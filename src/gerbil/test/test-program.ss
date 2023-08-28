@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; gxc compilation test program
+(import ./test-lib)
 (export main)
 
 (def (main)
-  (displayln (gerbil-system-version-string)))
+  (greeting (gerbil-system-version-string)))
