@@ -431,13 +431,23 @@
       (verbosef "sending control reply to ~a: ~a" source msg)
       (thread-send/check source msg)))
 
-  (def is-authorized?
+  (def is-shutdown-authorized?
     (if admin
       (lambda (srv-id)
         (cond
          ((hash-get admin-auth srv-id)
          => (lambda (state)
               (find (lambda (cap) (memq cap '(admin shutdown))) (cdr state))))
+         (else #f)))
+      (lambda (srv-id)
+        #t)))
+
+  (def is-admin?
+    (if admin
+      (lambda (srv-id)
+        (cond
+         ((hash-get admin-auth srv-id)
+          => (lambda (state) (memq 'admin (cdr state))))
          (else #f)))
       (lambda (srv-id)
         #t)))
@@ -630,7 +640,7 @@
               (debugf "remote control message from ~a: ~a" src-id msg)
               (match (&envelope-message msg)
                 ((!shutdown)
-                 (if (is-authorized? src-id)
+                 (if (is-shutdown-authorized? src-id)
                    (begin
                      (infof "remote shutdown from ~a" src-id)
                      (send-remote-control-reply! src-id msg (!ok (void)))
@@ -676,6 +686,16 @@
                               (send-remote-control-reply! src-id msg (!error "challenge failed")))))))
                   (else
                    (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
+
+                ((!admin-retract authorized-server-id)
+                 (if (is-admin? src-id)
+                   (begin
+                     (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
+                     (hash-remove! admin-auth authorized-server-id)
+                     (send-remote-control-reply! src-id msg (!ok (void))))
+                   (begin
+                     (warnf "unauthorized retraction from ~a" src-id)
+                     (send-remote-control-reply! src-id msg (!error "not authorized")))))
 
                 ((!list-actors srv-id)
                  (send-remote-control-reply! src-id msg

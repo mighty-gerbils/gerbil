@@ -792,6 +792,15 @@ using the private key `privk`. `cap` is a list of symbols denoting
 the capabilities of the authorized server; the `admin` capability
 implies all other capabilities.
 
+### admin-retract
+```scheme
+(admin-retract srv-id authorized-server-id (srv (current-actor-server)))
+```
+
+Retracts the capabilities previously confered to
+`authorized-server-id` within the context of `srv-id`.  Note that the
+in-process actor server must have `admin` capabilities.
+
 ### get-admin-pubkey
 ```scheme
 (get-admin-pubkey (path (default-admin-pubkey-path)))

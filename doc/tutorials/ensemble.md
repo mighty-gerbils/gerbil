@@ -47,6 +47,7 @@ Commands:
  list-connections                 list a server's connection
  lookup                           looks up a server by id or role
  authorize                        authorize capabilities for a server
+ retract                          retract all capabilities granted to a server
  cookie                           generate a new ensemble cookie
  admin                            generate a new ensemble administrator key pair
  help                             display help; help <command> for command help
@@ -105,6 +106,24 @@ Arguments:
  server-id                        the server id
  authorized-server-id             the server to authorize capabilities for
  capabilities                     the server capabilities to authorize [default: (admin)]
+```
+
+### Retracting capabilities
+This is an administrative action, that retracts capabilities from a
+previously authorized server.
+
+Here is the usage:
+```
+$ gxensemble help retract
+Usage: gxensemble retract [command-option ...] <server-id> <authorized-server-id>
+       retract all capabilities granted to a server
+
+Command Options:
+  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+
+Arguments:
+ server-id                        the server id
+ authorized-server-id             the server to authorize capabilities for
 ```
 
 ### Starting the ensemble
@@ -542,6 +561,12 @@ For example, to allow actors in `my-authorized-server` to shutdown
 privileges:
 ```
 $ gxensemble authorize my-server my-authorized-server "(shutdown)"
+```
+
+You can retract capabilities from a server with the `retract` command
+of the `gxensemble` tool:
+```
+$ gxensemble retract my-server my-authorized-server
 ```
 
 ::: warning

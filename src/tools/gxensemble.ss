@@ -209,6 +209,13 @@
       capabilities-optional-argument
       help: "authorize capabilities for a server"))
 
+  (def retract-cmd
+    (command 'retract
+      registry-option
+      server-id-argument
+      authorized-server-id-argument
+      help: "retract all capabilities granted to a server"))
+
   (def cookie-cmd
     (command 'cookie
       force-flag
@@ -235,6 +242,7 @@
     list-connections-cmd
     lookup-cmd
     authorize-cmd
+    retract-cmd
     cookie-cmd
     admin-cmd))
 
@@ -252,6 +260,7 @@
           (list-connections do-list-connections)
           (lookup           do-lookup)
           (authorize        do-authorize)
+          (retract          do-retract)
           (cookie           do-cookie)
           (admin            do-admin)))
   (cond
@@ -277,6 +286,13 @@
         (capabilities (hash-ref opt 'capabilities)))
     (admin-authorize (get-privkey) server-id authorized-server-id
                      capabilities: capabilities)))
+
+(def (do-retract opt)
+  (start-actor-server-with-options! opt)
+  (let ((server-id (hash-ref opt 'server-id))
+        (authorized-server-id (hash-ref opt 'authorized-server-id)))
+    (maybe-authorize! server-id)
+    (admin-retract server-id authorized-server-id)))
 
 (def (do-lookup opt)
   (start-actor-server-with-options! opt)

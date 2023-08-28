@@ -78,6 +78,7 @@
 (defmessage !admin-auth (server capabilities))
 (defmessage !admin-auth-challenge (bytes))
 (defmessage !admin-auth-response (sig))
+(defmessage !admin-retract (server))
 
 ;; utilities
 (def (actor-monitor actor peer (sendto ->))

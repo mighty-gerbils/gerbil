@@ -125,4 +125,11 @@
        (let (sig (admin-auth-challenge-sign privk srv-id authorized-server-id bytes))
          (->> remote-root (!admin-auth-response sig))))
       (result result)))
-  error: "error authorizing administrative privileges" srv-id)
+  error: "error authorizing with administrative privileges" srv-id)
+
+;; retract capabilities confered to a server; the current server must be authorized with
+;; admin capabilities
+(defcall-actor (admin-retract srv-id authorized-server-id (srv (current-actor-server)))
+  (let (remote-root (handle srv (reference srv-id 0)))
+    (->> remote-root (!admin-retract authorized-server-id)))
+  error: "error retracting capabilities" srv-id authorized-server-id)
