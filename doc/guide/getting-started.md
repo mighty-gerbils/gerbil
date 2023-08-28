@@ -215,9 +215,6 @@ $ gxc -dynamic -exe -o mybin mybin.ss
 The advantage of static executables is that they can work without a local
 Gerbil installation, which makes them suitable for binary distribution.
 They also start a little faster, as there is no dynamic module loading at runtime.
-In addition, because all dependencies from the stdlib are compiled in together, you
-can apply global declarations like `(declare (not safe))` to the whole program, which
-can result in significant performance gains albeit at the cost of safety.
 And if you are willing to wait a bit for your proggram to compile, you
 can specify `-full-program-optimization` which instructs the compiler
 to perform full program optimization, resulting in further performance
