@@ -217,7 +217,7 @@ namespace: gxc
            (deps             (find-runtime-module-deps ctx))
            (deps             (filter not-exclude-module? deps))
            (deps-scm         (map find-static-module-file deps))
-           (deps-scm         (filter not-file-empty? deps))
+           (deps-scm         (filter not-file-empty? deps-scm))
            (deps-scm         (map path-expand deps-scm))
            (deps-c           (map (cut replace-extension <> ".c") deps-scm))
            (deps-o           (map (cut replace-extension <> ".o") deps-scm))
