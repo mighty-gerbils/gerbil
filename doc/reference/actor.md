@@ -491,6 +491,7 @@ manually.
 ```scheme
 (start-actor-server! cookie:     (cookie (get-actor-server-cookie))
                      admin:      (admin (get-admin-pubkey))
+                     auth:       (auth #f)
                      addresses:  (addrs [])
                      identifier: (id (make-random-identifier))
                      ensemble:   (known-servers (default-known-servers)))
@@ -503,6 +504,8 @@ returns the main server thread.
   not automatically created.
 - `admin` is the (optional) administrative public key; normally resindes in
   `$GERBIL_PATH/ensemble/admin.pub`.
+- `auth`: a hash table mapping server ids to capabilities; these are preauthorized
+  server capabilities.
 - `addresses` is the list of addresses the server should listen; by default it is empty,
   making this a transient actor server.
 - `identifier` is the server identifier; if you don't specify one, a random server
@@ -621,7 +624,8 @@ Sets the actor server's address cache TTL (in seconds, a real number).
                            registry:  (registry-addrs #f)
                            roles:     (roles [])
                            cookie:    (cookie (get-actor-server-cookie))
-                           admin:     (admin (get-admin-pubkey)))
+                           admin:     (admin (get-admin-pubkey))
+                           auth:      (auth #f))
 ```
 
 This is the programmatic equivalent of `gxensemble run`; first it
@@ -648,6 +652,8 @@ Options:
   `$GERBIL_PATH/ensemble/cookie`.
 - `admin`: the administrative public key, if any; by default it uses the public
    key in `$GERBIL_PATH/ensemble/admin.pub` if it exists.
+- `auth`: a hash table mapping server ids to capabilities; these are preauthorized
+  server capabilities.
 
 ### ensemble-base-path
 ```scheme

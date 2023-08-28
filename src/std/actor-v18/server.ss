@@ -41,6 +41,8 @@
 ;; - admin is an _optional_ public key for authorizing administrative actions at the
 ;;   origin server level.
 ;;   If it is #f, then all server in the ensemble are automatically authorized.
+;; - auth is an _optional_ hash table for pre-authorized server capabilities.
+;;   It is a map of server-id to a list of symbols denoating capabilities
 ;; - addresses is a list of addresses the server should listen; empty by default.
 ;;   Addresses can be:
 ;;   - [unix: hostname  path]: a path for a unix domain socket in a host
@@ -54,12 +56,13 @@
 ;; Returns the server thread.
 (def (start-actor-server! cookie:     (cookie (get-actor-server-cookie))
                           admin:      (admin (get-admin-pubkey))
+                          auth:       (auth #f)
                           addresses:  (addrs [])
                           identifier: (id (make-random-identifier))
                           ensemble:   (known-servers (default-known-servers)))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs))
-         (server (spawn/group 'actor-server actor-server id known-servers cookie admin socks)))
+         (server (spawn/group 'actor-server actor-server id known-servers cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -172,10 +175,10 @@
       (else
        (reverse socks)))))
 
-(def (actor-server id known-servers cookie admin socks)
-  (with-exception-stack-trace (cut actor-server-main id known-servers cookie admin socks)))
+(def (actor-server id known-servers cookie admin auth socks)
+  (with-exception-stack-trace (cut actor-server-main id known-servers cookie admin auth socks)))
 
-(def (actor-server-main id known-servers cookie admin socks)
+(def (actor-server-main id known-servers cookie admin auth socks)
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
@@ -197,9 +200,11 @@
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
   (def actor-threads (make-hash-table-eq))
-  ;; authorized administrative server table: server-id -> [delegated|connected cap ...]
+  ;; authorized administrative server table: server-id -> [delegated|connected|preauth cap ...]
   (def admin-auth
-    (make-hash-table-eq))
+    (if auth
+      (list->hash-table-eq (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
+      (make-hash-table-eq)))
   ;; pending administrative server authorization: server-id -> [server-id cap challenge
   (def pending-admin-auth
     (make-hash-table-eq))
