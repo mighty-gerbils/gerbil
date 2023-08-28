@@ -660,7 +660,7 @@
                           (hash-remove! pending-admin-auth src-id)
                           (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
                             (begin
-                              (infof "admin privileges authorized for ~a" authorized-server-id)
+                              (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
                               (hash-update! admin-auth authorized-server-id
                                             (lambda (existing-cap)
                                               (cons (if (eq? src-id authorized-server-id)
