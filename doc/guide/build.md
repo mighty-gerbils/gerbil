@@ -50,6 +50,7 @@ And we can build by invoking the script:
 ``` bash
 $ chmod +x build.ss
 $ ./build.ss
+...
 ```
 
 ## Intermediate build scripts
@@ -94,70 +95,3 @@ $ ./build.ss
 ```
 
 After the initial dependency graph generation, we can build during development by reusing the dependency graph and simply invoking ./build.ss. You only need to generate a new dependency graph if your import sets change.
-
-## Building static executables
-
-Static executables are simple to build:
-
-- the executables are specified with the static-exe: build spec in place of exe:.
-- the make invocation needs static: #t to be specified so that static compilation artifacts are built for modules.
-
-However, there is a nuance: you usually don't want to build static executables with debug introspection as this will blow the executable size significantly.
-
-Perhaps the simplest way to deal with the bloat issue is to have a separate step building the executables, while still compiling library modules with debug introspection for working in the repl.
-
-The following build script breaks the build action into two steps, one for building library modules and another for building the executables:
-
-``` scheme
-#!/usr/bin/env gxi
-
-(import :std/make)
-
-;; the library module build specification
-(def lib-build-spec
-  '("util"))
-
-(def bin-build-spec
-  '((static-exe: "hello")))
-
-;; the source directory anchor
-(def srcdir
-  (path-normalize (path-directory (this-source-file))))
-
-;; the main function of the script
-(def (main . args)
-  (match args
-    (["lib"]
-     ;; this action builds the library modules -- with static compilation artifacts
-     (make srcdir: srcdir
-           bindir: srcdir
-           optimize: #t
-           debug: 'src             ; enable debugger introspection for library modules
-           static: #t              ; generate static compilation artifacts; required!
-           prefix: "example"
-           ;; build-deps: "build-deps" ; this value is the default
-           lib-build-spec))
-
-    (["bin"]
-     ;; this action builds the static executables -- no debug introspection
-     (make srcdir: srcdir
-           bindir: srcdir
-           optimize: #t
-           debug: #f               ; no debug bloat for executables
-           static: #t              ; generate static compilation artifacts; required!
-           prefix: "example"
-           build-deps: "build-deps-bin" ; importantly, pick a file that differs from above
-           bin-build-spec))
-
-    ;; this is the default action, builds libraries and executables
-    ([]
-     (main "lib")
-     (main "bin"))))
-```
-
-Note that the `build-deps:` file is a cache that stores your project dependencies.
-In large project, an up-to-date cache can save many seconds in build times.
-When multiple projects share a same directory, they must be made to use separate
-`build-deps:` file, or the caches will clash and be ineffective.
-All but one of the projects must explicitly specify the `build-deps:` argument
-to point to its own distinct file.
