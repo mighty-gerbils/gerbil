@@ -118,6 +118,8 @@
                                 (srv (current-actor-server))
                                 capabilities: (cap '(admin)))
   (let (remote-root (handle srv (reference srv-id 0)))
+    (unless (and (list? cap) (andmap symbol? cap))
+      (error "Bad argument; expected list of symbols" cap))
     (match (->> remote-root (!admin-auth authorized-server-id cap))
       ((!admin-auth-challenge bytes)
        (let (sig (admin-auth-challenge-sign privk srv-id authorized-server-id bytes))
