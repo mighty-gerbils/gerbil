@@ -85,6 +85,17 @@
       help: "the server or role to lookup"
       value: string->symbol))
 
+  (def authorized-server-id-argument
+    (argument 'authorized-server-id
+      help: "the server to authorize capabilities for"
+      value: string->symbol))
+
+  (def capabilities-optional-argument
+    (optional-argument 'capabilities
+      help: "the server capabilities to authorize"
+      value: string->object
+      default: '(admin)))
+
   (def expr-argument
     (argument 'expr
       help: "the expression to eval"
@@ -190,6 +201,14 @@
       server-id-or-role-argument
       help: "looks up a server by id or role"))
 
+  (def authorize-cmd
+    (command 'authorize
+      registry-option
+      server-id-argument
+      authorized-server-id-argument
+      capabilities-optional-argument
+      help: "authorize capabilities for a server"))
+
   (def cookie-cmd
     (command 'cookie
       force-flag
@@ -199,6 +218,7 @@
     (command 'admin
       force-flag
       help: "generate a new ensemble administrator key pair"))
+
 
   (call-with-getopt gxensemble-main args
     program: "gxensemble"
@@ -214,6 +234,7 @@
     list-actors-cmd
     list-connections-cmd
     lookup-cmd
+    authorize-cmd
     cookie-cmd
     admin-cmd))
 
@@ -230,6 +251,7 @@
           (list-actors      do-list-actors)
           (list-connections do-list-connections)
           (lookup           do-lookup)
+          (authorize        do-authorize)
           (cookie           do-cookie)
           (admin            do-admin)))
   (cond
@@ -247,6 +269,14 @@
     (unless (equal? passphrase again)
       (error "administrative passphrases don't match"))
     (generate-admin-keypair! passphrase force: (hash-get opt 'force))))
+
+(def (do-authorize opt)
+  (start-actor-server-with-options! opt)
+  (let ((server-id (hash-ref opt 'server-id))
+        (authorized-server-id (hash-ref opt 'authorized-server-id))
+        (capabilities (hash-ref opt 'capabilities)))
+    (admin-authorize (get-privkey) server-id authorized-server-id
+                     capabilities: capabilities)))
 
 (def (do-lookup opt)
   (start-actor-server-with-options! opt)
@@ -668,11 +698,16 @@
                          ensemble: known-servers)))
 
 (def +admin-privkey+ #f)
+(def (get-privkey)
+  (or +admin-privkey+
+      (if (file-exists? (default-admin-privkey-path))
+        (let* ((passphrase (read-password prompt: "Enter passphrase: "))
+               (privk (get-admin-privkey passphrase)))
+          (set! +admin-privkey+ privk)
+          privk)
+        (error "no administrative private key"))))
 
 (def (maybe-authorize! server-id)
   (when (file-exists? (default-admin-privkey-path))
-    (unless +admin-privkey+
-      (let* ((passphrase (read-password prompt: "Enter passphrase: "))
-             (privk (get-admin-privkey passphrase)))
-        (set! +admin-privkey+ privk)))
-    (admin-authorize +admin-privkey+ server-id (actor-server-identifier))))
+    (let (privk (get-privkey))
+      (admin-authorize +admin-privkey+ server-id (actor-server-identifier)))))
