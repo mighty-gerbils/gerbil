@@ -114,9 +114,11 @@
 
 ;; authorizes the current server for administrative privileges with the given remote server,
 ;; using the administative private key.
-(defcall-actor (admin-authorize privk srv-id authorized-server-id (srv (current-actor-server)))
+(defcall-actor (admin-authorize privk srv-id authorized-server-id
+                                (srv (current-actor-server))
+                                capabilities: (cap '(admin)))
   (let (remote-root (handle srv (reference srv-id 0)))
-    (match (->> remote-root (!admin-auth authorized-server-id))
+    (match (->> remote-root (!admin-auth authorized-server-id cap))
       ((!admin-auth-challenge bytes)
        (let (sig (admin-auth-challenge-sign privk srv-id authorized-server-id bytes))
          (->> remote-root (!admin-auth-response sig))))

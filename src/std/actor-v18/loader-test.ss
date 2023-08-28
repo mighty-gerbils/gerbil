@@ -184,16 +184,25 @@
                        (actor-error-with? "not authorized"))
 
 
-      ;; now auth
-      (check (admin-authorize privk test-server-id (actor-server-identifier srv) srv) => (void))
+      ;; now auth loader capabilities
+      (check (admin-authorize privk test-server-id (actor-server-identifier srv) srv
+                              capabilities: '(loader))
+             => (void))
       (check (remote-eval test-server-id '(+ 1 1)) => 2)
       (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__0.o1")))
         (check the-code-hash ? string?))
       ;; eval hello
       (check (remote-eval test-server-id '(std/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
+      ;; but still can't shut it down
+      (check-exception (remote-stop-server! test-server-id)
+                       (actor-error-with? "not authorized"))
+      ;; elevate privileges
+      (check (admin-authorize privk test-server-id (actor-server-identifier srv) srv
+                              capabilities: '(shutdown))
+             => (void))
       ;; and shut it down
-      (remote-stop-server! test-server-id)
+      (check (remote-stop-server! test-server-id) => (void))
       (unless (zero? (process-status test-server-process))
         (displayln (read-all test-server-process)))
       ;; clean up

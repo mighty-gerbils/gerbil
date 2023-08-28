@@ -101,9 +101,11 @@
       (def cookie (make-random-cookie))
       (def srv1
         (start-actor-server! cookie: cookie
+                             admin: #f
                              addresses: [addr1]))
       (def srv2
         (start-actor-server! cookie: cookie
+                             admin: #f
                              addresses: [addr2]))
 
       (def srv1-id
@@ -178,11 +180,13 @@
         (def cookie (make-random-cookie))
         (def srv1
           (start-actor-server! cookie: cookie
+                               admin: #f
                                addresses: [addr1]))
         (def srv1-id
           (actor-server-identifier srv1))
         (def srv2
           (start-actor-server! cookie: cookie
+                               admin: #f
                                addresses: []
                                ensemble: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
@@ -225,9 +229,9 @@
 
       (def cookie (make-random-cookie))
       (def srv1
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
       (def srv2
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
         (actor-server-identifier srv1))
@@ -248,9 +252,9 @@
 
       (def cookie (make-random-cookie))
       (def srv1
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
       (def srv2
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
         (actor-server-identifier srv1))
@@ -278,13 +282,15 @@
         (def cookie1 (make-random-cookie))
         (def srv1
           (start-actor-server! cookie: cookie1
+                               admin: #f
                                addresses: [addr1]))
         (def srv1-id
           (actor-server-identifier srv1))
 
         (def cookie2 (make-random-cookie))
         (def srv2
-          (start-actor-server! cookie: cookie2))
+          (start-actor-server! cookie: cookie2
+                               admin: #f))
         (def srv2-id
           (actor-server-identifier srv2))
 
@@ -332,6 +338,7 @@
 
       (def local-srv
         (start-actor-server! cookie: cookie
+                             admin: #f
                              ensemble: (hash (,remote-srv-id [remote-addr]))))
 
       ;; try to shutdown remote-srv without authorization first; this should fail

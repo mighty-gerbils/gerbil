@@ -782,11 +782,15 @@ ensemble.
 
 ### admin-authorize
 ```scheme
-(admin-authorize privk srv-id authorized-server-id (srv (current-actor-server)))
+(admin-authorize privk srv-id authorized-server-id (srv (current-actor-server))
+                 capabilities: (cap '(admin)))
 ```
 
-Authorizes administrative privileges for `authorized-server-id` in the remote server `srv-id`,
-using the private key `privk`.
+Authorizes the capabilities specified by `cap` with administrative
+privileges for `authorized-server-id` in the remote server `srv-id`,
+using the private key `privk`. `cap` is a list of symbols denoting
+the capabilities of the authorized server; the `admin` capability
+implies all other capabilities.
 
 ### get-admin-pubkey
 ```scheme

@@ -197,10 +197,10 @@
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
   (def actor-threads (make-hash-table-eq))
-  ;; authorized administrative server table: server-id -> delegated|connected
+  ;; authorized administrative server table: server-id -> [delegated|connected cap ...]
   (def admin-auth
     (make-hash-table-eq))
-  ;; pending administrative server authorization: server-id -> challenge (u8vector)
+  ;; pending administrative server authorization: server-id -> [server-id cap challenge
   (def pending-admin-auth
     (make-hash-table-eq))
   ;; actor listener threads
@@ -434,9 +434,34 @@
   (def is-authorized?
     (if admin
       (lambda (srv-id)
-        (hash-get admin-auth srv-id))
+        (cond
+         ((hash-get admin-auth srv-id)
+         => (lambda (state)
+              (find (lambda (cap) (memq cap '(admin shutdown))) (cdr state))))
+         (else #f)))
       (lambda (srv-id)
         #t)))
+
+  (def actor-capabilities
+    (if admin
+      (lambda (srv-id)
+        (cond
+         ((hash-get admin-auth srv-id) => cdr)
+         (else #f)))
+      (lambda (srv-id)
+        '(admin))))
+
+  (def (merge-capabilities new-cap cap)
+    (cond
+     ((memq 'admin cap)
+      '(admin))
+     ((memq 'admin new-cap)
+      '(admin))
+     (else
+      (foldl
+        (lambda (c r)
+          (if (memq c r) r (cons c r)))
+        cap new-cap))))
 
   ;; main loop
   (let/cc exit
@@ -614,30 +639,37 @@
                      (warnf "unauthorized shutdown request from ~a" src-id)
                      (send-remote-control-reply! src-id msg (!error "not authorized")))))
 
-                ((!admin-auth authorized-server-id)
+                ((!admin-auth authorized-server-id cap)
                  (cond
-                  ((or (not admin) (hash-get admin-auth authorized-server-id))
+                  ((or (not admin)
+                       (alet (state (hash-get admin-auth src-id))
+                         (andmap (cut memq <> (cdr state)) cap)))
                    (send-remote-control-reply! src-id msg (!ok (void))))
                   ((hash-get pending-admin-auth src-id)
                    (send-remote-control-reply! src-id msg (!error "challenge pending")))
                   (else
                    (let (bytes (random-bytes 32))
-                     (hash-put! pending-admin-auth src-id (cons authorized-server-id bytes))
+                     (hash-put! pending-admin-auth src-id [authorized-server-id cap bytes])
                      (send-remote-control-reply! src-id msg (!admin-auth-challenge bytes))))))
 
                 ((!admin-auth-response sig)
                  (cond
                   ((hash-get pending-admin-auth src-id)
                    => (lambda (state)
-                        (with ([authorized-server-id . bytes] state)
+                        (with ([authorized-server-id cap bytes] state)
                           (hash-remove! pending-admin-auth src-id)
                           (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
                             (begin
                               (infof "admin privileges authorized for ~a" authorized-server-id)
-                              (hash-put! admin-auth authorized-server-id
-                                         (if (eq? src-id authorized-server-id)
-                                           'connected
-                                           'delegated))
+                              (hash-update! admin-auth authorized-server-id
+                                            (lambda (existing-cap)
+                                              (cons (if (eq? src-id authorized-server-id)
+                                                      'connected
+                                                      'delegated)
+                                                    (if existing-cap
+                                                      (merge-capabilities cap (cdr existing-cap))
+                                                      cap)))
+                                            #f)
                               (send-remote-control-reply! src-id msg (!ok (void))))
                             (begin
                               (warnf "admin authorization failed for ~a" src-id)
@@ -704,7 +736,7 @@
                    (set! (&envelope-source msg)
                      (handle (current-thread)
                              (reference src-id (&envelope-source msg))
-                             (is-authorized? src-id)))
+                             (actor-capabilities src-id)))
                    (set! (&envelope-dest msg) actor)
                    (thread-send/check actor msg)))
 
@@ -728,8 +760,11 @@
                  (if (null? remaining)
                    (begin
                      (hash-remove! conns srv-id)
-                     (when (eq? (hash-get admin-auth srv-id) 'connected)
-                       (hash-remove! admin-auth srv-id))
+                     (cond
+                      ((hash-get admin-auth srv-id)
+                       => (lambda (state)
+                            (when (eq? (car state) 'connected)
+                              (hash-remove! admin-auth srv-id)))))
                      (hash-remove! pending-admin-auth srv-id))
                    (hash-put! conns srv-id remaining)))))))
 

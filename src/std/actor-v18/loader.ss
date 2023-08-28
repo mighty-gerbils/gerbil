@@ -34,7 +34,7 @@
     (while #t
       (<-
        ((!load-library-module id)
-        (if (actor-authorized? @source)
+        (if (actor-authorized? @source 'loader)
           ;; don't try to load if the library loader is not initialized
           ;; cf static binaries
           (if (&current-module-registry)
@@ -51,7 +51,7 @@
           (--> (!error "not authorized"))))
 
        ((!load-code code linker)
-        (if (actor-authorized? @source)
+        (if (actor-authorized? @source 'loader)
           (let (code-hash (hex-encode (sha256 code)))
             (infof "loading code; hash: ~a" code-hash)
             (cond
@@ -78,7 +78,7 @@
           (--> (!error "not authorized"))))
 
        ((!eval expr)
-        (if (actor-authorized? @source)
+        (if (actor-authorized? @source 'loader)
           (begin
             (infof "eval ~a" expr)
             (background

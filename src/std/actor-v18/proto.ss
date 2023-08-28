@@ -43,7 +43,7 @@
 ;; reaction macro for shutdown
 (defrule (@shutdown exit ...)
   ((!shutdown)
-   (if (actor-authorized? @source)
+   (if (actor-authorized? @source 'shutdown)
      (begin
        (-->? (!ok (void)))
        exit ...)
@@ -75,7 +75,7 @@
 (defmessage !eval (expr))
 (defmessage !continue (thunk))
 
-(defmessage !admin-auth (server))
+(defmessage !admin-auth (server capabilities))
 (defmessage !admin-auth-challenge (bytes))
 (defmessage !admin-auth-response (sig))
 
