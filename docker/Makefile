@@ -5,9 +5,7 @@ GAMBIT_VERSION := v4.9.5
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
-
-#$(eval squid_ip := $(shell docker inspect squid|jq -r '.[].NetworkSettings.IPAddress'))
-#$(info $(cores) is cores)
+arch := $(shell uname -m)
 
 alpine_packages := autoconf \
                    automake \
@@ -36,17 +34,17 @@ alpine_packages := autoconf \
                    zlib-static
 
 amazon_packages := cmake \
-				   leveldb \
-				   leveldb-devel \
-				   libsqlite3x-devel \
-				   libxml2-devel \
+		   leveldb \
+		   leveldb-devel \
+		   libsqlite3x-devel \
+		   libxml2-devel \
                    libyaml-devel \
-				   lmdb-libs \
+		   lmdb-libs \
                    lmdb-devel \
-				   mysql-community-client \
-				   mysql-community-libs \
-				   mysql-community-devel \
-				   openssl-devel \
+		   mysql-community-client \
+		   mysql-community-libs \
+		   mysql-community-devel \
+		   openssl-devel \
                    sqlite-devel
 
 fedora_packages := cmake \
@@ -90,7 +88,7 @@ alpine:
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="alpine" -t final $(ROOT_DIR)
-	docker tag final gerbil/alpine
+	docker tag final gerbil/alpine:$(arch)
 
 amazonlinux:
 	docker build --target final \
@@ -100,7 +98,7 @@ amazonlinux:
 	--build-arg cores=$(cores)  \
 	--build-arg distro="amazonlinux" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/amazonlinux
+	docker tag final gerbil/amazonlinux:$(arch)
 
 centos:
 	docker build --target final \
@@ -111,7 +109,7 @@ centos:
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/centos
+	docker tag final gerbil/centos:$(arch)
 
 fedora:
 	docker build --target final \
@@ -121,7 +119,7 @@ fedora:
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/fedora
+	docker tag final gerbil/fedora:$(arch)
 
 ubuntu:
 	docker build --target final \
@@ -132,7 +130,7 @@ ubuntu:
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/ubuntu
+	docker tag final gerbil/ubuntu:$(arch)
 
 ubuntu-current-jedi:
 	docker build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi
@@ -140,7 +138,7 @@ ubuntu-current-jedi:
 
 package-ubuntu:
 	docker run -v $(PWD):/src:z -t gerbil/ubuntu \
-    bash -c "gem install fpm && \
+	bash -c "gem install fpm && \
 	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).ubuntu \
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
@@ -155,7 +153,7 @@ package-fedora:
 package-amazonlinux:
 	docker run -v $(PWD):/src:z -t gerbil/amazonlinux \
 	bash -c "amazon-linux-extras install -y ruby2.6 && \
-    yum install -y ruby-devel rubygems rpm-build && \
+	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
 	-n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).amazonlinux \
@@ -168,6 +166,9 @@ push-all:
 	docker push gerbil/ubuntu
 	docker push gerbil/fedora
 	docker push gerbil/amazonlinux
+
+manifest:
+	docker manifest create gerbil/alpine:latest --amend gerbil/alpine:aarch64 --amend gerbil/alpine:x86_64
 
 all: alpine amazonlinux fedora ubuntu
 
