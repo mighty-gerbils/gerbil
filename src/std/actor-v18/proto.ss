@@ -75,7 +75,7 @@
 (defmessage !eval (expr))
 (defmessage !continue (thunk))
 
-(defmessage !admin-auth ())
+(defmessage !admin-auth (server))
 (defmessage !admin-auth-challenge (bytes))
 (defmessage !admin-auth-response (sig))
 

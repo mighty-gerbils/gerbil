@@ -48,7 +48,7 @@
 ;;   - TODO: TLS address
 ;; - identifier is the server identifier in your ensemble; a symbol.
 ;;   defaults to a random identifier.
-;; - knonw-servers is the set of known servers.
+;; - known-servers is the set of known servers.
 ;;   it is a hash table mapping server identifiers to list of addresses.
 ;;   all servers in the ensemble must share the same cookie.
 ;; Returns the server thread.
@@ -197,7 +197,7 @@
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
   (def actor-threads (make-hash-table-eq))
-  ;; authorized administrative server set
+  ;; authorized administrative server table: server-id -> delegated|connected
   (def admin-auth
     (make-hash-table-eq))
   ;; pending administrative server authorization: server-id -> challenge (u8vector)
@@ -614,30 +614,34 @@
                      (warnf "unauthorized shutdown request from ~a" src-id)
                      (send-remote-control-reply! src-id msg (!error "not authorized")))))
 
-                ((!admin-auth)
+                ((!admin-auth authorized-server-id)
                  (cond
-                  ((or (not admin) (hash-get admin-auth src-id))
+                  ((or (not admin) (hash-get admin-auth authorized-server-id))
                    (send-remote-control-reply! src-id msg (!ok (void))))
                   ((hash-get pending-admin-auth src-id)
                    (send-remote-control-reply! src-id msg (!error "challenge pending")))
                   (else
                    (let (bytes (random-bytes 32))
-                     (hash-put! pending-admin-auth src-id bytes)
+                     (hash-put! pending-admin-auth src-id (cons authorized-server-id bytes))
                      (send-remote-control-reply! src-id msg (!admin-auth-challenge bytes))))))
 
                 ((!admin-auth-response sig)
                  (cond
                   ((hash-get pending-admin-auth src-id)
-                   => (lambda (bytes)
-                        (hash-remove! pending-admin-auth src-id)
-                        (if (admin-auth-challenge-verify admin id src-id bytes sig)
-                          (begin
-                            (infof "admin privileges authorized for ~a" src-id)
-                            (hash-put! admin-auth src-id #t)
-                            (send-remote-control-reply! src-id msg (!ok (void))))
-                          (begin
-                            (warnf "admin authorization failed for ~a" src-id)
-                            (send-remote-control-reply! src-id msg (!error "challenge failed"))))))
+                   => (lambda (state)
+                        (with ([authorized-server-id . bytes] state)
+                          (hash-remove! pending-admin-auth src-id)
+                          (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
+                            (begin
+                              (infof "admin privileges authorized for ~a" authorized-server-id)
+                              (hash-put! admin-auth authorized-server-id
+                                         (if (eq? src-id authorized-server-id)
+                                           'connected
+                                           'delegated))
+                              (send-remote-control-reply! src-id msg (!ok (void))))
+                            (begin
+                              (warnf "admin authorization failed for ~a" src-id)
+                              (send-remote-control-reply! src-id msg (!error "challenge failed")))))))
                   (else
                    (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
 
@@ -724,7 +728,8 @@
                  (if (null? remaining)
                    (begin
                      (hash-remove! conns srv-id)
-                     (hash-remove! admin-auth srv-id)
+                     (when (eq? (hash-get admin-auth srv-id) 'connected)
+                       (hash-remove! admin-auth srv-id))
                      (hash-remove! pending-admin-auth srv-id))
                    (hash-put! conns srv-id remaining)))))))
 

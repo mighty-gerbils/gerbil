@@ -185,7 +185,7 @@
 
 
       ;; now auth
-      (check (admin-authorize privk test-server-id srv) => (void))
+      (check (admin-authorize privk test-server-id (actor-server-identifier srv) srv) => (void))
       (check (remote-eval test-server-id '(+ 1 1)) => 2)
       (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__0.o1")))
         (check the-code-hash ? string?))

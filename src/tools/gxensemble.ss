@@ -675,4 +675,4 @@
       (let* ((passphrase (read-password prompt: "Enter passphrase: "))
              (privk (get-admin-privkey passphrase)))
         (set! +admin-privkey+ privk)))
-    (admin-authorize +admin-privkey+ server-id)))
+    (admin-authorize +admin-privkey+ server-id (actor-server-identifier))))

@@ -782,10 +782,10 @@ ensemble.
 
 ### admin-authorize
 ```scheme
-(admin-authorize privk srv-id (srv (current-actor-server)))
+(admin-authorize privk srv-id authorized-server-id (srv (current-actor-server)))
 ```
 
-Authorizes administrative privileges with the remote server `srv-id`,
+Authorizes administrative privileges for `authorized-server-id` in the remote server `srv-id`,
 using the private key `privk`.
 
 ### get-admin-pubkey

@@ -339,7 +339,8 @@
                        (actor-error-with? "not authorized"))
 
       ;; now authorize administrative privileges and try again
-      (check (admin-authorize privk remote-srv-id local-srv) => (void))
+      (check (admin-authorize privk remote-srv-id (actor-server-identifier local-srv) local-srv)
+             => (void))
       (check (remote-stop-server! remote-srv-id local-srv) => (void))
       (check (thread-join! remote-srv) => 'shutdown)
 
