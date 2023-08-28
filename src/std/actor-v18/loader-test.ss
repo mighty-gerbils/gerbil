@@ -197,7 +197,13 @@
       ;; but still can't shut it down
       (check-exception (remote-stop-server! test-server-id)
                        (actor-error-with? "not authorized"))
-      ;; elevate privileges
+      ;; retract capabilities and make sure we cannot eval any longer
+      (check (admin-retract test-server-id (actor-server-identifier srv) srv)
+             => (void))
+      (check-exception (remote-eval test-server-id '(+ 1 1))
+                       (actor-error-with? "not authorized"))
+
+      ;; grant shutdown capability
       (check (admin-authorize privk test-server-id (actor-server-identifier srv) srv
                               capabilities: '(shutdown))
              => (void))

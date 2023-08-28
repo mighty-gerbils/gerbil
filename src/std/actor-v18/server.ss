@@ -447,14 +447,15 @@
       (lambda (srv-id)
         #t)))
 
-  (def is-admin?
+  (def is-retract-authorized?
     (if admin
-      (lambda (srv-id)
+      (lambda (srv-id authorized-server-id)
         (cond
+         ((eq? srv-id authorized-server-id))
          ((hash-get admin-auth srv-id)
           => (lambda (state) (memq 'admin (cdr state))))
          (else #f)))
-      (lambda (srv-id)
+      (lambda (srv-id authorized-server-id)
         #t)))
 
   (def actor-capabilities
@@ -697,7 +698,7 @@
                    (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
 
                 ((!admin-retract authorized-server-id)
-                 (if (is-admin? src-id)
+                 (if (is-retract-authorized? src-id authorized-server-id)
                    (begin
                      (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
                      (hash-remove! admin-auth authorized-server-id)
