@@ -615,7 +615,11 @@
                  ;; update our known address mapping
                  (hash-remove! server-addrs srv-id)
                  ;; and our authorization table
-                 (hash-remove! admin-auth srv-id)
+                 (cond
+                  ((hash-get admin-auth srv-id)
+                   => (lambda (state)
+                        (when (eq? (car state) 'connected)
+                          (hash-remove! admin-auth srv-id)))))
                  (hash-remove! pending-admin-auth srv-id)
                  ;; update the registry
                  (send-to-registry! actor-id msg))
