@@ -4,6 +4,7 @@
 ;;; libgerbil build script
 
 (import :gerbil/expander
+        :gerbil/gambit/ports
         :std/build-config
         :std/make
         :std/iter)
@@ -235,6 +236,7 @@
                                  stdout-redirection: #f
                                  stderr-redirection: #f]))
          (status (process-status process)))
+    (close-port process)
     (unless (zero? status)
       (displayln "process " program " exited with non-zero status " status)
       (error "error executing process" program status))))
@@ -273,7 +275,7 @@
            (libgerbil.a (static-file-path "libgerbil.a")))
       ;; compile each .scm to .c separately to avoid using too much memory
       (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
-        (displayln "compile " scm-path)
+        (displayln "... compile " scm-path)
         (invoke-gsc [gsc-runtime-opts
                      ... "-c"
                      gsc-debug-opts ...
@@ -281,20 +283,22 @@
                      gsc-gx-features ...
                      scm-path]))
       ;; link them
+      (displayln "... link " link-c-path)
       (invoke-gsc [gsc-runtime-opts
                    ... "-link" "-o" link-c-path
                    gx-gambc-c-paths ...
                    static-module-c-paths ...])
       ;; build them
-      (invoke-gsc [gsc-runtime-opts
+      (for (c-path [gx-gambc-c-paths ... static-module-c-paths ... link-c-path])
+        (displayln "... compile " c-path)
+        (invoke-gsc [gsc-runtime-opts
                    ... "-obj"
                    "-cc-options" cc-options
-                   gx-gambc-c-paths ...
-                   static-module-c-paths ...
-                   link-c-path])
+                   c-path]))
       ;; and collect them
       (when (file-exists? libgerbil.a)
         (delete-file libgerbil.a))
+      (displayln "... collect " libgerbil.a)
       (invoke-ar ["cql" ld-options
                   libgerbil.a
                   gx-gambc-o-paths ...
