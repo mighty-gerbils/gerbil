@@ -33,6 +33,9 @@ namespace: gxc
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
 
+(def (compile-timestamp-nanos)
+  (time->seconds (current-time)))
+
 (def scheme-file-settings '(permissions: #o644 char-encoding: UTF-8 eol-encoding: lf))
 
 (def (with-output-to-scheme-file path fun)
@@ -53,6 +56,20 @@ namespace: gxc
      (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
       "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
      (else "-:i8,f8,-8,t8"))]) ;; works after v4.9.3-1101-g1f1ce436 - in between, you lose.
+
+(cond-expand
+  ;; Note: delete-file-or-directory first appeared in v4.9.4
+  (,(##unbound? (##global-var-ref (##make-global-var 'delete-file-or-directory)))
+   (def (delete-directory* dir)
+     (for-each delete-file (directory-files dir))
+     (delete-directory dir)))
+  ((defined delete-file-or-directory)
+   (def (delete-directory* dir)
+     (delete-file-or-directory dir #t)))
+  (else
+   (extern namespace: #f delete-file-or-directory)
+   (def (delete-directory* dir)
+     (delete-file-or-directory dir #t))))
 
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
@@ -214,15 +231,21 @@ namespace: gxc
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
            (gxlink           (path-expand "gxlink" gerbil-staticdir))
            (gxinit-scm       (path-expand "gx-init-static-exe.scm" gerbil-libdir))
+           (tmp              (path-expand
+                              (string-append "gxc." (number->string (compile-timestamp-nanos)))
+                              "/tmp"))
+           (tmp-path         (lambda (f) (path-expand (path-strip-directory f) tmp)))
            (deps             (find-runtime-module-deps ctx))
            (deps             (filter not-exclude-module? deps))
-           (deps-scm         (map find-static-module-file deps))
-           (deps-scm         (filter not-file-empty? deps-scm))
-           (deps-scm         (map path-expand deps-scm))
+           (src-deps-scm     (map find-static-module-file deps))
+           (src-deps-scm     (filter not-file-empty? src-deps-scm))
+           (src-deps-scm     (map path-expand src-deps-scm))
+           (deps-scm         (map tmp-path src-deps-scm))
            (deps-c           (map (cut replace-extension <> ".c") deps-scm))
            (deps-o           (map (cut replace-extension <> ".o") deps-scm))
-           (bin-scm          (find-static-module-file ctx))
-           (bin-scm          (path-expand bin-scm))
+           (src-bin-scm      (find-static-module-file ctx))
+           (src-bin-scm      (path-expand src-bin-scm))
+           (bin-scm          (tmp-path src-bin-scm))
            (bin-c            (replace-extension bin-scm ".c"))
            (bin-o            (replace-extension bin-scm ".o"))
            (output-bin       (path-expand output-bin))
@@ -240,6 +263,9 @@ namespace: gxc
       (with-output-to-scheme-file output-scm
         (cut generate-stub gxinit-scm))
       (when (current-compile-invoke-gsc)
+        (create-directory tmp)
+        (for-each copy-file src-deps-scm deps-scm)
+        (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
                 [gsc-runtime-args
                  ... "-link" "-l" gxlink
@@ -264,7 +290,8 @@ namespace: gxc
                  "-L" gambit-libdir "-lgambit"
                  libgerbil-ld-opts ...])
         ;; clean up
-        (for-each delete-file [output-c output_-c output-o output_-o]))))
+        (for-each delete-file [output-c output_-c output-o output_-o])
+        (delete-directory* tmp))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scmx")))
