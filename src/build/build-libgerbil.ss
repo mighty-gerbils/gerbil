@@ -303,4 +303,8 @@
                   libgerbil.a
                   gx-gambc-o-paths ...
                   static-module-o-paths ...
-                  link-o-path]))))
+                  link-o-path])
+      ;; cleanup
+      (for (f [gx-gambc-c-paths ... static-module-c-paths ...
+               gx-gambc-o-paths ... static-module-o-paths ...])
+        (delete-file f)))))
