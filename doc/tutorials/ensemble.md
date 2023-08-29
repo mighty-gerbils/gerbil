@@ -411,13 +411,10 @@ have to parse CLI options on your own, probably using getopt.
 
 Note that some care should be taken to ensure necessary bindings are
 available in the server and not eliminated by the tree shaker from
-static compilation.  You can do this with appropriate `(not
-optimize-dead-definitions id ...)` declarations. It is recommended
-that you turn off the tree shaker entirely by compiling your server
-with the `-prelude '(declare (not optimize-dead-definitions))'`
-compiler option otherwise it is very much likely that some essential
-bindings will be missing, causing your server to crash when trying
-to load code.
+full program optimization.  As such, it is _strongly_ recommended that
+you do not use full program optimization for servers; otherwise it is
+very much likely that some essential bindings will be missing, causing
+your server to crash when trying to load code.
 
 Here is an example static binary running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
 ```scheme

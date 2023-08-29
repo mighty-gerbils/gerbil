@@ -6,7 +6,4 @@
   '("server"
     "handler"
     "httpd-svc"
-    (static-exe: "httpd-exe"
-                 "-prelude" "(declare (not optimize-dead-definitions))"
-                 "-cc-options" "-Wno-deprecated-declarations -Wno-implicit-function-declaration"
-                 "-ld-options" "-lpthread -lssl -ldl -lcrypto -lz")))
+    (exe: "httpd-exe")))
