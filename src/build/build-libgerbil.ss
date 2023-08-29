@@ -5,7 +5,8 @@
 
 (import :gerbil/expander
         :std/build-config
-        :std/make)
+        :std/make
+        :std/iter)
 
 (include "../std/build-spec.ss")
 
@@ -270,19 +271,28 @@
            (gsc-gx-features
             '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
            (libgerbil.a (static-file-path "libgerbil.a")))
+      ;; compile each .scm to .c separately to avoid using too much memory
+      (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
+        (displayln "compile " scm-path)
+        (invoke-gsc [gsc-runtime-opts
+                     ... "-c"
+                     gsc-debug-opts ...
+                     gsc-gx-macros ...
+                     gsc-gx-features ...
+                     scm-path]))
+      ;; link them
       (invoke-gsc [gsc-runtime-opts
                    ... "-link" "-o" link-c-path
-                   gsc-debug-opts ...
-                   gsc-gx-macros ...
-                   gsc-gx-features ...
-                   gx-gambc-scm-paths ...
-                   static-module-scm-paths ...])
+                   gx-gambc-c-paths ...
+                   static-module-c-paths ...])
+      ;; build them
       (invoke-gsc [gsc-runtime-opts
                    ... "-obj"
                    "-cc-options" cc-options
                    gx-gambc-c-paths ...
                    static-module-c-paths ...
                    link-c-path])
+      ;; and collect them
       (when (file-exists? libgerbil.a)
         (delete-file libgerbil.a))
       (invoke-ar ["cql" ld-options
