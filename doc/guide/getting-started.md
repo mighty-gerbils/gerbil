@@ -153,12 +153,12 @@ representative  for your top package namespace, like your github user id.
 
 So, let's make a simple library module:
 ```
-$ mkdir -p myproject/src/myuser
-$ cd myproject/src/myuser
+$ mkdir -p myproject
+$ cd myproject
 
 # Create a gerbil.pkg file for our project
 $ cat > gerbil.pkg <<EOF
-(package: myuser)
+(package: myproject)
 EOF
 
 $ cat > mylib.ss <<EOF
@@ -173,13 +173,13 @@ You can change this by exporting the `GERBIL_PATH` variable.
 You may also explicitly use the `-d` option;
 but then you'll have to add your libdir to `GERBIL_LOADPATH`.
 ```
-$ gxc mylib.ss
+$ gxc -O mylib.ss
 ```
 
 You now have a compiled module, which you can use in the interpreter:
 ```
 $ gxi
-> (import :myuser/mylib)
+> (import :myproject/mylib)
 > (hello "world")
 hello world
 ```
@@ -187,7 +187,7 @@ hello world
 Next let's make an executable:
 ```
 $ cat > mybin.ss <<EOF
-(import :myuser/mylib)
+(import ./mylib)
 (export main)
 (def (main who)
  (hello who))
@@ -195,45 +195,31 @@ EOF
 ```
 and let's compile it and run it:
 ```
-$ gxc -exe -o mybin mybin.ss
+$ gxc -O -exe -o mybin mybin.ss
 $ ./mybin world
 hello world
 ```
 
-Note that this is a dynamically linked executable, the module has been
-compiled dynamically in the gerbil libdir and the executable is a stub
-that loads it and executes main, which means that your `GERBIL_HOME`
-(and `GERBIL_LOADPATH` if you are putting your artefacts in a different
-place, like `myproject/lib`) must be set.
+Note that this is a statically linked executable.
 
-You can also compile a statically linked executable, which can work without
-a local gerbil environment:
+If you want a dynamically linked executable, the module will be
+compiled dynamically in the gerbil libdir and the executable is a stub
+that loads it and executes main. This means that your `GERBIL_HOME`
+must be set.
+
+You can compile a dynamic executable with the `-dynamic` flag:
 ```
-$ gxc -static mylib.ss  # compile dependent library statically first
-$ gxc -static -exe -o mybin-static mybin.ss
-$ ./mybin-static world
-hello world
+$ gxc -dynamic -exe -o mybin mybin.ss
 ```
 
 The advantage of static executables is that they can work without a local
 Gerbil installation, which makes them suitable for binary distribution.
 They also start a little faster, as there is no dynamic module loading at runtime.
-In addition, because all dependencies from the stdlib are compiled in together, you
-can apply global declarations like `(declare (not safe))` to the whole program, which
-can result in significant performance gains. And as of `Gerbil-v0.13-DEV-50-gaf81bba`
-the compiler performs full program optimization, resulting in further performance
+And if you are willing to wait a bit for your proggram to compile, you
+can specify `-full-program-optimization` which instructs the compiler
+to perform full program optimization, resulting in further performance
 benefits.
 
-The downside is long compilation times and the limitation that the executable
-won't be able to use the expander or the compiler, as the meta parts of the Gerbil
-runtime are not linked in.
-
-Note that when creating static executables, you will need to pass on options to
-the linker if you're relying on foreign libraries. For example, to
-include a dependency on `zlib`:
-```
-$ gxc -static -exe -o mybin-static -ld-options -lz mybin.ss
-```
-
-The `-ld-options` are being passed on to `gsc` which in turn adds the
-specified options to the command that invokes the C linker.
+The downside of static executables, is that they currently can't use
+the gerbil expander and compiler packages. This restriction will be
+lifted in a future release.

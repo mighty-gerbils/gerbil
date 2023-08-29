@@ -40,24 +40,21 @@ hello world
 
 The "hello world" executable:
 ```
-$ cat > hello.ss <<EOF
-package: example
+$ cat > gerbil.pkg <<EOF
+(package: example)
+EOF
 
+$ cat > hello.ss <<EOF
 (export main)
 (def (main . args)
   (displayln "hello world"))
 EOF
-$ gxc -exe -o hello hello.ss
+
+$ gxc -O -exe -o hello hello.ss
 $ ./hello
 hello world
 ```
 
-And if you want a statically linked hello with no runtime dependencies to the Gerbil environment:
-```
-$ gxc -static -exe -o hello hello.ss
-$ ./hello
-hello world
-```
 ## Core Gerbil
 ### Primitive forms
 The standard Scheme primitive forms and macros are all supported.
@@ -769,8 +766,11 @@ to work.
 For example, suppose we have a module example/hello.ss that we
 want to compile as an executable module:
 ```
+$ cat > example/gerbil.pkg <<EOF
+(package: example)
+EOF
+
 $ cat > example/hello.ss <<EOF
-package: example
 (export main)
 (def (main . args)
   (displayln "hello world"))
@@ -783,34 +783,47 @@ runtime and module dependencies.
 You can compile it to an executable with `gxc` with the
 following command:
 ```
-$ gxc -exe -o hello example/hello.ss
+$ gxc -O -exe -o hello example/hello.ss
 $ ./hello
 hello world
 ```
 
-You can also compile the executable with static linkage, which links
-parts of the gerbil runtime and all dependent modules statically and
-allows the executable to work without a local gerbil environment:
+If you want the compiler to perform full program optimization, then you can
+specify the `-full-program-optimization` flag:
 ```
-$ gxc -static -exe -o hello example/hello.ss
+$ gxc -O -full-program-optimization -exe -o hello example/hello.ss
 $ ./hello
 hello world
 ```
 
-The disadvantage of static linkage is that the executables are bigger,
-and can only use the baseline parts of the gerbil runtime (gx-gambc0).
-That means that static executables can't use the expander or the compiler,
-as the meta levels of the gerbil runtime are not linked and initialized.
-They also take quite longer to compile.
+You can also compile the executable with dynamic linkage, which requires
+a local gerbil installation at runtime.
+```
+$ gxc -O -dynamic -exe -o hello example/hello.ss
+$ ./hello
+hello world
+```
 
-The advantage is that static executables don't require a local Gerbil
-installation to work, which makes them suitable for binary distribution.
-They also load faster, as they don't have to do any dynamic module loading.
-Furthermore, because dependencies are compiled in together, you can apply
-declarations like `(not safe)` to the whole program, resulting in potentially
-significant performance gains. And as of `Gerbil-v0.13-DEV-50-gaf81bba` the
-compiler performs full program optimization with tree shaking, which provides
-further performance benefits.
+The difference between the 3 executable compilation modes can be summarized as follows:
+- By default, a statically linked executable is generated, linking to the precompiled
+  gerbil standard library. Note that the executable may some have dynamic library
+  dependencies from stdlib foreign code , and also links to `libgambit`.
+  If you have configured your   gambit with `--enable-shared`, then this will be
+  a dynamic library dependency.
+- When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
+  full program optimization with all gerbil library dependencies. This will result
+  both in smaller executable size and better performance, albeit at the cost of
+  increased compilation time; this can be minutes for complex programs, while
+  separately linked executables compile in a second. Furthermore, because
+  dependencies are compiled in together, you can apply declarations like `(not safe)`
+  to the whole program using the `-prelude` directive. This can result
+  in potentially significant performance gains at the expense of safety.
+- When `-dynamic` is passed to `gxc`, then a dynamic executable stub will be generated,
+  which will depend on the Gerbil runtime environment being present at execution time.
+  Dynamic executables do have some advantages over static executables however:
+  - they compile instantly and are tiny
+  - they can use the expander and the compiler; note that this restriction will be
+    lifted from static executables in a future release.
 
 ### Prelude Modules and Custom Languages
 

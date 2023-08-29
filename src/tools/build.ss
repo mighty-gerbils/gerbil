@@ -3,10 +3,10 @@
 (import :std/build-script)
 
 (defbuild-script
-  '((exe: "gxprof")
-    (exe: "gxtags")
-    (exe: "gxpkg")
-    (exe: "gxtest"))
+  '((dynamic-exe: "gxprof")
+    (dynamic-exe: "gxtags")
+    (dynamic-exe: "gxpkg")
+    (dynamic-exe: "gxtest"))
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
   bindir: (path-expand "bin" (getenv "GERBIL_HOME"))
   debug: #f)

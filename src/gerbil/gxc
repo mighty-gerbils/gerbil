@@ -11,9 +11,11 @@
   (displayln " -exe                        compile an executable")
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")
+  (displayln " -dynamic                    compile a dynamic executable; modifier for -exe")
+  (displayln " -static                     this option is accepted and ignored for backwards compatibility; it is the default")
+  (displayln " -full-program-optimization  perform full program optimization when compiling a (static) executable")
   (displayln " -s                          keep intermediate .scm files")
   (displayln " -S                          don't invoke gsc")
-  (displayln " -static                     compile modules for static linking; with -exe, compile a statically linked executable")
   (displayln " -v                          be verbose during compilation")
   (displayln " -g                          invoke gsc with -debug; enables -s")
   (displayln " -genv                       invoke gsc with -debug-environments")
@@ -34,9 +36,10 @@
   (def keep-scm #f)
   (def verbose #f)
   (def optimize #f)
+  (def full-program-optimization #f)
   (def debug #f)
   (def generate-ssxi #t) ; enable by default (only when optimizing)
-  (def static #f)
+  (def static #t)
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
@@ -52,6 +55,7 @@
      keep-scm: keep-scm
      verbose: verbose
      optimize: optimize
+     full-program-optimization: full-program-optimization
      debug: debug
      static: static
      generate-ssxi: generate-ssxi
@@ -83,6 +87,9 @@
          (("-static")
           (set! static #t)
           (lp rest))
+         (("-dynamic")
+          (set! static #f)
+          (lp rest))
          (("-g")
           (set! keep-scm #t)
           (set! debug #t)
@@ -104,6 +111,9 @@
           (lp rest))
          (("-O")
           (set! optimize #t)
+          (lp rest))
+         (("-full-program-optimization")
+          (set! full-program-optimization #t)
           (lp rest))
          (("-no-ssxi")
           (set! generate-ssxi #f)

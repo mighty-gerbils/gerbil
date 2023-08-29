@@ -24,9 +24,7 @@
  (std/srfi/19
   (gxc: "srfi/19" (extra-inputs: ("srfi/srfi-19.scm")))
   (gerbil/core gerbil/gambit/exact std/srfi/8 std/srfi/srfi-support))
- (std/srfi/42
-  (gxc: "srfi/42" "-cc-options" "--param max-gcse-memory=300000000")
-  (gerbil/core))
+ (std/srfi/42 (gxc: "srfi/42") (gerbil/core))
  (std/srfi/43
   (gxc: "srfi/43" (extra-inputs: ("srfi/srfi-43.scm")))
   (gerbil/core std/srfi/8))
@@ -152,6 +150,9 @@
     "-e"
     "(include \"~~lib/_gambit#.scm\")"))
   (gerbil/core))
+ (std/os/temporaries
+  "os/temporaries"
+  (gerbil/core gerbil/gambit/os gerbil/gambit/random std/sugar))
  (std/net/bio/input
   "net/bio/input"
   (gerbil/core gerbil/gambit/bits std/error std/text/utf8))
@@ -176,7 +177,7 @@
  (std/misc/list-builder "misc/list-builder" (gerbil/core))
  (std/misc/alist "misc/alist" (gerbil/core std/sugar))
  (std/misc/plist "misc/plist" (gerbil/core std/sugar))
- (std/misc/walist "misc/walist" (gerbil/core std/sugar std/misc/alist))
+ (std/misc/walist "misc/walist" (gerbil/core std/misc/alist std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
@@ -252,11 +253,7 @@
   "srfi/14"
   (gerbil/core gerbil/gambit/bits std/srfi/8 std/srfi/9 std/srfi/srfi-support))
  (std/srfi/13
-  (gxc:
-   "srfi/13"
-   (extra-inputs: ("srfi/srfi-13.scm"))
-   "-cc-options"
-   "--param max-gcse-memory=300000000")
+  (gxc: "srfi/13" (extra-inputs: ("srfi/srfi-13.scm")))
   (gerbil/core gerbil/gambit/bits std/srfi/14))
  (std/srfi/41
   (gxc: "srfi/41" (extra-inputs: ("srfi/srfi-41.scm")))
@@ -451,10 +448,10 @@
   "srfi/160/c128"
   (gerbil/core std/srfi/160/base std/srfi/160/macros))
  (std/parser/defparser
-  (gxc: "parser/defparser" "-cc-options" "--param max-gcse-memory=300000000")
+  (gxc: "parser/defparser")
   (gerbil/core std/parser/base std/parser/lexer std/parser/rlang std/stxutil))
  (std/parser/rx-parser
-  (gxc: "parser/rx-parser" "-cc-options" "--param max-gcse-memory=300000000")
+  (gxc: "parser/rx-parser")
   (gerbil/core
    std/parser/base
    std/parser/defparser
@@ -606,9 +603,6 @@
    std/os/signalfd
    std/sugar))
  (std/os/pid "os/pid" (gerbil/core std/foreign))
- (std/os/temporaries
-  "os/temporaries"
-  (gerbil/core gerbil/gambit/os std/foreign std/sugar))
  (std/net/bio/file
   "net/bio/file"
   (gerbil/core
@@ -625,9 +619,7 @@
    std/net/bio/file
    std/net/bio/input
    std/net/bio/output))
- (std/xml/ssax
-  (gxc: "xml/ssax" "-cc-options" "--param max-gcse-memory=300000000")
-  (gerbil/core std/srfi/13))
+ (std/xml/ssax (gxc: "xml/ssax") (gerbil/core std/srfi/13))
  (std/xml "xml"
           (gerbil/core
            std/build-config
@@ -926,6 +918,7 @@
    std/io/bio/input
    std/io/bio/output
    std/io/bio/types
+   std/io/interface
    std/sugar))
  (std/io/bio/util
   "io/bio/util"
@@ -1073,7 +1066,7 @@
    std/misc/list-builder
    std/net/bio))
  (std/actor/proto
-  (gxc: "actor/proto" "-cc-options" "--param max-gcse-memory=300000000")
+  (gxc: "actor/proto")
   (gerbil/core
    gerbil/gambit/hash
    gerbil/gambit/misc

@@ -57,6 +57,8 @@ jobs:
         run: ./src/build.sh stage1 final
       - name: Build Gerbil stdlib
         run: ./src/build.sh stdlib
+      - name: Build Gerbil libgerbil
+        run: ./src/build.sh libgerbil
       - name: Build Gerbil lang
         run: ./src/build.sh lang
       - name: Build Gerbil tools
@@ -65,4 +67,5 @@ jobs:
         run: |
           export GERBIL_HOME=${GITHUB_WORKSPACE}
           export PATH=${GITHUB_WORKSPACE}/bin:$PATH
+          gxtest src/gerbil/test/...
           gxtest src/std/...

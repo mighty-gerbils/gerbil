@@ -14,7 +14,7 @@
 
   (def (prelude-macros)
     '((define-macro (define-guard guard defn)
-        (if (eval `(cond-expand (,guard #t) (else #f)))
+        (if (eval `(cond-expand (gerbil-separate-compilation #f) (,guard #t) (else #f)))
           '(begin)
           (begin
             (eval `(define-cond-expand-feature ,guard))
@@ -86,10 +86,10 @@
                                         struct-keyword? struct-str " *obj = (" struct-keyword? struct-str "*) ptr;" "\n"
                                         (apply string-append
                                           (map (lambda (m)
-                                                 (cond 
+                                                 (cond
                                                   ((memq (cdr m) string-types)
                                                    (let ((mem-name (symbol->string (car m))))
-                                                     (string-append "if(obj->" mem-name ") " 
+                                                     (string-append "if(obj->" mem-name ") "
                                                                     "free(obj->" mem-name ");" "\n")))
                                                   (else "")))
                                                members))

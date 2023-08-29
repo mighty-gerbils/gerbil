@@ -167,6 +167,14 @@ build_stdlib () {
   (cd std && ./build.ss)
 }
 
+build_libgerbil () {
+  feedback_low "Building libgerbil"
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required for build
+  export PATH GERBIL_HOME
+  ./build/build-libgerbil.ss
+}
+
 build_lang () {
   feedback_low "Building gerbil languages"
   PATH="${GERBIL_BASE}/bin:${PATH}"
@@ -226,6 +234,7 @@ build_gerbil() {
   stage0           || die
   stage1 final     || die
   build_stdlib     || die
+  build_libgerbil  || die
   build_lang       || die
   build_r7rs_large || die
   build_tools      || die
@@ -252,6 +261,9 @@ else
        "stdlib")
          build_stdlib || die
          ;;
+       "libgerbil")
+         build_libgerbil || die
+         ;;
        "lang")
          build_lang || die
          ;;
@@ -273,7 +285,7 @@ else
        *)
          feedback_err "Unknown command."
          feedback_err \
-           "Correct usage: ./build.sh [gxi|stage0|stage1 [final]|stdlib|lang|r7rs-large|tools|tags]"
+           "Correct usage: ./build.sh [gxi|stage0|stage1 [final]|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
          die
          ;;
   esac
