@@ -219,6 +219,7 @@ package: gerbil
     current-directory create-directory create-directory*
     delete-file copy-file rename-file
     delete-directory directory-files
+    delete-file-or-directory
     file-exists? file-newer? file-type
     path-expand path-normalize
     path-extension path-strip-extension
