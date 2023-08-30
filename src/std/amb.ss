@@ -3,7 +3,8 @@
 ;;; AMB: the ambiguous operator
 ;;; Orignally based on Ken Lovett's chicken implementation, but has mutated since then.
 
-(import :gerbil/gambit/random
+(import :gerbil/gambit/threads
+        :gerbil/gambit/exceptions
         :std/sugar
         :std/error
         :std/misc/shuffle)
@@ -14,56 +15,76 @@
 
 (defstruct (amb-completion <error>) ())
 
+(defrule (invoke proc arg ...)
+  (proc arg ...))
+
 (def +amb-exhausted+
   (make-amb-completion "amb exhausted" [] 'amb))
 
 (def (amb-exhausted)
   (cond
-   ((amb-end) => (cut <>))
+   ((current-amb-state)
+    => (lambda (state)
+         (cond
+          ((amb-state-end state) => invoke)
+          (else
+           ((amb-state-top state) +amb-exhausted+)))))
    (else
     (raise +amb-exhausted+))))
 
 (def (amb-exhausted? e)
   (eq? e +amb-exhausted+))
 
-(def amb-fail
-  (make-parameter amb-exhausted))
+(defstruct amb-state (top fail end results strategy)
+  final: #t)
 
-(def amb-end
-  (make-parameter #f))
+(def* current-amb-state
+  (() (thread-specific (current-thread)))
+  ((state) (thread-specific-set! (current-thread) state)))
 
-(def amb-results
-  (make-parameter []))
+(defrule (with-amb-thread (strategy) body rest ...)
+  (invoke-amb (make-amb-state #f amb-exhausted #f [] strategy)
+              (lambda () body rest ...)))
 
-(def amb-strategy
-  (make-parameter identity))
+(def (invoke-amb state thunk)
+  (let (amb-thread
+        (make-thread
+         (lambda ()
+           (let/cc top
+             (amb-state-top-set! state top)
+             (current-amb-state state)
+             (thunk)))
+         'amb))
+    (thread-start! amb-thread)
+    (thread-join! amb-thread)))
 
-(defrules begin-amb ()
-  ((_ e es ...)
-   (parameterize ((amb-fail amb-exhausted)
-                  (amb-end #f)
-                  (amb-results []))
-     e es ...)))
+(defrule (defstate proc getf setf)
+  (def* proc
+    (() (getf (current-amb-state)))
+    ((state) (setf (current-amb-state) state))))
 
-(defrules begin-amb-random ()
-  ((_ e es ...)
-   (parameterize ((amb-fail amb-exhausted)
-                  (amb-end #f)
-                  (amb-results [])
-                  (amb-strategy shuffle))
-     e es ...)))
+(defstate amb-fail     amb-state-fail     amb-state-fail-set!)
+(defstate amb-end      amb-state-end      amb-state-end-set!)
+(defstate amb-results  amb-state-results  amb-state-results-set!)
+(defstate amb-strategy amb-state-strategy amb-state-strategy-set!)
+
+(defrule (begin-amb e es ...)
+  (with-amb-thread (identity)
+    e es ...))
+
+(defrule (begin-amb-random e es ...)
+  (with-amb-thread (shuffle)
+     e es ...))
 
 (defrules amb ()
-  ((_) ((amb-fail)))
+  ((_) (invoke (amb-fail)))
   ((_ e) e)
   ((_ e es ...)
    (amb-do [(lambda () e) (lambda () es) ...])))
 
 (defrules amb-find ()
   ((_ e)
-   (amb-do-find (lambda () e)))
-  ((_ e fail)
-   (amb-do-find (lambda () e) (lambda () fail))))
+   (amb-do-find (lambda () e))))
 
 (defalias one-of amb-find)
 
@@ -75,29 +96,31 @@
 
 (defrules amb-assert ()
   ((_ e)
-   (unless e ((amb-fail)))))
+   (unless e (invoke (amb-fail)))))
 
 (defalias required amb-assert)
 
 (def (amb-do thunks)
   (let (fail (amb-fail))
     (let/cc return
-      (let loop ((rest ((amb-strategy) thunks)))
-        (match rest
-          ([thunk . rest]
-           (amb-fail (lambda () (loop rest)))
-           (return (thunk)))
-          (else
-           (amb-fail fail)
-           (fail)))))))
+      (let loop ((rest (invoke (amb-strategy) thunks)))
+        (loop
+         (let/cc continue
+           (match rest
+             ([thunk . rest]
+              (amb-fail (lambda () (continue rest)))
+              (return (invoke thunk)))
+             (else
+              (amb-fail fail)
+              (return (invoke fail))))))))))
 
-(def (amb-do-find thunk (failure amb-exhausted))
+(def (amb-do-find thunk)
   (let (end (amb-end))
     (let/cc return
       (amb-end
        (lambda ()
          (amb-end end)
-         (return (failure))))
+         (return (invoke amb-exhausted))))
       (let (result (thunk))
         (amb-end end)
         (return result)))))
@@ -111,9 +134,9 @@
            (amb-results [])
            (amb-end end)
            (return (reverse result)))))
-      (let (next (thunk))
+      (let (next (invoke thunk))
         (amb-results (cons next (amb-results)))
-        ((amb-fail))))))
+        (invoke (amb-fail))))))
 
 (def (element-of xs)
   (amb-do (map (cut lambda () <>) xs)))
