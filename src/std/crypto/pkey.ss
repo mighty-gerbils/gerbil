@@ -17,7 +17,9 @@
   (def ctx (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f))
   (unless (and ctx (< 0 (EVP_PKEY_keygen_init ctx)))
     (error "Can't create ED25519 keygen context"))
-  (EVP_PKEY_keygen ctx)) ;; shouldn't we be calling (foreign-release! ctx) afterwards?
+  (unwind-protect
+    (EVP_PKEY_keygen ctx)
+    (foreign-release! ctx)))
 
 (def (bytes->private-key type bytes engine: (engine #f))
   (EVP_PKEY_new_raw_private_key type engine bytes))
@@ -55,17 +57,23 @@
   (let (mctx (EVP_MD_CTX_create))
     (unless mctx
       (error "Cannot create signing context"))
-    (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
-    (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
-           (result (EVP_DigestSign mctx s bytes)))
-    (if (##fxzero? result)
-      (raise-libcrypto-error)
-      (bytes-result s result)))))
+    (unwind-protect
+      (begin
+        (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
+        (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
+               (result (EVP_DigestSign mctx s bytes)))
+          (if (##fxzero? result)
+            (raise-libcrypto-error)
+            (bytes-result s result))))
+      (foreign-release! mctx))))
 
 ;; NB: for other key types, there may be parameters to set before DigestVerify
 (def (digest-verify pkey sig bytes engine: (engine #f))
   (let (mctx (EVP_MD_CTX_create))
     (unless mctx
       (error "Cannot create signing context"))
-    (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
-    (= 1 (EVP_DigestVerify mctx sig bytes))))
+    (unwind-protect
+      (begin
+        (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
+        (= 1 (EVP_DigestVerify mctx sig bytes)))
+      (foreign-release! mctx))))
