@@ -121,6 +121,7 @@ END-C
 END-C
 )
 
+
 ;; funky decls to apease the compiler for discarding const
 ;; sometimes I really hate gcc (which apparently has no working option to turn
 ;;  that shit off -- -Wno-cast-qual doesn't fucking work, at least with 4.5.x)
@@ -168,7 +169,11 @@ END-C
 (c-declare #<<END-C
 static ___SCMOBJ ffi_release_EVP_MD_CTX (void *ptr)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   EVP_MD_CTX_destroy ((EVP_MD_CTX*)ptr); /* NB: renamed _free in 1.1.0 */
+#else
+  EVP_MD_CTX_free ((EVP_MD_CTX*)ptr);
+#endif
   return ___FIX (___NO_ERR);
 }
 
@@ -547,7 +552,7 @@ static ___SCMOBJ ffi_release_EVP_PKEY_CTX (void *ptr)
   return ___FIX (___NO_ERR);
 }
 static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx) {
-  EVP_PKEY* pkey = NULL; // NB: not initializing this variable leads to occasional segfaults
+  EVP_PKEY* pkey = NULL;
   if (EVP_PKEY_keygen(ctx, &pkey) == 1) {
     return pkey;
   } else {
