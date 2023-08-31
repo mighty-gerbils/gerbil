@@ -72,11 +72,14 @@
     ([static-include: modf]
      #f)))
 
-(def (fold-cc-options stdlib-spec)
-  (let (base (string-append "-D___LIBRARY -I " (gerbil-static-dir)))
+(def (fold-cc-options stdlib-spec mode)
+  (let* ((base (if (eq? mode 'shared)
+                 "-D___SHARED"
+                 "-D___LIBRARY"))
+         (base (string-append base " -I " (gerbil-static-dir))))
     (fold-options "-cc-options" stdlib-spec base)))
 
-(def (fold-ld-options stdlib-spec)
+(def (fold-ld-options stdlib-spec mode)
   (let (base default-ld-options)
     (fold-options "-ld-options" stdlib-spec base)))
 
@@ -216,16 +219,28 @@
   (static-module-file f ".o"))
 
 (def +gerbil-home+ #f)
+
+(def +gerbil-lib-dir+ #f)
+(def (gerbil-lib-dir)
+  (if +gerbil-lib-dir+
+    +gerbil-lib-dir+
+    (let (lib-dir (path-expand "lib" +gerbil-home+))
+      (set! +gerbil-lib-dir+ lib-dir)
+      lib-dir)))
+
 (def +gerbil-static-dir+ #f)
 (def (gerbil-static-dir)
   (if +gerbil-static-dir+
     +gerbil-static-dir+
-    (let (static-dir (path-expand "lib/static" +gerbil-home+))
+    (let (static-dir (path-expand "static" (gerbil-lib-dir)))
       (set! +gerbil-static-dir+ static-dir)
       static-dir)))
 
 (def (invoke-gsc args)
   (invoke-process default-gerbil-gsc args))
+
+(def (invoke-gcc args)
+  (invoke-process default-gerbil-gcc args))
 
 (def (invoke-ar args)
   (invoke-process default-gerbil-ar args))
@@ -241,70 +256,97 @@
       (displayln "process " program " exited with non-zero status " status)
       (error "error executing process" program status))))
 
-(def (main)
+(def (build-libgerbil mode)
+  (let* ((build-spec (build-spec))
+         (stdlib-spec (filter-map filter-build-spec build-spec))
+         (cc-options (fold-cc-options stdlib-spec mode))
+         (ld-options (fold-ld-options stdlib-spec mode))
+         (stdlib-modules (map car stdlib-spec))
+         (all-modules (append gerbil-prelude-gambit stdlib-modules))
+         (ordered-modules (order-modules all-modules))
+         (static-module-scm-files (map static-module-scm-file ordered-modules))
+         (static-module-scm-paths (map static-file-path static-module-scm-files))
+         (static-module-c-paths   (map static-module-c-file static-module-scm-paths))
+         (static-module-o-paths   (map static-module-o-file static-module-c-paths))
+         (gx-gambc-scm-files (map static-module-scm-file gerbil-runtime))
+         (gx-gambc-scm-paths (map static-file-path gx-gambc-scm-files))
+         (gx-gambc-c-paths   (map static-module-c-file gx-gambc-scm-paths))
+         (gx-gambc-o-paths   (map static-module-o-file gx-gambc-c-paths))
+         (link-c-path (static-file-path "gxlink.c"))
+         (link-o-path (static-module-o-file link-c-path))
+         (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
+         (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+         (gsc-gx-macros
+          (if (gerbil-runtime-smp?)
+            ["-e" "(define-cond-expand-feature|enable-smp|)"
+             "-e" include-gx-gambc-macros]
+            ["-e" include-gx-gambc-macros]))
+         (gsc-gx-features
+          '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
+         (libgerbil
+          (if (eq? mode 'shared)
+            (path-expand "libgerbil.so" (gerbil-lib-dir))
+            (path-expand "libgerbil.a"  (gerbil-lib-dir)))))
+    ;; compile each .scm to .c separately to avoid using too much memory
+    (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
+      (displayln "... compile " scm-path)
+      (invoke-gsc [gsc-runtime-opts
+                   ... "-c"
+                   gsc-debug-opts ...
+                   gsc-gx-macros ...
+                   gsc-gx-features ...
+                   scm-path]))
+    ;; link them
+    (displayln "... link " link-c-path)
+    (invoke-gsc [gsc-runtime-opts
+                 ... "-link" "-o" link-c-path
+                 gx-gambc-c-paths ...
+                 static-module-c-paths ...])
+    ;; build them
+    (for (c-path [gx-gambc-c-paths ... static-module-c-paths ... link-c-path])
+      (displayln "... compile " c-path)
+      (invoke-gsc [gsc-runtime-opts
+                   ... "-obj"
+                   "-cc-options" cc-options
+                   c-path]))
+    ;; and collect them
+    (when (file-exists? libgerbil)
+      (delete-file libgerbil))
+    (displayln "... build " libgerbil)
+    (if (eq? mode 'shared)
+      (let (shared-ld-opts  (filter (? (not string-empty?)) (string-split ld-options #\space)))
+        (invoke-gcc ["-shared" "-o" libgerbil
+                     shared-ld-opts ...
+                     gx-gambc-o-paths ...
+                     static-module-o-paths ...
+                     link-o-path])
+        (call-with-output-file (string-append libgerbil ".link")
+          (cut write shared-ld-opts <>)))
+      (invoke-ar ["cql" ld-options
+                  libgerbil
+                  gx-gambc-o-paths ...
+                  static-module-o-paths ...
+                  link-o-path]))
+    ;; cleanup
+    (for (f [gx-gambc-c-paths ... static-module-c-paths ...
+                              gx-gambc-o-paths ... static-module-o-paths ...])
+      (delete-file f))))
+
+(def (auto-build-mode)
+  (if (member "--enable-shared" (string-split (configure-command-string) #\'))
+    'shared
+    'library))
+
+(def (main . args)
   (let (gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
     (unless gerbil-home
       (error "Cannot determine GERBIL_HOME"))
     (set! +gerbil-home+ gerbil-home)
-    (let* ((build-spec (build-spec))
-           (stdlib-spec (filter-map filter-build-spec build-spec))
-           (cc-options (fold-cc-options stdlib-spec))
-           (ld-options (fold-ld-options stdlib-spec))
-           (stdlib-modules (map car stdlib-spec))
-           (all-modules (append gerbil-prelude-gambit stdlib-modules))
-           (ordered-modules (order-modules all-modules))
-           (static-module-scm-files (map static-module-scm-file ordered-modules))
-           (static-module-scm-paths (map static-file-path static-module-scm-files))
-           (static-module-c-paths   (map static-module-c-file static-module-scm-paths))
-           (static-module-o-paths   (map static-module-o-file static-module-c-paths))
-           (gx-gambc-scm-files (map static-module-scm-file gerbil-runtime))
-           (gx-gambc-scm-paths (map static-file-path gx-gambc-scm-files))
-           (gx-gambc-c-paths   (map static-module-c-file gx-gambc-scm-paths))
-           (gx-gambc-o-paths   (map static-module-o-file gx-gambc-c-paths))
-           (link-c-path (static-file-path "gxlink.c"))
-           (link-o-path (static-module-o-file link-c-path))
-           (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
-           (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
-           (gsc-gx-macros
-            (if (gerbil-runtime-smp?)
-              ["-e" "(define-cond-expand-feature|enable-smp|)"
-               "-e" include-gx-gambc-macros]
-              ["-e" include-gx-gambc-macros]))
-           (gsc-gx-features
-            '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
-           (libgerbil.a (static-file-path "libgerbil.a")))
-      ;; compile each .scm to .c separately to avoid using too much memory
-      (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
-        (displayln "... compile " scm-path)
-        (invoke-gsc [gsc-runtime-opts
-                     ... "-c"
-                     gsc-debug-opts ...
-                     gsc-gx-macros ...
-                     gsc-gx-features ...
-                     scm-path]))
-      ;; link them
-      (displayln "... link " link-c-path)
-      (invoke-gsc [gsc-runtime-opts
-                   ... "-link" "-o" link-c-path
-                   gx-gambc-c-paths ...
-                   static-module-c-paths ...])
-      ;; build them
-      (for (c-path [gx-gambc-c-paths ... static-module-c-paths ... link-c-path])
-        (displayln "... compile " c-path)
-        (invoke-gsc [gsc-runtime-opts
-                   ... "-obj"
-                   "-cc-options" cc-options
-                   c-path]))
-      ;; and collect them
-      (when (file-exists? libgerbil.a)
-        (delete-file libgerbil.a))
-      (displayln "... collect " libgerbil.a)
-      (invoke-ar ["cql" ld-options
-                  libgerbil.a
-                  gx-gambc-o-paths ...
-                  static-module-o-paths ...
-                  link-o-path])
-      ;; cleanup
-      (for (f [gx-gambc-c-paths ... static-module-c-paths ...
-               gx-gambc-o-paths ... static-module-o-paths ...])
-        (delete-file f)))))
+
+    (match args
+      ([] (build-libgerbil (auto-build-mode)))
+      (["shared"] (build-libgerbil 'shared))
+      (["library"] (build-libgerbil 'library))
+      (else
+       (displayln "Usage: build-libgerbil [shared|library]")
+       (exit 1)))))

@@ -199,16 +199,19 @@ namespace: gxc
            (lp rest))
           (else [])))))
 
-  (def (get-libgerbil-ld-opts libgerbil.a)
+  (def (get-libgerbil.a-ld-opts libgerbil.a)
     (let* ((proc (open-input-process [path: (gerbil-ar) arguments: ["p" libgerbil.a "__.LIBDEP"]
                                             stderr-redirection: #f]))
-           (line (read-line proc #f)))
+           (output (read-line proc #f)))
       (unless (zero? (process-status proc))
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              "ar"))
-      (let* ((line (substring line 0 (1- (string-length line)))) ; drop the NUL terminator
-             (parts (string-split line #\space)))                ; TODO deal with space madness
+      (let* ((line (substring output 0 (1- (string-length output)))) ; drop the NUL terminator
+             (parts (string-split line #\space)))                    ; TODO deal with space madness
         (filter not-string-empty? parts))))
+
+  (def (get-libgerbil.so-ld-opts libgerbil.so)
+    (call-with-input-file (string-append libgerbil.so ".link") read))
 
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
@@ -259,7 +262,15 @@ namespace: gxc
            (gsc-cc-opts      (get-gsc-cc-opts gerbil-staticdir))
            (output-ld-opts   (get-output-ld-opts))
            (libgerbil-ld-opts
-            (get-libgerbil-ld-opts (path-expand "libgerbil.a" gerbil-staticdir))))
+            (let ((libgerbil.a (path-expand "libgerbil.a" gerbil-libdir))
+                  (libgerbil.so (path-expand "libgerbil.so" gerbil-libdir)))
+              (cond
+               ((file-exists? libgerbil.a)
+                (get-libgerbil.a-ld-opts libgerbil.a))
+               ((file-exists? libgerbil.so)
+                (get-libgerbil.so-ld-opts libgerbil.so))
+               (else
+                (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))))
       (with-output-to-scheme-file output-scm
         (cut generate-stub gxinit-scm))
       (when (current-compile-invoke-gsc)
@@ -286,7 +297,7 @@ namespace: gxc
                  bin-o
                  output-o output_-o
                  output-ld-opts ...
-                 "-L" gerbil-staticdir "-lgerbil"
+                 "-L" gerbil-libdir "-lgerbil"
                  "-L" gambit-libdir "-lgambit"
                  libgerbil-ld-opts ...])
         ;; clean up
