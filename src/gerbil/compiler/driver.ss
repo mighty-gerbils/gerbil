@@ -261,16 +261,20 @@ namespace: gxc
            (gsc-opts         (get-gsc-link-opts))
            (gsc-cc-opts      (get-gsc-cc-opts gerbil-staticdir))
            (output-ld-opts   (get-output-ld-opts))
+           (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
+           (libgerbil.so     (path-expand "libgerbil.so" gerbil-libdir))
            (libgerbil-ld-opts
-            (let ((libgerbil.a (path-expand "libgerbil.a" gerbil-libdir))
-                  (libgerbil.so (path-expand "libgerbil.so" gerbil-libdir)))
-              (cond
-               ((file-exists? libgerbil.a)
-                (get-libgerbil.a-ld-opts libgerbil.a))
-               ((file-exists? libgerbil.so)
-                (get-libgerbil.so-ld-opts libgerbil.so))
-               (else
-                (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))))
+            (cond
+             ((file-exists? libgerbil.so)
+              (get-libgerbil.so-ld-opts libgerbil.so))
+             ((file-exists? libgerbil.a)
+              (get-libgerbil.a-ld-opts libgerbil.a))
+             (else
+              (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
+           (gerbil-rpath
+            (if (file-exists? libgerbil.so)
+              (string-append "-Wl,-rpath=" gerbil-libdir ":" gambit-libdir)
+              (string-append "-Wl,-rpath=" gambit-libdir))))
       (with-output-to-scheme-file output-scm
         (cut generate-stub gxinit-scm))
       (when (current-compile-invoke-gsc)
@@ -297,6 +301,7 @@ namespace: gxc
                  bin-o
                  output-o output_-o
                  output-ld-opts ...
+                 gerbil-rpath
                  "-L" gerbil-libdir "-lgerbil"
                  "-L" gambit-libdir "-lgambit"
                  libgerbil-ld-opts ...])
