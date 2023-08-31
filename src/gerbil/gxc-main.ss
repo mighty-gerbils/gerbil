@@ -1,12 +1,11 @@
-#!/usr/bin/env gxi
-;; -*- Gerbil -*-
+;;; -*- Gerbil -*-
+;;; © vyzo
+;;; gxc main function; included by main.ss
 
-(import :gerbil/compiler)
-
-(def (print-usage!)
+(def (gxc-print-usage!)
   (displayln "gxc [options...] <file> ...")
   (displayln "Options: ")
-  (displayln " -h,-help,--help             display this usage summary and exit")
+  (displayln " -h,--help                   display this help message and exit")
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
   (displayln " -o <file>                   set executable output file")
@@ -30,7 +29,7 @@
   (displayln " -gsc-flag   <opt>           add [<opt>] to gsc options")
   (displayln " -gsc-option <opt> <string>  add [<opt> <string>] to gsc options"))
 
-(def (parse-args args)
+(def (gxc-parse-args args)
   (def outdir (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
   (def invoke-gsc #t)
   (def keep-scm #f)
@@ -67,8 +66,8 @@
     (match rest
       ([arg . rest]
        (case arg
-         (("-h" "-help" "--help")
-          (print-usage!)
+         (("-h" "--help")
+          (gxc-print-usage!)
           (exit 0))
          (("-d")
           (match rest
@@ -76,7 +75,7 @@
              (set! outdir dir)
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (("-S")
           (set! invoke-gsc #f)
@@ -139,7 +138,7 @@
              (add-gsc-option! ["-prelude" opt])
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (("-cc-options")
           (match rest
@@ -147,7 +146,7 @@
              (add-gsc-option! ["-cc-options" opt])
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (("-ld-options")
           (match rest
@@ -155,7 +154,7 @@
              (add-gsc-option! ["-ld-options" opt])
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (("-gsc-flag")
           (match rest
@@ -163,7 +162,7 @@
              (add-gsc-option! [opt])
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (("-gsc-option")
           (match rest
@@ -171,7 +170,7 @@
              (add-gsc-option! [opt arg])
              (lp rest))
             (else
-             (print-usage!)
+             (gxc-print-usage!)
              (exit 1))))
          (else
           (if (and (not (string-empty? arg))
@@ -181,7 +180,7 @@
       (else
        (values compile-exe (make-opts) rest)))))
 
-(def (compile-exe file opts)
+(def (gxc-compile-exe file opts)
   (if (pgetq static: opts)
     (begin
       (compile-file file [invoke-gsc: #f opts ...])
@@ -190,10 +189,17 @@
       (compile-file file opts)
       (compile-exe-stub file opts))))
 
-(def (main . args)
-  (let* (((values compile-exe? opts files) (parse-args args))
-         (compile-e (if compile-exe? compile-exe compile-file))
-         (files (filter (? (not string-empty?)) files)))
-    (if (null? files)
-      (print-usage!)
-      (for-each (cut compile-e <> opts) files))))
+(def (gxc-main . args)
+  (let ((values compile-exe? opts files) (gxc-parse-args args))
+    (if compile-exe?
+      (let lp ((rest files))
+        (match rest
+          ([last]
+           (gxc-compile-exe last opts))
+          ([file . rest]
+           (compile-file file opts)
+           (lp rest))
+          (else
+           (gxc-print-usage!)
+           (exit 1))))
+      (for-each (cut compile-file <> opts) files))))

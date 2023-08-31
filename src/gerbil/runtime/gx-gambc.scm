@@ -33,9 +33,6 @@
   (set! _gx#eval-module gx#core-eval-module))
 
 ;; load the interpreter environment
-(define (gerbil-lang)
-  (string->symbol (getenv "GERBIL_LANG" "gerbil")))
-
 (define (_gx#load-gxi #!optional (hook-expander? #t))
   (define +readtable+ _gx#*readtable*)
   (_gx#init-gx!)
@@ -45,17 +42,7 @@
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
     (gx#core-bind-root-syntax! ':<core> pre #t)
-    (let ((lang (gerbil-lang)))
-      (case lang
-        ((gerbil)
-         (gx#eval-syntax '(import :gerbil/core)))
-        ((polydactyl)
-         (gx#eval-syntax '(import :gerbil/polydactyl))
-         (set! +readtable+ (gx#eval-syntax '|gerbil/polydactyl[1]#*readtable*|)))
-        ((r7rs)
-         (gx#eval-syntax '(import :scheme/r7rs :scheme/base)))
-        (else
-         (gx#eval-syntax `(import ,lang))))))
+    (gx#eval-syntax '(import :gerbil/core)))
   (when hook-expander?
     ;; avoid loops from phi evals
     (gx#current-expander-compile _gx#compile-top-source)
@@ -73,24 +60,11 @@
     (for-each
       (lambda (port)
         (output-port-readtable-set! port
-         (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
+                                    (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
       (list ##stdout-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
-  (define (load-init init.ss)
-    ;; load gerbil interactive init
-    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME" __gx#default-gerbil-home))))
-      (gx#eval-syntax `(include ,init-file)))
-    ;; if it exists, load user's ~/.gerbil/init.ss
-    (let ((init-file (string-append "~/.gerbil/" init.ss)))
-      (if (file-exists? init-file)
-        (gx#eval-syntax `(include ,init-file)))))
-
-  (case (gerbil-lang)
-    ((gerbil polydactyl)
-     (load-init "init.ss"))
-    ((r7rs)
-     (load-init "r7rs-init.ss"))))
+  (void))
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
 (define (load-scheme path)

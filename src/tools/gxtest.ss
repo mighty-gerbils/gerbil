@@ -39,8 +39,6 @@
   (def import-errors [])
   (def filter-rx (and filter (pregexp filter)))
 
-  (_gx#load-expander!)
-
   (when features
     (let* ((features (string-split features #\,))
            (features (map string->symbol features))

@@ -33,7 +33,6 @@
        (hash-get opt 'append)))
 
 (def (run inputs tagfile append?)
-  (_gx#load-expander!)
   (make-tags inputs tagfile append?))
 
 (def current-tags-path
