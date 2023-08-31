@@ -806,21 +806,23 @@ hello world
 
 The difference between the 3 executable compilation modes can be summarized as follows:
 - By default, a statically linked executable is generated, linking to the precompiled
-  gerbil standard library. Note that the executable may some have dynamic library
-  dependencies from stdlib foreign code , and also links to `libgambit`.
-  If you have configured your   gambit with `--enable-shared`, then this will be
-  a dynamic library dependency.
+  gerbil standard library. If the system was configured with `--enable-shared`, then this
+  will be a shared library; otherwise it will be a static library archive.
+  Note that the executable may some have additionl dynamic library
+  dependencies from stdlib foreign code , and also links to `libgambit` which will be
+  a shared library when the system is configured with `--enable-shared`.
 - When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
   full program optimization with all gerbil library dependencies. This will result
-  both in smaller executable size and better performance, albeit at the cost of
-  increased compilation time; this can be minutes for complex programs, while
+  both in better performance, albeit at the cost of increased compilation time;
+  this can be minutes for complex programs, while
   separately linked executables compile in a second. Furthermore, because
   dependencies are compiled in together, you can apply declarations like `(not safe)`
   to the whole program using the `-prelude` directive. This can result
   in potentially significant performance gains at the expense of safety.
 - When `-dynamic` is passed to `gxc`, then a dynamic executable stub will be generated,
   which will depend on the Gerbil runtime environment being present at execution time.
-  Dynamic executables do have some advantages over static executables however:
+  Dynamic executables are very useful for development and do have some advantages over
+  static executables:
   - they compile instantly and are tiny
   - they can use the expander and the compiler; note that this restriction will be
     lifted from static executables in a future release.

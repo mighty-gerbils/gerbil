@@ -134,10 +134,13 @@ alternatively, you could symlink the installed `gxi` and `gxc` binaries
 into a directory already in your `$PATH`.
 You may also define `GERBIL_HOME`, or leave it undefined (or unexported)
 and let Gerbil autodetect where it was installed.
+
 I (vyzo) have the following in my `.bashrc`:
 ```
 export GERBIL_HOME=$HOME/gerbil
 add_path $GERBIL_HOME/bin
+add_ldpath $GERBIL_HOME/lib
+add_path $HOME/.gerbil/bin
 ```
 
 ## Write some code
