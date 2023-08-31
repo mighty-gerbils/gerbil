@@ -3,10 +3,10 @@
 ;;; script to build "BACH", the universal gerbil binary
 (import :gerbil/compiler)
 
-(def default-gambit-gsc "gsc")
+(def default-gerbil-gsc "gsc")
 
 (def (gerbil-gsc)
-  (getenv "GERBIL_GSC" default-gambit-gsc))
+  (getenv "GERBIL_GSC" default-gerbil-gsc))
 
 (def gerbil-bindir
   (path-expand "bin" (getenv "GERBIL_TARGET")))
