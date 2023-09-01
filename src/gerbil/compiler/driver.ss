@@ -211,7 +211,7 @@ namespace: gxc
         (filter not-string-empty? parts))))
 
   (def (get-libgerbil.so-ld-opts libgerbil.so)
-    (call-with-input-file (string-append libgerbil.so ".link") read))
+    (call-with-input-file (string-append libgerbil.so ".ldd") read))
 
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
@@ -232,7 +232,7 @@ namespace: gxc
            (gerbil-home      (getenv "GERBIL_HOME" default-gerbil-home))
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
-           (gxlink           (path-expand "gxlink" gerbil-staticdir))
+           (gxlink           (path-expand "libgerbil-link" gerbil-libdir))
            (gxinit-scm       (path-expand "gx-init-static-exe.scm" gerbil-libdir))
            (tmp              (path-expand
                               (string-append "gxc." (number->string (compile-timestamp-nanos)))

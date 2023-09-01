@@ -208,15 +208,18 @@
 (def (static-file-path f)
   (path-expand f (gerbil-static-dir)))
 
-(def (static-module-file f ext)
+(def (file-replace-extension f ext)
   (string-append (path-strip-extension f)
                  ext))
 
-(def (static-module-c-file f)
-  (static-module-file f ".c"))
+(def (module-c-file f)
+  (file-replace-extension f ".c"))
 
-(def (static-module-o-file f)
-  (static-module-file f ".o"))
+(def (module-o-file f)
+  (file-replace-extension f ".o"))
+
+(def (library-file-path f)
+  (path-expand f (gerbil-lib-dir)))
 
 (def +gerbil-home+ #f)
 
@@ -266,14 +269,14 @@
          (ordered-modules (order-modules all-modules))
          (static-module-scm-files (map static-module-scm-file ordered-modules))
          (static-module-scm-paths (map static-file-path static-module-scm-files))
-         (static-module-c-paths   (map static-module-c-file static-module-scm-paths))
-         (static-module-o-paths   (map static-module-o-file static-module-c-paths))
+         (static-module-c-paths   (map module-c-file static-module-scm-paths))
+         (static-module-o-paths   (map module-o-file static-module-c-paths))
          (gx-gambc-scm-files (map static-module-scm-file gerbil-runtime))
          (gx-gambc-scm-paths (map static-file-path gx-gambc-scm-files))
-         (gx-gambc-c-paths   (map static-module-c-file gx-gambc-scm-paths))
-         (gx-gambc-o-paths   (map static-module-o-file gx-gambc-c-paths))
-         (link-c-path (static-file-path "gxlink.c"))
-         (link-o-path (static-module-o-file link-c-path))
+         (gx-gambc-c-paths   (map module-c-file gx-gambc-scm-paths))
+         (gx-gambc-o-paths   (map module-o-file gx-gambc-c-paths))
+         (link-c-path (library-file-path "libgerbil-link.c"))
+         (link-o-path (module-o-file link-c-path))
          (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
          (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
          (gsc-gx-macros
@@ -285,8 +288,8 @@
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
          (libgerbil
           (if (eq? mode 'shared)
-            (path-expand "libgerbil.so" (gerbil-lib-dir))
-            (path-expand "libgerbil.a"  (gerbil-lib-dir)))))
+            (library-file-path "libgerbil.so")
+            (library-file-path "libgerbil.a"))))
     ;; compile each .scm to .c separately to avoid using too much memory
     (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
       (displayln "... compile " scm-path)
@@ -320,7 +323,7 @@
                      gx-gambc-o-paths ...
                      static-module-o-paths ...
                      link-o-path])
-        (call-with-output-file (string-append libgerbil ".link")
+        (call-with-output-file (string-append libgerbil ".ldd")
           (cut write shared-ld-opts <>)))
       (invoke-ar ["cql" ld-options
                   libgerbil
