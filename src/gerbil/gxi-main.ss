@@ -3,22 +3,34 @@
 ;;; gxi main function; included by main.ss
 
 (def (gxi-print-usage!)
-  (displayln "Usage: gxi arguments ...")
+  (displayln "Usage: gxi [options ...] arguments ...")
   (displayln)
-  (displayln "Arguments: ")
+  (displayln "Options: ")
   (displayln "  -h|--help|help                   display this help message exit")
   (displayln "  -v||--version|version            display the system version and exit")
   (displayln "  -l|--lang module                 set the current interpretation language; must precede any evaluation")
   (displayln "  -e|--eval <expr>                 evaluate an expression")
-  (displayln "  :module                          import library module; if it exports a main function, evaluate it with the remaining arguments")
-  (displayln "  file                             load file; if it defines a main function, evaluate it with the remaining arguments")
-  (displayln "  -                                enter the repl")
   (displayln)
-  (displayln "When no arguments other than options are supplied, enters the interactive repl"))
+  (displayln "Arguments: ")
+  (displayln "  -                                enter the repl")
+  (displayln "  :module                          import library module; if it exports a main function, apply it with the remaining arguments")
+  (displayln "  file                             load file; if it defines a main function, apply it with the remaining arguments")
+  (displayln)
+  (displayln "When no arguments or options other than --lang are supplied, enters the interactive repl"))
 
 (def (gxi-main . args)
   (def can-set-lang? #t)
   (def end-interactive? #t)
+
+  (defrules enter-repl! ()
+    ((_) (##repl-debug #f #f #t)))
+
+  (defrules try-main! ()
+    ((_ args E)
+     (cond
+      ((with-catch false (cut eval 'main))
+       => (lambda (main) (apply main args)))
+      (else (E args)))))
 
   (let lp ((rest args))
     (match rest
@@ -34,7 +46,11 @@
              ([lang . rest]
               (if (string-prefix? ":" lang)
                 (set-lang! (string->symbol lang))
-                (set-lang! lang))
+                (case lang
+                  (("gerbil" "polydactyl" "r7rs")
+                   (set-lang! (string->symbol lang)))
+                  (else
+                   (set-lang! lang))))
               (set! can-set-lang? #f)
               (lp rest))
              (else
@@ -54,9 +70,9 @@
          (set! can-set-lang? #f)
          (set! end-interactive? #f)
          (if (null? rest)
-           (##repl-debug #f #f #t)
+           (enter-repl!)
            (begin
-             (##repl-debug #f #f #t)
+             (enter-repl!)
              (lp rest))))
         ((string-prefix? "-" hd)
          (error "uknown option; try -h or --help for options" hd))
@@ -65,21 +81,13 @@
          (set! end-interactive? #f)
          (let (module-id (string->symbol hd))
            (eval `(import ,module-id))
-           (let* ((module-ctx (import-module module-id))
-                  (module-main (with-catch false (cut find-runtime-symbol module-ctx 'main))))
-             (if module-main
-               (apply (eval module-main) rest)
-               (lp rest)))))
+           (try-main! rest lp)))
         (else
          (set! can-set-lang? #f)
          (set! end-interactive? #f)
          (##load-module-or-file hd void)
-         ;; see if we got a main
-         (cond
-          ((with-catch false (cut eval 'main))
-           => (lambda (main) (apply main rest)))
-          (else (lp rest))))))
+         (try-main! rest lp))))
       (else
        (when end-interactive?
          (init-interactive!)
-         (##repl-debug #f #f #t))))))
+         (enter-repl!))))))

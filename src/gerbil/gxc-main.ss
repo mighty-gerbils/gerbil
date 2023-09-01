@@ -11,7 +11,7 @@
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")
   (displayln " -dynamic                    compile a dynamic executable; modifier for -exe")
-  (displayln " -static                     this option is accepted and ignored for backwards compatibility; it is the default")
+  (displayln " -static                     this option is accepted for backwards compatibility; it is the default")
   (displayln " -full-program-optimization  perform full program optimization when compiling a (static) executable")
   (displayln " -s                          keep intermediate .scm files")
   (displayln " -S                          don't invoke gsc")
