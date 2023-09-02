@@ -30,4 +30,4 @@
        src [invoke-gsc: #t output-file: exe optimize: #f verbose: #f debug: #f static: #t
             output-dir: test-dir
             gsc-options: [(include-gambit-sharp)...]])
-      (run-process/batch [exe]))))
+      (check (run-process/batch [exe]) => (void)))))
