@@ -18,6 +18,9 @@
     wg))
 
 (def (worker wg)
+  (with-exception-stack-trace (cut worker-main wg)))
+
+(def (worker-main wg)
   (let (ch (&WG-workch wg))
     (let loop ()
       (let (next (channel-get ch))
