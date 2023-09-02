@@ -653,7 +653,7 @@ TODO:
             static: (settings-static settings)
             verbose: (settings-verbose>=? settings 9)
             (when/list gsc-opts [gsc-options: gsc-opts]) ...]))
-      (compile-file srcpath gxc-opts))
+      (compile-module srcpath gxc-opts))
     (let* ((arguments
             ["-d" (settings-libdir settings)
              (when/list (not invoke-gsc?) ["-s" "-S"]) ...

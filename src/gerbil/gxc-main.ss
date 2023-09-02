@@ -175,11 +175,11 @@
        (values compile-exe (make-opts) rest)))))
 
 (def (gxc-compile-exe file opts)
-  (gxc#compile-file file [invoke-gsc: #f opts ...])
+  (gxc#compile-module file [invoke-gsc: #f opts ...])
   (gxc#compile-exe file opts))
 
 (def (gxc-compile-file file opts)
-  (gxc#compile-file file opts))
+  (gxc#compile-module file opts))
 
 (def (gxc-main . args)
   (let ((values compile-exe? opts files) (gxc-parse-args args))
@@ -194,4 +194,4 @@
           (else
            (gxc-print-usage!)
            (exit 1))))
-      (for-each (cut compile-file <> opts) files))))
+      (for-each (cut gxc-compile-file <> opts) files))))

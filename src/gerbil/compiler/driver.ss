@@ -18,7 +18,7 @@ namespace: gxc
         (only-in :gerbil/gambit/threads
                  make-mutex with-lock))
 
-(export compile-file compile-exe)
+(export compile-module compile-exe)
 
 (def default-gerbil-home #f)
 (def default-gambit-gsc "gsc")
@@ -71,7 +71,7 @@ namespace: gxc
    (def (delete-directory* dir)
      (delete-file-or-directory dir #t))))
 
-(def (compile-file srcpath (opts []))
+(def (compile-module srcpath (opts []))
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
 

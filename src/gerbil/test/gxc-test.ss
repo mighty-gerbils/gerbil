@@ -10,7 +10,7 @@
 (def this-directory
   (path-expand (path-directory (this-source-file))))
 
-(def (compile-lib source . opts)
+(def (compile-module source . opts)
   (displayln "compile " source)
   (let (proc (open-process
               [path: "gxc" arguments: ["-O" opts ... source]
@@ -43,11 +43,11 @@
   (test-suite "executable compilation"
     (def program-source-file
       (path-expand "test-program.ss" this-directory))
-    (def lib-source-file
+    (def module-source-file
       (path-expand "test-lib.ss" this-directory))
 
     (test-case "library module"
-      (check (compile-lib lib-source-file) => 0))
+      (check (compile-module module-source-file) => 0))
 
     (test-case "executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".bin"))
