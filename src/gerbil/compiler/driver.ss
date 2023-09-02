@@ -154,7 +154,8 @@ namespace: gxc
     (let* ((opts (pgetq gsc-options: opts))
            (base (string-append "-I " gerbil-staticdir))
            (user-static-dir
-            (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil")))
+            (path-expand
+             (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
            (base (string-append base " -I " user-static-dir)))
       (let lp ((rest opts))
         (match rest
@@ -346,7 +347,8 @@ namespace: gxc
     (def static-dir
       (path-expand "lib/static" home))
     (def user-static-dir
-      (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil")))
+      (path-expand
+       (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
     (def cppflags
       (string-append "-I " static-dir " -I " user-static-dir))
 
