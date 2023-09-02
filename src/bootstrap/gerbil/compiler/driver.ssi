@@ -4,6 +4,7 @@ namespace: gxc
 
 (%#begin (%#import
           :gerbil/expander
+          :gerbil/gambit/ports
           :gerbil/compiler/base
           :gerbil/compiler/compile
           :gerbil/compiler/optimize
@@ -11,47 +12,65 @@ namespace: gxc
           (spec:
            (:gerbil/gambit/ports)
            (0 open-process 0 open-process)
+           (0 close-port 0 close-port)
            (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
-           (0 file-info 0 file-info)
-           (0 current-time 0 current-time)
+           (0 file-info-size 0 file-info-size)
            (0 time->seconds 0 time->seconds)
-           (0 file-info-size 0 file-info-size)))
+           (0 file-info 0 file-info)
+           (0 current-time 0 current-time))
+          (spec:
+           (:gerbil/gambit/threads)
+           (0 make-mutex 0 make-mutex)
+           (0 with-lock 0 with-lock)))
          (%#export
-          (spec: 0 compile-file compile-file)
-          (spec: 0 compile-exe-stub compile-exe-stub)
-          (spec: 0 compile-static-exe compile-static-exe))
+          (spec: 0 compile-module compile-module)
+          (spec: 0 compile-exe compile-exe))
+         (%#define-runtime default-gerbil-home gxc#default-gerbil-home)
+         (%#define-runtime default-gerbil-gsc gxc#default-gerbil-gsc)
+         (%#define-runtime default-gerbil-gcc gxc#default-gerbil-gcc)
+         (%#define-runtime default-gerbil-ar gxc#default-gerbil-ar)
+         (%#define-runtime +driver-mutex+ gxc#+driver-mutex+)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/compiler/driver__1")))
+                  (%#define-syntax
+                   with-driver-mutex
+                   |gxc[:0:]#with-driver-mutex|))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
-         (%#define-runtime gerbil-gsc gxc#gerbil-gsc)
-         (%#begin (%#define-runtime compile-file__% gxc#compile-file__%)
-                  (%#begin (%#define-runtime
-                            compile-file__0
-                            gxc#compile-file__0)
-                           (%#define-runtime compile-file gxc#compile-file)))
-         (%#begin (%#define-runtime
-                   compile-exe-stub__%
-                   gxc#compile-exe-stub__%)
-                  (%#begin (%#define-runtime
-                            compile-exe-stub__0
-                            gxc#compile-exe-stub__0)
-                           (%#define-runtime
-                            compile-exe-stub
-                            gxc#compile-exe-stub)))
-         (%#begin (%#define-runtime
-                   compile-static-exe__%
-                   gxc#compile-static-exe__%)
-                  (%#begin (%#define-runtime
-                            compile-static-exe__0
-                            gxc#compile-static-exe__0)
-                           (%#define-runtime
-                            compile-static-exe
-                            gxc#compile-static-exe)))
-         (%#define-runtime do-compile-exe gxc#do-compile-exe)
-         (%#define-runtime compile-exe-stub-module gxc#compile-exe-stub-module)
+         (%#define-runtime compile-timestamp-nanos gxc#compile-timestamp-nanos)
+         (%#define-runtime scheme-file-settings gxc#scheme-file-settings)
          (%#define-runtime
-          compile-exe-static-module
-          gxc#compile-exe-static-module)
+          with-output-to-scheme-file
+          gxc#with-output-to-scheme-file)
+         (%#define-runtime +gerbil-gsc+ gxc#+gerbil-gsc+)
+         (%#define-runtime gerbil-gsc gxc#gerbil-gsc)
+         (%#define-runtime +gerbil-gcc+ gxc#+gerbil-gcc+)
+         (%#define-runtime gerbil-gcc gxc#gerbil-gcc)
+         (%#define-runtime +gerbil-ar+ gxc#+gerbil-ar+)
+         (%#define-runtime gerbil-ar gxc#gerbil-ar)
+         (%#define-runtime gsc-runtime-args gxc#gsc-runtime-args)
+         (%#define-runtime delete-directory* gxc#delete-directory*)
+         (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)
+                  (%#begin (%#define-runtime
+                            compile-module__0
+                            gxc#compile-module__0)
+                           (%#define-runtime
+                            compile-module
+                            gxc#compile-module)))
+         (%#begin (%#define-runtime compile-exe__% gxc#compile-exe__%)
+                  (%#begin (%#define-runtime compile-exe__0 gxc#compile-exe__0)
+                           (%#define-runtime compile-exe gxc#compile-exe)))
+         (%#define-runtime
+          compile-executable-module
+          gxc#compile-executable-module)
+         (%#define-runtime
+          compile-executable-module/separate
+          gxc#compile-executable-module/separate)
+         (%#define-runtime
+          compile-executable-module/full-program-optimization
+          gxc#compile-executable-module/full-program-optimization)
          (%#define-runtime find-export-binding gxc#find-export-binding)
          (%#define-runtime find-runtime-symbol gxc#find-runtime-symbol)
          (%#define-runtime
@@ -91,5 +110,6 @@ namespace: gxc
           compile-static-output-file
           gxc#compile-static-output-file)
          (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
-         (%#define-runtime static-module-name gxc#static-module-name))
+         (%#define-runtime static-module-name gxc#static-module-name)
+         (%#define-runtime invoke gxc#invoke))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/driver__0"))

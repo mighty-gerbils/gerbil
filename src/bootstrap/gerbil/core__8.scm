@@ -11,10 +11,10 @@
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object?|
     (make-class-predicate |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#make-macro-object|
-    (lambda _$args22570_
+    (lambda _$args22360_
       (apply make-class-instance
              |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
-             _$args22570_)))
+             _$args22360_)))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro|
     (make-class-slot-accessor
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
@@ -24,10 +24,26 @@
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
      'macro))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
-    (lambda (_self22566_ _stx22568_)
+    (lambda (_self22356_ _stx22358_)
       (gx#core-apply-expander
-       (|gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro| _self22566_)
-       _stx22568_)))
+       (unchecked-slot-ref _self22356_ 'macro)
+       _stx22358_)))
+  (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|
+    (lambda (__t36469)
+      (let ((__macro36470
+             (let ((__tmp36471 (class-slot-offset __t36469 'macro)))
+               (if __tmp36471
+                   (let () (declare (not safe)) (##fx+ __tmp36471 '1))
+                   (error '"Unknown slot" 'macro)))))
+        (lambda (_self22356_ _stx22358_)
+          (gx#core-apply-expander
+           (let ()
+             (declare (not safe))
+             (##unchecked-structure-ref _self22356_ __macro36470 __t36469 '#f))
+           _stx22358_)))))
+  (bind-specializer!
+   |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
+   |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|)
   (bind-method!
    |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
    'apply-macro-expander

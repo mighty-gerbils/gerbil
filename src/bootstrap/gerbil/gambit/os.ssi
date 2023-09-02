@@ -98,6 +98,5 @@ namespace: gerbil/gambit/os
           (tty-history-set! tty-history-set!)
           (tty-history-max-length-set! tty-history-max-length-set!)
           (tty-text-attributes-set! tty-text-attributes-set!)
-          (tty-mode-reset tty-mode-reset)
           (tty-mode-set! tty-mode-set!)
           (tty-type-set! tty-type-set!)))

@@ -35,7 +35,7 @@ namespace: gx
          (%#define-runtime
           current-expander-allow-rebind?
           gx#current-expander-allow-rebind?)
-          (%#define-runtime
+         (%#define-runtime
           current-expander-compiling?
           gx#current-expander-compiling?)
          (%#define-runtime expander-context::t gx#expander-context::t)

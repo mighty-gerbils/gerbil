@@ -384,7 +384,7 @@ package: gerbil
  fxarithmetic-shift
  set-box!
  memf find
- remove remq remv remf
+ remove1 remq remv remf
  hash-key?
  hash-map
  string-shrink!
@@ -790,8 +790,6 @@ package: gerbil
  create-symbolic-link
 
  tty-history-set! tty-history-max-length-set!
- tty-text-attributes-set! tty-mode-reset tty-mode-set!
- tty-type-set!
 
  input-port-timeout-set!
  output-port-timeout-set!
@@ -838,7 +836,9 @@ package: gerbil
  bitwise-merge
  extract-bit-field test-bit-field? clear-bit-field
  fxif
- random-source-pseudo-randomize!)
+ random-source-pseudo-randomize!
+ tty-text-attributes-set!
+ tty-type-set!)
 
 (declare-primitive/4
  replace-bit-field copy-bit-field)
@@ -912,7 +912,8 @@ package: gerbil
  (make-condition-variable 0 1)
  (make-thread-group 0 1 2)
  (thread-interrupt! 1 2)
- (thread-init! 2 3 4))
+ (thread-init! 2 3 4)
+ (tty-mode-set! 5 6))
 
 ;; exceptions
 (declare-primitive/1

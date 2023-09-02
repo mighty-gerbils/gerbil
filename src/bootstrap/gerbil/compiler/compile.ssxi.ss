@@ -29,6 +29,7 @@ package: gerbil/compiler
   (declare-type gxc#collect-bindings-define-values% (@lambda 1 #f))
   (declare-type gxc#collect-bindings-define-syntax% (@lambda 1 #f))
   (declare-type gxc#lift-modules-module% (@lambda 2 #f))
+  (declare-type gxc#current-compile-decls-unsafe? (@lambda 0 #f))
   (declare-type gxc#add-module-binding! (@lambda 2 #f))
   (declare-type gxc#runtime-identifier=? (@lambda 2 #f))
   (declare-type gxc#generate-runtime-binding-id (@lambda 1 #f))

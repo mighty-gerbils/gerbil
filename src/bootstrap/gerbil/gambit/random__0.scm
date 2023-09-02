@@ -1,2 +1,4 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(random-source-randomize! default-random-source)
+(begin
+  (define gerbil/gambit/random::timestamp 1693679888)
+  (random-source-randomize! default-random-source))
