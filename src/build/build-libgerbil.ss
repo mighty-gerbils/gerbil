@@ -5,9 +5,11 @@
 
 (import :gerbil/expander
         :gerbil/gambit/ports
+        :gerbil/gambit/threads
         :std/build-config
         :std/make
-        :std/iter)
+        :std/iter
+        :std/misc/wg)
 
 (include "../std/build-spec.ss")
 
@@ -286,6 +288,12 @@
       (displayln "process " program " exited with non-zero status " status)
       (error "error executing process" program status))))
 
+(def (make-wg/build-cores)
+  (let (cores (string->number (getenv "GERBIL_BUILD_CORES" "0")))
+    (if (and (number? cores) (> cores 1))
+      (make-wg cores)
+      #f)))
+
 (def (build-libgerbil mode)
   (let* ((build-spec (build-spec))
          (stdlib-spec (filter-map filter-build-spec build-spec))
@@ -327,15 +335,20 @@
                   (quote ,(append gerbil-runtime ordered-modules)))
                p)
         (newline p)))
-    ;; compile each .scm to .c separately to avoid using too much memory
-    (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ... builtin-modules-scm-path])
-      (displayln "... compile " scm-path)
-      (invoke-gsc [gsc-runtime-opts
-                   ... "-c"
-                   gsc-debug-opts ...
-                   gsc-gx-macros ...
-                   gsc-gx-features ...
-                   scm-path]))
+    ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
+    (let (wg (make-wg/build-cores))
+      (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ... builtin-modules-scm-path])
+        (wg-add! wg
+          (lambda ()
+            (displayln "... compile " scm-path)
+            (invoke-gsc [gsc-runtime-opts
+                         ... "-c"
+                         gsc-debug-opts ...
+                         gsc-gx-macros ...
+                         gsc-gx-features ...
+                         scm-path]))))
+      (wg-wait! wg))
+
     ;; link them
     (displayln "... link " link-c-path)
     (invoke-gsc [gsc-runtime-opts
@@ -343,15 +356,21 @@
                  gx-gambc-c-paths ...
                  static-module-c-paths ...
                  builtin-modules-c-path])
+
     ;; build them
-    (for (c-path [gx-gambc-c-paths ...
-                  static-module-c-paths ...
-                  builtin-modules-c-path link-c-path])
-      (displayln "... compile " c-path)
-      (invoke-gsc [gsc-runtime-opts
-                   ... "-obj"
-                   "-cc-options" cc-options
-                   c-path]))
+    (let (wg (make-wg/build-cores))
+      (for (c-path [gx-gambc-c-paths ...
+                    static-module-c-paths ...
+                    builtin-modules-c-path link-c-path])
+        (wg-add! wg
+          (lambda ()
+            (displayln "... compile " c-path)
+            (invoke-gsc [gsc-runtime-opts
+                         ... "-obj"
+                         "-cc-options" cc-options
+                         c-path]))))
+      (wg-wait! wg))
+
     ;; and collect them
     (when (file-exists? libgerbil)
       (delete-file libgerbil))
