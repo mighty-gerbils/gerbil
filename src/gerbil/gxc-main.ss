@@ -175,11 +175,11 @@
        (values compile-exe (make-opts) rest)))))
 
 (def (gxc-compile-exe file opts)
-  (gxc#compile-module file [invoke-gsc: #f opts ...])
-  (gxc#compile-exe file opts))
+  (compile-module file [invoke-gsc: #f opts ...])
+  (compile-exe file opts))
 
 (def (gxc-compile-file file opts)
-  (gxc#compile-module file opts))
+  (compile-module file opts))
 
 (def (gxc-main . args)
   (let ((values compile-exe? opts files) (gxc-parse-args args))

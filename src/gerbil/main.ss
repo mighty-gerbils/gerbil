@@ -84,9 +84,7 @@ package: gerbil
   (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
 
 (extern namespace: #f
-  gerbil-home
-  gerbil-runtime-init!
-  gerbil-load-expander!)
+  gerbil-runtime-init!)
 
 (def (init!)
   (gerbil-runtime-init! builtin-modules)
