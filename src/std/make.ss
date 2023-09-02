@@ -91,7 +91,7 @@ TODO:
 
 ;;; Settings: see details in doc/reference/make.md
 (defstruct settings
-  (srcdir libdir bindir prefix force optimize debug static static-debug verbose build-deps
+  (srcdir libdir bindir prefix force optimize debug static-debug verbose build-deps
    libdir-prefix parallelize
    full-program-optimization)
   transparent: #t constructor: :init!)
@@ -101,7 +101,7 @@ TODO:
       srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
       prefix: (prefix_ #f) force: (force? #f)
       optimize: (optimize #t) debug: (debug 'env)
-      static: (static #t) static-debug: (static-debug #f)
+      static: (_ignore-static #t) static-debug: (static-debug #f)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #f)
       full-program-optimization: (full-program-optimization #f))
@@ -120,7 +120,7 @@ TODO:
        (else #f)))
     (struct-instance-init!
       self
-      srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
+      srcdir libdir bindir prefix force? optimize debug static-debug verbose build-deps
       libdir-prefix parallelize
       full-program-optimization)))
 
@@ -481,8 +481,7 @@ TODO:
 
   (create-directory* (settings-bindir settings))
   (create-directory* (settings-libdir settings))
-  (when (settings-static settings)
-    (create-directory* (path-expand "static" (settings-libdir settings))))
+  (create-directory* (path-expand "static" (settings-libdir settings)))
 
   (init-walk)
   (when (verbose>=? 6) (writeln [Step: 5. queue: (sort (pqueue-contents ready-fg) <)]))
@@ -629,7 +628,7 @@ TODO:
 
 (def (gxc-outputs mod opts settings)
   [(library-path mod ".ssi" settings)
-   (when/list (settings-static settings) [(static-path mod settings)]) ...])
+   (static-path mod settings)])
 
 (def (gsc-compile-opts opts)
   (match opts
@@ -650,7 +649,6 @@ TODO:
             optimize: (settings-optimize settings)
             debug: (settings-debug settings)
             generate-ssxi: #t
-            static: (settings-static settings)
             verbose: (settings-verbose>=? settings 9)
             (when/list gsc-opts [gsc-options: gsc-opts]) ...]))
       (compile-module srcpath gxc-opts))
@@ -659,7 +657,6 @@ TODO:
              (when/list (not invoke-gsc?) ["-s" "-S"]) ...
              (when/list (settings-optimize settings) ["-O"]) ...
              (when/list (settings-debug settings) ["-g"]) ...
-             (when/list (not (settings-static settings)) ["-dynamic"]) ...
              (when/list (settings-verbose>=? settings 9) ["-v"]) ...
              (when/list gsc-opts (append-map (lambda (x) ["-gsc-flag" x]) gsc-opts)) ...
              srcpath])
@@ -702,18 +699,17 @@ TODO:
   (create-directory* libpath)
   (message "... compile foreign " mod)
   (let* ((proc (open-process [path: (gerbil-gsc)
-                              arguments: ["-o" libpath gsc-opts ... srcpath]
-                              stdout-redirection: #f]))
+                                    arguments: ["-o" libpath gsc-opts ... srcpath]
+                                    stdout-redirection: #f]))
          (status (process-status proc)))
     (close-port proc)
     (unless (zero? status)
       (error "Compilation error; gsc exited with nonzero status" status)))
-  (when (settings-static settings)
-    ;; just copy to libdir/static/ with properly mangled module name
-    (let (statpath (static-path mod settings))
-      (when (file-exists? statpath)
-        (delete-file statpath))
-      (copy-file srcpath statpath))))
+  ;; just copy to libdir/static/ with properly mangled module name
+  (let (statpath (static-path mod settings))
+    (when (file-exists? statpath)
+      (delete-file statpath))
+    (copy-file srcpath statpath)))
 
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" default-gambit-gsc))
@@ -750,11 +746,6 @@ TODO:
      (compile-exe-gsc-opts rest))
     (else opts)))
 
-(def (make-settings-static settings)
-  (def s (struct-copy settings))
-  (set! (settings-static s) #t)
-  s)
-
 (def (compile-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod opts settings))
@@ -766,13 +757,12 @@ TODO:
      debug: (settings-static-debug settings)
      full-program-optimization: (settings-full-program-optimization settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (gxc-compile mod gsc-opts (make-settings-static settings))
+  (gxc-compile mod gsc-opts settings)
   (message "... compile exe " mod " -> " binpath)
   (gxc#compile-exe srcpath gxc-opts))
 
 (def (make-settings-optimized settings)
   (def s (struct-copy settings))
-  (set! (settings-static s) #t)
   (set! (settings-full-program-optimization s) #t)
   s)
 

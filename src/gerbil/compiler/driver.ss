@@ -82,8 +82,7 @@ namespace: gxc
         (verbosity   (pgetq verbose: opts))
         (optimize    (pgetq optimize: opts))
         (debug       (pgetq debug: opts))
-        (gen-ssxi    (pgetq generate-ssxi: opts))
-        (static      (pgetq static: opts)))
+        (gen-ssxi    (pgetq generate-ssxi: opts)))
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (when optimize
@@ -96,7 +95,6 @@ namespace: gxc
                    (current-compile-optimize optimize)
                    (current-compile-debug debug)
                    (current-compile-generate-ssxi gen-ssxi)
-                   (current-compile-static static)
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile " srcpath)
@@ -153,8 +151,11 @@ namespace: gxc
            (reverse opts))))))
 
   (def (get-gsc-cc-opts gerbil-staticdir)
-    (let ((opts (pgetq gsc-options: opts))
-          (base (string-append "-I " gerbil-staticdir)))
+    (let* ((opts (pgetq gsc-options: opts))
+           (base (string-append "-I " gerbil-staticdir))
+           (user-static-dir
+            (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil")))
+           (base (string-append base " -I " user-static-dir)))
       (let lp ((rest opts))
         (match rest
           (["-cc-options" opts . _]
@@ -585,7 +586,7 @@ namespace: gxc
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
         (generate-runtime-code ctx code))
-       ((current-compile-static)
+       (else
         ;; just touch empty runtime code file in static
         (let (path (compile-static-output-file ctx))
           (with-output-to-scheme-file path void))))
@@ -614,18 +615,16 @@ namespace: gxc
             ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
                     runtime-code])
            (scm0 (compile-output-file ctx 0 ".scm")))
-      (if (current-compile-static)
-        (let (scms (compile-static-output-file ctx))
-          ;; copy compiled scm0 to static and delete when not keep-scm
-          (parameterize ((current-compile-keep-scm #t))
-            (compile-scm-file scm0 runtime-code))
-          (when (file-exists? scms)
-            (delete-file scms))
-          (verbose "copy static module " scm0 " => " scms)
-          (copy-file scm0 scms)
-          (unless (current-compile-keep-scm)
-            (delete-file scm0)))
-        (compile-scm-file scm0 runtime-code))))
+      (let (scms (compile-static-output-file ctx))
+        ;; copy compiled scm0 to static and delete when not keep-scm
+        (parameterize ((current-compile-keep-scm #t))
+          (compile-scm-file scm0 runtime-code))
+        (when (file-exists? scms)
+          (delete-file scms))
+        (verbose "copy static module " scm0 " => " scms)
+        (copy-file scm0 scms)
+        (unless (current-compile-keep-scm)
+          (delete-file scm0)))))
 
   (def (generate-loader-code ctx code rt)
     (let* ((loader-code
