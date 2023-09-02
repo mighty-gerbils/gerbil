@@ -56,8 +56,8 @@
 
 (def (compile1 modf debug optimize? gen-ssxi?)
   (displayln "... compile " modf)
-  (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
-                      debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: #t]))
+  (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
+                        debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: #t]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
   ;; TODO: parallelize, but with the correct dependencies -- instead of "false",

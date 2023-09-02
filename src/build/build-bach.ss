@@ -84,10 +84,10 @@
 
 ;; first compile the module
 (displayln "... compile " bach-main)
-(compile-file (string-append bach-main ".ss")
-              [output-dir: gerbil-libdir
-                           optimize: #t generate-ssxi: #f
-                           invoke-gsc: #t static: #t])
+(compile-module (string-append bach-main ".ss")
+                [output-dir: gerbil-libdir
+                 optimize: #t generate-ssxi: #f
+                 invoke-gsc: #t static: #t])
 
 ;; and then compile the binary
 (let* ((runtime-scm (map static-file-name gerbil-runtime))
