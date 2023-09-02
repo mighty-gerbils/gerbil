@@ -21,7 +21,7 @@ namespace: gxc
 (export compile-module compile-exe)
 
 (def default-gerbil-home #f)
-(def default-gambit-gsc "gsc")
+(def default-gerbil-gsc "gsc")
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
 
@@ -41,14 +41,23 @@ namespace: gxc
 (def (with-output-to-scheme-file path fun)
   (with-output-to-file [path: path . scheme-file-settings] fun))
 
+(def +gerbil-gsc+ #f)
 (def (gerbil-gsc)
-  (getenv "GERBIL_GSC" default-gambit-gsc))
+  (unless +gerbil-gsc+
+    (set! +gerbil-gsc+ (getenv "GERBIL_GSC" default-gerbil-gsc)))
+  +gerbil-gsc+)
 
+(def +gerbil-gcc+ #f)
 (def (gerbil-gcc)
-  (getenv "GERBIL_GCC" default-gerbil-gcc))
+  (unless +gerbil-gcc+
+    (set! +gerbil-gcc+ (getenv "GERBIL_GCC" default-gerbil-gcc)))
+  +gerbil-gcc+)
 
+(def +gerbil-ar+ #f)
 (def (gerbil-ar)
-  (getenv "GERBIL_AR" default-gerbil-ar))
+  (unless +gerbil-ar+
+    (set! +gerbil-ar+ (getenv "GERBIL_AR" default-gerbil-ar)))
+  +gerbil-ar+)
 
 (def gsc-runtime-args
   [;; force Gambit to use UTF-8:

@@ -11,7 +11,6 @@
 
 (include "../std/build-spec.ss")
 
-(def default-gerbil-home #f)
 (def default-gerbil-gsc "gsc")
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
@@ -245,32 +244,36 @@
 (def (library-file-path f)
   (path-expand f (gerbil-lib-dir)))
 
-(def +gerbil-home+ #f)
-
 (def +gerbil-lib-dir+ #f)
 (def (gerbil-lib-dir)
-  (if +gerbil-lib-dir+
-    +gerbil-lib-dir+
-    (let (lib-dir (path-expand "lib" +gerbil-home+))
-      (set! +gerbil-lib-dir+ lib-dir)
-      lib-dir)))
+  (unless +gerbil-lib-dir+
+    (set! +gerbil-lib-dir+
+      (path-expand "lib" (gerbil-home))))
+  +gerbil-lib-dir+)
 
 (def +gerbil-static-dir+ #f)
 (def (gerbil-static-dir)
-  (if +gerbil-static-dir+
-    +gerbil-static-dir+
-    (let (static-dir (path-expand "static" (gerbil-lib-dir)))
-      (set! +gerbil-static-dir+ static-dir)
-      static-dir)))
+  (unless +gerbil-static-dir+
+    (set! +gerbil-static-dir+ (path-expand "static" (gerbil-lib-dir))))
+  +gerbil-static-dir+)
 
+(def +gerbil-gsc+ #f)
 (def (invoke-gsc args)
-  (invoke-process default-gerbil-gsc args))
+  (unless +gerbil-gsc+
+    (set! +gerbil-gsc+ (getenv "GERBIL_GSC" default-gerbil-gsc)))
+  (invoke-process +gerbil-gsc+ args))
 
+(def +gerbil-gcc+ #f)
 (def (invoke-gcc args)
-  (invoke-process default-gerbil-gcc args))
+  (unless +gerbil-gcc+
+    (set! +gerbil-gcc+ (getenv "GERBIL_GCC" default-gerbil-gcc)))
+  (invoke-process +gerbil-gcc+ args))
 
+(def +gerbil-ar+ #f)
 (def (invoke-ar args)
-  (invoke-process default-gerbil-ar args))
+  (unless +gerbil-ar+
+    (set! +gerbil-ar+ (getenv "GERBIL_AR" default-gerbil-ar)))
+  (invoke-process +gerbil-ar+ args))
 
 (def (invoke-process program args)
   ;; (displayln "invoke " program " " args) ; uncomment if you are debugging
@@ -384,15 +387,10 @@
     'library))
 
 (def (main . args)
-  (let (gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
-    (unless gerbil-home
-      (error "Cannot determine GERBIL_HOME"))
-    (set! +gerbil-home+ gerbil-home)
-
-    (match args
-      ([] (build-libgerbil (auto-build-mode)))
-      (["shared"] (build-libgerbil 'shared))
-      (["library"] (build-libgerbil 'library))
-      (else
-       (displayln "Usage: build-libgerbil [shared|library]")
-       (exit 1)))))
+  (match args
+    ([] (build-libgerbil (auto-build-mode)))
+    (["shared"] (build-libgerbil 'shared))
+    (["library"] (build-libgerbil 'library))
+    (else
+     (displayln "Usage: build-libgerbil [shared|library]")
+     (exit 1))))
