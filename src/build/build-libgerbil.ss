@@ -19,15 +19,14 @@
 
 (def stdlib-exclude
   '("gambit-sharp"                      ; _gambit#.scm wrapper
-    "make"                              ; compiler dependency
-    "build-script"                      ; compiler dependency
-    "interactive"                       ; expander dependency
-    "stxutil"                           ; expander dependency
     "foreign-test-support"              ; test support module
     ))
 
 (def gerbil-runtime
-  '("gx-gambc0"))
+  '("gx-gambc0"
+    "gx-gambc1"
+    "gx-gambc2"
+    "gx-gambc"))
 
 (def gerbil-prelude-gambit
   '("gerbil/gambit/ports"
@@ -48,6 +47,31 @@
     "gerbil/gambit/flonum"
     "gerbil/gambit/exact"
     "gerbil/gambit"))
+
+(def gerbil-expander
+  '("gerbil/expander/common"
+    "gerbil/expander/stx"
+    "gerbil/expander/core"
+    "gerbil/expander/top"
+    "gerbil/expander/module"
+    "gerbil/expander/compile"
+    "gerbil/expander/root"
+    "gerbil/expander/stxcase"
+    "gerbil/expander"))
+
+(def gerbil-compiler
+  '("gerbil/compiler/base"
+    "gerbil/compiler/compile"
+    "gerbil/compiler/optimize-base"
+    "gerbil/compiler/optimize-xform"
+    "gerbil/compiler/optimize-top"
+    "gerbil/compiler/optimize-spec"
+    "gerbil/compiler/optimize-ann"
+    "gerbil/compiler/optimize-call"
+    "gerbil/compiler/optimize"
+    "gerbil/compiler/driver"
+    "gerbil/compiler/ssxi"
+    "gerbil/compiler"))
 
 (def gsc-runtime-opts
   '("-:i8,f8,-8,t8"))
@@ -265,7 +289,7 @@
          (cc-options (fold-cc-options stdlib-spec mode))
          (ld-options (fold-ld-options stdlib-spec mode))
          (stdlib-modules (map car stdlib-spec))
-         (all-modules (append gerbil-prelude-gambit stdlib-modules))
+         (all-modules (append gerbil-prelude-gambit gerbil-expander gerbil-compiler stdlib-modules))
          (ordered-modules (order-modules all-modules))
          (static-module-scm-files (map static-module-scm-file ordered-modules))
          (static-module-scm-paths (map static-file-path static-module-scm-files))
@@ -275,6 +299,9 @@
          (gx-gambc-scm-paths (map static-file-path gx-gambc-scm-files))
          (gx-gambc-c-paths   (map module-c-file gx-gambc-scm-paths))
          (gx-gambc-o-paths   (map module-o-file gx-gambc-c-paths))
+         (builtin-modules-scm-path (static-file-path "libgerbil-builtin-modules.scm"))
+         (builtin-modules-c-path (module-c-file builtin-modules-scm-path))
+         (builtin-modules-o-path (module-o-file builtin-modules-c-path))
          (link-c-path (library-file-path "libgerbil-link.c"))
          (link-o-path (module-o-file link-c-path))
          (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
@@ -290,8 +317,15 @@
           (if (eq? mode 'shared)
             (library-file-path "libgerbil.so")
             (library-file-path "libgerbil.a"))))
+    ;; generate the builtin modules stub
+    (call-with-output-file builtin-modules-scm-path
+      (lambda (p)
+        (write `(define ligerbil-builtin-modules
+                  (quote ,(append gerbil-runtime ordered-modules)))
+               p)
+        (newline p)))
     ;; compile each .scm to .c separately to avoid using too much memory
-    (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ...])
+    (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ... builtin-modules-scm-path])
       (displayln "... compile " scm-path)
       (invoke-gsc [gsc-runtime-opts
                    ... "-c"
@@ -304,9 +338,12 @@
     (invoke-gsc [gsc-runtime-opts
                  ... "-link" "-o" link-c-path
                  gx-gambc-c-paths ...
-                 static-module-c-paths ...])
+                 static-module-c-paths ...
+                 builtin-modules-c-path])
     ;; build them
-    (for (c-path [gx-gambc-c-paths ... static-module-c-paths ... link-c-path])
+    (for (c-path [gx-gambc-c-paths ...
+                  static-module-c-paths ...
+                  builtin-modules-c-path link-c-path])
       (displayln "... compile " c-path)
       (invoke-gsc [gsc-runtime-opts
                    ... "-obj"
@@ -322,6 +359,7 @@
                      shared-ld-opts ...
                      gx-gambc-o-paths ...
                      static-module-o-paths ...
+                     builtin-modules-o-path
                      link-o-path])
         (call-with-output-file (string-append libgerbil ".ldd")
           (cut write shared-ld-opts <>)))
@@ -329,10 +367,15 @@
                   libgerbil
                   gx-gambc-o-paths ...
                   static-module-o-paths ...
+                  builtin-modules-o-path
                   link-o-path]))
     ;; cleanup
-    (for (f [gx-gambc-c-paths ... static-module-c-paths ...
-                              gx-gambc-o-paths ... static-module-o-paths ...])
+    (for (f [gx-gambc-c-paths ...
+             static-module-c-paths ...
+             builtin-modules-c-path
+             gx-gambc-o-paths ...
+             static-module-o-paths ...
+             builtin-modules-o-path])
       (delete-file f))))
 
 (def (auto-build-mode)

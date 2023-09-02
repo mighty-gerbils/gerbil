@@ -37,7 +37,6 @@
   (define +readtable+ _gx#*readtable*)
   (_gx#init-gx!)
   ;; do this here so that import failures can report friendly error messages
-  (set! ##display-exception-hook _gx#display-exception)
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
@@ -279,3 +278,61 @@
     (else (void)))
   (cond
    ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf e)))))
+
+;; executable setup
+(define (gerbil-runtime-init! builtin-modules)
+  (let* ((home
+          (path-normalize
+           (cond
+            ((getenv "GERBIL_HOME" __gx#default-gerbil-home))
+            (else
+             (error "Cannot determine GERBIL_HOME")))))
+         (libdir (path-expand "lib" home))
+         (loadpath
+          (cond
+           ((getenv "GERBIL_LOADPATH" #f)
+            => (lambda (envvar)
+                 (filter (lambda (x) (not (string-empty? x)))
+                         (string-split envvar #\:))))
+           (else '())))
+         (userpath
+          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
+         (loadpath
+          (cons userpath loadpath)))
+    (&current-module-libpath (cons libdir loadpath)))
+
+  (let* ((registry-entry (lambda (m) (cons m 'builtin)))
+         (runtime-modules '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc"))
+         (module-registry
+         (let lp ((rest builtin-modules) (registry '()))
+           (core-match rest
+             ((mod . rest)
+              (lp rest
+                  (cons* (registry-entry (string-append mod "__0"))
+                         (registry-entry (string-append mod "__rt"))
+                         registry)))
+             (else
+              (list->hash-table
+               (append (map registry-entry runtime-modules)
+                       registry)))))))
+    (&current-module-registry module-registry))
+
+  (current-readtable _gx#*readtable*)
+  (set! ##display-exception-hook _gx#display-exception))
+
+;; expander loading hook
+(define _gx#expander-loaded #f)
+
+(define (gerbil-load-expander!)
+  (unless _gx#expander-loaded
+    (_gx#load-gxi)
+    ;; and make it idempotent
+    (set! _gx#expander-loaded #t)))
+
+;; define this for compatibility with existing (older) dynamic exe code
+(define (_gx#load-expander!)
+  (gerbil-load-expander!))
+
+;; home sweet home
+(define (gerbil-home)
+  (getenv "GERBIL_HOME" __gx#default-gerbil-home))

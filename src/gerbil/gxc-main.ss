@@ -10,8 +10,7 @@
   (displayln " -exe                        compile an executable")
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")
-  (displayln " -dynamic                    compile a dynamic executable; modifier for -exe")
-  (displayln " -static                     this option is accepted for backwards compatibility; it is the default")
+  (displayln " -static                     this option is accepted for backwards compatibility; it does nothing")
   (displayln " -full-program-optimization  perform full program optimization when compiling a (static) executable")
   (displayln " -s                          keep intermediate .scm files")
   (displayln " -S                          don't invoke gsc")
@@ -38,7 +37,6 @@
   (def full-program-optimization #f)
   (def debug #f)
   (def generate-ssxi #t) ; enable by default (only when optimizing)
-  (def static #t)
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
@@ -56,7 +54,7 @@
      optimize: optimize
      full-program-optimization: full-program-optimization
      debug: debug
-     static: static
+     static: #t
      generate-ssxi: generate-ssxi
      gsc-options: gsc-options
      output-dir: outdir
@@ -84,10 +82,6 @@
           (set! keep-scm #t)
           (lp rest))
          (("-static")
-          (set! static #t)
-          (lp rest))
-         (("-dynamic")
-          (set! static #f)
           (lp rest))
          (("-g")
           (set! keep-scm #t)
@@ -181,13 +175,11 @@
        (values compile-exe (make-opts) rest)))))
 
 (def (gxc-compile-exe file opts)
-  (if (pgetq static: opts)
-    (begin
-      (compile-file file [invoke-gsc: #f opts ...])
-      (compile-static-exe file opts))
-    (begin
-      (compile-file file opts)
-      (compile-exe-stub file opts))))
+  (gxc#compile-file file [invoke-gsc: #f opts ...])
+  (gxc#compile-exe file opts))
+
+(def (gxc-compile-file file opts)
+  (gxc#compile-file file opts))
 
 (def (gxc-main . args)
   (let ((values compile-exe? opts files) (gxc-parse-args args))
@@ -197,7 +189,7 @@
           ([last]
            (gxc-compile-exe last opts))
           ([file . rest]
-           (compile-file file opts)
+           (gxc-compile-file file opts)
            (lp rest))
           (else
            (gxc-print-usage!)

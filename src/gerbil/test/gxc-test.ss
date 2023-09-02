@@ -49,17 +49,12 @@
     (test-case "library module"
       (check (compile-lib lib-source-file) => 0))
 
-    (test-case "static executable"
+    (test-case "executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".bin"))
         (check (compile-exe program-source-file bin) => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
 
-    (test-case "optimized static executable"
+    (test-case "optimized executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".opt-bin"))
         (check (compile-exe program-source-file bin "-full-program-optimization") => 0)
-        (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
-
-    (test-case "dynamic executable"
-      (let (bin (string-append (path-strip-extension program-source-file) ".dyn-bin"))
-        (check (compile-exe program-source-file bin "-dynamic") => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))))

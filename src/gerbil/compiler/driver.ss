@@ -18,7 +18,7 @@ namespace: gxc
         (only-in :gerbil/gambit/threads
                  make-mutex with-lock))
 
-(export compile-file compile-exe-stub compile-static-exe)
+(export compile-file compile-exe)
 
 (def default-gerbil-home #f)
 (def default-gambit-gsc "gsc")
@@ -102,13 +102,7 @@ namespace: gxc
       (verbose "compile " srcpath)
       (compile-top-module (with-driver-mutex (import-module srcpath))))))
 
-(def (compile-exe-stub srcpath (opts []))
-  (do-compile-exe srcpath opts compile-exe-stub-module))
-
-(def (compile-static-exe srcpath (opts []))
-  (do-compile-exe srcpath opts compile-exe-static-module))
-
-(def (do-compile-exe srcpath opts compile-e)
+(def (compile-exe srcpath (opts []))
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
 
@@ -127,41 +121,22 @@ namespace: gxc
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
-      (compile-e (with-driver-mutex (import-module srcpath)) opts))))
+      (compile-executable-module (with-driver-mutex (import-module srcpath)) opts))))
 
-(def (compile-exe-stub-module ctx opts)
-  (def (generate-stub gx-init-stub)
-    (let* ((mod-str (module-id->path-string (expander-context-id ctx)))
-           (mod-rt  (string-append mod-str "__rt"))
-           (mod-main (find-runtime-symbol ctx 'main)))
-      (write '(##namespace (""))) (newline)
-      (write `(include ,gx-init-stub)) (newline)
-      (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
-
-  (def (compile-stub output-scm output-bin)
-    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME" default-gerbil-home)))
-           (gsc-args [gsc-runtime-args ... "-exe" "-o" output-bin output-scm]))
-      (with-output-to-scheme-file output-scm (cut generate-stub init-stub))
-      (when (current-compile-invoke-gsc)
-        (invoke (gerbil-gsc) gsc-args))))
-
-  (let* ((output-bin (compile-exe-output-file ctx opts))
-         (output-scm (string-append output-bin ".scmx")))
-    (with-driver-mutex (create-directory* (path-directory output-scm)))
-    (compile-stub output-scm output-bin)
-    (unless (current-compile-keep-scm)
-      (delete-file output-scm))))
-
-(def (compile-exe-static-module ctx opts)
+(def (compile-executable-module ctx opts)
   (if (pgetq full-program-optimization: opts)
-    (compile-exe-static-module/full-program-optimization ctx opts)
-    (compile-exe-static-module/separate ctx opts)))
+    (compile-executable-module/full-program-optimization ctx opts)
+    (compile-executable-module/separate ctx opts)))
 
-(def (compile-exe-static-module/separate ctx opts)
-  (def (generate-stub gxinit-scm)
+(def (compile-executable-module/separate ctx opts)
+  (def (generate-stub builtin-modules)
     (let (mod-main (find-runtime-symbol ctx 'main))
-      (write `(include ,gxinit-scm))
-      (write `(apply ,mod-main (cdr (command-line))))
+      (write `(define builtin-modules
+                (append (quote ,builtin-modules) libgerbil-builtin-modules)))
+      (write `(define (gerbil-main)
+                (gerbil-runtime-init! builtin-modules)
+                (apply ,mod-main (cdr (command-line)))))
+      (write '(gerbil-main))
       (newline)))
 
   (def (get-gsc-link-opts)
@@ -233,7 +208,6 @@ namespace: gxc
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
            (gxlink           (path-expand "libgerbil-link" gerbil-libdir))
-           (gxinit-scm       (path-expand "gx-init-static-exe.scm" gerbil-libdir))
            (tmp              (path-expand
                               (string-append "gxc." (number->string (compile-timestamp-nanos)))
                               "/tmp"))
@@ -274,9 +248,12 @@ namespace: gxc
            (gerbil-rpath
             (if (file-exists? libgerbil.so)
               (string-append "-Wl,-rpath=" gerbil-libdir ":" gambit-libdir)
-              (string-append "-Wl,-rpath=" gambit-libdir))))
+              (string-append "-Wl,-rpath=" gambit-libdir)))
+           (builtin-modules
+            (map (lambda (mod) (symbol->string (expander-context-id mod)))
+                 (cons ctx deps))))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub gxinit-scm))
+        (cut generate-stub builtin-modules))
       (when (current-compile-invoke-gsc)
         (create-directory tmp)
         (for-each copy-file src-deps-scm deps-scm)
@@ -315,7 +292,7 @@ namespace: gxc
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
 
-(def (compile-exe-static-module/full-program-optimization ctx opts)
+(def (compile-executable-module/full-program-optimization ctx opts)
   (def (reset-declare)
     '(declare
        (gambit-scheme)
@@ -354,7 +331,14 @@ namespace: gxc
           (write `(include ,dep))
           (newline))
         deps)
-      (write `(apply ,mod-main (cdr (command-line))))
+      (write `(define (gerbil-main)
+                ;; we don't know what the tree shaker will throw out
+                ;; so we cannot assume that compiled in modules are fully present
+                ;; thus we initialize the runtime with an empty builtin module list
+                ;; so that the user can actually load things if he needs to
+                (gerbil-runtime-init! '())
+                (apply ,mod-main (cdr (command-line)))))
+      (write '(gerbil-main))
       (newline)))
 
   (def (static-include gsc-opts home)
@@ -399,8 +383,11 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
-           (gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" gerbil-home))
-           (gx-gambc-init (path-expand "lib/gx-init-static-exe.scm" gerbil-home))
+           (gx-gambc
+            (map (lambda (mod)
+                   (path-expand (string-append mod ".scm")
+                                (path-expand "lib/static" gerbil-home)))
+                 '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc")))
            (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
            (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
            (bin-scm (find-static-module-file ctx))
@@ -420,7 +407,7 @@ namespace: gxc
              (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
              output-scm]))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm]))
+        (cut generate-stub [gx-gambc ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
         (invoke (gerbil-gsc) gsc-args))))
 

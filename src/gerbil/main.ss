@@ -8,9 +8,6 @@ package: gerbil
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
-;; patch by configure
-(def default-gerbil-home #f)
-
 (def builtin-modules
   '(;; :gerbil/gambit
     "gerbil/gambit/ports"
@@ -65,10 +62,6 @@ package: gerbil
   '(("compile" . "gxc")
     ("interactive" . "gxi")))
 
-;; define this for compatibility with existing dynamic exe code
-(def (_gx#load-expander!)
-  (void))
-
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
   (displayln)
@@ -91,44 +84,15 @@ package: gerbil
   (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
 
 (extern namespace: #f
-  &current-module-libpath
-  &current-module-registry)
+  gerbil-home
+  gerbil-runtime-init!
+  gerbil-load-expander!)
 
 (def (init!)
-  (let* ((home
-          (path-normalize
-           (cond
-            ((getenv "GERBIL_HOME" default-gerbil-home))
-            (else
-             (error "Cannot determine GERBIL_HOME")))))
-         (libdir (path-expand "lib" home))
-         (loadpath
-          (cond
-           ((getenv "GERBIL_LOADPATH" #f)
-            => (lambda (envvar)
-                 (filter (? (not string-empty?)) (string-split envvar #\:))))
-           (else [])))
-         (userpath
-          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
-         (loadpath
-          (cons userpath loadpath)))
-    (&current-module-libpath (cons libdir loadpath)))
-    (&current-module-registry (builtin-module-registry))
-    (current-readtable _gx#*readtable*)
-    (_gx#load-gxi)
-    ;; hook ##begin -- gambit wraps it around scripts
-    (gx#eval-syntax '(define-alias ##begin begin)))
-
-(def (builtin-module-registry)
-  (let lp ((rest builtin-modules) (registry []))
-    (match rest
-      ([mod . rest]
-       (lp rest
-           (cons* (cons (string-append mod "__0") 'builtin)
-                  (cons (string-append mod "__rt") 'builtin)
-                  registry)))
-      (else
-       (list->hash-table registry)))))
+  (gerbil-runtime-init! builtin-modules)
+  (gerbil-load-expander!)
+  ;; hook ##begin -- gambit wraps it around scripts
+  (eval-syntax '(define-alias ##begin begin)))
 
 (def +current-lang+ 'gerbil)
 (def (set-lang! lang)
@@ -167,8 +131,7 @@ package: gerbil
 (def (init-interactive!)
   (def (load-init! init.ss)
     ;; load interactive init
-    (let (init-file (path-expand (path-expand init.ss "lib")
-                                 (getenv "GERBIL_HOME" default-gerbil-home)))
+    (let (init-file (path-expand (path-expand init.ss "lib") (gerbil-home)))
       (when (file-exists? init-file)
         (eval-syntax `(include ,init-file))))
     ;; load user init if it exists

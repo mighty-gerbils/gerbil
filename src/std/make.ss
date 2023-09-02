@@ -154,16 +154,20 @@ TODO:
 
 (def (spec-file spec settings)
   (match spec
-    ((? string? modf) (source-path modf ".ss" settings))
-    ([gxc: modf . opts] (source-path modf ".ss" settings))
-    ([gsc: modf . opts] (source-path modf ".scm" settings))
-    ([ssi: modf . deps] (source-path modf ".ssi" settings))
-    ([exe: modf . opts] (source-path modf ".ss" settings))
-    ([static-exe: modf . opts] (source-path modf ".ss" settings))
-    ([optimized-exe: modf . opts] (source-path modf ".ss" settings))
-    ([dynamic-exe: modf . opts] (source-path modf ".ss" settings))
-    ([static-include: file] (static-file-path file settings))
-    ([copy: file] file)
+    ((? string? modf)
+     (source-path modf ".ss" settings))
+    ([gxc: modf . opts]
+     (source-path modf ".ss" settings))
+    ([gsc: modf . opts]
+     (source-path modf ".scm" settings))
+    ([ssi: modf . deps]
+     (source-path modf ".ssi" settings))
+    ([(or exe: static-exe: optimized-exe:)  modf . opts]
+     (source-path modf ".ss" settings))
+    ([static-include: file]
+     (static-file-path file settings))
+    ([copy: file]
+     file)
     (else
      (error "Bad buildspec" spec))))
 
@@ -196,14 +200,9 @@ TODO:
     ([gsc: modf . opts] [(gsc-c-path modf settings)])
     ([ssi: modf . submodules] [(library-path modf ".ssi" settings)
                                (append-map (cut spec-outputs <> settings) submodules) ...])
-    ([dynamic-exe: modf . opts] [(library-path modf ".ssi" settings)
-                                 (binary-path modf opts settings)])
-    ([static-exe: modf . opts] [(binary-path modf opts settings)
-                                (static-path modf settings)])
-    ([exe: modf . opts] [(binary-path modf opts settings)
-                         (static-path modf settings)])
-    ([optimized-exe: modf . opts] [(binary-path modf opts settings)
-                                   (static-path modf settings)])
+    ([(or exe: static-exe: optimized-exe:) modf . opts]
+     [(binary-path modf opts settings)
+      (static-path modf settings)])
     ([static-include: file] [(static-file-path file settings)])
     ([copy: file] [(library-path file #f settings)])
     (else (error "Bad buildspec" spec))))
@@ -561,7 +560,7 @@ TODO:
                            [gxc: name [submodules: s] . args])
                           ((? string? spec)
                            [gxc: spec [submodules: s]]))))))
-         ((exe: static-exe: optimized-exe: dynamic-exe:) (no-submodules spec) (c spec))
+         ((exe: static-exe: optimized-exe:) (no-submodules spec) (c spec))
          ((gsc: static-include: copy:) (push-submodule spec))
          ((ssi:) (c (append spec (get-submodules))))
          (else (error "Unrecognized spec type" spec)))))
@@ -616,14 +615,10 @@ TODO:
     ([ssi: modf . submodules]
      (for-each (cut build <> settings) submodules)
      (compile-ssi modf '() settings))
-    ([exe: modf . opts]
-     (compile-static-exe modf opts settings))
-    ([static-exe: modf . opts]
-     (compile-static-exe modf opts settings))
+    ([(or exe: static-exe:) modf . opts]
+     (compile-exe modf opts settings))
     ([optimized-exe: modf . opts]
      (compile-optimized-exe modf opts settings))
-    ([dynamic-exe: modf . opts]
-     (compile-dynamic-exe modf opts settings))
     ([static-include: file]
      (copy-target file settings)
      (copy-static file settings))
@@ -749,18 +744,6 @@ TODO:
       (error "Compilation error; gsc exited with nonzero status" status))
     (delete-file rtpath)))
 
-(def (compile-dynamic-exe mod opts settings)
-  (def srcpath (source-path mod ".ss" settings))
-  (def binpath (binary-path mod opts settings))
-  (def gsc-opts (compile-exe-gsc-opts opts))
-  (def gxc-opts
-    [invoke-gsc: #t
-     output-file: binpath
-     verbose: (settings-verbose>=? settings 9)])
-  (gxc-compile mod gsc-opts settings)
-  (message "... compile dynamic exe " mod " -> " binpath)
-  (compile-exe-stub srcpath gxc-opts))
-
 (def (compile-exe-gsc-opts opts)
   (match opts
     ([(? keyword?) opt . rest]
@@ -772,7 +755,7 @@ TODO:
   (set! (settings-static s) #t)
   s)
 
-(def (compile-static-exe mod opts settings)
+(def (compile-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod opts settings))
   (def gsc-opts (compile-exe-gsc-opts opts))
@@ -785,7 +768,7 @@ TODO:
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
   (gxc-compile mod gsc-opts (make-settings-static settings))
   (message "... compile exe " mod " -> " binpath)
-  (gxc#compile-static-exe srcpath gxc-opts))
+  (gxc#compile-exe srcpath gxc-opts))
 
 (def (make-settings-optimized settings)
   (def s (struct-copy settings))
@@ -794,7 +777,7 @@ TODO:
   s)
 
 (def (compile-optimized-exe mod opts settings)
-  (compile-static-exe mod opts (make-settings-optimized settings)))
+  (compile-exe mod opts (make-settings-optimized settings)))
 
 (def (copy-static file settings)
   (def spath (static-file-path file settings))

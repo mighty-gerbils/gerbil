@@ -64,8 +64,7 @@ compile_runtime () {
 finalize_stage1 () {
   local target_lib="${1}"
   local target_bin="${2}"
-  cp -v gerbil/boot/*.scm \
-        gerbil/interactive/*.ss \
+  cp -v gerbil/interactive/*.ss \
         "${target_lib}"
   (cd "${target_bin}" && ln -sv gerbil gxi)
   (cd "${target_bin}" && ln -sv gerbil gxc)
@@ -75,7 +74,6 @@ finalize_boot () {
   local target_lib="${1}"
   local target_bin="${2}"
   cp -v gerbil/boot/*.scm \
-        gerbil/interactive/*.ss \
         "${target_lib}"
   cp -v gerbil/boot-gxi \
        "${target_bin}"
@@ -86,7 +84,7 @@ stage0 () {
   local target_lib="${GERBIL_STAGE0}/lib"
 
   ## feedback
-  feedback_low "Building gerbil stage0"
+  feedback_low "Building gerbil stage0 (bootstrap)"
 
   ## preparing target directory
   feedback_mid "preparing ${GERBIL_STAGE0}"
@@ -108,7 +106,7 @@ stage0 () {
   rm -f .build.stage0
 
   ## finalize build
-  feedback_mid "finalizing build"
+  feedback_mid "finalizing bootstrap"
   finalize_boot "${target_lib}" "${target_bin}"
 }
 

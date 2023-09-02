@@ -8,6 +8,7 @@
        (libdir (path-expand "lib" home)))
   (load (path-expand "gx-init.scm" libdir))
   (_gx#init)
+  (set! ##display-exception-hook _gx#display-exception)
   (_gx#load-gxi)
   ;; hook ##begin -- gambit wraps it around -e and scripts
   (gx#eval-syntax '(define-alias ##begin begin))
