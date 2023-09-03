@@ -23,7 +23,7 @@ readonly gerbil_version=v0.18-DEV
 
 prefix="/opt/gerbil"
 gambit_tag=v4.9.5
-gambit_config="--enable-targets='' --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=t8,f8,-8 --enable-openssl --enable-trust-c-tco"
+gambit_config="--enable-targets='' --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=t8,f8,-8 --enable-trust-c-tco"
 
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"
