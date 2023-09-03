@@ -10,11 +10,13 @@ namespace: gerbil/core
           (import: (in: #f <match>))
           (import: (in: #f <more-sugar>))
           (import: (in: #f <module-sugar>))
+          (import: (in: #f <special>))
           (phi: 1 (import: (in: #f <runtime>)))
           (phi: 1 (import: (in: #f <sugar>)))
           (phi: 1 (import: (in: #f <MOP>)))
           (phi: 1 (import: (in: #f <match>)))
           (phi: 1 (import: (in: #f <more-sugar>)))
+          (phi: 1 (import: (in: #f <special>)))
           (phi: 1 (import: (in: #f <expander-runtime>)))
           (phi: 1 (import: (in: #f <syntax-case>)))
           (phi: 1 (import: (in: #f <syntax-sugar>)))
@@ -432,6 +434,7 @@ namespace: gerbil/core
                     (direct-struct-instance? direct-struct-instance?)
                     (direct-class-instance? direct-class-instance?)
                     (make-object make-object)
+                    (struct-copy struct-copy)
                     (struct->list struct->list)
                     (class->list class->list)
                     (make-struct-instance make-struct-instance)
@@ -442,6 +445,8 @@ namespace: gerbil/core
                     (slot-set! slot-set!)
                     (call-method call-method)
                     (bind-method! bind-method!)
+                    (bind-specializer! bind-specializer!)
+                    (seal-class! seal-class!)
                     (method-ref method-ref)
                     (direct-method-ref direct-method-ref)
                     (bound-method-ref bound-method-ref)
@@ -452,6 +457,7 @@ namespace: gerbil/core
                     (call-next-method call-next-method)
                     (struct-subtype? struct-subtype?)
                     (class-subtype? class-subtype?)
+                    (write-style write-style)
                     (current-error-port current-error-port)
                     (make-promise make-promise)
                     (promise? promise?)
@@ -484,6 +490,7 @@ namespace: gerbil/core
                     (rename-file rename-file)
                     (delete-directory delete-directory)
                     (directory-files directory-files)
+                    (delete-file-or-directory delete-file-or-directory)
                     (file-exists? file-exists?)
                     (file-newer? file-newer?)
                     (file-type file-type)
@@ -559,19 +566,22 @@ namespace: gerbil/core
                     (absent-value absent-value)
                     (load-module load-module)
                     (keyword-dispatch keyword-dispatch)
+                    (keyword-rest keyword-rest)
                     (gerbil-version-string gerbil-version-string)
                     (gerbil-system-version-string gerbil-system-version-string)
                     (system-version system-version)
                     (gerbil-system gerbil-system)
                     (system-type system-type)
-                    (gerbil-runtime-smp? gerbil-runtime-smp?))
+                    (gerbil-runtime-smp? gerbil-runtime-smp?)
+                    (gerbil-load-expander! gerbil-load-expander!)
+                    (gerbil-home gerbil-home))
                    (%#define-alias transcript-on void)
                    (%#define-alias transcript-off void)
                    (%#define-alias car-set! set-car!)
                    (%#define-alias cdr-set! set-cdr!)
                    (%#define-alias box-set! set-box!)
                    (%#define-alias call/cc call-with-current-continuation)
-                   (%#define-alias call/esc call-with-escape)
+                   (%#define-alias call/esc call-with-current-continuation)
                    (%#define-alias call/values call-with-values)
                    (%#define-alias call/parameters call-with-parameters)))
          (%#module
@@ -651,6 +661,8 @@ namespace: gerbil/core
                     (current-expander-marks gx#current-expander-marks)
                     (current-expander-path gx#current-expander-path)
                     (current-expander-phi gx#current-expander-phi)
+                    (current-expander-compiling?
+                     gx#current-expander-compiling?)
                     (current-module-reader-path gx#current-module-reader-path)
                     (current-module-reader-args gx#current-module-reader-args)
                     (local-context? gx#local-context?)
@@ -1375,9 +1387,12 @@ namespace: gerbil/core
                               (%#define-syntax
                                macro-object
                                |gerbil/core$<MOP>$<MOP:3>[:1:]#macro-object|)
-                              (%#define-runtime
-                               macro-object::apply-macro-expander
-                               |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|))))
+                              (%#begin (%#define-runtime
+                                        macro-object::apply-macro-expander
+                                        |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|)
+                                       (%#define-runtime
+                                        macro-object::apply-macro-expander::specialize
+                                        |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|)))))
                    (%#import (in: #f <MOP:3>))))
          (%#import (in: #f <MOP>) (phi: 1 (in: #f <MOP>)))
          (%#module
@@ -1568,6 +1583,9 @@ namespace: gerbil/core
                     prefix-in
                     |gerbil/core$<module-sugar>[:0:]#prefix-in|)
                    (%#define-syntax
+                    group-in
+                    |gerbil/core$<module-sugar>[:0:]#group-in|)
+                   (%#define-syntax
                     except-out
                     |gerbil/core$<module-sugar>[:0:]#except-out|)
                    (%#begin-syntax
@@ -1583,4 +1601,14 @@ namespace: gerbil/core
                    (%#define-syntax
                     struct-out
                     |gerbil/core$<module-sugar>[:0:]#struct-out|)))
-         (%#import (in: #f <module-sugar>)))
+         (%#import (in: #f <module-sugar>))
+         (%#module
+          <special>
+          (%#begin (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref _gx#load-module)
+                                     (%#quote "gerbil/core__16")))
+                            (%#define-syntax
+                             eval-when-compile
+                             |gerbil/core$<special>[:0:]#eval-when-compile|))))
+         (%#import (in: #f <special>)))

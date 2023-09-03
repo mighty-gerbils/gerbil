@@ -26,12 +26,16 @@ namespace: gxc
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
          (%#define-runtime optimizer-info-type gxc#optimizer-info-type)
          (%#define-runtime optimizer-info-ssxi gxc#optimizer-info-ssxi)
+         (%#define-runtime optimizer-info-methods gxc#optimizer-info-methods)
          (%#define-runtime
           optimizer-info-type-set!
           gxc#optimizer-info-type-set!)
          (%#define-runtime
           optimizer-info-ssxi-set!
           gxc#optimizer-info-ssxi-set!)
+         (%#define-runtime
+          optimizer-info-methods-set!
+          gxc#optimizer-info-methods-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref _gx#load-module)
                            (%#quote "gerbil/compiler/optimize-base__1")))
@@ -69,6 +73,26 @@ namespace: gxc
           !struct-type-methods-set!
           gxc#!struct-type-methods-set!)
          (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
+         (%#define-runtime !class-type::t gxc#!class-type::t)
+         (%#define-runtime !class-type? gxc#!class-type?)
+         (%#define-runtime make-!class-type gxc#make-!class-type)
+         (%#define-runtime !class-type-super gxc#!class-type-super)
+         (%#define-runtime !class-type-mixin gxc#!class-type-mixin)
+         (%#define-runtime !class-type-slots gxc#!class-type-slots)
+         (%#define-runtime !class-type-xslots gxc#!class-type-xslots)
+         (%#define-runtime !class-type-ctor gxc#!class-type-ctor)
+         (%#define-runtime !class-type-plist gxc#!class-type-plist)
+         (%#define-runtime !class-type-methods gxc#!class-type-methods)
+         (%#define-runtime !class-type-super-set! gxc#!class-type-super-set!)
+         (%#define-runtime !class-type-mixin-set! gxc#!class-type-mixin-set!)
+         (%#define-runtime !class-type-slots-set! gxc#!class-type-slots-set!)
+         (%#define-runtime !class-type-xslots-set! gxc#!class-type-xslots-set!)
+         (%#define-runtime !class-type-ctor-set! gxc#!class-type-ctor-set!)
+         (%#define-runtime !class-type-plist-set! gxc#!class-type-plist-set!)
+         (%#define-runtime
+          !class-type-methods-set!
+          gxc#!class-type-methods-set!)
+         (%#define-syntax !class-type |gxc[:0:]#!class-type|)
          (%#define-runtime !procedure::t gxc#!procedure::t)
          (%#define-runtime !procedure? gxc#!procedure?)
          (%#define-runtime make-!procedure gxc#make-!procedure)
@@ -101,6 +125,34 @@ namespace: gxc
           !struct-setf-unchecked?-set!
           gxc#!struct-setf-unchecked?-set!)
          (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
+         (%#define-runtime !class-pred::t gxc#!class-pred::t)
+         (%#define-runtime !class-pred? gxc#!class-pred?)
+         (%#define-runtime make-!class-pred gxc#make-!class-pred)
+         (%#define-syntax !class-pred |gxc[:0:]#!class-pred|)
+         (%#define-runtime !class-cons::t gxc#!class-cons::t)
+         (%#define-runtime !class-cons? gxc#!class-cons?)
+         (%#define-runtime make-!class-cons gxc#make-!class-cons)
+         (%#define-syntax !class-cons |gxc[:0:]#!class-cons|)
+         (%#define-runtime !class-getf::t gxc#!class-getf::t)
+         (%#define-runtime !class-getf? gxc#!class-getf?)
+         (%#define-runtime make-!class-getf gxc#make-!class-getf)
+         (%#define-runtime !class-getf-slot gxc#!class-getf-slot)
+         (%#define-runtime !class-getf-unchecked? gxc#!class-getf-unchecked?)
+         (%#define-runtime !class-getf-slot-set! gxc#!class-getf-slot-set!)
+         (%#define-runtime
+          !class-getf-unchecked?-set!
+          gxc#!class-getf-unchecked?-set!)
+         (%#define-syntax !class-getf |gxc[:0:]#!class-getf|)
+         (%#define-runtime !class-setf::t gxc#!class-setf::t)
+         (%#define-runtime !class-setf? gxc#!class-setf?)
+         (%#define-runtime make-!class-setf gxc#make-!class-setf)
+         (%#define-runtime !class-setf-slot gxc#!class-setf-slot)
+         (%#define-runtime !class-setf-unchecked? gxc#!class-setf-unchecked?)
+         (%#define-runtime !class-setf-slot-set! gxc#!class-setf-slot-set!)
+         (%#define-runtime
+          !class-setf-unchecked?-set!
+          gxc#!class-setf-unchecked?-set!)
+         (%#define-syntax !class-setf |gxc[:0:]#!class-setf|)
          (%#define-runtime !lambda::t gxc#!lambda::t)
          (%#define-runtime !lambda? gxc#!lambda?)
          (%#define-runtime make-!lambda gxc#make-!lambda)
@@ -146,6 +198,7 @@ namespace: gxc
           gxc#!kw-lambda-primary-main-set!)
          (%#define-syntax !kw-lambda-primary |gxc[:0:]#!kw-lambda-primary|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
+         (%#define-runtime !class-type:::init! gxc#!class-type:::init!)
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
@@ -157,9 +210,16 @@ namespace: gxc
                             !lambda:::init!
                             gxc#!lambda:::init!)))
          (%#define-runtime !struct-type-vtab gxc#!struct-type-vtab)
+         (%#define-runtime !class-type-vtab gxc#!class-type-vtab)
+         (%#define-runtime !type-vtab gxc#!type-vtab)
          (%#define-runtime
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
+         (%#define-runtime
+          !class-type-lookup-method
+          gxc#!class-type-lookup-method)
+         (%#define-runtime !type-lookup-method gxc#!type-lookup-method)
+         (%#define-runtime !class-type-complete? gxc#!class-type-complete?)
          (%#begin (%#define-runtime
                    optimizer-declare-type!__%
                    gxc#optimizer-declare-type!__%)
@@ -190,5 +250,11 @@ namespace: gxc
          (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
          (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
          (%#define-runtime optimizer-lookup-method gxc#optimizer-lookup-method)
+         (%#define-runtime
+          optimizer-top-level-method!
+          gxc#optimizer-top-level-method!)
+         (%#define-runtime
+          optimizer-top-level-method?
+          gxc#optimizer-top-level-method?)
          (%#define-runtime identifier-symbol gxc#identifier-symbol))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-base__0"))

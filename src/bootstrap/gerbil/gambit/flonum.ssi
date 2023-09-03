@@ -10,6 +10,7 @@ namespace: gerbil/gambit/flonum
           (flatan flatan)
           (flceiling flceiling)
           (flcos flcos)
+          (flodd? flodd?)
           (fleven? fleven?)
           (flexp flexp)
           (flexpt flexpt)

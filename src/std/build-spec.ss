@@ -292,6 +292,7 @@
     "misc/completion"
     "misc/barrier"
     "misc/channel"
+    "misc/wg"
     (gxc:  "misc/ports" ,@(include-gambit-sharp))
     (gxc:  "misc/threads" ,@(include-gambit-sharp))
     "misc/process"

@@ -51,9 +51,9 @@ target_setup () {
   mkdir -p "${target}/lib"
 }
 
-compile_gxi () {
-  feedback_low "Compiling gxi shim"
-  (cd gerbil && ${CC:-cc} -O2 -o gxi gxi.c)
+compile_boot_gxi () {
+  feedback_low "Compiling boot gxi shim"
+  (cd gerbil && ${CC:-cc} -O2 -o boot-gxi boot-gxi.c)
 }
 
 compile_runtime () {
@@ -61,16 +61,22 @@ compile_runtime () {
   (cd gerbil/runtime && ./build.scm "${target_lib}")
 }
 
-finalize_build () {
+finalize_stage1 () {
+  local target_lib="${1}"
+  local target_bin="${2}"
+  cp -v gerbil/interactive/*.ss \
+        "${target_lib}"
+  (cd "${target_bin}" && ln -sv gerbil gxi)
+  (cd "${target_bin}" && ln -sv gerbil gxc)
+}
+
+finalize_boot () {
   local target_lib="${1}"
   local target_bin="${2}"
   cp -v gerbil/boot/*.scm \
-        gerbil/interactive/*.ss \
         "${target_lib}"
-  cp -v gerbil/gxi \
-        gerbil/gxc \
-        "${target_bin}"
-  (cd "${target_bin}" && ln -s gxi gxi-script)
+  cp -v gerbil/boot-gxi \
+       "${target_bin}"
 }
 
 stage0 () {
@@ -78,7 +84,7 @@ stage0 () {
   local target_lib="${GERBIL_STAGE0}/lib"
 
   ## feedback
-  feedback_low "Building gerbil stage0"
+  feedback_low "Building gerbil stage0 (bootstrap)"
 
   ## preparing target directory
   feedback_mid "preparing ${GERBIL_STAGE0}"
@@ -100,8 +106,8 @@ stage0 () {
   rm -f .build.stage0
 
   ## finalize build
-  feedback_mid "finalizing build"
-  finalize_build "${target_lib}" "${target_bin}"
+  feedback_mid "finalizing bootstrap"
+  finalize_boot "${target_lib}" "${target_bin}"
 }
 
 stage1 () {
@@ -138,15 +144,19 @@ stage1 () {
         gerbil/runtime/gx-version.scm \
         "${target_lib_static}"
 
-  feedback_mid "compiling gerbil core"
   GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi
   GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
   export GERBIL_HOME GERBIL_TARGET
-  "${GERBIL_STAGE0}/bin/gxi" "${GERBIL_BUILD}/build1.ss" || die
+
+  feedback_mid "compiling gerbil core"
+  "${GERBIL_STAGE0}/bin/boot-gxi" "${GERBIL_BUILD}/build1.ss" || die
+
+  feedback_mid "compiling gerbil bach"
+  "${GERBIL_STAGE0}/bin/boot-gxi" "${GERBIL_BUILD}/build-bach.ss" || die
 
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
-  finalize_build "${target_lib}" "${target_bin}"
+  finalize_stage1 "${target_lib}" "${target_bin}"
 
   ## clean up stage0
   if [ -n "${final}" ]; then
@@ -199,6 +209,10 @@ build_tools () {
   GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
   export PATH GERBIL_HOME
   (cd tools && ./build.ss)
+  for tool in tools/gx*.ss; do
+      toolname=$(basename -s .ss $tool)
+      (cd ${GERBIL_BASE}/bin && ln -sv gerbil $toolname)
+  done
 }
 
 build_tags () {
@@ -230,7 +244,7 @@ build_doc () {
 build_gerbil() {
   feedback_low "Building Gerbil"
   sanity_check     || die
-  compile_gxi      || die
+  compile_boot_gxi || die
   stage0           || die
   stage1 final     || die
   build_stdlib     || die
@@ -249,8 +263,8 @@ else
        "sanity-check")
          sanity_check || die
          ;;
-       "gxi")
-         compile_gxi || die
+       "boot-gxi")
+         compile_boot_gxi || die
          ;;
        "stage0")
          stage0 || die
@@ -285,7 +299,7 @@ else
        *)
          feedback_err "Unknown command."
          feedback_err \
-           "Correct usage: ./build.sh [gxi|stage0|stage1 [final]|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
+           "Correct usage: ./build.sh [boot-gxi|stage0|stage1 [final]|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
          die
          ;;
   esac

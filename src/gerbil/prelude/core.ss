@@ -270,6 +270,10 @@ package: gerbil
     gerbil-system system-type
     ;; voodoo doll
     gerbil-runtime-smp?
+    ;; expander loading for executables
+    gerbil-load-expander!
+    ;; our home
+    gerbil-home
     )
 
   (define-alias transcript-on void)

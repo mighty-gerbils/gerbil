@@ -142,9 +142,47 @@ package: gerbil/expander
   (declare-type
    gx#&export-set-exports-set!
    (@struct-setf gx#export-set::t 2 #t))
-  (declare-type gx#make-import-expander (@lambda (0) #f))
-  (declare-type gx#make-export-expander (@lambda (0) #f))
-  (declare-type gx#make-import-export-expander (@lambda (0) #f))
+  (declare-type
+   gx#import-expander::t
+   (@class-type
+    gx#import-expander::t
+    gx#user-expander::t
+    (gx#user-expander::t)
+    ()
+    ()
+    :init!
+    ()))
+  (declare-type gx#import-expander? (@class-pred gx#import-expander::t))
+  (declare-type gx#make-import-expander (@class-cons gx#import-expander::t))
+  (declare-type
+   gx#export-expander::t
+   (@class-type
+    gx#export-expander::t
+    gx#user-expander::t
+    (gx#user-expander::t)
+    ()
+    ()
+    :init!
+    ()))
+  (declare-type gx#export-expander? (@class-pred gx#export-expander::t))
+  (declare-type gx#make-export-expander (@class-cons gx#export-expander::t))
+  (declare-type
+   gx#import-export-expander::t
+   (@class-type
+    gx#import-export-expander::t
+    gx#user-expander::t
+    (gx#import-expander::t gx#export-expander::t)
+    ()
+    ()
+    :init!
+    ()))
+  (declare-type
+   gx#import-export-expander?
+   (@class-pred gx#import-export-expander::t))
+  (declare-type
+   gx#make-import-export-expander
+   (@class-cons gx#import-export-expander::t))
+  (declare-type gx#call-with-input-source-file (@lambda 2 #f))
   (declare-type gx#module-context:::init! (@lambda 5 #f))
   (declare-method gx#module-context::t :init! gx#module-context:::init! #f)
   (declare-type gx#prelude-context:::init!__% (@lambda 3 #f))
@@ -217,6 +255,7 @@ package: gerbil/expander
     (1 gx#core-resolve-module-path__0)
     (2 gx#core-resolve-module-path__%)))
   (declare-type gx#core-resolve-library-module-path (@lambda 1 #f))
+  (declare-type gx#core-resolve-library-relative-module-path (@lambda 1 #f))
   (declare-type gx#core-library-package-path-prefix (@lambda 1 #f))
   (declare-type gx#core-library-package-plist__% (@lambda 2 #f))
   (declare-type gx#core-library-package-plist__0 (@lambda 1 #f))
@@ -227,6 +266,7 @@ package: gerbil/expander
     (2 gx#core-library-package-plist__%)))
   (declare-type gx#core-library-package-cache (@lambda 0 #f))
   (declare-type gx#core-library-module-path? (@lambda 1 #f))
+  (declare-type gx#core-library-relative-module-path? (@lambda 1 #f))
   (declare-type gx#core-special-module-path? (@lambda 2 #f))
   (declare-type gx#core-bound-prelude? (@lambda 1 #f))
   (declare-type gx#core-bound-module? (@lambda 1 #f))

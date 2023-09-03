@@ -9,6 +9,7 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#root-context:::init!__0)
     (2 gx#root-context:::init!__%)))
+  (declare-type gx#root-context:::init!::specialize (@lambda 1 #f))
   (declare-method gx#root-context::t :init! gx#root-context:::init! #f)
   (declare-type gx#top-context:::init!__% (@lambda 2 #f))
   (declare-type gx#top-context:::init!__0 (@lambda 1 #f))

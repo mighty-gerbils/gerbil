@@ -4,7 +4,7 @@ package: gerbil/compiler
 (begin
   (declare-type
    gxc#optimizer-info::t
-   (@struct-type gxc#optimizer-info::t #f 2 :init! ()))
+   (@struct-type gxc#optimizer-info::t #f 3 :init! ()))
   (declare-type gxc#optimizer-info? (@struct-pred gxc#optimizer-info::t))
   (declare-type gxc#make-optimizer-info (@struct-cons gxc#optimizer-info::t))
   (declare-type
@@ -14,11 +14,17 @@ package: gerbil/compiler
    gxc#optimizer-info-ssxi
    (@struct-getf gxc#optimizer-info::t 1 #f))
   (declare-type
+   gxc#optimizer-info-methods
+   (@struct-getf gxc#optimizer-info::t 2 #f))
+  (declare-type
    gxc#optimizer-info-type-set!
    (@struct-setf gxc#optimizer-info::t 0 #f))
   (declare-type
    gxc#optimizer-info-ssxi-set!
    (@struct-setf gxc#optimizer-info::t 1 #f))
+  (declare-type
+   gxc#optimizer-info-methods-set!
+   (@struct-setf gxc#optimizer-info::t 2 #f))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
   (declare-method gxc#optimizer-info::t :init! gxc#optimizer-info:::init! #f)
   (declare-type gxc#!type::t (@struct-type gxc#!type::t #f 1 #f ()))
@@ -67,6 +73,39 @@ package: gerbil/compiler
    gxc#!struct-type-methods-set!
    (@struct-setf gxc#!struct-type::t 5 #f))
   (declare-type
+   gxc#!class-type::t
+   (@struct-type gxc#!class-type::t gxc#!type::t 7 :init! ()))
+  (declare-type gxc#!class-type? (@struct-pred gxc#!class-type::t))
+  (declare-type gxc#make-!class-type (@struct-cons gxc#!class-type::t))
+  (declare-type gxc#!class-type-super (@struct-getf gxc#!class-type::t 0 #f))
+  (declare-type gxc#!class-type-mixin (@struct-getf gxc#!class-type::t 1 #f))
+  (declare-type gxc#!class-type-slots (@struct-getf gxc#!class-type::t 2 #f))
+  (declare-type gxc#!class-type-xslots (@struct-getf gxc#!class-type::t 3 #f))
+  (declare-type gxc#!class-type-ctor (@struct-getf gxc#!class-type::t 4 #f))
+  (declare-type gxc#!class-type-plist (@struct-getf gxc#!class-type::t 5 #f))
+  (declare-type gxc#!class-type-methods (@struct-getf gxc#!class-type::t 6 #f))
+  (declare-type
+   gxc#!class-type-super-set!
+   (@struct-setf gxc#!class-type::t 0 #f))
+  (declare-type
+   gxc#!class-type-mixin-set!
+   (@struct-setf gxc#!class-type::t 1 #f))
+  (declare-type
+   gxc#!class-type-slots-set!
+   (@struct-setf gxc#!class-type::t 2 #f))
+  (declare-type
+   gxc#!class-type-xslots-set!
+   (@struct-setf gxc#!class-type::t 3 #f))
+  (declare-type
+   gxc#!class-type-ctor-set!
+   (@struct-setf gxc#!class-type::t 4 #f))
+  (declare-type
+   gxc#!class-type-plist-set!
+   (@struct-setf gxc#!class-type::t 5 #f))
+  (declare-type
+   gxc#!class-type-methods-set!
+   (@struct-setf gxc#!class-type::t 6 #f))
+  (declare-type
    gxc#!procedure::t
    (@struct-type gxc#!procedure::t gxc#!type::t 0 #f ()))
   (declare-type gxc#!procedure? (@struct-pred gxc#!procedure::t))
@@ -111,6 +150,46 @@ package: gerbil/compiler
   (declare-type
    gxc#!struct-setf-unchecked?-set!
    (@struct-setf gxc#!struct-setf::t 1 #f))
+  (declare-type
+   gxc#!class-pred::t
+   (@struct-type gxc#!class-pred::t gxc#!procedure::t 0 #f ()))
+  (declare-type gxc#!class-pred? (@struct-pred gxc#!class-pred::t))
+  (declare-type gxc#make-!class-pred (@struct-cons gxc#!class-pred::t))
+  (declare-type
+   gxc#!class-cons::t
+   (@struct-type gxc#!class-cons::t gxc#!procedure::t 0 #f ()))
+  (declare-type gxc#!class-cons? (@struct-pred gxc#!class-cons::t))
+  (declare-type gxc#make-!class-cons (@struct-cons gxc#!class-cons::t))
+  (declare-type
+   gxc#!class-getf::t
+   (@struct-type gxc#!class-getf::t gxc#!procedure::t 2 #f ()))
+  (declare-type gxc#!class-getf? (@struct-pred gxc#!class-getf::t))
+  (declare-type gxc#make-!class-getf (@struct-cons gxc#!class-getf::t))
+  (declare-type gxc#!class-getf-slot (@struct-getf gxc#!class-getf::t 0 #f))
+  (declare-type
+   gxc#!class-getf-unchecked?
+   (@struct-getf gxc#!class-getf::t 1 #f))
+  (declare-type
+   gxc#!class-getf-slot-set!
+   (@struct-setf gxc#!class-getf::t 0 #f))
+  (declare-type
+   gxc#!class-getf-unchecked?-set!
+   (@struct-setf gxc#!class-getf::t 1 #f))
+  (declare-type
+   gxc#!class-setf::t
+   (@struct-type gxc#!class-setf::t gxc#!procedure::t 2 #f ()))
+  (declare-type gxc#!class-setf? (@struct-pred gxc#!class-setf::t))
+  (declare-type gxc#make-!class-setf (@struct-cons gxc#!class-setf::t))
+  (declare-type gxc#!class-setf-slot (@struct-getf gxc#!class-setf::t 0 #f))
+  (declare-type
+   gxc#!class-setf-unchecked?
+   (@struct-getf gxc#!class-setf::t 1 #f))
+  (declare-type
+   gxc#!class-setf-slot-set!
+   (@struct-setf gxc#!class-setf::t 0 #f))
+  (declare-type
+   gxc#!class-setf-unchecked?-set!
+   (@struct-setf gxc#!class-setf::t 1 #f))
   (declare-type
    gxc#!lambda::t
    (@struct-type gxc#!lambda::t gxc#!procedure::t 4 :init! ()))
@@ -173,6 +252,8 @@ package: gerbil/compiler
    (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
   (declare-type gxc#!struct-type:::init! (@lambda 7 #f))
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
+  (declare-type gxc#!class-type:::init! (@lambda 8 #f))
+  (declare-method gxc#!class-type::t :init! gxc#!class-type:::init! #f)
   (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
   (declare-type gxc#!lambda:::init!__0 (@lambda 4 #f))
   (declare-type gxc#!lambda:::init!__1 (@lambda 5 #f))
@@ -184,7 +265,12 @@ package: gerbil/compiler
     (6 gxc#!lambda:::init!__%)))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type gxc#!struct-type-vtab (@lambda 1 #f))
+  (declare-type gxc#!class-type-vtab (@lambda 1 #f))
+  (declare-type gxc#!type-vtab (@lambda 1 #f))
   (declare-type gxc#!struct-type-lookup-method (@lambda 2 #f))
+  (declare-type gxc#!class-type-lookup-method (@lambda 2 #f))
+  (declare-type gxc#!type-lookup-method (@lambda 2 #f))
+  (declare-type gxc#!class-type-complete? (@lambda 1 #f))
   (declare-type gxc#optimizer-declare-type!__% (@lambda 3 #f))
   (declare-type gxc#optimizer-declare-type!__0 (@lambda 2 #f))
   (declare-type
@@ -209,4 +295,6 @@ package: gerbil/compiler
   (declare-type gxc#optimizer-lookup-type (@lambda 1 #f))
   (declare-type gxc#optimizer-resolve-type (@lambda 1 #f))
   (declare-type gxc#optimizer-lookup-method (@lambda 2 #f))
+  (declare-type gxc#optimizer-top-level-method! (@lambda 1 #f))
+  (declare-type gxc#optimizer-top-level-method? (@lambda 1 #f))
   (declare-type gxc#identifier-symbol (@lambda 1 #f)))

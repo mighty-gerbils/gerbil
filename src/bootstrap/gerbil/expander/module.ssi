@@ -141,6 +141,10 @@ namespace: gx
          (%#define-runtime
           current-module-reader-args
           gx#current-module-reader-args)
+         (%#define-runtime source-file-settings gx#source-file-settings)
+         (%#define-runtime
+          call-with-input-source-file
+          gx#call-with-input-source-file)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
                    prelude-context:::init!__%
@@ -220,6 +224,9 @@ namespace: gx
           core-resolve-library-module-path
           gx#core-resolve-library-module-path)
          (%#define-runtime
+          core-resolve-library-relative-module-path
+          gx#core-resolve-library-relative-module-path)
+         (%#define-runtime
           core-library-package-path-prefix
           gx#core-library-package-path-prefix)
          (%#begin (%#define-runtime
@@ -237,6 +244,9 @@ namespace: gx
          (%#define-runtime
           core-library-module-path?
           gx#core-library-module-path?)
+         (%#define-runtime
+          core-library-relative-module-path?
+          gx#core-library-relative-module-path?)
          (%#define-runtime
           core-special-module-path?
           gx#core-special-module-path?)

@@ -49,8 +49,8 @@ jobs:
           gsc -v
       - name: Setup Gerbil build
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
-      - name: Build Gerbil gxi
-        run: ./src/build.sh gxi
+      - name: Build Gerbil boot gxi
+        run: ./src/build.sh boot-gxi
       - name: Build Gerbil stage0
         run: ./src/build.sh stage0
       - name: Build Gerbil stage1 final

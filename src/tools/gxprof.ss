@@ -14,7 +14,6 @@
 (def (main . args)
   (match args
     ([mod . args]
-     (_gx#load-expander!)
      (let* ((ctx (import-module (module-path mod) #f #t))
             (main-id (find-runtime-symbol ctx 'main))
             (main-fn (eval main-id)))

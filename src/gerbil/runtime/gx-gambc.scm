@@ -33,29 +33,15 @@
   (set! _gx#eval-module gx#core-eval-module))
 
 ;; load the interpreter environment
-(define (gerbil-lang)
-  (string->symbol (getenv "GERBIL_LANG" "gerbil")))
-
 (define (_gx#load-gxi #!optional (hook-expander? #t))
   (define +readtable+ _gx#*readtable*)
   (_gx#init-gx!)
   ;; do this here so that import failures can report friendly error messages
-  (set! ##display-exception-hook _gx#display-exception)
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
     (gx#core-bind-root-syntax! ':<core> pre #t)
-    (let ((lang (gerbil-lang)))
-      (case lang
-        ((gerbil)
-         (gx#eval-syntax '(import :gerbil/core)))
-        ((polydactyl)
-         (gx#eval-syntax '(import :gerbil/polydactyl))
-         (set! +readtable+ (gx#eval-syntax '|gerbil/polydactyl[1]#*readtable*|)))
-        ((r7rs)
-         (gx#eval-syntax '(import :scheme/r7rs :scheme/base)))
-        (else
-         (gx#eval-syntax `(import ,lang))))))
+    (gx#eval-syntax '(import :gerbil/core)))
   (when hook-expander?
     ;; avoid loops from phi evals
     (gx#current-expander-compile _gx#compile-top-source)
@@ -73,24 +59,11 @@
     (for-each
       (lambda (port)
         (output-port-readtable-set! port
-         (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
+                                    (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
       (list ##stdout-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
-  (define (load-init init.ss)
-    ;; load gerbil interactive init
-    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME" __gx#default-gerbil-home))))
-      (gx#eval-syntax `(include ,init-file)))
-    ;; if it exists, load user's ~/.gerbil/init.ss
-    (let ((init-file (string-append "~/.gerbil/" init.ss)))
-      (if (file-exists? init-file)
-        (gx#eval-syntax `(include ,init-file)))))
-
-  (case (gerbil-lang)
-    ((gerbil polydactyl)
-     (load-init "init.ss"))
-    ((r7rs)
-     (load-init "r7rs-init.ss"))))
+  (void))
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
 (define (load-scheme path)
@@ -305,3 +278,61 @@
     (else (void)))
   (cond
    ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf e)))))
+
+;; executable setup
+(define (gerbil-runtime-init! builtin-modules)
+  (let* ((home
+          (path-normalize
+           (cond
+            ((getenv "GERBIL_HOME" __gx#default-gerbil-home))
+            (else
+             (error "Cannot determine GERBIL_HOME")))))
+         (libdir (path-expand "lib" home))
+         (loadpath
+          (cond
+           ((getenv "GERBIL_LOADPATH" #f)
+            => (lambda (envvar)
+                 (filter (lambda (x) (not (string-empty? x)))
+                         (string-split envvar #\:))))
+           (else '())))
+         (userpath
+          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
+         (loadpath
+          (cons userpath loadpath)))
+    (&current-module-libpath (cons libdir loadpath)))
+
+  (let* ((registry-entry (lambda (m) (cons m 'builtin)))
+         (runtime-modules '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc"))
+         (module-registry
+         (let lp ((rest builtin-modules) (registry '()))
+           (core-match rest
+             ((mod . rest)
+              (lp rest
+                  (cons* (registry-entry (string-append mod "__0"))
+                         (registry-entry (string-append mod "__rt"))
+                         registry)))
+             (else
+              (list->hash-table
+               (append (map registry-entry runtime-modules)
+                       registry)))))))
+    (&current-module-registry module-registry))
+
+  (current-readtable _gx#*readtable*)
+  (set! ##display-exception-hook _gx#display-exception))
+
+;; expander loading hook
+(define _gx#expander-loaded #f)
+
+(define (gerbil-load-expander!)
+  (unless _gx#expander-loaded
+    (_gx#load-gxi)
+    ;; and make it idempotent
+    (set! _gx#expander-loaded #t)))
+
+;; define this for compatibility with existing (older) dynamic exe code
+(define (_gx#load-expander!)
+  (gerbil-load-expander!))
+
+;; home sweet home
+(define (gerbil-home)
+  (getenv "GERBIL_HOME" __gx#default-gerbil-home))

@@ -3,6 +3,7 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#apply-collect-mutators (@lambda (1) #f))
+  (declare-type gxc#apply-collect-methods (@lambda (1) #f))
   (declare-type gxc#apply-expression-subst (@lambda (1) #f))
   (declare-type gxc#apply-expression-subst* (@lambda (1) #f))
   (declare-type gxc#apply-find-var-refs (@lambda (1) #f))
@@ -23,6 +24,7 @@ package: gerbil/compiler
   (declare-type gxc#xform-call% (@lambda (1) #f))
   (declare-type gxc#xform-setq% (@lambda (1) #f))
   (declare-type gxc#collect-mutators-setq% (@lambda 1 #f))
+  (declare-type gxc#collect-methods-call% (@lambda 1 #f))
   (declare-type gxc#expression-subst-ref% (@lambda 3 #f))
   (declare-type gxc#expression-subst*-ref% (@lambda 2 #f))
   (declare-type gxc#expression-subst-setq% (@lambda 3 #f))

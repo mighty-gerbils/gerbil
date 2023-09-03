@@ -54,11 +54,10 @@
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_TARGET")))
 
-(def (compile1 modf debug optimize? gen-ssxi? static?)
+(def (compile1 modf debug optimize? gen-ssxi?)
   (displayln "... compile " modf)
-  (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
-                      debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: static?
-                      gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
+  (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
+                        debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: #t]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
   ;; TODO: parallelize, but with the correct dependencies -- instead of "false",
@@ -73,11 +72,11 @@
 ;; initialize optimizer and preload core.ssxi so that we have core visibility
 (gxc#optimizer-info-init!)
 (gx#import-module "gerbil/prelude/core.ssxi.ss" #t #t)
-;; compile expander first so that prelude macros have expander visibility; no static
-(compile-group gerbil-modules-expander debug-none #t #t #f)
+;; compile expander first so that prelude macros have expander visibility
+(compile-group gerbil-modules-expander debug-none #t #t)
 ;; compile core prelude; don't clobber core.ssxi
-(compile-group gerbil-prelude-core debug-none #t #f #t)
+(compile-group gerbil-prelude-core debug-none #t #f)
 ;; compile gambit prelude
-(compile-group gerbil-prelude-gambit debug-none #t #t #t)
-;; compile compiler; no static
-(compile-group gerbil-modules-compiler debug-none #t #t #f)
+(compile-group gerbil-prelude-gambit debug-none #t #t)
+;; compile compiler
+(compile-group gerbil-modules-compiler debug-none #t #t)

@@ -13,9 +13,6 @@ src/TAGS
 doc/node_modules
 doc/.vuepress/dist
 src/gerbil/runtime/gx-version.scm
-src/gerbil/gxi
+src/gerbil/boot-gxi
 
-src/tutorial/lang/build-deps
-src/tutorial/proxy/build-deps
-src/tutorial/proxy/socks-proxy
-src/tutorial/proxy/tcp-proxy
+build-deps

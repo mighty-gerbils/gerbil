@@ -28,6 +28,30 @@ package: gerbil/compiler
    optimize-call
    gxc#!struct-setf::optimize-call
    #f)
+  (declare-type gxc#!class-pred::optimize-call (@lambda 3 #f))
+  (declare-method
+   gxc#!class-pred::t
+   optimize-call
+   gxc#!class-pred::optimize-call
+   #f)
+  (declare-type gxc#!class-cons::optimize-call (@lambda 3 #f))
+  (declare-method
+   gxc#!class-cons::t
+   optimize-call
+   gxc#!class-cons::optimize-call
+   #f)
+  (declare-type gxc#!class-getf::optimize-call (@lambda 3 #f))
+  (declare-method
+   gxc#!class-getf::t
+   optimize-call
+   gxc#!class-getf::optimize-call
+   #f)
+  (declare-type gxc#!class-setf::optimize-call (@lambda 3 #f))
+  (declare-method
+   gxc#!class-setf::t
+   optimize-call
+   gxc#!class-setf::optimize-call
+   #f)
   (declare-type gxc#!lambda::optimize-call (@lambda 3 #f))
   (declare-method gxc#!lambda::t optimize-call gxc#!lambda::optimize-call #f)
   (declare-type gxc#!case-lambda::optimize-call (@lambda 3 #f))

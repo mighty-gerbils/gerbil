@@ -10,7 +10,7 @@
 (def this-directory
   (path-expand (path-directory (this-source-file))))
 
-(def (compile-lib source . opts)
+(def (compile-module source . opts)
   (displayln "compile " source)
   (let (proc (open-process
               [path: "gxc" arguments: ["-O" opts ... source]
@@ -43,23 +43,18 @@
   (test-suite "executable compilation"
     (def program-source-file
       (path-expand "test-program.ss" this-directory))
-    (def lib-source-file
+    (def module-source-file
       (path-expand "test-lib.ss" this-directory))
 
     (test-case "library module"
-      (check (compile-lib lib-source-file) => 0))
+      (check (compile-module module-source-file) => 0))
 
-    (test-case "static executable"
+    (test-case "executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".bin"))
         (check (compile-exe program-source-file bin) => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
 
-    (test-case "optimized static executable"
+    (test-case "optimized executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".opt-bin"))
         (check (compile-exe program-source-file bin "-full-program-optimization") => 0)
-        (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
-
-    (test-case "dynamic executable"
-      (let (bin (string-append (path-strip-extension program-source-file) ".dyn-bin"))
-        (check (compile-exe program-source-file bin "-dynamic") => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))))

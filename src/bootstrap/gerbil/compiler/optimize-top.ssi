@@ -9,6 +9,18 @@ namespace: gxc
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)
+         (%#define-runtime
+          &collect-top-level-type-info
+          gxc#&collect-top-level-type-info)
+         (%#define-runtime
+          apply-collect-top-level-type-info
+          gxc#apply-collect-top-level-type-info)
+         (%#define-runtime
+          &basic-expression-top-level-type
+          gxc#&basic-expression-top-level-type)
+         (%#define-runtime
+          apply-basic-expression-top-level-type
+          gxc#apply-basic-expression-top-level-type)
          (%#define-runtime &collect-type-info gxc#&collect-type-info)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
          (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
@@ -17,6 +29,9 @@ namespace: gxc
           gxc#apply-basic-expression-type)
          (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
+         (%#define-runtime
+          collect-top-level-type-define-values%
+          gxc#collect-top-level-type-define-values%)
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
@@ -84,6 +99,36 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-make-struct-field-unchecked-mutator
           gxc#basic-expression-type-make-struct-field-unchecked-mutator)
+         (%#define-runtime
+          basic-expression-type-make-class-type
+          gxc#basic-expression-type-make-class-type)
+         (%#define-runtime
+          basic-expression-type-make-class-predicate
+          gxc#basic-expression-type-make-class-predicate)
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-class-slot-accessor__%
+                   gxc#basic-expression-type-make-class-slot-accessor__%)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-class-slot-accessor__0
+                            gxc#basic-expression-type-make-class-slot-accessor__0)
+                           (%#define-runtime
+                            basic-expression-type-make-class-slot-accessor
+                            gxc#basic-expression-type-make-class-slot-accessor)))
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-class-slot-mutator__%
+                   gxc#basic-expression-type-make-class-slot-mutator__%)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-class-slot-mutator__0
+                            gxc#basic-expression-type-make-class-slot-mutator__0)
+                           (%#define-runtime
+                            basic-expression-type-make-class-slot-mutator
+                            gxc#basic-expression-type-make-class-slot-mutator)))
+         (%#define-runtime
+          basic-expression-type-make-class-slot-unchecked-accessor
+          gxc#basic-expression-type-make-class-slot-unchecked-accessor)
+         (%#define-runtime
+          basic-expression-type-make-class-slot-unchecked-mutator
+          gxc#basic-expression-type-make-class-slot-unchecked-mutator)
          (%#define-runtime
           basic-expression-type-ref%
           gxc#basic-expression-type-ref%)

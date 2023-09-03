@@ -42,6 +42,7 @@ namespace: gxc
          (%#define-runtime
           current-compile-timestamp
           gxc#current-compile-timestamp)
+         (%#define-runtime current-compile-decls gxc#current-compile-decls)
          (%#define-runtime symbol-table::t gxc#symbol-table::t)
          (%#define-runtime symbol-table? gxc#symbol-table?)
          (%#define-runtime make-symbol-table gxc#make-symbol-table)

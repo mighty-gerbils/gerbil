@@ -173,7 +173,9 @@ package: gerbil/expander
     (1 gx#local-context:::init!__0)
     (2 gx#local-context:::init!__%)))
   (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
-  (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
+  (declare-type
+   gx#binding::t
+   (@struct-type gx#binding::t #f 3 #f ((transparent: . #t))))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
   (declare-type gx#make-binding (@struct-cons gx#binding::t))
   (declare-type gx#binding-id (@struct-getf gx#binding::t 0 #f))
@@ -190,22 +192,42 @@ package: gerbil/expander
   (declare-type gx#&binding-phi-set! (@struct-setf gx#binding::t 2 #t))
   (declare-type
    gx#runtime-binding::t
-   (@struct-type gx#runtime-binding::t gx#binding::t 0 #f ()))
+   (@struct-type
+    gx#runtime-binding::t
+    gx#binding::t
+    0
+    #f
+    ((transparent: . #t))))
   (declare-type gx#runtime-binding? (@struct-pred gx#runtime-binding::t))
   (declare-type gx#make-runtime-binding (@struct-cons gx#runtime-binding::t))
   (declare-type
    gx#local-binding::t
-   (@struct-type gx#local-binding::t gx#runtime-binding::t 0 #f ()))
+   (@struct-type
+    gx#local-binding::t
+    gx#runtime-binding::t
+    0
+    #f
+    ((transparent: . #t))))
   (declare-type gx#local-binding? (@struct-pred gx#local-binding::t))
   (declare-type gx#make-local-binding (@struct-cons gx#local-binding::t))
   (declare-type
    gx#top-binding::t
-   (@struct-type gx#top-binding::t gx#runtime-binding::t 0 #f ()))
+   (@struct-type
+    gx#top-binding::t
+    gx#runtime-binding::t
+    0
+    #f
+    ((transparent: . #t))))
   (declare-type gx#top-binding? (@struct-pred gx#top-binding::t))
   (declare-type gx#make-top-binding (@struct-cons gx#top-binding::t))
   (declare-type
    gx#module-binding::t
-   (@struct-type gx#module-binding::t gx#top-binding::t 1 #f ()))
+   (@struct-type
+    gx#module-binding::t
+    gx#top-binding::t
+    1
+    #f
+    ((transparent: . #t))))
   (declare-type gx#module-binding? (@struct-pred gx#module-binding::t))
   (declare-type gx#make-module-binding (@struct-cons gx#module-binding::t))
   (declare-type
@@ -216,12 +238,22 @@ package: gerbil/expander
    (@struct-setf gx#module-binding::t 0 #f))
   (declare-type
    gx#extern-binding::t
-   (@struct-type gx#extern-binding::t gx#top-binding::t 0 #f ()))
+   (@struct-type
+    gx#extern-binding::t
+    gx#top-binding::t
+    0
+    #f
+    ((transparent: . #t))))
   (declare-type gx#extern-binding? (@struct-pred gx#extern-binding::t))
   (declare-type gx#make-extern-binding (@struct-cons gx#extern-binding::t))
   (declare-type
    gx#syntax-binding::t
-   (@struct-type gx#syntax-binding::t gx#binding::t 1 #f ((final: . #t))))
+   (@struct-type
+    gx#syntax-binding::t
+    gx#binding::t
+    1
+    #f
+    ((final: . #t) (transparent: . #t))))
   (declare-type gx#syntax-binding? (@struct-pred gx#syntax-binding::t))
   (declare-type gx#make-syntax-binding (@struct-cons gx#syntax-binding::t))
   (declare-type gx#syntax-binding-e (@struct-getf gx#syntax-binding::t 0 #f))
@@ -234,7 +266,12 @@ package: gerbil/expander
    (@struct-setf gx#syntax-binding::t 0 #t))
   (declare-type
    gx#import-binding::t
-   (@struct-type gx#import-binding::t gx#binding::t 3 #f ((final: . #t))))
+   (@struct-type
+    gx#import-binding::t
+    gx#binding::t
+    3
+    #f
+    ((final: . #t) (transparent: . #t))))
   (declare-type gx#import-binding? (@struct-pred gx#import-binding::t))
   (declare-type gx#make-import-binding (@struct-cons gx#import-binding::t))
   (declare-type gx#import-binding-e (@struct-getf gx#import-binding::t 0 #f))
@@ -271,7 +308,12 @@ package: gerbil/expander
    (@struct-setf gx#import-binding::t 2 #t))
   (declare-type
    gx#alias-binding::t
-   (@struct-type gx#alias-binding::t gx#binding::t 1 #f ((final: . #t))))
+   (@struct-type
+    gx#alias-binding::t
+    gx#binding::t
+    1
+    #f
+    ((final: . #t) (transparent: . #t))))
   (declare-type gx#alias-binding? (@struct-pred gx#alias-binding::t))
   (declare-type gx#make-alias-binding (@struct-cons gx#alias-binding::t))
   (declare-type gx#alias-binding-e (@struct-getf gx#alias-binding::t 0 #f))

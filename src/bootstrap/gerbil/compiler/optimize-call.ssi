@@ -24,6 +24,18 @@ namespace: gxc
          (%#define-runtime
           !struct-setf::optimize-call
           gxc#!struct-setf::optimize-call)
+         (%#define-runtime
+          !class-pred::optimize-call
+          gxc#!class-pred::optimize-call)
+         (%#define-runtime
+          !class-cons::optimize-call
+          gxc#!class-cons::optimize-call)
+         (%#define-runtime
+          !class-getf::optimize-call
+          gxc#!class-getf::optimize-call)
+         (%#define-runtime
+          !class-setf::optimize-call
+          gxc#!class-setf::optimize-call)
          (%#define-runtime !lambda::optimize-call gxc#!lambda::optimize-call)
          (%#define-runtime
           !case-lambda::optimize-call
