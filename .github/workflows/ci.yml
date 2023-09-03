@@ -6,66 +6,37 @@ jobs:
     strategy:
       fail-fast: false  # if one fails, do not cancel the other
       matrix:
-        gambit-version: ['v4.9.5', 'v4.9.4', 'master']
+        gambit-version: ['v4.9.5', 'master']
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
-      - uses: actions/checkout@v2
-        with:
-          repository: 'gambit/gambit'
-          ref: ${{ matrix.gambit-version }}
-          fetch-depth: 0  # Checkout history and tags
-          path: 'gambit-src'
-        if: steps.cache-gambit.outputs.cache-hit != 'true'
-      - name: Get Gambit version
-        id: get-gambit-version
-        run: |
-          cd gambit-src
-          echo "::set-output name=gambit-version::$(git rev-parse HEAD)"
-        shell: bash
-      - uses: actions/cache@v2
-        name: Cache gambit
-        id: cache-gambit
-        with:
-          path: 'gambit'
-          key: ${{ runner.os }}-gambit-${{ steps.get-gambit-version.outputs.gambit-version }}
-      - name: Build and install Gambit
-        if: ${{ !steps.cache-gambit.outputs.cache-hit }}
-        run: |
-          cd gambit-src
-          export LDFLAGS="-lm"
-          ./configure 'LIBS=-lm' --prefix=${GITHUB_WORKSPACE}/gambit --enable-single-host --enable-targets=""
-          make clean
-          make
-          make install
-      - name: Setup links to Gambit executables
-        run: |
-          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsi /bin/gsi
-          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsi-script /bin/gsi-script
-          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsc /bin/gsc
-          gsi -v
-          gsi-script -v
-          gsc -v
-      - name: Setup Gerbil build
+      - name: Configure Gerbil
+        run: ./configure --prefix=/opt/gerbil --with-gambit=${{ matrix.gambit-version }}
+      - name: Create Gerbil version
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
+      - name: Prepare Build
+        run: ./src/build.sh prepare
+      - name: Build Gambit
+        run: ./src/build.sh gambit
       - name: Build Gerbil boot gxi
         run: ./src/build.sh boot-gxi
       - name: Build Gerbil stage0
         run: ./src/build.sh stage0
-      - name: Build Gerbil stage1 final
-        run: ./src/build.sh stage1 final
+      - name: Build Gerbil stage1
+        run: ./src/build.sh stage1
       - name: Build Gerbil stdlib
         run: ./src/build.sh stdlib
       - name: Build Gerbil libgerbil
         run: ./src/build.sh libgerbil
       - name: Build Gerbil lang
         run: ./src/build.sh lang
+      - name: Build Gerbil r7rs-large
+        run: ./src/build.sh r7rs-large
       - name: Build Gerbil tools
         run: ./src/build.sh tools
       - name: Run Gerbil tests
         run: |
-          export GERBIL_HOME=${GITHUB_WORKSPACE}
-          export PATH=${GITHUB_WORKSPACE}/bin:$PATH
+          export PATH=/opt/gerbil/bin:$PATH
           gxtest src/gerbil/test/...
           gxtest src/std/...
