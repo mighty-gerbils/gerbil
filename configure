@@ -19,7 +19,7 @@ std_disable_feature() {
     std_patch_feature "s/$1 #t/$1 #f"
 }
 
-readonly gerbil_version=v0.18-DEV
+readonly gerbil_version="v$(git describe --tags --always)"
 
 prefix="/opt/gerbil"
 gambit_tag=v4.9.5
