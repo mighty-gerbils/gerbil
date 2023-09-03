@@ -3,18 +3,22 @@
 ;;; script to build "BACH", the universal gerbil binary
 (import :gerbil/compiler)
 
-(def default-gerbil-gsc "gsc")
+(def build-home
+  (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+
+(def default-gerbil-gsc
+  (path-expand "bin/gsc" build-home))
 
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" default-gerbil-gsc))
 
 (def gerbil-bindir
-  (path-expand "bin" (getenv "GERBIL_TARGET")))
+  (path-expand "bin" build-home))
 (def gerbil-libdir
-  (path-expand "lib" (getenv "GERBIL_TARGET")))
+  (path-expand "lib" build-home))
 
 (def gambit-libdir
-  (path-expand "~~lib"))
+  (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
 (def gerbil-runtime
   '("gx-gambc0"
@@ -95,11 +99,14 @@
        (bach-main-scm (static-file-name bach-main))
        (gx-gambc-macros (static-file-name "gx-gambc#"))
        (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+       (gambit-sharp (path-expand "_gambit#.scm" gerbil-libdir))
+       (include-gambit-sharp
+        (string-append "(include \"" gambit-sharp "\")"))
        (gsc-gx-macros
         (if (gerbil-runtime-smp?)
           ["-e" "(define-cond-expand-feature|enable-smp|)"
-           "-e" include-gx-gambc-macros]
-          ["-e" include-gx-gambc-macros]))
+           "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
+          ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
        (gsc-runtime-args
         "-:i8,f8,-8,t8")
        (output-bin

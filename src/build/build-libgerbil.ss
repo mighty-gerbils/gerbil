@@ -13,7 +13,11 @@
 
 (include "../std/build-spec.ss")
 
-(def default-gerbil-gsc "gsc")
+(def build-home
+  (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+
+(def default-gerbil-gsc
+  (path-expand "bin/gsc" build-home))
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
 (def default-ld-options "-ldl -lm")
@@ -250,7 +254,7 @@
 (def (gerbil-lib-dir)
   (unless +gerbil-lib-dir+
     (set! +gerbil-lib-dir+
-      (path-expand "lib" (gerbil-home))))
+      (path-expand "lib" build-home)))
   +gerbil-lib-dir+)
 
 (def +gerbil-static-dir+ #f)
@@ -317,11 +321,14 @@
          (link-o-path (module-o-file link-c-path))
          (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
          (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+         (gambit-sharp (library-file-path "_gambit#.scm"))
+         (include-gambit-sharp
+          (string-append "(include \"" gambit-sharp "\")"))
          (gsc-gx-macros
           (if (gerbil-runtime-smp?)
             ["-e" "(define-cond-expand-feature|enable-smp|)"
-             "-e" include-gx-gambc-macros]
-            ["-e" include-gx-gambc-macros]))
+             "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
+            ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
          (libgerbil

@@ -7,6 +7,6 @@
     "gxtags"
     "gxpkg"
     "gxtest")
-  libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
-  bindir: (path-expand "bin" (getenv "GERBIL_HOME"))
+  libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+  bindir: (path-expand "bin" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
   debug: #f)

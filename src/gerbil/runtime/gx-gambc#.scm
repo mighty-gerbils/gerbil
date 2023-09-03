@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil stage0 -- Gambit-C macros
 (##namespace (""))
-(include "~~lib/_gambit#.scm")
+;; (include "~~lib/_gambit#.scm")
 
 ;;; shims to ensure inlining of low level primitives
 (define-macro (%%apply . args)

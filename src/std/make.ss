@@ -593,12 +593,17 @@ TODO:
     identity)))
 
 (def (include-gambit-sharp)
-  (cond
-   ((gerbil-runtime-smp?)
-    '("-e" "(define-cond-expand-feature|enable-smp|)"
-      "-e" "(include \"~~lib/_gambit#.scm\")"))
-   (else
-    '("-e" "(include \"~~lib/_gambit#.scm\")"))))
+  (let* ((gambit-sharp
+          (path-expand "lib/_gambit#.scm"
+                       (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
+         (include-gambit-sharp
+          (string-append "(include \"" gambit-sharp "\")")))
+    (cond
+     ((gerbil-runtime-smp?)
+      `("-e" "(define-cond-expand-feature|enable-smp|)"
+        "-e" ,include-gambit-sharp))
+     (else
+      `("-e" ,include-gambit-sharp)))))
 
 (def (build spec settings)
   (match spec

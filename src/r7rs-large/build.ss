@@ -45,5 +45,5 @@
     "scheme/vector/c128"
     "scheme/show"
     )
-  libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
+  libdir: (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
   debug: 'src)

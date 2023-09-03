@@ -9,7 +9,8 @@
   (standard-bindings)
   (extended-bindings))
 
-(define __gx#default-gerbil-home #f)
+(define __gx#default-gerbil-home
+  (path-expand "~~"))
 
 (define _gx#loading-scheme-source
   (make-parameter #f))
@@ -47,8 +48,6 @@
     (gx#current-expander-compile _gx#compile-top-source)
     ;; hook the expander
     (set! ##expand-source _gx#expand-source)
-    (unless _gx#real-macro-descr
-      (set! _gx#real-macro-descr ##macro-descr))
     (set! ##macro-descr _gx#macro-descr)
     ;; hook the readtables
     (set! ##main-readtable _gx#*readtable*)
@@ -62,6 +61,7 @@
                                     (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
       (list ##stdout-port ##console-port))))
 
+;; bootstrap compatibility shim
 (define (_gx#gxi-init-interactive! cmdline)
   (void))
 
@@ -88,13 +88,13 @@
 
 (define (add-library-load-path . paths)
   (let* ((current (&current-module-libpath))
-         (paths (map path-normalize paths))
+         (paths (map path-expand paths))
          (paths (filter (lambda (x) (not (member x current))) paths)))
     (&current-module-libpath (append current paths))))
 
 (define (add-expander-load-path . paths)
   (let* ((current (gx#current-expander-module-library-path))
-         (paths (map path-normalize paths))
+         (paths (map path-expand paths))
          (paths (filter (lambda (x) (not (member x current))) paths)))
     (gx#current-expander-module-library-path (append current paths))))
 
@@ -104,12 +104,12 @@
 
 (define (cons-library-load-path . paths)
   (let ((current (&current-module-libpath))
-        (paths (map path-normalize paths)))
+        (paths (map path-expand paths)))
     (&current-module-libpath (append paths current))))
 
 (define (cons-expander-load-path . paths)
   (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-normalize paths)))
+        (paths (map path-expand paths)))
     (gx#current-expander-module-library-path (append paths current))))
 
 (define (with-cons-load-path thunk . paths)
@@ -119,13 +119,13 @@
 
 (define (with-cons-library-load-path thunk . paths)
   (let ((current (&current-module-libpath))
-        (paths (map path-normalize paths)))
+        (paths (map path-expand paths)))
     (parameterize ((&current-module-libpath (append paths current)))
       (thunk))))
 
 (define (with-cons-expander-load-path thunk . paths)
   (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-normalize paths)))
+        (paths (map path-expand paths)))
     (parameterize ((gx#current-expander-module-library-path (append paths current)))
       (thunk))))
 
@@ -155,11 +155,30 @@
 ;; hook to make gambit macro expansion work with a hooked expander
 ;; ##macro-descr recurses into the expander through ##eval-top,
 ;; which breaks begin-foreign
-(define _gx#real-macro-descr #f)
+(define (_gx#macro-descr src def-syntax?)
+  (define (fail!)
+    (##raise-expression-parsing-exception
+     'ill-formed-macro-transformer
+     src))
 
-(define (_gx#macro-descr . args)
-  (parameterize ((_gx#loading-scheme-source 'macro))
-    (apply _gx#real-macro-descr args)))
+  (define (make-descr size)
+    (let ((expander
+           (parameterize ((_gx#loading-scheme-source 'macro))
+             (##eval-top src ##interaction-cte))))
+      (if (procedure? expander)
+        (##make-macro-descr def-syntax? size expander src)
+        (fail!))))
+
+  (if def-syntax?
+    (make-descr -1)
+    (let ((code (##source-code src)))
+      (if (and (##pair? code)
+               (##memq (##source-code (##sourcify (##car code) src))
+                       '(##lambda lambda)))
+        (begin
+          (##shape src src -3)
+          (make-descr (##form-size (##sourcify (##cadr code) src))))
+        (fail!)))))
 
 (define-macro (%make-AST e source)
   `(##structure AST::t ,e ,source))
@@ -281,12 +300,7 @@
 
 ;; executable setup
 (define (gerbil-runtime-init! builtin-modules)
-  (let* ((home
-          (path-normalize
-           (cond
-            ((getenv "GERBIL_HOME" __gx#default-gerbil-home))
-            (else
-             (error "Cannot determine GERBIL_HOME")))))
+  (let* ((home (gerbil-home))
          (libdir (path-expand "lib" home))
          (loadpath
           (cond
@@ -321,13 +335,13 @@
   (set! ##display-exception-hook _gx#display-exception))
 
 ;; expander loading hook
-(define _gx#expander-loaded #f)
+(define __gx#expander-loaded #f)
 
 (define (gerbil-load-expander!)
-  (unless _gx#expander-loaded
+  (unless __gx#expander-loaded
     (_gx#load-gxi)
     ;; and make it idempotent
-    (set! _gx#expander-loaded #t)))
+    (set! __gx#expander-loaded #t)))
 
 ;; define this for compatibility with existing (older) dynamic exe code
 (define (_gx#load-expander!)
