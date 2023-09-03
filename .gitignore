@@ -16,3 +16,4 @@ src/gerbil/runtime/gx-version.scm
 src/gerbil/boot-gxi
 
 build-deps
+build-env.sh
