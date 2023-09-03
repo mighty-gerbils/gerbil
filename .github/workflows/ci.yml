@@ -13,28 +13,50 @@ jobs:
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
       - name: Configure Gerbil
         run: ./configure --prefix=/opt/gerbil --with-gambit=${{ matrix.gambit-version }}
-      - name: Create Gerbil version
+      - name: Create Gerbil version file
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
       - name: Prepare Build
-        run: ./src/build.sh prepare
+        run: |
+           . ./build-env.sh
+           ./src/build.sh prepare
       - name: Build Gambit
-        run: ./src/build.sh gambit
+        run: |
+           . ./build-env.sh
+           ./src/build.sh gambit
       - name: Build Gerbil boot gxi
-        run: ./src/build.sh boot-gxi
+        run: |
+           . ./build-env.sh
+           ./src/build.sh boot-gxi
       - name: Build Gerbil stage0
-        run: ./src/build.sh stage0
+        run: |
+          . ./build-env.sh
+          ./src/build.sh stage0
       - name: Build Gerbil stage1
-        run: ./src/build.sh stage1
+        run: |
+          . ./build-env.sh
+          ./src/build.sh stage1
       - name: Build Gerbil stdlib
-        run: ./src/build.sh stdlib
+        run: |
+          . ./build-env.sh
+          ./src/build.sh stdlib
       - name: Build Gerbil libgerbil
-        run: ./src/build.sh libgerbil
+        run: |
+          . ./build-env.sh
+          ./src/build.sh libgerbil
       - name: Build Gerbil lang
-        run: ./src/build.sh lang
+        run: |
+          . ./build-env.sh
+          ./src/build.sh lang
       - name: Build Gerbil r7rs-large
-        run: ./src/build.sh r7rs-large
+        run: |
+          . ./build-env.sh
+          ./src/build.sh r7rs-large
       - name: Build Gerbil tools
-        run: ./src/build.sh tools
+        run: |
+          . ./build-env.sh
+          ./src/build.sh tools
+      - name: Install Gerbil
+        run: ./install.sh
       - name: Run Gerbil tests
         run: |
           export PATH=/opt/gerbil/bin:$PATH
