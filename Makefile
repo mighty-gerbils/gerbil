@@ -7,6 +7,6 @@ install:
 	./install.sh
 
 clean:
-	cd src/gambit && make clean
 	rm -rf build
 	rm -rf bootstrap
+	cd src/gambit && make clean
