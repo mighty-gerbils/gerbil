@@ -17,11 +17,7 @@ readonly GERBIL_BASE="$(dirname "${GERBIL_SOURCE}")"
 readonly GERBIL_STAGE0="${GERBIL_BASE}/bootstrap"
 
 ## Build Environment
-if [ -z "${DESTDIR}" ]; then
-    GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
-else
-    GERBIL_BUILD_PREFIX="${DESTDIR}"
-fi
+GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
 export GERBIL_BUILD_PREFIX
 
 GERBIL_LOADPATH="${GERBIL_BUILD_PREFIX}/lib"
