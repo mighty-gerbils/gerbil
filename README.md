@@ -37,6 +37,13 @@ $ sudo make install
 This will install Gerbil in `/opt/gerbil`; all you have to do then is
 add `/opt/gerbil/bin` to your path.
 
+**Note** the default configuration has some dependencies you may need
+to install: sqlite, zlib, and libcrypto/openssl.
+You can install them in ubuntu with:
+```shell
+$ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
+```
+
 For more detailed installation instructions see the [Guide](https://cons.io/guide/).
 
 # Using Gerbil
