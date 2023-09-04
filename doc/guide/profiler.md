@@ -1,10 +1,15 @@
 # The Gerbil Profiler
 
-Gerbil ships with a basic profiler tool, gxprof. The tool can profile dynamically compiled executable modules, by running them with an interrupt handler that samples the current continuation on every scheduler heartbeat.
+Gerbil ships with a basic profiler tool, `gerbil prof` or just
+`gxprof`. The tool can profile dynamically compiled executable
+modules, by running them with an interrupt handler that samples the
+current continuation on every scheduler heartbeat.
+
+**Note** The tool is very basic at the moment.
 
 To invoke:
 ```bash
-gxprof :your/module arg ...
+gxprof :your/executable-module arg ...
 ```
 
 This will run the main function in `:your/module` with the given arguments. The function is run to completion, at which point the profiler writes the captured continuation samples in gxprof.out in the current directory.

@@ -14,7 +14,7 @@ Tests can also optionally export `test-setup!` and `test-cleanup!` thunks:
 - `test-cleanup!` will be executed (with unwind protection) when all the test suites in the
   file have run.
 
-Once your tests are in place, you can run them using `gxtest`.
+Once your tests are in place, you can run them using `gerbil test` or just `gxtest`.
 If you invoke it without arguments it will run all the test files in the current directory.
 You can also explicitly pass files or directories to be run, and if you want to run tests
 in a directory recursively you can append `/...` in the directory.
