@@ -754,18 +754,12 @@ $ gxc -d your-library-path example/util.ss
 ### Executable Modules
 
 The gerbil compiler can also create executables that invoke the main
-function of a module.  The generated executables only load runtime
-dependencies without linking and initializing the expander, resulting
-in significantly faster load times compared to wrapper scripts.
-
-Note that by default, the executable is linked dynamically:
-the module is still compiled as a dynamic loadable module
-and must be available in the gerbil library path for the executable
-to work.
+function of a module.
 
 For example, suppose we have a module example/hello.ss that we
 want to compile as an executable module:
 ```
+$ mkdir example
 $ cat > example/gerbil.pkg <<EOF
 (package: example)
 EOF
@@ -796,36 +790,35 @@ $ ./hello
 hello world
 ```
 
-You can also compile the executable with dynamic linkage, which requires
-a local gerbil installation at runtime.
+You can also compile the module dynamically so that it can be executed with the `gerbil` program:
 ```
-$ gxc -O -dynamic -exe -o hello example/hello.ss
-$ ./hello
+$ gxc -O example/hello.ss
+$ gerbil :example/hello
 hello world
 ```
 
 The difference between the 3 executable compilation modes can be summarized as follows:
-- By default, a statically linked executable is generated, linking to the precompiled
-  gerbil standard library. If the system was configured with `--enable-shared`, then this
+- By default, an compiles with separate module compilation and links to the precompiled
+  gerbil library (`libgerbil`).
+  If the system was configured with `--enable-shared`, then this
   will be a shared library; otherwise it will be a static library archive.
-  Note that the executable may some have additionl dynamic library
+  Note that the executable may have some additionl dynamic library
   dependencies from stdlib foreign code , and also links to `libgambit` which will be
   a shared library when the system is configured with `--enable-shared`.
 - When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
   full program optimization with all gerbil library dependencies. This will result
-  both in better performance, albeit at the cost of increased compilation time;
+  in better performance, albeit at the cost of increased compilation time;
   this can be minutes for complex programs, while
-  separately linked executables compile in a second. Furthermore, because
+  separately linked executables compile in second(s). Furthermore, because
   dependencies are compiled in together, you can apply declarations like `(not safe)`
   to the whole program using the `-prelude` directive. This can result
   in potentially significant performance gains at the expense of safety.
-- When `-dynamic` is passed to `gxc`, then a dynamic executable stub will be generated,
-  which will depend on the Gerbil runtime environment being present at execution time.
-  Dynamic executables are very useful for development and do have some advantages over
-  static executables:
-  - they compile instantly and are tiny
-  - they can use the expander and the compiler; note that this restriction will be
-    lifted from static executables in a future release.
+  Note that an executable compiled with full program optimization still links to `libgambit`.
+- An executable module can also be compiled as a plain dynamic module and then
+  executed with the `gerbil` universal binary.
+  This dynamic mode of executables is useful for development, as they compile
+  instantly and do not need to be recompiled while you are working on their
+  dependencies.
 
 ### Prelude Modules and Custom Languages
 

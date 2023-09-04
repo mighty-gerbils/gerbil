@@ -14,6 +14,7 @@ You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and add
 You should further utilize Gambit's inferior mode, as it offers debugger integration with sources on emacs.
 It lives in [$GAMBIT_HOME/share/emacs/site-lisp/gambit.el](https://github.com/gambit/gambit/blob/master/misc/gambit.el).
 
+
 You can add it to your autoload path and then add this to your `.emacs`:
 ```
 (require 'gambit)
@@ -23,11 +24,14 @@ You can add it to your autoload path and then add this to your `.emacs`:
 You can then make `gxi` your scheme program by setting `scheme-program-name`:
 ```
 (defvar gerbil-program-name
-  (expand-file-name "~/gerbil/bin/gxi")) ; Set this for your GERBIL_HOME
+  (expand-file-name "/opt/gerbil/bin/gxi")) ; Set this for your GERBIL_HOME
 (setq scheme-program-name gerbil-program-name)
 ```
 
 And you can now run Gerbil with `M-x run-scheme`.
+
+Note that both `gerbil-mode.el` and `gambit.el` are installed by
+default in `GERBIL_HOME/share/emacs/site-lisp` when installing gerbil.
 
 N.B. Up to v0.16 the editing mode file was gerbil.el. After `v0.16-48-g46f10016`, gerbil mode has been migrated to gerbil-mode.el; see [#510](https://github.com/vyzo/gerbil/issues/510) for migrating.
 

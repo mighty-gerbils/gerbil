@@ -2,22 +2,8 @@
 
 Gerbil uses a few environment variables, which affect the behaviour of the runtime
 and toolchain:
-- `GERBIL_HOME`
 - `GERBIL_PATH`
 - `GERBIL_LOADPATH`
-
-## GERBIL_HOME
-
-This is the root of your Gerbil installation.
-
-The runtime expects the gerbil system modules to be located in
-`$GERBIL_HOME/lib`, which is set as the first component of the runtime
-load path. The compiler also expects to find system static compilation
-artifacts there.
-
-This variable must be set for dynamic executables to be able to load
-the runtime.  `gxi` and `gxc` can deduce it automatically from their
-installation path if it's not set.
 
 ## GERBIL_PATH
 
@@ -40,14 +26,6 @@ runtime load path.  You can use this for loading site specific
 libraries. By default it's unset, which is equivalent to an empty
 value.
 
-## GERBIL_GSC
-
-This is the program name or path to the `gsc` compiler executable;
-defaults to `gsc` (or to full path to `gsc`, on a Nix build).
-
-This variable is used by `Gerbil v0.14-DEV-73-g7a2a91c1` and later; earlier versions
-hardcode `gsc` as the compiler program name.
-
 ## GERBIL_GXC
 
 This is the program name or path to the `gxc` compiler executable;
@@ -56,8 +34,13 @@ Currently it is only used by `std/make` and `std/build-script`,
 and only when building software in parallel (which is now the default,
 but can be disabled with the `GERBIL_BUILD_CORES` variable below).
 
-This variable is used by `Gerbil v0.16-DEV-560` and later;
-earlier versions did not have a parallel build.
+## GERBIL_GCC
+
+This is the program name or path to `gcc`; defaults to `gcc` resolving from your `$PATH`..
+
+## GERBIL_AR
+
+This is the program name or path to the `ar` executable; defaults to `ar` resolving from your `$PATH`.
 
 ## GERBIL_BUILD_CORES
 
@@ -73,6 +56,3 @@ You can wholly disable parallelism by exporting `GERBIL_BUILD_CORES=0`,
 at which point the Gerbil part of compilation will be done in the current process.
 By contrast, `GERBIL_BUILD_CORES=1` enforces use of subprocesses for Gerbil compilation,
 even though only one process will be run at once.
-
-This variable is used by `Gerbil v0.16-DEV-560` and later;
-earlier versions did not have a parallel build.

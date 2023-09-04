@@ -1,7 +1,8 @@
 # Gerbil Scheme
 
 Gerbil is an opinionated dialect of Scheme designed for Systems Programming,
-with a state of the art macro and module system on top of the Gambit runtime.
+with a state of the art macro and module system on top of the Gambit runtime
+and compiler. One way to think of Gerbil is as the C++ to Marc Feeley's C.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
@@ -24,12 +25,29 @@ ahead of time compilation and compiled macros.
 The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
 with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
 
-For installation instructions see the [Guide](doc/guide/README.md), rendered
-online [here](https://cons.io/guide/).
+Installation from source is straightforward:
+```shell
+$ git clone git@github.com:vyzo/gerbil.git
+$ cd gerbil
+$ ./configure --enable-shared # recommeded to use shared libraries for a local install
+$ make
+$ sudo make install
+```
+
+This will install Gerbil in `/opt/gerbil`; all you have to do then is
+add `/opt/gerbil/bin` to your path.
+
+**Note** the default configuration has some dependencies you may need
+to install: sqlite, zlib, and libcrypto/openssl.
+You can install them in ubuntu with:
+```shell
+$ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
+```
+
+For more detailed installation instructions see the [Guide](https://cons.io/guide/).
 
 # Using Gerbil
-The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
-`$GERBIL_HOME/bin/gxc`.
+The Gerbil interpreter is `gxi`, and the compiler is `gxc`.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
@@ -46,8 +64,8 @@ that should get you started:
   of setting up your Gerbil installation and writing your first code.
 - The [Gerbil Tutorial](https://cons.io/tutorials/) provides a few hands-on guides
   on Gerbil programming.
-- The [Gerbil Reference](https://cons.io/reference/) is the reference documentation for the
-  Gerbil runtime and standard library.
+- The [Gerbil Reference Documentation](https://cons.io/reference/) is the reference documentation
+  for the Gerbil runtime and standard library.
 
 The documentation is automatically rendered online at [cons.io](https://cons.io).
 You can render it locally by running `doc/build.sh`, which will leave
@@ -85,7 +103,7 @@ bothered and polluted everything with more than a (C) vyzo, would read
 like this:
 
 ```
-© 2007-2019 Dimitris Vyzovitis and contributors
+© 2007-2023 Dimitris Vyzovitis and contributors
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```
@@ -118,17 +136,17 @@ any of its variations or derivitives in the future.
 
 # Epilogue
 
-Gerbil has been my private Scheme for many years, evolved out of a set
+Gerbil had been my private Scheme for many years, evolved out of a set
 of common macros that i used across different implementations and
 eventually a full-blown PLT macro language. As such I have had
 multiple backends that supported the Gerbil dialect, but I have
 elected to base the canonical version of Gerbil on Gambit.
 
-At the prompting of some friends (they know who they are), who
-had seen private versions of Gerbil, I decided to release it in public
-with a clean bootstrap version that bootstraps on gambit with a precompiled
-version of the macro system and compiler.
-That means that the system is entirely self-hosted in Gambit.
+At the prompting of some friends (they know who they are), who had
+seen private versions of Gerbil, I decided to release it in public
+with a clean bootstrap version that bootstraps on gambit with a
+precompiled version of the macro system and compiler.  That means that
+the system is entirely self-hosted.
 
 Gerbil is under continuous use and development.
 The core language has been stable for a while, but we are busy porting

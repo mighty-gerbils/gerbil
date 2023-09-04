@@ -99,7 +99,7 @@ build_gambit() {
 }
 
 build_boot_gxi () {
-  feedback_low "Compiling boot gxi shim"
+  feedback_low "Compiling bootstrap gxi shim"
   (cd gerbil && ${CC:-cc} -O2 -o boot-gxi boot-gxi.c)
 }
 
@@ -148,7 +148,7 @@ build_stage0 () {
   cp -R bootstrap/gerbil "${target_lib}"
   find "${target_lib}" -name \*.scm > .build.stage0
 
-  feedback_mid "compiling gerbil core"
+  feedback_mid "compiling bootstrap gerbil"
   gsi ./build/build0.scm || die
 
   ## cleaning up
@@ -167,7 +167,7 @@ build_stage1 () {
   local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
 
   ## feedback
-  feedback_low "Building gerbil stage1 ${final:+${final_string}}"
+  feedback_low "Building gerbil stage1"
 
   ## gerbil runtime
   feedback_mid "compiling runtime"
