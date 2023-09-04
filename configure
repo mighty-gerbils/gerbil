@@ -7,6 +7,43 @@ die() {
   exit 1
 }
 
+usage() {
+    local gambit_config_help="$(cd src/gambit && ./configure --help | tail -n +63)"
+
+    cat <<EOF
+This script configures the Gerbil and integrated Gambit build.
+
+Usage: $0 [option] ... [var=value]...
+
+Options controlling integrated Gambit configuration:
+${gambit_config_help}
+
+Options understood and processed by Gerbil:
+  --prefix=PREFIX       where to install Gerbil; default prefix is /opt/gerbil
+  --with-gambit=TAG     integrated gambit git tag to check out for the build;
+                        defaults to ${default_gambit_tag}
+
+Gerbil Standard Library features:
+  --enable-libxml       Enable or disable libxml based libraries; disabled by default
+  --disable-libxml
+  --enable-libyaml      Enable or disable libyaml based libraries; disabled by default
+  --disable-libyaml
+  --enable-zlib         Enable or disable zlib support; enabled by default
+  --disable-zlib
+  --enable-sqlite       Enable or disable sqlite support; enabled by default
+  --disable-sqlite
+  --enable-mysql        Enable or disable mysql driver support; disabled by default
+  --disable-mysql
+  --enable-lmdb         Enable or disable MDB support; disabled by default
+  --disable-lmdb
+  --enable-leveldb      Enable or disable leveldb support; disabled by default
+  --disable-leveldb
+
+Default integrated Gambit configuration: ${default_gambit_config}
+EOF
+}
+
+
 std_patch_feature() {
     sed -i -e "$1" src/std/build-features.ss
 }
@@ -20,16 +57,22 @@ std_disable_feature() {
 }
 
 readonly gerbil_version="v$(git describe --tags --always)"
-
+readonly default_gambit_tag=v4.9.5
+readonly default_gambit_config="--enable-targets='' --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=t8,f8,-8 --enable-trust-c-tco"
 prefix="/opt/gerbil"
-gambit_tag=v4.9.5
-gambit_config="--enable-targets='' --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=t8,f8,-8 --enable-trust-c-tco"
-
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"
 
+gambit_tag="${default_gambit_tag}"
+gambit_config="${default_gambit_config}"
+
 while [ $# -gt 0 ]; do
     case "$1" in
+        --help)
+            usage
+            exit 0
+            ;;
+
         --prefix=*)
             prefix=$(echo "$1" | cut -d = -f 2-)
             shift
