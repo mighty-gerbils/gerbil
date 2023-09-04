@@ -296,7 +296,7 @@
     (gxc:  "misc/ports" ,@(include-gambit-sharp))
     (gxc:  "misc/threads" ,@(include-gambit-sharp))
     "misc/process"
-    (gxc:  "misc/shared" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc:  "misc/shared" ,@(include-gambit-sharp))
     "misc/text"
     "misc/func"
     "misc/bytes"

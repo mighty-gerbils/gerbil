@@ -121,10 +121,17 @@
              (lp rest))))
          (("-include-gambit-sharp")
           (add-gsc-option!
-           (if (gerbil-runtime-smp?)
-             '("-e" "(define-cond-expand-feature|enable-smp|)"
-               "-e" "(include \"~~lib/_gambit#.scm\")")
-             '("-e" "(include \"~~lib/_gambit#.scm\")")))
+           (let* ((gambit-sharp
+                   (path-expand "lib/_gambit#.scm"
+                                (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
+                  (include-gambit-sharp
+                   (string-append "(include \"" gambit-sharp "\")")))
+             (cond
+              ((gerbil-runtime-smp?)
+               `("-e" "(define-cond-expand-feature|enable-smp|)"
+                 "-e" ,include-gambit-sharp))
+              (else
+               `("-e" ,include-gambit-sharp)))))
           (lp rest))
          (("-prelude")
           (match rest

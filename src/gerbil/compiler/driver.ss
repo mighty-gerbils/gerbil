@@ -20,8 +20,8 @@ namespace: gxc
 
 (export compile-module compile-exe)
 
-(def default-gerbil-home #f)
-(def default-gerbil-gsc "gsc")
+(def default-gerbil-gsc
+  (path-expand "gsc" (path-expand "~~bin")))
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
 
@@ -214,8 +214,7 @@ namespace: gxc
     (not (string-empty? str)))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gambit-libdir    (path-expand "~~lib"))
-           (gerbil-home      (getenv "GERBIL_HOME" default-gerbil-home))
+    (let* ((gerbil-home      (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
            (gerbil-libdir    (path-expand "lib" gerbil-home))
            (gerbil-staticdir (path-expand "static" gerbil-libdir))
            (gxlink           (path-expand "libgerbil-link" gerbil-libdir))
@@ -257,9 +256,7 @@ namespace: gxc
              (else
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
            (gerbil-rpath
-            (if (file-exists? libgerbil.so)
-              (string-append "-Wl,-rpath=" gerbil-libdir ":" gambit-libdir)
-              (string-append "-Wl,-rpath=" gambit-libdir)))
+            (string-append "-Wl,-rpath=" gerbil-libdir))
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))
@@ -290,8 +287,7 @@ namespace: gxc
                  output-o output_-o
                  output-ld-opts ...
                  gerbil-rpath
-                 "-L" gerbil-libdir "-lgerbil"
-                 "-L" gambit-libdir "-lgambit"
+                 "-L" gerbil-libdir "-lgerbil" "-lgambit"
                  libgerbil-ld-opts ...])
         ;; clean up
         (for-each delete-file [output-c output_-c output-o output_-o])
@@ -394,7 +390,7 @@ namespace: gxc
              (cons 'declare (reverse user-decls))))))))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
+    (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
            (gx-gambc
             (map (lambda (mod)
                    (path-expand (string-append mod ".scm")
@@ -402,6 +398,8 @@ namespace: gxc
                  '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc")))
            (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
            (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+           (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
+           (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
            (bin-scm (find-static-module-file ctx))
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
@@ -411,8 +409,8 @@ namespace: gxc
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
               ["-e" "(define-cond-expand-feature|enable-smp|)"
-               "-e" include-gx-gambc-macros]
-              ["-e" include-gx-gambc-macros]))
+               "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
+              ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
            (gsc-args
             [gsc-runtime-args
              ... "-exe" "-o" output-bin

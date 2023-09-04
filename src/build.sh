@@ -6,11 +6,39 @@ cd $(dirname "$0") # Change to this directory
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
 
+# Check for GERBIL_PREFIX being set
+# This is necessary for the bach build script to set the correct RUNPATH in the
+# gerbil binary.
+if [ "x${GERBIL_PREFIX:-}" = "x" ]; then
+    echo "GERBIL_PREFIX is not set"
+    exit 1
+fi
+
 ## global constants
 readonly GERBIL_SOURCE="$(pwd -P)"
 readonly GERBIL_BASE="$(dirname "${GERBIL_SOURCE}")"
-readonly GERBIL_BUILD="${GERBIL_SOURCE}/build"
 readonly GERBIL_STAGE0="${GERBIL_BASE}/bootstrap"
+
+## Build Environment
+GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
+export GERBIL_BUILD_PREFIX
+
+GERBIL_LOADPATH="${GERBIL_BUILD_PREFIX}/lib"
+export GERBIL_LOADPATH
+
+GAMBOPT="~~bin=${GERBIL_BUILD_PREFIX}/bin,~~lib=${GERBIL_BUILD_PREFIX}/lib,~~include=${GERBIL_BUILD_PREFIX}/include"
+export GAMBOPT
+
+PATH="${GERBIL_BUILD_PREFIX}/bin:${PATH}"
+export PATH
+
+# required when --enable-shared
+if [ "x${LD_LIBRARY_PATH:-}" = "x" ]; then
+    LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib"
+else
+    LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}"
+fi
+export LD_LIBRARY_PATH
 
 #===============================================================================
 ## feedback
@@ -31,27 +59,46 @@ die() {
   exit 1
 }
 
-## sanity check
-sanity_check () {
-  GSIV="$(gsi -v)"
-  ## TODO: Get a buy-in from Marc Feeley on what good pattern would be there. Maybe a regexp via sed?
-  #case "$GSIV" in v[4-9].[0-9].[0-9]*" "20[2-9][0-9][0-1][0-9][0-3][0-9][0-2][0-9][0-5][0-9][0-9][0-9]" "*" \""*"\"") : ok ;;
-  #  *) echo >&2 "Is Gambit installed on your machine and in your PATH? Unrecognized version from gsi -v: $GSIV" ; return 1 ;;
-  #esac
-  GSCV="$(${GERBIL_GSC:-gsc} -v)"
-  [ "$GSIV" = "$GSCV" ] || { echo >&2 "gsi -v and ${GERBIL_GSC:-gsc} -v fail to report matching versions. Please define a proper GERBIL_GSC. Would gsc be called gambitc or gsc-script on your system not to clash with GhostScript?" ; return 1; }
-}
-
-## bootstrap
-target_setup () {
+target_setup() {
   local target="${1}"
   rm -rf "${target:?}/bin"  # warning: `:?` necessary for safety
   rm -rf "${target:?}/lib"  # warning: `:?` necessary for safety
   mkdir -p "${target}/bin"
   mkdir -p "${target}/lib"
+  mkdir -p "${target}/include"
 }
 
-compile_boot_gxi () {
+build_prepare() {
+  feedback_mid "Preparing build"
+  feedback_low "preparing ${GERBIL_STAGE0}"
+  target_setup "${GERBIL_STAGE0}"
+  feedback_low "preparing ${GERBIL_BUILD_PREFIX}"
+  target_setup "${GERBIL_BUILD_PREFIX}"
+}
+
+build_gambit() {
+  feedback_low "Building Gambit in ${GERBIL_BUILD_PREFIX}/gambit"
+  feedback_mid "Building core gambit"
+  (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} core) || die
+
+  feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
+  cp -v gambit/gsi/gsi gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
+  cp -v gambit/include/gambit.h gambit/include/gambit-not*.h "${GERBIL_BUILD_PREFIX}/include"
+  cp -v gambit/lib/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
+  cp -v gambit/lib/_define-syntax.scm "${GERBIL_BUILD_PREFIX}/lib"
+  cp -v gambit/gsc/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
+  cp -v gambit/lib/_gambit.c "${GERBIL_BUILD_PREFIX}/lib"
+  for f in lib/libgambit.so lib/libgambit.a \
+           gsi/libgambitgsi.so gsi/libgambitgsi.a \
+           gsc/libgambitgsc.so gsc/libgambitgsc.a;
+  do
+      if [ -e gambit/$f ]; then
+          cp -v gambit/$f "${GERBIL_BUILD_PREFIX}/lib"
+      fi
+  done
+}
+
+build_boot_gxi () {
   feedback_low "Compiling boot gxi shim"
   (cd gerbil && ${CC:-cc} -O2 -o boot-gxi boot-gxi.c)
 }
@@ -61,34 +108,36 @@ compile_runtime () {
   (cd gerbil/runtime && ./build.scm "${target_lib}")
 }
 
+finalize_stage0 () {
+  local target_lib="${1}"
+  local target_bin="${2}"
+  cp -v gerbil/boot/*.scm \
+     "${target_lib}"
+  cp -v gerbil/boot-gxi \
+     "${target_bin}"
+}
+
+clean_stage0() {
+  ## clean up stage0
+  feedback_low "Cleaning up bootstrap"
+  rm -rf "${GERBIL_STAGE0}"
+}
+
 finalize_stage1 () {
   local target_lib="${1}"
   local target_bin="${2}"
   cp -v gerbil/interactive/*.ss \
-        "${target_lib}"
-  (cd "${target_bin}" && ln -sv gerbil gxi)
-  (cd "${target_bin}" && ln -sv gerbil gxc)
+     "${target_lib}"
+  (cd "${target_bin}" && ln -svf gerbil gxi)
+  (cd "${target_bin}" && ln -svf gerbil gxc)
 }
 
-finalize_boot () {
-  local target_lib="${1}"
-  local target_bin="${2}"
-  cp -v gerbil/boot/*.scm \
-        "${target_lib}"
-  cp -v gerbil/boot-gxi \
-       "${target_bin}"
-}
-
-stage0 () {
+build_stage0 () {
   local target_bin="${GERBIL_STAGE0}/bin"
   local target_lib="${GERBIL_STAGE0}/lib"
 
   ## feedback
   feedback_low "Building gerbil stage0 (bootstrap)"
-
-  ## preparing target directory
-  feedback_mid "preparing ${GERBIL_STAGE0}"
-  target_setup "${GERBIL_STAGE0}"
 
   ## gerbil runtime
   feedback_mid "compiling runtime"
@@ -100,36 +149,25 @@ stage0 () {
   find "${target_lib}" -name \*.scm > .build.stage0
 
   feedback_mid "compiling gerbil core"
-  gsi "${GERBIL_BUILD}/build0.scm" || die
+  gsi ./build/build0.scm || die
 
   ## cleaning up
   rm -f .build.stage0
 
   ## finalize build
   feedback_mid "finalizing bootstrap"
-  finalize_boot "${target_lib}" "${target_bin}"
+  finalize_stage0 "${target_lib}" "${target_bin}"
 }
 
-stage1 () {
-  ## handling arguments
-  local final_string="[final]"
-  local final=""
-  [ "final" = "${1:-}" ] && final="1"
-
+build_stage1 () {
   ## constants
-  local target_bin="${GERBIL_BASE}/bin"
-  local target_lib="${GERBIL_BASE}/lib"
-  local target_lib_gerbil="${GERBIL_BASE}/lib/gerbil"
-  local target_lib_static="${GERBIL_BASE}/lib/static"
+  local target_bin="${GERBIL_BUILD_PREFIX}/bin"
+  local target_lib="${GERBIL_BUILD_PREFIX}/lib"
+  local target_lib_gerbil="${GERBIL_BUILD_PREFIX}/lib/gerbil"
+  local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
 
   ## feedback
   feedback_low "Building gerbil stage1 ${final:+${final_string}}"
-
-  ## preparing target directory
-  feedback_mid "preparing ${GERBIL_BASE}"
-  target_setup "${GERBIL_BASE}"
-  touch "${GERBIL_BASE}/bin/.keep"
-  touch "${GERBIL_BASE}/lib/.keep"
 
   ## gerbil runtime
   feedback_mid "compiling runtime"
@@ -144,109 +182,72 @@ stage1 () {
         gerbil/runtime/gx-version.scm \
         "${target_lib_static}"
 
-  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi
-  GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
-  export GERBIL_HOME GERBIL_TARGET
+  GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
+  export GERBIL_HOME
 
   feedback_mid "compiling gerbil core"
-  "${GERBIL_STAGE0}/bin/boot-gxi" "${GERBIL_BUILD}/build1.ss" || die
+  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss || die
 
   feedback_mid "compiling gerbil bach"
-  "${GERBIL_STAGE0}/bin/boot-gxi" "${GERBIL_BUILD}/build-bach.ss" || die
+  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
+
+  ## unset GERBIL_HOME from its bootstrap value to avoid confusing the rest of the build
+  unset GERBIL_HOME
 
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
   finalize_stage1 "${target_lib}" "${target_bin}"
-
-  ## clean up stage0
-  if [ -n "${final}" ]; then
-    feedback_low "Cleaning up bootstrap"
-    rm -rf "${GERBIL_STAGE0}"
-    mkdir "${GERBIL_STAGE0}"
-    touch "${GERBIL_STAGE0}/.keep"
-  fi
 }
 
 ## commands
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  GERBIL_GXC=gxc
-  export PATH GERBIL_HOME GERBIL_GXC
   (cd std && ./build.ss)
 }
 
 build_libgerbil () {
   feedback_low "Building libgerbil"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required for build
-  export PATH GERBIL_HOME
-  ./build/build-libgerbil.ss
+  ./build/build-libgerbil.ss || die
 }
 
 build_lang () {
   feedback_low "Building gerbil languages"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  GERBIL_PATH="${GERBIL_HOME}" #required to build in the right place
-  export PATH GERBIL_HOME GERBIL_PATH
   (cd lang && ./build.ss)
 }
 
 build_r7rs_large() {
   feedback_low "Building R7RS large"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  GERBIL_PATH="${GERBIL_HOME}" #required to build in the right place
-  export PATH GERBIL_HOME GERBIL_PATH
   (cd r7rs-large && ./build.ss)
 }
 
 build_tools () {
   feedback_low "Building gerbil tools"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  export PATH GERBIL_HOME
   (cd tools && ./build.ss)
   for tool in tools/gx*.ss; do
       toolname=$(basename -s .ss $tool)
-      (cd ${GERBIL_BASE}/bin && ln -sv gerbil $toolname)
+      (cd "${GERBIL_BUILD_PREFIX}/bin" && ln -svf gerbil $toolname)
   done
 }
 
 build_tags () {
   feedback_low "Build gerbil tags"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
-  export PATH GERBIL_HOME
   gxtags gerbil std lang
-}
-
-## reset build layout -- touch .keep files for scm
-build_layout () {
-  feedback_low "Resetting build layout structure"
-  mkdir -p "${GERBIL_STAGE0}"
-  touch "${GERBIL_STAGE0}/.keep"
-  touch "${GERBIL_BASE}/bin/.keep"
-  touch "${GERBIL_BASE}/lib/.keep"
 }
 
 build_doc () {
   feedback_low "Build gerbil docs"
-  GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
-  export GERBIL_HOME
-  (cd "${GERBIL_HOME}/doc" && npm install && node_modules/vuepress/cli.js dev)
+  (cd "${GERBIL_BASE}/doc" && npm install && node_modules/vuepress/cli.js dev)
 }
 
 #===============================================================================
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
-  sanity_check     || die
-  compile_boot_gxi || die
-  stage0           || die
-  stage1 final     || die
+  build_prepare    || die
+  build_gambit     || die
+  build_boot_gxi   || die
+  build_stage0     || die
+  build_stage1     || die
   build_stdlib     || die
   build_libgerbil  || die
   build_lang       || die
@@ -260,17 +261,20 @@ if [ "$#" -eq 0 ]; then
   build_gerbil
 else
   case "$1" in
-       "sanity-check")
-         sanity_check || die
+      "prepare")
+         build_prepare || die
          ;;
-       "boot-gxi")
-         compile_boot_gxi || die
+      "gambit")
+         build_gambit || die
+         ;;
+      "boot-gxi")
+         build_boot_gxi || die
          ;;
        "stage0")
-         stage0 || die
+         build_stage0 || die
          ;;
        "stage1")
-         stage1 "${2:-}" || die
+         build_stage1 || die
          ;;
        "stdlib")
          build_stdlib || die
@@ -290,16 +294,13 @@ else
        "tags")
          build_tags || die
          ;;
-       "layout")
-         build_layout || die
-         ;;
        "doc")
          build_doc || die
          ;;
        *)
          feedback_err "Unknown command."
          feedback_err \
-           "Correct usage: ./build.sh [boot-gxi|stage0|stage1 [final]|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
+           "Correct usage: ./build.sh [prepare|gambit|boot-gxi|stage0|stage1|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
          die
          ;;
   esac

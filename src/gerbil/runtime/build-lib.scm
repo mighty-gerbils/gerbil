@@ -1,4 +1,9 @@
-(define default-gambit-gsc "gsc")
+(define default-gambit-gsc
+  (path-expand "bin/gsc"
+               (getenv "GERBIL_BUILD_PREFIX" (path-expand "~~"))))
+
+(define (gambit-gsc)
+  (getenv "GERBIL_GSC" default-gambit-gsc))
 
 (define (false . _) #f)
 
@@ -21,7 +26,7 @@
     (displayln "... compile " modf)
     (let* ((proc
             (open-process
-             (list path: (getenv "GERBIL_GSC" default-gambit-gsc)
+             (list path: (gambit-gsc)
                    arguments: `(,@options ,modf)
                    stdout-redirection: #f)))
            (status (process-status proc)))
@@ -52,8 +57,13 @@
         (set! workers (+ workers 1))
         (thread-start!
          (make-thread
-          (lambda () (dynamic-wind void
-                         (lambda () (build item))
-                         (lambda () (thread-send foreground-thread (list (current-thread) item)))))
+          (lambda ()
+            (with-exception-catcher
+             (lambda (exn)
+               (display-exception exn (current-error-port)))
+             (lambda ()
+               (dynamic-wind void
+                   (lambda () (build item))
+                   (lambda () (thread-send foreground-thread (list (current-thread) item)))))))
           `(worker: ,item)))
         (loop))))))
