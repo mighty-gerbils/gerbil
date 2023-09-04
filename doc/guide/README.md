@@ -52,8 +52,8 @@ If you are using the default configuration, you can build Gerbil simply with:
 $ ./configure && make && sudo make install
 ```
 
-This will install Gerbil in `/usr/local/gerbil`; you will need to add
-`/usr/local/gerbin/bin` to your PATH environment variable.
+This will install Gerbil in `/opt/gerbil`; you will need to add
+`/opt/gerbin/bin` to your PATH environment variable.
 
 It is recommended that you enable shared libraries if this is an installation for your development workstation or laptop:
 ```bash
