@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -eu
 cd $(dirname "$0") # Change to this directory
 
 #===============================================================================
@@ -9,7 +9,7 @@ cd $(dirname "$0") # Change to this directory
 # Check for GERBIL_PREFIX being set
 # This is necessary for the bach build script to set the correct RUNPATH in the
 # gerbil binary.
-if [ -z "${GERBIL_PREFIX}" ]; then
+if [ "x${GERBIL_PREFIX:-}" = "x" ]; then
     echo "GERBIL_PREFIX is not set"
     exit 1
 fi
@@ -33,7 +33,7 @@ PATH="${GERBIL_BUILD_PREFIX}/bin:${PATH}"
 export PATH
 
 # required when --enable-shared
-if [ -z "$LD_LIBRARY_PATH" ]; then
+if [ "x${LD_LIBRARY_PATH:-}" = "x" ]; then
     LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib"
 else
     LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}"
