@@ -1,6 +1,9 @@
 # The Gerbil Package Manager
 
-Gerbil comes with a command line package manager, gxpkg, which allows you to install and manage packages distributed through github, gitlab, or bitbucket.
+Gerbil comes with a command line package manager, invoked with `gerbil pkg` or just `gxpkg`.
+
+The package manager allows you to install and manage packages
+distributed through github, gitlab, or bitbucket.
 
 ::: tip usage
 ```

@@ -18,8 +18,8 @@ You can also start the Gerbil interpreter in an r7rs repl, by passing
 the option `--lang r7rs`.
 ```bash
 $ gxi --lang r7rs
-R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
-> _
+R7RS Scheme in Gerbil 0.17.0-202-g6a00c01c on Gambit v4.9.5
+>
 ```
 
 The top context uses R7RS scheme syntax and includes bindings from `(scheme base)`.
@@ -131,10 +131,10 @@ $ cat > example/life.ss
 
 We compile our library modules with `gxc` as usual:
 ```
-$ gxc example/grid.ss example/life.ss
+$ gxc -O example/grid.ss example/life.ss
 ```
 
-And then we can run a little game of Life in the interpreter:
+And then we can run a little game of Life in the interpreter using the normal gerbil language prelude:
 ```bash
 $ gxi
 > (import (only-in :example/life life)
@@ -156,25 +156,21 @@ $ gxi
 
 ## Evaluating R7RS Expressions
 
-This is just a matter of using the R7RS eval.
-Continuing the example above, we can do the same evaluations with pure R7RS syntax:
+This is just a matter of using the r7rs language prelude in `gxi`:
 ```
-$ gxi
-> (import :scheme/eval :scheme/repl)
-> (eval '(import (scheme base)
-               (only (example life) life)
-               (rename (prefix (example grid) grid-)
-                       (grid-make make-grid)))
-      (interaction-environment))
-> (eval '(begin (define grid (make-grid 24 24))
-              (grid-set! grid 1 1 #t)
-              (grid-set! grid 2 2 #t)
-              (grid-set! grid 3 0 #t)
-              (grid-set! grid 3 1 #t)
-              (grid-set! grid 3 2 #t))
-      (interaction-environment))
-> (eval '(life grid 80)
-        (interaction-environment))
+$ gxi --lang r7rs
+> (import (scheme base)
+          (only (example life) life)
+          (rename (prefix (example grid) grid-)
+                  (grid-make make-grid)))
+> (begin
+    (define grid (make-grid 24 24))
+    (grid-set! grid 1 1 #t)
+    (grid-set! grid 2 2 #t)
+    (grid-set! grid 3 0 #t)
+    (grid-set! grid 3 1 #t)
+    (grid-set! grid 3 2 #t))
+> (life grid 80)
 ...
 ```
 

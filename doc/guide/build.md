@@ -42,8 +42,7 @@ $ cat build.ss
 (import :std/build-script)
 (defbuild-script
   '("util"
-    (exe: "hello"))
-  optimize: #t debug: 'src)
+    (exe: "hello")))
 ```
 
 And we can build by invoking the script:
@@ -82,7 +81,6 @@ $ cat build.ss
            bindir: srcdir          ; where to place executables; default is GERBIL_PATH/bin
            optimize: #t            ; enable optimizations
            debug: 'src             ; enable debugger introspection
-           static: #f              ; don't generate static compilation artifacts
            prefix: "example"       ; this matches your package prefix
            build-spec))))          ; the actual build specification
 ```
@@ -93,5 +91,3 @@ To build our project:
 $ chmod +x build.ss
 $ ./build.ss
 ```
-
-After the initial dependency graph generation, we can build during development by reusing the dependency graph and simply invoking ./build.ss. You only need to generate a new dependency graph if your import sets change.

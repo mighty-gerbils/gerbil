@@ -1,6 +1,6 @@
 # The Interactive Gerbil Shell
 
-The interactive shell that you get when you run gxi is a larger environment than the Gerbil core language. It imports the `:gerbil/gambit` prelude and also provides some functionality that is mainly useful for interactive development.
+The interactive shell that you get when you run `gxi` is a larger environment than the Gerbil core language. It imports the `:gerbil/gambit` prelude and also provides some functionality that is mainly useful for interactive development.
 
 ## Interactive Development Macros
 
@@ -60,7 +60,3 @@ Here is a small example `~/.gerbil/init.ss` that provides useful functionality:
 ;; import your personal gerbil libraries
 (import :my/stuff :more/of/my/stuff)
 ```
-
-These files are only loaded when no argument is passed to gxi.
-To read those initialization files while passing arguments to gxi, you can have these arguments
-explicitly call `(_gx#gxi-init-interactive! command-line)`.

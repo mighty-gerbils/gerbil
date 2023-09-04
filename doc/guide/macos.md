@@ -1,5 +1,7 @@
 # Macos Specific Items
 
+**Note** This page is out of date and needs to be updated.
+
 ## Performance
 
 ## Static compilation
@@ -91,7 +93,3 @@ end
 
 ```
 Additional examples at https://github.com/ober/homebrew-brew
-
-
-
-###
