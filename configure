@@ -49,11 +49,11 @@ std_patch_feature() {
 }
 
 std_enable_feature() {
-    std_patch_feature "s/$1 #f/$1 #t"
+    std_patch_feature "s/$1 #f/$1 #t/"
 }
 
 std_disable_feature() {
-    std_patch_feature "s/$1 #t/$1 #f"
+    std_patch_feature "s/$1 #t/$1 #f/"
 }
 
 readonly gerbil_version="v$(git describe --tags --always)"
