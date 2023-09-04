@@ -6,6 +6,9 @@ cd $(dirname "$0") # Change to this directory
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
 
+# Check for GERBIL_PREFIX being set
+# This is necessary for the bach build script to set the correct RUNPATH in the
+# gerbil binary.
 if [ -z "${GERBIL_PREFIX}" ]; then
     echo "GERBIL_PREFIX is not set"
     exit 1
