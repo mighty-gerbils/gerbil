@@ -12,7 +12,8 @@ install() {
     mkdir -p "${prefix}" || die
     cp -av build/* "${prefix}" || die
     mkdir -p "${prefix}/share/emacs/site-lisp" || die
-    cp -av etc/gerbil-mode.el "${prefix}/share/emacs/site-lisp" || die
+    cp -v etc/gerbil-mode.el "${prefix}/share/emacs/site-lisp" || die
+    cp -v src/gambit/misc/gambit.el "${prefix}/share/emacs/site-lisp" || die
 }
 
 link_version() {
