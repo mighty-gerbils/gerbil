@@ -4,7 +4,7 @@ This is a quick start guide to setting up your Gerbil development environment, s
 
 ## Install Gerbil
 
-::: Note
+::: tip Note
 Older versions of Gerbil, prior to the v0.18 release cycle, required
 you to configure and install Gambit separately. This is no longer the
 case, as Gambit has been integrated as a git submodule.
