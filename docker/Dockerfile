@@ -50,13 +50,13 @@ ARG gerbil_version
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
--    --prefix=${GERBIL_HOME} \
--    --enable-leveldb \
--    --enable-libxml \
--    --enable-libyaml \
--    --enable-lmdb \
--    --enable-mysql \
--    --enable-zlib
+    --prefix=${GERBIL_HOME} \
+    --enable-leveldb \
+    --enable-libxml \
+    --enable-libyaml \
+    --enable-lmdb \
+    --enable-mysql \
+    --enable-zlib
 RUN make && make install
 
 FROM gerbil as final
