@@ -19,11 +19,11 @@ install() {
 link_version() {
     local base="${1}"
     local version="${2}"
-    (cd "${base}" && rm -f current && ln -sfv "${version}" current) || die
-    (cd "${base}" && rm -f bin && ln -sfv current/bin bin) || die
-    (cd "${base}" && rm -f lib && ln -sfv current/lib lib) || die
-    (cd "${base}" && rm -f include && ln -sfv current/include include) || die
-    (cd "${base}" && rm -f share && ln -sfv current/share share) || die
+    (cd "${base}" && rm -f current && ln -sf "${version}" current) || die
+    (cd "${base}" && rm -f bin && ln -sf current/bin bin) || die
+    (cd "${base}" && rm -f lib && ln -sf current/lib lib) || die
+    (cd "${base}" && rm -f include && ln -sf current/include include) || die
+    (cd "${base}" && rm -f share && ln -sf current/share share) || die
 }
 
 if [ -e build-env.sh ]; then
