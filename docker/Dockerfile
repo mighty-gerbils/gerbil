@@ -5,11 +5,14 @@ ARG cores
 ARG packages
 
 FROM ${distro}:latest as base
-ARG distro
-ARG gerbil_version
-ARG gambit_version
 ARG cores
+ARG distro
+ARG gambit_version
+ARG gerbil_version
 ARG packages
+ENV GERBIL_BUILD_CORES=$cores
+ENV GERBIL_HOME=/opt/gerbil
+ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /src /opt
@@ -46,7 +49,15 @@ ARG cores
 ARG gerbil_version
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && ./configure && make && make install
+    && ./configure \
+-    --prefix=${GERBIL_HOME} \
+-    --enable-leveldb \
+-    --enable-libxml \
+-    --enable-libyaml \
+-    --enable-lmdb \
+-    --enable-mysql \
+-    --enable-zlib
+RUN make && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src
