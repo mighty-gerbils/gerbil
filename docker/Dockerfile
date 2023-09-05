@@ -53,7 +53,7 @@ RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${ger
     --enable-lmdb \
     --enable-mysql \
     --enable-zlib
-RUN make && make install
+RUN cd /opt/gerbil/src && make && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src
