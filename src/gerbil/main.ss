@@ -56,7 +56,8 @@ package: gerbil
   '("pkg"
     "test"
     "tags"
-    "prof"))
+    "prof"
+    "ensemble"))
 
 (def builtin-tools-synonyms
   '(("compile" . "gxc")
@@ -80,6 +81,7 @@ package: gerbil
   (displayln "  test                             the gerbil test runner (gxtest)")
   (displayln "  tags                             the gerbil tag generator (gxtags)")
   (displayln "  prof                             the gerbil profiler (gxprof)")
+  (displayln "  ensemble                         the gerbil actor ensemble manager (gxensemble)")
   (displayln)
   (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
 
