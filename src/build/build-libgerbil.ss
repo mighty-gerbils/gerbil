@@ -20,7 +20,12 @@
   (path-expand "bin/gsc" build-home))
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
-(def default-ld-options "-ldl -lm")
+
+(cond-expand
+ (netbsd
+  (def default-ld-options "-lm"))
+ (else
+  (def default-ld-options "-ldl -lm")))
 
 (def stdlib-exclude
   '("gambit-sharp"                      ; _gambit#.scm wrapper
