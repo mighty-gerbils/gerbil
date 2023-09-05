@@ -91,7 +91,7 @@
       ;; and shut it down
       (remote-stop-server! test-server-id)
       (unless (zero? (process-status test-server-process))
-        (displayln (read-all test-server-process)))
+        (displayln (read-line test-server-process #f)))
       ;; clean up
       (delete-file test-server-sock))
 
@@ -131,6 +131,6 @@
       ;; and shut it down
       (remote-stop-server! test-server-id)
       (unless (zero? (process-status test-server-process))
-        (displayln (read-all test-server-process)))
+        (displayln (read-line test-server-process #f)))
       ;; clean up
       (delete-file test-server-sock))))
