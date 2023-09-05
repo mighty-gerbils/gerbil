@@ -56,11 +56,8 @@ You can configure the use of a specific compiler by
 configuring with the `CC=compiler` variable and setting the
 `GERBIL_GCC` environment variable to point to your preferred compiler.
 
-On another note about the LLVM toolchain: some versions of LLVM's `ar`
-are not capable of recording dynamic library dependencies inside archives.
-In this case you should set the `GERBIL_AR` environment variable to point
-to a more capable version of ar, like GNU ar.  This only applies if
-you have configured the system without `--enable-shared`.
+If you are having problems with your system's ar, you can also set the
+`GERBIL_AR` environment variable to point to a specific `ar` that works.
 
 Finally, Gerbil consults the `GERBIL_BUILD_CORES` environment variable
 to determine whether to build its code in parallel, e.g.
