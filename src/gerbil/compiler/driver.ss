@@ -185,19 +185,8 @@ namespace: gxc
            (lp rest))
           (else [])))))
 
-  (def (get-libgerbil.a-ld-opts libgerbil.a)
-    (let* ((proc (open-input-process [path: (gerbil-ar) arguments: ["p" libgerbil.a "__.LIBDEP"]
-                                            stderr-redirection: #f]))
-           (output (read-line proc #f)))
-      (unless (zero? (process-status proc))
-        (raise-compile-error "Compilation error; process exit with nonzero status"
-                             "ar"))
-      (let* ((line (substring output 0 (1- (string-length output)))) ; drop the NUL terminator
-             (parts (string-split line #\space)))                    ; TODO deal with space madness
-        (filter not-string-empty? parts))))
-
-  (def (get-libgerbil.so-ld-opts libgerbil.so)
-    (call-with-input-file (string-append libgerbil.so ".ldd") read))
+  (def (get-libgerbil-ld-opts libgerbil)
+    (call-with-input-file (string-append libgerbil ".ldd") read))
 
   (def (replace-extension path ext)
     (string-append (path-strip-extension path) ext))
@@ -250,9 +239,9 @@ namespace: gxc
            (libgerbil-ld-opts
             (cond
              ((file-exists? libgerbil.so)
-              (get-libgerbil.so-ld-opts libgerbil.so))
+              (get-libgerbil-ld-opts libgerbil.so))
              ((file-exists? libgerbil.a)
-              (get-libgerbil.a-ld-opts libgerbil.a))
+              (get-libgerbil-ld-opts libgerbil.a))
              (else
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
            (gerbil-rpath

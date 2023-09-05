@@ -387,22 +387,21 @@
     (when (file-exists? libgerbil)
       (delete-file libgerbil))
     (displayln "... build " libgerbil)
-    (if (eq? mode 'shared)
-      (let (shared-ld-opts  (filter (? (not string-empty?)) (string-split ld-options #\space)))
+    (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
+      (if (eq? mode 'shared)
         (invoke-gcc ["-shared" "-o" libgerbil
                      shared-ld-opts ...
                      gx-gambc-o-paths ...
                      static-module-o-paths ...
                      builtin-modules-o-path
                      link-o-path])
-        (call-with-output-file (string-append libgerbil ".ldd")
-          (cut write shared-ld-opts <>)))
-      (invoke-ar ["cql" ld-options
-                  libgerbil
-                  gx-gambc-o-paths ...
-                  static-module-o-paths ...
-                  builtin-modules-o-path
-                  link-o-path]))
+        (invoke-ar ["cq" libgerbil
+                    gx-gambc-o-paths ...
+                    static-module-o-paths ...
+                    builtin-modules-o-path
+                    link-o-path]))
+      (call-with-output-file (string-append libgerbil ".ldd")
+        (cut write libgerbil-ldd <>)))
     ;; cleanup
     (for (f [gx-gambc-c-paths ...
              static-module-c-paths ...
