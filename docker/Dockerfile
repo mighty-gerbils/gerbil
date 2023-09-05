@@ -1,18 +1,14 @@
 ARG distro
 ARG gerbil_version
-ARG gambit_version
 ARG cores
 ARG packages
 
 FROM ${distro}:latest as base
 ARG cores
 ARG distro
-ARG gambit_version
 ARG gerbil_version
 ARG packages
-ENV GERBIL_BUILD_CORES=$cores
-ENV GERBIL_HOME=/opt/gerbil
-ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
 ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir -p /src /opt
