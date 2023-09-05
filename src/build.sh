@@ -224,7 +224,7 @@ build_tools () {
   feedback_low "Building gerbil tools"
   (cd tools && ./build.ss)
   for tool in tools/gx*.ss; do
-      toolname=$(basename -s .ss $tool)
+      toolname=$(basename $tool .ss)
       (cd "${GERBIL_BUILD_PREFIX}/bin" && ln -svf gerbil $toolname)
   done
 }
