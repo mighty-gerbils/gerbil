@@ -22,6 +22,8 @@ Options understood and processed by Gerbil:
   --prefix=PREFIX       where to install Gerbil; default prefix is /opt/gerbil
   --with-gambit=TAG     integrated gambit git tag to check out for the build;
                         defaults to ${default_gambit_tag}
+  --enable-march=ARCH   specify the machine architecture; it can be empty.
+                        defaults to native
 
 Gerbil Standard Library features:
   --enable-libxml       Enable or disable libxml based libraries; disabled by default
@@ -63,6 +65,7 @@ prefix="/opt/gerbil"
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"
 
+gambit_march="native"
 gambit_tag="${default_gambit_tag}"
 gambit_config="${default_gambit_config}"
 
@@ -80,6 +83,11 @@ while [ $# -gt 0 ]; do
 
         --with-gambit=*)
             gambit_tag=$(echo "$1" | cut -d = -f 2-)
+            shift
+            ;;
+
+        --enable-march=*)
+            gambit_march=$(echo "$1" | cut -d = -f 2-)
             shift
             ;;
 
@@ -198,7 +206,7 @@ git submodule update --force || die
 
 (cd src/gambit && git pull origin master && git checkout "${gambit_tag}" && touch configure config.status) || die
 
-gambit_config="--prefix=${gerbil_prefix} ${gambit_config} LDFLAGS=${LDFLAGS} CFLAGS=${CFLAGS}"
+gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_config} LDFLAGS=${LDFLAGS} CFLAGS=${CFLAGS}"
 (cd src/gambit && ./configure $gambit_config) || die
 
 rm -f build-env.sh
