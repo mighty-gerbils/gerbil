@@ -7,8 +7,6 @@
         :std/actor-v18/loader)
 (export main)
 
-(extern namespace: #f &current-module-libpath)
-
 (def (main server-id server-addrs cookie)
   (let ((server-id (string->symbol server-id))
         (server-addrs (call-with-input-string server-addrs read))

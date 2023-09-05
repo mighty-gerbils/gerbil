@@ -24,26 +24,31 @@
 
 (def (test-setup!)
   (setenv "GERBIL_PATH" gerbil-path)
+  (create-directory* gerbil-path)
+  (create-directory* (path-expand "bin" gerbil-path))
   ;; compile the test program server
   (let (gxc (open-process
              [path: "gxc"
                     arguments: ["-O" "-exe"
                                 "-o" (path-expand "bin/loader-test-server" gerbil-path)
-                                (path-expand "loader-test-server.ss" (this-source-directory))]]))
+                                (path-expand "loader-test-server.ss" (this-source-directory))]
+                    stderr-redirection: #f
+                    stdout-redirection: #f]))
     (unless (zero? (process-status gxc))
-      (displayln (read-all gxc))
       (error "error compiling test server")))
   ;; compile the test support module
   (let (gxc (open-process
              [path: "gxc"
                     arguments: ["-O"
-                                (path-expand "loader-test-support.ss" (this-source-directory))]]))
+                                (path-expand "loader-test-support.ss" (this-source-directory))]
+                    stderr-redirection: #f
+                    stdout-redirection: #f]))
     (unless (zero? (process-status gxc))
-      (displayln (read-all gxc))
       (error "error compiling test support module"))))
 
 (def (test-cleanup!)
-  (setenv "GERBIL_PATH"))
+  (setenv "GERBIL_PATH")
+  (delete-file-or-directory gerbil-path #t))
 
 (def (start-test-server! server-id server-addr cookie)
   (open-process
