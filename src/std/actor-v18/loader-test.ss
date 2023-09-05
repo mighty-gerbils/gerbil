@@ -27,7 +27,7 @@
   ;; compile the test program server
   (let (gxc (open-process
              [path: "gxc"
-                    arguments: ["-O" "-exe" "-dynamic"
+                    arguments: ["-O" "-exe"
                                 "-o" (path-expand "bin/loader-test-server" gerbil-path)
                                 (path-expand "loader-test-server.ss" (this-source-directory))]]))
     (unless (zero? (process-status gxc))
