@@ -46,7 +46,7 @@ ARG gerbil_version
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
-    --prefix=${GERBIL_HOME} \
+    --prefix=/opt/gerbil \
     --enable-leveldb \
     --enable-libxml \
     --enable-libyaml \
