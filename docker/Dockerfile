@@ -46,10 +46,7 @@ ARG cores
 ARG gerbil_version
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && ./configure --enable-shared
-
-RUN cd /opt/gerbil-src && make
-RUN cd /opt/gerbil-src && make install
+    && ./configure && make && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src
