@@ -54,7 +54,7 @@ Commands:
 
 Before starting an ensemble, we must generate a cookie for our servers
 to authenticate each other. The cookie is placed in `$GERBIL_PATH/ensemble/cookie`;
-if you are running an ensemble spanniong multiple hosts, you should copy the cookie
+if you are running an ensemble spanning multiple hosts, you should copy the cookie
 to the relevant hosts.  Note that the tool will not overwrite an existing ensemble
 cookie.
 
@@ -312,8 +312,8 @@ $ gxensemble run --roles "(httpd)" httpd2 :tutorial/ensemble/httpd-svc 8081
 Now let's look at our servers:
 ```
 $ gxensemble lookup --role httpd
-(httpd1 (unix dellicious /tmp/ensemble/httpd1))
-(httpd2 (unix dellicious /tmp/ensemble/httpd2))
+(httpd1 (unix: "dellicious" "/tmp/ensemble/httpd1"))
+(httpd2 (unix: "dellicious" "/tmp/ensemble/httpd2"))
 ```
 
 We can also ping them for liveness:
@@ -413,9 +413,10 @@ have to parse CLI options on your own, probably using [getopt](../reference/geto
 Note that some care should be taken to ensure necessary bindings are
 available in the server and not eliminated by the tree shaker from
 full program optimization.  As such, it is _strongly_ recommended that
-you do not use full program optimization for servers; otherwise it is
-very much likely that some essential bindings will be missing, causing
-your server to crash when trying to load code.
+you do not use full program optimization for executable binaries
+compiled for servers; otherwise it is very much likely that some
+essential bindings will be missing, causing your server to crash when
+trying to load code.
 
 Here is an example binary executable running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
 ```scheme
@@ -437,15 +438,15 @@ $ httpd-exe httpd3 8082
 ...
 
 $ gxensemble lookup --role httpd
-(httpd1 (unix dellicious /tmp/ensemble/httpd1))
-(httpd2 (unix dellicious /tmp/ensemble/httpd2))
-(httpd3 (unix dellicious /tmp/ensemble/httpd3))
+(httpd1 (unix: "dellicious" "/tmp/ensemble/httpd1"))
+(httpd2 (unix: "dellicious" "/tmp/ensemble/httpd2"))
+(httpd3 (unix: "dellicious" "/tmp/ensemble/httpd3"))
 
 $ gxensemble repl httpd3
-httpd3> ,(load :tutorial/ensemble/handler)
-httpd3> ,(import :tutorial/ensemble/handler)
+httpd3> ,(load :tutorial/ensemble/handler)    ; load the code in the remote server
+httpd3> ,(import :tutorial/ensemble/handler)  ; import for local expansion
 httpd3> (set-greeting! "hello, i am httpd3 and i am a binary executable\n")
-httpd3> ,(import :std/net/httpd)
+httpd3> ,(import :std/net/httpd)              ; import for local expansion
 httpd3> (http-register-handler (current-http-server) "/greeting" write-simple-handler)
 httpd3> ,q
 

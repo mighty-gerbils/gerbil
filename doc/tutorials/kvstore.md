@@ -72,7 +72,7 @@ these to implement its functionality.
 
 ## The server implementation
 
-The server is implementated in [server.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/server.ss).
+The server is implemented in [server.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/server.ss).
 Here is the code:
 ```scheme
 (deflogger kvstore)
