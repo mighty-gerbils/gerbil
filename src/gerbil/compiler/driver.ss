@@ -249,6 +249,7 @@ namespace: gxc
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))
+      (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
         (cut generate-stub builtin-modules))
       (when (current-compile-invoke-gsc)
@@ -405,6 +406,7 @@ namespace: gxc
              ... "-exe" "-o" output-bin
              (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
              output-scm]))
+      (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
         (cut generate-stub [gx-gambc ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
