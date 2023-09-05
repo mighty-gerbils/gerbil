@@ -401,14 +401,14 @@ $ curl http://localhost:8080/greeting
 hello, i am httpd1
 ```
 
-## Working with static binaries
+## Working with binary executables
 
-So far we have demonstrated ensembles with _dynamic_ binaries; in
-practice however, you are most likely to run a _static_ binary on your
+So far we have demonstrated ensembles with _dynamic_ executable modules; in
+practice however, you are most likely to ship a binary executable to your
 server. Of course this is not a problem; all you have to do is run your
 server's entry point using `call-with-ensemble-server`; this is what
 `gxensemble run` does after all.  The only difference is that you will
-have to parse CLI options on your own, probably using getopt.
+have to parse CLI options on your own, probably using [getopt](../reference/getopt.md).
 
 Note that some care should be taken to ensure necessary bindings are
 available in the server and not eliminated by the tree shaker from
@@ -417,7 +417,7 @@ you do not use full program optimization for servers; otherwise it is
 very much likely that some essential bindings will be missing, causing
 your server to crash when trying to load code.
 
-Here is an example static binary running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
+Here is an example binary executable running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
 ```scheme
 (import :std/actor
         ./server)
@@ -444,13 +444,13 @@ $ gxensemble lookup --role httpd
 $ gxensemble repl httpd3
 httpd3> ,(load :tutorial/ensemble/handler)
 httpd3> ,(import :tutorial/ensemble/handler)
-httpd3> (set-greeting! "hello, i am httpd3 and i am a static binary\n")
+httpd3> (set-greeting! "hello, i am httpd3 and i am a binary executable\n")
 httpd3> ,(import :std/net/httpd)
 httpd3> (http-register-handler (current-http-server) "/greeting" write-simple-handler)
 httpd3> ,q
 
 $ curl http://localhost:8082/greeting
-hello, i am httpd3 and i am a static binary
+hello, i am httpd3 and i am a binary executable
 ```
 
 ## Shutting down
