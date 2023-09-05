@@ -614,7 +614,9 @@
 
 ;;; utilities
 (def (display-result-list lst)
-  (for-each displayln lst))
+  (for (result lst)
+    (write result)
+    (newline)))
 
 (def (string->object str)
   (call-with-input-string str read))
