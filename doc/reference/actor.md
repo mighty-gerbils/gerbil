@@ -6,7 +6,7 @@ Actor-oriented concurrent and distributed programming.
 (import :std/actor)
 :::
 
-::: note
+::: tip Note
 This page documents the API of the actors package in Gerbil v0.18 and later; the legacy actor package is deprecated, but still available in `:std/actor-v13` if you need time to port existing code.
 :::
 
@@ -85,14 +85,14 @@ If there is an `else` clause it will be dispatched immediately if
 there is no message matching any of the patterns in the mailbox.
 
 Within a reaction rule body, the following syntactic variables are set:
-- `@envelope` is set to the message envelope.
-- `@message`  is set to the envelope payload.
-- `@dest`     is set to the envelope destination.
-- `@source`   is set to the envelope source.
-- `@nonce`    is set to the envelope nonce.
-- `@replyto`  is set to the envelope reply nonce.
-- `@expiry`   is set to the envelope expiry.
-- `@reply-expected?` is set to the envelope reply-expected hint.
+- `@envelope` is set to the message envelope; this is an instance of the `evenelope` struct.
+- `@message`  is set to the envelope payload; this can be anything.
+- `@dest`     is set to the envelope destination; this is where the message was sent, a thread or a handle.
+- `@source`   is set to the envelope source; this is where the message came from, a thread or a handle.
+- `@nonce`    is set to the envelope nonce; a monotonically increasing nonnegative integer.
+- `@replyto`  is set to the envelope reply nonce; it can be #f if this message is not a reply to a previous message, or the nonce of a previously sent message.
+- `@expiry`   is set to the envelope expiry; this is a `time` object, representing absolute expiration time.
+- `@reply-expected?` is set to the envelope reply-expected hint; this is #t if the source is expecting a reply to this message.
 
 ### <<
 ```scheme
@@ -101,7 +101,12 @@ Within a reaction rule body, the following syntactic variables are set:
     [(else body ...)])
 ```
 
-Like `<-` but it matches raw messages; you don't normally have to use this.
+Like `<-` but it destructures raw messages that can be anything, not
+necessarily wrapped in an envelope. You don't normally have to use
+this unless you are expecting to receive messages sent with a raw
+primitive like `thread-send` or `send-message` and not with the send
+operator(s).
+
 There are no syntactic variables bound in the reaction context.
 
 ### envelope
@@ -115,6 +120,16 @@ those by hand and let the send operators construct it for you.
 
 The structure is provided so that you program raw reactions with `<<`,
 for instance when writing a proxy actor.
+
+The meanings and types of the struct fields are as defined as follows:
+- `message`  is the payload; this can be anything.
+- `dest`     is the destination actor; this is where the message was sent, a thread or a handle.
+- `source`   is the source of the message; this is where the message came from, a thread or a handle.
+- `nonce`    is the source-specific message nonce; a monotonically increasing nonnegative integer.
+- `replyto`  is the destination-specific reply nonce; it can be #f if this message is not a reply to a previous message, or the nonce of a previously sent message.
+- `expiry`   is envelope expiry; this is a `time` object, representing absolute expiration time.
+- `reply-expected?` is hint for proxies; this is #t if the source is expecting a reply to this message.
+
 
 ### send-message
 ```scheme
@@ -136,9 +151,9 @@ pre-constructed envelopes, for instance when writing a proxy actor.
 Returns the current thread's numeric nonce and post increments.
 
 You don't normally have to use this procedure, the nonce is
-incremented automatically by the send operators. Its is provided
+incremented automatically by the send operators. It is provided
 however in case you want to construct your own envelopes, for instance
-when writing a prpoxy actor.
+when writing a proxy actor.
 
 ### actor-error
 ```scheme
@@ -178,7 +193,7 @@ Sets the default reply timeout.
 Creates a handle for sending messages to an actor through a proxy.
 - `proxy` is the actor who will receive the messages, a thread.
 - `ref` is a `reference` to the actor being proxied; in general it is
-  something the proxy can interpret; see `referece` below.
+  something the proxy can interpret; see `reference` below.
 
 ### handle?
 ```scheme
@@ -231,10 +246,11 @@ server as the proxy.
 Macro to define message types that can be efficiently marshalled as
 protocol messages.
 
-The structure is final and transparent, and it is registered in the
-message type registry where the unmarshaller can find it.
+The structure is final and transparent, and it is automatically
+registered in the message type registry where the unmarshaller can
+find it.
 
-::: note
+::: tip Note
 Messages _must_ be acyclic; if you want to send cyclic data you
 can use a normal struct, but be aware that such structs will be
 serialized/deserialized with the raw gambit serializer and carry the
@@ -258,7 +274,7 @@ Predicate for instances of messages defined with `defmessage`.
 Macro for defining synchronous interaction entry points for actors.
 
 The macro defines a procedure that invokes an actor with `expr` and
-matches the result.  If it is `!ok` the embeded value is returned.  If
+unwraps the result.  If it is `!ok` the embedded value is returned.  If
 it is `!error` an actor error is raised, using the optional error
 message and irritants specified in the definition.
 
@@ -283,7 +299,7 @@ diagnostic string, that will be included in the error raised by
 (with-result expr [fail!])
 ```
 
-Evalutes `expr` and matches the result; if it is `!ok` the embedded
+Evaluates `expr` and matches the result; if it is `!ok` the embedded
 value is returned.  If it is `!error` an error is raised by invoking
 the `fail!` (`error` by default) procedure with the error message.
 
@@ -337,7 +353,7 @@ You can use this in reaction context (`<-`) with the gnostic
    (-->? (!error "unexpected message"))))
 ```
 
-Reaction macro to autoamtically log and conditionally respond to unexpected messages.
+Reaction macro to automatically log and conditionally respond to unexpected messages.
 
 You can use this in reaction contex (`<-`) with the gnostic
 `,(@unexpected warnf)` syntax.
@@ -378,7 +394,7 @@ Sleeps for `time` and sends a tick to the specified peer.
 
 This is the message sent by `ticker` and related procedures to signify a temporal tick.
 - `id` is the identifier of the tick, which is a hint for actors to
-  demulitplex multiple tick sources.
+  demultiplex multiple tick sources.
 - `seqno` is the sequence number of the tick.
 
 
@@ -389,7 +405,9 @@ This is the message sent by `ticker` and related procedures to signify a tempora
 (actor-monitor actor peer (send ->))
 ```
 
-Joins `actor` and sends an `!actor-dead` message to `peer` when it exits.
+Waits for `actor` to terminate by joining it and sends an
+`!actor-dead` message to `peer` when it exits. The `actor` must be a
+thread.
 
 The `send` procedure is used to send the message; if you are
 processing raw messages with `<<` in your actor's reaction loop, you
@@ -425,19 +443,19 @@ A UNIX domain address is denoted like this:
 ```
 
 `hostname` is the name of the host where the server is
-accessible and `path` is the socket path.
+accessible and `path` is the socket path; they are both strings.
 
 Actor servers will never try to connect to UNIX addresses in different
 hosts.
 
 ### TCP Addresses
-A TCP addres is denoted like this:
+A TCP address is denoted like this:
 ```
 [tcp: inet-addr]
 ```
 
 `inet-addr` is an inet address; normally a pair of a host address and a port.
-See the `:std/net/address` module for more details.
+See the [:std/net/address](address.md#internet-addresses) module for more details.
 
 ### TLS Addresses
 
@@ -465,6 +483,8 @@ manually.
 Starts an actor server, sets the `current-actor-server` parameter and
 returns the main server thread.
 - `cookie` is the ensemble cookie; normally resides in `$GERBIL_PATH/ensemble/cookie`.
+  Note that the administrator has to explicitly create a cookie for the ensemble, it is
+  not automatically created.
 - `addresses` is the list of addresses the server should listen; by default it is empty,
   making this a transient actor server.
 - `identifier` is the server identifier; if you don't specify one, a random server
@@ -502,7 +522,7 @@ Registers the current thread in an actor server as an actor with the name `name`
 Instructs an actor server to connect to another server.
 - `id` is the identifier of the target server
 - `addrs` is an optional list of addresses; if none is specified and
-  the server is uknown, its addresses will be resolved through the
+  the server is unknown, its addresses will be resolved through the
   ensemble registry.
 
 ### list-actors
@@ -559,14 +579,15 @@ Sets the default registry addresses.
 (server-address-cache-ttl)
 ```
 
-Returns the actor's server address cache TTL in seconds; by default this is 5 minutes.
+Returns the actor's server address cache TTL in seconds (a real number);
+by default this is 5 minutes.
 
 ### set-server-address-cache-ttl!
 ```scheme
 (set-server-address-cache-ttl! ttl)
 ```
 
-Sets the actor server's address cache TTL (in seconds).
+Sets the actor server's address cache TTL (in seconds, a real number).
 
 
 
@@ -735,5 +756,5 @@ Looks up a server's addresses in the registry.
 (ensemble-lookup-servers/role role (srv (current-actor-server)))
 ```
 
-Looks up servers (and their addresses) that fullfilly `role` in the
+Looks up servers (and their addresses) that fulfill `role` in the
 ensemble.

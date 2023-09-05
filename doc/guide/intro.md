@@ -1408,8 +1408,10 @@ interaction with actors that is type-safe.
 The `:std/actor` package provides a `defmessage` macro for defining messages,
 together with the `!ok` and `!error` messages for structuring responses to
 request messages.
-The package also provides a `defcall-actor` macro for providing facades to
-actor request/reply interactions.
+The package also provides a `defcall-actor` macro for providing
+facades to actor request/reply interactions These facades
+automatically unwrap results and return the value if the result was
+`!ok` and raise an `actor-error` if the result was an `!error`.
 
 Here is an simple example wallet actor that holds a balance and
 responds to `!balance`, `!deposit` and `!withdraw` messages, and entry

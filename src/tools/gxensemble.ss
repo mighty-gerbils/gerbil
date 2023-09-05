@@ -470,7 +470,7 @@
               ((or 'q 'quit)
                (exit (void)))
               (else
-               (displayln "uknown control command " command)
+               (displayln "unknown control command " command)
                (display-help))))
            (expr (eval-expr expr)))
          (catch (exn)

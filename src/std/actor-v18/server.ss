@@ -650,7 +650,7 @@
                    (thread-send/check actor msg)))
 
              (else
-              (warnf "incoming message from ~a for uknown actor ~a" src-id dest)
+              (warnf "incoming message from ~a for unknown actor ~a" src-id dest)
               (when (&envelope-reply-expected? msg)
                 (send-remote-control-reply! src-id msg (!error "unknown actor"))))))))
 

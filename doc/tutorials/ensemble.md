@@ -24,7 +24,8 @@ release.
 
 ## The gxensemble Management Tool
 
-Gerbil comes with a powerful tool for managing actor ensembles: `gxensemble`.
+Gerbil comes with a powerful tool for managing actor ensembles: `gerbil ensemble`
+or just `gxensemble`.
 
 Here are the commands it supports:
 ```
