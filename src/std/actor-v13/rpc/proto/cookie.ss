@@ -5,11 +5,11 @@
 (import :std/net/bio
         :std/crypto/etc
         :std/crypto/digest
-        :std/actor/xdr
-        :std/actor/proto
-        :std/actor/rpc/base
-        :std/actor/rpc/proto/message
-        :std/actor/rpc/proto/null)
+        ../../xdr
+        ../../proto
+        ../base
+        ./message
+        ./null)
 (export rpc-cookie-proto
         rpc-generate-cookie!
         rpc-cookie-proto-challenge

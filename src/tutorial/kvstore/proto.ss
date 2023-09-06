@@ -1,19 +1,32 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; kvstore protocol
-(import :std/actor)
+(import :gerbil/gambit
+        :std/actor)
 (export #t)
 
-;; A protocol for key-value stores
-;; (get key)      -- retrieve object associated with key, or #f if not found
-;; (ref key)      -- like get, but result in an exception if not foound
-;; (put! key val) -- put an object for a key to the store
-;; (remove! key)  -- remove a key
-(defproto kvstore
-  (get key)
-  (ref key)
-  (put! key val)
-  (remove! key))
+(defmessage !get (key))
+(defmessage !put (key val))
+(defmessage !remove (key))
 
-;; bind the protocol for the kvstore actor
-(bind-protocol! 'kvstore kvstore::proto)
+(defcall-actor (kvstore-put! key val (server-id 'kvstore))
+  (->> (kvstore-handle server-id) (!put key val))
+  error: "error putting key" key)
+
+(defcall-actor (kvstore-get key (server-id 'kvstore))
+  (->> (kvstore-handle server-id) (!get key))
+  error: "error retrieving key" key)
+
+(defcall-actor (kvstore-remove! key (server-id 'kvstore))
+  (->> (kvstore-handle server-id) (!remove key))
+  error: "error removing key" key)
+
+(def (kvstore-put-object! key val (server-id 'kvstore))
+  (kvstore-put! key (object->u8vector val) server-id))
+
+(def (kvstore-get-object key (server-id 'kvstore))
+  (u8vector->object (kvstore-get key server-id)))
+
+(def (kvstore-handle (server-id 'kvstore))
+  (make-handle (current-actor-server)
+               (reference server-id 'kvstore)))

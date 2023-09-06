@@ -6,12 +6,12 @@
         :gerbil/gambit/threads
         :std/error
         :std/sugar
-        :std/logger
         :std/io
         :std/io/dummy
         :std/foreign
         :std/text/utf8
-        :std/pregexp)
+        :std/pregexp
+        ./base)
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -32,8 +32,6 @@
         set-httpd-output-buffer-size!)
 
 (declare (not safe))
-
-(deflogger httpd)
 
 (defstruct http-request (buf sock client method url path params proto headers data)
   final: #t unchecked: #t)
@@ -264,14 +262,14 @@
   (c-declare #<<END-C
 #include <time.h>
 #include <string.h>
-__thread char buf[64];
+__thread char date_buf[64];
 static char *ffi_httpd_date () {
  struct tm tm;
  time_t t = time(NULL);
- asctime_r (gmtime_r (&t, &tm), buf);
+ asctime_r (gmtime_r (&t, &tm), date_buf);
  // clobber newline
- buf[strlen(buf)-1] = 0;
- return buf;
+ date_buf[strlen(date_buf)-1] = 0;
+ return date_buf;
 }
 END-C
 )

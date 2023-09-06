@@ -55,7 +55,7 @@
 
 (extern thread-send/check)
 (begin-foreign
-  (namespace ("std/actor/message#" send thread-send/check))
+  (namespace ("std/actor-v13/message#" send thread-send/check))
   (define (thread-send/check thread msg)
     (declare (not interrupts-enabled))
     (macro-check-initialized-thread thread (send thread msg)
@@ -212,7 +212,7 @@
 (extern mailbox-empty mailbox-next)
 
 (begin-foreign
-  (namespace ("std/actor/message#" mailbox-empty mailbox-next))
+  (namespace ("std/actor-v13/message#" mailbox-empty mailbox-next))
 
   (define mailbox-empty '#(empty))
 

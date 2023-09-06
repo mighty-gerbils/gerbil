@@ -3,7 +3,8 @@
 ;;; extensible binary i/o buffers with port compatible interface
 ;;; Warning: Low level unsafe interface; let their be Dragons.
 
-(import :std/net/bio/input
+(import :std/deprecation
+        :std/net/bio/input
         :std/net/bio/output
         :std/net/bio/buffer
         :std/net/bio/file)
@@ -64,3 +65,5 @@
   open-fd-output-buffer
   file-output-buffer?
   close-file-output-buffer)
+
+(package-deprecation-warning!)

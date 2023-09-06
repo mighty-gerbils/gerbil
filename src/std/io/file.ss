@@ -8,7 +8,8 @@
         :std/os/fdio
         :std/os/fcntl
         :std/event
-        ./interface)
+        ./interface
+        ./error)
 (export open-file-reader
         open-file-writer
         default-file-reader-flags
@@ -27,7 +28,7 @@
 (defmethod {read input-file-io}
   (lambda (self output output-start output-end input-need)
     (when (&file-io-closed? self)
-      (raise-io-error 'file-io-read "file has been closed"))
+      (raise-io-closed-error 'file-io-read "file is closed"))
     (let (fd (&file-io-fd self))
       (let lp ((output-start output-start) (input-need input-need) (result 0))
         (if (fx< output-start output-end)
@@ -49,7 +50,7 @@
 (defmethod {write output-file-io}
   (lambda (self input input-start input-end)
     (when (&file-io-closed? self)
-      (raise-io-error 'file-io-wrte "file has been closed"))
+      (raise-io-closed-error 'file-io-wrte "file is closed"))
     (let (fd (&file-io-fd self))
       (let lp ((input-start input-start) (result 0))
         (if (fx< input-start input-end)

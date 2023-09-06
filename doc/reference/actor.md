@@ -2,755 +2,759 @@
 
 Actor-oriented concurrent and distributed programming.
 
-::: tip usage
+::: tip to use bindings from this package
 (import :std/actor)
 :::
 
-## Overview
-
-Please write me!
-
-## Basic Types
-
-### message
-```
-(defstruct message (e source dest options))
-```
-
-Please document me!
-
-### proxy
-```
-(defstruct proxy (handler))
-```
-
-Please document me!
-
-### handle
-```
-(defstruct (handle proxy) (uuid))
-```
-
-Please document me!
-
-### remote
-```
-(defstruct (remote handle) (address proto))
-```
-
-Please document me!
-
-### remote=?
-::: tip usage
-```
-(remote=? ...)
-```
+::: tip Note
+This page documents the API of the actors package in Gerbil v0.18 and later; the legacy actor package is deprecated, but still available in `:std/actor-v13` if you need time to port existing code.
 :::
 
-Please document me!
+## Messaging Primitives
 
-### remote-hash
-::: tip usage
+### ->
+```scheme
+(-> dest msg
+    replyto: (replyto #f)
+    expiry: (expiry #f)
+    reply-expected: (reply-expected? #f))
 ```
-(remote-hash ...)
+Sends a message to `dest`, which must be a thread or actor handle, wrapped in an envelope.
+- `replyto` is an optional nonce when sending a reply to a previous message.
+- `expiry` is an optional expiry time (as a time object), which denotes the expiry of the
+   message. Expired messages will not be processed by the reaction macro `<-` below.
+- `reply-expected?` is a boolean indicated whether a reply is expected to this message.
+   It is a hint for message routers to send back a control reply in case of routing
+   errors.
+Returns the nonce of the message or `#f` if the message was not sent because the destination
+actor was detected as dead.
+
+### ->>
+```scheme
+(->> dest msg
+     replyto: (replyto #f)
+     timeout: (timeo (default-reply-timeout)))
 ```
-:::
+Sends a message to dest and waits for the reply.
+- `replyto` is an optional nonce indicating a reply to a previous interaction.
+- `timeout` is the timeout for receiving the reply, which must be a relative time (a positive real) or an absolute time (a time object).
 
-Please document me!
+Returns the value received in the reply message.
 
+Raises an actor error if the message could not be sent because the destination was detected
+as dead.
 
-## Exceptions
+Raises a timeout error if waiting for the reply times out.
 
-### actor-error?
-::: tip usage
+### -->
+```scheme
+(--> result)
 ```
-(actor-error? ...)
+
+Sends result as a reply to the source of the message in the current
+reaction context; it must be invoked within the lexical scope of a
+`<-` reaction.
+
+### -->?
+```scheme
+(-->? result)
 ```
-:::
 
-Please document me!
+Conditionally sends result as a reply to the source of the message in
+the current reaction context, if a reply is expected; it must be
+invoked within the lexical scope of a `<-` reaction.
 
-### rpc-error?
-::: tip usage
+### <-
+```scheme
+(<- (pattern body ...) ...
+    [,(reaction-rule-macro ...) ...]
+    [,@(multiple-reaction-rules-macro ...) ...]
+    [timeout: timeo]
+    [(else body ...)])
 ```
-(rpc-error? ...)
+
+Receives an enveloped message from the thread's mailbox matching one
+of the patterns and dispatching the body accordingly; patterns are
+matched with `match`.
+
+If there is a timeout specified, it will raise a timeout error if no
+message matching any of the patterns is received before the timeout
+elapses.
+
+If there is an `else` clause it will be dispatched immediately if
+there is no message matching any of the patterns in the mailbox.
+
+Within a reaction rule body, the following syntactic variables are set:
+- `@envelope` is set to the message envelope; this is an instance of the `evenelope` struct.
+- `@message`  is set to the envelope payload; this can be anything.
+- `@dest`     is set to the envelope destination; this is where the message was sent, a thread or a handle.
+- `@source`   is set to the envelope source; this is where the message came from, a thread or a handle.
+- `@nonce`    is set to the envelope nonce; a monotonically increasing nonnegative integer.
+- `@replyto`  is set to the envelope reply nonce; it can be #f if this message is not a reply to a previous message, or the nonce of a previously sent message.
+- `@expiry`   is set to the envelope expiry; this is a `time` object, representing absolute expiration time.
+- `@reply-expected?` is set to the envelope reply-expected hint; this is #t if the source is expecting a reply to this message.
+
+### <<
+```scheme
+(<< (pattern body ...) ...
+    [timeout: timeo]
+    [(else body ...)])
 ```
-:::
 
-Please document me!
+Like `<-` but it destructures raw messages that can be anything, not
+necessarily wrapped in an envelope. You don't normally have to use
+this unless you are expecting to receive messages sent with a raw
+primitive like `thread-send` or `send-message` and not with the send
+operator(s).
 
-### remote-error?
-::: tip usage
+There are no syntactic variables bound in the reaction context.
+
+### envelope
+```scheme
+(defstruct envelope (message dest source nonce replyto expiry reply-expected?)
+ ...)
 ```
-(remote-error? ...)
-```
-:::
 
-Please document me!
+Envelope structure for messages; you normally shouldn't construct
+those by hand and let the send operators construct it for you.
 
-### rpc-io-error?
-::: tip usage
-```
-(rpc-io-error? ...)
-```
-:::
+The structure is provided so that you program raw reactions with `<<`,
+for instance when writing a proxy actor.
 
-Please document me!
+The meanings and types of the struct fields are as defined as follows:
+- `message`  is the payload; this can be anything.
+- `dest`     is the destination actor; this is where the message was sent, a thread or a handle.
+- `source`   is the source of the message; this is where the message came from, a thread or a handle.
+- `nonce`    is the source-specific message nonce; a monotonically increasing nonnegative integer.
+- `replyto`  is the destination-specific reply nonce; it can be #f if this message is not a reply to a previous message, or the nonce of a previously sent message.
+- `expiry`   is envelope expiry; this is a `time` object, representing absolute expiration time.
+- `reply-expected?` is hint for proxies; this is #t if the source is expecting a reply to this message.
 
-
-## Message Primitives
-
-### -&gt;
-::: tip usage
-```
-(-> ...)
-```
-:::
-
-Please document me!
-
-### send
-::: tip usage
-```
-(send ...)
-```
-:::
-
-Please document me!
 
 ### send-message
-::: tip usage
-```
-(send-message ...)
-```
-:::
-
-Please document me!
-
-### send-message/timeout
-::: tip usage
-```
-(send-message/timeout ...)
-```
-:::
-
-Please document me!
-
-### &lt;&lt;
-::: tip usage
-```
-(<< ...)
-```
-:::
-
-Please document me!
-
-### &lt;-
-::: tip usage
-```
-(<- ...)
-```
-:::
-
-Please document me!
-
-### @message
-```
-(defsyntax @message)
-(defsyntax @@message)
+```scheme
+(send-message actor msg)
 ```
 
-Please document me!
+Sends a message to an actor, which must be a thread or a handle.
+Returns `#f` if the message was not sent because the actor was detected as dead.
 
-### @value
-```
-(defsyntax @value)
-(defsyntax @@value)
-```
+You don't normally have to invoke this, it is invoked internally by
+the send operators.  It is provided however in case you want to send
+pre-constructed envelopes, for instance when writing a proxy actor.
 
-Please document me!
-
-### @source
-```
-(defsyntax @source)
-(defsyntax @@source)
+### current-thread-nonce!
+```scheme
+(current-thread-nonce!)
 ```
 
-Please document me!
+Returns the current thread's numeric nonce and post increments.
 
-### @dest
-```
-(defsyntax @dest)
-(defsyntax @@dest)
-```
+You don't normally have to use this procedure, the nonce is
+incremented automatically by the send operators. It is provided
+however in case you want to construct your own envelopes, for instance
+when writing a proxy actor.
 
-Please document me!
-
-### @options
-```
-(defsyntax @options)
-(defsyntax @@options)
+### actor-error
+```scheme
+(defstruct (actor-error <error>) ())
 ```
 
-Please document me!
+Structure for actor errors.
 
-### !
-```
-(defsyntax !)
+### raise-actor-error
+```scheme
+(raise-actor-error where what . irritants)
 ```
 
-Please document me!
+Raises an actor error.
+
+### default-reply-timeout
+```scheme
+(default-reply-timeout)
+```
+
+The default reply timeout in seconds; initial value is 5s.
+
+### set-default-reply-timeout!
+```scheme
+(set-default-reply-timeout! timeo)
+```
+Sets the default reply timeout.
+
+
+## Handles and References
+
+### make-handle
+```scheme
+(handle proxy ref)
+```
+
+Creates a handle for sending messages to an actor through a proxy.
+- `proxy` is the actor who will receive the messages, a thread.
+- `ref` is a `reference` to the actor being proxied; in general it is
+  something the proxy can interpret; see `reference` below.
+
+### handle?
+```scheme
+(handle? obj)
+```
+
+Predicate for handles.
+
+
+### handle-proxy
+```scheme
+(handle-proxy h)
+```
+
+Returns the proxy in the handle.
+
+### handle-ref
+```scheme
+(handle-ref h)
+```
+
+Returns the actor reference in the handle.
+
+### reference
+```scheme
+(defmessage reference (server id))
+```
+
+References for actors in the ensemble.
+- `server` is the server identifier where the actor resides.
+- `id` is the actor identifier, generally a symbol for references by name.
+
+
+### reference->handle
+```scheme
+(reference->handle ref (srv (current-actor-server)))
+```
+
+Creates a handle from a reference, using by default the current actor
+server as the proxy.
 
 
 ## Protocols
 
-### defproto
-::: tip usage
+### defmessage
+```scheme
+(defmessage id (field-name ...) struct-options ...)
 ```
-(defproto ...)
-```
+
+Macro to define message types that can be efficiently marshalled as
+protocol messages.
+
+The structure is final and transparent, and it is automatically
+registered in the message type registry where the unmarshaller can
+find it.
+
+::: tip Note
+Messages _must_ be acyclic; if you want to send cyclic data you
+can use a normal struct, but be aware that such structs will be
+serialized/deserialized with the raw gambit serializer and carry the
+whole type descriptor (including methods) with them.
 :::
 
-Please document me!
-
-### defproto-default-type
-::: tip usage
-```
-(defproto-default-type ...)
-```
-:::
-
-Please document me!
-
-### !protocol
-```
-(defstruct !protocol (id super types))
+### message?
+```scheme
+(message? obj)
 ```
 
-Please document me!
+Predicate for instances of messages defined with `defmessage`.
 
-### proto-out
-::: tip usage
-```
-(proto-out ...)
-```
-:::
-
-Please document me!
-
-### !rpc
-```
-(defstruct !rpc ())
+### defcall-actor
+```scheme
+(defcall-actor (proc arg ...)
+  expr
+  [error: error-msg error-irritant ...])
 ```
 
-Please document me!
+Macro for defining synchronous interaction entry points for actors.
 
-### !call
-```
-(defstruct (!call !rpc) (e k)
-```
+The macro defines a procedure that invokes an actor with `expr` and
+unwraps the result.  If it is `!ok` the embedded value is returned.  If
+it is `!error` an actor error is raised, using the optional error
+message and irritants specified in the definition.
 
-Please document me!
-
-### !!call
-::: tip usage
-```
-(!!call ...)
-```
-:::
-
-Please document me!
-
-
-### !value
-```
-(defstruct (!value !rpc) (e k))
+### !ok
+```scheme
+(defmessage !ok (value))
 ```
 
-Please document me!
-
-### !!value
-::: tip usage
-```
-(!!value ...)
-```
-:::
-
-Please document me!
-
+Message indicating a successful invocation of an actor.
 
 ### !error
+```scheme
+(defmessage !error (message))
 ```
-(defstruct (!error !rpc) (e k))
-```
 
-Please document me!
+Message indicating an error in an actor invocation. The message is a
+diagnostic string, that will be included in the error raised by
+`defcall-actor` definitions.
 
-### !!error
-::: tip usage
-```
-(!!error ...)
+### with-result
+```scheme
+(with-result expr [fail!])
 ```
-:::
 
-Please document me!
+Evaluates `expr` and matches the result; if it is `!ok` the embedded
+value is returned.  If it is `!error` an error is raised by invoking
+the `fail!` (`error` by default) procedure with the error message.
 
-### !event
-```
-(defstruct (!event !rpc) (e))
-```
 
-Please document me!
+## Actor Management Protocol
 
-### !!event
-::: tip usage
+### !ping
+```scheme
+(defmessage !ping ())
 ```
-(!!event ...)
-```
-:::
 
-Please document me!
+Message sent to check liveness of an actor; the actor must reply with
+`(!ok 'OK)` if it is live.
 
-### !stream
-```
-(defstruct (!stream !rpc) (e k))
+### @ping
+```scheme
+(defrule (@ping)
+  ((!ping) (--> (!ok 'OK))))
 ```
 
-Please document me!
+Reaction macro to automatically respond to `!ping` messages.
 
-### !!stream
-::: tip usage
-```
-(!!stream ...)
-```
-:::
+You can use this in reaction context (`<-`) with the gnostic `,(@ping)` syntax.
 
-Please document me!
 
-### !yield
+### !shutdown
+```scheme
+(defmessage !shutdown ())
 ```
-(defstruct (!yield !rpc) (e k))
-```
 
-Please document me!
+Message sent to request an actor to gracefully shutdown.
 
-### !!yield
-::: tip usage
-```
-(!!yield ...)
+### @shutdown
+```scheme
+(defrule (@shutdown exit ...)
+  ((!shutdown)
+   (-->? (!ok (void)))
+   exit ...))
 ```
-:::
 
-Please document me!
-
-### !end
-```
-(defstruct (!end !rpc) (k))
-```
+Reaction macro to automatically (conditionally) respond to a `!shutdown` message.
 
-Please document me!
+You can use this in reaction context (`<-`) with the gnostic
+`,(@shutdown exit-actor-loop ...)` syntax.
 
-### !!end
-::: tip usage
-```
-(!!end ...)
+### @unexpected
+```scheme
+(defrule (@unexpected logf)
+  (unexpected
+   (logf "unexpected message from ~a: ~a" @source @message)
+   (-->? (!error "unexpected message"))))
 ```
-:::
 
-Please document me!
+Reaction macro to automatically log and conditionally respond to unexpected messages.
 
-### !continue
-```
-(defstruct (!continue !rpc) (k))
-```
+You can use this in reaction contex (`<-`) with the gnostic
+`,(@unexpected warnf)` syntax.
 
-Please document me!
 
-### !!continue
-::: tip usage
-```
-(!!continue ...)
+### Tickers
+
+#### ticker
+```scheme
+(ticker peer (period 1) (tick 'tick))
 ```
-:::
 
-Please document me!
+Runs in a loop sending `!tick` messages to `peer` every elapsed `period` (in seconds).
 
-### !close
+You can spawn tickers to send heartbeat messages to an actor like this:
+```scheme
+(spawn/name 'ticker ticker (current-thread))
 ```
-(defstruct (!close !rpc) (k))
+
+#### ticker-after
+```scheme
+(ticker-after peer initial-delay (period 1) (tick 'tick))
 ```
 
-Please document me!
+Runs `ticker` after sleeping for `initial-delay` (in seconds).
 
-### !!close
-::: tip usage
+#### after
+```scheme
+(after time peer (tick 'tick))
 ```
-(!!close ...)
-```
-:::
 
-Please document me!
+Sleeps for `time` and sends a tick to the specified peer.
 
-### !abort
-```
-(defstruct (!abort !rpc) (k))
+#### !tick
+```scheme
+(defmessage !tick (id seqno))
 ```
 
-Please document me!
+This is the message sent by `ticker` and related procedures to signify a temporal tick.
+- `id` is the identifier of the tick, which is a hint for actors to
+  demultiplex multiple tick sources.
+- `seqno` is the sequence number of the tick.
 
-### !!abort
-::: tip usage
-```
-(!!abort ...)
-```
-:::
 
-Please document me!
+### Actor Monitors
 
-### !sync
+#### actor-monitor
+```scheme
+(actor-monitor actor peer (send ->))
 ```
-(defstruct (!sync !rpc) (k))
-```
+
+Waits for `actor` to terminate by joining it and sends an
+`!actor-dead` message to `peer` when it exits. The `actor` must be a
+thread.
 
-Please document me!
+The `send` procedure is used to send the message; if you are
+processing raw messages with `<<` in your actor's reaction loop, you
+can use `send-message` instead of `->` to avoid wrapping the
+notification in an envelope.
 
-### !!sync
-::: tip usage
+You can spawn an actor monitor to notify you of thread exits like this:
+```scheme
+(spawn/name 'actor-monitor actor-monitor actor (current-thread))
 ```
-(!!sync ...)
+
+#### !actor-dead
+```scheme
+(defmessage !actor-dead (thread))
 ```
-:::
 
-Please document me!
+Message sent by actor monitors to notify or a monitored thread exit.
 
-### !token
-```
-(defstruct !token ())
-```
+
+## The Actor Server
 
-Please document me!
+### Server Addresses
 
+Actor server addresses can be:
+- UNIX domain addresses
+- TCP addresses
+- TLS addresses -- will be available for the v0.18 release.
 
-### !!pipe
-::: tip usage
+### Unix Addresses
+A UNIX domain address is denoted like this:
 ```
-(!!pipe ...)
+[unix: hostname path]
 ```
-:::
 
-Please document me!
+`hostname` is the name of the host where the server is
+accessible and `path` is the socket path; they are both strings.
 
+Actor servers will never try to connect to UNIX addresses in different
+hosts.
 
-## Syntax Bindings
-
-### make-protocol-info
-::: tip usage
+### TCP Addresses
+A TCP address is denoted like this:
 ```
-(make-protocol-info ...)
+[tcp: inet-addr]
 ```
-:::
 
-Please document me!
+`inet-addr` is an inet address; normally a pair of a host address and a port.
+See the [:std/net/address](address.md#internet-addresses) module for more details.
 
-### protocol-info?
-::: tip usage
-```
-(protocol-info? ...)
-```
-:::
+### TLS Addresses
 
-Please document me!
+TODO
 
-### protocol-info-runtime-identifier
-::: tip usage
+### current-actor-server
+```scheme
+(current-actor-server)
 ```
-(protocol-info-runtime-identifier ...)
-```
-:::
 
-Please document me!
+Parameter denoting the current actor server.
 
-### protocol-info-id
-::: tip usage
-```
-(protocol-info-id ...)
+This parameter is set automatically by `start-actor-server!` and
+`call-with-ensemble-server`; you don't normally have to set it
+manually.
+
+### start-actor-server!
+```scheme
+(start-actor-server! cookie:     (cookie (get-actor-server-cookie))
+                     addresses:  (addrs [])
+                     identifier: (id (make-random-identifier))
+                     ensemble:   (known-servers (default-known-servers)))
 ```
-:::
 
-Please document me!
+Starts an actor server, sets the `current-actor-server` parameter and
+returns the main server thread.
+- `cookie` is the ensemble cookie; normally resides in `$GERBIL_PATH/ensemble/cookie`.
+  Note that the administrator has to explicitly create a cookie for the ensemble, it is
+  not automatically created.
+- `addresses` is the list of addresses the server should listen; by default it is empty,
+  making this a transient actor server.
+- `identifier` is the server identifier; if you don't specify one, a random server
+  identifier will be generated.
+- `ensemble` specifies statically known hosts; it is a hash table mapping server identifiers
+  to lists of addresses.
+  The default known servers only contain the registry with the default registry address.
 
-### protocol-info-extend
-::: tip usage
-```
-(protocol-info-extend ...)
+### stop-actor-server!
+```scheme
+(stop-actor-server! (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Stops and joins an actor server.
 
-### protocol-info-calls
-::: tip usage
+### actor-server-identifier
+```scheme
+(actor-server-identifier (srv (current-actor-server)))
 ```
-(protocol-info-calls ...)
-```
-:::
 
-Please document me!
+Returns an actor server's identifier.
 
-### protocol-info-events
-::: tip usage
-```
-(protocol-info-events ...)
+### register-actor!
+```scheme
+(register-actor! name (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Registers the current thread in an actor server as an actor with the name `name`.
 
-### protocol-info-streams
-::: tip usage
+### connect-to-server!
+```scheme
+(connect-to-server! id (addrs #f) (srv (current-actor-server)))
 ```
-(protocol-info-streams ...)
-```
-:::
 
-Please document me!
+Instructs an actor server to connect to another server.
+- `id` is the identifier of the target server
+- `addrs` is an optional list of addresses; if none is specified and
+  the server is unknown, its addresses will be resolved through the
+  ensemble registry.
 
+### list-actors
+```scheme
+(list-actors (srv (current-actor-server)))
+```
 
-## RPC
+Lists the actors registered with an actor server.
+Returns a list of references.
 
-### current-rpc-server
-::: tip usage
+### list-connections
+```scheme
+(list-connections (srv (current-actor-server)))
 ```
-(current-rpc-server ...)
-```
-:::
 
-Please document me!
+Lists the current connections of an actor server.
+Returns an associative list, with the server identifier at the car and the
+list of addresses connected at the cdr.
 
-### start-rpc-server!
-::: tip usage
-```
-(start-rpc-server! ...)
+### default-known-servers
+```scheme
+(default-known-servers)
 ```
-:::
 
-Please document me!
+Returns a hash table with the default known servers.
+By default it only contains the registry reachable in its default address.
 
-### stop-rpc-server!
-::: tip usage
+### set-default-known-servers!
+```scheme
+(set-default-known-servers! servers)
 ```
-(stop-rpc-server! ...)
-```
-:::
 
-Please document me!
+Sets the default known servers; `servers` must be a hash table mapping
+server identifiers to lists of addresses.
 
-### rpc-connect
-::: tip usage
-```
-(rpc-connect ...)
+### default-registry-addresses
+```scheme
+(default-registry-addresses)
 ```
-:::
 
-Please document me!
+Returns the default registry addresses, as a list of addresses.  By
+default the registry is reachable at `/tmp/ensemble/registry` in the
+current host.
 
-### rpc-register
-::: tip usage
+### set-default-registry-addresses!
+```scheme
+(set-default-registry-addresses! addrs)
 ```
-(rpc-register ...)
-```
-:::
 
-Please document me!
+Sets the default registry addresses.
 
-### rpc-unregister
-::: tip usage
-```
-(rpc-unregister ...)
+### server-address-cache-ttl
+```scheme
+(server-address-cache-ttl)
 ```
-:::
 
-Please document me!
+Returns the actor's server address cache TTL in seconds (a real number);
+by default this is 5 minutes.
 
-### bind-protocol!
-::: tip usage
+### set-server-address-cache-ttl!
+```scheme
+(set-server-address-cache-ttl! ttl)
 ```
-(bind-protocol! ...)
-```
-:::
 
-Please document me!
+Sets the actor server's address cache TTL (in seconds, a real number).
 
 
-## RPC Server Protocol
 
-### rpc.register
-::: tip usage
-```
-(rpc.register ...)
-(!rpc.register ...)
-(!!rpc.register ...)
+## Ensemble Servers
+
+### call-with-ensemble-server
+```scheme
+(call-with-ensemble-server server-id thunk
+                           log-level: (log-level 'INFO)
+                           log-file:  (log-file #f)
+                           listen:    (listen-addrs [])
+                           announce:  (public-addrs #f)
+                           registry:  (registry-addrs #f)
+                           roles:     (roles [])
+                           cookie:    (cookie (get-actor-server-cookie)))
 ```
-:::
 
-Please document me!
+This is the programmatic equivalent of `gxensemble run`; first it
+starts the logger with the appropriate options, and then it starts a
+new actor server with identifier `server-id`, starts the loader
+service, adds the server to the ensemble, and then invokes thunk.
+When the thunk exits, it shuts down the actor server and removes the
+server-id from the ensemble.
 
-### rpc.unregister
-::: tip usage
-```
-(rpc.unregister ...)
-(!rpc.unregister ...)
-(!!rpc.unregister ...)
+Options:
+- `log-level`: logging level to use; INFO by default
+- `log-file`: log file for the logger; if it is "-" then the canonical
+  server log is used; this file is at
+  `$GERBIL_PATH/ensemble/server/<server-id>/log`.
+- `listen`: a list of addresses for the actor server to listen to, in
+  addition to the default unix address.
+- `announce`: an optional list of addresses to announce to the registry,
+  in addition to the default unix address. If it is not specified, then
+  the listen addresses are announced.
+- `registry`: an optional list of registry addresses. If it is not specified,
+  then the default registry address is used.
+- `roles`: a list of roles the server fullfills in the registry.
+- `cookie`: the cookie to use; by default it uses the ensemble cooke in
+  `$GERBIL_PATH/ensemble/cookie`.
+
+### ensemble-base-path
+```scheme
+(ensemble-base-path)
 ```
-:::
 
-Please document me!
+Returns the base directory for the ensemble; this is `$GERBIL_PATH/ensemble`.
 
-### rpc.resolve
-::: tip usage
+### ensemble-server-path
+```scheme
+(ensemble-server-path server-id)
 ```
-(rpc.resolve ...)
-(!rpc.resolve ...)
-(!!rpc.resolve ...)
-```
-:::
 
-Please document me!
+Returns the directory for server specific data; this is `$GERBIL_PATH/ensemble/server/<server-id>`.
 
-### rpc.server-address
-::: tip usage
-```
-(rpc.server-address ...)
-(!rpc.server-address ...)
-(!!rpc.server-address ...)
-```
-:::
+## Ensemble Control
 
-Please document me!
+This is programmatic functionality for operations normally performed
+using the `gxensemble` tool; see the [ensemble tutorial](../tutorials/ensemble.md)
+for more information.
 
-### rpc.monitor
-::: tip usage
-```
-(rpc.monitor ...)
-(!rpc.monitor ...)
-(!!rpc.monitor ...)
+### stop-actor!
+```scheme
+(stop-actor! ref (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Stops an actor referred by `ref` by sending it a `!shutdown` request.
 
-### rpc.unmonitor
-::: tip usage
+### remote-stop-server!
 ```
-(rpc.unmonitor ...)
-(!rpc.unmonitor ...)
-(!!rpc.unmonitor ...)
+(remote-stop-server! srv-id (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Stops the remote server with identifier `srv-id`.
 
-### rpc.disconnect
-::: tip usage
+### remote-list-actors
+```scheme
+(remote-list-actors srv-id (srv (current-actor-server)))
 ```
-(rpc.disconnect ...)
-(!rpc.disconnect ...)
-(!!rpc.disconnect ...)
-```
-:::
 
-Please document me!
+Lists registered actors at the remote server with identifier `srv-id`.
 
-### rpc.shutdown
-::: tip usage
-```
-(rpc.shutdown ...)
-(!rpc.shutdown ...)
-(!!rpc.shutdown ...)
+### remote-connect-to-server!
+```scheme
+(remote-connect-to-server! from-id to-id (addrs #f) (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Asks the remote server with identifier `from-id` to connect to the
+server with identifier `to-id`.  If the optional addresses `addrs` are
+not specified, then the `to-id` server will be looked up in the registry.
 
+### remote-list-connections
+```scheme
+(remote-list-connections srv-id (srv (current-actor-server)))
+```
 
-## RPC Wire Protocols
+Lists the connections of a remote server with identifier `srv-id`.
 
-### rpc-null-proto
-::: tip usage
+### remote-load-library-module
+```scheme
+(remote-load-library-module srv-id mod (srv (current-actor-server)))
 ```
-(rpc-null-proto ...)
-```
-:::
 
-Please document me!
+Asks the remote server with identifier `srv-id` to load the library module `mod`.
 
-### rpc-cookie-proto
-::: tip usage
-```
-(rpc-cookie-proto ...)
+### remote-load-code
+```scheme
+(remote-load-code srv-id object-file-path (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Asks the remote server with identifier `srv-id` to load a code object file.
 
-### rpc-generate-cookie!
-::: tip usage
+### remote-eval
+```scheme
+(remote-eval srv-id expr (srv (current-actor-server)))
 ```
-(rpc-generate-cookie! ...)
-```
-:::
 
-Please document me!
+Evaluates `expr` in the remote server with identifier `srv-id`.
 
-### rpc-cipher-proto
-::: tip usage
-```
-(rpc-cipher-proto ...)
+### ping-server
+```scheme
+(ping-server srv-id (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Pings the remote server with identifier `srv-id`.
 
-### rpc-cookie-cipher-proto
-::: tip usage
+### ping-actor
+```scheme
+(ping-actor ref (srv (current-actor-server)))
 ```
-(rpc-cookie-cipher-proto ...)
-```
-:::
 
-Please document me!
+Pings the actor referred by `ref`.
 
+### ensemble-add-server!
+```scheme
+(ensemble-add-server! id addrs roles (srv (current-actor-server)))
+```
 
-## RPC Options
+Adds a server to the ensemble registry:
+- `id` is the server identifier
+- `addrs` is the list of actor server addresses.
+- `roles` is a list of roles for the server; a list of symbols.
 
-### set-rpc-keep-alive-interval!
-::: tip usage
+### ensemble-remove-server!
+```scheme
+(ensemble-remove-server! id (srv (current-actor-server)))
 ```
-(set-rpc-keep-alive-interval! ...)
-```
-:::
 
-Please document me!
+Removes the server with identifier `id` from the ensemble registry.
 
-### set-rpc-idle-timeout!
-::: tip usage
-```
-(set-rpc-idle-timeout! ...)
+### ensemble-list-servers
+```scheme
+(ensemble-list-servers (srv (current-actor-server)))
 ```
-:::
 
-Please document me!
+Lists the current ensemble servers.
 
-### set-rpc-call-timeout!
-::: tip usage
+### ensemble-lookup-server
+```scheme
+(ensemble-lookup-server id (srv (current-actor-server)))
 ```
-(set-rpc-call-timeout! ...)
-```
-:::
 
-Please document me!
+Looks up a server's addresses in the registry.
 
-
-## Example
+### ensemble-lookup-servers/role
+```scheme
+(ensemble-lookup-servers/role role (srv (current-actor-server)))
+```
 
-Please write me!
+Looks up servers (and their addresses) that fulfill `role` in the
+ensemble.

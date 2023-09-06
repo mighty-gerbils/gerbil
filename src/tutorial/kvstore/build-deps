@@ -1,0 +1,28 @@
+(gerbil-build-deps-v2:
+ (tutorial/kvstore/proto "proto" (gerbil/core gerbil/gambit std/actor))
+ (tutorial/kvstore/server
+  "server"
+  (gerbil/core
+   std/actor
+   std/db/lmdb
+   std/logger
+   std/sugar
+   std/text/zlib
+   tutorial/kvstore/proto))
+ (tutorial/kvstore/kvstore-svc
+  "kvstore-svc"
+  (gerbil/core
+   gerbil/gambit/threads
+   std/actor
+   std/db/lmdb
+   tutorial/kvstore/server))
+ (tutorial/kvstore/kvstorec
+  (exe: "kvstorec")
+  (gerbil/core
+   gerbil/gambit
+   std/actor
+   std/getopt
+   std/misc/ports
+   std/sugar
+   tutorial/kvstore/proto)))
+

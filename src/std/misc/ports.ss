@@ -3,6 +3,7 @@
 ;;; miscellaneous port utilities
 
 (import :gerbil/gambit/ports
+        :gerbil/gambit/os
         :std/sugar
         :std/misc/list-builder
         (only-in :std/srfi/13 string-suffix?))
@@ -201,9 +202,13 @@
           (u8vector-shrink! buf len)
           (u8vector-concatenate (reverse (cons buf u8s))))))))
 
-(def (read-file-u8vector file settings: (settings '()) bufsize: (bufsize 8192))
-  (call-with-input-file (cons* path: file settings)
-    (cut read-all-as-u8vector <> bufsize)))
+(def (read-file-u8vector file-path settings: (settings '()))
+  (let* ((finfo (file-info file-path #t))
+         (size  (file-info-size finfo))
+         (buffer  (make-u8vector size)))
+    (call-with-input-file (cons* path: file-path settings)
+      (cut read-subu8vector buffer 0 size <>))
+    buffer))
 
 ;; Write string to file using the 'display' procedure.
 ;;   file             the file to be written to

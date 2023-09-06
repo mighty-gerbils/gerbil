@@ -174,7 +174,7 @@ the unchecked method.
 Note: if you get this wrong and the type is not the right instance, there will be dragons.
 Use with caution!
 
-```
+```scheme
 (interface A
   (f ...))
 

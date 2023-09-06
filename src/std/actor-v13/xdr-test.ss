@@ -1,17 +1,17 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; :std/actor/xdr unit-test
+;;; :std/actor-v13/xdr unit-test
 
 (import :gerbil/gambit/random
         :gerbil/gambit/os
         :std/test
-        :std/actor/xdr
         :std/net/bio
-        :std/iter)
-(export xdr-test)
+        :std/iter
+        ./xdr)
+(export actor-v13-xdr-test)
 
-(def xdr-test
-  (test-suite "test :std/actor/xdr"
+(def actor-v13-xdr-test
+  (test-suite "test :std/actor-v13/xdr"
 
     (def (check-serialize obj (obj-e values))
         (let (p (open-serializer-output-buffer))

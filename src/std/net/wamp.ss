@@ -12,8 +12,8 @@
         :std/misc/completion
         :std/misc/threads
         :std/net/websocket
-        :std/actor/message
-        :std/actor/proto
+        :std/actor-v13/message
+        :std/actor-v13/proto
         :std/crypto/etc
         :std/text/json)
 (export

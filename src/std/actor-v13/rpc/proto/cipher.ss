@@ -8,12 +8,12 @@
         :std/crypto/cipher
         :std/crypto/dh
         :std/crypto/bn
-        :std/actor/xdr
-        :std/actor/proto
-        :std/actor/rpc/base
-        :std/actor/rpc/proto/message
-        :std/actor/rpc/proto/null
-        :std/actor/rpc/proto/cookie)
+        ../../xdr
+        ../../proto
+        ../base
+        ./message
+        ./null
+        ./cookie)
 (export rpc-cipher-proto
         rpc-cookie-cipher-proto
         rpc-cipher-proto-key-exchange)

@@ -5,8 +5,8 @@
 (import :gerbil/gambit/threads
         :std/net/socket/base
         :std/os/socket
-        :std/actor/message
-        :std/actor/proto
+        :std/actor-v13/message
+        :std/actor-v13/proto
         :std/logger
         :std/sugar)
 (export (except-out #t errorf warnf infof debugf verbosef))

@@ -7,8 +7,7 @@
         :gerbil/gambit/exceptions
         :std/sugar
         :std/format
-        :std/srfi/19
-        )
+        :std/srfi/19)
 (export start-logger!
         current-logger
         current-logger-options
@@ -54,11 +53,32 @@
 (def current-logger
   (make-parameter #f))
 
+(def (get-logger)
+  (cond
+   ((not (actor-thread? (current-thread)))
+    (current-logger))
+   ((thread-local-get 'logger))
+   (else
+    (let (logger (current-logger))
+      (thread-local-set! 'logger logger)
+      logger))))
+
 ;; options can be:
 ;; - a level, either symbolic or a fixnum
 ;; - a logger-options object, which specifies per source options as a hash table of source -> level
 (def current-logger-options
   (make-parameter 1))
+
+(def (get-logger-options)
+  (cond
+   ((not (actor-thread? (current-thread)))
+    (current-logger-options))
+   ((thread-local-get 'logger-options))
+   ((current-logger-options)
+    => (lambda (opts)
+         (let (opts (if (symbol? opts) (object->level opts) opts))
+           (thread-local-set! 'logger-options opts)
+           opts)))))
 
 (defstruct logger-options (threshold sources))
 
@@ -73,9 +93,9 @@
           (thread-send logger (!log-message now level source msg))))))
 
   (cond
-   ((current-logger)
+   ((get-logger)
     => (lambda (logger)
-         (let (opts (current-logger-options))
+         (let (opts (get-logger-options))
            (cond
             ((logger-options? opts)
              (cond

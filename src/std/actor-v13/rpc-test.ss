@@ -1,12 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; :std/actor unit-test
+;;; :std/actor-v13 unit-test
 
 (import :gerbil/gambit
         :std/test
         :std/event
-        :std/actor)
-(export actor-test)
+        ../actor-v13)
+(export actor-v13-rpc-test
+        actor-v13-rpc-stream-test)
 
 (defproto hello
   call: (hello a)
@@ -47,7 +48,7 @@
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
-(def actor-rpc-test
+(def actor-v13-rpc-test
   (test-suite "test :std/actor RPC"
     (test-case "test RPC NULL proto"
       (def remoted (start-rpc-server! rpc-server-address1))
@@ -186,7 +187,7 @@
         ((!rpc.shutdown)
          (void)))))
 
-(def actor-rpc-stream-test
+(def actor-v13-rpc-stream-test
   (test-suite "test :std/actor RPC stream"
     (test-case "test basic RPC stream"
       (def N 5)
@@ -252,8 +253,3 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))))
-
-(def actor-test
-  (test-suite "test :std/actor RPC"
-    (run-test-suite! actor-rpc-test)
-    (run-test-suite! actor-rpc-stream-test)))

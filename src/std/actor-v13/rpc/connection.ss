@@ -12,11 +12,11 @@
         :std/os/socket
         :std/misc/uuid
         :std/misc/threads
-        :std/actor/message
-        :std/actor/xdr
-        :std/actor/proto
-        :std/actor/rpc/base
-        :std/actor/rpc/proto/message)
+        ../message
+        ../xdr
+        ../proto
+        ./base
+        ./proto/message)
 (export (except-out #t errorf warnf infof debugf verbosef))
 
 (declare (not safe))

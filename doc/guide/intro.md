@@ -433,6 +433,87 @@ $ ./clasess-test 10000000
     no major faults
 ```
 
+
+#### Interfaces
+
+Starting with Gerbil v0.18, The `:std/interface` package provides the
+interface abstraction, which allows you to define facades for your
+class hierarchy, hiding the details of internal implementation and
+preresolving methods for direct dispatch.
+
+In the example above, we can normalize the interface to our class hierarchy as follows:
+```scheme
+(interface F
+  (add-a x)
+  (add-b x)
+  (mul-c x y))
+```
+
+You can create instances of your interfaces by casting objects with the `F` macro.
+Using interfaces, the code becomes both more robust and more efficient:
+```scheme
+(defclass A (a))
+(defclass B (b))
+(defclass (C A B) (c))
+(defclass (D A B) (d))
+(defclass (E C D) (e) final: #t)
+
+(defmethod {add-a A}
+  (lambda (self x)
+    (+ (@ self a) x)))
+
+(defmethod {add-b B}
+  (lambda (self x)
+    (+ (@ self b) x)))
+
+(defmethod {mul-c C}
+  (lambda (self x y)
+    (* (@ self c) {add-a self x} {add-b self y})))
+
+(def (do-it-with-object o n)
+  (for (_ (in-range n)) {mul-c o 1 2}))
+(def (do-it-with-interface o n)
+  (let (o (F o)) (for (_ (in-range n)) (F-mul-c o 1 2))))
+```
+
+Let's compile and time the code above:
+```scheme
+> (def foo (E a: 1 b: 2 c: 3))
+> (time (do-it-with-object foo 1000000))
+(time (tmp/example#do-it-with-object foo (##quote 1000000)))
+    0.226230 secs real time
+    0.226218 secs cpu time (0.225842 user, 0.000376 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    590719272 cpu cycles
+> (seal-class! E::t)
+#<type #16 E>
+> (time (do-it-with-object foo 1000000))
+(time (tmp/example#do-it-with-object foo (##quote 1000000)))
+    0.044066 secs real time
+    0.044069 secs cpu time (0.042088 user, 0.001981 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    115047186 cpu cycles
+> (time (do-it-with-interface foo 1000000))
+(time (tmp/example#do-it-with-interface foo (##quote 1000000)))
+    0.025100 secs real time
+    0.025104 secs cpu time (0.025103 user, 0.000001 system)
+    no collections
+    704 bytes allocated
+    no minor faults
+    no major faults
+    65530420 cpu cycles
+```
+
+See the [Interfaces](../reference/interface.md) package documentation
+for more details.
+
+
 ### Pattern Matching
 
 Gerbil uses pattern matching extensively, so a suitable match
@@ -1278,235 +1359,249 @@ For example:
 
 ### Actors
 
-At the low-level Gerbil builds on Gambit's thread mailboxes to provide
+Gerbil builds on Gambit's thread messaging primitives to provide
 actor-oriented programming capabilities and remote interactor
 communication.
 
-#### Messages
+#### What is an actor
 
-Gerbil's actors are threads, either in the current or remote processes
-and communicate exchanging messages. Messages can be arbitrary objects,
-but usually actors communicate with structured messages:
-```scheme
-(defstruct message (e source dest options))
-(def (send dest value) ...)                       ; send raw message
-(def (send-message dest value (options #f)) ...)  ; send structured message
-(def (send-message/timeout dest value timeo) ...)
-```
-Actors process messages and events with two main macros, `<<` and `<-`.
-They both synchronize on the thread's mailbox and pattern match incoming messages;
-the difference is that `<<` matches on raw messages and `<-` matches on
-structured message values.
-Within a `<-` pattern body, the variables `@message`, `@value`, `@source`,
-`@dest` and `@options` are bound from the structured message.
-Within the pattern body, the `->` can be used as shorthand syntax to send messages
-to `@source`.
+At the fundamental level, an actor is a thread that is emitting and
+responding to messages, usually running in a loop.
+The actor may be running locally, accessible from other threads within
+the process, or it can be part of an _ensemble_ of actors running in a
+substrate of servers.
 
-For example, a simple echo actor:
+We give a brief overview of actor oriented programming in what follows.
+
+#### Sending and Receiving Messages
+
+The basic interaction operators:
+- you can send a message with the `->` operator.
+- you can send a message and wait for the reply with the `->>` operator.
+- you can receive and react to messages with the `<-` syntax.
+- you can send a reply in a reaction context with the `-->` syntax.
+- you can also send a reply conditionally, if one is expected, with the `-->?` syntax.
+
+Here is an example, where we spawn a very basic actor that receives and responds to a message:
 ```scheme
-(import :std/actor)
-(def (my-echo)
- (let lp ()
-   (<- (value
-        (displayln @source " says " value)
-        (-> value)
-        (lp)))))
-(def echo (spawn my-echo))
-> (send-message echo 'hello)
-#<thread #1 primordial> says hello
-> (<- (value value))
-=> 'hello
+(def (respond-once)
+  (<- (greeting (--> (cons 'hello greeting)))))
+(def the-actor (spawn respond-once))
+
+> (->> the-actor 'world)
+=> '(hello . world)
+
 ```
+
+The code reacts with the `<-` reaction syntax, and replies with the
+`-->` reply syntax.  The reaction pattern binds the content of the
+message to `greeting`, which is then sent back consed with `hello`.
+
+See the [actor package](../reference/actor.md) reference documentation
+for more details.
 
 #### Protocols
 
-Beyond structured messages, Gerbil provides protocols for structured interaction.
-Protocol messages can be one way messages (instances of `!event`), a remote
-call (instances of `!call`) or a value for a previous call (`!value` or `!error`).
+While all this is nice and dandy, we generally want _structured_
+interaction with actors that is type-safe.
 
-Protocols are defined with `defproto`, which defines structures and macros
-for using the protocol interfaces, together with marshalling support.
-For example, let's define an echo protocol:
+The `:std/actor` package provides a `defmessage` macro for defining messages,
+together with the `!ok` and `!error` messages for structuring responses to
+request messages.
+The package also provides a `defcall-actor` macro for providing
+facades to actor request/reply interactions These facades
+automatically unwrap results and return the value if the result was
+`!ok` and raise an `actor-error` if the result was an `!error`.
+
+Here is an simple example wallet actor that holds a balance and
+responds to `!balance`, `!deposit` and `!withdraw` messages, and entry
+points for querying the balance and making desposits and withdrawals:
 ```scheme
-(defproto echo
-  id: echo
-  call: (hello what))
-(def (my-echo)
-  (let lp ()
-    (<- ((!echo.hello what k)
-          (displayln @source " says " what)
-          (!!value what k)
-          (lp)))))
-(def echo (spawn my-echo))
-> (!!echo.hello echo 'hello)
-#<thread #1 primordial> says hello
-=> 'hello
+(defmessage !balance ())
+(defmessage !deposit (amount))
+(defmessage !withdraw (amount))
 
+(def (wallet-actor balance)
+  (while #t
+    (<- ((!balance)
+         (--> (!ok balance)))
+        ((!deposit amount)
+         (set! balance (+ balance amount))
+         (--> (!ok balance)))
+        ((!withdraw amount)
+         (if (< balance amount)
+           (--> (!error "insufficient balance"))
+           (begin
+             (set! balance (- balance amount))
+             (--> (!ok balance))))))))
+
+(defcall-actor (balance wallet)
+  (->> wallet (!balance))
+  error: "balance query failed")
+
+(defcall-actor (deposit! wallet amount)
+  (->> wallet (!deposit amount))
+  error: "deposit failed")
+
+(defcall-actor (withdraw! wallet amount)
+  (->> wallet (!withdraw amount))
+  error: "withdrawal failed")
 ```
 
-In the example, we define a protocol `echo` with a single call `hello`.
-The macro defines the structures and macros for using the interface:
-```scheme
-(defstruct echo.hello (what))
-(defsyntax-for-match !echo.hello ...)
-(defrules !!echo.hello ...
+and here is an example interaction:
+```
+> (def my-wallet (spawn wallet-actor 100))
+> (balance my-wallet)
+100
+> (deposit! my-wallet 10)
+110
+> (withdraw! my-wallet 20)
+90
+> (withdraw! my-wallet 200)
+*** ERROR IN (stdin)@26.1 -- withdraw!: [actor-error] withdrawal failed
+--- irritants: insufficient balance
 ```
 
-The invocation `(!!echo.hello echo 'hello)` constructs a `!call` protocol
-message with an instance of `echo.hello` and a gensymed continuation id.
-It then sends the message to the `echo` actor and waits for a `!value`
-or `!error` message matching the continuation. If it receives a `!value` it
-returns it, and if it receives an `!error` it signals an error.
+#### Ensembles
 
-In the actor, the `(!echo.hello what k)` matches a `!call` with
-the value matching `(echo.hello what)` and the continuation token
-bound to `k`. The actor displays its message, and then responds by
-sending a value with the `!!value` macro. An error could be signalled
-with the `!!error` macro.
+So far our actor is limited to communicating with threads within the
+process.  That's fine for many applications, but as you build more
+complex systems you will need to span processes in the same host and
+eventually span hosts in the network.
 
-The syntax for `!!value` and `!!error` is similar: the take
-an optional destination (which defaults to `@source`), a value
-or error message and the continuation token:
-```scheme
-(!!value [@source] val token)
-(!!error [@source] msg token)
+The concept of the ensemble denotes the totality of actors running on
+a server substrate, perhaps in the Internet at large, and sharing a
+secret _cookie_ that allows them to communicate with each other.
+
+::: warning
+Note that for communication over the open Internet it is strongly
+recommended to use TLS; this will be implemented soon for the v0.18
+release.
+:::
+
+So how do we build an ensemble?  First we need to generate a cookie
+for our ensemble, which we can do programmatically or using the `gxensemble`
+tool:
+```
+$ gxensemble cookie
 ```
 
-#### Streams
+This will generate a random 256-bit cookie in `$GERBIL_PATH/ensemble/cookie`.
+Note that it will not overwrite an existing cookie, unless you force
+it with `-f`.
 
-In addition to calls and events, actors can also open streams.
-A stream is like a call, but it returns multiple values using
-`!!yield` until the stream's end or an error occurs.
+The second thing we need to do is modify our actor to _register_ with
+its in-process actor server.  We also add a couple of standard
+ensemble reaction rules that make our actor behave nicely and submit
+to management with the `gxensemble` tool.
 
-For example, the following server generates a stream of numbers as
-specified by the argument:
+Here is the complete code for the actor:
 ```scheme
-(defproto simple-stream
-  stream: (count N))
+(import :gerbil/gambit/threads
+        :std/actor
+        :std/sugar
+        :std/logger)
+(export #t)
 
-(def (my-simple-stream)
-  (def (stream dest N k)
-    (let lp ((n 0))
-      (if (< n N)
-        (begin
-          (!!yield dest n k)
-          (!!sync dest k)               ; request sync
-          (<- ((!continue k)            ; flow control
-               (lp (1+ n)))
-              ((!close k)               ; stream closed
-               (!!end dest k))
-              ((!abort k)               ; stream aborted
-               (void))))
-        (!!end dest k))))
+(deflogger wallet)
 
-  (let lp ()
-    (<- ((!simple-stream.count N k)
-         (spawn stream @source N k)
-         (lp)))))
+(defmessage !balance ())
+(defmessage !deposit (amount))
+(defmessage !withdraw (amount))
 
-(def my-stream (spawn my-simple-stream))
+(defcall-actor (balance wallet)
+  (->> wallet (!balance))
+  error: "balance query failed")
+
+(defcall-actor (deposit! wallet amount)
+  (->> wallet (!deposit amount))
+  error: "deposit failed")
+
+(defcall-actor (withdraw! wallet amount)
+  (->> wallet (!withdraw amount))
+  error: "withdrawl failed")
+
+(def (wallet-actor balance)
+  (register-actor! 'wallet)
+  (let/cc exit
+    (while #t
+      (<- ((!balance)
+           (--> (!ok balance)))
+          ((!deposit amount)
+           (set! balance (+ balance amount))
+           (--> (!ok balance)))
+          ((!withdraw amount)
+           (if (< balance amount)
+             (--> (!error "insufficient balance"))
+             (begin
+               (set! balance (- balance amount))
+               (--> (!ok balance)))))
+
+          ,(@ping)
+          ,(@shutdown (exit 'shutdown))
+          ,(@unexpected warnf)))))
+
+(def (main initial-balance)
+  (thread-join! (spawn/name 'wallet wallet-actor (string->number initial-balance))))
 ```
 
-Yielded values can be processed as messages, or with the `!!pipe`
-macro which constructs a vector pipe and pipes the yielded values
-through it in a background thread.
+Notice that we also define an entry point for running a server that hosts the wallet.
 
-Here is an example that uses a pipe:
-```scheme
-> (let ((values inp close) (!!pipe (!!simple-stream.count my-stream 5)))
-    (for (x inp)
-      (displayln x)))
-0
-1
-2
-3
-4
-```
+With all this we can run a server named `'my-wallet-server` hosting our wallet in the ensemble
+as follows:
+```shell
+$ cat gerbil.pkg
+(package: tmp)
+$ gxc -O wallet-actor.ss
 
-The pipe may be convenient, but it forgoes end-to-end back pressure
-and synchronization with `!!sync`. Here is the same example again,
-but with explicit processing of messages through the actor mailbox:
-```scheme
-(let (k (!!simple-stream.count my-stream 5))
-  (let lp ()
-    (<- ((!yield x (eq? k))
-         (displayln x)
-         (lp))
-        ((!sync (eq? k))
-         (!!continue k)
-         (lp))
-        ((!end (eq? k))
-         (void)))))
-```
-
-#### RPC
-
-The interaction so far has been local. In order to interact with
-remote actors, Gerbil provides an rpc protocol and server for
-handling the necessary network interaction.
-
-Using rpc is very simple: An rpc server can be constructed
-with `start-rpc-server!` which accepts an optional server address
-to bind and a wire protocol implementation with a keyword.
-
-In one shell:
-```scheme
-(def (my-echo rpcd)
-  (rpc-register rpcd 'echo echo::proto)
-  (let lp ()
-    (<- ((!echo.hello what k)
-          (displayln @source " says " what)
-          (!!value what k)
-          (lp)))))
-(def serverd (start-rpc-server! "127.0.0.1:9999"))
-(def echod (spawn my-echo serverd))
-```
-This starts an rpc server at port 9999 in the localhost.
-The echo actor binds itself under the id `echo` using the
-echo protocol `echo::proto` for marshalling and unmarshalling.
-
-In a different shell, we can connect to our echo with a `remote` handle:
-```scheme
-(def clientd (start-rpc-server!))
-(def echod (rpc-connect clientd 'echo "127.0.0.1:9999" echo::proto))
-> (!!echo.hello echod 'hello)
-=> 'hello
-```
-
-If your actors are well-known (application scoped), then you can globally bind
-a protocol to the name with `bind-protocol!` and you don't need to specify
-the protocol in `rpc-register` and `rpc-connect`:
-```scheme
-(bind-protocol! 'echo echo::proto)
-(def clientd ...)
-(def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
-```
-
-By default, a null rpc protocol is used which does no authentication
-or encryption. If you intend to expose your actors to the Internet
-you should use authentication and optionally encryption.
-
-For authentication, you can generate a shared cookie with `rpc-generate-cookie!`
-and start your rpc-server using the `rpc-cookie-proto`:
-```scheme
-$ mkdir ~/.gerbil
-> (rpc-generate-cookie!)
-; generates a cookie in ~/.gerbil/cookie
+# in one terminal - run this to allow for server registration and lookup
+$ gxensemble registry
 ...
-(def remoted
- (start-rpc-server! "127.0.0.1:9999"
-    proto: (rpc-cookie-proto)))
-...
-(def locald
-  (start-rpc-server! proto: (rpc-cookie-proto)))
+
+# in another terminal
+$ gxensemble run my-wallet-server :tmp/wallet-actor 100
 ...
 ```
 
-If you also want to encrypt your communications, then use
-the `rpc-cookie-cipher-proto` as `proto:` argument for your rpc
-servers. On top of cookie authentication, this protocol performs
-a Diffie-Hellman key exchange and then encrypts all messages with
-AES/HMAC (it encrypts and then MACs).
+We can now interact with our actor using a _handle_ in our interpreter:
+```shell
+$ gxi
+> (import :std/actor)
+> (start-actor-server!)
+#<thread #22 actor-server>
+> (def my-wallet (make-handle (current-actor-server) (reference 'my-wallet-server 'wallet)))
+> (import :tmp/wallet-actor)
+> (balance my-wallet)
+100
+> (deposit!  my-wallet 10)
+110
+;; ... and so on
+
+```
+
+If we want to shutdown our ensemble we can do so very easily with the
+gxensemble tool, which is part of the Gerbil distribution:
+```shell
+$ gxensemble shutdown
+This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]
+y
+... shutting down my-wallet-server
+... shutting down registry
+```
+
+#### More about actors
+
+See the [Key-Value Store](../tutorials/kvstore.md) tutorial for a
+comprehensive example of actor-oriented programming.
+
+See the [Working with Actor Ensembles](../tutorials/ensemble.md) tutorial
+for more information about how to work with actor ensembles.
+
+See the
+[Actors](../reference/actor.md) package documentation for more
+details in the API available for programming and interacting with
+actors.
+
 
 ### HTTP requests
 
