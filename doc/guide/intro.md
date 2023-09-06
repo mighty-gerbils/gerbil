@@ -8,18 +8,18 @@ In the following, `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
 ## Using Gerbil
-The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
-`$GERBIL_HOME/bin/gxc`.
+The Gerbil interpreter is `/opt/gerbil/bin/gxi`, and the compiler is
+`/opt/gerbin/bin/gxc`, assuming the default installation prefix.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
 
 
 ## Hello world
-Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
+Add `/opt/gerbil/bin` to your path and invoke the interpreter
 for the obligatory "hello world":
 ```
-$ export PATH=$PATH:$GERBIL_HOME/bin
+$ export PATH=$PATH:/opt/gerbil/bin
 $ gxi
 > (displayln "hello world")
 hello world
@@ -334,8 +334,7 @@ For example, the following constructs a diamond hierarchy with a base struct:
 
 #### Sealing Classes
 
-As of `Gerbil-v0.16-DEV-331-g7b454eea`, Gerbil supports _sealing_ for
-_final_ class (and struct) types.
+Gerbil supports _sealing_ for _final_ class (and struct) types.
 
 By sealing a class, all methods in the hierarchy are coalesced
 into the class' method table, resulting to a single hash table lookup
@@ -879,24 +878,24 @@ hello world
 ```
 
 The difference between the 3 executable compilation modes can be summarized as follows:
-- By default, an compiles with separate module compilation and links to the precompiled
-  gerbil library (`libgerbil`).
+- By default, executable binaries are compiled with separate module compilation and link
+  to the  precompiled gerbil library (`libgerbil`).
   If the system was configured with `--enable-shared`, then this
   will be a shared library; otherwise it will be a static library archive.
   Note that the executable may have some additionl dynamic library
-  dependencies from stdlib foreign code , and also links to `libgambit` which will be
+  dependencies from stdlib foreign code, and also links to `libgambit` which will be
   a shared library when the system is configured with `--enable-shared`.
 - When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
   full program optimization with all gerbil library dependencies. This will result
   in better performance, albeit at the cost of increased compilation time;
   this can be minutes for complex programs, while
-  separately linked executables compile in second(s). Furthermore, because
+  separately linked executables compile in a second. Furthermore, because
   dependencies are compiled in together, you can apply declarations like `(not safe)`
   to the whole program using the `-prelude` directive. This can result
   in potentially significant performance gains at the expense of safety.
   Note that an executable compiled with full program optimization still links to `libgambit`.
 - An executable module can also be compiled as a plain dynamic module and then
-  executed with the `gerbil` universal binary.
+  executed with the `gerbil` universal binary (or `gxi`).
   This dynamic mode of executables is useful for development, as they compile
   instantly and do not need to be recompiled while you are working on their
   dependencies.
@@ -947,11 +946,10 @@ they  are further explored in the
 
 ### Implicit Package Declarations
 
-As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can elide the `package:` and
-`prelude:` declarations in your module and have them automatically deduced
-from the file system layout of your library/package.
-You can do so by creating a `gerbil.pkg` file in the root of your library,
-which contains a property list.
+As you have noticed, you don't generally declare the package and the
+prelude inside a module. This is implicitly handled by creating a
+`gerbil.pkg` file in the root of your package, which contains a
+property list.
 
 The `package:` property specifies the prefix package at the root of your
 hierarchy. The package of individual modules will extend this prefix to
@@ -965,11 +963,15 @@ property list.  This allows you to simply touch a gerbil.pkg at the
 root of your source hierarchy when you don't need a custom prelude and
 use a directory structure that mimics your logical package structure.
 
+Note that you can also place `package:` and `prelude:` declarations at
+the top of your module; this is something you might encounter in older
+gerbil code or things with special requirements.
+
+
 ### Library Relative Module Paths
 
-As of `Gerbil v0.16-DEV-196-g41214a5`, you can use the dot notation to
-import library modules using a relative path within a library.  Within
-a library module `:A/B/C/D`, an import of `./E` will resolve to
+You can use the dot notation to import library modules using a relative path.
+Within a library module `:A/B/C/D`, an import of `./E` will resolve to
 `:A/B/C/E`, while an import of `../E` will resolve to `:A/B/E`.
 Upwards traversals can be nested, so `../../E` will resolve to `:A/E`.
 Downwards traversals are also possible, so `../../E/G` will resolve to
@@ -978,14 +980,14 @@ Downwards traversals are also possible, so `../../E/G` will resolve to
 Note that this is merely a syntactic convenience for `import` that
 allows you to refer to relative modules with a short module path and
 still load a library module. Relative module paths are meaningless
-outside the context of a library module.
+outside the context for interpreted code.
 
 ### Core Gerbil Variants
 
-As of `Gerbil v0.16-DEV-259-g13646d64` gerbil comes with a custom language
-prelude, `:gerbil/polydactyl`, that treats square brackets as plain parentheses
--- instead of the reader expanding them to `@list` forms.
-The language is otherwise the same as `:gerbil/core`.
+Gerbil comes with a custom language prelude, `:gerbil/polydactyl`,
+that treats square brackets as plain parentheses -- instead of the
+reader expanding them to `@list` forms.  The language is otherwise the
+same as `:gerbil/core`.
 
 To use it in a module, add the following lang declaration to the top of your file:
 ```
@@ -1010,20 +1012,28 @@ interesting of the Gerbil-specific libraries.
 
 ### Optional Libraries
 
-Some library modules are not built by default, because they have external
-library dependencies that may not be present in your system.
-The build configuration for the std library is specified in
-`$GERBIL_HOME/src/std/build-features.ss`.
-
-If you have the required libraries (documented in build-features) in your
-system, you can enable building by setting the `(enable feature #f)`
-statement in `build-features.ss` to `#t`. You can then build the optional
-library modules by running `$GERBIL_HOME/src/build.sh stdlib`.
+Note that some standard library modules are not built by default,
+because they have external library dependencies that may not be
+present in your system. You have to enable them during configuration
+by using the appropriate `--enable-feature` configuration options.
 
 ### Additional Syntactic Sugar
 
-The `:std/sugar` library provides, among other macros, a `try` syntactic
-form for handling exceptions in imperative style.
+The `:std/sugar` library provides some useful macros that are widely applicable.
+The two most widely used are `defrule` and `try`.
+
+The `defrule` macro is a single arm specialization of `defrules` for
+simple syntactic transformations:
+```scheme
+(defrule (f a b c)
+  (+ a b c))
+
+;; expands to:
+(defrules f ()
+  ((_ a b c) (+ a b c)))
+```
+
+The `try` macro provides a special form for handling exceptions in imperative style.
 For example:
 ```scheme
 > (try (error "my error")
@@ -1659,11 +1669,11 @@ Gerbil supports XML and HTML with the `:std/xml` library.
 The library supports parsing and querying with Oleg's SXML/SSAX/SXPath and
 provides additional facilities for processing SXML.
 
-Optionally, when configured so, the library can also use `libxml2` to parse
-real world HTML (and plain old XML).
-The `libxml2` dependent components are not built by default.
-You can build them by editing `std/build-features.ss` to set `(enable libxml #t)`
-and rerunning the std library build script as described earlier in the guide.
+Optionally, when configured so, the library can also use `libxml2` to
+parse real world HTML (and plain old XML).  The `libxml2` dependent
+components are not built by default.  You can build them by specifying
+the `--enable-libxml` configuration option when configuring and
+building Gerbil.
 
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
@@ -1696,12 +1706,13 @@ Gerbil offers two options to support web applications:
 
 The rack/fastcgi server has been in the standard library since early
 releases of Gerbil and has a very simple interface familiar from other
-languages. It works with standard ports so it supports non-development
-versions of Gambit which don't have raw devices.
+languages. It works with standard ports so it supported earlier
+versions of Gambit which didn't have raw devices.
 
-The embedded http server is a new development in Gerbil-v0.12-DEV, and
+The embedded http server was first introduced in Gerbil v0.12 and
 utilizes raw devices. It is significantly faster and offers a low
-level interface oriented towards API programming.
+level interface oriented towards API programming, and by now the
+canonical (and recommended) way to write web applications.
 
 #### Web programming with rack/fastcgi
 
@@ -1787,9 +1798,8 @@ particular databases.
 
 Note that not all drivers are built by default, as some are FFI
 drivers (SQLite, MySQL), so you will need to enable them for your
-installation in `$GERBIL_HOME/src/std/build-features.ss`,
-by editing it or using e.g. the `--enable-mysql` option to `./configure`,
-before you build Gerbil.
+with the apopriopriate configuration options e.g. the `--enable-mysql`
+option to `./configure`, before you build and install Gerbil.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
@@ -1841,8 +1851,7 @@ And we are done, we can close our database connection:
 The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
 while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 The libraries are not built by default, as they have foreign dependencies, so you need to
-enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`,
-by editing it or using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
+enable them using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
 before you build Gerbil.
 
 For example, here we use the LevelDB library for some simple operations:
