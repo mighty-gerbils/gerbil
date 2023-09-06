@@ -1012,15 +1012,10 @@ interesting of the Gerbil-specific libraries.
 
 ### Optional Libraries
 
-Some library modules are not built by default, because they have external
-library dependencies that may not be present in your system.
-The build configuration for the std library is specified in
-`$GERBIL_HOME/src/std/build-features.ss`.
-
-If you have the required libraries (documented in build-features) in your
-system, you can enable building by setting the `(enable feature #f)`
-statement in `build-features.ss` to `#t`. You can then build the optional
-library modules by running `$GERBIL_HOME/src/build.sh stdlib`.
+Note that some standard library modules are not built by default,
+because they have external library dependencies that may not be
+present in your system. You have to enable them during configuration
+by using the appropriate `--enable-feature` configuration options.
 
 ### Additional Syntactic Sugar
 
