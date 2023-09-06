@@ -194,7 +194,7 @@
     (gxc: "os/pipe" ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
-        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE" ,@(include-gambit-sharp)))
+        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
        (else
         `(gsc: "os/_socket" ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
@@ -264,7 +264,7 @@
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
     (gxc: "crypto/libcrypto"
-          "-cc-options" ,(cppflags "libcrypto" "")
+          "-cc-options" ,(cppflags "libcrypto" "-Wno-deprecated-declarations -Wno-implicit-function-declaration")
           "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
           ,@(include-gambit-sharp))
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
