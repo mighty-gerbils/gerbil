@@ -8,18 +8,18 @@ In the following, `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
 ## Using Gerbil
-The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
-`$GERBIL_HOME/bin/gxc`.
+The Gerbil interpreter is `/opt/gerbil/bin/gxi`, and the compiler is
+`/opt/gerbin/bin/gxc`, assuming the default installation prefix.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
 
 
 ## Hello world
-Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
+Add `/opt/gerbil/bin` to your path and invoke the interpreter
 for the obligatory "hello world":
 ```
-$ export PATH=$PATH:$GERBIL_HOME/bin
+$ export PATH=$PATH:/opt/gerbil/bin
 $ gxi
 > (displayln "hello world")
 hello world
