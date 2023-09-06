@@ -60,7 +60,7 @@ The protocol for communicating with the kvstore server is defined in
 
 (def (kvstore-handle (server-id 'kvstore))
   (make-handle (current-actor-server)
-               (reference server-id 'kvstore)))
+               (reference server-id 'kvstore))) ; 'kvstore here is the actor id
 ```
 
 The module defines 3 messages which are all request messages, to which

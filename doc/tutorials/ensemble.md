@@ -111,7 +111,11 @@ Arguments:
 
 ### Loading code
 
-You can dynamically load code in any ensemble server using the `gxensemble load` command.
+You can dynamically load code in any ensemble server using the
+`gxensemble load` command.  This command will ship the object file
+(and it is dependencies, unless forced by the user) to the remote
+server and load them.
+
 Here is the usage:
 ```
 Usage: gxensemble load [command-option ...] <server-id> <module-id>
