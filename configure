@@ -172,7 +172,7 @@ while [ $# -gt 0 ]; do
             ;;
 
         LDFLAGS=*)
-            lags=$(echo "$1" | cut -d = -f 2-)
+            flags=$(echo "$1" | cut -d = -f 2-)
             if [ -z "${LDFLAGS}" ]; then
                 LDFLAGS="${flags}"
             else
@@ -196,9 +196,9 @@ else
 fi
 
 if [ -z "${LDFLAGS}" ]; then
-    LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib"
+    LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
 else
-    LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib"
+    LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
 fi
 
 git submodule init || die
