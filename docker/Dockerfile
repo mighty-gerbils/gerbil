@@ -43,8 +43,6 @@ RUN case ${distro} in \
 FROM base as gerbil
 ARG cores
 ARG gerbil_version
-ENV CFLAGS="--enable-openssl"
-ENV LDFLAGS="-lssl"
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
