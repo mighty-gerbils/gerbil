@@ -491,14 +491,14 @@
             (lambda (chars drop) (list->string (reverse! (list-tail chars drop)))))))
     (let lp ((x 0) (separating separators) (drop 0) (chars []))
       (cond
-       ((null? separating)
+       ((and sep (null? separating))
         (finish chars drop))
        ((read-more? x)
         (let (next (&BufferedReader-read-char-inline reader))
           (cond
            ((eof-object? next)
             (finish chars drop))
-           ((eq? (car separating) next)
+           ((and sep (eq? (car separating) next))
             (lp (fx+ x 1) (cdr separating) (fx+ drop 1) (cons next chars)))
            (else
             (lp (fx+ x 1) separators 0 (cons next chars))))))

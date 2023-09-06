@@ -1,15 +1,12 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo, drew
+;;; ̧© vyzo, drew
 ;;; PostgreSQL driver
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/bits
-        :std/actor-v13/proto
-        :std/actor-v13/message
+        :std/actor
+        :std/io
         :std/misc/channel
         :std/misc/list
-        :std/net/bio
         :std/net/sasl
         :std/text/utf8
         :std/text/hex
@@ -17,7 +14,8 @@
         :std/logger
         :std/sugar
         :std/error
-        :std/db/dbi)
+        :std/db/dbi
+        (only-in :std/srfi/1 reverse!))
 (export postgresql-connect!
         postgresql-prepare-statement!
         postgresql-close-statement!
@@ -27,7 +25,6 @@
         postgresql-continue!
         postgresql-reset!
         postgresql-close!
-        postgresql-socket
         postgresql-message
         postgresql-message-name
         postgresql-message-args
@@ -40,18 +37,18 @@
 
 (deflogger postgres)
 
+(defstruct !token ()
+  final: #t)
+
 ;;; driver interface
-(defproto postgresql
-  (prepare name sql)
-  (exec name params)
-  (query name params)
-  (simple-query str)
-  (current-notice-handler proc)
-  event:
-  (continue token)
-  (reset token)
-  (close name)
-  (shutdown))
+(defmessage !prepare (name sql))
+(defmessage !exec (name params))
+(defmessage !query (name params))
+(defmessage !simple-query (str))
+(defmessage !current-notice-handler (proc))
+(defmessage !continue (token))
+(defmessage !reset (token))
+(defmessage !close (name))
 
 (defstruct postgresql-message (name args)
   print: (args))
@@ -85,8 +82,6 @@
   ((_ conn)
    (if (thread? conn) conn (connection-e conn))))
 
-(def postgresql-socket thread-specific)
-
 (def current-notice-handler
   (make-parameter
    (lambda (msg irritants)
@@ -95,54 +90,67 @@
 #;(defrules DEBUG ()
   ((_ what arg ...)
    (begin
-     (display what)
-     (begin (write arg) (display " ")) ...
-     (newline))))
+     (display what (current-error-port))
+     (begin (write arg (current-error-port)) (display " " (current-error-port))) ...
+     (newline (current-error-port)))))
 
 (defrules DEBUG ()
   ((_ what arg ...)
    (void)))
 
-(def (postgresql-prepare-statement! conn name sql)
+(defcall-actor (postgresql-prepare-statement! conn name sql)
   (with-driver conn driver
-    (!!postgresql.prepare driver name sql)))
+    (->> driver (!prepare name sql)))
+  error: "error preparing statement" sql)
 
 (def (postgresql-close-statement! conn name)
   (alet (driver (get-driver conn))
-    (!!postgresql.close driver name)))
+    (-> driver (!close name))))
 
-(def (postgresql-exec! conn name bind)
+(defcall-actor (postgresql-exec! conn name bind)
   (with-driver conn driver
-    (!!postgresql.exec driver name bind)))
+    (->> driver (!exec name bind)))
+  error: "error executing statement")
 
-(def (postgresql-query! conn name bind)
+(defcall-actor (postgresql-query! conn name bind)
   (with-driver conn driver
-    (!!postgresql.query driver name bind)))
+    (->> driver (!query name bind)))
+  error: "error executing query")
 
-(def (postgresql-simple-query! conn str)
+(defcall-actor (postgresql-simple-query! conn str)
   (with-driver conn driver
-    (!!postgresql.simple-query driver str)))
+    (->> driver (!simple-query str)))
+  error: "error executing query")
 
 (def (postgresql-continue! conn token)
   (if (!token? token)
     (with-driver conn driver
-      (!!postgresql.continue driver token))
+      (-> driver (!continue token)))
     (error "Bad argument; illegal query token" token)))
 
 (def (postgresql-reset! conn token)
   (if (!token? token)
     (alet (driver (get-driver conn))
-      (!!postgresql.reset driver token))
+      (-> driver (!reset token)))
     (error "Bad argument; illegal query token" token)))
 
-(def (postgresql-current-notice-handler conn)
-  (alet (driver (get-driver conn))
-    (!!postgresql.current-notice-handler driver #f)))
+(defcall-actor (postgresql-current-notice-handler conn)
+  (cond
+   ((get-driver conn)
+    => (cut ->> <> (!current-notice-handler #f)))
+   (else
+    (!ok (void))))
+  error: "error retrieving notice handler")
 
 
-(def (postgresql-current-notice-handler-set! conn handler)
-  (alet (driver (get-driver conn))
-    (!!postgresql.current-notice-handler driver handler)))
+(defcall-actor (postgresql-current-notice-handler-set! conn handler)
+  (cond
+   ((get-driver conn)
+    => (cut ->> <> (!current-notice-handler handler)))
+   (else
+    (!ok (void))))
+  error: "error setting notice handler")
+
 (def (with-postgresql-notice-handler conn handler thunk)
   (let (pren (postgresql-current-notice-handler conn))
     (try
@@ -152,59 +160,66 @@
      (finally
       (set! (postgresql-current-notice-handler conn) pren)))))
 
-
-(def (postgresql-close! conn)
-  (alet (driver (get-driver conn))
-    (!!postgresql.shutdown driver)))
+(defcall-actor (postgresql-close! conn)
+  (cond
+   ((get-driver conn)
+    => (cut ->> <> (!shutdown)))
+   (else
+    (!ok (void))))
+  error: "error closing connection")
 
 ;;; driver implementation
 (def (postgresql-connect! host port user passwd db)
   (def sock
-    (open-tcp-client [server-address: host port-number: port]))
+    (tcp-connect (cons host port)))
 
-  (def buffer
-    (box (make-u8vector 1024)))
+  (def reader
+    (open-buffered-reader
+     (StreamSocket-reader sock)))
 
-  (def (start-driver! sock)
+  (def writer
+    (open-buffered-writer
+     (StreamSocket-writer sock)))
+
+  (def (start-driver!)
     (DEBUG "STARTING DRIVER")
     (let lp ()
-      (match (postgresql-recv! sock buffer)
+      (match (postgresql-recv! reader)
         (['ReadyForQuery _]
-         (let ((t (spawn/name 'postgresql-connection postgresql-driver sock)))
-           (set! (thread-specific t) sock)
-           t))
+         (spawn/name 'postgresql-connection postgresql-driver sock reader writer))
         (['ErrorResponse msg . irritants]
          (apply raise-io-error 'postgresql-connect! msg irritants))
         (['NoticeResponse msg . irritants]
          ((current-notice-handler) msg irritants)
          (lp))
-        (else
+        (other
+         (DEBUG "unprocessed message" other)
          (lp)))))
 
   (defrules send! ()
     ((_ msg)
-     (postgresql-send! sock msg)))
+     (postgresql-send! writer msg)))
 
   (defrules recv! ()
     ((_ clause ...)
-     (match (postgresql-recv! sock buffer)
+     (match (postgresql-recv! reader)
        clause ...
        (['ErrorResponse msg . irritants]
         (apply raise-io-error 'postgresql-connect! msg irritants))
        (unexpected
         (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))))
 
-  (def (authen-pass sock pass)
+  (def (authen-pass pass)
     (send! ['PasswordMessage pass])
     (recv!
      (['AuthenticationRequest 'AuthenticationOk]
-      (start-driver! sock))))
+      (start-driver!))))
 
-  (def (authen-cleartext sock)
+  (def (authen-cleartext)
     (DEBUG "AUTHEN CLEARTEXT")
-    (authen-pass sock passwd))
+    (authen-pass passwd))
 
-  (def (authen-md5 sock salt)
+  (def (authen-md5 salt)
     (def (md5-hex data)
       (hex-encode (md5 data)))
 
@@ -214,9 +229,9 @@
            (word3 (u8vector-append (string->utf8 word2) salt))
            (word4 (md5-hex word3))
            (pass (string-append "md5" word4)))
-      (authen-pass sock pass)))
+      (authen-pass pass)))
 
-  (def (authen-sasl sock mechanisms)
+  (def (authen-sasl mechanisms)
     (DEBUG "AUTHEN SASL")
     (unless (member "SCRAM-SHA-256" mechanisms)
       (raise-io-error 'postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
@@ -233,7 +248,7 @@
             (scram-client-final-server-message! ctx msg)
             (recv!
              (['AuthenticationRequest 'AuthenticationOk]
-              (start-driver! sock))))))))))
+              (start-driver!))))))))))
 
   (start-logger!)
   (DEBUG "STARTUP")
@@ -244,34 +259,35 @@
      (DEBUG "AUTHENTICATION REQUEST " what)
      (case what
        ((AuthenticationOk)
-        (start-driver! sock))
+        (start-driver!))
        ((AuthenticationCleartextPassword)
-        (authen-cleartext sock))
+        (authen-cleartext))
        ((AuthenticationMD5Password)
-        (authen-md5 sock (car rest)))
+        (authen-md5 (car rest)))
        ((AuthenticationSASL)
-        (authen-sasl sock rest))
+        (authen-sasl rest))
        (else
         (raise-io-error 'postgresql-connect! "unsupported authentication mechanism" what)))))
    (catch (e)
-     (close-port sock)
+     (StreamSocket-close sock)
      (raise e))))
 
-(def (postgresql-driver sock)
+(def (postgresql-driver sock reader writer)
+  (with-exception-stack-trace (cut postgresql-driver-main sock reader writer)))
+
+(def (postgresql-driver-main sock reader writer)
   (def query-limit 1000)
   (def query-output #f)
   (def query-token #f)
   (def simple-query #f)
 
-  (def buffer (box (make-u8vector 1024)))
-
   (def deferred-close [])
 
   (def (send! msg)
-    (postgresql-send! sock msg))
+    (postgresql-send! writer msg))
 
   (def (recv!)
-    (match (postgresql-recv! sock buffer)
+    (match (postgresql-recv! reader)
       (['NoticeResponse msg . irritants]
        (notice! msg irritants)
        (recv!))
@@ -426,11 +442,11 @@
       (maybe-sync!)
       (send! ['Query str])
       (let ((ch (make-channel query-limit))
-               (token (make-!token)))
-           (set! query-output ch)
-           (set! query-token token)
-           (set! simple-query #t)
-           (values ch token)))
+            (token (make-!token)))
+        (set! query-output ch)
+        (set! query-token token)
+        (set! simple-query #t)
+        (values ch token)))
 
   (def (simple-query-pump)
     (let/cc break
@@ -482,89 +498,72 @@
            (warnf "error closing statement ~a: ~a" name msg)))
         (resync!))))
 
-  (def (shutdown!)
+  (def (shutdown! exit)
     (send! '(Sync))
     (resync!)
     (send! '(Terminate))
-    (raise 'shutdown))
+    (exit 'shutdown))
 
   (defrules do-action ()
-    ((_ k action)
+    ((_ action)
      (try
       (let (res action)
-        (!!value res k))
+        (--> (!ok res)))
       (catch (e)
-        (!!error e k)
+        (--> (!error (error-message e)))
         (unless (sql-error? e)
           (raise e)))))
-    ((recur k action continue ...)
+    ((recur action continue ...)
      (begin
-       (recur k action)
+       (recur action)
        continue ...)))
 
   (def (loop)
-    (<- ((!postgresql.prepare name sql k)
-         (do-action k (prepare name sql)))
-        ((!postgresql.exec name params k)
-         (do-action k (exec name params)))
-        ((!postgresql.query name params k)
-         (do-action k (query-start name params) (query-pump)))
-        ((!postgresql.simple-query str k)
-         (do-action k (simple-query-start str) (simple-query-pump)))
-        ((!postgresql.continue token) (continue token))
-        ((!postgresql.reset token) (maybe-sync!))
-        ((!postgresql.close name) (close name))
-        ((!postgresql.shutdown) (shutdown!))
-        ((!postgresql.current-notice-handler proc k)
-         (do-action k (if proc
-           (current-notice-handler proc)
-           (current-notice-handler))))
-        (bogus
-         (warnf "unexpected message: ~a" bogus)))
-    (loop))
+    (let/cc exit
+      (while #t
+        (<- ((!prepare name sql)
+             (do-action (prepare name sql)))
+            ((!exec name params)
+             (do-action (exec name params)))
+            ((!query name params)
+             (do-action (query-start name params) (query-pump)))
+            ((!simple-query str)
+             (do-action (simple-query-start str) (simple-query-pump)))
+            ((!continue token)
+             (continue token))
+            ((!reset token)
+             (maybe-sync!))
+            ((!close name)
+             (close name))
+            ((!current-notice-handler proc)
+             (do-action (if proc
+                          (current-notice-handler proc)
+                          (current-notice-handler))))
+            ,(@ping)
+            ,(@shutdown
+              (shutdown! exit))
+            ,(@unexpected warnf)))))
 
   (try
    (loop)
    (catch (e)
-     (unless (eq? e 'shutdown)
-       (errorf "unhandled exception: ~a" e)
-       (raise e)))
+     (errorf "unhandled exception: ~a" e)
+     (raise e))
    (finally
     (when query-output
       (channel-sync query-output (make-sql-error "connection error" [] 'postgresql-driver))
       (channel-close query-output))
-    (close-port sock))))
+    (StreamSocket-close sock))))
 
 ;;; Protocol I/O
-(def (postgresql-send! sock msg)
+(def (postgresql-send! writer msg)
   (def (marshal-and-write tid body marshal)
-    (let* ((payload (marshal body))
-           (payload-len
-            (cond
-             ((u8vector? payload)
-              (u8vector-length payload))
-             ((chunked-output-buffer? payload)
-              (chunked-output-length payload))
-             (else
-              (raise-io-error 'postgresql-send! "unexpected payload" tid body payload)))))
+    (let (payload (marshal body))
       (when tid
-        (write-u8 tid sock))
-      (write-u32 (##fx+ payload-len 4) sock)
-      (if (u8vector? payload)
-        (let (len (u8vector-length payload))
-          (when (##fx> len 0)
-            (write-subu8vector payload 0 len sock)))
-        (for-each
-          (lambda (u8v)
-            (write-subu8vector u8v 0 (u8vector-length u8v) sock))
-          (chunked-output-chunks payload)))
-      (force-output sock)))
-
-  (def (write-u32 u32 sock)
-    (write-u8 (##fxand (##fxarithmetic-shift-right u32 24) #xff) sock)
-    (write-u8 (##fxand (##fxarithmetic-shift-right u32 16) #xff) sock)
-    (write-u8 (##fxand (##fxarithmetic-shift-right u32 8) #xff) sock)
-    (write-u8 (##fxand u32 #xff) sock))
+        (&BufferedWriter-write-u8 writer tid))
+      (&BufferedWriter-write-u32 writer (fx+ (u8vector-length payload) 4))
+      (&BufferedWriter-write writer payload)
+      (&BufferedWriter-flush writer)))
 
   (DEBUG "SEND " msg)
   (with ([tag . body] msg)
@@ -578,44 +577,14 @@
      (else
       (raise-io-error 'postgresql-send! "cannot marshal; unknown message tag" msg)))))
 
-(def (postgresql-recv! sock buf)
-  (def (read-u32 sock u8v)
-    (let (rd (read-subu8vector u8v 0 4 sock))
-      (cond
-       ((##fx< rd 4)
-        (raise-io-error 'postgresql-recv! "premature end of input" rd))
-       ((##fxarithmetic-shift-left? (##u8vector-ref u8v 0) 24)
-        => (lambda (bits)
-             (##fxior bits
-                      (##fxarithmetic-shift-left (##u8vector-ref u8v 1) 16)
-                      (##fxarithmetic-shift-left (##u8vector-ref u8v 2) 8)
-                      (##u8vector-ref u8v 3))))
-       (else
-        (bitwise-ior (arithmetic-shift (##u8vector-ref u8v 0) 24)
-                     (##fxarithmetic-shift-left (##u8vector-ref u8v 1) 16)
-                     (##fxarithmetic-shift-left (##u8vector-ref u8v 2) 8)
-                     (##u8vector-ref u8v 3))))))
-
+(def (postgresql-recv! reader)
   (DEBUG "RECEIVE!")
-  (let* ((tid (read-u8 sock))
+  (let* ((tid (&BufferedReader-read-u8 reader))
          (_ (when (eof-object? tid)
               (raise-io-error 'postgresql-recv! "connection closed")))
-         (payload-len (read-u32 sock (unbox buf)))
-         (payload-len (##fx- payload-len 4))
-         (u8buf
-          (let (u8buf (unbox buf))
-            (if (##fx< (u8vector-length u8buf) payload-len)
-              (let (u8buf (make-u8vector payload-len))
-                (set! (box buf) u8buf)
-                u8buf)
-              u8buf)))
-         (rd
-          (if (##fx> payload-len 0)
-            (read-subu8vector u8buf 0 payload-len sock)
-            0))
-         (_ (when (##fx< rd payload-len)
-              (raise-io-error 'postgresql-recv! "premature end of input" rd tid payload-len)))
-         (bio (open-input-buffer u8buf 0 payload-len)))
+         (payload-len (&BufferedReader-read-u32 reader))
+         (payload-len (fx- payload-len 4))
+         (payload-reader (&BufferedReader-delimit reader payload-len)))
 
     (DEBUG "READ MESSAGE " tid payload-len)
     (cond
@@ -623,122 +592,131 @@
       => (match <>
            ([tag . unmarshal]
             (DEBUG "UNMARSHAL " tag)
-            (let* ((body (unmarshal bio))
+            (let* ((body (unmarshal payload-reader))
                    (msg (cons tag body)))
+              ;; skip left-over input in the delimited reader
+              (while (not (eof-object? (&BufferedReader-read-u8 payload-reader))))
               (DEBUG "RECEIVE " msg)
               msg))))
      (else
       (raise-io-error 'postgresql-recv! "unexpected backend message" tid)))))
 
 ;;; message unmarshaling
-(def (unmarshal-ignore bio)
+(def (unmarshal-ignore buf)
   '(...))
 
-(def (unmarshal-empty bio)
+(def (unmarshal-empty buf)
   '())
 
-(def (unmarshal-authen-request bio)
-  (let (t (bio-read-u32 bio))
+(def (unmarshal-authen-request buf)
+  (let (t (&BufferedReader-read-u32 buf))
     (case t
       ((0) '(AuthenticationOk))
       ((2) '(AuthenticationKerberosV5))
       ((3) '(AuthenticationCleartextPassword))
       ((5)
        (let (salt (make-u8vector 4))
-         (bio-read-bytes salt bio)
+         (&BufferedReader-read buf salt 0 4 4)
          ['AuthenticationMD5Password salt]))
       ((6) '(AuthenticationSCMCredential))
       ((7) '(AuthenticationGSS))
       ((8)
-       (let (data (unmarshal-bytes-rest bio))
+       (let (data (unmarshal-bytes-rest buf))
          ['AuthenticationGSSContinue data]))
       ((9) '(AuthenticationSSPI))
       ((10)
-       (let (mechanisms (unmarshal-string-list bio))
+       (let (mechanisms (unmarshal-string-list buf))
          ['AuthenticationSASL . mechanisms]))
       ((11)
-       (let (data (unmarshal-string-rest bio))
+       (let (data (unmarshal-string-rest buf))
          ['AuthenticationSASLContinue data]))
       ((12)
-       (let (data (unmarshal-string-rest bio))
+       (let (data (unmarshal-string-rest buf))
          ['AuthenticationSASLFinal data]))
       (else
        [t '...]))))
 
-(def (unmarshal-string-list bio)
+(def (unmarshal-string-list buf)
   (let lp ((r []))
-    (let (next (unmarshal-string bio))
+    (let (next (unmarshal-string buf))
       (if (string-empty? next)
-        (reverse r)
+        (reverse! r)
         (lp (cons next r))))))
 
-(def (unmarshal-string bio)
+(def (unmarshal-string buf)
+  (let lp ((chars []))
+    (if (fx= (&BufferedReader-peek-u8 buf) 0)
+      (begin
+        (&BufferedReader-read-u8 buf)
+        (list->string (reverse! chars)))
+      (let (next (&BufferedReader-read-char buf))
+        (lp (cons next chars))))))
+
+(def (unmarshal-bytes-rest buf)
   (let lp ((bytes []))
-    (let (next (bio-read-u8 bio))
-      (if (##fx= next 0)
-        (utf8->string (list->u8vector (reverse bytes)))
+    (let (next (&BufferedReader-read-u8 buf))
+      (if (eof-object? next)
+        (list->u8vector (reverse! bytes))
         (lp (cons next bytes))))))
 
-(def (unmarshal-bytes-rest bio)
-  (let* ((count (bio-input-count bio))
-         (data (make-u8vector count)))
-    (bio-read-bytes data bio)
-    data))
+(def (unmarshal-string-rest buf)
+  (let lp ((chars []))
+    (let (next (&BufferedReader-read-char buf))
+      (if (eof-object? next)
+        (list->string (reverse! chars))
+        (lp (cons next chars))))))
 
-(def (unmarshal-string-rest bio)
-  (let (count (bio-input-count bio))
-    (bio-input-utf8-decode count bio)))
-
-(def (unmarshal-complete bio)
-  (let (tag (unmarshal-string bio))
+(def (unmarshal-complete buf)
+  (let (tag (unmarshal-string buf))
     [tag]))
 
-(def (unmarshal-data-row bio)
-  (let (count (bio-read-u16 bio))
+(def (unmarshal-data-row buf)
+  (let (count (&BufferedReader-read-u16 buf))
     (let lp ((i 0) (r []))
-      (if (##fx< i count)
-        (let (len (bio-read-s32 bio))
-          (if (##fx>= len 0)
-            (let (str (bio-input-utf8-decode len bio))
-              (lp (##fx+ i 1) (cons str r)))
-            (lp (##fx+ i 1) (cons #f r)))) ; NULL
-        (reverse r)))))
+      (if (fx< i count)
+        (let (len (&BufferedReader-read-s32 buf))
+          (if (fx>= len 0)
+            (let* ((strbuf (&BufferedReader-delimit buf len))
+                   (str (unmarshal-string-rest strbuf)))
+              (lp (fx+ i 1) (cons str r)))
+            (lp (fx+ i 1) (cons #f r)))) ; NULL
+        (reverse! r)))))
 
-(def (unmarshal-error-notice bio)
+(def (unmarshal-error-notice buf)
   (let lp ((r []))
-    (let (t (bio-read-u8 bio))
-      (if (##fx= t 0)
-        (let* ((alist (reverse r))
+    (let (t (&BufferedReader-read-u8! buf))
+      (if (fx= t 0)
+        (let* ((alist (reverse! r))
                (msg (assgetq #\M alist)))
           (cons msg alist))
-        (let (field (unmarshal-string bio))
+        (let (field (unmarshal-string buf))
           (lp (cons (cons (integer->char t) field) r)))))))
 
-(def (unmarshal-param-description bio)
-  (let (count (bio-read-u16 bio))
+(def (unmarshal-param-description buf)
+  (let (count (&BufferedReader-read-u16 buf))
     (let lp ((i 0) (r []))
-      (if (##fx< i count)
-        (let (oid (bio-read-u32 bio))
-          (lp (##fx+ i 1) (cons oid r)))
-        (reverse r)))))
+      (if (fx< i count)
+        (let (oid (&BufferedReader-read-u32 buf))
+          (lp (fx+ i 1) (cons oid r)))
+        (reverse! r)))))
 
-(def (unmarshal-row-description bio)
-  (let (count (bio-read-u16 bio))
+(def (unmarshal-row-description buf)
+  (let (count (&BufferedReader-read-u16 buf))
     (let lp ((i 0) (r []))
-      (if (##fx< i count)
-        (let* ((field-name (unmarshal-string bio))
-               (table-id (bio-read-u32 bio))
-               (attr-id (bio-read-u16 bio))
-               (type-id (bio-read-u32 bio))
-               (type-sz (bio-read-s16 bio))
-               (modifier (bio-read-s32 bio))
-               (fmt (bio-read-u16 bio)))
-          (lp (##fx+ i 1)
+      (if (fx< i count)
+        (let* ((field-name (unmarshal-string buf))
+               (table-id (&BufferedReader-read-u32 buf))
+               (attr-id  (&BufferedReader-read-u16 buf))
+               (type-id  (&BufferedReader-read-u32 buf))
+               (type-sz  (&BufferedReader-read-s16 buf))
+               (modifier (&BufferedReader-read-s32 buf))
+               (fmt      (&BufferedReader-read-u16 buf)))
+          (lp (fx+ i 1)
               (cons [field-name table-id attr-id type-id type-sz modifier fmt] r)))
-        (reverse r)))))
+        (reverse! r)))))
 
-(def (unmarshal-ready bio)
-  (let (status (bio-read-u8 bio))
+(def (unmarshal-ready buf)
+  (let (status (&BufferedReader-read-u8! buf))
     [(integer->char status)]))
 
 ;;; message marshaling
@@ -749,97 +727,118 @@
 (def (marshal-empty body)
   '#u8())
 
-(def (marshal-string str bio)
-  (bio-write-string str bio)
-  (bio-write-u8 0 bio))
+(def (marshal-string buf str)
+  (&BufferedWriter-write-string buf str)
+  (&BufferedWriter-write-u8 buf 0))
+
+(defrule (with-buffered-writer writer body ...)
+  (let* ((buffer (cache-get-buffer))
+         (writer (open-buffered-writer #f buffer)))
+    (let () body ...)
+    (let (result (get-buffer-output-u8vector writer))
+      (cache-put-buffer buffer)
+      result)))
 
 (def (marshal-startup body)
   (with ([[param . value] ...] body)
-    (let (bio (open-serializer-output-buffer))
-      (bio-write-u32 196608 bio) ; Protocol v3.0
+    (with-buffered-writer buf
+      (&BufferedWriter-write-u32 buf 196608) ; Protocol v3.0
       (for-each
         (lambda (param value)
-          (marshal-string param bio)
-          (marshal-string value bio))
+          (marshal-string buf param)
+          (marshal-string buf value))
         param value)
-      (bio-write-u8 0 bio))))
+      (&BufferedWriter-write-u8 buf 0))))
 
 (def (marshal-bind body)
   (with ([portal-name stmt-name . params] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string portal-name bio)
-      (marshal-string stmt-name bio)
-      (bio-write-u16 0 bio)
-      (bio-write-u16 (length params) bio)
+    (with-buffered-writer buf
+      (marshal-string buf portal-name)
+      (marshal-string buf stmt-name)
+      (&BufferedWriter-write-u16 buf 0)
+      (&BufferedWriter-write-u16 buf (length params))
       (for-each
         (lambda (param)
           (cond
            ((not param)
-            (bio-write-s32 -1 bio))
+            (&BufferedWriter-write-s32 buf -1))
            ((string? param)
             (let (len (string-utf8-length param))
-              (bio-write-u32 len bio)
-              (bio-write-string param bio)))
+              (&BufferedWriter-write-u32 buf len)
+              (&BufferedWriter-write-string buf param)))
            ((u8vector? param)
-            (bio-write-u32 (u8vector-length param) bio)
-            (bio-write-bytes param bio))
+            (&BufferedWriter-write-u32 buf (u8vector-length param))
+            (&BufferedWriter-write buf param))
            (else
             (raise-io-error 'postgresql-send! "Cannot marshal; bad parameter" param))))
         params)
-      (bio-write-u16 0 bio)
-      bio)))
+      (&BufferedWriter-write-u16 buf 0))))
 
 (def (marshal-close body)
   (marshal-describe body))
 
 (def (marshal-describe body)
   (with ([what name] body)
-    (let (bio (open-serializer-output-buffer))
-      (bio-write-u8 (char->integer what) bio)
-      (marshal-string name bio)
-      bio)))
+    (with-buffered-writer buf
+      (&BufferedWriter-write-u8 buf (char->integer what))
+      (marshal-string buf name))))
 
 (def (marshal-exec body)
   (with ([portal limit] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string portal bio)
-      (bio-write-u32 0 bio)
-      bio)))
+    (with-buffered-writer buf
+      (marshal-string buf portal)
+      (&BufferedWriter-write-u32 buf 0))))
 
 (def (marshal-parse body)
   (with ([stmt sql] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string stmt bio)
-      (marshal-string sql bio)
-      (bio-write-u16 0 bio)
-      bio)))
+    (with-buffered-writer buf
+      (marshal-string buf stmt)
+      (marshal-string buf sql)
+      (&BufferedWriter-write-u16 buf 0))))
 
 (def (marshal-passwd body)
   (with ([passwd] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string passwd bio)
-      bio)))
+    (with-buffered-writer buf
+      (marshal-string buf passwd))))
 
 (def (marshal-query body)
   (with ([sql] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string sql bio)
-      bio)))
+    (with-buffered-writer buf
+      (marshal-string buf sql))))
 
 (def (marshal-sasl-initial-reponse body)
   (with ([mechanism data] body)
-    (let (bio (open-serializer-output-buffer))
-      (marshal-string mechanism bio)
+    (with-buffered-writer buf
+      (marshal-string buf mechanism)
       (if data
         (let (len (string-utf8-length data))
-          (bio-write-u32 len bio)
-          (bio-write-string data bio))
-        (bio-write-s32 -1 bio))
-      bio)))
+          (&BufferedWriter-write-u32 buf len)
+          (&BufferedWriter-write-string buf data))
+        (&BufferedWriter-write-s32 buf -1)))))
 
 (def (marshal-sasl-response body)
   (with ([data] body)
     (string->utf8 data)))
+
+;;; marshal buffer cache
+(def +buffer-cache+ [])
+(def +buffer-cache-mx+ (make-mutex 'buffer-cache))
+
+(def (cache-get-buffer)
+  (mutex-lock! +buffer-cache-mx+)
+  (match +buffer-cache+
+    ([buf . rest]
+     (set! +buffer-cache+ rest)
+     (mutex-unlock! +buffer-cache-mx+)
+     buf)
+    (else
+     (mutex-unlock! +buffer-cache-mx+)
+     (make-u8vector 4096))))
+
+(def (cache-put-buffer buf)
+  (mutex-lock! +buffer-cache-mx+)
+  (set! +buffer-cache+ (cons buf +buffer-cache+))
+  (mutex-unlock! +buffer-cache-mx+))
 
 ;;; dispatch tables
 (def +backend-messages+
