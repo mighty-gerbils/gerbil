@@ -946,11 +946,10 @@ they  are further explored in the
 
 ### Implicit Package Declarations
 
-As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can elide the `package:` and
-`prelude:` declarations in your module and have them automatically deduced
-from the file system layout of your library/package.
-You can do so by creating a `gerbil.pkg` file in the root of your library,
-which contains a property list.
+As you have noticed, you don't generally declare the package and the
+prelude inside a module. This is implicitly handled by creating a
+`gerbil.pkg` file in the root of your package, which contains a
+property list.
 
 The `package:` property specifies the prefix package at the root of your
 hierarchy. The package of individual modules will extend this prefix to
@@ -964,11 +963,15 @@ property list.  This allows you to simply touch a gerbil.pkg at the
 root of your source hierarchy when you don't need a custom prelude and
 use a directory structure that mimics your logical package structure.
 
+Note that you can also place `package:` and `prelude:` declarations at
+the top of your module; this is something you might encounter in older
+gerbil code or things with special requirements.
+
+
 ### Library Relative Module Paths
 
-As of `Gerbil v0.16-DEV-196-g41214a5`, you can use the dot notation to
-import library modules using a relative path within a library.  Within
-a library module `:A/B/C/D`, an import of `./E` will resolve to
+You can use the dot notation to import library modules using a relative path.
+Within a library module `:A/B/C/D`, an import of `./E` will resolve to
 `:A/B/C/E`, while an import of `../E` will resolve to `:A/B/E`.
 Upwards traversals can be nested, so `../../E` will resolve to `:A/E`.
 Downwards traversals are also possible, so `../../E/G` will resolve to
@@ -977,14 +980,14 @@ Downwards traversals are also possible, so `../../E/G` will resolve to
 Note that this is merely a syntactic convenience for `import` that
 allows you to refer to relative modules with a short module path and
 still load a library module. Relative module paths are meaningless
-outside the context of a library module.
+outside the context for interpreted code.
 
 ### Core Gerbil Variants
 
-As of `Gerbil v0.16-DEV-259-g13646d64` gerbil comes with a custom language
-prelude, `:gerbil/polydactyl`, that treats square brackets as plain parentheses
--- instead of the reader expanding them to `@list` forms.
-The language is otherwise the same as `:gerbil/core`.
+Gerbil comes with a custom language prelude, `:gerbil/polydactyl`,
+that treats square brackets as plain parentheses -- instead of the
+reader expanding them to `@list` forms.  The language is otherwise the
+same as `:gerbil/core`.
 
 To use it in a module, add the following lang declaration to the top of your file:
 ```
