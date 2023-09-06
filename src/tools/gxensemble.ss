@@ -387,8 +387,8 @@
            (result (remote-eval server-id raw-compiled-expr)))
       (unless (void? result)
         (if (##values? result)
-          (for-each displayln (values->list result))
-          (displayln result)))))
+          (display-result-list (values->list result))
+          (display-result result)))))
 
   (_gx#load-expander!)
   (connect-to-server! server-id)
@@ -615,8 +615,11 @@
 ;;; utilities
 (def (display-result-list lst)
   (for (result lst)
+    (display-result result)))
+
+(def (display-result result)
     (write result)
-    (newline)))
+    (newline))
 
 (def (string->object str)
   (call-with-input-string str read))
