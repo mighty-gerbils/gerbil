@@ -58,6 +58,47 @@
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
   (reset! output))
 
+;; string/textual IO
+(interface StringReader
+  ;; read into a string
+  (read-string str (start 0) (end (string-length str)) (need 0))
+  ;; closes the reader
+  (close))
+
+(interface (BufferedStringReader StringReader)
+  ;; reads a single char
+  (read-char)
+  ;; peeks the next char
+  (peek-char)
+
+  ;; puts back some chars previously read
+  ;; - previous-input is a char or a list of char previously read from the buffer
+  (put-back previous-input)
+
+    ;; skips the next count bytes of input
+  (skip count)
+
+  ;; returns a new StringBufferedReader instance delimiting the input length that shares
+  ;; the underlying buffer; the limit must be a fixnum.
+  (delimit limit)
+
+  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
+  (reset! reader))
+
+(interface StringWriter
+  ;; write a string
+  (write-string str (start 0) (end (string-length str)))
+  ;; closes the writer
+  (close))
+
+(interface (BufferedStringWriter StringWriter)
+  ;; write a single char
+  (write-char char)
+  ;; flush output
+  (flush)
+  ;; resets the underlying output and buffer state, allowing reuse of buffers.
+  (reset! output))
+
 ;; socket interfaces
 (interface Socket
   (domain)

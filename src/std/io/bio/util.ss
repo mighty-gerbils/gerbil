@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; buffered io extension methods
-(import :gerbil/gambit/threads
-        :gerbil/gambit/bits
+(import :gerbil/gambit/bits
         :gerbil/gambit/fixnum
         :std/error
         :std/sugar
