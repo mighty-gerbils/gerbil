@@ -1024,8 +1024,21 @@ library modules by running `$GERBIL_HOME/src/build.sh stdlib`.
 
 ### Additional Syntactic Sugar
 
-The `:std/sugar` library provides, among other macros, a `try` syntactic
-form for handling exceptions in imperative style.
+The `:std/sugar` library provides some useful macros that are widely applicable.
+The two most widely used are `defrule` and `try`.
+
+The `defrule` macro is a single arm specialization of `defrules` for
+simple syntactic transformations:
+```scheme
+(defrule (f a b c)
+  (+ a b c))
+
+;; expands to:
+(defrules f ()
+  ((_ a b c) (+ a b c)))
+```
+
+The `try` macro provides a special form for handling exceptions in imperative style.
 For example:
 ```scheme
 > (try (error "my error")
@@ -1698,12 +1711,13 @@ Gerbil offers two options to support web applications:
 
 The rack/fastcgi server has been in the standard library since early
 releases of Gerbil and has a very simple interface familiar from other
-languages. It works with standard ports so it supports non-development
-versions of Gambit which don't have raw devices.
+languages. It works with standard ports so it supported earlier
+versions of Gambit which didn't have raw devices.
 
-The embedded http server is a new development in Gerbil-v0.12-DEV, and
+The embedded http server was first introduced in Gerbil v0.12 and
 utilizes raw devices. It is significantly faster and offers a low
-level interface oriented towards API programming.
+level interface oriented towards API programming, and by now the
+canonical (and recommended) way to write web applications.
 
 #### Web programming with rack/fastcgi
 
@@ -1789,9 +1803,8 @@ particular databases.
 
 Note that not all drivers are built by default, as some are FFI
 drivers (SQLite, MySQL), so you will need to enable them for your
-installation in `$GERBIL_HOME/src/std/build-features.ss`,
-by editing it or using e.g. the `--enable-mysql` option to `./configure`,
-before you build Gerbil.
+with the apopriopriate configuration options e.g. the `--enable-mysql`
+option to `./configure`, before you build and install Gerbil.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
@@ -1843,8 +1856,7 @@ And we are done, we can close our database connection:
 The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
 while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 The libraries are not built by default, as they have foreign dependencies, so you need to
-enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`,
-by editing it or using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
+enable them using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
 before you build Gerbil.
 
 For example, here we use the LevelDB library for some simple operations:
