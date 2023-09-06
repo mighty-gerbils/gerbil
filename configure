@@ -192,13 +192,13 @@ gerbil_prefix="${prefix}/${gerbil_version}"
 if [ -z "${CFLAGS}" ]; then
     CFLAGS="${cflags_opt}"
 else
-    CFLAGS="'${CFLAGS} ${cflags_opt}'"
+    CFLAGS="${CFLAGS} ${cflags_opt}"
 fi
 
 if [ -z "${LDFLAGS}" ]; then
     LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib"
 else
-    LDFLAGS="'${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib'"
+    LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib"
 fi
 
 git submodule init || die
@@ -206,8 +206,8 @@ git submodule update --force || die
 
 (cd src/gambit && git pull origin master && git checkout "${gambit_tag}" && touch configure config.status) || die
 
-gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_config} LDFLAGS=${LDFLAGS} CFLAGS=${CFLAGS}"
-(cd src/gambit && ./configure $gambit_config) || die
+gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_config}"
+(export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config ) || die
 
 rm -f build-env.sh
 cat > build-env.sh <<EOF
