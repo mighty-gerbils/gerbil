@@ -174,6 +174,10 @@
     (ssi: "text/base64")
     "text/base58"
     "text/csv"
+    "text/json/env"
+    "text/json/input"
+    "text/json/output"
+    "text/json/api"
     "text/json"
     ,@(if config-enable-libyaml
         `((gsc: "text/libyaml"

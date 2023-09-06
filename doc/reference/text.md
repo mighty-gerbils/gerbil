@@ -483,24 +483,37 @@ character.
 
 ### read-json
 ``` scheme
-(read-json [port = (current-input-port)]) -> json | error
+(read-json [input = (current-input-port)]) -> json | error
 
-  port := input-port to read JSON data
+  input := input source to read JSON data
 ```
 
-Returns JSON object from given *port*. Signals an error if fails to parse JSON.
+Returns JSON object from given input source. Signals an error if fails to parse JSON
+
+The input source can be:
+- An input port.
+- A BufferedStringReader.
+- A BufferedReader.
 
 ### write-json
 ``` scheme
-(write-json obj [port = (current-output-port)]) -> void | error
+(write-json obj [sink = (current-output-port)]) -> void | error
 
-  obj := JSON object
+  obj  := JSON object
+  sink := output sink to write JSON data
 ```
 
 Writes JSON object *obj* optionally given *port*. Defaults to using
 current-output-port. Signals an error on failed write.
 
-### string-&gt;json-object
+The output sink can be:
+- An output port.
+- A BufferedStringWriter.
+- A BufferedWriter.
+- A StringWriter.
+- A Writer.
+
+### string->json-object
 ``` scheme
 (string->json-object str) -> json | error
 
@@ -509,7 +522,7 @@ current-output-port. Signals an error on failed write.
 
 Parses given *str* and returns JSON object or signals an error fails to parse.
 
-### json-object-&gt;string
+### json-object->string
 ``` scheme
 (json-object->string obj) -> string | error
 
