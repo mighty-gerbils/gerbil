@@ -35,7 +35,8 @@
         pkg-config-libs
         pkg-config-cflags
         ldflags
-        cppflags)
+        cppflags
+        append-options)
 
 (import :gerbil/gambit/threads)
 
@@ -868,3 +869,8 @@ TODO:
    (pkg-config-cflags lib)
    (catch (e)
      ((env-cppflags) flags))))
+
+;; appends flags together; useful for -cc-options and -ld-options
+(def (append-options . opts)
+  (let (opts (filter (? (not string-empty?)) opts))
+    (string-join opts " ")))

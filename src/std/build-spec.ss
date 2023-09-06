@@ -206,7 +206,7 @@
     (gxc: "os/pipe" ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
-        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE" ,@(include-gambit-sharp)))
+        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
        (else
         `(gsc: "os/_socket" ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
@@ -276,7 +276,7 @@
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
     (gxc: "crypto/libcrypto"
-          "-cc-options" ,(cppflags "libcrypto" "")
+          "-cc-options" ,(append-options (cppflags "libcrypto" "") "-Wno-deprecated-declarations -Wno-implicit-function-declaration")
           "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
           ,@(include-gambit-sharp))
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
@@ -345,7 +345,7 @@
     ;; DEPRECATEED: actor-v13
     (gxc: "actor-v13/message" ,@(include-gambit-sharp))
     (gxc: "actor-v13/xdr"  ,@(include-gambit-sharp))
-    (gxc: "actor-v13/proto" "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "actor-v13/proto")
     "actor-v13/rpc/base"
     "actor-v13/rpc/proto/message"
     "actor-v13/rpc/proto/null"
