@@ -334,8 +334,7 @@ For example, the following constructs a diamond hierarchy with a base struct:
 
 #### Sealing Classes
 
-As of `Gerbil-v0.16-DEV-331-g7b454eea`, Gerbil supports _sealing_ for
-_final_ class (and struct) types.
+Gerbil supports _sealing_ for _final_ class (and struct) types.
 
 By sealing a class, all methods in the hierarchy are coalesced
 into the class' method table, resulting to a single hash table lookup
@@ -879,24 +878,24 @@ hello world
 ```
 
 The difference between the 3 executable compilation modes can be summarized as follows:
-- By default, an compiles with separate module compilation and links to the precompiled
-  gerbil library (`libgerbil`).
+- By default, executable binaries are compiled with separate module compilation and link
+  to the  precompiled gerbil library (`libgerbil`).
   If the system was configured with `--enable-shared`, then this
   will be a shared library; otherwise it will be a static library archive.
   Note that the executable may have some additionl dynamic library
-  dependencies from stdlib foreign code , and also links to `libgambit` which will be
+  dependencies from stdlib foreign code, and also links to `libgambit` which will be
   a shared library when the system is configured with `--enable-shared`.
 - When `-full-program-optimization` is passed to `gxc`, then the compiler will perform
   full program optimization with all gerbil library dependencies. This will result
   in better performance, albeit at the cost of increased compilation time;
   this can be minutes for complex programs, while
-  separately linked executables compile in second(s). Furthermore, because
+  separately linked executables compile in a second. Furthermore, because
   dependencies are compiled in together, you can apply declarations like `(not safe)`
   to the whole program using the `-prelude` directive. This can result
   in potentially significant performance gains at the expense of safety.
   Note that an executable compiled with full program optimization still links to `libgambit`.
 - An executable module can also be compiled as a plain dynamic module and then
-  executed with the `gerbil` universal binary.
+  executed with the `gerbil` universal binary (or `gxi`).
   This dynamic mode of executables is useful for development, as they compile
   instantly and do not need to be recompiled while you are working on their
   dependencies.
