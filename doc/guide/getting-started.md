@@ -75,12 +75,12 @@ To complete your installation, you have to configure your shell to find Gerbil,
 by editing e.g. your `$HOME/.profile`, `$HOME/.bashrc` or `$HOME/.zshenv`.
 
 Whether you install Gerbil to some directory or not,
-be sure to add your `$GERBIL_PREFIX/bin` to your `PATH`
+be sure to add your `$GERBIL_INSTALL_PREFIX/bin` to your `PATH`
 so your shell and other programs can find `gxi` and `gxc`;
-alternatively, you could symlink the installed `gxi` and `gxc` binaries
+alternatively, you could symlink the installed gerbil binaries
 into a directory already in your `$PATH`.
 
-In addition, you should your personal gerbil path's bin (by default
+In addition, you should add your personal gerbil path's bin (by default
 `~/.gerbil` but overridable with the `GERBIL_PATH` environment
 variable) into your path.
 
@@ -92,8 +92,8 @@ add_path() {
     fi
 }
 
-GERBIL_PREFIX=/usr/local/gerbil # no need to export this
-add_path $GERBIL_PREFIX/bin
+GERBIL_INSTAL_PREFIX=/usr/local/gerbil # no need to export this
+add_path $GERBIL_INSTALL_PREFIX/bin
 add_path $HOME/.gerbil/bin
 ```
 
@@ -104,9 +104,9 @@ world development.
 
 First create your workspace -- I recommend you use a top package for your libs
 so that you don't have namespace conflicts.
-So let's make our project with you using `myuser` as the top package name, and
-your source live in `myproject`. You should of course pick something more
-representative  for your top package namespace, like your github user id.
+So let's make our project using `myproject` as the package.
+You should of course pick something more
+representative for your top package namespace, like your github user id.
 
 So, let's make a simple library module:
 ```
@@ -121,7 +121,7 @@ EOF
 $ cat > mylib.ss <<EOF
 (export #t) ; export all symbols
 (def (hello who)
- (displayln "hello " who))
+ (displayln "hello, " who))
 EOF
 ```
 
@@ -138,7 +138,7 @@ You now have a compiled module, which you can use in the interpreter:
 $ gxi
 > (import :myproject/mylib)
 > (hello "world")
-hello world
+hello, world
 ```
 
 Next let's make an executable:
@@ -157,10 +157,23 @@ $ ./mybin world
 hello world
 ```
 
+Finally, let's create a build script to automate our build:
+```
+$ cat > build.ss <<EOF
+#!/usr/bin/env gxi
+(import :std/build-script)
+(defbuil-script '("mylib" (exe: "mybin")))
+EOF
+$ chmod +x build.ss
+```
+
+And you can now build by invoking the build script.
+
 Note that by default your program will be compiled with separate
 module compilation semantics and link to `libgerbil`.  If you are
 willing to wait a bit for your proggram to compile, you can specify
-`-full-program-optimization` which instructs the compiler to perform
-full program optimization. When the system is configured without
-`--enable-shared` this results in significantly smaller binaries with
-better execution performance.
+`-full-program-optimization` or use the `optimized-exe:` build spec
+for your executable in the build script.  This will instruct the
+compiler to perform full program optimization. When the system is
+configured without `--enable-shared` this results in significantly
+smaller binaries with better execution performance.
