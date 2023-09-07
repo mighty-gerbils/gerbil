@@ -19,7 +19,7 @@
   (read u8v (start 0) (end (u8vector-length u8v)) (need 0)))
 
 
-(interface Writer
+(interface (Writer Closer)
   ;; write from a buffer; it _must_ be a u8vector
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
