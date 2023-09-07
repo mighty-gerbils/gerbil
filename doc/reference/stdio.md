@@ -11,6 +11,24 @@ sockets, buffers, and so on.
 ```
 :::
 
+## IO Sources and Sinks
+At the base of of the interface hierarchy sits the `Closer` interface,
+which is the general representation of closable IO sinks and sources.
+
+### Closer
+```scheme
+(interface Closer
+  (close))
+```
+
+### Closer-close
+```scheme
+(Closer-close closer)
+  closer := instance of Closer
+```
+
+Closes the underlying IO source or sink.
+
 ## Binary IO
 The `Reader` interface provides the basic input facilities, while
 the `Writer` interface provides the basic output facilities.
@@ -20,9 +38,8 @@ The `Reader` interface represents binary input sources; the interface
 is defined as follows:
 
 ```scheme
-(interface Reader
-  (read output (start 0) (end (u8vector-length output)) (need 0))
-  (close))
+(interface (Reader Closer)
+  (read output (start 0) (end (u8vector-length output)) (need 0)))
 ```
 
 There are two methods in the Reader interface:
@@ -41,20 +58,12 @@ Returns the number of bytes read, with 0 denoting the end of input.
 If `need > 0`, then it specifies the number of bytes needed; if less than `need` bytes
 are read before encountering the end of input, an error is raised.
 
-#### Reader-close
-```scheme
-(Reader-close reader)
-  reader := Reader implementation
-```
-Closes the input source represented by the reader.
-
 ### Writer
 The `Writer` interface represents binary output sinks; the interface
 is defined as follows:
 ```scheme
-(interface Writer
-  (write input (start 0) (end (u8vector-length input)))
-  (close))
+(interface (Writer Closer)
+  (write input (start 0) (end (u8vector-length input))))
 ```
 
 There are two methods in the Writer interface:
@@ -69,13 +78,6 @@ There are two methods in the Writer interface:
 Writes into a writer from the `input` buffer, with the read range being `[start, end)`.
 Returns the number of bytes written; if fewer bytes are written than expected, an error`
 is raised.
-
-#### Writer-close
-```scheme
-(Writer-close writer)
-  writer := Writer implementation
-```
-Closes the output source represented by the writer.
 
 ## File IO
 You can operate on files using the Reader and Writer interfaces.
@@ -115,15 +117,14 @@ Notes:
 ### Base Socket Functionality
 The base `Socket` interface defines methods that are common for all sockets:
 ```scheme
-(interface Socket
+(interface (Socket Closer)
   (domain)
   (address)
   (peer-address)
   (getsockopt level option)
   (setsockopt level option value)
   (set-input-timeout! timeo)
-  (set-output-timeout! timeo)
-  (close))
+  (set-output-timeout! timeo))
 ```
 
 #### Socket-domain
@@ -193,14 +194,6 @@ Notes:
 - #f clears the timeout
 - a real value sets a relative timeout.
 - a time object sets an absolute timeout.
-
-#### Socket-close
-```scheme
-(Socket-close socket)
-  socket := Socket
-```
-
-Closes the socket raw device.
 
 ### Stream Sockets
 Stream sockets extend the basic socket interface to do IO with a connected
@@ -665,9 +658,8 @@ Notes:
 - the method is guaranteed to succeed, regardless of how many bytes you are
   putting back; the buffer may grow as needed to accommodate the putback.
 - the bytes put back do not have to be the same as bytes previously read from
-  the input stream. Thus the method allowsthe method allows you to
-  _inject_ bytes into the input stream, which may be useful for
-  parsers.
+  the input stream. Thus the method allows you to _inject_ bytes into the input
+  stream, which may be useful for parsers.
 
 #### BufferedReader-skip
 ```scheme
@@ -915,9 +907,8 @@ The `StringReader` interface represents textual input sources; the interface
 is defined as follows:
 
 ```scheme
-(interface StringReader
-  (read-string str (start 0) (end (string-length str)) (need 0))
-  (close))
+(interface (StringReader Closer)
+  (read-string str (start 0) (end (string-length str)) (need 0)))
 ```
 
 There is one constructor two methods in the StringReader interface:
@@ -952,23 +943,12 @@ Returns the number of characters read, with 0 denoting the end of input.
 If `need > 0`, then it specifies the number of bytes needed; if less than `need` characters
 are read before encountering the end of input, an error is raised.
 
-#### StringReader-close
-```scheme
-(StringReader-close reader)
-  reader := StringReader implementation
-```
-Closes the input source represented by the reader.
-
-
-
-
 ### StringWriter
 The `StringWriter` interface represents textual output sinks; the interface
 is defined as follows:
 ```scheme
-(interface StringWriter
-  (write-string input (start 0) (end (string-length input)))
-  (close))
+(interface (StringWriter Closer)
+  (write-string input (start 0) (end (string-length input))))
 ```
 
 There is one constructor two methods in the Writer interface:
@@ -999,17 +979,6 @@ in the future.
 Writes into a writer from the `input` buffer, with the read range being `[start, end)`.
 Returns the number of characters written; if fewer characters are written than expected, an error`
 is raised.
-
-#### StringWriter-close
-```scheme
-(StringWriter-close writer)
-  writer := StringWriter implementation
-```
-Closes the output source represented by the writer.
-
-
-
-
 
 
 ## Buffered Textual IO
@@ -1091,9 +1060,8 @@ Notes:
 - the method is guaranteed to succeed, regardless of how many chars you are
   putting back; the buffer may grow as needed to accommodate the putback.
 - the chars put back do not have to be the same as bytes previously read from
-  the input stream. Thus the method allowsthe method allows you to
-  _inject_ bytes into the input stream, which may be useful for
-  parsers.
+  the input stream. Thus the method allows you to _inject_ characters into the
+  input stream, which may be useful for parsers.
 
 #### BufferedStringReader-skip
 ```scheme

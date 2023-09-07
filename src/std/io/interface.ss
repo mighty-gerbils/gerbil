@@ -33,8 +33,8 @@
   ;; peeks the next byte
   (peek-u8)
 
-  ;; puts back some bytes previously read
-  ;; - previous-input is a u8 or a list of u8s previously read from the buffer
+  ;; puts back some bytes previously read; can also inject bytes.
+  ;; - previous-input is a u8 or a list of u8s injected back into the buffer
   (put-back previous-input)
 
   ;; skips the next count bytes of input
@@ -68,8 +68,8 @@
   ;; peeks the next char
   (peek-char)
 
-  ;; puts back some chars previously read
-  ;; - previous-input is a char or a list of char previously read from the buffer
+  ;; puts back some chars previously read; can also inject characters.
+  ;; - previous-input is a char or a list of chars injected into the buffer
   (put-back previous-input)
 
     ;; skips the next count bytes of input
