@@ -21,8 +21,6 @@ RUN case ${distro} in \
     ;; \
     amazonlinux) \
     amazon-linux-extras install epel -y && \
-    rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 && \
-    yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm && \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
     ;; \
@@ -51,12 +49,11 @@ RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${ger
     --enable-libxml \
     --enable-libyaml \
     --enable-lmdb \
-    --enable-mysql \
     --enable-zlib
 RUN cd /opt/gerbil-src && make && make install
 
 FROM gerbil as final
-RUN rm -rf /opt/gerbil-src
+RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb
 
 WORKDIR /src
 CMD ["gxi"]
