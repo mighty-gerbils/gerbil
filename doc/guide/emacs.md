@@ -11,8 +11,7 @@ You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and add
 (autoload 'gerbil-mode "gerbil-mode" "Gerbil editing mode." t)
 ```
 
-You should further utilize Gambit's inferior mode, as it offers debugger integration with sources on emacs.
-It lives in [$GAMBIT_HOME/share/emacs/site-lisp/gambit.el](https://github.com/gambit/gambit/blob/master/misc/gambit.el).
+You should further utilize Gambit's inferior mode, as it offers debugger integration with sources on emacs. By default it is installed in `$GERBIL_INSTALL_PREFIX/share/emacs/site-lisp/gambit.el` alongside `gerbil-mode.el`.
 
 
 You can add it to your autoload path and then add this to your `.emacs`:
@@ -24,16 +23,15 @@ You can add it to your autoload path and then add this to your `.emacs`:
 You can then make `gxi` your scheme program by setting `scheme-program-name`:
 ```
 (defvar gerbil-program-name
-  (expand-file-name "/opt/gerbil/bin/gxi")) ; Set this for your GERBIL_HOME
+  (expand-file-name "/opt/gerbil/bin/gxi")) ; default installation, adjust for your GERBIL_INSTALL_PREFIX
 (setq scheme-program-name gerbil-program-name)
 ```
 
 And you can now run Gerbil with `M-x run-scheme`.
 
 Note that both `gerbil-mode.el` and `gambit.el` are installed by
-default in `GERBIL_HOME/share/emacs/site-lisp` when installing gerbil.
+default in `$GERBIL_INSTAL_PREFIX/share/emacs/site-lisp` when installing gerbil.
 
-N.B. Up to v0.16 the editing mode file was gerbil.el. After `v0.16-48-g46f10016`, gerbil mode has been migrated to gerbil-mode.el; see [#510](https://github.com/vyzo/gerbil/issues/510) for migrating.
 
 ## Treadmill: An Alternative
 
@@ -44,13 +42,13 @@ N.B. Up to v0.16 the editing mode file was gerbil.el. After `v0.16-48-g46f10016`
 Gerbil comes with a tool to build emacs tags from Gerbil sources, called `gxtags`.
 
 By default, the build script creates tags for the system in
-`$GERBIL_HOME/src/TAGS`. This tags table contains all exported symbols
+`$GERBIL_SRCDIR/src/TAGS`. This tags table contains all exported symbols
 for the Gerbil prelude, standard library, compiler and expander. They
 allow you to easily browse Gerbil code, and also explore the system.
 
 You can load the tags table with `M-x visit-tags-table` and selecting the tags file.
 If you want it to be a permanent part of your editing experience, you can add
-`$GERBIL_HOME/src` to your tags table list by adding this to your .emacs:
+`$GERBIL_SRCDIR/src` to your tags table list by adding this to your .emacs:
 ```
 (visit-tags-table "~/gerbil/src/TAGS")
 ```
@@ -99,12 +97,12 @@ See drewc's [guide](https://gist.github.com/drewc/5f260537b7914a2b999c8a539fb480
 ## Use-Package Example Configuration
 
 Example [use-package](https://github.com/jwiegley/use-package) definition to get you
-hacking in no time. All you have to do is to set the environment variables
-`GERBIL_HOME` and `GAMBIT_HOME` and copy the code snippet below into your Emacs config.
+hacking in no time. All you have to do is to set the environment variables `GERBIL_INSTALL_PREFX`
+and `GERBIL_SRCDIR` and copy the code snippet below into your Emacs config.
 
 ``` elisp
 (use-package gerbil-mode
-  :when (getenv "GERBIL_HOME")
+  :when (getenv "GERBIL_INSTALL_PREFIX")
   :ensure nil
   :defer t
   :mode (("\\.ss\\'"  . gerbil-mode)
@@ -116,24 +114,22 @@ hacking in no time. All you have to do is to set the environment variables
               :map gerbil-mode-map
               (("C-S-l" . clear-comint-buffer)))
   :init
-  (setf gambit (getenv "GAMBIT_HOME"))
-  (setf gerbil (getenv "GERBIL_HOME"))
+  (setf gambit (getenv "GAMBIT_INSTALL_PREFIX"))
+  (setf gerbil (getenv "GERBIL_INSTALL_PREFIX"))
+  (setf gerbil-src (getenv "GERBIL_SRCDIR"))
   (autoload 'gerbil-mode
-    (concat gerbil "/etc/gerbil-mode.el") "Gerbil editing mode." t)
+    (concat gerbil "/share/emacs/site-list/gerbil-mode.el") "Gerbil editing mode." t)
   :hook
   ((gerbil-mode . linum-mode)
    (inferior-scheme-mode-hook . gambit-inferior-mode))
   :config
   (require 'gambit
-           (concat gambit
-                   (if (equal "nixos" (system-name))
-                     "/share/emacs/site-lisp/gambit.el"
-                     "/misc/gambit.el")))
+           (concat gambit "/share/emacs/site-lisp/gambit.el"))
   (setf scheme-program-name (concat gerbil "/bin/gxi"))
 
   (let ((tags (locate-dominating-file default-directory "TAGS")))
     (when tags (visit-tags-table tags)))
-  (visit-tags-table (concat gerbil "/src/TAGS"))
+  (visit-tags-table (concat gerbil-src "/src/TAGS"))
 
   (when (package-installed-p 'smartparens)
     (sp-pair "'" nil :actions :rem)

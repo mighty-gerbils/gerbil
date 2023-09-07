@@ -39,8 +39,8 @@ to the configure script (see below).
 
 
 ## Build Instructions
-After unpacking a release or checking out the source code from Github, let
-`$GERBIL_HOME` be the top directory of Gerbil source.
+After unpacking a release or checking out the source code from Github,
+cd into the `gerbil` directory.
 
 Gerbil takes quite a while to compile, if you wish it to build faster, you can:
 ```

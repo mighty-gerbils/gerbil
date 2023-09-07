@@ -4,17 +4,8 @@
 
 In this tutorial we illustrate web programming with the embedded Gerbil http server.
 
-This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
-
-The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/httpd](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd).
-You can build the source code using the build script:
-```bash
-$ cd $GERBIL_HOME/src/tutorial/httpd
-$ ./build.ss
-
-```
-
-This builds a single binary, `simpled`, in the tutorial directory.
+The source code for the tutorial is available at [src/tutorial/httpd](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd).
+You can build the code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd/build.ss).
 
 ## A Simple Web Server
 
@@ -193,7 +184,7 @@ location / {
         # Forward requests to Gerbil production port
         proxy_pass http://localhost:8080;
         proxy_buffering off; # Single page apps work faster with it
-        proxy_set_header X-Real-IP $remote_addr; 
+        proxy_set_header X-Real-IP $remote_addr;
     }
 }
 ```
@@ -201,7 +192,7 @@ location / {
 Notes:
 
 - www.example.com should be replaced with your domain name or server IP address. Note that multiple values are supported, such as `server_name  domain1.com www.domain1.com;`
-- The line `proxy_pass http://localhost:8080;` should be set to the appropriate port as determined in your Gerbil `getopt` configuration. Replace *8080* with the port number that Gerbil's httpd will be listening on. 
+- The line `proxy_pass http://localhost:8080;` should be set to the appropriate port as determined in your Gerbil `getopt` configuration. Replace *8080* with the port number that Gerbil's httpd will be listening on.
 
 If you have edited the file /etc/nginx/sites-available/default, you are ready to go. If you've created another profile, you will need to symlink to this file in /etc/nginx/sites-enabled.
 
@@ -224,7 +215,6 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
-Environment=GERBIL_HOME=/path/to/gerbil/home
 Type=simple
 Restart=always
 RestartSec=5
@@ -240,7 +230,6 @@ WantedBy=multi-user.target
 In the above example:
 
 - Replace `my-server website` with an appropriate description.
-- Replace `/path/to/gerbil/home` with the appropriate GERBIL_HOME environment path.
 - Replace `/srv/my-server` with an appropriate working directory, possibly the directory of your project on the server.
 - Replace `/srv/my-server/my-server` with the path to your compiled Gerbil binary.
 - Replace `web` with an existing user and group (as created with `useradd`). Systemd will run your server with the privileges of this user. Note that this user must have read and execute privileges for your binary and workingDirectory.

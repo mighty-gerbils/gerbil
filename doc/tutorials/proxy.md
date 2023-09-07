@@ -18,7 +18,7 @@ The last program is an anonymous SOCKS4 proxy, written again using the
 
 ## Preliminaries
 
-The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
+The source code for the tutorial is available at [src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
 You can build the programs using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy/build.ss).
 
 ## A Transparent TCP Proxy
