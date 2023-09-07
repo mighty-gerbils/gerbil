@@ -10,6 +10,7 @@
         :gerbil/gambit/misc
         :gerbil/gambit/os
         :gerbil/gambit/ports
+        :gerbil/gambit/system
         ./srfi/1
         ;;./srfi/43 ; vector-for-each, but we reimplement them because of bug #465
         ./misc/hash
