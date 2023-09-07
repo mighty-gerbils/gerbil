@@ -779,20 +779,22 @@ you need the following import statement:
 The library module is defined in a file named `json.ss` in the Gerbil
 std library source tree. The module declares that it is part of the
 `std/text` package, which places compiler artefacts in the
-`$GERBIL_HOME/lib/std/text` directory.
+`$GERBIL_PREFIX/lib/std/text` directory.
 The namespace prefix for identifiers defined in the module is
 `std/text/json#`.
 
 When writing a library module, you should choose an appropriate package
 for your code.
 The package is specified with a `package: package-path` declaration
-at the top of a module. It effects the namespace of the module and
+at the top of a module or with a `package:` entry in the `gerbil.pkg`
+plist. It effects the namespace of the module and
 placement of compiled code.
 
-By default library modules are looked up in the `$GERBIL_HOME/lib` and
-`~/.gerbil/lib` directories. You can specify additional directories to
-be searched with the `GERBIL_LOADPATH` environment variable.  You can
-also modify the load-path at runtime with `add-load-path`.
+By default library modules are looked up in the `GERBIL_INSTALL_PREFIX/lib`
+and `${GERBIL_PATH:~/.gerbil}/lib` directories.  You can specify
+additional directories to be searched with the `GERBIL_LOADPATH`
+environment variable.  You can also modify the load-path at runtime
+with `add-load-path`.
 
 #### Building Libraries
 
@@ -805,8 +807,10 @@ Here, we call it `util` with the expectation that the library
 and module will grow further:
 ```
 $ mkdir example
+$ cat > example/gerbil.pkg <<EOF
+(package: example)
+EOF
 $ cat > example/util.ss <<EOF
-package: example
 (export with-display-exception)
 (extern (display-exception display-exception))
 (def (with-display-exception thunk)
@@ -824,7 +828,7 @@ $ gxi
 > (import :example/util)
 ```
 
-By default, the compiler will place compiled modules in `~/.gerbil/lib`.
+By default, the compiler will place compiled modules in `${GERBIL_PATH:~/.gerbil}/lib`.
 If you want a separate directory structure for your library, you can
 specify a different directory with the `-d` option:
 ```
@@ -1496,7 +1500,7 @@ tool:
 $ gxensemble cookie
 ```
 
-This will generate a random 256-bit cookie in `$GERBIL_PATH/ensemble/cookie`.
+This will generate a random 256-bit cookie in `${GERBIL_PATH:~/.gerbil}/ensemble/cookie`.
 Note that it will not overwrite an existing cookie, unless you force
 it with `-f`.
 

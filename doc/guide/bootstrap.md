@@ -2,7 +2,7 @@
 
 If you have made changes to the core prelude, expander, or the compiler, you will also want to update the compiled bootstrap modules.
 
-This can be accomplished with the following incantations in `$GERBIL_HOME/src`.
+This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`.
 
 To compile the core prelude bootstrap:
 ```

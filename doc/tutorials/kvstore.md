@@ -9,27 +9,12 @@ programmatic API or through the command line.
 
 This tutorial requires [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database).
 You need to first install it, and then build the LMDB bindings in stdlib, as they are
-not built by default.
+not built by default. You can do this during installation by running `configure` with
+the `--enable-lmdb` option.
 
-So, after installing LMDB, enable and build the LMDB bindings:
-```bash
-$ cd $GERBIL_HOME/src
-$ sed -i 's/lmdb #f/lmdb #t/' std/build-features.ss
-$ ./build.sh stdlib
-...
-```
 
-The source code for the tutorial is available at [$GERBIL\_HOME/src/tutorial/kvstore](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore).
-You can now build the kvstore tutorial using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs:
-```bash
-$ cd $GERBIL_HOME/src/tutorial/kvstore
-$ ./build.ss
-... compile proto
-... compile server
-... compile kvstore-svc
-... compile kvstorec
-... compile exe kvstorec -> ~/.gerbil/bin/kvstorec
-```
+The source code for the tutorial is available at [src/tutorial/kvstore](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore).
+You can build the kvstore tutorial code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs.
 
 ## The kvstore protocol
 

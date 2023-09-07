@@ -4,19 +4,8 @@ Here we explore language extensibility in Gerbil by defining custom preludes.
 
 ## Preliminaries
 
-The source code for all the examples is available at [$GERBIL_HOME/src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
-You should visit that directory and compile the tutorial custom preludes so that you can try out
-the examples in the interpreter:
-```bash
-$ cd $GERBIL_HOME/src/tutorial/lang
-$ ./build.ss
-... compile dot-app
-... compile auto-export
-... compile sexp
-... compile scuby-etc
-... compile scuby-grammar
-... compile scuby
-```
+The source code for all the examples is available at [src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
+You can build the tutorial code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/build.ss).
 
 ## Custom Languages in the REPL
 
