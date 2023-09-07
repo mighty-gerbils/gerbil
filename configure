@@ -24,6 +24,7 @@ Options understood and processed by Gerbil:
                         defaults to ${default_gambit_tag}
   --enable-march=ARCH   specify the machine architecture; it can be empty.
                         defaults to native
+  --enable-shared       use shared libraries for libgerbil and libgambit
 
 Gerbil Standard Library features:
   --enable-libxml       Enable or disable libxml based libraries; disabled by default
@@ -88,6 +89,12 @@ while [ $# -gt 0 ]; do
 
         --enable-march=*)
             gambit_march=$(echo "$1" | cut -d = -f 2-)
+            shift
+            ;;
+
+        --enable-shared)
+            gerbil_shared=t
+            gambit_config="${gambit_config} $1"
             shift
             ;;
 
@@ -196,9 +203,17 @@ else
 fi
 
 if [ -z "${LDFLAGS}" ]; then
-    LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
+    if [ "${gerbil_shared}" = "t" ]; then
+        LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
+    else
+        LDFLAGS="-lssl"
+    fi
 else
-    LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
+    if [ "${gerbil_shared}" = "t" ]; then
+        LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib -lssl"
+    else
+        LDFLAGS="${LDFLAGS} -lssl"
+    fi
 fi
 
 git submodule init || die
