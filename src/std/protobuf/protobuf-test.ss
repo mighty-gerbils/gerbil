@@ -29,16 +29,16 @@
       (defmessage Test4
         packed: (d 4 int32))
 
-      (check (marshal (Test1 a: 150) bio-write-Test1)
+      (check (marshal (Test1 a: 150) BufferedWriter-write-Test1)
              => '#u8(#x08 #x96 #x01))
 
-      (check (marshal (Test2 b: "testing") bio-write-Test2)
+      (check (marshal (Test2 b: "testing") BufferedWriter-write-Test2)
              => '#u8(#x12 #x07 #x74 #x65 #x73 #x74 #x69 #x6e #x67))
 
-      (check (marshal (Test3 c: (Test1 a: 150)) bio-write-Test3)
+      (check (marshal (Test3 c: (Test1 a: 150)) BufferedWriter-write-Test3)
              => '#u8(#x1a #x03 #x08 #x96 #x01))
 
-      (check (marshal (Test4 d: [3 270 86942]) bio-write-Test4)
+      (check (marshal (Test4 d: [3 270 86942]) BufferedWriter-write-Test4)
              => '#u8(#x22 #x06 #x03 #x8E #x02 #x9E #xA7 #x05)))
 
     (test-case "test marshal/unmarshal"
@@ -67,21 +67,28 @@
         optional: (g 7 float)
         optional: (h 8 double))
 
-      (check-marshal-unmarshal (Test1 a: 150) bio-read-Test1 bio-write-Test1)
-      (check-marshal-unmarshal (Test2 b: "testing") bio-read-Test2 bio-write-Test2)
-      (check-marshal-unmarshal (Test3 c: (Test1 a: 150)) bio-read-Test3 bio-write-Test3)
-      (check-marshal-unmarshal (Test4 d: [3 270 86942]) bio-read-Test4 bio-write-Test4)
-      (check-marshal-unmarshal (Test5 e: [(Test1 a: 150) (Test1 a: 300)]) bio-read-Test5 bio-write-Test5)
+      (check-marshal-unmarshal (Test1 a: 150)
+                               BufferedReader-read-Test1 BufferedWriter-write-Test1)
+      (check-marshal-unmarshal (Test2 b: "testing")
+                               BufferedReader-read-Test2 BufferedWriter-write-Test2)
+      (check-marshal-unmarshal (Test3 c: (Test1 a: 150))
+                               BufferedReader-read-Test3 BufferedWriter-write-Test3)
+      (check-marshal-unmarshal (Test4 d: [3 270 86942])
+                               BufferedReader-read-Test4 BufferedWriter-write-Test4)
+      (check-marshal-unmarshal (Test5 e: [(Test1 a: 150) (Test1 a: 300)])
+                               BufferedReader-read-Test5 BufferedWriter-write-Test5)
       (check-marshal-unmarshal (Test6 a: -3 b: -5 c: 10 d: -20 e: 100 f: -100 g: 3.5 h: 7.0)
-                               bio-read-Test6 bio-write-Test6)
+                               BufferedReader-read-Test6 BufferedWriter-write-Test6)
       )
 
     (test-case "test oneof"
       (defmessage A
         oneof: (a (s 1 string) (i 2 int32)))
 
-      (check-marshal-unmarshal (A a: (cons s: "abc")) bio-read-A bio-write-A)
-      (check-marshal-unmarshal (A a: (cons i: 123)) bio-read-A bio-write-A))
+      (check-marshal-unmarshal (A a: (cons s: "abc"))
+                               BufferedReader-read-A BufferedWriter-write-A)
+      (check-marshal-unmarshal (A a: (cons i: 123))
+                               BufferedReader-read-A BufferedWriter-write-A))
 
     (test-case "test map"
       (defmessage A
@@ -92,7 +99,7 @@
         map: (c 1 string A))
 
       (check-marshal-unmarshal (B c: (hash ("a" (A a: "a" b: 1)) ("b" (A a: "b" b: 2))))
-                               bio-read-B bio-write-B))
+                               BufferedReader-read-B BufferedWriter-write-B))
 
     (test-case "test parser"
       (check (gx#import-module (path-expand "potpourri-test.proto"

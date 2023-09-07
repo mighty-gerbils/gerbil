@@ -2,14 +2,15 @@
 ;;; © vyzo
 ;;; Protobuf macros
 
-(import :std/protobuf/io
-        :std/net/bio
-        :std/error
+(import :std/error
+        :std/io
+        (only-in :std/io/bio/util defreader-ext* defwriter-ext*)
+        ./io
         (for-syntax :std/stxutil))
 (export #t (for-syntax #t))
 
 (begin-syntax
-  (defclass type (name tag io-methods))
+  (defclass type (name tag io-methods unchecked-io-methods))
   (defclass (scalar-type type) ())
   (defclass (enum-type type) ())
   (defclass (message-type type) ())
@@ -39,8 +40,8 @@
                           (with-syntax ((key key) (val val))
                             #'((val) (quote key))))
                         keys vals)))
-      #'(def (bio-read buf)
-          (let (val (bio-read-varint buf))
+      #'(defreader-ext* (bio-read buf)
+          (let (val (&BufferedReader-read-varint* buf))
             (case val
               cases ...
               (else val))))))
@@ -50,9 +51,9 @@
                   ((cases ...)
                    (map (lambda (key val)
                           (with-syntax ((key key) (val val))
-                            #'((key) (bio-write-varint val buf))))
+                            #'((key) (&BufferedWriter-write-varint* val buf))))
                         keys vals)))
-      #'(def (bio-write val buf)
+      #'(defwriter-ext* (bio-write buf val)
           (case val
             cases ...
             (else
@@ -65,8 +66,12 @@
           (andmap stx-fixnum? #'(val ...)))
      (with-syntax* ((_ (check-duplicate-identifiers #'(key ...) stx))
                     (_ (check-duplicate-keys! (map stx-e #'(val ...)) stx))
-                    (bio-read  (format-id #'id "bio-read-~a" #'id))
-                    (bio-write (format-id #'id "bio-write-~a" #'id))
+                    (bio-read  (format-id #'id "read-~a" #'id))
+                    (bio-write (format-id #'id "write-~a" #'id))
+                    (bio-read-fqn (format-id #'id "BufferedReader-~a" #'bio-read))
+                    (bio-write-fqn (format-id #'id "BufferedWriter-~a" #'bio-write))
+                    (&bio-read-fqn (format-id #'id "&~a" #'bio-read-fqn))
+                    (&bio-write-fqn (format-id #'id "&~a" #'bio-write-fqn))
                     (defbio-read
                       (make-bio-read #'bio-read #'(key ...) #'(val ...)))
                     (defbio-write
@@ -76,7 +81,8 @@
              (make-enum-type
               name: 'id
               tag: 'VARINT
-              io-methods: [(quote-syntax bio-read) (quote-syntax bio-write)]))
+              io-methods: [(quote-syntax bio-read-fqn) (quote-syntax bio-write-fqn)]
+              unchecked-io-methods: [(quote-syntax &bio-read-fqn) (quote-syntax &bio-write-fqn)]))
            defbio-read
            defbio-write)))))
 
@@ -176,8 +182,12 @@
                    ((setf ...)
                     (map (cut format-id id "~a-~a-set!" id <>)
                          #'(field-id ...)))
-                   (bio-read  (format-id id "bio-read-~a" id))
-                   (bio-write (format-id id "bio-write-~a" id))
+                   (bio-read  (format-id id "read-~a" id))
+                   (bio-write (format-id id "write-~a" id))
+                   (bio-read-fqn (format-id id "BufferedReader-~a" #'bio-read))
+                   (bio-write-fqn (format-id id "BufferedWriter-~a" #'bio-write))
+                   (&bio-read-fqn (format-id id "&~a" #'bio-read-fqn))
+                   (&bio-write-fqn (format-id id "&~a" #'bio-write-fqn))
                    (id id))
       #'(begin
           (defstruct-type id::t #f make-id id?
@@ -205,7 +215,8 @@
               (quote (field-id ...)))
              name: (quote id)
              tag: (quote VARLEN)
-             io-methods: [(quote-syntax bio-read) (quote-syntax bio-write)])))))
+             io-methods: [(quote-syntax bio-read-fqn) (quote-syntax bio-write-fqn)]
+             unchecked-io-methods: [(quote-syntax &bio-read-fqn) (quote-syntax &bio-write-fqn)])))))
 
   (def (keyword-e id)
     (symbol->keyword (stx-e id)))
@@ -272,8 +283,9 @@
          (cons 'begin (reverse defs))))))
 
   (def (make-bio-read id fields)
-    (with-syntax ((bio-read  (format-id id "bio-read-~a" id))
-                  (bio-read! (format-id id "bio-read-~a!" id))
+    (with-syntax ((bio-read  (format-id id "read-~a" id))
+                  (bio-read! (format-id id "read-~a!" id))
+                  (&bio-read! (format-id id "&BufferedReader-read-~a!" id))
                   (id::t     (format-id id "~a::t" id))
                   (field-count (length fields))
                   ((cases ...)
@@ -283,19 +295,19 @@
                   ((read-fini ...)
                    (make-read-fini id fields)))
       #'(begin
-          (def (bio-read buf)
+          (defreader-ext* (bio-read buf)
             (let (obj (make-object id::t field-count))
-              (bio-read! obj buf)
+              (&bio-read! buf obj)
               obj))
-          (def (bio-read! obj buf)
+          (defreader-ext* (bio-read! buf obj)
             read-init ...
             (let lp ()
-              (unless (eof-object? (bio-peek-u8 buf))
-                (let ((values key tag) (bio-read-field buf))
+              (unless (eof-object? (&BufferedReader-peek-u8 buf))
+                (let ((values key tag) (&BufferedReader-read-field buf))
                   (case key
                     cases ...
                     (else
-                     (bio-input-skip-unknown tag buf)))
+                     (&BufferedReader-skip-unknown buf tag)))
                   (lp))))
             read-fini ...))))
 
@@ -342,7 +354,7 @@
         (if (or (scalar-type? type)
                 (enum-type? type))
           #'(bio-read-e buf)
-          #'(bio-read-delimited bio-read-e buf))))
+          #'(&BufferedReader-read-delimited buf bio-read-e))))
 
     (with ([specifier field-id . rest] field)
       (with-syntax ((getf (format-id id "&~a-~a" id field-id))
@@ -351,7 +363,7 @@
           ((required: optional:)
            (with ([key type] rest)
              (with-syntax* ((key key)
-                            ((bio-read-e _) (type-io-methods type))
+                            ((bio-read-e _) (type-unchecked-io-methods type))
                             (do-read (make-read-e type #'bio-read-e)))
                (cons #'((key)
                         (setf obj do-read))
@@ -359,7 +371,7 @@
           ((repeated: packed:)
            (with ([key type] rest)
              (with-syntax ((key key)
-                           ((bio-read-e _) (type-io-methods type)))
+                           ((bio-read-e _) (type-unchecked-io-methods type)))
                (case (type-tag type)
                  ((VARLEN)
                   ;; it's a length-delimited object; cannot be packed.
@@ -372,20 +384,20 @@
                   (with-syntax ((do-read (make-read-e type #'bio-read-e)))
                     (cons #'((key)
                              (if (eq? tag 'VARLEN)
-                               (setf obj (foldl cons (getf obj) (bio-read-packed bio-read-e buf)))
+                               (setf obj (foldl cons (getf obj) (&BufferedReader-read-packed buf bio-read-e)))
                                (setf obj (cons do-read (getf obj)))))
                           r)))))))
           ((map:)
            (with ([key key-type value-type] rest)
              (with-syntax* ((key key)
-                            ((bio-read-key-e _) (type-io-methods key-type))
-                            ((bio-read-value-e _) (type-io-methods value-type))
+                            ((bio-read-key-e _) (type-unchecked-io-methods key-type))
+                            ((bio-read-value-e _) (type-unchecked-io-methods value-type))
                             (read-value-e
                              (if (message-type? value-type)
-                               #'(cut bio-read-delimited bio-read-value-e <>)
+                               #'(cut &BufferedReader-read-delimited <> bio-read-value-e)
                                #'bio-read-value-e)))
                (cons #'((key)
-                        (let (kv (bio-read-key-value-pair bio-read-key-e read-value-e buf))
+                        (let (kv (&BufferedReader-read-key-value-pair buf bio-read-key-e read-value-e))
                           (setf obj (cons kv (or (getf obj) [])))))
                      r))))
           ((oneof:)
@@ -394,7 +406,7 @@
                (with ([subfield-id key type] subfield)
                  (with-syntax* ((key key)
                                 (kw (keyword-e subfield-id))
-                                ((bio-read-e _) (type-io-methods type))
+                                ((bio-read-e _) (type-unchecked-io-methods type))
                                 (do-read (make-read-e type #'bio-read-e)))
                    (cons #'((key)
                             (setf obj (cons kw do-read)))
@@ -404,14 +416,14 @@
            (error "Unexpected specifier" specifier field))))))
 
   (def (make-bio-write id fields)
-    (with-syntax ((bio-write (format-id id "bio-write-~a" id))
+    (with-syntax ((bio-write (format-id id "write-~a" id))
                   ((write-field ...)
                    (map (cut make-bio-write-field id <>)
                         fields))
                   (id? (format-id id "~a?" id))
                   (error-message
                    (string-append "Expected instance of " (symbol->string (stx-e id)))))
-      #'(def (bio-write obj buf)
+      #'(defwriter-ext* (bio-write buf obj)
           (unless (id? obj)
             (error error-message obj))
           write-field ...)))
@@ -421,8 +433,8 @@
       (with-syntax ((bio-write-e bio-write-e))
         (if (or (scalar-type? type)
                 (enum-type? type))
-          #'(bio-write-e val buf)
-          #'(bio-write-delimited val bio-write-e buf))))
+          #'(bio-write-e buf val)
+          #'(&BufferedWriter-write-delimited* buf val bio-write-e))))
 
     (with ([specifier field-id . rest] field)
       (with-syntax ((getf (format-id id "&~a-~a" id field-id)))
@@ -431,51 +443,51 @@
            (with ([key type] rest)
              (with-syntax* ((key key)
                             (tag (type-tag type))
-                            ((_ bio-write-e) (type-io-methods type))
+                            ((_ bio-write-e) (type-unchecked-io-methods type))
                             (do-write (make-write-e type #'bio-write-e)))
                #'(let (val (getf obj))
-                   (bio-write-field key (quote tag) buf)
+                   (&BufferedWriter-write-field buf key (quote tag))
                    do-write))))
           ((optional:)
            (with ([key type] rest)
              (with-syntax* ((key key)
                             (tag (type-tag type))
-                            ((_ bio-write-e) (type-io-methods type))
+                            ((_ bio-write-e) (type-unchecked-io-methods type))
                             (do-write (make-write-e type #'bio-write-e)))
                #'(cond
                   ((getf obj)
                    => (lambda (val)
-                        (bio-write-field key (quote tag) buf)
+                        (&BufferedWriter-write-field buf key (quote tag))
                         do-write))))))
           ((repeated:)
            (with ([key type] rest)
              (with-syntax* ((key key)
                             (tag (type-tag type))
-                            ((_ bio-write-e) (type-io-methods type))
+                            ((_ bio-write-e) (type-unchecked-io-methods type))
                             (do-write (make-write-e type #'bio-write-e)))
                #'(let (vals (getf obj))
                    (for-each
                      (lambda (val)
-                       (bio-write-field key (quote tag) buf)
+                       (&BufferedWriter-write-field buf key (quote tag))
                        do-write)
                      vals)))))
           ((packed:)
            (with ([key type] rest)
              (with-syntax ((key key)
-                           ((_ bio-write-e) (type-io-methods type)))
+                           ((_ bio-write-e) (type-unchecked-io-methods type)))
                #'(let (vals (getf obj))
-                   (bio-write-field key (quote VARLEN) buf)
-                   (bio-write-packed vals bio-write-e buf)))))
+                   (&BufferedWriter-write-field buf key (quote VARLEN))
+                   (&BufferedWriter-write-packed buf vals bio-write-e)))))
           ((map:)
            (with ([key key-type value-type] rest)
              (with-syntax* ((key key)
                            (key-tag (type-tag key-type))
                            (value-tag (type-tag value-type))
-                           ((_ bio-write-key-e) (type-io-methods key-type))
-                           ((_ bio-write-value-e) (type-io-methods value-type))
+                           ((_ bio-write-key-e) (type-unchecked-io-methods key-type))
+                           ((_ bio-write-value-e) (type-unchecked-io-methods value-type))
                            (write-value-e
                             (if (message-type? value-type)
-                              #'(cut bio-write-delimited <> bio-write-value-e <>)
+                              #'(cut &BufferedWriter-write-delimited* <> <> bio-write-value-e)
                               #'bio-write-value-e)))
                #'(cond
                   ((getf obj)
@@ -483,11 +495,12 @@
                         (for-each
                           (lambda (kv)
                             (with ([k . v] kv)
-                              (bio-write-field key (quote VARLEN) buf)
-                              (bio-write-key-value-pair k v
-                                                        (quote key-tag) bio-write-key-e
-                                                        (quote value-tag) write-value-e
-                                                        buf)))
+                              (&BufferedWriter-write-field buf key (quote VARLEN))
+                              (&BufferedWriter-write-key-value-pair buf k v
+                                                                    (quote key-tag)
+                                                                    bio-write-key-e
+                                                                    (quote value-tag)
+                                                                    write-value-e)))
                           (hash->list hash))))))))
           ((oneof:)
            (with-syntax (((cases ...)
@@ -496,11 +509,11 @@
                                   (with-syntax* ((key key)
                                                  (kw (keyword-e subfield-id))
                                                  (tag (type-tag type))
-                                                 ((_ bio-write-e) (type-io-methods type))
+                                                 ((_ bio-write-e) (type-unchecked-io-methods type))
                                                  (do-write
                                                   (make-write-e type #'bio-write-e)))
                                     #'((kw)
-                                       (bio-write-field key (quote tag) buf)
+                                       (&BufferedWriter-write-field buf key (quote tag))
                                        do-write))))
                                rest)))
              #'(cond
@@ -530,29 +543,35 @@
              defread
              defwrite))))))
 
-(defrules defscalar-type ()
-  ((_ id tag bio-read-e bio-write-e)
-   (defsyntax id
-     (make-scalar-type
-      name: 'id
-      tag:  'tag
-      io-methods: [(quote-syntax bio-read-e) (quote-syntax bio-write-e)]))))
+(defsyntax (defscalar-type stx)
+  (syntax-case stx ()
+    ((_ id tag method)
+     (with-syntax* ((bio-read-e (format-id #'id "BufferedReader-read-~a" #'method))
+                    (bio-write-e (format-id #'id "BufferedWriter-write-~a" #'method))
+                    (&bio-read-e (format-id #'id "&~a" #'bio-read-e))
+                    (&bio-write-e (format-id #'id "&~a" #'bio-write-e)))
+       #'(defsyntax id
+           (make-scalar-type
+            name: 'id
+            tag:  'tag
+            io-methods: [(quote-syntax bio-read-e) (quote-syntax bio-write-e)]
+            unchecked-io-methods: [(quote-syntax &bio-read-e) (quote-syntax &bio-write-e)]))))))
 
-(defscalar-type bool     VARINT  bio-read-boolean bio-write-boolean)
-(defscalar-type int32    VARINT  bio-read-varint bio-write-varint)
-(defscalar-type uint32   VARINT  bio-read-varint bio-write-varint)
-(defscalar-type sint32   VARINT  bio-read-varint-zigzag bio-write-varint-zigzag)
-(defscalar-type int64    VARINT  bio-read-varint bio-write-varint)
-(defscalar-type uint64   VARINT  bio-read-varint bio-write-varint)
-(defscalar-type sint64   VARINT  bio-read-varint-zigzag bio-write-varint-zigzag)
-(defscalar-type fixed32  FIXED32 bio-read-fixed32 bio-write-fixed32)
-(defscalar-type sfixed32 FIXED32 bio-read-sfixed32 bio-write-sfixed32)
-(defscalar-type fixed64  FIXED64 bio-read-fixed64 bio-write-fixed64)
-(defscalar-type sfixed64 FIXED64 bio-read-sfixed64 bio-write-sfixed64)
-(defscalar-type double   FIXED64 bio-read-double bio-write-double)
-(defscalar-type float    FIXED32 bio-read-float bio-write-float)
-(defscalar-type string   VARLEN  bio-read-delimited-string bio-write-delimited-string)
-(defscalar-type bytes    VARLEN  bio-read-delimited-bytes bio-write-delimited-bytes)
+(defscalar-type bool     VARINT  boolean)
+(defscalar-type int32    VARINT  varint*)
+(defscalar-type uint32   VARINT  varint*)
+(defscalar-type sint32   VARINT  varint-zigzag*)
+(defscalar-type int64    VARINT  varint*)
+(defscalar-type uint64   VARINT  varint*)
+(defscalar-type sint64   VARINT  varint-zigzag*)
+(defscalar-type fixed32  FIXED32 fixed32)
+(defscalar-type sfixed32 FIXED32 sfixed32)
+(defscalar-type fixed64  FIXED64 fixed64)
+(defscalar-type sfixed64 FIXED64 sfixed64)
+(defscalar-type double   FIXED64 double)
+(defscalar-type float    FIXED32 float)
+(defscalar-type string   VARLEN  delimited-string)
+(defscalar-type bytes    VARLEN  delimited-bytes)
 
 (defrules defpackage ()
   ((_ id type-id ...)
