@@ -1,7 +1,6 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
 GERBIL_VERSION := master
-GAMBIT_VERSION := v4.9.5
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
@@ -83,7 +82,6 @@ ubuntu_packages := autoconf \
 alpine:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg cores=$(cores) \
@@ -92,7 +90,6 @@ alpine:
 
 amazonlinux:
 	docker build --target final \
-	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg cores=$(cores)  \
@@ -103,7 +100,6 @@ amazonlinux:
 centos:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg cores=$(cores) \
@@ -113,7 +109,6 @@ centos:
 
 fedora:
 	docker build --target final \
-	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg cores=$(cores) \
@@ -124,7 +119,6 @@ fedora:
 ubuntu:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg cores=$(cores) \
@@ -139,16 +133,16 @@ ubuntu-current-jedi:
 package-ubuntu:
 	docker run -v $(PWD):/src:z -t gerbil/ubuntu \
 	bash -c "gem install fpm && \
-	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).ubuntu \
-	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION).ubuntu \
+	--description 'Gerbil Package' /opt/gerbil"
 
 package-fedora:
 	docker run -v $(PWD):/src:z -t gerbil/fedora \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).fedora \
-	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+	-n gerbil-$(GERBIL_VERSION).fedora \
+	--description 'Gerbil Package' /opt/gerbil"
 
 package-amazonlinux:
 	docker run -v $(PWD):/src:z -t gerbil/amazonlinux \
@@ -156,8 +150,8 @@ package-amazonlinux:
 	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).amazonlinux \
-	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+	-n gerbil-$(GERBIL_VERSION).amazonlinux \
+	--description 'Gerbil Package' /opt/gerbil"
 
 packages: package-ubuntu package-fedora
 
