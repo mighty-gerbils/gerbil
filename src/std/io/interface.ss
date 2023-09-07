@@ -4,28 +4,27 @@
 (import :std/interface)
 (export #t)
 
+;; closable io sources and sinks
+(interface Closer
+  (close))
+
 ;; generic binary IO
-(interface Reader
+(interface (Reader Closer)
   ;; read into a buffer; it _must_ be a u8vector.
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end
   ;; - need denotes the minimum required input; it must be a fixnum
   ;; Returns the number of bytes read; 0 denotes the end of input.
   ;; If less than the needed bytes are read, an io-error is raised.
-  (read u8v (start 0) (end (u8vector-length u8v)) (need 0))
+  (read u8v (start 0) (end (u8vector-length u8v)) (need 0)))
 
-  ;; closes the input source
-  (close))
 
 (interface Writer
   ;; write from a buffer; it _must_ be a u8vector
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (write u8v (start 0) (end (u8vector-length u8v)))
-
-  ;; closes the output sink
-  (close))
+  (write u8v (start 0) (end (u8vector-length u8v))))
 
 ;; buffered IO
 (interface (BufferedReader Reader)
@@ -59,11 +58,9 @@
   (reset! output))
 
 ;; string/textual IO
-(interface StringReader
+(interface (StringReader Closer)
   ;; read into a string
-  (read-string str (start 0) (end (string-length str)) (need 0))
-  ;; closes the reader
-  (close))
+  (read-string str (start 0) (end (string-length str)) (need 0)))
 
 (interface (BufferedStringReader StringReader)
   ;; reads a single char
@@ -85,11 +82,9 @@
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
   (reset! reader))
 
-(interface StringWriter
+(interface (StringWriter Closer)
   ;; write a string
-  (write-string str (start 0) (end (string-length str)))
-  ;; closes the writer
-  (close))
+  (write-string str (start 0) (end (string-length str))))
 
 (interface (BufferedStringWriter StringWriter)
   ;; write a single char
@@ -100,15 +95,14 @@
   (reset! output))
 
 ;; socket interfaces
-(interface Socket
+(interface (Socket Closer)
   (domain)
   (address)
   (peer-address)
   (getsockopt level option)
   (setsockopt level option value)
   (set-input-timeout! timeo)
-  (set-output-timeout! timeo)
-  (close))
+  (set-output-timeout! timeo))
 
 (interface (StreamSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
