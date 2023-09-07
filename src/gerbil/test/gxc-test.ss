@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; gxc compilation test
 (import :gerbil/gambit/ports
+        :gerbil/gambit/system
         :std/test)
 (export gxc-test)
 
@@ -54,7 +55,19 @@
         (check (compile-exe program-source-file bin) => 0)
         (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
 
+    (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
+      (test-case "static executable"
+        (let (bin (string-append (path-strip-extension program-source-file) ".static-bin"))
+          (check (compile-exe program-source-file bin "-static") => 0)
+          (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))
+
     (test-case "optimized executable"
       (let (bin (string-append (path-strip-extension program-source-file) ".opt-bin"))
         (check (compile-exe program-source-file bin "-full-program-optimization") => 0)
-        (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))))
+        (check (execute bin) => (string-append "hello " (gerbil-system-version-string)))))
+
+    (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
+      (test-case "optimized static executable"
+        (let (bin (string-append (path-strip-extension program-source-file) ".opt-static-bin"))
+          (check (compile-exe program-source-file bin "-static" "-full-program-optimization") => 0)
+          (check (execute bin) => (string-append "hello " (gerbil-system-version-string))))))))
