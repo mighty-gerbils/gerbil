@@ -20,7 +20,6 @@ alpine_packages := autoconf \
                    linux-headers \
                    lmdb-dev \
                    make \
-                   mariadb-dev \
                    musl \
                    musl-dev \
                    nodejs \
@@ -40,9 +39,6 @@ amazon_packages := cmake \
                    libyaml-devel \
 		   lmdb-libs \
                    lmdb-devel \
-		   mysql-community-client \
-		   mysql-community-libs \
-		   mysql-community-devel \
 		   openssl-devel \
                    sqlite-devel
 
@@ -52,7 +48,6 @@ fedora_packages := cmake \
                    libxml2-devel \
                    libyaml-devel \
                    lmdb-devel \
-                   mariadb-devel \
                    openssl-devel \
                    sqlite-devel
 
@@ -65,7 +60,6 @@ ubuntu_packages := autoconf \
                    libleveldb-dev \
                    libleveldb1d \
                    liblmdb-dev \
-                   libmysqlclient-dev \
                    libnss3-dev \
                    libsnappy1v5 \
                    libsqlite3-dev \
