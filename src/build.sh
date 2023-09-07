@@ -128,8 +128,8 @@ finalize_stage1 () {
   local target_bin="${2}"
   cp -v gerbil/interactive/*.ss \
      "${target_lib}"
-  (cd "${target_bin}" && ln -svf gerbil gxi)
-  (cd "${target_bin}" && ln -svf gerbil gxc)
+  (cd "${target_bin}" && ln -sf gerbil gxi)
+  (cd "${target_bin}" && ln -sf gerbil gxc)
 }
 
 build_stage0 () {
