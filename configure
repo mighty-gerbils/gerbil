@@ -66,7 +66,15 @@ prefix="/opt/gerbil"
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"
 
-gambit_march="native"
+case $(uname) in
+    OpenBSD)
+        gambit_march=""
+        ;;
+    *)
+        gambit_march="native"
+        ;;
+esac
+
 gambit_tag="${default_gambit_tag}"
 gambit_config="${default_gambit_config}"
 
