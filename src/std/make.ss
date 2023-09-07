@@ -768,7 +768,7 @@ TODO:
      debug: (settings-static-debug settings)
      full-program-optimization: (settings-full-program-optimization settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (gxc-compile mod gsc-opts settings)
+  (gxc-compile mod gsc-opts settings #f)
   (message "... compile exe " mod " -> " binpath)
   (gxc#compile-exe srcpath gxc-opts))
 
