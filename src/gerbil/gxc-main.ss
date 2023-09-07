@@ -82,6 +82,8 @@
           (set! keep-scm #t)
           (lp rest))
          (("-static")
+          (when (member "--enable-shared" (string-split (configure-command-string) #\'))
+            (error "system is configured with --enable-shared and cannot build static executables"))
           (add-gsc-option! '("-cc-options" "-Bstatic"))
           (add-gsc-option! '("-ld-options" "-static"))
           (lp rest))

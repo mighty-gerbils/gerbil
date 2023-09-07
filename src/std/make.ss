@@ -772,6 +772,8 @@ TODO:
   (gxc#compile-exe srcpath gxc-opts))
 
 (def (compile/static-linkage mod opts settings compile-e)
+  (when (member "--enable-shared" (string-split (configure-command-string) #\'))
+    (error "system is configured with --enable-shared and cannot build static executables"))
   (let (static-opts (append opts '("-cc-options" "-Bstatic" "-ld-options" "-static")))
     (compile-e mod static-opts settings)))
 
