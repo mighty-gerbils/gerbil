@@ -368,7 +368,7 @@
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
                 "-cc-options" ,(cppflags "sqlite3" "")
-                "-ld-options" ,(ldflags "sqlite3" "-lsqlite3"))
+                "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
