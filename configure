@@ -27,6 +27,7 @@ Options understood and processed by Gerbil:
   --enable-shared       use shared libraries for libgerbil and libgambit
 
 Gerbil Standard Library features:
+  --enable-deprecated   Enable building of deprecated packages
   --enable-libxml       Enable or disable libxml based libraries; disabled by default
   --disable-libxml
   --enable-libyaml      Enable or disable libyaml based libraries; disabled by default
@@ -103,6 +104,11 @@ while [ $# -gt 0 ]; do
         --enable-shared)
             gerbil_shared=t
             gambit_config="${gambit_config} $1"
+            shift
+            ;;
+
+        --enable-deprecated)
+            std_enable_feature deprecated
             shift
             ;;
 
