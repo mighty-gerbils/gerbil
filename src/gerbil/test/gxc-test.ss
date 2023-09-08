@@ -89,24 +89,32 @@
       (when (file-exists? gerbil-path)
         (delete-file-or-directory gerbil-path #t))
       (create-directory* gerbil-path)
-      (check (invoke (path-expand "test-build-exe.ss" this-directory) []) => 0))
+      (check (invoke (path-expand "test-build-exe.ss" this-directory) []) => 0)
+      (check (execute (path-expand "bin/test-program" gerbil-path))
+             => (string-append "hello " (gerbil-system-version-string))))
 
     (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
-      (test-case "build executable"
+      (test-case "build static executable"
         (when (file-exists? gerbil-path)
           (delete-file-or-directory gerbil-path #t))
         (create-directory* gerbil-path)
-        (check (invoke (path-expand "test-build-static-exe.ss" this-directory) []) => 0)))
+        (check (invoke (path-expand "test-build-static-exe.ss" this-directory) []) => 0)
+        (check (execute (path-expand "bin/test-program" gerbil-path))
+               => (string-append "hello " (gerbil-system-version-string)))))
 
     (test-case "build optimized executable"
       (when (file-exists? gerbil-path)
         (delete-file-or-directory gerbil-path #t))
       (create-directory* gerbil-path)
-      (check (invoke (path-expand "test-build-optimized-exe.ss" this-directory) []) => 0))
+      (check (invoke (path-expand "test-build-optimized-exe.ss" this-directory) []) => 0)
+      (check (execute (path-expand "bin/test-program" gerbil-path))
+             => (string-append "hello " (gerbil-system-version-string))))
 
     (unless (member "--enable-shared" (string-split (configure-command-string) #\'))
       (test-case "build optimized static executable"
         (when (file-exists? gerbil-path)
           (delete-file-or-directory gerbil-path #t))
         (create-directory* gerbil-path)
-        (check (invoke (path-expand "test-build-optimized-static-exe.ss" this-directory) []) => 0)))))
+        (check (invoke (path-expand "test-build-optimized-static-exe.ss" this-directory) []) => 0)
+        (check (execute (path-expand "bin/test-program" gerbil-path))
+               => (string-append "hello " (gerbil-system-version-string)))))))
