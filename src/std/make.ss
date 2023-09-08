@@ -10,6 +10,7 @@
         :gerbil/gambit/misc
         :gerbil/gambit/os
         :gerbil/gambit/ports
+        :gerbil/gambit/system
         ./srfi/1
         ;;./srfi/43 ; vector-for-each, but we reimplement them because of bug #465
         ./misc/hash
@@ -163,7 +164,7 @@ TODO:
      (source-path modf ".scm" settings))
     ([ssi: modf . deps]
      (source-path modf ".ssi" settings))
-    ([(or exe: static-exe: optimized-exe:)  modf . opts]
+    ([(or exe: static-exe: optimized-exe: optimized-static-exe:)  modf . opts]
      (source-path modf ".ss" settings))
     ([static-include: file]
      (static-file-path file settings))
@@ -201,7 +202,7 @@ TODO:
     ([gsc: modf . opts] [(gsc-c-path modf settings)])
     ([ssi: modf . submodules] [(library-path modf ".ssi" settings)
                                (append-map (cut spec-outputs <> settings) submodules) ...])
-    ([(or exe: static-exe: optimized-exe:) modf . opts]
+    ([(or exe: static-exe: optimized-exe: optimized-static-exe:) modf . opts]
      [(binary-path modf opts settings)
       (static-path modf settings)])
     ([static-include: file] [(static-file-path file settings)])
@@ -560,7 +561,7 @@ TODO:
                            [gxc: name [submodules: s] . args])
                           ((? string? spec)
                            [gxc: spec [submodules: s]]))))))
-         ((exe: static-exe: optimized-exe:) (no-submodules spec) (c spec))
+         ((exe: static-exe: optimized-exe: optimized-static-exe:) (no-submodules spec) (c spec))
          ((gsc: static-include: copy:) (push-submodule spec))
          ((ssi:) (c (append spec (get-submodules))))
          (else (error "Unrecognized spec type" spec)))))
@@ -620,10 +621,14 @@ TODO:
     ([ssi: modf . submodules]
      (for-each (cut build <> settings) submodules)
      (compile-ssi modf '() settings))
-    ([(or exe: static-exe:) modf . opts]
+    ([exe:  modf . opts]
      (compile-exe modf opts settings))
+    ([static-exe:  modf . opts]
+     (compile-exe/static-linkage modf opts settings))
     ([optimized-exe: modf . opts]
      (compile-optimized-exe modf opts settings))
+    ([optimized-static-exe: modf . opts]
+     (compile-optimized-exe/static-linkage modf opts settings))
     ([static-include: file]
      (copy-target file settings)
      (copy-static file settings))
@@ -763,9 +768,18 @@ TODO:
      debug: (settings-static-debug settings)
      full-program-optimization: (settings-full-program-optimization settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (gxc-compile mod gsc-opts settings)
+  (gxc-compile mod gsc-opts settings #f)
   (message "... compile exe " mod " -> " binpath)
   (gxc#compile-exe srcpath gxc-opts))
+
+(def (compile/static-linkage mod opts settings compile-e)
+  (when (member "--enable-shared" (string-split (configure-command-string) #\'))
+    (error "system is configured with --enable-shared and cannot build static executables"))
+  (let (static-opts (append opts '("-cc-options" "-Bstatic" "-ld-options" "-static")))
+    (compile-e mod static-opts settings)))
+
+(def (compile-exe/static-linkage mod opts settings)
+  (compile/static-linkage mod opts settings compile-exe))
 
 (def (make-settings-optimized settings)
   (def s (struct-copy settings))
@@ -774,6 +788,9 @@ TODO:
 
 (def (compile-optimized-exe mod opts settings)
   (compile-exe mod opts (make-settings-optimized settings)))
+
+(def (compile-optimized-exe/static-linkage mod opts settings)
+  (compile/static-linkage mod opts settings compile-optimized-exe))
 
 (def (copy-static file settings)
   (def spath (static-file-path file settings))

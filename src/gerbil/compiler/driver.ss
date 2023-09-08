@@ -166,24 +166,27 @@ namespace: gxc
             (path-expand
              (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
            (base (string-append base " -I " user-static-dir)))
-      (let lp ((rest opts))
+      (let lp ((rest opts) (ccflags base))
         (match rest
-          (["-cc-options" opts . _]
-           ["-cc-options" (string-append base " " opts)])
+          (["-cc-options" opts . rest]
+           (lp rest (string-append ccflags " " opts)))
           ([_ . rest]
-           (lp rest))
+           (lp rest ccflags))
           (else
-           ["-cc-options" base])))))
+           ["-cc-options" ccflags])))))
 
   (def (get-output-ld-opts)
     (let (opts (pgetq gsc-options: opts))
-      (let lp ((rest opts))
+      (let lp ((rest opts) (ldflags ""))
         (match rest
-          (["-ld-options" opts . _]
-           (filter not-string-empty? (string-split opts #\space)))
+          (["-ld-options" opts . rest]
+           (lp rest (string-append ldflags (if (string-empty? ldflags) "" " ") opts)))
           ([_ . rest]
-           (lp rest))
-          (else [])))))
+           (lp rest ldflags))
+          (else
+           (if (string-empty? ldflags)
+             []
+             (filter not-string-empty? (string-split ldflags #\space))))))))
 
   (def (get-libgerbil-ld-opts libgerbil)
     (call-with-input-file (string-append libgerbil ".ldd") read))
@@ -347,16 +350,7 @@ namespace: gxc
     (def cppflags
       (string-append "-I " static-dir " -I " user-static-dir))
 
-    (cond
-     ((member "-cc-options" gsc-opts)
-      => (lambda (rest)
-           (let* ((cell (cdr rest))
-                  (opt (car cell)))
-             (set! (car cell)
-               (string-append opt " " cppflags))
-             gsc-opts)))
-     (else
-      (cons* "-cc-options" cppflags gsc-opts))))
+    (append gsc-opts ["-cc-options" cppflags]))
 
   (def (user-declare)
     (let* ((gsc-opts (pgetq gsc-options: opts))
