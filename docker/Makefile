@@ -31,7 +31,8 @@ alpine_packages := autoconf \
 		   sqlite-static \
 		   yaml-dev \
                    yaml-static \
-                   zlib-static
+		   xz-static \
+		   zlib-static
 
 amazon_packages := cmake \
 		   leveldb \
@@ -76,64 +77,65 @@ ubuntu_packages := autoconf \
                    zlib1g-dev
 
 alpine:
-	docker build --target final \
+	podman build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="alpine" -t final $(ROOT_DIR)
-	docker tag final gerbil/alpine:$(arch)
+	--build-arg distro="alpine" -t final $(ROOT_DIR) \
+	--progress=plain
+	podman tag final gerbil/alpine:$(arch)
 
 amazonlinux:
-	docker build --target final \
+	podman build --target final \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg cores=$(cores)  \
 	--build-arg distro="amazonlinux" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/amazonlinux:$(arch)
+	podman tag final gerbil/amazonlinux:$(arch)
 
 centos:
-	docker build --target final \
+	podman build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/centos:$(arch)
+	podman tag final gerbil/centos:$(arch)
 
 fedora:
-	docker build --target final \
+	podman build --target final \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/fedora:$(arch)
+	podman tag final gerbil/fedora:$(arch)
 
 ubuntu:
-	docker build --target final \
+	podman build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/ubuntu:$(arch)
+	podman tag final gerbil/ubuntu:$(arch)
 
 ubuntu-current-jedi:
-	docker build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi
-	docker tag ubuntu-current-jedi gerbil/jedi:ubuntu
+	podman build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi
+	podman tag ubuntu-current-jedi gerbil/jedi:ubuntu
 
 package-ubuntu:
-	docker run -v $(PWD):/src:z -t gerbil/ubuntu \
+	podman run -v $(PWD):/src:z -t gerbil/ubuntu \
 	bash -c "gem install fpm && \
 	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION).ubuntu \
 	--description 'Gerbil Package' /opt/gerbil"
 
 package-fedora:
-	docker run -v $(PWD):/src:z -t gerbil/fedora \
+	podman run -v $(PWD):/src:z -t gerbil/fedora \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
@@ -141,7 +143,7 @@ package-fedora:
 	--description 'Gerbil Package' /opt/gerbil"
 
 package-amazonlinux:
-	docker run -v $(PWD):/src:z -t gerbil/amazonlinux \
+	podman run -v $(PWD):/src:z -t gerbil/amazonlinux \
 	bash -c "amazon-linux-extras install -y ruby2.6 && \
 	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
@@ -152,14 +154,14 @@ package-amazonlinux:
 packages: package-ubuntu package-fedora
 
 push-all:
-	docker push gerbil/alpine
-	docker push gerbil/ubuntu
-	docker push gerbil/fedora
-	docker push gerbil/amazonlinux
+	podman push gerbil/alpine
+	podman push gerbil/ubuntu
+	podman push gerbil/fedora
+	podman push gerbil/amazonlinux
 
 manifest:
-	docker manifest create gerbil/alpine:latest --amend gerbil/alpine:aarch64 --amend gerbil/alpine:x86_64
+	podman manifest create gerbil/alpine:latest --amend gerbil/alpine:aarch64 --amend gerbil/alpine:x86_64
 
 all: alpine amazonlinux fedora ubuntu
 
-docker: ubuntu
+podman: ubuntu
