@@ -881,6 +881,8 @@ $ gerbil :example/hello
 hello world
 ```
 
+#### Executable Compilation Modes
+
 The difference between the 3 executable compilation modes can be summarized as follows:
 - By default, executable binaries are compiled with separate module compilation and link
   to the  precompiled gerbil library (`libgerbil`).
@@ -898,11 +900,30 @@ The difference between the 3 executable compilation modes can be summarized as f
   to the whole program using the `-prelude` directive. This can result
   in potentially significant performance gains at the expense of safety.
   Note that an executable compiled with full program optimization still links to `libgambit`.
+  Also note that you might have to pass appropriate `ld-options` for the libraries
+  you are linking to, because the compiler cannot determine what you actually need
+  due to the tree shaker and thus cannot simply attach the recorded stdlib library
+  dependencies.
 - An executable module can also be compiled as a plain dynamic module and then
   executed with the `gerbil` universal binary (or `gxi`).
   This dynamic mode of executables is useful for development, as they compile
   instantly and do not need to be recompiled while you are working on their
   dependencies.
+
+#### Fully Static Binaries
+
+It is also possible to build _fully static_ binaries, provided that
+your system supports it and you haven't configured Gerbil with
+`--enable-shared`.  You can do this simply by passing the `-static`
+option to `gxc` or using the `static-exe:` and `optimized-static-exe:`
+specs in your build script.
+
+Note that systems based on glibc are incapable of building fully
+static binaries, because glibc itself has some dynamic dependencies to
+lower level libraries. That's unfortunate, but it shouldn't stop you
+from building fully static binaries: you can simply use Docker with an
+apropriate image of a distribution based on the musl libc (alpine or
+void linux for instance).
 
 ### Prelude Modules and Custom Languages
 

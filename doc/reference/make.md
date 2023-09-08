@@ -84,17 +84,21 @@ Each target specification can be:
 
   - A list of the form `(exe: file opts ...)` where the file is a Gerbil Scheme module source file
     (with the `".ss"` extension automatically added by default) that exports a function `main`.
-    The file will be compiled by `gxc` with the provided options into an executable, that,
+    The file will be compiled by `gxc` with the provided options into an executable binary, that,
     when invoked, calls the `main` function with a single argument, the list of command-line parameters
-    (excluding the `argv[0]` command location). Note that this executable will dynamically load
-    libraries from your `GERBIL_PATH` and/or your `~/.gerbil/lib` as needed.
+    (excluding the `argv[0]` command location).
 
   - A list of the form `(static-exe: file opts ...)` which is similar to the `exe:` case above,
-    except that the executable will statically include all the compiled Gerbil code rather than
-    dynamically load it from your Gerbil path, etc.
-    Note that from the point of view of the "C" world, it is still a "dynamically linked" executable
-    that is linked against the `libc`, `libgambit`, etc. ---
-    only the Scheme code is statically compiled.
+    except that the executable will be fully statically linked.
+
+  - A list of the form `(optimized-exe: file opts ..)` which is similar to `exe:` above, but
+    builds the executable with full program optimization. Note that you may have to pass
+    library dependencies expclitly in this case, using `"-ld-options" "-lyourlib" ...` in the
+    options.
+
+  - A list of thhe form `(optimized-static-exe: file opts ...)` which is similar to
+    `optimized-exe:` above, except that it use fully static linkage for the executable
+    binary.
 
   - A list of the form `(copy: file)` which specifies a file that will be copied
     to the Gerbil library path. It can be a precompiled C object, Scheme file, data file, etc.,
@@ -160,12 +164,6 @@ the following keyword arguments, that may configure how your project is built.
     and `env` for code you compile over and over.
     Be sure to properly quote the symbol when passing it as argument to a function, as in
     `(make build-spec debug: 'src)`.
-
-  - `static:` specifies a boolean that if true tells Gerbil to compile objects for inclusion
-    in a static binary in addition to shared objects that can be dynamically loaded at the REPL.
-    If you know you'll never generate a static binary from your project you can set it to `#f`,
-    but if your project includes a static binary, or is a library that might be used
-    in a static binary, you should leave it at the default `#t`, or explicitly set it to `#t`.
 
   - `static-debug:` specifies the same thing as `debug:` but for the statically linked objects
     that will be used to build static executables. The default is `#f`.
