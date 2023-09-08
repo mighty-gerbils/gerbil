@@ -17,7 +17,8 @@ alpine_packages := autoconf \
                    libgcc \
                    libtool \
                    libxml2-dev \
-                   linux-headers \
+		   libxml2-static \
+		   linux-headers \
                    lmdb-dev \
                    make \
                    musl \
@@ -27,7 +28,8 @@ alpine_packages := autoconf \
                    openssl-libs-static \
                    ruby \
                    sqlite-dev \
-                   yaml-dev \
+		   sqlite-static \
+		   yaml-dev \
                    yaml-static \
                    zlib-static
 
