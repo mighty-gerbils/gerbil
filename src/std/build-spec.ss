@@ -199,7 +199,10 @@
     "net/socks"
     "net/request"
     "net/websocket"
-    "net/wamp"
+    ;; temporary deprecated until it has been ported
+    ,@(if config-enable-deprecated
+        '("net/wamp")
+        '())
     (gxc: "net/repl" ,@(include-gambit-sharp))
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
