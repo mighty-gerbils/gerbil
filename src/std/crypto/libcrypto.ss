@@ -70,6 +70,7 @@
 (declare (not safe))
 
 (c-declare #<<END-C
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <openssl/dh.h>
@@ -80,8 +81,7 @@ END-C
 )
 
 (c-initialize #<<END-C
-ERR_load_crypto_strings(); /* Load the human readable error strings for libcrypto */
-OpenSSL_add_all_algorithms(); /* Load all digest and cipher algorithms, + engines on BSD */
+OPENSSL_init_crypto(0, NULL);
 END-C
 )
 
