@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto FFI
-;; compile: -ld-options "-lcrypto"
 (export #t)
 (import :std/foreign)
 
@@ -83,15 +82,6 @@ END-C
 (c-initialize #<<END-C
 ERR_load_crypto_strings(); /* Load the human readable error strings for libcrypto */
 OpenSSL_add_all_algorithms(); /* Load all digest and cipher algorithms, + engines on BSD */
-END-C
-)
-
-(c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
 END-C
 )
 
