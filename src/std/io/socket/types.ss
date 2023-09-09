@@ -14,7 +14,7 @@
 ;;   - 2 means write closed (but read still open)
 ;;   - 3 means read and write closed; the socket is closed.
 (defstruct (stream-socket basic-socket) (state)
-  final: #t unchecked: #t)
+  unchecked: #t)
 
 ;; stream-socket reader
 (defstruct stream-socket-reader (sock)

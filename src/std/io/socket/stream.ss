@@ -95,7 +95,7 @@
 
 ;; stream socket reader
 (def (stream-socket-read sreader output output-start output-end input-need)
-  (let (ssock (stream-socket-reader-sock sreader))
+  (let (ssock (&stream-socket-reader-sock sreader))
     (let lp ((output-start output-start) (input-need input-need) (result 0))
       (if (fx< output-start output-end)
         (let (read (stream-socket-recv ssock output output-start output-end 0))
@@ -115,7 +115,7 @@
 
 ;; stream socket writer
 (def (stream-socket-write swriter input input-start input-end)
-  (let (ssock (stream-socket-writer-sock swriter))
+  (let (ssock (&stream-socket-writer-sock swriter))
     (let lp ((input-start input-start) (result 0))
       (if (fx< input-start input-end)
         (let (wrote (stream-socket-send ssock input input-start input-end 0))
