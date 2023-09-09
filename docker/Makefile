@@ -17,7 +17,8 @@ alpine_packages := autoconf \
                    libgcc \
                    libtool \
                    libxml2-dev \
-                   linux-headers \
+		   libxml2-static \
+		   linux-headers \
                    lmdb-dev \
                    make \
                    musl \
@@ -27,9 +28,11 @@ alpine_packages := autoconf \
                    openssl-libs-static \
                    ruby \
                    sqlite-dev \
-                   yaml-dev \
+		   sqlite-static \
+		   yaml-dev \
                    yaml-static \
-                   zlib-static
+		   xz-static \
+		   zlib-static
 
 amazon_packages := cmake \
 		   leveldb \
@@ -79,7 +82,8 @@ alpine:
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="alpine" -t final $(ROOT_DIR)
+	--build-arg distro="alpine" -t final $(ROOT_DIR) \
+	--progress=plain
 	docker tag final gerbil/alpine:$(arch)
 
 amazonlinux:
