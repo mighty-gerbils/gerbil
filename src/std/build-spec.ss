@@ -195,13 +195,18 @@
         '())
     ;; :std/net
     "net/address"
+    (gxc: "net/ssl/libssl" "-ld-options" ,(ldflags "libssl" "-lssl"))
+    "net/ssl/error"
+    "net/ssl/interface"
+    "net/ssl/client"
     "net/uri"
-    "net/socks"
     "net/request"
-    "net/websocket"
-    ;; TODO temporarily disable wamp until it has been ported
+    ;; TODO to be ported
+    ;;"net/websocket"
+    ;; TODO to be removed
     ;; "net/wamp"
     (gxc: "net/repl" ,@(include-gambit-sharp))
+    "net/socks"
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
     (gxc: "os/fd" ,@(include-gambit-sharp))
