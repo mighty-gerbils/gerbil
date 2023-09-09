@@ -24,6 +24,7 @@
 
   (c-declare #<<END-C
 #include <openssl/ssl.h>
+#include <openssl/conf.h>
 
 static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
 {
@@ -116,7 +117,11 @@ static ___SCMOBJ ffi_ssl_set_host(SSL *ssl, char* hostname)
 {
  int r = SSL_set1_host(ssl, hostname);
  if (r > 0) {
-  return ___FIX(r);
+  int r = SSL_set_tlsext_host_name(ssl, hostname);
+  if (r > 0) {
+   return ___FIX(r);
+  }
+  return ffi_ssl_error(ssl, r);
  }
 
  return ffi_ssl_error(ssl, r);
@@ -139,6 +144,7 @@ static SSL_CTX *ffi_default_ssl_ctx()
   return NULL;
  }
 
+ SSL_CTX_set_default_verify_paths(ctx);
  SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
  return ctx;
 }
@@ -160,6 +166,12 @@ static SSL_CTX *ffi_insecure_ssl_ctx()
  return ctx;
 }
 
+END-C
+)
+
+
+  (c-initialize #<<END-C
+OPENSSL_init_ssl(0, NULL);
 END-C
 )
 

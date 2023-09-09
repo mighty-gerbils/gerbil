@@ -199,6 +199,8 @@
     "net/ssl/error"
     "net/ssl/interface"
     "net/ssl/client"
+    "net/ssl/api"
+    "net/ssl"
     "net/uri"
     "net/request"
     ;; TODO to be ported
