@@ -2,8 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto FFI
 ;; compile: -ld-options "-lcrypto"
-package: std/crypto
-
 (export #t)
 (import :std/foreign)
 

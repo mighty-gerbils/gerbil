@@ -23,9 +23,9 @@
 
 (cond-expand
  (netbsd
-  (def default-ld-options "-lm -lssl"))
+  (def default-ld-options "-lm"))
  (else
-  (def default-ld-options "-ldl -lm -lssl")))
+  (def default-ld-options "-ldl -lm")))
 
 (def stdlib-exclude
   '("gambit-sharp"                      ; _gambit#.scm wrapper

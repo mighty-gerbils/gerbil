@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; syntax utilities; import for-syntax
-package: std
-
 (import <expander-runtime>
         :std/format)
 (export #t)
