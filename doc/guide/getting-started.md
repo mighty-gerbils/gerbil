@@ -162,7 +162,7 @@ Finally, let's create a build script to automate our build:
 $ cat > build.ss <<EOF
 #!/usr/bin/env gxi
 (import :std/build-script)
-(defbuil-script '("mylib" (exe: "mybin")))
+(defbuild-script '("mylib" (exe: "mybin")))
 EOF
 $ chmod +x build.ss
 ```
