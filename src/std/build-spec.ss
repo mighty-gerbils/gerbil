@@ -199,7 +199,8 @@
     "net/socks"
     "net/request"
     "net/websocket"
-    "net/wamp"
+    ;; TODO temporarily disable wamp until it has been ported
+    ;; "net/wamp"
     (gxc: "net/repl" ,@(include-gambit-sharp))
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
@@ -231,26 +232,28 @@
     "os/pid"
     "os/temporaries"
     "os/hostname"
-    ;; :std/net/bio
-    "net/bio/input"
-    "net/bio/output"
-    "net/bio/buffer"
-    "net/bio/file"
-    "net/bio"
-    ;; :std/net/socket
-    "net/socket/base"
-    "net/socket/basic-socket"
-    "net/socket/api"
-    "net/socket/buffer"
-    "net/socket/basic-server"
-    ,@(cond-expand
-        (linux
-         '("net/socket/epoll-server"))
-        (bsd
-         '("net/socket/kqueue-server"))
-        (else '()))
-    "net/socket/server"
-    "net/socket"
+    ,@(if config-enable-deprecated
+        ;; :std/net/bio -- DEPRECATED
+        ["net/bio/input"
+         "net/bio/output"
+         "net/bio/buffer"
+         "net/bio/file"
+         "net/bio"
+         ;; :std/net/socket -- DEPRECATED
+         "net/socket/base"
+         "net/socket/basic-socket"
+         "net/socket/api"
+         "net/socket/buffer"
+         "net/socket/basic-server"
+         (cond-expand
+           (linux
+            '("net/socket/epoll-server"))
+           (bsd
+            '("net/socket/kqueue-server"))
+           (else '())) ...
+         "net/socket/server"
+         "net/socket"]
+        [])
     ;; :std/net/httpd
     "net/httpd/base"
     "net/httpd/control"
@@ -347,18 +350,20 @@
     "actor-v18/api"
     "actor"
     ;; DEPRECATEED: actor-v13
-    (gxc: "actor-v13/message" ,@(include-gambit-sharp))
-    (gxc: "actor-v13/xdr"  ,@(include-gambit-sharp))
-    (gxc: "actor-v13/proto")
-    "actor-v13/rpc/base"
-    "actor-v13/rpc/proto/message"
-    "actor-v13/rpc/proto/null"
-    "actor-v13/rpc/proto/cookie"
-    "actor-v13/rpc/proto/cipher"
-    "actor-v13/rpc/connection"
-    "actor-v13/rpc/server"
-    "actor-v13/rpc"
-    "actor-v13"
+    ,@(if config-enable-deprecated
+        [[gxc: "actor-v13/message" (include-gambit-sharp) ...]
+         [gxc: "actor-v13/xdr"  (include-gambit-sharp) ...]
+         [gxc: "actor-v13/proto"]
+         "actor-v13/rpc/base"
+         "actor-v13/rpc/proto/message"
+         "actor-v13/rpc/proto/null"
+         "actor-v13/rpc/proto/cookie"
+         "actor-v13/rpc/proto/cipher"
+         "actor-v13/rpc/connection"
+         "actor-v13/rpc/server"
+         "actor-v13/rpc"
+         "actor-v13"]
+        [])
     "web/fastcgi"
     "web/rack"
     "db/dbi"

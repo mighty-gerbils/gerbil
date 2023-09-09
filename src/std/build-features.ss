@@ -1,5 +1,8 @@
 ;; This file is meant to be include'd by build-config.ss
 
+;; build deprecated packaages
+(enable deprecated #f)
+
 ;; build std/xml libraries - requires libxml2
 (enable libxml #f)
 
