@@ -5,7 +5,7 @@ GERBIL_VERSION := master
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
 arch := $(shell uname -m)
-DEFAULT=gerbil-plus
+DEFAULT=gerbilxx
 
 alpine_packages := autoconf \
                    automake \
@@ -77,7 +77,7 @@ ubuntu_packages := autoconf \
                    texinfo \
                    zlib1g-dev
 
-gerbil-plus:
+gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -87,7 +87,7 @@ gerbil-plus:
 	--build-arg with_db=YES \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
-	docker tag final gerbil/gerbil-plus:$(arch)
+	docker tag final gerbil/gerbilxx:$(arch)
 
 gerbil:
 	docker build --target final \
