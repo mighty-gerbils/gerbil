@@ -1,7 +1,7 @@
 ARG distro
 ARG gerbil_version
 ARG cores
-ARG configure_arguments
+ARG configure_args
 ARG packages
 
 FROM ${distro}:latest as base
@@ -43,11 +43,11 @@ RUN case ${distro} in \
 FROM base as gerbil
 ARG cores
 ARG gerbil_version
-ARG configure_arguments
+ARG configure_args
 ENV GERBIL_GCC=g++
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && eval ./configure --prefix=/opt/gerbil ${configure_arguments}
+    && eval ./configure --prefix=/opt/gerbil ${configure_args}
 
 RUN cd /opt/gerbil-src && make && make install
 
