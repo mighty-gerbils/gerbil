@@ -76,7 +76,7 @@ ubuntu_packages := autoconf \
                    texinfo \
                    zlib1g-dev
 
-full:
+gerbil++:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -86,9 +86,9 @@ full:
 	--build-arg with_db=YES \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
-	docker tag final gerbil/full:$(arch)
+	docker tag final gerbil/gerbil++:$(arch)
 
-base:
+gerbil:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -98,7 +98,7 @@ base:
 	--build-arg with_db=NO \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
-	docker tag final gerbil/base:$(arch)
+	docker tag final gerbil/gerbil:$(arch)
 
 amazonlinux:
 	docker build --target final \
