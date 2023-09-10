@@ -29,7 +29,7 @@ export GERBIL_LOADPATH
 GAMBOPT="~~bin=${GERBIL_BUILD_PREFIX}/bin,~~lib=${GERBIL_BUILD_PREFIX}/lib,~~include=${GERBIL_BUILD_PREFIX}/include"
 export GAMBOPT
 
-PATH="${GERBIL_BUILD_PREFIX}/bin:${PATH}"
+PATH="${GERBIL_BUILD_PREFIX}/bin:${GERBIL_STAGE0}/bin:${PATH}"
 export PATH
 
 # required when --enable-shared
@@ -187,10 +187,10 @@ build_stage1 () {
   export GERBIL_HOME
 
   feedback_mid "compiling gerbil core"
-  PATH="${GERBIL_STAGE0}/bin:$PATH" "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss || die
+  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss || die
 
   feedback_mid "compiling gerbil bach"
-  PATH="${GERBIL_STAGE0}/bin:$PATH" "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
+  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
 
   ## unset GERBIL_HOME from its bootstrap value to avoid confusing the rest of the build
   unset GERBIL_HOME
