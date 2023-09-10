@@ -4,7 +4,8 @@
 (import (only-in :std/misc/ports read-file-u8vector)
         ./message
         ./proto
-        ./server)
+        ./server
+        ./admin)
 (export #t)
 
 ;; stops (shuts down) an actor by reference
@@ -110,3 +111,25 @@
 (defcall-actor (ensemble-lookup-servers/role role (srv (current-actor-server)))
   (->> srv (!ensemble-lookup-server #f role))
   error: "error looking up servers")
+
+;; authorizes the current server for administrative privileges with the given remote server,
+;; using the administative private key.
+(defcall-actor (admin-authorize privk srv-id authorized-server-id
+                                (srv (current-actor-server))
+                                capabilities: (cap '(admin)))
+  (let (remote-root (handle srv (reference srv-id 0)))
+    (unless (and (list? cap) (andmap symbol? cap))
+      (error "Bad argument; expected list of symbols" cap))
+    (match (->> remote-root (!admin-auth authorized-server-id cap))
+      ((!admin-auth-challenge bytes)
+       (let (sig (admin-auth-challenge-sign privk srv-id authorized-server-id bytes))
+         (->> remote-root (!admin-auth-response sig))))
+      (result result)))
+  error: "error authorizing with administrative privileges" srv-id)
+
+;; retract capabilities confered to a server; the current server must be authorized with
+;; admin capabilities
+(defcall-actor (admin-retract srv-id authorized-server-id (srv (current-actor-server)))
+  (let (remote-root (handle srv (reference srv-id 0)))
+    (->> remote-root (!admin-retract authorized-server-id)))
+  error: "error retracting capabilities" srv-id authorized-server-id)

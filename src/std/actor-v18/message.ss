@@ -63,8 +63,31 @@
 ;; actor handle base type.
 ;; - proxy is the thread that handles messages on behalf of another actor.
 ;; - ref is a reference to an actor; see ./server
-(defstruct handle (proxy ref)
-  unchecked: #t final: #t transparent: #t)
+;; - authorized? is a boolean indicating whether the origin is authorized for
+;;   for administrative actions.
+(defstruct handle (proxy ref capabilities)
+  unchecked: #t final: #t transparent: #t
+  constructor: :init!)
+
+(defmethod {:init! handle}
+  (lambda (self proxy ref (capabilities #f))
+    (set! (&handle-proxy self) proxy)
+    (set! (&handle-ref self) ref)
+    (set! (&handle-capabilities self) capabilities)))
+
+;; checks whether an actor is authorized for administrative actions.
+;; Local (in-process) actors are always authorized.
+;; Remote actors are authorized by the actor server (see ./server) if configured
+;; to require authorization for administrative actions.
+;; cap is a symbol denoting a capability; admin capabilities in a handle imply
+;; all other capabilities
+(def (actor-authorized? actor (cap 'admin))
+  (cond
+   ((thread? actor) #t)
+   ((handle? actor)
+    (alet (capabilities (&handle-capabilities actor))
+      (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities)))
+   (else #f)))
 
 ;; sends a message to an actor
 ;; - actor must be a thread or handle

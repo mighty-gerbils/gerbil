@@ -46,7 +46,10 @@ Commands:
  list-actors                      list actors registered in a server
  list-connections                 list a server's connection
  lookup                           looks up a server by id or role
+ authorize                        authorize capabilities for a server
+ retract                          retract all capabilities granted to a server
  cookie                           generate a new ensemble cookie
+ admin                            generate a new ensemble administrator key pair
  help                             display help; help <command> for command help
 ```
 
@@ -67,6 +70,61 @@ Usage: gxensemble cookie [command-option ...]
 Command Options:
  -f --force                       force the action
  ```
+
+### Generating and administrative key pair
+
+If you want to limit administrative actions only to administrators,
+you can generate an administraticve key pair with `gxensemble admin`.
+See [Administrative Privileges](#administrative-privileges) below.
+
+Here is the usage:
+```
+$ gxensemble help admin
+Usage: gxensemble admin [command-option ...]
+       generate a new ensemble administrator key pair
+
+Command Options:
+ -f --force                       force the action
+```
+
+### Authorizing capabilities
+
+This is an administrative action, that confers capabilities to an
+authorized server within the context of another server.
+See [Administrative Privileges](#administrative-privileges) below.
+
+Here is the usage:
+```
+$ gxensemble help authorize
+Usage: gxensemble authorize [command-option ...] <server-id> <authorized-server-id> [<capabilities>]
+       authorize capabilities for a server
+
+Command Options:
+  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+
+Arguments:
+ server-id                        the server id
+ authorized-server-id             the server to authorize capabilities for
+ capabilities                     the server capabilities to authorize [default: (admin)]
+```
+
+### Retracting capabilities
+This is an administrative action, that retracts capabilities from a
+previously authorized server.
+
+Here is the usage:
+```
+$ gxensemble help retract
+Usage: gxensemble retract [command-option ...] <server-id> <authorized-server-id>
+       retract all capabilities granted to a server
+
+Command Options:
+  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+
+Arguments:
+ server-id                        the server id
+ authorized-server-id             the server to authorize capabilities for
+```
 
 ### Starting the ensemble
 
@@ -468,3 +526,53 @@ $ gxensemble shutdown -f
 ... shutting down httpd3
 ... shutting down registry
 ```
+
+## Administrative Privileges
+
+You may have noticed that the `gxensemble` tool has some powerful and
+potentially destructive capabilities. In general, this is fine for
+development or when your ensemble is limited to a single host, but as
+your system grows and spans more hosts and involves more people, it
+might be prudent to limit administrative capabilities to authorized
+administrators.
+
+The actor system in Gerbil allows you to (optionally) use a Ed25519
+key pair that limits administrative actions (shutdown, code loading
+and evaluation, etc) only to entities that can prove that they have
+access to the private key material.
+
+This is integrated with the `gxensemble` tool:
+- You can generate an administrative key pair with the `gxensemble
+  admin` command. The command will ask for a passphrase to encrypt
+  the private key, and will leave the key pair in
+  `$GERBIL_PATH/ensemble/admin.{pub,priv}`.
+- Subsequently, when attempting a senstive action that requires
+  administrative privileges the tool will ask you to enter the
+  passphrase in order to unlock and use the private key to elevate
+  privileges in the servers involved.
+
+Furthermore, using the administrative key pair, you can confer
+capabilities to servers, within the the context of another server.
+For example, you can confer the `shutdown` capability to another
+server within the context of server.
+
+For example, to allow actors in `my-authorized-server` to shutdown
+`my-server`, you can issue the following command with administrative
+privileges:
+```
+$ gxensemble authorize my-server my-authorized-server "(shutdown)"
+```
+
+You can retract capabilities from a server with the `retract` command
+of the `gxensemble` tool:
+```
+$ gxensemble retract my-server my-authorized-server
+```
+
+::: warning
+In order to effectively and securely confer capabilities to other
+servers by name, it is strongly recommended that you use TLS.
+
+Otherwise anyone in the ensemble can claim your authorized server's id
+and acquire capabilities that are not intended.
+:::

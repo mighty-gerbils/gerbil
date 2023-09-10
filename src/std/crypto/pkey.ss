@@ -4,24 +4,22 @@
 
 (import :gerbil/gambit/bytes
         :gerbil/gambit/foreign
-        :std/crypto/libcrypto
-        :std/crypto/etc
-        (for-syntax :std/stxutil))
+        ./libcrypto
+        ./etc)
 
 (export
   keygen/ed25519 EVP_PKEY_ED25519
   bytes->private-key bytes->public-key
   private-key->bytes public-key->bytes
   digest-sign digest-verify)
-
-(import :gerbil/gambit/ports);;DBG
-
 ;; NB: for other key types, there may be parameters to set before keygen
 (def (keygen/ed25519)
   (def ctx (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f))
   (unless (and ctx (< 0 (EVP_PKEY_keygen_init ctx)))
     (error "Can't create ED25519 keygen context"))
-  (EVP_PKEY_keygen ctx)) ;; shouldn't we be calling (foreign-release! ctx) afterwards?
+  (unwind-protect
+    (EVP_PKEY_keygen ctx)
+    (foreign-release! ctx)))
 
 (def (bytes->private-key type bytes engine: (engine #f))
   (EVP_PKEY_new_raw_private_key type engine bytes))
@@ -39,7 +37,9 @@
   (cond
    ((zero? len) #f)
    ((= len (bytes-length bytes)) bytes)
-   ((< len (bytes-length bytes)) (subu8vector bytes 0 len))
+   ((< len (bytes-length bytes))
+    (u8vector-shrink! bytes len)
+    bytes)
    (else #f)))
 
 (def (key->bytes pkey bytes get_raw)
@@ -57,17 +57,23 @@
   (let (mctx (EVP_MD_CTX_create))
     (unless mctx
       (error "Cannot create signing context"))
-    (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
-    (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
-           (result (EVP_DigestSign mctx s bytes)))
-    (if (##fxzero? result)
-      (raise-libcrypto-error)
-      (bytes-result s result)))))
+    (unwind-protect
+      (begin
+        (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
+        (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
+               (result (EVP_DigestSign mctx s bytes)))
+          (if (##fxzero? result)
+            (raise-libcrypto-error)
+            (bytes-result s result))))
+      (foreign-release! mctx))))
 
 ;; NB: for other key types, there may be parameters to set before DigestVerify
 (def (digest-verify pkey sig bytes engine: (engine #f))
   (let (mctx (EVP_MD_CTX_create))
     (unless mctx
       (error "Cannot create signing context"))
-    (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
-    (= 1 (EVP_DigestVerify mctx sig bytes))))
+    (unwind-protect
+      (begin
+        (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
+        (= 1 (EVP_DigestVerify mctx sig bytes)))
+      (foreign-release! mctx))))

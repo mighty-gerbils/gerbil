@@ -155,6 +155,21 @@ incremented automatically by the send operators. It is provided
 however in case you want to construct your own envelopes, for instance
 when writing a proxy actor.
 
+### actor-authorized?
+```scheme
+(actor-authorized? actor)
+```
+
+Returns true if the actor (a thread or a handle) are authorized for administrative actions.
+
+All threads within the process are implicitly authorized.
+
+Remote actors must be authorized with the actor server using
+`admin-authorize` if the actor server requires authentication.  This
+happens by default if an administrative public key exists in the
+ensemble directory. If none exists, the actor server will consider all
+actors in the ensemble as authorized.
+
 ### actor-error
 ```scheme
 (defstruct (actor-error <error>) ())
@@ -475,6 +490,8 @@ manually.
 ### start-actor-server!
 ```scheme
 (start-actor-server! cookie:     (cookie (get-actor-server-cookie))
+                     admin:      (admin (get-admin-pubkey))
+                     auth:       (auth #f)
                      addresses:  (addrs [])
                      identifier: (id (make-random-identifier))
                      ensemble:   (known-servers (default-known-servers)))
@@ -485,6 +502,10 @@ returns the main server thread.
 - `cookie` is the ensemble cookie; normally resides in `$GERBIL_PATH/ensemble/cookie`.
   Note that the administrator has to explicitly create a cookie for the ensemble, it is
   not automatically created.
+- `admin` is the (optional) administrative public key; normally resindes in
+  `$GERBIL_PATH/ensemble/admin.pub`.
+- `auth`: a hash table mapping server ids to capabilities; these are preauthorized
+  server capabilities.
 - `addresses` is the list of addresses the server should listen; by default it is empty,
   making this a transient actor server.
 - `identifier` is the server identifier; if you don't specify one, a random server
@@ -602,7 +623,9 @@ Sets the actor server's address cache TTL (in seconds, a real number).
                            announce:  (public-addrs #f)
                            registry:  (registry-addrs #f)
                            roles:     (roles [])
-                           cookie:    (cookie (get-actor-server-cookie)))
+                           cookie:    (cookie (get-actor-server-cookie))
+                           admin:     (admin (get-admin-pubkey))
+                           auth:      (auth #f))
 ```
 
 This is the programmatic equivalent of `gxensemble run`; first it
@@ -627,6 +650,10 @@ Options:
 - `roles`: a list of roles the server fullfills in the registry.
 - `cookie`: the cookie to use; by default it uses the ensemble cooke in
   `$GERBIL_PATH/ensemble/cookie`.
+- `admin`: the administrative public key, if any; by default it uses the public
+   key in `$GERBIL_PATH/ensemble/admin.pub` if it exists.
+- `auth`: a hash table mapping server ids to capabilities; these are preauthorized
+  server capabilities.
 
 ### ensemble-base-path
 ```scheme
@@ -758,3 +785,52 @@ Looks up a server's addresses in the registry.
 
 Looks up servers (and their addresses) that fulfill `role` in the
 ensemble.
+
+### admin-authorize
+```scheme
+(admin-authorize privk srv-id authorized-server-id (srv (current-actor-server))
+                 capabilities: (cap '(admin)))
+```
+
+Authorizes the capabilities specified by `cap` with administrative
+privileges for `authorized-server-id` in the remote server `srv-id`,
+using the private key `privk`. `cap` is a list of symbols denoting
+the capabilities of the authorized server; the `admin` capability
+implies all other capabilities.
+
+### admin-retract
+```scheme
+(admin-retract srv-id authorized-server-id (srv (current-actor-server)))
+```
+
+Retracts the capabilities previously confered to
+`authorized-server-id` within the context of `srv-id`.  Note that the
+in-process actor server must have `admin` capabilities.
+
+### get-admin-pubkey
+```scheme
+(get-admin-pubkey (path (default-admin-pubkey-path)))
+```
+
+Loads the administrative public key from the specified `path`, if it exists
+
+### get-admin-privkey
+```scheme
+(get-admin-privkey passphrase (path (default-admin-privkey-path)))
+```
+
+Loads and decrypts the administrative private key from the specified `path`, if it exists
+
+### default-admin-pubkey-path
+```scheme
+(default-admin-pubkey-path)
+```
+
+The default path for the ensemble admin public key; defaults to `$GERBIL_PATH/ensemble/admin.pub`.
+
+### default-admin-privkey-path
+```scheme
+(default-admin-privkey-path)
+```
+
+The default path for the encrypted ensemble admin private key; defaults to `$GERBIL_PATH/ensemble/admin.priv`.

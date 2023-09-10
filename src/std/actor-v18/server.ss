@@ -18,6 +18,7 @@
         ./message
         ./proto
         ./cookie
+        ./admin
         ./connection)
 (export #t)
 
@@ -37,6 +38,11 @@
 
 ;; starts the actor server
 ;; - cookie is a u8vector, used for authenticating connections.
+;; - admin is an _optional_ public key for authorizing administrative actions at the
+;;   origin server level.
+;;   If it is #f, then all server in the ensemble are automatically authorized.
+;; - auth is an _optional_ hash table for pre-authorized server capabilities.
+;;   It is a map of server-id to a list of symbols denoating capabilities
 ;; - addresses is a list of addresses the server should listen; empty by default.
 ;;   Addresses can be:
 ;;   - [unix: hostname  path]: a path for a unix domain socket in a host
@@ -44,17 +50,19 @@
 ;;   - TODO: TLS address
 ;; - identifier is the server identifier in your ensemble; a symbol.
 ;;   defaults to a random identifier.
-;; - knonw-servers is the set of known servers.
+;; - known-servers is the set of known servers.
 ;;   it is a hash table mapping server identifiers to list of addresses.
 ;;   all servers in the ensemble must share the same cookie.
 ;; Returns the server thread.
 (def (start-actor-server! cookie:     (cookie (get-actor-server-cookie))
+                          admin:      (admin (get-admin-pubkey))
+                          auth:       (auth #f)
                           addresses:  (addrs [])
                           identifier: (id (make-random-identifier))
                           ensemble:   (known-servers (default-known-servers)))
   (start-logger!)
   (let* ((socks (actor-server-listen! addrs))
-         (server (spawn/group 'actor-server actor-server id known-servers cookie socks)))
+         (server (spawn/group 'actor-server actor-server id known-servers cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -167,10 +175,10 @@
       (else
        (reverse socks)))))
 
-(def (actor-server id known-servers cookie socks)
-  (with-exception-stack-trace (cut actor-server-main id known-servers cookie socks)))
+(def (actor-server id known-servers cookie admin auth socks)
+  (with-exception-stack-trace (cut actor-server-main id known-servers cookie admin auth socks)))
 
-(def (actor-server-main id known-servers cookie socks)
+(def (actor-server-main id known-servers cookie admin auth socks)
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
@@ -192,6 +200,14 @@
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
   (def actor-threads (make-hash-table-eq))
+  ;; authorized administrative server table: server-id -> [delegated|connected|preauth cap ...]
+  (def admin-auth
+    (if auth
+      (list->hash-table-eq (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
+      (make-hash-table-eq)))
+  ;; pending administrative server authorization: server-id -> [server-id cap challenge
+  (def pending-admin-auth
+    (make-hash-table-eq))
   ;; actor listener threads
   (def listeners
     (map (cut spawn/name 'actor-listener actor-listener (current-thread) <>  cookie) socks))
@@ -420,6 +436,49 @@
       (verbosef "sending control reply to ~a: ~a" source msg)
       (thread-send/check source msg)))
 
+  (def is-shutdown-authorized?
+    (if admin
+      (lambda (srv-id)
+        (cond
+         ((hash-get admin-auth srv-id)
+         => (lambda (state)
+              (find (lambda (cap) (memq cap '(admin shutdown))) (cdr state))))
+         (else #f)))
+      (lambda (srv-id)
+        #t)))
+
+  (def is-retract-authorized?
+    (if admin
+      (lambda (srv-id authorized-server-id)
+        (cond
+         ((eq? srv-id authorized-server-id))
+         ((hash-get admin-auth srv-id)
+          => (lambda (state) (memq 'admin (cdr state))))
+         (else #f)))
+      (lambda (srv-id authorized-server-id)
+        #t)))
+
+  (def actor-capabilities
+    (if admin
+      (lambda (srv-id)
+        (cond
+         ((hash-get admin-auth srv-id) => cdr)
+         (else #f)))
+      (lambda (srv-id)
+        '(admin))))
+
+  (def (merge-capabilities new-cap cap)
+    (cond
+     ((memq 'admin cap)
+      '(admin))
+     ((memq 'admin new-cap)
+      '(admin))
+     (else
+      (foldl
+        (lambda (c r)
+          (if (memq c r) r (cons c r)))
+        cap new-cap))))
+
   ;; main loop
   (let/cc exit
     (def (shutdown!)
@@ -556,6 +615,13 @@
                 ((!ensemble-remove-server srv-id)
                  ;; update our known address mapping
                  (hash-remove! server-addrs srv-id)
+                 ;; and our authorization table
+                 (cond
+                  ((hash-get admin-auth srv-id)
+                   => (lambda (state)
+                        (when (eq? (car state) 'connected)
+                          (hash-remove! admin-auth srv-id)))))
+                 (hash-remove! pending-admin-auth srv-id)
                  ;; update the registry
                  (send-to-registry! actor-id msg))
 
@@ -584,9 +650,62 @@
               (debugf "remote control message from ~a: ~a" src-id msg)
               (match (&envelope-message msg)
                 ((!shutdown)
-                 (infof "remote shutdown from ~a" src-id)
-                 (send-remote-control-reply! src-id msg (!ok (void)))
-                 (shutdown!))
+                 (if (is-shutdown-authorized? src-id)
+                   (begin
+                     (infof "remote shutdown from ~a" src-id)
+                     (send-remote-control-reply! src-id msg (!ok (void)))
+                     (shutdown!))
+                   (begin
+                     (warnf "unauthorized shutdown request from ~a" src-id)
+                     (send-remote-control-reply! src-id msg (!error "not authorized")))))
+
+                ((!admin-auth authorized-server-id cap)
+                 (cond
+                  ((or (not admin)
+                       (alet (state (hash-get admin-auth src-id))
+                         (andmap (cut memq <> (cdr state)) cap)))
+                   (send-remote-control-reply! src-id msg (!ok (void))))
+                  ((hash-get pending-admin-auth src-id)
+                   (send-remote-control-reply! src-id msg (!error "challenge pending")))
+                  (else
+                   (let (bytes (random-bytes 32))
+                     (hash-put! pending-admin-auth src-id [authorized-server-id cap bytes])
+                     (send-remote-control-reply! src-id msg (!admin-auth-challenge bytes))))))
+
+                ((!admin-auth-response sig)
+                 (cond
+                  ((hash-get pending-admin-auth src-id)
+                   => (lambda (state)
+                        (with ([authorized-server-id cap bytes] state)
+                          (hash-remove! pending-admin-auth src-id)
+                          (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
+                            (begin
+                              (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
+                              (hash-update! admin-auth authorized-server-id
+                                            (lambda (existing-cap)
+                                              (cons (if (eq? src-id authorized-server-id)
+                                                      'connected
+                                                      'delegated)
+                                                    (if existing-cap
+                                                      (merge-capabilities cap (cdr existing-cap))
+                                                      cap)))
+                                            #f)
+                              (send-remote-control-reply! src-id msg (!ok (void))))
+                            (begin
+                              (warnf "admin authorization failed for ~a" src-id)
+                              (send-remote-control-reply! src-id msg (!error "challenge failed")))))))
+                  (else
+                   (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
+
+                ((!admin-retract authorized-server-id)
+                 (if (is-retract-authorized? src-id authorized-server-id)
+                   (begin
+                     (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
+                     (hash-remove! admin-auth authorized-server-id)
+                     (send-remote-control-reply! src-id msg (!ok (void))))
+                   (begin
+                     (warnf "unauthorized retraction from ~a" src-id)
+                     (send-remote-control-reply! src-id msg (!error "not authorized")))))
 
                 ((!list-actors srv-id)
                  (send-remote-control-reply! src-id msg
@@ -645,7 +764,9 @@
               => (lambda (actor)
                    ;; rewrite the envelope and forward
                    (set! (&envelope-source msg)
-                     (handle (current-thread) (reference src-id (&envelope-source msg))))
+                     (handle (current-thread)
+                             (reference src-id (&envelope-source msg))
+                             (actor-capabilities src-id)))
                    (set! (&envelope-dest msg) actor)
                    (thread-send/check actor msg)))
 
@@ -667,7 +788,14 @@
                      (remf (lambda (notification) (eq? conn (!connected-conn notification)))
                            notifications))
                  (if (null? remaining)
-                   (hash-remove! conns srv-id)
+                   (begin
+                     (hash-remove! conns srv-id)
+                     (cond
+                      ((hash-get admin-auth srv-id)
+                       => (lambda (state)
+                            (when (eq? (car state) 'connected)
+                              (hash-remove! admin-auth srv-id)))))
+                     (hash-remove! pending-admin-auth srv-id))
                    (hash-put! conns srv-id remaining)))))))
 
        ((!connection-failed srv-id what)

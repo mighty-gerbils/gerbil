@@ -12,6 +12,7 @@
         ./server
         ./ensemble
         ./cookie
+        ./admin
         ./path
         ./loader)
 (export
@@ -23,6 +24,7 @@
   defmessage
   message?
   make-handle handle? handle-proxy handle-ref
+  actor-authorized?
   send-message
   -> ->> --> -->?
   <- <<
@@ -67,6 +69,8 @@
   set-default-registry-addresses!
   server-address-cache-ttl
   set-server-address-cache-ttl!
+  ;; ./admin
+  (import: ./admin)
   ;; ./ensemble
   (import: ./ensemble)
   ;; ./path
@@ -82,7 +86,9 @@
                                 announce:  (public-addrs #f)
                                 registry:  (registry-addrs #f)
                                 roles:     (roles [])
-                                cookie:    (cookie (get-actor-server-cookie)))
+                                cookie:    (cookie (get-actor-server-cookie))
+                                admin:     (admin (get-admin-pubkey))
+                                auth:      (auth #f))
   (current-logger-options log-level)
   (when log-file
     (let (path
@@ -108,6 +114,8 @@
             listen-addrs)))
     ;; start the actor server
     (start-actor-server! cookie: cookie
+                         admin:  admin
+                         auth: auth
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)
@@ -134,6 +142,6 @@
       (remove-from-registry! cookie known-servers server-id))))
 
 (def (remove-from-registry! cookie known-servers server-id)
-  (start-actor-server! cookie: cookie ensemble: known-servers)
+  (start-actor-server! cookie: cookie ensemble: known-servers identifier: server-id)
   (with-catch void (cut ensemble-remove-server! server-id))
   (stop-actor-server!))

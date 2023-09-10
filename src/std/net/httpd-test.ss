@@ -133,6 +133,7 @@
         [unix: (hostname) httpd-actor-server-sock])
       (def httpd-actor-server
         (start-actor-server! cookie: cookie
+                             admin: #f
                              addresses: [httpd-actor-server-addr]))
       (def httpd-actor-server-id
         (actor-server-identifier httpd-actor-server))

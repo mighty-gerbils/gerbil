@@ -43,8 +43,11 @@
 ;; reaction macro for shutdown
 (defrule (@shutdown exit ...)
   ((!shutdown)
-   (-->? (!ok (void)))
-   exit ...))
+   (if (actor-authorized? @source 'shutdown)
+     (begin
+       (-->? (!ok (void)))
+       exit ...)
+     (-->? (!error "not authorized")))))
 
 ;; package private
 (defmessage !register (name))
@@ -72,6 +75,12 @@
 (defmessage !eval (expr))
 (defmessage !continue (thunk))
 
+(defmessage !admin-auth (server capabilities))
+(defmessage !admin-auth-challenge (bytes))
+(defmessage !admin-auth-response (sig))
+(defmessage !admin-retract (server))
+
+;; utilities
 (def (actor-monitor actor peer (sendto ->))
   (with-catch void (cut thread-join! actor))
   (sendto peer (!actor-dead actor)))

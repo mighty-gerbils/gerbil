@@ -15,8 +15,10 @@
         ./server
         ./ensemble
         ./cookie
+        ./admin
         "test-util")
-(export actor-server-test actor-server-ipc-test test-setup! test-cleanup!)
+(export actor-server-test actor-server-ipc-test actor-server-auth-test
+        test-setup! test-cleanup!)
 
 (def (test-setup!)
   ;; uncomment this if you are debugging test failures
@@ -99,9 +101,11 @@
       (def cookie (make-random-cookie))
       (def srv1
         (start-actor-server! cookie: cookie
+                             admin: #f
                              addresses: [addr1]))
       (def srv2
         (start-actor-server! cookie: cookie
+                             admin: #f
                              addresses: [addr2]))
 
       (def srv1-id
@@ -176,11 +180,13 @@
         (def cookie (make-random-cookie))
         (def srv1
           (start-actor-server! cookie: cookie
+                               admin: #f
                                addresses: [addr1]))
         (def srv1-id
           (actor-server-identifier srv1))
         (def srv2
           (start-actor-server! cookie: cookie
+                               admin: #f
                                addresses: []
                                ensemble: (hash-eq (,srv1-id [addr1]))))
         (def srv2-id
@@ -223,9 +229,9 @@
 
       (def cookie (make-random-cookie))
       (def srv1
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
       (def srv2
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
         (actor-server-identifier srv1))
@@ -246,9 +252,9 @@
 
       (def cookie (make-random-cookie))
       (def srv1
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
       (def srv2
-        (start-actor-server! cookie: cookie))
+        (start-actor-server! cookie: cookie admin: #f))
 
       (def srv1-id
         (actor-server-identifier srv1))
@@ -276,13 +282,15 @@
         (def cookie1 (make-random-cookie))
         (def srv1
           (start-actor-server! cookie: cookie1
+                               admin: #f
                                addresses: [addr1]))
         (def srv1-id
           (actor-server-identifier srv1))
 
         (def cookie2 (make-random-cookie))
         (def srv2
-          (start-actor-server! cookie: cookie2))
+          (start-actor-server! cookie: cookie2
+                               admin: #f))
         (def srv2-id
           (actor-server-identifier srv2))
 
@@ -294,3 +302,58 @@
 
         (stop-actor-server! srv1)
         (check (thread-join! srv1) => 'shutdown)))))
+
+(def actor-server-auth-test
+  (test-suite "actor server administrative privileges"
+    (test-case "authorization for sensitive actions"
+      (reset-thread!)
+
+      (def pubk-path
+        (make-temporary-file-name "pubk"))
+      (def privk-path
+        (make-temporary-file-name "privk"))
+      (def passphrase
+        "oh so secret")
+
+      (generate-admin-keypair! passphrase pubk-path privk-path)
+
+      (def pubk
+        (get-admin-pubkey pubk-path))
+      (def privk
+        (get-admin-privkey passphrase privk-path))
+
+      (def cookie
+        (make-random-cookie))
+
+      (def tmp-sock
+        (make-temporary-file-name "actor-server"))
+      (def remote-addr
+        [unix: (hostname) tmp-sock])
+      (def remote-srv
+        (start-actor-server! cookie: cookie
+                             addresses: [remote-addr]
+                             admin: pubk))
+      (def remote-srv-id
+        (actor-server-identifier remote-srv))
+
+      (def local-srv
+        (start-actor-server! cookie: cookie
+                             admin: #f
+                             ensemble: (hash (,remote-srv-id [remote-addr]))))
+
+      ;; try to shutdown remote-srv without authorization first; this should fail
+      (check-exception (remote-stop-server! remote-srv-id local-srv)
+                       (actor-error-with? "not authorized"))
+
+      ;; now authorize administrative privileges and try again
+      (check (admin-authorize privk remote-srv-id (actor-server-identifier local-srv) local-srv)
+             => (void))
+      (check (remote-stop-server! remote-srv-id local-srv) => (void))
+      (check (thread-join! remote-srv) => 'shutdown)
+
+      (stop-actor-server! local-srv)
+      (check (thread-join! local-srv) => 'shutdown)
+
+      (delete-file tmp-sock)
+      (delete-file pubk-path)
+      (delete-file privk-path))))

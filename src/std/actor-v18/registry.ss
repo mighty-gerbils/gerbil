@@ -39,6 +39,11 @@
   (register-actor! 'registry srv)
   (infof "starting registry ...")
 
+  (def (authorized-for? actor server-id)
+    (or (actor-authorized? actor)
+        (and (handle? actor)
+             (eq? (reference-server (handle-ref actor)) server-id))))
+
   (def (sort-server-list lst)
     (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
   (def flush-ticker
@@ -48,14 +53,20 @@
     (while #t
       (<-
        ((!ensemble-add-server id addrs roles)
-        (infof "adding server ~a ~a at ~a" id roles addrs)
-        (&Registry-add-server registry id addrs roles)
-        (--> (!ok (void))))
+        (if (authorized-for? @source id)
+          (begin
+            (infof "adding server ~a ~a at ~a" id roles addrs)
+            (&Registry-add-server registry id addrs roles)
+            (--> (!ok (void))))
+          (--> (!error "not authorized"))))
 
        ((!ensemble-remove-server id)
-        (infof "removing server ~a" id)
-        (&Registry-remove-server registry id)
-        (--> (!ok (void))))
+        (if (authorized-for? @source id)
+          (begin
+            (infof "removing server ~a" id)
+            (&Registry-remove-server registry id)
+            (--> (!ok (void))))
+          (--> (!error "not authorized"))))
 
        ((!ensemble-lookup-server id role)
         (cond

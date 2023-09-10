@@ -14,7 +14,8 @@
         :std/actor-v18/loader
         :std/actor-v18/registry
         :std/actor-v18/path
-        :std/os/hostname)
+        :std/os/hostname
+        :std/misc/ports)
 (export main)
 
 (def (main . args)
@@ -83,6 +84,17 @@
     (argument 'server-or-role
       help: "the server or role to lookup"
       value: string->symbol))
+
+  (def authorized-server-id-argument
+    (argument 'authorized-server-id
+      help: "the server to authorize capabilities for"
+      value: string->symbol))
+
+  (def capabilities-optional-argument
+    (optional-argument 'capabilities
+      help: "the server capabilities to authorize"
+      value: string->object
+      default: '(admin)))
 
   (def expr-argument
     (argument 'expr
@@ -189,10 +201,31 @@
       server-id-or-role-argument
       help: "looks up a server by id or role"))
 
+  (def authorize-cmd
+    (command 'authorize
+      registry-option
+      server-id-argument
+      authorized-server-id-argument
+      capabilities-optional-argument
+      help: "authorize capabilities for a server"))
+
+  (def retract-cmd
+    (command 'retract
+      registry-option
+      server-id-argument
+      authorized-server-id-argument
+      help: "retract all capabilities granted to a server"))
+
   (def cookie-cmd
     (command 'cookie
       force-flag
       help: "generate a new ensemble cookie"))
+
+  (def admin-cmd
+    (command 'admin
+      force-flag
+      help: "generate a new ensemble administrator key pair"))
+
 
   (call-with-getopt gxensemble-main args
     program: "gxensemble"
@@ -208,8 +241,10 @@
     list-actors-cmd
     list-connections-cmd
     lookup-cmd
-    cookie-cmd))
-
+    authorize-cmd
+    retract-cmd
+    cookie-cmd
+    admin-cmd))
 
 (def (gxensemble-main cmd opt)
   (def commands
@@ -224,7 +259,10 @@
           (list-actors      do-list-actors)
           (list-connections do-list-connections)
           (lookup           do-lookup)
-          (cookie           do-cookie)))
+          (authorize        do-authorize)
+          (retract          do-retract)
+          (cookie           do-cookie)
+          (admin            do-admin)))
   (cond
    ((hash-get commands cmd)
     => (cut <> opt))
@@ -233,6 +271,28 @@
 
 (def (do-cookie opt)
   (generate-actor-server-cookie! force: (hash-get opt 'force)))
+
+(def (do-admin opt)
+  (let* ((passphrase (read-password prompt: "Enter passphprase: "))
+         (again      (read-password prompt: "Re-enter passphprase: ")))
+    (unless (equal? passphrase again)
+      (error "administrative passphrases don't match"))
+    (generate-admin-keypair! passphrase force: (hash-get opt 'force))))
+
+(def (do-authorize opt)
+  (start-actor-server-with-options! opt)
+  (let ((server-id (hash-ref opt 'server-id))
+        (authorized-server-id (hash-ref opt 'authorized-server-id))
+        (capabilities (hash-ref opt 'capabilities)))
+    (admin-authorize (get-privkey) server-id authorized-server-id
+                     capabilities: capabilities)))
+
+(def (do-retract opt)
+  (start-actor-server-with-options! opt)
+  (let ((server-id (hash-ref opt 'server-id))
+        (authorized-server-id (hash-ref opt 'authorized-server-id)))
+    (maybe-authorize! server-id)
+    (admin-retract server-id authorized-server-id)))
 
 (def (do-lookup opt)
   (start-actor-server-with-options! opt)
@@ -269,9 +329,11 @@
          (cond
           ((hash-get opt 'actor-id)
            => (lambda (actor-id)
+                (maybe-authorize! server-id)
                 (displayln "... shutting down " actor-id "@" server-id)
                 (stop-actor! (reference server-id actor-id))))
           (else
+           (maybe-authorize! server-id)
            (displayln "... shutting down " server-id)
            (remote-stop-server! server-id)))))
    (else
@@ -283,6 +345,7 @@
 
       (let (servers (ensemble-list-servers))
         (for (server-id (map car servers))
+          (maybe-authorize! server-id)
           (displayln "... shutting down " server-id)
           (with-catch void (cut remote-stop-server! server-id)))
         ;; wait a second before shutting down the registry, so that servers can remove
@@ -290,6 +353,7 @@
         (unless (null? servers)
           (thread-sleep! 3)))
       (displayln "... shutting down registry")
+      (maybe-authorize! 'registry)
       (remote-stop-server! 'registry))))
   (stop-actor-server!))
 
@@ -309,6 +373,7 @@
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (expr (hash-ref opt 'expr)))
+    (maybe-authorize! server-id)
     (displayln
      (remote-eval server-id expr)))
   (stop-actor-server!))
@@ -317,6 +382,7 @@
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (library-prefix (hash-ref opt 'library-prefix)))
+    (maybe-authorize! server-id)
     (do-repl-for-server server-id library-prefix)
     (stop-actor-server!)))
 
@@ -487,6 +553,7 @@
   (let ((module-id (hash-ref opt 'module-id))
         (server-id (hash-ref opt 'server-id)))
     (start-actor-server-with-options! opt)
+    (maybe-authorize! server-id)
     (displayln "... loading library module " module-id)
     (displayln
      (remote-load-library-module server-id module-id))
@@ -499,6 +566,7 @@
     (let ((values object-files library-modules)
           (get-module-objects module-id library-prefix))
       (start-actor-server-with-options! opt)
+      (maybe-authorize! server-id)
       ;; when forcing, we don't load the library modules
       ;; useful for static executables
       (unless (hash-get opt 'force)
@@ -644,3 +712,18 @@
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)))
+
+(def +admin-privkey+ #f)
+(def (get-privkey)
+  (or +admin-privkey+
+      (if (file-exists? (default-admin-privkey-path))
+        (let* ((passphrase (read-password prompt: "Enter passphrase: "))
+               (privk (get-admin-privkey passphrase)))
+          (set! +admin-privkey+ privk)
+          privk)
+        (error "no administrative private key"))))
+
+(def (maybe-authorize! server-id)
+  (when (file-exists? (default-admin-privkey-path))
+    (let (privk (get-privkey))
+      (admin-authorize +admin-privkey+ server-id (actor-server-identifier)))))
