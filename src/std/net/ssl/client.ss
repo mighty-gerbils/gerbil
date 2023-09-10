@@ -118,18 +118,20 @@
   (lambda (self)
     (with-basic-socket-write-lock self
       (unless (&basic-socket-closed? self)
-        (let ((rsock (&basic-socket-sock self))
-              (ssl (&ssl-socket-ssl self)))
-          (let lp ()
-            (let (result (SSL_shutdown ssl))
-              (cond
-               ((and (fixnum? result) (fx> result 0)) (void))
-               ((eqv? result SSL_ERROR_WANT_READ)
-                (basic-socket-wait-io! self (fd-io-in rsock) #f)
-                (lp))
-               ((eqv? result SSL_ERROR_WANT_WRITE)
-                (basic-socket-wait-io! self (fd-io-out rsock) #f)
-                (lp))))))
+        (try
+         (let ((rsock (&basic-socket-sock self))
+               (ssl (&ssl-socket-ssl self)))
+           (let lp ()
+             (let (result (SSL_shutdown ssl))
+               (cond
+                ((and (fixnum? result) (fx> result 0)) (void))
+                ((eqv? result SSL_ERROR_WANT_READ)
+                 (basic-socket-wait-io! self (fd-io-in rsock) #f)
+                 (lp))
+                ((eqv? result SSL_ERROR_WANT_WRITE)
+                 (basic-socket-wait-io! self (fd-io-out rsock) #f)
+                 (lp))))))
+         (catch (e) (void)))
         (basic-socket-close/lock self)))))
 
 (defmethod {peer-certificate ssl-socket}
