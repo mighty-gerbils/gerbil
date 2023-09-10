@@ -18,7 +18,7 @@
             SSL_ERROR_WANT_WRITE
             make-client-ssl-context
             make-insecure-client-ssl-context
-            ;; make-server-ssl-context
+            make-server-ssl-context
             ;; make-actor-tls-context
             )
 
@@ -166,6 +166,35 @@ static SSL_CTX *ffi_insecure_ssl_ctx()
  return ctx;
 }
 
+static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path)
+{
+ SSL_CTX *ctx = SSL_CTX_new(TLS_method());
+ if (!ctx) {
+  return NULL;
+ }
+
+ int r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
+ if (r <= 0) {
+  SSL_CTX_free(ctx);
+  return NULL;
+  }
+
+ r = SSL_CTX_use_PrivateKey_file(ctx, privk_path, SSL_FILETYPE_PEM);
+ if (r <= 0) {
+  SSL_CTX_free(ctx);
+  return NULL;
+  }
+
+ r = SSL_CTX_check_private_key(ctx);
+ if (r <= 0) {
+  SSL_CTX_free(ctx);
+  return NULL;
+ }
+
+ SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
+ return ctx;
+}
+
 END-C
 )
 
@@ -203,6 +232,6 @@ END-C
 
   (define-c-lambda make-client-ssl-context () SSL_CTX* "ffi_default_ssl_ctx")
   (define-c-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
-
+  (define-c-lambda make-server-ssl-context (char-string char-string) SSL_CTX* "ffi_server_ssl_ctx")
   ;; ...
   )

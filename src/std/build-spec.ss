@@ -200,6 +200,7 @@
     "net/ssl/interface"
     "net/ssl/socket"
     "net/ssl/client"
+    "net/ssl/server"
     "net/ssl/api"
     "net/ssl"
     "net/uri"

@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; SSL socket implementation
 (export #t)
-(import :std/error
+(import :gerbil/gambit/foreign
+        :std/error
         :std/sugar
         :std/iter
         :std/io
@@ -55,7 +56,9 @@
                  (basic-socket-wait-io! self (fd-io-out rsock) #f)
                  (lp))))))
          (catch (e) (void)))
-        (basic-socket-close/lock self)))))
+        (basic-socket-close/lock self)
+        (foreign-release! (&ssl-socket-ssl self))
+        (set! (&ssl-socket-ssl self) #f)))))
 
 (defmethod {peer-certificate ssl-socket}
   (lambda (self)
