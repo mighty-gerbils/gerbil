@@ -5,6 +5,7 @@
         ./interface
         ./libssl
         ./client
+        ./socket
         ./error)
 (export (import: ./interface)
         default-client-ssl-context

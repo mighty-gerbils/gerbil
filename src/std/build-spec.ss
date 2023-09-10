@@ -198,6 +198,7 @@
     (gxc: "net/ssl/libssl" "-ld-options" ,(ldflags "libssl" "-lssl"))
     "net/ssl/error"
     "net/ssl/interface"
+    "net/ssl/socket"
     "net/ssl/client"
     "net/ssl/api"
     "net/ssl"
