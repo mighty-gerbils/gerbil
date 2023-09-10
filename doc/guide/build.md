@@ -55,7 +55,7 @@ $ ./build.ss
 ## Intermediate build scripts
 
 Here is a build script that uses an environment variable to determine
-whether to build a fully static binary or a normally linked binary:
+whether to build an optimized fully static binary or a normally linked binary:
 
 ```bash
 $ cat build.ss
@@ -63,7 +63,7 @@ $ cat build.ss
 (import :std/build-script)
 (defbuild-script
   `("util"
-    ,(if (getenv "BUILD_STATIC_EXE" #f) '(static-exe: "hello") '(exe: "hello"))))
+    ,(if (getenv "BUILD_RELEASE" #f) '(optimized-static-exe: "hello") '(exe: "hello"))))
 ```
 
 If you are in your development environment and building executables for your host, then you can just invoke it as
@@ -73,7 +73,15 @@ If you are in your development environment and building executables for your hos
 
 On the other hand, if you are building inside a docker container that
 supports fully static binaries (say alpine or void linux), you can
-just use the following to build a fully static binary:
+just use the following to build an optimized fully static binary:
 ```bash
-BUILD_STATIC_EXE=t ./build.ss
+BUILD_RELEASE=t ./build.ss
 ```
+
+::: tip Note
+You may need to pass some linker flags in your build spec, using
+`(optimized-static-exe: <module> "-ld-options" "...")`.  This might be
+necessary because the compiler cannot tell what the tree shaker will
+eliminate and thus it is not prudent to automatically link all stdlib
+foreign dependencies.
+:::
