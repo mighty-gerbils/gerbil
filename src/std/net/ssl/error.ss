@@ -30,10 +30,8 @@
   (let (errstr
         (match result
           ((? fixnum? result)
-           (string-append (or (ERR_lib_error_string result) "?")
-                          ":" (or (ERR_reason_error_string result) "?")))
+           (ERR_error_string result))
           ([_ . err]
-           (string-append (or (ERR_lib_error_string err) "?")
-                          ":" (or (ERR_reason_error_string err) "?")))
+           (ERR_error_string err))
           (else "unknown error")))
     (raise (make-ssl-error "SSL error" [errstr result] where))))

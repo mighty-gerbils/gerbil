@@ -7,6 +7,7 @@
 (begin-ffi
     (ERR_get_error ERR_peek_last_error
      ERR_lib_error_string ERR_func_error_string ERR_reason_error_string
+     ERR_error_string
      EVP_MD? EVP_MD_CTX?
      EVP_MD_CTX_create EVP_DigestInit EVP_DigestUpdate EVP_DigestFinal
      EVP_MD_CTX_copy
@@ -142,11 +143,22 @@ END-C
           (##memq ',tag (foreign-tags x)))))
 
 ;; error handling
+(c-declare #<<END-C
+__thread char openssl_error_buf[256];
+static char *ffi_openssl_error_string(unsigned long err)
+{
+ ERR_error_string_n(err, openssl_error_buf, sizeof(openssl_error_buf));
+ return openssl_error_buf;
+}
+END-C
+)
+
 (define-c-lambda ERR_get_error () unsigned-long)
 (define-c-lambda ERR_peek_last_error () unsigned-long)
 (define-c-lambda/const-pointer ERR_lib_error_string (unsigned-long) char-string)
 (define-c-lambda/const-pointer ERR_func_error_string (unsigned-long) char-string)
 (define-c-lambda/const-pointer ERR_reason_error_string (unsigned-long) char-string)
+(define-c-lambda ERR_error_string (unsigned-long) char-string "ffi_openssl_error_string")
 
 ;;; Engines
 (c-define-type ENGINE "ENGINE")
