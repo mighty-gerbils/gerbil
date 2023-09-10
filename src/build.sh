@@ -82,7 +82,8 @@ build_gambit() {
   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} core) || die
 
   feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
-  cp -v gambit/gsi/gsi gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
+  cp -v gambit/gsi/gsi "${GERBIL_STAGE0}/bin"
+  cp -v gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
   cp -v gambit/include/gambit.h gambit/include/gambit-not*.h "${GERBIL_BUILD_PREFIX}/include"
   cp -v gambit/lib/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
   cp -v gambit/lib/_define-syntax.scm "${GERBIL_BUILD_PREFIX}/lib"
@@ -186,10 +187,10 @@ build_stage1 () {
   export GERBIL_HOME
 
   feedback_mid "compiling gerbil core"
-  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss || die
+  PATH="${GERBIL_STAGE0}/bin:$PATH" "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build1.ss || die
 
   feedback_mid "compiling gerbil bach"
-  "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
+  PATH="${GERBIL_STAGE0}/bin:$PATH" "${GERBIL_STAGE0}/bin/boot-gxi" ./build/build-bach.ss || die
 
   ## unset GERBIL_HOME from its bootstrap value to avoid confusing the rest of the build
   unset GERBIL_HOME
