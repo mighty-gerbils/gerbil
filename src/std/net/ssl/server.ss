@@ -6,6 +6,7 @@
         :std/error
         :std/sugar
         :std/iter
+        :std/interface
         :std/io
         :std/io/socket/types
         :std/io/socket/server
@@ -24,7 +25,7 @@
                  backlog: (backlog default-server-backlog)
                  sockopts: (sockopts default-server-sockopts))
   (let* ((bsock (tcp-listen addr backlog: backlog sockopts: sockopts))
-         (sslsock (make-ssl-server-socket bsock context)))
+         (sslsock (make-ssl-server-socket (interface-instance-object bsock) context)))
     (ServerSocket sslsock)))
 
 (defstruct (ssl-server-socket basic-server-socket) (ctx)
@@ -37,30 +38,33 @@
       (for (i (in-range 1 fields))
         (##unchecked-structure-set!
          self
-         (##unchecked-structure-ref bsock i stream-socket::t  #f)
-         i ssl-socket::t #f)))
+         (##unchecked-structure-ref bsock i basic-server-socket::t  #f)
+         i ssl-server-socket::t #f)))
     (set! (&ssl-server-socket-ctx self) ctx)))
 
 (defmethod {accept ssl-server-socket}
   (lambda (self)
-    (let (bsock (server-socket-accept self))
+    (let (clisock (server-socket-accept self))
       (try
-       (let* ((rsock (&basic-socket-sock bsock))
+       (let* ((bsock (interface-instance-object clisock))
+              (rsock (&basic-socket-sock bsock))
               (ctx (&ssl-server-socket-ctx self))
-              (ssl (SSL_new ctx)))
+              (ssl (check-ptr (SSL_new ctx)))
+              (_ (with-ssl-result (SSL_set_fd ssl (fd-e rsock))))
+              (sslsock (make-ssl-socket bsock ssl))
+              (deadline (make-timeout ssl-server-handshake-timeout #f))
+              (_ (set! (&basic-socket-timeo-in sslsock) deadline))
+              (_ (set! (&basic-socket-timeo-out sslsock) deadline)))
          (try
-          (let* ((_ (with-ssl-result (SSL_set_fd ssl (fd-e rsock))))
-                 (sslsock (make-ssl-socket bsock ssl))
-                 (deadline (make-timeout ssl-server-handshake-timeout #f))
-                 (_ (set! (&basic-socket-timeo-in sslsock) deadline))
-                 (_ (set! (&basic-socket-timeo-out sslsock) deadline)))
-            (ssl-server-handshake sslsock)
-            (SSLSocket sslsock))
+          (ssl-server-handshake sslsock)
           (catch (e)
             (foreign-release! ssl)
-            (raise e))))
+            (raise e)))
+         (set! (&basic-socket-timeo-in sslsock) #f)
+         (set! (&basic-socket-timeo-out sslsock) #f)
+         (SSLSocket sslsock))
        (catch (e)
-         (StreamSocket-close bsock)
+         (StreamSocket-close clisock)
          (raise e))))))
 
 (def (ssl-server-handshake sock)

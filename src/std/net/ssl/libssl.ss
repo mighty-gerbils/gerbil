@@ -25,6 +25,7 @@
   (c-declare #<<END-C
 #include <openssl/ssl.h>
 #include <openssl/conf.h>
+#include <openssl/err.h>
 
 static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
 {
@@ -47,6 +48,7 @@ static ___SCMOBJ ffi_release_X509 (void *ptr)
 
 static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
 {
+ // ERR_print_errors_fp(stderr);
  int err = SSL_get_error(ssl, r);
  switch (err) {
   case SSL_ERROR_WANT_READ:
@@ -116,15 +118,16 @@ static ___SCMOBJ ffi_ssl_shutdown(SSL *ssl)
 static ___SCMOBJ ffi_ssl_set_host(SSL *ssl, char* hostname)
 {
  int r = SSL_set1_host(ssl, hostname);
- if (r > 0) {
-  int r = SSL_set_tlsext_host_name(ssl, hostname);
-  if (r > 0) {
-   return ___FIX(r);
-  }
+ if (r <= 0) {
   return ffi_ssl_error(ssl, r);
  }
 
- return ffi_ssl_error(ssl, r);
+ r = SSL_set_tlsext_host_name(ssl, hostname);
+ if (r <= 0) {
+  return ffi_ssl_error(ssl, r);
+ }
+
+ return ___FIX(r);
 }
 
 static ___SCMOBJ ffi_ssl_set_fd(SSL *ssl, int fd)
@@ -139,7 +142,7 @@ static ___SCMOBJ ffi_ssl_set_fd(SSL *ssl, int fd)
 
 static SSL_CTX *ffi_default_ssl_ctx()
 {
- SSL_CTX *ctx = SSL_CTX_new(TLS_method());
+ SSL_CTX *ctx = SSL_CTX_new(TLS_client_method());
  if (!ctx) {
   return NULL;
  }
@@ -148,7 +151,6 @@ static SSL_CTX *ffi_default_ssl_ctx()
  SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER, NULL);
  return ctx;
 }
-
 
 static int ffi_ssl_verify_insecure(int preverify, X509_STORE_CTX *ctx)
 {
@@ -168,7 +170,7 @@ static SSL_CTX *ffi_insecure_ssl_ctx()
 
 static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path)
 {
- SSL_CTX *ctx = SSL_CTX_new(TLS_method());
+ SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
  if (!ctx) {
   return NULL;
  }
@@ -185,19 +187,12 @@ static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path
   return NULL;
   }
 
- r = SSL_CTX_check_private_key(ctx);
- if (r <= 0) {
-  SSL_CTX_free(ctx);
-  return NULL;
- }
-
  SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
  return ctx;
 }
 
 END-C
 )
-
 
   (c-initialize #<<END-C
 OPENSSL_init_ssl(0, NULL);
