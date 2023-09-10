@@ -11,6 +11,7 @@ ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
 ENV DEBIAN_FRONTEND=noninteractive
+ENV GERBIL_GCC=g++
 RUN mkdir -p /src /opt
 RUN case ${distro} in \
     alpine) \
@@ -41,6 +42,7 @@ RUN case ${distro} in \
 FROM base as gerbil
 ARG cores
 ARG gerbil_version
+ENV GERBIL_GCC=g++
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
@@ -49,7 +51,9 @@ RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${ger
     --enable-libxml \
     --enable-libyaml \
     --enable-lmdb \
-    --enable-zlib
+    --enable-zlib \
+    --enable-c++
+
 RUN cd /opt/gerbil-src && make && make install
 
 FROM gerbil as final
