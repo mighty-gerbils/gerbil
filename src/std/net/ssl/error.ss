@@ -31,7 +31,7 @@
         (match result
           ((? fixnum? result)
            (ERR_error_string result))
-          ([_ . err]
-           (ERR_error_string err))
+          ([_ _ last]
+           (ERR_error_string last))
           (else "unknown error")))
     (raise (make-ssl-error "SSL error" [errstr result] where))))

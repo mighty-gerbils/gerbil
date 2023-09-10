@@ -48,7 +48,7 @@ static ___SCMOBJ ffi_release_X509 (void *ptr)
 
 static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
 {
- // ERR_print_errors_fp(stderr);
+ unsigned long last = ERR_peek_last_error();
  int err = SSL_get_error(ssl, r);
  switch (err) {
   case SSL_ERROR_WANT_READ:
@@ -58,7 +58,12 @@ static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
   case SSL_ERROR_ZERO_RETURN:
    return ___FIX(0);
    default:
-   ___SCMOBJ result = ___make_pair(___PSTATE, ___FIX(r), ___FIX(err));
+   ___processor_state ___ps = ___PSTATE;
+   ___SCMOBJ result = ___make_pair(___ps, ___FIX(last), ___NUL);
+   ___release_scmobj(result);
+   result = ___make_pair(___ps, ___FIX(err), result);
+   ___release_scmobj(result);
+   result = ___make_pair(___ps, ___FIX(r), result);
    ___release_scmobj(result);
    return result;
  }
