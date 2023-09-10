@@ -5,6 +5,7 @@ GERBIL_VERSION := master
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
 arch := $(shell uname -m)
+DEFAULT=gerbil++
 
 alpine_packages := autoconf \
                    automake \
