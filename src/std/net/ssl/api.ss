@@ -14,4 +14,6 @@
         make-server-ssl-context
         ssl-connect
         ssl-listen
+        ssl-client-upgrade
+        ssl-server-upgrade
         ssl-error?)

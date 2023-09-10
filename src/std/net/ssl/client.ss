@@ -32,8 +32,14 @@
                 (else
                  (error "unexpected host" host))))
          (deadline (make-timeout timeo #f))
-         (sock (tcp-connect addr timeo))
-         (bsock (interface-instance-object sock))
+         (sock (tcp-connect addr deadline)))
+    (ssl-client-upgrade sock deadline context: context host: host)))
+
+(def (ssl-client-upgrade sock (timeo #f)
+                         context: (context (default-client-ssl-context))
+                         host: host)
+  (let* ((deadline (make-timeout timeo #f))
+         (bsock (&interface-instance-object sock))
          (rsock (&basic-socket-sock bsock))
          (ssl (check-ptr (SSL_new context)))
          (_ (with-ssl-result (SSL_set_fd ssl (fd-e rsock))))
