@@ -29,7 +29,7 @@ export GERBIL_LOADPATH
 GAMBOPT="~~bin=${GERBIL_BUILD_PREFIX}/bin,~~lib=${GERBIL_BUILD_PREFIX}/lib,~~include=${GERBIL_BUILD_PREFIX}/include"
 export GAMBOPT
 
-PATH="${GERBIL_BUILD_PREFIX}/bin:${PATH}"
+PATH="${GERBIL_BUILD_PREFIX}/bin:${GERBIL_STAGE0}/bin:${PATH}"
 export PATH
 
 # required when --enable-shared
@@ -82,7 +82,8 @@ build_gambit() {
   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} core) || die
 
   feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
-  cp -v gambit/gsi/gsi gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
+  cp -v gambit/gsi/gsi "${GERBIL_STAGE0}/bin"
+  cp -v gambit/gsc/gsc gambit/bin/gambuild-C "${GERBIL_BUILD_PREFIX}/bin"
   cp -v gambit/include/gambit.h gambit/include/gambit-not*.h "${GERBIL_BUILD_PREFIX}/include"
   cp -v gambit/lib/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
   cp -v gambit/lib/_define-syntax.scm "${GERBIL_BUILD_PREFIX}/lib"
