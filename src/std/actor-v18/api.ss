@@ -12,6 +12,7 @@
         ./server
         ./ensemble
         ./cookie
+        ./tls
         ./admin
         ./path
         ./loader)
@@ -80,15 +81,16 @@
 ;; call a thunk in the context of an ensemble server
 ;; this is the programmatic equivalent of gxensemble run
 (def (call-with-ensemble-server server-id thunk
-                                log-level: (log-level 'INFO)
-                                log-file:  (log-file #f)
-                                listen:    (listen-addrs [])
-                                announce:  (public-addrs #f)
-                                registry:  (registry-addrs #f)
-                                roles:     (roles [])
-                                cookie:    (cookie (get-actor-server-cookie))
-                                admin:     (admin (get-admin-pubkey))
-                                auth:      (auth #f))
+                                log-level:   (log-level 'INFO)
+                                log-file:    (log-file #f)
+                                listen:      (listen-addrs [])
+                                announce:    (public-addrs #f)
+                                registry:    (registry-addrs #f)
+                                roles:       (roles [])
+                                tls-context: (tls-context (get-actor-tls-context server-id))
+                                cookie:      (cookie (get-actor-server-cookie))
+                                admin:       (admin (get-admin-pubkey))
+                                auth:        (auth #f))
   (current-logger-options log-level)
   (when log-file
     (let (path
@@ -113,11 +115,12 @@
             (cons unix-addr public-addrs)
             listen-addrs)))
     ;; start the actor server
-    (start-actor-server! cookie: cookie
+    (start-actor-server! identifier: server-id
+                         tls-context: tls-context
+                         cookie: cookie
                          admin:  admin
                          auth: auth
                          addresses: listen-addrs
-                         identifier: server-id
                          ensemble: known-servers)
     ;; start the loader
     (start-loader!)

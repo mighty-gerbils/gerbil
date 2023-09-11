@@ -358,6 +358,7 @@
     "actor-v18/registry"
     "actor-v18/loader"
     "actor-v18/ensemble"
+    "actor-v18/tls"
     "actor-v18/api"
     "actor"
     ;; DEPRECATEED: actor-v13

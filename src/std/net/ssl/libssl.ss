@@ -16,11 +16,13 @@
             SSL_get_peer_certificate
             SSL_ERROR_WANT_READ
             SSL_ERROR_WANT_WRITE
+            X509_get_text_by_NID
+            NID_commonName
+            NID_subject_alt_name
             make-client-ssl-context
             make-insecure-client-ssl-context
             make-server-ssl-context
-            ;; make-actor-tls-context
-            )
+            make-actor-tls-context)
 
   (c-declare #<<END-C
 #include <openssl/ssl.h>
@@ -183,17 +185,68 @@ static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path
  int r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
  if (r <= 0) {
   SSL_CTX_free(ctx);
+  ERR_print_errors_fp(stderr);
   return NULL;
   }
 
  r = SSL_CTX_use_PrivateKey_file(ctx, privk_path, SSL_FILETYPE_PEM);
  if (r <= 0) {
+  ERR_print_errors_fp(stderr);
   SSL_CTX_free(ctx);
   return NULL;
   }
 
  SSL_CTX_set_verify(ctx, SSL_VERIFY_NONE, NULL);
  return ctx;
+}
+
+static SSL_CTX *ffi_actor_tls_ctx(const char *ca_path, const char *cert_path, const char *privk_path)
+{
+ SSL_CTX *ctx = SSL_CTX_new(TLS_method());
+ if (!ctx) {
+  return NULL;
+ }
+
+ STACK_OF(X509_NAME) *client_ca_list = SSL_load_client_CA_file(ca_path);
+ if (!client_ca_list) {
+  ERR_print_errors_fp(stderr);
+  SSL_CTX_free(ctx);
+  return NULL;
+ }
+ SSL_CTX_set_client_CA_list(ctx, client_ca_list);
+
+ int r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
+ if (r <= 0) {
+  ERR_print_errors_fp(stderr);
+  SSL_CTX_free(ctx);
+  return NULL;
+  }
+
+ r = SSL_CTX_use_PrivateKey_file(ctx, privk_path, SSL_FILETYPE_PEM);
+ if (r <= 0) {
+  ERR_print_errors_fp(stderr);
+  SSL_CTX_free(ctx);
+  return NULL;
+  }
+
+ SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT|0, NULL);
+ return ctx;
+}
+
+__thread char openssl_x509_name_buf[4096];
+static char *ffi_X509_get_text_by_NID(X509 *cert, int nid)
+{
+ X509_NAME *name = X509_get_subject_name(cert);
+ if (!name) {
+  return NULL;
+ }
+
+ int r = X509_NAME_get_text_by_NID(name, nid, openssl_x509_name_buf, sizeof(openssl_x509_name_buf));
+ if (r <= 0) {
+  return NULL;
+ }
+
+ return openssl_x509_name_buf;
 }
 
 END-C
@@ -233,5 +286,8 @@ END-C
   (define-c-lambda make-client-ssl-context () SSL_CTX* "ffi_default_ssl_ctx")
   (define-c-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
   (define-c-lambda make-server-ssl-context (char-string char-string) SSL_CTX* "ffi_server_ssl_ctx")
-  ;; ...
-  )
+  (define-c-lambda make-actor-tls-context (char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
+
+  (define-const NID_commonName)
+  (define-const NID_subject_alt_name)
+  (define-c-lambda X509_get_text_by_NID (X509* int) char-string "ffi_X509_get_text_by_NID"))
