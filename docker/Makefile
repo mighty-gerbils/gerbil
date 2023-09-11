@@ -84,7 +84,7 @@ gerbilxx:
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++" \
 	--build-arg cores=$(cores) \
-	--build-arg with_db=YES \
+	--build-arg with_db="YES" \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
 	docker tag final gerbil/gerbilxx:$(arch)

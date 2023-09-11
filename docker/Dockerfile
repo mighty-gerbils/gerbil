@@ -1,4 +1,5 @@
 ARG distro
+ARG with_db
 ARG gerbil_version
 ARG cores
 ARG configure_args
@@ -7,6 +8,7 @@ ARG packages
 FROM ${distro}:latest as base
 ARG cores
 ARG distro
+ARG with_db
 ARG gerbil_version
 ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
