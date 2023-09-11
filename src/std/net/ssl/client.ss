@@ -33,7 +33,11 @@
                  (error "unexpected host" host))))
          (deadline (make-timeout timeo #f))
          (sock (tcp-connect addr deadline)))
-    (ssl-client-upgrade sock deadline context: context host: host)))
+    (try
+     (ssl-client-upgrade sock deadline context: context host: host)
+     (catch (e)
+       (Socket-close sock)
+       (raise e)))))
 
 (def (ssl-client-upgrade sock (timeo #f)
                          context: (context (default-client-ssl-context))
@@ -50,12 +54,11 @@
          (_ (try
              (ssl-client-handshake sslsock)
              (catch (e)
-               (basic-socket-close  sslsock)
                (foreign-release! ssl)
                (raise e))))
          (_ (set! (&basic-socket-timeo-in sslsock) #f))
          (_ (set! (&basic-socket-timeo-out  sslsock) #f)))
-    (SSLSocket sslsock)))
+    (StreamSocket sslsock)))
 
 (def (ssl-client-handshake sock)
   (let ((rsock (&basic-socket-sock sock))

@@ -255,9 +255,14 @@
               => (lambda (connectf)
                    (if ssl?
                      (lambda (addr)
-                       (ssl-client-upgrade (connectf addr) deadline
-                                           context: ssl-context
-                                           host: host))
+                       (let (sock (connectf addr))
+                         (try
+                          (ssl-client-upgrade sock deadline
+                                              context: ssl-context
+                                              host: host)
+                          (catch (e)
+                            (Socket-close sock)
+                            (raise e)))))
                      connectf)))
              (ssl?
               (lambda (addr)
