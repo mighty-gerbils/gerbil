@@ -14,7 +14,7 @@ distribution, you can use our
 
 ## Running Gerbil in Docker
 
-`docker run -it gerbil/gerbil` iill invoke the Gerbil repl.
+`docker run -it gerbil/gerbil` will invoke the Gerbil repl.
 
 ## Building static executable binaries using the `gerbilxx` image.
 
