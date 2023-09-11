@@ -37,3 +37,5 @@
 
 (def (raise-timeout where what . irritants)
   (raise (make-timeout-error what irritants where)))
+
+(defclass Exception ()) ;; for exceptions as classes rather than structs

@@ -12,6 +12,8 @@
   request-json
   request-cookies
   request-close
+  request-response-bytes
+  http-get-content
   (rename: request-sock request-socket)
   (rename: request-reader request-socket-reader)
   (rename: request-writer request-socket-writer))
@@ -504,3 +506,14 @@
            (else
             (lp rest))))
         (else (void))))))
+
+(def (request-response-bytes req)
+  (try
+   (if (eq? (request-status req) 200)
+     (request-content req)
+     (error "HTTP request failed" (request-status req) (request-status-text req)))
+   (finally
+    (request-close req))))
+
+(def (http-get-content url)
+  (and url (request-response-bytes (http-get url))))

@@ -14,6 +14,7 @@
   (syntax-case stx ()
     ((macro name peek-char read-char)
      (with-syntax ((read-json-object    (stx-identifier #'macro "read-json-object/" #'name))
+                   (read-json-object1   (stx-identifier #'macro "read-json-object1/" #'name))
                    (read-json-hash      (stx-identifier #'macro "read-json-hash/" #'name))
                    (read-json-hash-key  (stx-identifier #'macro "read-json-hash-key" #'name))
                    (read-json-list      (stx-identifier #'macro "read-json-list/" #'name))
@@ -26,7 +27,13 @@
                    (skip-whitespace     (stx-identifier #'macro "skip-whitespace/" #'name))
                    (skip-chars          (stx-identifier #'macro "skip-chars/" #'name)))
        #'(begin
-           (def (read-json-object input env)
+           (def (read-json-object input env (junk-allowed? #t))
+             (begin0 (read-json-object1 input env)
+               (unless junk-allowed?
+                 (skip-whitespace input)
+                 (unless (eof-object? (peek-char input))
+                   (error "Junk after JSON object in input" input)))))
+           (def (read-json-object1 input env)
              (skip-whitespace input)
              (let (char (peek-char input))
                (if (eof-object? char)
@@ -54,7 +61,7 @@
                      ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
                      (if (hash-key? obj key)
                        (error "Duplicate hash key in JSON input" key)
-                       (let (val (read-json-object input env))
+                       (let (val (read-json-object1 input env))
                          (hash-put! obj key val)
                          (skip-whitespace input)
                          (let (char (peek-char input))
@@ -110,7 +117,7 @@
                   (read-char input)
                   #!eof)
                  (else
-                  (let (obj (read-json-object input env))
+                  (let (obj (read-json-object1 input env))
                     (skip-whitespace input)
                     (let (char (peek-char input))
                       (case char

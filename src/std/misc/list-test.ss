@@ -156,6 +156,9 @@
       (check-equal? (group [1]) [[1]])
       (check-equal? (group [1 []]) [[1] [[]]])
       (check-equal? (group ["aa" "aa" "b"]) [["aa" "aa"] ["b"]]))
+    (test-case "grouping"
+      (check-equal? (grouping '("abc" "b" "c" "ef" "gh" "ijk") string-length)
+                    '(("abc" "ijk") ("b" "c") ("ef" "gh"))))
     (test-case "test every-consecutive?"
       (check-equal? (every-consecutive? < [1 2 3 4 5]) #t)
       (check-equal? (every-consecutive? < [1 2 5 4 3]) #f)

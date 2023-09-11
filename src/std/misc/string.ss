@@ -9,6 +9,7 @@
   string-split-eol
   string-trim-eol
   string-subst
+  string-substitute-char
   string-whitespace?
   random-string
   str str-format
@@ -19,7 +20,8 @@
   (only-in :gerbil/gambit/random random-integer)
   :std/srfi/13
   :std/format
-  )
+  :std/iter
+  :std/misc/number)
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -254,3 +256,50 @@
    ((? (and number? inexact?) v) "~f")
    ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
    (else "~a")))
+
+;; Like CL SUBSTITUTE but specialized for strings and chars
+(def (string-substitute-char-if
+      newchar predicate string
+      start: (start #f)
+      end: (end #f)
+      from-end: (from-end? #f)
+      count: (count #f)
+      in-place: (in-place? #f))
+  (unless start (set! start 0))
+  (unless end (set! end (string-length string)))
+  (def s (if in-place? string (string-copy string)))
+  (let/cc return
+    (cond
+     ((equal? count 0) (return))
+     (count
+      (for (i (if from-end? (in-range (1- end) (1- start) -1) (in-range start end)))
+        (when (predicate (string-ref s i))
+          (string-set! s i newchar)
+          (decrement! count)
+          (when (zero? count) (return)))))
+     (else
+      (for (i (in-range start end))
+        (when (predicate (string-ref s i))
+          (string-set! s i newchar))))))
+  s)
+
+(def (string-substitute-char
+      newchar oldchar string
+      test: (test #f)
+      test-not: (test-not #f)
+      key: (key #f)
+      start: (start #f)
+      end: (end #f)
+      from-end: (from-end? #f)
+      count: (count #f)
+      in-place: (in-place? #f))
+  (def key_ (or key identity))
+  (def predicate
+    (cond
+     (test (lambda (x) (test oldchar (key_ x))))
+     (test-not (lambda (x) (not (test-not oldchar (key_ x)))))
+     (key (lambda (x) (eqv? oldchar (key_ x))))
+     (else (cut eqv? oldchar <>))))
+  (string-substitute-char-if
+   newchar predicate string
+   start: start end: end count: count from-end: from-end? in-place: in-place?))

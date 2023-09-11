@@ -37,4 +37,47 @@
         set-httpd-max-token-length!
         set-httpd-max-request-body-length!
         set-httpd-input-buffer-size!
-        set-httpd-output-buffer-size!)
+        set-httpd-output-buffer-size!
+        http-response-write-condition
+        condition-handler
+
+        Continue
+        Switching-Protocols
+        OK
+        Created
+        Accepted
+        Non-Authoritative-Information
+        No-Content
+        Reset-Content
+        Partial-Content
+        Multiple-Choices
+        Moved-Permanently
+        Found
+        See-Other
+        Not-Modified
+        Use-Proxy
+        Temporary-Redirect
+        Bad-Request
+        Unauthorized
+        Payment-Required
+        Forbidden
+        Not-Found
+        Method-Not-Allowed
+        Not-Acceptable
+        Proxy-Authentication-Required
+        Request-Timeout
+        Conflict
+        Gone
+        Length-Required
+        Precondition-Failed
+        Request-Entity-Too-Large
+        Request-URI-Too-Long
+        Unsupported-Media-Type
+        Requested-Range-Not-Satisfiable
+        Expectation-Failed
+        Internal-Server-Error
+        Not-Implemented
+        Bad-Gateway
+        Service-Unavailable
+        Gateway-Timeout
+        HTTP-Version-Not-Supported)

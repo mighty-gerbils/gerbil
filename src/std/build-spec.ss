@@ -12,6 +12,7 @@
     "pregexp"
     "sort"
     "sugar"
+    "values"
     "assert"
     "make"
     "build-script"
@@ -177,6 +178,7 @@
     "text/json/env"
     "text/json/input"
     "text/json/output"
+    "text/json/util"
     "text/json/api"
     "text/json"
     ,@(if config-enable-libyaml
@@ -205,6 +207,7 @@
     "net/ssl"
     "net/uri"
     "net/request"
+    "net/json-rpc"
     ;; TODO to be ported
     ;;"net/websocket"
     ;; TODO to be removed
@@ -305,6 +308,7 @@
     "crypto/kdf"
     "crypto"
     ;; :std/misc
+    "misc/with-id"
     "misc/concurrent-plan"
     "misc/timeout"
     "misc/list-builder"
