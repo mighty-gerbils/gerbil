@@ -9,6 +9,7 @@
         :std/net/ssl
         :std/net/httpd
         :std/net/request
+        :std/misc/process
         :std/text/utf8
         :std/os/temporaries)
 (export ssl-client-test
@@ -70,16 +71,6 @@ END
            "-in" (path-expand "test.csr" test-directory)
            "-signkey" test-private-key
            "-out" test-certificate]))
-
-(def (invoke program args)
-  (let* ((process (open-process [path: program arguments: args
-                                 stdout-redirection: #f
-                                 stderr-redirection: #f]))
-         (status (process-status process)))
-    (close-port process)
-    (unless (zero? status)
-      (displayln "process " program " exited with non-zero status " status)
-      (error "error executing process" program status))))
 
 (def (test-cleanup!)
   (when (file-exists? test-directory)
