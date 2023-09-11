@@ -1,16 +1,24 @@
-# Instructions for building and using docker
-	We have to different docker images based on Alpine Linux:
+# Gerbil in Docker
 
-1. `gerbilxx` Includes leveldb,lmdb,libyaml,libxml2,c++,zlib
-1. `gerbil` Is a base image without any additional configure items added.
+You can run Gerbil in docker using our prebuilt containers.
 
-	Alpine was chosen due to the static compilation capabilities it provides.
+We offer two official docker images based on Alpine Linux:
+- `gerbil` is the base image, with a default install without any additional features configured.
+- `gerbilxx` is the full image, with all features and C++ enabled.
 
-## Using docker to invoke Gerbil
-`docker run -it gerbil/gerbil` Will invoke the Gerbil Repl.
+Alpine was chosen due to the static compilation environment and capabilities it provides.
 
-## Building static libraries using the `gerbilxx` image.
-	In this example, a demonstration of building a static binary for a gerbil project.
+If you want to build your own container, perhaps based on some other
+distribution, you can use our
+[Dockerfile](https://github.com/vyzo/gerbil/tree/master/docker/Dockerfile).
+
+## Running Gerbil in Docker
+
+`docker run -it gerbil/gerbil` iill invoke the Gerbil repl.
+
+## Building static executable binaries using the `gerbilxx` image.
+
+Here is an example of building a static binary for a gerbil project.
 
 ### `build.ss`
 ```
