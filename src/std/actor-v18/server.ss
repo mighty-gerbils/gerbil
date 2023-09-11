@@ -455,7 +455,7 @@
       (thread-send/check source msg)))
 
   (def is-shutdown-authorized?
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id)
         (cond
          ((hash-get capabilities srv-id)
@@ -466,7 +466,7 @@
         #t)))
 
   (def is-retract-authorized?
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id authorized-server-id)
         (cond
          ((eq? srv-id authorized-server-id))
@@ -477,7 +477,7 @@
         #t)))
 
   (def actor-capabilities
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id)
         (cond
          ((hash-get capabilities srv-id) => cdr)
@@ -688,6 +688,8 @@
 
                 ((!admin-auth authorized-server-id cap)
                  (cond
+                  ((and (not admin) tls-context)
+                   (send-remote-control-reply! src-id msg (!error "no admin credentials")))
                   ((or (not admin)
                        (alet (state (hash-get capabilities src-id))
                          (andmap (cut memq <> (cdr state)) cap)))
