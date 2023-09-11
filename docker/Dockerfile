@@ -1,11 +1,14 @@
 ARG distro
+ARG with_db
 ARG gerbil_version
 ARG cores
+ARG configure_args
 ARG packages
 
 FROM ${distro}:latest as base
 ARG cores
 ARG distro
+ARG with_db
 ARG gerbil_version
 ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
@@ -17,8 +20,8 @@ RUN case ${distro} in \
     alpine) \
     apk update && \
     eval apk add ${packages} && \
-    cd /src && git clone --recurse-submodules https://github.com/google/leveldb.git && cd /src/leveldb && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . -j $cores &&  mv libleveldb.a /usr/lib && \
-    cd /src && git clone https://github.com/LMDB/lmdb && cd /src/lmdb/libraries/liblmdb && make && cd /src/lmdb/libraries/liblmdb && mv liblmdb.a /usr/lib \
+    cd /src && test -n "${with_db}" && (git clone --recurse-submodules https://github.com/google/leveldb.git && cd /src/leveldb && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . -j $cores &&  mv libleveldb.a /usr/lib) || true \
+    cd /src && test -n "${with_db}" && (git clone https://github.com/LMDB/lmdb && cd /src/lmdb/libraries/liblmdb && make && cd /src/lmdb/libraries/liblmdb && mv liblmdb.a /usr/lib) || true\
     ;; \
     amazonlinux) \
     amazon-linux-extras install epel -y && \
@@ -42,17 +45,11 @@ RUN case ${distro} in \
 FROM base as gerbil
 ARG cores
 ARG gerbil_version
+ARG configure_args
 ENV GERBIL_GCC=g++
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && ./configure \
-    --prefix=/opt/gerbil \
-    --enable-leveldb \
-    --enable-libxml \
-    --enable-libyaml \
-    --enable-lmdb \
-    --enable-zlib \
-    --enable-c++
+    && eval ./configure --prefix=/opt/gerbil ${configure_args}
 
 RUN cd /opt/gerbil-src && make && make install
 
