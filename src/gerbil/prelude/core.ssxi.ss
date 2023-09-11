@@ -362,7 +362,7 @@ package: gerbil
  raise
  exception? error-object? type-error?
  error? error-message error-irritants error-trace
- create-directory create-directory*
+ create-directory
  delete-file delete-directory
  file-type
  path-extension path-strip-extension
@@ -514,7 +514,8 @@ package: gerbil
  (write-subu8vector 3 4)
  (open-input-u8vector 0 1)
  (open-output-u8vector 0 1)
- (load-module 1 2))
+ (load-module 1 2)
+ (create-directory* 1 2))
 
 ;; extended runtime procedures -- :gerbil/gambit
 (declare-primitive/0
