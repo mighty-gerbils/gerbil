@@ -108,7 +108,7 @@
   (def (loop)
     (let (clisock (ServerSocket-accept sock))
       (spawn/name 'http-request-handler
-                  http-request-handler clisock get-handler)
+                  http-request-handler (StreamSocket clisock) get-handler)
       (loop)))
 
   (let again ()
