@@ -168,15 +168,16 @@ END
 
 (def http-server-test
   (test-suite "https server"
-    (let* ((ssl-ctx (make-server-ssl-context test-certificate test-private-key))
-           (httpd (start-http-server! [ssl:  test-server-address ssl-ctx])))
-      (check (http-register-handler httpd "/"
-               (lambda (req res)
-                 (http-response-write res 200 '(("Content-Type" . "text/plain"))
-                                      "hello, ssl")))
-             => (void))
-      (let (req (http-get (string-append "https://" test-server-address)
-                          ssl-context: (insecure-client-ssl-context))) ; self-signed cert
-        (check (request-status req) => 200)
-        (check (request-text req) => "hello, ssl")
-        (request-close req)))))
+    (test-case "self-signed certificate"
+      (let* ((ssl-ctx (make-server-ssl-context test-certificate test-private-key))
+             (httpd (start-http-server! [ssl:  test-server-address ssl-ctx])))
+        (check (http-register-handler httpd "/"
+                 (lambda (req res)
+                   (http-response-write res 200 '(("Content-Type" . "text/plain"))
+                                        "hello, ssl")))
+               => (void))
+        (let (req (http-get (string-append "https://" test-server-address)
+                            ssl-context: (insecure-client-ssl-context))) ; self-signed cert
+          (check (request-status req) => 200)
+          (check (request-text req) => "hello, ssl")
+          (request-close req))))))
