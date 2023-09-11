@@ -80,9 +80,9 @@
   (void))
 
 (def (invoke program args
-             stdout-redirection: (stdout-r #t)
-             stderr-redirection: (stderr-r #t)
-             stdin-redirection:  (stdin-r #t))
+             stdout-redirection: (stdout-r #f)
+             stderr-redirection: (stderr-r #f)
+             stdin-redirection:  (stdin-r #f))
   (let* ((process (open-process [path: program arguments: args
                                  stdout-redirection: stdout-r
                                  stderr-redirection: stderr-r
@@ -91,7 +91,7 @@
     (try
      (unless (zero? status)
        (error "Process invocation exited with non-zero status" status (cons program args)))
-     (unless stdout-r
+     (when stdout-r
        (read-line process #f))
      (finally
       (close-port process)))))

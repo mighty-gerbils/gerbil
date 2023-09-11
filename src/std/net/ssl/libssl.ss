@@ -16,9 +16,9 @@
             SSL_get_peer_certificate
             SSL_ERROR_WANT_READ
             SSL_ERROR_WANT_WRITE
-            X509_get_text_by_NID
-            NID_commonName
-            NID_subject_alt_name
+            X509_read
+            X509_get_subject_name
+            X509_get_san_uris
             make-client-ssl-context
             make-insecure-client-ssl-context
             make-server-ssl-context
@@ -28,6 +28,7 @@
 #include <openssl/ssl.h>
 #include <openssl/conf.h>
 #include <openssl/err.h>
+#include <openssl/bio.h>
 
 static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
 {
@@ -207,15 +208,14 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *ca_path, const char *cert_path, co
   return NULL;
  }
 
- STACK_OF(X509_NAME) *client_ca_list = SSL_load_client_CA_file(ca_path);
- if (!client_ca_list) {
+ int r = SSL_CTX_load_verify_dir(ctx, ca_path);
+ if (r <= 0) {
   ERR_print_errors_fp(stderr);
   SSL_CTX_free(ctx);
   return NULL;
- }
- SSL_CTX_set_client_CA_list(ctx, client_ca_list);
+  }
 
- int r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
+ r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
  if (r <= 0) {
   ERR_print_errors_fp(stderr);
   SSL_CTX_free(ctx);
@@ -233,20 +233,79 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *ca_path, const char *cert_path, co
  return ctx;
 }
 
-__thread char openssl_x509_name_buf[4096];
-static char *ffi_X509_get_text_by_NID(X509 *cert, int nid)
+__thread char openssl_x509_name_buf[16384];
+static char *ffi_X509_get_subject_name(X509 *cert)
 {
  X509_NAME *name = X509_get_subject_name(cert);
  if (!name) {
   return NULL;
  }
 
- int r = X509_NAME_get_text_by_NID(name, nid, openssl_x509_name_buf, sizeof(openssl_x509_name_buf));
+ int r = X509_NAME_get_text_by_NID(name, NID_commonName, openssl_x509_name_buf, sizeof(openssl_x509_name_buf));
  if (r <= 0) {
   return NULL;
  }
 
  return openssl_x509_name_buf;
+}
+
+static char *ffi_X509_get_san_uris(X509 *cert)
+{
+ int cursor = 0;
+
+ STACK_OF(GENERAL_NAME) *san_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
+ if (san_names == NULL) {
+  return NULL;
+ }
+
+ int count = sk_GENERAL_NAME_num(san_names);
+ for (int i = 0; i < count; i++) {
+  const GENERAL_NAME *name = sk_GENERAL_NAME_value(san_names, i);
+  if (name->type == GEN_URI) {
+   int len = ASN1_STRING_length(name->d.uniformResourceIdentifier);
+   if (cursor + len < sizeof(openssl_x509_name_buf) - 2) {
+    const char *uri = ASN1_STRING_get0_data(name->d.uniformResourceIdentifier);
+    memcpy(openssl_x509_name_buf + cursor, uri, len);
+    cursor += len;
+    openssl_x509_name_buf[cursor] = ',';
+    cursor++;
+   } else {
+    openssl_x509_name_buf[cursor] = 0;
+    return  openssl_x509_name_buf;
+   }
+  }
+ }
+
+ if (!cursor) {
+  return NULL;
+ }
+
+ openssl_x509_name_buf[cursor] = 0;
+ return openssl_x509_name_buf;
+}
+
+static X509 *ffi_X509_read(const char *path)
+{
+ BIO *bp = BIO_new(BIO_s_file());
+ if (!bp) {
+  return NULL;
+ }
+
+ int r = BIO_read_filename(bp, path);
+ if (r <= 0) {
+  ERR_print_errors_fp(stderr);
+  return NULL;
+ }
+
+ X509 *x509 = PEM_read_bio_X509(bp, NULL, 0, NULL);
+ if (!x509) {
+  ERR_print_errors_fp(stderr);
+  BIO_free(bp);
+  return NULL;
+ }
+
+ BIO_free(bp);
+ return x509;
 }
 
 END-C
@@ -288,6 +347,6 @@ END-C
   (define-c-lambda make-server-ssl-context (char-string char-string) SSL_CTX* "ffi_server_ssl_ctx")
   (define-c-lambda make-actor-tls-context (char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
 
-  (define-const NID_commonName)
-  (define-const NID_subject_alt_name)
-  (define-c-lambda X509_get_text_by_NID (X509* int) char-string "ffi_X509_get_text_by_NID"))
+  (define-c-lambda X509_get_subject_name (X509*) char-string "ffi_X509_get_subject_name")
+  (define-c-lambda X509_get_san_uris (X509*) char-string "ffi_X509_get_san_uris")
+  (define-c-lambda X509_read (char-string) X509* "ffi_X509_read"))

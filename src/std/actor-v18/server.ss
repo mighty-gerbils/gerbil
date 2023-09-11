@@ -803,7 +803,8 @@
         (hash-update! conns srv-id (cut cons notification <>) [])
         (when cert
           (let (cap (actor-tls-certificate-cap cert))
-            (update-capabilities! srv-id cap 'connected)))
+            (when cap
+              (update-capabilities! srv-id cap 'connected))))
         (dispatch-pending-conns! srv-id (!ok notification)))
 
        ((!disconnected conn srv-id)

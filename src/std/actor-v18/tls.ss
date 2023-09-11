@@ -10,7 +10,7 @@
         ./path)
 (export ensemble-tls-base-path
         ensemble-tls-server-path
-        ensemble-tls-ca-certificates-file-path
+        ensemble-tls-ca-certificates-path
         get-actor-tls-context
         actor-tls-certificate-id
         actor-tls-certificate-cap
@@ -28,30 +28,30 @@
 (def (ensemble-tls-server-path server-id)
   (path-expand "tls" (ensemble-server-path server-id)))
 
-(def (ensemble-tls-ca-certificates-file-path)
-  (path-expand "ca.pem" (ensemble-tls-base-path)))
+(def (ensemble-tls-ca-certificates-path)
+  (path-expand "ca-certificates" (ensemble-tls-base-path)))
 
 (def (get-actor-tls-context server-id)
-  (let* ((ca.pem (ensemble-tls-ca-certificates-file-path))
+  (let* ((ca-certificates (ensemble-tls-ca-certificates-path))
          (server-base (ensemble-tls-server-path server-id))
          (server.crt (path-expand "server.crt" server-base))
          (server.key (path-expand "server.key" server-base)))
-    (and (andmap file-exists? [ca.pem server-base server.crt server.key])
-         (make-actor-tls-context ca.pem server.crt server.key))))
+    (and (andmap file-exists? [ca-certificates server-base server.crt server.key])
+         (make-actor-tls-context ca-certificates server.crt server.key))))
 
 (def (actor-tls-certificate-id x509)
-  (let (name (X509_get_text_by_NID x509 NID_commonName))
+  (let (name (X509_get_subject_name x509))
     (and name
-         (car (string-split name #\.)))))
+         (string->symbol (car (string-split name #\.))))))
 
 (def (actor-tls-certificate-cap x509)
-  (let (altname (X509_get_text_by_NID x509 NID_subject_alt_name))
-    (and altname
+  (let (san-uris (X509_get_san_uris x509))
+    (and san-uris
          (filter-map (lambda (x)
-                       (and (string-prefix? "URI:cap:" x)
+                       (and (string-prefix? "cap:" x)
                             (string->symbol
-                             (substring x (string-length "URI:cap:") (string-length x)))))
-                     (string-split altname #\,)))))
+                             (substring x (string-length "cap:") (string-length x)))))
+                     (string-split san-uris #\,)))))
 
 (def (actor-tls-domain)
   (read-file-string (path-expand "domain" (ensemble-tls-base-path))))
@@ -71,11 +71,13 @@
          (root-ca.key  (path-expand "private/root-ca.key" root-ca-path))
          (root-ca.csr  (path-expand "root-ca.csr" root-ca-path))
          (root-ca.crt  (path-expand "root-ca.crt" root-ca-path))
-         (ca-certificates (path-expand "ca-certificates" base-path))
-         (ca.pem          (path-expand "ca.pem" base-path)))
+         (ca-certificates (path-expand "ca-certificates" base-path)))
+
     ;; sanity check: refuse to remove an existing root-ca
     (when (file-exists? root-ca-path)
       (error "root-ca already exists" root-ca-path))
+
+    (create-directory* base-path)
 
     ;; write the domain so that actor-tls-host can find it
     (write-file-string (path-expand "domain" base-path) domain)
@@ -88,11 +90,12 @@
       (create-directory* (path-expand dir root-ca-path) #o700))
     (write-file-string (path-expand "db/index" root-ca-path) "")
     (write-file-string (path-expand "db/serial" root-ca-path)
-                       (read-all-as-string (invoke "openssl" ["rand" "-hex" "16"]
-                                                   stdout-redirection: #f)))
+                       (invoke "openssl" ["rand" "-hex" "16"]
+                               stdout-redirection: #t))
     (write-file-string (path-expand "db/crlnumber" root-ca-path) "1001")
 
     ;; root-ca.conf
+    (displayln "... generate " root-ca.conf)
     (call-with-output-file root-ca.conf
       (cut write-template root-ca.conf-template <>
            domain: domain
@@ -102,8 +105,9 @@
            home: root-ca-path))
 
     ;; root-ca.csr
+    (displayln "... generate " root-ca.csr " " root-ca.key)
     (invoke "openssl"
-            ["req" "-new "
+            ["req" "-new"
              "-config" root-ca.conf
              "-out" root-ca.csr
              "-keyout" root-ca.key
@@ -111,11 +115,12 @@
              ;;      an organization with high security requirements may want to
              ;;      pass the passphrase more securely.
              ;;      patches welcome if you are concerned about this.
-             "-passin" (string-append "pass:" root-ca-passphrase)])
+             "-passout" (string-append "pass:" root-ca-passphrase)])
 
     ;; root-ca.crt
+    (displayln "... generate " root-ca.crt)
     (invoke "openssl"
-            ["ca" "-selfsign"
+            ["ca" "-selfsign" "-batch" "-notext"
              "-config" root-ca.conf
              "-in" root-ca.csr
              "-out" root-ca.crt
@@ -125,11 +130,7 @@
 
     ;; initialize trust-store
     (create-directory* ca-certificates)
-    (copy-file root-ca.crt ca-certificates)
-    (call-with-output-file [path: ca.pem append: #t]
-      (lambda (out)
-        (let (blob (read-file-u8vector root-ca.crt))
-          (write-subu8vector blob 0 (u8vector-length blob) out))))))
+    (copy-file root-ca.crt (path-expand "root-ca.crt" ca-certificates))))
 
 
 (def (generate-actor-tls-sub-ca! root-ca-passphrase
@@ -146,7 +147,7 @@
          (sub-ca.csr   (path-expand "sub-ca.csr" sub-ca-path))
          (sub-ca.crt   (path-expand "sub-ca.crt" sub-ca-path))
          (ca-certificates (path-expand "ca-certificates" base-path))
-         (ca.pem          (path-expand "ca.pem" base-path)))
+         (domain          (actor-tls-domain)))
 
     ;; sanity check: refuse to remove an existing root-ca or sub-ca
     (unless (file-exists? root-ca-path)
@@ -162,29 +163,34 @@
       (create-directory* (path-expand dir sub-ca-path) #o700))
     (write-file-string (path-expand "db/index" sub-ca-path) "")
     (write-file-string (path-expand "db/serial" sub-ca-path)
-                       (read-all-as-string (invoke "openssl" ["rand" "-hex" "16"]
-                                                   stdout-redirection: #f)))
+                       (invoke "openssl" ["rand" "-hex" "16"]
+                               stdout-redirection: #t))
     (write-file-string (path-expand "db/crlnumber" sub-ca-path) "1001")
 
+    (displayln "... generate " sub-ca.conf)
     ;; sub-ca.conf
     (call-with-output-file sub-ca.conf
       (cut write-template sub-ca.conf-template <>
+           domain: domain
+           home: sub-ca-path
            country-name: country-name
            organization-name: organization-name
            common-name: common-name))
 
     ;; sub-ca.key, sub-ca.csr
+    (displayln "... generate " sub-ca.csr " " sub-ca.key)
     (invoke "openssl"
             ["req" "-new"
              "-config" sub-ca.conf
              "-out" sub-ca.csr
              "-keyout" sub-ca.key
              ;; TODO see above
-             "-passin" (string-append "pass:" sub-ca-passphrase)])
+             "-passout" (string-append "pass:" sub-ca-passphrase)])
 
     ;; sub-ca.crt
+    (displayln "... generate " sub-ca.crt)
     (invoke "openssl"
-            ["ca"
+            ["ca" "-batch" "-notext"
              "-config" root-ca.conf
              "-in" sub-ca.csr
              "-out" sub-ca.crt
@@ -193,12 +199,7 @@
              "-passin" (string-append "pass:" root-ca-passphrase)])
 
     ;; update trust store
-    (copy-file sub-ca.crt ca-certificates)
-    (call-with-output-file [path: ca.pem append: #t]
-      (lambda (out)
-        (let (blob (read-file-u8vector sub-ca.crt))
-          (write-subu8vector blob 0 (u8vector-length blob) out))))
-    ))
+    (copy-file sub-ca.crt (path-expand "sub-ca.crt" ca-certificates))))
 
 (def (generate-actor-tls-cert! sub-ca-passphrase
                                server-id: server-id
@@ -217,7 +218,7 @@
          (server.key   (path-expand "server.key" server-path))
          (server.csr   (path-expand "server.csr" server-path))
          (server.crt   (path-expand "server.crt" server-path))
-         (domain      (actor-tls-domain)))
+         (domain       (actor-tls-domain)))
 
     ;; sanity check: must have a sub-ca
     (unless (file-exists? sub-ca-path)
@@ -227,6 +228,7 @@
       (create-directory* server-path))
 
     ;; server.conf
+    (displayln "... generate " server.conf)
     (call-with-output-file server.conf
       (cut write-template server.conf-template <>
            server-id: server-id
@@ -244,6 +246,7 @@
 
     ;; server.key
     (unless (file-exists? server.key)
+      (displayln "... generate " server.key)
       (invoke "openssl"
               ["genpkey"
                "-quiet"
@@ -255,8 +258,9 @@
     (when (file-exists? server.csr)
       (rename-file server.csr
                    (string-append server.csr ".bak." (number->string (current-time-seconds)))))
+    (displayln "... generate " server.csr)
     (invoke "openssl"
-            ["req -new"
+            ["req" "-new"
              "-config" server.conf
              "-key" server.key
              "-out" server.csr])
@@ -265,12 +269,12 @@
     (when (file-exists? server.crt)
       (rename-file server.crt
                    (string-append server.crt ".bak." (number->string (number->string (current-time-seconds))))))
+    (displayln "... generate " server.crt)
     (invoke "openssl"
-            ["ca"
+            ["ca" "-batch" "-notext"
              "-config" sub-ca.conf
              "-in" server.csr
              "-out" server.crt
-             "-extensions" "actor_ext"
              ;; TODO see above
              "-passin" (string-append "pass:" sub-ca-passphrase)])))
 
@@ -353,25 +357,53 @@ END
 (def sub-ca.conf-template #<<END
 [default]
 name                    = sub-ca
+domain_suffix           = ${domain}
+default_ca              = ca_default
+name_opt                = utf8,esc_ctrl,multiline,lname,align
 
 [ca_dn]
 countryName             = "${country-name}"
 organizationName        = "${organization-name}"
 commonName              = "${common-name}"
 
-[ca_default]
-default_days            = 365
-default_crl_days        = 30
-copy_extensions         = copy
-
-[actor_ext]
-authorityInfoAccess     = @issuer_info
-authorityKeyIdentifier  = keyid:always
-basicConstraints        = critical,CA:false
-crlDistributionPoints   = @crl_info
-keyUsage                = critical,digitalSignature,keyEncipherment
-extKeyUsage             = critical,serverAuth,clientAuth
+[ca_ext]
+basicConstraints        = critical,CA:true
+keyUsage                = critical,keyCertSign,cRLSign
 subjectKeyIdentifier    = hash
+
+[ca_default]
+home                    = ${home}
+database                = $home/db/index
+serial                  = $home/db/serial
+crlnumber               = $home/db/crlnumber
+certificate             = $home/$name.crt
+private_key             = $home/private/$name.key
+RANDFILE                = $home/private/random
+new_certs_dir           = $home/certs
+unique_subject          = no
+default_days            = 730
+default_crl_days        = 30
+default_md              = sha256
+copy_extensions         = copy
+policy                  = policy_c_o_match
+
+[policy_c_o_match]
+countryName             = optional
+stateOrProvinceName     = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[req]
+default_bits            = 4096
+encrypt_key             = yes
+default_md              = sha256
+utf8                    = yes
+string_mask             = utf8only
+prompt                  = no
+distinguished_name      = ca_dn
+req_extensions          = ca_ext
 END
 )
 
@@ -388,11 +420,10 @@ L  = ${location}
 C  = ${country-name}
 
 [ext]
-subjectAltName      = @sans
+subjectAltName          = @sans
 
 [sans]
 DNS = ${server-id}.${domain}
 ${capabilities}
-
 END
 )

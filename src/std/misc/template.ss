@@ -9,7 +9,7 @@
 (def (write-template template output . args)
   (let (str (apply apply-template template args))
     (cond
-     ((input-port? output)
+     ((output-port? output)
       (display str output))
      ((is-StringWriter? output)
       (StringWriter-write-string output str))
