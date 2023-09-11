@@ -3,6 +3,7 @@
 ;;; miscellaneous process utilities
 
 (export
+  invoke
   run-process
   run-process/batch)
 
@@ -77,3 +78,20 @@
                check-status: check-status environment: environment
                directory: directory show-console: show-console)
   (void))
+
+(def (invoke program args
+             stdout-redirection: (stdout-r #t)
+             stderr-redirection: (stderr-r #t)
+             stdin-redirection:  (stdin-r #t))
+  (let* ((process (open-process [path: program arguments: args
+                                 stdout-redirection: stdout-r
+                                 stderr-redirection: stderr-r
+                                 stdin-redirection: stdin-r]))
+         (status (process-status process)))
+    (try
+     (unless (zero? status)
+       (error "Process invocation exited with non-zero status" status (cons program args)))
+     (unless stdout-r
+       (read-line process #f))
+     (finally
+      (close-port process)))))
