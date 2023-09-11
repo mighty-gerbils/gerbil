@@ -7,6 +7,8 @@
         :std/test
         :std/io
         :std/net/ssl
+        :std/net/httpd
+        :std/net/request
         :std/text/utf8
         :std/os/temporaries)
 (export ssl-client-test
@@ -24,6 +26,8 @@
   (path-expand "test.cert" test-directory))
 (def test-server-name
   "www.example.local")
+(def test-server-address
+  "127.0.0.1:39999")
 
 (def test-csr-template #<<END
 [req]
@@ -117,9 +121,6 @@ END
 
 (def ssl-server-test
   (test-suite "ssl server"
-    (def test-server-address
-      "127.0.0.1:39999")
-
     (def (test-server cert privk)
       (let* ((srv-ctx (make-server-ssl-context cert privk))
              (srv-sock (ssl-listen test-server-address context: srv-ctx))
@@ -130,6 +131,7 @@ END
              (reply (string-append "hello, " greet)))
         (Writer-write (SSLSocket-writer cli-sock) (string->utf8 reply))
         (SSLSocket-close cli-sock)
+        (ServerSocket-close srv-sock)
         (void)))
 
     (def (test-client ctx)
@@ -152,13 +154,29 @@ END
         (check (thread-join! srv) => (void))))))
 
 (def http-client-test
-  (test-suite "http client"
-    ;; ...
-    (void)
-    ))
+  (test-suite "https client"
+    (test-case  "https request: www.google.com"
+      (let (req (http-get "https://www.google.com"))
+        (check (request-status req) => 200)
+        (request-close req)))
+    (test-case "https request failure: badssl"
+      (check-exception (http-get "https://expired.badssl.com") ssl-error?))
+    (test-case "https request insecure: badssl"
+      (let (req (http-get "https://www.google.com" ssl-context: (insecure-client-ssl-context)))
+        (check (request-status req) => 200)
+        (request-close req)))))
 
 (def http-server-test
-  (test-suite "http server"
-    ;; ...
-    (void)
-    ))
+  (test-suite "https server"
+    (let* ((ssl-ctx (make-server-ssl-context test-certificate test-private-key))
+           (httpd (start-http-server! [ssl:  test-server-address ssl-ctx])))
+      (check (http-register-handler httpd "/"
+               (lambda (req res)
+                 (http-response-write res 200 '(("Content-Type" . "text/plain"))
+                                      "hello, ssl")))
+             => (void))
+      (let (req (http-get (string-append "https://" test-server-address)
+                          ssl-context: (insecure-client-ssl-context))) ; self-signed cert
+        (check (request-status req) => 200)
+        (check (request-text req) => "hello, ssl")
+        (request-close req)))))
