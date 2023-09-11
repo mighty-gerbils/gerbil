@@ -96,7 +96,6 @@ gerbil:
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="" \
 	--build-arg cores=$(cores) \
-	--build-arg with_db=NO \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
 	docker tag final gerbil/gerbil:$(arch)
