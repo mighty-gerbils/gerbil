@@ -330,6 +330,7 @@
     "misc/path"
     "misc/symbol"
     "misc/rwlock"
+    "misc/template"
     ;; :std/protobuf
     "protobuf/io"
     "protobuf/macros"
