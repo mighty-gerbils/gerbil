@@ -34,7 +34,7 @@
                             capabilities: test-server2-cap))
 
 (def (test-cleanup!)
-  #;(when (file-exists? gerbil-path)
+  (when (file-exists? gerbil-path)
     (delete-file-or-directory gerbil-path #t))
   (setenv "GERBIL_PATH"))
 
