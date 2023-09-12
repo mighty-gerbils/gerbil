@@ -21,6 +21,22 @@
         :std/text/hex)
 (export main)
 
+(def (main . args)
+  (call-with-getopt gxensemble-main args
+    program: "gxensemble"
+    help: "the Gerbil Actor Ensemble Manager"
+    run-cmd
+    registry-cmd
+    load-cmd
+    eval-cmd
+    repl-cmd
+    ping-cmd
+    shutdown-cmd
+    admin-cmd
+    list-cmd
+    ca-cmd
+    package-cmd))
+
 ;;;
 ;;; getopt objects
 ;;;
@@ -306,6 +322,16 @@
     capabilities-optional-argument
     help: "generate or inspect an actor server certificate"))
 
+(def package-output-option
+  (option 'output "-o" "--output"
+    default: "ensemble.tar.gz"
+    help: "output file for the server package"))
+
+(def package-cmd
+  (command 'package
+    package-output-option
+    server-id-argument
+    help: "package ensemble state to ship an actor server environment"))
 ;;;
 ;;; command implementation
 ;;;
@@ -325,7 +351,8 @@
   (shutdown         do-shutdown)
   (list             do-list)
   (admin            do-admin)
-  (ca               do-ca))
+  (ca               do-ca)
+  (package          do-package))
 
 (defcommand-table list-commands
   (servers     do-list-servers)
@@ -360,21 +387,6 @@
         program: name
         gopts ...))))
 
-(def (main . args)
-  (call-with-getopt gxensemble-main args
-    program: "gxensemble"
-    help: "the Gerbil Actor Ensemble Manager"
-    run-cmd
-    registry-cmd
-    load-cmd
-    eval-cmd
-    repl-cmd
-    ping-cmd
-    shutdown-cmd
-    admin-cmd
-    list-cmd
-    ca-cmd))
-
 (def (gxensemble-main cmd opt)
   (dispatch-command cmd opt main-commands))
 
@@ -392,8 +404,9 @@
 
 (def (do-admin-creds opt)
   (if (hash-get opt 'view)
-    (let (pubk (get-admin-pubkey))
-      (displayln (hex-encode pubk)))
+    (let* ((pubk-path (default-admin-pubkey-path))
+           (pubk-raw (read-file-u8vector pubk-path)))
+      (displayln (hex-encode pubk-raw)))
     (let* ((passphrase (read-password prompt: "Enter passphprase: "))
            (again      (read-password prompt: "Re-enter passphprase: ")))
       (unless (equal? passphrase again)
@@ -492,6 +505,34 @@
       (generate-actor-tls-cert! sub-passphrase
                                 server-id: server-id
                                 capabilities: (hash-ref opt 'capabilities)))))))
+
+(def (do-package opt)
+  (let* ((server-id (hash-ref opt 'server-id))
+         (output    (hash-ref opt 'output))
+         (output    (path-expand output (current-directory)))
+         (gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+         (ensemble-base "ensemble/")
+         (ensemble-rebase
+          (lambda files
+            (map (cut string-append ensemble-base <>) files)))
+         (server-base
+          (string-append ensemble-base
+                         "server/"
+                         (symbol->string server-id) "/"))
+         (server-rebase
+          (lambda files
+            (map (cut string-append server-base <>) files))))
+
+    (current-directory gerbil-path)
+    (invoke "tar"
+            ["cavf" output
+             (ensemble-rebase
+              "admin.pub"
+              "tls/ca-certificates"
+              "tls/ca.pem"
+              "tls/caroot.pem"
+              "tls/domain") ...
+             (server-rebase "tls/chain.pem" "tls/server.key") ...])))
 
 (def (do-shutdown opt)
   (start-actor-server-with-options! opt)
