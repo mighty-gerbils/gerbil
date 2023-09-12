@@ -28,7 +28,7 @@ foreign dependencies are not built by default, with the exception of
 enough to warrant being present by default; you can still disable them
 if you want for a minimal installation.
 
-In Ubuntu 20.04, you can install the dependencies for a default installation with:
+In Ubuntu, you can install the dependencies for a default installation with:
 
 ```bash
 $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
@@ -93,7 +93,7 @@ the brew recipe will be updated for v0.18 once the release is ready.
 
 The latest Gerbil images are available via [Docker Hub](https://hub.docker.com/u/gerbil)
 
-Ubuntu based version:
+Alpine based version:
 ```bash
 docker pull gerbil/gerbil:$(uname -m)
 ```
