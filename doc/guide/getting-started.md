@@ -42,7 +42,9 @@ If you are on Linux or BSD, I also recommend using `--enable-poll`,
 which will use the more scalable `poll`-based i/o scheduler (instead
 of the default `select`-based one).
 
-**Note** Do not use `--enable-poll` if you are on MacOS, as console polling is broken.
+::: warning Note
+Do not use `--enable-poll` if you are on MacOS, as console polling is broken.
+:::
 
 If you intend to build static executables for servers, then you should
 remove `--enable-shared` to configure the system to use static

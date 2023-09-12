@@ -63,7 +63,9 @@ $ cat build.ss
 (import :std/build-script)
 (defbuild-script
   `("util"
-    ,(if (getenv "BUILD_RELEASE" #f) '(optimized-static-exe: "hello") '(exe: "hello"))))
+    ,(if (getenv "BUILD_RELEASE" #f)
+       '(optimized-static-exe: "hello")
+       '(exe: "hello"))))
 ```
 
 If you are in your development environment and building executables for your host, then you can just invoke it as
@@ -79,9 +81,9 @@ BUILD_RELEASE=t ./build.ss
 ```
 
 ::: tip Note
-You may need to pass some linker flags in your build spec, using
-`(optimized-static-exe: <module> "-ld-options" "...")`.  This might be
-necessary because the compiler cannot tell what the tree shaker will
-eliminate and thus it is not prudent to automatically link all stdlib
-foreign dependencies.
+You may need to pass some linker flags in your build spec when using
+`(optimized-static-exe: <module> "-ld-options" "...")`.  This may be
+necessary because the compiler cannot tell in advance what the tree
+shaker will eliminate and thus it is not prudent to automatically
+link all stdlib foreign dependencies.
 :::

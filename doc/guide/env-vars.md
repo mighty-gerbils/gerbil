@@ -36,9 +36,14 @@ but can be disabled with the `GERBIL_BUILD_CORES` variable below).
 
 This is the program name or path to `gcc`; defaults to `gcc` resolving from your `$PATH`..
 
+::: tip Note
+If you have configured Gerbil with `--enable-c++`, you should set `GERBIL_GCC=g++`.
+:::
+
 ## GERBIL_AR
 
-This is the program name or path to the `ar` executable; defaults to `ar` resolving from your `$PATH`.
+This is the program name or path to the `ar` executable; defaults to
+`ar` resolving from your `$PATH`.
 
 ## GERBIL_BUILD_CORES
 
