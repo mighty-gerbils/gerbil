@@ -28,7 +28,7 @@ foreign dependencies are not built by default, with the exception of
 enough to warrant being present by default; you can still disable them
 if you want for a minimal installation.
 
-In Ubuntu 20.04, you can install the dependencies for a default installation with:
+In Ubuntu, you can install the dependencies for a default installation with:
 
 ```bash
 $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
@@ -53,7 +53,7 @@ $ ./configure && make && sudo make install
 ```
 
 This will install Gerbil in `/opt/gerbil`; you will need to add
-`/opt/gerbin/bin` to your PATH environment variable.
+`/opt/gerbil/bin` to your PATH environment variable.
 
 It is recommended that you enable shared libraries if this is an installation for your development workstation or laptop:
 ```bash
@@ -93,22 +93,23 @@ the brew recipe will be updated for v0.18 once the release is ready.
 
 The latest Gerbil images are available via [Docker Hub](https://hub.docker.com/u/gerbil)
 
-Ubuntu based version:
+Alpine based version:
 ```bash
-docker pull gerbil/ubuntu
+docker pull gerbil/gerbil:$(uname -m)
 ```
 
 To get to the REPL:
 ```bash
-docker run -it gerbil/ubuntu
+docker run -it gerbil/gebil:$(uname -m)
 ```
 
 To get a bash shell where you can compile programs:
 ```bash
-docker run -it gerbil/ubuntu bash
+docker run -it gerbil/gerbil:$(uname -m) bash
 ```
 
-Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/docker/Dockerfile)
+Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/docker/Dockerfile).
+See the [Docker Gulde](docker.md) for additional information.
 
 ## Using Nix and/or Docker
 

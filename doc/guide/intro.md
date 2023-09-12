@@ -9,7 +9,7 @@ interpreter prompt.
 
 ## Using Gerbil
 The Gerbil interpreter is `/opt/gerbil/bin/gxi`, and the compiler is
-`/opt/gerbin/bin/gxc`, assuming the default installation prefix.
+`/opt/gerbil/bin/gxc`, assuming the default installation prefix.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
@@ -17,28 +17,28 @@ directly by running `gxi`.
 
 ## Hello world
 Add `/opt/gerbil/bin` to your path and invoke the interpreter
-for the obligatory "hello world":
+for the obligatory "hello, world":
 ```
 $ export PATH=$PATH:/opt/gerbil/bin
 $ gxi
-> (displayln "hello world")
-hello world
+> (displayln "hello, world")
+hello, world
 ```
 
-The "hello world" script:
+The "hello, world" script:
 ```
 $ cat > hello.ss <<EOF
 #!/usr/bin/env gxi
 
 (def (main . args)
-  (displayln "hello world"))
+  (displayln "hello, world"))
 EOF
 $ chmod +x hello.ss
 $./hello.ss
-hello world
+hello, world
 ```
 
-The "hello world" executable:
+The "hello, world" executable:
 ```
 $ cat > gerbil.pkg <<EOF
 (package: example)
@@ -47,12 +47,12 @@ EOF
 $ cat > hello.ss <<EOF
 (export main)
 (def (main . args)
-  (displayln "hello world"))
+  (displayln "hello, world"))
 EOF
 
 $ gxc -O -exe -o hello hello.ss
 $ ./hello
-hello world
+hello, world
 ```
 
 ## Core Gerbil
@@ -76,19 +76,28 @@ formal arguments:
 (def (a-simple-function a b)
   (+ a b))
 > (a-simple-function 1 2)
-=> 3
+3
 
 (def (an-opt-lambda a (b 1))
   (+ a b))
 > (an-opt-lambda 1)
-=> 2
+2
 
 (def (a-keyword-lambda a b: (b 1))
   (+ a b))
 > (a-keyword-lambda 1)
-=> 2
+2
 > (a-keyword-lambda 1 b: 2)
-=> 3
+3
+
+(def (a-keyword-lambda-with-options a b: (b 1) (c 3) . rest)
+ (+ a (* b c)))
+> (a-keyword-lambda-with-options 1)
+4
+> (a-keyword-lambda-with-options 1 b: 2)
+7
+> (a-keyword-lambda-with-options 1 b: 2 4)
+9
 ```
 
 Multiple arity lambdas can be declared with case-lambda:
@@ -108,13 +117,13 @@ Let bindings can have a short form for single arguments,
 as well as multiple value bindings mixed in:
 ```scheme
 > ((let (x 1) (lambda (y) (+ x 1))) 1)
-=> 2
+2
 > (let ((values a b) (values 1 2)) (+ a b))
-=> 3
+3
 > (let ((x 1)
         ((values y z) (values 2 3)))
     (+ x y z))
-=> 6
+6
 ```
 
 Note that the `_` identifier is reserved for bindings to
@@ -124,7 +133,7 @@ is ignored and no lexical binding is generated:
 (def (a-function x . _) ; accepts 1 or more ignored args
  (+ x 1))
 > (a-function 1 2)
-=> 2
+2
 ```
 
 Apart from cons and list, pairs and lists can also be
@@ -132,10 +141,10 @@ constructed with short-hand syntax using square brackets:
 ```scheme
 ; cons a pair
 > [1 . 2]
-=> (1 . 2)
+(1 . 2)
 ; cons a list
 > [1 2 3]
-=> (1 2 3)
+(1 2 3)
 ```
 
 The short-hand syntax also supports list splicing using
@@ -143,7 +152,7 @@ using the ellipsis `...`:
 ```scheme
 ; splice nested list
 > [1 2 [3 4 5] ... 6]
-=> (1 2 3 4 5 6)
+(1 2 3 4 5 6)
 ```
 
 Bindings can be mutated with `set!` as usual.
@@ -151,7 +160,7 @@ Bindings can be mutated with `set!` as usual.
 > (def a #f)
 > (set! a 'a)
 > a
-=> 'a
+'a
 ```
 
 `set!` also expands with s-expressions as the target
@@ -165,7 +174,7 @@ invocation.
 > (def a-pair (cons 'a 'b))
 > (set! (car a-pair) 'c)
 > (car a-pair)
-=> 'c
+'c
 ```
 
 Finally, macros that mixin the `setq-macro` class,
@@ -189,7 +198,7 @@ Structs are defined with `defstruct`:
 (defstruct point (x y))
 (defstruct (point-3d point) (z))
 > (make-point-3d 1 2 3)
-=> #<point-3d>
+#<point-3d>
 ```
 
 For each struct `defstruct` defines a constructor, a type predicate,
@@ -200,14 +209,14 @@ So:
 ```scheme
 > (def my-point (make-point-3d 1 2 3))
 > (point-x my-point)
-=> 1
+1
 > (point-y my-point)
-=> 2
+2
 > (point-3d-z my-point)
-=> 3
+3
 > (set! (point-3d-z my-point) 0)
 > (point-3d-z my-point)
-=> 0
+0
 
 ```
 
@@ -222,18 +231,18 @@ For example:
 ...
 > (def my (make-C a: 1 b: 2 c: 3))
 > (A? my)
-=> #t
+#t
 > (B? my)
-=> #t
+#t
 > (@ my a)
-=> 1
+1
 > (@ my b)
-=> 2
+2
 > (@ my c)
-=> 3
+3
 > (set! (@ my c) 0)
 > (@ my c)
-=> 0
+0
 
 ```
 
@@ -296,7 +305,7 @@ For example:
     (set! (point-3d-z self) z)))
 > (def my-point (make-point-3d 1 2))
 > (point-3d-z my-point)
-=> 0
+0
 
 ```
 
@@ -318,17 +327,17 @@ For example, the following constructs a diamond hierarchy with a base struct:
 (def d (make-D 1))
 
 > (A? d)
-=> #t
+#t
 > (A-x d)
-=> 1
+1
 > (B? d)
-=> #t
+#t
 > (C? d)
-=> #t
+#t
 > (D? d)
-=> #t
+#t
 > (type-descriptor-mixin D::t)
-=> (#<type #5 B> #<type #6 C> #<type #7 A>)
+(#<type #5 B> #<type #6 C> #<type #7 A>)
 
 ```
 
@@ -538,13 +547,13 @@ For example:
    (else 'something-else)))
 > (my-destructurer [1 2 3])
 a pair (1 . (2 3))
-=> 'pair
+'pair
 > (my-destructurer (make-point 1 2))
 a 2d point (1 2)
-=> 'point-2d
+'point-2d
 > (my-destructurer (make-point-3d 1 2))
 a 3d-point (2 0 0)
-=> 'point-3d
+'point-3d
 ```
 
 #### Destructuring Binds
@@ -552,7 +561,7 @@ Gerbil's `match` provides a shorthand syntax for match lambdas:
 ```scheme
 (def car+cdr (match <> ([a . b] (values a b))))
 > (car+cdr [1 2 3])
-=> values 1 '(2 3)
+values 1 '(2 3)
 ```
 
 It is also common to destructure-bind an object, thus a common
@@ -599,7 +608,7 @@ hygienically:
     (with-syntax ((magic-id (datum->syntax #'macro 'magic)))
       #'(let (magic-id expr) body ...)))))
 > (with-magic 3 (+ magic 1))
-=> 4
+4
 ```
 
 #### defsyntax-for-match
@@ -623,12 +632,12 @@ destructuring  pairs tagged with `'foo`:
 
 > (def my-foo (foo 1))
 > my-foo
-=> (foo . 1)
+(foo . 1)
 > (match my-foo ((foo x) x))
-=> 1
+1
 > (def my-bar (cons 'bar 2))
 > (match my-bar ((foo x) x) (else 'not-a-foo))
-=> not-a-foo
+not-a-foo
 ```
 
 #### begin-syntax
@@ -686,7 +695,7 @@ a function that uses `display-exception` from the runtime as extern:
 > (import A)
 > (with-display-exception (lambda () (error 'it-is-an-error)))
 it-is-an-error
-=> #<error-exception #5>
+#<error-exception #5>
 ```
 
 ### Imports and Exports
@@ -851,7 +860,7 @@ EOF
 $ cat > example/hello.ss <<EOF
 (export main)
 (def (main . args)
-  (displayln "hello world"))
+  (displayln "hello, world"))
 EOF
 ```
 The module must define and export a `main` function that gets
@@ -863,7 +872,7 @@ following command:
 ```
 $ gxc -O -exe -o hello example/hello.ss
 $ ./hello
-hello world
+hello, world
 ```
 
 If you want the compiler to perform full program optimization, then you can
@@ -871,14 +880,14 @@ specify the `-full-program-optimization` flag:
 ```
 $ gxc -O -full-program-optimization -exe -o hello example/hello.ss
 $ ./hello
-hello world
+hello, world
 ```
 
 You can also compile the module dynamically so that it can be executed with the `gerbil` program:
 ```
 $ gxc -O example/hello.ss
 $ gerbil :example/hello
-hello world
+hello, world
 ```
 
 #### Executable Compilation Modes
@@ -1107,23 +1116,23 @@ on numbers and strings. We can use the generic method as a procedure:
 
 ```scheme
 > (my-add 1 2)
-=> 3
+3
 > (my-add "a" "b")
-=> "ab"
+"ab"
 ```
 
 We can similarly define methods for user-defined types as well.
 Here we define an implementation for instances of a struct `A`:
 ```scheme
 > (my-add (make-A 1) (make-A 2))
-=> #f
+#f
 
 (defstruct A (x))
 (defmethod (my-add (a A) (b A))
   (make-A (+ (A-x a) (A-x b))))
 
 > (my-add (make-A 1) (make-A 2))
-=> #<A a: 3>
+#<A a: 3>
 ```
 
 Inside the body of every method implementation, `@next-method` is bound
@@ -1140,7 +1149,7 @@ number method to add.
 ```scheme
 > (my-add 1 2)
 add fixnums
-=> 3
+3
 ```
 
 ### Iteration
@@ -1215,7 +1224,7 @@ The values of an iteration can be collected in a list with `for/collect`:
 > (for/collect ((x (in-naturals))
                 (y '#(a b c d)))
     (cons x y))
-=> ((0 . a) (1 . b) (2 . c) (3 . d))
+((0 . a) (1 . b) (2 . c) (3 . d))
 ```
 
 Finally, the values of an iteration can be folded to produce a value;
@@ -1224,7 +1233,7 @@ with a folding `cons`:
 ```scheme
 > (for/fold (r []) (x (in-range 2 7))
     (cons x r))
-=> (6 5 4 3 2)
+(6 5 4 3 2)
 ```
 
 #### Iteration Protocol
@@ -1282,13 +1291,13 @@ For example:
   'end)
 (def cort (coroutine my-coroutine))
 > (continue cort)
-=> 1
+1
 > (continue cort)
-=> 2
+2
 > (continue cort)
-=> 3
+3
 > (continue cort)
-=> 'end ; coroutine end
+'end ; coroutine end
 ```
 
 ### Event Programming
@@ -1316,9 +1325,9 @@ For example:
 > (def (sleeping-thread t)
     (spawn (lambda () (thread-sleep! t) 'done)))
 > (wait (sleeping-thread 5) 1)  ; or (select [(sleeping-thread 5)] 1)
-=> #f                           ; after a second elapses
+#f                           ; after a second elapses
 > (wait (sleeping-thread 5))    ; or (select [(sleeping-thread 5)])
-=> #<thread #7>                 ; after the thread completes its sleep
+#<thread #7>                 ; after the thread completes its sleep
 ```
 
 #### sync
@@ -1349,9 +1358,9 @@ For example:
 > (def (sleeping-thread t)
     (spawn (lambda () (thread-sleep! t) 'done)))
 > (sync 1 (sleeping-thread 5))
-=> #f ; after a second elapses
+#f ; after a second elapses
 > (sync (sleeping-thread 5))
-=> #<thread #7> ; after the thread completes its sleep
+#<thread #7> ; after the thread completes its sleep
 
 ```
 
@@ -1370,7 +1379,7 @@ timeout 0
 timeout 1
 timeout 2
 timeout 3
-=> 'done
+'done
 ```
 
 #### Sync Macros
@@ -1424,7 +1433,7 @@ Here is an example, where we spawn a very basic actor that receives and responds
 (def the-actor (spawn respond-once))
 
 > (->> the-actor 'world)
-=> '(hello . world)
+'(hello . world)
 
 ```
 
@@ -1647,11 +1656,11 @@ Here is an example for how to use the library:
 > (import :std/net/request)
 > (def req (http-get "freegeoip.net/json/8.8.8.8"))
 > (request-status req)
-=> 200
+200
 > (request-text req)
-=> "{\"ip\":\"8.8.8.8\",\"country_code\":\"US\",\"country_name\":\"United States\",\"region_code\":\"CA\",\"region_name\":\"California\",\"city\":\"Mountain View\",\"zip_code\":\"94040\",\"time_zone\":\"America/Los_Angeles\",\"latitude\":37.3845,\"longitude\":-122.0881,\"metro_code\":807}\n"
+"{\"ip\":\"8.8.8.8\",\"country_code\":\"US\",\"country_name\":\"United States\",\"region_code\":\"CA\",\"region_name\":\"California\",\"city\":\"Mountain View\",\"zip_code\":\"94040\",\"time_zone\":\"America/Los_Angeles\",\"latitude\":37.3845,\"longitude\":-122.0881,\"metro_code\":807}\n"
 > (hash->list (request-json req))
-=> ((country_name . "United States")
+((country_name . "United States")
     (metro_code . 807)
     (longitude . -122.0881)
     (country_code . "US")
@@ -1706,7 +1715,7 @@ style, and CDATA:
 > (import :std/net/request :std/xml/libxml)
 > (def req (http-get "https://www.bing.com"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
-=> (*TOP* (html (@ (lang "el")
+(*TOP* (html (@ (lang "el")
                 (xml:lang "el")
                 (xmlns "http://www.w3.org/1999/xhtml"))
              (head (meta (@ (content "text/html; charset=utf-8")
@@ -1745,7 +1754,7 @@ This is the obligatory hello web example:
 ```scheme
 (import :std/web/rack)
 (def (respond env data)
-  (values 200 '((Content-Type . "text/plain")) "hello world\n"))
+  (values 200 '((Content-Type . "text/plain")) "hello, world\n"))
 (start-rack-fastcgi-server! "127.0.0.1:9000" respond)
 ```
 
@@ -1787,7 +1796,7 @@ Here is the hello world example using the embedded httpd:
   (http-response-write res
                        200                                ; status
                        '(("Content-Type" . "text/plain")) ; headers
-                       "hello world\n"))
+                       "hello, world\n"))
 
 ;; register the handler
 > (http-register-handler httpd "/hello" hello-handler)
@@ -1804,7 +1813,7 @@ responds with hello world with a single `http-response-write` call.
 We can see the handler at work with curl:
 ```
 $ curl http://localhost:8080/hello
-hello world
+hello, world
 ```
 
 For more examples of httpd handlers, see the [httpd tutorial](/tutorials/httpd.md).
@@ -1854,7 +1863,7 @@ And finally a query:
 ```scheme
 > (def users (sql-prepare db "SELECT FirstName, LastName FROM Users"))
 > (sql-query users)
-=> (#("John" "Smith") #("Marc" "Thompson"))
+(#("John" "Smith") #("Marc" "Thompson"))
 ```
 
 We can also iterate on the results of a query:
@@ -1916,7 +1925,7 @@ def => this is the value of def
 ;; Let's delete a value
 > (leveldb-delete db "abc")
 > (leveldb-get db "abc")
-=> #f
+#f
 
 ;; we are done, let's close the db
 (leveldb-close db)
