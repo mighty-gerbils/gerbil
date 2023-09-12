@@ -279,7 +279,7 @@
               ["genpkey"
                "-quiet"
                "-algorithm" "RSA"
-               "-pkeyopt" "rsa_keygen_bits:2048"
+               "-pkeyopt" "rsa_keygen_bits:4096"
                "-out" server.key]))
 
     ;; server.csr
@@ -435,7 +435,7 @@ commonName              = supplied
 emailAddress            = optional
 
 [req]
-default_bits            = 2048
+default_bits            = 4096
 encrypt_key             = yes
 default_md              = sha256
 utf8                    = yes
