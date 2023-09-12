@@ -10,13 +10,14 @@
         ./path)
 (export ensemble-tls-base-path
         ensemble-tls-server-path
-        ensemble-tls-ca-certificates-path
+        ensemble-tls-cafile
         get-actor-tls-context
         actor-tls-certificate-id
         actor-tls-certificate-cap
         actor-tls-host
         generate-actor-tls-root-ca!
         generate-actor-tls-sub-ca!
+        generate-actor-tls-cafiles!
         generate-actor-tls-cert!
         )
 (def (current-time-seconds)
@@ -28,16 +29,24 @@
 (def (ensemble-tls-server-path server-id)
   (path-expand "tls" (ensemble-server-path server-id)))
 
-(def (ensemble-tls-ca-certificates-path)
+(def (ensemble-tls-cafile)
+  (path-expand "ca.pem" (ensemble-tls-base-path)))
+
+(def (ensemble-tls-caroot)
+  (path-expand "caroot.pem" (ensemble-tls-base-path)))
+
+(def (ensemble-tls-capath)
   (path-expand "ca-certificates" (ensemble-tls-base-path)))
 
 (def (get-actor-tls-context server-id)
-  (let* ((ca-certificates (ensemble-tls-ca-certificates-path))
+  (let* ((cafile (ensemble-tls-cafile))
+         (caroot (ensemble-tls-caroot))
+         (capath (ensemble-tls-capath))
          (server-base (ensemble-tls-server-path server-id))
-         (server.crt (path-expand "server.crt" server-base))
+         (chain.pem  (path-expand "chain.pem" server-base))
          (server.key (path-expand "server.key" server-base)))
-    (and (andmap file-exists? [ca-certificates server-base server.crt server.key])
-         (make-actor-tls-context ca-certificates server.crt server.key))))
+    (and (andmap file-exists? [cafile server-base chain.pem server.key])
+         (make-actor-tls-context caroot cafile capath chain.pem server.key))))
 
 (def (actor-tls-certificate-id x509)
   (let (name (X509_get_subject_name x509))
@@ -201,6 +210,25 @@
     ;; update trust store
     (copy-file sub-ca.crt (path-expand "sub-ca.crt" ca-certificates))))
 
+(def (generate-actor-tls-cafiles! force: (force? #f))
+  (let* ((cafile (ensemble-tls-cafile))
+         (base-path (ensemble-tls-base-path))
+         (ca-certificates (path-expand "ca-certificates" base-path))
+         (sub-ca.crt (path-expand "sub-ca.crt" ca-certificates))
+         (root-ca.crt (path-expand "root-ca.crt" ca-certificates))
+         (caroot.pem (path-expand "caroot.pem" base-path)))
+    (when (file-exists? cafile)
+      (if force?
+        (delete-file cafile)
+        (error "cafile already existx" cafile)))
+    (invoke "c_rehash" [ca-certificates])
+    (call-with-output-file cafile
+      (lambda(output)
+        (for (f [sub-ca.crt root-ca.crt])
+          (let (blob (read-file-u8vector f))
+            (write-subu8vector blob 0 (u8vector-length blob) output)))))
+    (copy-file root-ca.crt caroot.pem)))
+
 (def (generate-actor-tls-cert! sub-ca-passphrase
                                server-id: server-id
                                capabilities: (capabilities [])
@@ -210,7 +238,6 @@
 
   (let* ((base-path (ensemble-tls-base-path))
          (root-ca-path (path-expand "root-ca" base-path))
-         (root-ca.crt  (path-expand "root-ca.crt" root-ca-path))
          (sub-ca-path  (path-expand "sub-ca" base-path))
          (sub-ca.conf  (path-expand "sub-ca.conf" sub-ca-path))
          (server-path  (ensemble-tls-server-path server-id))
@@ -218,6 +245,7 @@
          (server.key   (path-expand "server.key" server-path))
          (server.csr   (path-expand "server.csr" server-path))
          (server.crt   (path-expand "server.crt" server-path))
+         (chain.pem    (path-expand "chain.pem" server-path))
          (domain       (actor-tls-domain)))
 
     ;; sanity check: must have a sub-ca
@@ -275,8 +303,16 @@
              "-config" sub-ca.conf
              "-in" server.csr
              "-out" server.crt
+             "-extensions" "actor_ext"
              ;; TODO see above
-             "-passin" (string-append "pass:" sub-ca-passphrase)])))
+             "-passin" (string-append "pass:" sub-ca-passphrase)])
+
+    (displayln "... generate " chain.pem)
+    (call-with-output-file chain.pem
+      (lambda(output)
+        (for (f [server.crt (ensemble-tls-cafile)])
+          (let (blob (read-file-u8vector f))
+            (write-subu8vector blob 0 (u8vector-length blob) output)))))))
 
 (def root-ca.conf-template #<<END
 [default]
@@ -284,6 +320,7 @@ name                    = root-ca
 domain_suffix           = ${domain}
 aia_url                 = http://$name.$domain_suffix/$name.crt
 crl_url                 = http://$name.$domain_suffix/$name.crl
+ocsp_url                = http://ocsp.$name.$domain_suffix:9080
 default_ca              = ca_default
 name_opt                = utf8,esc_ctrl,multiline,lname,align
 
@@ -338,7 +375,6 @@ basicConstraints        = critical,CA:true,pathlen:0
 crlDistributionPoints   = @crl_info
 extendedKeyUsage        = clientAuth,serverAuth
 keyUsage                = critical,keyCertSign,cRLSign
-nameConstraints         = @name_constraints
 subjectKeyIdentifier    = hash
 
 [crl_info]
@@ -346,11 +382,16 @@ URI.0                   = $crl_url
 
 [issuer_info]
 caIssuers;URI.0         = $aia_url
+OCSP;URI.0              = $ocsp_url
 
-[name_constraints]
-permitted;DNS.0=${domain}
-excluded;IP.0=0.0.0.0/0.0.0.0
-excluded;IP.1=0:0:0:0:0:0:0:0/0:0:0:0:0:0:0:0
+[ocsp_ext]
+authorityKeyIdentifier  = keyid:always
+basicConstraints        = critical,CA:false
+extendedKeyUsage        = OCSPSigning
+noCheck                 = yes
+keyUsage                = critical,digitalSignature
+subjectKeyIdentifier    = hash
+
 END
 )
 
@@ -358,6 +399,9 @@ END
 [default]
 name                    = sub-ca
 domain_suffix           = ${domain}
+aia_url                 = http://$name.$domain_suffix/$name.crt
+crl_url                 = http://$name.$domain_suffix/$name.crl
+ocsp_url                = http://ocsp.$name.$domain_suffix:9081
 default_ca              = ca_default
 name_opt                = utf8,esc_ctrl,multiline,lname,align
 
@@ -365,11 +409,6 @@ name_opt                = utf8,esc_ctrl,multiline,lname,align
 countryName             = "${country-name}"
 organizationName        = "${organization-name}"
 commonName              = "${common-name}"
-
-[ca_ext]
-basicConstraints        = critical,CA:true
-keyUsage                = critical,keyCertSign,cRLSign
-subjectKeyIdentifier    = hash
 
 [ca_default]
 home                    = ${home}
@@ -381,10 +420,10 @@ private_key             = $home/private/$name.key
 RANDFILE                = $home/private/random
 new_certs_dir           = $home/certs
 unique_subject          = no
-default_days            = 730
+copy_extensions         = copy
+default_days            = 365
 default_crl_days        = 30
 default_md              = sha256
-copy_extensions         = copy
 policy                  = policy_c_o_match
 
 [policy_c_o_match]
@@ -396,14 +435,37 @@ commonName              = supplied
 emailAddress            = optional
 
 [req]
-default_bits            = 4096
+default_bits            = 2048
 encrypt_key             = yes
 default_md              = sha256
 utf8                    = yes
 string_mask             = utf8only
 prompt                  = no
 distinguished_name      = ca_dn
-req_extensions          = ca_ext
+
+[actor_ext]
+authorityInfoAccess     = @issuer_info
+authorityKeyIdentifier  = keyid:always
+basicConstraints        = critical,CA:false
+crlDistributionPoints   = @crl_info
+extendedKeyUsage        = clientAuth,serverAuth
+keyUsage                = critical,digitalSignature,keyEncipherment
+subjectKeyIdentifier    = hash
+
+[crl_info]
+URI.0                   = $crl_url
+
+[issuer_info]
+caIssuers;URI.0         = $aia_url
+OCSP;URI.0              = $ocsp_url
+
+[ocsp_ext]
+authorityKeyIdentifier  = keyid:always
+basicConstraints        = critical,CA:false
+extendedKeyUsage        = OCSPSigning
+keyUsage                = critical,digitalSignature
+subjectKeyIdentifier    = hash
+
 END
 )
 

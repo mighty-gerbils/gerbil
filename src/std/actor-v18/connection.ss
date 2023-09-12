@@ -227,7 +227,7 @@
      ([tcp: inet-addr]
       (tcp-connect inet-addr))
      ([tls: inet-addr]
-      (ssl-connect inet-addr host: (actor-tls-host peer-id)))
+      (ssl-connect inet-addr host: (actor-tls-host peer-id) context: tls-context))
      (else
       (warnf "unrecognized address ~a for ~a:" addr peer-id)
       #f))
@@ -263,9 +263,13 @@
                       (and (is-TLS? sock)
                            (TLS-peer-certificate sock))
                       (let (addr (peer-address sock))
-                        (if (eqv? (StreamSocket-domain sock) AF_UNIX)
-                          [unix: (hostname) addr]
-                          [tcp: addr]))
+                        (cond
+                         ((eqv? (StreamSocket-domain sock) AF_UNIX)
+                          [unix: (hostname) addr])
+                         ((is-TLS? sock)
+                          [tls: addr])
+                         (else
+                          [tcp: addr])))
                       direction
                       reader
                       writer))

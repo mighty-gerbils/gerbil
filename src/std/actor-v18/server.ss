@@ -194,7 +194,7 @@
 
 (def (actor-server id known-servers tls-context cookie admin auth socks)
   (with-exception-stack-trace
-   (cut actor-server-main id known-servers cookie tls-context admin auth socks)))
+   (cut actor-server-main id known-servers tls-context cookie admin auth socks)))
 
 (def (actor-server-main id known-servers tls-context cookie admin auth socks)
   ;; next actor numeric id; 0 is self
