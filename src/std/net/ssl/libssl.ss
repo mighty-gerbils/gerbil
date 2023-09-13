@@ -30,9 +30,12 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 
-#if OPENSSL_VERSION_NUMBER > 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/macros.h>
+#ifdef OPENSSL_NO_DEPRECATED_3_0
 #include <openssl/safestack.h>
- DEFINE_STACK_OF(GENERAL_NAME);
+DEFINE_STACK_OF(GENERAL_NAME);
+#endif
 #endif
 
 static int ffi_ssl_gerbil_data_index;
