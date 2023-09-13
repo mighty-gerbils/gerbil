@@ -97,8 +97,7 @@ TODO:
    libdir-prefix parallelize
    full-program-optimization
    build-release
-   build-optimized
-   )
+   build-optimized)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
