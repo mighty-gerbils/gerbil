@@ -1,21 +1,9 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
+;;; © vyzo
 ;;; HTTP requests for humans; py requests-like http client interface
-
-(import :gerbil/gambit/ports
-        :std/error
-        :std/format
-        :std/net/uri
-        :std/pregexp
-        :std/srfi/13
-        :std/sugar
-        :std/misc/list-builder
-        :std/text/base64
-        :std/text/json
-        :std/text/utf8
-        :std/text/zlib)
 (export
-  http-get http-head http-post http-put http-delete http-options http-any
+  http-connect
+  http-head http-get http-post http-put http-delete http-options http-any
   request? request-url request-status request-status-text
   request-headers
   request-encoding request-encoding-set!
@@ -24,15 +12,47 @@
   request-json
   request-cookies
   request-close
-  request-port)
+  (rename: request-sock request-socket)
+  (rename: request-reader request-socket-reader)
+  (rename: request-writer request-socket-writer))
 
-(defstruct request (port url history status status-text headers body encoding)
-  id: std/net#request::t
-  constructor: :init!)
+(import :std/build-config
+        :std/error
+        :std/sugar
+        :std/io
+        :std/net/ssl
+        :std/net/uri
+        :std/format
+        :std/pregexp
+        :std/srfi/13
+        :std/misc/timeout
+        :std/misc/list-builder
+        :std/text/base64
+        :std/text/json
+        :std/text/utf8)
+
+(cond-expand
+  (cofing-enable-zlib
+   (import :std/text/zlib)))
+
+;; proxy connect function: lambda (addr) -> StreamSocket
+(def http-connect
+  (make-parameter #f))
+
+;; the request structure
+(defstruct request (sock reader writer url history status status-text headers body encoding)
+  constructor: :init!
+  final: #t unchecked: #t)
 
 (defmethod {:init! request}
-  (lambda (self port url history)
-    (struct-instance-init! self port url history)))
+  (lambda (self sock url history)
+    (set! (&request-sock self) sock)
+    (set! (&request-reader self)
+      (open-buffered-reader (StreamSocket-reader sock)))
+    (set! (&request-writer self)
+      (open-buffered-writer (StreamSocket-writer sock)))
+    (set! (&request-url self) url)
+    (set! (&request-history self) history)))
 
 (def (url-target-e url params)
   (if params
@@ -54,19 +74,21 @@
       (http-headers-cons <> (http-headers-auth auth)))))
 
 (def http/1.1-base-headers
-  '(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
+  `(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
     ("Connection" . "close")
     ("Accept" . "*/*")
-    ("Accept-Encoding" . "gzip, deflate, identity")))
+    ,(cond-expand
+        (config-enable-zlib
+         '("Accept-Encoding" . "gzip, deflate, identity"))
+        (else
+         '("Accept-Encoding" . "identity")))))
 
 (def (http-headers-auth auth)
   (def (basic-auth-header user password)
-    (let ((credentials (u8vector->base64-string
-                        (with-output-to-u8vector
-                         (lambda ()
-                           (display user)
-                           (display ":")
-                           (display password))))))
+    (let (credentials
+          (u8vector->base64-string
+           (string->utf8
+            (string-append user ":" password))))
       (cons "Authorization" (string-append "Basic " credentials))))
   (match auth
     ([basic: user password] [(basic-auth-header user password)])
@@ -106,100 +128,92 @@
           (cons (cons key value) headers))))))
   (foldr fold-e headers new-headers))
 
+(defsyntax (defhttp-method stx)
+  (syntax-case stx (=>)
+    ((_ (http-method url arg ...) body ...)
+     (with-syntax ((redirect    (stx-identifier #'http-method 'redirect))
+                   (headers     (stx-identifier #'http-method 'headers))
+                   (cookies     (stx-identifier #'http-method 'cookies))
+                   (params      (stx-identifier #'http-method 'params))
+                   (data        (stx-identifier #'http-method 'data))
+                   (auth        (stx-identifier #'http-method 'auth))
+                   (ssl-context (stx-identifier #'http-method 'ssl-context))
+                   (deadline    (stx-identifier #'http-method 'deadline)))
+       #'(def (http-method url arg ...
+                           redirect:     (redirect #f)
+                           headers:      (headers #f)
+                           cookies:      (cookies #f)
+                           params:       (params #f)
+                           data:         (data #f)
+                           auth:         (auth #f)
+                           ssl-context:  (ssl-context (default-client-ssl-context))
+                           timeout:      (timeo #f))
+           (let (deadline (make-timeout timeo #f))
+             body ...))))
+    ((_ http-method => method)
+     (with-syntax ((redirect    (stx-identifier #'http-method 'redirect))
+                   (headers     (stx-identifier #'http-method 'headers))
+                   (cookies     (stx-identifier #'http-method 'cookies))
+                   (params      (stx-identifier #'http-method 'params))
+                   (data        (stx-identifier #'http-method 'data))
+                   (auth        (stx-identifier #'http-method 'auth))
+                   (ssl-context (stx-identifier #'http-method 'ssl-context)))
+       #'(def (http-method url
+                           redirect:     (redirect #f)
+                           headers:      (headers #f)
+                           cookies:      (cookies #f)
+                           params:       (params #f)
+                           data:         (data #f)
+                           auth:         (auth #f)
+                           ssl-context:  (ssl-context (default-client-ssl-context))
+                           timeout:      (timeo #f))
+           (http-any 'method url
+                     redirect:     redirect
+                     headers:     headers
+                     cookies:     cookies
+                     params:      params
+                     data:        data
+                     auth:        auth
+                     ssl-context:  ssl-context
+                     timeout: timeo))))))
 
-(def (http-get url
-               redirect: (redirect #t)
-               headers:  (headers #f)
-               cookies:  (cookies #f)
-               params:   (params #f)
-               data:     (data #f)
-               auth:     (auth #f))
-  (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'GET url headers data [] redirect)))
+(defhttp-method http-get => GET)
+(defhttp-method http-head => HEAD)
 
-(def (http-head url
-                redirect: (redirect #t)
-                headers:  (headers #f)
-                cookies:  (cookies #f)
-                params:   (params #f)
-                data:     (data #f)
-                auth:     (auth #f))
-  (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'HEAD url headers data [] redirect)))
-
-(def (http-post url
-                redirect: (redirect #t)
-                headers:  (headers #f)
-                cookies:  (cookies #f)
-                params:   (params #f)
-                data:     (data #f)
-                auth:     (auth #f))
+(defhttp-method (http-post url)
   (let ((values headers data)
         (if params
           (let (form-data (form-url-encode params #t))
             (values
-              (http-headers-cons
-               '(("Content-Type" . "application/x-www-form-urlencoded"))
-               (make-http/1.1-headers headers cookies auth))
-              form-data))
+             (http-headers-cons
+              '(("Content-Type" . "application/x-www-form-urlencoded"))
+              (make-http/1.1-headers headers cookies auth))
+             form-data))
           (values
-            (make-http/1.1-headers headers cookies auth)
-            data)))
-    (http-request 'POST url headers data [] redirect)))
+           (make-http/1.1-headers headers cookies auth)
+           data)))
+    (http-request 'POST url headers data [] redirect ssl-context deadline)))
 
-(def (http-put url
-               redirect: (redirect #t)
-               headers:  (headers #f)
-               cookies:  (cookies #f)
-               params:   (params #f)
-               data:     (data #f)
-               auth:     (auth #f))
+(defhttp-method http-put => PUT)
+(defhttp-method http-delete => DELETE)
+(defhttp-method http-options => OPTIONS)
+
+(defhttp-method (http-any method url)
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'PUT url headers data [] redirect)))
-
-(def (http-delete url
-                  redirect: (redirect #t)
-                  headers:  (headers #f)
-                  cookies:  (cookies #f)
-                  params:   (params #f)
-                  data:     (data #f)
-                  auth:     (auth #f))
-  (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'DELETE url headers data [] redirect)))
-
-(def (http-options url
-                   redirect: (redirect #t)
-                   headers:  (headers #f)
-                   cookies:  (cookies #f)
-                   params:   (params #f)
-                   data:     (data #f)
-                   auth:     (auth #f))
-  (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'OPTIONS url headers data [] redirect)))
-
-(def (http-any     method
-                   url
-                   redirect: (redirect #t)
-                   headers:  (headers #f)
-                   cookies:  (cookies #f)
-                   params:   (params #f)
-                   data:     (data #f)
-                   auth:     (auth #f))
-  (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request method url headers data [] redirect)))
+    (http-request method url headers data [] redirect ssl-context deadline)))
 
 (def url-rx
   (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
 
-(def +tls-context+ (delay (make-tls-context)))
-
-(def (http-request method url user-headers body history redirect)
+;; the http request main logic
+(def (http-request method url
+                   user-headers
+                   body
+                   history
+                   redirect
+                   ssl-context
+                   deadline)
   ;; extra headers:
   ;;  Host: url host
   ;;  Content-Length: binary body length if body is string/bytes
@@ -234,38 +248,71 @@
               (http-headers-cons! [(cons "Content-Length" (u8vector-length body))]
                                   headers)
               headers))
-           (tcp-client-options
-            [server-address: host port-number: port eol-encoding: 'cr-lf])
-           (tcp-client-options
-            (if (equal? scheme "https")
-              (cons* tls-context: (force +tls-context+) tcp-client-options)
-              tcp-client-options))
-           (sock (open-tcp-client tcp-client-options))
+           (ssl? (equal? scheme "https"))
+           (connect
+            (cond
+             ((http-connect)            ; proxy function: lambda (addr) -> StreamSocket
+              => (lambda (connectf)
+                   (if ssl?
+                     (lambda (addr)
+                       (let (sock (connectf addr))
+                         (try
+                          (ssl-client-upgrade sock deadline
+                                              context: ssl-context
+                                              host: host)
+                          (catch (e)
+                            (Socket-close sock)
+                            (raise e)))))
+                     connectf)))
+             (ssl?
+              (lambda (addr)
+                (ssl-connect addr deadline
+                             context: ssl-context
+                             host: host)))
+             (else
+              (lambda (addr)
+                (tcp-connect addr deadline)))))
+           (sock (connect (cons host port)))
            (req (make-request sock url history)))
-      (http-request-write sock method target headers body)
+      (http-request-write req method target headers body)
       (http-request-read-response! req)
       (cond
        ((and redirect
-             (memv (request-status req) '(301 302 303 307))
+             (memv (&request-status req) '(301 302 303 307))
              (memq method '(GET HEAD))
-             (assoc "Location" (request-headers req)))
+             (assoc "Location" (&request-headers req)))
         => (match <>
              ([_ . new-url]
               (if (member new-url history)
                 (error "URL redirection loop" url)
                 (begin
                   (request-close req)
-                  (http-request method new-url user-headers body (cons url history) #t))))))
+                  (http-request method new-url
+                                user-headers
+                                body
+                                (cons url history)
+                                #t
+                                ssl-context
+                                deadline))))))
        (else req)))))
 
-(def (http-request-write port method target headers body)
-  (fprintf port "~a ~a HTTP/1.1~n" method target)
-  (for-each (match <> ([key . val](fprintf port "~a: ~a~n" key val)))
-            headers)
-  (newline port)
-  (when body
-    (write-subu8vector body 0 (u8vector-length body) port))
-  (force-output port))
+(def (http-request-write req method target headers body)
+  (let (writer (&request-writer req))
+    (writeln writer "~a ~a HTTP/1.1" method target)
+    (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
+              headers)
+    (writeln writer)
+    (when body
+      (&BufferedWriter-write writer body))
+    (&BufferedWriter-flush writer)))
+
+(def* writeln
+  ((writer)
+   (&BufferedWriter-write-char-inline writer #\return)
+   (&BufferedWriter-write-char-inline writer #\newline))
+  ((writer fmt . args)
+   (let (str (apply format fmt args))
+     (&BufferedWriter-write-line writer str '(#\return #\newline)))))
 
 (def status-line-rx
   (pregexp "([0-9]{3})\\s+(.*)"))
@@ -274,19 +321,18 @@
   (pregexp "([^:]+):\\s*(.*)?"))
 
 (def (http-request-read-response! req)
-  (let* ((port (request-port req))
-         (status-line (read-response-line port)))
+  (let (status-line (read-response-line req))
     (match (pregexp-match status-line-rx status-line)
       ([_ status status-text]
-       (set! (request-status req)
+       (set! (&request-status req)
          (string->number status))
-       (set! (request-status-text req)
+       (set! (&request-status-text req)
          (string-trim-both status-text))
        (let (root [#f])
          (let lp ((tl root))
-           (let (next (read-response-line port))
+           (let (next (read-response-line req))
              (if (string-empty? next)
-               (set! (request-headers req)
+               (set! (&request-headers req)
                  (cdr root))
                (match (pregexp-match header-line-rx next)
                  ([_ key value]
@@ -295,12 +341,12 @@
                     (lp tl*)))
                  (else
                   (raise-io-error 'http-request-read-response!
-                                  "Malformed header" port next))))))))
+                                  "Malformed header" req next))))))))
       (else
        (raise-io-error 'http-request-read-response!
-                       "malformed status line" port status-line)))))
+                       "malformed status line" req status-line)))))
 
-(def (http-request-read-body port headers)
+(def (http-request-read-body req headers)
   (def (length-e headers)
     (cond
      ((assget "Content-Length" headers)
@@ -311,44 +357,44 @@
    ((assget "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
-           (http-request-read-chunked-body port)
-           (http-request-read-simple-body port (length-e headers)))))
+           (http-request-read-chunked-body req)
+           (http-request-read-simple-body req (length-e headers)))))
    (else
-    (http-request-read-simple-body port (length-e headers)))))
+    (http-request-read-simple-body req (length-e headers)))))
 
-(def (http-request-read-chunked-body port)
-  (let (root [#f])
+(def (http-request-read-chunked-body req)
+  (let ((reader (&request-reader req))
+        (root [#f]))
     (let lp ((tl root))
-      (let* ((line (read-response-line port))
+      (let* ((line (read-response-line req))
              (clen (string->number (car (string-split line #\space)) 16)))
         (if (fxzero? clen)
           (u8vector-concatenate (cdr root))
-          (let* ((chunk (make-u8vector clen))
-                 (rd    (read-subu8vector chunk 0 clen port)))
-            (when (##fx< rd clen)
-              (raise-io-error 'http-request-read-body
-                              "error reading chunk; premature end of port"))
-            (read-response-line port)     ; read chunk trailing CRLF
+          (let (chunk (make-u8vector clen))
+            (&BufferedReader-read reader chunk 0 clen clen)
+            (read-response-line req)     ; read chunk trailing CRLF
             (let (tl* [chunk])
               (set! (cdr tl) tl*)
               (lp tl*))))))))
 
-(def (http-request-read-simple-body port length)
-  (def (read/length port length)
+(def (http-request-read-simple-body req length)
+  (def reader (&request-reader req))
+
+  (def (read/length length)
     (let* ((data (make-u8vector length))
-           (rd (read-subu8vector data 0 length port)))
+           (rd (&BufferedReader-read reader data)))
       (if (##fx< rd length)
         (begin
           (u8vector-shrink! data rd)
           data)
         data)))
 
-  (def (read/end port)
+  (def (read/end)
     (let (root [#f])
       (let lp ((tl root))
         (let* ((buflen 4096)
                (buf (make-u8vector buflen))
-               (rd  (read-subu8vector buf 0 buflen port)))
+               (rd  (&BufferedReader-read reader buf)))
           (cond
            ((##fxzero? rd)
             (u8vector-concatenate (cdr root)))
@@ -362,27 +408,27 @@
               (lp tl*))))))))
 
   (if length
-    (read/length port length)
-    (read/end port)))
+    (read/length length)
+    (read/end)))
 
 (def cr (char->integer #\return))
 (def lf (char->integer #\newline))
-(def crlf (u8vector cr lf))
 
-(def (read-response-line port)
-  (let (root [#f])
+(def (read-response-line req)
+  (let ((reader (&request-reader req))
+        (root [#f]))
     (let lp ((tl root))
-      (let (next (read-u8 port))
+      (let (next (&BufferedReader-read-u8-inline reader))
         (cond
          ((eof-object? next)
           (raise-io-error 'request-read-response-line
-                          "Incomplete response; connection closed" port))
+                          "Incomplete response; connection closed" req))
          ((eq? next cr)
-          (let (next (read-u8 port))
+          (let (next (&BufferedReader-read-u8-inline reader))
             (cond
              ((eof-object? next)
               (raise-io-error 'request-read-response-line
-                              "Incomplete response; connection closed" port))
+                              "Incomplete response; connection closed" reader))
              ((eq? next lf)
               (utf8->string (list->u8vector (cdr root))))
              (else
@@ -395,38 +441,42 @@
             (lp tl*))))))))
 
 (def (request-close req)
-  (alet (port (request-port req))
-    (with-catch void (cut close-port port))
-    (set! (request-port req) #f)))
+  (alet (sock (request-sock req))
+    (with-catch void (cut Socket-close sock))
+    (set! (&request-sock req) #f)
+    (set! (&request-reader req) #f)
+    (set! (&request-writer req) #f)))
 
 (defmethod {destroy request}
   request-close)
 
 (def (request-content req)
   (cond
-   ((request-body req) => values)
-   ((request-port req)
-    => (lambda (port)
+   ((request-body req))
+   ((&request-sock req)
+    => (lambda (sock)
          (let (headers (request-headers req))
            (try
-            (let* ((body (http-request-read-body port headers))
+            (let* ((body (http-request-read-body req headers))
                    (body
-                    (cond
-                     ((assoc "Content-Encoding" headers)
-                      => (lambda (enc)
-                           (case (cdr enc)
-                             (("gzip" "deflate")
-                              (uncompress body))
-                             (("identity")
-                              body)
-                             (else
-                              (error "Unsupported content encoding" enc)))))
-                     (else body))))
-              (set! (request-body req) body)
+                    (cond-expand
+                      (config-enable-zlib
+                       (cond
+                        ((assoc "Content-Encoding" headers)
+                         => (lambda (enc)
+                              (case (cdr enc)
+                                (("gzip" "deflate")
+                                 (uncompress body))
+                                (("identity")
+                                 body)
+                                (else
+                                 (error "Unsupported content encoding" enc)))))
+                        (else body)))
+                      (else body))))
+              (set! (&request-body req) body)
               body)
             (finally
-             (close-port port)
-             (set! (request-port req) #f))))))
+             (request-close req))))))
    (else #f)))
 
 (def (request-text req)

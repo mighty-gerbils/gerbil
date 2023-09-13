@@ -95,81 +95,19 @@
 
 (def actor-server-ipc-test
   (test-suite "actor server ipc"
-    (def (test-ipc addr1 addr2)
-      (reset-thread!)
-
-      (def cookie (make-random-cookie))
-      (def srv1
-        (start-actor-server! cookie: cookie
-                             admin: #f
-                             addresses: [addr1]))
-      (def srv2
-        (start-actor-server! cookie: cookie
-                             admin: #f
-                             addresses: [addr2]))
-
-      (def srv1-id
-        (actor-server-identifier srv1))
-      (def srv2-id
-        (actor-server-identifier srv2))
-
-      (check (connect-to-server! srv2-id [addr2] srv1)
-             => [addr2])
-      (check (list-connections srv1) => [[srv2-id addr2]])
-      (check (caar (list-connections srv2)) => srv1-id)
-      (check (remote-list-connections srv1-id srv2) => [[srv2-id addr2]])
-      (check (caar (remote-list-connections srv2-id srv1)) => srv1-id)
-      (check (ping-server srv2-id srv1) => 'OK)
-      (check (ping-server srv1-id srv2) => 'OK)
-
-      (def actor1
-        (spawn/name 'echo1 echo-actor srv1 (current-thread)))
-      (def actor1-ref
-        (<- ((and ['ready . ref] (? (lambda (_) (eq? @source actor1))))
-             ref)))
-
-      (def actor2
-        (spawn/name 'echo2 echo-actor srv2 (current-thread)))
-      (def actor2-ref
-        (<- ((and ['ready . ref] (? (lambda (_) (eq? @source actor2))))
-             ref)))
-
-      (def actor1-proxy-srv2
-        (handle srv2 actor1-ref))
-      (def actor2-proxy-srv1
-        (handle srv1 actor2-ref))
-
-      (check (list-actors srv1) => [actor1-ref])
-      (check (list-actors srv2) => [actor2-ref])
-      (check (remote-list-actors srv2-id srv1) => [actor2-ref])
-      (check (remote-list-actors srv1-id srv2) => [actor1-ref])
-      (check (ping-actor actor2-ref srv1) => 'OK)
-      (check (ping-actor actor1-ref srv2) => 'OK)
-
-      (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
-      (check (->> actor2-proxy-srv1 'world) =>  '(hello . world))
-
-      (remote-stop-server! srv2-id srv1)
-      (check (thread-join! srv2) => 'shutdown)
-      (check (thread-join! actor2) => 'shutdown)
-
-      (stop-actor-server! srv1)
-      (check (thread-join! srv1) => 'shutdown)
-      (check (thread-join! actor1) => 'shutdown))
-
-    (test-case "unix ipc"
+    (test-case "UNIX IPC"
       (let* ((tmp1 (make-temporary-file-name "actor-server"))
              (tmp2 (make-temporary-file-name "actor-server")))
-        (test-ipc [unix: (hostname) tmp1]
-                  [unix: (hostname) tmp2])
+        (test-ipc 'test-server1 [unix: (hostname) tmp1]
+                  'test-server2 [unix: (hostname) tmp2])
         (delete-file tmp1)
         (delete-file tmp2)))
 
-    (test-case "tcp ipc"
+    (test-case "TCP IPC"
       (let* ((addr1 (cons localhost4 33333))
              (addr2 (cons localhost4 44444)))
-        (test-ipc [tcp: addr1]
-                  [tcp: addr2])))
+        (test-ipc 'test-server1 [tcp: addr1]
+                  'test-server2 [tcp: addr2])))
 
     (test-case "implicit connection"
       (reset-thread!)

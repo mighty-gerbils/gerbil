@@ -14,219 +14,14 @@
         :std/actor-v18/loader
         :std/actor-v18/registry
         :std/actor-v18/path
+        :std/actor-v18/tls
         :std/os/hostname
-        :std/misc/ports)
+        :std/misc/ports
+        :std/misc/process
+        :std/text/hex)
 (export main)
 
 (def (main . args)
-  (def logging-option
-    (option 'logging #f "--log"
-      value: string->symbol
-      default: 'INFO
-      help: "specifies the log level to run with"))
-
-  (def logging-file-option
-    (option 'logging-file #f "--log-file"
-      default: #f
-      help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log"))
-
-  (def listen-option
-    (option 'listen "-l" "--listen"
-      value: string->object
-      default: []
-      help: "additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id>"))
-
-  (def announce-option
-    (option 'announce "-a" "--announce"
-      value: string->object
-      default: #f
-      help: "public addresses to announce to the registry; by default these are the listen addresses"))
-
-  (def registry-option
-    (option 'registry #f "--registry"
-      value: string->object
-      default: #f
-      help: "additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry"))
-
-  (def roles-option
-    (option 'roles #f "--roles"
-      value: string->object
-      default: []
-      help: "server role(s); a list of symbols"))
-
-  (def library-prefix-option
-    (option 'library-prefix #f "--library-prefix"
-      value: string->object
-      default: '(gerbil scheme std)
-      help: "list of package prefixes to consider as library modules installed in the server"))
-
-  (def server-id-argument
-    (argument 'server-id
-      help: "the server id"
-      value: string->symbol))
-
-  (def server-id-optional-argument
-    (optional-argument 'server-id
-      help: "the server id"
-      value: string->symbol))
-
-  (def actor-id-optional-argument
-    (optional-argument 'actor-id
-      help: "the actor's registered name"
-      value: string->symbol))
-
-  (def module-id-argument
-    (argument 'module-id
-      help: "the module id"
-      value: string->symbol))
-
-  (def server-id-or-role-argument
-    (argument 'server-or-role
-      help: "the server or role to lookup"
-      value: string->symbol))
-
-  (def authorized-server-id-argument
-    (argument 'authorized-server-id
-      help: "the server to authorize capabilities for"
-      value: string->symbol))
-
-  (def capabilities-optional-argument
-    (optional-argument 'capabilities
-      help: "the server capabilities to authorize"
-      value: string->object
-      default: '(admin)))
-
-  (def expr-argument
-    (argument 'expr
-      help: "the expression to eval"
-      value: string->object))
-
-  (def main-arguments
-    (rest-arguments 'main-args
-      help: "arguments for the module's main procedure"))
-
-  (def library-flag
-    (flag 'library #f "--library"
-      help: "loads the code as library module; the library must be in the servers load path"))
-
-  (def role-flag
-    (flag 'role #f "--role"
-      help: "lookup by role"))
-
-  (def force-flag
-    (flag 'force "-f" "--force"
-      help: "force the action"))
-
-  (def run-cmd
-    (command 'run
-      logging-option
-      logging-file-option
-      listen-option
-      announce-option
-      registry-option
-      roles-option
-      server-id-argument
-      module-id-argument
-      main-arguments
-      help: "run a server in the ensemble"))
-
-  (def registry-cmd
-    (command 'registry
-      logging-option
-      logging-file-option
-      listen-option
-      announce-option
-      help: "runs the ensemble registry"))
-
-  (def load-cmd
-    (command 'load
-      force-flag
-      library-flag
-      registry-option
-      library-prefix-option
-      server-id-argument
-      module-id-argument
-      help: "loads code in a running server"))
-
-  (def eval-cmd
-    (command 'eval
-      registry-option
-      server-id-argument
-      expr-argument
-      help: "evals code in a running server"))
-
-  (def repl-cmd
-    (command 'repl
-      registry-option
-      library-prefix-option
-      server-id-argument
-      help: "provides a repl for a running server"))
-
-  (def ping-cmd
-    (command 'ping
-      registry-option
-      server-id-argument
-      actor-id-optional-argument
-      help: "pings a server or actor in the server"))
-
-  (def shutdown-cmd
-    (command 'shutdown
-      force-flag
-      registry-option
-      server-id-optional-argument
-      actor-id-optional-argument
-      help: "shuts down an actor, server, or the entire ensemble including the registry"))
-
-  (def list-servers-cmd
-    (command 'list-servers
-      registry-option
-      help: "lists known servers"))
-
-  (def list-actors-cmd
-    (command 'list-actors
-      registry-option
-      server-id-argument
-      help: "list actors registered in a server"))
-
-  (def list-connections-cmd
-    (command 'list-connections
-      registry-option
-      server-id-argument
-      help: "list a server's connection"))
-
-  (def lookup-cmd
-    (command 'lookup
-      registry-option
-      role-flag
-      server-id-or-role-argument
-      help: "looks up a server by id or role"))
-
-  (def authorize-cmd
-    (command 'authorize
-      registry-option
-      server-id-argument
-      authorized-server-id-argument
-      capabilities-optional-argument
-      help: "authorize capabilities for a server"))
-
-  (def retract-cmd
-    (command 'retract
-      registry-option
-      server-id-argument
-      authorized-server-id-argument
-      help: "retract all capabilities granted to a server"))
-
-  (def cookie-cmd
-    (command 'cookie
-      force-flag
-      help: "generate a new ensemble cookie"))
-
-  (def admin-cmd
-    (command 'admin
-      force-flag
-      help: "generate a new ensemble administrator key pair"))
-
-
   (call-with-getopt gxensemble-main args
     program: "gxensemble"
     help: "the Gerbil Actor Ensemble Manager"
@@ -236,50 +31,417 @@
     eval-cmd
     repl-cmd
     ping-cmd
-    shutdown-cmd
-    list-servers-cmd
-    list-actors-cmd
-    list-connections-cmd
     lookup-cmd
-    authorize-cmd
-    retract-cmd
-    cookie-cmd
-    admin-cmd))
+    shutdown-cmd
+    admin-cmd
+    list-cmd
+    ca-cmd
+    package-cmd))
+
+;;;
+;;; getopt objects
+;;;
+(def logging-option
+  (option 'logging "--log"
+    value: string->symbol
+    default: 'INFO
+    help: "specifies the log level to run with"))
+
+(def logging-file-option
+  (option 'logging-file "--log-file"
+    default: #f
+    help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log"))
+
+(def listen-option
+  (option 'listen "-l" "--listen"
+    value: string->object
+    default: []
+    help: "additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id>"))
+
+(def announce-option
+  (option 'announce "-a" "--announce"
+    value: string->object
+    default: #f
+    help: "public addresses to announce to the registry; by default these are the listen addresses"))
+
+(def console-option
+  (option 'console "-c" "--console"
+    value: string->symbol
+    default: 'console
+    help: "console server id"))
+
+(def registry-option
+  (option 'registry "-r" "--registry"
+    value: string->object
+    default: #f
+    help: "additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry"))
+
+(def roles-option
+  (option 'roles "--roles"
+    value: string->object
+    default: []
+    help: "server role(s); a list of symbols"))
+
+(def library-prefix-option
+  (option 'library-prefix "--library-prefix"
+    value: string->object
+    default: '(gerbil scheme std)
+    help: "list of package prefixes to consider as library modules installed in the server"))
+
+(def server-id-argument
+  (argument 'server-id
+    help: "the server id"
+    value: string->symbol))
+
+(def server-id-optional-argument
+  (optional-argument 'server-id
+    help: "the server id"
+    value: string->symbol))
+
+(def actor-id-optional-argument
+  (optional-argument 'actor-id
+    help: "the actor's registered name"
+    value: string->symbol))
+
+(def module-id-argument
+  (argument 'module-id
+    help: "the module id"
+    value: string->symbol))
+
+(def server-id-or-role-argument
+  (argument 'server-or-role
+    help: "the server or role to lookup"
+    value: string->symbol))
+
+(def authorized-server-id-argument
+  (argument 'authorized-server-id
+    help: "the server to authorize capabilities for"
+    value: string->symbol))
+
+(def capabilities-optional-argument
+  (optional-argument 'capabilities
+    help: "the server capabilities to authorize"
+    value: string->object
+    default: '(admin)))
+
+(def expr-argument
+  (argument 'expr
+    help: "the expression to eval"
+    value: string->object))
+
+(def main-arguments
+  (rest-arguments 'main-args
+    help: "arguments for the module's main procedure"))
+
+(def library-flag
+  (flag 'library "--library"
+    help: "loads the code as library module; the library must be in the servers load path"))
+
+(def role-flag
+  (flag 'role "--role"
+    help: "lookup by role"))
+
+(def force-flag
+  (flag 'force "-f" "--force"
+    help: "force the action"))
+
+(def view-flag
+  (flag 'view "--view"
+    help: "inspect existing, don't generate"))
+
+(def (subcommand help)
+  (argument 'subcommand
+    help: help
+    value: string->symbol))
+
+(def subcommand-list
+  (subcommand "what to do: servers|actors|connections"))
+
+(def subcommand-admin
+  (subcommand "what to do: cookie|creds|authorize|retract"))
+
+(def subcommand-ca
+  (subcommand "what to do: setup|cert"))
+
+(def subcommand-arguments
+  (rest-arguments 'subcommand-args
+    help: "arguments for the subcommand"))
+
+(def run-cmd
+  (command 'run
+    logging-option
+    logging-file-option
+    listen-option
+    announce-option
+    registry-option
+    roles-option
+    server-id-argument
+    module-id-argument
+    main-arguments
+    help: "run a server in the ensemble"))
+
+(def registry-cmd
+  (command 'registry
+    logging-option
+    logging-file-option
+    listen-option
+    announce-option
+    help: "runs the ensemble registry"))
+
+(def load-cmd
+  (command 'load
+    console-option
+    force-flag
+    library-flag
+    registry-option
+    library-prefix-option
+    server-id-argument
+    module-id-argument
+    help: "loads code in a running server"))
+
+(def eval-cmd
+  (command 'eval
+    console-option
+    registry-option
+    server-id-argument
+    expr-argument
+    help: "evals code in a running server"))
+
+(def repl-cmd
+  (command 'repl
+    console-option
+    registry-option
+    library-prefix-option
+    server-id-argument
+    help: "provides a repl for a running server"))
+
+(def ping-cmd
+  (command 'ping
+    console-option
+    registry-option
+    server-id-argument
+    actor-id-optional-argument
+    help: "pings a server or actor in the server"))
+
+(def shutdown-cmd
+  (command 'shutdown
+    console-option
+    force-flag
+    registry-option
+    server-id-optional-argument
+    actor-id-optional-argument
+    help: "shuts down an actor, server, or the entire ensemble including the registry"))
+
+(def lookup-cmd
+  (command 'lookup
+    console-option
+    registry-option
+    role-flag
+    server-id-or-role-argument
+    help: "looks up a server by id or role"))
+
+(def list-cmd
+  (command 'list
+    subcommand-list
+    subcommand-arguments
+    help: "list server state"))
+
+(def admin-cmd
+  (command 'admin
+    subcommand-admin
+    subcommand-arguments
+    help: "ensemble administrative operations"))
+
+(def ca-cmd
+  (command 'ca
+    subcommand-ca
+    subcommand-arguments
+    help: "ensemble CA operations"))
+
+;; list subcommands
+(def list-servers-cmd
+  (command 'servers
+    console-option
+    registry-option
+    help: "lists known servers"))
+
+(def list-actors-cmd
+  (command 'actors
+    console-option
+    registry-option
+    server-id-argument
+    help: "list actors registered in a server"))
+
+(def list-connections-cmd
+  (command 'connections
+    console-option
+    registry-option
+    server-id-argument
+    help: "list a server's connections"))
+
+;; admin subcommands
+(def admin-authorize-cmd
+  (command 'authorize
+    console-option
+    registry-option
+    server-id-argument
+    authorized-server-id-argument
+    capabilities-optional-argument
+    help: "authorize capabilities for a server as an administrator"))
+
+(def admin-retract-cmd
+  (command 'retract
+    console-option
+    registry-option
+    server-id-argument
+    authorized-server-id-argument
+    help: "retract all capabilities granted to a server by an administrator"))
+
+(def admin-cookie-cmd
+  (command 'cookie
+    force-flag
+    view-flag
+    help: "generate or inspect the ensemble cookie"))
+
+(def admin-creds-cmd
+  (command 'creds
+    force-flag
+    view-flag
+    help: "generate or inspect ensemble administrator credentials"))
+
+;; ca subcommands
+(def ca-domain-option
+  (option 'domain "--domain"
+    default: "ensemble.local"
+    help: "ensembe TLS domain"))
+
+(def ca-subject/C-option
+  (option 'subject/C "--subject/C"
+     default: "UN"
+     help: "ensemble TLS CA Country"))
+
+(def ca-subject/O-option
+  (option 'subject/O "--subject/O"
+    default: "Mighty Gerbils"
+    help: "ensemble TLS CA Organization"))
+
+(def ca-subject/L-option
+  (option 'subject/L "--subject/L"
+    default: "Internet"
+    help: "ensemble TLS certificate location"))
+
+(def ca-setup-cmd
+  (command 'setup
+    view-flag
+    ca-domain-option
+    ca-subject/C-option
+    ca-subject/O-option
+    ca-subject/L-option
+    help: "setup or inspect the ensemble CAs"))
+
+(def ca-cert-cmd
+  (command 'cert
+    force-flag
+    view-flag
+    ca-subject/C-option
+    ca-subject/O-option
+    ca-subject/L-option
+    server-id-argument
+    capabilities-optional-argument
+    help: "generate or inspect an actor server certificate"))
+
+(def package-output-option
+  (option 'output "-o" "--output"
+    default: "ensemble.tar.gz"
+    help: "output file for the server package"))
+
+(def package-cmd
+  (command 'package
+    package-output-option
+    server-id-argument
+    help: "package ensemble state to ship an actor server environment"))
+;;;
+;;; command implementation
+;;;
+(defrule (defcommand-table name body ...)
+  (def name
+    (delay
+      (hash body ...))))
+
+(defcommand-table main-commands
+  (run              do-run)
+  (registry         do-registry)
+  (load             do-load)
+  (eval             do-eval)
+  (repl             do-repl)
+  (ping             do-ping)
+  (lookup           do-lookup)
+  (shutdown         do-shutdown)
+  (list             do-list)
+  (admin            do-admin)
+  (ca               do-ca)
+  (package          do-package))
+
+(defcommand-table list-commands
+  (servers     do-list-servers)
+  (actors      do-list-actors)
+  (connections do-list-connections))
+
+(defcommand-table admin-commands
+  (authorize        do-admin-authorize)
+  (retract          do-admin-retract)
+  (cookie           do-admin-cookie)
+  (creds            do-admin-creds))
+
+(defcommand-table ca-commands
+  (setup   do-ca-setup)
+  (cert    do-ca-cert))
+
+(defrule (dispatch-command cmd opt commands)
+  (let (table (force commands))
+    (cond
+     ((hash-get table cmd)
+      => (cut <> opt))
+     (else
+      (error "Unexpected command" cmd (hash-keys table))))))
+
+(defrule (defcommand-nested do-command commands name gopts ...)
+  (def (do-command opt)
+    (let* ((cmd  (hash-ref opt 'subcommand))
+           (cmd-args (cons (symbol->string cmd) (hash-ref opt 'subcommand-args)))
+           (cmd-main
+            (lambda (cmd opt) (dispatch-command cmd opt commands))))
+      (call-with-getopt cmd-main cmd-args
+        program: name
+        gopts ...))))
 
 (def (gxensemble-main cmd opt)
-  (def commands
-    (hash (run              do-run)
-          (registry         do-registry)
-          (load             do-load)
-          (eval             do-eval)
-          (repl             do-repl)
-          (ping             do-ping)
-          (shutdown         do-shutdown)
-          (list-servers     do-list-servers)
-          (list-actors      do-list-actors)
-          (list-connections do-list-connections)
-          (lookup           do-lookup)
-          (authorize        do-authorize)
-          (retract          do-retract)
-          (cookie           do-cookie)
-          (admin            do-admin)))
-  (cond
-   ((hash-get commands cmd)
-    => (cut <> opt))
-   (else
-    (error "Unexpected command" cmd))))
+  (dispatch-command cmd opt main-commands))
 
-(def (do-cookie opt)
-  (generate-actor-server-cookie! force: (hash-get opt 'force)))
+(defcommand-nested do-admin admin-commands "gxensemble admin"
+  admin-cookie-cmd
+  admin-creds-cmd
+  admin-authorize-cmd
+  admin-retract-cmd)
 
-(def (do-admin opt)
-  (let* ((passphrase (read-password prompt: "Enter passphprase: "))
-         (again      (read-password prompt: "Re-enter passphprase: ")))
-    (unless (equal? passphrase again)
-      (error "administrative passphrases don't match"))
-    (generate-admin-keypair! passphrase force: (hash-get opt 'force))))
+(def (do-admin-cookie opt)
+  (if (hash-get opt 'view)
+    (let (cookie (get-actor-server-cookie))
+      (displayln (hex-encode cookie)))
+    (generate-actor-server-cookie! force: (hash-get opt 'force))))
 
-(def (do-authorize opt)
+(def (do-admin-creds opt)
+  (if (hash-get opt 'view)
+    (let* ((pubk-path (default-admin-pubkey-path))
+           (pubk-raw (read-file-u8vector pubk-path)))
+      (displayln (hex-encode pubk-raw)))
+    (let* ((passphrase (read-password prompt: "Enter passphprase: "))
+           (again      (read-password prompt: "Re-enter passphprase: ")))
+      (unless (equal? passphrase again)
+        (error "administrative passphrases don't match"))
+      (generate-admin-keypair! passphrase force: (hash-get opt 'force)))))
+
+(def (do-admin-authorize opt)
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (authorized-server-id (hash-ref opt 'authorized-server-id))
@@ -287,7 +449,7 @@
     (admin-authorize (get-privkey) server-id authorized-server-id
                      capabilities: capabilities)))
 
-(def (do-retract opt)
+(def (do-admin-retract opt)
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (authorized-server-id (hash-ref opt 'authorized-server-id)))
@@ -302,6 +464,11 @@
        (ensemble-lookup-servers/role what)
        (ensemble-lookup-server what))))
   (stop-actor-server!))
+
+(defcommand-nested do-list list-commands "gxensemble list"
+  list-servers-cmd
+  list-actors-cmd
+  list-connections-cmd)
 
 (def (do-list-connections opt)
   (start-actor-server-with-options! opt)
@@ -320,6 +487,92 @@
   (display-result-list
    (ensemble-list-servers))
   (stop-actor-server!))
+
+(defcommand-nested do-ca ca-commands "gxensemble ca"
+  ca-setup-cmd
+  ca-cert-cmd)
+
+(def (do-ca-setup opt)
+  (cond
+   ((hash-get opt 'view)
+    (let* ((base-path (ensemble-tls-base-path))
+           (ca-certificates (path-expand "ca-certificates" base-path)))
+      (for (subject '("root-ca" "sub-ca"))
+        (let (cert (path-expand (string-append subject ".crt") ca-certificates))
+          (invoke "openssl" ["-text" "-in" cert])))))
+   ((file-exists? (path-expand "caroot.pem" (ensemble-tls-base-path)))
+    (displayln "caroot.pem already exists"))
+   (else
+    (let* ((root-passphrase (read-password prompt: "Enter root CA passphprase: "))
+           (again           (read-password prompt: "Re-enter passphprase: ")))
+      (unless (equal? root-passphrase again)
+        (error "root CA passphrases don't match"))
+      (generate-actor-tls-root-ca! root-passphrase
+                                   domain: (hash-ref opt 'domain)
+                                   country-name: (hash-ref opt 'subject/C)
+                                   organization-name: (hash-ref opt 'subject/O))
+      (let* ((sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
+             (again          (read-password prompt: "Re-enter passphprase: ")))
+      (unless (equal? sub-passphrase again)
+        (error "subordinate CA passphrases don't match"))
+      (generate-actor-tls-sub-ca! root-passphrase sub-passphrase
+                                  country-name: (hash-ref opt 'subject/C)
+                                  organization-name: (hash-ref opt 'subject/O))
+      (generate-actor-tls-cafiles!)
+      (generate-actor-tls-cert! sub-passphrase
+                                server-id: 'console
+                                capabilities: '(admin)
+                                country-name: (hash-ref opt 'subject/C)
+                                organization-name: (hash-ref opt 'subject/O)
+                                location: (hash-ref opt 'subject/L)))))))
+
+(def (do-ca-cert opt)
+  (let* ((server-id (hash-ref opt 'server-id))
+         (base-path (ensemble-tls-server-path server-id)))
+  (cond
+   ((hash-get opt 'view)
+    (let (cert (path-expand "server.crt" base-path))
+      (invoke "openssl" ["-text" "-in" cert])))
+   ((and (not (hash-get opt 'force))
+         (file-exists?  (path-expand "server.crt" base-path)))
+    (displayln "server.crt already exists; use --force to force certificate generation"))
+   (else
+    (let (sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
+      (generate-actor-tls-cert! sub-passphrase
+                                server-id: server-id
+                                capabilities: (hash-ref opt 'capabilities)
+                                country-name: (hash-ref opt 'subject/C)
+                                organization-name: (hash-ref opt 'subject/O)
+                                location: (hash-ref opt 'subject/L)))))))
+
+(def (do-package opt)
+  (let* ((server-id (hash-ref opt 'server-id))
+         (output    (hash-ref opt 'output))
+         (output    (path-expand output (current-directory)))
+         (gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+         (ensemble-base "ensemble/")
+         (ensemble-rebase
+          (lambda files
+            (map (cut string-append ensemble-base <>) files)))
+         (server-base
+          (string-append ensemble-base
+                         "server/"
+                         (symbol->string server-id) "/"))
+         (server-rebase
+          (lambda files
+            (map (cut string-append server-base <>) files))))
+
+    (current-directory gerbil-path)
+    (invoke "tar"
+            ["cavf" output
+             (ensemble-rebase
+              "cookie"
+              "admin.pub"
+              "tls/ca-certificates"
+              "tls/ca.pem"
+              "tls/caroot.pem"
+              "tls/domain") ...
+             (server-rebase "tls/chain.pem" "tls/server.key") ...])))
 
 (def (do-shutdown opt)
   (start-actor-server-with-options! opt)
@@ -704,26 +957,28 @@
           (else
            (hash-eq (registry (default-registry-addresses))))))
          (server-id
-          (make-random-identifier))
+          (hash-ref opt 'console))
         (listen-addrs
          (hash-ref opt 'listen []))
         (cookie (get-actor-server-cookie)))
-    (start-actor-server! cookie: cookie
+    (start-actor-server! identifier: server-id
+                         cookie: cookie
                          addresses: listen-addrs
-                         identifier: server-id
                          ensemble: known-servers)))
 
 (def +admin-privkey+ #f)
 (def (get-privkey)
   (or +admin-privkey+
       (if (file-exists? (default-admin-privkey-path))
-        (let* ((passphrase (read-password prompt: "Enter passphrase: "))
+        (let* ((passphrase (read-password prompt: "Enter administrative passphrase: "))
                (privk (get-admin-privkey passphrase)))
           (set! +admin-privkey+ privk)
           privk)
         (error "no administrative private key"))))
 
 (def (maybe-authorize! server-id)
-  (when (file-exists? (default-admin-privkey-path))
-    (let (privk (get-privkey))
-      (admin-authorize +admin-privkey+ server-id (actor-server-identifier)))))
+  (let (addr (connect-to-server! server-id))
+    (unless (eq? tls: (car addr))
+      (when (file-exists? (default-admin-privkey-path))
+        (let (privk (get-privkey))
+          (admin-authorize +admin-privkey+ server-id (actor-server-identifier)))))))

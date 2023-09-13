@@ -28,7 +28,7 @@
 
 ;; server sockets
 (defstruct (basic-server-socket basic-socket) ()
-  final: #t unchecked: #t)
+  unchecked: #t)
 
 ;; datagram sockets
 (defstruct (datagram-socket basic-socket) ()

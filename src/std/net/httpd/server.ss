@@ -7,8 +7,9 @@
         :std/sugar
         (only-in :std/logger start-logger!)
         :std/io
-        :std/os/socket
         :std/actor
+        :std/net/ssl
+        :std/os/socket
         :std/misc/threads
         ./base
         ./handler
@@ -21,7 +22,7 @@
                          sockopts: (sockopts [SO_REUSEADDR])
                          . addresses)
   (start-logger!)
-  (let (socks (map (cut tcp-listen <> backlog: backlog sockopts: sockopts) addresses))
+  (let (socks (map (cut http-listen <> backlog: backlog sockopts: sockopts) addresses))
     (let (srv (spawn/group 'http-server http-server socks mux))
       (current-http-server srv)
       srv)))
@@ -35,6 +36,13 @@
       (thread-group-kill! tgroup)))))
 
 ;;; implementation
+(def (http-listen addr backlog: backlog sockopts: sockopts)
+  (match addr
+    ([ssl: addr ssl-context]
+     (ssl-listen addr context: ssl-context backlog: backlog sockopts: sockopts))
+    (else
+     (tcp-listen addr))))
+
 (def (http-server socks mux)
   (with-methods mux get-handler put-handler!)
 
@@ -100,7 +108,7 @@
   (def (loop)
     (let (clisock (ServerSocket-accept sock))
       (spawn/name 'http-request-handler
-                  http-request-handler clisock get-handler)
+                  http-request-handler (StreamSocket clisock) get-handler)
       (loop)))
 
   (let again ()

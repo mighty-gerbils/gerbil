@@ -6,6 +6,7 @@
         :std/sugar
         :std/iter
         :std/io
+        :std/net/ssl
         :std/net/address
         :std/crypto
         :std/text/hex
@@ -18,6 +19,7 @@
         ./message
         ./proto
         ./cookie
+        ./tls
         ./admin
         ./connection)
 (export #t)
@@ -37,7 +39,11 @@
   (make-handle srv ref))
 
 ;; starts the actor server
-;; - cookie is a u8vector, used for authenticating connections.
+;; - identifier is the server identifier in your ensemble; a symbol.
+;;   defaults to a random identifier.
+;; - cookie is a u8vector, used for authenticating local (and raw tcp) connections.
+;; - tls-context is the actor server's tls context; it can be #f if the server will
+;;   not be communicating with remote servers using tls
 ;; - admin is an _optional_ public key for authorizing administrative actions at the
 ;;   origin server level.
 ;;   If it is #f, then all server in the ensemble are automatically authorized.
@@ -48,21 +54,20 @@
 ;;   - [unix: hostname  path]: a path for a unix domain socket in a host
 ;;   - [tcp: addr]: an internet address; see :std/net/address
 ;;   - TODO: TLS address
-;; - identifier is the server identifier in your ensemble; a symbol.
-;;   defaults to a random identifier.
 ;; - known-servers is the set of known servers.
 ;;   it is a hash table mapping server identifiers to list of addresses.
 ;;   all servers in the ensemble must share the same cookie.
 ;; Returns the server thread.
-(def (start-actor-server! cookie:     (cookie (get-actor-server-cookie))
-                          admin:      (admin (get-admin-pubkey))
-                          auth:       (auth #f)
-                          addresses:  (addrs [])
-                          identifier: (id (make-random-identifier))
-                          ensemble:   (known-servers (default-known-servers)))
+(def (start-actor-server! identifier:  (id (make-random-identifier))
+                          tls-context: (tls-context (get-actor-tls-context id))
+                          cookie:      (cookie (get-actor-server-cookie))
+                          admin:       (admin (get-admin-pubkey))
+                          auth:        (auth #f)
+                          addresses:   (addrs [])
+                          ensemble:    (known-servers (default-known-servers)))
   (start-logger!)
-  (let* ((socks (actor-server-listen! addrs))
-         (server (spawn/group 'actor-server actor-server id known-servers cookie admin auth socks)))
+  (let* ((socks (actor-server-listen! addrs tls-context))
+         (server (spawn/group 'actor-server actor-server id known-servers tls-context cookie admin auth socks)))
     (current-actor-server server)
     (set! (thread-specific server) id)
     server))
@@ -146,12 +151,17 @@
   (string->symbol
    (string-append "actor-server-" (hex-encode (subu8vector (sha256 (random-bytes 32)) 0 8)))))
 
-(def (actor-server-listen! addrs)
+(def (actor-server-listen! addrs tls-context)
   (let lp ((rest addrs) (socks []))
-    (defrule (fail! msg arg ...)
-      (begin
-        (for-each ServerSocket-close socks)
-        (error msg arg ...)))
+    (defrules fail! ()
+      ((_ exn)
+       (begin
+         (for-each ServerSocket-close socks)
+         (raise exn)))
+      ((_ msg arg ...) (stx-string? #'msg)
+       (begin
+         (for-each ServerSocket-close socks)
+         (error msg arg ...))))
 
     (match rest
       ([addr . rest]
@@ -163,22 +173,30 @@
                    (maybe-sock (with-catch values (cut unix-listen path))))
               (if (ServerSocket? maybe-sock)
                 (lp rest (cons maybe-sock socks))
-                (fail! "failed to listen" path)))
+                (fail! maybe-sock)))
             (fail! "bad unix address; hostname mismatch" addr)))
          ([tcp: inet-addr]
           (let (maybe-sock (with-catch values (cut tcp-listen inet-addr)))
             (if (ServerSocket? maybe-sock)
               (lp rest (cons maybe-sock socks))
-              (fail! "failed to listen" addr))))
+              (fail! maybe-sock))))
+         ([tls: inet-addr]
+          (if tls-context
+            (let (maybe-sock (with-catch values (cut ssl-listen inet-addr context: tls-context)))
+              (if (ServerSocket? maybe-sock)
+                (lp rest (cons maybe-sock socks))
+                (fail! maybe-sock)))
+            (fail! "no TLS context" addr)))
          (else
           (fail! "unrecognized address" addr))))
       (else
        (reverse socks)))))
 
-(def (actor-server id known-servers cookie admin auth socks)
-  (with-exception-stack-trace (cut actor-server-main id known-servers cookie admin auth socks)))
+(def (actor-server id known-servers tls-context cookie admin auth socks)
+  (with-exception-stack-trace
+   (cut actor-server-main id known-servers tls-context cookie admin auth socks)))
 
-(def (actor-server-main id known-servers cookie admin auth socks)
+(def (actor-server-main id known-servers tls-context cookie admin auth socks)
   ;; next actor numeric id; 0 is self
   (def next-actor-id 1)
   ;; server address cache
@@ -200,8 +218,8 @@
   (def actors (make-hash-table-eqv))
   ;; reverse actor table: actor thread -> [actor-id ...]
   (def actor-threads (make-hash-table-eq))
-  ;; authorized administrative server table: server-id -> [delegated|connected|preauth cap ...]
-  (def admin-auth
+  ;; server capability table: server-id -> [delegated|connected|preauth cap ...]
+  (def capabilities
     (if auth
       (list->hash-table-eq (hash-map (lambda (k v) (cons k (cons 'preauth v))) auth ))
       (make-hash-table-eq)))
@@ -328,7 +346,7 @@
               (else
                (debugf "connecting to server ~a at ~a" srv-id addrs)
                (hash-put! pending-conns srv-id [cont])
-               (spawn/name 'actor-connector actor-connector (current-thread) srv-id addrs cookie))))
+               (spawn/name 'actor-connector actor-connector (current-thread) srv-id addrs cookie tls-context))))
             (else
              (cont result))))))))
 
@@ -437,10 +455,10 @@
       (thread-send/check source msg)))
 
   (def is-shutdown-authorized?
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id)
         (cond
-         ((hash-get admin-auth srv-id)
+         ((hash-get capabilities srv-id)
          => (lambda (state)
               (find (lambda (cap) (memq cap '(admin shutdown))) (cdr state))))
          (else #f)))
@@ -448,21 +466,21 @@
         #t)))
 
   (def is-retract-authorized?
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id authorized-server-id)
         (cond
          ((eq? srv-id authorized-server-id))
-         ((hash-get admin-auth srv-id)
+         ((hash-get capabilities srv-id)
           => (lambda (state) (memq 'admin (cdr state))))
          (else #f)))
       (lambda (srv-id authorized-server-id)
         #t)))
 
   (def actor-capabilities
-    (if admin
+    (if (or admin tls-context)
       (lambda (srv-id)
         (cond
-         ((hash-get admin-auth srv-id) => cdr)
+         ((hash-get capabilities srv-id) => cdr)
          (else #f)))
       (lambda (srv-id)
         '(admin))))
@@ -478,6 +496,15 @@
         (lambda (c r)
           (if (memq c r) r (cons c r)))
         cap new-cap))))
+
+  (def (update-capabilities! server-id cap how)
+    (hash-update! capabilities server-id
+                  (lambda (existing-cap)
+                    (cons how
+                          (if existing-cap
+                            (merge-capabilities cap (cdr existing-cap))
+                            cap)))
+                  #f))
 
   ;; main loop
   (let/cc exit
@@ -617,10 +644,10 @@
                  (hash-remove! server-addrs srv-id)
                  ;; and our authorization table
                  (cond
-                  ((hash-get admin-auth srv-id)
+                  ((hash-get capabilities srv-id)
                    => (lambda (state)
                         (when (eq? (car state) 'connected)
-                          (hash-remove! admin-auth srv-id)))))
+                          (hash-remove! capabilities srv-id)))))
                  (hash-remove! pending-admin-auth srv-id)
                  ;; update the registry
                  (send-to-registry! actor-id msg))
@@ -661,8 +688,10 @@
 
                 ((!admin-auth authorized-server-id cap)
                  (cond
+                  ((and (not admin) tls-context)
+                   (send-remote-control-reply! src-id msg (!error "no admin credentials")))
                   ((or (not admin)
-                       (alet (state (hash-get admin-auth src-id))
+                       (alet (state (hash-get capabilities src-id))
                          (andmap (cut memq <> (cdr state)) cap)))
                    (send-remote-control-reply! src-id msg (!ok (void))))
                   ((hash-get pending-admin-auth src-id)
@@ -681,15 +710,11 @@
                           (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
                             (begin
                               (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
-                              (hash-update! admin-auth authorized-server-id
-                                            (lambda (existing-cap)
-                                              (cons (if (eq? src-id authorized-server-id)
+                              (update-capabilities! authorized-server-id
+                                                    cap
+                                                    (if (eq? src-id authorized-server-id)
                                                       'connected
-                                                      'delegated)
-                                                    (if existing-cap
-                                                      (merge-capabilities cap (cdr existing-cap))
-                                                      cap)))
-                                            #f)
+                                                      'delegated))
                               (send-remote-control-reply! src-id msg (!ok (void))))
                             (begin
                               (warnf "admin authorization failed for ~a" src-id)
@@ -701,7 +726,7 @@
                  (if (is-retract-authorized? src-id authorized-server-id)
                    (begin
                      (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
-                     (hash-remove! admin-auth authorized-server-id)
+                     (hash-remove! capabilities authorized-server-id)
                      (send-remote-control-reply! src-id msg (!ok (void))))
                    (begin
                      (warnf "unauthorized retraction from ~a" src-id)
@@ -775,9 +800,13 @@
               (when (&envelope-reply-expected? msg)
                 (send-remote-control-reply! src-id msg (!error "unknown actor"))))))))
 
-       ((and notification (!connected conn srv-id addr dir))
+       ((and notification (!connected conn srv-id cert addr dir))
         (debugf "connected to server ~a at ~a [~a]" srv-id addr dir)
         (hash-update! conns srv-id (cut cons notification <>) [])
+        (when cert
+          (let (cap (actor-tls-certificate-cap cert))
+            (when cap
+              (update-capabilities! srv-id cap 'connected))))
         (dispatch-pending-conns! srv-id (!ok notification)))
 
        ((!disconnected conn srv-id)
@@ -791,10 +820,10 @@
                    (begin
                      (hash-remove! conns srv-id)
                      (cond
-                      ((hash-get admin-auth srv-id)
+                      ((hash-get capabilities srv-id)
                        => (lambda (state)
                             (when (eq? (car state) 'connected)
-                              (hash-remove! admin-auth srv-id)))))
+                              (hash-remove! capabilities srv-id)))))
                      (hash-remove! pending-admin-auth srv-id))
                    (hash-put! conns srv-id remaining)))))))
 

@@ -1,15 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto FFI
-;; compile: -ld-options "-lcrypto"
-package: std/crypto
-
 (export #t)
 (import :std/foreign)
 
 (begin-ffi
     (ERR_get_error ERR_peek_last_error
      ERR_lib_error_string ERR_func_error_string ERR_reason_error_string
+     ERR_error_string
      EVP_MD? EVP_MD_CTX?
      EVP_MD_CTX_create EVP_DigestInit EVP_DigestUpdate EVP_DigestFinal
      EVP_MD_CTX_copy
@@ -73,6 +71,7 @@ package: std/crypto
 (declare (not safe))
 
 (c-declare #<<END-C
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <openssl/dh.h>
@@ -83,17 +82,7 @@ END-C
 )
 
 (c-initialize #<<END-C
-ERR_load_crypto_strings(); /* Load the human readable error strings for libcrypto */
-OpenSSL_add_all_algorithms(); /* Load all digest and cipher algorithms, + engines on BSD */
-END-C
-)
-
-(c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
+OPENSSL_init_crypto(0, NULL);
 END-C
 )
 
@@ -154,11 +143,22 @@ END-C
           (##memq ',tag (foreign-tags x)))))
 
 ;; error handling
+(c-declare #<<END-C
+__thread char openssl_error_buf[256];
+static char *ffi_openssl_error_string(unsigned long err)
+{
+ ERR_error_string_n(err, openssl_error_buf, sizeof(openssl_error_buf));
+ return openssl_error_buf;
+}
+END-C
+)
+
 (define-c-lambda ERR_get_error () unsigned-long)
 (define-c-lambda ERR_peek_last_error () unsigned-long)
 (define-c-lambda/const-pointer ERR_lib_error_string (unsigned-long) char-string)
 (define-c-lambda/const-pointer ERR_func_error_string (unsigned-long) char-string)
 (define-c-lambda/const-pointer ERR_reason_error_string (unsigned-long) char-string)
+(define-c-lambda ERR_error_string (unsigned-long) char-string "ffi_openssl_error_string")
 
 ;;; Engines
 (c-define-type ENGINE "ENGINE")

@@ -59,7 +59,7 @@
 (defmessage !ensemble-lookup-server (id role))
 (defmessage !lookup-timeout (srv nonce))
 
-(defmessage !connected (conn id addr dir reader writer))
+(defmessage !connected (conn id cert addr dir reader writer))
 (defmessage !connection-failed (id what))
 (defmessage !disconnected (conn id))
 (defmessage !recv (id msg))

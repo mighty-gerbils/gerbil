@@ -21,7 +21,9 @@
         inaddr-any4
         inaddr-any6
         localhost4
-        localhost6)
+        localhost6
+        (rename: default-listen-sockopts default-server-sockopts)
+        (rename: default-backlog default-server-backlog))
 
 (def default-listen-sockopts
   [SO_REUSEADDR])
