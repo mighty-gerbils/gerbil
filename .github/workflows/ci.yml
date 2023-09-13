@@ -52,6 +52,10 @@ jobs:
         run: |
           . ./build-env.sh
           ./src/build.sh r7rs-large
+      - name: Build Gerbil srfi shims
+        run: |
+          . ./build-env.sh
+          ./src/build.sh srfi
       - name: Build Gerbil tools
         run: |
           . ./build-env.sh

@@ -221,6 +221,11 @@ build_r7rs_large() {
   (cd r7rs-large && ./build.ss)
 }
 
+build_srfi() {
+    feedback_low "Building SRFI shims"
+    (cd srfi && ./build.ss)
+}
+
 build_tools () {
   feedback_low "Building gerbil tools"
   (cd tools && ./build.ss)
@@ -253,6 +258,7 @@ build_gerbil() {
   build_libgerbil  || die
   build_lang       || die
   build_r7rs_large || die
+  build_srfi       || die
   build_tools      || die
   build_tags       || die
 }
@@ -289,6 +295,9 @@ else
        "r7rs-large")
          build_r7rs_large || die
          ;;
+       "srfi")
+         build_srfi || die
+         ;;
        "tools")
          build_tools || die
          ;;
@@ -301,7 +310,7 @@ else
        *)
          feedback_err "Unknown command."
          feedback_err \
-           "Correct usage: ./build.sh [prepare|gambit|boot-gxi|stage0|stage1|stdlib|libgerbil|lang|r7rs-large|tools|tags]"
+           "Correct usage: ./build.sh [prepare|gambit|boot-gxi|stage0|stage1|stdlib|libgerbil|lang|r7rs-large|srfi|tools|tags]"
          die
          ;;
   esac
