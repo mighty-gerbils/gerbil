@@ -304,6 +304,8 @@
          (libdir (path-expand "lib" home))
          (loadpath
           (cond
+           ((getenv "GERBIL_BUILD_PREFIX" #f)
+            '())
            ((getenv "GERBIL_LOADPATH" #f)
             => (lambda (envvar)
                  (filter (lambda (x) (not (string-empty? x)))
@@ -312,7 +314,9 @@
          (userpath
           (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
          (loadpath
-          (cons userpath loadpath)))
+          (if (getenv "GERBIL_BUILD_PREFIX" #f)
+            loadpath
+            (cons userpath loadpath))))
     (&current-module-libpath (cons libdir loadpath)))
 
   (let* ((registry-entry (lambda (m) (cons m 'builtin)))
