@@ -44,25 +44,27 @@
 (def (main . args)
   (def install-cmd
     (command 'install help: "install one or more packages"
-             (rest-arguments 'pkg help: "package to install")))
+      (rest-arguments 'pkg help: "package to install")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
-             (flag 'force "-f" help: "force uninstall even if there are orphaned dependencies")
-             (rest-arguments 'pkg help: "package to uninstall")))
+      (flag 'force "-f" help: "force uninstall even if there are orphaned dependencies")
+      (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
-             (rest-arguments 'pkg help: "package to update; all for all packages")))
+      (rest-arguments 'pkg help: "package to update; all for all packages")))
   (def link-cmd
     (command 'link help: "link a local development package"
-             (argument 'pkg help: "package to link")
-             (argument 'src help: "path to package source directory")))
+      (argument 'pkg help: "package to link")
+      (argument 'src help: "path to package source directory")))
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
-             (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
-             (rest-arguments 'pkg help: "package to unlink")))
+      (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
+      (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
-             (rest-arguments 'pkg help: "package to build; all for all packages")))
+      (flag 'build-release "-R" "--release" help: "build released (static) executables")
+      (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
+      (rest-arguments 'pkg help: "package to build; all for all packages")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
              (rest-arguments 'pkg help: "package to clean")))
@@ -102,7 +104,7 @@
       ((unlink)
        (unlink-pkgs .pkg .?force))
       ((build)
-       (build-pkgs .pkg))
+       (build-pkgs .pkg .?release .?optimized))
       ((clean)
        (clean-pkgs .pkg))
       ((list)
@@ -154,7 +156,11 @@
 (def (unlink-pkgs pkgs force?)
   (for-each (cut pkg-unlink <> force?) pkgs))
 
-(def (build-pkgs pkgs)
+(def (build-pkgs pkgs release? optimized?)
+  (when release?
+    (setenv "GERBUIL_BUILD_RELEASE" "t"))
+  (when optimized?
+    (setenv "GERBUIL_BUILD_OPTIMIZED" "t"))
   (for-each pkg-build pkgs))
 
 (def (clean-pkgs pkgs)
