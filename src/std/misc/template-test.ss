@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; string template tests
-(import :std/test)
+(import :std/test
+        ./template)
 (export template-test)
 
 (def template-test
