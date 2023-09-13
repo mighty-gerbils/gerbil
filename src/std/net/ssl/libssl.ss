@@ -32,7 +32,7 @@
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 #include <openssl/macros.h>
-#ifdef OPENSSL_NO_DEPRECATED_3_0
+#ifndef OPENSSL_NO_DEPRECATED_3_0
 #include <openssl/safestack.h>
 #include <openssl/x509v3.h>
 DEFINE_STACK_OF(GENERAL_NAME);
