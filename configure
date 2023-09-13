@@ -233,7 +233,7 @@ fi
 git submodule init || die
 git submodule update --force || die
 
-(cd src/gambit && git pull origin master && git checkout "${gambit_tag}" && touch configure config.status) || die
+(cd src/gambit && git fetch origin && git checkout "${gambit_tag}" && touch configure config.status) || die
 
 gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_config}"
 (export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config ) || die
