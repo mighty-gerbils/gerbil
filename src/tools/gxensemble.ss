@@ -565,6 +565,7 @@
     (invoke "tar"
             ["cavf" output
              (ensemble-rebase
+              "cookie"
               "admin.pub"
               "tls/ca-certificates"
               "tls/ca.pem"
