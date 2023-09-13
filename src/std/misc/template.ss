@@ -33,29 +33,45 @@
       (let lp ((rest (string->list template)))
         (match rest
           ([char . rest]
-           (if (eqv? char #\$)
+           (cond
+            ((eqv? char #\\)
+             (match rest
+               ([escape . rest]
+                (display escape output)
+                (lp rest))
+               (else
+                (error "incomplete character escape"))))
+            ((eqv? char #\$)
              (match rest
                ([char . rest]
-                (if (eqv? char #\{)
+                (cond
+                 ((eqv? char #\\)
+                  (match rest
+                    ([escape . rest]
+                     (display #\$ output)
+                     (display escape output)
+                     (lp rest))))
+                 ((eqv? char #\{)
                   (let lp-inner ((rest rest) (var []))
                     (match rest
                       ([char . rest]
-                       (if (eqv? char #\})
-                         (begin
-                           (display (hash-ref vars (list->string (reverse! var)))
-                                    output)
-                           (lp rest))
-                         (lp-inner rest (cons char var))))
+                       (cond
+                        ((eqv? char #\})
+                         (display (hash-ref vars (list->string (reverse! var)))
+                                  output)
+                         (lp rest))
+                        (else
+                         (lp-inner rest (cons char var)))))
                       (else
-                       (error "incomplete variable substitution"))))
-                  (begin
+                       (error "incomplete variable substitution")))))
+                 (else
                    (display #\$ output)
                    (display char output)
                    (lp rest))))
                (else
                 (display #\$ output)
-                (lp rest)))
-             (begin
+                (lp rest))))
+             (else
                (display char output)
                (lp rest))))
           (else (void)))))))
