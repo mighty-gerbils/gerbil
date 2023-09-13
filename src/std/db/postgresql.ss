@@ -20,11 +20,15 @@
 (defstruct (postgresql-connection connection) (host port user db)
   print: (host port user db)
   constructor: :init!
-  final: #t)
+  final: #t unchecked: #t)
 
 (defmethod {:init! postgresql-connection}
   (lambda (self driver host port user db)
-    (struct-instance-init! self driver #f #f #f host port user db)))
+    (connection:::init! self driver)
+    (set! (&postgresql-connection-host self) host)
+    (set! (&postgresql-connection-port self) port)
+    (set! (&postgresql-connection-user self) user)
+    (set! (&postgresql-connection-db self) db)))
 
 (def (postgresql-connect host: (host "127.0.0.1")
                          port: (port 5432)
@@ -35,11 +39,11 @@
     (make-postgresql-connection driver host port user db)))
 
 (defmethod {close postgresql-connection}
-  (lambda (self)
-    (postgresql-close! self)))
+  postgresql-close!)
 
 (defstruct (postgresql-command statement) (conn complete notices input token)
   constructor: :init!
+  unchecked: #t
   print: (complete))
 
 (defstruct !unnamed () final: t)
@@ -47,9 +51,15 @@
 
 (defmethod {:init! postgresql-command}
   (lambda (self conn name: (name unnamed-command) complete: (complete #f))
-    (struct-instance-init! self name conn complete [])))
+    (statement:::init! self name)
+    (set! (&postgresql-command-conn self) conn)
+    (set! (&postgresql-command-complete self) complete)
+    (set! (&postgresql-command-notices self) [])))
 
-
+(defmethod {bind postgresql-command} void)
+(defmethod {exec postgresql-command} void)
+(defmethod {clear postgresql-command} void)
+(defmethod {finalize postgresql-command} void)
 (defmethod {query-start postgresql-command} void)
 (defmethod {query-fini postgresql-command} postgresql-command::reset)
 (defmethod {query-fetch postgresql-command} (lambda _ iter-end))
@@ -65,29 +75,31 @@
 
 (defmethod {reset postgresql-command}
   (lambda (self)
-    (alet (token (postgresql-command-token self))
-      (postgresql-reset! (postgresql-command-conn self) token)
-      (set! (postgresql-command-token self) #f)
-      (set! (postgresql-command-input self) #f))))
+    (alet (token (&postgresql-command-token self))
+      (postgresql-reset! (&postgresql-command-conn self) token)
+      (set! (&postgresql-command-token self) #f)
+      (set! (&postgresql-command-input self) #f))))
 
 (defstruct (postgresql-statement postgresql-command) (cols params bind row)
   constructor: :init!
-  final: #t)
+  final: #t unchecked: #t)
 
 (defalias postgresql-statement-name statement-e)
 
 (defmethod {:init! postgresql-statement}
   (lambda (self conn name: (name unnamed-command)
-                cols params: (params []))
-    (struct-instance-init! self name conn #f [] #f #f cols params)))
+           cols params: (params []))
+    (postgresql-command:::init! self conn name: name)
+    (set! (&postgresql-statement-cols self) cols)
+    (set! (&postgresql-statement-params self) params)))
 
 (defmethod {query-row postgresql-statement}
   (lambda (self)
-    (postgresql-statement-row self)))
+    (&postgresql-statement-row self)))
 
 (defmethod {columns postgresql-statement}
    (lambda (self)
-     (map car (postgresql-statement-cols self))))
+     (map car (&postgresql-statement-cols self))))
 
 (defmethod {query-fini postgresql-statement}
    postgresql-statement::reset)
@@ -100,16 +112,16 @@
     (wrap-notice-handler
      self
      (cut unless (postgresql-statement-in-query? self)
-          (with ((postgresql-statement name conn _ _ _ _ _ _ bind) self)
+          (with ((postgresql-statement name _ conn _ _ _ _ _ _ bind) self)
             (let ((values inp token) (postgresql-query! conn name (or bind [])))
-              (set! (postgresql-command-token self) token)
-              (set! (postgresql-command-input self) inp)
-              (set! (postgresql-statement-row self) #f)))))))
+              (set! (&postgresql-command-token self) token)
+              (set! (&postgresql-command-input self) inp)
+              (set! (&postgresql-statement-row self) #f)))))))
 
 (defmethod {query-fetch postgresql-statement}
   (lambda (self)
     (def (result->row cols)
-      (let (res (map result->value cols (postgresql-statement-cols self)))
+      (let (res (map result->value cols (&postgresql-statement-cols self)))
         (cond
          ((null? res) #f)
          ((null? (cdr res))
@@ -129,27 +141,27 @@
        (else res)))
 
     (cond
-     ((postgresql-command-input self)
+     ((&postgresql-command-input self)
       => (lambda (inp)
            (let again ()
              (let (next (channel-get inp))
                (cond
                 ((or (eof-object? next) (postgresql-CommandComplete? next))
                  (when (postgresql-CommandComplete? next)
-                     (set! (postgresql-command-complete self)
+                     (set! (&postgresql-command-complete self)
                        (postgresql-message-args next)))
-                 (set! (postgresql-command-token self) #f)
-                 (set! (postgresql-command-input self) #f)
-                 (set! (postgresql-statement-row self) #f)
+                 (set! (&postgresql-command-token self) #f)
+                 (set! (&postgresql-command-input self) #f)
+                 (set! (&postgresql-statement-row self) #f)
                  iter-end)
                 ((exception? next)
                  (raise next))
                 ((query-token? next)
-                 (postgresql-continue! (postgresql-command-conn self) next)
+                 (postgresql-continue! (&postgresql-command-conn self) next)
                  (again))
                 (else
                  (let (row (result->row next))
-                   (set! (postgresql-statement-row self) row)
+                   (set! (&postgresql-statement-row self) row)
                    (void))))))))
      (else iter-end))))
 
@@ -174,93 +186,95 @@
         => (cut <> arg))
        (else
         (error "Cannot bind; Parameter type oid not in (current-catalog)" type-oid arg))))
-    (let* ((params (postgresql-statement-params self))
+    (let* ((params (&postgresql-statement-params self))
            (bind (map value->binding params args)))
-      (set! (postgresql-statement-bind self) bind)
+      (set! (&postgresql-statement-bind self) bind)
       (void))))
 
 (defmethod {clear postgresql-statement}
   (lambda (self)
-    (set! (postgresql-statement-bind self) #f)))
+    (set! (&postgresql-statement-bind self) #f)))
 
 (defmethod {exec postgresql-statement}
   (lambda (self)
-    (with ((postgresql-statement name conn _ _ _ _ _ _ bind) self)
+    (with ((postgresql-statement name _ conn _ _ _ _ _ _ bind) self)
       (wrap-notice-handler self
        (cut let (comp (postgresql-exec! conn name (or bind [])))
                 (begin0 comp
-                  (set! (postgresql-command-complete self) comp)))))))
+                  (set! (&postgresql-command-complete self) comp)))))))
 (defmethod {finalize postgresql-statement}
   (lambda (self)
-    (with ((postgresql-statement name conn) self)
+    (with ((postgresql-statement name _ conn) self)
       (postgresql-statement::reset self)
-      (set! (postgresql-command-complete self) #f)
+      (set! (&postgresql-command-complete self) #f)
       (postgresql-close-statement! conn name))))
 
 (defmethod {reset postgresql-statement}
   (lambda (self)
     (postgresql-command::reset self)
-    (set! (postgresql-statement-row self) #f)))
+    (set! (&postgresql-statement-row self) #f)))
 
 (defstruct (postgresql-query postgresql-command) (str cmd greedy)
   constructor: :init!
   print: (greedy str)
-  final: #t)
+  final: #t unchecked: #t)
 
 (defmethod {:init! postgresql-query}
   (lambda (self conn str greedy: (greedy #t))
-    (struct-instance-init! self unnamed-command conn #f [] #f #f str #f greedy)))
+    (postgresql-command:::init! self conn name: unnamed-command)
+    (set! (&postgresql-query-str self) str)
+    (set! (&postgresql-query-greedy self) greedy)))
 
 (defmethod {exec postgresql-query}
   (lambda (self)
     (postgresql-query::query-start self)
     (wrap-notice-handler self
-     (cut with ((postgresql-query _ conn _ _ _ token str) self)
+     (cut with ((postgresql-query _ conn _ _ _ _ token str) self)
           (postgresql-reset! conn token)))))
 
-(defmethod {query-row postgresql-query} postgresql-query-cmd)
+(defmethod {query-row postgresql-query} &postgresql-query-cmd)
 
 (defmethod {query-start postgresql-query}
   (lambda (self)
     (wrap-notice-handler self
-     (cut with ((postgresql-query _ conn _ _ _ _ str) self)
+     (cut with ((postgresql-query _ _ conn _ _ _ _ str) self)
           (let ((values inp token) (postgresql-simple-query! conn str))
-            (set! (postgresql-command-token self) token)
-            (set! (postgresql-command-input self) inp))))))
+            (set! (&postgresql-command-token self) token)
+            (set! (&postgresql-command-input self) inp))))))
 
 (defmethod {query-fetch postgresql-query}
   (lambda (self)
     (def greedy-in #f)
     (wrap-notice-handler self
-     (cut with ((postgresql-query _ conn _ _ inp token _ cmd greedy) self)
+     (cut with ((postgresql-query _ _ conn _ _ inp token _ cmd greedy) self)
       (if (not inp) iter-end
           (let again ()
              (let (next (channel-get inp))
                (cond
                 ((eof-object? next)
-                 (set! (postgresql-command-token self) #f)
-                 (set! (postgresql-command-input self) #f)
-                 (set! (postgresql-command-complete self) #t)
+                 (set! (&postgresql-command-token self) #f)
+                 (set! (&postgresql-command-input self) #f)
+                 (set! (&postgresql-command-complete self) #t)
                  iter-end)
                 ((exception? next)
                  (raise next))
                 ((query-token? next)
-                 (postgresql-continue! (postgresql-command-conn self) next)
+                 (postgresql-continue! (&postgresql-command-conn self) next)
                  (again))
                 ((postgresql-CommandComplete? next)
                  (let ((comp (postgresql-message-args next)))
                    (when (and cmd (not greedy))
-                     (set! (postgresql-command-input cmd) #f))
+                     (set! (&postgresql-command-input cmd) #f))
                    (when greedy-in
                      (channel-sync greedy-in next)
                      (set! greedy-in #f))
-                   (cond ((or (not cmd) (postgresql-command-complete cmd))
-                          (set! (postgresql-query-cmd self)
+                   (cond ((or (not cmd) (&postgresql-command-complete cmd))
+                          (set! (&postgresql-query-cmd self)
                             (make-postgresql-command conn complete: comp)))
                          (else
-                          (set! (postgresql-command-complete cmd) comp)))
+                          (set! (&postgresql-command-complete cmd) comp)))
                    (cond ((not greedy)
-                            (set! (postgresql-query-cmd self) #f)
+                            (set! (&postgresql-query-cmd self) #f)
                             (set! cmd #f)
                             (again))
                          (else
@@ -268,14 +282,14 @@
                 ((postgresql-RowDescription? next)
                  (let (stmt (make-postgresql-statement
                              conn (postgresql-message-args next)))
-                   (set! (postgresql-query-cmd self) stmt)
+                   (set! (&postgresql-query-cmd self) stmt)
                    (set! cmd stmt)
                    (cond ((not greedy)
-                          (set! (postgresql-command-input stmt) inp)
+                          (set! (&postgresql-command-input stmt) inp)
                           (void))
                          (else
                           (set! greedy-in (make-channel))
-                          (set! (postgresql-command-input stmt) greedy-in)
+                          (set! (&postgresql-command-input stmt) greedy-in)
                           (again)))))
                 (else
                  (when greedy-in (channel-sync greedy-in next))
