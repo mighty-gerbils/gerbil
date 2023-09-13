@@ -30,6 +30,11 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 
+#if OPENSSL_VERSION_NUMBER > 0x30000000L
+#include <openssl/safestack.h>
+ DEFINE_STACK_OF(GENERAL_NAME);
+#endif
+
 static int ffi_ssl_gerbil_data_index;
 
 static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
