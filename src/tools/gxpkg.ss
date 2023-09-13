@@ -161,7 +161,10 @@
     (setenv "GERBUIL_BUILD_RELEASE" "t"))
   (when optimized?
     (setenv "GERBUIL_BUILD_OPTIMIZED" "t"))
-  (for-each pkg-build pkgs))
+  (if (null? pkgs)
+    ;; do local build
+    (pkg-build "." #f)
+    (for-each pkg-build pkgs)))
 
 (def (clean-pkgs pkgs)
   (for-each pkg-clean pkgs))
@@ -300,24 +303,31 @@
       (delete-file dest))))
 
 (def (pkg-build pkg (dependents? #t))
-  (if (equal? pkg "all")
+  (cond
+   ((equal? pkg "all")
     (let* ((pkgs (pkg-list))
            (deps (map (cut pkg-dependents* <> pkgs) pkgs))
            (pkgs+deps (map cons pkgs deps))
            (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
-      (for-each (cut pkg-build <> #f) (map car sorted)))
-    (let* ((root (pkg-root-dir))
-           (path (path-expand pkg root))
-           (_ (unless (file-exists? path)
-                (error "Cannot build unknown package" pkg)))
-           (build.ss (pkg-build-script pkg)))
-      (displayln "... build " pkg)
+      (for-each (cut pkg-build <> #f) (map car sorted))))
+   ((equal? pkg ".")
+    (displayln "... build in current directory")
+    (let (build.ss (path-expand "build.ss" (current-directory)))
       (run-process [build.ss "compile"]
-                   directory: path
-                   coprocess: void
-                   stdout-redirection: #f)
-      (when dependents?
-        (for-each pkg-build (pkg-dependents pkg))))))
+                   stdout-redirection: #f)))
+    (else
+     (let* ((root (pkg-root-dir))
+            (path (path-expand pkg root))
+            (_ (unless (file-exists? path)
+                 (error "Cannot build unknown package" pkg)))
+            (build.ss (pkg-build-script pkg)))
+       (displayln "... build " pkg)
+       (run-process [build.ss "compile"]
+                    directory: path
+                    coprocess: void
+                    stdout-redirection: #f)
+       (when dependents?
+         (for-each pkg-build (pkg-dependents pkg))))))))
 
 (def (pkg-clean pkg)
   (def gpath (getenv "GERBIL_PATH" "~/.gerbil"))
