@@ -72,7 +72,7 @@ static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
   case SSL_ERROR_ZERO_RETURN:
    return ___FIX(0);
    default:
-   ___processor_state ___ps = ___PSTATE;
+   ___processor_state ___ps = ___GET_PSTATE();
    ___SCMOBJ result = ___make_pair(___ps, ___FIX(last), ___NUL);
    ___release_scmobj(result);
    result = ___make_pair(___ps, ___FIX(err), result);
