@@ -304,8 +304,6 @@
          (libdir (path-expand "lib" home))
          (loadpath
           (cond
-           ((getenv "GERBIL_BUILD_PREFIX" #f)
-            '())
            ((getenv "GERBIL_LOADPATH" #f)
             => (lambda (envvar)
                  (filter (lambda (x) (not (string-empty? x)))
