@@ -768,15 +768,15 @@ TODO:
 (def (compile-exe/context mod opts settings)
   (cond
    ((or (settings-build-release settings)
-        (getenv "GERBUIL_BUILD_RELEASE" #f))
+        (getenv "GERBIL_BUILD_RELEASE" #f))
     (cond
      ((or (settings-build-optimized settings)
-          (getenv "GERBUIL_BUILD_OPTIMIZED" #f))
+          (getenv "GERBIL_BUILD_OPTIMIZED" #f))
       (compile-optimized-exe/static-linkage mod opts settings))
       (else
        (compile-exe/static-linkage mod opts settings))))
    ((or (settings-build-optimized settings)
-        (getenv "GERBUIL_BUILD_OPTIMIZED" #f))
+        (getenv "GERBIL_BUILD_OPTIMIZED" #f))
     (compile-optimized-exe mod opts settings))
    (else
     (compile-exe mod opts settings))))

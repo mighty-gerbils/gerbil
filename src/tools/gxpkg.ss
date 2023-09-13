@@ -158,9 +158,9 @@
 
 (def (build-pkgs pkgs release? optimized?)
   (when release?
-    (setenv "GERBUIL_BUILD_RELEASE" "t"))
+    (setenv "GERBIL_BUILD_RELEASE" "t"))
   (when optimized?
-    (setenv "GERBUIL_BUILD_OPTIMIZED" "t"))
+    (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
   (if (null? pkgs)
     ;; do local build
     (pkg-build "." #f)
