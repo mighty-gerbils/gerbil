@@ -47,7 +47,7 @@
 
    (defmethod {:init! mysql-statement}
      (lambda (self mystmt in out)
-       (struct-instance-init! self mystmt)
+       (statement:::init! self mystmt)
        (set! (mysql-statement-in self)
          in)
        (set! (mysql-statement-out self)

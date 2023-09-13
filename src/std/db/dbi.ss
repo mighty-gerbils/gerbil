@@ -4,12 +4,15 @@
 
 (import (only-in :gerbil/gambit/misc make-will)
         :std/sugar
+        :std/interface
+        (only-in :std/io Closer)
         :std/iter
         :std/generic
         :std/error)
 (export
   (struct-out connection statement sql-error)
   connection:::init!
+  statement:::init!
   raise-sql-error
   sql-connect sql-close sql-prepare
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
@@ -17,13 +20,50 @@
   sql-exec sql-query in-sql-query sql-columns
   sql-txn-begin sql-txn-commit sql-txn-abort)
 
-(defstruct connection (e txn-begin txn-commit txn-abort)
-  constructor: :init!)
-(defstruct statement (e))
+;; SQL DB Driver interface
+(interface (Driver Closer)
+  ;; prepare an sql statment
+  (prepare sql))
+
+;; SQL (preared) Statement interface
+(interface Statement
+  ;; bind arguments to a statement
+  (bind . args)
+  ;; execute a statement
+  (exec)
+  ;; reset a statement
+  (reset)
+  ;; clear a statement
+  (clear)
+  ;; finalize a statement; it will no longer be used and should be discarded.
+  (finalize)
+  ;; start a query
+  (query-start)
+  ;; fetch the next row
+  (query-fetch)
+  ;; get the current row
+  (query-row)
+  ;; finish the query
+  (query-fini)
+  ;; query value metadata
+  (columns))
+
+(defstruct connection (e driver txn-begin txn-commit txn-abort)
+  constructor: :init!
+  unchecked: #t)
+(defstruct statement (e i)
+  constructor: :init!
+  unchecked: #t)
 
 (defmethod {:init! connection}
   (lambda (self e)
-    (struct-instance-init! self e)))
+    (set! (&connection-e self) e)
+    (set! (&connection-driver self) (Driver self))))
+
+(defmethod {:init! statement}
+  (lambda (self e)
+    (set! (&statement-e self) e)
+    (set! (&statement-i self) (Statement self))))
 
 (defstruct (sql-error <error>) ())
 
@@ -36,18 +76,19 @@
     conn))
 
 (def (sql-close conn)
-  (with ((connection e txn-begin txn-commit txn-abort) conn)
+  (with ((connection e driver txn-begin txn-commit txn-abort) conn)
     (when e
       (try
        (when txn-begin
-         (with-catch void (lambda () {finalize txn-begin})))
+         (with-catch void (lambda () (sql-finalize txn-begin))))
        (when txn-commit
-         (with-catch void (lambda () {finalize txn-commit})))
+         (with-catch void (lambda () (sql-finalize txn-commit))))
        (when txn-abort
-         (with-catch void (lambda () {finalize txn-abort})))
-       {close conn}
+         (with-catch void (lambda () (sql-finalize txn-abort))))
+       (&Driver-close driver)
        (finally
         (set! (connection-e conn) #f)
+        (set! (connection-driver conn) #f)
         (set! (connection-txn-begin conn) #f)
         (set! (connection-txn-commit conn) #f)
         (set! (connection-txn-abort conn) #f))))))
@@ -56,13 +97,13 @@
   sql-close)
 
 (def (sql-txn-do conn sql getf setf)
-  (with ((connection e) conn)
+  (with ((connection e driver) conn)
     (cond
      ((not e)
       (error "Invalid operation; connection closed" conn))
      ((getf conn) => sql-exec)
      (else
-      (let (stmt {prepare conn sql})
+      (let (stmt (&Driver-prepare driver sql))
         (setf conn stmt)
         (sql-exec stmt))))))
 
@@ -76,40 +117,49 @@
   (sql-txn-do conn "ROLLBACK" connection-txn-abort connection-txn-abort-set!))
 
 (def (sql-prepare conn text)
-  (if (connection-e conn)
-    (let (stmt {prepare conn text})
-      (make-will stmt sql-finalize)
-      stmt)
-    (error "Invalid operation; connection closed" conn)))
+  (with ((connection e driver) conn)
+    (if e
+      (let (stmt (&Driver-prepare driver text))
+        (make-will stmt sql-finalize)
+        stmt)
+      (error "Invalid operation; connection closed" conn))))
 
 (def (sql-finalize stmt)
-  (when (statement-e stmt)
-    (try {finalize stmt}
-      (finally
-       (set! (statement-e stmt) #f)))))
+  (with ((statement e i) stmt)
+    (when e
+      (try (&Statement-finalize i)
+           (finally
+            (set! (&statement-e stmt) #f)
+            (set! (&statement-i stmt) #f))))))
 
 (defmethod {destroy statement}
   sql-finalize)
 
 (def (sql-bind stmt . args)
-  (if (statement-e stmt)
-    (apply call-method stmt 'bind args)
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (apply &Statement-bind i args)
+      (error "Invalid operation; statement finalized" stmt))))
 
 (def (sql-clear stmt)
-  (if (statement-e stmt)
-    {clear stmt}
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (&Statement-clear i)
+      (error "Invalid operation; statement finalized" stmt))))
 
 (def (sql-reset stmt)
-  (if (statement-e stmt)
-    {reset stmt}
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (&Statement-reset i)
+      (error "Invalid operation; statement finalized" stmt))))
 
 (def (sql-reset/clear stmt)
-  (if (statement-e stmt)
-    (begin {reset stmt} {clear stmt})
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (begin
+        (&Statement-reset i)
+        (&Statement-clear i))
+      (error "Invalid operation; statement finalized" stmt))))
 
 (def (sql-eval-e eval-e conn sql args)
   (let (stmt (sql-prepare conn sql))
@@ -126,12 +176,13 @@
   (sql-eval-e sql-query conn sql args))
 
 (def (sql-exec stmt)
-  (if (statement-e stmt)
-    (begin
-      {exec stmt}
-      {reset stmt}
-      #!void)
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (begin
+        (&Statement-exec i)
+        (&Statement-reset i)
+        (void))
+      (error "Invalid operation; statement finalized" stmt))))
 
 (def (sql-query stmt)
   (for/collect (row (in-sql-query stmt)) row))
@@ -142,27 +193,29 @@
 
 (def (in-sql-query stmt)
   (def (next it)
-    (with ((iterator stmt) it)
-      (let (r {query-fetch stmt})
+    (with ((iterator i) it)
+      (let (r (&Statement-query-fetch i))
         (if (iter-end? r)
           iter-end
-          {query-row stmt}))))
+          (&Statement-query-row i)))))
 
   (def (fini it)
-    (with ((iterator stmt) it)
-      (when stmt
-        {query-fini stmt}
+    (with ((iterator i) it)
+      (when i
+        (&Statement-query-fini i)
         (set! (iterator-e it) #f))))
 
-  (if (statement-e stmt)
-    (let (it (make-iterator stmt next fini))
-      (make-will it fini)
-      {query-start stmt}
-      it)
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (let (it (make-iterator i next fini))
+        (make-will it fini)
+        (&Statement-query-start i)
+        it)
+      (error "Invalid operation; statement finalized" stmt))))
 
 ;;; metadata
 (def (sql-columns stmt)
-  (if (statement-e stmt)
-    {columns stmt}
-    (error "Invalid operation; statement finalized" stmt)))
+  (with ((statement e i) stmt)
+    (if e
+      (&Statement-columns i)
+      (error "Invalid operation; statement finalized" stmt))))

@@ -15,6 +15,8 @@
 
 (defmethod {:init! sqlite-connection}
   connection:::init!)
+(defmethod {:init! sqlite-statement}
+  statement:::init!)
 
 (def (raise-sqlite-error where err)
   (let (errstr (sqlite3_errstr err))
