@@ -63,6 +63,9 @@ package: gerbil
   '(("compile" . "gxc")
     ("interactive" . "gxi")))
 
+(def builtin-tools-subcommand-synonyms
+  '(("build" "gxpkg" "build")))
+
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
   (displayln)
@@ -77,6 +80,7 @@ package: gerbil
   (displayln "Builtin Tools:")
   (displayln "  interactive                      the gerbil interpreter (gxi)")
   (displayln "  compile                          the gerbil compiler (gxc)")
+  (displayln "  build                            the gerbil build tool (gxkpg build)")
   (displayln "  pkg                              the gerbil package manager (gxpkg)")
   (displayln "  test                             the gerbil test runner (gxtest)")
   (displayln "  tags                             the gerbil tag generator (gxtags)")
@@ -188,6 +192,8 @@ package: gerbil
        (tool-main (string-append "gx" hd) rest))
       ((assoc hd builtin-tools-synonyms)
        => (lambda (p) (tool-main (cdr p) rest)))
+      ((assoc hd builtin-tools-subcommand-synonyms)
+       => (lambda (sub) (tool-main (cadr p) (append (cdr p) rest))))
       ((member hd '("-h" "--help" "help"))
        (print-usage! program-name))
       ((member hd '("-v" "--version" "version"))
