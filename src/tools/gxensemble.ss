@@ -309,15 +309,42 @@
     help: "generate or inspect ensemble administrator credentials"))
 
 ;; ca subcommands
+(def ca-domain-option
+  (option 'domain "--domain"
+    default: "ensemble.local"
+    help: "ensembe TLS domain"))
+
+(def ca-subject/C-option
+  (option 'subject/C "--subject/C"
+     default: "UN"
+     help: "ensemble TLS CA Country"))
+
+(def ca-subject/O-option
+  (option 'subject/O "--subject/O"
+    default: "Mighty Gerbils"
+    help: "ensemble TLS CA Organization"))
+
+(def ca-subject/L-option
+  (option 'subject/L "--subject/L"
+    default: "Internet"
+    help: "ensemble TLS certificate location"))
+
 (def ca-setup-cmd
   (command 'setup
     view-flag
+    ca-domain-option
+    ca-subject/C-option
+    ca-subject/O-option
+    ca-subject/L-option
     help: "setup or inspect the ensemble CAs"))
 
 (def ca-cert-cmd
   (command 'cert
     force-flag
     view-flag
+    ca-subject/C-option
+    ca-subject/O-option
+    ca-subject/L-option
     server-id-argument
     capabilities-optional-argument
     help: "generate or inspect an actor server certificate"))
@@ -479,16 +506,24 @@
            (again           (read-password prompt: "Re-enter passphprase: ")))
       (unless (equal? root-passphrase again)
         (error "root CA passphrases don't match"))
-      (generate-actor-tls-root-ca! root-passphrase)
+      (generate-actor-tls-root-ca! root-passphrase
+                                   domain: (hash-ref opt 'domain)
+                                   country-name: (hash-ref opt 'subject/C)
+                                   organization-name: (hash-ref opt 'subject/O))
       (let* ((sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
              (again          (read-password prompt: "Re-enter passphprase: ")))
       (unless (equal? sub-passphrase again)
         (error "subordinate CA passphrases don't match"))
-      (generate-actor-tls-sub-ca! root-passphrase sub-passphrase)
+      (generate-actor-tls-sub-ca! root-passphrase sub-passphrase
+                                  country-name: (hash-ref opt 'subject/C)
+                                  organization-name: (hash-ref opt 'subject/O))
       (generate-actor-tls-cafiles!)
       (generate-actor-tls-cert! sub-passphrase
                                 server-id: 'console
-                                capabilities: '(admin)))))))
+                                capabilities: '(admin)
+                                country-name: (hash-ref opt 'subject/C)
+                                organization-name: (hash-ref opt 'subject/O)
+                                location: (hash-ref opt 'subject/L)))))))
 
 (def (do-ca-cert opt)
   (let* ((server-id (hash-ref opt 'server-id))
@@ -504,7 +539,10 @@
     (let (sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
       (generate-actor-tls-cert! sub-passphrase
                                 server-id: server-id
-                                capabilities: (hash-ref opt 'capabilities)))))))
+                                capabilities: (hash-ref opt 'capabilities)
+                                country-name: (hash-ref opt 'subject/C)
+                                organization-name: (hash-ref opt 'subject/O)
+                                location: (hash-ref opt 'subject/L)))))))
 
 (def (do-package opt)
   (let* ((server-id (hash-ref opt 'server-id))

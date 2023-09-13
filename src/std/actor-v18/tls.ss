@@ -73,7 +73,7 @@
                                   domain: (domain "ensemble.local")
                                   country-name: (country-name "UN")
                                   organization-name: (organization-name "Mighty Gerbils")
-                                  common-name: (common-name "Gerbil Ensemble Root CA"))
+                                  common-name: (common-name (string-append organization-name " Root CA")))
   (let* ((base-path (ensemble-tls-base-path))
          (root-ca-path (path-expand "root-ca" base-path))
          (root-ca.conf (path-expand "root-ca.conf" root-ca-path))
@@ -146,7 +146,7 @@
                                  sub-ca-passphrase
                                  country-name: (country-name "UN")
                                  organization-name: (organization-name "Mighty Gerbils")
-                                 common-name: (common-name "Gerbil Ensemble Subordinate CA"))
+                                 common-name: (common-name (string-append organization-name " Subordinate CA")))
   (let* ((base-path (ensemble-tls-base-path))
          (root-ca-path (path-expand "root-ca" base-path))
          (root-ca.conf (path-expand "root-ca.conf" root-ca-path))
