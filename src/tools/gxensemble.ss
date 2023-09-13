@@ -31,6 +31,7 @@
     eval-cmd
     repl-cmd
     ping-cmd
+    lookup-cmd
     shutdown-cmd
     admin-cmd
     list-cmd
@@ -41,13 +42,13 @@
 ;;; getopt objects
 ;;;
 (def logging-option
-  (option 'logging #f "--log"
+  (option 'logging "--log"
     value: string->symbol
     default: 'INFO
     help: "specifies the log level to run with"))
 
 (def logging-file-option
-  (option 'logging-file #f "--log-file"
+  (option 'logging-file "--log-file"
     default: #f
     help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log"))
 
@@ -70,19 +71,19 @@
     help: "console server id"))
 
 (def registry-option
-  (option 'registry #f "--registry"
+  (option 'registry "-r" "--registry"
     value: string->object
     default: #f
     help: "additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry"))
 
 (def roles-option
-  (option 'roles #f "--roles"
+  (option 'roles "--roles"
     value: string->object
     default: []
     help: "server role(s); a list of symbols"))
 
 (def library-prefix-option
-  (option 'library-prefix #f "--library-prefix"
+  (option 'library-prefix "--library-prefix"
     value: string->object
     default: '(gerbil scheme std)
     help: "list of package prefixes to consider as library modules installed in the server"))
@@ -133,11 +134,11 @@
     help: "arguments for the module's main procedure"))
 
 (def library-flag
-  (flag 'library #f "--library"
+  (flag 'library "--library"
     help: "loads the code as library module; the library must be in the servers load path"))
 
 (def role-flag
-  (flag 'role #f "--role"
+  (flag 'role "--role"
     help: "lookup by role"))
 
 (def force-flag
