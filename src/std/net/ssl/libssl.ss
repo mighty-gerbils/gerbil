@@ -35,7 +35,7 @@
 #ifndef OPENSSL_NO_DEPRECATED_3_0
 #include <openssl/safestack.h>
 #include <openssl/x509v3.h>
-DEFINE_STACK_OF(GENERAL_NAME);
+DEFINE_STACK_OF(GENERAL_NAME)
 #endif
 #endif
 
