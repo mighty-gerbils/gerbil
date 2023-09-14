@@ -76,8 +76,10 @@
         default: (getenv "USER"))
       (option 'name "-n" "--name"
         help: "The package name; defaults to the current directory name"
-        default: (path-strip-directory (current-directory)))
-      (option 'name "-l" "--link"
+        default: (path-strip-directory
+                  (let (path (path-normalize (current-directory)))
+                    (substring path 0 (1- (string-length path))))))
+      (option 'link "-l" "--link"
         help: "Optionally link this package with a public package name; for example: github.com/your-user/your-package")))
   (def list-cmd
     (command 'list help: "list installed packages"))
@@ -228,7 +230,6 @@
 
   (create-template "gerbil.pkg" gerbil.pkg-template
                    package: prefix)
-  (create-directory "bin")
   (create-directory name)
   (create-template (path-expand "main.ss" name) main.ss-template
                    name: name)
@@ -525,6 +526,7 @@
 ;;; templates
 (def gerbil.pkg-template #<<END
 (package: ${package})
+
 END
 )
 
@@ -543,7 +545,7 @@ END
     ;; ...
     ))
 
-(def ${name}-main
+(def* ${name}-main
   ((opt)
    (${name}-main/options opt))
   ((cmd opt)
@@ -556,6 +558,7 @@ END
 ;;; Implement this if your CLI has commands
 (def (${name}-main/command cmd opt)
   (error "Implement me!"))
+
 END
 )
 
@@ -566,6 +569,7 @@ END
 
 ;;; Your library support code
 ;;; ...
+
 END
 )
 
@@ -576,6 +580,7 @@ END
 
 (defbuild-script
   '("${name}/lib"
-    (exe: "${name}/main" bin: "bin/${name}")))
+    (exe: "${name}/main" bin: "${name}")))
+
 END
 )
