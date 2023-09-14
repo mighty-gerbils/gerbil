@@ -76,7 +76,9 @@
         default: (getenv "USER"))
       (option 'name "-n" "--name"
         help: "The package name; defaults to the current directory name"
-        default: (path-strip-directory (current-directory)))))
+        default: (path-strip-directory (current-directory)))
+      (option 'name "-l" "--link"
+        help: "Link this package with a package name; for example: github.com/your-user/your-package")))
   (def list-cmd
     (command 'list help: "list installed packages"))
   (def retag-cmd
@@ -104,7 +106,7 @@
   (let-hash opt
     (case cmd
       ((new)
-       (new-pkg .package .name))
+       (new-pkg .package .name .link))
       ((build)
        (build-pkgs .pkg .?release .?optimized))
       ((clean)
@@ -218,7 +220,7 @@
       (force once)
       +pkg-root-dir+)))
 
-(def (pkg-new prefix name)
+(def (pkg-new prefix name maybe-link)
   (def (create-template file template . args)
     (call-with-output-file file
       (lambda (output)
@@ -234,7 +236,9 @@
   (create-template [path: "build.ss" permissions: #o755] build.ss-template
                    name: name)
   ;; TODO create Makefile template
-  )
+  ;; ...
+  (when maybe-link
+    (pkg-link maybe-link (current-directory))))
 
 (def (pkg-install pkg)
   (def (git-clone-url pkg)
