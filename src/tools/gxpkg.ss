@@ -28,6 +28,7 @@
         :std/pregexp
         :std/net/request
         :std/misc/process
+        :std/misc/template
         (only-in :std/srfi/13 string-trim)
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
@@ -64,10 +65,22 @@
     (command 'build help: "rebuild one or more packages and their dependents"
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
-      (rest-arguments 'pkg help: "package to build; all for all packages")))
+      (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
-             (rest-arguments 'pkg help: "package to clean")))
+      (rest-arguments 'pkg help: "package to clean; all for all packages, omit to clean in current directory")))
+  (def new-cmd
+    (command 'new help: "Create a new package template in the current directory"
+      (option 'package "-p" "--package"
+        help: "The package prefix for your project; defaults to the current username"
+        default: (getenv "USER"))
+      (option 'name "-n" "--name"
+        help: "The package name; defaults to the current directory name"
+        default: (path-strip-directory
+                  (let (path (path-normalize (current-directory)))
+                    (substring path 0 (1- (string-length path))))))
+      (option 'link "-l" "--link"
+        help: "Optionally link this package with a public package name; for example: github.com/your-user/your-package")))
   (def list-cmd
     (command 'list help: "list installed packages"))
   (def retag-cmd
@@ -79,13 +92,14 @@
   (call-with-getopt gxpkg-main args
     program: "gxpkg"
     help: "The Gerbil Package Manager"
+    new-cmd
+    build-cmd
+    clean-cmd
+    link-cmd
+    unlink-cmd
     install-cmd
     uninstall-cmd
     update-cmd
-    link-cmd
-    unlink-cmd
-    build-cmd
-    clean-cmd
     list-cmd
     retag-cmd
     search-cmd))
@@ -93,20 +107,22 @@
 (def (gxpkg-main cmd opt)
   (let-hash opt
     (case cmd
+      ((new)
+       (pkg-new .package .name .link))
+      ((build)
+       (build-pkgs .pkg .?release .?optimized))
+      ((clean)
+       (clean-pkgs .pkg))
+      ((link)
+       (link-pkg .pkg .src))
+      ((unlink)
+       (unlink-pkgs .pkg .?force))
       ((install)
        (install-pkgs .pkg))
       ((uninstall)
        (uninstall-pkgs .pkg .?force))
       ((update)
        (update-pkgs .pkg))
-      ((link)
-       (link-pkg .pkg .src))
-      ((unlink)
-       (unlink-pkgs .pkg .?force))
-      ((build)
-       (build-pkgs .pkg .?release .?optimized))
-      ((clean)
-       (clean-pkgs .pkg))
       ((list)
        (list-pkgs))
       ((retag)
@@ -205,6 +221,28 @@
     (lambda ()
       (force once)
       +pkg-root-dir+)))
+
+(def (pkg-new prefix name maybe-link)
+  (def (create-template file template . args)
+    (call-with-output-file file
+      (lambda (output)
+        (apply write-template template output args))))
+
+  (create-template "gerbil.pkg" gerbil.pkg-template
+                   package: prefix)
+  (create-directory name)
+  (create-template (path-expand "main.ss" name) main.ss-template
+                   name: name)
+  (create-template (path-expand "lib.ss" name) lib.ss-template)
+  (create-template [path: "build.ss" permissions: #o755] build.ss-template
+                   name: name)
+  (create-template ".gitignore" gitignore-template)
+
+  ;; TODO create Makefile template
+  ;; ...
+
+  (when maybe-link
+    (pkg-link maybe-link (current-directory))))
 
 (def (pkg-install pkg)
   (def (git-clone-url pkg)
@@ -487,3 +525,72 @@
 (def (file-symbolic-link? path)
   (eq? (file-info-type (file-info path #f))
        'symbolic-link))
+
+;;; templates
+(def gerbil.pkg-template #<<END
+(package: ${package})
+
+END
+)
+
+(def main.ss-template #<<END
+;;; -*- Gerbil -*-
+(import :std/sugar
+        :std/getopt
+        ./lib)
+(export main)
+
+(def (main . args)
+  (call-with-getopt ${name}-main args
+    program: "${name}"
+    help: "A one line description of your program"
+    ;; commands/options/flags for your program; see :std/getopt
+    ;; ...
+    ))
+
+(def* ${name}-main
+  ((opt)
+   (${name}-main/options opt))
+  ((cmd opt)
+   (${name}-main/command cmd opt)))
+
+;;; Implement this if your CLI doesn't have commands
+(def (${name}-main/options opt)
+  (error "Implement me!"))
+
+;;; Implement this if your CLI has commands
+(def (${name}-main/command cmd opt)
+  (error "Implement me!"))
+
+END
+)
+
+(def lib.ss-template #<<END
+;;; -*- Gerbil -*-
+(import :std/sugar)
+(export #t)
+
+;;; Your library support code
+;;; ...
+
+END
+)
+
+(def build.ss-template #<<END
+#!/usr/bin/env gxi
+;;; -*- Gerbil -*-
+(import :std/build-script)
+
+(defbuild-script
+  '("${name}/lib"
+    (exe: "${name}/main" bin: "${name}")))
+
+END
+)
+
+(def gitignore-template #<<END
+*~
+build-deps
+
+END
+)

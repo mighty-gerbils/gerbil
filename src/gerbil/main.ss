@@ -52,42 +52,55 @@ package: gerbil
     "gerbil/compiler/ssxi"
     "gerbil/compiler"))
 
-(def builtin-tools
-  '("pkg"
-    "test"
-    "tags"
-    "prof"
-    "ensemble"))
+(def builtin-tool-commands
+  '(("new"         "gxpkg" "new")
+    ("build"       "gxpkg" "build")
+    ("clean"       "gxpkg" "clean")
+    ("pkg"         "gxpkg")
+    ("test"        "gxtest")
+    ("tags"        "gxtags")
+    ("prof"        "gxprof")
+    ("ensemble"    "gxensemble")
+    ("interactive" "gxi")
+    ("compile"     "gxc")))
 
-(def builtin-tools-synonyms
-  '(("compile" . "gxc")
-    ("interactive" . "gxi")))
-
-(def builtin-tools-subcommand-synonyms
-  '(("build" "gxpkg" "build")))
+(def builtin-tool-help
+  '(("new"         "gxpkg" "help" "new")
+    ("build"       "gxpkg" "help" "build")
+    ("clean"       "gxpkg" "help" "clean")
+    ("pkg"         "gxpkg" "help")
+    ("test"        "gxtest" "-h")
+    ("tags"        "gxtags" "-h")
+    ("prof"        "gxprof" "-h")
+    ("ensemble"    "gxensemble" "help")
+    ("interactive" "gxi" "-h")
+    ("compile"     "gxc" "-h")))
 
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
   (displayln)
   (displayln "Options: ")
-  (displayln "  -h|--help|help                   display this help message exit")
+  (displayln "  -h|--help                        display this help message exit")
   (displayln "  -v|--version|version             display the system version and exit")
   (displayln)
   (displayln "Arguments: ")
-  (displayln "  <tool> tool-arg ...              execute a builtin gerbil tool")
+  (displayln "  <cmd> cmd-arg ...                execute a builtin tool command")
   (displayln "  arg ...                          drop to the gerbil interpreter")
   (displayln)
-  (displayln "Builtin Tools:")
-  (displayln "  interactive                      the gerbil interpreter (gxi)")
-  (displayln "  compile                          the gerbil compiler (gxc)")
-  (displayln "  build                            the gerbil build tool (gxkpg build)")
-  (displayln "  pkg                              the gerbil package manager (gxpkg)")
-  (displayln "  test                             the gerbil test runner (gxtest)")
-  (displayln "  tags                             the gerbil tag generator (gxtags)")
-  (displayln "  prof                             the gerbil profiler (gxprof)")
-  (displayln "  ensemble                         the gerbil actor ensemble manager (gxensemble)")
+  (displayln "Commands:")
+  (displayln "  new                              create a new project template (gxpkg new)")
+  (displayln "  build                            build a gerbil package (gxpkg build)")
+  (displayln "  clean                            clean build artifactacts for a package (gxpkg clean)")
+  (displayln "  pkg                              invoke the gerbil package manager (gxpkg)")
+  (displayln "  test                             run tests (gxtest)")
+  (displayln "  tags                             create emacs tags (gxtags)")
+  (displayln "  prof                             profile a dynamic executable module (gxprof)")
+  (displayln "  ensemble                         invoke the gerbil actor ensemble manager (gxensemble)")
+  (displayln "  interactive                      invoke the gerbil interpreter (gxi)")
+  (displayln "  compile                          invoke the gerbil compiler (gxc)")
+  (displayln "  help <cmd>                       display help for a tool command")
   (displayln)
-  (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
+  (displayln "Try " program-name " help <cmd> for help on tool command usage" ))
 
 (extern namespace: #f
   gerbil-runtime-init!)
@@ -188,14 +201,21 @@ package: gerbil
   (match args
     ([hd . rest]
      (cond
-      ((member hd builtin-tools)
-       (tool-main (string-append "gx" hd) rest))
-      ((assoc hd builtin-tools-synonyms)
-       => (lambda (p) (tool-main (cdr p) rest)))
-      ((assoc hd builtin-tools-subcommand-synonyms)
-       => (lambda (sub) (tool-main (cadr sub) (append (cdr sub) rest))))
-      ((member hd '("-h" "--help" "help"))
+      ((member hd '("-h" "--help"))
        (print-usage! program-name))
+      ((equal? "help" hd)
+       (match rest
+         ([cmd]
+          (cond
+           ((assoc cmd builtin-tool-help)
+            => (lambda (help-cmd) (tool-main (cadr help-cmd) (cddr help-cmd))))
+           (else
+            (displayln "no help for topic " cmd)
+            (print-usage! program-name))))
+         (else
+          (print-usage! program-name))))
+      ((assoc hd builtin-tool-commands)
+       => (lambda (cmd) (tool-main (cadr cmd) (append (cddr cmd) rest))))
       ((member hd '("-v" "--version" "version"))
        (displayln (gerbil-system-version-string)))
       (else
