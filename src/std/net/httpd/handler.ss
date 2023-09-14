@@ -603,16 +603,13 @@ END-C
         ("OPTIONS" 'OPTIONS)))
 
 (def +http-response-codes+ (make-hash-table-eq))
-(defclass http-condition ())
-(defmethod {http-message http-condition}
-  (lambda (self) (hash-get +http-response-codes+ {http-code self})))
-(defrule (def-http-condition ctx number message)
+(defstruct http-condition (code message))
+(defrule (def-http-condition ctx code message)
   (with-id ctx ((condition
                  (string-substitute-char #\- #\space (stringify #'message))))
-    (defclass (condition http-condition) ())
+    (def condition (make-http-condition code message))
     (export condition)
-    (defmethod {http-code condition} (lambda (_) number))
-    (hash-put! +http-response-codes+ number message)))
+    (hash-put! +http-response-codes+ code message)))
 (defrules def-http-conditions ()
   ((ctx (number message) ...) (begin (def-http-condition ctx number message) ...)))
 (def-http-conditions
@@ -659,19 +656,16 @@ END-C
 
 (def (http-response-write-condition
       res (condition #f) code: (code #f) content-type: (content-type #f) message: (message #f))
-  (http-response-write res (or code {http-code condition})
+  (http-response-write res (or code (http-condition-code condition))
                        `(("Content-Type" . ,(or content-type "text/plain")))
-                       (or message {http-message condition})))
+                       (or message (http-condition-message condition))))
 
 (def (condition-handler handler)
   (lambda (req res)
     (try (handler req res)
      (catch (e)
-       (apply http-response-write-condition res
-              (if (http-condition? e)
-                [e]
-                [(Internal-Server-Error)]
-                #;[code: 500 message: "Internal Server Error"]))))))
+       (http-response-write-condition
+        res (if (http-condition? e) e Internal-Server-Error))))))
 
 ;;; buffer management
 (extern namespace: #f

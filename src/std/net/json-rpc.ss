@@ -175,7 +175,7 @@
   (lambda (req res)
     (let/cc return
       (def (bad-request)
-        (http-response-write-condition res (Bad-Request))
+        (http-response-write-condition res Bad-Request)
         (return))
       ;; Skip these checks specified in JSON RPC over HTTP
       #;(let (headers (http-request-headers req))
@@ -234,6 +234,6 @@
        (try
         (json-object->string response-json)
         (catch (_)
-          (http-response-write-condition res (Internal-Server-Error))
+          (http-response-write-condition res Internal-Server-Error)
           (return))))
     (http-response-write res 200 `(("Content-Type" . "text/json-rpc")) response-text)))
