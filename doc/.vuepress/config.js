@@ -10,88 +10,102 @@ module.exports = {
       { text: 'Gitter', link: 'https://gitter.im/gerbil-scheme/community' }
     ],
     sidebarDepth: 2,
-    sidebar: {
-      '/guide/': [
-        {
-          collapsable: false,
-          title: 'Guide',
-            children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'ffi', 'build', 'docker', 'nix', 'r7rs', 'srfi', 'macos']
-        }
-      ],
-      '/tutorials/': [
-          {
-            collapsable: false,
-            title: 'Tutorials',
-              children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble']
-          }
-      ], '/reference/gerbil/runtime/': [
-	  { title: "Gerbil Runtime",
-	    children:
-	      [
-		  '', 'special-objects', 'lists', 'hash-tables', 'numerics', 'symbols',
-		  'strings',  'MOP','control-flow', 'exception-objects', 'misc-procedures',
-		  'syntax-objects', 'system-information', 'thread-primitives'
-	      ]
-	  },
-		  { title: "< Back to Reference", path: '/reference/'}
-	
-    ], '/reference/gerbil/prelude/': [
-	{ title: "Gerbil Prelude",
-	  children: [ '', 'core-expander-syntax', 'macros', 'runtime-bindings']
-	},
-	{ title: "< Back to Reference", path: '/reference/'}
-    ], '/reference/gerbil/expander/': [
-	{ title: "Gerbil Expander",
-	  children: [ '', 'syntax-errors', 'syntax-objects', 'identifiers', 'utilities' ]
-	},
-	{ title: "< Back to Reference", path: '/reference/'}
-    ],
-	
-  '/reference/std/': [
-          {
-            collapsable: false,
-            title: 'Standard Library',
-              children: [
-		  'sugar',
-		  { title: "Lists",
-		    path: '/reference/std/misc/list',
-		    children: [
-			'misc/list',
-			'misc/alist',
-			'misc/plist'
-		    ]
-		  },
+      sidebar: {
+          '/guide/': [
+              {
+                  title: 'Guide',
+                  children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'nix', 'r7rs', 'macos']
+              }
+          ],
+          '/tutorials/': [
+              {
+                  title: 'Tutorials',
+                  children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble']
+              }
+          ], '/reference/gerbil/runtime/': [
+	          { title: "Gerbil Runtime",
+	            children:
+	            [
+		            '', 'special-objects', 'lists', 'hash-tables', 'numerics', 'symbols',
+		            'strings',  'MOP','control-flow', 'exception-objects', 'misc-procedures',
+		            'syntax-objects', 'system-information', 'thread-primitives'
+	            ]
+	          },
+		      { title: "< Back to Reference", path: '/reference/'}
 
-		'assert', 'errors', 'format', 'logger',
-		'sort', 'regexp', 'generic', 'interface',
-		'stdio', 'ref',  'iterators', 'coroutine',
-		'events', 'actor', 'requests', 'httpd',
-		'web', 'db', 'kvstore', 'sockets',
-		'net', 'protobuf', 'os', 'crypto',
-		'text', 'xml', 'parser', 'misc/', 'lazy', 'amb',
-		  'getopt'
-	      ]
-          },
-      
-	{ title: "< Back to Reference", path: '/reference/'}
-      ],
+          ], '/reference/gerbil/prelude/': [
+	          { title: "Gerbil Prelude",
+	            children: [ '', 'core-expander-syntax', 'macros', 'runtime-bindings']
+	          },
+	          { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/gerbil/expander/': [
+	          { title: "Gerbil Expander",
+	            children: [ '', 'syntax-errors', 'syntax-objects', 'identifiers', 'utilities' ]
+	          },
+	          { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/std/': [
+              {
+                  title: 'Standard Library',
+                  children: [
+		              'sugar',
+		              { title: "Lists",
+		                path: '/reference/std/misc/list',
+		                children: [
+			                'misc/list',
+			                'misc/alist',
+			                'misc/plist'
+		                ]
+		              },
 
-      '/reference/': [
-        {
-            collapsable: false,
-            title: 'Gerbil Reference',
-	    children:  [
-		'',
-		'gerbil/prelude/',
-		'gerbil/runtime/',
-		'gerbil/expander/',
-		'std/',
-		'stxparam', 'stxutil', 'foreign', 'srfi', 'test',
-		'debug', 'make', 'profiler', 'bootstrap'
-	    ]
-        }
-      ]
-    },
+		              'assert', 'errors', 'format', 'logger',
+		              'sort', 'regexp', 'generic', 'interface',
+		              'stdio', 'ref',  'iterators', 'coroutine',
+		              'events', 'actor', 'requests', 'httpd',
+		              'web', 'db', 'kvstore', 'sockets',
+		              'net', 'protobuf', 'os', 'crypto',
+		              'text', 'xml', 'parser', 'misc/', 'lazy', 'amb',
+		              'getopt', 'stxparam', 'stxutil', 'foreign', 'make'
+	              ]
+              },
+
+	          { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/dev/': [
+              {
+                  title: 'Developing Software with Gerbil',
+                  children: [
+                      'bach',
+                      'build',
+                      'test',
+                      'debug',
+                      'profiler',
+                      'ffi',
+                      'bootstrap'
+                  ]
+              },
+              { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/srfi/': [
+              {
+                  title: "SRFI Support in Gerbil",
+                  children: [
+                      '',
+                  ]
+              },
+              { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/': [
+              {
+                  title: 'Gerbil Reference',
+	              children:  [
+		              '',
+		              'gerbil/prelude/',
+		              'gerbil/runtime/',
+		              'gerbil/expander/',
+		              'std/',
+                      'dev/',
+		              'srfi/'
+	              ]
+              }
+          ]
+      },
     // Assumes GitHub. Can also be a full GitLab url.
     repo: 'vyzo/gerbil',
     // Customising the header label
