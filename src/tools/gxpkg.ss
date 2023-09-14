@@ -327,7 +327,7 @@
                     coprocess: void
                     stdout-redirection: #f)
        (when dependents?
-         (for-each pkg-build (pkg-dependents pkg))))))))
+         (for-each pkg-build (pkg-dependents pkg)))))))
 
 (def (pkg-clean pkg)
   (def gpath (getenv "GERBIL_PATH" "~/.gerbil"))
