@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; std/net/json-rpc unit-test
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/random
-        :std/test
+(import :std/iter
         :std/net/httpd
         :std/net/request
-        :std/net/json-rpc)
+        :std/net/json-rpc
+        :std/sugar
+        :std/test)
 (export json-rpc-test)
 
 (def server-address
@@ -25,18 +25,24 @@
   (test-suite "json-rpc test"
     (def httpd
       (start-http-server! server-address mux: (make-recursive-http-mux)))
-    (test-case "basic handlers"
-      (http-register-handler httpd "/json-rpc-test" (json-rpc-handler json-rpc-test-processor))
-      (def url (string-append server-url "/json-rpc-test"))
-      (def (this-json-rpc-error? number)
-        (lambda (e) (and (json-rpc-error? e) (equal? (json-rpc-error-code e) number))))
-      (check (json-rpc url "ping" '(42)) => '("pong" (42)))
-      (check (json-rpc url "add" '(1 2 3 4)) => 10)
-      (check-exception (json-rpc url 42)
-                       (this-json-rpc-error? -32600)) ;; invalid-request
-      (check-exception (json-rpc url "meaning-of-life")
-                       (this-json-rpc-error? -32601)) ;; method-not-found
-      (check-exception (json-rpc url "ping" 42)
-                       (this-json-rpc-error? -32602)) ;; invalid-params
-      (void))
+    (http-register-handler httpd "/json-rpc-test" (json-rpc-handler json-rpc-test-processor))
+    (def url (string-append server-url "/json-rpc-test"))
+    (def (query . args)
+      (display "query: ") (write args) (newline)
+      (apply json-rpc url args))
+    (def (this-json-rpc-error? number)
+      (lambda (e) (and (json-rpc-error? e) (equal? (json-rpc-error-code e) number))))
+    (defrule (check-e expr code) (check-exception expr (this-json-rpc-error? code)))
+    (def (test-basic-handlers http-method)
+      (def (q . a) (apply query http-method: http-method a))
+      (check (q "ping" '(42)) => '("pong" (42)))
+      (check (q "add" '(1 2 3 4)) => 10)
+      (check-e (q "ping" 42) -32602) ;; invalid-params
+      (check-e (q "meaning-of-life") -32601)) ;; method-not-found
+    (test-case "basic handlers with POST"
+      (test-basic-handlers 'POST)
+      (check-exception (query 42 http-method: 'POST) (this-json-rpc-error? -32600))) ;; invalid-request
+    (test-case "basic handlers with GET"
+      (test-basic-handlers 'GET)
+      (check-exception (query 42 http-method: 'GET) true)) ;; can't uri-encode number 42
     (stop-http-server! httpd)))

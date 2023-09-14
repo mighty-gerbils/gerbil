@@ -48,7 +48,7 @@
 
 (def (json-object->bytes obj)
   (let (buffer (open-buffered-writer #f))
-    (write-json-object/writer obj buffer (make-env))
+    (write-json-object/buffer obj buffer (make-env))
     (get-buffer-output-u8vector buffer)))
 
 (def (trivial-class->json-object object)
@@ -106,8 +106,8 @@
   (apply make-struct-instance strukt (vector->list fields)))
 
 ;; Mixin for a trivial method that just lists all slots
-(defclass jsonable ())
-(defmethod {:json jsonable} trivial-class->json-object)
+(defclass JSON ())
+(defmethod {:json JSON} trivial-class->json-object)
 
 (def (pretty-json object (out #f))
   (with-output (out)

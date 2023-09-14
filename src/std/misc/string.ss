@@ -293,13 +293,13 @@
       from-end: (from-end? #f)
       count: (count #f)
       in-place: (in-place? #f))
-  (def key_ (or key identity))
-  (def predicate
-    (cond
-     (test (lambda (x) (test oldchar (key_ x))))
-     (test-not (lambda (x) (not (test-not oldchar (key_ x)))))
-     (key (lambda (x) (eqv? oldchar (key_ x))))
-     (else (cut eqv? oldchar <>))))
-  (string-substitute-char-if
-   newchar predicate string
-   start: start end: end count: count from-end: from-end? in-place: in-place?))
+  (let* ((key (or key identity))
+         (predicate
+          (cond
+           (test (lambda (x) (test oldchar (key x))))
+           (test-not (lambda (x) (not (test-not oldchar (key x)))))
+           (key (lambda (x) (eqv? oldchar (key x))))
+           (else (cut eqv? oldchar <>)))))
+    (string-substitute-char-if
+     newchar predicate string
+     start: start end: end count: count from-end: from-end? in-place: in-place?)))

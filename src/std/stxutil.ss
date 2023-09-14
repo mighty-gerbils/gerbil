@@ -15,11 +15,6 @@
   (datum->syntax ctx (string->symbol (apply format fmt (map stx-e args)))
                  (stx-source ctx)))
 
-#;(import
-  (for-syntax :std/iter :std/srfi/1)
-  <expander-runtime> :gerbil/expander :std/misc/ports :std/sugar
-  ./basic-parsers ./path)
-
 ;; Use maybe-intern-symbol instead of string->symbol to avoid DoS attacks
 ;; that cause you to intern too many symbols and run out of memory.
 ;; : (Or Symbol String) <- String
