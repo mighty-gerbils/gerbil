@@ -167,7 +167,10 @@
     (for-each pkg-build pkgs)))
 
 (def (clean-pkgs pkgs)
-  (for-each pkg-clean pkgs))
+  (if (null? pkgs)
+    ;; do local clean
+    (pkg-clean ".")
+    (for-each pkg-clean pkgs)))
 
 (def (list-pkgs)
   (for-each displayln (pkg-list)))
@@ -315,7 +318,7 @@
     (let (build.ss (path-expand "build.ss" (current-directory)))
       (run-process [build.ss "compile"]
                    stdout-redirection: #f)))
-    (else
+   (else
      (let* ((root (pkg-root-dir))
             (path (path-expand pkg root))
             (_ (unless (file-exists? path)
@@ -330,88 +333,29 @@
          (for-each pkg-build (pkg-dependents pkg)))))))
 
 (def (pkg-clean pkg)
-  (def gpath (getenv "GERBIL_PATH" "~/.gerbil"))
-  (def libdir (path-expand "lib" gpath))
-  (def bindir (path-expand "bin" gpath))
-
-  (def (clean-lib mod)
-    (let* ((modpath (path-expand mod libdir))
-           (moddir (path-directory modpath))
-           (modname (path-strip-directory modpath))
-           (mod-dot (string-append modname "."))
-           (mod-us (string-append modname "__"))
-           (mod-nested (string-append modname "$")))
-      (when (file-exists? moddir)
-        (for-each
-          (lambda (file)
-            (when (or (string-prefix? mod-dot file)
-                      (string-prefix? mod-us file)
-                      (string-prefix? mod-nested file))
-              (let (path (path-expand file moddir))
-                (delete-file path))))
-          (directory-files moddir))))
-
-    (let* ((static-libdir (path-expand "static" libdir))
-           (static-modname (string-join (string-split mod #\/) "__"))
-           (mod-self (string-append static-modname ".scm"))
-           (mod-nested (string-append static-modname "$")))
-      (when (file-exists? static-libdir)
-        (for-each
-          (lambda (file)
-            (when (or (equal? file mod-self)
-                      (string-prefix? mod-nested file))
-              (let (path (path-expand file static-libdir))
-                (delete-file path))))
-          (directory-files static-libdir)))))
-
-  (def (clean-bin exe)
-    (let (bin (path-expand exe bindir))
-      (when (file-exists? bin)
-        (delete-file bin))))
-
-  (def (clean-static-include file)
-    (let* ((filename (path-strip-directory file))
-           (static-path
-            (path-expand filename (path-expand "static" libdir))))
-      (when (file-exists? static-path)
-        (delete-file static-path))))
-
-  (let* ((root (pkg-root-dir))
-         (path (path-expand pkg root))
-         (_ (unless (file-exists? path)
-              (error "Cannot clean unknown package" pkg)))
-         (build.ss (pkg-build-script pkg))
-         (build-spec (run-process [build.ss "spec"]
-                                  directory: path
-                                  coprocess: read))
-         (plist (pkg-plist pkg))
-         (prefix (pgetq package: plist))
-         (prefix (and prefix (symbol->string prefix)))
-         (with-prefix
-          (if prefix
-            (lambda (mod) (string-append prefix "/" mod))
-            values)))
-    (for-each
-      (match <>
-        ((? string? modf)
-         (clean-lib (with-prefix modf)))
-        ([gxc: modf . _]
-         (clean-lib (with-prefix modf)))
-        ([gsc: modf . _]
-         (clean-lib (with-prefix modf)))
-        ([ssi: modf . _]
-         (clean-lib (with-prefix modf)))
-        ([exe: modf . opts]
-         (clean-lib (with-prefix modf))
-         (clean-bin (pgetq bin: opts modf)))
-        ([static-exe: modf . opts]
-         (clean-lib (with-prefix modf))
-         (clean-bin (pgetq bin: opts modf)))
-        ([static-include: file]
-         (clean-static-include file))
-        (unexpected
-         (displayln "Ignoring unexpected build artifact " unexpected)))
-      build-spec)))
+  (cond
+   ((equal? pkg "all")
+    (let* ((pkgs (pkg-list))
+           (deps (map (cut pkg-dependents* <> pkgs) pkgs))
+           (pkgs+deps (map cons pkgs deps))
+           (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
+      (for-each (cut pkg-clean <>) (map car sorted))))
+   ((equal? pkg ".")
+    (displayln "... clean current package")
+    (let (build.ss (path-expand "build.ss" (current-directory)))
+      (run-process [build.ss "clean"]
+                   stdout-redirection: #f)))
+   (else
+     (let* ((root (pkg-root-dir))
+            (path (path-expand pkg root))
+            (_ (unless (file-exists? path)
+                 (error "Cannot build unknown package" pkg)))
+            (build.ss (pkg-build-script pkg)))
+       (displayln "... clean " pkg)
+       (run-process [build.ss "clean"]
+                    directory: path
+                    coprocess: void
+                    stdout-redirection: #f)))))
 
 (def (pkg-list)
   (def root (pkg-root-dir))

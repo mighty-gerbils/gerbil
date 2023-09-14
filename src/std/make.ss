@@ -28,6 +28,7 @@
 (extern namespace: #f with-cons-load-path load-path)
 
 (export make
+        make-clean
         shell-config
         env-cppflags
         env-ldflags
@@ -506,6 +507,20 @@ TODO:
    deterministic-order: #f max-workers: (max (settings-parallelize settings) 1))
 
   (when (verbose>=? 3) (writeln [Step: 5 "All built"])))
+
+(def (make-clean . args)
+  (defvalues (positionals keywords) (separate-keyword-arguments args #t))
+  (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
+  (def settings (apply make-settings keywords))
+
+  (for-each
+    (lambda (spec)
+      (for-each
+        (lambda (f)
+          (displayln "... remove " f)
+          (delete-file-or-directory f))
+        (spec-outputs spec settings)))
+    buildspec))
 
 (defstruct build-failure (item exception))
 
