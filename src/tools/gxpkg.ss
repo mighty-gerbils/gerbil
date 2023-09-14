@@ -106,7 +106,7 @@
   (let-hash opt
     (case cmd
       ((new)
-       (new-pkg .package .name .link))
+       (pkg-new .package .name .link))
       ((build)
        (build-pkgs .pkg .?release .?optimized))
       ((clean)
@@ -226,7 +226,7 @@
       (lambda (output)
         (apply write-template template output args))))
 
-  (create-template "gerbil.pkg" gerbi.pkg-template
+  (create-template "gerbil.pkg" gerbil.pkg-template
                    package: prefix)
   (create-directory "bin")
   (create-directory name)
