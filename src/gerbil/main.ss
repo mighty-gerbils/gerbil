@@ -64,11 +64,23 @@ package: gerbil
     ("interactive" "gxi")
     ("compile"     "gxc")))
 
+(def builtin-tool-help
+  '(("new"         "gxkpg" "help" "new")
+    ("build"       "gxpkg" "help" "build")
+    ("clean"       "gxpkg" "help" "clean")
+    ("pkg"         "gxkpg" "help")
+    ("test"        "gxtest" "-h")
+    ("tags"        "gxtags" "-h")
+    ("prof"        "gxprof" "-h")
+    ("ensemble"    "gxensemble" "help")
+    ("interactive" "gxi" "-h")
+    ("compile"     "gxc" "-h")))
+
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
   (displayln)
   (displayln "Options: ")
-  (displayln "  -h|--help|help                   display this help message exit")
+  (displayln "  -h|--help                        display this help message exit")
   (displayln "  -v|--version|version             display the system version and exit")
   (displayln)
   (displayln "Arguments: ")
@@ -86,8 +98,9 @@ package: gerbil
   (displayln "  ensemble                         invoke the gerbil actor ensemble manager (gxensemble)")
   (displayln "  interactive                      invoke the gerbil interpreter (gxi)")
   (displayln "  compile                          invoke the gerbil compiler (gxc)")
+  (displayln "  help <cmd>                       display help for a tool command")
   (displayln)
-  (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
+  (displayln "Try " program-name " help <cmd> for help on tool command usage" ))
 
 (extern namespace: #f
   gerbil-runtime-init!)
@@ -188,10 +201,21 @@ package: gerbil
   (match args
     ([hd . rest]
      (cond
+      ((member hd '("-h" "--help"))
+       (print-usage! program-name))
+      ((equal? "help" hd)
+       (match rest
+         ([cmd . rest]
+          (cond
+           ((assoc cmd builtin-tool-help)
+            => (lambda (help-cmd) (tool-main (cadr help-cmd) (cdr help-cmd) rest)))
+           (else
+            (displayln "no help for topic " cmd)
+            (print-usage! program-name))))
+         (else
+          (print-usage! program-name))))
       ((assoc hd builtin-tool-commands)
        => (lambda (cmd) (tool-main (cadr cmd) (append (cdr cmd) rest))))
-      ((member hd '("-h" "--help" "help"))
-       (print-usage! program-name))
       ((member hd '("-v" "--version" "version"))
        (displayln (gerbil-system-version-string)))
       (else
