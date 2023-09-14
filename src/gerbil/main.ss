@@ -193,7 +193,7 @@ package: gerbil
       ((assoc hd builtin-tools-synonyms)
        => (lambda (p) (tool-main (cdr p) rest)))
       ((assoc hd builtin-tools-subcommand-synonyms)
-       => (lambda (sub) (tool-main (cadr p) (append (cdr p) rest))))
+       => (lambda (sub) (tool-main (cadr sub) (append (cdr sub) rest))))
       ((member hd '("-h" "--help" "help"))
        (print-usage! program-name))
       ((member hd '("-v" "--version" "version"))
