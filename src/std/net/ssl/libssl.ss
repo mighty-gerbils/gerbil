@@ -30,6 +30,17 @@
 #include <openssl/err.h>
 #include <openssl/bio.h>
 
+#include <openssl/x509v3.h>
+static int ffi_sk_GENERAL_NAME_num(const STACK_OF(GENERAL_NAME) *sk)
+{
+  return OPENSSL_sk_num((const OPENSSL_STACK *)sk);
+}
+
+static GENERAL_NAME *ffi_sk_GENERAL_NAME_value(const STACK_OF(GENERAL_NAME) *sk, int idx)
+{
+  return (GENERAL_NAME *)OPENSSL_sk_value((const OPENSSL_STACK *)sk, idx);
+}
+
 static int ffi_ssl_gerbil_data_index;
 
 static ___SCMOBJ ffi_release_SSL_CTX (void *ptr)
@@ -63,7 +74,7 @@ static ___SCMOBJ ffi_ssl_error(SSL *ssl, int r)
   case SSL_ERROR_ZERO_RETURN:
    return ___FIX(0);
    default:
-   ___processor_state ___ps = ___PSTATE;
+   ___processor_state ___ps = ___GET_PSTATE();
    ___SCMOBJ result = ___make_pair(___ps, ___FIX(last), ___NUL);
    ___release_scmobj(result);
    result = ___make_pair(___ps, ___FIX(err), result);
@@ -323,9 +334,9 @@ static char *ffi_X509_get_san_uris(X509 *cert)
   return NULL;
  }
 
- int count = sk_GENERAL_NAME_num(san_names);
+ int count = ffi_sk_GENERAL_NAME_num(san_names);
  for (int i = 0; i < count; i++) {
-  const GENERAL_NAME *name = sk_GENERAL_NAME_value(san_names, i);
+  const GENERAL_NAME *name = ffi_sk_GENERAL_NAME_value(san_names, i);
   if (name->type == GEN_URI) {
    int len = ASN1_STRING_length(name->d.uniformResourceIdentifier);
    if (cursor + len < sizeof(openssl_x509_name_buf) - 2) {
