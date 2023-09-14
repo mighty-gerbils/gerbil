@@ -53,7 +53,7 @@ package: gerbil
     "gerbil/compiler"))
 
 (def builtin-tool-commands
-  '(("new"         "gxkpg" "new")
+  '(("new"         "gxpkg" "new")
     ("build"       "gxpkg" "build")
     ("clean"       "gxpkg" "clean")
     ("pkg"         "gxpkg")
@@ -65,10 +65,10 @@ package: gerbil
     ("compile"     "gxc")))
 
 (def builtin-tool-help
-  '(("new"         "gxkpg" "help" "new")
+  '(("new"         "gxpkg" "help" "new")
     ("build"       "gxpkg" "help" "build")
     ("clean"       "gxpkg" "help" "clean")
-    ("pkg"         "gxkpg" "help")
+    ("pkg"         "gxpkg" "help")
     ("test"        "gxtest" "-h")
     ("tags"        "gxtags" "-h")
     ("prof"        "gxprof" "-h")
@@ -89,7 +89,7 @@ package: gerbil
   (displayln)
   (displayln "Commands:")
   (displayln "  new                              create a new project template (gxpkg new)")
-  (displayln "  build                            build a gerbil package (gxkpg build)")
+  (displayln "  build                            build a gerbil package (gxpkg build)")
   (displayln "  clean                            clean build artifactacts for a package (gxpkg clean)")
   (displayln "  pkg                              invoke the gerbil package manager (gxpkg)")
   (displayln "  test                             run tests (gxtest)")
