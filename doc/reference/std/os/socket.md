@@ -1,9 +1,9 @@
-# Network Programming with Sockets
+# Raw Socket Devices
 
-Gerbil provides raw socket devices to support network programming with sockets.
-See the [tutorial](/tutorials/proxy.md) for example programs.
+Gerbil provides raw socket devices to support network programming with
+sockets.  See the [tutorial](/tutorials/proxy.md) for an example
+program that utilizes raw socket devices.
 
-## Low Level Interface
 ::: tip usage
 (import :std/os/socket)
 :::
