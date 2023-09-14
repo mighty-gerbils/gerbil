@@ -24,12 +24,71 @@ module.exports = {
             title: 'Tutorials',
               children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble']
           }
+      ], '/reference/gerbil/runtime/': [
+	  { title: "Gerbil Runtime",
+	    children:
+	      [
+		  '', 'special-objects', 'lists', 'hash-tables', 'numerics', 'symbols',
+		  'strings',  'MOP','control-flow', 'exception-objects', 'misc-procedures',
+		  'syntax-objects', 'system-information', 'thread-primitives'
+	      ]
+	  },
+		  { title: "< Back to Reference", path: '/reference/'}
+	
+    ], '/reference/gerbil/prelude/': [
+	{ title: "Gerbil Prelude",
+	  children: [ '', 'core-expander-syntax', 'macros', 'runtime-bindings']
+	},
+	{ title: "< Back to Reference", path: '/reference/'}
+    ], '/reference/gerbil/expander/': [
+	{ title: "Gerbil Expander",
+	  children: [ '', 'syntax-errors', 'syntax-objects', 'identifiers', 'utilities' ]
+	},
+	{ title: "< Back to Reference", path: '/reference/'}
+    ],
+	
+  '/reference/std/': [
+          {
+            collapsable: false,
+            title: 'Standard Library',
+              children: [
+		  'sugar',
+		  { title: "Lists",
+		    path: '/reference/std/misc/list',
+		    children: [
+			'misc/list',
+			'misc/alist',
+			'misc/plist'
+		    ]
+		  },
+
+		'assert', 'errors', 'format', 'logger',
+		'sort', 'regexp', 'generic', 'interface',
+		'stdio', 'ref',  'iterators', 'coroutine',
+		'events', 'actor', 'requests', 'httpd',
+		'web', 'db', 'kvstore', 'sockets',
+		'net', 'protobuf', 'os', 'crypto',
+		'text', 'xml', 'parser', 'misc/', 'lazy', 'amb',
+		  'getopt'
+	      ]
+          },
+      
+	{ title: "< Back to Reference", path: '/reference/'}
       ],
+
       '/reference/': [
         {
-          collapsable: false,
-          title: 'Gerbil Reference',
-            children:  ['', 'core-prelude', 'core-builtin', 'core-expander', 'stdlib', 'sugar', 'assert', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'interface', 'stdio', 'ref',  'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'protobuf', 'os', 'crypto', 'text', 'xml', 'parser', 'misc', 'lazy', 'amb', 'stxparam', 'stxutil', 'foreign', 'srfi', 'test', 'debug', 'make', 'profiler', 'bootstrap' ]
+            collapsable: false,
+            title: 'Gerbil Reference',
+	    children:  [
+		'',
+		'gerbil/prelude/',
+		'gerbil/runtime/',
+		'gerbil/expander/',
+		'std/',
+		'stxparam', 'stxutil', 'foreign', 'srfi', 'test',
+		'debug', 'make', 'profiler', 'bootstrap'
+	    ]
         }
       ]
     },

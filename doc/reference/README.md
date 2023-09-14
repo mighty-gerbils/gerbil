@@ -1,4 +1,4 @@
-# Reference Documentation
+# Introduction
 
 This is the reference documentation for Gerbil.
 We aim to exhaustively document the core prelude, runtime builtins, and the standard library.
@@ -12,7 +12,7 @@ is already extensive high quality documentation for these topics:
 
 If any part of this documentation is missing, out of date, or unclear, it's a bug;
 we know there are lots of such bugs, but if any one such bug bothers you particularly,
-contact us (by email, on IRC, etc.) to fix it, and we'll prioritize documenting
+contact us (by email, on Gitter or GitHub, etc.) to fix it, and we'll prioritize documenting
 those parts that are in demand.
 
 You too can help by submitting missing documentation, even if you don't fully understand how it works:
