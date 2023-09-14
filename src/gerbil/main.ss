@@ -64,7 +64,8 @@ package: gerbil
     ("interactive" . "gxi")))
 
 (def builtin-tools-subcommand-synonyms
-  '(("build" "gxpkg" "build")))
+  '(("new" "gxkpg" "new")
+    ("build" "gxpkg" "build")))
 
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
@@ -80,6 +81,7 @@ package: gerbil
   (displayln "Builtin Tools:")
   (displayln "  interactive                      the gerbil interpreter (gxi)")
   (displayln "  compile                          the gerbil compiler (gxc)")
+  (displayln "  new                              the gerbil package template tool (gxpkg new)")
   (displayln "  build                            the gerbil build tool (gxkpg build)")
   (displayln "  pkg                              the gerbil package manager (gxpkg)")
   (displayln "  test                             the gerbil test runner (gxtest)")
