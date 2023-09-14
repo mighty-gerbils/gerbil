@@ -33,7 +33,7 @@
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 #include <openssl/safestack.h>
 #include <openssl/x509v3.h>
-DEFINE_STACK_OF(GENERAL_NAME)
+DEFINE_STACK_OF(GENERAL_NAME);
 #endif
 
 static int ffi_ssl_gerbil_data_index;
