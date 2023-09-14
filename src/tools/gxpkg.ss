@@ -65,10 +65,10 @@
     (command 'build help: "rebuild one or more packages and their dependents"
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
-      (rest-arguments 'pkg help: "package to build; all for all packages")))
+      (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
-      (rest-arguments 'pkg help: "package to clean")))
+      (rest-arguments 'pkg help: "package to clean; all for all packages, omit to clean in current directory")))
   (def new-cmd
     (command 'new help: "Create a new package template in the current directory"
       (option 'package "-p" "--package"
