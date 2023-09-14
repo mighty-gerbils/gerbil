@@ -78,7 +78,7 @@
         help: "The package name; defaults to the current directory name"
         default: (path-strip-directory (current-directory)))
       (option 'name "-l" "--link"
-        help: "Link this package with a package name; for example: github.com/your-user/your-package")))
+        help: "Optionally link this package with a public package name; for example: github.com/your-user/your-package")))
   (def list-cmd
     (command 'list help: "list installed packages"))
   (def retag-cmd
