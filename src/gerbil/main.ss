@@ -52,20 +52,17 @@ package: gerbil
     "gerbil/compiler/ssxi"
     "gerbil/compiler"))
 
-(def builtin-tools
-  '("pkg"
-    "test"
-    "tags"
-    "prof"
-    "ensemble"))
-
-(def builtin-tools-synonyms
-  '(("compile" . "gxc")
-    ("interactive" . "gxi")))
-
-(def builtin-tools-subcommand-synonyms
-  '(("new" "gxkpg" "new")
-    ("build" "gxpkg" "build")))
+(def builtin-tool-commands
+  '(("new"         "gxkpg" "new")
+    ("build"       "gxpkg" "build")
+    ("clean"       "gxpkg" "clean")
+    ("pkg"         "gxkpg")
+    ("test"        "gxtest")
+    ("tags"        "gxtags")
+    ("prof"        "gxprof")
+    ("ensemble"    "gxensemble")
+    ("interactive" "gxi")
+    ("compile"     "gxc")))
 
 (def (print-usage! program-name)
   (displayln "Usage: " program-name " [option ...] arguments ...")
@@ -75,19 +72,20 @@ package: gerbil
   (displayln "  -v|--version|version             display the system version and exit")
   (displayln)
   (displayln "Arguments: ")
-  (displayln "  <tool> tool-arg ...              execute a builtin gerbil tool")
+  (displayln "  <cmd> cmd-arg ...                execute a builtin tool command")
   (displayln "  arg ...                          drop to the gerbil interpreter")
   (displayln)
-  (displayln "Builtin Tools:")
-  (displayln "  interactive                      the gerbil interpreter (gxi)")
-  (displayln "  compile                          the gerbil compiler (gxc)")
-  (displayln "  new                              the gerbil package template tool (gxpkg new)")
-  (displayln "  build                            the gerbil build tool (gxkpg build)")
-  (displayln "  pkg                              the gerbil package manager (gxpkg)")
-  (displayln "  test                             the gerbil test runner (gxtest)")
-  (displayln "  tags                             the gerbil tag generator (gxtags)")
-  (displayln "  prof                             the gerbil profiler (gxprof)")
-  (displayln "  ensemble                         the gerbil actor ensemble manager (gxensemble)")
+  (displayln "Commands:")
+  (displayln "  new                              create a new project template (gxpkg new)")
+  (displayln "  build                            build a gerbil package (gxkpg build)")
+  (displayln "  clean                            clean build artifactacts for a package (gxpkg clean)")
+  (displayln "  pkg                              invoke the gerbil package manager (gxpkg)")
+  (displayln "  test                             run tests (gxtest)")
+  (displayln "  tags                             create emacs tags (gxtags)")
+  (displayln "  prof                             profile a dynamic executable module (gxprof)")
+  (displayln "  ensemble                         invoke the gerbil actor ensemble manager (gxensemble)")
+  (displayln "  interactive                      invoke the gerbil interpreter (gxi)")
+  (displayln "  compile                          invoke the gerbil compiler (gxc)")
   (displayln)
   (displayln "Try " program-name " <tool> [-h|--help|help] for help on tool usage" ))
 
@@ -190,12 +188,8 @@ package: gerbil
   (match args
     ([hd . rest]
      (cond
-      ((member hd builtin-tools)
-       (tool-main (string-append "gx" hd) rest))
-      ((assoc hd builtin-tools-synonyms)
-       => (lambda (p) (tool-main (cdr p) rest)))
-      ((assoc hd builtin-tools-subcommand-synonyms)
-       => (lambda (sub) (tool-main (cadr sub) (append (cdr sub) rest))))
+      ((assoc hd builtin-tool-commands)
+       => (lambda (cmd) (tool-main (cadr cmd) (append (cdr cmd) rest))))
       ((member hd '("-h" "--help" "help"))
        (print-usage! program-name))
       ((member hd '("-v" "--version" "version"))
