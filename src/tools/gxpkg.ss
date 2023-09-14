@@ -236,8 +236,11 @@
   (create-template (path-expand "lib.ss" name) lib.ss-template)
   (create-template [path: "build.ss" permissions: #o755] build.ss-template
                    name: name)
+  (create-template ".gitignore" gitignore-template)
+
   ;; TODO create Makefile template
   ;; ...
+
   (when maybe-link
     (pkg-link maybe-link (current-directory))))
 
@@ -581,6 +584,13 @@ END
 (defbuild-script
   '("${name}/lib"
     (exe: "${name}/main" bin: "${name}")))
+
+END
+)
+
+(def gitignore-template #<<END
+*~
+build-deps
 
 END
 )
