@@ -205,17 +205,17 @@ package: gerbil
        (print-usage! program-name))
       ((equal? "help" hd)
        (match rest
-         ([cmd . rest]
+         ([cmd]
           (cond
            ((assoc cmd builtin-tool-help)
-            => (lambda (help-cmd) (tool-main (cadr help-cmd) (cdr help-cmd) rest)))
+            => (lambda (help-cmd) (tool-main (car help-cmd) (cdr help-cmd))))
            (else
             (displayln "no help for topic " cmd)
             (print-usage! program-name))))
          (else
           (print-usage! program-name))))
       ((assoc hd builtin-tool-commands)
-       => (lambda (cmd) (tool-main (cadr cmd) (append (cdr cmd) rest))))
+       => (lambda (cmd) (tool-main (car cmd) (append (cdr cmd) rest))))
       ((member hd '("-v" "--version" "version"))
        (displayln (gerbil-system-version-string)))
       (else
