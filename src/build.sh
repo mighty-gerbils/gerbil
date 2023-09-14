@@ -203,7 +203,7 @@ build_stage1 () {
 ## commands
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
-  (cd std && ./build.ss)
+  (cd std && ./build.ss) || die
 }
 
 build_libgerbil () {
@@ -213,22 +213,22 @@ build_libgerbil () {
 
 build_lang () {
   feedback_low "Building gerbil languages"
-  (cd lang && ./build.ss)
+  (cd lang && ./build.ss) || die
 }
 
 build_r7rs_large() {
   feedback_low "Building R7RS large"
-  (cd r7rs-large && ./build.ss)
+  (cd r7rs-large && ./build.ss) || die
 }
 
 build_srfi() {
     feedback_low "Building SRFI shims"
-    (cd srfi && ./build.ss)
+    (cd srfi && ./build.ss) || die
 }
 
 build_tools () {
   feedback_low "Building gerbil tools"
-  (cd tools && ./build.ss)
+  (cd tools && ./build.ss) || die
   for tool in tools/gx*.ss; do
       toolname=$(basename $tool .ss)
       (cd "${GERBIL_BUILD_PREFIX}/bin" && ln -sf gerbil $toolname)

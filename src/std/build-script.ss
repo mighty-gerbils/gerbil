@@ -9,10 +9,12 @@
 (def (build-main args build-spec keys that-file)
   (def srcdir (path-normalize (path-directory that-file)))
   (def (build) (apply make build-spec srcdir: srcdir keys))
+  (def (clean) (apply make-clean build-spec srcdir: srcdir keys))
   (match args
-    (["meta"] (write '("spec" "compile")) (newline))
+    (["meta"] (write '("spec" "compile" "clean")) (newline))
     (["spec"] (pretty-print build-spec))
     (["compile"] (build))
+    (["clean"] (clean))
     ([] (build))))
 
 (defsyntax (defbuild-script stx)

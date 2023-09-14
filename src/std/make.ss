@@ -28,6 +28,7 @@
 (extern namespace: #f with-cons-load-path load-path)
 
 (export make
+        make-clean
         shell-config
         env-cppflags
         env-ldflags
@@ -95,7 +96,9 @@ TODO:
 (defstruct settings
   (srcdir libdir bindir prefix force optimize debug static-debug verbose build-deps
    libdir-prefix parallelize
-   full-program-optimization)
+   full-program-optimization
+   build-release
+   build-optimized)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
@@ -106,7 +109,10 @@ TODO:
       static: (_ignore-static #t) static-debug: (static-debug #f)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #f)
-      full-program-optimization: (full-program-optimization #f))
+      full-program-optimization: (full-program-optimization #f)
+      build-release: (build-release #f)
+      build-optimized: (build-optimized #f))
+
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
     (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
@@ -124,7 +130,9 @@ TODO:
       self
       srcdir libdir bindir prefix force? optimize debug static-debug verbose build-deps
       libdir-prefix parallelize
-      full-program-optimization)))
+      full-program-optimization
+      build-release
+      build-optimized)))
 
 (def (gerbil-build-cores (cpu-count-spec #t))
   ;; TODO: for the default (catch) case, use something like
@@ -500,6 +508,20 @@ TODO:
 
   (when (verbose>=? 3) (writeln [Step: 5 "All built"])))
 
+(def (make-clean . args)
+  (defvalues (positionals keywords) (separate-keyword-arguments args #t))
+  (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
+  (def settings (apply make-settings keywords))
+
+  (for-each
+    (lambda (spec)
+      (for-each
+        (lambda (f)
+          (displayln "... remove " f)
+          (delete-file-or-directory f))
+        (spec-outputs spec settings)))
+    buildspec))
+
 (defstruct build-failure (item exception))
 
 (defmethod {display-exception build-failure}
@@ -622,7 +644,7 @@ TODO:
      (for-each (cut build <> settings) submodules)
      (compile-ssi modf '() settings))
     ([exe:  modf . opts]
-     (compile-exe modf opts settings))
+     (compile-exe/context modf opts settings))
     ([static-exe:  modf . opts]
      (compile-exe/static-linkage modf opts settings))
     ([optimized-exe: modf . opts]
@@ -756,6 +778,22 @@ TODO:
     ([(? keyword?) opt . rest]
      (compile-exe-gsc-opts rest))
     (else opts)))
+
+(def (compile-exe/context mod opts settings)
+  (cond
+   ((or (settings-build-release settings)
+        (getenv "GERBIL_BUILD_RELEASE" #f))
+    (cond
+     ((or (settings-build-optimized settings)
+          (getenv "GERBIL_BUILD_OPTIMIZED" #f))
+      (compile-optimized-exe/static-linkage mod opts settings))
+      (else
+       (compile-exe/static-linkage mod opts settings))))
+   ((or (settings-build-optimized settings)
+        (getenv "GERBIL_BUILD_OPTIMIZED" #f))
+    (compile-optimized-exe mod opts settings))
+   (else
+    (compile-exe mod opts settings))))
 
 (def (compile-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
