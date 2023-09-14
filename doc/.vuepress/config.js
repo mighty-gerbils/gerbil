@@ -47,24 +47,52 @@ module.exports = {
               {
                   title: 'Standard Library',
                   children: [
+                      '',
 		              'sugar',
-		              { title: "Lists",
-		                path: '/reference/std/misc/list',
-		                children: [
-			                'misc/list',
-			                'misc/alist',
-			                'misc/plist'
-		                ]
-		              },
-
 		              'assert', 'errors', 'format', 'logger',
 		              'sort', 'regexp', 'generic', 'interface',
 		              'stdio', 'ref',  'iterators', 'coroutine',
 		              'events', 'actor', 'requests', 'httpd',
 		              'web', 'db', 'kvstore', 'sockets',
 		              'net', 'protobuf', 'os', 'crypto',
-		              'text', 'xml', 'parser', 'misc/', 'lazy', 'amb',
-		              'getopt', 'stxparam', 'stxutil', 'foreign', 'make'
+		              'text', 'xml', 'parser', 'lazy', 'amb',
+		              'getopt', 'stxparam', 'stxutil', 'foreign', 'make',
+
+                      { title: "Miscellaneous Libraries",
+		                path: '/reference/std/misc/',
+		                children: [
+                            'misc/',
+			                'misc/list',
+			                'misc/alist',
+			                'misc/plist',
+                            'misc/hash',
+                            'misc/sync',
+                            'misc/rbtree',
+                            'misc/lru',
+                            'misc/channel',
+                            'misc/completion',
+                            'misc/barrier',
+                            'misc/rwlock',
+                            'misc/threads',
+                            'misc/queue',
+                            'misc/deque',
+                            'misc/pqueue',
+                            'misc/repr',
+                            'misc/ports',
+                            'misc/process',
+                            'misc/bytes',
+                            'misc/timeout',
+                            'misc/rtd',
+                            'misc/shared',
+                            'misc/string',
+                            'misc/text',
+                            'misc/template',
+                            'misc/func',
+                            'misc/number',
+                            'misc/shuffle',
+                            'misc/uuid'
+		                ]
+		              }
 	              ]
               },
 
