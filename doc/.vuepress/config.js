@@ -52,11 +52,68 @@ module.exports = {
 		              'assert', 'errors', 'format', 'logger',
 		              'sort', 'regexp', 'generic', 'interface',
 		              'stdio', 'ref',  'iterators', 'coroutine',
-		              'events', 'actor', 'requests', 'httpd',
-		              'web', 'db', 'kvstore', 'sockets',
-		              'net', 'protobuf', 'os', 'crypto',
-		              'text', 'xml', 'parser', 'lazy', 'amb',
+		              'events', 'actor',
+		              'web', 'db', 'kvstore',
+		              'protobuf', 'crypto',
+		              'xml', 'parser', 'lazy', 'amb',
 		              'getopt', 'stxparam', 'stxutil', 'foreign', 'make',
+
+                      { title: "Networking Libraries",
+                        path: "/reference/std/net/",
+                        children: [
+                            "net/",
+                            "net/request",
+                            "net/json-rpc",
+                            "net/websocket",
+                            "net/socks",
+                            "net/httpd",
+                            "net/ssl",
+                            "net/uri",
+                            "net/address",
+                            "net/sasl",
+                            "net/repl"
+                        ]
+                      },
+
+                      { title: "Operating System Libraries",
+                        path: "/reference/std/os/",
+                        children: [
+                            "os/",
+                            "os/error",
+                            "os/fd",
+                            "os/fdio",
+                            "os/fcntl",
+                            "os/flock",
+                            "os/socket",
+                            "os/pipe",
+                            "os/signal",
+                            "os/signal-handler",
+                            "os/signalfd",
+                            "os/inotify",
+                            "os/epoll",
+                            "os/kqueue",
+                            "os/hostname",
+                            "os/temporaries"
+                        ]
+                      },
+
+                      { title: "Text Encoding and Decoding Libraries",
+                        path: "/reference/std/text/",
+                        children: [
+                            "text/",
+                            "text/json",
+                            "text/yaml",
+                            "text/csv",
+                            "text/yaml",
+                            "text/utf8",
+                            "text/utf16",
+                            "text/utf32",
+                            "text/base64",
+                            "text/base58",
+                            "text/hex",
+                            "text/zlib"
+                        ]
+                      },
 
                       { title: "Miscellaneous Libraries",
 		                path: '/reference/std/misc/',
