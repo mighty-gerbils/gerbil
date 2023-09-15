@@ -238,8 +238,7 @@
                    name: name)
   (create-template ".gitignore" gitignore-template)
 
-  ;; TODO create Makefile template
-  ;; ...
+  (create-template "Makefile" Makefile-template name: name)
 
   (when maybe-link
     (pkg-link maybe-link (current-directory))))
@@ -582,6 +581,38 @@ END
 
 ;;; Your library support code
 ;;; ...
+
+END
+)
+
+(def Makefile-template #<<END
+ARCH := \$(shell uname -m)
+DOCKER_IMAGE := "gerbil/gerbilxx:\$(ARCH)"
+default: linux-static
+
+build-release:
+	/opt/gerbil/bin/gxpkg link ${name} /src || true
+	/opt/gerbil/bin/gxpkg build --release ${name}
+
+build-clean:
+	/opt/gerbil/bin/gxpkg clean ${name}
+
+linux-static:
+	docker run -it \\
+	-e GERBIL_PATH=/src/.gerbil \\
+	-v \$(PWD):/src:z \\
+	\$(DOCKER_IMAGE) \\
+	make -C /src/ build-release
+
+install:
+	mv .gerbil/bin/${name} /usr/local/bin/${name}
+
+clean:
+	docker run -it \\
+	-e GERBIL_PATH=/src/.gerbil \\
+	-v \$(PWD):/src:z \\
+	\$(DOCKER_IMAGE) \\
+	make -C /src/ build-clean
 
 END
 )
