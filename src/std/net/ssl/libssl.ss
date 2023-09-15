@@ -261,6 +261,13 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const
   STACK_OF(X509) *catrust = sk_X509_new_null();
   sk_X509_push(catrust, caroot_cert);
 
+  r = SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION);
+  if (r <= 0) {
+   ERR_print_errors_fp(stderr);
+   SSL_CTX_free(ctx);
+   return NULL;
+ }
+
   r = SSL_CTX_set_app_data(ctx, catrust);
   if (r <= 0) {
    ERR_print_errors_fp(stderr);
