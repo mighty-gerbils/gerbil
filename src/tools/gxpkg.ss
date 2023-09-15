@@ -580,16 +580,16 @@ ARCH := \\$(shell uname -m)
 DOCKER_IMAGE := "gerbil/gerbilxx:\\$(ARCH)"
 default: linux-static
 
-build:
+build-release:
       /opt/gerbil/bin/gxpkg link ${name} /src ||true
-      /opt/gerbil/bin/gxpkg build ${name}
+      /opt/gerbil/bin/gxpkg build --release ${name}
 
 linux-static:
         docker run -it \
 	-e GERBIL_PATH=/src/.gerbil \
 	-v \\$(PWD):/src:z \
 	\\$(DOCKER_IMAGE) \
-	make -C /src/ build
+	make -C /src/ build-release
 
 install:
        mv .gerbil/bin/${name} /usr/local/bin/${name}
