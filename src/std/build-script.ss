@@ -7,15 +7,29 @@
 (export defbuild-script)
 
 (def (build-main args build-spec keys that-file)
-  (def srcdir (path-normalize (path-directory that-file)))
-  (def (build) (apply make build-spec srcdir: srcdir keys))
-  (def (clean) (apply make-clean build-spec srcdir: srcdir keys))
+  (def (parse-options opts)
+    (let lp ((rest opts) (options []))
+      (match rest
+        ([] options)
+        (["--release" . rest]
+         (lp rest (cons* build-release: #t options)))
+        (["--optimized" . rest]
+         (lp rest (cons* build-optimized: #t options)))
+        (else
+         (error "Unexpected " rest)))))
+  (def srcdir
+    (path-normalize (path-directory that-file)))
+  (def (build options)
+    (apply make build-spec srcdir: srcdir (append options keys)))
+  (def (clean)
+    (apply make-clean build-spec srcdir: srcdir keys))
+
   (match args
     (["meta"] (write '("spec" "compile" "clean")) (newline))
     (["spec"] (pretty-print build-spec))
-    (["compile"] (build))
+    (["compile" . options] (build (parse-options options)))
     (["clean"] (clean))
-    ([] (build))))
+    ([] (build []))))
 
 (defsyntax (defbuild-script stx)
   (syntax-case stx ()
