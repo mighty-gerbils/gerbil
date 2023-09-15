@@ -581,8 +581,8 @@ DOCKER_IMAGE := "gerbil/gerbilxx:\\$(ARCH)"
 default: linux-static
 
 build:
-      /opt/gerbil/bin/gxpkg link ${project} /src ||true
-      /opt/gerbil/bin/gxpkg build ${project}
+      /opt/gerbil/bin/gxpkg link ${name} /src ||true
+      /opt/gerbil/bin/gxpkg build ${name}
 
 linux-static:
         docker run -it \
@@ -592,7 +592,7 @@ linux-static:
 	make -C /src/ build
 
 install:
-mv .gerbil/bin/${project} /usr/local/bin/${project}
+       mv .gerbil/bin/${name} /usr/local/bin/${name}
 
 END
 )
