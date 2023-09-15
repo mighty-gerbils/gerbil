@@ -599,6 +599,7 @@ build-clean:
 
 linux-static:
 	docker run -it \\
+	-e USER=\$(USER) \\
 	-e GERBIL_PATH=/src/.gerbil \\
 	-v \$(PWD):/src:z \\
 	\$(DOCKER_IMAGE) \\
@@ -610,6 +611,7 @@ install:
 clean:
 	docker run -it \\
 	-e GERBIL_PATH=/src/.gerbil \\
+	-e USER=\$(USER) \\
 	-v \$(PWD):/src:z \\
 	\$(DOCKER_IMAGE) \\
 	make -C /src/ build-clean
