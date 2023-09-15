@@ -19,8 +19,9 @@ Starting with the v0.18 release cycle, there is no external dependency on Gambit
 
 The core system has no outside depencies, but the standard
 library has several mostly optional dependencies. The only hard dependency
-is `libcrypto` from OpenSSL; important parts of the standard library
-require it.
+is `libssl` and `libcrypto` from OpenSSL; important parts of the standard
+library require it and we refuse to ship software without SSL/TLS support
+in the 2020s.
 
 All the other dependencies are soft.  Most library modules with
 foreign dependencies are not built by default, with the exception of
