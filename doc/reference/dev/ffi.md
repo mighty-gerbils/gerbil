@@ -103,7 +103,7 @@ Using `begin-ffi` the previous example would be written as follows:
   (define-c-lambda get-glibc-version () char-string "gnu_get_libc_version"))
 ```
 
-If you want to find more about Gerbil FFI programming, the std lib sources for the [os package](https://github.com/vyzo/gerbil/tree/master/src/std/os) are a good starting point.
+If you want to find more about Gerbil FFI programming, the std lib sources for the [os package](https://github.com/mighty-gerbils/gerbil/tree/master/src/std/os) are a good starting point.
 
 ## Interfacing with C structs
 

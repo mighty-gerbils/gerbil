@@ -13,13 +13,13 @@ not built by default. You can do this during installation by running `configure`
 the `--enable-lmdb` option.
 
 
-The source code for the tutorial is available at [src/tutorial/kvstore](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore).
-You can build the kvstore tutorial code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs.
+The source code for the tutorial is available at [src/tutorial/kvstore](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/kvstore).
+You can build the kvstore tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs.
 
 ## The kvstore protocol
 
 The protocol for communicating with the kvstore server is defined in
-[proto.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/proto.ss):
+[proto.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/proto.ss):
 ```scheme
 (defmessage !get (key))
 (defmessage !put (key val))
@@ -57,7 +57,7 @@ these to implement its functionality.
 
 ## The server implementation
 
-The server is implemented in [server.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/server.ss).
+The server is implemented in [server.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/server.ss).
 Here is the code:
 ```scheme
 (deflogger kvstore)
@@ -134,7 +134,7 @@ can be managed with the `gxensemble` tool.
 
 ## The ensemble service
 The entry point for the server is invoked by the service front end in
-[kvstore-svc.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/kvstore-svc.ss):
+[kvstore-svc.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/kvstore-svc.ss):
 ```scheme
 (def (main (path #f))
   (let* ((path
@@ -151,7 +151,7 @@ The service is normally invoked with `gxensemble run` as we will se below.
 
 ## The command-line client
 
-A command line client for interacting with the kvstore server is provided in [kvstorec.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/kvstorec.ss).
+A command line client for interacting with the kvstore server is provided in [kvstorec.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/kvstorec.ss).
 Here is the code:
 ```scheme
 (def (main . args)
@@ -268,7 +268,7 @@ Here is the code:
 ```
 
 The client uses [getopt](../reference/getopt.md) to parse the command line arguments,
-and interacts with the kvstore server using the methods defined in [proto.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/proto.ss).
+and interacts with the kvstore server using the methods defined in [proto.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/proto.ss).
 
 ## Example interaction
 

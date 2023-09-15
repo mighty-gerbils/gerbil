@@ -42,7 +42,7 @@ The `@@message` syntax parameter can also be cleanly re-parameterized without
 affecting existing macros.
 
 See [Keeping it Clean with Syntax Parameters](http://eli.barzilay.org/misc/stxparam.pdf)
-and [std/actor/message.ss](https://github.com/vyzo/gerbil/blob/master/src/std/actor/message.ss).
+and [std/actor/message.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/actor/message.ss).
 
 :::
 

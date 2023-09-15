@@ -10,7 +10,7 @@ Alpine was chosen due to the static compilation environment and capabilities it 
 
 If you want to build your own container, perhaps based on some other
 distribution, you can use our
-[Dockerfile](https://github.com/vyzo/gerbil/tree/master/docker/Dockerfile).
+[Dockerfile](https://github.com/mighty-gerbils/gerbil/tree/master/docker/Dockerfile).
 
 ## Running Gerbil in Docker
 

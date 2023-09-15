@@ -1,12 +1,12 @@
 # Installation
 
 ## Source Code
-The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
-with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
+The source code for Gerbil is hosted on [Github](https://github.com/mighty-gerbils/gerbil),
+with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
 
 For the latest Gerbil, you can clone the repository:
 ```bash
-$ git clone https://github.com/vyzo/gerbil.git
+$ git clone https://github.com/mighty-gerbils/gerbil.git
 ```
 
 ## Dependencies
@@ -108,7 +108,7 @@ To get a bash shell where you can compile programs:
 docker run -it gerbil/gerbil:$(uname -m) bash
 ```
 
-Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/docker/Dockerfile).
+Or you can build your own container using the [Dockerfile](https://github.com/mighty-gerbils/gerbil/blob/master/docker/Dockerfile).
 See the [Docker Gulde](docker.md) for additional information.
 
 ## Using Nix and/or Docker
