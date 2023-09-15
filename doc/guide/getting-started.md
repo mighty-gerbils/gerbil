@@ -133,6 +133,7 @@ drwxrwxr-x 3 vyzo vyzo 4096 Sep 15 09:54 .
 -rw-rw-r-- 1 vyzo vyzo   16 Sep 15 09:54 gerbil.pkg
 -rw-rw-r-- 1 vyzo vyzo   14 Sep 15 09:54 .gitignore
 drwxrwxr-x 2 vyzo vyzo 4096 Sep 15 09:54 hello
+-rw-rw-r-- 1 vyzo vyzo  555 Sep 15 09:54 Makefile
 drwxrwxr-x 3 vyzo vyzo 4096 Sep 15 09:54 ..
 
 ./hello:
@@ -163,6 +164,8 @@ The tool has created the following files in the current directory:
   As we can see, this is my `vyzo` user name in this example
 - `build.ss` -- this is the project build script, pre-filled with the two source files the
   tool generated.
+- `Makefile` -- this is the project release Makefile, which you can use to build release
+  executables with docker.
 
 It also created two source file templates, one for library code and one for the executable:
 ```shell
@@ -363,3 +366,14 @@ Note that for release builds, your system must be configured without
 static library archives. Of course, you can do that by maintaining a
 separate gerbil build in your system for releases, but the recommended
 way to build release binaries is by using [docker](docker.md).
+
+## Using the Makefile
+
+The generated Makefile has two main rules: the default `linux-static`
+rule which builds static executables for your poject, and the utility
+`clean` rule to clean static build artifacts.
+
+So all you have to do to build a release executable is this:
+```shell
+$ make
+```
