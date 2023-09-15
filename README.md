@@ -27,7 +27,7 @@ with the latest release available in [releases](https://github.com/vyzo/gerbil/r
 
 Installation from source is straightforward:
 ```shell
-$ git clone git@github.com:vyzo/gerbil.git
+$ git clone git@github.com:mighty-gerbils/gerbil.git
 $ cd gerbil
 $ ./configure --enable-shared # recommeded to use shared libraries for a local install
 $ make
@@ -135,7 +135,7 @@ any of its variations or derivitives in the future.
 
 # Epilogue
 
-Gerbil had been my private Scheme for many years, evolved out of a set
+Gerbil had been my (vyzo) private Scheme for many years, evolved out of a set
 of common macros that i used across different implementations and
 eventually a full-blown PLT macro language. As such I have had
 multiple backends that supported the Gerbil dialect, but I have

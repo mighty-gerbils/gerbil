@@ -14,7 +14,7 @@ variable; in fact you should not set this unless you have special
 requirements.
 :::
 
-* Clone the repo from [github](https://github.com/vyzo/gerbil)
+* Clone the repo from [github](https://github.com/mighty-gerbils/gerbil)
 
 * Install dependencies
 

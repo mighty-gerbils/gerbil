@@ -4,8 +4,8 @@ Here we explore language extensibility in Gerbil by defining custom preludes.
 
 ## Preliminaries
 
-The source code for all the examples is available at [src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
-You can build the tutorial code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/build.ss).
+The source code for all the examples is available at [src/tutorial/lang](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang).
+You can build the tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/build.ss).
 
 ## Custom Languages in the REPL
 
@@ -50,7 +50,7 @@ For chained dotted references we want to invoke the dotted parts as methods:
 (a.b.c arg ...) => {{b a} c arg ...}
 ```
 
-The [dot-app](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/dot-app.ss) prelude accomplishes this by redefining
+The [dot-app](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/dot-app.ss) prelude accomplishes this by redefining
 the `%%app` and `%%ref` expander hooks:
 ```scheme
 (defsyntax (my-%%app stx)
@@ -115,7 +115,7 @@ The macros also need a couple of helper functions, defined for syntax:
 
 #### Example
 
-For a contrived example, consider the code in [example/my-app.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/example/my-app.ss):
+For a contrived example, consider the code in [example/my-app.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-app.ss):
 
 ```scheme
 $ cat example/my-app.ss
@@ -159,7 +159,7 @@ of custom module body expansion.
 
 The premise is very simple: we want a language that automatically exports all bindings,
 similar to how Schemes without modules work.
-The [auto-export](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/auto-export.ss) prelude accomplishes this by
+The [auto-export](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/auto-export.ss) prelude accomplishes this by
 redefining the `%%begin-module` expander:
 ```scheme
 (import :gerbil/core) ;; so that we can re-export
@@ -176,7 +176,7 @@ does is plaster an `(export #t)` and expand up the chain through the root `%%beg
 
 #### Example
 
-The [example](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/example/my-auto-export.ss) is a module
+The [example](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-auto-export.ss) is a module
 with a single definition `greet` and no export directive in sight:
 ```scheme
 $ cat example/my-auto-export.ss
@@ -201,7 +201,7 @@ hello world
 The next example is the `sexp` language, which illustrates the mechanics of custom module
 readers and `#lang` preludes.
 
-The [sexp](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/sexp.ss) prelude is a minimal module with a custom
+The [sexp](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/sexp.ss) prelude is a minimal module with a custom
 reader:
 ```scheme
 (import :gerbil/core) ;; so that we can re-export
@@ -220,7 +220,7 @@ The reader itself is quite uninteresting: it uses the builtin `read-syntax` prim
 to read s-expressions, so this language is identical to Gerbil core. However, it can be
 used as a `#lang` prelude, in contrast to the gerbil core prelude.
 
-The [example](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
+The [example](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
 ```
 $ cat example/my-sexp.ss
 #lang :tutorial/lang/sexp
@@ -246,7 +246,7 @@ blocks using `end` tokens. The language itself is a toy, but it's complex enough
 to benefit from a proper parser and a lexer.
 
 Gerbil provides extensive facilities for parsing and lexing in the standard
-library, as part of the [:std/parser](https://github.com/vyzo/gerbil/tree/master/src/std/parser) package.
+library, as part of the [:std/parser](https://github.com/mighty-gerbils/gerbil/tree/master/src/std/parser) package.
 The package provides facilities for lexing and parsing while accurately tracking source
 location, macros for parser and lexer generation, and a custom language prelude for
 writing language grammars in declarative fashion (i was quite fond of silex and lalr).
@@ -258,7 +258,7 @@ We want to keep things simple and minimal, so we have one `def` form for
 function definitions and variables, while we have exactly one special form
 with `if`. Our datums can be booleans, null, integers, and strings.
 
-There is some scuby code in the [example module](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/example/my-scuby.ss).
+There is some scuby code in the [example module](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-scuby.ss).
 
 For instance, here is a function that computes the nth Fibonacci number:
 ```
@@ -287,7 +287,7 @@ end
 
 ### The Grammar
 
-So let's take a look at the [grammar](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/scuby-grammar.ss).
+So let's take a look at the [grammar](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/scuby-grammar.ss).
 
 First, let's take a look at the parser specification. The syntax is declarative,
 with mutually recursive rules and productions.
@@ -414,7 +414,7 @@ null                            -> (NULL '())                    ; '()
 
 ### The Scuby Prelude
 
-The [scuby](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/scuby.ss) prelude defines a custom module reader
+The [scuby](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/scuby.ss) prelude defines a custom module reader
 which parses scuby syntax and
 produces an AST. The reader is straightforward:
 ```scheme
@@ -444,7 +444,7 @@ produces an AST. The reader is straightforward:
 
 #### Example
 
-And putting it all together, we can import our small corpus of [scuby code](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang/example/my-scuby.ss):
+And putting it all together, we can import our small corpus of [scuby code](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-scuby.ss):
 ```
 $ gxi
 > (import "example/my-scuby")

@@ -947,7 +947,7 @@ The prelude context on the other hand, is an ordinary module that
 exports any number of bindings that form the language of the module.
 
 When a prelude is not specified, the default prelude is the Gerbil
-[core prelude](https://github.com/vyzo/gerbil/tree/master/src/gerbil/prelude/core.ss).
+[core prelude](https://github.com/mighty-gerbils/gerbil/tree/master/src/gerbil/prelude/core.ss).
 Any module however can designate a different prelude with the `prelude:`
 module directive, which allows us to design custom languages.
 

@@ -44,7 +44,7 @@ To install fare's gerbil-utils package:
 
 To link a local development package (here vyzo's gerbil-aws package):
 
-`gxpkg link github.com/vyzo/gerbil-aws gerbil-aws`
+`gxpkg link github.com/mighty-gerbils/gerbil-aws gerbil-aws`
 
 To list all installed (or linked) packages:
 
@@ -68,7 +68,7 @@ To search for packages created by vyzo using the package directory:
 
 ## Known Gerbil Packages
 
-We maintain a list of known Gerbil packages in the [Gerbil Package Directory](https://github.com/vyzo/gerbil-directory).
+We maintain a list of known Gerbil packages in the [Gerbil Package Directory](https://github.com/mighty-gerbils/gerbil-directory).
 Feel free to open a PR in that repo to list your own packages!
 
 ## A Word of Caution

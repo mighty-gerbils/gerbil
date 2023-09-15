@@ -224,7 +224,7 @@ module.exports = {
           ]
       },
     // Assumes GitHub. Can also be a full GitLab url.
-    repo: 'vyzo/gerbil',
+    repo: 'mighty-gerbils/gerbil',
     // Customising the header label
     // Defaults to "GitHub"/"GitLab"/"Bitbucket" depending on `themeConfig.repo`
     repoLabel: 'Contribute!',
@@ -232,7 +232,7 @@ module.exports = {
     // Optional options for generating "Edit this page" link
 
     // if your docs are in a different repo from your main project:
-    docsRepo: 'vyzo/gerbil',
+    docsRepo: 'mighty-gerbils/gerbil',
     // if your docs are not at the root of the repo:
     docsDir: 'doc',
     // if your docs are in a specific branch (defaults to 'master'):

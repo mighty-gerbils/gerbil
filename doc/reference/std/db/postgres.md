@@ -2,7 +2,7 @@
 
     (import :std/db/postgresql)
 
-Have a look at [the postgresql-test.ss file](https://github.com/vyzo/gerbil/blob/master/src/std/db/postgresql-test.ss) to see more of how it is used with
+Have a look at [the postgresql-test.ss file](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/db/postgresql-test.ss) to see more of how it is used with
 the `:std/db/dbi`.
 
 
