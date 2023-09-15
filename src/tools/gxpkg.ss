@@ -110,7 +110,7 @@
       ((new)
        (pkg-new .package .name .link))
       ((build)
-       (build-pkgs .pkg .?release .?optimized))
+       (build-pkgs .pkg .?build-release .?build-optimized))
       ((clean)
        (clean-pkgs .pkg))
       ((link)
@@ -344,6 +344,16 @@
       (delete-file dest))))
 
 (def (pkg-build pkg (dependents? #t))
+  (def build-options
+    (let* ((options [])
+           (options (if (getenv "GERBIL_BUILD_RELEASE" #f)
+                      (cons "--release" options)
+                      options))
+           (options (if (getenv "GERBIL_BUILD_OPTIMIZED" #f)
+                      (cons "--optimized" options)
+                      options)))
+      options))
+
   (cond
    ((equal? pkg "all")
     (let* ((pkgs (pkg-list))
@@ -354,7 +364,7 @@
    ((equal? pkg ".")
     (displayln "... build in current directory")
     (let (build.ss (path-expand "build.ss" (current-directory)))
-      (run-process [build.ss "compile"]
+      (run-process [build.ss "compile" build-options ...]
                    stdout-redirection: #f)))
    (else
      (let* ((root (pkg-root-dir))
@@ -363,7 +373,7 @@
                  (error "Cannot build unknown package" pkg)))
             (build.ss (pkg-build-script pkg)))
        (displayln "... build " pkg)
-       (run-process [build.ss "compile"]
+       (run-process [build.ss "compile" build-options ...]
                     directory: path
                     coprocess: void
                     stdout-redirection: #f)
