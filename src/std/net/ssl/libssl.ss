@@ -20,9 +20,15 @@
             X509_get_subject_name
             X509_get_san_uris
             make-client-ssl-context
+            make-client-ssl-context/v
             make-insecure-client-ssl-context
             make-server-ssl-context
-            make-actor-tls-context)
+            make-server-ssl-context/v
+            make-actor-tls-context
+            TLS1_VERSION
+            TLS1_1_VERSION
+            TLS1_2_VERSION
+            TLS1_3_VERSION)
 
   (c-declare #<<END-C
 #include <openssl/ssl.h>
@@ -175,11 +181,18 @@ static ___SCMOBJ ffi_ssl_set_fd(SSL *ssl, int fd)
  return ffi_ssl_error(ssl, r);
  }
 
-static SSL_CTX *ffi_default_ssl_ctx()
+static SSL_CTX *ffi_client_ssl_ctx(int min_protocol_version)
 {
  SSL_CTX *ctx = SSL_CTX_new(TLS_client_method());
  if (!ctx) {
   return NULL;
+ }
+
+ int r = SSL_CTX_set_min_proto_version(ctx, min_protocol_version);
+ if (r <= 0) {
+   ERR_print_errors_fp(stderr);
+   SSL_CTX_free(ctx);
+   return NULL;
  }
 
  SSL_CTX_set_default_verify_paths(ctx);
@@ -203,14 +216,22 @@ static SSL_CTX *ffi_insecure_ssl_ctx()
  return ctx;
 }
 
-static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path)
+static SSL_CTX *ffi_server_ssl_ctx(const char *cert_path, const char *privk_path, int min_protocol_version)
 {
  SSL_CTX *ctx = SSL_CTX_new(TLS_server_method());
  if (!ctx) {
   return NULL;
  }
 
- int r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
+ int r = SSL_CTX_set_min_proto_version(ctx, min_protocol_version);
+  if (r <= 0) {
+   ERR_print_errors_fp(stderr);
+   SSL_CTX_free(ctx);
+   return NULL;
+ }
+
+
+ r = SSL_CTX_use_certificate_file(ctx, cert_path, SSL_FILETYPE_PEM);
  if (r <= 0) {
   SSL_CTX_free(ctx);
   ERR_print_errors_fp(stderr);
@@ -260,6 +281,13 @@ static SSL_CTX *ffi_actor_tls_ctx(const char *caroot, const char *ca_file, const
  if (caroot_cert) {
   STACK_OF(X509) *catrust = sk_X509_new_null();
   sk_X509_push(catrust, caroot_cert);
+
+  r = SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION);
+  if (r <= 0) {
+   ERR_print_errors_fp(stderr);
+   SSL_CTX_free(ctx);
+   return NULL;
+ }
 
   r = SSL_CTX_set_app_data(ctx, catrust);
   if (r <= 0) {
@@ -419,9 +447,21 @@ END-C
   (define-c-lambda SSL_set_fd (SSL* int) scheme-object "ffi_ssl_set_fd")
   (define-c-lambda SSL_get_peer_certificate (SSL*) X509*)
 
-  (define-c-lambda make-client-ssl-context () SSL_CTX* "ffi_default_ssl_ctx")
+  (define-const TLS1_VERSION)
+  (define-const TLS1_1_VERSION)
+  (define-const TLS1_2_VERSION)
+  (define-const TLS1_3_VERSION)
+
+  (define (make-client-ssl-context #!optional (min-protocol-version TLS1_2_VERSION))
+    (make-client-ssl-context/v min-protocol-version))
+
+  (define (make-server-ssl-context cert-path key-path
+                                   #!optional (min-protocol-version TLS1_2_VERSION))
+    (make-server-ssl-context/v cert-path key-path min-protocol-version))
+
+  (define-c-lambda make-client-ssl-context/v (int) SSL_CTX* "ffi_client_ssl_ctx")
   (define-c-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
-  (define-c-lambda make-server-ssl-context (char-string char-string) SSL_CTX* "ffi_server_ssl_ctx")
+  (define-c-lambda make-server-ssl-context/v (char-string char-string int) SSL_CTX* "ffi_server_ssl_ctx")
   (define-c-lambda make-actor-tls-context (char-string char-string char-string char-string char-string) SSL_CTX* "ffi_actor_tls_ctx")
 
   (define-c-lambda X509_get_subject_name (X509*) char-string "ffi_X509_get_subject_name")
