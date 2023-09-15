@@ -316,23 +316,50 @@ your project with `gerbil build --optimized` or use the `optimized-exe:`
 build spec for your executable in the build script.
 
 This will instruct the compiler to perform full program
-optimization. When the system is configured without `--enable-shared`
-this results in significantly smaller binaries with better execution
-performance.
+optimization.
 
 For example:
 ```shell
+$ ldd $(which hello)
+	linux-vdso.so.1 (0x00007ffc3ffb0000)
+	libgerbil.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgerbil.so (0x00007f1304600000)
+	libgambit.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgambit.so (0x00007f1303c00000)
+	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007f1306588000)
+	libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007f130455c000)
+	libsqlite3.so.0 => /lib/x86_64-linux-gnu/libsqlite3.so.0 (0x00007f1303ab3000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f1303800000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f13065c4000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f1303719000)
+	libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007f1303200000)
+
 $ gerbil clean
-...
+... clean current package
+... remove ~/.gerbil/lib/vyzo/hello/lib.ssi
+... remove ~/.gerbil/lib/static/vyzo__hello__lib.scm
+... remove ~/.gerbil/bin/hello
+... remove ~/.gerbil/lib/static/vyzo__hello__main.scm
+
 $ gerbil build --optimized
-...
+... build in current directory
+... compile hello/lib
+... compile hello/main
+... compile exe hello/main -> ~/.gerbil/bin/hello
+
+$ ldd $(which hello)
+	linux-vdso.so.1 (0x00007ffc8e93a000)
+	libgambit.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgambit.so (0x00007f58ba000000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f58b9c00000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f58ba956000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f58bab1b000)
+
 ```
 
 If you want your program to be statically linked to dependent
 libraries, so that you can ship it as a _release_, you can specify the
-`--release` flag, which may combined with `--optimized`.  Note that
-your system must be configured without `--enable-shared` and have all
-dependencies available as static library archives. Of course, you can
-do that by maintaining a separate gerbil build in your system, but the
-recommended way to build release binaries is by using
-[docker](docker.md).
+`--release` flag, which may be combined with `--optimized`.
+
+Note that for release builds, your system must be configured without
+`--enable-shared` and have all foreign dependencies available as
+static library archives. Of course, you can do that by maintaining a
+separate gerbil build in your system for releases, but the recommended
+way to build release binaries is by using [docker](docker.md).
