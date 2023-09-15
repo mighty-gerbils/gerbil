@@ -22,8 +22,8 @@ ahead of time compilation and compiled macros.
 <!-- tocstop -->
 
 # Installation
-The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
-with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
+The source code for Gerbil is hosted on [Github](https://github.com/mighty-gerbils/gerbil),
+with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
 
 Installation from source is straightforward:
 ```shell
