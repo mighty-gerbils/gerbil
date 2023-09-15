@@ -581,21 +581,29 @@ DOCKER_IMAGE := "gerbil/gerbilxx:\\$(ARCH)"
 default: linux-static
 
 build-release:
-      /opt/gerbil/bin/gxpkg link ${name} /src ||true
-      /opt/gerbil/bin/gxpkg build --release ${name}
+	/opt/gerbil/bin/gxpkg link ${name} /src ||true
+	/opt/gerbil/bin/gxpkg build --release ${name}
+
+build-clean:
+	/opt/gerbil/bin/gxpkg clean ${name}
 
 linux-static:
-        docker run -it \
+	docker run -it \
 	-e GERBIL_PATH=/src/.gerbil \
 	-v \\$(PWD):/src:z \
 	\\$(DOCKER_IMAGE) \
 	make -C /src/ build-release
 
 install:
-       mv .gerbil/bin/${name} /usr/local/bin/${name}
+    mv .gerbil/bin/${name} /usr/local/bin/${name}
 
 clean:
-       /opt/gerbil/bin/gxpkg clean
+    docker run -it \
+	-e GERBIL_PATH=/src/.gerbil \
+	-v \\$(PWD):/src:z \
+	\\$(DOCKER_IMAGE) \
+    make -C /src/ build-clean
+
 END
 )
 
