@@ -10,6 +10,7 @@
 (import :gerbil/expander
         :std/sugar
         :std/getopt
+        :std/format
         :std/sort)
 (export main)
 
@@ -120,7 +121,8 @@
   (def sample-count
     (length samples))
   (def (pct cont-samples)
-    (* 100 (exact->inexact (/ cont-samples sample-count))))
+    (format "~3,3f"
+            (* 100 (exact->inexact (/ cont-samples sample-count)))))
   (def (display-aggregate agg)
     (for-each
       (match <>
