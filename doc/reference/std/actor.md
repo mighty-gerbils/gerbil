@@ -449,7 +449,7 @@ Message sent by actor monitors to notify or a monitored thread exit.
 Actor server addresses can be:
 - UNIX domain addresses
 - TCP addresses
-- TLS addresses -- will be available for the v0.18 release.
+- TLS addresses.
 
 ### Unix Addresses
 A UNIX domain address is denoted like this:
@@ -672,7 +672,7 @@ Returns the directory for server specific data; this is `$GERBIL_PATH/ensemble/s
 ## Ensemble Control
 
 This is programmatic functionality for operations normally performed
-using the `gxensemble` tool; see the [ensemble tutorial](../tutorials/ensemble.md)
+using the `gxensemble` tool; see the [ensemble tutorial](/tutorials/ensemble.md)
 for more information.
 
 ### stop-actor!

@@ -423,7 +423,7 @@ $ cat classes-test.ss
     (seal-class! E::t)
     (time (do-it o n))))
 
-$ gxc -static -O -exe -o clasess-test classes-test.ss
+$ gxc  -O -exe -o clasess-test classes-test.ss
 $ ./clasess-test 10000000
 (time (tmp/classes-test#do-it _o392_ _n391_))
     3.357118 secs real time
@@ -518,7 +518,7 @@ Let's compile and time the code above:
     65530420 cpu cycles
 ```
 
-See the [Interfaces](../reference/interface.md) package documentation
+See the [Interfaces](/reference/std/interface.md) package documentation
 for more details.
 
 
@@ -1441,7 +1441,7 @@ The code reacts with the `<-` reaction syntax, and replies with the
 `-->` reply syntax.  The reaction pattern binds the content of the
 message to `greeting`, which is then sent back consed with `hello`.
 
-See the [actor package](../reference/actor.md) reference documentation
+See the [actor package](/reference/std/actor.md) reference documentation
 for more details.
 
 #### Protocols
@@ -1519,8 +1519,7 @@ secret _cookie_ that allows them to communicate with each other.
 
 ::: warning
 Note that for communication over the open Internet it is strongly
-recommended to use TLS; this will be implemented soon for the v0.18
-release.
+recommended to use TLS.
 :::
 
 So how do we build an ensemble?  First we need to generate a cookie
@@ -1635,14 +1634,14 @@ y
 
 #### More about actors
 
-See the [Key-Value Store](../tutorials/kvstore.md) tutorial for a
+See the [Key-Value Store](/tutorials/kvstore.md) tutorial for a
 comprehensive example of actor-oriented programming.
 
-See the [Working with Actor Ensembles](../tutorials/ensemble.md) tutorial
+See the [Working with Actor Ensembles](/tutorials/ensemble.md) tutorial
 for more information about how to work with actor ensembles.
 
 See the
-[Actors](../reference/actor.md) package documentation for more
+[Actors](/reference/std/actor.md) package documentation for more
 details in the API available for programming and interacting with
 actors.
 

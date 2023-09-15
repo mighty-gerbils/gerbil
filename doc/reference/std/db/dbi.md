@@ -169,7 +169,7 @@ Like [`sql-exec`](#sqlExec) it does not take arguments because they need to be b
 
 ## in-sql-query
 
-For more advanced uses `in-sql-query` takes a statement and returns an [iterator.](iterators.md)
+For more advanced uses `in-sql-query` takes a statement and returns an [iterator](/reference/std/iterators.md).
 
     (import :std/iter)
 
@@ -342,8 +342,9 @@ Aborts a transaction. Sometimes we choose to abort, sometimes it is needed.
 
 Is this error a database error or something else? This predicate tells us so.
 
-Using it with [try](sugar.md), we can for example we can make a connection not error if we
-have a transaction that error yet leave other errors thrown.
+Using it with [try](/reference/std/sugar.md), we can for example we
+can make a connection not error if we have a transaction that error
+yet leave other errors thrown.
 
 To start with, no catcher.
 

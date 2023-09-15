@@ -19,8 +19,7 @@ additional addresses, including Internet addresses where the server
 should listen. If your ensemble spans multiple hosts, you should
 specify the tcp addresses where your servers listen explicitly. If you
 plan to expose your servers to the wider Internet, it is strongly
-recommended to use TLS, which will be available soon for the v0.18
-release.
+recommended to use TLS.
 
 ## The gxensemble Management Tool
 

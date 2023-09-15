@@ -8,7 +8,7 @@
 Base class for all Gerbil-derived exception types. It's an empty struct type
 that extends the Gambit builtin exception record type.
 
-See also [Exception Base Classes](errors.md).
+See also [Exception Base Classes](/reference/std/errors.md).
 ### error::t
 ``` scheme
 (def error::t)
@@ -17,7 +17,7 @@ See also [Exception Base Classes](errors.md).
 Base class for all Gerbil-derived errors. It's a struct type that extends
 `exception::t` and has 3 fields: message, irritants, and trace.
 
-See also [Exception Base Classes](errors.md).
+See also [Exception Base Classes](/reference/std/errors.md).
 
 ### exception?
 ``` scheme
@@ -77,4 +77,3 @@ not an error instance, it returns `#f`.
 
 Returns the trace associated with an error instance. If the object *obj* is not
 an error instance, it returns `#f`.
-

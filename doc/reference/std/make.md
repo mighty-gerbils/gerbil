@@ -1,7 +1,7 @@
 # Build Tool
 
 The `:std/make` library provides support for building source Gerbil projects.
-See also the [guide](/guide/build.md).
+See also the [guide](/reference/dev/build.md).
 
 ::: tip usage
 (import :std/make)
