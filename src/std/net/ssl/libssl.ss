@@ -457,7 +457,7 @@ END-C
 
   (define (make-server-ssl-context cert-path key-path
                                    #!optional (min-protocol-version TLS1_2_VERSION))
-    (make-server-ssl-context/v min-protocol-version))
+    (make-server-ssl-context/v cert-path key-path min-protocol-version))
 
   (define-c-lambda make-client-ssl-context/v (int) SSL_CTX* "ffi_client_ssl_ctx")
   (define-c-lambda make-insecure-client-ssl-context () SSL_CTX* "ffi_insecure_ssl_ctx")
