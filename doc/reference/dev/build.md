@@ -1,6 +1,6 @@
 # The Standard Library Build Tool
 
-Building complex libraries and executables by invoking `gxc` quickly gets tedious. When you reach that point of complexity and you need a build tool, you can use the [`:std/make` library module](../reference/make.md) which provides a modest build tool that can handle reasonably complex project building.
+Building complex libraries and executables by invoking `gxc` quickly gets tedious. When you reach that point of complexity and you need a build tool, you can use the [`:std/make` library module](/reference/std/make.md) which provides a modest build tool that can handle reasonably complex project building.
 
 ## The project source code
 

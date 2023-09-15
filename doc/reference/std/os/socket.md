@@ -401,8 +401,3 @@ MSG_PEEK
 MSG_TRUNC
 MSG_WAITALL
 ```
-
-## Synchronous Socket Interface
-**The `:std/net/socket` package is _deprecated_ and will be removed in the future; please don't use it for new code!**
-
-See [Standard IO Interfaces](stdio.md).
