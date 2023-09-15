@@ -115,3 +115,61 @@ std/io/bio/util#&BufferedWriter-write-string__%: 1 [0.606%]
 std/text/json/input#read-json-object/buffer: 1 [0.606%]
 vyzo@dellicious:~/gerbil/src/std/text/json$
 ```
+
+If you want to hide kernel continuations from the sample (they are not
+usually very intesting), you can do so with the `-k` analysis options:
+```shell
+$ gxprof -k
+... analyzing gxprof.out
+Top Continuation Samples
+------------------------
+std/text/json/input#read-json-hash/buffer: 61 [36.970%]
+std/text/json/output#write-json-string/buffer: 42 [25.455%]
+std/text/json/input#read-json-hash-keybuffer: 17 [10.303%]
+std/text/json/input#read-json-string/buffer: 15 [9.091%]
+std/text/json/output#write-json-alist/buffer: 7 [4.242%]
+std/sort#list-merge-sort: 6 [3.636%]
+std/io/file#input-file-io::read: 3 [1.818%]
+##list->string: 2 [1.212%]
+##table-foldl: 2 [1.212%]
+std/text/json/output#write-json-list/buffer: 2 [1.212%]
+std/io/file#output-file-io::write: 2 [1.212%]
+std/text/json/input#read-json-object/buffer: 1 [0.606%]
+std/text/json/input#read-json-list-next/buffer: 1 [0.606%]
+std/text/json/input#read-json-number/buffer: 1 [0.606%]
+##string->number-slow-path: 1 [0.606%]
+std/text/json/output#write-json-hash/buffer: 1 [0.606%]
+std/text/json/json-benchmark#benchmark-stdio-bio: 1 [0.606%]
+
+Call Graph Samples
+------------------
+std/text/json/input#read-json-hash/buffer: 349 [211.515%]
+std/text/json/output#write-json-alist/buffer: 195 [118.182%]
+std/text/json/json-benchmark#benchmark-stdio-bio: 165 [100.000%]
+##exec-stats: 164 [99.394%]
+##time-thunk: 164 [99.394%]
+std/text/json/input#read-json-list-next/buffer: 114 [69.091%]
+std/text/json/input#read-json-list/buffer: 114 [69.091%]
+std/text/json/json-benchmark#call-with-buffered-reader: 102 [61.818%]
+std/sort#list-merge-sort: 89 [53.939%]
+std/text/json/output#write-json-list/buffer: 74 [44.848%]
+std/text/json/output#write-json-string/buffer: 67 [40.606%]
+std/text/json/input#read-json-hash-keybuffer: 23 [13.939%]
+std/text/json/input#read-json-string/buffer: 18 [10.909%]
+std/text/json/output#write-json-hash/buffer: 9 [5.455%]
+std/io/file#input-file-io::read: 3 [1.818%]
+std/io/bio/util#&BufferedReader-read-char: 3 [1.818%]
+##list->string: 2 [1.212%]
+std/text/json/input#read-json-number/buffer: 2 [1.212%]
+##table-foldl: 2 [1.212%]
+std/io/bio/output#bio-write-u8: 2 [1.212%]
+std/io/file#output-file-io::write: 2 [1.212%]
+##string->number-slow-path: 2 [1.212%]
+std/text/json/input#read-json-object/buffer: 1 [0.606%]
+std/io/bio/util#&BufferedWriter-write-string__%: 1 [0.606%]
+```
+
+Also note, that in the call graph samples, some procedures may have
+more than 100% coverage. This is _not a bug_; a procedure may appear
+multiple times within the same continuation sample because of a
+recursive call.
