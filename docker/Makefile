@@ -82,7 +82,7 @@ gerbilxx:
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
-	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++" \
+	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg with_db="YES" \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
@@ -94,7 +94,7 @@ gerbil:
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
-	--build-arg configure_args="" \
+	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
 	--progress=plain
