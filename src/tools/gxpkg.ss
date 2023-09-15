@@ -238,7 +238,7 @@
                    name: name)
   (create-template ".gitignore" gitignore-template)
 
-  (create-template "Makefile" name: name)
+  (create-template "Makefile" Makefile-template name: name)
 
   (when maybe-link
     (pkg-link maybe-link (current-directory))))
