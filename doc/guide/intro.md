@@ -423,7 +423,7 @@ $ cat classes-test.ss
     (seal-class! E::t)
     (time (do-it o n))))
 
-$ gxc -static -O -exe -o clasess-test classes-test.ss
+$ gxc  -O -exe -o clasess-test classes-test.ss
 $ ./clasess-test 10000000
 (time (tmp/classes-test#do-it _o392_ _n391_))
     3.357118 secs real time
@@ -1519,8 +1519,7 @@ secret _cookie_ that allows them to communicate with each other.
 
 ::: warning
 Note that for communication over the open Internet it is strongly
-recommended to use TLS; this will be implemented soon for the v0.18
-release.
+recommended to use TLS.
 :::
 
 So how do we build an ensemble?  First we need to generate a cookie
