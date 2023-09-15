@@ -594,6 +594,8 @@ linux-static:
 install:
        mv .gerbil/bin/${name} /usr/local/bin/${name}
 
+clean:
+       /opt/gerbil/bin/gxpkg clean
 END
 )
 
