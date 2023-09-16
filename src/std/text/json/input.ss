@@ -15,7 +15,7 @@
     ((macro name peek-char read-char)
      (with-syntax ((read-json-object    (stx-identifier #'macro "read-json-object/" #'name))
                    (read-json-hash      (stx-identifier #'macro "read-json-hash/" #'name))
-                   (read-json-hash-key  (stx-identifier #'macro "read-json-hash-key" #'name))
+                   (read-json-hash-key  (stx-identifier #'macro "read-json-hash-key/" #'name))
                    (read-json-list      (stx-identifier #'macro "read-json-list/" #'name))
                    (read-json-list-next (stx-identifier #'macro "read-json-list-next/" #'name))
                    (read-json-string    (stx-identifier #'macro "read-json-string/" #'name))
