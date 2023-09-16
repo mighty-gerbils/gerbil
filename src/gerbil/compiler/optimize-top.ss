@@ -462,7 +462,7 @@ namespace: gxc
 (def (basic-expression-type-make-class-slot-mutator stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote slot))
-     (make-!class-setf (identifier-symbol #'type-t) (stx-e #'class) unchecked?))
+     (make-!class-setf (identifier-symbol #'type-t) (stx-e #'slot) unchecked?))
     (_ #f)))
 
 (def (basic-expression-type-make-class-slot-unchecked-accessor stx args)
