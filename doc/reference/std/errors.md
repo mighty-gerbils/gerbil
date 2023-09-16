@@ -6,6 +6,8 @@ The `:std/error` library provides base classes for exceptions and errors.
 (import :std/error)
 :::
 
+
+################################################################################
 ## exception
 
 ```

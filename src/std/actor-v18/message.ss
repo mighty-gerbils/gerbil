@@ -12,7 +12,7 @@
 (defclass (ActorError Error) ())
 (defmethod {:init! ActorError}
   Error:::init!)
-(defalias actor-error? ActorError?)
+(def actor-error? ActorError?)
 
 (def (raise-actor-error where what . irritants)
   (raise (ActorError what irritants: irritants where: where)))

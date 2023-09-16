@@ -32,7 +32,7 @@
                            (or (ERR_lib_error_string errno) "?") ":"
                            (or (ERR_func_error_string errno) "?"))
                    irritants: (cons errno irritants))))
-(defalias libcrypto-error? LibCryptoError?)
+(def libcrypto-error? LibCryptoError?)
 
 (def (raise-libcrypto-error . irritants)
   (raise (LibCryptoError (ERR_get_error) irritants)))

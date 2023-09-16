@@ -67,29 +67,29 @@
 (defclass (BadArgument StackTrace Error) ())
 (defmethod {:init! BadArgument}
   Error:::init!)
-(defalias bad-argument-error? BadArgument)
+(def bad-argument-error? BadArgument?)
 
 ;; IO Errors
 (defclass (IOError StackTrace Error) ())
 (defmethod {:init! IOError}
   Error:::init!)
-(defalias io-error? IOError?)
+(def io-error? IOError?)
 
 (defclass (PrematureEndOfInput IOError) ())
 (defmethod {:init! PrematureEndOfInput}
   Error:::init!)
-(defalias premature-end-of-input-error? PrematureEndOfInput?)
+(def premature-end-of-input-error? PrematureEndOfInput?)
 
 (defclass (IOClosed IOError) ())
 (defmethod {:init! IOClosed}
   Error:::init!)
-(defalias io-closed-error? IOClosed?)
+(def io-closed-error? IOClosed?)
 
 ;; Timeouts
 (defclass (Timeout StackTrace Error) ())
 (defmethod {:init! Timeout}
   Error:::init!)
-(defalias timeout-error? Timeout?)
+(def timeout-error? Timeout?)
 
 ;; Exceptions base class for non error exceptional conditions
 (defclass (Exception <exception>) ())

@@ -27,7 +27,7 @@
 (defclass (SSLError IOError) ())
 (defmethod {:init! SSLError}
   Error:::init!)
-(defalias ssl-error? SSLError?)
+(def ssl-error? SSLError?)
 
 (def (raise-ssl-error where result)
   (let (errstr

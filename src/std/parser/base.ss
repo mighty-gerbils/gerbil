@@ -33,7 +33,7 @@
 
 (def (raise-parse-error where msg tok . rest)
   (raise (ParseError msg irritants: (cons tok rest) where: where)))
-(defalias parse-error? ParseError)
+(def parse-error? ParseError?)
 
 (defmethod {display-exception ParseError}
   (lambda (self port)

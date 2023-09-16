@@ -69,7 +69,7 @@
 (defclass (SQLError StackTrace Error) ())
 (defmethod {:init! SQLError}
   Error:::init!)
-(defalias sql-error? SQLError?)
+(def sql-error? SQLError?)
 
 (def (raise-sql-error where what . irritants)
   (raise (SQLError what irritants: irritants where: where)))

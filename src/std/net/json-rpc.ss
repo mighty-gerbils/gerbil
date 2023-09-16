@@ -47,8 +47,8 @@
            data: (data (void))) ;; (Maybe Bytes)
     (def irritants [code message data])
     (Error:::init! self what irritants: irritants where: where)))
-(defalias json-rpc-error JSON-RPCError)
-(defalias json-rpc-error? JSON-RPCError?)
+(def json-rpc-error make-JSON-RPCError)
+(def json-rpc-error? JSON-RPCError?)
 
 
 (def (json-rpc-error-code e)

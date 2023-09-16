@@ -29,8 +29,8 @@
     (Error:::init! self msg where: 'getopt irritants: args)
     (set! (@ self getopt) getopt)))
 
-(defalias getopt-error? GetOptError)
-(defalias getopt-error-e GetOptError-getopt)
+(def getopt-error? GetOptError?)
+(def getopt-error-e GetOptError-getopt)
 
 (def current-getopt-parser
   (make-parameter #f))
