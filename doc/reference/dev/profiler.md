@@ -1,4 +1,4 @@
-# The Gerbil Profiler
+# Profiling Gerbil Programs
 
 Gerbil ships with a basic profiler tool, `gerbil prof` or just
 `gxprof`. The tool can profile dynamically compiled executable
