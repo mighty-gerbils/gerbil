@@ -1,4 +1,4 @@
-# The standard testin library
+# The Standard Testing library
 
 ::: tip To use the test library
 ```scheme
