@@ -439,7 +439,7 @@ The `:std/generic` library extends the form for generic method
 ```
 This is the reader macro for `{...}`, the method invocation operator.
 
-### @
+### @ (slot reference)
 ``` scheme
 (@ obj id)
 => (slot-ref obj 'id)
@@ -597,7 +597,7 @@ Short-form destructuring bind macros.
 ```
 :::
 
-### ?
+### ? (predicate constructor)
 ``` scheme
 (? (and pred ...) obj)
 => (and (? pred obj) ...)
