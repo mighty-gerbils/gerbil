@@ -29,14 +29,16 @@ Creates a new test case, with the body executed in a thunk.
 ## check
 ```scheme
 (check expr => value)
+(check expr => value :: equality-function)
 (check expr ? predicate)
 (check equality-function expr value)
 ```
 
 Evaluates an `expr` and asserts that its value is the expected one:
 - the first form uses `equal?` to compare the result of `expr` with the expected value.
-- the second form applies the predicate `predicate`.
-- the third form compares the result with `value` using the equality function `equality-function`.
+- the second form uses a custom equality predicate to compare the result of `expr` with `value`.
+- the third form applies the predicate `predicate`.
+- the fourth form compares the result with `value` using the equality function `equality-function`.
 
 
 ## checkf
