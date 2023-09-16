@@ -11,7 +11,10 @@
         :std/foreign
         :std/text/utf8
         :std/pregexp
-        ./base)
+        :std/misc/with-id
+        ./base
+        (for-syntax :std/stxutil
+                    :std/misc/string))
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -29,7 +32,9 @@
         set-httpd-max-token-length!
         set-httpd-max-request-body-length!
         set-httpd-input-buffer-size!
-        set-httpd-output-buffer-size!)
+        set-httpd-output-buffer-size!
+        http-response-write-condition
+        condition-handler)
 
 (declare (not safe))
 
@@ -286,12 +291,11 @@ END-C
 (def input-buffer-size 8192)
 (def output-buffer-size 32768)
 
-(defrules defsetter ()
-  ((_ (setf id) pred)
-   (def (setf val)
-     (if (? pred val)
-       (set! id val)
-       (error "Cannot set httpd parameter; Bad argument" val)))))
+(defrule (defsetter (setf id) pred)
+  (def (setf val)
+    (if (? pred val)
+      (set! id val)
+      (error "Cannot set httpd parameter; Bad argument" val))))
 
 (defsetter (set-httpd-request-timeout! request-timeout)
   (or not real? time?))
@@ -598,47 +602,70 @@ END-C
         ("TRACE"   'TRACE)
         ("OPTIONS" 'OPTIONS)))
 
-(def +http-response-codes+
-  (hash-eq (100 "Continue")
-           (101 "Switching Protocols")
-           (200 "OK")
-           (201 "Created")
-           (202 "Accepted")
-           (203 "Non-Authoritative Information")
-           (204 "No Content")
-           (205 "Reset Content")
-           (206 "Partial Content")
-           (300 "Multiple Choices")
-           (301 "Moved Permanently")
-           (302 "Found")
-           (303 "See Other")
-           (304 "Not Modified")
-           (305 "Use Proxy")
-           (307 "Temporary Redirect")
-           (400 "Bad Request")
-           (401 "Unauthorized")
-           (402 "Payment Required")
-           (403 "Forbidden")
-           (404 "Not Found")
-           (405 "Method Not Allowed")
-           (406 "Not Acceptable")
-           (407 "Proxy Authentication Required")
-           (408 "Request Timeout")
-           (409 "Conflict")
-           (410 "Gone")
-           (411 "Length Required")
-           (412 "Precondition Failed")
-           (413 "Request Entity Too Large")
-           (414 "Request-URI Too Long")
-           (415 "Unsupported Media Type")
-           (416 "Requested Range Not Satisfiable")
-           (417 "Expectation Failed")
-           (500 "Internal Server Error")
-           (501 "Not Implemented")
-           (502 "Bad Gateway")
-           (503 "Service Unavailable")
-           (504 "Gateway Timeout")
-           (505 "HTTP Version Not Supported")))
+(def +http-response-codes+ (make-hash-table-eq))
+(defstruct http-condition (code message))
+(defrule (def-http-condition ctx code message)
+  (with-id ctx ((condition
+                 (string-substitute-char (stringify #'message) #\- #\space)))
+    (def condition (make-http-condition code message))
+    (export condition)
+    (hash-put! +http-response-codes+ code message)))
+(defrules def-http-conditions ()
+  ((ctx (number message) ...) (begin (def-http-condition ctx number message) ...)))
+(def-http-conditions
+  (100 "Continue")
+  (101 "Switching Protocols")
+  (200 "OK")
+  (201 "Created")
+  (202 "Accepted")
+  (203 "Non-Authoritative Information")
+  (204 "No Content")
+  (205 "Reset Content")
+  (206 "Partial Content")
+  (300 "Multiple Choices")
+  (301 "Moved Permanently")
+  (302 "Found")
+  (303 "See Other")
+  (304 "Not Modified")
+  (305 "Use Proxy")
+  (307 "Temporary Redirect")
+  (400 "Bad Request")
+  (401 "Unauthorized")
+  (402 "Payment Required")
+  (403 "Forbidden")
+  (404 "Not Found")
+  (405 "Method Not Allowed")
+  (406 "Not Acceptable")
+  (407 "Proxy Authentication Required")
+  (408 "Request Timeout")
+  (409 "Conflict")
+  (410 "Gone")
+  (411 "Length Required")
+  (412 "Precondition Failed")
+  (413 "Request Entity Too Large")
+  (414 "Request-URI Too Long")
+  (415 "Unsupported Media Type")
+  (416 "Requested Range Not Satisfiable")
+  (417 "Expectation Failed")
+  (500 "Internal Server Error")
+  (501 "Not Implemented")
+  (502 "Bad Gateway")
+  (503 "Service Unavailable")
+  (504 "Gateway Timeout")
+  (505 "HTTP Version Not Supported"))
+
+(def (http-response-write-condition
+      res (condition #f) code: (code #f) content-type: (content-type #f) message: (message #f))
+  (http-response-write res (or code (http-condition-code condition))
+                       `(("Content-Type" . ,(or content-type "text/plain")))
+                       (or message (http-condition-message condition))))
+
+(def (condition-handler handler)
+  (lambda (req res)
+    (try (handler req res)
+     (catch (e)
+       (http-response-write-condition
+        res (if (http-condition? e) e Internal-Server-Error))))))
 
 ;;; buffer management
 (extern namespace: #f

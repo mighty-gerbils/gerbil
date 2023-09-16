@@ -4,6 +4,7 @@ gambit-source
 attic
 bin
 lib
+/build
 *.o
 *.o?
 *.so

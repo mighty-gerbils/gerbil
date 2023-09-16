@@ -30,18 +30,18 @@
              (skip-whitespace input)
              (let (char (peek-char input))
                (if (eof-object? char)
-                 #!eof)
-               (case char
-                 ((#\{) (read-json-hash input env))
-                 ((#\[) (read-json-list input env))
-                 ((#\") (read-json-string input env))
-                 ((#\t) (read-json-true input env))
-                 ((#\f) (read-json-false input env))
-                 ((#\n) (read-json-null input env))
-                 ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
-                  (read-json-number input env))
-                 (else
-                  (raise-invalid-token input char)))))
+                 #!eof
+                 (case char
+                   ((#\{) (read-json-hash input env))
+                   ((#\[) (read-json-list input env))
+                   ((#\") (read-json-string input env))
+                   ((#\t) (read-json-true input env))
+                   ((#\f) (read-json-false input env))
+                   ((#\n) (read-json-null input env))
+                   ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+                    (read-json-number input env))
+                   (else
+                    (raise-invalid-token input char))))))
 
            (def (read-json-hash input env)
              (read-char input)

@@ -5,11 +5,14 @@
 (export
   invoke
   run-process
-  run-process/batch)
+  run-process/batch
+  filter-with-process)
 
 (import
   :gerbil/gambit/ports
-  :std/misc/ports :std/sugar)
+  :gerbil/gambit/threads
+  :std/misc/ports
+  :std/sugar)
 
 ;; Error
 (def (check-process-success exit-status settings)
@@ -82,16 +85,38 @@
 (def (invoke program args
              stdout-redirection: (stdout-r #f)
              stderr-redirection: (stderr-r #f)
-             stdin-redirection:  (stdin-r #f))
-  (let* ((process (open-process [path: program arguments: args
-                                 stdout-redirection: stdout-r
-                                 stderr-redirection: stderr-r
-                                 stdin-redirection: stdin-r]))
-         (status (process-status process)))
-    (try
-     (unless (zero? status)
-       (error "Process invocation exited with non-zero status" status (cons program args)))
-     (when stdout-r
-       (read-line process #f))
-     (finally
-      (close-port process)))))
+             stdin-redirection:  (stdin-r #f)
+             coprocess: (coprocess (if stdout-r read-all-as-string void))
+             check-status: (check-status #t)
+             environment: (environment #f)
+             directory: (directory #f)
+             show-console: (show-console #f))
+  (run-process (cons program args)
+               stdout-redirection: stdout-r
+               stderr-redirection: stderr-r
+               stdin-redirection: stdin-r
+               check-status: check-status
+               environment: environment
+               directory: directory
+               show-console: show-console))
+
+;; write data into a filter process and read some data back.
+;; process-options as per open-process, except you should only use
+;; path: arguments: directory: environment:
+(def (filter-with-process command writer reader)
+  (run-process
+   command
+   coprocess:
+   (lambda (process)
+     (spawn/name
+      ['writing-to command]
+      (lambda ()
+        (try
+         (writer process)
+         (force-output process)
+         (finally
+          (close-output-port process)))))
+     (try
+      (reader process)
+      (finally
+       (close-port process))))))

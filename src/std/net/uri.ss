@@ -7,7 +7,7 @@
                  with-output-to-u8vector write-u8)
         :std/text/utf8)
 
-(export uri-encode uri-decode form-url-encode form-url-decode
+(export uri-encode uri-decode form-url-encode form-url-decode query-string
         make-uri-encoding-table
         uri-unreserved-chars uri-gendelim-chars uri-subdelim-chars)
 
@@ -48,7 +48,7 @@
       (write-uri-encoded str vt))))
 
 ;; form-url-encode: [[string . string/#f] ...] => string
-;; if +space is t, #\space is encoded as #\+ (otherwise %20)
+;; if +space? is #t, #\space is encoded as #\+ (otherwise %20)
 (def (form-url-encode fields (+space? #t))
   (def encoding
     (if +space? uri-space-encoding uri-encoding))
@@ -69,6 +69,29 @@
          (for-each (lambda (field) (write-char #\&) (encode-field field))
                    rest))))
     ([] "")))
+
+;; Create a query string...
+;; BEWARE!!! This does NO VALIDATION of the command and option syntax.
+;; The command should already be a valid URL path prefix.
+;; The options fields ought to be explicitly encoded with uri-encode if needed.
+(def (query-string path . options)
+  (call-with-output-string
+    '()
+    (lambda (o)
+      (display path o)
+      (let loop ((options options)
+                 (separator #\?))
+        (match options
+          ([] (void))
+          ([key value . more]
+           (if value
+             (begin
+               (display separator o)
+               (display key o)
+               (display #\= o)
+               (display value o)
+               (loop more #\&))
+             (loop more separator))))))))
 
 (def (write-uri-encoded str encoding)
   (def (write-hex n)

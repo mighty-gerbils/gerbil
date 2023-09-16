@@ -18,7 +18,8 @@
   butlast
   split
   take-until take-until! drop-until
-  group
+  group group-by grouping
+  map/car
   every-consecutive?
   separate-keyword-arguments
   first-and-only
@@ -34,7 +35,8 @@
         (only-in ../srfi/1
                  drop drop-right drop-right! take take-right take! reverse!
                  take-while take-while! drop-while
-                 delete-duplicates delete-duplicates!)
+                 delete-duplicates delete-duplicates!
+                 split-at)
         ../sugar
         ../assert)
 
@@ -284,7 +286,7 @@
 ;;  (drop-until number? ['a [] "hi" 1 'c]) => (1 c)
 (def (drop-until pred list) (drop-while (? (not pred)) list))
 
-;; group consecutive elements of the list lst into a list-of-lists.
+;; group consecutive equal elements of the list lst into a list-of-lists.
 ;;
 ;; Example:
 ;;  (group [1 2 2 3 1 1]) => ((1) (2 2) (3) (1 1))
@@ -301,6 +303,36 @@
     ([] lst)
     ([a] [[a]])
     (_ (helper))))
+
+;; group consecutive clusters of n elements of the list into a list-of-lists
+;; The last element of the list returned may have fewer than n elements.
+;; : Nat (List X) -> (List (List X))
+(def (group-by n list)
+  (cond
+   ((null? list) [])
+   ((length<=n? list n) [list])
+   (else (let-values (((head tail) (split-at list n))) (cons head (group-by n tail))))))
+
+;; Given a list l of X, a key function f from X to Y, and a presumably empty table of Y to a list of X
+;; (by default an empty hash-table), add the elements in l to t, then return the list for each added
+;; key y in t of the list of elements xs with that same key y (for the equality predicate of t).
+;; Otherwise preserve the order of appearance of keys and elements for each key.
+;; : (List X) (Fun X -> Y) ?(Table Y -> (List X)) -> (List (List X))
+(def (grouping l f (t (make-hash-table)))
+  (def ys (with-list-builder (c)
+            (for-each! l
+              (lambda (x)
+                (def y (f x))
+                (def p (hash-get t y))
+                (if p
+                  (hash-put! t y (cons x p))
+                  (begin
+                    (hash-put! t y (list x))
+                    (c y)))))))
+  (map (lambda (y) (reverse (hash-get t y))) ys))
+
+;; : (A -> C) (Cons A B) -> (Cons C B)
+(def (map/car f x) (match x ([a . b] [(f a) . b])))
 
 ;; Returns a boolean that is true if any two consecutive terms in the list satisfy the predicate.
 ;; In particular, if the predicate is a partial order predicate (respectively a strict partial
