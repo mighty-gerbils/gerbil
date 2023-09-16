@@ -1,5 +1,6 @@
-;;;; Utility functions and accessors for multiple values
-
+;;; -*- Gerbil -*-
+;;; © fare, vyzo
+;;; Utility functions and accessors for multiple values
 (import ./sugar)
 
 (export first-value second-value nth-value
@@ -9,12 +10,12 @@
 
 (defrules first-value ()
   ((_ form) (with ((values x . _) form) x))
-  ((_ form forms ...) (error "syntax error"))
+  ((_ form forms ...) (syntax-error "Bad syntax"))
   (_ (lambda (x . _) x)))
 
 (defrules second-value ()
   ((_ form) (with ((values _ x . _) form) x))
-  ((_ form forms ...) (error "syntax error"))
+  ((_ form forms ...) (syntax-error "Bad syntax"))
   (_ (lambda (_ x . _) x)))
 
 (defrule (nth-value n form) (with ((values . x) form) (list-ref x n)))
