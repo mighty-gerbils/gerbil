@@ -41,7 +41,6 @@
     "io/delimited"
     "io/file"
     "io/util"
-    "io/error"
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"

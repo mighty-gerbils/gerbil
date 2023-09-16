@@ -9,10 +9,13 @@
 (export #t)
 
 ;; actor errors
-(defstruct (actor-error <error>) ())
+(defclass (ActorError Error) ())
+(defmethod {:init! ActorError}
+  Error:::init!)
+(defalias actor-error? ActorError?)
 
 (def (raise-actor-error where what . irritants)
-  (raise (make-actor-error what irritants where)))
+  (raise (ActorError what irritants: irritants where: where)))
 
 ;; default reply timeout; 5s
 (def +default-reply-timeout+ 5)

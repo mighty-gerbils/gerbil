@@ -10,10 +10,11 @@
         :std/generic
         :std/error)
 (export
-  (struct-out connection statement sql-error)
+  (struct-out connection statement SQLError)
   connection:::init!
   statement:::init!
   raise-sql-error
+  sql-error?
   sql-connect sql-close sql-prepare
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
   sql-eval sql-eval-query
@@ -65,10 +66,13 @@
     (set! (&statement-e self) e)
     (set! (&statement-i self) (Statement self))))
 
-(defstruct (sql-error <error>) ())
+(defclass (SQLError StackTrace Error) ())
+(defmethod {:init! SQLError}
+  Error:::init!)
+(defalias sql-error? SQLError?)
 
 (def (raise-sql-error where what . irritants)
-  (raise (make-sql-error what irritants where)))
+  (raise (SQLError what irritants: irritants where: where)))
 
 (def (sql-connect connect . args)
   (let (conn (apply connect args))

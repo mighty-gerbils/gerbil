@@ -19,7 +19,7 @@
 (export
   call-with-ensemble-server
   ;; ./message
-  (struct-out actor-error)
+  actor-error?
   raise-actor-error
   (struct-out envelope)
   defmessage

@@ -22,13 +22,21 @@
         call-with-getopt
         )
 
-(defstruct (getopt-error <error>) (e))
+(defclass (GetOptError Error) (getopt)
+  final: #t)
+(defmethod {:init! GetOptError}
+  (lambda (self msg args getopt)
+    (Error:::init! self msg where: 'getopt irritants: args)
+    (set! (@ self getopt) getopt)))
+
+(defalias getopt-error? GetOptError)
+(defalias getopt-error-e GetOptError-getopt)
 
 (def current-getopt-parser
   (make-parameter #f))
 
 (def (raise-getopt-error msg . args)
-  (raise (make-getopt-error msg args #f (current-getopt-parser))))
+  (raise (GetOptError msg args (current-getopt-parser))))
 
 (defstruct !getopt (opts cmds args help))
 (defstruct !top (key help))

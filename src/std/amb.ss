@@ -13,13 +13,17 @@
         amb-exhausted?
         element-of)
 
-(defstruct (amb-completion <error>) ())
+(defclass (AmbCompletion Exception) ())
+(defmethod {display-exception AmbCompletion}
+  (lambda (self port)
+    (display "amb exhausted" port)
+    (newline port)))
 
 (defrule (invoke proc arg ...)
   (proc arg ...))
 
 (def +amb-exhausted+
-  (make-amb-completion "amb exhausted" [] 'amb))
+  (AmbCompletion))
 
 (def (amb-exhausted)
   (cond

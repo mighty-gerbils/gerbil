@@ -309,7 +309,7 @@
 
   (def (maybe-sync!)
     (when query-output
-      (channel-sync query-output (make-sql-error "portal expired" [] 'postgresql-query-pump!))
+      (channel-sync query-output (SQLError "portal expired" where: 'postgresql-query-pump!))
       (channel-close query-output)
       (set! query-output #f)
       (set! query-token #f)
@@ -432,7 +432,7 @@
             ([(or 'PortalSuspended 'EmptyQueryResponse)]
              (void))
             (['ErrorResponse msg . irritants]
-             (channel-sync query-output (make-sql-error msg irritants 'postgresql-query!)))))
+             (channel-sync query-output (SQLError msg irritants: irritants where: 'postgresql-query!)))))
         (channel-close query-output)
         (set! query-output #f)
         (set! query-token #f)
@@ -471,7 +471,7 @@
               (['EmptyQueryResponse]
                (lp))
               (['ErrorResponse msg . irritants]
-               (channel-sync query-output (make-sql-error msg irritants 'postgresql-simple-query!))
+               (channel-sync query-output (SQLError msg irritants: irritants where: 'postgresql-simple-query!))
                (lp))))))
       (channel-close query-output)
       (set! query-output #f)
@@ -551,7 +551,7 @@
      (raise e))
    (finally
     (when query-output
-      (channel-sync query-output (make-sql-error "connection error" [] 'postgresql-driver))
+      (channel-sync query-output (SQLError "connection error" where: 'postgresql-driver))
       (channel-close query-output))
     (StreamSocket-close sock))))
 

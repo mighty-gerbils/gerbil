@@ -77,7 +77,7 @@
     (if (fx< i len)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
-          (raise-io-error 'Buffered-reader-read-uint "premature end of input")
+          (raise-premature-end-of-input 'Buffered-reader-read-uint)
           (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next))))
       x)))
 
@@ -102,7 +102,7 @@
     (if (read-more? shift)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
-          (raise-io-error 'Buffered-reader-read-varuint "premature end of input")
+          (raise-premature-end-of-input 'Buffered-reader-read-varuint)
           (let* ((limb (fxand next #x7f))
                  (x (bitwise-ior (arithmetic-shift limb shift) x)))
             (if (fx= (fxand next #x80) 0)
@@ -121,7 +121,7 @@
 (defreader-ext (read-u8! reader)
   (let (u8 (&BufferedReader-read-u8-inline reader))
     (if (eof-object? u8)
-      (raise-io-error 'BufferedReader-read-u8! "premature end of input")
+      (raise-premature-end-of-input 'BufferedReader-read-u8!)
       u8)))
 
 (defreader-ext (read-char reader)
@@ -457,7 +457,7 @@
 (defreader-ext (read-char! reader)
   (let (char (&BufferedReader-read-char-inline reader))
     (if (eof-object? char)
-      (raise-io-error 'BufferedReader-read-char! "premature end of input")
+      (raise-premature-end-of-input 'BufferedReader-read-char!)
       char)))
 
 (defreader-ext (read-string reader str (start 0) (end (string-length str)) (need 0))
@@ -467,7 +467,7 @@
         (let (next (&BufferedReader-read-char-inline reader))
           (if (eof-object? next)
             (if (fx> need 0)
-              (raise-io-error 'BufferedReader-read-string "premature end of input")
+              (raise-premature-end-of-input 'BufferedReader-read-string)
               read)
             (begin
               (string-set! str i next)

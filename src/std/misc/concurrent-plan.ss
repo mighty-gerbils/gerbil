@@ -107,12 +107,13 @@
   (try
    (thread-join! thread)
    (catch (uncaught-exception? exn)
-     (raise (worker-error exn)))))
+     (raise (WorkerError exception: exn)))))
 
-(defstruct (worker-error exception) (e))
+(defclass (WorkerError Exception) (exception)
+  final: #t)
 
-(defmethod {display-exception worker-error}
+(defmethod {display-exception WorkerError}
   (lambda (self port)
-    (let (e (worker-error-e self))
+    (let (e (WorkerError-exception self))
       (display "Uncaught exception: " port)
       (display-exception (uncaught-exception-reason e) port))))

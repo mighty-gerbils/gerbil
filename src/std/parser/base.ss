@@ -5,7 +5,10 @@
 (import :std/error)
 (export #t)
 
-(defstruct (parse-error <error>) ())
+(defclass (ParseError Error) ()
+  final: #t)
+(defmethod {:init! ParseError}
+  Error:::init!)
 
 (defstruct token (t e loc) final: #t)
 (defstruct location (port line col off xoff) final: #t)
@@ -29,11 +32,14 @@
     (else tok)))
 
 (def (raise-parse-error where msg tok . rest)
-  (raise (make-parse-error msg (cons tok rest) where)))
+  (raise (ParseError msg irritants: (cons tok rest) where: where)))
+(defalias parse-error? ParseError)
 
-(defmethod {display-exception parse-error}
+(defmethod {display-exception ParseError}
   (lambda (self port)
-    (with ((parse-error msg irritants where) self)
+    (let ((msg (Error-message self))
+          (where (Error-where self))
+          (irritants (Error-irritants self)))
       (match irritants
         ([(token t e loc) . rest]
          (parameterize ((current-output-port port))

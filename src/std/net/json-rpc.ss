@@ -22,7 +22,7 @@
   malformed-request malformed-response)
 
 (import
-  (only-in :std/error Exception <error>)
+  :std/error
   (only-in :std/misc/atom atomic-counter)
   (only-in :std/net/httpd http-response-write http-response-write-condition
            http-request-body http-request-params http-request-method
@@ -35,30 +35,35 @@
   (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
            bytes->json-object json-object->bytes json-object->string))
 
-(defstruct (json-rpc-error <error>) ()
+(defclass (JSON-RPCError IOError) ()
 ;;  (code    ;; SInt16
 ;;   message ;; String
 ;;   data)   ;; (Maybe Bytes)
-  transparent: #t constructor: :init!)
-(defmethod {:init! json-rpc-error}
+  transparent: #t)
+(defmethod {:init! JSON-RPCError}
   (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
            code: code ;; SInt16
            message: message ;; String
            data: (data (void))) ;; (Maybe Bytes)
     (def irritants [code message data])
-    (struct-instance-init! self what irritants where)))
+    (Error:::init! self what irritants: irritants where: where)))
+(defalias json-rpc-error JSON-RPCError)
+(defalias json-rpc-error? JSON-RPCError?)
+
+
 (def (json-rpc-error-code e)
-  (car (error-irritants e)))
+  (car (Error-irritants e)))
 (def (json-rpc-error-message e)
-  (cadr (error-irritants e)))
+  (cadr (Error-irritants e)))
 (def (json-rpc-error-data e)
-  (caddr (error-irritants e)))
-(defmethod {:json json-rpc-error}
+  (caddr (Error-irritants e)))
+
+(defmethod {:json JSON-RPCError}
   (lambda (self)
-    (with ([code message data] (error-irritants self))
+    (with ([code message data] (Error-irritants self))
       (hash ("code" code) ("message" message) ("data" data)))))
 (def (json->json-rpc-error json)
-  (trivial-json-object->class json-rpc-error::t json))
+  (trivial-json-object->class JSON-RPCError::t json))
 
 (def json-rpc-version "2.0")
 

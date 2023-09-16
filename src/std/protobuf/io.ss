@@ -76,7 +76,7 @@
   (let lp ()
     (let (byte (&BufferedReader-read-u8 buf))
       (when (eof-object? byte)
-        (raise-io-error 'BufferedReader-skip-varint "Premature end of input" buf))
+        (raise-premature-end-of-input 'BufferedReader-skip-varint))
       (unless (fx= (fxand byte #x80) 0)
         (lp)))))
 
@@ -190,7 +190,7 @@
     (if (fx< i n)
       (let (byte (&BufferedReader-read-u8 buf))
         (when (eof-object? byte)
-          (raise-io-error 'bio-read-sfixed32 "Premature end of input" buf))
+          (raise-premature-end-of-input 'bio-read-sfixed32))
         (lp (fx+ i 1)
             (bitwise-ior bits (arithmetic-shift byte (fx* 8 i)))))
       bits)))

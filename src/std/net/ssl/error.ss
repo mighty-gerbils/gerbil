@@ -24,7 +24,10 @@
    (else
     (error "SSL object allocation failed" 'expr))))
 
-(defstruct (ssl-error <error>) ())
+(defclass (SSLError IOError) ())
+(defmethod {:init! SSLError}
+  Error:::init!)
+(defalias ssl-error? SSLError?)
 
 (def (raise-ssl-error where result)
   (let (errstr
@@ -34,4 +37,4 @@
           ([_ _ last]
            (ERR_error_string last))
           (else "unknown error")))
-    (raise (make-ssl-error "SSL error" [errstr result] where))))
+    (raise (SSLError "SSL error" irritants: [errstr result] where: where))))
