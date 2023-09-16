@@ -56,6 +56,7 @@ module.exports = {
                       'getopt',
                       'make',
                       'test',
+                      'debug',
                       'format',
                       'logger',
                       'generic',
