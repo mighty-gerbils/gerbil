@@ -4,12 +4,12 @@
 
 In this tutorial we illustrate web programming with the embedded Gerbil http server.
 
-The source code for the tutorial is available at [src/tutorial/httpd](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd).
-You can build the code using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd/build.ss).
+The source code for the tutorial is available at [src/tutorial/httpd](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd).
+You can build the code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd/build.ss).
 
 ## A Simple Web Server
 
-The [server](https://github.com/vyzo/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default to localhost:8080
+The [server](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default to localhost:8080
 and handles 3 request URLs:
 - `/` which greets the requestor
 - `/echo` which echoes back the body of the request

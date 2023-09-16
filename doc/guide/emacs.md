@@ -3,7 +3,7 @@
 The natural home for Gerbil development is Emacs, the ultimate parenthesis manipulation machine.
 
 ## Standard Emacs Setup
-Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil-mode.el](https://github.com/vyzo/gerbil/blob/master/etc/gerbil-mode.el).
+Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil-mode.el](https://github.com/mighty-gerbils/gerbil/blob/master/etc/gerbil-mode.el).
 See below for additional functionality provided by gerbil-mode.
 
 You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and adding this to your `.emacs`:

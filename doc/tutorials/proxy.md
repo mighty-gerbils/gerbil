@@ -18,12 +18,12 @@ The last program is an anonymous SOCKS4 proxy, written again using the
 
 ## Preliminaries
 
-The source code for the tutorial is available at [src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
-You can build the programs using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy/build.ss).
+The source code for the tutorial is available at [src/tutorial/proxy](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy).
+You can build the programs using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy/build.ss).
 
 ## A Transparent TCP Proxy
 
-The [transparent proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/tcp-proxy.ss) listens to a local port and
+The [transparent proxy](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy.ss) listens to a local port and
 proxies all incoming connections to a specified remote server.
 
 ### The main function
@@ -161,7 +161,7 @@ Vary: Accept-Encoding
 
 ## Transparent TCP Proxy with stdio
 
-This is the [second take](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
+This is the [second take](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
 using the [Standard IO](../reference/stdio.md) API.
 
 You'll notice that it is half the code and you don't have to do any
@@ -244,7 +244,7 @@ Vary: Accept-Encoding
 
 ## A SOCKS4 Proxy
 
-The [socks proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/socks-proxy.ss) listens to a local port and
+The [socks proxy](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/socks-proxy.ss) listens to a local port and
 proxies connections using the SOCKS4 protocol.
 
 ### The main function
