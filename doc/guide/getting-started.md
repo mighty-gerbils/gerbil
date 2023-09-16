@@ -377,3 +377,6 @@ So all you have to do to build a release executable is this:
 ```shell
 $ make
 ```
+
+This will build the release executable in `.gerbil/bin` in the current
+directory.
