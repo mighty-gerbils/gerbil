@@ -257,9 +257,9 @@
    ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
    (else "~a")))
 
-;; Like CL SUBSTITUTE but specialized for strings and chars
+;; Like CL SUBSTITUTE-IF but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char-if
-      newchar predicate string
+      string newchar predicate
       start: (start #f)
       end: (end #f)
       from-end: (from-end? #f)
@@ -283,8 +283,9 @@
           (string-set! s i newchar))))))
   s)
 
+;; Like CL SUBSTITUTE but specialized for strings and chars. Mind the argument order.
 (def (string-substitute-char
-      newchar oldchar string
+      string newchar oldchar
       test: (test #f)
       test-not: (test-not #f)
       key: (key #f)
@@ -301,5 +302,5 @@
            (key (lambda (x) (eqv? oldchar (key x))))
            (else (cut eqv? oldchar <>)))))
     (string-substitute-char-if
-     newchar predicate string
+     string newchar predicate
      start: start end: end count: count from-end: from-end? in-place: in-place?)))

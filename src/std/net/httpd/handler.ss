@@ -606,7 +606,7 @@ END-C
 (defstruct http-condition (code message))
 (defrule (def-http-condition ctx code message)
   (with-id ctx ((condition
-                 (string-substitute-char #\- #\space (stringify #'message))))
+                 (string-substitute-char (stringify #'message) #\- #\space)))
     (def condition (make-http-condition code message))
     (export condition)
     (hash-put! +http-response-codes+ code message)))

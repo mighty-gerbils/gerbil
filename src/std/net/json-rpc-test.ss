@@ -28,7 +28,6 @@
     (http-register-handler httpd "/json-rpc-test" (json-rpc-handler json-rpc-test-processor))
     (def url (string-append server-url "/json-rpc-test"))
     (def (query . args)
-      (display "query: ") (write args) (newline)
       (apply json-rpc url args))
     (def (this-json-rpc-error? number)
       (lambda (e) (and (json-rpc-error? e) (equal? (json-rpc-error-code e) number))))

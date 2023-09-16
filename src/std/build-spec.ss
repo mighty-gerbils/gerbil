@@ -308,6 +308,7 @@
     "crypto/kdf"
     "crypto"
     ;; :std/misc
+    "misc/atom"
     "misc/with-id"
     "misc/concurrent-plan"
     "misc/timeout"

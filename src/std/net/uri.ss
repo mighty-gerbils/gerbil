@@ -80,17 +80,17 @@
     (lambda (o)
       (display path o)
       (let loop ((options options)
-                 (separator "?"))
+                 (separator #\?))
         (match options
-          ('() (void))
+          ([] (void))
           ([key value . more]
            (if value
              (begin
                (display separator o)
                (display key o)
-               (display "=" o)
+               (display #\= o)
                (display value o)
-               (loop more "&"))
+               (loop more #\&))
              (loop more separator))))))))
 
 (def (write-uri-encoded str encoding)

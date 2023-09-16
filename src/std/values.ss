@@ -2,7 +2,7 @@
 
 (import ./sugar)
 
-(export first-value nth-value
+(export first-value second-value nth-value
         values->vector vector->values
         list->values ;; NB: values->list is builtin
         values->cons cons->values)
@@ -11,6 +11,12 @@
   ((_ form) (with ((values x . _) form) x))
   ((_ form forms ...) (error "syntax error"))
   (_ (lambda (x . _) x)))
+
+(defrules second-value ()
+  ((_ form) (with ((values _ x . _) form) x))
+  ((_ form forms ...) (error "syntax error"))
+  (_ (lambda (_ x . _) x)))
+
 (defrule (nth-value n form) (with ((values . x) form) (list-ref x n)))
 
 (defrule (values->vector form) (list->vector (values->list form)))

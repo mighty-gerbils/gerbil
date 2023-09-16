@@ -15,7 +15,7 @@
     (test-case "with-id, defining variables"
       (def mem (make-vector 5 0))
       (defrule (defvar name n)
-        (with-id defvar ((@ #'name "@") (get #'name) (set #'name "-set!"))
+        (with-id name ((@ #'name "@") (get #'name) (set #'name "-set!"))
           (begin (def @ n) (def (get) (vector-ref mem @)) (def (set x) (vector-set! mem @ x)))))
       (defvar A 0)
       (defvar B 1)
