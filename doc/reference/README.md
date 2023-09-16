@@ -1,20 +1,12 @@
 # Introduction
 
-This is the reference documentation for Gerbil.
-We aim to exhaustively document the core prelude, runtime builtins, and the standard library.
+This is the reference documentation for Gerbil.  We aim to
+exhaustively document the Scheme primitives, the Gambit primitives, the Gerbil [core prelude](gerbil/prelude/README.md), [runtime builtins](gerbil/runtime/README.md), the
+[standard library](std/README.md), and the Meta-[expander context](gerbil/expander/README.md).
 
-Nonetheless, we will not (re)document core Scheme and Gambit provided primitives, as there
-is already extensive high quality documentation for these topics:
-- For documentation pertaining to core Scheme primitives, see
-  [R5RS](https://schemers.org/Documents/Standards/R5RS/HTML/)
-- For documentation pertaining to Gambit provided primitives, see the
-  [Gambit Manual](https://www.iro.umontreal.ca/~gambit/doc/gambit.html).
+The idea of extensive and easy to use documentation is at our forefront. This is still a WIP and there's more to come. If you need certain things now see the [R5RS](https://schemers.org/Documents/Standards/R5RS/HTML/) document for basic Scheme primitives used as a part of our prelude along with the [Gambit Manual](https://www.iro.umontreal.ca/~gambit/doc/gambit.html) for our underlying implementation internals. 
 
-If any part of this documentation is missing, out of date, or unclear, it's a bug;
-we know there are lots of such bugs, but if any one such bug bothers you particularly,
-contact us (by email, on Gitter or GitHub, etc.) to fix it, and we'll prioritize documenting
-those parts that are in demand.
+If you're viewing this as a webpage online almost every page has a link whereby you can edit and request a commit. Even if it's just pointing out the issue every part helps.
 
-You too can help by submitting missing documentation, even if you don't fully understand how it works:
-stating your misunderstanding can help us discover which aspects deserve more explanations,
-and whatever you propose can be a great starting point that we can fix and complete.
+When information is missing, out of date, or unclear, it's a bug! If you cannot edit try to contact us (by email, on Gitter or GitHub, etc.) and we'll get it done. 
+
