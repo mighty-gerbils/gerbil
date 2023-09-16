@@ -12,7 +12,7 @@ insightful statistics.
 ## Invocation
 
 ```shell
-gerbil prof -h
+$ gerbil prof -h
 gxprof: The Gerbil profiler
 
 Usage: gxprof [option ...] [<module>] <module-args> ...
