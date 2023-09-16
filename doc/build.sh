@@ -3,4 +3,5 @@
 cd ${0%/*}
 
 npm install
-npm run build
+# npm run build
+NODE_OPTIONS=--openssl-legacy-provider npm run build
