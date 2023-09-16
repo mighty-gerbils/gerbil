@@ -1,3 +1,6 @@
+;;; -*- Gerbil -*-
+;;; ̧© vyzo, fare
+;;; json utilities
 (import
   :gerbil/gambit/ports
   :std/io :std/misc/ports :std/misc/process
