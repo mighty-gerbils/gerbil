@@ -55,6 +55,7 @@ module.exports = {
                       'errors',
                       'getopt',
                       'make',
+                      'test',
                       'format',
                       'logger',
                       'generic',
