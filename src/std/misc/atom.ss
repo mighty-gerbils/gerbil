@@ -14,11 +14,17 @@
 (import :gerbil/gambit/threads
         :std/sugar)
 
-(export atom deref
-        swap! swap-values! reset! reset-values!
-        compare-and-set!
-        get-validator set-validator!
-        add-watch! remove-watch!
+(export atom
+        (rename: Atom-value atom-deref)
+        (rename: swap! atom-swap!)
+        (rename: swap-values! atom-swap-values!)
+        (rename: reset! atom-reset!)
+        (rename: reset-values! atom-reset-values!)
+        (rename: compare-and-set! atom-compare-and-set!)
+        (rename: Atom-validator atom-validator)
+        (rename: Atom-validator-set! atom-validator-set!)
+        (rename: add-watch! atom-add-watch!)
+        (rename: remove-watch! atom-remove-watch!)
         atom-increment! atomic-counter)
 
 (defstruct Atom
@@ -28,7 +34,6 @@
 (def (atom (initial-value (void)) validator: (validator #f))
   (Atom (make-mutex 'atom) initial-value validator (hash)))
 
-(defalias deref Atom-value)
 (defalias &deref &Atom-value)
 
 ;; Internal helper to ensure atomicity
@@ -87,12 +92,6 @@
     (and (eq? (&deref a) old-val)
          (update-atom! a new-val #f)
          #t)))
-
-;; same as Clojure set-validator!
-(defalias set-validator! Atom-validator-set!)
-
-;; same as Clojure get-validator
-(defalias get-validator Atom-validator)
 
 ;; same as Clojure add-watch
 (def (add-watch! a key fn)
