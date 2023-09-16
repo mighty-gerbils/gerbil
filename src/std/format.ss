@@ -14,11 +14,12 @@
   (only-in :gerbil/gambit/bits
            integer-length)
   (only-in :std/misc/repr
-           print-representation))
+           print-representation)
+  :std/error)
 
 (def (format fmt . args)
   (unless (string? fmt)
-    (error "Expected format string" fmt))
+    (raise-bad-argument 'format "string" fmt))
   (let (out (open-output-string))
     (dofmt out fmt args)
     (get-output-string out)))
@@ -28,9 +29,9 @@
 
 (def (fprintf port fmt . args)
   (unless (output-port? port)
-    (error "Expected output port" port))
+    (raise-bad-argument 'fprintf "output port" port))
   (unless (string? fmt)
-    (error "Expected format string" fmt))
+    (raise-bad-argument 'fprintf "string" fmt))
   (dofmt port fmt args))
 
 (def (eprintf fmt . args)
@@ -67,13 +68,13 @@
                  ((hash-get dispatch-table next)
                   => (cut <> next K xi rest))
                  (else
-                  (error "Unknown format specifier" fmt next))))
-              (error "Bad format string" fmt))
+                  (raise-bad-argument 'format "format specifier" fmt next))))
+              (raise-bad-argument 'format "format string" fmt))
             (begin
               (write-char next)
               (K xi rest))))
         (unless (null? rest)
-          (error "Too many arguments for format string" fmt args))))))
+          (raise-bad-argument 'format "format string -- too many arguments" fmt args))))))
 
 ;; format parameters
 (def current-format-string
@@ -91,7 +92,7 @@
      ([arg . rest-args]
       body ...)
      (else
-      (error "Missing format argument"
+      (raise-bad-argument 'format "format string -- missing argument"
         (current-format-string) (current-format-args))))))
 
 (defrules defdispatch ()
@@ -188,7 +189,7 @@
 
       (defrules bad-format-string ()
         ((_)
-         (error "Bad format string; malformed fixed width specifier"
+         (raise-bad-argument 'format "format string -- malformed fixed width specifier"
            str (current-format-args))))
 
       (let lp ((xi xi) (width [char]))
@@ -223,8 +224,8 @@
                  => (lambda (f)
                       (format-fixed-generic (chars->number (reverse width))
                                             f next xi rest K)))
-                 (else
-                  (error "Unknown format specifier" str next))))))
+                (else
+                 (raise-bad-argument "format string -- unknown format specifier" str next))))))
           (bad-format-string))))))
 
 (def (format-fixed-generic width f next xi rest K)
@@ -269,7 +270,7 @@
          (else
           (pad-zeros (number->string (exact->inexact arg)))))))
      (else
-      (error "Bad argument for float format; expected number"
+      (raise-bad-argument 'format "number -- float format specifier"
         (current-format-string) (current-format-args) arg))))
 
   (def (compose-float digits pre-str frac-str)

@@ -95,10 +95,10 @@
 (defclass (Exception <exception>) ())
 
 ;; check to the raiser!
-(def (raise-bad-argument where expectation bad)
+(def (raise-bad-argument where expectation . irritants)
   (raise/stack-trace
    (BadArgument (string-append "Bad argument; expected " expectation)
-                where: where irritants: [bad])))
+                where: where irritants: irritants)))
 
 (def (raise-io-error where what . irritants)
   (raise/stack-trace
