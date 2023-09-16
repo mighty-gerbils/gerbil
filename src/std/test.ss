@@ -61,6 +61,8 @@
 (defrules check (=> ?)
   ((_ expr => value)
    (check-equal? expr value))
+  ((_ expr => value :: eqf)
+   (checkf eqf expr value))
   ((_ expr ? pred)
    (check-predicate expr (? pred)))
   ((_ eqf expr value)
