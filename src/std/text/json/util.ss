@@ -8,22 +8,22 @@
 
 (export #t)
 
-(def (read-json (input (current-input-port)) (junk-allowed? #t))
+(def (read-json (input (current-input-port)))
   (cond
    ((input-port? input)
-    (read-json-object/port input (make-env) junk-allowed?))
+    (read-json-object/port input (make-env)))
    ((is-BufferedStringReader? input)
-    (read-json-object/reader (BufferedStringReader input) (make-env) junk-allowed?))
+    (read-json-object/reader (BufferedStringReader input) (make-env)))
    ((is-BufferedReader? input)
-    (read-json-object/buffer (BufferedReader input) (make-env) junk-allowed?))
+    (read-json-object/buffer (BufferedReader input) (make-env)))
    (else
     (error "Bad input source; expected input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
-  (read-json-object/reader (open-buffered-string-reader str) (make-env) #f))
+  (read-json-object/reader (open-buffered-string-reader str) (make-env)))
 
 (def (bytes->json-object bytes)
-  (read-json (open-buffered-reader bytes) #f))
+  (read-json (open-buffered-reader bytes)))
 
 (def (write-json obj (output (current-output-port)))
   (cond
