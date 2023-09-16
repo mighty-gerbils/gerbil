@@ -9,7 +9,7 @@ jobs:
         gambit-version: ['v4.9.5', 'master']
         shared-mode: ['', '--enable-shared']
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
       - name: Configure Gerbil
