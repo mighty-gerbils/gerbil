@@ -1,3 +1,7 @@
+;;; -*- Gerbil -*-
+;;; © fare
+;;; JSON RPC interfaces
+
 ;; Support for JSON RPC 2.0 -- https://www.jsonrpc.org/specification
 ;; JSON RPC over HTTP (historical): https://www.jsonrpc.org/historical/json-rpc-over-http.html
 ;; See also https://www.simple-is-better.org/json-rpc/transport_http.html#get-request

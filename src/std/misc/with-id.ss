@@ -1,3 +1,6 @@
+;;; -*- Gerbil -*-
+;;; © fare
+;;; Easier identifier introduction
 (export #t)
 
 (import (for-syntax ./func
