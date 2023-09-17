@@ -158,5 +158,5 @@
     (unless (StackTrace-continuation exn)
       (continuation-capture
        (lambda (cont)
-         (set! (StackTrace-continuation exn) cont)))))
+         (set! (StackTrace-continuation exn) (##continuation-next cont))))))
   (raise exn))
