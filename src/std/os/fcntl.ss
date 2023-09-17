@@ -3,8 +3,8 @@
 ;;; OS fcntl interface
 
 (import :std/foreign
-        :std/os/error
-        :std/os/fd)
+        ./error
+        ./fd)
 (export #t)
 
 (def* fcntl

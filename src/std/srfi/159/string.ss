@@ -6,7 +6,8 @@
 ;;; BSD-style license: http://synthcode.com/license.txt
 
 
-(import ../14
+(import :std/error
+        ../14
         ../130)
 (export #t)
 

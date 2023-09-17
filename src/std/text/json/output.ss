@@ -4,6 +4,7 @@
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
         :gerbil/gambit/exact
+        :std/error
         :std/sugar
         :std/io
         :std/misc/walist

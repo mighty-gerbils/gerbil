@@ -3,6 +3,7 @@
 ;;; SRFI-159: base library
 
 (import :gerbil/gambit/exact
+        :std/error
         ../srfi-support
         ../1
         ../9

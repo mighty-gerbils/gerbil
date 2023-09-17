@@ -1,4 +1,4 @@
-# Exception Base Classes
+# Exceptions and Errors
 
 The `:std/error` library provides base classes for exceptions and errors.
 
@@ -178,7 +178,7 @@ Same as `PrematureEndOfInput?`.
 
 ### IOClosed
 ```scheme
-(defclass (IOClosed IOError) ())
+(deferror-class (IOClosed IOError))
 ```
 
 Error indicating that the IO sink or source has been closed and thus
@@ -200,7 +200,7 @@ Same as `IOClosed?`.
 
 ### Timeout
 ```scheme
-(defclass (Timeout StackTrace Error) ())
+(deferror-class Timeout)
 ```
 
 Error indicating that some operation has timed out.
@@ -219,10 +219,61 @@ Predicate testing whether the error is a timeout.
 
 Same as `Timeout?`.
 
-## Raising Errors
+### ContextError
+```scheme
+(deferror-class ContextError)
+```
 
-The library redefines `raise` so that it feels stack traces where appropriate.
-It also provides some utility procedure for raising particular errors.
+Error indicating that some operation was performed out of context.
+
+### ContextError?
+```scheme
+(ContextError? obj)
+```
+
+Predicate testing whether the error is a context error
+
+### context-error?
+```scheme
+(def context-error? ContextError?)
+```
+
+Same as `ContextError?`.
+
+### KeyError
+```scheme
+(deferror-class KeyError)
+```
+
+Error indicating that some lookup operation failed because a key was unbound.
+
+### KeyError?
+```scheme
+(KeyError? obj)
+```
+
+Predicate testing whether the error is a key error
+
+### key-error?
+```scheme
+(def key-error? KeyError?)
+```
+
+Same as `KeyError?`.
+
+## Raising exceptions
+
+The library redefines `raise` and `error` so that it fills stack
+traces where appropriate.
+It also provides some utility procedure for raising particular errors
+without caring about the particulars of the condition system.
+
+### error
+```scheme
+(error message irritant ...)
+```
+
+Like basic Scheme's `error`, but raises with stack trace.
 
 ### raise
 ```scheme
@@ -269,3 +320,52 @@ Raises an `IOClosed` condition.
 ```
 
 Raises a `Timeout` condition.
+
+### raise-context-error
+```scheme
+(raise-context-error where what . irritants)
+```
+
+Raise a `ContextError` condition.
+
+### raise-key-error
+```scheme
+(raise-key-error where what . irritants)
+```
+
+Raise a `KeyError` condition.
+
+## BUGS
+
+Sometimes something that really shouldn't happen, but it did; because, Murphy.
+
+### BUG
+```scheme
+(BUG where what . irritants)
+```
+
+Raise a bug condition.
+
+### is-it-bug?
+```scheme
+(is-it-bug? obj)
+```
+
+Checks whether an error condition was caused by a something unexpected, a bug.
+
+## Defining custom Error classes
+
+The library offers a utility macro to define error classes that follow
+the standard library conventions. You don't have to use it, but if you
+are building a library it is recommended to do so.
+
+### deferror-class
+```scheme
+(deferror-class Class slots predicate-alias [constructor = Error:::init!])
+(deferror-class (Class Mixin ...) slots predicate-alias [constructor = Error:::init!])
+```
+
+The first form defines a class `Class` with slots `slots` that extends
+`Error`, mixing in `StackTrace`.  It also defines a predicate alias
+for the class's instance predicate that can be exported to hide the
+internal error details.

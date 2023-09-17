@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-146: A. Gleckler's HAMT
 
-(import (only-in :std/srfi/1 find-tail)
+(import :std/error
+        (only-in :std/srfi/1 find-tail)
         :std/srfi/9
 	    (only-in :std/srfi/143 fx-width)
 	    :std/srfi/151

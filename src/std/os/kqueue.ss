@@ -7,9 +7,9 @@
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/foreign
-        :std/os/error
-        :std/os/fd
-        :std/os/fcntl)
+        ./error
+        ./fd
+        ./fcntl)
 
 (export kqueue kqueue-close
         make-kevents kevent-set!

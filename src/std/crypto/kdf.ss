@@ -3,6 +3,7 @@
 ;;; Key Derivation functions
 
 (import :gerbil/gambit/foreign
+        :std/error
         ./libcrypto
         ./etc)
 (export scrypt)

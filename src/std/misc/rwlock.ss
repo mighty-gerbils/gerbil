@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; read-write locks
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar)
 (export make-rwlock
         rwlock?
@@ -53,7 +54,7 @@
            (readers-1 (fx- readers 1)))
       (unless (fx> readers 0)
         (mutex-unlock! mx)
-        (error "rwlock is not read locked" rw))
+        (raise-context-error 'rwlock-read-unlock! "rwlock is not read locked" rw))
       (set! (&rwlock-readers rw) readers-1)
       (when (and (fx= readers-1 0) (fx> (&rwlock-writers-waiting rw) 0))
         (condition-variable-signal! wcv))
@@ -80,7 +81,7 @@
     (mutex-lock! mx)
     (unless (&rwlock-writer rw)
       (mutex-unlock! mx)
-      (error "rwlock is not write locked" rw))
+      (raise-context-error 'rwlock-write-unlock! "rwlock is not write locked" rw))
     (set! (&rwlock-writer rw) #f)
     (if (fx> (&rwlock-writers-waiting rw) 0)
       (condition-variable-signal! wcv)

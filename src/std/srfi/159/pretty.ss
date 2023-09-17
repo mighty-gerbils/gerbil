@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; SRFI-159: pretty printing format combinator
 
-(import ../1
+(import :std/error
+        ../1
         ../125
         ../130
         ./base

@@ -69,6 +69,7 @@
                    (@vector-comparator        (format-id #'t "~avector-comparator" #'t))
                    (write-@vector             (format-id #'t "write-~avector" #'t)))
        #'(begin
+           (import :std/error)
            (export make-@vector @vector
                    @vector-unfold @vector-unfold-right
                    @vector-copy @vector-reverse-copy

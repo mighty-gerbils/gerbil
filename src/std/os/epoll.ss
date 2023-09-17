@@ -6,9 +6,9 @@
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/foreign
-        :std/os/error
-        :std/os/fd
-        :std/os/fcntl)
+        ./error
+        ./fd
+        ./fcntl)
 (export epoll-create epoll-ctl-add epoll-ctl-mod epoll-ctl-del epoll-wait
         make-epoll-events epoll-event-fd epoll-event-events
         EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT)

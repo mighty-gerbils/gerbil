@@ -3,9 +3,10 @@
 ;;; libcrypto ciphers
 
 (import :gerbil/gambit/ports
+        :std/error
         :std/text/utf8
-        :std/crypto/libcrypto
-        :std/crypto/etc
+        ./libcrypto
+        ./etc
         (for-syntax :std/stxutil))
 
 (export

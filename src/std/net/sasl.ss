@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; SASL authentication mechanisms
 
-(import :std/crypto
+(import :std/error
+        :std/crypto
         :std/text/base64
         :std/text/utf8
         :std/text/hex
@@ -118,7 +119,7 @@
               (##u8vector-set! res i (##fxxor (##u8vector-ref a i) (##u8vector-ref b i)))
               (lp (fx1+ i)))
             res)))
-      (error "Cannot xor bytes; length mismatch" a b))))
+      (BUG 'bytes-xor "Cannot xor bytes; length mismatch" a b))))
 
 (def (scram-parse-message msg)
   (try

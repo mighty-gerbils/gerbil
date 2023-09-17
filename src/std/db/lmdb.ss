@@ -5,6 +5,7 @@
 (import :gerbil/gambit/threads
         :std/build-config
         :std/error
+        :std/os/error
         :std/text/utf8
         :std/db/_lmdb)
 (export lmdb-error?
@@ -23,9 +24,9 @@
 
 (require config-have-lmdb)
 
-(defstruct (lmdb-error <error>) ())
+(deferror-class LMDBError () lmdb-error?)
 (def (raise-lmdb-error where errno)
-  (raise (make-lmdb-error (mdb_strerror errno) [errno] where)))
+  (raise (LMDBError (mdb_strerror errno) irritants: [errno] where: where)))
 
 (defrules with-lmdb-error ()
   ((_ (lmdb-e args ...) cleanup ...)
@@ -50,10 +51,7 @@
                 flags: (flags 0)
                 mode: (mode #o660))
   (create-directory* path)              ; needs to exist
-  (let (env** (ffi_make_mdb_env_ptr_ptr))
-    (unless env**
-      (error "lmdb-open: memory allocation failure"))
-
+  (let (env** (check-ptr (ffi_make_mdb_env_ptr_ptr)))
     (with-lmdb-error (mdb_env_create env**))
     (let (env* (ffi_mdb_env_ptr env**))
       (when maxdbs
@@ -73,7 +71,7 @@
 (def (lmdb-sync env (force? #f))
   (with ((lmdb-env env*) env)
     (unless env*
-      (error "lmdb-open-db: invalid env"))
+      (raise-context-error 'lmdb "invalid env"))
     (with-lmdb-error (mdb_env_sync env* (if force? 1 0)))))
 
 (def (lmdb-close env)
@@ -87,9 +85,7 @@
 
 (defrules do-lmdb-stat ()
   ((_ env* stat-e stat-args ...)
-   (let (stat* (ffi_make_mdb_stat_ptr))
-     (unless stat*
-       (error "lmdb-stat: memory allocation failure")  )
+   (let (stat* (check-ptr (ffi_make_mdb_stat_ptr)))
      (with-lmdb-error (stat-e stat-args ... stat*))
      [psize: (ffi_mdb_stat_psize)
       depth: (ffi_mdb_stat_depth)
@@ -101,22 +97,20 @@
 (def (lmdb-stat env)
   (with ((lmdb-env env*) env)
     (unless env*
-      (error "lmdb-open-db: invalid env"))
+      (raise-context-error 'lmdb "invalid env"))
     (do-lmdb-stat env* mdb_env_stat env*)))
 
 (def (lmdb-open-db env name (flags MDB_CREATE))
   (with ((lmdb-env env* dbs mx) env)
     (unless env*
-      (error "lmdb-open-db: invalid env"))
+      (raise-context-error 'lmdb "invalid env"))
     (with-lock mx ; there can only be a single txn opening a db
       (lambda ()
         (cond
          ((hash-get dbs name) => values)
          (else
-          (let ((txn** (ffi_make_mdb_txn_ptr_ptr))
-                (dbi* (ffi_make_mdb_dbi_ptr)))
-            (unless (and txn** dbi*)
-              (error "lmdb-open-db: memory allocation failure"))
+          (let ((txn** (check-ptr (ffi_make_mdb_txn_ptr_ptr)))
+                (dbi* (check-ptr (ffi_make_mdb_dbi_ptr))))
             (with-lmdb-error (mdb_txn_begin env* #f 0 txn**))
             (let (txn* (ffi_mdb_txn_ptr txn**))
               (with-lmdb-error (mdb_dbi_open txn* name flags dbi*)
@@ -143,16 +137,12 @@
 (def (lmdb-txn-begin env (parent #f) (flags 0))
   (with ((lmdb-env env*) env)
     (unless env*
-      (error "lmdb-open-db: invalid env"))
-    (let ((txn** (ffi_make_mdb_txn_ptr_ptr))
+      (raise-context-error 'lmdb "invalid env"))
+    (let ((txn** (check-ptr (ffi_make_mdb_txn_ptr_ptr)))
           (partxn* (and parent (match parent ((lmdb-txn _ txn*) txn*)))))
-      (unless txn**
-        (error "lmdb-txn-begin: memory allocation failure"))
       (with-lmdb-error (mdb_txn_begin env* parent flags txn**))
-      (let ((txn* (ffi_mdb_txn_ptr txn**))
-            (val* (ffi_make_mdb_val_ptr)))
-        (unless (and txn* val*)
-          (error "lmdb-stat: memory allocation failure")  )
+      (let ((txn* (check-ptr (ffi_mdb_txn_ptr txn**)))
+            (val* (check-ptr (ffi_make_mdb_val_ptr))))
         (make-lmdb-txn env txn* val*)))))
 
 (def (lmdb-txn-id txn)
@@ -190,7 +180,7 @@
    ((u8vector? key) key)
    ((string? key) (string->utf8 key))
    (else
-    (error "Bad argument: expected u8vector or string" key))))
+    (raise-bad-argument 'lmdb "u8vector or string" key))))
 
 (def (value-data val*)
   (let* ((size (ffi_mdb_val_size val*))
@@ -235,15 +225,11 @@
 (def (lmdb-cursor-open txn db)
   (with (((lmdb-txn _ txn* val*) txn)
          ((lmdb-db _ dbi) db))
-    (let (cursor** (ffi_make_mdb_cursor_ptr_ptr))
-      (unless cursor**
-        (error "lmdb-cursor-open: memory allocation failure")  )
+    (let (cursor** (check-ptr (ffi_make_mdb_cursor_ptr_ptr)))
       (with-lmdb-error (mdb_cursor_open txn* dbi cursor**))
-      (let ((val1* (ffi_make_mdb_val_ptr))
-            (val2* (ffi_make_mdb_val_ptr))
+      (let ((val1* (check-ptr (ffi_make_mdb_val_ptr)))
+            (val2* (check-ptr (ffi_make_mdb_val_ptr)))
             (cursor* (ffi_mdb_cursor_ptr cursor**)))
-        (unless (and val1* val2*)
-          (error "lmdb-cursor-open: memory allocation failure"))
       (make-lmdb-cursor txn db cursor* val1* val2*)))))
 
 (def (lmdb-cursor-close cursor)
@@ -258,7 +244,7 @@
   (with (((lmdb-cursor _ _ cursor*) cursor)
          ((lmdb-txn _ txn*) txn))
     (unless cursor*
-      (error "lmdb-cursor-renew: invalid cursor"))
+      (raise-context-error 'lmdb "invalid cursor"))
     (with-lmdb-error (mdb_cursor_renew txn* cursor*))
     (set! (lmdb-cursor-txn cursor) txn)))
 
@@ -267,7 +253,7 @@
         (valx (and val (value-bytes val))))
     (with ((lmdb-cursor _ _ cursor* val1* val2*) cursor)
       (unless cursor*
-        (error "lmdb-cursor-get: invalid cursor"))
+        (raise-context-error 'lmdb "invalid cursor"))
       (let (res (mdb_cursor_get cursor* keyx val1* valx val2* op))
         (cond
          ((##fxzero? res)
@@ -282,20 +268,18 @@
         (valx (value-bytes val)))
     (with ((lmdb-cursor _ _ cursor*) cursor)
       (unless cursor*
-        (error "lmdb-cursor-put: invalid cursor"))
+        (raise-context-error 'lmdb "invalid cursor"))
       (with-lmdb-error (mdb_cursor_put cursor* keyx valx flags)))))
 
 (def (lmdb-cursor-del cursor (flags 0))
   (with ((lmdb-cursor _ _ cursor*) cursor)
     (unless cursor*
-      (error "lmdb-cursor-del: invalid cursor"))
+      (raise-context-error 'lmdb "invalid cursor"))
     (with-lmdb-error (mdb_cursor_del cursor* flags))))
 
 (def (lmdb-cursor-count cursor)
   (with ((lmdb-cursor _ _ cursor*) cursor)
     (unless cursor*
-      (error "lmdb-cursor-count: invalid cursor"))
-    (let (size_t* (ffi_make_size_t_ptr))
-      (unless size_t*
-        (error "lmdb-cursor-open: memory allocation failure"))
+      (raise-context-error 'lmdb "invalid cursor"))
+    (let (size_t* (check-ptr (ffi_make_size_t_ptr)))
       (ffi_size_t_ptr_value size_t*))))

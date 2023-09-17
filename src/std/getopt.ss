@@ -21,22 +21,16 @@
         rest-arguments
         call-with-getopt
         )
-
-(defclass (GetOptError Error) (getopt)
-  final: #t)
-(defmethod {:init! GetOptError}
-  (lambda (self msg args getopt)
-    (Error:::init! self msg where: 'getopt irritants: args)
-    (set! (@ self getopt) getopt)))
-
-(def getopt-error? GetOptError?)
-(def getopt-error-e GetOptError-getopt)
-
 (def current-getopt-parser
   (make-parameter #f))
 
+(deferror-class (GetOptError Error) (getopt) getopt-error?
+  (lambda (self msg args getopt)
+    (Error:::init! self msg where: 'getopt irritants: args)
+    (set! (@ self getopt) getopt)))
 (def (raise-getopt-error msg . args)
   (raise (GetOptError msg args (current-getopt-parser))))
+(def getopt-error-e GetOptError-getopt)
 
 (defstruct !getopt (opts cmds args help))
 (defstruct !top (key help))

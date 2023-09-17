@@ -7,6 +7,7 @@
 ;;;
 
 (import :gerbil/gambit/bits
+        :std/error
         :std/srfi/14)
 (export
   string-map string-map!

@@ -5,7 +5,8 @@
 ;;; the SML/NJ library implementation, which is in turn based on Chris Okasaki's
 ;;; implementation; delete is based on CLR...
 
-(import :std/generic
+(import :std/error
+        :std/generic
         :std/iter)
 (export rbtree rbtree? make-rbtree
         rbtree-ref rbtree-get
@@ -41,7 +42,7 @@
   (with ((rbtree root cmp) t)
     (let (r (tree-ref cmp root key default))
       (if (eq? r absent-obj)
-        (error "No value associated with key" t key)
+        (raise-key-error 'rbtree-ref t key)
         r))))
 
 (def (rbtree-get t key)

@@ -2,6 +2,7 @@
 ;;; (C) vyzo
 ;;; some standard sugar
 
+(import :std/error)
 (export
   defrule
   catch

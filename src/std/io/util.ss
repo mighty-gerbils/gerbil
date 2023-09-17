@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; stdio utilities
 (import :std/sugar
+        :std/error
         ./interface)
 (export io-copy!)
 
@@ -15,7 +16,7 @@
    ((is-StringReader? reader)
     (io-copy-textual! reader writer (make-string-buffer buffer-or-size)))
    (else
-    (error "Bad argument; expected Reader or StringReader instance" reader))))
+    (raise-bad-argument 'io-copy! "Reader or StringReader instance" reader))))
 
 (defrule (defio-copy proc reader-t read-e writer-t write-e)
   (def (proc reader writer buffer)
@@ -45,7 +46,7 @@
      ((fixnum? buffer-or-size)
       (make-buffer buffer-or-size))
      (else
-      (error "Bad argument; expected buffer, fixnum or #f" buffer-or-size)))))
+      (raise-bad-argument 'make-buffer "buffer, fixnum or #f" buffer-or-size)))))
 
 (defmake-buffer make-u8vector-buffer u8vector? make-u8vector default-u8vector-buffer-size)
 (defmake-buffer make-string-buffer string? make-string default-string-buffer-size)

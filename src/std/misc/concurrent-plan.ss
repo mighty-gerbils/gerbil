@@ -2,9 +2,9 @@
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
-        ../sugar
-        ../assert
-        ../error
+        :std/sugar
+        :std/assert
+        :std/error
         ./pqueue)
 
 ;; This parameter is purely for checking whether indeed concurrency was used.
@@ -72,7 +72,7 @@
             (set! workers (- workers 1))
             (postprocess item (worker-join! worker))
             (loop))
-           (m (error "unexpected message" m))))
+           (m (BUG 'perform-plan/threads "unexpected message" m))))
      (;; Can run stuff in the background? Keep those CPUs busy!
       (and parallel? ready-to-spawn?)
       (let ((item (pqueue-pop! bg-queue #f)))

@@ -3,7 +3,8 @@
 ;;; SRFI-144: Flonums
 
 (import :gerbil/gambit/flonum
-        :gerbil/gambit/exact)
+        :gerbil/gambit/exact
+        :std/error)
 (export
   ;; Mathematical Constants
 

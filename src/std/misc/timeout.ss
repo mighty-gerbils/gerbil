@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; timeouts
 
-(import :gerbil/gambit/os)
+(import :gerbil/gambit/os
+        :std/error)
 (export #t)
 
 (def (make-timeout t (none absent-obj))
@@ -12,4 +13,4 @@
    ((real? t)
     (seconds->time (+ (##current-time-point) t)))
    (else
-    (error "Bad argument; expected real, time or #f" t))))
+    (raise-bad-argument 'make-timeout "real, time or #f" t))))

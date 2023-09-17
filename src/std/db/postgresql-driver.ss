@@ -76,7 +76,7 @@
     ((connection-e conn)
      => (lambda (driver) body ...))
     (else
-     (error "connection has been closed" conn)))))
+     (raise-io-closed 'postgresql-driver "connection has been closed" conn)))))
 
 (defrules get-driver ()
   ((_ conn)
@@ -126,13 +126,13 @@
   (if (!token? token)
     (with-driver conn driver
       (-> driver (!continue token)))
-    (error "Bad argument; illegal query token" token)))
+    (raise-bad-argument 'postgreql "query token" token)))
 
 (def (postgresql-reset! conn token)
   (if (!token? token)
     (alet (driver (get-driver conn))
       (-> driver (!reset token)))
-    (error "Bad argument; illegal query token" token)))
+    (raise-bad-argument 'postgreql "query token" token)))
 
 (defcall-actor (postgresql-current-notice-handler conn)
   (cond

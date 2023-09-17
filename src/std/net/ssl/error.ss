@@ -1,8 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SSL errors
-(export #t)
+(export #t check-ptr)
 (import :std/error
+        :std/os/error
         :std/sugar
         :std/crypto/libcrypto
         ./libssl)
@@ -18,17 +19,7 @@
      (else
       (raise-ssl-error 'proc result)))))
 
-(defrule (check-ptr expr)
-  (cond
-   (expr)
-   (else
-    (error "SSL object allocation failed" 'expr))))
-
-(defclass (SSLError IOError) ())
-(defmethod {:init! SSLError}
-  Error:::init!)
-(def ssl-error? SSLError?)
-
+(deferror-class (SSLError IOError) () ssl-error?)
 (def (raise-ssl-error where result)
   (let (errstr
         (match result

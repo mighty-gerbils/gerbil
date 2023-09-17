@@ -3,7 +3,7 @@
 ;;; OS signal primitives
 
 (import :std/foreign
-        :std/os/error)
+        ./error)
 
 (export
   SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE

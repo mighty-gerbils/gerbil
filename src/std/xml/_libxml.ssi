@@ -4,6 +4,7 @@
 package: std/xml
 namespace: std/xml/libxml
 
+(import :std/error)
 (export #t)
 (extern
   XML_ELEMENT_NODE

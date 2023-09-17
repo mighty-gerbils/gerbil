@@ -46,7 +46,7 @@
     ((2) 'VARLEN)
     ((5) 'FIXED32)
     (else
-     (error "Unknown type tag" x))))
+     (raise-io-error 'protobuf "Unknown type tag" x))))
 
 (def (tag->byte x)
   (case x
@@ -55,7 +55,7 @@
     ((VARLEN)  2)
     ((FIXED32) 5)
     (else
-     (error "Unknown type tag" x))))
+     (raise-io-error 'protobuf "Unknown type tag" x))))
 
 
 ;; unknown field skipping
@@ -70,7 +70,7 @@
     ((FIXED32)
      (&BufferedReader-skip buf 4))
     (else
-     (error "Unknown type tag" tag))))
+     (raise-io-error 'protobuf "Unknown type tag" tag))))
 
 (defreader-ext (skip-varint buf)
   (let lp ()

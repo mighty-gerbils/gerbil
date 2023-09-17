@@ -2,6 +2,7 @@
 ;;; ̧© vyzo
 ;;; embedded HTTP/1.1 server control
 (import :std/sugar
+        :std/error
         :std/actor
         ./base)
 (export #t)
@@ -29,13 +30,13 @@
 (defrule (with-actor-server do-it)
   (if (current-actor-server)
     do-it
-    (error "no actor server")))
+    (raise-context-error 'http-control "no actor server")))
 
 (defrule (check-handler path handler do-it)
   (cond
    ((not (string? path))
-    (error "Bad path; expected string" path))
+    (raise-bad-argument 'check-handler "path: string" path))
    ((not (procedure? handler))
-    (error "Bad handler; expected procedure" handler))
+    (raise-bad-argument 'check-handler  "handler: procedure" handler))
    (else
     do-it)))

@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit/bytes
         :gerbil/gambit/foreign
+        :std/error
         ./libcrypto
         ./etc)
 

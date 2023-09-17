@@ -2,11 +2,14 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS errors
 
-(import :std/foreign)
+(import :std/foreign
+        :std/error)
 (export raise-os-error
         check-os-error
+        os-error?
         do-retry-nonblock
         check-ptr
+        foreign-allocation-error?
         strerror
         EAGAIN
         EINTR
@@ -17,8 +20,13 @@
         ECONNREFUSED
         ECONNRESET)
 
+(deferror-class OSError () os-error?)
 (def (raise-os-error errno prim . args)
-  (apply ##raise-os-exception (strerror errno) errno prim args))
+  (raise (OSError (strerror errno) errno prim args)))
+
+(deferror-class AllocationError () foreign-allocation-error?)
+(def (raise-allocation-error where expr)
+  (raise (AllocationError "error allocating memory" where: where irritants: [expr])))
 
 (defrules check-os-error ()
   ((_ expr (prim arg ...))
@@ -43,8 +51,7 @@
 (defrules check-ptr ()
   ((_ (make arg ...))
    (let (r (make arg ...))
-     (if r r
-         (error "Error allocating memory" 'make)))))
+     (if r r (raise-allocation-error 'make '(make arg ...))))))
 
 (begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK
                      EBADF ECONNABORTED ECONNREFUSED ECONNRESET)

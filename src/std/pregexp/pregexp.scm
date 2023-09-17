@@ -9,6 +9,7 @@
 ;;  use a parameter for *pregexp-space-sensitive?*
 ;;  check fixnum args and range  in pregexp-match-positions
 ;;  use error with args
+;;  use gerbil error classes
 
 (define *pregexp-version* 20050502) ;last change
 
@@ -57,19 +58,10 @@
             (set-cdr! s r)
             (loop d s))))))
 
-#;(define pregexp-error
-  ;R5RS won't give me a portable error procedure.
-  ;modify this as needed
-  (lambda whatever
-    (display "Error:")
-    (for-each (lambda (x) (display #\space) (write x))
-              whatever)
-    (newline)
-    (error "pregexp-error")))
 
-;; vyzo: error with arguments
-(define (pregexp-error . args)
-  (apply error "Regular expression error" args))
+;; vyzo: pregexp-error -> BUG
+(define (pregexp-error where . irritants)
+  (apply BUG where "pregexp internal error" irritants))
 
 (define pregexp-read-pattern
   (lambda (s i n)
@@ -713,15 +705,15 @@
               (if (fixnum? start)
                 (if (and (>= start 0) (< start str-len))
                   start
-                  (error "Start index out of range" start))
-                (error "Expected nonnegative fixnum" start))
+                  (raise-bad-argument 'pregexp "start index: out of range" start))
+                (raise-bad-argument 'pregexp "nonnegative fixnum" start))
               0))
            (end
             (if end
               (if (fixnum? end)
                 (if (<= end str-len) end
-                    (error "End index out of range" end))
-                (error "Expected fixnum" end))
+                    (raise-bad-argument 'pregexp "end index: out of range" end))
+                (raise-bad-argument 'pregexp "fixnum" end))
               str-len)))
       (let loop ((i start))
         (and (<= i end)

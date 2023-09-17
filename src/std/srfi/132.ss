@@ -3,7 +3,8 @@
 ;;; SRFI-132: Sorting Library
 
 (import :gerbil/gambit/random
-        :gerbil/gambit/exact)
+        :gerbil/gambit/exact
+        :std/error)
 (export list-sorted?               vector-sorted?
         list-sort                  vector-sort
         list-stable-sort           vector-stable-sort

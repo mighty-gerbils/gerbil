@@ -6,6 +6,7 @@
         :gerbil/gambit/ports
         :gerbil/gambit/readtables
         :gerbil/gambit/exceptions
+        :std/error
         :std/sugar
         :std/logger
         :std/net/address
@@ -222,10 +223,10 @@
            (thread-group-specific-set! tgroup state)
            ostate)))
    (else
-    (error "No repl state"))))
+    (raise-context-error 'repl "No repl state"))))
 
 (def (untaint! (tgroup #f) (state #f))
   (let (tgroup (or tgroup (primordial-thread-group)))
     (if (repl-state? (thread-group-specific tgroup))
       (thread-group-specific-set! tgroup state)
-      (error "No tainted repl state in thread-group" tgroup))))
+      (raise-context-error 'repl "No tainted repl state in thread-group" tgroup))))

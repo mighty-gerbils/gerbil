@@ -4,6 +4,7 @@
 package: std/xml
 namespace: std/xml/sxml-to-xml
 
+(import :std/error)
 (export #t)
 (extern
   sxml>>html*

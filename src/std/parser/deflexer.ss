@@ -3,9 +3,9 @@
 ;;; std parser lexer generator
 
 (import (phi: +1 :std/parser/base :std/parser/rx-parser :std/stxutil)
-        :std/parser/base
-        :std/parser/rlang
-        :std/parser/lexer)
+        ./base
+        ./rlang
+        ./lexer)
 
 (export deflexer)
 

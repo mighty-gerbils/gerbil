@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor protocol messages
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         ./message)
 (export #t)

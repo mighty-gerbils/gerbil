@@ -2,7 +2,8 @@
 ;;; (C) vyzo
 ;;; SQLite dbi interface
 
-(import :std/db/dbi
+(import :std/error
+        :std/db/dbi
         :std/db/_sqlite
         :std/format
         :std/iter)
@@ -50,7 +51,7 @@
     (with ((sqlite-statement stmt) self)
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
-                  (error "bind parameters do not match statement count" args params))))
+                  (raise-bad-argument 'sqlite "bind parameters: do not match statement count" args params))))
         (for ((arg args) (param (in-iota params 1)))
           (cond
            ((not arg)
@@ -64,12 +65,12 @@
              ((real? arg)
               (sqlite3_bind_double stmt param (exact->inexact arg)))
              (else
-              (error "cannot bind number; not a real" arg))))
+              (raise-bad-argument 'sqlite "real: bind parameter" arg))))
            ((string? arg)
             (sqlite3_bind_text stmt param arg))
            ((u8vector? arg)
             (sqlite3_bind_blob stmt param arg))
-           (error "cannot bind object; unknown conversion" arg)))))))
+           (raise-bad-argument 'sqlite "object: unknown bind conversion" arg)))))))
 
 (defmethod {clear sqlite-statement}
   (lambda (self)
@@ -120,7 +121,7 @@
               (sqlite3_column_blob stmt col bytes)
               bytes))
            (else
-            (error "Unexpected column type" t)))))
+            (BUG 'sqlite "Unexpected column type" t)))))
 
       (let (count (sqlite3_column_count stmt))
         (case count

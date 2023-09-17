@@ -4,14 +4,14 @@
 
 (import :gerbil/gambit/threads
         :std/test
-        :std/os/signal
-        :std/os/signalfd
-        :std/os/pid)
+        ./signal
+        ./signalfd
+        ./pid)
 (export signalfd-test)
 
 (def signalfd-test
-  (test-suite "test :std/os/signalfd"
-    (test-case "test basic signal handling"
+  (test-suite "signalfd"
+    (test-case "basic signal handling"
       (def ss (make_sigset))
       (sigaddset ss SIGHUP)
       (sigprocmask SIG_BLOCK ss #f)

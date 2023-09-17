@@ -2,10 +2,10 @@
 ;;; (C) vyzo
 ;;; std parser for lexeme regular expressions
 
-(import :std/parser/base
-        :std/parser/rlang
-        :std/parser/lexer
-        :std/parser/defparser
+(import ./base
+        ./rlang
+        ./lexer
+        ./defparser
         (only-in <expander-runtime> datum->syntax))
 (export parse-rx current-rx-syntax-context)
 

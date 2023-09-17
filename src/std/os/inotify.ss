@@ -6,11 +6,12 @@
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/foreign
+        :std/error
         :std/misc/timeout
-        :std/os/error
-        :std/os/fd
-        :std/os/fdio
-        :std/os/fcntl)
+        ./error
+        ./fd
+        ./fdio
+        ./fcntl)
 (export inotify-init inotify? inotify-close
         inotify-add-watch inotify-rm-watch
         inotify
@@ -71,7 +72,7 @@
         (cond
          (rd
           (if (##fxzero? rd)
-            (error "empty inotify read")
+            (raise-io-closed 'inotify "empty inotify read")
             (inotify-events buf rd)))
          ((##wait-for-io! (fd-io-in in) timeo)
           (lp))

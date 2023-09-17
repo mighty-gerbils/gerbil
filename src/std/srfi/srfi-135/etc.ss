@@ -3,6 +3,7 @@
 ;;; SRFI-135: Immutable Texts
 
 (import :gerbil/gambit/exact
+        :std/error
         (only-in :std/srfi/13 string-downcase string-upcase string-titlecase))
 (export #t)
 

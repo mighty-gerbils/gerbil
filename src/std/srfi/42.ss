@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-42: Eager Comprehensions
-
+(import :std/error)
 (export
   do-ec
   list-ec append-ec

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; socket api
 (import :std/net/address
+        :std/error
         :std/os/error
         :std/os/socket
         :std/misc/rwlock
@@ -56,7 +57,7 @@
     ((4) AF_INET)
     ((6) AF_INET6)
     (else
-     (error "unknown address domain" host))))
+     (BUG 'ip-address-domain "unknown address domain" host))))
 
 (def (tcp-connect address (timeo #f))
   (let* ((address (resolve-address address))
@@ -76,7 +77,7 @@
 
 (def (unix-connect path (timeo #f))
   (unless (string? path)
-    (error "Bad argument; expected string" path))
+    (raise-bad-argument 'unix-connect "string" path))
   (let (sock (connect path timeo))
     (StreamSocket (make-stream-socket sock AF_UNIX #f #f #f #f (make-rwlock 'socket) #f 0))))
 
@@ -84,7 +85,7 @@
                   backlog: (backlog default-backlog)
                   sockopts: (sockopts default-listen-sockopts))
   (unless (string? path)
-    (error "Bad argument; expected string" path))
+    (raise-bad-argument 'unix-listen "expected string" path))
   (let (sock (listen path backlog sockopts))
     (ServerSocket (make-basic-server-socket sock AF_UNIX #f #f #f #f (make-rwlock 'socket) #f))))
 
@@ -101,7 +102,7 @@
          (local-address (inet-address local-address))
          (domain (ip-address-domain group-ip-address))
          (_ (unless (fx= domain (address-domain local-address))
-              (error "Bad address; domain mismatch" group-ip-address local-address)))
+              (raise-bad-argument 'udp-multicast-socket "address: domain mismatch" group-ip-address local-address)))
          (sock (udp-new-multicast domain group-ip-address local-address ifindex)))
     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
 

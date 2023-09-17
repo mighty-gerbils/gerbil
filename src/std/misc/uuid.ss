@@ -2,7 +2,8 @@
 ;;; (C) vyzo
 ;;; UUID utilities
 
-(import :std/pregexp
+(import :std/error
+        :std/pregexp
         :std/text/hex
         :std/text/utf8
         (only-in :std/crypto/digest md5)
@@ -35,7 +36,7 @@
    ((u8vector? obj)
     (u8vector->uuid obj))
    (else
-    (error "bad uuid identifier" obj))))
+    (raise-bad-argument 'UUID "uuid identifier" obj))))
 
 (def (random-uuid)
   (let (bytes (make-u8vector uuid-length))
@@ -59,9 +60,9 @@
     (content-uuid str)))
 
 (def (u8vector->uuid u8v)
-  (if (##fx= (u8vector-length u8v) uuid-length)
-    (make-uuid u8v #f)
-    (error "Bad argument; invalid u8vector length" u8v)))
+  (unless (##fx= (u8vector-length u8v) uuid-length)
+    (raise-bad-argument 'u8vector->uuid "u8vector length of UUID lenth" u8v uuid-length))
+  (make-uuid u8v #f))
 
 (def (uuid->u8vector uuid)
   (uuid-bytes uuid))
@@ -78,7 +79,7 @@
        (hex-decode e))
       str))
     (else
-     (error "Bad argument; malformed uuid" str))))
+     (raise-bad-argument 'string->uuid "uuid string" str))))
 
 (def (uuid->string uuid)
   (cond

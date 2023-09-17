@@ -66,11 +66,7 @@
     (set! (&statement-e self) e)
     (set! (&statement-i self) (Statement self))))
 
-(defclass (SQLError StackTrace Error) ())
-(defmethod {:init! SQLError}
-  Error:::init!)
-(def sql-error? SQLError?)
-
+(deferror-class SQLError () sql-error?)
 (def (raise-sql-error where what . irritants)
   (raise (SQLError what irritants: irritants where: where)))
 
@@ -104,7 +100,7 @@
   (with ((connection e driver) conn)
     (cond
      ((not e)
-      (error "Invalid operation; connection closed" conn))
+      (raise-context-error 'sql-txn-do "Invalid operation; connection closed" conn))
      ((getf conn) => sql-exec)
      (else
       (let (stmt (&Driver-prepare driver sql))
@@ -126,7 +122,7 @@
       (let (stmt (&Driver-prepare driver text))
         (make-will stmt sql-finalize)
         stmt)
-      (error "Invalid operation; connection closed" conn))))
+      (raise-context-error 'sql-prepare "Invalid operation; connection closed" conn))))
 
 (def (sql-finalize stmt)
   (with ((statement e i) stmt)
@@ -143,19 +139,19 @@
   (with ((statement e i) stmt)
     (if e
       (apply &Statement-bind i args)
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-bind "Invalid operation; statement finalized" stmt))))
 
 (def (sql-clear stmt)
   (with ((statement e i) stmt)
     (if e
       (&Statement-clear i)
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-clear "Invalid operation; statement finalized" stmt))))
 
 (def (sql-reset stmt)
   (with ((statement e i) stmt)
     (if e
       (&Statement-reset i)
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-reset "Invalid operation; statement finalized" stmt))))
 
 (def (sql-reset/clear stmt)
   (with ((statement e i) stmt)
@@ -163,7 +159,7 @@
       (begin
         (&Statement-reset i)
         (&Statement-clear i))
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-reset/clear "Invalid operation; statement finalized" stmt))))
 
 (def (sql-eval-e eval-e conn sql args)
   (let (stmt (sql-prepare conn sql))
@@ -186,7 +182,7 @@
         (&Statement-exec i)
         (&Statement-reset i)
         (void))
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-exec "Invalid operation; statement finalized" stmt))))
 
 (def (sql-query stmt)
   (for/collect (row (in-sql-query stmt)) row))
@@ -215,11 +211,11 @@
         (make-will it fini)
         (&Statement-query-start i)
         it)
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'in-sql-query "Invalid operation; statement finalized" stmt))))
 
 ;;; metadata
 (def (sql-columns stmt)
   (with ((statement e i) stmt)
     (if e
       (&Statement-columns i)
-      (error "Invalid operation; statement finalized" stmt))))
+      (raise-context-error 'sql-columns "Invalid operation; statement finalized" stmt))))

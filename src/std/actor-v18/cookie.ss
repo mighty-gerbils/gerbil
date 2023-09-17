@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server cookies
-(import :std/crypto
+(import :std/error
+        :std/crypto
         :std/misc/ports
         ./path)
 (export #t)

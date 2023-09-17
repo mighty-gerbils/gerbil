@@ -60,7 +60,7 @@
             ((out) SHUT_WR)
             ((inout) SHUT_RDWR)
             (else
-             (error "Bad argument; direction must be in, out, or inout"))))
+             (raise-bad-argument 'stream-socket-shutdown "direction: must be in, out, or inout"))))
          (state-dir (direction->state dir)))
     (with-basic-socket-write-lock ssock
       (unless (stream-socket-closed? ssock state-dir)

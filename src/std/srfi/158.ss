@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-158: Generators
 
-(import ./121)
+(import :std/error
+        ./121)
 (export generator circular-generator make-iota-generator make-range-generator
         make-coroutine-generator list->generator vector->generator
         reverse-vector->generator string->generator

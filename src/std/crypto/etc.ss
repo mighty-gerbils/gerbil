@@ -23,16 +23,14 @@
   macro-character-port-rbuf
   macro-character-port-rlo-set!)
 
-(defclass (LibCryptoError Error) ())
-(defmethod {:init! LibCryptoError}
+(deferror-class LibCryptoError () libcrypto-error?
   (lambda (self errno . irritants)
     (Error:::init! self
-                   (or (ERR_reason_error_string errno) "Unknown error")
+                   (or (ERR_reason_error_string errno) "libcrypto: Unknown error")
                    where: (string-append
                            (or (ERR_lib_error_string errno) "?") ":"
                            (or (ERR_func_error_string errno) "?"))
                    irritants: (cons errno irritants))))
-(def libcrypto-error? LibCryptoError?)
 
 (def (raise-libcrypto-error . irritants)
   (raise (LibCryptoError (ERR_get_error) irritants)))
@@ -53,7 +51,7 @@
    ((input-port? in)
     (apply call-with-binary-input-port proc in args))
    (else
-    (error "Unexpected input source" in))))
+    (raise-bad-argument 'libcrypt "input source; u8vector, string or input port" in))))
 
 (def* call-with-binary-input-u8vector
   ((proc in)
@@ -134,4 +132,4 @@
    ((u8vector? in) in)
    ((string? in) (string->utf8 in))
    (else
-    (error "Expected u8vector or string" in))))
+    (raise-bad-argument 'libcrypto "u8vector or string" in))))

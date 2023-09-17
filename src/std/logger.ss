@@ -5,6 +5,7 @@
 (import :gerbil/gambit/ports
         :gerbil/gambit/threads
         :gerbil/gambit/exceptions
+        :std/error
         :std/sugar
         :std/format
         :std/srfi/19)
@@ -47,7 +48,7 @@
    ((symbol? level)
     (hash-ref symbolic-levels level verbose-level))
    (else
-    (error "invalid level; must be fixnum or symbol" level))))
+    (raise-bad-argument 'logger "log level: fixnum or symbol" level))))
 
 ;; the current logger actor
 (def current-logger
@@ -151,7 +152,7 @@
              ((string? output)
               (values (open-output-file [path: output append: #t]) #t))
              (else
-              (error "Bad output; expected filename or port" output))))
+              (raise-bad-argument 'start-logger! "filename or port" output))))
            (srv (spawn/name 'logger logger-server port own-port?)))
       (current-logger srv)
       srv))))

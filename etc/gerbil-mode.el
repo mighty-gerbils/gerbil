@@ -449,7 +449,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
-   '("(\\(defstruct\\|defclass\\|defmessage\\|class\\|struct\\|interface\\|union\\)\\s-+(?\\(\\sw+\\)"
+   '("(\\(defstruct\\|defclass\\|defmessage\\|interface\\|deferror-class\\)\\s-+(?\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-type-face)))
   (gerbil-fontlock-add

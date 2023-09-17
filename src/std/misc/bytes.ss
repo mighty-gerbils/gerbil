@@ -7,6 +7,7 @@
         :gerbil/gambit/exact
         :gerbil/gambit/bits
         :gerbil/gambit/fixnum
+        :std/error
         :std/text/hex
         :std/foreign)
 (export
@@ -144,21 +145,21 @@
   ((_ v k size)
    (begin
      (unless (u8vector? v)
-       (error "Expected u8vector" v))
+       (raise-bad-argument 'u8vector-int-ref/set! "u8vector" v))
      (unless (and (fixnum? k)
                   (fx<= 0 k (fx1- (##u8vector-length v))))
-       (error "Bad index" v k))
+       (raise-bad-argument 'u8vector-int-ref/set! "u8vector index" v k))
      (unless (and (fixnum? size)
                   (fx<= 0 size (fx- (##u8vector-length v) k)))
-       (error "Bad integer size" v k size))))
+       (raise-bad-argument 'u8vector-int-ref/set! "integer size" v k size))))
   ((_ v size)
    (begin
      (unless (u8vector? v)
-       (error "Expected u8vector" v))
+       (raise-bad-argument 'u8vector-int-ref/set! "u8vector" v))
      (unless (and (fixnum? size)
                   (fx> size 0)
                   (fxzero? (fxremainder (##u8vector-length v) size)))
-       (error "Bad size" v size)))))
+       (raise-bad-argument 'u8vector-int-ref/set! "integer size" v size)))))
 
 (defrules do-endianness ()
   ((_ endianness do-big do-little)
@@ -170,7 +171,7 @@
         do-little
         do-big))
      (else
-      (error "Bad endianness" endianness))))
+      (raise-bad-argument 'u8vector-int-ref/set! "endianness" endianness))))
   ((_ endianness do-big do-little do-native)
    (if (eq? endianness native-endianness)
      do-native
@@ -179,7 +180,7 @@
        ((little) do-little)
        ((native) do-native)
        (else
-        (error "Bad endianness" endianness))))))
+        (raise-bad-argument 'u8vector-int-ref/set! "endianness" endianness))))))
 
 (def (u8vector-s8-ref v i)
   (check-int-ref v i 1)
@@ -195,7 +196,7 @@
 (def (u8vector-s8-set! v i s8)
   (check-int-ref v i 1)
   (unless (fixnum? s8)
-    (error "expected fixnum" s8))
+    (raise-bad-argument 'u8vector-s8-set! "fixnum" s8))
   (&u8vector-s8-set! v i s8))
 
 (def (&u8vector-s8-set! v i s8)
@@ -318,9 +319,9 @@
   ((_ lst size)
    (begin
      (unless (and (list? lst) (andmap exact-integer? lst))
-       (error "Expected list of exact integers" lst))
+       (raise-bad-argument 'int-list->u8vector "list of exact integers" lst))
      (unless (and (fixnum? size) (fx> size 0))
-       (error "Bad size" size)))))
+       (raise-bad-argument 'int-list->u8vector "integer size" size)))))
 
 (def (uint-list->u8vector lst endianness size)
   (check-int-list lst size)
@@ -479,12 +480,12 @@
 
 (def (u8vector-swap! v j k)
   (unless (u8vector? v)
-    (error "Expected u8vector" v))
+    (raise-bad-argument 'u8vector-swap! "u8vector" v))
   (let (len-1 (fx1- (##u8vector-length v)))
     (unless (fx<= 0 j len-1)
-      (error "Index out of range" v j))
+      (raise-bad-argument 'u8vector-swap! "index: out of range" v j))
     (unless (fx<= 0 k len-1)
-      (error "Index out of range" v k)))
+      (raise-bad-argument 'u8vector-swap! "index: out of range" v k)))
   (&u8vector-swap! v j k))
 
 (def (&u8vector-swap! v j k)
@@ -496,7 +497,7 @@
 
 (def (u8vector-reverse! v)
   (unless (u8vector? v)
-    (error "Expected u8vector" v))
+    (raise-bad-argument 'u8vector-reverse! "u8vector" v))
   (&u8vector-reverse! v 0 (u8vector-length v)))
 
 (def (&u8vector-reverse! v k size)
@@ -509,7 +510,7 @@
 (def (u8vector-reverse v)
   (declare (fixnum) (not safe))
   (unless (u8vector? v)
-    (error "Expected u8vector" v))
+    (raise-bad-argument 'u8vector-reverse "u8vector" v))
   (let* ((len (u8vector-length v))
          (len-1 (1- len))
          (u (make-u8vector len)))
@@ -521,9 +522,9 @@
 (def (u8vector->bytestring v (delim #\space))
   (declare (fixnum) (not safe))
   (unless (u8vector? v)
-    (error "Expected u8vector" v))
+    (raise-bad-argument 'u8vector->bytestring "u8vector" v))
   (unless (or (not delim) (char? delim))
-    (error "Expected character or #f" delim))
+    (raise-bad-argument 'u8vector->bytestring "delimiter: character or #f" delim))
   (let* ((len (u8vector-length v))
          (s (make-string (+ len len (if (and (< 0 len) delim) (1- len) 0)))))
     (let lp ((i 0) (j 0))
@@ -540,7 +541,8 @@
   (declare (fixnum) (not safe))
   (if delim
     (let ()
-      (def (invalid) (error "Invalid bytestring" bs delim))
+      (def (invalid)
+        (raise-bad-argument 'bytestring->u8vector "delimited separated bytestring" bs delim))
       (def blen (string-length bs))
       (when (and (< 0 blen) (not (zero? (modulo (1+ blen) 3))))
         (invalid))
@@ -554,7 +556,7 @@
 
 (def (u8vector->uint v (endianness big))
   (unless (u8vector? v)
-    (error "Expected u8vector" v))
+    (raise-bad-argument 'u8vector->uint "u8vector" v))
   (do-endianness endianness
     (&u8vector->uint/be v)
     (&u8vector->uint/le v)))
@@ -581,7 +583,7 @@
 
 (def (uint->u8vector uint (endianness big))
   (unless (and (exact-integer? uint) (>= uint 0))
-    (error "Non-negative exact integer expected" uint))
+    (raise-bad-argument 'uint->u8vector "nonnegative exact integer" uint))
   (do-endianness endianness
     (&uint->u8vector/be uint)
     (&uint->u8vector/le uint)))

@@ -22,6 +22,7 @@
   malformed-request malformed-response)
 
 (import
+  :gerbil/gambit/continuations
   :std/error
   (only-in :std/misc/atom atomic-counter)
   (only-in :std/net/httpd http-response-write http-response-write-condition
@@ -35,21 +36,17 @@
   (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
            bytes->json-object json-object->bytes json-object->string))
 
-(defclass (JSON-RPCError IOError) ()
-;;  (code    ;; SInt16
-;;   message ;; String
-;;   data)   ;; (Maybe Bytes)
-  transparent: #t)
-(defmethod {:init! JSON-RPCError}
+(deferror-class (JSON-RPCError IOError) () json-rpc-error?
+  ;;  (code    ;; SInt16
+  ;;   message ;; String
+  ;;   data)   ;; (Maybe Bytes)
   (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
            code: code ;; SInt16
            message: message ;; String
            data: (data (void))) ;; (Maybe Bytes)
-    (def irritants [code message data])
-    (Error:::init! self what irritants: irritants where: where)))
+    (let (irritants [code message data])
+      (Error:::init! self what irritants: irritants where: where))))
 (def json-rpc-error make-JSON-RPCError)
-(def json-rpc-error? JSON-RPCError?)
-
 
 (def (json-rpc-error-code e)
   (car (Error-irritants e)))
@@ -117,8 +114,20 @@
 (def (tranport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
-(defclass (malformed-request JSON Exception) (method params e) transparent: #t)
-(defclass (malformed-response JSON Exception) (request-id response e) transparent: #t)
+(defclass (malformed-request JSON StackTrace Exception) (method params e) transparent: #t)
+(defclass (malformed-response JSON StackTrace Exception) (request-id response e) transparent: #t)
+
+(def (display-malformed-exception obj port)
+  (parameterize ((current-output-port port))
+    (displayln (##type-name (object-type obj)))
+    (alet (cont (@ obj continuation))
+      (displayln "--- continuation backtrace:")
+      (display-continuation-backtrace cont))))
+
+(defmethod {display-exception malformed-request}
+  display-malformed-exception)
+(defmethod {display-exception malformed-response}
+  display-malformed-exception)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
   (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
@@ -186,7 +195,7 @@
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
-       (else (raise (error "Invalid http method" http-method))))))
+       (else (raise-bad-argument 'json-rpc "http method: invalid" http-method)))))
   (def response-json
     (try
      (bytes->json response-bytes) ;; todo: move to decode-json-rpc-response ?

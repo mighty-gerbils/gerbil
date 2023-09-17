@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-78: Lightweight testing
 
-(import :std/srfi/42)
+(import :std/error
+        :std/srfi/42)
 (export check check-ec
         check-report
         check-set-mode!

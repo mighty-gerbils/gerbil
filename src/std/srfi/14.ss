@@ -2,6 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-13: charset library
 (import :gerbil/gambit/bits
+        :std/error
         :std/srfi/srfi-support
         :std/srfi/8
         :std/srfi/9)

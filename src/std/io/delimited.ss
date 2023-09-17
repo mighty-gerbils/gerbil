@@ -15,12 +15,12 @@
 
 (def (open-delimited-reader reader limit)
   (unless (Reader? reader)
-    (error "expected Reader" reader))
+    (raise-bad-argument 'open-delimited-reader "Reader" reader))
   (Reader (make-delimited-reader reader limit)))
 
 (def (open-delimited-string-reader reader limit)
   (unless (StringReader? reader)
-    (error "expected StringReader" reader))
+    (raise-bad-argument 'open-delimited-string-readeer "StringReader" reader))
   (StringReader (make-delimited-string-reader reader limit)))
 
 (defmethod {read delimited-reader}

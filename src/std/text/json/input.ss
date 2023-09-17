@@ -3,6 +3,7 @@
 ;;; json reader
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
+        :std/error
         :std/sugar
         :std/io
         :std/text/hex

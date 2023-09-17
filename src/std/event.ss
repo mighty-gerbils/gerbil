@@ -5,6 +5,7 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
         :gerbil/gambit/exceptions
+        :std/error
         :std/sugar
         :std/misc/shuffle)
 (export wait select sync
@@ -40,25 +41,25 @@
   (if (maybe-timeout? timeo)
     (let (wait-e (selector-wait-e sel))
       (and (wait-e sel timeo) sel))
-    (error "Bad argument; expected timeout or #f" timeo)))
+    (raise-bad-argument 'wait "timeout or #f" timeo)))
 
 (def (select sels (timeo #f))
   (match sels
     ([]
-     (error "empty selection set"))
+     (raise-bad-argument 'select "selection set: empty"))
     ([sel]
      (wait sel timeo))
     (else
      (if (maybe-timeout? timeo)
        (do-select sels timeo)
-       (error "Bad argument; expected timeout or #f" timeo)))))
+       (raise-bad-argument 'select "timeout or #f" timeo)))))
 
 ;; specialized variant for waiting on an io condvar
 (def (wait-io! iocv (timeo #f))
   (unless (io-condition-variable? iocv)
-    (error "Bad argument; expected IO condition variable" iocv))
+    (raise-bad-argument 'wait-io! "IO condition variable" iocv))
   (unless (maybe-timeout? timeo)
-    (error "Bad argument; expected timeout or #f" timeo))
+    (raise-bad-argument 'wait-io! "timeout or #f" timeo))
   (&wait-io! iocv timeo))
 
 ;; unchecked variant of wait-io!
@@ -119,9 +120,9 @@
           (condition-variable? (cdr sel)))
      (if (eq? (current-thread) (macro-mutex-btq-owner (car sel)))
        do-condvar
-       (error "Illegal selector; mutex must be owned by current thread" sel)))
+       (BUG 'sync "Illegal selector; mutex must be owned by current thread" sel)))
     (else
-     (error "Illegal selector" sel)))))
+     (BUG 'sync "Illegal selector" sel)))))
 
 (def (wrap-selector sel)
   (dispatch-selector sel
@@ -395,7 +396,7 @@
    ((macro-raw-device-port? port)
     (make-raw-device-port-evt port))
    (else
-    (error "can't wrap event around unknown port type" port))))
+    (BUG 'sync "can't wrap event around unknown port type" port))))
 
 (def (make-u8vector-port-evt port)
   (def (rbuf-check port)

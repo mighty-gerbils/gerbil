@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO api
-(import :std/interface
+(import :std/error
+        :std/interface
         ../interface
         ../dummy
         ./types
@@ -28,7 +29,7 @@
    ((u8vector? buffer-or-size)
     buffer-or-size)
    (else
-    (error "Bad argument; expected fixnum or u8vector" buffer-or-size))))
+    (raise-bad-argument 'make-buffer "fixnum or u8vector" buffer-or-size))))
 
 (def (open-buffered-reader reader-or-u8vector (buffer-or-size default-buffer-size))
   (cond
@@ -40,7 +41,7 @@
           (reader (Reader reader-or-u8vector)))
       (BufferedReader (make-input-buffer reader buffer 0 0 #f))))
    (else
-    (error "Bad argument; expected reader instance or u8vector" reader-or-u8vector))))
+    (raise-bad-argument 'open-buffered-reader "Reader instance or u8vector" reader-or-u8vector))))
 
 (def (open-buffered-writer maybe-writer (buffer-or-size default-buffer-size))
   (cond
@@ -53,7 +54,7 @@
           (buffer (make-u8vector-buffer buffer-or-size)))
       (BufferedWriter (make-output-buffer writer buffer 0 #f))))
    (else
-    (error "Bad argument; expected reader instance or #f" maybe-writer))))
+    (raise-bad-argument 'open-buffered-writer "Writer instance or #f" maybe-writer))))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))
@@ -68,7 +69,7 @@
       (or (&chunked-output-buffer-output bio)
           (reverse (&chunked-output-buffer-chunks bio))))
      (else
-      (error "Unexpected type; expected instance of Writer or BufferedWriter wrapping an output buffer" wr)))))
+      (raise-bad-argument 'get-buffer-output "instance of BufferedWriter wrapping an output buffer" wr)))))
 
 (def (get-buffer-output-u8vector wr)
   (let (chunks (get-buffer-output-chunks wr))

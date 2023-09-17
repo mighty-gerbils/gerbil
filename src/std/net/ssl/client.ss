@@ -30,7 +30,7 @@
                 ((ip6-address? host)
                  (ip6-address->string host))
                 (else
-                 (error "unexpected host" host))))
+                 (raise-bad-argument 'ssl-connect "hostname" host))))
          (deadline (make-timeout timeo #f))
          (sock (tcp-connect addr deadline)))
     (try

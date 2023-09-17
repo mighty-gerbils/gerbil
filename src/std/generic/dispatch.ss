@@ -12,11 +12,7 @@
 
 (declare (not safe))
 
-(defclass (DispatchError StackTrace Error) ())
-(defmethod {:init! DispatchError}
-  Error:::init!)
-(def dispatch-error? DispatchError?)
-
+(deferror-class DispatchError () dispatch-error?)
 (def (raise-dispatch-error where method-id args)
   (raise (DispatchError "generic dispatch failure; no matching method"
                         where: where irritants: (cons method-id args))))
@@ -383,7 +379,7 @@
               (else
                (raise-dispatch-error 'generic-dispatch-next (generic-id gen) args))))))
      (else
-      (error "Cannot dispatch next method; no dispatch table" (generic-id gen) args)))))
+      (raise-dispatch-error 'generic-dispatch-next (generic-id gen) args)))))
 
 ;; The cache is a perfect hash table represented as a vector containing
 ;; cache entries. A cache entry is an inverted arg type id improper list

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor TLS utilities
 (import :gerbil/gambit/os
+        :std/error
         :std/iter
         :std/net/ssl/libssl
         :std/misc/template
@@ -220,7 +221,7 @@
     (when (file-exists? cafile)
       (if force?
         (delete-file cafile)
-        (error "cafile already existx" cafile)))
+        (error "cafile already exists" cafile)))
     (invoke "c_rehash" [ca-certificates])
     (call-with-output-file cafile
       (lambda(output)

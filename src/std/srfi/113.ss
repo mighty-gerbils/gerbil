@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-113: Sets and Bags
 
-(import :std/srfi/9
+(import :std/error
+        :std/srfi/9
         :std/srfi/125
         :std/srfi/128)
 (export set set-unfold

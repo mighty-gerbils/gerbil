@@ -3,7 +3,8 @@
 ;;; hex encoding
 
 (export hex-encode hexlify hex-decode hex-decode-byte hex-decode-nibble unhexlify hex unhex unhex*)
-(import :gerbil/gambit/fixnum)
+(import :gerbil/gambit/fixnum
+        :std/error)
 
 (def hexes "0123456789abcdef")
 (def (hex-encode bytes (start 0) (end #f))

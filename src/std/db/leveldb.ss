@@ -6,6 +6,7 @@
         :gerbil/gambit/misc
         :std/db/_leveldb
         :std/error
+        :std/os/error
         :std/iter
         :std/text/utf8)
 (export leveldb-error?
@@ -28,19 +29,13 @@
         leveldb-read-options leveldb-default-read-options
         leveldb-write-options leveldb-default-write-options)
 
-(defstruct (leveldb-error <error>) ())
+(deferror-class LevelDBError () leveldb-error?)
 
 (def (raise-leveldb-error where what)
-  (raise (make-leveldb-error what [] where)))
+  (raise (make-leveldb-error what where: where)))
 
 (def (raise-leveldb-error/errptr where errptr)
-  (raise (make-leveldb-error (errptr_str errptr) [] where)))
-
-(defrules check-ptr ()
-  ((_ where expr)
-   (let (ptr expr)
-     (if ptr ptr
-         (raise-leveldb-error 'where "Error allocating pointer")))))
+  (raise (make-leveldb-error (errptr_str errptr) where: where)))
 
 (def (fixnum-positive? obj)
   (and (fixnum? obj)
@@ -51,7 +46,7 @@
    ((u8vector? key) key)
    ((string? key) (string->utf8 key))
    (else
-    (error "Bad argument: expected u8vector or string" key))))
+    (raise-bad-argument 'leveldb "u8vector or string" key))))
 
 ;;; Implementation
 (defstruct leveldb (db opt)
@@ -88,7 +83,7 @@
         (cond
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-put <>))))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-put "LevelDB database has been closed"))))
 
 (def (leveldb-get ldb key (opts (leveldb-default-read-options)))
   (with ((leveldb db) ldb)
@@ -102,7 +97,7 @@
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-get <>))
          (else #f)))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-get "LevelDB database has been closed"))))
 
 (def (leveldb-delete ldb key (opts (leveldb-default-write-options)))
   (with ((leveldb db) ldb)
@@ -113,7 +108,7 @@
         (cond
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-delete <>))))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-delete  "LevelDB database has been closed"))))
 
 (def (leveldb-write ldb batch (opts (leveldb-default-write-options)))
   (with ((leveldb db) ldb)
@@ -123,7 +118,7 @@
         (cond
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-write <>))))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-write "LevelDB database has been closed"))))
 
 (def (leveldb-key? ldb key (opts (leveldb-default-read-options)))
   (with ((leveldb db) ldb)
@@ -136,7 +131,7 @@
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-key? <>))
          (else #f)))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-key? "LevelDB database has been closed"))))
 
 (def (slice->bytes slice)
   (let* ((len (slice_len slice))
@@ -181,7 +176,7 @@
       (let (lit (make-leveldb-itor (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))))
         (make-will lit leveldb-iterator-close)
         lit)
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb-iterator "LevelDB database has been closed"))))
 
 (def (leveldb-iterator-close lit)
   (with ((leveldb-itor itor) lit)
@@ -196,52 +191,52 @@
   (with ((leveldb-itor itor) lit)
     (if itor
       (eq? (leveldb_iter_valid itor) 1)
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-seek-first lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (leveldb_iter_seek_to_first itor)
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-seek-last lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (leveldb_iter_seek_to_last itor)
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-seek lit key)
   (with ((leveldb-itor itor) lit)
     (if itor
       (let (keyx (value-bytes key))
         (leveldb_iter_seek itor keyx))
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-next lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (leveldb_iter_next itor)
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-prev lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (leveldb_iter_prev itor)
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-key lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (alet (slice (leveldb_iter_key itor))
         (slice->bytes slice))
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-value lit)
   (with ((leveldb-itor itor) lit)
     (if itor
       (alet (slice (leveldb_iter_value itor))
         (slice->bytes slice))
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 (def (leveldb-iterator-error lit (raise? #t))
   (with ((leveldb-itor itor) lit)
@@ -254,7 +249,7 @@
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-iterator-error <>))
          (else #f)))
-      (error "Iterator has been finalized"))))
+      (raise-context-error 'leveldb-iterator "Iterator has been finalized"))))
 
 
 ;; iterator protocol
@@ -350,7 +345,7 @@
       (let ((startx (value-bytes start-key))
             (endx (value-bytes end-key)))
         (leveldb_compact_range db startx endx))
-      (error "LevelDB database has been closed"))))
+      (raise-context-error 'leveldb "LevelDB database has been closed"))))
 
 (def (leveldb-destroy-db name (opts (leveldb-default-options)))
   (let (errptr (get-errptr))
@@ -390,33 +385,33 @@
     (when write-buffer-size
       (if (fixnum-positive? write-buffer-size)
         (leveldb_options_set_write_buffer_size opts write-buffer-size)
-        (error "Bad write buffer size; expected positive fixnum" write-buffer-size)))
+        (raise-bad-argument 'leveldb "positive fixnum: write buffer size" write-buffer-size)))
     (when max-open-files
       (if (fixnum? max-open-files)
         (leveldb_options_set_max_open_files opts max-open-files)
-        (error "Bad max open files; expected fixnum")))
+        (raise-bad-argument 'leveldb "fixnum: max open files" max-open-files)))
     (when block-size
       (if (fixnum-positive? block-size)
         (leveldb_options_set_block_size opts block-size)
-        (error "Bad block size; expected positive fixnum")))
+        (raise-bad-argument 'leveldb "positive fixnum: block size" block-size)))
     (when block-restart-interval
       (if (fixnum? block-restart-interval)
         (leveldb_options_set_block_restart_interval opts block-restart-interval)
-        (error "Bad block restart interval; expected fixnum")))
+        (raise-bad-argument 'leveldb "fixnum: block restart interval" block-restart-interval)))
     (def cache
       (when lru-cache-capacity
         (if (fixnum-positive? lru-cache-capacity)
           (let (ptr (check-ptr leveldb_cache_create_lru (leveldb_cache_create_lru lru-cache-capacity)))
             (leveldb_options_set_cache opts ptr)
             ptr)
-          (error "Bad lru cache size; expected positive fixnum"))))
+          (raise-bad-argument 'leveldb "positive fixnum: lru cache size" lru-cache-capacity))))
     (def bloom-filter
       (when bloom-filter-bits
         (if (fixnum-positive? bloom-filter-bits)
           (let (ptr (check-ptr leveldb_filterpolicy_create_bloom (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
             (leveldb_options_set_filter_policy opts ptr)
             ptr)
-          (error "Bad bloom filter bits; expected positive fixnum"))))
+          (raise-bad-argument 'leveldb "positive fixnum: bloom filter biits" bloom-filter-bits))))
     (make-leveldb-opts opts cache bloom-filter)))
 
 (def (leveldb-default-options)

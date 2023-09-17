@@ -5,12 +5,12 @@
 (import <expander-runtime>
         <syntax-case>
         <syntax-sugar>
-        :std/parser/rlang
-        :std/parser/base
-        :std/parser/stream
-        :std/parser/lexer
-        :std/parser/defparser
-        :std/parser/deflexer)
+        ./rlang
+        ./base
+        ./stream
+        ./lexer
+        ./defparser
+        ./deflexer)
 
 (export read-module-body)
 

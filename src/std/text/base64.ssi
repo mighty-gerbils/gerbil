@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; base64 encoding
-package: std/text
-namespace: std/text/base64
-
+(import :std/error)
 (export #t)
 (extern
   base64-string->u8vector

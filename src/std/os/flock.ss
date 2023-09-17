@@ -2,16 +2,16 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS Advisory File Locking
 
-(import :std/foreign
-        :std/os/fd
-        :std/os/fcntl
-        :std/os/fdio
-        :std/os/error
+(import :gerbil/gambit/os
+        :gerbil/gambit/random
+        :gerbil/gambit/threads
         :std/error
         :std/sugar
-        :gerbil/gambit/os
-        :gerbil/gambit/random
-        :gerbil/gambit/threads)
+        :std/foreign
+        ./fd
+        ./fcntl
+        ./fdio
+        ./error)
 (export flock flock/block
         open-input-file/lock
         open-output-file/lock
@@ -41,7 +41,7 @@
      ((real? timeout)
       (+ (##current-time-point) timeout))
      (else
-      (error "Bad argument; expected real, time or #f" timeout))))
+      (raise-bad-argument 'flock "real, time or #f" timeout))))
 
   (let lp ()
     (unless (flock raw-or-fd op)

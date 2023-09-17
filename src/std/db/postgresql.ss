@@ -2,7 +2,8 @@
 ;;; (C) vyzo, drewc
 ;;; PostgreSQL dbi interface
 
-(import :std/db/dbi
+(import :std/error
+        :std/db/dbi
         :std/db/postgresql-driver
         :std/iter
         :std/misc/channel
@@ -185,7 +186,7 @@
        ((catalog-serializer (current-catalog) type-oid)
         => (cut <> arg))
        (else
-        (error "Cannot bind; Parameter type oid not in (current-catalog)" type-oid arg))))
+        (raise-bad-argument 'postgresql "catalog parameter: unknown" type-oid arg))))
     (let* ((params (&postgresql-statement-params self))
            (bind (map value->binding params args)))
       (set! (&postgresql-statement-bind self) bind)
@@ -364,7 +365,7 @@
 
 (def (identity-string obj)
   (if (string? obj) obj
-      (error "Bad argument; expected string" obj)))
+      (raise-bad-argument 'postgresql "string" obj)))
 
 (defcatalog default-catalog
   ;; BOOLOID

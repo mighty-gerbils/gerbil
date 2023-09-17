@@ -2,9 +2,10 @@
 ;;; (C) vyzo
 ;;; std parser lexer and lexer generator
 
-(import :std/parser/base
-        :std/parser/stream
-        :std/parser/rlang)
+(import :std/error
+        ./base
+        ./stream
+        ./rlang)
 
 (export lex lex-chars
         token-stream?
@@ -111,7 +112,7 @@
     (make-char-stream (open-input-string inp)))
    ((char-stream? inp) inp)
    (else
-    (error "Bad input source; expected input-port, string or char-stream" inp))))
+    (raise-bad-argument 'lexer "input source; input-port, string or char-stream" inp))))
 
 ;; cs: char-stream
 ;; Ls: list of rlangs for each lexeme; matches longest, with ties resolved in order

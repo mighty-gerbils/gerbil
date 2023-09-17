@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; SRFI-159: unicode
 
-(import ../151
+(import :std/error
+        ../151
         ./base)
 (export as-unicode unicode-terminal-width)
 

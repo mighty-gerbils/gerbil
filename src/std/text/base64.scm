@@ -183,9 +183,7 @@
 
     (define err
       (lambda (str-location code-location)
-        (error "base64 decoding error" str-location code-location)
-        ;; (void) - If uncommented, keeps variables on the stack during the exception
-        ))
+        (std/error#raise-io-error 'base64-codec "base64 decoding error" str-location code-location)))
 
     (define chunk-len 64) ; must be a power of 2
 

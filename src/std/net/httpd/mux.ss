@@ -2,7 +2,8 @@
 ;;; (C) vyzo
 ;;; embedded HTTP/1.1 server; path multiplexer
 
-(import :std/misc/sync)
+(import :std/error
+        :std/misc/sync)
 (export #t)
 
 ;; multiplexer: an object with two methods:

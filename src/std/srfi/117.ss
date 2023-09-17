@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-117: List Queues
 
-(import :std/srfi/9)
+(import :std/error
+        :std/srfi/9)
 (export
   make-list-queue list-queue list-queue-copy list-queue-unfold list-queue-unfold-right
   list-queue? list-queue-empty?

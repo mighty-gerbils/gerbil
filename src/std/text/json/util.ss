@@ -3,10 +3,16 @@
 ;;; json utilities
 (import
   :gerbil/gambit/ports
-  :std/io :std/misc/ports :std/misc/process
-  :std/iter :std/misc/alist :std/misc/hash :std/misc/list :std/misc/list-builder
-  :std/misc/ports :std/misc/plist :std/misc/rtd :std/misc/walist
-  :std/sort :std/srfi/43 :std/sugar :std/values
+  :std/sugar
+  :std/error
+  :std/iter
+  :std/io
+  :std/misc/process
+  :std/misc/ports
+  :std/misc/list
+  :std/misc/hash
+  :std/misc/rtd
+  :std/values
   ./env ./input ./output)
 
 (export #t)
@@ -20,7 +26,7 @@
    ((is-BufferedReader? input)
     (read-json-object/buffer (BufferedReader input) (make-env)))
    (else
-    (error "Bad input source; expected input port, BufferedStringReader or BufferedReader instance" input))))
+    (raise-bad-argument 'read-json "input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
   (read-json-object/reader (open-buffered-string-reader str) (make-env)))
@@ -42,7 +48,7 @@
       (write-json-object/writer obj output (make-env))
       (&BufferedStringWriter-flush output)))
    (else
-    (error "Bad output sink; expected output port, Writer, StringWriter or BufferedStringWriter" output))))
+    (raise-bad-argument 'write-json "output port, Writer, StringWriter or BufferedStringWriter" output))))
 
 (def (json-object->string obj)
   (let (buffer (open-buffered-string-writer #f))

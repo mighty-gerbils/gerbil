@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit/hash
         :gerbil/gambit/bits
+        :std/error
         :std/generic)
 (export
   comparator? comparator-ordered? comparator-hashable?

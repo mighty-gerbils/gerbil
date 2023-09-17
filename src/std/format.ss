@@ -284,7 +284,7 @@
        ((##fx= digits 0)
         (if (equal? pre-str "-0") "0" pre-str))
        (else
-        (error "BUG: compose-float" digits pre-str frac-str)))))
+        (BUG 'format "compose-float" digits pre-str frac-str)))))
 
   ;; ensure there is a leading zero for sub-1 magnitude floats
   ;; ensure there is a fractional part

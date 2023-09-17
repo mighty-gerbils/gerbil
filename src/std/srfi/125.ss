@@ -3,6 +3,7 @@
 ;;; SRFI-125: Hash Table Library
 
 (import :gerbil/gambit/hash
+        :std/error
         :std/srfi/128)
 (export
   ;; constructors
