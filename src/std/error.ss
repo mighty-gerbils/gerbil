@@ -202,13 +202,13 @@
 
 (defmethod {display-exception RuntimeException}
   (lambda (self port)
-    (##default-display-exception (RuntimeException-exception self) port)
-    (alet (cont (StackTrace-continuation self))
-      (let (old-width (fix-port-width! port))
+    (let (old-width (fix-port-width! port))
+      #;(##default-display-exception (RuntimeException-exception self) port)
+      (alet (cont (StackTrace-continuation self))
         (display "--- continuation backtrace:" port)
         (newline port)
-        (display-continuation-backtrace cont port)
-        (reset-port-width! port old-width)))))
+        (display-continuation-backtrace cont port))
+      (reset-port-width! port old-width))))
 
 ;; exception?
 (def (exception-handler-hook exn continue)
@@ -218,11 +218,13 @@
    ((or (Error? exn) (Exception? exn))  ; already has it if we want it
     (continue exn))
    ((macro-exception? exn)
-    (let (rte (RuntimeException exception: exn ))
+    (let (rte (RuntimeException exception: exn))
       (continuation-capture
        (lambda (cont)
-         (set! (StackTrace-continuation rte) cont)))
-      (continue rte)))
+         (set! (StackTrace-continuation rte) (##continuation-next cont))))
+      (if (eq? continue ##thread-end-with-uncaught-exception!)
+        (##repl-exception-handler-hook rte continue)
+        (continue rte))))
    (else
     (continue exn))))
 
@@ -451,6 +453,8 @@
 
 (extern namespace: #f
   macro-exception?
+  macro-debug-settings-uncaught-primordial
+  macro-debug-settings-uncaught
   macro-character-port?
   macro-character-port-output-width
   macro-character-port-output-width-set!)
