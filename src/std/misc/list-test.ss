@@ -4,10 +4,6 @@
   :gerbil/gambit/exceptions
   :std/error :std/misc/list :std/test)
 
-(def (error-with-message? message)
-  (lambda (e)
-    (and (error-exception? e) (equal? (error-exception-message e) message))))
-
 (def (copy-list lst) (foldr cons '() lst))
 
 (def list-test
@@ -38,7 +34,7 @@
       (check-equal? (length=n? '(1 2 3) -4) #f)
       (check-equal? (length=n? '(1 2 3) 6.022e23) #f)
       (check-equal? (length=n? '(1 2 3) 2+3i) #f)
-      (check-exception (length=n? '(1 2 3) 'foo) (error-with-message? "not a number")))
+      (check-exception (length=n? '(1 2 3) 'foo) bad-argument-error?))
     (test-case "test length<=n?"
       (check-equal? (length<=n? '(1 2 3) 4) #t)
       (check-equal? (length<=n? '(1 2 3) 3) #t)
@@ -52,8 +48,8 @@
       (check-equal? (length<=n? '(1 2 3 . 4) 2) #f)
       (check-equal? (length<=n? '(1 2 3) -4) #f)
       (check-equal? (length<=n? '(1 2 3) 6.022e23) #t)
-      (check-exception (length<=n? '(1 2 3) 2+3i) (error-with-message? "not a real number"))
-      (check-exception (length<=n? '(1 2 3) 'foo) (error-with-message? "not a real number")))
+      (check-exception (length<=n? '(1 2 3) 2+3i) bad-argument-error?)
+      (check-exception (length<=n? '(1 2 3) 'foo) bad-argument-error?))
     (test-case "test length<n?"
       (check-equal? (length<n? '(1 2 3) 4) #t)
       (check-equal? (length<n? '(1 2 3) 3) #f)
@@ -67,8 +63,8 @@
       (check-equal? (length<n? '(1 2 3 . 4) 2) #f)
       (check-equal? (length<n? '(1 2 3) -4) #f)
       (check-equal? (length<n? '(1 2 3) 6.022e23) #t)
-      (check-exception (length<n? '(1 2 3) 2+3i) (error-with-message? "not a real number"))
-      (check-exception (length<n? '(1 2 3) 'foo) (error-with-message? "not a real number")))
+      (check-exception (length<n? '(1 2 3) 2+3i) bad-argument-error?)
+      (check-exception (length<n? '(1 2 3) 'foo) bad-argument-error?))
     (test-case "test snoc"
       (check-equal? (snoc 3 []) [3])
       (check-equal? (snoc 1 [3 2]) [3 2 1]))

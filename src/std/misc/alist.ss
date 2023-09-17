@@ -93,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2v2 . rr] (set-car! p k2v2) (set-cdr! p rr))
-               ([] (BUG 'arem! "cannot remove last key from alist" lst key))
+               ([] (raise-bad-argument 'arem! "key: cannot remove last key from alist" lst key))
                (_ (invalid))))
            (lp r p)))
         ([] (void)) ; key not found: NOP

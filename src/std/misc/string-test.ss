@@ -1,13 +1,10 @@
 (export string-test)
 
 (import
+  :std/error
   :std/misc/string :std/srfi/13
   :std/test :gerbil/gambit/exceptions
   :std/pregexp :std/misc/repr :std/sugar :std/format)
-
-(def (error-with-message? message)
-  (lambda (e)
-    (and (error-exception? e) (equal? (error-exception-message e) message))))
 
 (defstruct point (x y))
 (defmethod {:pr point}
@@ -44,7 +41,7 @@
      (check-equal? (string-subst "abb"          "b*" "_" count: #f) "abb")
      (check-exception
       (string-subst "abc" "b" "_" count: #t)
-      (error-with-message? "Illegal argument; count must be a fixnum or #f, got:"))
+      bad-argument-error?)
      ;; empty old
      (check-equal? (string-subst ""     "" "_"  count: 1)  "_")
      (check-equal? (string-subst "a"    "" "_"  count: 1)  "_a")

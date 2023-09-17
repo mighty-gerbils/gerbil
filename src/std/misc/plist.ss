@@ -93,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2 . v2r] (set-car! p k2) (set-cdr! p v2r))
-               ([] (BUG 'prem! "Cannot remove last key from plist" lst key))
+               ([] (raise-bad-argument 'prem! "key: cannot remove last key from plist" lst key))
                (_ (invalid))))
            (lp r (cdr p))))
         ([] (void)) ; key not found: NOP

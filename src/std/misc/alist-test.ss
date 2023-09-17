@@ -4,10 +4,6 @@
   :gerbil/gambit/exceptions
   :std/error :std/misc/alist :std/test)
 
-(def (error-with-message? message)
-  (lambda (e)
-    (and (error-exception? e) (equal? (error-exception-message e) message))))
-
 (def (copy-list lst) (foldr cons '() lst))
 
 (def alist-test
@@ -24,7 +20,7 @@
       (check-equal? (let (a [['a . 1]['b . 2]]) (aremq! 'b a) a) '((a . 1)))
       (check-equal? (let (a [['a . 1]['b . 2]]) (aremq! 'c a) a) '((a . 1) (b . 2)))
       (check-equal? (let (a []) (aremq! 'a a) a) '())
-      (check-exception (aremq! 'a [['a . 1]]) (error-with-message? "Cannot remove last key from alist")))
+      (check-exception (aremq! 'a [['a . 1]]) bad-argument-error?))
     (test-case "test aset"
       (check-equal? (asetq [['a . 1]['b . 2]] 'a 3) [['a . 3]['b . 2]])
       (check-equal? (asetq [['a . 1]['b . 2]] 'b 4) [['a . 1]['b . 4]])

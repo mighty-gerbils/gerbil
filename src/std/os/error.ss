@@ -22,7 +22,7 @@
 
 (deferror-class OSError () os-error?)
 (def (raise-os-error errno prim . args)
-  (raise (OSError (strerror errno) errno prim args)))
+  (raise (OSError (strerror errno) irritants: [errno prim args])))
 
 (deferror-class AllocationError () foreign-allocation-error?)
 (def (raise-allocation-error where expr)
