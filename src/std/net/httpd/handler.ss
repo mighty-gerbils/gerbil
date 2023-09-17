@@ -11,10 +11,10 @@
         :std/foreign
         :std/text/utf8
         :std/pregexp
-        :std/misc/with-id
         ./base
         (for-syntax :std/stxutil
                     :std/misc/string))
+
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params

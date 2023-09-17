@@ -1,0 +1,45 @@
+(import
+  :gerbil/gambit/ports
+  :std/sugar)
+
+(export raw-port raw-port-port)
+
+;; Raw wrapper for a port without any buffering
+(defstruct raw-port (port) final: #t unchecked: #t)
+
+(defrule (def-raw-port-method (name port . args) body ...)
+  (defmethod {name raw-port}
+    (lambda (self . args)
+      (let (port (&raw-port-port self))
+        body ...))))
+
+(def-raw-port-method (close port)
+  (close-port port))
+(def-raw-port-method (read-char port)
+  (read-char port))
+(def-raw-port-method (peek-char port)
+  (peek-char port))
+(def-raw-port-method (read port u8v (start 0) (end (u8vector-length u8v)) (need 0))
+  (read-subu8vector u8v port start end need))
+(def-raw-port-method (write port u8v (start 0) (end (u8vector-length u8v)))
+  (write-subu8vector u8v port start end))
+(def-raw-port-method (read-u8 port)
+  (read-u8 port))
+(def-raw-port-method (peek-u8 port)
+  (peek-u8 port))
+(def-raw-port-method (put-back port previous-input)
+  (error "cannot put-back into port" port previous-input))
+(def-raw-port-method (skip port count)
+  (error "cannot skip from port" port count))
+(def-raw-port-method (delimit port limit)
+  (error "cannot delimit port" port limit))
+(def-raw-port-method (reset! port reader)
+  (error "cannot reset! port" port reader))
+(def-raw-port-method (write-u8 port u8)
+  (write-u8 u8 port))
+(def-raw-port-method (flush port)
+  (force-output port))
+(def-raw-port-method (read-string port str (start 0) (end (string-length str)) (need 0))
+  (read-substring str start end port need))
+(def-raw-port-method (write-string port str (start 0) (end (string-length str)))
+  (write-substring str start end port))

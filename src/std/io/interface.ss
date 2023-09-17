@@ -27,12 +27,13 @@
   (write u8v (start 0) (end (u8vector-length u8v))))
 
 ;; buffered IO
-(interface (BufferedReader Reader)
+(interface (PeekableReader Reader)
   ;; reads a single byte
   (read-u8)
   ;; peeks the next byte
-  (peek-u8)
+  (peek-u8))
 
+(interface (BufferedReader PeekableReader)
   ;; puts back some bytes previously read; can also inject bytes.
   ;; - previous-input is a u8 or a list of u8s injected back into the buffer
   (put-back previous-input)
@@ -51,7 +52,7 @@
   ;; writes a single byte
   (write-u8 u8)
 
-  ;; flushes the buffer to the underlyin output instance
+  ;; flushes the buffer to the underlying output instance
   (flush)
 
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
@@ -62,17 +63,18 @@
   ;; read into a string
   (read-string str (start 0) (end (string-length str)) (need 0)))
 
-(interface (BufferedStringReader StringReader)
+(interface (PeekableStringReader StringReader)
   ;; reads a single char
   (read-char)
   ;; peeks the next char
-  (peek-char)
+  (peek-char))
 
+(interface (BufferedStringReader PeekableStringReader)
   ;; puts back some chars previously read; can also inject characters.
   ;; - previous-input is a char or a list of chars injected into the buffer
   (put-back previous-input)
 
-    ;; skips the next count bytes of input
+  ;; skips the next count chars of input
   (skip count)
 
   ;; returns a new StringBufferedReader instance delimiting the input length that shares
