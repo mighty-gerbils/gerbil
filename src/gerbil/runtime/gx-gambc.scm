@@ -334,7 +334,12 @@
     (&current-module-registry module-registry))
 
   (current-readtable _gx#*readtable*)
-  (set! ##display-exception-hook _gx#display-exception))
+  (set! ##display-exception-hook _gx#display-exception)
+  ;; fix the output width to something that doesn't truncate exceptions
+  (for-each
+    (lambda (port)
+      (macro-character-port-output-width-set! port (lambda (port) 256)))
+    (list ##stdout-port ##console-port)))
 
 ;; expander loading hook
 (define __gx#expander-loaded #f)
