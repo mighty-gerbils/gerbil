@@ -339,7 +339,16 @@
   (for-each
     (lambda (port)
       (macro-character-port-output-width-set! port (lambda (port) 256)))
-    (list ##stdout-port ##console-port (current-error-port))))
+    (list ##stdout-port ##console-port (current-error-port)))
+  ;; set an initial primodrila exception hook
+  (##primordial-exception-handler-hook-set! _gx#exception-handler-hook))
+
+(define (_gx#exception-handler-hook exn continue)
+  (if (or (heap-overflow-exception? exn)
+          (stack-overflow-exception? exn))
+    ;; not safe to do much
+    (continue exn)
+    (##repl-exception-handler-hook exn continue)))
 
 ;; expander loading hook
 (define __gx#expander-loaded #f)

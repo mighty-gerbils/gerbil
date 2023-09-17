@@ -213,7 +213,8 @@
 ;; exception?
 (def (exception-handler-hook exn continue)
   (cond
-   ((heap-overflow-exception? exn)      ; not safe to do much
+   ((or (heap-overflow-exception? exn)
+        (stack-overflow-exception? exn)) ; not safe to do much
     (continue exn))
    ((or (Error? exn) (Exception? exn))  ; already has it if we want it
     (continue exn))
