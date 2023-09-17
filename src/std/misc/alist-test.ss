@@ -1,7 +1,6 @@
 (export alist-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/error :std/misc/alist :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))

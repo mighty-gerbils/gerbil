@@ -5,7 +5,7 @@
 
 (import :std/test
         (only-in :std/sugar try catch)
-        :gerbil/gambit/exceptions
+        :std/error
         :std/misc/bytes :std/srfi/13)
 (export bytes-test)
 

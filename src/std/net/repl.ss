@@ -5,7 +5,6 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/readtables
-        :gerbil/gambit/exceptions
         :std/error
         :std/sugar
         :std/logger

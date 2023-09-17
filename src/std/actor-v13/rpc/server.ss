@@ -3,7 +3,7 @@
 ;;; actor rpc
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
+        :std/error
         :std/sugar
         :std/logger
         :std/misc/threads

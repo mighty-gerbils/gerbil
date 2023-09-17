@@ -1,7 +1,6 @@
 (export plist-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/error :std/misc/plist :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))

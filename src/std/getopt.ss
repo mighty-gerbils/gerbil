@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
 
-(import :gerbil/gambit/exceptions
-        :std/error
+(import :std/error
         :std/sugar
         :std/format)
 (export getopt

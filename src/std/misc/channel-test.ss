@@ -5,8 +5,8 @@
 (import :std/misc/channel
         :std/test
         :std/sugar
-        :gerbil/gambit/threads
-        :gerbil/gambit/exceptions)
+        :std/error
+        :gerbil/gambit/threads)
 (export channel-test)
 
 (def (channel-reader ch count)

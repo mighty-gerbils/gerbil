@@ -339,7 +339,7 @@
   (for-each
     (lambda (port)
       (macro-character-port-output-width-set! port (lambda (port) 256)))
-    (list ##stdout-port ##console-port)))
+    (list ##stdout-port ##console-port (current-error-port))))
 
 ;; expander loading hook
 (define __gx#expander-loaded #f)

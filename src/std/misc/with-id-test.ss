@@ -1,13 +1,13 @@
 (export with-id-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/srfi/13
   :std/misc/number
   :std/misc/string
   :std/sugar
   :std/stxutil
   :std/test
+  :std/error
   ./with-id)
 
 (def with-id-test

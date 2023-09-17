@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; stream sockets
-(import (only-in :gerbil/gambit/exceptions display-exception)
-        :std/error
+(import :std/error
         :std/os/socket
         :std/os/fd
         ../interface

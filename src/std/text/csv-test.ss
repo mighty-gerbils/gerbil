@@ -5,7 +5,7 @@
 (export csv-test)
 
 (import
-  :gerbil/gambit/exceptions
+  :std/error
   :std/format :std/misc/ports :std/misc/string :std/sugar :std/test :std/text/csv)
 
 (def (normalize-crlf input)

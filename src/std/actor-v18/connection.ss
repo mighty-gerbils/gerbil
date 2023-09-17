@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor server connections
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/error
         :std/sugar
         :std/sort

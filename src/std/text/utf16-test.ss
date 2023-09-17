@@ -5,8 +5,8 @@
 (import :std/test
         :std/text/utf16
         :std/sugar
-        :gerbil/gambit/random
-        :gerbil/gambit/exceptions)
+        :std/error
+        :gerbil/gambit/random)
 
 (export utf16-test)
 (def utf16-test

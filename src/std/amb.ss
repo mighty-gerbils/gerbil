@@ -4,7 +4,6 @@
 ;;; Orignally based on Ken Lovett's chicken implementation, but has mutated since then.
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/sugar
         :std/error
         :std/misc/shuffle)

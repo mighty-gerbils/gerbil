@@ -1,7 +1,6 @@
 (export #t)
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/sugar
         :std/assert
         :std/error

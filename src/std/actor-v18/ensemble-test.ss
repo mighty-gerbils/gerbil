@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor ensemble test
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/test
         :std/error
         :std/sugar

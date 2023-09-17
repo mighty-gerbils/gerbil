@@ -3,7 +3,6 @@
 ;;; embedded HTTP/1.1 server
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/sugar
         :std/error
         (only-in :std/logger start-logger!)

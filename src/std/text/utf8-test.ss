@@ -6,8 +6,7 @@
         :std/text/utf8
         :std/sugar
 	    :std/error
-        :gerbil/gambit/random
-        :gerbil/gambit/exceptions)
+        :gerbil/gambit/random)
 
 (export utf8-test)
 

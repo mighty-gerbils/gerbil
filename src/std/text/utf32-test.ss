@@ -5,8 +5,7 @@
 (import :std/test
         :std/text/utf32
         :std/sugar
-        :gerbil/gambit/random
-        :gerbil/gambit/exceptions)
+        :gerbil/gambit/random)
 
 (export utf32-test)
 (def utf32-test

@@ -19,12 +19,15 @@
         ContextError ContextError? raise-context-error context-error?
         KeyError KeyError? raise-key-error key-error?
         Exception Exception?
+        RuntimeException RuntimeException?
         (rename: raise-unspecified-error error)
         (rename: raise-bug BUG)
         (rename: raise/stack-trace raise)
         is-it-bug?
         with-exception-stack-trace
-        dump-stack-trace!)
+        dump-stack-trace!
+        ;; re-export this so that noone has to import :gerbil/gambit/exceptions
+        display-exception)
 
 (defsyntax <exception>
   (make-runtime-struct-info
@@ -178,6 +181,8 @@
 
 (def (dump-stack-trace! cont exn (error-port (current-error-port)))
   (let ((out (open-output-string)))
+    ;; XXX workaround for broken stack traces because of truncation
+    (##unchecked-structure-set! out (lambda (port) 256) 37 #f #f)
     (display "*** Unhandled exception in " out)
     (display (current-thread) out)
     (newline out)
@@ -190,3 +195,248 @@
       (display-continuation-backtrace cont out))
 
     (##write-string (get-output-string out) error-port)))
+
+;;; Runtime Errors -- stack traces for gambit emitted exceptions
+(defclass (RuntimeException StackTrace Exception) (exception))
+
+(defmethod {display-exception RuntimeException}
+  (lambda (self port)
+    (##default-display-exception (RuntimeException-exception self) port)
+    (alet (cont (StackTrace-continuation self))
+      (display "--- continuation backtrace:" port)
+      (newline port)
+      (display-continuation-backtrace cont port))))
+
+(def (exception-handler-hook exn cont)
+  (cond
+   ((or (Error? exn) (Exception? exn))
+    (cont exn))
+   ((and (exception? exn)
+         (not (heap-overflow-exception? exn))) ; not safe to allocate
+    (cont
+     (RuntimeException exception: exn continuation: (continuation-capture identity))))
+   (else
+    (cont exn))))
+
+(##primordial-exception-handler-hook-set! exception-handler-hook)
+
+(defsyntax (defruntime-exception stx)
+  (syntax-case stx ()
+    ((_ (predicate accessor ...))
+     (with-syntax ((is? (stx-identifier #'predicate "is-" #'predicate))
+                   ((getf ...)
+                    (map (lambda (f) (stx-identifier f "get-" f))
+                         #'(accessor ...))))
+       #'(begin
+           (def (is? exn)
+             (if (RuntimeException? exn)
+               (predicate (RuntimeException-exception exn))
+               (predicate exn)))
+           (def (getf exn)
+             (if (RuntimeException? exn)
+               (accessor (RuntimeException-exception exn))
+               (accessor exn)))
+           ...
+           (export
+             (rename: is? predicate)
+             (rename: getf accessor)
+             ...))))))
+
+(defrules defruntime-exceptions ()
+  ((_ defexn ...)
+   (begin
+     (defruntime-exception defexn)
+     ...)))
+
+(defruntime-exceptions
+  (abandoned-mutex-exception?)
+
+  (cfun-conversion-exception?
+   cfun-conversion-exception-arguments
+   cfun-conversion-exception-code
+   cfun-conversion-exception-message
+   cfun-conversion-exception-procedure)
+
+  (datum-parsing-exception?
+   datum-parsing-exception-kind
+   datum-parsing-exception-parameters
+   datum-parsing-exception-readenv)
+
+  (deadlock-exception?)
+
+  (divide-by-zero-exception?
+   divide-by-zero-exception-arguments
+   divide-by-zero-exception-procedure)
+
+  (error-exception?
+   error-exception-message
+   error-exception-parameters)
+
+  (expression-parsing-exception?
+   expression-parsing-exception-kind
+   expression-parsing-exception-parameters
+   expression-parsing-exception-source)
+
+  (file-exists-exception?
+   file-exists-exception-arguments
+   file-exists-exception-procedure)
+
+  (fixnum-overflow-exception?
+   fixnum-overflow-exception-arguments
+   fixnum-overflow-exception-procedure)
+
+  (heap-overflow-exception?)
+
+  (inactive-thread-exception?
+   inactive-thread-exception-arguments
+   inactive-thread-exception-procedure)
+
+  (initialized-thread-exception?
+   initialized-thread-exception-arguments
+   initialized-thread-exception-procedure)
+
+  (invalid-hash-number-exception?
+   invalid-hash-number-exception-arguments
+   invalid-hash-number-exception-procedure)
+
+  (invalid-utf8-encoding-exception?
+   invalid-utf8-encoding-exception-arguments
+   invalid-utf8-encoding-exception-procedure)
+
+  (join-timeout-exception?
+   join-timeout-exception-arguments
+   join-timeout-exception-procedure)
+
+  (keyword-expected-exception?
+   keyword-expected-exception-arguments
+   keyword-expected-exception-procedure)
+
+  (length-mismatch-exception?
+   length-mismatch-exception-arg-id
+   length-mismatch-exception-arguments
+   length-mismatch-exception-procedure)
+
+  (mailbox-receive-timeout-exception?
+   mailbox-receive-timeout-exception-arguments
+   mailbox-receive-timeout-exception-procedure)
+
+  (module-not-found-exception?
+   module-not-found-exception-arguments
+   module-not-found-exception-procedure)
+
+  (multiple-c-return-exception?)
+
+  (no-such-file-or-directory-exception?
+   no-such-file-or-directory-exception-arguments
+   no-such-file-or-directory-exception-procedure)
+
+  (noncontinuable-exception?
+   noncontinuable-exception-reason)
+
+  (nonempty-input-port-character-buffer-exception?
+   nonempty-input-port-character-buffer-exception-arguments
+   nonempty-input-port-character-buffer-exception-procedure)
+
+  (nonprocedure-operator-exception?
+   nonprocedure-operator-exception-arguments
+   nonprocedure-operator-exception-code
+   nonprocedure-operator-exception-operator
+   nonprocedure-operator-exception-rte)
+
+  (not-in-compilation-context-exception?
+   not-in-compilation-context-exception-arguments
+   not-in-compilation-context-exception-procedure)
+
+  (number-of-arguments-limit-exception?
+   number-of-arguments-limit-exception-arguments
+   number-of-arguments-limit-exception-procedure)
+
+  (os-exception?
+   os-exception-arguments
+   os-exception-code
+   os-exception-message
+   os-exception-procedure)
+
+  (permission-denied-exception?
+   permission-denied-exception-arguments
+   permission-denied-exception-procedure)
+
+  (range-exception?
+   range-exception-arg-id
+   range-exception-arguments
+   range-exception-procedure)
+
+  (rpc-remote-error-exception?
+   rpc-remote-error-exception-arguments
+   rpc-remote-error-exception-message
+   rpc-remote-error-exception-procedure)
+
+  (scheduler-exception?
+   scheduler-exception-reason)
+
+  (sfun-conversion-exception?
+   sfun-conversion-exception-arguments
+   sfun-conversion-exception-code
+   sfun-conversion-exception-message
+   sfun-conversion-exception-procedure)
+
+  (stack-overflow-exception?)
+
+  (started-thread-exception?
+   started-thread-exception-arguments
+   started-thread-exception-procedure)
+
+  (terminated-thread-exception?
+   terminated-thread-exception-arguments
+   terminated-thread-exception-procedure)
+
+  (type-exception?
+   type-exception-arg-id
+   type-exception-arguments
+   type-exception-procedure
+   type-exception-type-id)
+
+  (unbound-global-exception?
+   unbound-global-exception-code
+   unbound-global-exception-rte
+   unbound-global-exception-variable)
+
+  (unbound-key-exception?
+   unbound-key-exception-arguments
+   unbound-key-exception-procedure)
+
+  (unbound-os-environment-variable-exception?
+   unbound-os-environment-variable-exception-arguments
+   unbound-os-environment-variable-exception-procedure)
+
+  (unbound-serial-number-exception?
+   unbound-serial-number-exception-arguments
+   unbound-serial-number-exception-procedure)
+
+  (uncaught-exception?
+   uncaught-exception-arguments
+   uncaught-exception-procedure
+   uncaught-exception-reason)
+
+  (uninitialized-thread-exception?
+   uninitialized-thread-exception-arguments
+   uninitialized-thread-exception-procedure)
+
+  (unknown-keyword-argument-exception?
+   unknown-keyword-argument-exception-arguments
+   unknown-keyword-argument-exception-procedure)
+
+  (unterminated-process-exception?
+   unterminated-process-exception-arguments
+   unterminated-process-exception-procedure)
+
+  (wrong-number-of-arguments-exception?
+   wrong-number-of-arguments-exception-arguments
+   wrong-number-of-arguments-exception-procedure)
+
+  (wrong-number-of-values-exception?
+   wrong-number-of-values-exception-code
+   wrong-number-of-values-exception-rte
+   wrong-number-of-values-exception-vals)
+
+  (wrong-processor-c-return-exception?))

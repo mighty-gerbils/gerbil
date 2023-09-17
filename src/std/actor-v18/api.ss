@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor v18 api
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/error
         :std/sugar
         :std/iter

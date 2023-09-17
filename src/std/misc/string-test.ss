@@ -3,7 +3,7 @@
 (import
   :std/error
   :std/misc/string :std/srfi/13
-  :std/test :gerbil/gambit/exceptions
+  :std/test
   :std/pregexp :std/misc/repr :std/sugar :std/format)
 
 (defstruct point (x y))
