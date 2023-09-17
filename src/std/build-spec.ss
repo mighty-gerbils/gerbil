@@ -16,7 +16,7 @@
     "assert"
     "make"
     "build-script"
-    "error"
+    (gxc: "error" ,@(include-gambit-sharp))
     "getopt"
     "logger"
     (gxc: "generic/dispatch" ,@(include-gambit-sharp))

@@ -47,23 +47,25 @@
 
 (defmethod {display-exception Error}
   (lambda (self port)
-    (parameterize ((current-output-port port))
-      (cond
-       ((Error-where self)
-        => (lambda (where) (display* where ": "))))
-      (display* "[" (##type-name (object-type self)) "] ")
-      (displayln (Error-message self))
-      (let (irritants (Error-irritants self))
-        (unless (null? irritants)
-          (display "--- irritants: ")
-          (for-each
-            (lambda (obj) (display* obj " "))
-            irritants)
-          (newline)))
-      (when (StackTrace? self)
-        (alet (cont (StackTrace-continuation self))
-          (displayln "--- continuation backtrace:")
-          (display-continuation-backtrace cont)))))
+    (let (old-width (fix-port-width! port))
+      (parameterize ((current-output-port port))
+        (cond
+         ((Error-where self)
+          => (lambda (where) (display* where ": "))))
+        (display* "[" (##type-name (object-type self)) "] ")
+        (displayln (Error-message self))
+        (let (irritants (Error-irritants self))
+          (unless (null? irritants)
+            (display "--- irritants: ")
+            (for-each
+              (lambda (obj) (display* obj " "))
+              irritants)
+            (newline)))
+        (when (StackTrace? self)
+          (alet (cont (StackTrace-continuation self))
+            (displayln "--- continuation backtrace:")
+            (display-continuation-backtrace cont))))
+      (reset-port-width! port old-width)))
   rebind: #t)
 
 (def (Error-message err)
@@ -181,8 +183,7 @@
 
 (def (dump-stack-trace! cont exn (error-port (current-error-port)))
   (let ((out (open-output-string)))
-    ;; XXX workaround for broken stack traces because of truncation
-    (##unchecked-structure-set! out (lambda (port) 256) 37 #f #f)
+    (fix-port-width! out)
     (display "*** Unhandled exception in " out)
     (display (current-thread) out)
     (newline out)
@@ -203,20 +204,27 @@
   (lambda (self port)
     (##default-display-exception (RuntimeException-exception self) port)
     (alet (cont (StackTrace-continuation self))
-      (display "--- continuation backtrace:" port)
-      (newline port)
-      (display-continuation-backtrace cont port))))
+      (let (old-width (fix-port-width! port))
+        (display "--- continuation backtrace:" port)
+        (newline port)
+        (display-continuation-backtrace cont port)
+        (reset-port-width! port old-width)))))
 
-(def (exception-handler-hook exn cont)
+;; exception?
+(def (exception-handler-hook exn continue)
   (cond
-   ((or (Error? exn) (Exception? exn))
-    (cont exn))
-   ((and (exception? exn)
-         (not (heap-overflow-exception? exn))) ; not safe to allocate
-    (cont
-     (RuntimeException exception: exn continuation: (continuation-capture identity))))
+   ((heap-overflow-exception? exn)      ; not safe to do much
+    (continue exn))
+   ((or (Error? exn) (Exception? exn))  ; already has it if we want it
+    (continue exn))
+   ((macro-exception? exn)
+    (let (rte (RuntimeException exception: exn ))
+      (continuation-capture
+       (lambda (cont)
+         (set! (StackTrace-continuation rte) cont)))
+      (continue rte)))
    (else
-    (cont exn))))
+    (continue exn))))
 
 (##primordial-exception-handler-hook-set! exception-handler-hook)
 
@@ -440,3 +448,20 @@
    wrong-number-of-values-exception-vals)
 
   (wrong-processor-c-return-exception?))
+
+(extern namespace: #f
+  macro-exception?
+  macro-character-port?
+  macro-character-port-output-width
+  macro-character-port-output-width-set!)
+
+;;;; Hack to workaround stack trace line truncation issues with port widths
+(def (fix-port-width! port)
+  (when (macro-character-port? port)
+    (let (old-width (macro-character-port-output-width port))
+      (macro-character-port-output-width-set! port (lambda (port) 256))
+      old-width)))
+
+(def (reset-port-width! port old-width)
+  (when (macro-character-port? port)
+    (macro-character-port-output-width-set! port old-width)))
