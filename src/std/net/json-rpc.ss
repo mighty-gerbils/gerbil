@@ -19,7 +19,8 @@
   json-rpc-version
   parser-error invalid-request method-not-found invalid-params internal-error
   application-error system-error tranport-error
-  malformed-request malformed-response)
+  MalformedRequest? malformed-request?
+  MalformedResponse? malformed-response?)
 
 (import
   :gerbil/gambit/continuations
@@ -114,20 +115,15 @@
 (def (tranport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
-(defclass (malformed-request JSON StackTrace Exception) (method params e) transparent: #t)
-(defclass (malformed-response JSON StackTrace Exception) (request-id response e) transparent: #t)
-
-(def (display-malformed-exception obj port)
-  (parameterize ((current-output-port port))
-    (displayln (##type-name (object-type obj)))
-    (alet (cont (@ obj continuation))
-      (displayln "--- continuation backtrace:")
-      (display-continuation-backtrace cont))))
-
-(defmethod {display-exception malformed-request}
-  display-malformed-exception)
-(defmethod {display-exception malformed-response}
-  display-malformed-exception)
+(def (malformed-request/response-init! self . args)
+  (class-instance-init! self args)
+  (Error:::init! self (@ self message)))
+(deferror-class (MalformedRequest JSON StackTrace Error) (method params message)
+  malformed-request?
+  malformed-request/response-init!)
+(deferror-class (MalformedResponse JSON StackTrace Error) (request-id response message)
+  malformed-response?
+  malformed-request/response-init!)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
   (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
@@ -154,8 +150,8 @@
               (try (json-object->bytes
                     (json-rpc-request jsonrpc: json-rpc-version
                                       method: method params: params id: id))
-                   (catch (e) (raise (malformed-request method: method params: params
-                                                        e: (error-message e))))))
+                   (catch (e) (raise (MalformedRequest method: method params: params
+                                                       message: (error-message e))))))
           (http-post server-url
                      auth: auth
                      headers: `(("Content-Type" . "application/json-rpc")
@@ -179,9 +175,9 @@
         (set! id (number->string id)) ;; GET method wants string id.
         (let* ((base64-params
                 (try (u8vector->base64-string (json-object->bytes params))
-                     (catch (e) (raise (malformed-request
+                     (catch (e) (raise (MalformedRequest
                                         method: method params: params
-                                        e: (error-message e))))))
+                                        message: (error-message e))))))
                (uri-params
                 `(("jsonrpc" .,json-rpc-version)
                   ("method" .,method)
@@ -199,7 +195,9 @@
   (def response-json
     (try
      (bytes->json response-bytes) ;; todo: move to decode-json-rpc-response ?
-     (catch (e) (raise (malformed-response request-id: id response: response-bytes e: e)))))
+     (catch (e)
+       (raise (MalformedResponse request-id: id response: response-bytes
+                                 message: (error-message e))))))
   (when log
     (log [from: server-url response: (bytes->string response-bytes)]))
   (decode-json-rpc-response
@@ -209,7 +207,8 @@
 
 (def (decode-json-rpc-response decoder request-id response-json)
   (def (mal! e)
-    (raise (malformed-response request-id: request-id response: response-json e: (error-message e))))
+    (raise (MalformedResponse request-id: request-id response: response-json
+                              message: (error-message e))))
   (def response (with-catch mal! (cut trivial-json-object->class json-rpc-response::t response-json)))
   (def jsonrpc (@ response jsonrpc))
   (def result (@ response result))
