@@ -341,7 +341,8 @@
       (macro-character-port-output-width-set! port (lambda (port) 256)))
     (list ##stdout-port ##console-port (current-error-port)))
   ;; set an initial primodrila exception hook
-  (##primordial-exception-handler-hook-set! _gx#exception-handler-hook))
+  (unless ##primordial-exception-handler-hook
+    (##primordial-exception-handler-hook-set! _gx#exception-handler-hook)))
 
 (define (_gx#exception-handler-hook exn continue)
   (if (or (heap-overflow-exception? exn)
