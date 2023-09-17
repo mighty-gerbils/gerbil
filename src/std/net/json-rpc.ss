@@ -37,16 +37,19 @@
   (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
            bytes->json-object json-object->bytes json-object->string))
 
-(deferror-class (JSON-RPCError IOError) () json-rpc-error?
-  ;;  (code    ;; SInt16
-  ;;   message ;; String
-  ;;   data)   ;; (Maybe Bytes)
+(deferror-class (JSON-RPCError IOError)
+  (code    ; SInt16
+     message ; String
+     data)   ; (Maybe Bytes)
+  json-rpc-error?
   (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
-           code: code ;; SInt16
-           message: message ;; String
-           data: (data (void))) ;; (Maybe Bytes)
-    (let (irritants [code message data])
-      (Error:::init! self what irritants: irritants where: where))))
+           code: code                   ; SInt16
+           message: message             ; String
+           data: (data (void)))         ; (Maybe Bytes)
+    (class-instance-init! self [code: code message: message data: data])
+    (let (irritants [code])
+      (Error:::init! self (string-append "JSON RPC error: "message)
+                     irritants: irritants where: where))))
 (def json-rpc-error make-JSON-RPCError)
 
 (def (json-rpc-error-code e)
@@ -118,10 +121,10 @@
 (def (malformed-request/response-init! self . args)
   (class-instance-init! self args)
   (Error:::init! self (@ self message)))
-(deferror-class (MalformedRequest JSON StackTrace Error) (method params message)
+(deferror-class (MalformedRequest JSON Error) (method params message)
   malformed-request?
   malformed-request/response-init!)
-(deferror-class (MalformedResponse JSON StackTrace Error) (request-id response message)
+(deferror-class (MalformedResponse JSON Error) (request-id response message)
   malformed-response?
   malformed-request/response-init!)
 

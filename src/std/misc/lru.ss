@@ -34,7 +34,7 @@
            (lru-cache-touch! lru n)
            (&node-val n)))
      ((eq? default absent-obj)
-      (raise-key-error 'lru-cache-ref lru key))
+      (raise-unbound-key 'lru-cache-ref lru key))
      (else default))))
 
 (def (lru-cache-touch! lru n)

@@ -12,18 +12,21 @@
         StackTrace StackTrace?
         BadArgument BadArgument? raise-bad-argument bad-argument-error?
         IOError IOError? raise-io-error io-error?
-        IOClosed IOClosed? raise-io-closed io-closed-error?
+        Closed Closed? raise-io-closed io-closed-error?
         PrematureEndOfInput PrematureEndOfInput? raise-premature-end-of-input
         premature-end-of-input-error?
         Timeout Timeout? raise-timeout timeout-error?
+        UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
-        KeyError KeyError? raise-key-error key-error?
         Exception Exception?
         RuntimeException RuntimeException?
-        (rename: raise-unspecified-error error)
         (rename: raise-bug BUG)
+        BUG? is-it-bug?
+        (rename: raise-unspecified-error error)
         (rename: raise/stack-trace raise)
-        is-it-bug?
+        (rename: with-exception-handler/stack-trace with-exception-handler)
+        (rename: with-catch/stack-trace with-catch)
+        (rename: with-catch/stack-trace with-exception-catcher)
         with-exception-stack-trace
         dump-stack-trace!
         ;; re-export this so that noone has to import :gerbil/gambit/exceptions
@@ -37,9 +40,16 @@
   (make-runtime-struct-info
    runtime-identifier: (quote-syntax error::t)))
 
+;; Exceptions base class for non error exceptional conditions
+(defclass (Exception <exception>) ())
+
+;; Mixin for getting stack traces
+(defclass StackTrace (continuation))
+
 ;; Error base class
-(defclass (Error <error>) ()
-  constructor: :init!)
+(defclass (Error StackTrace <error>) ()
+  constructor: :init!
+  transparent: #t)
 
 (defmethod {:init! Error}
   (lambda (self message where: (where #f) irritants: (irritants []))
@@ -78,26 +88,33 @@
 ;; utility macro
 (defsyntax (deferror-class stx)
   (syntax-case stx ()
+    ((_ Class slots)
+     (identifier? #'Class)
+     (#'(deferror-class (Class Error) slots #f Error:::init!)))
     ((_ Class slots predicate-alias)
      (identifier? #'Class)
-     #'(deferror-class (Class StackTrace Error) slots predicate-alias Error:::init!))
+     #'(deferror-class (Class Error) slots predicate-alias Error:::init!))
     ((_ Class slots predicate-alias kons)
      (identifier? #'Class)
-     #'(deferror-class (Class StackTrace Error) slots predicate-alias kons))
+     #'(deferror-class (Class Error) slots predicate-alias kons))
+    ((_ (Class Mixin ...) slots)
+     (identifier-list? #'(Class Mixin ...))
+     #'(deferror-class (Class Mixin ...) slots #f Error:::init!))
     ((_ (Class Mixin ...) slots predicate-alias)
      (identifier-list? #'(Class Mixin ...))
      #'(deferror-class (Class Mixin ...) slots predicate-alias Error:::init!))
     ((_ (Class Mixin ...) slots predicate-alias kons)
      (identifier-list? #'(Class Mixin ...))
-     (with-syntax ((Class? (stx-identifier #'Class #'Class "?")))
+     (with-syntax ((defpredicate-alias
+                     (if (stx-e #'predicate-alias)
+                       (with-syntax ((Class? (stx-identifier #'Class #'Class "?")))
+                         #'(def predicate-alias Class?))
+                       #'(begin))))
        #'(begin
-           (defclass (Class Mixin ...) slots)
+           (defclass (Class Mixin ...) slots transparent: #t)
            (defmethod {:init! Class}
              kons)
-           (def predicate-alias Class?))))))
-
-;; Mixin for getting stack traces
-(defclass StackTrace (continuation))
+           defpredicate-alias)))))
 
 ;; Input argument errors
 (deferror-class BadArgument () bad-argument-error?)
@@ -105,7 +122,7 @@
 ;; IO Errors
 (deferror-class IOError () io-error?)
 (deferror-class (PrematureEndOfInput IOError) () premature-end-of-input-error?)
-(deferror-class (IOClosed IOError) () io-closed-error?)
+(deferror-class (Closed IOError) () io-closed-error?)
 
 ;; Timeouts
 (deferror-class Timeout () timeout-error?)
@@ -114,13 +131,10 @@
 (deferror-class ContextError () context-error?)
 
 ;; key lookup errors
-(deferror-class KeyError () key-error?)
+(deferror-class UnboundKey () unbound-key-error?)
 
 ;; unspecified errors
 (deferror-class UnspecifiedError () unspecified-error?)
-
-;; Exceptions base class for non error exceptional conditions
-(defclass (Exception <exception>) ())
 
 ;; check to the raiser!
 (def (raise-bad-argument where expectation . irritants)
@@ -138,7 +152,7 @@
 
 (def (raise-io-closed where message . irritants)
   (raise/stack-trace
-   (IOClosed message where: where irritants: irritants)))
+   (Closed message where: where irritants: irritants)))
 
 (def (raise-timeout where message . irritants)
   (raise/stack-trace
@@ -148,9 +162,9 @@
   (raise/stack-trace
    (ContextError message where: where irritants: irritants)))
 
-(def (raise-key-error where . irritants)
+(def (raise-unbound-key where . irritants)
   (raise/stack-trace
-   (KeyError "no value associated with key" where: where irritants: irritants)))
+   (UnboundKey "no value associated with key" where: where irritants: irritants)))
 
 (def (raise-unspecified-error message . irritants)
   (raise/stack-trace
@@ -194,7 +208,6 @@
       (display "Continuation backtrace: " out)
       (newline out)
       (display-continuation-backtrace cont out))
-
     (##write-string (get-output-string out) error-port)))
 
 ;;; Runtime Errors -- stack traces for gambit emitted exceptions
@@ -210,24 +223,45 @@
         (display-continuation-backtrace cont port))
       (reset-port-width! port old-width))))
 
-;; exception?
+;; exception handler hook
 (def (exception-handler-hook exn continue)
+  (let (exn (wrap-exception/stack-trace exn))
+    (##repl-exception-handler-hook exn continue)))
+
+(##primordial-exception-handler-hook-set! exception-handler-hook)
+
+;; exception handler installation
+(def (with-exception-handler/stack-trace handler thunk)
+  (with-exception-handler
+   (lambda (exn)
+     (let (exn (wrap-exception/stack-trace exn))
+       (handler exn)))
+   thunk))
+
+(def (with-catch/stack-trace handler thunk)
+  (continuation-capture
+   (lambda (cont)
+     (with-exception-handler/stack-trace
+      (lambda (exn) (continuation-graft cont handler exn))
+      thunk))))
+
+(extern namespace: #f syntax-error?)
+(def (wrap-exception/stack-trace exn)
   (cond
-   ((or (heap-overflow-exception? exn)
-        (stack-overflow-exception? exn)) ; not safe to do much
-    (continue exn))
+   ((or (heap-overflow-exception? exn)  ; out of memory, don't allocate
+        (stack-overflow-exception? exn) ; not safe to do much
+        (syntax-error? exn))            ; pass this through, the stack trace is not useful
+    exn)
    ((or (Error? exn) (Exception? exn))  ; already has it if we want it
-    (continue exn))
+    exn)
    ((macro-exception? exn)
     (let (rte (RuntimeException exception: exn))
       (continuation-capture
        (lambda (cont)
          (set! (StackTrace-continuation rte) (##continuation-next cont))))
-      (##repl-exception-handler-hook rte continue)))
+      rte))
    (else
-    (continue exn))))
-
-(##primordial-exception-handler-hook-set! exception-handler-hook)
+    exn)))
 
 (defsyntax (defruntime-exception stx)
   (syntax-case stx ()

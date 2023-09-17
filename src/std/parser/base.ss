@@ -25,7 +25,7 @@
      (wrap-ast [t e] loc))
     (else tok)))
 
-(deferror-class (ParseError Error) () parse-error?)
+(deferror-class ParseError () parse-error?)
 (def (raise-parse-error where msg tok . rest)
   (raise (ParseError msg irritants: (cons tok rest) where: where)))
 

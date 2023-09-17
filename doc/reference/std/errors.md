@@ -12,8 +12,13 @@ The exception hierarchy is rooted in two base classes: `Error` and `Exception`.
 - Instances of `Error` indicate error conditions, and they have a
   standard payload of a message, a subsystem or procedure name where
   the error originated, and a list of irritants.
+  `Error` mixes in `StackTrace` which allows the system to fill stack traces
+  -- see `raise` below.
 - Instances of `Exception` indicate exceptional conditions that are
   not necessarily errors, and do not have a standard payload.
+  `Exception` does not mix `StackTrace`, as it is possible to use `Exception`
+  instances for control flow, in which case it would be appropriate to include
+  stack traces without the programmer's consent.
 
 ### Exception
 ```scheme
@@ -46,9 +51,31 @@ The original exception is available at the `exception` slot.
 
 Predicate for `RuntimeException` instances.
 
+### StackTrace
+```scheme
+(defclass StackTrace (continuation))
+```
+
+Mixin class for stack traces in errors.
+
+If an exception class that mixes in `StackTrace` is raised by this module's
+redefined `raise` (see below), then the current continuation will be
+captured (if not already captured) and stored in the `continuation`
+slot. The continuation backtrace will be displayed by
+`Error::display-exception` to facilitate debugging.
+
+
+### StackTrace?
+```scheme
+StackTrace?
+```
+
+Predicate for `StackTrace` mixins.
+
+
 ### Error
 ```scheme
-(defclass Error ...)
+(defclass (Error StackTrace ...) ...)
 
 (Error message irritants: (irritants []) where: (where #f))
 ```
@@ -114,27 +141,6 @@ available; see `StackTrace` below.
 
 The following are predefined classes with standard semantics, used
 througout the standard library.
-
-### StackTrace
-```scheme
-(defclass StackTrace (continuation))
-```
-
-Mixin class for stack traces in errors.
-
-If an error class mixes in `StackTrace` is raised by this module's
-redefined `raise` (see below), then the current continuation will be
-captured (if not already captured) and stored in the `continuation`
-slot. The continuation backtrace will be displayed by
-`Error::display-exception` to facilitate debugging.
-
-
-### StackTrace?
-```scheme
-StackTrace?
-```
-
-Predicate for `StackTrace` mixins.
 
 ### BadArgument
 ```scheme
@@ -264,26 +270,26 @@ Predicate testing whether the error is a context error
 
 Same as `ContextError?`.
 
-### KeyError
+### UnboundKeyE
 ```scheme
-(deferror-class KeyError)
+(deferror-class UnboundKey)
 ```
 
 Error indicating that some lookup operation failed because a key was unbound.
 
-### KeyError?
+### UnboundKey?
 ```scheme
-(KeyError? obj)
+(UnboundKey? obj)
 ```
 
-Predicate testing whether the error is a key error
+Predicate testing whether the condition is an unbound key error
 
-### key-error?
+### key-unbound-error?
 ```scheme
-(def key-error? KeyError?)
+(def unbound-key-error? UnboundKey?)
 ```
 
-Same as `KeyError?`.
+Same as `UnboundKey?`.
 
 ## Raising exceptions
 
@@ -319,7 +325,7 @@ Raises a `BadArgument` condition.
 
 ### raise-io-error
 ```scheme
-(raise-io-error where what . irritants)
+(raise-io-error where message . irritants)
 ```
 
 Raises an `IOError` condition.
@@ -328,33 +334,33 @@ Raises an `IOError` condition.
 ```scheme
 (raise-premature-end-of-input where . irritants)
 ```
-
+p
 Raises a `PrematureEndOfInput` condition.
 
 ### raise-io-closed
 ```scheme
-(raise-io-closed where what . irritants)
+(raise-io-closed where message . irritants)
 ```
 
 Raises an `IOClosed` condition.
 
 ### raise-timeout
 ```scheme
-(raise-timeout where what . irritants)
+(raise-timeout where message . irritants)
 ```
 
 Raises a `Timeout` condition.
 
 ### raise-context-error
 ```scheme
-(raise-context-error where what . irritants)
+(raise-context-error where message . irritants)
 ```
 
 Raise a `ContextError` condition.
 
 ### raise-key-error
 ```scheme
-(raise-key-error where what . irritants)
+(raise-key-error where message . irritants)
 ```
 
 Raise a `KeyError` condition.
@@ -365,7 +371,7 @@ Sometimes something that really shouldn't happen, but it did; because, Murphy.
 
 ### BUG
 ```scheme
-(BUG where what . irritants)
+(BUG where message . irritants)
 ```
 
 Raise a bug condition.

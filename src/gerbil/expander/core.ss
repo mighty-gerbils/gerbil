@@ -147,10 +147,12 @@ namespace: gx
   id: gx#expander-mark::t
   unchecked: #t)
 
-
 ;; syntax errors
 (defstruct (syntax-error <error>) (context marks phi)
   id: gx#syntax-error::t)
+
+(defmethod {display-exception syntax-error}
+  _gx#display-syntax-error)
 
 (def (raise-syntax-error where message stx . details)
   (raise

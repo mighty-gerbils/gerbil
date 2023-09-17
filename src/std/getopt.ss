@@ -23,7 +23,7 @@
 (def current-getopt-parser
   (make-parameter #f))
 
-(deferror-class (GetOptError Error) (getopt) getopt-error?
+(deferror-class GetOptError (getopt) getopt-error?
   (lambda (self msg args getopt)
     (Error:::init! self msg where: 'getopt irritants: args)
     (set! (@ self getopt) getopt)))

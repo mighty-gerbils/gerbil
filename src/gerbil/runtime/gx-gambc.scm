@@ -58,7 +58,7 @@
     (for-each
       (lambda (port)
         (output-port-readtable-set! port
-                                    (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
+          (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
       (list ##stdout-port ##console-port))))
 
 ;; bootstrap compatibility shim
@@ -249,16 +249,28 @@
 
 (define (_gx#display-exception e port)
   (cond
-   ((syntax-error? e)
-    (parameterize ((current-output-port port))
-      (displayln "Syntax Error")
-      (_gx#display-syntax-error e)))
    ((method-ref e 'display-exception)
     => (lambda (f) (f e port)))
    (else
     (##default-display-exception e port))))
 
-(define (_gx#display-syntax-error e)
+(define (_gx#display-error e port)
+  (parameterize ((current-output-port port))
+    (display        "*** ERROR IN ")
+    (display       (or ((error-trace e) "?")))
+    (display       ": ")
+    (display       (or (error-message e) "?"))
+    (newline)
+    (let ((irritants (error-irritants e)))
+      (unless (null? irritants)
+        (for-each
+          (lambda (i)
+            (display "Irritant: ")
+            (display i)
+            (newline))
+          irritants)))))
+
+(define (_gx#display-syntax-error e port)
   (define (location)
     (let lp ((rest (error-irritants e)))
       (core-match rest
@@ -267,36 +279,37 @@
              (lp rest)))
         (else #f))))
 
-  (display        "*** ERROR IN ")
-  (cond
-   ((location)
-    => (lambda (where)
-         (##display-locat where #t (current-output-port))))
-   (else (display "?")))
-  (newline)
-  (display        "--- Syntax Error")
-  (cond
-   ((error-trace e)
-    => (lambda (where) (displayln " at " where ": " (error-message e))))
-   (else (displayln ": " (error-message e))))
-  (core-match (error-irritants e)
-    ((stx . rest)
-     (display     "... form:   ")
-     (_gx#pp-syntax stx)
-     (for-each
-       (lambda (detail)
-         (display "... detail: ")
-         (write (&AST->datum detail))
-         (cond
-          ((&AST-source detail)
-           => (lambda (loc)
-                (display " at ")
-                (##display-locat loc #t (current-output-port)))))
-         (newline))
-       rest))
-    (else (void)))
-  (cond
-   ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf e)))))
+  (parameterize ((current-output-port port))
+    (display        "*** ERROR IN ")
+    (cond
+     ((location)
+      => (lambda (where)
+           (##display-locat where #t (current-output-port))))
+     (else (display "?")))
+    (newline)
+    (display        "--- Syntax Error")
+    (cond
+     ((error-trace e)
+      => (lambda (where) (displayln " at " where ": " (error-message e))))
+     (else (displayln ": " (error-message e))))
+    (core-match (error-irritants e)
+      ((stx . rest)
+       (display     "... form:   ")
+       (_gx#pp-syntax stx)
+       (for-each
+         (lambda (detail)
+           (display "... detail: ")
+           (write (&AST->datum detail))
+           (cond
+            ((&AST-source detail)
+             => (lambda (loc)
+                  (display " at ")
+                  (##display-locat loc #t (current-output-port)))))
+           (newline))
+         rest))
+      (else (void)))
+    (cond
+     ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf e))))))
 
 ;; executable setup
 (define (gerbil-runtime-init! builtin-modules)
@@ -334,22 +347,20 @@
     (&current-module-registry module-registry))
 
   (current-readtable _gx#*readtable*)
-  (set! ##display-exception-hook _gx#display-exception)
+  ;; bind the methods for exceptions
+  (bind-method! error::t 'display-exception _gx#display-error #t)
+  (bind-method! syntax-error::t 'display-exception _gx#display-syntax-error #t)
+
+  ;; set the display exception hook
+  (##display-exception-hook-set! _gx#display-exception)
   ;; fix the output width to something that doesn't truncate exceptions
   (for-each
     (lambda (port)
       (macro-character-port-output-width-set! port (lambda (port) 256)))
     (list ##stdout-port ##console-port (current-error-port)))
-  ;; set an initial primodrila exception hook
+  ;; set an initial primodrial exception hook
   (unless ##primordial-exception-handler-hook
-    (##primordial-exception-handler-hook-set! _gx#exception-handler-hook)))
-
-(define (_gx#exception-handler-hook exn continue)
-  (if (or (heap-overflow-exception? exn)
-          (stack-overflow-exception? exn))
-    ;; not safe to do much
-    (continue exn)
-    (##repl-exception-handler-hook exn continue)))
+    (##primordial-exception-handler-hook-set! ##repl-exception-handler-hook)))
 
 ;; expander loading hook
 (define __gx#expander-loaded #f)
