@@ -7,6 +7,8 @@
 (export raise-os-error
         check-os-error
         os-error?
+        os-error-errno
+        OSError OSError?
         do-retry-nonblock
         check-ptr
         foreign-allocation-error?
@@ -20,9 +22,12 @@
         ECONNREFUSED
         ECONNRESET)
 
-(deferror-class OSError () os-error?)
-(def (raise-os-error errno prim . args)
-  (raise (OSError (strerror errno) irritants: [errno prim args])))
+(deferror-class OSError (errno) os-error?)
+(def (raise-os-error errno . irritants)
+  (let (err (OSError (strerror errno) irritants: irritants))
+    (set! (OSError-errno err) errno)
+    (raise err)))
+(def os-error-errno OSError-errno)
 
 (deferror-class AllocationError () foreign-allocation-error?)
 (def (raise-allocation-error where expr)
@@ -32,7 +37,7 @@
   ((_ expr (prim arg ...))
    (let (r expr)
      (if (not (##fxnegative? r)) r
-         (raise-os-error (##fx- r) prim arg ...)))))
+         (raise-os-error r '(prim arg ...))))))
 
 (defrules do-retry-nonblock ()
   ((_ expr (prim arg ...) ERRNO ...)
