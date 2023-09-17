@@ -222,9 +222,7 @@
       (continuation-capture
        (lambda (cont)
          (set! (StackTrace-continuation rte) (##continuation-next cont))))
-      (if (eq? continue ##thread-end-with-uncaught-exception!)
-        (##repl-exception-handler-hook rte continue)
-        (continue rte))))
+      (##repl-exception-handler-hook rte continue)))
    (else
     (continue exn))))
 
