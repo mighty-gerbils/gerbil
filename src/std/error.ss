@@ -203,7 +203,7 @@
 (defmethod {display-exception RuntimeException}
   (lambda (self port)
     (let (old-width (fix-port-width! port))
-      #;(##default-display-exception (RuntimeException-exception self) port)
+      (##default-display-exception (RuntimeException-exception self) port)
       (alet (cont (StackTrace-continuation self))
         (display "--- continuation backtrace:" port)
         (newline port)
