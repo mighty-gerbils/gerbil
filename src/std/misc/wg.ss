@@ -3,6 +3,7 @@
 ;;; transient parallel workgroups
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
+        :std/error
         :std/iter
         ./channel)
 (export WG? make-wg wg-add! wg-wait!)

@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Gerbil error objects
-(import :gerbil/gambit/continuations)
+(import :gerbil/gambit/continuations
+        :gerbil/gambit/threads)
 (export Error Error?
         Error-message Error-irritants Error-where
         Error:::init!
@@ -20,7 +21,9 @@
         (rename: raise-unspecified-error error)
         (rename: raise-bug BUG)
         (rename: raise/stack-trace raise)
-        is-it-bug?)
+        is-it-bug?
+        with-exception-stack-trace
+        dump-stack-trace!)
 
 (defsyntax <exception>
   (make-runtime-struct-info
@@ -160,3 +163,29 @@
        (lambda (cont)
          (set! (StackTrace-continuation exn) (##continuation-next cont))))))
   (raise exn))
+
+;; utilities for exception printing
+(def (with-exception-stack-trace thunk (error-port (current-error-port)))
+  (with-exception-handler
+   (let (E (current-exception-handler))
+     (lambda (exn)
+       (continuation-capture
+        (lambda (cont)
+          (dump-stack-trace! cont exn error-port)
+          (E exn)))))
+   thunk))
+
+(def (dump-stack-trace! cont exn (error-port (current-error-port)))
+  (let ((out (open-output-string)))
+    (display "*** Unhandled exception in " out)
+    (display (current-thread) out)
+    (newline out)
+    (display-exception exn out)
+
+    ;; only do that if there no stack trace in the exception already
+    (unless (StackTrace? exn)
+      (display "Continuation backtrace: " out)
+      (newline out)
+      (display-continuation-backtrace cont out))
+
+    (##write-string (get-output-string out) error-port)))

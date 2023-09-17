@@ -369,3 +369,29 @@ The first form defines a class `Class` with slots `slots` that extends
 `Error`, mixing in `StackTrace`.  It also defines a predicate alias
 for the class's instance predicate that can be exported to hide the
 internal error details.
+
+## Dumping stack traces
+
+It is useful to invoke a thunk and dump an exception stack trace if it
+raises; this can be accomplished with the `with-exception-stack-trace`
+and `dump-stack-trace!` utility procedures.
+
+This can be useful when you are dealing with exceptions that do not
+mixin `StackTrace` (which will automatically dump the stack trace when
+displaying the exception with `display-exception`).
+
+### with-exception-stack-trace
+```scheme
+(with-exception-stack-trace thunk (error-port (current-error-port)))
+```
+
+Invokes `thunk` with an exception handler that dumps the exception
+stack trace with `dump-stack-trace!`.
+
+### dump-stack-trace!
+```scheme
+(dump-stack-trace! cont exn (error-port (current-error-port)))
+```
+
+Displays the exception `exn`, dumping the stack trace of continuation
+`cont` if there is no stack trace information in the exception itself.

@@ -5,6 +5,7 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
         :std/sugar
+        :std/error
         (only-in :std/logger start-logger!)
         :std/io
         :std/actor

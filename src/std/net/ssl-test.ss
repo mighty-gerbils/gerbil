@@ -3,6 +3,7 @@
 ;;; SSL tests
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :std/error
         :std/sugar
         :std/test
         :std/io
