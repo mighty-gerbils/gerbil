@@ -2,6 +2,7 @@
 ;;; (C) vyzo
 ;;; Gerbil error objects
 (import :gerbil/gambit/continuations
+        :gerbil/gambit/exceptions
         :gerbil/gambit/threads)
 (export Error Error?
         Error-message Error-irritants Error-where
