@@ -1160,22 +1160,22 @@
          (else r)))
       (else r))))
 
-(define (foldl f iv lst . rest)
-  (define (fold* f iv rest)
-    (if (andmap1 pair? rest)
-      (fold* f
-             (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
-                              (list iv) rest))
-             (map cdr rest))
-      iv))
+(define (foldl* f iv . rest)
+  (if (andmap1 pair? rest)
+    (apply foldl* f
+           (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
+                            (list iv) rest))
+           (map cdr rest))
+    iv))
 
+(define (foldl f iv lst . rest)
   (cond
    ((null? rest)
     (foldl1 f iv lst))
    ((null? (cdr rest))
     (foldl2 f iv lst (car rest)))
    (else
-    (fold* f iv (cons lst rest)))))
+    (apply foldl* f iv lst rest))))
 
 (define (foldr1 f iv lst)
   (let recur ((rest lst))
@@ -1194,22 +1194,22 @@
          (else iv)))
       (else iv))))
 
-(define (foldr f iv lst . rest)
-  (define (fold* f iv rest)
-    (if (andmap1 pair? rest)
-      (apply f
-        (foldr1 (lambda (xs r) (cons (car xs) r))
-                (list (fold* f iv (map cdr rest)))
-                rest))
-      iv))
+(define (foldr* f iv . rest)
+  (if (andmap1 pair? rest)
+    (apply f
+      (foldr1 (lambda (xs r) (cons (car xs) r))
+              (list (apply foldr* f iv (map cdr rest)))
+              rest))
+    iv))
 
+(define (foldr f iv lst . rest)
   (cond
    ((null? rest)
     (foldr1 f iv lst))
    ((null? (cdr rest))
     (foldr2 f iv lst (car rest)))
    (else
-    (fold* f iv (cons lst rest)))))
+    (apply foldr* f iv lst rest))))
 
 (define (andmap1 f lst)
   (let lp ((rest lst))

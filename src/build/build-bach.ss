@@ -23,8 +23,10 @@
 (def builtin-modules
   '(;; :gerbil/runtime
     "gerbil/runtime/gambit"
-    "gerbil/runtime/system"
     "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/syntax"
@@ -100,16 +102,14 @@
 ;; and then compile the binary
 (let* ((builtin-modules-scm (map static-file-name builtin-modules))
        (bach-main-scm (static-file-name bach-main))
-       (gx-gambc-macros (static-file-name "gx-gambc#"))
-       (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
        (gambit-sharp (path-expand "_gambit#.scm" gerbil-libdir))
        (include-gambit-sharp
         (string-append "(include \"" gambit-sharp "\")"))
        (gsc-gx-macros
         (if (gerbil-runtime-smp?)
           ["-e" "(define-cond-expand-feature|enable-smp|)"
-           "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
-          ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
+           "-e" include-gambit-sharp]
+          ["-e" include-gambit-sharp]))
        (gsc-runtime-args
         "-:i8,f8,-8,t8")
        (output-bin

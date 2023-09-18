@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "system" "util" "mop" "error" "syntax" "eval" "repl")
+(import "gambit" "system" "util" "loader" "control" "mop" "error" "syntax" "eval"  "repl")
 
 (def __loading-scheme-source
   (make-parameter #f))
@@ -30,7 +30,7 @@ namespace: #f
   (set! __eval-module gx#core-eval-module))
 
 ;; load the interpreter environment
-(def (__load-gxi (hook-expander? #t))
+(def (__load-gxi)
   (def +readtable+ __*readtable*)
   (__init-gx!)
   ;; do this here so that import failures can report friendly error messages
@@ -39,23 +39,22 @@ namespace: #f
     (gx#current-expander-module-prelude pre)
     (gx#core-bind-root-syntax! ':<core> pre #t)
     (gx#eval-syntax '(import :gerbil/core)))
-  (when hook-expander?
-    ;; avoid loops from phi evals
-    (gx#current-expander-compile __compile-top-source)
-    ;; hook the expander
-    (set! ##expand-source __expand-source)
-    (set! ##macro-descr __macro-descr)
-    ;; hook the readtables
-    (set! ##main-readtable __*readtable*)
-    (for-each
-      (lambda (port)
-        (input-port-readtable-set! port +readtable+))
-      (list ##stdin-port ##console-port))
-    (for-each
-      (lambda (port)
-        (output-port-readtable-set! port
-          (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
-      (list ##stdout-port ##console-port))))
+  ;; avoid loops from phi evals
+  (gx#current-expander-compile __compile-top-source)
+  ;; hook the expander
+  (##expand-source-set! __expand-source)
+  (##macro-descr-set! __macro-descr)
+  ;; hook the readtables
+  (##main-readtable-set! __*readtable*)
+  (for-each
+    (lambda (port)
+      (input-port-readtable-set! port +readtable+))
+    (list ##stdin-port ##console-port))
+  (for-each
+    (lambda (port)
+      (output-port-readtable-set! port
+        (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
+    (list ##stdout-port ##console-port)))
 
 ;; bootstrap compatibility shim
 (def (__gxi-init-interactive! cmdline)
@@ -133,20 +132,31 @@ namespace: #f
 
   (def (no-expand src)
     (cond
-     ((__loading-scheme-source)
-      src)
      ((##source? src)
       (let (code (##source-code src))
         (and (pair? code)
              (eq? __noexpand: (##car code))
              (##cdr code))))
+     ((__loading-scheme-source)
+      src)
      (else #f)))
 
   ;;(displayln "expand-source " src)
 
   (cond
-   ((no-expand src) => values)
-   (else (expand src))))
+   ((no-expand src))
+   (else
+    ;;(expand src)
+
+    (displayln "expand: ")
+    (pp src)
+    (displayln "syntax:")
+    (__pp-syntax (__source->syntax src))
+    (let (expanded (expand src))
+      (displayln "->:")
+      (pp expanded)
+      expanded)
+    )))
 
 ;; hook to make gambit macro expansion work with a hooked expander
 ;; ##macro-descr recurses into the expander through ##eval-top,
@@ -180,7 +190,7 @@ namespace: #f
   (let recur ((e src))
     (cond
      ((##source? e)
-      (%make-AST (recur (##source-code e)) (##source-locat e)))
+      (make-AST (recur (##source-code e)) (##source-locat e)))
      ((pair? e)
       (cons (recur (##car e))
             (recur (##cdr e))))
@@ -259,30 +269,20 @@ namespace: #f
     (current-module-library-path (cons libdir loadpath)))
 
   (let* ((registry-entry (lambda (m) (cons m 'builtin)))
-         (runtime-modules '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc"))
          (module-registry
-         (let lp ((rest builtin-modules) (registry '()))
-           (match rest
-             ([mod . rest]
-              (lp rest
-                  (cons* (registry-entry (string-append mod "__0"))
-                         (registry-entry (string-append mod "__rt"))
-                         registry)))
-             (else
-              (list->hash-table
-               (append (map registry-entry runtime-modules)
-                       registry)))))))
+          (let lp ((rest builtin-modules) (registry '()))
+            (match rest
+              ([mod . rest]
+               (lp rest
+                   (cons* (registry-entry (string-append mod "__0"))
+                          (registry-entry (string-append mod "__rt"))
+                          registry)))
+              (else
+               (list->hash-table
+                registry))))))
     (current-module-registry module-registry))
 
-  (current-readtable __*readtable*)
-  ;; fix the output width to something that doesn't truncate exceptions
-  (for-each
-    (lambda (port)
-      (macro-character-port-output-width-set! port (lambda (port) 256)))
-    (list ##stdout-port ##console-port (current-error-port)))
-  ;; set an initial primordial exception hook
-  (unless ##primordial-exception-handler-hook
-    (##primordial-exception-handler-hook-set! ##repl-exception-handler-hook)))
+  (current-readtable __*readtable*))
 
 ;; expander loading hook
 (def __expander-loaded #f)

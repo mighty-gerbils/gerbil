@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Gerbil error objects
-(import :gerbil/runtime
+(import :gerbil/runtime/error
         :gerbil/gambit/continuations
         :gerbil/gambit/threads)
 (export Exception Exception?

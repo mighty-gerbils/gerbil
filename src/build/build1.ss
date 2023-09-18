@@ -5,8 +5,10 @@
 
 (def gerbil-modules-runtime
   '("gerbil/runtime/gambit.ss"
-    "gerbil/runtime/system.ss"
     "gerbil/runtime/util.ss"
+    "gerbil/runtime/system.ss"
+    "gerbil/runtime/loader.ss"
+    "gerbil/runtime/control.ss"
     "gerbil/runtime/mop.ss"
     "gerbil/runtime/error.ss"
     "gerbil/runtime/syntax.ss"
@@ -69,8 +71,7 @@
   (displayln "... compile " modf)
   (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
                         debug: #f optimize: #t generate-ssxi: gen-ssxi?
-                        gsc-options: ["-track-scheme" "-debug-environments"
-                                      "-cc-options" "-g"]]))
+                        gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
   ;; TODO: parallelize, but with the correct dependencies -- instead of "false",

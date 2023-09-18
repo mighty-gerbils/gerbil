@@ -52,7 +52,7 @@ namespace: #f
         (create1 dir))))))
 
 (def absent-obj
-  (macro-absent-obj))
+  (##absent-object))
 
 (def absent-value
   '#(#!void))
@@ -250,15 +250,15 @@ namespace: #f
   ((f iv lst1 lst2)
    (foldl2 f iv lst1 lst2))
   ((f iv lst1 lst2 . rest)
-   (foldl* f iv (cons* lst1 lst2 rest))))
+   (apply foldl* f iv lst1 lst2 rest)))
 
-(def (foldl* f iv rest)
-  (if (andmap1 pair? rest)
-    (foldl* f
-            (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
-                             (list iv) rest))
-            (map cdr rest))
-    iv))
+(def (foldl* f iv . rest)
+  (let recur ((iv iv) (rest rest))
+    (if (andmap1 pair? rest)
+      (recur (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
+                              (list iv) rest))
+             (map cdr rest))
+      iv)))
 
 (def (foldr1 f iv lst)
   (let recur ((rest lst))
@@ -283,15 +283,16 @@ namespace: #f
   ((f iv lst1 lst2)
    (foldr2 f iv lst1 lst2))
   ((f iv lst1 lst2 . rest)
-   (foldr* f iv (cons* lst1 lst2 rest))))
+   (apply foldr* f iv lst1 lst2 rest)))
 
-(def (foldr* f iv rest)
-  (if (andmap1 pair? rest)
-    (apply f
-      (foldr1 (lambda (xs r) (cons (car xs) r))
-              (list (foldr* f iv (map cdr rest)))
-              rest))
-    iv))
+(def (foldr* f iv . rest)
+  (let recur ((rest rest))
+    (if (andmap1 pair? rest)
+      (apply f
+        (foldr1 (lambda (xs r) (cons (car xs) r))
+                (list (recur (map cdr rest)))
+                rest))
+      iv)))
 
 (def (andmap1 f lst)
   (let lp ((rest lst))
@@ -316,13 +317,14 @@ namespace: #f
   ((f lst1 lst2)
    (andmap2 f lst1 lst2))
   ((f lst1 lst2 . rest)
-   (andmap* f (cons* lst1 lst2 rest))))
+   (apply andmap* f lst1 lst2 rest)))
 
-(def (andmap* f rest)
-  (if (andmap1 pair? rest)
-    (and (apply f (map car rest))
-         (andmap* f (map cdr rest)))
-    #t))
+(def (andmap* f . rest)
+  (let recur ((rest rest))
+    (if (andmap1 pair? rest)
+      (and (apply f (map car rest))
+           (recur (map cdr rest)))
+      #t)))
 
 (def (ormap1 f lst)
   (let lp ((rest lst))
@@ -347,13 +349,14 @@ namespace: #f
   ((f lst1 lst2)
    (ormap2 f lst1 lst2))
   ((f lst1 lst2 . rest)
-   (ormap* f (cons* lst1 lst2 rest))))
+   (apply ormap* f lst1 lst2 rest)))
 
-(def (ormap* f rest)
-  (if (andmap1 pair? rest)
-    (or (apply f (map car rest))
-        (ormap* f (map cdr rest)))
-    #f))
+(def (ormap* f . rest)
+  (let recur ((rest rest))
+    (if (andmap1 pair? rest)
+      (or (apply f (map car rest))
+          (recur (map cdr rest)))
+      #f)))
 
 (def (filter f lst)
   (let recur ((lst lst))
@@ -394,16 +397,17 @@ namespace: #f
   ((f lst1 lst2)
    (filter-map2 f lst1 lst2))
   ((f lst1 lst2 . rest)
-   (filter-map* f (cons* lst1 lst2 rest))))
+   (apply filter-map* f lst1 lst2 rest)))
 
-(def (filter-map* f rest)
-  (if (andmap1 pair? rest)
-    (cond
-     ((apply f (map car rest))
-      => (lambda (r) (cons r (filter-map* f (map cdr rest)))))
-     (else
-      (filter-map* f (map cdr rest))))
-    []))
+(def (filter-map* f . rest)
+  (let recur ((rest rest))
+    (if (andmap1 pair? rest)
+      (cond
+       ((apply f (map car rest))
+        => (lambda (r) (cons r (recur (map cdr rest)))))
+       (else
+        (recur (map cdr rest))))
+      [])))
 
 (def (iota count (start 0) (step 1))
   (unless (fixnum? count)
@@ -542,7 +546,7 @@ namespace: #f
 
 (def (bytes->string bstr (enc 'UTF-8))
   (if (eq? enc 'UTF-8)
-    (utf8->string bst)
+    (utf8->string bstr)
     (let* ((in (open-input-u8vector `(char-encoding: ,enc init: ,bstr)))
            (len (u8vector-length bstr))
            (out (make-string len))

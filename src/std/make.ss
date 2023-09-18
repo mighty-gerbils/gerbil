@@ -105,7 +105,7 @@ TODO:
   (lambda (self
       srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
       prefix: (prefix_ #f) force: (force? #f)
-      optimize: (optimize #t) debug: (debug #t)
+      optimize: (optimize #t) debug: (debug #f)
       static: (_ignore-static #t) static-debug: (static-debug #f)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #f)

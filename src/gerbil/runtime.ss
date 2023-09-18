@@ -10,6 +10,8 @@ package: gerbil
 (import
   "runtime/system"
   "runtime/util"
+  "runtime/loader"
+  "runtime/control"
   "runtime/mop"
   "runtime/error"
   "runtime/syntax"
@@ -20,6 +22,8 @@ package: gerbil
   (import:
    "runtime/system"
    "runtime/util"
+   "runtime/loader"
+   "runtime/control"
    "runtime/mop"
    "runtime/error"
    "runtime/syntax"

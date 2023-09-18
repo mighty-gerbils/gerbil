@@ -19,7 +19,7 @@
          (gerbil-version-path
           (path-expand "gerbil/runtime/version.ss" (getenv "GERBIL_SOURCE")))
          (git-version
-          (and (file-exists? "../../../.git")
+          (and (file-exists? (path-expand "../.git" (getenv "GERBIL_SOURCE")))
                (with-exception-catcher
                 (lambda (e) #f)
                 (lambda ()
@@ -36,10 +36,12 @@
                (string-append "(define (gerbil-version-string) \"" git-version "\")\n"))))
     (if gerbil-version-text
       (begin
+        (displayln "... write " gx-version-path)
         (call-with-output-file `(path: ,gx-version-path create: maybe append: #f truncate: #t)
-          (lambda (port) (display gx-version-text port)))
+          (lambda (port) (display gerbil-version-text port)))
+        (displayln "... write " gerbil-version-path)
         (call-with-output-file `(path: ,gerbil-version-path create: maybe append: #f truncate: #t)
-          (lambda (port) (display gx-version-text port)))))))
+          (lambda (port) (display gerbil-version-text port)))))))
 
 (define (main libdir)
   (let* ((build-prefix (getenv "GERBIL_BUILD_PREFIX"))

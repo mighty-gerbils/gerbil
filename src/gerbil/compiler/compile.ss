@@ -549,9 +549,13 @@ namespace: gxc
   (if top
     (let ((ns (module-context-ns (core-context-top (current-expander-context))))
           (phi (current-expander-phi)))
-      (if (fxpositive? phi)
-        (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
-        (make-symbol ns "#_" (gensym) "_")))
+      (if ns
+        (if (fxpositive? phi)
+          (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol ns "#_" (gensym) "_"))
+        (if (fxpositive? phi)
+          (make-symbol "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol "_" (gensym) "_"))))
     (make-symbol "_" (gensym) "_")))
 
 (def (generate-runtime-empty stx)

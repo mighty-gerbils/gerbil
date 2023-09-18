@@ -68,8 +68,10 @@ namespace: gxc
 
 (def gerbil-runtime-modules
   '("gerbil/runtime/gambit"
-    "gerbil/runtime/system"
     "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/syntax"
@@ -376,7 +378,7 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
-           (runtime (map find-static-module-file gerbil-runtime-modules)
+           (runtime (map find-static-module-file gerbil-runtime-modules))
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
            (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
            (bin-scm (find-static-module-file ctx))
@@ -741,7 +743,7 @@ namespace: gxc
      (if phi? [] opts)))
   (cond
    ((current-compile-debug)
-    (not-phi ["-debug-environments" "-track-scheme" "-cc-options" "-g"]))
+    (not-phi ["-debug-environments" "-track-scheme"]))
    (else [])))
 
 (def (gsc-compile-file path phi?)

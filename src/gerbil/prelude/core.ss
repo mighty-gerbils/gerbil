@@ -226,9 +226,9 @@ package: gerbil
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
     ;; reader
-    AST::t AST? AST-e AST-source make-AST
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
+    make-syntax-error syntax-error?
     ;; required by the module reader to support #lang
     datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
@@ -296,7 +296,7 @@ package: gerbil
   (export #t)
   (extern namespace: gx
     ;; syntax and friends
-    raise-syntax-error syntax-error?
+    raise-syntax-error
     identifier? identifier-list? free-identifier=? bound-identifier=?
     datum->syntax syntax->datum syntax-e syntax->list
     genident gentemps
@@ -367,7 +367,8 @@ package: gerbil
     core-expand-export-source))
 
 (import <runtime>
-        (phi: +1 <runtime> <expander-runtime>))
+        (phi: +1 <runtime> <expander-runtime>)
+        (phi: +2 <runtime> <expander-runtime>))
 
 (module <syntax-case>
   (export #t)

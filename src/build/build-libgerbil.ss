@@ -34,8 +34,10 @@
 
 (def gerbil-runtime
   '("gerbil/runtime/gambit"
-    "gerbil/runtime/system"
     "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/syntax"

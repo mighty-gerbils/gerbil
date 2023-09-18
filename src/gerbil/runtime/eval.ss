@@ -8,76 +8,10 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "mop" "error" "syntax")
 
-;; we really don't want stack traces in syntax error, they are worse than useless.
-;; so SyntaxError extends just Exception
-(defclass (SyntaxError Exception) (message irritants where
-                                   context
-                                   phi
-                                   marks)
-  unchecked: #t
-  final: #t)
-
-(defmethod {display-exception SyntaxError}
-  (lambda (self port)
-    (def (location)
-      (let lp ((rest (&SyntaxError-irritants self)))
-        (match rest
-          ([hd . rest]
-           (or (__AST-source hd)
-               (lp rest)))
-          (else #f))))
-
-    (parameterize ((current-output-port port))
-      (display        "*** ERROR IN ")
-      (cond
-       ((location)
-        => (lambda (where)
-             (##display-locat where #t (current-output-port))))
-       (else (display "?")))
-      (newline)
-      (display        "--- Syntax Error")
-      (cond
-       ((&SyntaxError-where self)
-        => (lambda (where) (displayln " at " where ": " (&SyntaxError-message self))))
-       (else (displayln ": " (&SyntaxError-message self))))
-      (match (&SyntaxError-irritants self)
-        ([stx . rest]
-         (display     "... form:   ")
-         (__pp-syntax stx)
-         (for-each
-           (lambda (detail)
-             (display "... detail: ")
-             (write (__AST->datum detail))
-             (cond
-              ((__AST-source detail)
-               => (lambda (loc)
-                    (display " at ")
-                    (##display-locat loc #t (current-output-port)))))
-             (newline))
-           rest))
-        (else (void)))
-      (cond
-       ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf self)))))))
-
-(seal-class! SyntaxError::t)
-
-;; expander hook
-(def (make-syntax-error message irritants where context marks phi)
-  (SyntaxError message: message
-               irritants: irritants
-               where: where
-               context: context
-               marks: marks
-               phi: phi))
-
-(def (__raise-syntax-error where message stx . details)
-  (raise
-    (make-syntax-error what (cons stx details) where (__current-context) #f #f)))
-
 (defstruct __context (t ns super table)
   unchecked: #t)
 (defstruct __runtime (id)
-  uchecked: #t)
+  unchecked: #t)
 (defstruct __syntax (e id)
   unchecked: #t)
 (defstruct (__macro __syntax) ()
@@ -112,8 +46,6 @@ namespace: #f
   (make-parameter #f))
 (def __current-compiler
   (make-parameter #f))
-(def __current-context
-  (make-parameter #f))
 (def __current-path
   (make-parameter '()))
 
@@ -135,7 +67,7 @@ namespace: #f
   (when eid
     (hash-put! (__context-table ctx) (__AST-e id) (make-__runtime eid))))
 (def (__core-bind-syntax! id e (make make-__syntax))
-  (hash-put! __*core* id (if (AST? e) e (make e id))))
+  (hash-put! __*core* id (if (__syntax? e) e (make e id))))
 (def (__core-bind-macro! id e)
   (__core-bind-syntax! id e make-__macro))
 (def (__core-bind-special-form! id e)
@@ -194,7 +126,7 @@ namespace: #f
      (cond
       ((__core-resolve form)
        => (lambda (bind)
-            ((__AST-e bind) stx)))
+            ((__syntax-e bind) stx)))
       (else
        (__raise-syntax-error #f "Bad syntax" stx form))))))
 
@@ -207,12 +139,12 @@ namespace: #f
 (def (__compile-begin% stx)
   (core-ast-case stx ()
     ((_ . body)
-     (__SRC (cons '##begin (map __compile body)) stx))))
+     (__SRC (cons 'begin (map __compile body)) stx))))
 
 (def (__compile-begin-foreign% stx)
   (core-ast-case stx ()
     ((_ . body)
-     (__SRC (cons '##begin (__AST->datum body)) stx))))
+     (__SRC (cons 'begin (__AST->datum body)) stx))))
 
 (def (__compile-import% stx)
   (core-ast-case stx ()
@@ -422,7 +354,7 @@ namespace: #f
              pre
              (cons `(,(__compile-head-id id) ,(car exprs)) bind)
              post))
-        ((hd . rest)
+        ([hd . rest]
          (cond
           ((__AST-id? hd)
            (lp rest (cdr exprs)
@@ -498,7 +430,7 @@ namespace: #f
                  (cons `(,id ,(car exprs)) post)))
            (lp rest (cdr exprs) bind
                (cons `(#f ,(car exprs)) post))))
-        ((hd . rest)
+        ([hd . rest]
          (cond
           ((__AST-id? hd)
            (let (id (__SRC hd))
@@ -612,7 +544,7 @@ namespace: #f
           (lp #'rest (cons (generate #'id #'compile #'make-__core-special-form)
                            body)))
          (((id) . rest)
-          (lp #'rest (cons (genereate #'id #'compile-error #'make-__core-form)
+          (lp #'rest (cons (generate #'id #'compile-error #'make-__core-form)
                            body)))
          (() (cons 'begin (reverse body))))))))
 

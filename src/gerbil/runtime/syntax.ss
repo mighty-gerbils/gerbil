@@ -64,6 +64,78 @@ namespace: #f
                 body)))
          (() #'(__raise-syntax-error #f "Bad syntax" tgt)))))))
 
+
+;; we really don't want stack traces in syntax error, they are worse than useless.
+;; so SyntaxError extends just Exception
+(defclass (SyntaxError Exception) (message irritants where
+                                   context
+                                   phi
+                                   marks)
+  unchecked: #t
+  final: #t)
+
+(defmethod {display-exception SyntaxError}
+  (lambda (self port)
+    (def (location)
+      (let lp ((rest (&SyntaxError-irritants self)))
+        (match rest
+          ([hd . rest]
+           (or (__AST-source hd)
+               (lp rest)))
+          (else #f))))
+
+    (parameterize ((current-output-port port))
+      (newline)
+      (display        "*** ERROR IN ")
+      (cond
+       ((location)
+        => (lambda (where)
+             (##display-locat where #t (current-output-port))))
+       (else (display "?")))
+      (newline)
+      (display        "--- Syntax Error")
+      (cond
+       ((&SyntaxError-where self)
+        => (lambda (where) (displayln " at " where ": " (&SyntaxError-message self))))
+       (else (displayln ": " (&SyntaxError-message self))))
+      (match (&SyntaxError-irritants self)
+        ([stx . rest]
+         (display     "... form:   ")
+         (__pp-syntax stx)
+         (for-each
+           (lambda (detail)
+             (display "... detail: ")
+             (write (__AST->datum detail))
+             (cond
+              ((__AST-source detail)
+               => (lambda (loc)
+                    (display " at ")
+                    (##display-locat loc #t (current-output-port)))))
+             (newline))
+           rest))
+        (else (void))))))
+
+(seal-class! SyntaxError::t)
+
+;; expander hook
+(def (make-syntax-error message irritants where context marks phi)
+  (SyntaxError message: message
+               irritants: irritants
+               where: where
+               context: context
+               marks: marks
+               phi: phi))
+
+(def syntax-error? SyntaxError?)
+
+(def (__raise-syntax-error where message stx . details)
+  (raise
+    (make-syntax-error message (cons stx details) where (__current-context) #f #f)))
+
+(def __current-context
+  (make-parameter #f))
+
+;;; ASTs
 (defstruct AST (e source)
   id:   gerbil#AST::t
   name: syntax
@@ -108,7 +180,7 @@ namespace: #f
 (def (__AST-id? stx)
   (symbol? (__AST-e stx)))
 
-(def (__AST-id-list? stx (tail? &AST-null?))
+(def (__AST-id-list? stx (tail? __AST-null?))
   (let lp ((rest stx))
     (core-ast-case rest ()
       ((hd . rest)
@@ -119,7 +191,7 @@ namespace: #f
 (def (__AST-bind-list? stx)
   (__AST-id-list? stx (lambda (e) (or (__AST-null? e) (__AST-id? e)))))
 
-(def (__AST-list? stx (tail? &AST-null?))
+(def (__AST-list? stx (tail? __AST-null?))
   (let lp ((rest stx))
     (core-ast-case rest ()
       ((_ . rest)
@@ -140,7 +212,7 @@ namespace: #f
     (cons (__AST->datum (car stx))
           (__AST->datum (cdr stx))))
    ((vector? stx)
-    (vector-map &AST->datum stx))
+    (vector-map __AST->datum stx))
    ((box? stx)
     (box (__AST->datum (unbox stx))))
    (else stx)))
@@ -183,9 +255,7 @@ namespace: #f
     (macro-readtable-write-extended-read-macros?-set! rt #t)
     (__readtable-bracket-keyword-set! rt '@list)
     (__readtable-brace-keyword-set! rt '@method)
-    (eval-if (>= (##vector-length (current-readtable)) 42)
-      (##readtable-char-sharp-handler-set! rt #\! __read-sharp-bang)
-      (void))
+    (##readtable-char-sharp-handler-set! rt #\! __read-sharp-bang)
     rt))
 
 (def (__readtable-bracket-keyword-set! rt kw)
@@ -199,7 +269,7 @@ namespace: #f
       (macro-readenv-script-line-set! re script-line)
       (##script-marker))
     (##read-sharp-bang re next start-pos)))
-    (set! ##readtable-setup-for-language! void)
+(set! ##readtable-setup-for-language! void)
 
 (def __*readtable*
   (__make-readtable))

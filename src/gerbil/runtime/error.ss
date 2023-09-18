@@ -14,7 +14,7 @@ namespace: #f
 
 ;; Mixin for getting stack traces
 (defclass StackTrace (continuation)
-  unckeced: #t)
+  unchecked: #t)
 
 ;; Error base class
 (defclass (Error StackTrace Exception) (message irritants where)
@@ -39,8 +39,7 @@ namespace: #f
     (unless (&StackTrace-continuation exn)
       (##continuation-capture
        (lambda (cont)
-         (set! (&StackTrace-continuation exn)
-           (##continuation-next cont))))))
+         (unchecked-slot-set! exn 'continuation (##continuation-next cont))))))
   (##raise exn))
 
 (def (error message . irritants)
@@ -81,8 +80,7 @@ namespace: #f
     (let (rte (RuntimeException exception: exn))
       (##continuation-capture
        (lambda (cont)
-         (set! (&StackTrace-continuation rte)
-           (##continuation-next cont))))
+         (unchecked-slot-set! rte 'continuation (##continuation-next cont))))
       rte))
    (else
     exn)))
@@ -98,7 +96,7 @@ namespace: #f
 (def (error-message obj)
   (cond
    ((Error? obj)
-    (Error-message) obj)
+    (&Error-message obj))
    ((error-exception? obj)
     (error-exception-message obj))
    (else #f)))
@@ -106,17 +104,17 @@ namespace: #f
 (def (error-irritants obj)
   (cond
    ((Error? obj)
-    (Error-irritants obj))
+    (&Error-irritants obj))
    ((error-exception? obj)
     (error-exception-parameters obj))
    (else #f)))
 
 (def (error-trace obj)
   (and (Error? obj)
-       (Error-where obj)))
+       (&Error-where obj)))
 
 ;; exception display
-(define (display-exception e (port (current-error-port)))
+(def (display-exception e (port (current-error-port)))
   (cond
    ((method-ref e 'display-exception)
     => (lambda (f) (f e port)))
@@ -128,11 +126,11 @@ namespace: #f
 ;; method implementations
 (defmethod {:init! Error}
   (lambda (self message where: (where #f) irritants: (irritants []))
-    (set! (&Error-message self) message)
+    (unchecked-slot-set! self 'message message)
     (when irritants
-      (set! (&Error-irritants self) irritants))
+      (unchecked-slot-set! self 'irritants irritants))
     (when where
-      (set! (&Error-where self) where))))
+      (unchecked-slot-set! self 'where where))))
 
 (defmethod {display-exception Error}
   (lambda (self port)
@@ -183,13 +181,12 @@ namespace: #f
 (defsyntax (defruntime-exception stx)
   (syntax-case stx ()
     ((_ (is? getf ...))
-     (with-syntax ((macro-is? (stx-identifier #'is? "macro-" #'predicate))
+     (with-syntax ((macro-is? (stx-identifier #'is? "macro-" #'is?))
                    ((macro-getf ...)
                     (map (lambda (f) (stx-identifier f "macro-" f))
                          #'(getf ...))))
        #'(begin
            (extern macro-is? macro-getf ...)
-           ...
            (def (is? exn)
              (if (RuntimeException? exn)
                (macro-is? (&RuntimeException-exception exn))

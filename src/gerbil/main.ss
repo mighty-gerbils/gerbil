@@ -12,7 +12,18 @@ package: gerbil
 
 (def builtin-modules
   '(;; :gerbil/runtime
-    ;; TODO
+    "gerbil/runtime/gambit"
+    "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"
     ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"
@@ -20,7 +31,6 @@ package: gerbil
     "gerbil/gambit/random"
     "gerbil/gambit/continuations"
     "gerbil/gambit/os"
-    "gerbil/gambit/exceptions"
     "gerbil/gambit/threads"
     "gerbil/gambit/bits"
     "gerbil/gambit/hvectors"
@@ -113,7 +123,7 @@ package: gerbil
   (gerbil-runtime-init! builtin-modules)
   (gerbil-load-expander!)
   ;; hook ##begin -- gambit wraps it around scripts
-  (eval-syntax '(define-alias ##begin begin)))
+  (eval '(define-alias ##begin begin)))
 
 (def +current-lang+ 'gerbil)
 (def (set-lang! lang)

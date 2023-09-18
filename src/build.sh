@@ -19,6 +19,8 @@ readonly GERBIL_SOURCE="$(pwd -P)"
 readonly GERBIL_BASE="$(dirname "${GERBIL_SOURCE}")"
 readonly GERBIL_STAGE0="${GERBIL_BASE}/bootstrap"
 
+export GERBIL_SOURCE
+
 ## Build Environment
 GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
 export GERBIL_BUILD_PREFIX
