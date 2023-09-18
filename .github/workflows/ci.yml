@@ -6,14 +6,14 @@ jobs:
     strategy:
       fail-fast: false  # if one fails, do not cancel the other
       matrix:
-        gambit-version: ['v4.9.5', 'master']
+        gambit-version: ['', '--with-gambit=master']
         shared-mode: ['', '--enable-shared']
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
       - name: Configure Gerbil
-        run: ./configure --prefix=/opt/gerbil --with-gambit=${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
+        run: ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
       - name: Create Gerbil version file
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
       - name: Prepare Build
