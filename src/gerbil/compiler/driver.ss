@@ -66,19 +66,20 @@ namespace: gxc
       "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
      (else "-:i8,f8,-8,t8"))]) ;; works after v4.9.3-1101-g1f1ce436 - in between, you lose.
 
-(cond-expand
-  ;; Note: delete-file-or-directory first appeared in v4.9.4
-  (,(##unbound? (##global-var-ref (##make-global-var 'delete-file-or-directory)))
-   (def (delete-directory* dir)
-     (for-each delete-file (directory-files dir))
-     (delete-directory dir)))
-  ((defined delete-file-or-directory)
-   (def (delete-directory* dir)
-     (delete-file-or-directory dir #t)))
-  (else
-   (extern namespace: #f delete-file-or-directory)
-   (def (delete-directory* dir)
-     (delete-file-or-directory dir #t))))
+(def gerbil-runtime-modules
+  '("gerbil/runtime/gambit"
+    "gerbil/runtime/system"
+    "gerbil/runtime/util"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"))
+
+(def (delete-directory* dir)
+  (delete-file-or-directory dir #t))
 
 (def (compile-module srcpath (opts []))
   (unless (string? srcpath)
@@ -375,7 +376,7 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
-           (runtime []) ;; TODO
+           (runtime (map find-static-module-file gerbil-runtime-modules)
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
            (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
            (bin-scm (find-static-module-file ctx))
@@ -519,7 +520,11 @@ namespace: gxc
      []))))
 
 (def (find-static-module-file ctx)
-  (let* ((scm (string-append (static-module-name (expander-context-id ctx)) ".scm"))
+  (let* ((context-id
+          (if (module-context? ctx)
+            (expander-context-id ctx)
+            (string->symbol ctx)))
+         (scm (string-append (static-module-name context-id) ".scm"))
          (dirs (current-expander-module-library-path))
          (dirs
           (cond
@@ -659,7 +664,7 @@ namespace: gxc
           (pretty-print code)
           (when rt
             (pretty-print
-             ['%#call ['%#ref '_gx#load-module] ['%#quote rt]]))))))
+             ['%#call ['%#ref 'load-module] ['%#quote rt]]))))))
 
   (def (compile-phi part)
     (match part

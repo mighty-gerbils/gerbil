@@ -1,15 +1,19 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; gerbil universal binary (aka "BACH") main function
+prelude: :gerbil/core
 package: gerbil
-(import :gerbil/gambit
+(import :gerbil/runtime
+        :gerbil/gambit
         :gerbil/expander
         :gerbil/compiler)
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
 (def builtin-modules
-  '(;; :gerbil/gambit
+  '(;; :gerbil/runtime
+    ;; TODO
+    ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"
     "gerbil/gambit/misc"

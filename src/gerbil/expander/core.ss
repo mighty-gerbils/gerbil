@@ -148,12 +148,7 @@ namespace: gx
   unchecked: #t)
 
 ;; syntax errors
-(defstruct (syntax-error <error>) (context marks phi)
-  id: gx#syntax-error::t)
-
-(defmethod {display-exception syntax-error}
-  _gx#display-syntax-error)
-
+(extern namespace: #f make-syntax-error)
 (def (raise-syntax-error where message stx . details)
   (raise
     (make-syntax-error message (cons stx details) where

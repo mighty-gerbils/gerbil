@@ -5,7 +5,7 @@
 (export r7rs-eval r7rs-environment)
 
 (def init!
-  (delay (_gx#load-expander!)))
+  (delay (gerbil-load-expander!)))
 
 (def (r7rs-eval expr environment)
   (force init!)

@@ -22,7 +22,16 @@
 
 (def builtin-modules
   '(;; :gerbil/runtime
-    ;; TODO
+    "gerbil/runtime/gambit"
+    "gerbil/runtime/system"
+    "gerbil/runtime/util"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"
     ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"

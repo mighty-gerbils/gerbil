@@ -33,7 +33,16 @@
     ))
 
 (def gerbil-runtime
-  '()) ;; TODO
+  '("gerbil/runtime/gambit"
+    "gerbil/runtime/system"
+    "gerbil/runtime/util"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"))
 
 (def gerbil-prelude-gambit
   '("gerbil/gambit/ports"

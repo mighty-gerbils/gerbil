@@ -188,15 +188,14 @@ package: gerbil
 
 ;; gx-gambc0: foldings
 (declare-type*
- (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) #f)))
- (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) #f)))
- (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) #f)))
- (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) #f)))
- (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) #f))))
+ (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) foldl*)))
+ (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
+ (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
+ (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
+ (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*))))
 
 ;; gx-gambc0: call/cc and friends
 (declare-type*
- (call-with-escape (@lambda 1 call-with-current-continuation))
  (with-catch (@lambda 2 with-exception-catcher)))
 
 ;; gx-gambc1: AST type for optimizing the expander

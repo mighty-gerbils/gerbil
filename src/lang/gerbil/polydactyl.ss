@@ -10,10 +10,18 @@
 
 (eval-when-compile (import (for-syntax :std/gambit-sharp)))
 
+(module <extern>
+  (extern namespace: #f
+    __make-readtable
+    __readtable-bracket-keyword-set!)
+  (export #t))
+
+(import (for-syntax <util>))
+
 (begin-syntax
   (def *readtable*
-    (let (rt (_gx#make-readtable))
-      (_gx#readtable-bracket-keyword-set! rt #f)
+    (let (rt (__make-readtable))
+      (__readtable-bracket-keyword-set! rt #f)
       rt))
 
   (def (read-module-body port)
