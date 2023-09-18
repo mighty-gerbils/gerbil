@@ -17,7 +17,7 @@ The exception hierarchy is rooted in two base classes: `Error` and `Exception`.
 - Instances of `Exception` indicate exceptional conditions that are
   not necessarily errors, and do not have a standard payload.
   `Exception` does not mix `StackTrace`, as it is possible to use `Exception`
-  instances for control flow, in which case it would be appropriate to include
+  instances for control flow, in which case it would be inappropriate to include
   stack traces without the programmer's consent.
 
 ### Exception
