@@ -20,21 +20,16 @@
 (def gambit-libdir
   (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
-(def gerbil-runtime
-  '("gx-gambc0"
-    "gx-gambc1"
-    "gx-gambc2"
-    "gx-gambc"))
-
 (def builtin-modules
-  '(;; :gerbil/gambit
+  '(;; :gerbil/runtime
+    ;; TODO
+    ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"
     "gerbil/gambit/misc"
     "gerbil/gambit/random"
     "gerbil/gambit/continuations"
     "gerbil/gambit/os"
-    "gerbil/gambit/exceptions"
     "gerbil/gambit/threads"
     "gerbil/gambit/bits"
     "gerbil/gambit/hvectors"
@@ -94,8 +89,7 @@
                  invoke-gsc: #t static: #t])
 
 ;; and then compile the binary
-(let* ((runtime-scm (map static-file-name gerbil-runtime))
-       (builtin-modules-scm (map static-file-name builtin-modules))
+(let* ((builtin-modules-scm (map static-file-name builtin-modules))
        (bach-main-scm (static-file-name bach-main))
        (gx-gambc-macros (static-file-name "gx-gambc#"))
        (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
@@ -119,7 +113,6 @@
            "-exe" "-o" output-bin
            "-cc-options" cc-options
            gsc-gx-macros ...
-           runtime-scm ...
            builtin-modules-scm ...
            bach-main-scm])
   ;; clean up

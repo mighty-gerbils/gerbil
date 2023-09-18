@@ -375,13 +375,7 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
-           (gx-gambc
-            (map (lambda (mod)
-                   (path-expand (string-append mod ".scm")
-                                (path-expand "lib/static" gerbil-home)))
-                 '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc")))
-           (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
-           (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+           (runtime []) ;; TODO
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
            (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
            (bin-scm (find-static-module-file ctx))
@@ -393,8 +387,8 @@ namespace: gxc
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
               ["-e" "(define-cond-expand-feature|enable-smp|)"
-               "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
-              ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
+               "-e" include-gambit-sharp]
+              ["-e" include-gambit-sharp]))
            (gsc-args
             [gsc-runtime-args
              ... "-exe" "-o" output-bin
@@ -402,7 +396,7 @@ namespace: gxc
              output-scm]))
       (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub [gx-gambc ... deps ... bin-scm]))
+        (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
         (invoke (gerbil-gsc) gsc-args))))
 
@@ -742,22 +736,7 @@ namespace: gxc
      (if phi? [] opts)))
   (cond
    ((current-compile-debug)
-    => (lambda (debug)
-         (case debug
-           ((env)
-            (not-phi ["-debug-environments"]))
-           ((env/phi)
-            ["-debug-environments"])
-           ((src)
-            (not-phi ["-debug-environments" "-debug-source"]))
-           ((src/phi)
-            ["-debug-environments" "-debug-source"])
-           ((all)
-            (not-phi ["-debug"]))
-           ((all/phi #t)
-            ["-debug"])
-           (else
-            (raise-compile-error "unknown debug option" debug)))))
+    (not-phi ["-debug-environments" "-track-scheme" "-cc-options" "-g"]))
    (else [])))
 
 (def (gsc-compile-file path phi?)

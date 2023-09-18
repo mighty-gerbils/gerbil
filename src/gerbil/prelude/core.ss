@@ -205,15 +205,15 @@ package: gerbil
     current-error-port
     make-promise promise?
     make-parameter call-with-parameters
-    call-with-escape
     ;;call-with-prompt abort!
     with-unwind-protect
-    current-exception-handler with-exception-handler
+    current-exception-handler
+    with-exception-handler
     with-catch
     error raise
-    exception? error-object? type-error?
-    exception::t error::t
-    error? error-trace error-message error-irritants
+    exception? error?
+    error-message error-irritants error-trace
+    display-exception
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*

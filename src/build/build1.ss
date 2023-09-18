@@ -3,6 +3,9 @@
 
 ;;(include "../gerbil/runtime/build-lib.scm") ;; Do everything serially for now.
 
+(def gerbil-modules-runtime
+  '()) ;; TODO
+
 (def gerbil-modules-expander
   '("gerbil/expander/common.ss"
     "gerbil/expander/stx.ss"
@@ -38,7 +41,6 @@
     "gerbil/prelude/gambit/random.ss"
     "gerbil/prelude/gambit/continuations.ss"
     "gerbil/prelude/gambit/os.ss"
-    "gerbil/prelude/gambit/exceptions.ss"
     "gerbil/prelude/gambit/threads.ss"
     "gerbil/prelude/gambit/bits.ss"
     "gerbil/prelude/gambit/hvectors.ss"
@@ -57,7 +59,9 @@
 (def (compile1 modf debug optimize? gen-ssxi?)
   (displayln "... compile " modf)
   (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
-                        debug: debug optimize: optimize? generate-ssxi: gen-ssxi?]))
+                        debug: debug optimize: optimize? generate-ssxi: gen-ssxi?
+                        gsc-options: ["-track-scheme" "-debug-environments"
+                                      "-cc-options" "-g"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
   ;; TODO: parallelize, but with the correct dependencies -- instead of "false",
@@ -72,6 +76,8 @@
 ;; initialize optimizer and preload core.ssxi so that we have core visibility
 (gxc#optimizer-info-init!)
 (gx#import-module "gerbil/prelude/core.ssxi.ss" #t #t)
+;; compile runtime
+(compile-group gerbil-modules-runtime debug-none #t #t)
 ;; compile expander first so that prelude macros have expander visibility
 (compile-group gerbil-modules-expander debug-none #t #t)
 ;; compile core prelude; don't clobber core.ssxi

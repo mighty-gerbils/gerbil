@@ -105,9 +105,9 @@ build_boot_gxi () {
   (cd gerbil && ${CC:-cc} -O2 -o boot-gxi boot-gxi.c)
 }
 
-compile_runtime () {
+compile_boot_runtime () {
   local target_lib="${1}"
-  (cd gerbil/runtime && ./build.scm "${target_lib}")
+  (cd gerbil/boot/runtime && ./build.scm "${target_lib}")
 }
 
 finalize_stage0 () {
@@ -142,8 +142,8 @@ build_stage0 () {
   feedback_low "Building gerbil stage0 (bootstrap)"
 
   ## gerbil runtime
-  feedback_mid "compiling runtime"
-  compile_runtime "${target_lib}"
+  feedback_mid "compiling bootstrap runtime"
+  compile_boot_runtime "${target_lib}"
 
   ## gerbil bootstrap
   feedback_mid "preparing bootstrap"
@@ -171,18 +171,11 @@ build_stage1 () {
   ## feedback
   feedback_low "Building gerbil stage1"
 
-  ## gerbil runtime
-  feedback_mid "compiling runtime"
-  compile_runtime "${target_lib}"
-
   ## stage1 build
   feedback_mid "preparing core build"
   mkdir -p "${target_lib_gerbil}"
   cp -v gerbil/prelude/core.ssxi.ss "${target_lib_gerbil}"
   mkdir -p "${target_lib_static}"
-  cp -v gerbil/runtime/gx-gambc*.scm \
-        gerbil/runtime/gx-version.scm \
-        "${target_lib_static}"
 
   GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
   export GERBIL_HOME
