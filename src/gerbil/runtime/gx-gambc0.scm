@@ -1651,7 +1651,7 @@
 
 ;; some minimal integration with gambit exception
 (define (exception? obj)
-  (%%structure-instance-of? obj (%%type-id exception-type::t)))
+  (%%structure-instance-of? obj (%%type-id exception::t)))
 
 (define (error? obj)
   (%%structure-instance-of? obj (%%type-id error::t)))

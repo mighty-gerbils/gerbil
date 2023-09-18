@@ -38,14 +38,14 @@
            bytes->json-object json-object->bytes json-object->string))
 
 (deferror-class (JSON-RPCError IOError)
-  (code    ; SInt16
-     message ; String
-     data)   ; (Maybe Bytes)
+  (code                                 ; SInt16
+   message                              ; String
+   data)                                ; (Maybe Bytes)
   json-rpc-error?
   (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
-           code: code                   ; SInt16
-           message: message             ; String
-           data: (data (void)))         ; (Maybe Bytes)
+           code: code
+           message: message
+           data: (data (void)))
     (class-instance-init! self [code: code message: message data: data])
     (let (irritants [code])
       (Error:::init! self (string-append "JSON RPC error: "message)
@@ -53,11 +53,11 @@
 (def json-rpc-error make-JSON-RPCError)
 
 (def (json-rpc-error-code e)
-  (car (Error-irritants e)))
+  (JSON-RPCError-code e))
 (def (json-rpc-error-message e)
-  (cadr (Error-irritants e)))
+  (JSON-RPCError-message e))
 (def (json-rpc-error-data e)
-  (caddr (Error-irritants e)))
+  (JSON-RPCError-data e))
 
 (defmethod {:json JSON-RPCError}
   (lambda (self)
