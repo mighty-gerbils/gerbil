@@ -61,8 +61,7 @@
 
 (defmethod {:json JSON-RPCError}
   (lambda (self)
-    (with ([code message data] (Error-irritants self))
-      (hash ("code" code) ("message" message) ("data" data)))))
+    (hash ("code" (@ self code)) ("message" (@ self message)) ("data" (@ self data)))))
 (def (json->json-rpc-error json)
   (trivial-json-object->class JSON-RPCError::t json))
 
