@@ -1636,11 +1636,6 @@
       K fini)))
 
 ;; gerbil errors
-(define exception-type::t (macro-type-exception))
-
-(define (type-descriptor-super-set! type super)
-  (%%vector-set! type 4 super))
-
 (define exception::t
   (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f))
 
@@ -1649,7 +1644,6 @@
                     '((fields: message irritants where) (transparent: . #t))
                     #f))
 
-;; some minimal integration with gambit exception
 (define (exception? obj)
   (%%structure-instance-of? obj (%%type-id exception::t)))
 
