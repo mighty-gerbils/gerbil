@@ -270,7 +270,7 @@ Predicate testing whether the error is a context error
 
 Same as `ContextError?`.
 
-### UnboundKeyE
+### UnboundKey
 ```scheme
 (deferror-class UnboundKey)
 ```
@@ -284,7 +284,7 @@ Error indicating that some lookup operation failed because a key was unbound.
 
 Predicate testing whether the condition is an unbound key error
 
-### key-unbound-error?
+### unbound-key-error?
 ```scheme
 (def unbound-key-error? UnboundKey?)
 ```
