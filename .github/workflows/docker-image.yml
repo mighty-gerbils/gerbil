@@ -17,5 +17,5 @@ jobs:
       run: make -C docker gerbilxx
     - name: docker push to dockerhub
       run: |
-        docker login -u gerbil -p ${{ secrets.DOCKERHUB_TOKEN }}
+        docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
         docker push gerbil/gerbilxx:latest
