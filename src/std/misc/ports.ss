@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; miscellaneous port utilities
 
-(import :gerbil/gambit/ports
-        :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/misc/list-builder
@@ -353,4 +352,4 @@
   ((_ (i x) body ...) (call-with-input x (lambda (i) body ...)))
   ((_ (i) body ...) (call-with-input i (lambda (i) body ...))))
 
-(def (char-port-eof? in) (macro-character-port-peek-eof? in))
+(def (char-port-eof? in) (eof-object? (peek-char in)))
