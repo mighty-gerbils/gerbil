@@ -46,7 +46,7 @@
            code: code
            message: message
            data: (data (void)))
-    (class-instance-init! self [code: code message: message data: data])
+    (class-instance-init! self code: code message: message data: data)
     (let (irritants [code])
       (Error:::init! self (string-append "JSON RPC error: "message)
                      irritants: irritants where: where))))
