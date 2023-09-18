@@ -9,6 +9,7 @@
   premq premv prem premq! premv! prem!)
 
 (import
+  :std/error
   :std/sugar)
 
 ;; This function checks if the list is a proper property-list.
@@ -27,7 +28,8 @@
     (match p
       ([[k . v] . rest] (append [k v] (loop rest)))
       ([] [])
-      (else (error "improper alist" alist)))))
+      (else
+       (raise-bad-argument 'alist->plist "proper alist" alist)))))
 
 ;; The plist definitions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
 (defrule (define-pset pset cmp)
@@ -52,12 +54,13 @@
 ;; plist rather than to its end.
 (defrule (define-pset! pset! cmp)
   (def (pset! lst key val)
-    (unless (pair? lst) (error "Cannot destructively modify an empty plist" pset! lst key val))
+    (unless (pair? lst)
+      (BUG 'pset! "Cannot destructively modify an empty plist" lst key val))
     (let lp ((l lst))
       (match l
         ([k v . r] (if (cmp k key) (set-car! (cdr l) val) (lp r)))
         ([] (match lst ([k1 . v1r] (set-car! lst key) (set-cdr! lst (cons* val k1 v1r)))))
-        (_ (error "Invalid plist" pset! lst key val))))))
+        (_ (raise-bad-argument 'pset! "valid plist" lst key val))))))
 
 (define-pset! psetq! eq?)
 (def pgetq-set! (case-lambda ((k l v) (psetq! l k v)) ((k l d v) (psetq! l k v))))
@@ -72,7 +75,7 @@
       (match tl
         ([k v . r] (if (cmp key k) (foldl cons r rhd) (lp r (cons* v k rhd))))
         ([] lst)
-        (_ (error "Invalid plist" 'prem key lst))))))
+        (_ (raise-bad-argument 'prem "valid plist" lst key))))))
 
 (define-prem premq eq?)
 (define-prem premv eqv?)
@@ -80,7 +83,8 @@
 
 (defrule (define-prem! prem! cmp)
   (def (prem! key lst)
-    (def (invalid) (error "Invalid plist" prem! key lst))
+    (def (invalid)
+      (raise-bad-argument 'prem! "valid plist" lst key))
     (let lp ((p lst) (prev #f))
       (match p
         ([k1 _ . r]
@@ -89,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2 . v2r] (set-car! p k2) (set-cdr! p v2r))
-               ([] (error "Cannot remove last key from plist" prem! key lst))
+               ([] (raise-bad-argument 'prem! "key: cannot remove last key from plist" lst key))
                (_ (invalid))))
            (lp r (cdr p))))
         ([] (void)) ; key not found: NOP

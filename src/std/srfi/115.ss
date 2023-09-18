@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-115: Regular Expressions; this is Alex Shinn's implementation from chibi
 
-(import :std/srfi/1
+(import :std/error
+        :std/srfi/1
         :std/srfi/9
         :std/srfi/14
         :std/srfi/151)

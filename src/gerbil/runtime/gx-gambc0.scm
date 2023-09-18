@@ -1636,22 +1636,16 @@
       K fini)))
 
 ;; gerbil errors
-(define exception-type::t (macro-type-exception))
-
-(define (type-descriptor-super-set! type super)
-  (%%vector-set! type 4 super))
-
 (define exception::t
-  (let ((t (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f)))
-    (type-descriptor-super-set! t exception-type::t)
-    t))
+  (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f))
 
 (define error::t
-  (make-struct-type 'gerbil#error::t exception::t 3 'error '() #f))
+  (make-struct-type 'gerbil#error::t exception::t 3 'error
+                    '((fields: message irritants where) (transparent: . #t))
+                    #f))
 
-;; some minimal integration with gambit exception
 (define (exception? obj)
-  (%%structure-instance-of? obj (%%type-id exception-type::t)))
+  (%%structure-instance-of? obj (%%type-id exception::t)))
 
 (define (error? obj)
   (%%structure-instance-of? obj (%%type-id error::t)))
@@ -1663,17 +1657,20 @@
   (%%structure-instance-of? obj (%%type-id (macro-type-type-exception))))
 
 (define (error-message obj)
-  (if (error? obj)
-    (%%vector-ref obj 1)
-    (with-output-to-string '() (lambda () (display-exception obj)))))
+  (cond
+   ((error? obj)
+    (%%structure-ref  obj 1 error::t #f))
+   ((error-object? obj)
+    (error-exception-message obj))
+   (else #f)))
 
 (define (error-irritants obj)
   (and (error? obj)
-       (%%vector-ref obj 2)))
+       (%%structure-ref  obj 2 error::t #f)))
 
 (define (error-trace obj)
   (and (error? obj)
-       (%%vector-ref obj 3)))
+       (%%structure-ref  obj 3 error::t #f)))
 
 (define (datum-parsing-exception-filepos e)
   (macro-readenv-filepos (datum-parsing-exception-readenv e)))

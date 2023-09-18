@@ -2,8 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto bignum utils
 
-(import :std/crypto/libcrypto
-        :std/crypto/etc)
+(import :std/error
+        ./libcrypto
+        ./etc)
 (export #t)
 
 (def (BN->bytes bn)

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble registry
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         :std/iter
         :std/interface

@@ -37,8 +37,9 @@
                  take-while take-while! drop-while
                  delete-duplicates delete-duplicates!
                  split-at)
-        ../sugar
-        ../assert)
+        :std/error
+        :std/sugar
+        :std/assert)
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
@@ -83,7 +84,7 @@
     (and (<= 0 n ##max-fixnum)
          (length=n? x (inexact->exact n))))
    ((number? n) #f)
-   (else (error "not a number" n))))
+   (else (raise-bad-argument 'length=n? "number" n))))
 
 ;; Is the first list strictly shorter than the latter?
 (def (length<? x y) ;; Efficient version of (< (length x) (length y))
@@ -107,7 +108,7 @@
     (and (positive? n)
          (or (< ##max-fixnum n)
              (length<=n? x (inexact->exact (floor n))))))
-   (else (error "not a real number" n))))
+   (else (raise-bad-argument 'length<=n? "real number" n))))
 
 (def (length<n? x n) ;; Efficient version of (< (length x) n)
   (cond
@@ -117,7 +118,7 @@
     (and (positive? n)
          (or (< ##max-fixnum n)
              (length<n? x (inexact->exact (ceiling n))))))
-   (else (error "not a real number" n))))
+   (else (raise-bad-argument 'length<n? "real number" n))))
 
 (def (length<=? x y) (not (length<? y x)))
 (def (length>? x y) (length<? y x))

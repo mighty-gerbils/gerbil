@@ -18,6 +18,7 @@
 (import
   (only-in :gerbil/gambit/ports write-substring write-string)
   (only-in :gerbil/gambit/random random-integer)
+  :std/error
   :std/srfi/13
   :std/format
   :std/iter
@@ -166,7 +167,7 @@
 (def (string-subst str old new count: (count #f))
   (declare (fixnum))
   (unless (or (not count) (fixnum? count))
-    (error "Illegal argument; count must be a fixnum or #f, got:" count))
+    (raise-bad-argument 'string-subst "fixnum or #f: count" count))
   (def old-empty? (string-empty? old))
   (def new-empty? (string-empty? new))
   (def str-empty? (string-empty? str))
@@ -212,7 +213,8 @@
 ;;  (random-string) => "5CfMyYd2Ob"
 (def (random-string (len 10))
   (declare (not safe) (fixnum))
-  (unless (fixnum? len) (error "len must be a fixnum"))
+  (unless (fixnum? len)
+    (raise-bad-argument 'random-string "fixnum" len))
   (if (> len 0)
     (let (str (make-string len))
       (do ((i 0 (1+ i)))

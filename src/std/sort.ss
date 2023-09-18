@@ -2,9 +2,12 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Sorting -- using Olin Shivers' withdrawn srfi-32 impl
 
-(declare (fixnum) (not safe))
-
+(import :std/error)
 (export sort sort! stable-sort stable-sort!)
+
+(declare
+  (not safe)
+  (fixnum))
 
 ;; front-end procs
 (defrules defproc ()

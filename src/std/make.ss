@@ -6,7 +6,6 @@
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/bits
-        :gerbil/gambit/exceptions
         :gerbil/gambit/misc
         :gerbil/gambit/os
         :gerbil/gambit/ports
@@ -23,6 +22,7 @@
         ./misc/concurrent-plan
         ./sort
         ./sugar
+        ./error
         ./assert)
 
 (extern namespace: #f with-cons-load-path load-path)

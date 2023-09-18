@@ -2,11 +2,13 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptor I/O
 
-(import :std/foreign
-        :std/os/fd
-        :std/os/fcntl
-        :std/os/error
-        :gerbil/gambit/ports)
+(import :gerbil/gambit/ports
+        :std/error
+        :std/foreign
+        ./fd
+        ./fcntl
+        ./error)
+
 (export #t)
 
 (def (fdread raw bytes (start 0) (end (u8vector-length bytes)))
@@ -51,7 +53,7 @@
    ((##fx= (##fxand flags O_WRONLY) O_WRONLY)
     'out)
    (else
-    (error "Unspecified file direction" flags))))
+    (raise-bad-argument 'fdio "file direction: unspecified" flags))))
 
 ;;; FFI impl
 (begin-ffi (_read _write _open _close

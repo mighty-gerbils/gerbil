@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-134: Immutable Deques
 
-(import :std/srfi/1
+(import :std/error
+        :std/srfi/1
         :std/srfi/8
         :std/srfi/9
         :std/srfi/121)

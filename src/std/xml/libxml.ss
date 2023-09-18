@@ -33,7 +33,12 @@
         HTML_PARSE_COMPACT
         HTML_PARSE_IGNORE_ENC)
 
-(import :std/xml/_libxml)
+(import :std/error
+        :std/xml/_libxml)
+
+(deferror-class (LibXMLError IOError) () libxml-error?)
+(def (raise-libxml-error where what . irritants)
+  (raise (LibXMLError what where: where irritants: irritants)))
 
 (def (parser-e source parse-string parse-u8vector parse-port)
   (cond
@@ -43,8 +48,7 @@
       (parse-u8vector src 0 (u8vector-length src) url enc opt)))
    ((input-port? source) parse-port)
    (else
-    (error "Illegal source; Expected string, u8vector, or input-port"
-      source))))
+    (raise-bad-argument 'libxml "string, u8vector, or input-port" source))))
 
 ;; xml parser interface: parses to SXML + *CDATA* unless collapsed with
 ;;  XML_PARSE_NOCDATA
@@ -70,7 +74,7 @@
       (unwind-protect
         (xml-doc->sxml xtree ns)
         (xmlFreeDoc xtree))
-      (error "Error parsing xml; no parse tree" source))))
+      (raise-libxml-error 'parse-xml "Error parsing xml; no parse tree" source))))
 
 ;; html parser interface; parses to SXML + *CDATA*
 ;; source, encoding, url, options as above
@@ -87,7 +91,7 @@
       (unwind-protect
         (html-doc->sxml xtree (node-filter-e filter-els))
         (xmlFreeDoc xtree))
-      (error "Error parsing html; no parse tree" source))))
+      (raise-libxml-error 'parse-html "Error parsing html; no parse tree" source))))
 
 (def (xml-doc->sxml xtree ns)
   (def nsmap
@@ -150,7 +154,7 @@
            ((eq? type XML_COMMENT_NODE)
             rest)
            (else
-            (error "Unexpected node" (xmlNode-name node) type)))))
+            (raise-libxml-error 'xmlNode->sxml "Unexpected node" (xmlNode-name node) type)))))
       [])))
 
 (def (xmlAttr->list attr attribute-e)

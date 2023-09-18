@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-19: time data types and procedures
 
-(import :std/srfi/srfi-support
+(import :std/error
+        :std/srfi/srfi-support
         :std/srfi/8
         :gerbil/gambit/exact)
 (export

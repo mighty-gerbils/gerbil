@@ -4,7 +4,7 @@
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
-        :gerbil/gambit/exceptions
+        :std/error
         :std/sugar
         :std/logger
         :std/net/bio

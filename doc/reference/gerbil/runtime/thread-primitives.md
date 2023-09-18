@@ -144,24 +144,3 @@ Evaluates *thunk* in a dynamic extent where *mx* is locked.
 
 Hooks the actor exception handler to invoke `(proc continuation exception)` on uncaught
 exceptions occurring in actor threads.
-
-## dump-stack-trace!
-``` scheme
-(dump-stack-trace! cont exn [port = (current-error-port)]) -> void
-
-  cont := continuation
-  exn  := exception
-  port := error port
-```
-
-Dumps a stack trace from an exception handler hook.
-
-
-## with-exception-stack-trace
-``` scheme
-(with-exception-stack-trace thunk [port = (current-error-port)]) -> any
-
-  thunk := procedure
-```
-
-Evaluate *thunk*, with a handler that dumps a stack trace on uncaught exceptions.

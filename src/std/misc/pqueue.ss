@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; heap based priority queues
-
+(import :std/error)
 (export pqueue make-pqueue pqueue? pqueue-empty? pqueue-size
         pqueue-peek pqueue-pop! pqueue-push! pqueue-contents)
 
@@ -29,7 +29,7 @@
   (with ((pqueue e cmp prio) pq)
     (if (##fxzero? (heap-size e))
       (if (eq? default absent-obj)
-        (error "empty pqueue")
+        (raise-context-error 'pqueue-peek "empty pqueue" pq)
         default)
       (heap-top e))))
 
@@ -37,7 +37,7 @@
   (with ((pqueue e cmp) pq)
     (if (##fxzero? (heap-size e))
       (if (eq? default absent-obj)
-        (error "Cannot pop; empty pqueue")
+        (raise-context-error 'pqueue-pop! "Cannot pop; empty pqueue" pq)
         default)
       (let (obj (heap-top e))
         (heap-pop! e cmp)

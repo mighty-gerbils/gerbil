@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; srfi implementation support libraries (mostly for Olin's code)
-
+(import :std/error)
 (export #t)
 
 (defrules check-arg ()

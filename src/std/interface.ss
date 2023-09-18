@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; Go-style interfaces
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         (only-in :std/srfi/1 reverse!)
         (for-syntax (only-in :std/srfi/1 delete-duplicates)
@@ -9,8 +10,13 @@
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out
         interface-instance? interface-instance-object &interface-instance-object
-        interface-descriptor? interface-descriptor-type interface-descriptor-methods)
+        interface-descriptor? interface-descriptor-type interface-descriptor-methods
+        interface-cast-error?)
 (declare (not safe))
+
+(deferror-class CastError () interface-cast-error?)
+(def (raise-cast-error message . irritants)
+  (raise (CastError message where: 'cast irritants: irritants)))
 
 ;; base type for all interface instances
 (defstruct interface-instance (object)
@@ -76,7 +82,7 @@
    descriptor klass obj-klass
    (lambda (prototype) prototype)
    (lambda (klass method-name)
-     (error "Cannot create interface instance; missing method" klass method-name))))
+     (raise-cast-error "Cannot create interface instance; missing method" klass method-name))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype
@@ -117,7 +123,7 @@
                  (instance (##structure-copy prototype)))
             (##unchecked-structure-set! instance obj 1 klass #f)
             instance)))))
-    (error "Cannot cast non-object to interface instance" obj)))
+    (raise-cast-error "Cannot cast non-object to interface instance" obj)))
 
 ;; check if an object satisfies an interface
 (def (satisfies? descriptor obj)

@@ -19,10 +19,12 @@
   json-rpc-version
   parser-error invalid-request method-not-found invalid-params internal-error
   application-error system-error tranport-error
-  malformed-request malformed-response)
+  MalformedRequest? malformed-request?
+  MalformedResponse? malformed-response?)
 
 (import
-  (only-in :std/error Exception <error>)
+  :gerbil/gambit/continuations
+  :std/error
   (only-in :std/misc/atom atomic-counter)
   (only-in :std/net/httpd http-response-write http-response-write-condition
            http-request-body http-request-params http-request-method
@@ -35,30 +37,33 @@
   (only-in :std/text/json trivial-json-object->class JSON json-symbolic-keys
            bytes->json-object json-object->bytes json-object->string))
 
-(defstruct (json-rpc-error <error>) ()
-;;  (code    ;; SInt16
-;;   message ;; String
-;;   data)   ;; (Maybe Bytes)
-  transparent: #t constructor: :init!)
-(defmethod {:init! json-rpc-error}
+(deferror-class (JSON-RPCError IOError)
+  (code                                 ; SInt16
+   message                              ; String
+   data)                                ; (Maybe Bytes)
+  json-rpc-error?
   (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
-           code: code ;; SInt16
-           message: message ;; String
-           data: (data (void))) ;; (Maybe Bytes)
-    (def irritants [code message data])
-    (struct-instance-init! self what irritants where)))
+           code: code
+           message: message
+           data: (data (void)))
+    (class-instance-init! self code: code message: message data: data)
+    (let (irritants [code])
+      (Error:::init! self (string-append "JSON RPC error: "message)
+                     irritants: irritants where: where))))
+(def json-rpc-error make-JSON-RPCError)
+
 (def (json-rpc-error-code e)
-  (car (error-irritants e)))
+  (JSON-RPCError-code e))
 (def (json-rpc-error-message e)
-  (cadr (error-irritants e)))
+  (JSON-RPCError-message e))
 (def (json-rpc-error-data e)
-  (caddr (error-irritants e)))
-(defmethod {:json json-rpc-error}
+  (JSON-RPCError-data e))
+
+(defmethod {:json JSON-RPCError}
   (lambda (self)
-    (with ([code message data] (error-irritants self))
-      (hash ("code" code) ("message" message) ("data" data)))))
+    (hash ("code" (@ self code)) ("message" (@ self message)) ("data" (@ self data)))))
 (def (json->json-rpc-error json)
-  (trivial-json-object->class json-rpc-error::t json))
+  (trivial-json-object->class JSON-RPCError::t json))
 
 (def json-rpc-version "2.0")
 
@@ -112,8 +117,15 @@
 (def (tranport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
-(defclass (malformed-request JSON Exception) (method params e) transparent: #t)
-(defclass (malformed-response JSON Exception) (request-id response e) transparent: #t)
+(def (malformed-request/response-init! self . args)
+  (class-instance-init! self args)
+  (Error:::init! self (@ self message)))
+(deferror-class (MalformedRequest JSON Error) (method params message)
+  malformed-request?
+  malformed-request/response-init!)
+(deferror-class (MalformedResponse JSON Error) (request-id response message)
+  malformed-response?
+  malformed-request/response-init!)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
   (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
@@ -140,8 +152,8 @@
               (try (json-object->bytes
                     (json-rpc-request jsonrpc: json-rpc-version
                                       method: method params: params id: id))
-                   (catch (e) (raise (malformed-request method: method params: params
-                                                        e: (error-message e))))))
+                   (catch (e) (raise (MalformedRequest method: method params: params
+                                                       message: (error-message e))))))
           (http-post server-url
                      auth: auth
                      headers: `(("Content-Type" . "application/json-rpc")
@@ -165,9 +177,9 @@
         (set! id (number->string id)) ;; GET method wants string id.
         (let* ((base64-params
                 (try (u8vector->base64-string (json-object->bytes params))
-                     (catch (e) (raise (malformed-request
+                     (catch (e) (raise (MalformedRequest
                                         method: method params: params
-                                        e: (error-message e))))))
+                                        message: (error-message e))))))
                (uri-params
                 `(("jsonrpc" .,json-rpc-version)
                   ("method" .,method)
@@ -181,11 +193,13 @@
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
-       (else (raise (error "Invalid http method" http-method))))))
+       (else (raise-bad-argument 'json-rpc "http method: invalid" http-method)))))
   (def response-json
     (try
      (bytes->json response-bytes) ;; todo: move to decode-json-rpc-response ?
-     (catch (e) (raise (malformed-response request-id: id response: response-bytes e: e)))))
+     (catch (e)
+       (raise (MalformedResponse request-id: id response: response-bytes
+                                 message: (error-message e))))))
   (when log
     (log [from: server-url response: (bytes->string response-bytes)]))
   (decode-json-rpc-response
@@ -195,7 +209,8 @@
 
 (def (decode-json-rpc-response decoder request-id response-json)
   (def (mal! e)
-    (raise (malformed-response request-id: request-id response: response-json e: (error-message e))))
+    (raise (MalformedResponse request-id: request-id response: response-json
+                              message: (error-message e))))
   (def response (with-catch mal! (cut trivial-json-object->class json-rpc-response::t response-json)))
   (def jsonrpc (@ response jsonrpc))
   (def result (@ response result))

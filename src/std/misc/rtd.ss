@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; safe type descriptor accessors
-
+(import :std/error)
 (export (rename: checked-object-type object-type)
         type? type-id type-name type-super
         type-descriptor?
@@ -23,7 +23,7 @@
 (def (checked-object-type obj)
   (if (object? obj)
     (object-type obj)
-    (error "Not an object" obj)))
+    (raise-bad-argument 'checked-object-type "object" obj)))
 
 (def (type? obj)
   (##type? obj))
@@ -33,14 +33,14 @@
    (def (id obj)
      (if (##type? obj)
        (getf obj)
-       (error "Bad argument; expected type object" obj)))))
+       (raise-bad-argument 'id "type object" obj)))))
 
 (defrules defcheck-type-descriptor ()
   ((_ id getf)
    (def (id obj)
      (if (type-descriptor? obj)
        (getf obj)
-       (error "Bad argument; expected type descriptor" obj)))))
+       (raise-bad-argument 'id "type descriptor" obj)))))
 
 (defcheck-type type-id ##type-id)
 (defcheck-type type-name ##type-name)

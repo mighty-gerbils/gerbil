@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-41: streams library
 
-(import :std/srfi/9)
+(import :std/error
+        :std/srfi/9)
 (export
   stream-type
   stream-lazy stream-eager stream-delay stream-force

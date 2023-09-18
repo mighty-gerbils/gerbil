@@ -2,9 +2,9 @@
 ;;; (C) vyzo
 ;;; std parser generator
 
-(import :std/parser/base
-        :std/parser/rlang
-        :std/parser/lexer
+(import ./base
+        ./rlang
+        ./lexer
         (for-syntax :std/stxutil))
 
 (export #t)

@@ -3,10 +3,15 @@
 ;;; assert macro, originally written by vyzo and enhanced by alex knauth
 
 (import
+  :std/error
   :std/sugar
   :std/format
   (for-syntax (only-in :gerbil/expander core-bound-identifier?)))
-(export assert!)
+(export assert! assertion-failed?)
+
+(deferror-class AssertionFailed () assertion-failed?)
+(def (raise-assertion-failed message)
+  (raise (AssertionFailed message where: 'assert)))
 
 (begin-syntax
   ;; original idea from Jack Firth, Sam Phillips, and Alex Knauth for Rackunit:
@@ -54,4 +59,4 @@
 (def (assert!/fail message condition-expr extras)
   (def hd (format "Assertion failed ~a: ~s" message condition-expr))
   (def str (apply string-append hd (map (match <> ((cons k v) (format "\n  ~s => ~r" k v))) extras)))
-  (error str))
+  (raise-assertion-failed str))

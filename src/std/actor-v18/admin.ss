@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server administration utils
-(import :std/crypto
+(import :std/error
+        :std/crypto
         :std/text/utf8
         :std/misc/ports
         ./path)

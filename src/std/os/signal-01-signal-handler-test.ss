@@ -5,14 +5,14 @@
 (import :gerbil/gambit/threads
         :std/test
         :std/sugar
-        :std/os/signal
-        :std/os/signal-handler
-        :std/os/pid)
+        ./signal
+        ./signal-handler
+        ./pid)
 
 (export signal-handler-test)
 (def signal-handler-test
-  (test-suite "test :std/os/signal-handler"
-    (test-case "test basic signal handling"
+  (test-suite "signal-handler"
+    (test-case "basic signal handling"
       ;; drain the message queue first from possible garbage from other tests
       (while (thread-receive 0 #f))
 

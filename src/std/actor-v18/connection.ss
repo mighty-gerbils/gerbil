@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor server connections
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/error
         :std/sugar
         :std/sort
@@ -47,8 +46,8 @@
        (catch (io-closed-error? e)
          ;; socket was closed
          (exit 'shutdown))
-       (catch (os-exception? e)
-         (let (errno (fx- (os-exception-code e)))
+       (catch (os-error? e)
+         (let (errno (os-error-errno e))
            (match errno
              ((eqv? ECONNABORTED)
               ;; connection was aborted

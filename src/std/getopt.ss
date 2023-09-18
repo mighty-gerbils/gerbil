@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
 
-(import :gerbil/gambit/exceptions
-        :std/error
+(import :std/error
         :std/sugar
         :std/format)
 (export getopt
@@ -21,14 +20,16 @@
         rest-arguments
         call-with-getopt
         )
-
-(defstruct (getopt-error <error>) (e))
-
 (def current-getopt-parser
   (make-parameter #f))
 
+(deferror-class GetOptError (getopt) getopt-error?
+  (lambda (self msg args getopt)
+    (Error:::init! self msg where: 'getopt irritants: args)
+    (set! (@ self getopt) getopt)))
 (def (raise-getopt-error msg . args)
-  (raise (make-getopt-error msg args #f (current-getopt-parser))))
+  (raise (GetOptError msg args (current-getopt-parser))))
+(def getopt-error-e GetOptError-getopt)
 
 (defstruct !getopt (opts cmds args help))
 (defstruct !top (key help))

@@ -3,6 +3,7 @@
 ;;; SRFI-101: Purely Functional Random-Access Pairs and Lists
 
 (import :gerbil/gambit/bits
+        :std/error
         :std/srfi/1)
 (export
   (rename: ra:quote rquote)

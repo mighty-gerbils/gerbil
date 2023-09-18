@@ -4,10 +4,10 @@
 
 (require linux)
 (import :std/foreign
-        :std/os/error
-        :std/os/fd
-        :std/os/fdio
-        :std/os/signal)
+        ./error
+        ./fd
+        ./fdio
+        ./signal)
 (export signalfd signalfd?
         signalfd-reset!
         signalfd-read

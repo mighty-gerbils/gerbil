@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; zlib interface
+;;; TODO support stdio
 
 (import :gerbil/gambit/ports
         :std/sugar
@@ -15,7 +16,7 @@
    ((string? data) (compress-bytes (string->utf8 data) level))
    ((input-port? data) (compress-port data level))
    (else
-    (error "Bad input source" data))))
+    (raise-bad-argument 'compress "input source; u8vector, string, or input-port" data))))
 
 (def (compress-bytes data level)
   (let* ((buf (make-u8vector (compressBound (u8vector-length data))))
@@ -35,7 +36,7 @@
    ((string? data) (compress-gz-bytes (string->utf8 data) level))
    ((input-port? data) (compress-gz-port data level))
    (else
-    (error "Bad input source" data))))
+    (raise-bad-argument 'compress-gz "input source; u8vector, string, or input-port" data))))
 
 (defrules with-z-stream ()
   ((_ where zs init body fini)
@@ -123,7 +124,7 @@
    ((u8vector? data) (uncompress-bytes data))
    ((input-port? data) (uncompress-port data))
    (else
-    (error "Bad input source" data))))
+    (raise-bad-argument 'uncompress "input source; u8vector or input-port" data))))
 
 (def (uncompress-bytes data)
   (do-inflate data uncompress-data))

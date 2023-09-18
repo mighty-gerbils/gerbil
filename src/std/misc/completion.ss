@@ -3,6 +3,7 @@
 ;;; asynchronous completion tokens
 
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar)
 (export make-completion
         completion?
@@ -46,7 +47,7 @@
      (if (&completion-ready? compl)
        (begin
          (mutex-unlock! mx)
-         (error "Completion has already been posted" compl))
+         (raise-context-error 'completion-post! "Completion has already been posted" compl))
        (begin
          (set-e compl val)
          (set! (&completion-ready? compl) #t)

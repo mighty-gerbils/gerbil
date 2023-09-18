@@ -72,7 +72,7 @@
   (lambda (self output output-start output-end _)
     (with-basic-socket-read-lock self
       (when (&basic-socket-closed? self)
-        (raise-io-closed-error 'ssl-socket-recv "socket input has been shutdown"))
+        (raise-io-closed 'ssl-socket-recv "socket input has been shutdown"))
       (let ((rsock (&basic-socket-sock self))
             (ssl (&ssl-socket-ssl self)))
         (let lp ()
@@ -85,7 +85,7 @@
                 (if wait-result
                   (begin
                     (when (&basic-socket-closed? self)
-                      (raise-io-closed-error 'ssl-socket-recv "socket input has been shutdown"))
+                      (raise-io-closed 'ssl-socket-recv "socket input has been shutdown"))
                     (lp))
                   (raise-timeout 'ssl-socket-recv "receive timeout"))))
              ((eqv? result SSL_ERROR_WANT_WRITE)
@@ -94,7 +94,7 @@
                 (if wait-result
                   (begin
                     (when (&basic-socket-closed? self)
-                      (raise-io-closed-error 'ssl-socket-recv "socket input has been shutdown"))
+                      (raise-io-closed 'ssl-socket-recv "socket input has been shutdown"))
                     (lp))
                   (raise-timeout 'ssl-socket-recv "receive timeout"))))
              (else
@@ -104,7 +104,7 @@
   (lambda (self input input-start input-end _)
     (with-basic-socket-read-lock self
       (when (&basic-socket-closed? self)
-        (raise-io-closed-error 'ssl-socket-send "socket output has been shutdown"))
+        (raise-io-closed 'ssl-socket-send "socket output has been shutdown"))
       (let ((rsock (&basic-socket-sock self))
             (ssl   (&ssl-socket-ssl self)))
         (let lp ()
@@ -117,7 +117,7 @@
                 (if wait-result
                   (begin
                     (when (&basic-socket-closed? self)
-                      (raise-io-closed-error 'ssl-socket-send "socket input has been shutdown"))
+                      (raise-io-closed 'ssl-socket-send "socket input has been shutdown"))
                     (lp))
                   (raise-timeout 'ssl-socket-send "receive timeout"))))
              ((eqv? result SSL_ERROR_WANT_WRITE)
@@ -126,7 +126,7 @@
                 (if wait-result
                   (begin
                     (when (&basic-socket-closed? self)
-                      (raise-io-closed-error 'ssl-socket-send "socket input has been shutdown"))
+                      (raise-io-closed 'ssl-socket-send "socket input has been shutdown"))
                     (lp))
                   (raise-timeout 'ssl-socket-send "receive timeout"))))
              (else
@@ -150,7 +150,7 @@
             (cond
              ((fx= read 0)
               (if (fx> input-need result)
-                (raise-io-error 'ssl-socket-read "premature end of input" input-need)
+                (raise-premature-end-of-input 'ssl-socket-read input-need)
                 result))
              ((fx> read input-need)
               (fx+ result read))

@@ -2,7 +2,7 @@
 ;;; © t.brandscheid@gmail.com
 ;;; © vyzo
 ;;; Utility procedures
-
+(import :std/error)
 (export
   repeat always
   compose1 compose compose/values
@@ -19,7 +19,7 @@
 (def (repeat v-or-fn n-times . args)
   (declare (fixnum) (not safe))
   (unless (fixnum? n-times)
-    (error "Bad argument; expected fixnum" n-times))
+    (raise-bad-argument 'repeat "fixnum" n-times))
   (if (procedure? v-or-fn)
     (let ((fn (if (null? args)
 		        v-or-fn

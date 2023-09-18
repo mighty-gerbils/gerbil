@@ -3,6 +3,7 @@
 ;;; actor server
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
+        :std/error
         :std/sugar
         :std/iter
         :std/io

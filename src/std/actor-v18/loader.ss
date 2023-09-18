@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; code loader
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         :std/crypto
         :std/text/hex

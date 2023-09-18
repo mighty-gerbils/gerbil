@@ -13,17 +13,17 @@
 (def (string->utf8 str (start 0) (end #f))
   (if (string? str)
     (utf8-encode str start (if (nonnegative-fixnum? end) end (string-length str)))
-    (error "Bad argument; expected string" str)))
+    (raise-bad-argument 'utf8-codec "string" str)))
 
 (def (string-utf8-length str (start 0) (end #f))
   (if (string? str)
     (utf8-encode-length str start (if (nonnegative-fixnum? end) end (string-length str)))
-    (error "Bad argument; expected string" str)))
+    (raise-bad-argument 'utf8-codec "string" str)))
 
 (def (utf8->string u8v (start 0) (end #f))
   (if (u8vector? u8v)
     (utf8-decode u8v start (if (nonnegative-fixnum? end) end (u8vector-length u8v)))
-    (error "Bad argument; expected u8vector" u8v)))
+    (raise-bad-argument 'utf8-codec "u8vector" u8v)))
 
 (def (utf8-encode str start end)
   (let* ((slen (fx- end start))

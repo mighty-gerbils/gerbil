@@ -404,7 +404,7 @@ END-C
    ((macro-character-input-port? port)
     (parse (read-char-port port) url encoding options))
    (else
-    (error "Can't parse port; not a byte or character input port" port))))
+    (std/error#raise-unspecified-error "Can't parse port; not a byte or character input port" port))))
 
 (define (xmlRead-port port url encoding options)
   (xmlRead-iocontext xmlRead-u8vector* port url encoding options))

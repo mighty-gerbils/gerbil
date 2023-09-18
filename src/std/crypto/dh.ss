@@ -2,8 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto DH key exchage
 
-(import :std/crypto/libcrypto
-        :std/crypto/etc)
+(import :std/error
+        ./libcrypto
+        ./etc)
 (export
   (except-out #t with-null-check)
   (rename: DH_pub_key DH-pub-key))

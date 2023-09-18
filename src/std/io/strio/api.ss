@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; string IO api
-(import :std/interface
+(import :std/error
+        :std/interface
         ../interface
         ../dummy
         ../port
@@ -33,27 +34,27 @@
   (cond
    ((fixnum? buffer-or-size)
     (if (fx> buffer-or-size max-u8vector-buffer-size)
-      (error "Bad argument; buffer too big" buffer-or-size)
+      (raise-bad-argument 'make-buffer "buffer size: buffer too big" buffer-or-size)
       (make-u8vector buffer-or-size)))
    ((u8vector? buffer-or-size)
     (if (fx> (u8vector-length buffer-or-size) max-u8vector-buffer-size)
-      (error "Bad argument; buffer too big" (u8vector-length buffer-or-size))
+      (raise-bad-argument 'make-buffer "buffer size: buffer too big" (u8vector-length buffer-or-size))
       buffer-or-size))
    (else
-    (error "Bad argument; expected fixnum or u8vector" buffer-or-size))))
+    (raise-bad-argument 'make-buffer "fixnum or u8vector" buffer-or-size))))
 
 (def (make-string-buffer buffer-or-size)
   (cond
    ((fixnum? buffer-or-size)
     (if (fx> buffer-or-size max-u8vector-buffer-size)
-      (error "Bad argument; buffer too big" buffer-or-size)
+      (raise-bad-argument 'make-buffer "buffer size: buffer too big" buffer-or-size)
       (make-string buffer-or-size)))
    ((string? buffer-or-size)
     (if (fx> (string-length buffer-or-size) max-u8vector-buffer-size)
-      (error "Bad argument; buffer too big" (string-length buffer-or-size))
+      (raise-bad-argument 'make-buffer "buffer size: buffer too big" (string-length buffer-or-size))
       buffer-or-size))
    (else
-    (error "Bad argument; expected fixnum or string" buffer-or-size))))
+    (raise-bad-argument 'make-buffer "fixnum or string" buffer-or-size))))
 
 (def (double string-buffer-or-size)
   (fx* 2 (if (fixnum? string-buffer-or-size)
@@ -64,13 +65,13 @@
   (case codec
     ((UTF-8) utf8-encode-partial!)
     (else
-     (error "Unsupported character encoding" codec))))
+     (BUG 'characer-encoder "Unsupported character encoding" codec))))
 
 (def (character-decoder codec)
   (case codec
     ((UTF-8) utf8-decode-partial!)
     (else
-     (error "Unsupported character encoding" codec))))
+     (BUG 'character-decoder "Unsupported character encoding" codec))))
 
 (def (open-string-reader pre-reader (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
@@ -99,7 +100,7 @@
    ((input-port? pre-reader)
     (StringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (error "Bad reader; expected implementation of Reader" pre-reader))))
+    (raise-bad-argument 'open-string-reader "implementation of Reader" pre-reader))))
 
 (def (open-string-writer pre-writer (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
@@ -128,7 +129,7 @@
    ((output-port? pre-writer)
     (StringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (error "Bad writer; expected implementation of Writer" pre-writer))))
+    (raise-bad-argument 'open-string-writer "implementation of Writer" pre-writer))))
 
 (def (open-buffered-string-reader pre-reader (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
@@ -154,7 +155,7 @@
    ((input-port? pre-reader)
     (BufferedStringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (error "Bad reader; expected string or implementation of StringReader or Reader" pre-reader))))
+    (raise-bad-argument 'open-buffered-string-reader "string or implementation of StringReader or Reader" pre-reader))))
 
 (def (open-buffered-string-writer pre-writer (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
@@ -180,7 +181,7 @@
    ((output-port? pre-writer)
     (BufferedStringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (error "Bad writer; expected #f or implementation of StringWriter or writer" pre-writer))))
+    (raise-bad-argument 'open-buffered-string-writer "#f or implementation of StringWriter or writer" pre-writer))))
 
 (def (open-chunk-writer)
   (StringWriter (make-chunked-string-output-buffer [] #f)))
@@ -201,7 +202,7 @@
       (or (&chunked-string-output-buffer-output strio)
           (reverse (&chunked-string-output-buffer-chunks strio))))
      (else
-      (error "Unexpected type; expected instance of Writer or BufferedWriter wrapping an output buffer" wr)))))
+      (raise-bad-argument 'get-buffer-output "BufferedStringWriter wrapping an output buffer" wr)))))
 
 ;; string-reader implements StringReader
 (defmethod {read-string string-reader}

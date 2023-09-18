@@ -1,12 +1,7 @@
 (export plist-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/error :std/misc/plist :std/test)
-
-(def (error-with-message? message)
-  (lambda (e)
-    (and (error-exception? e) (equal? (error-exception-message e) message))))
 
 (def (copy-list lst) (foldr cons '() lst))
 
@@ -24,7 +19,7 @@
       (check-equal? (let (p ['a 1 'b 2]) (premq! 'b p) p) ['a 1])
       (check-equal? (let (p ['a 1 'b 2]) (premq! 'c p) p) ['a 1 'b 2])
       (check-equal? (let (p []) (premq! 'a p) p) [])
-      (check-exception (premq! 'a ['a 1]) (error-with-message? "Cannot remove last key from plist")))
+      (check-exception (premq! 'a ['a 1]) bad-argument-error?))
     (test-case "test pset"
       (check-equal? (psetq ['a 1 'b 2] 'a 3) ['a 3 'b 2])
       (check-equal? (psetq ['a 1 'b 2] 'b 4) ['a 1 'b 4])

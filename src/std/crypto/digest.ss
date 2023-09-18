@@ -2,8 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto digests
 
-(import :std/crypto/libcrypto
-        :std/crypto/etc
+(import :std/error
+        ./libcrypto
+        ./etc
         (for-syntax :std/stxutil))
 
 (export make-digest digest? digest-update! digest-update* digest-final!

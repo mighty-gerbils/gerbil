@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-133: R7RS-compatible vector library
 
-(import :std/srfi/8)
+(import :std/error
+        :std/srfi/8)
 ;; Constructors
 (export vector-unfold vector-unfold-right vector-copy vector-reverse-copy
         vector-append vector-concatenate vector-append-subvectors)

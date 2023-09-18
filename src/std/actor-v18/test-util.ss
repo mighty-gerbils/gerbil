@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; some test utilities
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         :std/test
         :std/sort

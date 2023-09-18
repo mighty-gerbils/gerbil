@@ -9,10 +9,9 @@
 (export #t)
 
 ;; actor errors
-(defstruct (actor-error <error>) ())
-
+(deferror-class ActorError () actor-error?)
 (def (raise-actor-error where what . irritants)
-  (raise (make-actor-error what irritants where)))
+  (raise (ActorError what irritants: irritants where: where)))
 
 ;; default reply timeout; 5s
 (def +default-reply-timeout+ 5)
@@ -100,7 +99,7 @@
    ((handle? actor)
     (thread-send/check (&handle-proxy actor) msg))
    (else
-    (error "Bad argument; expected thread or handle" actor))))
+    (raise-bad-argument 'send-message "thread or handle" actor))))
 
 ;; sends a message wrapped in an envelope
 ;; Returns #f if the destination is a dead thread; otherwise returns the message nonce.
@@ -279,7 +278,7 @@
    ((time? timeo)
     timeo)
    (else
-    (error "Bad argument; expected real or time" timeo))))
+    (raise-bad-argument 'expiry "real or time" timeo))))
 
 ;; message type registry
 (def +message-types+ (make-hash-table-eq))
@@ -288,7 +287,7 @@
 (def (register-message-type! klass)
   (let (klass-id (##type-id klass))
     (unless (interned-symbol? klass-id)
-      (error "uninterned message class" klass))
+      (raise-context-error 'register-message-type! "uninterned message class" klass))
     (mutex-lock! +message-types-mx+)
     (hash-put! +message-types+ klass-id klass)
     (mutex-unlock! +message-types-mx+)))

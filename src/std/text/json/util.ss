@@ -3,6 +3,7 @@
 ;;; json utilities
 (import
   :gerbil/gambit/ports
+  :std/error
   :std/io
   :std/misc/ports
   :std/misc/process
@@ -33,7 +34,7 @@
    ((is-BufferedReader? input)
     (read-json-object/buffer (BufferedReader input) (make-env)))
    (else
-    (error "Bad input source; expected input port, BufferedStringReader or BufferedReader instance" input))))
+    (raise-bad-argument 'read-json "input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
   (let (reader (open-buffered-string-reader str))
@@ -63,7 +64,7 @@
       (write-json-object/writer obj output (make-env))
       (&BufferedStringWriter-flush output)))
    (else
-    (error "Bad output sink; expected output port, Writer, StringWriter or BufferedStringWriter" output))))
+    (raise-bad-argument 'write-json "output port, Writer, StringWriter or BufferedStringWriter" output))))
 
 (def (json-object->string obj)
   (let (buffer (open-buffered-string-writer #f))

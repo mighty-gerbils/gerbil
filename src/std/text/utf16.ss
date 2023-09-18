@@ -12,14 +12,14 @@
 
 (def (string->utf16 str (endianness big) (BOM? #f))
   (unless (string? str)
-    (error "Expected string" str))
+    (raise-bad-argument 'utf16-codec "string" str))
   (let (u16-set!
         (case endianness
           ((big) u16-set!/be)
           ((little) u16-set!/le)
           ((native) &u8vector-u16-set!/native)
           (else
-           (error "Bad endianness" endianness))))
+           (raise-bad-argument 'utf16-codec "endianness" endianness))))
   (utf16-encode str u16-set! BOM?)))
 
 (def (utf16-encode str u16-set! BOM?)
@@ -57,14 +57,14 @@
 
 (def (utf16->string bytes (endianness big) (endianness-mandatory? #f))
   (unless (u8vector? bytes)
-    (error "Expected u8vector" bytes))
+    (raise-bad-argument 'utf16-codec "u8vector" bytes))
   (let (u16-ref
         (case endianness
           ((big) u16-ref/be)
           ((little) u16-ref/le)
           ((native) &u8vector-u16-ref/native)
           (else
-           (error "Bad endianness" endianness))))
+           (raise-bad-argument 'utf16-codec "endianness" endianness))))
     (utf16-decode bytes u16-ref (not endianness-mandatory?))))
 
 (def (utf16-decode bytes u16-ref BOM?)

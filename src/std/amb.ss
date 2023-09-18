@@ -4,7 +4,6 @@
 ;;; Orignally based on Ken Lovett's chicken implementation, but has mutated since then.
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :std/sugar
         :std/error
         :std/misc/shuffle)
@@ -13,13 +12,17 @@
         amb-exhausted?
         element-of)
 
-(defstruct (amb-completion <error>) ())
+(defclass (AmbCompletion Exception) ())
+(defmethod {display-exception AmbCompletion}
+  (lambda (self port)
+    (display "amb exhausted" port)
+    (newline port)))
 
 (defrule (invoke proc arg ...)
   (proc arg ...))
 
 (def +amb-exhausted+
-  (make-amb-completion "amb exhausted" [] 'amb))
+  (AmbCompletion))
 
 (def (amb-exhausted)
   (cond

@@ -1,7 +1,6 @@
 (export ports-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/error :std/misc/ports :std/test)
 
 (def ports-test

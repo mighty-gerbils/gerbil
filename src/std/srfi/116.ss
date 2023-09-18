@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-116: Immutable list library
 
-(import :std/srfi/9)
+(import :std/error
+        :std/srfi/9)
 (export iq
         ipair ilist xipair ipair* make-ilist ilist-copy ilist-tabulate iiota
         ipair?

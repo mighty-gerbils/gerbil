@@ -2,11 +2,16 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS errors
 
-(import :std/foreign)
+(import :std/foreign
+        :std/error)
 (export raise-os-error
         check-os-error
+        os-error?
+        os-error-errno
+        OSError OSError?
         do-retry-nonblock
         check-ptr
+        foreign-allocation-error?
         strerror
         EAGAIN
         EINTR
@@ -17,14 +22,22 @@
         ECONNREFUSED
         ECONNRESET)
 
-(def (raise-os-error errno prim . args)
-  (apply ##raise-os-exception (strerror errno) errno prim args))
+(deferror-class OSError (errno) os-error?)
+(def (raise-os-error errno . irritants)
+  (let (err (OSError (strerror errno) irritants: irritants))
+    (set! (OSError-errno err) errno)
+    (raise err)))
+(def os-error-errno OSError-errno)
+
+(deferror-class AllocationError () foreign-allocation-error?)
+(def (raise-allocation-error where expr)
+  (raise (AllocationError "error allocating memory" where: where irritants: [expr])))
 
 (defrules check-os-error ()
   ((_ expr (prim arg ...))
    (let (r expr)
      (if (not (##fxnegative? r)) r
-         (raise-os-error (##fx- r) prim arg ...)))))
+         (raise-os-error r '(prim arg ...))))))
 
 (defrules do-retry-nonblock ()
   ((_ expr (prim arg ...) ERRNO ...)
@@ -43,8 +56,7 @@
 (defrules check-ptr ()
   ((_ (make arg ...))
    (let (r (make arg ...))
-     (if r r
-         (error "Error allocating memory" 'make)))))
+     (if r r (raise-allocation-error 'make '(make arg ...))))))
 
 (begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK
                      EBADF ECONNABORTED ECONNREFUSED ECONNRESET)

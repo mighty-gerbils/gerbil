@@ -1,11 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser base types
-
 (import :std/error)
 (export #t)
-
-(defstruct (parse-error <error>) ())
 
 (defstruct token (t e loc) final: #t)
 (defstruct location (port line col off xoff) final: #t)
@@ -28,12 +25,15 @@
      (wrap-ast [t e] loc))
     (else tok)))
 
+(deferror-class ParseError () parse-error?)
 (def (raise-parse-error where msg tok . rest)
-  (raise (make-parse-error msg (cons tok rest) where)))
+  (raise (ParseError msg irritants: (cons tok rest) where: where)))
 
-(defmethod {display-exception parse-error}
+(defmethod {display-exception ParseError}
   (lambda (self port)
-    (with ((parse-error msg irritants where) self)
+    (let ((msg (Error-message self))
+          (where (Error-where self))
+          (irritants (Error-irritants self)))
       (match irritants
         ([(token t e loc) . rest]
          (parameterize ((current-output-port port))

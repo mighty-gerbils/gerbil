@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; SSAX parser inerface
 
-(import :std/srfi/13)
+(import :std/error
+        :std/srfi/13)
 
 (export read-xml)
 

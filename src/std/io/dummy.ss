@@ -11,7 +11,7 @@
 (defmethod {read dummy-io}
   (lambda (self output output-start output-end input-need)
     (if (fx> input-need 0)
-      (raise-io-error 'dummy-read "Premature end of input")
+      (raise-premature-end-of-input 'dummy-read)
       0)))
 
 (defmethod {write dummy-io}
@@ -21,7 +21,7 @@
 (defmethod {read-string dummy-io}
   (lambda (self output output-start output-end input-need)
     (if (fx> input-need 0)
-      (raise-io-error 'dummy-read-string "Premature end of input")
+      (raise-premature-end-of-input 'dummy-read-string)
       0)))
 
 (defmethod {write-string dummy-io}

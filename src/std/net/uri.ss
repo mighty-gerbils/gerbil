@@ -5,6 +5,7 @@
 (import (only-in :gerbil/gambit/ports
                  with-output-to-string
                  with-output-to-u8vector write-u8)
+        :std/error
         :std/text/utf8)
 
 (export uri-encode uri-decode form-url-encode form-url-decode query-string
@@ -42,7 +43,7 @@
 ;; uri-encode: string => string
 (def (uri-encode str (vt uri-encoding))
   (unless (and (vector? vt) (##fx= (vector-length vt) 256))
-    (error "Bad encoding table" vt))
+    (raise-bad-argument 'uri-encode "encoding table; vector of length 256" vt))
   (with-output-to-string []
     (lambda ()
       (write-uri-encoded str vt))))
@@ -127,11 +128,11 @@
       (cond
        ((hash-get hex-bytes char) => values)
        (else
-        (error "Malformed uri encoding" char)))))
+        (raise-bad-argument 'uri-decode "uri encoded string: unexecpted character" str char)))))
 
   (when encoding
     (unless (and (vector? encoding) (##fx= (vector-length encoding) 256))
-      (error "Bad encoding table" encoding)))
+      (raise-bad-argument 'uri-decode "encoding table; vector of length 256" encoding)))
 
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8))
@@ -155,7 +156,7 @@
                        (write-u8 (##fxior (##fxarithmetic-shift (hex-byte hi) 4)
                                           (hex-byte lo)))
                        (lp (##fx+ n 2)))
-                     (error "Malformed uri component"))))
+                     (raise-bad-argument 'uri-decode "uri encoded string: malformed compoent" str))))
                 (else
                  (write-u8 next)
                  (lp (##fx+ n 1))))))))))))
@@ -175,5 +176,5 @@
             ([key]
              (cons (uri-decode key uri-space-decoding) #f))
             (else
-             (error "Malformed form component" part)))))
+             (raise-bad-argument 'form-url-decode "form url encoded string: malformed component" str part)))))
    (string-split str #\&)))

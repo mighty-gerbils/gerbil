@@ -3,13 +3,14 @@
 ;;; OS signal handler interface
 
 (import :gerbil/gambit/threads
-        :std/os/signal
+        :std/error
         :std/logger
-        :std/sugar)
+        :std/sugar
+        ./signal)
 
 (cond-expand
-  (linux (import :std/os/signalfd))
-  (bsd (import :std/os/kqueue :std/os/error :std/os/fd)))
+  (linux (import ./signalfd))
+  (bsd (import ./kqueue ./error ./fd)))
 
 (export add-signal-handler! remove-signal-handler!)
 
@@ -20,13 +21,13 @@
 
 (def (add-signal-handler! signo thunk)
   (unless (and (fx> signo 0) (fx< signo SIGMAX))
-    (error "Invalid signal" signo))
+    (raise-bad-argument 'add-signal-handler! "signal number" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-add! handler signo thunk)))
 
 (def (remove-signal-handler! signo)
   (unless (and (fx> signo 0) (fx< signo SIGMAX))
-    (error "Invalid signal" signo))
+    (raise-bad-argument 'remove-signal-handler! "signal number" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-remove! handler signo)))
 

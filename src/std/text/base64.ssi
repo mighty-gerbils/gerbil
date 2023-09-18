@@ -4,6 +4,7 @@
 package: std/text
 namespace: std/text/base64
 
+(import :std/error)
 (export #t)
 (extern
   base64-string->u8vector

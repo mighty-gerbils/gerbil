@@ -1,10 +1,9 @@
 (export #t)
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
-        ../sugar
-        ../assert
-        ../error
+        :std/sugar
+        :std/assert
+        :std/error
         ./pqueue)
 
 ;; This parameter is purely for checking whether indeed concurrency was used.
@@ -72,7 +71,7 @@
             (set! workers (- workers 1))
             (postprocess item (worker-join! worker))
             (loop))
-           (m (error "unexpected message" m))))
+           (m (BUG 'perform-plan/threads "unexpected message" m))))
      (;; Can run stuff in the background? Keep those CPUs busy!
       (and parallel? ready-to-spawn?)
       (let ((item (pqueue-pop! bg-queue #f)))
@@ -107,12 +106,13 @@
   (try
    (thread-join! thread)
    (catch (uncaught-exception? exn)
-     (raise (worker-error exn)))))
+     (raise (WorkerError exception: exn)))))
 
-(defstruct (worker-error exception) (e))
+(defclass (WorkerError Exception) (exception)
+  final: #t)
 
-(defmethod {display-exception worker-error}
+(defmethod {display-exception WorkerError}
   (lambda (self port)
-    (let (e (worker-error-e self))
+    (let (e (WorkerError-exception self))
       (display "Uncaught exception: " port)
       (display-exception (uncaught-exception-reason e) port))))

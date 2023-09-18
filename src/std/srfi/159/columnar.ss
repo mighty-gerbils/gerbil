@@ -3,6 +3,7 @@
 ;;; SRFI-159: columanr formatting
 
 (import :gerbil/gambit/exact
+        :std/error
         ../srfi-support
         ../1
         ../9

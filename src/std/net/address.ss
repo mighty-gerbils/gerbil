@@ -3,6 +3,7 @@
 ;;; network addresses
 
 (import :gerbil/gambit/os
+        :std/error
         :std/pregexp
         :std/format
         :std/text/hex)
@@ -25,7 +26,7 @@
    ((ip6-address-string? obj)
     (string->ip6-address obj))
    (else
-    (error "Malformed ip address" obj))))
+    (raise-bad-argument 'ip-address "ip address" obj))))
 
 (def (ip-address? obj)
   (or (ip4-address? obj)
@@ -40,7 +41,7 @@
    ((ip4-address-string? obj)
     (string->ip4-address obj))
    (else
-    (error "Malformed ip4 address" obj))))
+    (raise-bad-argument 'ip4-address  "ip4 address" obj))))
 
 (def (ip4-address? obj)
   (and (##u8vector? obj)
@@ -64,7 +65,7 @@
     (apply format "~a.~a.~a.~a" (##u8vector->list ip4)))
    ((ip4-address-string? ip4) ip4)
    (else
-    (error "Malformed ip4 address" ip4))))
+    (raise-bad-argument 'ip4-address->string "ip4 address" ip4))))
 
 ;; ipv6 compat
 (def (ip6-address obj)
@@ -73,7 +74,7 @@
    ((ip6-address-string? obj)
     (string->ip6-address obj))
    (else
-    (error "Malformed ip6 address" obj))))
+    (raise-bad-argument 'ip6-error "ip6 address" obj))))
 
 (def (ip6-address? obj)
   (and (##u8vector? obj)
@@ -94,7 +95,7 @@
       (cond
        ((unhex* char) => values)
        (else
-        (error "Malformed address; not a hex digit" str char)))))
+        (raise-bad-argument 'string->ip6-address "ip6 address: not a hex digit" str char)))))
 
   (def (loop rest bytes have-zeros)
     (match rest
@@ -102,12 +103,12 @@
        (case (string-length hex)
          ((0)
           (if have-zeros
-            (error "Malformed address" str)
+            (raise-bad-argument 'string->ip6-address "ip6 address: too many zeros" str)
             (let* ((count (length rest))
                    (count (##fx* (##fx- 8 count) 2))
                    (count (##fx- count (length bytes)))
                    (_ (when (##fxnegative? count)
-                        (error "Malformed address; too many bits" str)))
+                        (raise-bad-argument 'string->ip6-address "ip6 address: too many bits" str)))
                    (block (make-list count 0)))
               (loop rest
                     (foldl cons bytes block)
@@ -134,7 +135,8 @@
                        (##fxior (##fxarithmetic-shift (hex-e hex 0) 4) (hex-e hex 1))
                        bytes)
                 have-zeros))
-         (else "Malformed address; block is too big" str hex)))
+         (else
+          (raise-bad-argument 'string->ip6-address "ip6 address: block is too big" str hex))))
       (else
        (check (list->u8vector (reverse bytes))))))
 
@@ -142,9 +144,9 @@
     (cond
      ((##fx= (u8vector-length bytes) 16) bytes)
      ((##fx< (u8vector-length bytes) 16)
-      (error "Malformed address; not enough bits" str bytes))
+      (raise-bad-argument 'string->ip6-address "ip6 address: not enough bits" str bytes))
      (else
-      (error "malformed address; too many bits" str bytes))))
+      (raise-bad-argument 'string->ip6-address  "ip6 address: too many bits" str bytes))))
 
   (let (hexes (string-split str #\:))
     (match hexes
@@ -152,7 +154,7 @@
        (let* ((count (length rest))
               (count (##fx* (##fx- 8 count) 2))
               (_ (when (##fxnegative? count)
-                   (error "Malformed address; too many bits" str)))
+                   (raise-bad-argument 'string->ip6-address  "ip6 address: too many bits" str)))
               (bytes (make-list count 0)))
            (loop rest bytes #t)))
       (else
@@ -215,7 +217,7 @@
    ((inet-address-string? obj)
     (string->inet-address obj))
    (else
-    (error "Malformed inet address" obj))))
+    (raise-bad-argument 'inet-address "inet address" obj))))
 
 (def (inet-address-normalize addr)
   (with ([host . port] addr)
@@ -282,12 +284,12 @@
      ((string-empty? host)
       '#u8(0 0 0 0))
      (else
-      (error "Malformed address; bad host" str host))))
+      (raise-bad-argument 'string->inet-address "inet address: bad host" str host))))
 
   (def (string->port port)
     (let (port (string->number port))
       (if (and (fixnum? port) (##fx<= 0 port 65535)) port
-          (error "Malformed address; bad port" str port))))
+          (raise-bad-argument 'string->inet-address "inet address: bad port" str port))))
 
   (with ((values host port) (inet-address-split str))
     (cons
@@ -301,7 +303,7 @@
       (format "~a:~a" (inet-host-address->string host) port)))
    ((inet-address-string? obj) obj)
    (else
-    (error "Malformed inet address"))))
+    (raise-bad-argument 'inet-address->string "inet address"))))
 
 (def (inet-host-address->string host)
   (cond
@@ -311,7 +313,7 @@
    ((ip6-address? host)
     (ip6-address->string host))
    (else
-    (error "Malformed inet host address" host))))
+    (raise-bad-argument 'inet-address->string "inet address: bad host address" host))))
 
 (def (resolve-address addr)
   (let (addr (inet-address addr))

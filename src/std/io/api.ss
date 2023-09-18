@@ -7,7 +7,6 @@
         ./delimited
         ./file
         ./util
-        ./error
         ./port)
 (export (import: ./bio/api)
         (import: ./strio/api)
@@ -15,5 +14,4 @@
         (import: ./delimited)
         (import: ./file)
         (import: ./util)
-        (import: ./error)
         (import: ./port))

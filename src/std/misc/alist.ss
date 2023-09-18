@@ -10,6 +10,7 @@
   aremq aremv arem aremq! aremv! arem!)
 
 (import
+  :std/error
   :std/sugar)
 
 ;; This function checks if the list is a proper association-list.
@@ -28,7 +29,8 @@
     (match p
       ([k v . rest] (cons (cons k v) (loop rest)))
       ([] [])
-      (else (error "improper plist" plist)))))
+      (else
+       (raise-bad-argument 'plist->alist "proper plist" plist)))))
 
 ;; The alist definitions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
 (defrule (define-aset aset cmp)
@@ -55,12 +57,13 @@
 ;; alist rather than to its end.
 (defrule (define-aset! aset! cmp)
   (def (aset! lst key val)
-    (unless (pair? lst) (error "Cannot destructively modify an empty alist" aset! key lst val))
+    (unless (pair? lst)
+      (raise-bad-argument 'aset! "non empty alist" lst key val))
     (let lp ((l lst))
       (match l
         ([kv . r] (if (cmp key (car kv)) (set-cdr! kv val) (lp r)))
         ([] (match lst ([k1v1 . r] (set-car! lst [key . val]) (set-cdr! lst [k1v1 . r]))))
-        (_ (error "Invalid alist" aset! key lst val))))))
+        (_ (raise-bad-argument 'aset! "alist" lst key val))))))
 
 (define-aset! asetq! eq?) (define (assq-set! k l v) (asetq! l k v))
 (define-aset! asetv! eqv?) (define (assv-set! k l v) (asetv! l k v))
@@ -72,7 +75,7 @@
       (match tl
         ([kv . r] (if (cmp key (car kv)) (foldl cons r rhd) (lp r [kv . rhd])))
         ([] lst)
-        (_ (error "Invalid alist" 'arem key lst))))))
+        (_ (raise-bad-argument 'arem "alist" lst key))))))
 
 (define-arem aremq eq?)
 (define-arem aremv eqv?)
@@ -80,7 +83,8 @@
 
 (defrule (define-arem! arem! cmp)
   (def (arem! key lst)
-    (def (invalid) (error "Invalid alist" arem! key lst))
+    (def (invalid)
+      (raise-bad-argument 'arem! "alist" lst key))
     (let lp ((p lst) (prev #f))
       (match p
         ([k1v1 . r]
@@ -89,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2v2 . rr] (set-car! p k2v2) (set-cdr! p rr))
-               ([] (error "Cannot remove last key from alist" arem! key lst))
+               ([] (raise-bad-argument 'arem! "key: cannot remove last key from alist" lst key))
                (_ (invalid))))
            (lp r p)))
         ([] (void)) ; key not found: NOP

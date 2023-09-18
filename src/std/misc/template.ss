@@ -3,7 +3,8 @@
 ;;; string templates
 (export write-template
         apply-template)
-(import :std/io
+(import :std/error
+        :std/io
         (only-in :std/srfi/1 reverse!))
 
 (def (write-template template output . args)
@@ -16,7 +17,7 @@
      ((is-BufferedWriter? output)
       (BufferedWriter-write-string output str))
      (else
-      (error "Bad argument; expected port, StringWriter or BufferedWriter" output)))))
+      (raise-bad-argument 'write-template "port, StringWriter or BufferedWriter" output)))))
 
 (def (apply-template template . args)
   (def vars (make-hash-table))
@@ -40,7 +41,7 @@
                 (display escape output)
                 (lp rest))
                (else
-                (error "incomplete character escape"))))
+                (BUG 'apply-template "incomplete character escape" template))))
             ((eqv? char #\$)
              (match rest
                ([char . rest]
@@ -57,13 +58,18 @@
                       ([char . rest]
                        (cond
                         ((eqv? char #\})
-                         (display (hash-ref vars (list->string (reverse! var)))
-                                  output)
+                         (let (var (list->string (reverse! var)))
+                           (cond
+                            ((hash-get vars var)
+                             => (lambda (val)
+                                  (display val output)))
+                            (else
+                             (BUG 'apply-template "undefined template variable" template var))))
                          (lp rest))
                         (else
                          (lp-inner rest (cons char var)))))
                       (else
-                       (error "incomplete variable substitution")))))
+                       (BUG 'apply-template "incomplete variable substitution" template)))))
                  (else
                    (display #\$ output)
                    (display char output)

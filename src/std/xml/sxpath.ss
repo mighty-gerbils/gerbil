@@ -2,6 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; SXPath interface
 
+(import :std/error)
 (export sxpath)
 
 (extern namespace: #f pretty-print)

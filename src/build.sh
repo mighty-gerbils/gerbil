@@ -55,8 +55,9 @@ feedback_mid() {
 }
 
 die() {
+  local exitcode=$?
   feedback_err "build failed"
-  exit 1
+  exit $exitcode
 }
 
 target_setup() {

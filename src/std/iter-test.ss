@@ -3,6 +3,7 @@
 ;;; :std/iter unit-tests
 
 (import :std/test
+        :std/error
         :std/iter
         (only-in :std/sugar hash)
         (only-in :gerbil/core error-object? with-catch))
@@ -72,7 +73,7 @@
       (def (test-for-8-not-real)
         (for (x (in-range (hash (a 1) (b 2) (c 3))))
           (displayln x)))
-      (check-equal? (with-catch exception? test-for-8-not-real) #t))
+      (check-exception (test-for-8-not-real) exception?))
 
     (test-case "test folding macros"
       (def (test-for/collect-0)

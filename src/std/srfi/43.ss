@@ -2,7 +2,8 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-43: vector library
 
-(import :std/srfi/8)
+(import :std/error
+        :std/srfi/8)
 (export
   ;; * Constructors
   make-vector vector

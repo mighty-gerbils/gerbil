@@ -1,6 +1,7 @@
 (import
   :std/misc/alist
-  :std/sugar)
+  :std/sugar
+  :std/error)
 
 (export
   walist walistq walistv walist! walistq! walistv!
@@ -86,7 +87,7 @@
           (prev (set-cdr! prev r))
           (else (set! (walist-alist w) r))))
         ([] (void)) ; key not found: NOP
-        (_ (error "Invalid walist" struct! w key))))))
+        (_ (raise-bad-argument 'walist-remove "valid walist" w struct! key))))))
 
 (defrule (define-remove! struct! fun cmp)
   (begin

@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptors
 
-(import :gerbil/gambit/ports)
+(import :gerbil/gambit/ports
+        :std/error)
 (export fdopen fdopen-port
         fd-e fd-io-in fd-io-out
         fd? fd-type? fd-type)
@@ -36,7 +37,7 @@
     ((out)   (macro-direction-out))
     ((inout) (macro-direction-inout))
     (else
-     (error "Bad direction; must be in, out, or inout" dir))))
+     (raise-bad-argument 'direction "'in, 'out, or 'inout" dir))))
 
 (def (fdopen fd dir t)
   (let (dirx (direction dir))

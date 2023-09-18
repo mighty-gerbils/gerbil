@@ -3,11 +3,11 @@
 ;;; std parser grammar prelude
 
 (import :gerbil/core
-        :std/parser/rlang
-        :std/parser/base
-        :std/parser/lexer
-        :std/parser/defparser
-        :std/parser/deflexer
+        ./rlang
+        ./base
+        ./lexer
+        ./defparser
+        ./deflexer
         (phi: +1 :std/parser/grammar-reader))
 
 (export (rename: begin-module%% %%begin-module)

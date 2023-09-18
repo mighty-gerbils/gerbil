@@ -544,7 +544,8 @@ END
 
 (def main.ss-template #<<END
 ;;; -*- Gerbil -*-
-(import :std/sugar
+(import :std/error
+        :std/sugar
         :std/getopt
         ./lib)
 (export main)
@@ -576,7 +577,8 @@ END
 
 (def lib.ss-template #<<END
 ;;; -*- Gerbil -*-
-(import :std/sugar)
+(import :std/error
+        :std/sugar)
 (export #t)
 
 ;;; Your library support code

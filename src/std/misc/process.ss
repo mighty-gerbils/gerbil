@@ -6,18 +6,25 @@
   invoke
   run-process
   run-process/batch
-  filter-with-process)
+  filter-with-process
+  process-error?)
 
 (import
   :gerbil/gambit/ports
   :gerbil/gambit/threads
+  :std/error
   :std/misc/ports
   :std/sugar)
 
 ;; Error
+(deferror-class ProcessError () process-error?)
+(def (raise-process-error settings exit-status)
+  (raise (ProcessError "process exited with non-zero status"
+                       irritatns: [(pgetq path: settings) exit-status settings])))
+
 (def (check-process-success exit-status settings)
   (unless (zero? exit-status)
-    (error "Process exited with non-zero status" exit-status settings)))
+    (raise-process-error settings exit-status)))
 
 ;; Synchronously run a command in a (sub)process.
 ;; The command is a list [path . arguments] to be processed by Gambit's open-process.

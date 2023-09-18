@@ -26,6 +26,7 @@
   (extended-bindings))
 
 (##namespace ("std/xml/sxml-to-xml#"
+              error
               xml-declaration:xml1.0-utf8
               xml-header:xhtml-1.0-transitional-en
               valid-quote-chars
@@ -93,6 +94,9 @@
               paramdata/chars-in-a-row-inc!
               next-separator
               ))
+
+(define-macro (error message . args)
+  `(std/error#raise-unspecified-error message ,@args))
 
 (define valid-quote-chars '(#\" #\'))
 

@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; SRFI-159: show stuffs
 
-(import ../13
+(import :std/error
+        ../13
         ./string
         ./base)
 (export

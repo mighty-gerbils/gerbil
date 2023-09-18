@@ -1,7 +1,6 @@
 (export walist-test)
 
 (import
-  :gerbil/gambit/exceptions
   :std/error :std/misc/walist :std/test)
 
 (def walist-test

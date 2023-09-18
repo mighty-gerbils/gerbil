@@ -2,9 +2,10 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto hmac
 
-(import :std/crypto/libcrypto
-        :std/crypto/etc
-        :std/crypto/digest)
+(import :std/error
+        ./libcrypto
+        ./etc
+        ./digest)
 (export hmac hmac? make-hmac
         hmac-init! hmac-update! hmac-final!
         hmac-digest hmac-md5 hmac-sha1 hmac-sha256 hmac-sha384 hmac-sha512)

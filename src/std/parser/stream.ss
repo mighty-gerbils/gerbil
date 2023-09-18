@@ -2,8 +2,9 @@
 ;;; (C) vyzo
 ;;; std parser location-tracking streams
 
-(import :std/parser/base
-        :gerbil/gambit/ports)
+(import :gerbil/gambit/ports
+        :std/error
+        ./base)
 (export make-char-stream char-stream?
         char-stream-loc
         char-stream-close
@@ -31,7 +32,7 @@
 (defmethod {:init! char-stream}
   (lambda (self port)
     (unless (macro-character-input-port? port)
-      (error "Bad input source; not a character-input-port" port))
+      (raise-bad-argument 'make-char-stream "input source; character-input-port" port))
     (struct-instance-init! self port [] (make-location port 0 0 0 0) [])))
 
 (def (char-stream-close cs)

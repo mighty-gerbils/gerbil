@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/os
+        :std/error
         :std/sugar
         :std/misc/list-builder
         (only-in :std/srfi/13 string-suffix?))
@@ -53,9 +54,9 @@
 (def (copy-port in out)
   (cond
    ((not (input-port? in))
-    (error "Expected input port" in))
+    (raise-bad-argument 'copy-port "input port" in))
    ((not (output-port? out))
-    (error "Expected output port" out))
+    (raise-bad-argument 'copy-port "output port" out))
    ((macro-byte-port? in)
     (cond
      ((macro-byte-port? out)
@@ -314,7 +315,8 @@
    ((string? contents) (display contents port))
    ((u8vector? contents) (write-u8vector contents port))
    ((procedure? contents) (contents port))
-   (else (error "invalid contents" contents))))
+   (else
+    (raise-bad-argument 'output-contents "string, u8vector or procedure" contents))))
 
 (def (force-current-outputs)
   (force-output (current-output-port))
@@ -333,7 +335,8 @@
    ((eq? o #t) (p (current-output-port)))
    ((string? o) (call-with-output-file o p))
    ((list? o) (call-with-output-file o p))
-   (else (error "Not an output port designator" o))))
+   (else
+    (raise-bad-argument 'call-with-output "output port designator" o))))
 
 (defrules with-output ()
   ((_ (o x) body ...) (call-with-output x (lambda (o) body ...)))

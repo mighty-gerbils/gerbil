@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; double ended queues
-
+(import :std/error)
 (export deque make-deque deque? deque-length
         deque-empty?
         push-front! pop-front! peek-front
@@ -77,7 +77,7 @@
           (1- len))
         (&node-e front)))
      ((eq? default absent-obj)
-      (error "Cannot pop; empty deque" dq))
+      (raise-context-error 'pop-front! "Cannot pop; empty deque" dq))
      (else default))))
 
 (def (pop-back! dq (default absent-obj))
@@ -93,7 +93,7 @@
           (1- len))
         (&node-e back)))
      ((eq? default absent-obj)
-      (error "Cannot pop; empty deque" dq))
+      (raise-context-error 'pop-back! "Cannot pop; empty deque" dq))
      (else default))))
 
 (def (peek-front dq (default absent-obj))
@@ -102,7 +102,7 @@
      (front
       (&node-e front))
      ((eq? default absent-obj)
-      (error "Cannot peek; empty deque"))
+      (raise-context-error 'peek-front "Cannot peek; empty deque" dq))
      (else default))))
 
 (def (peek-back dq (default absent-obj))
@@ -111,7 +111,7 @@
      (back
       (&node-e back))
      ((eq? default absent-obj)
-      (error "Cannot peek; empty deque"))
+      (raise-context-error 'peek-back "Cannot peek; empty deque" dq))
      (else default))))
 
 (def (deque->list dq)

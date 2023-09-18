@@ -16,7 +16,7 @@
     "assert"
     "make"
     "build-script"
-    "error"
+    (gxc: "error" ,@(include-gambit-sharp))
     "getopt"
     "logger"
     (gxc: "generic/dispatch" ,@(include-gambit-sharp))
@@ -41,7 +41,6 @@
     "io/delimited"
     "io/file"
     "io/util"
-    "io/error"
     "io/port"
     "io/bio/types"
     "io/bio/input"
