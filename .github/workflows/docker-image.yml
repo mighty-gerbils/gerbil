@@ -10,12 +10,15 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        docker-image: ['gerbil', 'gerbilxx']
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: make -C docker gerbil
+      run: make -C docker ${{ matrix.docker-image }}
     - name: docker push to dockerhub
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
-        docker push gerbil/gerbil:latest
+        docker push gerbil/${{ matrix.docker-image }}:$(uname -m)
