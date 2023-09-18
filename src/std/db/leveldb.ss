@@ -437,7 +437,7 @@
   (delay (leveldb-read-options)))
 
 (def (leveldb-write-options sync: (sync #f)) ; boolean
-  (let (opts (check-ptr leveldb_writeoptions_create (leveldb_writeoptions_create)))
+  (let (opts (check-ptr (leveldb_writeoptions_create)))
     (when sync
       (leveldb_writeoptions_set_sync opts 1))
     opts))
