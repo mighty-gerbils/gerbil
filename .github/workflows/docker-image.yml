@@ -9,12 +9,13 @@ on:
 jobs:
 
   build:
-
     runs-on: alpine-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: make -C docker gerbilxx 
+      run: make -C docker gerbilxx
     - name: docker push to dockerhub
-      run: docker push gerbil/gerbilxx:latest
+      run: |
+        docker login -u gerbil -p ${{ secrets.DOCKERHUB_TOKEN }}
+        docker push gerbil/gerbilxx:latest
