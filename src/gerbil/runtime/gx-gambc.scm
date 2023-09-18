@@ -358,7 +358,7 @@
     (lambda (port)
       (macro-character-port-output-width-set! port (lambda (port) 256)))
     (list ##stdout-port ##console-port (current-error-port)))
-  ;; set an initial primodrial exception hook
+  ;; set an initial primordial exception hook
   (unless ##primordial-exception-handler-hook
     (##primordial-exception-handler-hook-set! ##repl-exception-handler-hook)))
 
