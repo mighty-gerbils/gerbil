@@ -14,8 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: make -C docker gerbilxx
+      run: make -C docker gerbil
     - name: docker push to dockerhub
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
-        docker push gerbil/gerbilxx:latest
+        docker push gerbil/gerbil:latest
