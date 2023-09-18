@@ -41,6 +41,7 @@
     "io/delimited"
     "io/file"
     "io/util"
+    "io/port"
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"
@@ -166,6 +167,8 @@
     "parser/grammar"
     "parser"
     ;; :std/text
+    "text/char-set"
+    "text/basic-parsers"
     "text/utf8"
     "text/utf16"
     "text/utf32"
@@ -308,7 +311,6 @@
     "crypto"
     ;; :std/misc
     "misc/atom"
-    "misc/with-id"
     "misc/concurrent-plan"
     "misc/timeout"
     "misc/list-builder"

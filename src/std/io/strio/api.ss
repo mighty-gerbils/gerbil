@@ -5,6 +5,7 @@
         :std/interface
         ../interface
         ../dummy
+        ../port
         ../bio/types
         ./types
         ./input
@@ -72,11 +73,13 @@
     (else
      (BUG 'character-decoder "Unsupported character encoding" codec))))
 
-(def (open-string-reader reader (buffer-or-size default-u8vector-buffer-size)
+(def (open-string-reader pre-reader (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
   (cond
-   ((is-BufferedReader? reader)
-    (let (obj (interface-instance-object reader))
+   ((StringReader? pre-reader) pre-reader)
+   ((is-StringReader? pre-reader) (StringReader pre-reader))
+   ((is-BufferedReader? pre-reader)
+    (let (obj (interface-instance-object pre-reader))
       (StringReader
        (if (input-buffer? obj)
          ;; already an input-buffer, use it directly to avoid double-buffering
@@ -87,21 +90,25 @@
                                                 0 0 #f)
                              (character-decoder codec)
                              #f)))))
-   ((is-Reader? reader)
+   ((is-Reader? pre-reader)
     (StringReader
-     (make-string-reader (make-input-buffer (Reader reader)
+     (make-string-reader (make-input-buffer (Reader pre-reader)
                                             (make-u8vector-buffer buffer-or-size)
                                             0 0 #f)
                          (character-decoder codec)
                          #f)))
+   ((input-port? pre-reader)
+    (StringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-string-reader "implementation of Reader" reader))))
+    (raise-bad-argument 'open-string-reader "implementation of Reader" pre-reader))))
 
-(def (open-string-writer writer (buffer-or-size default-u8vector-buffer-size)
+(def (open-string-writer pre-writer (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
   (cond
-   ((is-BufferedWriter? writer)
-    (let (obj (interface-instance-object writer))
+   ((StringWriter? pre-writer) pre-writer)
+   ((is-StringWriter? pre-writer) (StringWriter pre-writer))
+   ((is-BufferedWriter? pre-writer)
+    (let (obj (interface-instance-object pre-writer))
       (StringWriter
        (if (output-buffer? obj)
          ;; already an output-buffer
@@ -112,59 +119,69 @@
                                                  0 #f)
                              (character-encoder codec)
                              #f)))))
-   ((is-Writer? writer)
+   ((is-Writer? pre-writer)
     (StringWriter
-     (make-string-writer (make-output-buffer (Writer writer)
+     (make-string-writer (make-output-buffer (Writer pre-writer)
                                              (make-u8vector-buffer buffer-or-size)
                                              0 #f)
                          (character-encoder codec)
                          #f)))
+   ((output-port? pre-writer)
+    (StringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-string-writer "implementation of Writer" writer))))
+    (raise-bad-argument 'open-string-writer "implementation of Writer" pre-writer))))
 
-(def (open-buffered-string-reader reader-or-string (buffer-or-size default-string-buffer-size)
+(def (open-buffered-string-reader pre-reader (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
   (cond
-   ((string? reader-or-string)
+   ((string? pre-reader)
     (BufferedStringReader
      (make-string-input-buffer dummy-string-reader
-                               reader-or-string 0 (string-length reader-or-string)
+                               pre-reader 0 (string-length pre-reader)
                                #f)))
-   ((is-StringReader? reader-or-string)
+   ((BufferedStringReader? pre-reader) pre-reader)
+   ((is-BufferedStringReader? pre-reader) (BufferedStringReader pre-reader))
+   ((is-StringReader? pre-reader)
     (BufferedStringReader
-     (make-string-input-buffer (StringReader reader-or-string)
+     (make-string-input-buffer (StringReader pre-reader)
                                (make-string-buffer buffer-or-size) 0 0
                                #f)))
-   ((is-Reader? reader-or-string)
+   ((is-Reader? pre-reader)
     (BufferedStringReader
-     (make-string-input-buffer (open-string-reader reader-or-string (double buffer-or-size)
+     (make-string-input-buffer (open-string-reader pre-reader (double buffer-or-size)
                                                    encoding: codec)
                                (make-string-buffer buffer-or-size) 0 0
                                #f)))
+   ((input-port? pre-reader)
+    (BufferedStringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-string-reader "string or implementation of StringReader or Reader" reader-or-string))))
+    (raise-bad-argument 'open-buffered-string-reader "string or implementation of StringReader or Reader" pre-reader))))
 
-(def (open-buffered-string-writer maybe-writer (buffer-or-size default-string-buffer-size)
+(def (open-buffered-string-writer pre-writer (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
   (cond
-   ((not maybe-writer)
+   ((not pre-writer)
     (BufferedStringWriter
      (make-string-output-buffer (open-chunk-writer)
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
-   ((is-StringWriter? maybe-writer)
+   ((BufferedStringWriter? pre-writer) pre-writer)
+   ((is-BufferedStringWriter? pre-writer) (BufferedStringWriter pre-writer))
+   ((is-StringWriter? pre-writer)
     (BufferedStringWriter
-     (make-string-output-buffer (StringWriter maybe-writer)
+     (make-string-output-buffer (StringWriter pre-writer)
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
-   ((is-Writer? maybe-writer)
+   ((is-Writer? pre-writer)
     (BufferedStringWriter
-     (make-string-output-buffer (open-string-writer maybe-writer (double buffer-or-size)
+     (make-string-output-buffer (open-string-writer pre-writer (double buffer-or-size)
                                                     encoding: codec)
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
+   ((output-port? pre-writer)
+    (BufferedStringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-string-writer "#f or implementation of StringWriter or writer" maybe-writer))))
+    (raise-bad-argument 'open-buffered-string-writer "#f or implementation of StringWriter or writer" pre-writer))))
 
 (def (open-chunk-writer)
   (StringWriter (make-chunked-string-output-buffer [] #f)))

@@ -85,14 +85,14 @@ package: gerbil
     eval interaction-environment scheme-report-environment
     ;; 6.6 i/o
     call-with-input-file call-with-output-file
-    input-port? output-port?
+    input-port? output-port? port?
     current-input-port current-output-port
     with-input-from-file with-output-to-file
     open-input-file open-output-file
     close-input-port close-output-port
-    read read-char peek-char
+    read read-char peek-char read-u8 peek-u8
     eof-object? char-ready?
-    write display newline write-char
+    write display newline write-char write-u8
     load
     ;; transcript-on transcript-off ; void
     ))

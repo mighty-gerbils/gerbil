@@ -5,6 +5,7 @@
         :std/interface
         ../interface
         ../dummy
+        ../port
         ./types
         ./input
         ./delimited
@@ -31,30 +32,38 @@
    (else
     (raise-bad-argument 'make-buffer "fixnum or u8vector" buffer-or-size))))
 
-(def (open-buffered-reader reader-or-u8vector (buffer-or-size default-buffer-size))
+(def (open-buffered-reader pre-reader (buffer-or-size default-buffer-size))
   (cond
-   ((u8vector? reader-or-u8vector)
+   ((BufferedReader? pre-reader) pre-reader)
+   ((is-BufferedReader? pre-reader) (BufferedReader pre-reader))
+   ((u8vector? pre-reader)
     (BufferedReader
-     (make-input-buffer dummy-reader reader-or-u8vector 0 (u8vector-length reader-or-u8vector) #f)))
-   ((is-Reader? reader-or-u8vector)
+     (make-input-buffer dummy-reader pre-reader 0 (u8vector-length pre-reader) #f)))
+   ((is-Reader? pre-reader)
     (let ((buffer (make-u8vector-buffer buffer-or-size))
-          (reader (Reader reader-or-u8vector)))
+          (reader (Reader pre-reader)))
       (BufferedReader (make-input-buffer reader buffer 0 0 #f))))
+   ((input-port? pre-reader)
+    (BufferedReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-reader "Reader instance or u8vector" reader-or-u8vector))))
+    (raise-bad-argument 'open-buffered-reader "Reader instance or u8vector" pre-reader))))
 
-(def (open-buffered-writer maybe-writer (buffer-or-size default-buffer-size))
+(def (open-buffered-writer pre-writer (buffer-or-size default-buffer-size))
   (cond
-   ((not maybe-writer)
+   ((BufferedWriter? pre-writer) pre-writer)
+   ((is-BufferedWriter? pre-writer) (BufferedWriter pre-writer))
+   ((not pre-writer)
     (let ((writer (open-chunk-writer))
           (buffer (make-u8vector-buffer buffer-or-size)))
       (BufferedWriter (make-output-buffer writer buffer 0 #f))))
-   ((is-Writer? maybe-writer)
-    (let ((writer (Writer maybe-writer))
+   ((is-Writer? pre-writer)
+    (let ((writer (Writer pre-writer))
           (buffer (make-u8vector-buffer buffer-or-size)))
       (BufferedWriter (make-output-buffer writer buffer 0 #f))))
+   ((output-port? pre-writer)
+    (BufferedWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-writer "Writer instance or #f" maybe-writer))))
+    (raise-bad-argument 'open-buffered-writer "Writer instance or #f" pre-writer))))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))

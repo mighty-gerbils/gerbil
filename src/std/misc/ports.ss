@@ -24,7 +24,8 @@
         call-with-output
         with-output
         call-with-input
-        with-input)
+        with-input
+        char-port-eof?)
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -351,3 +352,5 @@
 (defrules with-input ()
   ((_ (i x) body ...) (call-with-input x (lambda (i) body ...)))
   ((_ (i) body ...) (call-with-input i (lambda (i) body ...))))
+
+(def (char-port-eof? in) (macro-character-port-peek-eof? in))

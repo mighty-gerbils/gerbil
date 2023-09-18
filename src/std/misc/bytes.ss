@@ -111,6 +111,8 @@
   &u8vector-double-set!/native
 
   &u8vector-swap!
+
+  u8vector-every
   )
 
 ;;; Endianness
@@ -697,3 +699,8 @@ END-C
   (define-c-lambda &u8vector-double-set!/native (scheme-object int double) void
     "*(double*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   )
+
+(def (u8vector-every pred bytes)
+  (declare (fixnum))
+  (let lp ((i (1- (u8vector-length bytes))))
+    (or (< i 0) (and (pred (u8vector-ref bytes i)) (lp (1- i))))))

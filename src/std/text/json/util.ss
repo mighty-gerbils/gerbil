@@ -3,15 +3,23 @@
 ;;; json utilities
 (import
   :gerbil/gambit/ports
-  :std/sugar
   :std/error
-  :std/iter
   :std/io
-  :std/misc/process
   :std/misc/ports
-  :std/misc/list
+  :std/misc/process
+  :std/iter
+  :std/misc/alist
   :std/misc/hash
+  :std/misc/list
+  :std/misc/list-builder
+  :std/misc/ports
+  :std/misc/plist
   :std/misc/rtd
+  :std/misc/walist
+  :std/sort
+  :std/srfi/43
+  :std/sugar
+  :std/text/basic-parsers
   :std/values
   ./env ./input ./output)
 
@@ -29,10 +37,18 @@
     (raise-bad-argument 'read-json "input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
-  (read-json-object/reader (open-buffered-string-reader str) (make-env)))
+  (let (reader (open-buffered-string-reader str))
+    (begin0 (read-json-object/reader reader (make-env))
+      ((parse-whitespace-to-eof) (PeekableStringReader reader)))))
 
 (def (bytes->json-object bytes)
-  (read-json (open-buffered-reader bytes)))
+  (let (buffer (open-buffered-reader bytes))
+    (begin0 (read-json-object/buffer buffer (make-env))
+      ((parse-whitespace-to-eof) (PeekableStringReader (open-buffered-string-reader buffer))))))
+
+(def (port->json-object port)
+  (begin0 (read-json-object/port port (make-env))
+    ((parse-whitespace-to-eof) (PeekableStringReader (open-buffered-string-reader port)))))
 
 (def (write-json obj (output (current-output-port)))
   (cond

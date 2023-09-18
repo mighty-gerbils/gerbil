@@ -6,10 +6,12 @@
         ./socket/api
         ./delimited
         ./file
-        ./util)
+        ./util
+        ./port)
 (export (import: ./bio/api)
         (import: ./strio/api)
         (import: ./socket/api)
         (import: ./delimited)
         (import: ./file)
-        (import: ./util))
+        (import: ./util)
+        (import: ./port))

@@ -1,4 +1,4 @@
-# The Gerbil Profiler
+# Profiling
 
 Gerbil ships with a basic profiler tool, `gerbil prof` or just
 `gxprof`. The tool can profile dynamically compiled executable
@@ -12,7 +12,7 @@ insightful statistics.
 ## Invocation
 
 ```shell
-gerbil prof -h
+$ gerbil prof -h
 gxprof: The Gerbil profiler
 
 Usage: gxprof [option ...] [<module>] <module-args> ...
@@ -68,7 +68,7 @@ Top Continuation Samples
 ------------------------
 std/text/json/input#read-json-hash/buffer: 61 [36.970%]
 std/text/json/output#write-json-string/buffer: 42 [25.455%]
-std/text/json/input#read-json-hash-keybuffer: 17 [10.303%]
+std/text/json/input#read-json-hash-key/buffer: 17 [10.303%]
 std/text/json/input#read-json-string/buffer: 15 [9.091%]
 std/text/json/output#write-json-alist/buffer: 7 [4.242%]
 std/sort#list-merge-sort: 6 [3.636%]

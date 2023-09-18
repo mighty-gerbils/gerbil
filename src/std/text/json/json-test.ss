@@ -2,10 +2,11 @@
 ;;; (C) vyzo at hackzen.org
 ;;; :std/text/json unit test
 
-(import :std/test
+(import :std/io
         :std/misc/walist
+        :std/parser/base
         :std/sugar
-        :std/io
+        :std/test
         :std/text/utf8
         ./api)
 (export json-test)
@@ -55,7 +56,8 @@
                              "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
       (check-encode (walist '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
-      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}"))
+      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
+      (check-exception (string->json-object "true junk") parse-error?))
 
     (test-case "io zoo"
       (def obj
