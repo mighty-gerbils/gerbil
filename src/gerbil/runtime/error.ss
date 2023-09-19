@@ -74,7 +74,7 @@ namespace: #f
    ((or (heap-overflow-exception? exn)   ; out of memory, don't allocate
         (stack-overflow-exception? exn)) ; not safe to do much
     exn)
-   ((or (Error? exn) (Exception? exn))  ; already has it if we want it
+   ((Exception? exn)                    ; already has it if we want it
     exn)
    ((macro-exception? exn)              ; runtime emitted exception
     (let (rte (RuntimeException exception: exn))
