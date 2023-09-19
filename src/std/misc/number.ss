@@ -6,9 +6,27 @@
         xmax xmax/list xmax! xmax/map
         pre-increment! increment! post-increment!
         pre-decrement! decrement! post-decrement!
-        make-counter)
+        make-counter
+        integer-part fractional-part
+        floor-align ceiling-align
+        real->sign
+        nat? fxnat?
+        nat-below?
+        nat-of-length?
+        integer-of-length?
+        normalize-nat
+        normalize-integer
+        for-each-integer!
+        half least-integer most-integer
+        bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
+        integer-log)
 
-(import ../srfi/1 ../sugar)
+(import
+  :gerbil/gambit
+  :std/srfi/1
+  :std/srfi/141
+  :std/error
+  :std/sugar)
 
 ;;; xmin and xmax on the (affine) extended real number line.
 ;;; An element is either a real number or a positive infinite +inf.0 (+∞)
@@ -20,10 +38,14 @@
 
 (def xmin
   (case-lambda
-    ((x y) (if (< x y) x y))
-    (() +inf.0) ((x) x) (l (xmin/list l))))
-(def (xmin/list l) (reduce xmin +inf.0 l))
-(defrule (xmin! x y ...) (set! x (xmin x y ...)))
+    ((x y) (if (<= x y) x y))
+    ((x) x)
+    (() +inf.0)
+    (l (xmin/list l))))
+(def (xmin/list l)
+  (reduce xmin +inf.0 l))
+(defrule (xmin! x y ...)
+  (set! x (xmin x y ...)))
 (def (xmin/map f l (base +inf.0))
   (let/cc return
     (when (eqv? base -inf.0) (return -inf.0))
@@ -36,10 +58,14 @@
 
 (def xmax
   (case-lambda
-    ((x y) (if (< x y) y x))
-    (() -inf.0) ((x) x) (l (xmax/list l))))
-(def (xmax/list l) (reduce xmax -inf.0 l))
-(defrule (xmax! x y ...) (set! x (xmax x y ...)))
+    ((x y) (if (>= x y) x y))
+    ((x) x)
+    (() -inf.0)
+    (l (xmax/list l))))
+(def (xmax/list l)
+  (reduce xmax -inf.0 l))
+(defrule (xmax! x y ...)
+  (set! x (xmax x y ...)))
 (def (xmax/map f l (base -inf.0))
   (let/cc return
     (when (eqv? base +inf.0) (return +inf.0))
@@ -47,7 +73,7 @@
                 (def x (f i))
                 (when (eqv? x +inf.0) (return +inf.0))
                 (xmax! base x))
-               l)
+              l)
     base))
 
 
@@ -75,3 +101,166 @@
     (() (post-increment! n))
     ((x) (post-increment! n x))
     (l (post-increment! n (apply + l)))))
+
+(def (integer-part real)
+  (cond
+   ((exact-integer? real) real)
+   ((real? real) (inexact->exact (truncate real)))
+   (else (error "Bad real" real))))
+
+(def (fractional-part real)
+  (cond
+   ((exact-integer? real) 0)
+   ((real? real) (- real (integer-part real)))
+   (else (error "Bad real" real))))
+
+(def (floor-align n alignment)
+  (- n (modulo n alignment)))
+
+(def (ceiling-align n alignment)
+  (let ((mod (modulo n alignment)))
+    (if (zero? mod) n (- (+ n alignment) mod))))
+
+(def (real->sign x)
+  (cond ((< 0 x) +1) ((> 0 x) -1) (else 0)))
+
+(def (nat? n)
+  (and (exact-integer? n) (not (negative? n))))
+
+(def (fxnat? n)
+  (and (fixnum? n) (not (negative? n))))
+
+(def (nat-below? n end)
+  (and (nat? n) (< n end)))
+
+(def (nat-of-length? x length-in-bits)
+  (and (nat? x) (<= (integer-length x) length-in-bits)))
+
+(def (integer-of-length? x length-in-bits)
+  (and (exact-integer? x) (< (integer-length x) length-in-bits)))
+
+;; Normalize an integer into an unsigned integer of given length in bits
+(def (normalize-nat x length-in-bits)
+  (extract-bit-field length-in-bits 0 x))
+
+;; Normalize an integer into a signed integer of given length in bits
+(def (normalize-integer x length-in-bits)
+  (cond
+   ((< (integer-length x) length-in-bits) x)
+   ((bit-set? (1- length-in-bits) x) (replace-bit-field length-in-bits 0 x -1))
+   (else (extract-bit-field length-in-bits 0 x))))
+
+;; Iterate a function with an integer argument ranging from one value
+;; increasing by one until it reaches another value (excluded)
+;; : (Integer ->) -> Integer Integer
+(def (for-each-integer! fun from below)
+  (let loop ((i from))
+    (when (< i below)
+      (fun i)
+      (loop (+ i 1)))))
+
+(def (half_ n)
+  (arithmetic-shift n -1))
+
+(defrules half ()
+  ((_ n) (arithmetic-shift n -1))
+  ((_ . args) (error "half takes only one argument"))
+  (_ half_))
+
+;;; Binary search in interval [start, end) to find the least integer for which pred? holds,
+;;; assuming pred? is "increasing", i.e. if true for some integer, true for all larger integers.
+;;; If no integer in the interval satisfies pred?, return end. If all do, return start.
+(def (least-integer pred? start end)
+  (if (<= end start) end ; empty interval, return end.
+      (let (mid (half (+ end start))) ;; NB: happily we have bignums, so no overflow
+        (if (pred? mid)
+          (least-integer pred? start mid)
+          (least-integer pred? (1+ mid) end)))))
+
+;;; Binary search in interval (start, end] to find the most integer i for which pred? holds
+;;; for all indexes in [start i), assuming pred? is "decreasing",
+;;; i.e. if true for some integer, true for all smaller integers.
+;;; If no integer in the interval satisfies pred?, return start. If all do, return end.
+(def (most-integer pred? start end)
+  (if (<= end start) start ; empty interval, return start.
+      (let (mid (half (+ end start 1))) ;; round up, trust bignums for no overflow
+        (if (pred? mid)
+          (most-integer pred? mid end)
+          (most-integer pred? start (- 1 mid))))))
+
+;; NOTE: the following functions are NOT cryptographic-quality constant-time!
+;; Do NOT use them for cryptography in production.
+;; TODO: offer an alternate module that offers cryptographic-ready arithmetic primitives via FFI
+
+;; Given integers a and b, return values x y d such that
+;; d is (non-negative) gcd of a and b, and a*x+b+y=d
+(def (bezout a b)
+  (check-argument (exact-integer? a) "integer" a)
+  (check-argument (exact-integer? b) "integer" b)
+  (def (eea a b) ;; Extended Euclid's Algorithm, where b is non-negative
+    (if (zero? b)
+      (values 1 0 a)
+      (let*-values (((q r) (floor/ a b)) ;; a=q*b+r ;; r=a-q*b ;; 0<=r<b
+                    ((x y d) (eea b r))) ;; d=b*x+r*y=b*x+(a-q*b)*y=b*(x-q*y)+a*y
+         (values y (- x (* q y)) d))))
+  (if (negative? b)
+    (let-values (((x y d) (eea a (- b))))
+      (values x (- y) d))
+    (eea a b)))
+
+(def (mult-mod a b n) ;; TODO: optimize that
+  (modulo (* a b) n))
+
+(def (invert-mod a n) ;; 1/a modulo n
+  (let-values (((x _ d) (bezout a n))) ;; a*x+n*y=d
+    (unless (= d 1) (error "integer not invertible modulo" a n))
+    x))
+
+(def (div-mod a b n) ;; a/b modulo n/(gcd b n)
+  (let-values (((x _ d) (bezout b n))) ;; b*x+n*y=d
+    (when (= d 0) (error "divisor is zero modulo" b n))
+    (let-values (((q r) (floor/ a d))) ;; a = d*q+r = b*x*q + q*y*n +r ;; 0<=r<d
+      (unless (= r 0) (error "integers do not divide modulo" a b n))
+      (* x q))))
+
+;; same as (modulo (* a (expt x e)) n)
+(def (mult-expt-mod a x e n)
+  (check-argument (exact-integer? a) "integer" a)
+  (check-argument (exact-integer? x) "integer" x)
+  (check-argument (exact-integer? e) "integer" e)
+  (check-argument (exact-integer? n) "integer" n)
+  (if (zero? n) (* a (expt x e))
+      (letrec (f (lambda (a x e)
+                   (if (zero? e)
+                     a
+                     (let (he (half e))
+                       (f (if (odd? e) (mult-mod a x n) a)
+                          (if (positive? e) (mult-mod x x n) 0)
+                          he)))))
+        (if (negative? e)
+          (f a (invert-mod x n) (- e))
+          (f a x e)))))
+
+;; same as (modulo (expt x e) n)
+(def (expt-mod x e n)
+  (mult-expt-mod 1 x e n))
+
+(def (integer-log a b) ;; largest natural integer n such that b**n <= a
+  (check-argument (and (exact-integer? a) (positive? a)) "positive integer" a)
+  (check-argument (and (exact-integer? b) (< 1 b)) "valid base" b)
+  (def (downward start end n pow es) ;; the power is between start included and n excluded
+    (match es
+      ([] start)
+      ([e . er] (let* ((m (half n))
+                       (mid (+ start m))
+                       (mpow (* pow e)))
+                 (if (<= mpow a)
+                   (downward mid end m mpow er)
+                   (downward start mid m pow er))))))
+  (def (upward b n es) ;; find a power of 2, n, such that b to the power n dominates a
+    (if (< a b)       ;; and accumulate the list of powers of n
+      (let (m (half n))
+        (downward m n m (car es) (cdr es)))
+      (upward (* b b) (+ n n) (cons b es))))
+  (if (< a b) 0
+      (upward (* b b) 2 [b])))

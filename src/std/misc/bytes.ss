@@ -4,9 +4,7 @@
 ;;; miscellaneous bytes utilities
 
 (import (for-syntax :std/stxutil)
-        :gerbil/gambit/exact
-        :gerbil/gambit/bits
-        :gerbil/gambit/fixnum
+        :gerbil/gambit
         :std/error
         :std/text/hex
         :std/foreign)
@@ -113,7 +111,9 @@
   &u8vector-swap!
 
   u8vector-every
-  )
+  n-bits->n-u8
+  nat-length-in-u8 nat->u8vector u8vector->nat
+  integer-length-in-u8 integer->u8vector u8vector->integer)
 
 ;;; Endianness
 
@@ -704,3 +704,29 @@ END-C
   (declare (fixnum))
   (let lp ((i (1- (u8vector-length bytes))))
     (or (< i 0) (and (pred (u8vector-ref bytes i)) (lp (1- i))))))
+
+(def (n-bits->n-u8 n-bits)
+  (arithmetic-shift (+ n-bits 7) -3))
+
+(def (nat-length-in-u8 n) (n-bits->n-u8 (integer-length n)))
+
+(def (nat->u8vector n (n-u8 (nat-length-in-u8 n)) (endianness big))
+  (def u8vector (make-u8vector n-u8 0))
+  (when (positive? n-u8)
+    (u8vector-uint-set! u8vector 0 n endianness n-u8))
+  u8vector)
+
+(def (u8vector->nat u8vector (n-u8 (u8vector-length u8vector)) (endianness big))
+  (if (zero? n-u8) 0 (u8vector-uint-ref u8vector 0 endianness n-u8)))
+
+(def (integer-length-in-u8 n)
+  (if (zero? n) 0 (n-bits->n-u8 (1+ (integer-length n)))))
+
+(def (integer->u8vector n (n-u8 (integer-length-in-u8 n)) (endianness big))
+  (def u8vector (make-u8vector n-u8 0))
+  (when (positive? n-u8)
+    (u8vector-sint-set! u8vector 0 n endianness n-u8))
+  u8vector)
+
+(def (u8vector->integer u8vector (n-u8 (u8vector-length u8vector)) (endianness big))
+  (if (zero? n-u8) 0 (u8vector-sint-ref u8vector 0 endianness n-u8)))

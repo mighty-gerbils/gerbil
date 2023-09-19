@@ -3,10 +3,11 @@
 ;;;     belmarca
 ;;; :std/misc/bytes test
 
-(import :std/test
-        (only-in :std/sugar try catch)
-        :std/error
-        :std/misc/bytes :std/srfi/13)
+(import :std/error
+        :std/misc/bytes
+        :std/srfi/13
+        (only-in :std/sugar try catch defrule)
+        :std/test)
 (export bytes-test)
 
 (def u0 (u8vector 1 2 3))
@@ -23,6 +24,11 @@
 (def u6 (u8vector 0 1 2 3))
 (def u6-reversed (u8vector 3 2 1 0))
 (def u6-reverse (lambda () (u8vector-reverse u6)))
+
+(defrule (check-rep parse unparse rep obj)
+  (begin ;;let ((rep rep) (obj obj))
+    (check-equal? (parse rep) obj)
+    (check-equal? (unparse obj) rep)))
 
 (def bytes-test
   (test-suite "test :std/misc/bytes"
@@ -118,4 +124,24 @@
                  [#u8() "" #\:]]))
     (test-case "test u8vector->uint"
       (check-equal? (u8vector->uint u4) (- (expt 2 16) 1))
-      (check-equal? (u8vector->uint u5) (- (expt 2 80) 1)))))
+      (check-equal? (u8vector->uint u5) (- (expt 2 80) 1)))
+
+    (test-case "nat<->u8vector"
+      (check-rep u8vector->nat nat->u8vector #u8() 0)
+      (check-rep u8vector->nat nat->u8vector #u8(1) 1)
+      (check-rep u8vector->nat nat->u8vector #u8(233) 233)
+      (check-rep u8vector->nat nat->u8vector #u8(255) 255)
+      (check-rep u8vector->nat nat->u8vector #u8(3 219) 987)
+      (check-rep u8vector->nat nat->u8vector #u8(130 255) 33535)
+      (check-rep u8vector->nat nat->u8vector #u8(1 37 17) 75025))
+    (test-case "integer<->u8vector"
+      (check-rep u8vector->integer integer->u8vector #u8() 0)
+      (check-rep u8vector->integer integer->u8vector #u8(1) 1)
+      (check-rep u8vector->integer integer->u8vector #u8(0 233) 233)
+      (check-rep u8vector->integer integer->u8vector #u8(233) -23)
+      (check-rep u8vector->integer integer->u8vector #u8(255) -1)
+      (check-rep u8vector->integer integer->u8vector #u8(128) -128)
+      (check-rep u8vector->integer integer->u8vector #u8(0 255) 255)
+      (check-rep u8vector->integer integer->u8vector #u8(3 219) 987)
+      (check-rep u8vector->integer integer->u8vector #u8(130 255) -32001)
+      (check-rep u8vector->integer integer->u8vector #u8(1 37 17) 75025))))
