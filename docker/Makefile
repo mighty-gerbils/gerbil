@@ -1,9 +1,13 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
-GERBIL_VERSION := master
+$(info the branch is $(GERBIL_VERSION))
+ifeq ($(GERBIL_VERSION),)
+GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
+endif
+$(info the branch is $(GERBIL_VERSION))
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-cores := $(shell grep -c "^processor" /proc/cpuinfo)
+cores := $(shell nproc)
 arch := $(shell uname -m)
 DEFAULT=gerbilxx
 

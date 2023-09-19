@@ -32,10 +32,10 @@
 (deferror-class LevelDBError () leveldb-error?)
 
 (def (raise-leveldb-error where what)
-  (raise (make-leveldb-error what where: where)))
+  (raise (LevelDBError what where: where)))
 
 (def (raise-leveldb-error/errptr where errptr)
-  (raise (make-leveldb-error (errptr_str errptr) where: where)))
+  (raise (LevelDBError (errptr_str errptr) where: where)))
 
 (def (fixnum-positive? obj)
   (and (fixnum? obj)
@@ -149,13 +149,13 @@
          (errptr_clear errptr)
          errptr))
    (else
-    (let (errptr (check-ptr get-errptr (make_errptr)))
+    (let (errptr (check-ptr (make_errptr)))
       (thread-local-set! errptr-key errptr)
       errptr))))
 
 ;; Write batches
 (def (leveldb-writebatch)
-  (check-ptr leveldb_writebatch_create (leveldb_writebatch_create)))
+  (check-ptr (leveldb_writebatch_create)))
 
 (def (leveldb-writebatch-clear batch)
   (leveldb_writebatch_clear batch))
@@ -173,7 +173,7 @@
 (def (leveldb-iterator ldb (opts (leveldb-default-read-options)))
   (with ((leveldb db) ldb)
     (if db
-      (let (lit (make-leveldb-itor (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))))
+      (let (lit (make-leveldb-itor (check-ptr (leveldb_create_iterator db opts))))
         (make-will lit leveldb-iterator-close)
         lit)
       (raise-context-error 'leveldb-iterator "LevelDB database has been closed"))))
@@ -373,7 +373,7 @@
                       lru-cache-capacity:     (lru-cache-capacity #f)     ; size_t
                       bloom-filter-bits:      (bloom-filter-bits #f)      ; int
                       )
-  (let (opts (check-ptr leveldb_options_create (leveldb_options_create)))
+  (let (opts (check-ptr (leveldb_options_create)))
     (when create-if-missing
       (leveldb_options_set_create_if_missing opts 1))
     (when error-if-exists
@@ -401,14 +401,14 @@
     (def cache
       (when lru-cache-capacity
         (if (fixnum-positive? lru-cache-capacity)
-          (let (ptr (check-ptr leveldb_cache_create_lru (leveldb_cache_create_lru lru-cache-capacity)))
+          (let (ptr (check-ptr (leveldb_cache_create_lru lru-cache-capacity)))
             (leveldb_options_set_cache opts ptr)
             ptr)
           (raise-bad-argument 'leveldb "positive fixnum: lru cache size" lru-cache-capacity))))
     (def bloom-filter
       (when bloom-filter-bits
         (if (fixnum-positive? bloom-filter-bits)
-          (let (ptr (check-ptr leveldb_filterpolicy_create_bloom (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
+          (let (ptr (check-ptr (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
             (leveldb_options_set_filter_policy opts ptr)
             ptr)
           (raise-bad-argument 'leveldb "positive fixnum: bloom filter biits" bloom-filter-bits))))
@@ -423,7 +423,7 @@
 (def (leveldb-read-options verify-checksums: (verify-checksums #f) ; boolean
                            fill-cache:       (fill-cache #f)       ; boolean
                            )
-  (let (opts (check-ptr leveldb_readoptions_create (leveldb_readoptions_create)))
+  (let (opts (check-ptr (leveldb_readoptions_create)))
     (when verify-checksums
       (leveldb_readoptions_set_verify_checksums opts 1))
     (when fill-cache
@@ -437,7 +437,7 @@
   (delay (leveldb-read-options)))
 
 (def (leveldb-write-options sync: (sync #f)) ; boolean
-  (let (opts (check-ptr leveldb_writeoptions_create (leveldb_writeoptions_create)))
+  (let (opts (check-ptr (leveldb_writeoptions_create)))
     (when sync
       (leveldb_writeoptions_set_sync opts 1))
     opts))

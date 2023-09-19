@@ -17,8 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: make -C docker ${{ matrix.docker-image }}
-    - name: docker push to dockerhub
+      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${{github.head_ref}}
+    - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
         docker push gerbil/${{ matrix.docker-image }}:$(uname -m)
+      if: github.event_name != 'pull_request'
