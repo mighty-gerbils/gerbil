@@ -350,7 +350,7 @@
     (call-with-output-file builtin-modules-scm-path
       (lambda (p)
         (write `(define ligerbil-builtin-modules
-                  (quote ,(append gerbil-runtime ordered-modules)))
+                  (quote ,ordered-modules))
                p)
         (newline p)))
     ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
