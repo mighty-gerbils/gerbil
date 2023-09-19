@@ -6,8 +6,7 @@
         :gerbil/gambit/misc
         :std/error
         :std/generic
-        :std/coroutine
-        )
+        :std/coroutine)
 (export
   (struct-out iterator)
   iter :iter iter-end iter-end? iter-next! iter-fini!
