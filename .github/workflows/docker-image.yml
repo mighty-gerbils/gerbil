@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${{GITHUB_REF##*/}}
+      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${GITHUB_REF##*/}
     - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
