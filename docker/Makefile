@@ -3,6 +3,7 @@
 ifeq (($GERBIL_VERSION),)
 GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
 endif
+$(info $(GERBIL_VERSION) is branch)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
