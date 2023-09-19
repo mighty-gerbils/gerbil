@@ -73,7 +73,7 @@
       (def (test-for-8-not-real)
         (for (x (in-range (hash (a 1) (b 2) (c 3))))
           (displayln x)))
-      (check-exception (test-for-8-not-real) exception?))
+      (check-exception (test-for-8-not-real) type-exception?))
 
     (test-case "test folding macros"
       (def (test-for/collect-0)
