@@ -134,7 +134,7 @@ namespace: #f
 
 (defmethod {display-exception Error}
   (lambda (self port)
-    (let (tmp-port (open-outut-string))
+    (let (tmp-port (open-output-string))
       (fix-port-width! tmp-port)
       (parameterize ((current-output-port tmp-port))
         (display "*** ERROR IN ")

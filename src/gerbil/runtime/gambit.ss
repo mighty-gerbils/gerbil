@@ -14,6 +14,8 @@ namespace: #f
   string->utf8
   string->uninterned-keyword
   string->uninterned-symbol
+  open-output-string
+  get-output-string
   fxarithmetic-shift
   fxquotient
   make-table
