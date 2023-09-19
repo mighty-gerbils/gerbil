@@ -1,6 +1,8 @@
 # Updating Bootstrap
 
-If you have made changes to the core prelude, expander, or the compiler, you will also want to update the compiled bootstrap modules.
+If you have made changes to the core prelude, expander, or the
+compiler, sometimes you may also need to update the compiled bootstrap
+modules (e.g. because of a bug fix).
 
 This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`.
 

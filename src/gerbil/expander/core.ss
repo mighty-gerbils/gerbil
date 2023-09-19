@@ -172,17 +172,7 @@ namespace: gx
 ;;;;XXXX
 (extern namespace: #f __pp-syntax)
 (def (core-expand-top stx)
-  (displayln "expanding:")
-  (__pp-syntax stx)
-
   (let (stx (core-expand* stx))
-
-
-  (displayln "->:")
-  (__pp-syntax stx)
-
-
-
     (core-syntax-case stx ()
       ((form . _)
        (core-bound-identifier? form)

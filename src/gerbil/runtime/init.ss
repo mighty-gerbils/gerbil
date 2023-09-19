@@ -141,22 +141,10 @@ namespace: #f
       src)
      (else #f)))
 
-  ;;(displayln "expand-source " src)
-
   (cond
    ((no-expand src))
    (else
-    ;;(expand src)
-
-    (displayln "expand: ")
-    (pp src)
-    (displayln "syntax:")
-    (__pp-syntax (__source->syntax src))
-    (let (expanded (expand src))
-      (displayln "->:")
-      (pp expanded)
-      expanded)
-    )))
+    (expand src))))
 
 ;; hook to make gambit macro expansion work with a hooked expander
 ;; ##macro-descr recurses into the expander through ##eval-top,

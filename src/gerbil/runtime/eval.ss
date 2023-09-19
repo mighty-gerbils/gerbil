@@ -164,7 +164,7 @@ namespace: #f
         (__compile expr))
        ((id)
         (__SRC
-         `(def ,(__SRC id)
+         `(define ,(__SRC id)
             ,(__compile expr))
          stx))
        (else
@@ -173,13 +173,13 @@ namespace: #f
                (tmp (__SRC (gensym))))
           (__SRC
            `(begin
-             ,(__SRC `(def ,tmp ,(__compile expr)) stx)
+             ,(__SRC `(define ,tmp ,(__compile expr)) stx)
              ,(__SRC `(__check-values ,tmp ,len) stx)
              ,@(filter-map
                 (lambda (id k)
                   (and (__AST-e id)
                        (__SRC
-                        `(def ,(__SRC id)
+                        `(define ,(__SRC id)
                                    (##vector-ref ,tmp ,k))
                         stx)))
                 ids (iota len)))

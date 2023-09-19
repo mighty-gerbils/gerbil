@@ -42,14 +42,7 @@
    message                              ; String
    data)                                ; (Maybe Bytes)
   json-rpc-error?
-  (lambda (self what: (what "JSON RPC error") where: (where 'json-rpc)
-           code: code
-           message: message
-           data: (data (void)))
-    (class-instance-init! self code: code message: message data: data)
-    (let (irritants [code])
-      (Error:::init! self (string-append "JSON RPC error: "message)
-                     irritants: irritants where: where))))
+  class-instance-init!)
 (def json-rpc-error make-JSON-RPCError)
 
 (def (json-rpc-error-code e)

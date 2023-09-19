@@ -39,7 +39,7 @@ namespace: #f
     (unless (&StackTrace-continuation exn)
       (##continuation-capture
        (lambda (cont)
-         (unchecked-slot-set! exn 'continuation (##continuation-next cont))))))
+         (unchecked-slot-set! exn 'continuation cont)))))
   (##raise exn))
 
 (def (error message . irritants)
