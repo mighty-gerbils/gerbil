@@ -9,6 +9,10 @@ namespace: gx
 (import "common" "stx" "core" "top")
 (declare (not safe))
 
+;; required by the module reader to support #lang
+(extern namespace: #f
+  datum-parsing-exception? datum-parsing-exception-filepos)
+
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
   final: #t unchecked: #t)

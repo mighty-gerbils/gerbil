@@ -231,8 +231,6 @@ package: gerbil
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
     make-syntax-error syntax-error?
-    ;; required by the module reader to support #lang
-    datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
     ;; string and vector moves
     vector-concatenate subvector-move! vector-shrink!
