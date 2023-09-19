@@ -10,11 +10,7 @@ namespace: #f
 ;; compatibilityf for prerelease gambit changes
 (cond-expand
   (,(with-catch false (cut eval '##max-char))
-   (cond-expand
-     (,(with-catch false (cut eval '##max-char-code))
-      (def ##max-char #x10ffff))
-     (else
-      (def ##max-char (##max-char-code))))))
+   (def ##max-char #x10ffff)))
 
 ;; gambit runtime builtin refs that are not in the core prelude <host-runtime>
 (extern
