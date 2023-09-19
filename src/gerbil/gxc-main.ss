@@ -15,7 +15,7 @@
   (displayln " -s                          keep intermediate .scm files")
   (displayln " -S                          don't invoke gsc")
   (displayln " -v                          be verbose during compilation")
-  (displayln " -g                          compile with debug: adds debug environments and tracks scheme source")
+  (displayln " -g                          compile with debug symbols; c code is compiled with -g")
   (displayln " -no-ssxi                    don't generate .ssxi modules for cross-module optimization")
   (displayln " -include-gambit-sharp       include _gambit# with necessary cond expand features")
   (displayln " -prelude <sexpr>            add [-prelude <sexpr>] to gsc options")
