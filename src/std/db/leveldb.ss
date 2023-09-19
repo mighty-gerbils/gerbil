@@ -149,7 +149,7 @@
          (errptr_clear errptr)
          errptr))
    (else
-    (let (errptr (check-ptr get-errptr (make_errptr)))
+    (let (errptr (check-ptr (make_errptr)))
       (thread-local-set! errptr-key errptr)
       errptr))))
 
