@@ -256,6 +256,8 @@ package: gerbil
     call-with-output-u8vector with-output-to-u8vector
     ;; generic I/O
     displayln display*
+    ;; formerly ##max-char
+    max-char-code
     ;;flush-output-port
     ;; etc...
     absent-obj   ; gambit api missing optional parameter

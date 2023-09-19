@@ -56,7 +56,7 @@
 ;; plus Unicode Space Separators (#x20 #xA0 #x1680 #x2000-#x200a #x202f #x205f #x3000)
 ;; plus Unicode Line Separators (#x0A #x0D #x85 #x2028 #x2029)
 ;; To check, see:
-;; (import :std/format :std/iter :std/misc/list :std/sugar) (with-list-builder (c) (for (i (in-range (1+ ##max-char))) (try (when (char-whitespace? (integer->char i)) (c (format "~04x" i))) (catch (_) (void)))))
+;; (import :std/format :std/iter :std/misc/list :std/sugar) (with-list-builder (c) (for (i (in-range (1+ max-char-code))) (try (when (char-whitespace? (integer->char i)) (c (format "~04x" i))) (catch (_) (void)))))
 (def-codepoint (scheme-whitespace? c)
   (char-whitespace? (integer->char c)))
 
