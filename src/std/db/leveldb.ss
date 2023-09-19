@@ -401,7 +401,7 @@
     (def cache
       (when lru-cache-capacity
         (if (fixnum-positive? lru-cache-capacity)
-          (let (ptr (check-ptr leveldb_cache_create_lru (leveldb_cache_create_lru lru-cache-capacity)))
+          (let (ptr (check-ptr (leveldb_cache_create_lru lru-cache-capacity)))
             (leveldb_options_set_cache opts ptr)
             ptr)
           (raise-bad-argument 'leveldb "positive fixnum: lru cache size" lru-cache-capacity))))
