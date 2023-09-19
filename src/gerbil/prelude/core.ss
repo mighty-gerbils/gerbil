@@ -9,7 +9,8 @@ package: gerbil
                  <module-sugar> <special>)
         (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar> <special>
                           <expander-runtime> <syntax-case> <syntax-sugar>
-                          <more-syntax-sugar>)))
+                          <more-syntax-sugar>))
+        (phi: +2 (import: <runtime> <expander-runtime>)))
 
 (provide gerbil-core)
 
