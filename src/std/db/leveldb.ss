@@ -373,7 +373,7 @@
                       lru-cache-capacity:     (lru-cache-capacity #f)     ; size_t
                       bloom-filter-bits:      (bloom-filter-bits #f)      ; int
                       )
-  (let (opts (check-ptr leveldb_options_create (leveldb_options_create)))
+  (let (opts (check-ptr (leveldb_options_create)))
     (when create-if-missing
       (leveldb_options_set_create_if_missing opts 1))
     (when error-if-exists
