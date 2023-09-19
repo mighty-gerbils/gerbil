@@ -82,6 +82,7 @@ build_prepare() {
 build_gambit() {
   feedback_low "Building Gambit in ${GERBIL_BUILD_PREFIX}/gambit"
   feedback_mid "Building core gambit"
+  (cd gambit && rm -rf boot gsc-boot) || die
   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} core) || die
 
   feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
