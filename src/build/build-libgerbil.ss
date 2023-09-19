@@ -316,16 +316,17 @@
          (cc-options (fold-cc-options stdlib-spec mode))
          (ld-options (fold-ld-options stdlib-spec mode))
          (stdlib-modules (map car stdlib-spec))
-         (all-modules (append gerbil-prelude-gambit gerbil-expander gerbil-compiler stdlib-modules))
-         (ordered-modules (order-modules all-modules))
+         (ordered-modules (order-modules stdlib-modules))
+         (ordered-modules (remove-duplicates
+                           (append gerbil-runtime
+                                   gerbil-prelude-gambit
+                                   gerbil-expander
+                                   gerbil-compiler
+                                   ordered-modules)))
          (static-module-scm-files (map static-module-scm-file ordered-modules))
          (static-module-scm-paths (map static-file-path static-module-scm-files))
          (static-module-c-paths   (map module-c-file static-module-scm-paths))
          (static-module-o-paths   (map module-o-file static-module-c-paths))
-         (runtime-scm-files (map static-module-scm-file gerbil-runtime))
-         (runtime-scm-paths (map static-file-path runtime-scm-files))
-         (runtime-c-paths   (map module-c-file runtime-scm-paths))
-         (runtime-o-paths   (map module-o-file runtime-c-paths))
          (builtin-modules-scm-path (static-file-path "libgerbil-builtin-modules.scm"))
          (builtin-modules-c-path (module-c-file builtin-modules-scm-path))
          (builtin-modules-o-path (module-o-file builtin-modules-c-path))
@@ -354,7 +355,7 @@
         (newline p)))
     ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
     (let (wg (make-wg/build-cores))
-      (for (scm-path [runtime-scm-paths ... static-module-scm-paths ... builtin-modules-scm-path])
+      (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
         (wg-add! wg
           (lambda ()
             (displayln "... compile " scm-path)
@@ -370,14 +371,12 @@
     (displayln "... link " link-c-path)
     (invoke-gsc [gsc-runtime-opts
                  ... "-link" "-o" link-c-path
-                 runtime-c-paths ...
                  static-module-c-paths ...
                  builtin-modules-c-path])
 
     ;; build them
     (let (wg (make-wg/build-cores))
-      (for (c-path [runtime-c-paths ...
-                    static-module-c-paths ...
+      (for (c-path [static-module-c-paths ...
                     builtin-modules-c-path link-c-path])
         (wg-add! wg
           (lambda ()
@@ -396,25 +395,30 @@
       (if (eq? mode 'shared)
         (invoke-gcc ["-shared" "-o" libgerbil
                      libgerbil-ldd ...
-                     runtime-o-paths ...
                      static-module-o-paths ...
                      builtin-modules-o-path
                      link-o-path])
         (invoke-ar ["cq" libgerbil
-                    runtime-o-paths ...
                     static-module-o-paths ...
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
         (cut write libgerbil-ldd <>)))
     ;; cleanup
-    (for (f [runtime-c-paths ...
-             static-module-c-paths ...
+    (for (f [static-module-c-paths ...
              builtin-modules-c-path
-             runtime-o-paths ...
              static-module-o-paths ...
              builtin-modules-o-path])
       (delete-file f))))
+
+(def (remove-duplicates lst)
+  (let lp ((rest lst) (result []))
+    (match rest
+      ([hd . rest]
+       (if (member hd result)
+         (lp rest result)
+         (lp rest (cons hd result))))
+      (else (reverse result)))))
 
 (def (auto-build-mode)
   (if (member "--enable-shared" (string-split (configure-command-string) #\'))
