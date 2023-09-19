@@ -22,3 +22,4 @@ jobs:
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
         docker push gerbil/${{ matrix.docker-image }}:$(uname -m)
+      if: github.event_name != 'pull_request'
