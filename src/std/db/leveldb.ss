@@ -423,7 +423,7 @@
 (def (leveldb-read-options verify-checksums: (verify-checksums #f) ; boolean
                            fill-cache:       (fill-cache #f)       ; boolean
                            )
-  (let (opts (check-ptr leveldb_readoptions_create (leveldb_readoptions_create)))
+  (let (opts (check-ptr (leveldb_readoptions_create)))
     (when verify-checksums
       (leveldb_readoptions_set_verify_checksums opts 1))
     (when fill-cache
