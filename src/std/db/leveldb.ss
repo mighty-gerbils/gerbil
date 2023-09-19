@@ -173,7 +173,7 @@
 (def (leveldb-iterator ldb (opts (leveldb-default-read-options)))
   (with ((leveldb db) ldb)
     (if db
-      (let (lit (make-leveldb-itor (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))))
+      (let (lit (make-leveldb-itor (check-ptr (leveldb_create_iterator db opts))))
         (make-will lit leveldb-iterator-close)
         lit)
       (raise-context-error 'leveldb-iterator "LevelDB database has been closed"))))

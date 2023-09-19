@@ -83,7 +83,6 @@ ubuntu_packages := autoconf \
 
 gerbilxx:
 	docker build --target final \
-	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++ --enable-march=" \
