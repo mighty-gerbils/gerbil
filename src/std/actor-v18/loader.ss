@@ -105,5 +105,3 @@
      (-> loader (!continue (cut K result))))
    (catch (exn)
      (-> loader (!continue (cut E exn))))))
-
-(extern namespace: #f &current-module-registry)
