@@ -155,7 +155,7 @@
 
 ;; Write batches
 (def (leveldb-writebatch)
-  (check-ptr leveldb_writebatch_create (leveldb_writebatch_create)))
+  (check-ptr (leveldb_writebatch_create)))
 
 (def (leveldb-writebatch-clear batch)
   (leveldb_writebatch_clear batch))
@@ -408,7 +408,7 @@
     (def bloom-filter
       (when bloom-filter-bits
         (if (fixnum-positive? bloom-filter-bits)
-          (let (ptr (check-ptr leveldb_filterpolicy_create_bloom (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
+          (let (ptr (check-ptr (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
             (leveldb_options_set_filter_policy opts ptr)
             ptr)
           (raise-bad-argument 'leveldb "positive fixnum: bloom filter biits" bloom-filter-bits))))
