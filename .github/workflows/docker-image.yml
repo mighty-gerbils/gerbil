@@ -19,7 +19,7 @@ jobs:
     - name: Build the Docker image
       run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${{GITHUB_REF##*/}}
     - name: docker push to dockerhub on pushes to master
-      if: github.ref == 'refs/heads/master'
+      if: ${{ github.ref }} == 'refs/heads/master'
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
         docker push gerbil/${{ matrix.docker-image }}:$(uname -m)
