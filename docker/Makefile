@@ -1,10 +1,8 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
-$(info $(GERBIL_VERSION) is branch)
-ifeq (($GERBIL_VERSION),)
+ifeq ($(GERBIL_VERSION),)
 GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
 endif
-$(info $(GERBIL_VERSION) is branch)
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell nproc)
