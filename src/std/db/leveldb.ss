@@ -32,10 +32,10 @@
 (deferror-class LevelDBError () leveldb-error?)
 
 (def (raise-leveldb-error where what)
-  (raise (make-leveldb-error what where: where)))
+  (raise (LevelDBError what where: where)))
 
 (def (raise-leveldb-error/errptr where errptr)
-  (raise (make-leveldb-error (errptr_str errptr) where: where)))
+  (raise (LevelDBError (errptr_str errptr) where: where)))
 
 (def (fixnum-positive? obj)
   (and (fixnum? obj)
