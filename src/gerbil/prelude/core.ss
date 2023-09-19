@@ -212,7 +212,7 @@ package: gerbil
     with-exception-handler
     with-catch
     error raise
-    exception? error?
+    exception? error-object?
     error-message error-irritants error-trace
     display-exception
     ;; OS
