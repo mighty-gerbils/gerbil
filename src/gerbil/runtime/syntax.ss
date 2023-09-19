@@ -11,9 +11,9 @@ namespace: #f
 (declare (not safe))
 
 (defrules core-ast-case ()
-  ((_ expr . body)
+  ((_ expr body ...)
    (let ($e expr)
-     (core-ast-case% $e . body))))
+     (core-ast-case% $e body ...))))
 
 (defsyntax (core-ast-case% stx)
   (def (generate1 hd tgt K E kws)
@@ -23,38 +23,39 @@ namespace: #f
          (with-syntax* (($tgt (genident '$tgt))
                         ($hd  (genident '$hd))
                         ($tl  (genident '$tl))
-                        (body (generate1 #'hd #'$hd (generate1 #'rest #'$tl K E kws) E kws)))
+                        (body (generate1 #'hd #'$hd (generate1 #'rest #'$tl K E kws) E kws))
+                        (E E))
            #'(if (__AST-pair? tgt)
                (let* (($tgt (__AST-e tgt))
                       ($hd  (##car $tgt))
                       ($tl  (##cdr $tgt)))
-                 body))))
+                 body)
+               E)))
         (id
          (identifier? #'id)
          (cond
           ((underscore? #'id) K)
-          ((find (cut bound-identifier=? <> #'id) kws)
+          ((find (cut bound-identifier=? <> #'id) (syntax->list kws))
            (with-syntax ((K K) (E E))
-             #'(if (and (__AST-id? tgt)
-                        (eq? (__AST-e tgt) 'id))
+             #'(if (and (__AST-id? tgt) (eq? (__AST-e tgt) 'id))
                  K E)))
           (else
            (with-syntax ((K K))
              #'(let ((id tgt)) K)))))
         (hd
          (with-syntax ((K K) (E E))
-           #'(if (equal? (__AST-e tgt) hd) K E))))))
+           #'(if (equal? (__AST-e tgt) 'hd) K E))))))
 
   (syntax-case stx ()
     ((_ tgt kws clause ...)
      (let recur ((rest #'(clause ...)))
-       (syntax-case rest ()
-         ((hd . rest)
+       (match rest
+         ([hd . rest]
           (with-syntax* (($E (genident '$E))
                          (E #'($E))
-                         (continue (recur #'rest))
+                         (continue (recur rest))
                          (body
-                          (syntax-case #'hd (else)
+                          (syntax-case hd (else)
                             ((else expr ...) #'(begin expr ...))
                             ((pat expr)
                              (generate1 #'pat #'tgt #'expr #'E #'kws))
@@ -62,7 +63,7 @@ namespace: #f
                              (generate1 #'pat #'tgt #'(if fender expr E) #'E #'kws)))))
             #'(let ($E (lambda () continue))
                 body)))
-         (() #'(__raise-syntax-error #f "Bad syntax" tgt)))))))
+         ([] #'(__raise-syntax-error #f "Bad syntax" tgt)))))))
 
 
 ;; we really don't want stack traces in syntax error, they are worse than useless.

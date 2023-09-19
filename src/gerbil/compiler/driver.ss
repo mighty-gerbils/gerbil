@@ -743,7 +743,7 @@ namespace: gxc
      (if phi? [] opts)))
   (cond
    ((current-compile-debug)
-    (not-phi ["-debug-environments" "-track-scheme"]))
+    (not-phi ["-debug-source" "-track-scheme" "-cc-options" "-g"]))
    (else [])))
 
 (def (gsc-compile-file path phi?)

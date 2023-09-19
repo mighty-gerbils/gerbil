@@ -47,6 +47,7 @@ namespace: #f
   macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port
+  macro-readenv-filepos
   macro-readenv-script-line-set!
   macro-readtable-write-extended-read-macros?-set!
   macro-readtable-bracket-handler-set!

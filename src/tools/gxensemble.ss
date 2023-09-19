@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :gerbil/expander
         :std/sugar
         :std/iter

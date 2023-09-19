@@ -1,9 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; syntax utilities; import for-syntax
-(import <expander-runtime>
+(import :gerbil/expander
         :std/format)
-(export #t (for-syntax #t))
+(export #t)
 
 ;; format an identifier; see also stx-identifier
 ;; ctx := template identifier
@@ -28,7 +28,6 @@
 (def keywordify (case-lambda ((x) (if (keyword? x) x (string->keyword (stringify x))))
                        (x (string->keyword (stringify x)))))
 (def (identifierify stx . x) (datum->syntax stx (apply symbolify x)))
-
 
 ;; Use maybe-intern-symbol instead of string->symbol to avoid DoS attacks
 ;; that cause you to intern too many symbols and run out of memory.

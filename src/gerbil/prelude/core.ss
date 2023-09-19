@@ -226,6 +226,7 @@ package: gerbil
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
     ;; reader
+    AST? AST::t make-AST AST-e AST-source
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
     make-syntax-error syntax-error?

@@ -169,8 +169,6 @@ namespace: gx
     (core-expand-expression stx)
     (core-expand-top stx)))
 
-;;;;XXXX
-(extern namespace: #f __pp-syntax)
 (def (core-expand-top stx)
   (let (stx (core-expand* stx))
     (core-syntax-case stx ()

@@ -12,8 +12,7 @@ namespace: gxc
         "optimize-top"
         "optimize-spec"
         "optimize-ann"
-        "optimize-call"
-        (only-in :gerbil/gambit/exceptions display-exception))
+        "optimize-call")
 (export #t)
 
 ;; sticky to persist across batch compilation and avoid reloading ssxi modules

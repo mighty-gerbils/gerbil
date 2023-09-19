@@ -2,11 +2,9 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
-  (declare-type gx#&AST-e (@struct-getf AST::t 0 #t))
-  (declare-type gx#&AST-source (@struct-getf AST::t 1 #t))
   (declare-type
    gx#identifier-wrap::t
-   (@struct-type gx#identifier-wrap::t AST::t 1 #f ((final: . #t))))
+   (@struct-type gx#identifier-wrap::t gx#AST::t 1 #f ((final: . #t))))
   (declare-type gx#identifier-wrap? (@struct-pred gx#identifier-wrap::t))
   (declare-type gx#make-identifier-wrap (@struct-cons gx#identifier-wrap::t))
   (declare-type
@@ -23,7 +21,7 @@ package: gerbil/expander
    (@struct-setf gx#identifier-wrap::t 0 #t))
   (declare-type
    gx#syntax-wrap::t
-   (@struct-type gx#syntax-wrap::t AST::t 1 #f ((final: . #t))))
+   (@struct-type gx#syntax-wrap::t gx#AST::t 1 #f ((final: . #t))))
   (declare-type gx#syntax-wrap? (@struct-pred gx#syntax-wrap::t))
   (declare-type gx#make-syntax-wrap (@struct-cons gx#syntax-wrap::t))
   (declare-type gx#syntax-wrap-mark (@struct-getf gx#syntax-wrap::t 0 #f))
@@ -34,7 +32,7 @@ package: gerbil/expander
    (@struct-setf gx#syntax-wrap::t 0 #t))
   (declare-type
    gx#syntax-quote::t
-   (@struct-type gx#syntax-quote::t AST::t 2 #f ((final: . #t))))
+   (@struct-type gx#syntax-quote::t gx#AST::t 2 #f ((final: . #t))))
   (declare-type gx#syntax-quote? (@struct-pred gx#syntax-quote::t))
   (declare-type gx#make-syntax-quote (@struct-cons gx#syntax-quote::t))
   (declare-type gx#syntax-quote-context (@struct-getf gx#syntax-quote::t 0 #f))

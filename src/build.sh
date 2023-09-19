@@ -303,6 +303,9 @@ else
        "doc")
          build_doc || die
          ;;
+       "env")
+           $*
+         ;;
        *)
          feedback_err "Unknown command."
          feedback_err \

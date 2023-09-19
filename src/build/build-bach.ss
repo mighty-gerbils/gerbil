@@ -120,6 +120,8 @@
   (invoke (gerbil-gsc)
           [gsc-runtime-args
            "-exe" "-o" output-bin
+           ;; aid debugging
+           "-track-scheme" "-cc-options" "-g"
            "-cc-options" cc-options
            gsc-gx-macros ...
            builtin-modules-scm ...

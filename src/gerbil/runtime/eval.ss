@@ -134,7 +134,7 @@ namespace: #f
   (__raise-syntax-error 'compile "Bad syntax; cannot compile" stx detail))
 
 (def (__compile-ignore% stx)
-  (__SRC '(##void) stx))
+  (__SRC '(quote #!void) stx))
 
 (def (__compile-begin% stx)
   (core-ast-case stx ()
@@ -164,8 +164,7 @@ namespace: #f
         (__compile expr))
        ((id)
         (__SRC
-         `(define ,(__SRC id)
-            ,(__compile expr))
+         `(define ,(__SRC id) ,(__compile expr))
          stx))
        (else
         (let* ((ids hd)
@@ -179,8 +178,7 @@ namespace: #f
                 (lambda (id k)
                   (and (__AST-e id)
                        (__SRC
-                        `(define ,(__SRC id)
-                                   (##vector-ref ,tmp ,k))
+                        `(define ,(__SRC id) (##vector-ref ,tmp ,k))
                         stx)))
                 ids (iota len)))
            stx)))))))
@@ -248,7 +246,7 @@ namespace: #f
        (__SRC
         `(lambda ,args
            ,(__SRC
-             `(let (,len ,(__SRC `(##length ,args) stx))
+             `(let ((,len ,(__SRC `(##length ,args) stx)))
                 ,(generate clauses args len))
              stx))
         stx)))))
@@ -367,7 +365,7 @@ namespace: #f
                   (tmp (__SRC (gensym))))
              (lp rest (cdr exprs)
                  (foldl (lambda (id r)
-                          (if (__AST-e id) (cons `(,(__SRC id) #!void) r) r))
+                          (if (__AST-e id) (cons `(,(__SRC id) (quote #!void)) r) r))
                         pre hd)
                  (cons `(,tmp ,(car exprs)) bind)
                  (cons (cons* tmp len
@@ -426,7 +424,7 @@ namespace: #f
          (if (__AST-id? hd)
            (let (id (__SRC hd))
              (lp rest (cdr exprs)
-                 (cons `(,id #!void) bind)
+                 (cons `(,id (quote #!void)) bind)
                  (cons `(,id ,(car exprs)) post)))
            (lp rest (cdr exprs) bind
                (cons `(#f ,(car exprs)) post))))
@@ -435,7 +433,7 @@ namespace: #f
           ((__AST-id? hd)
            (let (id (__SRC hd))
              (lp rest (cdr exprs)
-                 (cons `(,id #!void) bind)
+                 (cons `(,id (quote #!void)) bind)
                  (cons `(,id (values->list ,(car exprs))) post))))
           ((not (__AST-e hd))
            (lp rest (cdr exprs) bind
@@ -445,7 +443,7 @@ namespace: #f
                   (tmp (__SRC (gensym))))
              (lp rest (cdr exprs)
                  (foldl (lambda (id r)
-                          (if (__AST-e id) (cons `(,(__SRC id) #!void) r) r))
+                          (if (__AST-e id) (cons `(,(__SRC id) (quote #!void)) r) r))
                         bind hd)
                  (cons (cons* tmp (car exprs) len
                               (filter-map (lambda (id k)
@@ -476,7 +474,7 @@ namespace: #f
                ([tmp expr len . init]
                 (cons
                  (__SRC
-                  `(let (,tmp ,expr)
+                  `(let ((,tmp ,expr))
                      ,(__SRC `(__check-values ,tmp ,len) stx)
                      ,@(map (lambda (hd)
                               (match hd

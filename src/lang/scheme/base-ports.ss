@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library -- implementation details
 (import :gerbil/gambit/ports
-        :gerbil/gambit/misc
-        :gerbil/gambit/exceptions)
+        :gerbil/gambit/misc)
 (export #t)
 
 (cond-expand

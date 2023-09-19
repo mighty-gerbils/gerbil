@@ -558,7 +558,7 @@ namespace: #f
 
 (def (struct->list obj)
   (if (object? obj)
-    (##structure->list obj)
+    (##vector->list obj)
     (error "Not an object" obj)))
 
 (def (class->list obj)

@@ -160,6 +160,14 @@ namespace: #f
   (lambda (self port)
     (let (old-width (fix-port-width! port))
       (##default-display-exception (&RuntimeException-exception self) port)
+
+      ;;;XXX
+      (let (what (&RuntimeException-exception self))
+        (when (macro-expression-parsing-exception? what)
+          (display (macro-expression-parsing-exception-source what) port)
+          (newline port)))
+      ;;;XXX
+
       (alet (cont (&StackTrace-continuation self))
         (display "--- continuation backtrace:" port)
         (newline port)
@@ -177,6 +185,10 @@ namespace: #f
   (when (macro-character-port? port)
     (macro-character-port-output-width-set! port old-width)))
 
+;; hook for expander
+(def (datum-parsing-exception-filepos e)
+  (macro-readenv-filepos (datum-parsing-exception-readenv e)))
+
 ;;; Runtime Exceptions
 (defsyntax (defruntime-exception stx)
   (syntax-case stx ()
@@ -189,12 +201,18 @@ namespace: #f
            (extern macro-is? macro-getf ...)
            (def (is? exn)
              (if (RuntimeException? exn)
-               (macro-is? (&RuntimeException-exception exn))
+               (let (e (&RuntimeException-exception exn))
+                 (macro-is? e))
                (macro-is? exn)))
            (def (getf exn)
              (if (RuntimeException? exn)
-               (macro-getf (&RuntimeException-exception exn))
-               (macro-getf exn)))
+               (let (e (&RuntimeException-exception exn))
+                 (if (macro-is? e)
+                   (macro-getf e)
+                   (error "not an instance" 'is? ['getf e])))
+               (if (macro-is? exn)
+                 (macro-getf exn)
+                 (error "not an instance" 'is? ['getf exn]))))
            ...)))))
 
 (defrules defruntime-exceptions ()

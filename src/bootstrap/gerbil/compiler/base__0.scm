@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1693679900)
+  (define gerbil/compiler/base::timestamp 1695117617)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -39,17 +39,17 @@
       (make-struct-field-mutator gxc#symbol-table::t '1))
     (define gxc#symbol-table:::init!
       (lambda (_self532_)
-        (if (let ((__tmp4770
+        (if (let ((__tmp4751
                    (let () (declare (not safe)) (##vector-length _self532_))))
               (declare (not safe))
-              (##fx< '2 __tmp4770))
+              (##fx< '2 __tmp4751))
             (begin
-              (let ((__tmp4771 (make-table 'test: eq?)))
+              (let ((__tmp4752 (make-table 'test: eq?)))
                 (declare (not safe))
-                (##vector-set! _self532_ '1 __tmp4771))
-              (let ((__tmp4772 (make-table 'test: eq?)))
+                (##vector-set! _self532_ '1 __tmp4752))
+              (let ((__tmp4753 (make-table 'test: eq?)))
                 (declare (not safe))
-                (##vector-set! _self532_ '2 __tmp4772)))
+                (##vector-set! _self532_ '2 __tmp4753)))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self532_))))
     (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)

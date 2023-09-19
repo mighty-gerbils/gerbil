@@ -132,13 +132,13 @@ namespace: #f
 
   (def (no-expand src)
     (cond
+     ((__loading-scheme-source)
+      src)
      ((##source? src)
       (let (code (##source-code src))
         (and (pair? code)
              (eq? __noexpand: (##car code))
              (##cdr code))))
-     ((__loading-scheme-source)
-      src)
      (else #f)))
 
   (cond
