@@ -16,12 +16,8 @@ jobs:
         docker-image: ['gerbil', 'gerbilxx']
     steps:
     - uses: actions/checkout@v3
-    - name: github context echo
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
     - name: Build the Docker image
-      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${GITHUB_REF}
+      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${head_ref}
     - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
