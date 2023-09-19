@@ -385,6 +385,7 @@ namespace: gxc
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
+           (deps (filter (lambda (f) (not (member f runtime))) deps))
            (gsc-opts (or (pgetq gsc-options: opts) []))
            (gsc-opts (static-include gsc-opts gerbil-home))
            (gsc-gx-macros
