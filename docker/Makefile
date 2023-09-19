@@ -1,6 +1,8 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
+ifeq (($GERBIL_VERSION),)
 GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
+endif
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
