@@ -125,12 +125,9 @@ namespace: #f
 
 ;; method implementations
 (defmethod {:init! Error}
-  (lambda (self message where: (where #f) irritants: (irritants []))
+  (lambda (self message . rest)
     (unchecked-slot-set! self 'message message)
-    (when irritants
-      (unchecked-slot-set! self 'irritants irritants))
-    (when where
-      (unchecked-slot-set! self 'where where))))
+    (apply class-instance-init! self rest)))
 
 (defmethod {display-exception Error}
   (lambda (self port)
