@@ -57,8 +57,9 @@
 
 (defmethod {display-exception Error}
   (lambda (self port)
-    (let (old-width (fix-port-width! port))
-      (parameterize ((current-output-port port))
+    (let (tmp-port (open-output-string))
+      (fix-port-width! tmp-port)
+      (parameterize ((current-output-port tmp-port))
         (cond
          ((Error-where self)
           => (lambda (where) (display* where ": "))))
@@ -75,7 +76,7 @@
           (alet (cont (StackTrace-continuation self))
             (displayln "--- continuation backtrace:")
             (display-continuation-backtrace cont))))
-      (reset-port-width! port old-width)))
+      (##write-string (get-output-string tmp-port) port)))
   rebind: #t)
 
 (def (Error-message err)
@@ -215,13 +216,14 @@
 
 (defmethod {display-exception RuntimeException}
   (lambda (self port)
-    (let (old-width (fix-port-width! port))
-      (##default-display-exception (RuntimeException-exception self) port)
+    (let (tmp-port (open-output-string))
+      (fix-port-width! tmp-port)
+      (##default-display-exception (RuntimeException-exception self) tmp-port)
       (alet (cont (StackTrace-continuation self))
-        (display "--- continuation backtrace:" port)
-        (newline port)
-        (display-continuation-backtrace cont port))
-      (reset-port-width! port old-width))))
+        (display "--- continuation backtrace:" tmp-port)
+        (newline tmp-port)
+        (display-continuation-backtrace cont tmp-port))
+      (##write-string (get-output-string tmp-port) port))))
 
 ;; exception handler hook
 (def (exception-handler-hook exn continue)
