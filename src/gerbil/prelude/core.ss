@@ -296,7 +296,7 @@ package: gerbil
   (export #t)
   (extern namespace: gx
     ;; syntax and friends
-    raise-syntax-error
+    raise-syntax-error syntax-error?
     identifier? identifier-list? free-identifier=? bound-identifier=?
     datum->syntax syntax->datum syntax-e syntax->list
     genident gentemps
