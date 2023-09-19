@@ -110,15 +110,12 @@
 (def (tranport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
-(def (malformed-request/response-init! self . args)
-  (class-instance-init! self args)
-  (Error:::init! self (@ self message)))
 (deferror-class (MalformedRequest JSON Error) (method params message)
   malformed-request?
-  malformed-request/response-init!)
+  class-instance-init!)
 (deferror-class (MalformedResponse JSON Error) (request-id response message)
   malformed-response?
-  malformed-request/response-init!)
+  class-instance-init!)
 
 (def (bytes->json b) ;; Don't intern JSON keys, using strings
   (parameterize ((json-symbolic-keys #f)) (bytes->json-object b)))
