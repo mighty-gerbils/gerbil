@@ -43,9 +43,10 @@ to the configure script (see below).
 After unpacking a release or checking out the source code from Github,
 cd into the `gerbil` directory.
 
-Gerbil takes quite a while to compile, if you wish it to build faster, you can:
+Gerbil takes quite a while to compile, if you wish it to build faster
+by utilizing multiple cores, you can:
 ```
-export GERBIL_BUILD_CORES=4
+make -j <number-of-cores>
 ```
 
 If you are using the default configuration, you can build Gerbil simply with:
