@@ -13,7 +13,8 @@ ifeq ($(REPO),)
 REPO := "mighty-gerbils/gerbil"
 endif
 
-$(info the branch is $(BRANCH) and the repo is $(REPO))
+cores := $(shell nproc)
+$(info the branch is $(BRANCH) and the repo is $(REPO) cores are: $(cores))
 
 alpine_packages := autoconf \
                    automake \
