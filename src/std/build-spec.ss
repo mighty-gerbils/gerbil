@@ -155,6 +155,7 @@
     "srfi/160/f64"
     "srfi/160/c64"
     "srfi/160/c128"
+    "srfi/212"
     ;; :std/parser
     "parser/rlang"
     "parser/base"
