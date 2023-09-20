@@ -19,7 +19,7 @@ jobs:
     - name: List of all Github Actions env vars
       run: env
     - name: Build the Docker image
-      run: make -C docker ${{ matrix.docker-image }} GERBIL_VERSION=${{github.head_ref}}
+      run: make -C docker ${{ matrix.docker-image }} REPO=${{github.GITHUB_REPOSITORY}} BRANCH=${{github.GITHUB_HEAD_REF}}
     - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}

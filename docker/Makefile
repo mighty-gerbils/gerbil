@@ -1,15 +1,11 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
-$(info the branch is $(GERBIL_VERSION))
-ifeq ($(GERBIL_VERSION),)
-GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
-endif
-$(info the branch is $(GERBIL_VERSION))
-
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell nproc)
 arch := $(shell uname -m)
 DEFAULT=gerbilxx
+
+$(info the branch is $(BRANCH) and the repo is $(REPO))
 
 alpine_packages := autoconf \
                    automake \
@@ -85,6 +81,8 @@ gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg repo="$(REPO)" \
+	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
@@ -96,7 +94,8 @@ gerbilxx:
 gerbil:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg repo="$(REPO)" \
+	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
