@@ -188,4 +188,5 @@ $ gxi --lang r7rs
   repl will loop when given a cyclic structure as syntax input.
 
 - ephemerons, in the `(scheme ephemeron)` library, are implemented
-  using weak pairs.
+  as weak pairs and will never be broken if the key is referred to
+  by the datum.
