@@ -104,13 +104,13 @@ char **gxi_argv_script(char* gerbil_home, char *runtime_opts, int argc, char **a
     gsi_argv[argix++] = runtime_opts;
   }
 
-  char *gxi_init = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
-  if (!gxi_init) {
+  char *gerbil_boot = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
+  if (!gerbil_boot) {
     perror("malloc");
     exit(3);
   }
-  sprintf(gxi_init, "%s/lib/gerbil-boot", gerbil_home);
-  gsi_argv[argix++] = gxi_init;
+  sprintf(gerbil_boot, "%s/lib/gerbil-boot", gerbil_home);
+  gsi_argv[argix++] = gerbil_boot;
 
   for (int i = 0; i < argc; i++) {
     gsi_argv[argix++] = argv[i];
@@ -140,13 +140,13 @@ char **gxi_argv_interactive(char *gerbil_home, char *runtime_opts) {
     gsi_argv[argix++] = runtime_opts;
   }
 
-  char *gxi_init = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
-  if (!gxi_init) {
+  char *gerbil_boot = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
+  if (!gerbil_boot) {
     perror("malloc");
     exit(3);
   }
-  sprintf(gxi_init, "%s/lib/gerbil-boot", gerbil_home);
-  gsi_argv[argix++] = gxi_init;
+  sprintf(gerbil_boot, "%s/lib/gerbil-boot", gerbil_home);
+  gsi_argv[argix++] = gerbil_boot;
 
   gsi_argv[argix++] = "-";
 
