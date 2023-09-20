@@ -22,8 +22,8 @@
 
 (def (make-ephemeron-finalizer ephemeron)
   (lambda (key)
-    (set! (&ephemeron-will! ephemeron) #f)
-    (set! (&ephemeron-datum-set! ephemeron) #f)))
+    (set! (&ephemeron-will ephemeron) #f)
+    (set! (&ephemeron-datum ephemeron) #f)))
 
 (def (ephemeron-broken? ephemeron)
   (not (ephemeron-will ephemeron)))
