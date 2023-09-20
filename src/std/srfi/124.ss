@@ -11,37 +11,27 @@
         ephemeron-broken?
         reference-barrier)
 
-(define-record-type <ephemeron>
-  (%make-ephemeron broken? will datum)
-  ephemeron?
-  (broken? ephemeron-broken? set-ephemeron-broken!)
-  (key-will ephemeron-key-will set-ephemeron-key-will!)
-  (datum-will ephemeron-datum-will set-ephemeron-datum-will!))
+(defstruct ephemeron (will datum)
+  final: #t unchecked: #t
+  constructor: :init!)
 
-(define (make-ephemeron key datum)
-  (letrec* ((eph (%make-ephemeron #f #f #f))
-            (datum-action
-             (lambda (x)
-               (if (not (ephemeron-broken? eph))
-                   (set-ephemeron-datum-will!
-                    eph
-                    (make-will x datum-action))))))
-    (set-ephemeron-key-will!
-     eph
-     (make-will key
-                (lambda (x)
-                  (set-ephemeron-broken! eph #t)
-                  (set-ephemeron-datum-will! eph #f))))
-    (set-ephemeron-datum-will!
-     eph
-     (make-will datum datum-action))
-    eph))
+(defmethod {:init! ephemeron}
+  (lambda (self key datum)
+    (set! (&ephemeron-will self)
+      (make-will key (make-ephemeron-finalizer self)))))
 
-(define (ephemeron-key eph)
-  (will-testator (ephemeron-key-will eph)))
+(def (make-ephemeron-finalizer ephemeron)
+  (lambda (key)
+    (set! (&ephemeron-will ephemeron) #f)
+    (set! (&ephemeron-datum ephemeron) #f)))
 
-(define (ephemeron-datum eph)
-  (and (not (ephemeron-broken? eph))
-       (will-testator (ephemeron-datum-will eph))))
+(def (ephemeron-broken? ephemeron)
+  (not (ephemeron-will ephemeron)))
 
-(define (reference-barrier k) (void))
+(def (ephemeron-key ephemeron)
+  (let (will (ephemeron-will ephemeron))
+    (and will
+         (will-testator will))))
+
+(def (reference-barrier key)
+  (##first-argument key))
