@@ -1,0 +1,16 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#export #t)
+         (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+         (%#define-runtime
+          current-module-library-path
+          current-module-library-path)
+         (%#define-runtime current-module-registry current-module-registry)
+         (%#define-runtime __reload-module __reload-module)
+         (%#begin (%#define-runtime load-module__% load-module__%)
+                  (%#begin (%#define-runtime load-module__0 load-module__0)
+                           (%#define-runtime load-module load-module)))
+         (%#define-runtime find-library-module find-library-module))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/loader__0"))

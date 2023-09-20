@@ -53,4 +53,4 @@ namespace: gx
          (%#define-runtime
           expander-context::bind-core-features!
           gx#expander-context::bind-core-features!))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/root__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/root__0"))

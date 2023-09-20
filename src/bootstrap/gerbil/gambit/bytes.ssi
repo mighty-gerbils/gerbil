@@ -36,6 +36,6 @@ namespace: gerbil/gambit/bytes
          (%#define-alias write-bytes write-u8vector)
          (%#define-alias read-bytes read-u8vector)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/gambit/bytes__1")))
                   (%#define-syntax @bytes |gerbil/gambit/bytes[:0:]#@bytes|)))

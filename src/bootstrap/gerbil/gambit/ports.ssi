@@ -108,4 +108,4 @@ namespace: gerbil/gambit/ports
          (%#define-runtime read-string gerbil/gambit/ports#read-string)
          (%#define-runtime write-u8vector gerbil/gambit/ports#write-u8vector)
          (%#define-runtime read-u8vector gerbil/gambit/ports#read-u8vector))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/ports__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/gambit/ports__0"))

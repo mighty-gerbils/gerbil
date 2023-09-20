@@ -12,13 +12,13 @@ namespace: gxc
           (spec:
            (:gerbil/gambit/ports)
            (0 open-process 0 open-process)
-           (0 close-port 0 close-port)
-           (0 process-status 0 process-status))
+           (0 process-status 0 process-status)
+           (0 close-port 0 close-port))
           (spec:
            (:gerbil/gambit/os)
            (0 current-time 0 current-time)
-           (0 file-info-size 0 file-info-size)
            (0 time->seconds 0 time->seconds)
+           (0 file-info-size 0 file-info-size)
            (0 file-info 0 file-info))
           (spec:
            (:gerbil/gambit/threads)
@@ -32,7 +32,7 @@ namespace: gxc
          (%#define-runtime default-gerbil-ar gxc#default-gerbil-ar)
          (%#define-runtime +driver-mutex+ gxc#+driver-mutex+)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/driver__1")))
                   (%#define-syntax
                    with-driver-mutex
@@ -49,7 +49,6 @@ namespace: gxc
          (%#define-runtime gerbil-gcc gxc#gerbil-gcc)
          (%#define-runtime +gerbil-ar+ gxc#+gerbil-ar+)
          (%#define-runtime gerbil-ar gxc#gerbil-ar)
-         (%#define-runtime gsc-runtime-args gxc#gsc-runtime-args)
          (%#define-runtime gerbil-runtime-modules gxc#gerbil-runtime-modules)
          (%#define-runtime delete-directory* gxc#delete-directory*)
          (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)
@@ -112,4 +111,4 @@ namespace: gxc
          (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
          (%#define-runtime static-module-name gxc#static-module-name)
          (%#define-runtime invoke gxc#invoke))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/driver__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/driver__0"))

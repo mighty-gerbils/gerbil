@@ -12,13 +12,13 @@ namespace: gxc
            (0 u64vector? 0 u64vector?)
            (0 u32vector? 0 u32vector?)
            (0 u16vector? 0 u16vector?)
-           (0 s64vector? 0 s64vector?)
+           (0 f64vector? 0 f64vector?)
+           (0 s16vector? 0 s16vector?)
            (0 s8vector? 0 s8vector?)
            (0 s32vector? 0 s32vector?)
-           (0 f64vector? 0 f64vector?)
+           (0 s64vector? 0 s64vector?)
            (0 f32vector? 0 f32vector?)
-           (0 u8vector? 0 u8vector?)
-           (0 s16vector? 0 s16vector?)))
+           (0 u8vector? 0 u8vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
@@ -34,7 +34,7 @@ namespace: gxc
           gxc#make-bound-identifier-table)
          (%#define-runtime compile-e gxc#compile-e)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/compile__1")))
                   (%#define-syntax
                    defcompile-method
@@ -331,4 +331,4 @@ namespace: gxc
           gxc#count-values-let-values%)
          (%#define-runtime count-values-call% gxc#count-values-call%)
          (%#define-runtime count-values-if% gxc#count-values-if%))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/compile__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/compile__0"))

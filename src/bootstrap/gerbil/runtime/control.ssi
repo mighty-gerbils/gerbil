@@ -1,0 +1,12 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+         (%#export #t)
+         (%#define-runtime make-promise make-promise)
+         (%#define-runtime call-with-parameters call-with-parameters)
+         (%#define-runtime with-unwind-protect with-unwind-protect)
+         (%#define-runtime keyword-dispatch keyword-dispatch)
+         (%#define-runtime keyword-rest keyword-rest))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/control__0"))

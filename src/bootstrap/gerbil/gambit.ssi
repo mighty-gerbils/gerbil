@@ -14,7 +14,6 @@ namespace: gerbil/gambit
           :gerbil/gambit/bytes
           :gerbil/gambit/readtables
           :gerbil/gambit/hash
-          :gerbil/gambit/exceptions
           :gerbil/gambit/os
           :gerbil/gambit/system
           :gerbil/gambit/foreign
@@ -32,7 +31,6 @@ namespace: gerbil/gambit
           (import: :gerbil/gambit/bytes)
           (import: :gerbil/gambit/readtables)
           (import: :gerbil/gambit/hash)
-          (import: :gerbil/gambit/exceptions)
           (import: :gerbil/gambit/os)
           (import: :gerbil/gambit/system)
           (import: :gerbil/gambit/foreign)

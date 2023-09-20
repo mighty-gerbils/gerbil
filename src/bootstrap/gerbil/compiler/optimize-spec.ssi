@@ -31,4 +31,4 @@ namespace: gxc
          (%#define-runtime
           subst-object-refs-call%
           gxc#subst-object-refs-call%))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-spec__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-spec__0"))

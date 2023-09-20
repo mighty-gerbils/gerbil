@@ -30,3 +30,5 @@ package: gerbil
    "runtime/eval"
    "runtime/repl"
    "runtime/init"))
+
+(void) ;; so that the runtime module exists

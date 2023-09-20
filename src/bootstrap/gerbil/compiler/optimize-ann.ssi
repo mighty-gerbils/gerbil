@@ -60,4 +60,4 @@ namespace: gxc
          (%#define-runtime push-match-vars-if% gxc#push-match-vars-if%)
          (%#define-runtime push-match-vars-call% gxc#push-match-vars-call%)
          (%#define-runtime push-match-vars-stop gxc#push-match-vars-stop))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-ann__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-ann__0"))

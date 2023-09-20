@@ -14,4 +14,4 @@ else
     die
 fi
 
-(cd src && ./build.sh) || die
+(cd src && ./build.sh $@) || die

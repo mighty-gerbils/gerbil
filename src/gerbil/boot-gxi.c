@@ -12,10 +12,10 @@
 static char *default_gerbil_home = NULL;
 static char *default_gerbil_gsi  = "gsi";
 
-static const char *usage = "Usage: %s [-v|-h] | [-:<runtime-options>] [--lang <language>] [[-] [-e <expr>] [file]] ...\n";
+static const char *usage = "Usage: %s [-v|-h] | [-:<runtime-options>] [[-] [-e <expr>] [file]] ...\n";
 
-void exec_gxi(char *gsi, char *gerbil_home, char *gerbil_lang, char *runtime_opts, int argc, char **argv);
-void gxi_setenv(char *gerbil_home, char *gerbil_lang);
+void exec_gxi(char *gsi, char *gerbil_home, char *runtime_opts, int argc, char **argv);
+void gxi_setenv(char *gerbil_home);
 char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv);
 char **gxi_argv_script(char *gerbil_home, char *runtime_opts, int argc, char **argv);
 char **gxi_argv_interactive(char *gerbil_home, char *runtime_opts);
@@ -38,7 +38,6 @@ int main(int argc, char **argv) {
   }
 
   int argp = 1;
-  char *gerbil_lang = NULL;
   char *runtime_opts = NULL;
   if (argc > 1) {
     if (!strcmp(argv[1], "-h")) {
@@ -48,7 +47,7 @@ int main(int argc, char **argv) {
 
     if (!strcmp(argv[1], "-v")) {
       char *args[] = {"-e", "(displayln gerbil-greeting)"};
-      exec_gxi(gerbil_gsi, gerbil_home, NULL, NULL, 2, args);
+      exec_gxi(gerbil_gsi, gerbil_home, NULL, 2, args);
       return 2;
     }
 
@@ -56,39 +55,24 @@ int main(int argc, char **argv) {
       runtime_opts = argv[1];
       argp++;
     }
-
-    if ((argp < argc) && !strcmp(argv[argp], "--lang")) {
-      argp++;
-      if (argp < argc) {
-        gerbil_lang = argv[argp];
-        argp++;
-      } else {
-        fprintf(stderr, usage, argv[0]);
-        return 1;
-      }
-    }
   }
 
-  exec_gxi(gerbil_gsi, gerbil_home, gerbil_lang, runtime_opts, argc - argp, argv + argp);
+  exec_gxi(gerbil_gsi, gerbil_home, runtime_opts, argc - argp, argv + argp);
   return 2;
 }
 
 void exec_gxi(char *gsi,
               char *gerbil_home,
-              char *gerbil_lang,
               char *runtime_opts,
               int argc, char **argv) {
   char **gsi_argv = gxi_argv(gerbil_home, runtime_opts, argc, argv);
-  gxi_setenv(gerbil_home, gerbil_lang);
+  gxi_setenv(gerbil_home);
   execvp(gsi, gsi_argv);
   perror("execvpe");
 }
 
-void gxi_setenv(char *gerbil_home, char *gerbil_lang) {
+void gxi_setenv(char *gerbil_home) {
   setenv("GERBIL_HOME", gerbil_home, 1);
-  if (gerbil_lang) {
-    setenv("GERBIL_LANG", gerbil_lang, 1);
-  }
 }
 
 char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv) {
@@ -120,13 +104,13 @@ char **gxi_argv_script(char* gerbil_home, char *runtime_opts, int argc, char **a
     gsi_argv[argix++] = runtime_opts;
   }
 
-  char *gxi_init = malloc(strlen(gerbil_home) + strlen("/lib/gxi-init") + 1);
-  if (!gxi_init) {
+  char *gerbil_boot = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
+  if (!gerbil_boot) {
     perror("malloc");
     exit(3);
   }
-  sprintf(gxi_init, "%s/lib/gxi-init", gerbil_home);
-  gsi_argv[argix++] = gxi_init;
+  sprintf(gerbil_boot, "%s/lib/gerbil-boot", gerbil_home);
+  gsi_argv[argix++] = gerbil_boot;
 
   for (int i = 0; i < argc; i++) {
     gsi_argv[argix++] = argv[i];
@@ -156,21 +140,13 @@ char **gxi_argv_interactive(char *gerbil_home, char *runtime_opts) {
     gsi_argv[argix++] = runtime_opts;
   }
 
-  char *gxi_init = malloc(strlen(gerbil_home) + strlen("/lib/gxi-init") + 1);
-  if (!gxi_init) {
+  char *gerbil_boot = malloc(strlen(gerbil_home) + strlen("/lib/gerbil-boot") + 1);
+  if (!gerbil_boot) {
     perror("malloc");
     exit(3);
   }
-  sprintf(gxi_init, "%s/lib/gxi-init", gerbil_home);
-  gsi_argv[argix++] = gxi_init;
-
-  char *gxi_interactive = malloc(strlen(gerbil_home) + strlen("/lib/gxi-interactive") + 1);
-  if (!gxi_interactive) {
-    perror("malloc");
-    exit(3);
-  }
-  sprintf(gxi_interactive, "%s/lib/gxi-interactive", gerbil_home);
-  gsi_argv[argix++] = gxi_interactive;
+  sprintf(gerbil_boot, "%s/lib/gerbil-boot", gerbil_home);
+  gsi_argv[argix++] = gerbil_boot;
 
   gsi_argv[argix++] = "-";
 

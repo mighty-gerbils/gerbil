@@ -64,3 +64,5 @@ namespace: #f
   macro-character-port?
   macro-character-port-output-width
   macro-character-port-output-width-set!)
+
+(void) ;; so that the __0 file exists

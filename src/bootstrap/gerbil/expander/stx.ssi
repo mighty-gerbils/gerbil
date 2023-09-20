@@ -16,7 +16,7 @@ namespace: gx
           &identifier-wrap-marks-set!
           gx#&identifier-wrap-marks-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/stx__1")))
                   (%#define-syntax identifier-wrap |gx[:0:]#identifier-wrap|))
          (%#define-runtime syntax-wrap::t gx#syntax-wrap::t)
@@ -122,4 +122,4 @@ namespace: gx
          (%#begin (%#define-runtime stx-getq__% gx#stx-getq__%)
                   (%#begin (%#define-runtime stx-getq__0 gx#stx-getq__0)
                            (%#define-runtime stx-getq gx#stx-getq))))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/stx__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/stx__0"))

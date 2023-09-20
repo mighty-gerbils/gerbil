@@ -8,6 +8,9 @@ namespace: gx
           :gerbil/expander/stx
           :gerbil/expander/core
           :gerbil/expander/top)
+         (%#extern
+          (datum-parsing-exception? datum-parsing-exception?)
+          (datum-parsing-exception-filepos datum-parsing-exception-filepos))
          (%#define-runtime module-import::t gx#module-import::t)
          (%#define-runtime module-import? gx#module-import?)
          (%#define-runtime make-module-import gx#make-module-import)
@@ -38,7 +41,7 @@ namespace: gx
           &module-import-weak?-set!
           gx#&module-import-weak?-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/module__1")))
                   (%#define-syntax module-import |gx[:0:]#module-import|))
          (%#define-runtime module-export::t gx#module-export::t)
@@ -342,4 +345,4 @@ namespace: gx
                            (%#define-runtime
                             core-bind-feature!
                             gx#core-bind-feature!))))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/module__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/module__0"))

@@ -63,4 +63,4 @@ namespace: gxc
          (%#define-runtime find-setq% gxc#find-setq%)
          (%#define-runtime find-var-refs-ref% gxc#find-var-refs-ref%)
          (%#define-runtime find-var-refs-setq% gxc#find-var-refs-setq%))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-xform__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform__0"))

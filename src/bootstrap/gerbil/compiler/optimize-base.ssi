@@ -37,7 +37,7 @@ namespace: gxc
           optimizer-info-methods-set!
           gxc#optimizer-info-methods-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-base__1")))
                   (%#define-syntax optimizer-info |gxc[:0:]#optimizer-info|))
          (%#define-runtime optimizer-info:::init! gxc#optimizer-info:::init!)
@@ -257,4 +257,4 @@ namespace: gxc
           optimizer-top-level-method?
           gxc#optimizer-top-level-method?)
          (%#define-runtime identifier-symbol gxc#identifier-symbol))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-base__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base__0"))
