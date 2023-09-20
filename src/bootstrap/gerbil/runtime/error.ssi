@@ -73,12 +73,29 @@ namespace: #f
          (%#define-runtime error-message error-message)
          (%#define-runtime error-irritants error-irritants)
          (%#define-runtime error-trace error-trace)
-         (%#define-runtime display-exception display-exception)
-         (%#define-runtime Error:::init! Error:::init!)
-         (%#define-runtime Error::display-exception Error::display-exception)
-         (%#define-runtime
-          RuntimeException::display-exception
-          RuntimeException::display-exception)
+         (%#begin (%#define-runtime display-exception__% display-exception__%)
+                  (%#begin (%#define-runtime
+                            display-exception__0
+                            display-exception__0)
+                           (%#define-runtime
+                            display-exception
+                            display-exception)))
+         (%#begin (%#define-runtime Error:::init! Error:::init!)
+                  (%#define-runtime
+                   Error:::init!::specialize
+                   Error:::init!::specialize))
+         (%#begin (%#define-runtime
+                   Error::display-exception
+                   Error::display-exception)
+                  (%#define-runtime
+                   Error::display-exception::specialize
+                   Error::display-exception::specialize))
+         (%#begin (%#define-runtime
+                   RuntimeException::display-exception
+                   RuntimeException::display-exception)
+                  (%#define-runtime
+                   RuntimeException::display-exception::specialize
+                   RuntimeException::display-exception::specialize))
          (%#define-runtime fix-port-width! fix-port-width!)
          (%#define-runtime reset-port-width! reset-port-width!)
          (%#define-runtime

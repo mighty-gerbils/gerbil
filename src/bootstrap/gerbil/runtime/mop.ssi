@@ -25,7 +25,13 @@ namespace: #f
           type-descriptor-methods-set!)
          (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
-         (%#define-runtime make-struct-type make-struct-type)
+         (%#begin (%#define-runtime make-struct-type__% make-struct-type__%)
+                  (%#begin (%#define-runtime
+                            make-struct-type__0
+                            make-struct-type__0)
+                           (%#define-runtime
+                            make-struct-type
+                            make-struct-type)))
          (%#define-runtime make-struct-predicate make-struct-predicate)
          (%#define-runtime
           make-struct-field-accessor
@@ -84,8 +90,12 @@ namespace: #f
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/mop__1")))
                   (%#define-syntax __slot-e |[:0:]#__slot-e|))
-         (%#define-runtime slot-ref slot-ref)
-         (%#define-runtime slot-set! slot-set!)
+         (%#begin (%#define-runtime slot-ref__% slot-ref__%)
+                  (%#begin (%#define-runtime slot-ref__0 slot-ref__0)
+                           (%#define-runtime slot-ref slot-ref)))
+         (%#begin (%#define-runtime slot-set!__% slot-set!__%)
+                  (%#begin (%#define-runtime slot-set!__0 slot-set!__0)
+                           (%#define-runtime slot-set! slot-set!)))
          (%#define-runtime __slot-error __slot-error)
          (%#define-runtime call-method call-method)
          (%#define-runtime __builtin-type-methods __builtin-type-methods)
@@ -102,7 +112,9 @@ namespace: #f
          (%#define-runtime direct-method-ref direct-method-ref)
          (%#define-runtime mixin-method-ref mixin-method-ref)
          (%#define-runtime builtin-method-ref builtin-method-ref)
-         (%#define-runtime bind-method! bind-method!)
+         (%#begin (%#define-runtime bind-method!__% bind-method!__%)
+                  (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
+                           (%#define-runtime bind-method! bind-method!)))
          (%#define-runtime __method-specializers __method-specializers)
          (%#define-runtime bind-specializer! bind-specializer!)
          (%#define-runtime seal-class! seal-class!)

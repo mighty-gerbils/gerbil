@@ -106,21 +106,83 @@ namespace: #f
          (%#define-runtime __current-expander __current-expander)
          (%#define-runtime __current-compiler __current-compiler)
          (%#define-runtime __current-path __current-path)
-         (%#define-runtime __core-resolve __core-resolve)
-         (%#define-runtime __core-bound-id? __core-bound-id?)
-         (%#define-runtime __core-bind-runtime! __core-bind-runtime!)
-         (%#define-runtime __core-bind-syntax! __core-bind-syntax!)
+         (%#begin (%#define-runtime __core-resolve__% __core-resolve__%)
+                  (%#begin (%#define-runtime
+                            __core-resolve__0
+                            __core-resolve__0)
+                           (%#define-runtime __core-resolve __core-resolve)))
+         (%#begin (%#define-runtime __core-bound-id?__% __core-bound-id?__%)
+                  (%#begin (%#define-runtime
+                            __core-bound-id?__0
+                            __core-bound-id?__0)
+                           (%#define-runtime
+                            __core-bound-id?
+                            __core-bound-id?)))
+         (%#begin (%#define-runtime
+                   __core-bind-runtime!__%
+                   __core-bind-runtime!__%)
+                  (%#begin (%#define-runtime
+                            __core-bind-runtime!__0
+                            __core-bind-runtime!__0)
+                           (%#define-runtime
+                            __core-bind-runtime!
+                            __core-bind-runtime!)))
+         (%#begin (%#define-runtime
+                   __core-bind-syntax!__%
+                   __core-bind-syntax!__%)
+                  (%#begin (%#define-runtime
+                            __core-bind-syntax!__0
+                            __core-bind-syntax!__0)
+                           (%#define-runtime
+                            __core-bind-syntax!
+                            __core-bind-syntax!)))
          (%#define-runtime __core-bind-macro! __core-bind-macro!)
          (%#define-runtime __core-bind-special-form! __core-bind-special-form!)
-         (%#define-runtime __core-bind-user-syntax! __core-bind-user-syntax!)
-         (%#define-runtime make-__runtime-id make-__runtime-id)
-         (%#define-runtime make-__context-local make-__context-local)
-         (%#define-runtime make-__context-module make-__context-module)
-         (%#define-runtime __SRC __SRC)
+         (%#begin (%#define-runtime
+                   __core-bind-user-syntax!__%
+                   __core-bind-user-syntax!__%)
+                  (%#begin (%#define-runtime
+                            __core-bind-user-syntax!__0
+                            __core-bind-user-syntax!__0)
+                           (%#define-runtime
+                            __core-bind-user-syntax!
+                            __core-bind-user-syntax!)))
+         (%#begin (%#define-runtime make-__runtime-id__% make-__runtime-id__%)
+                  (%#begin (%#define-runtime
+                            make-__runtime-id__0
+                            make-__runtime-id__0)
+                           (%#define-runtime
+                            make-__runtime-id
+                            make-__runtime-id)))
+         (%#begin (%#define-runtime
+                   make-__context-local__%
+                   make-__context-local__%)
+                  (%#begin (%#define-runtime
+                            make-__context-local__0
+                            make-__context-local__0)
+                           (%#define-runtime
+                            make-__context-local
+                            make-__context-local)))
+         (%#begin (%#define-runtime
+                   make-__context-module__%
+                   make-__context-module__%)
+                  (%#begin (%#define-runtime
+                            make-__context-module__0
+                            make-__context-module__0)
+                           (%#define-runtime
+                            make-__context-module
+                            make-__context-module)))
+         (%#begin (%#define-runtime __SRC__% __SRC__%)
+                  (%#begin (%#define-runtime __SRC__0 __SRC__0)
+                           (%#define-runtime __SRC __SRC)))
          (%#define-runtime __locat __locat)
          (%#define-runtime __check-values __check-values)
          (%#define-runtime __compile __compile)
-         (%#define-runtime __compile-error __compile-error)
+         (%#begin (%#define-runtime __compile-error__% __compile-error__%)
+                  (%#begin (%#define-runtime
+                            __compile-error__0
+                            __compile-error__0)
+                           (%#define-runtime __compile-error __compile-error)))
          (%#define-runtime __compile-ignore% __compile-ignore%)
          (%#define-runtime __compile-begin% __compile-begin%)
          (%#define-runtime __compile-begin-foreign% __compile-begin-foreign%)
