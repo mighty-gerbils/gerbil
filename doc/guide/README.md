@@ -49,6 +49,10 @@ by utilizing multiple cores, you can:
 make -j<number-of-cores>
 ```
 
+Alternatively, you can set the `GERBIL_BUILD_CORES` environment
+variable to the number of cores you want to use.
+
+
 If you are using the default configuration, you can build Gerbil simply with:
 ```bash
 $ ./configure && make && sudo make install
