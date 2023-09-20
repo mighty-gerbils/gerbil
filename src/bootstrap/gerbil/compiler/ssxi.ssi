@@ -15,7 +15,7 @@ namespace: gxc
           (spec: 0 with-syntax* with-syntax*)
           (import: :gerbil/core))
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/ssxi__1")))
                   (%#define-syntax declare-type |gxc[:0:]#declare-type|))
          (%#define-syntax declare-type* |gxc[:0:]#declare-type*|)

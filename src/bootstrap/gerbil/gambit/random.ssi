@@ -23,4 +23,4 @@ namespace: gerbil/gambit/random
          (%#define-alias
           random-source-make-bytes
           random-source-make-u8vectors))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/random__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/gambit/random__0"))

@@ -18,7 +18,7 @@ namespace: gx
           syntax-pattern-depth-set!
           gx#syntax-pattern-depth-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/stxcase__1")))
                   (%#define-syntax syntax-pattern |gx[:0:]#syntax-pattern|))
          (%#define-runtime
@@ -45,4 +45,4 @@ namespace: gx
           syntax-check-splice-targets
           gx#syntax-check-splice-targets)
          (%#define-runtime syntax-split-splice gx#syntax-split-splice))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/stxcase__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/stxcase__0"))

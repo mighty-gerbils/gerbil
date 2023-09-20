@@ -11,7 +11,6 @@
   (load-module "gerbil/gambit/bytes__rt")
   (load-module "gerbil/gambit/readtables__rt")
   (load-module "gerbil/gambit/hash__rt")
-  (load-module "gerbil/gambit/exceptions__rt")
   (load-module "gerbil/gambit/os__rt")
   (load-module "gerbil/gambit/system__rt")
   (load-module "gerbil/gambit/foreign__rt")

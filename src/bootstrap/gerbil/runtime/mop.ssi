@@ -1,0 +1,113 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#export #t)
+         (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+         (%#define-runtime type-descriptor? type-descriptor?)
+         (%#define-runtime struct-type? struct-type?)
+         (%#define-runtime class-type? class-type?)
+         (%#define-runtime make-type-descriptor make-type-descriptor)
+         (%#define-runtime
+          make-struct-type-descriptor
+          make-struct-type-descriptor)
+         (%#define-runtime
+          make-class-type-descriptor
+          make-class-type-descriptor)
+         (%#define-runtime type-descriptor-mixin type-descriptor-mixin)
+         (%#define-runtime type-descriptor-fields type-descriptor-fields)
+         (%#define-runtime type-descriptor-plist type-descriptor-plist)
+         (%#define-runtime type-descriptor-ctor type-descriptor-ctor)
+         (%#define-runtime type-descriptor-slots type-descriptor-slots)
+         (%#define-runtime type-descriptor-methods type-descriptor-methods)
+         (%#define-runtime
+          type-descriptor-methods-set!
+          type-descriptor-methods-set!)
+         (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
+         (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
+         (%#define-runtime make-struct-type make-struct-type)
+         (%#define-runtime make-struct-predicate make-struct-predicate)
+         (%#define-runtime
+          make-struct-field-accessor
+          make-struct-field-accessor)
+         (%#define-runtime make-struct-field-mutator make-struct-field-mutator)
+         (%#define-runtime
+          make-struct-field-unchecked-accessor
+          make-struct-field-unchecked-accessor)
+         (%#define-runtime
+          make-struct-field-unchecked-mutator
+          make-struct-field-unchecked-mutator)
+         (%#define-runtime struct-field-offset struct-field-offset)
+         (%#define-runtime struct-field-ref struct-field-ref)
+         (%#define-runtime struct-field-set! struct-field-set!)
+         (%#define-runtime struct-subtype? struct-subtype?)
+         (%#define-runtime make-class-type make-class-type)
+         (%#define-runtime class-linearize-mixins class-linearize-mixins)
+         (%#define-runtime __linearize-mixins __linearize-mixins)
+         (%#define-runtime make-class-predicate make-class-predicate)
+         (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
+         (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
+         (%#define-runtime
+          make-class-slot-unchecked-accessor
+          make-class-slot-unchecked-accessor)
+         (%#define-runtime
+          make-class-slot-unchecked-mutator
+          make-class-slot-unchecked-mutator)
+         (%#define-runtime class-slot-offset class-slot-offset)
+         (%#define-runtime class-slot-ref class-slot-ref)
+         (%#define-runtime class-slot-set! class-slot-set!)
+         (%#define-runtime class-subtype? class-subtype?)
+         (%#define-runtime object? object?)
+         (%#define-runtime object-type object-type)
+         (%#define-runtime direct-instance? direct-instance?)
+         (%#define-runtime struct-instance? struct-instance?)
+         (%#define-runtime direct-struct-instance? direct-struct-instance?)
+         (%#define-runtime class-instance? class-instance?)
+         (%#define-runtime direct-class-instance? direct-class-instance?)
+         (%#define-runtime make-object make-object)
+         (%#define-runtime make-struct-instance make-struct-instance)
+         (%#define-runtime make-class-instance make-class-instance)
+         (%#define-runtime struct-instance-init! struct-instance-init!)
+         (%#define-runtime __struct-instance-init! __struct-instance-init!)
+         (%#define-runtime class-instance-init! class-instance-init!)
+         (%#define-runtime __class-instance-init! __class-instance-init!)
+         (%#define-runtime constructor-init! constructor-init!)
+         (%#define-runtime __constructor-init! __constructor-init!)
+         (%#define-runtime struct-copy struct-copy)
+         (%#define-runtime struct->list struct->list)
+         (%#define-runtime class->list class->list)
+         (%#define-runtime unchecked-field-ref unchecked-field-ref)
+         (%#define-runtime unchecked-field-set! unchecked-field-set!)
+         (%#define-runtime unchecked-slot-ref unchecked-slot-ref)
+         (%#define-runtime unchecked-slot-set! unchecked-slot-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/mop__1")))
+                  (%#define-syntax __slot-e |[:0:]#__slot-e|))
+         (%#define-runtime slot-ref slot-ref)
+         (%#define-runtime slot-set! slot-set!)
+         (%#define-runtime __slot-error __slot-error)
+         (%#define-runtime call-method call-method)
+         (%#define-runtime __builtin-type-methods __builtin-type-methods)
+         (%#define-runtime method-ref method-ref)
+         (%#define-runtime checked-method-ref checked-method-ref)
+         (%#define-runtime bound-method-ref bound-method-ref)
+         (%#define-runtime checked-bound-method-ref checked-bound-method-ref)
+         (%#define-runtime find-method find-method)
+         (%#define-runtime __find-method __find-method)
+         (%#define-runtime struct-find-method struct-find-method)
+         (%#define-runtime class-find-method class-find-method)
+         (%#define-runtime mixin-find-method mixin-find-method)
+         (%#define-runtime builtin-find-method builtin-find-method)
+         (%#define-runtime direct-method-ref direct-method-ref)
+         (%#define-runtime mixin-method-ref mixin-method-ref)
+         (%#define-runtime builtin-method-ref builtin-method-ref)
+         (%#define-runtime bind-method! bind-method!)
+         (%#define-runtime __method-specializers __method-specializers)
+         (%#define-runtime bind-specializer! bind-specializer!)
+         (%#define-runtime seal-class! seal-class!)
+         (%#define-runtime next-method next-method)
+         (%#define-runtime call-next-method call-next-method)
+         (%#define-runtime write-style write-style)
+         (%#define-runtime write-object write-object))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/mop__0"))

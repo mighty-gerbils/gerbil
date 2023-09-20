@@ -16,9 +16,9 @@ namespace: gx
          (%#define-runtime &AST-e-set! gx#&AST-e-set!)
          (%#define-runtime &AST-source-set! gx#&AST-source-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/common__1")))
                   (%#define-syntax AST |gx[:0:]#AST|))
          (%#define-syntax check-procedure |gx[:0:]#check-procedure|)
          (%#define-syntax core-syntax-case |gx[:0:]#core-syntax-case|))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/common__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/common__0"))

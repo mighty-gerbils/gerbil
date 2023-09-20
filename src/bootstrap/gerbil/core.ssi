@@ -20,7 +20,9 @@ namespace: gerbil/core
           (phi: 1 (import: (in: #f <expander-runtime>)))
           (phi: 1 (import: (in: #f <syntax-case>)))
           (phi: 1 (import: (in: #f <syntax-sugar>)))
-          (phi: 1 (import: (in: #f <more-syntax-sugar>))))
+          (phi: 1 (import: (in: #f <more-syntax-sugar>)))
+          (phi: 2 (import: (in: #f <runtime>)))
+          (phi: 2 (import: (in: #f <expander-runtime>))))
          (%#provide gerbil-core)
          (%#module
           <r5rs-runtime>
@@ -474,7 +476,7 @@ namespace: gerbil/core
                     (error error)
                     (raise raise)
                     (exception? exception?)
-                    (error? error?)
+                    (error-object? error-object?)
                     (error-message error-message)
                     (error-irritants error-irritants)
                     (error-trace error-trace)
@@ -502,6 +504,11 @@ namespace: gerbil/core
                     (path-strip-directory path-strip-directory)
                     (path-strip-trailing-directory-separator
                      path-strip-trailing-directory-separator)
+                    (AST? AST?)
+                    (AST::t AST::t)
+                    (make-AST make-AST)
+                    (AST-e AST-e)
+                    (AST-source AST-source)
                     (read-syntax read-syntax)
                     (read-syntax-from-file read-syntax-from-file)
                     (source-location? source-location?)
@@ -509,9 +516,6 @@ namespace: gerbil/core
                     (source-location-path source-location-path)
                     (make-syntax-error make-syntax-error)
                     (syntax-error? syntax-error?)
-                    (datum-parsing-exception? datum-parsing-exception?)
-                    (datum-parsing-exception-filepos
-                     datum-parsing-exception-filepos)
                     (read-line read-line)
                     (read-all read-all)
                     (vector-concatenate vector-concatenate)
@@ -559,6 +563,7 @@ namespace: gerbil/core
                     (with-output-to-u8vector with-output-to-u8vector)
                     (displayln displayln)
                     (display* display*)
+                    (max-char-code max-char-code)
                     (absent-obj absent-obj)
                     (absent-value absent-value)
                     (load-module load-module)
@@ -592,6 +597,7 @@ namespace: gerbil/core
           (%#begin (%#export #t)
                    (%#extern
                     (raise-syntax-error gx#raise-syntax-error)
+                    (syntax-error? gx#syntax-error?)
                     (identifier? gx#identifier?)
                     (identifier-list? gx#identifier-list?)
                     (free-identifier=? gx#free-identifier=?)
@@ -756,7 +762,7 @@ namespace: gerbil/core
           (%#begin (%#export #t)
                    (%#import (in: #f <expander-runtime>))
                    (%#begin (%#begin-syntax
-                             (%#call (%#ref _gx#load-module)
+                             (%#call (%#ref load-module)
                                      (%#quote "gerbil/core__1")))
                             (%#define-syntax
                              syntax
@@ -772,7 +778,7 @@ namespace: gerbil/core
                     (in: #f <expander-runtime>)
                     (in: #f <syntax-case>))
                    (%#begin (%#begin-syntax
-                             (%#call (%#ref _gx#load-module)
+                             (%#call (%#ref load-module)
                                      (%#quote "gerbil/core__2")))
                             (%#define-syntax
                              syntax-rules
@@ -797,7 +803,7 @@ namespace: gerbil/core
                     <sugar:1>
                     (%#begin (%#export #t)
                              (%#begin (%#begin-syntax
-                                       (%#call (%#ref _gx#load-module)
+                                       (%#call (%#ref load-module)
                                                (%#quote "gerbil/core__3")))
                                       (%#define-syntax
                                        defrules
@@ -853,7 +859,7 @@ namespace: gerbil/core
                     <sugar:2>
                     (%#begin (%#export #t)
                              (%#begin (%#begin-syntax
-                                       (%#call (%#ref _gx#load-module)
+                                       (%#call (%#ref load-module)
                                                (%#quote "gerbil/core__4")))
                                       (%#define-syntax
                                        lambda
@@ -927,7 +933,7 @@ namespace: gerbil/core
                     <sugar:3>
                     (%#begin (%#export #t)
                              (%#begin (%#begin-syntax
-                                       (%#call (%#ref _gx#load-module)
+                                       (%#call (%#ref load-module)
                                                (%#quote "gerbil/core__5")))
                                       (%#define-syntax
                                        defsyntax
@@ -950,7 +956,7 @@ namespace: gerbil/core
                     <MOP:1>
                     (%#begin (%#export #t)
                              (%#begin-syntax
-                              (%#call (%#ref _gx#load-module)
+                              (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__6"))
                               (%#define-runtime
                                generate-typedef
@@ -1140,7 +1146,7 @@ namespace: gerbil/core
                                runtime-type-exhibitor-e
                                runtime-type-exhibitor-e))
                              (%#begin-syntax
-                              (%#call (%#ref _gx#load-module)
+                              (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__7"))
                               (%#define-runtime
                                runtime-type-info::t
@@ -1332,10 +1338,10 @@ namespace: gerbil/core
                     <MOP:3>
                     (%#begin (%#export (phi: 1 #t))
                              (%#begin-syntax
-                              (%#call (%#ref _gx#load-module)
+                              (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__8"))
                               (%#begin (%#begin-syntax
-                                        (%#call (%#ref _gx#load-module)
+                                        (%#call (%#ref load-module)
                                                 (%#quote "gerbil/core__9")))
                                        (%#define-syntax
                                         runtime-type-info
@@ -1407,8 +1413,7 @@ namespace: gerbil/core
                      syntax-local-match-macro?)
                     (spec: 1 match-pattern? match-pattern?))
                    (%#begin-syntax
-                    (%#call (%#ref _gx#load-module)
-                            (%#quote "gerbil/core__10"))
+                    (%#call (%#ref load-module) (%#quote "gerbil/core__10"))
                     (%#define-runtime
                      match-macro::t
                      |gerbil/core$<match>[1]#match-macro::t|)
@@ -1419,7 +1424,7 @@ namespace: gerbil/core
                      make-match-macro
                      |gerbil/core$<match>[1]#make-match-macro|)
                     (%#begin (%#begin-syntax
-                              (%#call (%#ref _gx#load-module)
+                              (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__11")))
                              (%#define-syntax
                               match-macro
@@ -1467,8 +1472,7 @@ namespace: gerbil/core
           <more-sugar>
           (%#begin (%#export #t (phi: 1 #t))
                    (%#begin-syntax
-                    (%#call (%#ref _gx#load-module)
-                            (%#quote "gerbil/core__12"))
+                    (%#call (%#ref load-module) (%#quote "gerbil/core__12"))
                     (%#define-runtime
                      setq-macro::t
                      |gerbil/core$<more-sugar>[1]#setq-macro::t|)
@@ -1479,7 +1483,7 @@ namespace: gerbil/core
                      make-setq-macro
                      |gerbil/core$<more-sugar>[1]#make-setq-macro|)
                     (%#begin (%#begin-syntax
-                              (%#call (%#ref _gx#load-module)
+                              (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__13")))
                              (%#define-syntax
                               setq-macro
@@ -1528,7 +1532,7 @@ namespace: gerbil/core
                     (in: #f <syntax-sugar>)
                     (phi: -1 (in: #f <more-sugar>)))
                    (%#begin (%#begin-syntax
-                             (%#call (%#ref _gx#load-module)
+                             (%#call (%#ref load-module)
                                      (%#quote "gerbil/core__14")))
                             (%#define-syntax
                              identifier-rules
@@ -1541,7 +1545,7 @@ namespace: gerbil/core
           <module-sugar>
           (%#begin (%#export #t)
                    (%#begin (%#begin-syntax
-                             (%#call (%#ref _gx#load-module)
+                             (%#call (%#ref load-module)
                                      (%#quote "gerbil/core__15")))
                             (%#define-syntax
                              require
@@ -1604,7 +1608,7 @@ namespace: gerbil/core
           <special>
           (%#begin (%#export #t)
                    (%#begin (%#begin-syntax
-                             (%#call (%#ref _gx#load-module)
+                             (%#call (%#ref load-module)
                                      (%#quote "gerbil/core__16")))
                             (%#define-syntax
                              eval-when-compile

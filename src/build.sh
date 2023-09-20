@@ -19,7 +19,7 @@ readonly GERBIL_SOURCE="$(pwd -P)"
 readonly GERBIL_BASE="$(dirname "${GERBIL_SOURCE}")"
 readonly GERBIL_STAGE0="${GERBIL_BASE}/bootstrap"
 
-export GERBIL_SOURCE
+export GERBIL_SOURCE GERBIL_STAGE0
 
 ## Build Environment
 GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
@@ -108,11 +108,6 @@ build_boot_gxi () {
   (cd gerbil && ${CC:-cc} -O2 -o boot-gxi boot-gxi.c)
 }
 
-compile_boot_runtime () {
-  local target_lib="${1}"
-  (cd gerbil/boot/runtime && ./build.scm "${target_lib}")
-}
-
 finalize_stage0 () {
   local target_lib="${1}"
   local target_bin="${2}"
@@ -142,11 +137,7 @@ build_stage0 () {
   local target_lib="${GERBIL_STAGE0}/lib"
 
   ## feedback
-  feedback_low "Building gerbil stage0 (bootstrap)"
-
-  ## gerbil runtime
-  feedback_mid "compiling bootstrap runtime"
-  compile_boot_runtime "${target_lib}"
+  feedback_low "Building Gerbil bootstrap"
 
   ## gerbil bootstrap
   feedback_mid "preparing bootstrap"
@@ -172,13 +163,16 @@ build_stage1 () {
   local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
 
   ## feedback
-  feedback_low "Building gerbil stage1"
+  feedback_low "Building Gerbil core"
 
   ## stage1 build
   feedback_mid "preparing core build"
   mkdir -p "${target_lib_gerbil}"
   cp -v gerbil/prelude/core.ssxi.ss "${target_lib_gerbil}"
   mkdir -p "${target_lib_static}"
+
+  feedback_mid "updating gerbil version"
+  gsi ./build/build-version.scm || die
 
   GERBIL_HOME="${GERBIL_STAGE0}" # required by boot-gxi
   export GERBIL_HOME
@@ -199,7 +193,7 @@ build_stage1 () {
 
 ## commands
 build_stdlib () {
-  feedback_low "Building gerbil stdlib"
+  feedback_low "Building stdlib"
   (cd std && ./build.ss) || die
 }
 
@@ -209,7 +203,7 @@ build_libgerbil () {
 }
 
 build_lang () {
-  feedback_low "Building gerbil languages"
+  feedback_low "Building languages"
   (cd lang && ./build.ss) || die
 }
 

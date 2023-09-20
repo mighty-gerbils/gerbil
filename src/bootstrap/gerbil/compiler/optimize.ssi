@@ -19,7 +19,6 @@ namespace: gxc
           optimizer-load-ssxi-deps
           gxc#optimizer-load-ssxi-deps)
          (%#define-runtime optimizer-load-ssxi gxc#optimizer-load-ssxi)
-         (%#extern (display-exception display-exception))
          (%#define-runtime optimizer-import-ssxi gxc#optimizer-import-ssxi)
          (%#define-runtime optimize-source gxc#optimize-source)
          (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
@@ -49,4 +48,4 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary::typedecl
           gxc#!kw-lambda-primary::typedecl))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize__0"))

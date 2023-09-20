@@ -58,7 +58,7 @@ namespace: gx
           &expander-context-table-set!
           gx#&expander-context-table-set!)
          (%#begin (%#begin-syntax
-                   (%#call (%#ref _gx#load-module)
+                   (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/core__1")))
                   (%#define-syntax
                    expander-context
@@ -630,4 +630,4 @@ namespace: gx
                             syntax-local-value
                             gx#syntax-local-value)))
          (%#define-runtime raise-syntax-ref-error gx#raise-syntax-ref-error))
-(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/core__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/core__0"))

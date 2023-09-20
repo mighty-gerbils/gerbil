@@ -188,15 +188,14 @@ package: gerbil
 
 ;; gx-gambc0: foldings
 (declare-type*
- (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) #f)))
- (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) #f)))
- (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) #f)))
- (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) #f)))
- (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) #f))))
+ (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) foldl*)))
+ (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
+ (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
+ (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
+ (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*))))
 
 ;; gx-gambc0: call/cc and friends
 (declare-type*
- (call-with-escape (@lambda 1 call-with-current-continuation))
  (with-catch (@lambda 2 with-exception-catcher)))
 
 ;; gx-gambc1: AST type for optimizing the expander
@@ -362,7 +361,7 @@ package: gerbil
  raise
  exception? error-object? type-error?
  error? error-message error-irritants error-trace
- create-directory create-directory*
+ create-directory
  delete-file delete-directory
  file-type
  path-extension path-strip-extension
@@ -514,7 +513,8 @@ package: gerbil
  (write-subu8vector 3 4)
  (open-input-u8vector 0 1)
  (open-output-u8vector 0 1)
- (load-module 1 2))
+ (load-module 1 2)
+ (create-directory* 1 2))
 
 ;; extended runtime procedures -- :gerbil/gambit
 (declare-primitive/0

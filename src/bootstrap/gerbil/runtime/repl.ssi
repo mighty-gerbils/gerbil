@@ -1,0 +1,6 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import :gerbil/runtime/error) (%#define-runtime replx replx))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/repl__0"))
