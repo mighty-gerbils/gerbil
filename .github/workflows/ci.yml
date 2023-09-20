@@ -15,7 +15,9 @@ jobs:
       - name: Configure Gerbil
         run: ./configure --prefix=/opt/gerbil ${{ matrix.gambit-version }} ${{ matrix.shared-mode }}
       - name: Create Gerbil version file
-        run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
+        run: |
+             echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/boot/runtime/gx-version.scm
+             echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/version.ss
       - name: Prepare Build
         run: |
            . ./build-env.sh

@@ -9,6 +9,5 @@
     (load-module "gerbil/compiler/optimize-top__rt")
     (load-module "gerbil/compiler/optimize-spec__rt")
     (load-module "gerbil/compiler/optimize-ann__rt")
-    (load-module "gerbil/compiler/optimize-call__rt")
-    (load-module "gerbil/gambit/exceptions__rt"))
+    (load-module "gerbil/compiler/optimize-call__rt"))
   (load-module "gerbil/compiler/optimize__0"))

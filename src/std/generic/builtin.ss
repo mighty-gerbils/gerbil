@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; Generics: builtin types
 
-(import :std/generic/macros)
+(import :gerbil/runtime/error
+        :std/generic/macros)
 (export #t)
 
 ;; primitive types
@@ -49,7 +50,7 @@
 ;; type descriptors: record types and classes
 (defbuiltin-type <type> ##type-type)
 ;; exception base class
-(defbuiltin-type <exception> (macro-type-exception))
+(defbuiltin-type <exception> Exception::t)
 ;; hash-tables and time
 (defbuiltin-type <hash-table> (##structure-type (make-hash-table)))
 (defbuiltin-type <time> (macro-type-time))

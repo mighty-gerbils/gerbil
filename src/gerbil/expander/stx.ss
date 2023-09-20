@@ -10,11 +10,6 @@ namespace: gx
 
 (declare (not safe))
 
-(def &AST-e
-  (make-struct-field-unchecked-accessor AST::t 0))
-(def &AST-source
-  (make-struct-field-unchecked-accessor AST::t 1))
-
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
   id:    gx#identifier-wrap::t

@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/gambit/threads
-        :gerbil/gambit/exceptions
         :gerbil/expander
         :std/sugar
         :std/iter
@@ -697,22 +696,22 @@
       (displayln "loading library module " lib)
       (remote-load-library-module server-id lib)
       (set! module-registry
-        (remote-eval server-id '(&current-module-registry)))))
+        (remote-eval server-id '(current-module-registry)))))
 
   (def (eval-expr expr)
     (let* ((expanded-expr (core-expand expr))
            (compiled-expr (core-compile-top-syntax expanded-expr))
-           (raw-compiled-expr (_gx#compile compiled-expr))
+           (raw-compiled-expr (__compile compiled-expr))
            (result (remote-eval server-id raw-compiled-expr)))
       (unless (void? result)
         (if (##values? result)
           (display-result-list (values->list result))
           (display-result result)))))
 
-  (_gx#load-expander!)
+  (gerbil-load-expander!)
   (connect-to-server! server-id)
   (set! module-registry
-    (remote-eval server-id '(&current-module-registry)))
+    (remote-eval server-id '(current-module-registry)))
   (let/cc exit
     (parameterize ((current-expander-context (make-top-context)))
       ;; prepare the context
@@ -796,8 +795,10 @@
            (display "*** ERROR ")
            (display-exception exn)))))))
 
+(extern namespace: #f __compile)
+
 (def (do-load opt)
-  (_gx#load-expander!)
+  (gerbil-load-expander!)
   (if (hash-get opt 'library)
     (do-load-library opt)
     (do-load-code opt)))
@@ -924,7 +925,7 @@
   (def (runtime-export? exported)
     (= (module-export-phi exported) 0))
 
-  (_gx#load-expander!)
+  (gerbil-load-expander!)
   (let (ctx (import-module module-id #f #t))
     (let/cc return
       (for (exported (module-context-export ctx))

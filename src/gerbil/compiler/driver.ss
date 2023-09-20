@@ -59,26 +59,22 @@ namespace: gxc
     (set! +gerbil-ar+ (getenv "GERBIL_AR" default-gerbil-ar)))
   +gerbil-ar+)
 
-(def gsc-runtime-args
-  [;; force Gambit to use UTF-8:
-   (cond-expand
-     (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
-      "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
-     (else "-:i8,f8,-8,t8"))]) ;; works after v4.9.3-1101-g1f1ce436 - in between, you lose.
+(def gerbil-runtime-modules
+  '("gerbil/runtime/gambit"
+    "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"))
 
-(cond-expand
-  ;; Note: delete-file-or-directory first appeared in v4.9.4
-  (,(##unbound? (##global-var-ref (##make-global-var 'delete-file-or-directory)))
-   (def (delete-directory* dir)
-     (for-each delete-file (directory-files dir))
-     (delete-directory dir)))
-  ((defined delete-file-or-directory)
-   (def (delete-directory* dir)
-     (delete-file-or-directory dir #t)))
-  (else
-   (extern namespace: #f delete-file-or-directory)
-   (def (delete-directory* dir)
-     (delete-file-or-directory dir #t))))
+(def (delete-directory* dir)
+  (delete-file-or-directory dir #t))
 
 (def (compile-module srcpath (opts []))
   (unless (string? srcpath)
@@ -260,8 +256,7 @@ namespace: gxc
         (for-each copy-file src-deps-scm deps-scm)
         (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
-                [gsc-runtime-args
-                 ... "-link" "-l" gxlink
+                ["-link" "-l" gxlink
                  (gsc-debug-options) ...
                  gsc-opts ...
                  deps-scm ...
@@ -375,34 +370,28 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
-           (gx-gambc
-            (map (lambda (mod)
-                   (path-expand (string-append mod ".scm")
-                                (path-expand "lib/static" gerbil-home)))
-                 '("gx-gambc0" "gx-gambc1" "gx-gambc2" "gx-gambc")))
-           (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
-           (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+           (runtime (map find-static-module-file gerbil-runtime-modules))
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
            (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
            (bin-scm (find-static-module-file ctx))
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
+           (deps (filter (lambda (f) (not (member f runtime))) deps))
            (gsc-opts (or (pgetq gsc-options: opts) []))
            (gsc-opts (static-include gsc-opts gerbil-home))
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
               ["-e" "(define-cond-expand-feature|enable-smp|)"
-               "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
-              ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
+               "-e" include-gambit-sharp]
+              ["-e" include-gambit-sharp]))
            (gsc-args
-            [gsc-runtime-args
-             ... "-exe" "-o" output-bin
+            ["-exe" "-o" output-bin
              (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
              output-scm]))
       (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub [gx-gambc ... deps ... bin-scm]))
+        (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
         (invoke (gerbil-gsc) gsc-args))))
 
@@ -525,7 +514,11 @@ namespace: gxc
      []))))
 
 (def (find-static-module-file ctx)
-  (let* ((scm (string-append (static-module-name (expander-context-id ctx)) ".scm"))
+  (let* ((context-id
+          (if (module-context? ctx)
+            (expander-context-id ctx)
+            (string->symbol ctx)))
+         (scm (string-append (static-module-name context-id) ".scm"))
          (dirs (current-expander-module-library-path))
          (dirs
           (cond
@@ -665,7 +658,7 @@ namespace: gxc
           (pretty-print code)
           (when rt
             (pretty-print
-             ['%#call ['%#ref '_gx#load-module] ['%#quote rt]]))))))
+             ['%#call ['%#ref 'load-module] ['%#quote rt]]))))))
 
   (def (compile-phi part)
     (match part
@@ -742,22 +735,7 @@ namespace: gxc
      (if phi? [] opts)))
   (cond
    ((current-compile-debug)
-    => (lambda (debug)
-         (case debug
-           ((env)
-            (not-phi ["-debug-environments"]))
-           ((env/phi)
-            ["-debug-environments"])
-           ((src)
-            (not-phi ["-debug-environments" "-debug-source"]))
-           ((src/phi)
-            ["-debug-environments" "-debug-source"])
-           ((all)
-            (not-phi ["-debug"]))
-           ((all/phi #t)
-            ["-debug"])
-           (else
-            (raise-compile-error "unknown debug option" debug)))))
+    (not-phi ["-debug-source" "-track-scheme" "-cc-options" "-g"]))
    (else [])))
 
 (def (gsc-compile-file path phi?)
@@ -767,7 +745,7 @@ namespace: gxc
             => (lambda (opts) [opts ... path]))
            (else [path])))
          (gsc-args
-          [gsc-runtime-args ... (gsc-debug-options phi?) ... gsc-args ...]))
+          [(gsc-debug-options phi?) ... gsc-args ...]))
     (invoke (gerbil-gsc) gsc-args)))
 
 (def (compile-output-file ctx n ext)

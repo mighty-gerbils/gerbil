@@ -9,31 +9,31 @@
      '()))
   (begin
     (define |gerbil/core$<syntax-sugar>[:0:]#syntax-rules|
-      (lambda (_stx41_)
-        (let* ((_g4468_ (lambda (_g4564_)
-                          (gx#raise-syntax-error '#f '"Bad syntax" _g4564_)))
-               (_g43374_
-                (lambda (_g4572_)
-                  (if (gx#stx-pair? _g4572_)
-                      (let ((_e4875_ (gx#syntax-e _g4572_)))
-                        (let ((_hd4979_
-                               (let () (declare (not safe)) (##car _e4875_)))
-                              (_tl5082_
-                               (let () (declare (not safe)) (##cdr _e4875_))))
-                          (if (gx#stx-pair? _tl5082_)
-                              (let ((_e5185_ (gx#syntax-e _tl5082_)))
-                                (let ((_hd5289_
+      (lambda (_stx42_)
+        (let* ((_g4569_ (lambda (_g4665_)
+                          (gx#raise-syntax-error '#f '"Bad syntax" _g4665_)))
+               (_g44374_
+                (lambda (_g4673_)
+                  (if (gx#stx-pair? _g4673_)
+                      (let ((_e4976_ (gx#syntax-e _g4673_)))
+                        (let ((_hd5080_
+                               (let () (declare (not safe)) (##car _e4976_)))
+                              (_tl5183_
+                               (let () (declare (not safe)) (##cdr _e4976_))))
+                          (if (gx#stx-pair? _tl5183_)
+                              (let ((_e5286_ (gx#syntax-e _tl5183_)))
+                                (let ((_hd5390_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e5185_)))
-                                      (_tl5392_
+                                         (##car _e5286_)))
+                                      (_tl5493_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e5185_))))
-                                  (if (gx#stx-pair/null? _tl5392_)
+                                         (##cdr _e5286_))))
+                                  (if (gx#stx-pair/null? _tl5493_)
                                       (let ((_g42120_
                                              (gx#syntax-split-splice
-                                              _tl5392_
+                                              _tl5493_
                                               '0)))
                                         (begin
                                           (let ((_g42121_
@@ -48,35 +48,35 @@
                                                        (##fx= _g42121_ 2)))
                                                 (error "Context expects 2 values"
                                                        _g42121_)))
-                                          (let ((_target5495_
+                                          (let ((_target5596_
                                                  (let ()
                                                    (declare (not safe))
                                                    (##vector-ref _g42120_ 0)))
-                                                (_tl5698_
+                                                (_tl5799_
                                                  (let ()
                                                    (declare (not safe))
                                                    (##vector-ref _g42120_ 1))))
-                                            (if (gx#stx-null? _tl5698_)
-                                                (letrec ((_loop57101_
-                                                          (lambda (_hd55105_
+                                            (if (gx#stx-null? _tl5799_)
+                                                (letrec ((_loop58102_
+                                                          (lambda (_hd56106_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _clauses61108_)
-                    (if (gx#stx-pair? _hd55105_)
-                        (let ((_e58111_ (gx#syntax-e _hd55105_)))
-                          (let ((_lp-hd59115_
+                           _clauses62109_)
+                    (if (gx#stx-pair? _hd56106_)
+                        (let ((_e59112_ (gx#syntax-e _hd56106_)))
+                          (let ((_lp-hd60116_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _e58111_)))
-                                (_lp-tl60118_
+                                   (##car _e59112_)))
+                                (_lp-tl61119_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _e58111_))))
-                            (_loop57101_
-                             _lp-tl60118_
-                             (cons _lp-hd59115_ _clauses61108_))))
-                        (let ((_clauses62121_ (reverse _clauses61108_)))
-                          ((lambda (_L125_ _L127_)
-                             (if (gx#identifier-list? _L127_)
+                                   (##cdr _e59112_))))
+                            (_loop58102_
+                             _lp-tl61119_
+                             (cons _lp-hd60116_ _clauses62109_))))
+                        (let ((_clauses63122_ (reverse _clauses62109_)))
+                          ((lambda (_L126_ _L128_)
+                             (if (gx#identifier-list? _L128_)
                                  (let* ((_body291_
                                          (gx#stx-map
                                           (lambda (_clause148_)
@@ -153,7 +153,7 @@
                                           (foldr (lambda (_g282285_ _g283288_)
                                                    (cons _g282285_ _g283288_))
                                                  '()
-                                                 _L125_)))
+                                                 _L126_)))
                                         (_g294311_
                                          (lambda (_g295307_)
                                            (gx#raise-syntax-error
@@ -232,7 +232,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '#f
                              '$stx)
-                            (cons _L127_
+                            (cons _L128_
                                   (foldr (lambda (_g361364_ _g362367_)
                                            (cons _g361364_ _g362367_))
                                          '()
@@ -245,18 +245,18 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (_g294311_ _g295315_)))))
                                    (_g293370_ _body291_))
-                                 (_g4468_ _g4572_)))
-                           _clauses62121_
-                           _hd5289_))))))
+                                 (_g4569_ _g4673_)))
+                           _clauses63122_
+                           _hd5390_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_loop57101_
-                                                   _target5495_
+                                                  (_loop58102_
+                                                   _target5596_
                                                    '()))
-                                                (_g4468_ _g4572_)))))
-                                      (_g4468_ _g4572_))))
-                              (_g4468_ _g4572_))))
-                      (_g4468_ _g4572_)))))
-          (_g43374_ _stx41_))))
+                                                (_g4569_ _g4673_)))))
+                                      (_g4569_ _g4673_))))
+                              (_g4569_ _g4673_))))
+                      (_g4569_ _g4673_)))))
+          (_g44374_ _stx42_))))
     (define |gerbil/core$<syntax-sugar>[:0:]#with-syntax|
       (lambda (_stx380_)
         (let* ((___stx3651736518_ _stx380_)

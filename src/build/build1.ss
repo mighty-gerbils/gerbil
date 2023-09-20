@@ -3,6 +3,20 @@
 
 ;;(include "../gerbil/runtime/build-lib.scm") ;; Do everything serially for now.
 
+(def gerbil-modules-runtime
+  '("gerbil/runtime/gambit.ss"
+    "gerbil/runtime/util.ss"
+    "gerbil/runtime/system.ss"
+    "gerbil/runtime/loader.ss"
+    "gerbil/runtime/control.ss"
+    "gerbil/runtime/mop.ss"
+    "gerbil/runtime/error.ss"
+    "gerbil/runtime/syntax.ss"
+    "gerbil/runtime/eval.ss"
+    "gerbil/runtime/repl.ss"
+    "gerbil/runtime/init.ss"
+    "gerbil/runtime.ss"))
+
 (def gerbil-modules-expander
   '("gerbil/expander/common.ss"
     "gerbil/expander/stx.ss"
@@ -38,7 +52,6 @@
     "gerbil/prelude/gambit/random.ss"
     "gerbil/prelude/gambit/continuations.ss"
     "gerbil/prelude/gambit/os.ss"
-    "gerbil/prelude/gambit/exceptions.ss"
     "gerbil/prelude/gambit/threads.ss"
     "gerbil/prelude/gambit/bits.ss"
     "gerbil/prelude/gambit/hvectors.ss"
@@ -54,10 +67,11 @@
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))
 
-(def (compile1 modf debug optimize? gen-ssxi?)
+(def (compile1 modf gen-ssxi?)
   (displayln "... compile " modf)
   (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
-                        debug: debug optimize: optimize? generate-ssxi: gen-ssxi?]))
+                        debug: #f optimize: #t generate-ssxi: gen-ssxi?
+                        gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
   ;; TODO: parallelize, but with the correct dependencies -- instead of "false",
@@ -65,18 +79,17 @@
   ;;(parallel-build group (lambda (x) (apply compile1 x options)) false)
   (for-each (lambda (x) (apply compile1 x options)) group))
 
-(def debug-none #f)  ; no bloat
-(def debug-src 'src) ; full introspection -- sadly, it adds bloat and increases load time
-
 (displayln "building gerbil in " gerbil-libdir)
 ;; initialize optimizer and preload core.ssxi so that we have core visibility
 (gxc#optimizer-info-init!)
-(gx#import-module "gerbil/prelude/core.ssxi.ss" #t #t)
+(gx#import-module "gerbil/prelude/core.ssxi.ss" #t)
+;; compile runtime
+(compile-group gerbil-modules-runtime #t)
 ;; compile expander first so that prelude macros have expander visibility
-(compile-group gerbil-modules-expander debug-none #t #t)
+(compile-group gerbil-modules-expander #t)
 ;; compile core prelude; don't clobber core.ssxi
-(compile-group gerbil-prelude-core debug-none #t #f)
+(compile-group gerbil-prelude-core #f)
 ;; compile gambit prelude
-(compile-group gerbil-prelude-gambit debug-none #t #t)
+(compile-group gerbil-prelude-gambit #t)
 ;; compile compiler
-(compile-group gerbil-modules-compiler debug-none #t #t)
+(compile-group gerbil-modules-compiler #t)

@@ -2,9 +2,9 @@
 ;;; (C) vyzo
 ;;; std parser grammar reader
 
-(import <expander-runtime>
-        <syntax-case>
+(import <syntax-case>
         <syntax-sugar>
+        <expander-runtime>
         ./rlang
         ./base
         ./stream

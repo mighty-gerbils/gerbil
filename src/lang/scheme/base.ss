@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library
-(import :gerbil/gambit/exceptions
-        :gerbil/gambit/ports
+(import :gerbil/gambit/ports
         :gerbil/gambit/exact
         :std/srfi/9
         :std/text/utf8
@@ -74,9 +73,9 @@
   equal?
   eqv?
   error
-  (rename: error-exception? error-object?)
-  (rename: error-exception-parameters error-object-irritants)
-  (rename: error-exception-message error-object-message)
+  error-object?
+  (rename: error-irritants error-object-irritants)
+  (rename: error-message error-object-message)
   even?
   exact
   exact?

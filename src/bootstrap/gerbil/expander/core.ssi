@@ -363,18 +363,7 @@ namespace: gx
           &expander-mark-trace-set!
           gx#&expander-mark-trace-set!)
          (%#define-syntax expander-mark |gx[:0:]#expander-mark|)
-         (%#define-runtime syntax-error::t gx#syntax-error::t)
-         (%#define-runtime syntax-error? gx#syntax-error?)
-         (%#define-runtime make-syntax-error gx#make-syntax-error)
-         (%#define-runtime syntax-error-context gx#syntax-error-context)
-         (%#define-runtime syntax-error-marks gx#syntax-error-marks)
-         (%#define-runtime syntax-error-phi gx#syntax-error-phi)
-         (%#define-runtime
-          syntax-error-context-set!
-          gx#syntax-error-context-set!)
-         (%#define-runtime syntax-error-marks-set! gx#syntax-error-marks-set!)
-         (%#define-runtime syntax-error-phi-set! gx#syntax-error-phi-set!)
-         (%#define-syntax syntax-error |gx[:0:]#syntax-error|)
+         (%#extern (make-syntax-error make-syntax-error))
          (%#define-runtime raise-syntax-error gx#raise-syntax-error)
          (%#begin (%#define-runtime eval-syntax__% gx#eval-syntax__%)
                   (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)

@@ -20,21 +20,27 @@
 (def gambit-libdir
   (path-expand "lib" (getenv "GERBIL_PREFIX")))
 
-(def gerbil-runtime
-  '("gx-gambc0"
-    "gx-gambc1"
-    "gx-gambc2"
-    "gx-gambc"))
-
 (def builtin-modules
-  '(;; :gerbil/gambit
+  '(;; :gerbil/runtime
+    "gerbil/runtime/gambit"
+    "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"
+    ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"
     "gerbil/gambit/misc"
     "gerbil/gambit/random"
     "gerbil/gambit/continuations"
     "gerbil/gambit/os"
-    "gerbil/gambit/exceptions"
     "gerbil/gambit/threads"
     "gerbil/gambit/bits"
     "gerbil/gambit/hvectors"
@@ -94,32 +100,27 @@
                  invoke-gsc: #t static: #t])
 
 ;; and then compile the binary
-(let* ((runtime-scm (map static-file-name gerbil-runtime))
-       (builtin-modules-scm (map static-file-name builtin-modules))
+(let* ((builtin-modules-scm (map static-file-name builtin-modules))
        (bach-main-scm (static-file-name bach-main))
-       (gx-gambc-macros (static-file-name "gx-gambc#"))
-       (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
        (gambit-sharp (path-expand "_gambit#.scm" gerbil-libdir))
        (include-gambit-sharp
         (string-append "(include \"" gambit-sharp "\")"))
        (gsc-gx-macros
         (if (gerbil-runtime-smp?)
           ["-e" "(define-cond-expand-feature|enable-smp|)"
-           "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
-          ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
-       (gsc-runtime-args
-        "-:i8,f8,-8,t8")
+           "-e" include-gambit-sharp]
+          ["-e" include-gambit-sharp]))
        (output-bin
         (path-expand "gerbil" gerbil-bindir))
        (cc-options
         (string-append "-Wl,-rpath=" gambit-libdir)))
   (displayln "... build " output-bin)
   (invoke (gerbil-gsc)
-          [gsc-runtime-args
-           "-exe" "-o" output-bin
+          ["-exe" "-o" output-bin
+           ;; aid debugging
+           "-track-scheme" "-cc-options" "-g"
            "-cc-options" cc-options
            gsc-gx-macros ...
-           runtime-scm ...
            builtin-modules-scm ...
            bach-main-scm])
   ;; clean up

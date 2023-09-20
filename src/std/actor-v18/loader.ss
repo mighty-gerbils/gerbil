@@ -36,19 +36,15 @@
       (<-
        ((!load-library-module id)
         (if (actor-authorized? @source 'loader)
-          ;; don't try to load if the library loader is not initialized
-          ;; cf static binaries
-          (if (&current-module-registry)
-            (begin
-              (infof "loading library module ~a" id)
-              (background
-               'load-library-module
-               (cut load-module id)
-               (lambda (result) (--> (!ok result)))
-               (lambda (exn)
-                 (warnf "error loading library module: ~a" exn)
-                 (--> (!error (error-message exn))))))
-            (--> (!error "process does not support library loading")))
+          (begin
+            (infof "loading library module ~a" id)
+            (background
+             'load-library-module
+             (cut load-module id)
+             (lambda (result) (--> (!ok result)))
+             (lambda (exn)
+               (warnf "error loading library module: ~a" exn)
+               (--> (!error (error-message exn))))))
           (--> (!error "not authorized"))))
 
        ((!load-code code linker)
@@ -109,5 +105,3 @@
      (-> loader (!continue (cut K result))))
    (catch (exn)
      (-> loader (!continue (cut E exn))))))
-
-(extern namespace: #f &current-module-registry)

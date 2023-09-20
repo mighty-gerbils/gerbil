@@ -1,22 +1,36 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; gerbil universal binary (aka "BACH") main function
+prelude: :gerbil/core
 package: gerbil
-(import :gerbil/gambit
+(import :gerbil/runtime
+        :gerbil/gambit
         :gerbil/expander
         :gerbil/compiler)
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
 (def builtin-modules
-  '(;; :gerbil/gambit
+  '(;; :gerbil/runtime
+    "gerbil/runtime/gambit"
+    "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"
+    ;; :gerbil/gambit
     "gerbil/gambit/ports"
     "gerbil/gambit/bytes"
     "gerbil/gambit/misc"
     "gerbil/gambit/random"
     "gerbil/gambit/continuations"
     "gerbil/gambit/os"
-    "gerbil/gambit/exceptions"
     "gerbil/gambit/threads"
     "gerbil/gambit/bits"
     "gerbil/gambit/hvectors"
@@ -109,7 +123,7 @@ package: gerbil
   (gerbil-runtime-init! builtin-modules)
   (gerbil-load-expander!)
   ;; hook ##begin -- gambit wraps it around scripts
-  (eval-syntax '(define-alias ##begin begin)))
+  (eval '(define-alias ##begin begin)))
 
 (def +current-lang+ 'gerbil)
 (def (set-lang! lang)

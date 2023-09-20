@@ -9,7 +9,8 @@ package: gerbil
                  <module-sugar> <special>)
         (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar> <special>
                           <expander-runtime> <syntax-case> <syntax-sugar>
-                          <more-syntax-sugar>)))
+                          <more-syntax-sugar>))
+        (phi: +2 (import: <runtime> <expander-runtime>)))
 
 (provide gerbil-core)
 
@@ -205,15 +206,15 @@ package: gerbil
     current-error-port
     make-promise promise?
     make-parameter call-with-parameters
-    call-with-escape
     ;;call-with-prompt abort!
     with-unwind-protect
-    current-exception-handler with-exception-handler
+    current-exception-handler
+    with-exception-handler
     with-catch
     error raise
-    exception? error-object? type-error?
-    exception::t error::t
-    error? error-trace error-message error-irritants
+    exception? error-object?
+    error-message error-irritants error-trace
+    display-exception
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
@@ -226,11 +227,10 @@ package: gerbil
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
     ;; reader
-    AST::t AST? AST-e AST-source make-AST
+    AST? AST::t make-AST AST-e AST-source
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
-    ;; required by the module reader to support #lang
-    datum-parsing-exception? datum-parsing-exception-filepos
+    make-syntax-error syntax-error?
     read-line read-all
     ;; string and vector moves
     vector-concatenate subvector-move! vector-shrink!
@@ -256,6 +256,8 @@ package: gerbil
     call-with-output-u8vector with-output-to-u8vector
     ;; generic I/O
     displayln display*
+    ;; formerly ##max-char
+    max-char-code
     ;;flush-output-port
     ;; etc...
     absent-obj   ; gambit api missing optional parameter
@@ -367,7 +369,8 @@ package: gerbil
     core-expand-export-source))
 
 (import <runtime>
-        (phi: +1 <runtime> <expander-runtime>))
+        (phi: +1 <runtime> <expander-runtime>)
+        (phi: +2 <runtime> <expander-runtime>))
 
 (module <syntax-case>
   (export #t)

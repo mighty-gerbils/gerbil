@@ -22,7 +22,7 @@
     (test-case "test utf32 encoding and decoding of random strings"
       (def N 10)
       (def len 100)
-      (def Q (+ ##max-char 1))
+      (def Q (+ max-char-code 1))
       (def (get-random-char)
         (try
          (integer->char (random-integer Q))

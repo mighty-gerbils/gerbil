@@ -4,8 +4,6 @@ namespace: gx
 
 (%#begin (%#import :gerbil/expander/common)
          (%#export #t)
-         (%#define-runtime &AST-e gx#&AST-e)
-         (%#define-runtime &AST-source gx#&AST-source)
          (%#define-runtime identifier-wrap::t gx#identifier-wrap::t)
          (%#define-runtime identifier-wrap? gx#identifier-wrap?)
          (%#define-runtime make-identifier-wrap gx#make-identifier-wrap)

@@ -1234,7 +1234,7 @@
            (with-exception-handler
             (let ((_E!28257_ (current-exception-handler)))
               (lambda (_e28260_)
-                (if (gx#syntax-error? _e28260_)
+                (if (syntax-error? _e28260_)
                     (_E28254_ '#f)
                     (_E!28257_ _e28260_))))
             (lambda ()

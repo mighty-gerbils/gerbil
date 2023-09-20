@@ -33,10 +33,18 @@
     ))
 
 (def gerbil-runtime
-  '("gx-gambc0"
-    "gx-gambc1"
-    "gx-gambc2"
-    "gx-gambc"))
+  '("gerbil/runtime/gambit"
+    "gerbil/runtime/util"
+    "gerbil/runtime/system"
+    "gerbil/runtime/loader"
+    "gerbil/runtime/control"
+    "gerbil/runtime/mop"
+    "gerbil/runtime/error"
+    "gerbil/runtime/syntax"
+    "gerbil/runtime/eval"
+    "gerbil/runtime/repl"
+    "gerbil/runtime/init"
+    "gerbil/runtime"))
 
 (def gerbil-prelude-gambit
   '("gerbil/gambit/ports"
@@ -45,7 +53,6 @@
     "gerbil/gambit/random"
     "gerbil/gambit/continuations"
     "gerbil/gambit/os"
-    "gerbil/gambit/exceptions"
     "gerbil/gambit/threads"
     "gerbil/gambit/bits"
     "gerbil/gambit/hvectors"
@@ -82,9 +89,6 @@
     "gerbil/compiler/driver"
     "gerbil/compiler/ssxi"
     "gerbil/compiler"))
-
-(def gsc-runtime-opts
-  '("-:i8,f8,-8,t8"))
 
 (def gsc-debug-opts
   '())
@@ -309,31 +313,30 @@
          (cc-options (fold-cc-options stdlib-spec mode))
          (ld-options (fold-ld-options stdlib-spec mode))
          (stdlib-modules (map car stdlib-spec))
-         (all-modules (append gerbil-prelude-gambit gerbil-expander gerbil-compiler stdlib-modules))
-         (ordered-modules (order-modules all-modules))
+         (ordered-modules (order-modules stdlib-modules))
+         (ordered-modules (remove-duplicates
+                           (append gerbil-runtime
+                                   gerbil-prelude-gambit
+                                   gerbil-expander
+                                   gerbil-compiler
+                                   ordered-modules)))
          (static-module-scm-files (map static-module-scm-file ordered-modules))
          (static-module-scm-paths (map static-file-path static-module-scm-files))
          (static-module-c-paths   (map module-c-file static-module-scm-paths))
          (static-module-o-paths   (map module-o-file static-module-c-paths))
-         (gx-gambc-scm-files (map static-module-scm-file gerbil-runtime))
-         (gx-gambc-scm-paths (map static-file-path gx-gambc-scm-files))
-         (gx-gambc-c-paths   (map module-c-file gx-gambc-scm-paths))
-         (gx-gambc-o-paths   (map module-o-file gx-gambc-c-paths))
          (builtin-modules-scm-path (static-file-path "libgerbil-builtin-modules.scm"))
          (builtin-modules-c-path (module-c-file builtin-modules-scm-path))
          (builtin-modules-o-path (module-o-file builtin-modules-c-path))
          (link-c-path (library-file-path "libgerbil-link.c"))
          (link-o-path (module-o-file link-c-path))
-         (gx-gambc-macros (static-file-path "gx-gambc#.scm"))
-         (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
          (gambit-sharp (library-file-path "_gambit#.scm"))
          (include-gambit-sharp
           (string-append "(include \"" gambit-sharp "\")"))
          (gsc-gx-macros
           (if (gerbil-runtime-smp?)
             ["-e" "(define-cond-expand-feature|enable-smp|)"
-             "-e" include-gambit-sharp "-e" include-gx-gambc-macros]
-            ["-e" include-gambit-sharp "-e" include-gx-gambc-macros]))
+             "-e" include-gambit-sharp]
+            ["-e" include-gambit-sharp]))
          (gsc-gx-features
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
          (libgerbil
@@ -344,17 +347,16 @@
     (call-with-output-file builtin-modules-scm-path
       (lambda (p)
         (write `(define ligerbil-builtin-modules
-                  (quote ,(append gerbil-runtime ordered-modules)))
+                  (quote ,ordered-modules))
                p)
         (newline p)))
     ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
     (let (wg (make-wg/build-cores))
-      (for (scm-path [gx-gambc-scm-paths ... static-module-scm-paths ... builtin-modules-scm-path])
+      (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
         (wg-add! wg
           (lambda ()
             (displayln "... compile " scm-path)
-            (invoke-gsc [gsc-runtime-opts
-                         ... "-c"
+            (invoke-gsc ["-c"
                          gsc-debug-opts ...
                          gsc-gx-macros ...
                          gsc-gx-features ...
@@ -363,22 +365,18 @@
 
     ;; link them
     (displayln "... link " link-c-path)
-    (invoke-gsc [gsc-runtime-opts
-                 ... "-link" "-o" link-c-path
-                 gx-gambc-c-paths ...
+    (invoke-gsc ["-link" "-o" link-c-path
                  static-module-c-paths ...
                  builtin-modules-c-path])
 
     ;; build them
     (let (wg (make-wg/build-cores))
-      (for (c-path [gx-gambc-c-paths ...
-                    static-module-c-paths ...
+      (for (c-path [static-module-c-paths ...
                     builtin-modules-c-path link-c-path])
         (wg-add! wg
           (lambda ()
             (displayln "... compile " c-path)
-            (invoke-gsc [gsc-runtime-opts
-                         ... "-obj"
+            (invoke-gsc ["-obj"
                          "-cc-options" cc-options
                          c-path]))))
       (wg-wait! wg))
@@ -391,25 +389,30 @@
       (if (eq? mode 'shared)
         (invoke-gcc ["-shared" "-o" libgerbil
                      libgerbil-ldd ...
-                     gx-gambc-o-paths ...
                      static-module-o-paths ...
                      builtin-modules-o-path
                      link-o-path])
         (invoke-ar ["cq" libgerbil
-                    gx-gambc-o-paths ...
                     static-module-o-paths ...
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
         (cut write libgerbil-ldd <>)))
     ;; cleanup
-    (for (f [gx-gambc-c-paths ...
-             static-module-c-paths ...
+    (for (f [static-module-c-paths ...
              builtin-modules-c-path
-             gx-gambc-o-paths ...
              static-module-o-paths ...
              builtin-modules-o-path])
       (delete-file f))))
+
+(def (remove-duplicates lst)
+  (let lp ((rest lst) (result []))
+    (match rest
+      ([hd . rest]
+       (if (member hd result)
+         (lp rest result)
+         (lp rest (cons hd result))))
+      (else (reverse result)))))
 
 (def (auto-build-mode)
   (if (member "--enable-shared" (string-split (configure-command-string) #\'))

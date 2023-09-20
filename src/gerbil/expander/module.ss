@@ -9,6 +9,10 @@ namespace: gx
 (import "common" "stx" "core" "top")
 (declare (not safe))
 
+;; required by the module reader to support #lang
+(extern namespace: #f
+  datum-parsing-exception? datum-parsing-exception-filepos)
+
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
   final: #t unchecked: #t)
@@ -233,8 +237,10 @@ namespace: gx
        (let (ns (cond
                  ((identifier? ns)
                   (symbol->string (stx-e ns)))
-                 ((or (stx-string? ns) (stx-false? ns))
+                 ((stx-string? ns)
                   (stx-e ns))
+                 ((stx-false? ns)
+                  #!void)
                  (else
                   (raise-syntax-error 'import
                     "Bad syntax; illegal namespace" ns))))
@@ -267,7 +273,7 @@ namespace: gx
               (path-id   (core-module-path->namespace path))
               (pkg-id (if pkg (string-append pkg "/" path-id) path-id))
               (module-id (string->symbol pkg-id))
-              (module-ns (or ns pkg-id)))
+              (module-ns (if (void? ns) #f (or ns pkg-id))))
          (values prelude module-id module-ns body))))))
 
 (def (core-read-module/lang path)

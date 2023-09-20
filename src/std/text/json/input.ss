@@ -147,7 +147,7 @@
                         (let (n (fxarithmetic-shift (hex-value char) shift))
                           (lp rest (bitwise-ior n val) (fx+ shift 4))))
                        (else
-                        (if (and (fx< val ##max-char)
+                        (if (and (fx< val max-char-code)
                                  (or (fx< val #xd800)
                                      (fx< #xdfff val)))
                           (integer->char val)

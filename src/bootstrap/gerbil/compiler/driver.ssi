@@ -16,18 +16,17 @@ namespace: gxc
            (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
+           (0 current-time 0 current-time)
            (0 file-info-size 0 file-info-size)
            (0 time->seconds 0 time->seconds)
-           (0 file-info 0 file-info)
-           (0 current-time 0 current-time))
+           (0 file-info 0 file-info))
           (spec:
            (:gerbil/gambit/threads)
-           (0 make-mutex 0 make-mutex)
-           (0 with-lock 0 with-lock)))
+           (0 with-lock 0 with-lock)
+           (0 make-mutex 0 make-mutex)))
          (%#export
           (spec: 0 compile-module compile-module)
           (spec: 0 compile-exe compile-exe))
-         (%#define-runtime default-gerbil-home gxc#default-gerbil-home)
          (%#define-runtime default-gerbil-gsc gxc#default-gerbil-gsc)
          (%#define-runtime default-gerbil-gcc gxc#default-gerbil-gcc)
          (%#define-runtime default-gerbil-ar gxc#default-gerbil-ar)
@@ -51,6 +50,7 @@ namespace: gxc
          (%#define-runtime +gerbil-ar+ gxc#+gerbil-ar+)
          (%#define-runtime gerbil-ar gxc#gerbil-ar)
          (%#define-runtime gsc-runtime-args gxc#gsc-runtime-args)
+         (%#define-runtime gerbil-runtime-modules gxc#gerbil-runtime-modules)
          (%#define-runtime delete-directory* gxc#delete-directory*)
          (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)
                   (%#begin (%#define-runtime

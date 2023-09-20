@@ -549,9 +549,13 @@ namespace: gxc
   (if top
     (let ((ns (module-context-ns (core-context-top (current-expander-context))))
           (phi (current-expander-phi)))
-      (if (fxpositive? phi)
-        (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
-        (make-symbol ns "#_" (gensym) "_")))
+      (if ns
+        (if (fxpositive? phi)
+          (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol ns "#_" (gensym) "_"))
+        (if (fxpositive? phi)
+          (make-symbol "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol "_" (gensym) "_"))))
     (make-symbol "_" (gensym) "_")))
 
 (def (generate-runtime-empty stx)
@@ -1439,7 +1443,7 @@ namespace: gxc
             (cond
              (block
               ['%#begin-syntax
-               ['%#call ['%#ref '_gx#load-module] ['%#quote block]]
+               ['%#call ['%#ref 'load-module] ['%#quote block]]
                c-body ...])
              ((null? c-body) #!void)
              (else
@@ -1460,7 +1464,7 @@ namespace: gxc
               (rt (hash-get (current-compile-runtime-sections) ctx))
               (loader
                (if rt
-                 [['%#call ['%#ref '_gx#load-module] ['%#quote rt]]]
+                 [['%#call ['%#ref 'load-module] ['%#quote rt]]]
                  []))
               (modid (stx-e #'id)))
          ;; close the module's blocks
@@ -1641,7 +1645,7 @@ namespace: gxc
        (if block
          ['%#begin
           ['%#begin-syntax
-           ['%#call ['%#ref '_gx#load-module] ['%#quote block]]]
+           ['%#call ['%#ref 'load-module] ['%#quote block]]]
           ['%#define-syntax (generate-runtime-identifier #'id) eid]]
          ['%#define-syntax (generate-runtime-identifier #'id) eid])))))
 

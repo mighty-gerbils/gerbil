@@ -473,23 +473,6 @@ package: gerbil/expander
   (declare-type
    gx#&expander-mark-trace-set!
    (@struct-setf gx#expander-mark::t 3 #t))
-  (declare-type
-   gx#syntax-error::t
-   (@struct-type gx#syntax-error::t error::t 3 #!void ()))
-  (declare-type gx#syntax-error? (@struct-pred gx#syntax-error::t))
-  (declare-type gx#make-syntax-error (@struct-cons gx#syntax-error::t))
-  (declare-type gx#syntax-error-context (@struct-getf gx#syntax-error::t 0 #f))
-  (declare-type gx#syntax-error-marks (@struct-getf gx#syntax-error::t 1 #f))
-  (declare-type gx#syntax-error-phi (@struct-getf gx#syntax-error::t 2 #f))
-  (declare-type
-   gx#syntax-error-context-set!
-   (@struct-setf gx#syntax-error::t 0 #f))
-  (declare-type
-   gx#syntax-error-marks-set!
-   (@struct-setf gx#syntax-error::t 1 #f))
-  (declare-type
-   gx#syntax-error-phi-set!
-   (@struct-setf gx#syntax-error::t 2 #f))
   (declare-type gx#raise-syntax-error (@lambda (3) #f))
   (declare-type gx#eval-syntax__% (@lambda 2 #f))
   (declare-type gx#eval-syntax__0 (@lambda 1 #f))

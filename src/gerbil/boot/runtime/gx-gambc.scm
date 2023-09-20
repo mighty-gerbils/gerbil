@@ -353,11 +353,6 @@
 
   ;; set the display exception hook
   (##display-exception-hook-set! _gx#display-exception)
-  ;; fix the output width to something that doesn't truncate exceptions
-  (for-each
-    (lambda (port)
-      (macro-character-port-output-width-set! port (lambda (port) 256)))
-    (list ##stdout-port ##console-port (current-error-port)))
   ;; set an initial primordial exception hook
   (unless ##primordial-exception-handler-hook
     (##primordial-exception-handler-hook-set! ##repl-exception-handler-hook)))
