@@ -61,9 +61,8 @@ configuring with the `CC=compiler` variable and setting the
 If you are having problems with your system's ar, you can also set the
 `GERBIL_AR` environment variable to point to a specific `ar` that works.
 
-Finally, Gerbil consults the `GERBIL_BUILD_CORES` environment variable
-to determine whether to build its code in parallel, e.g.
-`export GERBIL_BUILD_CORES=4` to build using 4 cores.
+Finally, the Gerbil Makefile honors the `-j` option; e.g.
+`make -j4` to build using 4 cores.
 
 If you want to enable standard library modules that are not built by
 default, you can do so by configuring with `./configure ... --enable-<feature> ...`.
