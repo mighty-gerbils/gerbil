@@ -179,9 +179,6 @@ $ gxi --lang r7rs
 - The `define-library` form can appear at most once per library module and
   the library id must match the id of the enclosing module.
 
-- The `char-foldcase` and `string-foldcase` procedures from `(scheme char)`
-  are not implemented.
-
 - The reader doesn't accept shared structures by default, as cycles
   are not currently supported in syntax objects. You can enable it on
   a per-port basis with a custom readtable, but be advised that the
