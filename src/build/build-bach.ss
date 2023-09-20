@@ -110,16 +110,13 @@
           ["-e" "(define-cond-expand-feature|enable-smp|)"
            "-e" include-gambit-sharp]
           ["-e" include-gambit-sharp]))
-       (gsc-runtime-args
-        "-:i8,f8,-8,t8")
        (output-bin
         (path-expand "gerbil" gerbil-bindir))
        (cc-options
         (string-append "-Wl,-rpath=" gambit-libdir)))
   (displayln "... build " output-bin)
   (invoke (gerbil-gsc)
-          [gsc-runtime-args
-           "-exe" "-o" output-bin
+          ["-exe" "-o" output-bin
            ;; aid debugging
            "-track-scheme" "-cc-options" "-g"
            "-cc-options" cc-options

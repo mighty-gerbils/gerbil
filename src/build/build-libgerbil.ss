@@ -90,9 +90,6 @@
     "gerbil/compiler/ssxi"
     "gerbil/compiler"))
 
-(def gsc-runtime-opts
-  '("-:i8,f8,-8,t8"))
-
 (def gsc-debug-opts
   '())
 
@@ -359,8 +356,7 @@
         (wg-add! wg
           (lambda ()
             (displayln "... compile " scm-path)
-            (invoke-gsc [gsc-runtime-opts
-                         ... "-c"
+            (invoke-gsc ["-c"
                          gsc-debug-opts ...
                          gsc-gx-macros ...
                          gsc-gx-features ...
@@ -369,8 +365,7 @@
 
     ;; link them
     (displayln "... link " link-c-path)
-    (invoke-gsc [gsc-runtime-opts
-                 ... "-link" "-o" link-c-path
+    (invoke-gsc ["-link" "-o" link-c-path
                  static-module-c-paths ...
                  builtin-modules-c-path])
 
@@ -381,8 +376,7 @@
         (wg-add! wg
           (lambda ()
             (displayln "... compile " c-path)
-            (invoke-gsc [gsc-runtime-opts
-                         ... "-obj"
+            (invoke-gsc ["-obj"
                          "-cc-options" cc-options
                          c-path]))))
       (wg-wait! wg))

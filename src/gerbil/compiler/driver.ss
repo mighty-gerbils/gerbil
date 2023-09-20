@@ -59,13 +59,6 @@ namespace: gxc
     (set! +gerbil-ar+ (getenv "GERBIL_AR" default-gerbil-ar)))
   +gerbil-ar+)
 
-(def gsc-runtime-args
-  [;; force Gambit to use UTF-8:
-   (cond-expand
-     (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
-      "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
-     (else "-:i8,f8,-8,t8"))]) ;; works after v4.9.3-1101-g1f1ce436 - in between, you lose.
-
 (def gerbil-runtime-modules
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
@@ -263,8 +256,7 @@ namespace: gxc
         (for-each copy-file src-deps-scm deps-scm)
         (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
-                [gsc-runtime-args
-                 ... "-link" "-l" gxlink
+                ["-link" "-l" gxlink
                  (gsc-debug-options) ...
                  gsc-opts ...
                  deps-scm ...
@@ -394,8 +386,7 @@ namespace: gxc
                "-e" include-gambit-sharp]
               ["-e" include-gambit-sharp]))
            (gsc-args
-            [gsc-runtime-args
-             ... "-exe" "-o" output-bin
+            ["-exe" "-o" output-bin
              (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
              output-scm]))
       (create-directory* (path-directory output-bin))
@@ -754,7 +745,7 @@ namespace: gxc
             => (lambda (opts) [opts ... path]))
            (else [path])))
          (gsc-args
-          [gsc-runtime-args ... (gsc-debug-options phi?) ... gsc-args ...]))
+          [(gsc-debug-options phi?) ... gsc-args ...]))
     (invoke (gerbil-gsc) gsc-args)))
 
 (def (compile-output-file ctx n ext)
