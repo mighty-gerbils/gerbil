@@ -7,6 +7,21 @@
         :std/text/utf8
         ./base-impl)
 
+(extern namespace: #f
+  boolean=? symbol=?
+  call-with-port
+  binary-port?
+  textual-port?
+  input-port-open?
+  output-port-open?
+  u8-ready?
+  read-bytevector read-bytevector!
+  write-bytevector
+  list-copy list-set!
+  floor/ floor-quotient floor-remainder
+  truncate/ truncate-quotient truncate-remainder
+  square)
+
 (export
   _ ... =>
   < <= = >= > - / * +
@@ -14,7 +29,7 @@
   and
   append
   apply
-  (rename: r7rs-assoc assoc)
+  assoc
   assq
   assv
   begin
@@ -89,7 +104,7 @@
   floor-quotient
   floor-remainder
   (rename: force-output flush-output-port)
-  (rename: r7rs-for-each for-each)
+  for-each
   gcd
   (rename: get-output-u8vector get-output-bytevector)
   get-output-string
@@ -127,9 +142,9 @@
   make-parameter
   make-string
   make-vector
-  (rename: r7rs-map map)
+  map
   max
-  (rename: r7rs-member member)
+  member
   memq
   memv
   min
@@ -168,7 +183,7 @@
   read-char
   read-error?
   read-line
-  (rename: r7rs-read-string read-string)
+  read-string
   read-u8
   real?
   remainder
@@ -186,12 +201,12 @@
   string>?
   string?
   string-append
-  (rename: r7rs-string-copy string-copy)
+  string-copy
   string-copy!
-  (rename: r7rs-string-fill! string-fill!)
+  string-fill!
   string-for-each
   string-length
-  (rename: r7rs-string->list string->list)
+  string->list
   string-map
   string->number
   string-ref
@@ -219,13 +234,13 @@
   vector
   vector?
   vector-append
-  (rename: r7rs-vector-copy vector-copy)
+  vector-copy
   vector-copy!
-  (rename: r7rs-vector-fill! vector-fill!)
+  vector-fill!
   vector-for-each
   vector-length
-  (rename: r7rs-vector->list vector->list)
-  (rename: r7rs-vector-map vector-map)
+  vector->list
+  vector-map
   vector-ref
   vector-set!
   vector->string
@@ -233,7 +248,7 @@
   (rename: r7rs-with-exception-handler with-exception-handler)
   write-bytevector
   write-char
-  (rename: r7rs-write-string write-string)
+  write-string
   write-u8
   zero?
   )

@@ -4,10 +4,13 @@
 (import :gerbil/gambit/os
         ./process-context-impl)
 
+(extern namespace: #f
+  emergency-exit
+  get-environment-variable
+  get-environment-variables)
 (export
   command-line
   emergency-exit
   (rename: r7rs-exit exit)
   get-environment-variable
-  get-environment-variables
-  )
+  get-environment-variables)

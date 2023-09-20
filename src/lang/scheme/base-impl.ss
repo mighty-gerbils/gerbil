@@ -1,15 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library -- implementation details
-(import ./base-etc
-        ./base-vectors
-        ./base-ports
-        :gerbil/gambit/continuations
+(import :gerbil/gambit/continuations
+        :std/error
         (phi: +1 :gerbil/expander :gerbil/gambit))
-(export #t
-        (import: ./base-etc)
-        (import: ./base-vectors)
-        (import: ./base-ports))
+(export #t)
 
 ;; macros
 ;; R7RS spec:
@@ -199,146 +194,11 @@
   ((_ path ...)
    (begin (include path) ...)))
 
-;; assoc and member: these accept an optional comparator procedure per spec
-(cond-expand
-  (,(> (system-version) 409001)
-   (defalias r7rs-assoc assoc)
-   (defalias r7rs-member member))
-  (else
-   (def* r7rs-assoc
-     ((x lst)
-      (assoc x lst))
-     ((x lst cmpf)
-      (assoc3 x lst cmpf)))
+;; error procedures
+(def (file-error? obj)
+  (or (no-such-file-or-directory-exception? obj)
+      (file-exists-exception? obj)
+      (permission-denied-exception? obj)))
 
-   (def (assoc3 x lst cmpf)
-     (let lp ((rest lst))
-       (match rest
-         ([hd . rest]
-          (if (cmpf (car hd) x)
-            hd
-            (lp rest)))
-         (else #f))))
-
-   (def* r7rs-member
-     ((x lst)
-      (member x lst))
-     ((x lst cmpf)
-      (member3 x lst cmpf)))
-
-   (def (member3 x lst cmpf)
-     (let lp ((lst lst))
-       (match lst
-         ([hd . rest]
-          (if (cmpf hd x)
-            lst
-            (lp rest)))
-         (else #f))))))
-
-;; map and for-each: these accept lists of different lengths
-(cond-expand
-  (,(> (system-version) 409001)
-   (defalias r7rs-map map)
-   (defalias r7rs-for-each for-each))
-  (else
-   (def* r7rs-map
-     ((f lst)
-      (map f lst))
-     ((f lst1 lst2)
-      (map2 f lst1 lst2))
-     ((f lst1 lst2 . rest)
-      (apply mapN f lst1 lst2 rest)))
-
-   (def (map2 f lst1 lst2)
-     (let recur ((rest-x lst1) (rest-y lst2))
-       (match* (rest-x rest-y)
-         (([x . rest-x] [y . rest-y])
-          (cons (f x y) (recur rest-x rest-y)))
-         (else []))))
-
-   (def (mapN f . lsts)
-     (let recur ((rest lsts))
-       (if (andmap pair? rest)
-         (cons (apply f (map car rest))
-               (recur (map cdr rest)))
-         [])))
-
-   (def* r7rs-for-each
-     ((f lst)
-      (for-each f lst))
-     ((f lst1 lst2)
-      (for-each2 f lst1 lst2))
-     ((f lst1 lst2 . rest)
-      (apply for-eachN f lst1 lst2 rest)))
-
-   (def (for-each2 f lst1 lst2)
-     (let lp ((rest-x lst1) (rest-y lst2))
-       (match* (rest-x rest-y)
-         (([x . rest-x] [y . rest-y])
-          (f x y)
-          (lp rest-x rest-y))
-         (else (void)))))
-
-   (def (for-eachN f . lsts)
-     (let lp ((rest lsts))
-       (when (andmap pair? rest)
-         (apply f (map car rest))
-         (lp (map cdr rest)))))))
-
-;; mathematical functions
-(def (floor/ n divisor)
-  (if (and (<= 0 n) (<= 0 divisor))
-    (values (quotient n divisor) (remainder n divisor))
-    (let ((m (modulo n divisor)))
-      (values (quotient (- n m) divisor) m))))
-(def (floor-quotient n divisor)
-  (if (eq? (<= 0 n) (<= 0 divisor))
-    (quotient n divisor)
-    (quotient (- n (modulo n divisor)) divisor)))
-(def floor-remainder modulo)
-(def (truncate/ x y) (values (quotient x y) (remainder x y)))
-(def truncate-quotient quotient)
-(def truncate-remainder remainder)
-
-;; these accept optional range arguments
-(cond-expand
-  (,(> (system-version) 409001)
-   (defalias r7rs-string-copy string-copy)
-   (defalias r7rs-string-fill! string-fill!)
-   (defalias r7rs-string->list string->list)
-   (defalias r7rs-vector-copy vector-copy)
-   (defalias r7rs-vector-fill! vector-fill!)
-   (defalias r7rs-vector-map vector-map)
-   (defalias r7rs-vector->list vector->list))
-  (else
-   (def* r7rs-string->list
-     ((str)
-      (string->list str))
-     ((str start)
-      (string->list* str start (string-length str)))
-     ((str start end)
-      (string->list* str start end)))
-
-   (def* r7rs-vector->list
-     ((vec)
-      (vector->list vec))
-     ((vec start)
-      (vector->list* vec start (vector-length vec)))
-     ((vec start end)
-      (vector->list* vec start end)))
-
-   (def* r7rs-string-fill!
-     ((str val)
-      (string-fill! str val))
-     ((str val start)
-      (string-fill!* str val start (string-length str)))
-     ((str val start end)
-      (string-fill!* str val start end)))
-
-   (def* r7rs-vector-fill!
-     ((vec val)
-      (vector-fill! vec val))
-     ((vec val start)
-      (vector-fill!* vec val start (vector-length vec)))
-     ((vec val start end)
-      (vector-fill!* vec val start end)))))
+(def (read-error? obj)
+  (datum-parsing-exception? obj))
