@@ -14,7 +14,7 @@ module.exports = {
           '/guide/': [
               {
                   title: 'Guide',
-                  children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'nix', 'r7rs', 'macos']
+                  children: ['', 'intro', 'getting-started', 'ffi', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'nix', 'r7rs', 'macos']
               }
           ],
           '/tutorials/': [
@@ -197,7 +197,6 @@ module.exports = {
                       'test',
                       'debug',
                       'profiler',
-                      'ffi',
                       'bootstrap'
                   ]
               },
