@@ -46,7 +46,7 @@ cd into the `gerbil` directory.
 Gerbil takes quite a while to compile, if you wish it to build faster
 by utilizing multiple cores, you can:
 ```
-make -j <number-of-cores>
+make -j<number-of-cores>
 ```
 
 If you are using the default configuration, you can build Gerbil simply with:
