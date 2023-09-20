@@ -128,7 +128,7 @@ package: gerbil
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
     vector-copy!
-    vector-map vector-for-each vector-copy vector-append
+    vector-map vector-for-each vector-copy vector-copy! vector-append
     true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
@@ -148,7 +148,7 @@ package: gerbil
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
     string-map string-for-each
-    string-copy! substring-fill!
+    string-copy string-copy! substring-fill!
     string->bytes substring->bytes bytes->string
     string->vector vector->string
     string-concatenate
@@ -276,7 +276,12 @@ package: gerbil
     gerbil-load-expander!
     ;; our home
     gerbil-home
+
+    ;; misc r7rs procedures
+    list-copy list-set!
+    string-downcase string-upcase
     )
+
 
   (define-alias transcript-on void)
   (define-alias transcript-off void)

@@ -10,7 +10,7 @@
 (def (r7rs-eval expr environment)
   (force init!)
   (parameterize ((current-expander-context environment))
-    (eval-syntax expr)))
+    (eval expr)))
 
 (def environments (make-hash-table))
 
@@ -18,8 +18,8 @@
   (force init!)
   (let (ctx (make-top-context))
     (parameterize ((current-expander-context ctx))
-      (eval-syntax '(import :scheme/r7rs))
-      (for-each (lambda (in) (eval-syntax ['import in]))
+      (eval '(import :scheme/r7rs))
+      (for-each (lambda (in) (eval ['import in]))
                 imports)
       ctx)))
 

@@ -1,11 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme write) library
-(import ./write-impl)
-
+(extern namespace: #f
+  write-simple write-shared)
 (export
   display
   write
   write-shared
-  write-simple
-  )
+  write-simple)

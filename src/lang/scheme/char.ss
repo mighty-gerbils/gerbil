@@ -1,9 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme char) library
-(import ./char-impl
-        (only-in :std/srfi/13 string-downcase string-upcase))
-
+(extern namespace: #f
+  digit-value
+  char-foldcase
+  string-foldcase
+  string-upcase
+  string-downcase)
 (export
   char-alphabetic?
   char-ci<=?
@@ -26,5 +29,4 @@
   string-ci>?
   string-downcase
   string-foldcase
-  string-upcase
-  )
+  string-upcase)
