@@ -16,6 +16,10 @@ jobs:
         docker-image: ['gerbil', 'gerbilxx']
     steps:
     - uses: actions/checkout@v3
+    - name: print out github context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
     - name: List of all Github Actions env vars
       run: env
     - name: Build the Docker image
