@@ -11,7 +11,7 @@ build_flags_cores() {
     for x in $1; do
         case $x in
             -j*)
-                echo $x | cut -d j -f 2
+                echo ${x##-j}
                 break
                 ;;
             *)
