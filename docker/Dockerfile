@@ -48,7 +48,7 @@ ARG repo
 ARG branch
 ARG configure_args
 ENV GERBIL_GCC=g++
-RUN git clone -b ${branch} https://github.com/${repo} /opt/gerbil-src
+RUN git clone -b ${branch} https://github.com/${repo} /opt/gerbil-src \
     && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
 
 RUN cd /opt/gerbil-src && make -j ${GERBIL_BUILD_CORES} && make install
