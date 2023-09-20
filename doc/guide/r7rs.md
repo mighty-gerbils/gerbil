@@ -187,5 +187,5 @@ $ gxi --lang r7rs
   a per-port basis with a custom readtable, but be advised that the
   repl will loop when given a cyclic structure as syntax input.
 
-- ephemerons, in the `scheme/ephemeron` library, have a trivial implementation
-  without garbage collector support.
+- ephemerons, in the `(scheme ephemeron)` library, are implemented
+  using weak pairs.
