@@ -41,7 +41,8 @@
           146
           151
           158
-          159))
+          159
+          212))
    (map (srfi-package "146/")
         '(hamt hamt-map hamt-misc hash vector-edit))
    (map (srfi-package "159/")
