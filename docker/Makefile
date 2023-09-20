@@ -10,7 +10,7 @@ BRANCH := $(shell git symbolic-ref --short HEAD)
 endif
 
 ifeq ($(REPO),)
-REPO := "might-gerbils/gerbil"
+REPO := "mighty-gerbils/gerbil"
 endif
 
 $(info the branch is $(BRANCH) and the repo is $(REPO))
