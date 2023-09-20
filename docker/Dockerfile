@@ -49,7 +49,7 @@ ARG configure_args
 ENV GERBIL_GCC=g++
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && eval ./configure --prefix=/opt/gerbil ${configure_args}
+    && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
 
 RUN cd /opt/gerbil-src && make -j ${GERBIL_BUILD_CORES} && make install
 

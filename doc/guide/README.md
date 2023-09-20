@@ -57,12 +57,12 @@ $ ./configure && make && sudo make install
 This will install Gerbil in `/opt/gerbil`; you will need to add
 `/opt/gerbil/bin` to your PATH environment variable.
 
-It is recommended that you enable shared libraries if this is an installation for your development workstation or laptop:
+By default, the configuration will enable shared libraries, which is the sane thing to do for a development workstation or laptop. On the other hand, if you want to build statically linked binaries, you can disable shared libraries by configuring like this:
 ```bash
-$ ./configure --enable-shared && make && sudo make install
+$ ./configure --disable-shared
 ```
 
-On the other hand, if you need to override some configuration defaults,
+If you need to override some configuration defaults,
 you will have to use the following (with your own set of configuration options):
 ```bash
 $ ./configure --prefix=/path/to/which/to/install/gerbil \
