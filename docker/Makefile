@@ -5,6 +5,14 @@ cores := $(shell nproc)
 arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
+ifeq ($(BRANCH),)
+BRANCH := $(shell git symbolic-ref --short HEAD)
+endif
+
+ifeq ($(REPO),)
+REPO := "https://github.com/might-gerbils/gerbil"
+endif
+
 $(info the branch is $(BRANCH) and the repo is $(REPO))
 
 alpine_packages := autoconf \
