@@ -29,7 +29,7 @@ Installation from source is straightforward:
 ```shell
 $ git clone git@github.com:mighty-gerbils/gerbil.git
 $ cd gerbil
-$ ./configure --enable-shared # recommeded to use shared libraries for a local install
+$ ./configure
 $ make
 $ sudo make install
 ```

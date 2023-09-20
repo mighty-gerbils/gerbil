@@ -24,7 +24,8 @@ Options understood and processed by Gerbil:
                         defaults to ${default_gambit_tag}
   --enable-march=ARCH   specify the machine architecture; it can be empty.
                         defaults to native
-  --enable-shared       use shared libraries for libgerbil and libgambit
+  --enable-shared[=no]  do (not) use shared libraries for libgerbil and libgambit
+                        enabled by default
 
 Gerbil Standard Library features:
   --enable-deprecated   Enable building of deprecated packages
@@ -77,8 +78,10 @@ case $(uname) in
         ;;
 esac
 
+gerbil_shared=t
 gambit_tag="${default_gambit_tag}"
 gambit_config="${default_gambit_config}"
+gambit_shared="--enable-shared"
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -104,7 +107,13 @@ while [ $# -gt 0 ]; do
 
         --enable-shared)
             gerbil_shared=t
-            gambit_config="${gambit_config} $1"
+            gambit_shared="--enable-shared"
+            shift
+            ;;
+
+        --enable-shared=no)
+            gerbil_shared=f
+            unset gambit_shared
             shift
             ;;
 
@@ -232,7 +241,7 @@ git submodule update --force || die
 
 (cd src/gambit && git fetch origin && git checkout "${gambit_tag}" && touch configure config.status) || die
 
-gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_config}"
+gambit_config="--prefix=${gerbil_prefix} --enable-march=${gambit_march} ${gambit_shared} ${gambit_config}"
 (export LDFLAGS="$LDFLAGS"; export CFLAGS="$CFLAGS"; cd src/gambit && ./configure $gambit_config ) || die
 
 rm -f build-env.sh

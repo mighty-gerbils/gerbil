@@ -7,7 +7,7 @@ jobs:
       fail-fast: false  # if one fails, do not cancel the other
       matrix:
         gambit-version: ['', '--with-gambit=master']
-        shared-mode: ['', '--enable-shared']
+        shared-mode: ['', '--enable-shared=no']
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies

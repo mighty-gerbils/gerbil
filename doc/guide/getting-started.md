@@ -28,7 +28,7 @@ $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 
 I usually configure Gerbil for devlopment with the following incantation:
 ```shell
-./configure --prefix=/usr/local/gerbil --enable-shared
+./configure --prefix=/usr/local/gerbil
 ```
 
 This will install Gerbil in `/usr/local/gerbil`; you should add
@@ -47,7 +47,7 @@ Do not use `--enable-poll` if you are on MacOS, as console polling is broken.
 :::
 
 If you intend to build static executables for servers, then you should
-remove `--enable-shared` to configure the system to use static
+add `--enable-shared=no` to configure the system to use static
 `libgerbil.a` and `libgambit.a` libraries.
 
 Also note, that it is _strongly_ recommended to use `gcc` as your
@@ -361,8 +361,8 @@ If you want your program to be statically linked to dependent
 libraries, so that you can ship it as a _release_, you can specify the
 `--release` flag, which may be combined with `--optimized`.
 
-Note that for release builds, your system must be configured without
-`--enable-shared` and have all foreign dependencies available as
+Note that for release builds, your system must be configured with
+`--enable-shared=no` and have all foreign dependencies available as
 static library archives. Of course, you can do that by maintaining a
 separate gerbil build in your system for releases, but the recommended
 way to build release binaries is by using [docker](docker.md).

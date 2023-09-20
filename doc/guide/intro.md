@@ -895,7 +895,7 @@ hello, world
 The difference between the 3 executable compilation modes can be summarized as follows:
 - By default, executable binaries are compiled with separate module compilation and link
   to the  precompiled gerbil library (`libgerbil`).
-  If the system was configured with `--enable-shared`, then this
+  If the system was configured with `--enable-shared` (the default), then this
   will be a shared library; otherwise it will be a static library archive.
   Note that the executable may have some additionl dynamic library
   dependencies from stdlib foreign code, and also links to `libgambit` which will be
@@ -922,8 +922,8 @@ The difference between the 3 executable compilation modes can be summarized as f
 #### Fully Static Binaries
 
 It is also possible to build _fully static_ binaries, provided that
-your system supports it and you haven't configured Gerbil with
-`--enable-shared`.  You can do this simply by passing the `-static`
+your system supports it and you have configured Gerbil with
+`--enable-shared=no`.  You can do this simply by passing the `-static`
 option to `gxc` or using the `static-exe:` and `optimized-static-exe:`
 specs in your build script.
 
