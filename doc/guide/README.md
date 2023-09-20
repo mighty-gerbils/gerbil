@@ -58,7 +58,7 @@ This will install Gerbil in `/opt/gerbil`; you will need to add
 
 By default, the configuration will enable shared libraries, which is the sane thing to do for a development workstation or laptop. On the other hand, if you want to build statically linked binaries, you can disable shared libraries by configuring like this:
 ```bash
-$ ./configure --enable-shared=no
+$ ./configure --disable-shared
 ```
 
 If you need to override some configuration defaults,
