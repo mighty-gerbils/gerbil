@@ -56,13 +56,16 @@ else
 fi
 export LD_LIBRARY_PATH
 
-if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ];then
+if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ]; then
     num_cores=$(build_flags_cores "${GERBIL_BUILD_FLAGS}")
     if [ "x${num_cores:-}" != "x" ]; then
-        echo "using ${num_cores} cores for the build"
         GERBIL_BUILD_CORES=${num_cores}
         export GERBIL_BUILD_CORES
     fi
+fi
+
+if [ "x${GERBIL_BUILD_CORES:-}" != "x" ]; then
+    echo "using ${GERBIL_BUILD_CORES} cores for the build"
 fi
 
 #===============================================================================
