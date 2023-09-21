@@ -95,9 +95,6 @@
               next-separator
               ))
 
-(define-macro (error message . args)
-  `(std/error#raise-unspecified-error message ,@args))
-
 (define valid-quote-chars '(#\" #\'))
 
 ; The following regards HTML/XHTML though as XML is so frequently used, we include it here.
