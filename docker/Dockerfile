@@ -1,6 +1,7 @@
 ARG distro
 ARG with_db
-ARG gerbil_version
+ARG repo
+ARG branch
 ARG cores
 ARG configure_args
 ARG packages
@@ -9,7 +10,6 @@ FROM ${distro}:latest as base
 ARG cores
 ARG distro
 ARG with_db
-ARG gerbil_version
 ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
@@ -44,12 +44,12 @@ RUN case ${distro} in \
 
 FROM base as gerbil
 ARG cores
-ARG gerbil_version
+ARG repo
+ARG branch
 ARG configure_args
 ENV GERBIL_GCC=g++
-RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
-RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
-    && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
+RUN  cd /opt && eval git clone -b ${branch} https://github.com/${repo} gerbil-src \
+    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
 
 RUN cd /opt/gerbil-src && make && make install
 
