@@ -4,11 +4,6 @@ package: gerbil/expander
 (begin
   (declare-type gx#core-compile-top-syntax (@lambda 1 #f))
   (declare-type gx#core-expander::compile-top-syntax (@lambda 2 #f))
-  (declare-method
-   gx#core-expander::t
-   compile-top-syntax
-   gx#core-expander::compile-top-syntax
-   #f)
   (declare-type gx#core-compile-top-error (@lambda 1 #f))
   (declare-type gx#core-compile-top-begin% (@lambda 1 #f))
   (declare-type gx#core-compile-top-begin-syntax% (@lambda 1 #f))

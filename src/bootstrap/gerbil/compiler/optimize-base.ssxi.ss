@@ -26,7 +26,6 @@ package: gerbil/compiler
    gxc#optimizer-info-methods-set!
    (@struct-setf gxc#optimizer-info::t 2 #f))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
-  (declare-method gxc#optimizer-info::t :init! gxc#optimizer-info:::init! #f)
   (declare-type gxc#!type::t (@struct-type gxc#!type::t #f 1 #f ()))
   (declare-type gxc#!type? (@struct-pred gxc#!type::t))
   (declare-type gxc#make-!type (@struct-cons gxc#!type::t))
@@ -250,10 +249,43 @@ package: gerbil/compiler
   (declare-type
    gxc#!kw-lambda-primary-main-set!
    (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
+  (declare-type
+   gxc#!primitive::t
+   (@class-type gxc#!primitive::t #f () () () #f ()))
+  (declare-type gxc#!primitive? (@class-pred gxc#!primitive::t))
+  (declare-type gxc#make-!primitive (@class-cons gxc#!primitive::t))
+  (declare-type
+   gxc#!primitive-lambda::t
+   (@class-type
+    gxc#!primitive-lambda::t
+    gxc#!lambda::t
+    (gxc#!primitive::t gxc#!lambda::t)
+    ()
+    ()
+    :init!
+    ()))
+  (declare-type gxc#!primitive-lambda? (@class-pred gxc#!primitive-lambda::t))
+  (declare-type
+   gxc#make-!primitive-lambda
+   (@class-cons gxc#!primitive-lambda::t))
+  (declare-type
+   gxc#!primitive-case-lambda::t
+   (@class-type
+    gxc#!primitive-case-lambda::t
+    gxc#!case-lambda::t
+    (gxc#!primitive::t gxc#!case-lambda::t)
+    ()
+    ()
+    :init!
+    ()))
+  (declare-type
+   gxc#!primitive-case-lambda?
+   (@class-pred gxc#!primitive-case-lambda::t))
+  (declare-type
+   gxc#make-!primitive-case-lambda
+   (@class-cons gxc#!primitive-case-lambda::t))
   (declare-type gxc#!struct-type:::init! (@lambda 7 #f))
-  (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (declare-type gxc#!class-type:::init! (@lambda 8 #f))
-  (declare-method gxc#!class-type::t :init! gxc#!class-type:::init! #f)
   (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
   (declare-type gxc#!lambda:::init!__0 (@lambda 4 #f))
   (declare-type gxc#!lambda:::init!__1 (@lambda 5 #f))
@@ -263,7 +295,15 @@ package: gerbil/compiler
     (4 gxc#!lambda:::init!__0)
     (5 gxc#!lambda:::init!__1)
     (6 gxc#!lambda:::init!__%)))
-  (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
+  (declare-type
+   gxc#!primitive-lambda:::init!
+   (@case-lambda
+    (4 gxc#!lambda:::init!__0)
+    (5 gxc#!lambda:::init!__1)
+    (6 gxc#!lambda:::init!__%)))
+  (declare-type
+   gxc#!primitive-case-lambda:::init!
+   (@kw-lambda-dispatch () struct-instance-init!))
   (declare-type gxc#!struct-type-vtab (@lambda 1 #f))
   (declare-type gxc#!class-type-vtab (@lambda 1 #f))
   (declare-type gxc#!type-vtab (@lambda 1 #f))

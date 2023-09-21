@@ -211,38 +211,71 @@ package: gerbil
   ((_ prim ...)
    (declare-primitive* (prim 0) ...)))
 
+(defrules declare-primitive/0/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 0) ...)))
+
 (defrules declare-primitive/1 ()
   ((_ prim ...)
    (declare-primitive* (prim 1) ...)))
+
+(defrules declare-primitive/1/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 1) ...)))
 
 (defrules declare-primitive/2 ()
   ((_ prim ...)
    (declare-primitive* (prim 2) ...)))
 
+(defrules declare-primitive/2/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 2) ...)))
+
 (defrules declare-primitive/3 ()
   ((_ prim ...)
    (declare-primitive* (prim 3) ...)))
+
+(defrules declare-primitive/3/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 3) ...)))
 
 (defrules declare-primitive/4 ()
   ((_ prim ...)
    (declare-primitive* (prim 4) ...)))
 
+(defrules declare-primitive/4/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 4) ...)))
+
 (defrules declare-primitive/5 ()
   ((_ prim ...)
    (declare-primitive* (prim 5) ...)))
 
+(defrules declare-primitive/5/unchecked()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 5) ...)))
+
 ;; r5rs primitives -- <r5rs-runtime>
-(declare-primitive/0
+(declare-primitive/0/unchecked
  interaction-environment)
 
-(declare-primitive/1
+(declare-primitive/1/unchecked
  not boolean?
  number? complex? real? rational? integer?
  exact? inexact?
  zero? positive? negative? odd? even?
+ pair? null? list?
+ symbol?
+ char?
+ string?
+ vector?
+ procedure?
+ input-port? output-port?
+ eof-object?)
+
+(declare-primitive/1
  exact->inexact inexact->exact
  abs
- pair? null? list?
  car cdr
  caar cadr cdar cddr
  caaar cadar caadr caddr
@@ -252,33 +285,30 @@ package: gerbil
  cdaaar cdadar cdaadr cdaddr
  cddaar cdddar cddadr cddddr
  reverse
- symbol? symbol->string string->symbol
- char?
+ symbol->string string->symbol
  char-alphabetic? char-numeric? char-whitespace?
  char-upper-case? char-lower-case?
  char->integer integer->char
  char-upcase char-downcase
- string?
  string-length
  list->string
- vector?
  vector-length
  list->vector
- procedure?
  force
  call-with-current-continuation
- input-port? output-port?
  open-input-file
  open-output-file
  close-input-port
  close-output-port
- eof-object?
  scheme-report-environment
  load)
 
-(declare-primitive/2
+(declare-primitive/2/unchecked
  eq? eqv? equal?
- cons set-car! set-cdr!
+ cons)
+
+(declare-primitive/2
+ set-car! set-cdr!
  list-tail list-ref
  memq memv
  assq assv
@@ -324,33 +354,23 @@ package: gerbil
  (write-char 1 2))
 
 ;; core runtime primitives -- <host-runtime>
-(declare-primitive/0
+(declare-primitive/0/unchecked
  gerbil-system system-type)
 
-(declare-primitive/1
+(declare-primitive/1/unchecked
  immediate?
- finite? infinite? nan?
  fixnum? nonnegative-fixnum?
- fxzero? fxpositive? fxnegative? fxodd? fxeven?
- fixnum->flonum
+ fxzero?
  flonum?
- flzero? flpositive? flnegative?
- flnan? flinfinite? flfinite? flinteger?
- box? box unbox
+ box? box
  last last-pair
- vector-concatenate
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
  plist->hash-table-eq plist->hash-table-eqv
  hash-keys
  hash-values
  eq?-hash eqv?-hash equal?-hash
- uninterned-symbol? interned-symbol? string->uninterned-symbol
- symbol-hash
- keyword? uninterned-keyword? interned-keyword? keyword-hash
- string->keyword keyword->string make-uninterned-keyword
- symbol->keyword keyword->symbol
+ keyword? uninterned-keyword? interned-keyword?
  string-empty?
- string-concatenate
  type-descriptor?
  struct-type?
  class-type?
@@ -358,36 +378,44 @@ package: gerbil
  make-class-predicate
  object? object-type
  struct->list class->list
- raise
- exception? error-object? type-error?
+ exception? error-object?
  error? error-message error-irritants error-trace
+ read-syntax-from-file
+ u8vector?
+ promise?)
+
+(declare-primitive/1
+ fixnum? nonnegative-fixnum?
+ fxpositive? fxnegative? fxodd? fxeven?
+ fixnum->flonum
+ flzero? flpositive? flnegative?
+ flnan? flinfinite? flfinite? flinteger?
+ unbox
+ uninterned-symbol? interned-symbol? string->uninterned-symbol
+ symbol-hash
+ keyword? uninterned-keyword? interned-keyword? keyword-hash
+ string->keyword keyword->string make-uninterned-keyword
+ symbol->keyword keyword->symbol
+ string-concatenate
+ raise
  create-directory
  delete-file delete-directory
  file-type
  path-extension path-strip-extension
  path-directory path-strip-directory
  path-strip-trailing-directory-separator
- read-syntax-from-file
- u8vector?
  u8vector-length
  u8vector->list list->u8vector
  u8vector-concatenate
  object->u8vector u8vector->object
  get-output-u8vector
- promise?
  make-promise)
 
-(declare-primitive/2
- fxmodulo
- fxbit-set?
- fxarithmetic-shift
- set-box!
+(declare-primitive/2/unchecked
  memf find
  remove1 remq remv remf
  hash-key?
  hash-map
- string-shrink!
- vector-shrink!
  string-split string-join
  string-prefix?
  make-struct-field-accessor
@@ -407,10 +435,19 @@ package: gerbil
  find-method
  struct-subtype? class-subtype?
  with-unwind-protect
+ with-catch
+ file-newer?)
+
+(declare-primitive/2
+ fxmodulo
+ fxbit-set?
+ fxarithmetic-shift
+ set-box!
+ remove1 remq remv remf
+ string-shrink!
+ vector-shrink!
  with-exception-handler
- with-exception-catcher
  copy-file rename-file
- file-newer?
  call-with-input-string with-input-from-string
  call-with-output-string with-output-to-string
  u8vector-ref
@@ -418,21 +455,25 @@ package: gerbil
  call-with-input-u8vector with-input-from-u8vector
  call-with-output-u8vector with-output-to-u8vector)
 
-(declare-primitive/3
- subvector
+(declare-primitive/3/unchecked
  hash-fold
  struct-field-ref
  class-slot-ref
  unchecked-field-set!
  unchecked-slot-set!
- next-method
+ next-method)
+
+(declare-primitive/3
+ subvector
  u8vector-set!
  subu8vector)
 
+(declare-primitive/4/unchecked
+ struct-field-set!
+ class-slot-set!)
+
 (declare-primitive/4
  subvector-fill!
- struct-field-set!
- class-slot-set!
  subu8vector-fill!)
 
 (declare-primitive/5
@@ -440,8 +481,7 @@ package: gerbil
  substring-move!
  subu8vector-move!)
 
-(declare-primitive*
- (make-list 1 2)
+(declare-primitive/unchecked*
  (iota 1 2 3)
  (assgetq 2 3)
  (assgetv 2 3)
@@ -449,6 +489,34 @@ package: gerbil
  (pgetq 2 3)
  (pgetv 2 3)
  (pget 2 3)
+ (plist->hash-table 1 2)
+ (hash-update! 3 4)
+ (hash-copy (1))
+ (hash-copy! (1))
+ (hash-merge (1))
+ (hash-merge! (1))
+ (hash-clear! 1 2)
+ (string->bytes 1 2)
+ (substring->bytes 3 4)
+ (bytes->string 1 2)
+ (string-index 2 3)
+ (string-rindex 2 3)
+ (make-struct-type 6 7)
+ (make-class-type 6)
+ (make-struct-instance (1))
+ (make-class-instance (1))
+ (class-instance-init! (1))
+ (slot-ref 2 3)
+ (slot-set! 3 4)
+ (bind-method! 3 4)
+ (call-next-method (3))
+ (call-with-parameters (1))
+ (read-syntax 0 1)
+ (load-module 1 2)
+ (create-directory* 1 2))
+
+(declare-primitive*
+ (make-list 1 2)
  (subvector->list 1 2)
  (vector->list 1 2 3)
  (vector->string 1 2 3)
@@ -465,33 +533,14 @@ package: gerbil
  (u8vector-fill! 2 3 4)
  (u8vector-copy 1 2 3)
  (u8vector-copy! 3 4 5)
- (plist->hash-table 1 2)
- (hash-update! 3 4)
- (hash-copy (1))
- (hash-copy! (1))
- (hash-merge (1))
- (hash-merge! (1))
- (hash-clear! 1 2)
  (gensym 0 1)
  (string->bytes 1 2)
  (substring->bytes 3 4)
  (bytes->string 1 2)
  (substring-fill! 4)
  (substring-move! 5)
- (string-index 2 3)
- (string-rindex 2 3)
- (make-struct-type 6 7)
- (make-class-type 6)
- (make-struct-instance (1))
- (make-class-instance (1))
- (class-instance-init! (1))
- (slot-ref 2 3)
- (slot-set! 3 4)
- (bind-method! 3 4)
- (call-next-method (3))
  (current-error-port 0 1)
  (make-parameter 1 2)
- (call-with-parameters (1))
  (current-exception-handler 0 1)
  (exit 0 1)
  (getenv 1 2)
@@ -512,9 +561,7 @@ package: gerbil
  (read-subu8vector 3 4 5)
  (write-subu8vector 3 4)
  (open-input-u8vector 0 1)
- (open-output-u8vector 0 1)
- (load-module 1 2)
- (create-directory* 1 2))
+ (open-output-u8vector 0 1))
 
 ;; extended runtime procedures -- :gerbil/gambit
 (declare-primitive/0
@@ -844,6 +891,7 @@ package: gerbil
  replace-bit-field copy-bit-field)
 
 (declare-primitive*
+ (error (1))
  (continuation-graft (2))
  (continuation-return (1))
  (display-exception 1 2)
@@ -1042,7 +1090,6 @@ package: gerbil
  invalid-hash-number-exception?
  invalid-hash-number-exception-procedure
  invalid-hash-number-exception-arguments)
-
 
 ;; hvectors
 (declare-primitive*

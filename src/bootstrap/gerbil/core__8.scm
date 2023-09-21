@@ -26,7 +26,7 @@
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
     (lambda (_self22356_ _stx22358_)
       (gx#core-apply-expander
-       (unchecked-slot-ref _self22356_ 'macro)
+       (let () (declare (not safe)) (unchecked-slot-ref _self22356_ 'macro))
        _stx22358_)))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|
     (lambda (__t36469)

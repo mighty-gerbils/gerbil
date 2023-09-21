@@ -96,17 +96,10 @@ package: gerbil/runtime
   (declare-type display-exception (@case-lambda (1 #f) (2 #f)))
   (declare-type Error:::init! (@lambda (2) #f))
   (declare-type Error:::init!::specialize (@lambda 1 #f))
-  (declare-method Error::t :init! Error:::init! #f)
   (declare-type Error::display-exception (@lambda 2 #f))
   (declare-type Error::display-exception::specialize (@lambda 1 #f))
-  (declare-method Error::t display-exception Error::display-exception #t)
   (declare-type RuntimeException::display-exception (@lambda 2 #f))
   (declare-type RuntimeException::display-exception::specialize (@lambda 1 #f))
-  (declare-method
-   RuntimeException::t
-   display-exception
-   RuntimeException::display-exception
-   #f)
   (declare-type fix-port-width! (@lambda 1 #f))
   (declare-type reset-port-width! (@lambda 2 #f))
   (declare-type datum-parsing-exception-filepos (@lambda 1 #f))

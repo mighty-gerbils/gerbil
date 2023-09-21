@@ -12,13 +12,13 @@ namespace: gxc
           (spec:
            (:gerbil/gambit/ports)
            (0 open-process 0 open-process)
-           (0 process-status 0 process-status)
-           (0 close-port 0 close-port))
+           (0 close-port 0 close-port)
+           (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
+           (0 file-info-size 0 file-info-size)
            (0 current-time 0 current-time)
            (0 time->seconds 0 time->seconds)
-           (0 file-info-size 0 file-info-size)
            (0 file-info 0 file-info))
           (spec:
            (:gerbil/gambit/threads)

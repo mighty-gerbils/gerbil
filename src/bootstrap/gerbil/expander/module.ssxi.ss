@@ -184,7 +184,6 @@ package: gerbil/expander
    (@class-cons gx#import-export-expander::t))
   (declare-type gx#call-with-input-source-file (@lambda 2 #f))
   (declare-type gx#module-context:::init! (@lambda 5 #f))
-  (declare-method gx#module-context::t :init! gx#module-context:::init! #f)
   (declare-type gx#prelude-context:::init!__% (@lambda 3 #f))
   (declare-type gx#prelude-context:::init!__0 (@lambda 2 #f))
   (declare-type
@@ -192,30 +191,12 @@ package: gerbil/expander
    (@case-lambda
     (2 gx#prelude-context:::init!__0)
     (3 gx#prelude-context:::init!__%)))
-  (declare-method gx#prelude-context::t :init! gx#prelude-context:::init! #f)
   (declare-type gx#import-export-expander-init! (@lambda 2 #f))
   (declare-type gx#import-expander:::init! (@lambda 2 #f))
-  (declare-method gx#import-expander::t :init! gx#import-expander:::init! #f)
   (declare-type gx#export-expander:::init! (@lambda 2 #f))
-  (declare-method gx#export-expander::t :init! gx#export-expander:::init! #f)
   (declare-type gx#import-export-expander:::init! (@lambda 2 #f))
-  (declare-method
-   gx#import-export-expander::t
-   :init!
-   gx#import-export-expander:::init!
-   #f)
   (declare-type gx#import-expander::apply-import-expander (@lambda 2 #f))
-  (declare-method
-   gx#import-expander::t
-   apply-import-expander
-   gx#import-expander::apply-import-expander
-   #f)
   (declare-type gx#export-expander::apply-export-expander (@lambda 2 #f))
-  (declare-method
-   gx#export-expander::t
-   apply-export-expander
-   gx#export-expander::apply-export-expander
-   #f)
   (declare-type gx#module-source-path (@lambda 1 #f))
   (declare-type gx#import-module__% (@lambda 3 #f))
   (declare-type gx#import-module__0 (@lambda 1 #f))
