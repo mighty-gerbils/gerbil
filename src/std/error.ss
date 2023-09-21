@@ -3,7 +3,8 @@
 ;;; Gerbil error objects
 (import :gerbil/runtime/error
         :gerbil/gambit/continuations
-        :gerbil/gambit/threads)
+        :gerbil/gambit/threads
+        (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
         Error Error?
@@ -71,6 +72,27 @@
 
 ;; key lookup errors
 (deferror-class UnboundKey () unbound-key-error?)
+
+;; utility macros
+(defsyntax (exception-context stx)
+  (syntax-case stx ()
+    ((macro)
+     #'(exception-context macro))
+    ((_ here)
+     (with-syntax ((where
+                    (cond
+                     ((or (AST-source #'here)
+                          (AST-source stx))
+                      => (lambda (locat)
+                           (call-with-output-string "" (cut ##display-locat locat #t <>))))
+                     (else
+                      (expander-context-id (core-context-top))))))
+       #'(quote where)))))
+
+(defrules check-argument ()
+  ((_ expr expectation argument)
+   (unless expr
+     (raise-bad-argument (exception-context argument) expectation argument))))
 
 ;; check to the raiser!
 (def (raise-bad-argument where expectation . irritants)

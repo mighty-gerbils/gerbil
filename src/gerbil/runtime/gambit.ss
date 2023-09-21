@@ -62,6 +62,7 @@ namespace: #f
   macro-readtable-brace-handler-set!
   macro-exception?
   macro-character-port?
+  macro-character-port-wchars
   macro-character-port-output-width
   macro-character-port-output-width-set!)
 

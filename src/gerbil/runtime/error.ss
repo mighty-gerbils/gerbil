@@ -131,9 +131,15 @@ namespace: #f
 
 (defmethod {display-exception Error}
   (lambda (self port)
-    (let (tmp-port (open-output-string))
+    (let ((tmp-port (open-output-string))
+          (display-error-newline
+           (if (macro-character-port? port)
+             (> (macro-character-port-wchars port) 0)
+             #f)))
       (fix-port-width! tmp-port)
       (parameterize ((current-output-port tmp-port))
+        (when display-error-newline ; avoid clown shoes at the repl prompt
+          (newline))
         (display "*** ERROR IN ")
         (cond
          ((&Error-where self) => display)
