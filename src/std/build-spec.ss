@@ -314,6 +314,7 @@
     ;; :std/misc
     "misc/atom"
     "misc/decimal"
+    "misc/extensible-vector"
     "misc/concurrent-plan"
     "misc/timeout"
     "misc/list-builder"
