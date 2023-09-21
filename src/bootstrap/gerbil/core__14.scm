@@ -8,15 +8,15 @@
              (_g3372633768_
               (lambda (_g3372833742_)
                 (if (gx#stx-pair? _g3372833742_)
-                    (let ((_e3373033745_ (gx#syntax-e _g3372833742_)))
+                    (let ((_e3373233745_ (gx#syntax-e _g3372833742_)))
                       (let ((_hd3373133749_
                              (let ()
                                (declare (not safe))
-                               (##car _e3373033745_)))
-                            (_tl3373233752_
+                               (##car _e3373233745_)))
+                            (_tl3373033752_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e3373033745_))))
+                               (##cdr _e3373233745_))))
                         ((lambda (_L33755_)
                            (cons (gx#datum->syntax '#f 'make-setq-macro)
                                  (cons 'macro:
@@ -25,7 +25,7 @@
                                                     'syntax-rules)
                                                    _L33755_)
                                              '()))))
-                         _tl3373233752_)))
+                         _tl3373033752_)))
                     (_g3372733738_ _g3372833742_)))))
         (_g3372633768_ _$stx33723_))))
   (define |gerbil/core$<more-syntax-sugar>[:0:]#quasisyntax|

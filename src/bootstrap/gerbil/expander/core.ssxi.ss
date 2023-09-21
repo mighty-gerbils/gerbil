@@ -164,7 +164,6 @@ package: gerbil/expander
   (declare-type
    gx#phi-context:::init!
    (@case-lambda (2 gx#phi-context:::init!__0) (3 gx#phi-context:::init!__%)))
-  (declare-method gx#phi-context::t :init! gx#phi-context:::init! #f)
   (declare-type gx#local-context:::init!__% (@lambda 2 #f))
   (declare-type gx#local-context:::init!__0 (@lambda 1 #f))
   (declare-type
@@ -172,7 +171,6 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#local-context:::init!__0)
     (2 gx#local-context:::init!__%)))
-  (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
   (declare-type
    gx#binding::t
    (@struct-type gx#binding::t #f 3 #f ((transparent: . #t))))
@@ -519,23 +517,8 @@ package: gerbil/expander
    gx#core-apply-expander
    (@case-lambda (2 gx#core-apply-expander__0) (3 gx#core-apply-expander__%)))
   (declare-type gx#expander::apply-macro-expander (@lambda 2 #f))
-  (declare-method
-   gx#expander::t
-   apply-macro-expander
-   gx#expander::apply-macro-expander
-   #f)
   (declare-type gx#macro-expander::apply-macro-expander (@lambda 2 #f))
-  (declare-method
-   gx#macro-expander::t
-   apply-macro-expander
-   gx#macro-expander::apply-macro-expander
-   #f)
   (declare-type gx#core-expander::apply-macro-expander (@lambda 2 #f))
-  (declare-method
-   gx#core-expander::t
-   apply-macro-expander
-   gx#core-expander::apply-macro-expander
-   #f)
   (declare-type gx#top-special-form::apply-macro-expander__% (@lambda 3 #f))
   (declare-type gx#top-special-form::apply-macro-expander__0 (@lambda 2 #f))
   (declare-type
@@ -543,23 +526,8 @@ package: gerbil/expander
    (@case-lambda
     (2 gx#top-special-form::apply-macro-expander__0)
     (3 gx#top-special-form::apply-macro-expander__%)))
-  (declare-method
-   gx#top-special-form::t
-   apply-macro-expander
-   gx#top-special-form::apply-macro-expander
-   #f)
   (declare-type gx#module-special-form::apply-macro-expander (@lambda 2 #f))
-  (declare-method
-   gx#module-special-form::t
-   apply-macro-expander
-   gx#module-special-form::apply-macro-expander
-   #f)
   (declare-type gx#rename-macro-expander::apply-macro-expander (@lambda 2 #f))
-  (declare-method
-   gx#rename-macro-expander::t
-   apply-macro-expander
-   gx#rename-macro-expander::apply-macro-expander
-   #f)
   (declare-type gx#core-apply-user-expander__% (@lambda 3 #f))
   (declare-type gx#core-apply-user-expander__0 (@lambda 2 #f))
   (declare-type
@@ -573,11 +541,6 @@ package: gerbil/expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
     (3 gx#core-apply-user-expander__%)))
-  (declare-method
-   gx#user-expander::t
-   apply-macro-expander
-   gx#user-expander::apply-macro-expander
-   #f)
   (declare-type gx#resolve-identifier__% (@lambda 3 #f))
   (declare-type gx#resolve-identifier__0 (@lambda 1 #f))
   (declare-type gx#resolve-identifier__1 (@lambda 2 #f))

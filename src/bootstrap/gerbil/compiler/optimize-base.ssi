@@ -197,6 +197,24 @@ namespace: gxc
           !kw-lambda-primary-main-set!
           gxc#!kw-lambda-primary-main-set!)
          (%#define-syntax !kw-lambda-primary |gxc[:0:]#!kw-lambda-primary|)
+         (%#define-runtime !primitive::t gxc#!primitive::t)
+         (%#define-runtime !primitive? gxc#!primitive?)
+         (%#define-runtime make-!primitive gxc#make-!primitive)
+         (%#define-syntax !primitive |gxc[:0:]#!primitive|)
+         (%#define-runtime !primitive-lambda::t gxc#!primitive-lambda::t)
+         (%#define-runtime !primitive-lambda? gxc#!primitive-lambda?)
+         (%#define-runtime make-!primitive-lambda gxc#make-!primitive-lambda)
+         (%#define-syntax !primitive-lambda |gxc[:0:]#!primitive-lambda|)
+         (%#define-runtime
+          !primitive-case-lambda::t
+          gxc#!primitive-case-lambda::t)
+         (%#define-runtime !primitive-case-lambda? gxc#!primitive-case-lambda?)
+         (%#define-runtime
+          make-!primitive-case-lambda
+          gxc#make-!primitive-case-lambda)
+         (%#define-syntax
+          !primitive-case-lambda
+          |gxc[:0:]#!primitive-case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#define-runtime !class-type:::init! gxc#!class-type:::init!)
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
@@ -209,6 +227,12 @@ namespace: gxc
                            (%#define-runtime
                             !lambda:::init!
                             gxc#!lambda:::init!)))
+         (%#define-runtime
+          !primitive-lambda:::init!
+          gxc#!primitive-lambda:::init!)
+         (%#define-runtime
+          !primitive-case-lambda:::init!
+          gxc#!primitive-case-lambda:::init!)
          (%#define-runtime !struct-type-vtab gxc#!struct-type-vtab)
          (%#define-runtime !class-type-vtab gxc#!class-type-vtab)
          (%#define-runtime !type-vtab gxc#!type-vtab)

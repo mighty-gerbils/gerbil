@@ -84,6 +84,7 @@ package: gerbil/compiler
   (declare-type gxc#generate-runtime-simple-let (@lambda 4 #f))
   (declare-type gxc#generate-runtime-quote% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-call% (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-call-unchecked% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-if% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-ref% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-setq% (@lambda 1 #f))
@@ -128,7 +129,6 @@ package: gerbil/compiler
    gxc#meta-state-blocks-set!
    (@struct-setf gxc#meta-state::t 3 #f))
   (declare-type gxc#meta-state:::init! (@lambda 2 #f))
-  (declare-method gxc#meta-state::t :init! gxc#meta-state:::init! #f)
   (declare-type
    gxc#meta-state-block::t
    (@struct-type gxc#meta-state-block::t #f 4 #f ()))

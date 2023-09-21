@@ -115,12 +115,18 @@ namespace: gxc
 (defrules @lambda ()
   ((_ arity inline: inline-rules)
    (make-!lambda 'lambda 'arity #f inline-rules 'inline-rules))
+  ((recur primitive: arity)
+   (recur primitive: arity #f))
+  ((_ primitive: arity dispatch)
+   (make-!primitive-lambda 'lambda 'arity 'dispatch))
   ((_ arity dispatch)
    (make-!lambda 'lambda 'arity 'dispatch))
   ((recur arity)
    (recur arity #f)))
 
 (defrules @case-lambda ()
+  ((_ primitive: (arity dispatch) ...)
+   (make-!primitive-case-lambda 'case-lambda [(@lambda primitive: arity dispatch) ...]))
   ((_ (arity dispatch) ...)
    (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...])))
 
@@ -133,6 +139,16 @@ namespace: gxc
    (make-!kw-lambda-primary 'kw-lambda-dispatch 'keys 'main)))
 
 (defrules declare-primitive ()
+  ((_ prim unchecked: arity)
+   (declare-type prim (@lambda arity)))
+  ((_ prim unchecked: arity ...)
+   (declare-type prim (@case-lambda (arity #f) ...)))
+  ((_ prim arity)
+   (declare-type prim (@lambda primitive: arity)))
+    ((_ prim arity ...)
+   (declare-type prim (@case-lambda primitive: (arity #f) ...))))
+
+(defrules declare-primitive/unchecked ()
   ((_ prim arity)
    (declare-type prim (@lambda arity)))
   ((_ prim arity ...)
@@ -142,3 +158,8 @@ namespace: gxc
   ((_ (prim arity ...) ...)
    (begin
      (declare-primitive prim arity ...) ...)))
+
+(defrules declare-primitive/unchecked* ()
+  ((_ (prim arity ...) ...)
+   (begin
+     (declare-primitive/unchecked prim arity ...) ...)))

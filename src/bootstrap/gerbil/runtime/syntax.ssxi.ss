@@ -55,11 +55,6 @@ package: gerbil/runtime
   (declare-type &SyntaxError-phi-set! (@class-setf SyntaxError::t phi #t))
   (declare-type &SyntaxError-marks-set! (@class-setf SyntaxError::t marks #t))
   (declare-type SyntaxError::display-exception (@lambda 2 #f))
-  (declare-method
-   SyntaxError::t
-   display-exception
-   SyntaxError::display-exception
-   #f)
   (declare-type make-syntax-error (@lambda 6 #f))
   (declare-type syntax-error? (@class-pred SyntaxError::t))
   (declare-type __raise-syntax-error (@lambda (3) #f))

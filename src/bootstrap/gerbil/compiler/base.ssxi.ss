@@ -20,7 +20,6 @@ package: gerbil/compiler
    gxc#symbol-table-bindings-set!
    (@struct-setf gxc#symbol-table::t 1 #f))
   (declare-type gxc#symbol-table:::init! (@lambda 1 #f))
-  (declare-method gxc#symbol-table::t :init! gxc#symbol-table:::init! #f)
   (declare-type gxc#raise-compile-error (@lambda (2) #f))
   (declare-type gxc#verbose (@lambda (0) #f))
   (declare-type gxc#module-id->path-string (@lambda 1 #f)))
