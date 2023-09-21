@@ -1,6 +1,7 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
 $(info the branch is $(GERBIL_VERSION))
+
 ifeq ($(GERBIL_VERSION),)
 GERBIL_VERSION := $(shell git symbolic-ref --short HEAD)
 endif
