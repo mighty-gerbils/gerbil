@@ -46,6 +46,13 @@ namespace: gxc
 (defstruct (!kw-lambda !procedure) (table dispatch))
 (defstruct (!kw-lambda-primary !procedure) (keys main))
 
+;; primitive markers (necessary to avoid unsound call optimizations)
+(defclass !primitive ())
+(defclass (!primitive-lambda !primitive !lambda) ()
+  constructor: :init!)
+(defclass (!primitive-case-lambda !primitive !case-lambda) ()
+  constructor: :init!)
+
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
     (struct-instance-init! self id super fields xfields ctor plist #f)))
@@ -57,6 +64,13 @@ namespace: gxc
 (defmethod {:init! !lambda}
   (lambda (self id arity dispatch (inline #f) (typedecl #f))
     (struct-instance-init! self id arity dispatch inline typedecl)))
+
+(defmethod {:init! !primitive-lambda}
+  !lambda:::init!)
+
+(defmethod {:init! !primitive-case-lambda}
+  (lambda (self . args)
+    (apply struct-instance-init! self args)))
 
 (def (!struct-type-vtab type)
   (cond

@@ -23,7 +23,15 @@ namespace: gxc
        (cond
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-         {optimize-call rator-type stx #'rands})
+         (let (optimized {optimize-call rator-type stx #'rands})
+           (if (!primitive? rator-type)
+             optimized        ; %#call-unchecked unsafe for primitives
+             (ast-case optimized (%#call)
+               ((%#call . body)
+                (xform-wrap-source
+                 (cons '%#call-unchecked #'body)
+                 stx))
+               (_ optimized)))))
         ((not rator-type)
          (xform-call% stx))
         (else
