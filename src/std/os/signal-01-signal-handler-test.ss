@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; :std/os/signal-handler unit-test
 
-(import :gerbil/gambit/threads
-        :std/test
+(import :std/test
         :std/sugar
         ./signal
         ./signal-handler

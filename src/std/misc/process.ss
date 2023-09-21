@@ -11,7 +11,6 @@
 
 (import
   :gerbil/gambit/ports
-  :gerbil/gambit/threads
   :std/error
   :std/misc/ports
   :std/sugar)

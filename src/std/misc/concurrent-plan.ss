@@ -1,7 +1,6 @@
 (export #t)
 
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/assert
         :std/error
         ./pqueue)

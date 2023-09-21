@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; kvstore ensemble service
-(import :gerbil/gambit/threads
-        :std/actor
+(import :std/actor
         :std/db/lmdb
         ./server)
 (export main)

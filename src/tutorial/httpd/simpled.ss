@@ -6,8 +6,7 @@
         :std/text/json
         :std/sugar
         :std/iter
-        :std/getopt
-        :gerbil/gambit/threads)
+        :std/getopt)
 (export main)
 
 (def (run address)

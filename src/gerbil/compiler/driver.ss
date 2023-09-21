@@ -14,10 +14,7 @@ namespace: gxc
         (only-in :gerbil/gambit/ports
                  close-port open-process process-status)
         (only-in :gerbil/gambit/os
-                 current-time time->seconds file-info file-info-size)
-        (only-in :gerbil/gambit/threads
-                 make-mutex with-lock))
-
+                 current-time time->seconds file-info file-info-size))
 (export compile-module compile-exe)
 
 (def default-gerbil-gsc
@@ -67,6 +64,7 @@ namespace: gxc
     "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"

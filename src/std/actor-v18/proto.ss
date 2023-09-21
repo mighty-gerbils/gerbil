@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor protocol messages
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         ./message)
 (export #t)

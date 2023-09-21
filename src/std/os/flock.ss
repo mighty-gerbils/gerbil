@@ -4,7 +4,6 @@
 
 (import :gerbil/gambit/os
         :gerbil/gambit/random
-        :gerbil/gambit/threads
         :std/error
         :std/sugar
         :std/foreign

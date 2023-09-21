@@ -3,7 +3,6 @@
 ;;; Gerbil error objects
 (import :gerbil/runtime/error
         :gerbil/gambit/continuations
-        :gerbil/gambit/threads
         (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?

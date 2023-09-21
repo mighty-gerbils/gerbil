@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor v18 api
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         :std/iter
         :std/logger

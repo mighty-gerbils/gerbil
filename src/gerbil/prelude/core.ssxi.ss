@@ -1236,3 +1236,15 @@ package: gerbil
  (f64vector-copy! 3 4 5)
  (subf64vector-move! 5)
  (f64vector-shrink! 2))
+
+(declare-primitive/unchecked*
+ (spawn (1))
+ (spawn/name (2))
+ (spawn/group (2))
+ (spawn-actor 4)
+ (spawn-thread 1 2 3)
+ (thread-local-ref 1 2)
+ (thread-local-set! 2)
+ (thread-local-clear! 1)
+ (current-thread-group 0)
+ (actor-thread? 1))

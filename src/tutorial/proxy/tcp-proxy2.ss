@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; transparent TCP proxy using stdio
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/logger
         :std/getopt
         :std/net/address

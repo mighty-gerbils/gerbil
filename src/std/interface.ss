@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Go-style interfaces
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         (only-in :std/srfi/1 reverse!)
         (for-syntax (only-in :std/srfi/1 delete-duplicates)

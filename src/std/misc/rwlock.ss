@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; read-write locks
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar)
 (export make-rwlock
         rwlock?

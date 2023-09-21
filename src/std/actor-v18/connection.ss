@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server connections
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         :std/sort
         :std/io

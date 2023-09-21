@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; asynchronous completion tokens
 
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar)
 (export make-completion
         completion?

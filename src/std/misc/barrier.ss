@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; thread barriers
 
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar)
 (export make-barrier barrier? barrier
         barrier-wait!

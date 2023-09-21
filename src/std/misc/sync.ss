@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous data structures
 
-(import :gerbil/gambit/threads)
 (export make-sync-hash sync-hash?
         sync-hash-get sync-hash-ref sync-hash-key? sync-hash-put! sync-hash-remove!
         sync-hash-do)
