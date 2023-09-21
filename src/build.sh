@@ -6,6 +6,20 @@ cd $(dirname "$0") # Change to this directory
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
 
+# utility to get number of cores from make -j
+build_flags_cores() {
+    for x in $1; do
+        case $x in
+            -j*)
+                echo ${x##-j}
+                break
+                ;;
+            *)
+                ;;
+        esac
+    done
+}
+
 # Check for GERBIL_PREFIX being set
 # This is necessary for the bach build script to set the correct RUNPATH in the
 # gerbil binary.
@@ -41,6 +55,18 @@ else
     LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}"
 fi
 export LD_LIBRARY_PATH
+
+if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ]; then
+    num_cores=$(build_flags_cores "${GERBIL_BUILD_FLAGS}")
+    if [ "x${num_cores:-}" != "x" ]; then
+        GERBIL_BUILD_CORES=${num_cores}
+        export GERBIL_BUILD_CORES
+    fi
+fi
+
+if [ "x${GERBIL_BUILD_CORES:-}" != "x" ]; then
+    echo "--- using ${GERBIL_BUILD_CORES} cores for the build"
+fi
 
 #===============================================================================
 ## feedback

@@ -1,25 +1,32 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/repl::timestamp 1695206877)
+  (define gerbil/runtime/repl::timestamp 1695292370)
   (define replx
     (lambda ()
-      (letrec ((_write-reason15895_
-                (lambda (_exn15901_)
-                  (lambda (_cont15903_ _port15904_)
+      (letrec ((_write-reason17596_
+                (lambda (_exn17602_)
+                  (lambda (_cont17604_ _port17605_)
                     (let ()
                       (declare (not safe))
                       (##display-exception-in-context
-                       _exn15901_
-                       _cont15903_
-                       _port15904_))
+                       _exn17602_
+                       _cont17604_
+                       _port17605_))
                     '#f))))
-        (with-exception-handler
-         (lambda (_exn15897_)
-           (let ((__tmp15905
-                  (lambda (_cont15899_)
-                    (let ((__tmp15906 (_write-reason15895_ _exn15897_)))
-                      (declare (not safe))
-                      (##repl-within _cont15899_ __tmp15906 _exn15897_)))))
-             (declare (not safe))
-             (##continuation-capture __tmp15905)))
-         ##repl)))))
+        (let ((__tmp17606
+               (lambda (_exn17598_)
+                 (let ((__tmp17607
+                        (lambda (_cont17600_)
+                          (let ((__tmp17608
+                                 (let ()
+                                   (declare (not safe))
+                                   (_write-reason17596_ _exn17598_))))
+                            (declare (not safe))
+                            (##repl-within
+                             _cont17600_
+                             __tmp17608
+                             _exn17598_)))))
+                   (declare (not safe))
+                   (##continuation-capture __tmp17607)))))
+          (declare (not safe))
+          (with-exception-handler __tmp17606 ##repl))))))

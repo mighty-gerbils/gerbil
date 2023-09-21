@@ -51,7 +51,7 @@ ENV GERBIL_GCC=g++
 RUN  cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
     && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
 
-RUN cd /opt/gerbil-src && make -j ${GERBIL_BUILD_CORES} && make install
+RUN cd /opt/gerbil-src && make && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb

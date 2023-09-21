@@ -39,4 +39,10 @@ namespace: gxc
          (%#define-syntax @kw-lambda |gxc[:0:]#@kw-lambda|)
          (%#define-syntax @kw-lambda-dispatch |gxc[:0:]#@kw-lambda-dispatch|)
          (%#define-syntax declare-primitive |gxc[:0:]#declare-primitive|)
-         (%#define-syntax declare-primitive* |gxc[:0:]#declare-primitive*|))
+         (%#define-syntax
+          declare-primitive/unchecked
+          |gxc[:0:]#declare-primitive/unchecked|)
+         (%#define-syntax declare-primitive* |gxc[:0:]#declare-primitive*|)
+         (%#define-syntax
+          declare-primitive/unchecked*
+          |gxc[:0:]#declare-primitive/unchecked*|))
