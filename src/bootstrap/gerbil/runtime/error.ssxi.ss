@@ -83,7 +83,7 @@ package: gerbil/runtime
   (declare-type raise (@lambda 1 #f))
   (declare-type error (@lambda (1) #f))
   (declare-type with-exception-handler (@lambda 2 #f))
-  (declare-type with-catch (@lambda 2 with-exception-catcher))
+  (declare-type with-catch (@lambda 2 #f))
   (declare-type wrap-runtime-exception (@lambda 1 #f))
   (declare-type exception? (@lambda 1 #f))
   (declare-type error? (@lambda 1 #f))

@@ -1,9 +1,8 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1695292370)
+  (define gerbil/runtime/init::timestamp 1695337676)
   (begin
-    (define __loading-scheme-source
-      (let () (declare (not safe)) (make-parameter '#f)))
+    (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
       (lambda ()
         (gx#current-expander-marks '())
@@ -23,54 +22,42 @@
         (set! __eval-module gx#core-eval-module)))
     (define __load-gxi
       (lambda ()
-        (letrec* ((_+readtable+17805_ __*readtable*))
+        (letrec* ((_+readtable+18301_ __*readtable*))
           (let () (declare (not safe)) (__init-gx!))
-          (let* ((_core17807_ (gx#import-module ':gerbil/core))
-                 (_pre17809_ (gx#make-prelude-context _core17807_)))
-            (gx#current-expander-module-prelude _pre17809_)
-            (gx#core-bind-root-syntax! ':<core> _pre17809_ '#t)
+          (let* ((_core18303_ (gx#import-module ':gerbil/core))
+                 (_pre18305_ (gx#make-prelude-context _core18303_)))
+            (gx#current-expander-module-prelude _pre18305_)
+            (gx#core-bind-root-syntax! ':<core> _pre18305_ '#t)
             (gx#eval-syntax '(import :gerbil/core)))
           (gx#current-expander-compile __compile-top-source)
           (let () (declare (not safe)) (##expand-source-set! __expand-source))
           (let () (declare (not safe)) (##macro-descr-set! __macro-descr))
           (let () (declare (not safe)) (##main-readtable-set! __*readtable*))
-          (let ((__tmp17817
-                 (lambda (_port17812_)
-                   (let ()
-                     (declare (not safe))
-                     (input-port-readtable-set!
-                      _port17812_
-                      _+readtable+17805_))))
-                (__tmp17816 (list ##stdin-port ##console-port)))
-            (declare (not safe))
-            (for-each __tmp17817 __tmp17816))
-          (let ((__tmp17819
-                 (lambda (_port17814_)
-                   (let ((__tmp17820
-                          (let ((__tmp17821
-                                 (let ()
-                                   (declare (not safe))
-                                   (output-port-readtable _port17814_))))
-                            (declare (not safe))
-                            (readtable-sharing-allowed?-set __tmp17821 '#t))))
-                     (declare (not safe))
-                     (output-port-readtable-set! _port17814_ __tmp17820))))
-                (__tmp17818 (list ##stdout-port ##console-port)))
-            (declare (not safe))
-            (for-each __tmp17819 __tmp17818)))))
-    (define __gxi-init-interactive! (lambda (_cmdline17802_) '#!void))
+          (for-each
+           (lambda (_port18308_)
+             (input-port-readtable-set! _port18308_ _+readtable+18301_))
+           (list ##stdin-port ##console-port))
+          (for-each
+           (lambda (_port18310_)
+             (output-port-readtable-set!
+              _port18310_
+              (readtable-sharing-allowed?-set
+               (output-port-readtable _port18310_)
+               '#t)))
+           (list ##stdout-port ##console-port)))))
+    (define __gxi-init-interactive! (lambda (_cmdline18298_) '#!void))
     (define load-scheme
-      (lambda (_path17797_)
-        (let ((__tmp17822
+      (lambda (_path18293_)
+        (let ((__tmp18312
                (lambda ()
-                 (let ((__tmp17823 (lambda _args17800_ '#f)))
+                 (let ((__tmp18313 (lambda _args18296_ '#f)))
                    (declare (not safe))
-                   (##load _path17797_ __tmp17823 '#t '#t '#f)))))
+                   (##load _path18293_ __tmp18313 '#t '#t '#f)))))
           (declare (not safe))
           (call-with-parameters
-           __tmp17822
+           __tmp18312
            __loading-scheme-source
-           _path17797_))))
+           _path18293_))))
     (define load-path
       (lambda ()
         (values (let () (declare (not safe)) (current-module-library-path))
@@ -81,454 +68,415 @@
     (define expander-load-path
       (lambda () (gx#current-expander-module-library-path)))
     (define add-load-path
-      (lambda _paths17792_
-        (apply add-library-load-path _paths17792_)
-        (apply add-expander-load-path _paths17792_)))
+      (lambda _paths18288_
+        (apply add-library-load-path _paths18288_)
+        (apply add-expander-load-path _paths18288_)))
     (define add-library-load-path
-      (lambda _paths17781_
-        (let* ((_current17783_ (current-module-library-path))
-               (_paths17785_
-                (let () (declare (not safe)) (map path-expand _paths17781_)))
-               (_paths17789_
-                (let ((__tmp17824
-                       (lambda (_x17787_)
-                         (let ((__tmp17825
-                                (let ()
-                                  (declare (not safe))
-                                  (member _x17787_ _current17783_))))
+      (lambda _paths18277_
+        (let* ((_current18279_ (current-module-library-path))
+               (_paths18281_ (map path-expand _paths18277_))
+               (_paths18285_
+                (let ((__tmp18314
+                       (lambda (_x18283_)
+                         (let ((__tmp18315 (member _x18283_ _current18279_)))
                            (declare (not safe))
-                           (not __tmp17825)))))
+                           (not __tmp18315)))))
                   (declare (not safe))
-                  (filter __tmp17824 _paths17785_))))
-          (current-module-library-path (append _current17783_ _paths17789_)))))
+                  (filter __tmp18314 _paths18281_))))
+          (current-module-library-path (append _current18279_ _paths18285_)))))
     (define add-expander-load-path
-      (lambda _paths17770_
-        (let* ((_current17772_ (gx#current-expander-module-library-path))
-               (_paths17774_
-                (let () (declare (not safe)) (map path-expand _paths17770_)))
-               (_paths17778_
-                (let ((__tmp17826
-                       (lambda (_x17776_)
-                         (let ((__tmp17827
-                                (let ()
-                                  (declare (not safe))
-                                  (member _x17776_ _current17772_))))
+      (lambda _paths18266_
+        (let* ((_current18268_ (gx#current-expander-module-library-path))
+               (_paths18270_ (map path-expand _paths18266_))
+               (_paths18274_
+                (let ((__tmp18316
+                       (lambda (_x18272_)
+                         (let ((__tmp18317 (member _x18272_ _current18268_)))
                            (declare (not safe))
-                           (not __tmp17827)))))
+                           (not __tmp18317)))))
                   (declare (not safe))
-                  (filter __tmp17826 _paths17774_))))
+                  (filter __tmp18316 _paths18270_))))
           (gx#current-expander-module-library-path
-           (append _current17772_ _paths17778_)))))
+           (append _current18268_ _paths18274_)))))
     (define cons-load-path
-      (lambda _paths17768_
-        (apply cons-library-load-path _paths17768_)
-        (apply cons-expander-load-path _paths17768_)))
+      (lambda _paths18264_
+        (apply cons-library-load-path _paths18264_)
+        (apply cons-expander-load-path _paths18264_)))
     (define cons-library-load-path
-      (lambda _paths17763_
-        (let ((_current17765_ (current-module-library-path))
-              (_paths17766_
-               (let () (declare (not safe)) (map path-expand _paths17763_))))
-          (current-module-library-path (append _paths17766_ _current17765_)))))
+      (lambda _paths18259_
+        (let ((_current18261_ (current-module-library-path))
+              (_paths18262_ (map path-expand _paths18259_)))
+          (current-module-library-path (append _paths18262_ _current18261_)))))
     (define cons-expander-load-path
-      (lambda _paths17758_
-        (let ((_current17760_ (gx#current-expander-module-library-path))
-              (_paths17761_
-               (let () (declare (not safe)) (map path-expand _paths17758_))))
+      (lambda _paths18254_
+        (let ((_current18256_ (gx#current-expander-module-library-path))
+              (_paths18257_ (map path-expand _paths18254_)))
           (gx#current-expander-module-library-path
-           (append _paths17761_ _current17760_)))))
+           (append _paths18257_ _current18256_)))))
     (define with-cons-load-path
-      (lambda (_thunk17754_ . _paths17755_)
+      (lambda (_thunk18250_ . _paths18251_)
         (apply with-cons-library-load-path
                (lambda ()
                  (apply with-cons-expander-load-path
-                        _thunk17754_
-                        _paths17755_))
-               _paths17755_)))
+                        _thunk18250_
+                        _paths18251_))
+               _paths18251_)))
     (define with-cons-library-load-path
-      (lambda (_thunk17747_ . _paths17748_)
-        (let ((_current17750_ (current-module-library-path))
-              (_paths17751_
-               (let () (declare (not safe)) (map path-expand _paths17748_))))
-          (let ((__tmp17829 (lambda () (_thunk17747_)))
-                (__tmp17828 (append _paths17751_ _current17750_)))
+      (lambda (_thunk18243_ . _paths18244_)
+        (let ((_current18246_ (current-module-library-path))
+              (_paths18247_ (map path-expand _paths18244_)))
+          (let ((__tmp18319 (lambda () (_thunk18243_)))
+                (__tmp18318 (append _paths18247_ _current18246_)))
             (declare (not safe))
             (call-with-parameters
-             __tmp17829
+             __tmp18319
              current-module-library-path
-             __tmp17828)))))
+             __tmp18318)))))
     (define with-cons-expander-load-path
-      (lambda (_thunk17740_ . _paths17741_)
-        (let ((_current17743_ (gx#current-expander-module-library-path))
-              (_paths17744_
-               (let () (declare (not safe)) (map path-expand _paths17741_))))
-          (let ((__tmp17831 (lambda () (_thunk17740_)))
-                (__tmp17830 (append _paths17744_ _current17743_)))
+      (lambda (_thunk18236_ . _paths18237_)
+        (let ((_current18239_ (gx#current-expander-module-library-path))
+              (_paths18240_ (map path-expand _paths18237_)))
+          (let ((__tmp18321 (lambda () (_thunk18236_)))
+                (__tmp18320 (append _paths18240_ _current18239_)))
             (declare (not safe))
             (call-with-parameters
-             __tmp17831
+             __tmp18321
              gx#current-expander-module-library-path
-             __tmp17830)))))
+             __tmp18320)))))
     (define __expand-source
-      (lambda (_src17726_)
-        (letrec ((_expand17728_
-                  (lambda (_src17738_)
-                    (let ((__tmp17832
+      (lambda (_src18222_)
+        (letrec ((_expand18224_
+                  (lambda (_src18234_)
+                    (let ((__tmp18322
                            (gx#core-expand
                             (let ()
                               (declare (not safe))
-                              (__source->syntax _src17738_)))))
+                              (__source->syntax _src18234_)))))
                       (declare (not safe))
-                      (__compile-top __tmp17832))))
-                 (_no-expand17729_
-                  (lambda (_src17734_)
+                      (__compile-top __tmp18322))))
+                 (_no-expand18225_
+                  (lambda (_src18230_)
                     (if (__loading-scheme-source)
-                        _src17734_
+                        _src18230_
                         (if (let ()
                               (declare (not safe))
-                              (##source? _src17734_))
-                            (let ((_code17736_
+                              (##source? _src18230_))
+                            (let ((_code18232_
                                    (let ()
                                      (declare (not safe))
-                                     (##source-code _src17734_))))
+                                     (##source-code _src18230_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (pair? _code17736_))
-                                  (if (let ((__tmp17833
+                                    (pair? _code18232_))
+                                  (if (let ((__tmp18323
                                              (let ()
                                                (declare (not safe))
-                                               (##car _code17736_))))
+                                               (##car _code18232_))))
                                         (declare (not safe))
-                                        (eq? '__noexpand: __tmp17833))
+                                        (eq? '__noexpand: __tmp18323))
                                       (let ()
                                         (declare (not safe))
-                                        (##cdr _code17736_))
+                                        (##cdr _code18232_))
                                       '#f)
                                   '#f))
                             '#f)))))
-          (let ((_$e17731_
-                 (let () (declare (not safe)) (_no-expand17729_ _src17726_))))
-            (if _$e17731_
-                _$e17731_
-                (let () (declare (not safe)) (_expand17728_ _src17726_)))))))
+          (let ((_$e18227_
+                 (let () (declare (not safe)) (_no-expand18225_ _src18222_))))
+            (if _$e18227_
+                _$e18227_
+                (let () (declare (not safe)) (_expand18224_ _src18222_)))))))
     (define __macro-descr
-      (lambda (_src17712_ _def-syntax?17713_)
-        (letrec ((_fail!17715_
+      (lambda (_src18208_ _def-syntax?18209_)
+        (letrec ((_fail!18211_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (##raise-expression-parsing-exception
                        'ill-formed-macro-transformer
-                       _src17712_))))
-                 (_make-descr17716_
-                  (lambda (_size17720_)
-                    (let ((_expander17723_
-                           (let ((__tmp17834
+                       _src18208_))))
+                 (_make-descr18212_
+                  (lambda (_size18216_)
+                    (let ((_expander18219_
+                           (let ((__tmp18324
                                   (lambda ()
                                     (let ()
                                       (declare (not safe))
                                       (##eval-top
-                                       _src17712_
+                                       _src18208_
                                        ##interaction-cte)))))
                              (declare (not safe))
                              (call-with-parameters
-                              __tmp17834
+                              __tmp18324
                               __loading-scheme-source
                               'macro))))
                       (if (let ()
                             (declare (not safe))
-                            (procedure? _expander17723_))
+                            (procedure? _expander18219_))
                           (let ()
                             (declare (not safe))
                             (##make-macro-descr
-                             _def-syntax?17713_
-                             _size17720_
-                             _expander17723_
-                             _src17712_))
-                          (let () (declare (not safe)) (_fail!17715_)))))))
-          (if _def-syntax?17713_
-              (let () (declare (not safe)) (_make-descr17716_ '-1))
-              (let ((_code17718_
-                     (let () (declare (not safe)) (##source-code _src17712_))))
-                (if (and (let () (declare (not safe)) (##pair? _code17718_))
-                         (let ((__tmp17838
-                                (let ((__tmp17839
-                                       (let ((__tmp17840
+                             _def-syntax?18209_
+                             _size18216_
+                             _expander18219_
+                             _src18208_))
+                          (let () (declare (not safe)) (_fail!18211_)))))))
+          (if _def-syntax?18209_
+              (let () (declare (not safe)) (_make-descr18212_ '-1))
+              (let ((_code18214_
+                     (let () (declare (not safe)) (##source-code _src18208_))))
+                (if (and (let () (declare (not safe)) (##pair? _code18214_))
+                         (let ((__tmp18328
+                                (let ((__tmp18329
+                                       (let ((__tmp18330
                                               (let ()
                                                 (declare (not safe))
-                                                (##car _code17718_))))
+                                                (##car _code18214_))))
                                          (declare (not safe))
-                                         (##sourcify __tmp17840 _src17712_))))
+                                         (##sourcify __tmp18330 _src18208_))))
                                   (declare (not safe))
-                                  (##source-code __tmp17839))))
+                                  (##source-code __tmp18329))))
                            (declare (not safe))
-                           (##memq __tmp17838 '(##lambda lambda))))
+                           (##memq __tmp18328 '(##lambda lambda))))
                     (begin
                       (let ()
                         (declare (not safe))
-                        (##shape _src17712_ _src17712_ '-3))
-                      (let ((__tmp17835
-                             (let ((__tmp17836
-                                    (let ((__tmp17837
+                        (##shape _src18208_ _src18208_ '-3))
+                      (let ((__tmp18325
+                             (let ((__tmp18326
+                                    (let ((__tmp18327
                                            (let ()
                                              (declare (not safe))
-                                             (##cadr _code17718_))))
+                                             (##cadr _code18214_))))
                                       (declare (not safe))
-                                      (##sourcify __tmp17837 _src17712_))))
+                                      (##sourcify __tmp18327 _src18208_))))
                                (declare (not safe))
-                               (##form-size __tmp17836))))
+                               (##form-size __tmp18326))))
                         (declare (not safe))
-                        (_make-descr17716_ __tmp17835)))
-                    (let () (declare (not safe)) (_fail!17715_))))))))
+                        (_make-descr18212_ __tmp18325)))
+                    (let () (declare (not safe)) (_fail!18211_))))))))
     (define __source->syntax
-      (lambda (_src17706_)
-        (let _recur17708_ ((_e17710_ _src17706_))
-          (if (let () (declare (not safe)) (##source? _e17710_))
-              (let ((__tmp17848
-                     (let ((__tmp17849
+      (lambda (_src18202_)
+        (let _recur18204_ ((_e18206_ _src18202_))
+          (if (let () (declare (not safe)) (##source? _e18206_))
+              (let ((__tmp18338
+                     (let ((__tmp18339
                             (let ()
                               (declare (not safe))
-                              (##source-code _e17710_))))
+                              (##source-code _e18206_))))
                        (declare (not safe))
-                       (_recur17708_ __tmp17849)))
-                    (__tmp17847
-                     (let () (declare (not safe)) (##source-locat _e17710_))))
+                       (_recur18204_ __tmp18339)))
+                    (__tmp18337
+                     (let () (declare (not safe)) (##source-locat _e18206_))))
                 (declare (not safe))
-                (##structure AST::t __tmp17848 __tmp17847))
-              (if (let () (declare (not safe)) (pair? _e17710_))
-                  (let ((__tmp17845
-                         (let ((__tmp17846
+                (##structure AST::t __tmp18338 __tmp18337))
+              (if (let () (declare (not safe)) (pair? _e18206_))
+                  (let ((__tmp18335
+                         (let ((__tmp18336
                                 (let ()
                                   (declare (not safe))
-                                  (##car _e17710_))))
+                                  (##car _e18206_))))
                            (declare (not safe))
-                           (_recur17708_ __tmp17846)))
-                        (__tmp17843
-                         (let ((__tmp17844
+                           (_recur18204_ __tmp18336)))
+                        (__tmp18333
+                         (let ((__tmp18334
                                 (let ()
                                   (declare (not safe))
-                                  (##cdr _e17710_))))
+                                  (##cdr _e18206_))))
                            (declare (not safe))
-                           (_recur17708_ __tmp17844))))
+                           (_recur18204_ __tmp18334))))
                     (declare (not safe))
-                    (cons __tmp17845 __tmp17843))
-                  (if (let () (declare (not safe)) (vector? _e17710_))
-                      (let ()
-                        (declare (not safe))
-                        (vector-map _recur17708_ _e17710_))
-                      (if (let () (declare (not safe)) (box? _e17710_))
-                          (let ((__tmp17841
-                                 (let ((__tmp17842
-                                        (let ()
-                                          (declare (not safe))
-                                          (unbox _e17710_))))
+                    (cons __tmp18335 __tmp18333))
+                  (if (let () (declare (not safe)) (vector? _e18206_))
+                      (vector-map _recur18204_ _e18206_)
+                      (if (let () (declare (not safe)) (box? _e18206_))
+                          (let ((__tmp18331
+                                 (let ((__tmp18332 (unbox _e18206_)))
                                    (declare (not safe))
-                                   (_recur17708_ __tmp17842))))
+                                   (_recur18204_ __tmp18332))))
                             (declare (not safe))
-                            (box __tmp17841))
-                          _e17710_)))))))
+                            (box __tmp18331))
+                          _e18206_)))))))
     (define __compile-top-source
-      (lambda (_stx17704_)
-        (let ((__tmp17850
-               (let () (declare (not safe)) (__compile-top _stx17704_))))
+      (lambda (_stx18200_)
+        (let ((__tmp18340
+               (let () (declare (not safe)) (__compile-top _stx18200_))))
           (declare (not safe))
-          (cons '__noexpand: __tmp17850))))
+          (cons '__noexpand: __tmp18340))))
     (define __compile-top
-      (lambda (_stx17702_)
-        (let ((__tmp17851 (gx#core-compile-top-syntax _stx17702_)))
+      (lambda (_stx18198_)
+        (let ((__tmp18341 (gx#core-compile-top-syntax _stx18198_)))
           (declare (not safe))
-          (__compile __tmp17851))))
+          (__compile __tmp18341))))
     (define __eval-import
-      (lambda (_in17683_)
-        (letrec* ((_mods17685_
+      (lambda (_in18179_)
+        (letrec* ((_mods18181_
                    (let () (declare (not safe)) (make-table 'test: eq?)))
-                  (_import117686_
-                   (lambda (_in17693_ _phi17694_)
-                     (if (gx#module-import? _in17693_)
-                         (let ((_iphi17696_
-                                (fx+ _phi17694_
-                                     (gx#module-import-phi _in17693_))))
+                  (_import118182_
+                   (lambda (_in18189_ _phi18190_)
+                     (if (gx#module-import? _in18189_)
+                         (let ((_iphi18192_
+                                (fx+ _phi18190_
+                                     (gx#module-import-phi _in18189_))))
                            (if (let ()
                                  (declare (not safe))
-                                 (fxzero? _iphi17696_))
-                               (let ((__tmp17855
+                                 (fxzero? _iphi18192_))
+                               (let ((__tmp18343
                                       (gx#module-export-context
-                                       (gx#module-import-source _in17693_))))
+                                       (gx#module-import-source _in18189_))))
                                  (declare (not safe))
-                                 (_eval117687_ __tmp17855))
+                                 (_eval118183_ __tmp18343))
                                '#!void))
-                         (if (gx#module-context? _in17693_)
+                         (if (gx#module-context? _in18189_)
                              (if (let ()
                                    (declare (not safe))
-                                   (fxzero? _phi17694_))
+                                   (fxzero? _phi18190_))
                                  (let ()
                                    (declare (not safe))
-                                   (_eval117687_ _in17693_))
+                                   (_eval118183_ _in18189_))
                                  '#!void)
-                             (if (gx#import-set? _in17693_)
-                                 (let ((_iphi17698_
-                                        (fx+ _phi17694_
-                                             (gx#import-set-phi _in17693_))))
+                             (if (gx#import-set? _in18189_)
+                                 (let ((_iphi18194_
+                                        (fx+ _phi18190_
+                                             (gx#import-set-phi _in18189_))))
                                    (if (let ()
                                          (declare (not safe))
-                                         (fxzero? _iphi17698_))
-                                       (let ((__tmp17854
+                                         (fxzero? _iphi18194_))
+                                       (let ((__tmp18342
                                               (gx#import-set-source
-                                               _in17693_)))
+                                               _in18189_)))
                                          (declare (not safe))
-                                         (_eval117687_ __tmp17854))
-                                       (if (let ()
-                                             (declare (not safe))
-                                             (fxpositive? _iphi17698_))
-                                           (let ((__tmp17853
-                                                  (lambda (_in17700_)
-                                                    (let ()
-                                                      (declare (not safe))
-                                                      (_import117686_
-                                                       _in17700_
-                                                       _iphi17698_))))
-                                                 (__tmp17852
-                                                  (gx#module-context-import
-                                                   (gx#import-set-source
-                                                    _in17693_))))
-                                             (declare (not safe))
-                                             (for-each __tmp17853 __tmp17852))
+                                         (_eval118183_ __tmp18342))
+                                       (if (fxpositive? _iphi18194_)
+                                           (for-each
+                                            (lambda (_in18196_)
+                                              (let ()
+                                                (declare (not safe))
+                                                (_import118182_
+                                                 _in18196_
+                                                 _iphi18194_)))
+                                            (gx#module-context-import
+                                             (gx#import-set-source _in18189_)))
                                            '#!void)))
-                                 (let ()
-                                   (declare (not safe))
-                                   (error '"Unexpected import" _in17693_)))))))
-                  (_eval117687_
-                   (lambda (_ctx17691_)
+                                 (error '"Unexpected import" _in18189_))))))
+                  (_eval118183_
+                   (lambda (_ctx18187_)
                      (if (let ()
                            (declare (not safe))
-                           (table-ref _mods17685_ _ctx17691_ '#f))
+                           (table-ref _mods18181_ _ctx18187_ '#f))
                          '#!void
                          (begin
                            (let ()
                              (declare (not safe))
-                             (table-set! _mods17685_ _ctx17691_ '#t))
-                           (__eval-module _ctx17691_))))))
-          (if (let () (declare (not safe)) (pair? _in17683_))
-              (let ((__tmp17856
-                     (lambda (_in17689_)
-                       (let ()
-                         (declare (not safe))
-                         (_import117686_ _in17689_ '0)))))
-                (declare (not safe))
-                (for-each __tmp17856 _in17683_))
-              (let () (declare (not safe)) (_import117686_ _in17683_ '0))))))
+                             (table-set! _mods18181_ _ctx18187_ '#t))
+                           (__eval-module _ctx18187_))))))
+          (if (let () (declare (not safe)) (pair? _in18179_))
+              (for-each
+               (lambda (_in18185_)
+                 (let () (declare (not safe)) (_import118182_ _in18185_ '0)))
+               _in18179_)
+              (let () (declare (not safe)) (_import118182_ _in18179_ '0))))))
     (define __eval-module
-      (lambda (_obj17676_)
-        (let* ((_key17678_
-                (if (gx#module-context? _obj17676_)
-                    (gx#module-context-path _obj17676_)
-                    _obj17676_))
-               (_$e17680_
+      (lambda (_obj18172_)
+        (let* ((_key18174_
+                (if (gx#module-context? _obj18172_)
+                    (gx#module-context-path _obj18172_)
+                    _obj18172_))
+               (_$e18176_
                 (let ()
                   (declare (not safe))
-                  (table-ref __*modules* _key17678_ '#f))))
-          (if _$e17680_ (values _$e17680_) (gx#core-eval-module _obj17676_)))))
+                  (table-ref __*modules* _key18174_ '#f))))
+          (if _$e18176_ (values _$e18176_) (gx#core-eval-module _obj18172_)))))
     (define gerbil-runtime-init!
-      (lambda (_builtin-modules17611_)
-        (let* ((_home17613_ (let () (declare (not safe)) (gerbil-home)))
-               (_libdir17615_
-                (let () (declare (not safe)) (path-expand '"lib" _home17613_)))
-               (_loadpath17624_
-                (let ((_$e17617_
-                       (let ()
-                         (declare (not safe))
-                         (getenv '"GERBIL_LOADPATH" '#f))))
-                  (if _$e17617_
-                      ((lambda (_envvar17620_)
-                         (let ((__tmp17858
-                                (lambda (_x17622_)
-                                  (let ((__tmp17859
+      (lambda (_builtin-modules18107_)
+        (let* ((_home18109_ (let () (declare (not safe)) (gerbil-home)))
+               (_libdir18111_ (path-expand '"lib" _home18109_))
+               (_loadpath18120_
+                (let ((_$e18113_ (getenv '"GERBIL_LOADPATH" '#f)))
+                  (if _$e18113_
+                      ((lambda (_envvar18116_)
+                         (let ((__tmp18345
+                                (lambda (_x18118_)
+                                  (let ((__tmp18346
                                          (let ()
                                            (declare (not safe))
-                                           (string-empty? _x17622_))))
+                                           (string-empty? _x18118_))))
                                     (declare (not safe))
-                                    (not __tmp17859))))
-                               (__tmp17857
+                                    (not __tmp18346))))
+                               (__tmp18344
                                 (let ()
                                   (declare (not safe))
-                                  (string-split _envvar17620_ '#\:))))
+                                  (string-split _envvar18116_ '#\:))))
                            (declare (not safe))
-                           (filter __tmp17858 __tmp17857)))
-                       _$e17617_)
+                           (filter __tmp18345 __tmp18344)))
+                       _$e18113_)
                       '())))
-               (_userpath17626_
-                (let ((__tmp17860
-                       (let ()
-                         (declare (not safe))
-                         (getenv '"GERBIL_PATH" '"~/.gerbil"))))
-                  (declare (not safe))
-                  (path-expand '"lib" __tmp17860)))
-               (_loadpath17628_
-                (if (let ()
-                      (declare (not safe))
-                      (getenv '"GERBIL_BUILD_PREFIX" '#f))
-                    _loadpath17624_
+               (_userpath18122_
+                (path-expand '"lib" (getenv '"GERBIL_PATH" '"~/.gerbil")))
+               (_loadpath18124_
+                (if (getenv '"GERBIL_BUILD_PREFIX" '#f)
+                    _loadpath18120_
                     (let ()
                       (declare (not safe))
-                      (cons _userpath17626_ _loadpath17624_)))))
+                      (cons _userpath18122_ _loadpath18120_)))))
           (current-module-library-path
-           (let () (declare (not safe)) (cons _libdir17615_ _loadpath17628_))))
-        (let* ((_registry-entry17633_
-                (lambda (_m17631_)
-                  (let () (declare (not safe)) (cons _m17631_ 'builtin))))
-               (_module-registry17673_
-                (let _lp17635_ ((_rest17637_ _builtin-modules17611_)
-                                (_registry17638_ '()))
-                  (let* ((_rest1763917647_ _rest17637_)
-                         (_else1764117655_
+           (let () (declare (not safe)) (cons _libdir18111_ _loadpath18124_))))
+        (let* ((_registry-entry18129_
+                (lambda (_m18127_)
+                  (let () (declare (not safe)) (cons _m18127_ 'builtin))))
+               (_module-registry18169_
+                (let _lp18131_ ((_rest18133_ _builtin-modules18107_)
+                                (_registry18134_ '()))
+                  (let* ((_rest1813518143_ _rest18133_)
+                         (_else1813718151_
                           (lambda ()
                             (let ()
                               (declare (not safe))
-                              (list->table _registry17638_))))
-                         (_K1764317661_
-                          (lambda (_rest17658_ _mod17659_)
-                            (let ((__tmp17861
-                                   (let ((__tmp17865
-                                          (let ((__tmp17866
+                              (list->table _registry18134_))))
+                         (_K1813918157_
+                          (lambda (_rest18154_ _mod18155_)
+                            (let ((__tmp18347
+                                   (let ((__tmp18351
+                                          (let ((__tmp18352
                                                  (string-append
-                                                  _mod17659_
+                                                  _mod18155_
                                                   '"__0")))
                                             (declare (not safe))
-                                            (_registry-entry17633_
-                                             __tmp17866)))
-                                         (__tmp17862
-                                          (let ((__tmp17863
-                                                 (let ((__tmp17864
+                                            (_registry-entry18129_
+                                             __tmp18352)))
+                                         (__tmp18348
+                                          (let ((__tmp18349
+                                                 (let ((__tmp18350
                                                         (string-append
-                                                         _mod17659_
+                                                         _mod18155_
                                                          '"__rt")))
                                                    (declare (not safe))
-                                                   (_registry-entry17633_
-                                                    __tmp17864))))
+                                                   (_registry-entry18129_
+                                                    __tmp18350))))
                                             (declare (not safe))
-                                            (cons __tmp17863
-                                                  _registry17638_))))
+                                            (cons __tmp18349
+                                                  _registry18134_))))
                                      (declare (not safe))
-                                     (cons __tmp17865 __tmp17862))))
+                                     (cons __tmp18351 __tmp18348))))
                               (declare (not safe))
-                              (_lp17635_ _rest17658_ __tmp17861)))))
+                              (_lp18131_ _rest18154_ __tmp18347)))))
                     (if (let ()
                           (declare (not safe))
-                          (##pair? _rest1763917647_))
-                        (let ((_hd1764417664_
+                          (##pair? _rest1813518143_))
+                        (let ((_hd1814018160_
                                (let ()
                                  (declare (not safe))
-                                 (##car _rest1763917647_)))
-                              (_tl1764517666_
+                                 (##car _rest1813518143_)))
+                              (_tl1814118162_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _rest1763917647_))))
-                          (let* ((_mod17669_ _hd1764417664_)
-                                 (_rest17671_ _tl1764517666_))
+                                 (##cdr _rest1813518143_))))
+                          (let* ((_mod18165_ _hd1814018160_)
+                                 (_rest18167_ _tl1814118162_))
                             (declare (not safe))
-                            (_K1764317661_ _rest17671_ _mod17669_)))
-                        (let () (declare (not safe)) (_else1764117655_)))))))
-          (current-module-registry _module-registry17673_))
-        (let () (declare (not safe)) (current-readtable __*readtable*))))
+                            (_K1813918157_ _rest18167_ _mod18165_)))
+                        (let () (declare (not safe)) (_else1813718151_)))))))
+          (current-module-registry _module-registry18169_))
+        (current-readtable __*readtable*)))
     (define __expander-loaded '#f)
     (define gerbil-load-expander!
       (lambda ()
