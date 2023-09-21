@@ -65,7 +65,7 @@ if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ]; then
 fi
 
 if [ "x${GERBIL_BUILD_CORES:-}" != "x" ]; then
-    echo "using ${GERBIL_BUILD_CORES} cores for the build"
+    echo "--- using ${GERBIL_BUILD_CORES} cores for the build"
 fi
 
 #===============================================================================
