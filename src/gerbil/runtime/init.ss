@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "system" "util" "loader" "control" "thread.ss" "mop" "error" "syntax" "eval"  "repl")
+(import "gambit" "system" "util" "loader" "control" "mop" "error" "thread" "syntax" "eval"  "repl")
 
 (def __loading-scheme-source
   (make-parameter #f))
