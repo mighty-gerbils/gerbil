@@ -6,7 +6,7 @@ arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
 ifeq ($(BRANCH),)
-BRANCH := $(shell git symbolic-ref --short HEAD)
+BRANCH := "master"
 endif
 
 ifeq ($(REPO),)
