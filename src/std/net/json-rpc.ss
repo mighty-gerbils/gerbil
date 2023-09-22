@@ -17,10 +17,14 @@
   ;; Error handling
   json-rpc-error json-rpc-error? json-rpc-error-code json-rpc-error-message json-rpc-error-data
   json-rpc-version
+  json-rpc-request json-rpc-request?
+  json-rpc-response json-rpc-response?
   parser-error invalid-request method-not-found invalid-params internal-error
   application-error system-error tranport-error
-  MalformedRequest? malformed-request?
-  MalformedResponse? malformed-response?)
+  JSON-RPCError JSON-RPCError? json-rpc-error?
+  MalformedRequest MalformedRequest? malformed-request?
+  MalformedResponse MalformedResponse? malformed-response?
+  decode-json-rpc-response)
 
 (import
   :gerbil/gambit/continuations
@@ -40,9 +44,12 @@
 (deferror-class (JSON-RPCError IOError)
   (code                                 ; SInt16
    message                              ; String
-   data)                                ; (Maybe Bytes)
+   data)                                ; Json ;; TODO: make it default to (void) not #f
   json-rpc-error?
-  class-instance-init!)
+  (lambda (self code: code message: message data: (data (void))
+           irritants: (irritants []) where: (where 'json-rpc))
+    (class-instance-init! self code: code message: message
+                          data: data irritants: irritants where: where)))
 (def json-rpc-error make-JSON-RPCError)
 
 (def (json-rpc-error-code e)
