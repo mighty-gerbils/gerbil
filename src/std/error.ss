@@ -1,8 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Gerbil error objects
-(import :gerbil/runtime/error
-        :gerbil/gambit/continuations
+(import :gerbil/gambit
+        :gerbil/runtime/error
         (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
@@ -11,7 +11,7 @@
         Error:::init!
         deferror-class
         StackTrace StackTrace?
-        BadArgument BadArgument? raise-bad-argument bad-argument-error?
+        BadArgument BadArgument? raise-bad-argument bad-argument-error? check-argument
         IOError IOError? raise-io-error io-error?
         Closed Closed? raise-io-closed io-closed-error?
         PrematureEndOfInput PrematureEndOfInput? raise-premature-end-of-input
@@ -29,7 +29,7 @@
   (syntax-case stx ()
     ((_ Class slots)
      (identifier? #'Class)
-     (#'(deferror-class (Class Error) slots #f Error:::init!)))
+     #'(deferror-class (Class Error) slots #f Error:::init!))
     ((_ Class slots predicate-alias)
      (identifier? #'Class)
      #'(deferror-class (Class Error) slots predicate-alias Error:::init!))
@@ -91,7 +91,7 @@
 (defrules check-argument ()
   ((_ expr expectation argument)
    (unless expr
-     (raise-bad-argument (exception-context argument) expectation argument))))
+     (raise-bad-argument (exception-context argument) expectation 'argument argument))))
 
 ;; check to the raiser!
 (def (raise-bad-argument where expectation . irritants)

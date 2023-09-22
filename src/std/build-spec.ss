@@ -170,6 +170,7 @@
     ;; :std/text
     "text/char-set"
     "text/basic-parsers"
+    "text/basic-printers"
     "text/utf8"
     "text/utf16"
     "text/utf32"
@@ -312,6 +313,9 @@
     "crypto"
     ;; :std/misc
     "misc/atom"
+    "misc/decimal"
+    "misc/extensible-vector"
+    "misc/prime"
     "misc/concurrent-plan"
     "misc/timeout"
     "misc/list-builder"

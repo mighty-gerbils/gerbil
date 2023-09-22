@@ -28,7 +28,8 @@
   with-id/expr
   defsyntax/unhygienic
   if-let
-  when-let)
+  when-let
+  def-check-argument-type)
 
 (import (for-syntax :std/misc/func
                     :std/stxutil))
@@ -421,3 +422,10 @@
    (let ((id expr)) (if id then else))))
 
 (defrule (when-let bindings body ...) (if-let bindings (begin body ...) (void)))
+
+(defrule (def-check-argument-type type ...)
+  (begin
+    (with-id type ((pred? #'type "?")
+                   (check "check-argument-" #'type))
+      (defrule (check a (... ...))
+        (begin (check-argument (pred? a) (symbol->string 'type) a) (... ...)))) ...))

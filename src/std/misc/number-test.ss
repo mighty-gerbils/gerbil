@@ -4,10 +4,15 @@
 ;;; :std/misc/number test
 
 (import :std/test
-        (only-in :std/sugar try catch)
+        (only-in :std/sugar try catch defrule)
         :std/error
         :std/misc/number)
 (export number-test)
+
+(defrule (check-rep parse unparse rep obj)
+  (begin ;;let ((rep rep) (obj obj))
+    (check-equal? (parse rep) obj)
+    (check-equal? (unparse obj) rep)))
 
 (def number-test
   (test-suite "test :std/misc/number"
@@ -74,4 +79,26 @@
       (check (post-decrement! (car l)) => 37)
       (check l => [36])
       (increment! (car l) 1 2 3)
-      (check l => [42]))))
+      (check l => [42]))
+
+    (test-case "normalize-nat, normalize-integer"
+      (defrule (check-normalize normalize (denormal normal) ...)
+        (begin
+          (begin
+            (check-equal? (normalize normal) normal)
+            (check-equal? (normalize denormal) normal)) ...))
+      (check-normalize (cut normalize-nat <> 10)
+                       (65536 0) (1025 1) (-32001 767))
+      (check-normalize (cut normalize-integer <> 10)
+                       (65536 0) (1025 1) (-32001 -257)))
+
+    (test-case "integer-log"
+      (check (integer-log 1 324) => 0)
+      (check (integer-log 64 2) => 6)
+      (check (integer-log 65 2) => 6)
+      (check (integer-log 63 2) => 5)
+      (check (integer-log (expt 5 881) 5) => 881))
+
+    (test-case "expt-mod"
+      (check (expt-mod 11954315054660605640 24 849105756568661461) => 645500962309081550)
+      #;(check (expt-mod 11954315054660605640 -24 849105756568661461) => ))))
