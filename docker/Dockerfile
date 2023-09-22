@@ -47,6 +47,7 @@ ARG cores
 ARG repo
 ARG branch
 ARG configure_args
+ENV GERBIL_BUILD_CORES=$cores
 ENV GERBIL_GCC=g++
 RUN  cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
     && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
