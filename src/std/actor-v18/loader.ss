@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; code loader
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         :std/crypto
         :std/text/hex

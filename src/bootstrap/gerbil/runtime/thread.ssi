@@ -1,0 +1,50 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/error)
+         (%#export #t)
+         (%#define-runtime spawn spawn)
+         (%#define-runtime spawn/name spawn/name)
+         (%#define-runtime spawn/group spawn/group)
+         (%#define-runtime spawn-actor spawn-actor)
+         (%#begin (%#define-runtime spawn-thread__% spawn-thread__%)
+                  (%#begin (%#define-runtime spawn-thread__0 spawn-thread__0)
+                           (%#define-runtime spawn-thread__1 spawn-thread__1)
+                           (%#define-runtime spawn-thread spawn-thread)))
+         (%#begin (%#define-runtime thread-local-ref__% thread-local-ref__%)
+                  (%#begin (%#define-runtime
+                            thread-local-ref__0
+                            thread-local-ref__0)
+                           (%#define-runtime
+                            thread-local-ref
+                            thread-local-ref)))
+         (%#define-runtime thread-local-get thread-local-get)
+         (%#define-runtime thread-local-set! thread-local-set!)
+         (%#define-runtime thread-local-clear! thread-local-clear!)
+         (%#define-runtime thread-local-table thread-local-table)
+         (%#define-runtime
+          __primordial-thread-locals
+          __primordial-thread-locals)
+         (%#define-runtime __thread-locals __thread-locals)
+         (%#define-runtime __thread-locals-mutex __thread-locals-mutex)
+         (%#define-runtime
+          __unhandled-actor-exception-hook
+          __unhandled-actor-exception-hook)
+         (%#define-runtime
+          unhandled-actor-exception-hook-set!
+          unhandled-actor-exception-hook-set!)
+         (%#define-runtime current-thread-group current-thread-group)
+         (%#define-runtime with-lock with-lock)
+         (%#define-runtime with-dynamic-lock with-dynamic-lock)
+         (%#extern
+          (actor-thread? actor-thread?)
+          (construct-actor-thread construct-actor-thread)
+          (actor-thread-locals actor-thread-locals)
+          (actor-thread-locals-set! actor-thread-locals-set!)
+          (actor-thread-nonce actor-thread-nonce)
+          (actor-thread-nonce-set! actor-thread-nonce-set!)))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/thread__0"))

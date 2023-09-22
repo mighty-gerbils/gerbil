@@ -71,7 +71,7 @@ This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`
 
 - To compile the bootstrap runtime:
 ```
-gxc -d bootstrap -s -S -O gerbil/runtime/{gambit,system,util,loader,control,mop,error,syntax,eval,repl,init}.ss gerbil/runtime.ss
+gxc -d bootstrap -s -S -O gerbil/runtime/{gambit,system,util,loader,control,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss
 ```
 
 - To compile the bootstrap core prelude:

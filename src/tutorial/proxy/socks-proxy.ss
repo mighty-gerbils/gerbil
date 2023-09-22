@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SOCKS4 proxy
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/logger
         :std/getopt
         :std/net/address

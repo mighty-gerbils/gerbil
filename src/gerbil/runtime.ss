@@ -14,6 +14,7 @@ package: gerbil
   "runtime/control"
   "runtime/mop"
   "runtime/error"
+  "runtime/thread"
   "runtime/syntax"
   "runtime/eval"
   "runtime/repl"

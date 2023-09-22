@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor ensemble registry
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar
         :std/iter
         :std/interface

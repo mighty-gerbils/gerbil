@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; :std/os/signalfd unit-test
 
-(import :gerbil/gambit/threads
-        :std/test
+(import :std/test
         ./signal
         ./signalfd
         ./pid)

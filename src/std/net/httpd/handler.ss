@@ -3,7 +3,6 @@
 ;;; embedded HTTP/1.1 server; request handler
 
 (import :gerbil/gambit/os
-        :gerbil/gambit/threads
         :std/error
         :std/sugar
         :std/io

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; symbolic utilities
-(import :gerbil/gambit/threads)
 (export #t)
 
 ;; caching symbol as string comparison

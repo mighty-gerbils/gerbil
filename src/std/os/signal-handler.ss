@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS signal handler interface
 
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/logger
         :std/sugar
         ./signal)

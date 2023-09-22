@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; Generic dispatch
 
-(import :gerbil/gambit/threads
-        :std/error)
+(import :std/error)
 (export type-of linear-type-of type-linearize-class
         make-generic generic? generic-id generic-dispatch
         generic-bind! generic-dispatch generic-dispatch-next

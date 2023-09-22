@@ -11,8 +11,7 @@
 ;;   but only one set of functions for atoms.
 ;; - Also export atom-increment! and atomic-counter for the common case.
 
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/sugar)
 
 (export atom

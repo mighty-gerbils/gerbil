@@ -277,6 +277,20 @@ package: gerbil
     ;; our home
     gerbil-home
 
+    ;; thread primitives
+    spawn spawn/name spawn/group spawn-actor spawn-thread
+    thread-local-ref thread-local-get thread-local-set! thread-local-clear!
+    unhandled-actor-exception-hook-set!
+    current-thread current-thread-group
+    thread? actor-thread?
+    thread-sleep! thread-join! thread-send thread-receive
+    thread-specific thread-specific-set!
+    current-thread
+    make-mutex mutex? mutex-lock! mutex-unlock! with-lock with-dynamic-lock
+    make-condition-variable condition-variable?
+    condition-variable-signal!
+    condition-variable-broadcast!
+
     ;; misc r7rs procedures
     list-copy list-set!
     string-downcase string-upcase

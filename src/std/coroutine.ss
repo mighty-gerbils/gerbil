@@ -2,9 +2,9 @@
 ;;; (C) vyzo
 ;;; coroutines and cothreads
 
-(import :gerbil/gambit/threads
-        :std/sugar
-        :std/error)
+(import :std/sugar
+        :std/error
+        :gerbil/gambit/threads)
 (export coroutine (rename: cort? coroutine?) continue yield
         cothread cothread? cothread-stop!)
 

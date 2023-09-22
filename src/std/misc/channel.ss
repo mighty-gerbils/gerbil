@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; buffered channels
 
-(import :gerbil/gambit/threads
-        :std/misc/queue
+(import :std/misc/queue
         :std/misc/timeout
         :std/generic
         :std/iter

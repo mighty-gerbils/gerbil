@@ -1,13 +1,4 @@
 # Thread Primitives
-
-The following primitives are defined in the `:gerbil/gambit/threads` prelude module.
-
-::: tip To use the bindings from this module:
-``` scheme
-(import :gerbil/gambit/threads)
-```
-:::
-
 ## spawn
 ``` scheme
 (spawn f . args) -> actor thread
@@ -128,6 +119,19 @@ Returns the thread-group of the current thread.
 ## with-lock
 ``` scheme
 (with-lock mx thunk) -> any
+
+  mx    := mutex
+  thunk := procedure
+```
+
+Evaluates *thunk* with `mx` automatically locked on entry and unlocked on exist or if an exception is raised.
+
+Note: the continuation should not escape or deadlock can occur. If you
+may have a continuation escaping, use `with-dynamic-lock`.
+
+## with-dynamic-lock
+``` scheme
+(with-dynamic-lock mx thunk) -> any
 
   mx    := mutex
   thunk := procedure

@@ -2,8 +2,7 @@
 ;;; ̧© vyzo
 ;;; embedded HTTP/1.1 server
 
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/error
         (only-in :std/logger start-logger!)
         :std/io
@@ -11,6 +10,7 @@
         :std/net/ssl
         :std/os/socket
         :std/misc/threads
+        :gerbil/gambit/threads
         ./base
         ./handler
         ./mux)

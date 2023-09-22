@@ -5,7 +5,6 @@
 
 (import :gerbil/expander
         :gerbil/gambit/ports
-        :gerbil/gambit/threads
         :std/build-config
         :std/make
         :std/iter
@@ -40,6 +39,7 @@
     "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"

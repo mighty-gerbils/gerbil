@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; transient parallel workgroups
-(import :gerbil/gambit/threads
-        :std/error
+(import :std/error
         :std/iter
         ./channel)
 (export WG? make-wg wg-add! wg-wait!)

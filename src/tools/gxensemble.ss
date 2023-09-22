@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor ensemble management tool
-(import :gerbil/gambit/threads
-        :gerbil/expander
+(import :gerbil/expander
         :std/sugar
         :std/iter
         :std/getopt

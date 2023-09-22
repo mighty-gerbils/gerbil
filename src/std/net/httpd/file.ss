@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; httpd file response handler
 
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/io
         :std/net/httpd/handler)
 (export http-response-file)

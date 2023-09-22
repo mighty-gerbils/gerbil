@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor messages, primitives and macros
-(import :gerbil/gambit/threads
+(import :gerbil/runtime/thread
+        :gerbil/gambit/threads
         :gerbil/gambit/os
         :std/error
         :std/sugar

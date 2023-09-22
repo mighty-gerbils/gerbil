@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; dynamic httpd for ensemble tutorial
-(import :gerbil/gambit/threads
-        :std/net/httpd
+(import :std/net/httpd
         :std/io)
 (export run!)
 

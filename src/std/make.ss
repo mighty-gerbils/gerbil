@@ -40,8 +40,6 @@
         cppflags
         append-options)
 
-(import :gerbil/gambit/threads)
-
 (def default-gambit-gsc "gsc")
 (def default-gerbil-gxc "gxc")
 

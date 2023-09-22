@@ -47,7 +47,17 @@ namespace: #f
   readtable-sharing-allowed?-set
   output-port-readtable
   thread-thread-group
-  configure-command-string)
+  configure-command-string
+
+  make-thread
+  make-thread-group
+  current-thread current-thread-group
+  thread? thread-group?
+  thread-start!
+  thread-init!
+  thread-thread-group
+  make-mutex
+  mutex-lock! mutex-unlock!)
 
 ;; gambit macros
 (extern

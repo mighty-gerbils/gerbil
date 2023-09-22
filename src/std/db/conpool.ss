@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; Generic database connection pool
 
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/error
         :std/logger)
 (export make-conpool conpool?

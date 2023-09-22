@@ -11,6 +11,7 @@
     "gerbil/runtime/control.ss"
     "gerbil/runtime/mop.ss"
     "gerbil/runtime/error.ss"
+    "gerbil/runtime/thread.ss"
     "gerbil/runtime/syntax.ss"
     "gerbil/runtime/eval.ss"
     "gerbil/runtime/repl.ss"

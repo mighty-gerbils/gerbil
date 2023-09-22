@@ -2,8 +2,7 @@
 ;;; ̧© vyzo, drew
 ;;; PostgreSQL driver
 
-(import :gerbil/gambit/threads
-        :std/actor
+(import :std/actor
         :std/io
         :std/misc/channel
         :std/misc/list

@@ -6,6 +6,7 @@
     "gerbil/runtime/control"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"

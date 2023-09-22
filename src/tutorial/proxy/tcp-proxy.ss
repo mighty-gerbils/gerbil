@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; transparent TCP proxy using low level socket programming
-(import :gerbil/gambit/threads
-        :std/os/socket
+(import :std/os/socket
         :std/os/fd
         :std/os/error
         :std/event

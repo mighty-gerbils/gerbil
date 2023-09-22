@@ -3,7 +3,6 @@
 ;;; Logging support
 
 (import :gerbil/gambit/ports
-        :gerbil/gambit/threads
         :std/error
         :std/sugar
         :std/format

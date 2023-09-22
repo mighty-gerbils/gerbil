@@ -1,35 +1,21 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1695292405)
+  (define gerbil/compiler/base::timestamp 1695337519)
   (begin
-    (define gxc#current-compile-symbol-table
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-runtime-sections
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-runtime-names
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-output-dir
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-invoke-gsc
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-gsc-options
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-keep-scm
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-verbose
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-optimize
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-debug
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-generate-ssxi
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-static
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-timestamp
-      (let () (declare (not safe)) (make-parameter '#f)))
-    (define gxc#current-compile-decls
-      (let () (declare (not safe)) (make-parameter '#f)))
+    (define gxc#current-compile-symbol-table (make-parameter '#f))
+    (define gxc#current-compile-runtime-sections (make-parameter '#f))
+    (define gxc#current-compile-runtime-names (make-parameter '#f))
+    (define gxc#current-compile-output-dir (make-parameter '#f))
+    (define gxc#current-compile-invoke-gsc (make-parameter '#f))
+    (define gxc#current-compile-gsc-options (make-parameter '#f))
+    (define gxc#current-compile-keep-scm (make-parameter '#f))
+    (define gxc#current-compile-verbose (make-parameter '#f))
+    (define gxc#current-compile-optimize (make-parameter '#f))
+    (define gxc#current-compile-debug (make-parameter '#f))
+    (define gxc#current-compile-generate-ssxi (make-parameter '#f))
+    (define gxc#current-compile-static (make-parameter '#f))
+    (define gxc#current-compile-timestamp (make-parameter '#f))
+    (define gxc#current-compile-decls (make-parameter '#f))
     (define gxc#symbol-table::t
       (let ()
         (declare (not safe))
@@ -66,19 +52,19 @@
         (make-struct-field-mutator gxc#symbol-table::t '1)))
     (define gxc#symbol-table:::init!
       (lambda (_self532_)
-        (if (let ((__tmp4753
+        (if (let ((__tmp5353
                    (let () (declare (not safe)) (##vector-length _self532_))))
               (declare (not safe))
-              (##fx< '2 __tmp4753))
+              (##fx< '2 __tmp5353))
             (begin
-              (let ((__tmp4751
+              (let ((__tmp5351
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (declare (not safe))
-                (##vector-set! _self532_ '1 __tmp4751))
-              (let ((__tmp4752
+                (##vector-set! _self532_ '1 __tmp5351))
+              (let ((__tmp5352
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (declare (not safe))
-                (##vector-set! _self532_ '2 __tmp4752)))
+                (##vector-set! _self532_ '2 __tmp5352)))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self532_))))
     (let ()
@@ -101,17 +87,13 @@
       (lambda (_id386_)
         (let* ((_str388_
                 (if (let () (declare (not safe)) (symbol? _id386_))
-                    (let () (declare (not safe)) (symbol->string _id386_))
+                    (symbol->string _id386_)
                     _id386_))
-               (_len390_
-                (let () (declare (not safe)) (string-length _str388_)))
-               (_res392_ (let () (declare (not safe)) (make-string _len390_))))
+               (_len390_ (string-length _str388_))
+               (_res392_ (make-string _len390_)))
           (let _lp395_ ((_i397_ '0))
             (if (fx< _i397_ _len390_)
-                (let* ((_char399_
-                        (let ()
-                          (declare (not safe))
-                          (string-ref _str388_ _i397_)))
+                (let* ((_char399_ (string-ref _str388_ _i397_))
                        (_xchar401_
                         (if (let ()
                               (declare (not safe))
@@ -120,11 +102,9 @@
                                _char399_))
                             '#\_
                             _char399_)))
-                  (let ()
-                    (declare (not safe))
-                    (string-set! _res392_ _i397_ _xchar401_))
-                  (let ((__tmp4754
+                  (string-set! _res392_ _i397_ _xchar401_)
+                  (let ((__tmp5354
                          (let () (declare (not safe)) (fx+ _i397_ '1))))
                     (declare (not safe))
-                    (_lp395_ __tmp4754)))
+                    (_lp395_ __tmp5354)))
                 _res392_)))))))

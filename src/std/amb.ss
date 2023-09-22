@@ -3,10 +3,10 @@
 ;;; AMB: the ambiguous operator
 ;;; Orignally based on Ken Lovett's chicken implementation, but has mutated since then.
 
-(import :gerbil/gambit/threads
-        :std/sugar
+(import :std/sugar
         :std/error
-        :std/misc/shuffle)
+        :std/misc/shuffle
+        :gerbil/gambit/threads)
 (export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect
         amb-exhausted?
