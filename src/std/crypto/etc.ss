@@ -6,8 +6,7 @@
         call-with-binary-input
         random-bytes random-bytes!
         as-bytes)
-(import :gerbil/gambit
-        :std/error
+(import :std/error
         :std/format
         :std/text/utf8
         :std/crypto/libcrypto)

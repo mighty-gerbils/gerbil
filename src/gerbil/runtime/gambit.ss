@@ -62,7 +62,12 @@ namespace: #f
   thread-init!
   thread-thread-group
   make-mutex
-  mutex-lock! mutex-unlock!)
+  mutex-lock! mutex-unlock!
+
+  read-subu8vector
+  write-subu8vector
+  read-substring
+  write-substring)
 
 ;; gambit macros
 (extern

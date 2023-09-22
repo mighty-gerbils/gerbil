@@ -646,3 +646,13 @@ namespace: #f
                (##substring-move! hd 0 hdlen ostr k)
                ostr))))
         (else "")))))                   ; empty
+
+(def (read-u8vector bytes port)
+  (read-subu8vector bytes 0 (u8vector-length bytes) port))
+(def (write-u8vector bytes port)
+  (write-subu8vector bytes 0 (u8vector-length bytes) port))
+
+(def (read-string str port)
+  (read-substring str 0 (string-length str) port))
+(def (write-string str port)
+  (write-substring str 0 (string-length str) port))

@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto ciphers
 
-(import :gerbil/gambit
-        :std/error
+(import :std/error
         :std/text/utf8
         ./libcrypto
         ./etc

@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto public-key signatures
 
-(import :gerbil/gambit
+(import (only-in :gerbil/gambit foreign-release!)
         :std/error
         ./libcrypto
         ./etc)
@@ -28,22 +28,22 @@
 
 (def (bytes-argument bytes)
   (cond
-   ((bytes? bytes) bytes)
-   ((fixnum? bytes) (make-bytes bytes))
+   ((u8vector? bytes) bytes)
+   ((fixnum? bytes) (make-u8vector bytes))
    ((not bytes) #f)
    (else (error "invalid bytes argument" bytes))))
 
 (def (bytes-result bytes len)
   (cond
    ((zero? len) #f)
-   ((= len (bytes-length bytes)) bytes)
-   ((< len (bytes-length bytes))
+   ((= len (u8vector-length bytes)) bytes)
+   ((< len (u8vector-length bytes))
     (u8vector-shrink! bytes len)
     bytes)
    (else #f)))
 
 (def (key->bytes pkey bytes get_raw)
-  (def b (or (bytes-argument bytes) (make-bytes (get_raw pkey #f))))
+  (def b (or (bytes-argument bytes) (make-u8vector (get_raw pkey #f))))
   (def len (get_raw pkey b))
   (bytes-result b len))
 
@@ -60,7 +60,7 @@
     (unwind-protect
       (begin
         (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
-        (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
+        (let* ((s (or (bytes-argument sig) (make-u8vector 8192)))
                (result (EVP_DigestSign mctx s bytes)))
           (if (##fxzero? result)
             (raise-libcrypto-error)

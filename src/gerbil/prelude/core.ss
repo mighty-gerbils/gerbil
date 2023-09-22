@@ -320,6 +320,9 @@ package: gerbil
     read-u8 peek-u8 write-u8
     char-ready?
 
+    read-string write-string
+    read-u8vector write-u8vector
+
     ;; misc r7rs procedures
     list-copy list-set!
     string-downcase string-upcase

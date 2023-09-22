@@ -78,6 +78,8 @@ TODO:
 (def (prefix/ prefix path) (if prefix (string-append prefix "/" path) path)) ;; move to std/misc/path ?
 
 ;; from srfi/43
+(def (srfi43-vector-for-each proc vec)
+  (vector-for-each proc (list->vector (iota (vector-length vec))) vec))
 (def (vector-ensure-ref v i f)
   (or (vector-ref v i) (let ((x (f))) (vector-set! v i x) x)))
 
@@ -341,7 +343,7 @@ TODO:
 
   ;; 3. Compute dependencies for entries that are out-of-date, or at least not cached
   ;; NB: We assume this will catch any circular dependency and error out.
-  ((cut vector-for-each <> spec@)
+  ((cut srfi43-vector-for-each <> spec@)
    (lambda (target spec)
      (when (verbose>=? 7) (writeln [Step: 3.0 target: target spec]))
      (unless (vector-ref id@ target) ; skip if already done as up-to-date from previous build-deps
@@ -372,7 +374,7 @@ TODO:
     (assert! (pqueue-empty? ready-fg))
     (assert! (pqueue-empty? ready-bg))
 
-    ((cut vector-for-each <> deps@)
+    ((cut srfi43-vector-for-each <> deps@)
      (lambda (target deps)
        ((cut for-each <> deps)
         (lambda (dep)
@@ -380,7 +382,7 @@ TODO:
             (when other-target
               (hash-put! (vector-ensure-ref blocked-by@ target make-hash-table) other-target #t)
               (hash-put! (vector-ensure-ref blocking@ other-target make-hash-table) target #t)))))))
-    ((cut vector-for-each <> spec@)
+    ((cut srfi43-vector-for-each <> spec@)
      (lambda (target _) (unless (vector-ref blocked-by@ target) (pqueue-push! ready-fg target)))))
 
   (def (mark-built target . _)

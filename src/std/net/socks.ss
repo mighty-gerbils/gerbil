@@ -2,6 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; SOCKS 4/5 support
 
+;;; --- TO BE REWRITTEN ---
+
 (import :gerbil/gambit
         :std/pregexp
         :std/error
