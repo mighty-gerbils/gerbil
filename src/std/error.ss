@@ -7,6 +7,7 @@
         RuntimeException RuntimeException?
         Error Error?
         Error-message Error-irritants Error-where
+        exception-context
         Error:::init!
         deferror-class
         StackTrace StackTrace?
