@@ -51,7 +51,11 @@ namespace: #f
           (thread-thread-group thread-thread-group)
           (make-mutex make-mutex)
           (mutex-lock! mutex-lock!)
-          (mutex-unlock! mutex-unlock!))
+          (mutex-unlock! mutex-unlock!)
+          (read-subu8vector read-subu8vector)
+          (write-subu8vector write-subu8vector)
+          (read-substring read-substring)
+          (write-substring write-substring))
          (%#extern
           (macro-absent-obj macro-absent-obj)
           (macro-subtype-structure macro-subtype-structure)
