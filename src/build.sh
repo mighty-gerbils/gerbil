@@ -253,7 +253,7 @@ build_tools () {
 }
 
 build_tags () {
-  feedback_low "Buildin gerbil TAGS"
+  feedback_low "Building gerbil TAGS"
   gxtags gerbil std lang
 }
 
