@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1695337676)
+  (define gerbil/runtime/error::timestamp 1695377590)
   (begin
     (define Exception::t
       (let ()
@@ -268,6 +268,7 @@
                   _thunk12425_))))
           (declare (not safe))
           (##continuation-capture __tmp12489))))
+    (define with-exception-catcher with-catch)
     (define wrap-runtime-exception
       (lambda (_exn12415_)
         (if (or (heap-overflow-exception? _exn12415_)
@@ -402,9 +403,7 @@
       (lambda (_self12239_ _port12240_)
         (let ((_tmp-port12242_ (open-output-string))
               (_display-error-newline12243_
-               (if (macro-character-port? _port12240_)
-                   (> (macro-character-port-wchars _port12240_) '0)
-                   '#f)))
+               (> (output-port-column _port12240_) '0)))
           (let () (declare (not safe)) (fix-port-width! _tmp-port12242_))
           (let ((__tmp12494
                  (lambda ()
@@ -509,9 +508,7 @@
           (lambda (_self12239_ _port12240_)
             (let ((_tmp-port12242_ (open-output-string))
                   (_display-error-newline12243_
-                   (if (macro-character-port? _port12240_)
-                       (> (macro-character-port-wchars _port12240_) '0)
-                       '#f)))
+                   (> (output-port-column _port12240_) '0)))
               (let () (declare (not safe)) (fix-port-width! _tmp-port12242_))
               (let ((__tmp12499
                      (lambda ()
@@ -626,22 +623,22 @@
             (##write-string __tmp12505 _port12107_)))))
     (define RuntimeException::display-exception::specialize
       (lambda (__t12474)
-        (let ((__exception12475
+        (let ((__continuation12475
                (let ((__tmp12477
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12474 'exception))))
+                        (class-slot-offset __t12474 'continuation))))
                  (if __tmp12477
                      (let () (declare (not safe)) (##fx+ __tmp12477 '1))
-                     (error '"Unknown slot" 'exception))))
-              (__continuation12476
+                     (error '"Unknown slot" 'continuation))))
+              (__exception12476
                (let ((__tmp12478
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12474 'continuation))))
+                        (class-slot-offset __t12474 'exception))))
                  (if __tmp12478
                      (let () (declare (not safe)) (##fx+ __tmp12478 '1))
-                     (error '"Unknown slot" 'continuation)))))
+                     (error '"Unknown slot" 'exception)))))
           (lambda (_self12106_ _port12107_)
             (let ((_tmp-port12109_ (open-output-string)))
               (let () (declare (not safe)) (fix-port-width! _tmp-port12109_))
@@ -650,7 +647,7 @@
                        (declare (not safe))
                        (##unchecked-structure-ref
                         _self12106_
-                        __exception12475
+                        __exception12476
                         __t12474
                         '#f))))
                 (declare (not safe))
@@ -660,7 +657,7 @@
                        (declare (not safe))
                        (##unchecked-structure-ref
                         _self12106_
-                        __continuation12476
+                        __continuation12475
                         __t12474
                         '#f))))
                 (if _cont1211012112_

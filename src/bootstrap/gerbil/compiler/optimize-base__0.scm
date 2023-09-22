@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1695337519)
+  (define gerbil/compiler/optimize-base::timestamp 1695377617)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -21,8 +21,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#optimizer-info::t)))
     (define gxc#make-optimizer-info
-      (lambda _$args19693_
-        (apply make-struct-instance gxc#optimizer-info::t _$args19693_)))
+      (lambda _$args19694_
+        (apply make-struct-instance gxc#optimizer-info::t _$args19694_)))
     (define gxc#optimizer-info-type
       (let ()
         (declare (not safe))
@@ -48,28 +48,28 @@
         (declare (not safe))
         (make-struct-field-mutator gxc#optimizer-info::t '2)))
     (define gxc#optimizer-info:::init!
-      (lambda (_self19691_)
-        (if (let ((__tmp19698
+      (lambda (_self19692_)
+        (if (let ((__tmp19699
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self19691_))))
+                     (##vector-length _self19692_))))
               (declare (not safe))
-              (##fx< '3 __tmp19698))
+              (##fx< '3 __tmp19699))
             (begin
-              (let ((__tmp19695
-                     (let () (declare (not safe)) (make-table 'test: eq?))))
-                (declare (not safe))
-                (##vector-set! _self19691_ '1 __tmp19695))
               (let ((__tmp19696
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (declare (not safe))
-                (##vector-set! _self19691_ '2 __tmp19696))
+                (##vector-set! _self19692_ '1 __tmp19696))
               (let ((__tmp19697
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (declare (not safe))
-                (##vector-set! _self19691_ '3 __tmp19697)))
+                (##vector-set! _self19692_ '2 __tmp19697))
+              (let ((__tmp19698
+                     (let () (declare (not safe)) (make-table 'test: eq?))))
+                (declare (not safe))
+                (##vector-set! _self19692_ '3 __tmp19698)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self19691_))))
+                   _self19692_))))
     (let ()
       (declare (not safe))
       (bind-method!
@@ -84,8 +84,8 @@
     (define gxc#!type?
       (let () (declare (not safe)) (make-struct-predicate gxc#!type::t)))
     (define gxc#make-!type
-      (lambda _$args19566_
-        (apply make-struct-instance gxc#!type::t _$args19566_)))
+      (lambda _$args19567_
+        (apply make-struct-instance gxc#!type::t _$args19567_)))
     (define gxc#!type-id
       (let ()
         (declare (not safe))
@@ -101,8 +101,8 @@
     (define gxc#!alias?
       (let () (declare (not safe)) (make-struct-predicate gxc#!alias::t)))
     (define gxc#make-!alias
-      (lambda _$args19563_
-        (apply make-struct-instance gxc#!alias::t _$args19563_)))
+      (lambda _$args19564_
+        (apply make-struct-instance gxc#!alias::t _$args19564_)))
     (define gxc#!struct-type::t
       (let ()
         (declare (not safe))
@@ -119,8 +119,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!struct-type::t)))
     (define gxc#make-!struct-type
-      (lambda _$args19560_
-        (apply make-struct-instance gxc#!struct-type::t _$args19560_)))
+      (lambda _$args19561_
+        (apply make-struct-instance gxc#!struct-type::t _$args19561_)))
     (define gxc#!struct-type-super
       (let ()
         (declare (not safe))
@@ -183,8 +183,8 @@
     (define gxc#!class-type?
       (let () (declare (not safe)) (make-struct-predicate gxc#!class-type::t)))
     (define gxc#make-!class-type
-      (lambda _$args19557_
-        (apply make-struct-instance gxc#!class-type::t _$args19557_)))
+      (lambda _$args19558_
+        (apply make-struct-instance gxc#!class-type::t _$args19558_)))
     (define gxc#!class-type-super
       (let ()
         (declare (not safe))
@@ -255,8 +255,8 @@
     (define gxc#!procedure?
       (let () (declare (not safe)) (make-struct-predicate gxc#!procedure::t)))
     (define gxc#make-!procedure
-      (lambda _$args19554_
-        (apply make-struct-instance gxc#!procedure::t _$args19554_)))
+      (lambda _$args19555_
+        (apply make-struct-instance gxc#!procedure::t _$args19555_)))
     (define gxc#!struct-pred::t
       (let ()
         (declare (not safe))
@@ -273,8 +273,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!struct-pred::t)))
     (define gxc#make-!struct-pred
-      (lambda _$args19551_
-        (apply make-struct-instance gxc#!struct-pred::t _$args19551_)))
+      (lambda _$args19552_
+        (apply make-struct-instance gxc#!struct-pred::t _$args19552_)))
     (define gxc#!struct-cons::t
       (let ()
         (declare (not safe))
@@ -291,8 +291,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!struct-cons::t)))
     (define gxc#make-!struct-cons
-      (lambda _$args19548_
-        (apply make-struct-instance gxc#!struct-cons::t _$args19548_)))
+      (lambda _$args19549_
+        (apply make-struct-instance gxc#!struct-cons::t _$args19549_)))
     (define gxc#!struct-getf::t
       (let ()
         (declare (not safe))
@@ -309,8 +309,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!struct-getf::t)))
     (define gxc#make-!struct-getf
-      (lambda _$args19545_
-        (apply make-struct-instance gxc#!struct-getf::t _$args19545_)))
+      (lambda _$args19546_
+        (apply make-struct-instance gxc#!struct-getf::t _$args19546_)))
     (define gxc#!struct-getf-off
       (let ()
         (declare (not safe))
@@ -343,8 +343,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!struct-setf::t)))
     (define gxc#make-!struct-setf
-      (lambda _$args19542_
-        (apply make-struct-instance gxc#!struct-setf::t _$args19542_)))
+      (lambda _$args19543_
+        (apply make-struct-instance gxc#!struct-setf::t _$args19543_)))
     (define gxc#!struct-setf-off
       (let ()
         (declare (not safe))
@@ -375,8 +375,8 @@
     (define gxc#!class-pred?
       (let () (declare (not safe)) (make-struct-predicate gxc#!class-pred::t)))
     (define gxc#make-!class-pred
-      (lambda _$args19539_
-        (apply make-struct-instance gxc#!class-pred::t _$args19539_)))
+      (lambda _$args19540_
+        (apply make-struct-instance gxc#!class-pred::t _$args19540_)))
     (define gxc#!class-cons::t
       (let ()
         (declare (not safe))
@@ -391,8 +391,8 @@
     (define gxc#!class-cons?
       (let () (declare (not safe)) (make-struct-predicate gxc#!class-cons::t)))
     (define gxc#make-!class-cons
-      (lambda _$args19536_
-        (apply make-struct-instance gxc#!class-cons::t _$args19536_)))
+      (lambda _$args19537_
+        (apply make-struct-instance gxc#!class-cons::t _$args19537_)))
     (define gxc#!class-getf::t
       (let ()
         (declare (not safe))
@@ -407,8 +407,8 @@
     (define gxc#!class-getf?
       (let () (declare (not safe)) (make-struct-predicate gxc#!class-getf::t)))
     (define gxc#make-!class-getf
-      (lambda _$args19533_
-        (apply make-struct-instance gxc#!class-getf::t _$args19533_)))
+      (lambda _$args19534_
+        (apply make-struct-instance gxc#!class-getf::t _$args19534_)))
     (define gxc#!class-getf-slot
       (let ()
         (declare (not safe))
@@ -439,8 +439,8 @@
     (define gxc#!class-setf?
       (let () (declare (not safe)) (make-struct-predicate gxc#!class-setf::t)))
     (define gxc#make-!class-setf
-      (lambda _$args19530_
-        (apply make-struct-instance gxc#!class-setf::t _$args19530_)))
+      (lambda _$args19531_
+        (apply make-struct-instance gxc#!class-setf::t _$args19531_)))
     (define gxc#!class-setf-slot
       (let ()
         (declare (not safe))
@@ -471,8 +471,8 @@
     (define gxc#!lambda?
       (let () (declare (not safe)) (make-struct-predicate gxc#!lambda::t)))
     (define gxc#make-!lambda
-      (lambda _$args19527_
-        (apply make-struct-instance gxc#!lambda::t _$args19527_)))
+      (lambda _$args19528_
+        (apply make-struct-instance gxc#!lambda::t _$args19528_)))
     (define gxc#!lambda-arity
       (let ()
         (declare (not safe))
@@ -521,8 +521,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!case-lambda::t)))
     (define gxc#make-!case-lambda
-      (lambda _$args19524_
-        (apply make-struct-instance gxc#!case-lambda::t _$args19524_)))
+      (lambda _$args19525_
+        (apply make-struct-instance gxc#!case-lambda::t _$args19525_)))
     (define gxc#!case-lambda-clauses
       (let ()
         (declare (not safe))
@@ -545,8 +545,8 @@
     (define gxc#!kw-lambda?
       (let () (declare (not safe)) (make-struct-predicate gxc#!kw-lambda::t)))
     (define gxc#make-!kw-lambda
-      (lambda _$args19521_
-        (apply make-struct-instance gxc#!kw-lambda::t _$args19521_)))
+      (lambda _$args19522_
+        (apply make-struct-instance gxc#!kw-lambda::t _$args19522_)))
     (define gxc#!kw-lambda-table
       (let ()
         (declare (not safe))
@@ -579,8 +579,8 @@
         (declare (not safe))
         (make-struct-predicate gxc#!kw-lambda-primary::t)))
     (define gxc#make-!kw-lambda-primary
-      (lambda _$args19518_
-        (apply make-struct-instance gxc#!kw-lambda-primary::t _$args19518_)))
+      (lambda _$args19519_
+        (apply make-struct-instance gxc#!kw-lambda-primary::t _$args19519_)))
     (define gxc#!kw-lambda-primary-keys
       (let ()
         (declare (not safe))
@@ -604,18 +604,18 @@
     (define gxc#!primitive?
       (let () (declare (not safe)) (make-class-predicate gxc#!primitive::t)))
     (define gxc#make-!primitive
-      (lambda _$args19515_
-        (apply make-class-instance gxc#!primitive::t _$args19515_)))
+      (lambda _$args19516_
+        (apply make-class-instance gxc#!primitive::t _$args19516_)))
     (define gxc#!primitive-lambda::t
-      (let ((__tmp19699
-             (let ((__tmp19700
+      (let ((__tmp19700
+             (let ((__tmp19701
                     (let () (declare (not safe)) (cons gxc#!lambda::t '()))))
                (declare (not safe))
-               (cons gxc#!primitive::t __tmp19700))))
+               (cons gxc#!primitive::t __tmp19701))))
         (declare (not safe))
         (make-class-type
          'gxc#!primitive-lambda::t
-         __tmp19699
+         __tmp19700
          '()
          '!primitive-lambda
          '()
@@ -625,20 +625,20 @@
         (declare (not safe))
         (make-class-predicate gxc#!primitive-lambda::t)))
     (define gxc#make-!primitive-lambda
-      (lambda _$args19512_
-        (apply make-class-instance gxc#!primitive-lambda::t _$args19512_)))
+      (lambda _$args19513_
+        (apply make-class-instance gxc#!primitive-lambda::t _$args19513_)))
     (define gxc#!primitive-case-lambda::t
-      (let ((__tmp19701
-             (let ((__tmp19702
+      (let ((__tmp19702
+             (let ((__tmp19703
                     (let ()
                       (declare (not safe))
                       (cons gxc#!case-lambda::t '()))))
                (declare (not safe))
-               (cons gxc#!primitive::t __tmp19702))))
+               (cons gxc#!primitive::t __tmp19703))))
         (declare (not safe))
         (make-class-type
          'gxc#!primitive-case-lambda::t
-         __tmp19701
+         __tmp19702
          '()
          '!primitive-case-lambda
          '()
@@ -648,254 +648,254 @@
         (declare (not safe))
         (make-class-predicate gxc#!primitive-case-lambda::t)))
     (define gxc#make-!primitive-case-lambda
-      (lambda _$args19509_
+      (lambda _$args19510_
         (apply make-class-instance
                gxc#!primitive-case-lambda::t
-               _$args19509_)))
+               _$args19510_)))
     (define gxc#!struct-type:::init!
-      (lambda (_self19501_
-               _id19502_
-               _super19503_
-               _fields19504_
-               _xfields19505_
-               _ctor19506_
-               _plist19507_)
-        (if (let ((__tmp19703
+      (lambda (_self19502_
+               _id19503_
+               _super19504_
+               _fields19505_
+               _xfields19506_
+               _ctor19507_
+               _plist19508_)
+        (if (let ((__tmp19704
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self19501_))))
+                     (##vector-length _self19502_))))
               (declare (not safe))
-              (##fx< '7 __tmp19703))
+              (##fx< '7 __tmp19704))
             (begin
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '1 _id19502_))
+                (##vector-set! _self19502_ '1 _id19503_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '2 _super19503_))
+                (##vector-set! _self19502_ '2 _super19504_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '3 _fields19504_))
+                (##vector-set! _self19502_ '3 _fields19505_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '4 _xfields19505_))
+                (##vector-set! _self19502_ '4 _xfields19506_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '5 _ctor19506_))
+                (##vector-set! _self19502_ '5 _ctor19507_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19501_ '6 _plist19507_))
-              (let () (declare (not safe)) (##vector-set! _self19501_ '7 '#f)))
+                (##vector-set! _self19502_ '6 _plist19508_))
+              (let () (declare (not safe)) (##vector-set! _self19502_ '7 '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self19501_))))
+                   _self19502_))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#!struct-type::t ':init! gxc#!struct-type:::init! '#f))
     (define gxc#!class-type:::init!
-      (lambda (_self19370_
-               _id19371_
-               _super19372_
-               _mixin19373_
-               _slots19374_
-               _xslots19375_
-               _ctor19376_
-               _plist19377_)
-        (if (let ((__tmp19704
+      (lambda (_self19371_
+               _id19372_
+               _super19373_
+               _mixin19374_
+               _slots19375_
+               _xslots19376_
+               _ctor19377_
+               _plist19378_)
+        (if (let ((__tmp19705
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self19370_))))
+                     (##vector-length _self19371_))))
               (declare (not safe))
-              (##fx< '8 __tmp19704))
+              (##fx< '8 __tmp19705))
             (begin
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '1 _id19371_))
+                (##vector-set! _self19371_ '1 _id19372_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '2 _super19372_))
+                (##vector-set! _self19371_ '2 _super19373_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '3 _mixin19373_))
+                (##vector-set! _self19371_ '3 _mixin19374_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '4 _slots19374_))
+                (##vector-set! _self19371_ '4 _slots19375_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '5 _xslots19375_))
+                (##vector-set! _self19371_ '5 _xslots19376_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '6 _ctor19376_))
+                (##vector-set! _self19371_ '6 _ctor19377_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19370_ '7 _plist19377_))
-              (let () (declare (not safe)) (##vector-set! _self19370_ '8 '#f)))
+                (##vector-set! _self19371_ '7 _plist19378_))
+              (let () (declare (not safe)) (##vector-set! _self19371_ '8 '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self19370_))))
+                   _self19371_))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#!class-type::t ':init! gxc#!class-type:::init! '#f))
     (define gxc#!lambda:::init!__%
-      (lambda (_self19214_
-               _id19215_
-               _arity19216_
-               _dispatch19217_
-               _inline19218_
-               _typedecl19219_)
-        (if (let ((__tmp19705
+      (lambda (_self19215_
+               _id19216_
+               _arity19217_
+               _dispatch19218_
+               _inline19219_
+               _typedecl19220_)
+        (if (let ((__tmp19706
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self19214_))))
+                     (##vector-length _self19215_))))
               (declare (not safe))
-              (##fx< '5 __tmp19705))
+              (##fx< '5 __tmp19706))
             (begin
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19214_ '1 _id19215_))
+                (##vector-set! _self19215_ '1 _id19216_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19214_ '2 _arity19216_))
+                (##vector-set! _self19215_ '2 _arity19217_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19214_ '3 _dispatch19217_))
+                (##vector-set! _self19215_ '3 _dispatch19218_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19214_ '4 _inline19218_))
+                (##vector-set! _self19215_ '4 _inline19219_))
               (let ()
                 (declare (not safe))
-                (##vector-set! _self19214_ '5 _typedecl19219_)))
+                (##vector-set! _self19215_ '5 _typedecl19220_)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self19214_))))
+                   _self19215_))))
     (define gxc#!lambda:::init!__0
-      (lambda (_self19224_ _id19225_ _arity19226_ _dispatch19227_)
-        (let* ((_inline19229_ '#f) (_typedecl19231_ '#f))
-          (if (let ((__tmp19706
-                     (let ()
-                       (declare (not safe))
-                       (##vector-length _self19224_))))
-                (declare (not safe))
-                (##fx< '5 __tmp19706))
-              (begin
-                (let ()
-                  (declare (not safe))
-                  (##vector-set! _self19224_ '1 _id19225_))
-                (let ()
-                  (declare (not safe))
-                  (##vector-set! _self19224_ '2 _arity19226_))
-                (let ()
-                  (declare (not safe))
-                  (##vector-set! _self19224_ '3 _dispatch19227_))
-                (let ()
-                  (declare (not safe))
-                  (##vector-set! _self19224_ '4 _inline19229_))
-                (let ()
-                  (declare (not safe))
-                  (##vector-set! _self19224_ '5 _typedecl19231_)))
-              (error '"struct-instance-init!: too many arguments for struct"
-                     _self19224_)))))
-    (define gxc#!lambda:::init!__1
-      (lambda (_self19233_
-               _id19234_
-               _arity19235_
-               _dispatch19236_
-               _inline19237_)
-        (let ((_typedecl19239_ '#f))
+      (lambda (_self19225_ _id19226_ _arity19227_ _dispatch19228_)
+        (let* ((_inline19230_ '#f) (_typedecl19232_ '#f))
           (if (let ((__tmp19707
                      (let ()
                        (declare (not safe))
-                       (##vector-length _self19233_))))
+                       (##vector-length _self19225_))))
                 (declare (not safe))
                 (##fx< '5 __tmp19707))
               (begin
                 (let ()
                   (declare (not safe))
-                  (##vector-set! _self19233_ '1 _id19234_))
+                  (##vector-set! _self19225_ '1 _id19226_))
                 (let ()
                   (declare (not safe))
-                  (##vector-set! _self19233_ '2 _arity19235_))
+                  (##vector-set! _self19225_ '2 _arity19227_))
                 (let ()
                   (declare (not safe))
-                  (##vector-set! _self19233_ '3 _dispatch19236_))
+                  (##vector-set! _self19225_ '3 _dispatch19228_))
                 (let ()
                   (declare (not safe))
-                  (##vector-set! _self19233_ '4 _inline19237_))
+                  (##vector-set! _self19225_ '4 _inline19230_))
                 (let ()
                   (declare (not safe))
-                  (##vector-set! _self19233_ '5 _typedecl19239_)))
+                  (##vector-set! _self19225_ '5 _typedecl19232_)))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self19233_)))))
+                     _self19225_)))))
+    (define gxc#!lambda:::init!__1
+      (lambda (_self19234_
+               _id19235_
+               _arity19236_
+               _dispatch19237_
+               _inline19238_)
+        (let ((_typedecl19240_ '#f))
+          (if (let ((__tmp19708
+                     (let ()
+                       (declare (not safe))
+                       (##vector-length _self19234_))))
+                (declare (not safe))
+                (##fx< '5 __tmp19708))
+              (begin
+                (let ()
+                  (declare (not safe))
+                  (##vector-set! _self19234_ '1 _id19235_))
+                (let ()
+                  (declare (not safe))
+                  (##vector-set! _self19234_ '2 _arity19236_))
+                (let ()
+                  (declare (not safe))
+                  (##vector-set! _self19234_ '3 _dispatch19237_))
+                (let ()
+                  (declare (not safe))
+                  (##vector-set! _self19234_ '4 _inline19238_))
+                (let ()
+                  (declare (not safe))
+                  (##vector-set! _self19234_ '5 _typedecl19240_)))
+              (error '"struct-instance-init!: too many arguments for struct"
+                     _self19234_)))))
     (define gxc#!lambda:::init!
-      (lambda _g19709_
-        (let ((_g19708_ (let () (declare (not safe)) (##length _g19709_))))
-          (cond ((let () (declare (not safe)) (##fx= _g19708_ 4))
-                 (apply (lambda (_self19224_
-                                 _id19225_
-                                 _arity19226_
-                                 _dispatch19227_)
+      (lambda _g19710_
+        (let ((_g19709_ (let () (declare (not safe)) (##length _g19710_))))
+          (cond ((let () (declare (not safe)) (##fx= _g19709_ 4))
+                 (apply (lambda (_self19225_
+                                 _id19226_
+                                 _arity19227_
+                                 _dispatch19228_)
                           (let ()
                             (declare (not safe))
                             (gxc#!lambda:::init!__0
-                             _self19224_
-                             _id19225_
-                             _arity19226_
-                             _dispatch19227_)))
-                        _g19709_))
-                ((let () (declare (not safe)) (##fx= _g19708_ 5))
-                 (apply (lambda (_self19233_
-                                 _id19234_
-                                 _arity19235_
-                                 _dispatch19236_
-                                 _inline19237_)
+                             _self19225_
+                             _id19226_
+                             _arity19227_
+                             _dispatch19228_)))
+                        _g19710_))
+                ((let () (declare (not safe)) (##fx= _g19709_ 5))
+                 (apply (lambda (_self19234_
+                                 _id19235_
+                                 _arity19236_
+                                 _dispatch19237_
+                                 _inline19238_)
                           (let ()
                             (declare (not safe))
                             (gxc#!lambda:::init!__1
-                             _self19233_
-                             _id19234_
-                             _arity19235_
-                             _dispatch19236_
-                             _inline19237_)))
-                        _g19709_))
-                ((let () (declare (not safe)) (##fx= _g19708_ 6))
-                 (apply (lambda (_self19241_
-                                 _id19242_
-                                 _arity19243_
-                                 _dispatch19244_
-                                 _inline19245_
-                                 _typedecl19246_)
-                          (if (let ((__tmp19710
+                             _self19234_
+                             _id19235_
+                             _arity19236_
+                             _dispatch19237_
+                             _inline19238_)))
+                        _g19710_))
+                ((let () (declare (not safe)) (##fx= _g19709_ 6))
+                 (apply (lambda (_self19242_
+                                 _id19243_
+                                 _arity19244_
+                                 _dispatch19245_
+                                 _inline19246_
+                                 _typedecl19247_)
+                          (if (let ((__tmp19711
                                      (let ()
                                        (declare (not safe))
-                                       (##vector-length _self19241_))))
+                                       (##vector-length _self19242_))))
                                 (declare (not safe))
-                                (##fx< '5 __tmp19710))
+                                (##fx< '5 __tmp19711))
                               (begin
                                 (let ()
                                   (declare (not safe))
-                                  (##vector-set! _self19241_ '1 _id19242_))
+                                  (##vector-set! _self19242_ '1 _id19243_))
                                 (let ()
                                   (declare (not safe))
-                                  (##vector-set! _self19241_ '2 _arity19243_))
+                                  (##vector-set! _self19242_ '2 _arity19244_))
                                 (let ()
                                   (declare (not safe))
                                   (##vector-set!
-                                   _self19241_
+                                   _self19242_
                                    '3
-                                   _dispatch19244_))
+                                   _dispatch19245_))
                                 (let ()
                                   (declare (not safe))
-                                  (##vector-set! _self19241_ '4 _inline19245_))
+                                  (##vector-set! _self19242_ '4 _inline19246_))
                                 (let ()
                                   (declare (not safe))
                                   (##vector-set!
-                                   _self19241_
+                                   _self19242_
                                    '5
-                                   _typedecl19246_)))
+                                   _typedecl19247_)))
                               (error '"struct-instance-init!: too many arguments for struct"
-                                     _self19241_)))
-                        _g19709_))
+                                     _self19242_)))
+                        _g19710_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#!lambda:::init!
-                  _g19709_))))))
+                  _g19710_))))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#!lambda::t ':init! gxc#!lambda:::init! '#f))
@@ -908,8 +908,8 @@
        gxc#!primitive-lambda:::init!
        '#f))
     (define gxc#!primitive-case-lambda:::init!
-      (lambda (_self18966_ . _args18967_)
-        (apply struct-instance-init! _self18966_ _args18967_)))
+      (lambda (_self18967_ . _args18968_)
+        (apply struct-instance-init! _self18967_ _args18968_)))
     (let ()
       (declare (not safe))
       (bind-method!
@@ -918,117 +918,117 @@
        gxc#!primitive-case-lambda:::init!
        '#f))
     (define gxc#!struct-type-vtab
-      (lambda (_type18836_)
-        (let ((_$e18838_
-               (##structure-ref _type18836_ '7 gxc#!struct-type::t '#f)))
-          (if _$e18838_
-              (values _$e18838_)
-              (let ((_vtab18841_
+      (lambda (_type18837_)
+        (let ((_$e18839_
+               (##structure-ref _type18837_ '7 gxc#!struct-type::t '#f)))
+          (if _$e18839_
+              (values _$e18839_)
+              (let ((_vtab18842_
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (##structure-set!
-                 _type18836_
-                 _vtab18841_
+                 _type18837_
+                 _vtab18842_
                  '7
                  gxc#!struct-type::t
                  '#f)
-                _vtab18841_)))))
+                _vtab18842_)))))
     (define gxc#!class-type-vtab
-      (lambda (_type18829_)
-        (let ((_$e18831_
-               (##structure-ref _type18829_ '8 gxc#!class-type::t '#f)))
-          (if _$e18831_
-              (values _$e18831_)
-              (let ((_vtab18834_
+      (lambda (_type18830_)
+        (let ((_$e18832_
+               (##structure-ref _type18830_ '8 gxc#!class-type::t '#f)))
+          (if _$e18832_
+              (values _$e18832_)
+              (let ((_vtab18835_
                      (let () (declare (not safe)) (make-table 'test: eq?))))
                 (##structure-set!
-                 _type18829_
-                 _vtab18834_
+                 _type18830_
+                 _vtab18835_
                  '8
                  gxc#!class-type::t
                  '#f)
-                _vtab18834_)))))
+                _vtab18835_)))))
     (define gxc#!type-vtab
-      (lambda (_type18827_)
+      (lambda (_type18828_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _type18827_ 'gxc#!struct-type::t))
-            (let () (declare (not safe)) (gxc#!struct-type-vtab _type18827_))
+              (##structure-instance-of? _type18828_ 'gxc#!struct-type::t))
+            (let () (declare (not safe)) (gxc#!struct-type-vtab _type18828_))
             (if (let ()
                   (declare (not safe))
-                  (##structure-instance-of? _type18827_ 'gxc#!class-type::t))
+                  (##structure-instance-of? _type18828_ 'gxc#!class-type::t))
                 (let ()
                   (declare (not safe))
-                  (gxc#!class-type-vtab _type18827_))
+                  (gxc#!class-type-vtab _type18828_))
                 '#f))))
     (define gxc#!struct-type-lookup-method
-      (lambda (_type18818_ _method18819_)
-        (let ((_vtab1882018822_
-               (##structure-ref _type18818_ '7 gxc#!struct-type::t '#f)))
-          (if _vtab1882018822_
-              (let ((_vtab18825_ _vtab1882018822_))
+      (lambda (_type18819_ _method18820_)
+        (let ((_vtab1882118823_
+               (##structure-ref _type18819_ '7 gxc#!struct-type::t '#f)))
+          (if _vtab1882118823_
+              (let ((_vtab18826_ _vtab1882118823_))
                 (declare (not safe))
-                (table-ref _vtab18825_ _method18819_ '#f))
+                (table-ref _vtab18826_ _method18820_ '#f))
               '#f))))
     (define gxc#!class-type-lookup-method
-      (lambda (_type18809_ _method18810_)
-        (let ((_vtab1881118813_
-               (##structure-ref _type18809_ '8 gxc#!class-type::t '#f)))
-          (if _vtab1881118813_
-              (let ((_vtab18816_ _vtab1881118813_))
+      (lambda (_type18810_ _method18811_)
+        (let ((_vtab1881218814_
+               (##structure-ref _type18810_ '8 gxc#!class-type::t '#f)))
+          (if _vtab1881218814_
+              (let ((_vtab18817_ _vtab1881218814_))
                 (declare (not safe))
-                (table-ref _vtab18816_ _method18810_ '#f))
+                (table-ref _vtab18817_ _method18811_ '#f))
               '#f))))
     (define gxc#!type-lookup-method
-      (lambda (_type18806_ _method18807_)
+      (lambda (_type18807_ _method18808_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _type18806_ 'gxc#!struct-type::t))
+              (##structure-instance-of? _type18807_ 'gxc#!struct-type::t))
             (let ()
               (declare (not safe))
-              (gxc#!struct-type-lookup-method _type18806_ _method18807_))
+              (gxc#!struct-type-lookup-method _type18807_ _method18808_))
             (if (let ()
                   (declare (not safe))
-                  (##structure-instance-of? _type18806_ 'gxc#!class-type::t))
+                  (##structure-instance-of? _type18807_ 'gxc#!class-type::t))
                 (let ()
                   (declare (not safe))
-                  (gxc#!class-type-lookup-method _type18806_ _method18807_))
+                  (gxc#!class-type-lookup-method _type18807_ _method18808_))
                 '#f))))
     (define gxc#!class-type-complete?
-      (lambda (_type18797_)
-        (if (##structure-ref _type18797_ '4 gxc#!class-type::t '#f)
-            (let ((_super18799_
-                   (##structure-ref _type18797_ '2 gxc#!class-type::t '#f)))
-              (if (let () (declare (not safe)) (not _super18799_))
+      (lambda (_type18798_)
+        (if (##structure-ref _type18798_ '4 gxc#!class-type::t '#f)
+            (let ((_super18800_
+                   (##structure-ref _type18798_ '2 gxc#!class-type::t '#f)))
+              (if (let () (declare (not safe)) (not _super18800_))
                   '#t
-                  (let ((_$e18801_
+                  (let ((_$e18802_
                          (let ()
                            (declare (not safe))
-                           (gxc#optimizer-lookup-type _super18799_))))
-                    (if _$e18801_
-                        ((lambda (_super-t18804_)
+                           (gxc#optimizer-lookup-type _super18800_))))
+                    (if _$e18802_
+                        ((lambda (_super-t18805_)
                            (if (##structure-ref
-                                _super-t18804_
+                                _super-t18805_
                                 '4
                                 gxc#!struct-type::t
                                 '#f)
                                '#t
                                '#f))
-                         _$e18801_)
+                         _$e18802_)
                         '#f))))
             '#f)))
     (define gxc#optimizer-declare-type!__%
-      (lambda (_sym18781_ _type18782_ _local?18783_)
+      (lambda (_sym18782_ _type18783_ _local?18784_)
         (if (let ()
               (declare (not safe))
-              (##structure-instance-of? _type18782_ 'gxc#!type::t))
+              (##structure-instance-of? _type18783_ 'gxc#!type::t))
             '#!void
-            (error '"bad declaration: expected !type" _sym18781_ _type18782_))
-        (let ((__tmp19711
-               (let () (declare (not safe)) (struct->list _type18782_))))
-          (declare (not safe))
-          (gxc#verbose '"declare-type " _sym18781_ '" " __tmp19711))
+            (error '"bad declaration: expected !type" _sym18782_ _type18783_))
         (let ((__tmp19712
-               (if _local?18783_
+               (let () (declare (not safe)) (struct->list _type18783_))))
+          (declare (not safe))
+          (gxc#verbose '"declare-type " _sym18782_ '" " __tmp19712))
+        (let ((__tmp19713
+               (if _local?18784_
                    (gxc#current-compile-local-type)
                    (##structure-ref
                     (gxc#current-compile-optimizer-info)
@@ -1036,44 +1036,44 @@
                     gxc#optimizer-info::t
                     '#f))))
           (declare (not safe))
-          (table-set! __tmp19712 _sym18781_ _type18782_))))
+          (table-set! __tmp19713 _sym18782_ _type18783_))))
     (define gxc#optimizer-declare-type!__0
-      (lambda (_sym18788_ _type18789_)
-        (let ((_local?18791_ '#f))
+      (lambda (_sym18789_ _type18790_)
+        (let ((_local?18792_ '#f))
           (declare (not safe))
           (gxc#optimizer-declare-type!__%
-           _sym18788_
-           _type18789_
-           _local?18791_))))
+           _sym18789_
+           _type18790_
+           _local?18792_))))
     (define gxc#optimizer-declare-type!
-      (lambda _g19714_
-        (let ((_g19713_ (let () (declare (not safe)) (##length _g19714_))))
-          (cond ((let () (declare (not safe)) (##fx= _g19713_ 2))
-                 (apply (lambda (_sym18788_ _type18789_)
+      (lambda _g19715_
+        (let ((_g19714_ (let () (declare (not safe)) (##length _g19715_))))
+          (cond ((let () (declare (not safe)) (##fx= _g19714_ 2))
+                 (apply (lambda (_sym18789_ _type18790_)
                           (let ()
                             (declare (not safe))
                             (gxc#optimizer-declare-type!__0
-                             _sym18788_
-                             _type18789_)))
-                        _g19714_))
-                ((let () (declare (not safe)) (##fx= _g19713_ 3))
-                 (apply (lambda (_sym18793_ _type18794_ _local?18795_)
+                             _sym18789_
+                             _type18790_)))
+                        _g19715_))
+                ((let () (declare (not safe)) (##fx= _g19714_ 3))
+                 (apply (lambda (_sym18794_ _type18795_ _local?18796_)
                           (let ()
                             (declare (not safe))
                             (gxc#optimizer-declare-type!__%
-                             _sym18793_
-                             _type18794_
-                             _local?18795_)))
-                        _g19714_))
+                             _sym18794_
+                             _type18795_
+                             _local?18796_)))
+                        _g19715_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-type!
-                  _g19714_))))))
+                  _g19715_))))))
     (define gxc#optimizer-clear-type!__%
-      (lambda (_sym18767_ _local?18768_)
-        (let () (declare (not safe)) (gxc#verbose '"clear-type " _sym18767_))
-        (let ((__tmp19715
-               (if _local?18768_
+      (lambda (_sym18768_ _local?18769_)
+        (let () (declare (not safe)) (gxc#verbose '"clear-type " _sym18768_))
+        (let ((__tmp19716
+               (if _local?18769_
                    (gxc#current-compile-local-type)
                    (##structure-ref
                     (gxc#current-compile-optimizer-info)
@@ -1081,182 +1081,172 @@
                     gxc#optimizer-info::t
                     '#f))))
           (declare (not safe))
-          (table-set! __tmp19715 _sym18767_))))
+          (table-set! __tmp19716 _sym18768_))))
     (define gxc#optimizer-clear-type!__0
-      (lambda (_sym18773_)
-        (let ((_local?18775_ '#f))
+      (lambda (_sym18774_)
+        (let ((_local?18776_ '#f))
           (declare (not safe))
-          (gxc#optimizer-clear-type!__% _sym18773_ _local?18775_))))
+          (gxc#optimizer-clear-type!__% _sym18774_ _local?18776_))))
     (define gxc#optimizer-clear-type!
-      (lambda _g19717_
-        (let ((_g19716_ (let () (declare (not safe)) (##length _g19717_))))
-          (cond ((let () (declare (not safe)) (##fx= _g19716_ 1))
-                 (apply (lambda (_sym18773_)
+      (lambda _g19718_
+        (let ((_g19717_ (let () (declare (not safe)) (##length _g19718_))))
+          (cond ((let () (declare (not safe)) (##fx= _g19717_ 1))
+                 (apply (lambda (_sym18774_)
                           (let ()
                             (declare (not safe))
-                            (gxc#optimizer-clear-type!__0 _sym18773_)))
-                        _g19717_))
-                ((let () (declare (not safe)) (##fx= _g19716_ 2))
-                 (apply (lambda (_sym18777_ _local?18778_)
+                            (gxc#optimizer-clear-type!__0 _sym18774_)))
+                        _g19718_))
+                ((let () (declare (not safe)) (##fx= _g19717_ 2))
+                 (apply (lambda (_sym18778_ _local?18779_)
                           (let ()
                             (declare (not safe))
                             (gxc#optimizer-clear-type!__%
-                             _sym18777_
-                             _local?18778_)))
-                        _g19717_))
+                             _sym18778_
+                             _local?18779_)))
+                        _g19718_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-clear-type!
-                  _g19717_))))))
+                  _g19718_))))))
     (define gxc#optimizer-declare-method!__%
-      (lambda (_type-t18740_ _method18741_ _sym18742_ _rebind?18743_)
-        (let* ((_type18745_
+      (lambda (_type-t18741_ _method18742_ _sym18743_ _rebind?18744_)
+        (let* ((_type18746_
                 (let ()
                   (declare (not safe))
-                  (gxc#optimizer-resolve-type _type-t18740_)))
-               (_$e18747_
-                (let () (declare (not safe)) (gxc#!type-vtab _type18745_))))
-          (if _$e18747_
-              ((lambda (_vtab18750_)
+                  (gxc#optimizer-resolve-type _type-t18741_)))
+               (_$e18748_
+                (let () (declare (not safe)) (gxc#!type-vtab _type18746_))))
+          (if _$e18748_
+              ((lambda (_vtab18751_)
                  (if (let ()
                        (declare (not safe))
-                       (hash-key? _vtab18750_ _method18741_))
-                     (if _rebind?18743_
+                       (hash-key? _vtab18751_ _method18742_))
+                     (if _rebind?18744_
                          (begin
                            (let ()
                              (declare (not safe))
                              (gxc#verbose
                               '"declare-method: rebind existing method"
-                              _type-t18740_
+                              _type-t18741_
                               '" "
-                              _method18741_))
+                              _method18742_))
                            (let ()
                              (declare (not safe))
                              (table-set!
-                              _vtab18750_
-                              _method18741_
-                              _sym18742_)))
+                              _vtab18751_
+                              _method18742_
+                              _sym18743_)))
                          (error '"declare-method: duplicate method declaration"))
                      (begin
                        (let ()
                          (declare (not safe))
                          (gxc#verbose
                           '"declare-method "
-                          _type-t18740_
+                          _type-t18741_
                           '" "
-                          _method18741_
+                          _method18742_
                           '" => "
-                          _sym18742_))
+                          _sym18743_))
                        (let ()
                          (declare (not safe))
-                         (table-set! _vtab18750_ _method18741_ _sym18742_)))))
-               _$e18747_)
-              (if (let () (declare (not safe)) (not _type18745_))
+                         (table-set! _vtab18751_ _method18742_ _sym18743_)))))
+               _$e18748_)
+              (if (let () (declare (not safe)) (not _type18746_))
                   (let ()
                     (declare (not safe))
                     (gxc#verbose
                      '"declare-method: unknown type "
-                     _type-t18740_))
+                     _type-t18741_))
                   (error '"declare-method: bad method declaration; no method table"
-                         _type-t18740_
-                         _type18745_))))))
+                         _type-t18741_
+                         _type18746_))))))
     (define gxc#optimizer-declare-method!__0
-      (lambda (_type-t18755_ _method18756_ _sym18757_)
-        (let ((_rebind?18759_ '#f))
+      (lambda (_type-t18756_ _method18757_ _sym18758_)
+        (let ((_rebind?18760_ '#f))
           (declare (not safe))
           (gxc#optimizer-declare-method!__%
-           _type-t18755_
-           _method18756_
-           _sym18757_
-           _rebind?18759_))))
+           _type-t18756_
+           _method18757_
+           _sym18758_
+           _rebind?18760_))))
     (define gxc#optimizer-declare-method!
-      (lambda _g19719_
-        (let ((_g19718_ (let () (declare (not safe)) (##length _g19719_))))
-          (cond ((let () (declare (not safe)) (##fx= _g19718_ 3))
-                 (apply (lambda (_type-t18755_ _method18756_ _sym18757_)
+      (lambda _g19720_
+        (let ((_g19719_ (let () (declare (not safe)) (##length _g19720_))))
+          (cond ((let () (declare (not safe)) (##fx= _g19719_ 3))
+                 (apply (lambda (_type-t18756_ _method18757_ _sym18758_)
                           (let ()
                             (declare (not safe))
                             (gxc#optimizer-declare-method!__0
-                             _type-t18755_
-                             _method18756_
-                             _sym18757_)))
-                        _g19719_))
-                ((let () (declare (not safe)) (##fx= _g19718_ 4))
-                 (apply (lambda (_type-t18761_
-                                 _method18762_
-                                 _sym18763_
-                                 _rebind?18764_)
+                             _type-t18756_
+                             _method18757_
+                             _sym18758_)))
+                        _g19720_))
+                ((let () (declare (not safe)) (##fx= _g19719_ 4))
+                 (apply (lambda (_type-t18762_
+                                 _method18763_
+                                 _sym18764_
+                                 _rebind?18765_)
                           (let ()
                             (declare (not safe))
                             (gxc#optimizer-declare-method!__%
-                             _type-t18761_
-                             _method18762_
-                             _sym18763_
-                             _rebind?18764_)))
-                        _g19719_))
+                             _type-t18762_
+                             _method18763_
+                             _sym18764_
+                             _rebind?18765_)))
+                        _g19720_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#optimizer-declare-method!
-                  _g19719_))))))
+                  _g19720_))))))
     (define gxc#optimizer-lookup-type
-      (lambda (_sym18728_)
-        (let ((_$e18736_
-               (let ((_ht1872918731_ (gxc#current-compile-local-type)))
-                 (if _ht1872918731_
-                     (let ((_ht18734_ _ht1872918731_))
+      (lambda (_sym18729_)
+        (let ((_$e18737_
+               (let ((_ht1873018732_ (gxc#current-compile-local-type)))
+                 (if _ht1873018732_
+                     (let ((_ht18735_ _ht1873018732_))
                        (declare (not safe))
-                       (table-ref _ht18734_ _sym18728_ '#f))
+                       (table-ref _ht18735_ _sym18729_ '#f))
                      '#f))))
-          (if _$e18736_
-              _$e18736_
-              (let ((__tmp19720
+          (if _$e18737_
+              _$e18737_
+              (let ((__tmp19721
                      (##structure-ref
                       (gxc#current-compile-optimizer-info)
                       '1
                       gxc#optimizer-info::t
                       '#f)))
                 (declare (not safe))
-                (table-ref __tmp19720 _sym18728_ '#f))))))
+                (table-ref __tmp19721 _sym18729_ '#f))))))
     (define gxc#optimizer-resolve-type
-      (lambda (_sym18720_)
-        (let ((_type1872118723_
+      (lambda (_sym18721_)
+        (let ((_type1872218724_
                (let ()
                  (declare (not safe))
-                 (gxc#optimizer-lookup-type _sym18720_))))
-          (if _type1872118723_
-              (let ((_type18726_ _type1872118723_))
+                 (gxc#optimizer-lookup-type _sym18721_))))
+          (if _type1872218724_
+              (let ((_type18727_ _type1872218724_))
                 (if (let ()
                       (declare (not safe))
-                      (##structure-instance-of? _type18726_ 'gxc#!alias::t))
-                    (let ((__tmp19721
-                           (##structure-ref _type18726_ '1 gxc#!type::t '#f)))
+                      (##structure-instance-of? _type18727_ 'gxc#!alias::t))
+                    (let ((__tmp19722
+                           (##structure-ref _type18727_ '1 gxc#!type::t '#f)))
                       (declare (not safe))
-                      (gxc#optimizer-resolve-type __tmp19721))
-                    _type18726_))
+                      (gxc#optimizer-resolve-type __tmp19722))
+                    _type18727_))
               '#f))))
     (define gxc#optimizer-lookup-method
-      (lambda (_type-t18717_ _method18718_)
-        (let ((__tmp19722
+      (lambda (_type-t18718_ _method18719_)
+        (let ((__tmp19723
                (let ()
                  (declare (not safe))
-                 (gxc#optimizer-resolve-type _type-t18717_))))
+                 (gxc#optimizer-resolve-type _type-t18718_))))
           (declare (not safe))
-          (gxc#!type-lookup-method __tmp19722 _method18718_))))
+          (gxc#!type-lookup-method __tmp19723 _method18719_))))
     (define gxc#optimizer-top-level-method!
-      (lambda (_sym18715_)
+      (lambda (_sym18716_)
         (let ()
           (declare (not safe))
-          (gxc#verbose '"top-level method: " _sym18715_))
-        (let ((__tmp19723
-               (##structure-ref
-                (gxc#current-compile-optimizer-info)
-                '3
-                gxc#optimizer-info::t
-                '#f)))
-          (declare (not safe))
-          (table-set! __tmp19723 _sym18715_ '#t))))
-    (define gxc#optimizer-top-level-method?
-      (lambda (_sym18713_)
+          (gxc#verbose '"top-level method: " _sym18716_))
         (let ((__tmp19724
                (##structure-ref
                 (gxc#current-compile-optimizer-info)
@@ -1264,13 +1254,23 @@
                 gxc#optimizer-info::t
                 '#f)))
           (declare (not safe))
-          (table-ref __tmp19724 _sym18713_ '#f))))
+          (table-set! __tmp19724 _sym18716_ '#t))))
+    (define gxc#optimizer-top-level-method?
+      (lambda (_sym18714_)
+        (let ((__tmp19725
+               (##structure-ref
+                (gxc#current-compile-optimizer-info)
+                '3
+                gxc#optimizer-info::t
+                '#f)))
+          (declare (not safe))
+          (table-ref __tmp19725 _sym18714_ '#f))))
     (define gxc#identifier-symbol
-      (lambda (_stx18711_)
+      (lambda (_stx18712_)
         (if (let ()
               (declare (not safe))
-              (##structure-direct-instance-of? _stx18711_ 'gx#syntax-quote::t))
+              (##structure-direct-instance-of? _stx18712_ 'gx#syntax-quote::t))
             (let ()
               (declare (not safe))
-              (gxc#generate-runtime-binding-id _stx18711_))
-            (let () (declare (not safe)) (gx#stx-e _stx18711_)))))))
+              (gxc#generate-runtime-binding-id _stx18712_))
+            (let () (declare (not safe)) (gx#stx-e _stx18712_)))))))

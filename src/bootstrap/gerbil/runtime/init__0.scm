@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1695337676)
+  (define gerbil/runtime/init::timestamp 1695377590)
   (begin
     (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
@@ -476,7 +476,8 @@
                             (_K1813918157_ _rest18167_ _mod18165_)))
                         (let () (declare (not safe)) (_else1813718151_)))))))
           (current-module-registry _module-registry18169_))
-        (current-readtable __*readtable*)))
+        (current-readtable __*readtable*)
+        (random-source-randomize! default-random-source)))
     (define __expander-loaded '#f)
     (define gerbil-load-expander!
       (lambda ()

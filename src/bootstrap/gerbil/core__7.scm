@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<MOP>$<MOP:2>[1]#_g42323_|
+  (define |gerbil/core$<MOP>$<MOP:2>[1]#_g42416_|
     (##structure
      gx#syntax-quote::t
      '@method
@@ -260,27 +260,27 @@
            _stx20774_
            _is?20777_))))
     (define |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
-      (lambda _g42281_
-        (let ((_g42280_ (let () (declare (not safe)) (##length _g42281_))))
-          (cond ((let () (declare (not safe)) (##fx= _g42280_ 1))
+      (lambda _g42374_
+        (let ((_g42373_ (let () (declare (not safe)) (##length _g42374_))))
+          (cond ((let () (declare (not safe)) (##fx= _g42373_ 1))
                  (apply (lambda (_stx20774_)
                           (let ()
                             (declare (not safe))
                             (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__0|
                              _stx20774_)))
-                        _g42281_))
-                ((let () (declare (not safe)) (##fx= _g42280_ 2))
+                        _g42374_))
+                ((let () (declare (not safe)) (##fx= _g42373_ 2))
                  (apply (lambda (_stx20780_ _is?20782_)
                           (let ()
                             (declare (not safe))
                             (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__%|
                              _stx20780_
                              _is?20782_)))
-                        _g42281_))
+                        _g42374_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
-                  _g42281_))))))
+                  _g42374_))))))
     (define |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|
       (lambda (_stx20754_)
         (let ()
@@ -327,30 +327,30 @@
                                  (declare (not safe))
                                  (##cdr _e2051920541_))))
                           (if (gx#stx-pair/null? _tl2051720548_)
-                              (let ((_g42282_
+                              (let ((_g42375_
                                      (gx#syntax-split-splice
                                       _tl2051720548_
                                       '0)))
                                 (begin
-                                  (let ((_g42283_
+                                  (let ((_g42376_
                                          (let ()
                                            (declare (not safe))
-                                           (if (##values? _g42282_)
-                                               (##vector-length _g42282_)
+                                           (if (##values? _g42375_)
+                                               (##vector-length _g42375_)
                                                1))))
                                     (if (not (let ()
                                                (declare (not safe))
-                                               (##fx= _g42283_ 2)))
+                                               (##fx= _g42376_ 2)))
                                         (error "Context expects 2 values"
-                                               _g42283_)))
+                                               _g42376_)))
                                   (let ((_target2052020551_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g42282_ 0)))
+                                           (##vector-ref _g42375_ 0)))
                                         (_tl2052220554_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g42282_ 1))))
+                                           (##vector-ref _g42375_ 1))))
                                     (if (gx#stx-null? _tl2052220554_)
                                         (letrec ((_loop2052320557_
                                                   (lambda (_hd2052120561_
@@ -365,10 +365,10 @@
                          (let () (declare (not safe)) (##car _e2052420567_)))
                         (_lp-tl2052620574_
                          (let () (declare (not safe)) (##cdr _e2052420567_))))
-                    (let ((__tmp42285
+                    (let ((__tmp42378
                            (cons _lp-hd2052520571_ _arg2052720564_)))
                       (declare (not safe))
-                      (_loop2052320557_ _lp-tl2052620574_ __tmp42285))))
+                      (_loop2052320557_ _lp-tl2052620574_ __tmp42378))))
                 (let ((_arg2052820577_ (reverse _arg2052720564_)))
                   ((lambda (_L20581_)
                      (let* ((_g2059720628_
@@ -496,14 +496,14 @@
                                    (let ()
                                      (declare (not safe))
                                      (_g2059720628_ _g2059820632_)))))
-                            (__tmp42284
+                            (__tmp42377
                              (let ()
                                (declare (not safe))
                                (unchecked-slot-ref
                                 _self20510_
                                 'expander-identifiers))))
                        (declare (not safe))
-                       (_g2059620737_ __tmp42284)))
+                       (_g2059620737_ __tmp42377)))
                    _arg2052820577_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (let ()
@@ -555,7 +555,7 @@
                       (gx#stx-source _stx19329_))))
                   (_make-id19339_
                    (if (uninterned-symbol? (gx#stx-e _id19331_))
-                       (lambda _g42286_ (gx#genident _id19331_))
+                       (lambda _g42379_ (gx#genident _id19331_))
                        (lambda _args20495_
                          (apply gx#stx-identifier _id19331_ _args20495_)))))
           (gx#check-duplicate-identifiers _els19333_ _stx19329_)
@@ -634,30 +634,30 @@
                            (_g1951720465_
                             (lambda (_g1951919539_)
                               (if (gx#stx-pair/null? _g1951919539_)
-                                  (let ((_g42287_
+                                  (let ((_g42380_
                                          (gx#syntax-split-splice
                                           _g1951919539_
                                           '0)))
                                     (begin
-                                      (let ((_g42288_
+                                      (let ((_g42381_
                                              (let ()
                                                (declare (not safe))
-                                               (if (##values? _g42287_)
-                                                   (##vector-length _g42287_)
+                                               (if (##values? _g42380_)
+                                                   (##vector-length _g42380_)
                                                    1))))
                                         (if (not (let ()
                                                    (declare (not safe))
-                                                   (##fx= _g42288_ 2)))
+                                                   (##fx= _g42381_ 2)))
                                             (error "Context expects 2 values"
-                                                   _g42288_)))
+                                                   _g42381_)))
                                       (let ((_target1952119542_
                                              (let ()
                                                (declare (not safe))
-                                               (##vector-ref _g42287_ 0)))
+                                               (##vector-ref _g42380_ 0)))
                                             (_tl1952319545_
                                              (let ()
                                                (declare (not safe))
-                                               (##vector-ref _g42287_ 1))))
+                                               (##vector-ref _g42380_ 1))))
                                         (if (gx#stx-null? _tl1952319545_)
                                             (letrec ((_loop1952419548_
                                                       (lambda (_hd1952219552_
@@ -675,10 +675,10 @@
                              (let ()
                                (declare (not safe))
                                (##cdr _e1952519558_))))
-                        (let ((__tmp42316
+                        (let ((__tmp42409
                                (cons _lp-hd1952619562_ _attr1952819555_)))
                           (declare (not safe))
-                          (_loop1952419548_ _lp-tl1952719565_ __tmp42316))))
+                          (_loop1952419548_ _lp-tl1952719565_ __tmp42409))))
                     (let ((_attr1952919568_ (reverse _attr1952819555_)))
                       ((lambda (_L19572_)
                          (let ()
@@ -691,34 +691,34 @@
                                   (_g1958820456_
                                    (lambda (_g1959019610_)
                                      (if (gx#stx-pair/null? _g1959019610_)
-                                         (let ((_g42289_
+                                         (let ((_g42382_
                                                 (gx#syntax-split-splice
                                                  _g1959019610_
                                                  '0)))
                                            (begin
-                                             (let ((_g42290_
+                                             (let ((_g42383_
                                                     (let ()
                                                       (declare (not safe))
-                                                      (if (##values? _g42289_)
+                                                      (if (##values? _g42382_)
                                                           (##vector-length
-                                                           _g42289_)
+                                                           _g42382_)
                                                           1))))
                                                (if (not (let ()
                                                           (declare (not safe))
-                                                          (##fx= _g42290_ 2)))
+                                                          (##fx= _g42383_ 2)))
                                                    (error "Context expects 2 values"
-                                                          _g42290_)))
+                                                          _g42383_)))
                                              (let ((_target1959219613_
                                                     (let ()
                                                       (declare (not safe))
                                                       (##vector-ref
-                                                       _g42289_
+                                                       _g42382_
                                                        0)))
                                                    (_tl1959419616_
                                                     (let ()
                                                       (declare (not safe))
                                                       (##vector-ref
-                                                       _g42289_
+                                                       _g42382_
                                                        1))))
                                                (if (gx#stx-null?
                                                     _tl1959419616_)
@@ -736,13 +736,13 @@
                                     (let ()
                                       (declare (not safe))
                                       (##cdr _e1959619629_))))
-                               (let ((__tmp42314
+                               (let ((__tmp42407
                                       (cons _lp-hd1959719633_
                                             _getf1959919626_)))
                                  (declare (not safe))
                                  (_loop1959519619_
                                   _lp-tl1959819636_
-                                  __tmp42314))))
+                                  __tmp42407))))
                            (let ((_getf1960019639_ (reverse _getf1959919626_)))
                              ((lambda (_L19643_)
                                 (let ()
@@ -756,36 +756,36 @@
                                           (lambda (_g1966119681_)
                                             (if (gx#stx-pair/null?
                                                  _g1966119681_)
-                                                (let ((_g42291_
+                                                (let ((_g42384_
                                                        (gx#syntax-split-splice
                                                         _g1966119681_
                                                         '0)))
                                                   (begin
-                                                    (let ((_g42292_
+                                                    (let ((_g42385_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (if (##values?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g42291_)
-                         (##vector-length _g42291_)
+                          _g42384_)
+                         (##vector-length _g42384_)
                          1))))
-              (if (not (let () (declare (not safe)) (##fx= _g42292_ 2)))
-                  (error "Context expects 2 values" _g42292_)))
+              (if (not (let () (declare (not safe)) (##fx= _g42385_ 2)))
+                  (error "Context expects 2 values" _g42385_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (let ((_target1966319684_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _g42291_
+                                                              _g42384_
                                                               0)))
                                                           (_tl1966519687_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              _g42291_
+                                                              _g42384_
                                                               1))))
                                                       (if (gx#stx-null?
                                                            _tl1966519687_)
@@ -803,13 +803,13 @@
                                            (let ()
                                              (declare (not safe))
                                              (##cdr _e1966719700_))))
-                                      (let ((__tmp42312
+                                      (let ((__tmp42405
                                              (cons _lp-hd1966819704_
                                                    _setf1967019697_)))
                                         (declare (not safe))
                                         (_loop1966619690_
                                          _lp-tl1966919707_
-                                         __tmp42312))))
+                                         __tmp42405))))
                                   (let ((_setf1967119710_
                                          (reverse _setf1967019697_)))
                                     ((lambda (_L19714_)
@@ -990,28 +990,28 @@
                                                  (lambda (_g1989919919_)
                                                    (if (gx#stx-pair/null?
                                                         _g1989919919_)
-                                                       (let ((_g42293_
+                                                       (let ((_g42386_
                                                               (gx#syntax-split-splice
                                                                _g1989919919_
                                                                '0)))
                                                          (begin
-                                                           (let ((_g42294_
+                                                           (let ((_g42387_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
-                            (if (##values? _g42293_)
-                                (##vector-length _g42293_)
+                            (if (##values? _g42386_)
+                                (##vector-length _g42386_)
                                 1))))
-                     (if (not (let () (declare (not safe)) (##fx= _g42294_ 2)))
-                         (error "Context expects 2 values" _g42294_)))
+                     (if (not (let () (declare (not safe)) (##fx= _g42387_ 2)))
+                         (error "Context expects 2 values" _g42387_)))
                    (let ((_target1990119922_
                           (let ()
                             (declare (not safe))
-                            (##vector-ref _g42293_ 0)))
+                            (##vector-ref _g42386_ 0)))
                          (_tl1990319925_
                           (let ()
                             (declare (not safe))
-                            (##vector-ref _g42293_ 1))))
+                            (##vector-ref _g42386_ 1))))
                      (if (gx#stx-null? _tl1990319925_)
                          (letrec ((_loop1990419928_
                                    (lambda (_hd1990219932_
@@ -1027,13 +1027,13 @@
                                                   (let ()
                                                     (declare (not safe))
                                                     (##cdr _e1990519938_))))
-                                             (let ((__tmp42310
+                                             (let ((__tmp42403
                                                     (cons _lp-hd1990619942_
                                                           _type-body1990819935_)))
                                                (declare (not safe))
                                                (_loop1990419928_
                                                 _lp-tl1990719945_
-                                                __tmp42310))))
+                                                __tmp42403))))
                                          (let ((_type-body1990919948_
                                                 (reverse _type-body1990819935_)))
                                            ((lambda (_L19952_)
@@ -1143,7 +1143,7 @@
                                  ((lambda (_L20236_)
                                     (let ()
                                       (let ()
-                                        (let ((__tmp42295
+                                        (let ((__tmp42388
                                                (cons (gx#datum->syntax
                                                       '#f
                                                       'begin)
@@ -1153,10 +1153,10 @@
                          '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (declare (not safe))
-                                          (_wrap19337_ __tmp42295)))))
+                                          (_wrap19337_ __tmp42388)))))
                                   _g2022220233_)))
-                              (__tmp42296
-                               (let ((__tmp42297
+                              (__tmp42389
+                               (let ((__tmp42390
                                       (cons (gx#datum->syntax '#f 'defsyntax)
                                             (cons _L19393_
                                                   (cons (cons _L20012_
@@ -1237,28 +1237,28 @@
                 '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                  (declare (not safe))
-                                 (_wrap19337_ __tmp42297))))
+                                 (_wrap19337_ __tmp42390))))
                          (declare (not safe))
-                         (_g2022020251_ __tmp42296))))
+                         (_g2022020251_ __tmp42389))))
                    _g2019420205_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
                                                   (_g2019220279_
                                                    _plist19840_))))
                                             _g2016620177_)))
-                                        (__tmp42298
+                                        (__tmp42391
                                          (if (not (null? _type-ctor19796_))
                                              (cadr _type-ctor19796_)
                                              '#f)))
                                    (declare (not safe))
-                                   (_g2016420283_ __tmp42298))))
+                                   (_g2016420283_ __tmp42391))))
                              _g2013820149_)))
-                         (__tmp42299 (cadr _type-name19766_)))
+                         (__tmp42392 (cadr _type-name19766_)))
                     (declare (not safe))
-                    (_g2013620287_ __tmp42299))))
+                    (_g2013620287_ __tmp42392))))
               _g2011020121_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (__tmp42300
+                                                  (__tmp42393
                                                    (let ((_quote-e20330_
                                                           (lambda (_x-ref20295_)
                                                             (if _x-ref20295_
@@ -1293,26 +1293,26 @@
                             _super-ref19332_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                              (declare (not safe))
-                                             (_g2010820291_ __tmp42300))))
+                                             (_g2010820291_ __tmp42393))))
                                        _g2008220093_)))
-                                   (__tmp42301
+                                   (__tmp42394
                                     (if (not (null? _type-id19781_))
                                         (cadr _type-id19781_)
                                         '#f)))
                               (declare (not safe))
-                              (_g2008020333_ __tmp42301))))
+                              (_g2008020333_ __tmp42394))))
                         _g2005420065_)))
-                    (__tmp42302
+                    (__tmp42395
                      (if _struct?19335_
                          (gx#datum->syntax '#f 'make-runtime-struct-exhibitor)
                          (gx#datum->syntax
                           '#f
                           'make-runtime-class-exhibitor))))
                (declare (not safe))
-               (_g2005220337_ __tmp42302))))
+               (_g2005220337_ __tmp42395))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  _g2002620037_)))
-                                             (__tmp42303
+                                             (__tmp42396
                                               (if _struct?19335_
                                                   (if _super19344_
                                                       (cons (gx#datum->syntax
@@ -1334,27 +1334,27 @@
                                                             (if (gx#stx-pair/null?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _g2034620366_)
-                        (let ((_g42304_
+                        (let ((_g42397_
                                (gx#syntax-split-splice _g2034620366_ '0)))
                           (begin
-                            (let ((_g42305_
+                            (let ((_g42398_
                                    (let ()
                                      (declare (not safe))
-                                     (if (##values? _g42304_)
-                                         (##vector-length _g42304_)
+                                     (if (##values? _g42397_)
+                                         (##vector-length _g42397_)
                                          1))))
                               (if (not (let ()
                                          (declare (not safe))
-                                         (##fx= _g42305_ 2)))
-                                  (error "Context expects 2 values" _g42305_)))
+                                         (##fx= _g42398_ 2)))
+                                  (error "Context expects 2 values" _g42398_)))
                             (let ((_target2034820369_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _g42304_ 0)))
+                                     (##vector-ref _g42397_ 0)))
                                   (_tl2035020372_
                                    (let ()
                                      (declare (not safe))
-                                     (##vector-ref _g42304_ 1))))
+                                     (##vector-ref _g42397_ 1))))
                               (if (gx#stx-null? _tl2035020372_)
                                   (letrec ((_loop2035120375_
                                             (lambda (_hd2034920379_
@@ -1373,12 +1373,12 @@
                                                              (declare
                                                                (not safe))
                                                              (##cdr _e2035220385_))))
-                                                      (let ((__tmp42306
+                                                      (let ((__tmp42399
                                                              (cons _lp-hd2035320389_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _super-id2035520382_)))
                 (declare (not safe))
-                (_loop2035120375_ _lp-tl2035420392_ __tmp42306))))
+                (_loop2035120375_ _lp-tl2035420392_ __tmp42399))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (let ((_super-id2035620395_
                                                          (reverse _super-id2035520382_)))
@@ -1415,9 +1415,9 @@
                                                     (_g2034420423_
                                                      _L19505_)))))
                                         (declare (not safe))
-                                        (_g2002420341_ __tmp42303))))
+                                        (_g2002420341_ __tmp42396))))
                                   _g1999820009_)))
-                              (__tmp42307
+                              (__tmp42400
                                (if _struct?19335_
                                    (gx#datum->syntax
                                     '#f
@@ -1426,10 +1426,10 @@
                                     '#f
                                     'make-extended-class-info))))
                          (declare (not safe))
-                         (_g1999620427_ __tmp42307))))
+                         (_g1999620427_ __tmp42400))))
                    _g1997019981_)))
-               (__tmp42308
-                (let ((__tmp42309
+               (__tmp42401
+                (let ((__tmp42402
                        (cons _L19362_
                              (cons _L19421_
                                    (cons _L19505_
@@ -1443,10 +1443,10 @@
                     _L19952_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                   (declare (not safe))
-                  (_wrap19337_ __tmp42309))))
+                  (_wrap19337_ __tmp42402))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (_g1996820431_ __tmp42308))))
+                                                  (_g1996820431_ __tmp42401))))
                                             _type-body1990919948_))))))
                            (let ()
                              (declare (not safe))
@@ -1456,7 +1456,7 @@
                            (_g1989819915_ _g1989919919_))))))
                (let () (declare (not safe)) (_g1989819915_ _g1989919919_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (__tmp42311
+                                                (__tmp42404
                                                  (foldr cons
                                                         (foldr cons
                                                                (foldr cons
@@ -1471,7 +1471,7 @@
                 _type-attr19759_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            (declare (not safe))
-                                           (_g1989720443_ __tmp42311))))
+                                           (_g1989720443_ __tmp42404))))
                                      _setf1967119710_))))))
                     (let ()
                       (declare (not safe))
@@ -1484,7 +1484,7 @@
                                                   (declare (not safe))
                                                   (_g1966019677_
                                                    _g1966119681_)))))
-                                         (__tmp42313
+                                         (__tmp42406
                                           (gx#stx-map
                                            (lambda (_g2045020452_)
                                              (_make-id19339_
@@ -1494,7 +1494,7 @@
                                               '"-set!"))
                                            _els19333_)))
                                     (declare (not safe))
-                                    (_g1965920447_ __tmp42313))))
+                                    (_g1965920447_ __tmp42406))))
                               _getf1960019639_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ()
@@ -1509,7 +1509,7 @@
                                          (let ()
                                            (declare (not safe))
                                            (_g1958919606_ _g1959019610_)))))
-                                  (__tmp42315
+                                  (__tmp42408
                                    (gx#stx-map
                                     (lambda (_g2045920461_)
                                       (_make-id19339_
@@ -1518,7 +1518,7 @@
                                        _g2045920461_))
                                     _els19333_)))
                              (declare (not safe))
-                             (_g1958820456_ __tmp42315))))
+                             (_g1958820456_ __tmp42408))))
                        _attr1952919568_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (let ()
@@ -1537,7 +1537,7 @@
                       (_g1951720465_ _els19333_))))
                 _g1949119502_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (__tmp42317
+                                                    (__tmp42410
                                                      (if _struct?19335_
                                                          (if _super19344_
                                                              (let ()
@@ -1550,46 +1550,46 @@
                       _super19344_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (_g1948920469_ __tmp42317))))
+                                               (_g1948920469_ __tmp42410))))
                                          _g1946319474_)))
-                                     (__tmp42318
+                                     (__tmp42411
                                       (_make-id19339_ _name19341_ '"?")))
                                 (declare (not safe))
-                                (_g1946120473_ __tmp42318))))
+                                (_g1946120473_ __tmp42411))))
                           _g1943519446_)))
-                      (__tmp42319 (_make-id19339_ '"make-" _name19341_)))
+                      (__tmp42412 (_make-id19339_ '"make-" _name19341_)))
                  (declare (not safe))
-                 (_g1943320477_ __tmp42319))))
+                 (_g1943320477_ __tmp42412))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    _g1940719418_)))
-                                               (__tmp42320
+                                               (__tmp42413
                                                 (_make-id19339_
                                                  _name19341_
                                                  '"::t")))
                                           (declare (not safe))
-                                          (_g1940520481_ __tmp42320))))
+                                          (_g1940520481_ __tmp42413))))
                                     _g1937919390_))))
                            (declare (not safe))
                            (_g1937720485_ _id19331_))))
                      _g1934819359_)))
-                 (__tmp42321
+                 (__tmp42414
                   (if _struct?19335_
                       (gx#datum->syntax '#f 'defstruct-type)
                       (gx#datum->syntax '#f 'defclass-type))))
             (declare (not safe))
-            (_g1934620489_ __tmp42321)))))
+            (_g1934620489_ __tmp42414)))))
     (define |gerbil/core$<MOP>$<MOP:2>[:0:]#defstruct|
       (lambda (_stx20817_)
         (letrec ((_generate20820_
                   (lambda (_hd20904_ _fields20906_ _body20907_)
-                    (let* ((___stx3917739178_ _hd20904_)
+                    (let* ((___stx3927039271_ _hd20904_)
                            (_g2091020925_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Bad syntax"
-                               ___stx3917739178_))))
-                      (let ((___kont3918039181_
+                               ___stx3927039271_))))
+                      (let ((___kont3927339274_
                              (lambda (_L20963_ _L20965_)
                                (let ()
                                  (declare (not safe))
@@ -1600,7 +1600,7 @@
                                   _fields20906_
                                   _body20907_
                                   '#t))))
-                            (___kont3918239183_
+                            (___kont3927539276_
                              (lambda ()
                                (if (gx#identifier? _hd20904_)
                                    (let ()
@@ -1617,7 +1617,7 @@
                                     '"Bad syntax"
                                     _stx20817_
                                     _hd20904_)))))
-                        (let ((___match3919839199_
+                        (let ((___match3929139292_
                                (lambda (_e2091620943_
                                         _hd2091520947_
                                         _tl2091420950_
@@ -1631,11 +1631,11 @@
                                               (declare (not safe))
                                               (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|
                                                _L20963_)))
-                                       (___kont3918039181_ _L20963_ _L20965_)
-                                       (___kont3918239183_))))))
-                          (if (gx#stx-pair? ___stx3917739178_)
+                                       (___kont3927339274_ _L20963_ _L20965_)
+                                       (___kont3927539276_))))))
+                          (if (gx#stx-pair? ___stx3927039271_)
                               (let ((_e2091620943_
-                                     (gx#syntax-e ___stx3917739178_)))
+                                     (gx#syntax-e ___stx3927039271_)))
                                 (let ((_tl2091420950_
                                        (let ()
                                          (declare (not safe))
@@ -1656,16 +1656,16 @@
                                                  (declare (not safe))
                                                  (##car _e2091920953_))))
                                           (if (gx#stx-null? _tl2091720960_)
-                                              (___match3919839199_
+                                              (___match3929139292_
                                                _e2091620943_
                                                _hd2091520947_
                                                _tl2091420950_
                                                _e2091920953_
                                                _hd2091820957_
                                                _tl2091720960_)
-                                              (___kont3918239183_))))
-                                      (___kont3918239183_))))
-                              (___kont3918239183_))))))))
+                                              (___kont3927539276_))))
+                                      (___kont3927539276_))))
+                              (___kont3927539276_))))))))
           (let* ((_g2082320842_
                   (lambda (_g2082420838_)
                     (gx#raise-syntax-error '#f '"Bad syntax" _g2082420838_)))
@@ -1729,25 +1729,25 @@
       (lambda (_stx20984_)
         (letrec ((_generate20987_
                   (lambda (_hd21071_ _slots21073_ _body21074_)
-                    (let* ((___stx3920139202_ _hd21071_)
+                    (let* ((___stx3929439295_ _hd21071_)
                            (_g2107721089_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Bad syntax"
-                               ___stx3920139202_))))
-                      (let ((___kont3920439205_
+                               ___stx3929439295_))))
+                      (let ((___kont3929739298_
                              (lambda (_L21117_ _L21119_)
-                               (let ((__tmp42322 (gx#syntax->list _L21117_)))
+                               (let ((__tmp42415 (gx#syntax->list _L21117_)))
                                  (declare (not safe))
                                  (|gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
                                   _stx20984_
                                   _L21119_
-                                  __tmp42322
+                                  __tmp42415
                                   _slots21073_
                                   _body21074_
                                   '#f))))
-                            (___kont3920639207_
+                            (___kont3929939300_
                              (lambda ()
                                (if (gx#identifier? _hd21071_)
                                    (let ()
@@ -1764,7 +1764,7 @@
                                     '"Bad syntax"
                                     _stx20984_
                                     _hd21071_)))))
-                        (let ((___match3921439215_
+                        (let ((___match3930739308_
                                (lambda (_e2108321107_
                                         _hd2108221111_
                                         _tl2108121114_)
@@ -1774,11 +1774,11 @@
                                             (gx#stx-andmap
                                              |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
                                              _L21117_))
-                                       (___kont3920439205_ _L21117_ _L21119_)
-                                       (___kont3920639207_))))))
-                          (if (gx#stx-pair? ___stx3920139202_)
+                                       (___kont3929739298_ _L21117_ _L21119_)
+                                       (___kont3929939300_))))))
+                          (if (gx#stx-pair? ___stx3929439295_)
                               (let ((_e2108321107_
-                                     (gx#syntax-e ___stx3920139202_)))
+                                     (gx#syntax-e ___stx3929439295_)))
                                 (let ((_tl2108121114_
                                        (let ()
                                          (declare (not safe))
@@ -1787,11 +1787,11 @@
                                        (let ()
                                          (declare (not safe))
                                          (##car _e2108321107_))))
-                                  (___match3921439215_
+                                  (___match3930739308_
                                    _e2108321107_
                                    _hd2108221111_
                                    _tl2108121114_)))
-                              (___kont3920639207_))))))))
+                              (___kont3929939300_))))))))
           (let* ((_g2099021009_
                   (lambda (_g2099121005_)
                     (gx#raise-syntax-error '#f '"Bad syntax" _g2099121005_)))
@@ -1899,7 +1899,7 @@
                                                    (##cdr _e2115721199_))))
                                             (if (gx#identifier? _hd2115621203_)
                                                 (if (gx#free-identifier=?
-                                                     |gerbil/core$<MOP>$<MOP:2>[1]#_g42323_|
+                                                     |gerbil/core$<MOP>$<MOP:2>[1]#_g42416_|
                                                      _hd2115621203_)
                                                     (if (gx#stx-pair?
                                                          _tl2115521206_)
@@ -2143,14 +2143,14 @@
             (_g2114221469_ _stx21136_)))))
     (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@method|
       (lambda (_$stx21479_)
-        (let* ((___stx3921739218_ _$stx21479_)
+        (let* ((___stx3931039311_ _$stx21479_)
                (_g2148421533_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx3921739218_))))
-          (let ((___kont3922039221_
+                   ___stx3931039311_))))
+          (let ((___kont3931339314_
                  (lambda (_L21699_ _L21701_ _L21702_)
                    (cons (gx#datum->syntax '#f 'apply)
                          (cons (gx#datum->syntax '#f 'call-method)
@@ -2168,7 +2168,7 @@
                       _L21699_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  '())))))))
-                (___kont3922439225_
+                (___kont3931739318_
                  (lambda (_L21600_ _L21602_ _L21603_)
                    (cons (gx#datum->syntax '#f 'call-method)
                          (cons _L21602_
@@ -2180,7 +2180,7 @@
                                                     _g2162421629_))
                                             '()
                                             _L21600_)))))))
-            (let* ((___match3928039281_
+            (let* ((___match3937339374_
                     (lambda (_e2151221540_
                              _hd2151121544_
                              _tl2151021547_
@@ -2190,7 +2190,7 @@
                              _e2151821560_
                              _hd2151721564_
                              _tl2151621567_
-                             ___splice3922639227_
+                             ___splice3931939320_
                              _target2151921570_
                              _tl2152121573_)
                       (letrec ((_loop2152221576_
@@ -2216,7 +2216,7 @@
                                               (_L21602_ _hd2151721564_)
                                               (_L21603_ _hd2151421554_))
                                           (if (gx#identifier? _L21603_)
-                                              (___kont3922439225_
+                                              (___kont3931739318_
                                                _L21600_
                                                _L21602_
                                                _L21603_)
@@ -2224,7 +2224,7 @@
                                                 (declare (not safe))
                                                 (_g2148421533_)))))))))
                         (_loop2152221576_ _target2151921570_ '()))))
-                   (___match3925439255_
+                   (___match3934739348_
                     (lambda (_e2149121639_
                              _hd2149021643_
                              _tl2148921646_
@@ -2234,7 +2234,7 @@
                              _e2149721659_
                              _hd2149621663_
                              _tl2149521666_
-                             ___splice3922239223_
+                             ___splice3931539316_
                              _target2149821669_
                              _tl2150021672_)
                       (letrec ((_loop2150121675_
@@ -2269,11 +2269,11 @@
                    '()
                    _L21699_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (___kont3922039221_
+                                              (___kont3931339314_
                                                _L21699_
                                                _L21701_
                                                _L21702_)
-                                              (___match3928039281_
+                                              (___match3937339374_
                                                _e2149121639_
                                                _hd2149021643_
                                                _tl2148921646_
@@ -2283,12 +2283,12 @@
                                                _e2149721659_
                                                _hd2149621663_
                                                _tl2149521666_
-                                               ___splice3922239223_
+                                               ___splice3931539316_
                                                _target2149821669_
                                                _tl2150021672_))))))))
                         (_loop2150121675_ _target2149821669_ '())))))
-              (if (gx#stx-pair? ___stx3921739218_)
-                  (let ((_e2149121639_ (gx#syntax-e ___stx3921739218_)))
+              (if (gx#stx-pair? ___stx3931039311_)
+                  (let ((_e2149121639_ (gx#syntax-e ___stx3931039311_)))
                     (let ((_tl2148921646_
                            (let () (declare (not safe)) (##cdr _e2149121639_)))
                           (_hd2149021643_
@@ -2317,7 +2317,7 @@
                                              (declare (not safe))
                                              (##car _e2149721659_))))
                                       (if (gx#stx-pair/null? _tl2149521666_)
-                                          (let ((___splice3922239223_
+                                          (let ((___splice3931539316_
                                                  (gx#syntax-split-splice
                                                   _tl2149521666_
                                                   '0)))
@@ -2325,16 +2325,16 @@
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      ___splice3922239223_
+                                                      ___splice3931539316_
                                                       '1)))
                                                   (_target2149821669_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      ___splice3922239223_
+                                                      ___splice3931539316_
                                                       '0))))
                                               (if (gx#stx-null? _tl2150021672_)
-                                                  (___match3925439255_
+                                                  (___match3934739348_
                                                    _e2149121639_
                                                    _hd2149021643_
                                                    _tl2148921646_
@@ -2344,7 +2344,7 @@
                                                    _e2149721659_
                                                    _hd2149621663_
                                                    _tl2149521666_
-                                                   ___splice3922239223_
+                                                   ___splice3931539316_
                                                    _target2149821669_
                                                    _tl2150021672_)
                                                   (let ()
@@ -2360,21 +2360,21 @@
                   (let () (declare (not safe)) (_g2148421533_))))))))
     (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@|
       (lambda (_$stx21744_)
-        (let* ((___stx3928339284_ _$stx21744_)
+        (let* ((___stx3937639377_ _$stx21744_)
                (_g2174921789_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx3928339284_))))
-          (let ((___kont3928639287_
+                   ___stx3937639377_))))
+          (let ((___kont3937939380_
                  (lambda (_L21927_ _L21929_)
                    (cons (gx#datum->syntax '#f 'slot-ref)
                          (cons _L21929_
                                (cons (cons (gx#datum->syntax '#f 'quote)
                                            (cons _L21927_ '()))
                                      '())))))
-                (___kont3928839289_
+                (___kont3938139382_
                  (lambda (_L21856_ _L21858_ _L21859_ _L21860_)
                    (cons _L21860_
                          (cons (cons _L21860_
@@ -2383,7 +2383,7 @@
                                         (cons _g2188121884_ _g2188221887_))
                                       '()
                                       _L21856_))))))
-            (let* ((___match3933839339_
+            (let* ((___match3943139432_
                     (lambda (_e2176821796_
                              _hd2176721800_
                              _tl2176621803_
@@ -2393,7 +2393,7 @@
                              _e2177421816_
                              _hd2177321820_
                              _tl2177221823_
-                             ___splice3929039291_
+                             ___splice3938339384_
                              _target2177521826_
                              _tl2177721829_)
                       (letrec ((_loop2177821832_
@@ -2415,13 +2415,13 @@
                                                  _rest2178221839_))))
                                       (let ((_rest2178321852_
                                              (reverse _rest2178221839_)))
-                                        (___kont3928839289_
+                                        (___kont3938139382_
                                          _rest2178321852_
                                          _hd2177321820_
                                          _hd2177021810_
                                          _hd2176721800_))))))
                         (_loop2177821832_ _target2177521826_ '()))))
-                   (___match3931239313_
+                   (___match3940539406_
                     (lambda (_e2175521897_
                              _hd2175421901_
                              _tl2175321904_
@@ -2434,9 +2434,9 @@
                       (let ((_L21927_ _hd2176021921_)
                             (_L21929_ _hd2175721911_))
                         (if (gx#identifier? _L21927_)
-                            (___kont3928639287_ _L21927_ _L21929_)
+                            (___kont3937939380_ _L21927_ _L21929_)
                             (if (gx#stx-pair/null? _tl2175921924_)
-                                (let ((___splice3929039291_
+                                (let ((___splice3938339384_
                                        (gx#syntax-split-splice
                                         _tl2175921924_
                                         '0)))
@@ -2444,16 +2444,16 @@
                                          (let ()
                                            (declare (not safe))
                                            (##vector-ref
-                                            ___splice3929039291_
+                                            ___splice3938339384_
                                             '1)))
                                         (_target2177521826_
                                          (let ()
                                            (declare (not safe))
                                            (##vector-ref
-                                            ___splice3929039291_
+                                            ___splice3938339384_
                                             '0))))
                                     (if (gx#stx-null? _tl2177721829_)
-                                        (___match3933839339_
+                                        (___match3943139432_
                                          _e2175521897_
                                          _hd2175421901_
                                          _tl2175321904_
@@ -2463,7 +2463,7 @@
                                          _e2176121917_
                                          _hd2176021921_
                                          _tl2175921924_
-                                         ___splice3929039291_
+                                         ___splice3938339384_
                                          _target2177521826_
                                          _tl2177721829_)
                                         (let ()
@@ -2472,8 +2472,8 @@
                                 (let ()
                                   (declare (not safe))
                                   (_g2174921789_))))))))
-              (if (gx#stx-pair? ___stx3928339284_)
-                  (let ((_e2175521897_ (gx#syntax-e ___stx3928339284_)))
+              (if (gx#stx-pair? ___stx3937639377_)
+                  (let ((_e2175521897_ (gx#syntax-e ___stx3937639377_)))
                     (let ((_tl2175321904_
                            (let () (declare (not safe)) (##cdr _e2175521897_)))
                           (_hd2175421901_
@@ -2502,7 +2502,7 @@
                                              (declare (not safe))
                                              (##car _e2176121917_))))
                                       (if (gx#stx-null? _tl2175921924_)
-                                          (___match3931239313_
+                                          (___match3940539406_
                                            _e2175521897_
                                            _hd2175421901_
                                            _tl2175321904_
@@ -2514,7 +2514,7 @@
                                            _tl2175921924_)
                                           (if (gx#stx-pair/null?
                                                _tl2175921924_)
-                                              (let ((___splice3929039291_
+                                              (let ((___splice3938339384_
                                                      (gx#syntax-split-splice
                                                       _tl2175921924_
                                                       '0)))
@@ -2522,17 +2522,17 @@
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          ___splice3929039291_
+                                                          ___splice3938339384_
                                                           '1)))
                                                       (_target2177521826_
                                                        (let ()
                                                          (declare (not safe))
                                                          (##vector-ref
-                                                          ___splice3929039291_
+                                                          ___splice3938339384_
                                                           '0))))
                                                   (if (gx#stx-null?
                                                        _tl2177721829_)
-                                                      (___match3933839339_
+                                                      (___match3943139432_
                                                        _e2175521897_
                                                        _hd2175421901_
                                                        _tl2175321904_
@@ -2542,7 +2542,7 @@
                                                        _e2176121917_
                                                        _hd2176021921_
                                                        _tl2175921924_
-                                                       ___splice3929039291_
+                                                       ___splice3938339384_
                                                        _target2177521826_
                                                        _tl2177721829_)
                                                       (let ()
@@ -2558,21 +2558,21 @@
                   (let () (declare (not safe)) (_g2174921789_))))))))
     (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@-set!|
       (lambda (_$stx21949_)
-        (let* ((___stx3934139342_ _$stx21949_)
+        (let* ((___stx3943439435_ _$stx21949_)
                (_g2195422006_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx3934139342_))))
-          (let ((___kont3934439345_
+                   ___stx3943439435_))))
+          (let ((___kont3943739438_
                  (lambda (_L22182_ _L22184_ _L22185_)
                    (cons (gx#datum->syntax '#f 'slot-set!)
                          (cons _L22185_
                                (cons (cons (gx#datum->syntax '#f 'quote)
                                            (cons _L22184_ '()))
                                      (cons _L22182_ '()))))))
-                (___kont3934639347_
+                (___kont3943939440_
                  (lambda (_L22093_
                           _L22095_
                           _L22096_
@@ -2591,7 +2591,7 @@
                 _L22096_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                (cons _L22095_ (cons _L22093_ '())))))))
-            (let* ((___match3941639417_
+            (let* ((___match3950939510_
                     (lambda (_e2197922013_
                              _hd2197822017_
                              _tl2197722020_
@@ -2601,7 +2601,7 @@
                              _e2198522033_
                              _hd2198422037_
                              _tl2198322040_
-                             ___splice3934839349_
+                             ___splice3944139442_
                              _target2198622043_
                              _tl2198822046_
                              _e2199722049_
@@ -2629,7 +2629,7 @@
                                                  _path2199322076_))))
                                       (let ((_path2199422089_
                                              (reverse _path2199322076_)))
-                                        (___kont3934639347_
+                                        (___kont3943939440_
                                          _hd2199922063_
                                          _hd2199622053_
                                          _path2199422089_
@@ -2637,7 +2637,7 @@
                                          _hd2198122027_
                                          _hd2197822017_))))))
                         (_loop2198922069_ _target2198622043_ '()))))
-                   (___match3937639377_
+                   (___match3946939470_
                     (lambda (_e2196122142_
                              _hd2196022146_
                              _tl2195922149_
@@ -2654,10 +2654,10 @@
                             (_L22184_ _hd2196622166_)
                             (_L22185_ _hd2196322156_))
                         (if (gx#identifier? _L22184_)
-                            (___kont3934439345_ _L22182_ _L22184_ _L22185_)
+                            (___kont3943739438_ _L22182_ _L22184_ _L22185_)
                             (if (gx#stx-pair/null? _tl2196522169_)
                                 (if (fx>= (gx#stx-length _tl2196522169_) '2)
-                                    (let ((___splice3934839349_
+                                    (let ((___splice3944139442_
                                            (gx#syntax-split-splice
                                             _tl2196522169_
                                             '2)))
@@ -2665,13 +2665,13 @@
                                              (let ()
                                                (declare (not safe))
                                                (##vector-ref
-                                                ___splice3934839349_
+                                                ___splice3944139442_
                                                 '1)))
                                             (_target2198622043_
                                              (let ()
                                                (declare (not safe))
                                                (##vector-ref
-                                                ___splice3934839349_
+                                                ___splice3944139442_
                                                 '0))))
                                         (if (gx#stx-pair? _tl2198822046_)
                                             (let ((_e2199722049_
@@ -2699,7 +2699,7 @@
                     (_hd2199922063_
                      (let () (declare (not safe)) (##car _e2200022059_))))
                 (if (gx#stx-null? _tl2199822066_)
-                    (___match3941639417_
+                    (___match3950939510_
                      _e2196122142_
                      _hd2196022146_
                      _tl2195922149_
@@ -2709,7 +2709,7 @@
                      _e2196722162_
                      _hd2196622166_
                      _tl2196522169_
-                     ___splice3934839349_
+                     ___splice3944139442_
                      _target2198622043_
                      _tl2198822046_
                      _e2199722049_
@@ -2732,8 +2732,8 @@
                                 (let ()
                                   (declare (not safe))
                                   (_g2195422006_))))))))
-              (if (gx#stx-pair? ___stx3934139342_)
-                  (let ((_e2196122142_ (gx#syntax-e ___stx3934139342_)))
+              (if (gx#stx-pair? ___stx3943439435_)
+                  (let ((_e2196122142_ (gx#syntax-e ___stx3943439435_)))
                     (let ((_tl2195922149_
                            (let () (declare (not safe)) (##cdr _e2196122142_)))
                           (_hd2196022146_
@@ -2773,7 +2773,7 @@
                                                      (declare (not safe))
                                                      (##car _e2197022172_))))
                                               (if (gx#stx-null? _tl2196822179_)
-                                                  (___match3937639377_
+                                                  (___match3946939470_
                                                    _e2196122142_
                                                    _hd2196022146_
                                                    _tl2195922149_
@@ -2792,16 +2792,16 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _tl2196522169_)
                         '2)
-                  (let ((___splice3934839349_
+                  (let ((___splice3944139442_
                          (gx#syntax-split-splice _tl2196522169_ '2)))
                     (let ((_tl2198822046_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref ___splice3934839349_ '1)))
+                             (##vector-ref ___splice3944139442_ '1)))
                           (_target2198622043_
                            (let ()
                              (declare (not safe))
-                             (##vector-ref ___splice3934839349_ '0))))
+                             (##vector-ref ___splice3944139442_ '0))))
                       (if (gx#stx-pair? _tl2198822046_)
                           (let ((_e2199722049_ (gx#syntax-e _tl2198822046_)))
                             (let ((_tl2199522056_
@@ -2824,7 +2824,7 @@
                                              (declare (not safe))
                                              (##car _e2200022059_))))
                                       (if (gx#stx-null? _tl2199822066_)
-                                          (___match3941639417_
+                                          (___match3950939510_
                                            _e2196122142_
                                            _hd2196022146_
                                            _tl2195922149_
@@ -2834,7 +2834,7 @@
                                            _e2196722162_
                                            _hd2196622166_
                                            _tl2196522169_
-                                           ___splice3934839349_
+                                           ___splice3944139442_
                                            _target2198622043_
                                            _tl2198822046_
                                            _e2199722049_
@@ -2858,7 +2858,7 @@
                                               (if (fx>= (gx#stx-length
                                                          _tl2196522169_)
                                                         '2)
-                                                  (let ((___splice3934839349_
+                                                  (let ((___splice3944139442_
                                                          (gx#syntax-split-splice
                                                           _tl2196522169_
                                                           '2)))
@@ -2867,14 +2867,14 @@
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              ___splice3934839349_
+                                                              ___splice3944139442_
                                                               '1)))
                                                           (_target2198622043_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##vector-ref
-                                                              ___splice3934839349_
+                                                              ___splice3944139442_
                                                               '0))))
                                                       (if (gx#stx-pair?
                                                            _tl2198822046_)
@@ -2898,7 +2898,7 @@
                                      (declare (not safe))
                                      (##car _e2200022059_))))
                               (if (gx#stx-null? _tl2199822066_)
-                                  (___match3941639417_
+                                  (___match3950939510_
                                    _e2196122142_
                                    _hd2196022146_
                                    _tl2195922149_
@@ -2908,7 +2908,7 @@
                                    _e2196722162_
                                    _hd2196622166_
                                    _tl2196522169_
-                                   ___splice3934839349_
+                                   ___splice3944139442_
                                    _target2198622043_
                                    _tl2198822046_
                                    _e2199722049_
