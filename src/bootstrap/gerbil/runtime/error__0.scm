@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1695381360)
+  (define gerbil/runtime/error::timestamp 1695392652)
   (begin
     (define Exception::t
       (let ()
@@ -439,9 +439,8 @@
                            (display '"--- irritants: ")
                            (for-each
                             (lambda (_obj12263_)
-                              (let ()
-                                (declare (not safe))
-                                (display* _obj12263_ '" ")))
+                              (write _obj12263_)
+                              (write-char '#\space))
                             _irritants12261_)
                            (newline))))
                    (if (let ()
@@ -469,38 +468,38 @@
             (##write-string __tmp12510 _port12252_)))))
     (define Error::display-exception::specialize
       (lambda (__t12476)
-        (let ((__irritants12477
+        (let ((__continuation12477
                (let ((__tmp12481
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12476 'irritants))))
+                        (class-slot-offset __t12476 'continuation))))
                  (if __tmp12481
                      (let () (declare (not safe)) (##fx+ __tmp12481 '1))
-                     (error '"Unknown slot" 'irritants))))
-              (__continuation12478
+                     (error '"Unknown slot" 'continuation))))
+              (__message12478
                (let ((__tmp12482
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12476 'continuation))))
+                        (class-slot-offset __t12476 'message))))
                  (if __tmp12482
                      (let () (declare (not safe)) (##fx+ __tmp12482 '1))
-                     (error '"Unknown slot" 'continuation))))
-              (__message12479
+                     (error '"Unknown slot" 'message))))
+              (__where12479
                (let ((__tmp12483
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12476 'message))))
+                        (class-slot-offset __t12476 'where))))
                  (if __tmp12483
                      (let () (declare (not safe)) (##fx+ __tmp12483 '1))
-                     (error '"Unknown slot" 'message))))
-              (__where12480
+                     (error '"Unknown slot" 'where))))
+              (__irritants12480
                (let ((__tmp12484
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12476 'where))))
+                        (class-slot-offset __t12476 'irritants))))
                  (if __tmp12484
                      (let () (declare (not safe)) (##fx+ __tmp12484 '1))
-                     (error '"Unknown slot" 'where))))
+                     (error '"Unknown slot" 'irritants))))
               (__class12485
                (let ()
                  (declare (not safe))
@@ -519,7 +518,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self12251_
-                                 __where12480
+                                 __where12479
                                  __t12476
                                  '#f))))
                          (if _$e12258_ (display _$e12258_) (display '"?")))
@@ -537,7 +536,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self12251_
-                                 __message12479
+                                 __message12478
                                  __t12476
                                  '#f))))
                          (declare (not safe))
@@ -547,7 +546,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self12251_
-                                 __irritants12477
+                                 __irritants12480
                                  __t12476
                                  '#f))))
                          (if (let ()
@@ -558,9 +557,8 @@
                                (display '"--- irritants: ")
                                (for-each
                                 (lambda (_obj12263_)
-                                  (let ()
-                                    (declare (not safe))
-                                    (display* _obj12263_ '" ")))
+                                  (write _obj12263_)
+                                  (write-char '#\space))
                                 _irritants12261_)
                                (newline))))
                        (if __class12485
@@ -569,7 +567,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self12251_
-                                     __continuation12478
+                                     __continuation12477
                                      __t12476
                                      '#f))))
                              (if _cont1226412266_
@@ -623,22 +621,22 @@
             (##write-string __tmp12517 _port12119_)))))
     (define RuntimeException::display-exception::specialize
       (lambda (__t12486)
-        (let ((__continuation12487
+        (let ((__exception12487
                (let ((__tmp12489
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12486 'continuation))))
+                        (class-slot-offset __t12486 'exception))))
                  (if __tmp12489
                      (let () (declare (not safe)) (##fx+ __tmp12489 '1))
-                     (error '"Unknown slot" 'continuation))))
-              (__exception12488
+                     (error '"Unknown slot" 'exception))))
+              (__continuation12488
                (let ((__tmp12490
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t12486 'exception))))
+                        (class-slot-offset __t12486 'continuation))))
                  (if __tmp12490
                      (let () (declare (not safe)) (##fx+ __tmp12490 '1))
-                     (error '"Unknown slot" 'exception)))))
+                     (error '"Unknown slot" 'continuation)))))
           (lambda (_self12118_ _port12119_)
             (let ((_tmp-port12121_ (open-output-string)))
               (let () (declare (not safe)) (fix-port-width! _tmp-port12121_))
@@ -647,7 +645,7 @@
                        (declare (not safe))
                        (##unchecked-structure-ref
                         _self12118_
-                        __exception12488
+                        __exception12487
                         __t12486
                         '#f))))
                 (declare (not safe))
@@ -657,7 +655,7 @@
                        (declare (not safe))
                        (##unchecked-structure-ref
                         _self12118_
-                        __continuation12487
+                        __continuation12488
                         __t12486
                         '#f))))
                 (if _cont1212212124_
