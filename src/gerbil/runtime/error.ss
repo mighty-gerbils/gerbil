@@ -151,7 +151,7 @@ namespace: #f
           (unless (null? irritants)
             (display "--- irritants: ")
             (for-each
-              (lambda (obj) (display* obj " "))
+              (lambda (obj) (write obj) (write-char #\space))
               irritants)
             (newline)))
         (when (StackTrace? self)

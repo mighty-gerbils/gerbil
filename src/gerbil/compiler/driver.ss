@@ -513,6 +513,16 @@ namespace: gxc
          (scm (string-append (static-module-name context-id) ".scm"))
          (dirs (current-expander-module-library-path))
          (dirs
+          (let (user-libpath (getenv "GERBIL_PATH" #f))
+            ;; this might have changed if we programmatically set it
+            ;; can happen in tests
+            (if user-libpath
+              (let (user-libpath (path-expand "lib" user-libpath))
+                (if (member user-libpath dirs)
+                  dirs
+                  (cons user-libpath dirs)))
+              dirs)))
+         (dirs
           (cond
            ((current-compile-output-dir)
             => (cut cons <> dirs))
