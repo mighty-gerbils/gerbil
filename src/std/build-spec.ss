@@ -315,6 +315,7 @@
     "misc/atom"
     "misc/decimal"
     "misc/extensible-vector"
+    "misc/prime"
     "misc/concurrent-plan"
     "misc/timeout"
     "misc/list-builder"

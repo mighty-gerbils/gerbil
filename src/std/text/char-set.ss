@@ -6,7 +6,7 @@
 (export #t)
 
 (import
-  :gerbil/gambit/exact
+  :gerbil/gambit
   :std/sugar)
 
 ;; Codepoints assume Unicode encoding
