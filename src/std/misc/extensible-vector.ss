@@ -25,16 +25,13 @@
 (declare (not safe))
 
 (defstruct evector (vector fill-pointer)
-  transparent: #t unchecked: #t
-  constructor: :init!)
+  transparent: #t unchecked: #t)
 
 (defstruct ebytes (bytes fill-pointer)
-  transparent: #t unchecked: #t
-  constructor: :init!)
+  transparent: #t unchecked: #t)
 
 (defstruct ebits (bits fill-pointer)
-  transparent: #t unchecked: #t
-  constructor: :init!)
+  transparent: #t unchecked: #t)
 
 (defcheck-argument-type evector)
 (defcheck-argument-type ebytes)
@@ -58,23 +55,6 @@
     (unless (fx< i len)
       (raise-bad-argument (exception-context i) "fixnum in range" i len))))
 
-(defmethod {:init! evector}
-  (lambda (self len (iv #f))
-    (check-argument-fxlength len)
-    (set! (&evector-vector self) (make-vector len iv))
-    (set! (&evector-fill-pointer self) len)))
-
-(defmethod {:init! ebytes}
-  (lambda (self len (iv 0))
-    (check-argument-fxlength len)
-    (set! (&ebytes-bytes self) (make-u8vector len iv))
-    (set! (&ebytes-fill-pointer self) len)))
-
-(defmethod {:init! ebits}
-  (lambda (self len (iv 0))
-    (check-argument-fxlength len)
-    (set! (&ebits-bits self) (make-u8vector (n-bits->n-u8 len) iv))
-    (set! (&ebits-fill-pointer self) len)))
 
 (defrule (defchecked (checked arg ...) (unchecked xarg ...) check ... body)
   (begin
@@ -251,19 +231,19 @@
 (defchecked (ebits-set? e i)
   (&ebits-set? e i)
   (check-argument-ebits)
-  (check-argument-range i (u8vector-length (&ebits-bits e)))
+  (check-argument-range i (fxarithmetic-shift (u8vector-length (&ebits-bits e)) 3))
   (bit-set? (fxand i 7) (u8vector-ref (&ebits-bits e) (fxarithmetic-shift i -3))))
 
 (defchecked (ebits-ref e i)
   (&ebits-ref e i)
   (check-argument-ebits e)
-  (check-argument-range i (u8vector-length (&ebits-bits e)))
+  (check-argument-range i (fxarithmetic-shift (u8vector-length (&ebits-bits e)) 3))
   (if (&ebits-set? e i) 1 0))
 
 (defchecked (ebits-set! e i x)
   (&ebits-set! e i x)
   (check-argument-ebits e)
-  (check-argument-range i (u8vector-length (&ebits-bits e)))
+  (check-argument-range i (fxarithmetic-shift (u8vector-length (&ebits-bits e)) 3))
   (let* ((ii (fxarithmetic-shift i -3))
          (bit (fxarithmetic-shift 1 (fxand i 7)))
          (b (&ebits-bits e))
