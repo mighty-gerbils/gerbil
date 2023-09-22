@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme process-context) library
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         ./process-context-impl)
 
 (extern namespace: #f

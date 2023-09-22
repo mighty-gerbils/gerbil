@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; :std/text/utf8 unit test
 
 (import :std/test
-        :std/text/utf8
         :std/sugar
 	    :std/error
-        :gerbil/gambit/random)
+        :gerbil/gambit
+        ./utf8)
 
 (export utf8-test)
 

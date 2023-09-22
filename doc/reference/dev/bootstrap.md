@@ -81,7 +81,7 @@ gxc -d bootstrap -s -S -O -no-ssxi gerbil/prelude/core.ss
 
 - To compile the bootstrap gambit prelude:
 ```
-gxc -d bootstrap -s -S gerbil/prelude/gambit/*.ss gerbil/prelude/gambit.ss
+gxc -d bootstrap -s -S gerbil/prelude/gambit.ss
 ```
 
 - To compile the bootstrap expander:

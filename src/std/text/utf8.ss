@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; string<->utf8 conversion without intermediate ports
 
-(import :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error)
 (export string->utf8 utf8->string
         utf8-encode utf8-decode

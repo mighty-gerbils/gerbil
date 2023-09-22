@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; LMDB wraper interface
 
-(import :gerbil/gambit/threads
+(import :gerbil/gambit
         :std/build-config
         :std/error
         :std/os/error

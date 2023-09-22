@@ -3,7 +3,7 @@
 ;;; SRFI-160: Homogeneous Numeric Vector Libraries
 
 (import (for-syntax :std/stxutil)
-        :gerbil/gambit/hash
+        :gerbil/gambit
         (only-in :std/srfi/128 make-comparator)
         ./base)
 (export #t)

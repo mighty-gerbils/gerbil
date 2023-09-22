@@ -2,7 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; file raw device buffers
 
-(import :gerbil/gambit/ports
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/net/bio/input
         :std/net/bio/output
         :std/os/fd

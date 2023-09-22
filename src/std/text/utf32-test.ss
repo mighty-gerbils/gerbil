@@ -3,10 +3,10 @@
 ;;; :std/text/utf32 unit test
 
 (import :std/test
-        :std/text/utf32
         :std/sugar
         :std/error
-        :gerbil/gambit/random)
+        :gerbil/gambit
+        ./utf32)
 
 (export utf32-test)
 (def utf32-test

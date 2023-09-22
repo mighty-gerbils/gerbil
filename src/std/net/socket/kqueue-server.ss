@@ -2,10 +2,10 @@
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets  -- kqueue server implementation
 
+;;; --- DEPRECATED ---
+
 (require bsd)
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/misc
+(import :gerbil/gambit
         :std/net/socket/base
         :std/net/socket/basic-server
         :std/os/fd

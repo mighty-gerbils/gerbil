@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO tests
-(import :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/test
         :std/error
         :std/iter

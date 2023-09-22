@@ -1,11 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor loader test
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/test
         :std/error
         :std/sugar
+        :std/logger
         :std/os/hostname
         :std/os/temporaries
         ./server
@@ -26,12 +26,11 @@
 (def (test-setup!)
   (setenv "GERBIL_PATH" gerbil-path)
   (create-directory* gerbil-path)
-  (create-directory* (path-expand "bin" gerbil-path))
   ;; compile the test program server
   (let (gxc (open-process
              [path: "gxc"
-                    arguments: ["-O" "-exe"
-                                "-o" (path-expand "bin/loader-test-server" gerbil-path)
+                    arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
+                                "-exe" "-o" (path-expand "bin/loader-test-server" gerbil-path)
                                 (path-expand "loader-test-server.ss" (this-source-directory))]
                     stderr-redirection: #f
                     stdout-redirection: #f]))
@@ -40,14 +39,21 @@
   ;; compile the test support module
   (let (gxc (open-process
              [path: "gxc"
-                    arguments: ["-O"
+                    arguments: ["-O" "-d" (path-expand "lib" gerbil-path)
                                 (path-expand "loader-test-support.ss" (this-source-directory))]
                     stderr-redirection: #f
                     stdout-redirection: #f]))
     (unless (zero? (process-status gxc))
-      (error "error compiling test support module"))))
+      (error "error compiling test support module")))
+
+  ;; uncomment this if you are debugging test failures
+  ;; (current-logger-options 'VERBOSE)
+  )
 
 (def (test-cleanup!)
+  ;; uncomment this if you uncommented above
+  ;; (current-logger-options 'WARN)
+
   (setenv "GERBIL_PATH")
   (delete-file-or-directory gerbil-path #t))
 
@@ -91,10 +97,10 @@
       (check (ping-server test-server-id)
              => 'OK)
       ;; load the loader-test-support module
-      (check (remote-load-library-module test-server-id ':std/actor-v18/loader-test-support)
-             => (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__rt.o1"))
+      (check (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support)
+             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__rt.o1"))
       ;; eval hello
-      (check (remote-eval test-server-id '(std/actor-v18/loader-test-support#hello 'world))
+      (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
       ;; and shut it down
       (remote-stop-server! test-server-id)
@@ -127,10 +133,10 @@
       (check (ping-server test-server-id)
              => 'OK)
       ;; load the loader-test-support module
-      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__0.o1")))
+      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1")))
         (check the-code-hash ? string?))
       ;; eval hello
-      (check (remote-eval test-server-id '(std/actor-v18/loader-test-support#hello 'world))
+      (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
       ;; and shut it down
       (remote-stop-server! test-server-id)
@@ -180,7 +186,7 @@
       ;; first try loading without auth; this should fail
       (check-exception (remote-eval test-server-id '(+ 1 1))
                        (actor-error-with? "not authorized"))
-      (check-exception (remote-load-code test-server-id (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__0.o1"))
+      (check-exception (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1"))
                        (actor-error-with? "not authorized"))
 
 
@@ -189,10 +195,10 @@
                               capabilities: '(loader))
              => (void))
       (check (remote-eval test-server-id '(+ 1 1)) => 2)
-      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/std/actor-v18/loader-test-support__0.o1")))
+      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1")))
         (check the-code-hash ? string?))
       ;; eval hello
-      (check (remote-eval test-server-id '(std/actor-v18/loader-test-support#hello 'world))
+      (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
       ;; but still can't shut it down
       (check-exception (remote-stop-server! test-server-id)

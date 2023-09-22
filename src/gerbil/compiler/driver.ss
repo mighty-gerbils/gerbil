@@ -5,16 +5,10 @@ package: gerbil/compiler
 namespace: gxc
 
 (import :gerbil/expander
-        :gerbil/gambit/ports
+        :gerbil/gambit
         "base"
         "compile"
-        "optimize"
-        (only-in :gerbil/gambit/misc
-                 pretty-print)
-        (only-in :gerbil/gambit/ports
-                 close-port open-process process-status)
-        (only-in :gerbil/gambit/os
-                 current-time time->seconds file-info file-info-size))
+        "optimize")
 (export compile-module compile-exe)
 
 (def default-gerbil-gsc
@@ -518,6 +512,16 @@ namespace: gxc
             (string->symbol ctx)))
          (scm (string-append (static-module-name context-id) ".scm"))
          (dirs (current-expander-module-library-path))
+         (dirs
+          (let (user-libpath (getenv "GERBIL_PATH" #f))
+            ;; this might have changed if we programmatically set it
+            ;; can happen in tests
+            (if user-libpath
+              (let (user-libpath (path-expand "lib" user-libpath))
+                (if (member user-libpath dirs)
+                  dirs
+                  (cons user-libpath dirs)))
+              dirs)))
          (dirs
           (cond
            ((current-compile-output-dir)

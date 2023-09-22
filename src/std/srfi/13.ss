@@ -6,7 +6,7 @@
 ;;; and optionals goop -- it uses gerbil opt-lambdas and ellides the checks altogether.
 ;;;
 
-(import :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error
         :std/srfi/14)
 (export

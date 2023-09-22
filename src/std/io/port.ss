@@ -1,5 +1,5 @@
 (import
-  :gerbil/gambit/ports
+  :gerbil/gambit
   :std/sugar)
 
 (export raw-port raw-port-port)

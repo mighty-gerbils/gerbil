@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; SRFI-160: Homogeneous Numeric Vector Libraries
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error)
 (export #t)
 

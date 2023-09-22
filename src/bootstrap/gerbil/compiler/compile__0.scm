@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1695337519)
+  (define gerbil/compiler/compile::timestamp 1695392692)
   (begin
     (define gxc#current-compile-methods (make-parameter '#f))
     (define gxc#current-compile-lift (make-parameter '#f))

@@ -2,10 +2,10 @@
 ;;; (C) vyzo
 ;;; WAMP client
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/bits
-        :gerbil/gambit/misc
+
+;;;;;; DEAD CODE -- TO BE MOVED TO gerbil-utils
+
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/logger

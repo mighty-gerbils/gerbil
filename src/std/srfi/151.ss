@@ -2,7 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-151: Bitwise Operations
 
-(import :gerbil/gambit/bits)
+(import :gerbil/gambit)
 (export bitwise-not bitwise-and bitwise-ior bitwise-xor bitwise-eqv
         bitwise-nand bitwise-nor bitwise-andc1 bitwise-andc2
         bitwise-orc1 bitwise-orc2

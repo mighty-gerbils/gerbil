@@ -3,7 +3,7 @@
 ;;; package build script template
 
 (import :std/make
-        :gerbil/gambit/misc)
+        :gerbil/gambit)
 (export defbuild-script)
 
 (def (build-main args build-spec keys that-file)

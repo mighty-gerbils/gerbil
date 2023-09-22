@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; [incomplete] OS temporary file interface
 
-(import :gerbil/gambit/os
-        :gerbil/gambit/random
+(import :gerbil/gambit
         :std/sugar)
 (export make-temporary-file-name
         call-with-temporary-file-name)

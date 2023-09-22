@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; utf8 codec
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/sugar
         ../interface
         ./packed)

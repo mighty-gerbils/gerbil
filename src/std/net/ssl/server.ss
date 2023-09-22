@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; SSL Server
 (export #t)
-(import :gerbil/gambit/foreign
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/iter

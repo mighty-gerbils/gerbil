@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; std/net/httpd unit-test
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/random
+(import :gerbil/gambit
         :std/test
         :std/sugar
         :std/logger

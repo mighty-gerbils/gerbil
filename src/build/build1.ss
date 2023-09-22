@@ -47,23 +47,7 @@
   '("gerbil/prelude/core.ss"))
 
 (def gerbil-prelude-gambit
-  '("gerbil/prelude/gambit/ports.ss"
-    "gerbil/prelude/gambit/bytes.ss"
-    "gerbil/prelude/gambit/misc.ss"
-    "gerbil/prelude/gambit/random.ss"
-    "gerbil/prelude/gambit/continuations.ss"
-    "gerbil/prelude/gambit/os.ss"
-    "gerbil/prelude/gambit/threads.ss"
-    "gerbil/prelude/gambit/bits.ss"
-    "gerbil/prelude/gambit/hvectors.ss"
-    "gerbil/prelude/gambit/system.ss"
-    "gerbil/prelude/gambit/foreign.ss"
-    "gerbil/prelude/gambit/hash.ss"
-    "gerbil/prelude/gambit/readtables.ss"
-    "gerbil/prelude/gambit/fixnum.ss"
-    "gerbil/prelude/gambit/flonum.ss"
-    "gerbil/prelude/gambit/exact.ss"
-    "gerbil/prelude/gambit.ss"))
+  '("gerbil/prelude/gambit.ss"))
 
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))

@@ -25,8 +25,7 @@
                     date-day date-month date-year
                     date-zone-offset
                     date->time-utc time-utc->date)
-           (only-in :gerbil/gambit/ports close-port)
-           :gerbil/gambit/threads)
+           :gerbil/gambit)
    (export mysql-connect)
 
    (package-deprecation-warning!)

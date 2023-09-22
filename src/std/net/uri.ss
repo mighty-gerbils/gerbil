@@ -2,9 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; URI support; rfc3986
 
-(import (only-in :gerbil/gambit/ports
-                 with-output-to-string
-                 with-output-to-u8vector write-u8)
+(import :gerbil/gambit
         :std/error
         :std/text/utf8)
 

@@ -1,5 +1,5 @@
 ;; -*- Gerbil -*-
-;;; © fare@tunes.org
+;;; © fare
 ;;;; Sourceable Representation of Gerbil entities
 
 (export
@@ -8,8 +8,9 @@
   pr prn repr)
 
 (import
-  :gerbil/gambit/hash :gerbil/gambit/ports
-  :std/misc/rtd :std/sort)
+  :gerbil/gambit
+  :std/sort
+  ./rtd)
 
 ;; Definition of for-each! copied from :std/misc/list,
 ;; Unlike for-each, also works on improper lists, ended by non-pairs other than '()

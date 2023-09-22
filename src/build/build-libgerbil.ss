@@ -4,7 +4,7 @@
 ;;; libgerbil build script
 
 (import :gerbil/expander
-        :gerbil/gambit/ports
+        :gerbil/gambit
         :std/build-config
         :std/make
         :std/iter
@@ -47,23 +47,7 @@
     "gerbil/runtime"))
 
 (def gerbil-prelude-gambit
-  '("gerbil/gambit/ports"
-    "gerbil/gambit/bytes"
-    "gerbil/gambit/misc"
-    "gerbil/gambit/random"
-    "gerbil/gambit/continuations"
-    "gerbil/gambit/os"
-    "gerbil/gambit/threads"
-    "gerbil/gambit/bits"
-    "gerbil/gambit/hvectors"
-    "gerbil/gambit/system"
-    "gerbil/gambit/foreign"
-    "gerbil/gambit/hash"
-    "gerbil/gambit/readtables"
-    "gerbil/gambit/fixnum"
-    "gerbil/gambit/flonum"
-    "gerbil/gambit/exact"
-    "gerbil/gambit"))
+  '("gerbil/gambit"))
 
 (def gerbil-expander
   '("gerbil/expander/common"

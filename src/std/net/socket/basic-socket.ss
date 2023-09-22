@@ -2,9 +2,9 @@
 ;;; (C) vyzo
 ;;; synchronous sockets -- basic unmanaged sockets
 
-(import :gerbil/gambit/misc
-        :gerbil/gambit/os
-        :gerbil/gambit/ports
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/net/socket/base
         :std/os/socket
         :std/os/fd)

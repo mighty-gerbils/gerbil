@@ -1,8 +1,8 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/system::timestamp 1695337676)
+  (define gerbil/runtime/system::timestamp 1695392652)
   (begin
-    (define gerbil-version-string (lambda () '"0.17.0-279-g9f99ec46"))
+    (define gerbil-version-string (lambda () '"0.17.0-286-g13ef868d"))
     (define gerbil-system-version-string
       (lambda ()
         (string-append
@@ -19,6 +19,6 @@
     (define gerbil-runtime-smp?
       (lambda ()
         (member '"--enable-smp"
-                (let ((__tmp8499 (configure-command-string)))
+                (let ((__tmp8511 (configure-command-string)))
                   (declare (not safe))
-                  (string-split __tmp8499 '#\')))))))
+                  (string-split __tmp8511 '#\')))))))

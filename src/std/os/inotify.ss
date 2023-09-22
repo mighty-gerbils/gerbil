@@ -3,8 +3,7 @@
 ;;; OS inotify interface [linux]
 
 (require linux)
-(import (only-in :gerbil/gambit/ports close-port)
-        :std/foreign
+(import :std/foreign
         :std/error
         :std/misc/timeout
         ./error

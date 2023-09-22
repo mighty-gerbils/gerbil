@@ -2,7 +2,7 @@
 ;;; (C) vyzo
 ;;; network addresses
 
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/pregexp
         :std/format

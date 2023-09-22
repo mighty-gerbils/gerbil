@@ -4,22 +4,10 @@ namespace: gxc
 
 (%#begin (%#import
           :gerbil/expander
-          :gerbil/gambit/ports
+          :gerbil/gambit
           :gerbil/compiler/base
           :gerbil/compiler/compile
-          :gerbil/compiler/optimize
-          (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
-          (spec:
-           (:gerbil/gambit/ports)
-           (0 open-process 0 open-process)
-           (0 process-status 0 process-status)
-           (0 close-port 0 close-port))
-          (spec:
-           (:gerbil/gambit/os)
-           (0 file-info 0 file-info)
-           (0 time->seconds 0 time->seconds)
-           (0 file-info-size 0 file-info-size)
-           (0 current-time 0 current-time)))
+          :gerbil/compiler/optimize)
          (%#export
           (spec: 0 compile-module compile-module)
           (spec: 0 compile-exe compile-exe))

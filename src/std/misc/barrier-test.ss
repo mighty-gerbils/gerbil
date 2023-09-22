@@ -2,9 +2,8 @@
 ;;; © vyzo
 ;;; :std/misc/barrier test
 
-(import :gerbil/gambit/threads
-        :std/misc/barrier
-        :std/test)
+(import :std/test
+        ./barrier)
 (export barrier-test)
 
 (def barrier-test

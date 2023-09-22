@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; actor messages, primitives and macros
 (import :gerbil/runtime/thread
-        :gerbil/gambit/threads
-        :gerbil/gambit/os
+        :gerbil/gambit
         :std/error
         :std/sugar
         :std/stxparam)

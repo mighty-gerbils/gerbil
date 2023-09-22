@@ -4,7 +4,7 @@
 ;;; This is :gerbil/core with a readtable that treats [] as plain parentheses.
 
 (import :gerbil/core
-        (for-syntax :gerbil/gambit/readtables))
+        (for-syntax :gerbil/gambit))
 (export (import: :gerbil/core)
         (for-syntax read-module-body))
 

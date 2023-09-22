@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; gxc compilation test
-(import :gerbil/gambit/ports
-        :gerbil/gambit/system
+(import :gerbil/gambit
         :std/test
         :std/os/temporaries)
 (export gxc-test make-test test-setup! test-cleanup!)

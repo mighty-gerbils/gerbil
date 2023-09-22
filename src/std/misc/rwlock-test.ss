@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; read-write lock test
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+(import :gerbil/gambit
         :std/test
         :std/iter
         ./rwlock

@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; simple benchmark for evaluating cast and satisfies? performance
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+(import :gerbil/gambit
         ./iter
         ./interface)
 (export main)

@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; SRFI-130: Cursor-based string library
 
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         (only-in ./1 last-pair)
         (except-in ./13
           string-index

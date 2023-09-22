@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; Protobuf I/O
 
-(import :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error
         :std/foreign
         :std/text/utf8

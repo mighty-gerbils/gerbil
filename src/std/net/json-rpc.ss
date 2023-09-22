@@ -23,7 +23,6 @@
   MalformedResponse? malformed-response?)
 
 (import
-  :gerbil/gambit/continuations
   :std/error
   (only-in :std/misc/atom atomic-counter)
   (only-in :std/net/httpd http-response-write http-response-write-condition

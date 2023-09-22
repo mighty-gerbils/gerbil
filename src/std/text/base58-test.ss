@@ -1,8 +1,7 @@
 (export base58-test)
-
 (import
-  :gerbil/gambit/bytes
-  :std/text/base58 :std/test)
+  :std/test
+  ./base58)
 
 (def base58-test
   (test-suite "test :std/text/base58"

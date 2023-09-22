@@ -2,7 +2,7 @@
 ;;; ̧© vyzo, fare
 ;;; json utilities
 (import
-  :gerbil/gambit/ports
+  :gerbil/gambit
   :std/error
   :std/io
   :std/misc/ports

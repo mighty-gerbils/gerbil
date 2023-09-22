@@ -2,10 +2,9 @@
 ;;; (C) vyzo
 ;;; actor protocols
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/misc
-        :gerbil/gambit/hash
+;;; --- DEPRECATED ----
+
+(import :gerbil/gambit
         :std/event
         :std/error
         :std/sugar

@@ -10,7 +10,7 @@
   process-error?)
 
 (import
-  :gerbil/gambit/ports
+  :gerbil/gambit
   :std/error
   :std/misc/ports
   :std/sugar)
@@ -34,10 +34,10 @@
 ;; that will read the process's entire output as a string.
 ;; If the check-status: argument is a procedure then when the process has
 ;; completed it is called with the exit status and the list of arguments passed
-;; to gerbil/gambit/ports#open-process used to create the process. If it is
+;; to open-process used to create the process. If it is
 ;; true, then the process exit status will be checked, and an error will be
 ;; raised if it isn't 0. If it is false, then the exit status is not checked.
-;; Other arguments are passed through to gerbil/gambit/ports#open-process.
+;; Other arguments are passed through to open-process.
 ;; They have the same defaults as per gambit, except for the show-console: argument
 ;; that defaults to #f, the Gambit default.
 ;; I (fare) consider that scripting is more common than user-interaction, and that

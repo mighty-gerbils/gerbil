@@ -2,8 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-128: Comparator library
 
-(import :gerbil/gambit/hash
-        :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error
         :std/generic)
 (export

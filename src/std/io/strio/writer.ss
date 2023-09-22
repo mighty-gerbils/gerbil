@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; string writer implementation
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/error
         :std/sugar
         ../interface

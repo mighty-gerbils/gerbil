@@ -2,8 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-144: Flonums
 
-(import :gerbil/gambit/flonum
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error)
 (export
   ;; Mathematical Constants

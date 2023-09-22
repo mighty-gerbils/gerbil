@@ -1,34 +1,34 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<match>[2]#_g42474_|
+  (define |gerbil/core$<match>[2]#_g42567_|
     (##structure
      gx#syntax-quote::t
      'macro-object
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g42476_|
+  (define |gerbil/core$<match>[2]#_g42569_|
     (##structure
      gx#syntax-quote::t
      'macro-object::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g42477_|
+  (define |gerbil/core$<match>[2]#_g42570_|
     (##structure
      gx#syntax-quote::t
      'match-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g42478_|
+  (define |gerbil/core$<match>[2]#_g42571_|
     (##structure
      gx#syntax-quote::t
      'make-match-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g42479_|
+  (define |gerbil/core$<match>[2]#_g42572_|
     (##structure
      gx#syntax-quote::t
      'match-macro?
@@ -36,20 +36,20 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core$<match>[:1:]#match-macro|
-    (let ((__tmp42480 |gerbil/core$<match>[2]#_g42477_|)
-          (__tmp42475
-           (cons (cons |gerbil/core$<match>[2]#_g42476_| '())
-                 (cons |gerbil/core$<match>[2]#_g42477_|
-                       (cons |gerbil/core$<match>[2]#_g42478_|
-                             (cons |gerbil/core$<match>[2]#_g42479_|
+    (let ((__tmp42573 |gerbil/core$<match>[2]#_g42570_|)
+          (__tmp42568
+           (cons (cons |gerbil/core$<match>[2]#_g42569_| '())
+                 (cons |gerbil/core$<match>[2]#_g42570_|
+                       (cons |gerbil/core$<match>[2]#_g42571_|
+                             (cons |gerbil/core$<match>[2]#_g42572_|
                                    (cons '() (cons '() '())))))))
-          (__tmp42472
-           (let ((__tmp42473 (list |gerbil/core$<match>[2]#_g42474_|)))
+          (__tmp42565
+           (let ((__tmp42566 (list |gerbil/core$<match>[2]#_g42567_|)))
              (declare (not safe))
              (##structure
               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
               'gerbil.core#match-macro::t
-              __tmp42473
+              __tmp42566
               'match-macro
               '#f
               '()
@@ -58,8 +58,8 @@
       (make-class-instance
        |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|
        'runtime-identifier:
-       __tmp42480
+       __tmp42573
        'expander-identifiers:
-       __tmp42475
+       __tmp42568
        'type-exhibitor:
-       __tmp42472))))
+       __tmp42565))))

@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; SRFI-159: columanr formatting
 
-(import :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error
         ../srfi-support
         ../1

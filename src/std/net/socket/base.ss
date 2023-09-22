@@ -2,7 +2,9 @@
 ;;; (C) vyzo
 ;;; synchronous sockets -- base
 
-(import :gerbil/gambit/os
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/actor-v13/proto
         :std/misc/timeout)
 (export #t)

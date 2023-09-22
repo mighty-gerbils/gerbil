@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; LevelDB wrapper interface
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/misc
+(import :gerbil/gambit
         :std/db/_leveldb
         :std/error
         :std/os/error

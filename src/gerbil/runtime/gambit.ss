@@ -44,20 +44,30 @@ namespace: #f
   err-code->string r
   input-port-readtable-set!
   output-port-readtable-set!
-  readtable-sharing-allowed?-set
+  output-port-column
   output-port-readtable
-  thread-thread-group
+  readtable-sharing-allowed?-set
+
   configure-command-string
+
+  random-source-randomize!
+  default-random-source
 
   make-thread
   make-thread-group
-  current-thread current-thread-group
+  thread-thread-group
+  current-thread
   thread? thread-group?
   thread-start!
   thread-init!
   thread-thread-group
   make-mutex
-  mutex-lock! mutex-unlock!)
+  mutex-lock! mutex-unlock!
+
+  read-subu8vector
+  write-subu8vector
+  read-substring
+  write-substring)
 
 ;; gambit macros
 (extern

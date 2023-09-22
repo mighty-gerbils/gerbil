@@ -2,7 +2,9 @@
 ;;; (C) vyzo
 ;;; synchronous sockets -- api
 
-(import :gerbil/gambit/os
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/net/socket/base
         :std/net/socket/basic-socket
         :std/os/socket

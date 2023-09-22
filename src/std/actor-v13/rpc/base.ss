@@ -2,7 +2,10 @@
 ;;; (C) vyzo
 ;;; actor rpc base
 
-(import :gerbil/gambit/threads
+
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/misc/uuid
         :std/misc/sync
         :std/net/bio

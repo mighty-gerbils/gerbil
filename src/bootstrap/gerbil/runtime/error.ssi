@@ -66,6 +66,7 @@ namespace: #f
          (%#define-syntax check-procedure |[:0:]#check-procedure|)
          (%#define-runtime with-exception-handler with-exception-handler)
          (%#define-runtime with-catch with-catch)
+         (%#define-runtime with-exception-catcher with-exception-catcher)
          (%#define-runtime wrap-runtime-exception wrap-runtime-exception)
          (%#define-runtime exception? exception?)
          (%#define-runtime error? error?)

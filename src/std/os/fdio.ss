@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptor I/O
 
-(import :gerbil/gambit/ports
-        :std/error
+(import :std/error
         :std/foreign
         ./fd
         ./fcntl

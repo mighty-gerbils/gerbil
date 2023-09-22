@@ -4,7 +4,7 @@
 
 (import :std/sugar
         :std/error
-        :gerbil/gambit/threads)
+        :gerbil/gambit)
 (export coroutine (rename: cort? coroutine?) continue yield
         cothread cothread? cothread-stop!)
 

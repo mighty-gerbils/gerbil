@@ -2,7 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets -- socket server building blocks
 
-(import :gerbil/gambit/threads
+;;; --- DEPRECAT$ED ---
+
+(import :gerbil/gambit
         :std/net/socket/base
         :std/os/socket
         :std/actor-v13/message

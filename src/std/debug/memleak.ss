@@ -2,11 +2,10 @@
 ;;; © vyzo
 ;;; memory leak debugging utilities
 
-(import :gerbil/gambit/ports
-        :gerbil/gambit/threads
-        :std/debug/heap
+(import :gerbil/gambit
         :std/sort
-        (only-in :std/generic type-of))
+        (only-in :std/generic type-of)
+        ./heap)
 (export heap-summary heap-summary-delta dump-heap-summary! watch-heap!)
 
 (def (heap-summary)

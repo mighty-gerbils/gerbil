@@ -16,13 +16,12 @@
   +cr+ +lf+ +crlf+)
 
 (import
-  (only-in :gerbil/gambit/ports write-substring write-string)
-  (only-in :gerbil/gambit/random random-integer)
+  (only-in :gerbil/gambit write-substring write-string random-integer)
   :std/error
   :std/srfi/13
   :std/format
   :std/iter
-  :std/misc/number)
+  ./number)
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -98,7 +97,7 @@
     (string-append new str)         ; add 'new' and leave procedure
     (call-with-output-string
      (lambda (port)
-       (write-string new port)      ; 'count' > 1, add 'new' before the first character
+       (write-string new port) ; 'count' > 1, add 'new' before the first character
        (let ((stop (1- len-str))
              (count (if (or (negative? count) (> count len-str))
 		      (1+ len-str)  ; the maximal number of replacements is len + 1

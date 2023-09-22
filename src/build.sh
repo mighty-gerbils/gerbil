@@ -253,12 +253,12 @@ build_tools () {
 }
 
 build_tags () {
-  feedback_low "Build gerbil tags"
+  feedback_low "Building gerbil TAGS"
   gxtags gerbil std lang
 }
 
 build_doc () {
-  feedback_low "Build gerbil docs"
+  feedback_low "Building gerbil hyperspec"
   (cd "${GERBIL_BASE}/doc" && npm install && node_modules/vuepress/cli.js dev)
 }
 

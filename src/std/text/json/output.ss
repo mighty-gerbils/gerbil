@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; json writer
-(import :gerbil/gambit/ports
-        :gerbil/gambit/bits
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/io

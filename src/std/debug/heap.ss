@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; heap debugging utilities
 
-(import :gerbil/gambit/hvectors
+(import :gerbil/gambit
         :std/generic
         :std/sort)
 (export memory-usage heap-type-stats dump-heap-stats! walk-heap!
@@ -10,8 +10,7 @@
 
 (cond-expand
   (gerbil-smp
-   (import :gerbil/gambit/threads
-           :std/misc/threads)))
+   (import :std/misc/threads)))
 
 (def (memory-usage)
   (let (stats (##process-statistics))
