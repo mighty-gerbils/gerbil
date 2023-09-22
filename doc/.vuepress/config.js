@@ -197,6 +197,7 @@ module.exports = {
                       'test',
                       'debug',
                       'profiler',
+                      'optimizing',
                       'bootstrap'
                   ]
               },

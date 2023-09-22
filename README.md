@@ -1,8 +1,10 @@
 # Gerbil Scheme
 
-Gerbil is an opinionated dialect of Scheme designed for Systems Programming,
-with a state of the art macro and module system on top of the Gambit runtime
-and compiler. One way to think of Gerbil is as the C++ to Marc Feeley's C.
+Gerbil is an opinionated, some might even say tendentious, dialect of
+Scheme designed for Systems Programming. It provides a state of the
+art macro and module system on top of the Gambit runtime and compiler
+and an extensive standard library. One way to think of Gerbil is as
+the C++ to Marc Feeley's C.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
@@ -72,6 +74,8 @@ You can render it locally by running `doc/build.sh`, which will leave
 the html output in `doc/.vuepress/dist`; the script uses vuepress and
 requires npm to be installed.
 
+## Deep Dive
+
 Probably the best way to dive into Gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
 within the implementation.
@@ -96,8 +100,8 @@ For questions and support, you can find us on gitter in [#gerbil-scheme](https:/
 The source code is distributed with the Gambit license; that means
 that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
 
-Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
-the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
+Gerbil's original author and primary maintainer is vyzo, aka in the
+Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
 bothered and polluted everything with more than a (C) vyzo, would read
 like this:
 
@@ -135,17 +139,19 @@ any of its variations or derivitives in the future.
 
 # Epilogue
 
-Gerbil had been my (vyzo) private Scheme for many years, evolved out of a set
-of common macros that i used across different implementations and
-eventually a full-blown PLT macro language. As such I have had
-multiple backends that supported the Gerbil dialect, but I have
-elected to base the canonical version of Gerbil on Gambit.
+Gerbil had been vyzo's private Scheme for many years, evolved out of a
+set of common macros that were used across different implementations
+and eventually a full-blown PLT macro language for actor oriented
+distributed programming.  As such, there have been multiple backends
+that supported the evolution of the Gerbil dialect, but vyzo elected
+to base the canonical version of Gerbil on Gambit because it is the
+most portable, performant and low-level Scheme kernel available.
 
 At the prompting of some friends (they know who they are), who had
-seen private versions of Gerbil, I decided to release it in public
-with a clean bootstrap version that bootstraps on gambit with a
-precompiled version of the macro system and compiler.  That means that
-the system is entirely self-hosted.
+seen private versions of Gerbil, vyzo decided to release it in public
+with a clean source-based bootstrap version that bootstraps on gambit
+with a precompiled version of the macro system and compiler.  That
+means that the system could be (and now is) entirely self-hosted.
 
 Gerbil is under continuous use and development.
 The core language has been stable for a while, but we are busy porting
