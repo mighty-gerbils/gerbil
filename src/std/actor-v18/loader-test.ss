@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor loader test
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/test
         :std/error
         :std/sugar

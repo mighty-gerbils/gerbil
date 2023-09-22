@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; packed small fixnum pairs
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/sugar)
 (export #t)
 

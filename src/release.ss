@@ -16,7 +16,7 @@
 ;; and v0.13 will be turned into v0.14-DEV
 
 (import
-  :gerbil/gambit/ports
+  :gerbil/gambit
   :std/format :std/misc/ports :std/misc/process :std/srfi/13 :std/srfi/14 :std/sugar :std/pregexp)
 
 ;; Where the root to gerbil is.
@@ -31,7 +31,7 @@
 
 ;; Path to the version file
 (def version-path
-  "src/gerbil/runtime/gx-version.scm")
+  "src/gerbil/runtime/version.ss")
 
 ;; Path to the .gitignore file
 (def ignore-path
@@ -111,7 +111,7 @@
   (printf "Making commit for release version ~a~%" version)
   ;; Create the version file
   (call-with-output-file [path: version-path truncate: #t]
-    (lambda (port) (fprintf port "(define (gerbil-version-string) \"~a\")\n" version)))
+    (lambda (port) (fprintf port "(def (gerbil-version-string) \"~a\")\n" version)))
   ;; Remove it from .gitignore
   (def ignore-lines (remove version-path (read-file-lines ignore-path)))
   (call-with-output-file [path: ignore-path truncate: #t]

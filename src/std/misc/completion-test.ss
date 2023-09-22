@@ -2,9 +2,9 @@
 ;;; © vyzo
 ;;; :std/misc/completion test
 
-(import :gerbil/gambit/threads
-        :std/misc/completion
-        :std/test)
+(import :gerbil/gambit
+        :std/test
+        ./completion)
 (export completion-test)
 
 (def completion-test

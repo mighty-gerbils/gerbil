@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; event-driven programming with conditions
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/misc/shuffle)

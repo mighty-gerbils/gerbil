@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/iter

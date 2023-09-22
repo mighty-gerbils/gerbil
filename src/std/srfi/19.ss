@@ -5,7 +5,7 @@
 (import :std/error
         :std/srfi/srfi-support
         :std/srfi/8
-        :gerbil/gambit/exact)
+        :gerbil/gambit)
 (export
   time-duration time-monotonic time-process time-tai time-thread time-utc
   current-date current-julian-day current-modified-julian-day

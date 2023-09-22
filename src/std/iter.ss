@@ -2,8 +2,7 @@
 ;;; (C) vyzo
 ;;; Iterations and comprehensions
 
-(import :gerbil/gambit/ports
-        :gerbil/gambit/misc
+(import :gerbil/gambit
         :std/error
         :std/generic
         :std/coroutine)

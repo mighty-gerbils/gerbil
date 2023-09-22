@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; thread debugging utilities
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/continuations
+(import :gerbil/gambit
         :std/misc/threads)
 (export #t)
 

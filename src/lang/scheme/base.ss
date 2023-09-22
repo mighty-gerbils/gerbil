@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library
-(import :gerbil/gambit/ports
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/srfi/9
         :std/text/utf8
         ./base-impl)

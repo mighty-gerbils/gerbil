@@ -2,7 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-141: Integer Division
 
-(import :gerbil/gambit/exact
+(import :gerbil/gambit
         ./8)
 (export ceiling/ ceiling-quotient ceiling-remainder
         floor/ floor-quotient floor-remainder

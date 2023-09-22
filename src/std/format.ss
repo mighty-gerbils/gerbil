@@ -3,19 +3,10 @@
 ;;; format and friends
 
 (export format printf fprintf eprintf)
-(import
-  (only-in :gerbil/gambit/ports
-           open-output-string
-           get-output-string
-           with-output-to-string
-           force-output)
-  (only-in :gerbil/gambit/misc
-           pretty-print)
-  (only-in :gerbil/gambit/bits
-           integer-length)
-  (only-in :std/misc/repr
-           print-representation)
-  :std/error)
+(import :gerbil/gambit
+        (only-in :std/misc/repr
+                 print-representation)
+        :std/error)
 
 (def (format fmt . args)
   (unless (string? fmt)

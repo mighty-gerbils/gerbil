@@ -2,8 +2,9 @@
 ;;; (C) vyzo
 ;;; actor rpc connections
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/logger

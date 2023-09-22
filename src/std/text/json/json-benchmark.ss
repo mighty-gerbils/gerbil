@@ -1,4 +1,4 @@
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/io
         :std/os/temporaries
         ./api)

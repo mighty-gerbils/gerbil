@@ -239,6 +239,7 @@ namespace: #f
       (gx#core-eval-module obj)))))
 
 (def (gerbil-runtime-init! builtin-modules)
+  ;; initialize the load path
   (let* ((home (gerbil-home))
          (libdir (path-expand "lib" home))
          (loadpath
@@ -256,6 +257,7 @@ namespace: #f
             (cons userpath loadpath))))
     (current-module-library-path (cons libdir loadpath)))
 
+  ;; initialize the modue registry
   (let* ((registry-entry (lambda (m) (cons m 'builtin)))
          (module-registry
           (let lp ((rest builtin-modules) (registry '()))
@@ -270,7 +272,11 @@ namespace: #f
                 registry))))))
     (current-module-registry module-registry))
 
-  (current-readtable __*readtable*))
+  ;; et the readtable
+  (current-readtable __*readtable*)
+
+  ;; randomize the default random source
+  (random-source-randomize! default-random-source))
 
 ;; expander loading hook
 (def __expander-loaded #f)

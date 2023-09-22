@@ -2,7 +2,9 @@
 ;;; (C) vyzo
 ;;; actor rpc
 
-(import :gerbil/gambit/threads
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/logger

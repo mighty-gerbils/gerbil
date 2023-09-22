@@ -1,5 +1,4 @@
-(import :gerbil/gambit/random
-        :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/iter
         :std/os/temporaries
         ./interface

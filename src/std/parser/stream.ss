@@ -2,7 +2,7 @@
 ;;; (C) vyzo
 ;;; std parser location-tracking streams
 
-(import :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/error
         ./base)
 (export make-char-stream char-stream?

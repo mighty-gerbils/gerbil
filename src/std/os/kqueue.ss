@@ -4,8 +4,7 @@
 
 (require bsd)
 
-(import (only-in :gerbil/gambit/ports close-port)
-        :std/foreign
+(import :std/foreign
         ./error
         ./fd
         ./fcntl)

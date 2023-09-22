@@ -3,8 +3,7 @@
 ;;; OS epoll interface [linux]
 
 (require linux)
-(import (only-in :gerbil/gambit/ports close-port)
-        :std/foreign
+(import :std/foreign
         ./error
         ./fd
         ./fcntl)

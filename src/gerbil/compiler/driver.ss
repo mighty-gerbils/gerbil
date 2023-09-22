@@ -5,16 +5,10 @@ package: gerbil/compiler
 namespace: gxc
 
 (import :gerbil/expander
-        :gerbil/gambit/ports
+        :gerbil/gambit
         "base"
         "compile"
-        "optimize"
-        (only-in :gerbil/gambit/misc
-                 pretty-print)
-        (only-in :gerbil/gambit/ports
-                 close-port open-process process-status)
-        (only-in :gerbil/gambit/os
-                 current-time time->seconds file-info file-info-size))
+        "optimize")
 (export compile-module compile-exe)
 
 (def default-gerbil-gsc

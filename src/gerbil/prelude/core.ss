@@ -91,16 +91,16 @@ package: gerbil
     with-input-from-file with-output-to-file
     open-input-file open-output-file
     close-input-port close-output-port
-    read read-char peek-char read-u8 peek-u8
-    eof-object? char-ready?
-    write display newline write-char write-u8
+    read read-char
+    eof-object?
+    write display newline write-char
     load
     ;; transcript-on transcript-off ; void
     ))
 
 
 ;;;
-;;; Common Runtime
+;;; Gerbil Host Runtime
 ;;;
 (module <host-runtime>
   (export #t)
@@ -112,13 +112,16 @@ package: gerbil
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
     fixnum->flonum
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxmodulo
-    fxbit-set? fxarithmetic-shift fxshift
+    fxbit-set? fxarithmetic-shift fxarithmetic-shift-left fxarithmetic-shift-right
+    fxshift
     fx< fx<= fx= fx>= fx>
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
     flzero? flpositive? flnegative?
     flnan? flinfinite? flfinite? flinteger?
     flmax flmin
+    arithmetic-shift bitwise-and bitwise-ior bitwise-xor bitwise-not
+    bitwise-merge integer-length
     box? box unbox set-box!
     make-list cons*
     foldl foldr andmap ormap filter filter-map iota last last-pair
@@ -277,23 +280,52 @@ package: gerbil
     ;; our home
     gerbil-home
 
-    ;; thread primitives
+    ;; concurrency primitives
     spawn spawn/name spawn/group spawn-actor spawn-thread
     thread-local-ref thread-local-get thread-local-set! thread-local-clear!
     unhandled-actor-exception-hook-set!
-    current-thread current-thread-group
+
     thread? actor-thread?
     thread-sleep! thread-join! thread-send thread-receive
     thread-specific thread-specific-set!
+    make-thread thread-start! thread-yield!
+    thread-name
     current-thread
+
+    thread-thread-group
+    thread-group?
+    thread-group-name
+    current-thread-group
+
     make-mutex mutex? mutex-lock! mutex-unlock! with-lock with-dynamic-lock
     make-condition-variable condition-variable?
     condition-variable-signal!
     condition-variable-broadcast!
 
+    ;; continuation primitives
+    continuation? continuation-capture continuation-graft continuation-return
+    display-continuation-backtrace
+
+    ;; time objects
+    current-time
+    time?
+    time->seconds
+    seconds->time
+
+    ;; port utilities
+    port? close-port force-output
+    read-all
+    read-line
+    peek-char
+    read-u8 peek-u8 write-u8
+    char-ready?
+
     ;; misc r7rs procedures
     list-copy list-set!
     string-downcase string-upcase
+    exact-integer?
+    exact inexact
+    exact-integer-sqrt
     )
 
 
@@ -2990,6 +3022,13 @@ package: gerbil
      (with-unwind-protect
       (lambda () body)
       (lambda () postlude rest ...))))
+
+  (defsyntax (@bytes stx)
+  (syntax-case stx ()
+    ((_ str)
+     (stx-string? #'str)
+     (with-syntax ((e (string->bytes (stx-e #'str))))
+       #'(quote e)))))
 
   ;; ...
   )

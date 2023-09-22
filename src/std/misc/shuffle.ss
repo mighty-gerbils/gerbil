@@ -3,7 +3,7 @@
 ;;; shuffling
 
 (export shuffle vector-shuffle vector-shuffle!)
-(import :gerbil/gambit/random)
+(import :gerbil/gambit)
 
 (def (shuffle lst (rng default-random-source))
   (vector->list

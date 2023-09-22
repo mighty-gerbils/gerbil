@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor TLS utilities
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/iter
         :std/net/ssl/libssl

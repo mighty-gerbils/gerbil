@@ -6,7 +6,7 @@
         :std/test
         :std/sugar
         :std/error
-        :gerbil/gambit/threads)
+        :gerbil/gambit)
 (export channel-test)
 
 (def (channel-reader ch count)

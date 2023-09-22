@@ -2,7 +2,7 @@
 ;;; (C) vyzo
 ;;; Logging support
 
-(import :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/format

@@ -2,7 +2,7 @@
 ;;; (C) vyzo
 ;;; Generic SQL database interface
 
-(import (only-in :gerbil/gambit/misc make-will)
+(import (only-in :gerbil/gambit make-will)
         :std/sugar
         :std/interface
         (only-in :std/io Closer)

@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; string<->utf32 conversion
 
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/misc/bytes
         :std/error)
 (export string->utf32 utf32->string)

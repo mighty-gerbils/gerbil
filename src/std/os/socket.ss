@@ -10,7 +10,6 @@
         ./error
         ./fd
         ./fcntl
-        (only-in :gerbil/gambit/ports close-port)
         (for-syntax :std/stxutil))
 
 (export socket

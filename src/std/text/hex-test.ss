@@ -1,8 +1,14 @@
 (export hex-test)
 
 (import
-  :gerbil/gambit/bytes
-  :std/assert :std/error :std/srfi/1 :std/srfi/13 :std/sugar :std/text/hex :std/test)
+  :gerbil/gambit
+  :std/test
+  :std/sugar
+  :std/assert
+  :std/error
+  :std/srfi/1
+  :std/srfi/13
+  ./hex )
 
 (def hex-test
   (test-suite "test :std/text/hex"

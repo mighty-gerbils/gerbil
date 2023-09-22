@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; file IO
-(import (only-in :gerbil/gambit/ports close-port)
-        :std/error
+(import :std/error
         :std/sugar
         :std/os/fd
         :std/os/fdio

@@ -6,7 +6,7 @@
         :std/text/utf16
         :std/sugar
         :std/error
-        :gerbil/gambit/random)
+        :gerbil/gambit)
 
 (export utf16-test)
 (def utf16-test

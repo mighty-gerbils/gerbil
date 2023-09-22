@@ -30,7 +30,7 @@
         :std/misc/process
         :std/misc/template
         (only-in :std/srfi/13 string-trim)
-        :gerbil/gambit/os)
+        :gerbil/gambit)
 (export main
         ;; script api
         pkg-root-dir

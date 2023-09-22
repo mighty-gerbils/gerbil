@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; interactive development utilities
 
-(import (only-in :gerbil/gambit/misc pretty-print))
+(import (only-in :gerbil/gambit pretty-print))
 (export #t (for-syntax #t))
 
 (module <util>

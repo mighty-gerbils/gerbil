@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; base58 encoding and decoding
 
-(import :gerbil/gambit/bits
-        :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/error)
 (export base58-encode base58-decode
         base58-btc-alphabet base58-flickr-alphabet)

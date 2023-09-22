@@ -5,13 +5,8 @@
 
 (import :gerbil/compiler
         :gerbil/expander
-        :gerbil/gambit/bits
-        :gerbil/gambit/misc
-        :gerbil/gambit/os
-        :gerbil/gambit/ports
-        :gerbil/gambit/system
+        :gerbil/gambit
         ./srfi/1
-        ;;./srfi/43 ; vector-for-each, but we reimplement them because of bug #465
         ./misc/hash
         ./misc/list
         ./misc/number
@@ -82,11 +77,7 @@ TODO:
 (def (writeln x) (write x) (newline) (force-outputs)) ;; move to std/misc/ports ?
 (def (prefix/ prefix path) (if prefix (string-append prefix "/" path) path)) ;; move to std/misc/path ?
 
-
-;;; Functions partially reimplemented from std/srfi/43. See bug #465
-(def (vector-for-each f v)
-  (def l (vector-length v))
-  (let loop ((i 0)) (when (< i l) (begin (f i (vector-ref v i)) (loop (+ 1 i))))))
+;; from srfi/43
 (def (vector-ensure-ref v i f)
   (or (vector-ref v i) (let ((x (f))) (vector-set! v i x) x)))
 

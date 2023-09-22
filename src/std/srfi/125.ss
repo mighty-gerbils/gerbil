@@ -2,7 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-125: Hash Table Library
 
-(import :gerbil/gambit/hash
+(import :gerbil/gambit
         :std/error
         :std/srfi/128)
 (export

@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; socket api tests
-(import :gerbil/gambit/threads
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/test

@@ -10,7 +10,7 @@
         :std/net/ssl
         :std/os/socket
         :std/misc/threads
-        :gerbil/gambit/threads
+        :gerbil/gambit
         ./base
         ./handler
         ./mux)

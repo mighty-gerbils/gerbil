@@ -7,7 +7,7 @@ namespace: gxc
 (import :gerbil/expander
         "base"
         <syntax-case> <syntax-sugar>
-        (only-in :gerbil/gambit/hvectors
+        (only-in :gerbil/gambit
                  s8vector? u8vector? s16vector? u16vector?
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?))

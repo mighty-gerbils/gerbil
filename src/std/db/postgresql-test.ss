@@ -8,7 +8,7 @@
            :std/misc/plist
            :std/sugar
            :std/error
-           :gerbil/gambit/threads)
+           :gerbil/gambit)
    (export postgresql-test
            test-setup!
            test-cleanup!)

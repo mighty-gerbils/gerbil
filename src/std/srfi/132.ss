@@ -2,8 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-132: Sorting Library
 
-(import :gerbil/gambit/random
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error)
 (export list-sorted?               vector-sorted?
         list-sort                  vector-sort

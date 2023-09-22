@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; timeouts
 
-(import :gerbil/gambit/os
-        :std/error)
+(import :std/error)
 (export #t)
 
 (def (make-timeout t (none absent-obj))

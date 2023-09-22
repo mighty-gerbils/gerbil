@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SSL tests
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/test

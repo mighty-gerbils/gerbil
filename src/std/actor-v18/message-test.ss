@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor message test
-(import :gerbil/gambit/threads
+(import :gerbil/gambit
         :std/test
         :std/error
         ./message

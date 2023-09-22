@@ -69,6 +69,9 @@ namespace: #f
       (lambda (exn) (##continuation-graft cont handler exn))
       thunk))))
 
+;; redefine this to avoid clown shoes
+(def with-exception-catcher with-catch)
+
 (def (wrap-runtime-exception exn)
   (cond
    ((or (heap-overflow-exception? exn)   ; out of memory, don't allocate
@@ -133,9 +136,7 @@ namespace: #f
   (lambda (self port)
     (let ((tmp-port (open-output-string))
           (display-error-newline
-           (if (macro-character-port? port)
-             (> (macro-character-port-wchars port) 0)
-             #f)))
+           (> (output-port-column port) 0)))
       (fix-port-width! tmp-port)
       (parameterize ((current-output-port tmp-port))
         (when display-error-newline ; avoid clown shoes at the repl prompt

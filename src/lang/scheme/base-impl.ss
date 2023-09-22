@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library -- implementation details
-(import :gerbil/gambit/continuations
+(import :gerbil/gambit
         :std/error
         (phi: +1 :gerbil/expander :gerbil/gambit))
 (export #t)

@@ -2,8 +2,8 @@
 ;;; (C) vyzo
 ;;; actor message primitives and macros
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+;;; --- DEPRECATED ----
+(import :gerbil/gambit
         (only-in :std/event !)
         :std/error
         :std/stxparam)

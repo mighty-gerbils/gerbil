@@ -1,10 +1,8 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
-;;; network repl
+;;; © vyzo
+;;; network debug repl
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/readtables
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/logger

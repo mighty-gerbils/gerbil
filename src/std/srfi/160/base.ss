@@ -2,8 +2,7 @@
 ;;; © vyzo
 ;;; SRFI-160: Homogeneous Numeric Vector Libraries
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/exact
+(import :gerbil/gambit
         ./cvector)
 
 (export make-u8vector make-s8vector make-u16vector make-s16vector

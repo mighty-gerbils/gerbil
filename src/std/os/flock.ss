@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS Advisory File Locking
 
-(import :gerbil/gambit/os
-        :gerbil/gambit/random
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/foreign

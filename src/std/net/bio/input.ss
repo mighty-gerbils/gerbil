@@ -3,7 +3,9 @@
 ;;; extensible binary i/o buffers with port compatible interface
 ;;; Warning: Low level unsafe interface; let their be Dragons.
 
-(import :gerbil/gambit/bits
+;;; --- DEPRECAT$ED ---
+
+(import :gerbil/gambit
         :std/text/utf8
         :std/error)
 (export (except-out #t 2^15 2^16 2^31 2^32))

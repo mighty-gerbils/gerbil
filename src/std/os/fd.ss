@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptors
 
-(import :gerbil/gambit/ports
-        :std/error)
+(import :std/error)
 (export fdopen fdopen-port
         fd-e fd-io-in fd-io-out
         fd? fd-type? fd-type)

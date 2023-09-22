@@ -22,12 +22,12 @@
   hash-merge/override!
   hash->list/sort
   hash-get-set!
-  hash-ref-set!
-  )
+  hash-ref-set!)
 
 (import
-  :gerbil/gambit/hash
-  ../iter ../sort)
+  :gerbil/gambit
+  :std/iter
+  :std/sort)
 
 (def (hash-empty? h)
   (zero? (hash-length h)))

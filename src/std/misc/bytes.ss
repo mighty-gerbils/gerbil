@@ -1,6 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
-;;;     belmarca
+;;; © vyzo, belmarca
 ;;; miscellaneous bytes utilities
 
 (import (for-syntax :std/stxutil)

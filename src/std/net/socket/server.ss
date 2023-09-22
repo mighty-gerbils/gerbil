@@ -2,7 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets -- socket server control
 
-(import :gerbil/gambit/threads
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/misc/threads
         :std/net/socket/base
         :std/logger

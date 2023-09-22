@@ -6,7 +6,7 @@
         call-with-binary-input
         random-bytes random-bytes!
         as-bytes)
-(import :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/error
         :std/format
         :std/text/utf8

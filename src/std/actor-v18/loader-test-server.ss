@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; loader test server
-(import :gerbil/gambit/threads
-        :std/logger
+(import :std/logger
         :std/actor
         :std/actor-v18/loader)
 (export main)

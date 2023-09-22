@@ -2,8 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-143: Fixnums
 
-(import :gerbil/gambit/fixnum
-        :gerbil/gambit/exact)
+(import :gerbil/gambit)
 (export fx-width fx-greatest fx-least
         fixnum? fx=? fx<? fx>? fx<=? fx>=?
         fxzero? fxpositive? fxnegative?

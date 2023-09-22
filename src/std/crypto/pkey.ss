@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto public-key signatures
 
-(import :gerbil/gambit/bytes
-        :gerbil/gambit/foreign
+(import :gerbil/gambit
         :std/error
         ./libcrypto
         ./etc)

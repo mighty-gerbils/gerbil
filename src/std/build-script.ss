@@ -2,8 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; package build script template
 
-(import :std/make
-        :gerbil/gambit/misc)
+(import :std/make)
 (export defbuild-script)
 
 (def (build-main args build-spec keys that-file)

@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; json reader
-(import :gerbil/gambit/ports
-        :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/io

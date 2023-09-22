@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; Key Derivation functions
 
-(import :gerbil/gambit/foreign
+(import :gerbil/gambit
         :std/error
         ./libcrypto
         ./etc)

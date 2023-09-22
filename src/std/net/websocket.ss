@@ -2,10 +2,9 @@
 ;;; (C) vyzo
 ;;; websocket client
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
-        :gerbil/gambit/os
-        :gerbil/gambit/bits
+;;;;;; DEAD CODE -- TO BE REWRITTEN
+
+(import :gerbil/gambit
         :std/srfi/13
         :std/error
         :std/sugar

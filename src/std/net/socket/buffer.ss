@@ -2,7 +2,9 @@
 ;;; (C) vyzo
 ;;; synchronous sockets -- bio buffers
 
-(import :gerbil/gambit/os
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/net/socket/base
         :std/net/socket/api
         :std/net/bio/input

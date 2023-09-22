@@ -3,7 +3,7 @@
 ;;; zlib interface
 ;;; TODO support stdio
 
-(import :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/sugar
         :std/error
         :std/text/utf8

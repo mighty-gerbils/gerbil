@@ -2,7 +2,7 @@
 ;;; (C) vyzo
 ;;; embedded HTTP/1.1 server; request handler
 
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/io

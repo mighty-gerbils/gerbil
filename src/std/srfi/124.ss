@@ -4,7 +4,7 @@
 ;;; Daphne Preston-Kendal
 
 (import :std/srfi/9
-        :gerbil/gambit/misc)
+        :gerbil/gambit)
 (export ephemeron?
         make-ephemeron
         ephemeron-key ephemeron-datum

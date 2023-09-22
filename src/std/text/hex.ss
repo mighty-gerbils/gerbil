@@ -1,9 +1,9 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; hex encoding
 
 (export hex-encode hexlify hex-decode hex-decode-byte hex-decode-nibble unhexlify hex unhex unhex*)
-(import :gerbil/gambit/fixnum
+(import :gerbil/gambit
         :std/error)
 
 (def hexes "0123456789abcdef")

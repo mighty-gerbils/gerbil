@@ -2,8 +2,9 @@
 ;;; (C) vyzo
 ;;; actor rpc wire data representation
 
-(import :gerbil/gambit/bits
-        :gerbil/gambit/os
+;;; --- DEPRECATED ----
+
+(import :gerbil/gambit
         :std/foreign
         :std/error
         :std/net/bio

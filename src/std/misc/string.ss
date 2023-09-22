@@ -16,13 +16,12 @@
   +cr+ +lf+ +crlf+)
 
 (import
-  (only-in :gerbil/gambit/ports write-substring write-string)
-  (only-in :gerbil/gambit/random random-integer)
+  (only-in :gerbil/gambit write-substring write-string random-integer)
   :std/error
   :std/srfi/13
   :std/format
   :std/iter
-  :std/misc/number)
+  ./number)
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.

@@ -2,7 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-101: Purely Functional Random-Access Pairs and Lists
 
-(import :gerbil/gambit/bits
+(import :gerbil/gambit
         :std/error
         :std/srfi/1)
 (export

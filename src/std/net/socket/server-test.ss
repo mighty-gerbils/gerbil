@@ -7,7 +7,6 @@
    (cond-expand
      ((or linux bsd)
       (import :gerbil/gambit
-              :gerbil/gambit/threads
               :std/misc/threads
               :std/net/socket
               :std/net/socket/base

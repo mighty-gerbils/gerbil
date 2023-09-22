@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor message serialization
-(import :gerbil/gambit/os
+(import :gerbil/gambit
         :std/error
         :std/sugar
         :std/foreign

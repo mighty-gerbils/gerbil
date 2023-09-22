@@ -3,7 +3,9 @@
 ;;; extensible binary i/o buffers with port compatible interface
 ;;; Warning: Low level unsafe interface; let their be Dragons.
 
-(import :gerbil/gambit/hvectors
+;;; --- DEPRECATED ---
+
+(import :gerbil/gambit
         :std/error
         :std/net/bio/input
         :std/net/bio/output

@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; SRFI-159: base library
 
-(import :gerbil/gambit/exact
+(import :gerbil/gambit
         :std/error
         ../srfi-support
         ../1

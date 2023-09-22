@@ -4,8 +4,7 @@
 (import :std/build-config)
 (cond-expand
   (config-enable-deprecated
-   (import :gerbil/gambit/random
-           :gerbil/gambit/os
+   (import :gerbil/gambit
            :std/test
            :std/net/bio
            :std/iter
