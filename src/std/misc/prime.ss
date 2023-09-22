@@ -11,7 +11,7 @@
   :std/srfi/141
   :std/error
   :std/iter
-  :std/misc/extensible-vector
+  :std/misc/evector
   :std/misc/list-builder
   :std/misc/number
   :std/sugar)
