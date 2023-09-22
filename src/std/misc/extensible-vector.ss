@@ -25,13 +25,34 @@
 (declare (not safe))
 
 (defstruct evector (vector fill-pointer)
-  transparent: #t unchecked: #t)
+  transparent: #t unchecked: #t
+  constructor: :init!)
 
 (defstruct ebytes (bytes fill-pointer)
-  transparent: #t unchecked: #t)
+  transparent: #t unchecked: #t
+  constructor: :init!)
 
 (defstruct ebits (bits fill-pointer)
-  transparent: #t unchecked: #t)
+  transparent: #t unchecked: #t
+  constructor: :init!)
+
+(defmethod {:init! evector}
+  (lambda (self vector fp)
+    (check-argument-vector vector)
+    (check-argument-fxlength fp)
+    (struct-instance-init! self vector fp)))
+
+(defmethod {:init! ebytes}
+  (lambda (self bytes fp)
+    (check-argument-u8vector bytes)
+    (check-argument-fxlength fp)
+    (struct-instance-init! self bytes fp)))
+
+(defmethod {:init! ebits}
+  (lambda (self bytes fp)
+    (check-argument-u8vector bytes)
+    (check-argument-fxlength fp)
+    (struct-instance-init! self bytes fp)))
 
 (defcheck-argument-type evector)
 (defcheck-argument-type ebytes)
