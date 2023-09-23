@@ -758,7 +758,7 @@
           (set! (car (cdr hd)) current-deps)
           (set! plist (append plist [depend: current-deps]))))
       (call-with-output-file (path-expand "gerbil.pkg" (current-directory))
-        (cut write plist <>)))
+        (cut pretty-print plist <>)))
 
     (if (null? deps)
       (cond
