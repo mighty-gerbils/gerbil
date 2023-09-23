@@ -19,7 +19,8 @@
         for-each-integer!
         half least-integer most-integer
         bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
-        integer-log)
+        integer-log
+        factor-out-powers-of-2 factor-out-powers)
 
 (import
   :gerbil/gambit
@@ -248,19 +249,43 @@
 (def (integer-log a b) ;; largest natural integer n such that b**n <= a
   (check-argument (and (exact-integer? a) (positive? a)) "positive integer" a)
   (check-argument (and (exact-integer? b) (< 1 b)) "valid base" b)
-  (def (downward start end n pow es) ;; the power is between start included and n excluded
-    (match es
-      ([] start)
-      ([e . er] (let* ((m (half n))
-                       (mid (+ start m))
-                       (mpow (* pow e)))
-                 (if (<= mpow a)
-                   (downward mid end m mpow er)
-                   (downward start mid m pow er))))))
-  (def (upward b n es) ;; find a power of 2, n, such that b to the power n dominates a
-    (if (< a b)       ;; and accumulate the list of powers of n
-      (let (m (half n))
-        (downward m n m (car es) (cdr es)))
-      (upward (* b b) (+ n n) (cons b es))))
-  (if (< a b) 0
-      (upward (* b b) 2 [b])))
+  (def (downward q n p bs)
+    ;; q is a divided n times by b already, b**p is too large to divide q,
+    ;; and the earlier powers of b are in bs
+    (def pp (half p))
+    (match bs
+      ([] n)
+      ([bp . br] (let*-values (((qq) (quotient q bp))
+                               ((nq nn) (if (zero? qq) (values q n) (values qq (+ n pp)))))
+                   (downward nq nn pp br)))))
+  (def (upward a bp p bps) ;; find a power of 2, p, such that b to the power 2*p is greater than a
+    (define-values (q r) (floor/ a bp))
+    (if (zero? q)
+      (downward a (1- p) p bps)
+      (upward q (* bp bp) (+ p p) (cons bp bps))))
+  (upward a b 1 []))
+
+;; return (values q p) such a=q*2**p and q is odd
+;; : Integer -> Integer Nat
+(def (factor-out-powers-of-2 n)
+  (check-argument (and (exact-integer? n) (not (zero? n))) "non-zero integer" n)
+  (def p (first-set-bit n))
+  (values (arithmetic-shift n (- p)) p))
+
+;; return (values q p) such a=q*b**p and b does not divide q
+;; : Integer Nat -> Integer Nat
+(def (factor-out-powers a b)
+  (check-argument (and (exact-integer? a) (not (zero? a))) "non-zero integer" a)
+  (check-argument (and (nat? b) (< 1 b)) "integer base" b)
+  (def (downward a bp p n bps) ;; we know (what remains of) a is not divisible by bp*bp
+    (define-values (q r) (floor/ a bp))
+    (define-values (aa nn) (if (zero? r) (values q (+ n p)) (values a n)))
+    (match bps
+      ([] (values aa nn))
+      ([bbp . bbps] (downward aa bbp (half p) nn bbps))))
+  (def (upward a bp p n bps) ;; find a power of 2, p, such that b to the power p doesn't divide a
+    (define-values (q r) (floor/ a bp))
+    (if (zero? r)
+      (upward q (* bp bp) (+ p p) (+ n p) (cons bp bps))
+      (downward a bp p n bps)))
+  (upward a b 1 0 []))
