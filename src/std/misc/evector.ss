@@ -125,7 +125,7 @@
   (let (l (vector-length (&evector-vector e)))
     (let/cc return
       (when (fx> fp l)
-        (unless (or (eq? extend #t) (and (exact-integer? extend) (< 0 extend)))
+        (unless (or (eq? extend #t) (and (fixnum? extend) (fx< 0 extend)))
           (return #f))
         (&extend-evector! e (if (eq? extend #t)
                               (fxarithmetic-shift 1 (fxmax 4 (integer-length fp)))
@@ -156,16 +156,17 @@
 ;;; memoize the start of a recursively defined sequence
 (def (memoize-recursive-sequence fun cache: (cache (list->evector '())))
   (check-argument-procedure fun)
+  (check-argument-evector cache)
   (lambda (n)
     (check-argument-fixnum n)
-    (def m (evector-fill-pointer cache))
+    (def m (&evector-fill-pointer cache))
     (if (fx< n m)
-      (vector-ref (evector-vector cache) n)
+      (vector-ref (&evector-vector cache) n)
       (begin
-        (evector-set-fill-pointer! cache (1+ n) initial-value: (void) extend: #t)
+        (&evector-set-fill-pointer! cache (fx1+ n) (void) #t)
         (let loop ((i m))
           (def v (fun i))
-          (vector-set! (evector-vector cache) i v)
+          (vector-set! (&evector-vector cache) i v)
           (if (fx= i n) v (loop (fx1+ i))))))))
 (export memoize-recursive-sequence)
 
