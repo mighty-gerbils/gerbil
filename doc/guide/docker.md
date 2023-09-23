@@ -3,8 +3,10 @@
 You can run Gerbil in docker using our prebuilt containers.
 
 We offer two official docker images based on Alpine Linux:
-- `gerbil` is the base image, with a default install without any additional features configured.
-- `gerbilxx` is the full image, with all features and C++ enabled.
+- `gerbil` is the base image, configured  without shared libraries.
+- `gerbilxx` is the full image, configured without shared libraries and with C++ enabled.
+  It also includes all the foreign dependencies required by the officially supported
+  external packages.
 
 Alpine was chosen due to the static compilation environment and capabilities it provides.
 

@@ -1819,20 +1819,19 @@ For more examples of httpd handlers, see the [httpd tutorial](/tutorials/httpd.m
 
 ### Databases
 
-Gerbil includes support for SQL databases (SQLite, PostgreSQL, MySQL)
-and key-value stores (LevelDB, LMDB) with the `:std/db` package.
+Gerbil includes builtin support for SQL databases (SQLite, PostgreSQL) in the
+standard library.
+
+We also provide external packages with drivers for
+[MySQL](https://github.com/mighty-gerbils/gerbil-mysql) and key-value
+stores ([LevelDB](https://github.com/mighty-gerbils/gerbil-leveldb),
+[LMDB](https://github.com/mighty-gerbils/gerbil-leveldb)).
 
 #### SQL Databases
 
 The `:std/db/dbi` library provides the implementation of the
 database interface, while individual modules (`:std/db/sqlite`,
-`:std/db/postgresql` and `:std/db/mysql`) provide the drivers for
-particular databases.
-
-Note that not all drivers are built by default, as some are FFI
-drivers (SQLite, MySQL), so you will need to enable them for your
-with the apopriopriate configuration options e.g. the `--enable-mysql`
-option to `./configure`, before you build and install Gerbil.
+`:std/db/postgresql`)  provide the drivers for particular databases.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
@@ -1881,15 +1880,21 @@ And we are done, we can close our database connection:
 
 #### Key-Value Stores
 
-The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
-while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
-The libraries are not built by default, as they have foreign dependencies, so you need to
-enable them using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
-before you build Gerbil.
+The [gerbil-leveldb](https://github.com/mighty-gerbils/gerbil-leveldb) package provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
+while the [gerbil-lmdb](https://github.com/mighty-gerbils/gerbil-lmdb) package provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 
-For example, here we use the LevelDB library for some simple operations:
+You can install these packages using the `gerbil pkg` tool:
+```shell
+# To install the leveldb driver
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-leveldb
+
+# To install the lmdb driver
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-lmdb
+```
+
+For example, here we use the LevelDB package for some simple operations:
 ```scheme
-> (import :std/db/leveldb
+> (import :clan/db/leveldb
           :std/sugar)
 > (def db (leveldb-open "/tmp/leveldb-test.db"))
 
