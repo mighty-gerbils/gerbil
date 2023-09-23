@@ -3,9 +3,6 @@
 ;; build deprecated packaages
 (enable deprecated #f)
 
-;; build std/xml libraries - requires libxml2
-(enable libxml #f)
-
 ;; build std/text/zlib library - requires zlib
 (enable zlib #t)
 
