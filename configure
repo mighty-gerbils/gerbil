@@ -28,21 +28,13 @@ Options understood and processed by Gerbil:
   --disable-shared      default is to enable shared libraries
 
 Gerbil Standard Library features:
-  --enable-deprecated   Enable building of deprecated packages
+  --enable-deprecated   Enable building of deprecated packages; disabled by default
   --enable-libxml       Enable or disable libxml based libraries; disabled by default
   --disable-libxml
-  --enable-libyaml      Enable or disable libyaml based libraries; disabled by default
-  --disable-libyaml
   --enable-zlib         Enable or disable zlib support; enabled by default
   --disable-zlib
   --enable-sqlite       Enable or disable sqlite support; enabled by default
   --disable-sqlite
-  --enable-mysql        Enable or disable mysql driver support; disabled by default
-  --disable-mysql
-  --enable-lmdb         Enable or disable MDB support; disabled by default
-  --disable-lmdb
-  --enable-leveldb      Enable or disable leveldb support; disabled by default
-  --disable-leveldb
 
 Default integrated Gambit configuration: ${default_gambit_config}
 EOF
@@ -59,6 +51,12 @@ std_enable_feature() {
 
 std_disable_feature() {
     std_patch_feature "s/$1 #t/$1 #f/"
+}
+
+package_out_of_tree() {
+    local pkg="$1"
+    echo "*** ERROR package ${pkg} has been moved out of the master Gerbil tree"
+    echo "It is now available as an external package: github.com/mighty-gerbils/gerbil-${pkg}"
 }
 
 readonly gerbil_version="v$(git describe --tags --always)"
@@ -132,16 +130,6 @@ while [ $# -gt 0 ]; do
             shift
             ;;
 
-        --enable-libyaml)
-            std_enable_feature libyaml
-            shift
-            ;;
-
-        --disable-libyaml)
-            std_disable_feature libyaml
-            shift
-            ;;
-
         --enable-zlib)
             std_enable_feature zlib
             shift
@@ -162,34 +150,24 @@ while [ $# -gt 0 ]; do
             shift
             ;;
 
-        --enable-mysql)
-            std_enable_feature mysql
-            shift
+        --*-libyaml)
+            package_out_of_tree libyaml
+            exit 42
             ;;
 
-        --disable-mysql)
-            std_disable_feature mysql
-            shift
+        --*-mysql)
+            package_out_of_tree mysql
+            exit 42
             ;;
 
-        --enable-lmdb)
-            std_enable_feature lmdb
-            shift
+        --*-lmdb)
+            package_out_of_tree lmdb
+            exit 42
             ;;
 
-        --disable-lmdb)
-            std_disable_feature lmdb
-            shift
-            ;;
-
-        --enable-leveldb)
-            std_enable_feature leveldb
-            shift
-            ;;
-
-        --disable-leveldb)
-            std_disable_feature leveldb
-            shift
+        --*-leveldb)
+            package_out_of_tree leveldb
+            exit 42
             ;;
 
         CFLAGS=*)
