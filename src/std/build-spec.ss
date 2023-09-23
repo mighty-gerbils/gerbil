@@ -185,13 +185,6 @@
     "text/json/util"
     "text/json/api"
     "text/json"
-    ,@(if config-enable-libyaml
-        `((gsc: "text/libyaml"
-                "-cc-options" ,(cppflags "libyaml" "")
-                "-ld-options" ,(ldflags "libyaml" "-lyaml"))
-          (ssi: "text/libyaml")
-          "text/yaml")
-        '())
     ,@(if config-enable-zlib
         `((gsc: "text/_zlib"
                 "-cc-options" ,(cppflags "zlib" "")
@@ -399,12 +392,4 @@
                 "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
           (ssi: "db/_sqlite")
           "db/sqlite")
-        '())
-    ,@(if config-enable-lmdb
-        `((gsc: "db/_lmdb"
-                "-cc-options" ,(cppflags "lmdb" "")
-                "-ld-options" ,(ldflags "lmdb" "-llmdb"))
-          (ssi: "db/_lmdb")
-          "db/lmdb")
-        '())
-    ))
+        '())))
