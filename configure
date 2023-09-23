@@ -29,8 +29,6 @@ Options understood and processed by Gerbil:
 
 Gerbil Standard Library features:
   --enable-deprecated   Enable building of deprecated packages; disabled by default
-  --enable-libxml       Enable or disable libxml based libraries; disabled by default
-  --disable-libxml
   --enable-zlib         Enable or disable zlib support; enabled by default
   --disable-zlib
   --enable-sqlite       Enable or disable sqlite support; enabled by default
@@ -120,16 +118,6 @@ while [ $# -gt 0 ]; do
             shift
             ;;
 
-        --enable-libxml)
-            std_enable_feature libxml
-            shift
-            ;;
-
-        --disable-libxml)
-            std_disable_feature libxml
-            shift
-            ;;
-
         --enable-zlib)
             std_enable_feature zlib
             shift
@@ -148,6 +136,11 @@ while [ $# -gt 0 ]; do
         --disable-sqlite)
             std_disable_feature sqlite
             shift
+            ;;
+
+        --*-libxml)
+            package_out_of_tree libxml
+            exit 42
             ;;
 
         --*-libyaml)
