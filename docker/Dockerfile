@@ -34,7 +34,7 @@ RUN case ${distro} in \
     ;; \
     ubuntu) \
     apt update -y && \
-    eval apt install -y ${packages} \
+  RUN  eval apt install -y ${packages} \
     ;; \
     *) \
     echo "Unknown distro ${distro}" \
@@ -52,7 +52,7 @@ ENV GERBIL_GCC=g++
 RUN  cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
     && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
 
-RUN cd /opt/gerbil-src && make -j2 && make install
+RUN cd /opt/gerbil-src && eval make -j$cores && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb
