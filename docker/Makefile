@@ -89,7 +89,6 @@ ubuntu_packages := autoconf \
 gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg repo="$(REPO)" \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
@@ -114,7 +113,6 @@ gerbil:
 
 amazonlinux:
 	docker build --target final \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg cores=$(cores)  \
 	--build-arg distro="amazonlinux" \
@@ -124,7 +122,6 @@ amazonlinux:
 centos:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
@@ -133,7 +130,6 @@ centos:
 
 fedora:
 	docker build --target final \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
@@ -143,7 +139,6 @@ fedora:
 ubuntu:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
@@ -157,7 +152,7 @@ ubuntu-current-jedi:
 package-ubuntu:
 	docker run -v $(PWD):/src:z -t gerbil/ubuntu \
 	bash -c "gem install fpm && \
-	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION).ubuntu \
+	fpm -s dir -p /src/ -t deb -n gerbil-$(BRANCH).ubuntu \
 	--description 'Gerbil Package' /opt/gerbil"
 
 package-fedora:
@@ -165,7 +160,7 @@ package-fedora:
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(GERBIL_VERSION).fedora \
+	-n gerbil-$(BRANCH).fedora \
 	--description 'Gerbil Package' /opt/gerbil"
 
 package-amazonlinux:
@@ -174,7 +169,7 @@ package-amazonlinux:
 	yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(GERBIL_VERSION).amazonlinux \
+	-n gerbil-$(BRANCH).amazonlinux \
 	--description 'Gerbil Package' /opt/gerbil"
 
 packages: package-ubuntu package-fedora
