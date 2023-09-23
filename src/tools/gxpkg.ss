@@ -14,6 +14,7 @@
 ;;;   clean pkg ...
 ;;;   list
 ;;;   retag
+;;;   search kw ...
 ;;; Packages:
 ;;;   github.com/user/package    -- github based packages
 ;;;   gitlab.com/user/package    -- gitlab based packages
@@ -86,7 +87,9 @@
     (command 'retag help: "retag installed packages"))
   (def search-cmd
     (command 'search help: "search the package directory"
-             (rest-arguments 'keywords help: "keywords to search for")))
+             (option 'directory "-d" "--directory"
+                     help: "A specific directory to use; by default the default directory and all user configured directories are searched")
+             (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
 
   (call-with-getopt gxpkg-main args
     program: "gxpkg"
@@ -127,7 +130,7 @@
       ((retag)
        (retag-pkgs))
       ((search)
-       (search-pkgs .keywords)))))
+       (search-pkgs .keywords .directory)))))
 
 ;;; commands
 (defrules fold-pkgs ()
@@ -193,8 +196,8 @@
 (def (retag-pkgs)
   (pkg-retag))
 
-(def (search-pkgs keywords)
-  (pkg-search keywords))
+(def (search-pkgs keywords dir)
+  (pkg-search keywords dir))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -433,50 +436,88 @@
                  directory: root)))
 
 ;; package directory search
-(def (pkg-search keywords)
-  (def (search alst)
-    (let lp ((rest alst) (r []))
+(def (pkg-search keywords dir)
+  (def (search lst)
+    (def (try-match kw)
+      (let (rx (pregexp (string-append "(?i:" kw ")")))
+        (lambda (pkg desc)
+          (or (pregexp-match rx pkg) (pregexp-match rx desc)))))
+
+    (def matching
+      (map try-match keywords))
+
+    (let lp ((rest lst) (result []))
       (match rest
-        ([(and hd [pkg . desc]) . rest]
-         (if (andmap (lambda (kw)
-                      (let (rx (pregexp (string-append "(?i:" kw ")")))
-                        (or (pregexp-match rx pkg) (pregexp-match rx desc))))
-                    keywords)
-           (lp rest (cons hd r))
-           (lp rest r)))
+        ([hd . rest]
+         (match hd
+           ([pkg . plist]
+            (let (description (pgetq description: plist))
+              (if (andmap (lambda (matches?) (matches? pkg description))
+                          matching)
+                (lp rest (cons (cons pkg description) result))
+                (lp rest result))))
+           (else
+            (lp rest result))))
         (else
-         (reverse r)))))
+         (reverse result)))))
 
   (def (display-pkgs alst)
     (for ([pkg . desc] alst)
       (displayln pkg ": " desc)))
 
-  (let (alst (pkg-directory-list))
-    (if (null? keywords)
-      (display-pkgs alst)
-      (let (matches (search alst))
-        (display-pkgs matches)))))
+  (let (alst (if dir (pkg-directory-list dir) (pkg-directory-list-all)))
+    (let (matches (search alst))
+      (display-pkgs matches))))
 
-(def +pkg-directory+
-  "https://raw.githubusercontent.com/vyzo/gerbil-directory/master/README.md")
+(def +mighty-gerbils-pkg-directory+
+  "github.com/mighty-gerbils/gerbil-directory")
 
-(def (pkg-directory-list)
-  (let* ((txt (request-text (http-get +pkg-directory+)))
-         (lines (string-split txt #\newline)))
-    (let lp ((rest lines))
-      (match rest
-        ([hd . rest]
-         (if (equal? hd "<!-- begin-pkg -->")
-           (let lp2 ((rest (cddr rest)) (pkgs []))
-             (match rest
-               ([hd . rest]
-                (if (equal? hd "<!-- end-pkg -->")
-                  (reverse pkgs)
-                  (match (string-split hd #\|)
-                    ([_ pkg-link pkg-desc . _]
-                     (with ([_ pkg] (pregexp-match "\\[([^]]+)\\]" pkg-link))
-                       (lp2 rest (cons (cons pkg (string-trim pkg-desc)) pkgs)))))))))
-           (lp rest)))))))
+(def (pkg-directory-url dir)
+  (cond
+   ((string-prefix? "github.com/" dir)
+    (let (base (substring dir (string-index dir #\/) (string-length dir)))
+      (string-append "https://raw.githubusercontent.com" base "/package-list")))
+   (else
+    (error "unsupported directory repo" dir))))
+
+(def (pkg-directory-urls)
+  (let* ((default-dirs [+mighty-gerbils-pkg-directory+])
+         (user-dirs
+          (let (user-conf (path-expand "directory-list" (pkg-root-dir)))
+            (if (file-exists? user-conf)
+              (call-with-input-file user-conf read)
+              [])))
+         (all-dirs (append default-dirs user-dirs)))
+    (map pkg-directory-url all-dirs)))
+
+(def (pkg-directory-list-all)
+  (for/fold (result []) (url (pkg-directory-urls))
+    (let (req (with-catch
+               (lambda (exn)
+                 (displayln/err "*** WARNING error retrieving packages from " url
+                                ": " (or (error-message exn) "(unknown error)"))
+                 #f)
+               (cut http-get url)))
+      (if (and req (fx= (request-status req) 200))
+        (let (pkgs (with-catch
+                    (lambda (exn)
+                      (displayln/err "*** WARNING error retrieving packages from "
+                                     (request-url req)
+                                     ": " (or (error-message exn) "(unknown error)"))
+                      [])
+                    (lambda () (read (request-text req)))))
+          (append result pkgs))
+        (begin
+          (displayln/err "error retrieving packages from " url
+                         ": " (request-status-text req))
+          result)))))
+
+(def (pkg-directory-list dir)
+  (let* ((url (pkg-directory-url dir))
+         (req (http-get url)))
+    (if (fx= (request-status req) 200)
+      (read (request-text req))
+      (error "error retrieving packages" url (request-status-text req)))))
 
 ;;; internal
 (def +pkg-plist+
@@ -491,7 +532,7 @@
            (path (path-expand pkg root))
            (gerbil.pkg (path-expand "gerbil.pkg" path))
            (_ (unless (file-exists? gerbil.pkg)
-                (error "Bad package; missing gerbil.pkg" pkg)))
+                (error "bad package; missing gerbil.pkg" pkg)))
            (plist (call-with-input-file gerbil.pkg read))
            (plist (if (eof-object? plist) [] plist)))
       (hash-put! +pkg-plist+ pkg plist)
@@ -533,6 +574,10 @@
 (def (file-symbolic-link? path)
   (eq? (file-info-type (file-info path #f))
        'symbolic-link))
+
+(def (displayln/err . args)
+  (parameterize ((current-output-port (current-error-port)))
+    (apply displayln args)))
 
 ;;; templates
 (def gerbil.pkg-template #<<END
