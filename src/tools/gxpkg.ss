@@ -22,7 +22,8 @@
 ;;;   all                        -- action applies to all packages where sensible to do so
 ;;; TODO: add private repos support
 
-(import :std/getopt
+(import :gerbil/gambit
+        :std/getopt
         :std/sugar
         :std/iter
         :std/sort
@@ -31,7 +32,7 @@
         :std/misc/process
         :std/misc/template
         (only-in :std/srfi/13 string-trim)
-        :gerbil/gambit)
+        (only-in :std/srfi/1 reverse!))
 (export main
         ;; script api
         pkg-root-dir
@@ -43,23 +44,32 @@
         pkg-plist pkg-dependents pkg-dependents*)
 
 (def (main . args)
+  (def local-flag
+    (flag 'local "-l" "--local"
+      help: "do the action in the local package context, unless GERBIL_PATH is set"))
+  (def force-flag
+    (flag 'force "-f" "--force"
+      help: "force the action"))
   (def install-cmd
     (command 'install help: "install one or more packages"
+      local-flag
       (rest-arguments 'pkg help: "package to install; use @tag to checkout a specific tag")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
-      (flag 'force "-f" help: "force uninstall even if there are orphaned dependencies")
+      local-flag force-flag
       (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
-             (rest-arguments 'pkg help: "package to update; use @tag to checkout a specific tag; all for all packages")))
+      local-flag
+      (rest-arguments 'pkg help: "package to update; use @tag to checkout a specific tag; all for all packages")))
   (def link-cmd
     (command 'link help: "link a local development package"
+      local-flag
       (argument 'pkg help: "package to link")
       (argument 'src help: "path to package source directory")))
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
-      (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
+      local-flag force-flag
       (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
@@ -68,6 +78,7 @@
       (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
+      local-flag
       (rest-arguments 'pkg help: "package to clean; all for all packages, omit to clean in current directory")))
   (def new-cmd
     (command 'new help: "create a new package template in the current directory"
@@ -92,25 +103,36 @@
       (rest-arguments 'deps
         help: "the list of dependencies to add or remove")))
   (def list-cmd
-    (command 'list help: "list installed packages"))
+    (command 'list
+      local-flag
+      help: "list installed packages"))
   (def retag-cmd
-    (command 'retag help: "retag installed packages"))
+    (command 'retag
+      local-flag
+      help: "retag installed packages"))
   (def search-cmd
     (command 'search help: "search the package directory"
+      local-flag
       (option 'directory "-d" "--directory"
         help: "A specific directory to use; by default the mighty-gerbils directory and all user configured directories are searched")
-      (flag 'as-list "-l" "--list"
+      (flag 'as-list "--list"
         help: "Print the results as a list, do not format it")
       (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
 
   (def dir-cmd
     (command 'dir help: "manage the directory list"
+      local-flag
       (flag 'add "-a" "--add"
         help: "add a directory to the list of searched directories")
       (flag 'remove "-r" "--remove"
         help: "remove a directory from the list")
       (rest-arguments 'directories
         help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a github repo of the form github.com/some-org/some-repo")))
+
+  (def env-cmd
+    (command 'env help: "execute a command within the local package context"
+      (argument 'command help: "the command to execute")
+      (rest-arguments 'command-args help: "the command arguments")))
 
   (call-with-getopt gxpkg-main args
     program: "gxpkg"
@@ -127,7 +149,8 @@
     list-cmd
     retag-cmd
     search-cmd
-    dir-cmd))
+    dir-cmd
+    env-cmd))
 
 (def (gxpkg-main cmd opt)
   (let-hash opt
@@ -135,31 +158,40 @@
       ((new)
        (pkg-new .package .name .link))
       ((build)
-       (build-pkgs .pkg .?build-release .?build-optimized))
+       (build-pkgs .pkg .?build-release .?build-optimized .?local))
       ((clean)
-       (clean-pkgs .pkg))
+       (clean-pkgs .pkg .?local))
       ((deps)
        (manage-deps .deps .?add .?install .?remove))
       ((link)
-       (link-pkg .pkg .src))
+       (link-pkg .pkg .src .?local))
       ((unlink)
-       (unlink-pkgs .pkg .?force))
+       (unlink-pkgs .pkg .?force .?local))
       ((install)
-       (install-pkgs .pkg))
+       (install-pkgs .pkg .?local))
       ((uninstall)
-       (uninstall-pkgs .pkg .?force))
+       (uninstall-pkgs .pkg .?force .?local))
       ((update)
-       (update-pkgs .pkg))
+       (update-pkgs .pkg .?local))
       ((list)
-       (list-pkgs))
+       (list-pkgs .?local))
       ((retag)
-       (retag-pkgs))
+       (retag-pkgs .?local))
       ((search)
        (search-pkgs .keywords .directory .?as-list))
       ((dir)
-       (manage-dirs .directories .?add .?remove)))))
+       (manage-dirs .directories .?add .?remove .?local))
+      ((env)
+       (env-exec .command .command-args)))))
 
 ;;; commands
+(def (env-exec command args)
+  (set-local-env!)
+  (invoke command args
+          stdin-redirection: #f
+          stdout-redirection: #f
+          stderr-redirection: #f))
+
 (defrules fold-pkgs ()
   ((_ pkgs action action-arg ...)
    (let lp ((rest pkgs) (result #f))
@@ -176,13 +208,19 @@
    (when (fold-pkgs pkgs action action-arg ...)
      (pkg-retag))))
 
-(def (install-pkgs pkgs)
+(def (install-pkgs pkgs local?)
+  (when local?
+    (set-local-env!))
   (fold-pkgs-retag pkgs pkg-install))
 
-(def (uninstall-pkgs pkgs force?)
+(def (uninstall-pkgs pkgs force? local?)
+  (when local?
+    (set-local-env!))
   (fold-pkgs-retag pkgs pkg-uninstall force?))
 
-(def (update-pkgs pkgs)
+(def (update-pkgs pkgs local?)
+  (when local?
+    (set-local-env!))
   (when (fold-pkgs pkgs pkg-update)
     ;; the package dependencies might have changed, so install them
     (for-each
@@ -195,29 +233,43 @@
     (for-each pkg-build pkgs)
     (pkg-retag)))
 
-(def (link-pkg pkg src)
+(def (link-pkg pkg src local?)
+  (when local?
+    (set-local-env!))
   (pkg-link pkg src))
 
-(def (unlink-pkgs pkgs force?)
+(def (unlink-pkgs pkgs force? local?)
+  (when local?
+    (set-local-env!))
   (for-each (cut pkg-unlink <> force?) pkgs))
 
-(def (build-pkgs pkgs release? optimized?)
+(def (build-pkgs pkgs release? optimized? local?)
+  (when local?
+    (set-local-env!))
   (when release?
     (setenv "GERBIL_BUILD_RELEASE" "t"))
   (when optimized?
     (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
   (if (null? pkgs)
     ;; do local build
-    (pkg-build "." #f)
+    (begin
+      (set-local-env!)
+      (pkg-build "." #f))
     (for-each pkg-build pkgs)))
 
-(def (clean-pkgs pkgs)
+(def (clean-pkgs pkgs local?)
+  (when local?
+    (set-local-env!))
   (if (null? pkgs)
     ;; do local clean
-    (pkg-clean ".")
+    (begin
+      (set-local-env!)
+      (pkg-clean "."))
     (for-each pkg-clean pkgs)))
 
-(def (list-pkgs)
+(def (list-pkgs local?)
+  (when local?
+    (set-local-env!))
   (for (pkg (pkg-list))
     (let (tag (pkg-tag-get pkg))
       (display pkg)
@@ -225,17 +277,32 @@
         (display* "@" tag))
       (newline))))
 
-(def (retag-pkgs)
+(def (retag-pkgs local?)
+  (when local?
+    (set-local-env!))
   (pkg-retag))
 
 (def (search-pkgs keywords dir as-list?)
   (pkg-search keywords dir as-list?))
 
-(def (manage-dirs dirs add? remove?)
-  (pkg-directory-manage dirs add? remove?))
+(def (manage-dirs dirs add? remove? local?)
+  (pkg-directory-manage dirs add? remove? local?))
 
 (def (manage-deps deps add? install? remove?)
+  (set-local-env!)
   (pkg-deps-manage deps add? install? remove?))
+
+(def (set-local-env!)
+  (unless (getenv "GERBIL_PATH" #f)
+    (let* ((here (path-normalize (current-directory)))
+           (gerbil-path (path-expand ".gerbil" here)))
+      (if (file-exists? gerbil-path)
+        (setenv "GERBIL_PATH" gerbil-path)
+        (if (file-exists? (path-expand "gerbil.pkg" here))
+          (begin
+            (create-directory* gerbil-path)
+            (setenv "GERBIL_PATH" gerbil-path))
+          (error "not in local package context"))))))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -634,15 +701,42 @@
     (error "bad directory" dir))))
 
 (def (pkg-directory-user-dirs-path)
-  (path-expand "directory-list" (pkg-root-dir)))
+  (path-expand "pkg/directory-list" (path-expand "~/.gerbil")))
 
-(def (pkg-directory-user-dirs)
-  (let (user-dir (pkg-directory-user-dirs-path))
-    (if (file-exists? user-dir)
-      (call-with-input-file user-dir read)
+(def (pkg-directory-local-dirs-path)
+  (path-expand "pkg/directory-list" (path-expand (getenv "GERBIL_PATH" "~/.gerbil"))))
+
+(def (pkg-directory-dirs)
+  (let* ((user-dir (pkg-directory-user-dirs-path))
+         (local-dir (pkg-directory-local-dirs-path))
+         (user-dirs
+          (if (file-exists? user-dir)
+            (call-with-input-file user-dir read)
+            [])))
+    (remove-duplicates
+     (cond
+      ((equal? user-dir local-dir)
+       user-dirs)
+      ((file-exists? local-dir)
+       (append (call-with-input-file local-dir read)
+               user-dirs))
+      (else
+       user-dirs)))))
+
+(def (pkg-directory-user-dirs (get-path pkg-directory-user-dirs-path))
+  (let (dir (get-path))
+    (if (file-exists? dir)
+      (call-with-input-file dir read)
       [])))
-(def (pkg-directory-user-dirs-add add-dirs)
-  (let* ((current (pkg-directory-user-dirs))
+
+(def (pkg-directory-local-dirs)
+  (pkg-directory-user-dirs pkg-directory-local-dirs-path))
+
+(def (pkg-directory-dirs-add add-dirs local?)
+  (let* ((current
+          (if local?
+            (pkg-directory-local-dirs)
+            (pkg-directory-user-dirs)))
          (new
           (let lp ((rest add-dirs) (new []))
             (match rest
@@ -652,12 +746,19 @@
                  (lp rest new)
                  (lp rest (cons dir new))))
               (else
-               (append current (reverse new)))))))
-    (call-with-output-file (pkg-directory-user-dirs-path)
+               (remove-duplicates
+                (append current (reverse new))))))))
+    (call-with-output-file
+        (if local?
+          (pkg-directory-local-dirs-path)
+          (pkg-directory-user-dirs-path))
       (cut write new <>))))
 
-(def (pkg-directory-user-dirs-remove remove-dirs)
-  (let* ((current (pkg-directory-user-dirs))
+(def (pkg-directory-dirs-remove remove-dirs local?)
+  (let* ((current
+          (if local?
+            (pkg-directory-local-dirs)
+            (pkg-directory-user-dirs)))
          (new
           (let lp ((rest current) (new []))
             (match rest
@@ -667,36 +768,40 @@
                  (lp rest (cons dir new))))
               (else
                (reverse new))))))
-    (call-with-output-file (pkg-directory-user-dirs-path)
+    (call-with-output-file
+        (if local?
+          (pkg-directory-local-dirs-path)
+          (pkg-directory-user-dirs-path))
       (cut write new <>))))
 
 (def (pkg-directory-urls)
   (let* ((default-dirs [+mighty-gerbils-pkg-directory+])
-         (user-dirs (pkg-directory-user-dirs))
-         (all-dirs (append default-dirs user-dirs)))
+         (other-dirs (pkg-directory-dirs))
+         (all-dirs (remove-duplicates (append default-dirs other-dirs))))
     (map pkg-directory-url all-dirs)))
 
 (def (pkg-directory-list-all)
-  (for/fold (result []) (url (pkg-directory-urls))
-    (let (req (with-catch
-               (lambda (exn)
-                 (displayln/err "*** WARNING error retrieving packages from " url
-                                ": " (or (error-message exn) "(unknown error)"))
-                 #f)
-               (cut http-get url redirect: #t)))
-      (if (and req (fx= (request-status req) 200))
-        (let (pkgs (with-catch
-                    (lambda (exn)
-                      (displayln/err "*** WARNING error retrieving packages from "
-                                     (request-url req)
-                                     ": " (or (error-message exn) "(unknown error)"))
-                      [])
-                    (lambda () (call-with-input-string (request-text req) read))))
-          (append result pkgs))
-        (begin
-          (displayln/err "error retrieving packages from " url
-                         ": " (request-status-text req))
-          result)))))
+  (remove-duplicates
+   (for/fold (result []) (url (pkg-directory-urls))
+     (let (req (with-catch
+                (lambda (exn)
+                  (displayln/err "*** WARNING error retrieving packages from " url
+                                 ": " (or (error-message exn) "(unknown error)"))
+                  #f)
+                (cut http-get url redirect: #t)))
+       (if (and req (fx= (request-status req) 200))
+         (let (pkgs (with-catch
+                     (lambda (exn)
+                       (displayln/err "*** WARNING error retrieving packages from "
+                                      (request-url req)
+                                      ": " (or (error-message exn) "(unknown error)"))
+                       [])
+                     (lambda () (call-with-input-string (request-text req) read))))
+           (append result pkgs))
+         (begin
+           (displayln/err "error retrieving packages from " url
+                          ": " (request-status-text req))
+           result))))))
 
 (def (pkg-directory-list dir)
   (let* ((url (pkg-directory-url dir))
@@ -706,12 +811,12 @@
       (error "error retrieving packages" url (request-status-text req)))))
 
 ;; package directory management
-(def (pkg-directory-manage dirs add? remove?)
+(def (pkg-directory-manage dirs add? remove? local?)
   (cond
    ((null? dirs)
     (if (or add? remove?)
       (error "no directory specified")
-      (let (user-dirs (pkg-directory-user-dirs))
+      (let (user-dirs (pkg-directory-dirs))
         (for (dir user-dirs)
           (let (url (pkg-directory-url dir))
             (if (equal? dir url)
@@ -720,9 +825,9 @@
    ((and add? remove?)
     (error "do you want to add or remove"))
    (add?
-    (pkg-directory-user-dirs-add dirs))
+    (pkg-directory-dirs-add dirs local?))
    (remove?
-    (pkg-directory-user-dirs-remove dirs))
+    (pkg-directory-dirs-remove dirs local?))
    (else
     (for (dir dirs)
       (pretty-print (pkg-directory-list dir))))))
@@ -765,7 +870,7 @@
        (add? (error "nothing to add"))
        (remove? (error "nothing to remove"))
        (install?
-        (install-pkgs current-deps))
+        (install-pkgs current-deps #t))
        (else
         (for-each displayln current-deps)))
       (cond
@@ -778,7 +883,7 @@
           (add-dep! dep))
         (write-deps!)
         (when install?
-          (install-pkgs deps)))
+          (install-pkgs deps #t)))
        (remove?
         (for (dep deps)
           (remove-dep! dep))
@@ -857,6 +962,20 @@
 (def (displayln/err . args)
   (parameterize ((current-output-port (current-error-port)))
     (apply displayln args)))
+
+
+(def (remove-duplicates lst)
+  (def seen (make-hash-table))
+  (let lp ((rest lst) (result []))
+    (match rest
+      ([hd . rest]
+       (if (hash-get seen hd)
+         (lp rest result)
+         (begin
+           (hash-put! seen hd #t)
+           (lp rest (cons hd result)))))
+      (else
+       (reverse! result)))))
 
 ;;; templates
 (def gerbil.pkg-template #<<END
