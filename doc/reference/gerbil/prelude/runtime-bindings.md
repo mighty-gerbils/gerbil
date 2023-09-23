@@ -8,7 +8,7 @@ which allows for easy reuse in custom languages.
 This includes the `<runtime>` prelude module, which is composed by the `<r5rs-runtime>` and
 `<host-runtime>` modules.
 
-#### <r5rs-runtime>
+#### `<r5rs-runtime>`
 
 Defines the following symbols as externs:
 ```
@@ -89,7 +89,7 @@ Defines the following symbols as externs:
     load
 ```
 
-#### <host-runtime>
+#### `<host-runtime>`
 
 Defines the following symbols as externs:
 ```
@@ -98,23 +98,28 @@ Defines the following symbols as externs:
     1+ 1- fx+ fx1+ fx- fx1- fx* fx/
     fixnum? nonnegative-fixnum?
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
-    fixnum->char char->fixnum fixnum->flonum
-    fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
-    fxbit-set? fxarithmetic-shift fxshift
+    fixnum->flonum
+    fxmax fxmin fxabs fxnot fxand fxior fxxor fxmodulo
+    fxbit-set? fxarithmetic-shift fxarithmetic-shift-left fxarithmetic-shift-right
+    fxshift
     fx< fx<= fx= fx>= fx>
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
     flzero? flpositive? flnegative?
     flnan? flinfinite? flfinite? flinteger?
     flmax flmin
+    arithmetic-shift bitwise-and bitwise-ior bitwise-xor bitwise-not
+    bitwise-merge integer-length
     box? box unbox set-box!
     make-list cons*
     foldl foldr andmap ormap filter filter-map iota last last-pair
-    memf assgetq find
+    memf assgetq assgetv assget find
+    list-set list-set!
     remove1 remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
-    vector-map vector-copy vector-append
+    vector-copy!
+    vector-map vector-for-each vector-copy vector-copy! vector-append
     true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
@@ -128,16 +133,20 @@ Defines the following symbols as externs:
     hash-keys hash-values
     hash-copy hash-copy!
     hash-merge hash-merge!
+    hash-clear!
+    eq?-hash eqv?-hash equal?-hash
     uninterned-symbol? interned-symbol? string->uninterned-symbol
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
-    string->bytes bytes->string
+    string-map string-for-each
+    string-copy string-copy! substring-fill!
+    string->bytes substring->bytes bytes->string
+    string->vector vector->string
+    string-concatenate
+    string-index string-rindex
+    string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
-    substring-fill! substring-move! string-shrink!
-    string-concatenate
-    string-map string-index string-rindex
-    string-split string-join string-empty?
     ;; MOP
     type-descriptor?
     struct-type?
@@ -146,74 +155,79 @@ Defines the following symbols as externs:
     make-struct-predicate
     make-struct-field-accessor
     make-struct-field-mutator
+    make-struct-field-unchecked-accessor
+    make-struct-field-unchecked-mutator
     struct-field-ref
     struct-field-set!
-    direct-field-ref
-    direct-field-set!
+    unchecked-field-ref
+    unchecked-field-set!
     make-class-type
     make-class-predicate
     make-class-slot-accessor
     make-class-slot-mutator
+    make-class-slot-unchecked-accessor
+    make-class-slot-unchecked-mutator
     class-slot-ref
     class-slot-set!
-    direct-slot-ref
-    direct-slot-set!
+    class-slot-offset
+    unchecked-slot-ref
+    unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
-    direct-struct-instance? direct-class-instance?
+    direct-instance? direct-struct-instance? direct-class-instance?
     make-object
     struct-copy
     struct->list class->list
-    make-struct-instance make-direct-struct-instance
-    make-class-instance make-direct-class-instance
-    direct-struct-instance-init!
-    direct-class-instance-init!
-    direct-constructor-init!
+    make-struct-instance
+    make-class-instance
+    struct-instance-init!
+    class-instance-init!
     slot-ref slot-set!
     call-method
-    bind-method!
+    bind-method! bind-specializer!
+    seal-class!
     method-ref direct-method-ref bound-method-ref
+    checked-method-ref checked-bound-method-ref
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
-    ;; generics
-    make-generic generic? generic-id
-    generic-add-method!
-    generic-dispatch
+    ;; write-env style
+    write-style
     ;; control
     current-error-port
     make-promise promise?
     make-parameter call-with-parameters
-    call-with-escape
+    ;;call-with-prompt abort!
     with-unwind-protect
-    current-exception-handler with-exception-handler
+    current-exception-handler
+    with-exception-handler
     with-catch
-    error raise raise-type-error
-    exception? error-object? type-error?
-    exception::t error::t
-    error? error-trace error-message error-irritants
+    error raise
+    exception? error-object?
+    error-message error-irritants error-trace
+    display-exception
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
     delete-file copy-file rename-file
     delete-directory directory-files
+    delete-file-or-directory
     file-exists? file-newer? file-type
     path-expand path-normalize
     path-extension path-strip-extension
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
     ;; reader
-    AST::t AST? AST-e AST-source make-AST
+    AST? AST::t make-AST AST-e AST-source
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
-    ;; required by the module reader to support #lang
-    datum-parsing-exception? datum-parsing-exception-filepos
+    make-syntax-error syntax-error?
     read-line read-all
     ;; string and vector moves
     vector-concatenate subvector-move! vector-shrink!
     string-concatenate substring-move! string-shrink!
     ;; string I/O
-    write-substring
+    read-substring write-substring
     open-input-string open-output-string get-output-string
     call-with-input-string with-input-from-string
     call-with-output-string with-output-to-string
@@ -222,27 +236,87 @@ Defines the following symbols as externs:
     make-u8vector u8vector-length u8vector-ref u8vector-set!
     u8vector->list list->u8vector
     u8vector-fill! u8vector-shrink!
-    u8vector-copy u8vector-append
+    u8vector-copy u8vector-copy! u8vector-append
     subu8vector subu8vector-fill! subu8vector-move!
     u8vector-concatenate
     object->u8vector u8vector->object
     ;; bytes I/O
-    write-subu8vector
+    read-subu8vector write-subu8vector
     open-input-u8vector open-output-u8vector get-output-u8vector
     call-with-input-u8vector with-input-from-u8vector
     call-with-output-u8vector with-output-to-u8vector
     ;; generic I/O
     displayln display*
+    ;; formerly ##max-char
+    max-char-code
     ;;flush-output-port
     ;; etc...
+    absent-obj   ; gambit api missing optional parameter
+    absent-value ; unbound hash reference atom
     ;; Module loading
     load-module
     ;; keyword argument dispatch
-    keyword-dispatch
+    keyword-dispatch keyword-rest
     ;; gerbil specifics
-    gerbil-version-string gerbil-system-version-string
+    gerbil-version-string gerbil-system-version-string system-version
     ;; system type information
     gerbil-system system-type
+    ;; voodoo doll
+    gerbil-runtime-smp?
+    ;; expander loading for executables
+    gerbil-load-expander!
+    ;; our home
+    gerbil-home
+
+    ;; concurrency primitives
+    spawn spawn/name spawn/group spawn-actor spawn-thread
+    thread-local-ref thread-local-get thread-local-set! thread-local-clear!
+    unhandled-actor-exception-hook-set!
+
+    thread? actor-thread?
+    thread-sleep! thread-join! thread-send thread-receive
+    thread-specific thread-specific-set!
+    make-thread thread-start! thread-yield!
+    thread-name
+    current-thread
+
+    thread-thread-group
+    thread-group?
+    thread-group-name
+    current-thread-group
+
+    make-mutex mutex? mutex-lock! mutex-unlock! with-lock with-dynamic-lock
+    make-condition-variable condition-variable?
+    condition-variable-signal!
+    condition-variable-broadcast!
+
+    ;; continuation primitives
+    continuation? continuation-capture continuation-graft continuation-return
+    display-continuation-backtrace
+
+    ;; time objects
+    current-time
+    time?
+    time->seconds
+    seconds->time
+
+    ;; port utilities
+    port? close-port force-output
+    read-all
+    read-line
+    peek-char
+    read-u8 peek-u8 write-u8
+    char-ready?
+
+    read-string write-string
+    read-u8vector write-u8vector
+
+    ;; misc r7rs procedures
+    list-copy list-set!
+    string-downcase string-upcase
+    exact-integer?
+    exact inexact
+    exact-integer-sqrt
 ```
 
 Also defines the following aliases:
@@ -264,7 +338,7 @@ Also defines the following aliases:
 The bindings include `<runtime>` and `<expander-runtime>`, which contains symbols
 defined by the expander.
 
-#### <expander-runtime>
+#### `<expander-runtime>`
 
 Defines the following symbols as extern:
 ```
