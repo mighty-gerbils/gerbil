@@ -29,7 +29,7 @@
   defsyntax/unhygienic
   if-let
   when-let
-  def-check-argument-type)
+  defcheck-argument-type)
 
 (import (for-syntax :std/misc/func
                     :std/stxutil))
@@ -423,9 +423,10 @@
 
 (defrule (when-let bindings body ...) (if-let bindings (begin body ...) (void)))
 
-(defrule (def-check-argument-type type ...)
+(defrule (defcheck-argument-type type ...)
   (begin
     (with-id type ((pred? #'type "?")
-                   (check "check-argument-" #'type))
+                   (check "check-argument-" #'type)
+                   (a #'type "-instance")) ; go get location for context
       (defrule (check a (... ...))
         (begin (check-argument (pred? a) (symbol->string 'type) a) (... ...)))) ...))

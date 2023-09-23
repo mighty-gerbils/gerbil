@@ -314,7 +314,7 @@
     ;; :std/misc
     "misc/atom"
     "misc/decimal"
-    "misc/extensible-vector"
+    "misc/evector"
     "misc/prime"
     "misc/concurrent-plan"
     "misc/timeout"

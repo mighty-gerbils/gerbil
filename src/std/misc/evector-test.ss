@@ -2,7 +2,7 @@
 
 (import
   :std/test
-  ./number ./extensible-vector)
+  ./number ./evector)
 
 (def extensible-vector-test
   (test-suite "test suite for std/misc/extensible-vector"
@@ -10,8 +10,8 @@
       (def e (list->evector '(a b c d)))
       (check-equal? (evector? e) #t)
       (check-equal? (evector-ref e 0) 'a)
-      (check-equal? (evector-push! e 'x) #f)
-      (check-equal? (evector-push! e 'x extend: #t) 4)
+      (check-equal? (evector-push! e 'x extend: #f) #f)
+      (check-equal? (evector-push! e 'x) 4)
       (check-equal? (evector-ref e 1) 'b)
       (check-equal? (evector-ref e 2) 'c)
       (check-equal? (evector-ref e 3) 'd)
@@ -21,8 +21,8 @@
       (def e (string->ebytes "abcd"))
       (check-equal? (ebytes? e) #t)
       (check-equal? (ebytes-ref e 0) 97)
-      (check-equal? (ebytes-push! e 120) #f)
-      (check-equal? (ebytes-push! e 120 extend: #t) 4)
+      (check-equal? (ebytes-push! e 120 extend: #f) #f)
+      (check-equal? (ebytes-push! e 120) 4)
       (check-equal? (ebytes-ref e 1) 98)
       (check-equal? (ebytes-ref e 2) 99)
       (check-equal? (ebytes-ref e 3) 100)
@@ -38,8 +38,8 @@
       (check-equal? (ebits-push! e 1) 13)
       (check-equal? (ebits-push! e 0) 14)
       (check-equal? (ebits-push! e 0) 15)
-      (check-equal? (ebits-push! e 0) #f)
-      (check-equal? (ebits-push! e 0 extend: #t) 16)
+      (check-equal? (ebits-push! e 0 extend: #f) #f)
+      (check-equal? (ebits-push! e 0) 16)
       (check-equal? (ebits-push! e 1) 17)
       (check-equal? (ebits-push! e 0) 18)
       (check-equal? (ebits-push! e 1) 19)
