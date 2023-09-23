@@ -2,7 +2,7 @@
 
 (import
   :std/srfi/1
-  :std/misc/extensible-vector
+  :std/misc/evector
   :std/misc/func
   :std/misc/number
   :std/misc/prime

@@ -12,6 +12,7 @@
         deferror-class
         StackTrace StackTrace?
         BadArgument BadArgument? raise-bad-argument bad-argument-error? check-argument
+        exception-context
         IOError IOError? raise-io-error io-error?
         Closed Closed? raise-io-closed io-closed-error?
         PrematureEndOfInput PrematureEndOfInput? raise-premature-end-of-input
