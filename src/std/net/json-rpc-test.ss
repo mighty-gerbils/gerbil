@@ -6,7 +6,8 @@
         :std/net/request
         :std/net/json-rpc
         :std/sugar
-        :std/test)
+        :std/test
+        :std/text/json)
 (export json-rpc-test)
 
 (def server-address
@@ -44,4 +45,37 @@
     (test-case "basic handlers with GET"
       (test-basic-handlers 'GET)
       (check-exception (query 42 http-method: 'GET) true)) ;; can't uri-encode number 42
+    (test-case "encode params"
+      (check-equal? (json-object->string
+                     (json-rpc-request jsonrpc: json-rpc-version
+                                       method: "foo" params: [42 "hello"] id: 13))
+                    "{\"id\":13,\"jsonrpc\":\"2.0\",\"method\":\"foo\",\"params\":[42,\"hello\"]}"))
+    (test-case "decode result"
+      (parameterize ((json-symbolic-keys #f))
+        (check-equal? (decode-json-rpc-response
+                       1+ 69 (string->json-object "{\"jsonrpc\": \"2.0\", \"result\": 1776, \"id\": 69}"))
+                      1777)))
+    (test-case "error matching"
+      (check (match (JSON-RPCError code: -151 message: "foo" data: [1])
+               ((JSON-RPCError code: -151 message: "foo" data: [1]) #t)
+               (else #f)) => #t)
+      (check (match (JSON-RPCError code: -151 message: "foo")
+               ((JSON-RPCError code: -151 message: "foo" data: #!void) #t)
+               (else #f)) => #t))
+    (test-case "decode errors"
+      (parameterize ((json-symbolic-keys #f))
+        (def response-json-1
+          (string->json-object "{\"jsonrpc\": \"2.0\", \"error\": { \"code\": -151, \"message\": \"foo\", \"data\": [1] }, \"id\": 42 }"))
+        (check-exception (decode-json-rpc-response 1+ 42 response-json-1)
+                         (match <> ((JSON-RPCError code: -151 message: "foo" data: [1]) #t) (else #f)))
+        (def response-json-2
+          (string->json-object "{\"jsonrpc\": \"2.0\", \"id\": 15 , \"error\": { \"code\": -32602, \"message\": \"non-array args\"}}\n"))
+        (check-exception (decode-json-rpc-response 1+ 15 response-json-2)
+                         (match <> ((JSON-RPCError code: -32602 message: "non-array args") #t) (else #f)))
+        (def response-json-3
+          (string->json-object "{\"jsonrpc\": \"2.0\", \"error\": 1776, \"id\": 42 }"))
+        (check-exception (decode-json-rpc-response 1+ 42 response-json-3) MalformedResponse?)
+        (def response-json-4
+          (string->json-object "{\"jsonrpc\": \"2.0\", \"error\":  { \"code\": -1, \"message\": \"foo\" }, \"id\": 41 }"))
+        (check-exception (decode-json-rpc-response 1+ 42 response-json-4) MalformedResponse?)))
     (stop-http-server! httpd)))
