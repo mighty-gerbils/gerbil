@@ -89,6 +89,8 @@
     (command 'search help: "search the package directory"
              (option 'directory "-d" "--directory"
                      help: "A specific directory to use; by default the default directory and all user configured directories are searched")
+             (flag 'as-list "-l" "--list"
+                   help: "Print the results as a list, do not format it")
              (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
 
   (call-with-getopt gxpkg-main args
@@ -130,7 +132,7 @@
       ((retag)
        (retag-pkgs))
       ((search)
-       (search-pkgs .keywords .directory)))))
+       (search-pkgs .keywords .directory .?as-list)))))
 
 ;;; commands
 (defrules fold-pkgs ()
@@ -196,8 +198,8 @@
 (def (retag-pkgs)
   (pkg-retag))
 
-(def (search-pkgs keywords dir)
-  (pkg-search keywords dir))
+(def (search-pkgs keywords dir as-list?)
+  (pkg-search keywords dir as-list?))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -436,7 +438,7 @@
                  directory: root)))
 
 ;; package directory search
-(def (pkg-search keywords dir)
+(def (pkg-search keywords dir as-list?)
   (def (search lst)
     (def (try-match kw)
       (let (rx (pregexp (string-append "(?i:" kw ")")))
@@ -462,23 +464,24 @@
          (reverse result)))))
 
   (def (display-pkgs alst)
-    (for ([pkg . desc] alst)
-      (displayln pkg ": " desc)))
+    (if as-list?
+      (pretty-print alst)
+      (for ([pkg . desc] alst)
+        (displayln pkg ": " desc))))
 
   (let (alst (if dir (pkg-directory-list dir) (pkg-directory-list-all)))
     (let (matches (search alst))
       (display-pkgs matches))))
 
 (def +mighty-gerbils-pkg-directory+
-  "github.com/mighty-gerbils/gerbil-directory")
+  "https://raw.githubusercontent.com/mighty-gerbils/gerbil-directory/master/package-list")
 
 (def (pkg-directory-url dir)
   (cond
-   ((string-prefix? "github.com/" dir)
-    (let (base (substring dir (string-index dir #\/) (string-length dir)))
-      (string-append "https://raw.githubusercontent.com" base "/package-list")))
+   ((string-prefix? "https://" dir)
+    dir)
    (else
-    (error "unsupported directory repo" dir))))
+    (string-append "https://" dir))))
 
 (def (pkg-directory-urls)
   (let* ((default-dirs [+mighty-gerbils-pkg-directory+])
@@ -497,7 +500,7 @@
                  (displayln/err "*** WARNING error retrieving packages from " url
                                 ": " (or (error-message exn) "(unknown error)"))
                  #f)
-               (cut http-get url)))
+               (cut http-get url redirect: #t)))
       (if (and req (fx= (request-status req) 200))
         (let (pkgs (with-catch
                     (lambda (exn)
@@ -505,7 +508,7 @@
                                      (request-url req)
                                      ": " (or (error-message exn) "(unknown error)"))
                       [])
-                    (lambda () (read (request-text req)))))
+                    (lambda () (call-with-input-string (request-text req) read))))
           (append result pkgs))
         (begin
           (displayln/err "error retrieving packages from " url
