@@ -284,11 +284,11 @@
     (pkg-link maybe-link (current-directory))))
 
 (def (pkg+tag pkg)
-  (let ((pt (string-split pkg #\@))
-        (pkg (car pkg+tag))
-        (tag (let (kdr (cdr pkg+tag))
-               (and (not (null? kdr))
-                    (car kdr)))))
+  (let* ((pt (string-split pkg #\@))
+         (pkg (car pt))
+         (tag (let (kdr (cdr pt))
+                (and (not (null? kdr))
+                     (car kdr)))))
     (values pkg tag)))
 
 (def (pkg-install pkg)
@@ -388,18 +388,18 @@
                    stdout-redirection: #f)
       (call-with-output-file (pkg-tag-file pkg)
         (cut write tag <>)))
-    (when (not (pkg-tag-semver? (pkg-tag-get pkg)))
-      (displayln "... pulling")
-      (run-process ["git" "pull" "-q" tag]
-                   directory: dest
-                   coprocess: void
-                   stdout-redirection: #f))))
+    (let (tag (pkg-tag-get pkg))
+      (when (not (pkg-tag-semver? tag))
+        (displayln "... pulling")
+        (run-process ["git" "pull" "-q" "origin" tag]
+                     directory: dest
+                     coprocess: void
+                     stdout-redirection: #f)))))
 
 (def (pkg-tag-file pkg)
   (let* ((root (pkg-root-dir))
-         (dest (path-expand pkg root))
-         (top  (path-directory dest)))
-    (path-expand (string-append pkg ".tag") top)))
+         (dest (path-expand pkg root)))
+    (string-append dest ".tag")))
 
 (def (pkg-tag-get pkg)
   (let ((tagf (pkg-tag-file pkg))
@@ -409,7 +409,8 @@
       (call-with-input-file tagf read))
      ((file-exists? top)
       (run-process ["git" "branch" "--show-current"]
-                   directory: top))
+                   directory: top
+                   coprocess: read-line))
      (else #f))))
 
 (def (pkg-tag-incompatible? current other)
@@ -729,7 +730,7 @@
 ;; package depnendency management
 (def (pkg-deps-manage deps add? install? remove?)
   (let* ((plist (pkg-plist "."))
-         (current-deps (pgetq depend: plist)))
+         (current-deps (pgetq depend: plist [])))
 
     (def (add-dep! dep)
       (let ((values xpkg _) (pkg+tag dep))
@@ -780,7 +781,8 @@
           (install-pkgs deps)))
        (remove?
         (for (dep deps)
-          (remove-dep! dep)))
+          (remove-dep! dep))
+        (write-deps!))
        (else
         (error "unspecified action; use --add or --remove"))))))
 
