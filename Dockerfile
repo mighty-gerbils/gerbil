@@ -15,7 +15,7 @@ ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=2
 ENV GERBIL_GCC=g++
 RUN mkdir -p /src /opt
-RUN apk update && \
+RUN apk update
 RUN apk add ${packages} autoconf automake cmake curl g++ gcc git libgcc libtool libxml2-dev linux-headers make musl musl-dev nodejs openssl-dev openssl-libs-static ruby yaml-dev xz-static zlib-static
 
 FROM base as gerbil
@@ -25,9 +25,8 @@ ARG branch
 ARG configure_args
 ENV GERBIL_BUILD_CORES=$cores
 ENV GERBIL_GCC=g++
-RUN cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
-    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no --enable-c++
-
+RUN cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src
+RUN  cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no --enable-c++
 RUN cd /opt/gerbil-src && make -j$cores && make install
 
 FROM gerbil as final
