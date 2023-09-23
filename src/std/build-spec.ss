@@ -400,13 +400,6 @@
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
-    ,@(if config-enable-mysql
-        `((gsc: "db/_mysql"
-                "-cc-options" ,(cppflags "mysqlclient" "")
-                "-ld-options" ,(ldflags "mysqlclient" "-lpthread -lmysqlclient"))
-          (ssi: "db/_mysql")
-          "db/mysql")
-        '())
     ,@(if config-enable-lmdb
         `((gsc: "db/_lmdb"
                 "-cc-options" ,(cppflags "lmdb" "")
