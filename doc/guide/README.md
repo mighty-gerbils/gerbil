@@ -18,16 +18,16 @@ Older versions of Gambit, starting with v4.9.1 may also work, but we haven't tes
 Starting with the v0.18 release cycle, there is no external dependency on Gambit any more; it is integrated in Gerbil as a git submodule
 
 The core system has no outside depencies, but the standard
-library has several mostly optional dependencies. The only hard dependency
+library has some mostly optional dependencies. The only hard dependency
 is `libssl` and `libcrypto` from OpenSSL; important parts of the standard
 library require it and we refuse to ship software without SSL/TLS support
 in the 2020s.
 
 All the other dependencies are soft.  Most library modules with
-foreign dependencies are not built by default, with the exception of
+foreign dependencies are external packages, with the exception of
 `zlib` and `sqlite`. These are ubiquitous, stable and generally useful
-enough to warrant being present by default; you can still disable them
-if you want for a minimal installation.
+enough to warrant being present in the standard library and enabled by default;
+you can still disable them if you want for a minimal installation.
 
 In Ubuntu, you can install the dependencies for a default installation with:
 

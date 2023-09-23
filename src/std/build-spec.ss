@@ -185,13 +185,6 @@
     "text/json/util"
     "text/json/api"
     "text/json"
-    ,@(if config-enable-libyaml
-        `((gsc: "text/libyaml"
-                "-cc-options" ,(cppflags "libyaml" "")
-                "-ld-options" ,(ldflags "libyaml" "-lyaml"))
-          (ssi: "text/libyaml")
-          "text/yaml")
-        '())
     ,@(if config-enable-zlib
         `((gsc: "text/_zlib"
                 "-cc-options" ,(cppflags "zlib" "")
@@ -281,14 +274,6 @@
     "net/httpd"
     "net/sasl"
     ;; :std/xml
-    ,@(if config-enable-libxml
-        `((gsc: "xml/_libxml"
-                "-cc-options" ,(shell-config "xml2-config" "--cflags")
-                "-ld-options" ,(shell-config "xml2-config" "--libs")
-                ,@(include-gambit-sharp))
-          (ssi: "xml/_libxml")
-          "xml/libxml")
-        '())
     (gxc: "xml/ssax")
     "xml/sxpath"
     "xml/sxml"
@@ -399,26 +384,4 @@
                 "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
           (ssi: "db/_sqlite")
           "db/sqlite")
-        '())
-    ,@(if config-enable-mysql
-        `((gsc: "db/_mysql"
-                "-cc-options" ,(cppflags "mysqlclient" "")
-                "-ld-options" ,(ldflags "mysqlclient" "-lpthread -lmysqlclient"))
-          (ssi: "db/_mysql")
-          "db/mysql")
-        '())
-    ,@(if config-enable-lmdb
-        `((gsc: "db/_lmdb"
-                "-cc-options" ,(cppflags "lmdb" "")
-                "-ld-options" ,(ldflags "lmdb" "-llmdb"))
-          (ssi: "db/_lmdb")
-          "db/lmdb")
-        '())
-    ,@(if config-enable-leveldb
-        `((gsc: "db/_leveldb"
-                "-cc-options" ,(cppflags "leveldb" "")
-                "-ld-options" ,(ldflags "leveldb" "-lleveldb"))
-          (ssi: "db/_leveldb")
-          "db/leveldb")
-        '())
-    ))
+        '())))
