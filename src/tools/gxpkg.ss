@@ -5,9 +5,9 @@
 ;;; Usage:
 ;;;   gxpkg action arg ....
 ;;; Actions:
-;;;   install pkg ...
+;;;   install pkg[@tag] ...
+;;;   update pkg[@tag] ...
 ;;;   uninstall pkg ...
-;;;   update pkg ...
 ;;;   link pkg src
 ;;;   unlink pkg ...
 ;;;   build pkg ...
@@ -45,14 +45,14 @@
 (def (main . args)
   (def install-cmd
     (command 'install help: "install one or more packages"
-      (rest-arguments 'pkg help: "package to install")))
+      (rest-arguments 'pkg help: "package to install; use @tag to checkout a specific tag")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
       (flag 'force "-f" help: "force uninstall even if there are orphaned dependencies")
       (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
-      (rest-arguments 'pkg help: "package to update; all for all packages")))
+             (rest-arguments 'pkg help: "package to update; use @tag to checkout a specific tag; all for all packages")))
   (def link-cmd
     (command 'link help: "link a local development package"
       (argument 'pkg help: "package to link")
@@ -88,7 +88,7 @@
   (def search-cmd
     (command 'search help: "search the package directory"
              (option 'directory "-d" "--directory"
-                     help: "A specific directory to use; by default the default directory and all user configured directories are searched")
+                     help: "A specific directory to use; by default the mighty-gerbils directory and all user configured directories are searched")
              (flag 'as-list "-l" "--list"
                    help: "Print the results as a list, do not format it")
              (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
@@ -262,32 +262,19 @@
   (when maybe-link
     (pkg-link maybe-link (current-directory))))
 
-(def (pkg-install pkg)
-  (def (git-clone-url pkg)
-    (string-append "https://" pkg ".git"))
-  (cond
-   ((or (string-prefix? "github.com/" pkg)
-        (string-prefix? "gitlab.com/" pkg)
-        (string-prefix? "bitbucket.org/" pkg))
-    (pkg-install-git pkg (git-clone-url pkg)))
-   (else
-    (error "Unknown package provider" pkg))))
+(def (pkg+tag pkg)
+  (let ((pt (string-split pkg #\@))
+        (pkg (car pkg+tag))
+        (tag (let (kdr (cdr pkg+tag))
+               (and (not (null? kdr))
+                    (car kdr)))))
+    (values pkg tag)))
 
-(def (pkg-install-git pkg clone-url)
-  (let* ((root (pkg-root-dir))
-         (dest (path-expand pkg root)))
-    (if (file-exists? dest)
-      #f
-      (let (path (path-directory dest))
-        (displayln "... install " pkg)
-        (create-directory* path)
-        (run-process ["git" "clone" "-q" clone-url]
-                     directory: path
-                     coprocess: void
-                     stdout-redirection: #f)
-        (pkg-install-deps pkg)
-        (pkg-build pkg)
-        #t))))
+(def (pkg-install pkg)
+  (let ((values pkg tag) (pkg+tag pkg))
+    (pkg-fetch pkg tag)
+    (pkg-install-deps pkg)
+    (pkg-build pkg)))
 
 (def (pkg-install-deps pkg)
   (let* ((plist (pkg-plist pkg))
@@ -323,16 +310,52 @@
 
 (def (pkg-update-git pkg)
   (let* ((root (pkg-root-dir))
+         ((values pkg tag) (pkg+tag pkg))
          (dest (path-expand pkg root)))
     (unless (file-exists? dest)
       (error "Cannot update uknown package" pkg))
     (and (not (file-symbolic-link? dest))
          (begin
-           (displayln "... update " pkg)
-           (let* ((result (run-process ["git" "pull"]
+           (pkg-fetch-git pkg tag)
+           (displayln "... pulling " pkg)
+           (let* ((result (run-process ["git" "pull" "-q"]
                                        directory: dest))
                   (update? (not (equal? result "Already up-to-date.\n"))))
              update?)))))
+
+(def (pkg-fetch pkg tag)
+  (cond
+   ((or (string-prefix? "github.com/" pkg)
+        (string-prefix? "gitlab.com/" pkg)
+        (string-prefix? "bitbucket.org/" pkg))
+    (pkg-fetch-git pkg tag))
+   (else
+    (error "Unknown package provider" pkg))))
+
+(def (pkg-fetch-git pkg tag)
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (if (file-exists? dest)
+      (begin
+        (displayln "... fetching " pkg)
+        (run-process ["git" "fetch" "-q"]
+                     directory: dest
+                     coprocess: void
+                     stdout-redirection: #f))
+      (let ((path (path-directory dest))
+            (clone-url (string-append "https://" pkg ".git")))
+        (displayln "... cloning " pkg)
+        (create-directory* path)
+        (run-process ["git" "clone" "-q" clone-url]
+                     directory: path
+                     coprocess: void
+                     stdout-redirection: #f)))
+    (when tag
+      (displayln "... checking out " tag)
+      (run-process ["git" "checkout" "-q" tag]
+                   directory: dest
+                   coprocess: void
+                   stdout-redirection: #f))))
 
 (def (pkg-link pkg src)
   (let* ((root (pkg-root-dir))
