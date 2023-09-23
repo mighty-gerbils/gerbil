@@ -93,6 +93,15 @@
                    help: "Print the results as a list, do not format it")
              (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
 
+  (def dir-cmd
+    (command 'dir help: "manage the directory list"
+             (flag 'add "-a" "--add"
+                   help: "add a directory to the list of searched directories")
+             (flag 'remove "-r" "--remove"
+                   help: "remove a directory from the list")
+             (rest-arguments 'directories
+                             help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a github repo of the form github.com/some-org/some-repo")))
+
   (call-with-getopt gxpkg-main args
     program: "gxpkg"
     help: "The Gerbil Package Manager"
@@ -106,7 +115,8 @@
     update-cmd
     list-cmd
     retag-cmd
-    search-cmd))
+    search-cmd
+    dir-cmd))
 
 (def (gxpkg-main cmd opt)
   (let-hash opt
@@ -132,7 +142,9 @@
       ((retag)
        (retag-pkgs))
       ((search)
-       (search-pkgs .keywords .directory .?as-list)))))
+       (search-pkgs .keywords .directory .?as-list))
+      ((dir)
+       (manage-dirs .directories .?add .?remove)))))
 
 ;;; commands
 (defrules fold-pkgs ()
@@ -200,6 +212,9 @@
 
 (def (search-pkgs keywords dir as-list?)
   (pkg-search keywords dir as-list?))
+
+(def (manage-dirs dirs add? remove?)
+  (pkg-directory-manage dirs add? remove?))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -486,13 +501,46 @@
    (else
     (error "bad directory" dir))))
 
+(def (pkg-directory-user-dirs-path)
+  (path-expand "directory-list" (pkg-root-dir)))
+
+(def (pkg-directory-user-dirs)
+  (let (user-dir (pkg-directory-user-dirs-path))
+    (if (file-exists? user-dir)
+      (call-with-input-file user-dir read)
+      [])))
+(def (pkg-directory-user-dirs-add add-dirs)
+  (let* ((current (pkg-directory-user-dirs))
+         (new
+          (let lp ((rest add-dirs) (new []))
+            (match rest
+              ([dir . rest]
+               (if (or (member dir current)
+                       (member dir new))
+                 (lp rest new)
+                 (lp rest (cons dir new))))
+              (else
+               (append current (reverse new)))))))
+    (call-with-output-file (pkg-directory-user-dirs-path)
+      (cut write new <>))))
+
+(def (pkg-directory-user-dirs-remove remove-dirs)
+  (let* ((current (pkg-directory-user-dirs))
+         (new
+          (let lp ((rest current) (new []))
+            (match rest
+              ([dir . rest]
+               (if (member dir remove-dirs)
+                 (lp rest new)
+                 (lp rest (cons dir new))))
+              (else
+               (reverse new))))))
+    (call-with-output-file (pkg-directory-user-dirs-path)
+      (cut write new <>))))
+
 (def (pkg-directory-urls)
   (let* ((default-dirs [+mighty-gerbils-pkg-directory+])
-         (user-dirs
-          (let (user-conf (path-expand "directory-list" (pkg-root-dir)))
-            (if (file-exists? user-conf)
-              (call-with-input-file user-conf read)
-              [])))
+         (user-dirs (pkg-directory-user-dirs))
          (all-dirs (append default-dirs user-dirs)))
     (map pkg-directory-url all-dirs)))
 
@@ -520,10 +568,32 @@
 
 (def (pkg-directory-list dir)
   (let* ((url (pkg-directory-url dir))
-         (req (http-get url)))
+         (req (http-get url redirect: #t)))
     (if (fx= (request-status req) 200)
-      (read (request-text req))
+      (call-with-input-string (request-text req) read)
       (error "error retrieving packages" url (request-status-text req)))))
+
+;; package directory management
+(def (pkg-directory-manage dirs add? remove?)
+  (cond
+   ((null? dirs)
+    (if (or add? remove?)
+      (error "no directory specified")
+      (let (user-dirs (pkg-directory-user-dirs))
+        (for (dir user-dirs)
+          (let (url (pkg-directory-url dir))
+            (if (equal? dir url)
+              (displayln dir)
+              (displayln dir " -> " url)))))))
+   ((and add? remove?)
+    (error "do you want to add or remove"))
+   (add?
+    (pkg-directory-user-dirs-add dirs))
+   (remove?
+    (pkg-directory-user-dirs-remove dirs))
+   (else
+    (for (dir dirs)
+      (pretty-print (pkg-directory-list dir))))))
 
 ;;; internal
 (def +pkg-plist+
