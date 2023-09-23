@@ -93,7 +93,7 @@ gerbilxx:
 	--build-arg repo="$(REPO)" \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
-	--build-arg configure_args="--enable-leveldb --enable-libxml --enable-libyaml --enable-lmdb --enable-zlib --enable-c++ --enable-march=" \
+	--build-arg configure_args="--enable-libxml--enable-zlib --enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg with_db="YES" \
 	--build-arg distro="alpine" -t final $(ROOT_DIR) \
