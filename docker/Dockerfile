@@ -34,7 +34,7 @@ RUN case ${distro} in \
     ;; \
     ubuntu) \
     apt update -y && \
-  RUN  eval apt install -y ${packages} \
+    eval apt install -y ${packages} \
     ;; \
     *) \
     echo "Unknown distro ${distro}" \
