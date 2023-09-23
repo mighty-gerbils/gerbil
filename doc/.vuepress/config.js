@@ -124,10 +124,7 @@ module.exports = {
                             "db/dbi",
                             "db/sqlite",
                             "db/postgres",
-                            "db/mysql",
                             "db/conpool",
-                            "db/leveldb",
-                            "db/lmdb",
                         ]
                       },
 
@@ -136,9 +133,7 @@ module.exports = {
                         children: [
                             "text/",
                             "text/json",
-                            "text/yaml",
                             "text/csv",
-                            "text/yaml",
                             "text/utf8",
                             "text/utf16",
                             "text/utf32",
