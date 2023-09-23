@@ -205,7 +205,12 @@
     (for-each pkg-clean pkgs)))
 
 (def (list-pkgs)
-  (for-each displayln (pkg-list)))
+  (for (pkg (pkg-list))
+    (let (tag (pkg-tag-get pkg))
+      (display pkg)
+      (when tag
+        (display* "@" tag))
+      (newline))))
 
 (def (retag-pkgs)
   (pkg-retag))
@@ -271,10 +276,21 @@
     (values pkg tag)))
 
 (def (pkg-install pkg)
-  (let ((values pkg tag) (pkg+tag pkg))
-    (pkg-fetch pkg tag)
-    (pkg-install-deps pkg)
-    (pkg-build pkg)))
+  (let* (((values pkg tag) (pkg+tag pkg))
+         (current-tag (pkg-tag-get pkg)))
+    (def (install-it)
+      (pkg-fetch pkg tag)
+      (pkg-install-deps pkg)
+      (pkg-build pkg))
+
+    (if current-tag
+      (cond
+       ((pkg-tag-incompatible?  current-tag tag)
+        (error "Package already installed with an incompatible tag" pkg tag current-tag))
+       ((pkg-tag-preserve? current-tag tag))
+       (else
+        (install-it)))
+      (install-it))))
 
 (def (pkg-install-deps pkg)
   (let* ((plist (pkg-plist pkg))
@@ -315,13 +331,7 @@
     (unless (file-exists? dest)
       (error "Cannot update uknown package" pkg))
     (and (not (file-symbolic-link? dest))
-         (begin
-           (pkg-fetch-git pkg tag)
-           (displayln "... pulling " pkg)
-           (let* ((result (run-process ["git" "pull" "-q"]
-                                       directory: dest))
-                  (update? (not (equal? result "Already up-to-date.\n"))))
-             update?)))))
+         (pkg-fetch-git pkg tag))))
 
 (def (pkg-fetch pkg tag)
   (cond
@@ -350,12 +360,92 @@
                      directory: path
                      coprocess: void
                      stdout-redirection: #f)))
-    (when tag
+    (cond
+     (tag
       (displayln "... checking out " tag)
       (run-process ["git" "checkout" "-q" tag]
                    directory: dest
                    coprocess: void
-                   stdout-redirection: #f))))
+                   stdout-redirection: #f)
+      (call-with-output-file (pkg-tag-file pkg)
+        (cut write tag <>)))
+     ((member (pkg-tag-get pkg) '("master" "main"))
+      (displayln "... pulling")
+      (run-process ["git" "pull" "-q" tag]
+                   directory: dest
+                   coprocess: void
+                   stdout-redirection: #f)))))
+
+(def (pkg-tag-file pkg)
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root))
+         (top  (path-directory dest)))
+    (path-expand (string-append pkg ".tag") top)))
+
+(def (pkg-tag-get pkg)
+  (let (tagf (pkg-tag-file pkg))
+    (cond
+     ((file-exists? tagf)
+      (call-with-input-file tagf read))
+     ((file-exists? (path-expand pkg (pkg-root-dir)))
+      "master")
+     (else #f))))
+
+(def (pkg-tag-incompatible? current other)
+  (cond
+   ((or (not current) (not other)) #f)
+   ((and (pkg-tag-semver? current)
+         (pkg-tag-semver? other))
+    #f)
+   ((or (member current '("master" "main"))
+        (member other '("master" "main")))
+    #f)
+   (else
+    (not (equal? current other)))))
+
+;; Note: in this implementation of semver, we always keep the greatest version.
+;; We don't pay attention to majors and we consider master/main to be the frontier.
+(def (pkg-tag-preserve? current other)
+  (cond
+   ((equal? current other)
+    ;; refetch if it is not semver
+    (pkg-tag-semver? current))
+   ((not other)
+    ;; refetch if it is master/main
+    (not (member current '("master" "main"))))
+   ((member current '("master" "main"))
+    #t)
+   ((member other '("master" "main"))
+    #f)
+   (else
+    (let ((current-version (pkg-tag-semver current))
+          (other-version (pkg-tag-semver other)))
+      (let lp ((current-rest current-version)
+               (other-rest other-version))
+        (match current-rest
+          ([current-hd . current-rest]
+           (match other-rest
+             ([other-hd . other-rest]
+              (cond
+               ((= current-hd other-hd)
+                (lp current-rest other-rest))
+               ((> current-hd other-hd)
+                #t)
+               (else #f)))
+             (else #t)))
+          (else
+           (null? other-rest))))))))
+
+(def +rx-semver+
+  (pregexp "v(\\d+\\.)*\\d+"))
+
+(def (pkg-tag-semver? tag)
+  (pregexp-match +rx-semver+ tag))
+
+(def (pkg-tag-semver tag)
+  (map string->number
+       (string-split (substring tag 1 (string-length tag)) ; drop the v
+                     #\.)))
 
 (def (pkg-link pkg src)
   (let* ((root (pkg-root-dir))
@@ -624,6 +714,10 @@
 
 (def (pkg-plist pkg)
   (cond
+   ((equal? pkg ".")
+    (let* ((gerbil.pkg (path-expand "gerbil.pkg" (current-directory)))
+           (plist (call-with-input-file gerbil.pkg read)))
+      (if (eof-object? plist) [] plist)))
    ((hash-get +pkg-plist+ pkg)
     => values)
    (else
@@ -631,7 +725,7 @@
            (path (path-expand pkg root))
            (gerbil.pkg (path-expand "gerbil.pkg" path))
            (_ (unless (file-exists? gerbil.pkg)
-                (error "bad package; missing gerbil.pkg" pkg)))
+                (error "bad packagekg; missing gerbil.pkg" pkg)))
            (plist (call-with-input-file gerbil.pkg read))
            (plist (if (eof-object? plist) [] plist)))
       (hash-put! +pkg-plist+ pkg plist)
@@ -648,12 +742,20 @@
     (path-normalize build.ss)))
 
 (def (pkg-dependents pkg (pkgs (pkg-list)))
-  (def (dependent xpkg)
-    (let* ((plist (pkg-plist xpkg))
-           (deps (pgetq depend: plist [])))
-      (and (member pkg deps)
-           xpkg)))
-  (filter-map dependent pkgs))
+  (let ((values pkg _) (pkg+tag pkg))
+    (def (dependent xpkg)
+      (let* ((plist (pkg-plist xpkg))
+             (deps (pgetq depend: plist [])))
+        (let lp ((rest deps) (dpkgs []))
+          (match rest
+            ([hd . rest]
+             (let ((values dpkg _) (pkg+tag hd))
+               (lp rest (cons dpkg dpkgs))))
+            (else
+             (and (member pkg dpkgs)
+                  (let ((values xpkg _) (pkg+tag xpkg))
+                    xpkg)))))))
+    (filter-map dependent pkgs)))
 
 (def (pkg-dependents* pkg (pkgs (pkg-list)))
   (let (deps (pkg-dependents pkg pkgs))
