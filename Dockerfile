@@ -23,11 +23,11 @@ ARG cores
 ARG repo
 ARG branch
 ARG configure_args
-ENV GERBIL_BUILD_CORES=$cores
+ENV GERBIL_BUILD_CORES=2
 ENV GERBIL_GCC=g++
 RUN cd /opt && eval git clone -b 908-fix-docker-speed https://github.com/mighty-gerbils/gerbil gerbil-src
-RUN  cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no --enable-c++
-RUN cd /opt/gerbil-src && make -j$cores && make install
+RUN cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no --enable-c++
+RUN cd /opt/gerbil-src && make -j2 && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb
