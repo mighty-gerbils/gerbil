@@ -105,7 +105,7 @@
         (loop (+ q p)))))
   (when (>= n m)
     ;; Ensure there is enough space for the sieve
-    (ebits-set-fill-pointer! prime-sieve u initial-value: 1 extend: #t)
+    (ebits-set-fill-pointer! prime-sieve u initial-value: 1)
     (let/cc return
       ;; Sieve off multiples of odd primes known so far
       (def r (integer-sqrt n))
@@ -119,7 +119,7 @@
         (defvalues (q wq) (wheel-next wheel p wp))
         (when (> q r) (return))
         (when (ebits-set? prime-sieve (half q))
-          (evector-push! primes q extend: #t)
+          (evector-push! primes q)
           (sieve! q))
         (loop q wq)))
     ;; Collect new primes above sqrt(n)
@@ -129,7 +129,7 @@
           (defvalues (q wq) (wheel-next wheel p wp))
           (unless (> q n)
             (when (ebits-set? prime-sieve (half q))
-              (evector-push! primes q extend: #t))
+              (evector-push! primes q))
             (loop q wq)))))))
 
 

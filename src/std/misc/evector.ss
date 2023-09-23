@@ -96,12 +96,12 @@
 
 (defchecked (evector-ref v i) (&evector-ref v i)
   (check-argument-evector v)
-  (check-argument-range i (evector-fill-pointer v))
+  (check-argument-range i (&evector-fill-pointer v))
   (vector-ref (&evector-vector v) i))
 
 (defchecked (evector-set! v i x) (&evector-set! v i x)
   (check-argument-evector v)
-  (check-argument-range i (evector-fill-pointer v))
+  (check-argument-range i (&evector-fill-pointer v))
   (vector-set! (&evector-vector v) i x))
 
 (def evector-ref-set!
@@ -118,7 +118,7 @@
     (when (fx> ll (vector-length v))
       (set! (&evector-vector e) (vector-copy v 0 ll iv)))))
 
-(defchecked (evector-set-fill-pointer! e fp initial-value: (iv #f) extend: (extend #f))
+(defchecked (evector-set-fill-pointer! e fp initial-value: (iv #f) extend: (extend #t))
   (&evector-set-fill-pointer! e fp iv extend)
   (check-argument-evector e)
   (check-argument-fxlength fp)
@@ -134,7 +134,7 @@
       (set! (&evector-fill-pointer e) fp)
       fp)))
 
-(defchecked (evector-push! e x initial-value: (iv #f) extend: (extend #f))
+(defchecked (evector-push! e x initial-value: (iv #f) extend: (extend #t))
   (&evector-push! e x iv extend)
   (check-argument-evector e)
   (let (i (&evector-fill-pointer e))
@@ -208,7 +208,7 @@
         (set! (ebytes-bytes e) bb)
         (subu8vector-move! b 0 (ebytes-fill-pointer e) bb 0)))))
 
-(defchecked (ebytes-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #f))
+(defchecked (ebytes-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #t))
   (&ebytes-set-fill-pointer! e fp iv extend)
   (check-argument-ebytes e)
   (check-argument-fxlength fp)
@@ -224,7 +224,7 @@
       (set! (ebytes-fill-pointer e) fp)
       fp)))
 
-(defchecked (ebytes-push! e x initial-value: (iv 0) extend: (extend #f))
+(defchecked (ebytes-push! e x initial-value: (iv 0) extend: (extend #t))
   (&ebytes-push! e x iv extend)
   (let (i (&ebytes-fill-pointer e))
     (def bb (cond
@@ -283,13 +283,13 @@
   (check-argument-ebits e)
   (check-argument-fxlength ll)
   (let ((b (&ebits-bits e))
-         (bl (n-bits->n-u8 ll)))
-    (when (> bl (u8vector-length b))
-      (let (bb (make-u8vector bl iv))
+        (bl (n-bits->n-u8 ll)))
+    (when (fx> bl (u8vector-length b))
+      (let (bb (make-u8vector bl (if (fxzero? iv) 0 255)))
         (set! (ebits-bits e) bb)
         (subu8vector-move! b 0 (n-bits->n-u8 (&ebits-fill-pointer e)) bb 0)))))
 
-(defchecked (ebits-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #f))
+(defchecked (ebits-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #t))
   (&ebits-set-fill-pointer! e fp iv extend)
   (check-argument-ebits e)
   (check-argument-fxlength fp)
@@ -306,11 +306,11 @@
     (set! (&ebits-fill-pointer e) fp)
     fp)))
 
-(defchecked (ebits-push! e x initial-value: (iv 0) extend: (extend #f))
+(defchecked (ebits-push! e x initial-value: (iv 0) extend: (extend #t))
   (&ebits-push! e x iv extend)
   (check-argument-ebits e)
   (let (i (&ebits-fill-pointer e))
-    (and (&ebits-set-fill-pointer! e (1+ i) iv extend)
+    (and (&ebits-set-fill-pointer! e (fx1+ i) iv extend)
          (begin
            (&ebits-set! e i x)
            i))))
