@@ -380,8 +380,7 @@
                      directory: path
                      coprocess: void
                      stdout-redirection: #f)))
-    (cond
-     (tag
+    (when tag
       (displayln "... checking out " tag)
       (run-process ["git" "checkout" "-q" tag]
                    directory: dest
@@ -389,12 +388,12 @@
                    stdout-redirection: #f)
       (call-with-output-file (pkg-tag-file pkg)
         (cut write tag <>)))
-     ((member (pkg-tag-get pkg) '("master" "main"))
+    (when (not (pkg-tag-semver? (pkg-tag-get pkg)))
       (displayln "... pulling")
       (run-process ["git" "pull" "-q" tag]
                    directory: dest
                    coprocess: void
-                   stdout-redirection: #f)))))
+                   stdout-redirection: #f))))
 
 (def (pkg-tag-file pkg)
   (let* ((root (pkg-root-dir))
