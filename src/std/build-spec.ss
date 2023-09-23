@@ -407,11 +407,4 @@
           (ssi: "db/_lmdb")
           "db/lmdb")
         '())
-    ,@(if config-enable-leveldb
-        `((gsc: "db/_leveldb"
-                "-cc-options" ,(cppflags "leveldb" "")
-                "-ld-options" ,(ldflags "leveldb" "-lleveldb"))
-          (ssi: "db/_leveldb")
-          "db/leveldb")
-        '())
     ))
