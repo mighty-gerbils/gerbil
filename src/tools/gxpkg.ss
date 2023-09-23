@@ -474,14 +474,17 @@
       (display-pkgs matches))))
 
 (def +mighty-gerbils-pkg-directory+
-  "https://raw.githubusercontent.com/mighty-gerbils/gerbil-directory/master/package-list")
+  "github.com/mighty-gerbils/gerbil-directory")
 
 (def (pkg-directory-url dir)
   (cond
    ((string-prefix? "https://" dir)
     dir)
+   ((string-prefix? "github.com/" dir)
+    (let (repo (substring dir (string-index dir #\/) (string-length dir)))
+      (string-append "https://raw.githubusercontent.com" repo "/main/package-list")))
    (else
-    (string-append "https://" dir))))
+    (error "bad directory" dir))))
 
 (def (pkg-directory-urls)
   (let* ((default-dirs [+mighty-gerbils-pkg-directory+])
