@@ -294,7 +294,7 @@
 (def (pkg-install pkg)
   (let* (((values pkg tag) (pkg+tag pkg))
          (current-tag (pkg-tag-get pkg)))
-    (def (install-it)
+    (def (install-it tag)
       (pkg-fetch pkg tag)
       (pkg-install-deps pkg)
       (pkg-build pkg))
@@ -303,10 +303,11 @@
       (cond
        ((pkg-tag-incompatible?  current-tag tag)
         (error "Package already installed with an incompatible tag" pkg tag current-tag))
-       ((pkg-tag-preserve? current-tag tag))
+       ((pkg-tag-choose current-tag tag)
+        =>  install-it)
        (else
-        (install-it)))
-      (install-it))))
+        (install-it tag)))
+      (install-it tag))))
 
 (def (pkg-install-deps pkg)
   (let* ((plist (pkg-plist pkg))
@@ -327,6 +328,9 @@
            (displayln "... uninstall " pkg)
            (run-process ["rm" "-rf" (path-normalize dest)]
                         coprocess: void)
+           (let (tagf (pkg-tag-file pkg))
+             (when (file-exists? tagf)
+               (delete-file tagf)))
            #t))))
 
 (def (pkg-update pkg)
@@ -399,12 +403,14 @@
     (path-expand (string-append pkg ".tag") top)))
 
 (def (pkg-tag-get pkg)
-  (let (tagf (pkg-tag-file pkg))
+  (let ((tagf (pkg-tag-file pkg))
+        (top (path-expand pkg (pkg-root-dir))))
     (cond
      ((file-exists? tagf)
       (call-with-input-file tagf read))
-     ((file-exists? (path-expand pkg (pkg-root-dir)))
-      "master")
+     ((file-exists? top)
+      (run-process ["git" "branch" "--show-current"]
+                   directory: top))
      (else #f))))
 
 (def (pkg-tag-incompatible? current other)
@@ -421,18 +427,16 @@
 
 ;; Note: in this implementation of semver, we always keep the greatest version.
 ;; We don't pay attention to majors and we consider master/main to be the frontier.
-(def (pkg-tag-preserve? current other)
+(def (pkg-tag-choose current other)
   (cond
    ((equal? current other)
-    ;; refetch if it is not semver
-    (pkg-tag-semver? current))
+    current)
    ((not other)
-    ;; refetch if it is master/main
-    (not (member current '("master" "main"))))
+    current)
    ((member current '("master" "main"))
-    #t)
+    current)
    ((member other '("master" "main"))
-    #f)
+    other)
    (else
     (let ((current-version (pkg-tag-semver current))
           (other-version (pkg-tag-semver other)))
@@ -446,11 +450,10 @@
                ((= current-hd other-hd)
                 (lp current-rest other-rest))
                ((> current-hd other-hd)
-                #t)
-               (else #f)))
-             (else #t)))
-          (else
-           (null? other-rest))))))))
+                current)
+               (else other)))
+             (else current)))
+          (else other)))))))
 
 (def +rx-semver+
   (pregexp "v(\\d+\\.)*\\d+"))
