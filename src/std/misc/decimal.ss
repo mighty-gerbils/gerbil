@@ -9,11 +9,12 @@
   :std/sugar
   :std/text/basic-parsers
   :std/text/basic-printers
-  :std/text/char-set)
+  :std/text/char-set
+  :std/values)
 
 (export decimal? parse-decimal string->decimal write-decimal decimal->string
         LossOfPrecision LossOfPrecision?
-        factor-out-powers-of-2 power-of-5?
+        power-of-5?
         find-decimal-multiplier
         count-significant-digits nat->significant-digits
         decimal->digits-exponent digits-exponent->decimal)
@@ -21,11 +22,7 @@
 ;; : Any -> Bool
 (def (decimal? x)
   (and (rational? x)
-       (power-of-5? (factor-out-powers-of-2 (denominator x)))))
-
-;; : Integer -> Integer
-(def (factor-out-powers-of-2 n)
-  (arithmetic-shift n (- (first-set-bit n))))
+       (power-of-5? (first-value (factor-out-powers-of-2 (denominator x))))))
 
 ;; : Integer -> Bool
 (def (power-of-5? n)
@@ -38,7 +35,7 @@
                        ((q r) (floor/ n (expt p l))))
            (and (zero? r) (power-of-5? q)))))) ;; reduce to the simpler problem above
 
-;; `parse-decimal` expects and parses a decimal number on the port.
+;; `parse-decimal` expects and parses a decimal number on the PeekableStringReader.
 ;; The character parameters `decimal-mark` and `group-separator` provide
 ;; support for different (typically cultural) numerical conventions.
 ;; For convenience, a `group-separator` of #t will be treated as the comma character.
@@ -48,10 +45,10 @@
 ;; with exception that the exponent marker must be 'e' or 'E' when `exponent-allowed` is #t,
 ;; or the exponent marker must be `char=` to some element of `exponent-allowed`
 ;; when `exponent-allowed` is a string.
-;; Side-effects the port, and returns the decimal number, or raises an exception.
+;; Side-effects the PeekableStringReader, and returns the decimal number, or raises an exception.
 ;; It is up to the caller to ignore and leading or trailing whitespace and check for eof
 ;; before and/or after calling `parse-decimal`.
-;; : Port sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
+;; : PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
 (def (parse-decimal
       pre-reader
       sign-allowed?: (sign-allowed? #t)
@@ -198,8 +195,7 @@
 ;; Returns c and max(m,n).
 ;; : Nat -> Nat Nat
 (def (find-decimal-multiplier d)
-  (def m (first-set-bit d))
-  (def 5^n (arithmetic-shift d (- m)))
+  (define-values (5^n m) (factor-out-powers-of-2 d))
   (def n (integer-log 5^n 5))
   ;; We check that the answer is correct before returning it to the caller.
   (check-argument (= d (* (arithmetic-shift 1 m) (expt 5 n))) "divisor of power of 10" d)
