@@ -70,37 +70,47 @@
     (command 'clean help: "clean compilation artefacts from one or more packages"
       (rest-arguments 'pkg help: "package to clean; all for all packages, omit to clean in current directory")))
   (def new-cmd
-    (command 'new help: "Create a new package template in the current directory"
+    (command 'new help: "create a new package template in the current directory"
       (option 'package "-p" "--package"
-        help: "The package prefix for your project; defaults to the current username"
+        help: "the package prefix for your project; defaults to the current username"
         default: (getenv "USER"))
       (option 'name "-n" "--name"
-        help: "The package name; defaults to the current directory name"
+        help: "the package name; defaults to the current directory name"
         default: (path-strip-directory
                   (let (path (path-normalize (current-directory)))
                     (substring path 0 (1- (string-length path))))))
       (option 'link "-l" "--link"
-        help: "Optionally link this package with a public package name; for example: github.com/your-user/your-package")))
+        help: "link this package with a public package name; for example: github.com/your-user/your-package")))
+  (def deps-cmd
+    (command 'deps help: "manage dependencies for the current project"
+      (flag 'add "-a" "--add"
+        help: "add dependencies")
+      (flag 'install "-i" "--install"
+        help: "install dependencies")
+      (flag 'remove "-r" "--remove"
+        help: "remove dependencies")
+      (rest-arguments 'deps
+        help: "the list of dependencies to add or remove")))
   (def list-cmd
     (command 'list help: "list installed packages"))
   (def retag-cmd
     (command 'retag help: "retag installed packages"))
   (def search-cmd
     (command 'search help: "search the package directory"
-             (option 'directory "-d" "--directory"
-                     help: "A specific directory to use; by default the mighty-gerbils directory and all user configured directories are searched")
-             (flag 'as-list "-l" "--list"
-                   help: "Print the results as a list, do not format it")
-             (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
+      (option 'directory "-d" "--directory"
+        help: "A specific directory to use; by default the mighty-gerbils directory and all user configured directories are searched")
+      (flag 'as-list "-l" "--list"
+        help: "Print the results as a list, do not format it")
+      (rest-arguments 'keywords help: "keywords to search for, as a boolean and")))
 
   (def dir-cmd
     (command 'dir help: "manage the directory list"
-             (flag 'add "-a" "--add"
-                   help: "add a directory to the list of searched directories")
-             (flag 'remove "-r" "--remove"
-                   help: "remove a directory from the list")
-             (rest-arguments 'directories
-                             help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a github repo of the form github.com/some-org/some-repo")))
+      (flag 'add "-a" "--add"
+        help: "add a directory to the list of searched directories")
+      (flag 'remove "-r" "--remove"
+        help: "remove a directory from the list")
+      (rest-arguments 'directories
+        help: "the directory to add or remove; the directory can be a fully qualified https url to the package-list or a github repo of the form github.com/some-org/some-repo")))
 
   (call-with-getopt gxpkg-main args
     program: "gxpkg"
@@ -108,6 +118,7 @@
     new-cmd
     build-cmd
     clean-cmd
+    deps-cmd
     link-cmd
     unlink-cmd
     install-cmd
@@ -127,6 +138,8 @@
        (build-pkgs .pkg .?build-release .?build-optimized))
       ((clean)
        (clean-pkgs .pkg))
+      ((deps)
+       (manage-deps .deps .?add .?install .?remove))
       ((link)
        (link-pkg .pkg .src))
       ((unlink)
@@ -220,6 +233,9 @@
 
 (def (manage-dirs dirs add? remove?)
   (pkg-directory-manage dirs add? remove?))
+
+(def (manage-deps deps add? install? remove?)
+  (pkg-deps-manage deps add? install? remove?))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -707,6 +723,64 @@
    (else
     (for (dir dirs)
       (pretty-print (pkg-directory-list dir))))))
+
+;; package depnendency management
+(def (pkg-deps-manage deps add? install? remove?)
+  (let* ((plist (pkg-plist "."))
+         (current-deps (pgetq depend: plist)))
+
+    (def (add-dep! dep)
+      (let ((values xpkg _) (pkg+tag dep))
+        (let lp ((rest current-deps))
+          (match rest
+            ([hd . rest]
+             (let ((values dpkg _) (pkg+tag hd))
+               (if (equal? xpkg dpkg)
+                 (set! (car rest) dep)
+                 (lp rest))))
+            (else
+             (set! current-deps (append current-deps [dep])))))))
+
+    (def (remove-dep! dep)
+      (let ((values xpkg _) (pkg+tag dep))
+        (set! current-deps
+          (filter (lambda (hd)
+                    (let ((values dpkg _) (pkg+tag hd))
+                      (not (equal? dpkg xpkg))))
+                  current-deps))))
+
+    (def (write-deps!)
+      (let (hd (member depend: plist))
+        (if hd
+          (set! (car (cdr hd)) current-deps)
+          (set! plist (append plist [depend: current-deps]))))
+      (call-with-output-file (path-expand "gerbil.pkg" (current-directory))
+        (cut write plist <>)))
+
+    (if (null? deps)
+      (cond
+       (add? (error "nothing to add"))
+       (remove? (error "nothing to remove"))
+       (install?
+        (install-pkgs current-deps))
+       (else
+        (for-each displayln current-deps)))
+      (cond
+       ((and add? remove?)
+        (error "cannot both add and remove"))
+       ((and remove? install?)
+        (error "cannot both remove and install"))
+       (add?
+        (for (dep deps)
+          (add-dep! dep))
+        (write-deps!)
+        (when install?
+          (install-pkgs deps)))
+       (remove?
+        (for (dep deps)
+          (remove-dep! dep)))
+       (else
+        (error "unspecified action; use --add or --remove"))))))
 
 ;;; internal
 (def +pkg-plist+
