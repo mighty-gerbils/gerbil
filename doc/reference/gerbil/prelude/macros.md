@@ -1,6 +1,6 @@
 # Prelude Macros
 
-These are the main macros defined by the prelude. 
+These are the main macros defined by the prelude.
 
 ## Definition Forms
 
@@ -337,6 +337,14 @@ Most useful little macro ever.
 ``` scheme
 (unwind-protect body postlude)
 ```
+
+### @bytes
+```scheme
+(@bytes "...")
+=> (quote #u8(...))
+```
+
+Converts a utf8 encoded string to a u8vector at expansion time.
 
 ### syntax-error
 ``` scheme
@@ -814,4 +822,3 @@ Examples:
 ```
 
 Evaluates `expr` when expanding in compiler context.
-
