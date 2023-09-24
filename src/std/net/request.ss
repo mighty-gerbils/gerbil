@@ -384,12 +384,8 @@
 
   (def (read/length length)
     (let* ((data (make-u8vector length))
-           (rd (&BufferedReader-read reader data)))
-      (if (##fx< rd length)
-        (begin
-          (u8vector-shrink! data rd)
-          data)
-        data)))
+           (rd (&BufferedReader-read reader data 0 length length)))
+      data))
 
   (def (read/end)
     (let (root [#f])
@@ -399,10 +395,6 @@
                (rd  (&BufferedReader-read reader buf)))
           (cond
            ((##fxzero? rd)
-            (u8vector-concatenate (cdr root)))
-           ((##fx< rd buflen)
-            (u8vector-shrink! buf rd)
-            (set! (cdr tl) [buf])
             (u8vector-concatenate (cdr root)))
            (else
             (let (tl* [buf])
