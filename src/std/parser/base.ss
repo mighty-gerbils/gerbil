@@ -27,7 +27,7 @@
 
 (deferror-class ParseError () parse-error?)
 (defraise/context (raise-parse-error where msg tok rest ...)
-  (ParseError msg where: where irritants: [tok rest ...]))
+  (ParseError msg irritants: [tok rest ...]))
 
 (defmethod {display-exception ParseError}
   (lambda (self port)

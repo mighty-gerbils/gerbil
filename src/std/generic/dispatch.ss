@@ -14,7 +14,7 @@
 (deferror-class DispatchError () dispatch-error?)
 (defraise/context (raise-dispatch-error where method-id args)
   (DispatchError "generic dispatch failure; no matching method"
-                 where: where irritants: (cons method-id args)))
+                 irritants: (cons method-id args)))
 
 ;;; type-of
 (def (type-of obj)

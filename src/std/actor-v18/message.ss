@@ -11,7 +11,7 @@
 ;; actor errors
 (deferror-class ActorError () actor-error?)
 (defraise/context (raise-actor-error where what irritants ...)
-  (ActorError what where: where irritants: [irritants ...]))
+  (ActorError what irritants: [irritants ...]))
 
 ;; default reply timeout; 5s
 (def +default-reply-timeout+ 5)

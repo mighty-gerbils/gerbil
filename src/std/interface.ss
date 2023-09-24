@@ -14,8 +14,8 @@
 (declare (not safe))
 
 (deferror-class CastError () interface-cast-error?)
-(defraise/context (raise-cast-error message irritants ...)
-  (CastError message where: 'cast irritants: [irritants ...]))
+(defraise/context (raise-cast-error where message irritants ...)
+  (CastError message irritants: [irritants ...]))
 
 ;; base type for all interface instances
 (defstruct interface-instance (object)
@@ -81,7 +81,7 @@
    descriptor klass obj-klass
    (lambda (prototype) prototype)
    (lambda (klass method-name)
-     (raise-cast-error "Cannot create interface instance; missing method" klass method-name))))
+     (raise-cast-error 'create-prototype "Cannot create interface instance; missing method" klass method-name))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype
@@ -122,7 +122,7 @@
                  (instance (##structure-copy prototype)))
             (##unchecked-structure-set! instance obj 1 klass #f)
             instance)))))
-    (raise-cast-error "Cannot cast non-object to interface instance" obj)))
+    (raise-cast-error 'cast "Cannot cast non-object to interface instance" obj)))
 
 ;; check if an object satisfies an interface
 (def (satisfies? descriptor obj)

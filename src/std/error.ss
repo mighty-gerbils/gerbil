@@ -100,42 +100,41 @@
 ;; check to the raiser!
 
 (defrules defraise/context ()
-  ((_ (rule args ...) (Klass message where: where irritants: irritants))
+  ((_ (rule where args ...) (Klass message irritants: irritants))
    (defrules rule ()
-     ((_ args ...)
+     ((_ where args ...)
       (raise
        (Klass message
-              where: (exception-context message)
+              where: (exception-context where)
               irritants: (cons where irritants)))))))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
   (BadArgument (string-append "Bad argument; expected " expectation)
-                where: where
                 irritants: [irritants ...]))
 
 (defraise/context (raise-io-error where message irritants ...)
-  (IOError message where: where irritants: [irritants ...]))
+  (IOError message irritants: [irritants ...]))
 
 (defraise/context (raise-premature-end-of-input where irritants ...)
-  (PrematureEndOfInput "premature end of input" where: where irritants: [irritants ...]))
+  (PrematureEndOfInput "premature end of input"  irritants: [irritants ...]))
 
 (defraise/context (raise-io-closed where message irritants ...)
-  (Closed message where: where irritants: [irritants ...]))
+  (Closed message irritants: [irritants ...]))
 
 (defraise/context (raise-timeout where message irritants ...)
-  (Timeout message where: where irritants: [irritants ...]))
+  (Timeout message irritants: [irritants ...]))
 
 (defraise/context (raise-context-error where message irritants ...)
-  (ContextError message where: where irritants: [irritants ...]))
+  (ContextError message irritants: [irritants ...]))
 
 (defraise/context (raise-unbound-key where irritants ...)
-  (UnboundKey "no value associated with key" where: where irritants: [irritants ...]))
+  (UnboundKey "no value associated with key" irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)
 
 (defraise/context (raise-bug where message irritants ...)
-  (BUG (string-append "BUG: " message) where: where irritants: [irritants ...]))
+  (BUG (string-append "BUG: " message) irritants: [irritants ...]))
 
 ;; utilities for exception printing
 (def (with-exception-stack-trace thunk (error-port (current-error-port)))
