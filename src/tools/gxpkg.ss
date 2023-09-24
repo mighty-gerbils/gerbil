@@ -1159,6 +1159,7 @@ END
 *~
 build-deps
 /manifest.ss
+.gerbil
 
 END
 )
