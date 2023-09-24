@@ -20,7 +20,7 @@
       (raise-ssl-error 'proc result)))))
 
 (deferror-class (SSLError IOError) () ssl-error?)
-(def (raise-ssl-error where result)
+(defrule (raise-ssl-error where result)
   (let (errstr
         (match result
           ((? fixnum? result)
@@ -28,4 +28,4 @@
           ([_ _ last]
            (ERR_error_string last))
           (else "unknown error")))
-    (raise (SSLError "SSL error" irritants: [errstr result] where: where))))
+    (raise (SSLError "SSL error" irritants: ['where errstr result] where: (exception-context where)))))

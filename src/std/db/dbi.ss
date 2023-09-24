@@ -67,8 +67,8 @@
     (set! (&statement-i self) (Statement self))))
 
 (deferror-class SQLError () sql-error?)
-(def (raise-sql-error where what . irritants)
-  (raise (SQLError what irritants: irritants where: where)))
+(defraise/context (raise-sql-error where what irritants ...)
+  (SQLError what where: where irritants: [irritants ...]))
 
 (def (sql-connect connect . args)
   (let (conn (apply connect args))

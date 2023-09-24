@@ -14,8 +14,8 @@
 (declare (not safe))
 
 (deferror-class CastError () interface-cast-error?)
-(def (raise-cast-error message . irritants)
-  (raise (CastError message where: 'cast irritants: irritants)))
+(defraise/context (raise-cast-error message irritants ...)
+  (CastError message where: 'cast irritants: [irritants ...]))
 
 ;; base type for all interface instances
 (defstruct interface-instance (object)

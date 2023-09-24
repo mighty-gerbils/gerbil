@@ -12,9 +12,9 @@
 (declare (not safe))
 
 (deferror-class DispatchError () dispatch-error?)
-(def (raise-dispatch-error where method-id args)
-  (raise (DispatchError "generic dispatch failure; no matching method"
-                        where: where irritants: (cons method-id args))))
+(defraise/context (raise-dispatch-error where method-id args)
+  (DispatchError "generic dispatch failure; no matching method"
+                 where: where irritants: (cons method-id args)))
 
 ;;; type-of
 (def (type-of obj)

@@ -187,7 +187,7 @@
         (['ReadyForQuery _]
          (spawn/name 'postgresql-connection postgresql-driver sock reader writer))
         (['ErrorResponse msg . irritants]
-         (apply raise-io-error 'postgresql-connect! msg irritants))
+         (raise-io-error 'postgresql-connect! msg irritants))
         (['NoticeResponse msg . irritants]
          ((current-notice-handler) msg irritants)
          (lp))
@@ -204,7 +204,7 @@
      (match (postgresql-recv! reader)
        clause ...
        (['ErrorResponse msg . irritants]
-        (apply raise-io-error 'postgresql-connect! msg irritants))
+        (raise-io-error 'postgresql-connect! msg irritants))
        (unexpected
         (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))))
 
@@ -334,13 +334,13 @@
        (void))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-prepare! msg irritants)))
+       (raise-sql-error 'postgresql-prepare! msg irritants)))
     (match (recv!)
       (['ParameterDescription . query-params]
        (set! params query-params))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-prepare! msg irritants)))
+       (raise-sql-error 'postgresql-prepare! msg irritants)))
     (match (recv!)
       (['RowDescription . fields]
        (set! cols fields))
@@ -366,7 +366,7 @@
        (void))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-exec! msg irritants)))
+       (raise-sql-error 'postgresql-exec! msg irritants)))
     (let lp ()
       (match (recv!)
         (['DataRow . cols]
@@ -377,7 +377,7 @@
          (void))
         (['ErrorResponse msg . irritants]
          (resync!)
-         (apply raise-sql-error 'postgreql-exec msg irritants))))
+         (raise-sql-error 'postgreql-exec msg irritants))))
     (resync!)
     res)
 
@@ -408,7 +408,7 @@
          (values ch token)))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-query! msg irritants))))
+       (raise-sql-error 'postgresql-query! msg irritants))))
 
   (def (query-pump)
       ;; Execute ("")          -> DataRow ...

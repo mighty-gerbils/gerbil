@@ -135,5 +135,5 @@
    (catch (e)
      (fail "Malformed message" msg e))))
 
-(def (fail what . irritants)
-  (apply raise-io-error 'sasl-authenticate what irritants))
+(defrule (fail what irritants ...)
+  (raise-io-error 'sasl-authenticate what irritants ...))

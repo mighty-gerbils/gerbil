@@ -10,6 +10,7 @@
         exception-context
         Error:::init!
         deferror-class
+        defraise/context
         StackTrace StackTrace?
         BadArgument BadArgument? raise-bad-argument bad-argument-error? check-argument
         exception-context
@@ -21,7 +22,7 @@
         UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
         (rename: raise-bug BUG)
-        BUG? is-it-bug?
+        is-it-bug?
         with-exception-stack-trace
         dump-stack-trace!)
 
@@ -92,42 +93,49 @@
 (defrules check-argument ()
   ((_ expr expectation argument)
    (unless expr
-     (raise-bad-argument (exception-context argument) expectation 'argument argument))))
+     (raise (BadArgument (string-append "bad argument; expected "expectation)
+                         where: (exception-context argument)
+                         irritants:  ['argument argument])))))
 
 ;; check to the raiser!
-(def (raise-bad-argument where expectation . irritants)
-  (raise
-   (BadArgument (string-append "Bad argument; expected " expectation)
-                where: where irritants: irritants)))
 
-(def (raise-io-error where message . irritants)
-  (raise
-   (IOError message where: where irritants: irritants)))
+(defrules defraise/context ()
+  ((_ (rule args ...) (Klass message where: where irritants: irritants))
+   (defrules rule ()
+     ((_ args ...)
+      (raise
+       (Klass message
+              where: (exception-context message)
+              irritants: (cons where irritants)))))))
 
-(def (raise-premature-end-of-input where . irritants)
-  (raise
-   (PrematureEndOfInput "premature end of input" where: where irritants: irritants)))
+(defraise/context (raise-bad-argument where expectation irritants ...)
+  (BadArgument (string-append "Bad argument; expected " expectation)
+                where: where
+                irritants: [irritants ...]))
 
-(def (raise-io-closed where message . irritants)
-  (raise
-   (Closed message where: where irritants: irritants)))
+(defraise/context (raise-io-error where message irritants ...)
+  (IOError message where: where irritants: [irritants ...]))
 
-(def (raise-timeout where message . irritants)
-  (raise
-   (Timeout message where: where irritants: irritants)))
+(defraise/context (raise-premature-end-of-input where irritants ...)
+  (PrematureEndOfInput "premature end of input" where: where irritants: [irritants ...]))
 
-(def (raise-context-error where message . irritants)
-  (raise
-   (ContextError message where: where irritants: irritants)))
+(defraise/context (raise-io-closed where message irritants ...)
+  (Closed message where: where irritants: [irritants ...]))
 
-(def (raise-unbound-key where . irritants)
-  (raise
-   (UnboundKey "no value associated with key" where: where irritants: irritants)))
+(defraise/context (raise-timeout where message irritants ...)
+  (Timeout message where: where irritants: [irritants ...]))
+
+(defraise/context (raise-context-error where message irritants ...)
+  (ContextError message where: where irritants: [irritants ...]))
+
+(defraise/context (raise-unbound-key where irritants ...)
+  (UnboundKey "no value associated with key" where: where irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)
-(def (raise-bug where message . irritants)
-  (raise (BUG (string-append "BUG: " message) where: where irritants: irritants)))
+
+(defraise/context (raise-bug where message irritants ...)
+  (BUG (string-append "BUG: " message) where: where irritants: [irritants ...]))
 
 ;; utilities for exception printing
 (def (with-exception-stack-trace thunk (error-port (current-error-port)))

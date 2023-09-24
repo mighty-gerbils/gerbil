@@ -7,6 +7,7 @@
         random-bytes random-bytes!
         as-bytes)
 (import :std/error
+        :std/sugar
         :std/format
         :std/text/utf8
         :std/crypto/libcrypto)
@@ -30,15 +31,15 @@
                            (or (ERR_func_error_string errno) "?"))
                    irritants: (cons errno irritants))))
 
-(def (raise-libcrypto-error . irritants)
-  (raise (LibCryptoError (ERR_get_error) irritants)))
+(defrule (raise-libcrypto-error irritants ...)
+  (raise (LibCryptoError (ERR_get_error) irritants ...)))
 
 (defrules with-libcrypto-error ()
   ((_ expr irritants ...)
    (let (res expr)
      (if (##fxpositive? res)
        res
-       (apply raise-libcrypto-error '(irritants ...))))))
+       (raise-libcrypto-error irritants ...)))))
 
 (def (call-with-binary-input proc in . args)
   (cond

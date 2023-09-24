@@ -17,9 +17,11 @@
 
 ;; Error
 (deferror-class ProcessError () process-error?)
-(def (raise-process-error settings exit-status)
-  (raise (ProcessError "process exited with non-zero status"
-                       irritants: [(pgetq path: settings) exit-status settings])))
+(defrule (raise-process-error settings exit-status)
+  (raise
+   (ProcessError "process exited with non-zero status"
+                 where: (exception-context exit-status)
+                 irritants: [(pgetq path: settings) exit-status settings])))
 
 (def (check-process-success exit-status settings)
   (unless (zero? exit-status)

@@ -3,9 +3,9 @@
 ;;; SQLite dbi interface
 
 (import :std/error
+        :std/sugar
         :std/db/dbi
         :std/db/_sqlite
-        :std/format
         :std/iter)
 (export sqlite-open)
 
@@ -19,9 +19,9 @@
 (defmethod {:init! sqlite-statement}
   statement:::init!)
 
-(def (raise-sqlite-error where err)
+(defrule (raise-sqlite-error where err)
   (let (errstr (sqlite3_errstr err))
-    (raise-sql-error where (format "SQLite error: ~a" errstr) err)))
+    (raise-sql-error where (string-append "SQLite error:" errstr) err)))
 
 (def (sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
   (let* ((ptr (make_sqlite3_ptr_ptr))
@@ -70,7 +70,8 @@
             (sqlite3_bind_text stmt param arg))
            ((u8vector? arg)
             (sqlite3_bind_blob stmt param arg))
-           (raise-bad-argument 'sqlite "object: unknown bind conversion" arg)))))))
+           (else
+            (raise-bad-argument 'sqlite "object: unknown bind conversion" arg))))))))
 
 (defmethod {clear sqlite-statement}
   (lambda (self)
