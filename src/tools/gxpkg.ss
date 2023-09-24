@@ -88,9 +88,7 @@
         default: (getenv "USER"))
       (option 'name "-n" "--name"
         help: "the package name; defaults to the current directory name"
-        default: (path-strip-directory
-                  (let (path (path-normalize (current-directory)))
-                    (substring path 0 (1- (string-length path))))))
+        default: (path-strip-directory (path-normalize* (current-directory))))
       (option 'link "-l" "--link"
         help: "link this package with a public package name; for example: github.com/your-user/your-package")))
   (def deps-cmd
@@ -99,10 +97,12 @@
         help: "add dependencies")
       (flag 'install "-i" "--install"
         help: "install dependencies")
+      (flag 'update "-u" "--update"
+        help: "update dependencies")
       (flag 'remove "-r" "--remove"
         help: "remove dependencies")
       (rest-arguments 'deps
-        help: "the list of dependencies to add or remove")))
+        help: "the list of dependencies to add, update or remove; empty for all; if no flags are specified it displays current deps")))
   (def list-cmd
     (command 'list
       local-flag
@@ -163,7 +163,7 @@
       ((clean)
        (clean-pkgs .pkg .?local))
       ((deps)
-       (manage-deps .deps .?add .?install .?remove))
+       (manage-deps .deps .?add .?install .?update .?remove))
       ((link)
        (link-pkg .pkg .src .?local))
       ((unlink)
@@ -289,13 +289,13 @@
 (def (manage-dirs dirs add? remove? local?)
   (pkg-directory-manage dirs add? remove? local?))
 
-(def (manage-deps deps add? install? remove?)
+(def (manage-deps deps add? install? update? remove?)
   (set-local-env!)
-  (pkg-deps-manage deps add? install? remove?))
+  (pkg-deps-manage deps add? install? update? remove?))
 
 (def (set-local-env!)
   (unless (getenv "GERBIL_PATH" #f)
-    (let* ((here (path-normalize (current-directory)))
+    (let* ((here (path-normalize* (current-directory)))
            (gerbil-path (path-expand ".gerbil" here)))
       (if (file-exists? gerbil-path)
         (setenv "GERBIL_PATH" gerbil-path)
@@ -394,7 +394,7 @@
                  (error "Refuse to uninstall package; orphaned dependencies" deps))))
            (pkg-clean pkg)
            (displayln "... uninstall " pkg)
-           (run-process ["rm" "-rf" (path-normalize dest)]
+           (run-process ["rm" "-rf" (path-normalize* dest)]
                         coprocess: void)
            (let (tagf (pkg-tag-file pkg))
              (when (file-exists? tagf)
@@ -441,7 +441,7 @@
                      coprocess: void
                      stdout-redirection: #f))
       (let ((path (path-directory dest))
-            (clone-url (string-append "https://" pkg ".git")))
+            (clone-url (git-clone-url pkg)))
         (displayln "... cloning " pkg)
         (create-directory* path)
         (run-process ["git" "clone" "-q" clone-url]
@@ -632,7 +632,7 @@
               (else
                (remove-duplicates result)))))
          (gerbil-version
-          (cons "Gerbil"(gerbil-version-string)))
+          (cons "Gerbil" (gerbil-version-string)))
          (gambit-version
           (cons "Gambit" (system-version-string)))
          (write-version-manifest
@@ -657,8 +657,7 @@
                 "unknown"))
              (manifest1
               (cons (path-strip-directory
-                     (let (path (path-normalize (current-directory)))
-                       (substring path 0 (1- (string-length path)))))
+                     (path-normalize (current-directory)))
                     version)))
         (call-with-output-file [path: "manifest.ss" create: 'maybe truncate: #t]
           (cut write-version-manifest manifest1 <>)))
@@ -913,7 +912,7 @@
       (pretty-print (pkg-directory-list dir))))))
 
 ;; package depnendency management
-(def (pkg-deps-manage deps add? install? remove?)
+(def (pkg-deps-manage deps add? install? update? remove?)
   (let* ((plist (pkg-plist "."))
          (current-deps (pgetq depend: plist [])))
 
@@ -951,6 +950,8 @@
        (remove? (error "nothing to remove"))
        (install?
         (install-pkgs current-deps #t))
+       (update?
+        (update-pkgs current-deps #t))
        (else
         (for-each displayln current-deps)))
       (cond
@@ -958,18 +959,22 @@
         (error "cannot both add and remove"))
        ((and remove? install?)
         (error "cannot both remove and install"))
+       ((and add? update?)
+        (error "cannot both add and update"))
        (add?
         (for (dep deps)
           (add-dep! dep))
         (write-deps!)
         (when install?
           (install-pkgs deps #t)))
+       (update?
+        (update-pkgs deps #t))
        (remove?
         (for (dep deps)
           (remove-dep! dep))
         (write-deps!))
        (else
-        (error "unspecified action; use --add or --remove"))))))
+        (error "unspecified action; use --add, --update or --remove"))))))
 
 ;;; internal
 (def +pkg-plist+
@@ -1000,7 +1005,7 @@
 (def (pkg-build-script pkg)
   (let* ((root (pkg-root-dir))
          (path (path-expand pkg root))
-         (plist (pkg-plist pkg))
+        (plist (pkg-plist pkg))
          (build (pgetq build: plist))
          (build.ss (path-expand (or build "build.ss") path)))
     (unless (file-exists? build.ss)
@@ -1059,6 +1064,21 @@
            (lp rest (cons hd result)))))
       (else
        (reverse! result)))))
+
+(def (git-clone-url pkg)
+  (if (getenv "GERBIL_PKG_GIT_USER" #f)
+    (let* ((split-at (string-index pkg #\/))
+           (base (substring pkg 0 split-at))
+           (repo  (substring pkg (1+ split-at) (string-length pkg))))
+      (string-append "git@" base ":" repo ".git"))
+    (string-append "https://" pkg ".git")))
+
+(def (path-normalize* path)
+  (let* ((path (path-normalize (current-directory)))
+         (last (fx1- (string-length path))))
+    (if (eqv? (string-ref path last) #\/)
+      (substring path 0 last)
+      path)))
 
 ;;; templates
 (def gerbil.pkg-template #<<END
@@ -1123,12 +1143,10 @@ default: linux-static
 
 build-release:
 	/opt/gerbil/bin/gxpkg link ${name} /src || true
+	/opt/gerbil/bin/gxpkg deps --install
 	/opt/gerbil/bin/gxpkg build --release ${name}
 
-build-clean:
-	/opt/gerbil/bin/gxpkg clean ${name}
-
-linux-static:
+linux-static: clean
 	docker run -it \\
 	-e USER=\$(USER) \\
 	-e GERBIL_PATH=/src/.gerbil \\
@@ -1140,12 +1158,7 @@ install:
 	mv .gerbil/bin/${name} /usr/local/bin/${name}
 
 clean:
-	docker run -it \\
-	-e GERBIL_PATH=/src/.gerbil \\
-	-e USER=\$(USER) \\
-	-v \$(PWD):/src:z \\
-	\$(DOCKER_IMAGE) \\
-	make -C /src/ build-clean
+	rm -rf .gerbil
 
 END
 )
@@ -1166,6 +1179,7 @@ END
 *~
 build-deps
 /manifest.ss
+.gerbil
 
 END
 )
