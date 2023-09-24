@@ -632,7 +632,7 @@
               (else
                (remove-duplicates result)))))
          (gerbil-version
-          (cons "Gerbil"(gerbil-version-string)))
+          (cons "Gerbil" (gerbil-version-string)))
          (gambit-version
           (cons "Gambit" (system-version-string)))
          (write-version-manifest
