@@ -81,7 +81,7 @@ package: gerbil
   (displayln)
   (displayln "Options: ")
   (displayln "  -h|--help                        display this help message exit")
-  (displayln "  -v|--version|version             display the system version and exit")
+  (displayln "  -v|--version                     display the system version and exit")
   (displayln)
   (displayln "Arguments: ")
   (displayln "  <cmd> cmd-arg ...                execute a builtin tool command")
