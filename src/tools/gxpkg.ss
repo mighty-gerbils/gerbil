@@ -1123,12 +1123,10 @@ default: linux-static
 
 build-release:
 	/opt/gerbil/bin/gxpkg link ${name} /src || true
+	/opt/gerbil/bin/gxpkg deps --install
 	/opt/gerbil/bin/gxpkg build --release ${name}
 
-build-clean:
-	/opt/gerbil/bin/gxpkg clean ${name}
-
-linux-static:
+linux-static: clean
 	docker run -it \\
 	-e USER=\$(USER) \\
 	-e GERBIL_PATH=/src/.gerbil \\
@@ -1140,12 +1138,7 @@ install:
 	mv .gerbil/bin/${name} /usr/local/bin/${name}
 
 clean:
-	docker run -it \\
-	-e GERBIL_PATH=/src/.gerbil \\
-	-e USER=\$(USER) \\
-	-v \$(PWD):/src:z \\
-	\$(DOCKER_IMAGE) \\
-	make -C /src/ build-clean
+	rm -rf .gerbil
 
 END
 )
