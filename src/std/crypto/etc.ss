@@ -23,23 +23,25 @@
   macro-character-port-rlo-set!)
 
 (deferror-class LibCryptoError () libcrypto-error?
-  (lambda (self errno . irritants)
+  (lambda (self ctx errno . irritants)
     (Error:::init! self
                    (or (ERR_reason_error_string errno) "libcrypto: Unknown error")
-                   where: (string-append
-                           (or (ERR_lib_error_string errno) "?") ":"
-                           (or (ERR_func_error_string errno) "?"))
-                   irritants: (cons errno irritants))))
+                   where: ctx
+                   irritants:
+                   [(string-append
+                     (or (ERR_lib_error_string errno) "?") ":"
+                     (or (ERR_func_error_string errno) "?"))
+                    errno irritants ...])))
 
-(defrule (raise-libcrypto-error irritants ...)
-  (raise (LibCryptoError (ERR_get_error) irritants ...)))
+(defrule (raise-libcrypto-error irritant irritants ...)
+  (raise (LibCryptoError (exception-context irritant) (ERR_get_error) irritant irritants ...)))
 
 (defrules with-libcrypto-error ()
   ((_ expr irritants ...)
    (let (res expr)
      (if (##fxpositive? res)
        res
-       (raise-libcrypto-error irritants ...)))))
+       (raise-libcrypto-error 'expr irritants ...)))))
 
 (def (call-with-binary-input proc in . args)
   (cond

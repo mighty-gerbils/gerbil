@@ -60,9 +60,8 @@
 
 
 ;; vyzo: pregexp-error -> BUG
-(define (pregexp-error where . irritants)
-  (apply (lambda irritants (BUG where "pregexp internal error" irritants))
-    irritants))
+(defrule (pregexp-error where irritants ...)
+  (BUG where "pregexp internal error" irritants ...))
 
 (define pregexp-read-pattern
   (lambda (s i n)
