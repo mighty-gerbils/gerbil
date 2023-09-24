@@ -441,7 +441,7 @@
                      coprocess: void
                      stdout-redirection: #f))
       (let ((path (path-directory dest))
-            (clone-url (string-append "https://" pkg ".git")))
+            (clone-url (git-clone-url pkg)))
         (displayln "... cloning " pkg)
         (create-directory* path)
         (run-process ["git" "clone" "-q" clone-url]
@@ -1000,7 +1000,7 @@
 (def (pkg-build-script pkg)
   (let* ((root (pkg-root-dir))
          (path (path-expand pkg root))
-         (plist (pkg-plist pkg))
+        (plist (pkg-plist pkg))
          (build (pgetq build: plist))
          (build.ss (path-expand (or build "build.ss") path)))
     (unless (file-exists? build.ss)
@@ -1059,6 +1059,14 @@
            (lp rest (cons hd result)))))
       (else
        (reverse! result)))))
+
+(def (git-clone-url pkg)
+  (if (getenv "GERBIL_PKG_GIT_USER" #f)
+    (let* ((split-at (string-index pkg #\/))
+           (base (substring pkg 0 split-at))
+           (repo  (substring pkg (1+ split-at) (string-length pkg))))
+      (string-append "git@" base ":" repo ".git"))
+    (string-append "https://" pkg ".git")))
 
 ;;; templates
 (def gerbil.pkg-template #<<END
