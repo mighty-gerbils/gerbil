@@ -72,7 +72,12 @@ gerbil pkg build all`
 
 Package lists come from directories, which can be any repo on github
 that has a `package-list` file or just a URL pointing to a package
-list. This list follows the simplest and most extensible an association list where the car is the package and the cdr is a plist of the package properties, with keyword keys. The only required key is `description:`.
+list.
+
+This list follows the simplest and most extensible format: an
+association list where the car is the package and the cdr is a plist
+of the package properties, with keyword keys. The only required key is
+`description:`.
 
 This is designed so that it is trivial to create a new directory; in
 fact users are encouraged to create their own directories for their
