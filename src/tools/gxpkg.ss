@@ -1143,7 +1143,7 @@ default: linux-static
 
 build-release:
 	/opt/gerbil/bin/gxpkg link ${name} /src || true
-	/opt/gerbil/bin/gxpkg deps --install
+	/opt/gerbil/bin/gxpkg deps -i
 	/opt/gerbil/bin/gxpkg build --release ${name}
 
 linux-static: clean
@@ -1158,7 +1158,8 @@ install:
 	mv .gerbil/bin/${name} /usr/local/bin/${name}
 
 clean:
-	rm -rf .gerbil
+	gerbil clean
+	gerbil clean all
 
 END
 )
