@@ -34,7 +34,7 @@ Any supported public provider git repo can serve a Gerbil package, provided that
 
 You can use `:std/build-script` to get a template script definition from the package build-spec.
 
-See gerbil-utils for an example package.
+See [gerbil-utils](https://github.com/mighty-gerbils/gerbil-utils) for an example package.
 
 ## Examples
 
@@ -60,7 +60,7 @@ $ gerbil pkg update all
 
 - To rebuild a package and its transitive dependencies:
 ```shell
-gerbil pkg build github.com/fare/gerbil-utils
+gerbil pkg build github.com/mighty-gerbils/gerbil-utils
 ```
 
 - To rebuild all packages:
