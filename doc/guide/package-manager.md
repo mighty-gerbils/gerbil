@@ -7,15 +7,15 @@ distributed through github, gitlab, or bitbucket.
 
 ::: tip usage
 ```
-gxpkg install pkg ...
-gxpkg update pkg ...
-gxpkg uninstall pkg ...
-gxpkg link pkg src
-gxpkg unlink pkg ...
-gxpkg build pkg ...
-gxpkg list
-gxpkg retag
-gxpkg search keyword ...
+gerbil pkg install pkg ...
+gerbil pkg update pkg ...
+gerbil pkg uninstall pkg ...
+gerbil pkg link pkg src
+gerbil pkg unlink pkg ...
+gerbil pkg build pkg ...
+gerbil pkg list
+gerbil pkg retag
+gerbil pkg search keyword ...
 ```
 :::
 
@@ -38,33 +38,35 @@ See gerbil-utils for an example package.
 
 ## Examples
 
-To install fare's gerbil-utils package:
+- To install fare's gerbil-utils package:
+```shell
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-utils
+```
 
-`gxpkg install github.com/mighty-gerbils/gerbil-utils`
+- To link a local development package (here vyzo's gerbil-aws package):
+```shell
+$ gerbil pkg link github.com/vyzo/gerbil-aws gerbil-aws
+```
 
-To link a local development package (here vyzo's gerbil-aws package):
+- To list all installed (or linked) packages:
+```shell
+$ gerbil pkg list
+```
 
-`gxpkg link github.com/vyzo/gerbil-aws gerbil-aws`
+- To update all packages:
+```shell
+$ gerbil pkg update all
+```
 
-To list all installed (or linked) packages:
+- To rebuild a package and its transitive dependencies:
+```shell
+gerbil pkg build github.com/fare/gerbil-utils
+```
 
-`gxpkg list`
-
-To update all packages:
-
-`gxpkg update all`
-
-To rebuild a package and its transitive dependencies:
-
-`gxpkg build github.com/fare/gerbil-utils`
-
-To rebuild all packages:
-
-`gxpkg build all`
-
-To search for packages created by vyzo using the package directory:
-
-`gxpkg search vyzo`
+- To rebuild all packages:
+```shell
+gerbil pkg build all`
+```
 
 ## Package Directories
 
@@ -81,7 +83,7 @@ directory](https://github.com/mighty-gerbils/gerbil-directory) is
 searched, as these are packaged developed and maintained by the Gerbil
 Core Team.
 
-You can add a new directory with the `gxpkg dir -a directory-repo-or-url ...`
+You can add a new directory with the `gerbil pkg dir -a directory-repo-or-url ...`
 command.
 
 ## A Word of Caution
