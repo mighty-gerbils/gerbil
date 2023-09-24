@@ -911,7 +911,7 @@
     (for (dir dirs)
       (pretty-print (pkg-directory-list dir))))))
 
-;; package depnendency management
+;; package dependency management
 (def (pkg-deps-manage deps add? install? update? remove?)
   (let* ((plist (pkg-plist "."))
          (current-deps (pgetq depend: plist [])))
@@ -1009,7 +1009,7 @@
          (build (pgetq build: plist))
          (build.ss (path-expand (or build "build.ss") path)))
     (unless (file-exists? build.ss)
-      (error "Bad package; missing build script" pkg build.ss))
+      (error "bad package; missing build script" pkg build.ss))
     (path-normalize build.ss)))
 
 (def (pkg-dependents pkg (pkgs (pkg-list)))
