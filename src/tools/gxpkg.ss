@@ -88,9 +88,7 @@
         default: (getenv "USER"))
       (option 'name "-n" "--name"
         help: "the package name; defaults to the current directory name"
-        default: (path-strip-directory
-                  (let (path (path-normalize (current-directory)))
-                    (substring path 0 (1- (string-length path))))))
+        default: (path-strip-directory (path-normalize* (current-directory))))
       (option 'link "-l" "--link"
         help: "link this package with a public package name; for example: github.com/your-user/your-package")))
   (def deps-cmd
@@ -297,7 +295,7 @@
 
 (def (set-local-env!)
   (unless (getenv "GERBIL_PATH" #f)
-    (let* ((here (path-normalize (current-directory)))
+    (let* ((here (path-normalize* (current-directory)))
            (gerbil-path (path-expand ".gerbil" here)))
       (if (file-exists? gerbil-path)
         (setenv "GERBIL_PATH" gerbil-path)
@@ -396,7 +394,7 @@
                  (error "Refuse to uninstall package; orphaned dependencies" deps))))
            (pkg-clean pkg)
            (displayln "... uninstall " pkg)
-           (run-process ["rm" "-rf" (path-normalize dest)]
+           (run-process ["rm" "-rf" (path-normalize* dest)]
                         coprocess: void)
            (let (tagf (pkg-tag-file pkg))
              (when (file-exists? tagf)
@@ -659,8 +657,7 @@
                 "unknown"))
              (manifest1
               (cons (path-strip-directory
-                     (let (path (path-normalize (current-directory)))
-                       (substring path 0 (1- (string-length path)))))
+                     (path-normalize (current-directory)))
                     version)))
         (call-with-output-file [path: "manifest.ss" create: 'maybe truncate: #t]
           (cut write-version-manifest manifest1 <>)))
@@ -1075,6 +1072,13 @@
            (repo  (substring pkg (1+ split-at) (string-length pkg))))
       (string-append "git@" base ":" repo ".git"))
     (string-append "https://" pkg ".git")))
+
+(def (path-normalize* path)
+  (let* ((path (path-normalize (current-directory)))
+         (last (fx1- (string-length path))))
+    (if (eqv? (string-ref path last) #\/)
+      (substring path 0 last)
+      path)))
 
 ;;; templates
 (def gerbil.pkg-template #<<END
