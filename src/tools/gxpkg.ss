@@ -99,10 +99,12 @@
         help: "add dependencies")
       (flag 'install "-i" "--install"
         help: "install dependencies")
+      (flag 'update "-u" "--update"
+        help: "update dependencies")
       (flag 'remove "-r" "--remove"
         help: "remove dependencies")
       (rest-arguments 'deps
-        help: "the list of dependencies to add or remove")))
+        help: "the list of dependencies to add, update or remove; empty for all; if no flags are specified it displays current deps")))
   (def list-cmd
     (command 'list
       local-flag
@@ -163,7 +165,7 @@
       ((clean)
        (clean-pkgs .pkg .?local))
       ((deps)
-       (manage-deps .deps .?add .?install .?remove))
+       (manage-deps .deps .?add .?install .?update .?remove))
       ((link)
        (link-pkg .pkg .src .?local))
       ((unlink)
@@ -289,9 +291,9 @@
 (def (manage-dirs dirs add? remove? local?)
   (pkg-directory-manage dirs add? remove? local?))
 
-(def (manage-deps deps add? install? remove?)
+(def (manage-deps deps add? install? update? remove?)
   (set-local-env!)
-  (pkg-deps-manage deps add? install? remove?))
+  (pkg-deps-manage deps add? install? update? remove?))
 
 (def (set-local-env!)
   (unless (getenv "GERBIL_PATH" #f)
@@ -913,7 +915,7 @@
       (pretty-print (pkg-directory-list dir))))))
 
 ;; package depnendency management
-(def (pkg-deps-manage deps add? install? remove?)
+(def (pkg-deps-manage deps add? install? update? remove?)
   (let* ((plist (pkg-plist "."))
          (current-deps (pgetq depend: plist [])))
 
@@ -951,6 +953,8 @@
        (remove? (error "nothing to remove"))
        (install?
         (install-pkgs current-deps #t))
+       (update?
+        (update-pkgs current-deps #t))
        (else
         (for-each displayln current-deps)))
       (cond
@@ -958,18 +962,22 @@
         (error "cannot both add and remove"))
        ((and remove? install?)
         (error "cannot both remove and install"))
+       ((and add? update?)
+        (error "cannot both add and update"))
        (add?
         (for (dep deps)
           (add-dep! dep))
         (write-deps!)
         (when install?
           (install-pkgs deps #t)))
+       (update?
+        (update-pkgs deps #t))
        (remove?
         (for (dep deps)
           (remove-dep! dep))
         (write-deps!))
        (else
-        (error "unspecified action; use --add or --remove"))))))
+        (error "unspecified action; use --add, --update or --remove"))))))
 
 ;;; internal
 (def +pkg-plist+
