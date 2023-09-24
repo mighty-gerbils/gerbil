@@ -7,15 +7,15 @@ distributed through github, gitlab, or bitbucket.
 
 ::: tip usage
 ```
-gxpkg install pkg ...
-gxpkg update pkg ...
-gxpkg uninstall pkg ...
-gxpkg link pkg src
-gxpkg unlink pkg ...
-gxpkg build pkg ...
-gxpkg list
-gxpkg retag
-gxpkg search keyword ...
+gerbil pkg install pkg ...
+gerbil pkg update pkg ...
+gerbil pkg uninstall pkg ...
+gerbil pkg link pkg src
+gerbil pkg unlink pkg ...
+gerbil pkg build pkg ...
+gerbil pkg list
+gerbil pkg retag
+gerbil pkg search keyword ...
 ```
 :::
 
@@ -34,46 +34,66 @@ Any supported public provider git repo can serve a Gerbil package, provided that
 
 You can use `:std/build-script` to get a template script definition from the package build-spec.
 
-See gerbil-utils for an example package.
+See [gerbil-utils](https://github.com/mighty-gerbils/gerbil-utils) for an example package.
 
 ## Examples
 
-To install fare's gerbil-utils package:
+- To install fare's gerbil-utils package:
+```shell
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-utils
+```
 
-`gxpkg install github.com/fare/gerbil-utils`
+- To link a local development package (here vyzo's gerbil-aws package):
+```shell
+$ gerbil pkg link github.com/vyzo/gerbil-aws gerbil-aws
+```
 
-To link a local development package (here vyzo's gerbil-aws package):
+- To list all installed (or linked) packages:
+```shell
+$ gerbil pkg list
+```
 
-`gxpkg link github.com/mighty-gerbils/gerbil-aws gerbil-aws`
+- To update all packages:
+```shell
+$ gerbil pkg update all
+```
 
-To list all installed (or linked) packages:
+- To rebuild a package and its transitive dependencies:
+```shell
+gerbil pkg build github.com/mighty-gerbils/gerbil-utils
+```
 
-`gxpkg list`
+- To rebuild all packages:
+```shell
+gerbil pkg build all`
+```
 
-To update all packages:
+## Package Directories
 
-`gxpkg update all`
+Package lists come from directories, which can be any repo on github
+that has a `package-list` file or just a URL pointing to a package
+list.
 
-To rebuild a package and its transitive dependencies:
+This list follows the simplest and most extensible format: an
+association list where the car is the package and the cdr is a plist
+of the package properties, with keyword keys. The only required key is
+`description:`.
 
-`gxpkg build github.com/fare/gerbil-utils`
+This is designed so that it is trivial to create a new directory; in
+fact users are encouraged to create their own directories for their
+packages and share them with each other.
 
-To rebuild all packages:
+By default, the [Mighty Gerbils
+directory](https://github.com/mighty-gerbils/gerbil-directory) is
+searched, as these are packaged developed and maintained by the Gerbil
+Core Team.
 
-`gxpkg build all`
-
-To search for packages created by vyzo using the package directory:
-
-`gxpkg search vyzo`
-
-## Known Gerbil Packages
-
-We maintain a list of known Gerbil packages in the [Gerbil Package Directory](https://github.com/mighty-gerbils/gerbil-directory).
-Feel free to open a PR in that repo to list your own packages!
+You can add a new directory with the `gerbil pkg dir -a directory-repo-or-url ...`
+command.
 
 ## A Word of Caution
 
-The build script is currently not sandboxed; it runs with user privileges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
+The build script is not sandboxed; it runs with user privileges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
 
 You can quickly vet a package by inspecting the gerbil.pkg manifest and the build script itself. If it uses the standard script template or just invokes make with a build-spec, then it should be a reasonably behaved package. Of course, who knows what surprises could be lurking in a macro deep in the sources, so where to stop?
 
