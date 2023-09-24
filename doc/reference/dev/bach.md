@@ -2,18 +2,18 @@
 
 If you look at the Gerbil installation bin directory, you will see someghing like the following:
 ```shell
-$ ls -l /usr/local/gerbil/bin/
-total 10664
--rwxrwxr-x 1 vyzo vyzo    19175 Sep 24 10:20 gambuild-C
--rwxrwxr-x 1 vyzo vyzo 10740352 Sep 24 10:23 gerbil
--rwxrwxr-x 1 vyzo vyzo   154472 Sep 24 10:20 gsc
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 10:23 gxc -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 14:43 gxensemble -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 10:23 gxi -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 14:43 gxpkg -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 14:43 gxprof -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 14:43 gxtags -> gerbil
-lrwxrwxrwx 1 vyzo vyzo        6 Sep 24 14:43 gxtest -> gerbil
+$ ll -h /usr/local/gerbil/bin/
+total 11M
+-rwxrwxr-x 1 vyzo vyzo  19K Sep 24 10:20 gambuild-C
+-rwxrwxr-x 1 vyzo vyzo  11M Sep 24 10:23 gerbil
+-rwxrwxr-x 1 vyzo vyzo 151K Sep 24 10:20 gsc
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 10:23 gxc -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 14:43 gxensemble -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 10:23 gxi -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 14:43 gxpkg -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 14:43 gxprof -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 14:43 gxtags -> gerbil
+lrwxrwxrwx 1 vyzo vyzo    6 Sep 24 14:43 gxtest -> gerbil
 ```
 
 As you notice all the programs distributed with Gerbil link to a
