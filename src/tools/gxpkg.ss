@@ -601,17 +601,22 @@
          (for-each pkg-build (pkg-dependents pkg)))))))
 
 (def (pkg-manifest! pkg)
-  (let* (((values pkg . _) (pkg+tag pkg))
+  (let* (((values pkg _) (pkg+tag pkg))
          (plist (pkg-plist pkg))
          (deps (pgetq depend: plist []))
          (deps
           (let recur ((rest deps) (result []))
             (match rest
               ([dep . rest]
-               (let* (((values dep . _) (pkg+tag dep))
-                      (plist (pkg-plist dep))
-                      (deps (pgetq depend: plist [])))
-                 (recur rest (recur deps (cons dep result)))))
+               (let ((values dep _) (pkg+tag dep))
+                 ;; check for external package manager installed deps (eg NiX)
+                 (if (file-exists? (pkg-plist-path dep))
+                   (let* ((plist (pkg-plist dep))
+                          (deps (pgetq depend: plist [])))
+                     (recur rest (recur deps (cons dep result))))
+                   ;; just record the dep, we don't have the pkg contents
+                   ;; for transitive
+                   (recur rest (cons dep result)))))
               (else
                (remove-duplicates result)))))
          (manifests
@@ -657,20 +662,20 @@
                     version)))
         (call-with-output-file [path: "manifest.ss" create: 'maybe truncate: #t]
           (cut write-version-manifest manifest1 <>)))
-      (let* ((pkg-path
-              (path-expand pkg (pkg-root-dir)))
-             (version
-              (run-process ["git" "describe" "--tags" "--always"]
-                           directory: pkg-path
-                           coprocess: read-line))
-             (manifest1
-              (cons pkg version)))
-        (call-with-output-file [path: (path-expand "manifest.ss" pkg-path)
-                                      create: 'maybe truncate: #t]
-          (cut write-version-manifest manifest1 <>))
-        (call-with-output-file [path: (string-append pkg-path ".manifest")
-                                      create: 'maybe truncate: #t]
-          (cut write-pkg-manifest manifest1 <>))))))
+      (let (pkg-path (path-expand pkg (pkg-root-dir)))
+        (when (file-exists? pkg-path)
+          (let* ((version
+                  (run-process ["git" "describe" "--tags" "--always"]
+                               directory: pkg-path
+                               coprocess: read-line))
+                 (manifest1
+                  (cons pkg version)))
+            (call-with-output-file [path: (path-expand "manifest.ss" pkg-path)
+                                          create: 'maybe truncate: #t]
+              (cut write-version-manifest manifest1 <>))
+            (call-with-output-file [path: (string-append pkg-path ".manifest")
+                                          create: 'maybe truncate: #t]
+              (cut write-pkg-manifest manifest1 <>))))))))
 
 (def (pkg-clean pkg)
   (cond
@@ -979,15 +984,18 @@
    ((hash-get +pkg-plist+ pkg)
     => values)
    (else
-    (let* ((root (pkg-root-dir))
-           (path (path-expand pkg root))
-           (gerbil.pkg (path-expand "gerbil.pkg" path))
+    (let* ((gerbil.pkg (pkg-plist-path pkg))
            (_ (unless (file-exists? gerbil.pkg)
-                (error "bad packagekg; missing gerbil.pkg" pkg)))
+                (error "bad package; missing gerbil.pkg" pkg)))
            (plist (call-with-input-file gerbil.pkg read))
            (plist (if (eof-object? plist) [] plist)))
       (hash-put! +pkg-plist+ pkg plist)
       plist))))
+
+(def (pkg-plist-path pkg)
+  (let* ((root (pkg-root-dir))
+         (path (path-expand pkg root)))
+    (path-expand "gerbil.pkg" path)))
 
 (def (pkg-build-script pkg)
   (let* ((root (pkg-root-dir))
