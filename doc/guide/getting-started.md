@@ -126,21 +126,21 @@ $ gerbil new -n hello
 
 $ ls -latR
 .:
-total 24
-drwxrwxr-x 3 vyzo vyzo 4096 Sep 15 09:54 .
--rwxr-xr-x 1 vyzo vyzo  138 Sep 15 09:54 build.ss
--rw-rw-r-- 1 vyzo vyzo   16 Sep 15 09:54 gerbil.pkg
--rw-rw-r-- 1 vyzo vyzo   14 Sep 15 09:54 .gitignore
-drwxrwxr-x 2 vyzo vyzo 4096 Sep 15 09:54 hello
--rw-rw-r-- 1 vyzo vyzo  555 Sep 15 09:54 Makefile
-drwxrwxr-x 3 vyzo vyzo 4096 Sep 15 09:54 ..
+total 28
+drwxrwxr-x 3 vyzo vyzo 4096 Sep 24 09:52 .
+-rwxr-xr-x 1 vyzo vyzo  138 Sep 24 09:52 build.ss
+-rw-rw-r-- 1 vyzo vyzo   16 Sep 24 09:52 gerbil.pkg
+-rw-rw-r-- 1 vyzo vyzo   27 Sep 24 09:52 .gitignore
+drwxrwxr-x 2 vyzo vyzo 4096 Sep 24 09:52 hello
+-rw-rw-r-- 1 vyzo vyzo  593 Sep 24 09:52 Makefile
+drwxrwxr-x 8 vyzo vyzo 4096 Sep 24 09:52 ..
 
 ./hello:
 total 16
-drwxrwxr-x 2 vyzo vyzo 4096 Sep 15 09:54 .
-drwxrwxr-x 3 vyzo vyzo 4096 Sep 15 09:54 ..
--rw-rw-r-- 1 vyzo vyzo   90 Sep 15 09:54 lib.ss
--rw-rw-r-- 1 vyzo vyzo  617 Sep 15 09:54 main.ss
+drwxrwxr-x 2 vyzo vyzo 4096 Sep 24 09:52 .
+drwxrwxr-x 3 vyzo vyzo 4096 Sep 24 09:52 ..
+-rw-rw-r-- 1 vyzo vyzo  109 Sep 24 09:52 lib.ss
+-rw-rw-r-- 1 vyzo vyzo  777 Sep 24 09:52 main.ss
 
 $ cat gerbil.pkg
 (package: vyzo)
@@ -184,6 +184,10 @@ $ cat hello/main.ss
         ./lib)
 (export main)
 
+;; build manifest; generated during the build
+;; defines version-manifest which you can use for exact versioning
+(include "../manifest.ss")
+
 (def (main . args)
   (call-with-getopt hello-main args
     program: "hello"
@@ -224,22 +228,24 @@ $ gerbil build
 ... build in current directory
 ... compile hello/lib
 ... compile hello/main
-... compile exe hello/main -> ~/.gerbil/bin/hello
-/tmp/gxc.1694761212.5571132/vyzo__hello__main.scm:
-/home/vyzo/.gerbil/bin/hello.scmx:
-/tmp/gxc.1694761212.5571132/vyzo__hello__main.c:
-/home/vyzo/.gerbil/bin/hello.c:
-/home/vyzo/.gerbil/bin/hello_.c:
-
+... compile exe hello/main -> /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello
+/tmp/gxc.1695538439.3642368/vyzo__hello__main.scm:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello.scmx:
+/tmp/gxc.1695538439.3642368/vyzo__hello__main.c:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello.c:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello_.c:
 ```
 
-And we have an executable, which is placed by default in `~/.gerbil/bin`.
+And we have an executable, which is placed by default in `.gerbil/bin`.
 You can change this by exporting the `GERBIL_PATH` variable.
 
 Of course our executable doesn't do anything right now, as we haven't filled any code:
 ```shell
-$ hello
-*** ERROR -- Implement me!
+$ ./.gerbil/bin/hello
+*** ERROR --
+*** ERROR IN ? [Error]: Implement me!
+--- continuation backtrace:
+0  error
 ```
 
 ## Write Some Code
@@ -296,16 +302,16 @@ $ gerbil build
 ... build in current directory
 ... compile hello/lib
 ... compile hello/main
-... compile exe hello/main -> ~/.gerbil/bin/hello
-/tmp/gxc.1694761770.3361619/vyzo__hello__lib.scm:
-/tmp/gxc.1694761770.3361619/vyzo__hello__main.scm:
-/home/vyzo/.gerbil/bin/hello.scmx:
-/tmp/gxc.1694761770.3361619/vyzo__hello__lib.c:
-/tmp/gxc.1694761770.3361619/vyzo__hello__main.c:
-/home/vyzo/.gerbil/bin/hello.c:
-/home/vyzo/.gerbil/bin/hello_.c:
+... compile exe hello/main -> /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello
+/tmp/gxc.1695538539.046348/vyzo__hello__lib.scm:
+/tmp/gxc.1695538539.046348/vyzo__hello__main.scm:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello.scmx:
+/tmp/gxc.1695538539.046348/vyzo__hello__lib.c:
+/tmp/gxc.1695538539.046348/vyzo__hello__main.c:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello.c:
+/home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello_.c:
 
-$ hello world
+$ .gerbil/bin/hello world
 hello, world
 ```
 
@@ -322,38 +328,37 @@ optimization.
 
 For example:
 ```shell
-$ ldd $(which hello)
-	linux-vdso.so.1 (0x00007ffc3ffb0000)
-	libgerbil.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgerbil.so (0x00007f1304600000)
-	libgambit.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgambit.so (0x00007f1303c00000)
-	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007f1306588000)
-	libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007f130455c000)
-	libsqlite3.so.0 => /lib/x86_64-linux-gnu/libsqlite3.so.0 (0x00007f1303ab3000)
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f1303800000)
-	/lib64/ld-linux-x86-64.so.2 (0x00007f13065c4000)
-	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f1303719000)
-	libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007f1303200000)
+$ ldd ./.gerbil/bin/hello
+	linux-vdso.so.1 (0x00007ffe5f3b6000)
+	libgerbil.so => /usr/local/gerbil/v0.17.0-294-g80c1d164/lib/libgerbil.so (0x00007fb29cc00000)
+	libgambit.so => /usr/local/gerbil/v0.17.0-294-g80c1d164/lib/libgambit.so (0x00007fb29c200000)
+	libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007fb29eb30000)
+	libssl.so.3 => /lib/x86_64-linux-gnu/libssl.so.3 (0x00007fb29ea8c000)
+	libsqlite3.so.0 => /lib/x86_64-linux-gnu/libsqlite3.so.0 (0x00007fb29c0b3000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb29be00000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fb29eb6c000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fb29cb19000)
+	libcrypto.so.3 => /lib/x86_64-linux-gnu/libcrypto.so.3 (0x00007fb29b800000)
 
 $ gerbil clean
 ... clean current package
-... remove ~/.gerbil/lib/vyzo/hello/lib.ssi
-... remove ~/.gerbil/lib/static/vyzo__hello__lib.scm
-... remove ~/.gerbil/bin/hello
-... remove ~/.gerbil/lib/static/vyzo__hello__main.scm
+... remove /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/lib/vyzo/hello/lib.ssi
+... remove /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/lib/static/vyzo__hello__lib.scm
+... remove /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello
+... remove /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/lib/static/vyzo__hello__main.scm
 
 $ gerbil build --optimized
 ... build in current directory
 ... compile hello/lib
 ... compile hello/main
-... compile exe hello/main -> ~/.gerbil/bin/hello
+... compile exe hello/main -> /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello
 
-$ ldd $(which hello)
-	linux-vdso.so.1 (0x00007ffc8e93a000)
-	libgambit.so => /usr/local/gerbil/v0.17.0-247-gfba4fc7f/lib/libgambit.so (0x00007f58ba000000)
-	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f58b9c00000)
-	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f58ba956000)
-	/lib64/ld-linux-x86-64.so.2 (0x00007f58bab1b000)
-
+$ ldd ./.gerbil/bin/hello
+	linux-vdso.so.1 (0x00007fff585fc000)
+	libgambit.so => /usr/local/gerbil/v0.17.0-294-g80c1d164/lib/libgambit.so (0x00007f6b2e600000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f6b2e200000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f6b2e502000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f6b2efc9000)
 ```
 
 If you want your program to be statically linked to dependent
@@ -370,7 +375,7 @@ way to build release binaries is by using [docker](docker.md).
 
 The generated Makefile has two main rules: the default `linux-static`
 rule which builds static executables for your poject, and the utility
-`clean` rule to clean static build artifacts.
+`clean` rule to clean build artifacts.
 
 So all you have to do to build a release executable is this:
 ```shell
@@ -379,3 +384,62 @@ $ make
 
 This will build the release executable in `.gerbil/bin` in the current
 directory.
+
+## Dependency Management
+
+Once you have started building more complex projects, you will
+naturally want to organize them into multiple packages. You are also
+likely to have some external dependencies to package developed by
+others.
+
+The `gerbil` tool provides functionality to help with this situation.
+
+Here are some examples:
+- Search for packages in the user configured directories (or just the
+  default `mighty-gerbils` directory if none is configured):
+
+```shell
+# Search for packages
+$ gerbil pkg search
+github.com/mighty-gerbils/gerbil-crypto: Cryptography beyond OpenSSL
+github.com/mighty-gerbils/gerbil-ethereum: Ethereum support
+github.com/mighty-gerbils/gerbil-persist: Data persistence layer
+github.com/mighty-gerbils/gerbil-leveldb: LevelDB bindings
+github.com/mighty-gerbils/gerbil-libxml: libxml2 bindings
+github.com/mighty-gerbils/gerbil-libyaml: Libyaml bindings
+github.com/mighty-gerbils/gerbil-lmdb: LMDB bindings
+github.com/mighty-gerbils/gerbil-mysql: MySQL database driver
+github.com/mighty-gerbils/gerbil-poo: Prototype Object Orientation system
+github.com/mighty-gerbils/gerbil-utils: Various utilities
+
+# Search with keywords
+$ gerbil pkg search xml
+github.com/mighty-gerbils/gerbil-libxml: libxml2 bindings
+```
+
+- Add dependencies to your project:
+```shell
+$ gerbil deps -a -i github.com/mighty-gerbils/gerbil-libxml
+... cloning github.com/mighty-gerbils/gerbil-libxml
+... pulling
+... build github.com/mighty-gerbils/gerbil-libxml
+... compile foreign xml/_libxml
+... copy ssi xml/_libxml
+... compile loader xml/_libxml
+... compile xml/libxml
+... tagging packages
+```
+
+- List your project's dependencies:
+```shell
+$ gerbil deps
+github.com/mighty-gerbils/gerbil-libxml
+```
+
+## Where to go from here
+
+You can find more information about packages in the [Gerbil Package Manager](package-manager.md) page.
+
+You can find more information about the `gerbil` tooling in the [Universal Gerbil Binary and Tools](/reference/dev/bach.md) page.
+
+You can find more information about the build tool specifics in the [Gerbil Build Tool](/reference/dev/build.md) page.
