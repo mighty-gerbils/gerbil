@@ -593,9 +593,9 @@ breaking the API of `v1` and so on for higher versions.
 So at this point you are naturally wondering how to run tests for your
 package, given the build isolation properties of the tooling.
 
-This is actually very simple: the `gerbil pkg env` provides you with
-the ability to run command with the local build GERBIL_PATH set for
-you.
+This is actually very simple: the `gerbil pkg env` command provides
+you with the ability to run command with the local build GERBIL_PATH
+set for you.
 
 So in order to run your tests, all you have to do is:
 ```
