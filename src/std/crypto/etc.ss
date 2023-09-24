@@ -52,7 +52,7 @@
    ((input-port? in)
     (apply call-with-binary-input-port proc in args))
    (else
-    (raise-bad-argument libcrypt "input source; u8vector, string or input port" in))))
+    (raise-bad-argument libcrypto "input source; u8vector, string or input port" in))))
 
 (def* call-with-binary-input-u8vector
   ((proc in)

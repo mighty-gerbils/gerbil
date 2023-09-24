@@ -256,10 +256,10 @@
   (def (module-type-id type-t)
     (cond
      ((module-context-ns (current-expander-context))
-      => (lambda (ns) (stx-identifier type-t ns "" type-t)))
+      => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
      (else
       (let (mid (expander-context-id (current-expander-context)))
-        (stx-identifier type-t mid "" type-t)))))
+        (stx-identifier type-t mid "#" type-t)))))
 
   (def (interface-spec? spec)
     (syntax-case spec ()

@@ -110,7 +110,7 @@
             (#f (("a,b" "c")) (separator #\;))
             ("a,b;c\n" (("a" "b;c")) (eol "\n")))
            ("\"a,b\"\r'c,d'\r\"e f\""
-            ("\"a,b\"\r\n'c,d'\r\ne f\r\n" (("a,b") ("'c" "d") ("e f")))
+            ("\"a,b\"\r\n'c,d'\r\ne f\r\n" (("a,b") ("'c" "d'") ("e f")))
             ("\"a,b\"\r\n'c,d'\r\n\"e f\"\r\n" (("\"a" "b\"") ("c,d") ("\"e f\"")) (quote #\')))
            ("foo''bar"
             (#f "unexpected quote in middle of field" (quote #\'))
@@ -122,8 +122,8 @@
             (#f "unexpected quote in middle of field" (quote #\'))
             (#f "unexpected quote in middle of field" (quote #\') (unquoted-quotequote? #t))
             ("foo\r\n" (("foo")) (quote #\') (loose-quote? #t)))
-           ("'a\n"
-            ("'a\r\n'\r\n" (("'a") ("")))
+           ("'a\n'"
+            ("'a\r\n'\r\n" (("'a") ("'")))
             ("'a\n'\r\n" (("a\n")) (quote #\')))
            ("Faré"
             ("\"Faré\"\r\n" (("Faré")))

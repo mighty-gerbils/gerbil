@@ -41,7 +41,7 @@
 (begin-ffi (_pipe make_pipe_ptr pipe_ptr_ref)
   (c-declare "#include <unistd.h>")
 
-  (namespace ("std/os/pipe" __pipe))
+  (namespace ("std/os/pipe#" __pipe))
 
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))

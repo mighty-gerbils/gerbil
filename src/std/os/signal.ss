@@ -98,7 +98,7 @@
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <signal.h>")
 
-  (namespace ("std/os/signal"
+  (namespace ("std/os/signal#"
               SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS
               SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
               SIGTERM SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU

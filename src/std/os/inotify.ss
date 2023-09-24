@@ -143,7 +143,7 @@
       `(define ,symbol
          ((c-lambda () unsigned-int32 ,ref)))))
 
-  (namespace ("std/os/inotify"
+  (namespace ("std/os/inotify#"
                __inotify_init
                __inotify_add_watch
                __inotify_rm_watch))

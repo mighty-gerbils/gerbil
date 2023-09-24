@@ -102,7 +102,7 @@
   (define-const LOCK_NB)
 
   ;; private
-  (namespace ("std/os/flock" __flock))
+  (namespace ("std/os/flock#" __flock))
 
   (define-c-lambda __flock (int int) int
     "flock")

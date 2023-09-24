@@ -172,7 +172,7 @@
    (begin-foreign
      (c-declare "#include <signal.h>")
 
-     (namespace ("std/os/signal-handler"
+     (namespace ("std/os/signal-handler#"
                  SIG_IGN
                  set-signal!))
 

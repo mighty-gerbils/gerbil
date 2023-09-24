@@ -21,7 +21,7 @@
 
 (defrule (raise-sqlite-error where err)
   (let (errstr (sqlite3_errstr err))
-    (raise-sql-error where (string-append "SQLite error:" errstr) err)))
+    (raise-sql-error where (string-append "SQLite error: " errstr) err)))
 
 (def (sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
   (let* ((ptr (make_sqlite3_ptr_ptr))

@@ -320,7 +320,7 @@
        (##thread-send thread msg)
        #f))))
 
-(def mailbox-timeout #(timeout))
+(def mailbox-timeout '#(timeout))
 (def mailbox-empty '#(empty))
 
 (cond-expand
