@@ -2,7 +2,7 @@
 (import :std/net/httpd
         :std/getopt
         :std/sugar
-        :gerbil/gambit/threads
+        :gerbil/gambit
         :std/misc/threads)
 (export main)
 

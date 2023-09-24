@@ -6,8 +6,7 @@
 ;;     nullproto.ss
 package: misc/rpc-perf
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/random
+(import :gerbil/gambit
         :std/actor
         :std/net/address
         :std/getopt
