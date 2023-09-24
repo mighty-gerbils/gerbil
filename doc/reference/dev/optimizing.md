@@ -77,7 +77,7 @@ checking and show you your performance envelope.
 
 ::: tip Note
 We do not advocate shipping programs compiled like this in production
-servers, unless you want your devops to be debugging segfaults. The
+servers, unless you want your devops to be debugging segfaults. These
 programs are also nearly impossible to debug because everything is
 lumped in a single host function and you might not even get a stack
 trace with gdb.
