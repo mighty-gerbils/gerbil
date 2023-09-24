@@ -73,6 +73,7 @@
       (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
+      local-flag
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
       (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
@@ -306,28 +307,28 @@
 
 ;;; action implementation -- script api
 (def +root-dir+
-  (getenv "GERBIL_PATH" "~/.gerbil"))
+  (delay (getenv "GERBIL_PATH" "~/.gerbil")))
 (def +pkg-root-dir+
-  (path-expand "pkg" +root-dir+))
+  (delay (path-expand "pkg" (force +root-dir+))))
 (def +pkg-lib-dir+
-  (path-expand "lib" +root-dir+))
+  (delay (path-expand "lib" (force +root-dir+))))
 (def +pkg-lib-static-dir+
-  (path-expand "static" +pkg-lib-dir+))
+  (delay (path-expand "static" (force +pkg-lib-dir+))))
 (def +pkg-bin-dir+
-  (path-expand "bin" +root-dir+))
+  (delay (path-expand "bin" (force +root-dir+))))
 
 (def pkg-root-dir
   (let (once
         (delay
           (begin
-            (create-directory* +root-dir+)
-            (create-directory* +pkg-root-dir+)
-            (create-directory* +pkg-lib-dir+)
-            (create-directory* +pkg-lib-static-dir+)
-            (create-directory* +pkg-bin-dir+))))
+            (create-directory* (force +root-dir+))
+            (create-directory* (force +pkg-root-dir+))
+            (create-directory* (force +pkg-lib-dir+))
+            (create-directory* (force +pkg-lib-static-dir+))
+            (create-directory* (force +pkg-bin-dir+)))))
     (lambda ()
       (force once)
-      +pkg-root-dir+)))
+      (force +pkg-root-dir+))))
 
 (def (pkg-new prefix name maybe-link)
   (def (create-template file template . args)
@@ -580,6 +581,7 @@
       (for-each (cut pkg-build <> #f) (map car sorted))))
    ((equal? pkg ".")
     (displayln "... build in current directory")
+    (pkg-manifest! pkg)
     (let (build.ss (path-expand "build.ss" (current-directory)))
       (run-process [build.ss "compile" build-options ...]
                    stdout-redirection: #f)))
@@ -590,12 +592,85 @@
                  (error "Cannot build unknown package" pkg)))
             (build.ss (pkg-build-script pkg)))
        (displayln "... build " pkg)
+       (pkg-manifest! pkg)
        (run-process [build.ss "compile" build-options ...]
                     directory: path
                     coprocess: void
                     stdout-redirection: #f)
        (when dependents?
          (for-each pkg-build (pkg-dependents pkg)))))))
+
+(def (pkg-manifest! pkg)
+  (let* (((values pkg . _) (pkg+tag pkg))
+         (plist (pkg-plist pkg))
+         (deps (pgetq depend: plist []))
+         (deps
+          (let recur ((rest deps) (result []))
+            (match rest
+              ([dep . rest]
+               (let* (((values dep . _) (pkg+tag dep))
+                      (plist (pkg-plist dep))
+                      (deps (pgetq depend: plist [])))
+                 (recur rest (recur deps (cons dep result)))))
+              (else
+               (remove-duplicates result)))))
+         (manifests
+          (let lp ((rest deps) (result []))
+            (match rest
+              ([dep . rest]
+               (let (manifest
+                     (call-with-input-file
+                         (path-expand (string-append dep ".manifest")
+                           (pkg-root-dir))
+                       read))
+                 (lp rest (append result manifest))))
+              (else
+               (remove-duplicates result)))))
+         (gerbil-version
+          (cons "Gerbil"(gerbil-version-string)))
+         (gambit-version
+          (cons "Gambit" (system-version-string)))
+         (write-version-manifest
+          (lambda (manifest1 output)
+            (pretty-print
+             `(def version-manifest
+                (quote
+                 ,(remove-duplicates
+                   (cons* manifest1 gerbil-version gambit-version manifests))))
+             output)))
+         (write-pkg-manifest
+          (lambda (manifest1 output)
+            (pretty-print
+             (remove-duplicates (cons* manifest1 gerbil-version gambit-version manifests))
+             output))))
+
+    (if (equal? pkg ".")
+      (let* ((version
+              (if (file-exists? ".git")
+                (run-process ["git" "describe" "--tags" "--always"]
+                             coprocess: read-line)
+                "unknown"))
+             (manifest1
+              (cons (path-strip-directory
+                     (let (path (path-normalize (current-directory)))
+                       (substring path 0 (1- (string-length path)))))
+                    version)))
+        (call-with-output-file [path: "manifest.ss" create: 'maybe truncate: #t]
+          (cut write-version-manifest manifest1 <>)))
+      (let* ((pkg-path
+              (path-expand pkg (pkg-root-dir)))
+             (version
+              (run-process ["git" "describe" "--tags" "--always"]
+                           directory: pkg-path
+                           coprocess: read-line))
+             (manifest1
+              (cons pkg version)))
+        (call-with-output-file [path: (path-expand "manifest.ss" pkg-path)
+                                      create: 'maybe truncate: #t]
+          (cut write-version-manifest manifest1 <>))
+        (call-with-output-file [path: (string-append pkg-path ".manifest")
+                                      create: 'maybe truncate: #t]
+          (cut write-pkg-manifest manifest1 <>))))))
 
 (def (pkg-clean pkg)
   (cond
@@ -992,6 +1067,10 @@ END
         ./lib)
 (export main)
 
+;; build manifest; generated during the build
+;; defines version-manifest which you can use for exact versioning
+(include "../manifest.ss")
+
 (def (main . args)
   (call-with-getopt ${name}-main args
     program: "${name}"
@@ -1078,6 +1157,7 @@ END
 (def gitignore-template #<<END
 *~
 build-deps
+/manifest.ss
 
 END
 )
