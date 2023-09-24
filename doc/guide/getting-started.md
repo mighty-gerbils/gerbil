@@ -34,7 +34,7 @@ I usually configure Gerbil for devlopment with the following incantation:
 This will install Gerbil in `/usr/local/gerbil`; you should add
 `/usr/local/gerbil/bin` to your path.
 
-Note that this configuration enables share libraries: all gerbil
+Note that this configuration enables shared libraries: all gerbil
 programs will use shared libraries for `libgambit` and `libgerbil`
 linkage, resulting in significantly smaller executables.
 
