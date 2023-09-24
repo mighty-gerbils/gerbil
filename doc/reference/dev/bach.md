@@ -41,7 +41,7 @@ Usage: gerbil [option ...] arguments ...
 
 Options:
   -h|--help                        display this help message exit
-  -v|--version|version             display the system version and exit
+  -v|--version                     display the system version and exit
 
 Arguments:
   <cmd> cmd-arg ...                execute a builtin tool command
