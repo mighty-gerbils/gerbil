@@ -14,10 +14,10 @@
      ((fixnum? result)
       (if (fx> result 0)
         (void)
-        (raise-ssl-error 'proc result)))
+        (raise-ssl-error proc result)))
      ((char? result) result)
      (else
-      (raise-ssl-error 'proc result)))))
+      (raise-ssl-error proc result)))))
 
 (deferror-class (SSLError IOError) () ssl-error?)
 (defrule (raise-ssl-error where result)

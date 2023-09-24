@@ -99,7 +99,7 @@
    ((handle? actor)
     (thread-send/check (&handle-proxy actor) msg))
    (else
-    (raise-bad-argument 'send-message "thread or handle" actor))))
+    (raise-bad-argument send-message "thread or handle" actor))))
 
 ;; sends a message wrapped in an envelope
 ;; Returns #f if the destination is a dead thread; otherwise returns the message nonce.
@@ -118,7 +118,7 @@
   (let* ((expiry (timeout->expiry timeo))
          (nonce (current-thread-nonce!)))
     (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry #t))
-      (raise-actor-error 'send-message "actor is dead" dest))
+      (raise-actor-error send-message "actor is dead" dest))
     (<< ((envelope reply _ _ _ (eqv? nonce))
          reply)
         timeout: expiry)))
@@ -171,7 +171,7 @@
                      (if (eq? next mailbox-timeout)
                        (begin
                          (thread-mailbox-rewind)
-                         (raise-timeout 'receive "receive timeout" expiry))
+                         (raise-timeout receive "receive timeout" expiry))
                        (recv-e next))))))))))))
 
   (def (generate-receive-raw stx)
@@ -278,7 +278,7 @@
    ((time? timeo)
     timeo)
    (else
-    (raise-bad-argument 'expiry "real or time" timeo))))
+    (raise-bad-argument expiry "real or time" timeo))))
 
 ;; message type registry
 (def +message-types+ (make-hash-table-eq))
@@ -287,7 +287,7 @@
 (def (register-message-type! klass)
   (let (klass-id (##type-id klass))
     (unless (interned-symbol? klass-id)
-      (raise-context-error 'register-message-type! "uninterned message class" klass))
+      (raise-context-error register-message-type! "uninterned message class" klass))
     (mutex-lock! +message-types-mx+)
     (hash-put! +message-types+ klass-id klass)
     (mutex-unlock! +message-types-mx+)))
@@ -320,7 +320,7 @@
        (##thread-send thread msg)
        #f))))
 
-(def mailbox-timeout '#(timeout))
+(def mailbox-timeout #(timeout))
 (def mailbox-empty '#(empty))
 
 (cond-expand

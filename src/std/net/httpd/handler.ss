@@ -342,7 +342,7 @@ END-C
            ([_ base]
             (split-request-url base))
            (else
-            (raise-io-error 'http-read-request "invalid url" url)))))
+            (raise-io-error http-read-request "invalid url" url)))))
    ((string-index url #\?)             ; parameters
     => (lambda (ix)
          (values (substring url 0 ix) (substring url (fx1+ ix) (string-length url)))))
@@ -376,7 +376,7 @@ END-C
             (set! (cdr tl) tl*)
             (lp tl* (fx1+ count))))
          (else
-          (raise-io-error 'http-read-request "too many headers" count)))))))
+          (raise-io-error http-read-request "too many headers" count)))))))
 
 (def (read-header ibuf)
   (let* ((key (read-token ibuf COL))
@@ -425,13 +425,13 @@ END-C
           (lp (fx1+ count))))
        (else
         (put-token-buffer! tbuf)
-        (raise-io-error 'http-read-request "Maximum token length exceeded" count))))))
+        (raise-io-error http-read-request "Maximum token length exceeded" count))))))
 
 (def* read-skip
   ((ibuf c)
    (let (next (&BufferedReader-read-u8-inline ibuf))
     (unless (eq? c next)
-      (raise-io-error 'http-read-request "Unexpected character" next))))
+      (raise-io-error http-read-request "Unexpected character" next))))
   ((ibuf c1 c2)
    (read-skip ibuf c1)
    (read-skip ibuf c2)))
@@ -458,7 +458,7 @@ END-C
       => (lambda (len)
            (let* ((len (string->number len))
                   (_ (unless (fx<= len max-request-body-length)
-                       (raise-io-error 'http-request-body "Maximum body length exceeded" len)))
+                       (raise-io-error http-request-body "Maximum body length exceeded" len)))
                   (bytes (make-u8vector len)))
              (&BufferedReader-read ibuf bytes 0 len len)
              bytes)))
@@ -488,7 +488,7 @@ END-C
                 (let (tl* [chunk])
                   (set! (cdr tl) tl*)
                   (lp tl* count)))
-              (raise-io-error 'http-request-body "Maximum body length exceeded" count len)))
+              (raise-io-error http-request-body "Maximum body length exceeded" count len)))
           (u8vector-concatenate (cdr root)))))))
 
 (def (skip-request-body ibuf headers)
@@ -497,7 +497,7 @@ END-C
       (let (len (string->number clen))
         (if (fixnum? len)
           (&BufferedReader-skip ibuf len)
-          (raise-io-error 'http-request-skip-body "Illegal body length" clen)))))
+          (raise-io-error http-request-skip-body "Illegal body length" clen)))))
 
   (cond
    ((header-e "Transfer-Encoding" headers)

@@ -63,7 +63,7 @@
         (let* ((s (or (bytes-argument sig) (make-u8vector 8192)))
                (result (EVP_DigestSign mctx s bytes)))
           (if (##fxzero? result)
-            (raise-libcrypto-error 'digest-sign)
+            (raise-libcrypto-error digest-sign)
             (bytes-result s result))))
       (foreign-release! mctx))))
 

@@ -3,7 +3,8 @@
 ;;; OS errors
 
 (import :std/foreign
-        :std/error)
+        :std/error
+        :std/sugar)
 (export raise-os-error
         check-os-error
         os-error?
@@ -23,15 +24,15 @@
         ECONNRESET)
 
 (deferror-class OSError (errno) os-error?)
-(def (raise-os-error errno . irritants)
-  (let (err (OSError (strerror errno) irritants: irritants))
+(defrule (raise-os-error errno irritants ...)
+  (let (err (OSError (strerror errno) where: (exception-context errno) irritants: [irritants ...]))
     (set! (OSError-errno err) errno)
     (raise err)))
 (def os-error-errno OSError-errno)
 
 (deferror-class AllocationError () foreign-allocation-error?)
-(def (raise-allocation-error where expr)
-  (raise (AllocationError "error allocating memory" where: where irritants: [expr])))
+(defraise/context (raise-allocation-error where expr)
+  (AllocationError "error allocating memory" irritants: [expr]))
 
 (defrules check-os-error ()
   ((_ expr (prim arg ...))
@@ -56,7 +57,7 @@
 (defrules check-ptr ()
   ((_ (make arg ...))
    (let (r (make arg ...))
-     (if r r (raise-allocation-error 'make '(make arg ...))))))
+     (if r r (raise-allocation-error make '(make arg ...))))))
 
 (begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK
                      EBADF ECONNABORTED ECONNREFUSED ECONNRESET)

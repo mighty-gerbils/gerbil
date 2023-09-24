@@ -186,7 +186,7 @@
        ((catalog-serializer (current-catalog) type-oid)
         => (cut <> arg))
        (else
-        (raise-bad-argument 'postgresql "catalog parameter: unknown" type-oid arg))))
+        (raise-bad-argument postgresql "catalog parameter: unknown" type-oid arg))))
     (let* ((params (&postgresql-statement-params self))
            (bind (map value->binding params args)))
       (set! (&postgresql-statement-bind self) bind)
@@ -365,7 +365,7 @@
 
 (def (identity-string obj)
   (if (string? obj) obj
-      (raise-bad-argument 'postgresql "string" obj)))
+      (raise-bad-argument postgresql "string" obj)))
 
 (defcatalog default-catalog
   ;; BOOLOID

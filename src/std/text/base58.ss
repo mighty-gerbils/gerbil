@@ -73,7 +73,7 @@
           => (lambda (c)
                (lp (fx1+ i) (+ (* bn 58) c))))
          (else
-          (raise-io-error 'base58-decode "Invalid character" str char))))
+          (raise-io-error base58-decode "Invalid character" str char))))
       (u8vector-append leading-zeros (integer->bytes bn)))))
 
 (def (bytes->integer bytes)

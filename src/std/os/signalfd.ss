@@ -76,7 +76,7 @@
   (c-declare "#include <sys/signalfd.h>")
 
   ;; private
-  (namespace ("std/os/signalfd#" __signalfd))
+  (namespace ("std/os/signalfd" __signalfd))
 
   (define-const SFD_NONBLOCK)
   (define-const SFD_CLOEXEC)

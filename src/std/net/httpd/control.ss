@@ -30,13 +30,13 @@
 (defrule (with-actor-server do-it)
   (if (current-actor-server)
     do-it
-    (raise-context-error 'http-control "no actor server")))
+    (raise-context-error http-control "no actor server")))
 
 (defrule (check-handler path handler do-it)
   (cond
    ((not (string? path))
-    (raise-bad-argument 'check-handler "path: string" path))
+    (raise-bad-argument check-handler "path: string" path))
    ((not (procedure? handler))
-    (raise-bad-argument 'check-handler  "handler: procedure" handler))
+    (raise-bad-argument check-handler  "handler: procedure" handler))
    (else
     do-it)))

@@ -173,7 +173,7 @@
              (and (accept= #\return port)
                   (or (and {accept-crlf?} (accept= #\newline port))
                       {accept-cr?}
-                      (raise-io-error 'accept-eol "Carriage-Return without Linefeed!"))))))
+                      (raise-io-error accept-eol "Carriage-Return without Linefeed!"))))))
   ;; Is character c some kind of white space?
   ;; NB: this only handles a tiny subset of whitespace characters, even if restricted to ASCII.
   ;; However, it's rather portable, and it is what the creativyst document specifies.
@@ -207,7 +207,7 @@
     (set! had-quotes? #t)
     (cond
      ((accept-eof port)
-      (raise-io-error 'read-csv-line "unexpected eof in quotes"))
+      (raise-io-error read-csv-line "unexpected eof in quotes"))
      ((accept= {quote} port)
       (cond
        ((accept= {quote} port)
@@ -251,7 +251,7 @@
        ({loose-quote?}
         (accept-field-quoted))
        (else
-        (raise-io-error 'read-csv-line "unexpected quote in middle of field"))))
+        (raise-io-error read-csv-line "unexpected quote in middle of field"))))
      (else
       (add-char (read-char port))
       (accept-field-unquoted))))
@@ -263,12 +263,12 @@
      ((accept= {separator} port)
       (accept-fields))
      (else
-      (raise-io-error 'read-csv-line "end of field expected"))))
+      (raise-io-error read-csv-line "end of field expected"))))
   (def (add x)
     (push! x fields))
   (def (add-char c)
     (unless (or {allow-binary?} (char-ascii-text? c))
-      (raise-io-error 'read-csv-line "binary data not allowed" c))
+      (raise-io-error read-csv-line "binary data not allowed" c))
     (write-char c ss))
   (def (current-string)
     (get-output-string ss))

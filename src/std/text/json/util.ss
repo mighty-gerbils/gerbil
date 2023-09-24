@@ -34,7 +34,7 @@
    ((is-BufferedReader? input)
     (read-json-object/buffer (BufferedReader input) (make-env)))
    (else
-    (raise-bad-argument 'read-json "input port, BufferedStringReader or BufferedReader instance" input))))
+    (raise-bad-argument read-json "input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
   (let (reader (open-buffered-string-reader str))
@@ -64,7 +64,7 @@
       (write-json-object/writer obj output (make-env))
       (&BufferedStringWriter-flush output)))
    (else
-    (raise-bad-argument 'write-json "output port, Writer, StringWriter or BufferedStringWriter" output))))
+    (raise-bad-argument write-json "output port, Writer, StringWriter or BufferedStringWriter" output))))
 
 (def (json-object->string obj)
   (let (buffer (open-buffered-string-writer #f))

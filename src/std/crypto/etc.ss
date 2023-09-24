@@ -41,7 +41,7 @@
    (let (res expr)
      (if (##fxpositive? res)
        res
-       (raise-libcrypto-error 'expr irritants ...)))))
+       (raise-libcrypto-error expr irritants ...)))))
 
 (def (call-with-binary-input proc in . args)
   (cond
@@ -52,7 +52,7 @@
    ((input-port? in)
     (apply call-with-binary-input-port proc in args))
    (else
-    (raise-bad-argument 'libcrypt "input source; u8vector, string or input port" in))))
+    (raise-bad-argument libcrypt "input source; u8vector, string or input port" in))))
 
 (def* call-with-binary-input-u8vector
   ((proc in)
@@ -133,4 +133,4 @@
    ((u8vector? in) in)
    ((string? in) (string->utf8 in))
    (else
-    (raise-bad-argument 'libcrypto "u8vector or string" in))))
+    (raise-bad-argument libcrypto "u8vector or string" in))))

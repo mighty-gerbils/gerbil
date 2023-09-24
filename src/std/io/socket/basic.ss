@@ -23,7 +23,7 @@
    (else
     (with-basic-socket-read-lock bsock
       (when (&basic-socket-closed? bsock)
-        (raise-io-error 'where "socket is closed"))
+        (raise-io-error where "socket is closed"))
       (let* ((sockaddr
               (getname (&basic-socket-sock bsock)
                        (make-socket-address (&basic-socket-domain bsock))))
@@ -57,13 +57,13 @@
 (def (basic-socket-getsockopt bsock level opt)
   (with-basic-socket-read-lock bsock
     (when (&basic-socket-closed? bsock)
-      (raise-io-error 'basic-socket-getsockopt "socket is closed"))
+      (raise-io-error basic-socket-getsockopt "socket is closed"))
     (socket-getsockopt (&basic-socket-sock bsock) level opt)))
 
 (def (basic-socket-setsockopt bsock level opt val)
   (with-basic-socket-read-lock bsock
     (when (&basic-socket-closed? bsock)
-      (raise-io-error 'basic-socket-setsockopt "socket is closed"))
+      (raise-io-error basic-socket-setsockopt "socket is closed"))
     (socket-setsockopt (&basic-socket-sock bsock) level opt val)))
 
 (def (basic-socket-close bsock)

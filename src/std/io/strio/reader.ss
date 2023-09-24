@@ -45,7 +45,7 @@
                   ;; we didn't read anything - EOF
                   (if (or (fx> input-need 0)
                           (fx> rhi 0))  ; we have an incomplete char
-                    (raise-premature-end-of-input 'strio-read-string)
+                    (raise-premature-end-of-input strio-read-string)
                     0)
                   ;; we read some bytes, recur
                   (begin
@@ -94,7 +94,7 @@
         (if (fx= input-bytes 0)
           ;; we didn't read anything - EOF
           (if (fx> input-need 0)
-            (raise-premature-end-of-input 'strio-read-string)
+            (raise-premature-end-of-input strio-read-string)
             0)
           ;; we read some-bytes
           (begin

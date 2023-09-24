@@ -160,7 +160,7 @@
 ;; this code was originally written by Marc Feeley for Guillaume Cartier
 ;; i have slightly modified it to drop the mutations and counter bitrot
 (begin-foreign
-  (namespace ("std/debug/heap#"
+  (namespace ("std/debug/heap"
               walk-interned-symbols!
               walk-interned-keywords!
               walk-from-object!))
@@ -367,7 +367,7 @@
   count-still-objects count-still-objects/refcount
   get-still-objects get-still-objects/refcount)
 (begin-foreign
-  (namespace ("std/debug/heap#"
+  (namespace ("std/debug/heap"
               count-still-objects count-still-objects/refcount
               get-still-objects get-still-objects/refcount))
 

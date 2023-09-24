@@ -81,7 +81,7 @@
    descriptor klass obj-klass
    (lambda (prototype) prototype)
    (lambda (klass method-name)
-     (raise-cast-error 'create-prototype "Cannot create interface instance; missing method" klass method-name))))
+     (raise-cast-error create-prototype "Cannot create interface instance; missing method" klass method-name))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype
@@ -122,7 +122,7 @@
                  (instance (##structure-copy prototype)))
             (##unchecked-structure-set! instance obj 1 klass #f)
             instance)))))
-    (raise-cast-error 'cast "Cannot cast non-object to interface instance" obj)))
+    (raise-cast-error cast "Cannot cast non-object to interface instance" obj)))
 
 ;; check if an object satisfies an interface
 (def (satisfies? descriptor obj)
@@ -256,10 +256,10 @@
   (def (module-type-id type-t)
     (cond
      ((module-context-ns (current-expander-context))
-      => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
+      => (lambda (ns) (stx-identifier type-t ns "" type-t)))
      (else
       (let (mid (expander-context-id (current-expander-context)))
-        (stx-identifier type-t mid "#" type-t)))))
+        (stx-identifier type-t mid "" type-t)))))
 
   (def (interface-spec? spec)
     (syntax-case spec ()

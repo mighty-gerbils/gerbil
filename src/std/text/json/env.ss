@@ -29,5 +29,5 @@
 
 (def (raise-invalid-token input char)
   (if (eof-object? char)
-    (raise-io-error 'read-json "Incomplete JSON object; EOF reached" input)
-    (raise-io-error 'read-json "Invalid JSON token" input char)))
+    (raise-io-error read-json "Incomplete JSON object; EOF reached" input)
+    (raise-io-error read-json "Invalid JSON token" input char)))

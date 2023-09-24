@@ -106,7 +106,7 @@
       (raise
        (Klass message
               where: (exception-context where)
-              irritants: (cons where irritants)))))))
+              irritants: (cons 'where irritants)))))))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
   (BadArgument (string-append "Bad argument; expected " expectation)

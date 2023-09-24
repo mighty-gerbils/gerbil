@@ -136,4 +136,4 @@
      (fail "Malformed message" msg e))))
 
 (defrule (fail what irritants ...)
-  (raise-io-error 'sasl-authenticate what irritants ...))
+  (raise-io-error sasl-authenticate what irritants ...))

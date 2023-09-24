@@ -11,14 +11,14 @@
 
 (def (string->utf16 str (endianness big) (BOM? #f))
   (unless (string? str)
-    (raise-bad-argument 'utf16-codec "string" str))
+    (raise-bad-argument utf16-codec "string" str))
   (let (u16-set!
         (case endianness
           ((big) u16-set!/be)
           ((little) u16-set!/le)
           ((native) &u8vector-u16-set!/native)
           (else
-           (raise-bad-argument 'utf16-codec "endianness" endianness))))
+           (raise-bad-argument utf16-codec "endianness" endianness))))
   (utf16-encode str u16-set! BOM?)))
 
 (def (utf16-encode str u16-set! BOM?)
@@ -48,7 +48,7 @@
             (u16-set! bytes (fx+ j 2) W2)
             (lp (fx1+ i) (fx+ j 4))))
          (else
-          (raise-io-error 'utf16-encode! "Illegal codepoint" char int)))))
+          (raise-io-error utf16-encode! "Illegal codepoint" char int)))))
      ((fx< j (u8vector-length bytes))
       (u8vector-shrink! bytes j)
       bytes)
@@ -56,20 +56,20 @@
 
 (def (utf16->string bytes (endianness big) (endianness-mandatory? #f))
   (unless (u8vector? bytes)
-    (raise-bad-argument 'utf16-codec "u8vector" bytes))
+    (raise-bad-argument utf16-codec "u8vector" bytes))
   (let (u16-ref
         (case endianness
           ((big) u16-ref/be)
           ((little) u16-ref/le)
           ((native) &u8vector-u16-ref/native)
           (else
-           (raise-bad-argument 'utf16-codec "endianness" endianness))))
+           (raise-bad-argument utf16-codec "endianness" endianness))))
     (utf16-decode bytes u16-ref (not endianness-mandatory?))))
 
 (def (utf16-decode bytes u16-ref BOM?)
   (def len (u8vector-length bytes))
   (unless (fxeven? len)
-    (raise-io-error 'utf16-decode "Cannot decode UTF-16; odd length u8vector" bytes))
+    (raise-io-error utf16-decode "Cannot decode UTF-16; odd length u8vector" bytes))
   (if BOM?
     ;; try to read the BOM to determine endianness
     (if (fx>= len 2)
@@ -115,7 +115,7 @@
                       (begin
                         (string-set! str j #xfffd) ; replacement character
                         (lp (fx+ i 4) (fx1+ j)))))
-                  (raise-io-error 'utf16-decode! "Incomplete character" W)))
+                  (raise-io-error utf16-decode! "Incomplete character" W)))
               ;; invalid character
               (begin
                 (string-set! str j #\xfffd) ; replacement character

@@ -332,7 +332,7 @@
       (let (sa (make-socket-address-un))
         (sockaddr_un_path_set sa path)
         sa)
-      (raise-bad-argument 'socket-address "UNIX path: too long"))))
+      (raise-bad-argument socket-address "UNIX path: too long"))))
 
 (def (socket-address-family sa)
   (sockaddr_family sa))
@@ -354,7 +354,7 @@
      ((ip6-address? ip)
       (socket-address-in6 ip port))
      (else
-      (raise-bad-argument 'socket-address "ip4 or ip6 address" addr)))))
+      (raise-bad-argument socket-address "ip4 or ip6 address" addr)))))
 
 (def (socket-address->address sa)
   (let (saf (sockaddr_family sa))
@@ -433,7 +433,7 @@
   (if (fixnum? val)
     (check-os-error (_setsockopt_int (fd-e sock) level opt val)
       (socket-setsockopt sock level opt val))
-    (raise-bad-argument 'sockopt "fixnum" val)))
+    (raise-bad-argument sockopt "fixnum" val)))
 
 (def (socket-getsockopt-tv sock level opt)
   (let (tv (check-ptr (make_tv)))
@@ -451,7 +451,7 @@
       (tv_usec_set tv (inexact->exact tm-usec))
       (check-os-error (_setsockopt_tv (fd-e sock) level opt tv)
         (socket-setsockopt sock level opt tm)))
-    (raise-bad-argument 'sockopt "real" tm)))
+    (raise-bad-argument sockopt "real" tm)))
 
 (def (socket-getsockopt-addr-in sock level opt)
   (let (sa (make-socket-address-in))
@@ -474,13 +474,13 @@
   (if (u8vector? bytes)
     (check-os-error (_getsockopt_bytes (fd-e sock) level opt bytes)
       (socket-getsockopt sock level opt bytes))
-    (raise-bad-argument 'sockopt "bytes" bytes)))
+    (raise-bad-argument sockopt "bytes" bytes)))
 
 (def (socket-setsockopt-bytes sock level opt bytes)
   (if (u8vector? bytes)
     (check-os-error (_setsockopt_bytes (fd-e sock) level opt bytes)
       (socket-setsockopt sock level opt bytes))
-    (raise-bad-argument 'sockopt "bytes" bytes)))
+    (raise-bad-argument sockopt "bytes" bytes)))
 
 (def (socket-setsockopt-mreq sock level opt ips)
   (match ips
@@ -490,7 +490,7 @@
      (check-os-error (_setsockopt_mreq (fd-e sock) level opt maddr laddr)
        (socket-setsockopt sock level opt ips))))
     (else
-     (raise-bad-argument 'sockopt "pair of ip4 addresses" ips))))
+     (raise-bad-argument sockopt "pair of ip4 addresses" ips))))
 
 (def (socket-setsockopt-mreq-src sock level opt ips)
   (match ips
@@ -501,7 +501,7 @@
      (check-os-error (_setsockopt_mreq_src (fd-e sock) level opt maddr iaddr saddr)
        (socket-setsockopt sock level opt ips))))
     (else
-     (raise-bad-argument 'sockopt "list with 3 ip4 addresses" ips))))
+     (raise-bad-argument sockopt "list with 3 ip4 addresses" ips))))
 
 (def (socket-setsockopt-mreq6 sock level opt ips)
   (match ips
@@ -510,7 +510,7 @@
        (check-os-error (_setsockopt_mreq6 (fd-e sock) level opt maddr ifindex)
          (socket-setsockopt sock level opt ips))))
     (else
-     (raise-bad-argument 'sockopt "pair of ip6 addresses" ips))))
+     (raise-bad-argument sockopt "pair of ip6 addresses" ips))))
 
 (def (socket-getsockopt-linger sock level opt)
   (let (linger (check-ptr (make_linger)))
@@ -530,7 +530,7 @@
       (linger_onoff_set linger 0)
       (linger_linger_set linger 0))
      (else
-      (raise-bad-argument 'sockopt "fixnum or #f" val)))
+      (raise-bad-argument sockopt "fixnum or #f" val)))
     (check-os-error (_setsockopt_linger sock level opt linger)
       (socket-setsockopt sock level opt val))))
 

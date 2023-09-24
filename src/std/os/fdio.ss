@@ -52,7 +52,7 @@
    ((##fx= (##fxand flags O_WRONLY) O_WRONLY)
     'out)
    (else
-    (raise-bad-argument 'fdio "file direction: unspecified" flags))))
+    (raise-bad-argument fdio "file direction: unspecified" flags))))
 
 ;;; FFI impl
 (begin-ffi (_read _write _open _close
@@ -79,7 +79,7 @@
   (define-const S_IXOTH)
 
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __close))
+  (namespace ("std/os/fdio" __read __write __open __close))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")

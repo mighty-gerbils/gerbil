@@ -39,13 +39,13 @@
      ((real? timeout)
       (+ (##current-time-point) timeout))
      (else
-      (raise-bad-argument 'flock "real, time or #f" timeout))))
+      (raise-bad-argument flock "real, time or #f" timeout))))
 
   (let lp ()
     (unless (flock raw-or-fd op)
       (when deadline
         (unless (< deadline (##current-time-point))
-          (raise-timeout 'flock "Deadline for flock operation exceeded" raw-or-fd op)))
+          (raise-timeout flock "Deadline for flock operation exceeded" raw-or-fd op)))
       (thread-sleep! (random-real))
       (lp))))
 
@@ -102,7 +102,7 @@
   (define-const LOCK_NB)
 
   ;; private
-  (namespace ("std/os/flock#" __flock))
+  (namespace ("std/os/flock" __flock))
 
   (define-c-lambda __flock (int int) int
     "flock")

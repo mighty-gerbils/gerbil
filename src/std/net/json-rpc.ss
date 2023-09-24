@@ -189,7 +189,7 @@
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
-       (else (raise-bad-argument 'json-rpc "http method: invalid" http-method)))))
+       (else (raise-bad-argument json-rpc "http method: invalid" http-method)))))
   (def response-json
     (try
      (bytes->json response-bytes) ;; todo: move to decode-json-rpc-response ?

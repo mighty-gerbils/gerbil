@@ -53,9 +53,9 @@
 (def (copy-port in out)
   (cond
    ((not (input-port? in))
-    (raise-bad-argument 'copy-port "input port" in))
+    (raise-bad-argument copy-port "input port" in))
    ((not (output-port? out))
-    (raise-bad-argument 'copy-port "output port" out))
+    (raise-bad-argument copy-port "output port" out))
    ((macro-byte-port? in)
     (cond
      ((macro-byte-port? out)
@@ -315,7 +315,7 @@
    ((u8vector? contents) (write-u8vector contents port))
    ((procedure? contents) (contents port))
    (else
-    (raise-bad-argument 'output-contents "string, u8vector or procedure" contents))))
+    (raise-bad-argument output-contents "string, u8vector or procedure" contents))))
 
 (def (force-current-outputs)
   (force-output (current-output-port))
@@ -335,7 +335,7 @@
    ((string? o) (call-with-output-file o p))
    ((list? o) (call-with-output-file o p))
    (else
-    (raise-bad-argument 'call-with-output "output port designator" o))))
+    (raise-bad-argument call-with-output "output port designator" o))))
 
 (defrules with-output ()
   ((_ (o x) body ...) (call-with-output x (lambda (o) body ...)))

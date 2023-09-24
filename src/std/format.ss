@@ -10,7 +10,7 @@
 
 (def (format fmt . args)
   (unless (string? fmt)
-    (raise-bad-argument 'format "string" fmt))
+    (raise-bad-argument format "string" fmt))
   (let (out (open-output-string))
     (dofmt out fmt args)
     (get-output-string out)))
@@ -20,9 +20,9 @@
 
 (def (fprintf port fmt . args)
   (unless (output-port? port)
-    (raise-bad-argument 'fprintf "output port" port))
+    (raise-bad-argument fprintf "output port" port))
   (unless (string? fmt)
-    (raise-bad-argument 'fprintf "string" fmt))
+    (raise-bad-argument fprintf "string" fmt))
   (dofmt port fmt args))
 
 (def (eprintf fmt . args)
@@ -59,13 +59,13 @@
                  ((hash-get dispatch-table next)
                   => (cut <> next K xi rest))
                  (else
-                  (raise-bad-argument 'format "format specifier" fmt next))))
-              (raise-bad-argument 'format "format string" fmt))
+                  (raise-bad-argument format "format specifier" fmt next))))
+              (raise-bad-argument format "format string" fmt))
             (begin
               (write-char next)
               (K xi rest))))
         (unless (null? rest)
-          (raise-bad-argument 'format "format string -- too many arguments" fmt args))))))
+          (raise-bad-argument format "format string -- too many arguments" fmt args))))))
 
 ;; format parameters
 (def current-format-string
@@ -83,7 +83,7 @@
      ([arg . rest-args]
       body ...)
      (else
-      (raise-bad-argument 'format "format string -- missing argument"
+      (raise-bad-argument format "format string -- missing argument"
         (current-format-string) (current-format-args))))))
 
 (defrules defdispatch ()
@@ -180,7 +180,7 @@
 
       (defrules bad-format-string ()
         ((_)
-         (raise-bad-argument 'format "format string -- malformed fixed width specifier"
+         (raise-bad-argument format "format string -- malformed fixed width specifier"
            str (current-format-args))))
 
       (let lp ((xi xi) (width [char]))
@@ -261,7 +261,7 @@
          (else
           (pad-zeros (number->string (exact->inexact arg)))))))
      (else
-      (raise-bad-argument 'format "number -- float format specifier"
+      (raise-bad-argument format "number -- float format specifier"
         (current-format-string) (current-format-args) arg))))
 
   (def (compose-float digits pre-str frac-str)

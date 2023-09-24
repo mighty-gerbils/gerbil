@@ -46,7 +46,7 @@
     ((2) 'VARLEN)
     ((5) 'FIXED32)
     (else
-     (raise-io-error 'protobuf "Unknown type tag" x))))
+     (raise-io-error protobuf "Unknown type tag" x))))
 
 (def (tag->byte x)
   (case x
@@ -55,7 +55,7 @@
     ((VARLEN)  2)
     ((FIXED32) 5)
     (else
-     (raise-io-error 'protobuf "Unknown type tag" x))))
+     (raise-io-error protobuf "Unknown type tag" x))))
 
 
 ;; unknown field skipping
@@ -70,13 +70,13 @@
     ((FIXED32)
      (&BufferedReader-skip buf 4))
     (else
-     (raise-io-error 'protobuf "Unknown type tag" tag))))
+     (raise-io-error protobuf "Unknown type tag" tag))))
 
 (defreader-ext (skip-varint buf)
   (let lp ()
     (let (byte (&BufferedReader-read-u8 buf))
       (when (eof-object? byte)
-        (raise-premature-end-of-input 'BufferedReader-skip-varint))
+        (raise-premature-end-of-input BufferedReader-skip-varint))
       (unless (fx= (fxand byte #x80) 0)
         (lp)))))
 
@@ -190,7 +190,7 @@
     (if (fx< i n)
       (let (byte (&BufferedReader-read-u8 buf))
         (when (eof-object? byte)
-          (raise-premature-end-of-input 'bio-read-sfixed32))
+          (raise-premature-end-of-input bio-read-sfixed32))
         (lp (fx+ i 1)
             (bitwise-ior bits (arithmetic-shift byte (fx* 8 i)))))
       bits)))

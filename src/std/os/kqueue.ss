@@ -179,7 +179,7 @@
   (c-declare "#include <sys/event.h>")
   (c-declare "#include <sys/time.h>")
 
-  (namespace ("std/os/kqueue#" kevent))
+  (namespace ("std/os/kqueue" kevent))
 
   ;; Flags
   (define-const EV_ADD)

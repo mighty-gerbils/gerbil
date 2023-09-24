@@ -29,7 +29,7 @@
       ([[k . v] . rest] (append [k v] (loop rest)))
       ([] [])
       (else
-       (raise-bad-argument 'alist->plist "proper alist" alist)))))
+       (raise-bad-argument alist->plist "proper alist" alist)))))
 
 ;; The plist definitions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
 (defrule (define-pset pset cmp)
@@ -60,7 +60,7 @@
       (match l
         ([k v . r] (if (cmp k key) (set-car! (cdr l) val) (lp r)))
         ([] (match lst ([k1 . v1r] (set-car! lst key) (set-cdr! lst (cons* val k1 v1r)))))
-        (_ (raise-bad-argument 'pset! "valid plist" lst key val))))))
+        (_ (raise-bad-argument pset! "valid plist" lst key val))))))
 
 (define-pset! psetq! eq?)
 (def pgetq-set! (case-lambda ((k l v) (psetq! l k v)) ((k l d v) (psetq! l k v))))
@@ -75,7 +75,7 @@
       (match tl
         ([k v . r] (if (cmp key k) (foldl cons r rhd) (lp r (cons* v k rhd))))
         ([] lst)
-        (_ (raise-bad-argument 'prem "valid plist" lst key))))))
+        (_ (raise-bad-argument prem "valid plist" lst key))))))
 
 (define-prem premq eq?)
 (define-prem premv eqv?)
@@ -84,7 +84,7 @@
 (defrule (define-prem! prem! cmp)
   (def (prem! key lst)
     (def (invalid)
-      (raise-bad-argument 'prem! "valid plist" lst key))
+      (raise-bad-argument prem! "valid plist" lst key))
     (let lp ((p lst) (prev #f))
       (match p
         ([k1 _ . r]
@@ -93,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2 . v2r] (set-car! p k2) (set-cdr! p v2r))
-               ([] (raise-bad-argument 'prem! "key: cannot remove last key from plist" lst key))
+               ([] (raise-bad-argument prem! "key: cannot remove last key from plist" lst key))
                (_ (invalid))))
            (lp r (cdr p))))
         ([] (void)) ; key not found: NOP

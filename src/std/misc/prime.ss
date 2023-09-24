@@ -29,7 +29,7 @@
   (unless (and (fixnum? product)
                (<= 2 product)
                (let (p (evector->list primes)) (every (cut member <> p) prime-list)))
-    (raise-bad-argument 'compute-prime-wheel "invalid list of primes" prime-list))
+    (raise-bad-argument compute-prime-wheel "invalid list of primes" prime-list))
   (def rp (list->vector (for/collect (n (in-range product)) (= 1 (gcd n product)))))
   (list->vector (for/collect (n (in-range product))
                   (let/cc return
