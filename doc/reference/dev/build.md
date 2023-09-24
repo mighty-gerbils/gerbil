@@ -420,7 +420,7 @@ notice that the version is a commit hash, as at the time of writing
 there are not any _version tags_ in the package (see next section).
 
 Note that the version of our project (`scrape-it`) is unknow; that's
-because we have initialized a git repository for our project.
+because we have not initialized a git repository for our project.
 Once we do that, it stops being unknown and it points to the current commit:
 ```shell
 $ git init
