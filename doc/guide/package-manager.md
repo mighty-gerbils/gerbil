@@ -40,11 +40,11 @@ See gerbil-utils for an example package.
 
 To install fare's gerbil-utils package:
 
-`gxpkg install github.com/fare/gerbil-utils`
+`gxpkg install github.com/mighty-gerbils/gerbil-utils`
 
 To link a local development package (here vyzo's gerbil-aws package):
 
-`gxpkg link github.com/mighty-gerbils/gerbil-aws gerbil-aws`
+`gxpkg link github.com/vyzo/gerbil-aws gerbil-aws`
 
 To list all installed (or linked) packages:
 
@@ -66,14 +66,27 @@ To search for packages created by vyzo using the package directory:
 
 `gxpkg search vyzo`
 
-## Known Gerbil Packages
+## Package Directories
 
-We maintain a list of known Gerbil packages in the [Gerbil Package Directory](https://github.com/mighty-gerbils/gerbil-directory).
-Feel free to open a PR in that repo to list your own packages!
+Package lists come from directories, which can be any repo on github
+that has a `package-list` file or just a URL pointing to a package
+list. This list follows the simplest and most extensible an association list where the car is the package and the cdr is a plist of the package properties, with keyword keys. The only required key is `description:`.
+
+This is designed so that it is trivial to create a new directory; in
+fact users are encouraged to create their own directories for their
+packages and share them with each other.
+
+By default, the [Mighty Gerbils
+directory](https://github.com/mighty-gerbils/gerbil-directory) is
+searched, as these are packaged developed and maintained by the Gerbil
+Core Team.
+
+You can add a new directory with the `gxpkg dir -a directory-repo-or-url ...`
+command.
 
 ## A Word of Caution
 
-The build script is currently not sandboxed; it runs with user privileges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
+The build script is not sandboxed; it runs with user privileges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
 
 You can quickly vet a package by inspecting the gerbil.pkg manifest and the build script itself. If it uses the standard script template or just invokes make with a build-spec, then it should be a reasonably behaved package. Of course, who knows what surprises could be lurking in a macro deep in the sources, so where to stop?
 
