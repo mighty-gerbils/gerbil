@@ -207,8 +207,6 @@
     "net/json-rpc"
     ;; TODO to be ported
     ;;"net/websocket"
-    ;; TODO to be removed
-    ;; "net/wamp"
     (gxc: "net/repl" ,@(include-gambit-sharp))
     "net/socks"
     ;; std/os
