@@ -63,7 +63,7 @@
 
 (defport-method raw-port       (close port)
   => close-port)
-(defport-method raw-port (reset! port reader)
+(defport-method raw-port       (reset! port reader)
   (raise-unsupported-method reset!))
 
 (defport-method raw-input-port (put-back port previous-input)
@@ -125,7 +125,7 @@
   (cooked-input-port-read* port buffer u8v start end need read-subu8vector subu8vector-move!))
 
 ;;; Delimited Binary Input
-(defsimple-port-method delimited-binary-input-port (close-port self)
+(defsimple-port-method delimited-binary-input-port (close self)
   (delimited-close! self))
 
 (defsimple-port-method delimited-binary-input-port (reset! self)
@@ -172,7 +172,7 @@
   (cooked-input-port-read* port buffer str start end need read-substring substring-move!))
 
 ;;; Delimited Textual Input
-(defsimple-port-method delimited-textual-input-port (close-port self)
+(defsimple-port-method delimited-textual-input-port (close self)
   (delimited-close! self))
 
 (defsimple-port-method delimited-textual-input-port (reset! self)
