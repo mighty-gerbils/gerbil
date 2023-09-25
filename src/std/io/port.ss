@@ -50,12 +50,11 @@
          body ...)))))
 
 (defrule (defcooked-port-method klass (name port buffer . args) body ...)
-  (defport-method klass (name port . args)
-    (defmethod {name klass}
-      (lambda (self . args)
-        (let ((port (&raw-port-port self))
-              (buffer (&cooked-port-buffer self)))
-          body ...)))))
+  (defmethod {name klass}
+    (lambda (self . args)
+      (let ((port (&raw-port-port self))
+            (buffer (&cooked-port-buffer self)))
+        body ...))))
 
 (defrule (defsimple-port-method klass (name self . args) body ...)
   (defmethod {name klass}
