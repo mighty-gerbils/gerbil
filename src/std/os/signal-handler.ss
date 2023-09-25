@@ -129,7 +129,8 @@
                                    (kevent-ident events i))))
                         (when event-handler
                           (signal-handler-dispatch event-handler))))
-                    (raise-os-error (kevent-data events i)
+                    (raise-os-error signal-handler-wait
+                                    (kevent-data events i)
                                     signal-handler-wait))
                   (event-loop (fx1+ i))))))
           (wait-loop)))

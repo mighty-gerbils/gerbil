@@ -24,8 +24,8 @@
         ECONNRESET)
 
 (deferror-class OSError (errno) os-error?)
-(defrule (raise-os-error errno irritants ...)
-  (let (err (OSError (strerror errno) where: (exception-context errno) irritants: [irritants ...]))
+(defrule (raise-os-error where errno irritants ...)
+  (let (err (OSError (strerror errno) where: (exception-context where) irritants: ['where irritants ...]))
     (set! (OSError-errno err) errno)
     (raise err)))
 (def os-error-errno OSError-errno)
@@ -38,7 +38,7 @@
   ((_ expr (prim arg ...))
    (let (r expr)
      (if (not (##fxnegative? r)) r
-         (raise-os-error r '(prim arg ...))))))
+         (raise-os-error prim r arg ...)))))
 
 (defrules do-retry-nonblock ()
   ((_ expr (prim arg ...) ERRNO ...)
@@ -52,7 +52,7 @@
               ((eq? errno EINTR)
                (lp))
               (else
-               (raise-os-error errno prim arg ...)))))))))
+               (raise-os-error prim errno arg ...)))))))))
 
 (defrules check-ptr ()
   ((_ (make arg ...))
