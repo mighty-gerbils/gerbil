@@ -52,7 +52,7 @@
    ((##fx= (##fxand flags O_WRONLY) O_WRONLY)
     'out)
    (else
-    (raise-bad-argument 'fdio "file direction: unspecified" flags))))
+    (raise-bad-argument fdio "file direction: unspecified" flags))))
 
 ;;; FFI impl
 (begin-ffi (_read _write _open _close

@@ -47,7 +47,7 @@
            (let (res (mutex-unlock! mx cv timeo))
              (if res
                (lp)
-               (raise-timeout 'conpool-get "Error getting connection; timeout")))))))))
+               (raise-timeout conpool-get "Error getting connection; timeout")))))))))
 
 (def (conpool-put cp conn)
   (with ((conpool _ mx cv conns out) cp)

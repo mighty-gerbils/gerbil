@@ -29,7 +29,7 @@
   (with ((pqueue e cmp prio) pq)
     (if (##fxzero? (heap-size e))
       (if (eq? default absent-obj)
-        (raise-context-error 'pqueue-peek "empty pqueue" pq)
+        (raise-context-error pqueue-peek "empty pqueue" pq)
         default)
       (heap-top e))))
 
@@ -37,7 +37,7 @@
   (with ((pqueue e cmp) pq)
     (if (##fxzero? (heap-size e))
       (if (eq? default absent-obj)
-        (raise-context-error 'pqueue-pop! "Cannot pop; empty pqueue" pq)
+        (raise-context-error pqueue-pop! "Cannot pop; empty pqueue" pq)
         default)
       (let (obj (heap-top e))
         (heap-pop! e cmp)

@@ -49,7 +49,7 @@
                     mod-str)))
             (string-append mod-str "__rt")))
          (else
-          (raise-bad-argument 'load-library-module "string or symbol" mod))))
+          (raise-bad-argument load-library-module "string or symbol" mod))))
     (->> (handle srv (reference srv-id 'loader))
          (!load-library-module mod-str)))
   error: "error remotely loading library module" srv-id mod)
@@ -61,7 +61,7 @@
           ((string? object-file-path)
            (read-file-u8vector object-file-path))
           (else
-           (raise-bad-argument 'load-code "path: code object file" object-file-path))))
+           (raise-bad-argument load-code "path: code object file" object-file-path))))
         (linker (path-strip-directory object-file-path)))
     (->> (handle srv (reference srv-id 'loader))
          (!load-code code linker)))
@@ -120,7 +120,7 @@
                                 capabilities: (cap '(admin)))
   (let (remote-root (handle srv (reference srv-id 0)))
     (unless (and (list? cap) (andmap symbol? cap))
-      (raise-bad-argument 'authorize "capabilities: list of symbols" cap))
+      (raise-bad-argument authorize "capabilities: list of symbols" cap))
     (match (->> remote-root (!admin-auth authorized-server-id cap))
       ((!admin-auth-challenge bytes)
        (let (sig (admin-auth-challenge-sign privk srv-id authorized-server-id bytes))

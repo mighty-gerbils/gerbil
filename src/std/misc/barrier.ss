@@ -16,7 +16,7 @@
 (defmethod {:init! barrier}
   (lambda (self limit)
     (unless (and (fixnum? limit) (##fx>= limit 0))
-      (raise-bad-argument 'make-barrier "positive fixnum" limit))
+      (raise-bad-argument make-barrier "positive fixnum" limit))
     (struct-instance-init! self
                            (make-mutex 'barrier)
                            (make-condition-variable 'barrier)

@@ -75,7 +75,7 @@
     ((connection-e conn)
      => (lambda (driver) body ...))
     (else
-     (raise-io-closed 'postgresql-driver "connection has been closed" conn)))))
+     (raise-io-closed postgresql-driver "connection has been closed" conn)))))
 
 (defrules get-driver ()
   ((_ conn)
@@ -125,13 +125,13 @@
   (if (!token? token)
     (with-driver conn driver
       (-> driver (!continue token)))
-    (raise-bad-argument 'postgreql "query token" token)))
+    (raise-bad-argument postgreql "query token" token)))
 
 (def (postgresql-reset! conn token)
   (if (!token? token)
     (alet (driver (get-driver conn))
       (-> driver (!reset token)))
-    (raise-bad-argument 'postgreql "query token" token)))
+    (raise-bad-argument postgreql "query token" token)))
 
 (defcall-actor (postgresql-current-notice-handler conn)
   (cond
@@ -187,7 +187,7 @@
         (['ReadyForQuery _]
          (spawn/name 'postgresql-connection postgresql-driver sock reader writer))
         (['ErrorResponse msg . irritants]
-         (apply raise-io-error 'postgresql-connect! msg irritants))
+         (raise-io-error postgresql-connect! msg irritants))
         (['NoticeResponse msg . irritants]
          ((current-notice-handler) msg irritants)
          (lp))
@@ -204,9 +204,9 @@
      (match (postgresql-recv! reader)
        clause ...
        (['ErrorResponse msg . irritants]
-        (apply raise-io-error 'postgresql-connect! msg irritants))
+        (raise-io-error postgresql-connect! msg irritants))
        (unexpected
-        (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))))
+        (raise-io-error postgresql-connect! "unexpected message" unexpected)))))
 
   (def (authen-pass pass)
     (send! ['PasswordMessage pass])
@@ -233,7 +233,7 @@
   (def (authen-sasl mechanisms)
     (DEBUG "AUTHEN SASL")
     (unless (member "SCRAM-SHA-256" mechanisms)
-      (raise-io-error 'postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
+      (raise-io-error postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
     (let* ((ctx (scram-sha-256-begin "" passwd))
            (msg (scram-client-first-message ctx)))
       (send! ['SASLInitialResponse "SCRAM-SHA-256" msg])
@@ -266,7 +266,7 @@
        ((AuthenticationSASL)
         (authen-sasl rest))
        (else
-        (raise-io-error 'postgresql-connect! "unsupported authentication mechanism" what)))))
+        (raise-io-error postgresql-connect! "unsupported authentication mechanism" what)))))
    (catch (e)
      (StreamSocket-close sock)
      (raise e))))
@@ -334,13 +334,13 @@
        (void))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-prepare! msg irritants)))
+       (raise-sql-error postgresql-prepare! msg irritants)))
     (match (recv!)
       (['ParameterDescription . query-params]
        (set! params query-params))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-prepare! msg irritants)))
+       (raise-sql-error postgresql-prepare! msg irritants)))
     (match (recv!)
       (['RowDescription . fields]
        (set! cols fields))
@@ -366,7 +366,7 @@
        (void))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-exec! msg irritants)))
+       (raise-sql-error postgresql-exec! msg irritants)))
     (let lp ()
       (match (recv!)
         (['DataRow . cols]
@@ -377,7 +377,7 @@
          (void))
         (['ErrorResponse msg . irritants]
          (resync!)
-         (apply raise-sql-error 'postgreql-exec msg irritants))))
+         (raise-sql-error postgreql-exec msg irritants))))
     (resync!)
     res)
 
@@ -408,7 +408,7 @@
          (values ch token)))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-query! msg irritants))))
+       (raise-sql-error postgresql-query! msg irritants))))
 
   (def (query-pump)
       ;; Execute ("")          -> DataRow ...
@@ -574,13 +574,13 @@
      ((eq? tag 'StartupMessage)
       (marshal-and-write #f body marshal-startup))
      (else
-      (raise-io-error 'postgresql-send! "cannot marshal; unknown message tag" msg)))))
+      (raise-io-error postgresql-send! "cannot marshal; unknown message tag" msg)))))
 
 (def (postgresql-recv! reader)
   (DEBUG "RECEIVE!")
   (let* ((tid (&BufferedReader-read-u8 reader))
          (_ (when (eof-object? tid)
-              (raise-io-error 'postgresql-recv! "connection closed")))
+              (raise-io-error postgresql-recv! "connection closed")))
          (payload-len (&BufferedReader-read-u32 reader))
          (payload-len (fx- payload-len 4))
          (payload-reader (&BufferedReader-delimit reader payload-len)))
@@ -598,7 +598,7 @@
               (DEBUG "RECEIVE " msg)
               msg))))
      (else
-      (raise-io-error 'postgresql-recv! "unexpected backend message" tid)))))
+      (raise-io-error postgresql-recv! "unexpected backend message" tid)))))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore buf)
@@ -721,7 +721,7 @@
 ;;; message marshaling
 (def (marshal-fail what)
   (lambda (body)
-    (raise-io-error 'postgresql-send! "Cannot marshal; unsupported message" (cons what body))))
+    (raise-io-error postgresql-send! "Cannot marshal; unsupported message" (cons what body))))
 
 (def (marshal-empty body)
   '#u8())
@@ -769,7 +769,7 @@
             (&BufferedWriter-write-u32 buf (u8vector-length param))
             (&BufferedWriter-write buf param))
            (else
-            (raise-io-error 'postgresql-send! "Cannot marshal; bad parameter" param))))
+            (raise-io-error postgresql-send! "Cannot marshal; bad parameter" param))))
         params)
       (&BufferedWriter-write-u16 buf 0))))
 

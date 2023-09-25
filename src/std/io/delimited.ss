@@ -15,12 +15,12 @@
 
 (def (open-delimited-reader reader limit)
   (unless (Reader? reader)
-    (raise-bad-argument 'open-delimited-reader "Reader" reader))
+    (raise-bad-argument open-delimited-reader "Reader" reader))
   (Reader (make-delimited-reader reader limit)))
 
 (def (open-delimited-string-reader reader limit)
   (unless (StringReader? reader)
-    (raise-bad-argument 'open-delimited-string-readeer "StringReader" reader))
+    (raise-bad-argument open-delimited-string-readeer "StringReader" reader))
   (StringReader (make-delimited-string-reader reader limit)))
 
 (defmethod {read delimited-reader}
@@ -28,7 +28,7 @@
     (let (remaining (&delimited-reader-remaining self))
       (cond
        ((fx> input-need remaining)
-        (raise-io-error 'Reader-read "input limit exceeded" input-need remaining))
+        (raise-io-error Reader-read "input limit exceeded" input-need remaining))
        ((fx= remaining 0) 0)
        (else
         (let* ((want (fx- output-end output-start))
@@ -51,7 +51,7 @@
     (let (remaining (&delimited-string-reader-remaining self))
       (cond
        ((fx> input-need remaining)
-        (raise-io-error 'StringReader-read-string "input limit exceeded" input-need remaining))
+        (raise-io-error StringReader-read-string "input limit exceeded" input-need remaining))
        ((fx= remaining 0) 0)
        (else
         (let* ((want (fx- output-end output-start))

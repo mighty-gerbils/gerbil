@@ -42,7 +42,7 @@
   (with ((rbtree root cmp) t)
     (let (r (tree-ref cmp root key default))
       (if (eq? r absent-obj)
-        (raise-unbound-key 'rbtree-ref t key)
+        (raise-unbound-key rbtree-ref t key)
         r))))
 
 (def (rbtree-get t key)

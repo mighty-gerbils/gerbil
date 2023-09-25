@@ -26,7 +26,7 @@
         (begin
           (unless (&wait-io! (fd-io-out sock) timeo)
             (socket-close sock)
-            (raise-timeout 'connect "connection timeout" address))
+            (raise-timeout connect "connection timeout" address))
           (let (errno (socket-getsockopt sock SOL_SOCKET SO_ERROR))
             (if (fx= errno 0)
               sock

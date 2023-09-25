@@ -11,7 +11,7 @@
   (let (remaining (&delimited-input-buffer-remaining delim))
     (cond
      ((fx> input-need remaining)
-      (raise-io-error 'BufferedReader-read-bytes "input limit exceeded" input-need remaining))
+      (raise-io-error BufferedReader-read-bytes "input limit exceeded" input-need remaining))
      ((fx= remaining 0) 0)
      (else
       (let ((want (fx- output-end output-start))
@@ -71,7 +71,7 @@
 (def (bio-delimited-skip-input delim count)
   (let (remaining (&delimited-input-buffer-remaining delim))
     (if (fx> count remaining)
-      (raise-io-error 'BufferedReader-read-bytes "input limit exceeded" count remaining)
+      (raise-io-error BufferedReader-read-bytes "input limit exceeded" count remaining)
       (let (in (&delimited-input-buffer-in delim))
         (if (input-buffer? in)
           (bio-skip-input in count)

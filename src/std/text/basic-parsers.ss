@@ -42,7 +42,7 @@
       (if-let (next-digit (char-ascii-digit (%peek-char reader) base))
         (loop (+ next-digit (* base n)))
         n))
-    (raise-parse-error 'parse-natural "Not a digit in requested base"
+    (raise-parse-error parse-natural "Not a digit in requested base"
                        (%peek-char reader) base reader)))
 
 (def (parse-signed-integer reader (base 10))
@@ -57,7 +57,7 @@
      ((char-ascii-digit char)
       (parse-natural reader base))
      (else
-      (raise-parse-error 'parse-signed-integer "Neither a sign nor a digit in requested base"
+      (raise-parse-error parse-signed-integer "Neither a sign nor a digit in requested base"
                          char base reader)))))
 
 (def (parse-maybe-one-of char-pred?)
@@ -70,7 +70,7 @@
     (def c (%peek-char reader))
     (if (char-pred? c)
       c
-      (raise-parse-error 'parse-one-of "Unexpected character"
+      (raise-parse-error parse-one-of "Unexpected character"
                          c char-pred? reader))))
 
 (def (parse-any-number-of char-pred?)
@@ -83,7 +83,7 @@
 (def (parse-one-or-more-of char-pred?)
   (lambda (reader)
     (or ((parse-any-number-of char-pred?) reader)
-        (raise-parse-error 'parse-one-or-more-of "Unexpected character"
+        (raise-parse-error parse-one-or-more-of "Unexpected character"
                            (%peek-char reader) reader))))
 
 (def (parse-maybe-char char)
@@ -113,7 +113,7 @@
     (for (i (in-range n))
       (def c (%peek-char reader))
       (unless (char-pred? c)
-        (raise-parse-error 'parse-n-chars "invalid character" c n char-pred? i))
+        (raise-parse-error parse-n-chars "invalid character" c n char-pred? i))
       (string-set! s i c))
     s))
 
@@ -125,7 +125,7 @@
                  (digit (char-ascii-digit char base)))
             (if digit
               (begin (%read-char reader) (loop (- n 1) (+ digit (* base r))))
-              (raise-parse-error 'parse-n-digits "not a digit" char reader n base)))))))
+              (raise-parse-error parse-n-digits "not a digit" char reader n base)))))))
 
 ;; Like parse-line, but handles (and still strips) any of the CRLF, CR and LF line endings
 (def (parse-line reader)

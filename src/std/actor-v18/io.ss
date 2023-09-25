@@ -15,13 +15,13 @@
   (let (tag (object-tag obj))
     (cond
      ((not tag)
-      (raise-io-error 'BufferedWriter-marshal "unserializable object" obj))
+      (raise-io-error BufferedWriter-marshal "unserializable object" obj))
      ((vector-ref +marshal+ tag)
       => (lambda (write-e)
            (&BufferedWriter-write-u8 buf tag)
            (fx+ (write-e buf obj) 1)))
      (else
-      (raise-io-error 'BufferedWriter-marshal "missing serializer" obj tag)))))
+      (raise-io-error BufferedWriter-marshal "missing serializer" obj tag)))))
 
 (defreader-ext* (unmarshal buf)
   (let (tag (&BufferedReader-read-u8! buf))
@@ -29,7 +29,7 @@
      ((vector-ref +unmarshal+ tag)
       => (cut <> buf))
      (else
-      (raise-io-error 'BufferedReader-unmarshal "unrecognized object tag" tag)))))
+      (raise-io-error BufferedReader-unmarshal "unrecognized object tag" tag)))))
 
 (defreader-ext* (try-unmarshal buf)
   (let (tag (&BufferedReader-read-u8 buf))
@@ -39,7 +39,7 @@
      ((vector-ref +unmarshal+ tag)
       => (cut <> buf))
      (else
-      (raise-io-error 'BufferedReader-unmarshal "unrecognized object tag" tag)))))
+      (raise-io-error BufferedReader-unmarshal "unrecognized object tag" tag)))))
 
 (defwriter-ext* (marshal-envelope buf obj)
   (with ((envelope message dest source nonce replyto expiry reply-expected?) obj)
@@ -47,7 +47,7 @@
               (handle? source)
               (thread? dest)
               (handle? dest))
-      (raise-io-error 'BufferedWriter-marshal "cannot marshal envelope; contains threads"
+      (raise-io-error BufferedWriter-marshal "cannot marshal envelope; contains threads"
                       source dest))
     (let* ((w1 (&BufferedWriter-marshal buf message))
            (w2 (&BufferedWriter-marshal buf dest))
@@ -100,7 +100,7 @@
      ((lookup-message-type klass-id)
       => (lambda (klass)
            (unless (fx= fields (type-descriptor-fields klass))
-             (raise-io-error 'BufferedReader-unmarshal-message "bad message; field count mismatch"
+             (raise-io-error BufferedReader-unmarshal-message "bad message; field count mismatch"
                              klass-id fields klass (type-descriptor-fields klass)))
            (let (obj (make-object klass fields))
              (let lp ((i 0))
@@ -111,7 +111,7 @@
                    (lp i+1))
                  obj)))))
      (else
-      (raise-io-error 'BufferedReader-unmarshal-message "unknown message type" klass-id)))))
+      (raise-io-error BufferedReader-unmarshal-message "unknown message type" klass-id)))))
 
 (defwriter-ext* (marshal-void buf obj)
   0)

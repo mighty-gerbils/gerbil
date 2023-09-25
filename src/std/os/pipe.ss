@@ -11,7 +11,7 @@
 
 (def (pipe (direction 'inout) (closeonexec #t))
   (unless (memq direction '(in out inout none))
-    (raise-bad-argument 'pipe "direction: in, out, inout, none"))
+    (raise-bad-argument pipe "direction: in, out, inout, none"))
   (let* ((ptr (check-ptr (make_pipe_ptr)))
          (_ (check-os-error (_pipe ptr) (pipe)))
          (ifd (pipe_ptr_ref ptr 0))

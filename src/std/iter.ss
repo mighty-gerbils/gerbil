@@ -51,7 +51,7 @@
 (defmethod (:iter (obj <port>))
   (if (input-port? obj)
     (iter-input-port obj)
-    (raise-bad-argument ':iter "input-port" obj)))
+    (raise-bad-argument :iter "input-port" obj)))
 (defmethod (:iter (obj <object>))
   {:iter obj})
 
@@ -133,7 +133,7 @@
             value)
           iter-end))))
   (unless (and (number? start) (fixnum? count) (number? step))
-    (raise-bad-argument 'in-iota "iota parameters: (count:fixnum start:number step:number)"
+    (raise-bad-argument in-iota "iota parameters: (count:fixnum start:number step:number)"
       count start step))
   (make-iterator (cons start count) next))
 
@@ -154,7 +154,7 @@
              e)
            iter-end)))
      (unless (and (real? start) (real? end) (real? step))
-       (raise-bad-argument 'in-range "range parameters: real numbers" start end step))
+       (raise-bad-argument in-range "range parameters: real numbers" start end step))
      (make-iterator start next))))
 
 (defiter-in-range iter-in-range< <)

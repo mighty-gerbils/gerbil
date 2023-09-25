@@ -11,14 +11,14 @@
 
 (def (string->utf32 str (endianness big) (BOM? #f))
   (unless (string? str)
-    (raise-bad-argument 'utf32-codec "string" str))
+    (raise-bad-argument utf32-codec "string" str))
   (let (u32-set!
         (case endianness
           ((big) u32-set!/be)
           ((little) u32-set!/le)
           ((native) (&u8vector-u32-set!/native))
           (else
-           (raise-bad-argument 'utf32-codec "endianness" endianness))))
+           (raise-bad-argument utf32-codec "endianness" endianness))))
     (utf32-encode str u32-set! BOM?)))
 
 (def (utf32-encode str u32-set! BOM?)
@@ -41,20 +41,20 @@
 
 (def (utf32->string bytes (endianness big) (endianness-mandatory? #f))
   (unless (u8vector? bytes)
-    (raise-bad-argument 'utf32-codec "u8vector" bytes))
+    (raise-bad-argument utf32-codec "u8vector" bytes))
   (let (u32-ref
         (case endianness
           ((big) u32-ref/be)
           ((little) u32-ref/le)
           ((native) &u8vector-u32-ref/native)
           (else
-           (raise-bad-argument 'utf32-codec "endianness" endianness))))
+           (raise-bad-argument utf32-codec "endianness" endianness))))
     (utf32-decode bytes u32-ref (not endianness-mandatory?))))
 
 (def (utf32-decode bytes u32-ref BOM?)
   (def len (u8vector-length bytes))
   (unless (fx= (fxremainder len 4) 0)
-    (raise-io-error 'utf32-decode "Cannot decode UTF-32; u8vector length is not a multiple of 4" bytes))
+    (raise-io-error utf32-decode "Cannot decode UTF-32; u8vector length is not a multiple of 4" bytes))
   (if BOM?
     ;; try to read the BOM to determine endianness
     (if (fx>= len 4)

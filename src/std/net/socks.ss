@@ -143,11 +143,11 @@
     (recv-msg sock in)
     (let (proto (##u8vector-ref in 0))
       (unless (eq? proto 5)
-        (raise-io-error 'socks5-open
+        (raise-io-error socks5-open
                         "SOCKS5 handshake error; protocol version mismatch" proto)))
     (let (rep (##u8vector-ref in 1))
       (unless (eq? rep 0)
-        (raise-io-error 'socks5-open
+        (raise-io-error socks5-open
                         "SOCKS5 handshake error; negotiation failed" rep)))))
 
 (def (socks5-connect sock address)
@@ -243,7 +243,7 @@
          (recv-msg sock addr)
          (cons addr (recv-port))))
       (else
-       (raise-io-error 'socks5-recv-reply
+       (raise-io-error socks5-recv-reply
                        "Unexpected SOCKS5 address type" atype rep))))
 
   (let (hdr (##make-u8vector 4 0))
@@ -251,11 +251,11 @@
     (let ((proto (##u8vector-ref hdr 0))
           (rep   (##u8vector-ref hdr 1)))
       (unless (eq? proto 5)
-        (raise-io-error 'socks5-recv-reply
+        (raise-io-error socks5-recv-reply
                         "Unexpected SOCKS5 reply; protocol mismatch" proto))
       (let (addr (recv-address (##u8vector-ref hdr 3) rep))
         (if (eq? rep 0) addr
-            (raise-io-error 'socks5-recv-reply
+            (raise-io-error socks5-recv-reply
                             "SOCKS5 error response" rep))))))
 
 (def (socks4-send-request sock cmd host port userid)
@@ -291,11 +291,11 @@
     (recv-msg sock buf)
     (let (vn (##u8vector-ref buf 0))
       (unless (eq? vn 0)
-        (raise-io-error 'socks4-recv-reply
+        (raise-io-error socks4-recv-reply
                         "Unexpected SOCKS4 reply; version mismatch" vn)))
     (let (rep (##u8vector-ref buf 1))
       (unless (eq? rep 90)
-        (raise-io-error 'socks4-recv-reply
+        (raise-io-error socks4-recv-reply
                         "SOCKS4 request rejected" rep)))
     (cons (##subu8vector buf 4 8)
           (##fxior (##fxarithmetic-shift (##u8vector-ref buf 2) 8)
@@ -304,12 +304,12 @@
 (def (send-msg sock buf)
   (let (wr (write-u8vector buf sock))
     (unless (eq? wr (##u8vector-length buf))
-      (raise-io-error 'socks-send-message
+      (raise-io-error socks-send-message
                       "Failed to send message; incomplete write" sock wr))
     (force-output sock)))
 
 (def (recv-msg sock buf)
   (let (rd (read-u8vector buf sock))
     (unless (eq? rd (##u8vector-length buf))
-      (raise-io-error 'socks-recv-message
+      (raise-io-error socks-recv-message
                       "Failed to receive message; incomplete read" sock rd))))

@@ -13,17 +13,17 @@
 (def (string->utf8 str (start 0) (end #f))
   (if (string? str)
     (utf8-encode str start (if (nonnegative-fixnum? end) end (string-length str)))
-    (raise-bad-argument 'utf8-codec "string" str)))
+    (raise-bad-argument utf8-codec "string" str)))
 
 (def (string-utf8-length str (start 0) (end #f))
   (if (string? str)
     (utf8-encode-length str start (if (nonnegative-fixnum? end) end (string-length str)))
-    (raise-bad-argument 'utf8-codec "string" str)))
+    (raise-bad-argument utf8-codec "string" str)))
 
 (def (utf8->string u8v (start 0) (end #f))
   (if (u8vector? u8v)
     (utf8-decode u8v start (if (nonnegative-fixnum? end) end (u8vector-length u8v)))
-    (raise-bad-argument 'utf8-codec "u8vector" u8v)))
+    (raise-bad-argument utf8-codec "u8vector" u8v)))
 
 (def (utf8-encode str start end)
   (let* ((slen (fx- end start))
@@ -95,7 +95,7 @@
          ((##fx<= byte #xdf)
           (let* ((i+2 (##fx+ i 2))
                  (_ (unless (##fx<= i+2 end)
-                      (raise-io-error 'utf8-decode! "incomplete character" byte)))
+                      (raise-io-error utf8-decode! "incomplete character" byte)))
                  (byte2 (##u8vector-ref u8v (##fx+ i 1)))
                  (char
                   (##integer->char
@@ -106,7 +106,7 @@
          ((##fx<= byte #xef)
           (let* ((i+3 (##fx+ i 3))
                  (_ (unless (##fx<= i+3 end)
-                      (raise-io-error 'utf8-decode! "incomplete character" byte)))
+                      (raise-io-error utf8-decode! "incomplete character" byte)))
                  (byte2 (##u8vector-ref u8v (##fx+ i 1)))
                  (byte3 (##u8vector-ref u8v (##fx+ i 2)))
                  (char
@@ -119,7 +119,7 @@
          ((##fx<= byte #xf4)
           (let* ((i+4 (##fx+ i 4))
                  (_ (unless (##fx<= i+4 end)
-                      (raise-io-error 'utf8-decode! "incomplete character" byte)))
+                      (raise-io-error utf8-decode! "incomplete character" byte)))
                  (byte2 (##u8vector-ref u8v (##fx+ i 1)))
                  (byte3 (##u8vector-ref u8v (##fx+ i 2)))
                  (byte4 (##u8vector-ref u8v (##fx+ i 3)))

@@ -36,7 +36,7 @@
    ((u8vector? obj)
     (u8vector->uuid obj))
    (else
-    (raise-bad-argument 'UUID "uuid identifier" obj))))
+    (raise-bad-argument UUID "uuid identifier" obj))))
 
 (def (random-uuid)
   (let (bytes (make-u8vector uuid-length))
@@ -61,7 +61,7 @@
 
 (def (u8vector->uuid u8v)
   (unless (##fx= (u8vector-length u8v) uuid-length)
-    (raise-bad-argument 'u8vector->uuid "u8vector length of UUID lenth" u8v uuid-length))
+    (raise-bad-argument u8vector->uuid "u8vector length of UUID lenth" u8v uuid-length))
   (make-uuid u8v #f))
 
 (def (uuid->u8vector uuid)
@@ -79,7 +79,7 @@
        (hex-decode e))
       str))
     (else
-     (raise-bad-argument 'string->uuid "uuid string" str))))
+     (raise-bad-argument string->uuid "uuid string" str))))
 
 (def (uuid->string uuid)
   (cond

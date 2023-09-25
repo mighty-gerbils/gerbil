@@ -30,7 +30,7 @@
                 ((ip6-address? host)
                  (ip6-address->string host))
                 (else
-                 (raise-bad-argument 'ssl-connect "hostname" host))))
+                 (raise-bad-argument ssl-connect "hostname" host))))
          (deadline (make-timeout timeo #f))
          (sock (tcp-connect addr deadline)))
     (try
@@ -73,15 +73,15 @@
                   (basic-socket-wait-io! sock (fd-io-in rsock) (&basic-socket-timeo-in sock)))
               (if wait-result
                 (lp)
-                (raise-timeout 'ssl-connect "receive timeout"))))
+                (raise-timeout ssl-connect "receive timeout"))))
            ((eqv? result SSL_ERROR_WANT_WRITE)
             (let (wait-result
                   (basic-socket-wait-io! sock (fd-io-out rsock) (&basic-socket-timeo-out sock)))
               (if wait-result
                 (lp)
-                (raise-timeout 'ssl-connect "receive timeout"))))
+                (raise-timeout ssl-connect "receive timeout"))))
            (else
-            (raise-ssl-error 'ssl-connect result))))))))
+            (raise-ssl-error ssl-connect result))))))))
 
 (def (default-client-ssl-context)
   (force +default-client-ssl-context+))
