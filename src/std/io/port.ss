@@ -110,49 +110,19 @@
   (cooked-buffer-put-back! buffer previous-input u8vector-set! u8vector-length make-u8vector subu8vector-move!))
 
 (defcooked-port-method cooked-binary-input-port (skip port buffer count)
-  (let (skipped (cooked-buffer-skip! buffer count))
-    (when (fx< skipped count)
-      (cooked-port-skip! port (fx- count skipped) read-u8)
-      (void))))
+  (cooked-input-port-skip! port buffer count read-u8))
 
 (defsimple-port-method cooked-binary-input-port (delimit self limit)
   (BufferedReader (make-delimited-binary-input-port self limit)))
 
 (defcooked-port-method cooked-binary-input-port (read-u8 port buffer)
-  (if (&cooked-buffer-buffer buffer)
-    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
-      (let (u8 (u8vector-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer)))
-        (cooked-buffer-consume! buffer 1)
-        u8)
-      (read-u8 port))
-    (read-u8 port)))
+  (cooked-input-port-read1 port buffer read-u8 u8vector-ref))
 
 (defcooked-port-method cooked-binary-input-port (peek-u8 port buffer)
-  (if (&cooked-buffer-buffer buffer)
-    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
-      (u8vector-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer))
-      (peek-u8 port))
-    (peek-u8 port)))
+  (cooked-input-port-peek port buffer peek-u8 u8vector-ref))
 
 (defcooked-port-method cooked-binary-input-port (read port buffer u8v start end need)
-  (if buffer
-    (let ((lo (&cooked-buffer-lo buffer))
-          (hi (&cooked-buffer-hi buffer)))
-      (if (fx< lo hi)
-        (let ((want (fx- end start))
-              (have (fx- hi lo)))
-          (cond
-           ((fx< have want)
-            (subu8vector-move! (&cooked-buffer-buffer buffer) lo hi u8v start)
-            (let (rd (read-subu8vector u8v (fx+ start have) end port (fxmax (fx- need have) 0)))
-              (cooked-buffer-consume! buffer have)
-              (fx+ have rd)))
-           (else
-            (subu8vector-move! (&cooked-buffer-buffer) lo (fx+ lo want) u8v start)
-            (cooked-buffer-consume! buffer want)
-            want)))
-        (read-subu8vector u8v start end port need)))
-    (read-subu8vector u8v start end port need)))
+  (cooked-input-port-read* port buffer u8v start end need read-subu8vector subu8vector-move!))
 
 ;;; Delimited Binary Input
 (defsimple-port-method delimited-binary-input-port (close-port self)
@@ -187,49 +157,19 @@
   (cooked-buffer-put-back! buffer previous-input string-set! string-length make-string substring-move!))
 
 (defcooked-port-method cooked-textual-input-port (skip port buffer count)
-  (let (skipped (cooked-buffer-skip! buffer count))
-    (when (fx< skipped count)
-      (cooked-port-skip! port (fx- count skipped) read-u8)
-      (void))))
+  (cooked-input-port-skip! port buffer count read-char))
 
 (defsimple-port-method cooked-textual-input-port (delimit self limit)
   (BufferedStringReader (make-delimited-textual-input-port self limit)))
 
 (defcooked-port-method cooked-textual-input-port (read-char port buffer)
-  (if (&cooked-buffer-buffer buffer)
-    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
-      (let (char (string-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer)))
-        (cooked-buffer-consume! buffer 1)
-        char)
-      (read-char port))
-    (read-char port)))
+  (cooked-input-port-read1 port buffer read-char string-ref))
 
 (defcooked-port-method cooked-textual-input-port (peek-char port buffer)
-  (if (&cooked-buffer-buffer buffer)
-    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
-      (string-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer))
-      (peek-char port))
-    (peek-char port)))
+  (cooked-input-port-peek port buffer peek-char string-ref))
 
 (defcooked-port-method cooked-textual-input-port (read-string port buffer str start end need)
-  (if buffer
-    (let ((lo (&cooked-buffer-lo buffer))
-          (hi (&cooked-buffer-hi buffer)))
-      (if (fx< lo hi)
-        (let ((want (fx- end start))
-              (have (fx- hi lo)))
-          (cond
-           ((fx< have want)
-            (substring-move! (&cooked-buffer-buffer buffer) lo hi str start)
-            (let (rd (read-substring str (fx+ start have) end port (fxmax (fx- need have) 0)))
-              (cooked-buffer-consume! buffer have)
-              (fx+ have rd)))
-           (else
-            (substring-move! (&cooked-buffer-buffer) lo (fx+ lo want) str start)
-            (cooked-buffer-consume! buffer want)
-            want)))
-        (read-substring str start end port need)))
-    (read-substring str start end port need)))
+  (cooked-input-port-read* port buffer u8v start end need read-substring substring-move!))
 
 ;;; Delimited Textual Input
 (defsimple-port-method delimited-textual-input-port (close-port self)
@@ -282,6 +222,48 @@
     (when (fx> to-skip 0)
       (read-e port)
       (lp (fx- to-skip 1)))))
+
+(defrule (cooked-input-port-skip! port bfufer count read-e)
+  (let (skipped (cooked-buffer-skip! buffer count))
+    (when (fx< skipped count)
+      (cooked-port-skip! port (fx- count skipped) read-e)
+      (void))))
+
+(defrule (cooked-input-port-read1 port buffer read-e buffer-ref)
+  (if (&cooked-buffer-buffer buffer)
+    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
+      (let (char (buffer-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer)))
+        (cooked-buffer-consume! buffer 1)
+        char)
+      (read-e port))
+    (read-e port)))
+
+(defrule (cooked-input-port-peek port buffer peek-e buffer-ref)
+  (if (&cooked-buffer-buffer buffer)
+    (if (fx< (&cooked-buffer-lo buffer) (&cooked-buffer-hi buffer))
+      (buffer-ref (&cooked-buffer-buffer buffer) (&cooked-buffer-lo buffer))
+      (peek-e port))
+    (peek-e port)))
+
+(defrule (cooked-input-port-read* port buffer obj start end need read-e buffer-move!)
+  (if buffer
+    (let ((lo (&cooked-buffer-lo buffer))
+          (hi (&cooked-buffer-hi buffer)))
+      (if (fx< lo hi)
+        (let ((want (fx- end start))
+              (have (fx- hi lo)))
+          (cond
+           ((fx< have want)
+            (buffer-move! (&cooked-buffer-buffer buffer) lo hi obj start)
+            (let (rd (read-e obj (fx+ start have) end port (fxmax (fx- need have) 0)))
+              (cooked-buffer-consume! buffer have)
+              (fx+ have rd)))
+           (else
+            (buffer-move! (&cooked-buffer-buffer) lo (fx+ lo want) obj start)
+            (cooked-buffer-consume! buffer want)
+            want)))
+        (read-e obj start end port need)))
+    (read-e obj start end port need)))
 
 (defrule (cooked-buffer-put-back! buffer previous-input buffer-set! buffer-length make-buffer buffer-move!)
   (let recur ((buf (&cooked-buffer-buffer buffer)) (previous-input previous-input))
