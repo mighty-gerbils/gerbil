@@ -333,7 +333,8 @@
       string)
 
     (def (disallowed-loss-of-precision)
-      (raise (LossOfPrecision "loss of precision" irritants: [n] where: '%decimal->digits)))
+      (raise (LossOfPrecision "loss of precision" irritants: [n]
+                              where: (exception-context disallowed-loss-of-precision))))
 
     (cond
      ((>= 0 extra-width)

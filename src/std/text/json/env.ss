@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; json io environment
-(import :std/error)
+(import :std/error
+        :std/sugar)
 (export #t)
 
 ;; should decoded hashes have symbols as keys?
@@ -27,7 +28,7 @@
     (set! (&env-sort-keys self) (json-sort-keys))
     (set! (&env-list-wrapper self) (json-list-wrapper))))
 
-(def (raise-invalid-token input char)
+(defrule (raise-invalid-token where input char)
   (if (eof-object? char)
-    (raise-io-error read-json "Incomplete JSON object; EOF reached" input)
-    (raise-io-error read-json "Invalid JSON token" input char)))
+    (raise-io-error where "Incomplete JSON object; EOF reached" input)
+    (raise-io-error where "Invalid JSON token" input char)))

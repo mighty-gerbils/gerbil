@@ -11,6 +11,7 @@
         Error:::init!
         deferror-class
         defraise/context
+        raise/context
         StackTrace StackTrace?
         BadArgument BadArgument? raise-bad-argument bad-argument-error? check-argument
         exception-context
@@ -93,11 +94,18 @@
 (defrules check-argument ()
   ((_ expr expectation argument)
    (unless expr
-     (raise (BadArgument (string-append "bad argument; expected "expectation)
+     (raise (BadArgument (string-append "bad argument; expected " expectation)
                          where: (exception-context argument)
                          irritants:  ['argument argument])))))
 
 ;; check to the raiser!
+(defrules raise/context ()
+  ((macro exn)
+   (raise/context exn where: macro))
+  ((_ exn where: ctx)
+   (let (e exn)
+     (set! (@ e where) (exception-context ctx))
+     (raise e))))
 
 (defrules defraise/context ()
   ((_ (rule where args ...) (Klass message irritants: irritants))
@@ -109,7 +117,7 @@
               irritants: (cons 'where irritants)))))))
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
-  (BadArgument (string-append "Bad argument; expected " expectation)
+  (BadArgument (string-append "bad argument; expected " expectation)
                 irritants: [irritants ...]))
 
 (defraise/context (raise-io-error where message irritants ...)
