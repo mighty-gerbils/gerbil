@@ -110,7 +110,7 @@
   (cooked-buffer-put-back! buffer previous-input u8vector-set! u8vector-length make-u8vector subu8vector-move!))
 
 (defcooked-port-method cooked-binary-input-port (skip port buffer count)
-  (let (skipped (cooked-buffer-skip! count))
+  (let (skipped (cooked-buffer-skip! buffer count))
     (when (fx< skipped count)
       (cooked-port-skip! port (fx- count skipped) read-u8)
       (void))))
@@ -187,7 +187,7 @@
   (cooked-buffer-put-back! buffer previous-input string-set! string-length make-string substring-move!))
 
 (defcooked-port-method cooked-textual-input-port (skip port buffer count)
-  (let (skipped (cooked-buffer-skip! count))
+  (let (skipped (cooked-buffer-skip! buffer count))
     (when (fx< skipped count)
       (cooked-port-skip! port (fx- count skipped) read-u8)
       (void))))
@@ -277,7 +277,7 @@
         (cooked-buffer-consume! buffer to-skip)
         to-skip))))
 
-(defrule (cooked-port-skip! port skip read-e)
+(def (cooked-port-skip! port skip read-e)
   (let lp ((to-skip skip))
     (when (fx> to-skip 0)
       (read-e port)
