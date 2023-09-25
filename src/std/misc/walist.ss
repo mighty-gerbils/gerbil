@@ -87,7 +87,7 @@
           (prev (set-cdr! prev r))
           (else (set! (walist-alist w) r))))
         ([] (void)) ; key not found: NOP
-        (_ (raise-bad-argument 'walist-remove "valid walist" w struct! key))))))
+        (_ (raise-bad-argument walist-remove "valid walist" w struct! key))))))
 
 (defrule (define-remove! struct! fun cmp)
   (begin

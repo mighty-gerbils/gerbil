@@ -41,7 +41,7 @@
                    ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
                     (read-json-number input env))
                    (else
-                    (raise-invalid-token input char))))))
+                    (raise-invalid-token read-json-object input char))))))
 
            (def (read-json-hash input env)
              (read-char input)
@@ -66,7 +66,7 @@
                               (read-char input)
                               obj)
                              (else
-                              (raise-invalid-token input char))))))
+                              (raise-invalid-token read-json-hash input char))))))
                      obj)))))
 
            (def (read-json-hash-key input env)
@@ -84,12 +84,12 @@
                            (string->symbol key)
                            key))
                         (else
-                         (raise-invalid-token input char))))))
+                         (raise-invalid-token read-json-hash-key input char))))))
                  ((#\})
                   (read-char input)
                   #f)
                  (else
-                  (raise-invalid-token input char)))))
+                  (raise-invalid-token read-json-hash-key input char)))))
 
            (def (read-json-list input env)
              (read-char input)
@@ -120,7 +120,7 @@
                         ((#\])
                          obj)
                         (else
-                         (raise-invalid-token input char)))))))))
+                         (raise-invalid-token read-json-list-next input char)))))))))
 
            (def (read-json-string input env)
              (def (read-escape-char input)
@@ -134,7 +134,7 @@
                    ((#\t) #\tab)
                    ((#\u) (read-escape-unicode input))
                    (else
-                    (raise-invalid-token input char)))))
+                    (raise-invalid-token read-escape-char input char)))))
 
              (def (read-escape-unicode input)
                (let lp ((n 0) (chars []))
@@ -157,7 +157,7 @@
                (cond
                 ((unhex* char))
                 (else
-                 (raise-invalid-token input char))))
+                 (raise-invalid-token hex-value input char))))
 
              (read-char input)
              (let (root [#f])
@@ -173,7 +173,7 @@
                         (lp tl*)))
                      (else
                       (if (eof-object? char)
-                        (raise-invalid-token input char)
+                        (raise-invalid-token read-json-string input char)
                         (let (tl* [char])
                           (set! (cdr tl) tl*)
                           (lp tl*)))))))))
@@ -185,7 +185,7 @@
              (def (parse chars)
                (let (str (list->string chars))
                  (or (string->number str)
-                     (raise-invalid-token input str))))
+                     (raise-invalid-token read-json-number input str))))
 
              (let (chars [(read-char input)])
                (let lp ((tl chars))
@@ -222,7 +222,7 @@
                   (let (next (read-char input))
                     (if (eq? next char)
                       (lp rest)
-                      (raise-invalid-token input next))))
+                      (raise-invalid-token skip-chars input next))))
                  (else (void))))))))))
 
 

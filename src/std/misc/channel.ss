@@ -32,7 +32,7 @@
         (cond
          ((&channel-eof ch)
           (mutex-unlock! mx)
-          (raise-io-error 'channel-put "channel is closed" ch))
+          (raise-io-error channel-put "channel is closed" ch))
          ((or (not limit) (##fx< (queue-length q) limit))
           (enqueue! q val)
           (when (##fx= (queue-length q) 1)
@@ -50,7 +50,7 @@
     (cond
      ((&channel-eof ch)
       (mutex-unlock! mx)
-      (raise-io-error 'channel-try-put "channel is closed" ch))
+      (raise-io-error channel-try-put "channel is closed" ch))
      ((or (not limit) (##fx< (queue-length q) limit))
       (enqueue! q val)
       (when (##fx= (queue-length q) 1)
@@ -67,7 +67,7 @@
     (cond
      ((&channel-eof ch)
       (mutex-unlock! mx)
-      (raise-io-error 'channel-sync "channel is closed" ch))
+      (raise-io-error channel-sync "channel is closed" ch))
      (else
       (unless (null? vals)
         (for-each (cut enqueue! q <>) vals)

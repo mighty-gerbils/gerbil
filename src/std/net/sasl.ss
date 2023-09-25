@@ -47,17 +47,21 @@
 (def (scram-client-first-server-message! ctx sfm)
   (let* ((msg (scram-parse-message sfm))
          (r (or (assget "r" msg)
-                (fail "Invalid server message; missing nonce" msg)))
+                (fail scram-client-first-server-message!
+                      "Invalid server message; missing nonce" msg)))
          (s (base64-decode
              (or (assget "s" msg)
-                 (fail "Invalid server message; missing salt" msg))))
+                 (fail scram-client-first-server-message!
+                       "Invalid server message; missing salt" msg))))
          (i (string->number
              (or (assget "i" msg)
-                 (fail "Invalid server message; missing iteration count" msg))))
+                 (fail scram-client-first-server-message!
+                       "Invalid server message; missing iteration count" msg))))
          (nonce (scram-context-nonce ctx)))
     (unless (and (fx> (string-length r) (string-length nonce))
                  (string-prefix? nonce r))
-      (fail "Invalid server nonce" r nonce))
+      (fail scram-client-first-server-message!
+            "Invalid server nonce" r nonce))
     (set! (scram-context-sfm ctx) sfm)
     (set! (scram-context-r ctx) r)
     (set! (scram-context-s ctx) s)
@@ -89,14 +93,17 @@
     (cond
      ((assget "e" msg)
       => (lambda (what)
-           (fail "Authentication failed" what)))
+           (fail scram-client-final-server-message!
+                 "Authentication failed" what)))
      ((assget "v" msg)
       => (lambda (v)
            (let (verifier (scram-context-v ctx))
              (unless (equal? v verifier)
-               (fail "Authentication failed; invalid server signature" v verifier)))))
+               (fail scram-client-final-server-message!
+                     "Authentication failed; invalid server signature" v verifier)))))
      (else
-      (fail "Malformed server message; missing verifier or error" msg)))))
+      (fail scram-client-final-server-message!
+            "Malformed server message; missing verifier or error" msg)))))
 
 (def (scram-Hi hmac passwd salt count)
   (let* ((key (string->utf8 passwd))
@@ -133,7 +140,7 @@
             (cons "str" #f))))
         (string-split msg #\,))
    (catch (e)
-     (fail "Malformed message" msg e))))
+     (fail scram-parse-message "Malformed message" msg e))))
 
-(def (fail what . irritants)
-  (apply raise-io-error 'sasl-authenticate what irritants))
+(defrule (fail where what irritants ...)
+  (raise-io-error where what irritants ...))

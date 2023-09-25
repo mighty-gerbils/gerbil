@@ -110,7 +110,7 @@
 
 ;; What character (we assume ASCII) for the given digit in the given base (up to 36)?
 ;; Return #f if N isn't a digit number that has a corresponding character in the given base.
-;; : Integer (Optional Integer 10) (Optional Bool #f) -> (Or Char '#f)
+;; : Integer (Optional Integer 10) (Optional Bool #f) -> (Or Char #f)
 (def (digit-char n (base 10) (upper-case? #f))
   (and (exact-integer? n) (exact-integer? base)
        (<= 2 base 36) (< -1 n base)

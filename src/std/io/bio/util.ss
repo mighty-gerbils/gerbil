@@ -76,7 +76,7 @@
     (if (fx< i len)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
-          (raise-premature-end-of-input 'Buffered-reader-read-uint)
+          (raise-premature-end-of-input Buffered-reader-read-uint)
           (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next))))
       x)))
 
@@ -101,13 +101,13 @@
     (if (read-more? shift)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
-          (raise-premature-end-of-input 'Buffered-reader-read-varuint)
+          (raise-premature-end-of-input Buffered-reader-read-varuint)
           (let* ((limb (fxand next #x7f))
                  (x (bitwise-ior (arithmetic-shift limb shift) x)))
             (if (fx= (fxand next #x80) 0)
               x
               (lp (fx+ shift 7) x)))))
-      (raise-io-error 'BufferedReader-read-varuint "varuint max bits exceeded" x max-bits))))
+      (raise-io-error BufferedReader-read-varuint "varuint max bits exceeded" x max-bits))))
 
 (defreader-ext (read-varint reader (max-bits 64))
   (let* ((uint (&BufferedReader-read-varuint reader max-bits))
@@ -120,7 +120,7 @@
 (defreader-ext (read-u8! reader)
   (let (u8 (&BufferedReader-read-u8-inline reader))
     (if (eof-object? u8)
-      (raise-premature-end-of-input 'BufferedReader-read-u8!)
+      (raise-premature-end-of-input BufferedReader-read-u8!)
       u8)))
 
 (defreader-ext (read-char reader)
@@ -456,7 +456,7 @@
 (defreader-ext (read-char! reader)
   (let (char (&BufferedReader-read-char-inline reader))
     (if (eof-object? char)
-      (raise-premature-end-of-input 'BufferedReader-read-char!)
+      (raise-premature-end-of-input BufferedReader-read-char!)
       char)))
 
 (defreader-ext (read-string reader str (start 0) (end (string-length str)) (need 0))
@@ -466,7 +466,7 @@
         (let (next (&BufferedReader-read-char-inline reader))
           (if (eof-object? next)
             (if (fx> need 0)
-              (raise-premature-end-of-input 'BufferedReader-read-string)
+              (raise-premature-end-of-input BufferedReader-read-string)
               read)
             (begin
               (string-set! str i next)
@@ -501,7 +501,7 @@
            (else
             (lp (fx+ x 1) separators 0 (cons next chars))))))
        (else
-        (raise-io-error 'BufferedReader-read-line "too many characters" x))))))
+        (raise-io-error BufferedReader-read-line "too many characters" x))))))
 
 ;; writer
 (defwriter-ext (write-u16 writer uint)
@@ -536,7 +536,7 @@
 
 (defwriter-ext (write-varuint writer uint (max-bits 64))
   (when (and max-bits (fx> (integer-length uint) max-bits))
-    (raise-io-error 'BufferedWriter-write-varuint "varuint max bits exceeded"))
+    (raise-io-error BufferedWriter-write-varuint "varuint max bits exceeded"))
   (let lp ((uint uint) (wrote 0))
     (if (> uint #x7f)
       (let (limb (fxior (bitwise-and uint #x7f) #x80))

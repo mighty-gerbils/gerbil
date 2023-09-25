@@ -50,7 +50,7 @@
   (syntax-case stx ()
     ((_ macro param)
      (identifier-list? #'(macro param))
-     (defparam #'macro #'param #'"Bad syntax"))
+     (defparam #'macro #'param "Bad syntax"))
     ((_ macro param errmsg)
      (identifier-list? #'(macro param))
      (defparam #'macro #'param #'errmsg))))

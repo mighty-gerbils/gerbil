@@ -32,7 +32,7 @@
 (defmethod {:init! char-stream}
   (lambda (self port)
     (unless (macro-character-input-port? port)
-      (raise-bad-argument 'make-char-stream "input source; character-input-port" port))
+      (raise-bad-argument make-char-stream "input source; character-input-port" port))
     (struct-instance-init! self port [] (make-location port 0 0 0 0) [])))
 
 (def (char-stream-close cs)

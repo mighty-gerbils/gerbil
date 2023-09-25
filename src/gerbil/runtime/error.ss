@@ -129,8 +129,12 @@ namespace: #f
 ;; method implementations
 (defmethod {:init! Error}
   (lambda (self message . rest)
-    (unchecked-slot-set! self 'message message)
-    (apply class-instance-init! self rest)))
+    (let (message
+          (if (string? message)
+            message
+            (call-with-output-string "" (cut display message <>))))
+      (unchecked-slot-set! self 'message message)
+      (apply class-instance-init! self rest))))
 
 (defmethod {display-exception Error}
   (lambda (self port)

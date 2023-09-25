@@ -41,7 +41,7 @@
 ;; uri-encode: string => string
 (def (uri-encode str (vt uri-encoding))
   (unless (and (vector? vt) (##fx= (vector-length vt) 256))
-    (raise-bad-argument 'uri-encode "encoding table; vector of length 256" vt))
+    (raise-bad-argument uri-encode "encoding table; vector of length 256" vt))
   (with-output-to-string []
     (lambda ()
       (write-uri-encoded str vt))))
@@ -126,11 +126,11 @@
       (cond
        ((hash-get hex-bytes char) => values)
        (else
-        (raise-bad-argument 'uri-decode "uri encoded string: unexecpted character" str char)))))
+        (raise-bad-argument uri-decode "uri encoded string: unexecpted character" str char)))))
 
   (when encoding
     (unless (and (vector? encoding) (##fx= (vector-length encoding) 256))
-      (raise-bad-argument 'uri-decode "encoding table; vector of length 256" encoding)))
+      (raise-bad-argument uri-decode "encoding table; vector of length 256" encoding)))
 
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8))
@@ -154,7 +154,7 @@
                        (write-u8 (##fxior (##fxarithmetic-shift (hex-byte hi) 4)
                                           (hex-byte lo)))
                        (lp (##fx+ n 2)))
-                     (raise-bad-argument 'uri-decode "uri encoded string: malformed compoent" str))))
+                     (raise-bad-argument uri-decode "uri encoded string: malformed compoent" str))))
                 (else
                  (write-u8 next)
                  (lp (##fx+ n 1))))))))))))
@@ -174,5 +174,5 @@
             ([key]
              (cons (uri-decode key uri-space-decoding) #f))
             (else
-             (raise-bad-argument 'form-url-decode "form url encoded string: malformed component" str part)))))
+             (raise-bad-argument form-url-decode "form url encoded string: malformed component" str part)))))
    (string-split str #\&)))

@@ -12,7 +12,6 @@
         remote-stop-http-server!
         current-http-server
         http-register-handler
-        remote-http-register-handler
 
         make-default-http-mux
         make-recursive-http-mux

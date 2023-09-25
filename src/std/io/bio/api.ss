@@ -30,7 +30,7 @@
    ((u8vector? buffer-or-size)
     buffer-or-size)
    (else
-    (raise-bad-argument 'make-buffer "fixnum or u8vector" buffer-or-size))))
+    (raise-bad-argument make-buffer "fixnum or u8vector" buffer-or-size))))
 
 (def (open-buffered-reader pre-reader (buffer-or-size default-buffer-size))
   (cond
@@ -46,7 +46,7 @@
    ((input-port? pre-reader)
     (BufferedReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-reader "Reader instance or u8vector" pre-reader))))
+    (raise-bad-argument open-buffered-reader "Reader instance or u8vector" pre-reader))))
 
 (def (open-buffered-writer pre-writer (buffer-or-size default-buffer-size))
   (cond
@@ -63,7 +63,7 @@
    ((output-port? pre-writer)
     (BufferedWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
    (else
-    (raise-bad-argument 'open-buffered-writer "Writer instance or #f" pre-writer))))
+    (raise-bad-argument open-buffered-writer "Writer instance or #f" pre-writer))))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))
@@ -78,7 +78,7 @@
       (or (&chunked-output-buffer-output bio)
           (reverse (&chunked-output-buffer-chunks bio))))
      (else
-      (raise-bad-argument 'get-buffer-output "instance of BufferedWriter wrapping an output buffer" wr)))))
+      (raise-bad-argument get-buffer-output "instance of BufferedWriter wrapping an output buffer" wr)))))
 
 (def (get-buffer-output-u8vector wr)
   (let (chunks (get-buffer-output-chunks wr))

@@ -1,8 +1,7 @@
 ;; -*- Gerbil -*-
 package: misc/rpc-perf
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/ports
+(import :gerbil/gambit
         :std/sugar
         :std/getopt)
 (export main)

@@ -30,7 +30,7 @@
       ([k v . rest] (cons (cons k v) (loop rest)))
       ([] [])
       (else
-       (raise-bad-argument 'plist->alist "proper plist" plist)))))
+       (raise-bad-argument plist->alist "proper plist" plist)))))
 
 ;; The alist definitions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
 (defrule (define-aset aset cmp)
@@ -58,12 +58,12 @@
 (defrule (define-aset! aset! cmp)
   (def (aset! lst key val)
     (unless (pair? lst)
-      (raise-bad-argument 'aset! "non empty alist" lst key val))
+      (raise-bad-argument aset! "non empty alist" lst key val))
     (let lp ((l lst))
       (match l
         ([kv . r] (if (cmp key (car kv)) (set-cdr! kv val) (lp r)))
         ([] (match lst ([k1v1 . r] (set-car! lst [key . val]) (set-cdr! lst [k1v1 . r]))))
-        (_ (raise-bad-argument 'aset! "alist" lst key val))))))
+        (_ (raise-bad-argument aset! "alist" lst key val))))))
 
 (define-aset! asetq! eq?) (define (assq-set! k l v) (asetq! l k v))
 (define-aset! asetv! eqv?) (define (assv-set! k l v) (asetv! l k v))
@@ -75,7 +75,7 @@
       (match tl
         ([kv . r] (if (cmp key (car kv)) (foldl cons r rhd) (lp r [kv . rhd])))
         ([] lst)
-        (_ (raise-bad-argument 'arem "alist" lst key))))))
+        (_ (raise-bad-argument arem "alist" lst key))))))
 
 (define-arem aremq eq?)
 (define-arem aremv eqv?)
@@ -84,7 +84,7 @@
 (defrule (define-arem! arem! cmp)
   (def (arem! key lst)
     (def (invalid)
-      (raise-bad-argument 'arem! "alist" lst key))
+      (raise-bad-argument arem! "alist" lst key))
     (let lp ((p lst) (prev #f))
       (match p
         ([k1v1 . r]
@@ -93,7 +93,7 @@
              (set-cdr! prev r)
              (match r
                ([k2v2 . rr] (set-car! p k2v2) (set-cdr! p rr))
-               ([] (raise-bad-argument 'arem! "key: cannot remove last key from alist" lst key))
+               ([] (raise-bad-argument arem! "key: cannot remove last key from alist" lst key))
                (_ (invalid))))
            (lp r p)))
         ([] (void)) ; key not found: NOP

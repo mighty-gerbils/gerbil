@@ -23,7 +23,7 @@
 (def (checked-object-type obj)
   (if (object? obj)
     (object-type obj)
-    (raise-bad-argument 'checked-object-type "object" obj)))
+    (raise-bad-argument checked-object-type "object" obj)))
 
 (def (type? obj)
   (##type? obj))
@@ -33,14 +33,14 @@
    (def (id obj)
      (if (##type? obj)
        (getf obj)
-       (raise-bad-argument 'id "type object" obj)))))
+       (raise-bad-argument id "type object" obj)))))
 
 (defrules defcheck-type-descriptor ()
   ((_ id getf)
    (def (id obj)
      (if (type-descriptor? obj)
        (getf obj)
-       (raise-bad-argument 'id "type descriptor" obj)))))
+       (raise-bad-argument id "type descriptor" obj)))))
 
 (defcheck-type type-id ##type-id)
 (defcheck-type type-name ##type-name)

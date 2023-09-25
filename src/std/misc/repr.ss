@@ -73,7 +73,7 @@
     (w x))
 
    ((or (symbol? x) (null? x)) ;; requires slightly more care: write it after a quote.
-    (d "'") (w x))
+    (d "") (w x))
 
    ((pair? x) ;; pair: print as [ ... ].
     (display-separated x port prefix: "[" display-element: p)
@@ -152,7 +152,7 @@
       object (port (current-output-port)) (options (current-representation-options)))
   (def (d x) (display x port))
   (def (w x) (write x port))
-  (d "#") (d (object->serial-number object)) (d " #;") (w (object->string object)))
+  (d "") (d (object->serial-number object)) (d " #;") (w (object->string object)))
 
 ;; Class for representable objects with a :pr method.
 (defclass representable ())

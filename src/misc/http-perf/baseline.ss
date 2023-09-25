@@ -1,6 +1,5 @@
 ;; -*- Gerbil -*-
-(import :gerbil/gambit/threads
-        :std/io
+(import :std/io
         :std/getopt
         :std/sugar
         :std/text/utf8)

@@ -81,7 +81,7 @@
            (else
             (lp (fx+ x 1) separators 0 (cons next chars))))))
        (else
-        (raise-io-error 'strbuf-read-line "too many characters" x))))))
+        (raise-io-error strbuf-read-line "too many characters" x))))))
 
 
 (defstring-writer-ext (write-line writer input (separator #\newline))

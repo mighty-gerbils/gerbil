@@ -59,3 +59,10 @@ You can wholly disable parallelism by exporting `GERBIL_BUILD_CORES=0`,
 at which point the Gerbil part of compilation will be done in the current process.
 By contrast, `GERBIL_BUILD_CORES=1` enforces use of subprocesses for Gerbil compilation,
 even though only one process will be run at once.
+
+## GERBIL_PKG_GIT_USER
+
+If this variable is set, `gxpkg` will clone packages using `git` over
+ssh instead of https.
+
+Set this if you want to access private repose.

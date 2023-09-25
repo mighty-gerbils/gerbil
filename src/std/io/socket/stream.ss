@@ -17,7 +17,7 @@
 (def (stream-socket-recv ssock output output-start output-end flags)
   (with-basic-socket-read-lock ssock
     (when (stream-socket-closed? ssock state-closed-in)
-      (raise-io-closed 'stream-socket-recv "socket input has been shutdown"))
+      (raise-io-closed stream-socket-recv "socket input has been shutdown"))
     (let (sock (&basic-socket-sock ssock))
       (let lp ()
         (let (read (socket-recv sock output output-start output-end flags))
@@ -25,15 +25,15 @@
            (read)
            ((basic-socket-wait-io! ssock (fd-io-in sock) (&basic-socket-timeo-in ssock))
             (when (stream-socket-closed? ssock state-closed-in)
-              (raise-io-closed 'stream-socket-recv "socket input has been shutdown"))
+              (raise-io-closed stream-socket-recv "socket input has been shutdown"))
             (lp))
            (else
-            (raise-timeout 'stream-socket-recv "receive timeout"))))))))
+            (raise-timeout stream-socket-recv "receive timeout"))))))))
 
 (def (stream-socket-send ssock input input-start input-end flags)
   (with-basic-socket-read-lock ssock
     (when (stream-socket-closed? ssock state-closed-out)
-      (raise-io-closed 'stream-socket-send "socket output has been shutdown"))
+      (raise-io-closed stream-socket-send "socket output has been shutdown"))
     (let (sock (&basic-socket-sock ssock))
       (let lp ()
         (let (wrote (socket-send sock input input-start input-end (fxior flags MSG_NOSIGNAL)))
@@ -41,10 +41,10 @@
            (wrote)
            ((basic-socket-wait-io! ssock (fd-io-out sock) (&basic-socket-timeo-out ssock))
             (when (stream-socket-closed? ssock state-closed-out)
-              (raise-io-closed 'stream-socket-send "socket output has been shutdown"))
+              (raise-io-closed stream-socket-send "socket output has been shutdown"))
             (lp))
            (else
-            (raise-timeout 'stream-socket-send "send timeout"))))))))
+            (raise-timeout stream-socket-send "send timeout"))))))))
 
 (def (stream-socket-get-reader ssock)
   (Reader (make-stream-socket-reader ssock)))
@@ -59,7 +59,7 @@
             ((out) SHUT_WR)
             ((inout) SHUT_RDWR)
             (else
-             (raise-bad-argument 'stream-socket-shutdown "direction: must be in, out, or inout"))))
+             (raise-bad-argument stream-socket-shutdown "direction: must be in, out, or inout"))))
          (state-dir (direction->state dir)))
     (with-basic-socket-write-lock ssock
       (unless (stream-socket-closed? ssock state-dir)
@@ -100,7 +100,7 @@
           (cond
            ((fx= read 0)
             (if (fx> input-need result)
-              (raise-premature-end-of-input 'stream-socket-read input-need)
+              (raise-premature-end-of-input stream-socket-read input-need)
               result))
            ((fx> read input-need)
             (fx+ result read))

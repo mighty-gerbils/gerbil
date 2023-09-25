@@ -57,7 +57,7 @@
           (case val
             cases ...
             (else
-             (raise-io-error 'bio-write "Invalid value for enum" val))))))
+             (raise-io-error bio-write "Invalid value for enum" val))))))
 
   (syntax-case stx ()
     ((_ id (key val) ...)

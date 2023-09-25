@@ -81,13 +81,13 @@
   (CharRangeChar
    (@eq #\]) !                      ; cut, we hit the end of the range
    (@eq #\-)
-   => (raise-parse-error 'parse-rx "Illegal character range" @@)
+   => (raise-parse-error parse-rx "Illegal character range" @@)
    EscapedChar
    Char)
   (IdentifierChar
    (@eq #\}) !                      ; cut, we hit the end of macro name
    SeparatorChar
-   => (raise-parse-error 'parse-rx "Illegal identifier character" @@)
+   => (raise-parse-error parse-rx "Illegal identifier character" @@)
    Char)
   (SpecialChar
    (@eq #\*)
@@ -122,5 +122,5 @@
         (if (fx<= k end)
           (lp (fx1+ k) (cons (integer->char k) chars))
           (reverse chars)))
-      (raise-parse-error 'parse-rx "Illegal character range"
+      (raise-parse-error parse-rx "Illegal character range"
                          (make-token 'CharRange [char-start char-end] loc)))))

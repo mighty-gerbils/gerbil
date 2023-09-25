@@ -20,13 +20,13 @@
 
 (def (add-signal-handler! signo thunk)
   (unless (and (fx> signo 0) (fx< signo SIGMAX))
-    (raise-bad-argument 'add-signal-handler! "signal number" signo))
+    (raise-bad-argument add-signal-handler! "signal number" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-add! handler signo thunk)))
 
 (def (remove-signal-handler! signo)
   (unless (and (fx> signo 0) (fx< signo SIGMAX))
-    (raise-bad-argument 'remove-signal-handler! "signal number" signo))
+    (raise-bad-argument remove-signal-handler! "signal number" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-remove! handler signo)))
 
@@ -129,7 +129,8 @@
                                    (kevent-ident events i))))
                         (when event-handler
                           (signal-handler-dispatch event-handler))))
-                    (raise-os-error (kevent-data events i)
+                    (raise-os-error signal-handler-wait
+                                    (kevent-data events i)
                                     signal-handler-wait))
                   (event-loop (fx1+ i))))))
           (wait-loop)))

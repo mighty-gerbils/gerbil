@@ -19,7 +19,7 @@
 (def (repeat v-or-fn n-times . args)
   (declare (fixnum) (not safe))
   (unless (fixnum? n-times)
-    (raise-bad-argument 'repeat "fixnum" n-times))
+    (raise-bad-argument repeat "fixnum" n-times))
   (if (procedure? v-or-fn)
     (let ((fn (if (null? args)
 		        v-or-fn

@@ -3,9 +3,9 @@
 ;;; SQLite dbi interface
 
 (import :std/error
+        :std/sugar
         :std/db/dbi
         :std/db/_sqlite
-        :std/format
         :std/iter)
 (export sqlite-open)
 
@@ -19,16 +19,16 @@
 (defmethod {:init! sqlite-statement}
   statement:::init!)
 
-(def (raise-sqlite-error where err)
+(defrule (raise-sqlite-error where err)
   (let (errstr (sqlite3_errstr err))
-    (raise-sql-error where (format "SQLite error: ~a" errstr) err)))
+    (raise-sql-error where (string-append "SQLite error: " errstr) err)))
 
 (def (sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
   (let* ((ptr (make_sqlite3_ptr_ptr))
          (r (sqlite3_open ptr file flags)))
     (if (##fx= r SQLITE_OK)
       (make-sqlite-connection (sqlite3_ptr ptr))
-      (raise-sqlite-error 'sqlite-open r))))
+      (raise-sqlite-error sqlite-open r))))
 
 (defmethod {close sqlite-connection}
   (lambda (self)
@@ -40,7 +40,7 @@
            (r (sqlite3_prepare ptr (connection-e self) sql 0)))
       (if (##fx= r SQLITE_OK)
         (make-sqlite-statement (sqlite3_stmt_ptr ptr))
-        (raise-sqlite-error 'sqlite-prepare r)))))
+        (raise-sqlite-error sqlite-prepare r)))))
 
 (defmethod {finalize sqlite-statement}
   (lambda (self)
@@ -51,7 +51,7 @@
     (with ((sqlite-statement stmt) self)
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
-                  (raise-bad-argument 'sqlite "bind parameters: do not match statement count" args params))))
+                  (raise-bad-argument sqlite "bind parameters: do not match statement count" args params))))
         (for ((arg args) (param (in-iota params 1)))
           (cond
            ((not arg)
@@ -65,12 +65,13 @@
              ((real? arg)
               (sqlite3_bind_double stmt param (exact->inexact arg)))
              (else
-              (raise-bad-argument 'sqlite "real: bind parameter" arg))))
+              (raise-bad-argument sqlite "real: bind parameter" arg))))
            ((string? arg)
             (sqlite3_bind_text stmt param arg))
            ((u8vector? arg)
             (sqlite3_bind_blob stmt param arg))
-           (raise-bad-argument 'sqlite "object: unknown bind conversion" arg)))))))
+           (else
+            (raise-bad-argument sqlite "object: unknown bind conversion" arg))))))))
 
 (defmethod {clear sqlite-statement}
   (lambda (self)
@@ -86,7 +87,7 @@
       (let (r (sqlite3_step stmt))
         (unless (or (eq? r SQLITE_DONE)
                     (eq? r SQLITE_ROW))
-          (raise-sqlite-error 'sqlite-exec r))))))
+          (raise-sqlite-error sqlite-exec r))))))
 
 (defmethod {query-start sqlite-statement}
   void)
@@ -99,7 +100,7 @@
          ((eq? r SQLITE_ROW) #!void)
          ((eq? r SQLITE_DONE) iter-end)
          (else
-          (raise-sqlite-error 'sqlite-query-fetch r)))))))
+          (raise-sqlite-error sqlite-query-fetch r)))))))
 
 (defmethod {query-row sqlite-statement}
   (lambda (self)

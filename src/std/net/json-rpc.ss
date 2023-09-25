@@ -148,8 +148,10 @@
               (try (json-object->bytes
                     (json-rpc-request jsonrpc: json-rpc-version
                                       method: method params: params id: id))
-                   (catch (e) (raise (MalformedRequest method: method params: params
-                                                       message: (error-message e))))))
+                   (catch (e)
+                     (raise/context
+                      (MalformedRequest method: method params: params
+                                        message: (error-message e))))))
           (http-post server-url
                      auth: auth
                      headers: `(("Content-Type" . "application/json-rpc")
@@ -173,8 +175,9 @@
         (set! id (number->string id)) ;; GET method wants string id.
         (let* ((base64-params
                 (try (u8vector->base64-string (json-object->bytes params))
-                     (catch (e) (raise (MalformedRequest
-                                        method: method params: params
+                     (catch (e)
+                       (raise/context (MalformedRequest
+                                       method: method params: params
                                         message: (error-message e))))))
                (uri-params
                 `(("jsonrpc" .,json-rpc-version)
@@ -189,13 +192,14 @@
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
-       (else (raise-bad-argument 'json-rpc "http method: invalid" http-method)))))
+       (else (raise-bad-argument json-rpc "http method: invalid" http-method)))))
   (def response-json
     (try
      (bytes->json response-bytes) ;; todo: move to decode-json-rpc-response ?
      (catch (e)
-       (raise (MalformedResponse request-id: id response: response-bytes
-                                 message: (error-message e))))))
+       (raise/context
+        (MalformedResponse request-id: id response: response-bytes
+                           message: (error-message e))))))
   (when log
     (log [from: server-url response: (bytes->string response-bytes)]))
   (decode-json-rpc-response
@@ -205,8 +209,9 @@
 
 (def (decode-json-rpc-response decoder request-id response-json)
   (def (mal! e)
-    (raise (MalformedResponse request-id: request-id response: response-json
-                              message: (error-message e))))
+    (raise/context
+     (MalformedResponse request-id: request-id response: response-json
+                        message: (error-message e))))
   (def response (with-catch mal! (cut trivial-json-object->class json-rpc-response::t response-json)))
   (def jsonrpc (@ response jsonrpc))
   (def result (@ response result))
@@ -221,7 +226,8 @@
     (mal! "bad id"))
   (if (void? error)
     (with-catch mal! (cut decoder result))
-    (raise (with-catch mal! (cut json->json-rpc-error error)))))
+    (raise/context
+     (with-catch mal! (cut json->json-rpc-error error)))))
 
 ;;; Server code
 

@@ -82,12 +82,12 @@
                   (basic-socket-wait-io! sock (fd-io-in rsock) (&basic-socket-timeo-in sock)))
               (if wait-result
                 (lp)
-                (raise-timeout 'ssl-accept "receive timeout"))))
+                (raise-timeout ssl-accept "receive timeout"))))
            ((eqv? result SSL_ERROR_WANT_WRITE)
             (let (wait-result
                   (basic-socket-wait-io! sock (fd-io-out rsock) (&basic-socket-timeo-out sock)))
               (if wait-result
                 (lp)
-                (raise-timeout 'ssl-accept "receive timeout"))))
+                (raise-timeout ssl-accept "receive timeout"))))
            (else
-            (raise-ssl-error 'ssl-accept result))))))))
+            (raise-ssl-error ssl-accept result))))))))

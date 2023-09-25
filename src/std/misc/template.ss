@@ -17,7 +17,7 @@
      ((is-BufferedWriter? output)
       (BufferedWriter-write-string output str))
      (else
-      (raise-bad-argument 'write-template "port, StringWriter or BufferedWriter" output)))))
+      (raise-bad-argument write-template "port, StringWriter or BufferedWriter" output)))))
 
 (def (apply-template template . args)
   (def vars (make-hash-table))

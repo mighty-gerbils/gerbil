@@ -21,7 +21,7 @@
   ((_ (proc arg ...) expr error: error-msg error-irritant ...)
    (def (proc arg ...)
      (with-result expr
-       (lambda (what) (raise-actor-error 'proc error-msg error-irritant ... what)))))
+       (lambda (what) (raise-actor-error proc error-msg error-irritant ... what)))))
   ((_ (proc arg ...) expr)
    (defcall-actor (proc arg ...) expr error: "actor error")))
 
