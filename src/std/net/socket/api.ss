@@ -33,7 +33,7 @@
       (unless rcon
         (unless (wait-out ssock (abs-timeout timeo))
           (close ssock 'inout #f)
-          (raise-timeout 'ssocket-connect "connection timeout" addr)))
+          (raise-timeout ssocket-connect "connection timeout" addr)))
       (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
         (if (##fxzero? errno)
           ssock
@@ -64,8 +64,8 @@
                 (make-ssocket cli)
                 (if (wait-in ssock timeo)
                   (lp)
-                  (raise-timeout 'ssocket-accept "accept timeout" ssock))))
-            (raise-io-error 'ssocket-accept "Socket is not open for input" ssock)))))))
+                  (raise-timeout ssocket-accept "accept timeout" ssock))))
+            (raise-io-error ssocket-accept "Socket is not open for input" ssock)))))))
 
 
 ;;; synchronous socket i/o
@@ -79,8 +79,8 @@
               (or r
                   (if (wait-out ssock timeo)
                     (lp)
-                    (raise-timeout 'ssocket-send "send timeout" ssock))))
-            (raise-io-error 'ssocket-send "Socket is not open for output" ssock)))))))
+                    (raise-timeout ssocket-send "send timeout" ssock))))
+            (raise-io-error ssocket-send "Socket is not open for output" ssock)))))))
 
 (def (ssocket-send-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
@@ -95,9 +95,9 @@
                  ((wait-out ssock timeo)
                   (lp count start))
                  (else
-                  (raise-timeout 'ssocket-send-all "send timeout" ssock))))
+                  (raise-timeout ssocket-send-all "send timeout" ssock))))
               count)
-            (raise-io-error 'ssocket-send-all "Socket is not open for output" ssock)))))))
+            (raise-io-error ssocket-send-all "Socket is not open for output" ssock)))))))
 
 (def (ssocket-recv ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
@@ -109,8 +109,8 @@
               (or r
                   (if (wait-in ssock timeo)
                     (lp)
-                    (raise-timeout 'ssocket-recv "receive timeout" ssock))))
-            (raise-io-error 'ssocket-recv "Socket is not open for input" ssock)))))))
+                    (raise-timeout ssocket-recv "receive timeout" ssock))))
+            (raise-io-error ssocket-recv "Socket is not open for input" ssock)))))))
 
 (def (ssocket-recv-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
@@ -125,12 +125,12 @@
                  ((not r)
                   (if (wait-in ssock timeo)
                     (lp count start)
-                    (raise-timeout 'ssocket-recv-all "receive timeout" ssock)))
+                    (raise-timeout ssocket-recv-all "receive timeout" ssock)))
                  ((##fxzero? r)
                   count)
                  (else
                   (lp (##fx+ count r) (##fx+ start r))))))
-            (raise-io-error 'ssocket-recv-all "Socket is not open for input" ssock)))))))
+            (raise-io-error ssocket-recv-all "Socket is not open for input" ssock)))))))
 
 ;;; utilities
 ;; retrieve the underlying socket

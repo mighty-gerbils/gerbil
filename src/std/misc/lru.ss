@@ -23,7 +23,7 @@
 (defmethod {:init! lru-cache}
   (lambda (self cap)
     (unless (and (fixnum? cap) (##fx> cap 1))
-      (raise-bad-argument 'make-lru-cache "fixnum > 1" cap))
+      (raise-bad-argument make-lru-cache "fixnum > 1" cap))
     (struct-instance-init! self (make-hash-table) #f #f 0 cap)))
 
 (def (lru-cache-ref lru key (default absent-obj))
@@ -34,7 +34,7 @@
            (lru-cache-touch! lru n)
            (&node-val n)))
      ((eq? default absent-obj)
-      (raise-unbound-key 'lru-cache-ref lru key))
+      (raise-unbound-key lru-cache-ref lru key))
      (else default))))
 
 (def (lru-cache-touch! lru n)

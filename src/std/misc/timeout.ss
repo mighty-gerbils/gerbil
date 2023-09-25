@@ -12,4 +12,4 @@
    ((real? t)
     (seconds->time (+ (##current-time-point) t)))
    (else
-    (raise-bad-argument 'make-timeout "real, time or #f" t))))
+    (raise-bad-argument make-timeout "real, time or #f" t))))

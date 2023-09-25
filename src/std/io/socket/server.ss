@@ -14,7 +14,7 @@
 (def (server-socket-accept ssock)
   (with-basic-socket-read-lock ssock
     (when (&basic-socket-closed? ssock)
-      (raise-io-closed 'server-socket-accept "socket has closed"))
+      (raise-io-closed server-socket-accept "socket has closed"))
     (let ((srv (&basic-socket-sock ssock))
           (sockaddr (make-socket-address (&basic-socket-domain ssock))))
       (let lp ()
@@ -32,7 +32,7 @@
                                    (make-rwlock 'socket) #f 0))))
            ((basic-socket-wait-io! ssock (fd-io-in srv) (&basic-socket-timeo-in ssock))
             (when (&basic-socket-closed? ssock)
-              (raise-io-closed 'server-socket-accept "socket has been closed"))
+              (raise-io-closed server-socket-accept "socket has been closed"))
             (lp))
            (else
-            (raise-timeout 'server-socket-accept "accept timeout"))))))))
+            (raise-timeout server-socket-accept "accept timeout"))))))))

@@ -80,12 +80,12 @@
   (def valid? #f) ;; have we seen at least one digit
   (def (peek) (PeekableStringReader-peek-char reader))
   (def c (peek))
-  (def (bad) (raise-parse-error 'parse-decimal "Unexpected character" #f pre-reader))
+  (def (bad) (raise-parse-error parse-decimal "Unexpected character" #f pre-reader))
   (def (next) (PeekableStringReader-read-char reader) (set! c (peek)))
   (def (parse-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
 
   (let/cc return
-    (when (eof-object? c) (raise-parse-error 'parse-decimal "Unexpected EOF" #!eof pre-reader))
+    (when (eof-object? c) (raise-parse-error parse-decimal "Unexpected EOF" #!eof pre-reader))
     (when sign-allowed? (set! sign (parse-sign)))
     (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
     (def (parse-left-digit-or-group-separator)
@@ -333,7 +333,8 @@
       string)
 
     (def (disallowed-loss-of-precision)
-      (raise (LossOfPrecision "loss of precision" irritants: [n] where: '%decimal->digits)))
+      (raise (LossOfPrecision "loss of precision" irritants: [n]
+                              where: (exception-context disallowed-loss-of-precision))))
 
     (cond
      ((>= 0 extra-width)

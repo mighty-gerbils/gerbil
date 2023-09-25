@@ -36,7 +36,7 @@
     ((out)   (macro-direction-out))
     ((inout) (macro-direction-inout))
     (else
-     (raise-bad-argument 'direction "'in, 'out, or 'inout" dir))))
+     (raise-bad-argument direction "in, out, or inout" dir))))
 
 (def (fdopen fd dir t)
   (let (dirx (direction dir))

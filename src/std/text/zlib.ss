@@ -16,13 +16,13 @@
    ((string? data) (compress-bytes (string->utf8 data) level))
    ((input-port? data) (compress-port data level))
    (else
-    (raise-bad-argument 'compress "input source; u8vector, string, or input-port" data))))
+    (raise-bad-argument compress "input source; u8vector, string, or input-port" data))))
 
 (def (compress-bytes data level)
   (let* ((buf (make-u8vector (compressBound (u8vector-length data))))
          (res (compress2 buf data level)))
     (if (##fxnegative? res)
-      (raise-io-error 'compress "zlib error" res)
+      (raise-io-error compress "zlib error" res)
       (begin
         (u8vector-shrink! buf res)
         buf))))
@@ -36,14 +36,14 @@
    ((string? data) (compress-gz-bytes (string->utf8 data) level))
    ((input-port? data) (compress-gz-port data level))
    (else
-    (raise-bad-argument 'compress-gz "input source; u8vector, string, or input-port" data))))
+    (raise-bad-argument compress-gz "input source; u8vector, string, or input-port" data))))
 
 (defrules with-z-stream ()
   ((_ where zs init body fini)
    (let* ((zs (make_z_stream))
           (res init))
      (unless (eq? res Z_OK)
-       (raise-io-error 'where "zlib stream initialization error" res))
+       (raise-io-error where "zlib stream initialization error" res))
      (try
       body
       (finally fini)))))
@@ -58,7 +58,7 @@
   (let* ((buf (make-u8vector (deflateBound zs (u8vector-length data))))
          (res (deflate zs buf data 0 Z_FINISH)))
     (unless (eq? res Z_STREAM_END)
-      (raise-io-error 'compress-gz "incomplete deflate" (z_stream_msg zs) res))
+      (raise-io-error compress-gz "incomplete deflate" (z_stream_msg zs) res))
     (u8vector-shrink! buf (z_stream_total_out zs))
     buf))
 
@@ -104,7 +104,7 @@
               (cons obuf r))
             r))
          (else
-          (raise-io-error 'deflate-port "deflate: zlib error" (z_stream_msg zs) res))))))
+          (raise-io-error deflate-port "deflate: zlib error" (z_stream_msg zs) res))))))
 
   (let (ibuf (make-u8vector buflen))
     (let lp ((r []))
@@ -124,7 +124,7 @@
    ((u8vector? data) (uncompress-bytes data))
    ((input-port? data) (uncompress-port data))
    (else
-    (raise-bad-argument 'uncompress "input source; u8vector or input-port" data))))
+    (raise-bad-argument uncompress "input source; u8vector or input-port" data))))
 
 (def (uncompress-bytes data)
   (do-inflate data uncompress-data))
@@ -152,7 +152,7 @@
         (u8vector-shrink! buf ocount)
         (u8vector-concatenate (reverse (cons buf r))))
        (else
-        (raise-io-error 'uncompress "zlib error" (z_stream_msg zs) res))))))
+        (raise-io-error uncompress "zlib error" (z_stream_msg zs) res))))))
 
 (def (uncompress-port inp)
   (do-inflate inp do-inflate-port))
@@ -181,7 +181,7 @@
           (u8vector-shrink! obuf ocount)
           (cons obuf r))
          (else
-          (raise-io-error 'inflate-port "zlib error" (z_stream_msg zs) res))))))
+          (raise-io-error inflate-port "zlib error" (z_stream_msg zs) res))))))
 
   (let (ibuf (make-u8vector buflen))
     (let lp ((r []))

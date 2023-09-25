@@ -49,7 +49,7 @@
     (try
      (let (status (request-status req))
        (unless (##fx= status 101)
-         (raise-io-error 'open-websocket-client
+         (raise-io-error open-websocket-client
                          "Unexpected server response"
                          url status)))
 
@@ -61,12 +61,12 @@
             (Sec-WebSocket-Protocol (assoc "Sec-Websocket-Protocol" rheaders)))
 
        (unless (and Connection (equal? (string-downcase (cdr Connection)) "upgrade"))
-         (raise-io-error 'open-websocket-client
+         (raise-io-error open-websocket-client
                          "Bad server response; no connection upgrade"
                          url Connection))
 
        (unless (and Upgrade (equal? (string-downcase (cdr Upgrade)) "websocket"))
-         (raise-io-error 'open-websocket-client
+         (raise-io-error open-websocket-client
                          "Bad server response; no websocket upgrade"
                          url Upgrade))
 
@@ -77,12 +77,12 @@
               (verify (digest-final! digest))
               (verify64 (base64-encode verify)))
          (unless (equal? accept64 verify64)
-           (raise-io-error 'open-websocket-client
+           (raise-io-error open-websocket-client
                            "Bad server response; nonce verification failure"
                            url nonce64 accept64 verify64)))
 
        (when Sec-WebSocket-Extensions
-         (raise-io-error 'open-websocket-client
+         (raise-io-error open-websocket-client
                          "Bad server response; includes unsupported exensions"
                          url Sec-WebSocket-Extensions))
 
@@ -91,7 +91,7 @@
                 (uproto (assoc "Sec-WebSocket-Protocol" headers))
                 (uproto (string-split (and uproto (cdr uproto)) #\,)))
            (unless (member proto uproto)
-             (raise-io-error 'open-websocket-client
+             (raise-io-error open-websocket-client
                              "Bad server response; unexpected protocol"
                              url Sec-WebSocket-Protocol)))))
 
@@ -145,7 +145,7 @@
     (error "Bad argument; expected 'binary or 'text" type))
    ((websocket-cs ws)
     => (lambda (how)
-         (raise-io-error 'websocket-send "Websocket has been closed" ws how)))
+         (raise-io-error websocket-send "Websocket has been closed" ws how)))
    (else
     (thread-send (websocket-wr ws) (cons type bytes)))))
 
@@ -172,12 +172,12 @@
           => (lambda (how)
                (mutex-unlock! mx)
                (if raise?
-                 (raise-io-error 'websocket-recv "Websocket has been closed" ws how)
+                 (raise-io-error websocket-recv "Websocket has been closed" ws how)
                  #!eof)))
          ((mutex-unlock! mx cv timeo)
           (lp))
          (raise?
-          (raise-timeout 'websocket-recv "timeout" ws))
+          (raise-timeout websocket-recv "timeout" ws))
          (else #f))))))
 
 (def (websocket-read ws (timeo #f) (raise? #f))

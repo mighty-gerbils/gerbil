@@ -12,9 +12,9 @@
 (declare (not safe))
 
 (deferror-class DispatchError () dispatch-error?)
-(def (raise-dispatch-error where method-id args)
-  (raise (DispatchError "generic dispatch failure; no matching method"
-                        where: where irritants: (cons method-id args))))
+(defraise/context (raise-dispatch-error where method-id args)
+  (DispatchError "generic dispatch failure; no matching method"
+                 irritants: (cons method-id args)))
 
 ;;; type-of
 (def (type-of obj)
@@ -161,7 +161,7 @@
 (defmethod {:init! generic}
   (lambda (self id (default #f))
     (unless (or (not default) (procedure? default))
-      (raise-bad-argument 'generic "procedure or #f -- default method" id default))
+      (raise-bad-argument generic "procedure or #f -- default method" id default))
     (struct-instance-init! self id (vector) default (make-mutex 'generic))))
 
 ;; generic dispatch tables
@@ -180,7 +180,7 @@
 
 (def (generic-bind! gen signature method)
   (unless (procedure? method)
-    (raise-bad-argument 'generic-bind! "procedure -- method implementation" method))
+    (raise-bad-argument generic-bind! "procedure -- method implementation" method))
   (let ((arity (length signature))
         (mx (&generic-mx gen)))
     (mutex-lock! mx)
@@ -272,12 +272,12 @@
              => (lambda (method)
                   (apply method args)))
             (else
-             (raise-dispatch-error 'generic-dispatch (generic-id gen) args)))))
+             (raise-dispatch-error generic-dispatch (generic-id gen) args)))))
      ((&generic-default gen)
       => (lambda (method)
            (apply method args)))
      (else
-      (raise-dispatch-error 'generic-dispatch (generic-id gen) args)))))
+      (raise-dispatch-error generic-dispatch (generic-id gen) args)))))
 
 (def (generic-dispatch-method gtab args default)
   (cond
@@ -313,11 +313,11 @@
                   => (lambda (method)
                        (method arg ...)))
                  (else
-                  (raise-dispatch-error 'dispatch-e (generic-id gen) [arg ...])))))
+                  (raise-dispatch-error dispatch-e (generic-id gen) [arg ...])))))
           ((&generic-default gen)
            => (lambda (method) (method arg ...)))
           (else
-           (raise-dispatch-error 'dispatch-e (generic-id gen) [arg ...])))))
+           (raise-dispatch-error dispatch-e (generic-id gen) [arg ...])))))
      (def (method-e gtab default arg ...)
        (cond
         ((cache-lookup-e (&generic-table-cache gtab) arg ...))
@@ -376,9 +376,9 @@
                => (lambda (method)
                     (apply method args)))
               (else
-               (raise-dispatch-error 'generic-dispatch-next (generic-id gen) args))))))
+               (raise-dispatch-error generic-dispatch-next (generic-id gen) args))))))
      (else
-      (raise-dispatch-error 'generic-dispatch-next (generic-id gen) args)))))
+      (raise-dispatch-error generic-dispatch-next (generic-id gen) args)))))
 
 ;; The cache is a perfect hash table represented as a vector containing
 ;; cache entries. A cache entry is an inverted arg type id improper list

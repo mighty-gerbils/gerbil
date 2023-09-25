@@ -45,7 +45,7 @@
   (with ((Atom _ old-val validator watchers) a)
     (when validator
       (unless (validator new-val)
-        (raise-bad-argument 'update-atom! "valid atom value" new-val)))
+        (raise-bad-argument update-atom! "valid atom value" new-val)))
     (set! (&Atom-value a) new-val)
     (hash-for-each (lambda (key watch) (watch key a old-val new-val)) watchers)
     (if values?

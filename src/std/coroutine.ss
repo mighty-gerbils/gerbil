@@ -42,7 +42,7 @@
    ((cothread? c)
     (cothread-continue! (thread-specific c) args))
    (else
-    (raise-bad-argument 'continue "coroutine or cothread" c))))
+    (raise-bad-argument continue "coroutine or cothread" c))))
 
 (def (yield . args)
   (cond
@@ -51,7 +51,7 @@
    ((cothr? (thread-specific (current-thread)))
     (cothread-yield! (thread-specific (current-thread)) args))
    (else
-    (raise-context-error 'yield "not in a coroutine continuation"))))
+    (raise-context-error yield "not in a coroutine continuation"))))
 
 ;;; Implementation of coroutines
 (def (coroutine-start! k thunk)
@@ -98,8 +98,8 @@
     (let (spec (thread-specific thread))
       (if (cothr? spec)
         (cothread-signal! spec 'end val)
-        (raise-bad-argument 'cothread-stop! "cothread" thread spec)))
-    (raise-bad-argument 'cothread-stop! "cothtread" thread)))
+        (raise-bad-argument cothread-stop! "cothread" thread spec)))
+    (raise-bad-argument cothread-stop! "cothtread" thread)))
 
 (def (cothread-continue! c val)
   (with ((cothr mx cv state kont) c)
@@ -130,7 +130,7 @@
               (raise kont))
              (else
               (mutex-unlock! mx)
-              (raise-context-error 'cothread-continue! "illegal cothread state" state))))))
+              (raise-context-error cothread-continue! "illegal cothread state" state))))))
       ((end)
        (mutex-unlock! mx)
        kont)
@@ -138,7 +138,7 @@
        (mutex-unlock! mx)
        (raise kont))
       (else
-       (raise-context-error 'cothread-continue! "illegal cothread state" state)))))
+       (raise-context-error cothread-continue! "illegal cothread state" state)))))
 
 (def (cothread-yield! c args)
   (let (kont (cothread-yield-values! c (apply values args)))
@@ -157,7 +157,7 @@
        kont)
       (else
        (mutex-unlock! mx)
-       (raise-context-error 'cothread-yield-values! "illegal cothread state" state)))))
+       (raise-context-error cothread-yield-values! "illegal cothread state" state)))))
 
 (def (cothread-signal! c state val)
   (with ((cothr mx cv) c)
@@ -181,4 +181,4 @@
            (mutex-unlock! mx))
           (else
            (mutex-unlock! mx)
-           (raise-context-error 'cothread-wait! "illegal cothread state" state)))))))
+           (raise-context-error cothread-wait! "illegal cothread state" state)))))))

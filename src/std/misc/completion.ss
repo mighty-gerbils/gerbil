@@ -46,7 +46,7 @@
      (if (&completion-ready? compl)
        (begin
          (mutex-unlock! mx)
-         (raise-context-error 'completion-post! "Completion has already been posted" compl))
+         (raise-context-error completion-post! "Completion has already been posted" compl))
        (begin
          (set-e compl val)
          (set! (&completion-ready? compl) #t)

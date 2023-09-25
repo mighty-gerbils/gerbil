@@ -67,7 +67,7 @@
          (tgroup-kill! tg)))
       (tgroup-detach! tg)
       (void))
-    (raise-bad-argument 'thread-group-kill! "thread-group" tg)))
+    (raise-bad-argument thread-group-kill! "thread-group" tg)))
 
 
 (def (tgroup-kill! tg)
@@ -134,7 +134,7 @@
 (def (thread-raise! thread obj)
   (cond
    ((not (thread? thread))
-    (raise-bad-argument 'thread-raise! "thread" thread))
+    (raise-bad-argument thread-raise! "thread" thread))
    ((eq? thread (current-thread))
     (raise obj))
    (else
@@ -143,7 +143,7 @@
 (def (thread-async! thread thunk)
   (cond
    ((not (thread? thread))
-    (raise-bad-argument 'thread-async! "thread" thread))
+    (raise-bad-argument thread-async! "thread" thread))
    ((eq? thread (current-thread))
     (thunk))
    (else

@@ -39,25 +39,25 @@
   (if (maybe-timeout? timeo)
     (let (wait-e (selector-wait-e sel))
       (and (wait-e sel timeo) sel))
-    (raise-bad-argument 'wait "timeout or #f" timeo)))
+    (raise-bad-argument wait "timeout or #f" timeo)))
 
 (def (select sels (timeo #f))
   (match sels
     ([]
-     (raise-bad-argument 'select "selection set: empty"))
+     (raise-bad-argument select "selection set: empty"))
     ([sel]
      (wait sel timeo))
     (else
      (if (maybe-timeout? timeo)
        (do-select sels timeo)
-       (raise-bad-argument 'select "timeout or #f" timeo)))))
+       (raise-bad-argument select "timeout or #f" timeo)))))
 
 ;; specialized variant for waiting on an io condvar
 (def (wait-io! iocv (timeo #f))
   (unless (io-condition-variable? iocv)
-    (raise-bad-argument 'wait-io! "IO condition variable" iocv))
+    (raise-bad-argument wait-io! "IO condition variable" iocv))
   (unless (maybe-timeout? timeo)
-    (raise-bad-argument 'wait-io! "timeout or #f" timeo))
+    (raise-bad-argument wait-io! "timeout or #f" timeo))
   (&wait-io! iocv timeo))
 
 ;; unchecked variant of wait-io!

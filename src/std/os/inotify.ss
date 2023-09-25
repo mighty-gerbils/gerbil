@@ -70,7 +70,7 @@
         (cond
          (rd
           (if (##fxzero? rd)
-            (raise-io-closed 'inotify "empty inotify read")
+            (raise-io-closed inotify "empty inotify read")
             (inotify-events buf rd)))
          ((##wait-for-io! (fd-io-in in) timeo)
           (lp))

@@ -34,7 +34,7 @@
          ((string? next)
           (write-substring next 0 (string-length next) out))
          (else
-          (raise-io-error 'rack-fastcgi-respond "bad response chunk" next))))
+          (raise-io-error rack-fastcgi-respond "bad response chunk" next))))
       (get-output-u8vector out)))
 
   (def (log-response-error e)

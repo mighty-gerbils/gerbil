@@ -220,10 +220,10 @@
            (thread-group-specific-set! tgroup state)
            ostate)))
    (else
-    (raise-context-error 'repl "No repl state"))))
+    (raise-context-error repl "No repl state"))))
 
 (def (untaint! (tgroup #f) (state #f))
   (let (tgroup (or tgroup (primordial-thread-group)))
     (if (repl-state? (thread-group-specific tgroup))
       (thread-group-specific-set! tgroup state)
-      (raise-context-error 'repl "No tainted repl state in thread-group" tgroup))))
+      (raise-context-error repl "No tainted repl state in thread-group" tgroup))))

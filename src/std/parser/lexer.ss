@@ -112,7 +112,7 @@
     (make-char-stream (open-input-string inp)))
    ((char-stream? inp) inp)
    (else
-    (raise-bad-argument 'lexer "input source; input-port, string or char-stream" inp))))
+    (raise-bad-argument lexer "input source; input-port, string or char-stream" inp))))
 
 ;; cs: char-stream
 ;; Ls: list of rlangs for each lexeme; matches longest, with ties resolved in order
@@ -127,7 +127,7 @@
 
   (def (raise-e chars start end)
     (let (tok (token-e 'ERROR (chars->string chars) start end))
-      (raise-parse-error 'lex "No lexeme matching input" tok)))
+      (raise-parse-error lex "No lexeme matching input" tok)))
 
   (def (loop Ls chars start E)
     (let (next (char-stream-getc cs))

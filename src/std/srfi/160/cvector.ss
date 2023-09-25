@@ -20,7 +20,7 @@
       (struct-instance-init! self e)
       (when fill
         (unless (complex? fill)
-          (raise-bad-argument 'cvector "complex number" fill))
+          (raise-bad-argument cvector "complex number" fill))
         (cvector-fill! e fill  ##f32vector-set! size)))))
 
 (defmethod {:init! c128vector}
@@ -29,7 +29,7 @@
       (struct-instance-init! self e)
       (when fill
         (unless (complex? fill)
-          (raise-bad-argument 'cvector "complex number" fill))
+          (raise-bad-argument cvector "complex number" fill))
         (cvector-fill! e fill ##f64vector-set! size)))))
 
 (def (cvector-fill! v fill set-e size)
@@ -64,7 +64,7 @@
     (match rest
       ([x . rest]
        (unless (complex? x)
-         (raise-bad-argument 'cvector "complex number" x))
+         (raise-bad-argument cvector "complex number" x))
        (let ((real (inexact (real-part x)))
              (imag (inexact (imag-part x))))
          (set-e v i real)

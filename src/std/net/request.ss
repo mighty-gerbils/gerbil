@@ -342,10 +342,10 @@
                     (set! (cdr tl) tl*)
                     (lp tl*)))
                  (else
-                  (raise-io-error 'http-request-read-response!
+                  (raise-io-error http-request-read-response!
                                   "Malformed header" req next))))))))
       (else
-       (raise-io-error 'http-request-read-response!
+       (raise-io-error http-request-read-response!
                        "malformed status line" req status-line)))))
 
 (def (http-request-read-body req headers)
@@ -415,13 +415,13 @@
       (let (next (&BufferedReader-read-u8-inline reader))
         (cond
          ((eof-object? next)
-          (raise-io-error 'request-read-response-line
+          (raise-io-error request-read-response-line
                           "Incomplete response; connection closed" req))
          ((eq? next cr)
           (let (next (&BufferedReader-read-u8-inline reader))
             (cond
              ((eof-object? next)
-              (raise-io-error 'request-read-response-line
+              (raise-io-error request-read-response-line
                               "Incomplete response; connection closed" reader))
              ((eq? next lf)
               (utf8->string (list->u8vector (cdr root))))
