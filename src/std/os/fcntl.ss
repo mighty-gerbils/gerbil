@@ -70,7 +70,7 @@
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
 
-  (namespace ("std/os/fcntl" __fcntl0 __fcntl1))
+  (namespace ("std/os/fcntl#" __fcntl0 __fcntl1))
 
   ;; POSIX commands
   (define-const F_DUPFD)

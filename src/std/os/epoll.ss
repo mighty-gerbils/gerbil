@@ -72,7 +72,7 @@
   (c-declare "#include <sys/epoll.h>")
 
   ;; private
-  (namespace ("std/os/epoll"
+  (namespace ("std/os/epoll#"
               epoll_event epoll_event*
               __epoll_create __epoll_ctl __epoll_wait
               _epoll_create _epoll_ctl _epoll_wait))

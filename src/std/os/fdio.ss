@@ -79,7 +79,7 @@
   (define-const S_IXOTH)
 
   ;; private
-  (namespace ("std/os/fdio" __read __write __open __close))
+  (namespace ("std/os/fdio#" __read __write __open __close))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")
