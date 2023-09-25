@@ -98,7 +98,7 @@
                          (character-decoder codec)
                          #f)))
    ((input-port? pre-reader)
-    (StringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
+    (StringReader (make-cooked-textual-input-port pre-reader)))
    (else
     (raise-bad-argument open-string-reader "implementation of Reader" pre-reader))))
 
@@ -127,7 +127,7 @@
                          (character-encoder codec)
                          #f)))
    ((output-port? pre-writer)
-    (StringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
+    (StringWriter (make-raw-textual-output-port pre-writer)))
    (else
     (raise-bad-argument open-string-writer "implementation of Writer" pre-writer))))
 
@@ -153,7 +153,7 @@
                                (make-string-buffer buffer-or-size) 0 0
                                #f)))
    ((input-port? pre-reader)
-    (BufferedStringReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
+    (BufferedStringReader (make-cooked-textual-input-port pre-reader)))
    (else
     (raise-bad-argument open-buffered-string-reader "string or implementation of StringReader or Reader" pre-reader))))
 
@@ -179,7 +179,7 @@
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
    ((output-port? pre-writer)
-    (BufferedStringWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
+    (BufferedStringWriter (make-cooked-textual-input-port pre-writer)))
    (else
     (raise-bad-argument open-buffered-string-writer "#f or implementation of StringWriter or writer" pre-writer))))
 

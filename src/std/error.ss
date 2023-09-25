@@ -22,6 +22,7 @@
         Timeout Timeout? raise-timeout timeout-error?
         UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
+        UnsupportedMethod? raise-unsupported-method unsupported-method-error?
         (rename: raise-bug BUG)
         is-it-bug?
         with-exception-stack-trace
@@ -74,6 +75,9 @@
 
 ;; key lookup errors
 (deferror-class UnboundKey () unbound-key-error?)
+
+;; unsupported interface methods
+(deferror-class UnsupportedMethod () unsupported-method-error?)
 
 ;; utility macros
 (defsyntax (exception-context stx)
@@ -137,6 +141,9 @@
 
 (defraise/context (raise-unbound-key where irritants ...)
   (UnboundKey "no value associated with key" irritants: [irritants ...]))
+
+(defraise/context (raise-unsupported-method where)
+  (UnsupportedMethod "unsupported method" irritants: []))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)
