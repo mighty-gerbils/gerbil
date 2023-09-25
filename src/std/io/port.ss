@@ -169,7 +169,7 @@
   (cooked-input-port-peek port buffer peek-char string-ref))
 
 (defcooked-port-method cooked-textual-input-port (read-string port buffer str start end need)
-  (cooked-input-port-read* port buffer u8v start end need read-substring substring-move!))
+  (cooked-input-port-read* port buffer str start end need read-substring substring-move!))
 
 ;;; Delimited Textual Input
 (defsimple-port-method delimited-textual-input-port (close-port self)
@@ -223,7 +223,7 @@
       (read-e port)
       (lp (fx- to-skip 1)))))
 
-(defrule (cooked-input-port-skip! port bfufer count read-e)
+(defrule (cooked-input-port-skip! port buffer count read-e)
   (let (skipped (cooked-buffer-skip! buffer count))
     (when (fx< skipped count)
       (cooked-port-skip! port (fx- count skipped) read-e)
@@ -259,7 +259,7 @@
               (cooked-buffer-consume! buffer have)
               (fx+ have rd)))
            (else
-            (buffer-move! (&cooked-buffer-buffer) lo (fx+ lo want) obj start)
+            (buffer-move! (&cooked-buffer-buffer buffer) lo (fx+ lo want) obj start)
             (cooked-buffer-consume! buffer want)
             want)))
         (read-e obj start end port need)))
