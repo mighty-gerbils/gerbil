@@ -1,8 +1,7 @@
 ;; -*- Gerbil -*-
 package: misc/rpc-perf
 
-(import :gerbil/gambit/threads
-        :gerbil/gambit/bytes
+(import :gerbil/gambit
         :std/net/socket
         :std/sugar
         :std/getopt)
