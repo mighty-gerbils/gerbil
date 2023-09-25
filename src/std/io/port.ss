@@ -193,7 +193,7 @@
       (void))))
 
 (defsimple-port-method cooked-textual-input-port (delimit self limit)
-  (BufferedReader (make-delimited-textual-input-port self limit)))
+  (BufferedStringReader (make-delimited-textual-input-port self limit)))
 
 (defcooked-port-method cooked-textual-input-port (read-char port buffer)
   (if (&cooked-buffer-buffer buffer)
@@ -245,7 +245,7 @@
   (delimited-skip! self count cooked-textual-input-port::skip))
 
 (defsimple-port-method delimited-textual-input-port (delimit self limit)
-  (BufferedReader (make-delimited-textual-input-port self limit)))
+  (BufferedStringReader (make-delimited-textual-input-port self limit)))
 
 (defsimple-port-method delimited-textual-input-port (peek-char self)
   (delimited-peek self cooked-textual-input-port::peek-char))
