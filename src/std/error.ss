@@ -87,8 +87,8 @@
     ((_ here)
      (with-syntax ((where
                     (cond
-                     ((or (AST-source #'here)
-                          (AST-source stx))
+                     ((or (stx-source #'here)
+                          (stx-source stx))
                       => (lambda (locat)
                            (call-with-output-string "" (cut ##display-locat locat #t <>))))
                      (else
