@@ -19,14 +19,6 @@
     (->> httpd (!register-handler host path handler)))
   error: "error registering handler" path)
 
-;; registers a handler with a remote httpd
-(defcall-actor (remote-http-register-handler server-id path handler (host #f))
-  (with-actor-server
-   (check-handler path handler
-     (->> (make-handle (current-actor-server) (reference server-id 'httpd))
-          (!register-handler host path handler))))
-  error: "error registering remote handler" server-id path)
-
 (defrule (with-actor-server do-it)
   (if (current-actor-server)
     do-it
