@@ -30,6 +30,7 @@
     "test"
     "stxparam"
     "stxutil"
+    "source"
     "lazy"
     "amb"
     (gxc: "interface" ,@(include-gambit-sharp))

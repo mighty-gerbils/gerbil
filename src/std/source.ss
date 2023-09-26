@@ -1,32 +1,31 @@
 (export #t)
 
-(import (for-syntax ./stxutil)
-        ./sugar)
-
-(begin-for-syntax
+(import (for-syntax :std/stxutil
+                    :std/misc/path
+                    :std/misc/ports)
+        :std/sugar)
 
 ;;; Locations follow the Gambit convention: it's a vector of two values.
 ;;; The first value is either a string which is filename, or a list containing a symbol.
 ;;; The second value is a fixnum, either non-negative (+ (* 65536 column) line),
 ;;; or if the previous formula had overflows, negative file position.
-(def (stx-source-file stx)
-  (let (loc (stx-source stx)) (and loc (vector-ref loc 0))))
 
-(def (stx-source-position stx)
-  (let (loc (stx-source stx)) (and loc (vector-ref loc 1))))
+(defsyntax-call (this-source-location ctx)
+  (stx-source ctx))
 
-(def (stx-source-directory stx)
-  (let (file (stx-source-file stx)) (and file (path-directory file))))
+(defsyntax-call (this-source-file ctx)
+  (stx-source-file ctx))
 
-(def (stx-source-path stx . relpath)
-  (let (dir (stx-source-directory stx)) (and dir (apply subpath dir relpath))))
+(defsyntax-call (this-source-position ctx)
+  (stx-source-position ctx))
 
-(def (stx-source-content stx . relpath)
-  (let (path (apply stx-source-path stx relpath)) (and path (read-file-u8vector path)))))
+(defsyntax-call (this-source-directory ctx)
+  (stx-source-directory ctx))
 
-(defsyntax-call (this-source-location x) (stx-source x))
-(defsyntax-call (this-source-file x) (stx-source-file x))
-(defsyntax-call (this-source-position x) (stx-source-position x))
-(defsyntax-call (this-source-directory x) (stx-source-directory x))
-(defsyntax-call (this-source-path x relpath) (stx-source-path x relpath))
-(defsyntax-call (this-source-content x relpath) (stx-source-content x relpath))
+(defsyntax-call (this-source-path ctx relpath)
+  (alet (dir (stx-source-directory ctx)) (apply subpath dir relpath)))
+
+(defsyntax-call (this-source-content ctx relpath)
+  (alet (dir (stx-source-directory ctx))
+    (alet (path (apply subpath dir ctx relpath))
+      (read-file-u8vector path))))
