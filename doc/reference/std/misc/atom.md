@@ -9,41 +9,46 @@ Atoms provide a way to manage shared, synchronous, independent state,
 closely following the API defined by [Clojure](https://clojure.org/reference/atoms).
 
 Compared to the Clojure atom API, we:
-  - We prefix all function names with `atom-`.
-  - Do not support the meta field and the functions `alter-meta!` or `reset-meta!`
-  - We replace Clojure `swap-vals!` and `reset-vals!` by our `swap-values!` and `reset-values!`
-    that return values rather than vectors.
-  - We `add-watch` and `remove-watch` to `atom-add-watch!` and `atom-remove-watch!`
-    with the `atom-` prefix and the `!` suffix.
-  - Do not have generic functions that work on multiple kinds of "references"
-    but only one set of functions for atoms.
-  - We also export `atom-increment!` and `atomic-counter` for the common case.
+  - prefix all function names with `atom-`;
+  - do not support the meta field and the functions `alter-meta!` or `reset-meta!`;
+  - replace Clojure `swap-vals!` and `reset-vals!` by our `swap-values!` and `reset-values!`
+    that return values rather than vectors;
+  - rename `add-watch` and `remove-watch` to `atom-add-watch!` and `atom-remove-watch!`
+    with the `atom-` prefix and the `!` suffix;
+  - do not have generic functions that work on multiple kinds of "references"
+    but only one set of functions for atoms;
+  - also export `atom-increment!` and `atomic-counter` for the common case.
 
 You create an atom with `atom`, and can access its state with `atom-deref`.
 Just like Clojure atoms and other references, our atoms support validators:
 functions that validate new values.
 To change the value of an atom, you can use `atom-swap!`,
 that atomically applies a function to the old value,
-and binds the atom to the new value to it the validator accepts it.
+and binds the atom to the new value to it if the validator accepts it.
 A lower-level `compare-and-set!` is also provided.
 Changes to atoms are always free of race conditions.
 
+::: warning
 Unlike the Clojure implementation, our current implementation does not retry,
 though we do not guarantee not to change in the future to match Clojure.
 Unlike in Clojure, it is thus acceptable for the change function to have side-effects,
 though it is not recommended, in case this behavior changes.
+:::
 
 ## atom
 ``` scheme
-(atom (atom (initial-value (void)) validator: (validator #f))) -> Atom
+(atom (initial-value (void)) validator: (validator #f)) -> Atom
 ```
 
 Creates a new atom, a box that atomically changes value.
-If no initial-value is provided, `(void)` is used (Clojure has no default initial-value).
+If no `initial-value` is provided, `(void)` is used (Clojure has no default initial-value).
 A `validator:` keyword argument can specify a validator
 (defaults to `#f` which designates a validator that always says "yes").
-The validator takes a new value and returns true if it is accepted,
-returns `#f` or throws if it is rejected.
+The validator takes a new value and returns true if it is accepted;
+if the validator returns `#f` or throws, the value is rejected and the atom is left unmodified;
+furthermore, if the validator throws, the exception is propagated
+to the caller of the modifying function.
+Similar to Clojure’s `atom`.
 
 ::: tip Examples:
 ``` scheme
@@ -60,13 +65,13 @@ returns `#f` or throws if it is rejected.
 (atom? a) -> boolean
 ```
 
-Returns `#t` if *a* an atom, `#f` otherwise.
+Returns `#t` if `a` an atom, `#f` otherwise.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (atom? (atom))
-t
-
+#t
 > (atom 42)
 #<Atom #8>
 > (atom? #8)
@@ -79,9 +84,9 @@ t
 (atom-swap! atom function) -> any
 ```
 
-Applies the function to the value currently in the atom, and,
-if it passes the atom's validator, sets the atom to the new value.
-Ensures that no other access is made to the atom in the middle of a swap.
+Applies the `function` to the value currently in the `atom`, and,
+if it passes the `atom`’s validator, sets the `atom` to the new value.
+Ensures that no other access is made to the `atom` in the middle of a swap.
 Returns the new value.
 
 ::: tip Examples:
@@ -98,10 +103,11 @@ Returns the new value.
 ```
 
 Similar to `atom-swap!` but returns two values, the `old` and the `new` values.
-Similar to Clojure's `swap-vals!` but returns two values rather than a vector of size 2.
+Similar to Clojure’s `swap-vals!` but returns two values rather than a vector of size 2.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 6))
 > (atom-swap-values! a (cut * 2 <>))
 6
@@ -114,12 +120,13 @@ Similar to Clojure's `swap-vals!` but returns two values rather than a vector of
 (atom-reset! atom new-value) -> new-value
 ```
 
-If the new value passes the atom's validator, sets the atom to it.
+If the new value passes the `atom`’s validator, sets the atom to it.
 Ensures that no other access is made to the atom in the middle of a reset.
 Returns the new value.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 42))
 > (atom-reset! a 23)
 23
@@ -138,6 +145,7 @@ Similar to Clojure `atom-reset-vals!` but returns values instead of a vector.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 42))
 > (atom-reset-values! a 23)
 42
@@ -153,13 +161,14 @@ Similar to Clojure `atom-reset-vals!` but returns values instead of a vector.
 (atom-compare-and-set! atom oldval newval) -> bool
 ```
 
-Atomically sets the value of atom to newval if and only if the
-current value of the atom is identical to oldval.
+Atomically sets the value of `atom` to `newval` if and only if the
+current value of the atom is identical to `oldval`.
 Returns `#t` if set happened, else `#f`.
 Similar to Clojure `compare-and-set!`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 42))
 > (atom-compare-and-set! a 42 23)
 #t
@@ -178,7 +187,7 @@ Similar to Clojure `compare-and-set!`.
 (atom-validator atom) -> validator
 ```
 
-Access the current atom's validator, a function that takes a new value as argument
+Access the current atom’s validator, a function that takes a new value as argument
 and returns a true value iff the atom will accept that value.
 The value `#f` is a stand-in for not doing any validation,
 which is equivalent to the function `true` that accepts every value.
@@ -186,6 +195,7 @@ Similar to Clojure `get-validator`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 42 validator: number?))
 > (atom-reset! a 1)
 1
@@ -202,17 +212,18 @@ Similar to Clojure `get-validator`.
 (atom-validator-set! atom validator) -> _
 ```
 
-Modify the current atom's validator, a function that takes a new value as argument
-and returns a true value iff the atom will accept that value.
+Modify the current `atom`’s `validator`, a function that takes a new value as argument
+and returns a true value iff the `atom` will accept that value.
 The value `#f` is a stand-in for not doing any validation,
-which is equivalent to the function `true` that accepts every value.
+which is behaviorally equivalent to the function `true` that accepts every value.
 The current value is grandfathered and not validated;
-the validator is not validated for whether it accepts the current value.
+the `validator` is not validated for whether it accepts the current value.
 The function is not guaranteed to return any specific value.
 Similar to Clojure `set-validator!`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/misc/atom)
 > (def a (atom 42 validator: number?))
 > (atom-reset! a 1)
 1
@@ -228,29 +239,32 @@ Similar to Clojure `set-validator!`.
 ## atom-add-watch!
 
 ``` scheme
-(atom-add-watch! atom key function) -> void
+(atom-add-watch! atom key watch-function) -> void
 ```
 
-Adds a watch function to an atom.
-The watch function must be a function of 4 args:
-a key, the atom, its old-state, its new-state.
-Whenever the atom's state is changed,
+Adds a `watch-function` to an `atom`, identified by given `key`.
+The `watch-function` must be a function of 4 args:
+the `key`, the `atom`, its `old-state`, its `new-state`.
+Whenever the `atom`’s state is changed,
 after the new value has been validated,
 each of the registered watches will have their functions called,
-in an unspecified order, while the atom lock is still held
-(so no changes to the atom are allowed in the watches themselves,
+in an unspecified order, while the `atom` lock is still held
+(so no changes to the `atom` are allowed in the watches themselves,
 though they may send asynchronous messages or spawn threads that
 will cause a cascade of further changes).
 Keys must be unique per atom, and can be used to remove the watch with
 `atom-remove-watch!`, but are otherwise considered opaque
 by the watch mechanism.
+Similar to Clojure’s `add-watch` function.
 
+::: warning
 It is unspecified whether the state has been modified yet,
-so use old-state and new-state rather than atom-deref.
+so use `old-state` and `new-state` rather than `atom-deref`.
 Note also that watch functions may be called from multiple threads
-simultaneously. (In current implementation, the state will already
-have been modified and no threads will be spawned.)
-Similar to Clojure's `add-watch` function.
+simultaneously.
+In the current implementation, the state will already have been modified
+and no threads will be spawned, but there is no guarantee we won’t change that.
+:::
 
 ::: tip Examples:
 ``` scheme
@@ -279,8 +293,8 @@ Similar to Clojure's `add-watch` function.
 (atom-remove-watch! atom key) -> void
 ```
 
-Removes a watch function to an atom.
-Similar to Clojure's `remove-watch` function.
+Removes a watch function to an `atom`, the one associated to the given `key` if any.
+Similar to Clojure’s `remove-watch` function.
 See example for `atom-add-watch!` above.
 
 ## atom-increment!
@@ -289,7 +303,7 @@ See example for `atom-add-watch!` above.
 (atom-increment! atom [increment]) -> number
 ```
 
-Increments the atom value by the specified increment, or by 1 if unspecified.
+Increments the `atom` value by the specified `increment`, or by `1` if left unspecified.
 Return the new value. Common special case for a numeric (often integer) atom.
 
 ::: tip Examples:
@@ -311,9 +325,9 @@ Return the new value. Common special case for a numeric (often integer) atom.
 (atomic-counter [initial-value]) -> function
 ```
 
-Creates a function that maintains an atomic counter
-that starts with the given initial-value (which defaults to -1),
-takes an increment as optional argument (defaults to 1),
+Creates a function that maintains an `atomic-counter`
+that starts with the given `initial-value` (which defaults to `-1`),
+takes an increment as optional argument (defaults to `1`),
 and increments the atomic value, returning the new value, each time it is called.
 
 ::: tip Examples:
