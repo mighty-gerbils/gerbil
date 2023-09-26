@@ -5,7 +5,8 @@
         :std/sugar
         :std/contract
         (only-in :std/srfi/1 reverse!)
-        (for-syntax (only-in :std/srfi/1 delete-duplicates)
+        (for-syntax :gerbil/expander
+                    (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out
@@ -453,8 +454,8 @@
     (and (identifier? id)
          (interface-info? (syntax-local-value id false))))
 
-  (def (expand-body ctx var Interface body)
-    (with-syntax ((@app (stx-identifier ctx '%%app))
+  (def (expand-body var Interface body)
+    (with-syntax ((@app (syntax-local-introduce '%%app))
                   (var var)
                   (Interface Interface)
                   ((body ...) body))
@@ -469,8 +470,7 @@
                              (and (identifier? #'method)
                                   (string-prefix? "." (symbol->string (stx-e #'method)))
                                   (identifier? #'rator)
-                                  (or (free-identifier=? #'rator (quote-syntax var))
-                                      (bound-identifier=? #'rator (quote-syntax var))))
+                                  (bound-identifier=? #'rator (syntax-local-introduce (syntax var))))
                              (with-syntax ((&method
                                             (stx-identifier
                                              #'method
@@ -483,8 +483,8 @@
             (let ()
               body ...)))))
 
-  (def (expand ctx var Interface body cast?)
-    (let (expr-body (expand-body ctx var Interface body))
+  (def (expand var Interface body cast?)
+    (let (expr-body (expand-body var Interface body))
       (if cast?
         (with-syntax ((var var) (Interface Interface) (expr-body expr-body))
           #'(let (var (Interface var))
@@ -492,11 +492,17 @@
         expr-body)))
 
   (syntax-case stx (: :-)
-    ((macro (var : Interface) body ...)
+    ((_ (var : Interface) body ...)
      (and (identifier? #'var)
           (interface-id? #'Interface))
-     (expand #'macro #'var #'Interface #'(body ...) #t))
-    ((macro (var :- Interface) body ...)
+     (expand #'var #'Interface #'(body ...) #t))
+    ((_ (var :- Interface) body ...)
      (and (identifier? #'var)
           (interface-id? #'Interface))
-     (expand #'macro #'var #'Interface #'(body ...) #f))))
+     (expand #'var #'Interface #'(body ...) #f))
+    ((macro ((var : Interface) . rest) body ...)
+     #'(macro (var : Interface) (macro rest body ...)))
+    ((macro ((var :- Interface) . rest) body ...)
+     #'(macro (var :- Interface) (macro rest body ...)))
+    ((_ () body ...)
+     #'(let () body ...))))
