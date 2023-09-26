@@ -81,7 +81,7 @@ Returns `#t` if `a` an atom, `#f` otherwise.
 
 ## atom-swap!
 ``` scheme
-(atom-swap! atom function) -> any
+(atom-swap! atom function) -> new-value
 ```
 
 Applies the `function` to the value currently in the `atom`, and,
@@ -99,10 +99,10 @@ Returns the new value.
 
 ## atom-swap-values!
 ``` scheme
-(atom-swap! atom function) -> any any
+(atom-swap! atom function) -> old-value new-value
 ```
 
-Similar to `atom-swap!` but returns two values, the `old` and the `new` values.
+Similar to `atom-swap!` but returns two values, the old and the new values.
 Similar to Clojure’s `swap-vals!` but returns two values rather than a vector of size 2.
 
 ::: tip Examples:
@@ -158,7 +158,7 @@ Similar to Clojure `atom-reset-vals!` but returns values instead of a vector.
 ## atom-compare-and-set!
 
 ``` scheme
-(atom-compare-and-set! atom oldval newval) -> bool
+(atom-compare-and-set! atom oldval newval) -> success?
 ```
 
 Atomically sets the value of `atom` to `newval` if and only if the
@@ -300,7 +300,7 @@ See example for `atom-add-watch!` above.
 ## atom-increment!
 
 ``` scheme
-(atom-increment! atom [increment]) -> number
+(atom-increment! atom [increment]) -> new-numeric-value
 ```
 
 Increments the `atom` value by the specified `increment`, or by `1` if left unspecified.
