@@ -98,7 +98,7 @@
                          (character-decoder codec)
                          #f)))
    ((input-port? pre-reader)
-    (StringReader (make-cooked-textual-input-port pre-reader)))
+    (StringReader (make-raw-textual-input-port pre-reader)))
    (else
     (raise-bad-argument open-string-reader "implementation of Reader" pre-reader))))
 
