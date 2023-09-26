@@ -68,12 +68,6 @@
 
 (defport-method raw-input-port (close port)
   => close-input-port)
-(defport-method raw-input-port (put-back port previous-input)
-  (raise-unsupported-method put-back))
-(defport-method raw-input-port (skip port count)
-  (raise-unsupported-method skip))
-(defport-method raw-input-port (delimit port limit)
-  (raise-unsupported-method delimit))
 
 (defport-method raw-binary-input-port (read port u8v start end need)
   (read-subu8vector u8v start end port need))
