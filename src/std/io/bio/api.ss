@@ -44,7 +44,7 @@
           (reader (Reader pre-reader)))
       (BufferedReader (make-input-buffer reader buffer 0 0 #f))))
    ((input-port? pre-reader)
-    (BufferedReader (raw-port pre-reader))) ;; TODO: use a cooked-port instead
+    (BufferedReader (make-cooked-binary-input-port pre-reader)))
    (else
     (raise-bad-argument open-buffered-reader "Reader instance or u8vector" pre-reader))))
 
@@ -61,7 +61,7 @@
           (buffer (make-u8vector-buffer buffer-or-size)))
       (BufferedWriter (make-output-buffer writer buffer 0 #f))))
    ((output-port? pre-writer)
-    (BufferedWriter (raw-port pre-writer))) ;; TODO: use a cooked-port instead
+    (BufferedWriter (make-raw-binary-output-port pre-writer)))
    (else
     (raise-bad-argument open-buffered-writer "Writer instance or #f" pre-writer))))
 
