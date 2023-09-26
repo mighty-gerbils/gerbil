@@ -283,6 +283,7 @@
                 test-suite test-case
                 interface
                 with-result
+                with-interface
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -472,7 +473,14 @@
    '("(\\(defcall-actor\\)\\s-+(?\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-function-name-face)))
-
+  (gerbil-fontlock-add
+   '("(\\(with-interface\\)\\s-+(\\(\\sw+\\)\\s-+:-?\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face)
+     (2 font-lock-variable-name-face)
+     (3 font-lock-type-face)))
+  (gerbil-fontlock-add
+   '("(\\(\\.\\sw+\\)"
+     (1 font-lock-variable-name-face)))
   (gerbil-fontlock-add
    '("\\_<\\([?!&]+\\)"
      (1 font-lock-builtin-face)))
