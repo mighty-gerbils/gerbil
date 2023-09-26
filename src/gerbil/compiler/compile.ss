@@ -13,6 +13,41 @@ namespace: gxc
                  f32vector? f64vector?))
 (export #t)
 
+(def gambit-annotations
+  '(not
+    gambit-scheme
+    ieee-scheme
+    r4rs-scheme
+    r5rs-scheme
+    block
+    separate
+    core
+    inline
+    inline-primitives
+    inlining-limit
+    constant-fold
+    lambda-lift
+    standard-bindings
+    extended-bindings
+    run-time-bindings
+    safe
+    interrupts-enabled
+    poll-on-return
+    proper-tail-calls
+    generative-lambda
+    optimize-dead-local-variables
+    optimize-dead-definitions
+    generic
+    fixnum
+    flonum
+    mostly-fixnum
+    mostly-flonum
+    mostly-fixnum-flonum
+    debug
+    debug-location
+    debug-source
+    debug-environments))
+
 ;; compilation method dispatch table
 (def current-compile-methods
   (make-parameter #f))
@@ -607,6 +642,10 @@ namespace: gxc
   (ast-case stx ()
     ((_ ann expr)
      (identifier? #'ann) ; optimizer annotation mark
+     (compile-e #'expr))
+    ((_ (ann param ...) expr)
+     (and (identifier? #'ann) ; extended optimizer annotation?
+          (not (memq (stx-e #'ann) gambit-annotations)))
      (compile-e #'expr))
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))

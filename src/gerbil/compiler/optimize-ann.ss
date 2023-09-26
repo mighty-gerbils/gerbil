@@ -45,6 +45,10 @@ namespace: gxc
             (optimize-syntax-case #'expr))
            (else
             (compile-e #'expr))))))
+    ((_ (ann param ...) expr) ; extended annotation -- stripped for now
+     (and (identifier? #'ann)
+          (not (memq (stx-e #'ann) gambit-annotations)))
+     (compile-e #'expr))
      (_ (xform-begin-annotation% stx))))
 
 ;;; optimize-match
