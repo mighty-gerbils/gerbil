@@ -33,6 +33,7 @@
     "source"
     "lazy"
     "amb"
+    "contract"
     (gxc: "interface" ,@(include-gambit-sharp))
     ;; stdio
     "io"
