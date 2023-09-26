@@ -455,27 +455,39 @@
 
   (def (expand-body ctx var Interface body)
     (with-syntax ((@app (stx-identifier ctx '%%app))
+                  (@ref (stx-identifier ctx '%%ref))
                   (var var)
                   (Interface Interface)
                   ((body ...) body))
       #'(let-syntax ((__app
                       (syntax-rules ()
                         ((_ rator rand (... ...))
-                         (@app rator rand (... ...))))))
-          (let-syntax (@app
-                       (lambda (stx)
-                         (syntax-case stx ()
-                           ((method rator . rands)
-                            (and (identifier? #'method)
-                                 (string-prefix? "." (symbol->string (stx-e #'method)))
-                                 (identifier? #'rator)
-                                 (bound-identifier=? #'rator (quote-syntax var)))
-                            (with-syntax (&method
-                                          (stx-identifier #'method
-                                                          "&" 'Interface "-"
-                                                          (let (str (symbol->string (stx-e #'method)))
-                                                            (substring str 1 (string-length str)))))
-                              #'(__app &method rator . rands))))))
+                         (@app rator rand (... ...)))))
+                     (__ref
+                      (syntax-rules ()
+                        ((_ id) (@ref id)))))
+          (let-syntax ((@app
+                        (lambda (stx)
+                          (syntax-case stx (begin-annotation @method quote-syntax)
+                            ((_ method (begin-annotation @method (quote-syntax rator)) . rands)
+                             (and (identifier? #'method)
+                                  (bound-identifier=? #'rator (quote-syntax var)))
+                             (with-syntax ((&method
+                                            (stx-identifier #'method
+                                                            "&" 'Interface "-"
+                                                            (let (str (symbol->string (stx-e #'method)))
+                                                              (substring str 1 (string-length str))))))
+                               #'(__app &method rator . rands)))
+                            ((_ . args)
+                             #'(__app . args)))))
+                       (@ref
+                        (lambda (stx)
+                          (syntax-case stx ()
+                            ((_ id)
+                             (identifier? #'id)
+                             (if (string-prefix? "." (symbol->string (stx-e #'id)))
+                               #'(begin-annotation @method (quote-syntax id))
+                               #'(__ref id)))))))
             (let ()
               body ...)))))
 
