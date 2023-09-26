@@ -179,7 +179,7 @@
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
    ((output-port? pre-writer)
-    (BufferedStringWriter (make-cooked-textual-input-port pre-writer)))
+    (BufferedStringWriter (make-raw-textual-output-port pre-writer)))
    (else
     (raise-bad-argument open-buffered-string-writer "#f or implementation of StringWriter or writer" pre-writer))))
 

@@ -119,14 +119,14 @@
 
     (test-case "char input"
       (let* ((input "the quick brown fox jumped over the lazy dog")
-             (brd (open-buffered-reader (open-input-string input))))
+             (brd (open-buffered-reader (open-input-u8vector (string->utf8 input)))))
         (for (char (string->list input))
           (check (BufferedReader-read-char brd) => char))
         (check (BufferedReader-read-char brd) ? eof-object?)))
 
     (test-case "string input"
       (let* ((input "the quick brown fox jumped over the lazy dog")
-             (brd (open-buffered-reader (open-input-string input)))
+             (brd (open-buffered-reader (open-input-u8vector (string->utf8 input))))
              (buf (make-string 16)))
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
           (let* ((expected-chars (min 16 (fx- (string-length input) (* i 16))))
@@ -138,15 +138,15 @@
       (let ((input1 "the quick brown fox jumped over the lazy dog")
             (input2 "the quick brown fox jumped over the lazy dog\n")
             (input3 "the quick brown fox jumped over the lazy dog\r\n"))
-        (let (brd (open-buffered-reader (open-input-string input1)))
+        (let (brd (open-buffered-reader (open-input-u8vector (string->utf8 input1))))
           (check (BufferedReader-read-line brd) => input1))
-        (let (brd (open-buffered-reader (open-input-string input2)))
+        (let (brd (open-buffered-reader (open-input-u8vector (string->utf8 input2))))
           (check (BufferedReader-read-line brd) => input1))
-        (let (brd (open-buffered-reader (open-input-string input2)))
+        (let (brd (open-buffered-reader (open-input-u8vector (string->utf8 input2))))
           (check (BufferedReader-read-line brd #\newline #t) => input2))
-        (let (brd (open-buffered-reader (open-input-string input3)))
+        (let (brd (open-buffered-reader (open-input-u8vector (string->utf8 input3))))
           (check (BufferedReader-read-line brd '(#\return #\newline)) => input1))
-        (let (brd (open-buffered-reader (open-input-string input3)))
+        (let (brd (open-buffered-reader (open-input-u8vector (string->utf8 input3))))
           (check (BufferedReader-read-line brd '(#\return #\newline) #t) => input3))))))
 
 (def binary-output-port-test
@@ -237,12 +237,12 @@
             (output1 (string->utf8 "the quick brown fox jumped over the lazy dog\n"))
             (output2 (string->utf8 "the quick brown fox jumped over the lazy dog\r\n")))
         (let* ((port (open-output-u8vector))
-               (bwr (open-buffered-writer #f)))
+               (bwr (open-buffered-writer port)))
           (check (BufferedWriter-write-line bwr input) => (fx+ (string-length input) 1))
           (BufferedWriter-close bwr)
           (check (get-output-u8vector port) => output1))
         (let* ((port (open-output-u8vector))
-               (bwr (open-buffered-writer #f)))
+               (bwr (open-buffered-writer port)))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
           (check (get-output-u8vector port) => output2))))))
 
@@ -339,7 +339,7 @@
         (for (i (in-range 1024))
           (check (BufferedStringWriter-write-char bwr (string-ref str i)) => 1))
         (BufferedStringWriter-close bwr)
-        (check (get-buffer-output-string bwr) => str)))
+        (check (get-output-string port) => str)))
 
     (test-case "line output"
       (let ((input "the quick brown fox jumped over the lazy dog")
