@@ -29,7 +29,10 @@
   defsyntax/unhygienic
   if-let
   when-let
-  defcheck-argument-type)
+  defcheck-argument-type
+  syntax-eval
+  syntax-call
+  defsyntax-call)
 
 (import (for-syntax :std/misc/func
                     :std/stxutil))
@@ -430,3 +433,25 @@
                    (a #'type "-instance")) ; go get location for context
       (defrule (check a (... ...))
         (begin (check-argument (pred? a) (symbol->string 'type) a) (... ...)))) ...))
+
+(defsyntax (syntax-eval stx)
+  (syntax-case stx () ((_ expr) #'(let () (defsyntax (foo _) expr) (foo)))))
+
+(defsyntax (syntax-call stx)
+  (syntax-case stx ()
+    ((ctx expr) #'(ctx expr ctx))
+    ((_ expr ctx stxs ...)
+     #'(let ()
+         (defsyntax (foo stx)
+           (datum->syntax (stx-car (stx-cdr stx)) (apply expr (syntax->list (stx-cdr stx)))))
+         (foo ctx stxs ...)))))
+
+(defrules defsyntax-call ()
+  ((_ (macro ctx formals ...) body)
+   (defsyntax (macro stx)
+     (syntax-case stx ()
+       ((_ ctx formals ...)
+        (datum->syntax (stx-car (stx-cdr stx))
+          (apply (lambda (ctx formals ...) body)
+            (stx-car (stx-cdr stx)) (syntax->datum (stx-cdr (stx-cdr stx))))))
+       ((ctx formals ...) #'(ctx ctx formals ...))))))
