@@ -16,6 +16,7 @@
 
 (export atom
         (rename: Atom-value atom-deref)
+        (rename: Atom? atom?)
         (rename: swap! atom-swap!)
         (rename: swap-values! atom-swap-values!)
         (rename: reset! atom-reset!)
@@ -108,11 +109,10 @@
 
 (def (atomic-counter (initial-value -1))
   (let (a (atom initial-value))
-    (lambda ()
+    (lambda ((increment 1))
       (let (mx (&Atom-mutex a))
         (mutex-lock! mx)
-        (let (new (1+ (&Atom-value a)))
-          (set! (&Atom-value a)
-            new)
+        (let (new (+ (&Atom-value a) increment))
+          (set! (&Atom-value a) new)
           (mutex-unlock! mx)
           new)))))

@@ -13,6 +13,7 @@ We can conceptually (and roughly) organize them in related group of modules:
   - [:std/misc/rbtree](rbtree.md)
   - [:std/misc/lru](lru.md)
 - Concurrency Primitives:
+  - [:std/misc/atom](atom.md)
   - [:std/misc/channel](channel.md)
   - [:std/misc/completion](completion.md)
   - [:std/misc/barrier](barrier.md)
