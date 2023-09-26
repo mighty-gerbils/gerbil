@@ -3,6 +3,7 @@
 ;;; string buffered io extension methods
 (import :std/sugar
         :std/error
+        :std/interface
         (only-in :std/srfi/1 reverse!)
         ../interface
         ./inline)
@@ -26,10 +27,11 @@
                    (unchecked-method (stx-identifier #'method "&BufferedStringReader-" #'method)))
        #'(begin
            (def (reader-method reader . args)
-             (let (reader (BufferedStringReader reader))
+             (with-interface (reader : BufferedStringReader)
                body ...))
            (def (unchecked-method reader . args)
-             body ...))))))
+             (with-interface (reader :- BufferedStringReader)
+               body ...)))))))
 
 (defsyntax (defstring-writer-ext stx)
   (syntax-case stx ()
@@ -47,10 +49,11 @@
                    (unchecked-method (stx-identifier #'method "&BufferedStringWriter-" #'method)))
        #'(begin
            (def (writer-method writer . args)
-             (let (writer (BufferedStringWriter writer))
+             (with-interface (writer : BufferedStringWriter)
                body ...))
            (def (unchecked-method writer . args)
-             body ...))))))
+             (with-interface (writer :- BufferedStringWriter)
+               body ...)))))))
 
 
 (defstring-reader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
@@ -72,7 +75,7 @@
        ((and sep (null? separating))
         (finish chars drop))
        ((read-more? x)
-        (let (next (&BufferedStringReader-read-char-inline reader))
+        (let (next (.read-char-inline reader))
           (cond
            ((eof-object? next)
             (finish chars drop))
@@ -85,14 +88,14 @@
 
 
 (defstring-writer-ext (write-line writer input (separator #\newline))
-  (let (result (&BufferedStringWriter-write-string writer input 0 (string-length input)))
+  (let (result (.write-string writer input 0 (string-length input)))
     (if (pair? separator)
       (let lp ((rest separator) (result result))
         (match rest
           ([char . rest]
-           (&BufferedStringWriter-write-char-inline writer char)
+           (.write-char-inline writer char)
            (lp rest (fx+ result 1)))
           (else result)))
       (begin
-        (&BufferedStringWriter-write-char-inline writer separator)
+        (.write-char-inline writer separator)
         (fx+ result 1)))))

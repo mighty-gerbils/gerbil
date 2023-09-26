@@ -4,6 +4,7 @@
 
 (import :std/actor
         :std/io
+        :std/interface
         :std/misc/channel
         :std/misc/list
         :std/net/sasl
@@ -556,49 +557,52 @@
 
 ;;; Protocol I/O
 (def (postgresql-send! writer msg)
-  (def (marshal-and-write tid body marshal)
-    (let (payload (marshal body))
-      (when tid
-        (&BufferedWriter-write-u8 writer tid))
-      (&BufferedWriter-write-u32 writer (fx+ (u8vector-length payload) 4))
-      (&BufferedWriter-write writer payload)
-      (&BufferedWriter-flush writer)))
+  (with-interface (writer :- BufferedWriter)
+    (def (marshal-and-write tid body marshal)
+      (let (payload (marshal body))
+        (when tid
+          (.write-u8 writer tid))
+        (.write-u32 writer (fx+ (u8vector-length payload) 4))
+        (.write writer payload)
+        (.flush writer)))
 
-  (DEBUG "SEND " msg)
-  (with ([tag . body] msg)
-    (cond
-     ((hash-get +frontend-messages+ tag)
-      => (match <>
-           ([tid . marshal]
-            (marshal-and-write tid body marshal))))
-     ((eq? tag 'StartupMessage)
-      (marshal-and-write #f body marshal-startup))
-     (else
-      (raise-io-error postgresql-send! "cannot marshal; unknown message tag" msg)))))
+    (DEBUG "SEND " msg)
+    (with ([tag . body] msg)
+      (cond
+       ((hash-get +frontend-messages+ tag)
+        => (match <>
+             ([tid . marshal]
+              (marshal-and-write tid body marshal))))
+       ((eq? tag 'StartupMessage)
+        (marshal-and-write #f body marshal-startup))
+       (else
+        (raise-io-error postgresql-send! "cannot marshal; unknown message tag" msg))))))
 
 (def (postgresql-recv! reader)
   (DEBUG "RECEIVE!")
-  (let* ((tid (&BufferedReader-read-u8 reader))
-         (_ (when (eof-object? tid)
-              (raise-io-error postgresql-recv! "connection closed")))
-         (payload-len (&BufferedReader-read-u32 reader))
-         (payload-len (fx- payload-len 4))
-         (payload-reader (&BufferedReader-delimit reader payload-len)))
+  (with-interface (reader :- BufferedReader)
+    (let* ((tid (.read-u8 reader))
+           (_ (when (eof-object? tid)
+                (raise-io-error postgresql-recv! "connection closed")))
+           (payload-len (.read-u32 reader))
+           (payload-len (fx- payload-len 4))
+           (payload-reader (.delimit reader payload-len)))
 
-    (DEBUG "READ MESSAGE " tid payload-len)
-    (cond
-     ((vector-ref +backend-messages+ tid)
-      => (match <>
-           ([tag . unmarshal]
-            (DEBUG "UNMARSHAL " tag)
-            (let* ((body (unmarshal payload-reader))
-                   (msg (cons tag body)))
-              ;; skip left-over input in the delimited reader
-              (while (not (eof-object? (&BufferedReader-read-u8 payload-reader))))
-              (DEBUG "RECEIVE " msg)
-              msg))))
-     (else
-      (raise-io-error postgresql-recv! "unexpected backend message" tid)))))
+      (with-interface (payload-reader :- BufferedReader)
+        (DEBUG "READ MESSAGE " tid payload-len)
+        (cond
+         ((vector-ref +backend-messages+ tid)
+          => (match <>
+               ([tag . unmarshal]
+                (DEBUG "UNMARSHAL " tag)
+                (let* ((body (unmarshal payload-reader))
+                       (msg (cons tag body)))
+                  ;; skip left-over input in the delimited reader
+                  (while (not (eof-object? (.read-u8 payload-reader))))
+                  (DEBUG "RECEIVE " msg)
+                  msg))))
+         (else
+          (raise-io-error postgresql-recv! "unexpected backend message" tid)))))))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore buf)
@@ -608,32 +612,33 @@
   '())
 
 (def (unmarshal-authen-request buf)
-  (let (t (&BufferedReader-read-u32 buf))
-    (case t
-      ((0) '(AuthenticationOk))
-      ((2) '(AuthenticationKerberosV5))
-      ((3) '(AuthenticationCleartextPassword))
-      ((5)
-       (let (salt (make-u8vector 4))
-         (&BufferedReader-read buf salt 0 4 4)
-         ['AuthenticationMD5Password salt]))
-      ((6) '(AuthenticationSCMCredential))
-      ((7) '(AuthenticationGSS))
-      ((8)
-       (let (data (unmarshal-bytes-rest buf))
-         ['AuthenticationGSSContinue data]))
-      ((9) '(AuthenticationSSPI))
-      ((10)
-       (let (mechanisms (unmarshal-string-list buf))
-         ['AuthenticationSASL . mechanisms]))
-      ((11)
-       (let (data (unmarshal-string-rest buf))
-         ['AuthenticationSASLContinue data]))
-      ((12)
-       (let (data (unmarshal-string-rest buf))
-         ['AuthenticationSASLFinal data]))
-      (else
-       [t '...]))))
+  (with-interface (buf :- BufferedReader)
+    (let (t (.read-u32 buf))
+      (case t
+        ((0) '(AuthenticationOk))
+        ((2) '(AuthenticationKerberosV5))
+        ((3) '(AuthenticationCleartextPassword))
+        ((5)
+         (let (salt (make-u8vector 4))
+           (.read buf salt 0 4 4)
+           ['AuthenticationMD5Password salt]))
+        ((6) '(AuthenticationSCMCredential))
+        ((7) '(AuthenticationGSS))
+        ((8)
+         (let (data (unmarshal-bytes-rest buf))
+           ['AuthenticationGSSContinue data]))
+        ((9) '(AuthenticationSSPI))
+        ((10)
+         (let (mechanisms (unmarshal-string-list buf))
+           ['AuthenticationSASL . mechanisms]))
+        ((11)
+         (let (data (unmarshal-string-rest buf))
+           ['AuthenticationSASLContinue data]))
+        ((12)
+         (let (data (unmarshal-string-rest buf))
+           ['AuthenticationSASLFinal data]))
+        (else
+         [t '...])))))
 
 (def (unmarshal-string-list buf)
   (let lp ((r []))
@@ -643,80 +648,88 @@
         (lp (cons next r))))))
 
 (def (unmarshal-string buf)
-  (let lp ((chars []))
-    (if (fx= (&BufferedReader-peek-u8 buf) 0)
-      (begin
-        (&BufferedReader-read-u8 buf)
-        (list->string (reverse! chars)))
-      (let (next (&BufferedReader-read-char buf))
-        (lp (cons next chars))))))
+  (with-interface (buf :- BufferedReader)
+    (let lp ((chars []))
+      (if (fx= (&BufferedReader-peek-u8 buf) 0)
+        (begin
+          (.read-u8 buf)
+          (list->string (reverse! chars)))
+        (let (next (.read-char buf))
+          (lp (cons next chars)))))))
 
 (def (unmarshal-bytes-rest buf)
-  (let lp ((bytes []))
-    (let (next (&BufferedReader-read-u8 buf))
-      (if (eof-object? next)
-        (list->u8vector (reverse! bytes))
-        (lp (cons next bytes))))))
+  (with-interface (buf :- BufferedReader)
+    (let lp ((bytes []))
+      (let (next (.read-u8 buf))
+        (if (eof-object? next)
+          (list->u8vector (reverse! bytes))
+          (lp (cons next bytes)))))))
 
 (def (unmarshal-string-rest buf)
-  (let lp ((chars []))
-    (let (next (&BufferedReader-read-char buf))
-      (if (eof-object? next)
-        (list->string (reverse! chars))
-        (lp (cons next chars))))))
+  (with-interface (buf :- BufferedReader)
+    (let lp ((chars []))
+      (let (next (read-char buf))
+        (if (eof-object? next)
+          (list->string (reverse! chars))
+          (lp (cons next chars)))))))
 
 (def (unmarshal-complete buf)
   (let (tag (unmarshal-string buf))
     [tag]))
 
 (def (unmarshal-data-row buf)
-  (let (count (&BufferedReader-read-u16 buf))
-    (let lp ((i 0) (r []))
-      (if (fx< i count)
-        (let (len (&BufferedReader-read-s32 buf))
-          (if (fx>= len 0)
-            (let* ((strbuf (&BufferedReader-delimit buf len))
-                   (str (unmarshal-string-rest strbuf)))
-              (lp (fx+ i 1) (cons str r)))
-            (lp (fx+ i 1) (cons #f r)))) ; NULL
-        (reverse! r)))))
+  (with-interface (buf :- BufferedReader)
+    (let (count (.read-u16 buf))
+      (let lp ((i 0) (r []))
+        (if (fx< i count)
+          (let (len (.read-s32 buf))
+            (if (fx>= len 0)
+              (let* ((strbuf (.delimit buf len))
+                     (str (unmarshal-string-rest strbuf)))
+                (lp (fx+ i 1) (cons str r)))
+              (lp (fx+ i 1) (cons #f r)))) ; NULL
+          (reverse! r))))))
 
 (def (unmarshal-error-notice buf)
-  (let lp ((r []))
-    (let (t (&BufferedReader-read-u8! buf))
-      (if (fx= t 0)
-        (let* ((alist (reverse! r))
-               (msg (assgetq #\M alist)))
-          (cons msg alist))
-        (let (field (unmarshal-string buf))
-          (lp (cons (cons (integer->char t) field) r)))))))
+  (with-interface (buf :- BufferedReader)
+    (let lp ((r []))
+      (let (t (.read-u8! buf))
+        (if (fx= t 0)
+          (let* ((alist (reverse! r))
+                 (msg (assgetq #\M alist)))
+            (cons msg alist))
+          (let (field (unmarshal-string buf))
+            (lp (cons (cons (integer->char t) field) r))))))))
 
 (def (unmarshal-param-description buf)
-  (let (count (&BufferedReader-read-u16 buf))
-    (let lp ((i 0) (r []))
-      (if (fx< i count)
-        (let (oid (&BufferedReader-read-u32 buf))
-          (lp (fx+ i 1) (cons oid r)))
-        (reverse! r)))))
+  (with-interface (buf :- BufferedReader)
+    (let (count (.read-u16 buf))
+      (let lp ((i 0) (r []))
+        (if (fx< i count)
+          (let (oid (.read-u32 buf))
+            (lp (fx+ i 1) (cons oid r)))
+          (reverse! r))))))
 
 (def (unmarshal-row-description buf)
-  (let (count (&BufferedReader-read-u16 buf))
-    (let lp ((i 0) (r []))
-      (if (fx< i count)
-        (let* ((field-name (unmarshal-string buf))
-               (table-id (&BufferedReader-read-u32 buf))
-               (attr-id  (&BufferedReader-read-u16 buf))
-               (type-id  (&BufferedReader-read-u32 buf))
-               (type-sz  (&BufferedReader-read-s16 buf))
-               (modifier (&BufferedReader-read-s32 buf))
-               (fmt      (&BufferedReader-read-u16 buf)))
-          (lp (fx+ i 1)
-              (cons [field-name table-id attr-id type-id type-sz modifier fmt] r)))
-        (reverse! r)))))
+  (with-interface (buf :- BufferedReader)
+    (let (count (.read-u16 buf))
+      (let lp ((i 0) (r []))
+        (if (fx< i count)
+          (let* ((field-name (unmarshal-string buf))
+                 (table-id (.read-u32 buf))
+                 (attr-id  (.read-u16 buf))
+                 (type-id  (.read-u32 buf))
+                 (type-sz  (.read-s16 buf))
+                 (modifier (.read-s32 buf))
+                 (fmt      (.read-u16 buf)))
+            (lp (fx+ i 1)
+                (cons [field-name table-id attr-id type-id type-sz modifier fmt] r)))
+          (reverse! r))))))
 
 (def (unmarshal-ready buf)
-  (let (status (&BufferedReader-read-u8! buf))
-    [(integer->char status)]))
+  (with-interface (buf :- BufferedReader)
+    (let (status (.read-u8! buf))
+      [(integer->char status)])))
 
 ;;; message marshaling
 (def (marshal-fail what)
@@ -727,13 +740,15 @@
   '#u8())
 
 (def (marshal-string buf str)
-  (&BufferedWriter-write-string buf str)
-  (&BufferedWriter-write-u8 buf 0))
+  (with-interface (buf :- BufferedWriter)
+    (.write-string buf str)
+    (.write-u8 buf 0)))
 
 (defrule (with-buffered-writer writer body ...)
   (let* ((buffer (cache-get-buffer))
          (writer (open-buffered-writer #f buffer)))
-    (let () body ...)
+    (with-interface (writer :- BufferedWriter)
+      (let () body ...))
     (let (result (get-buffer-output-u8vector writer))
       (cache-put-buffer buffer)
       result)))
@@ -741,37 +756,37 @@
 (def (marshal-startup body)
   (with ([[param . value] ...] body)
     (with-buffered-writer buf
-      (&BufferedWriter-write-u32 buf 196608) ; Protocol v3.0
+      (.write-u32 buf 196608) ; Protocol v3.0
       (for-each
         (lambda (param value)
           (marshal-string buf param)
           (marshal-string buf value))
         param value)
-      (&BufferedWriter-write-u8 buf 0))))
+      (.write-u8 buf 0))))
 
 (def (marshal-bind body)
   (with ([portal-name stmt-name . params] body)
     (with-buffered-writer buf
       (marshal-string buf portal-name)
       (marshal-string buf stmt-name)
-      (&BufferedWriter-write-u16 buf 0)
-      (&BufferedWriter-write-u16 buf (length params))
+      (.write-u16 buf 0)
+      (.write-u16 buf (length params))
       (for-each
         (lambda (param)
           (cond
            ((not param)
-            (&BufferedWriter-write-s32 buf -1))
+            (.write-s32 buf -1))
            ((string? param)
             (let (len (string-utf8-length param))
-              (&BufferedWriter-write-u32 buf len)
-              (&BufferedWriter-write-string buf param)))
+              (.write-u32 buf len)
+              (.write-string buf param)))
            ((u8vector? param)
-            (&BufferedWriter-write-u32 buf (u8vector-length param))
-            (&BufferedWriter-write buf param))
+            (.write-u32 buf (u8vector-length param))
+            (.write buf param))
            (else
             (raise-io-error postgresql-send! "Cannot marshal; bad parameter" param))))
         params)
-      (&BufferedWriter-write-u16 buf 0))))
+      (.write-u16 buf 0))))
 
 (def (marshal-close body)
   (marshal-describe body))
@@ -779,21 +794,21 @@
 (def (marshal-describe body)
   (with ([what name] body)
     (with-buffered-writer buf
-      (&BufferedWriter-write-u8 buf (char->integer what))
+      (.write-u8 buf (char->integer what))
       (marshal-string buf name))))
 
 (def (marshal-exec body)
   (with ([portal limit] body)
     (with-buffered-writer buf
       (marshal-string buf portal)
-      (&BufferedWriter-write-u32 buf 0))))
+      (.write-u32 buf 0))))
 
 (def (marshal-parse body)
   (with ([stmt sql] body)
     (with-buffered-writer buf
       (marshal-string buf stmt)
       (marshal-string buf sql)
-      (&BufferedWriter-write-u16 buf 0))))
+      (.write-u16 buf 0))))
 
 (def (marshal-passwd body)
   (with ([passwd] body)
@@ -811,9 +826,9 @@
       (marshal-string buf mechanism)
       (if data
         (let (len (string-utf8-length data))
-          (&BufferedWriter-write-u32 buf len)
-          (&BufferedWriter-write-string buf data))
-        (&BufferedWriter-write-s32 buf -1)))))
+          (.write-u32 buf len)
+          (.write-string buf data))
+        (.write-s32 buf -1)))))
 
 (def (marshal-sasl-response body)
   (with ([data] body)

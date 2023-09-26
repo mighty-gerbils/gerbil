@@ -21,6 +21,7 @@
 (import :std/build-config
         :std/error
         :std/sugar
+        :std/interface
         :std/io
         :std/net/ssl
         :std/net/uri
@@ -300,21 +301,24 @@
 
 (def (http-request-write req method target headers body)
   (let (writer (&request-writer req))
-    (writeln writer "~a ~a HTTP/1.1" method target)
-    (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
-              headers)
-    (writeln writer)
-    (when body
-      (&BufferedWriter-write writer body))
-    (&BufferedWriter-flush writer)))
+    (with-interface (writer :- BufferedWriter)
+      (writeln writer "~a ~a HTTP/1.1" method target)
+      (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
+                headers)
+      (writeln writer)
+      (when body
+        (.write writer body))
+      (.flush writer))))
 
 (def* writeln
   ((writer)
-   (&BufferedWriter-write-char-inline writer #\return)
-   (&BufferedWriter-write-char-inline writer #\newline))
+   (with-interface (writer :- BufferedWriter)
+     (.write-char-inline writer #\return)
+     (.write-char-inline writer #\newline)))
   ((writer fmt . args)
    (let (str (apply format fmt args))
-     (&BufferedWriter-write-line writer str '(#\return #\newline)))))
+     (with-interface (writer :- BufferedWriter)
+       (.write-line writer str '(#\return #\newline))))))
 
 (def status-line-rx
   (pregexp "([0-9]{3})\\s+(.*)"))
@@ -367,43 +371,44 @@
 (def (http-request-read-chunked-body req)
   (let ((reader (&request-reader req))
         (root [#f]))
-    (let lp ((tl root))
-      (let* ((line (read-response-line req))
-             (clen (string->number (car (string-split line #\space)) 16)))
-        (if (fxzero? clen)
-          (u8vector-concatenate (cdr root))
-          (let (chunk (make-u8vector clen))
-            (&BufferedReader-read reader chunk 0 clen clen)
-            (read-response-line req)     ; read chunk trailing CRLF
-            (let (tl* [chunk])
-              (set! (cdr tl) tl*)
-              (lp tl*))))))))
+    (with-interface (reader :- BufferedReader)
+      (let lp ((tl root))
+        (let* ((line (read-response-line req))
+               (clen (string->number (car (string-split line #\space)) 16)))
+          (if (fxzero? clen)
+            (u8vector-concatenate (cdr root))
+            (let (chunk (make-u8vector clen))
+              (.read reader chunk 0 clen clen)
+              (read-response-line req)  ; read chunk trailing CRLF
+              (let (tl* [chunk])
+                (set! (cdr tl) tl*)
+                (lp tl*)))))))))
 
 (def (http-request-read-simple-body req length)
-  (def reader (&request-reader req))
+  (let (reader (&request-reader req))
+    (with-interface (reader :- BufferedReader)
+      (def (read/length length)
+        (let* ((data (make-u8vector length))
+               (rd (.read reader data 0 length length)))
+          data))
 
-  (def (read/length length)
-    (let* ((data (make-u8vector length))
-           (rd (&BufferedReader-read reader data 0 length length)))
-      data))
+      (def (read/end)
+        (let (root [#f])
+          (let lp ((tl root))
+            (let* ((buflen 4096)
+                   (buf (make-u8vector buflen))
+                   (rd  (.read reader buf)))
+              (cond
+               ((##fxzero? rd)
+                (u8vector-concatenate (cdr root)))
+               (else
+                (let (tl* [buf])
+                  (set! (cdr tl) tl*)
+                  (lp tl*))))))))
 
-  (def (read/end)
-    (let (root [#f])
-      (let lp ((tl root))
-        (let* ((buflen 4096)
-               (buf (make-u8vector buflen))
-               (rd  (&BufferedReader-read reader buf)))
-          (cond
-           ((##fxzero? rd)
-            (u8vector-concatenate (cdr root)))
-           (else
-            (let (tl* [buf])
-              (set! (cdr tl) tl*)
-              (lp tl*))))))))
-
-  (if length
-    (read/length length)
-    (read/end)))
+      (if length
+        (read/length length)
+        (read/end)))))
 
 (def cr (char->integer #\return))
 (def lf (char->integer #\newline))
@@ -411,28 +416,29 @@
 (def (read-response-line req)
   (let ((reader (&request-reader req))
         (root [#f]))
-    (let lp ((tl root))
-      (let (next (&BufferedReader-read-u8-inline reader))
-        (cond
-         ((eof-object? next)
-          (raise-io-error request-read-response-line
-                          "Incomplete response; connection closed" req))
-         ((eq? next cr)
-          (let (next (&BufferedReader-read-u8-inline reader))
-            (cond
-             ((eof-object? next)
-              (raise-io-error request-read-response-line
-                              "Incomplete response; connection closed" reader))
-             ((eq? next lf)
-              (utf8->string (list->u8vector (cdr root))))
-             (else
-              (let (tl* [cr next])
-                (set! (cdr tl) tl*)
-                (lp (cdr tl*)))))))
-         (else
-          (let (tl* [next])
-            (set! (cdr tl) tl*)
-            (lp tl*))))))))
+    (with-interface (reader :- BufferedReader)
+      (let lp ((tl root))
+        (let (next (.read-u8-inline reader))
+          (cond
+           ((eof-object? next)
+            (raise-io-error request-read-response-line
+                            "Incomplete response; connection closed" req))
+           ((eq? next cr)
+            (let (next (.read-u8-inline reader))
+              (cond
+               ((eof-object? next)
+                (raise-io-error request-read-response-line
+                                "Incomplete response; connection closed" reader))
+               ((eq? next lf)
+                (utf8->string (list->u8vector (cdr root))))
+               (else
+                (let (tl* [cr next])
+                  (set! (cdr tl) tl*)
+                  (lp (cdr tl*)))))))
+           (else
+            (let (tl* [next])
+              (set! (cdr tl) tl*)
+              (lp tl*)))))))))
 
 (def (request-close req)
   (alet (sock (request-sock req))

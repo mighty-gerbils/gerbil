@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit
         :std/error
+        :std/interface
         :std/foreign
         :std/text/utf8
         :std/io
@@ -31,13 +32,13 @@
 
 ;; field encoding
 (defreader-ext (read-field buf)
-  (let (field (&BufferedReader-read-varint* buf))
+  (let (field (.read-varuint buf))
     (values
       (arithmetic-shift field -3)
       (byte->tag (bitwise-and field #b111)))))
 
 (defwriter-ext (write-field buf x tag)
-  (&BufferedWriter-write-varint* buf (bitwise-ior (arithmetic-shift x 3) (tag->byte tag))))
+  (.write-varuint buf (bitwise-ior (arithmetic-shift x 3) (tag->byte tag))))
 
 (def (byte->tag x)
   (case x
@@ -62,19 +63,19 @@
 (defreader-ext (skip-unknown buf tag)
   (case tag
     ((VARINT)
-     (&BufferedReader-skip-varint buf))
+     (.skip-varint buf))
     ((FIXED64)
-     (&BufferedReader-skip buf 8))
+     (.skip buf 8))
     ((VARLEN)
-     (&BufferedReader-skip buf (&BufferedReader-read-varint* buf)))
+     (.skip buf (.read-varuint buf)))
     ((FIXED32)
-     (&BufferedReader-skip buf 4))
+     (.skip buf 4))
     (else
      (raise-io-error protobuf "Unknown type tag" tag))))
 
 (defreader-ext (skip-varint buf)
   (let lp ()
-    (let (byte (&BufferedReader-read-u8 buf))
+    (let (byte (.read-u8 buf))
       (when (eof-object? byte)
         (raise-premature-end-of-input BufferedReader-skip-varint))
       (unless (fx= (fxand byte #x80) 0)
@@ -82,10 +83,10 @@
 
 ;; packed encoding
 (defreader-ext (read-packed buf read-e)
-  (let* ((len (&BufferedReader-read-varint* buf))
-         (buf (&BufferedReader-delimit buf len)))
+  (let* ((len (.read-varuint buf))
+         (buf (.delimit buf len)))
     (let lp ((r []))
-      (if (eof-object? (&BufferedReader-peek-u8 buf))
+      (if (eof-object? (.peek-u8 buf))
         (reverse r)
         (lp (cons (read-e buf) r))))))
 
@@ -94,8 +95,8 @@
     (for-each (cut write-e tmpbuf <>) xs)
     (let* ((chunks (get-buffer-output-chunks tmpbuf))
            (len (chunks-length chunks)))
-      (&BufferedWriter-write-varint* buf len)
-      (for-each (cut &BufferedWriter-write buf <>)
+      (.write-varuint buf len)
+      (for-each (cut .write buf <>)
                 chunks))))
 
 (def (chunks-length chunks)
@@ -103,45 +104,46 @@
 
 ;; map encoding
 (defreader-ext (read-key-value-pair buf read-key-e read-value-e)
-  (let* ((len (&BufferedReader-read-varint* buf))
-         (buf (&BufferedReader-delimit buf len)))
+  (let* ((len (.read-varuint buf))
+         (buf (.delimit buf len)))
     (let lp ((key #f) (value #f))
-      (if (eof-object? (&BufferedReader-peek-u8 buf))
+      (if (eof-object? (.peek-u8 buf))
         (cons key value)
-        (let ((values field tag) (&BufferedReader-read-field buf))
+        (let ((values field tag) (.read-field buf))
           (case field
             ((1)
              (lp (read-key-e buf) value))
             ((2)
              (lp key (read-value-e buf)))
             (else
-             (&BufferedReader-skip-unknown buf tag)
+             (.skip-unknown buf tag)
              (lp key value))))))))
 
 (defwriter-ext (write-key-value-pair buf k v ktag write-key-e vtag write-value-e)
   (let* ((tmpbuf (open-buffered-writer #f))
          (tmpbuf-write
-          (lambda (field tag val write-e)
-            (&BufferedWriter-write-field tmpbuf field tag)
-            (write-e tmpbuf val))))
+          (with-interface (tmpbuf :- BufferedWriter)
+            (lambda (field tag val write-e)
+              (.write-field tmpbuf field tag)
+              (write-e tmpbuf val)))))
     (tmpbuf-write 1 ktag k write-key-e)
     (tmpbuf-write 2 vtag v write-value-e)
     (let* ((chunks (get-buffer-output-chunks tmpbuf))
            (len (chunks-length chunks)))
-      (&BufferedWriter-write-varint* buf len)
-      (for-each (cut &BufferedWriter-write buf <>)
+      (.write-varuint buf len)
+      (for-each (cut .write buf <>)
                 chunks))))
 
 ;; length delimited objects
 (defwriter-ext (write-delimited* buf obj write-e)
-  (&BufferedWriter-write-delimited buf (cut write-e <> obj)))
+  (.write-delimited buf (cut write-e <> obj)))
 
 ;; booleans
 (defreader-ext (read-boolean buf)
-  (not (zero? (&BufferedReader-read-u8 buf))))
+  (not (zero? (.read-u8 buf))))
 
 (defwriter-ext (write-boolean buf x)
-  (&BufferedWriter-write-u8 buf (if x 1 0)))
+  (.write-u8 buf (if x 1 0)))
 
 ;; numbers
 ;; protobuf varints are not the same as standard varints; go figure.
@@ -152,7 +154,7 @@
       (- r 2^64)))
 
   (let lp ((shift 0) (r 0))
-    (let* ((bits (&BufferedReader-read-u8! buf))
+    (let* ((bits (.read-u8! buf))
            (limb (fxand bits #x7f))
            (r (bitwise-ior (arithmetic-shift limb shift) r)))
       (if (fxzero? (fxand bits #x80))
@@ -167,14 +169,14 @@
 
   (let lp ((bits (complement x)))
     (if (< bits 128)
-      (&BufferedWriter-write-u8 buf bits)
+      (.write-u8 buf bits)
       (let* ((limb (bitwise-and bits #x7f))
              (obits (fxior limb #x80)))
-        (&BufferedWriter-write-u8 buf obits)
+        (.write-u8 buf obits)
         (lp (arithmetic-shift bits -7))))))
 
 (defreader-ext (read-varint-zigzag* buf)
-  (let (y (&BufferedReader-read-varint* buf))
+  (let (y (.read-varint* buf))
     (if (even? y)
       (quotient y 2)
       (- (quotient (1+ y) 2)))))
@@ -183,23 +185,25 @@
   (let (y (if (negative? x)
             (- (+ (* x 2) 1))
             (* x 2)))
-    (&BufferedWriter-write-varint* buf y)))
+    (.write-varint* buf y)))
 
 (def (bio-read-fixed-uint buf n)
-  (let lp ((i 0) (bits 0))
-    (if (fx< i n)
-      (let (byte (&BufferedReader-read-u8 buf))
-        (when (eof-object? byte)
-          (raise-premature-end-of-input bio-read-sfixed32))
-        (lp (fx+ i 1)
-            (bitwise-ior bits (arithmetic-shift byte (fx* 8 i)))))
-      bits)))
+  (with-interface (buf :- BufferedReader)
+    (let lp ((i 0) (bits 0))
+      (if (fx< i n)
+        (let (byte (.read-u8 buf))
+          (when (eof-object? byte)
+            (raise-premature-end-of-input bio-read-sfixed32))
+          (lp (fx+ i 1)
+              (bitwise-ior bits (arithmetic-shift byte (fx* 8 i)))))
+        bits))))
 
 (def (bio-write-fixed-uint buf x n)
-  (let lp ((i 0) (bits x))
-    (when (fx< i n)
-      (&BufferedWriter-write-u8 buf (bitwise-and bits #xff))
-      (lp (fx+ i 1) (arithmetic-shift bits -8)))))
+  (with-interface (buf :- BufferedWriter)
+    (let lp ((i 0) (bits x))
+      (when (fx< i n)
+        (.write-u8 buf (bitwise-and bits #xff))
+        (lp (fx+ i 1) (arithmetic-shift bits -8))))))
 
 (defreader-ext (read-fixed32 buf)
   (bio-read-fixed-uint buf 4))
@@ -250,14 +254,16 @@
   (bio-write-float-bytes buf x 8 double->bytes!))
 
 (def (bio-read-float-bytes buf n bytes->flonum)
-  (let (bytes (make-u8vector n))
-    (&BufferedReader-read buf bytes)
-    (bytes->flonum bytes)))
+  (with-interface (buf :- BufferedReader)
+    (let (bytes (make-u8vector n))
+      (.read buf bytes)
+      (bytes->flonum bytes))))
 
 (def (bio-write-float-bytes buf x n flonum->bytes!)
-  (let (bytes (make-u8vector n))
-    (flonum->bytes! x bytes)
-    (&BufferedWriter-write buf bytes)))
+  (with-interface (buf :- BufferedWriter)
+    (let (bytes (make-u8vector n))
+      (flonum->bytes! x bytes)
+      (.write buf bytes))))
 
 (begin-ffi (bytes->float float->bytes! bytes->double double->bytes!)
   (c-declare #<<END-C

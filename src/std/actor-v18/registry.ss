@@ -49,55 +49,56 @@
   (def flush-ticker
     (spawn/name 'ticker ticker (current-thread)))
 
-  (let/cc exit
-    (while #t
-      (<-
-       ((!ensemble-add-server id addrs roles)
-        (if (authorized-for? @source id)
-          (begin
-            (infof "adding server ~a ~a at ~a" id roles addrs)
-            (&Registry-add-server registry id addrs roles)
-            (--> (!ok (void))))
-          (--> (!error "not authorized"))))
+  (with-interface (registry :- Registry)
+    (let/cc exit
+      (while #t
+        (<-
+         ((!ensemble-add-server id addrs roles)
+          (if (authorized-for? @source id)
+            (begin
+              (infof "adding server ~a ~a at ~a" id roles addrs)
+              (.add-server registry id addrs roles)
+              (--> (!ok (void))))
+            (--> (!error "not authorized"))))
 
-       ((!ensemble-remove-server id)
-        (if (authorized-for? @source id)
-          (begin
-            (infof "removing server ~a" id)
-            (&Registry-remove-server registry id)
-            (--> (!ok (void))))
-          (--> (!error "not authorized"))))
+         ((!ensemble-remove-server id)
+          (if (authorized-for? @source id)
+            (begin
+              (infof "removing server ~a" id)
+              (.remove-server registry id)
+              (--> (!ok (void))))
+            (--> (!error "not authorized"))))
 
-       ((!ensemble-lookup-server id role)
-        (cond
-         (id
-          (debugf "looking up server ~a for ~a" id @source)
+         ((!ensemble-lookup-server id role)
           (cond
-           ((&Registry-lookup-server registry id)
-            => (lambda (value) (--> (!ok value))))
+           (id
+            (debugf "looking up server ~a for ~a" id @source)
+            (cond
+             ((.lookup-server registry id)
+              => (lambda (value) (--> (!ok value))))
+             (else
+              (--> (!error "unknown server")))))
+           (role
+            (debugf "looking up servers by role ~a for ~a" role @source)
+            (let* ((result (.lookup-servers/role registry role))
+                   (result (sort-server-list result)))
+              (--> (!ok result))))
            (else
-            (--> (!error "unknown server")))))
-         (role
-          (debugf "looking up servers by role ~a for ~a" role @source)
-          (let* ((result (&Registry-lookup-servers/role registry role))
-                 (result (sort-server-list result)))
-            (--> (!ok result))))
-         (else
-          (debugf "listing servers for ~a" @source)
-          (let* ((result (&Registry-list-servers registry))
-                 (result (sort-server-list result)))
-            (--> (!ok result))))))
+            (debugf "listing servers for ~a" @source)
+            (let* ((result (.list-servers registry))
+                   (result (sort-server-list result)))
+              (--> (!ok result))))))
 
-       ((!tick)
-        (&Registry-flush registry))
+         ((!tick)
+          (.flush registry))
 
-       ,(@shutdown
-         (infof "registry shutting down ...")
-         (&Registry-close registry)
-         (-> flush-ticker (!shutdown))
-         (exit 'shutdown))
-       ,(@ping)
-       ,(@unexpected warnf)))))
+         ,(@shutdown
+           (infof "registry shutting down ...")
+           (.close registry)
+           (-> flush-ticker (!shutdown))
+           (exit 'shutdown))
+         ,(@ping)
+         ,(@unexpected warnf))))))
 
 ;; registry implementation
 (defstruct registry (path servers roles dirty?)

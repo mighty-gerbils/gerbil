@@ -3,6 +3,7 @@
 ;;; actor server connections
 (import :std/error
         :std/sugar
+        :std/interface
         :std/sort
         :std/io
         :std/net/ssl
@@ -59,73 +60,76 @@
   (with-exception-stack-trace (cut actor-acceptor-main srv sock cookie)))
 
 (def (actor-acceptor-main srv sock cookie)
-  (if (is-TLS? sock)
-    ;; no handshake needed; TLS authenticated
-    (let ((reader (open-buffered-reader (StreamSocket-reader sock)))
-          (writer (open-buffered-writer (StreamSocket-writer sock)))
-          (peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
-      (if peer-id
-        (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in)
-        (begin
-          (warnf "no peer id for TLS authenticated peer ~a" (peer-address sock))
-          (with-catch void (cut StreamSocket-close sock))
-          (exit 'unknown-peer))))
-    ;; no TLS; do cookie authentication handshake
-    (let/cc exit
-      (def (fail! what)
-        (warnf "incomplete handshake with ~a: ~a"(peer-address sock) what)
-        (with-catch void (cut StreamSocket-close sock))
-        (exit 'incomplete-handshake))
+  (with-interface (sock : StreamSocket)
+    (if (is-TLS? sock)
+      ;; no handshake needed; TLS authenticated
+      (let ((reader (open-buffered-reader (.reader sock)))
+            (writer (open-buffered-writer (.writer sock)))
+            (peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
+        (if peer-id
+          (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in)
+          (begin
+            (warnf "no peer id for TLS authenticated peer ~a" (peer-address sock))
+            (with-catch void (cut .close sock))
+            (exit 'unknown-peer))))
+      ;; no TLS; do cookie authentication handshake
+      (let/cc exit
+        (def (fail! what)
+          (warnf "incomplete handshake with ~a: ~a"(peer-address sock) what)
+          (with-catch void (cut .close sock))
+          (exit 'incomplete-handshake))
 
-      (try
-       (let* ((reader (StreamSocket-reader sock))
-              (reader (open-buffered-reader reader))
-              (writer (StreamSocket-writer sock))
-              (writer (open-buffered-writer writer))
-              (srv-id (thread-specific srv)))
-         ;; set handshake timeouts
-         (let (expiry (timeout->expiry default-handshake-timeout))
-           (StreamSocket-set-input-timeout! sock expiry)
-           (StreamSocket-set-output-timeout! sock expiry))
-         (when (eof-object? (&BufferedReader-peek-u8 reader))
-           (fail! "client socket closed"))
-         (let (version (&BufferedReader-read-u16 reader))
-           (unless (fx= version version-magic)
-             (fail! "protocol version mismatch")))
-         (match (read-delimited reader)
-           ((!hello peer-id)
-            (cond
-             ((not peer-id)
-              (fail! "bad hello; no server id"))
-             ((eq? srv-id peer-id)
-              (fail! "bad hello; client claims to be our server"))
-             (else
-              (let (salt (random-bytes (u8vector-length cookie)))
-                (write-delimited writer (!challenge srv-id salt))
-                (match (read-delimited reader)
-                  ((!response auth cli-salt)
-                   (unless (equal? auth (digest srv-id peer-id salt cookie))
-                     (fail! "authentication failed"))
-                   (write-delimited writer (!accepted (digest srv-id peer-id cli-salt cookie)))
-                   (infof "authenticated client ~a at ~a" peer-id (peer-address sock))
-                   ;; reset timeouts
-                   (StreamSocket-set-input-timeout! sock #f)
-                   (StreamSocket-set-output-timeout! sock #f)
-                   ;; and go!
-                   (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in))
-                  ((? eof-object?)
-                   (fail! "incomplete handshake"))
-                  (unexpected
-                   (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
-                   (fail! "bad response")))))))
-           ((? eof-object?)
-            (fail! "incomplete handshake"))
-           (unexpected
-            (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
-            (fail! "bad hello"))))
-       (catch (exn)
-         (warnf "unhandled exception: ~a" exn)
-         (fail! (error-message exn)))))))
+        (try
+         (let* ((reader (.reader sock))
+                (reader (open-buffered-reader reader))
+                (writer (.writer sock))
+                (writer (open-buffered-writer writer))
+                (srv-id (thread-specific srv)))
+           (with-interface ((reader :- BufferedReader)
+                            (writer :- BufferedWriter))
+               ;; set handshake timeouts
+               (let (expiry (timeout->expiry default-handshake-timeout))
+                 (.set-input-timeout! sock expiry)
+                 (.set-output-timeout! sock expiry))
+               (when (eof-object? (.peek-u8 reader))
+                 (fail! "client socket closed"))
+               (let (version (.read-u16 reader))
+                 (unless (fx= version version-magic)
+                   (fail! "protocol version mismatch")))
+               (match (read-delimited reader)
+                 ((!hello peer-id)
+                  (cond
+                   ((not peer-id)
+                    (fail! "bad hello; no server id"))
+                   ((eq? srv-id peer-id)
+                    (fail! "bad hello; client claims to be our server"))
+                   (else
+                    (let (salt (random-bytes (u8vector-length cookie)))
+                      (write-delimited writer (!challenge srv-id salt))
+                      (match (read-delimited reader)
+                        ((!response auth cli-salt)
+                         (unless (equal? auth (digest srv-id peer-id salt cookie))
+                           (fail! "authentication failed"))
+                         (write-delimited writer (!accepted (digest srv-id peer-id cli-salt cookie)))
+                         (infof "authenticated client ~a at ~a" peer-id (peer-address sock))
+                         ;; reset timeouts
+                         (.set-input-timeout! sock #f)
+                         (.set-output-timeout! sock #f)
+                         ;; and go!
+                         (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'in))
+                        ((? eof-object?)
+                         (fail! "incomplete handshake"))
+                        (unexpected
+                         (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
+                         (fail! "bad response")))))))
+                 ((? eof-object?)
+                  (fail! "incomplete handshake"))
+                 (unexpected
+                  (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
+                  (fail! "bad hello")))))
+         (catch (exn)
+           (warnf "unhandled exception: ~a" exn)
+           (fail! (error-message exn))))))))
 
 (def (actor-connector srv peer-id addrs cookie tls-context)
   (with-exception-stack-trace (cut actor-connector-main srv peer-id addrs cookie tls-context)))
@@ -149,71 +153,74 @@
          (thread-send/check srv (!connection-failed peer-id "no usable addresses")))))))
 
 (def (actor-connector-handshake srv peer-id cookie sock)
-  (if (is-TLS? sock)
-    ;; no handshake needed; TLS authenticated
-    (let ((reader (open-buffered-reader (StreamSocket-reader sock)))
-          (writer (open-buffered-writer (StreamSocket-writer sock)))
-          (cert-peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
-      (if (eq? peer-id cert-peer-id)
-        (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
-        (begin
-          (warnf "peer id mismatch for TLS authenticated peer ~a" (peer-address sock))
-          (with-catch void (cut StreamSocket-close sock))
-          'error)))
-    ;; no TLS; do cookie authentication handshake
-    (let/cc exit
-      (def (fail! what)
-        (warnf "handshake with ~a failed: ~a" peer-id what)
-        (with-catch void (cut StreamSocket-close sock))
-        (thread-send/check srv (!connection-failed peer-id what))
-        (exit 'error))
+  (with-interface (sock : StreamSocket)
+    (if (is-TLS? sock)
+      ;; no handshake needed; TLS authenticated
+      (let ((reader (open-buffered-reader (.reader sock)))
+            (writer (open-buffered-writer (.writer sock)))
+            (cert-peer-id (actor-tls-certificate-id (TLS-peer-certificate sock))))
+        (if (eq? peer-id cert-peer-id)
+          (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out)
+          (begin
+            (warnf "peer id mismatch for TLS authenticated peer ~a" (peer-address sock))
+            (with-catch void (cut .close sock))
+            'error)))
+      ;; no TLS; do cookie authentication handshake
+      (let/cc exit
+        (def (fail! what)
+          (warnf "handshake with ~a failed: ~a" peer-id what)
+          (with-catch void (cut .close sock))
+          (thread-send/check srv (!connection-failed peer-id what))
+          (exit 'error))
 
-      (try
-       (let* ((reader (StreamSocket-reader sock))
-              (reader (open-buffered-reader reader))
-              (writer (StreamSocket-writer sock))
-              (writer (open-buffered-writer writer))
-              (srv-id (thread-specific srv)))
-         ;; set handshake timeouts
-         (let (expiry (timeout->expiry default-handshake-timeout))
-           (StreamSocket-set-input-timeout! sock expiry)
-           (StreamSocket-set-output-timeout! sock expiry))
-         ;; send hello
-         (&BufferedWriter-write-u16 writer version-magic)
-         (write-delimited writer (!hello srv-id))
-         (when (eof-object? (&BufferedReader-peek-u8 reader))
-           (fail! "incomplete handshake"))
-         (match (read-delimited reader)
-           ((!challenge remote-id salt)
-            (cond
-             ((not remote-id)
-              (fail! "bad challenge; no server id"))
-             ((eq? remote-id srv-id)
-              (fail! "bad challenge; server claims to be our server"))
-             ((not (eq? remote-id peer-id))
-              (fail! "bad challenge; server id mismatch"))
-             (else
-              (let (cli-salt (random-bytes (u8vector-length cookie)))
-                (write-delimited writer (!response (digest peer-id srv-id salt cookie) cli-salt))
-                (match (read-delimited reader)
-                  ((!accepted auth)
-                   (unless (equal? auth (digest peer-id srv-id cli-salt cookie))
-                     (fail! "server authentication failed"))
-                   (infof "connected to server: ~a" peer-id)
-                   ;; reset timeouts
-                   (StreamSocket-set-input-timeout! sock #f)
-                   (StreamSocket-set-output-timeout! sock #f)
-                   ;; and go!
-                   (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out))
-                  ((? eof-object?)
-                   (fail! "incomplete handshake"))
-                  (unexpected
-                   (fail! "bad response")))))))
-           ((? eof-object?)
-            (fail! "incomplete handshake"))))
-       (catch (exn)
-         (warnf "unhandled exception: ~a" exn)
-         (fail! (error-message exn)))))))
+        (try
+         (let* ((reader (.reader sock))
+                (reader (open-buffered-reader reader))
+                (writer (.writer sock))
+                (writer (open-buffered-writer writer))
+                (srv-id (thread-specific srv)))
+           (with-interface ((reader :- BufferedReader)
+                            (writer :- BufferedWriter))
+               ;; set handshake timeouts
+               (let (expiry (timeout->expiry default-handshake-timeout))
+                 (.set-input-timeout! sock expiry)
+                 (.set-output-timeout! sock expiry))
+               ;; send hello
+               (.write-u16 writer version-magic)
+               (write-delimited writer (!hello srv-id))
+               (when (eof-object? (.peek-u8 reader))
+                 (fail! "incomplete handshake"))
+               (match (read-delimited reader)
+                 ((!challenge remote-id salt)
+                  (cond
+                   ((not remote-id)
+                    (fail! "bad challenge; no server id"))
+                   ((eq? remote-id srv-id)
+                    (fail! "bad challenge; server claims to be our server"))
+                   ((not (eq? remote-id peer-id))
+                    (fail! "bad challenge; server id mismatch"))
+                   (else
+                    (let (cli-salt (random-bytes (u8vector-length cookie)))
+                      (write-delimited writer (!response (digest peer-id srv-id salt cookie) cli-salt))
+                      (match (read-delimited reader)
+                        ((!accepted auth)
+                         (unless (equal? auth (digest peer-id srv-id cli-salt cookie))
+                           (fail! "server authentication failed"))
+                         (infof "connected to server: ~a" peer-id)
+                         ;; reset timeouts
+                         (.set-input-timeout! sock #f)
+                         (.set-output-timeout! sock #f)
+                         ;; and go!
+                         (spawn/name 'actor-connection actor-connection srv peer-id sock reader writer 'out))
+                        ((? eof-object?)
+                         (fail! "incomplete handshake"))
+                        (unexpected
+                         (fail! "bad response")))))))
+                 ((? eof-object?)
+                  (fail! "incomplete handshake")))))
+         (catch (exn)
+           (warnf "unhandled exception: ~a" exn)
+           (fail! (error-message exn))))))))
 
 (def (try-connect peer-id addr tls-context)
   (try
@@ -237,58 +244,59 @@
   (with-exception-stack-trace (cut actor-connection-main srv peer-id sock reader writer direction)))
 
 (def (actor-connection-main srv peer-id sock reader writer direction)
-  (with-error-close sock
-    ;; first order of business: set KEEPALIVE for tcp
-    (unless (eqv? (StreamSocket-domain sock) AF_UNIX)
-      (StreamSocket-setsockopt sock SOL_SOCKET SO_KEEPALIVE 1))
-    (let/cc exit
-      ;; spawn the reader and writer threads
-      (let ((reader (spawn/name 'actor-connection-reader actor-connection-reader srv peer-id reader))
-            (writer (spawn/name 'actor-connection-writer actor-connection-writer srv peer-id writer)))
+  (with-interface (sock :- StreamSocket)
+    (with-error-close sock
+      ;; first order of business: set KEEPALIVE for tcp
+      (unless (eqv? (.domain sock) AF_UNIX)
+        (.setsockopt sock SOL_SOCKET SO_KEEPALIVE 1))
+      (let/cc exit
+        ;; spawn the reader and writer threads
+        (let ((reader (spawn/name 'actor-connection-reader actor-connection-reader srv peer-id reader))
+              (writer (spawn/name 'actor-connection-writer actor-connection-writer srv peer-id writer)))
 
-        (def (shutdown! how)
-          ;; try to gracefully shutdown the writer; give it a reply's worth of time
-          ;; to drain its queue
-          (thread-send/check writer (!shutdown))
-          (with-catch void (cut thread-join! writer +default-reply-timeout+))
-          (with-catch void (cut StreamSocket-close sock))
-          (with-catch void (cut thread-join! reader))
-          (exit how))
+          (def (shutdown! how)
+            ;; try to gracefully shutdown the writer; give it a reply's worth of time
+            ;; to drain its queue
+            (thread-send/check writer (!shutdown))
+            (with-catch void (cut thread-join! writer +default-reply-timeout+))
+            (with-catch void (cut .close sock))
+            (with-catch void (cut thread-join! reader))
+            (exit how))
 
-        (def (connection-notification)
-          (!connected (current-thread)
-                      peer-id
-                      (and (is-TLS? sock)
-                           (TLS-peer-certificate sock))
-                      (let (addr (peer-address sock))
-                        (cond
-                         ((eqv? (StreamSocket-domain sock) AF_UNIX)
-                          [unix: (hostname) addr])
-                         ((is-TLS? sock)
-                          [tls: addr])
-                         (else
-                          [tcp: addr])))
-                      direction
-                      reader
-                      writer))
+          (def (connection-notification)
+            (!connected (current-thread)
+                        peer-id
+                        (and (is-TLS? sock)
+                             (TLS-peer-certificate sock))
+                        (let (addr (peer-address sock))
+                          (cond
+                           ((eqv? (.domain sock) AF_UNIX)
+                            [unix: (hostname) addr])
+                           ((is-TLS? sock)
+                            [tls: addr])
+                           (else
+                            [tcp: addr])))
+                        direction
+                        reader
+                        writer))
 
-        ;; notify the server; we exit if it has died in the meantime
-        (unless (thread-send/check srv (connection-notification))
-          (shutdown! 'server-dead))
+          ;; notify the server; we exit if it has died in the meantime
+          (unless (thread-send/check srv (connection-notification))
+            (shutdown! 'server-dead))
 
-        ;; spawn monitors
-        (spawn/name 'connection-monitor actor-monitor reader (current-thread) thread-send/check)
-        (spawn/name 'connection-monitor actor-monitor writer (current-thread) thread-send/check)
-        ;; and loop
-        (while #t
-          (<<
-           ((!shutdown)
-            (shutdown! 'shutdown))
-           ((!actor-dead)
-            (thread-send/check srv (!disconnected (current-thread) peer-id))
-            (shutdown! 'disconnected))
-           (unexpected
-            (warnf "unexpected message: ~a" unexpected))))))))
+          ;; spawn monitors
+          (spawn/name 'connection-monitor actor-monitor reader (current-thread) thread-send/check)
+          (spawn/name 'connection-monitor actor-monitor writer (current-thread) thread-send/check)
+          ;; and loop
+          (while #t
+            (<<
+             ((!shutdown)
+              (shutdown! 'shutdown))
+             ((!actor-dead)
+              (thread-send/check srv (!disconnected (current-thread) peer-id))
+              (shutdown! 'disconnected))
+             (unexpected
+              (warnf "unexpected message: ~a" unexpected)))))))))
 
 (def (actor-connection-reader srv peer-id reader)
   (with-exception-stack-trace (cut actor-connection-reader-main srv peer-id reader)))
@@ -341,13 +349,15 @@
                            cookie)))
 
 (def (read-delimited reader)
-  (if (eof-object? (&BufferedReader-peek-u8-inline reader))
-    '#!eof
-    (&BufferedReader-read-delimited reader &BufferedReader-unmarshal)))
+  (with-interface (reader :- BufferedReader)
+    (if (eof-object? (.peek-u8-inline reader))
+      '#!eof
+      (.read-delimited reader &BufferedReader-unmarshal))))
 
 (def (write-delimited writer obj)
-  (&BufferedWriter-write-delimited writer (cut &BufferedWriter-marshal <> obj))
-  (&BufferedWriter-flush writer))
+  (with-interface (writer :- BufferedWriter)
+    (.write-delimited writer (cut &BufferedWriter-marshal <> obj))
+    (.flush writer)))
 
 (defrule (with-error-close sock body ...)
   (let (E (current-exception-handler))

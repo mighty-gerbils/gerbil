@@ -3,6 +3,7 @@
 ;;; httpd file response handler
 
 (import :std/sugar
+        :std/interface
         :std/io
         :std/net/httpd/handler)
 (export http-response-file)
@@ -11,23 +12,25 @@
 
 (def (http-response-file res headers path)
   (let (reader (open-file-reader path))
-    (try
-     (http-response-write-file res headers reader)
-     (finally
-      (&Reader-close reader)))))
+    (with-interface (reader :- Reader)
+      (try
+       (http-response-write-file res headers reader)
+       (finally
+        (.close reader))))))
 
 (def (http-response-write-file res headers reader)
-  (let (buf (get-file-buffer))
-    (http-response-begin res 200 headers)
-    (let lp ()
-      (let (rd (&Reader-read reader buf))
-        (cond
-         ((fx= rd 0)
-          (put-file-buffer buf)
-          (http-response-end res))
-         (else
-          (http-response-chunk res buf 0 rd)
-          (lp)))))))
+  (with-interface (reader :- Reader)
+    (let (buf (get-file-buffer))
+      (http-response-begin res 200 headers)
+      (let lp ()
+        (let (rd (.read reader buf))
+          (cond
+           ((fx= rd 0)
+            (put-file-buffer buf)
+            (http-response-end res))
+           (else
+            (http-response-chunk res buf 0 rd)
+            (lp))))))))
 
 (def +buffer-size+ 32768)
 (def +buffer-cache+ [])
