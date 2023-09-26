@@ -45,12 +45,3 @@
                              (x (maybe-intern-symbol (stringify x)))))
 (def maybe-keywordify (case-lambda ((x) (if (keyword? x) x (maybe-intern-keyword (stringify x))))
                               (x (maybe-intern-keyword (stringify x)))))
-
-(def (stx-source-file stx)
-  (alet (loc (stx-source stx)) (vector-ref loc 0)))
-
-(def (stx-source-position stx)
-  (alet (loc (stx-source stx)) (vector-ref loc 1)))
-
-(def (stx-source-directory stx)
-  (alet (file (stx-source-file stx)) (path-directory file)))
