@@ -283,7 +283,11 @@
                 test-suite test-case
                 interface
                 with-result
+                using
                 with-interface
+                with-struct
+                with-class
+                with-contract
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -341,7 +345,7 @@
                        "spawn" "spawn*" "spawn/name" "spawn/group"
                        ;; sugar
                        "try" "finally" "catch" "with-destroy"
-                       "while" "until" "using" "defmethod/alias"
+                       "while" "until" "defmethod/alias"
                        "with-methods" "with-class-methods" "with-class-method"
                        "hash" "hash-eq" "hash-eqv" "let-hash" "assert!" "awhen"
                        "chain" "is"
@@ -474,12 +478,12 @@
      (1 font-lock-keyword-face)
      (2 font-lock-function-name-face)))
   (gerbil-fontlock-add
-   '("(\\(with-type\\)\\s-+((?\\(\\sw+\\)\\s-+:-?\\s-+\\(\\sw+\\)"
+   '("(\\(using\\)\\s-+((?\\(\\sw+\\)\\s-+:-?\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)
      (3 font-lock-type-face)))
   (gerbil-fontlock-add
-   '("\\(\\sw+\\)\\.\\(\\sw+\\)\\(\\s-+\\|)\\)"
+   '("\\_<\\(\\sw+\\)\\.\\(\\sw+\\)\\_>"
      (1 font-lock-variable-name-face)
      (2 font-lock-reference-face)))
   (gerbil-fontlock-add
