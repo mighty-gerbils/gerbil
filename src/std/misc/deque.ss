@@ -77,7 +77,7 @@
                (set! (&node-prev next) #f)
                (set! dq.back #f))
              (set! dq.length (fx1- dq.length))
-             (&node-e dq.front))))
+             (&node-e front))))
      ((eq? default absent-obj)
       (raise-context-error pop-front! "Cannot pop; empty deque" dq))
      (else default))))
