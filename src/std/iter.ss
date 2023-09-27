@@ -150,9 +150,9 @@
      (def (next it)
        (using (it :- iterator)
          (if (cmp it.e end)
-           (begin
-             (set! it.e (+ it.e step))
-             it.e)
+           (let (e it.e)
+             (set! it.e (+ e step))
+             e)
            iter-end)))
      (unless (and (real? start) (real? end) (real? step))
        (raise-bad-argument in-range "range parameters: real numbers" start end step))
