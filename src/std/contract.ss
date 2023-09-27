@@ -78,15 +78,14 @@
                                                 (var-local
                                                  (syntax-local-introduce #'var))
                                                 (object-local
-                                                 (stx-identifier var-local object)))
+                                                 (stx-identifier #'rator object)))
                                            (and (fx= (length split) 2)
                                                 (bound-identifier=? object-local var-local))))))
-                             (let* ((var-local (syntax-local-introduce #'var))
-                                    (split (string-split (symbol->string (stx-e #'rator)) #\.))
+                             (let* ((split (string-split (symbol->string (stx-e #'rator)) #\.))
                                     (object (string->symbol (car split)))
                                     (method (string->symbol (cadr split))))
-                               (with-syntax ((object (stx-identifier var-local object))
-                                             (method (stx-identifier var-local (if checked? "" "&") 'Interface "-" method)))
+                               (with-syntax ((object (stx-identifier #'rator object))
+                                             (method (stx-identifier #'rator (if checked? "" "&") 'Interface "-" method)))
                                  (syntax/loc stx
                                    (method object . args)))))
                             ((_ . args)
