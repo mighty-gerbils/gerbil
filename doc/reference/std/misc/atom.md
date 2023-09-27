@@ -22,11 +22,15 @@ Compared to the Clojure atom API, we:
 You create an atom with `atom`, and can access its state with `atom-deref`.
 Just like Clojure atoms and other references, our atoms support validators:
 functions that validate new values.
-To change the value of an atom, you can use `atom-swap!`,
-that atomically applies a function to the old value,
-and binds the atom to the new value to it if the validator accepts it.
+To change the value of an atom, you can use `atom-swap!` or its variants
+`atom-swap-values!`, `atom-reset!`, `atom-reset-values!`,
+and for number-valued atoms, `atom-increment!`,
+that will atomically change the value to which the atom is set,
+by applying a transformation function to the old value
+and checking that the atom’s validator accepts the new value.
 A lower-level `compare-and-set!` is also provided.
-Changes to atoms are always free of race conditions.
+Changes to atoms are always applied in a sequence of disjoint computations,
+free of race conditions.
 
 ::: warning
 Unlike the Clojure implementation, our current implementation does not retry,
@@ -42,12 +46,16 @@ though it is not recommended, in case this behavior changes.
 
 Creates a new atom, a box that atomically changes value.
 If no `initial-value` is provided, `(void)` is used (Clojure has no default initial-value).
+
 A `validator:` keyword argument can specify a validator
 (defaults to `#f` which designates a validator that always says "yes").
-The validator takes a new value and returns true if it is accepted;
-if the validator returns `#f` or throws, the value is rejected and the atom is left unmodified;
-furthermore, if the validator throws, the exception is propagated
-to the caller of the modifying function.
+The validator takes a new value and returns true if it is accepted.
+If the validator returns `#f` or throws, the value is rejected and the atom is left unmodified;
+furthermore, after releasing the lock and allowing other threads to modify the atom,
+an exception is raised for the caller of the modifying function:
+either the exception thrown by the validator, if any,
+or a `BadArgument` error raised if the validator returned `#f`.
+
 Similar to Clojure’s `atom`.
 
 ::: tip Examples:
@@ -85,7 +93,8 @@ Returns `#t` if `a` an atom, `#f` otherwise.
 ```
 
 Applies the `function` to the value currently in the `atom`, and,
-if it passes the `atom`’s validator, sets the `atom` to the new value.
+if it passes the `atom`’s validator (see the `atom` function above),
+sets the `atom` to the new value.
 Ensures that no other access is made to the `atom` in the middle of a swap.
 Returns the new value.
 
@@ -120,7 +129,8 @@ Similar to Clojure’s `swap-vals!` but returns two values rather than a vector 
 (atom-reset! atom new-value) -> new-value
 ```
 
-If the new value passes the `atom`’s validator, sets the atom to it.
+Sets the atom to the provided new value,
+if it passes the `atom`’s validator (see the `atom` function above),
 Ensures that no other access is made to the atom in the middle of a reset.
 Returns the new value.
 
@@ -162,8 +172,10 @@ Similar to Clojure `atom-reset-vals!` but returns values instead of a vector.
 ```
 
 Atomically sets the value of `atom` to `newval` if and only if the
-current value of the atom is identical to `oldval`.
-Returns `#t` if set happened, else `#f`.
+current value of the atom is identical to `oldval`,
+and the new value passes the `atom`’s validator (see the `atom` function above).
+Returns `#t` if set happened, else `#f`
+(but still throws an exception in case of validation error).
 Similar to Clojure `compare-and-set!`.
 
 ::: tip Examples:
