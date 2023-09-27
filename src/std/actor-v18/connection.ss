@@ -60,7 +60,7 @@
   (with-exception-stack-trace (cut actor-acceptor-main srv sock cookie)))
 
 (def (actor-acceptor-main srv sock cookie)
-  (with-type (sock : StreamSocket)
+  (using (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (sock.reader)))
@@ -85,8 +85,8 @@
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
                 (srv-id (thread-specific srv)))
-           (with-type ((reader :- BufferedReader)
-                            (writer :- BufferedWriter))
+           (using ((reader :- BufferedReader)
+                   (writer :- BufferedWriter))
                ;; set handshake timeouts
                (let (expiry (timeout->expiry default-handshake-timeout))
                  (sock.set-input-timeout! expiry)
@@ -153,7 +153,7 @@
          (thread-send/check srv (!connection-failed peer-id "no usable addresses")))))))
 
 (def (actor-connector-handshake srv peer-id cookie sock)
-  (with-type (sock : StreamSocket)
+  (using (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (sock.reader)))
@@ -179,8 +179,8 @@
                 (writer (sock.writer))
                 (writer (open-buffered-writer writer))
                 (srv-id (thread-specific srv)))
-           (with-type ((reader :- BufferedReader)
-                            (writer :- BufferedWriter))
+           (using ((reader :- BufferedReader)
+                   (writer :- BufferedWriter))
                ;; set handshake timeouts
                (let (expiry (timeout->expiry default-handshake-timeout))
                  (sock.set-input-timeout! expiry)
@@ -244,7 +244,7 @@
   (with-exception-stack-trace (cut actor-connection-main srv peer-id sock reader writer direction)))
 
 (def (actor-connection-main srv peer-id sock reader writer direction)
-  (with-type (sock :- StreamSocket)
+  (using (sock :- StreamSocket)
     (with-error-close sock
       ;; first order of business: set KEEPALIVE for tcp
       (unless (eqv? (sock.domain) AF_UNIX)
@@ -349,13 +349,13 @@
                            cookie)))
 
 (def (read-delimited reader)
-  (with-type (reader :- BufferedReader)
+  (using (reader :- BufferedReader)
     (if (eof-object? (reader.peek-u8-inline))
       '#!eof
       (reader.read-delimited &BufferedReader-unmarshal))))
 
 (def (write-delimited writer obj)
-  (with-type (writer :- BufferedWriter)
+  (using (writer :- BufferedWriter)
     (writer.write-delimited (cut &BufferedWriter-marshal <> obj))
     (writer.flush)))
 

@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; double ended queues
-(import :std/error)
+(import :std/error
+        :std/contract)
 (export deque make-deque deque? deque-length
         deque-empty?
         push-front! pop-front! peek-front
@@ -21,15 +22,17 @@
 
 (def (make-node/prev e prev)
   (let (new (make-node e))
-    (set! (&node-prev new) prev)
-    (set! (&node-next prev) new)
-    new))
+    (using ((new :- node) (prev :- node))
+      (set! new.prev prev)
+      (set! prev.next new)
+      new)))
 
 (def (make-node/next e next)
   (let (new (make-node e))
-    (set! (&node-next new) next)
-    (set! (&node-prev next) new)
-    new))
+    (using ((new :- node) (next :- node))
+      (set! new.next next)
+      (set! next.prev new)
+      new)))
 
 (defstruct deque (front back length)
   constructor: :init!
@@ -40,83 +43,80 @@
     (struct-instance-init! self #f #f 0)))
 
 (def (deque-empty? dq)
-  (zero? (&deque-length dq)))
+  (using (dq : deque)
+    (zero? dq.length)))
 
 (def (push-front! dq v)
-  (with ((deque front back len) dq)
-    (let (new (if front
-                (make-node/next v front)
+  (using (dq : deque)
+    (let (new (if dq.front
+                (make-node/next v dq.front)
                 (make-node v)))
-      (set! (&deque-front dq) new)
-      (unless back
-        (set! (&deque-back dq) new))
-      (set! (&deque-length dq)
-        (1+ len)))))
+      (set! dq.front new)
+      (unless dq.back
+        (set! dq.back new))
+      (set! dq.length (fx1+ dq.length)))))
 
 (def (push-back! dq v)
-  (with ((deque front back len) dq)
-    (let (new (if back
-                (make-node/prev v back)
+  (using (dq : deque)
+    (let (new (if dq.back
+                (make-node/prev v dq.back)
                 (make-node v)))
-      (set! (&deque-back dq) new)
-      (unless front
-        (set! (&deque-front dq) new))
-      (set! (&deque-length dq)
-        (1+ len)))))
+      (set! dq.back new)
+      (unless dq.front
+        (set! dq.front new))
+      (set! dq.length (fx1+ dq.length)))))
 
 (def (pop-front! dq (default absent-obj))
-  (with ((deque front back len) dq)
+  (using (dq : deque)
     (cond
-     (front
-      (let (next (&node-next front))
-        (set! (&deque-front dq) next)
-        (if next
-          (set! (&node-prev next) #f)
-          (set! (&deque-back dq) #f))
-        (set! (&deque-length dq)
-          (1- len))
-        (&node-e front)))
+     (dq.front
+      => (lambda (front)
+           (let (next (&node-next front))
+             (set! dq.front next)
+             (if next
+               (set! (&node-prev next) #f)
+               (set! dq.back #f))
+             (set! dq.length (fx1- dq.length))
+             (&node-e dq.front))))
      ((eq? default absent-obj)
       (raise-context-error pop-front! "Cannot pop; empty deque" dq))
      (else default))))
 
 (def (pop-back! dq (default absent-obj))
-  (with ((deque front back len) dq)
+  (using (dq : deque)
     (cond
-     (back
-      (let (prev (&node-prev back))
-        (set! (&deque-back dq) prev)
-        (if prev
-          (set! (&node-next prev) #f)
-          (set! (&deque-front dq) #f))
-        (set! (&deque-length dq)
-          (1- len))
-        (&node-e back)))
+     (dq.back
+      => (lambda (back)
+           (let (prev (&node-prev back))
+             (set! dq.back prev)
+             (if prev
+               (set! (&node-next prev) #f)
+               (set! dq.front #f))
+             (set! dq.length (fx1- dq.length))
+             (&node-e back))))
      ((eq? default absent-obj)
       (raise-context-error pop-back! "Cannot pop; empty deque" dq))
      (else default))))
 
 (def (peek-front dq (default absent-obj))
-  (with ((deque front) dq)
+  (using (dq : deque)
     (cond
-     (front
-      (&node-e front))
+     (dq.front => &node-e)
      ((eq? default absent-obj)
       (raise-context-error peek-front "Cannot peek; empty deque" dq))
      (else default))))
 
 (def (peek-back dq (default absent-obj))
-  (with ((deque _ back) dq)
+  (using (dq : deque)
     (cond
-     (back
-      (&node-e back))
+     (dq.back => &node-e)
      ((eq? default absent-obj)
       (raise-context-error peek-back "Cannot peek; empty deque" dq))
      (else default))))
 
 (def (deque->list dq)
-  (with ((deque _ back) dq)
-    (let lp ((n back) (r []))
+  (using (dq : deque)
+    (let lp ((n dq.back) (r []))
       (if n
         (lp (&node-prev n)
             (cons (&node-e n) r))

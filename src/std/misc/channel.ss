@@ -5,6 +5,7 @@
 (import :std/misc/queue
         :std/misc/timeout
         :std/generic
+        :std/contract
         :std/iter
         :std/error)
 (export make-channel channel?
@@ -25,97 +26,97 @@
       limit #f)))
 
 (def (channel-put ch val (timeo #f))
-  (let (timeo (make-timeout timeo))
-    (with ((channel q mx cv limit) ch)
+  (using (ch : channel)
+    (let (timeo (make-timeout timeo))
       (let lp ()
-        (mutex-lock! mx)
+        (mutex-lock! ch.mx)
         (cond
-         ((&channel-eof ch)
-          (mutex-unlock! mx)
+         (ch.eof
+          (mutex-unlock! ch.mx)
           (raise-io-error channel-put "channel is closed" ch))
-         ((or (not limit) (##fx< (queue-length q) limit))
-          (enqueue! q val)
-          (when (##fx= (queue-length q) 1)
-            (condition-variable-broadcast! cv)) ; unblock readers
-          (mutex-unlock! mx)
+         ((or (not ch.limit) (##fx< (&queue-length ch.q) ch.limit))
+          (&enqueue! ch.q val)
+          (when (##fx= (&queue-length ch.q) 1)
+            (condition-variable-broadcast! ch.cv)) ; unblock readers
+          (mutex-unlock! ch.mx)
           #t)
          (else
-          (if (mutex-unlock! mx cv timeo)
+          (if (mutex-unlock! ch.mx ch.cv timeo)
             (lp)
             #f)))))))
 
 (def (channel-try-put ch val)
-  (with ((channel q mx cv limit) ch)
-    (mutex-lock! mx)
+  (using (ch : channel)
+    (mutex-lock! ch.mx)
     (cond
-     ((&channel-eof ch)
-      (mutex-unlock! mx)
+     (ch.eof
+      (mutex-unlock! ch.mx)
       (raise-io-error channel-try-put "channel is closed" ch))
-     ((or (not limit) (##fx< (queue-length q) limit))
-      (enqueue! q val)
-      (when (##fx= (queue-length q) 1)
-        (condition-variable-broadcast! cv)) ; unblock readers
-      (mutex-unlock! mx)
+     ((or (not ch.limit) (##fx< (&queue-length ch.q) ch.limit))
+      (&enqueue! ch.q val)
+      (when (##fx= (&queue-length ch.q) 1)
+        (condition-variable-broadcast! ch.cv)) ; unblock readers
+      (mutex-unlock! ch.mx)
       #t)
      (else
-      (mutex-unlock! mx)
+      (mutex-unlock! ch.mx)
       #f))))
 
 (def (channel-sync ch . vals)
-  (with ((channel q mx cv limit) ch)
-    (mutex-lock! mx)
+  (using (ch : channel)
+    (mutex-lock! ch.mx)
     (cond
-     ((&channel-eof ch)
-      (mutex-unlock! mx)
+     (ch.eof
+      (mutex-unlock! ch.mx)
       (raise-io-error channel-sync "channel is closed" ch))
      (else
       (unless (null? vals)
-        (for-each (cut enqueue! q <>) vals)
-        (condition-variable-broadcast! cv))
-      (mutex-unlock! mx)))))
+        (for-each (cut &enqueue! ch.q <>) vals)
+        (condition-variable-broadcast! ch.cv))
+      (mutex-unlock! ch.mx)))))
 
 (def (channel-get ch (timeo #f) (default #f))
-  (let (timeo (make-timeout timeo))
-    (with ((channel q mx cv limit) ch)
+  (using (ch : channel)
+    (let (timeo (make-timeout timeo))
       (let lp ()
-        (mutex-lock! mx)
+        (mutex-lock! ch.mx)
         (cond
-         ((queue-empty? q)
+         ((&queue-empty? ch.q)
           (cond
-           ((&channel-eof ch)
-            (mutex-unlock! mx)
+           (ch.eof
+            (mutex-unlock! ch.mx)
             #!eof)
-           ((mutex-unlock! mx cv timeo)
+           ((mutex-unlock! ch.mx ch.cv timeo)
             (lp))
            (else default)))
          (else
-          (let (next (dequeue! q))
-            (when (and limit (##fx= (queue-length q) (##fx- limit 1)))
-              (condition-variable-broadcast! cv)) ; unblock writers
-            (mutex-unlock! mx)
+          (let (next (&dequeue! ch.q))
+            (when (and ch.limit (##fx= (&queue-length ch.q) (##fx- ch.limit 1)))
+              (condition-variable-broadcast! ch.cv)) ; unblock writers
+            (mutex-unlock! ch.mx)
             next)))))))
 
 (def (channel-try-get ch (default #f))
-  (with ((channel q mx cv limit) ch)
-    (mutex-lock! mx)
+  (using (ch : channel)
+    (mutex-lock! ch.mx)
     (cond
-     ((queue-empty? q)
-      (mutex-unlock! mx)
-      (if (&channel-eof ch) #!eof default))
+     ((&queue-empty? ch.q)
+      (mutex-unlock! ch.mx)
+      (if ch.eof #!eof default))
      (else
-      (let (next (dequeue! q))
-        (when (and limit (##fx= (queue-length q) (##fx- limit 1)))
-          (condition-variable-broadcast! cv)) ; unblock writers
-        (mutex-unlock! mx)
+      (let (next (&dequeue! ch.q))
+        (when (and ch.limit (##fx= (&queue-length ch.q) (##fx- ch.limit 1)))
+          (condition-variable-broadcast! ch.cv)) ; unblock writers
+        (mutex-unlock! ch.mx)
         next)))))
 
 (def (channel-close ch)
-  (with ((channel q mx cv _ eof) ch)
-    (unless eof
-      (mutex-lock! mx)
-      (set! (&channel-eof ch) #t)
-      (condition-variable-broadcast! (channel-cv ch))
-      (mutex-unlock! mx))))
+  (using (ch : channel)
+    (unless ch.eof
+      (mutex-lock! ch.mx)
+      (set! ch.eof #t)
+      (condition-variable-broadcast! ch.cv)
+      (mutex-unlock! ch.mx))))
 
 (defmethod {destroy channel}
   channel-close)

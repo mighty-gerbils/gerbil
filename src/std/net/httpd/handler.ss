@@ -44,7 +44,7 @@
   final: #t unchecked: #t)
 
 (def (http-request-handler sock get-handler)
-  (with-type (sock :- StreamSocket)
+  (using (sock :- StreamSocket)
     (def ibuf (get-input-buffer sock))
     (def obuf (get-output-buffer sock))
 
@@ -156,14 +156,14 @@
 
 (def (http-request-timeout-set! req timeo)
   (with ((http-request _ sock) req)
-    (with-type (sock :- StreamSocket)
+    (using (sock :- StreamSocket)
       (sock.set-input-timeout! timeo))))
 
 ;; response
 ;; write a full response
 (def (http-response-write res status headers body)
   (with ((http-response obuf _ output close?) res)
-    (with-type (obuf :- BufferedWriter)
+    (using (obuf :- BufferedWriter)
       (when output
         (error "duplicate response" res))
       (set! (&http-response-output res) 'END)
@@ -232,7 +232,7 @@
 
 (def (http-response-timeout-set! res timeo)
   (with ((http-response _ sock) res)
-    (with-type (sock :- StreamSocket)
+    (using (sock :- StreamSocket)
       (sock.set-output-timeout! timeo))))
 
 ;;; server internal
@@ -253,7 +253,7 @@
 (def (http-response-trace res req)
   (with ((http-request _ _ method url _ _ proto headers) req)
     (let (xbuf (open-buffered-writer #f 4096))
-      (with-type (xbuf :- BufferedWriter)
+      (using (xbuf :- BufferedWriter)
         (xbuf.write-string (symbol->string method))
         (xbuf.write-u8-inline SPC)
         (xbuf.write-string url)
@@ -524,7 +524,7 @@ END-C
       (skip-request-chunks ibuf))))
 
 (def (write-response-line obuf status)
-  (with-type (obuf :- BufferedWriter)
+  (using (obuf :- BufferedWriter)
     (let (text
           (cond
            ((hash-get +http-response-codes+ status)
@@ -538,7 +538,7 @@ END-C
       (write-crlf obuf))))
 
 (def (write-response-headers obuf headers)
-  (with-type (obuf :- BufferedWriter)
+  (using (obuf :- BufferedWriter)
     (def (write-header hdr)
       (with ([key . val] hdr)
         (if (string? key)
@@ -554,12 +554,12 @@ END-C
     (for-each write-header headers)))
 
 (def (write-crlf obuf)
-  (with-type (obuf :- BufferedWriter)
+  (using (obuf :- BufferedWriter)
     (obuf.write-u8-inline CR)
     (obuf.write-u8-inline LF)))
 
 (def (write-chunk obuf chunk start end)
-  (with-type (obuf :- BufferedWriter)
+  (using (obuf :- BufferedWriter)
     (let* ((end
             (cond
              (end end)
@@ -590,7 +590,7 @@ END-C
         (obuf.flush)))))
 
 (def (write-last-chunk obuf)
-  (with-type (obuf :- BufferedWriter)
+  (using (obuf :- BufferedWriter)
     (obuf.write-u8-inline C0)
     (write-crlf obuf)
     (write-crlf obuf)

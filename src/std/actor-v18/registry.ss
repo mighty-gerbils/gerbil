@@ -50,7 +50,7 @@
   (def flush-ticker
     (spawn/name 'ticker ticker (current-thread)))
 
-  (with-type (registry :- Registry)
+  (using (registry :- Registry)
     (let/cc exit
       (while #t
         (<-

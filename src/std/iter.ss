@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/generic
         :std/coroutine)
 (export
@@ -60,10 +61,10 @@
 
 (def (iter-list lst)
   (def (next it)
-    (let (e (&iterator-e it))
-      (match e
+    (using (it :- iterator)
+      (match it.e
         ([hd . rest]
-         (set! (&iterator-e it) rest)
+         (set! it.e rest)
          hd)
         (else iter-end))))
   (make-iterator lst next))
@@ -73,11 +74,11 @@
    (def (iter-vector vec)
      (declare (not safe))
      (def (next it)
-       (let (e (&iterator-e it))
-         (with ([vec . index] e)
+       (using (it :- iterator)
+         (with ([vec . index] it.e)
            (if (fx< index (length-e vec))
              (let (v (ref-e vec index))
-               (set! (cdr e) (fx1+ index))
+               (set! (cdr it.e) (fx1+ index))
                v)
              iter-end))))
      (make-iterator (cons vec 0) next))))
@@ -92,20 +93,20 @@
 
 (def (iter-coroutine proc)
   (def (next it)
-    (let (cort (&iterator-e it))
-      (continue cort)))
+    (using (it :- iterator)
+      (continue it.e)))
   (let (cort (coroutine (lambda () (proc) iter-end)))
     (make-iterator cort next)))
 
 (def (iter-cothread proc)
   (def (next it)
-    (let (cothr (&iterator-e it))
-      (continue cothr)))
+    (using (it :- iterator)
+      (continue it.e)))
   (def (fini it)
-    (let (cothr (&iterator-e it))
-      (when cothr
-        (cothread-stop! cothr)
-        (set! (&iterator-e it) #f))))
+    (using (it :- iterator)
+      (when it.e
+        (cothread-stop! it.e)
+        (set! it.e #f))))
   (let* ((cothr (cothread (lambda () (proc) iter-end)))
          (it (make-iterator cothr next fini)))
     (make-will it fini)
@@ -114,8 +115,8 @@
 (def (iter-input-port port (read-e read))
   (declare (not safe))
   (def (next it)
-    (let (port (&iterator-e it))
-      (let (val (read-e port))
+    (using (it :- iterator)
+      (let (val (read-e it.e))
         (if (eof-object? val)
           iter-end
           val))))
@@ -124,12 +125,12 @@
 (def (iter-in-iota start count step)
   (declare (not safe))
   (def (next it)
-    (let (e (&iterator-e it))
-      (with ([value . limit] e)
+    (using (it :- iterator)
+      (with ([value . limit] it.e)
         (if (fx> limit 0)
           (begin
-            (set! (car e) (+ value step))
-            (set! (cdr e) (fx1- limit))
+            (set! (car it.e) (+ value step))
+            (set! (cdr it.e) (fx1- limit))
             value)
           iter-end))))
   (unless (and (number? start) (fixnum? count) (number? step))
@@ -147,11 +148,11 @@
    (def (iter-in-range start end step)
      (declare (not safe))
      (def (next it)
-       (let (e (&iterator-e it))
-         (if (cmp e end)
+       (using (it :- iterator)
+         (if (cmp it.e end)
            (begin
-             (set! (&iterator-e it) (+ e step))
-             e)
+             (set! it.e (+ it.e step))
+             it.e)
            iter-end)))
      (unless (and (real? start) (real? end) (real? step))
        (raise-bad-argument in-range "range parameters: real numbers" start end step))
@@ -174,10 +175,11 @@
 (def (in-naturals (start 0) (step 1))
   (declare (not safe))
   (def (next it)
-    (let (value (&iterator-e it))
-      (let (value+step (+ value step))
-        (set! (&iterator-e it) value+step)
-        value)))
+    (using (it :- iterator)
+      (let (value it.e)
+        (let (value+step (+ value step))
+          (set! it.e value+step)
+          value))))
   (make-iterator start next))
 
 (def (in-hash ht)
@@ -212,8 +214,9 @@
   (iter-cothread (if (null? args) proc (cut apply proc args))))
 
 (def (iter-next! it)
-  (declare (not safe))
-  ((&iterator-next it) it))
+  (using (it :- iterator)
+    (declare (not safe))
+    (it.e it)))
 
 (def (iter-fini! it)
   (declare (not safe))

@@ -3,7 +3,8 @@
 ;;; asynchronous completion tokens
 
 (import :std/error
-        :std/sugar)
+        :std/sugar
+        :std/contract)
 (export make-completion
         completion?
         completion
@@ -23,36 +24,34 @@
                            (make-mutex name)
                            (make-condition-variable name))))
 
-(def (completion-wait! compl)
-  (with ((completion mx cv) compl)
+(def (completion-wait! c)
+  (using (c : completion)
     (let lp ()
-      (mutex-lock! mx)
-      (if (&completion-ready? compl)
+      (mutex-lock! c.mx)
+      (if c.ready?
         (begin
-          (mutex-unlock! mx)
+          (mutex-unlock! c.mx)
           (cond
-           ((&completion-exn compl)
-            => raise)
-           (else
-            (&completion-val compl))))
+           (c.exn => raise)
+           (else c.val)))
         (begin
-          (mutex-unlock! mx cv)
+          (mutex-unlock! c.mx c.cv)
           (lp))))))
 
-(defrules do-completion-post! ()
-  ((_ compl val set-e)
-   (with ((completion mx cv) compl)
-     (mutex-lock! mx)
-     (if (&completion-ready? compl)
-       (begin
-         (mutex-unlock! mx)
-         (raise-context-error completion-post! "Completion has already been posted" compl))
-       (begin
-         (set-e compl val)
-         (set! (&completion-ready? compl) #t)
-         (mutex-unlock! mx)
-         (condition-variable-broadcast! cv)
-         (void))))))
+(defrule (do-completion-post! compl val set-e)
+  (let (c compl)
+    (using (c : completion)
+      (mutex-lock! c.mx)
+      (if c.ready?
+        (begin
+          (mutex-unlock! c.mx)
+          (raise-context-error completion-post! "Completion has already been posted" c))
+        (begin
+          (set-e c val)
+          (set! c.ready? #t)
+          (mutex-unlock! c.mx)
+          (condition-variable-broadcast! c.cv)
+          (void))))))
 
 (def (completion-post! compl val)
   (do-completion-post! compl val &completion-val-set!))

@@ -59,13 +59,15 @@
 
 (defmethod {:init! connection}
   (lambda (self e)
-    (set! (&connection-e self) e)
-    (set! (&connection-driver self) (Driver self))))
+    (using (self :- connection)
+      (set! self.e e)
+      (set! self.driver (Driver self)))))
 
 (defmethod {:init! statement}
   (lambda (self e)
-    (set! (&statement-e self) e)
-    (set! (&statement-i self) (Statement self))))
+    (using (self :- statement)
+      (set! self.e e)
+      (set! self.i (Statement self)))))
 
 (deferror-class SQLError () sql-error?)
 (defraise/context (raise-sql-error where what irritants ...)
@@ -78,7 +80,7 @@
 
 (def (sql-close conn)
   (with ((connection e driver txn-begin txn-commit txn-abort) conn)
-    (with-type (driver :- Driver)
+    (using (driver :- Driver)
       (when e
         (try
          (when txn-begin
@@ -100,7 +102,7 @@
 
 (def (sql-txn-do conn sql getf setf)
   (with ((connection e driver) conn)
-    (with-type (driver :- Driver)
+    (using (driver :- Driver)
       (cond
        ((not e)
         (raise-context-error sql-txn-do "Invalid operation; connection closed" conn))
@@ -121,7 +123,7 @@
 
 (def (sql-prepare conn text)
   (with ((connection e driver) conn)
-    (with-type (driver :- Driver)
+    (using (driver :- Driver)
       (if e
         (let (stmt (driver.prepare text))
           (make-will stmt sql-finalize)
@@ -130,12 +132,13 @@
 
 (def (sql-finalize stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using ((stmt :- statement)
+            (i :- Statement))
       (when e
         (try (i.finalize)
              (finally
-              (set! (&statement-e stmt) #f)
-              (set! (&statement-i stmt) #f)))))))
+              (set! stmt.e #f)
+              (set! stmt.i #f)))))))
 
 (defmethod {destroy statement}
   sql-finalize)
@@ -148,21 +151,21 @@
 
 (def (sql-clear stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (i.clear)
         (raise-context-error sql-clear "Invalid operation; statement finalized" stmt)))))
 
 (def (sql-reset stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (i.reset)
         (raise-context-error sql-reset "Invalid operation; statement finalized" stmt)))))
 
 (def (sql-reset/clear stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (begin
           (i.reset)
@@ -185,7 +188,7 @@
 
 (def (sql-exec stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (begin
           (i.exec)
@@ -203,7 +206,7 @@
 (def (in-sql-query stmt)
   (def (next it)
     (with ((iterator i) it)
-      (with-type (i :- Statement)
+      (using (i :- Statement)
         (let (r (i.query-fetch))
           (if (iter-end? r)
             iter-end
@@ -211,13 +214,13 @@
 
   (def (fini it)
     (with ((iterator i) it)
-      (with-type (i :- Statement)
+      (using (i :- Statement)
         (when i
           (i.query-fini)
           (set! (iterator-e it) #f)))))
 
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (let (it (make-iterator i next fini))
           (make-will it fini)
@@ -228,7 +231,7 @@
 ;;; metadata
 (def (sql-columns stmt)
   (with ((statement e i) stmt)
-    (with-type (i :- Statement)
+    (using (i :- Statement)
       (if e
         (i.columns)
         (raise-context-error sql-columns "Invalid operation; statement finalized" stmt)))))

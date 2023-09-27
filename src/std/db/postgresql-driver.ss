@@ -557,7 +557,7 @@
 
 ;;; Protocol I/O
 (def (postgresql-send! writer msg)
-  (with-type (writer :- BufferedWriter)
+  (using (writer :- BufferedWriter)
     (def (marshal-and-write tid body marshal)
       (let (payload (marshal body))
         (when tid
@@ -580,7 +580,7 @@
 
 (def (postgresql-recv! reader)
   (DEBUG "RECEIVE!")
-  (with-type (reader :- BufferedReader)
+  (using (reader :- BufferedReader)
     (let* ((tid (reader.read-u8))
            (_ (when (eof-object? tid)
                 (raise-io-error postgresql-recv! "connection closed")))
@@ -588,7 +588,7 @@
            (payload-len (fx- payload-len 4))
            (payload-reader (reader.delimit payload-len)))
 
-      (with-type (payload-reader :- BufferedReader)
+      (using (payload-reader :- BufferedReader)
         (DEBUG "READ MESSAGE " tid payload-len)
         (cond
          ((vector-ref +backend-messages+ tid)
@@ -612,7 +612,7 @@
   '())
 
 (def (unmarshal-authen-request buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let (t (buf.read-u32))
       (case t
         ((0) '(AuthenticationOk))
@@ -648,9 +648,9 @@
         (lp (cons next r))))))
 
 (def (unmarshal-string buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let lp ((chars []))
-      (if (fx= (&BufferedReader-peek-u8 buf) 0)
+      (if (fx= (buf.peek-u8) 0)
         (begin
           (buf.read-u8)
           (list->string (reverse! chars)))
@@ -658,7 +658,7 @@
           (lp (cons next chars)))))))
 
 (def (unmarshal-bytes-rest buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let lp ((bytes []))
       (let (next (buf.read-u8))
         (if (eof-object? next)
@@ -666,7 +666,7 @@
           (lp (cons next bytes)))))))
 
 (def (unmarshal-string-rest buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let lp ((chars []))
       (let (next (read-char buf))
         (if (eof-object? next)
@@ -678,7 +678,7 @@
     [tag]))
 
 (def (unmarshal-data-row buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let (count (buf.read-u16))
       (let lp ((i 0) (r []))
         (if (fx< i count)
@@ -691,7 +691,7 @@
           (reverse! r))))))
 
 (def (unmarshal-error-notice buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let lp ((r []))
       (let (t (buf.read-u8!))
         (if (fx= t 0)
@@ -702,7 +702,7 @@
             (lp (cons (cons (integer->char t) field) r))))))))
 
 (def (unmarshal-param-description buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let (count (buf.read-u16))
       (let lp ((i 0) (r []))
         (if (fx< i count)
@@ -711,7 +711,7 @@
           (reverse! r))))))
 
 (def (unmarshal-row-description buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let (count (buf.read-u16))
       (let lp ((i 0) (r []))
         (if (fx< i count)
@@ -727,7 +727,7 @@
           (reverse! r))))))
 
 (def (unmarshal-ready buf)
-  (with-type (buf :- BufferedReader)
+  (using (buf :- BufferedReader)
     (let (status (buf.read-u8!))
       [(integer->char status)])))
 
@@ -740,14 +740,14 @@
   '#u8())
 
 (def (marshal-string buf str)
-  (with-type (buf :- BufferedWriter)
+  (using (buf :- BufferedWriter)
     (buf.write-string str)
     (buf.write-u8 0)))
 
 (defrule (with-buffered-writer writer body ...)
   (let* ((buffer (cache-get-buffer))
          (writer (open-buffered-writer #f buffer)))
-    (with-type (writer :- BufferedWriter)
+    (using (writer :- BufferedWriter)
       (let () body ...))
     (let (result (get-buffer-output-u8vector writer))
       (cache-put-buffer buffer)

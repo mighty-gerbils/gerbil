@@ -10,7 +10,6 @@
   try
   with-destroy
   defmethod/alias
-  using
   using-method
   with-methods
   with-class-methods
@@ -124,9 +123,6 @@
        #'(begin
            (defmethod {method type} body ...)
            (bind-method! type::t 'alias method-impl) ...)))))
-
-(defrule (using obj method ...)
-  (begin (using-method obj method) ...))
 
 (defrules using-method ()
   ((_ obj method)
