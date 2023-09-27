@@ -339,8 +339,11 @@ Return the new value. Common special case for a numeric (often integer) atom.
 
 Creates a function that maintains an `atomic-counter`
 that starts with the given `initial-value` (which defaults to `-1`),
-takes an increment as optional argument (defaults to `1`),
-and increments the atomic value, returning the new value, each time it is called.
+and increments the atomic value by `1`, returning the new value, each time it is called.
+
+Note that for performance reasons, you cannot specify a different increment;
+if this is what you need, make your own abstraction based on `atom`
+(and if you use it a lot... maybe contribute it to this library, or another).
 
 ::: tip Examples:
 ``` scheme
