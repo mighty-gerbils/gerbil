@@ -157,7 +157,7 @@
 
 ;; Parse an entire port
 (def (parse-port parser port (description port) (where 'parse-port))
-  (parse-reader parser (PeekableStringReader (make-raw-input-port port)) description where))
+  (parse-reader parser (PeekableStringReader (make-raw-textual-input-port port)) description where))
 
 ;; Parse an entire file
 (def (parse-file parser file (description file) (where 'parse-file))
