@@ -109,10 +109,10 @@
 
 (def (atomic-counter (initial-value -1))
   (let (a (atom initial-value))
-    (lambda ((increment 1))
+    (lambda ()
       (let (mx (&Atom-mutex a))
         (mutex-lock! mx)
-        (let (new (+ (&Atom-value a) increment))
+        (let (new (1+ (&Atom-value a)))
           (set! (&Atom-value a) new)
           (mutex-unlock! mx)
           new)))))
