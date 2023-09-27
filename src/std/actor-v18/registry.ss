@@ -58,7 +58,7 @@
           (if (authorized-for? @source id)
             (begin
               (infof "adding server ~a ~a at ~a" id roles addrs)
-              (.add-server registry id addrs roles)
+              (registry.add-server id addrs roles)
               (--> (!ok (void))))
             (--> (!error "not authorized"))))
 
@@ -66,7 +66,7 @@
           (if (authorized-for? @source id)
             (begin
               (infof "removing server ~a" id)
-              (.remove-server registry id)
+              (registry.remove-server id)
               (--> (!ok (void))))
             (--> (!error "not authorized"))))
 
@@ -75,27 +75,27 @@
            (id
             (debugf "looking up server ~a for ~a" id @source)
             (cond
-             ((.lookup-server registry id)
+             ((registry.lookup-server id)
               => (lambda (value) (--> (!ok value))))
              (else
               (--> (!error "unknown server")))))
            (role
             (debugf "looking up servers by role ~a for ~a" role @source)
-            (let* ((result (.lookup-servers/role registry role))
+            (let* ((result (registry.lookup-servers/role role))
                    (result (sort-server-list result)))
               (--> (!ok result))))
            (else
             (debugf "listing servers for ~a" @source)
-            (let* ((result (.list-servers registry))
+            (let* ((result (registry.list-servers))
                    (result (sort-server-list result)))
               (--> (!ok result))))))
 
          ((!tick)
-          (.flush registry))
+          (registry.flush))
 
          ,(@shutdown
            (infof "registry shutting down ...")
-           (.close registry)
+           (registry.close)
            (-> flush-ticker (!shutdown))
            (exit 'shutdown))
          ,(@ping)

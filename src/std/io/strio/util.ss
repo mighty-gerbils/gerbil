@@ -75,7 +75,7 @@
        ((and sep (null? separating))
         (finish chars drop))
        ((read-more? x)
-        (let (next (.read-char-inline reader))
+        (let (next (reader.read-char-inline))
           (cond
            ((eof-object? next)
             (finish chars drop))
@@ -88,14 +88,14 @@
 
 
 (defstring-writer-ext (write-line writer input (separator #\newline))
-  (let (result (.write-string writer input 0 (string-length input)))
+  (let (result (writer.write-string input 0 (string-length input)))
     (if (pair? separator)
       (let lp ((rest separator) (result result))
         (match rest
           ([char . rest]
-           (.write-char-inline writer char)
+           (writer.write-char-inline char)
            (lp rest (fx+ result 1)))
           (else result)))
       (begin
-        (.write-char-inline writer separator)
+        (writer.write-char-inline separator)
         (fx+ result 1)))))

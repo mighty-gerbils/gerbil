@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; contracts and type assertions
 (export with-type with-interface with-struct with-class with-contract)
-(import ./error
+(import (for-syntax :gerbil/expander)
+        ./error
         ./interface)
 
 (defsyntax (with-type stx)
@@ -24,7 +25,7 @@
         ((extended-class-info? meta)
          #'(with-class (id ~ Type) body ...))
         (else
-         (raise-syntax-error #f "bad type; must be an interface, struct, or class type" stx #'Type meta)))))
+         (raise-syntax-error #f "bad type; must be an interface, struct, or class with complete type information" stx #'Type meta)))))
     ((_ (id :~ pred) body ...)
      (identifier? #'id)
      #'(with-contract (id :~ pred) body ...))
@@ -68,21 +69,29 @@
           (let-syntax ((@app
                         (lambda (stx)
                           (syntax-case stx ()
-                            ((_ method rator . rands)
-                             (and (identifier? #'method)
-                                  (string-prefix? "." (symbol->string (stx-e #'method)))
-                                  (identifier? #'rator)
-                                  (bound-identifier=? #'rator (syntax-local-introduce (syntax var))))
-                             (with-syntax ((->method
-                                            (stx-identifier
-                                             #'method
-                                             (if checked? "" "&")
-                                             'Interface "-"
-                                             (let (str (symbol->string (stx-e #'method)))
-                                               (substring str 1 (string-length str))))))
-                               #'(->method rator . rands)))
+                            ((_ rator . args)
+                             (and (identifier? #'rator)
+                                  (let (rator-str (symbol->string (stx-e #'rator)))
+                                    (and (string-index rator-str #\.)
+                                         (let* ((split (string-split rator-str #\.))
+                                                (object (string->symbol (car split)))
+                                                (var-local
+                                                 (syntax-local-introduce #'var))
+                                                (object-local
+                                                 (stx-identifier var-local object)))
+                                           (and (fx= (length split) 2)
+                                                (bound-identifier=? object-local var-local))))))
+                             (let* ((var-local (syntax-local-introduce #'var))
+                                    (split (string-split (symbol->string (stx-e #'rator)) #\.))
+                                    (object (string->symbol (car split)))
+                                    (method (string->symbol (cadr split))))
+                               (with-syntax ((object (stx-identifier var-local object))
+                                             (method (stx-identifier var-local (if checked? "" "&") 'Interface "-" method)))
+                                 (syntax/loc stx
+                                   (method object . args)))))
                             ((_ . args)
-                             #'(__app . args))))))
+                             (syntax/loc stx
+                               (__app . args)))))))
             (begin-annotation (@type (var interface: Interface))
               (let ()
                 body ...))))))

@@ -88,23 +88,23 @@
       (else (u8vector-concatenate chunks)))))
 
 (defreader-ext (read-delimited reader read-value)
-  (let* ((len (.read-varuint reader))
-         (delimited (.delimit reader len)))
+  (let* ((len (reader.read-varuint))
+         (delimited (reader.delimit len)))
     (read-value delimited)))
 
 (defreader-ext (read-delimited-u8vector reader)
-  (let* ((len (.read-varuint reader))
+  (let* ((len (reader.read-varuint))
          (output (make-u8vector len)))
-    (.read reader output 0 len len)
+    (reader.read output 0 len len)
     output))
 
 (defreader-ext (read-delimited-string reader)
-  (let* ((len (.read-varuint reader))
-         (delimited (.delimit reader len))
+  (let* ((len (reader.read-varuint))
+         (delimited (reader.delimit len))
          (output (make-string len)))
     (with-type (delimited :- BufferedReader)
       (let lp ((i 0))
-        (let (next (.read-char delimited))
+        (let (next (delimited.read-char))
           (if (eof-object? next)
             (begin
               (string-shrink! output i)
@@ -118,16 +118,16 @@
          (_ (write-value tmp-writer))
          (chunks (get-buffer-output-chunks tmp-writer))
          (len (foldl (lambda (c r) (fx+ (u8vector-length c) r)) 0 chunks))
-         (varlen (.write-varuint writer len)))
+         (varlen (writer.write-varuint len)))
     (for-each (cut &BufferedWriter-write writer <>) chunks)
     (fx+ varlen len)))
 
 (defwriter-ext (write-delimited-u8vector writer bytes)
-  (.write-delimited writer (cut &BufferedWriter-write <> bytes)))
+  (writer.write-delimited (cut &BufferedWriter-write <> bytes)))
 
 (defwriter-ext (write-delimited-string writer str)
-  (.write-delimited writer (cut &BufferedWriter-write-string <> str)
-                                   (fx* 4 (string-length str))))
+  (writer.write-delimited (cut &BufferedWriter-write-string <> str)
+                          (fx* 4 (string-length str))))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation

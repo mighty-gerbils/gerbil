@@ -17,14 +17,14 @@
       (try
        (http-response-write-file res headers reader)
        (finally
-        (.close reader))))))
+        (reader.close))))))
 
 (def (http-response-write-file res headers reader)
   (with-type (reader :- Reader)
     (let (buf (get-file-buffer))
       (http-response-begin res 200 headers)
       (let lp ()
-        (let (rd (.read reader buf))
+        (let (rd (reader.read buf))
           (cond
            ((fx= rd 0)
             (put-file-buffer buf)

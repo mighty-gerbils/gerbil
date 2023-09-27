@@ -4,8 +4,7 @@
 (import :std/error
         :std/sugar
         (only-in :std/srfi/1 reverse!)
-        (for-syntax :gerbil/expander
-                    (only-in :std/srfi/1 delete-duplicates)
+        (for-syntax (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out

@@ -49,11 +49,11 @@
     (def obuf (get-output-buffer sock))
 
     (def (loop)
-      (let ((req (make-http-request ibuf sock (.peer-address sock)
+      (let ((req (make-http-request ibuf sock (sock.peer-address)
                                     #f #f #f #f #f #f #!void))
             (res (make-http-response obuf sock #f #f)))
-        (.set-input-timeout! sock request-timeout)
-        (.set-output-timeout! sock response-timeout)
+        (sock.set-input-timeout! request-timeout)
+        (sock.set-output-timeout! response-timeout)
 
         (try
          (read-request! req)
@@ -134,7 +134,7 @@
      (finally
       (with-catch void
                   (cut &StreamSocket-shutdown sock 'out))
-      (.close sock)
+      (sock.close)
       (put-input-buffer! ibuf)
       (put-output-buffer! obuf)))))
 
@@ -157,7 +157,7 @@
 (def (http-request-timeout-set! req timeo)
   (with ((http-request _ sock) req)
     (with-type (sock :- StreamSocket)
-      (.set-input-timeout! sock timeo))))
+      (sock.set-input-timeout! timeo))))
 
 ;; response
 ;; write a full response
@@ -190,10 +190,10 @@
         (write-crlf obuf)
         (cond
          ((u8vector? body)
-          (.write obuf body))
+          (obuf.write body))
          ((string? body)
-          (.write-string obuf body)))
-        (.flush obuf)))))
+          (obuf.write-string body)))
+        (obuf.flush)))))
 
 ;; begin a chunked response
 (def (http-response-begin res status headers)
@@ -233,7 +233,7 @@
 (def (http-response-timeout-set! res timeo)
   (with ((http-response _ sock) res)
     (with-type (sock :- StreamSocket)
-      (.set-output-timeout! sock timeo))))
+      (sock.set-output-timeout! timeo))))
 
 ;;; server internal
 (def (header-e key lst)
@@ -254,11 +254,11 @@
   (with ((http-request _ _ method url _ _ proto headers) req)
     (let (xbuf (open-buffered-writer #f 4096))
       (with-type (xbuf :- BufferedWriter)
-        (.write-string xbuf (symbol->string method))
-        (.write-u8-inline xbuf SPC)
-        (.write-string xbuf url)
-        (.write-u8-inline xbuf SPC)
-        (.write-string xbuf proto)
+        (xbuf.write-string (symbol->string method))
+        (xbuf.write-u8-inline SPC)
+        (xbuf.write-string url)
+        (xbuf.write-u8-inline SPC)
+        (xbuf.write-string proto)
         (write-crlf xbuf)
         (write-response-headers xbuf headers)
         (write-crlf xbuf)
@@ -530,11 +530,11 @@ END-C
            ((hash-get +http-response-codes+ status)
             => values)
            (else "Gremlins!")))
-      (.write-string obuf "HTTP/1.1")
-      (.write-u8-inline obuf SPC)
-      (.write-string obuf (number->string status))
-      (.write-u8-inline obuf SPC)
-      (.write-string obuf text)
+      (obuf.write-string "HTTP/1.1")
+      (obuf.write-u8-inline SPC)
+      (obuf.write-string (number->string status))
+      (obuf.write-u8-inline SPC)
+      (obuf.write-string text)
       (write-crlf obuf))))
 
 (def (write-response-headers obuf headers)
@@ -544,10 +544,10 @@ END-C
         (if (string? key)
           (if (string? val)
             (begin
-              (.write-string obuf key)
-              (.write-u8-inline obuf COL)
-              (.write-u8-inline obuf SPC)
-              (.write-string obuf val)
+              (obuf.write-string key)
+              (obuf.write-u8-inline COL)
+              (obuf.write-u8-inline SPC)
+              (obuf.write-string val)
               (write-crlf obuf))
             (error "Bad header value; expected string" hdr val))
           (error "Bad header key; expected string" hdr key))))
@@ -555,8 +555,8 @@ END-C
 
 (def (write-crlf obuf)
   (with-type (obuf :- BufferedWriter)
-    (.write-u8-inline obuf CR)
-    (.write-u8-inline obuf LF)))
+    (obuf.write-u8-inline CR)
+    (obuf.write-u8-inline LF)))
 
 (def (write-chunk obuf chunk start end)
   (with-type (obuf :- BufferedWriter)
@@ -579,22 +579,22 @@ END-C
              (else
               0))))
       (when (fx> len 0)
-        (.write-string obuf (number->string len 16))
+        (obuf.write-string (number->string len 16))
         (write-crlf obuf)
         (cond
          ((u8vector? chunk)
-          (.write obuf chunk start end))
+          (obuf.write chunk start end))
          ((string? chunk)
-          (.write-string obuf chunk start end)))
+          (obuf.write-string chunk start end)))
         (write-crlf obuf)
-        (.flush obuf)))))
+        (obuf.flush)))))
 
 (def (write-last-chunk obuf)
   (with-type (obuf :- BufferedWriter)
-    (.write-u8-inline obuf C0)
+    (obuf.write-u8-inline C0)
     (write-crlf obuf)
     (write-crlf obuf)
-    (.flush obuf)))
+    (obuf.flush)))
 
 (def C0 (char->integer #\0))
 (def CR (char->integer #\return))

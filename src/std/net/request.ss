@@ -308,18 +308,18 @@
                 headers)
       (writeln writer)
       (when body
-        (.write writer body))
-      (.flush writer))))
+        (writer.write body))
+      (writer.flush writer))))
 
 (def* writeln
   ((writer)
    (with-type (writer :- BufferedWriter)
-     (.write-char-inline writer #\return)
-     (.write-char-inline writer #\newline)))
+     (writer.write-char-inline #\return)
+     (writer.write-char-inline #\newline)))
   ((writer fmt . args)
    (let (str (apply format fmt args))
      (with-type (writer :- BufferedWriter)
-       (.write-line writer str '(#\return #\newline))))))
+       (writer.write-line str '(#\return #\newline))))))
 
 (def status-line-rx
   (pregexp "([0-9]{3})\\s+(.*)"))
@@ -379,7 +379,7 @@
           (if (fxzero? clen)
             (u8vector-concatenate (cdr root))
             (let (chunk (make-u8vector clen))
-              (.read reader chunk 0 clen clen)
+              (reader.read chunk 0 clen clen)
               (read-response-line req)  ; read chunk trailing CRLF
               (let (tl* [chunk])
                 (set! (cdr tl) tl*)
@@ -390,7 +390,7 @@
     (with-type (reader :- BufferedReader)
       (def (read/length length)
         (let* ((data (make-u8vector length))
-               (rd (.read reader data 0 length length)))
+               (rd (reader.read data 0 length length)))
           data))
 
       (def (read/end)
@@ -398,7 +398,7 @@
           (let lp ((tl root))
             (let* ((buflen 4096)
                    (buf (make-u8vector buflen))
-                   (rd  (.read reader buf)))
+                   (rd  (reader.read buf)))
               (cond
                ((##fxzero? rd)
                 (u8vector-concatenate (cdr root)))
@@ -419,13 +419,13 @@
         (root [#f]))
     (with-type (reader :- BufferedReader)
       (let lp ((tl root))
-        (let (next (.read-u8-inline reader))
+        (let (next (reader.read-u8-inline))
           (cond
            ((eof-object? next)
             (raise-io-error request-read-response-line
                             "Incomplete response; connection closed" req))
            ((eq? next cr)
-            (let (next (.read-u8-inline reader))
+            (let (next (reader.read-u8-inline))
               (cond
                ((eof-object? next)
                 (raise-io-error request-read-response-line

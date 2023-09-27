@@ -78,7 +78,7 @@
   (with-type (reader :- BufferedReader)
     (let lp ((i 0) (x 0))
       (if (fx< i len)
-        (let (next (.read-u8-inline reader))
+        (let (next (reader.read-u8-inline))
           (if (eof-object? next)
             (raise-premature-end-of-input read-uint)
             (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next))))
@@ -103,7 +103,7 @@
 
   (let lp ((shift 0) (x 0))
     (if (read-more? shift)
-      (let (next (.read-u8-inline reader))
+      (let (next (reader.read-u8-inline))
         (if (eof-object? next)
           (raise-premature-end-of-input read-varuint)
           (let* ((limb (fxand next #x7f))
@@ -114,7 +114,7 @@
       (raise-io-error read-varuint "varuint max bits exceeded" x max-bits))))
 
 (defreader-ext (read-varint reader (max-bits 64))
-  (let* ((uint (.read-varuint reader max-bits))
+  (let* ((uint (reader.read-varuint max-bits))
          (int (arithmetic-shift uint -1))
          (sign (bitwise-and uint 1)))
     (if (fx= sign 0)
@@ -122,7 +122,7 @@
       (bitwise-not int))))
 
 (defreader-ext (read-u8! reader)
-  (let (u8 (.read-u8-inline reader))
+  (let (u8 (reader.read-u8-inline))
     (if (eof-object? u8)
       (raise-premature-end-of-input read-u8!)
       u8)))
@@ -283,9 +283,9 @@
                 '#!eof))))))
     (peek-char-generic reader)))
 
-(defrule (&BufferedReader-read-char-inline reader)
-  (if (is-input-buffer? reader)
-    (let ()
+(defrule (&BufferedReader-read-char-inline input)
+  (if (is-input-buffer? input)
+    (let (reader input)
       (declare (not interrupts-enabled))
       (with-type (reader :- BufferedReader)
         (let (bio (&interface-instance-object reader))
@@ -300,10 +300,10 @@
                   (integer->char byte1))
                  (else
                   ;; multibyte character, dispatch to the method
-                  (.read-char reader))))
+                  (reader.read-char))))
               ;; buffer empty, dispatch to the method
-              (.read-char reader))))))
-    (read-char-generic reader)))
+              (reader.read-char))))))
+    (read-char-generic input)))
 
 (defrule (BufferedReader-read-char-inline reader)
   (let (reader (BufferedReader reader))
@@ -311,9 +311,9 @@
 
 (export &BufferedReader-read-char-inline BufferedReader-read-char-inline)
 
-(defrule (&BufferedReader-peek-char-inline reader)
-  (if (is-input-buffer? reader)
-    (let ()
+(defrule (&BufferedReader-peek-char-inline input)
+  (if (is-input-buffer? input)
+    (let (reader input)
       (declare (not interrupts-enabled))
       (with-type (reader :- BufferedReader)
         (let (bio (&interface-instance-object reader))
@@ -327,35 +327,35 @@
                   (integer->char byte1))
                  (else
                   ;; multibyte character, dispatch to the method
-                  (.peek-char reader))))
+                  (reader.peek-char))))
               ;; buffer empty, dispatch to method
-              (.peek-char reader))))))
-    (peek-char-generic reader)))
+              (reader.peek-char))))))
+    (peek-char-generic input)))
 
 (export &BufferedReader-peek-char-inline)
 
 (def (read-char-generic reader)
   (with-type (reader :- BufferedReader)
-    (let (byte1 (.read-u8 reader))
+    (let (byte1 (reader.read-u8))
       (cond
        ((eof-object? byte1)
         '#!eof)
        ((fx<= byte1 #x7f)
         (integer->char byte1))
        ((fx<= byte1 #xdf)
-        (let (byte2 (.read-u8! reader))
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
             (integer->char
              (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
                     (fxand byte2 #x3f)))
             (begin
               ;; bad continuation; put back the byte to the buffer and return replacement char
-              (.put-back reader byte2)
+              (reader.put-back byte2)
               #\xfffd))))
        ((fx<= byte1 #xef)
-        (let (byte2 (.read-u8! reader))
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
-            (let (byte3 (.read-u8! reader))
+            (let (byte3 (reader.read-u8!))
               (if (fx= (fxand byte3 #xc0) #x80)
                 (integer->char
                  (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
@@ -363,18 +363,18 @@
                         (fxand byte3 #x3f)))
                 (begin
                   ;; bad continuation; put back and return replacement char
-                  (.put-back reader [byte2 byte3])
+                  (reader.put-back [byte2 byte3])
                   #\xfffd)))
             (begin
               ;; bad continuation; put back and return replacement char
-              (.put-back reader byte2)
+              (reader.put-back byte2)
               #\xfffd))))
        ((fx<= byte1 #xf4)
-        (let (byte2 (.read-u8! reader))
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
-            (let (byte3 (.read-u8! reader))
+            (let (byte3 (reader.read-u8!))
               (if (fx= (fxand byte3 #xc0) #x80)
-                (let (byte4 (.read-u8! reader))
+                (let (byte4 (reader.read-u8!))
                   (if (fx= (fxand byte4 #xc0) #x80)
                     (integer->char
                      (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
@@ -382,15 +382,15 @@
                             (fxand byte3 #x3f)))
                     (begin
                       ;; bad continuation; put back and return replacement char
-                      (.put-back reader [byte2 byte3 byte4])
+                      (reader.put-back [byte2 byte3 byte4])
                       #\xfffd)))
                 (begin
                   ;; bad continuation; put back and return replacement char
-                  (.put-back reader [byte2 byte3])
+                  (reader.put-back [byte2 byte3])
                   #\xfffd)))
             (begin
               ;; bad continuation; put back and return replacement char
-              (.put-back reader byte2)
+              (reader.put-back byte2)
               #\xfffd))))
        (else
         ;; Bad encoding; use replacement character
@@ -398,77 +398,77 @@
 
 (def (peek-char-generic reader)
   (with-type (reader :- BufferedReader)
-    (let (byte1 (.peek-u8 reader))
+    (let (byte1 (reader.peek-u8))
       (cond
        ((eof-object? byte1)
         '#!eof)
        ((fx<= byte1 #x7f)
         (integer->char byte1))
        ((fx<= byte1 #xdf)
-        (.read-u8 reader)
-        (let (byte2 (.read-u8! reader))
+        (reader.read-u8)
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
             (begin
-              (.put-back reader [byte1 byte2])
+              (reader.put-back [byte1 byte2])
               (integer->char
                (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
                       (fxand byte2 #x3f))))
             (begin
               ;; bad continuation; put back the byte to the buffer and return replacement char
-              (.put-back reader [byte1 byte2])
+              (reader.put-back [byte1 byte2])
               #\xfffd))))
        ((fx<= byte1 #xef)
-        (.read-u8 reader)
-        (let (byte2 (.read-u8! reader))
+        (reader.read-u8)
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
-            (let (byte3 (.read-u8! reader))
+            (let (byte3 (reader.read-u8!))
               (if (fx= (fxand byte3 #xc0) #x80)
                 (begin
-                  (.put-back reader [byte1 byte2 byte3])
+                  (reader.put-back [byte1 byte2 byte3])
                   (integer->char
                    (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
                           (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
                           (fxand byte3 #x3f))))
                 (begin
                   ;; bad continuation; return replacement char
-                  (.put-back reader [byte1 byte2 byte3])
+                  (reader.put-back [byte1 byte2 byte3])
                   #\xfffd)))
             (begin
               ;; bad continuation; return replacement char
-              (.put-back reader [byte1 byte2])
+              (reader.put-back [byte1 byte2])
               #\xfffd))))
        ((fx<= byte1 #xf4)
-        (.read-u8 reader)
-        (let (byte2 (.read-u8! reader))
+        (reader.read-u8)
+        (let (byte2 (reader.read-u8!))
           (if (fx= (fxand byte2 #xc0) #x80)
-            (let (byte3 (.read-u8! reader))
+            (let (byte3 (reader.read-u8!))
               (if (fx= (fxand byte3 #xc0) #x80)
-                (let (byte4 (.read-u8! reader))
+                (let (byte4 (reader.read-u8!))
                   (if (fx= (fxand byte4 #xc0) #x80)
                     (begin
-                      (.put-back reader [byte1 byte2 byte3 byte4])
+                      (reader.put-back [byte1 byte2 byte3 byte4])
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
                               (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
                               (fxand byte3 #x3f))))
                     (begin
                       ;; bad continuation; return replacement char
-                      (.put-back reader [byte1 byte2 byte3 byte4])
+                      (reader.put-back [byte1 byte2 byte3 byte4])
                       #\xfffd)))
                 (begin
                   ;; bad continuation; return replacement char
-                  (.put-back reader [byte1 byte2 byte3])
+                  (reader.put-back [byte1 byte2 byte3])
                   #\xfffd)))
             (begin
               ;; bad continuation; return replacement char
-              (.put-back reader [byte1 byte2])
+              (reader.put-back [byte1 byte2])
               #\xfffd))))
        (else
         ;; Bad encoding; use replacement character
         #\xfffd)))))
 
 (defreader-ext (read-char! reader)
-  (let (char (.read-char-inline reader))
+  (let (char (reader.read-char-inline))
     (if (eof-object? char)
       (raise-premature-end-of-input read-char!)
       char)))
@@ -477,7 +477,7 @@
   (let (count (fx- end start))
     (let lp ((i 0) (need need) (read 0))
       (if (fx< i count)
-        (let (next (.read-char-inline reader))
+        (let (next (reader.read-char-inline))
           (if (eof-object? next)
             (if (fx> need 0)
               (raise-premature-end-of-input read-string)
@@ -506,7 +506,7 @@
        ((and sep (null? separating))
         (finish chars drop))
        ((read-more? x)
-        (let (next (.read-char-inline reader))
+        (let (next (reader.read-char-inline))
           (cond
            ((eof-object? next)
             (finish chars drop))
@@ -536,7 +536,7 @@
     (let lp ((i 0) (shift (fx- (fxarithmetic-shift-left len 3) 8)))
       (if (fx< i len)
         (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
-          (.write-u8-inline writer u8)
+          (writer.write-u8-inline u8)
           (lp (fx+ i 1) (fx- shift 8)))
         len))))
 
@@ -555,10 +555,10 @@
   (let lp ((uint uint) (wrote 0))
     (if (> uint #x7f)
       (let (limb (fxior (bitwise-and uint #x7f) #x80))
-        (.write-u8-inline writer limb)
+        (writer.write-u8-inline limb)
         (lp (arithmetic-shift uint -7) (fx+ wrote 1)))
       (begin
-        (.write-u8-inline writer uint)
+        (writer.write-u8-inline uint)
         (fx+ wrote 1)))))
 
 (defwriter-ext (write-varint writer int (max-bits 64))
@@ -573,47 +573,47 @@
           (if signed
             (bitwise-ior uint 1)
             uint)))
-    (.write-varuint writer uint max-bits)))
+    (writer.write-varuint uint max-bits)))
 
 (defwriter-ext (write-char writer char)
   (let (c (char->integer char))
     (cond
      ((fx<= c #x7f)
-      (.write-u8-inline writer c))
+      (writer.write-u8-inline c))
      ((fx<= c #x7ff)
       (let ((b1 (fxior #xc0 (fxarithmetic-shift-right c 6)))
             (b2 (fxior #x80 (fxand c #x3f))))
-        (.write-u8-inline writer b1)
-        (.write-u8-inline writer b2)
+        (writer.write-u8-inline b1)
+        (writer.write-u8-inline b2)
         2))
      ((##fx<= c #xffff)
       (let ((b1 (fxior #xe0 (fxarithmetic-shift-right c 12)))
             (b2 (fxior #x80 (fxand (fxarithmetic-shift-right c 6) #x3f)))
             (b3 (fxior #x80 (fxand c #x3f))))
-        (.write-u8-inline writer b1)
-        (.write-u8-inline writer b2)
-        (.write-u8-inline writer b3)
+        (writer.write-u8-inline b1)
+        (writer.write-u8-inline b2)
+        (writer.write-u8-inline b3)
         3))
      (else                              ; max char is #x10ffff
       (let ((b1 (fxior #xf0 (fxarithmetic-shift-right c 18)))
             (b2 (fxior #x80 (fxand (fxarithmetic-shift-right c 12) #x3f)))
             (b3 (fxior #x80 (fxand (fxarithmetic-shift-right c 6) #x3f)))
             (b4 (fxior #x80 (fxand c #x3f))))
-        (.write-u8-inline writer b1)
-        (.write-u8-inline writer b2)
-        (.write-u8-inline writer b3)
-        (.write-u8-inline writer b4)
+        (writer.write-u8-inline b1)
+        (writer.write-u8-inline b2)
+        (writer.write-u8-inline b3)
+        (writer.write-u8-inline b4)
         4)))))
 
-(defrule (&BufferedWriter-write-char-inline writer char)
-  (let ()
+(defrule (&BufferedWriter-write-char-inline output char)
+  (let (writer output)
     (declare (not interrupts-enabled))
     (with-type (writer :- BufferedWriter)
       (let (c (char->integer char))
         (if (fx<= c #x7f)
-          (.write-u8-inline writer c)
+          (writer.write-u8-inline c)
           ;; multibyte, fall back to the method
-          (.write-char writer char))))))
+          (writer.write-char char))))))
 
 (defrule (BufferedWriter-write-char-inline writer char)
   (let (writer (BufferedWriter writer))
@@ -624,20 +624,20 @@
 (defwriter-ext (write-string writer str (start 0) (end (string-length str)))
   (let lp ((i start) (result 0))
     (if (fx< i end)
-      (let (wrote (.write-char-inline writer (string-ref str i)))
+      (let (wrote (writer.write-char-inline (string-ref str i)))
         (lp (fx+ i 1) (fx+ result wrote)))
       result)))
 
 (defwriter-ext (write-line writer str (separator #\newline))
-  (let (result (.write-string writer str))
+  (let (result (writer.write-string str))
     (if (pair? separator)
       (let lp ((rest separator) (result result))
         (match rest
           ([char . rest]
-           (let (wrote (.write-char-inline writer char))
+           (let (wrote (writer.write-char-inline char))
              (lp rest (fx+ result wrote))))
           (else result)))
-      (let (wrote (.write-char-inline writer separator))
+      (let (wrote (writer.write-char-inline separator))
         (fx+ result wrote)))))
 
 ;; expt caches
