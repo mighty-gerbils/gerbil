@@ -30,6 +30,10 @@
             (strbuf-peek-char strbuf)))))
     (&BufferedStringReader-peek-char reader)))
 
+(defrule (BufferedStringReader-peek-char-inline reader)
+  (let (reader (BufferedStringReader reader))
+    (&BufferedStringReader-peek-char-inline reader)))
+
 (defrule (&BufferedStringReader-read-char-inline reader)
   (if (is-string-input-buffer? reader)
     (let ()
@@ -47,6 +51,10 @@
             (strbuf-read-char strbuf)))))
     (&BufferedStringReader-read-char reader)))
 
+(defrule (BufferedStringReader-read-char-inline reader)
+  (let (reader (BufferedStringReader reader))
+    (&BufferedStringReader-read-char-inline reader)))
+
 (defrule (&BufferedStringWriter-write-char-inline writer char)
   (if (is-string-output-buffer? writer)
     (let ()
@@ -63,3 +71,7 @@
             ;; full buffer, fall back to the method
             (strbuf-write-char  strbuf char)))))
     (&BufferedStringWriter-write-char writer char)))
+
+(defrule (BufferedStringWriter-write-char-inline writer char)
+  (let (writer (BufferedStringWriter writer))
+    (&BufferedStringWriter-write-char-inline writer char)))

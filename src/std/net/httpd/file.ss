@@ -13,14 +13,14 @@
 
 (def (http-response-file res headers path)
   (let (reader (open-file-reader path))
-    (with-interface (reader :- Reader)
+    (with-type (reader :- Reader)
       (try
        (http-response-write-file res headers reader)
        (finally
         (.close reader))))))
 
 (def (http-response-write-file res headers reader)
-  (with-interface (reader :- Reader)
+  (with-type (reader :- Reader)
     (let (buf (get-file-buffer))
       (http-response-begin res 200 headers)
       (let lp ()

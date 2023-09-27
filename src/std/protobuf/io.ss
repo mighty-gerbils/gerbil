@@ -123,7 +123,7 @@
 (defwriter-ext (write-key-value-pair buf k v ktag write-key-e vtag write-value-e)
   (let* ((tmpbuf (open-buffered-writer #f))
          (tmpbuf-write
-          (with-interface (tmpbuf :- BufferedWriter)
+          (with-type (tmpbuf :- BufferedWriter)
             (lambda (field tag val write-e)
               (.write-field tmpbuf field tag)
               (write-e tmpbuf val)))))
@@ -189,7 +189,7 @@
     (.write-varint* buf y)))
 
 (def (bio-read-fixed-uint buf n)
-  (with-interface (buf :- BufferedReader)
+  (with-type (buf :- BufferedReader)
     (let lp ((i 0) (bits 0))
       (if (fx< i n)
         (let (byte (.read-u8 buf))
@@ -200,7 +200,7 @@
         bits))))
 
 (def (bio-write-fixed-uint buf x n)
-  (with-interface (buf :- BufferedWriter)
+  (with-type (buf :- BufferedWriter)
     (let lp ((i 0) (bits x))
       (when (fx< i n)
         (.write-u8 buf (bitwise-and bits #xff))
@@ -255,13 +255,13 @@
   (bio-write-float-bytes buf x 8 double->bytes!))
 
 (def (bio-read-float-bytes buf n bytes->flonum)
-  (with-interface (buf :- BufferedReader)
+  (with-type (buf :- BufferedReader)
     (let (bytes (make-u8vector n))
       (.read buf bytes)
       (bytes->flonum bytes))))
 
 (def (bio-write-float-bytes buf x n flonum->bytes!)
-  (with-interface (buf :- BufferedWriter)
+  (with-type (buf :- BufferedWriter)
     (let (bytes (make-u8vector n))
       (flonum->bytes! x bytes)
       (.write buf bytes))))

@@ -32,10 +32,10 @@
                    (unchecked-method (stx-identifier #'method "&BufferedReader-" #'method)))
        #'(begin
            (def (reader-method reader . args)
-             (with-interface (reader : BufferedReader)
+             (with-type (reader : BufferedReader)
                body ...))
            (def (unchecked-method reader . args)
-             (with-interface (reader :- BufferedReader)
+             (with-type (reader :- BufferedReader)
                body ...)))))))
 
 (defsyntax (defwriter-ext stx)
@@ -54,10 +54,10 @@
                    (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method)))
        #'(begin
            (def (writer-method writer . args)
-             (with-interface (writer : BufferedWriter)
+             (with-type (writer : BufferedWriter)
                body ...))
            (def (unchecked-method writer . args)
-             (with-interface (writer :- BufferedWriter)
+             (with-type (writer :- BufferedWriter)
                body ...)))))))
 
 ;; reader
@@ -75,7 +75,7 @@
   (read-sint reader 8))
 
 (def (read-uint reader len)
-  (with-interface (reader :- BufferedReader)
+  (with-type (reader :- BufferedReader)
     (let lp ((i 0) (x 0))
       (if (fx< i len)
         (let (next (.read-u8-inline reader))
@@ -287,7 +287,7 @@
   (if (is-input-buffer? reader)
     (let ()
       (declare (not interrupts-enabled))
-      (with-interface (reader :- BufferedReader)
+      (with-type (reader :- BufferedReader)
         (let (bio (&interface-instance-object reader))
           (let ((rlo (&input-buffer-rlo bio))
                 (rhi (&input-buffer-rhi bio))
@@ -305,13 +305,17 @@
               (.read-char reader))))))
     (read-char-generic reader)))
 
-(export &BufferedReader-read-char-inline)
+(defrule (BufferedReader-read-char-inline reader)
+  (let (reader (BufferedReader reader))
+    (&BufferedReader-read-char-inline reader)))
+
+(export &BufferedReader-read-char-inline BufferedReader-read-char-inline)
 
 (defrule (&BufferedReader-peek-char-inline reader)
   (if (is-input-buffer? reader)
     (let ()
       (declare (not interrupts-enabled))
-      (with-interface (reader :- BufferedReader)
+      (with-type (reader :- BufferedReader)
         (let (bio (&interface-instance-object reader))
           (let ((rlo (&input-buffer-rlo bio))
                 (rhi (&input-buffer-rhi bio))
@@ -331,7 +335,7 @@
 (export &BufferedReader-peek-char-inline)
 
 (def (read-char-generic reader)
-  (with-interface (reader :- BufferedReader)
+  (with-type (reader :- BufferedReader)
     (let (byte1 (.read-u8 reader))
       (cond
        ((eof-object? byte1)
@@ -393,7 +397,7 @@
         #\xfffd)))))
 
 (def (peek-char-generic reader)
-  (with-interface (reader :- BufferedReader)
+  (with-type (reader :- BufferedReader)
     (let (byte1 (.peek-u8 reader))
       (cond
        ((eof-object? byte1)
@@ -528,7 +532,7 @@
   (write-sint writer int 8))
 
 (def (write-uint writer uint len)
-  (with-interface (writer :- BufferedWriter)
+  (with-type (writer :- BufferedWriter)
     (let lp ((i 0) (shift (fx- (fxarithmetic-shift-left len 3) 8)))
       (if (fx< i len)
         (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
@@ -604,12 +608,16 @@
 (defrule (&BufferedWriter-write-char-inline writer char)
   (let ()
     (declare (not interrupts-enabled))
-    (with-interface (writer :- BufferedWriter)
+    (with-type (writer :- BufferedWriter)
       (let (c (char->integer char))
         (if (fx<= c #x7f)
           (.write-u8-inline writer c)
           ;; multibyte, fall back to the method
           (.write-char writer char))))))
+
+(defrule (BufferedWriter-write-char-inline writer char)
+  (let (writer (BufferedWriter writer))
+    (&BufferedWriter-write-char-inline writer char)))
 
 (export &BufferedWriter-write-char-inline)
 

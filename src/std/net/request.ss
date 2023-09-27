@@ -302,7 +302,7 @@
 
 (def (http-request-write req method target headers body)
   (let (writer (&request-writer req))
-    (with-interface (writer :- BufferedWriter)
+    (with-type (writer :- BufferedWriter)
       (writeln writer "~a ~a HTTP/1.1" method target)
       (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
                 headers)
@@ -313,12 +313,12 @@
 
 (def* writeln
   ((writer)
-   (with-interface (writer :- BufferedWriter)
+   (with-type (writer :- BufferedWriter)
      (.write-char-inline writer #\return)
      (.write-char-inline writer #\newline)))
   ((writer fmt . args)
    (let (str (apply format fmt args))
-     (with-interface (writer :- BufferedWriter)
+     (with-type (writer :- BufferedWriter)
        (.write-line writer str '(#\return #\newline))))))
 
 (def status-line-rx
@@ -372,7 +372,7 @@
 (def (http-request-read-chunked-body req)
   (let ((reader (&request-reader req))
         (root [#f]))
-    (with-interface (reader :- BufferedReader)
+    (with-type (reader :- BufferedReader)
       (let lp ((tl root))
         (let* ((line (read-response-line req))
                (clen (string->number (car (string-split line #\space)) 16)))
@@ -387,7 +387,7 @@
 
 (def (http-request-read-simple-body req length)
   (let (reader (&request-reader req))
-    (with-interface (reader :- BufferedReader)
+    (with-type (reader :- BufferedReader)
       (def (read/length length)
         (let* ((data (make-u8vector length))
                (rd (.read reader data 0 length length)))
@@ -417,7 +417,7 @@
 (def (read-response-line req)
   (let ((reader (&request-reader req))
         (root [#f]))
-    (with-interface (reader :- BufferedReader)
+    (with-type (reader :- BufferedReader)
       (let lp ((tl root))
         (let (next (.read-u8-inline reader))
           (cond

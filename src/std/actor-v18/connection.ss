@@ -60,7 +60,7 @@
   (with-exception-stack-trace (cut actor-acceptor-main srv sock cookie)))
 
 (def (actor-acceptor-main srv sock cookie)
-  (with-interface (sock : StreamSocket)
+  (with-type (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (.reader sock)))
@@ -85,7 +85,7 @@
                 (writer (.writer sock))
                 (writer (open-buffered-writer writer))
                 (srv-id (thread-specific srv)))
-           (with-interface ((reader :- BufferedReader)
+           (with-type ((reader :- BufferedReader)
                             (writer :- BufferedWriter))
                ;; set handshake timeouts
                (let (expiry (timeout->expiry default-handshake-timeout))
@@ -153,7 +153,7 @@
          (thread-send/check srv (!connection-failed peer-id "no usable addresses")))))))
 
 (def (actor-connector-handshake srv peer-id cookie sock)
-  (with-interface (sock : StreamSocket)
+  (with-type (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
       (let ((reader (open-buffered-reader (.reader sock)))
@@ -179,7 +179,7 @@
                 (writer (.writer sock))
                 (writer (open-buffered-writer writer))
                 (srv-id (thread-specific srv)))
-           (with-interface ((reader :- BufferedReader)
+           (with-type ((reader :- BufferedReader)
                             (writer :- BufferedWriter))
                ;; set handshake timeouts
                (let (expiry (timeout->expiry default-handshake-timeout))
@@ -244,7 +244,7 @@
   (with-exception-stack-trace (cut actor-connection-main srv peer-id sock reader writer direction)))
 
 (def (actor-connection-main srv peer-id sock reader writer direction)
-  (with-interface (sock :- StreamSocket)
+  (with-type (sock :- StreamSocket)
     (with-error-close sock
       ;; first order of business: set KEEPALIVE for tcp
       (unless (eqv? (.domain sock) AF_UNIX)
@@ -349,13 +349,13 @@
                            cookie)))
 
 (def (read-delimited reader)
-  (with-interface (reader :- BufferedReader)
+  (with-type (reader :- BufferedReader)
     (if (eof-object? (.peek-u8-inline reader))
       '#!eof
       (.read-delimited reader &BufferedReader-unmarshal))))
 
 (def (write-delimited writer obj)
-  (with-interface (writer :- BufferedWriter)
+  (with-type (writer :- BufferedWriter)
     (.write-delimited writer (cut &BufferedWriter-marshal <> obj))
     (.flush writer)))
 

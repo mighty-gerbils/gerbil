@@ -102,7 +102,7 @@
   (let* ((len (.read-varuint reader))
          (delimited (.delimit reader len))
          (output (make-string len)))
-    (with-interface (delimited :- BufferedReader)
+    (with-type (delimited :- BufferedReader)
       (let lp ((i 0))
         (let (next (.read-char delimited))
           (if (eof-object? next)

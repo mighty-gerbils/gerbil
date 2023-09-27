@@ -31,6 +31,10 @@
             (bio-read-u8 bio)))))
     (&BufferedReader-read-u8 reader)))
 
+(defrule (BufferedReader-read-u8-inline reader)
+  (let (reader (BufferedReader reader))
+    (&BufferedReader-read-u8-inline reader)))
+
 (defrule (&BufferedReader-peek-u8-inline reader)
   (if (is-input-buffer? reader)
     (let ()
@@ -44,6 +48,10 @@
             ;; empty buffer, fall back to the method
             (bio-peek-u8 bio)))))
     (&BufferedReader-peek-u8 reader)))
+
+(defrule (BufferedReader-peek-u8-inline reader)
+  (let (reader (BufferedReader reader))
+    (&BufferedReader-peek-u8-inline reader)))
 
 (defrule (&BufferedWriter-write-u8-inline writer u8)
   (if (is-output-buffer? writer)
@@ -61,3 +69,7 @@
             ;; full buffer, fallback to the method
             (bio-write-u8 bio u8)))))
     (&BufferedWriter-write-u8 writer u8)))
+
+(defrule (BufferedWriter-write-u8-inline writer char)
+  (let (writer (BufferedWriter writer))
+    (&BufferedWriter-write-u8-inline writer char)))

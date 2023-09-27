@@ -22,7 +22,8 @@
         Timeout Timeout? raise-timeout timeout-error?
         UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
-        UnsupportedMethod? raise-unsupported-method unsupported-method-error?
+        UnsupportedMethod UnsupportedMethod? raise-unsupported-method unsupported-method-error?
+        ContractViolation ContractViolation? raise-contract-violation contract-violation-error?
         (rename: raise-bug BUG)
         is-it-bug?
         with-exception-stack-trace
@@ -78,6 +79,9 @@
 
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
+
+;; contract violations
+(deferror-class ContractViolation () contract-violation-error?)
 
 ;; utility macros
 (defsyntax (exception-context stx)
@@ -144,6 +148,9 @@
 
 (defraise/context (raise-unsupported-method where)
   (UnsupportedMethod "unsupported method" irritants: []))
+
+(defraise/context (raise-contract-violation where contract)
+  (ContractViolation "contract violation" irritants: '(contract)))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

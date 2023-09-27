@@ -28,10 +28,10 @@
                    (unchecked-method (stx-identifier #'method "&BufferedStringReader-" #'method)))
        #'(begin
            (def (reader-method reader . args)
-             (with-interface (reader : BufferedStringReader)
+             (with-type (reader : BufferedStringReader)
                body ...))
            (def (unchecked-method reader . args)
-             (with-interface (reader :- BufferedStringReader)
+             (with-type (reader :- BufferedStringReader)
                body ...)))))))
 
 (defsyntax (defstring-writer-ext stx)
@@ -50,12 +50,11 @@
                    (unchecked-method (stx-identifier #'method "&BufferedStringWriter-" #'method)))
        #'(begin
            (def (writer-method writer . args)
-             (with-interface (writer : BufferedStringWriter)
+             (with-type (writer : BufferedStringWriter)
                body ...))
            (def (unchecked-method writer . args)
-             (with-interface (writer :- BufferedStringWriter)
+             (with-type (writer :- BufferedStringWriter)
                body ...)))))))
-
 
 (defstring-reader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
   (let* ((separators
