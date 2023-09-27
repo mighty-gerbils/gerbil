@@ -309,7 +309,7 @@
       (writeln writer)
       (when body
         (writer.write body))
-      (writer.flush writer))))
+      (writer.flush))))
 
 (def* writeln
   ((writer)
