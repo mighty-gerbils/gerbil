@@ -236,7 +236,7 @@
     (let* ((meta (syntax-local-value Type #f))
            (expr-body (expand-body meta var Type body)))
       (if checked?
-        (with-syntax ((instance? (caddr (expander-type-identifiers meta)))
+        (with-syntax ((instance? (list-ref (expander-type-identifiers meta) 3))
                       (var var) (expr-body expr-body))
           #'(with-contract (var :~ instance?)
               expr-body))
@@ -318,7 +318,7 @@
     (let* ((meta (syntax-local-value Type #f))
            (expr-body (expand-body meta var Type body)))
       (if checked?
-        (with-syntax ((instance? (caddr (expander-type-identifiers meta)))
+        (with-syntax ((instance? (list-ref (expander-type-identifiers meta) 3))
                       (var var) (expr-body expr-body))
           #'(with-contract (var :~ instance?)
               expr-body))
