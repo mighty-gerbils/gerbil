@@ -2000,7 +2000,7 @@ package: gerbil
                        ((values type-unchecked)
                         (or (alet (e (stx-getq unchecked: body))
                               [unchecked: e])
-                            []))
+                            [unchecked: #t]))
                        ((type-body ...)
                         [type-attr ...
                          type-id ...
