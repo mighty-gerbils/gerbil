@@ -19,7 +19,7 @@
       (check-equal? (let (a [['a . 1]['b . 2]]) (aremq! 'b a) a) '((a . 1)))
       (check-equal? (let (a [['a . 1]['b . 2]]) (aremq! 'c a) a) '((a . 1) (b . 2)))
       (check-equal? (let (a []) (aremq! 'a a) a) '())
-      (check-exception (aremq! 'a [['a . 1]]) bad-argument-error?))
+      (check-exception (aremq! 'a [['a . 1]]) contract-violation-error?))
     (test-case "test aset"
       (check-equal? (asetq [['a . 1]['b . 2]] 'a 3) [['a . 3]['b . 2]])
       (check-equal? (asetq [['a . 1]['b . 2]] 'b 4) [['a . 1]['b . 4]])
