@@ -52,13 +52,13 @@
   (def (get-struct-accessor stx field meta (E #f))
     (let lp ((meta meta))
       (let get-e ((fields (runtime-struct-fields (runtime-type-exhibitor meta)))
-                  (accessors (cadddr (expander-type-identifiers meta))))
+                  (accessors (list-ref (expander-type-identifiers meta) 4)))
         (match fields
-          ([x . fields]
+          ([x . rest]
            (if (eq? x field)
              (let (getf (car accessors))
                (stx-identifier getf "&" getf))
-             (get-e fields (cdr accessors))))
+             (get-e rest (cdr accessors))))
           (else
            (cond
             ((car (expander-type-identifiers meta))
@@ -79,13 +79,13 @@
   (def (get-struct-mutator stx field meta (E #f))
     (let lp ((meta meta))
       (let get-e ((fields (runtime-struct-fields (runtime-type-exhibitor meta)))
-                  (mutators (car (cddddr (expander-type-identifiers meta)))))
+                  (mutators (list-ref (expander-type-identifiers meta) 5)))
         (match fields
-          ([x . fields]
+          ([x . rest]
            (if (eq? x field)
              (let (getf (car mutators))
                (stx-identifier getf "&" getf))
-             (get-e fields (cdr mutators))))
+             (get-e rest (cdr mutators))))
           (else
            (cond
             ((car (expander-type-identifiers meta))
@@ -105,10 +105,10 @@
   (def (get-class-accessor stx field-or-slot meta (E #f))
     (let get-e ((slots (runtime-class-slots (runtime-type-exhibitor meta))))
         (match slots
-          ([x . slots]
+          ([x . rest]
            (if (eq? x field-or-slot)
              #t
-             (get-e slots)))
+             (get-e rest)))
           (else
            (cond
             ((car (expander-type-identifiers meta))
@@ -136,10 +136,10 @@
   (def (get-class-mutator stx field-or-slot meta (E #f))
     (let get-e ((slots (runtime-class-slots (runtime-type-exhibitor meta))))
       (match slots
-          ([x . slots]
+          ([x . rest]
            (if (eq? x field-or-slot)
              #t
-             (get-e slots)))
+             (get-e rest)))
           (else
            (cond
             ((car (expander-type-identifiers meta))
@@ -183,7 +183,7 @@
 
   (def (expand-body meta var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
-                  (@set! (syntax-local-introduce 'set!))
+                  (@set! (stx-identifier var 'set!)) ; need to get the right set! context
                   (var var)
                   (meta meta)
                   ((body ...) body))
@@ -206,9 +206,9 @@
                                              (getf (get-struct-accessor stx field 'meta)))
                                  (syntax/loc stx
                                    (getf object)))))
-                            ((_ . args)
+                            ((_ id)
                              (syntax/loc stx
-                               (__app . args))))))
+                               (__ref id))))))
                        (@set!
                            (lambda (stx)
                              (syntax-case stx ()
@@ -255,7 +255,7 @@
 
   (def (expand-body meta var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
-                  (@set! (syntax-local-introduce 'set!))
+                  (@set! (stx-identifier var 'set!))
                   (var var)
                   (meta meta)
                   ((body ...) body))
@@ -283,9 +283,9 @@
                                    (with-syntax ((slot slot))
                                      (syntax/loc stx
                                        (unchecked-slot-ref object 'slot)))))))
-                            ((_ . args)
+                            ((_ id)
                              (syntax/loc stx
-                               (__app . args))))))
+                               (__ref id))))))
                        (@set!
                            (lambda (stx)
                              (syntax-case stx ()
@@ -306,7 +306,7 @@
                                ((_ place val)
                                 (syntax/loc stx
                                   (__set! place val)))))))
-            (begin-annotation (@type (var struct: Type))
+            (begin-annotation (@type (var class: Type))
               (let ()
                 body ...))))))
 
