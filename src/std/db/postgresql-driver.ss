@@ -4,7 +4,7 @@
 
 (import :std/actor
         :std/io
-        :std/interface
+        :std/contract
         :std/misc/channel
         :std/misc/list
         :std/net/sasl

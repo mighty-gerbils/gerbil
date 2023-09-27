@@ -4,6 +4,7 @@
 (import :std/sugar
         :std/error
         :std/interface
+        :std/contract
         (only-in :std/srfi/1 reverse!)
         ../interface
         ./inline)

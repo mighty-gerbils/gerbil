@@ -2959,6 +2959,15 @@ package: gerbil
 (module <more-sugar>
   (export #t (phi: +1 #t))
 
+  ;; checked type contract
+  (defrules : ())
+
+  ;; checked predicate contract
+  (defrules :~ ())
+
+  ;; type assertion
+  (defrules :- ())
+
   (begin-syntax
     (defclass (setq-macro macro-object) ()
       id: gerbil.core#setq-macro::t)

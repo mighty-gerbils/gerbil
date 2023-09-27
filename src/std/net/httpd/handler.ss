@@ -5,7 +5,7 @@
 (import :gerbil/gambit
         :std/error
         :std/sugar
-        :std/interface
+        :std/contract
         :std/io
         :std/io/dummy
         :std/foreign

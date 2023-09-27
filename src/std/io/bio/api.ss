@@ -3,6 +3,7 @@
 ;;; Buffered IO api
 (import :std/error
         :std/interface
+        :std/contract
         ../interface
         ../dummy
         ../port

@@ -5,6 +5,7 @@
 (import (only-in :gerbil/gambit make-will)
         :std/sugar
         :std/interface
+        :std/contract
         (only-in :std/io Closer)
         :std/iter
         :std/generic

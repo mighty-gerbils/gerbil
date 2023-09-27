@@ -4,8 +4,8 @@
 (import :gerbil/gambit
         :std/error
         :std/sugar
-        :std/interface
         :std/foreign
+        :std/interface
         :std/io
         (only-in :std/io/bio/api defreader-ext defreader-ext* defwriter-ext defwriter-ext*)
         ./message)

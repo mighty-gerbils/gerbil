@@ -4,6 +4,7 @@
 
 (import :std/sugar
         :std/interface
+        :std/contract
         :std/io
         :std/net/httpd/handler)
 (export http-response-file)

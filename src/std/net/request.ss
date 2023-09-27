@@ -22,6 +22,7 @@
         :std/error
         :std/sugar
         :std/interface
+        :std/contract
         :std/io
         :std/net/ssl
         :std/net/uri
