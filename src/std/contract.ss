@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; contracts and type assertions
-(export with-type with-interface with-struct with-class with-contract)
+(export using with-interface with-struct with-class with-contract)
 (import (for-syntax :gerbil/expander)
         ./error
         ./interface)
 
-(defsyntax (with-type stx)
+(defsyntax (using stx)
   (syntax-case stx (:~)
     ((_ (id ~ Type) body ...)
      (and (identifier? #'id)
@@ -49,6 +49,10 @@
      body ...)))
 
 (begin-syntax
+  (def (meta-type-id rtd-id)
+    (let* (id-str (symbol->string (stx-e rtd-id)))
+      (stx-identifier rtd-id (substring id-str 0 (- (string-length id-str) 3)))))
+
   (def (get-struct-accessor stx field meta (E #f))
     (let lp ((meta meta))
       (let get-e ((fields (runtime-struct-fields (runtime-type-exhibitor meta)))
@@ -64,7 +68,7 @@
             ((car (expander-type-identifiers meta))
              => (lambda (super)
                   (cond
-                   ((syntax-local-value super false)
+                   ((syntax-local-value (meta-type-id super) false)
                     => (lambda (meta)
                          (if (extended-struct-info? meta)
                            (lp meta)
@@ -91,7 +95,7 @@
             ((car (expander-type-identifiers meta))
              => (lambda (super)
                   (cond
-                   ((syntax-local-value super false)
+                   ((syntax-local-value (meta-type-id super) false)
                     => (lambda (meta)
                          (if (extended-struct-info? meta)
                            (lp meta)
@@ -118,7 +122,7 @@
                     (match rest
                       ([super . rest]
                        (cond
-                        ((syntax-local-value super false)
+                        ((syntax-local-value (meta-type-id super) false)
                          => (lambda (meta)
                               (cond
                                ((extended-struct-info? meta)
@@ -149,7 +153,7 @@
                     (match rest
                       ([super . rest]
                        (cond
-                        ((syntax-local-value super false)
+                        ((syntax-local-value (meta-type-id super) false)
                          => (lambda (meta)
                               (cond
                                ((extended-struct-info? meta)
