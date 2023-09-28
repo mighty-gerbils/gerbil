@@ -3,6 +3,8 @@
 ;;; thread barriers
 
 (import :std/error
+        :std/interface
+        :std/contract
         :std/sugar)
 (export make-barrier barrier? barrier
         barrier-wait!
@@ -23,39 +25,38 @@
                            0 limit)))
 
 (def (barrier-wait! b)
-  (with ((barrier mx cv _ limit) b)
+  (using (b : barrier)
     (let lp ()
-      (mutex-lock! mx)
-      (let (count (&barrier-count b))
-        (cond
-         ((&barrier-exn b)
-          => (lambda (exn)
-               (mutex-unlock! mx)
-               (raise exn)))
-         ((##fx< count limit)
-          (mutex-unlock! mx cv)
-          (lp))
-         (else
-          (mutex-unlock! mx)
-          (void)))))))
+      (mutex-lock! b.mx)
+      (cond
+       (b.exn
+        => (lambda (exn)
+             (mutex-unlock! b.mx)
+             (raise exn)))
+       ((##fx< b.count b.limit)
+        (mutex-unlock! b.mx b.cv)
+        (lp))
+       (else
+        (mutex-unlock! b.mx)
+        (void))))))
 
 (def (barrier-post! b)
-  (with ((barrier mx cv _ limit) b)
-    (mutex-lock! mx)
-    (let* ((count (&barrier-count b))
+  (using (b : barrier)
+    (mutex-lock! b.mx)
+    (let* ((count b.count)
            (count+1 (##fx+ count 1)))
-      (set! (&barrier-count b) count+1)
-      (unless (##fx< count+1 limit)
-        (condition-variable-broadcast! cv))
-      (mutex-unlock! mx))))
+      (set! b.count count+1)
+      (unless (##fx< count+1 b.limit)
+        (condition-variable-broadcast! b.cv))
+      (mutex-unlock! b.mx))))
 
 (def (barrier-error! b exn)
-  (with ((barrier mx cv) b)
-    (mutex-lock! mx)
-    (unless (&barrier-exn b)
-      (set! (&barrier-exn b) exn))
-    (condition-variable-broadcast! cv)
-    (mutex-unlock! mx)))
+  (using (b : barrier)
+    (mutex-lock! b.mx)
+    (unless b.exn
+      (set! b.exn exn))
+    (condition-variable-broadcast! b.cv)
+    (mutex-unlock! b.mx)))
 
 (defrules with-barrier-error ()
   ((_ b expr rest ...)
