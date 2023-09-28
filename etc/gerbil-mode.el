@@ -485,6 +485,9 @@
    '("\\_<\\([?!&]+\\)"
      (1 font-lock-builtin-face)))
   (gerbil-fontlock-add
+   '("\\_<\\(\\sw+:\\)\\_>"
+     (1 font-lock-builtin-face)))
+  (gerbil-fontlock-add
    '("\\<\\(#[tf]\\|#!\\w+\\)"
      (1 font-lock-builtin-face)))
   (gerbil-fontlock-add
