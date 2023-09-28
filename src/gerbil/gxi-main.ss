@@ -40,6 +40,13 @@
          (gxi-print-usage!))
         ((member hd '("-v" "--version"))
          (displayln (gerbil-system-version-string)))
+        ((member hd '("-L" "--load"))
+         (match rest
+           ([file . rest]
+            (load file)
+            (lp rest))
+           (else
+            (error "missing argument for file to load"))))
         ((member hd '("-l" "--lang"))
          (if can-set-lang?
            (match rest
@@ -75,7 +82,7 @@
              (enter-repl!)
              (lp rest))))
         ((string-prefix? "-" hd)
-         (error "uknown option; try -h or --help for options" hd))
+         (error "unknown option; try -h or --help for options" hd))
         ((string-prefix? ":" hd)
          (set! can-set-lang? #f)
          (set! end-interactive? #f)
