@@ -37,6 +37,9 @@
       (def (q . a) (apply query http-method: http-method a))
       (check (q "ping" '(42)) => '("pong" (42)))
       (check (q "add" '(1 2 3 4)) => 10)
+      (check (q "add" '("23" "19")
+                param-encoder: (cut map string->number <>)
+                result-decoder: number->string) => "42")
       (check-e (q "ping" 42) -32602) ;; invalid-params
       (check-e (q "meaning-of-life") -32601)) ;; method-not-found
     (test-case "basic handlers with POST"
