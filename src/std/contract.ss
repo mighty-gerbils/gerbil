@@ -157,9 +157,9 @@
                          => (lambda (meta)
                               (cond
                                ((extended-struct-info? meta)
-                                (get-struct-accessor stx field-or-slot meta (cut lp rest)))
+                                (get-struct-mutator stx field-or-slot meta (cut lp rest)))
                                ((extended-class-info? meta)
-                                (get-class-accessor stx field-or-slot meta (cut lp rest)))
+                                (get-class-mutator stx field-or-slot meta (cut lp rest)))
                                (else
                                 (raise-syntax-error #f "incomplete type info" stx super)))))
                         (else
