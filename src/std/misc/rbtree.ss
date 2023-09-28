@@ -6,6 +6,7 @@
 ;;; implementation; delete is based on CLR...
 
 (import :std/error
+        :std/contract
         :std/generic
         :std/iter)
 (export rbtree rbtree? make-rbtree
@@ -39,8 +40,8 @@
     (struct-instance-init! self root cmp)))
 
 (def (rbtree-ref t key (default absent-obj))
-  (with ((rbtree root cmp) t)
-    (let (r (tree-ref cmp root key default))
+  (using (t : rbtree)
+    (let (r (tree-ref t.cmp t.root key default))
       (if (eq? r absent-obj)
         (raise-unbound-key rbtree-ref t key)
         r))))
@@ -49,13 +50,12 @@
   (rbtree-ref t key #f))
 
 (def (rbtree-put! t key value)
-  (with ((rbtree root cmp) t)
-    (set! (rbtree-root t)
-      (tree-insert cmp root key value))))
+  (using (t : rbtree)
+    (set! t.root (tree-insert t.cmp t.root key value))))
 
 (def (rbtree-put t key value)
-  (with ((rbtree root cmp) t)
-    (rbtree cmp (tree-insert cmp root key value))))
+  (using (t : rbtree)
+    (rbtree t.cmp (tree-insert t.cmp t.root key value))))
 
 (def (rbtree-update! t key update (default (void)))
   (let (value (rbtree-ref t key default))
@@ -66,31 +66,31 @@
     (rbtree-put t key (update value))))
 
 (def (rbtree-remove! t key)
-  (with ((rbtree root cmp) t)
+  (using (t : rbtree)
     (cond
-     ((tree-delete cmp root key)
+     ((tree-delete t.cmp t.root key)
       => (lambda (new-root)
-           (set! (rbtree-root t) new-root))))))
+           (set! t.root new-root))))))
 
 (def (rbtree-remove t key)
-  (with ((rbtree root cmp) t)
+  (using (t : rbtree)
     (cond
-     ((tree-delete cmp root key)
+     ((tree-delete t.cmp t.root key)
       => (lambda (new-root)
-           (rbtree cmp new-root)))
+           (rbtree t.cmp new-root)))
      (else t))))
 
 (def (rbtree-empty? t)
-  (with ((rbtree root) t)
-    (Empty? root)))
+  (using (t : rbtree)
+    (Empty? t.root)))
 
 (def (rbtree-copy t)
-  (with ((rbtree root cmp) t)
-    (rbtree cmp root)))
+  (using (t : rbtree)
+    (rbtree t.cmp t.root)))
 
 (def (rbtree-for-each proc t)
-  (with ((rbtree root) t)
-    (let loop ((root root))
+  (using (t : rbtree)
+    (let loop ((root t.root))
       (match root
         ((Tree _ left right key value)
          (loop left)
@@ -100,8 +100,8 @@
          (void))))))
 
 (def (rbtree-for-eachr proc t)
-  (with ((rbtree root) t)
-    (let loop ((root root))
+  (using (t : rbtree)
+    (let loop ((root t.root))
       (match root
         ((Tree _ left right key value)
          (loop right)

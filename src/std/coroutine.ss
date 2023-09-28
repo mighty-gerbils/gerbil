@@ -4,6 +4,7 @@
 
 (import :std/sugar
         :std/error
+        :std/contract
         :gerbil/gambit)
 (export coroutine (rename: cort? coroutine?) continue yield
         cothread cothread? cothread-stop!)
@@ -56,32 +57,35 @@
 ;;; Implementation of coroutines
 (def (coroutine-start! k thunk)
   (let (c (make-cort #f #f #f))
-    (parameterize ((current-coroutine c))
-      (let/cc kk
-        (set! (cort-k c) kk)
-        (k c))
-      (call/values
-        thunk
-        (lambda res
-          (let (k (cort-k c))
-            (set! (cort-end? c) #t)
-            (set! (cort-res c) res)
-            (set! (cort-k c) #f)
-            (apply k res)))))))
+    (using (c :- cort)
+      (parameterize ((current-coroutine c))
+        (let/cc kk
+          (set! c.k kk)
+          (k c))
+        (call/values
+          thunk
+          (lambda res
+            (let (k c.k)
+              (set! c.end? #t)
+              (set! c.res res)
+              (set! c.k #f)
+              (apply k res))))))))
 
 (def (coroutine-continue! c args)
-  (with ((cort k end? res) c)
-    (if end?
-      (apply values res)
+  (using (c :- cort)
+    (if c.end?
+      (apply values c.res)
       (let/cc kk
-        (set! (cort-k c) kk)
-        (apply k args)))))
+        (let (k c.k)
+          (set! c.k kk)
+          (apply k args))))))
 
 (def (coroutine-yield! c args)
-  (with ((cort k) c)
+  (using (c :- cort)
     (let/cc kk
-      (set! (cort-k c) kk)
-      (apply k args))))
+      (let (k c.k)
+        (set! c.k kk)
+        (apply k args)))))
 
 ;;; Implementation of cothreads
 (def (cothread-start! c proc args)
@@ -102,43 +106,42 @@
     (raise-bad-argument cothread-stop! "cothtread" thread)))
 
 (def (cothread-continue! c val)
-  (with ((cothr mx cv state kont) c)
-    (mutex-lock! mx)
-    (case state
+  (using (c :- cothr)
+    (mutex-lock! c.mx)
+    (case c.state
       ((run)
-       (set! (cothr-val c) val)
-       (set! (cothr-state c) 'continue)
-       (condition-variable-signal! cv)
-       (mutex-unlock! mx cv)
+       (set! c.val val)
+       (set! c.state 'continue)
+       (condition-variable-signal! c.cv)
+       (mutex-unlock! c.mx c.cv)
        (let lp ()
-         (mutex-lock! mx)
-         (let ((state (cothr-state c))
-               (kont (cothr-val c)))
-           (case state
+         (mutex-lock! c.mx)
+         (let (kont c.val)
+           (case c.state
              ((continue)
-              (mutex-unlock! mx cv)
+              (mutex-unlock! c.mx c.cv)
               (lp))
              ((yield)
-              (set! (cothr-state c) 'run)
-              (mutex-unlock! mx)
+              (set! c.state 'run)
+              (mutex-unlock! c.mx)
               kont)
              ((end)
-              (mutex-unlock! mx)
+              (mutex-unlock! c.mx)
               kont)
              ((error)
-              (mutex-unlock! mx)
+              (mutex-unlock! c.mx)
               (raise kont))
              (else
-              (mutex-unlock! mx)
-              (raise-context-error cothread-continue! "illegal cothread state" state))))))
+              (mutex-unlock! c.mx)
+              (raise-context-error cothread-continue! "illegal cothread state" c.state))))))
       ((end)
-       (mutex-unlock! mx)
-       kont)
+       (mutex-unlock! c.mx)
+       c.val)
       ((error)
-       (mutex-unlock! mx)
-       (raise kont))
+       (mutex-unlock! c.mx)
+       (raise c.val))
       (else
-       (raise-context-error cothread-continue! "illegal cothread state" state)))))
+       (raise-context-error cothread-continue! "illegal cothread state" c.state)))))
 
 (def (cothread-yield! c args)
   (let (kont (cothread-yield-values! c (apply values args)))
@@ -146,39 +149,39 @@
     kont))
 
 (def (cothread-yield-values! c val)
-  (with ((cothr mx cv state kont) c)
-    (mutex-lock! mx)
-    (case state
+  (using (c :- cothr)
+    (mutex-lock! c.mx)
+    (case c.state
       ((continue)
-       (set! (cothr-val c) val)
-       (set! (cothr-state c) 'yield)
-       (condition-variable-signal! cv)
-       (mutex-unlock! mx)
-       kont)
+       (let (kont c.val)
+         (set! c.val val)
+         (set! c.state 'yield)
+         (condition-variable-signal! c.cv)
+         (mutex-unlock! c.mx)
+         kont))
       (else
-       (mutex-unlock! mx)
-       (raise-context-error cothread-yield-values! "illegal cothread state" state)))))
+       (mutex-unlock! c.mx)
+       (raise-context-error cothread-yield-values! "illegal cothread state" c.state)))))
 
 (def (cothread-signal! c state val)
-  (with ((cothr mx cv) c)
-    (mutex-lock! mx)
-    (unless (memq (cothr-state c) '(end error))
-      (set! (cothr-val c) val)
-      (set! (cothr-state c) state)
-      (condition-variable-signal! cv))
-    (mutex-unlock! mx)))
+  (using (c :- cothr)
+    (mutex-lock! c.mx)
+    (unless (memq c.state '(end error))
+      (set! c.val val)
+      (set! c.state state)
+      (condition-variable-signal! c.cv))
+    (mutex-unlock! c.mx)))
 
 (def (cothread-wait! c)
-  (with ((cothr mx cv) c)
+  (using (c :- cothr)
     (let lp ()
-      (mutex-lock! mx)
-      (let (state (cothr-state c))
-        (case state
-          ((run yield)
-           (mutex-unlock! mx cv)
-           (lp))
-          ((continue)
-           (mutex-unlock! mx))
-          (else
-           (mutex-unlock! mx)
-           (raise-context-error cothread-wait! "illegal cothread state" state)))))))
+      (mutex-lock! c.mx)
+      (case c.state
+        ((run yield)
+         (mutex-unlock! c.mx c.cv)
+         (lp))
+        ((continue)
+         (mutex-unlock! c.mx))
+        (else
+         (mutex-unlock! c.mx)
+         (raise-context-error cothread-wait! "illegal cothread state" c.state))))))
