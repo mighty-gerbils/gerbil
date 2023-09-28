@@ -18,16 +18,14 @@
 (def (stream-socket-recv ssock output output-start output-end flags)
   (using (ssock :- stream-socket)
     (with-basic-socket-read-lock ssock
-      (when (stream-socket-closed? ssock state-closed-in)
-        (raise-io-closed stream-socket-recv "socket input has been shutdown"))
       (let (sock ssock.sock)
         (let lp ()
+          (when (stream-socket-closed? ssock state-closed-in)
+            (raise-io-closed stream-socket-recv "socket input has been shutdown"))
           (let (read (socket-recv sock output output-start output-end flags))
             (cond
              (read)
              ((basic-socket-wait-io! ssock (fd-io-in sock) ssock.timeo-in)
-              (when (stream-socket-closed? ssock state-closed-in)
-                (raise-io-closed stream-socket-recv "socket input has been shutdown"))
               (lp))
              (else
               (raise-timeout stream-socket-recv "receive timeout")))))))))
@@ -35,16 +33,14 @@
 (def (stream-socket-send ssock input input-start input-end flags)
   (using (ssock :- stream-socket)
     (with-basic-socket-read-lock ssock
-      (when (stream-socket-closed? ssock state-closed-out)
-        (raise-io-closed stream-socket-send "socket output has been shutdown"))
       (let (sock ssock.sock)
         (let lp ()
+          (when (stream-socket-closed? ssock state-closed-out)
+            (raise-io-closed stream-socket-send "socket output has been shutdown"))
           (let (wrote (socket-send sock input input-start input-end (fxior flags MSG_NOSIGNAL)))
             (cond
              (wrote)
              ((basic-socket-wait-io! ssock (fd-io-out sock) ssock.timeo-out)
-              (when (stream-socket-closed? ssock state-closed-out)
-                (raise-io-closed stream-socket-send "socket output has been shutdown"))
               (lp))
              (else
               (raise-timeout stream-socket-send "send timeout")))))))))

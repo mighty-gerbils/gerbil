@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; delimited readers
 (import :std/error
+        :std/contract
         ./interface)
 (export (rename: open-delimited-reader delimited-reader)
         (rename: open-delimited-string-reader delimited-string-reader))
@@ -25,45 +26,47 @@
 
 (defmethod {read delimited-reader}
   (lambda (self output output-start output-end input-need)
-    (let (remaining (&delimited-reader-remaining self))
-      (cond
-       ((fx> input-need remaining)
-        (raise-io-error Reader-read "input limit exceeded" input-need remaining))
-       ((fx= remaining 0) 0)
-       (else
-        (let* ((want (fx- output-end output-start))
-               (output-end
-                (if (fx> want remaining)
-                  (fx+ output-start remaining)
-                  output-end))
-               (read (&Reader-read (&delimited-reader-reader self)  output output-start output-end input-need)))
-          (set! (&delimited-reader-remaining self)
-            (fx- remaining read))
-          read))))))
+    (using (self :- delimited-reader)
+      (let (remaining self.remaining)
+        (cond
+         ((fx> input-need remaining)
+          (raise-io-error Reader-read "input limit exceeded" input-need remaining))
+         ((fx= remaining 0) 0)
+         (else
+          (let* ((want (fx- output-end output-start))
+                 (output-end
+                  (if (fx> want remaining)
+                    (fx+ output-start remaining)
+                    output-end))
+                 (read (&Reader-read self.reader  output output-start output-end input-need)))
+            (set! self.remaining (fx- remaining read))
+            read)))))))
 
 (defmethod {close delimited-reader}
   (lambda (self)
-    (&Reader-close (&delimited-reader-reader self))))
+    (using (self :- delimited-reader)
+      (&Reader-close self.reader))))
 
 
 (defmethod {read-string delimited-string-reader}
   (lambda (self output output-start output-end input-need)
-    (let (remaining (&delimited-string-reader-remaining self))
-      (cond
-       ((fx> input-need remaining)
-        (raise-io-error StringReader-read-string "input limit exceeded" input-need remaining))
-       ((fx= remaining 0) 0)
-       (else
-        (let* ((want (fx- output-end output-start))
-               (output-end
-                (if (fx> want remaining)
-                  (fx+ output-start remaining)
-                  output-end))
-               (read (&StringReader-read-string (&delimited-string-reader-reader self)  output output-start output-end input-need)))
-          (set! (&delimited-reader-remaining self)
-            (fx- remaining read))
-          read))))))
+    (using (self :- delimited-reader)
+      (let (remaining self.remaining)
+        (cond
+         ((fx> input-need remaining)
+          (raise-io-error StringReader-read-string "input limit exceeded" input-need remaining))
+         ((fx= remaining 0) 0)
+         (else
+          (let* ((want (fx- output-end output-start))
+                 (output-end
+                  (if (fx> want remaining)
+                    (fx+ output-start remaining)
+                    output-end))
+                 (read (&StringReader-read-string self.reader  output output-start output-end input-need)))
+            (set! self.remaining (fx- remaining read))
+            read)))))))
 
 (defmethod {close delimited-string-reader}
   (lambda (self)
-    (&StringReader-close (&delimited-string-reader-reader self))))
+    (using (self :- delimited-reader)
+      (&StringReader-close self.reader))))

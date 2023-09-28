@@ -13,19 +13,17 @@
 (def (datagram-socket-recvfrom dsock peer output output-start output-end flags)
   (using (dsock :- datagram-socket)
     (with-basic-socket-read-lock dsock
-      (when dsock.closed?
-        (raise-io-closed datagram-socket-recvfrom "socket is closed"))
       (let ((sock dsock.sock)
             (sockaddr (make-socket-address dsock.domain)))
         (let lp ()
+          (when dsock.closed?
+            (raise-io-closed datagram-socket-recvfrom "socket is closed"))
           (let (read (socket-recvfrom sock output sockaddr output-start output-end flags))
             (cond
              (read
               (box-set! peer (socket-address->address sockaddr))
               read)
              ((basic-socket-wait-io! dsock (fd-io-in sock) dsock.timeo-in)
-              (when dsock.closed?
-                (raise-io-closed datagram-socket-recvfrom "socket is closed"))
               (lp))
              (else
               (raise-timeout datagram-socket-recvfrom "receive timeout")))))))))
@@ -52,18 +50,17 @@
 (def (datagram-socket-recv dsock output output-start output-end flags)
   (using (dsock :- datagram-socket)
     (with-basic-socket-read-lock dsock
-      (when dsock.closed?
-        (raise-io-closed datagram-socket-recv "socket is closed"))
       (unless dsock.raddr
         (raise-io-error datagram-socket-recv "socket is not connected"))
       (let (sock dsock.sock)
         (let lp ()
+          (when dsock.closed?
+            (raise-io-closed datagram-socket-recv "socket is closed"))
           (let (read (socket-recv sock output output-start output-end flags))
             (cond
              (read)
              ((basic-socket-wait-io! dsock (fd-io-in sock) dsock.timeo-in)
-              (when dsock.closed?
-                (raise-io-error datagram-socket-recv "socket is closed"))
+
               (lp))
              (else
               (raise-timeout datagram-socket-recvfrom "receive timeout")))))))))
