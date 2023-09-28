@@ -19,6 +19,14 @@ prototype which is then cloned.
 :::
 
 
+## Defining interfaces
+
+(TODO)
+
+## Interface instances
+
+(TODO)
+
 ## When to use interfaces
 
 If you are interacting with an object using methods and you make many
@@ -166,13 +174,14 @@ avoid unnecessary casts.
 (B-f b ...)
 ```
 
-### Use unchecked methods when you know the exact type
+### Use unchecked methods when you know the exact type and satisfy the contract
 
-If you know the exact type of an instance, you can elide the checked cast by calling
-the unchecked method.
+If you know the exact type of an instance and you satisfy the contract,
+you can elide the checked cast by calling the unchecked method.
 
-Note: if you get this wrong and the type is not the right instance, there will be dragons.
-Use with caution!
+Note: if you get this wrong and the type is not the right instance or
+the contract is not satisfied, there will be dragons.  Use with
+caution!
 
 ```scheme
 (interface A
