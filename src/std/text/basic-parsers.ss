@@ -157,7 +157,7 @@
 
 ;; Parse an entire port
 (def (parse-port parser port (description port) (where 'parse-port))
-  (parse-reader parser (PeekableStringReader (make-raw-input-port port)) description where))
+  (parse-reader parser (PeekableStringReader (make-raw-textual-input-port port)) description where))
 
 ;; Parse an entire file
 (def (parse-file parser file (description file) (where 'parse-file))
@@ -198,7 +198,7 @@
   (parse-or
    (parse-begin parse-terminator (parse-pure '()))
    (parse-bind parse-element
-                (lambda (e) (parse-repeated (parse-begin parse-separator parse-element)
+               (lambda (e) (parse-repeated (parse-begin parse-separator parse-element)
                                       parse-terminator [e])))))
 (def ((parse-n-repeats n parse-element) reader)
   (for/collect ((_ (in-range n))) (parse-element reader)))
