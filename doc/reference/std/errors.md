@@ -161,7 +161,7 @@ Predicate testing whether the error is a contract violation condition.
 (def contract-violation-error! ContractViolation?)
 ```
 
-same as `ContractViolation?`
+Same as `ContractViolation?`.
 
 ### IOError
 ```scheme
