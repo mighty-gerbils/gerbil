@@ -13,10 +13,8 @@
 
 (import
   :std/error
-  (only-in :std/io PeekableStringReader open-buffered-string-reader)
-  (rename-in :std/io
-             (PeekableStringReader-peek-char %peek-char)
-             (PeekableStringReader-read-char %read-char))
+  :std/contract
+  :std/io
   (only-in :std/parser/base parse-error? raise-parse-error)
   :std/iter
   :std/misc/bytes
@@ -28,7 +26,8 @@
 
 
 (def (string-reader-eof? reader)
-  (eof-object? (%peek-char reader)))
+  (using (reader : PeekableStringReader)
+    (eof-object? (reader.peek-char))))
 
 ;;; Parse an empty string
 (def (parse-empty reader)
@@ -36,55 +35,61 @@
 
 ;;; Parse a natural number in decimal on the current reader, return it.
 (def (parse-natural reader (base 10))
-  (if-let (digit (char-ascii-digit (%peek-char reader) base))
-    (let loop ((n digit))
-      (%read-char reader)
-      (if-let (next-digit (char-ascii-digit (%peek-char reader) base))
-        (loop (+ next-digit (* base n)))
-        n))
-    (raise-parse-error parse-natural "Not a digit in requested base"
-                       (%peek-char reader) base reader)))
+  (using (reader : PeekableStringReader)
+    (if-let (digit (char-ascii-digit (reader.peek-char) base))
+      (let loop ((n digit))
+        (reader.read-char)
+        (if-let (next-digit (char-ascii-digit (reader.peek-char) base))
+          (loop (+ next-digit (* base n)))
+          n))
+      (raise-parse-error parse-natural "Not a digit in requested base"
+                         (reader.peek-char) base reader))))
 
 (def (parse-signed-integer reader (base 10))
-  (let ((char (%peek-char reader)))
-    (cond
-     ((eqv? char #\+)
-      (%read-char reader)
-      (parse-natural reader base))
-     ((eqv? char #\-)
-      (%read-char reader)
-      (- (parse-natural reader base)))
-     ((char-ascii-digit char)
-      (parse-natural reader base))
-     (else
-      (raise-parse-error parse-signed-integer "Neither a sign nor a digit in requested base"
-                         char base reader)))))
+  (using (reader : PeekableStringReader)
+    (let ((char (reader.peek-char)))
+      (cond
+       ((eqv? char #\+)
+        (reader.read-char)
+        (parse-natural reader base))
+       ((eqv? char #\-)
+        (reader.read-char)
+        (- (parse-natural reader base)))
+       ((char-ascii-digit char)
+        (parse-natural reader base))
+       (else
+        (raise-parse-error parse-signed-integer "Neither a sign nor a digit in requested base"
+                           char base reader))))))
 
 (def (parse-maybe-one-of char-pred?)
   (lambda (reader)
-    (def c (%peek-char reader))
-    (and (char-pred? c) c)))
+    (using (reader : PeekableStringReader)
+      (def c (reader.peek-char))
+      (and (char-pred? c) c))))
 
 (def (parse-one-of char-pred?)
   (lambda (reader)
-    (def c (%peek-char reader))
-    (if (char-pred? c)
-      c
-      (raise-parse-error parse-one-of "Unexpected character"
-                         c char-pred? reader))))
+    (using (reader : PeekableStringReader)
+      (def c (reader.peek-char))
+      (if (char-pred? c)
+        c
+        (raise-parse-error parse-one-of "Unexpected character"
+                           c char-pred? reader)))))
 
 (def (parse-any-number-of char-pred?)
   (lambda (reader)
-    (and (char-pred? (%peek-char reader))
-         (call-with-output-string
-          (lambda (out) (while (begin (write-char (%read-char reader) out)
-                                 (char-pred? (%peek-char reader)))))))))
+    (using (reader : PeekableStringReader)
+      (and (char-pred? (reader.peek-char))
+           (call-with-output-string
+            (lambda (out) (while (begin (write-char (reader.read-char) out)
+                                   (char-pred? (reader.peek-char))))))))))
 
 (def (parse-one-or-more-of char-pred?)
   (lambda (reader)
-    (or ((parse-any-number-of char-pred?) reader)
-        (raise-parse-error parse-one-or-more-of "Unexpected character"
-                           (%peek-char reader) reader))))
+    (using (reader : PeekableStringReader)
+      (or ((parse-any-number-of char-pred?) reader)
+          (raise-parse-error parse-one-or-more-of "Unexpected character"
+                             (reader.peek-char) reader)))))
 
 (def (parse-maybe-char char)
   (parse-maybe-one-of (cut eqv? char <>)))
@@ -93,8 +98,9 @@
   (parse-one-of (cut eqv? char <>)))
 
 (def (parse-and-skip-any-whitespace reader (whitespace? char-strict-whitespace?))
-  (while (whitespace? (%peek-char reader))
-    (%read-char reader)))
+  (using (reader : PeekableStringReader)
+    (while (whitespace? (reader.peek-char))
+      (reader.read-char))))
 
 (def parse-eof (parse-one-of eof-object?))
 
@@ -109,34 +115,37 @@
 
 (def (parse-n-chars n (char-pred? char?))
   (lambda (reader)
-    (def s (make-string n))
-    (for (i (in-range n))
-      (def c (%peek-char reader))
-      (unless (char-pred? c)
-        (raise-parse-error parse-n-chars "invalid character" c n char-pred? i))
-      (string-set! s i c))
-    s))
+    (using (reader : PeekableStringReader)
+      (def s (make-string n))
+      (for (i (in-range n))
+        (def c (reader.peek-char))
+        (unless (char-pred? c)
+          (raise-parse-error parse-n-chars "invalid character" c n char-pred? i))
+        (string-set! s i c))
+      s)))
 
 (def (parse-n-digits n (base 10))
   (lambda (reader)
-    (let loop ((n n) (r 0))
-      (if (zero? n) r
-          (let* ((char (%peek-char reader))
-                 (digit (char-ascii-digit char base)))
-            (if digit
-              (begin (%read-char reader) (loop (- n 1) (+ digit (* base r))))
-              (raise-parse-error parse-n-digits "not a digit" char reader n base)))))))
+    (using (reader : PeekableStringReader)
+      (let loop ((n n) (r 0))
+        (if (zero? n) r
+            (let* ((char (reader.peek-char))
+                   (digit (char-ascii-digit char base)))
+              (if digit
+                (begin (reader.read-char) (loop (- n 1) (+ digit (* base r))))
+                (raise-parse-error parse-n-digits "not a digit" char reader n base))))))))
 
 ;; Like parse-line, but handles (and still strips) any of the CRLF, CR and LF line endings
 (def (parse-line reader)
-  (call-with-output-string
-    [] (lambda (out)
-         (let loop ()
-           (let ((char (%peek-char reader)))
-             (cond
-              ((char-eol? char) (parse-eol reader))
-              ((eof-object? char) (void))
-              (else (display char out) (%read-char reader) (loop))))))))
+  (using (reader : PeekableStringReader)
+    (call-with-output-string
+     [] (lambda (out)
+          (let loop ()
+            (let ((char (reader.peek-char)))
+              (cond
+               ((char-eol? char) (parse-eol reader))
+               ((eof-object? char) (void))
+               (else (display char out) (reader.read-char) (loop)))))))))
 
 (def (parse-lines reader (parse-line parse-line))
   (with-list-builder (c)
@@ -157,7 +166,7 @@
 
 ;; Parse an entire port
 (def (parse-port parser port (description port) (where 'parse-port))
-  (parse-reader parser (PeekableStringReader (make-raw-input-port port)) description where))
+  (parse-reader parser (PeekableStringReader (make-raw-textual-input-port port)) description where))
 
 ;; Parse an entire file
 (def (parse-file parser file (description file) (where 'parse-file))

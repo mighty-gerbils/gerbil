@@ -3,6 +3,7 @@
 ;;; actor server
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/iter
         :std/io
@@ -236,6 +237,9 @@
   (defrule (routed-message? msg)
     (handle? (&envelope-dest msg)))
 
+  (defrule (expired? msg)
+    (&envelope-expired? msg))
+
   (def (add-actor! actor)
     (cond
      ((hash-get actor-threads actor)
@@ -247,9 +251,6 @@
         (hash-put! actors actor-id actor)
         (spawn/name 'actor-monitor actor-monitor actor (current-thread) thread-send/check)
         actor-id))))
-
-  (def (expired? msg)
-    (&envelope-expired? msg))
 
   (def (update-server-addrs! srv-id addrs ttl)
     (let (ttl (if (eq? srv-id 'registry)
@@ -368,91 +369,80 @@
        (symbol<? (car a) (car b)))))
 
   (def (send-remote-message! msg srv-id dest-actor-id actor-id)
-    (connect-to-server! srv-id
-      (lambda (result)
-        (unless (expired? msg)
-          (match result
-            ((!ok notification)
-             (set! (&envelope-dest msg)
-               dest-actor-id)
-             (set! (&envelope-source msg)
-               actor-id)
-             (thread-send/check (!connected-writer notification)
-               (!send msg)))
-            ((!error what)
-             (warnf "error sending message to ~a (~a): ~a" srv-id dest-actor-id what)
-             (when (&envelope-reply-expected? msg)
-               (send-control-reply! msg result))))))))
+    (using (msg :- envelope)
+      (connect-to-server! srv-id
+        (lambda (result)
+          (unless (expired? msg)
+            (match result
+              ((!ok notification)
+               (set! msg.dest dest-actor-id)
+               (set! msg.source actor-id)
+               (thread-send/check (!connected-writer notification)
+                                  (!send msg)))
+              ((!error what)
+               (warnf "error sending message to ~a (~a): ~a" srv-id dest-actor-id what)
+               (when msg.reply-expected?
+                 (send-control-reply! msg result)))))))))
 
   (def (send-to-registry! actor-id msg)
-    (if (eq? id 'registry)
-      ;; we are the registry
-      (cond
-       ((hash-get actors 'registry)
-        => (lambda (actor)
-             ;; rewrite the envelope and forward
-             (set! (&envelope-dest msg) actor)
-             (thread-send/check actor msg)))
-       (else
-        ;; but the registry actor isn't here!!!
-        (send-control-reply! msg (!error "no registry actor"))))
-      ;; reach out to the registry
-      (send-remote-message! msg 'registry 'registry actor-id)))
+    (using (msg :- envelope)
+      (if (eq? id 'registry)
+        ;; we are the registry
+        (cond
+         ((hash-get actors 'registry)
+          => (lambda (actor)
+               ;; rewrite the envelope and forward
+               (set! msg.dest actor)
+               (thread-send/check actor msg)))
+         (else
+          ;; but the registry actor isn't here!!!
+          (send-control-reply! msg (!error "no registry actor"))))
+        ;; reach out to the registry
+        (send-remote-message! msg 'registry 'registry actor-id))))
 
   (def (send-remote-control-message! srv-id msg actor-id)
-    (connect-to-server! srv-id
-      (lambda (result)
-        (unless (expired? msg)
-          (match result
-            ((!ok notification)
-             (set! (&envelope-dest msg) 0)
-             (set! (&envelope-source msg) actor-id)
-             (thread-send/check (!connected-writer notification)
-               (!send msg)))
-            (else
-             (send-control-reply! msg result)))))))
+    (using (msg :- envelope)
+      (connect-to-server! srv-id
+        (lambda (result)
+          (unless (expired? msg)
+            (match result
+              ((!ok notification)
+               (set! msg.dest 0)
+               (set! msg.source actor-id)
+               (thread-send/check (!connected-writer notification)
+                 (!send msg)))
+              (else
+               (send-control-reply! msg result))))))))
 
   (def (send-remote-control-reply! srv-id msg result)
-    (cond
-     ((hash-get conns srv-id)
-      => (lambda (notifications)
-           (let ((source  (&envelope-source msg))
-                 (nonce   (&envelope-nonce msg)))
-             (set! (&envelope-message msg)
-               result)
-             (set! (&envelope-dest msg)
-               source)
-             (set! (&envelope-source msg)
-               0)
-             (set! (&envelope-nonce msg)
-               (current-thread-nonce!))
-             (set! (&envelope-replyto msg)
-               nonce)
-             (set! (&envelope-reply-expected? msg)
-               #f)
-
-             (verbosef "sending remote control reply to ~a: ~a" srv-id msg)
-             (thread-send/check (!connected-writer (car notifications))
-               (!send msg)))))))
+    (using (msg :- envelope)
+      (cond
+       ((hash-get conns srv-id)
+        => (lambda (notifications)
+             (let ((source  msg.source)
+                   (nonce   msg.nonce))
+               (set! msg.message result)
+               (set! msg.dest source)
+               (set! msg.source 0)
+               (set! msg.nonce (current-thread-nonce!))
+               (set! msg.replyto nonce)
+               (set! msg.reply-expected? #f)
+               (verbosef "sending remote control reply to ~a: ~a" srv-id msg)
+               (thread-send/check (!connected-writer (car notifications))
+                 (!send msg))))))))
 
   (def (send-control-reply! msg result)
-    (let ((source  (&envelope-source msg))
-          (nonce   (&envelope-nonce msg)))
-      (set! (&envelope-message msg)
-        result)
-      (set! (&envelope-dest msg)
-        source)
-      (set! (&envelope-source msg)
-        (current-thread))
-      (set! (&envelope-nonce msg)
-        (current-thread-nonce!))
-      (set! (&envelope-replyto msg)
-        nonce)
-      (set! (&envelope-reply-expected? msg)
-        #f)
-
-      (verbosef "sending control reply to ~a: ~a" source msg)
-      (thread-send/check source msg)))
+    (using (msg :- envelope)
+      (let ((source  msg.source)
+            (nonce   msg.nonce))
+        (set! msg.message result)
+        (set! msg.dest source)
+        (set! msg.source (current-thread))
+        (set! msg.nonce (current-thread-nonce!))
+        (set! msg.replyto nonce)
+        (set! msg.reply-expected? #f)
+        (verbosef "sending control reply to ~a: ~a" source msg)
+        (thread-send/check source msg))))
 
   (def is-shutdown-authorized?
     (if (or admin tls-context)
@@ -545,260 +535,262 @@
       (<<
        ;; envelope
        ((? envelope? msg)
-        (unless (expired? msg)
-          (let* ((source  (&envelope-source msg))
-                 (actor-id (add-actor! source)))
-            (cond
-             ((routed-message? msg)
-              (let* ((dest (&envelope-dest msg))
-                     (dest-ref (&handle-ref dest))
-                     (dest-srv-id (&reference-server dest-ref))
-                     (dest-actor-id (&reference-id dest-ref)))
-                (if (or (not dest-srv-id) (eq? dest-srv-id id))
-                  ;; local send
-                  (cond
-                   ((hash-get actors dest-actor-id)
-                    => (lambda (actor)
-                         (thread-send/check actor msg)))
-                   (else
-                    (warnf "message for unknown actor ~a" dest-actor-id)
-                    (when (&envelope-reply-expected? msg)
-                      (send-control-reply! msg (!error "unknown actor")))))
-                  ;; remote send
-                  (send-remote-message! msg dest-srv-id dest-actor-id actor-id))))
+        (using (msg :- envelope)
+          (unless (expired? msg)
+            (let* ((source  msg.source)
+                   (actor-id (add-actor! source)))
+              (cond
+               ((routed-message? msg)
+                (let (dest msg.dest)
+                  (using (dest :- handle)
+                    (let (dest-ref dest.ref)
+                      (using (dest-ref :- reference)
+                        (let* ((dest-srv-id dest-ref.server)
+                               (dest-actor-id dest-ref.id))
+                      (if (or (not dest-srv-id) (eq? dest-srv-id id))
+                        ;; local send
+                        (cond
+                         ((hash-get actors dest-actor-id)
+                          => (lambda (actor)
+                               (thread-send/check actor msg)))
+                         (else
+                          (warnf "message for unknown actor ~a" dest-actor-id)
+                          (when msg.reply-expected?
+                            (send-control-reply! msg (!error "unknown actor")))))
+                        ;; remote send
+                        (send-remote-message! msg dest-srv-id dest-actor-id actor-id))))))))
 
-             ((control-message? msg)
-              (debugf "control message from ~a: ~a" source msg)
+                  ((control-message? msg)
+                   (debugf "control message from ~a: ~a" source msg)
 
-              (match (&envelope-message msg)
-                ;; shutdown notification
-                ((!shutdown)
-                 (shutdown!))
+                   (match msg.message
+                     ;; shutdown notification
+                     ((!shutdown)
+                      (shutdown!))
 
-                ;; actor registration
-                ((!register name)
-                 (if (hash-key? actors name)
-                   (send-control-reply! msg (!error "actor already registered"))
-                   (begin
-                     (hash-put! actors name source)
-                     (hash-update! actor-threads source (cut cons name <>))
-                     (let (result (!ok (reference id name)))
-                       (send-control-reply! msg result)))))
+                     ;; actor registration
+                     ((!register name)
+                      (if (hash-key? actors name)
+                        (send-control-reply! msg (!error "actor already registered"))
+                        (begin
+                          (hash-put! actors name source)
+                          (hash-update! actor-threads source (cut cons name <>))
+                          (let (result (!ok (reference id name)))
+                            (send-control-reply! msg result)))))
 
-                ;; actor listing
-                ((!list-actors srv)
-                 (if (or (not srv) (eq? srv id))
-                   (let (result (!ok (get-actors)))
-                     (send-control-reply! msg result ))
-                   ;; remote list
-                   (send-remote-control-message! srv msg actor-id)))
+                     ;; actor listing
+                     ((!list-actors srv)
+                      (if (or (not srv) (eq? srv id))
+                        (let (result (!ok (get-actors)))
+                          (send-control-reply! msg result ))
+                        ;; remote list
+                        (send-remote-control-message! srv msg actor-id)))
 
-                ;; connection listing
-                ((!list-connections srv)
-                 (if (or (not srv) (eq? srv id))
-                   (let (result (!ok (get-conns)))
-                     (send-control-reply! msg result))
-                   ;; remote list
-                   (send-remote-control-message! srv msg actor-id)))
+                     ;; connection listing
+                     ((!list-connections srv)
+                      (if (or (not srv) (eq? srv id))
+                        (let (result (!ok (get-conns)))
+                          (send-control-reply! msg result))
+                        ;; remote list
+                        (send-remote-control-message! srv msg actor-id)))
 
-                ;; make a connection
-                ((!connect srv other-srv addrs)
-                 (if (or (not srv) (eq? srv id))
-                   (cond
-                    ((eq? id other-srv)
-                     ;; don't self connect
-                     (let (result (!error "cannot connect to self"))
-                       (send-control-reply! msg result)))
-                    ((hash-get conns other-srv)
-                     ;; we already have one or more connections
-                     => (lambda (notifications)
-                          (let (result (!ok (map !connected-addr notifications)))
-                            (send-control-reply! msg result))))
-                    (else
-                     ;; update our known address mapping -- user supplied addrs don't expire.
-                     (when (and addrs (not (null? addrs)))
-                       (update-server-addrs! other-srv addrs +inf.0))
-                     ;; and connect
-                     (connect-to-server! other-srv
-                       (lambda (result)
-                         (unless (expired? msg)
-                           (match result
-                             ((!ok notification)
-                              (let (result (!ok [(!connected-addr notification)]))
-                                (send-control-reply! msg result)))
-                             (else
-                              (send-control-reply! msg result))))))))
-                   ;; remote connect
-                   (send-remote-control-message! srv msg actor-id)))
+                     ;; make a connection
+                     ((!connect srv other-srv addrs)
+                      (if (or (not srv) (eq? srv id))
+                        (cond
+                         ((eq? id other-srv)
+                          ;; don't self connect
+                          (let (result (!error "cannot connect to self"))
+                            (send-control-reply! msg result)))
+                         ((hash-get conns other-srv)
+                          ;; we already have one or more connections
+                          => (lambda (notifications)
+                               (let (result (!ok (map !connected-addr notifications)))
+                                 (send-control-reply! msg result))))
+                         (else
+                          ;; update our known address mapping -- user supplied addrs don't expire.
+                          (when (and addrs (not (null? addrs)))
+                            (update-server-addrs! other-srv addrs +inf.0))
+                          ;; and connect
+                          (connect-to-server! other-srv
+                            (lambda (result)
+                              (unless (expired? msg)
+                                (match result
+                                  ((!ok notification)
+                                   (let (result (!ok [(!connected-addr notification)]))
+                                     (send-control-reply! msg result)))
+                                  (else
+                                   (send-control-reply! msg result))))))))
+                        ;; remote connect
+                        (send-remote-control-message! srv msg actor-id)))
 
-                ;; ensemble control
-                ((!ensemble-add-server srv-id addrs roles)
-                 (unless (eq? srv-id id)
-                   ;; update our known address mapping
-                   (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
-                 ;; update the registry
-                 (send-to-registry! actor-id msg))
+                     ;; ensemble control
+                     ((!ensemble-add-server srv-id addrs roles)
+                      (unless (eq? srv-id id)
+                        ;; update our known address mapping
+                        (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
+                      ;; update the registry
+                      (send-to-registry! actor-id msg))
 
-                ((!ensemble-remove-server srv-id)
-                 ;; update our known address mapping
-                 (hash-remove! server-addrs srv-id)
-                 ;; and our authorization table
-                 (cond
-                  ((hash-get capabilities srv-id)
-                   => (lambda (state)
-                        (when (eq? (car state) 'connected)
-                          (hash-remove! capabilities srv-id)))))
-                 (hash-remove! pending-admin-auth srv-id)
-                 ;; update the registry
-                 (send-to-registry! actor-id msg))
+                     ((!ensemble-remove-server srv-id)
+                      ;; update our known address mapping
+                      (hash-remove! server-addrs srv-id)
+                      ;; and our authorization table
+                      (cond
+                       ((hash-get capabilities srv-id)
+                        => (lambda (state)
+                             (when (eq? (car state) 'connected)
+                               (hash-remove! capabilities srv-id)))))
+                      (hash-remove! pending-admin-auth srv-id)
+                      ;; update the registry
+                      (send-to-registry! actor-id msg))
 
-                ((!ensemble-lookup-server srv-id role)
-                 (send-to-registry! actor-id msg))
+                     ((!ensemble-lookup-server srv-id role)
+                      (send-to-registry! actor-id msg))
 
-                ((!ping)
-                 (send-control-reply! msg (!ok 'OK)))
+                     ((!ping)
+                      (send-control-reply! msg (!ok 'OK)))
 
-                (else
-                 (warnf "unexpected control message: ~a" msg)
-                 (when (&envelope-reply-expected? msg)
-                   (send-control-reply! msg (!error "unexpected control message"))))))
+                     (else
+                      (warnf "unexpected control message: ~a" msg)
+                      (when msg.reply-expected?
+                        (send-control-reply! msg (!error "unexpected control message"))))))
 
-             (else
-              (warnf "unexpected message: ~a" msg))))))
+                  (else
+                   (warnf "unexpected message: ~a" msg)))))))
 
        ;; internal control messages
        ((!recv src-id msg)
         ;; incoming message
-        (unless (expired? msg)
-          (let (dest (&envelope-dest msg))
-            (cond
-             ((eqv? dest 0)
-              ;; remote control message
-              (debugf "remote control message from ~a: ~a" src-id msg)
-              (match (&envelope-message msg)
-                ((!shutdown)
-                 (if (is-shutdown-authorized? src-id)
-                   (begin
-                     (infof "remote shutdown from ~a" src-id)
-                     (send-remote-control-reply! src-id msg (!ok (void)))
-                     (shutdown!))
-                   (begin
-                     (warnf "unauthorized shutdown request from ~a" src-id)
-                     (send-remote-control-reply! src-id msg (!error "not authorized")))))
+        (using (msg :- envelope)
+          (unless (expired? msg)
+            (let (dest msg.dest)
+              (cond
+               ((eqv? dest 0)
+                ;; remote control message
+                (debugf "remote control message from ~a: ~a" src-id msg)
+                (match msg.message
+                  ((!shutdown)
+                   (if (is-shutdown-authorized? src-id)
+                     (begin
+                       (infof "remote shutdown from ~a" src-id)
+                       (send-remote-control-reply! src-id msg (!ok (void)))
+                       (shutdown!))
+                     (begin
+                       (warnf "unauthorized shutdown request from ~a" src-id)
+                       (send-remote-control-reply! src-id msg (!error "not authorized")))))
 
-                ((!admin-auth authorized-server-id cap)
-                 (cond
-                  ((and (not admin) tls-context)
-                   (send-remote-control-reply! src-id msg (!error "no admin credentials")))
-                  ((or (not admin)
-                       (alet (state (hash-get capabilities src-id))
-                         (andmap (cut memq <> (cdr state)) cap)))
-                   (send-remote-control-reply! src-id msg (!ok (void))))
-                  ((hash-get pending-admin-auth src-id)
-                   (send-remote-control-reply! src-id msg (!error "challenge pending")))
-                  (else
-                   (let (bytes (random-bytes 32))
-                     (hash-put! pending-admin-auth src-id [authorized-server-id cap bytes])
-                     (send-remote-control-reply! src-id msg (!admin-auth-challenge bytes))))))
-
-                ((!admin-auth-response sig)
-                 (cond
-                  ((hash-get pending-admin-auth src-id)
-                   => (lambda (state)
-                        (with ([authorized-server-id cap bytes] state)
-                          (hash-remove! pending-admin-auth src-id)
-                          (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
-                            (begin
-                              (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
-                              (update-capabilities! authorized-server-id
-                                                    cap
-                                                    (if (eq? src-id authorized-server-id)
-                                                      'connected
-                                                      'delegated))
-                              (send-remote-control-reply! src-id msg (!ok (void))))
-                            (begin
-                              (warnf "admin authorization failed for ~a" src-id)
-                              (send-remote-control-reply! src-id msg (!error "challenge failed")))))))
-                  (else
-                   (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
-
-                ((!admin-retract authorized-server-id)
-                 (if (is-retract-authorized? src-id authorized-server-id)
-                   (begin
-                     (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
-                     (hash-remove! capabilities authorized-server-id)
-                     (send-remote-control-reply! src-id msg (!ok (void))))
-                   (begin
-                     (warnf "unauthorized retraction from ~a" src-id)
-                     (send-remote-control-reply! src-id msg (!error "not authorized")))))
-
-                ((!list-actors srv-id)
-                 (send-remote-control-reply! src-id msg
-                   (if (or (not srv-id) (eq? srv-id id))
-                     (!ok (get-actors))
-                     (!error "server id mismatch"))))
-
-                ((!list-connections srv-id)
-                 (send-remote-control-reply! src-id msg
-                   (if (or (not srv-id) (eq? srv-id id))
-                     (!ok (get-conns))
-                     (!error "server id mismatch"))))
-
-                ((!connect from-id to-id addrs)
-                 (if (or (not from-id) (eq? from-id id))
+                  ((!admin-auth authorized-server-id cap)
                    (cond
-                    ((eq? id to-id)
-                     ;; don't self connect
-                     (let (result (!error "cannot connect to self"))
-                       (send-remote-control-reply! src-id msg result)))
-                    ((hash-get conns to-id)
-                     ;; we already have one or more connections
-                     => (lambda (notifications)
-                          (let (result (!ok (map !connected-addr notifications)))
-                            (send-remote-control-reply! src-id msg result))))
+                    ((and (not admin) tls-context)
+                     (send-remote-control-reply! src-id msg (!error "no admin credentials")))
+                    ((or (not admin)
+                         (alet (state (hash-get capabilities src-id))
+                           (andmap (cut memq <> (cdr state)) cap)))
+                     (send-remote-control-reply! src-id msg (!ok (void))))
+                    ((hash-get pending-admin-auth src-id)
+                     (send-remote-control-reply! src-id msg (!error "challenge pending")))
                     (else
-                     ;; update our known address mapping -- user supplied addrs don't expire.
-                     (when (and addrs (not (null? addrs)))
-                       (update-server-addrs! to-id addrs +inf.0))
-                     ;; and connect
-                     (connect-to-server! to-id
-                       (lambda (result)
-                         (unless (expired? msg)
-                           (match result
-                             ((!ok notification)
-                              (let (result (!ok [(!connected-addr notification)]))
-                                (send-remote-control-reply! src-id msg result)))
-                             (else
-                              (send-remote-control-reply! src-id msg result))))))))
+                     (let (bytes (random-bytes 32))
+                       (hash-put! pending-admin-auth src-id [authorized-server-id cap bytes])
+                       (send-remote-control-reply! src-id msg (!admin-auth-challenge bytes))))))
+
+                  ((!admin-auth-response sig)
+                   (cond
+                    ((hash-get pending-admin-auth src-id)
+                     => (lambda (state)
+                          (with ([authorized-server-id cap bytes] state)
+                            (hash-remove! pending-admin-auth src-id)
+                            (if (admin-auth-challenge-verify admin id authorized-server-id bytes sig)
+                              (begin
+                                (infof "admin privileges authorized for ~a; capabilities: ~a" authorized-server-id cap)
+                                (update-capabilities! authorized-server-id
+                                                      cap
+                                                      (if (eq? src-id authorized-server-id)
+                                                        'connected
+                                                        'delegated))
+                                (send-remote-control-reply! src-id msg (!ok (void))))
+                              (begin
+                                (warnf "admin authorization failed for ~a" src-id)
+                                (send-remote-control-reply! src-id msg (!error "challenge failed")))))))
+                    (else
+                     (send-remote-control-reply! src-id msg (!error "unexpected auth response")))))
+
+                  ((!admin-retract authorized-server-id)
+                   (if (is-retract-authorized? src-id authorized-server-id)
+                     (begin
+                       (infof "capabilities retracted for ~a from ~a" authorized-server-id src-id)
+                       (hash-remove! capabilities authorized-server-id)
+                       (send-remote-control-reply! src-id msg (!ok (void))))
+                     (begin
+                       (warnf "unauthorized retraction from ~a" src-id)
+                       (send-remote-control-reply! src-id msg (!error "not authorized")))))
+
+                  ((!list-actors srv-id)
                    (send-remote-control-reply! src-id msg
-                                               (!error "server id mismatch"))))
+                                               (if (or (not srv-id) (eq? srv-id id))
+                                                 (!ok (get-actors))
+                                                 (!error "server id mismatch"))))
 
-                ((!ping)
-                 (send-remote-control-reply! src-id msg (!ok 'OK)))
+                  ((!list-connections srv-id)
+                   (send-remote-control-reply! src-id msg
+                                               (if (or (not srv-id) (eq? srv-id id))
+                                                 (!ok (get-conns))
+                                                 (!error "server id mismatch"))))
 
-                (else (warnf "unexpected control message from: ~a: ~a" src-id msg))))
+                  ((!connect from-id to-id addrs)
+                   (if (or (not from-id) (eq? from-id id))
+                     (cond
+                      ((eq? id to-id)
+                       ;; don't self connect
+                       (let (result (!error "cannot connect to self"))
+                         (send-remote-control-reply! src-id msg result)))
+                      ((hash-get conns to-id)
+                       ;; we already have one or more connections
+                       => (lambda (notifications)
+                            (let (result (!ok (map !connected-addr notifications)))
+                              (send-remote-control-reply! src-id msg result))))
+                      (else
+                       ;; update our known address mapping -- user supplied addrs don't expire.
+                       (when (and addrs (not (null? addrs)))
+                         (update-server-addrs! to-id addrs +inf.0))
+                       ;; and connect
+                       (connect-to-server! to-id
+                         (lambda (result)
+                           (unless (expired? msg)
+                             (match result
+                               ((!ok notification)
+                                (let (result (!ok [(!connected-addr notification)]))
+                                  (send-remote-control-reply! src-id msg result)))
+                               (else
+                                (send-remote-control-reply! src-id msg result))))))))
+                     (send-remote-control-reply! src-id msg
+                                                 (!error "server id mismatch"))))
 
-             ((and (pair? dest) (eq? (car dest) 'lookup))
-              ;; registry lookup result
-              (let ((srv-id (cdr dest))
-                    (replyto (&envelope-replyto msg))
-                    (result (&envelope-message msg)))
-                (dispatch-lookup-result! srv-id replyto result)))
+                  ((!ping)
+                   (send-remote-control-reply! src-id msg (!ok 'OK)))
 
-             ((hash-get actors dest)
-              => (lambda (actor)
-                   ;; rewrite the envelope and forward
-                   (set! (&envelope-source msg)
-                     (handle (current-thread)
-                             (reference src-id (&envelope-source msg))
-                             (actor-capabilities src-id)))
-                   (set! (&envelope-dest msg) actor)
-                   (thread-send/check actor msg)))
+                  (else (warnf "unexpected control message from: ~a: ~a" src-id msg))))
 
-             (else
-              (warnf "incoming message from ~a for unknown actor ~a" src-id dest)
-              (when (&envelope-reply-expected? msg)
-                (send-remote-control-reply! src-id msg (!error "unknown actor"))))))))
+               ((and (pair? dest) (eq? (car dest) 'lookup))
+                ;; registry lookup result
+                (let (srv-id (cdr dest))
+                  (dispatch-lookup-result! srv-id msg.replyto msg.message)))
+
+               ((hash-get actors dest)
+                => (lambda (actor)
+                     ;; rewrite the envelope and forward
+                     (set! msg.source
+                       (handle (current-thread)
+                               (reference src-id msg.source)
+                               (actor-capabilities src-id)))
+                     (set! msg.dest actor)
+                     (thread-send/check actor msg)))
+
+               (else
+                (warnf "incoming message from ~a for unknown actor ~a" src-id dest)
+                (when msg.reply-expected?
+                  (send-remote-control-reply! src-id msg (!error "unknown actor")))))))))
 
        ((and notification (!connected conn srv-id cert addr dir))
         (debugf "connected to server ~a at ~a [~a]" srv-id addr dir)

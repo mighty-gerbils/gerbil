@@ -4,6 +4,7 @@
 (import :gerbil/runtime/thread
         :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/stxparam)
 (export #t)
@@ -56,8 +57,9 @@
 
 ;; returns true if the envelope has expired
 (def (&envelope-expired? msg)
-  (alet (expiry (&envelope-expiry msg))
-    (< (time->seconds expiry) (##current-time-point))))
+  (using (msg :- envelope)
+    (alet (expiry msg.expiry)
+      (< (time->seconds expiry) (##current-time-point)))))
 
 ;; actor handle base type.
 ;; - proxy is the thread that handles messages on behalf of another actor.
@@ -70,9 +72,10 @@
 
 (defmethod {:init! handle}
   (lambda (self proxy ref (capabilities #f))
-    (set! (&handle-proxy self) proxy)
-    (set! (&handle-ref self) ref)
-    (set! (&handle-capabilities self) capabilities)))
+    (using (self :- handle)
+      (set! self.proxy proxy)
+      (set! self.ref ref)
+      (set! self.capabilities capabilities))))
 
 ;; checks whether an actor is authorized for administrative actions.
 ;; Local (in-process) actors are always authorized.
@@ -84,8 +87,9 @@
   (cond
    ((thread? actor) #t)
    ((handle? actor)
-    (alet (capabilities (&handle-capabilities actor))
-      (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities)))
+    (using (actor :- handle)
+      (alet (capabilities actor.capabilities)
+        (find (lambda (c) (or (eq? c cap) (eq? c 'admin))) capabilities))))
    (else #f)))
 
 ;; sends a message to an actor
@@ -97,7 +101,8 @@
    ((thread? actor)
     (thread-send/check actor msg))
    ((handle? actor)
-    (thread-send/check (&handle-proxy actor) msg))
+    (using (actor :- handle)
+      (thread-send/check actor.proxy msg)))
    (else
     (raise-bad-argument send-message "thread or handle" actor))))
 

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble registry
 (import :std/error
+        :std/contract
         :std/sugar
         :std/iter
         :std/interface
@@ -108,73 +109,78 @@
 
 (defmethod {:init! registry}
   (lambda (self path)
-    (let (path (path-expand path))
-      (create-directory* (path-directory path))
-      (set! (&registry-path self) path)
-      (set! (&registry-servers self) (make-hash-table-eq))
-      (set! (&registry-roles self) (make-hash-table-eq))
-      (when (file-exists? path)
-        (call-with-input-file path
-          (lambda (file)
-            (let lp ()
-              (let (next (read file))
-                (unless (eof-object? next)
-                  (match next
-                    ([id roles . addrs]
-                     (registry::add-server self id addrs roles)
-                     (lp))))))))
-        (set! (&registry-dirty? self) #f)))))
+    (using (self :- registry)
+      (let (path (path-expand path))
+        (create-directory* (path-directory path))
+        (set! self.path path)
+        (set! self.servers (make-hash-table-eq))
+        (set! self.roles (make-hash-table-eq))
+        (when (file-exists? path)
+          (call-with-input-file path
+            (lambda (file)
+              (let lp ()
+                (let (next (read file))
+                  (unless (eof-object? next)
+                    (match next
+                      ([id roles . addrs]
+                       (registry::add-server self id addrs roles)
+                       (lp))))))))
+          (set! self.dirty? #f))))))
 
 (defmethod {add-server registry}
   (lambda (self id addrs roles)
-    ;; is it an update? if so remove first
-    (when (hash-key? (&registry-servers self) id)
-      (registry::remove-server self id))
-    ;; and now add it
-    (hash-put! (&registry-servers self) id (cons roles addrs))
-    (when roles
-      (for (role roles)
-        (hash-update! (&registry-roles self) role (cut cons id <>) [])))
-    (set! (&registry-dirty? self) #t)))
+    (using (self :- registry)
+      ;; is it an update? if so remove first
+      (when (hash-key? self.servers id)
+        (registry::remove-server self id))
+      ;; and now add it
+      (hash-put! self.servers id (cons roles addrs))
+      (when roles
+        (for (role roles)
+          (hash-update! self.roles role (cut cons id <>) [])))
+      (set! self.dirty? #t))))
 
 (defmethod {remove-server registry}
   (lambda (self id)
-    (cond
-     ((hash-get (&registry-servers self) id)
-      => (lambda (entry)
-           (for (role (car entry))
-             (hash-update! (&registry-roles self) role (cut remq id <>) []))
-           (hash-remove! (&registry-servers self) id)
-           (set! (&registry-dirty? self) #t))))))
+    (using (self :- registry)
+      (cond
+       ((hash-get self.servers id)
+        => (lambda (entry)
+             (for (role (car entry))
+               (hash-update! self.roles role (cut remq id <>) []))
+             (hash-remove! self.servers id)
+             (set! self.dirty? #t)))))))
 
 (defmethod {lookup-server registry}
   (lambda (self id)
-    (alet (entry (hash-get (&registry-servers self) id))
-      (cdr entry))))
+    (using (self :- registry)
+      (alet (entry (hash-get self.servers id))
+        (cdr entry)))))
 
 (defmethod {lookup-servers/role registry}
   (lambda (self role)
-    (let (servers (hash-ref (&registry-roles self) role []))
-      (map (lambda (id) (cons id (cdr (hash-ref (&registry-servers self) id []))))
-           servers))))
+    (using (self :- registry)
+      (let (servers (hash-ref self.roles role []))
+        (map (lambda (id) (cons id (cdr (hash-ref self.servers id []))))
+             servers)))))
 
 (defmethod {list-servers registry}
   (lambda (self)
-    (hash->list (&registry-servers self))))
+    (using (self :- registry)
+      (hash->list self.servers))))
 
 (defmethod {flush registry}
   (lambda (self)
-    (when (&registry-dirty? self)
-      (let* ((path (&registry-path self))
-             (tmp (string-append path ".tmp")))
-        (call-with-output-file tmp
-          (lambda (file)
-            (for (entry (hash->list (&registry-servers self)))
-              (write entry file)
-              (newline file))))
-        (rename-file tmp path)
-        (set! (&registry-dirty? self) #f)))))
+    (using (self :- registry)
+      (when self.dirty?
+        (let (tmp (string-append self.path ".tmp"))
+          (call-with-output-file tmp
+            (lambda (file)
+              (for (entry (hash->list self.servers))
+                (write entry file)
+                (newline file))))
+          (rename-file tmp self.path)
+          (set! self.dirty? #f))))))
 
 (defmethod {close registry}
-  (lambda (self)
-    (registry::flush self)))
+  registry::flush)
