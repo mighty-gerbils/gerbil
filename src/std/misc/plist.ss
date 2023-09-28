@@ -26,7 +26,7 @@
 (def (alist->plist alist)
   (let loop ((p alist))
     (match p
-      ([[k . v] . rest] (append [k v] (loop rest)))
+      ([[k . v] . rest] (cons* k v (loop rest)))
       ([] [])
       (else
        (raise-bad-argument alist->plist "proper alist" alist)))))
