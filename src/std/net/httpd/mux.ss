@@ -14,8 +14,11 @@
 ;; - {get-handler mux host path} => handler or #f
 ;;   invoked by a http request handler to resolve a path for the request host
 (interface Mux
-  (put-handler! host path handler)
-  (get-handler host path))
+  (put-handler! (host    :~ (maybe string?))
+                (path    :~  string?)
+                (handler :~  procedure?))
+  (get-handler  (host    :~ (maybe string?))
+                (path    :~ string?)))
 
 ;; default mux implementation -- paths are resolved with an exact match
 (defstruct default-http-mux (t default)

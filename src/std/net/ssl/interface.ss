@@ -3,6 +3,7 @@
 ;;; SSL socket interface
 (export #t)
 (import :std/interface
+        :std/contract
         :std/io)
 
 (interface TLS

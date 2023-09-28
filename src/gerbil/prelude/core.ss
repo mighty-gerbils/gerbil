@@ -2968,6 +2968,9 @@ package: gerbil
   ;; type assertion
   (defrules :- ())
 
+  ;; default value
+  (defrules := ())
+
   (begin-syntax
     (defclass (setq-macro macro-object) ()
       id: gerbil.core#setq-macro::t)

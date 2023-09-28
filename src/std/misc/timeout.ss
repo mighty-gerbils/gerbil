@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; timeouts
 
-(import :std/error)
+(import :std/error
+        :std/sugar)
 (export #t)
 
 (def (make-timeout t (none absent-obj))
@@ -13,3 +14,6 @@
     (seconds->time (+ (##current-time-point) t)))
    (else
     (raise-bad-argument make-timeout "real, time or #f" t))))
+
+(defrule (timeout? o)
+  (or (real? o) time? o))

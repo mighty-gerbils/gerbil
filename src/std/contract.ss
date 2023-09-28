@@ -1,10 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; contracts and type assertions
-(export using with-interface with-struct with-class with-contract)
+(export using
+        with-interface with-struct with-class with-contract
+        maybe list-of? in-range? in-range-inclusive? nonnegative-fixnum?)
 (import (for-syntax :gerbil/expander)
         ./error
-        ./interface)
+        ./interface
+        ./sugar)
 
 (defsyntax (using stx)
   (syntax-case stx (:~)
@@ -45,7 +48,7 @@
    (let ()
      (begin-annotation @contract
        (unless (predicate-expr id)
-         (raise-contract-violation id predicate-expr)))
+         (raise-contract-violation id predicate-expr id)))
      body ...)))
 
 (begin-syntax
@@ -385,3 +388,29 @@
      (and (identifier? #'var)
           (interface-id? #'Interface))
      (expand #'var #'Interface #'(body ...) #f))))
+
+(defrule (maybe pred)
+  (lambda (o)
+    (or (not o)
+        (pred o))))
+
+(defrule (in-range? start end)
+  (lambda (o)
+    (and (fixnum? o)
+         (fx>= o start)
+         (fx< o end))))
+
+(defrule (in-range-inclusive? start end)
+  (lambda (o)
+    (and (fixnum? o)
+         (fx<= start o end))))
+
+(defrule (list-of? pred)
+  (lambda (o)
+    (and (list? o)
+         (andmap pred o))))
+
+(defrule (nonnegative-fixnum? o)
+  (lambda (o)
+    (and (fixnum? o)
+         (fx>= o 0))))

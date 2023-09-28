@@ -124,7 +124,8 @@
   (sql-txn-do conn "ROLLBACK" &connection-txn-abort &connection-txn-abort-set!))
 
 (def (sql-prepare conn text)
-  (using (conn : connection)
+  (using ((conn : connection)
+          (text :~ string?))
     (let (driver conn.driver)
       (using (driver :- Driver)
         (if conn.e

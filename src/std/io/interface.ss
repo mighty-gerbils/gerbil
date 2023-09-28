@@ -1,8 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Standard IO interfaces
-(import :std/interface)
-(export #t)
+(import :std/interface
+        :std/contract
+        :std/sugar
+        :std/misc/timeout)
+(export #t timeout?)
 
 ;; closable io sources and sinks
 (interface Closer
@@ -16,7 +19,10 @@
   ;; - need denotes the minimum required input; it must be a fixnum
   ;; Returns the number of bytes read; 0 denotes the end of input.
   ;; If less than the needed bytes are read, an io-error is raised.
-  (read u8v (start 0) (end (u8vector-length u8v)) (need 0)))
+  (read (u8v                            :~  u8vector?)
+        (start :=  0                    :~ (in-range? 0 (u8vector-length u8v)))
+        (end   := (u8vector-length u8v) :~ (in-range-inclusive? start (u8vector-length u8v)))
+        (need  :=  0                    :~  nonnegative-fixnum?)))
 
 
 (interface (Writer Closer)
@@ -24,7 +30,9 @@
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (write u8v (start 0) (end (u8vector-length u8v))))
+  (write (u8v                            :~  u8vector?)
+         (start :=  0                    :~ (in-range? 0 (u8vector-length u8v)))
+         (end   := (u8vector-length u8v) :~ (in-range-inclusive? start (u8vector-length u8v)))))
 
 ;; buffered IO
 (interface (PeekableReader Reader)
@@ -36,32 +44,35 @@
 (interface (BufferedReader PeekableReader)
   ;; puts back some bytes previously read; can also inject bytes.
   ;; - previous-input is a u8 or a list of u8s injected back into the buffer
-  (put-back previous-input)
+  (put-back (previous-input :~ (? (or fixnum? (list-of? fixnum?)))))
 
   ;; skips the next count bytes of input
-  (skip count)
+  (skip     (count          :~ nonnegative-fixnum?))
 
   ;; returns a new BufferedReader instance delimiting the input length that shares the underlying
   ;; buffer; the limit must be a fixnum.
-  (delimit limit)
+  (delimit   (limit         :~ nonnegative-fixnum?))
 
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! reader))
+  (reset! ( reader : Reader)))
 
 (interface (BufferedWriter Writer)
   ;; writes a single byte
-  (write-u8 u8)
+  (write-u8 (u8     :~ fixnum?))
 
   ;; flushes the buffer to the underlying output instance
   (flush)
 
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! output))
+  (reset!   (output :  Writer)))
 
 ;; string/textual IO
 (interface (StringReader Closer)
   ;; read into a string
-  (read-string str (start 0) (end (string-length str)) (need 0)))
+  (read-string (str                          :~  string?)
+               (start :=  0                  :~ (in-range? 0 (string-length str)))
+               (end   := (string-length str) :~ (in-range-inclusive? start (string-length str)))
+               (need  :=  0                  :~  nonnegative-fixnum?)))
 
 (interface (PeekableStringReader StringReader)
   ;; reads a single char
@@ -72,52 +83,63 @@
 (interface (BufferedStringReader PeekableStringReader)
   ;; puts back some chars previously read; can also inject characters.
   ;; - previous-input is a char or a list of chars injected into the buffer
-  (put-back previous-input)
+  (put-back (previous-input :~ (? (or char? (list-of? char?)))))
 
   ;; skips the next count chars of input
-  (skip count)
+  (skip     (count          :~ nonnegative-fixnum?))
 
   ;; returns a new StringBufferedReader instance delimiting the input length that shares
   ;; the underlying buffer; the limit must be a fixnum.
-  (delimit limit)
+  (delimit  (limit          :~ nonnegative-fixnum?))
 
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! reader))
+  (reset!   (reader         :  StringReader)))
 
 (interface (StringWriter Closer)
   ;; write a string
-  (write-string str (start 0) (end (string-length str))))
+  (write-string (str                          :~  string?)
+                (start :=  0                  :~ (in-range? 0 (string-length str)))
+                (end   := (string-length str) :~ (in-range-inclusive? start (string-length str)))))
 
 (interface (BufferedStringWriter StringWriter)
   ;; write a single char
-  (write-char char)
+  (write-char (char   :~ char?))
   ;; flush output
   (flush)
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! output))
+  (reset!     (output : StringWriter)))
 
 ;; socket interfaces
 (interface (Socket Closer)
   (domain)
   (address)
   (peer-address)
-  (getsockopt level option)
-  (setsockopt level option value)
-  (set-input-timeout! timeo)
-  (set-output-timeout! timeo))
+  (getsockopt (level          :~  fixnum?)
+              (option         :~  fixnum?))
+  (setsockopt (level          :~  fixnum?)
+              (option         :~  fixnum?)
+               value)
+  (set-input-timeout! (timeo  :~ (maybe timeout?)))
+  (set-output-timeout!(timeo  :~ (maybe timeout? ))))
 
 (interface (StreamSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end.
   ;; Returns the number of bytes read.
-  (recv u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  (recv (u8v                            :~  u8vector?)
+        (start :=  0                    :~ (in-range? 0 (u8vector-length u8v)))
+        (end   := (u8vector-length u8v) :~ (in-range-inclusive? start (u8vector-length u8v)))
+        (flags :=  0                    :~  fixnum?))
 
   ;; sends data from a buffer; it _must_ be a u8vector
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end.
   ;; Returns the number of bytes written.
-  (send u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  (send (u8v                            :~  u8vector?)
+        (start :=  0                    :~ (in-range? 0 (u8vector-length u8v)))
+        (end   := (u8vector-length u8v) :~ (in-range-inclusive? start (u8vector-length u8v)))
+        (flags :=  0                    :~  fixnum?))
 
   ;; returns a Reader instance reading from the socket
   (reader)
@@ -127,7 +149,7 @@
 
   ;; shuts down the socket in one direction which must be 'in, 'out or 'inout
   ;; if both directions are closed the socket is also closed.
-  (shutdown direction))
+  (shutdown (direction                  :~  symbol?)))
 
 (interface (ServerSocket Socket)
   ;; accept waits for an incoming connection and returns a StreamSocket
@@ -139,18 +161,37 @@
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end
   ;; Returns the number of bytes read.
-  (recvfrom peer u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  (recvfrom (peer                           :~  box?)
+            (u8v                            :~  u8vector?)
+            (start :=  0                    :~ (in-range? 0 (u8vector-length u8v)))
+            (end   := (u8vector-length u8v) :~ (in-range-inclusive? start (u8vector-length u8v)))
+            (flags :=  0                    :~  fixnum?))
 
   ;; sends data from a buffer; it _must_ be a u8vector
   ;; - peer is the address of the peer
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (sendto peer u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  (sendto (peer                             :~ address?)
+          (u8v                              :~  u8vector?)
+          (start :=  0                      :~ (in-range? 0 (u8vector-length u8v)))
+          (end   := (u8vector-length u8v)   :~ (in-range-inclusive? start (u8vector-length u8v)))
+          (flags :=  0                      :~  fixnum?))
 
   ;; connect the datagram socket to a peer
-  (connect peer)
+  (connect (peer                            :~ address?))
+
   ;; recv data from the connected peer
-  (recv u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  (recv (u8v                                :~  u8vector?)
+        (start :=  0                        :~ (in-range? 0 (u8vector-length u8v)))
+        (end   := (u8vector-length u8v)     :~ (in-range-inclusive? start (u8vector-length u8v)))
+        (flags :=  0                        :~  fixnum?))
+
   ;; send data to the connected peer
-  (send u8v (start 0) (end (u8vector-length u8v)) (flags 0)))
+  (send (u8v                                :~ u8vector?)
+        (start :=  0                        :~ (in-range? 0 (u8vector-length u8v)))
+        (end   := (u8vector-length u8v)     :~ (in-range-inclusive? start (u8vector-length u8v)))
+        (flags :=  0                        :~  fixnum?)))
+
+(defrule (address? o)
+  (or (pair? o) (string? o)))
