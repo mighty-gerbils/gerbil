@@ -4,6 +4,7 @@
 
 (import :std/sugar
         :std/error
+        :std/contract
         (only-in :std/logger start-logger!)
         :std/io
         :std/actor
@@ -23,7 +24,7 @@
                          . addresses)
   (start-logger!)
   (let (socks (map (cut http-listen <> backlog: backlog sockopts: sockopts) addresses))
-    (let (srv (spawn/group 'http-server http-server socks mux))
+    (let (srv (spawn/group 'http-server http-server socks (Mux mux)))
       (current-http-server srv)
       srv)))
 
@@ -44,65 +45,64 @@
      (tcp-listen addr))))
 
 (def (http-server socks mux)
-  (with-methods mux get-handler put-handler!)
+  (using (mux :- Mux)
+    (def acceptors
+      (parameterize ((current-http-server (current-thread)))
+        (map
+          (lambda (sock)
+            (spawn/name 'http-server-accept
+                        http-server-accept sock (cut mux.get-handler <> <>)))
+          socks)))
 
-  (def acceptors
-    (parameterize ((current-http-server (current-thread)))
-      (map
-        (lambda (sock)
-          (spawn/name 'http-server-accept
-                      http-server-accept sock (cut get-handler mux <> <>)))
-           socks)))
+    (def (shutdown!)
+      (for-each ServerSocket-close socks))
 
-  (def (shutdown!)
-    (for-each ServerSocket-close socks))
+    (def (monitor thread)
+      (spawn/name 'http-server-monitor actor-monitor thread (current-thread)))
 
-  (def (monitor thread)
-    (spawn/name 'http-server-monitor actor-monitor thread (current-thread)))
+    (def (loop)
+      (let/cc exit
+        (while #t
+          (<-
+           ((!register-handler host path handler)
+            (if (actor-authorized? @source)
+              (begin
+                (infof "registering handler in host ~a: ~a" (or host '(any)) path)
+                (try
+                 (mux.put-handler! host path handler)
+                 (--> (!ok (void)))
+                 (catch (e)
+                   (--> (!error (error-message e))))))
+              (--> (!error "not authorized"))))
 
-  (def (loop)
-    (let/cc exit
-      (while #t
-        (<-
-         ((!register-handler host path handler)
-          (if (actor-authorized? @source)
-            (begin
-              (infof "registering handler in host ~a: ~a" (or host '(any)) path)
-              (try
-               (put-handler! mux host path handler)
-               (--> (!ok (void)))
-               (catch (e)
-                 (--> (!error (error-message e))))))
-            (--> (!error "not authorized"))))
+           ((!actor-dead thread)
+            (try
+             (thread-join! thread)
+             (warnf "acceptor thread ~a exited unexpectedly" (thread-name thread))
+             (catch (uncaught-exception? e)
+               (errorf "acceptor error: ~a" (uncaught-exception-reason e)))
+             (catch (e)
+               (errorf "acceptor error: ~a" e))))
 
-         ((!actor-dead thread)
-          (try
-           (thread-join! thread)
-           (warnf "acceptor thread ~a exited unexpectedly" (thread-name thread))
-           (catch (uncaught-exception? e)
-             (errorf "acceptor error: ~a" (uncaught-exception-reason e)))
-           (catch (e)
-             (errorf "acceptor error: ~a" e))))
+           ,(@shutdown
+             (infof "httpd shutting down...")
+             (exit 'shutdown))
+           ,(@ping)
+           ,(@unexpected warnf)))))
 
-         ,(@shutdown
-           (infof "httpd shutting down...")
-           (exit 'shutdown))
-         ,(@ping)
-         ,(@unexpected warnf)))))
+    (try
+     (for-each monitor acceptors)
 
-  (try
-   (for-each monitor acceptors)
+     (when (current-actor-server)
+       (register-actor! 'httpd))
 
-   (when (current-actor-server)
-     (register-actor! 'httpd))
-
-   (parameterize ((current-http-server (current-thread)))
-     (with-exception-stack-trace loop))
-   (catch (e)
-     (errorf "unhandled exception: ~a" e)
-     (raise e))
-   (finally
-    (shutdown!))))
+     (parameterize ((current-http-server (current-thread)))
+       (with-exception-stack-trace loop))
+     (catch (e)
+       (errorf "unhandled exception: ~a" e)
+       (raise e))
+     (finally
+      (shutdown!)))))
 
 (def (http-server-accept sock get-handler)
   (def (loop)

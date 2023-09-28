@@ -20,9 +20,9 @@
 
 (import :std/build-config
         :std/error
-        :std/sugar
         :std/interface
         :std/contract
+        :std/sugar
         :std/io
         :std/net/ssl
         :std/net/uri
@@ -50,13 +50,15 @@
 
 (defmethod {:init! request}
   (lambda (self sock url history)
-    (set! (&request-sock self) sock)
-    (set! (&request-reader self)
-      (open-buffered-reader (StreamSocket-reader sock)))
-    (set! (&request-writer self)
-      (open-buffered-writer (StreamSocket-writer sock)))
-    (set! (&request-url self) url)
-    (set! (&request-history self) history)))
+    (using ((self :- request)
+            (sock :- StreamSocket))
+      (set! self.sock sock)
+      (set! self.reader
+        (open-buffered-reader (sock.reader)))
+      (set! self.writer
+        (open-buffered-writer (sock.writer)))
+      (set! self.url url)
+      (set! self.history history))))
 
 (def (url-target-e url params)
   (if params
@@ -255,7 +257,7 @@
            (ssl? (equal? scheme "https"))
            (connect
             (cond
-             ((http-connect)            ; proxy function: lambda (addr) -> StreamSocket
+             ((http-connect) ; proxy function: lambda (addr) -> StreamSocket
               => (lambda (connectf)
                    (if ssl?
                      (lambda (addr)
@@ -278,38 +280,40 @@
                 (tcp-connect addr deadline)))))
            (sock (connect (cons host port)))
            (req (make-request sock url history)))
-      (http-request-write req method target headers body)
-      (http-request-read-response! req)
-      (cond
-       ((and redirect
-             (memv (&request-status req) '(301 302 303 307))
-             (memq method '(GET HEAD))
-             (assoc "Location" (&request-headers req)))
-        => (match <>
-             ([_ . new-url]
-              (if (member new-url history)
-                (error "URL redirection loop" url)
-                (begin
-                  (request-close req)
-                  (http-request method new-url
-                                user-headers
-                                body
-                                (cons url history)
-                                #t
-                                ssl-context
-                                deadline))))))
-       (else req)))))
+      (using (req :- request)
+        (http-request-write req method target headers body)
+        (http-request-read-response! req)
+        (cond
+         ((and redirect
+               (memv req.status '(301 302 303 307))
+               (memq method '(GET HEAD))
+               (assoc "Location" req.headers))
+          => (match <>
+               ([_ . new-url]
+                (if (member new-url history)
+                  (error "URL redirection loop" url)
+                  (begin
+                    (&request-close req)
+                    (http-request method new-url
+                                  user-headers
+                                  body
+                                  (cons url history)
+                                  #t
+                                  ssl-context
+                                  deadline))))))
+         (else req))))))
 
 (def (http-request-write req method target headers body)
-  (let (writer (&request-writer req))
-    (using (writer :- BufferedWriter)
-      (writeln writer "~a ~a HTTP/1.1" method target)
-      (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
-                headers)
-      (writeln writer)
-      (when body
-        (writer.write body))
-      (writer.flush))))
+  (using (req :- request)
+    (let (writer req.writer)
+      (using (writer :- BufferedWriter)
+        (writeln writer "~a ~a HTTP/1.1" method target)
+        (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
+                  headers)
+        (writeln writer)
+        (when body
+          (writer.write body))
+        (writer.flush)))))
 
 (def* writeln
   ((writer)
@@ -328,30 +332,31 @@
   (pregexp "([^:]+):\\s*(.*)?"))
 
 (def (http-request-read-response! req)
-  (let (status-line (read-response-line req))
-    (match (pregexp-match status-line-rx status-line)
-      ([_ status status-text]
-       (set! (&request-status req)
-         (string->number status))
-       (set! (&request-status-text req)
-         (string-trim-both status-text))
-       (let (root [#f])
-         (let lp ((tl root))
-           (let (next (read-response-line req))
-             (if (string-empty? next)
-               (set! (&request-headers req)
-                 (cdr root))
-               (match (pregexp-match header-line-rx next)
-                 ([_ key value]
-                  (let (tl* [(cons (string-titlecase key) (string-trim-both value))])
-                    (set! (cdr tl) tl*)
-                    (lp tl*)))
-                 (else
-                  (raise-io-error http-request-read-response!
-                                  "Malformed header" req next))))))))
-      (else
-       (raise-io-error http-request-read-response!
-                       "malformed status line" req status-line)))))
+  (using (req :- request)
+    (let (status-line (read-response-line req))
+      (match (pregexp-match status-line-rx status-line)
+        ([_ status status-text]
+         (set! req.status
+           (string->number status))
+         (set! req.status-text
+           (string-trim-both status-text))
+         (let (root [#f])
+           (let lp ((tl root))
+             (let (next (read-response-line req))
+               (if (string-empty? next)
+                 (set! req.headers
+                   (cdr root))
+                 (match (pregexp-match header-line-rx next)
+                   ([_ key value]
+                    (let (tl* [(cons (string-titlecase key) (string-trim-both value))])
+                      (set! (cdr tl) tl*)
+                      (lp tl*)))
+                   (else
+                    (raise-io-error http-request-read-response!
+                                    "Malformed header" req next))))))))
+        (else
+         (raise-io-error http-request-read-response!
+                         "malformed status line" req status-line))))))
 
 (def (http-request-read-body req headers)
   (def (length-e headers)
@@ -370,149 +375,165 @@
     (http-request-read-simple-body req (length-e headers)))))
 
 (def (http-request-read-chunked-body req)
-  (let ((reader (&request-reader req))
-        (root [#f]))
-    (using (reader :- BufferedReader)
-      (let lp ((tl root))
-        (let* ((line (read-response-line req))
-               (clen (string->number (car (string-split line #\space)) 16)))
-          (if (fxzero? clen)
-            (u8vector-concatenate (cdr root))
-            (let (chunk (make-u8vector clen))
-              (reader.read chunk 0 clen clen)
-              (read-response-line req)  ; read chunk trailing CRLF
-              (let (tl* [chunk])
-                (set! (cdr tl) tl*)
-                (lp tl*)))))))))
+  (using (req :- request)
+    (let ((reader req.reader)
+          (root [#f]))
+      (using (reader :- BufferedReader)
+        (let lp ((tl root))
+          (let* ((line (read-response-line req))
+                 (clen (string->number (car (string-split line #\space)) 16)))
+            (if (fxzero? clen)
+              (u8vector-concatenate (cdr root))
+              (let (chunk (make-u8vector clen))
+                (reader.read chunk 0 clen clen)
+                (read-response-line req) ; read chunk trailing CRLF
+                (let (tl* [chunk])
+                  (set! (cdr tl) tl*)
+                  (lp tl*))))))))))
 
 (def (http-request-read-simple-body req length)
-  (let (reader (&request-reader req))
-    (using (reader :- BufferedReader)
-      (def (read/length length)
-        (let* ((data (make-u8vector length))
-               (rd (reader.read data 0 length length)))
-          data))
+  (using (req :- request)
+    (let (reader req.reader)
+      (using (reader :- BufferedReader)
+        (def (read/length length)
+          (let* ((data (make-u8vector length))
+                 (rd (reader.read data 0 length length)))
+            data))
 
-      (def (read/end)
-        (let (root [#f])
-          (let lp ((tl root))
-            (let* ((buflen 4096)
-                   (buf (make-u8vector buflen))
-                   (rd  (reader.read buf)))
-              (cond
-               ((##fxzero? rd)
-                (u8vector-concatenate (cdr root)))
-               (else
-                (let (tl* [buf])
-                  (set! (cdr tl) tl*)
-                  (lp tl*))))))))
+        (def (read/end)
+          (let (root [#f])
+            (let lp ((tl root))
+              (let* ((buflen 4096)
+                     (buf (make-u8vector buflen))
+                     (rd  (reader.read buf)))
+                (cond
+                 ((##fxzero? rd)
+                  (u8vector-concatenate (cdr root)))
+                 (else
+                  (let (tl* [buf])
+                    (set! (cdr tl) tl*)
+                    (lp tl*))))))))
 
-      (if length
-        (read/length length)
-        (read/end)))))
+        (if length
+          (read/length length)
+          (read/end))))))
 
 (def cr (char->integer #\return))
 (def lf (char->integer #\newline))
 
 (def (read-response-line req)
-  (let ((reader (&request-reader req))
-        (root [#f]))
-    (using (reader :- BufferedReader)
-      (let lp ((tl root))
-        (let (next (reader.read-u8-inline))
-          (cond
-           ((eof-object? next)
-            (raise-io-error request-read-response-line
-                            "Incomplete response; connection closed" req))
-           ((eq? next cr)
-            (let (next (reader.read-u8-inline))
-              (cond
-               ((eof-object? next)
-                (raise-io-error request-read-response-line
-                                "Incomplete response; connection closed" reader))
-               ((eq? next lf)
-                (utf8->string (list->u8vector (cdr root))))
-               (else
-                (let (tl* [cr next])
-                  (set! (cdr tl) tl*)
-                  (lp (cdr tl*)))))))
-           (else
-            (let (tl* [next])
-              (set! (cdr tl) tl*)
-              (lp tl*)))))))))
+  (using (req :- request)
+    (let ((reader req.reader)
+          (root [#f]))
+      (using (reader :- BufferedReader)
+        (let lp ((tl root))
+          (let (next (reader.read-u8-inline))
+            (cond
+             ((eof-object? next)
+              (raise-io-error request-read-response-line
+                              "Incomplete response; connection closed" req))
+             ((eq? next cr)
+              (let (next (reader.read-u8-inline))
+                (cond
+                 ((eof-object? next)
+                  (raise-io-error request-read-response-line
+                                  "Incomplete response; connection closed" reader))
+                 ((eq? next lf)
+                  (utf8->string (list->u8vector (cdr root))))
+                 (else
+                  (let (tl* [cr next])
+                    (set! (cdr tl) tl*)
+                    (lp (cdr tl*)))))))
+             (else
+              (let (tl* [next])
+                (set! (cdr tl) tl*)
+                (lp tl*))))))))))
 
 (def (request-close req)
-  (alet (sock (request-sock req))
-    (with-catch void (cut Socket-close sock))
-    (set! (&request-sock req) #f)
-    (set! (&request-reader req) #f)
-    (set! (&request-writer req) #f)))
+  (using (req : request)
+    (&request-close req)))
+
+(def (&request-close req)
+  (using (req :- request)
+    (alet (sock req.sock)
+      (with-catch void (cut Socket-close sock))
+      (set! req.sock #f)
+      (set! req.reader #f)
+      (set! req.writer #f))))
 
 (defmethod {destroy request}
   request-close)
 
 (def (request-content req)
-  (cond
-   ((request-body req))
-   ((&request-sock req)
-    => (lambda (sock)
-         (let (headers (request-headers req))
-           (try
-            (let* ((body (http-request-read-body req headers))
-                   (body
-                    (cond-expand
-                      (config-enable-zlib
-                       (cond
-                        ((assoc "Content-Encoding" headers)
-                         => (lambda (enc)
-                              (case (cdr enc)
-                                (("gzip" "deflate")
-                                 (uncompress body))
-                                (("identity")
-                                 body)
-                                (else
-                                 (error "Unsupported content encoding" enc)))))
-                        (else body)))
-                      (else body))))
-              (set! (&request-body req) body)
-              body)
-            (finally
-             (request-close req))))))
-   (else #f)))
+  (using (req : request)
+    (&request-content req)))
+
+(def (&request-content req)
+  (using (req :- request)
+    (cond
+     (req.body)
+     (req.sock
+      => (lambda (sock)
+           (let (headers (request-headers req))
+             (try
+              (let* ((body (http-request-read-body req headers))
+                     (body
+                      (cond-expand
+                        (config-enable-zlib
+                         (cond
+                          ((assoc "Content-Encoding" headers)
+                           => (lambda (enc)
+                                (case (cdr enc)
+                                  (("gzip" "deflate")
+                                   (uncompress body))
+                                  (("identity")
+                                   body)
+                                  (else
+                                   (error "Unsupported content encoding" enc)))))
+                          (else body)))
+                        (else body))))
+                (set! req.body body)
+                body)
+              (finally
+               (request-close req))))))
+     (else #f))))
 
 (def (request-text req)
-  (def (get-text enc)
-    (if (eq? enc 'UTF-8)
-      (utf8->string (request-content req))
-      (bytes->string (request-content req) enc)))
-  (cond
-   ((request-encoding req) => get-text)
-   (else
-    (get-text 'UTF-8))))
+  (using (req : request)
+    (def (get-text enc)
+      (if (eq? enc 'UTF-8)
+        (utf8->string (&request-content req))
+        (bytes->string (&request-content req) enc)))
+    (cond
+     ((request-encoding req) => get-text)
+     (else
+      (get-text 'UTF-8)))))
 
 (def (request-json req)
   (string->json-object (request-text req)))
 
 (def (request-cookies req)
-  (with-list-builder (push!)
-    (let lp ((rest (request-headers req)))
-      (match rest
-        ([hd . rest]
-         (match hd
-           (["Set-Cookie" . cookie]
-            (push! cookie)
-            (lp rest))
-           (else
-            (lp rest))))
-        (else (void))))))
+  (using (req : request)
+    (with-list-builder (push!)
+      (let lp ((rest req.headers))
+        (match rest
+          ([hd . rest]
+           (match hd
+             (["Set-Cookie" . cookie]
+              (push! cookie)
+              (lp rest))
+             (else
+              (lp rest))))
+          (else (void)))))))
 
 (def (request-response-bytes req)
-  (try
-   (if (eq? (request-status req) 200)
-     (request-content req)
-     (error "HTTP request failed" (request-status req) (request-status-text req)))
-   (finally
-    (request-close req))))
+  (using (req : request)
+    (try
+     (if (eq? req.status 200)
+       (request-content req)
+       (error "HTTP request failed" req.status req.status-text))
+     (finally
+      (&request-close req)))))
 
 (def (http-get-content url)
   (and url (request-response-bytes (http-get url))))

@@ -3,6 +3,8 @@
 ;;; embedded HTTP/1.1 server; path multiplexer
 
 (import :std/error
+        :std/interface
+        :std/contract
         :std/misc/sync)
 (export #t)
 
@@ -11,6 +13,9 @@
 ;;   invoked by the http server to register a new handler
 ;; - {get-handler mux host path} => handler or #f
 ;;   invoked by a http request handler to resolve a path for the request host
+(interface Mux
+  (put-handler! host path handler)
+  (get-handler host path))
 
 ;; default mux implementation -- paths are resolved with an exact match
 (defstruct default-http-mux (t default)
@@ -22,12 +27,13 @@
 
 (defmethod {put-handler! default-http-mux}
   (lambda (self host path handler)
-    (sync-hash-put! (&default-http-mux-t self) path handler)))
+    (using (self :- default-http-mux)
+      (sync-hash-put! self.t path handler))))
 
 (defmethod {get-handler default-http-mux}
   (lambda (self host path)
-    (sync-hash-ref (&default-http-mux-t self) path
-                   (&default-http-mux-default self))))
+    (using (self :- default-http-mux)
+      (sync-hash-ref self.t path self.default))))
 
 ;; recursive mux -- resolves paths up to their parent
 (defstruct (recursive-http-mux default-http-mux) ())
@@ -37,15 +43,16 @@
 
 (defmethod {get-handler recursive-http-mux}
   (lambda (self host path)
-    (sync-hash-do (&default-http-mux-t self)
-      (lambda (ht)
-        (let lp ((path path))
-          (cond
-           ((hash-get ht path))
-           ((string-rindex path #\/)
-            => (lambda (ix) (lp (substring path 0 ix))))
-           (else
-            (&default-http-mux-default self))))))))
+    (using (self :- recursive-http-mux)
+      (sync-hash-do self.t
+        (lambda (ht)
+          (let lp ((path path))
+            (cond
+             ((hash-get ht path))
+             ((string-rindex path #\/)
+              => (lambda (ix) (lp (substring path 0 ix))))
+             (else
+              self.default))))))))
 
 ;; static mux -- paths are resolved in a static hash table, which elides the need for a mutex
 (defstruct static-http-mux (t default)
@@ -61,8 +68,8 @@
 
 (defmethod {get-handler static-http-mux}
   (lambda (self host path)
-    (hash-ref (&static-http-mux-t self) path
-              (&static-http-mux-default self))))
+    (using (self :- static-http-mux)
+      (hash-ref self.t path self.default))))
 
 ;; recursive static mux -- resolves paths up to their parent
 (defstruct (recursive-static-http-mux static-http-mux) ())
@@ -72,13 +79,14 @@
 
 (defmethod {get-handler recursive-static-http-mux}
   (lambda (self host path)
-    (let (ht (&static-http-mux-t self))
-      (let lp ((path path))
-        (cond
-         ((hash-get ht path))
-         ((string-rindex path #\/)
-          => (lambda (ix) (lp (substring path 0 ix))))
-         (else (&static-http-mux-default self)))))))
+    (using (self :- static-http-mux)
+      (let (ht self.t)
+        (let lp ((path path))
+          (cond
+           ((hash-get ht path))
+           ((string-rindex path #\/)
+            => (lambda (ix) (lp (substring path 0 ix))))
+           (else self.default)))))))
 
 ;; custom mux -- it dispatches all resolutions/registrations to user supplied functions
 (defstruct custom-http-mux (get put)
@@ -90,8 +98,10 @@
 
 (defmethod {get-handler custom-http-mux}
   (lambda (self host path)
-    ((&custom-http-mux-get self) host path)))
+    (using (self :- custom-http-mux)
+      (self.get host path))))
 
 (defmethod {put-handler! custom-http-mux}
   (lambda (self host path handler)
-    ((&custom-http-mux-put self) host path handler)))
+    (using (self :- custom-http-mux)
+      (self.put host path handler))))
