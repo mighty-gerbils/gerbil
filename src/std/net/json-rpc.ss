@@ -138,8 +138,9 @@
                log: (log #f)
                http-method: (http-method 'POST))
   (def id (id-counter))
+  (def encoded-params (param-encoder params))
   (when log
-    (log [json-rpc: server-url method: method params: params id: id]))
+    (log [json-rpc: server-url method: method params: encoded-params id: id]))
   (def response-bytes
     (request-response-bytes
      (case http-method
@@ -147,10 +148,10 @@
         (let (data
               (try (json-object->bytes
                     (json-rpc-request jsonrpc: json-rpc-version
-                                      method: method params: params id: id))
+                                      method: method params: encoded-params id: id))
                    (catch (e)
                      (raise/context
-                      (MalformedRequest method: method params: params
+                      (MalformedRequest method: method params: encoded-params
                                         message: (error-message e))))))
           (http-post server-url
                      auth: auth
@@ -174,7 +175,7 @@
        ((GET)
         (set! id (number->string id)) ;; GET method wants string id.
         (let* ((base64-params
-                (try (u8vector->base64-string (json-object->bytes params))
+                (try (u8vector->base64-string (json-object->bytes encoded-params))
                      (catch (e)
                        (raise/context (MalformedRequest
                                        method: method params: params

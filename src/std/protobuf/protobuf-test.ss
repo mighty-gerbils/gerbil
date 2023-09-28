@@ -67,6 +67,9 @@
         optional: (g 7 float)
         optional: (h 8 double))
 
+      (defmessage Test7
+        required: (a 1 bytes))
+
       (check-marshal-unmarshal (Test1 a: 150)
                                BufferedReader-read-Test1 BufferedWriter-write-Test1)
       (check-marshal-unmarshal (Test2 b: "testing")
@@ -79,6 +82,8 @@
                                BufferedReader-read-Test5 BufferedWriter-write-Test5)
       (check-marshal-unmarshal (Test6 a: -3 b: -5 c: 10 d: -20 e: 100 f: -100 g: 3.5 h: 7.0)
                                BufferedReader-read-Test6 BufferedWriter-write-Test6)
+      (check-marshal-unmarshal (Test7 a: #u8(1 2 3))
+                               BufferedReader-read-Test7 BufferedWriter-write-Test7)
       )
 
     (test-case "test oneof"
