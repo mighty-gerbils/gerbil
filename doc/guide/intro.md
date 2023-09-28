@@ -185,11 +185,14 @@ application.
 All the usual Scheme macros are available, with common
 syntactic forms described later in the guide.
 
-### Structs and Classes
+### Objective Gerbil
 
-Gerbil supports Object-oriented programming with structs and
-classes. Structs are index-based types with single inheritance,
-while classes are slot-based types with multiple inheritance.
+Gerbil supports Object-oriented programming with structs, classes, and
+interfaces. Structs are index-based types with single inheritance,
+while classes are slot-based types with multiple
+inheritance. Interfaces are akin to type-classses, and they pack an
+object with its method implementatio for safe and efficient method
+calls.
 
 #### Structs
 
@@ -521,6 +524,10 @@ Let's compile and time the code above:
 See the [Interfaces](/reference/std/interface.md) package documentation
 for more details.
 
+
+#### Contracts, Type Annotations and Dotted Notation
+
+(TODO)
 
 ### Pattern Matching
 
