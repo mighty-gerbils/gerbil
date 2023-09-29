@@ -2,6 +2,15 @@
 
 The `:std/interface` module provides the implementation of interfaces.
 
+::: tip To use the bindings from this module:
+```scheme
+(import :std/interface)
+```
+:::
+
+
+## General
+
 Interfaces declare the methods that an object must implement and
 provide a constructor to package an object together with the method
 implementations in a flat instance. This allows interface method
@@ -10,13 +19,6 @@ Furthermore, once an interface has been instantiated for some class,
 the system keeps a prototype instance in cache; this allows subsequent
 instantiations to reduce to a single hash table lookup to the
 prototype which is then cloned.
-
-::: tip To use the bindings from this module:
-```scheme
-(import :std/interface)
-```
-:::
-
 
 ## Defining interfaces
 
@@ -72,6 +74,8 @@ Given these interface definitions, the macro will generate rougly the following:
 (def Reader::descriptor ...)
 (def (Reader? obj) ...)
 (def (is-Reader? obj) ...)
+(def (Reader-close obj) ...)
+(def (&Reader-close obj) ...)
 (def (Reader-read obj arg ...) ...)
 (def (&Reader-read obj arg ...) ...)
 ```
@@ -90,6 +94,9 @@ Given these interface definitions, the macro will generate rougly the following:
 - The `&Closer-close` procedure is the _unchecked_ variant, which expects an exact instance
   of the interface, extracts the object from the instance and dispatches to the method
   implementation.
+- The `Reader-close` procedure casts the object to be an exact `Reader` instance and
+  dispatches to `&Reader-close`.
+- The `&Reader-close` procedure dispatches the method to the implementation.
 - The `Reader-read` procedure _checks the contract_, casts the object to an exact instance
   of `Reader` and dispatches to `&Reader-read`.
 - The `&Reader-read` procedure dispatches the method to the implementation.
