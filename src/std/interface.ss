@@ -540,7 +540,7 @@
   (def (make-checked-method-def interface-name method-name descriptor klass method-impl-name unchecked-method-impl-name signature offset)
     (with-syntax ((interface-name interface-name)
                   (method method-impl-name)
-                  (unchecked unchcked-method-imple-name))
+                  (unchecked unchecked-method-impl-name))
       (if (stx-list? signature)
         (with-syntax* (((in ...) (checked-method-arguments-in signature))
                        ((out ...) (method-arguments-out signature))
@@ -549,9 +549,9 @@
                           (interface-name self)))
                        (dispatch
                         (syntax/loc stx
-                          (uchecked cast-self out ...)))
+                          (unchecked cast-self out ...)))
                        (body
-                        (make-checked-method-body interface-name signature #'dispatch)))
+                        (make-checked-method-body #'interface-name signature #'dispatch)))
           (syntax/loc stx
             (def (method self in ...)
               body)))
@@ -565,7 +565,7 @@
                         (syntax/loc stx
                           (apply unchecked cast-self out ...)))
                        (body
-                        (make-checked-method-body name signature #'dispatch)))
+                        (make-checked-method-body #'interface-name signature #'dispatch)))
           (syntax/loc stx
             (def (method self . in)
               body))))))
@@ -602,7 +602,7 @@
   (def (make-method-defs interface-name descriptor klass)
     (lambda (method-name method-impl-name unchecked-method-impl-name signature offset)
       (with-syntax ((checked-method-def
-                     (make-checked-method-def inteface-name method-name
+                     (make-checked-method-def interface-name method-name
                                               descriptor klass
                                               method-impl-name
                                               unchecked-method-impl-name
