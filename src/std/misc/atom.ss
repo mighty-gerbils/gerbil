@@ -16,6 +16,7 @@
 
 (export atom
         (rename: Atom-value atom-deref)
+        (rename: Atom? atom?)
         (rename: swap! atom-swap!)
         (rename: swap-values! atom-swap-values!)
         (rename: reset! atom-reset!)
@@ -112,7 +113,6 @@
       (let (mx (&Atom-mutex a))
         (mutex-lock! mx)
         (let (new (1+ (&Atom-value a)))
-          (set! (&Atom-value a)
-            new)
+          (set! (&Atom-value a) new)
           (mutex-unlock! mx)
           new)))))

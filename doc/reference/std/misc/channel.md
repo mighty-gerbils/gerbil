@@ -280,7 +280,7 @@ consumed.
 
 ::: tip Examples:
 ``` scheme
-> (import :std/iter :gerbil/gambit/threads)
+> (import :std/iter)
 > (def (consume ch)
     (for/fold (sum 0) (x ch)
       (+ x sum)))

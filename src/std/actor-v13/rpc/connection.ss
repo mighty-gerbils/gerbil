@@ -569,7 +569,7 @@
         (begin
           (warnf "unexpected control message; unknown stream ~a" cont)
           (unless (!abort? content)
-            (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg)))))))
+            (dispatch-remote-error (make-!error "unknown stream" cont) (message-dest msg)))))))
 
   (def (value-k obj)
     (##vector-ref obj (fx1- (##vector-length obj))))

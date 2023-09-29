@@ -417,7 +417,7 @@
          ((values pkg tag) (pkg+tag pkg))
          (dest (path-expand pkg root)))
     (unless (file-exists? dest)
-      (error "Cannot update uknown package" pkg))
+      (error "Cannot update unknown package" pkg))
     (and (not (file-symbolic-link? dest))
          (pkg-fetch-git pkg tag))))
 

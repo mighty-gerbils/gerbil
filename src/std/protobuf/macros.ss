@@ -571,7 +571,7 @@
 (defscalar-type double   FIXED64 double)
 (defscalar-type float    FIXED32 float)
 (defscalar-type string   VARLEN  delimited-string)
-(defscalar-type bytes    VARLEN  delimited-bytes)
+(defscalar-type bytes    VARLEN  delimited-u8vector)
 
 (defrules defpackage ()
   ((_ id type-id ...)

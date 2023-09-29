@@ -8,6 +8,7 @@
   (displayln "Options: ")
   (displayln "  -h|--help|help                   display this help message exit")
   (displayln "  -v||--version|version            display the system version and exit")
+  (displayln "  -L|--load module|file            import a module (if begins with :) or load a file")
   (displayln "  -l|--lang module                 set the current interpretation language; must precede any evaluation")
   (displayln "  -e|--eval <expr>                 evaluate an expression")
   (displayln)
@@ -40,6 +41,15 @@
          (gxi-print-usage!))
         ((member hd '("-v" "--version"))
          (displayln (gerbil-system-version-string)))
+        ((member hd '("-L" "--load"))
+         (match rest
+           ([x . rest]
+            (if (string-prefix? ":" x)
+              (eval `(import ,(string->symbol x)))
+              (load x))
+            (lp rest))
+           (else
+            (error "missing argument for file to load"))))
         ((member hd '("-l" "--lang"))
          (if can-set-lang?
            (match rest
@@ -75,7 +85,7 @@
              (enter-repl!)
              (lp rest))))
         ((string-prefix? "-" hd)
-         (error "uknown option; try -h or --help for options" hd))
+         (error "unknown option; try -h or --help for options" hd))
         ((string-prefix? ":" hd)
          (set! can-set-lang? #f)
          (set! end-interactive? #f)
