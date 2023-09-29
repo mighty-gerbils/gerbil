@@ -122,8 +122,7 @@ Besides the abstraction, there are also performance reasons to use interfaces.
 If you are interacting with an object using methods and you make many
 method invocations, you should consider using interfaces.
 
-Here is an example that demonstrates the performance advantages over dynamic dispatch using
-a dynamically loaded module in the interpreter:
+Here is an example that demonstrates the performance advantages over dynamic dispatch:
 ```scheme
 (interface Operation
   (start!)
