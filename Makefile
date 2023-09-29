@@ -4,11 +4,14 @@ build:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh
 
 install:
-	./install.sh
+	DESTDIR="$(DESTDIR)" ./install.sh
+
+check:
+	./build.sh env gxtest ./...
 
 clean:
 	rm -rf build
 	rm -rf bootstrap
 	cd src/gambit && make clean
 
-.PHONY: all install clean
+.PHONY: all install check clean
