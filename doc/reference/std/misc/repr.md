@@ -18,13 +18,31 @@
 
 Prints an evaluable source-code representation of *obj* to *port*, which
 defaults to `(current-output-port)`. That very representation can later be read
-back into an equivalent object.
+and evaluated back into an equivalent object.
 
 The behaviour of `print-representation` can be specialized for new classes of
 objects by defining new overloads on the `:pr` method, see `representable`.
 
 Note: *options* aren't doing anything as of now, but are reserved for future
-use.
+use. For instance, they may in the future be used to deal with circularity in
+the object graph, which `print-representation` does not currently handle.
+
+The goal is that printing an object with `print-representation`, `pr` or `prn`,
+or capturing its output in a string with `repr`, shall yield a representation
+that if copy-pasted into the REPL in some reasonable context would yield
+the same object as given as argument, up to `equal?`.
+In other words, the following equation should hold whenever possible,
+(though it is obviously not guaranteed on arbitrary user-defined objects):
+
+```scheme
+      (equal? (eval (call-with-input-string (repr o) read)) o)
+```
+
+Now, if no other suitable method is found, an object with be printed using the
+`#42 #;"<foo #42>"` notation wherein a magic syntax using the "serial number"
+syntax, that only works in the same context and same thread as the printer
+for reading back, but still produces as much information as possible in a
+subsequent `#;` comment. You can use the `#n` handle to query the object.
 
 ::: tip Examples:
 ``` scheme
@@ -84,7 +102,7 @@ Short for `print-representation`.
 [[1 'x ...] [2 'y ...] [3 'z ...]]
 > (defstruct gerbil (name age greeting))
 > (pr (make-gerbil "Cinnamon" 6 "Morning, everyone!"))
-(begin0 #634 "#<gerbil #634>")    ; unrepresentable by default
+#634 #;"#<gerbil #634>"    ; unrepresentable by default
 ```
 :::
 
@@ -132,7 +150,7 @@ use.
 ``` scheme
 > (defstruct node (data next prev))
 > (repr (make-node #f #f #f))
-"(begin0 #635 \"#<node #635>\")"
+"#635 #;\"#<node #635>\""
 > (repr (node-data (make-node #(1 2 3) #f #f)))
 "(vector 1 2 3)"
 ```
@@ -155,7 +173,7 @@ default, if a class does not provide its own implementation, then
 > (displayln p)
 #<point #4>
 > (prn p)
-(begin0 #4 "#<point #4>")    ; print-unrepresentable-object
+#4 #;"#<point #4>"    ; print-unrepresentable-object
 
 > (import :std/format)
 > (defmethod {:pr point}
@@ -198,9 +216,9 @@ use.
 > (def q (make-queue))
 > (enqueue! q 100)
 > (prn q)
-(begin0 #9 "#<queue #9>")    ; calls print-unrepresentable-object
+#9 #;"#<queue #9>"    ; calls print-unrepresentable-object
 > (print-unrepresentable-object q)
-(begin0 #9 "#<queue #9>")
+#9 #;"#<queue #9>"
 ```
 :::
 

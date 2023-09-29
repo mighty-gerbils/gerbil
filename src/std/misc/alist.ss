@@ -27,7 +27,7 @@
 (def (plist->alist plist)
   (let loop ((p plist))
     (match p
-      ([k v . rest] (cons (cons k v) (loop rest)))
+      ([k v . rest] (acons k v (loop rest)))
       ([] [])
       (else
        (raise-bad-argument plist->alist "proper plist" plist)))))
