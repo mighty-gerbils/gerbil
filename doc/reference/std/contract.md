@@ -45,6 +45,53 @@ The macro expands the declarations and creates a block that evaluates the body w
     - If the declaration is a type assertion with `:-`, then the unchecked facade procedure
       will be used.
 
+### Example
+
+Here is an example from the standard library:
+```scheme
+(def (lru-cache-ref lru key (default absent-obj))
+  (using (lru : lru-cache)
+    (cond
+     ((hash-get lru.ht key)
+      => (lambda (n)
+           (using (n :- node)
+             (lru-cache-touch! lru n)
+             n.val)))
+     ((eq? default absent-obj)
+      (raise-unbound-key lru-cache-ref lru key))
+     (else default))))
+
+(def (lru-cache-touch! lru n)
+  (using ((lru :- lru-cache)
+          (n :- node))
+    (let ((hd lru.hd)
+          (tl lru.tl))
+      (using ((hd :- node)
+              (tl :- node))
+        (cond
+         ((eq? n hd))
+         ((eq? n tl)
+          (let (prev n.prev)
+            (using (prev :- node)
+              (set! prev.next #f)
+              (set! lru.tl prev)
+              (set! n.next hd)
+              (set! hd.prev n)
+              (set! n.prev #f)
+              (set! lru.hd n))))
+         (else
+          (let ((prev n.prev)
+                (next n.next))
+            (using ((prev :- node)
+                    (next :- node))
+              (set! prev.next next)
+              (set! next.prev prev)
+              (set! n.next hd)
+              (set! hd.prev n)
+              (set! n.prev #f)
+              (set! lru.hd n)))))))))
+```
+
 ### maybe
 ```scheme
 (maybe predicate) -> lambda (o) -> bool
