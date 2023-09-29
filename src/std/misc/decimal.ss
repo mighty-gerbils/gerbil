@@ -2,6 +2,7 @@
   :gerbil/gambit
   :std/srfi/141
   :std/error
+  :std/contract
   :std/io
   :std/iter
   :std/misc/number
@@ -72,95 +73,96 @@
   (check-argument (not (and (char? group-separator) exponent-allowed
                             (string-index exponent-allowed group-separator)))
                   "group-separator not in exponent-allowed" [group-separator exponent-allowed])
-  (def numerator 0)
-  (def denominator 1)
-  (def sign 1)
-  (def exponent 0)
-  (def exponent-sign 1)
-  (def valid? #f) ;; have we seen at least one digit
-  (def (peek) (PeekableStringReader-peek-char reader))
-  (def c (peek))
-  (def (bad) (raise-parse-error parse-decimal "Unexpected character" #f pre-reader))
-  (def (next) (PeekableStringReader-read-char reader) (set! c (peek)))
-  (def (parse-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
+  (using (reader : PeekableStringReader)
+    (def numerator 0)
+    (def denominator 1)
+    (def sign 1)
+    (def exponent 0)
+    (def exponent-sign 1)
+    (def valid? #f) ;; have we seen at least one digit
+    (def (peek) (reader.peek-char))
+    (def c (peek))
+    (def (bad) (raise-parse-error parse-decimal "Unexpected character" #f pre-reader))
+    (def (next) (reader.read-char) (set! c (peek)))
+    (def (parse-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
 
-  (let/cc return
-    (when (eof-object? c) (raise-parse-error parse-decimal "Unexpected EOF" #!eof pre-reader))
-    (when sign-allowed? (set! sign (parse-sign)))
-    (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
-    (def (parse-left-digit-or-group-separator)
-      (cond
-       ((char-ascii-digit c) =>
-        (lambda (d)
-          (set! numerator (+ (* numerator 10) d))
-          (set! valid? #t)
+    (let/cc return
+      (when (eof-object? c) (raise-parse-error parse-decimal "Unexpected EOF" #!eof pre-reader))
+      (when sign-allowed? (set! sign (parse-sign)))
+      (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
+      (def (parse-left-digit-or-group-separator)
+        (cond
+         ((char-ascii-digit c) =>
+          (lambda (d)
+            (set! numerator (+ (* numerator 10) d))
+            (set! valid? #t)
+            (next)
+            (parse-left-digit-or-group-separator)))
+         ((and group-separator (eqv? group-separator c))
           (next)
-          (parse-left-digit-or-group-separator)))
-       ((and group-separator (eqv? group-separator c))
-        (next)
-        (parse-left-digit-or-group-separator))
-       (else (maybe-decimal-mark))))
-    (def (maybe-decimal-mark)
-      (cond
-       ((eqv? c decimal-mark)
-        (next)
-        (if valid? ;; if we have seen a left digit
-          (maybe-right-digit)
-          (parse-right-digit)))
-       (valid?
-        (maybe-exponent-marker))
-       (else
-        (bad))))
-    (def (parse-right-digit)
-      (cond
-       ((char-ascii-digit c) =>
-        (lambda (d)
-          (set! numerator (+ (* numerator 10) d))
-          (set! denominator (* denominator 10))
-          (set! valid? #t)
+          (parse-left-digit-or-group-separator))
+         (else (maybe-decimal-mark))))
+      (def (maybe-decimal-mark)
+        (cond
+         ((eqv? c decimal-mark)
           (next)
-          (maybe-right-digit)))
-       (else (bad))))
-    (def (maybe-right-digit)
-      (cond
-       ((char-ascii-digit c) =>
-        (lambda (d)
-          (set! numerator (+ (* numerator 10) d))
-          (set! denominator (* denominator 10))
-          (set! valid? #t)
+          (if valid? ;; if we have seen a left digit
+            (maybe-right-digit)
+            (parse-right-digit)))
+         (valid?
+          (maybe-exponent-marker))
+         (else
+          (bad))))
+      (def (parse-right-digit)
+        (cond
+         ((char-ascii-digit c) =>
+          (lambda (d)
+            (set! numerator (+ (* numerator 10) d))
+            (set! denominator (* denominator 10))
+            (set! valid? #t)
+            (next)
+            (maybe-right-digit)))
+         (else (bad))))
+      (def (maybe-right-digit)
+        (cond
+         ((char-ascii-digit c) =>
+          (lambda (d)
+            (set! numerator (+ (* numerator 10) d))
+            (set! denominator (* denominator 10))
+            (set! valid? #t)
+            (next)
+            (maybe-right-digit)))
+         (else (maybe-exponent-marker))))
+      (def (maybe-exponent-marker)
+        (cond
+         ((and exponent-allowed (string-index exponent-allowed c))
+          (set! valid? #f) ;; invalid until we finish parsing the exponent
           (next)
-          (maybe-right-digit)))
-       (else (maybe-exponent-marker))))
-    (def (maybe-exponent-marker)
-      (cond
-       ((and exponent-allowed (string-index exponent-allowed c))
-        (set! valid? #f) ;; invalid until we finish parsing the exponent
-        (next)
-        (maybe-exponent-sign))
-       (else (done))))
-    (def (maybe-exponent-sign)
-      (set! exponent-sign (parse-sign))
-      (parse-exponent-digit))
-    (def (parse-exponent-digit)
-      (cond
-       ((char-ascii-digit c) =>
-        (lambda (d)
-          (set! exponent (+ (* exponent 10) d))
-          (set! valid? #t)
-          (next)
-          (maybe-exponent-digit)))
-        (else (bad))))
-    (def (maybe-exponent-digit)
-      (cond
-       ((char-ascii-digit c) =>
-        (lambda (d)
-          (set! exponent (+ (* exponent 10) d))
-          (set! valid? #t)
-          (next)
-          (maybe-exponent-digit)))
-       (else
-        (done))))
-    (parse-left-digit-or-group-separator)))
+          (maybe-exponent-sign))
+         (else (done))))
+      (def (maybe-exponent-sign)
+        (set! exponent-sign (parse-sign))
+        (parse-exponent-digit))
+      (def (parse-exponent-digit)
+        (cond
+         ((char-ascii-digit c) =>
+          (lambda (d)
+            (set! exponent (+ (* exponent 10) d))
+            (set! valid? #t)
+            (next)
+            (maybe-exponent-digit)))
+         (else (bad))))
+      (def (maybe-exponent-digit)
+        (cond
+         ((char-ascii-digit c) =>
+          (lambda (d)
+            (set! exponent (+ (* exponent 10) d))
+            (set! valid? #t)
+            (next)
+            (maybe-exponent-digit)))
+         (else
+          (done))))
+      (parse-left-digit-or-group-separator))))
 
 ;; String sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) allow-leading-whitespace?:Bool allow-trailing-whitespace?:Bool start:Nat end:(OrFalse Nat) -> Decimal
 (def (string->decimal s

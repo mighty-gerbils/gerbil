@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/format
         :std/srfi/19)
@@ -97,11 +98,12 @@
          (let (opts (get-logger-options))
            (cond
             ((logger-options? opts)
-             (cond
-              ((hash-get (logger-options-sources opts) source)
-               => (cut log-it logger <>))
-              (else
-               (log-it logger (logger-options-threshold opts)))))
+             (using (opts :- logger-options)
+               (cond
+                ((hash-get opts.sources source)
+                 => (cut log-it logger <>))
+                (else
+                 (log-it logger opts.threshold)))))
             (else
              (log-it logger opts))))))))
 

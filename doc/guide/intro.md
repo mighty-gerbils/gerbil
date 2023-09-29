@@ -185,11 +185,14 @@ application.
 All the usual Scheme macros are available, with common
 syntactic forms described later in the guide.
 
-### Structs and Classes
+### Objective Gerbil
 
-Gerbil supports Object-oriented programming with structs and
-classes. Structs are index-based types with single inheritance,
-while classes are slot-based types with multiple inheritance.
+Gerbil supports object-oriented programming with structs, classes, and
+interfaces. Structs are index-based types with single inheritance,
+while classes are slot-based types with multiple
+inheritance. Interfaces are akin to type-classes, and they pack an
+object with its method implementations for safe and efficient method
+calls.
 
 #### Structs
 
@@ -521,6 +524,51 @@ Let's compile and time the code above:
 See the [Interfaces](/reference/std/interface.md) package documentation
 for more details.
 
+
+#### Contracts, Type Annotations and Dotted Notation
+
+Starting with Gerbil v0.18, The `:std/contract` package provides macros for contracts and type annotations.
+
+You can attach contracts to interface method definitions (see
+[Interfaces](/reference/std/interface.md)) and you can use the `using`
+macro to provide type checks and assertions, accessors and mutators
+for structs and classes, and interface method calls with the dotted
+notation.
+
+Here is a simple example:
+```scheme
+(import :std/contract)
+(defstruct A (x y))
+(defclass (B A) (z) constructor: :init!)
+(defmethod {:init! B}
+  (lambda (self x y z)
+    (using (self :- B)
+      (set! self.x x)
+      (set! self.y y)
+      (set! self.z z))))
+
+> (def b (B 1 2 3))
+> (using (b : B) (* (+ b.x b.y) b.z))
+9
+
+```
+
+Furthermore, dynamic method calls with the `{...}` notation also expand dotted identifiers.
+So `{obj.method 1 2 2}` is equivalent to `{method obj 1 2 3}`.
+
+Extending the example further:
+```scheme
+(defmethod {do-it B}
+  (lambda (self factor)
+    (using (self :- B)
+      (* (+ self.x self.y) self.z factor))))
+
+> {b.do-it 1}
+9
+> {b.do-it 2}
+18
+
+```
 
 ### Pattern Matching
 

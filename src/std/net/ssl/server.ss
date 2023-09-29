@@ -4,6 +4,7 @@
 (export #t)
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/iter
         :std/interface
@@ -34,44 +35,50 @@
 
 (defmethod {:init! ssl-server-socket}
   (lambda (self bsock ctx)
-    (let (fields (##structure-length bsock))
-      (for (i (in-range 1 fields))
-        (##unchecked-structure-set!
-         self
-         (##unchecked-structure-ref bsock i basic-server-socket::t  #f)
-         i ssl-server-socket::t #f)))
-    (set! (&ssl-server-socket-ctx self) ctx)))
+    (using (self :- ssl-server-socket)
+      (let (fields (##structure-length bsock))
+        (for (i (in-range 1 fields))
+          (##unchecked-structure-set!
+           self
+           (##unchecked-structure-ref bsock i basic-server-socket::t  #f)
+           i ssl-server-socket::t #f)))
+      (set! self.ctx ctx))))
 
 (defmethod {accept ssl-server-socket}
   (lambda (self)
-    (let (clisock (server-socket-accept self))
-      (try
-       (ssl-server-upgrade clisock (&ssl-server-socket-ctx self))
-       (catch (e)
-         (StreamSocket-close clisock)
-         (raise e))))))
+    (using (self :- ssl-server-socket)
+      (let (clisock (server-socket-accept self))
+        (using (clisock :- StreamSocket)
+          (try
+           (ssl-server-upgrade clisock self.ctx)
+           (catch (e)
+             (clisock.close)
+             (raise e))))))))
 
 (def (ssl-server-upgrade clisock ctx)
-  (let* ((bsock (&interface-instance-object clisock))
-         (rsock (&basic-socket-sock bsock))
-         (ssl (check-ptr (SSL_new ctx)))
-         (_ (with-ssl-result (SSL_set_fd ssl (fd-e rsock))))
-         (sslsock (make-ssl-socket bsock ssl))
-         (deadline (make-timeout ssl-server-handshake-timeout #f))
-         (_ (set! (&basic-socket-timeo-in sslsock) deadline))
-         (_ (set! (&basic-socket-timeo-out sslsock) deadline)))
-    (try
-     (ssl-server-handshake sslsock)
-     (catch (e)
-       (foreign-release! ssl)
-       (raise e)))
-    (set! (&basic-socket-timeo-in sslsock) #f)
-    (set! (&basic-socket-timeo-out sslsock) #f)
-    (StreamSocket sslsock)))
+  (let (bsock (&interface-instance-object clisock))
+    (using (bsock :- basic-socket)
+      (let* ((rsock bsock.sock)
+             (ssl (check-ptr (SSL_new ctx)))
+             (_ (with-ssl-result (SSL_set_fd ssl (fd-e rsock))))
+             (sslsock (make-ssl-socket bsock ssl))
+             (deadline (make-timeout ssl-server-handshake-timeout #f)))
+        (using (sslsock :- ssl-socket)
+          (set! sslsock.timeo-in deadline)
+          (set! sslsock.timeo-out deadline)
+          (try
+           (ssl-server-handshake sslsock)
+           (catch (e)
+             (foreign-release! ssl)
+             (raise e)))
+          (set! sslsock.timeo-in #f)
+          (set! sslsock.timeo-out #f)
+          (StreamSocket sslsock))))))
 
 (def (ssl-server-handshake sock)
-  (let ((rsock (&basic-socket-sock sock))
-        (ssl (&ssl-socket-ssl sock)))
+  (using (sock :- ssl-socket)
+    (let ((rsock sock.sock)
+          (ssl sock.ssl))
     (with-basic-socket-read-lock sock
       (let lp ()
         (let (result (SSL_accept ssl))
@@ -79,15 +86,15 @@
            ((and (fixnum? result) (fx> result 0)) (void))
            ((eqv? result SSL_ERROR_WANT_READ)
             (let (wait-result
-                  (basic-socket-wait-io! sock (fd-io-in rsock) (&basic-socket-timeo-in sock)))
+                  (basic-socket-wait-io! sock (fd-io-in rsock) sock.timeo-in))
               (if wait-result
                 (lp)
                 (raise-timeout ssl-accept "receive timeout"))))
            ((eqv? result SSL_ERROR_WANT_WRITE)
             (let (wait-result
-                  (basic-socket-wait-io! sock (fd-io-out rsock) (&basic-socket-timeo-out sock)))
+                  (basic-socket-wait-io! sock (fd-io-out rsock) sock.timeo-out))
               (if wait-result
                 (lp)
                 (raise-timeout ssl-accept "receive timeout"))))
            (else
-            (raise-ssl-error ssl-accept result))))))))
+            (raise-ssl-error ssl-accept result)))))))))

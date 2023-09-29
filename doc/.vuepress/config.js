@@ -71,6 +71,7 @@ module.exports = {
                       'web',
                       'foreign',
                       'interface',
+                      'contract',
                       'stdio',
                       'actor',
                       'crypto',

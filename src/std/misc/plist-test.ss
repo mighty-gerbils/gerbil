@@ -19,7 +19,7 @@
       (check-equal? (let (p ['a 1 'b 2]) (premq! 'b p) p) ['a 1])
       (check-equal? (let (p ['a 1 'b 2]) (premq! 'c p) p) ['a 1 'b 2])
       (check-equal? (let (p []) (premq! 'a p) p) [])
-      (check-exception (premq! 'a ['a 1]) bad-argument-error?))
+      (check-exception (premq! 'a ['a 1]) contract-violation-error?))
     (test-case "test pset"
       (check-equal? (psetq ['a 1 'b 2] 'a 3) ['a 3 'b 2])
       (check-equal? (psetq ['a 1 'b 2] 'b 4) ['a 1 'b 4])

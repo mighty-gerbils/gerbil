@@ -4,13 +4,14 @@
 
 (import :std/sugar
         :std/error
+        :std/contract
         :std/logger)
 (export make-conpool conpool?
         conpool-get conpool-put conpool-release conpool-close)
 
 (deflogger connpool)
 
-(defstruct conpool (e mx cv conns out max)
+(defstruct conpool (connect mx cv conns out max)
   constructor: :init!
   final: #t)
 
@@ -21,65 +22,58 @@
       [] [] max)))
 
 (def (conpool-get cp (timeo absent-obj))
-  (with ((conpool connect mx cv _ out max) cp)
+  (using (cp : conpool)
     (let lp ()
-      (mutex-lock! mx)
-      (match (conpool-conns cp)
+      (mutex-lock! cp.mx)
+      (match cp.conns
         ([conn . rest]
-         (set! (conpool-conns cp)
-           rest)
-         (set! (conpool-out cp)
-           (cons conn out))
-         (mutex-unlock! mx)
+         (set! cp.conns rest)
+         (set! cp.out (cons conn cp.out))
+         (mutex-unlock! cp.mx)
          conn)
         (else
-         (if (or (not max) (fx< (length out) max))
+         (if (or (not cp.max) (fx< (length cp.out) cp.max))
            (let (conn
                  (try
-                  (connect)
+                  (cp.connect)
                   (catch (e)
-                    (mutex-unlock! mx)
+                    (mutex-unlock! cp.mx)
                     (raise e))))
-             (set! (conpool-out cp)
-               (cons conn out))
-             (mutex-unlock! mx)
+             (set! cp.out (cons conn cp.out))
+             (mutex-unlock! cp.mx)
              conn)
-           (let (res (mutex-unlock! mx cv timeo))
+           (let (res (mutex-unlock! cp.mx cp.cv timeo))
              (if res
                (lp)
                (raise-timeout conpool-get "Error getting connection; timeout")))))))))
 
 (def (conpool-put cp conn)
-  (with ((conpool _ mx cv conns out) cp)
-    (mutex-lock! mx)
-    (set! (conpool-conns cp)
-      (cons conn conns))
-    (set! (conpool-out cp)
-      (remq conn out))
-    (condition-variable-signal! cv)
-    (mutex-unlock! mx)))
+  (using (cp : conpool)
+    (mutex-lock! cp.mx)
+    (set! cp.conns (cons conn cp.conns))
+    (set! cp.out (remq conn cp.out))
+    (condition-variable-signal! cp.cv)
+    (mutex-unlock! cp.mx)))
 
 (def (conpool-release cp conn)
-  (with ((conpool _ mx cv conns out) cp)
-    (mutex-lock! mx)
-    (set! (conpool-out cp)
-      (remq conn out))
-    (mutex-unlock! mx)
+  (using (cp : conpool)
+    (mutex-lock! cp.mx)
+    (set! cp.out (remq conn cp.out))
+    (mutex-unlock! cp.mx)
     {destroy conn}))
 
 (def (conpool-close cp)
-  (def (close conn)
-    (try
-     {destroy conn}
-     (catch (e)
-       (errorf "error closing connection: ~a" e))))
+  (using (cp : conpool)
+    (def (close conn)
+      (try
+       {destroy conn}
+       (catch (e)
+         (errorf "error closing connection: ~a" e))))
 
-  (with ((conpool _ mx cv conns out) cp)
-    (mutex-lock! mx)
-    (for-each close conns)
-    (for-each close out)
-    (set! (conpool-e cp)
-      (cut error "Connection pool is closed"))
-    (set! (conpool-conns cp) [])
-    (set! (conpool-out cp) [])
-    (mutex-unlock! mx)))
+    (mutex-lock! cp.mx)
+    (for-each close cp.conns)
+    (for-each close cp.out)
+    (set! cp.connect (cut error "Connection pool is closed"))
+    (set! cp.conns [])
+    (set! cp.out [])
+    (mutex-unlock! cp.mx)))

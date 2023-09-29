@@ -2,9 +2,16 @@
 ;;; (C) vyzo at hackzen.org
 ;;; imperative queues
 
-(export queue make-queue queue? queue-length
-        queue-empty? non-empty-queue?
-        enqueue! enqueue-front! dequeue! queue-peek
+(import :std/error
+        :std/contract)
+(export queue make-queue queue?
+        queue-length &queue-length
+        queue-empty? &queue-empty?
+        non-empty-queue?
+        enqueue! &enqueue!
+        enqueue-front! &enqueue-front!
+        dequeue! &dequeue!
+        queue-peek &queue-peek
         queue->list)
 (declare (not safe))
 
@@ -14,70 +21,82 @@
 
 (defmethod {:init! queue}
   (lambda (self)
-    (struct-instance-init! self '() #f 0)))
+    (struct-instance-init! self [] #f 0)))
 
 (def (queue-empty? q)
-  (null? (queue-front q)))
+  (using (q : queue)
+    (&queue-empty? q)))
+
+(def (&queue-empty? q)
+  (using (q :- queue)
+    (null? q.front)))
 
 (def (non-empty-queue? q)
-  (pair? (queue-front q)))
+  (using (q : queue)
+    (pair? q.front)))
 
 (def (enqueue! q v)
-  (with ((queue front back length) q)
-    (if (null? front)
+  (using (q : queue)
+    (&enqueue! q v)))
+
+(def (&enqueue! q v)
+  (using (q :- queue)
+    (if (null? q.front)
       (let (front [v])
-        (set! (&queue-front q)
-          front)
-        (set! (&queue-back q)
-          front)
-        (set! (&queue-length q)
-          1))
+        (set! q.front front)
+        (set! q.back front)
+        (set! q.length 1))
       (let (new-back [v])
-        (set! (cdr back)
-          new-back)
-        (set! (&queue-back q)
-          new-back)
-        (set! (&queue-length q)
-          (fx1+ length))))))
+        (set! (cdr q.back) new-back)
+        (set! q.back new-back)
+        (set! q.length (fx1+ q.length))))))
 
 (def (enqueue-front! q v)
-  (if (queue-empty? q)
-    (enqueue! q v)
-    (with ((queue front _ length) q)
-      (let (new-front (cons v front))
-        (set! (&queue-front q)
-          new-front)
-        (set! (&queue-length q)
-          (fx1+ length))))))
+  (using (q : queue)
+    (&enqueue-front! q v)))
+
+(def (&enqueue-front! q v)
+  (using (q :- queue)
+    (if (&queue-empty? q)
+      (&enqueue! q v)
+      (let (new-front (cons v q.front))
+        (set! q.front new-front)
+        (set! q.length (fx1+ q.length))))))
 
 (def (dequeue! q (default absent-obj))
-  (with ((queue front back length) q)
+  (using (q : queue)
+    (&dequeue! q default)))
+
+(def (&dequeue! q (default absent-obj))
+  (using (q :- queue)
     (cond
-     ((eq? front back)
-      (let (v (car front))
-        (set! (&queue-front q) '())
-        (set! (&queue-back q) #f)
-        (set! (&queue-length q) 0)
+     ((eq? q.front q.back)
+      (let (v (car q.front))
+        (set! q.front [])
+        (set! q.back #f)
+        (set! q.length 0)
         v))
-     ((pair? front)
-      (let ((v (car front))
-            (new-front (cdr front)))
-        (set! (&queue-front q)
-          new-front)
-        (set! (&queue-length q)
-          (fx1- length))
+     ((pair? q.front)
+      (let ((v (car q.front))
+            (new-front (cdr q.front)))
+        (set! q.front new-front)
+        (set! q.length (fx1- q.length))
         v))
      ((eq? default absent-obj)
-      (error "cannot dequeue; empty queue" q))
+      (raise-context-error dequeue! "cannot dequeue; empty queue" q))
      (else default))))
 
 (def (queue-peek q (default absent-obj))
-  (with ((queue front) q)
+  (using (q : queue)
+    (&queue-peek q default)))
+
+(def (&queue-peek q (default absent-obj))
+  (using (q :- queue)
     (cond
-     ((pair? front)
-      (car front))
+     ((pair? q.front)
+      (car q.front))
      ((eq? default absent-obj)
-      (error "cannot peek; empty queue" q))
+      (raise-context-error queue-peek "cannot peek; empty queue" q))
      (else default))))
 
 (def (queue->list q)

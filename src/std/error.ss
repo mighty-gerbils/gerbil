@@ -13,7 +13,7 @@
         defraise/context
         raise/context
         StackTrace StackTrace?
-        BadArgument BadArgument? raise-bad-argument bad-argument-error? check-argument
+        check-argument
         exception-context
         IOError IOError? raise-io-error io-error?
         Closed Closed? raise-io-closed io-closed-error?
@@ -22,7 +22,9 @@
         Timeout Timeout? raise-timeout timeout-error?
         UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
-        UnsupportedMethod? raise-unsupported-method unsupported-method-error?
+        UnsupportedMethod UnsupportedMethod? raise-unsupported-method unsupported-method-error?
+        ContractViolation ContractViolation? raise-contract-violation contract-violation-error?
+        raise-bad-argument
         (rename: raise-bug BUG)
         is-it-bug?
         with-exception-stack-trace
@@ -59,9 +61,6 @@
              kons)
            defpredicate-alias)))))
 
-;; Input argument errors
-(deferror-class BadArgument () bad-argument-error?)
-
 ;; IO Errors
 (deferror-class IOError () io-error?)
 (deferror-class (PrematureEndOfInput IOError) () premature-end-of-input-error?)
@@ -78,6 +77,9 @@
 
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
+
+;; contract violations
+(deferror-class ContractViolation () contract-violation-error?)
 
 ;; utility macros
 (defsyntax (exception-context stx)
@@ -97,10 +99,9 @@
 
 (defrules check-argument ()
   ((_ expr expectation argument)
-   (unless expr
-     (raise (BadArgument (string-append "bad argument; expected " expectation)
-                         where: (exception-context argument)
-                         irritants:  ['argument argument])))))
+   (begin-annotation @contract
+     (unless expr
+       (raise-contract-violation argument expr (string-append "bad argument; expected " expectation))))))
 
 ;; check to the raiser!
 (defrules raise/context ()
@@ -119,10 +120,6 @@
        (Klass message
               where: (exception-context where)
               irritants: (cons 'where irritants)))))))
-
-(defraise/context (raise-bad-argument where expectation irritants ...)
-  (BadArgument (string-append "bad argument; expected " expectation)
-                irritants: [irritants ...]))
 
 (defraise/context (raise-io-error where message irritants ...)
   (IOError message irritants: [irritants ...]))
@@ -144,6 +141,12 @@
 
 (defraise/context (raise-unsupported-method where)
   (UnsupportedMethod "unsupported method" irritants: []))
+
+(defraise/context (raise-contract-violation where contract irritants ...)
+  (ContractViolation "contract violation" irritants: ['contract irritants ...]))
+
+(defraise/context (raise-bad-argument where expectation irritants ...)
+  (ContractViolation "contract violation" irritants: [expectation irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

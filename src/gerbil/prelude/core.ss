@@ -2000,7 +2000,7 @@ package: gerbil
                        ((values type-unchecked)
                         (or (alet (e (stx-getq unchecked: body))
                               [unchecked: e])
-                            []))
+                            [unchecked: #t]))
                        ((type-body ...)
                         [type-attr ...
                          type-id ...
@@ -2147,14 +2147,37 @@ package: gerbil
           (else
            (raise-syntax-error #f "Bad syntax; illegal method options" stx))))))
 
-    (defrules @method ()
-      ((_ id obj arg ...)
-       (and (identifier? #'id)
-            (stx-ormap ellipsis? #'(arg ...)))
-       (apply call-method obj 'id [arg ...]))
-      ((_ id obj arg ...)
-       (identifier? #'id)
-       (call-method obj 'id arg ...)))
+    (defsyntax (@method stx)
+      (def (dotted-identifier? id)
+        (and (identifier? id)
+             (let (id-str (symbol->string (stx-e id)))
+               (and (string-index id-str #\.)
+                    (let (split (string-split id-str #\.))
+                      (fx= (length split) 2))))))
+
+      (def (split-dotted id)
+        (let* ((id-str (symbol->string (stx-e id)))
+               (split (string-split id-str #\.)))
+          [(stx-identifier id (car split))
+           (stx-identifier id (cadr split))]))
+
+      (syntax-case stx ()
+        ((_ id arg ... last)
+         (and (dotted-identifier? #'id)
+              (stx-ormap ellipsis? #'(arg ...)))
+         (with-syntax (((object method) (split-dotted #'id)))
+           #'(apply call-method object 'method [arg ...])))
+        ((_ id arg ...)
+         (dotted-identifier? #'id)
+         (with-syntax (((object method) (split-dotted #'id)))
+           #'(call-method object 'method arg ...)))
+        ((_ id obj arg ...)
+         (and (identifier? #'id)
+              (stx-ormap ellipsis? #'(arg ...)))
+         #'(apply call-method obj 'id [arg ...]))
+        ((_ id obj arg ...)
+         (identifier? #'id)
+         #'(call-method obj 'id arg ...))))
 
     (defrules @ ()
       ((_ obj id)
@@ -2958,6 +2981,18 @@ package: gerbil
 
 (module <more-sugar>
   (export #t (phi: +1 #t))
+
+  ;; checked type contract
+  (defrules : ())
+
+  ;; checked predicate contract
+  (defrules :~ ())
+
+  ;; type assertion
+  (defrules :- ())
+
+  ;; default value
+  (defrules := ())
 
   (begin-syntax
     (defclass (setq-macro macro-object) ()

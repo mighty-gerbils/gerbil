@@ -2,6 +2,7 @@
 ;;; ̧© vyzo
 ;;; json io environment
 (import :std/error
+        :std/contract
         :std/sugar)
 (export #t)
 
@@ -24,9 +25,10 @@
 
 (defmethod {:init! env}
   (lambda (self)
-    (set! (&env-symbolic-keys self) (json-symbolic-keys))
-    (set! (&env-sort-keys self) (json-sort-keys))
-    (set! (&env-list-wrapper self) (json-list-wrapper))))
+    (using (self :- env)
+      (set! self.symbolic-keys (json-symbolic-keys))
+      (set! self.sort-keys (json-sort-keys))
+      (set! self.list-wrapper (json-list-wrapper)))))
 
 (defrule (raise-invalid-token where input char)
   (if (eof-object? char)

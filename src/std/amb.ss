@@ -5,6 +5,7 @@
 
 (import :std/sugar
         :std/error
+        :std/contract
         :std/misc/shuffle)
 (export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect
@@ -27,10 +28,11 @@
   (cond
    ((current-amb-state)
     => (lambda (state)
-         (cond
-          ((amb-state-end state) => invoke)
-          (else
-           ((amb-state-top state) +amb-exhausted+)))))
+         (using (state :- amb-state)
+           (cond
+            (state.end => invoke)
+            (else
+             (state.top +amb-exhausted+))))))
    (else
     (raise +amb-exhausted+))))
 
@@ -49,16 +51,17 @@
               (lambda () body rest ...)))
 
 (def (invoke-amb state thunk)
-  (let (amb-thread
-        (make-thread
-         (lambda ()
-           (let/cc top
-             (amb-state-top-set! state top)
-             (current-amb-state state)
-             (thunk)))
-         'amb))
-    (thread-start! amb-thread)
-    (thread-join! amb-thread)))
+  (using (state :- amb-state)
+    (let (amb-thread
+          (make-thread
+           (lambda ()
+             (let/cc top
+               (set! state.top top)
+               (current-amb-state state)
+               (thunk)))
+           'amb))
+      (thread-start! amb-thread)
+      (thread-join! amb-thread))))
 
 (defrule (defstate proc getf setf)
   (def* proc

@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/logger
         :std/net/address
@@ -86,60 +87,62 @@
           (lp)))))
 
   (let (state (repl-client-state))
-    (thread-start! (repl-state-reader state))
-    (parameterize ((current-input-port  (##repl-input-port))
-                   (current-output-port (##repl-output-port))
-                   (current-error-port  (##repl-output-port))
-                   (##current-user-interrupt-handler (cut ##handle-interrupt #f)))
-      (replx))
-    (close-port client)
-    (thread-terminate! (repl-state-reader state))))
+    (using (state :- repl-state)
+      (thread-start! state.reader)
+      (parameterize ((current-input-port  (##repl-input-port))
+                     (current-output-port (##repl-output-port))
+                     (current-error-port  (##repl-output-port))
+                     (##current-user-interrupt-handler (cut ##handle-interrupt #f)))
+        (replx))
+      (close-port client)
+      (thread-terminate! state.reader))))
 
 (def (repl-client-reader state in out repl-thread)
-  (def (loop mode)
-    (let (c (read-char in))
-      (if (eof-object? c)
-        (begin
-          (set! (repl-state-eof state) #t)
-          (close-output-port out))
-        (case mode
-          ((input)
-           (cond
-            ((char=? c #\xff)           ; telnet IAC
-             (loop c))
-            ((char=? c #\x04)           ; C-d
-             (close-output-port out)
-             (loop mode))
+  (using (state :- repl-state)
+    (def (loop mode)
+      (let (c (read-char in))
+        (if (eof-object? c)
+          (begin
+            (set! state.eof #t)
+            (close-output-port out))
+          (case mode
+            ((input)
+             (cond
+              ((char=? c #\xff)         ; telnet IAC
+               (loop c))
+              ((char=? c #\x04)         ; C-d
+               (close-output-port out)
+               (loop mode))
+              (else
+               (write-char c out)
+               (force-output out)
+               (loop mode))))
+            ((#\xfb #\xfc #\xfe)        ; WILL/WONT/DONT
+             (loop 'input))
+            ((#\xfd)                    ; DO
+             (when (char=? c #\x06)     ; timing mark
+               (let (client state.client)
+                 (write-u8vector '#u8(#xff #xfb #x06) client)
+                 (force-output client)))
+             (loop 'input))
+            ((#\xff)                    ; IAC
+             (case c
+               ((#\xf4)                 ; INTERRUPT (C-c)
+                (thread-async! repl-thread ##user-interrupt!)
+                (loop 'input))
+               ((#\xfb #\xfc #\xfd #\xfe) ; WILL/WONT/DO/DONT
+                (loop c))
+               (else
+                (loop 'input))))
             (else
-             (write-char c out)
-             (force-output out)
-             (loop mode))))
-          ((#\xfb #\xfc #\xfe)          ; WILL/WONT/DONT
-           (loop 'input))
-          ((#\xfd)                      ; DO
-           (when (char=? c #\x06)       ; timing mark
-             (let (client (repl-state-client state))
-               (write-u8vector '#u8(#xff #xfb #x06) client)
-               (force-output client)))
-           (loop 'input))
-          ((#\xff)                      ; IAC
-           (case c
-             ((#\xf4)                   ; INTERRUPT (C-c)
-              (thread-async! repl-thread ##user-interrupt!)
-              (loop 'input))
-             ((#\xfb #\xfc #\xfd #\xfe) ; WILL/WONT/DO/DONT
-              (loop c))
-             (else
-              (loop 'input))))
-          (else
-           (loop 'input))))))
+             (loop 'input))))))
 
-  (try
-   (loop 'input)
-   (catch (e)
-     (errorf "repl reader error: ~a" e)
-     (set! (repl-state-eof state) #t)
-     (close-output-port out))))
+    (try
+     (loop 'input)
+     (catch (e)
+       (errorf "repl reader error: ~a" e)
+       (set! state.eof #t)
+       (close-output-port out)))))
 
 (def (make-repl-client-state client thread)
   (let* (((values in-rd in-wr)
@@ -150,8 +153,9 @@
          (state (make-repl-state client channel #f #f))
          (reader (make-thread (lambda () (repl-client-reader state client in-wr thread))
                               'repl-client-reader)))
-    (set! (repl-state-reader state) reader)
-    state))
+    (using (state :- repl-state)
+      (set! state.reader reader)
+      state)))
 
 ;;; repl internals
 ;; override repl-context-command to provide sensibe behaviour on nested repl
@@ -161,19 +165,20 @@
     (cond
      ((repl-client-state)
       => (lambda (state)
-           (if (repl-state-eof state)
-             ;; hard eof, exit to repl invocation
-             (##repl-context-return repl-context (void))
-             ;; soft eof, close nested repl or exit to repl invocation
-             (begin
-               (##repl-channel-newline)
-               (cond
-                ((fx< 0 (macro-repl-context-level repl-context))
-                 (##repl-cmd-d repl-context))
-                ((##repl-channel-really-exit?)
-                 (##repl-context-return repl-context (void)))
-                (else
-                 (##repl-context-prompt repl-context)))))))
+           (using (state :- repl-state)
+             (if state.eof
+               ;; hard eof, exit to repl invocation
+               (##repl-context-return repl-context (void))
+               ;; soft eof, close nested repl or exit to repl invocation
+               (begin
+                 (##repl-channel-newline)
+                 (cond
+                  ((fx< 0 (macro-repl-context-level repl-context))
+                   (##repl-cmd-d repl-context))
+                  ((##repl-channel-really-exit?)
+                   (##repl-context-return repl-context (void)))
+                  (else
+                   (##repl-context-prompt repl-context))))))))
      (else
       (##default-repl-context-command repl-context src)))
     (##default-repl-context-command repl-context src)))

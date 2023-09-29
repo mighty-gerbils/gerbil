@@ -2,6 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous data structures
 
+(import :std/contract)
 (export make-sync-hash sync-hash?
         sync-hash-get sync-hash-ref sync-hash-key? sync-hash-put! sync-hash-remove!
         sync-hash-do)
@@ -18,32 +19,32 @@
   (sync-hash-ref sht key #f))
 
 (def (sync-hash-ref sht key default)
-  (with ((sync-hash ht mx) sht)
-    (mutex-lock! mx)
-    (let (val (hash-ref ht key default))
-      (mutex-unlock! mx)
+  (using (sht : sync-hash)
+    (mutex-lock! sht.mx)
+    (let (val (hash-ref sht.ht key default))
+      (mutex-unlock! sht.mx)
       val)))
 
 (def (sync-hash-key? sht key)
-  (with ((sync-hash ht mx) sht)
-    (mutex-lock! mx)
-    (let (res (hash-key? ht key))
-      (mutex-unlock! mx)
+  (using (sht : sync-hash)
+    (mutex-lock! sht.mx)
+    (let (res (hash-key? sht.ht key))
+      (mutex-unlock! sht.mx)
       res)))
 
 (def (sync-hash-put! sht key val)
-  (with ((sync-hash ht mx) sht)
-    (mutex-lock! mx)
-    (hash-put! ht key val)
-    (mutex-unlock! mx)))
+  (using (sht : sync-hash)
+    (mutex-lock! sht.mx)
+    (hash-put! sht.ht key val)
+    (mutex-unlock! sht.mx)))
 
 (def (sync-hash-remove! sht key)
-  (with ((sync-hash ht mx) sht)
-    (mutex-lock! mx)
-    (hash-remove! ht key)
-    (mutex-unlock! mx)))
+  (using (sht : sync-hash)
+    (mutex-lock! sht.mx)
+    (hash-remove! sht.ht key)
+    (mutex-unlock! sht.mx)))
 
 (def (sync-hash-do sht fun)
-  (with ((sync-hash ht mx) sht)
-    (with-lock mx
-      (cut fun ht))))
+  (using (sht : sync-hash)
+    (with-lock sht.mx
+      (cut fun sht.ht))))

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; chunked buffers
 (import :std/error
+        :std/contract
         :std/srfi/1
         ../interface
         ./types)
@@ -9,14 +10,16 @@
 (declare (not safe))
 
 (def (bio-chunked-write-bytes bio input input-start input-end)
-  (let (chunk (subu8vector input input-start input-end))
-    (set! (&chunked-output-buffer-chunks bio)
-      (cons chunk (&chunked-output-buffer-chunks bio)))
-    (void)))
+  (using (bio :- chunked-output-buffer)
+    (let (chunk (subu8vector input input-start input-end))
+      (set! bio.chunks
+        (cons chunk bio.chunks))
+      (void))))
 
 (def (bio-chunked-close bio)
-  (unless (&chunked-output-buffer-output bio) ; already closed
-    (set! (&chunked-output-buffer-output bio)
-      (reverse! (&chunked-output-buffer-chunks bio)))
-    (set! (&chunked-output-buffer-chunks bio) [])
-    (void)))
+  (using (bio :- chunked-output-buffer)
+    (unless bio.output                  ; already closed
+      (set! bio.output
+        (reverse! bio.chunks))
+      (set! bio.chunks [])
+      (void))))

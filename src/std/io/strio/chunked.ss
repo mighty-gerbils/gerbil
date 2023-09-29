@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; chunked string writer
 (import :std/error
+        :std/contract
         :std/srfi/1
         ../interface
         ./types)
@@ -9,14 +10,14 @@
 (declare (not safe))
 
 (def (strio-chunked-write-string strio input input-start input-end)
-  (let (chunk (substring input input-start input-end))
-    (set! (&chunked-string-output-buffer-chunks strio)
-      (cons chunk (&chunked-string-output-buffer-chunks strio)))
-    (void)))
+  (using (strio :- chunked-string-output-buffer)
+    (let (chunk (substring input input-start input-end))
+      (set! strio.chunks (cons chunk strio.chunks))
+      (void))))
 
 (def (strio-chunked-close strio)
-  (unless (&chunked-string-output-buffer-output strio) ; already closed
-    (set! (&chunked-string-output-buffer-output strio)
-      (reverse! (&chunked-string-output-buffer-chunks strio)))
-    (set! (&chunked-string-output-buffer-chunks strio) [])
-    (void)))
+  (using (strio :- chunked-string-output-buffer)
+    (unless strio.output ; already closed
+      (set! strio.output (reverse! strio.chunks))
+      (set! strio.chunks [])
+      (void))))

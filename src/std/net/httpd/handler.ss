@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit
         :std/error
+        :std/contract
         :std/sugar
         :std/io
         :std/io/dummy
@@ -43,192 +44,200 @@
   final: #t unchecked: #t)
 
 (def (http-request-handler sock get-handler)
-  (def ibuf (get-input-buffer sock))
-  (def obuf (get-output-buffer sock))
+  (using (sock :- StreamSocket)
+    (def ibuf (get-input-buffer sock))
+    (def obuf (get-output-buffer sock))
 
-  (def (loop)
-    (let ((req (make-http-request ibuf sock (&StreamSocket-peer-address sock)
-                                  #f #f #f #f #f #f #!void))
-          (res (make-http-response obuf sock #f #f)))
-      (&StreamSocket-set-input-timeout! sock request-timeout)
-      (&StreamSocket-set-output-timeout! sock response-timeout)
+    (def (loop)
+      (let ((req (make-http-request ibuf sock (sock.peer-address)
+                                    #f #f #f #f #f #f #!void))
+            (res (make-http-response obuf sock #f #f)))
+        (using ((req :- http-request)
+                (res :- http-response))
+          (sock.set-input-timeout! request-timeout)
+          (sock.set-output-timeout! response-timeout)
 
-      (try
-       (read-request! req)
-       (catch (timeout-error? e)
-         (errorf "request error: ~a" e)
-         (set! (&http-response-close? res) #t)
-         (http-response-write res 408 [] #f)
-         (raise 'abort))
-       (catch (io-error? e)
-         (errorf "request error: ~a" e)
-         (set! (&http-response-close? res) #t)
-         (http-response-write res 400 [] #f)
-         (raise 'abort)))
+          (try
+           (read-request! req)
+           (catch (timeout-error? e)
+             (errorf "request error: ~a" e)
+             (set! res.close? #t)
+             (http-response-write res 408 [] #f)
+             (raise 'abort))
+           (catch (io-error? e)
+             (errorf "request error: ~a" e)
+             (set! res.close? #t)
+             (http-response-write res 400 [] #f)
+             (raise 'abort)))
 
-      (let* ((method  (&http-request-method req))
-             (path    (&http-request-path req))
-             (proto   (&http-request-proto req))
-             (headers (&http-request-headers req))
-             (host    (header-e "Host" headers))
-             (close?
-              (case proto
-                (("HTTP/1.1")
-                 (equal? (header-e "Connection" headers) "close"))
-                (("HTTP/1.0")
-                 (not (equal? (header-e "Connection" headers) "Keep-Alive")))
-                (else #t))))
+          (let* ((method  req.method)
+                 (path    req.path)
+                 (proto   req.proto)
+                 (headers req.headers)
+                 (host    (header-e "Host" headers))
+                 (close?
+                  (case proto
+                    (("HTTP/1.1")
+                     (equal? (header-e "Connection" headers) "close"))
+                    (("HTTP/1.0")
+                     (not (equal? (header-e "Connection" headers) "Keep-Alive")))
+                    (else #t))))
 
-        (when close?
-          (set! (&http-response-close? res) #t))
+            (when close?
+              (set! res.close? #t))
 
-        (cond
-         ((not (member proto '("HTTP/1.1" "HTTP/1.0")))
-          (http-response-write res 505 [] #f))
-         ((not (symbol? method))
-          (http-response-write res 501 [] #f))
-         ((and (eq? method 'OPTIONS) (equal? path "*"))
-          (http-response-write res 200 [] #f))
-         ((eq? method 'TRACE)
-          (http-response-trace res req))
-         ((get-handler host path)
-          => (lambda (handler)
-               (cond
-                ((procedure? handler)
-                 (try
-                  (handler req res)
-                  (catch (io-error? e)
-                    (errorf "request i/o error: ~a" e)
-                    (unless (&http-response-output res)
-                      (set! (&http-response-close? res) #t)
-                      (http-response-write res 500 [] #f))
-                    (raise 'abort))
-                  (catch (e)
-                    (errorf "request handler error: ~a" e)
-                    (if (&http-response-output res)
-                      ;; if there was output from the handler, the connection
-                      ;; is unusable; abort
-                      (raise 'abort)
-                      (http-response-write res 500 [] #f)))))
-                ((not handler)
-                 (http-response-write res 404 [] "Not Found"))
-                (else
-                   (warnf "bad request handler: ~a ~a ~a" host path handler)
-                   (http-response-write res 500 [] #f)))))
-         (else
-          (http-response-write res 404 [] #f)))
+            (cond
+             ((not (member proto '("HTTP/1.1" "HTTP/1.0")))
+              (http-response-write res 505 [] #f))
+             ((not (symbol? method))
+              (http-response-write res 501 [] #f))
+             ((and (eq? method 'OPTIONS) (equal? path "*"))
+              (http-response-write res 200 [] #f))
+             ((eq? method 'TRACE)
+              (http-response-trace res req))
+             ((get-handler host path)
+              => (lambda (handler)
+                   (cond
+                    ((procedure? handler)
+                     (try
+                      (handler req res)
+                      (catch (io-error? e)
+                        (errorf "request i/o error: ~a" e)
+                        (unless res.output
+                          (set! res.close? #t)
+                          (http-response-write res 500 [] #f))
+                        (raise 'abort))
+                      (catch (e)
+                        (errorf "request handler error: ~a" e)
+                        (if res.output
+                          ;; if there was output from the handler, the connection
+                          ;; is unusable; abort
+                          (raise 'abort)
+                          (http-response-write res 500 [] #f)))))
+                    ((not handler)
+                     (http-response-write res 404 [] "Not Found"))
+                    (else
+                     (warnf "bad request handler: ~a ~a ~a" host path handler)
+                     (http-response-write res 500 [] #f)))))
+             (else
+              (http-response-write res 404 [] #f)))
 
-        (unless close?
-          (http-request-skip-body req)
-          (loop)))))
+            (unless close?
+              (http-request-skip-body req)
+              (loop))))))
 
-  (try
-   (loop)
-   (catch (e)
-     (unless (memq e '(abort eof))
-       (errorf "unhandled exception: ~a" e)
-       (raise e))
-     e)
-   (finally
-    (with-catch void
-      (cut &StreamSocket-shutdown sock 'out))
-    (&StreamSocket-close sock)
-    (put-input-buffer! ibuf)
-    (put-output-buffer! obuf))))
+    (try
+     (loop)
+     (catch (e)
+       (unless (memq e '(abort eof))
+         (errorf "unhandled exception: ~a" e)
+         (raise e))
+       e)
+     (finally
+      (with-catch void
+                  (cut &StreamSocket-shutdown sock 'out))
+      (sock.close)
+      (put-input-buffer! ibuf)
+      (put-output-buffer! obuf)))))
 
 ;;; handler interface
 ;; request
 (def (http-request-body req)
-  (with ((http-request ibuf _ _ method _ _ _ _ headers data) req)
-    (if (void? data)
-      (case method
+  (using (req : http-request)
+    (if (void? req.data)
+      (case req.method
         ((POST PUT)
-         (let (data (read-request-body ibuf headers))
-           (set! (&http-request-data req)
-             data)
+         (let (data (read-request-body req.buf req.headers))
+           (set! req.data data)
            data))
         (else
          (http-request-skip-body req)
          #f))
-      data)))
+      req.data)))
 
 (def (http-request-timeout-set! req timeo)
-  (with ((http-request _ sock) req)
-    (&StreamSocket-set-input-timeout! sock timeo)))
+  (using (req : http-request)
+    (let (sock req.sock)
+      (using (sock :- StreamSocket)
+        (sock.set-input-timeout! timeo)))))
 
 ;; response
 ;; write a full response
 (def (http-response-write res status headers body)
-  (with ((http-response obuf _ output close?) res)
-    (when output
-      (error "duplicate response" res))
-    (set! (&http-response-output res) 'END)
-    (let* ((len
-            (cond
-             ((u8vector? body)
-              (u8vector-length body))
-             ((string? body)
-              (string-utf8-length body))
-             ((not body)
-              0)
-             (else
-              (error "Bad response body; expected string, u8vector, or #f" body))))
-           (headers
-            (cons (cons "Content-Length" (number->string len)) headers))
-           (headers
-            (if close?
-              (cons '("Connection" . "close") headers)
-              headers))
-           (headers
-            (cons (cons "Date" (http-date)) headers)))
-      (write-response-line obuf status)
-      (write-response-headers obuf headers)
-      (write-crlf obuf)
-      (cond
-       ((u8vector? body)
-        (&BufferedWriter-write obuf body))
-       ((string? body)
-        (&BufferedWriter-write-string obuf body)))
-      (&BufferedWriter-flush obuf))))
+  (using (res : http-response)
+    (let (obuf res.buf)
+      (using (obuf :- BufferedWriter)
+        (when res.output
+          (error "duplicate response" res))
+        (set! res.output 'END)
+        (let* ((len
+                (cond
+                 ((u8vector? body)
+                  (u8vector-length body))
+                 ((string? body)
+                  (string-utf8-length body))
+                 ((not body)
+                  0)
+                 (else
+                  (error "Bad response body; expected string, u8vector, or #f" body))))
+               (headers
+                (cons (cons "Content-Length" (number->string len)) headers))
+               (headers
+                (if res.close?
+                  (cons '("Connection" . "close") headers)
+                  headers))
+               (headers
+                (cons (cons "Date" (http-date)) headers)))
+          (write-response-line obuf status)
+          (write-response-headers obuf headers)
+          (write-crlf obuf)
+          (cond
+           ((u8vector? body)
+            (obuf.write body))
+           ((string? body)
+            (obuf.write-string body)))
+          (obuf.flush))))))
 
 ;; begin a chunked response
 (def (http-response-begin res status headers)
-  (with ((http-response obuf _ output close?) res)
-    (when output
+  (using (res : http-response)
+    (when res.output
       (error "duplicate response" res))
-    (set! (&http-response-output res) 'CHUNK)
+    (set! res.output 'CHUNK)
     (let* ((headers (cons '("Transfer-Encoding" . "chunked") headers))
-           (headers (if close?
+           (headers (if res.close?
                       (cons '("Connection" . "close") headers)
                       headers))
            (headers
             (cons (cons "Date" (http-date)) headers)))
-      (write-response-line obuf status)
-      (write-response-headers obuf headers)
-      (write-crlf obuf))))
+      (write-response-line res.buf status)
+      (write-response-headers res.buf headers)
+      (write-crlf res.buf))))
 
 ;; write the next chunk in the response
 (def (http-response-chunk res chunk (start 0) (end #f))
-  (with ((http-response obuf _ output) res)
-    (unless (eq? output 'CHUNK)
-      (error "illegal response; not writing chunks" res output))
-    (write-chunk obuf chunk start end)))
+  (using (res : http-response)
+    (unless (eq? res.output 'CHUNK)
+      (error "illegal response; not writing chunks" res res.output))
+    (write-chunk res.buf chunk start end)))
 
 ;; end chunked response
 (def (http-response-end res)
-  (with ((http-response obuf _ output) res)
-    (unless (eq? output 'CHUNK)
-      (error "illegal response; not writing chunks" res output))
-    (set! (&http-response-output res) 'END)
-    (write-last-chunk obuf)))
+  (using (res : http-response)
+    (unless (eq? res.output 'CHUNK)
+      (error "illegal response; not writing chunks" res res.output))
+    (set! res.output 'END)
+    (write-last-chunk res.buf)))
 
 ;; force output of current chunks
 (def (http-response-force-output res)
-  (&BufferedWriter-flush (&http-response-buf res)))
+  (using (res : http-response)
+    (&BufferedWriter-flush res.buf)))
 
 (def (http-response-timeout-set! res timeo)
   (with ((http-response _ sock) res)
-    (&StreamSocket-set-output-timeout! sock timeo)))
+    (using (sock :- StreamSocket)
+      (sock.set-output-timeout! timeo))))
 
 ;;; server internal
 (def (header-e key lst)
@@ -241,25 +250,28 @@
       (else #f))))
 
 (def (http-request-skip-body req)
-  (when (void? (&http-request-data req))
-    (set! (&http-request-data req) #f)
-    (skip-request-body (&http-request-buf req) (&http-request-headers req))))
+  (using (req :- http-request)
+    (when (void? req.data)
+      (set! req.data #f)
+      (skip-request-body req.buf req.headers))))
 
 (def (http-response-trace res req)
-  (with ((http-request _ _ method url _ _ proto headers) req)
+  (using ((res :- http-response)
+          (req :- http-request))
     (let (xbuf (open-buffered-writer #f 4096))
-      (&BufferedWriter-write-string xbuf (symbol->string method))
-      (&BufferedWriter-write-u8-inline xbuf SPC)
-      (&BufferedWriter-write-string xbuf url)
-      (&BufferedWriter-write-u8-inline xbuf SPC)
-      (&BufferedWriter-write-string xbuf proto)
-      (write-crlf xbuf)
-      (write-response-headers xbuf headers)
-      (write-crlf xbuf)
-      (let (chunks (get-buffer-output-chunks xbuf))
-        (http-response-begin res 200 '(("Content-Type". "message/http")))
-        (for-each (cut http-response-chunk res <>) chunks)
-        (http-response-end res)))))
+      (using (xbuf :- BufferedWriter)
+        (xbuf.write-string (symbol->string req.method))
+        (xbuf.write-u8-inline SPC)
+        (xbuf.write-string req.url)
+        (xbuf.write-u8-inline SPC)
+        (xbuf.write-string req.proto)
+        (write-crlf xbuf)
+        (write-response-headers xbuf req.headers)
+        (write-crlf xbuf)
+        (let (chunks (get-buffer-output-chunks xbuf))
+          (http-response-begin res 200 '(("Content-Type". "message/http")))
+          (for-each (cut http-response-chunk res <>) chunks)
+          (http-response-end res))))))
 
 
 (begin-ffi (http-date)
@@ -312,24 +324,19 @@ END-C
   (and fixnum? fxpositive?))
 
 (def (read-request! req)
-  (let* ((ibuf (&http-request-buf req))
-         ((values method url proto)
-          (read-request-line ibuf))
-         ((values path params)
-          (split-request-url url))
-         (headers (read-request-headers ibuf)))
-    (set! (&http-request-method req)
-      method)
-    (set! (&http-request-url req)
-      url)
-    (set! (&http-request-path req)
-      path)
-    (set! (&http-request-params req)
-      params)
-    (set! (&http-request-proto req)
-      proto)
-    (set! (&http-request-headers req)
-      headers)))
+  (using (req :- http-request)
+    (let* ((ibuf req.buf)
+           ((values method url proto)
+            (read-request-line ibuf))
+           ((values path params)
+            (split-request-url url))
+           (headers (read-request-headers ibuf)))
+      (set! req.method method)
+      (set! req.url url)
+      (set! req.path path)
+      (set! req.params params)
+      (set! req.proto proto)
+      (set! req.headers headers))))
 
 (def split-request-url-rx
   (pregexp "^[^/]+://[^/]*(/.*)$"))
@@ -361,22 +368,23 @@ END-C
     (values method url proto)))
 
 (def (read-request-headers ibuf)
-  (let (root [#f])
-    (let lp ((tl root) (count 0))
-      (let (next (&BufferedReader-peek-u8-inline ibuf))
-        (cond
-         ((eof-object? next)
-          (raise 'eof))
-         ((eq? next CR)
-          (read-skip ibuf CR LF)
-          (cdr root))
-         ((fx< count max-request-headers)
-          (let* ((hdr (read-header ibuf))
-                 (tl* [hdr]))
-            (set! (cdr tl) tl*)
-            (lp tl* (fx1+ count))))
-         (else
-          (raise-io-error http-read-request "too many headers" count)))))))
+  (using (ibuf :- BufferedReader)
+    (let (root [#f])
+      (let lp ((tl root) (count 0))
+        (let (next (ibuf.peek-u8-inline))
+          (cond
+           ((eof-object? next)
+            (raise 'eof))
+           ((eq? next CR)
+            (read-skip ibuf CR LF)
+            (cdr root))
+           ((fx< count max-request-headers)
+            (let* ((hdr (read-header ibuf))
+                   (tl* [hdr]))
+              (set! (cdr tl) tl*)
+              (lp tl* (fx1+ count))))
+           (else
+            (raise-io-error http-read-request "too many headers" count))))))))
 
 (def (read-header ibuf)
   (let* ((key (read-token ibuf COL))
@@ -408,24 +416,25 @@ END-C
         str))))
 
 (def (read-token ibuf sep)
-  (def tbuf (get-token-buffer))
-  (let lp ((count 0))
-    (let (next (&BufferedReader-read-u8-inline ibuf))
-      (cond
-       ((eof-object? next)
-        (put-token-buffer! tbuf)
-        (raise 'eof))
-       ((eq? next sep)
-        (let (token (substring tbuf 0 count))
+  (using (ibuf : BufferedReader)
+    (def tbuf (get-token-buffer))
+    (let lp ((count 0))
+      (let (next (ibuf.read-u8-inline))
+        (cond
+         ((eof-object? next)
           (put-token-buffer! tbuf)
-          token))
-       ((fx< count max-token-length)
-        (let (char (integer->char next))
-          (string-set! tbuf count char)
-          (lp (fx1+ count))))
-       (else
-        (put-token-buffer! tbuf)
-        (raise-io-error http-read-request "Maximum token length exceeded" count))))))
+          (raise 'eof))
+         ((eq? next sep)
+          (let (token (substring tbuf 0 count))
+            (put-token-buffer! tbuf)
+            token))
+         ((fx< count max-token-length)
+          (let (char (integer->char next))
+            (string-set! tbuf count char)
+            (lp (fx1+ count))))
+         (else
+          (put-token-buffer! tbuf)
+          (raise-io-error http-read-request "Maximum token length exceeded" count)))))))
 
 (def* read-skip
   ((ibuf c)
@@ -509,81 +518,87 @@ END-C
     (skip-simple-body))))
 
 (def (skip-request-chunks ibuf)
-  (let* ((next (read-token ibuf CR))
-         (_ (read-skip ibuf LF))
-         (len (string->number next 16)))
-    (when (fx> len 0)
-      (&BufferedReader-skip ibuf len)
-      (read-skip ibuf CR LF)
-      (skip-request-chunks ibuf))))
+  (using (ibuf : BufferedReader)
+    (let* ((next (read-token ibuf CR))
+           (_ (read-skip ibuf LF))
+           (len (string->number next 16)))
+      (when (fx> len 0)
+        (ibuf.skip len)
+        (read-skip ibuf CR LF)
+        (skip-request-chunks ibuf)))))
 
 (def (write-response-line obuf status)
-  (let (text
-        (cond
-         ((hash-get +http-response-codes+ status)
-          => values)
-         (else "Gremlins!")))
-    (&BufferedWriter-write-string obuf "HTTP/1.1")
-    (&BufferedWriter-write-u8-inline obuf SPC)
-    (&BufferedWriter-write-string obuf (number->string status))
-    (&BufferedWriter-write-u8-inline obuf SPC)
-    (&BufferedWriter-write-string obuf text)
-    (write-crlf obuf)))
+  (using (obuf :- BufferedWriter)
+    (let (text
+          (cond
+           ((hash-get +http-response-codes+ status)
+            => values)
+           (else "Gremlins!")))
+      (obuf.write-string "HTTP/1.1")
+      (obuf.write-u8-inline SPC)
+      (obuf.write-string (number->string status))
+      (obuf.write-u8-inline SPC)
+      (obuf.write-string text)
+      (write-crlf obuf))))
 
 (def (write-response-headers obuf headers)
-  (def (write-header hdr)
-    (with ([key . val] hdr)
-      (if (string? key)
-        (if (string? val)
-          (begin
-            (&BufferedWriter-write-string obuf key)
-            (&BufferedWriter-write-u8-inline obuf COL)
-            (&BufferedWriter-write-u8-inline obuf SPC)
-            (&BufferedWriter-write-string obuf val)
-            (write-crlf obuf))
-          (error "Bad header value; expected string" hdr val))
-        (error "Bad header key; expected string" hdr key))))
-  (for-each write-header headers))
+  (using (obuf :- BufferedWriter)
+    (def (write-header hdr)
+      (with ([key . val] hdr)
+        (if (string? key)
+          (if (string? val)
+            (begin
+              (obuf.write-string key)
+              (obuf.write-u8-inline COL)
+              (obuf.write-u8-inline SPC)
+              (obuf.write-string val)
+              (write-crlf obuf))
+            (error "Bad header value; expected string" hdr val))
+          (error "Bad header key; expected string" hdr key))))
+    (for-each write-header headers)))
 
 (def (write-crlf obuf)
-  (&BufferedWriter-write-u8-inline obuf CR)
-  (&BufferedWriter-write-u8-inline obuf LF))
+  (using (obuf :- BufferedWriter)
+    (obuf.write-u8-inline CR)
+    (obuf.write-u8-inline LF)))
 
 (def (write-chunk obuf chunk start end)
-  (let* ((end
-          (cond
-           (end end)
-           ((u8vector? chunk)
-            (u8vector-length chunk))
-           ((string? chunk)
-            (string-length chunk))
-           ((not chunk) 0)
-           (else
-            (error "Bad chunk; expected u8vector or string" chunk))))
-         (len
-          (cond
-           ((u8vector? chunk)
-            (fx- end start))
-           ((string? chunk)
-            (string-utf8-length chunk start end))
-           (else
-            0))))
-    (when (fx> len 0)
-      (&BufferedWriter-write-string obuf (number->string len 16))
-      (write-crlf obuf)
-      (cond
-       ((u8vector? chunk)
-        (&BufferedWriter-write obuf chunk start end))
-       ((string? chunk)
-        (&BufferedWriter-write-string obuf chunk start end)))
-      (write-crlf obuf)
-      (&BufferedWriter-flush obuf))))
+  (using (obuf :- BufferedWriter)
+    (let* ((end
+            (cond
+             (end end)
+             ((u8vector? chunk)
+              (u8vector-length chunk))
+             ((string? chunk)
+              (string-length chunk))
+             ((not chunk) 0)
+             (else
+              (error "Bad chunk; expected u8vector or string" chunk))))
+           (len
+            (cond
+             ((u8vector? chunk)
+              (fx- end start))
+             ((string? chunk)
+              (string-utf8-length chunk start end))
+             (else
+              0))))
+      (when (fx> len 0)
+        (obuf.write-string (number->string len 16))
+        (write-crlf obuf)
+        (cond
+         ((u8vector? chunk)
+          (obuf.write chunk start end))
+         ((string? chunk)
+          (obuf.write-string chunk start end)))
+        (write-crlf obuf)
+        (obuf.flush)))))
 
 (def (write-last-chunk obuf)
-  (&BufferedWriter-write-u8-inline obuf C0)
-  (write-crlf obuf)
-  (write-crlf obuf)
-  (&BufferedWriter-flush obuf))
+  (using (obuf :- BufferedWriter)
+    (obuf.write-u8-inline C0)
+    (write-crlf obuf)
+    (write-crlf obuf)
+    (obuf.flush)))
 
 (def C0 (char->integer #\0))
 (def CR (char->integer #\return))

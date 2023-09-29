@@ -41,7 +41,7 @@
      (check-equal? (string-subst "abb"          "b*" "_" count: #f) "abb")
      (check-exception
       (string-subst "abc" "b" "_" count: #t)
-      bad-argument-error?)
+      contract-violation-error?)
      ;; empty old
      (check-equal? (string-subst ""     "" "_"  count: 1)  "_")
      (check-equal? (string-subst "a"    "" "_"  count: 1)  "_a")

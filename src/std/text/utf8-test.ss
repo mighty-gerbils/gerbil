@@ -37,7 +37,7 @@
             (lp (fx1+ k))))))
 
     (test-case "test utf8 encoding and decoding malformed inputs"
-      (check-exception (string->utf8 #f) bad-argument-error?)
-      (check-exception (string-utf8-length #f) bad-argument-error?)
-      (check-exception (utf8->string #f) bad-argument-error?))
+      (check-exception (string->utf8 #f) contract-violation-error?)
+      (check-exception (string-utf8-length #f) contract-violation-error?)
+      (check-exception (utf8->string #f) contract-violation-error?))
     ))

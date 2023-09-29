@@ -142,26 +142,26 @@ available; see `StackTrace` below.
 The following are predefined classes with standard semantics, used
 througout the standard library.
 
-### BadArgument
+### ContractViolation
 ```scheme
-(defclass (BadArgument StackTrace Error) ())
+(defclass (ContractViolation StackTrace Error) ())
 ```
 
-Error indicating a bad argument condition.
+Error indicating an input parameter contract violation condition.
 
-### BadArgument?
+### ContractViolation?
 ```scheme
-(BadArgument? exn)
+(ContractViolation? exn)
 ```
 
-Predicate testing whether the error is a bad argument condition.
+Predicate testing whether the error is a contract violation condition.
 
-### bad-argument-error?
+### contract-violation-error?
 ```scheme
-(def bad-argument-error? BadArgument?
+(def contract-violation-error! ContractViolation?)
 ```
 
-same as `BadArgument?`
+Same as `ContractViolation?`.
 
 ### IOError
 ```scheme
@@ -316,12 +316,22 @@ If the exception object is an instance of `StackTrace`, then unless
 there is already a continuation because this is a re-raise, the
 continuation is captured and stored in the `continuation` slot.
 
-### raise-bad-argument
+### check-argument
 ```scheme
-(raise-bad-argument where expectation bad)
+(check-argument expr expectation argument)
+  expr := a boolean expression
+  expectation := a string describing the expectation
+  argument := the argument being checked for reporting purposes.
 ```
 
-Raises a `BadArgument` condition.
+Evaluates the boolean expression `expr` and raises a contract violation if it is `#f`.
+
+### raise-contract-violation
+```scheme
+(raise-contract-violation where contract irritant ...)
+```
+
+Raises a `ContractViolation` condition.
 
 ### raise-io-error
 ```scheme
