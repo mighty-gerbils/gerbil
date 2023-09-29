@@ -48,9 +48,9 @@ Here is an example from the [Standard IO Interfaces](stdio.md):
 ```
 
 In this example we define two interfaces, `Closer` and `Reader`.
-- `Closer` is a base interface with a single method `close` that takes no arguments
+- `Closer` is a base interface with a single method `close` that takes no arguments.
 - `Reader` is a refinement of `Closer` that defines a method `read` with a contract:
-  - u8v is a required argument, which must satisfy the `u8vector?`
+  - `u8v` is a required argument, which must satisfy the `u8vector?`
     predicate; in short, it must be a u8vector.
   - `start` is an optional argument, which must satisfy the
     `(in-range? 0 (u8vector-length u8v))` predicate. Notice that
@@ -59,7 +59,7 @@ In this example we define two interfaces, `Closer` and `Reader`.
     in the length range of the `u8v` u8vector.
   - `end` and `need` are also optional arguments with attached contracts.
 
-Given these interface definitions, the macro will generate rougly the following:
+Given these interface definitions, the macro will generate roughly the following:
 ```scheme
 ;; Closer interface
 (defsyntax Closer ...)
@@ -299,7 +299,7 @@ the contract is not satisfied, there will be dragons.
 ## Macros
 ### interface
 ```scheme
-(interface id method-spec ...)
+(interface id method-signature ...)
 (interface (id mixin-id ...) method-signature ...)
 
 method-signature:
