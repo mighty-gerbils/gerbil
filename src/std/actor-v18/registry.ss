@@ -3,10 +3,9 @@
 ;;; actor ensemble registry
 (import :std/error
         :std/contract
+        :std/interface
         :std/sugar
         :std/iter
-        :std/interface
-        :std/contract
         :std/sort
         :std/misc/symbol
         ./logger

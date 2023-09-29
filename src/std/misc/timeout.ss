@@ -16,4 +16,4 @@
     (raise-bad-argument make-timeout "real, time or #f" t))))
 
 (defrule (timeout? o)
-  (or (real? o) time? o))
+  (or (real? o) (time? o)))

@@ -12,21 +12,21 @@ The `:std/contract` package provides facilities for contract checking and type a
 ### using
 ```scheme
 (using declaration body ...)
-(using (declration ...) body ...)
+(using (declaration ...) body ...)
 
-declation:
- (var : Type)        ; contract check or cast with type
+declaration:
  (var :~ predicate)  ; contract check with predicate
+ (var : Type)        ; contract check or cast with type
  (var :- Type)       ; type assertion
 
  Type:
   struct identifier
   class identifier
-  interface interfier
+  interface identifier
 ```
 
 The macro expands the declarations and creates a block that evaluates the body with the following effects:
-- If the declaration is a predicate check, the object identified by
+- If the declaration is a predicate check with `:~`, the object identified by
   `var` will be checked to satisfy `predicate`. If the check fails, a
   `ContractViolation` will be raised.
 - If the declaration is a type contract with `:`, which can be a struct, class, or interface type, then:

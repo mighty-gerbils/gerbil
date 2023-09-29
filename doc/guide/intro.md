@@ -187,7 +187,7 @@ syntactic forms described later in the guide.
 
 ### Objective Gerbil
 
-Gerbil supports Object-oriented programming with structs, classes, and
+Gerbil supports object-oriented programming with structs, classes, and
 interfaces. Structs are index-based types with single inheritance,
 while classes are slot-based types with multiple
 inheritance. Interfaces are akin to type-classes, and they pack an
@@ -553,7 +553,7 @@ Here is a simple example:
 
 ```
 
-Further more, dynamic method calls with the `{...}` notation also expand dotted identifiers.
+Furthermore, dynamic method calls with the `{...}` notation also expand dotted identifiers.
 So `{obj.method 1 2 2}` is equivalent to `{method obj 1 2 3}`.
 
 Extending the example further:

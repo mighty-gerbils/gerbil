@@ -321,10 +321,10 @@ continuation is captured and stored in the `continuation` slot.
 (check-argument expr expectation argument)
   expr := a boolean expression
   expectation := a string describing the expectation
-  argument := the argument being checked
+  argument := the argument being checked for reporting purposes.
 ```
 
-Evaluations the boolean expression `expr` and raise a contract violation if it is `#f`.
+Evaluates the boolean expression `expr` and raises a contract violation if it is `#f`.
 
 ### raise-contract-violation
 ```scheme

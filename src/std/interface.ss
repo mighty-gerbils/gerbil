@@ -4,7 +4,8 @@
 (import :std/error
         :std/sugar
         (only-in :std/srfi/1 reverse!)
-        (for-syntax (only-in :std/srfi/1 delete-duplicates)
+        (for-syntax :gerbil/expander
+                    (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out
@@ -631,6 +632,7 @@
          (identifier-list? #'hd))
      (with-syntax* ((name (if (identifier? #'hd) #'hd (stx-car #'hd)))
                     (klass (stx-identifier #'name #'name "::t"))
+                    (klass-quoted (core-quote-syntax #'klass))
                     (klass-type-id
                      (if (module-context? (current-expander-context))
                        (module-type-id #'klass)
@@ -675,7 +677,8 @@
                                             '(method-name ...))))   ; field names
                     (defdescriptor
                       #'(def descriptor
-                          (make-interface-descriptor klass '(method-name ...))))
+                          (begin-annotation (@interface klass-quoted (method-name ...))
+                            (make-interface-descriptor klass '(method-name ...)))))
                     (defmake
                       #'(def (make obj)
                           (cast descriptor obj)))
