@@ -668,7 +668,7 @@
 (def (unmarshal-string-rest buf)
   (using (buf :- BufferedReader)
     (let lp ((chars []))
-      (let (next (read-char buf))
+      (let (next (buf.read-char))
         (if (eof-object? next)
           (list->string (reverse! chars))
           (lp (cons next chars)))))))
