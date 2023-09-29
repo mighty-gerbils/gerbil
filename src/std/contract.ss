@@ -191,6 +191,8 @@
   (def (expand-body meta var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
                   (@set! (stx-identifier var 'set!)) ; need to get the right set! context
+                  (Type::t (runtime-type-identifier meta))
+                  (var-quoted (core-quote-syntax var))
                   (var var)
                   (meta meta)
                   ((body ...) body))
@@ -231,7 +233,7 @@
                                ((_ place val)
                                 (syntax/loc stx
                                   (__set! place val)))))))
-            (begin-annotation (@type (var struct: Type))
+            (begin-annotation (@type var-quoted struct: Type::t)
               (let ()
                 body ...))))))
 
@@ -263,6 +265,8 @@
   (def (expand-body meta var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
                   (@set! (stx-identifier var 'set!))
+                  (Type::t (runtime-type-identifier meta))
+                  (var-quoted (core-quote-syntax var))
                   (var var)
                   (meta meta)
                   ((body ...) body))
@@ -311,7 +315,7 @@
                                ((_ place val)
                                 (syntax/loc stx
                                   (__set! place val)))))))
-            (begin-annotation (@type (var class: Type))
+            (begin-annotation (@type var-quoted class: Type::t)
               (let ()
                 body ...))))))
 
@@ -342,6 +346,8 @@
 
   (def (expand-body var Interface body checked?)
     (with-syntax ((@app (syntax-local-introduce '%%app))
+                  (Type::t (interface-info-descriptor (syntax-local-value Interface)))
+                  (var-quoted (core-quote-syntax var))
                   (var var)
                   (Interface Interface)
                   (checked? checked?)
@@ -365,7 +371,7 @@
                             ((_ . args)
                              (syntax/loc stx
                                (__app . args)))))))
-            (begin-annotation (@type (var interface: Interface))
+            (begin-annotation (@type var-quoted interface: Interface)
               (let ()
                 body ...))))))
 
