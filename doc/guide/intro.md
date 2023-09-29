@@ -546,6 +546,7 @@ Here is a simple example:
       (set! self.x x)
       (set! self.y y)
       (set! self.z z))))
+
 > (def b (B 1 2 3))
 > (using (b : B) (* (+ b.x b.y) b.z))
 9
@@ -554,6 +555,20 @@ Here is a simple example:
 
 Further more, dynamic method calls with the `{...}` notation also expand dotted identifiers.
 So `{obj.method 1 2 2}` is equivalent to `{method obj 1 2 3}`.
+
+Extending the example further:
+```scheme
+(defmethod {do-it B}
+  (lambda (self factor)
+    (using (b : B)
+      (* (+ b.x b.y) b.z factor))))
+
+> {b.do-it 1}
+9
+> {b.do-it 2}
+18
+
+```
 
 ### Pattern Matching
 
