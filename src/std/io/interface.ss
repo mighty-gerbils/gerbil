@@ -172,7 +172,7 @@
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (sendto (peer                             :~ address?)
+  (sendto (peer                             :~  address?)
           (u8v                              :~  u8vector?)
           (start :=  0                      :~ (in-range? 0 (u8vector-length u8v)))
           (end   := (u8vector-length u8v)   :~ (in-range-inclusive? start (u8vector-length u8v)))
