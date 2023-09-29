@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 client functionality
-(import :std/io
+(import :std/contract
+        :std/io
         :std/net/address
         :std/text/utf8
         ./interface)
@@ -128,9 +129,10 @@
   (cut socks-proxy-init! <> <> <> 'SOCKS5))
 
 (def (socks-proxy-init! self sock address proto)
-  (set! (&socks-proxy-sock self) sock)
-  (set! (&socks-proxy-address self) address)
-  (set! (&socks-proxy-protocol self) proto))
+  (using (self :- socks-proxy)
+    (set! self.sock sock)
+    (set! self.address address)
+    (set! self.protocol proto)))
 
 (def (socks-open proxy handshake)
   (let (sock (tcp-connect proxy))
@@ -156,15 +158,16 @@
     (SOCKS (make-socks5-proxy sock proxy))))
 
 (def (socks5-handshake sock)
-  (&Socket-send sock '#u8(5 1 0))
-  (let* ((response (make-u8vector 2 0))
-         (rd (&Socket-recv sock response)))
-    (unless (fx= rd 2)
-      (raise-io-error socks5-handshake "incomplete handshake"))
-    (unless (fx= (u8vector-ref response 0) 5)
-      (raise-io-error socks5-handshake "bad protocol version" (u8vector-ref response 0)))
-    (unless (fx= (u8vector-ref response 1) 0)
-      (raise-io-error socks5-handshake "handshake failed" (u8vector-ref response 1)))))
+  (using (sock :- StreamSocket)
+    (sock.send '#u8(5 1 0))
+    (let* ((response (make-u8vector 2 0))
+           (rd (sock.recv response)))
+      (unless (fx= rd 2)
+        (raise-io-error socks5-handshake "incomplete handshake"))
+      (unless (fx= (u8vector-ref response 0) 5)
+        (raise-io-error socks5-handshake "bad protocol version" (u8vector-ref response 0)))
+      (unless (fx= (u8vector-ref response 1) 0)
+        (raise-io-error socks5-handshake "handshake failed" (u8vector-ref response 1))))))
 
 (def (socks4-connect sock address)
   (socks-connect sock socks4-send-request socks4-recv-reply (resolve-address address) #f))
@@ -199,35 +202,38 @@
 
 (def (socks4-send-request sock cmd host port 4a?)
   (let (pkt (open-buffered-writer #f 64))
-    (&BufferedWriter-write-u8 pkt #x04) ; VERSION
-    (&BufferedWriter-write-u8 pkt cmd)  ; CMD
-    (&BufferedWriter-write-u16 pkt port); PORT
-    (cond
-     ((and 4a? (string? host))
-      (&BufferedWriter-write pkt '#u8(0 0 0 1)) ; SOCKS4a bit
-      (&BufferedWriter-write-u8 pkt 0)          ; userid NULL terminator
-      (&BufferedWriter-write-string pkt host)   ; hostname
-      (&BufferedWriter-write-u8 pkt 0))         ; hostname NULL terminator
-     ((ip4-address? host)
-      (&BufferedWriter-write pkt host)          ; host ip4
-      (&BufferedWriter-write-u8 pkt 0))         ; userid NULL terminator
-     (else
-      (raise-bad-argument socks4-send-request "bad host address" host)))
-    (let (msg (get-buffer-output-u8vector pkt))
-      (&StreamSocket-send sock msg))))
+    (using ((sock :- StreamSocket)
+            (pkt :- BufferedWriter))
+      (pkt.write-u8 #x04)               ; VERSION
+      (pkt.write-u8 cmd)                ; CMD
+      (pkt.write-u16 port)              ; PORT
+      (cond
+       ((and 4a? (string? host))
+        (pkt.write '#u8(0 0 0 1))       ; SOCKS4a bit
+        (pkt.write-u8 0)                ; userid NULL terminator
+        (pkt.write-string host)         ; hostname
+        (pkt.write-u8 0))               ; hostname NULL terminator
+       ((ip4-address? host)
+        (pkt.write host)                ; host ip4
+        (pkt.write-u8 0))               ; userid NULL terminator
+       (else
+        (raise-bad-argument socks4-send-request "bad host address" host)))
+      (let (msg (get-buffer-output-u8vector pkt))
+        (sock.send msg)))))
 
 (def (socks4-recv-reply sock)
-  (let (msg (make-u8vector 8 0))
-    (&StreamSocket-recv sock msg)
-    (let (vn (u8vector-ref msg 0))
-      (unless (fx= vn 0)
-        (raise-io-error socks4-recv-reply "version mismatch" vn)))
-    (let (res (u8vector-ref msg 1))
-      (unless (fx= res 90)
-        (raise-io-error socks4-recv-reply "request rejected" res)))
-    (cons (subu8vector msg 4 8)
-          (fxior (fxarithmetic-shift (u8vector-ref buf 2) 8)
-                 (u8vector-ref buf 3)))))
+  (using (sock :- StreamSocket)
+    (let (msg (make-u8vector 8 0))
+      (sock.recv msg)
+      (let (vn (u8vector-ref msg 0))
+        (unless (fx= vn 0)
+          (raise-io-error socks4-recv-reply "version mismatch" vn)))
+      (let (res (u8vector-ref msg 1))
+        (unless (fx= res 90)
+          (raise-io-error socks4-recv-reply "request rejected" res)))
+      (cons (subu8vector msg 4 8)
+            (fxior (fxarithmetic-shift (u8vector-ref buf 2) 8)
+                   (u8vector-ref buf 3))))))
 
 (def (socks5-send-request sock cmd host port)
   XXX
