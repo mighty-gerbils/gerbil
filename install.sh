@@ -33,19 +33,9 @@ else
     die
 fi
 
-if [ -z "${DESTDIR}" ]; then
-    install "${GERBIL_PREFIX}"
+install "${DESTDIR}${GERBIL_PREFIX}"
 
-    GERBIL_BASE=$(dirname "${GERBIL_PREFIX}")
-    if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
-        link_version "${GERBIL_BASE}" "${GERBIL_VERSION}"
-    fi
-else
-    GERBIL_BASE=$(dirname "${GERBIL_PREFIX}")
-    if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
-        install "${DESTDIR}/${GERBIL_VERSION}"
-        link_version "${DESTDIR}" "${GERBIL_VERSION}"
-    else
-        install "${DESTDIR}"
-    fi
+GERBIL_BASE=$(dirname "${GERBIL_PREFIX}")
+if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
+    link_version "${DESTDIR}${GERBIL_BASE}" "${GERBIL_VERSION}"
 fi

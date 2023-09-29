@@ -4,7 +4,7 @@ build:
 	GERBIL_BUILD_FLAGS="$(MAKEFLAGS)" ./build.sh
 
 install:
-	./install.sh
+	DESTDIR="$(DESTDIR)" ./install.sh
 
 clean:
 	rm -rf build
