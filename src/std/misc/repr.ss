@@ -1,7 +1,19 @@
 ;; -*- Gerbil -*-
 ;;; © fare
 ;;;; Sourceable Representation of Gerbil entities
-;;;; (equal? (eval (call-with-input-string (repr o) read)) o)
+;;
+;; The goal is that printing an object with prn (or capturing its output in a string with repr)
+;; shall yield a representation that if copy-pasted into the REPL in some reasonable context
+;; would yield the same object as printed, up to equal?.
+;; In other words, this equation should hold whenever possible
+;; (though it is obviously not guaranteed on arbitrary user-defined objects):
+;;               (equal? (eval (call-with-input-string (repr o) read)) o)
+;;
+;; Now, if no other suitable method is found, an object with be printed using the
+;; #42 #;"<foo #42>" notation wherein a magic syntax using the "serial number" syntax
+;; of Gambit Scheme, that only works in the same thread as the printer for reading back,
+;; but still produces as much information as possible in a subsequent #; comment.
+;; You can still use the #n handle to access and query the object.
 
 (export
   default-representation-options current-representation-options
