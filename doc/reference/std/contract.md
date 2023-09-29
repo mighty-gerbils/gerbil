@@ -49,6 +49,9 @@ The macro expands the declarations and creates a block that evaluates the body w
 
 Here is an example from the standard library:
 ```scheme
+(defstruct lru-cache (ht hd tl size cap))
+(defstruct node (key val prev next))
+
 (def (lru-cache-ref lru key (default absent-obj))
   (using (lru : lru-cache)
     (cond
