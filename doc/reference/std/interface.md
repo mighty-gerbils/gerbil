@@ -122,7 +122,8 @@ Besides the abstraction, there are also performance reasons to use interfaces.
 If you are interacting with an object using methods and you make many
 method invocations, you should consider using interfaces.
 
-Here is an example that demonstrates the performance advantages over dynamic dispatch:
+Here is an example that demonstrates the performance advantages over dynamic dispatch using
+a dynamically loaded module in the interpreter:
 ```scheme
 (interface Operation
   (start!)
@@ -169,46 +170,61 @@ Here is an example that demonstrates the performance advantages over dynamic dis
     (&Operation-finish! op)))
 ```
 
-And here are some timings for 1M iterations, after compiling the above code:
-```scheme
-> (import :tmp/interface-example)
-> (def acc (LinearAccumulator #f 2 3))
-> (time (fold-accumulator/vanilla acc 1000000))
-(time (tmp/interface-example#fold-accumulator/vanilla acc (##quote 1000000)))
-    0.045348 secs real time
-    0.045350 secs cpu time (0.042612 user, 0.002738 system)
+And here are some timings for 1M iterations, after compiling the above code in a binary:
+```shell
+$ gxc -O -exe -o interface-op interface-op.ss
+$ ./interface-op 1000000
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/vanilla _acc71_ _iters70_)))
+    0.058732 secs real time
+    0.058726 secs cpu time (0.058726 user, 0.000000 system)
     no collections
-    no bytes allocated
+    64 bytes allocated
     no minor faults
     no major faults
-1000002000000
-> (time (fold-accumulator/interface acc 1000000))
-(time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.016888 secs real time
-    0.016891 secs cpu time (0.016401 user, 0.000490 system)
+    153354940 cpu cycles
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/interface _acc71_ _iters70_)))
+    0.036777 secs real time
+    0.036777 secs cpu time (0.036777 user, 0.000000 system)
     no collections
-    928 bytes allocated
+    448 bytes allocated
     no minor faults
     no major faults
-1000002000000
-> (time (fold-accumulator/interface acc 1000000))
-(time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.016777 secs real time
-    0.016778 secs cpu time (0.016614 user, 0.000164 system)
+    96028762 cpu cycles
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/unchecked-interface _acc71_ _iters70_)))
+    0.022321 secs real time
+    0.022313 secs cpu time (0.022313 user, 0.000000 system)
     no collections
-    144 bytes allocated
+    160 bytes allocated
     no minor faults
     no major faults
-1000002000000
-> (time (fold-accumulator/unchecked-interface acc 1000000))
-(time (tmp/interface-example#fold-accumulator/unchecked-interface acc (##quote 1000000)))
-    0.015616 secs real time
-    0.015617 secs cpu time (0.015581 user, 0.000036 system)
+    58279314 cpu cycles
+
+$ gxc -O -exe -full-program-optimization -o interface-op-optimized interface-op.ss
+$ ./interface-op-optimized 1000000
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/vanilla _acc71_ _iters70_)))
+    0.044859 secs real time
+    0.044846 secs cpu time (0.042098 user, 0.002748 system)
     no collections
-    144 bytes allocated
+    64 bytes allocated
     no minor faults
     no major faults
-1000002000000
+    117129276 cpu cycles
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/interface _acc71_ _iters70_)))
+    0.021684 secs real time
+    0.021672 secs cpu time (0.021599 user, 0.000073 system)
+    no collections
+    704 bytes allocated
+    no minor faults
+    no major faults
+    56617088 cpu cycles
+(time (let () (declare (not safe)) (tmp/benchmark/interface/interface-op#fold-accumulator/unchecked-interface _acc71_ _iters70_)))
+    0.020295 secs real time
+    0.020296 secs cpu time (0.016758 user, 0.003538 system)
+    no collections
+    160 bytes allocated
+    no minor faults
+    no major faults
+    52992136 cpu cycles
 ```
 
 As we can see the interface version is significantly faster, and the
