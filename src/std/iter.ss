@@ -216,7 +216,7 @@
 (def (iter-next! it)
   (using (it :- iterator)
     (declare (not safe))
-    (it.e it)))
+    (it.next it)))
 
 (def (iter-fini! it)
   (declare (not safe))
