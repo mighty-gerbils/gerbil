@@ -12,7 +12,7 @@ namespace: gxc
 (export compile-module compile-exe)
 
 (def default-gerbil-gsc
-  (path-expand "gsc" (path-expand "~~bin")))
+  (path-expand "gsc" (path-expand "bin" (path-expand "~~"))))
 (def default-gerbil-gcc "gcc")
 (def default-gerbil-ar "ar")
 
