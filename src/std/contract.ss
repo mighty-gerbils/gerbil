@@ -282,11 +282,10 @@
                                     (object (string->symbol (car split)))
                                     (slot (string->symbol (cadr split))))
                                (with-syntax ((object (stx-identifier #'id object))
-                                             (getf (get-class-accessor stx slot meta)))
-                                 (if (identifier? getf)
-                                   (with-syntax ((getf getf))
-                                     (syntax/loc stx
-                                       (getf object)))
+                                             (getf (get-class-accessor stx slot 'meta)))
+                                 (if (identifier? #'getf)
+                                   (syntax/loc stx
+                                     (getf object))
                                    (with-syntax ((slot slot))
                                      (syntax/loc stx
                                        (unchecked-slot-ref object 'slot)))))))
@@ -300,13 +299,12 @@
                                 (dotted-identifier? #'id #'var)
                                 (let* ((split (string-split (symbol->string (stx-e #'id)) #\.))
                                        (object (string->symbol (car split)))
-                                       (field (string->symbol (cadr split))))
+                                       (slot (string->symbol (cadr split))))
                                   (with-syntax ((object (stx-identifier #'id object))
-                                                (setf (get-class-mutator stx slot meta)))
-                                    (if (identifier? setf)
-                                      (with-syntax ((setf setf))
-                                        (syntax/loc stx
-                                          (setf object val)))
+                                                (setf (get-class-mutator stx slot 'meta)))
+                                    (if (identifier? #'setf)
+                                      (syntax/loc stx
+                                        (setf object val))
                                       (with-syntax ((slot slot))
                                         (syntax/loc stx
                                           (unchecked-slot-set! object 'slot val)))))))
