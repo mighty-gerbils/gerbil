@@ -39,6 +39,9 @@ export GERBIL_SOURCE GERBIL_STAGE0
 GERBIL_BUILD_PREFIX="${GERBIL_BASE}/build"
 export GERBIL_BUILD_PREFIX
 
+GERBIL_GSC="${GERBIL_BUILD_PREFIX}/bin/gsc"
+export GERBIL_GSC
+
 GERBIL_LOADPATH="${GERBIL_BUILD_PREFIX}/lib"
 export GERBIL_LOADPATH
 
@@ -187,6 +190,7 @@ build_stage1 () {
   local target_lib="${GERBIL_BUILD_PREFIX}/lib"
   local target_lib_gerbil="${GERBIL_BUILD_PREFIX}/lib/gerbil"
   local target_lib_static="${GERBIL_BUILD_PREFIX}/lib/static"
+
 
   ## feedback
   feedback_low "Building Gerbil core"
