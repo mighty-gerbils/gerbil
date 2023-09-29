@@ -537,47 +537,43 @@
           (id (identifier? #'id) body)
           (() body)))))
 
-  (def (make-checked-method-def name descriptor klass method-impl-name unchecked-method-impl-name signature offset)
-    (with-syntax ((descriptor descriptor)
-                  (klass klass)
+  (def (make-checked-method-def interface-name method-name descriptor klass method-impl-name unchecked-method-impl-name signature offset)
+    (with-syntax ((interface-name interface-name)
                   (method method-impl-name)
-                  (offset offset))
+                  (unchecked unchcked-method-imple-name))
       (if (stx-list? signature)
         (with-syntax* (((in ...) (checked-method-arguments-in signature))
                        ((out ...) (method-arguments-out signature))
+                       (cast-self
+                        (syntax/loc stx
+                          (interface-name self)))
                        (dispatch
                         (syntax/loc stx
-                          (let (instance (cast descriptor self))
-                            (let ((obj (##unchecked-structure-ref instance 1 klass 'method))
-                                  (f   (##unchecked-structure-ref instance offset klass 'method)))
-                              (let ()
-                                (declare (not safe))
-                                (f obj out ...))))))
+                          (uchecked cast-self out ...)))
                        (body
-                        (make-checked-method-body name signature #'dispatch)))
+                        (make-checked-method-body interface-name signature #'dispatch)))
           (syntax/loc stx
             (def (method self in ...)
               body)))
         ;; variadic, we have to use apply
         (with-syntax* ((in (checked-method-arguments-in signature))
                        ((out ...) (method-arguments-out signature))
+                       (cast-self
+                        (syntax/loc stx
+                          (interface-name self)))
                        (dispatch
                         (syntax/loc stx
-                          (let (instance (cast descriptor self))
-                            (let ((obj (##unchecked-structure-ref instance 1 klass 'method))
-                                  (f   (##unchecked-structure-ref instance offset klass 'method)))
-                              (let ()
-                                (declare (not safe))
-                                (apply f obj out ...))))))
+                          (apply unchecked cast-self out ...)))
                        (body
                         (make-checked-method-body name signature #'dispatch)))
           (syntax/loc stx
             (def (method self . in)
               body))))))
 
-  (def (make-unchecked-method-def name descriptor klass method-impl-name unchecked-method-impl-name signature offset)
+  (def (make-unchecked-method-def interface-name method-name descriptor klass method-impl-name unchecked-method-impl-name signature offset)
     (with-syntax ((descriptor descriptor)
                   (klass klass)
+                  (method method-name)
                   (unchecked-method unchecked-method-impl-name)
                   (offset offset))
       (if (stx-list? signature)
@@ -603,16 +599,18 @@
                   (declare (not safe))
                   (apply f obj out ...)))))))))
 
-  (def (make-method-defs name descriptor klass)
-    (lambda (method-impl-name unchecked-method-impl-name signature offset)
+  (def (make-method-defs interface-name descriptor klass)
+    (lambda (method-name method-impl-name unchecked-method-impl-name signature offset)
       (with-syntax ((checked-method-def
-                     (make-checked-method-def name descriptor klass
+                     (make-checked-method-def inteface-name method-name
+                                              descriptor klass
                                               method-impl-name
                                               unchecked-method-impl-name
                                               signature
                                               offset))
                     (unchecked-method-def
-                     (make-unchecked-method-def name descriptor klass
+                     (make-unchecked-method-def interface-name method-name
+                                                descriptor klass
                                                 method-impl-name
                                                 unchecked-method-impl-name
                                                 signature
@@ -659,6 +657,7 @@
                           #'(method-name ...)))
                     ((defmethod-impl ...)
                      (map (make-method-defs #'name #'descriptor #'klass)
+                          #'(method-name ...)
                           #'(method-impl-name ...)
                           #'(unchecked-method-impl-name ...)
                           #'(method-signature ...)
