@@ -560,8 +560,8 @@ Extending the example further:
 ```scheme
 (defmethod {do-it B}
   (lambda (self factor)
-    (using (b : B)
-      (* (+ b.x b.y) b.z factor))))
+    (using (self :- B)
+      (* (+ self.x self.y) self.z factor))))
 
 > {b.do-it 1}
 9
