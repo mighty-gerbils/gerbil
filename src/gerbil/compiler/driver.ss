@@ -291,9 +291,9 @@ namespace: gxc
       (write '(gerbil-main))
       (newline)))
 
-  (def (static-include gsc-opts home)
+  (def (static-include gsc-opts libdir)
     (def static-dir
-      (path-expand "lib/static" home))
+      (path-expand "static" libdir))
     (def user-static-dir
       (path-expand
        (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
@@ -325,6 +325,7 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_BUILD_PREFIX" (gerbil-home)))
+           (gerbil-libdir (path-expand "lib" gerbil-home))
            (runtime (map find-static-module-file gerbil-runtime-modules))
            (gambit-sharp (path-expand "lib/_gambit#.scm" gerbil-home))
            (include-gambit-sharp (string-append "(include \"" gambit-sharp "\")"))
@@ -333,22 +334,36 @@ namespace: gxc
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
            (deps (filter (lambda (f) (not (member f runtime))) deps))
-           (gsc-opts (or (pgetq gsc-options: opts) []))
-           (gsc-opts (static-include gsc-opts gerbil-home))
+           (output-base (string-append (path-strip-extension output-scm)))
+           (output-c (string-append output-base ".c"))
+           (output-o (string-append output-base ".o"))
+           (output-c_ (string-append output-base "_.c"))
+           (output-o_ (string-append output-base "_.o"))
+           (gsc-link-opts (gsc-link-options #f))
+           (gsc-cc-opts (static-include (gsc-cc-options) gerbil-libdir))
+           (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
               ["-e" "(define-cond-expand-feature|enable-smp|)"
                "-e" include-gambit-sharp]
               ["-e" include-gambit-sharp]))
-           (gsc-args
-            ["-exe" "-o" output-bin
-             (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
-             output-scm]))
+           (gsc-link-opts
+            (append gsc-link-opts gsc-gx-macros))
+           (gerbil-rpath
+            (string-append "-Wl,-rpath=" gerbil-libdir)))
       (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
         (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
-        (invoke (gerbil-gsc) gsc-args))))
+        (invoke (gerbil-gsc)
+                ["-link" "-o" output-c_ gsc-link-opts ... output-scm])
+        (invoke (gerbil-gsc)
+                ["-obj" output-c output-c_])
+        (invoke (gerbil-gcc)
+                ["-o" output-bin
+                 output-o output-o_ output-ld-opts ...
+                 gerbil-rpath
+                 "-L" gerbil-libdir "-lgambit"]))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scmx")))
