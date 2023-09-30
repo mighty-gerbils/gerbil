@@ -26,6 +26,7 @@
         http-response-begin http-response-chunk http-response-end
         http-response-force-output
         http-response-timeout-set!
+        http-response-upgrade!
         set-httpd-request-timeout!
         set-httpd-response-timeout!
         set-httpd-max-request-headers!
@@ -122,7 +123,7 @@
              (else
               (http-response-write res 404 [] #f)))
 
-            (unless close?
+            (unless (or close? res.close?)
               (http-request-skip-body req)
               (loop))))))
 
@@ -232,10 +233,27 @@
   (using (res : http-response)
     (&BufferedWriter-flush res.buf)))
 
+;; set the response output timeout
 (def (http-response-timeout-set! res timeo)
   (using ((res : http-response)
           (sock res.sock :- StreamSocket))
     (sock.set-output-timeout! timeo)))
+
+;; upgrade a connect, with the supplied headers
+;; automatically adds Connection: upgrade to the headers
+;; returns 3 values: the socket, the reader, and the writer
+(def (http-response-upgrade! res headers)
+  (using (res : http-response)
+    (let (headers (cons '("Connection" . "upgrade") headers))
+      (write-response-line res.buf 101)
+      (write-response-headers res.buf headers)
+      (write-crlf res.buf)
+      (set! res.close? #t)
+      (let (sock res.sock)
+        (using (sock :- StreamSocket)
+          (values res.sock
+                  (open-buffered-reader (sock.reader))
+                  res.buf))))))
 
 ;;; server internal
 (def (header-e key lst)

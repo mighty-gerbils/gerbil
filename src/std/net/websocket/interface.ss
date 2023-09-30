@@ -17,5 +17,8 @@
   ;; send a message, binary or text
   (send (msg : message))
 
-  ;; receive a message or #!eof if the websocket has been closed in the input direction
-  (recv))
+  ;; receive a message or #!eof if the websocket has been closed
+  (recv)
+
+  ;; returns the websocket protocol or #f if none was specified
+  (protocol))

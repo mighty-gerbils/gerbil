@@ -11,6 +11,7 @@
 (export #t)
 
 (def (websocket-connect url
+                        protocol:     (proto #f)
                         redirect:     (redirect #f)
                         headers:      (headers #f)
                         cookies:      (cookies #f)

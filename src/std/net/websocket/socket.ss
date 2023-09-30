@@ -9,37 +9,46 @@
         ./interface)
 (export #t)
 
-(defstruct websocket (sock reader writer rw server?)
+(defstruct websocket (sock reader writer rw server? proto)
   final: #t
   constructor: :init!)
 
 (defmethod {:init! websocket}
-  (lambda (self sock reader writer server?)
+  (lambda (self sock reader writer server? proto)
     (using (self :- websocket)
       (set! self.sock sock)
       (set! self.reader reader)
       (set! self.writer writer)
       (set! self.rw (make-rwlock 'websocket))
-      (set! self.server? server?))))
+      (set! self.server? server?)
+      (set! self.proto proto))))
 
 ;;; WebSocket interface implementation
 (defmethod {send websocket}
   (lambda (self msg)
     (using ((self :- websocket)
             (msg :- message))
+      ;; TODO
       (error "IMPLEMENTME")
       )))
 
 (defmethod {recv websocket}
   (lambda (self)
     (using (self :- websocket)
-      (error "IMPLEMENTME"))))
+      ;; TODO
+      (error "IMPLEMENTME")
+      )))
+
+(defmethod {protocol websocket}
+  websocket-proto)
 
 ;; Closer interface implementation
 (defmethod {close websocket}
   (lambda (self)
     (using (self :- websocket)
-      (error "IMPLEMENTME"))))
+      ;; TODO
+      (error "IMPLEMENTME")
+      )))
 
 ;;; Socket interface implementation passhtrough
 (defsyntax (defsocket-dispatch-method stx)
