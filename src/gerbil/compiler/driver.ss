@@ -801,7 +801,7 @@ namespace: gxc
             ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
             stdout-redirection: #t)
     (invoke (gerbil-gcc)
-            ["-shared" gcc-ld-opts ... "-o" link-path link-path-o path-o])
+            ["-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
     (for-each delete-file [path-c path-o link-path-c link-path-o])))
 
 (def (compile-output-file ctx n ext)
