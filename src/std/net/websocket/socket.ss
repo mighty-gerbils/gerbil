@@ -10,7 +10,7 @@
         ./interface)
 (export #t)
 
-(defstruct websocket (sock reader writer rw server? closed? proto)
+(defstruct websocket (sock reader writer server? closed? proto)
   final: #t
   constructor: :init!)
 
@@ -23,7 +23,6 @@
       (set! self.sock sock)
       (set! self.reader reader)
       (set! self.writer writer)
-      (set! self.rw (make-rwlock 'websocket))
       (set! self.server? server?)
       (set! self.proto proto))))
 
@@ -32,26 +31,24 @@
   (lambda (self msg)
     (using ((self :- websocket)
             (msg :- message))
-      (with-read-lock self.rw
-        (lambda ()
-          (when self.closed?
-            (raise-io-closed send "websocket has been closed" self))
 
-          ;; TODO
-          (error "IMPLEMENTME")
-          )))))
+      (when self.closed?
+        (raise-io-closed send "websocket has been closed" self))
+
+      ;; TODO
+      (error "IMPLEMENTME")
+      )))
 
 (defmethod {recv websocket}
   (lambda (self)
     (using (self :- websocket)
-      (with-read-lock self.rw
-        (lambda ()
-          (when self.closed?
-            (raise-io-closed send "websocket has been closed" self))
+      (when self.closed?
+        (raise-io-closed send "websocket has been closed" self))
 
-          ;; TODO
-          (error "IMPLEMENTME")
-          )))))
+      ;; TODO
+
+      (error "IMPLEMENTME")
+      )))
 
 (defmethod {protocol websocket}
   websocket-proto)
@@ -60,13 +57,14 @@
 (defmethod {close websocket}
   (lambda (self)
     (using (self :- websocket)
-      (with-write-lock self.rw
-        (lambda ()
-          (unless self.closed?
-            (set! self.closed? #t)
-            (let (sock self.sock)
-              (using (sock :- StreamSocket)
-                (sock.close)))))))))
+      (unless self.closed?
+        (set! self.closed? #t)
+
+        ;; TODO graceful close with reason
+
+        (let (sock self.sock)
+          (using (sock :- StreamSocket)
+            (sock.close)))))))
 
 ;;; Socket interface implementation passhtrough
 (defsyntax (defsocket-dispatch-method stx)
