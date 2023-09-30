@@ -207,8 +207,11 @@
     "net/uri"
     "net/request"
     "net/json-rpc"
-    ;; TODO to be ported
-    ;;"net/websocket"
+    "net/websocket/interface"
+    "net/websocket/socket"
+    "net/websocket/client"
+    "net/websocket/server"
+    ;;"net/websocket" -- To import and reexport ./websocket/api
     (gxc: "net/repl" ,@(include-gambit-sharp))
     "net/socks/interface"
     "net/socks/client"
