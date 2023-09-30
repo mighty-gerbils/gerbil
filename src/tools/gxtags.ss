@@ -19,26 +19,39 @@
 (def (main . args)
   (call-with-getopt gxtags-main args
     program: "gxtags"
-    help: "generate emacs tags for Gerbil code"
+    help: "generate emacs/vim tags for Gerbil code"
     (flag 'append "-a"
       help: "append to existing tag file")
     (option 'output "-o" default: "TAGS"
       help: "explicit name of file for tag table")
+    (option 'format "-t" "--tag-format"
+      help: "TAGS index format; emacs or vim"
+      value: string->symbol
+      default: 'emacs)
     (rest-arguments 'input
       help: "source file or directory")))
 
 (def (gxtags-main opt)
   (run (hash-ref opt 'input ["."])
        (hash-get opt 'output)
-       (hash-get opt 'append)))
+       (hash-get opt 'append)
+       (hash-get opt 'format)))
 
-(def (run inputs tagfile append?)
-  (make-tags inputs tagfile append?))
+(def (run inputs tagfile append? format)
+  (case format
+    ((emacs vim)
+     (void))
+    (else
+     (error "unknown TAGS index format")))
+   (parameterize ((current-tags-format format))
+     (make-tags inputs tagfile append? format)))
 
 (def current-tags-path
   (make-parameter #f))
+(def current-tags-format
+  (make-parameter #f))
 
-(def (make-tags inputs tagfile (append? #f))
+(def (make-tags inputs tagfile (append? #f) (format 'emacs))
   (call-with-output-file [path: tagfile append: append?]
     (lambda (output)
       (parameterize ((current-tags-path (path-normalize tagfile)))
@@ -163,6 +176,12 @@
     (reverse! tags)))
 
 (def (write-tags tags filename output)
+  (case (current-tags-format)
+    ((emacs) (write-tags/emacs tags filename output))
+    ((vim)   (write-tags/vim tags filename output))
+    (else    (error "unexpected TAGS index format" (current-tags-format)))))
+
+(def (write-tags/emacs tags filename output)
   (let* ((lines (read-file-lines filename))
          (lines (if (null? lines)
                   '#("") ; empty module, need an anchor
@@ -206,7 +225,19 @@
         (let* ((tags (reverse! out-of-file-tags))
                (path (source-location-path (caddar tags)))
                (filename (path-normalize path #t)))
-          (write-tags tags filename output))))))
+          (write-tags/emacs tags filename output))))))
+
+(def (write-tags/vim tags filename output)
+  (for-each
+    (lambda (tag)
+      (with ([_ name loc] tag)
+        (display name output)
+        (display #\tab output)
+        (display filename output)
+        (display #\tab output)
+        (display (source-location-line loc) output)
+        (newline output)))
+    tags))
 
 (def +nl+
   (char->integer #\newline))
