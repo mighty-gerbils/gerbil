@@ -15,9 +15,9 @@ The `:std/contract` package provides facilities for contract checking and type a
 (using (declaration ...) body ...)
 
 declaration:
- (var :~ predicate)  ; contract check with predicate
- (var : Type)        ; contract check or cast with type
- (var :- Type)       ; type assertion
+ (var [expr] :~ predicate)  ; contract check with predicate
+ (var [expr] : Type)        ; contract check or cast with type
+ (var [expr] :- Type)       ; type assertion
 
  Type:
   struct identifier
@@ -44,6 +44,8 @@ The macro expands the declarations and creates a block that evaluates the body w
       facade procedure will be used.
     - If the declaration is a type assertion with `:-`, then the unchecked facade procedure
       will be used.
+- The form with the optional expression in the declaration expands to a let over using.
+  So `(using (var expr :~ contract) body ...)` expands to `(let (var expr) (using (var :~ contract) body ...))` and so on.
 
 ### Example
 
