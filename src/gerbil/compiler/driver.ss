@@ -795,7 +795,8 @@ namespace: gxc
          (gsc-cc-opts (gsc-cc-options))
          (gcc-ld-opts (gcc-ld-options)))
     (invoke (gerbil-gsc)
-            ["-link" "-flat" gsc-link-opts ... "-o" link-path-c path])
+            ["-link" "-flat" gsc-link-opts ... "-o" link-path-c path]
+            stdout-redirection: #t)
     (invoke (gerbil-gsc)
             ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c])
     (invoke (gerbil-gcc)
@@ -878,13 +879,17 @@ namespace: gxc
    (else
     (error "Bad module id" idstr))))
 
-(def (invoke program args)
+(def (invoke program args
+             stdout-redirection: (stdout-redirection #f)
+             stderr-redirection: (stderr-redirection #f))
   (verbose "invoke " [program . args])
-  (let* ((proc (open-process [path: program arguments: args
-                                    stdout-redirection: #f
-                                    stderr-redirection: #f]))
-         (status (process-status proc)))
-    (close-port proc)
-    (unless (zero? status)
-      (raise-compile-error "Compilation error; process exit with nonzero status"
-                           program))))
+  (let (proc (open-process [path: program arguments: args
+                                  stdout-redirection: stdout-redirection
+                                  stderr-redirection: stderr-redirection]))
+    (when (or stdout-redirection stderr-redirection)
+      (read-line proc #f))
+    (let (status (process-status proc))
+      (close-port proc)
+      (unless (zero? status)
+        (raise-compile-error "Compilation error; process exit with nonzero status"
+                             program)))))
