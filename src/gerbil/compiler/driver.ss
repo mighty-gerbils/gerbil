@@ -795,10 +795,11 @@ namespace: gxc
          (gsc-cc-opts (gsc-cc-options))
          (gcc-ld-opts (gcc-ld-options)))
     (invoke (gerbil-gsc)
-            ["-link" "-flat" gsc-link-opts ... "-o" link-path-c path]
+            ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
             stdout-redirection: #t)
     (invoke (gerbil-gsc)
-            ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c])
+            ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
+            stdout-redirection: #t)
     (invoke (gerbil-gcc)
             ["-shared" gcc-ld-opts ... "-o" link-path link-path-o path-o])
     (for-each delete-file [path-c path-o link-path-c link-path-o])))
