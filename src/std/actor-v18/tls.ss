@@ -222,7 +222,7 @@
       (if force?
         (delete-file cafile)
         (error "cafile already exists" cafile)))
-    (invoke "c_rehash" [ca-certificates])
+    (invoke "openssl" ["rehash" ca-certificates])
     (call-with-output-file cafile
       (lambda(output)
         (for (f [sub-ca.crt root-ca.crt])
