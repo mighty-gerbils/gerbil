@@ -87,13 +87,14 @@
     (cond
      (dq.back
       => (lambda (back)
-           (let (prev (&node-prev back))
+           (using ((back :- node)
+                   (prev back.prev :- node))
              (set! dq.back prev)
              (if prev
-               (set! (&node-next prev) #f)
+               (set! prev.next #f)
                (set! dq.front #f))
              (set! dq.length (fx1- dq.length))
-             (&node-e back))))
+             back.e)))
      ((eq? default absent-obj)
       (raise-context-error pop-back! "Cannot pop; empty deque" dq))
      (else default))))
@@ -118,6 +119,6 @@
   (using (dq : deque)
     (let lp ((n dq.back) (r []))
       (if n
-        (lp (&node-prev n)
-            (cons (&node-e n) r))
+        (using (n :- node)
+          (lp n.prev (cons n.e r)))
         r))))

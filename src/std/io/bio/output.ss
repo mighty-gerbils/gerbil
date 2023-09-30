@@ -10,20 +10,17 @@
 (declare (not safe))
 
 (defrule (bio-output-advance! output whi)
-  (let (bio output)
-    (using (bio :- output-buffer)
-      (set! bio.whi whi))))
+  (using (bio output :- output-buffer)
+    (set! bio.whi whi)))
 
 (defrule (bio-output-consume! output)
-  (let (bio output)
-    (using (bio :- output-buffer)
-      (set! bio.whi 0))))
+  (using (bio output :- output-buffer)
+    (set! bio.whi 0)))
 
 (defrule (bio-output-drain! output buf whi)
-  (let (bio output)
-    (using (bio :- output-buffer)
-      (&Writer-write bio.writer buf 0 whi)
-      (bio-output-consume! bio))))
+  (using (bio output :- output-buffer)
+    (&Writer-write bio.writer buf 0 whi)
+    (bio-output-consume! bio)))
 
 (def (bio-write-bytes bio input input-start input-end)
   (using (bio :- output-buffer)

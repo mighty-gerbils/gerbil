@@ -304,16 +304,15 @@
          (else req))))))
 
 (def (http-request-write req method target headers body)
-  (using (req :- request)
-    (let (writer req.writer)
-      (using (writer :- BufferedWriter)
-        (writeln writer "~a ~a HTTP/1.1" method target)
-        (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
-                  headers)
-        (writeln writer)
-        (when body
-          (writer.write body))
-        (writer.flush)))))
+  (using ((req :- request)
+          (writer req.writer :- BufferedWriter))
+    (writeln writer "~a ~a HTTP/1.1" method target)
+    (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
+              headers)
+    (writeln writer)
+    (when body
+      (writer.write body))
+    (writer.flush)))
 
 (def* writeln
   ((writer)
@@ -375,79 +374,77 @@
     (http-request-read-simple-body req (length-e headers)))))
 
 (def (http-request-read-chunked-body req)
-  (using (req :- request)
-    (let ((reader req.reader)
-          (root [#f]))
-      (using (reader :- BufferedReader)
-        (let lp ((tl root))
-          (let* ((line (read-response-line req))
-                 (clen (string->number (car (string-split line #\space)) 16)))
-            (if (fxzero? clen)
-              (u8vector-concatenate (cdr root))
-              (let (chunk (make-u8vector clen))
-                (reader.read chunk 0 clen clen)
-                (read-response-line req) ; read chunk trailing CRLF
-                (let (tl* [chunk])
-                  (set! (cdr tl) tl*)
-                  (lp tl*))))))))))
+  (using ((req :- request)
+          (reader req.reader :- BufferedReader))
+    (let (root [#f])
+      (let lp ((tl root))
+        (let* ((line (read-response-line req))
+               (clen (string->number (car (string-split line #\space)) 16)))
+          (if (fxzero? clen)
+            (u8vector-concatenate (cdr root))
+            (let (chunk (make-u8vector clen))
+              (reader.read chunk 0 clen clen)
+              (read-response-line req)  ; read chunk trailing CRLF
+              (let (tl* [chunk])
+                (set! (cdr tl) tl*)
+                (lp tl*)))))))))
 
 (def (http-request-read-simple-body req length)
-  (using (req :- request)
-    (let (reader req.reader)
-      (using (reader :- BufferedReader)
-        (def (read/length length)
-          (let* ((data (make-u8vector length))
-                 (rd (reader.read data 0 length length)))
-            data))
+  (using ((req :- request)
+          (reader req.reader :- BufferedReader))
 
-        (def (read/end)
-          (let (root [#f])
-            (let lp ((tl root))
-              (let* ((buflen 4096)
-                     (buf (make-u8vector buflen))
-                     (rd  (reader.read buf)))
-                (cond
-                 ((##fxzero? rd)
-                  (u8vector-concatenate (cdr root)))
-                 (else
-                  (let (tl* [buf])
-                    (set! (cdr tl) tl*)
-                    (lp tl*))))))))
+    (def (read/length length)
+      (let* ((data (make-u8vector length))
+             (rd (reader.read data 0 length length)))
+        data))
 
-        (if length
-          (read/length length)
-          (read/end))))))
+    (def (read/end)
+      (let (root [#f])
+        (let lp ((tl root))
+          (let* ((buflen 4096)
+                 (buf (make-u8vector buflen))
+                 (rd  (reader.read buf)))
+            (cond
+             ((##fxzero? rd)
+              (u8vector-concatenate (cdr root)))
+             (else
+              (let (tl* [buf])
+                (set! (cdr tl) tl*)
+                (lp tl*))))))))
+
+    (if length
+      (read/length length)
+      (read/end))))
 
 (def cr (char->integer #\return))
 (def lf (char->integer #\newline))
 
 (def (read-response-line req)
-  (using (req :- request)
-    (let ((reader req.reader)
-          (root [#f]))
-      (using (reader :- BufferedReader)
-        (let lp ((tl root))
-          (let (next (reader.read-u8-inline))
-            (cond
-             ((eof-object? next)
-              (raise-io-error request-read-response-line
-                              "Incomplete response; connection closed" req))
-             ((eq? next cr)
-              (let (next (reader.read-u8-inline))
-                (cond
-                 ((eof-object? next)
-                  (raise-io-error request-read-response-line
-                                  "Incomplete response; connection closed" reader))
-                 ((eq? next lf)
-                  (utf8->string (list->u8vector (cdr root))))
-                 (else
-                  (let (tl* [cr next])
-                    (set! (cdr tl) tl*)
-                    (lp (cdr tl*)))))))
-             (else
-              (let (tl* [next])
-                (set! (cdr tl) tl*)
-                (lp tl*))))))))))
+  (using ((req :- request)
+          (reader req.reader :- BufferedReader))
+    (let (root [#f])
+      (let lp ((tl root))
+        (let (next (reader.read-u8-inline))
+          (cond
+           ((eof-object? next)
+            (raise-io-error request-read-response-line
+                            "Incomplete response; connection closed" req))
+           ((eq? next cr)
+            (let (next (reader.read-u8-inline))
+              (cond
+               ((eof-object? next)
+                (raise-io-error request-read-response-line
+                                "Incomplete response; connection closed" reader))
+               ((eq? next lf)
+                (utf8->string (list->u8vector (cdr root))))
+               (else
+                (let (tl* [cr next])
+                  (set! (cdr tl) tl*)
+                  (lp (cdr tl*)))))))
+           (else
+            (let (tl* [next])
+              (set! (cdr tl) tl*)
+              (lp tl*)))))))))
 
 (def (request-close req)
   (using (req : request)
@@ -530,7 +527,7 @@
   (using (req : request)
     (try
      (if (eq? req.status 200)
-       (request-content req)
+       (&request-content req)
        (error "HTTP request failed" req.status req.status-text))
      (finally
       (&request-close req)))))
