@@ -1,7 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 interface
-(import :std/interface)
+(import :std/interface
+        :std/contract
+        :std/io/interface)
 (export #t)
 
 ;; SOCKS client interface
@@ -14,11 +16,10 @@
   ;; :- inet-address?
   (proxy-address)
 
-  ;; address := inet-address?
-  ;; :- StreamSocket?
-  (connect address)
+  ;; open a connection through the proxy
+  ;; :- StreamSocket
+  (connect (address :~ address?))
 
-  ;; Binds an address at the server
-  ;; address := maybe inet-address?
-  ;; :- ServerSocket?
-  (bind (address #f)))
+  ;; Bind an address at the proxy
+  ;; :- ServerSocket
+  (bind (address :~ (maybe address?) := #f)))
