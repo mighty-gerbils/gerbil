@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; websocket socket implementation
-(import :std/interface
+(import :std/error
+        :std/interface
         :std/contract
         :std/io
         :std/misc/rwlock
@@ -9,7 +10,7 @@
         ./interface)
 (export #t)
 
-(defstruct websocket (sock reader writer rw server? proto)
+(defstruct websocket (sock reader writer rw server? closed? proto)
   final: #t
   constructor: :init!)
 
@@ -31,16 +32,26 @@
   (lambda (self msg)
     (using ((self :- websocket)
             (msg :- message))
-      ;; TODO
-      (error "IMPLEMENTME")
-      )))
+      (with-read-lock self.rw
+        (lambda ()
+          (when self.closed?
+            (raise-io-closed send "websocket has been closed" self))
+
+          ;; TODO
+          (error "IMPLEMENTME")
+          )))))
 
 (defmethod {recv websocket}
   (lambda (self)
     (using (self :- websocket)
-      ;; TODO
-      (error "IMPLEMENTME")
-      )))
+      (with-read-lock self.rw
+        (lambda ()
+          (when self.closed?
+            (raise-io-closed send "websocket has been closed" self))
+
+          ;; TODO
+          (error "IMPLEMENTME")
+          )))))
 
 (defmethod {protocol websocket}
   websocket-proto)
@@ -49,9 +60,13 @@
 (defmethod {close websocket}
   (lambda (self)
     (using (self :- websocket)
-      ;; TODO
-      (error "IMPLEMENTME")
-      )))
+      (with-write-lock self.rw
+        (lambda ()
+          (unless self.closed?
+            (set! self.closed? #t)
+            (let (sock self.sock)
+              (using (sock :- StreamSocket)
+                (sock.close)))))))))
 
 ;;; Socket interface implementation passhtrough
 (defsyntax (defsocket-dispatch-method stx)
