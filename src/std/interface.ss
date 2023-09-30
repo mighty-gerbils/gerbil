@@ -585,9 +585,7 @@
               (declare (not safe))
               (let ((obj (##unchecked-structure-ref self 1 klass 'method))
                     (f   (##unchecked-structure-ref self offset klass 'method)))
-                (let ()
-                  (declare (not safe))
-                  (f obj out ...))))))
+                (f obj out ...)))))
         ;; variadic, we have to use apply
         (with-syntax ((in (unchecked-method-arguments-in signature))
                       ((out ...) (method-arguments-out signature)))
@@ -596,9 +594,7 @@
               (declare (not safe))
               (let ((obj (##unchecked-structure-ref self 1 klass 'method))
                     (f   (##unchecked-structure-ref self offset klass 'method)))
-                (let ()
-                  (declare (not safe))
-                  (apply f obj out ...)))))))))
+                (apply f obj out ...))))))))
 
   (def (make-method-defs interface-name descriptor klass)
     (lambda (method-name method-impl-name unchecked-method-impl-name signature offset)

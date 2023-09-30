@@ -15,9 +15,9 @@ The `:std/contract` package provides facilities for contract checking and type a
 (using (declaration ...) body ...)
 
 declaration:
- (var :~ predicate)  ; contract check with predicate
- (var : Type)        ; contract check or cast with type
- (var :- Type)       ; type assertion
+ (var [expr] :~ predicate)  ; contract check with predicate
+ (var [expr] : Type)        ; contract check or cast with type
+ (var [expr] :- Type)       ; type assertion
 
  Type:
   struct identifier
@@ -44,6 +44,8 @@ The macro expands the declarations and creates a block that evaluates the body w
       facade procedure will be used.
     - If the declaration is a type assertion with `:-`, then the unchecked facade procedure
       will be used.
+- The form with the optional expression in the declaration expands to a let over using.
+  So `(using (var expr :~ contract) body ...)` expands to `(let (var expr) (using (var :~ contract) body ...))` and so on.
 
 ### Example
 
@@ -66,33 +68,28 @@ Here is an example from the standard library:
 
 (def (lru-cache-touch! lru n)
   (using ((lru :- lru-cache)
-          (n :- node))
-    (let ((hd lru.hd)
-          (tl lru.tl))
-      (using ((hd :- node)
-              (tl :- node))
-        (cond
-         ((eq? n hd))
-         ((eq? n tl)
-          (let (prev n.prev)
-            (using (prev :- node)
-              (set! prev.next #f)
-              (set! lru.tl prev)
-              (set! n.next hd)
-              (set! hd.prev n)
-              (set! n.prev #f)
-              (set! lru.hd n))))
-         (else
-          (let ((prev n.prev)
-                (next n.next))
-            (using ((prev :- node)
-                    (next :- node))
-              (set! prev.next next)
-              (set! next.prev prev)
-              (set! n.next hd)
-              (set! hd.prev n)
-              (set! n.prev #f)
-              (set! lru.hd n)))))))))
+          (n :- node)
+          (hd lru.hd :- node)
+          (tl lru.tl :- node))
+    (cond
+     ((eq? n hd))
+     ((eq? n tl)
+      (using (prev n.prev :- node)
+        (set! prev.next #f)
+        (set! lru.tl prev)
+        (set! n.next hd)
+        (set! hd.prev n)
+        (set! n.prev #f)
+        (set! lru.hd n)))
+     (else
+      (using ((prev n.prev :- node)
+              (next n.next :- node))
+        (set! prev.next next)
+        (set! next.prev prev)
+        (set! n.next hd)
+        (set! hd.prev n)
+        (set! n.prev #f)
+        (set! lru.hd n))))))
 ```
 
 ### maybe

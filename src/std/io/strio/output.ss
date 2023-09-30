@@ -10,20 +10,17 @@
 (declare (not safe))
 
 (defrule (strbuf-output-advance! output whi)
-  (let (strbuf output)
-    (using (strbuf :- string-output-buffer)
-      (set! strbuf.whi whi))))
+  (using (strbuf output :- string-output-buffer)
+    (set! strbuf.whi whi)))
 
 (defrule (strbuf-output-consume! output)
-  (let (strbuf output)
-    (using (strbuf :- string-output-buffer)
-      (set! strbuf.whi 0))))
+  (using (strbuf output :- string-output-buffer)
+    (set! strbuf.whi 0)))
 
 (defrule (strbuf-output-drain! output buf whi)
-  (let (strbuf output)
-    (using (strbuf :- string-output-buffer)
-      (&StringWriter-write-string strbuf.writer buf 0 whi)
-      (strbuf-output-consume! strbuf))))
+  (using (strbuf output :- string-output-buffer)
+    (&StringWriter-write-string strbuf.writer buf 0 whi)
+    (strbuf-output-consume! strbuf)))
 
 (def (strbuf-write-char strbuf char)
   (using (strbuf :- string-output-buffer)

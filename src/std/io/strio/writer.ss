@@ -14,9 +14,8 @@
 (declare (not safe))
 
 (defrule (strio-output-drain! output buf whi)
-  (let (bio output)
-    (using (bio :- output-buffer)
-      (&Writer-write bio.writer buf 0 whi))))
+  (using (bio output :- output-buffer)
+    (&Writer-write bio.writer buf 0 whi)))
 
 (def (strio-write-string strio input input-start input-end)
   (using (strio :- string-writer)

@@ -39,19 +39,18 @@
           (lp))))))
 
 (defrule (do-completion-post! compl val set-e)
-  (let (c compl)
-    (using (c : completion)
-      (mutex-lock! c.mx)
-      (if c.ready?
-        (begin
-          (mutex-unlock! c.mx)
-          (raise-context-error completion-post! "Completion has already been posted" c))
-        (begin
-          (set-e c val)
-          (set! c.ready? #t)
-          (mutex-unlock! c.mx)
-          (condition-variable-broadcast! c.cv)
-          (void))))))
+  (using (c compl : completion)
+    (mutex-lock! c.mx)
+    (if c.ready?
+      (begin
+        (mutex-unlock! c.mx)
+        (raise-context-error completion-post! "Completion has already been posted" c))
+      (begin
+        (set-e c val)
+        (set! c.ready? #t)
+        (mutex-unlock! c.mx)
+        (condition-variable-broadcast! c.cv)
+        (void)))))
 
 (def (completion-post! compl val)
   (do-completion-post! compl val &completion-val-set!))
