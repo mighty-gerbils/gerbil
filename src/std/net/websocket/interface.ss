@@ -14,10 +14,12 @@
   final: #t)
 
 (interface (WebSocket Socket)
-  ;; send a message, binary or text
+  ;; send a message
+  ;; raises io-closed-error? if the websocket has been closed
   (send (msg : message))
 
-  ;; receive a message or #!eof if the websocket has been closed
+  ;; receive a message
+  ;; raises io-closed-error? if the websocket has been closed
   (recv)
 
   ;; returns the websocket protocol or #f if none was specified
