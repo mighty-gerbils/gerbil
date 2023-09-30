@@ -350,7 +350,11 @@ namespace: gxc
            (gsc-link-opts
             (append gsc-link-opts gsc-gx-macros))
            (gerbil-rpath
-            (string-append "-Wl,-rpath=" gerbil-libdir)))
+            (string-append "-Wl,-rpath=" gerbil-libdir))
+           (default-ld-options
+             (cond-expand
+               (netbsd ["-lm"])
+               (else ["-ldl" "-lm"]))))
       (create-directory* (path-directory output-bin))
       (with-output-to-scheme-file output-scm
         (cut generate-stub [runtime ... deps ... bin-scm]))
@@ -362,7 +366,7 @@ namespace: gxc
         (invoke (gerbil-gcc)
                 ["-o" output-bin
                  output-o output-o_ output-ld-opts ...
-                 gerbil-rpath
+                 gerbil-rpath default-ld-options ...
                  "-L" gerbil-libdir "-lgambit"]))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
