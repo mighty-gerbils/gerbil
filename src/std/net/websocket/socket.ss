@@ -60,11 +60,20 @@
       (unless self.closed?
         (set! self.closed? #t)
 
-        ;; TODO graceful close with reason
+        ;; Note we don't do the graceful shutdown part of the spec for good reason
+        ;; - it is borderline useless
+        ;; - it is hard to implement correctly
+        ;; - adding an rwlock in the websocket would make it impossible to
+        ;;   close the socket from a third thread as the socket already has one.
+        ;; - i don't understand the rationale for including it in the RFC
+        ;; - and honestly, it is not needed.
 
-        (let (sock self.sock)
-          (using (sock :- StreamSocket)
-            (sock.close)))))))
+        (let ((reader self.reader)
+              (writer self.writer))
+          (using ((reader :- BufferedReader)
+                  (writer :- BufferedWriter))
+            (reader.close)
+            (writer.close)))))))
 
 ;;; Socket interface implementation passhtrough
 (defsyntax (defsocket-dispatch-method stx)
