@@ -541,24 +541,22 @@
                    (actor-id (add-actor! source)))
               (cond
                ((routed-message? msg)
-                (let (dest msg.dest)
-                  (using (dest :- handle)
-                    (let (dest-ref dest.ref)
-                      (using (dest-ref :- reference)
-                        (let* ((dest-srv-id dest-ref.server)
-                               (dest-actor-id dest-ref.id))
-                      (if (or (not dest-srv-id) (eq? dest-srv-id id))
-                        ;; local send
-                        (cond
-                         ((hash-get actors dest-actor-id)
-                          => (lambda (actor)
-                               (thread-send/check actor msg)))
-                         (else
-                          (warnf "message for unknown actor ~a" dest-actor-id)
-                          (when msg.reply-expected?
-                            (send-control-reply! msg (!error "unknown actor")))))
-                        ;; remote send
-                        (send-remote-message! msg dest-srv-id dest-actor-id actor-id))))))))
+                (using ((dest msg.dest :- handle)
+                        (dest-ref dest.ref :- reference))
+                  (let* ((dest-srv-id dest-ref.server)
+                         (dest-actor-id dest-ref.id))
+                    (if (or (not dest-srv-id) (eq? dest-srv-id id))
+                      ;; local send
+                      (cond
+                       ((hash-get actors dest-actor-id)
+                        => (lambda (actor)
+                             (thread-send/check actor msg)))
+                       (else
+                        (warnf "message for unknown actor ~a" dest-actor-id)
+                        (when msg.reply-expected?
+                          (send-control-reply! msg (!error "unknown actor")))))
+                      ;; remote send
+                      (send-remote-message! msg dest-srv-id dest-actor-id actor-id)))))
 
                   ((control-message? msg)
                    (debugf "control message from ~a: ~a" source msg)

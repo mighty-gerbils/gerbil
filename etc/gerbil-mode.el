@@ -472,7 +472,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-function-name-face)))
   (gerbil-fontlock-add
-   '("(\\(using\\)\\s-+((?\\(\\sw+\\)\\s-+\\(:[-~]?\\)\\s-+\\(\\sw+\\)"
+   '("(\\(using\\)\\s-+((?\\(\\sw+\\)\\s-+[^:]*\\(:[-~]?\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)
      (3 font-lock-keyword-face)
