@@ -15,7 +15,10 @@
 
 (defmethod {:init! websocket}
   (lambda (self sock reader writer server? proto)
-    (using (self :- websocket)
+    (using ((self :- websocket)
+            (sock : StreamSocket)
+            (reader : BufferedReader)
+            (writer : BufferedWriter))
       (set! self.sock sock)
       (set! self.reader reader)
       (set! self.writer writer)
