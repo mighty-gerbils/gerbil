@@ -366,8 +366,9 @@ namespace: gxc
         (invoke (gerbil-gcc)
                 ["-o" output-bin
                  output-o output-o_ output-ld-opts ...
-                 gerbil-rpath default-ld-options ...
-                 "-L" gerbil-libdir "-lgambit"]))))
+                 gerbil-rpath
+                 "-L" gerbil-libdir "-lgambit"
+                 default-ld-options ...]))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scmx")))
