@@ -28,7 +28,7 @@
     (option 'format "-t" "--tag-format"
       help: "TAGS index format; emacs or vim"
       value: string->symbol
-      default: 'emacs)
+      default: (string->symbol (getenv "GERBIL_TAGS_FORMAT" "emacs")))
     (rest-arguments 'input
       help: "source file or directory")))
 
