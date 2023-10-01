@@ -125,8 +125,7 @@
 (defstruct (socks5-proxy socks-proxy) ()  final: #t
   constructor: :init!)
 
-(defstruct socks-server-socket (sock)
-  constructor: :init!)
+(defstruct socks-server-socket (sock))
 (defstruct (socks4-server-socket socks-server-socket) () final: #t)
 (defstruct (socks5-server-socket socks-server-socket) () final: #t)
 
@@ -159,7 +158,7 @@
          (catch (e)
            (using (sock self.sock :- StreamSocket)
              (sock.close))
-           raise e))))))
+           (raise e)))))))
 
 (defconnect-method socks4-proxy socks4-connect)
 (defconnect-method socks4a-proxy socks4a-connect)
@@ -178,11 +177,19 @@
          (catch (e)
            (using (sock self.sock :- StreamSocket)
              (sock.close))
-           raise e))))))
+           (raise e)))))))
 
 (defbind-method socks4-proxy socks4-bind make-socks4-server-socket)
 (defbind-method socks4a-proxy socks4-bind make-socks4-server-socket)
 (defbind-method socks5-proxy socks5-bind make-socks5-server-socket)
+
+(defmethod {close socks-server-socket}
+  (lambda (self)
+    (using (self :- socks-server-socket)
+      (when self.sock
+        (using (sock self.sock :- StreamSocket)
+          (sock.close))
+        (set! self.sock #f)))))
 
 (defsyntax (defserver-dispatch-method stx)
   (syntax-case stx ()
@@ -344,7 +351,7 @@
      ((string? host)
       (pkt.write-u8 3) ; ATYP: DOMAINNAME
       (let* ((fqdn (string->utf8 host))
-             (len (u8vector-length host)))
+             (len (u8vector-length fqdn)))
         (when (fx> len 255)
           (raise-bad-argument socks5-send-request "domain name: too long" host len))
         (pkt.write-u8 len)

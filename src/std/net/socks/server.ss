@@ -16,6 +16,8 @@
 
 (deflogger socks)
 
+(def default-connect-timeout 1)
+
 (def current-socks-server
   (make-parameter #f))
 
@@ -93,8 +95,8 @@
 
 (def (socks-request-handler sock allow-bind?)
   (using ((sock :- StreamSocket)
-          (reader (open-buffered-reader sock 384) :- BufferedReader)
-          (writer (open-buffered-writer sock 384) :- BufferedWriter))
+          (reader (open-buffered-reader (sock.reader) 384) :- BufferedReader)
+          (writer (open-buffered-writer (sock.writer) 384) :- BufferedWriter))
     (let (vn (reader.read-u8!))
       (try
        (case vn
@@ -142,7 +144,7 @@
   (using ((reader :- BufferedReader)
           (writer :- BufferedWriter))
     (let* ((port (reader.read-u16))
-           (host (make-u8vector 4 0))
+           (host (make-u8vector 4))
            (_ (reader.read host 0 4 4)))
       (def (accept! host port)
         (writer.write-u8 0)
@@ -161,15 +163,19 @@
           (if (fx< rd 255)
             (let (next (reader.read-u8!))
               (if (fx= next 0)
-                (let* ((host (utf8->string (reverse! bytes)))
-                       (proxy-sock (tcp-connect (cons host port))))
-                  (accept! host port)
-                  (socks-proxy-pump sock proxy-sock))
+                (let* ((host (list->u8vector (reverse! bytes)))
+                       (host-str (utf8->string host)))
+                  (using (proxy-sock (tcp-connect (cons host-str port) default-connect-timeout) :- StreamSocket)
+                    (let* ((peer-address (proxy-sock.peer-address))
+                           (host (car peer-address))
+                           (port (cdr peer-address)))
+                      (accept! host port))
+                    (socks-proxy-pump sock proxy-sock)))
                 (lp (cons next bytes) (fx+ rd 1)))))))
        ((equal? (u8vector-ref host 0) 127)   ; localhost? uhm, no
         (raise-io-error socks4-connect "attempt to connect to local host"))
        (else
-        (let (proxy-sock (tcp-connect (cons host port)))
+        (let (proxy-sock (tcp-connect (cons host port) default-connect-timeout))
           (accept! host port)
           (socks-proxy-pump sock proxy-sock)))))))
 
@@ -191,8 +197,14 @@
 (def (socks4-bind sock reader writer)
   (using ((reader :- BufferedReader)
           (writer :- BufferedWriter))
+    (def (accept! host port)
+      (writer.write-u8 0)
+      (writer.write-u8 90)
+      (writer.write-u16 port)
+      (writer.write host)
+      (writer.flush))
     (let* ((port (reader.read-u16))
-           (host (make-u8vector 4 0))
+           (host (make-u8vector 4))
            (_ (reader.read host 0 4 4)))
       (cond
        ((not (fx= port 0))
@@ -204,14 +216,14 @@
           (let* ((binding-address (srv-sock.address))
                  (host (car binding-address))
                  (port (cdr binding-address)))
-            (writer.write-u8 0)
-            (writer.write-u8 90)
-            (writer.write-u16 port)
-            (writer.write host)
-            (writer.flush)
+            (accept! host port)
             (try
-             (let (proxy-sock (srv-sock.accept))
-               (socks-proxy-pump sock proxy-sock))
+             (using (proxy-sock (srv-sock.accept) :- StreamSocket)
+               (let* ((binding-address (proxy-sock.peer-address))
+                      (host (car binding-address))
+                      (port (cdr binding-address)))
+                 (accept! host port)
+                 (socks-proxy-pump sock proxy-sock)))
              (finally
               (srv-sock.close))))))))))
 
@@ -287,12 +299,12 @@
            (atyp (reader.read-u8!)))    ; ATYP
       (case atyp
         ((1)                            ; IPv4
-         (let* ((host (make-u8vector 4 0))
-                (port (reader.read-u16))
+         (let* ((host (make-u8vector 4))
                 (_ (reader.read host 0 4 4))
                 (_ (when (equal? (u8vector-ref host 0) 127) ; localhost? uhm, no
                      (raise-io-error socks5-connect "attempt to connect to local host")))
-                (proxy-sock (tcp-connect (cons host port))))
+                (port (reader.read-u16))
+                (proxy-sock (tcp-connect (cons host port) default-connect-timeout)))
            (accept! host port)
            (socks-proxy-pump sock proxy-sock)))
         ((3)                            ; DOMAINNAME
@@ -301,19 +313,19 @@
                 (_ (reader.read host 0 len len))
                 (host (utf8->string host))
                 (port (reader.read-u16)))
-           (using (proxy-sock (tcp-connect (cons host port)) :- StreamSocket)
+           (using (proxy-sock (tcp-connect (cons host port) default-connect-timeout) :- StreamSocket)
              (let* ((peer-address (proxy-sock.peer-address))
                     (host (car peer-address))
                     (port (cdr peer-address)))
                (accept! host port)
                (socks-proxy-pump sock proxy-sock)))))
         ((4)                            ; IPv6
-         (let* ((host (make-u8vector 16 0))
-                (port (reader.read-u16))
+         (let* ((host (make-u8vector 16))
                 (_ (reader.read host 0 16 16))
                 (_ (when (equal? (u8vector-ref host 0) 127) ; localhost? uhm, no
                      (raise-io-error socks5-connect "attempt to connect to local host")))
-                (proxy-sock (tcp-connect (cons host port))))
+                (port (reader.read-u16))
+                (proxy-sock (tcp-connect (cons host port) default-connect-timeout)))
            (accept! host port)
            (socks-proxy-pump sock proxy-sock)))
         (else
@@ -337,12 +349,17 @@
         (let* ((binding-address (srv-sock.address))
                (host (car binding-address))
                (port (cdr binding-address)))
-          (accept! host port)
-          (try
-           (let (proxy-sock (srv-sock.accept))
-             (socks-proxy-pump sock proxy-sock))
-           (finally
-            (srv-sock.close))))))
+          (accept! host port))
+        (try
+         (using (proxy-sock (srv-sock.accept) :- StreamSocket)
+           (let* ((binding-address (srv-sock.address))
+                  (host (car binding-address))
+                  (port (cdr binding-address)))
+             (accept! host port))
+
+           (socks-proxy-pump sock proxy-sock))
+         (finally
+          (srv-sock.close)))))
 
     (def (check! host port expected-host)
       (unless (equal? host expected-host)
