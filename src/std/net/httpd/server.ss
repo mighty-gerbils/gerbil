@@ -42,7 +42,7 @@
     ([ssl: addr ssl-context]
      (ssl-listen addr context: ssl-context backlog: backlog sockopts: sockopts))
     (else
-     (tcp-listen addr))))
+     (tcp-listen addr backlog: backlog sockopts: sockopts))))
 
 (def (http-server socks mux)
   (using (mux :- Mux)
@@ -92,10 +92,8 @@
 
     (try
      (for-each monitor acceptors)
-
      (when (current-actor-server)
        (register-actor! 'httpd))
-
      (parameterize ((current-http-server (current-thread)))
        (with-exception-stack-trace loop))
      (catch (e)
@@ -105,15 +103,16 @@
       (shutdown!)))))
 
 (def (http-server-accept sock get-handler)
-  (def (loop)
-    (let (clisock (ServerSocket-accept sock))
-      (spawn/name 'http-request-handler
-                  http-request-handler (StreamSocket clisock) get-handler)
-      (loop)))
+  (using (sock :- ServerSocket)
+    (def (loop)
+      (let (clisock (sock.accept))
+        (spawn/name 'http-request-handler
+                    http-request-handler (StreamSocket clisock) get-handler)
+        (loop)))
 
-  (let again ()
-    (try
-     (loop)
-     (catch (os-exception? e)
-       (errorf "error accepting connection: ~a" e)
-       (again)))))
+    (let again ()
+      (try
+       (loop)
+       (catch (os-exception? e)
+         (errorf "error accepting connection: ~a" e)
+         (again))))))
