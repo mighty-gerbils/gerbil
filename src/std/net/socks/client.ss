@@ -1,15 +1,20 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SOCKS v4/4a/5 client functionality
-(import :std/contract
+(import :std/error
+        :std/contract
+        :std/interface
         :std/io
+        :std/io/socket/types
+        (only-in :std/os/socket AF_INET AF_INET6)
         :std/net/address
         :std/text/utf8
+        :std/sugar
         ./interface)
 (export #t)
 (declare (not safe))
 
-;;; SOCKS5; rfc1928
+;;; SOCKS5; RFC-1928
 ;;  Handshake:
 ;;   client -> server:
 ;;   +----+----------+----------+
@@ -111,13 +116,18 @@
 ;;  Following the NULL byte of user id, domain name (NULL-terminated)
 ;;
 
-(defstruct socks-proxy (sock address protocol) unchecked: #t)
-(defstruct (socks4-proxy socks-proxy) () unchecked: #t final: #t
+(defstruct socks-proxy (sock address protocol))
+(defstruct (socks4-proxy socks-proxy) () final: #t
   constructor: :init!)
-(defstruct (socks4a-proxy socks-proxy) () unchecked: #t final: #t
+(defstruct (socks4a-proxy socks-proxy) () final: #t
   constructor: :init!)
-(defstruct (socks5-proxy socks-proxy) () unchecked: #t final: #t
+(defstruct (socks5-proxy socks-proxy) ()  final: #t
   constructor: :init!)
+
+(defstruct socks-server-socket (sock)
+  constructor: :init!)
+(defstruct (socks4-server-socket socks-server-socket) () final: #t)
+(defstruct (socks5-server-socket socks-server-socket) () final: #t)
 
 (defmethod {:init! socks4-proxy}
   (cut socks-proxy-init! <> <> <> 'SOCKS4))
@@ -127,6 +137,78 @@
 
 (defmethod {:init! socks5-proxy}
   (cut socks-proxy-init! <> <> <> 'SOCKS5))
+
+(defmethod {protocol socks-proxy}
+  &socks-proxy-protocol)
+
+(defmethod {proxy-address socks-proxy}
+  &socks-proxy-address)
+
+(defrule (defconnect-method proxy-type connect-e)
+  (defmethod {connect proxy-type}
+    (lambda (self address)
+      (using (self :- socks-proxy)
+        (let (address (inet-address address))
+          (let (bind-address (connect-e self.sock address))
+            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+              (set! bsock.laddr bind-address)
+              (set! bsock.raddr address))))
+        self.sock))))
+
+(defconnect-method socks4-proxy socks4-connect)
+(defconnect-method socks4a-proxy socks4a-connect)
+(defconnect-method socks5-proxy socks5-connect)
+
+(defrule (defbind-method proxy-type bind-e make-server-socket)
+  (defmethod {bind proxy-type}
+    (lambda (self maybe-address)
+      (using (self :- socks-server-socket)
+        (let (address (and maybe-address (inet-address maybe-address)))
+          (let (bind-address (bind-e self.sock address))
+            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+              (set! bsock.laddr bind-address))))
+        (ServerSocket (make-server-socket self.sock))))))
+
+(defbind-method socks4-proxy socks4-bind make-socks4-server-socket)
+(defbind-method socks4a-proxy socks4-bind make-socks4-server-socket)
+(defbind-method socks5-proxy socks5-bind make-socks5-server-socket)
+
+(defsyntax (defserver-dispatch-method stx)
+  (syntax-case stx ()
+    ((_ (method arg ...))
+     (with-syntax ((sock.method (make-symbol 'sock "." (stx-e #'method))))
+       #'(defmethod {method socks-server-socket}
+           (lambda (self arg ...)
+             (using ((self :- socks-server-socket)
+                     (sock self.sock :- StreamSocket))
+               (sock.method arg ...))))))))
+
+(defserver-dispatch-method (domain))
+(defserver-dispatch-method (address))
+(defserver-dispatch-method (getsockopt level option))
+(defserver-dispatch-method (setsockopt level option val))
+(defserver-dispatch-method (set-input-timeout! timeo))
+(defserver-dispatch-method (set-output-timeout! timeo))
+
+(defmethod {peer-address socks-server-socket}
+  (lambda (self)
+    (raise-unsupported-method peer-address)))
+
+(defrule (defserver-accept-method server-type receive-e)
+  (defmethod {accept server-type}
+    (lambda (self)
+      (using (self :- socks-server-socket)
+        (if self.sock
+          (let (peer-address (receive-e self.sock))
+            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+              (set! bsock.raddr peer-address))
+            (let (sock self.sock)
+              (set! self.sock #f)
+              sock))
+          (raise-context-error accept "proxy client has already accepted a connection"))))))
+
+(defserver-accept-method socks4-server-socket socks4-recv-reply)
+(defserver-accept-method socks5-server-socket socks5-recv-reply)
 
 (def (socks-proxy-init! self sock address proto)
   (using (self :- socks-proxy)
@@ -184,42 +266,48 @@
 (def (socks5-bind sock address)
   (socks-bind sock socks5-send-request socks5-recv-reply (and address (inet-address address))))
 
-(defrule (socks-connect sock send-request recv-reply address arg ...)
-  (with ([host . port] address)
-    (send-request sock #x01 host port arg ...)
+(defrule (socks-connect sock-in send-request recv-reply address arg ...)
+  (let (sock sock-in)
+    (with ([host . port] address)
+      (send-request sock #x01 host port arg ...)
+      (recv-reply sock))))
+
+(defrule (socks-bind sock-in send-request recv-reply maybe-address-in)
+  (let ((maybe-address maybe-address-in) (sock sock-in))
+    (match maybe-address
+      ([host . port]
+       (send-request sock #x02 host port))
+      (else
+       (using (sock :- StreamSocket)
+         (let (domain (sock.domain))
+           (cond
+            ((fx= domain AF_INET)
+             (send-request sock #x02 inaddr-any4 0))
+            ((fx= domain AF_INET6)
+             (send-request sock #x02 inaddr-any6 0))
+            (else
+             (error "unuspoorted socket domain" domain)))))))
     (recv-reply sock)))
 
-(defrule (socks-bind sock send-request recv-reply maybe-address)
-  (match maybe-address
-    ([host . port]
-     (send-request sock #x02 host port)
-     (recv-reply sock))
-    (else
-     (if (fx= (StreamSocket-domain sock) AF_INET)
-       (send-request sock #x02 inaddr-any4 0)
-       (send-request sock #x02 inaddr-any6 0))
-     (recv-reply sock))))
-
-(def (socks4-send-request sock cmd host port 4a?)
-  (let (pkt (open-buffered-writer #f 64))
-    (using ((sock :- StreamSocket)
-            (pkt :- BufferedWriter))
-      (pkt.write-u8 #x04)               ; VERSION
-      (pkt.write-u8 cmd)                ; CMD
-      (pkt.write-u16 port)              ; PORT
-      (cond
-       ((and 4a? (string? host))
-        (pkt.write '#u8(0 0 0 1))       ; SOCKS4a bit
-        (pkt.write-u8 0)                ; userid NULL terminator
-        (pkt.write-string host)         ; hostname
-        (pkt.write-u8 0))               ; hostname NULL terminator
-       ((ip4-address? host)
-        (pkt.write host)                ; host ip4
-        (pkt.write-u8 0))               ; userid NULL terminator
-       (else
-        (raise-bad-argument socks4-send-request "bad host address" host)))
-      (let (msg (get-buffer-output-u8vector pkt))
-        (sock.send msg)))))
+(def (socks4-send-request sock cmd host port (4a? #f))
+  (using ((sock :- StreamSocket)
+          (pkt (open-buffered-writer #f 64) :- BufferedWriter))
+    (pkt.write-u8 #x04)                 ; VERSION
+    (pkt.write-u8 cmd)                  ; CMD
+    (pkt.write-u16 port)                ; PORT
+    (cond
+     ((and 4a? (string? host))
+      (pkt.write '#u8(0 0 0 1))         ; SOCKS4a bit
+      (pkt.write-u8 0)                  ; userid NULL terminator
+      (pkt.write-string host)           ; hostname
+      (pkt.write-u8 0))                 ; hostname NULL terminator
+     ((ip4-address? host)
+      (pkt.write host)                  ; host ip4
+      (pkt.write-u8 0))                 ; userid NULL terminator
+     (else
+      (raise-bad-argument socks4-send-request "bad host address" host)))
+    (let (msg (get-buffer-output-u8vector pkt))
+      (sock.send msg))))
 
 (def (socks4-recv-reply sock)
   (using (sock :- StreamSocket)
@@ -232,9 +320,86 @@
         (unless (fx= res 90)
           (raise-io-error socks4-recv-reply "request rejected" res)))
       (cons (subu8vector msg 4 8)
-            (fxior (fxarithmetic-shift (u8vector-ref buf 2) 8)
-                   (u8vector-ref buf 3))))))
+            (fxior (fxarithmetic-shift (u8vector-ref msg 2) 8)
+                   (u8vector-ref msg 3))))))
 
 (def (socks5-send-request sock cmd host port)
-  XXX
-  )
+  (using ((sock :- StreamSocket)
+          (pkt (open-buffered-writer #f 64) :- BufferedWriter))
+    (pkt.write-u8 5)                    ; VER
+    (pkt.write-u8 cmd)                  ; CMD
+    (pkt.write-u8 0)                    ; RSV
+    (cond
+     ((string? host)
+      (pkt.write-u8 3) ; ATYP: DOMAINNAME
+      (let* ((fqdn (string->utf8 host))
+             (len (u8vector-length host)))
+        (when (fx> len 255)
+          (raise-bad-argument socks5-send-request "domain name: too long" host len))
+        (pkt.write-u8 len)
+        (pkt.write fqdn)))
+     ((ip4-address? host)
+      (pkt.write-u8 1) ; ATYP: IPv4
+      (pkt.write host))
+     ((ip6-address? host)
+      (pkt.write-u8 4) ; ATYP: IPv6
+      (pkt.write host))
+     (else
+      (raise-bad-argument socks5-send-request "host address; ip4, ip6, or domain name" host)))
+    (pkt.write-u16 port)
+    (let (msg (get-buffer-output-u8vector pkt))
+      (sock.send msg))))
+
+(def (socks5-recv-reply sock)
+  (using (sock :- StreamSocket)
+    (let* ((msg (make-u8vector 262))
+           (len  (sock.recv msg)))
+      (let (vn (u8vector-ref msg 0))
+        (unless (fx= vn 5)
+          (raise-io-error socks5-recv-reply "version mismatch" vn)))
+      (let (res (u8vector-ref msg 1))
+        (unless (fx= res 0)
+          (raise-io-error socks5-recv-reply "request failed" (socks5-reply-text res) res)))
+      (let (atyp (u8vector-ref msg 3))
+        (case atyp
+          ((1)                          ; IPv4
+           (unless (fx= len 10)
+             (raise-io-error socks5-recv-reply "bad response length" len 10))
+           (let* ((host (subu8vector msg 4 8))
+                  (porthi (u8vector-ref msg 8))
+                  (portlo (u8vector-ref msg 9))
+                  (port  (fxior (fxarithmetic-shift porthi 8) portlo)))
+             (cons host port)))
+          ((3)                                           ; DOMAINNAME
+           (unless (fx> len 6)
+             (raise-io-error socks5-recv-reply "bad response length" len ('> 6)))
+           (let* ((host (subu8vector msg 4 (fx- len 3))) ; skip NUL terminator
+                  (porthi (u8vector-ref msg (fx- len 2)))
+                  (portlo (u8vector-ref msg (fx- len 1)))
+                  (port  (fxior (fxarithmetic-shift porthi 8) portlo)))
+             (cons host port)))
+          ((4)                          ; IPv6
+           (unless (fx= len 22)
+             (raise-io-error socks5-recv-reply "bad response length" len 22))
+           (let* ((host (subu8vector msg 4 20))
+                  (porthi (u8vector-ref msg 20))
+                  (portlo (u8vector-ref msg 21))
+                  (port  (fxior (fxarithmetic-shift porthi 8) portlo)))
+             (cons host port)))
+          (else
+           (raise-io-error socks5-recv-reply "uknown address type" atyp)))))))
+
+(def (socks5-reply-text res)
+  (hash-ref +socks5-reply-text+ res "unknown response"))
+
+(def +socks5-reply-text+
+  (hash-eqv
+   (0 "succeeded")
+   (1 "general SOCKS server failure")
+   (2 "connection not allowed by ruleset")
+   (3 "Network unreachable")
+   (4 "Host unreachable")
+   (5 "Connection refused")
+   (6 "TTL expired")
+   (7 "Command not supported")
+   (8 "Address type not supported")))
