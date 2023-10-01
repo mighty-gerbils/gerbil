@@ -618,7 +618,7 @@ END-C
 
 (defstruct http-condition (code message))
 
-(defsyntax (def-http-condition stx)
+(defsyntax (defhttp-condition stx)
   (syntax-case stx ()
     ((_ code message-string)
      (stx-string? #'message-string)
@@ -632,11 +632,11 @@ END-C
            (export condition)
            (hash-put! +http-response-codes+ code (quote message-string)))))))
 
-(defrules def-http-conditions ()
+(defrules defhttp-conditions ()
   ((_ (number message) ...)
-   (begin (def-http-condition number message) ...)))
+   (begin (defhttp-condition number message) ...)))
 
-(def-http-conditions
+(defhttp-conditions
   (100 "Continue")
   (101 "Switching Protocols")
   (200 "OK")
