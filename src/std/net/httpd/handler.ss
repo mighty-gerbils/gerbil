@@ -156,47 +156,45 @@
       req.data)))
 
 (def (http-request-timeout-set! req timeo)
-  (using (req : http-request)
-    (let (sock req.sock)
-      (using (sock :- StreamSocket)
-        (sock.set-input-timeout! timeo)))))
+  (using ((req : http-request)
+          (sock req.sock :- StreamSocket))
+    (sock.set-input-timeout! timeo)))
 
 ;; response
 ;; write a full response
 (def (http-response-write res status headers body)
-  (using (res : http-response)
-    (let (obuf res.buf)
-      (using (obuf :- BufferedWriter)
-        (when res.output
-          (error "duplicate response" res))
-        (set! res.output 'END)
-        (let* ((len
-                (cond
-                 ((u8vector? body)
-                  (u8vector-length body))
-                 ((string? body)
-                  (string-utf8-length body))
-                 ((not body)
-                  0)
-                 (else
-                  (error "Bad response body; expected string, u8vector, or #f" body))))
-               (headers
-                (cons (cons "Content-Length" (number->string len)) headers))
-               (headers
-                (if res.close?
-                  (cons '("Connection" . "close") headers)
-                  headers))
-               (headers
-                (cons (cons "Date" (http-date)) headers)))
-          (write-response-line obuf status)
-          (write-response-headers obuf headers)
-          (write-crlf obuf)
-          (cond
-           ((u8vector? body)
-            (obuf.write body))
-           ((string? body)
-            (obuf.write-string body)))
-          (obuf.flush))))))
+  (using ((res : http-response)
+          (obuf res.buf :- BufferedWriter))
+    (when res.output
+      (error "duplicate response" res))
+    (set! res.output 'END)
+    (let* ((len
+            (cond
+             ((u8vector? body)
+              (u8vector-length body))
+             ((string? body)
+              (string-utf8-length body))
+             ((not body)
+              0)
+             (else
+              (error "Bad response body; expected string, u8vector, or #f" body))))
+           (headers
+            (cons (cons "Content-Length" (number->string len)) headers))
+           (headers
+            (if res.close?
+              (cons '("Connection" . "close") headers)
+              headers))
+           (headers
+            (cons (cons "Date" (http-date)) headers)))
+      (write-response-line obuf status)
+      (write-response-headers obuf headers)
+      (write-crlf obuf)
+      (cond
+       ((u8vector? body)
+        (obuf.write body))
+       ((string? body)
+        (obuf.write-string body)))
+      (obuf.flush))))
 
 ;; begin a chunked response
 (def (http-response-begin res status headers)
@@ -235,9 +233,9 @@
     (&BufferedWriter-flush res.buf)))
 
 (def (http-response-timeout-set! res timeo)
-  (with ((http-response _ sock) res)
-    (using (sock :- StreamSocket)
-      (sock.set-output-timeout! timeo))))
+  (using ((res : http-response)
+          (sock res.sock :- StreamSocket))
+    (sock.set-output-timeout! timeo)))
 
 ;;; server internal
 (def (header-e key lst)

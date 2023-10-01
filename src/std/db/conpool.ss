@@ -60,7 +60,7 @@
     (mutex-lock! cp.mx)
     (set! cp.out (remq conn cp.out))
     (mutex-unlock! cp.mx)
-    {destroy conn}))
+    {conn.destroy}))
 
 (def (conpool-close cp)
   (using (cp : conpool)
