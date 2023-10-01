@@ -9,7 +9,7 @@
 ;; SOCKS client interface
 (interface SOCKS
   ;; protocol version used by the proxy
-  ;; :- symbol?
+  ;; :-symbol? (one-of 'SOCKS4 'SOCKS4a 'SOCKS5)
   (protocol)
 
   ;; proxy address

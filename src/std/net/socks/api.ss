@@ -7,7 +7,8 @@
         ./server)
 (export (import: ./interface
                  ./server)
-        socks-proxy)
+        socks-proxy
+        socks-connect)
 
 (def (socks-proxy proxy-address (protocol 'SOCKS4))
   (SOCKS
@@ -19,3 +20,9 @@
       (raise-bad-argument socks-connect
                           "socks protocol; 4 or SOCKS4, 4a orSOCKS4a, 5 or SOCKS5"
                           protocol)))))
+
+
+(def (socks-connect proxy-address (protocol 'SOCKS4))
+  (lambda (address)
+    (SOCKS-connect (socks-proxy proxy-address protocol)
+                   address)))

@@ -26,6 +26,15 @@ connect to another host or bind to accept an incoming connection.
 This is the SOCKS client interface. The following methods create and
 operate on instances of the interface.
 
+### socks-connect
+```scheme
+(socks-connect proxy-address [protocol = 'SOCKS4]) -> lambda (address) -> StreamSocket
+```
+
+Creates a connector function for establishing connextions through the
+proxy at `proxy-address`.
+
+
 ### socks-proxy
 ```scheme
 (socks-proxy proxy-address (protocol SOCKS4)) -> SOCKS
@@ -75,10 +84,6 @@ connection. Returns an instance of `ServerSocket`.
 
 Here is how to use a SOCKS proxy listening at `your-proxy-server-address` for http connections:
 ```scheme
-(def (socks-connect address)
-  (let (socks (socks-proxy your-proxy-server-address))
-     (SOCKS-connect socks address)))
-
-(parameterize ((http-connect socks-connect))
+(parameterize ((http-connect (socks-connect your-proxy-server-address)))
   (http-get "https://www.google.com"))
 ```

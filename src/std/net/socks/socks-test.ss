@@ -33,11 +33,7 @@
       (test-bind 'SOCKS5))
 
     (test-case "proxy http request"
-      (def (socks-connect address)
-        (let (socks (socks-proxy server-address))
-          (SOCKS-connect socks address)))
-
-      (parameterize ((http-connect socks-connect))
+      (parameterize ((http-connect (socks-connect server-address)))
         (let (req (http-get "https://www.google.com"))
           (check (request-status req) => 200)
           (request-close req))))))
