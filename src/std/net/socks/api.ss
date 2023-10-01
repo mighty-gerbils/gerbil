@@ -5,12 +5,12 @@
         ./interface
         ./client
         ./server)
-(export (import: ./interface)
-        socks-connect
-        start-socks-server!
-        stop-socks-server!)
+(export (import: ./interface
+                 ./client
+                 ./server)
+        socks-proxy)
 
-(def (socks-connect proxy-address protocol)
+(def (socks-proxy proxy-address (protocol 4))
   (SOCKS
    (case protocol
      ((4 SOCKS4) (socks4-open proxy-address))

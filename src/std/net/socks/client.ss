@@ -11,8 +11,9 @@
         :std/text/utf8
         :std/sugar
         ./interface)
-(export #t)
-(declare (not safe))
+(export socks4-open
+        socks4a-open
+        socks5-open)
 
 ;;; SOCKS5; RFC-1928
 ;;  Handshake:
@@ -148,12 +149,17 @@
   (defmethod {connect proxy-type}
     (lambda (self address)
       (using (self :- socks-proxy)
-        (let (address (inet-address address))
-          (let (bind-address (connect-e self.sock address))
-            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-              (set! bsock.laddr bind-address)
-              (set! bsock.raddr address))))
-        self.sock))))
+        (try
+         (let (address (inet-address address))
+           (let (bind-address (connect-e self.sock address))
+             (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+               (set! bsock.laddr bind-address)
+               (set! bsock.raddr address))))
+         self.sock
+         (catch (e)
+           (using (sock self.sock :- StreamSocket)
+             (sock.close))
+           raise e))))))
 
 (defconnect-method socks4-proxy socks4-connect)
 (defconnect-method socks4a-proxy socks4a-connect)
@@ -163,11 +169,16 @@
   (defmethod {bind proxy-type}
     (lambda (self maybe-address)
       (using (self :- socks-server-socket)
-        (let (address (and maybe-address (inet-address maybe-address)))
-          (let (bind-address (bind-e self.sock address))
-            (using (bsock (&interface-instance-object self.sock) :- basic-socket)
-              (set! bsock.laddr bind-address))))
-        (ServerSocket (make-server-socket self.sock))))))
+        (try
+         (let (address (and maybe-address (inet-address maybe-address)))
+           (let (bind-address (bind-e self.sock address))
+             (using (bsock (&interface-instance-object self.sock) :- basic-socket)
+               (set! bsock.laddr bind-address))))
+         (ServerSocket (make-server-socket self.sock))
+         (catch (e)
+           (using (sock self.sock :- StreamSocket)
+             (sock.close))
+           raise e))))))
 
 (defbind-method socks4-proxy socks4-bind make-socks4-server-socket)
 (defbind-method socks4a-proxy socks4-bind make-socks4-server-socket)
@@ -291,7 +302,7 @@
 
 (def (socks4-send-request sock cmd host port (4a? #f))
   (using ((sock :- StreamSocket)
-          (pkt (open-buffered-writer #f 64) :- BufferedWriter))
+          (pkt (open-buffered-writer #f 384) :- BufferedWriter))
     (pkt.write-u8 #x04)                 ; VERSION
     (pkt.write-u8 cmd)                  ; CMD
     (pkt.write-u16 port)                ; PORT
@@ -300,7 +311,7 @@
       (pkt.write '#u8(0 0 0 1))         ; SOCKS4a bit
       (pkt.write-u8 0)                  ; userid NULL terminator
       (pkt.write-string host)           ; hostname
-      (pkt.write-u8 0))                 ; hostname NULL terminator
+      (pkt.write-u8 0))                  ; hostname NULL terminator
      ((ip4-address? host)
       (pkt.write host)                  ; host ip4
       (pkt.write-u8 0))                 ; userid NULL terminator
@@ -325,7 +336,7 @@
 
 (def (socks5-send-request sock cmd host port)
   (using ((sock :- StreamSocket)
-          (pkt (open-buffered-writer #f 64) :- BufferedWriter))
+          (pkt (open-buffered-writer #f 384) :- BufferedWriter))
     (pkt.write-u8 5)                    ; VER
     (pkt.write-u8 cmd)                  ; CMD
     (pkt.write-u8 0)                    ; RSV
@@ -352,7 +363,7 @@
 
 (def (socks5-recv-reply sock)
   (using (sock :- StreamSocket)
-    (let* ((msg (make-u8vector 262))
+    (let* ((msg (make-u8vector 384))
            (len  (sock.recv msg)))
       (let (vn (u8vector-ref msg 0))
         (unless (fx= vn 5)
