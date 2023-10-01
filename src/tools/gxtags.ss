@@ -26,7 +26,7 @@
     (option 'output "-o" default: "TAGS"
       help: "explicit name of file for tag table")
     (option 'format "-t" "--tag-format"
-      help: "TAGS index format; emacs or vim"
+      help: "TAGS index format; emacs or vim; uses the GERBIL_TAGS_FORMAT environment variable, with default value of emacs if it is not set"
       value: string->symbol
       default: (string->symbol (getenv "GERBIL_TAGS_FORMAT" "emacs")))
     (rest-arguments 'input
