@@ -678,13 +678,10 @@ END-C
   (504 "Gateway Timeout")
   (505 "HTTP Version Not Supported"))
 
-(def (http-response-write-condition res (condition #f)
-                                    code: (code #f)
-                                    content-type: (content-type #f)
-                                    message: (message #f))
-  (http-response-write res (or code (http-condition-code condition))
-                       `(("Content-Type" . ,(or content-type "text/plain")))
-                       (or message (http-condition-message condition))))
+(def (http-response-write-condition res condition)
+  (http-response-write res (http-condition-code condition)
+                       `(("Content-Type" . "text/plain"))
+                       (http-condition-message condition)))
 
 (def (condition-handler handler)
   (lambda (req res)
