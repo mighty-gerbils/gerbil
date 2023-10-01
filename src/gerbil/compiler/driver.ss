@@ -236,7 +236,9 @@ namespace: gxc
              (else
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
            (gerbil-rpath
-            (string-append "-Wl,-rpath=" gerbil-libdir))
+            (string-append
+	     (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
+	     gerbil-libdir))
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))

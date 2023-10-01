@@ -196,7 +196,11 @@
         '())
     ;; :std/net
     "net/address"
-    (gxc: "net/ssl/libssl" "-ld-options" ,(ldflags "libssl" "-lssl"))
+    (gxc: "net/ssl/libssl"
+	  "-ld-options" ,(append-options
+			  (ldflags "libssl" "-lssl")
+			  (ldflags "libcrypto" "-lcrypto")
+			  (string-append "-L" (gerbil-libdir)) "-lgambit"))
     "net/ssl/error"
     "net/ssl/interface"
     "net/ssl/socket"

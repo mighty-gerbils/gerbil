@@ -65,6 +65,13 @@ prefix="/opt/gerbil"
 readonly cflags_opt="-foptimize-sibling-calls"
 readonly ldflags_rpath="-Wl,-rpath"
 
+if [ $(uname) = "Darwin" ];
+then
+    readonly rpath_sep=","
+else
+    readonly rpath_sep="="
+fi
+
 case $(uname) in
     OpenBSD)
         gambit_march=""
@@ -196,14 +203,13 @@ if [ -z "${CFLAGS}" ]; then
 else
     CFLAGS="${CFLAGS} ${cflags_opt}"
 fi
-
 if [ -z "${LDFLAGS}" ]; then
     if [ "${gerbil_shared}" = "t" ]; then
-        LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib"
+	LDFLAGS="${ldflags_rpath}$rpath_sep${gerbil_prefix}/lib"
     fi
 else
     if [ "${gerbil_shared}" = "t" ]; then
-        LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib"
+	LDFLAGS="${LDFLAGS} ${ldflags_rpath}$rpath_sep${gerbil_prefix}/lib"
     fi
 fi
 

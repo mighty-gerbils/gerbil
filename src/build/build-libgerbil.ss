@@ -10,6 +10,7 @@
         :std/iter
         :std/misc/wg)
 
+(def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
 (include "../std/build-spec.ss")
 
 (def build-home

@@ -1,0 +1,537 @@
+#+TITLE: Homebrew : Fetch us a pint o' Gerbil!
+
+I just got a Mac. I need to run gerbil. Bleeding edge even!
+
+#+begin_src sh
+./build.sh env bash
+cd std/crypto
+gxc -s -S libcrypto.ss
+cd ~/.gerbil/lib/std/crypto
+gsc -link -flat -o libcrypto__0.o1.c -e '(include "~~lib/_gambit#.scm")' ~/.gerbil/lib/std/crypto/libcrypto__0
+gsc -obj -cc-options -D___DYNAMIC libcrypto__0.c libcrypto__0.o1.c
+
+## all this should succeed and now we get to the link phase, which is what we are trying to debug:
+
+## current incantation is (you need to sub the XXX with /path/to/brew-ssl-libdir):
+
+gcc -shared -o libcrypto.o1 libcrypto__0.o libcrypto__0.o1.o -L XXX -lssl
+
+#+end_src
+
+#+begin_src sh
+./build.sh env bash
+export DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+cd std/net/ssl
+gxc -s -S libssl.ss
+cd ~/.gerbil/lib/std/net/ssl/
+gsc -link -flat -o libssl__0.o1.c -e '(include "~~lib/_gambit#.scm")' ~/.gerbil/lib/std/net/ssl/libssl__0
+gsc -obj -cc-options -D___DYNAMIC libssl__0.c libssl__0.o1.c
+gcc -shared -o libssl.o1 libssl__0.o libssl__0.o1.o `pkg-config --libs libssl` `pkg-config --libs libcrypto` -L${LD_LIBRARY_PATH} -lgambit
+#+end_src
+
+* Usage
+
+Right now it's not in the upstream tap, or any tap for that matter. 
+
+
+
+
+For a homebrew 
+* The Formula
+:PROPERTIES:
+:header-args:ruby: :tangle gerbil-scheme.rb :padline no
+:END:
+
+Homebrew uses [[#RubyIsms][Ruby]] for its DSL. That means =GerbilScheme= is a subclass of =Formula=.
+
+#+begin_src ruby
+class GerbilScheme < Formula
+#+end_src
+
+There's some meta-info that's nice to have.
+
+#+begin_src ruby
+  desc "Opinionated dialect of Scheme designed for Systems Programming"
+  homepage "https://cons.io"
+  license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+#+end_src
+
+Now where it will install from, and how it gets it. The tag is the version.
+
+#+begin_src ruby
+  url "https://github.com/drewc/gerbil.git", using: :git, branch: "homebrew-v18"
+  head "file:///Users/drewc/me/src/gerbil", using: :git, branch: "homebrew-v18"
+  version "18-alpha-1"
+#+end_src
+
+Now the things it depends on.
+
+#+begin_src ruby
+  depends_on "openssl@3"
+  depends_on "sqlite"
+  depends_on "gcc"
+
+  fails_with :clang do
+    cause "gerbil-scheme is built with GCC"
+  end
+#+end_src
+
+Now the dirt. The install process is as it should be! ~./configure && make && make install~.
+
+
+
+
+#+begin_src ruby
+    def install
+        system "./configure", "--prefix=#{prefix}" #, "--disable-shared"
+              
+        system "make"
+        ENV.deparallelize
+        system "make", "install"
+    end
+
+    test do
+      assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+    end
+#+end_src
+
+
+#+begin_src ruby
+end
+#+end_src
+  
+* Ruby-isms
+:PROPERTIES:
+:CUSTOM_ID: RubyIsms
+:END:
+
+Haven't really used ruby at all? So, install it!
+
+#+begin_src sh
+  brew install ruby
+  echo 'export PATH="/usr/local/opt/ruby/bin:$PATH"' >> ~/.profile
+  . ~/.profile 
+#+end_src
+
+
+
+* Development, AKA =gerbil-scheme-local=
+
+For testing I need to make this all local and quick. To start with I'll make a branch, commit to it, and try to build from there.
+
+#+begin_src sh
+  git checkout -b homebrew-v18
+  # Save the file (in emacs of course!)
+  git add homebrew/README.org
+  git commit -m "Add homebrew/README.org"
+#+end_src
+
+
+So now we have a working dev branch.
+
+When running it fails with
+
+    : configure:3710: gcc-13 -foptimize-sibling-calls  -Wl,-rpath=/usr/local/Cellar/gerbil-scheme-local/0.18-dev/v0.17.0-217-gb5512b8e/lib conftest.c  >&5
+    : ld: unknown option: -rpath=/usr/local/Cellar/gerbil-scheme-local/0.18-dev/v0.17.0-217-gb5512b8e/lib=
+
+    What if I change the === to a =,=?
+
+    Let's make a patch.
+
+    #+begin_src sh :results verbatim :wrap src diff
+      git diff ../configure
+    #+end_src
+
+    #+begin_src diff
+    diff --git a/configure b/configure
+    index 4ddec719..78fa270f 100755
+    --- a/configure
+    +++ b/configure
+    @@ -65,6 +65,13 @@ prefix="/opt/gerbil"
+     readonly cflags_opt="-foptimize-sibling-calls"
+     readonly ldflags_rpath="-Wl,-rpath"
+
+    +if [ $(uname) = "Darwin" ];
+    +then
+    +    readonly rpath_sep=","
+    +else
+    +    readonly rpath_sep="="
+    +fi
+    +
+     gambit_march="native"
+     gambit_tag="${default_gambit_tag}"
+     gambit_config="${default_gambit_config}"
+    @@ -194,11 +201,10 @@ if [ -z "${CFLAGS}" ]; then
+     else
+	 CFLAGS="${CFLAGS} ${cflags_opt}"
+     fi
+    -
+     if [ -z "${LDFLAGS}" ]; then
+    -    LDFLAGS="${ldflags_rpath}=${gerbil_prefix}/lib"
+    +    LDFLAGS="${ldflags_rpath}$rpath_sep${gerbil_prefix}/lib"
+     else
+    -    LDFLAGS="${LDFLAGS} ${ldflags_rpath}=${gerbil_prefix}/lib"
+    +    LDFLAGS="${LDFLAGS} ${ldflags_rpath}$rpath_sep${gerbil_prefix}/lib"
+     fi
+
+     git submodule init || die
+    #+end_src
+
+
+    commit it.
+
+    #+begin_src sh
+      git add ../configure
+      git commit -m "Try a different separator for rpath on Darwin"
+    #+end_src
+
+    Trying again got a new failure. in expander/root.ss there are the features we need.
+
+    #+begin_src sh :results verbatim :wrap src diff
+      git diff ../src/build/*
+    #+end_src
+
+    #+begin_src diff
+      diff --git a/src/build/build-bach.ss b/src/build/build-bach.ss
+      index 3efa9c5f..f6df5079 100644
+      --- a/src/build/build-bach.ss
+      +++ b/src/build/build-bach.ss
+      @@ -112,7 +112,8 @@
+      	    (output-bin
+      	     (path-expand "gerbil" gerbil-bindir))
+      	    (cc-options
+      -        (string-append "-Wl,-rpath=" gambit-libdir)))
+      +        (string-append (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
+      +		       gambit-libdir)))
+         (displayln "... build " output-bin)
+         (invoke (gerbil-gsc)
+      	       [gsc-runtime-args
+    #+end_src
+
+    #+begin_src sh
+      git add ../src/build/build-bach.ss
+      git commit -m "Try a different separator for rpath on Darwin on build-bach.ss"
+    #+end_src
+
+    #+RESULTS:
+    | [homebrew-v18 5d2e89e5] Try a different separator for rpath on Darwin on build-bach.ss |                 |               |
+    | 1 file changed                                                                         | 2 insertions(+) | 1 deletion(-) |
+
+    
+#+begin_src ruby :tangle gerbil-scheme-local.rb
+  class GerbilSchemeLocal < Formula
+    url "file:///Users/drewc/me/src/gerbil", using: :git, branch: "homebrew-v18"
+    license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+    version "0.18-dev"
+    depends_on "openssl@3"
+
+    On_macos do
+      depends_on "gcc"
+    end
+
+    # Clang is slower both for compiling and for running output binaries
+    fails_with :clang
+
+    def install
+        system "./configure", "--prefix=#{prefix}",
+                                    "--enable-leveldb",
+                                    "--enable-libxml",
+                                    "--enable-libyaml",
+                                    "--enable-lmdb"
+              
+      # Dir.chdir('src/gambit'){
+
+      #   # Fixed in gambit HEAD, but they haven't cut a release
+      #   inreplace "config.status" do |s|
+      #     s.gsub! %r{/usr/local/opt/openssl(@\d(\.\d)?)?}, Formula["openssl@3"].opt_prefix
+      #   end
+      #   system "./config.status"
+
+      #   # fix lisp file install location
+      #   #        elisp.install share/"emacs/site-lisp/gambit.el"
+      # }
+          system "make"
+        ENV.deparallelize
+        system "make", "install"
+
+
+    end
+
+    test do
+      assert_equal "0123456789", shell_output("#{bin}/gsi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+    end
+  end
+#+end_src
+
+
+* Upstream
+
+i PATH="/usr/local/opt/binutils/bin:$PATH"
+#+begin_src sh :results verbatim :wrap src ruby
+ curl https://raw.githubusercontent.com/Homebrew/homebrew-core/92838f1b8d185ae7d8e21ffbec735e476c9c0f20/Formula/g/gambit-scheme.rb
+#+end_src
+
+#+RESULTS:
+#+begin_src ruby
+class GambitScheme < Formula
+  desc "Implementation of the Scheme Language"
+  homepage "https://github.com/gambit/gambit"
+  url "https://github.com/gambit/gambit/archive/v4.9.5.tar.gz"
+  sha256 "758da7b4afe6411e9c4fed14b0cc5ada39b5f1393c1edd4d3dd9c9a06127c310"
+  license "Apache-2.0"
+
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
+  bottle do
+    sha256 arm64_ventura:  "958094368433dfd957d53e1cfbaa8af1235b879b70ace4eea23bbb1196f1aa5f"
+    sha256 arm64_monterey: "12263d69bdfd8b2a13901ec6967ba60946e36db1e0fff53190a1e27a7ae25221"
+    sha256 arm64_big_sur:  "4b8892cf54da88e4b8edd58e31d46a6c56fad15b3f5a2dc646e94958db044ae5"
+    sha256 ventura:        "7f26f3c29562f4dc3c8033a18e53d47bf55c093dcafd622e8fd78cf4d8d61f28"
+    sha256 monterey:       "3ead39c88a5246f0f8ecbb1afa4e4dc218375c35aea624afea101c7b803321dc"
+    sha256 big_sur:        "1e335b312ef44ae5d0b3475ab771da5390943a33435883570cb124d11c9c02e7"
+    sha256 x86_64_linux:   "5c4bb1bcc575d1079679114fec7776b3ac881ce67324a1a5b0bab2b6843f7ef6"
+  end
+
+  depends_on "openssl@3"
+
+  on_macos do
+    depends_on "gcc"
+  end
+
+  conflicts_with "ghostscript", because: "both install `gsc` binary"
+
+  # Clang is slower both for compiling and for running output binaries
+  fails_with :clang
+
+  def install
+    args = %W[
+      --prefix=#{prefix}
+      --docdir=#{doc}
+      --infodir=#{info}
+      --enable-single-host
+      --enable-default-runtime-options=f8,-8,t8
+      --enable-openssl
+    ]
+
+    system "./configure", *args
+
+    # Fixed in gambit HEAD, but they haven't cut a release
+    inreplace "config.status" do |s|
+      s.gsub! %r{/usr/local/opt/openssl(@\d(\.\d)?)?}, Formula["openssl@3"].opt_prefix
+    end
+    system "./config.status"
+
+    system "make"
+    ENV.deparallelize
+    system "make", "install"
+
+    # fix lisp file install location
+    elisp.install share/"emacs/site-lisp/gambit.el"
+  end
+
+  test do
+    assert_equal "0123456789", shell_output("#{bin}/gsi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+  end
+end
+#+end_src
+
+#+begin_src sh :results verbatim :wrap src ruby
+ curl https://raw.githubusercontent.com/Homebrew/homebrew-core/92838f1b8d185ae7d8e21ffbec735e476c9c0f20/Formula/g/gerbil-scheme.rb
+#+end_src
+
+#+begin_src ruby
+class GerbilScheme < Formula
+  desc "Opinionated dialect of Scheme designed for Systems Programming"
+  homepage "https://cons.io"
+  url "https://github.com/vyzo/gerbil/archive/v0.17.tar.gz"
+  sha256 "1e81265aba7e9022432649eb26b2e5c85a2bb631a315e4fa840b14cf336b2483"
+  license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+  revision 3
+
+  livecheck do
+    url "https://github.com/vyzo/gerbil.git"
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
+  Bottle do
+    sha256 arm64_ventura:  "5568e6b56fed556b8c0145de4d54d6dc256c0d75af3e43a88a34c4f3b4922a0f"
+    sha256 arm64_monterey: "eea0039afa114fcf1329ca303a4b1829141a8b94d95520409109b362ffe459f6"
+    sha256 arm64_big_sur:  "a95805093e7668f057a9bead359aed795887a461c6399fe7da08a2a365d0a176"
+    sha256 ventura:        "29e03e2cce80923ebace68b450dd7ac32c0fb8e9d5108ad1734c20b133e70306"
+    sha256 monterey:       "f3048903ad1fd2bd101cabb22d7587229d8e92712f6fb1724d5683664ad1e80b"
+    sha256 big_sur:        "f6e7338913c1e66538c1af4d177c63869dd33554f0aa5d14be7143eefa724330"
+    sha256 x86_64_linux:   "878b862448fe401b00980688c6c880ef4344cc88272bb29ed6c1ddb1ce14460f"
+  end
+
+  depends_on "gambit-scheme"
+  depends_on "leveldb"
+  depends_on "libyaml"
+  depends_on "lmdb"
+  depends_on "openssl@3"
+
+  uses_from_macos "libxml2"
+  uses_from_macos "sqlite"
+
+  on_macos do
+    depends_on "gcc"
+  end
+
+  fails_with :clang do
+    cause "gambit-scheme is built with GCC"
+  end
+
+  def install
+    cd "src" do
+      system "./configure", "--prefix=#{prefix}",
+                            "--with-gambit=#{Formula["gambit-scheme"].opt_prefix}",
+                            "--enable-leveldb",
+                            "--enable-libxml",
+                            "--enable-libyaml",
+                            "--enable-lmdb"
+      System "./build.sh"
+      system "./install"
+
+      mv "#{share}/emacs/site-lisp/gerbil", "#{share}/emacs/site-lisp/gerbil-scheme"
+    end
+  end
+
+  test do
+    assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+  end
+end
+#+end_src
+
+
+  #+begin_src ruby :tangle a-gerbil-scheme.rb
+        class GerbilScheme < Formula
+          desc "Opinionated dialect of Scheme designed for Systems Programming"
+          homepage "https://cons.io"
+          url "https://github.com/vyzo/gerbil.git"
+          #     "https://github.com/vyzo/gerbil/archive/refs/heads/master.zip"
+          # sha256 "1e81265aba7e9022432649eb26b2e5c85a2bb631a315e4fa840b14cf336b2483"
+          license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+          revision 0.17
+          version "master"
+
+          # livecheck do
+          #   url "https://github.com/vyzo/gerbil.git"
+          #   regex(/^v?(\d+(?:\.\d+)+)$/i)
+          # end
+
+          # bottle do
+          #   sha256 arm64_ventura:  "5568e6b56fed556b8c0145de4d54d6dc256c0d75af3e43a88a34c4f3b4922a0f"
+          #   sha256 arm64_monterey: "eea0039afa114fcf1329ca303a4b1829141a8b94d95520409109b362ffe459f6"
+          #   sha256 arm64_big_sur:  "a95805093e7668f057a9bead359aed795887a461c6399fe7da08a2a365d0a176"
+          #   sha256 ventura:        "29e03e2cce80923ebace68b450dd7ac32c0fb8e9d5108ad1734c20b133e70306"
+          #   sha256 monterey:       "f3048903ad1fd2bd101cabb22d7587229d8e92712f6fb1724d5683664ad1e80b"
+          #   sha256 big_sur:        "f6e7338913c1e66538c1af4d177c63869dd33554f0aa5d14be7143eefa724330"
+          #   sha256 x86_64_linux:   "878b862448fe401b00980688c6c880ef4344cc88272bb29ed6c1ddb1ce14460f"
+          # end
+
+          # depends_on "gambit-scheme"
+          depends_on "binutils"
+          depends_on "leveldb"
+          depends_on "libyaml"
+          depends_on "lmdb"
+          depends_on "openssl@3"
+
+          uses_from_macos "libxml2"
+          uses_from_macos "sqlite"
+
+          on_macos do
+            depends_on "gcc"
+          end
+
+          fails_with :clang do
+            cause "gambit-scheme is built with GCC"
+          end
+
+          def install
+              system "./configure", "--prefix=#{prefix}",
+                                    "--enable-leveldb",
+                                    "--enable-libxml",
+                                    "--enable-libyaml",
+                                    "--enable-lmdb"
+              system "./build.sh"
+              system "make install"
+            #  mv "#{share}/emacs/site-lisp/gerbil", "#{share}/emacs/site-lisp/gerbil-scheme"
+          end
+
+          test do
+            assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+          end
+        end
+#+end_src
+
+#+begin_src ruby :tangle gerbil-gambit-scheme.rb
+  class GerbilGambitScheme < Formula
+    desc "Implementation of the Scheme Language"
+    homepage "https://github.com/gambit/gambit"
+    url "https://github.com/vyzo/gerbil.git"
+    #url "https://github.com/gambit/gambit/archive/v4.9.5.tar.gz"
+    #sha256 "758da7b4afe6411e9c4fed14b0cc5ada39b5f1393c1edd4d3dd9c9a06127c310"
+    license "Apache-2.0"
+    version "4.9.5"
+
+    # livecheck do
+    #   url :stable
+    #   regex(/^v?(\d+(?:\.\d+)+)$/i)
+    # end
+
+    # bottle do
+    #   sha256 arm64_ventura:  "958094368433dfd957d53e1cfbaa8af1235b879b70ace4eea23bbb1196f1aa5f"
+    #   sha256 arm64_monterey: "12263d69bdfd8b2a13901ec6967ba60946e36db1e0fff53190a1e27a7ae25221"
+    #   sha256 arm64_big_sur:  "4b8892cf54da88e4b8edd58e31d46a6c56fad15b3f5a2dc646e94958db044ae5"
+    #   sha256 ventura:        "7f26f3c29562f4dc3c8033a18e53d47bf55c093dcafd622e8fd78cf4d8d61f28"
+    #   sha256 monterey:       "3ead39c88a5246f0f8ecbb1afa4e4dc218375c35aea624afea101c7b803321dc"
+    #   sha256 big_sur:        "1e335b312ef44ae5d0b3475ab771da5390943a33435883570cb124d11c9c02e7"
+    #   sha256 x86_64_linux:   "5c4bb1bcc575d1079679114fec7776b3ac881ce67324a1a5b0bab2b6843f7ef6"
+    # end
+    depends_on "openssl@3"
+
+    on_macos do
+      depends_on "gcc"
+    end
+
+    conflicts_with "ghostscript", because: "both install `gsc` binary"
+
+    # Clang is slower both for compiling and for running output binaries
+    fails_with :clang
+
+    def install
+        system "./configure", "--prefix=#{prefix}",
+                                    "--enable-leveldb",
+                                    "--enable-libxml",
+                                    "--enable-libyaml",
+                                    "--enable-lmdb"
+              
+      Dir.chdir('src/gambit'){
+
+        # Fixed in gambit HEAD, but they haven't cut a release
+        inreplace "config.status" do |s|
+          s.gsub! %r{/usr/local/opt/openssl(@\d(\.\d)?)?}, Formula["openssl@3"].opt_prefix
+        end
+        system "./config.status"
+
+        # fix lisp file install location
+        #        elisp.install share/"emacs/site-lisp/gambit.el"
+      }
+          system "make"
+        ENV.deparallelize
+        system "make", "install"
+
+
+    end
+
+    test do
+      assert_equal "0123456789", shell_output("#{bin}/gsi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+    end
+  end
+#+end_src
+
+# Local Variables:
+# org-src-preserve-indentation: t
+# END:

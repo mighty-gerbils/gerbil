@@ -2,6 +2,8 @@
 set -eu
 cd $(dirname "$0") # Change to this directory
 
+# export GERBIL_GCC='gcc-13'
+# export CC='gcc-13'
 #===============================================================================
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
@@ -57,7 +59,18 @@ if [ "x${LD_LIBRARY_PATH:-}" = "x" ]; then
 else
     LD_LIBRARY_PATH="${GERBIL_BUILD_PREFIX}/lib:${LD_LIBRARY_PATH}"
 fi
-export LD_LIBRARY_PATH
+
+DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH"
+
+# Does OSX really sanitize this FFS?
+
+_THE_LIBRARY_PATH="$LD_LIBRARY_PATH"
+
+# It does. holy crud. Is fallback stripped?
+
+DYLD_FALLBACK_LIBRARY_PATH="$LD_LIBRARY_PATH"
+
+export LD_LIBRARY_PATH DYLD_LIBRARY_PATH _THE_LIBRARY_PATH DYLD_FALLBACK_LIBRARY_PATH
 
 if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ]; then
     num_cores=$(build_flags_cores "${GERBIL_BUILD_FLAGS}")
@@ -122,9 +135,9 @@ build_gambit() {
   cp -v gambit/lib/_define-syntax.scm "${GERBIL_BUILD_PREFIX}/lib"
   cp -v gambit/gsc/*\#.scm "${GERBIL_BUILD_PREFIX}/lib"
   cp -v gambit/lib/_gambit.c "${GERBIL_BUILD_PREFIX}/lib"
-  for f in lib/libgambit.so lib/libgambit.a \
-           gsi/libgambitgsi.so gsi/libgambitgsi.a \
-           gsc/libgambitgsc.so gsc/libgambitgsc.a;
+  for f in lib/libgambit.so lib/libgambit.a lib/libgambit.dylib\
+           gsi/libgambitgsi.so gsi/libgambitgsi.a  gsi/libgambitgsi.dylib\
+           gsc/libgambitgsc.so gsc/libgambitgsc.a gsc/libgambitgsc.dylib;
   do
       if [ -e gambit/$f ]; then
           cp -v gambit/$f "${GERBIL_BUILD_PREFIX}/lib"
@@ -224,32 +237,32 @@ build_stage1 () {
 ## commands
 build_stdlib () {
   feedback_low "Building stdlib"
-  (cd std && ./build.ss) || die
+  (cd std && gxi ./build.ss) || die
 }
 
 build_libgerbil () {
   feedback_low "Building libgerbil"
-  ./build/build-libgerbil.ss || die
+  gxi ./build/build-libgerbil.ss || die
 }
 
 build_lang () {
   feedback_low "Building languages"
-  (cd lang && ./build.ss) || die
+  (cd lang && gxi ./build.ss) || die
 }
 
 build_r7rs_large() {
   feedback_low "Building R7RS large"
-  (cd r7rs-large && ./build.ss) || die
+  (cd r7rs-large && gxi ./build.ss) || die
 }
 
 build_srfi() {
     feedback_low "Building SRFI shims"
-    (cd srfi && ./build.ss) || die
+    (cd srfi && gxi ./build.ss) || die
 }
 
 build_tools () {
   feedback_low "Building gerbil tools"
-  (cd tools && ./build.ss) || die
+  (cd tools && gxi ./build.ss) || die
   for tool in tools/gx*.ss; do
       toolname=$(basename $tool .ss)
       (cd "${GERBIL_BUILD_PREFIX}/bin" && ln -sf gerbil $toolname)

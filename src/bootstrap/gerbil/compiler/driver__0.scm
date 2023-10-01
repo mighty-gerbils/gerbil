@@ -791,7 +791,7 @@
                                        _libgerbil.so69300_)))))
                            (_gerbil-rpath69304_
                             (string-append
-                             '"-Wl,-rpath="
+			     (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
                              _gerbil-libdir69232_))
                            (_builtin-modules69308_
                             (map (lambda (_mod69306_)
