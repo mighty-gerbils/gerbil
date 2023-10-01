@@ -628,7 +628,7 @@ END-C
                       (string-substitute-char (stx-e #'message-string) #\- #\space)))))
        #'(begin
            (def condition
-             (make-http-condition code (quote message)))
+             (make-http-condition code (quote message-string)))
            (export condition)
            (hash-put! +http-response-codes+ code (quote message-string)))))))
 
