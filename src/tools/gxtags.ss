@@ -13,6 +13,7 @@
         :std/sort
         :std/text/utf8
         :std/misc/ports
+        :std/os/temporaries
         (only-in :std/srfi/1 delete-duplicates reverse!))
 (export main make-tags)
 
@@ -44,7 +45,9 @@
     (else
      (error "unknown TAGS index format")))
    (parameterize ((current-tags-format format))
-     (make-tags inputs tagfile append? format)))
+     (make-tags inputs tagfile append? format)
+     (case format
+       ((vim) (sort-tags! tagfile)))))
 
 (def current-tags-path
   (make-parameter #f))
@@ -266,3 +269,10 @@
   (try
    (import-module filename)
    (catch (e) #f)))
+
+(def (sort-tags! tagfile)
+  (let* ((tmp (make-temporary-file-name "TAGS"))
+         (lines (read-file-lines tagfile))
+         (sorted (sort lines string<?)))
+    (write-file-lines tmp sorted)
+    (rename-file tmp tagfile)))
