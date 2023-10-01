@@ -615,16 +615,28 @@ END-C
         ("OPTIONS" 'OPTIONS)))
 
 (def +http-response-codes+ (make-hash-table-eq))
+
 (defstruct http-condition (code message))
-(defrule (def-http-condition ctx code message)
-  (with-id ctx ((condition
-                 (string-substitute-char (stringify #'message) #\- #\space)))
-    (def condition (make-http-condition code message))
-    (export condition)
-    (hash-put! +http-response-codes+ code message)))
-(defrules def-http-conditions ()
-  ((ctx (number message) ...) (begin (def-http-condition ctx number message) ...)))
-(def-http-conditions
+
+(defsyntax (defhttp-condition stx)
+  (syntax-case stx ()
+    ((_ code message-string)
+     (stx-string? #'message-string)
+     (with-syntax ((condition
+                    (syntax-local-introduce
+                     (make-symbol
+                      (string-substitute-char (stx-e #'message-string) #\- #\space)))))
+       #'(begin
+           (def condition
+             (make-http-condition code (quote message-string)))
+           (export condition)
+           (hash-put! +http-response-codes+ code (quote message-string)))))))
+
+(defrules defhttp-conditions ()
+  ((_ (number message) ...)
+   (begin (defhttp-condition number message) ...)))
+
+(defhttp-conditions
   (100 "Continue")
   (101 "Switching Protocols")
   (200 "OK")
@@ -666,11 +678,10 @@ END-C
   (504 "Gateway Timeout")
   (505 "HTTP Version Not Supported"))
 
-(def (http-response-write-condition
-      res (condition #f) code: (code #f) content-type: (content-type #f) message: (message #f))
-  (http-response-write res (or code (http-condition-code condition))
-                       `(("Content-Type" . ,(or content-type "text/plain")))
-                       (or message (http-condition-message condition))))
+(def (http-response-write-condition res condition)
+  (http-response-write res (http-condition-code condition)
+                       `(("Content-Type" . "text/plain"))
+                       (http-condition-message condition)))
 
 (def (condition-handler handler)
   (lambda (req res)
