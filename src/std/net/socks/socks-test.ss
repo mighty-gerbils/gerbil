@@ -5,6 +5,7 @@
         :std/io
         :std/text/utf8
         :std/logger
+        :std/net/request
         ./api)
 (export socks-test test-setup! test-cleanup!)
 
@@ -29,7 +30,17 @@
     (test-case "SOCKS5 connect"
       (test-connect 'SOCKS5))
     (test-case "SOCKS5 bind"
-      (test-bind 'SOCKS5))))
+      (test-bind 'SOCKS5))
+
+    (test-case "proxy http request"
+      (def (socks-connect address)
+        (let (socks (socks-proxy server-address))
+          (SOCKS-connect socks address)))
+
+      (parameterize ((http-connect socks-connect))
+        (let (req (http-get "https://www.google.com"))
+          (check (request-status req) => 200)
+          (request-close req))))))
 
 (def (test-connect proto)
   (def request
