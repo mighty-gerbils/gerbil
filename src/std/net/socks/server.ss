@@ -30,12 +30,9 @@
       srv)))
 
 (def (stop-socks-server! (server (current-socks-server)))
-  (let (tgroup (thread-thread-group server))
-    (try
-     (->> server (!shutdown))
-     (thread-join! server)
-     (finally
-      (thread-group-kill! tgroup)))))
+  (unless (thread-dead? server)
+    (->> server (!shutdown)))
+  (thread-join! server))
 
 (def (socks-server socks allow-bind?)
   (def acceptors

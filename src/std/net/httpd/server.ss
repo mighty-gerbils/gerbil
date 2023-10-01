@@ -28,13 +28,10 @@
       (current-http-server srv)
       srv)))
 
-(def (stop-http-server! httpd)
-  (let (tgroup (thread-thread-group httpd))
-    (try
-     (->> httpd (!shutdown))
-     (thread-join! httpd)
-     (finally
-      (thread-group-kill! tgroup)))))
+(def (stop-http-server! (server (current-http-server)))
+  (unless (thread-dead? server)
+    (->> server (!shutdown)))
+  (thread-join! server))
 
 ;;; implementation
 (def (http-listen addr backlog: backlog sockopts: sockopts)
