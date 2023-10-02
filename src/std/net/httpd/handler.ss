@@ -243,17 +243,16 @@
 ;; automatically adds Connection: upgrade to the headers
 ;; returns 3 values: the socket, the reader, and the writer
 (def (http-response-upgrade! res headers)
-  (using (res : http-response)
+  (using ((res : http-response)
+          (sock res.sock :- StreamSocket))
     (let (headers (cons '("Connection" . "upgrade") headers))
       (write-response-line res.buf 101)
       (write-response-headers res.buf headers)
       (write-crlf res.buf)
       (set! res.close? #t)
-      (let (sock res.sock)
-        (using (sock :- StreamSocket)
-          (values res.sock
-                  (open-buffered-reader (sock.reader))
-                  res.buf))))))
+      (values res.sock
+              (open-buffered-reader (sock.reader))
+              res.buf))))
 
 ;;; server internal
 (def (header-e key lst)
