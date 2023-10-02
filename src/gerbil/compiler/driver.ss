@@ -6,10 +6,15 @@ namespace: gxc
 
 (import :gerbil/expander
         :gerbil/gambit
+        (only-in :gerbil/runtime gerbil-path)
         "base"
         "compile"
         "optimize")
 (export compile-module compile-exe)
+
+(def (gerbil-path) ;; definition needed here until it is in the bootstrapped runtime
+  (or (getenv "GERBIL_PATH" #f)
+      (path-expand "~/.gerbil")))
 
 (def default-gerbil-gsc
   (path-expand "gsc" (path-expand "bin" (path-expand "~~"))))
@@ -139,7 +144,7 @@ namespace: gxc
            (base (string-append "-I " gerbil-staticdir))
            (user-static-dir
             (path-expand
-             (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
+             (path-expand "lib/static" (gerbil-path))))
            (base (string-append base " -I " user-static-dir)))
       [base ... (gsc-cc-options) ...]))
 
@@ -296,7 +301,7 @@ namespace: gxc
       (path-expand "static" libdir))
     (def user-static-dir
       (path-expand
-       (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil"))))
+       (path-expand "lib/static" (gerbil-path))))
     (def cppflags
       (string-append "-I " static-dir " -I " user-static-dir))
 

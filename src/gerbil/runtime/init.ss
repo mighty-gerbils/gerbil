@@ -238,6 +238,10 @@ namespace: #f
      (else
       (gx#core-eval-module obj)))))
 
+(def (gerbil-path)
+  (or (getenv "GERBIL_PATH" #f)
+      (path-expand "~/.gerbil")))
+
 (def (gerbil-runtime-init! builtin-modules)
   ;; initialize the load path
   (let* ((home (gerbil-home))
@@ -250,7 +254,7 @@ namespace: #f
                          (string-split envvar #\:))))
            (else '())))
          (userpath
-          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
+          (path-expand "lib" (gerbil-path)))
          (loadpath
           (if (getenv "GERBIL_BUILD_PREFIX" #f)
             loadpath

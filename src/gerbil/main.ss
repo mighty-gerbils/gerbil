@@ -10,6 +10,10 @@ package: gerbil
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
+(def (gerbil-path) ;; definition needed here until it is in the bootstrapped runtime
+  (or (getenv "GERBIL_PATH" #f)
+      (path-expand "~/.gerbil")))
+
 (def builtin-modules
   '(;; :gerbil/runtime
     "gerbil/runtime/gambit"

@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/expander
+        (only-in :gerbil/runtime gerbil-path)
         :std/sugar
         :std/iter
         :std/getopt
@@ -547,7 +548,6 @@
   (let* ((server-id (hash-ref opt 'server-id))
          (output    (hash-ref opt 'output))
          (output    (path-expand output (current-directory)))
-         (gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
          (ensemble-base "ensemble/")
          (ensemble-rebase
           (lambda files
@@ -560,7 +560,7 @@
           (lambda files
             (map (cut string-append server-base <>) files))))
 
-    (current-directory gerbil-path)
+    (current-directory (gerbil-path))
     (invoke "tar"
             ["cavf" output
              (ensemble-rebase
