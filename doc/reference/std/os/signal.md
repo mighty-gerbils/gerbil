@@ -4,34 +4,28 @@
 :::
 
 ## kill
-::: tip usage
 ```
-(kill ...)
+(kill pid signo)
 ```
-:::
 
 Please document me!
 
 ## sigprocmask
-::: tip usage
 ```
-(sigprocmask ...)
+(sigprocmask how sigset old-sigset)
 ```
-:::
 
 Please document me!
 
 ## sigsets
-::: tip usage
 ```
-(make_sigset ...)
-(sigemptyset ...)
-(sigfillset ...)
-(sigaddset ...)
-(sigdelset ...)
-(sigismember ...)
+(define-c-lambda make_sigset () sigset_t* ...)
+(define-c-lambda sigemptyset (sigset_t*) int)
+(define-c-lambda sigfillset (sigset_t*) int)
+(define-c-lambda sigaddset (sigset_t* int) int)
+(define-c-lambda sigdelset (sigset_t* int) int)
+(define-c-lambda sigismember (sigset_t* int) int))
 ```
-:::
 
 Please document me!
 

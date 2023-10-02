@@ -1,38 +1,29 @@
 # Syntax Objects
 
-## datum-&gt;syntax
-::: tip usage
+## datum->syntax
 ```
 (datum->syntax ...)
 ```
-:::
 
 Please document me!
 
-## syntax-&gt;datum
-::: tip usage
+## syntax->datum
 ```
 (syntax->datum ...)
 ```
-:::
 
 Please document me!
 
 ## syntax-e
-::: tip usage
 ```
 (syntax-e ...)
 ```
-:::
 
 Please document me!
 
-## syntax-&gt;list
-::: tip usage
+## syntax->list
 ```
 (syntax->list ...)
 ```
-:::
 
 Please document me!
-

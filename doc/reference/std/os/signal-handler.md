@@ -4,19 +4,15 @@
 :::
 
 ## add-signal-handler!
-::: tip usage
 ```
-(add-signal-handler! ...)
+(add-signal-handler! signo thunk)
 ```
-:::
 
 Please document me!
 
 ## remove-signal-handler!
-::: tip usage
 ```
-(remove-signal-handler! ...)
+(remove-signal-handler! signo)
 ```
-:::
 
 Please document me!
