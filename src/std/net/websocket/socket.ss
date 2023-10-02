@@ -95,7 +95,7 @@
   (using (writer :- BufferedWriter)
     (let (head (fxior (fxarithmetic-shift-left fin 7) typ))
       (writer.write-u8 head))
-    (let ((mask-bit (if mask 8 0))
+    (let ((mask-bit (if mask #x80 0))
           (len (fx- end start)))
       (cond
        ((fx< len 126)
