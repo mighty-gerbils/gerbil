@@ -26,7 +26,8 @@
                         params:       (params #f)
                         auth:         (auth #f)
                         ssl-context:  (ssl-context (default-client-ssl-context))
-                        timeout:      (timeo #f))
+                        timeout:      (timeo #f)
+                        max-frame-size: (max-frame-size default-max-frame-size))
   (let* ((url (url->request-url url))
          (nonce (random-bytes 16))
          (nonce64 (base64-encode nonce))
@@ -96,7 +97,8 @@
                                   (request-socket-reader req)
                                   (request-socket-writer req)
                                   #f    ; client socket
-                                  (and Sec-WebSocket-Protocol (cdr Sec-WebSocket-Protocol)))))
+                                  (and Sec-WebSocket-Protocol (cdr Sec-WebSocket-Protocol))
+                                  max-frame-size)))
 
      (catch (e)
        (request-close req)

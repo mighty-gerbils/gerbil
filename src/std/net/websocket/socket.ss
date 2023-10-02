@@ -19,7 +19,7 @@
   constructor: :init!)
 
 (defmethod {:init! websocket}
-  (lambda (self sock reader writer server? proto (max-frame-size default-max-frame-size))
+  (lambda (self sock reader writer server? proto max-frame-size)
     (using ((self :- websocket)
             (sock : StreamSocket)
             (reader : BufferedReader)
