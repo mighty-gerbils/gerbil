@@ -2,7 +2,7 @@
 
 The `:std/net/socks` package provides functionality for using and running SOCKS proxies.
 
-::: To use bindings from this module
+::: tip To use bindings from this module
 ```scheme
 (import :std/net/socks)
 ```
