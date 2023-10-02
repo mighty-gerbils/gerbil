@@ -230,8 +230,9 @@
 
 ;; force output of current chunks
 (def (http-response-force-output res)
-  (using (res : http-response)
-    (&BufferedWriter-flush res.buf)))
+  (using ((res : http-response)
+          (buf res.buf :- BufferedWriter))
+    (buf.flush)))
 
 ;; set the response output timeout
 (def (http-response-timeout-set! res timeo)
@@ -244,15 +245,17 @@
 ;; returns 3 values: the socket, the reader, and the writer
 (def (http-response-upgrade! res headers)
   (using ((res : http-response)
+          (buf res.buf :- BufferedWriter)
           (sock res.sock :- StreamSocket))
     (let (headers (cons '("Connection" . "upgrade") headers))
-      (write-response-line res.buf 101)
-      (write-response-headers res.buf headers)
-      (write-crlf res.buf)
+      (write-response-line buf 101)
+      (write-response-headers buf headers)
+      (write-crlf buf)
+      (buf.flush)
       (set! res.close? #t)
       (values res.sock
               (open-buffered-reader (sock.reader))
-              res.buf))))
+              buf))))
 
 ;;; server internal
 (def (header-e key lst)

@@ -27,14 +27,16 @@
                         auth:         (auth #f)
                         ssl-context:  (ssl-context (default-client-ssl-context))
                         timeout:      (timeo #f)
+                        protocol:     (proto #f)
                         max-frame-size: (max-frame-size default-max-frame-size))
   (let* ((url (url->request-url url))
          (nonce (random-bytes 16))
          (nonce64 (base64-encode nonce))
          (headers [["Upgrade" . "websocket"]
                    ["Connection" . "Upgrade"]
-                   ["Sec-WebSocket-Key" . nonce64]
-                   ["Sec-WebSocket-Version" . +websocket-version+]
+                   ["Sec-Websocket-Key" . nonce64]
+                   ["Sec-Websocket-Version" . +websocket-version+]
+                   (if proto [["Sec-Websocket-Protocol" . proto]] []) ...
                    (or headers []) ...])
          (req (http-get url
                         redirect: redirect
@@ -49,15 +51,15 @@
        (unless (fx= status 101)
          (raise-io-error websocket-connect
                          "Unexpected server response"
-                         url status)))
+                         url status (request-text req))))
 
      (let* ((rheaders (request-headers req))
             (Connection (assoc "Connection" rheaders))
             (Upgrade (assoc "Upgrade" rheaders))
-            (Sec-WebSocket-Accept (assoc "Sec-Websocket-Accept" rheaders))
-            (Sec-WebSocket-Version (assoc "Sec-WebSocket-Version" rheaders))
-            (Sec-WebSocket-Extensions (assoc "Sec-Websocket-Extensions" rheaders))
-            (Sec-WebSocket-Protocol (assoc "Sec-Websocket-Protocol" rheaders)))
+            (Sec-Websocket-Accept (assoc "Sec-Websocket-Accept" rheaders))
+            (Sec-Websocket-Version (assoc "Sec-Websocket-Version" rheaders))
+            (Sec-Websocket-Extensions (assoc "Sec-Websocket-Extensions" rheaders))
+            (Sec-Websocket-Protocol (assoc "Sec-Websocket-Protocol" rheaders)))
 
        (unless (and Connection (equal? (string-downcase (cdr Connection)) "upgrade"))
          (raise-io-error websocket-connect
@@ -69,11 +71,12 @@
                          "bad server response; no websocket upgrade"
                          url Upgrade))
 
-       (unless (and Sec-WebSocket-Version (equal? Sec-WebSocket-Version +websocket-version+))
+       (unless (and Sec-Websocket-Version (equal? (cdr Sec-Websocket-Version) +websocket-version+))
          (raise-io-error websocket-connect
-                         "bad server response; unsupported websocket version"))
+                         "bad server response; unsupported websocket version"
+                         Sec-Websocket-Version))
 
-       (let* ((accept64 (and Sec-WebSocket-Accept (cdr Sec-WebSocket-Accept)))
+       (let* ((accept64 (and Sec-Websocket-Accept (cdr Sec-Websocket-Accept)))
               (digest (make-digest digest::sha1))
               (_ (digest-update! digest (string->utf8 nonce64)))
               (_ (digest-update! digest (string->utf8 +websocket-magic+)))
@@ -84,20 +87,19 @@
                            "bad server response; nonce verification failure"
                            url nonce64 accept64 verify64)))
 
-       (when Sec-WebSocket-Protocol
-         (let* ((proto (cdr Sec-WebSocket-Protocol))
-                (uproto (assoc "Sec-WebSocket-Protocol" headers))
-                (uproto (string-split (and uproto (cdr uproto)) #\,)))
-           (unless (member proto uproto)
+       (when (and proto Sec-Websocket-Protocol)
+         (let ((rproto (cdr Sec-Websocket-Protocol))
+               (uprotos (string-split proto #\,)))
+           (unless (member rproto uprotos)
              (raise-io-error websocket-connect
                              "bad server response; unexpected protocol"
-                             url Sec-WebSocket-Protocol))))
+                             url Sec-Websocket-Protocol))))
 
        (WebSocket (make-websocket (request-socket req)
                                   (request-socket-reader req)
                                   (request-socket-writer req)
                                   #f    ; client socket
-                                  (and Sec-WebSocket-Protocol (cdr Sec-WebSocket-Protocol))
+                                  (and Sec-Websocket-Protocol (cdr Sec-Websocket-Protocol))
                                   max-frame-size)))
 
      (catch (e)

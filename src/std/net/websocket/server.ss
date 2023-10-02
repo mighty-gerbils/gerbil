@@ -8,6 +8,7 @@
         :std/crypto/digest
         :std/text/base64
         :std/text/utf8
+        :gerbil/gambit
         ./interface
         ./socket)
 (export websocket-request-handler)
@@ -37,17 +38,17 @@
       (exit 'bad-request))
 
     (let* ((request-headers (http-request-headers req))
-           (_ (alet (version (assget "Sec-WebSocket-Version" request-headers))
-                (unless (eqv? (string->number version) +websocket-version+)
+           (_ (alet (version (assget "Sec-Websocket-Version" request-headers))
+                (unless (equal? version +websocket-version+)
                   (bad-request! "unusupported websocket protocol version"))))
            (proto
-            (alet (request-proto (assget "Sec-WebSocket-Protocol" request-headers))
+            (alet (request-proto (assget "Sec-Websocket-Protocol" request-headers))
               (cond
                ((select-protocol (string-split request-proto #\,)))
                (else
                 (bad-request! "unsupported websocket protocol")))))
            (auth
-            (alet (nonce64 (assget "Sec-WebSocket-Key" request-headers))
+            (alet (nonce64 (assget "Sec-Websocket-Key" request-headers))
               (let* ((digest (make-digest digest::sha1))
                      (_ (digest-update! digest (string->utf8 nonce64)))
                      (_ (digest-update! digest (string->utf8 +websocket-magic+)))
@@ -56,7 +57,7 @@
            ;; TODO do we need any more headers?
            (upgrade-headers
             [["Upgrade" . "websocket"]
-             ["Sec-WebSocket-Version" . +websocket-version+]
+             ["Sec-Websocket-Version" . +websocket-version+]
              (if auth
                [["Sec-Websocket-Accept" . auth]]
                [])
