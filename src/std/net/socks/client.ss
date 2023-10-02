@@ -309,7 +309,7 @@
 
 (def (socks4-send-request sock cmd host port (4a? #f))
   (using ((sock :- StreamSocket)
-          (pkt (open-buffered-writer #f 384) :- BufferedWriter))
+          (pkt (open-buffered-writer (sock.writer) 384) :- BufferedWriter))
     (pkt.write-u8 #x04)                 ; VERSION
     (pkt.write-u8 cmd)                  ; CMD
     (pkt.write-u16 port)                ; PORT
@@ -324,8 +324,7 @@
       (pkt.write-u8 0))                 ; userid NULL terminator
      (else
       (raise-bad-argument socks4-send-request "bad host address" host)))
-    (let (msg (get-buffer-output-u8vector pkt))
-      (sock.send msg))))
+    (pkt.flush)))
 
 (def (socks4-recv-reply sock)
   (using (sock :- StreamSocket)
@@ -343,7 +342,7 @@
 
 (def (socks5-send-request sock cmd host port)
   (using ((sock :- StreamSocket)
-          (pkt (open-buffered-writer #f 384) :- BufferedWriter))
+          (pkt (open-buffered-writer (sock.writer) 384) :- BufferedWriter))
     (pkt.write-u8 5)                    ; VER
     (pkt.write-u8 cmd)                  ; CMD
     (pkt.write-u8 0)                    ; RSV
@@ -365,8 +364,7 @@
      (else
       (raise-bad-argument socks5-send-request "host address; ip4, ip6, or domain name" host)))
     (pkt.write-u16 port)
-    (let (msg (get-buffer-output-u8vector pkt))
-      (sock.send msg))))
+    (pkt.flush)))
 
 (def (socks5-recv-reply sock)
   (using (sock :- StreamSocket)
