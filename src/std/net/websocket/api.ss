@@ -35,12 +35,12 @@
   (using (wsock :- WebSocket)
     (let ((len (u8vector-length data))
           (max-frame-size (wsock.max-frame-size)))
-      (if (fx< len max-frame-size)
+      (if (fx<= len max-frame-size)
         (wsock.send (message data type #f))
         ;; TODO use slices when we have them
         (let lp ((start 0))
           (let (start+frame (fx+ start max-frame-size))
-            (if (fx< start+frame len)
+            (if (fx<= len start+frame)
               (wsock.send (message (subu8vector data start len) type #f))
               (begin
                 (wsock.send (message (subu8vector data start start+frame) type #t))
@@ -65,7 +65,7 @@
             (unless (fx< new-count max-message-size)
               (raise-io-error websocket-recv "oversize message" type new-count max-message-size))
             (lp (cons msg.data data) msg.type new-count))
-          (message (combine-frame-data (cons msg.data data) type) type #f))))))
+          (message (combine-frame-data (cons msg.data data) type) (or type msg.type) #f))))))
 
 (def (combine-frame-data data type)
   (let (result (reverse! data))

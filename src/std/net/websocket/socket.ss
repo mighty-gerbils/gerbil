@@ -48,7 +48,7 @@
                (else
                 (raise-bad-argument websocket-send "message payload; u8vector or string" msg.data))))
              (len (u8vector-length data)))
-        (if (fx< len self.max-frame-size)
+        (if (fx<= len self.max-frame-size)
           (write-frame self.writer data 0 len
                        (message->frame-type msg.type)
                        (if msg.partial? 0 1)

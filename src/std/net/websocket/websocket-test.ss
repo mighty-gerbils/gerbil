@@ -5,7 +5,7 @@
         ./api)
 (export websocket-test test-setup! test-cleanup!)
 
-(def server-address "127.0.0.1:29999")
+(def server-address "127.0.0.1:29998")
 (def httpd #f)
 
 (def (test-setup!)
