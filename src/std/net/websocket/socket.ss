@@ -5,21 +5,21 @@
         :std/interface
         :std/contract
         :std/io
-        :std/misc/rwlock
+        :std/crypto
         :std/sugar
         :std/text/utf8
-        :std/misc/bytes
         ./interface)
 (export #t)
+(declare (not safe))
 
 (def default-max-frame-size (expt 2 20)) ; 1MB
 
-(defstruct websocket (sock reader writer server? closed? proto max-frame-size mask?)
+(defstruct websocket (sock reader writer server? closed? proto max-frame-size mask)
   final: #t
   constructor: :init!)
 
 (defmethod {:init! websocket}
-  (lambda (self sock reader writer server? proto (max-frame-size default-max-frame-size) (mask? #f)) ; TODO (MASKING)
+  (lambda (self sock reader writer server? proto (max-frame-size default-max-frame-size))
     (using ((self :- websocket)
             (sock : StreamSocket)
             (reader : BufferedReader)
@@ -30,78 +30,148 @@
       (set! self.server? server?)
       (set! self.proto proto)
       (set! self.max-frame-size max-frame-size)
-      ; TODO (MASKING)
-      (set! self.mask? #f))))
+      (unless server?
+        (set! self.mask (random-bytes 4))))))
 
 ;;; WebSocket interface implementation
+
+;; Base Framing Protocol [RFC 6455]
+;;
+;;  0                   1                   2                   3
+;;  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+;; +-+-+-+-+-------+-+-------------+-------------------------------+
+;; |F|R|R|R| opcode|M| Payload len |    Extended payload length    |
+;; |I|S|S|S|  (4)  |A|     (7)     |             (16/64)           |
+;; |N|V|V|V|       |S|             |   (if payload len==126/127)   |
+;; | |1|2|3|       |K|             |                               |
+;; +-+-+-+-+-------+-+-------------+ - - - - - - - - - - - - - - - +
+;; |     Extended payload length continued, if payload len == 127  |
+;; + - - - - - - - - - - - - - - - +-------------------------------+
+;; |                               |Masking-key, if MASK set to 1  |
+;; +-------------------------------+-------------------------------+
+;; | Masking-key (continued)       |          Payload Data         |
+;; +-------------------------------- - - - - - - - - - - - - - - - +
+;; :                     Payload Data continued ...                :
+;; + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+;; |                     Payload Data continued ...                |
+;; +---------------------------------------------------------------+
+;;
+
 (defmethod {send websocket}
   (lambda (self msg)
     (using ((self :- websocket)
-            (msg :- message)
-            (writer self.writer : BufferedWriter))
+            (msg :- message))
       (when self.closed?
         (raise-io-closed send "websocket has been closed" self))
-      (let* ((len (u8vector-length msg.data))
-             ; network byte order == big
-             (lenbytes (uint->u8vector (endianness big) len))
-             (lenbyteslen (u8vector-length lenbytes))
-             ; TODO (MASKING)
-             (masked? #f)
-             (data (if (string? msg.data)
-                     (string->utf8 msg.data)
-                     msg.data)))
-        ; TODO: slice the underlying u8vector and send fragmented messages once we have
-        ; efficient slicing.
-        (if (> len self.max-frame-size)
-          (raise-io-error websocket.send "message payload larger than max frame size"
-                          len self.max-frame-size))
-        (writer.write-u8 (make-first-header-byte  self msg))
-        (cond
-          ; represent the length as a u64
-          ((> lenbyteslen 2)
-           (begin
-             (writer.write-u8 #x7f)
-             ; TODO (MASKING)
-             ; pad to 8 bytes
-             (do ((i (- 8 lenbyteslen) (1- i)))
-                 ((< i 0))
-                (writer.write-u8 #x0))
-             (writer.write lenbytes)))
-          ((> (u8vector-length 1))
-           (begin
-             (writer.write-u8 #x7e)
-             (writer.write lenbytes)))
-          ; The length is < 126 bytes
-          (else (writer.write-u8 len)))
-        ; Write the payload
-        (writer.write data)
-        (writer.flush)))))
-
-(def (make-first-header-byte ws msg)
-     (using ((ws :- websocket)
-             (msg :- message)
-             (writer ws.writer : BufferedWriter))
-            (##fxior (match msg.type
-                      ('text #x1)
-                      ('binary #x2)
-                      ('closed #x8)
-                      ('ping #x9)  ; | FIN bit is always set. TODO:
-                                   ; | implement frame segmenting
-                      ('pong #xA)) #x80)))
+      (let* ((data
+              (cond
+               ((u8vector? msg.data) msg.data)
+               ((string? msg.data) (string->utf8 msg.data))
+               (else
+                (raise-bad-argument websocket-send "message payload; u8vector or string" msg.data))))
+             (len (u8vector-length data)))
+        (if (fx< len self.max-frame-size)
+          (write-frame self.writer data 0 len
+                       (message->frame-type msg.type)
+                       (if msg.partial? 0 1)
+                       self.mask)
+          (raise-io-error websocket-send "message exceeds max frame size" len self.max-frame-size))))))
 
 (defmethod {recv websocket}
   (lambda (self)
-    (using ((self :- websocket)
-            (reader self.reader :- BufferedReader))
+    (using (self :- websocket)
       (when self.closed?
         (raise-io-closed send "websocket has been closed" self))
 
-      ;; TODO
+      (let* (((values data typ fin) (read-frame self.reader self.max-frame-size))
+             (type (frame->message-type typ))
+             (data (if (eq? type 'text)
+                     (utf8->string data)
+                     data))
+             (partial? (fx= fin 0)))
+        (message data type partial?)))))
 
-      (error "IMPLEMENTME"))))
+(def (write-frame writer data start end typ fin mask)
+  (using (writer :- BufferedWriter)
+    (let (head (fxior (fxarithmetic-shift-left fin 7) typ))
+      (writer.write-u8 head))
+    (let ((mask-bit (if mask 8 0))
+          (len (fx- end start)))
+      (cond
+       ((fx< len 126)
+        (writer.write-u8 (fxior mask-bit len)))
+       ((fx< len 65536)
+        (writer.write-u8 (fxior mask-bit 126))
+        (writer.write-u16 len))
+       (else
+        (writer.write-u8 (fxior mask-bit 127))
+        (writer.write-u64 len))))
+    (when mask
+      (writer.write mask)
+      (frame-mask! data start end mask))
+    (writer.write data start end)
+    (writer.flush)))
+
+(def (read-frame reader max-frame-size)
+  (using (reader :- BufferedReader)
+    (def typ #f)
+    (def fin #f)
+    (def mask #f)
+    (def len #f)
+
+    (let (head (reader.read-u8!))
+      (set! fin (fxarithmetic-shift-right head 7))
+      (set! typ (fxand head #x0f)))
+    (let (pbyte (reader.read-u8!))
+      (let ((mask? (not (fx= (fxand pbyte #x80))))
+            (plen0 (fxand pbyte #x7f)))
+        (cond
+         ((fx< plen0 126)
+          (set! len plen0))
+         ((fx= plen0 126)
+          (set! len (reader.read-u16)))
+         (else
+          (set! len (reader.read-u64))))
+        (when mask?
+          (let (mask (make-u8vector 4))
+            (set! mask (reader.read mask 0 4 4))))))
+    (when (fx> len max-frame-size)
+      (raise-io-error websocket-recv "oversize frame" len max-frame-size))
+    (let (data (make-u8vector len))
+      (reader.read data 0 len len)
+      (values data typ fin))))
+
+(def (message->frame-type msg-type)
+  (case msg-type
+    ((text)    #x1)
+    ((binary)  #x2)
+    ((close)   #x8)
+    ((ping)    #x9)
+    ((pong)    #xA)
+    (else
+     (raise-bad-argument websocket-send "message type; text, binary, close, ping, or pong" msg-type))))
+
+(def (frame->message-type frame-type)
+  (case frame-type
+    ((#x1) 'text)
+    ((#x2) 'binary)
+    ((#x8) 'close)
+    ((#x9) 'ping)
+    ((#xA) 'pong)
+    (else
+     (raise-io-error websocket-recv "bad frame type" frame-type))))
+
+(def (frame-mask! data start end mask)
+  (let lp ((i start) (mask-i 0))
+    (when (fx< i end)
+      (u8vector-set! data i (fxxor (u8vector-ref data i) (u8vector-ref mask mask-i)))
+      (lp (fx+ i 1) (fxmodulo (fx+ mask-i 1) 4)))))
 
 (defmethod {protocol websocket}
-  websocket-proto)
+  &websocket-proto)
+
+(defmethod {max-frame-size websocket}
+  &websocket-max-frame-size)
 
 ;; Closer interface implementation
 (defmethod {close websocket}
@@ -117,6 +187,9 @@
         ;;   close the socket from a third thread as the socket already has one.
         ;; - i don't understand the rationale for including it in the RFC
         ;; - and honestly, it is not needed.
+        ;; What we do instead is pass the "close" message to the user and let them
+        ;; handle it as they see fit.
+        ;; Here, we just close the socket.
         (using ((reader self.reader :- BufferedReader)
                 (writer self.writer :- BufferedWriter))
             (reader.close)
