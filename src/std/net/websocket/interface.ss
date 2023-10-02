@@ -10,7 +10,8 @@
 ;; websocket messages
 ;; - data is a string or u8vector, depending on the message type
 ;; - type is the message type, the symbol 'text, 'binary, 'ping, 'pong, or 'closed
-(defstruct message (data type partial?))
+;; - partial? is set to true if this is a partial frame
+(defstruct message (data type partial?) final: #t)
 
 (interface (WebSocket Socket)
   ;; send a message
@@ -22,4 +23,7 @@
   (recv) ; -> message
 
   ;; returns the websocket protocol or #f if none was specified
-  (protocol))
+  (protocol)
+
+  ;; returns the maximum frame size in bytes
+  (max-frame-size))
