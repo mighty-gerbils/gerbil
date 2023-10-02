@@ -93,7 +93,7 @@
 
 (def (write-frame writer data start end typ fin mask)
   (using (writer :- BufferedWriter)
-    (let (head (fxior (fxarithmetic-shift-left fin 7) typ))
+    (let (head (fxior (if (fx= fin 1) #x80 0) typ))
       (writer.write-u8 head))
     (let ((mask-bit (if mask #x80 0))
           (len (fx- end start)))
@@ -123,7 +123,7 @@
       (set! fin (fxarithmetic-shift-right head 7))
       (set! typ (fxand head #x0f)))
     (let (pbyte (reader.read-u8!))
-      (let ((mask? (not (fx= (fxand pbyte #x80) 0)))
+      (let ((mask? (fx= (fxand pbyte #x80) #x80))
             (plen0 (fxand pbyte #x7f)))
         (cond
          ((fx< plen0 126)
@@ -133,9 +133,9 @@
          (else
           (set! len (reader.read-u64))))
         (when mask?
-          (let (mask (make-u8vector 4))
-            (reader.read mask 0 4 4)
-            (set! mask mask)))))
+          (set! mask (make-u8vector 4))
+          (reader.read mask 0 4 4))))
+
     (when (fx> len max-frame-size)
       (raise-io-error websocket-recv "oversize frame" len max-frame-size))
     (let (data (make-u8vector len))

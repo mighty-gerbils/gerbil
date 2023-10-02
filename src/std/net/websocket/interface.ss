@@ -12,7 +12,15 @@
 ;; - data is a string or u8vector, depending on the message type
 ;; - type is the message type, the symbol 'text, 'binary, 'ping, 'pong, or 'closed
 ;; - partial? is set to true if this is a partial frame
-(defstruct message (data type partial?) final: #t)
+(defstruct message (data type partial?) final: #t
+  constructor: :init!)
+
+(defmethod {:init! message}
+  (lambda (self data type (partial? #f))
+    (using (self :- message)
+      (set! self.data data)
+      (set! self.type type)
+      (set! self.partial? partial?))))
 
 (interface (WebSocket Socket)
   ;; send a message
