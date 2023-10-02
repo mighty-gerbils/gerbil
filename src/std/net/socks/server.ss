@@ -393,4 +393,6 @@
          (raise-io-error socks5-bind "bad binding" atyp))))))
 
 (def (sensitive-host? ip)
-  (memv (u8vector-ref ip 0) '(0 127)))
+  (if (fx= (u8vector-length ip) 4)
+    (equal? (u8vector-ref ip 0) 127)
+    (equal? ip localhost6)))
