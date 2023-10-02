@@ -4,6 +4,7 @@
 (import :std/error
         :std/contract
         :std/text/utf8
+        (only-in :std/srfi/1 reverse!)
         ./interface
         ./client
         ./server
@@ -64,11 +65,7 @@
           (message (combine-frame-data (cons msg.data data) type) type #f))))))
 
 (def (combine-frame-data data type)
-  (let lp ((rest data) (result []))
-    (match rest
-      ([hd . rest]
-       (lp rest (cons hd result)))
-      (else
-       (if (memq type '(text close))
-         (string-concatenate result)
-         (u8vector-concatenate result))))))
+  (let (result (reverse! data))
+    (if (memq type '(text close))
+      (string-concatenate result)
+      (u8vector-concatenate result))))
