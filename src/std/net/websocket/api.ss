@@ -17,16 +17,19 @@
         WebSocket-recv-all
         &WebSocket-recv-all)
 
-;; extension methods
-(def (WebSocket-send-all wsock data type)
-  (check-argument (or (u8vector? data) (string? data)) "u8vector or string" data)
-  (check-argument (memq type '(text binary ping pong close)) "message type; text, binary, ping, pong or close" type)
-  (&WebSocket-send-all (WebSocket wsock) data type))
+(declare (not safe))
 
-(def (&WebSocket-send-all wsock data type)
-  (if (string? data)
-    (send-all-frames wsock (string->utf8 data) type)
-    (send-all-frames wsock data type)))
+;; extension methods
+(def (WebSocket-send-all wsock msg)
+  (check-argument (valid-message? msg) "message" msg)
+  (check-argument (not (&message-partial? msg)) "full message" msg)
+  (&WebSocket-send-all (WebSocket wsock) msg))
+
+(def (&WebSocket-send-all wsock msg)
+  (using (msg :- message)
+    (if (memq msg.type '(text close))
+      (send-all-frames wsock (string->utf8 msg.data) msg.type)
+      (send-all-frames wsock msg.data msg.type))))
 
 (def (send-all-frames wsock data type)
   (using (wsock :- WebSocket)

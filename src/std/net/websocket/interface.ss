@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;; websocket interface
 
-(import :std/interface
+(import :std/error
+        :std/interface
         :std/contract
         :std/io/interface)
 (export #t)
@@ -16,7 +17,7 @@
 (interface (WebSocket Socket)
   ;; send a message
   ;; raises io-closed-error? if the websocket has been closed
-  (send (msg : message))
+  (send (msg :~ valid-message?))
 
   ;; receive a message
   ;; raises io-closed-error? if the websocket has been closed
@@ -27,3 +28,9 @@
 
   ;; returns the maximum frame size in bytes
   (max-frame-size))
+
+(def (valid-message? msg)
+  (using (msg msg : message)
+    (if (memq msg.type '(text close))
+      (check-argument (string? msg.data) "string" msg.data)
+      (check-argument (u8vector? msg.data) "u8vector" msg.data))))
