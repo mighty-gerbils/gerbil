@@ -102,7 +102,7 @@
   ((_ expr expectation argument)
    (begin-annotation @contract
      (unless expr
-       (raise-contract-violation argument expr (string-append "bad argument; expected " expectation))))))
+       (raise-contract-violation argument expr (string-append "bad argument; expected " expectation) argument)))))
 
 ;; check to the raiser!
 (defrules raise/context ()
