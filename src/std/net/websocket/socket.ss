@@ -123,7 +123,7 @@
       (set! fin (fxarithmetic-shift-right head 7))
       (set! typ (fxand head #x0f)))
     (let (pbyte (reader.read-u8!))
-      (let ((mask? (not (fx= (fxand pbyte #x80))))
+      (let ((mask? (not (fx= (fxand pbyte #x80) 0)))
             (plen0 (fxand pbyte #x7f)))
         (cond
          ((fx< plen0 126)
