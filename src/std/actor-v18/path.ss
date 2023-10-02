@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; ensemble path utils
 (export #t)
-(import (only-in :gerbil/runtime gerbil-path))
 
 (def (ensemble-base-path)
   (path-expand "ensemble" (gerbil-path)))

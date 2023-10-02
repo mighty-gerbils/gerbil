@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/expander
-        (only-in :gerbil/runtime gerbil-path)
         :std/sugar
         :std/iter
         :std/getopt

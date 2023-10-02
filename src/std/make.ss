@@ -6,7 +6,6 @@
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit
-        (only-in :gerbil/runtime gerbil-path)
         ./srfi/1
         ./misc/hash
         ./misc/list

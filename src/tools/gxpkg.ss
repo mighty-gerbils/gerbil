@@ -23,7 +23,6 @@
 ;;; TODO: add private repos support
 
 (import :gerbil/gambit
-        (only-in :gerbil/runtime gerbil-path)
         :std/getopt
         :std/sugar
         :std/iter

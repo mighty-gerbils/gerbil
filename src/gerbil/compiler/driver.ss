@@ -6,15 +6,12 @@ namespace: gxc
 
 (import :gerbil/expander
         :gerbil/gambit
-        (only-in :gerbil/runtime gerbil-path)
         "base"
         "compile"
         "optimize")
 (export compile-module compile-exe)
 
-(def (gerbil-path) ;; definition needed here until it is in the bootstrapped runtime
-  (or (getenv "GERBIL_PATH" #f)
-      (path-expand "~/.gerbil")))
+(extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
 
 (def default-gerbil-gsc
   (path-expand "gsc" (path-expand "bin" (path-expand "~~"))))

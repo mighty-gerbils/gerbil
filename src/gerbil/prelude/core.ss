@@ -279,6 +279,8 @@ package: gerbil
     gerbil-load-expander!
     ;; our home
     gerbil-home
+    ;; path to which to compile modules and from which to load them
+    gerbil-path
 
     ;; concurrency primitives
     spawn spawn/name spawn/group spawn-actor spawn-thread
