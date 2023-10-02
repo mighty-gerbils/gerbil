@@ -136,10 +136,7 @@ END
         (SSLSocket-close sock)))
 
     (test-case "self-signed certificate"
-      (let (srv
-            (spawn
-             (cut with-exception-stack-trace
-                  (cut test-server test-certificate test-private-key))))
+      (let (srv (spawn test-server test-certificate test-private-key))
         (thread-sleep! .1)
         (test-client (insecure-client-ssl-context))
         (check (thread-join! srv) => (void))))))

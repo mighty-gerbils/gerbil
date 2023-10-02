@@ -273,9 +273,6 @@
      (raise e))))
 
 (def (postgresql-driver sock reader writer)
-  (with-exception-stack-trace (cut postgresql-driver-main sock reader writer)))
-
-(def (postgresql-driver-main sock reader writer)
   (def query-limit 1000)
   (def query-output #f)
   (def query-token #f)

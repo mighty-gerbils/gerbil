@@ -18,9 +18,6 @@
     wg))
 
 (def (worker wg)
-  (with-exception-stack-trace (cut worker-main wg)))
-
-(def (worker-main wg)
   (using (wg :- WG)
     (let (ch wg.workch)
       (let loop ()

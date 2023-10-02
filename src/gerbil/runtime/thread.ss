@@ -10,14 +10,20 @@ namespace: #f
 
 ;; spawn an actor thread apply f to args
 (def (spawn f . args)
-  (spawn-actor f args #!void #f))
+  (unless (procedure? f)
+    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
+  (spawn-actor f args '#!void #f))
 
 ;; spawn a named actor thread
 (def (spawn/name name f . args)
+  (unless (procedure? f)
+    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
   (spawn-actor f args name #f))
 
 ;; spawn a named actor thread with a new thread group
 (def (spawn/group name f . args)
+  (unless (procedure? f)
+    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
   (let (tgroup (make-thread-group name))
     (spawn-actor f args name tgroup)))
 
@@ -46,12 +52,10 @@ namespace: #f
              exn))))
        thunk)))
 
-  (unless (procedure? f)
-    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
-
-  (let ((thunk (if (null? args) f
-                   (lambda () (apply f args))))
-        (tgroup (or tgroup (current-thread-group))))
+  (let* ((thunk (if (null? args) f
+                    (lambda () (apply f args))))
+         (thunk (cut with-exception-stack-trace thunk))
+         (tgroup (or tgroup (current-thread-group))))
     (thread-start!
      (thread-init!
       (construct-actor-thread #f 0)
@@ -143,6 +147,32 @@ namespace: #f
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
+
+;; utilities for exception printing
+(def (with-exception-stack-trace thunk (error-port (current-error-port)))
+  (with-exception-handler
+   (let (E (current-exception-handler))
+     (lambda (exn)
+       (continuation-capture
+        (lambda (cont)
+          (dump-stack-trace! cont exn error-port)
+          (E exn)))))
+   thunk))
+
+(def (dump-stack-trace! cont exn (error-port (current-error-port)))
+  (let ((out (open-output-string)))
+    (fix-port-width! out)
+    (display "*** Unhandled exception in " out)
+    (display (current-thread) out)
+    (newline out)
+    (display-exception exn out)
+
+    ;; only do that if there no stack trace in the exception already
+    (unless (StackTrace? exn)
+      (display "Continuation backtrace: " out)
+      (newline out)
+      (display-continuation-backtrace cont out))
+    (##write-string (get-output-string out) error-port)))
 
 ;; actor thread type
 (extern

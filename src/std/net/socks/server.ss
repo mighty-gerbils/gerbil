@@ -71,7 +71,7 @@
    (for-each monitor acceptors)
    (when (current-actor-server)
      (register-actor! 'httpd))
-   (with-exception-stack-trace loop)
+   (loop)
    (catch (e)
      (errorf "unhandled exception: ~a" e)
      (raise e))
