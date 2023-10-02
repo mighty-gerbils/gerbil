@@ -184,3 +184,14 @@ Returns the string representation of an IPv6 address.
 
 Converts the string representation `str` of an IPv6 address to its canonical
 u8vector representation.
+
+## inaddr-any4 inaddr-any6 localhost4 localhost6
+```
+(def inaddr-any4 ...)
+(def inaddr-any6 ...)
+(def localhost4 ...)
+(def localhost6 ...)
+```
+
+Predefined ip address for the any address binding and localhost, for
+IPv4 and IPv6 respectively.
