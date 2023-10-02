@@ -5,6 +5,7 @@
         :std/error
         :std/os/error
         :std/os/socket
+        :std/net/address
         :std/misc/rwlock
         ../interface
         ./types
@@ -30,23 +31,6 @@
   [SO_REUSEADDR])
 
 (def default-backlog 10)
-
-(def inaddr-any4
-  (make-u8vector 4 0))
-
-(def inaddr-any6
-  (make-u8vector 16 0))
-
-(def localhost4
-  (let (addr (make-u8vector 4 0))
-    (u8vector-set! addr 0 127)
-    (u8vector-set! addr 3 1)
-    addr))
-
-(def localhost6
-  (let (addr (make-u8vector 16 0))
-    (u8vector-set! addr 15 1)
-    addr))
 
 (def (address-domain addr)
   (with ([host . _ ] addr)
