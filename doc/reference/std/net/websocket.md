@@ -58,6 +58,7 @@ has the following fields:
 ## websocket-connect
 ```scheme
 (websocket-connect url
+                   protocol:     (proto #f)
                    redirect:     (redirect #f)
                    headers:      (headers #f)
                    cookies:      (cookies #f)
@@ -76,6 +77,9 @@ The `redirect`, `headers`, `cookies`, `params`, `auth`, `ssl-context`
 and `timeout` parameters are passed to the http request when
 establishing a connection; see [HTTP requests](request.md) for more
 information.
+
+The `protocol` parameter is an optional comma separated list of protocols,
+for websocket protocol negotiation.
 
 The `max-frame-size` parameter specifies the maximum accepted size for a
 frame; it defaults to 1MB.
