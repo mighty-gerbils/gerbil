@@ -134,11 +134,14 @@
           (set! len (reader.read-u64))))
         (when mask?
           (let (mask (make-u8vector 4))
-            (set! mask (reader.read mask 0 4 4))))))
+            (reader.read mask 0 4 4)
+            (set! mask mask)))))
     (when (fx> len max-frame-size)
       (raise-io-error websocket-recv "oversize frame" len max-frame-size))
     (let (data (make-u8vector len))
       (reader.read data 0 len len)
+      (when mask
+        (frame-mask! data 0 len mask))
       (values data typ fin))))
 
 (def (message->frame-type msg-type)
