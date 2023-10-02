@@ -52,8 +52,7 @@ namespace: #f
              exn))))
        thunk)))
 
-  (let* ((thunk (if (null? args) f
-                    (lambda () (apply f args))))
+  (let* ((thunk (if (null? args) f (cut apply f args)))
          (thunk (cut with-exception-stack-trace thunk))
          (tgroup (or tgroup (current-thread-group))))
     (thread-start!
