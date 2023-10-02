@@ -211,7 +211,8 @@
     "net/websocket/socket"
     "net/websocket/client"
     "net/websocket/server"
-    ;;"net/websocket" -- To import and reexport ./websocket/api
+    "net/websocket/api"
+    "net/websocket"
     (gxc: "net/repl" ,@(include-gambit-sharp))
     "net/socks/interface"
     "net/socks/client"

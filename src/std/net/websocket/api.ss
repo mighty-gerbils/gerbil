@@ -3,7 +3,12 @@
 ;;; websocket API
 (import ./interface
         ./client
-        ./server)
+        ./server
+        ./socket)
 (export (import: ./interface
                  ./client
-                 ./server))
+                 ./server)
+        WebSocket-send-all
+        &WebSocket-send-all
+        WebSocket-recv-all
+        &WebSocket-recv-all)
