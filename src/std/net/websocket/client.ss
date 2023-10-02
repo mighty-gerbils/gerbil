@@ -24,7 +24,6 @@
                         headers:      (headers #f)
                         cookies:      (cookies #f)
                         params:       (params #f)
-                        data:         (data #f)
                         auth:         (auth #f)
                         ssl-context:  (ssl-context (default-client-ssl-context))
                         timeout:      (timeo #f))
@@ -40,7 +39,10 @@
                         redirect: redirect
                         headers: headers
                         cookies: cookies
-                        params: params)))
+                        params: params
+                        auth: auth
+                        ssl-context: ssl-context
+                        timeout: timeo)))
     (try
      (let (status (request-status req))
        (unless (fx= status 101)
