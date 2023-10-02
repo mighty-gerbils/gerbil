@@ -14,7 +14,26 @@
         ip6-address-string? ip6-address->string string->ip6-address
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
-        resolve-address resolved-address?)
+        resolve-address resolved-address?
+        inaddr-any4 inaddr-any6
+        localhost4 localhost6)
+
+(def inaddr-any4
+  (make-u8vector 4 0))
+
+(def inaddr-any6
+  (make-u8vector 16 0))
+
+(def localhost4
+  (let (addr (make-u8vector 4 0))
+    (u8vector-set! addr 0 127)
+    (u8vector-set! addr 3 1)
+    addr))
+
+(def localhost6
+  (let (addr (make-u8vector 16 0))
+    (u8vector-set! addr 15 1)
+    addr))
 
 ;; ip address; ip4 or ip6
 (def (ip-address obj)
