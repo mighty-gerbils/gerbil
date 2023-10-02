@@ -98,7 +98,7 @@ This is the server side of websockets; it creates a request handler for the http
 that accepts and upgrades websocket requests.
 
 The procedure requires two arguments:
-`- `continue` is a procedure that takes a `WebSocket` instance to handle the interaction.
+- `continue` is a procedure that takes a `WebSocket` instance to handle the interaction.
    It is invoked by the http handler after the connection has been successfully upgraded.
 - `select-protocol` is a procedure that takes a list of websocket protocols (strings) and
    selects one of them or returns #f if it doesn't support any of client specified protocols.
