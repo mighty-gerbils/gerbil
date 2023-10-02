@@ -23,7 +23,8 @@
 ;;   or a comman separated list of protocols.
 ;;  It should return either the selected protocol or #f if it cannot select a protocol,
 ;;  indicating that the connection should be closed.
-(def (websocket-request-handler continue select-protocol (max-frame-size default-max-frame-size))
+(def (websocket-request-handler continue select-protocol
+                                max-frame-size: (max-frame-size default-max-frame-size))
   (using ((continue :~ procedure?)
           (select-protocol :~ procedure?))
     (lambda (req res)
@@ -42,7 +43,7 @@
            (proto
             (alet (request-proto (assget "Sec-WebSocket-Protocol" request-headers))
               (cond
-               ((select-protocol request-proto))
+               ((select-protocol (string-split request-proto #\,)))
                (else
                 (bad-request! "unsupported websocket protocol")))))
            (auth

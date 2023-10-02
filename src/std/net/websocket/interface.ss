@@ -30,7 +30,7 @@
   (max-frame-size))
 
 (def (valid-message? msg)
-  (using (msg msg : message)
+  (using (msg : message)
     (if (memq msg.type '(text close))
       (check-argument (string? msg.data) "string" msg.data)
       (check-argument (u8vector? msg.data) "u8vector" msg.data))))
