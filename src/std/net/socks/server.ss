@@ -394,5 +394,5 @@
 
 (def (sensitive-host? ip)
   (if (fx= (u8vector-length ip) 4)
-    (equal? (u8vector-ref ip 0) 127)
+    (fx= (u8vector-ref ip 0) 127)
     (equal? ip localhost6)))
