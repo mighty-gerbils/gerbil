@@ -1,6 +1,6 @@
 # List builder
 
-## with-list-builder ##
+## with-list-builder
 
 ``` scheme
 (with-list-builder (put! [peek]) body ...) -> list
@@ -28,9 +28,7 @@ so *put!* and *peek* can be used without wrapping them in a lambda first.
 ```
 :::
 
-## call-with-list-builder ##
-
-## call-with-list-builder ##
+## call-with-list-builder
 
 ``` scheme
 (call-with-list-builder proc) -> list
