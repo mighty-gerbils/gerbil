@@ -34,9 +34,6 @@
 
 ;;; Internals
 (def (ensemble-registry srv registry)
-  (with-exception-stack-trace (cut ensemble-registry-main srv registry)))
-
-(def (ensemble-registry-main srv registry)
   (register-actor! 'registry srv)
   (infof "starting registry ...")
 

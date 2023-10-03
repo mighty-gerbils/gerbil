@@ -104,10 +104,10 @@ TODO:
       build-release: (build-release #f)
       build-optimized: (build-optimized #f))
 
-    (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+    (def gerbil-path_ (delay (gerbil-path)))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
-    (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
-    (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
+    (def libdir (or libdir_ (path-expand "lib" (force gerbil-path_))))
+    (def bindir (or bindir_ (path-expand "bin" (force gerbil-path_))))
     (def prefix (or prefix_ (read-package-prefix srcdir)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))

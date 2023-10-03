@@ -12,65 +12,56 @@ of the regular expression language and examples.
 
 ## pregexp
 
-::: tip usage
 ```
 (pregexp regexp)
   regexp := string; the regular expression
-=> <pregexp>
+-> <pregexp>
 ```
-:::
 
 Parse a string and compile it to a regular expression.
 
 ## pregexp-match
 
-::: tip usage
 ```
 (pregexp-match pat str [start #f] [end #f])
   pat := <pregexp> or string; the regular expression to match
   str := the string to match
   start := start position in the string
   end := end position in the string
-=> list or #f
+-> list or #f
 ```
-:::
 
 Match a string against a regular expression and return a list of matching
 substrings.
 
 ## pregexp-match-positions
 
-::: tip usage
 ```
 (pregexp-match-positions pat str [start #f] [end #f])
   pat := <pregexp> or string; the regular expression to match
   str := the string to match
   start := start position in the string
   end := end position in the string
-=> list or #f
+-> list or #f
 ```
-:::
 
 Match a string against a regular expression and return a list of index pairs
 where matches have occurred.
 
 ## pregexp-split
 
-::: tip usage
 ```
 (pregexp-split pat str)
   pat := <pregexp> or string; the regular expression to match
   str := the string to match
-=> list
+-> list
 ```
-:::
 
 Split a string using a regular expression as delimiter and return a list
 of matching substrings.
 
 ## pregexp-replace
 
-::: tip usage
 ```
 (pregexp-replace pat str ins)
   pat := <pregexp> or string; the regular expression to match
@@ -78,14 +69,12 @@ of matching substrings.
   ins := the string to insert
 => string
 ```
-:::
 
 
 Replace the portion of a string matched by regular expression with another string.
 
 ## pregexp-replace*
 
-::: tip usage
 ```
 (pregexp-replace* pat str ins)
   pat := <pregexp> or string; the regular expression to match
@@ -93,19 +82,17 @@ Replace the portion of a string matched by regular expression with another strin
   ins := the string to insert
 => string
 ```
-:::
 
 Like `pregexp-replace` but replaces all occurrences of the pattern
 
 ## pregexp-quote
 
-::: tip usage
 ```
 (pregexp-quote str)
   str := a string
 => string
 ```
-:::
+
 
 Takes an arbitrary string and returns a string regular expression that represents
 it precisely.

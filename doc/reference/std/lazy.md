@@ -8,46 +8,36 @@ Primitives for iterative lazy algorithms, as specified in R7RS; see also
 :::
 
 ### lazy
-::: tip usage
 ```
 (lazy ...)
 ```
-:::
 
 Please document me!
 
 ### delay
-::: tip usage
 ```
 (delay ...)
 ```
-:::
 
 Please document me!
 
 ### force
-::: tip usage
 ```
 (force ...)
 ```
-:::
 
 Please document me!
 
 ### lazy?
-::: tip usage
 ```
 (lazy? ...)
 ```
-:::
 
 Please document me!
 
 ### eager
-::: tip usage
 ```
 (eager ...)
 ```
-:::
 
 Please document me!

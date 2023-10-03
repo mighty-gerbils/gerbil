@@ -25,4 +25,4 @@ package: test/actor-v18
          (start-loader!))
 
        (thread-join! srv)))
-   (path-expand "lib" (getenv "GERBIL_PATH"))))
+   (path-expand "lib" (gerbil-path))))

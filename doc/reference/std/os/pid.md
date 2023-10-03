@@ -4,19 +4,15 @@
 :::
 
 ## getpid
-::: tip usage
 ```
-(getpid ...)
+(define-c-lambda getpid () int)
 ```
-:::
 
 Please document me!
 
 ## getppid
-::: tip usage
 ```
-(getppid ...)
+(define-c-lambda getppid () int)
 ```
-:::
 
 Please document me!

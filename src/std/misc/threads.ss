@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; miscellaneous thread utilities
 
-(import :gerbil/gambit
+(import :gerbil/runtime/thread
+        :gerbil/gambit
         :std/error
         :std/sugar)
 (export primordial-thread-group

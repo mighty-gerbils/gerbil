@@ -250,7 +250,7 @@ namespace: #f
                          (string-split envvar #\:))))
            (else '())))
          (userpath
-          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
+          (path-expand "lib" (gerbil-path)))
          (loadpath
           (if (getenv "GERBIL_BUILD_PREFIX" #f)
             loadpath

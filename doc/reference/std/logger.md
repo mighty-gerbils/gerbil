@@ -2,7 +2,7 @@
 
 The `:std/logger` library provides basic logging facilities.
 
-::: tip usage
+::: tip To use bindings from this module
 (import :std/logger)
 :::
 
@@ -92,37 +92,31 @@ threshold level.
 
 ## errorf
 
-::: tip usage
 ```
 (errorf fmt . args)
   fmt  := string; a format specifier
   args := arguments for format specifier
 ```
-:::
 
 Predefined error logger, using the default source.
 
 ## warnf
 
-::: tip usage
 ```
 (warnf fmt . args)
   fmt  := string; a format specifier
   args := arguments for format specifier
 ```
-:::
 
 Predefined warn logger, using the default source.
 
 ## infof
 
-::: tip usage
 ```
 (infof fmt . args)
   fmt  := string; a format specifier
   args := arguments for format specifier
 ```
-:::
 
 Predefined info logger, using the default source.
 

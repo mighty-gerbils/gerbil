@@ -150,6 +150,7 @@ module.exports = {
 		                children: [
                             'misc/',
                             'misc/list',
+                            'misc/list-builder',
                             'misc/alist',
                             'misc/plist',
                             'misc/hash',

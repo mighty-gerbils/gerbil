@@ -3,21 +3,19 @@
 The `:std/format` library implements string formatting as specified
 in [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html).
 
-::: tip usage
+::: tip To use bindings from this module
 (import :std/format)
 :::
 
 ## format
-
-::: tip usage
-```
+```scheme
 (format fmt . args)
   fmt   := string
   args  := mixed values
 
-<= string
+-> string
 ```
-:::
+
 
 Formats the arguments to a string using the supplied format specifier.
 
@@ -32,41 +30,32 @@ Formats the arguments to a string using the supplied format specifier.
 
 ## fprintf
 
-:::tip usage
-```
+```scheme
 (fprintf port fmt . args)
   port  := output-port
   fmt   := string
   args  := mixed values
 ```
-:::
 
 Same as [format](#format-2) but outputs to a specific output port.
 
 ## printf
 
-:::tip usage
-```
+```scheme
 (printf fmt . args)
   fmt   := string
   args  := mixed values
-
-<= null
 ```
-:::
+
 
 Same as [fprintf](#fprintf) but with the output port defaulted to `(current-output-port)`
 
 ## eprintf
 
-:::tip usage
-```
+```scheme
 (eprintf fmt . args)
   fmt   := string
   args  := mixed values
-
-<= null
 ```
-:::
 
 Same as [fprintf](#fprintf) but with the output port defaulted to `(current-error-port)`

@@ -4,64 +4,57 @@
 :::
 
 ## fdopen
-::: tip usage
 ```
-(fdopen ...)
+(fdopen fd dir t)
 ```
-:::
+
+Please document me!
+
+## fdopen-port
+```
+(fdopen-port fd dir name)
+```
 
 Please document me!
 
 ## fd-e
-::: tip usage
 ```
-(fd-e ...)
+(fd-e raw)
 ```
-:::
 
 Please document me!
 
 ## fd-io-in
-::: tip usage
 ```
-(fd-io-in ...)
+(fd-io-in raw)
 ```
-:::
 
 Please document me!
 
 ## fd-io-out
-::: tip usage
 ```
-(fd-io-out ...)
+(fd-io-out raw)
 ```
-:::
 
 Please document me!
 
 ## fd?
-::: tip usage
 ```
-(fd? ...)
+(fd? obj)
 ```
-:::
 
 Please document me!
 
 ## fd-type?
-::: tip usage
 ```
-(fd-type? ...)
+(fd-type? obj t)
 ```
-:::
 
 Please document me!
 
 ## fd-type
-::: tip usage
 ```
-(fd-type ...)
+(fd-type raw)
 ```
-:::
 
 Please document me!
