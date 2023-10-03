@@ -188,6 +188,7 @@
 ;;; commands
 (def (env-exec command args)
   (set-local-env!)
+  (set-local-path!)
   (invoke command args
           stdin-redirection: #f
           stdout-redirection: #f
@@ -304,6 +305,12 @@
             (create-directory* gerbil-path)
             (setenv "GERBIL_PATH" gerbil-path))
           (error "not in local package context"))))))
+
+(def (set-local-path!)
+  (let* (($GERBIL_PATH (gerbil-path))
+         ($PATH (getenv "PATH"))
+         ($PATH (string-append $GERBIL_PATH "/bin" ":" $PATH)))
+    (setenv "PATH" $PATH)))
 
 ;;; action implementation -- script api
 (def +root-dir+
