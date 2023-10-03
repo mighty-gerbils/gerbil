@@ -11,24 +11,27 @@ websocket clients and servers.
 
 ## WebSocket interface
 ```scheme
-(defstruct message (data type partial?) final: #t)
-
 (interface (WebSocket Socket)
   (send (msg :~ valid-message?))
   (recv) ; -> message
   (protocol)
   (max-frame-size))
 
-(valid-message? msg) :-
-  (and (message? msg)
-       (or (string? msg)     ; when type is text or close
-           (u8vector? msg))) ; for all other message types
+(defstruct message (data type partial?) final: #t
+  constructor: :init!)
 
+(def (valid-message? msg)
   (using (msg : message)
     (if (memq msg.type '(text close))
       (check-argument (string? msg.data) "string" msg.data)
       (check-argument (u8vector? msg.data) "u8vector" msg.data))))
 
+(defmethod {:init! message}
+  (lambda (self data type (partial? #f))
+    (using (self :- message)
+      (set! self.data data)
+      (set! self.type type)
+      (set! self.partial? partial?))))
 ```
 
 The `WebSocket` interface provides the abstractions for sending and receiving messages.
