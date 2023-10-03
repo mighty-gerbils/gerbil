@@ -388,8 +388,7 @@
 		 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
 		(else true))
 	      libgerbil-ldd)
-	     <>)
-        ))
+	     <>)))
     ;; cleanup
     (for (f [static-module-c-paths ...
              builtin-modules-c-path
