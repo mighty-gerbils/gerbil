@@ -19,11 +19,11 @@
                 ((#\n) (lp rest (cons #\newline chars)))
                 ((#\t) (lp rest (cons #\tab chars)))
                 (else
-                 (raise-parse-error 'lex-scuby "Unrecognized escape character"
+                 (raise-parse-error lex-scuby "Unrecognized escape character"
                                     (make-token 'String str loc)
                                     char))))
              (else
-              (raise-parse-error 'lex-scuby "Misplaced escape character"
+              (raise-parse-error lex-scuby "Misplaced escape character"
                                  (make-token 'String str loc)
                                  char)))
            (lp rest (cons char chars)))))))
