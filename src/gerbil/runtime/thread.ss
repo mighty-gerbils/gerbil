@@ -10,20 +10,17 @@ namespace: #f
 
 ;; spawn an actor thread apply f to args
 (def (spawn f . args)
-  (unless (procedure? f)
-    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
+  (check-procedure f spawn)
   (spawn-actor f args '#!void #f))
 
 ;; spawn a named actor thread
 (def (spawn/name name f . args)
-  (unless (procedure? f)
-    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
+  (check-procedure f spawn/name)
   (spawn-actor f args name #f))
 
 ;; spawn a named actor thread with a new thread group
 (def (spawn/group name f . args)
-  (unless (procedure? f)
-    (raise (Error "bad argument; expected procedure" where: 'spawn irritants: (cons f args))))
+  (check-procedure f spawn/group)
   (let (tgroup (make-thread-group name))
     (spawn-actor f args name tgroup)))
 
