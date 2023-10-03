@@ -36,8 +36,7 @@ with the canonical form `"host:port"`.
 ```
 
 Normalizes the Internet address represented by `obj`, which can be an
-(unormalized) host-port pair or a string representing an Internet
-address.
+host-port pair or a string representing an Internet address.
 
 Example:
 ```
@@ -72,7 +71,7 @@ Returns true if `obj` is a normalized Internet address.
 (inet-address->string addr)
 ```
 
-Returns the string representation of an Ineternet address.
+Returns the string representation of an Internet address.
 
 ## string->inet-address
 ```
@@ -141,6 +140,13 @@ Returns true if `obj` is a string representing an IPv4 address
 
 Returns the string representation of IPv4 address.
 
+Example:
+```
+> (ip4-address->string #u8(127 0 0 1))
+"127.0.0.1"
+```
+
+
 ## string->ip4-address
 ```
 (string->ip4-address str)
@@ -176,6 +182,12 @@ Returns true if `obj` is a string representing an IPv6 address
 ```
 
 Returns the string representation of an IPv6 address.
+
+Example:
+```
+> (ip6-address->string #u8(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1))
+"::1"
+```
 
 ## string->ip6-address
 ```

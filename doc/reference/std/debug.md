@@ -30,7 +30,7 @@ Example:
 (heap-type-stats) -> (values live-objects type-table)
 ```
 
-Returuns two values, the number of live objects and a table containing
+Returns two values, the number of live objects and a table containing
 a count for each type of live object.
 
 ### dump-heap-stats!
@@ -145,7 +145,7 @@ gx#root-context::t 1
 ```
 
 Walks the heap, optionally starting from the specified `root` object
-and using `walk` as the function for walking containers.
+and optionally using `walk` as the function for walking container objects.
 
 Returns a table of all visited objects.
 
@@ -169,7 +169,7 @@ Counts the still objects in the heap.
 (still-objects/refcount ...)
 ```
 
-Counts the refernces counted objects in the heap.
+Counts the reference counted objects in the heap.
 
 
 ## Memory leak debugging utilities
@@ -343,7 +343,7 @@ Dumps all threads with a non empty message queue (mailbox).
                     (filter true))
 ```
 
-Dumps all threads in the specified thread groupd `tg`, that satisfy
+Dumps all threads in the specified thread group `tg`, that satisfy
 the filter `filter`.
 
 
@@ -361,7 +361,7 @@ Like `dump-thread-group!`, but also recursively dumps all child thread groups.
 (dump-thread! thread (port (current-error-port)))
 ```
 
-Dumpbs the state of a thread, including the size of its message queue
+Dumps the state of a thread, including the size of its message queue
 and stack trace.
 
 ### dump-thread-stack-trace!

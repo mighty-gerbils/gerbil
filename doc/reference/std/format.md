@@ -56,8 +56,6 @@ Same as [fprintf](#fprintf) but with the output port defaulted to `(current-outp
 (eprintf fmt . args)
   fmt   := string
   args  := mixed values
-
-<= null
 ```
 
 Same as [fprintf](#fprintf) but with the output port defaulted to `(current-error-port)`
