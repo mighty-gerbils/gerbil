@@ -52,6 +52,7 @@ Commands:
   build                            build a gerbil package (gxpkg build)
   deps                             manage dependencies for a package (gxpkg deps)
   clean                            clean build artifactacts for a package (gxpkg clean)
+  env                              eval a shall expression in the local package environemnt (gxpkg env)
   pkg                              invoke the gerbil package manager (gxpkg)
   test                             run tests (gxtest)
   tags                             create emacs tags (gxtags)
@@ -152,6 +153,17 @@ Command Options:
 
 Arguments:
  pkg                              package to clean; all for all packages, omit to clean in current directory
+```
+
+### `gerbil env`
+```shell
+$ gerbil help env
+Usage: gxpkg env <command> <command-args> ...
+       execute a command within the local package context
+
+Arguments:
+ command                          the command to execute
+ command-args                     the command arguments
 ```
 
 ### `gerbil pkg`
