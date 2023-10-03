@@ -126,8 +126,9 @@ gxc -O -exe -o hello example/hello.ss
 #+end_src
 
 **BUG** : ld: warning: directory not found for option '-L/private/tmp/gerbil-scheme-20231001-63059-1rk8o36/build/lib
- This is because I set -L in build spec to deal with these issues. Fsck.
+ This is because I set -L in build spec to deal with these issues.
 
+ Ah, that's because =gxc= passes all the -L's used to build all of gerbil's stdlib. Not bad idea.  
  
 
 
