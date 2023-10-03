@@ -6,7 +6,8 @@
         :std/error
         :std/pregexp
         :std/format
-        :std/text/hex)
+        :std/text/hex
+        :std/sugar)
 (export ip-address? ip-address
         ip4-address? ip4-address
         ip4-address-string? ip4-address->string string->ip4-address
@@ -19,21 +20,13 @@
         localhost4 localhost6)
 
 (def inaddr-any4
-  (make-u8vector 4 0))
-
+  #u8(0 0 0 0))
 (def inaddr-any6
-  (make-u8vector 16 0))
-
+  #u8(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
 (def localhost4
-  (let (addr (make-u8vector 4 0))
-    (u8vector-set! addr 0 127)
-    (u8vector-set! addr 3 1)
-    addr))
-
+  #u8(127 0 0 1))
 (def localhost6
-  (let (addr (make-u8vector 16 0))
-    (u8vector-set! addr 15 1)
-    addr))
+  #u8(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1))
 
 ;; ip address; ip4 or ip6
 (def (ip-address obj)
@@ -63,8 +56,8 @@
     (raise-bad-argument ip4-address  "ip4 address" obj))))
 
 (def (ip4-address? obj)
-  (and (##u8vector? obj)
-       (##fx= (##u8vector-length obj) 4)))
+  (and (u8vector? obj)
+       (fx= (u8vector-length obj) 4)))
 
 (def (ip4-address-string? obj)
   (and (string? obj)
@@ -75,13 +68,19 @@
   (pregexp "^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$"))
 
 (def (string->ip4-address str)
-  (with ([_ . octets] (pregexp-match ip4-address-rx str))
-    (apply ##u8vector (map string->number octets))))
+  (match (pregexp-match ip4-address-rx str)
+    ([_ . octets]
+     (let (octets (map string->number octets))
+       (unless (andmap (cut fx< <> 256) octets)
+         (raise-bad-argument string->ip4-address "ip4 address string: not an octet" str))
+       (apply u8vector octets)))
+    (else
+     (raise-bad-argument string->ip4-address "ip4 address string" str))))
 
 (def (ip4-address->string ip4)
   (cond
    ((ip4-address? ip4)
-    (apply format "~a.~a.~a.~a" (##u8vector->list ip4)))
+    (apply format "~a.~a.~a.~a" (u8vector->list ip4)))
    ((ip4-address-string? ip4) ip4)
    (else
     (raise-bad-argument ip4-address->string "ip4 address" ip4))))
@@ -96,8 +95,8 @@
     (raise-bad-argument ip6-error "ip6 address" obj))))
 
 (def (ip6-address? obj)
-  (and (##u8vector? obj)
-       (##fx= (##u8vector-length obj) 16)))
+  (and (u8vector? obj)
+       (fx= (u8vector-length obj) 16)))
 
 (def ip6-address-rx
   (pregexp "^[0-9a-fA-F:]+$"))
@@ -109,111 +108,179 @@
 
 ;; rfc4291-compliant ipv6 address strings
 (def (string->ip6-address str)
-  (def (hex-e str k)
-    (let (char (string-ref str k))
-      (cond
-       ((unhex* char) => values)
-       (else
-        (raise-bad-argument string->ip6-address "ip6 address: not a hex digit" str char)))))
+  (def result (make-u8vector 16 0))
 
-  (def (loop rest bytes have-zeros)
-    (match rest
-      ([hex . rest]
-       (case (string-length hex)
-         ((0)
-          (if have-zeros
-            (raise-bad-argument string->ip6-address "ip6 address: too many zeros" str)
-            (let* ((count (length rest))
-                   (count (##fx* (##fx- 8 count) 2))
-                   (count (##fx- count (length bytes)))
-                   (_ (when (##fxnegative? count)
-                        (raise-bad-argument string->ip6-address "ip6 address: too many bits" str)))
-                   (block (make-list count 0)))
-              (loop rest
-                    (foldl cons bytes block)
-                    #t))))
-         ((1)
-          (loop rest
-                (cons* (hex-e hex 0)
-                       0 bytes)
-                have-zeros))
-         ((2)
-          (loop rest
-                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 0) 4) (hex-e hex 1))
-                       0 bytes)
-                have-zeros))
-         ((3)
-          (loop rest
-                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 1) 4) (hex-e hex 2))
-                       (hex-e hex 0)
-                       bytes)
-                have-zeros))
-         ((4)
-          (loop rest
-                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 2) 4) (hex-e hex 3))
-                       (##fxior (##fxarithmetic-shift (hex-e hex 0) 4) (hex-e hex 1))
-                       bytes)
-                have-zeros))
-         (else
-          (raise-bad-argument string->ip6-address "ip6 address: block is too big" str hex))))
-      (else
-       (check (list->u8vector (reverse bytes))))))
+  (defrule (fail! ctx what irritant ...)
+    (raise-bad-argument ctx (string-append "ip6 address string: " what) string irritant ...))
 
-  (def (check bytes)
-    (cond
-     ((##fx= (u8vector-length bytes) 16) bytes)
-     ((##fx< (u8vector-length bytes) 16)
-      (raise-bad-argument string->ip6-address "ip6 address: not enough bits" str bytes))
-     (else
-      (raise-bad-argument string->ip6-address  "ip6 address: too many bits" str bytes))))
+  (def (parse-trailing rest leading)
+    (let loop ((rest rest) (byte 0) (octets 0) (bytes []) (have-colon? #t))
+      (def (consume rest octet-expr)
+        (let (octet octet-expr)
+          (case octets
+            ((0 2)
+             (loop rest octet (fx+ octets 1) bytes #f))
+            ((1 3)
+             (loop rest 0 (fx+ octets 1)
+                   (cons (fxior octet (fxarithmetic-shift-left byte 4))
+                         bytes)
+                   #f))
+            (else
+             (fail! string->ip6-address "too many bits in octet")))))
 
-  (let (hexes (string-split str #\:))
-    (match hexes
-      (["" "" . rest]
-       (let* ((count (length rest))
-              (count (##fx* (##fx- 8 count) 2))
-              (_ (when (##fxnegative? count)
-                   (raise-bad-argument string->ip6-address  "ip6 address: too many bits" str)))
-              (bytes (make-list count 0)))
-           (loop rest bytes #t)))
-      (else
-       (loop hexes [] #f)))))
+      (def (finish!)
+        (let (bytes (if (fx= (fxand octets 1) 1) (cons byte bytes) bytes))
+          (let fini ((rest bytes) (i 15))
+            (match rest
+              ([byte . rest]
+               (u8vector-set! result i byte)
+               (fini rest (fx- i 1)))
+              (else result)))))
+
+      (let (len (length bytes))
+        (if (fx< len (fx- 16 leading))
+          (match rest
+            ([hd . rest]
+             (case hd
+               ((#\:)
+                (if have-colon?
+                  (fail! string->ip6-address "too many colons")
+                  (case octets
+                    ((1 2)
+                     (loop rest 0 0 (cons* byte 0 bytes) #t))
+                    ((3)
+                     (let* ((byte+1 (car bytes))
+                            (byte+0 (fxarithmetic-shift-right byte+1 4))
+                            (byte+1 (fxior (fxarithmetic-shift-left (fxand byte+1 #x0f) 4)
+                                           byte)))
+                       (loop rest 0 0 (cons* byte+1 byte+0 (cdr bytes)) #t)))
+                    ((4)
+                     (loop rest 0 0 bytes #t))
+                    (else
+                     (BUG string->ip6-address "unexpected number of octets" octets)))))
+               ((#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+                (consume rest (fx- (char->integer hd) 48)))
+               ((#\A #\B #\C #\D #\E #\F)
+                (consume rest (fx+ 10 (fx- (char->integer hd) 65))))
+               ((#\a #\b #\c #\d #\e #\f)
+                (consume rest (fx+ 10 (fx- (char->integer hd) 97))))
+               (else
+                (fail! string->ip6-address "bad character" hd))))
+            (else
+             (finish!)))
+          (match rest
+            ([] (finish!))
+            (else
+             (fail! string->ip6-address "too many octets")))))))
+
+  (def (parse-leading rest)
+    (let loop ((rest rest) (i 0) (byte 0) (octets 0) (have-colon? #f))
+      (def (consume rest octet-expr)
+        (let (octet octet-expr)
+          (case octets
+            ((0 2)
+             (loop rest i octet (fx+ octets 1) #f))
+            ((1)
+             (let (byte (fxior octet (fxarithmetic-shift-left byte 4)))
+               (u8vector-set! result (fx+ i 1) byte)
+               (loop rest i 0 (fx+ octets 1) #f)))
+            ((3)
+             (let (byte (fxior octet (fxarithmetic-shift-left byte 4)))
+               (u8vector-set! result i (u8vector-ref result (fx+ i 1)))
+               (u8vector-set! result (fx+ i 1) byte)
+               (loop rest (fx+ i 2) 0 (fx+ octets 1) #f)))
+            (else
+             (fail! string->ip6-address "too many bits in octet")))))
+
+      (def (finish!)
+        (case octets
+          ((0 2 4)
+           (void))
+          ((1)
+           (u8vector-set! result (fx+ i 1) byte))
+          ((3)
+           (u8vector-set! result i (u8vector-ref result (fx+ i 1)))
+           (u8vector-set! result (fx+ i 1) byte))
+          (else
+           (BUG string->ip6-address "too many octets" octets str))))
+
+      (if (fx< i 16)
+        (match rest
+          ([hd . rest]
+           (case hd
+             ((#\:)
+              (cond
+               (have-colon?
+                (parse-trailing rest i))
+               ((fx= 0 i octets)
+                (match rest
+                  (['#\: . rest]
+                   (parse-trailing rest 0))
+                  (else
+                   (fail! string->ip6-address "bad starting colon"))))
+               (else
+                (case octets
+                  ((1)
+                   (u8vector-set! result (fx+ i 1) byte)
+                   (loop rest (fx+ i 2) 0 0 #t))
+                  ((2)
+                   (loop rest (fx+ i 2) 0 0 #t))
+                  ((3)
+                   (let* ((byte+1 (u8vector-ref result (fx+ i 1)))
+                          (byte+0 (fxarithmetic-shift-right byte+1 4))
+                          (byte+1 (fxior (fxarithmetic-shift-left (fxand byte+1 #x0f) 4)
+                                         byte)))
+                     (u8vector-set! result i byte+0)
+                     (u8vector-set! result (fx+ i 1) byte+1)
+                     (loop rest (fx+ i 2) 0 0 #t)))
+                  ((4)
+                   (loop rest i 0 0 #t))
+                  (else
+                   (BUG ip6->string "unexpected number of octets" octets str hd))))))
+             ((#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+              (consume rest (fx- (char->integer hd) 48)))
+             ((#\A #\B #\C #\D #\E #\F)
+              (consume rest (fx+ 10 (fx- (char->integer hd) 65))))
+             ((#\a #\b #\c #\d #\e #\f)
+              (consume rest (fx+ 10 (fx- (char->integer hd) 97))))
+             (else
+              (fail! string->ip6-address "bad character" hd))))
+          (else
+           (finish!)
+           result))
+        (match rest
+          ([]
+           (finish!)
+           result)
+          (else
+           (fail! string->ip6-address "too many octets"))))))
+
+  (parse-leading (string->list str)))
 
 (def (ip6-address->string ip6)
-  (def (compress-zeros hexes)
-    (compress-leading-trailing
-     (compress hexes)))
+  (def (concat hexes)
+    (let recur ((rest hexes)(have-zeros? #f) (have-prefix? #f))
+      (match rest
+        (["0" . rest]
+         (recur rest #t have-prefix?))
+        (else
+         (if have-zeros?
+           (string-append (if have-prefix? ":" "::") (concat2 rest))
+           (match rest
+             ([hd . rest]
+              (string-append hd ":" (recur rest #f #t)))
+             (else "")))))))
 
-  (def (compress-leading-trailing hexes)
-    (cond
-     ((equal? (car hexes) "")
-      (cons "" hexes))
-     ((equal? (last hexes) "")
-      (set! (cdr (last-pair hexes)) '(""))
-      hexes)
-     (else hexes)))
-
-  (def (compress hexes)
-    (match hexes
-      (["0" "0" . rest]
-       (cons "" (compress* rest)))
-      ([hd . rest]
-       (cons hd (compress rest)))
-      (else [])))
-
-  (def (compress* hexes)
-    (match hexes
-      (["0" . rest]
-       (compress* rest))
-      (else hexes)))
+  (def (concat2 hexes)
+    (string-join hexes #\:))
 
   (let lp ((rest (u8vector->list ip6)) (hexes []))
     (match rest
       ([b0 b1 . rest]
-       (let ((b0h (##fxand (##fxarithmetic-shift b0 -4) #xf))
-             (b0l (##fxand b0 #xf))
-             (b1h (##fxand (##fxarithmetic-shift b1 -4) #xf))
-             (b1l (##fxand b1 #xf)))
+       (let ((b0h (fxarithmetic-shift-right b0 4))
+             (b0l (fxand b0 #xf))
+             (b1h (fxarithmetic-shift-right b1 4))
+             (b1l (fxand b1 #xf)))
          (match* (b0h b0l b1h b1l)
            ((0 0 0 0)
             (lp rest (cons "0" hexes)))
@@ -226,7 +293,7 @@
            (else
             (lp rest (cons (string (hex b0h) (hex b0l) (hex b1h) (hex b1l)) hexes))))))
       (else
-       (string-join (compress-zeros (reverse hexes)) #\:)))))
+       (concat (reverse hexes))))))
 
 ;; inet address: endpoint [host . port]
 (def (inet-address obj)
@@ -271,7 +338,7 @@
    ((string-rindex str #\:)
     => (lambda (ix)
          (values (substring str 0 ix)
-                 (substring str (##fx+ ix 1) (string-length str)))))
+                 (substring str (fx+ ix 1) (string-length str)))))
    (else
     (E "Malformed address; no port separator" str))))
 
@@ -307,7 +374,7 @@
 
   (def (string->port port)
     (let (port (string->number port))
-      (if (and (fixnum? port) (##fx<= 0 port 65535)) port
+      (if (and (fixnum? port) (fx<= 0 port 65535)) port
           (raise-bad-argument string->inet-address "inet address: bad port" str port))))
 
   (with ((values host port) (inet-address-split str))
