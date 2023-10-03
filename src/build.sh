@@ -2,8 +2,6 @@
 set -eu
 cd $(dirname "$0") # Change to this directory
 
-# export GERBIL_GCC='gcc-13'
-# export CC='gcc-13'
 #===============================================================================
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
@@ -61,16 +59,9 @@ else
 fi
 
 DYLD_LIBRARY_PATH="$LD_LIBRARY_PATH"
-
-# Does OSX really sanitize this FFS?
-
-_THE_LIBRARY_PATH="$LD_LIBRARY_PATH"
-
-# It does. holy crud. Is fallback stripped?
-
 DYLD_FALLBACK_LIBRARY_PATH="$LD_LIBRARY_PATH"
 
-export LD_LIBRARY_PATH DYLD_LIBRARY_PATH _THE_LIBRARY_PATH DYLD_FALLBACK_LIBRARY_PATH
+export LD_LIBRARY_PATH DYLD_LIBRARY_PATH DYLD_FALLBACK_LIBRARY_PATH
 
 if [ "x${GERBIL_BUILD_FLAGS:-}" != "x" ]; then
     num_cores=$(build_flags_cores "${GERBIL_BUILD_FLAGS}")
