@@ -8,13 +8,19 @@ programmatic API or through the command line.
 ## Preliminaries
 
 This tutorial requires [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database).
-You need to first install it, and then build the LMDB bindings in stdlib, as they are
-not built by default. You can do this during installation by running `configure` with
-the `--enable-lmdb` option.
+You need to first install it. This tutorial uses the [gerbil-lmdb](https://github.com/mighty-gerbils/gerbil-lmdb), which will be installed as parts of the deps installation below.
 
 
 The source code for the tutorial is available at [src/tutorial/kvstore](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/kvstore).
-You can build the kvstore tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs.
+You can build the kvstore tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/kvstore/build.ss) so that you can use the programs:
+
+```shell
+$ cd gerbil/src/tutorial/kvstore
+$ gerbil deps -i
+...
+$ gerbil build
+...
+```
 
 ## The kvstore protocol
 
@@ -211,37 +217,30 @@ Here is the code:
     (command 'help help: "display help"
              (optional-argument 'command value: string->symbol)))
 
-  (def gopt
-    (getopt get-cmd
-            get-object-cmd
-            put-cmd
-            put-object-cmd
-            remove-cmd
-            help-cmd))
+  (call-with-getopt kvstorec-main args
+    program: "kvstorec"
+    help: "A command line client for the key-value store daemon"
+    get-cmd
+    get-object-cmd
+    put-cmd
+    put-object-cmd
+    remove-cmd
+    help-cmd))
 
-  (try
-   (let ((values cmd opt) (getopt-parse gopt args))
-     (start-actor-server!)
-     (let-hash opt
-       (case cmd
-         ((get)
-          (write-output (kvstore-get .key .server) .output))
-         ((get-object)
-          (write-object (kvstore-get-object .key .server) .output))
-         ((put)
-          (kvstore-put! .key (read-input .input) .server))
-         ((put-object)
-          (kvstore-put-object! .key (read-object .input) .server))
-         ((remove)
-          (kvstore-remove! .key .server))
-         ((help)
-          (getopt-display-help-topic gopt .?command "kvstorec")))))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "kvstorec" (current-error-port))
-     (exit 1))
-   (catch (exn)
-     (display-exception exn (current-error-port))
-     (exit 2))))
+(def (kvstorec-main cmd opt)
+  (start-actor-server!)
+  (let-hash opt
+    (case cmd
+      ((get)
+       (write-output (kvstore-get .key .server) .output))
+      ((get-object)
+       (write-object (kvstore-get-object .key .server) .output))
+      ((put)
+       (kvstore-put! .key (read-input .input) .server))
+      ((put-object)
+       (kvstore-put-object! .key (read-object .input) .server))
+      ((remove)
+       (kvstore-remove! .key .server)))))
 
 (def (write-output val output)
   (when (u8vector? val)
@@ -267,7 +266,7 @@ Here is the code:
     (call-with-input-file input read)))
 ```
 
-The client uses [getopt](../reference/getopt.md) to parse the command line arguments,
+The client uses [getopt](/reference/std/getopt.md) to parse the command line arguments,
 and interacts with the kvstore server using the methods defined in [proto.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/proto.ss).
 
 ## Example interaction
@@ -278,19 +277,19 @@ with actor ensembles.
 
 First let's ensure our ensemble has a cookie and start the actor ensemble:
 ```
-$ gxensemble cookie
-$ gxensemble registry
+$ gerbil env gxensemble admin cookie
+$ gerbil env gxensemble registry
 ...
 ```
-And then let's run our kvstore server:
+And then let's run our kvstore server in another terminal:
 ```
-$ gxensemble run --roles "(kvstore)" kvstore :tutorial/kvstore/kvstore-svc
+$ gerbil env gxensemble run --roles "(kvstore)" kvstore :tutorial/kvstore/kvstore-svc
 ...
 ```
 
-At this point we are ready to interact with the server using the `kvstorec` cli tool:
+At this point we are ready to interact with the server using the `kvstorec` cli tool.
+First, let's create a file to put to the server:
 ```
-# a file to put to the server
 $ cat > /tmp/foo.json
 {
  "head": "I am a walrus~",
@@ -298,6 +297,12 @@ $ cat > /tmp/foo.json
    "value": "and this is my body"
  }
 }
+```
+
+And then let's base to the local environment:
+```
+$ gerbil env bash
+
 $ kvstorec put --input /tmp/foo.json foo.json
 
 # let's retrieve it

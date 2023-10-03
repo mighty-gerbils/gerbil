@@ -64,39 +64,32 @@
 
   (def help-cmd
     (command 'help help: "display help"
-             (optional-argument 'command value: string->symbol)))
+      (optional-argument 'command value: string->symbol)))
 
-  (def gopt
-    (getopt get-cmd
+  (call-with-getopt kvstorec-main args
+    program: "kvstorec"
+    help: "A command line client for the key-value store daemon"
+    get-cmd
             get-object-cmd
             put-cmd
             put-object-cmd
             remove-cmd
             help-cmd))
 
-  (try
-   (let ((values cmd opt) (getopt-parse gopt args))
-     (start-actor-server!)
-     (let-hash opt
-       (case cmd
-         ((get)
-          (write-output (kvstore-get .key .server) .output))
-         ((get-object)
-          (write-object (kvstore-get-object .key .server) .output))
-         ((put)
-          (kvstore-put! .key (read-input .input) .server))
-         ((put-object)
-          (kvstore-put-object! .key (read-object .input) .server))
-         ((remove)
-          (kvstore-remove! .key .server))
-         ((help)
-          (getopt-display-help-topic gopt .?command "kvstorec")))))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "kvstorec" (current-error-port))
-     (exit 1))
-   (catch (exn)
-     (display-exception exn (current-error-port))
-     (exit 2))))
+(def (kvstorec-main cmd opt)
+  (start-actor-server!)
+  (let-hash opt
+    (case cmd
+      ((get)
+       (write-output (kvstore-get .key .server) .output))
+      ((get-object)
+       (write-object (kvstore-get-object .key .server) .output))
+      ((put)
+       (kvstore-put! .key (read-input .input) .server))
+      ((put-object)
+       (kvstore-put-object! .key (read-object .input) .server))
+      ((remove)
+       (kvstore-remove! .key .server)))))
 
 (def (write-output val output)
   (when (u8vector? val)
