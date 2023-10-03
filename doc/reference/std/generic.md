@@ -13,409 +13,401 @@ Please write me!
 ## Macros
 
 ### defgeneric
-::: tip usage
 ```
 (defgeneric ...)
 ```
-:::
 
 Please document me!
 
 ### defmethod
-::: tip usage
 ```
 (defmethod ...)
 ```
-:::
 
 Please document me!
 
 ### defbuiltin-type
-::: tip usage
 ```
 (defbuiltin-type ...)
 ```
-:::
 
 Please document me!
 
 ### defprimitive-type
-::: tip usage
 ```
 (defprimitive-type ...)
 ```
-:::
 
 Please document me!
 
 
 ## Predefined Types
 
-### &lt;bignum&gt;
+### <bignum>
 ```
 (defprimitive-type <bignum> ...)
 ```
 
 Please document me!
 
-### &lt;boolean&gt;
+### <boolean>
 ```
 (defprimitive-type <boolean> ...)
 ```
 
 Please document me!
 
-### &lt;box&gt;
+### <box>
 ```
 (defprimitive-type <box> ...)
 ```
 
 Please document me!
 
-### &lt;byte-port&gt;
+### <byte-port>
 ```
 (defbuiltin-type <byte-port> ...)
 ```
 
 Please document me!
 
-### &lt;char&gt;
+### <char>
 ```
 (defprimitive-type <char> ...)
 ```
 
 Please document me!
 
-### &lt;character-port&gt;
+### <character-port>
 ```
 (defbuiltin-type <character-port> ...)
 ```
 
 Please document me!
 
-### &lt;complex&gt;
+### <complex>
 ```
 (defprimitive-type <complex> ...)
 ```
 
 Please document me!
 
-### &lt;condvar&gt;
+### <condvar>
 ```
 (defbuiltin-type <condvar> ...)
 ```
 
 Please document me!
 
-### &lt;continuation&gt;
+### <continuation>
 ```
 (defprimitive-type <continuation> ...)
 ```
 
 Please document me!
 
-### &lt;device-port&gt;
+### <device-port>
 ```
 (defbuiltin-type <device-port> ...)
 ```
 
 Please document me!
 
-### &lt;directory-port&gt;
+### <directory-port>
 ```
 (defbuiltin-type <directory-port> ...)
 ```
 
 Please document me!
 
-### &lt;eof&gt;
+### <eof>
 ```
 (defprimitive-type <eof> ...)
 ```
 
 Please document me!
 
-### &lt;event-queue-port&gt;
+### <event-queue-port>
 ```
 (defbuiltin-type <event-queue-port> ...)
 ```
 
 Please document me!
 
-### &lt;exception&gt;
+### <exception>
 ```
 (defbuiltin-type <exception> ...)
 ```
 
 Please document me!
 
-### &lt;f32vector&gt;
+### <f32vector>
 ```
 (defprimitive-type <f32vector> ...)
 ```
 
 Please document me!
 
-### &lt;f64vector&gt;
+### <f64vector>
 ```
 (defprimitive-type <f64vector> ...)
 ```
 
 Please document me!
 
-### &lt;fixnum&gt;
+### <fixnum>
 ```
 (defprimitive-type <fixnum> ...)
 ```
 
 Please document me!
 
-### &lt;flonum&gt;
+### <flonum>
 ```
 (defprimitive-type <flonum> ...)
 ```
 
 Please document me!
 
-### &lt;foreign&gt;
+### <foreign>
 ```
 (defprimitive-type <foreign> ...)
 ```
 
 Please document me!
 
-### &lt;hash-table&gt;
+### <hash-table>
 ```
 (defprimitive-type <hash-table> ...)
 ```
 
 Please document me!
 
-### &lt;integer&gt;
+### <integer>
 ```
 (defprimitive-type <integer> ...)
 ```
 
 Please document me!
 
-### &lt;keyword&gt;
+### <keyword>
 ```
 (defprimitive-type <keyword> ...)
 ```
 
 Please document me!
 
-### &lt;mutex&gt;
+### <mutex>
 ```
 (defbuiltin-type <mutex> ...)
 ```
 
 Please document me!
 
-### &lt;null&gt;
+### <null>
 ```
 (defprimitive-type <null> ...)
 ```
 
 Please document me!
 
-### &lt;number&gt;
+### <number>
 ```
 (defprimitive-type <number> ...)
 ```
 
 Please document me!
 
-### &lt;object-port&gt;
+### <object-port>
 ```
 (defbuiltin-type <object-port> ...)
 ```
 
 Please document me!
 
-### &lt;object&gt;
+### <object>
 ```
 (defprimitive-type <object> ...)
 ```
 
 Please document me!
 
-### &lt;pair&gt;
+### <pair>
 ```
 (defprimitive-type <pair> ...)
 ```
 
 Please document me!
 
-### &lt;port&gt;
+### <port>
 ```
 (defbuiltin-type <port> ...)
 ```
 
 Please document me!
 
-### &lt;procedure&gt;
+### <procedure>
 ```
 (defprimitive-type <procedure> ...)
 ```
 
 Please document me!
 
-### &lt;promise&gt;
+### <promise>
 ```
 (defprimitive-type <promise> ...)
 ```
 
 Please document me!
 
-### &lt;rational&gt;
+### <rational>
 ```
 (defprimitive-type <rational> ...)
 ```
 
 Please document me!
 
-### &lt;raw-device-port&gt;
+### <raw-device-port>
 ```
 (defbuiltin-type <raw-device-port> ...)
 ```
 
 Please document me!
 
-### &lt;readtable&gt;
+### <readtable>
 ```
 (defbuiltin-type <readtable> ...)
 ```
 
 Please document me!
 
-### &lt;real&gt;
+### <real>
 ```
 (defprimitive-type <real> ...)
 ```
 
 Please document me!
 
-### &lt;s16vector&gt;
+### <s16vector>
 ```
 (defprimitive-type <s16vector> ...)
 ```
 
 Please document me!
 
-### &lt;s32vector&gt;
+### <s32vector>
 ```
 (defprimitive-type <s32vector> ...)
 ```
 
 Please document me!
 
-### &lt;s64vector&gt;
+### <s64vector>
 ```
 (defprimitive-type <s64vector> ...)
 ```
 
 Please document me!
 
-### &lt;s8vector&gt;
+### <s8vector>
 ```
 (defprimitive-type <s8vector> ...)
 ```
 
 Please document me!
 
-### &lt;string-port&gt;
+### <string-port>
 ```
 (defbuiltin-type <string-port> ...)
 ```
 
 Please document me!
 
-### &lt;string&gt;
+### <string>
 ```
 (defprimitive-type <string> ...)
 ```
 
 Please document me!
 
-### &lt;symbol&gt;
+### <symbol>
 ```
 (defprimitive-type <symbol> ...)
 ```
 
 Please document me!
 
-### &lt;t&gt;
+### <t>
 ```
 (defprimitive-type <t> ...)
 ```
 
 Please document me!
 
-### &lt;tcp-server-port&gt;
+### <tcp-server-port>
 ```
 (defbuiltin-type <tcp-server-port> ...)
 ```
 
 Please document me!
 
-### &lt;thread-group&gt;
+### <thread-group>
 ```
 (defbuiltin-type <thread-group> ...)
 ```
 
 Please document me!
 
-### &lt;thread&gt;
+### <thread>
 ```
 (defbuiltin-type <thread> ...)
 ```
 
 Please document me!
 
-### &lt;time&gt;
+### <time>
 ```
 (defbuiltin-type <time> ...)
 ```
 
 Please document me!
 
-### &lt;type&gt;
+### <type>
 ```
 (defbuiltin-type <type> ...)
 ```
 
 Please document me!
 
-### &lt;u16vector&gt;
+### <u16vector>
 ```
 (defprimitive-type <u16vector> ...)
 ```
 
 Please document me!
 
-### &lt;u32vector&gt;
+### <u32vector>
 ```
 (defprimitive-type <u32vector> ...)
 ```
 
 Please document me!
 
-### &lt;u64vector&gt;
+### <u64vector>
 ```
 (defprimitive-type <u64vector> ...)
 ```
 
 Please document me!
 
-### &lt;u8vector-port&gt;
+### <u8vector-port>
 ```
 (defbuiltin-type <u8vector-port> ...)
 ```
 
 Please document me!
 
-### &lt;u8vector&gt;
+### <u8vector>
 
 ```
 (defprimitive-type <u8vector> ...)
@@ -423,28 +415,28 @@ Please document me!
 
 Please document me!
 
-### &lt;values&gt;
+### <values>
 ```
 (defprimitive-type <values> ...)
 ```
 
 Please document me!
 
-### &lt;vector-port&gt;
+### <vector-port>
 ```
 (defbuiltin-type <vector-port> ...)
 ```
 
 Please document me!
 
-### &lt;vector&gt;
+### <vector>
 ```
 (defprimitive-type <vector> ...)
 ```
 
 Please document me!
 
-### &lt;void&gt;
+### <void>
 ```
 (defbuiltin-type <void> ...)
 ```
@@ -455,29 +447,23 @@ Please document me!
 ## Generic Object Types
 
 ### type-of
-::: tip usage
 ```
 (type-of ...)
 ```
-:::
 
 Please document me!
 
 ### linear-type-of
-::: tip usage
 ```
 (linear-type-of ...)
 ```
-:::
 
 Please document me!
 
 ### type-linearize-class
-::: tip usage
 ```
 (type-linearize-class ...)
 ```
-:::
 
 Please document me!
 
@@ -485,56 +471,44 @@ Please document me!
 ## Generic Method Objects
 
 ### make-generic
-::: tip usage
 ```
 (make-generic ...)
 ```
-:::
 
 Please document me!
 
 ### generic?
-::: tip usage
 ```
 (generic? ...)
 ```
-:::
 
 Please document me!
 
 ### generic-id
-::: tip usage
 ```
 (generic-id ...)
 ```
-:::
 
 Please document me!
 
 ### generic-bind!
-::: tip usage
 ```
 (generic-bind! ...)
 ```
-:::
 
 Please document me!
 
 ### generic-dispatch
-::: tip usage
 ```
 (generic-dispatch ...)
 ```
-:::
 
 Please document me!
 
 ### generic-dispatch-next
-::: tip usage
 ```
 (generic-dispatch-next ...)
 ```
-:::
 
 Please document me!
 

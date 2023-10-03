@@ -9,137 +9,107 @@ Cryptography based on libcrypto.
 ## Digests
 
 ### make-digest
-::: tip usage
 ```
 (make-digest ...)
 ```
-:::
 
 Please document me!
 
 ### digest?
-::: tip usage
 ```
 (digest? ...)
 ```
-:::
 
 Please document me!
 
 ### digest-update!
-::: tip usage
 ```
 (digest-update! ...)
 ```
-:::
 
 Please document me!
 
 ### digest-update*
-::: tip usage
 ```
 (digest-update* ...)
 ```
-:::
 
 Please document me!
 
 ### digest-final!
-::: tip usage
 ```
 (digest-final! ...)
 ```
-:::
 
 Please document me!
 
 ### digest-size
-::: tip usage
 ```
 (digest-size ...)
 ```
-:::
 
 Please document me!
 
 ### digest-name
-::: tip usage
 ```
 (digest-name ...)
 ```
-:::
 
 Please document me!
 
 ### digest-copy
-::: tip usage
 ```
 (digest-copy ...)
 ```
-:::
 
 Please document me!
 
 ### md5
-::: tip usage
 ```
 (md5 ...)
 ```
-:::
 
 Please document me!
 
 ### sha1
-::: tip usage
 ```
 (sha1 ...)
 ```
-:::
 
 Please document me!
 
 ### sha224
-::: tip usage
 ```
 (sha224 ...)
 ```
-:::
 
 Please document me!
 
 ### sha256
-::: tip usage
 ```
 (sha256 ...)
 ```
-:::
 
 Please document me!
 
 ### sha384
-::: tip usage
 ```
 (sha384 ...)
 ```
-:::
 
 Please document me!
 
 ### whirlpool
-::: tip usage
 ```
 (whirlpool ...)
 ```
-:::
 
 Please document me!
 
 ### ripemd160
-::: tip usage
 ```
 (ripemd160 ...)
 ```
-:::
 
 Please document me!
 
@@ -184,101 +154,79 @@ md5-digest?
 ## Ciphers
 
 ### cipher
-::: tip usage
 ```
 (cipher ...)
 ```
-:::
 
 Please document me!
 
 ### make-cipher
-::: tip usage
 ```
 (make-cipher ...)
 ```
-:::
 
 Please document me!
 
 ### cipher?
-::: tip usage
 ```
 (cipher? ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-type
-::: tip usage
 ```
 (cipher-type ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-ctx
-::: tip usage
 ```
 (cipher-ctx ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-context
-::: tip usage
 ```
 (cipher-context ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-name
-::: tip usage
 ```
 (cipher-name ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-block-size
-::: tip usage
 ```
 (cipher-block-size ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-key-length
-::: tip usage
 ```
 (cipher-key-length ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-iv-length
-::: tip usage
 ```
 (cipher-iv-length ...)
 ```
-:::
 
 Please document me!
 
 ### cipher-copy
-::: tip usage
 ```
 (cipher-copy ...)
 ```
-:::
 
 Please document me!
 
@@ -426,110 +374,86 @@ aes-128-ecb-cipher?
 ## Encryption and Decryption
 
 ### encrypt
-::: tip usage
 ```
 (encrypt ...)
 ```
-:::
 
 Please document me!
 
 ### encrypt-u8vector
-::: tip usage
 ```
 (encrypt-u8vector ...)
 ```
-:::
 
 Please document me!
 
 ### encrypt-u8vector!
-::: tip usage
 ```
 (encrypt-u8vector! ...)
 ```
-:::
 
 Please document me!
 
 ### encrypt-init!
-::: tip usage
 ```
 (encrypt-init! ...)
 ```
-:::
 
 Please document me!
 
 ### encrypt-update!
-::: tip usage
 ```
 (encrypt-update! ...)
 ```
-:::
 
 Please document me!
 
 ### encrypt-final!
-::: tip usage
 ```
 (encrypt-final! ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt
-::: tip usage
 ```
 (decrypt ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt-u8vector
-::: tip usage
 ```
 (decrypt-u8vector ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt-u8vector!
-::: tip usage
 ```
 (decrypt-u8vector! ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt-init!
-::: tip usage
 ```
 (decrypt-init! ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt-update!
-::: tip usage
 ```
 (decrypt-update! ...)
 ```
-:::
 
 Please document me!
 
 ### decrypt-final!
-::: tip usage
 ```
 (decrypt-final! ...)
 ```
-:::
 
 Please document me!
 
@@ -538,110 +462,86 @@ Please document me!
 
 
 ### hmac
-::: tip usage
 ```
 (hmac ...)
 ```
-:::
 
 Please document me!
 
 ### hmac?
-::: tip usage
 ```
 (hmac? ...)
 ```
-:::
 
 Please document me!
 
 ### make-hmac
-::: tip usage
 ```
 (make-hmac ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-init!
-::: tip usage
 ```
 (hmac-init! ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-update!
-::: tip usage
 ```
 (hmac-update! ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-final!
-::: tip usage
 ```
 (hmac-final! ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-digest
-::: tip usage
 ```
 (hmac-digest ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-md5
-::: tip usage
 ```
 (hmac-md5 ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-sha1
-::: tip usage
 ```
 (hmac-sha1 ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-sha256
-::: tip usage
 ```
 (hmac-sha256 ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-sha384
-::: tip usage
 ```
 (hmac-sha384 ...)
 ```
-:::
 
 Please document me!
 
 ### hmac-sha512
-::: tip usage
 ```
 (hmac-sha512 ...)
 ```
-:::
 
 Please document me!
 
@@ -650,56 +550,44 @@ Please document me!
 
 
 ### DH-generate-key
-::: tip usage
 ```
 (DH-generate-key ...)
 ```
-:::
 
 Please document me!
 
 ### DH-get-2048-256
-::: tip usage
 ```
 (DH-get-2048-256 ...)
 ```
-:::
 
 Please document me!
 
 ### DH-get-2048-224
-::: tip usage
 ```
 (DH-get-2048-224 ...)
 ```
-:::
 
 Please document me!
 
 ### DH-get-1024-160
-::: tip usage
 ```
 (DH-get-1024-160 ...)
 ```
-:::
 
 Please document me!
 
 ### DH-compute-key
-::: tip usage
 ```
 (DH-compute-key ...)
 ```
-:::
 
 Please document me!
 
 ### DH-pub-key
-::: tip usage
 ```
 (DH-pub-key ...)
 ```
-:::
 
 Please document me!
 
@@ -708,46 +596,36 @@ Please document me!
 
 
 ### libcrypto-error?
-::: tip usage
 ```
 (libcrypto-error? ...)
 ```
-:::
 
 Please document me!
 
 ### random-bytes
-::: tip usage
 ```
 (random-bytes ...)
 ```
-:::
 
 Please document me!
 
 ### random-bytes!
-::: tip usage
 ```
 (random-bytes! ...)
 ```
-:::
 
 Please document me!
 
-### bytes-&gt;BN
-::: tip usage
+### bytes->BN
 ```
 (bytes->BN ...)
 ```
-:::
 
 Please document me!
 
-### BN-&gt;bytes
-::: tip usage
+### BN->bytes
 ```
 (BN->bytes ...)
 ```
-:::
 
 Please document me!

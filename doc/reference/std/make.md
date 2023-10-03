@@ -211,94 +211,74 @@ the following keyword arguments, that may configure how your project is built.
 ## Interface
 
 ### make
-::: tip usage
 ```
 (make build-spec settings-keyword-arguments ...)
 ```
-:::
 
 Compile all parts of the project that are not up-to-date.
 
 
 
 ### shell-config
-::: tip usage
 ```
 (shell-config ...)
 ```
-:::
 
 Please document me!
 
 ### env-cppflags
-::: tip usage
 ```
 (env-cppflags ...)
 ```
-:::
 
 Please document me!
 
 ### env-ldflags
-::: tip usage
 ```
 (env-ldflags ...)
 ```
-:::
 
 Please document me!
 
 ### include-gambit-sharp
-::: tip usage
 ```
 (include-gambit-sharp ...)
 ```
-:::
 
 Please document me!
 
 ### pkg-config
-::: tip usage
 ```
 (pkg-config ...)
 ```
-:::
 
 Please document me!
 
 ### pkg-config-libs
-::: tip usage
 ```
 (pkg-config-libs ...)
 ```
-:::
 
 Please document me!
 
 ### pkg-config-cflags
-::: tip usage
 ```
 (pkg-config-cflags ...)
 ```
-:::
 
 Please document me!
 
 ### ldflags
-::: tip usage
 ```
 (ldflags ...)
 ```
-:::
 
 Please document me!
 
 ### cppflags
-::: tip usage
 ```
 (cppflags ...)
 ```
-:::
 
 Please document me!
 
@@ -309,11 +289,9 @@ Please document me!
 :::
 
 ### defbuild-script
-::: tip usage
 ```
 (defbuild-script build-spec settings-keyword-arguments ...)
 ```
-:::
 
 Define a `main` function that will built the project.
 See above.

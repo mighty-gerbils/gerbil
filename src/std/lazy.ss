@@ -63,7 +63,7 @@
                  (let (content* p*.e)
                    (set! (car content) (car content*))
                    (set! (cdr content) (cdr content*))
-                   (set! p*.e content)))
+                   (set! p.e content*)))
                (begin
                  (set! (car content) 'eager)
                  (set! (cdr content) p*))))

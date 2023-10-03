@@ -8,305 +8,284 @@ program that utilizes raw socket devices.
 (import :std/os/socket)
 :::
 
-### socket
-::: tip usage
+## socket
 ```
-(socket ...)
+(socket domain type (proto 0))
 ```
-:::
 
 Please document me!
 
-### server-socket
-::: tip usage
+## server-socket
 ```
-(server-socket ...)
+(server-socket domain type (proto 0))
 ```
-:::
 
 Please document me!
 
-### socket?
-::: tip usage
+## socket?
 ```
-(socket? ...)
+(socket? obj)
 ```
-:::
 
 Please document me!
 
-### socket-bind
-::: tip usage
+## socket-bind
 ```
-(socket-bind ...)
+(socket-bind sock addr)
 ```
-:::
 
 Please document me!
 
-### socket-listen
-::: tip usage
+## socket-listen
 ```
-(socket-listen ...)
+(socket-listen sock (backlog 10))
 ```
-:::
 
 Please document me!
 
-### socket-accept
-::: tip usage
+## socket-accept
 ```
-(socket-accept ...)
+(socket-accept sock (sa #f))
 ```
-:::
 
 Please document me!
 
-### socket-connect
-::: tip usage
+## socket-connect
 ```
-(socket-connect ...)
+(socket-connect sock sa)
 ```
-:::
 
 Please document me!
 
-### socket-shutdown
-::: tip usage
+## socket-shutdown
 ```
-(socket-shutdown ...)
+(socket-shutdown sock how)
 ```
-:::
 
 Please document me!
 
-### socket-close
-::: tip usage
+## socket-close
 ```
-(socket-close ...)
+(socket-close sock)
 ```
-:::
 
 Please document me!
 
-### socket-send
-::: tip usage
+## socket-send
 ```
-(socket-send ...)
+(socket-send sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
 ```
-:::
 
 Please document me!
 
-### socket-sendto
-::: tip usage
+## socket-sendto
 ```
-(socket-sendto ...)
+(socket-sendto sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
 ```
-:::
 
 Please document me!
 
-### socket-sendmsg
-::: tip usage
+## socket-sendmsg
 ```
-(socket-sendmsg ...)
+(socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)
 ```
-:::
 
 Please document me!
 
-### socket-recv
-::: tip usage
+## socket-recv
 ```
-(socket-recv ...)
+(socket-recv sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
 ```
-:::
 
 Please document me!
 
-### socket-recvfrom
-::: tip usage
+## socket-recvfrom
 ```
-(socket-recvfrom ...)
+(socket-recvfrom sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
 ```
-:::
 
 Please document me!
 
-### socket-recvmsg
-::: tip usage
+## socket-recvmsg
 ```
-(socket-recvmsg ...)
+(socket-recvmsg sock name io ctl flags)
 ```
-:::
 
 Please document me!
 
-### socket-recvmsg*
-::: tip usage
+## socket-recvmsg*
 ```
-(socket-recvmsg* ...)
+(socket-recvmsg* sock name-bytes rname io-bytes ctl-bytes rctl flags rflags)
 ```
-:::
 
 Please document me!
 
-### socket-getpeername
-::: tip usage
+## socket-getpeername
 ```
-(socket-getpeername ...)
+(socket-getpeername sock (sa #f))
 ```
-:::
 
 Please document me!
 
-### socket-getsockname
-::: tip usage
+## socket-getsockname
 ```
-(socket-getsockname ...)
+(socket-getsockname sock (sa #f))
 ```
-:::
 
 Please document me!
 
-### socket-getsockopt
-::: tip usage
+## socket-getsockopt socket-setsockopt
 ```
-(socket-getsockopt ...)
+(socket-getsockopt sock level opt)
+(socket-setsockopt sock level opt val)
+
+;;          level      opt                      get    set?
+(defsockopt SOL_SOCKET SO_ACCEPTCONN            int    #f)
+(defsockopt SOL_SOCKET SO_BINDTODEVICE          bytes  bytes)
+(defsockopt SOL_SOCKET SO_BROADCAST             int    int)
+(defsockopt SOL_SOCKET SO_DEBUG                 int    int)
+(defsockopt SOL_SOCKET SO_DOMAIN                int    #f)
+(defsockopt SOL_SOCKET SO_DONTROUTE             int    int)
+(defsockopt SOL_SOCKET SO_ERROR                 int    #f)
+(defsockopt SOL_SOCKET SO_KEEPALIVE             int    int)
+(defsockopt SOL_SOCKET SO_LINGER                linger linger)
+(defsockopt SOL_SOCKET SO_OOBLINE               int    int)
+(defsockopt SOL_SOCKET SO_PASSCRED              int    int)
+(defsockopt SOL_SOCKET SO_PEERCRED              bytes  bytes)
+(defsockopt SOL_SOCKET SO_PEEK_OFF              int    int)
+(defsockopt SOL_SOCKET SO_PROTOCOL              int    int)
+(defsockopt SOL_SOCKET SO_RCVBUF                int    int)
+(defsockopt SOL_SOCKET SO_SNDBUF                int    int)
+(defsockopt SOL_SOCKET SO_RCVLOWAT              int    int)
+(defsockopt SOL_SOCKET SO_SNDLOWAT              int    int)
+(defsockopt SOL_SOCKET SO_RCVTIMEO              tv     tv)
+(defsockopt SOL_SOCKET SO_SNDTIMEO              tv     tv)
+(defsockopt SOL_SOCKET SO_REUSEADDR             int    int)
+(defsockopt SOL_SOCKET SO_REUSEPORT             int    int)
+(defsockopt SOL_SOCKET SO_TYPE                  int    int)
+(defsockopt SOL_SOCKET SO_TIMESTAMP             int    int)
+(defsockopt SOL_SOCKET SO_USELOOPBACK           int    int)
+
+(defsockopt IPPROTO_IP IP_ADD_MEMBERSHIP         #f     mreq)
+(defsockopt IPPROTO_IP IP_DROP_MEMBERSHIP        #f     mreq)
+(defsockopt IPPROTO_IP IP_ADD_SOURCE_MEMBERSHIP  #f     mreq-src)
+(defsockopt IPPROTO_IP IP_DROP_SOURCE_MEMBERSHIP #f     mreq-src)
+(defsockopt IPPROTO_IP IP_BLOCK_SOURCE           #f     mreq-src)
+(defsockopt IPPROTO_IP IP_UNBLOCK_SOURCE         #f     mreq-src)
+(defsockopt IPPROTO_IP IP_FREEBIND               int    int)
+(defsockopt IPPROTO_IP IP_HDRINCL                int    int)
+(defsockopt IPPROTO_IP IP_MTU                    int    #f)
+(defsockopt IPPROTO_IP IP_MTU_DISCOVER           int    int)
+(defsockopt IPPROTO_IP IP_MULTICAST_ALL          int    int)
+(defsockopt IPPROTO_IP IP_MULTICAST_IF           #f     mreq)
+(defsockopt IPPROTO_IP IP_MULTICAST_LOOP         int    int)
+(defsockopt IPPROTO_IP IP_MULTICAST_TTL          int    int)
+(defsockopt IPPROTO_IP IP_NODEFRAG               int    int)
+(defsockopt IPPROTO_IP IP_OPTIONS                bytes  bytes)
+(defsockopt IPPROTO_IP IP_PKTINFO                bytes  bytes)
+(defsockopt IPPROTO_IP IP_RECVERR                int    int)
+(defsockopt IPPROTO_IP IP_RECVORIGDSTADDR        int    int)
+(defsockopt IPPROTO_IP IP_RECVOPTS               int    int)
+(defsockopt IPPROTO_IP IP_RECVTOS                int    int)
+(defsockopt IPPROTO_IP IP_RECVTTL                int    int)
+(defsockopt IPPROTO_IP IP_RETOPTS                int    int)
+(defsockopt IPPROTO_IP IP_ROUTER_ALERT           int    int)
+(defsockopt IPPROTO_IP IP_TOS                    int    int)
+(defsockopt IPPROTO_IP IP_TTL                    int    int)
+
+(defsockopt IPPROTO_IPV6 IPV6_ADDRFORM           #f     int)
+(defsockopt IPPROTO_IPV6 IPV6_ADD_MEMBERSHIP     #f     mreq6)
+(defsockopt IPPROTO_IPV6 IPV6_DROP_MEMBERSHIP    #f     mreq6)
+(defsockopt IPPROTO_IPV6 IPV6_MTU                int    int)
+(defsockopt IPPROTO_IPV6 IPV6_MTU_DISCOVER       int    int)
+(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_HOPS     int    int)
+(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_IF       int    int)
+(defsockopt IPPROTO_IPV6 IPV6_MULTICAST_LOOP     int    int)
+(defsockopt IPPROTO_IPV6 IPV6_RECVPKTINFO        int    int)
+(defsockopt IPPROTO_IPV6 IPV6_RTHDR              int    int)
+(defsockopt IPPROTO_IPV6 IPV6_AUTHHDR            int    int)
+(defsockopt IPPROTO_IPV6 IPV6_DSTOPTS            int    int)
+(defsockopt IPPROTO_IPV6 IPV6_HOPOPTS            int    int)
+(defsockopt IPPROTO_IPV6 IPV6_FLOWINFO           int    int)
+(defsockopt IPPROTO_IPV6 IPV6_HOPLIMIT           int    int)
+(defsockopt IPPROTO_IPV6 IPV6_ROUTER_ALERT       int    int)
+(defsockopt IPPROTO_IPV6 IPV6_UNICAST_HOPS       int    int)
+(defsockopt IPPROTO_IPV6 IPV6_V6ONLY             int    int)
+
+(defsockopt IPPROTO_TCP TCP_CONGESTION           #f     bytes)
+(defsockopt IPPROTO_TCP TCP_CORK                 int    int)
+(defsockopt IPPROTO_TCP TCP_DEFER_ACCEPT         int    int)
+(defsockopt IPPROTO_TCP TCP_KEEPCNT              int    int)
+(defsockopt IPPROTO_TCP TCP_KEEPIDLE             int    int)
+(defsockopt IPPROTO_TCP TCP_KEEPINTVL            int    int)
+(defsockopt IPPROTO_TCP TCP_MAXSEG               int    int)
+(defsockopt IPPROTO_TCP TCP_NODELAY              int    int)
+(defsockopt IPPROTO_TCP TCP_SYNCNT               int    int)
+
 ```
-:::
 
 Please document me!
 
-### socket-setsockopt
-::: tip usage
+## socket-domain
 ```
-(socket-setsockopt ...)
+(socket-domain sock)
 ```
-:::
 
 Please document me!
 
-### socket-domain
-::: tip usage
+## socket-address?
 ```
-(socket-domain ...)
+(socket-address? obj)
 ```
-:::
 
 Please document me!
 
-### socket-address?
-::: tip usage
+## make-socket-address make-socket-address-in make-socket-address-in6 make-socket-address-un
 ```
-(socket-address? ...)
+(make-socket-address af)
+(make-socket-address-in)
+=>  (make-socket-address AF_INET)
+(make-socket-address-in6)
+=>  (make-socket-address AF_INET6)
+(make-socket-address-un)
+=>  (make-socket-address AF_UNIX)
 ```
-:::
 
 Please document me!
 
-### make-socket-address
-::: tip usage
+## socket-address socket-address-in socket-address-in6 socket-address-un
 ```
-(make-socket-address ...)
+(socket-address addr)
+(socket-address-in host port)
+(socket-address-in6 host port)
+(socket-address-un path)
 ```
-:::
 
 Please document me!
 
-### make-socket-address-in
-::: tip usage
+## socket-address->address
 ```
-(make-socket-address-in ...)
+(socket-address->address sa)
 ```
-:::
 
 Please document me!
 
-### make-socket-address-in6
-::: tip usage
+## socket-address->string
 ```
-(make-socket-address-in6 ...)
+(socket-address->string sa)
 ```
-:::
 
 Please document me!
 
-### make-socket-address-un
-::: tip usage
+## socket-address-family
 ```
-(make-socket-address-un ...)
+(socket-address-family sa)
 ```
-:::
-
-Please document me!
-
-### socket-address
-::: tip usage
-```
-(socket-address ...)
-```
-:::
-
-Please document me!
-
-### socket-address-in
-::: tip usage
-```
-(socket-address-in ...)
-```
-:::
-
-Please document me!
-
-### socket-address-in6
-::: tip usage
-```
-(socket-address-in6 ...)
-```
-:::
-
-Please document me!
-
-### socket-address-un
-::: tip usage
-```
-(socket-address-un ...)
-```
-:::
-
-Please document me!
-
-### socket-address-&gt;address
-::: tip usage
-```
-(socket-address->address ...)
-```
-:::
-
-Please document me!
-
-### socket-address-&gt;string
-::: tip usage
-```
-(socket-address->string ...)
-```
-:::
-
-Please document me!
-
-### socket-address-family
-::: tip usage
-```
-(socket-address-family ...)
-```
-:::
 
 Please document me!
 
 
-### Constants
+## Constants
 ```
 AF_UNSPEC
 AF_INET

@@ -5,10 +5,9 @@
 :::
 
 ## sqlite-open
-::: tip usage
 ```
 (sql-connect sqlite-open ...)
+(sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
 ```
-:::
 
 Please document me!
