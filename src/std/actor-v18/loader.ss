@@ -22,9 +22,6 @@
   (spawn/name 'loader loader srv path))
 
 (def (loader srv path)
-  (with-exception-stack-trace (cut loader-main srv path)))
-
-(def (loader-main srv path)
   (register-actor! 'loader srv)
   (debugf "starting loader...")
 

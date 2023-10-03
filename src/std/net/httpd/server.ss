@@ -92,7 +92,7 @@
      (when (current-actor-server)
        (register-actor! 'httpd))
      (parameterize ((current-http-server (current-thread)))
-       (with-exception-stack-trace loop))
+       (loop))
      (catch (e)
        (errorf "unhandled exception: ~a" e)
        (raise e))

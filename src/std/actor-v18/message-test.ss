@@ -31,7 +31,7 @@
       (reset-thread!)
       (def (reply)
         (<- (value (--> (cons 'reply value)))))
-      (def reply-thread (spawn (cut with-exception-stack-trace reply)))
+      (def reply-thread (spawn reply))
       (check (->> reply-thread 'hello) => '(reply . hello))
       (thread-join! reply-thread))
 
@@ -39,7 +39,7 @@
       (reset-thread!)
       (def (reply)
         (thread-sleep! +inf.0))
-      (def reply-thread (spawn (cut with-exception-stack-trace reply)))
+      (def reply-thread (spawn reply))
       (check-exception (->> reply-thread 'hello timeout: 1) timeout-error?)
       (thread-terminate! reply-thread))
 
@@ -53,7 +53,7 @@
       (reset-thread!)
       (def (reply)
         (thread-sleep! +inf.0))
-      (def reply-thread (spawn (cut with-exception-stack-trace reply)))
+      (def reply-thread (spawn reply))
       (check (-> reply-thread 'hello) => 0)
       (check (<- (value value)
                  (else #f))
