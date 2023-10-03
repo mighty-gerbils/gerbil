@@ -541,10 +541,16 @@ namespace: gxc
     (when (current-compile-optimize)
       (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
-    (let* ((thr1 (go! (compile-runtime-code ctx)))
-           (thr2 (go! (compile-meta-code ctx))))
-      (join! thr1)
-      (join! thr2))
+
+    (if (null? (lift-nested-modules ctx))
+      (let* ((thr1 (go! (compile-runtime-code ctx)))
+             (thr2 (go! (compile-meta-code ctx))))
+        (join! thr1)
+        (join! thr2))
+      (begin
+        (compile-runtime-code ctx)
+        (compile-meta-code ctx)))
+
     (when (and (current-compile-optimize)
                (current-compile-generate-ssxi))
       (compile-ssxi-code ctx))))
