@@ -70,7 +70,7 @@ Command Options:
  -f --force                       force the action
  ```
 
-### Generating and administrative key pair
+### Generating an administrative key pair
 
 If you want to limit administrative actions only to administrators,
 you can generate an administraticve key pair with `gxensemble admin`.
