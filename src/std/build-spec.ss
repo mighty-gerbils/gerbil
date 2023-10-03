@@ -220,6 +220,10 @@
     ;; TODO to be ported
     ;;"net/websocket"
     (gxc: "net/repl" ,@(include-gambit-sharp))
+    "net/socks/interface"
+    "net/socks/client"
+    "net/socks/server"
+    "net/socks/api"
     "net/socks"
     ;; std/os
     (gxc: "os/error" ,@(include-gambit-sharp))
