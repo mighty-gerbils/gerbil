@@ -708,6 +708,7 @@
 
   (gerbil-load-expander!)
   (connect-to-server! server-id)
+  (remote-eval server-id '(##expand-source-set! identity))
   (set! module-registry
     (remote-eval server-id '(current-module-registry)))
   (let/cc exit
@@ -893,7 +894,6 @@
               (values object-files (reverse libraries))))))))))
 
 (def (do-registry opt)
-  (##expand-source-set! ##identity)
   (call-with-ensemble-server 'registry
                              (cut start-ensemble-registry!)
                              log-level: (hash-ref opt 'logging)
@@ -905,8 +905,6 @@
                              cookie:    (get-actor-server-cookie)))
 
 (def (do-run opt)
-  ;; unhook the expander for consistent eval
-  (##expand-source-set! ##identity)
   (let ((module-main (get-module-main (hash-ref opt 'module-id)))
         (main-args (hash-ref opt 'main-args)))
     (call-with-ensemble-server (hash-ref opt 'server-id)
