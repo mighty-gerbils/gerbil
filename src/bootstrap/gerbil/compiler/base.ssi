@@ -54,6 +54,14 @@ namespace: gxc
          (%#define-runtime
           symbol-table-bindings-set!
           gxc#symbol-table-bindings-set!)
+         (%#define-runtime &symbol-table-gensyms gxc#&symbol-table-gensyms)
+         (%#define-runtime &symbol-table-bindings gxc#&symbol-table-bindings)
+         (%#define-runtime
+          &symbol-table-gensyms-set!
+          gxc#&symbol-table-gensyms-set!)
+         (%#define-runtime
+          &symbol-table-bindings-set!
+          gxc#&symbol-table-bindings-set!)
          (%#define-syntax symbol-table |gxc[:0:]#symbol-table|)
          (%#define-runtime symbol-table:::init! gxc#symbol-table:::init!)
          (%#define-runtime raise-compile-error gxc#raise-compile-error)

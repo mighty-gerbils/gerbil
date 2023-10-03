@@ -25,12 +25,32 @@ package: gerbil/compiler
   (declare-type
    gxc#optimizer-info-methods-set!
    (@struct-setf gxc#optimizer-info::t 2 #f))
+  (declare-type
+   gxc#&optimizer-info-type
+   (@struct-getf gxc#optimizer-info::t 0 #t))
+  (declare-type
+   gxc#&optimizer-info-ssxi
+   (@struct-getf gxc#optimizer-info::t 1 #t))
+  (declare-type
+   gxc#&optimizer-info-methods
+   (@struct-getf gxc#optimizer-info::t 2 #t))
+  (declare-type
+   gxc#&optimizer-info-type-set!
+   (@struct-setf gxc#optimizer-info::t 0 #t))
+  (declare-type
+   gxc#&optimizer-info-ssxi-set!
+   (@struct-setf gxc#optimizer-info::t 1 #t))
+  (declare-type
+   gxc#&optimizer-info-methods-set!
+   (@struct-setf gxc#optimizer-info::t 2 #t))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
   (declare-type gxc#!type::t (@struct-type gxc#!type::t #f 1 #f ()))
   (declare-type gxc#!type? (@struct-pred gxc#!type::t))
   (declare-type gxc#make-!type (@struct-cons gxc#!type::t))
   (declare-type gxc#!type-id (@struct-getf gxc#!type::t 0 #f))
   (declare-type gxc#!type-id-set! (@struct-setf gxc#!type::t 0 #f))
+  (declare-type gxc#&!type-id (@struct-getf gxc#!type::t 0 #t))
+  (declare-type gxc#&!type-id-set! (@struct-setf gxc#!type::t 0 #t))
   (declare-type
    gxc#!alias::t
    (@struct-type gxc#!alias::t gxc#!type::t 0 #f ()))
@@ -72,6 +92,40 @@ package: gerbil/compiler
    gxc#!struct-type-methods-set!
    (@struct-setf gxc#!struct-type::t 5 #f))
   (declare-type
+   gxc#&!struct-type-super
+   (@struct-getf gxc#!struct-type::t 0 #t))
+  (declare-type
+   gxc#&!struct-type-fields
+   (@struct-getf gxc#!struct-type::t 1 #t))
+  (declare-type
+   gxc#&!struct-type-xfields
+   (@struct-getf gxc#!struct-type::t 2 #t))
+  (declare-type gxc#&!struct-type-ctor (@struct-getf gxc#!struct-type::t 3 #t))
+  (declare-type
+   gxc#&!struct-type-plist
+   (@struct-getf gxc#!struct-type::t 4 #t))
+  (declare-type
+   gxc#&!struct-type-methods
+   (@struct-getf gxc#!struct-type::t 5 #t))
+  (declare-type
+   gxc#&!struct-type-super-set!
+   (@struct-setf gxc#!struct-type::t 0 #t))
+  (declare-type
+   gxc#&!struct-type-fields-set!
+   (@struct-setf gxc#!struct-type::t 1 #t))
+  (declare-type
+   gxc#&!struct-type-xfields-set!
+   (@struct-setf gxc#!struct-type::t 2 #t))
+  (declare-type
+   gxc#&!struct-type-ctor-set!
+   (@struct-setf gxc#!struct-type::t 3 #t))
+  (declare-type
+   gxc#&!struct-type-plist-set!
+   (@struct-setf gxc#!struct-type::t 4 #t))
+  (declare-type
+   gxc#&!struct-type-methods-set!
+   (@struct-setf gxc#!struct-type::t 5 #t))
+  (declare-type
    gxc#!class-type::t
    (@struct-type gxc#!class-type::t gxc#!type::t 7 :init! ()))
   (declare-type gxc#!class-type? (@struct-pred gxc#!class-type::t))
@@ -104,6 +158,36 @@ package: gerbil/compiler
   (declare-type
    gxc#!class-type-methods-set!
    (@struct-setf gxc#!class-type::t 6 #f))
+  (declare-type gxc#&!class-type-super (@struct-getf gxc#!class-type::t 0 #t))
+  (declare-type gxc#&!class-type-mixin (@struct-getf gxc#!class-type::t 1 #t))
+  (declare-type gxc#&!class-type-slots (@struct-getf gxc#!class-type::t 2 #t))
+  (declare-type gxc#&!class-type-xslots (@struct-getf gxc#!class-type::t 3 #t))
+  (declare-type gxc#&!class-type-ctor (@struct-getf gxc#!class-type::t 4 #t))
+  (declare-type gxc#&!class-type-plist (@struct-getf gxc#!class-type::t 5 #t))
+  (declare-type
+   gxc#&!class-type-methods
+   (@struct-getf gxc#!class-type::t 6 #t))
+  (declare-type
+   gxc#&!class-type-super-set!
+   (@struct-setf gxc#!class-type::t 0 #t))
+  (declare-type
+   gxc#&!class-type-mixin-set!
+   (@struct-setf gxc#!class-type::t 1 #t))
+  (declare-type
+   gxc#&!class-type-slots-set!
+   (@struct-setf gxc#!class-type::t 2 #t))
+  (declare-type
+   gxc#&!class-type-xslots-set!
+   (@struct-setf gxc#!class-type::t 3 #t))
+  (declare-type
+   gxc#&!class-type-ctor-set!
+   (@struct-setf gxc#!class-type::t 4 #t))
+  (declare-type
+   gxc#&!class-type-plist-set!
+   (@struct-setf gxc#!class-type::t 5 #t))
+  (declare-type
+   gxc#&!class-type-methods-set!
+   (@struct-setf gxc#!class-type::t 6 #t))
   (declare-type
    gxc#!procedure::t
    (@struct-type gxc#!procedure::t gxc#!type::t 0 #f ()))
@@ -134,6 +218,16 @@ package: gerbil/compiler
   (declare-type
    gxc#!struct-getf-unchecked?-set!
    (@struct-setf gxc#!struct-getf::t 1 #f))
+  (declare-type gxc#&!struct-getf-off (@struct-getf gxc#!struct-getf::t 0 #t))
+  (declare-type
+   gxc#&!struct-getf-unchecked?
+   (@struct-getf gxc#!struct-getf::t 1 #t))
+  (declare-type
+   gxc#&!struct-getf-off-set!
+   (@struct-setf gxc#!struct-getf::t 0 #t))
+  (declare-type
+   gxc#&!struct-getf-unchecked?-set!
+   (@struct-setf gxc#!struct-getf::t 1 #t))
   (declare-type
    gxc#!struct-setf::t
    (@struct-type gxc#!struct-setf::t gxc#!procedure::t 2 #f ()))
@@ -149,6 +243,16 @@ package: gerbil/compiler
   (declare-type
    gxc#!struct-setf-unchecked?-set!
    (@struct-setf gxc#!struct-setf::t 1 #f))
+  (declare-type gxc#&!struct-setf-off (@struct-getf gxc#!struct-setf::t 0 #t))
+  (declare-type
+   gxc#&!struct-setf-unchecked?
+   (@struct-getf gxc#!struct-setf::t 1 #t))
+  (declare-type
+   gxc#&!struct-setf-off-set!
+   (@struct-setf gxc#!struct-setf::t 0 #t))
+  (declare-type
+   gxc#&!struct-setf-unchecked?-set!
+   (@struct-setf gxc#!struct-setf::t 1 #t))
   (declare-type
    gxc#!class-pred::t
    (@struct-type gxc#!class-pred::t gxc#!procedure::t 0 #f ()))
@@ -174,6 +278,16 @@ package: gerbil/compiler
   (declare-type
    gxc#!class-getf-unchecked?-set!
    (@struct-setf gxc#!class-getf::t 1 #f))
+  (declare-type gxc#&!class-getf-slot (@struct-getf gxc#!class-getf::t 0 #t))
+  (declare-type
+   gxc#&!class-getf-unchecked?
+   (@struct-getf gxc#!class-getf::t 1 #t))
+  (declare-type
+   gxc#&!class-getf-slot-set!
+   (@struct-setf gxc#!class-getf::t 0 #t))
+  (declare-type
+   gxc#&!class-getf-unchecked?-set!
+   (@struct-setf gxc#!class-getf::t 1 #t))
   (declare-type
    gxc#!class-setf::t
    (@struct-type gxc#!class-setf::t gxc#!procedure::t 2 #f ()))
@@ -189,6 +303,16 @@ package: gerbil/compiler
   (declare-type
    gxc#!class-setf-unchecked?-set!
    (@struct-setf gxc#!class-setf::t 1 #f))
+  (declare-type gxc#&!class-setf-slot (@struct-getf gxc#!class-setf::t 0 #t))
+  (declare-type
+   gxc#&!class-setf-unchecked?
+   (@struct-getf gxc#!class-setf::t 1 #t))
+  (declare-type
+   gxc#&!class-setf-slot-set!
+   (@struct-setf gxc#!class-setf::t 0 #t))
+  (declare-type
+   gxc#&!class-setf-unchecked?-set!
+   (@struct-setf gxc#!class-setf::t 1 #t))
   (declare-type
    gxc#!lambda::t
    (@struct-type gxc#!lambda::t gxc#!procedure::t 4 :init! ()))
@@ -204,6 +328,18 @@ package: gerbil/compiler
   (declare-type
    gxc#!lambda-inline-typedecl-set!
    (@struct-setf gxc#!lambda::t 3 #f))
+  (declare-type gxc#&!lambda-arity (@struct-getf gxc#!lambda::t 0 #t))
+  (declare-type gxc#&!lambda-dispatch (@struct-getf gxc#!lambda::t 1 #t))
+  (declare-type gxc#&!lambda-inline (@struct-getf gxc#!lambda::t 2 #t))
+  (declare-type
+   gxc#&!lambda-inline-typedecl
+   (@struct-getf gxc#!lambda::t 3 #t))
+  (declare-type gxc#&!lambda-arity-set! (@struct-setf gxc#!lambda::t 0 #t))
+  (declare-type gxc#&!lambda-dispatch-set! (@struct-setf gxc#!lambda::t 1 #t))
+  (declare-type gxc#&!lambda-inline-set! (@struct-setf gxc#!lambda::t 2 #t))
+  (declare-type
+   gxc#&!lambda-inline-typedecl-set!
+   (@struct-setf gxc#!lambda::t 3 #t))
   (declare-type
    gxc#!case-lambda::t
    (@struct-type gxc#!case-lambda::t gxc#!procedure::t 1 #f ()))
@@ -215,6 +351,12 @@ package: gerbil/compiler
   (declare-type
    gxc#!case-lambda-clauses-set!
    (@struct-setf gxc#!case-lambda::t 0 #f))
+  (declare-type
+   gxc#&!case-lambda-clauses
+   (@struct-getf gxc#!case-lambda::t 0 #t))
+  (declare-type
+   gxc#&!case-lambda-clauses-set!
+   (@struct-setf gxc#!case-lambda::t 0 #t))
   (declare-type
    gxc#!kw-lambda::t
    (@struct-type gxc#!kw-lambda::t gxc#!procedure::t 2 #f ()))
@@ -228,6 +370,14 @@ package: gerbil/compiler
   (declare-type
    gxc#!kw-lambda-dispatch-set!
    (@struct-setf gxc#!kw-lambda::t 1 #f))
+  (declare-type gxc#&!kw-lambda-table (@struct-getf gxc#!kw-lambda::t 0 #t))
+  (declare-type gxc#&!kw-lambda-dispatch (@struct-getf gxc#!kw-lambda::t 1 #t))
+  (declare-type
+   gxc#&!kw-lambda-table-set!
+   (@struct-setf gxc#!kw-lambda::t 0 #t))
+  (declare-type
+   gxc#&!kw-lambda-dispatch-set!
+   (@struct-setf gxc#!kw-lambda::t 1 #t))
   (declare-type
    gxc#!kw-lambda-primary::t
    (@struct-type gxc#!kw-lambda-primary::t gxc#!procedure::t 2 #f ()))
@@ -249,6 +399,18 @@ package: gerbil/compiler
   (declare-type
    gxc#!kw-lambda-primary-main-set!
    (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
+  (declare-type
+   gxc#&!kw-lambda-primary-keys
+   (@struct-getf gxc#!kw-lambda-primary::t 0 #t))
+  (declare-type
+   gxc#&!kw-lambda-primary-main
+   (@struct-getf gxc#!kw-lambda-primary::t 1 #t))
+  (declare-type
+   gxc#&!kw-lambda-primary-keys-set!
+   (@struct-setf gxc#!kw-lambda-primary::t 0 #t))
+  (declare-type
+   gxc#&!kw-lambda-primary-main-set!
+   (@struct-setf gxc#!kw-lambda-primary::t 1 #t))
   (declare-type
    gxc#!primitive::t
    (@class-type gxc#!primitive::t #f () () () #f ()))

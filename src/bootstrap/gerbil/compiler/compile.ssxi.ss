@@ -128,6 +128,18 @@ package: gerbil/compiler
   (declare-type
    gxc#meta-state-blocks-set!
    (@struct-setf gxc#meta-state::t 3 #f))
+  (declare-type gxc#&meta-state-src (@struct-getf gxc#meta-state::t 0 #t))
+  (declare-type gxc#&meta-state-n (@struct-getf gxc#meta-state::t 1 #t))
+  (declare-type gxc#&meta-state-open (@struct-getf gxc#meta-state::t 2 #t))
+  (declare-type gxc#&meta-state-blocks (@struct-getf gxc#meta-state::t 3 #t))
+  (declare-type gxc#&meta-state-src-set! (@struct-setf gxc#meta-state::t 0 #t))
+  (declare-type gxc#&meta-state-n-set! (@struct-setf gxc#meta-state::t 1 #t))
+  (declare-type
+   gxc#&meta-state-open-set!
+   (@struct-setf gxc#meta-state::t 2 #t))
+  (declare-type
+   gxc#&meta-state-blocks-set!
+   (@struct-setf gxc#meta-state::t 3 #t))
   (declare-type gxc#meta-state:::init! (@lambda 2 #f))
   (declare-type
    gxc#meta-state-block::t
@@ -160,6 +172,30 @@ package: gerbil/compiler
   (declare-type
    gxc#meta-state-block-code-set!
    (@struct-setf gxc#meta-state-block::t 3 #f))
+  (declare-type
+   gxc#&meta-state-block-ctx
+   (@struct-getf gxc#meta-state-block::t 0 #t))
+  (declare-type
+   gxc#&meta-state-block-phi
+   (@struct-getf gxc#meta-state-block::t 1 #t))
+  (declare-type
+   gxc#&meta-state-block-n
+   (@struct-getf gxc#meta-state-block::t 2 #t))
+  (declare-type
+   gxc#&meta-state-block-code
+   (@struct-getf gxc#meta-state-block::t 3 #t))
+  (declare-type
+   gxc#&meta-state-block-ctx-set!
+   (@struct-setf gxc#meta-state-block::t 0 #t))
+  (declare-type
+   gxc#&meta-state-block-phi-set!
+   (@struct-setf gxc#meta-state-block::t 1 #t))
+  (declare-type
+   gxc#&meta-state-block-n-set!
+   (@struct-setf gxc#meta-state-block::t 2 #t))
+  (declare-type
+   gxc#&meta-state-block-code-set!
+   (@struct-setf gxc#meta-state-block::t 3 #t))
   (declare-type gxc#meta-state-begin-phi! (@lambda 2 #f))
   (declare-type gxc#meta-state-add-phi! (@lambda 3 #f))
   (declare-type gxc#meta-state-end-phi! (@lambda 1 #f))

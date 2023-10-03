@@ -19,6 +19,18 @@ package: gerbil/compiler
   (declare-type
    gxc#symbol-table-bindings-set!
    (@struct-setf gxc#symbol-table::t 1 #f))
+  (declare-type
+   gxc#&symbol-table-gensyms
+   (@struct-getf gxc#symbol-table::t 0 #t))
+  (declare-type
+   gxc#&symbol-table-bindings
+   (@struct-getf gxc#symbol-table::t 1 #t))
+  (declare-type
+   gxc#&symbol-table-gensyms-set!
+   (@struct-setf gxc#symbol-table::t 0 #t))
+  (declare-type
+   gxc#&symbol-table-bindings-set!
+   (@struct-setf gxc#symbol-table::t 1 #t))
   (declare-type gxc#symbol-table:::init! (@lambda 1 #f))
   (declare-type gxc#raise-compile-error (@lambda (2) #f))
   (declare-type gxc#verbose (@lambda (0) #f))

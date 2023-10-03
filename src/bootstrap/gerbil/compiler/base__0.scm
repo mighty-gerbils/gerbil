@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1695392691)
+  (define gerbil/compiler/base::timestamp 1696371935)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -50,6 +50,22 @@
       (let ()
         (declare (not safe))
         (make-struct-field-mutator gxc#symbol-table::t '1)))
+    (define gxc#&symbol-table-gensyms
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-accessor gxc#symbol-table::t '0)))
+    (define gxc#&symbol-table-bindings
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-accessor gxc#symbol-table::t '1)))
+    (define gxc#&symbol-table-gensyms-set!
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-mutator gxc#symbol-table::t '0)))
+    (define gxc#&symbol-table-bindings-set!
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-mutator gxc#symbol-table::t '1)))
     (define gxc#symbol-table:::init!
       (lambda (_self532_)
         (if (let ((__tmp5353
