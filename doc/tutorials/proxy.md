@@ -22,6 +22,7 @@ macro from the [:std/contract](/reference/std/contract.md) module.
 The source code for the tutorial is available at [src/tutorial/proxy](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy).
 You can build the programs using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/proxy/build.ss):
 ```
+$ cd gerbil/src/tutorial/proxy
 $ gerbil build
 ...
 ```
