@@ -31,6 +31,7 @@ $ gerbil build
 
 The first variant of the [transparent proxy](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy1.ss) listens to a local port and
 proxies all incoming connections to a specified remote server.
+It is implemented using low level [raw socket devices](/reference/std/os/socket.md).
 
 ### The main function
 
@@ -40,16 +41,15 @@ It simply parses the arguments to the program using the [getopt](../reference/ge
 and dispatches to `run` which is the server main loop:
 ```scheme
 (def (main . args)
-  (def gopt
-    (getopt (argument 'local help: "local address to bind")
-            (argument 'remote help: "remote address to proxy to")))
-  (try
-   (let (opt (getopt-parse gopt args))
-     (start-logger!)
-     (run (hash-get opt 'local) (hash-get opt 'remote)))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "tcp-proxy" (current-error-port))
-     (exit 1))))
+  (call-with-getopt proxy-main args
+    program: "tcp-proxy"
+    help: "A transparent TCP proxy"
+    (argument 'local help: "local address to bind")
+    (argument 'remote help: "remote address to proxy to")))
+
+(def (proxy-main opt)
+  (start-logger!)
+  (run (hash-get opt 'local) (hash-get opt 'remote)))
 ```
 
 ### The server main loop
