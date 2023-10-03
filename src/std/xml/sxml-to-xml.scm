@@ -502,7 +502,7 @@
                                    (@char>> #\/ port)))
                         (@char>> #\> port))))
           (cond ((or (pair? content)
-                     (memq nam '(iframe div span textarea link script style ul))) ; For XHTML support
+                     (memq nam '(iframe div span textarea script style ul))) ; For XHTML support
                  (out>>/body>> (body->>> content))) ;; first I called it body->>> body>>/body. that would be sick
                 ((null? content)
                  (end>>))

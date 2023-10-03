@@ -4,8 +4,7 @@
 (export #t)
 
 (def (ensemble-base-path)
-  (path-expand
-   (path-expand "ensemble" (getenv "GERBIL_PATH" "~/.gerbil"))))
+  (path-expand "ensemble" (gerbil-path)))
 
 (def (ensemble-server-path server-id)
   (path-expand (symbol->string server-id)
