@@ -53,7 +53,7 @@ has the following fields:
   - `'ping` for a ping message; the programmer should reply with `'pong` message.
   - `'pong` for a pong message, sent as a reply to a previous `'ping`.
   - `'close` for gracefully closing the socket; the program should close the websocket.
-- `partial?` is a boolean, with true value indicating that this a partial message.
+- `partial?` is a boolean, with true value indicating that this is a partial message.
 
 ## websocket-connect
 ```scheme
