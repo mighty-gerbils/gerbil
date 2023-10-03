@@ -6,6 +6,7 @@
         :std/os/error
         :std/io
         :std/actor
+        :std/net/address
         :std/text/utf8
         :std/misc/threads
         :std/sugar
@@ -164,15 +165,18 @@
             (let (next (reader.read-u8!))
               (if (fx= next 0)
                 (let* ((host (list->u8vector (reverse! bytes)))
-                       (host-str (utf8->string host)))
-                  (using (proxy-sock (tcp-connect (cons host-str port) default-connect-timeout) :- StreamSocket)
+                       (host (utf8->string host))
+                       (resolved (resolve-address (cons host port))))
+                  (when (sensitive-host? (car resolved))
+                    (raise-io-error socks4-connect "attempt to connect to local host"))
+                  (using (proxy-sock (tcp-connect resolved default-connect-timeout) :- StreamSocket)
                     (let* ((peer-address (proxy-sock.peer-address))
                            (host (car peer-address))
                            (port (cdr peer-address)))
                       (accept! host port))
                     (socks-proxy-pump sock proxy-sock)))
                 (lp (cons next bytes) (fx+ rd 1)))))))
-       ((equal? (u8vector-ref host 0) 127)   ; localhost? uhm, no
+       ((sensitive-host? host)
         (raise-io-error socks4-connect "attempt to connect to local host"))
        (else
         (let (proxy-sock (tcp-connect (cons host port) default-connect-timeout))
@@ -301,7 +305,7 @@
         ((1)                            ; IPv4
          (let* ((host (make-u8vector 4))
                 (_ (reader.read host 0 4 4))
-                (_ (when (equal? (u8vector-ref host 0) 127) ; localhost? uhm, no
+                (_ (when (sensitive-host? host)
                      (raise-io-error socks5-connect "attempt to connect to local host")))
                 (port (reader.read-u16))
                 (proxy-sock (tcp-connect (cons host port) default-connect-timeout)))
@@ -312,8 +316,11 @@
                 (host (make-u8vector len))
                 (_ (reader.read host 0 len len))
                 (host (utf8->string host))
-                (port (reader.read-u16)))
-           (using (proxy-sock (tcp-connect (cons host port) default-connect-timeout) :- StreamSocket)
+                (port (reader.read-u16))
+                (resolved (resolve-address (cons host port))))
+           (when (sensitive-host? (car resolved))
+             (raise-io-error socks4-connect "attempt to connect to local host"))
+           (using (proxy-sock (tcp-connect resolved default-connect-timeout) :- StreamSocket)
              (let* ((peer-address (proxy-sock.peer-address))
                     (host (car peer-address))
                     (port (cdr peer-address)))
@@ -322,7 +329,7 @@
         ((4)                            ; IPv6
          (let* ((host (make-u8vector 16))
                 (_ (reader.read host 0 16 16))
-                (_ (when (equal? (u8vector-ref host 0) 127) ; localhost? uhm, no
+                (_ (when (sensitive-host? host)
                      (raise-io-error socks5-connect "attempt to connect to local host")))
                 (port (reader.read-u16))
                 (proxy-sock (tcp-connect (cons host port) default-connect-timeout)))
@@ -384,3 +391,8 @@
            (listen! inaddr-any6)))
         (else
          (raise-io-error socks5-bind "bad binding" atyp))))))
+
+(def (sensitive-host? ip)
+  (if (fx= (u8vector-length ip) 4)
+    (fx= (u8vector-ref ip 0) 127)
+    (equal? ip localhost6)))
