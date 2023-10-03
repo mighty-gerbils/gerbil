@@ -1,7 +1,11 @@
+
+
+# Gerbil on MacOS
+
 To install gerbil on MacOS the easy way is simply to download the
 homebrew `.rb` and run it as such.
 
-    wget https://raw.githubusercontent.com/drewc/gerbil/homebrew-diff/homebrew/gerbil-scheme.rb
+    wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
     brew install --formula -vd gerbil-scheme.rb
 
 The run the bleeding edge master build simply pass the `--HEAD` argument.
@@ -10,6 +14,10 @@ The run the bleeding edge master build simply pass the `--HEAD` argument.
 
 
 # Documentation
+
+<!---
+  The markdown file "macos.md" is weaved (AKA generated) from the homebrew/README.org file.
+ -->
 
 Gerbil is fully available for MacOS! There are some differences that
 need to be taken into account should you wish to compile and
