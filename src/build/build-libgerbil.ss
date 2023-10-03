@@ -107,15 +107,17 @@
     (fold-options "-ld-options" stdlib-spec base)))
 
 (def (fold-options opt stdlib-spec base)
-  (let lp ((rest stdlib-spec) (result base))
-    (match rest
-      ([spec . rest]
-       (cond
-        ((pget opt (cdr spec))
-         => (lambda (val)
-              (lp rest (string-append result " " val))))
-        (else (lp rest result))))
-      (else result))))
+  (filter
+    (lambda (arg) (not (string-prefix? "-L/private/tmp/" arg)))
+    (let lp ((rest stdlib-spec) (result base))
+      (match rest
+	([spec . rest]
+	 (cond
+	  ((pget opt (cdr spec))
+	   => (lambda (val)
+		(lp rest (string-append result " " val))))
+	  (else (lp rest result))))
+	(else result)))))
 
 (def (order-modules all-modules)
   (def visited-modules

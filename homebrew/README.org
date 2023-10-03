@@ -1,6 +1,249 @@
 #+TITLE: Homebrew : Fetch us a pint o' Gerbil!
+#+OPTIONS: tags:nil toc:nil
 
-I just got a Mac. I need to run gerbil. Bleeding edge even!
+To install gerbil on MacOS the easy way is simply to download the
+homebrew =.rb= and run it as such.
+
+#+begin_src sh
+wget https://raw.githubusercontent.com/drewc/gerbil/homebrew-diff/homebrew/gerbil-scheme.rb
+brew install --formula -vd gerbil-scheme.rb
+#+end_src
+
+The run the bleeding edge master build simply pass the =--HEAD= argument.
+
+#+begin_src sh
+brew install --HEAD --formula -vd gerbil-scheme.rb
+#+end_src
+
+
+* Documentation                                                
+
+Gerbil is fully available for MacOS! There are some differences that
+need to be taken into account should you wish to compile and
+distribute a binary but it should JustWork(tm) all things considered.
+
+** =DYLD_LIBRARY_PATH= and stripping: System Integrity Protection (SIP)
+
+Ah stripping. Whether you love it or hate it, it happens, often witout
+a say. System Integrity Protection (SIP) in macOS protects the entire
+system by preventing the execution of unauthorized code.
+
+In short the mantra is "Don't Shell Out!". The environment is propagated when just calling =gxi=.
+
+#+begin_src sh
+% gxi -e '(displayln (getenv "DYLD_LIBRARY_PATH" #f))'
+/opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+#+end_src
+
+It may not propagate with a shebang or other reasons. It seems
+arbitrary. For example I updated my older iMac to an unsupported
+Ventura. It does not strip for me.
+
+#+begin_src sh
+$ uname -a
+Darwin drewc-iMac.local 22.6.0 Darwin Kernel Version 22.6.0: Tue Aug 15 20:13:24 PDT 2023; root:xnu-8796.141.3.700.5~2/RELEASE_X86_64 x86_64
+$ export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
+$ LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+$ DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+$ echo '#!/bin/sh' > /tmp/foo
+$ echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
+$ echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
+$ echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
+$ chmod 755 /tmp/foo
+$ /tmp/foo
+dy?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+ld?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+my?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+#+end_src
+
+Whereas my Mac Mini, also running Ventura, does indeed strip.
+
+#+begin_src sh
+% uname -a
+Darwin users-Mac-mini.local 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:41 PST 2023; root:xnu-8796.101.5~3/RELEASE_ARM64_T8103 arm64
+% export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
+% DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+% LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+% export DYLD_LIBRARY_PATH LD_LIBRARY_PATH
+% echo '#!/bin/sh' > /tmp/foo
+% echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
+% echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
+% echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
+% chmod 755 /tmp/foo
+% /tmp/foo
+dy?:
+ld?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+my?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+#+end_src
+
+So be cautious with =DYLD_LIBRARY_PATH= and friends. Even better is to
+pass an =-rpath= to =ld= along with a =-L<library-path>= for building
+if needed.
+
+
+** The Mac =ld= and =-rpath=: No strippers allowed! 
+
+Because MacOS tries to keep things SI(m)P'le often their =ld= is not capable
+of finding our =.so='s, =.a='s, or =.dylib='s.
+
+To deal with that there is the =-rpath= parameter for Apple's =ld=.
+
+#+begin_quote
+ -rpath path Add path to the runpath search path list for image being
+             created.  At runtime, dyld uses the runpath when
+             searching for dylibs whose load path begins with @rpath/.
+#+end_quote
+
+What does that mean? In MacOS, every dynamic library has an [[https://developer.apple.com/forums/thread/736719][install
+name]]. Now, Xcode seems to [[https://developer.apple.com/forums/thread/736728][do it a certain way]]. But we are not Xcode
+and I do not even know what is is or what it entails.
+
+In linux we can just set the =LD_LIBRARY_PATH= if needed but really it
+does so much magic to find libraries that it's fairly easy to get by
+without setting much of anything.
+
+In MacOS there's the often stripped and must be manually propagated
+=DYLD_LIBRARY_PATH=.
+
+
+#+begin_src sh
+cd /tmp 
+mkdir example
+cat > example/gerbil.pkg <<EOF
+(package: example)
+EOF
+
+cat > example/hello.ss <<EOF
+(export main)
+(def (main . args)
+  (displayln "hello, world"))
+EOF
+
+gxc -O -exe -o hello example/hello.ss
+./hello
+
+# hello, world
+#+end_src
+
+**BUG** : ld: warning: directory not found for option '-L/private/tmp/gerbil-scheme-20231001-63059-1rk8o36/build/lib
+ This is because I set -L in build spec to deal with these issues. Fsck.
+
+ 
+
+
+
+
+https://www.fullstaq.com/knowledge-hub/blogs/an-alternative-to-macos-dyld-library-path
+
+** Unsupported Upgrades
+
+My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by 
+[[https://www.macworld.com/article/672461/how-to-install-macos-on-unsupported-mac.html][installing MacOS on an unsupported Mac]]. It worked but there are a few things different about it.
+
+Here's where I put such things.
+
+#+begin_src sh
+alias otool=/Library/Developer/CommandLineTools/usr/bin/otool
+#+end_src
+
+
+
+
+
+
+
+
+
+* The Formula                                                      :noexport:
+:PROPERTIES:
+:header-args:ruby: :tangle gerbil-scheme.rb :padline no
+:END:
+
+Homebrew uses [[#RubyIsms][Ruby]] for its DSL. That means =GerbilScheme= is a subclass of =Formula=.
+
+
+#+begin_src ruby :comments yes
+class GerbilScheme < Formula
+#+end_src
+
+There's some meta-info that's nice to have.
+
+#+begin_src ruby
+  desc "Opinionated dialect of Scheme designed for Systems Programming"
+  homepage "https://cons.io"
+  license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+#+end_src
+
+Now where it will install from, and how it gets it. The tag is the version.
+
+#+begin_src ruby
+  url "https://github.com/drewc/gerbil.git", using: :git, branch: "homebrew-diff"
+  head "file:///Users/drewc/me/src/gerbil-diff", using: :git, branch: "homebrew-diff"
+  version "17.9"
+  revision 0
+#+end_src
+
+Now the things it depends on.
+
+#+begin_src ruby
+  depends_on "openssl@3"
+  depends_on "sqlite"
+  depends_on "zlib"
+  depends_on "gcc"
+
+  fails_with :clang do
+    cause "gerbil-scheme is built with GCC"
+  end
+#+end_src
+
+Now the dirt. The install process is as it should be! ~./configure && make && make install~.
+
+
+#+begin_src ruby
+    def install
+        system "./configure", "--prefix=#{prefix}" #, "--disable-shared"
+              
+        system "make"
+        ENV.deparallelize
+        system "make", "install"
+#+end_src
+
+
+Now we want to have homebrew link certain binaries. The default
+install has a symlink for the =./bin/= and that's a good thing! This
+way we can choose what files actually go in the global bin.
+
+
+#+begin_src ruby
+        rm prefix/"bin"
+        mkdir prefix/"bin"
+
+        cd prefix/"current/bin" do
+           ln "gerbil", prefix/"bin", verbose: true
+           cp %w(gxc gxensemble gxi gxpkg gxprof gxtags gxtest), prefix/"bin"
+        end
+    end
+
+#+end_src
+
+That's that!
+
+
+#+begin_src ruby
+
+    test do
+      assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+    end
+#+end_src
+
+
+#+begin_src ruby
+end
+#+end_src
+
+* Appendix                                                         :noexport:
+
+This is just random junk that I do not yet wish to get rid of.
 
 #+begin_src sh
 ./build.sh env bash
@@ -29,78 +272,36 @@ gsc -obj -cc-options -D___DYNAMIC libssl__0.c libssl__0.o1.c
 gcc -shared -o libssl.o1 libssl__0.o libssl__0.o1.o `pkg-config --libs libssl` `pkg-config --libs libcrypto` -L${LD_LIBRARY_PATH} -lgambit
 #+end_src
 
-* Usage
-
-Right now it's not in the upstream tap, or any tap for that matter. 
 
 
+** Diff
+#+begin_src sh
+git clone git@github.com:drewc/gerbil.git gerbil-diff
+cd gerbil-diff
+git remote add upstream git@github.com:mighty-gerbils/gerbil.git
+git checkout -b oldmaster master
+git push --set-upstream origin oldmaster
+git branch -d master
+git checkout -b master upstream/master
+git push --force --set-upstream origin master
 
+git checkout homebrew-v18
+git checkout -b other-homebrew-v18 homebrew-v18
+git merge -Xtheirs master
+git push --force --set-upstream origin other-homebrew-v18
 
-For a homebrew 
-* The Formula
-:PROPERTIES:
-:header-args:ruby: :tangle gerbil-scheme.rb :padline no
-:END:
+git diff --raw -p master > master-diff
+git checkout -b homebrew-diff master
+patch -p1 < master-diff
 
-Homebrew uses [[#RubyIsms][Ruby]] for its DSL. That means =GerbilScheme= is a subclass of =Formula=.
-
-#+begin_src ruby
-class GerbilScheme < Formula
+git add --all
+git restore --staged master-diff
+rm master-diff
+git commit -m "Fix the MacOS build and add a homebrew"
+git push --set-upstream origin homebrew-diff
 #+end_src
 
-There's some meta-info that's nice to have.
-
-#+begin_src ruby
-  desc "Opinionated dialect of Scheme designed for Systems Programming"
-  homepage "https://cons.io"
-  license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
-#+end_src
-
-Now where it will install from, and how it gets it. The tag is the version.
-
-#+begin_src ruby
-  url "https://github.com/drewc/gerbil.git", using: :git, branch: "homebrew-v18"
-  head "file:///Users/drewc/me/src/gerbil", using: :git, branch: "homebrew-v18"
-  version "18-alpha-1"
-#+end_src
-
-Now the things it depends on.
-
-#+begin_src ruby
-  depends_on "openssl@3"
-  depends_on "sqlite"
-  depends_on "gcc"
-
-  fails_with :clang do
-    cause "gerbil-scheme is built with GCC"
-  end
-#+end_src
-
-Now the dirt. The install process is as it should be! ~./configure && make && make install~.
-
-
-
-
-#+begin_src ruby
-    def install
-        system "./configure", "--prefix=#{prefix}" #, "--disable-shared"
-              
-        system "make"
-        ENV.deparallelize
-        system "make", "install"
-    end
-
-    test do
-      assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
-    end
-#+end_src
-
-
-#+begin_src ruby
-end
-#+end_src
-  
-* Ruby-isms
+** Ruby-isms
 :PROPERTIES:
 :CUSTOM_ID: RubyIsms
 :END:
@@ -115,7 +316,7 @@ Haven't really used ruby at all? So, install it!
 
 
 
-* Development, AKA =gerbil-scheme-local=
+** Development, AKA =gerbil-scheme-local=
 
 For testing I need to make this all local and quick. To start with I'll make a branch, commit to it, and try to build from there.
 
@@ -264,7 +465,7 @@ When running it fails with
 #+end_src
 
 
-* Upstream
+** Upstream
 
 i PATH="/usr/local/opt/binutils/bin:$PATH"
 #+begin_src sh :results verbatim :wrap src ruby
