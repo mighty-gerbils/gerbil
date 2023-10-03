@@ -6,6 +6,7 @@ namespace: gxc
 
 (import :gerbil/expander
         :gerbil/gambit
+        :gerbil/runtime/error
         "base"
         "compile"
         "optimize")
@@ -540,8 +541,10 @@ namespace: gxc
     (when (current-compile-optimize)
       (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
-    (compile-runtime-code ctx)
-    (compile-meta-code ctx)
+    (let* ((thr1 (go! (compile-runtime-code ctx)))
+           (thr2 (go! (compile-meta-code ctx))))
+      (join! thr1)
+      (join! thr2))
     (when (and (current-compile-optimize)
                (current-compile-generate-ssxi))
       (compile-ssxi-code ctx))))
@@ -659,7 +662,8 @@ namespace: gxc
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
-    (for-each compile-phi phi-code)))
+    (let (threads (map (lambda (code) (go! (compile-phi code))) phi-code))
+      (for-each  join! threads))))
 
 (def (compile-ssxi-code ctx)
   (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
@@ -881,3 +885,15 @@ namespace: gxc
       (unless (zero? status)
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              program)))))
+
+(defrules go! ()
+  ((_ expr)
+   (spawn (lambda () expr))))
+
+(def (join! thread)
+  (with-catch
+   (lambda (exn)
+     (if (uncaught-exception? exn)
+       (raise (uncaught-exception-reason exn))
+       (raise exn)))
+   (cut thread-join! thread)))
