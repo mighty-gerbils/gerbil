@@ -1,4 +1,4 @@
-# List utilities 
+# List utilities
 
 ::: tip To use the bindings from this module:
 ``` scheme
@@ -67,7 +67,7 @@ Also, either of these two lists is allowed to be circular, but not both.
 ```
 
 Checks how the length of *lst* compares to *n* and returns a truth value result
-(`#t` or `#f`). Signals an error when n isn't a valid number.
+(`#t` or `#f`). Signals an error when *n* isn't a valid number.
 
 | function            | less efficient variant |
 |:--------------------|:-----------------------|
@@ -96,69 +96,7 @@ Also, *lst* is allowed to be circular.
 ```
 :::
 
-## call-with-list-builder ##
-
-``` scheme
-(call-with-list-builder proc) -> list
-
-  proc := procedure that takes two proc identifiers as input
-```
-
-Takes a procedure or lambda *proc* which itself takes two procedures that can have
-any name but are called *put!* and *peek* here:
-
-- *put!* will append its input element onto an internal list (and thus modifies
-  it) on each invocation.
-- *peek* retrieves the elements collected so far, or `[]` if *put!* is never called.
-
-Finally, `call-with-list-builder` returns the constructed list.
-
-::: tip Examples:
-``` scheme
-> (import :std/iter)
-> (call-with-list-builder
-    (lambda (put! peek)
-      (for (x (in-range 5 10))
-        (displayln (peek))
-        (put! (random-integer (1+ x))))))
-()           ; no prior put!
-(5)
-(5 6)
-(5 6 2)
-(5 6 2 8)    ; fifth explicit peek call
-(5 6 2 8 6)  ; peek is called implicitly at the end
-```
-:::
-
-## with-list-builder ##
-
-``` scheme
-(with-list-builder (put! [peek]) body ...) -> list
-
-  put! := function identifier that modifies internal list
-  peek := optional function identifier that retrieves internal list
-```
-
-Syntax sugar for the `call-with-list-builder` procedure, so *put!* and *peek* can
-be used without wrapping them in a lambda first. `with-list-builder` returns the
-internal list at the end.
-
-::: tip Examples:
-``` scheme
-> (import :std/iter)
-> (with-list-builder (put!)
-    (for (n (in-iota 100 1))
-      (let ((mod3 (zero? (modulo n 3)))
-            (mod5 (zero? (modulo n 5))))
-        (put! (cond ((and mod3 mod5) "fizzbuzz")
-                    (mod3 "fizz")
-                    (mod5 "buzz")
-                    (else n))))))
-(1 2 "fizz" 4 "buzz" "fizz" ... 97 98 "fizz" "buzz")
-```
-:::
-
-## snoc ##
+## snoc, append1 ##
 
 ``` scheme
 (snoc elem lst) -> list | error
@@ -207,6 +145,9 @@ latter returns an improper list when appending a non-list *elem* to *lst*.
 second list as-is.
 
 Signals an error when *lst* is not a list.
+
+Note that `snoc` and `append1` have the same function body, just with
+their two arguments swapped.
 
 ::: tip Examples:
 ``` scheme
@@ -283,9 +224,11 @@ error    ; list expected
   lst  := list
 ```
 
-Macro that conses *elem* onto *lst* and `set!`s *lst* accordingly. *lst* needs
-to be bound beforehand or it signals an error. It's unspecified what `push!`
-returns otherwise.
+Macro that conses *elem* onto *lst* and `set!`s *lst* accordingly.
+*lst* needs to be bound beforehand or it signals an error.
+It's unspecified what `push!` returns otherwise.
+Note that the argument order is element first and list second,
+as is traditional with the original Lisp `PUSH` macro.
 
 ::: tip Examples:
 ``` scheme
@@ -315,8 +258,9 @@ error    ; uses set! internally, requires valid binding
   lst  := list, from which the first element will be removed
 ```
 
-Macro that checks whether the *lst* is a cons cell, if so returns the car of that cons cell,
-and sets *lst* to the cdr of that cons cell, otherwise returns `#f`.
+Macro that checks whether the *lst* is a cons cell, if so returns
+the car of that cons cell, and sets *lst* to the cdr of that cons cell,
+otherwise returns `#f`.
 
 ::: tip Examples:
 ``` scheme
@@ -337,14 +281,15 @@ and sets *lst* to the cdr of that cons cell, otherwise returns `#f`.
 ## flatten ##
 
 ``` scheme
-(flatten lst) -> list
+(flatten tree) -> list
 
-  lst := proper nested list-of-lists
+  tree := nested list of lists
 ```
 
-Removes all layers of nesting from *lst*, which is expected to be a proper
-list-of-lists (or tree structure). It will ignore any empty lists it encounters
-while traversing, not adding them to the returned flattened list.
+Flatten a `tree` into a list. The argument `tree` can be a list of lists,
+where pairs are branching nodes and the empty list is an empty tree, and
+the elements that are neither pairs nor empty lists are values to be accumulated
+left to right into a list, that is returned.
 
 ::: tip Examples:
 ```scheme
@@ -354,8 +299,8 @@ while traversing, not adding them to the returned flattened list.
 > (flatten [1 [] [2 [3 [] 4] 5]])
 (1 2 3 4 5)  ; ignores empty sublists
 
-> (flatten '((a . 1) (b . 2) (c . 3)))
-(a b c)      ; expects proper non-dotted list-of-lists
+> (flatten '((a 1 . b) (2 c . 3) d . 4)))
+(a 1 b 2 c 3 d 4) ; improper list terminators are tree elements like others
 ```
 :::
 
@@ -393,9 +338,7 @@ error    ; expects proper non-dotted list-of-lists
 ```
 :::
 
-## unique ##
-
-## unique! ##
+## unique, unique! ##
 
 ``` scheme
 (unique lst [test = equal?]) -> list
@@ -475,6 +418,30 @@ otherwise.
 ```
 :::
 
+## when/list ##
+
+``` scheme
+(when/list cond lst) -> list  | []
+
+  cond := expression that evaluates to a generalized boolean
+  lst := expression evaluated and returned if cond was true
+```
+
+`when/list` is like `when` but returns `[]` instead of `(void)` when the condition is false.
+It is meant to be used when a list is expected, for instance, a list of options or keyword arguments,
+that are only defined when some feature is enabled or other condition is true.
+
+::: tip Examples:
+``` scheme
+> (when/list #t [mykw: 42])
+(mykw: 42)
+> (when/list #f [mykw: 42])
+()
+> (when/list #f (error "foo"))
+()
+```
+:::
+
 ## when-list-or-empty ##
 
 ``` scheme
@@ -496,6 +463,63 @@ otherwise an empty list is returned.
 > (when-list-or-empty []
     (cons "never" "expanded"))
 ()
+```
+:::
+
+## listify ##
+
+``` scheme
+(listify x) -> list
+
+  x := expression that is returned if a list, or else [] is returned
+```
+
+`listify` always returns a list: when the argument `x` is a list, it is returned,
+otherwise return the empty list `[]`.
+
+::: tip Examples:
+``` scheme
+> (listify 42)
+()
+> (listify [])
+()
+> (listify ["proper" "list"])
+("proper" "list")
+> (listify ["improper" . "list"])
+("improper" . "list")
+```
+:::
+
+## keyword-when ##
+
+``` scheme
+(keyword-when cond [value]) -> list
+
+  keyword := arbitrary value, usually a keyword
+  cond := expression that if true, triggers the keyword-value list to be returned
+  value := expression evaluated if cond is true, returned as the value in the list
+```
+
+`keyword-when` always returns a list: when the `cond` is true, the list
+`[keyword value]` is returned, otherwise the empty list `[]`.
+If `value` is not specified, the non-false value returned by `cond` is used
+(but `cond` is only evaluated once, in case it has side-effects).
+`keyword` doesn't actually have to be a keyword.
+
+::: tip Examples:
+``` scheme
+> (keyword-when mykw: #t 42)
+(mykw: 42)
+> (keyword-when mykw: #f 42)
+()
+> (keyword-when mykw: "true")
+(mykw: "true")
+> (keyword-when mykw: #f)
+()
+> (keyword-when mykw: #f (error "foo"))
+()
+> (keyword-when "not a keyword" #t 42)
+("not a keyword" 42)
 ```
 :::
 
@@ -672,24 +696,114 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 ```
 :::
 
-## group ##
+## group-consecutive ##
 
 ``` scheme
-(group lst [test = equal?]) -> list
+(group-consecutive lst [test = equal?]) -> list
 
   lst  := proper list
   test := optional, binary predicate
 ```
-group consecutive elements of the list `lst` into a list-of-lists.
+group consecutive elements of the list `lst` into a list-of-lists
+wherein elements that satisfy the predicate with the previous element
+are put in the same list, but those that don't are put in the next list.
 
 ::: tip Examples:
 ``` scheme
-> (group [1 2 2 3 1 1])
+> (group-consecutive [1 2 2 3 1 1])
 ((1) (2 2) (3) (1 1))
 
 > (import :std/sort)
-> (group (sort [1 2 2 3 1 1] <) eqv?)
+> (group-consecutive (sort [1 2 2 3 1 1] <) eqv?)
 ((1 1 1) (2 2) (3))
+
+> (group-consecutive [1 2 3 2 2 3 4 0 3 5] <)
+((1 2 3) (2) (2 3 4) (0 3 5))
+```
+:::
+
+## group-n-consecutive ##
+
+``` scheme
+(group-n-consecutive n lst) -> list-of-list
+
+  n    := a positive integer
+  lst  := list
+```
+
+group elements of the list `lst` into clusters of `n` elements, resulting
+in a a list-of-lists that when concatenated return a list equal to `lst`.
+each element of the result list is a non-empty list, and the last element
+and that element only may have fewer than `n` elements, if `n` does not
+divide the length of the original list.
+If `lst` is an improper list, the last element of the result will be an
+improper list with the same terminator.
+
+::: tip Examples:
+``` scheme
+> (group-n-consecutive 2 [1 2 2 3 1 1])
+((1 2) (2 3) (1 1))
+
+> (group-n-consecutive 1 [1 2 3 4 5 6])
+((1) (2) (3) (4) (5) (6))
+
+> (group-n-consecutive 2 [1 2 3 4 5 6])
+((1 2) (3 4) (5 6))
+
+> (group-n-consecutive 2 [1 2 3 4 5 6 7])
+((1 2) (3 4) (5 6) (7))
+
+> (group-n-consecutive 3 [1 2 3 4 5 6 . 7])
+((1 2 3) (4 5 6 . 7))
+```
+:::
+
+
+## group-same ##
+
+``` scheme
+(group-same lst key: [key] table: [table]) -> list-of-list
+
+  lst   := list
+  key   := 1-argument function (default: identity)
+  table := a hash-table, hash-table-eq or hash-table-eqv (defaults: empty hash-table)
+```
+
+group elements of the list `lst` that are have the same `key` value
+(default: that are the same), using the provided table to store the similar ones,
+with "same" meaning equal according to the table's equality predicate
+(which is `equal?` by default, but the user may provide a different hash-table).
+If the user provides a hash-table, it will be populated with the list of elements
+for each key, reversed.
+The elements in the resulting list appear in the order that
+their first element appear in the original list,
+and are each lists containing elements with the same key
+in the same order as their appear in the original list.
+
+::: tip Examples:
+``` scheme
+> (group-same [1 2 2 3 1])
+((1 1) (2 2) (3))
+
+> (group-same '("abc" "b" "c" "ef" "gh" "ijk") key: string-length)
+(("abc" "ijk") ("b" "c") ("ef" "gh"))
+```
+:::
+
+## map/car ##
+
+``` scheme
+(map/car f pair)
+
+  f    := function acting on the car of the pair
+  pair := pair
+```
+returns a new pair where the first element (car) has been transformed by the function `f`.
+
+::: tip Examples:
+``` scheme
+> (map/car (cut * 10 <>) (cons 3 4))
+(30 . 4)
 ```
 :::
 
@@ -713,6 +827,41 @@ according to the predicate.
 ```
 :::
 
+## separate-keyword-arguments ##
+
+``` scheme
+(separate-keyword-arguments args [positionals-only]) -> (values positional-args keyword-args)
+```
+Given a list of arguments passed to a function, return two values,
+the first one the list of positional arguments, in order, in the first list,
+the second one the plist of keyword arguments with each provided keyword
+followed by the corresponding argument value.
+
+If `positionals-only` is false (the default), then the `#!key` and `#!rest` markers
+are kept into the list in the first value, so the list can be used in a call to `apply`
+to another function to keep passing those values, without the keyword arguments
+(or with the keyword arguments prepended in front).
+
+If `positionals-only` is true, then the `#!key` and `#!rest` markers
+are filtered off so the first value is ready to be matched positionally
+against a list of variables of the same length (and/or with a rest argument).
+
+::: tip Examples:
+``` scheme
+> (separate-keyword-arguments '(x a: 1 y b: 2 c: 3 z))
+(x y z)
+(a: 1 b: 2 c: 3)
+
+> (separate-keyword-arguments '(x a: 1 y #!key b: 2 c: 3 z #!rest t d: 4) #t)
+(x y b: 2 z t d: 4)
+(a: 1 c: 3)
+
+> (separate-keyword-arguments '(x a: 1 y #!key b: 2 c: 3 z #!rest t d: 4) #f)
+(x y #!key b: 2 z #!rest t d: 4)
+(a: 1 c: 3)
+```
+:::
+
 ## first-and-only ##
 
 ``` scheme
@@ -731,3 +880,6 @@ or raises an error if the argument wasn't a singleton list.
 ```
 :::
 
+## with-list-builder, call-with-list-builder ##
+
+This macro and this function are re-exported from [:std/misc/list-builder](list-builder)
