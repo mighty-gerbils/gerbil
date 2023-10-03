@@ -1,5 +1,7 @@
 ;; -*- Gerbil -*-
 
+(def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
+
 (def (build-spec . _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "gambit-sharp"

@@ -10,7 +10,6 @@
         :std/iter
         :std/misc/wg)
 
-(def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
 (include "../std/build-spec.ss")
 
 (def build-home
@@ -106,17 +105,16 @@
   (let (base default-ld-options)
     (fold-options "-ld-options" stdlib-spec base)))
 
-(def (fold-options opt stdlib-spec base (ignore (cut string-prefix? "-L/private/tmp/" <>)))
+(def (fold-options opt stdlib-spec base)
   (let lp ((rest stdlib-spec) (result base))
-    (match rest
-      ([spec . rest]
-       (cond
-	((pget opt (cdr spec))
-	 => (lambda (val)
-	      (lp rest (if (ignore val) result
-			   (string-append result " " val)))))
-	(else (lp rest result))))
-      (else result))))
+      (match rest
+	([spec . rest]
+	 (cond
+	  ((pget opt (cdr spec))
+	   => (lambda (val)
+		(lp rest (string-append result " " val))))
+	  (else (lp rest result))))
+	(else result))))
 
 (def (order-modules all-modules)
   (def visited-modules
@@ -383,13 +381,17 @@
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
-        (cut write libgerbil-ldd <>)))
+        (cut write (filter (cond-expand (darwin (lambda (arg)
+						  (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+					   (else true))
+			   libgerbil-ldd)
+	     <>)))
     ;; cleanup
     (for (f [static-module-c-paths ...
              builtin-modules-c-path
              static-module-o-paths ...
              builtin-modules-o-path])
-      (delete-file f))))
+	 (delete-file f))))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))
