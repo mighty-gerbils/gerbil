@@ -10,6 +10,8 @@ package: gerbil
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
+(extern namespace: #f gerbil-path) ;; needed until bootstrap re-generated
+
 (def builtin-modules
   '(;; :gerbil/runtime
     "gerbil/runtime/gambit"
