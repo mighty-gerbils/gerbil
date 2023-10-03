@@ -283,7 +283,7 @@ package: gerbil
     gerbil-path
 
     ;; concurrency primitives
-    spawn spawn/name spawn/group spawn-actor spawn-thread
+    spawn spawn/name spawn/group
     thread-local-ref thread-local-get thread-local-set! thread-local-clear!
     unhandled-actor-exception-hook-set!
 

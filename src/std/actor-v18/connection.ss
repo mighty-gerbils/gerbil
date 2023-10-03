@@ -32,9 +32,6 @@
       addr)))
 
 (def (actor-listener srv sock cookie)
-  (with-exception-stack-trace (cut actor-listener-main srv cookie sock)))
-
-(def (actor-listener-main srv cookie sock)
   (let/cc exit
     (while #t
       (try
@@ -57,9 +54,6 @@
               (warnf "error accepting connection: ~a [~a]" (strerror errno) errno)))))))))
 
 (def (actor-acceptor srv sock cookie)
-  (with-exception-stack-trace (cut actor-acceptor-main srv sock cookie)))
-
-(def (actor-acceptor-main srv sock cookie)
   (using (sock : StreamSocket)
     (if (is-TLS? sock)
       ;; no handshake needed; TLS authenticated
@@ -132,9 +126,6 @@
            (fail! (error-message exn))))))))
 
 (def (actor-connector srv peer-id addrs cookie tls-context)
-  (with-exception-stack-trace (cut actor-connector-main srv peer-id addrs cookie tls-context)))
-
-(def (actor-connector-main srv peer-id addrs cookie tls-context)
   ;; try UNIX addresses first, TLS addresses second
   (let* (((values unix-addrs other-addrs)
           (partition (lambda (a) (eq? (car a) unix:)) addrs))
@@ -241,9 +232,6 @@
      #f)))
 
 (def (actor-connection srv peer-id sock reader writer direction)
-  (with-exception-stack-trace (cut actor-connection-main srv peer-id sock reader writer direction)))
-
-(def (actor-connection-main srv peer-id sock reader writer direction)
   (using (sock :- StreamSocket)
     (with-error-close sock
       ;; first order of business: set KEEPALIVE for tcp
@@ -299,9 +287,6 @@
               (warnf "unexpected message: ~a" unexpected)))))))))
 
 (def (actor-connection-reader srv peer-id reader)
-  (with-exception-stack-trace (cut actor-connection-reader-main srv peer-id reader)))
-
-(def (actor-connection-reader-main srv peer-id reader)
   (let/cc exit
     (while #t
       (try
@@ -320,9 +305,6 @@
          (exit e))))))
 
 (def (actor-connection-writer srv peer-id writer)
-  (with-exception-stack-trace (cut actor-connection-writer-main srv peer-id writer)))
-
-(def (actor-connection-writer-main srv peer-id writer)
   (let/cc exit
     (while #t
       (<<

@@ -2,6 +2,7 @@
 ;;; (C) vyzo
 ;;; Gerbil error objects
 (import :gerbil/runtime/error
+        :gerbil/runtime/thread
         (for-syntax :gerbil/expander))
 (export Exception Exception?
         RuntimeException RuntimeException?
@@ -153,32 +154,6 @@
 
 (defraise/context (raise-bug where message irritants ...)
   (BUG (string-append "BUG: " message) irritants: [irritants ...]))
-
-;; utilities for exception printing
-(def (with-exception-stack-trace thunk (error-port (current-error-port)))
-  (with-exception-handler
-   (let (E (current-exception-handler))
-     (lambda (exn)
-       (continuation-capture
-        (lambda (cont)
-          (dump-stack-trace! cont exn error-port)
-          (E exn)))))
-   thunk))
-
-(def (dump-stack-trace! cont exn (error-port (current-error-port)))
-  (let ((out (open-output-string)))
-    (fix-port-width! out)
-    (display "*** Unhandled exception in " out)
-    (display (current-thread) out)
-    (newline out)
-    (display-exception exn out)
-
-    ;; only do that if there no stack trace in the exception already
-    (unless (StackTrace? exn)
-      (display "Continuation backtrace: " out)
-      (newline out)
-      (display-continuation-backtrace cont out))
-    (##write-string (get-output-string out) error-port)))
 
 ;; runtime exceptions
 (defrules export-runtime-exceptions ()
