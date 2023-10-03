@@ -211,14 +211,14 @@
                   (deps (find-deps modctx))
                   (ordered
                    (foldl
-                    (lambda (dep r)
-                      (if (hash-get visited-modules (expander-context-id dep))
-                        r
-                        (begin
+                     (lambda (dep r)
+                       (if (hash-get visited-modules (expander-context-id dep))
+                         r
+                         (begin
                            (hash-put! visited-modules (expander-context-id dep) #t)
                            (cons (module-file dep) r))))
-                    ordered
-                    (reverse deps))))
+                     ordered
+                     (reverse deps))))
              (lp rest ordered)))))
       (else
        (reverse ordered)))))
@@ -338,13 +338,13 @@
     (let (wg (make-wg/build-cores))
       (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])
         (wg-add! wg
-          (lambda ()
-            (displayln "... compile " scm-path)
-            (invoke-gsc ["-c"
-                         gsc-debug-opts ...
-                         gsc-gx-macros ...
-                         gsc-gx-features ...
-                         scm-path]))))
+	 (lambda ()
+	   (displayln "... compile " scm-path)
+	   (invoke-gsc ["-c"
+			gsc-debug-opts ...
+			gsc-gx-macros ...
+			gsc-gx-features ...
+			scm-path]))))
       (wg-wait! wg))
 
     ;; link them
@@ -356,13 +356,13 @@
     ;; build them
     (let (wg (make-wg/build-cores))
       (for (c-path [static-module-c-paths ...
-                    builtin-modules-c-path link-c-path])
+		    builtin-modules-c-path link-c-path])
         (wg-add! wg
-          (lambda ()
-            (displayln "... compile " c-path)
-            (invoke-gsc ["-obj"
-                         "-cc-options" cc-options
-                         c-path]))))
+	 (lambda ()
+	   (displayln "... compile " c-path)
+	   (invoke-gsc ["-obj"
+			"-cc-options" cc-options
+			c-path]))))
       (wg-wait! wg))
 
     ;; and collect them
@@ -381,17 +381,20 @@
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
-        (cut write (filter (cond-expand (darwin (lambda (arg)
-						  (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
-					   (else true))
-			   libgerbil-ldd)
+        (cut write
+	     (filter
+	      (cond-expand
+		(darwin (lambda (arg)
+			  (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+		(else true))
+	      libgerbil-ldd)
 	     <>)))
     ;; cleanup
     (for (f [static-module-c-paths ...
-             builtin-modules-c-path
-             static-module-o-paths ...
-             builtin-modules-o-path])
-	 (delete-file f))))
+	     builtin-modules-c-path
+	     static-module-o-paths ...
+	     builtin-modules-o-path])
+      (delete-file f))))
 
 (def (remove-duplicates lst)
   (let lp ((rest lst) (result []))
