@@ -140,8 +140,9 @@ alias otool=/Library/Developer/CommandLineTools/usr/bin/otool
 Homebrew uses [[#RubyIsms][Ruby]] for its DSL. That means =GerbilScheme= is a subclass of =Formula=.
 
 
-#+begin_src ruby :comments yes
+#+begin_src ruby
 class GerbilScheme < Formula
+# This .rb file is tangled (AKA generated) from README.org
 #+end_src
 
 There's some meta-info that's nice to have.

@@ -1,6 +1,5 @@
-# [[file:README.org::*The Formula][The Formula:1]]
 class GerbilScheme < Formula
-# The Formula:1 ends here
+# This .rb file is tangled (AKA generated) from README.org
   desc "Opinionated dialect of Scheme designed for Systems Programming"
   homepage "https://cons.io"
   license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
