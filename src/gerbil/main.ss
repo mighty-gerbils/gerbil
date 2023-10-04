@@ -96,7 +96,7 @@ package: gerbil
   (displayln "  build                            build a gerbil package (gxpkg build)")
   (displayln "  deps                             manage dependencies for a package (gxpkg deps)")
   (displayln "  clean                            clean build artifactacts for a package (gxpkg clean)")
-  (displayln "  env                              eval a shall expression in the local package environemnt (gxpkg env)")
+  (displayln "  env                              eval a shell command in the local package environment (gxpkg env)")
   (displayln "  pkg                              invoke the gerbil package manager (gxpkg)")
   (displayln "  test                             run tests (gxtest)")
   (displayln "  tags                             create emacs tags (gxtags)")

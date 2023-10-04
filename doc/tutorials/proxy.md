@@ -35,7 +35,7 @@ It is implemented using low level [raw socket devices](/reference/std/os/socket.
 
 ### The main function
 
-First the main main function of the proxy, which is common for all three variants.
+First the main function of the proxy, which is common for all three variants.
 
 It simply parses the arguments to the program using the [getopt](../reference/getopt.md) library,
 and dispatches to `run` which is the server main loop:
