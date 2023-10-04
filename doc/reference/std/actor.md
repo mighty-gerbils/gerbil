@@ -466,7 +466,7 @@ hosts.
 ### TCP Addresses
 A TCP address is denoted like this:
 ```
-[tcp: inet-addr]
+[tls: inet-addr]
 ```
 
 `inet-addr` is an Internet address; normally a pair of a host address
@@ -477,7 +477,7 @@ See the [:std/net/address](address.md#internet-addresses) module for more detail
 ::: warning
 Do not use bare TCP addresses in production, as you will vulnerable to
 Man in the Middle attacks.  Gerbil actors only support them for
-development and debugging purposes; you _shoud_use TLS in production.
+development and debugging purposes; you _should_ use TLS in production.
 :::
 
 ### TLS Addresses
