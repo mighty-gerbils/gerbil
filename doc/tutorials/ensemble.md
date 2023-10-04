@@ -3,8 +3,12 @@
 ## Ensemble Basics
 
 The concept of the ensemble denotes the totality of actors running on
-a server substrate, perhaps in the Internet at large, and sharing a
-secret _cookie_ that allows them to communicate with each other.
+a server substrate, perhaps in the Internet at large using TLS.
+Actors in the local server share a secret _cookie_ that allows them to
+authenticate and communicate with each other.  Actors in the Internet
+at large use TLS certificates issued by a private CA, owned by the
+operators of the software and usually created with the `gerbil ensemble`
+tool.
 
 Each server has a _server identifier_, which is a symbol, that
 uniquely names the server within the ensemble.  Each ensemble has a
@@ -13,13 +17,19 @@ Internet.  It allows servers to find each other by using the server
 identifier, and implicit connect as needed without requiring the
 programmer or the operator to explicitly connect to each other.
 
+::: tip Note
+The registry is currently a centralized component, which obviously
+creates scalability and fault tolerance issues. We plan to implement a
+distributed registry for the next Gerbil release (v0.19); see
+the [Distributed Registry(https://github.com/mighty-gerbils/gerbil/issues/823)
+issue on github.
+:::
+
 By default, each server binds and listens to a UNIX domain socket
 `/tmp/ensemble/<server-identifier>`. Obviously you can specify
-additional addresses, including Internet addresses where the server
+additional addresses, including TLS addresses where the server
 should listen. If your ensemble spans multiple hosts, you should
-specify the tcp addresses where your servers listen explicitly. If you
-plan to expose your servers to the wider Internet, it is strongly
-recommended to use TLS.
+specify the TLS addresses where your servers listen explicitly.
 
 ## The gxensemble Management Tool
 
@@ -28,7 +38,7 @@ or just `gxensemble`.
 
 Here are the commands it supports:
 ```
-$ gxensemble help
+$ gerbil ensemble help
 gxensemble: the Gerbil Actor Ensemble Manager
 
 Usage: gxensemble  <command> command-arg ...
@@ -40,51 +50,53 @@ Commands:
  eval                             evals code in a running server
  repl                             provides a repl for a running server
  ping                             pings a server or actor in the server
- shutdown                         shuts down an actor, server, or the entire ensemble including the registry
- list-servers                     lists known servers
- list-actors                      list actors registered in a server
- list-connections                 list a server's connection
  lookup                           looks up a server by id or role
- authorize                        authorize capabilities for a server
- retract                          retract all capabilities granted to a server
- cookie                           generate a new ensemble cookie
- admin                            generate a new ensemble administrator key pair
+ shutdown                         shuts down an actor, server, or the entire ensemble including the registry
+ admin                            ensemble administrative operations
+ list                             list server state
+ ca                               ensemble CA operations
+ package                          package ensemble state to ship an actor server environment
  help                             display help; help <command> for command help
-```
+ ```
 
-### Generating the ensemble cookie
+### Generating an ensemble administrative cookie
 
-Before starting an ensemble, we must generate a cookie for our servers
+Before starting an ensemble, we must generate a cookie for our local servers
 to authenticate each other. The cookie is placed in `$GERBIL_PATH/ensemble/cookie`;
-if you are running an ensemble spanning multiple hosts, you should copy the cookie
-to the relevant hosts.  Note that the tool will not overwrite an existing ensemble
-cookie.
+Note that the tool will not overwrite an existing ensemble cookie.
+
+If you intend to have your ensemble substrate spanning hosts in the
+open Internet, you should generate a TLS CA and appropriate
+certificates for your servers; see [Working with TLS](#working-with-tls) later in
+this tutorial.
 
 Here is the usage:
 ```
-$ gxensemble help cookie
-Usage: gxensemble cookie [command-option ...]
-       generate a new ensemble cookie
+$ gerbil ensemble admin help cookie
+Usage: gxensemble admin cookie [command-option ...]
+       generate or inspect the ensemble cookie
 
 Command Options:
  -f --force                       force the action
- ```
+ --view                           inspect existing, don't generate
+  ```
 
 ### Generating an administrative key pair
 
 If you want to limit administrative actions only to administrators,
-you can generate an administraticve key pair with `gxensemble admin`.
+you should generate an administrative key pair with `gxensemble admin creds`.
 See [Administrative Privileges](#administrative-privileges) below.
 
 Here is the usage:
 ```
-$ gxensemble help admin
-Usage: gxensemble admin [command-option ...]
-       generate a new ensemble administrator key pair
+$ gerbil ensemble admin help creds
+Usage: gxensemble admin creds [command-option ...]
+       generate or inspect ensemble administrator credentials
 
 Command Options:
  -f --force                       force the action
-```
+ --view                           inspect existing, don't generate
+ ```
 
 ### Authorizing capabilities
 
@@ -94,49 +106,51 @@ See [Administrative Privileges](#administrative-privileges) below.
 
 Here is the usage:
 ```
-$ gxensemble help authorize
-Usage: gxensemble authorize [command-option ...] <server-id> <authorized-server-id> [<capabilities>]
-       authorize capabilities for a server
+$ gerbil ensemble admin help authorize
+Usage: gxensemble admin authorize [command-option ...] <server-id> <authorized-server-id> [<capabilities>]
+       authorize capabilities for a server as an administrator
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
 
 Arguments:
  server-id                        the server id
  authorized-server-id             the server to authorize capabilities for
  capabilities                     the server capabilities to authorize [default: (admin)]
-```
+ ```
 
 ### Retracting capabilities
-This is an administrative action, that retracts capabilities from a
+This is also an administrative action, that retracts capabilities from a
 previously authorized server.
 
 Here is the usage:
 ```
-$ gxensemble help retract
-Usage: gxensemble retract [command-option ...] <server-id> <authorized-server-id>
-       retract all capabilities granted to a server
+$ gerbil ensemble admin help retract
+Usage: gxensemble admin retract [command-option ...] <server-id> <authorized-server-id>
+       retract all capabilities granted to a server by an administrator
 
 Command Options:
-  --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
+ -c --console <console>           console server id [default: console]
+ -r --registry <registry>         additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
 
 Arguments:
  server-id                        the server id
  authorized-server-id             the server to authorize capabilities for
-```
+ ```
 
 ### Starting the ensemble
 
 The first order of business when starting an actor ensemble, is to run a registry.
 We can do this with the `gxensemble registry` command:
 ```
-$ gxensemble help registry
+$ gerbil ensemble help registry
 Usage: gxensemble registry [command-option ...]
        runs the ensemble registry
 
 Command Options:
-  --log <logging>                 specifies the log level to run with [default: INFO]
-  --log-file <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log [default: #f]
+ --log  <logging>                 specifies the log level to run with [default: INFO]
+ --log-file  <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log [default: #f]
  -l --listen <listen>             additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id> [default: ()]
  -a --announce <announce>         public addresses to announce to the registry; by default these are the listen addresses [default: #f]
 ```
@@ -322,7 +336,12 @@ ensemble, that supports dynamic handler registration.
 
 The source code for the tutorial is available in the gerbil source distribution, in
 [src/tutorial/ensemble](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble).
-You can build it using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/build.ss).
+You can build it using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/build.ss):
+```
+$ cd gerbil/src/tutorial/ensemble
+$ gerbil build
+...
+```
 
 Firt let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/server.ss):
 ```scheme
@@ -355,33 +374,39 @@ This is the code for the wrapper (see [src/tutorial/ensemble/httpd-svc.ss](https
 
 With all this, let's start an ensemble with two httpds, named `httpd1` and `httpd2`:
 ```
-# generate a cookie for our ensemble, if on does not already exist
-$ gxensemble cookie
+# switch to the local environment context
+$ gerbil env bash
 
-# start the registry
-$ gxensemble registry
+# generate a cookie for our ensemble
+$ gerbil ensemble admin cookie
+
+# start the registry in one terminal
+$ gerbil ensemble registry
 ...
 
-# start the servers
-$ gxensemble run --roles "(httpd)" httpd1 :tutorial/ensemble/httpd-svc 8080
+# start the servers in separate terminals
+$ gerbil env bash
+$ gerbil ensemble run --roles "(httpd)" httpd1 :tutorial/ensemble/httpd-svc 8080
 ...
 
-$ gxensemble run --roles "(httpd)" httpd2 :tutorial/ensemble/httpd-svc 8081
+$ gerbil env bash
+$ gerbil ensemble run --roles "(httpd)" httpd2 :tutorial/ensemble/httpd-svc 8081
 ...
 ```
 
 Now let's look at our servers:
 ```
-$ gxensemble lookup --role httpd
+$ gerbil env bash
+$ gerbil ensemble lookup --role httpd
 (httpd1 (unix: "dellicious" "/tmp/ensemble/httpd1"))
 (httpd2 (unix: "dellicious" "/tmp/ensemble/httpd2"))
 ```
 
 We can also ping them for liveness:
 ```
-$ gxensemble ping httpd1
+$ gerbil ensemble ping httpd1
 OK
-$ gxensemble ping httpd2
+$ gerbil ensemble ping httpd2
 OK
 ```
 
@@ -432,13 +457,13 @@ that are not initially registerd anywhere.
 Here is how we can load the code:
 ```
 # load with -f as there is no need to load any library dependencies
-$ gxensemble load -f httpd1 :tutorial/ensemble/handler
-... loading code object file /home/vyzo/.gerbil/lib/tutorial/ensemble/handler__0.o3
-ca3f193373a296d7bdb9101e7d4b9f1d450676aec6c49f05202a3dbcc5d766e2
+$ gerbil ensemble load -f httpd1 :tutorial/ensemble/handler
+... loading code object file /home/vyzo/gerbil/src/tutorial/ensemble/.gerbil/lib/tutorial/ensemble/handler__0.o1
+7eea9ca8dbcb1c6987b38c724c2c1d24bd81ca2d42dff43bc0dbee4b293d75e7
 
-$ gxensemble load -f httpd2 :tutorial/ensemble/handler
-... loading code object file /home/vyzo/.gerbil/lib/tutorial/ensemble/handler__0.o3
-ca3f193373a296d7bdb9101e7d4b9f1d450676aec6c49f05202a3dbcc5d766e2
+$ gerbil ensemble load -f httpd2 :tutorial/ensemble/handler
+... loading code object file /home/vyzo/gerbil/src/tutorial/ensemble/.gerbil/lib/tutorial/ensemble/handler__0.o1
+7eea9ca8dbcb1c6987b38c724c2c1d24bd81ca2d42dff43bc0dbee4b293d75e7
 ```
 
 and we can verify that the two servers now have a root handler:
@@ -452,7 +477,7 @@ the world is not flat but round!
 
 Finally, we can use the repl to install another handler from the module we just loaded:
 ```
-$ gxensemble repl httpd1
+$ gerbil ensemble repl httpd1
 httpd1> ,(import :tutorial/ensemble/handler)
 httpd1> ,(import :std/net/httpd)
 httpd1> (set-greeting! "hello, i am httpd1\n")
@@ -498,12 +523,12 @@ And here it running and getting managed with `gxensemble`:
 $ httpd-exe httpd3 8082
 ...
 
-$ gxensemble lookup --role httpd
+$ gerbil ensemble lookup --role httpd
 (httpd1 (unix: "dellicious" "/tmp/ensemble/httpd1"))
 (httpd2 (unix: "dellicious" "/tmp/ensemble/httpd2"))
 (httpd3 (unix: "dellicious" "/tmp/ensemble/httpd3"))
 
-$ gxensemble repl httpd3
+$ gerbil ensemble repl httpd3
 httpd3> ,(load :tutorial/ensemble/handler)    ; load the code in the remote server
 httpd3> ,(import :tutorial/ensemble/handler)  ; import for local expansion
 httpd3> (set-greeting! "hello, i am httpd3 and i am a binary executable\n")
@@ -519,7 +544,7 @@ hello, i am httpd3 and i am a binary executable
 
 At this point, we are done with this tutorial, and we can shutdown our ensemble:
 ```
-$ gxensemble shutdown -f
+$ gerbil ensemble shutdown -f
 ... shutting down httpd1
 ... shutting down httpd2
 ... shutting down httpd3
@@ -540,13 +565,28 @@ key pair that limits administrative actions (shutdown, code loading
 and evaluation, etc) only to entities that can prove that they have
 access to the private key material.
 
+Actor TLS certificates have capabilities embedded in the certificate
+so that they can automatically acquire the relevant privileges by
+presenting the certificate during the handshake. So when using TLS,
+there is strictly no need to use administrative credentials, but
+instead issue a certificate with the right capabilities; the `console`
+server (which is the default server for interaction) is automatically
+issued a certificate with administrative capabilities when creating a
+CA.
+
+Nonetheless, it is still recommended to generate administrative
+credentials in case you have issues with expired certificates; you
+will still be able to connect to your server via the UNIX domain
+socket or TCP on localhost tunneled through ssh, and issue
+administrative commands.
+
 This is integrated with the `gxensemble` tool:
 - You can generate an administrative key pair with the `gxensemble
-  admin` command. The command will ask for a passphrase to encrypt
+  admin creds` command. The command will ask for a passphrase to encrypt
   the private key, and will leave the key pair in
   `$GERBIL_PATH/ensemble/admin.{pub,priv}`.
-- Subsequently, when attempting a senstive action that requires
-  administrative privileges the tool will ask you to enter the
+- Subsequently, when attempting a sensitive action via a non-TLS connection
+  that requires administrative privileges, the tool will ask you to enter the
   passphrase in order to unlock and use the private key to elevate
   privileges in the servers involved.
 
@@ -559,19 +599,22 @@ For example, to allow actors in `my-authorized-server` to shutdown
 `my-server`, you can issue the following command with administrative
 privileges:
 ```
-$ gxensemble authorize my-server my-authorized-server "(shutdown)"
+$ gerbil ensemble admin authorize my-server my-authorized-server "(shutdown)"
 ```
 
 You can retract capabilities from a server with the `retract` command
 of the `gxensemble` tool:
 ```
-$ gxensemble retract my-server my-authorized-server
+$ gerbil ensemble admin retract my-server my-authorized-server
 ```
 
 ::: warning
 In order to effectively and securely confer capabilities to other
 servers by name, it is strongly recommended that you use TLS.
 
-Otherwise anyone in the ensemble can claim your authorized server's id
-and acquire capabilities that are not intended.
+Otherwise anyone in the ensemble connecting from localhost can claim
+your authorized server's id and acquire capabilities that are not
+intended.
 :::
+
+## Working with TLS
