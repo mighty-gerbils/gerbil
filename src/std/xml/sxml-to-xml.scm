@@ -26,7 +26,6 @@
   (extended-bindings))
 
 (##namespace ("std/xml/sxml-to-xml#"
-              error
               xml-declaration:xml1.0-utf8
               xml-header:xhtml-1.0-transitional-en
               valid-quote-chars
