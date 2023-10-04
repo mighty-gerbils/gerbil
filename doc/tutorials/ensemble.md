@@ -625,18 +625,18 @@ spanning multiple hosts and eventually in contact with the open
 Internet. Actor ensembles do support bare TCP connections, but these
 are supported mostly for debugging and development purposes. Once you
 deploy you actor servers to their natural location in the Internet you
-_should _use TLS -- after all the only systems not connected to the
+_should_ use TLS -- after all the only systems not connected to the
 Internet these days are air gapped high security installations and
 even these networks can be breached as we know.
 
-So what do you need to do in order to enable TLS? well, not all that
+So what do you need to do in order to enable TLS? Well, not all that
 much, as TLS is deeply integrated in the actors package:
 - You need to generate an actor ensemble CA; the is handled by the
   `gerbil ensembe ca` tool, as we will see shortly.
 - You need to generate certificates for your servers; this again is
   handled by the `gerbil ensemble ca` tool.
 - You need to bundle and ship your servers'  ensemble environment
-  together with the binaries;; this is simplified with the
+  together with the binaries; this is simplified with the
   `gerbil ensemble package` tool.
 - You need to listen and announce TLS addresses from your actors.
 
@@ -689,19 +689,17 @@ you should be lax with security.
 
 Let's take a look at what the tool generated:
 ```
+$ ls -lR .gerbil/ensemble
 .gerbil/ensemble:
 total 12
--rw------- 1 vyzo vyzo   32 Oct  4 14:00 cookie
+...
 drwxr-xr-x 7 vyzo vyzo 4096 Oct  4 20:52 server
 drwxr-xr-x 5 vyzo vyzo 4096 Oct  4 20:52 tls
 
 .gerbil/ensemble/server:
 total 20
 drwxr-xr-x 3 vyzo vyzo 4096 Oct  4 20:52 console
-drwxr-xr-x 3 vyzo vyzo 4096 Oct  4 14:01 httpd1
-drwxr-xr-x 3 vyzo vyzo 4096 Oct  4 14:02 httpd2
-drwxr-xr-x 3 vyzo vyzo 4096 Oct  4 14:49 httpd3
-drwxr-xr-x 3 vyzo vyzo 4096 Oct  4 14:51 registry
+...
 
 .gerbil/ensemble/server/console:
 total 4
@@ -715,16 +713,6 @@ total 24
 -rw-rw-r-- 1 vyzo vyzo 1765 Oct  4 20:52 server.csr
 -rw------- 1 vyzo vyzo 3268 Oct  4 20:52 server.key
 
-.gerbil/ensemble/server/httpd1:
-...
-
-.gerbil/ensemble/server/httpd2:
-...
-
-.gerbil/ensemble/server/httpd3:
-...
-
-.gerbil/ensemble/server/registry:
 ...
 
 .gerbil/ensemble/tls:
@@ -831,7 +819,7 @@ Command Options:
 
 Arguments:
  server-id                        the server id
- capabilities                     the server capabilities to authorize [default: (]
+ capabilities                     the server capabilities to authorize [default: ()]
 ```
 
 And here is how we generate the certificates:
@@ -894,7 +882,7 @@ ensemble/server/httpd/tls/server.key
 
 ### Putting it all together
 
-Now are ready to ship our servers and demonstrate ensemble capabilities with TLS.
+Now are ready to ship our servers and demonstrate ensemble actor TLS capabilities.
 
 First, let's build the binaries for our servers, using the docker
 [Makefile](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/Makefile)
@@ -911,7 +899,7 @@ servers.  I set up two ephemeral linodes for this demonstration, you
 can use your favorite cloud provider to do the same.
 
 **Note** that the IPs will be long relinquished by the time you read
-this, substitute your real server IPS. In this demonstration,
+this, substitute your real server IPs. In this demonstration,
 `172.104.139.107` is the registry IP and `172.104.139.226` is the
 httpd IP.
 
