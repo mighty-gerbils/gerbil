@@ -67,21 +67,39 @@ namespace: gxc
     (symbol-hash (stx-e id)))
   (make-hash-table test: bound-identifier=? hash: hash-e))
 
-(def (compile-e stx . args)
-  (ast-case stx ()
+(def* compile-e
+  ((stx)
+   (do-compile-e stx method
+     (method stx)))
+  ((stx arg)
+   (do-compile-e stx method
+     (method stx arg)))
+  ((stx arg1 arg2)
+   (do-compile-e stx method
+     (method stx arg1 arg2)))
+  ((stx arg1 arg2 . args)
+   (do-compile-e stx method
+     (apply method stx arg1 arg2 args))))
+
+(defrules do-compile-e ()
+  ((_ stx method dispatch)
+   (ast-case stx ()
     ((hd . _)
      (cond
       ((hash-get (current-compile-methods) (stx-e #'hd))
-       => (lambda (method) (apply method stx args)))
+       => (lambda (method)
+            (declare (not safe))
+            dispatch))
+            ))
       (else
-       (raise-compile-error "Cannot compile; missing method" stx #'hd))))))
+       (raise-compile-error "Cannot compile; missing method" stx #'hd)))))
 
 (defrules defcompile-method ()
   ((recur compile-method table . methods)
    (identifier? #'table)
    (recur compile-method (table) . methods))
   ((_ #f (table super ...) (symbol method) ...)
-   (define table
+   (def table
      (delay
        (let (tbl (make-hash-table-eq))
          (hash-copy! tbl (force super)) ...
@@ -91,9 +109,24 @@ namespace: gxc
    (identifier? #'compile-method)
    (begin
      (recur #f (table . super) . methods)
-     (define (compile-method stx . args)
+     (def (compile-method stx . args)
        (parameterize ((current-compile-methods (force table)))
-         (apply compile-e stx args))))))
+         (declare (not safe))
+         (do-apply-compile-e stx args))))))
+
+(defrules do-apply-compile-e ()
+  ((_ stx args)
+   (if (null? args)
+     (compile-e stx)
+     (let ((arg1 (car args))
+           (rest (cdr args)))
+       (if (null? rest)
+         (compile-e stx arg1)
+         (let ((arg2 (car rest))
+               (rest (cdr rest)))
+           (if (null? rest)
+             (compile-e stx arg1 arg2)
+             (apply compile-e stx arg1 arg2 rest))))))))
 
 (defcompile-method #f &void-expression
   (%#begin-annotation        void)
@@ -382,7 +415,9 @@ namespace: gxc
 (def (collect-begin% stx . args)
   (ast-case stx ()
     ((_ . body)
-     (for-each (cut apply compile-e <> args) (stx-e #'body)))))
+     (for-each
+       (lambda (stx) (do-apply-compile-e stx args))
+       (stx-e #'body)))))
 
 (def (collect-begin-syntax% stx . args)
   (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
@@ -391,51 +426,51 @@ namespace: gxc
 (def (collect-module% stx . args)
   (ast-case stx ()
     ((_ id . body)
-     (let (ctx (syntax-local-e #'id))
+     (let* ((ctx (syntax-local-e #'id))
+            (ctx-stx (module-context-code ctx)))
        (parameterize ((current-expander-context ctx))
-         (apply compile-e (module-context-code ctx) args))))))
+         (do-apply-compile-e ctx-stx args))))))
 
 (def (collect-begin-annotation% stx . args)
   (ast-case stx ()
     ((_ ann expr)
-     (apply compile-e #'expr args))))
+     (do-apply-compile-e #'expr args))))
 
 (def (collect-define-values% stx . args)
   (ast-case stx ()
     ((_ hd expr)
-     (apply compile-e #'expr args))))
+     (do-apply-compile-e #'expr args))))
 
 (def (collect-define-syntax% stx . args)
   (ast-case stx ()
     ((_ id expr)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (apply compile-e #'expr args)))))
+       (do-apply-compile-e #'expr args)))))
 
 (def (collect-body-lambda% stx . args)
   (ast-case stx ()
     ((_ hd body)
-     (apply compile-e #'body args))))
+     (do-apply-compile-e #'body args))))
 
 (def (collect-body-case-lambda% stx . args)
   (ast-case stx ()
     ((_ (hd body) ...)
-     (for-each (cut apply compile-e <> args) #'(body ...)))))
+     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(body ...)))))
 
 (def (collect-body-let-values% stx . args)
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
-     (for-each (cut apply compile-e <> args) #'(expr ... body)))))
-
+     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(expr ... body)))))
 
 (def (collect-body-setq% stx . args)
   (ast-case stx ()
     ((_ id expr)
-     (apply compile-e #'expr args))))
+     (do-apply-compile-e #'expr args))))
 
 (def (collect-operands stx . args)
   (ast-case stx ()
     ((_ rands ...)
-     (for-each (cut apply compile-e <> args) #'(rands ...)))))
+     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(rands ...)))))
 
 ;;; collect-bindings
 (def (collect-bindings-define-values% stx)
