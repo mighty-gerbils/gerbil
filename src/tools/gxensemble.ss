@@ -875,12 +875,10 @@
            (cond
             ((not ctx-id)
              (lp rest to-load libraries))
-            ((string-prefix? "gerbil/core" ctx-id-str)
+            ((string-prefix? "gerbil/" ctx-id-str)
              (lp rest to-load libraries))
             ((find (cut string-prefix? <> ctx-id-str) library-prefix-str)
-             (if (member ctx-id libraries)
-               (lp rest to-load libraries)
-               (lp rest to-load (cons ctx-id libraries))))
+             (lp rest to-load libraries))
             (else
              (if (member ctx-id to-load)
                (lp rest to-load libraries)
