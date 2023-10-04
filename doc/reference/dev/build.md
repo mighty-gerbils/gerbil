@@ -273,7 +273,7 @@ $ gerbil build
 /home/vyzo/src/vyzo/scratch/test/scrape-it/.gerbil/bin/scraper.c:
 /home/vyzo/src/vyzo/scratch/test/scrape-it/.gerbil/bin/scraper_.c:
 
-$ ./.gerbil/bin/scraper http://hackzen.org
+$ gerbil env scraper http://hackzen.org
 (*TOP* (html (head (title "(hackzen.org)")
                    (link (@ (rel "stylesheet") (type "text/css") (href "style.css"))))
              (body "\n    "
@@ -549,7 +549,7 @@ $ gerbil build
 
 And voila:
 ```shell
-$ ./.gerbil/bin/scraper -v
+$ gerbil env scraper -v
 (("scrape-it" . "0ba7240")
  ("Gerbil" . "0.17.0-309-g5ebf1095")
  ("Gambit" . "v4.9.5-40-g24201248")
