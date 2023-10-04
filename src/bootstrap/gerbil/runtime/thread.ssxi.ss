@@ -20,4 +20,16 @@ package: gerbil/runtime
   (declare-type unhandled-actor-exception-hook-set! (@lambda 1 #f))
   (declare-type current-thread-group (@lambda 0 #f))
   (declare-type with-lock (@lambda 2 #f))
-  (declare-type with-dynamic-lock (@lambda 2 #f)))
+  (declare-type with-dynamic-lock (@lambda 2 #f))
+  (declare-type with-exception-stack-trace__% (@lambda 2 #f))
+  (declare-type with-exception-stack-trace__0 (@lambda 1 #f))
+  (declare-type
+   with-exception-stack-trace
+   (@case-lambda
+    (1 with-exception-stack-trace__0)
+    (2 with-exception-stack-trace__%)))
+  (declare-type dump-stack-trace!__% (@lambda 3 #f))
+  (declare-type dump-stack-trace!__0 (@lambda 2 #f))
+  (declare-type
+   dump-stack-trace!
+   (@case-lambda (2 dump-stack-trace!__0) (3 dump-stack-trace!__%))))

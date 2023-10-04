@@ -157,7 +157,7 @@ namespace: gxc
   (stx-wrap-source stx (stx-source src-stx)))
 
 (def (xform-apply-compile-e args)
-  (cut apply compile-e <> args))
+  (lambda (stx) (do-apply-compile-e stx args)))
 
 (def (xform-begin% stx . args)
   (ast-case stx ()
@@ -183,7 +183,7 @@ namespace: gxc
             (code (module-context-code ctx))
             (code
              (parameterize ((current-expander-context ctx))
-               (apply compile-e code args))))
+               (do-apply-compile-e code args))))
        (set! (module-context-code ctx)
          code)
        (xform-wrap-source
@@ -193,7 +193,7 @@ namespace: gxc
 (def (xform-define-values% stx . args)
   (ast-case stx ()
     ((_ hd expr)
-     (let (expr (apply compile-e #'expr args))
+     (let (expr (do-apply-compile-e #'expr args))
        (xform-wrap-source
         ['%#define-values #'hd expr]
         stx)))))
@@ -202,7 +202,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ id expr)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (let (expr (apply compile-e #'expr args))
+       (let (expr (do-apply-compile-e #'expr args))
          (xform-wrap-source
           ['%#define-syntax #'id expr]
           stx))))))
@@ -210,7 +210,7 @@ namespace: gxc
 (def (xform-begin-annotation% stx . args)
   (ast-case stx ()
     ((_ ann expr)
-     (let (expr (apply compile-e #'expr args))
+     (let (expr (do-apply-compile-e #'expr args))
        (xform-wrap-source
         ['%#begin-annotation #'ann expr]
         stx)))))
@@ -259,7 +259,7 @@ namespace: gxc
 (def (xform-setq% stx . args)
   (ast-case stx ()
     ((_ id expr)
-     (let (expr (apply compile-e #'expr args))
+     (let (expr (do-apply-compile-e #'expr args))
        (xform-wrap-source
         ['%#set! #'id expr]
         stx)))))
