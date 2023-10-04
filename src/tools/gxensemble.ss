@@ -120,7 +120,7 @@
   (optional-argument 'capabilities
     help: "the server capabilities to authorize"
     value: string->object
-    default: '(admin)))
+    default: '()))
 
 (def expr-argument
   (argument 'expr

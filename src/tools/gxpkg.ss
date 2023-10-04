@@ -1149,11 +1149,10 @@ DOCKER_IMAGE := "gerbil/gerbilxx:\$(ARCH)"
 default: linux-static
 
 build-release:
-	/opt/gerbil/bin/gxpkg link ${name} /src || true
 	/opt/gerbil/bin/gxpkg deps -i
-	/opt/gerbil/bin/gxpkg build --release ${name}
+	/opt/gerbil/bin/gxpkg build --release
 
-linux-static: clean
+linux-static:
 	docker run -it \\
 	-e USER=\$(USER) \\
 	-e GERBIL_PATH=/src/.gerbil \\
