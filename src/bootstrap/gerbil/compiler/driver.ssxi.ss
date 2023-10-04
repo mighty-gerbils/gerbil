@@ -47,9 +47,22 @@ package: gerbil/compiler
   (declare-type
    gxc#gsc-debug-options
    (@case-lambda (0 gxc#gsc-debug-options__0) (1 gxc#gsc-debug-options__%)))
+  (declare-type gxc#gsc-link-options (@lambda 1 #f))
+  (declare-type gxc#gsc-cc-options (@lambda 0 #f))
+  (declare-type gxc#gcc-ld-options (@lambda 0 #f))
+  (declare-type gxc#not-string-empty? (@lambda 1 #f))
   (declare-type gxc#gsc-compile-file (@lambda 2 #f))
   (declare-type gxc#compile-output-file (@lambda 3 #f))
   (declare-type gxc#compile-static-output-file (@lambda 1 #f))
   (declare-type gxc#compile-exe-output-file (@lambda 2 #f))
   (declare-type gxc#static-module-name (@lambda 1 #f))
-  (declare-type gxc#invoke (@lambda 2 #f)))
+  (declare-type gxc#invoke__% (@lambda 5 #f))
+  (declare-type
+   gxc#invoke__@
+   (@kw-lambda-dispatch
+    (stdout-redirection: stderr-redirection:)
+    gxc#invoke__%))
+  (declare-type
+   gxc#invoke
+   (@kw-lambda (stderr-redirection: stdout-redirection:) gxc#invoke__@))
+  (declare-type gxc#join! (@lambda 1 #f)))
