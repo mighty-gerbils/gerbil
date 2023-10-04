@@ -14,7 +14,7 @@
 
 (defrules begin-module%% ()
   ((_ . body)
-   (%%begin-module (export #t) . body)))
+   (%%begin-module (import :gerbil/core) (export #t) . body)))
 
 (defsyntax (begin-protobuf stx)
   (def (parse-body body)
