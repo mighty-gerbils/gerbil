@@ -64,14 +64,12 @@
     "these aren't the droids you are looking for.\n"))
 
 (def (main . args)
-  (def gopt
-    (getopt (option 'address "-a" "--address"
-                    help: "server address"
-                    default: "127.0.0.1:8080")))
+  (call-with-getopt simpled-main args
+    program: "simpled"
+    help: "A simple httpd server"
+    (option 'address "-a" "--address"
+      help: "server address"
+      default: "127.0.0.1:8080")))
 
-  (try
-   (let (opt (getopt-parse gopt args))
-     (run (hash-get opt 'address)))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "hellod" (current-error-port))
-     (exit 1))))
+(def (simpled-main opt)
+  (run (hash-ref opt 'address)))

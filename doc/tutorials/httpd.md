@@ -5,7 +5,13 @@
 In this tutorial we illustrate web programming with the embedded Gerbil http server.
 
 The source code for the tutorial is available at [src/tutorial/httpd](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd).
-You can build the code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd/build.ss).
+You can build the code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/httpd/build.ss):
+```
+$ cd gerbil/src/tutorial/httpd
+$ gerbil build
+...
+```
+
 
 ## A Simple Web Server
 
@@ -24,17 +30,15 @@ handler multiplexer, and registers handlers using `http-register-handler`
 for the various paths we want to handle:
 ```scheme
 (def (main . args)
-  (def gopt
-    (getopt (option 'address "-a" "--address"
-                    help: "server address"
-                    default: "127.0.0.1:8080")))
+  (call-with-getopt simpled-main args
+    program: "simpled"
+    help: "A simple httpd server"
+    (option 'address "-a" "--address"
+      help: "server address"
+      default: "127.0.0.1:8080")))
 
-  (try
-   (let (opt (getopt-parse gopt args))
-     (run (hash-get opt 'address)))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "hellod" (current-error-port))
-     (exit 1))))
+(def (simpled-main opt)
+  (run (hash-ref opt 'address)))
 
 (def (run address)
   (let (httpd (start-http-server! address mux: (make-default-http-mux default-handler)))
@@ -134,8 +138,10 @@ print an informative message:
 
 Here are some example interactions with the server using curl:
 ```bash
-$ ./simpled &
+## in one terminal
+$ gerbil env simpled
 
+## in another terminal
 $ curl http://localhost:8080/
 hello, 127.0.0.1:39189
 
