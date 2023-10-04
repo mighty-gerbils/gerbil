@@ -5,6 +5,7 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
+(export #t)
 (import "gambit" "util")
 (include "version.ss")
 
@@ -20,6 +21,10 @@ namespace: #f
 
 (def (gerbil-home)
   (getenv "GERBIL_HOME" (path-expand "~~")))
+
+(def (gerbil-path)
+  (or (getenv "GERBIL_PATH" #f)
+      (path-expand "~/.gerbil")))
 
 (def (gerbil-runtime-smp?)
   (member "--enable-smp" (string-split (configure-command-string) #\')))

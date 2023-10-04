@@ -7,11 +7,9 @@
 ## Macros
 
 ### defsyntax-parameter
-::: tip usage
 ```
-(defsyntax-parameter ...)
+(defsyntax-parameter id default)
 ```
-:::
 
 Please document me!
 
@@ -47,11 +45,10 @@ and [std/actor/message.ss](https://github.com/mighty-gerbils/gerbil/blob/master/
 :::
 
 ### syntax-parameterize
-::: tip usage
 ```
-(syntax-parameterize ...)
+(syntax-parameterize ((syntax-parameter value) ...)
+  body ...)
 ```
-:::
 
 Please document me!
 
@@ -67,19 +64,15 @@ For syntax bindings [phi=+1] for use in macros.
 Please document me!
 
 ### syntax-parameter-value
-::: tip usage
 ```
-(syntax-parameter-value ...)
+(syntax-parameter-value id-stx)
 ```
-:::
 
 Please document me!
 
 ### syntax-parameter-e
-::: tip usage
 ```
-(syntax-parameter-e ...)
+(syntax-parameter-e param)
 ```
-:::
 
 Please document me!

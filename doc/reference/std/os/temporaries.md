@@ -1,5 +1,5 @@
 # Temporary Files
-::: tip To use bindings from this module
+::: tip usage
 ```scheme
 (import :std/os/temporaries)
 ```

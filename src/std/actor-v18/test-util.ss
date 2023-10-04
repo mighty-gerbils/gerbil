@@ -23,7 +23,7 @@
   ;; drain all existing (leftover) messages
   (while (thread-receive 0 #f)))
 
-(def (echo-actor-main srv main)
+(def (echo-actor srv main)
   (def ref
     (match (register-actor! 'echo srv)
       (ref ref)))
@@ -38,17 +38,11 @@
           (greeting
            (--> (cons 'hello greeting)))))))
 
-(def (echo-actor srv main)
-  (with-exception-stack-trace (cut echo-actor-main srv main)))
-
-(def (void-actor-main srv main)
+(def (void-actor srv main)
   (let (ref (register-actor! 'void srv))
     (-> main (cons 'ready ref)))
   ;; wait for the death signal
   (thread-receive))
-
-(def (void-actor srv main)
-  (with-exception-stack-trace (cut void-actor-main srv main)))
 
 (def (actor-error-with? what)
   (lambda (exn)

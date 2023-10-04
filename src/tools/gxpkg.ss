@@ -307,7 +307,7 @@
 
 ;;; action implementation -- script api
 (def +root-dir+
-  (delay (getenv "GERBIL_PATH" "~/.gerbil")))
+  (delay (gerbil-path)))
 (def +pkg-root-dir+
   (delay (path-expand "pkg" (force +root-dir+))))
 (def +pkg-lib-dir+
@@ -783,7 +783,7 @@
   (path-expand "pkg/directory-list" (path-expand "~/.gerbil")))
 
 (def (pkg-directory-local-dirs-path)
-  (path-expand "pkg/directory-list" (path-expand (getenv "GERBIL_PATH" "~/.gerbil"))))
+  (path-expand "pkg/directory-list" (gerbil-path)))
 
 (def (pkg-directory-dirs)
   (let* ((user-dir (pkg-directory-user-dirs-path))

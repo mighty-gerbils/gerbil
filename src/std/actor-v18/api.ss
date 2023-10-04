@@ -128,7 +128,7 @@
       (ensemble-add-server! server-id public-addrs roles))
     ;; run it!
     (try
-     (with-exception-stack-trace thunk)
+     (thunk)
      (catch (e)
        (display "*** ERROR " (current-error-port))
        (display-exception e (current-error-port))))

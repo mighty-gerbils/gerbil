@@ -30,6 +30,7 @@
         http-response-file
         http-response-force-output
         http-response-timeout-set!
+        http-response-upgrade!
         set-httpd-request-timeout!
         set-httpd-response-timeout!
         set-httpd-max-request-headers!

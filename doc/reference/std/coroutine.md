@@ -18,79 +18,65 @@ a delimited dynamic scope.
 ## Interface
 
 ### coroutine
-::: tip usage
 ```
 (coroutine proc arg ...)
   proc := procedure
-=> <coroutine>
+-> <coroutine>
 ```
-:::
 
 Creates a new coroutine that evaluates proc with arguments `(proc arg ...)`.
 The coroutine is initially a suspended continuation, and can be resumed
 with `continue`.
 
 ### coroutine?
-::: tip usage
 ```
 (coroutine? obj)
-=> boolean
+-> boolean
 ```
-:::
 
 Returns true if the object is a coroutine.
 
 ### cothread
-::: tip usage
 ```
 (cothread proc arg ...)
   proc := procedure
-=> <cothread>
+-> <cothread>
 ```
-:::
 
 Creates a new cothread that evaluates proc with arguments `(proc arg ...)`.
 The thread is initially suspended, and can be resumed with `continue`.
 
 ### cothread?
-::: tip usage
 ```
 (cothread? obj)
-=> boolean
+-> boolean
 ```
-:::
 
 Returns true if the object is a cothread.
 
 
 ### continue
-::: tip usage
 ```
 (continue co arg ...)
   co := coroutine or cothread
-=> any
+-> any
 ```
-:::
 
 Resumes the coroutine or cothread, with the arguments becoming the values of the last yield.
 If the continuable was in initial suspended state, then it is resumed and the arguments are ignored.
 
 ### yield
-::: tip usage
 ```
 (yield arg ...)
 ```
-:::
 
 Continues execution of the main routine or thread, with the arguments becoming the values of the last continue.
 
 ### cothread-stop!
-::: tip usage
 ```
 (cothread-stop! co)
   co := cothread
 ```
-:::
 
 Stops the execution of a cothread.
 

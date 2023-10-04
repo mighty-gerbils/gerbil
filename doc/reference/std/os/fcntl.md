@@ -4,92 +4,73 @@
 :::
 
 ### fcntl
-::: tip usage
 ```
-(fcntl ...)
+(fcntl raw cmd)
+(fcntl raw cmd arg)
 ```
-:::
 
 Please document me!
 
 ### fd-getfl
-::: tip usage
 ```
-(fd-getfl ...)
+(fd-getfl raw)
 ```
-:::
 
 Please document me!
 
 ### fd-setfl
-::: tip usage
 ```
-(fd-setfl ...)
+(fd-setfl raw xflags)
 ```
-:::
 
 Please document me!
 
 ### fd-setfl!
-::: tip usage
 ```
-(fd-setfl! ...)
+(fd-setfl! raw flags)
 ```
-:::
 
 Please document me!
 
 ### fd-getfd
-::: tip usage
 ```
-(fd-getfd ...)
+(fd-getfd raw)
 ```
-:::
 
 Please document me!
 
 ### fd-setfd
-::: tip usage
 ```
-(fd-setfd ...)
+(fd-setfd raw xflags)
 ```
-:::
 
 Please document me!
 
 ### fd-setfd!
-::: tip usage
 ```
-(fd-setfd! ...)
+(fd-setfd! raw flags)
 ```
-:::
 
 Please document me!
 
 ### fd-set-closeonexec
-::: tip usage
 ```
-(fd-set-closeonexec ...)
+(fd-set-closeonexec raw)
 ```
-:::
 
 Please document me!
 
 ### fd-set-nonblock
-::: tip usage
 ```
-(fd-set-nonblock ...)
+(fd-set-nonblock raw)
 ```
-:::
 
 Please document me!
 
 ### fd-set-nonblock/closeonexec
-::: tip usage
 ```
-(fd-set-nonblock/closeonexec ...)
+(fd-set-nonblock/closeonexec raw)
 ```
-:::
 
 Please document me!
 
