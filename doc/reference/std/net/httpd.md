@@ -31,7 +31,7 @@ Parameter denoting the current http server.
   mux := request multiplexer
   backlog := server socket listen backlog
   sockpts := server socket options.
-  address ... := addresses to listen
+  address ... := addresses to listen; either an inet-address or [ssl: inet-address ssl-context]
 ```
 
 Start a new http server serving in the specified addresses and multiplexing
