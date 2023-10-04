@@ -888,6 +888,7 @@ First, let's build the binaries for our servers, using the docker
 [Makefile](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/Makefile)
 to build fully static binaries:
 ```
+$ gerbil clean
 $ make
 ...
 ```
