@@ -36,7 +36,7 @@
         :std/text/utf8)
 
 (cond-expand
-  (cofing-enable-zlib
+  (config-have-zlib
    (import :std/text/zlib)))
 
 ;; proxy connect function: lambda (addr) -> StreamSocket
@@ -84,7 +84,7 @@
     ("Connection" . "close")
     ("Accept" . "*/*")
     ,(cond-expand
-        (config-enable-zlib
+        (config-have-zlib
          '("Accept-Encoding" . "gzip, deflate, identity"))
         (else
          '("Accept-Encoding" . "identity")))))
@@ -476,7 +476,7 @@
               (let* ((body (http-request-read-body req headers))
                      (body
                       (cond-expand
-                        (config-enable-zlib
+                        (config-have-zlib
                          (cond
                           ((assoc "Content-Encoding" headers)
                            => (lambda (enc)
