@@ -36,6 +36,18 @@ namespace: gxc
          (%#define-runtime
           optimizer-info-methods-set!
           gxc#optimizer-info-methods-set!)
+         (%#define-runtime &optimizer-info-type gxc#&optimizer-info-type)
+         (%#define-runtime &optimizer-info-ssxi gxc#&optimizer-info-ssxi)
+         (%#define-runtime &optimizer-info-methods gxc#&optimizer-info-methods)
+         (%#define-runtime
+          &optimizer-info-type-set!
+          gxc#&optimizer-info-type-set!)
+         (%#define-runtime
+          &optimizer-info-ssxi-set!
+          gxc#&optimizer-info-ssxi-set!)
+         (%#define-runtime
+          &optimizer-info-methods-set!
+          gxc#&optimizer-info-methods-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-base__1")))
@@ -46,6 +58,8 @@ namespace: gxc
          (%#define-runtime make-!type gxc#make-!type)
          (%#define-runtime !type-id gxc#!type-id)
          (%#define-runtime !type-id-set! gxc#!type-id-set!)
+         (%#define-runtime &!type-id gxc#&!type-id)
+         (%#define-runtime &!type-id-set! gxc#&!type-id-set!)
          (%#define-syntax !type |gxc[:0:]#!type|)
          (%#define-runtime !alias::t gxc#!alias::t)
          (%#define-runtime !alias? gxc#!alias?)
@@ -72,6 +86,28 @@ namespace: gxc
          (%#define-runtime
           !struct-type-methods-set!
           gxc#!struct-type-methods-set!)
+         (%#define-runtime &!struct-type-super gxc#&!struct-type-super)
+         (%#define-runtime &!struct-type-fields gxc#&!struct-type-fields)
+         (%#define-runtime &!struct-type-xfields gxc#&!struct-type-xfields)
+         (%#define-runtime &!struct-type-ctor gxc#&!struct-type-ctor)
+         (%#define-runtime &!struct-type-plist gxc#&!struct-type-plist)
+         (%#define-runtime &!struct-type-methods gxc#&!struct-type-methods)
+         (%#define-runtime
+          &!struct-type-super-set!
+          gxc#&!struct-type-super-set!)
+         (%#define-runtime
+          &!struct-type-fields-set!
+          gxc#&!struct-type-fields-set!)
+         (%#define-runtime
+          &!struct-type-xfields-set!
+          gxc#&!struct-type-xfields-set!)
+         (%#define-runtime &!struct-type-ctor-set! gxc#&!struct-type-ctor-set!)
+         (%#define-runtime
+          &!struct-type-plist-set!
+          gxc#&!struct-type-plist-set!)
+         (%#define-runtime
+          &!struct-type-methods-set!
+          gxc#&!struct-type-methods-set!)
          (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
          (%#define-runtime !class-type::t gxc#!class-type::t)
          (%#define-runtime !class-type? gxc#!class-type?)
@@ -92,6 +128,24 @@ namespace: gxc
          (%#define-runtime
           !class-type-methods-set!
           gxc#!class-type-methods-set!)
+         (%#define-runtime &!class-type-super gxc#&!class-type-super)
+         (%#define-runtime &!class-type-mixin gxc#&!class-type-mixin)
+         (%#define-runtime &!class-type-slots gxc#&!class-type-slots)
+         (%#define-runtime &!class-type-xslots gxc#&!class-type-xslots)
+         (%#define-runtime &!class-type-ctor gxc#&!class-type-ctor)
+         (%#define-runtime &!class-type-plist gxc#&!class-type-plist)
+         (%#define-runtime &!class-type-methods gxc#&!class-type-methods)
+         (%#define-runtime &!class-type-super-set! gxc#&!class-type-super-set!)
+         (%#define-runtime &!class-type-mixin-set! gxc#&!class-type-mixin-set!)
+         (%#define-runtime &!class-type-slots-set! gxc#&!class-type-slots-set!)
+         (%#define-runtime
+          &!class-type-xslots-set!
+          gxc#&!class-type-xslots-set!)
+         (%#define-runtime &!class-type-ctor-set! gxc#&!class-type-ctor-set!)
+         (%#define-runtime &!class-type-plist-set! gxc#&!class-type-plist-set!)
+         (%#define-runtime
+          &!class-type-methods-set!
+          gxc#&!class-type-methods-set!)
          (%#define-syntax !class-type |gxc[:0:]#!class-type|)
          (%#define-runtime !procedure::t gxc#!procedure::t)
          (%#define-runtime !procedure? gxc#!procedure?)
@@ -114,6 +168,14 @@ namespace: gxc
          (%#define-runtime
           !struct-getf-unchecked?-set!
           gxc#!struct-getf-unchecked?-set!)
+         (%#define-runtime &!struct-getf-off gxc#&!struct-getf-off)
+         (%#define-runtime
+          &!struct-getf-unchecked?
+          gxc#&!struct-getf-unchecked?)
+         (%#define-runtime &!struct-getf-off-set! gxc#&!struct-getf-off-set!)
+         (%#define-runtime
+          &!struct-getf-unchecked?-set!
+          gxc#&!struct-getf-unchecked?-set!)
          (%#define-syntax !struct-getf |gxc[:0:]#!struct-getf|)
          (%#define-runtime !struct-setf::t gxc#!struct-setf::t)
          (%#define-runtime !struct-setf? gxc#!struct-setf?)
@@ -124,6 +186,14 @@ namespace: gxc
          (%#define-runtime
           !struct-setf-unchecked?-set!
           gxc#!struct-setf-unchecked?-set!)
+         (%#define-runtime &!struct-setf-off gxc#&!struct-setf-off)
+         (%#define-runtime
+          &!struct-setf-unchecked?
+          gxc#&!struct-setf-unchecked?)
+         (%#define-runtime &!struct-setf-off-set! gxc#&!struct-setf-off-set!)
+         (%#define-runtime
+          &!struct-setf-unchecked?-set!
+          gxc#&!struct-setf-unchecked?-set!)
          (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
          (%#define-runtime !class-pred::t gxc#!class-pred::t)
          (%#define-runtime !class-pred? gxc#!class-pred?)
@@ -142,6 +212,12 @@ namespace: gxc
          (%#define-runtime
           !class-getf-unchecked?-set!
           gxc#!class-getf-unchecked?-set!)
+         (%#define-runtime &!class-getf-slot gxc#&!class-getf-slot)
+         (%#define-runtime &!class-getf-unchecked? gxc#&!class-getf-unchecked?)
+         (%#define-runtime &!class-getf-slot-set! gxc#&!class-getf-slot-set!)
+         (%#define-runtime
+          &!class-getf-unchecked?-set!
+          gxc#&!class-getf-unchecked?-set!)
          (%#define-syntax !class-getf |gxc[:0:]#!class-getf|)
          (%#define-runtime !class-setf::t gxc#!class-setf::t)
          (%#define-runtime !class-setf? gxc#!class-setf?)
@@ -152,6 +228,12 @@ namespace: gxc
          (%#define-runtime
           !class-setf-unchecked?-set!
           gxc#!class-setf-unchecked?-set!)
+         (%#define-runtime &!class-setf-slot gxc#&!class-setf-slot)
+         (%#define-runtime &!class-setf-unchecked? gxc#&!class-setf-unchecked?)
+         (%#define-runtime &!class-setf-slot-set! gxc#&!class-setf-slot-set!)
+         (%#define-runtime
+          &!class-setf-unchecked?-set!
+          gxc#&!class-setf-unchecked?-set!)
          (%#define-syntax !class-setf |gxc[:0:]#!class-setf|)
          (%#define-runtime !lambda::t gxc#!lambda::t)
          (%#define-runtime !lambda? gxc#!lambda?)
@@ -166,6 +248,18 @@ namespace: gxc
          (%#define-runtime
           !lambda-inline-typedecl-set!
           gxc#!lambda-inline-typedecl-set!)
+         (%#define-runtime &!lambda-arity gxc#&!lambda-arity)
+         (%#define-runtime &!lambda-dispatch gxc#&!lambda-dispatch)
+         (%#define-runtime &!lambda-inline gxc#&!lambda-inline)
+         (%#define-runtime
+          &!lambda-inline-typedecl
+          gxc#&!lambda-inline-typedecl)
+         (%#define-runtime &!lambda-arity-set! gxc#&!lambda-arity-set!)
+         (%#define-runtime &!lambda-dispatch-set! gxc#&!lambda-dispatch-set!)
+         (%#define-runtime &!lambda-inline-set! gxc#&!lambda-inline-set!)
+         (%#define-runtime
+          &!lambda-inline-typedecl-set!
+          gxc#&!lambda-inline-typedecl-set!)
          (%#define-syntax !lambda |gxc[:0:]#!lambda|)
          (%#define-runtime !case-lambda::t gxc#!case-lambda::t)
          (%#define-runtime !case-lambda? gxc#!case-lambda?)
@@ -174,6 +268,10 @@ namespace: gxc
          (%#define-runtime
           !case-lambda-clauses-set!
           gxc#!case-lambda-clauses-set!)
+         (%#define-runtime &!case-lambda-clauses gxc#&!case-lambda-clauses)
+         (%#define-runtime
+          &!case-lambda-clauses-set!
+          gxc#&!case-lambda-clauses-set!)
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !kw-lambda::t gxc#!kw-lambda::t)
          (%#define-runtime !kw-lambda? gxc#!kw-lambda?)
@@ -184,6 +282,12 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-dispatch-set!
           gxc#!kw-lambda-dispatch-set!)
+         (%#define-runtime &!kw-lambda-table gxc#&!kw-lambda-table)
+         (%#define-runtime &!kw-lambda-dispatch gxc#&!kw-lambda-dispatch)
+         (%#define-runtime &!kw-lambda-table-set! gxc#&!kw-lambda-table-set!)
+         (%#define-runtime
+          &!kw-lambda-dispatch-set!
+          gxc#&!kw-lambda-dispatch-set!)
          (%#define-syntax !kw-lambda |gxc[:0:]#!kw-lambda|)
          (%#define-runtime !kw-lambda-primary::t gxc#!kw-lambda-primary::t)
          (%#define-runtime !kw-lambda-primary? gxc#!kw-lambda-primary?)
@@ -196,6 +300,18 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary-main-set!
           gxc#!kw-lambda-primary-main-set!)
+         (%#define-runtime
+          &!kw-lambda-primary-keys
+          gxc#&!kw-lambda-primary-keys)
+         (%#define-runtime
+          &!kw-lambda-primary-main
+          gxc#&!kw-lambda-primary-main)
+         (%#define-runtime
+          &!kw-lambda-primary-keys-set!
+          gxc#&!kw-lambda-primary-keys-set!)
+         (%#define-runtime
+          &!kw-lambda-primary-main-set!
+          gxc#&!kw-lambda-primary-main-set!)
          (%#define-syntax !kw-lambda-primary |gxc[:0:]#!kw-lambda-primary|)
          (%#define-runtime !primitive::t gxc#!primitive::t)
          (%#define-runtime !primitive? gxc#!primitive?)

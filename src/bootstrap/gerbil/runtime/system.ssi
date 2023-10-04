@@ -2,7 +2,8 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
-(%#begin (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+(%#begin (%#export #t)
+         (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
          (%#define-runtime gerbil-version-string gerbil-version-string)
          (%#define-runtime
           gerbil-system-version-string
@@ -10,5 +11,6 @@ namespace: #f
          (%#define-runtime gerbil-system gerbil-system)
          (%#define-runtime gerbil-greeting gerbil-greeting)
          (%#define-runtime gerbil-home gerbil-home)
+         (%#define-runtime gerbil-path gerbil-path)
          (%#define-runtime gerbil-runtime-smp? gerbil-runtime-smp?))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/system__0"))

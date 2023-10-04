@@ -40,6 +40,22 @@ namespace: #f
          (%#define-runtime current-thread-group current-thread-group)
          (%#define-runtime with-lock with-lock)
          (%#define-runtime with-dynamic-lock with-dynamic-lock)
+         (%#begin (%#define-runtime
+                   with-exception-stack-trace__%
+                   with-exception-stack-trace__%)
+                  (%#begin (%#define-runtime
+                            with-exception-stack-trace__0
+                            with-exception-stack-trace__0)
+                           (%#define-runtime
+                            with-exception-stack-trace
+                            with-exception-stack-trace)))
+         (%#begin (%#define-runtime dump-stack-trace!__% dump-stack-trace!__%)
+                  (%#begin (%#define-runtime
+                            dump-stack-trace!__0
+                            dump-stack-trace!__0)
+                           (%#define-runtime
+                            dump-stack-trace!
+                            dump-stack-trace!)))
          (%#extern
           (actor-thread? actor-thread?)
           (construct-actor-thread construct-actor-thread)

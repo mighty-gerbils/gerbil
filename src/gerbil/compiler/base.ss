@@ -69,7 +69,13 @@ namespace: gxc
 
 (def (verbose . args)
   (when (current-compile-verbose)
-    (apply displayln args)))
+    (with-verbose-mutex (apply displayln args))))
+
+(def +verbose-mutex+ (make-mutex 'compiler/driver))
+(defrules with-verbose-mutex ()
+  ((_ expr)
+   (with-lock +verbose-mutex+ (lambda () expr))))
+
 
 ;; these characters are restricted to avoid confusing shells and other tools
 (def module-path-reserved-chars
