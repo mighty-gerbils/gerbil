@@ -207,11 +207,11 @@ namespace: gxc
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))
-      (create-directory* (path-directory output-bin))
+      (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
         (cut generate-stub builtin-modules))
       (when (current-compile-invoke-gsc)
-        (create-directory tmp)
+        (with-driver-mutex (create-directory tmp))
         (for-each copy-file src-deps-scm deps-scm)
         (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
@@ -358,7 +358,7 @@ namespace: gxc
              (cond-expand
                (netbsd ["-lm"])
                (else ["-ldl" "-lm"]))))
-      (create-directory* (path-directory output-bin))
+      (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
         (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
@@ -836,7 +836,7 @@ namespace: gxc
        (module-source-directory ctx)))))
 
   (let (path (file-path))
-    (create-directory* (path-directory path))
+    (with-driver-mutex (create-directory* (path-directory path)))
     path))
 
 (def (compile-static-output-file ctx)
@@ -853,7 +853,7 @@ namespace: gxc
         (path-expand file "static")))))
 
   (let (path (file-path))
-    (create-directory* (path-directory path))
+    (with-driver-mutex (create-directory* (path-directory path)))
     path))
 
 (def (compile-exe-output-file ctx opts)
