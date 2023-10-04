@@ -365,7 +365,7 @@
     (def (install-it tag)
       (pkg-fetch pkg tag)
       (pkg-install-deps pkg)
-      (pkg-build pkg))
+      (pkg-build pkg #f))
 
     (if current-tag
       (cond
