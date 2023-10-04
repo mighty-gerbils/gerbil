@@ -66,6 +66,8 @@ namespace: gxc
          (%#define-runtime symbol-table:::init! gxc#symbol-table:::init!)
          (%#define-runtime raise-compile-error gxc#raise-compile-error)
          (%#define-runtime verbose gxc#verbose)
+         (%#define-runtime +verbose-mutex+ gxc#+verbose-mutex+)
+         (%#define-syntax with-verbose-mutex |gxc[:0:]#with-verbose-mutex|)
          (%#define-runtime
           module-path-reserved-chars
           gxc#module-path-reserved-chars)

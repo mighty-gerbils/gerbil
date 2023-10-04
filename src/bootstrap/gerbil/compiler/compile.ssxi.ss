@@ -3,7 +3,20 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
-  (declare-type gxc#compile-e (@lambda (1) #f))
+  (declare-type gxc#compile-e__0 (@lambda 1 #f))
+  (declare-type gxc#compile-e__1 (@lambda 2 #f))
+  (declare-type gxc#compile-e__2 (@lambda 3 #f))
+  (declare-type gxc#compile-e__3 (@lambda (3) #f))
+  (declare-type
+   gxc#compile-e
+   (@case-lambda
+    (1 gxc#compile-e__0)
+    (2 gxc#compile-e__1)
+    (3 gxc#compile-e__2)
+    ((3) gxc#compile-e__3)))
+  (declare-type gxc#void-method (@lambda (1) #f))
+  (declare-type gxc#false-method (@lambda (1) #f))
+  (declare-type gxc#true-method (@lambda (1) #f))
   (declare-type gxc#apply-collect-bindings (@lambda (1) #f))
   (declare-type gxc#apply-lift-modules (@lambda (1) #f))
   (declare-type gxc#apply-find-runtime-code (@lambda (1) #f))
