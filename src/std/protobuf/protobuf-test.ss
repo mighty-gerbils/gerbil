@@ -108,12 +108,12 @@
 
     (test-case "test parser"
       (check (gx#import-module (path-expand "potpourri-test.proto"
-                                            (path-directory (this-source-file))))
+                                 (path-directory (this-source-file))))
              ? gx#module-context?))
 
     (test-case "test import"
       (check (gx#import-module (path-expand "potpourri-test2.proto"
-                                            (path-directory (this-source-file))))
+                                 (path-directory (this-source-file))))
              ? gx#module-context?))
 
     ))
