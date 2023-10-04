@@ -21,7 +21,7 @@ programmer or the operator to explicitly connect to each other.
 The registry is currently a centralized component, which obviously
 creates scalability and fault tolerance issues. We plan to implement a
 distributed registry for the next Gerbil release (v0.19); see
-the [Distributed Registry(https://github.com/mighty-gerbils/gerbil/issues/823)
+the [Distributed Registry](https://github.com/mighty-gerbils/gerbil/issues/823)
 issue on github.
 :::
 
