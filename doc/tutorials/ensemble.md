@@ -896,12 +896,12 @@ This gives us the [`httpd-prod-exe`](https://github.com/mighty-gerbils/gerbil/tr
 
 Next, we need to ship the code and ensemble environment and run the
 servers.  I set up two ephemeral linodes for this demonstration, you
-can use your favorite cloud provider to do the same.
+should use your favorite cloud provider to do the same.
 
-**Note** that the IPs will be long relinquished by the time you read
-this, substitute your real server IPs. In this demonstration,
-`172.104.139.107` is the registry IP and `172.104.139.226` is the
-httpd IP.
+**Note** that these servers are ephemeral and the IPs will be long
+relinquished by the time you read this, so please substitute your real
+server IPs.  In this demonstration, `172.104.139.107` is the `registry`
+IP and `172.104.139.226` is the `httpd` IP.
 
 In one terminal:
 ```
