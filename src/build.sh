@@ -285,7 +285,6 @@ build_gerbil() {
   build_r7rs_large || die
   build_srfi       || die
   build_tools      || die
-  build_tags       || die
 }
 
 ## handling command line
