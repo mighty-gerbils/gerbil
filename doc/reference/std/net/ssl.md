@@ -80,9 +80,10 @@ it is not supplied, it defaults to he car of the address.
 -> StreamSocket
 ```
 
-Upgrades a client-side `StreamSocket` (see the [Standard IO
-Interfaces](/refernce/std/stdio.md) for details of this interface) to
-use SSL; this is the programmatic equivalent of `STARTTLS`.
+Upgrades a client-side `StreamSocket`
+(see the [Standard IO Interfaces](/reference/std/stdio.md)
+for details of this interface) to use SSL;
+this is the programmatic equivalent of `STARTTLS`.
 
 ## ssl-listen
 ```
@@ -103,7 +104,7 @@ Listens for incoming TLS connections in `addr`
 ```
 
 Upgrades a server-side `StreamSocket` (see the [Standard IO
-Interfaces](/refernce/std/stdio.md) for details of this interface) to
+Interfaces](/reference/std/stdio.md) for details of this interface) to
 use SSL; this is the programmatic equivalent of responding of `STARTTLS`.
 
 
