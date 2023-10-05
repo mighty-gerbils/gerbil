@@ -78,22 +78,19 @@ Various features can be enabled or disabled by passing `--enable-FEATURE` or
 `--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
 features are available.
 
-If you are building on macOS and want to use the homebrew OpenSSL,
-then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
-For instance:
-```bash
-$ ./configure LDFLAGS=-L/usr/local/opt/openssl/lib \
-              CPPFLAGS=-I/usr/local/opt/openssl/include \
+## Installation on MacOS
+
+Gerbil is available via a homebrew recipe. If you are on MacOS, you can build using the brew formula.
+``` bash
+$ wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
+$ brew install --formula -vd gerbil-scheme.rb
 ```
 
-## Installation on macOS
-Gerbil is available via homebrew.
-```
-$ brew install gerbil-scheme
-```
+Feel free to check out the [MacOS Details](./macos.md) if needed.
 
-**Note** Currently, this will install the last Gerbil release, v0.17;
-the brew recipe will be updated for v0.18 once the release is ready.
+**Note** Currently, this is not yet upstreamed. The brew recipe will
+be updated for v0.18 once the release is ready and available by
+default for all homebrew users.
 
 ## Skip the Install, Get Started on Docker
 

@@ -98,7 +98,8 @@
        (output-bin
         (path-expand "gerbil" gerbil-bindir))
        (cc-options
-        (string-append "-Wl,-rpath=" gambit-libdir)))
+        (string-append (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
+		       gambit-libdir)))
   (displayln "... build " output-bin)
   (invoke (gerbil-gsc)
           ["-exe" "-o" output-bin

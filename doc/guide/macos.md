@@ -1,95 +1,115 @@
-# Macos Specific Items
-
-**Note** This page is out of date and needs to be updated.
-
-## Performance
-
-## Static compilation
-In static we mean the linkage to external libraries. (e.g. zlib, openssl)
-
-Macos can statically link all external libraries with the exception of libsystem.
-
-The requirements for this are that you must use Clang.
-While it is generally not recommended to use Clang on macos, as it does take a significant amount
-of time to compile.
-
-The other requirement is that you have to 'hide' the dynamic libs to force static linkage.
-See https://dropline.net/2015/10/static-linking-on-mac-os-x/ for an example script to do this,
-and the rationale behind it.
-
-### Using raw gxc examples
-```
-gxc -o slack -cc-options "-Bstatic -DOPENSSL_NO_KRB5 -I/usr/local/include -I/usr/local/opt/openssl@1.1/include" -static -ld-options "-static -lpthread -L/usr/lib64 -L/usr/local/opt/openssl@1.1/lib -lssl -L/usr/local/lib -ldl -lyaml -lz" -exe slack/slack.ss
-```
-
-### Homebrew examples
-As an example Makefile, I use the script from above to hide the dynamic libraries for the primary
-libraries this app uses. This also is how using homebrew brew formulae one can deliver static binaries.
-
-```makefile
-hide-shared:
-	@./hide-shared-libs -d /usr/local/opt/openssl@1.1 -m
-	@./hide-shared-libs -d /usr/local/opt/libyaml -m
-	@./hide-shared-libs -d /usr/local/opt/zlib -m
-	@./hide-shared-libs -d /usr/local/opt/lmdb -m
-	@./hide-shared-libs -d /usr/local/opt/leveldb -m
-
-restore-shared:
-	@./hide-shared-libs -d /usr/local/opt/openssl@1.1 -r
-	@./hide-shared-libs -d /usr/local/opt/libyaml -r
-	@./hide-shared-libs -d /usr/local/opt/zlib -r
-	@./hide-shared-libs -d /usr/local/opt/lmdb -r
-	@./hide-shared-libs -d /usr/local/opt/leveldb -r
 
 
-app:
-	@brew remove -f --ignore-dependencies $(space) || true
-	brew install --verbose --build-bottle $(space)
-	brew bottle $(space)
-	$(MAKE) restore-shared
+# Gerbil on MacOS
 
-slack:
-	$(MAKE) app space=slack
-```
+To install gerbil on MacOS the easy way is simply to download the
+homebrew `.rb` and run it as such.
 
-Then with the slack.rb, one can package up static binaries for Homebrew.
+    wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
+    brew install --formula -vd gerbil-scheme.rb
 
-```ruby
-class Slack < Formula
-  desc "Slack command line helper"
-  homepage "https://github.com/ober/slack"
-  url "https://github.com/ober/slack.git"
-  version "0.06"
+The run the bleeding edge master build simply pass the `--HEAD` argument.
 
-  bottle do
-    root_url "https://github.com/ober/homebrew-artifacts/raw/master"
-    sha256 "670974d34f99f8332850c21a30a7f342afcb3aee9982f20f8e4ed2c25991ff01" => :mojave
-  end
+    brew install --HEAD --formula -vd gerbil-scheme.rb
 
-  depends_on "gerbil-scheme-ober" => :build
 
-  def install
-    ENV['CC'] = Formula['gcc'].opt_bin/Formula['gcc'].aliases.first.gsub("@","-")
-    gxpkg_dir = Dir.mktmpdir
+# Documentation
 
-    gambit = Formula["gambit-scheme-ober"]
-    ENV.append_path "PATH", "#{gambit.opt_prefix}/current/bin"
+<!---
+  The markdown file "macos.md" is weaved (AKA generated) from the homebrew/README.org file.
+ -->
 
-    gerbil = Formula["gerbil-scheme-ober"]
-    ENV['GERBIL_HOME'] = "#{gerbil.libexec}"
+Gerbil is fully available for MacOS! There are some differences that
+need to be taken into account should you wish to compile and
+distribute a binary but it should JustWork(tm) all things considered.
 
-    ENV['GERBIL_PATH'] = gxpkg_dir
-    mkdir_p "#{gxpkg_dir}/bin" # hack to get around gerbil not making ~/.gxpkg/bin
-    mkdir_p "#{gxpkg_dir}/pkg" # ditto
-    system "gxpkg", "install", "github.com/ober/slack"
-    bin.install Dir["#{gxpkg_dir}/bin/slack"]
-  end
 
-  test do
-    output = `#{bin}/slack`
-    assert_equal 0, $CHILD_STATUS.exitstatus
-  end
-end
+## `DYLD_LIBRARY_PATH` and stripping: System Integrity Protection (SIP)
 
-```
-Additional examples at https://github.com/ober/homebrew-brew
+Ah stripping. Whether you love it or hate it, it happens, often witout
+a say. System Integrity Protection (SIP) in macOS protects the entire
+system by preventing the execution of unauthorized code.
+
+In short the mantra is "Don't Shell Out!". The environment is propagated when just calling `gxi`.
+
+    % gxi -e '(displayln (getenv "DYLD_LIBRARY_PATH" #f))'
+    /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+
+It may not propagate with a shebang or other reasons. It seems
+arbitrary. For example I updated my older iMac to an unsupported
+Ventura. It does not strip for me.
+
+    $ uname -a
+    Darwin drewc-iMac.local 22.6.0 Darwin Kernel Version 22.6.0: Tue Aug 15 20:13:24 PDT 2023; root:xnu-8796.141.3.700.5~2/RELEASE_X86_64 x86_64
+    $ export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
+    $ LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+    $ DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+    $ echo '#!/bin/sh' > /tmp/foo
+    $ echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
+    $ echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
+    $ echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
+    $ chmod 755 /tmp/foo
+    $ /tmp/foo
+    dy?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+    ld?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+    my?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+
+Whereas my Mac Mini, also running Ventura, does indeed strip.
+
+    % uname -a
+    Darwin users-Mac-mini.local 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:41 PST 2023; root:xnu-8796.101.5~3/RELEASE_ARM64_T8103 arm64
+    % export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
+    % DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+    % LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
+    % export DYLD_LIBRARY_PATH LD_LIBRARY_PATH
+    % echo '#!/bin/sh' > /tmp/foo
+    % echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
+    % echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
+    % echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
+    % chmod 755 /tmp/foo
+    % /tmp/foo
+    dy?:
+    ld?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+    my?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+
+So be cautious with `DYLD_LIBRARY_PATH` and friends. Even better is to
+pass an `-rpath` to `ld` along with a `-L<library-path>` for building
+if needed.
+
+
+## The Mac `ld` and `-rpath`: No strippers allowed!
+
+Because MacOS tries to keep things SI(m)P'le often their `ld` is not capable
+of finding our `.so`'s, `.a`'s, or `.dylib`'s.
+
+To deal with that there is the `-rpath` parameter for Apple's `ld`.
+
+> -rpath path Add path to the runpath search path list for image being
+> 	    created.  At runtime, dyld uses the runpath when
+> 	    searching for dylibs whose load path begins with @rpath/.
+
+What does that mean? In MacOS, every dynamic library has an [install
+name](https://developer.apple.com/forums/thread/736719). Now, Xcode seems to [do it a certain way](https://developer.apple.com/forums/thread/736728). But we are not Xcode
+and I do not even know what is is or what it entails.
+
+In linux we can just set the `LD_LIBRARY_PATH` if needed but really it
+does so much magic to find libraries that it's fairly easy to get by
+without setting much of anything.
+
+In MacOS there's the often stripped and must be manually propagated
+`DYLD_LIBRARY_PATH`.
+
+I think there's a great workaround where we can define an rpath
+relative to the execuable path! There's some more information
+available [here](https://www.fullstaq.com/knowledge-hub/blogs/an-alternative-to-macos-dyld-library-path).
+
+
+## Unsupported Upgrades
+
+My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by 
+[installing MacOS on an unsupported Mac](https://www.macworld.com/article/672461/how-to-install-macos-on-unsupported-mac.html). It worked but there are a few things different about it.
+
+Here's where I put some workarounds and hacks.
+
+    alias otool=/Library/Developer/CommandLineTools/usr/bin/otool
+
