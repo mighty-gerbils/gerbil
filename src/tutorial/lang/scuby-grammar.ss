@@ -1,6 +1,6 @@
 #lang :std/parser/grammar
 
-(import :tutorial/lang/scuby-etc)
+(import ./scuby-etc)
 
 %%parser parse-scuby lexer: lex-scuby
 

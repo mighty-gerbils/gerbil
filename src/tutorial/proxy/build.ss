@@ -4,6 +4,6 @@
 (import :std/build-script)
 
 (defbuild-script
-  '((exe: "tcp-proxy")
+  '((exe: "tcp-proxy1")
     (exe: "tcp-proxy2")
-    (exe: "socks-proxy")))
+    (exe: "tcp-proxy3")))

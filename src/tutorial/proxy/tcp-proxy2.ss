@@ -38,13 +38,12 @@
   (Reader-close reader))
 
 (def (main . args)
-  (def gopt
-    (getopt (argument 'local help: "local address to bind")
-            (argument 'remote help: "remote address to proxy to")))
-  (try
-   (let (opt (getopt-parse gopt args))
-     (start-logger!)
-     (run (hash-get opt 'local) (hash-get opt 'remote)))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "tcp-proxy" (current-error-port))
-     (exit 1))))
+  (call-with-getopt proxy-main args
+    program: "tcp-proxy"
+    help: "A transparent TCP proxy"
+    (argument 'local help: "local address to bind")
+    (argument 'remote help: "remote address to proxy to")))
+
+(def (proxy-main opt)
+  (start-logger!)
+  (run (hash-get opt 'local) (hash-get opt 'remote)))

@@ -5,12 +5,14 @@ namespace: gxc
 (%#begin (%#import
           :gerbil/expander
           :gerbil/gambit
+          :gerbil/runtime/error
           :gerbil/compiler/base
           :gerbil/compiler/compile
           :gerbil/compiler/optimize)
          (%#export
           (spec: 0 compile-module compile-module)
           (spec: 0 compile-exe compile-exe))
+         (%#extern (gerbil-path gerbil-path))
          (%#define-runtime default-gerbil-gsc gxc#default-gerbil-gsc)
          (%#define-runtime default-gerbil-gcc gxc#default-gerbil-gcc)
          (%#define-runtime default-gerbil-ar gxc#default-gerbil-ar)
@@ -87,6 +89,10 @@ namespace: gxc
                            (%#define-runtime
                             gsc-debug-options
                             gxc#gsc-debug-options)))
+         (%#define-runtime gsc-link-options gxc#gsc-link-options)
+         (%#define-runtime gsc-cc-options gxc#gsc-cc-options)
+         (%#define-runtime gcc-ld-options gxc#gcc-ld-options)
+         (%#define-runtime not-string-empty? gxc#not-string-empty?)
          (%#define-runtime gsc-compile-file gxc#gsc-compile-file)
          (%#define-runtime compile-output-file gxc#compile-output-file)
          (%#define-runtime
@@ -94,5 +100,9 @@ namespace: gxc
           gxc#compile-static-output-file)
          (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
          (%#define-runtime static-module-name gxc#static-module-name)
-         (%#define-runtime invoke gxc#invoke))
+         (%#begin (%#define-runtime invoke__% gxc#invoke__%)
+                  (%#define-runtime invoke__@ gxc#invoke__@)
+                  (%#define-runtime invoke gxc#invoke))
+         (%#define-syntax go! |gxc[:0:]#go!|)
+         (%#define-runtime join! gxc#join!))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/driver__0"))

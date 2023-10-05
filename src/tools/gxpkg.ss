@@ -76,6 +76,7 @@
       local-flag
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
+      (flag 'build-debug "-g" "--debug" help: "build with debug symbols")
       (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
@@ -159,7 +160,7 @@
       ((new)
        (pkg-new .package .name .link))
       ((build)
-       (build-pkgs .pkg .?build-release .?build-optimized .?local))
+       (build-pkgs .pkg .?build-release .?build-optimized .?build-debug .?local))
       ((clean)
        (clean-pkgs .pkg .?local))
       ((deps)
@@ -188,6 +189,7 @@
 ;;; commands
 (def (env-exec command args)
   (set-local-env!)
+  (set-local-path!)
   (invoke command args
           stdin-redirection: #f
           stdout-redirection: #f
@@ -244,13 +246,15 @@
     (set-local-env!))
   (for-each (cut pkg-unlink <> force?) pkgs))
 
-(def (build-pkgs pkgs release? optimized? local?)
+(def (build-pkgs pkgs release? optimized? debug? local?)
   (when local?
     (set-local-env!))
   (when release?
     (setenv "GERBIL_BUILD_RELEASE" "t"))
   (when optimized?
     (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
+  (when debug?
+    (setenv "GERBIL_BUILD_DEBUG" "t"))
   (if (null? pkgs)
     ;; do local build
     (begin
@@ -304,6 +308,12 @@
             (create-directory* gerbil-path)
             (setenv "GERBIL_PATH" gerbil-path))
           (error "not in local package context"))))))
+
+(def (set-local-path!)
+  (let* (($GERBIL_PATH (gerbil-path))
+         ($PATH (getenv "PATH"))
+         ($PATH (string-append $GERBIL_PATH "/bin" ":" $PATH)))
+    (setenv "PATH" $PATH)))
 
 ;;; action implementation -- script api
 (def +root-dir+
@@ -365,7 +375,7 @@
     (def (install-it tag)
       (pkg-fetch pkg tag)
       (pkg-install-deps pkg)
-      (pkg-build pkg))
+      (pkg-build pkg #f))
 
     (if current-tag
       (cond
@@ -569,6 +579,9 @@
                       options))
            (options (if (getenv "GERBIL_BUILD_OPTIMIZED" #f)
                       (cons "--optimized" options)
+                      options))
+           (options (if (getenv "GERBIL_BUILD_DEBUG" #f)
+                      (cons "--debug" options)
                       options)))
       options))
 
@@ -1142,11 +1155,10 @@ DOCKER_IMAGE := "gerbil/gerbilxx:\$(ARCH)"
 default: linux-static
 
 build-release:
-	/opt/gerbil/bin/gxpkg link ${name} /src || true
 	/opt/gerbil/bin/gxpkg deps -i
-	/opt/gerbil/bin/gxpkg build --release ${name}
+	/opt/gerbil/bin/gxpkg build --release
 
-linux-static: clean
+linux-static:
 	docker run -it \\
 	-e USER=\$(USER) \\
 	-e GERBIL_PATH=/src/.gerbil \\

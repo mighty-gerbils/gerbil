@@ -52,6 +52,7 @@ Commands:
   build                            build a gerbil package (gxpkg build)
   deps                             manage dependencies for a package (gxpkg deps)
   clean                            clean build artifactacts for a package (gxpkg clean)
+  env                              eval a shell expression in the local package environment (gxpkg env)
   pkg                              invoke the gerbil package manager (gxpkg)
   test                             run tests (gxtest)
   tags                             create emacs tags (gxtags)
@@ -154,6 +155,17 @@ Arguments:
  pkg                              package to clean; all for all packages, omit to clean in current directory
 ```
 
+### `gerbil env`
+```shell
+$ gerbil help env
+Usage: gxpkg env <command> <command-args> ...
+       execute a command within the local package context
+
+Arguments:
+ command                          the command to execute
+ command-args                     the command arguments
+```
+
 ### `gerbil pkg`
 ```shell
 $ gerbil help pkg
@@ -245,9 +257,9 @@ Commands:
  repl                             provides a repl for a running server
  ping                             pings a server or actor in the server
  lookup                           looks up a server by id or role
+ list                             list server state
  shutdown                         shuts down an actor, server, or the entire ensemble including the registry
  admin                            ensemble administrative operations
- list                             list server state
  ca                               ensemble CA operations
  package                          package ensemble state to ship an actor server environment
  help                             display help; help <command> for command help

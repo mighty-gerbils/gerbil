@@ -19,3 +19,5 @@ src/bootstrap/static
 
 build-deps
 build-env.sh
+
+.gerbil

@@ -6,4 +6,6 @@
   '("server"
     "handler"
     "httpd-svc"
-    (exe: "httpd-exe")))
+    (exe: "httpd-exe")
+    (exe: "httpd-prod-exe")
+    (exe: "registry-prod-exe")))

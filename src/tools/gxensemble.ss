@@ -120,7 +120,7 @@
   (optional-argument 'capabilities
     help: "the server capabilities to authorize"
     value: string->object
-    default: '(admin)))
+    default: '()))
 
 (def expr-argument
   (argument 'expr
@@ -374,8 +374,8 @@
   (repl             do-repl)
   (ping             do-ping)
   (lookup           do-lookup)
-  (shutdown         do-shutdown)
   (list             do-list)
+  (shutdown         do-shutdown)
   (admin            do-admin)
   (ca               do-ca)
   (package          do-package))
@@ -708,6 +708,7 @@
 
   (gerbil-load-expander!)
   (connect-to-server! server-id)
+  (remote-eval server-id '(##expand-source-set! identity))
   (set! module-registry
     (remote-eval server-id '(current-module-registry)))
   (let/cc exit
@@ -874,12 +875,10 @@
            (cond
             ((not ctx-id)
              (lp rest to-load libraries))
-            ((string-prefix? "gerbil/core" ctx-id-str)
+            ((string-prefix? "gerbil/" ctx-id-str)
              (lp rest to-load libraries))
             ((find (cut string-prefix? <> ctx-id-str) library-prefix-str)
-             (if (member ctx-id libraries)
-               (lp rest to-load libraries)
-               (lp rest to-load (cons ctx-id libraries))))
+             (lp rest to-load libraries))
             (else
              (if (member ctx-id to-load)
                (lp rest to-load libraries)
@@ -893,7 +892,6 @@
               (values object-files (reverse libraries))))))))))
 
 (def (do-registry opt)
-  (##expand-source-set! ##identity)
   (call-with-ensemble-server 'registry
                              (cut start-ensemble-registry!)
                              log-level: (hash-ref opt 'logging)
@@ -905,8 +903,6 @@
                              cookie:    (get-actor-server-cookie)))
 
 (def (do-run opt)
-  ;; unhook the expander for consistent eval
-  (##expand-source-set! ##identity)
   (let ((module-main (get-module-main (hash-ref opt 'module-id)))
         (main-args (hash-ref opt 'main-args)))
     (call-with-ensemble-server (hash-ref opt 'server-id)

@@ -2,14 +2,18 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-141: Integer Division
 
-(import :gerbil/gambit
-        ./8)
 (export ceiling/ ceiling-quotient ceiling-remainder
         floor/ floor-quotient floor-remainder
         truncate/ truncate-quotient truncate-remainder
         round/ round-quotient round-remainder
         euclidean/ euclidean-quotient euclidean-remainder
-        balanced/ balanced-quotient balanced-remainder
-        ceiling/ ceiling-quotient ceiling-remainder)
+        balanced/ balanced-quotient balanced-remainder)
 
-(include "srfi-141.scm")
+;; All SRFI-141 operators are already implemented by Gambit
+(extern namespace: #f
+  floor/ floor-quotient floor-remainder
+  ceiling/ ceiling-quotient ceiling-remainder
+  truncate/ truncate-quotient truncate-remainder
+  round/ round-quotient round-remainder
+  euclidean/ euclidean-quotient euclidean-remainder
+  balanced/ balanced-quotient balanced-remainder)

@@ -1,8 +1,8 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/system::timestamp 1695392652)
+  (define gerbil/runtime/system::timestamp 1696372335)
   (begin
-    (define gerbil-version-string (lambda () '"0.17.0-286-g13ef868d"))
+    (define gerbil-version-string (lambda () '"0.17.0-330-g2880ebbc"))
     (define gerbil-system-version-string
       (lambda ()
         (string-append
@@ -16,9 +16,13 @@
     (set! gerbil-greeting gerbil-greeting)
     (define gerbil-home
       (lambda () (getenv '"GERBIL_HOME" (path-expand '"~~"))))
+    (define gerbil-path
+      (lambda ()
+        (let ((_$e6420_ (getenv '"GERBIL_PATH" '#f)))
+          (if _$e6420_ _$e6420_ (path-expand '"~/.gerbil")))))
     (define gerbil-runtime-smp?
       (lambda ()
         (member '"--enable-smp"
-                (let ((__tmp8511 (configure-command-string)))
+                (let ((__tmp8515 (configure-command-string)))
                   (declare (not safe))
-                  (string-split __tmp8511 '#\')))))))
+                  (string-split __tmp8515 '#\')))))))

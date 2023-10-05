@@ -103,16 +103,15 @@
            ((eq? server-id 'registry)
             (hash-eq))
            (registry-addrs
-            (hash-eq (registry (append (default-registry-addresses) registry-addrs))))
+            (hash-eq (registry registry-addrs)))
            (else
             (hash-eq (registry (default-registry-addresses))))))
          (unix-addr [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))])
          (listen-addrs
           (cons unix-addr listen-addrs))
          (public-addrs
-          (if public-addrs
-            (cons unix-addr public-addrs)
-            listen-addrs)))
+          (or public-addrs
+              listen-addrs)))
     ;; start the actor server
     (start-actor-server! identifier: server-id
                          tls-context: tls-context

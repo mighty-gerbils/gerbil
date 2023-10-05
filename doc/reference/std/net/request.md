@@ -10,22 +10,46 @@ The `:std/net/request` library provides an HTTP client interface.
 The main HTTP client interface uses a `request` structure to return results of
 HTTP requests. See API documentation for details on making requests.
 
-NOTE: In order to make HTTPS connections the underlying Gambit Scheme
-implementation Gerbil is using  must be configured with `--enable-openssl` flag.
-
 ## Request API
+
+### Common Options for all HTTP request methods
+
+The following options are common for all HTTP request metods:
+```
+(http-method url arg ...
+             redirect:     (redirect #f)
+             headers:      (headers #f)
+             cookies:      (cookies #f)
+             params:       (params #f)
+             data:         (data #f)
+             auth:         (auth #f)
+             ssl-context:  (ssl-context (default-client-ssl-context))
+             timeout:      (timeo #f))
+```
+
+where `http-method` can be `http-get`, `http-head`, `http-post`,
+`http-put`, `http-delete`, or `http-any`.
+
+The `url` argument is a string to tell which URL the HTTP client should connect to.
+
+The meaning of the keyword parameters is as follows:
+```
+  redirect     := boolean telling if client should follow HTTP redirects
+  headers      := alist of extra HTTP headers to set in request
+  cookies      := alist of cookie name/value pairs to set in request
+  data         := request data given as a u8vector or string
+  params       := alist of query param name/value pairs set in request
+  auth         := a list with a keyword head, like [basic: user password]
+  ssl-context  := the SSL context for HTTPS requests; the default uses
+                  verification using the system's PKI certifcates.
+  timeout      := an absolute or relative timeout for initial connection
+                  establishment
+```
 
 ### http-get
 
 ``` scheme
-(http-get url [redirect: #t] [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
-
-  url      := a string to tell which URL the HTTP client should connect to
-  redirect := boolean telling if client should follow HTTP redirects
-  headers  := alist of extra HTTP headers to set in request
-  cookies  := alist of cookie name/value pairs to set in request
-  params   := alist of query param name/value pairs set in request
-  auth     := a list with a keyword head, like [basic: user password]
+(http-get url ...)
 ```
 
 The `http-get` procedure executes HTTP GET request to given *url* and returns an
@@ -40,6 +64,10 @@ for the request. The default headers set by Gerbil are:
 Host: url host
 Content-Length: binary body length if body is string/bytes
 Transfer-Encoding: chunk if body is input-port
+Accept: */*
+Accept-Encoding: "gzip, deflate, identity" if zlib is enabled, "identity" otherwise
+Connection: close
+User-Agent: Mozilla/5.0 (compatible; gerbil/1.0)
 ```
 
 The `cookies` parameter takes an association list of cookie name and value pairs and sets
@@ -66,14 +94,7 @@ key/value pairs to add as HTTP query params to the request.
 ### http-head
 
 ``` scheme
-(http-head url [redirect: #t] [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
-
-  url      := a string to tell which URL the HTTP client should connect to
-  redirect := boolean telling if client should follow HTTP redirects
-  headers  := alist of extra HTTP headers to set in request
-  cookies  := alist of cookie name/value pairs to set in request
-  params   := alist of query param name/value pairs set in request
-  auth     := a list with a keyword head, like [basic: user password]
+(http-head url ...)
 ```
 
 Like the `http-get` procedure but instead executes HTTP HEAD method on given
@@ -81,14 +102,7 @@ Like the `http-get` procedure but instead executes HTTP HEAD method on given
 
 ### http-post
 ``` scheme
-(http-post url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
-
-  url     := a string to tell which URL the HTTP client should connect to
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params  := alist of query param name/value pairs set in request
-  data    := request data given as octet vector or string
-  auth    := a list with a keyword head, like [basic: user password]
+(http-post url ...)
 ```
 
 Like the `http-get` procedure but instead executes HTTP POST method on given
@@ -96,55 +110,30 @@ Like the `http-get` procedure but instead executes HTTP POST method on given
 
 ### http-put
 ``` scheme
-(http-put url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
-
-  url     := a string to tell which URL the HTTP client should connect to
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params  := alist of query param name/value pairs set in request
-  data    := request data given as octet vector or string
-  auth    := a list with a keyword head, like [basic: user password]
+(http-put url ...)
 ```
 
 Like the `http-post` procedure but instead executes HTTP PUT method on `url`.
 
 ### http-delete
 ``` scheme
-(http-delete url [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
-
-  url     := a string to tell which URL the HTTP client should connect to
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params  := alist of query param name/value pairs set in request
-  auth    := a list with a keyword head, like [basic: user password]
+(http-delete url ...)
 ```
 
 Like `http-get` procedure but instead executes HTTP DELETE method on `url`.
 
 ### http-options
 ``` scheme
-(http-options url [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
-
-  url     := a string to tell which URL the HTTP client should connect to
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params  := alist of query param name/value pairs set in request
-  auth    := a list with a keyword head, like [basic: user password]
+(http-options url ...)
 ```
 
 Like `http-get` procedure but instead executes HTTP OPTIONS method on the `url`.
 
 ### http-any
 ``` scheme
-(http-any method url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
+(http-any method url ...)
 
   method  := a symbol to define which HTTP method to use, like 'GET or 'PATCH
-  url     := a string to tell which URL the HTTP client should connect to
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params  := alist of query param name/value pairs set in request
-  data    := request data given as octet vector or string
-  auth    := a list with a keyword head, like [basic: user password]
 ```
 
 Like the other http procedures but allows you to specify your own HTTP method.
@@ -275,11 +264,19 @@ object. Cookies are given as an list of strings.
 Closes the input/output port of given *req* object. If the port has
 already been closed the procedure returns #f.
 
-### request-port
+### request-socket request-socket-reader request-socket-writer
 ``` scheme
-(request-port req) -> port | #f
+(request-socket req) -> StreamSocket | #f
   req := an HTTP request object
+
+(request-socket-reader req) -> BufferedReader | #f
+(request-socket-writer req) -> BufferedWriter | #f
 ```
 
-Returns the Input/Output port to be used to access the request
-data in *req*. If requests port is already closed, the procedure will return #f.
+Returns the `StreamSocket`, `BufferedReader`, and `BufferedWriter`
+associated with the request. This allows you to upgrade a connection
+and implement arbitrary protocols on top of HTTP.
+see the [Standard IO Interfaces](/reference/std/stdio.md) for details
+of these interfaces.
+
+If requests is already closed, these procedures will return #f.

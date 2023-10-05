@@ -16,18 +16,18 @@
         integer-of-length?
         normalize-nat
         normalize-integer
-        for-each-integer!
+        for-each-integer
         half least-integer most-integer
         bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
         integer-log
         factor-out-powers-of-2 factor-out-powers)
 
 (import
-  :gerbil/gambit
-  :std/srfi/1
-  :std/srfi/141
-  :std/error
-  :std/sugar)
+  (only-in :gerbil/gambit first-set-bit bit-set? replace-bit-field extract-bit-field)
+  (only-in :std/srfi/1 reduce)
+  (only-in :std/srfi/141 floor/)
+  (only-in :std/error check-argument)
+  (only-in :std/sugar defrule))
 
 ;;; xmin and xmax on the (affine) extended real number line.
 ;;; An element is either a real number or a positive infinite +inf.0 (+∞)
@@ -83,18 +83,18 @@
 (defrules increment! ()
   ((_ place) (increment! place 1))
   ((_ place increment ...) (set! place (+ place increment ...))))
-(defrules pre-increment! ()
-  ((_ place increment ...) (begin (increment! place increment ...) place)))
-(defrules post-increment! ()
-  ((_ place increment ...) (begin0 place (increment! place increment ...))))
+(defrule (pre-increment! place increment ...)
+  (begin (increment! place increment ...) place))
+(defrule (post-increment! place increment ...)
+  (begin0 place (increment! place increment ...)))
 
 (defrules decrement! ()
   ((_ place) (decrement! place 1))
   ((_ place decrement ...) (set! place (- place decrement ...))))
-(defrules pre-decrement! ()
-  ((_ place decrement ...) (begin (decrement! place decrement ...) place)))
-(defrules post-decrement! ()
-  ((_ place decrement ...) (begin0 place (decrement! place decrement ...))))
+(defrule (pre-decrement! place decrement ...)
+  (begin (decrement! place decrement ...) place))
+(defrule (post-decrement! place decrement ...)
+  (begin0 place (decrement! place decrement ...)))
 
 ;;; Make a new counter with a start value
 (def (make-counter (n 0))
@@ -129,7 +129,7 @@
   (and (exact-integer? n) (not (negative? n))))
 
 (def (fxnat? n)
-  (and (fixnum? n) (not (negative? n))))
+  (and (fixnum? n) (fx<= 0 n)))
 
 (def (nat-below? n end)
   (and (nat? n) (< n end)))
@@ -154,7 +154,7 @@
 ;; Iterate a function with an integer argument ranging from one value
 ;; increasing by one until it reaches another value (excluded)
 ;; : (Integer ->) -> Integer Integer
-(def (for-each-integer! fun from below)
+(def (for-each-integer fun from below)
   (let loop ((i from))
     (when (< i below)
       (fun i)
@@ -187,7 +187,7 @@
       (let (mid (half (+ end start 1))) ;; round up, trust bignums for no overflow
         (if (pred? mid)
           (most-integer pred? mid end)
-          (most-integer pred? start (- 1 mid))))))
+          (most-integer pred? start (1- mid))))))
 
 ;; NOTE: the following functions are NOT cryptographic-quality constant-time!
 ;; Do NOT use them for cryptography in production.

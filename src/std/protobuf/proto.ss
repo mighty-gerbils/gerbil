@@ -10,7 +10,8 @@
 (export (except-out #t begin-module%%)
         (rename: begin-module%% %%begin-module)
         (import: :std/protobuf/macros)
-        (for-syntax read-module-body))
+        load-module
+        (for-syntax read-module-body load-module))
 
 (defrules begin-module%% ()
   ((_ . body)

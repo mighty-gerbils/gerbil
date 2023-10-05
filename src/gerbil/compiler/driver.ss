@@ -6,6 +6,7 @@ namespace: gxc
 
 (import :gerbil/expander
         :gerbil/gambit
+        :gerbil/runtime/error
         "base"
         "compile"
         "optimize")
@@ -112,7 +113,8 @@ namespace: gxc
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
-        (verbosity   (pgetq verbose: opts)))
+        (verbosity   (pgetq verbose: opts))
+        (debug       (pgetq debug: opts)))
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (parameterize ((current-compile-output-dir outdir)
@@ -120,6 +122,7 @@ namespace: gxc
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
+                   (current-compile-debug debug)
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
@@ -193,7 +196,7 @@ namespace: gxc
            (output_          (string-append (path-strip-extension output-scm) "_"))
            (output_-c        (string-append output_ ".c"))
            (output_-o        (string-append output_ ".o"))
-           (gsc-link-opts    (gsc-link-options #f))
+           (gsc-link-opts    (gsc-link-options))
            (gsc-cc-opts      (get-gsc-cc-opts gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
@@ -210,11 +213,11 @@ namespace: gxc
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))
-      (create-directory* (path-directory output-bin))
+      (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
         (cut generate-stub builtin-modules))
       (when (current-compile-invoke-gsc)
-        (create-directory tmp)
+        (with-driver-mutex (create-directory tmp))
         (for-each copy-file src-deps-scm deps-scm)
         (copy-file src-bin-scm bin-scm)
         (invoke (gerbil-gsc)
@@ -345,7 +348,7 @@ namespace: gxc
            (output-o (string-append output-base ".o"))
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
-           (gsc-link-opts (gsc-link-options #f))
+           (gsc-link-opts (gsc-link-options))
            (gsc-cc-opts (static-include (gsc-cc-options) gerbil-libdir))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
@@ -361,7 +364,7 @@ namespace: gxc
              (cond-expand
                (netbsd ["-lm"])
                (else ["-ldl" "-lm"]))))
-      (create-directory* (path-directory output-bin))
+      (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
         (cut generate-stub [runtime ... deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
@@ -544,8 +547,16 @@ namespace: gxc
     (when (current-compile-optimize)
       (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
-    (compile-runtime-code ctx)
-    (compile-meta-code ctx)
+
+    (if (null? (lift-nested-modules ctx))
+      (let* ((thr1 (go! (compile-runtime-code ctx)))
+             (thr2 (go! (compile-meta-code ctx))))
+        (join! thr1)
+        (join! thr2))
+      (begin
+        (compile-runtime-code ctx)
+        (compile-meta-code ctx)))
+
     (when (and (current-compile-optimize)
                (current-compile-generate-ssxi))
       (compile-ssxi-code ctx))))
@@ -663,7 +674,8 @@ namespace: gxc
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
-    (for-each compile-phi phi-code)))
+    (let (threads (map (lambda (code) (go! (compile-phi code))) phi-code))
+      (for-each  join! threads))))
 
 (def (compile-ssxi-code ctx)
   (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
@@ -720,16 +732,7 @@ namespace: gxc
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
-(def (gsc-debug-options (phi? #f))
-  (defrules not-phi ()
-    ((_ opts)
-     (if phi? [] opts)))
-  (cond
-   ((current-compile-debug)
-    (not-phi ["-debug-source" "-track-scheme" "-cc-options" "-g"]))
-   (else [])))
-
-(def (gsc-link-options phi?)
+(def (gsc-link-options (phi? #f))
   (let lp ((rest (current-compile-gsc-options)) (opts []))
     (match rest
       (["-cc-options" _ . rest]
@@ -739,9 +742,11 @@ namespace: gxc
       ([opt . rest]
        (lp rest (cons opt opts)))
       (else
-       [(gsc-debug-options phi?) ... (reverse opts) ...]))))
+       (if (and (not phi?) (current-compile-debug))
+         ["-debug-source" "-track-scheme" (reverse opts) ...]
+         (reverse opts))))))
 
-(def (gsc-cc-options)
+(def (gsc-cc-options (phi? #f))
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
         (["-cc-options" opt . rest]
@@ -751,7 +756,9 @@ namespace: gxc
         ([_ . rest]
          (lp rest opts))
         (else
-         (reverse opts)))))
+         (if (and (not phi?) (current-compile-debug))
+           ["-cc-options" "-g" (reverse opts) ...]
+           (reverse opts))))))
 
 (def (gcc-ld-options)
     (let lp ((rest (current-compile-gsc-options)) (opts []))
@@ -783,7 +790,7 @@ namespace: gxc
          (link-path-c (string-append link-path ".c"))
          (link-path-o (string-append link-path ".o"))
          (gsc-link-opts (gsc-link-options phi?))
-         (gsc-cc-opts (gsc-cc-options))
+         (gsc-cc-opts (gsc-cc-options phi?))
          (gcc-ld-opts (gcc-ld-options)))
     (invoke (gerbil-gsc)
             ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
@@ -830,7 +837,7 @@ namespace: gxc
        (module-source-directory ctx)))))
 
   (let (path (file-path))
-    (create-directory* (path-directory path))
+    (with-driver-mutex (create-directory* (path-directory path)))
     path))
 
 (def (compile-static-output-file ctx)
@@ -847,7 +854,7 @@ namespace: gxc
         (path-expand file "static")))))
 
   (let (path (file-path))
-    (create-directory* (path-directory path))
+    (with-driver-mutex (create-directory* (path-directory path)))
     path))
 
 (def (compile-exe-output-file ctx opts)
@@ -885,3 +892,15 @@ namespace: gxc
       (unless (zero? status)
         (raise-compile-error "Compilation error; process exit with nonzero status"
                              program)))))
+
+(defrules go! ()
+  ((_ expr)
+   (spawn (lambda () expr))))
+
+(def (join! thread)
+  (with-catch
+   (lambda (exn)
+     (if (uncaught-exception? exn)
+       (raise (uncaught-exception-reason exn))
+       (raise exn)))
+   (cut thread-join! thread)))
