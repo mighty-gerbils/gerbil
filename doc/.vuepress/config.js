@@ -186,6 +186,14 @@ module.exports = {
               },
 
 	          { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/srfi/': [
+              {
+                  title: "SRFI Support in Gerbil",
+                  children: [
+                      '',
+                  ]
+              },
+              { title: "< Back to Reference", path: '/reference/'}
           ], '/reference/dev/': [
               {
                   title: 'Developing Software with Gerbil',
@@ -197,14 +205,6 @@ module.exports = {
                       'profiler',
                       'optimizing',
                       'bootstrap'
-                  ]
-              },
-              { title: "< Back to Reference", path: '/reference/'}
-          ], '/reference/srfi/': [
-              {
-                  title: "SRFI Support in Gerbil",
-                  children: [
-                      '',
                   ]
               },
               { title: "< Back to Reference", path: '/reference/'}
