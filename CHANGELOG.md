@@ -148,8 +148,8 @@ development cycle.
 
 In conclusion, it is safe to say that at this point Gerbil is
 approaching production readiness; you should already be able to use it
-in production for experimental and non-mission critical projects with
-out fear.  See [Developing Software with
+in production for experimental and non-mission critical projects
+without fear.  See [Developing Software with
 Gerbil](https://cons.io/reference/dev/).
 
 Happy Hacking!
