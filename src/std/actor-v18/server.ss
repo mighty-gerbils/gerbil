@@ -47,9 +47,9 @@
 ;;   not be communicating with remote servers using tls
 ;; - admin is an _optional_ public key for authorizing administrative actions at the
 ;;   origin server level.
-;;   If it is #f, then all server in the ensemble are automatically authorized.
+;;   If it is #f, then all servers in the ensemble are automatically authorized.
 ;; - auth is an _optional_ hash table for pre-authorized server capabilities.
-;;   It is a map of server-id to a list of symbols denoating capabilities
+;;   It is a map of server-id to a list of symbols denoting capabilities
 ;; - addresses is a list of addresses the server should listen; empty by default.
 ;;   Addresses can be:
 ;;   - [unix: hostname  path]: a path for a unix domain socket in a host

@@ -5,7 +5,7 @@
         :std/logger
         :std/actor
         :std/text/zlib
-        :std/db/lmdb
+        :clan/db/lmdb
         ./proto)
 (export run)
 

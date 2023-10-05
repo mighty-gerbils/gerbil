@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; kvstore ensemble service
 (import :std/actor
-        :std/db/lmdb
+        :clan/db/lmdb
         ./server)
 (export main)
 

@@ -5,7 +5,13 @@ Here we explore language extensibility in Gerbil by defining custom preludes.
 ## Preliminaries
 
 The source code for all the examples is available at [src/tutorial/lang](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang).
-You can build the tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/build.ss).
+You can build the tutorial code using the [build script](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/build.ss):
+
+```bash
+$ cd gerbil/src/tutorial/lang
+$ gerbil build
+...
+```
 
 ## Custom Languages in the REPL
 
@@ -18,7 +24,7 @@ custom prelude.
 
 For instance, to use our dot-app language in the repl:
 ```bash
-$ gxi --lang :tutorial/lang/dot-app
+$ gerbil env gxi --lang :tutorial/lang/dot-app
 > _
 ```
 
@@ -140,7 +146,7 @@ prelude: :tutorial/lang/dot-app
 
 We can see the result in the interpreter:
 ```
-$ gxi
+$ gerbil env gxi
 > (import "example/my-app")
 > (def a (make-A 1))
 > (add-x a 1)
@@ -190,7 +196,7 @@ prelude: :tutorial/lang/auto-export
 
 We can verify that `greet` is indeed exported in the interpreter:
 ```
-$ gxi
+$ gerbil env gxi
 > (import "example/my-auto-export")
 > (greet "world")
 hello world
@@ -229,7 +235,7 @@ $ cat example/my-sexp.ss
 (def (greet x)
   (displayln "hello " x))
 
-$ gxi
+$ gerbil env gxi
 > (import "example/my-sexp")
 > (greet "world")
 hello world
@@ -446,7 +452,7 @@ produces an AST. The reader is straightforward:
 
 And putting it all together, we can import our small corpus of [scuby code](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/lang/example/my-scuby.ss):
 ```
-$ gxi
+$ gerbil env gxi
 > (import "example/my-scuby")
 > (import :std/iter)
 > (for (x (in-iota 10 1)) (displayln (fibo x)))

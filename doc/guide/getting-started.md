@@ -241,12 +241,16 @@ You can change this by exporting the `GERBIL_PATH` variable.
 
 Of course our executable doesn't do anything right now, as we haven't filled any code:
 ```shell
-$ ./.gerbil/bin/hello
+$ gerbil env hello
 *** ERROR --
 *** ERROR IN ? [Error]: Implement me!
 --- continuation backtrace:
 0  error
 ```
+
+Notice that we ran the executable using `gerbil env`, which executes a
+command in the local package environment, with `GERBIL_PATH` set to
+`.gerbil` and `GERBIL_PATH/bin` prefixed to the PATH.
 
 ## Write Some Code
 
@@ -311,7 +315,7 @@ $ gerbil build
 /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello.c:
 /home/vyzo/src/vyzo/scratch/test/hello-world/.gerbil/bin/hello_.c:
 
-$ .gerbil/bin/hello world
+$ gerbil env hello world
 hello, world
 ```
 

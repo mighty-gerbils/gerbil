@@ -31,11 +31,15 @@ Parameter denoting the current http server.
   mux := request multiplexer
   backlog := server socket listen backlog
   sockpts := server socket options.
-  address ... := addresses to listen
+  address ... := addresses to listen; either an inet-address or [ssl: inet-address ssl-context]
 ```
 
 Start a new http server serving in the specified addresses and multiplexing
 requests using the specified multiplexer.
+
+The Addresses in the address can have one of these forms:
+- `[ssl: inet-address ssl-context]` is an SSL address, using the supplied server `ssl-context`; see [TLS/SSL Sockets](ssl.md) for details on how to create a server SSL context.
+- `inet-address` is a plaintext TCP address; suitable if you are behind a load balancer or proxy, eg `nginx`.
 
 ### stop-http-server!
 ```scheme

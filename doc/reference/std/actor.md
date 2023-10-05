@@ -447,8 +447,8 @@ Message sent by actor monitors to notify or a monitored thread exit.
 ### Server Addresses
 
 Actor server addresses can be:
-- UNIX domain addresses
-- TCP addresses
+- UNIX domain addresses.
+- TCP addresses.
 - TLS addresses.
 
 ### Unix Addresses
@@ -466,15 +466,31 @@ hosts.
 ### TCP Addresses
 A TCP address is denoted like this:
 ```
+[tls: inet-addr]
+```
+
+`inet-addr` is an Internet address; normally a pair of a host address
+and a port or a string encoded Internet address of the form
+`"host:port"`.
+See the [:std/net/address](address.md#internet-addresses) module for more details.
+
+::: warning
+Do not use bare TCP addresses in production, as you will vulnerable to
+Man in the Middle attacks.  Gerbil actors only support them for
+development and debugging purposes; you _should_ use TLS in production.
+:::
+
+### TLS Addresses
+A TLS address is denoted like this:
+```
 [tcp: inet-addr]
 ```
 
-`inet-addr` is an inet address; normally a pair of a host address and a port.
+`inet-addr` is an Internet address; normally a pair of a host address
+and a port or a string encoded Internet address of the form
+`"host:port"`.
 See the [:std/net/address](address.md#internet-addresses) module for more details.
 
-### TLS Addresses
-
-TODO
 
 ### current-actor-server
 ```scheme
@@ -489,16 +505,22 @@ manually.
 
 ### start-actor-server!
 ```scheme
-(start-actor-server! cookie:     (cookie (get-actor-server-cookie))
-                     admin:      (admin (get-admin-pubkey))
-                     auth:       (auth #f)
-                     addresses:  (addrs [])
-                     identifier: (id (make-random-identifier))
-                     ensemble:   (known-servers (default-known-servers)))
+(start-actor-server! identifier:  (id (make-random-identifier))
+                     tls-context: (tls-context (get-actor-tls-context id))
+                     cookie:      (cookie (get-actor-server-cookie))
+                     admin:       (admin (get-admin-pubkey))
+                     auth:        (auth #f)
+                     addresses:   (addrs [])
+                     ensemble:    (known-servers (default-known-servers)))
+
 ```
 
 Starts an actor server, sets the `current-actor-server` parameter and
 returns the main server thread.
+- `identifier` is the server identifier; if you don't specify one, a random server
+  identifier will be generated.
+- `tls-context` is the server's TLS context, which can be omitted if this is a development
+  server. By default it is looked up in `GERBIL_PATH/ensemble/server/<server-id>/tls`.
 - `cookie` is the ensemble cookie; normally resides in `$GERBIL_PATH/ensemble/cookie`.
   Note that the administrator has to explicitly create a cookie for the ensemble, it is
   not automatically created.
@@ -508,8 +530,6 @@ returns the main server thread.
   server capabilities.
 - `addresses` is the list of addresses the server should listen; by default it is empty,
   making this a transient actor server.
-- `identifier` is the server identifier; if you don't specify one, a random server
-  identifier will be generated.
 - `ensemble` specifies statically known hosts; it is a hash table mapping server identifiers
   to lists of addresses.
   The default known servers only contain the registry with the default registry address.
@@ -612,20 +632,22 @@ Sets the actor server's address cache TTL (in seconds, a real number).
 
 
 
+
 ## Ensemble Servers
 
 ### call-with-ensemble-server
 ```scheme
 (call-with-ensemble-server server-id thunk
-                           log-level: (log-level 'INFO)
-                           log-file:  (log-file #f)
-                           listen:    (listen-addrs [])
-                           announce:  (public-addrs #f)
-                           registry:  (registry-addrs #f)
-                           roles:     (roles [])
-                           cookie:    (cookie (get-actor-server-cookie))
-                           admin:     (admin (get-admin-pubkey))
-                           auth:      (auth #f))
+                           log-level:   (log-level 'INFO)
+                           log-file:    (log-file #f)
+                           listen:      (listen-addrs [])
+                           announce:    (public-addrs #f)
+                           registry:    (registry-addrs #f)
+                           roles:       (roles [])
+                           tls-context: (tls-context (get-actor-tls-context server-id))
+                           cookie:      (cookie (get-actor-server-cookie))
+                           admin:       (admin (get-admin-pubkey))
+                           auth:        (auth #f))
 ```
 
 This is the programmatic equivalent of `gxensemble run`; first it
@@ -648,6 +670,8 @@ Options:
 - `registry`: an optional list of registry addresses. If it is not specified,
   then the default registry address is used.
 - `roles`: a list of roles the server fullfills in the registry.
+- `tls-context` is the server's TLS context, which can be omitted if this is a development
+  server. By default it is looked up in `GERBIL_PATH/ensemble/server/<server-id>/tls`.
 - `cookie`: the cookie to use; by default it uses the ensemble cooke in
   `$GERBIL_PATH/ensemble/cookie`.
 - `admin`: the administrative public key, if any; by default it uses the public
@@ -668,6 +692,7 @@ Returns the base directory for the ensemble; this is `$GERBIL_PATH/ensemble`.
 ```
 
 Returns the directory for server specific data; this is `$GERBIL_PATH/ensemble/server/<server-id>`.
+
 
 ## Ensemble Control
 
@@ -834,3 +859,102 @@ The default path for the ensemble admin public key; defaults to `$GERBIL_PATH/en
 ```
 
 The default path for the encrypted ensemble admin private key; defaults to `$GERBIL_PATH/ensemble/admin.priv`.
+
+
+## Actor TLS related procedures
+
+The following procedures offer programmatic functionality used by
+actor servers and the `gxensemble` for managing TLS infrastructure.
+
+### ensemble-tls-base-path
+```scheme
+(ensemble-tls-base-path)
+```
+
+Returns the base TLS directory for the ensemble; this is `$GERBIL_PATH/ensemble/tls`.
+
+
+### ensemble-tls-server-path
+```scheme
+(ensemble-tls-server-path server-id)
+```
+
+Returns the directory for server specific data; this is `$GERBIL_PATH/ensemble/server/<server-id>`/tls.
+
+
+### ensemble-tls-cafile
+```scheme
+(ensemble-tls-cafile)
+```
+
+Returns the base TLS CA file  for the ensemble; this is `$GERBIL_PATH/ensemble/tls/ca.pem`.
+
+### get-actor-tls-context
+```
+(get-actor-tls-context server-id) -> tls-context or #f
+```
+
+Create an appropriate TLS context for the actor server with id `server-id`.
+It loads the server's private key from `(ensemble-tls-server-path)`.
+
+### actor-tls-certificate-id
+```
+(actor-tls-certificate-id x509)
+```
+
+Returns the actor server id for an x509 certificate.
+
+### actor-tls-certificate-cap
+```
+(actor-tls-certificate-cap x509)
+```
+
+Returns the actor server capabilities embedded in an x509 certificate.
+
+### actor-tls-host
+```
+(actor-tls-host server-id)
+```
+
+Returns the host name for an actor server as it is expected to appear in its certificate, for certificate verification purposes.
+
+### generate-actor-tls-root-ca!
+```
+(generate-actor-tls-root-ca! root-ca-passphrase
+                             domain: (domain "ensemble.local")
+                             country-name: (country-name "UN")
+                             organization-name: (organization-name "Mighty Gerbils")
+                             common-name: (common-name (string-append organization-name " Root CA")))
+```
+
+Generates a new root CA.
+
+### generate-actor-tls-sub-ca!
+```
+(generate-actor-tls-sub-ca! root-ca-passphrase
+                            sub-ca-passphrase
+                            country-name: (country-name "UN")
+                            organization-name: (organization-name "Mighty Gerbils")
+                            common-name: (common-name (string-append organization-name " Subordinate CA")))
+```
+
+Generates a new subordinate CA.
+
+### generate-actor-tls-cafiles!
+```
+(generate-actor-tls-cafiles! force: (force? #f))
+```
+
+Generates the CA files for the actor CA.
+
+### generate-actor-tls-cert!
+```
+(generate-actor-tls-cert! sub-ca-passphrase
+                          server-id: server-id
+                          capabilities: (capabilities [])
+                          country-name: (country-name "UN")
+                          organization-name: (organization-name "Mighty Gerbils")
+                          location: (location "Internet"))
+```
+
+Issues a new actor TLS certificate.
