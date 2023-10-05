@@ -63,7 +63,7 @@ Manager](https://cons.io/guide/package-manager.html) for more details.
 
 Speaking of tooling, we now have a dedicated test running tool which
 can run your tests in the command line and works similar to `go
-test`. This has allowed us to greatly increased our development
+test`. This has allowed us to greatly increase our development
 velocity and bring an "always test" mentality to Gerbil
 development. You no longer have to stand in your head to run your
 tests, you just write them and run them with `gerbil test`.
@@ -72,10 +72,10 @@ Moving on to linguistic and standard library changes, there is a
 monumental shift with the introduction of _interfaces_, which are akin
 to type-classes and similar to Go's interfaces. In short, interfaces
 allow us to create facades to complex functionality and complete our
-object orientation story. See [Objective
-Gerbil](https://cons.io/guide/intro.html#objective-gerbil) in the
-guide and [Interfaces](https://cons.io/reference/std/interface.html)
-in the reference documentation.
+object orientation story. See
+[Interfaces](https://cons.io/guide/intro.html#interfaces) in the guide
+and [Interfaces](https://cons.io/reference/std/interface.html) in the
+reference documentation.
 
 Introducing interfaces allowed us to bring on the [Standard IO
 Interfaces](https://cons.io/reference/std/stdio.html) and completely
