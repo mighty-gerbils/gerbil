@@ -68,6 +68,8 @@ that should get you started:
   on Gerbil programming.
 - The [Gerbil Reference Documentation](https://cons.io/reference/) is the reference documentation
   for the Gerbil runtime and standard library.
+- See also the [Developing Software with Gerbil](https://cons.io/reference/dev) section in the
+  hyperspec for general software development practices with Gerbil.
 
 The documentation is automatically rendered online at [cons.io](https://cons.io).
 You can render it locally by running `doc/build.sh`, which will leave

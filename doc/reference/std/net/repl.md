@@ -3,7 +3,9 @@
 Network repl for debugging live programs.
 
 ::: tip usage
+```scheme
 (import :std/net/repl)
+```
 :::
 
 ## start-repl-server!
@@ -46,10 +48,11 @@ Untaints a thread-group, restoring its specific state.
 ## Loading the Expander
 
 By default, once connected, the REPL does not load the Gerbil expander but
-uses the primitive Gambit eval. This allows the REPL to be embedded to
-static binaries without the requirement to embed the expander's environment.
+uses the primitive Gambit eval. This allows the REPL to be embedded in
+binaries without the requirement to embed the expander's environment.
 
-You can load the expander on demand in executables with:
+If you are debugging during development and thus have expander environemnt,
+you can load the expander on demand in running executables with:
 ```
 REPL> (gerbil-load-expander!)
 ```
