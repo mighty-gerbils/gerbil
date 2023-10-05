@@ -27,7 +27,7 @@
   decode-json-rpc-response)
 
 (import
-  :std/error
+  (only-in :std/error raise-bad-argument deferror-class IOError Error raise/context)
   (only-in :std/misc/atom atomic-counter)
   (only-in :std/net/httpd http-response-write http-response-write-condition
            http-request-body http-request-params http-request-method
