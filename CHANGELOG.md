@@ -146,9 +146,11 @@ notes](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18-rc1)
 for the full changelog pointing to every pr commited in this
 development cycle.
 
-In conclusion, it is safe to say that at this point Gerbil is becoming
-production ready; you should already be able to use it production for
-experimental and non-mission critical projects with out fear.
+In conclusion, it is safe to say that at this point Gerbil is
+approaching production readiness; you should already be able to use it
+in production for experimental and non-mission critical projects with
+out fear.  See [Developing Software with
+Gerbil](https://cons.io/reference/dev/).
 
 Happy Hacking!
 
