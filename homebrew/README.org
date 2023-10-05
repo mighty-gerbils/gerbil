@@ -156,9 +156,9 @@ There's some meta-info that's nice to have.
 Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
-  url "https://github.com/drewc/gerbil.git", using: :git, branch: "homebrew-diff"
-  head "file:///Users/drewc/me/src/gerbil-diff", using: :git, branch: "homebrew-diff"
-  version "17.9"
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, tag: "v0.18-rc1"
+  head "https://github.com/mighty-gerbils/gerbil.git", using: :git
+  version "0.18"
   revision 0
 #+end_src
 

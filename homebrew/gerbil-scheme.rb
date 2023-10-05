@@ -3,9 +3,9 @@ class GerbilScheme < Formula
   desc "Opinionated dialect of Scheme designed for Systems Programming"
   homepage "https://cons.io"
   license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
-  url "https://github.com/drewc/gerbil.git", using: :git, branch: "homebrew-diff"
-  head "file:///Users/drewc/me/src/gerbil-diff", using: :git, branch: "homebrew-diff"
-  version "17.9"
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, tag: "v0.18-rc1"
+  head "https://github.com/mighty-gerbils/gerbil.git", using: :git
+  version "0.18"
   revision 0
   depends_on "openssl@3"
   depends_on "sqlite"
