@@ -34,8 +34,8 @@ libraries by default, or baked into the binary if the system is
 configured with `--disable-shared`) or compiled with full program
 optimization, which is akin to the old static binary compilation
 model. The nomenclature has also changed, as the dynamic -vs- static
-distinction refers to the _linkage_ of the executable, in line
-with the native system toolchain.
+distinction refers to the _linkage_ of the executable, in line with
+the native system toolchain.
 
 The runtime has been rewritten in pure Gerbil; gone are the `gx-gambc`
 gambit "modules" that provided the core runtime functionality. This
@@ -49,11 +49,11 @@ load the expander environment on demand.
 
 The tooling has been greatly improved, with emphasis on build
 isolation so that each individual project has its own GERBIL_PATH
-bundling dependencies and solving once and for all the dirty `~/.gerbil`
-problem that plagued earlier version of Gerbil. The tooling
-improvements don't stop there of course, see [Getting Started with
-Gerbil Development](https://cons.io/guide/getting-started.html), [The
-Gerbil Universal Binary and
+bundling dependencies and solving once and for all the dirty
+`~/.gerbil` problem that plagued earlier version of Gerbil. The
+tooling improvements don't stop there of course, see [Getting Started
+with Gerbil Development](https://cons.io/guide/getting-started.html),
+[The Gerbil Universal Binary and
 Tools](https://cons.io/reference/dev/bach.html), and [The Gerbil Build
 Tool](https://cons.io/reference/dev/build.html) for more details. The
 package manager has also been greatly enhanced to support a
@@ -105,11 +105,20 @@ Following that, the
 serve requests over SSL without needing a front end proxy like
 `nginx`.
 
-Naturally, the [request library](https://cons.io/reference/std/net/request.html) has been rewriten internally to utilize interfaces, and so has the [protobuf](https://cons.io/reference/std/protobuf.html) library.
+Naturally, the [request
+library](https://cons.io/reference/std/net/request.html) has been
+rewriten internally to utilize interfaces, and so has the
+[protobuf](https://cons.io/reference/std/protobuf.html) library.
 
-We also have completely rewritten [WebSockets](https://cons.io/reference/std/net/websocket.html#websocket-interface) and [SOCKS](https://cons.io/reference/std/net/socks.html) libraries, now with server side support.
+We also have completely rewritten
+[WebSockets](https://cons.io/reference/std/net/websocket.html#websocket-interface)
+and [SOCKS](https://cons.io/reference/std/net/socks.html) libraries,
+now with server side support.
 
-JSON RPC has also become a first class citizen, with both client and server-side support. See [JSON RPC](https://cons.io/reference/std/net/json-rpc.html) in the reference documentation for details.
+JSON RPC has also become a first class citizen, with both client and
+server-side support. See [JSON
+RPC](https://cons.io/reference/std/net/json-rpc.html) in the reference
+documentation for details.
 
 Other than that, we also have a lot of new code integrated in the
 standard library, graduating from its
@@ -145,7 +154,9 @@ Happy Hacking!
 
 ## Pre-Singularity Release Notes
 
-This is the release Changelog for releases prior to Gerbil v0.18; these are releases before the bootstrap singularity that occured in the v0.18 development cycle.
+This is the release Changelog for releases prior to Gerbil v0.18;
+these are releases before the bootstrap singularity that occured in
+the v0.18 development cycle.
 
 ### 1-10-2022: Gerbil-v0.17
 
