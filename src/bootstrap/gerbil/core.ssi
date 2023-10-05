@@ -583,11 +583,10 @@ namespace: gerbil/core
                     (gerbil-runtime-smp? gerbil-runtime-smp?)
                     (gerbil-load-expander! gerbil-load-expander!)
                     (gerbil-home gerbil-home)
+                    (gerbil-path gerbil-path)
                     (spawn spawn)
                     (spawn/name spawn/name)
                     (spawn/group spawn/group)
-                    (spawn-actor spawn-actor)
-                    (spawn-thread spawn-thread)
                     (thread-local-ref thread-local-ref)
                     (thread-local-get thread-local-get)
                     (thread-local-set! thread-local-set!)
@@ -1465,6 +1464,12 @@ namespace: gerbil/core
                               (%#define-runtime
                                macro-object-macro-set!
                                |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro-set!|)
+                              (%#define-runtime
+                               &macro-object-macro
+                               |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro|)
+                              (%#define-runtime
+                               &macro-object-macro-set!
+                               |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro-set!|)
                               (%#define-syntax
                                macro-object
                                |gerbil/core$<MOP>$<MOP:3>[:1:]#macro-object|)
@@ -1548,8 +1553,16 @@ namespace: gerbil/core
          (%#module
           <more-sugar>
           (%#begin (%#export #t (phi: 1 #t))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core__12")))
+                            (%#define-syntax
+                             :
+                             |gerbil/core$<more-sugar>[:0:]#:|))
+                   (%#define-syntax :~ |gerbil/core$<more-sugar>[:0:]#:~|)
+                   (%#define-syntax :- |gerbil/core$<more-sugar>[:0:]#:-|)
+                   (%#define-syntax := |gerbil/core$<more-sugar>[:0:]#:=|)
                    (%#begin-syntax
-                    (%#call (%#ref load-module) (%#quote "gerbil/core__12"))
                     (%#define-runtime
                      setq-macro::t
                      |gerbil/core$<more-sugar>[1]#setq-macro::t|)
