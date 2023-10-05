@@ -57,7 +57,7 @@ with Gerbil Development](https://cons.io/guide/getting-started.html),
 Tools](https://cons.io/reference/dev/bach.html), and [The Gerbil Build
 Tool](https://cons.io/reference/dev/build.html) for more details. The
 package manager has also been greatly enhanced to support a
-distributed directory model and semantic versionong for dependencies;
+distributed directory model and semantic versioning for dependencies;
 see [The Gerbil Package
 Manager](https://cons.io/guide/package-manager.html) for more details.
 
