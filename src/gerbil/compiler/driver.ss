@@ -108,7 +108,8 @@ namespace: gxc
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
-        (verbosity   (pgetq verbose: opts)))
+        (verbosity   (pgetq verbose: opts))
+        (debug       (pgetq debug: opts)))
     (when outdir
       (with-driver-mutex (create-directory* outdir)))
     (parameterize ((current-compile-output-dir outdir)
@@ -116,6 +117,7 @@ namespace: gxc
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
+                   (current-compile-debug debug)
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
@@ -189,7 +191,7 @@ namespace: gxc
            (output_          (string-append (path-strip-extension output-scm) "_"))
            (output_-c        (string-append output_ ".c"))
            (output_-o        (string-append output_ ".o"))
-           (gsc-link-opts    (gsc-link-options #f))
+           (gsc-link-opts    (gsc-link-options))
            (gsc-cc-opts      (get-gsc-cc-opts gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
@@ -342,7 +344,7 @@ namespace: gxc
            (output-o (string-append output-base ".o"))
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
-           (gsc-link-opts (gsc-link-options #f))
+           (gsc-link-opts (gsc-link-options))
            (gsc-cc-opts (static-include (gsc-cc-options) gerbil-libdir))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
@@ -726,16 +728,7 @@ namespace: gxc
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
-(def (gsc-debug-options (phi? #f))
-  (defrules not-phi ()
-    ((_ opts)
-     (if phi? [] opts)))
-  (cond
-   ((current-compile-debug)
-    (not-phi ["-debug-source" "-track-scheme" "-cc-options" "-g"]))
-   (else [])))
-
-(def (gsc-link-options phi?)
+(def (gsc-link-options (phi? #f))
   (let lp ((rest (current-compile-gsc-options)) (opts []))
     (match rest
       (["-cc-options" _ . rest]
@@ -745,9 +738,11 @@ namespace: gxc
       ([opt . rest]
        (lp rest (cons opt opts)))
       (else
-       [(gsc-debug-options phi?) ... (reverse opts) ...]))))
+       (if (and (not phi?) (current-compile-debug))
+         ["-debug-source" "-track-scheme" (reverse opts) ...]
+         (reverse opts))))))
 
-(def (gsc-cc-options)
+(def (gsc-cc-options (phi? #f))
     (let lp ((rest (current-compile-gsc-options)) (opts []))
       (match rest
         (["-cc-options" opt . rest]
@@ -757,7 +752,9 @@ namespace: gxc
         ([_ . rest]
          (lp rest opts))
         (else
-         (reverse opts)))))
+         (if (and (not phi?) (current-compile-debug))
+           ["-cc-options" "-g" (reverse opts) ...]
+           (reverse opts))))))
 
 (def (gcc-ld-options)
     (let lp ((rest (current-compile-gsc-options)) (opts []))
@@ -789,7 +786,7 @@ namespace: gxc
          (link-path-c (string-append link-path ".c"))
          (link-path-o (string-append link-path ".o"))
          (gsc-link-opts (gsc-link-options phi?))
-         (gsc-cc-opts (gsc-cc-options))
+         (gsc-cc-opts (gsc-cc-options phi?))
          (gcc-ld-opts (gcc-ld-options)))
     (invoke (gerbil-gsc)
             ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
