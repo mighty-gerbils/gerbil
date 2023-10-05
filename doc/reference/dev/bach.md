@@ -257,9 +257,9 @@ Commands:
  repl                             provides a repl for a running server
  ping                             pings a server or actor in the server
  lookup                           looks up a server by id or role
+ list                             list server state
  shutdown                         shuts down an actor, server, or the entire ensemble including the registry
  admin                            ensemble administrative operations
- list                             list server state
  ca                               ensemble CA operations
  package                          package ensemble state to ship an actor server environment
  help                             display help; help <command> for command help

@@ -21,7 +21,7 @@ in a directory recursively you can append `/...` in the directory.
 
 For instance, the following will recursively run all tests in the current directory:
 ```
-gxtest ./...
+gerbil test ./...
 ```
 
 ## Test suites
@@ -62,7 +62,7 @@ $ cat mylib-test.ss
       (check (myadd 1 2) => 3))))
 
 $ gxc -O mylib.ss
-$ gxtest
+$ gerbil test
 === ./mylib-test.ss
 >>> setup
 setting up...

@@ -85,7 +85,7 @@ TODO:
 
 ;;; Settings: see details in doc/reference/make.md
 (defstruct settings
-  (srcdir libdir bindir prefix force optimize debug static-debug verbose build-deps
+  (srcdir libdir bindir prefix force optimize debug verbose build-deps
    libdir-prefix parallelize
    full-program-optimization
    build-release
@@ -96,8 +96,8 @@ TODO:
   (lambda (self
       srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
       prefix: (prefix_ #f) force: (force? #f)
-      optimize: (optimize #t) debug: (debug #f)
-      static: (_ignore-static #t) static-debug: (static-debug #f)
+      optimize: (optimize #t) debug: (debug_ #f)
+      static: (_ignore-static #t)
       verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #f)
       full-program-optimization: (full-program-optimization #f)
@@ -117,9 +117,14 @@ TODO:
        (verbose_)
        ((getenv "GERBIL_BUILD_VERBOSE" #f) => string->number)
        (else #f)))
+    (def debug
+      (cond
+       (debug_)
+       ((getenv "GERBIL_BUILD_DEBUG" #f) #t)
+       (else #f)))
     (struct-instance-init!
       self
-      srcdir libdir bindir prefix force? optimize debug static-debug verbose build-deps
+      srcdir libdir bindir prefix force? optimize debug verbose build-deps
       libdir-prefix parallelize
       full-program-optimization
       build-release
@@ -794,7 +799,7 @@ TODO:
     [invoke-gsc: #t
      output-file: binpath
      verbose: (settings-verbose>=? settings 9)
-     debug: (settings-static-debug settings)
+     debug: (settings-debug settings)
      full-program-optimization: (settings-full-program-optimization settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
   (gxc-compile mod gsc-opts settings #f)
