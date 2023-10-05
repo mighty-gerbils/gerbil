@@ -144,6 +144,16 @@ namespace: gx
           prelude-context-import-set!
           gx#prelude-context-import-set!)
          (%#define-runtime prelude-context-e-set! gx#prelude-context-e-set!)
+         (%#define-runtime &prelude-context-path gx#&prelude-context-path)
+         (%#define-runtime &prelude-context-import gx#&prelude-context-import)
+         (%#define-runtime &prelude-context-e gx#&prelude-context-e)
+         (%#define-runtime
+          &prelude-context-path-set!
+          gx#&prelude-context-path-set!)
+         (%#define-runtime
+          &prelude-context-import-set!
+          gx#&prelude-context-import-set!)
+         (%#define-runtime &prelude-context-e-set! gx#&prelude-context-e-set!)
          (%#define-syntax prelude-context |gx[:0:]#prelude-context|)
          (%#define-runtime local-context::t gx#local-context::t)
          (%#define-runtime local-context? gx#local-context?)
@@ -202,6 +212,10 @@ namespace: gx
          (%#define-runtime
           module-binding-context-set!
           gx#module-binding-context-set!)
+         (%#define-runtime &module-binding-context gx#&module-binding-context)
+         (%#define-runtime
+          &module-binding-context-set!
+          gx#&module-binding-context-set!)
          (%#define-syntax module-binding |gx[:0:]#module-binding|)
          (%#define-runtime extern-binding::t gx#extern-binding::t)
          (%#define-runtime extern-binding? gx#extern-binding?)
@@ -252,6 +266,8 @@ namespace: gx
          (%#define-runtime make-expander gx#make-expander)
          (%#define-runtime expander-e gx#expander-e)
          (%#define-runtime expander-e-set! gx#expander-e-set!)
+         (%#define-runtime &expander-e gx#&expander-e)
+         (%#define-runtime &expander-e-set! gx#&expander-e-set!)
          (%#define-syntax expander |gx[:0:]#expander|)
          (%#define-runtime core-expander::t gx#core-expander::t)
          (%#define-runtime core-expander? gx#core-expander?)
@@ -264,6 +280,14 @@ namespace: gx
          (%#define-runtime
           core-expander-compile-top-set!
           gx#core-expander-compile-top-set!)
+         (%#define-runtime &core-expander-id gx#&core-expander-id)
+         (%#define-runtime
+          &core-expander-compile-top
+          gx#&core-expander-compile-top)
+         (%#define-runtime &core-expander-id-set! gx#&core-expander-id-set!)
+         (%#define-runtime
+          &core-expander-compile-top-set!
+          gx#&core-expander-compile-top-set!)
          (%#define-syntax core-expander |gx[:0:]#core-expander|)
          (%#define-runtime expression-form::t gx#expression-form::t)
          (%#define-runtime expression-form? gx#expression-form?)
@@ -330,6 +354,12 @@ namespace: gx
           user-expander-context-set!
           gx#user-expander-context-set!)
          (%#define-runtime user-expander-phi-set! gx#user-expander-phi-set!)
+         (%#define-runtime &user-expander-context gx#&user-expander-context)
+         (%#define-runtime &user-expander-phi gx#&user-expander-phi)
+         (%#define-runtime
+          &user-expander-context-set!
+          gx#&user-expander-context-set!)
+         (%#define-runtime &user-expander-phi-set! gx#&user-expander-phi-set!)
          (%#define-syntax user-expander |gx[:0:]#user-expander|)
          (%#define-runtime expander-mark::t gx#expander-mark::t)
          (%#define-runtime expander-mark? gx#expander-mark?)

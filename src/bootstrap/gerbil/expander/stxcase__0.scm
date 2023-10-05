@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/stxcase::timestamp 1695392682)
+  (define gerbil/expander/stxcase::timestamp 1696542250)
   (begin
     (define gx#syntax-pattern::t
       (let ()
@@ -36,6 +36,22 @@
       (let ()
         (declare (not safe))
         (make-struct-field-mutator gx#syntax-pattern::t '1)))
+    (define gx#&syntax-pattern-id
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-accessor gx#syntax-pattern::t '0)))
+    (define gx#&syntax-pattern-depth
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-accessor gx#syntax-pattern::t '1)))
+    (define gx#&syntax-pattern-id-set!
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-mutator gx#syntax-pattern::t '0)))
+    (define gx#&syntax-pattern-depth-set!
+      (let ()
+        (declare (not safe))
+        (make-struct-field-unchecked-mutator gx#syntax-pattern::t '1)))
     (define gx#syntax-pattern::apply-macro-expander
       (lambda (_self21066_ _stx21067_)
         (let ()

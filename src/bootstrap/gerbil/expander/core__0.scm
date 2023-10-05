@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1695392682)
+  (define gerbil/expander/core::timestamp 1696542250)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -197,6 +197,18 @@
       (make-struct-field-mutator gx#prelude-context::t '1))
     (define gx#prelude-context-e-set!
       (make-struct-field-mutator gx#prelude-context::t '2))
+    (define gx#&prelude-context-path
+      (make-struct-field-unchecked-accessor gx#prelude-context::t '0))
+    (define gx#&prelude-context-import
+      (make-struct-field-unchecked-accessor gx#prelude-context::t '1))
+    (define gx#&prelude-context-e
+      (make-struct-field-unchecked-accessor gx#prelude-context::t '2))
+    (define gx#&prelude-context-path-set!
+      (make-struct-field-unchecked-mutator gx#prelude-context::t '0))
+    (define gx#&prelude-context-import-set!
+      (make-struct-field-unchecked-mutator gx#prelude-context::t '1))
+    (define gx#&prelude-context-e-set!
+      (make-struct-field-unchecked-mutator gx#prelude-context::t '2))
     (define gx#local-context::t
       (make-struct-type
        'gx#local-context::t
@@ -358,6 +370,10 @@
       (make-struct-field-accessor gx#module-binding::t '0))
     (define gx#module-binding-context-set!
       (make-struct-field-mutator gx#module-binding::t '0))
+    (define gx#&module-binding-context
+      (make-struct-field-unchecked-accessor gx#module-binding::t '0))
+    (define gx#&module-binding-context-set!
+      (make-struct-field-unchecked-mutator gx#module-binding::t '0))
     (define gx#extern-binding::t
       (make-struct-type
        'gx#extern-binding::t
@@ -458,6 +474,10 @@
         (apply make-struct-instance gx#expander::t _$args9783_)))
     (define gx#expander-e (make-struct-field-accessor gx#expander::t '0))
     (define gx#expander-e-set! (make-struct-field-mutator gx#expander::t '0))
+    (define gx#&expander-e
+      (make-struct-field-unchecked-accessor gx#expander::t '0))
+    (define gx#&expander-e-set!
+      (make-struct-field-unchecked-mutator gx#expander::t '0))
     (define gx#core-expander::t
       (make-struct-type
        'gx#core-expander::t
@@ -479,6 +499,14 @@
       (make-struct-field-mutator gx#core-expander::t '0))
     (define gx#core-expander-compile-top-set!
       (make-struct-field-mutator gx#core-expander::t '1))
+    (define gx#&core-expander-id
+      (make-struct-field-unchecked-accessor gx#core-expander::t '0))
+    (define gx#&core-expander-compile-top
+      (make-struct-field-unchecked-accessor gx#core-expander::t '1))
+    (define gx#&core-expander-id-set!
+      (make-struct-field-unchecked-mutator gx#core-expander::t '0))
+    (define gx#&core-expander-compile-top-set!
+      (make-struct-field-unchecked-mutator gx#core-expander::t '1))
     (define gx#expression-form::t
       (make-struct-type
        'gx#expression-form::t
@@ -638,6 +666,14 @@
       (make-struct-field-mutator gx#user-expander::t '0))
     (define gx#user-expander-phi-set!
       (make-struct-field-mutator gx#user-expander::t '1))
+    (define gx#&user-expander-context
+      (make-struct-field-unchecked-accessor gx#user-expander::t '0))
+    (define gx#&user-expander-phi
+      (make-struct-field-unchecked-accessor gx#user-expander::t '1))
+    (define gx#&user-expander-context-set!
+      (make-struct-field-unchecked-mutator gx#user-expander::t '0))
+    (define gx#&user-expander-phi-set!
+      (make-struct-field-unchecked-mutator gx#user-expander::t '1))
     (define gx#expander-mark::t
       (make-struct-type
        'gx#expander-mark::t
