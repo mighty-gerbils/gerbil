@@ -230,16 +230,17 @@
           (write-tags/emacs tags filename output))))))
 
 (def (write-tags/vim tags filename output)
-  (for-each
-    (lambda (tag)
-      (with ([_ name loc] tag)
-        (display name output)
-        (display #\tab output)
-        (display filename output)
-        (display #\tab output)
-        (display (source-location-line loc) output)
-        (newline output)))
-    tags))
+  (let (filename (path-normalize filename))
+    (for-each
+      (lambda (tag)
+        (with ([_ name loc] tag)
+          (display name output)
+          (display #\tab output)
+          (display filename output)
+          (display #\tab output)
+          (display (source-location-line loc) output)
+          (newline output)))
+      tags)))
 
 (def +nl+
   (char->integer #\newline))
