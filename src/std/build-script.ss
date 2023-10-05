@@ -15,6 +15,8 @@
          (lp rest (cons* build-release: #t options)))
         (["--optimized" . rest]
          (lp rest (cons* build-optimized: #t options)))
+        (["--debug" . rest]
+         (lp rest (cons* debug: #t options)))
         (else
          (error "Unexpected " rest)))))
   (def srcdir

@@ -76,6 +76,7 @@
       local-flag
       (flag 'build-release "-R" "--release" help: "build released (static) executables")
       (flag 'build-optimized "-O" "--optimized" help: "build full program optimized executables")
+      (flag 'build-debug "-g" "--debug" help: "build with debug symbols")
       (rest-arguments 'pkg help: "package to build; all for all packages, omit to build in current directory")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
@@ -159,7 +160,7 @@
       ((new)
        (pkg-new .package .name .link))
       ((build)
-       (build-pkgs .pkg .?build-release .?build-optimized .?local))
+       (build-pkgs .pkg .?build-release .?build-optimized .?build-debug .?local))
       ((clean)
        (clean-pkgs .pkg .?local))
       ((deps)
@@ -245,13 +246,15 @@
     (set-local-env!))
   (for-each (cut pkg-unlink <> force?) pkgs))
 
-(def (build-pkgs pkgs release? optimized? local?)
+(def (build-pkgs pkgs release? optimized? debug? local?)
   (when local?
     (set-local-env!))
   (when release?
     (setenv "GERBIL_BUILD_RELEASE" "t"))
   (when optimized?
     (setenv "GERBIL_BUILD_OPTIMIZED" "t"))
+  (when debug?
+    (setenv "GERBIL_BUILD_DEBUG" "t"))
   (if (null? pkgs)
     ;; do local build
     (begin
@@ -576,6 +579,9 @@
                       options))
            (options (if (getenv "GERBIL_BUILD_OPTIMIZED" #f)
                       (cons "--optimized" options)
+                      options))
+           (options (if (getenv "GERBIL_BUILD_DEBUG" #f)
+                      (cons "--debug" options)
                       options)))
       options))
 
