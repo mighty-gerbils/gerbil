@@ -451,7 +451,7 @@ Actor server addresses can be:
 - TCP addresses.
 - TLS addresses.
 
-### Unix Addresses
+#### Unix Addresses
 A UNIX domain address is denoted like this:
 ```
 [unix: hostname path]
@@ -463,10 +463,10 @@ accessible and `path` is the socket path; they are both strings.
 Actor servers will never try to connect to UNIX addresses in different
 hosts.
 
-### TCP Addresses
+#### TCP Addresses
 A TCP address is denoted like this:
 ```
-[tls: inet-addr]
+[tcp: inet-addr]
 ```
 
 `inet-addr` is an Internet address; normally a pair of a host address
@@ -480,10 +480,10 @@ Man in the Middle attacks.  Gerbil actors only support them for
 development and debugging purposes; you _should_ use TLS in production.
 :::
 
-### TLS Addresses
+#### TLS Addresses
 A TLS address is denoted like this:
 ```
-[tcp: inet-addr]
+[tls: inet-addr]
 ```
 
 `inet-addr` is an Internet address; normally a pair of a host address
