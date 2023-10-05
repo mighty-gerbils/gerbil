@@ -78,14 +78,6 @@ Various features can be enabled or disabled by passing `--enable-FEATURE` or
 `--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
 features are available.
 
-If you are building on macOS and want to use the homebrew OpenSSL,
-then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
-For instance:
-```bash
-$ ./configure LDFLAGS=-L/usr/local/opt/openssl/lib \
-              CPPFLAGS=-I/usr/local/opt/openssl/include \
-```
-
 ## Installation on MacOS
 
 Gerbil is available via a homebrew recipe. If you are on MacOS, you can build using the brew formula.
