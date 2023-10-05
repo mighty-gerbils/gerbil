@@ -192,7 +192,6 @@
          (offsets (file-line-offsets filename))
          (tmp (open-output-string))
          (filepath (path-normalize filename))
-         (rfilepath (path-normalize filepath #t (current-tags-path)))
          (out-of-file-tags []))
     (for-each
       (lambda (tag)
@@ -219,7 +218,7 @@
            (len (string-utf8-length str)))
       (write-char #\x0c output)
       (newline output)
-      (write-string rfilepath output)
+      (write-string filepath output)
       (write-char #\, output)
       (display len output)
       (newline output)
@@ -231,16 +230,17 @@
           (write-tags/emacs tags filename output))))))
 
 (def (write-tags/vim tags filename output)
-  (for-each
-    (lambda (tag)
-      (with ([_ name loc] tag)
-        (display name output)
-        (display #\tab output)
-        (display filename output)
-        (display #\tab output)
-        (display (source-location-line loc) output)
-        (newline output)))
-    tags))
+  (let (filename (path-normalize filename))
+    (for-each
+      (lambda (tag)
+        (with ([_ name loc] tag)
+          (display name output)
+          (display #\tab output)
+          (display filename output)
+          (display #\tab output)
+          (display (source-location-line loc) output)
+          (newline output)))
+      tags)))
 
 (def +nl+
   (char->integer #\newline))
