@@ -217,8 +217,8 @@ module.exports = {
 		              'gerbil/runtime/',
 		              'gerbil/expander/',
 		              'std/',
-                      'dev/',
-		              'srfi/'
+                      'srfi/',
+		              'dev/'
 	              ]
               }
           ]
