@@ -237,7 +237,7 @@ HTTP/1.0 200 OK
 
 ## Transparent TCP Proxy with stdio and the using macro
 
-This is the [third and final installment](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
+This is the [third and final installment](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/proxy/tcp-proxy3.ss) on the transparent proxy, this time written
 using stdio and the all powerful `using` macro from [:std/contract](/reference/std/contract.md).
 
 This allows you to attach annotations and contracts on variables and

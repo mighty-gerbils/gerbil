@@ -10,9 +10,6 @@ The `:std/net/request` library provides an HTTP client interface.
 The main HTTP client interface uses a `request` structure to return results of
 HTTP requests. See API documentation for details on making requests.
 
-NOTE: In order to make HTTPS connections the underlying Gambit Scheme
-implementation Gerbil is using  must be configured with `--enable-openssl` flag.
-
 ## Request API
 
 ### Common Options for all HTTP request methods
@@ -267,11 +264,19 @@ object. Cookies are given as an list of strings.
 Closes the input/output port of given *req* object. If the port has
 already been closed the procedure returns #f.
 
-### request-port
+### request-socket request-socket-reader request-socket-writer
 ``` scheme
-(request-port req) -> port | #f
+(request-socket req) -> StreamSocket | #f
   req := an HTTP request object
+
+(request-socket-reader req) -> BufferedReader | #f
+(request-socket-writer req) -> BufferedWriter | #f
 ```
 
-Returns the Input/Output port to be used to access the request
-data in *req*. If requests port is already closed, the procedure will return #f.
+Returns the `StreamSocket`, `BufferedReader`, and `BufferedWriter`
+associated with the request. This allows you to upgrade a connection
+and implement arbitrary protocols on top of HTTP.
+see the [Standard IO Interfaces](/reference/std/stdio.md) for details
+of these interfaces.
+
+If requests is already closed, these procedures will return #f.
