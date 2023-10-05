@@ -14,7 +14,7 @@ module.exports = {
           '/guide/': [
               {
                   title: 'Guide',
-                  children: ['', 'intro', 'getting-started', 'ffi', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'nix', 'r7rs', 'macos']
+                  children: ['', 'intro', 'getting-started', 'ffi', 'emacs', 'shell', 'env-vars', 'package-manager', 'docker', 'macos', 'nix', 'r7rs']
               }
           ],
           '/tutorials/': [
@@ -186,6 +186,14 @@ module.exports = {
               },
 
 	          { title: "< Back to Reference", path: '/reference/'}
+          ], '/reference/srfi/': [
+              {
+                  title: "SRFI Support in Gerbil",
+                  children: [
+                      '',
+                  ]
+              },
+              { title: "< Back to Reference", path: '/reference/'}
           ], '/reference/dev/': [
               {
                   title: 'Developing Software with Gerbil',
@@ -200,14 +208,6 @@ module.exports = {
                   ]
               },
               { title: "< Back to Reference", path: '/reference/'}
-          ], '/reference/srfi/': [
-              {
-                  title: "SRFI Support in Gerbil",
-                  children: [
-                      '',
-                  ]
-              },
-              { title: "< Back to Reference", path: '/reference/'}
           ], '/reference/': [
               {
                   title: 'Gerbil Reference',
@@ -217,8 +217,8 @@ module.exports = {
 		              'gerbil/runtime/',
 		              'gerbil/expander/',
 		              'std/',
-                      'dev/',
-		              'srfi/'
+                      'srfi/',
+		              'dev/'
 	              ]
               }
           ]

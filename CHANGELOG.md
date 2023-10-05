@@ -1,4 +1,166 @@
-## 1-10-2022: Gerbil-v0.17
+# Gerbil Release Notes
+## Gerbil v0.18, Nimzowitsch
+
+- Gerbil v0.18; to be released soon
+- Gerbil v0.18-rc1; October 6, 2023
+
+**TL;DR** Gerbil v0.18 is a milestone release, which sets the
+**foundation** for Gerbil v1.0 in the near future. We affectionately
+call it the **Nimzowitsch** release, after the great Chess player who
+formulated the basis of modern Chess theory.
+
+There have been cataclysmic changes, as we have finally achieved full
+self hosting bootstrap (the Bootstrap Singularity) and the entirety of
+the language is written in itself. Gambit is now integrated as a git
+submodule, with the only dependency being on `libgambit` and `gsc` as
+the compiler backend.  `gsi` is only needed for the bootstrap
+compilation, after that is out of the picture and we don't even
+install it.
+
+The build system has been reworked from the ground up. We start from
+the precompiled bootstrap sources, which we compile with a build
+script using gsi.  The bootstrap compiler then compiles the runtime,
+the expander and the prelude, and after that we build the universal
+`gerbil` binary to build the rest of the system. All this is described
+in detail in [The Gerbil
+Bootstrap](https://cons.io/reference/dev/bootstrap.html).
+
+The executable compilation model has been also reworked from the
+ground up.  Gone are the dynamic executable stubs, we don't need them
+any more as you can just run any dynamically compiled executable
+module with the `gerbil` binary. Instead all executables are proper
+binaries which either link to `libgerbil` and `libgambit` (as shared
+libraries by default, or baked into the binary if the system is
+configured with `--disable-shared`) or compiled with full program
+optimization, which is akin to the old static binary compilation
+model. The nomenclature has also changed, as the dynamic -vs- static
+distinction refers to the _linkage_ of the executable, in line with
+the native system toolchain.
+
+The runtime has been rewritten in pure Gerbil; gone are the `gx-gambc`
+gambit "modules" that provided the core runtime functionality. This
+has allowed us great freedom and some very important features. We have
+completely reworked the exception hierarchy to be class based and we
+define our own versions of `raise`, `with-exception-handler` and
+`with-catch` and ensure that all exceptions have stack traces. We have
+also lifted all restrictions with regards to embedding the expander in
+binary executables.  The code is there in libgerbil, and you can just
+load the expander environment on demand.
+
+The tooling has been greatly improved, with emphasis on build
+isolation so that each individual project has its own GERBIL_PATH
+bundling dependencies and solving once and for all the dirty
+`~/.gerbil` problem that plagued earlier version of Gerbil. The
+tooling improvements don't stop there of course, see [Getting Started
+with Gerbil Development](https://cons.io/guide/getting-started.html),
+[The Gerbil Universal Binary and
+Tools](https://cons.io/reference/dev/bach.html), and [The Gerbil Build
+Tool](https://cons.io/reference/dev/build.html) for more details. The
+package manager has also been greatly enhanced to support a
+distributed directory model and semantic versioning for dependencies;
+see [The Gerbil Package
+Manager](https://cons.io/guide/package-manager.html) for more details.
+
+Speaking of tooling, we now have a dedicated test running tool which
+can run your tests in the command line and works similar to `go
+test`. This has allowed us to greatly increase our development
+velocity and bring an "always test" mentality to Gerbil
+development. You no longer have to stand in your head to run your
+tests, you just write them and run them with `gerbil test`.
+
+Moving on to linguistic and standard library changes, there is a
+monumental shift with the introduction of _interfaces_, which are akin
+to type-classes and similar to Go's interfaces. In short, interfaces
+allow us to create facades to complex functionality and complete our
+object orientation story. See
+[Interfaces](https://cons.io/guide/intro.html#interfaces) in the guide
+and [Interfaces](https://cons.io/reference/std/interface.html) in the
+reference documentation.
+
+Introducing interfaces allowed us to bring on the [Standard IO
+Interfaces](https://cons.io/reference/std/stdio.html) and completely
+redefine the way we do IO in Gerbil. This allowed us to rewrite almost
+everything that touches IO in the standard library, with cleaner and
+more performant code.
+
+Moving on from IO, the Actor package in the standard library has been
+rewritten from scratch and brings a simpler and more powerful low
+level protocol and very important new functionality for managing actor
+ensembles. See [Actors](https://cons.io/guide/intro.html#actors) in
+the guide, the all new [Working with Actor
+Ensembles](https://cons.io/tutorials/ensemble.html) tutorial, and the
+[:std/actor](https://cons.io/reference/std/actor.html)  package in the
+reference documentation.
+
+Another very important change, also enabled by interfaces, is the full
+on embrace of openssl3 in the standard library; see [TLS/SSL
+Sockets](https://cons.io/reference/std/net/ssl.html) in the reference
+documentation. Everything that uses the [socket
+interfaces](https://cons.io/reference/std/stdio.html#sockets) can also
+transparently use SSL, with the added ability to upgrade existing
+sockets after negotiation.
+
+Following that, the
+[httpd](https://cons.io/reference/std/net/httpd.html) can natively
+serve requests over SSL without needing a front end proxy like
+`nginx`.
+
+Naturally, the [request
+library](https://cons.io/reference/std/net/request.html) has been
+rewriten internally to utilize interfaces, and so has the
+[protobuf](https://cons.io/reference/std/protobuf.html) library.
+
+We also have completely rewritten
+[WebSockets](https://cons.io/reference/std/net/websocket.html#websocket-interface)
+and [SOCKS](https://cons.io/reference/std/net/socks.html) libraries,
+now with server side support.
+
+JSON RPC has also become a first class citizen, with both client and
+server-side support. See [JSON
+RPC](https://cons.io/reference/std/net/json-rpc.html) in the reference
+documentation for details.
+
+Other than that, we also have a lot of new code integrated in the
+standard library, graduating from its
+[gerbil-utils](https://github.com/mighty-gerbils/gerbil-utils/)
+incubation.
+
+We have also refactored out libraries with foreign dependencies that
+were not built by default into external packages, listed in the
+[mighty gerbils
+directory](https://github.com/mighty-gerbils/gerbil-directory). This
+includes the `libxml`, `leveldb`, `lmdb`, and `leveldb` lbiraries.
+
+And last but not least, we introduced [Contracts and Type
+Annotations](https://cons.io/reference/std/contract.html). Contracts
+can be attached to interfaces or enacted by the all powerful `using`
+macro with the meta-linguistic ability to perform dotted access for
+interface calls and struct and class accessors and mutators.  This
+greatly reduces boilerplate and makes the code much more pleasant to
+read.  See the [Proxies](https://cons.io/tutorials/proxy.html)
+tutorial for the natural progression culminating in the `using` macro.
+
+Of course this is just the bird's eye view of the changes; see the
+[release
+notes](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18-rc1)
+for the full changelog pointing to every pr commited in this
+development cycle.
+
+In conclusion, it is safe to say that at this point Gerbil is
+approaching production readiness; you should already be able to use it
+in production for experimental and non-mission critical projects
+without fear.  See [Developing Software with
+Gerbil](https://cons.io/reference/dev/).
+
+Happy Hacking!
+
+## Pre-Singularity Release Notes
+
+This is the release Changelog for releases prior to Gerbil v0.18;
+these are releases before the bootstrap singularity that occured in
+the v0.18 development cycle.
+
+### 1-10-2022: Gerbil-v0.17
 
 Highlights:
 - Gambit v4.9.4 support.
