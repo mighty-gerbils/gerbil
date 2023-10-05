@@ -89,7 +89,7 @@ level protocol and very important new functionality for managing actor
 ensembles. See [Actors](https://cons.io/guide/intro.html#actors) in
 the guide, the all new [Working with Actor
 Ensembles](https://cons.io/tutorials/ensemble.html) tutorial, and the
-[:std/actor package](https://cons.io/reference/std/actor.html) in the
+[:std/actor](https://cons.io/reference/std/actor.html)  package in the
 reference documentation.
 
 Another very important change, also enabled by interfaces, is the full
