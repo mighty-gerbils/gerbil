@@ -49,6 +49,9 @@ Gambit v4.9.5-40-g24201248
 ,(v X)          : Start a REPL visiting X (proc/cont/thread)
 ```
 
+See also the [Interactive Gerbil Shell](/guide/shell.md) page for some
+utilities useful for debugging in the REPL.
+
 ## Debugging with Exception Stack Traces
 
 Gerbil goes to a lot of effort to ensure all exceptions have full
