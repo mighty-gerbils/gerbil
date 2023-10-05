@@ -8,6 +8,7 @@ package: gerbil/compiler
   (declare-type gxc#gerbil-gsc (@lambda 0 #f))
   (declare-type gxc#gerbil-gcc (@lambda 0 #f))
   (declare-type gxc#gerbil-ar (@lambda 0 #f))
+  (declare-type gxc#gerbil-rpath (@lambda 1 #f))
   (declare-type gxc#delete-directory* (@lambda 1 #f))
   (declare-type gxc#compile-module__% (@lambda 2 #f))
   (declare-type gxc#compile-module__0 (@lambda 1 #f))
@@ -42,13 +43,17 @@ package: gerbil/compiler
   (declare-type
    gxc#compile-scm-file
    (@case-lambda (2 gxc#compile-scm-file__0) (3 gxc#compile-scm-file__%)))
-  (declare-type gxc#gsc-debug-options__% (@lambda 1 #f))
-  (declare-type gxc#gsc-debug-options__0 (@lambda 0 #f))
+  (declare-type gxc#gsc-link-options__% (@lambda 1 #f))
+  (declare-type gxc#gsc-link-options__0 (@lambda 0 #f))
   (declare-type
-   gxc#gsc-debug-options
-   (@case-lambda (0 gxc#gsc-debug-options__0) (1 gxc#gsc-debug-options__%)))
-  (declare-type gxc#gsc-link-options (@lambda 1 #f))
-  (declare-type gxc#gsc-cc-options (@lambda 0 #f))
+   gxc#gsc-link-options
+   (@case-lambda (0 gxc#gsc-link-options__0) (1 gxc#gsc-link-options__%)))
+  (declare-type gxc#gsc-cc-options__% (@lambda 1 #f))
+  (declare-type gxc#gsc-cc-options__0 (@lambda 0 #f))
+  (declare-type
+   gxc#gsc-cc-options
+   (@case-lambda (0 gxc#gsc-cc-options__0) (1 gxc#gsc-cc-options__%)))
+  (declare-type gxc#gsc-static-include-options (@lambda 1 #f))
   (declare-type gxc#gcc-ld-options (@lambda 0 #f))
   (declare-type gxc#not-string-empty? (@lambda 1 #f))
   (declare-type gxc#gsc-compile-file (@lambda 2 #f))

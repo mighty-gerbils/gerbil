@@ -17,6 +17,16 @@ package: gerbil/expander
   (declare-type
    gx#syntax-pattern-depth-set!
    (@struct-setf gx#syntax-pattern::t 1 #f))
+  (declare-type gx#&syntax-pattern-id (@struct-getf gx#syntax-pattern::t 0 #t))
+  (declare-type
+   gx#&syntax-pattern-depth
+   (@struct-getf gx#syntax-pattern::t 1 #t))
+  (declare-type
+   gx#&syntax-pattern-id-set!
+   (@struct-setf gx#syntax-pattern::t 0 #t))
+  (declare-type
+   gx#&syntax-pattern-depth-set!
+   (@struct-setf gx#syntax-pattern::t 1 #t))
   (declare-type gx#syntax-pattern::apply-macro-expander (@lambda 2 #f))
   (declare-type gx#macro-expand-syntax (@lambda 1 #f))
   (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))

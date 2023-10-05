@@ -35,6 +35,7 @@ namespace: gxc
          (%#define-runtime gerbil-gcc gxc#gerbil-gcc)
          (%#define-runtime +gerbil-ar+ gxc#+gerbil-ar+)
          (%#define-runtime gerbil-ar gxc#gerbil-ar)
+         (%#define-runtime gerbil-rpath gxc#gerbil-rpath)
          (%#define-runtime gerbil-runtime-modules gxc#gerbil-runtime-modules)
          (%#define-runtime delete-directory* gxc#delete-directory*)
          (%#begin (%#define-runtime compile-module__% gxc#compile-module__%)
@@ -81,16 +82,24 @@ namespace: gxc
                             compile-scm-file
                             gxc#compile-scm-file)))
          (%#begin (%#define-runtime
-                   gsc-debug-options__%
-                   gxc#gsc-debug-options__%)
+                   gsc-link-options__%
+                   gxc#gsc-link-options__%)
                   (%#begin (%#define-runtime
-                            gsc-debug-options__0
-                            gxc#gsc-debug-options__0)
+                            gsc-link-options__0
+                            gxc#gsc-link-options__0)
                            (%#define-runtime
-                            gsc-debug-options
-                            gxc#gsc-debug-options)))
-         (%#define-runtime gsc-link-options gxc#gsc-link-options)
-         (%#define-runtime gsc-cc-options gxc#gsc-cc-options)
+                            gsc-link-options
+                            gxc#gsc-link-options)))
+         (%#begin (%#define-runtime gsc-cc-options__% gxc#gsc-cc-options__%)
+                  (%#begin (%#define-runtime
+                            gsc-cc-options__0
+                            gxc#gsc-cc-options__0)
+                           (%#define-runtime
+                            gsc-cc-options
+                            gxc#gsc-cc-options)))
+         (%#define-runtime
+          gsc-static-include-options
+          gxc#gsc-static-include-options)
          (%#define-runtime gcc-ld-options gxc#gcc-ld-options)
          (%#define-runtime not-string-empty? gxc#not-string-empty?)
          (%#define-runtime gsc-compile-file gxc#gsc-compile-file)

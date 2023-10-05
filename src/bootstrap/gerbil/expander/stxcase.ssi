@@ -17,6 +17,12 @@ namespace: gx
          (%#define-runtime
           syntax-pattern-depth-set!
           gx#syntax-pattern-depth-set!)
+         (%#define-runtime &syntax-pattern-id gx#&syntax-pattern-id)
+         (%#define-runtime &syntax-pattern-depth gx#&syntax-pattern-depth)
+         (%#define-runtime &syntax-pattern-id-set! gx#&syntax-pattern-id-set!)
+         (%#define-runtime
+          &syntax-pattern-depth-set!
+          gx#&syntax-pattern-depth-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/stxcase__1")))

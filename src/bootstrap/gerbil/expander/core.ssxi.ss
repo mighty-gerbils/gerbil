@@ -155,6 +155,24 @@ package: gerbil/expander
    gx#prelude-context-e-set!
    (@struct-setf gx#prelude-context::t 2 #f))
   (declare-type
+   gx#&prelude-context-path
+   (@struct-getf gx#prelude-context::t 0 #t))
+  (declare-type
+   gx#&prelude-context-import
+   (@struct-getf gx#prelude-context::t 1 #t))
+  (declare-type
+   gx#&prelude-context-e
+   (@struct-getf gx#prelude-context::t 2 #t))
+  (declare-type
+   gx#&prelude-context-path-set!
+   (@struct-setf gx#prelude-context::t 0 #t))
+  (declare-type
+   gx#&prelude-context-import-set!
+   (@struct-setf gx#prelude-context::t 1 #t))
+  (declare-type
+   gx#&prelude-context-e-set!
+   (@struct-setf gx#prelude-context::t 2 #t))
+  (declare-type
    gx#local-context::t
    (@struct-type gx#local-context::t gx#phi-context::t 0 :init! ()))
   (declare-type gx#local-context? (@struct-pred gx#local-context::t))
@@ -234,6 +252,12 @@ package: gerbil/expander
   (declare-type
    gx#module-binding-context-set!
    (@struct-setf gx#module-binding::t 0 #f))
+  (declare-type
+   gx#&module-binding-context
+   (@struct-getf gx#module-binding::t 0 #t))
+  (declare-type
+   gx#&module-binding-context-set!
+   (@struct-setf gx#module-binding::t 0 #t))
   (declare-type
    gx#extern-binding::t
    (@struct-type
@@ -327,6 +351,8 @@ package: gerbil/expander
   (declare-type gx#make-expander (@struct-cons gx#expander::t))
   (declare-type gx#expander-e (@struct-getf gx#expander::t 0 #f))
   (declare-type gx#expander-e-set! (@struct-setf gx#expander::t 0 #f))
+  (declare-type gx#&expander-e (@struct-getf gx#expander::t 0 #t))
+  (declare-type gx#&expander-e-set! (@struct-setf gx#expander::t 0 #t))
   (declare-type
    gx#core-expander::t
    (@struct-type gx#core-expander::t gx#expander::t 2 #f ()))
@@ -342,6 +368,16 @@ package: gerbil/expander
   (declare-type
    gx#core-expander-compile-top-set!
    (@struct-setf gx#core-expander::t 1 #f))
+  (declare-type gx#&core-expander-id (@struct-getf gx#core-expander::t 0 #t))
+  (declare-type
+   gx#&core-expander-compile-top
+   (@struct-getf gx#core-expander::t 1 #t))
+  (declare-type
+   gx#&core-expander-id-set!
+   (@struct-setf gx#core-expander::t 0 #t))
+  (declare-type
+   gx#&core-expander-compile-top-set!
+   (@struct-setf gx#core-expander::t 1 #t))
   (declare-type
    gx#expression-form::t
    (@struct-type gx#expression-form::t gx#core-expander::t 0 #f ()))
@@ -426,6 +462,16 @@ package: gerbil/expander
   (declare-type
    gx#user-expander-phi-set!
    (@struct-setf gx#user-expander::t 1 #f))
+  (declare-type
+   gx#&user-expander-context
+   (@struct-getf gx#user-expander::t 0 #t))
+  (declare-type gx#&user-expander-phi (@struct-getf gx#user-expander::t 1 #t))
+  (declare-type
+   gx#&user-expander-context-set!
+   (@struct-setf gx#user-expander::t 0 #t))
+  (declare-type
+   gx#&user-expander-phi-set!
+   (@struct-setf gx#user-expander::t 1 #t))
   (declare-type
    gx#expander-mark::t
    (@struct-type gx#expander-mark::t #f 4 #f ()))

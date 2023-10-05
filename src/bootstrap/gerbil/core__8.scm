@@ -11,10 +11,10 @@
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object?|
     (make-class-predicate |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#make-macro-object|
-    (lambda _$args22360_
+    (lambda _$args22744_
       (apply make-class-instance
              |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
-             _$args22360_)))
+             _$args22744_)))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro|
     (make-class-slot-accessor
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
@@ -23,24 +23,32 @@
     (make-class-slot-mutator
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
      'macro))
+  (define |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro|
+    (make-class-slot-unchecked-accessor
+     |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
+     'macro))
+  (define |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro-set!|
+    (make-class-slot-unchecked-mutator
+     |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
+     'macro))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
-    (lambda (_self22356_ _stx22358_)
+    (lambda (_self22740_ _stx22742_)
       (gx#core-apply-expander
-       (let () (declare (not safe)) (unchecked-slot-ref _self22356_ 'macro))
-       _stx22358_)))
+       (let () (declare (not safe)) (unchecked-slot-ref _self22740_ 'macro))
+       _stx22742_)))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|
-    (lambda (__t36562)
-      (let ((__macro36563
-             (let ((__tmp36564 (class-slot-offset __t36562 'macro)))
-               (if __tmp36564
-                   (let () (declare (not safe)) (##fx+ __tmp36564 '1))
+    (lambda (__t37002)
+      (let ((__macro37003
+             (let ((__tmp37004 (class-slot-offset __t37002 'macro)))
+               (if __tmp37004
+                   (let () (declare (not safe)) (##fx+ __tmp37004 '1))
                    (error '"Unknown slot" 'macro)))))
-        (lambda (_self22356_ _stx22358_)
+        (lambda (_self22740_ _stx22742_)
           (gx#core-apply-expander
            (let ()
              (declare (not safe))
-             (##unchecked-structure-ref _self22356_ __macro36563 __t36562 '#f))
-           _stx22358_)))))
+             (##unchecked-structure-ref _self22740_ __macro37003 __t37002 '#f))
+           _stx22742_)))))
   (bind-specializer!
    |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
    |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|)
