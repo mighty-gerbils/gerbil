@@ -1,5 +1,24 @@
 # JSON RPC
 
+The `:std/net/json-rpc` library provides support for
+[JSON RPC 2.0](https://www.jsonrpc.org/specification)
+both as a client issuing requests
+[over HTTP](https://www.jsonrpc.org/historical/json-rpc-over-http.html)
+and as a server processing them.
+
+Note that you should probably be using POST requests (the default)
+and not GET requests
+(that we support but not all servers do and are
+[not recommended](https://www.simple-is-better.org/json-rpc/transport_http.html#get-request)).
+
+Also note that make a practical effort to support existing clients and servers,
+most of which don't follow various parts of the many specifications, and so
+we are not too strict in our checking.
+
+::: tip To use bindings from this module
+(import :std/net/json-rpc)
+:::
+
 ## json-rpc
 ```
 (json-rpc server-url method (params (void))
