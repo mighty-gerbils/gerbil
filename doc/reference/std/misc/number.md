@@ -123,4 +123,248 @@ one (if no further argument is specified) or the provided arguments (if specifie
 
 This function creates a new counter, a function that takes zero or more arguments,
 adds the sum of these arguments to the counter (or `1`, not `0`, if no argument was provided),
-and returns the original value of the counter before the addition.
+and returns the original value of the counter before the addition (post-increment).
+You can thus reserve how many entries you are counting before the next call.
+
+## integer-part
+``` scheme
+(integer-part x) -> integer
+```
+
+Given a real number `x`, `integer-part` will return the integer part as an exact integer,
+i.e. the number with largest absolute value whose absolute value is no greater than that of `x`.
+
+## fractional-part
+``` scheme
+(fractional-part x) -> integer
+```
+
+## floor-align, ceiling-align
+``` scheme
+(floor-align n alignment) -> integer
+(ceiling-align n alignment) -> integer
+```
+
+Given an integer `n`, and a non-zero integer `alignment`,
+if alignment is positive, `floor-align` returns
+the largest multiple of `alignment` non-greater than `n`, and
+`ceiling-align` returns the smallest multiple of `alignment` non-lesser than `n`;
+if alignment is negative, the roles of `floor-align` and `ceiling-align` are swapped.
+
+::: tip Examples:
+``` scheme
+> (floor-align 20 10)
+20
+> (floor-align 25 10)
+20
+> (floor-align 25 -10)
+30
+> (ceiling-align 20 10)
+20
+> (ceiling-align 25 10)
+30
+> (ceiling-align 25 -10)
+20
+```
+:::
+
+## real->sign
+``` scheme
+(real->sign x) -> -1, 0 or 1
+```
+
+Given a real number `x`, return an integer, `-1` if the number is negative,
+`0` if it is zero, and `1` if it is positive.
+
+::: tip Examples:
+``` scheme
+> (real->sign 2.7)
+1
+> (real->sign 1e-100)
+1
+> (real->sign -42)
+-1
+> (real->sign -inf.0)
+-1
+> (real->sign 0.0)
+0
+> (real->sign 0)
+0
+```
+:::
+
+
+## nat?
+``` scheme
+(nat? x) -> Bool
+```
+
+Given any object `x`, return true if it is an non-negative exact integer.
+
+## fxnat?
+``` scheme
+(fxnat? x) -> Bool
+```
+
+Given any object `x`, return true if it is an non-negative fixnum.
+
+## nat-below?
+``` scheme
+(nat-below? x end) -> Bool
+```
+
+Given any object `x`, return true if it is an non-negative exact integer less than `end` (not included).
+
+## nat-of-length?
+``` scheme
+(nat-of-length? x length-in-bits) -> Bool
+```
+
+Given any object `x`, return true if it is an non-negative exact integer
+that can be stored in `length-in-bits` bits, as witnessed by
+its `integer-length` being no greater than `length-in-bits` (included).
+
+## integer-of-length?
+``` scheme
+(nat-of-length? x length-in-bits) -> Bool
+```
+
+Given any object `x`, return true if it is a (negative, zero or positive)
+exact integer that can be stored in `length-in-bits` bits, as witnessed by
+its `integer-length` being strictly less than `length-in-bits` (not included).
+
+## for-each-integer
+``` scheme
+(for-each-integer fun from below)
+```
+
+Given `fun` a function of one argument, call `fun` with each successive increasing integer
+starting with `from` up to and not including `below`.
+
+## half
+``` scheme
+(half n)
+```
+
+Given an integer `n`, return half of `n` if it is even, or half of `n-1` if it is odd.
+
+## least-integer?
+``` scheme
+(least-integer pred? start end) -> integer
+```
+
+Do a binary search in interval [`start`, `end`) to find the least integer for which `pred?` holds,
+assuming `pred?` is “increasing”, i.e. if true for some integer in the interval,
+it is true for all greater integers in the interval.
+If no integer in the interval satisfies `pred?`, return `end`. If all do, return `start`.
+If `pred?` isn't actually increasing, return some integer in the interval.
+
+
+## most-integer?
+``` scheme
+(most-integer pred? start end) -> integer
+```
+
+Do a binary search in interval (`start`, `end`] to find the most integer for which `pred?` holds,
+assuming `pred?` is “decreasing”, i.e. if true for some integer in the interval,
+it is true for all lesser integers in the interval.
+If no integer in the interval satisfies `pred?`, return `start`. If all do, return `end`.
+If `pred?` isn't actually decreasing, return some integer in the interval.
+
+## bezout
+``` scheme
+(bezout a b) -> (values integer integer integer)
+```
+
+Given two integers `a` and `b`, return three values `x` `y` and `d`,
+such that `d` is the (non-negative) gcd of `a` and `b`, and `a*x+b+y=d`,
+thus forming a Bezout relationship.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+
+## mult-mod a b n
+``` scheme
+(mult-mod a b n) -> integer
+```
+
+Given two integers `a`, `b` and a positive integer `n`,
+return the product `m` of `a` and `b` modulo `n`.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+Its performance is only moderate.
+
+## invert-mod
+``` scheme
+(invert-mod a n) -> integer
+```
+
+Given an integer `a` and a positive integer `n`,
+return the inverse of `a` modulo `n`,
+or raise an error if `a` is not invertible modulo `n`.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+Its performance is only moderate.
+
+## invert-mod
+``` scheme
+(invert-mod a n) -> integer
+```
+
+Given integers `a` and `b` and a positive integer `n`,
+divide `a` by `b` modulo `n`,
+i.e. return an integer `m` such that `a = b*m [n]`,
+if such an integer exists, or raise an error if no such integer exists.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+Its performance is only moderate.
+
+## mult-expt-mod
+``` scheme
+(mult-expt-mod a x e n) -> integer
+```
+
+Given integers `a`, `x`, `e` and `n`,
+multiply `a` by `x` to the power `e` modulo `n`.
+If `e` is negative then `x` must be invertible modulo `n`.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+Its performance is only moderate.
+
+## expt-mod
+``` scheme
+(expt-mod x e n) -> integer
+```
+
+Given integers `x`, `e` and `n`, compute `x` to the power `e` modulo `n`.
+If `e` is negative then `x` must be invertible modulo `n`.
+
+Note: the current implementation doesn't use constant-time computations
+and shouldn't be used for production-grade cryptography.
+Its performance is only moderate.
+
+## integer-log
+``` scheme
+(integer-log a b) -> integer
+```
+
+Given two integers `a` and `b`, return the largest natural integer n such that `b**n <= a`.
+
+
+## factor-out-powers-of-2
+``` scheme
+(factor-out-powers-of-2 n) -> integer
+```
+
+Given an integer `n`, return the smallest integer `m` such that `n = m*2**k` for some integer `k`.
+
+## factor-out-powers
+``` scheme
+(factor-out-powers a b) -> integer
+```
+
+Given integers `a` and `b`, return the smallest integer `m` such that `a = m*b**k` for some integer `k`.

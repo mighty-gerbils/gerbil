@@ -3,7 +3,7 @@
 (import
   :gerbil/gambit
   :std/srfi/13
-  :std/srfi/141
+  (only-in :std/srfi/141 floor/)
   :std/error
   :std/misc/number
   :std/misc/ports

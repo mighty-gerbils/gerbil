@@ -6,15 +6,17 @@
 (export #t)
 
 (import
-  :gerbil/gambit
-  :std/srfi/1
-  :std/srfi/141
-  :std/error
-  :std/iter
-  :std/misc/evector
-  :std/misc/list-builder
-  :std/misc/number
-  :std/sugar)
+  (only-in :gerbil/gambit random-integer integer-sqrt bit-set?)
+  (only-in :std/srfi/1 every reduce)
+  (only-in :std/srfi/141 floor/ floor-quotient)
+  (only-in :std/error check-argument raise-bad-argument)
+  (only-in :std/iter for in-range for/collect)
+  (only-in :std/misc/evector memoize-recursive-sequence
+           evector-ref evector-ref-set! evector-push! extend-evector!
+           evector-fill-pointer evector-fill-pointer-set! list->evector evector->list
+           make-ebits ebits-ref ebits-set-fill-pointer! ebits-set? ebits-set! ebits-fill-pointer)
+  (only-in :std/misc/list-builder with-list-builder)
+  (only-in :std/misc/number nat? mult-mod expt-mod pre-increment! half ceiling-align))
 
 ;; An extensible vector containing the increasing sequence of all small enough primes
 ;; NB: the initial 0 is so the useful array indices start with 1, keeping with convention.
