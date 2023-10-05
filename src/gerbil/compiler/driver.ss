@@ -350,8 +350,8 @@ namespace: gxc
         (invoke (gerbil-gsc)
                 ["-link" "-o" output-c_ gsc-link-opts ... output-scm])
         (invoke (gerbil-gsc)
-                ["-obj" output-c gsc-cc-opts ... gsc-static-opts ...
-                 output-c_])
+                ["-obj" gsc-cc-opts ... gsc-static-opts ...
+                 output-c output-c_])
         (invoke (gerbil-gcc)
                 ["-o" output-bin
                  output-o output-o_ output-ld-opts ...
