@@ -10,13 +10,12 @@
 (export (except-out #t begin-module%%)
         (rename: begin-module%% %%begin-module)
         (import: :std/protobuf/macros)
-        (for-syntax read-module-body))
+        load-module
+        (for-syntax read-module-body load-module))
 
 (defrules begin-module%% ()
   ((_ . body)
-   (%%begin-module (import (only-in :gerbil/core load-module)
-                           (for-syntax (only-in :gerbil/core load-module)))
-                   (export #t) . body)))
+   (%%begin-module (export #t) . body)))
 
 (defsyntax (begin-protobuf stx)
   (def (parse-body body)
