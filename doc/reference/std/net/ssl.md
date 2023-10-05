@@ -3,7 +3,9 @@
 The `:std/net/ssl` package provides functionality for working with SSL/TLS sockets.
 
 ::: tip To use bindings from this module
+```scheme
 (import :std/net/ssl)
+```
 :::
 
 ## TLS
