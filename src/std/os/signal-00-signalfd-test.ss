@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; :std/os/signalfd unit-test
 (cond-expand
-  (enable-signalfd-test
+  ((and enable-signalfd-test linux)
    (import :std/test
            ./signal
            ./signalfd

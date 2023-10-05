@@ -53,6 +53,11 @@ namespace: gxc
     (set! +gerbil-ar+ (getenv "GERBIL_AR" default-gerbil-ar)))
   +gerbil-ar+)
 
+(def (gerbil-rpath gerbil-libdir)
+  (string-append
+   (cond-expand (darwin "-Wl,-rpath,") (else "-Wl,-rpath="))
+   gerbil-libdir))
+
 (def gerbil-runtime-modules
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
@@ -196,8 +201,7 @@ namespace: gxc
               (get-libgerbil-ld-opts libgerbil.a))
              (else
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
-           (gerbil-rpath
-            (string-append "-Wl,-rpath=" gerbil-libdir))
+           (rpath (gerbil-rpath gerbil-libdir))
            (builtin-modules
             (map (lambda (mod) (symbol->string (expander-context-id mod)))
                  (cons ctx deps))))
@@ -227,7 +231,7 @@ namespace: gxc
                  bin-o
                  output-o output_-o
                  output-ld-opts ...
-                 gerbil-rpath
+                 rpath
                  "-L" gerbil-libdir "-lgerbil" "-lgambit"
                  libgerbil-ld-opts ...])
         ;; clean up
@@ -337,8 +341,8 @@ namespace: gxc
               ["-e" include-gambit-sharp]))
            (gsc-link-opts
             (append gsc-link-opts gsc-gx-macros))
-           (gerbil-rpath
-            (string-append "-Wl,-rpath=" gerbil-libdir))
+           (rpath
+            (gerbil-rpath gerbil-libdir))
            (default-ld-options
              (cond-expand
                (netbsd ["-lm"])
@@ -355,7 +359,7 @@ namespace: gxc
         (invoke (gerbil-gcc)
                 ["-o" output-bin
                  output-o output-o_ output-ld-opts ...
-                 gerbil-rpath
+                 rpath
                  "-L" gerbil-libdir "-lgambit"
                  default-ld-options ...]))))
 

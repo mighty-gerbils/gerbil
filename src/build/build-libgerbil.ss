@@ -381,7 +381,14 @@
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
-        (cut write libgerbil-ldd <>)))
+	(cut write
+	     (filter
+	      (cond-expand
+		(darwin
+		 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+		(else true))
+	      libgerbil-ldd)
+	     <>)))
     ;; cleanup
     (for (f [static-module-c-paths ...
              builtin-modules-c-path

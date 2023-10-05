@@ -1,5 +1,7 @@
 ;; -*- Gerbil -*-
 
+(def (gerbil-libdir) (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
+
 (def (build-spec . _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "gambit-sharp"
@@ -196,7 +198,15 @@
         '())
     ;; :std/net
     "net/address"
-    (gxc: "net/ssl/libssl" "-ld-options" ,(ldflags "libssl" "-lssl"))
+    ,(cond-expand
+      (darwin
+       `(gxc: "net/ssl/libssl"
+	     "-ld-options" ,(append-options
+			     (ldflags "libssl" "-lssl")
+			     (ldflags "libcrypto" "-lcrypto")
+			     (string-append "-L" (gerbil-libdir)) "-lgambit")))
+      (else `(gxc: "net/ssl/libssl"
+		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
     "net/ssl/error"
     "net/ssl/interface"
     "net/ssl/socket"
