@@ -122,7 +122,7 @@ Gerbil offers a couple of different options for this:
    manually start the repl server inside your program.
  - Servers in an [Actor Ensemble](/tutorials/ensemble.md) automatically have
    network repl capabilities for debugging and loading code.
-   You can interact with them  using the `gxensemble` tool.
+   You can interact with them using the `gxensemble` tool.
 
 Once you have a REPL to a running program, you can interact with it by
 evaluating code.  Gerbil also provides some useful

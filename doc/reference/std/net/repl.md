@@ -51,7 +51,7 @@ By default, once connected, the REPL does not load the Gerbil expander but
 uses the primitive Gambit eval. This allows the REPL to be embedded in
 binaries without the requirement to embed the expander's environment.
 
-If you are debugging during development and thus have expander environemnt,
+If you are debugging during development and thus have the expander environment,
 you can load the expander on demand in running executables with:
 ```
 REPL> (gerbil-load-expander!)
