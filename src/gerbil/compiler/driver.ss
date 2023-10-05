@@ -327,7 +327,8 @@ namespace: gxc
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
            (gsc-link-opts (gsc-link-options))
-           (gsc-cc-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))
+           (gsc-cc-opts (gsc-cc-options))
+           (gsc-static-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
@@ -349,7 +350,8 @@ namespace: gxc
         (invoke (gerbil-gsc)
                 ["-link" "-o" output-c_ gsc-link-opts ... output-scm])
         (invoke (gerbil-gsc)
-                ["-obj" output-c output-c_])
+                ["-obj" output-c gsc-cc-opts ... gsc-static-opts ...
+                 output-c_])
         (invoke (gerbil-gcc)
                 ["-o" output-bin
                  output-o output-o_ output-ld-opts ...
