@@ -183,7 +183,7 @@ namespace: gxc
            (output_-c        (string-append output_ ".c"))
            (output_-o        (string-append output_ ".o"))
            (gsc-link-opts    (gsc-link-options))
-           (gsc-cc-opts      (gsc-cc-options gerbil-staticdir))
+           (gsc-cc-opts      (gsc-cc-options))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
