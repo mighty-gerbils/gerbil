@@ -139,15 +139,6 @@ namespace: gxc
       (write '(gerbil-main))
       (newline)))
 
-  (def (get-gsc-cc-opts gerbil-staticdir)
-    (let* ((opts (pgetq gsc-options: opts))
-           (base (string-append "-I " gerbil-staticdir))
-           (user-static-dir
-            (path-expand
-             (path-expand "lib/static" (gerbil-path))))
-           (base (string-append base " -I " user-static-dir)))
-      [base ... (gsc-cc-options) ...]))
-
   (def (get-libgerbil-ld-opts libgerbil)
     (call-with-input-file (string-append libgerbil ".ldd") read))
 
@@ -192,7 +183,8 @@ namespace: gxc
            (output_-c        (string-append output_ ".c"))
            (output_-o        (string-append output_ ".o"))
            (gsc-link-opts    (gsc-link-options))
-           (gsc-cc-opts      (get-gsc-cc-opts gerbil-staticdir))
+           (gsc-cc-opts      (gsc-cc-options gerbil-staticdir))
+           (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
            (output-ld-opts   (gcc-ld-options))
            (libgerbil.a      (path-expand "libgerbil.a" gerbil-libdir))
            (libgerbil.so     (path-expand "libgerbil.so" gerbil-libdir))
@@ -225,6 +217,7 @@ namespace: gxc
         (invoke (gerbil-gsc)
                 ["-obj"
                  gsc-cc-opts ...
+                 gsc-static-opts ...
                  deps-c ...
                  bin-c
                  output-c output_-c])
@@ -296,17 +289,6 @@ namespace: gxc
       (write '(gerbil-main))
       (newline)))
 
-  (def (static-include gsc-opts libdir)
-    (def static-dir
-      (path-expand "static" libdir))
-    (def user-static-dir
-      (path-expand
-       (path-expand "lib/static" (gerbil-path))))
-    (def cppflags
-      (string-append "-I " static-dir " -I " user-static-dir))
-
-    (append gsc-opts ["-cc-options" cppflags]))
-
   (def (user-declare)
     (let* ((gsc-opts (pgetq gsc-options: opts))
            (gsc-prelude (and gsc-opts (member "-prelude" gsc-opts)))
@@ -345,7 +327,7 @@ namespace: gxc
            (output-c_ (string-append output-base "_.c"))
            (output-o_ (string-append output-base "_.o"))
            (gsc-link-opts (gsc-link-options))
-           (gsc-cc-opts (static-include (gsc-cc-options) gerbil-libdir))
+           (gsc-cc-opts (gsc-static-include-options (path-expand "static" gerbil-libdir)))
            (output-ld-opts (gcc-ld-options))
            (gsc-gx-macros
             (if (gerbil-runtime-smp?)
@@ -755,6 +737,12 @@ namespace: gxc
          (if (and (not phi?) (current-compile-debug))
            ["-cc-options" "-g" (reverse opts) ...]
            (reverse opts))))))
+
+(def (gsc-static-include-options staticdir)
+  (let (user-staticdir
+        (path-expand
+            (path-expand "lib/static" (gerbil-path))))
+    ["-cc-options" (string-append "-I " staticdir " -I "  user-staticdir)]))
 
 (def (gcc-ld-options)
     (let lp ((rest (current-compile-gsc-options)) (opts []))
