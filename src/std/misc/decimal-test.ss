@@ -13,13 +13,13 @@
 
 (def decimal-test
   (test-suite "test suite for std/misc/decimal"
-    (test-case "power-of-5?"
+    (test-case "power-of-5"
       (for (i (in-range 1000))
-        (check (power-of-5? (expt 5 i)) => i)
-        (check (power-of-5? (1- (expt 5 i))) => #f)
-        (check (power-of-5? (1+ (expt 5 i))) => #f))
-      (check (power-of-5? (* (expt 2 2000) (expt 5 880))) => #f)
-      (check (power-of-5? (* 256 (expt 5 4400))) => #f))
+        (check (power-of-5 (expt 5 i)) => i)
+        (check (power-of-5 (1- (expt 5 i))) => #f)
+        (check (power-of-5 (1+ (expt 5 i))) => #f))
+      (check (power-of-5 (* (expt 2 2000) (expt 5 880))) => #f)
+      (check (power-of-5 (* 256 (expt 5 4400))) => #f))
     (test-case "decimal?"
       (defrule (checks res val ...)
         (begin (check (decimal? val) => res) ...))

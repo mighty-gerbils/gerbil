@@ -188,9 +188,9 @@ calling `write-decimal` with the same number and options.
 An error class and its recognizer predicate, for the sake of handling cases when
 printing a decimal number results in loss of precision.
 
-## power-of-5?
+## power-of-5
 ```
-(power-of-5? x) -> nat or false
+(power-of-5 x) -> nat or false
 ```
 If `x` is an exact integer that is the `n`th power of 5, return `n`,
 otherwise return false.

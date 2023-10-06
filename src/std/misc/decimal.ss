@@ -6,7 +6,7 @@
   decimal->string
   LossOfPrecision
   LossOfPrecision?
-  power-of-5?
+  power-of-5
   find-decimal-multiplier
   count-significant-digits
   decimal->digits-exponent
@@ -33,11 +33,11 @@
 (def (decimal? x)
   (or (exact-integer? x)
       (and (##ratnum? x)
-           (power-of-5? (first-value (factor-out-powers-of-2 (denominator x))))
+           (power-of-5 (first-value (factor-out-powers-of-2 (denominator x))))
            #t)))
 
-;; : Integer -> Bool
-(def (power-of-5? n)
+;; : Integer -> (OrFalse Nat)
+(def (power-of-5 n)
   (and (exact-integer? n) (positive? n)
        (if (< (integer-length n) 1024) ;; number small enough to be converted to double float
          (let (l (integer-part (round (log n 5)))) ;; no loss of precision below 440
@@ -45,7 +45,7 @@
          (let*-values (((p) (syntax-eval (expt 5 440))) ;; largest power of five under 2**1023
                        ((q k) (factor-out-powers n p)))
            (and (< q p)
-                (let (l (power-of-5? q))
+                (let (l (power-of-5 q))
                   (and l (+ l (* 440 k)))))))))
 
 ;; `parse-decimal` expects and parses a decimal number on the PeekableStringReader.
@@ -216,7 +216,7 @@
 ;; : Nat+ -> Nat+ Nat
 (def (find-decimal-multiplier d)
   (define-values (5^n m) (factor-out-powers-of-2 d))
-  (def n (power-of-5? 5^n))
+  (def n (power-of-5 5^n))
   (check-argument n "divisor of a power of 10" d)
   ;; We check that the answer is correct before returning it to the caller.
   (if (> m n)
