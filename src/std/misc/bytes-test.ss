@@ -26,7 +26,7 @@
 (def u6-reverse (lambda () (u8vector-reverse u6)))
 
 (defrule (check-rep parse unparse rep obj)
-  (begin ;;let ((rep rep) (obj obj))
+  (begin
     (check-equal? (parse rep) obj)
     (check-equal? (unparse obj) rep)))
 
@@ -111,6 +111,8 @@
       (check-equal? (u1-reverse) u1-reversed))
     (test-case "test bytevector-reverse"
       (check-equal? (u6-reverse) u6-reversed))
+    (test-case "test u8vector-init!"
+      (check-equal? (u8vector-init! 5 (lambda (x) (* x x))) #u8(0 1 4 9 16)))
     (test-case "test u8vector->bytestring, bytestring->u8vector"
       (for-each (match <>
                   ([vec hex delim]
@@ -144,4 +146,44 @@
       (check-rep u8vector->integer integer->u8vector #u8(0 255) 255)
       (check-rep u8vector->integer integer->u8vector #u8(3 219) 987)
       (check-rep u8vector->integer integer->u8vector #u8(130 255) -32001)
-      (check-rep u8vector->integer integer->u8vector #u8(1 37 17) 75025))))
+      (check-rep u8vector->integer integer->u8vector #u8(1 37 17) 75025))
+
+    (test-case "u8vector-every"
+      (check (u8vector-every odd? #u8(1 3 5)) => #t)
+      (check (u8vector-every odd? #u8(1 2 3)) => #f))
+
+    (test-case "n-bits->n-u8"
+      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
+             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
+
+    (test-case "n-bits->n-u8"
+      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
+             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
+
+    (test-case "nat-length-in-u8"
+      (check (map (lambda (x) (list x (nat-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536)) =>
+             '((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))))
+
+    (test-case "nat<->u8vector"
+      (defrule (checks (v n a ...) ...)
+        (begin (begin (check (nat->u8vector n a ...) => v)
+                      (check (u8vector->nat v a ...) => n)) ...))
+      (checks (#u8(1 2 3) 66051)
+              (#u8(3 2 1 0) 66051 4 little)
+              (#u8(104 101 108 108 111) 448378203247))
+      (check (nat->u8vector 25642 1 big) => #u8(42))
+      (check (nat->u8vector 25642 1 little) => #u8(42)))
+
+    (test-case "integer<->u8vector"
+      (defrule (checks (v n a ...) ...)
+        (begin (begin (check (integer->u8vector n a ...) => v)
+                      (check (u8vector->integer v a ...) => n)) ...))
+      (checks (#u8(1 2 3) 66051)
+              (#u8(3 2 1 0) 66051 4 little)
+              (#u8(104 101 108 108 111) 448378203247)
+              (#u8(255 1) -255)
+              (#u8(254 253 253) -66051)
+              (#u8(253 253 254 255) -66051 4 little))
+      (check (integer->u8vector 25642 1 big) => #u8(42))
+      (check (integer->u8vector 25642 1 little) => #u8(42)))
+    ))
