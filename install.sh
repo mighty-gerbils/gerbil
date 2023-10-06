@@ -7,6 +7,14 @@ die() {
   exit 1
 }
 
+if [ $(uname) = "Darwin" ];
+then
+    FIND=gfind
+else
+    FIND=find
+fi
+
+
 install() {
     local prefix="${1}"
     mkdir -p "${prefix}" || die
@@ -40,7 +48,7 @@ install_src_files() {
     local dest="${2}"
     local oldpwd="$(pwd)"
     cd "${src}"
-    for f in $(find -name \*.ss -or -name \*.ssi -or -name \*.scm -or -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
+    for f in $(${FIND} -name \*.ss -or -name \*.ssi -or -name \*.scm -or -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
         mkdir -p $(dirname "${dest}/${f}") || die
         cp -v "${f}" "${dest}/${f}" || die
     done
