@@ -1,11 +1,9 @@
 (export decimal-test)
 
 (import
-  :std/srfi/13
-  :std/iter
   :std/misc/decimal
-  :std/misc/string
-  :std/parser/base
+  (only-in :std/iter for in-range)
+  (only-in :std/parser/base parse-error?)
   (only-in :std/error ContractViolation?)
   (only-in :std/sugar defrule)
   (only-in :std/text/char-set char-ascii-alphabetic?)
