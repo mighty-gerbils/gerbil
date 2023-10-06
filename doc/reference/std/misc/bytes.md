@@ -440,3 +440,167 @@ The following low level unsafe operations are also exported.
 
 (&u8vector-swap! v i j) -> unspecified
 ```
+
+## u8vector-init!, bytevector-init!
+``` scheme
+(u8vector-init! len fun) -> u8vector
+```
+
+`u8vector-init!` is take a non-negative fixnum `len` and a one-argument function `fun`
+and creates a new `u8vector` of length `len` where each element is initialized
+in increasing index order with the result of calling `fun` with the index as argument
+(starting with `0`, assuming `len` is positive).
+
+::: tip Examples:
+``` scheme
+> (u8vector-init! 5 (lambda (x) (* x x)))
+#u8(0 1 4 9 16)
+```
+:::
+
+## u8vector-every
+``` scheme
+(u8vector-every pred? u8vector) -> bool
+```
+
+Return true if every element of the given `u8vector` satisfies the unary predicate `pred?`.
+
+::: tip Examples:
+``` scheme
+> (u8vector-every odd? #u8(1 3 5))
+#t
+> (u8vector-every odd? #u8(1 2 3))
+#f
+```
+:::
+
+## n-bits->n-u8
+``` scheme
+(n-bits->n-u8 n) -> integer
+```
+
+Given a number `n` of bits, return the number `N` of 8-bit bytes necessary to store those `n` bits,
+i.e. `N = (ceiling-align n-bits 8)`.
+
+::: tip Examples:
+``` scheme
+> (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000))
+((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))
+```
+:::
+
+## nat-length-in-u8
+``` scheme
+(nat-length-in-u8 n) -> integer
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+return the number of 8-bit bytes necessary to store all the bits of `n`.
+
+::: tip Examples:
+``` scheme
+> (map (lambda (x) (list x (nat-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536))
+((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))
+```
+:::
+
+## nat->u8vector
+``` scheme
+(nat->u8vector n [length] [endianness]) -> u8vector
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+a `length` (which defaults to the minimal length required to store all the bits of `n`),
+and an endianness (which defaults to `big`),
+return a u8vector of given length which stores the bits of `n` in the given endianness.
+
+::: tip Examples:
+``` scheme
+> (nat->u8vector 66051)
+#u8(1 2 3)
+> (nat->u8vector 66051 4 little)
+#u8(3 2 1 0)
+```
+:::
+
+## u8vector->nat
+``` scheme
+(u8vector->nat u8vector [length] [endianness]) -> integer
+```
+
+Given a `u8vector`, a `length` no greater than that of the vector,
+and an `endianness` (defaults to `big`), decode the first `length` bytes of `u8vector`
+using the given endianness into a natural number (non-negative, "unsigned").
+Assuming the `length` and `endianness` match and the number fits in the `length`,
+this is the inverse operation of `nat->u8vector`.
+
+::: tip Examples:
+``` scheme
+> (u8vector->nat #u8(1 2 3))
+66051
+> (u8vector->nat #u8(3 2 1 0) 4 little)
+66051
+```
+:::
+
+## integer-length-in-u8
+``` scheme
+(integer-length-in-u8 n) -> integer
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+return the number of 8-bit bytes necessary to store all the bits of `n`.
+
+::: tip Examples:
+``` scheme
+> (map (lambda (x) (list x (integer-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536))
+((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))
+```
+:::
+
+## integer->u8vector
+``` scheme
+(integer->u8vector n [length] [endianness]) -> u8vector
+```
+
+Given a relative integer `n` (possibly negative, "signed"),
+a `length` (which defaults to the minimal length required to store all the bits of `n`),
+and an endianness (which defaults to `big`),
+return a u8vector of given length which stores the bits of `n` in the given endianness.
+
+::: tip Examples:
+``` scheme
+> (integer->u8vector 66051)
+#u8(1 2 3)
+> (integer->u8vector -255)
+#u8(255 1)
+> (integer->u8vector 66051 4 little)
+#u8(3 2 1 0)
+> (integer->u8vector -66051 4 little)
+#u8(253 253 254 255)
+```
+:::
+
+## u8vector->integer
+``` scheme
+(u8vector->integer u8vector [length] [endianness]) -> integer
+```
+
+Given a `u8vector`, a `length` no greater than that of the vector,
+and an `endianness` (defaults to `big`), decode the first `length` bytes of `u8vector`
+using the given endianness into a natural number (non-negative, "unsigned").
+Assuming the `length` and `endianness` match and the number fits in the `length`,
+this is the inverse operation of `integer->u8vector`.
+
+::: tip Examples:
+``` scheme
+> (u8vector->integer #u8(1 2 3))
+66051
+> (u8vector->integer #u8(255 1))
+-255
+> (u8vector->integer #u8(3 2 1 0) 4 little)
+66051
+> (u8vector->integer #u8(253 253 254 255) 4 little)
+-66051
+```
+:::
