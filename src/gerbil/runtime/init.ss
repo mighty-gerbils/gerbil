@@ -239,49 +239,55 @@ namespace: #f
       (gx#core-eval-module obj)))))
 
 (def (gerbil-runtime-init! builtin-modules)
-  ;; initialize the load path
-  (let* ((home (gerbil-home))
-         (libdir (path-expand "lib" home))
-         (loadpath
-          (cond
-           ((getenv "GERBIL_LOADPATH" #f)
-            => (lambda (envvar)
-                 (filter (lambda (x) (not (string-empty? x)))
-                         (string-split envvar #\:))))
-           (else '())))
-         (userpath
-          (path-expand "lib" (gerbil-path)))
-         (loadpath
-          (if (getenv "GERBIL_BUILD_PREFIX" #f)
-            loadpath
-            (cons userpath loadpath))))
-    (current-module-library-path (cons libdir loadpath)))
+  (unless __runtime-initialized
+    ;; initialize the load path
+    (let* ((home (gerbil-home))
+           (libdir (path-expand "lib" home))
+           (loadpath
+            (cond
+             ((getenv "GERBIL_LOADPATH" #f)
+              => (lambda (envvar)
+                   (filter (lambda (x) (not (string-empty? x)))
+                           (string-split envvar #\:))))
+             (else '())))
+           (userpath
+            (path-expand "lib" (gerbil-path)))
+           (loadpath
+            (if (getenv "GERBIL_BUILD_PREFIX" #f)
+              loadpath
+              (cons userpath loadpath))))
+      (current-module-library-path (cons libdir loadpath)))
 
-  ;; initialize the modue registry
-  (let* ((registry-entry (lambda (m) (cons m 'builtin)))
-         (module-registry
-          (let lp ((rest builtin-modules) (registry '()))
-            (match rest
-              ([mod . rest]
-               (lp rest
-                   (cons* (registry-entry (string-append mod "__0"))
-                          (registry-entry (string-append mod "__rt"))
-                          registry)))
-              (else
-               (list->hash-table
-                registry))))))
-    (current-module-registry module-registry))
+    ;; initialize the modue registry
+    (let* ((registry-entry (lambda (m) (cons m 'builtin)))
+           (module-registry
+            (let lp ((rest builtin-modules) (registry '()))
+              (match rest
+                ([mod . rest]
+                 (lp rest
+                     (cons* (registry-entry (string-append mod "__0"))
+                            (registry-entry (string-append mod "__rt"))
+                            registry)))
+                (else
+                 (list->hash-table
+                  registry))))))
+      (current-module-registry module-registry))
 
-  ;; et the readtable
-  (current-readtable __*readtable*)
+    ;; et the readtable
+    (current-readtable __*readtable*)
 
-  ;; randomize the default random source
-  (random-source-randomize! default-random-source))
+    ;; randomize the default random source
+    (random-source-randomize! default-random-source)
+    ;; all done
+    (set! __runtime-initialized #t)))
 
 ;; expander loading hook
 (def __expander-loaded #f)
+(def __runtime-initialized #f)
 
 (def (gerbil-load-expander!)
+  (unless __runtime-initialized
+    (error "runtime has not been initialized"))
   (unless __expander-loaded
     (__load-gxi)
     ;; and make it idempotent
