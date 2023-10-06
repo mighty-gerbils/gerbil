@@ -11,6 +11,7 @@ class GerbilScheme < Formula
   depends_on "sqlite"
   depends_on "zlib"
   depends_on "gcc"
+  depends_on "findutils"
 
   fails_with :clang do
     cause "gerbil-scheme is built with GCC"

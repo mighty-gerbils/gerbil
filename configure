@@ -57,7 +57,7 @@ package_out_of_tree() {
     echo "It is now available as an external package: github.com/mighty-gerbils/gerbil-${pkg}"
 }
 
-readonly gerbil_version="v$(git describe --tags --always)"
+readonly gerbil_version="$(git describe --tags --always)"
 readonly gerbil_targets=""
 readonly default_gambit_tag=24201248effa23d5017be4992b5b9879e4cd3a4c
 readonly default_gambit_config="--enable-targets=${gerbil_targets} --enable-single-host --enable-dynamic-clib --enable-default-runtime-options=tE8,f8,-8 --enable-trust-c-tco"
