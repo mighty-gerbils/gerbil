@@ -119,7 +119,7 @@
     (gxc: "srfi/srfi-135/macros" (extra-inputs: ("srfi/srfi-135/macros.scm")))
     (gxc: "srfi/srfi-135/text" (extra-inputs: ("srfi/srfi-135/text.scm")))
     "srfi/135"
-    (gxc: "srfi/141" (extra-inputs: ("srfi/srfi-141.scm")))
+    (gxc: "srfi/141")
     (gxc: "srfi/143" (extra-inputs: ("srfi/srfi-143/carries.scm")))
     (gxc: "srfi/144" (extra-inputs: ("srfi/srfi-144/144.constants.scm" "srfi/srfi-144/144.body0.scm"
                                      "srfi/srfi-144/144.body.scm" "srfi/srfi-144/144.special.scm")))

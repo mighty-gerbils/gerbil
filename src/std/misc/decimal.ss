@@ -1,40 +1,52 @@
-(import
-  :gerbil/gambit
-  :std/srfi/141
-  :std/error
-  :std/contract
-  :std/io
-  :std/iter
-  :std/misc/number
-  :std/parser/base
-  :std/sugar
-  :std/text/basic-parsers
-  :std/text/basic-printers
-  :std/text/char-set
-  :std/values)
+(export
+  decimal?
+  parse-decimal
+  string->decimal
+  write-decimal
+  decimal->string
+  LossOfPrecision
+  LossOfPrecision?
+  power-of-5?
+  find-decimal-multiplier
+  count-significant-digits
+  decimal->digits-exponent
+  digits-exponent->decimal)
 
-(export decimal? parse-decimal string->decimal write-decimal decimal->string
-        LossOfPrecision LossOfPrecision?
-        power-of-5?
-        find-decimal-multiplier
-        count-significant-digits nat->significant-digits
-        decimal->digits-exponent digits-exponent->decimal)
+(import
+  (only-in :std/srfi/141 round/ truncate/ floor/)
+  (only-in :std/error check-argument raise-bad-argument
+           deferror-class raise/context exception-context)
+  (only-in :std/contract using)
+  (only-in :std/io PeekableStringReader open-buffered-string-reader
+           PeekableStringReader-read-char PeekableStringReader-peek-char)
+  (only-in :std/misc/number decrement! nat? integer-part
+           integer-log factor-out-powers factor-out-powers-of-2)
+  (only-in :std/misc/ports with-output)
+  (only-in :std/parser/base raise-parse-error)
+  (only-in :std/sugar syntax-eval)
+  (only-in :std/text/basic-parsers parse-and-skip-any-whitespace parse-eof)
+  (only-in :std/text/basic-printers write-n-chars)
+  (only-in :std/text/char-set digit-char char-ascii-digit char-strict-whitespace?)
+  (only-in :std/values first-value))
 
 ;; : Any -> Bool
 (def (decimal? x)
-  (and (rational? x)
-       (power-of-5? (first-value (factor-out-powers-of-2 (denominator x))))))
+  (or (exact-integer? x)
+      (and (##ratnum? x)
+           (power-of-5? (first-value (factor-out-powers-of-2 (denominator x))))
+           #t)))
 
 ;; : Integer -> Bool
 (def (power-of-5? n)
   (and (exact-integer? n) (positive? n)
-       (if (< (integer-length n) 1024) ;; number small enough to be converter to double float
+       (if (< (integer-length n) 1024) ;; number small enough to be converted to double float
          (let (l (integer-part (round (log n 5)))) ;; no loss of precision below 440
-           (= n (expt 5 l)))
-         (let*-values (((p) (expt 5 440)) ;; largest power of five under 2**1023
-                       ((l) (integer-log n p))
-                       ((q r) (floor/ n (expt p l))))
-           (and (zero? r) (power-of-5? q)))))) ;; reduce to the simpler problem above
+           (and (= n (expt 5 l)) l))
+         (let*-values (((p) (syntax-eval (expt 5 440))) ;; largest power of five under 2**1023
+                       ((q k) (factor-out-powers n p)))
+           (and (< q p)
+                (let (l (power-of-5? q))
+                  (and l (+ l (* 440 k)))))))))
 
 ;; `parse-decimal` expects and parses a decimal number on the PeekableStringReader.
 ;; The character parameters `decimal-mark` and `group-separator` provide
@@ -58,7 +70,7 @@
       exponent-allowed: (exponent-allowed_ #f))
   (def reader (PeekableStringReader (open-buffered-string-reader pre-reader)))
   (check-argument (boolean? sign-allowed?) "boolean" sign-allowed?)
-  (check-argument (char? decimal-mark) "char" decimal-mark)
+  (check-argument (or (char? decimal-mark) (boolean? decimal-mark)) "char or boolean" decimal-mark)
   (check-argument (or (boolean? group-separator_) (char? group-separator_))
                   "boolean or char" group-separator_)
   (check-argument (or (boolean? exponent-allowed_) (string? exponent-allowed_))
@@ -176,12 +188,18 @@
       end: (end_ #f))
   (def l (string-length s))
   (def end (or end_ l))
+  (def (make-space? allow-whitespace?)
+    (cond
+     ((eq? allow-whitespace? #t) char-strict-whitespace?)
+     ((procedure? allow-whitespace?) allow-whitespace?)
+     (else (raise-bad-argument string->decimal "allow-*-whitespace? to be #t or a character predicate"
+                               allow-whitespace?))))
   (call-with-input-string
    (if (and (zero? start) (= end l)) s (substring s start end))
    (lambda (port)
      (def reader (PeekableStringReader (open-buffered-string-reader port)))
      (when allow-leading-whitespace?
-       (parse-and-skip-any-whitespace reader))
+       (parse-and-skip-any-whitespace reader (make-space? allow-leading-whitespace?)))
      (begin0
          (parse-decimal reader
                         sign-allowed?: sign-allowed?
@@ -189,63 +207,57 @@
                         group-separator: group-separator
                         exponent-allowed: exponent-allowed)
        (when allow-trailing-whitespace?
-         (parse-and-skip-any-whitespace reader))
+         (parse-and-skip-any-whitespace reader (make-space? allow-trailing-whitespace?)))
        (parse-eof reader)))))
 
-;; Given an integer d of the form 2^m*5^n (reduced denominator of a decimal number),
+;; Given a positive integer d of the form 2^m*5^n (reduced denominator of a decimal number),
 ;; compute c such that c*d = c*(2^m*5^n) = 10^max(m,n).
 ;; Returns c and max(m,n).
-;; : Nat -> Nat Nat
+;; : Nat+ -> Nat+ Nat
 (def (find-decimal-multiplier d)
   (define-values (5^n m) (factor-out-powers-of-2 d))
-  (def n (integer-log 5^n 5))
+  (def n (power-of-5? 5^n))
+  (check-argument n "divisor of a power of 10" d)
   ;; We check that the answer is correct before returning it to the caller.
-  (check-argument (= d (* (arithmetic-shift 1 m) (expt 5 n))) "divisor of power of 10" d)
   (if (> m n)
     (values (expt 5 (- m n)) m)
     (values (arithmetic-shift 1 (- n m)) n)))
 
 ;; Count the number of significant digits to represent this natural integer.
 ;; For 0, return 0.
-;; TODO: document and check the limit conditions of validity of the algorithm
 ;; : Nat -> Nat
 (def (count-significant-digits n)
   (check-argument (nat? n) "natural" n)
-  (if (zero? n)
-      0
-      (let (l0 (integer-part (log n 10)))
-        (let loop ((l l0) (a (quotient n (expt 10 l0))))
-          (if (< a 1) l (loop (1+ l) (quotient a 10)))))))
-
-;; Converts an integer into a base 10 string. The sign is ignored.
-;; For 0 becomes an empty string "" rather than "0".
-;; : Nat -> String
-(def (nat->significant-digits n)
-  (check-argument (nat? n) "natural" n)
-  (let* ((digit-count (count-significant-digits n))
-         (str (make-string digit-count))
-         (remainder 0))
-    (let loop ((a n)
-               (i (1- digit-count)))
-      (if (negative? i) str
-          (let-values (((q r) (truncate/ a 10)))
-            (string-set! str i (digit-char r 10))
-            (loop q (1- i)))))))
+  (cond
+   ((zero? n) 1) ;; special case: 0 requires 1 digit to display
+   ;; We'd like to use the below formula for small enough numbers, except that
+   ;; the floating point approximation is sometimes slightly off:
+   ;; for instance (log 1000 10) = 2.9999999999999996 instead of 3.
+   ;; TODO: use the formula as a heuristic then adjust by ±1 as needed,
+   ;; and it should be faster than integer-log
+   #;((< (integer-length n) 1024) (1+ (integer-part (log n 10))))
+   (else (1+ (integer-log n 10)))))
 
 ;; Given a decimal number, return
-;; - The absolute smallest integer with all its digits
-;; - the non-negative power of ten by which the decimal had to be multiplied to get this integer.
-;; Maybe we should find the valuation of the decimal in base 10,
-;; and return the least, negative, number when appropriate?
-;; : Decimal -> Integer Nat
+;; - The absolute smallest integer with all its digits, excluding the all-zeros to the right and left
+;; - the power of ten by which the decimal had to be multiplied to get this integer.
+;; : Decimal -> Integer Integer
 (def (decimal->digits-exponent decimal)
-  (defvalues (c m) (find-decimal-multiplier (denominator decimal)))
-  (values (* (numerator decimal) c) m))
+  (cond
+   ((zero? decimal) (values 0 0))
+   ((exact-integer? decimal)
+    (let*-values (((r 2s) (factor-out-powers-of-2 decimal))
+                  ((_ 5s) (factor-out-powers r 5))
+                  ((m) (min 2s 5s)))
+      (values (/ decimal (expt 10 m)) m)))
+   (else
+    (let-values (((c m) (find-decimal-multiplier (denominator decimal))))
+      (values (* (numerator decimal) c) (- m))))))
 
-;; From an integer number for the digits and an exponent for the negative powers of 10,
+;; From an integer number for the digits and an exponent for a power of 10,
 ;; return a decimal number.
 (def (digits-exponent->decimal digits exponent)
-  (/ digits (expt 10 exponent)))
+  (* digits (expt 10 exponent)))
 
 ;; Attempted print operation would lose precision. See precision-loss-behavior.
 (deferror-class LossOfPrecision ())
@@ -270,24 +282,26 @@
 ;;   always-decimal?:Bool \
 ;;   decimal-mark:Char \
 ;;   precision-loss-behavior:(Enum error truncate round) -> String
-(def (%decimal->digits n scale: (scale #f) width: (width #f)
-                       integral-digits: (integral-digits #f)
-                       fractional-digits: (fractional-digits #f)
+(def (%decimal->digits n scale: (scale_ #f) width: (width #f)
+                       integral-digits: (integral-digits_ #f)
+                       fractional-digits: (fractional-digits_ #f)
                        always-decimal?: (always-decimal? #f)
                        decimal-mark: (decimal-mark #\.)
                        precision-loss-behavior: (precision-loss-behavior 'error))
-  (unless integral-digits (set! integral-digits 0))
-  (unless fractional-digits (set! fractional-digits 0))
+  (def scale (or scale_ 0))
+  (def integral-digits (or integral-digits_ 0))
+  (def fractional-digits (or fractional-digits_ 0))
   (let/cc return
+    ;; special case: zero always shows a "0" even if no digits are explicitly required.
     (when (and (zero? n) (zero? integral-digits) (zero? fractional-digits))
-      (return (if always-decimal? "0." "0")))
+      (return (if always-decimal? (list->string [#\0 decimal-mark]) "0")))
 
     ;; Integer with the significant digits, number of fractional digits in it
     (defvalues (all-digits denominator-power) (decimal->digits-exponent n))
     ;; Total number of significant digits in number
     (def digit-count (count-significant-digits all-digits))
     ;; Where is the decimal mark relative to the start of the significant digits (0: just before)
-    (def decimal-mark-index (- (+ digit-count (or scale 0)) denominator-power))
+    (def decimal-mark-index (+ digit-count scale denominator-power))
     ;; How many 0s to add in front of the digits for the integer part?
     (def integral-left-padding (max 0 (- integral-digits (max 0 decimal-mark-index))))
     ;; How many digits to copy from all-digits for the integer part?
@@ -323,7 +337,7 @@
 
     (def (digits)
       ;; A string with the significant digits
-      (def significant-digits (nat->significant-digits all-digits))
+      (def significant-digits (##exact-int->string all-digits))
       ;; The target string
       (def string (make-string effective-length #\0))
       (string-copy! string integral-left-padding significant-digits 0 integral-digits-copied)
@@ -335,8 +349,8 @@
       string)
 
     (def (disallowed-loss-of-precision)
-      (raise (LossOfPrecision "loss of precision" irritants: [n]
-                              where: (exception-context disallowed-loss-of-precision))))
+      (raise/context (LossOfPrecision "loss of precision" irritants: [n]
+                                      where: (exception-context disallowed-loss-of-precision))))
 
     (cond
      ((>= 0 extra-width)
@@ -394,25 +408,25 @@
                     always-sign?: (always-sign? #f)
                     decimal-mark: (decimal-mark #\.)
                     precision-loss-behavior: (precision-loss-behavior 'error))
-  (def pad (or pad_ #\space))
-  (def spaceleft width)
-  (when (and width (or always-sign? (> 0 number)))
-    (decrement! spaceleft))
-  (def digits (%decimal->digits (abs number) scale: scale width: spaceleft
-                                integral-digits: integral-digits
-                                fractional-digits: fractional-digits
-                                always-decimal?: always-decimal?
-                                decimal-mark: decimal-mark
-                                precision-loss-behavior: precision-loss-behavior))
-  (when width
-    (decrement! spaceleft (string-length digits))
-    (write-n-chars spaceleft pad port))
-  (if (> 0 number)
-    (write-char #\- port)
-    (when always-sign?
-      (write-char #\+ port)))
-  (display digits port)
-  (void))
+  (with-output (port)
+    (def pad (or pad_ #\space))
+    (def spaceleft width)
+    (when (and width (or (negative? number) (and always-sign? (not (zero? number)))))
+      (decrement! spaceleft))
+    (def digits (%decimal->digits (abs number) scale: scale width: spaceleft
+                                  integral-digits: integral-digits
+                                  fractional-digits: fractional-digits
+                                  always-decimal?: always-decimal?
+                                  decimal-mark: decimal-mark
+                                  precision-loss-behavior: precision-loss-behavior))
+    (when width
+      (decrement! spaceleft (string-length digits))
+      (write-n-chars spaceleft pad port))
+    (cond
+     ((negative? number) (write-char #\- port))
+     ((zero? number) (void))
+     (always-sign? (write-char #\+ port)))
+    (display digits port)))
 
 ;; Given
 ;; - a decimal number,
