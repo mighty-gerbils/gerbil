@@ -1,11 +1,13 @@
-# Decimal
+# Decimal Numbers
 
 The `:std/misc/decimal` library provides support for
 arbitrary-precision decimal numbers and conversion between them and strings.
 This can notably be important for handling financial data without losing precision.
 
 ::: tip To use bindings from this module
+``` Scheme
 (import :std/misc/decimal)
+```
 :::
 
 Decimal numbers are "just" a subset of rational numbers, and so
@@ -22,7 +24,7 @@ QUUX (see the [snapshot at QITAB](https://qitab.common-lisp.dev/) and
 with its own design and implementation improvements.
 
 ## decimal?
-```
+``` Scheme
 (decimal? x) -> bool
 ```
 
@@ -30,7 +32,7 @@ Given any value `x`, return true if that object is a decimal number,
 i.e. a rational number that is not a floating-point number.
 
 ::: tip Examples:
-```
+``` Scheme
 > (decimal? 13/10)
 #t
 > (decimal? 1.3)
@@ -45,19 +47,20 @@ i.e. a rational number that is not a floating-point number.
 ## parse-decimal
 ``` Scheme
 (parse-decimal
-   pre-reader
+   input
    sign-allowed?: (sign-allowed? #t)
    decimal-mark: (decimal-mark #\.)
    group-separator: (group-separator_ #f)
    exponent-allowed: (exponent-allowed_ #f)) -> decimal
 ```
 
-`parse-decimal` expects and parses a decimal number on a `pre-reader` input,
+`parse-decimal` expects and parses a decimal number on an `input`,
 with the options specifed via keyword arguments.
 
-`parse-decimal` casts its `pre-reader` argument to a `BufferedStringReader`
-using [`open-buffered-string-reader`](../stdio.md#open-buffered-string-reader),
-that it then side-effects, and finally returns the decimal number,
+The `input` will be cast to a `BufferedStringReader` using
+[`open-buffered-string-reader`](../stdio.md#open-buffered-string-reader).
+`parse-decimal` will then side-effect this reader as it parses,
+and finally return the decimal number,
 or raises a `parse-error` (from `:std/parser/base`).
 
 The keyword arguments `decimal-mark` and `group-separator` are each a character or false,
@@ -88,7 +91,7 @@ You may use utilities from [:std/text/basic-parsers](../text/basic-parsers)
 to parse decimals as part of something bigger, or just use `string->decimal` below.
 
 ## string->decimal
-```
+``` Scheme
 (string->decimal s
       sign-allowed?: (sign-allowed? #t)
       decimal-mark: (decimal-mark #\.)
@@ -166,9 +169,9 @@ The keyword options are as follow:
     one of `error` (the default), `truncate` or `round`,
     in case the digits cannot fit in the space.
 
-Note that even with `precision-loss-behavior` being `truncate` or `round`,
-`write-decimal` may throw an error if the integral part of the `number` is too large
-to fit in the given width.
+Note that even if `precision-loss-behavior` is `truncate` or `round`,
+`write-decimal` may throw an error if the integral part of the `number` is
+too large to fit within the given width.
 
 ## decimal->string
 ``` Scheme
@@ -189,14 +192,14 @@ An error class and its recognizer predicate, for the sake of handling cases when
 printing a decimal number results in loss of precision.
 
 ## power-of-5
-```
+``` Scheme
 (power-of-5 x) -> nat or false
 ```
 If `x` is an exact integer that is the `n`th power of 5, return `n`,
 otherwise return false.
 
 ## find-decimal-multiplier
-```
+``` Scheme
 (find-decimal-multiplier d) -> (values integer integer)
 ```
 Given a positive integer `d`, the reduced denominator of a decimal number,
@@ -217,7 +220,7 @@ Exception: for `0`, return `0`, which defies convention for writing integers,
 but is the right thing in the context of figuring out how many decimals to use
 
 ## decimal->digits-exponent
-```
+``` Scheme
 (decimal->digits-exponent decimal) -> (values integer integer)
 ```
 Given a decimal number `decimal`, return two values:
@@ -226,7 +229,7 @@ Given a decimal number `decimal`, return two values:
     (can be positive, zero or negative).
 
 ## digits-exponent->decimal
-```
+``` Scheme
 (digits-exponent->decimal digits exponent) -> decimal
 ```
 Given an integer `digits` and an `exponent`, multiply `digits` by 10 to the given power.
