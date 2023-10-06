@@ -100,64 +100,71 @@ LSP server for the next Gerbil release (v0.19).
 
 ## Use-Package Example Configuration
 
-Example [use-package](https://github.com/jwiegley/use-package) definition to get you
-hacking in no time. All you have to do is to set the environment variables `GERBIL_INSTALL_PREFX`
-and `GERBIL_SRCDIR` and copy the code snippet below into your Emacs config.
+Example [use-package](https://github.com/jwiegley/use-package)
+definition to get you hacking in no time. All you have to do is to
+have`gxi`in your path and copy the code snippet below into your Emacs
+config.
 
 ``` elisp
-(use-package gerbil-mode
-  :when (getenv "GERBIL_INSTALL_PREFIX")
-  :ensure nil
-  :defer t
-  :mode (("\\.ss\\'"  . gerbil-mode)
-         ("\\.pkg\\'" . gerbil-mode))
-  :bind (:map comint-mode-map
-              (("C-S-n" . comint-next-input)
-               ("C-S-p" . comint-previous-input)
-               ("C-S-l" . clear-comint-buffer))
-              :map gerbil-mode-map
-              (("C-S-l" . clear-comint-buffer)))
-  :init
-  (setf gambit (getenv "GAMBIT_INSTALL_PREFIX"))
-  (setf gerbil (getenv "GERBIL_INSTALL_PREFIX"))
-  (setf gerbil-src (getenv "GERBIL_SRCDIR"))
-  (autoload 'gerbil-mode
-    (concat gerbil "/share/emacs/site-list/gerbil-mode.el") "Gerbil editing mode." t)
-  :hook
-  ((gerbil-mode . linum-mode)
-   (inferior-scheme-mode-hook . gambit-inferior-mode))
-  :config
-  (require 'gambit
-           (concat gambit "/share/emacs/site-lisp/gambit.el"))
-  (setf scheme-program-name (concat gerbil "/bin/gxi"))
+(progn
+  
+  (defvar *gerbil-path*
+    (shell-command-to-string "gxi -e '(display (path-expand \"~~\"))'\
+      -e '(flush-output-port)'"))
 
-  (let ((tags (locate-dominating-file default-directory "TAGS")))
-    (when tags (visit-tags-table tags)))
-  (visit-tags-table (concat gerbil-src "/src/TAGS"))
+  (use-package gerbil-mode
+    :when (file-directory-p *gerbil-path*)
+    :ensure nil
+    :straight nil
+    :defer t
+    :mode (("\\.ss\\'"  . gerbil-mode)
+           ("\\.pkg\\'" . gerbil-mode))
+    :bind (:map comint-mode-map
+		(("C-S-n" . comint-next-input)
+		 ("C-S-p" . comint-previous-input)
+		 ("C-S-l" . clear-comint-buffer))
+		:map gerbil-mode-map
+		(("C-S-l" . clear-comint-buffer)))
+    :init
+    (autoload 'gerbil-mode
+      (expand-file-name "share/emacs/site-lisp/gerbil-mode.el" *gerbil-path*)
+      "Gerbil editing mode." t)
+    :hook
+    ((gerbil-mode-hook . linum-mode)
+     (inferior-scheme-mode-hook . gambit-inferior-mode))
+    :config
+    (require 'gambit
+             (expand-file-name "share/emacs/site-lisp/gambit.el" *gerbil-path*))
+    (setf scheme-program-name (expand-file-name "bin/gxi" *gerbil-path*))
 
-  (when (package-installed-p 'smartparens)
-    (sp-pair "'" nil :actions :rem)
-    (sp-pair "`" nil :actions :rem))
+    (let ((tags (locate-dominating-file default-directory "TAGS")))
+      (when tags (visit-tags-table tags)))
+    (let ((tags (expand-file-name "src/TAGS" *gerbil-path*)))
+      (when (file-exists-p tags) (visit-tags-table tags)))
 
-  (defun clear-comint-buffer ()
+    (when (package-installed-p 'smartparens)
+      (sp-pair "'" nil :actions :rem)
+      (sp-pair "`" nil :actions :rem))
+
+    (defun clear-comint-buffer ()
+      (interactive)
+      (with-current-buffer "*scheme*"
+	(let ((comint-buffer-maximum-size 0))
+          (comint-truncate-buffer)))))
+
+  (defun gerbil-setup-buffers ()
+    "Change current buffer mode to gerbil-mode and start a REPL"
     (interactive)
-    (with-current-buffer "*scheme*"
-      (let ((comint-buffer-maximum-size 0))
-        (comint-truncate-buffer)))))
+    (gerbil-mode)
+    (split-window-right)
+    (shrink-window-horizontally 2)
+    (let ((buf (buffer-name)))
+      (other-window 1)
+      (run-scheme "gxi")
+      (switch-to-buffer-other-window "*scheme*" nil)
+      (switch-to-buffer buf)))
 
-(defun gerbil-setup-buffers ()
-  "Change current buffer mode to gerbil-mode and start a REPL"
-  (interactive)
-  (gerbil-mode)
-  (split-window-right)
-  (shrink-window-horizontally 2)
-  (let ((buf (buffer-name)))
-    (other-window 1)
-    (run-scheme "gxi")
-    (switch-to-buffer-other-window "*scheme*" nil)
-    (switch-to-buffer buf)))
-
-(global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers)
+  (global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers))
 ```
 
 To start open a Gerbil file or type `C-c C-g`. Alternatively run `M-x gerbil-mode` (to launch a REPL `run-scheme`).
