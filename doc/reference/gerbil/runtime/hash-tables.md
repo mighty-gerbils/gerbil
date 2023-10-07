@@ -230,7 +230,6 @@ Creates a new hash table, merging *more* hash tables into *hash*. Entries in has
   hash := hash table
   more := list of hash tables
 ```
-:::
 
 Merges *more* hash tables into *hash*. Entries in hash tables on the left take precedence over entries on the right.
 
@@ -312,4 +311,3 @@ Same as `plist->hash-table`, but using `eq?` as the test function for the table.
 ```
 
 Same as `plist->hash-table`, but using `eqv?` as the test function for the table.
-
