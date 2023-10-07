@@ -163,11 +163,6 @@ This is very useful to avoid method dispatch _and_ implicit allocation from
 method application if the methods of an object (class) are used multiple times
 within the lexical scope.
 
-The difference from `using` is that methods are not _bound_ to an object, and
-you thus have to pass the receiver as first argument to the method.
-The advantage over `using` is that there is no implicit allocation for
-collecting arguments to apply the bound closure of the method.
-
 ::: tip Examples:
 ```scheme
 > (defclass C (c) transparent: #t)
