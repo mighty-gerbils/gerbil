@@ -5,7 +5,7 @@ arbitrary-precision decimal numbers and conversion between them and strings.
 This can notably be important for handling financial data without losing precision.
 
 ::: tip To use bindings from this module
-``` Scheme
+```scheme
 (import :std/misc/decimal)
 ```
 :::
@@ -24,7 +24,7 @@ QUUX (see the [snapshot at QITAB](https://qitab.common-lisp.dev/) and
 with its own design and implementation improvements.
 
 ## decimal?
-``` Scheme
+```scheme
 (decimal? x) -> bool
 ```
 
@@ -32,7 +32,7 @@ Given any value `x`, return true if that object is a decimal number,
 i.e. a rational number that is not a floating-point number.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (decimal? 13/10)
 #t
 > (decimal? 1.3)
@@ -45,7 +45,7 @@ i.e. a rational number that is not a floating-point number.
 :::
 
 ## parse-decimal
-``` Scheme
+```scheme
 (parse-decimal
    input
    sign-allowed?: (sign-allowed? #t)
@@ -91,7 +91,7 @@ You may use utilities from [:std/text/basic-parsers](../text/basic-parsers.md)
 to parse decimals as part of something bigger, or just use `string->decimal` below.
 
 ## string->decimal
-``` Scheme
+```scheme
 (string->decimal s
       sign-allowed?: (sign-allowed? #t)
       decimal-mark: (decimal-mark #\.)
@@ -127,7 +127,7 @@ before (respectively after) the decimal number as part of the string:
     for other whitespace predicates.
 
 ## write-decimal
-``` Scheme
+```scheme
 (write-decimal number (port (current-output-port))
   scale: (scale #f)
   width: (width #f)
@@ -174,7 +174,7 @@ Note that even if `precision-loss-behavior` is `truncate` or `round`,
 too large to fit within the given width.
 
 ## decimal->string
-``` Scheme
+```scheme
 (decimal->string number
   scale: (scale #f) width: (width #f)
   integral-digits: (integral-digits #f) fractional-digits: (fractional-digits #f)
@@ -192,14 +192,14 @@ An error class and its recognizer predicate, for the sake of handling cases when
 printing a decimal number results in loss of precision.
 
 ## power-of-5
-``` Scheme
+```scheme
 (power-of-5 x) -> nat or false
 ```
 If `x` is an exact integer that is the `n`th power of 5, return `n`,
 otherwise return false.
 
 ## find-decimal-multiplier
-``` Scheme
+```scheme
 (find-decimal-multiplier d) -> (values integer integer)
 ```
 Given a positive integer `d`, the reduced denominator of a decimal number,
@@ -210,7 +210,7 @@ respectively the multiplier required to make the denominator a power of 10,
 and which power of 10 you will thus have reached.
 
 ## count-significant-digits
-``` Scheme
+```scheme
 (count-significant-digits n) -> nat
 ```
 
@@ -220,7 +220,7 @@ Exception: for `0`, return `0`, which defies convention for writing integers,
 but is the right thing in the context of figuring out how many decimals to use
 
 ## decimal->digits-exponent
-``` Scheme
+```scheme
 (decimal->digits-exponent decimal) -> (values integer integer)
 ```
 Given a decimal number `decimal`, return two values:
@@ -229,7 +229,7 @@ Given a decimal number `decimal`, return two values:
     (can be positive, zero or negative).
 
 ## digits-exponent->decimal
-``` Scheme
+```scheme
 (digits-exponent->decimal digits exponent) -> decimal
 ```
 Given an integer `digits` and an `exponent`, multiply `digits` by 10 to the given power.

@@ -41,11 +41,11 @@
 
     (test-case "try catch finally"
       (def (unbound-runtime-exception? e)
-        (match e ((RuntimeException exception: (? unbound-global-exception?)) #t)
+        (match e ((? unbound-global-exception?) #t)
                (else #f)))
       (def (toplevel-symbol-bound? sym)
         (try (eval sym) #t
-             (catch (unbound-runtime-exception? e) #f)))
+             (catch (unbound-global-exception? e) #f)))
       (check (toplevel-symbol-bound? 'list) => #t)
       (check (toplevel-symbol-bound? 'this-symbol-is-unbound) => #f)
 
@@ -179,7 +179,7 @@
     (test-case "defsyntax/unhygienic"
       (def aa 22)
       (defsyntax/unhygienic (double-id ctx)
-        (syntax-case ctx () ((_ x) (identifierify #'ctx #'x #'x))))
+        (syntax-case ctx () ((_ x) (stx-identifier #'ctx #'x #'x))))
       (check (double-id a) => 22))
 
     (test-case "with-id with-id/expr"
@@ -268,5 +268,5 @@
              => "sugar-test.ss")
       (def bar 23)
       (def foofoo 42)
-      (check (syntax-call (lambda (ctx . args) (identifierify ctx args args)) bar foo) => 42))
+      (check (syntax-call (lambda (ctx . args) (stx-identifier ctx args args)) bar foo) => 42))
     ))

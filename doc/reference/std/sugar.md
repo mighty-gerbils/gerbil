@@ -19,7 +19,7 @@ For the simplest macros that fit with a single expansion rule,
 `defrule` provides a short-hand compared to writing a `defrules` with a single rewrite rule.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/sugar :std/format)
 > (defrule (show var ...) (begin (printf "  ~a = ~s\n" 'var var) ...))
 > (define-values (x y z) (values 1 [2 3] "4 5"))
@@ -49,10 +49,10 @@ finally-clause:
 Evaluates body with an exception catcher and an unwind finalizer.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/error)
 > (def (unbound-runtime-exception? e)
-    (match e ((RuntimeException exception: (? unbound-global-exception?)) #t)
+    (match e ((? unbound-global-exception?) #t)
       (else #f)))
 > (def (toplevel-symbol-bound? sym)
     (try (eval sym) #t
@@ -85,7 +85,7 @@ ERROR "foo" ...
 
 Evaluates body with an unwind finalizer that invokes `{destroy obj}`.
 
-``` Scheme
+```scheme
 > (defclass A (x) transparent: #t constructor: :init!)
 > (defmethod {:init! A} (lambda (self) (class-instance-init! self x: 'open)))
 > (defmethod {destroy A} (lambda (self) (set! (@ self x) 'closed)))
@@ -107,7 +107,7 @@ closed
 Defines a method with one or more binding aliases
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (defclass A ())
 > (defmethod/alias {foo (bar baz) A} (lambda (self) "foo"))
 > [{foo (A)} {bar (A)} {baz (A)}]
@@ -129,7 +129,7 @@ This is very useful for avoiding method dispatch if methods of an object are
 used multiple times within the lexical scope.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (defclass A (x) transparent: #t)
 > (defmethod {foo A} (lambda (self) (+ 10 (@ self x))))
 > (def a (A x: 13))
@@ -172,7 +172,7 @@ The advantage over `using` is that there is no implicit allocation for
 collecting arguments to apply the bound closure of the method.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (defclass C (c) transparent: #t)
 > (defmethod {foo C} (lambda (self) (+ 10 (@ self c))))
 > (defmethod {frob C} (lambda (self (increment 1)) (pre-increment! (@ self c) increment)))
@@ -203,7 +203,7 @@ collecting arguments to apply the bound closure of the method.
 Evaluates body in a loop while the test expression evaluates to true.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/misc/number)
 > (def vector-ref-set! vector-set!)
 > (def a #(1 2 3 4 5 6))
@@ -224,7 +224,7 @@ Evaluates body in a loop while the test expression evaluates to true.
 Evaluates body in a loop until the test expression evaluates to true.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/misc/number)
 > (def vector-ref-set! vector-set!)
 > (def a #(2 3 4 5 6 7))
@@ -245,7 +245,7 @@ Evaluates body in a loop until the test expression evaluates to true.
 Construct a hash table; the keys are quasiquoted while the values are evaluated.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/sort :std/misc/symbol)
 > (def key 'aaa)
 > (def t (hash (a 1) (,key 2) (k (+ 10 13))))
@@ -283,7 +283,7 @@ are resolved with the following rules:
 - `..x -> (%%ref .x)`         ; escape
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (def .c 4)
 > (def h (hash (a 1) (b 2) (c 3)))
 > (let-hash h [.a .?b ..c .?d])
@@ -299,7 +299,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 *test* is not `#f`. Otherwise, returns `#!void`.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/text/basic-parsers)
 > (def (foo c) (awhen (v (char-ascii-digit c)) (* v v)))
 > (foo #\3)
@@ -308,7 +308,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 ```
 
 ## chain
-``` scheme
+```scheme
 (chain expression ...)
 
 <expression>:
@@ -328,7 +328,7 @@ prefixed with a variable (supports destructuring).
 When the first expression is a `<>`, chain will return a unary lambda.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (chain "stressed"
     string->list
     reverse
@@ -352,7 +352,7 @@ When the first expression is a `<>`, chain will return a unary lambda.
 :::
 
 ## is
-``` scheme
+```scheme
 (is [proc] v-or-pred [test: equal?]) -> procedure
 (is v [test: equal?])                -> procedure
 
@@ -370,7 +370,7 @@ if passed to the macro as value and not as variable. Alternatively, the
 `test:` keyword can be used to supply a test, the default is `equal?`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > ((is "a") "a")
 #t
 
@@ -393,7 +393,7 @@ For the simplest macros that fit with a single expansion rule,
 `defrule` provides a short-hand compared to writing a `defrules` with a single rewrite rule.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/sugar :std/format)
 > (defrule (show var ...) (begin (printf "  ~a = ~s\n" 'var var) ...))
 > (define-values (x y z) (values 1 [2 3] "4 5"))
@@ -419,10 +419,10 @@ my understanding of how hygienic macros works. Hopefully, I can get an explanati
 from the author Alex Knauth, or from another Racket wizard or macro guru.]
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (def aa 22)
 > (defsyntax/unhygienic (double-id ctx)
-    (syntax-case ctx () ((_ x) (identifierify #'ctx #'x #'x))))
+    (syntax-case ctx () ((_ x) (stx-identifier #'ctx #'x #'x))))
 > (double-id a)
 22
 ```
@@ -446,7 +446,7 @@ The general form of an identifier specification is
 and `str1 str2 ...` are expressions that may evaluate to
 strings, symbols, identifiers, etc., that will be converted to strings, concatenated,
 interned in a symbol then associated with the lexical context `ctx`,
-as per [`identifierify` in stxutil](stxutil.md#identifierify),
+as per `stx-identifier` from the gerbil prelude,
 such that mentions of `id` in the body are expanded to mentions
 of the computed identifier in the target context.
 
@@ -477,7 +477,7 @@ it creates a new scope every time, so you cannot create new visible definitions
 but also will not cause clashes with unhelpful error messages.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 ;; Defining "variables" A, B, C, D to actually be
 ;; accessors for positions in a vector.
 > (def mem (make-vector 5 0))
@@ -511,7 +511,7 @@ but also will not cause clashes with unhelpful error messages.
 > [(bad-var-index A) (bad-var-index B) (var-index C) (var-index D)]
 *** ERROR IN ...
 --- Syntax Error: Bad syntax; illegal expression
-... form:   ... detail: (%#define-syntax m (compose syntax-local-introduce (lambda (stx2) (with-syntax ((@ (identifierify (stx-car (stx-cdr stx2)) (list (syntax A) '@)))) (syntax (... @)))) syntax-local-introduce))
+... form:   ... detail: (%#define-syntax m (compose syntax-local-introduce (lambda (stx2) (with-syntax ((@ (stx-identifier (stx-car (stx-cdr stx2)) (list (syntax A) '@)))) (syntax (... @)))) syntax-local-introduce))
 ```
 :::
 
@@ -539,7 +539,7 @@ each of which design choices is opposite to the one made in
 the `if-let` offered in Common Lisp by Alexandria and UIOP.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/text/basic-parsers)
 > (def (foo a b c)
     (if-let ((x (char-ascii-digit a))
@@ -561,7 +561,7 @@ Generalization of `awhen` where multiple bindings are allowed, and
 specialization of `if-let` where the else clause is `(void)`.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/iter :std/misc/list-builder)
 > (def h (hash (1 "foo") (3 "bar") (4 "baz")))
 > (with-list-builder (collect)
@@ -574,7 +574,7 @@ specialization of `if-let` where the else clause is `(void)`.
 :::
 
 ## defcheck-argument-type
-``` Scheme
+```scheme
 (defcheck-argument-type <type>...)
 ```
 For each specified `<type>`, define a macro `check-argument-<type>`
@@ -583,7 +583,7 @@ else raises a `ContractViolation`
 as per [`check-argument`](errors.md#check-argument).
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import :std/number :std/iter)
 > (defcheck-argument-type integer vector)
 > (def (foo v n start (end #f))
@@ -606,14 +606,14 @@ as per [`check-argument`](errors.md#check-argument).
 :::
 
 ## syntax-eval stx
-``` Scheme
+```scheme
 (syntax-eval expression)
 ```
 Evaluate the `expression` during syntax-expansion, and
 use the result as source.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 ;; Low-level language users like to show off their "fast" O(n) fibonacci.
 ;; Here is a faster O(1) implementation that supports numbers they don't.
 > (import (for-syntax :std/misc/list-builder))
@@ -634,7 +634,7 @@ use the result as source.
 :::
 
 ## syntax-call
-``` Scheme
+```scheme
 (syntax-call expression)
 (syntax-call expression ctx . args)
 ```
@@ -646,17 +646,17 @@ The `expression` can only use functionality imported `for-syntax`.
 If may inspect the source location using `AST-source` and visit ancillary source files, etc.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (import (for-syntax :std/stxutil))
 > (def bar 23)
 > (def foofoo 42)
-> (syntax-call (lambda (ctx . args) (identifierify ctx args args)) bar foo)
+> (syntax-call (lambda (ctx . args) (stx-identifier ctx args args)) bar foo)
 42
 ```
 :::
 
 ## defsyntax-call
-``` Scheme
+```scheme
 (defsyntax-call (macro ctx formals ...) body ...)
 ```
 
@@ -667,7 +667,7 @@ if the formals have a fixed size and one argument is otherwise missing,
 from the `macro` invocation itself.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 ;;; This is how this-source-file is defined in :std/source
 > (begin-syntax
     (def (stx-source-file stx)

@@ -30,7 +30,7 @@ fixing that will require updating the recipes for relevant libraries;
 at the same time, Nix makes static linking not necessary.
 
 To compile using `gxc` should work fine from within Nix recipes
-or from within a `nix-shell`, if you add `gerbil`, `gambit` and
+or from within a `nix-shell`, if you add `gerbil-unstable`, and
 all the libraries you use to your package's `buildInputs`.
 See the `pkgs.gerbil-support`,
 as defined in `pkgs/development/compilers/gerbil/gerbil-support.nix`

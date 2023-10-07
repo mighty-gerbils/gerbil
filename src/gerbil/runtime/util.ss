@@ -516,17 +516,22 @@ namespace: #f
   (and (symbol? x)
        (not (uninterned-symbol? x))))
 
+(def (display-as-string x port)
+  (cond
+   ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x)) (display x port))
+   ((pair? x) (display-as-string (car x) port) (display-as-string (cdr x) port))
+   ((vector? x) (display-as-string (vector->list x) port))
+   ((or (null? x) (void? x) (eof-object? x) (boolean? x)) (void))
+   (else (error "cannot convert to symbol" x))))
+
+(def (as-string . args)
+  (call-with-output-string [] (lambda (p) (display-as-string args p))))
+
 (def (make-symbol . args)
-  (string->symbol
-   (apply string-append
-     (map (lambda (x)
-            (cond
-             ((string? x) x)
-             ((symbol? x) (symbol->string x))
-             ((keyword? x) (keyword->string x))
-             ((number? x) (number->string x))
-             (else (error "cannot convert to symbol" x))))
-          args))))
+  (string->symbol (apply as-astring args)))
+
+(def (make-keyword . args)
+  (string->keyword (apply as-astring args)))
 
 (def (interned-keyword? x)
   (and (keyword? x)

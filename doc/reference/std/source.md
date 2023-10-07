@@ -1,9 +1,9 @@
 # Source Location and Ancillary Source File Support
 
 The `:std/source` library provides common macros to access
-the source location of code being compiled, and to
+the source location of code being read, interpreted or compiled, and to
 ancillary files next to the source files proper,
-that may provide data used while compiling.
+that may provide data used at either runtime or compile-time.
 
 ::: tip To use the bindings from this module:
 ```scheme
@@ -29,7 +29,7 @@ The location is a vector `#(file pos)` in standard Gambit fashion:
     or else a negative integer, the opposite of the file or port position.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 > (quotient (vector-ref (this-source-location) 1) 65536)
 23
 ```
@@ -43,10 +43,11 @@ Expands to the file path of the supplied `context` source form,
 or to the `this-source-file` invocation itself if left implicit.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 #!/usr/bin/env gxi
 (import :std/source)
 (def $0 (this-source-file))
+;;; Now you can play with this source file at runtime.
 ```
 
 ## this-source-directory
@@ -55,10 +56,11 @@ or to the `this-source-file` invocation itself if left implicit.
 ```
 
 Expands to the file directory path of the supplied `context` source form,
-or to the `this-source-directory` invocation itself if left implicit.
+or to the `this-source-directory` invocation itself if left implicit,
+so you can play with it at runtime.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 #!/usr/bin/env gxi
 (import :std/source :std/misc/path :std/misc/ports)
 (def $this-dir (this-source-directory))
@@ -75,7 +77,7 @@ return the expanded path relative to the `path-directory` of that `source-file`
 under the `relpath` relative path.
 
 ::: tip Examples:
-``` Scheme
+```scheme
 #!/usr/bin/env gxi
 (import :std/source :std/misc/ports)
 (def data (read-all-as-lines (this-source-path "data.txt")))

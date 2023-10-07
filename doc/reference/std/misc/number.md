@@ -14,13 +14,13 @@ work better with infinities. Notably:
     More generally, `xmin` and `xmax` preserve the type of the argument they return.
 
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/misc/number)
 ```
 :::
 
 ## xmin
-``` scheme
+```scheme
 (xmin <x1> ... <xn>) -> real
 ```
 
@@ -29,7 +29,7 @@ In particular, it returns `+inf.0` (the positive infinity) if provided zero argu
 and is the identity function when given a single argument.
 
 ## xmin/list
-``` scheme
+```scheme
 (xmin/list <l>) -> real
 ```
 
@@ -38,7 +38,7 @@ passed as its arguments. In particular, it returns `+inf.0` (the positive
 infinity) if provided an empty list.
 
 ## xmin!
-``` scheme
+```scheme
 (xmin! <var> <x> ...) -> void
 ```
 
@@ -46,7 +46,7 @@ infinity) if provided an empty list.
 of the previous value and the provided arguments.
 
 ## xmin/map
-``` scheme
+```scheme
 (xmin/map <f> <l> [<base>]) -> real
 ```
 
@@ -57,7 +57,7 @@ The function is short-circuiting and will not evaluate further values and their 
 after the bottom value `-inf.0` is reached.
 
 ## xmax
-``` scheme
+```scheme
 (xmax <x1> ... <xn>) -> real
 ```
 
@@ -66,7 +66,7 @@ In particular, it returns `-inf.0` (the negative infinity) if provided zero argu
 and is the identity function when given a single argument.
 
 ## xmax/list
-``` scheme
+```scheme
 (xmax/list <l>) -> real
 ```
 
@@ -74,7 +74,7 @@ and is the identity function when given a single argument.
 In particular, it returns `-inf.0` (the negative infinity) if provided an empty list.
 
 ## xmax!
-``` scheme
+```scheme
 (xmax! <var> <x> ...) -> void
 ```
 
@@ -82,7 +82,7 @@ In particular, it returns `-inf.0` (the negative infinity) if provided an empty 
 of the previous value and the provided arguments.
 
 ## xmax/map
-``` scheme
+```scheme
 (xmax/map <f> <l> [<base>]) -> real
 ```
 
@@ -93,7 +93,7 @@ The function is short-circuiting and will not evaluate further values and their 
 after the top value `+inf.0` is reached.
 
 ## increment!, pre-increment!, post-increment!, decrement!, pre-decrement!, post-decrement!
-``` scheme
+```scheme
 (increment! place) -> (void)
 (increment! place increment ...) -> (void)
 (pre-increment! place) -> number
@@ -116,7 +116,7 @@ one (if no further argument is specified) or the provided arguments (if specifie
 *post-increment!* and *post-decrement!* return the value before addition (respectively, subtraction).
 
 ## make-counter
-``` scheme
+```scheme
 (make-counter) -> counter
 (make-counter n) -> counter
 ```
@@ -127,7 +127,7 @@ and returns the original value of the counter before the addition (post-incremen
 You can thus reserve how many entries you are counting before the next call.
 
 ## integer-part
-``` scheme
+```scheme
 (integer-part x) -> integer
 ```
 
@@ -135,12 +135,12 @@ Given a real number `x`, `integer-part` will return the integer part as an exact
 i.e. the number with largest absolute value whose absolute value is no greater than that of `x`.
 
 ## fractional-part
-``` scheme
+```scheme
 (fractional-part x) -> integer
 ```
 
 ## floor-align, ceiling-align
-``` scheme
+```scheme
 (floor-align n alignment) -> integer
 (ceiling-align n alignment) -> integer
 ```
@@ -152,7 +152,7 @@ the largest multiple of `alignment` non-greater than `n`, and
 if alignment is negative, the roles of `floor-align` and `ceiling-align` are swapped.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (floor-align 20 10)
 20
 > (floor-align 25 10)
@@ -169,7 +169,7 @@ if alignment is negative, the roles of `floor-align` and `ceiling-align` are swa
 :::
 
 ## real->sign
-``` scheme
+```scheme
 (real->sign x) -> -1, 0 or 1
 ```
 
@@ -177,7 +177,7 @@ Given a real number `x`, return an integer, `-1` if the number is negative,
 `0` if it is zero, and `1` if it is positive.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (real->sign 2.7)
 1
 > (real->sign 1e-100)
@@ -195,28 +195,28 @@ Given a real number `x`, return an integer, `-1` if the number is negative,
 
 
 ## nat?
-``` scheme
+```scheme
 (nat? x) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer.
 
 ## fxnat?
-``` scheme
+```scheme
 (fxnat? x) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative fixnum.
 
 ## nat-below?
-``` scheme
+```scheme
 (nat-below? x end) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer less than `end` (not included).
 
 ## nat-of-length?
-``` scheme
+```scheme
 (nat-of-length? x length-in-bits) -> Bool
 ```
 
@@ -225,7 +225,7 @@ that can be stored in `length-in-bits` bits, as witnessed by
 its `integer-length` being no greater than `length-in-bits` (included).
 
 ## integer-of-length?
-``` scheme
+```scheme
 (nat-of-length? x length-in-bits) -> Bool
 ```
 
@@ -234,7 +234,7 @@ exact integer that can be stored in `length-in-bits` bits, as witnessed by
 its `integer-length` being strictly less than `length-in-bits` (not included).
 
 ## for-each-integer
-``` scheme
+```scheme
 (for-each-integer fun from below)
 ```
 
@@ -242,14 +242,14 @@ Given `fun` a function of one argument, call `fun` with each successive increasi
 starting with `from` up to and not including `below`.
 
 ## half
-``` scheme
+```scheme
 (half n)
 ```
 
 Given an integer `n`, return half of `n` if it is even, or half of `n-1` if it is odd.
 
 ## least-integer?
-``` scheme
+```scheme
 (least-integer pred? start end) -> integer
 ```
 
@@ -261,7 +261,7 @@ If `pred?` isn't actually increasing, return some integer in the interval.
 
 
 ## most-integer?
-``` scheme
+```scheme
 (most-integer pred? start end) -> integer
 ```
 
@@ -272,7 +272,7 @@ If no integer in the interval satisfies `pred?`, return `start`. If all do, retu
 If `pred?` isn't actually decreasing, return some integer in the interval.
 
 ## bezout
-``` scheme
+```scheme
 (bezout a b) -> (values integer integer integer)
 ```
 
@@ -284,7 +284,7 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 
 ## mult-mod a b n
-``` scheme
+```scheme
 (mult-mod a b n) -> integer
 ```
 
@@ -296,7 +296,7 @@ and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
 ## invert-mod
-``` scheme
+```scheme
 (invert-mod a n) -> integer
 ```
 
@@ -309,7 +309,7 @@ and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
 ## invert-mod
-``` scheme
+```scheme
 (invert-mod a n) -> integer
 ```
 
@@ -323,7 +323,7 @@ and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
 ## mult-expt-mod
-``` scheme
+```scheme
 (mult-expt-mod a x e n) -> integer
 ```
 
@@ -336,7 +336,7 @@ and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
 ## expt-mod
-``` scheme
+```scheme
 (expt-mod x e n) -> integer
 ```
 
@@ -348,7 +348,7 @@ and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
 ## integer-log
-``` scheme
+```scheme
 (integer-log a b) -> integer
 ```
 
@@ -356,14 +356,14 @@ Given two integers `a` and `b`, return the largest natural integer n such that `
 
 
 ## factor-out-powers-of-2
-``` scheme
+```scheme
 (factor-out-powers-of-2 n) -> integer
 ```
 
 Given an integer `n`, return the smallest integer `m` such that `n = m*2**k` for some integer `k`.
 
 ## factor-out-powers
-``` scheme
+```scheme
 (factor-out-powers a b) -> integer
 ```
 

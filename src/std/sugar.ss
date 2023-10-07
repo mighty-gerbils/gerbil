@@ -402,7 +402,7 @@
                              #'(id-spec ...))))
        #'(begin
            (defsyntax/unhygienic (m stx2)
-             (with-syntax ((id (identifierify (stx-car (stx-cdr stx2)) expr)) ...)
+             (with-syntax ((id (stx-identifier (stx-car (stx-cdr stx2)) expr)) ...)
                (... #'(... template))))
            (m ctx))))))
 
