@@ -1743,16 +1743,17 @@ Gerbil supports XML and HTML with the `:std/xml` library.
 The library supports parsing and querying with Oleg's SXML/SSAX/SXPath and
 provides additional facilities for processing SXML.
 
-Optionally, when configured so, the library can also use `libxml2` to
-parse real world HTML (and plain old XML).  The `libxml2` dependent
-components are not built by default.  You can build them by specifying
-the `--enable-libxml` configuration option when configuring and
-building Gerbil.
+If you want to use `libxml2` library for parsing real world HTML,
+you can install the [gerbil-libxml](https://github.com/mighty-gerbils/gerbil-libxml)
+with
+```shell
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-libxml
+```
 
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
 ```scheme
-> (import :std/net/request :std/xml/libxml)
+> (import :std/net/request :clan/xml/libxml)
 > (def req (http-get "https://www.bing.com"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
 (*TOP* (html (@ (lang "el")
