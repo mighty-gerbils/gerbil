@@ -79,6 +79,7 @@ module.exports = {
                       'protobuf',
                       'xml',
                       'parser',
+                      'values',
 
                       { title: "Networking Libraries",
                         path: "/reference/std/net/",
@@ -182,7 +183,6 @@ module.exports = {
                             'misc/number',
                             'misc/shuffle',
                             'misc/uuid',
-                            'misc/values'
 		                ]
 		              }
 	              ]
