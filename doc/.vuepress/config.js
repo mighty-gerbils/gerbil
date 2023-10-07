@@ -182,6 +182,7 @@ module.exports = {
                             'misc/number',
                             'misc/shuffle',
                             'misc/uuid'
+                            'misc/values'
 		                ]
 		              }
 	              ]
