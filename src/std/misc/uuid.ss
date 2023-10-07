@@ -41,6 +41,8 @@
 (def (random-uuid)
   (let (bytes (make-u8vector uuid-length))
     (random-bytes! bytes)
+    (u8vector-set! bytes 6 (bitwise-ior (bitwise-and (u8vector-ref bytes 6) #x0f) #x40))
+    (u8vector-set! bytes 8 (bitwise-ior (bitwise-and (u8vector-ref bytes 8) #x3f) #x80))
     (make-uuid bytes #f)))
 
 (def (content-uuid str)
