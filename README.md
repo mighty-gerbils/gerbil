@@ -46,7 +46,18 @@ You can install them in ubuntu with:
 $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 ```
 
-For more detailed installation instructions see the [Guide](https://cons.io/guide/).
+**If you are on MacOS** you can install Gerbil using our [brew formula](https://github.com/mighty-gerbils/gerbil/blob/master/homebrew/gerbil-scheme.rb):
+```shell
+$ wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
+
+## To install latest release
+$ brew install --formula -vd gerbil-scheme.rb
+
+## To install latest Gerbil from master
+$ brew install --HEAD --formula -vd gerbil-scheme.rb
+```
+
+for more detailed installation instructions see the [Guide](https://cons.io/guide/).
 
 # Using Gerbil
 The Gerbil interpreter is `gxi`, and the compiler is `gxc`.
