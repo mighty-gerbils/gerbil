@@ -1,4 +1,4 @@
-# Multiple Values Library
+# Working with Multiple Values
 
 The `:std/values` library provides support for working with
 multiple return values.
