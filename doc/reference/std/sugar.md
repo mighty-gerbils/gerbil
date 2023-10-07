@@ -84,6 +84,7 @@ ERROR "foo" ...
 
 Evaluates body with an unwind finalizer that invokes `{destroy obj}`.
 
+::: tip Examples:
 ```scheme
 > (defclass A (x) transparent: #t constructor: :init!)
 > (defmethod {:init! A} (lambda (self) (class-instance-init! self x: 'open)))
@@ -96,6 +97,7 @@ ERROR: FOO ...
 > (A-x b)
 closed
 ```
+:::
 
 ## defmethod/alias
 ```scheme
