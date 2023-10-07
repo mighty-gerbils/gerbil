@@ -552,6 +552,7 @@ the `if-let` offered in Common Lisp by Alexandria and UIOP.
 > (foo #\1 #\A #\3)
 -1
 ```
+:::
 
 ## when-let
 ```
