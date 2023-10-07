@@ -1,67 +1,185 @@
 (export sugar-test)
 
 (import :std/test
+        :std/error
+        :std/format
+        :std/misc/hash
         :std/misc/number
+        :std/misc/symbol
         :std/pregexp
-        :std/sugar)
+        :std/sort
+        (for-syntax :std/stxutil)
+        :std/sugar
+        :std/text/char-set)
+
+;; Classes used by some examples
+(defclass A (a) transparent: #t constructor: :init!)
+(defmethod {:init! A} (lambda (self) (class-instance-init! self a: 'open)))
+(defmethod {destroy A} (lambda (self) (set! (@ self a) 'closed)))
+
+(defclass C (c) transparent: #t)
+(defmethod {foo C} (lambda (self) (+ 10 (@ self c))))
+(defmethod {frob C} (lambda (self (increment 1)) (pre-increment! (@ self c) increment)))
+
+(def vector-ref-set! vector-set!)
 
 (def sugar-test
   (test-suite "test :std/sugar"
-   (test-case "chain"
-    (check-equal?
-     ;; expression as input
-     (chain (iota 3)
-            ([_ . rest] (map 1+ rest))
-            (xs (map number->string xs))
-            (string-join <> ", "))
-     "2, 3")
+    (test-case "defrule"
+      (check
+       (call-with-output-string
+        (lambda (p)
+          (parameterize ((current-output-port p))
+            (defrule (show var ...) (begin (printf "  ~a = ~s\n" 'var var) ...))
+            (define-values (x y z) (values 1 [2 3] "4 5"))
+            (show x y z))))
+       => "  x = 1\n  y = (2 3)\n  z = \"4 5\"\n"))
 
-    (check-equal?
-     ;; variable as input
-     (let (lst (iota 3))
-       (chain lst
-              ([_ . rest] (map 1+ rest))
-              (xs (map number->string xs))
-              (string-join <> ", ")))
-     "2, 3")
+    (test-case "try catch finally"
+      (def (unbound-runtime-exception? e)
+        (match e ((RuntimeException exception: (? unbound-global-exception?)) #t)
+               (else #f)))
+      (def (toplevel-symbol-bound? sym)
+        (try (eval sym) #t
+             (catch (unbound-runtime-exception? e) #f)))
+      (check (toplevel-symbol-bound? 'list) => #t)
+      (check (toplevel-symbol-bound? 'this-symbol-is-unbound) => #f)
 
-    (check-equal?
-     ;; chain lambda
-     ((chain <>
-             ([_ . rest] (map 1+ rest))
-             (xs (map number->string xs))
-             (string-join <> ", "))
-      (iota 3))
-     "2, 3")
+      (def depth 0)
+      (def (in-ctx f)
+        (try
+         (set! depth (1+ depth))
+         (f)
+         (finally (set! depth (1- depth)))))
+      (check depth => 0)
+      (check (in-ctx (lambda () depth)) => 1)
+      (check-exception (in-ctx (lambda () (check depth => 1) (error "foo"))) true)
+      (check depth => 0))
 
-    (check-equal?
-      ;; unary procedure at the start
-      (let (map1 (cut map 1+ <>))
-        (chain [1 2]
-          map1
-          (reverse <>)))
-      [3 2])
+    (test-case "with-destroy"
+      (check (let (a (A)) [(with-destroy a (A-a a)) (A-a a)]) => '(open closed))
+      (def b (A))
+      (check-exception (with-destroy b (error "FOO")) true)
+      (check (A-a b) => 'closed))
 
-    (check-equal?
-      ;; unary procedure not at the start
-      (chain [9 19 29]
-        ([_ . rest] (map 1+ rest))
-        reverse
-        car)
-      30)
+    (test-case "defmethod/alias"
+      (defmethod/alias {name (nickname nick) A} (lambda (self) "foo"))
+      (check {name (A)} => "foo")
+      (check {nickname (A)} => "foo")
+      (check {nick (A)} => "foo"))
 
-    (check-equal? (chain [0 1] (map (lambda (v) (1+ v)) <>)) [1 2]))
-   (test-case "test is"
-    (check ((is 1+ 3) 2)                => #t)
-    (check ((is 1+ number?) 0)          => #t)
-    (check ((is symbol->string "a") 'a) => #t)
-    (check ((is 1+ 3 test: eqv?) 2)     => #t)
-    (check ((is 2) 2)                   => #t)
-    (check ((is 'a test: eq?) 'a)       => #t)
-    (check ((is 2.0) 2.0)               => #t)
-    (check ((is "a") "a")               => #t))
+    (test-case "using-method"
+      (def c (C c: 13))
+      (using-method c foo)
+      (check (foo) => 23)
+      (using-method c (bar foo))
+      (check (bar) => 23))
 
-    (test-case "with-id, defining variables"
+    (test-case "with-methods with-class-methods with-class-method"
+      (def c (C c: 10))
+      (with-methods c foo (frobnicate frob))
+      (check (foo c) => 20)
+      (check (frobnicate c) => 11)
+      (check (frobnicate c) => 12)
+      (with-class-methods C::t (fuzz foo) frob)
+      (check (fuzz c) => 22)
+      (check (frob c) => 13)
+      (with-class-method C::t (baz foo))
+      (check (baz c) => 23))
+
+    (test-case "while until"
+      (def a #(1 2 3 4 5 6))
+      (def i 5)
+      (while (<= 0 i)
+        (increment! (vector-ref a i))
+        (decrement! i))
+      (check a => #(2 3 4 5 6 7))
+      (set! i 0)
+      (until (= i (vector-length a))
+        (increment! (vector-ref a i))
+        (increment! i))
+      (check a => #(3 4 5 6 7 8)))
+
+    (test-case "hash hash-eq hash-eqv"
+      (defrule (checks h ...)
+        (let* ((key 'aaa)
+               (t (hash (a 1) (,key 2) (k (+ 10 13)))))
+          (check (hash->list/sort t symbol<?) => '((a . 1) (aaa . 2) (k . 23)))))
+      (checks hash hash-eq hash-eqv))
+
+    (test-case "let-hash"
+      (def .c 4)
+      (def h (hash (a 1) (b 2) (c 3)))
+      (check (let-hash h [.a .?b ..c .?d]) => [1 2 4 #f]))
+
+    (test-case "awhen"
+      (def (foo c) (awhen (v (char-ascii-digit c)) (* v v)))
+      (check (foo #\3) => 9)
+      (check (foo #\a) => (void)))
+
+    (test-case "chain"
+      (check-equal?
+       ;; expression as input
+       (chain (iota 3)
+         ([_ . rest] (map 1+ rest))
+         (xs (map number->string xs))
+         (string-join <> ", "))
+       "2, 3")
+
+      (check-equal?
+       ;; variable as input
+       (let (lst (iota 3))
+         (chain lst
+           ([_ . rest] (map 1+ rest))
+           (xs (map number->string xs))
+           (string-join <> ", ")))
+       "2, 3")
+
+      (check-equal?
+       ;; chain lambda
+       ((chain <>
+          ([_ . rest] (map 1+ rest))
+          (xs (map number->string xs))
+          (string-join <> ", "))
+        (iota 3))
+       "2, 3")
+
+      (check-equal?
+       ;; unary procedure at the start
+       (let (map1 (cut map 1+ <>))
+         (chain [1 2]
+           map1
+           (reverse <>)))
+       [3 2])
+
+      (check-equal?
+       ;; unary procedure not at the start
+       (chain [9 19 29]
+         ([_ . rest] (map 1+ rest))
+         reverse
+         car)
+       30)
+
+      (check-equal? (chain [0 1] (map (lambda (v) (1+ v)) <>)) [1 2]))
+
+    (test-case "test is"
+      (check ((is 1+ 3) 2)                => #t)
+      (check ((is 1+ number?) 0)          => #t)
+      (check ((is symbol->string "a") 'a) => #t)
+      (check ((is 1+ 3 test: eqv?) 2)     => #t)
+      (check ((is 2) 2)                   => #t)
+      (check ((is 'a test: eq?) 'a)       => #t)
+      (check ((is 2.0) 2.0)               => #t)
+      (check ((is "a") "a")               => #t))
+
+    (test-case "defsyntax/unhygienic"
+      (def aa 22)
+      (defsyntax/unhygienic (double-id ctx)
+        (syntax-case ctx () ((_ x) (identifierify #'ctx #'x #'x))))
+      (check (double-id a) => 22))
+
+    (test-case "with-id with-id/expr"
+      ;; defining variables
       (def mem (make-vector 5 0))
       (defrule (defvar name n)
         (with-id name ((@ #'name "@") (get #'name) (set #'name "-set!"))
@@ -71,8 +189,14 @@
       (defvar C 2)
       (defvar D 3)
       (A-set! 42) (B-set! (+ (A) 27)) (increment! (C) 5) (D-set! (post-increment! (C) 18))
-      (check-equal? mem #(42 69 23 5 0)))
-    (test-case "with-id, variable resolution in macro"
+      (check mem => #(42 69 23 5 0))
+      (check C@ => 2)
+      ;; accessing variables
+      (defrule (var-index var) (with-id/expr var ((@ #'var '@)) @))
+      (check [(var-index A) (var-index B) (var-index C) (var-index D)] => [0 1 2 3])
+      (defrule (vars-index var ...) (list (var-index var) ...))
+      (check (vars-index A B C D) => [0 1 2 3])
+
       (check-exception
        (eval '(begin
                 (defsyntax (m stx)

@@ -132,7 +132,6 @@
    (and (identifier? #'method) (identifier? #'method-id))
    (def method (checked-bound-method-ref obj 'method-id))))
 
-
 (defrule (with-methods o method ...)
   (begin
     (def $klass (object-type o))
@@ -398,7 +397,7 @@
      (with-syntax ((((id expr) ...)
                     (stx-map (lambda (spec) (syntax-case spec ()
                                          ((id) #'(id 'id))
-                                         ((id ct-expr more ...) #'(id (list ct-expr more ...)))
+                                         ((id str1 str2 ...) #'(id (list str1 str2 ...)))
                                          (id (identifier? #'id) #'(id 'id))))
                              #'(id-spec ...))))
        #'(begin
