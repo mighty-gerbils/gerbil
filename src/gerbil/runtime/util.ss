@@ -527,7 +527,7 @@ namespace: #f
     (vector-for-each (cut display-as-string <> port) x))
    ((or (null? x) (void? x) (eof-object? x) (boolean? x))
     (void))
-   (else (error "cannot convert to symbol" x))))
+   (else (error "cannot convert as string" x))))
 
 (def* as-string
   ((x)
