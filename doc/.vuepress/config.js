@@ -181,7 +181,7 @@ module.exports = {
                             'misc/func',
                             'misc/number',
                             'misc/shuffle',
-                            'misc/uuid'
+                            'misc/uuid',
                             'misc/values'
 		                ]
 		              }
