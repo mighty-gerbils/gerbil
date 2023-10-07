@@ -209,7 +209,7 @@ Evaluates body in a loop while the test expression evaluates to true.
     (increment! (vector-ref a i))
      (decrement! i))
 > a
-#(2 3 4 5 6 7))
+#(2 3 4 5 6 7)
 ```
 :::
 
@@ -606,7 +606,7 @@ as per [`check-argument`](errors.md#check-argument).
 ```
 :::
 
-## syntax-eval stx
+## syntax-eval
 ```scheme
 (syntax-eval expression)
 ```
@@ -631,6 +631,13 @@ use the result as source.
 > (def aa 1)
 > (syntax-eval (string->symbol "aa"))
 1
+
+;;; When benchmarking how fast your language can solve a problem,
+;;; compile an exe with a file like that:
+(import :std/sugar (for-syntax :problem-solution))
+(def (main) (displayln (syntax-eval (solution))))
+;;; There, all done at compile-time, your runtime is almost instantaneous,
+;;; infinitely faster than all the solutions in all the other languages.
 ```
 :::
 
