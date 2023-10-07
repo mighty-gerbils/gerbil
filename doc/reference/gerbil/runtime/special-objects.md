@@ -27,7 +27,6 @@ Returns `#t`, ignoring its arguments.
 
   obj := any object
 ```
-:::
 
 Returns true if the object is `#t`.
 
@@ -112,4 +111,3 @@ Returns true if the object is `#!optional`.
 ```
 
 Returns true if the object *obj* is an immediate value.
-

@@ -28,6 +28,7 @@ For the simplest macros that fit with a single expansion rule,
   y = (2 3)
   z = "4 5"
 ```
+:::
 
 ## try
 ```scheme
@@ -74,6 +75,7 @@ ERROR "foo" ...
 > depth
 0
 ```
+:::
 
 ## with-destroy
 ```scheme
@@ -82,6 +84,7 @@ ERROR "foo" ...
 
 Evaluates body with an unwind finalizer that invokes `{destroy obj}`.
 
+::: tip Examples:
 ```scheme
 > (defclass A (x) transparent: #t constructor: :init!)
 > (defmethod {:init! A} (lambda (self) (class-instance-init! self x: 'open)))
@@ -94,6 +97,7 @@ ERROR: FOO ...
 > (A-x b)
 closed
 ```
+:::
 
 ## defmethod/alias
 ```scheme
@@ -110,6 +114,7 @@ Defines a method with one or more binding aliases
 > [{foo (A)} {bar (A)} {baz (A)}]
 ("foo" "foo" "foo")
 ```
+:::
 
 ## using-method
 ```scheme
@@ -140,7 +145,7 @@ used multiple times within the lexical scope.
 :::
 
 ## with-methods with-class-methods with-class-method
-```
+```scheme
 (with-methods obj <method-spec> ...)
 => (begin
      (def klass (object-type obj))
@@ -162,11 +167,6 @@ Defines local procedures for methods of an object (class).
 This is very useful to avoid method dispatch _and_ implicit allocation from
 method application if the methods of an object (class) are used multiple times
 within the lexical scope.
-
-The difference from `using` is that methods are not _bound_ to an object, and
-you thus have to pass the receiver as first argument to the method.
-The advantage over `using` is that there is no implicit allocation for
-collecting arguments to apply the bound closure of the method.
 
 ::: tip Examples:
 ```scheme
@@ -286,6 +286,7 @@ are resolved with the following rules:
 > (let-hash h [.a .?b ..c .?d])
 (1 2 4 #f)
 ```
+:::
 
 ## awhen
 ```scheme
@@ -303,6 +304,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 9
 > (foo #\a)
 ```
+:::
 
 ## chain
 ```scheme
@@ -399,6 +401,7 @@ For the simplest macros that fit with a single expansion rule,
   y = (2 3)
   z = "4 5"
 ```
+:::
 
 ## defsyntax/unhygienic
 ```scheme
@@ -549,6 +552,7 @@ the `if-let` offered in Common Lisp by Alexandria and UIOP.
 > (foo #\1 #\A #\3)
 -1
 ```
+:::
 
 ## when-let
 ```
