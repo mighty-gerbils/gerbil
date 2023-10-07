@@ -1092,13 +1092,6 @@ Gerbil-specific libraries.
 Here we provide examples and brief documentation for the more
 interesting of the Gerbil-specific libraries.
 
-### Optional Libraries
-
-Note that some standard library modules are not built by default,
-because they have external library dependencies that may not be
-present in your system. You have to enable them during configuration
-by using the appropriate `--enable-feature` configuration options.
-
 ### Additional Syntactic Sugar
 
 The `:std/sugar` library provides some useful macros that are widely applicable.
@@ -1574,7 +1567,7 @@ So how do we build an ensemble?  First we need to generate a cookie
 for our ensemble, which we can do programmatically or using the `gxensemble`
 tool:
 ```
-$ gxensemble cookie
+$ gerbil ensemble admin cookie
 ```
 
 This will generate a random 256-bit cookie in `${GERBIL_PATH:~/.gerbil}/ensemble/cookie`.
@@ -1646,11 +1639,11 @@ $ cat gerbil.pkg
 $ gxc -O wallet-actor.ss
 
 # in one terminal - run this to allow for server registration and lookup
-$ gxensemble registry
+$ gerbil ensemble registry
 ...
 
 # in another terminal
-$ gxensemble run my-wallet-server :tmp/wallet-actor 100
+$ gerbil ensemble run my-wallet-server :tmp/wallet-actor 100
 ...
 ```
 
@@ -1673,7 +1666,7 @@ $ gxi
 If we want to shutdown our ensemble we can do so very easily with the
 gxensemble tool, which is part of the Gerbil distribution:
 ```shell
-$ gxensemble shutdown
+$ gerbil ensemble shutdown -f
 This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]
 y
 ... shutting down my-wallet-server
