@@ -408,18 +408,19 @@
 
 (defrule (with-id/expr stuff ...) (let () (with-id stuff ...)))
 
-;; From CL's ALEXANDRIA library
 (defrules if-let ()
   ((_ () then else) then)
-  ((_ ((ids exprs) ...) then else)
-   (let ((ids exprs) ...)
-     (if (and ids ...)
-       then
-       else)))
+  ((_ ((id expr)) then else) (if-let (id expr) then else))
+  ((_ ((id expr) ...) then else)
+   (let/cc return
+     (def (fail) (return else))
+     (let* ((id (or expr (fail))) ...)
+       then)))
   ((_ (id expr) then else)
-   (let ((id expr)) (if id then else))))
+   (let (test expr) (if test (let (id test) then) else))))
 
-(defrule (when-let bindings body ...) (if-let bindings (begin body ...) (void)))
+(defrule (when-let bindings body ...)
+  (if-let bindings (begin body ...) (void)))
 
 (defrule (defcheck-argument-type type ...)
   (begin

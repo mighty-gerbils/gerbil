@@ -516,12 +516,48 @@ but also will not cause clashes with unhelpful error messages.
 :::
 
 ## if-let
+```scheme
+(if-let ((id test) ...) then else)
+(if-let (id test) then else)
+```
+
+Variant of `if` that sequentially evaluates each `test` and if it passes
+(returns a true value, anything but `#f`) binds the identifier `id` to it,
+that can be then seen by all subsequent tests and by the `then` clause
+that is evaluated if all tests pass.
+However, if any test fails (returns `#f`), then
+the `else` clause is evaluated, which does not see the identifiers.
+
+A single `(id test)` binding can be done with one fewer levels of parentheses.
+
+The `else` clause is mandatory.
+Use `when-let` instead for a variant where the `else` clause is always `(void)`.
+
+NB: This `if-let` binds identifiers sequentially like `let*`, short-circuits
+like `and`, and does not bind any of the identifiers in the `else` clause,
+each of which design choices is opposite to the one made in
+the `if-let` offered in Common Lisp by Alexandria and UIOP.
+
+::: tip Examples:
+``` Scheme
+> (import :std/text/basic-parsers)
+> (def (foo a b c)
+    (if-let ((x (char-ascii-digit a))
+             (y (char-ascii-digit b))
+             (z (char-ascii-digit c)))
+      (+ x y z)
+      -1))
+> (foo #\1 #\2 #\3)
+6
+> (foo #\1 #\A #\3)
+-1
+```
 
 ## when-let
 ```
 (when-let bindings body ...)
 ```
-Generalization of `awhen` for multiple bindings and
+Generalization of `awhen` where multiple bindings are allowed, and
 specialization of `if-let` where the else clause is `(void)`.
 
 ## defcheck-argument-type

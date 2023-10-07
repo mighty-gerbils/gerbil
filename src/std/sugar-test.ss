@@ -3,7 +3,10 @@
 (import :std/test
         :std/error
         :std/format
+        :std/iter
+        :std/misc/decimal
         :std/misc/hash
+        :std/misc/list-builder
         :std/misc/number
         :std/misc/symbol
         :std/pregexp
@@ -209,4 +212,24 @@
                       (myvar "bar"))
           #'(with-id ctx ((foo #'myvar)) (def foo 3))))
       (m)
-      (check-equal? bar 3))))
+      (check-equal? bar 3))
+
+    (test-case "if-let"
+      (def (foo a b c)
+        (if-let ((x (char-ascii-digit a))
+                 (y (char-ascii-digit b))
+                 (z (char-ascii-digit c)))
+          (+ x y z)
+          -1))
+      (check (foo #\1 #\2 #\3) => 6)
+      (check (foo #\1 #\A #\3) => -1))
+
+    (test-case "when-let"
+      (def h (hash (1 "foo") (3 "bar") (4 "baz")))
+      (check
+       (with-list-builder (c)
+         (for (n (in-range 1000))
+           (when-let ((p (power-of-5 n))
+                      (x (hash-get h p)))
+             (c [n x])))) => [[5 "foo"] [125 "bar"] [625 "baz"]]))
+    ))
