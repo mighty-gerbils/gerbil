@@ -518,18 +518,25 @@ namespace: #f
 
 (def (display-as-string x port)
   (cond
-   ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x)) (display x port))
-   ((pair? x) (display-as-string (car x) port) (display-as-string (cdr x) port))
-   ((vector? x) (display-as-string (vector->list x) port))
-   ((or (null? x) (void? x) (eof-object? x) (boolean? x)) (void))
+   ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x))
+    (display x port))
+   ((pair? x)
+    (display-as-string (car x) port)
+    (display-as-string (cdr x) port))
+   ((vector? x)
+    (vector-for-each (cut display-as-string <> port) x))
+   ((or (null? x) (void? x) (eof-object? x) (boolean? x))
+    (void))
    (else (error "cannot convert to symbol" x))))
 
 (def* as-string
   ((x)
    (cond
     ((string? x) x)
-    ((symbol? x) (symbol->string x))
-    ((keyword? x) (keyword->string x))
+    ((symbol? x)
+     (symbol->string x))
+    ((keyword? x)
+     (keyword->string x))
     (else
      (call-with-output-string [] (cut display-as-string x <>)))))
   (args
