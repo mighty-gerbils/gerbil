@@ -27,7 +27,7 @@ ahead of time compilation and compiled macros.
 The source code for Gerbil is hosted on [Github](https://github.com/mighty-gerbils/gerbil),
 with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
 
-Installation from source is straightforward:
+**If you are on Linux** installation from source is straightforward:
 ```shell
 $ git clone git@github.com:mighty-gerbils/gerbil.git
 $ cd gerbil
@@ -37,7 +37,9 @@ $ sudo make install
 ```
 
 This will install Gerbil in `/opt/gerbil`; all you have to do then is
-add `/opt/gerbil/bin` to your path.
+add `/opt/gerbil/bin` to your path. Obviously, you can customize the
+install prefix by using the `--prefix=/path/to/gerbil/installation`
+configure option.
 
 **Note** the default configuration has some dependencies you may need
 to install: sqlite, zlib, and libcrypto/openssl.
