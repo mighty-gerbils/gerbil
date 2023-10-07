@@ -33,6 +33,7 @@ The location is a vector `#(file pos)` in standard Gambit fashion:
 > (quotient (vector-ref (this-source-location) 1) 65536)
 23
 ```
+:::
 
 ## this-source-file
 ```scheme
@@ -49,6 +50,7 @@ or to the `this-source-file` invocation itself if left implicit.
 (def $0 (this-source-file))
 ;;; Now you can play with this source file at runtime.
 ```
+:::
 
 ## this-source-directory
 ```scheme
@@ -66,6 +68,7 @@ so you can play with it at runtime.
 (def $this-dir (this-source-directory))
 (def data (read-all-as-lines (subpath $this-dir "data.txt")))
 ```
+:::
 
 ## this-source-path
 ```scheme
@@ -82,6 +85,7 @@ under the `relpath` relative path.
 (import :std/source :std/misc/ports)
 (def data (read-all-as-lines (this-source-path "data.txt")))
 ```
+:::
 
 ## this-source-content
 ```scheme
