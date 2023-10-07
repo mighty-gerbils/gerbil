@@ -149,6 +149,7 @@ module.exports = {
 		                path: '/reference/std/misc/',
 		                children: [
                             'misc/',
+                            'misc/decimal',
                             'misc/list',
                             'misc/list-builder',
                             'misc/alist',
