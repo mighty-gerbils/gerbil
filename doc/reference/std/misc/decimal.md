@@ -87,7 +87,7 @@ before and/or after calling `parse-decimal`.
 
 `: PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal`
 
-You may use utilities from [:std/text/basic-parsers](../text/basic-parsers)
+You may use utilities from [:std/text/basic-parsers](../text/basic-parsers.md)
 to parse decimals as part of something bigger, or just use `string->decimal` below.
 
 ## string->decimal
@@ -142,7 +142,7 @@ before (respectively after) the decimal number as part of the string:
 
 Write a decimal `number` to the specified `port` with the given keyword options.
 
-The `port` is designated as per [`with-output`](../ports.md#with-output).
+The `port` is designated as per [`with-output`](ports.md#with-output).
 
 The keyword options are as follow:
   - An integer `scale` (or `#f` meaning `0`, the default), such that

@@ -35,7 +35,7 @@
   (stx-source ctx))
 
 (defsyntax-call (this-source-file ctx)
-  (stx-source-file ctx))
+  `',(stx-source-file ctx))
 
 (defsyntax-call (this-source-position ctx)
   (stx-source-position ctx))
