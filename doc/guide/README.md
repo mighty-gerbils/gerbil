@@ -119,5 +119,6 @@ See the [Docker Gulde](docker.md) for additional information.
 You can install Gerbil using Nix. See [nix.md](nix.md) for more details.
 
 There are also Docker containers based on Nix, with some gerbil libraries also installed,
-at `fahree/gerbil-nix` (`root` only) and `fahree/gerbil-utils` (user `user` working in `/home`).
+at `mukn/gerbil` (with the compiler) and `mukn/glow` (with many libraries installed)
+(user `user` working in `/home`).
 See the `scripts` directory of [Gerbil Clan](https://github.com/fare/gerbil-utils) for details.
