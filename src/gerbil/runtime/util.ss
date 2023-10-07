@@ -524,14 +524,23 @@ namespace: #f
    ((or (null? x) (void? x) (eof-object? x) (boolean? x)) (void))
    (else (error "cannot convert to symbol" x))))
 
-(def (as-string . args)
-  (call-with-output-string [] (lambda (p) (display-as-string args p))))
+(def as-string
+  (case-lambda
+    ((x) (cond ((string? x) x)
+               ((symbol? x) (symbol->string x))
+               ((keyword? x) (keyword->string x))
+               (else (call-with-output-string [] (lambda (p) (display-as-string x p))))))
+    (r (as-string r))))
 
-(def (make-symbol . args)
-  (string->symbol (apply as-astring args)))
+(def make-symbol
+  (case-lambda
+    ((x) (if (interned-symbol? x) x (string->symbol (as-string x))))
+    (r (make-symbol r))))
 
-(def (make-keyword . args)
-  (string->keyword (apply as-astring args)))
+(def make-keyword
+  (case-lambda
+    ((x) (if (interned-keyword? x) x (string->keyword (as-string x))))
+    (r (make-keyword r))))
 
 (def (interned-keyword? x)
   (and (keyword? x)

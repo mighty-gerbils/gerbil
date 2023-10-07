@@ -13,21 +13,26 @@
   (datum->syntax ctx (string->symbol (apply format fmt (map stx-e args)))
                  (stx-source ctx)))
 
-;; Use maybe-intern-symbol instead of string->symbol to avoid DoS attacks
+;; TODO: delete after v0.18 -- for temporary compatibility only
+(defalias displayify display-as-string)
+(defalias stringify as-string)
+(defalias symbolify make-symbol)
+(defalias identifierify stx-identifier)
+
+;; Use maybe-make-symbol instead of make-symbol to avoid DoS attacks
 ;; that cause you to intern too many symbols and run out of memory.
-;; : (Or Symbol String) <- String
-(def (maybe-intern-symbol string)
-  (or (##find-interned-symbol string) string))
-
-;; Use maybe-intern-symbol instead of string->keyword to avoid DoS attacks
-;; that cause you to intern too many keywords and run out of memory.
-;; : (Or Keyword String) <- String
-(def (maybe-intern-keyword string)
-  (or (##find-interned-keyword string) string))
-
-(def maybe-intern-symbol
-  (case-lambda ((x) (if (symbol? x) x (maybe-intern-symbol (as-string x))))
+;; : (Or Symbol String) <- StringDesignator ...
+(def maybe-make-symbol
+  (case-lambda ((x) (if (interned-symbol? x) x
+                   (let (s (as-string x))
+                     (or (##find-interned-symbol s) s))))
           (x (maybe-intern-symbol (as-string x)))))
-(def maybe-intern-keyword
-  (case-lambda ((x) (if (keyword? x) x (maybe-intern-keyword (as-string x))))
+
+;; Use maybe-make-keyword instead of make-keyword to avoid DoS attacks
+;; that cause you to intern too many keywords and run out of memory.
+;; : (Or Keyword String) <- StringDesignator ...
+(def maybe-make-keyword
+  (case-lambda ((x) (if (interned-keyword? x) x
+                   (let (s (as-string x))
+                     (or (##find-interned-keyword s) s))))
           (x (maybe-intern-keyword (as-string x)))))

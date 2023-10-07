@@ -136,8 +136,8 @@ Defines the following symbols as externs:
     hash-clear!
     eq?-hash eqv?-hash equal?-hash
     uninterned-symbol? interned-symbol? string->uninterned-symbol
-    gensym make-symbol make-uninterned-symbol symbol-hash
-    keyword? uninterned-keyword? interned-keyword? keyword-hash
+    gensym make-symbol make-uninterned-symbol symbol-hash as-string display-as-string
+    keyword? uninterned-keyword? interned-keyword? keyword-hash make-keyword
     string-map string-for-each
     string-copy string-copy! substring-fill!
     string->bytes substring->bytes bytes->string
