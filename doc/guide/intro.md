@@ -1754,24 +1754,26 @@ For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
 ```scheme
 > (import :std/net/request :clan/xml/libxml)
-> (def req (http-get "https://www.bing.com"))
+> (def req (http-get "http://hackzen.org"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
-(*TOP* (html (@ (lang "el")
-                (xml:lang "el")
-                (xmlns "http://www.w3.org/1999/xhtml"))
-             (head (meta (@ (content "text/html; charset=utf-8")
-                            (http-equiv "content-type")))
-                   (title "Bing")
-                   (link (@ (rel "icon")
-                            (sizes "any")
-                            (mask "")
-                            (href "/fd/s/a/hp/bing.svg")))
-                   (meta (@ (name "theme-color") (content "#4F4F4F")))
-                   (link (@ (href "/s/a/bing_p.ico") (rel "icon")))
-                   (meta (@ (content "Το Bing σ"))))))
-
-; so much for modern html!
-; everything script, style, and CDATA in the page.
+(*TOP* (html (head (title "(hackzen.org)")
+                   (link (@ (rel "stylesheet") (type "text/css") (href "style.css"))))
+             (body "\n    "
+                   (h1 (@ (id "header")) "(hackzen.org)")
+                   "\n    "
+                   "\n    "
+                   (div (a (@ (href "http://xkcd.com/297/")) (img (@ (src "parens.png")))))
+                   "\n    "
+                   (br)
+                   (div (a (@ (href "robots.html")) "(robots)"))
+                   "\n    "
+                   (div (a (@ (href "gerbil/index.html")) "(gerbils)"))
+                   "\n    "
+                   (div (a (@ (href "humans.html")) "(humans)"))
+                   "\n    "
+                   (div (a (@ (href "nic9/index.html")) "[N1C#09]"))
+                   "\n    "
+                   (br))))
 ```
 ### Web Applications
 
@@ -1786,7 +1788,7 @@ versions of Gambit which didn't have raw devices.
 
 The embedded http server was first introduced in Gerbil v0.12 and
 utilizes raw devices. It is significantly faster and offers a low
-level interface oriented towards API programming, and by now the
+level interface oriented towards API programming, and is by now the
 canonical (and recommended) way to write web applications.
 
 #### Web programming with rack/fastcgi
