@@ -26,7 +26,7 @@
   (case-lambda ((x) (if (interned-symbol? x) x
                    (let (s (as-string x))
                      (or (##find-interned-symbol s) s))))
-          (x (maybe-intern-symbol (as-string x)))))
+          (x (maybe-make-symbol (as-string x)))))
 
 ;; Use maybe-make-keyword instead of make-keyword to avoid DoS attacks
 ;; that cause you to intern too many keywords and run out of memory.
@@ -35,4 +35,4 @@
   (case-lambda ((x) (if (interned-keyword? x) x
                    (let (s (as-string x))
                      (or (##find-interned-keyword s) s))))
-          (x (maybe-intern-keyword (as-string x)))))
+          (x (maybe-make-keyword (as-string x)))))

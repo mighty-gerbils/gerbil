@@ -40,14 +40,11 @@
        => "  x = 1\n  y = (2 3)\n  z = \"4 5\"\n"))
 
     (test-case "try catch finally"
-      (def (unbound-runtime-exception? e)
-        (match e ((? unbound-global-exception?) #t)
-               (else #f)))
-      (def (toplevel-symbol-bound? sym)
+      (def (global-symbol-bound? sym)
         (try (eval sym) #t
              (catch (unbound-global-exception? e) #f)))
-      (check (toplevel-symbol-bound? 'list) => #t)
-      (check (toplevel-symbol-bound? 'this-symbol-is-unbound) => #f)
+      (check (global-symbol-bound? 'list) => #t)
+      (check (global-symbol-bound? 'this-symbol-is-unbound) => #f)
 
       (def depth 0)
       (def (in-ctx f)

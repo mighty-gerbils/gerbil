@@ -51,15 +51,12 @@ Evaluates body with an exception catcher and an unwind finalizer.
 ::: tip Examples:
 ```scheme
 > (import :std/error)
-> (def (unbound-runtime-exception? e)
-    (match e ((? unbound-global-exception?) #t)
-      (else #f)))
-> (def (toplevel-symbol-bound? sym)
+> (def (global-symbol-bound? sym)
     (try (eval sym) #t
-      (catch (unbound-runtime-exception? e) #f)))
-> (toplevel-symbol-bound? 'list)
+      (catch (unbound-global-exception? e) #f)))
+> (global-symbol-bound? 'list)
 #t
-> (toplevel-symbol-bound? 'this-symbol-is-unbound)
+> (global-symbol-bound? 'this-symbol-is-unbound)
 #f
 
 > (def depth 0)
