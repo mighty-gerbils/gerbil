@@ -32,7 +32,7 @@ with the latest release available in [releases](https://github.com/mighty-gerbil
 $ git clone git@github.com:mighty-gerbils/gerbil.git
 $ cd gerbil
 $ ./configure
-$ make
+$ make -j4
 $ sudo make install
 ```
 
@@ -52,10 +52,13 @@ $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 ```shell
 $ wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
 
-## To install latest release
+## to use 4 cores for the build
+$ export GERBIL_BUILD_CORES=4
+
+## to install latest release
 $ brew install --formula -vd gerbil-scheme.rb
 
-## To install latest Gerbil from master
+## to install latest Gerbil from master
 $ brew install --HEAD --formula -vd gerbil-scheme.rb
 ```
 
