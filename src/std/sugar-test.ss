@@ -7,6 +7,7 @@
         :std/misc/decimal
         :std/misc/hash
         :std/misc/list-builder
+        (for-syntax :std/misc/list-builder)
         :std/misc/number
         :std/misc/symbol
         :std/pregexp
@@ -232,4 +233,40 @@
            (when-let ((p (power-of-5 n))
                       (x (hash-get h p)))
              (c [n x])))) => [[5 "foo"] [125 "bar"] [625 "baz"]]))
+
+    (test-case "defcheck-argument-type"
+      (defcheck-argument-type integer vector)
+      (def (foo v n start (end #f))
+        (check-argument-vector v)
+        (unless end (set! end (vector-length v)))
+        (check-argument-integer n start end)
+        (for (i (in-range start end))
+          (increment! (vector-ref v i) n)))
+      (def v #(1 2 3 4 5 6))
+      (foo v 10 2)
+      (check v => #(1 2 13 14 15 16))
+      (check-exception (foo '(1 2 3) 1 0) ContractViolation?)
+      (check-exception (foo #(1 2 3) 1 "0") ContractViolation?))
+
+    (test-case "syntax-eval"
+      (def (constant-time-fibonacci n)
+        (def precomputed
+          (syntax-eval
+           (list->vector
+            (with-list-builder (collect)
+              (let loop ((a 0) (b 1))
+                (when (<= (integer-length a) 128)
+                  (collect a)
+                  (loop b (+ a b))))))))
+        (vector-ref precomputed n))
+      (check (constant-time-fibonacci 186) => 332825110087067562321196029789634457848)
+      (def aa 88)
+      (check (syntax-eval (string->symbol "aa")) => 88))
+
+    (test-case "syntax-call"
+      (check (syntax-call (lambda (ctx) (path-strip-directory (vector-ref (AST-source ctx) 0))))
+             => "sugar-test.ss")
+      (def bar 23)
+      (def foofoo 42)
+      (check (syntax-call (lambda (ctx . args) (identifierify ctx args args)) bar foo) => 42))
     ))

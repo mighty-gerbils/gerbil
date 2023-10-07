@@ -560,10 +560,124 @@ the `if-let` offered in Common Lisp by Alexandria and UIOP.
 Generalization of `awhen` where multiple bindings are allowed, and
 specialization of `if-let` where the else clause is `(void)`.
 
+::: tip Examples:
+``` Scheme
+> (import :std/iter :std/misc/list-builder)
+> (def h (hash (1 "foo") (3 "bar") (4 "baz")))
+> (with-list-builder (collect)
+    (for (n (in-range 1000))
+      (when-let ((p (power-of-5 n))
+                 (x (hash-get h p)))
+        (collect [n x]))))
+((5 "foo") (125 "bar") (625 "baz"))
+```
+:::
+
 ## defcheck-argument-type
+``` Scheme
+(defcheck-argument-type <type>...)
+```
+For each specified `<type>`, define a macro `check-argument-<type>`
+that checks that each of its argument is of the given `<type>` or
+else raises a `ContractViolation`
+as per [`check-argument`](errors.md#check-argument).
+
+::: tip Examples:
+``` Scheme
+> (import :std/number :std/iter)
+> (defcheck-argument-type integer vector)
+> (def (foo v n start (end #f))
+    (check-argument-vector v)
+    (unless end (set! end (vector-length v)))
+    (check-argument-integer n start end)
+    (for (i (in-range start end))
+      (increment! (vector-ref v i) n)))
+> (def v #(1 2 3 4 5 6))
+> (foo v 10 2)
+> v
+#(1 2 13 14 15 16)
+> (foo '(1 2 3) 1 0)
+*** ERROR IN ... [ContractViolation]: contract violation
+--- irritants: v (vector? v) "bad argument; expected vector" (1 2 3)
+> (foo #(1 2 3) 1 "0")
+*** ERROR IN ... [ContractViolation]: contract violation
+--- irritants: start (integer? start) "bad argument; expected integer" "0"
+```
+:::
 
 ## syntax-eval stx
+``` Scheme
+(syntax-eval expression)
+```
+Evaluate the `expression` during syntax-expansion, and
+use the result as source.
 
-## syntax-call stx
+::: tip Examples:
+``` Scheme
+;; Low-level language users like to show off their "fast" O(n) fibonacci.
+;; Here is a faster O(1) implementation that supports numbers they don't.
+> (import (for-syntax :std/misc/list-builder))
+> (def (constant-time-fibonacci n)
+    (def precomputed (syntax-eval (list->vector
+      (with-list-builder (collect)
+        (let loop ((a 0) (b 1))
+          (when (<= (integer-length a) 128)
+            (collect a) (loop b (+ a b))))))))
+    (vector-ref precomputed n))
+> (constant-time-fibonacci 186)
+332825110087067562321196029789634457848
+
+> (def aa 1)
+> (syntax-eval (string->symbol "aa"))
+1
+```
+:::
+
+## syntax-call
+``` Scheme
+(syntax-call expression)
+(syntax-call expression ctx . args)
+```
+During syntax-expansion, evaluate the `expression` and apply the resulting function
+to the context identifier `ctx` and the arguments.
+If `ctx` is not provided, use the `syntax-call` identifier from the call itself.
+
+The `expression` can only use functionality imported `for-syntax`.
+If may inspect the source location using `AST-source` and visit ancillary source files, etc.
+
+::: tip Examples:
+``` Scheme
+> (import (for-syntax :std/stxutil))
+> (def bar 23)
+> (def foofoo 42)
+> (syntax-call (lambda (ctx . args) (identifierify ctx args args)) bar foo)
+42
+```
+:::
 
 ## defsyntax-call
+``` Scheme
+(defsyntax-call (macro ctx formals ...) body ...)
+```
+
+Define a `macro` that takes a lexical context `ctx` and other argument `formals ...`
+and expands into the `body ...`.
+The context `ctx` is taken as first argument of the `macro` invocation, or,
+if the formals have a fixed size and one argument is otherwise missing,
+from the `macro` invocation itself.
+
+::: tip Examples:
+``` Scheme
+;;; This is how this-source-file is defined in :std/source
+> (begin-syntax
+    (def (stx-source-file stx)
+      (alet (loc (stx-source stx))
+        (vector-ref loc 0))))
+> (defsyntax-call (this-source-file ctx)
+    (stx-source-file ctx))
+
+;;; Now in some script, you can use:
+(import :std/source)
+(def $0 (this-source-file))
+```
+:::
