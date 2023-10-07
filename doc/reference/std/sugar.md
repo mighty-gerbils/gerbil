@@ -75,6 +75,7 @@ ERROR "foo" ...
 > depth
 0
 ```
+:::
 
 ## with-destroy
 ```scheme
@@ -111,6 +112,7 @@ Defines a method with one or more binding aliases
 > [{foo (A)} {bar (A)} {baz (A)}]
 ("foo" "foo" "foo")
 ```
+:::
 
 ## using-method
 ```scheme
@@ -141,7 +143,7 @@ used multiple times within the lexical scope.
 :::
 
 ## with-methods with-class-methods with-class-method
-```
+```scheme
 (with-methods obj <method-spec> ...)
 => (begin
      (def klass (object-type obj))
@@ -282,6 +284,7 @@ are resolved with the following rules:
 > (let-hash h [.a .?b ..c .?d])
 (1 2 4 #f)
 ```
+:::
 
 ## awhen
 ```scheme
@@ -299,6 +302,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 9
 > (foo #\a)
 ```
+:::
 
 ## chain
 ```scheme
@@ -395,6 +399,7 @@ For the simplest macros that fit with a single expansion rule,
   y = (2 3)
   z = "4 5"
 ```
+:::
 
 ## defsyntax/unhygienic
 ```scheme
