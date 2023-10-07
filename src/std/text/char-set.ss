@@ -67,7 +67,7 @@
 ;; Whitespace as defined by C, C++ and Python.
 ;; : Codepoint -> Bool
 (def-codepoint (ascii-whitespace? c)
-  (or (codepoint-ascii-whitespace? c)
+  (or (codepoint-strict-whitespace? c)
       (= c #x0B) ;; #\vtab (vertical tab) C'\v'
       (= c #x0C))) ;; #\page (page break, form feed) C'\f'
 
