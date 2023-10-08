@@ -6,7 +6,7 @@ At this time, we make no pretense of supporting Windows-style paths;
 if on Windows, use WSL or Cygwin—or help improve Gerbil to be more portable.
 
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/misc/path)
 ```
 :::
@@ -24,7 +24,7 @@ if the `ext` start with `"."` and the `path` has no extension
 of the `path` and `ext`, otherwise return `path` unmodified.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (path-default-extension "foo.ss" ".o")
 "foo.ss"
 > (path-default-extension "foo" ".o")
@@ -61,7 +61,7 @@ but what comes before might suddenly become the extension if `ext` is `""`.
 However, these are corner cases that shouldn't matter most of the time.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (path-force-extension "foo.ss" ".o")
 "foo.o"
 > (path-force-extension "foo" ".o")
@@ -81,7 +81,7 @@ However, these are corner cases that shouldn't matter most of the time.
 Return true if the given `path` has the given `extension`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (path-extension-is? "foo.ss" ".ss")
 #t
 > (path-extension-is? "foo" "")
@@ -103,14 +103,39 @@ Return true if the given `path` has the given `extension`.
 (subpath top . sub-components)
 ```
 
+Given a `top` path and any number of `sub-components`, all of them strings,
+construct a path made by joining `top` and all the `sub-components` in order
+into a subpath of the `top` path.
+
+::: tip Examples:
+```scheme
+> (subpath "foo" "bar" "baz/quux" "myfile.ext")
+"foo/bar/baz/quux/myfile.ext"
+> (subpath "/home/user" ".gerbil" "lib" "static")
+"/home/user/.gerbil/lib/static"
+```
+:::
+
 ## subpath?
 ```scheme
 ;; : (OrFalse String) (OrFalse String) -> (OrFalse String)
 (subpath? maybe-subpath base-path)
 ```
+
 If `maybe-subpath` is a pathname that is under `base-path`, return a pathname object that
 when used with `path-expand` with defaults `base-path`, yields `maybe-subpath`.
 Otherwise, return `#f`.
+
+::: tip Examples:
+```scheme
+> (subpath? "/foo" "/bar")
+#f
+> (subpath? "/home/user/.gerbil/lib" "/home/user")
+".gerbil/lib"
+> (subpath? "foo/bar/baz/quux" "foo/bar")
+"baz/quux"
+```
+:::
 
 ## path-absolute?
 ```scheme
@@ -118,11 +143,47 @@ Otherwise, return `#f`.
 (path-absolute? path)
 ```
 
+Given `path`, a string, return true if that `path` is absolute.
+
+We only support POSIX paths, where a path absolute iff it starts with `"/"`.
+In a hypothetical future where we better support Windows,
+the test may be platform-dependent and more complex.
+
+::: tip Examples:
+```scheme
+> (path-absolute? "/foo")
+#t
+> (path-absolute? "foo")
+#f
+```
+:::
+
 ## absolute-path?
 ```scheme
 ;; : Any -> Bool
 (absolute-path? path)
 ```
+
+Given an object `path` that may or may not be a string, return true if
+that object is indeed a string, and that string indeed denotes an absolute path
+as per `path-absolute?`.
+
+::: tip Examples:
+```scheme
+> (absolute-path? "/foo")
+#t
+> (absolute-path? "foo")
+#f
+> (absolute-path? 'foo)
+#f
+> (absolute-path? 42)
+#f
+> (absolute-path? #f)
+#f
+> (absolute-path? #t)
+#f
+```
+:::
 
 ## get-absolute-path
 ```scheme
@@ -135,7 +196,21 @@ Return the absolute path associated to a `path-designator`:
   - A thunk designates the result of calling it.
   - `#f` designates the `(current-directory)`.
 
-Throw an error if the designator is invalid or does not designate an absolute path.
+Raise an error if the designator is invalid or does not designate an absolute path.
+
+::: tip Examples:
+```scheme
+> (get-absolute-path "/foo")
+"/foo"
+> (get-absolute-path "foo")
+ERROR
+> (get-absolute-path (lambda () (or (getenv "MY_APP_HOME") (other-default))))
+"/opt/my-application" ;; or wherever that environment variable points to,
+                      ;; or an error if not defined to a absolute path
+> (get-absolute-path #f)
+"/home/user" ;; or wherever your (current-directory) points to
+```
+:::
 
 ## ensure-absolute-path
 ```scheme
@@ -146,12 +221,29 @@ Throw an error if the designator is invalid or does not designate an absolute pa
 Given a `path`, that may be absolute, or may be relative to a `base`,
 try hard to return the absolute path that this `path` would designate
 if used to open a file relative to the `base`.
+Raise an error if that attempt is unsuccessful.
 
-The `base` itself may be a string denoting a path that is or isn't absolute,
-or may be `#f` which denotes the `(current-directory)`,
-or may be a thunk that returns a string
-(that may itself some path relative to `(current-directory)`, or some other
-default extracted from some environment variable or other configuration).
+The `base` itself is only consulted if `path` is not absolute,
+at which point it denotes a base absolute path as per `get-absolute-path`,
+that will raise an exception if it cannot indeed
+compute an absolute path out of it.
+
+::: tip Examples:
+```scheme
+> (ensure-absolute-path "/foo" #f)
+"/foo"
+> (ensure-absolute-path "/foo" error)
+"/foo"
+> (ensure-absolute-path "foo" "/bar")
+"/bar/foo"
+> (ensure-absolute-path "foo" current-directory)
+"/home/user/foo" ;; depends on your actual current-directory
+> (ensure-absolute-path "foo" #f)
+"/home/user/foo" ;; same as above
+> (ensure-absolute-path "foo" "bar")
+*** ERROR IN ? [Error]: Path not absolute
+```
+:::
 
 ## path-maybe-normalize
 ```scheme
@@ -174,6 +266,11 @@ There are many reasons why `path-normalize` may fail:
 So you may want to gracefully fall back to a non-normalized yet simplified path
 when that's the case.
 
+::: tip Examples:
+```scheme
+```
+:::
+
 ## path-enough
 ```scheme
 ;; : String String -> String
@@ -187,6 +284,11 @@ Otherwise, return `sub` unchanged.
 This function is broadly similar to the Common Lisp standard function
 `enough-namestring`, or its semi-standard library variant `uiop:enough-pathname`.
 
+::: tip Examples:
+```scheme
+```
+:::
+
 ## path-simplify-directory
 ```scheme
 ;; : String -> String
@@ -194,6 +296,11 @@ This function is broadly similar to the Common Lisp standard function
 ```
 
 Given a `path`, keep only its directory portion, and simplify it.
+
+::: tip Examples:
+```scheme
+```
+:::
 
 ## path-normalized-directory
 ```scheme
@@ -204,11 +311,21 @@ Given a `path`, keep only its directory portion, and simplify it.
 Given the `path` to a directory that exists, return the normalized path
 to that directory.
 
+::: tip Examples:
+```scheme
+```
+:::
+
 ## path-parent
 ```scheme
 ;; : String -> String
 (path-parent path)
 ```
+
+::: tip Examples:
+```scheme
+```
+:::
 
 ## path-simplify
 ```scheme
@@ -228,3 +345,8 @@ but may fail to preserve subtle behavior such as:
   - Weird behavior that may happen due to filesystem mounts.
 
 NB: Always simplify away a trailing `"/"` except for the root directory `"/"`.
+
+::: tip Examples:
+```scheme
+```
+:::
