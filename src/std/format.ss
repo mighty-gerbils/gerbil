@@ -37,6 +37,7 @@
 ;;   ~f/~F means "float" and does non-exp fp (C-style %f more or less)
 ;;   ~r/~R means "repr" and works with `:std/misc/repr` and the `:pr` method
 ;;   ~w{spec} does generic fixed width
+;;   ~! does force-output (inspired by OCaml)
 ;; not implemented: ~& ~H wtfs
 ;; TODO: ~g/~e for C-style %g/%e
 
@@ -160,6 +161,9 @@
 
 (defdispatch-q (#\_)
   (write-char #\space))
+
+(defdispatch-q (#\!)
+  (force-output))
 
 ;; recursive format
 (defdispatch (#\? #\k #\K)

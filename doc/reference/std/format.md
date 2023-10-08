@@ -16,7 +16,6 @@ in [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html).
 -> string
 ```
 
-
 Formats the arguments to a string using the supplied format specifier.
 
 ::: warning Differences with SRFI 48
@@ -25,6 +24,7 @@ Formats the arguments to a string using the supplied format specifier.
 - ~f/~F means "float" and does non-exp fp (C-style %f more or less)
 - ~r/~R means "repr" and works with `:std/misc/repr` and the `:pr` method
 - ~w{spec} does generic fixed width
+- ~! does force-output (inspired by OCaml)
 - not implemented: ~& ~H wtfs
 :::
 
