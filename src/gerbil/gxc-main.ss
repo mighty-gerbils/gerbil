@@ -22,7 +22,8 @@
   (displayln " -cc-options <string>        add [-cc-options <string>] to gsc options")
   (displayln " -ld-options <string>        add [-ld-options <string>] to gsc options")
   (displayln " -gsc-flag   <opt>           add [<opt>] to gsc options")
-  (displayln " -gsc-option <opt> <string>  add [<opt> <string>] to gsc options"))
+  (displayln " -gsc-option <opt> <string>  add [<opt> <string>] to gsc options")
+  (force-output))
 
 (def (gxc-parse-args args)
   (def outdir (path-expand "lib" (gerbil-path)))

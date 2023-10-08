@@ -106,7 +106,8 @@ package: gerbil
   (displayln "  compile                          invoke the gerbil compiler (gxc)")
   (displayln "  help <cmd>                       display help for a tool command")
   (displayln)
-  (displayln "Try " program-name " help <cmd> for help on tool command usage" ))
+  (displayln "Try " program-name " help <cmd> for help on tool command usage" )
+  (force-output))
 
 (extern namespace: #f
   gerbil-runtime-init!)
