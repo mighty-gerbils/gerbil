@@ -6,9 +6,11 @@
 (export #t)
 
 (import
-  :std/srfi/1
-  :std/srfi/13
-  :std/sugar)
+  (only-in :std/srfi/1 remove)
+  ;; NB: string-index from srfi/13 differs from Gambit's!!!
+  (only-in :std/srfi/13 string-suffix? string-index)
+  (only-in :std/misc/list when/list)
+  (only-in :std/sugar while))
 
 ;; : String (OrFalse String) -> String
 (def (path-default-extension path ext)
@@ -97,7 +99,7 @@
 
 ;; : String -> String
 (def (path-parent path)
-  (path-maybe-normalize (path-expand ".." path)))
+  (path-maybe-normalize (path-expand "../" path)))
 
 ;; Given a path to a file that may or may exists on the current filesystem,
 ;; return a simplified path, eliminating redundant uses of "." or "/",
@@ -106,9 +108,12 @@
 ;; NB: Always simplify away a trailing / except for the root directory /.
 ;; : String keep..?:Bool -> String
 (def (path-simplify path keep..?: (keep..? #f))
-  (def l (string-split path #\/))
-  (def abs? (and (pair? l) (equal? (car l) "")))
-  (set! l (remove (cut member <> '("" ".")) l))
+  (def abs? (string-prefix? "/" path))
+  (def dir? (string-suffix? "/" path))
+  (def l (remove (cut member <> '("" ".")) (string-split path #\/)))
+  (when abs?
+    (while (and (pair? l) (equal? (car l) ".."))
+      (set! l (cdr l))))
   (unless keep..?
     (let loop ((head (reverse l)) (tail '()))
       (cond
@@ -116,13 +121,8 @@
         (loop (cdr head) (cdr tail)))
        ((pair? head)
         (loop (cdr head) (cons (car head) tail)))
-       (else (set! l tail))))
-    (when abs?
-      (while (and (pair? l) (equal? (car l) ".."))
-        (set! l (cdr l)))))
-  (if (null? l)
-    (if abs? "/" "") ;; "" is the standard "here" path, though we could have picked ".".
-    (begin
-      (when abs?
-        (set! l (cons "" l)))
-      (string-join l "/"))))
+       (else (set! l tail)))))
+  (cond
+   ((pair? l) (string-join (append (when/list abs? '("")) l (when/list dir? '(""))) "/"))
+   (abs? "/")
+   (else ""))) ;; "" is our standard "here" path, though we could have picked "." or "./".

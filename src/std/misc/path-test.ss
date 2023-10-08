@@ -55,15 +55,28 @@
       (check (ensure-absolute-path "foo" #f) => (subpath (current-directory) "foo"))
       (check-exception (ensure-absolute-path "foo" "bar") true))
     (test-case "path-maybe-normalize"
-      1)
+      (check (path-maybe-normalize "/etc/.") => "/etc/")
+      (check (path-maybe-normalize "/../../../does////../not/../exist/../etc") => "/etc"))
     (test-case "path-enough"
-      1)
+      (check (path-enough "/home/user/.gerbil/lib" "/home/user") => ".gerbil/lib")
+      (check (path-enough "/etc" "/home/user") => "/etc")
+      (check (path-enough "foo/bar/baz/quux" "foo/bar") => "baz/quux")
+      (check (path-enough "foo/bar" "baz/quux") => "foo/bar"))
     (test-case "path-simplify-directory"
-      1)
-    (test-case "path-normalized-directory"
-      1)
-    (test-case "path-parent"
-      1)
+      (check (path-simplify-directory "/opt/local/bin/../stow/foo/bin/bar.sh")
+             => "/opt/local/stow/foo/bin/"))
+    #; ;; These tests are flaky if some path exists but is non-canonical
+    (begin
+      (test-case "path-normalized-directory"
+        (check (path-normalized-directory "/etc/password") => "/etc/")
+        (check (path-normalized-directory "/etc") => "/"))
+      (test-case "path-parent"
+        (check (path-parent "/home/user") => "/home/")
+        (check (path-parent "/home/user/") => "/home/")
+        (check (path-parent "/etc/X11") => "/etc/")
+        (check (path-parent "/etc/X11/") => "/etc/")
+        (check (path-parent "does/not/exist/") => "does/not/")
+        (check (path-parent "does/not/exist") => "does/not/")))
     (test-case "path-simplify"
-      1)
-))
+      (check (path-simplify-directory "/foo/./..///.../../bar/../baz////")
+             => "/baz/"))))

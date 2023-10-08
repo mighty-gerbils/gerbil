@@ -266,8 +266,20 @@ There are many reasons why `path-normalize` may fail:
 So you may want to gracefully fall back to a non-normalized yet simplified path
 when that's the case.
 
+Note that when the `path` is a directory and `path-normalize` succeeds,
+the path it returns will end with `"/"`; however, if a directory-to-be
+does not exist yet, then the fallback to `path-simplify` will not *add*
+a `"/"` at the end.
+
 ::: tip Examples:
 ```scheme
+;; Assuming /etc is indeed already a normalized path
+> (path-maybe-normalize "/etc/.")
+"/etc/"
+
+;; Goes through path-simplify and does not add the / at the end!
+> (path-maybe-normalize "/../../../does////../not/../exist/../etc")
+"/etc"
 ```
 :::
 
@@ -286,6 +298,14 @@ This function is broadly similar to the Common Lisp standard function
 
 ::: tip Examples:
 ```scheme
+> (path-enough "/home/user/.gerbil/lib" "/home/user")
+".gerbil/lib"
+> (path-enough "/etc" "/home/user")
+"/etc"
+> (path-enough "foo/bar/baz/quux" "foo/bar")
+"bar/quux"
+> (path-enough "foo/bar" "baz/quux")
+"foo/bar"
 ```
 :::
 
@@ -295,10 +315,12 @@ This function is broadly similar to the Common Lisp standard function
 (path-simplify-directory path)
 ```
 
-Given a `path`, keep only its directory portion, and simplify it.
+Given a `path`, keep only its directory portion, then simplify it.
 
 ::: tip Examples:
 ```scheme
+> (path-simplify-directory "/opt/local/bin/../stow/foo/bin/bar.sh")
+"/opt/local/stow/foo/bin"
 ```
 :::
 
@@ -308,11 +330,17 @@ Given a `path`, keep only its directory portion, and simplify it.
 (path-normalized-directory path)
 ```
 
-Given the `path` to a directory that exists, return the normalized path
-to that directory.
+Given a `path`, keep only its directory portion, then try to normalize it
+as per `path-maybe-normalize`.
 
 ::: tip Examples:
 ```scheme
+> (path-normalized-directory "/etc/password")
+"/etc/"
+
+;; Here we first take the path-directory portion, which is only "/"
+> (path-normalized-directory "/etc")
+"/"
 ```
 :::
 
@@ -322,8 +350,24 @@ to that directory.
 (path-parent path)
 ```
 
+Given the `path` to a directory, with or without trailing `"/"`,
+get the path to the parent directory, and try to normalize it
+as per `path-maybe-normalize`, leaving a `"/"` at the end.
+
 ::: tip Examples:
 ```scheme
+> (path-parent "/home/user")
+"/home/"
+> (path-parent "/home/user/")
+"/home/"
+> (path-parent "/etc/X11")
+"/etc/"
+> (path-parent "/etc/X11/")
+"/etc/"
+> (path-parent "does/not/exist/")
+"does/not/"
+> (path-parent "does/not/exist")
+"does/not/"
 ```
 :::
 
@@ -348,5 +392,7 @@ NB: Always simplify away a trailing `"/"` except for the root directory `"/"`.
 
 ::: tip Examples:
 ```scheme
+> (path-simplify-directory "/foo/./..///.../../bar/../baz////")
+"/bar/"
 ```
 :::
