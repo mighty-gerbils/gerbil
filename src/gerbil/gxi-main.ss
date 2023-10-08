@@ -17,7 +17,8 @@
   (displayln "  :module                          import library module; if it exports a main function, apply it with the remaining arguments")
   (displayln "  file                             load file; if it defines a main function, apply it with the remaining arguments")
   (displayln)
-  (displayln "When no arguments or options other than --lang are supplied, enters the interactive repl"))
+  (displayln "When no arguments or options other than --lang are supplied, enters the interactive repl")
+  (force-output))
 
 (def (gxi-main . args)
   (def can-set-lang? #t)
@@ -40,7 +41,8 @@
         ((member hd '("-h" "--help"))
          (gxi-print-usage!))
         ((member hd '("-v" "--version"))
-         (displayln (gerbil-system-version-string)))
+         (displayln (gerbil-system-version-string))
+         (force-output))
         ((member hd '("-L" "--load"))
          (match rest
            ([x . rest]
