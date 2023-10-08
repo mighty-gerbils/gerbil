@@ -177,6 +177,7 @@ module.exports = {
                             'misc/rtd',
                             'misc/shared',
                             'misc/string',
+                            'misc/path',
                             'misc/text',
                             'misc/template',
                             'misc/func',
