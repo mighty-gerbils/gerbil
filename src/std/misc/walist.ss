@@ -24,9 +24,9 @@
 
 (def walist->alist walist-alist)
 
-(def (walist-acons w k v) (make-walist (acons k v (walist-alist w))))
-(def (walistq-acons w k v) (make-walistq (acons k v (walist-alist w))))
-(def (walistv-acons w k v) (make-walistv (acons k v (walist-alist w))))
+(def (walist-acons w k v) (match w ((walist a) (make-walist (acons k v a)))))
+(def (walistq-acons w k v) (match w ((walistq a) (make-walistq (acons k v a)))))
+(def (walistv-acons w k v) (match w ((walistv a) (make-walistv (acons k v a)))))
 (def (walist-acons! w k v) (set! (walist-alist w) (acons k v (walist-alist w))))
 (defmethod {acons walist} walist-acons)
 (defmethod {acons walistq} walistq-acons)
@@ -70,28 +70,44 @@
 (defmethod {remove walistq} walistq-remove)
 (defmethod {remove walistv} walistv-remove)
 
-(def (walist!-put! w k v) (aset! (walist-alist w) k v))
-(def (walistq!-put! w k v) (asetq! (walist-alist w) k v))
-(def (walistv!-put! w k v) (asetv! (walist-alist w) k v))
-(defmethod {put! walist!} walist!-put!)
-(defmethod {put! walistv!} walistv!-put!)
-(defmethod {put! walistq!} walistq!-put!)
+(defrule (define-put! struct! fun cmp)
+  (begin
+    (def (fun w key val)
+      (match w
+        ((struct! alist!)
+         (let lp ((l alist!))
+           (match l
+             ([kv . r] (if (cmp key (car kv))
+                         (set-cdr! kv val)
+                         (lp r)))
+             ([] (match alist!
+                   ([k1v1 . r]
+                    (set-car! alist! [key . val])
+                    (set-cdr! alist! [k1v1 . r]))
+                   ([] (set! (walist-alist w) [[key . val]])))))))))
+    (defmethod {put! struct!} fun)))
 
-(def (make-remove! struct! cmp)
-  (lambda (w key)
-    (let lp ((p (walist-alist w)) (prev #f))
-      (match p
-        ([[k . _] . r]
-         (cond
-          ((not (cmp key k)) (lp r p))
-          (prev (set-cdr! prev r))
-          (else (set! (walist-alist w) r))))
-        ([] (void)) ; key not found: NOP
-        (_ (raise-bad-argument walist-remove "valid walist" w struct! key))))))
+(define-put! walist! walist!-put! equal?)
+(define-put! walistq! walistq!-put! eq?)
+(define-put! walistv! walistv!-put! eqv?)
 
 (defrule (define-remove! struct! fun cmp)
   (begin
-    (def fun (make-remove! 'struct! cmp))
+    (def (fun w key)
+      (def (bad)
+        (raise-bad-argument walist-remove "valid walist" w 'struct! key))
+      (match w
+        ((struct! alist!)
+         (let lp ((p alist!) (prev #f))
+           (match p
+             ([[k . _] . r]
+              (cond
+               ((not (cmp key k)) (lp r p))
+               (prev (set-cdr! prev r))
+               (else (set! (walist-alist w) r))))
+             ([] (void)) ; key not found: NOP
+             (_ (bad)))))
+        (_ (bad))))
     (defmethod {remove! struct!} fun)))
 
 (define-remove! walist! walist!-remove! equal?)
