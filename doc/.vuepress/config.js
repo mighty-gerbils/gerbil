@@ -155,6 +155,7 @@ module.exports = {
                             'misc/list',
                             'misc/list-builder',
                             'misc/alist',
+                            'misc/walist',
                             'misc/plist',
                             'misc/hash',
                             'misc/sync',
