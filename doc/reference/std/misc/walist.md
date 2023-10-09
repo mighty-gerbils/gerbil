@@ -270,9 +270,11 @@ if the `key` is present in a key-value pair in the `walistq`'s alist.
 `walistv-key?` takes an instance of `walistv` or `walistv!` and a `key` and returns true
 if the `key` is present in a key-value pair in the `walistv`'s alist.
 
-These functions will not raise an error if called on an instance of the wrong type.
+`walist-key?` will not raise an error if called on an instance of the wrong type
+(the other variants will), but may produce wrong answer
+because it will use the wrong predicate.
 On the other hand, the generic function `{key?}` will always work correctly
-on any variant of `walist`.
+using the correct predicate on any variant of `walist`.
 
 ::: tip Examples:
 ``` scheme
@@ -306,9 +308,11 @@ raises an error if the there is no matching key-value pair in the alist.
 the value associated to that `key` in the `walistv`'s alist, or
 raises an error if the there is no matching key-value pair in the alist.
 
-These functions will not raise an error if called on an instance of the wrong type.
+`walist-get` will not raise an error if called on an instance of the wrong type
+(the other variants will), but may produce wrong answer
+because it will use the wrong predicate.
 On the other hand, the generic function `{get}` will always work correctly
-on any variant of `walist`.
+using the correct predicate on any variant of `walist`.
 
 ::: tip Examples:
 ``` scheme
@@ -342,9 +346,11 @@ the first key-pair associated to that `key` in the `walistq`'s alist, or
 the first key-pair associated to that `key` in the `walistv`'s alist, or
 `#f` if there is no matching key-value pair in the alist.
 
-These functions will not raise an error if called on an instance of the wrong type.
+`walist-assoc` will not raise an error if called on an instance of the wrong type
+(the other variants will), but may produce wrong answer
+because it will use the wrong predicate.
 On the other hand, the generic function `{assoc}` will always work correctly
-on any variant of `walist`.
+using the correct predicate on any variant of `walist`.
 
 ::: tip Examples:
 ``` scheme
@@ -374,9 +380,13 @@ pair containing `key` if any, or else is placed in front of the alist.
 `walistq-put` and `walistv-put` work similarly for the types
 `walistq` and `walistv`.
 
-These functions will not raise an error if called on an instance of the wrong type.
+These functions will not raise an error if called on an instance of the mutable
+variant, and `walist-put` will not raise an error if called on a variant using
+a different equality predicate either. But the result will violate assumptions
+that other consumers of the data structure may rely upon.
 On the other hand, the generic function `{put}` will always work correctly
-on any variant of `walist`.
+using the correct predicate, though it may still fail to raise on error
+when used on a mutable variant.
 
 ::: tip Examples:
 ``` scheme
@@ -435,9 +445,13 @@ where the first key-value pair associated to `key`, if any, has been removed.
 `walistq-remove` and `walistv-remove` work similarly for the types
 `walistq` and `walistv`.
 
-These functions will not raise an error if called on an instance of the wrong type.
+These functions will not raise an error if called on an instance of the mutable
+variant, and `walist-remove` will not raise an error if called on a variant using
+a different equality predicate either. But the result will violate assumptions
+that other consumers of the data structure may rely upon.
 On the other hand, the generic function `{remove}` will always work correctly
-on any variant of `walist`.
+using the correct predicate, though it may still fail to raise on error
+when used on a mutable variant.
 
 ::: tip Examples:
 ``` scheme
