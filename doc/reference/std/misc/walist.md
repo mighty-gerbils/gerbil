@@ -1,4 +1,4 @@
-# Wrapped A-List utilities
+# Wrapped Association List utilities
 Utilities for using wrapped alists: objects that wrap an [alist](alist.md)
 to provide an API similar to that of mutable hash-tables.
 
