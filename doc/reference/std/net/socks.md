@@ -35,6 +35,15 @@ Creates a connector function for establishing connextions through the
 proxy at `proxy-address`.
 
 
+::: tip Example:
+Here is how to use a SOCKS proxy listening at `your-proxy-server-address` for http connections:
+```scheme
+(parameterize ((http-connect (socks-connect your-proxy-server-address)))
+  (http-get "https://www.google.com"))
+```
+:::
+
+
 ### socks-proxy
 ```scheme
 (socks-proxy proxy-address (protocol SOCKS4)) -> SOCKS
@@ -79,11 +88,3 @@ Returns a `StreamSocket` instance.
 
 Binds a listener in the proxy behind the `SOCKS` instance for accepting an incoming
 connection. Returns an instance of `ServerSocket`.
-
-## Example
-
-Here is how to use a SOCKS proxy listening at `your-proxy-server-address` for http connections:
-```scheme
-(parameterize ((http-connect (socks-connect your-proxy-server-address)))
-  (http-get "https://www.google.com"))
-```

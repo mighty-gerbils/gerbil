@@ -120,6 +120,7 @@ relative to the execuable path! There's some more information
 available [[https://www.fullstaq.com/knowledge-hub/blogs/an-alternative-to-macos-dyld-library-path][here]].
 
 
+
 ** Unsupported Upgrades
 
 My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by 
@@ -156,7 +157,8 @@ There's some meta-info that's nice to have.
 Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
-  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, tag: "v0.18-rc1"
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
+      revision: "3414e3f111a38965a549dce0b11aeee2e2771e3a"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18"
   revision 0
@@ -169,6 +171,7 @@ Now the things it depends on.
   depends_on "sqlite"
   depends_on "zlib"
   depends_on "gcc"
+  depends_on "findutils"
 
   fails_with :clang do
     cause "gerbil-scheme is built with GCC"

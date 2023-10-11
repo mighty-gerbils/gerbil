@@ -66,3 +66,11 @@ If this variable is set, `gxpkg` will clone packages using `git` over
 ssh instead of https.
 
 Set this if you want to access private repose.
+
+## GERBIL_TAGS_FORMAT
+
+This variable is consulted by the `gxtags` tool when generating TAGS.
+It can have the value `emacs` for emacs TAGS or `vim` for vi/vim/neovim TAGS.
+
+If unset, the default format is `emacs`, so you should set this if you
+are a vim user.

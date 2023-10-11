@@ -516,17 +516,39 @@ namespace: #f
   (and (symbol? x)
        (not (uninterned-symbol? x))))
 
-(def (make-symbol . args)
-  (string->symbol
-   (apply string-append
-     (map (lambda (x)
-            (cond
-             ((string? x) x)
-             ((symbol? x) (symbol->string x))
-             ((keyword? x) (keyword->string x))
-             ((number? x) (number->string x))
-             (else (error "cannot convert to symbol" x))))
-          args))))
+(def (display-as-string x port)
+  (cond
+   ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x))
+    (display x port))
+   ((pair? x)
+    (display-as-string (car x) port)
+    (display-as-string (cdr x) port))
+   ((vector? x)
+    (vector-for-each (cut display-as-string <> port) x))
+   ((or (null? x) (void? x) (eof-object? x) (boolean? x))
+    (void))
+   (else (error "cannot convert as string" x))))
+
+(def* as-string
+  ((x)
+   (cond
+    ((string? x) x)
+    ((symbol? x)
+     (symbol->string x))
+    ((keyword? x)
+     (keyword->string x))
+    (else
+     (call-with-output-string [] (cut display-as-string x <>)))))
+  (args
+   (call-with-output-string [] (cut display-as-string args <>))))
+
+(def* make-symbol
+  ((x) (if (interned-symbol? x) x (string->symbol (as-string x))))
+  (args (string->symbol (apply as-string args))))
+
+(def* make-keyword
+  ((x) (if (interned-keyword? x) x (string->keyword (as-string x))))
+  (args (string->keyword (apply as-string args))))
 
 (def (interned-keyword? x)
   (and (keyword? x)

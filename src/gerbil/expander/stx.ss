@@ -263,7 +263,7 @@ namespace: gx
 
 ;; identifier utils
 (def (stx-identifier template . args)
-  (datum->syntax template (apply make-symbol (map stx-e args))
+  (datum->syntax template (apply make-symbol (syntax->datum args))
                  (stx-source template)))
 
 (def (stx-identifier-marks stx)

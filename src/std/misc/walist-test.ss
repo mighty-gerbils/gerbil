@@ -1,7 +1,9 @@
 (export walist-test)
 
 (import
-  :std/error :std/misc/walist :std/test)
+  :std/generic
+  :std/misc/walist
+  :std/test)
 
 (def walist-test
   (test-suite "test :std/misc/walist"
@@ -22,6 +24,7 @@
       (check-equal? {put (a1b2) 'a 3} (make '((a . 3) (b . 2))))
       (check-equal? {put (a1b2) 'c 3} (make '((c . 3) (a . 1) (b . 2))))
       (check-equal? {put (a1b2) 'b 4} (make '((a . 1) (b . 4))))
+      (check-equal? {put (make '()) 'a 1} (make '((a . 1))))
       (check-equal? {remove (a1b2) 'a} (make '((b . 2))))
       (check-equal? {remove (a1b2) 'b} (make '((a . 1))))
       (check-equal? {remove (a1b2) 'c} (a1b2))
@@ -33,6 +36,7 @@
       (check-equal? (let (w (a1b2)) {put! w 'a 3} w) (make '((a . 3) (b . 2))))
       (check-equal? (let (w (a1b2)) {put! w 'c 3} w) (make '((c . 3) (a . 1) (b . 2))))
       (check-equal? (let (w (a1b2)) {put! w 'b 4} w) (make '((a . 1) (b . 4))))
+      (check-equal? (let (w (make '())) {put! w 'a 1} w) (make '((a . 1))))
       (check-equal? (let (w (a1b2)) {remove! w 'a} w) (make '((b . 2))))
       (check-equal? (let (w (a1b2)) {remove! w 'b} w) (make '((a . 1))))
       (check-equal? (let (w (a1b2)) {remove! w 'c} w) (a1b2))
@@ -49,4 +53,28 @@
     (test-case "test walistq!"
       (test-walist! make-walistq!))
     (test-case "test walistv!"
-      (test-walist! make-walistv!))))
+      (test-walist! make-walistv!))
+    (test-case "walist-alist, etc."
+      (def w (walistv '()))
+      (check (walist-alist w) => '())
+      (walist-alist-set! w '((a . 1) (b . 2)))
+      (check (walist-alist w) => '((a . 1) (b . 2)))
+      (set! (walist-alist w) '((c . 3) (d . 4)))
+      (check (walist-alist w) => '((c . 3) (d . 4))))
+    (test-case "walist?, etc."
+      (def w (walist '()))
+      (def wq! (walistq! '()))
+      (check (walist? w) => #t)
+      (check (walistq!? wq!) => #t)
+      ;; inheritance weirdness
+      (check (walistq!? w) => #f)
+      (check (walist? wq!) => #t)
+      (check (walistq? w) => #f)
+      (check (walistq? wq!) => #t)
+      ;; other stuff
+      (check (walist? "hello world") => #f)
+      (check (walist? '((a . 1) (b . 2))) => #f)
+      ;; type-of
+      (check (type-of w) => 'std/misc/walist#walist::t)
+      (check (type-of wq!) => 'std/misc/walist#walistq!::t)
+      (check (eq? (type-of w) (type-of wq!)) => #f))))

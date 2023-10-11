@@ -48,10 +48,11 @@ module.exports = {
                   title: 'Standard Library',
                   children: [
                       '',
-		              'sugar',
+                      'sugar',
+                      'source',
                       'stxparam',
                       'stxutil',
-		              'assert',
+                      'assert',
                       'errors',
                       'getopt',
                       'make',
@@ -63,7 +64,7 @@ module.exports = {
                       'ref',
                       'iterators',
                       'coroutine',
-		              'events',
+                      'events',
                       'amb',
                       'lazy',
                       'sort',
@@ -78,6 +79,7 @@ module.exports = {
                       'protobuf',
                       'xml',
                       'parser',
+                      'values',
 
                       { title: "Networking Libraries",
                         path: "/reference/std/net/",
@@ -149,9 +151,11 @@ module.exports = {
 		                path: '/reference/std/misc/',
 		                children: [
                             'misc/',
+                            'misc/decimal',
                             'misc/list',
                             'misc/list-builder',
                             'misc/alist',
+                            'misc/walist',
                             'misc/plist',
                             'misc/hash',
                             'misc/sync',
@@ -174,12 +178,13 @@ module.exports = {
                             'misc/rtd',
                             'misc/shared',
                             'misc/string',
+                            'misc/path',
                             'misc/text',
                             'misc/template',
                             'misc/func',
                             'misc/number',
                             'misc/shuffle',
-                            'misc/uuid'
+                            'misc/uuid',
 		                ]
 		              }
 	              ]

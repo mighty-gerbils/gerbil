@@ -62,6 +62,7 @@ namespace: #f
   subs8vector-fill!
   s8vector-concatenate
   s8vector-copy
+  s8vector-copy!
   s8vector-append
   subs8vector
   subs8vector-move!
@@ -78,6 +79,7 @@ namespace: #f
   subu8vector-fill!
   u8vector-concatenate
   u8vector-copy
+  u8vector-copy!
   u8vector-append
   subu8vector
   subu8vector-move!
@@ -94,6 +96,7 @@ namespace: #f
   subs16vector-fill!
   s16vector-concatenate
   s16vector-copy
+  s16vector-copy!
   s16vector-append
   subs16vector
   subs16vector-move!
@@ -110,6 +113,7 @@ namespace: #f
   subu16vector-fill!
   u16vector-concatenate
   u16vector-copy
+  u16vector-copy!
   u16vector-append
   subu16vector
   subu16vector-move!
@@ -126,6 +130,7 @@ namespace: #f
   subs32vector-fill!
   s32vector-concatenate
   s32vector-copy
+  s32vector-copy!
   s32vector-append
   subs32vector
   subs32vector-move!
@@ -142,6 +147,7 @@ namespace: #f
   subu32vector-fill!
   u32vector-concatenate
   u32vector-copy
+  u32vector-copy!
   u32vector-append
   subu32vector
   subu32vector-move!
@@ -158,6 +164,7 @@ namespace: #f
   subs64vector-fill!
   s64vector-concatenate
   s64vector-copy
+  s64vector-copy!
   s64vector-append
   subs64vector
   subs64vector-move!
@@ -174,6 +181,7 @@ namespace: #f
   subu64vector-fill!
   u64vector-concatenate
   u64vector-copy
+  u64vector-copy!
   u64vector-append
   subu64vector
   subu64vector-move!
@@ -190,6 +198,7 @@ namespace: #f
   subf32vector-fill!
   f32vector-concatenate
   f32vector-copy
+  f32vector-copy!
   f32vector-append
   subf32vector
   subf32vector-move!
@@ -206,6 +215,7 @@ namespace: #f
   subf64vector-fill!
   f64vector-concatenate
   f64vector-copy
+  f64vector-copy!
   f64vector-append
   subf64vector
   subf64vector-move!
