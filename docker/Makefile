@@ -25,7 +25,8 @@ alpine_packages := autoconf \
                    git \
                    leveldb-dev \
                    libgcc \
-                   libtool \
+		   libsecp256k1-dev \
+		   libtool \
                    libxml2-dev \
 		   libxml2-static \
 		   linux-headers \
@@ -37,7 +38,7 @@ alpine_packages := autoconf \
                    openssl-dev \
                    openssl-libs-static \
                    ruby \
-                   sqlite-dev \
+		   sqlite-dev \
 		   sqlite-static \
 		   yaml-dev \
                    yaml-static \
