@@ -148,6 +148,7 @@ centos:
 
 fedora:
 	docker build --target final \
+	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
