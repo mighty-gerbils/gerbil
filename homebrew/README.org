@@ -19,7 +19,7 @@ brew install --HEAD --formula -vd gerbil-scheme.rb
 #+end_src
 
 
-* Documentation                                                
+* Documentation
 
 #+begin_export md
 <!---
@@ -90,7 +90,7 @@ pass an =-rpath= to =ld= along with a =-L<library-path>= for building
 if needed.
 
 
-** The Mac =ld= and =-rpath=: No strippers allowed! 
+** The Mac =ld= and =-rpath=: No strippers allowed!
 
 Because MacOS tries to keep things SI(m)P'le often their =ld= is not capable
 of finding our =.so='s, =.a='s, or =.dylib='s.
@@ -123,7 +123,7 @@ available [[https://www.fullstaq.com/knowledge-hub/blogs/an-alternative-to-macos
 
 ** Unsupported Upgrades
 
-My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by 
+My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by
 [[https://www.macworld.com/article/672461/how-to-install-macos-on-unsupported-mac.html][installing MacOS on an unsupported Mac]]. It worked but there are a few things different about it.
 
 Here's where I put some workarounds and hacks.
@@ -157,8 +157,7 @@ There's some meta-info that's nice to have.
 Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
-  url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
-      revision: "3414e3f111a38965a549dce0b11aeee2e2771e3a"
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, tag: "v0.18"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18"
   revision 0
@@ -183,8 +182,7 @@ Now the dirt. The install process is as it should be! ~./configure && make && ma
 
 #+begin_src ruby
     def install
-        system "./configure", "--prefix=#{prefix}" #, "--disable-shared"
-              
+        system "./configure", "--prefix=#{prefix}"
         system "make"
         ENV.deparallelize
         system "make", "install"
@@ -222,4 +220,3 @@ That's that!
 #+begin_src ruby
 end
 #+end_src
-

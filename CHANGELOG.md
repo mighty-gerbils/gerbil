@@ -1,7 +1,7 @@
 # Gerbil Release Notes
 ## Gerbil v0.18, Nimzowitsch
 
-- Gerbil v0.18; to be released soon
+- Gerbil v0.18; October 12, 2023
 - Gerbil v0.18-rc1; October 6, 2023
 
 **TL;DR** Gerbil v0.18 is a milestone release, which sets the

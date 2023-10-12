@@ -78,6 +78,12 @@ Various features can be enabled or disabled by passing `--enable-FEATURE` or
 `--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
 features are available.
 
+## Installation using Binary Release Packages
+
+If you want to install the latest release (v0.18), you can also use
+the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS.
+They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
+
 ## Installation on MacOS
 
 Gerbil is available via a homebrew recipe. If you are on MacOS, you can build using the brew formula.
