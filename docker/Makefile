@@ -55,6 +55,15 @@ amazon_packages := cmake \
 		   openssl-devel \
                    sqlite-devel
 
+centos_packages := cmake \
+                   leveldb-devel \
+                   libsqlite3x-devel \
+                   libxml2-devel \
+                   libyaml-devel \
+                   lmdb-devel \
+                   openssl-devel \
+                   sqlite-devel
+
 fedora_packages := cmake \
                    leveldb-devel \
                    libsqlite3x-devel \
