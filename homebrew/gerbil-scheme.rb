@@ -3,7 +3,7 @@ class GerbilScheme < Formula
   desc "Opinionated dialect of Scheme designed for Systems Programming"
   homepage "https://cons.io"
   license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
-  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, revision: "v0.18"
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git, tag: "v0.18"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18"
   revision 0
