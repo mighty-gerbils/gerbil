@@ -5,6 +5,7 @@ ARG branch
 ARG cores
 ARG configure_args
 ARG packages
+ARG shared
 
 FROM ${distro}:latest as base
 ARG cores
@@ -43,13 +44,14 @@ RUN case ${distro} in \
     esac
 
 FROM base as gerbil
-ARG cores
-ARG repo
 ARG branch
 ARG configure_args
+ARG cores
+ARG repo
+ARG shared
 ENV GERBIL_GCC=g++
-RUN  cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
-    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
+RUN cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
+    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=${shared} ${configure_args}
 
 RUN cd /opt/gerbil-src && make && make install
 
