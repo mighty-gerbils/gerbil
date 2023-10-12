@@ -2,13 +2,29 @@
 ## Identifiers
 
 ### identifier?
-::: tip usage
+``` scheme
+(identifier? syntax-object)
 ```
-(identifier? ...)
-```
-:::
 
-Please document me!
+Returns #t if syntax-object is an identifier, or #f otherwise.
+
+Very useful as a guard for expansion.
+
+``` scheme
+> (defsyntax (add42 stx)
+   (syntax-case stx () 
+    ((_ id) (identifier? #'id)
+     #'(+ id 42))))
+> (let (n 0) (add42 n))
+42
+> (add42 0)
+*** ERROR -- 
+*** ERROR IN (stdin)@432.1
+--- Syntax Error: Bad syntax
+... form:   (add42 0)
+> 
+```
+
 
 ### free-identifier=?
 ::: tip usage
