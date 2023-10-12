@@ -1,55 +1,55 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<more-sugar>[2]#_g43087_|
+  (define |gerbil/core$<more-sugar>[2]#_g43051_|
     (##structure
      gx#syntax-quote::t
      'macro-object
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43089_|
+  (define |gerbil/core$<more-sugar>[2]#_g43053_|
     (##structure
      gx#syntax-quote::t
      'macro-object::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43090_|
+  (define |gerbil/core$<more-sugar>[2]#_g43054_|
     (##structure
      gx#syntax-quote::t
      'setq-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43091_|
+  (define |gerbil/core$<more-sugar>[2]#_g43055_|
     (##structure
      gx#syntax-quote::t
      'make-setq-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43092_|
+  (define |gerbil/core$<more-sugar>[2]#_g43056_|
     (##structure
      gx#syntax-quote::t
      'setq-macro?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43097_|
+  (define |gerbil/core$<more-sugar>[2]#_g43061_|
     (##structure
      gx#syntax-quote::t
      'setf-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43098_|
+  (define |gerbil/core$<more-sugar>[2]#_g43062_|
     (##structure
      gx#syntax-quote::t
      'make-setf-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g43099_|
+  (define |gerbil/core$<more-sugar>[2]#_g43063_|
     (##structure
      gx#syntax-quote::t
      'setf-macro?
@@ -58,20 +58,20 @@
      '()))
   (begin
     (define |gerbil/core$<more-sugar>[:1:]#setq-macro|
-      (let ((__tmp43093 |gerbil/core$<more-sugar>[2]#_g43090_|)
-            (__tmp43088
-             (cons (cons |gerbil/core$<more-sugar>[2]#_g43089_| '())
-                   (cons |gerbil/core$<more-sugar>[2]#_g43090_|
-                         (cons |gerbil/core$<more-sugar>[2]#_g43091_|
-                               (cons |gerbil/core$<more-sugar>[2]#_g43092_|
+      (let ((__tmp43057 |gerbil/core$<more-sugar>[2]#_g43054_|)
+            (__tmp43052
+             (cons (cons |gerbil/core$<more-sugar>[2]#_g43053_| '())
+                   (cons |gerbil/core$<more-sugar>[2]#_g43054_|
+                         (cons |gerbil/core$<more-sugar>[2]#_g43055_|
+                               (cons |gerbil/core$<more-sugar>[2]#_g43056_|
                                      (cons '() (cons '() '())))))))
-            (__tmp43085
-             (let ((__tmp43086 (list |gerbil/core$<more-sugar>[2]#_g43087_|)))
+            (__tmp43049
+             (let ((__tmp43050 (list |gerbil/core$<more-sugar>[2]#_g43051_|)))
                (declare (not safe))
                (##structure
                 |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
                 'gerbil.core#setq-macro::t
-                __tmp43086
+                __tmp43050
                 'setq-macro
                 '#f
                 '()
@@ -80,26 +80,26 @@
         (make-class-instance
          |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|
          'runtime-identifier:
-         __tmp43093
+         __tmp43057
          'expander-identifiers:
-         __tmp43088
+         __tmp43052
          'type-exhibitor:
-         __tmp43085)))
+         __tmp43049)))
     (define |gerbil/core$<more-sugar>[:1:]#setf-macro|
-      (let ((__tmp43100 |gerbil/core$<more-sugar>[2]#_g43097_|)
-            (__tmp43096
-             (cons (cons |gerbil/core$<more-sugar>[2]#_g43089_| '())
-                   (cons |gerbil/core$<more-sugar>[2]#_g43097_|
-                         (cons |gerbil/core$<more-sugar>[2]#_g43098_|
-                               (cons |gerbil/core$<more-sugar>[2]#_g43099_|
+      (let ((__tmp43064 |gerbil/core$<more-sugar>[2]#_g43061_|)
+            (__tmp43060
+             (cons (cons |gerbil/core$<more-sugar>[2]#_g43053_| '())
+                   (cons |gerbil/core$<more-sugar>[2]#_g43061_|
+                         (cons |gerbil/core$<more-sugar>[2]#_g43062_|
+                               (cons |gerbil/core$<more-sugar>[2]#_g43063_|
                                      (cons '() (cons '() '())))))))
-            (__tmp43094
-             (let ((__tmp43095 (list |gerbil/core$<more-sugar>[2]#_g43087_|)))
+            (__tmp43058
+             (let ((__tmp43059 (list |gerbil/core$<more-sugar>[2]#_g43051_|)))
                (declare (not safe))
                (##structure
                 |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
                 'gerbil.core#setf-macro::t
-                __tmp43095
+                __tmp43059
                 'setf-macro
                 '#f
                 '()
@@ -108,8 +108,8 @@
         (make-class-instance
          |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|
          'runtime-identifier:
-         __tmp43100
+         __tmp43064
          'expander-identifiers:
-         __tmp43096
+         __tmp43060
          'type-exhibitor:
-         __tmp43094)))))
+         __tmp43058)))))

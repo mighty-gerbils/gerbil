@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/stx::timestamp 1696542250)
+  (define gerbil/expander/stx::timestamp 1697117331)
   (begin
     (declare (not safe))
     (define gx#identifier-wrap::t
@@ -491,7 +491,7 @@
       (lambda (_template6692_ . _args6693_)
         (gx#datum->syntax__1
          _template6692_
-         (apply make-symbol (map gx#stx-e _args6693_))
+         (apply make-symbol (gx#syntax->datum _args6693_))
          (gx#stx-source _template6692_))))
     (define gx#stx-identifier-marks
       (lambda (_stx6690_)
