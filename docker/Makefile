@@ -56,7 +56,8 @@ amazon_packages := cmake \
                    sqlite-devel
 
 centos_packages := cmake \
-                   leveldb-devel \
+		   git \
+		   leveldb-devel \
                    libsqlite3x-devel \
                    libxml2-devel \
                    libyaml-devel \
