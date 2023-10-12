@@ -15,7 +15,6 @@ ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
 ENV DEBIAN_FRONTEND=noninteractive
-ENV GERBIL_GCC=g++
 RUN mkdir -p /src /opt
 RUN case ${distro} in \
     alpine) \
