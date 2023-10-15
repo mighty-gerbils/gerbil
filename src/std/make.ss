@@ -513,8 +513,9 @@ TODO:
     (lambda (spec)
       (for-each
         (lambda (f)
-          (displayln "... remove " f)
-          (delete-file-or-directory f))
+          (when (file-exists? f)
+            (displayln "... remove " f)
+            (delete-file-or-directory f)))
         (spec-outputs spec settings)))
     buildspec))
 

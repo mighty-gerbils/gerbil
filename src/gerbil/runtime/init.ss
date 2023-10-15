@@ -243,20 +243,22 @@ namespace: #f
     ;; initialize the load path
     (let* ((home (gerbil-home))
            (libdir (path-expand "lib" home))
-           (loadpath
-            (cond
-             ((getenv "GERBIL_LOADPATH" #f)
-              => (lambda (envvar)
-                   (filter (lambda (x) (not (string-empty? x)))
-                           (string-split envvar #\:))))
-             (else '())))
            (userpath
             (path-expand "lib" (gerbil-path)))
            (loadpath
             (if (getenv "GERBIL_BUILD_PREFIX" #f)
-              loadpath
-              (cons userpath loadpath))))
-      (current-module-library-path (cons libdir loadpath)))
+              [libdir]
+              [userpath libdir]))
+           (loadpath
+            (cond
+             ((getenv "GERBIL_LOADPATH" #f)
+              => (lambda (envvar)
+                   (append
+                    (filter (lambda (x) (not (string-empty? x)))
+                            (string-split envvar #\:))
+                    loadpath)))
+             (else loadpath))))
+      (current-module-library-path loadpath))
 
     ;; initialize the modue registry
     (let* ((registry-entry (lambda (m) (cons m 'builtin)))
