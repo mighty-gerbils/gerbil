@@ -254,9 +254,9 @@ namespace: #f
             (path-expand "lib" (gerbil-path)))
            (loadpath
             (if (getenv "GERBIL_BUILD_PREFIX" #f)
-              loadpath
-              (cons userpath loadpath))))
-      (current-module-library-path (cons libdir loadpath)))
+              (cons loadpath libdir)
+              (cons* loadpath userpath libdir))))
+      (current-module-library-path loadpath))
 
     ;; initialize the modue registry
     (let* ((registry-entry (lambda (m) (cons m 'builtin)))
