@@ -13,7 +13,7 @@ src/TAGS
 .build*
 doc/node_modules
 doc/.vuepress/dist
-# src/gerbil/runtime/version.ss
+src/gerbil/runtime/version.ss
 src/gerbil/boot-gxi
 src/bootstrap/static
 
