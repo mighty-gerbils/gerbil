@@ -392,8 +392,9 @@ calls the function `f` with that port as argument.
 The `input-spec` is interpreted as follows:
 - a port designates itself;
 - the true value `#t` designates the `(current-input-port)`;
-- a string designates a port to be open by passing it to `call-with-output-string`;
-- a list designates the settings to pass to `call-with-output-file`;
+- a string designates a port to be open by passing it to `call-with-input-string`;
+- a u8vector designates a port to be open by passing it to `call-with-input-u8vector`;
+- a list designates the settings to pass to `call-with-input-file`;
 - other values are invalid (a future version of Gerbil might accept additional values).
 
 The result returned is that of the call to function `f`.
@@ -434,6 +435,24 @@ allowing for seamless resolution of an `input-spec` designator around the inner 
     (let* ((a (parse-a-field i))
            (b (parse-b-field i)))
       (make-my-struct a b))))
+```
+:::
+
+## char-port-eof?
+```scheme
+(char-port-eof? port) -> bool
+```
+
+`char-port-eof?` is function that given a `port` that is an input-port for characters,
+returns `#t` if that port is at the end of file, or else `#f`.
+
+::: tip Examples:
+```scheme
+> (call-with-input-string "a" (lambda (port) (let* ((x (char-port-eof? port))
+                                               (y (read-char port))
+                                               (z (char-port-eof? port)))
+                                          [x y z])))
+(#f #\a #t)
 ```
 :::
 

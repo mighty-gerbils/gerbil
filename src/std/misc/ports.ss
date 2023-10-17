@@ -346,7 +346,9 @@
    ((port? i) (f i))
    ((eq? i #t) (f (current-input-port)))
    ((string? i) (call-with-input-string i f))
-   ((list? i) (call-with-input-file i f))))
+   ((u8vector? i) (call-with-input-u8vector i f))
+   ((list? i) (call-with-input-file i f))
+   (else (error "bad call-with-input input" i))))
 
 (defrules with-input ()
   ((_ (i x) body ...) (call-with-input x (lambda (i) body ...)))
