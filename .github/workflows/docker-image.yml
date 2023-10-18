@@ -25,5 +25,7 @@ jobs:
     - name: Push to Docker Hub on Pushes to master
       run: |
         docker login -u gerbil -p ${{ secrets.DOCKER_TOKEN }}
-        docker push gerbil/${{ matrix.docker-image }}:$(uname -m)
+        docker push gerbil/${{ matrix.docker-image }}:$(uname -m)-master
+        docker manifest create gerbil/${{ matrix.docker-image }}:master --amend gerbil/gerbil:aarch64-master --amend gerbil/gerbil:x86_64-master
+        docker manifest push gerbil/${{ matrix.docker-image }}:master
       if: github.event_name == 'push'

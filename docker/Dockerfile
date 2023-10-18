@@ -32,7 +32,7 @@ RUN case ${distro} in \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
     ;; \
-    ubuntu) \
+    debian|ubuntu) \
     apt update -y && \
     eval apt install -y ${packages} \
     ;; \
@@ -51,7 +51,8 @@ ARG shared
 RUN cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
     && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=${shared} ${configure_args}
 
-RUN cd /opt/gerbil-src && make && make install
+RUN cd /opt/gerbil-src && make
+RUN cd /opt/gerbil-src && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb
