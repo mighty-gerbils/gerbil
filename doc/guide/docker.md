@@ -63,3 +63,15 @@ clean:
 install:
 	mv .gerbil/bin/$(PROJECT) /usr/local/bin/$(PROJECT)
 ```
+
+## Building docker images
+
+There are several variations you can build out on docker.
+
+### Build using custom branch
+
+`cd gerbil/docker && make gerbil BRANCH=my-fixup-branch`
+
+### Building from your own repository
+
+`cd gerbil/docker && make gerbil REPO=my-github-user/gerbil`
