@@ -37,7 +37,7 @@
             (access-key (getenv "AWS_ACCESS_KEY_ID" #f))
             (secret-key (getenv "AWS_SECRET_ACCESS_KEY" #f))
             (region (getenv "AWS_DEFAULT_REGION" "us-east-1")))
-    (using (self self : s3-client)
+    (using (self :- s3-client)
       (set! self.endpoint endpoint)
       (set! self.access-key access-key)
       (set! self.secret-key secret-key)
@@ -46,7 +46,7 @@
 ; Retrieves buckets accessible to this client.
 (defmethod {list-buckets s3-client} ; => (list : bucket)
   (lambda (self)
-    (using (self self : s3-client)
+    (using (self :- s3-client)
            (let* ((req (s3-request/error self verb: 'GET))
                   (xml (s3-parse-xml req))
                   (buckets (sxml-find xml (sxml-e? 's3:Buckets) sxml-children))
@@ -62,7 +62,7 @@
 ;; NOTE: all bucket operations need the correct region for the bucket or they will 400
 (defmethod {create-bucket! s3-client}
   (lambda (self bucket)
-    (using (self self : s3-client)
+    (using (self :- s3-client)
       (let (req (s3-request/error self verb: 'PUT bucket: bucket))
         (request-close req)
         (void)))))
@@ -70,24 +70,23 @@
 ; Gets a bucket struct that can be used to fetch objects.
 (defmethod {get-bucket s3-client} ; => bucket
   (lambda (self bucket-name)
-    (using (self self : s3-client)
-      (if {bucket-exists? self bucket-name}
+    (using (self :- s3-client)
+      (if (s3-client::bucket-exists? self bucket-name)
         (make-bucket self bucket-name self.region)
         #f))))
 
 ; Delete a bucket by name
 (defmethod {delete-bucket! s3-client}
   (lambda (self bucket)
-    (using ((self self : s3-client)
-            (bucket bucket :~ string?))
-           (when {bucket-exists? self bucket}
-             (let (req (s3-request/error self verb: 'DELETE bucket: bucket))
-               (request-close req)
-               (void))))))
+    (using (self :- s3-client)
+      (when (s3-client::bucket-exists? self bucket)
+        (let (req (s3-request/error self verb: 'DELETE bucket: bucket))
+          (request-close req)
+          (void))))))
 
 (defmethod {bucket-exists? s3-client}
   (lambda (self bucket)
-    (using (self self : s3-client)
+    (using (self :- s3-client)
            (let* ((bucket (if (bucket? bucket) (bucket-name bucket) bucket))
                   (req {self.request verb: 'HEAD bucket: bucket})
                   (code (request-status req)))
@@ -103,15 +102,15 @@
 
 (defmethod {bucket s3-client}
   (lambda (self name)
-    (using (self self : s3-client)
-      (if {bucket-exists? self name}
+    (using (self self :- s3-client)
+      (if (s3-client::bucket-exists? self name)
         (make-bucket self name (s3-client-region self))
         #f))))
 
 ; Lists the objects stored within the bucket
 (defmethod {list-objects bucket}
   (lambda (self)
-    (using ((self self : bucket)
+    (using ((self self :- bucket)
             (client (bucket-client self) : s3-client))
            (let* ((name (bucket-name self))
                   (req (s3-request/error client verb: 'GET bucket: name))
@@ -123,7 +122,6 @@
 (defmethod {get bucket}
   (lambda (self key)
     (using ((self self : bucket)
-            (key :~ string?)
             (client (bucket-client self) : s3-client))
       (let* ((req (s3-request/error client verb: 'GET bucket: (bucket-name self)
                                     path: (string-append "/" key)))
@@ -134,7 +132,6 @@
 (defmethod {put! bucket}
   (lambda (self key data content-type: (content-type "binary/octet-stream"))
     (using ((self self : bucket)
-            (key :~ string?)
             (client (bucket-client self) : s3-client))
            (let (req (s3-request/error client verb: 'PUT bucket: (bucket-name self)
                                        path: (string-append "/" key)
@@ -145,8 +142,7 @@
 
 (defmethod {delete! bucket}
   (lambda (self key)
-    (using ((self : bucket)
-            (key :~ string?)
+    (using ((self :- bucket)
             (client (bucket-client self) : s3-client))
            (let (req (s3-request/error client verb: 'DELETE bucket: (bucket-name self)
                      path: (string-append "/" key)))
@@ -154,17 +150,10 @@
              (void)))))
 
 (defmethod {copy-to! bucket}
-  (lambda (self src-bucket src dest)
-    (using ((self : bucket)
-            (client (bucket-client self) : s3-client)
-            ; a bucket instance pointing to the intended source bucket
-            (src-bucket : bucket)
-            ; the source file name
-            (src :~ string?)
-            ; the destination file name
-            (dest :~ string?))
-           (let* ((src-ident (string-append (bucket-name src-bucket) "/" src))
-                  (headers [["x-amz-copy-source" :: src-ident]])
+  (lambda (self src dest)
+    (using ((self :- bucket)
+            (client (bucket-client self) : s3-client))
+           (let* ((headers [["x-amz-copy-source" :: src]])
                   (req (s3-request/error client
                                          verb: 'PUT
                                          bucket: (bucket-name self)
@@ -186,7 +175,7 @@
             ; optional extra headers
             extra-headers: (extra-headers #f)
             content-type: (content-type #f)) ; must be specified if body is specified
-    (using (self self : s3-client)
+    (using (self :- s3-client)
            (let* ((now (current-date))
                   (ts (date->string now "~Y~m~dT~H~M~SZ"))
                   (scopets (date->string now "~Y~m~d"))
@@ -224,19 +213,19 @@
 
 (defrule (s3-request/error self ...)
   (with-request-error
-   {request self ...}))
+    {request self ...}))
 
 (def (s3-parse-xml req)
   (read-xml (request-content req)
-           namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3"))))
+    namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3"))))
 
 (def (with-request-error req)
   (using (req :~ request?)
-        (if (and (fx>= (request-status req) 200)
-                 (fx< (request-status req) 300))
-          req
-          (begin
-            (request-close req)
-            (raise-s3-error
-              (request-status req)
-              (request-status-text req))))))
+    (if (and (fx>= (request-status req) 200)
+             (fx< (request-status req) 300))
+      req
+      (begin
+        (request-close req)
+        (raise-s3-error
+          (request-status req)
+          (request-status-text req))))))

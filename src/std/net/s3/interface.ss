@@ -19,4 +19,7 @@
         ; Additional options. See implementation for additional details
         (opts :~ (maybe alist?) := #f))
   (delete! (name :~ string?))
+  ; src should follow `bucket/file/path` format. Destination should just be `file/path`.
+  ; Copies *from* src to *dest* in this ObjectMap.
+  (copy-to! (src :~ string?) (dest :~ string?))
   (list-objects))
