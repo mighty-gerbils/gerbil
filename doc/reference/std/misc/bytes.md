@@ -3,7 +3,7 @@
 This library provides primitives for operating on u8vectors as well as some utility functions.
 
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/misc/bytes)
 ```
 :::
@@ -99,7 +99,7 @@ Retrieves a signed integer from its binary representation from *v*, starting at 
 Encodes the signed integer *n* in its binary representation in *v*, starting at offset *i*.
 
 ## u8vector->uint-list
-``` scheme
+```scheme
 (u8vector->uint-list v endianness size) -> list of exact nonnegative integers
 
   v          := u8vector
@@ -110,7 +110,7 @@ Encodes the signed integer *n* in its binary representation in *v*, starting at 
 Decodes a u8vector *v* into a list of exact nonnegative integers.
 
 ## uint-list->u8vector
-``` scheme
+```scheme
 (uint-list->u8vector lst endianness size) -> u8vcetor
 
   lst        := list of exact nonnegative integers
@@ -121,7 +121,7 @@ Decodes a u8vector *v* into a list of exact nonnegative integers.
 Encodes a list of unsigned integers to a u8vector.
 
 ## u8vector->sint-list
-``` scheme
+```scheme
 (u8vector->sint-list v endianness size) -> list of exact integers
 
   v          := u8vector
@@ -132,7 +132,7 @@ Encodes a list of unsigned integers to a u8vector.
 Decodes a u8vector *v* into a list of exact integers.
 
 ## sint-list->u8vector
-``` scheme
+```scheme
 (uint-list->u8vector lst endianness size) -> u8vector
 
   lst        := list of exact integers
@@ -143,7 +143,7 @@ Decodes a u8vector *v* into a list of exact integers.
 Encodes a list of signed integers to a u8vector.
 
 ## Operations on Machine-size Integers
-``` scheme
+```scheme
 (u8vector-u16-ref v i endianness) -> u16
 (u8vector-u16-native-ref v i) -> u16
 (u8vector-u16-ref-set! v i n endianness) -> unspecified
@@ -195,7 +195,7 @@ When the endianness matches the native endianness, then a faster native implemen
 Operations for encoding and decoding floating point numbers using the IEEE-754 representation.
 
 ## u8vector-swap!
-``` scheme
+```scheme
 (u8vector-swap! v i j) -> unspecified
 
   v := u8vector
@@ -206,7 +206,7 @@ Operations for encoding and decoding floating point numbers using the IEEE-754 r
 Swaps elements *i* and *j* of `u8vector` *v*.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def u (u8vector 1 2))
 > (u8vector-swap! u 0 1)
 > u
@@ -215,7 +215,7 @@ Swaps elements *i* and *j* of `u8vector` *v*.
 :::
 
 ## u8vector-reverse!
-``` scheme
+```scheme
 (u8vector-reverse! v) -> void
 
   v := u8vector
@@ -224,7 +224,7 @@ Swaps elements *i* and *j* of `u8vector` *v*.
 Reverses the elements of `u8vector` *v* in-place. Mutates the vector.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def u (u8vector 1 2 3 4 5))
 > (u8vector-reverse! u)
 > u
@@ -233,7 +233,7 @@ Reverses the elements of `u8vector` *v* in-place. Mutates the vector.
 :::
 
 ## u8vector-reverse
-``` scheme
+```scheme
 (u8vector-reverse v) -> u8vector
 
   v := u8vector
@@ -242,7 +242,7 @@ Reverses the elements of `u8vector` *v* in-place. Mutates the vector.
 Reverses the elements of `u8vector` *v*. Produces a new `u8vector`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def u (u8vector 1 2 3 4 5))
 > (u8vector-reverse u)
 #u8(5 4 3 2 1)
@@ -250,7 +250,7 @@ Reverses the elements of `u8vector` *v*. Produces a new `u8vector`.
 :::
 
 ## u8vector->bytestring
-``` scheme
+```scheme
 (u8vector->bytestring v (delim #\space)) -> bytestring
 
   v     := u8vector
@@ -264,7 +264,7 @@ and separated using the specified delimiter character; the delimiter can
 be `#f` to specify simple concatenation.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (u8vector->bytestring (u8vector 255 127 11 1 0))
 "FF 7F 0B 01 00"
 > (displayln (u8vector->bytestring (u8vector 255 127 11 1 0)))
@@ -275,7 +275,7 @@ FF 7F 0B 01 00
 :::
 
 ## bytestring->u8vector
-``` scheme
+```scheme
 (bytestring->u8vector bs (delim #\space)) -> u8vector
 
   bs    := bytestring
@@ -288,7 +288,7 @@ This function expects a string of bytes delimited by *delim*, which can be `#f` 
 no delimiter. Each byte consists of two hexadecimal characters.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (bytestring->u8vector "FF AB 00")
 #u8(255 171 0)
 > (u8vector->bytestring (bytestring->u8vector "FF AB 00"))
@@ -299,7 +299,7 @@ no delimiter. Each byte consists of two hexadecimal characters.
 :::
 
 ## u8vector->uint
-``` scheme
+```scheme
 (u8vector->uint v (endianness big)) -> uint
 
   v          := u8vector
@@ -309,7 +309,7 @@ no delimiter. Each byte consists of two hexadecimal characters.
 Decodes a u8vector as an unsigned integer.
 
 ## uint->u8vector
-``` scheme
+```scheme
 (uint->u8vector n (endianness big)) -> u8vector
 
   n          := exact nonnegative integer
@@ -319,7 +319,7 @@ Decodes a u8vector as an unsigned integer.
 Encodes an unsigned integer to its binary representation.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (u8vector->uint #u8(0 1))
 1
 > (u8vector->uint (make-u8vector 2 #xFF))
@@ -440,3 +440,167 @@ The following low level unsafe operations are also exported.
 
 (&u8vector-swap! v i j) -> unspecified
 ```
+
+## u8vector-init!, bytevector-init!
+```scheme
+(u8vector-init! len fun) -> u8vector
+```
+
+`u8vector-init!` is take a non-negative fixnum `len` and a one-argument function `fun`
+and creates a new `u8vector` of length `len` where each element is initialized
+in increasing index order with the result of calling `fun` with the index as argument
+(starting with `0`, assuming `len` is positive).
+
+::: tip Examples:
+```scheme
+> (u8vector-init! 5 (lambda (x) (* x x)))
+#u8(0 1 4 9 16)
+```
+:::
+
+## u8vector-every
+```scheme
+(u8vector-every pred? u8vector) -> bool
+```
+
+Return true if every element of the given `u8vector` satisfies the unary predicate `pred?`.
+
+::: tip Examples:
+```scheme
+> (u8vector-every odd? #u8(1 3 5))
+#t
+> (u8vector-every odd? #u8(1 2 3))
+#f
+```
+:::
+
+## n-bits->n-u8
+```scheme
+(n-bits->n-u8 n) -> integer
+```
+
+Given a number `n` of bits, return the number `N` of 8-bit bytes necessary to store those `n` bits,
+i.e. `N = (ceiling-align n-bits 8)`.
+
+::: tip Examples:
+```scheme
+> (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000))
+((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))
+```
+:::
+
+## nat-length-in-u8
+```scheme
+(nat-length-in-u8 n) -> integer
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+return the number of 8-bit bytes necessary to store all the bits of `n`.
+
+::: tip Examples:
+```scheme
+> (map (lambda (x) (list x (nat-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536))
+((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))
+```
+:::
+
+## nat->u8vector
+```scheme
+(nat->u8vector n [length] [endianness]) -> u8vector
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+a `length` (which defaults to the minimal length required to store all the bits of `n`),
+and an endianness (which defaults to `big`),
+return a u8vector of given length which stores the bits of `n` in the given endianness.
+
+::: tip Examples:
+```scheme
+> (nat->u8vector 66051)
+#u8(1 2 3)
+> (nat->u8vector 66051 4 little)
+#u8(3 2 1 0)
+```
+:::
+
+## u8vector->nat
+```scheme
+(u8vector->nat u8vector [length] [endianness]) -> integer
+```
+
+Given a `u8vector`, a `length` no greater than that of the vector,
+and an `endianness` (defaults to `big`), decode the first `length` bytes of `u8vector`
+using the given endianness into a natural number (non-negative, "unsigned").
+Assuming the `length` and `endianness` match and the number fits in the `length`,
+this is the inverse operation of `nat->u8vector`.
+
+::: tip Examples:
+```scheme
+> (u8vector->nat #u8(1 2 3))
+66051
+> (u8vector->nat #u8(3 2 1 0) 4 little)
+66051
+```
+:::
+
+## integer-length-in-u8
+```scheme
+(integer-length-in-u8 n) -> integer
+```
+
+Given a natural number `n` (non-negative, "unsigned"),
+return the number of 8-bit bytes necessary to store all the bits of `n`.
+
+::: tip Examples:
+```scheme
+> (map (lambda (x) (list x (integer-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536))
+((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))
+```
+:::
+
+## integer->u8vector
+```scheme
+(integer->u8vector n [length] [endianness]) -> u8vector
+```
+
+Given a relative integer `n` (possibly negative, "signed"),
+a `length` (which defaults to the minimal length required to store all the bits of `n`),
+and an endianness (which defaults to `big`),
+return a u8vector of given length which stores the bits of `n` in the given endianness.
+
+::: tip Examples:
+```scheme
+> (integer->u8vector 66051)
+#u8(1 2 3)
+> (integer->u8vector -255)
+#u8(255 1)
+> (integer->u8vector 66051 4 little)
+#u8(3 2 1 0)
+> (integer->u8vector -66051 4 little)
+#u8(253 253 254 255)
+```
+:::
+
+## u8vector->integer
+```scheme
+(u8vector->integer u8vector [length] [endianness]) -> integer
+```
+
+Given a `u8vector`, a `length` no greater than that of the vector,
+and an `endianness` (defaults to `big`), decode the first `length` bytes of `u8vector`
+using the given endianness into a natural number (non-negative, "unsigned").
+Assuming the `length` and `endianness` match and the number fits in the `length`,
+this is the inverse operation of `integer->u8vector`.
+
+::: tip Examples:
+```scheme
+> (u8vector->integer #u8(1 2 3))
+66051
+> (u8vector->integer #u8(255 1))
+-255
+> (u8vector->integer #u8(3 2 1 0) 4 little)
+66051
+> (u8vector->integer #u8(253 253 254 255) 4 little)
+-66051
+```
+:::

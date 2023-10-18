@@ -433,7 +433,7 @@ Canonical class type definition macro.
   [rebind: bool])
 => (begin
     (def type::method-id expr)
-    (bind-method type::t 'method-id type::method-id rebind?))
+    (bind-method! type::t 'method-id type::method-id rebind?))
 ```
 
 Defines a method `method-id` for type `type`, which must be

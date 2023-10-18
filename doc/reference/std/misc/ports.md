@@ -1,13 +1,13 @@
 
 # Port utilities
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/misc/ports)
 ```
 :::
 
 ## copy-port
-``` scheme
+```scheme
 (copy-port in out) -> void | error
 
   in  := input port to read from
@@ -18,7 +18,7 @@ Copy all data from port *in* to port *out*. Signals an error when *in* and *out*
 aren't satisfying `input-port?` and `output-port?`, respectively.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def nums (string-join (map number->string [1 2 3 4 5]) "\n" 'suffix))
 > (call-with-output-file "~/testing/nums.txt"
     (lambda (out)
@@ -41,7 +41,7 @@ everyone!    ; quit with Ctrl-D
 :::
 
 ## read-all-as-string
-``` scheme
+```scheme
 (read-all-as-string in) -> string | error
 
   in := input port to read from
@@ -51,7 +51,7 @@ Reads all the contents of port *in*, returning a single string including all
 newline characters. Signals an error when *in* can't be read.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (import :std/srfi/13)
 > (with-input-from-file "~/dev/gerbil/CHANGELOG.md"
     (lambda ()
@@ -61,7 +61,7 @@ newline characters. Signals an error when *in* can't be read.
 :::
 
 ## read-all-as-lines
-``` scheme
+```scheme
 (read-all-as-lines in [separator: #\newline] [include-separator?: #f]) -> list | error
 
   in                 := input port to read from
@@ -75,7 +75,7 @@ to include these separator characters in the line strings. Signals an error when
 *in* can't be read.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (import :std/srfi/1)
 > (take (call-with-input-file "~/dev/gerbil/README.md" read-all-as-lines) 4)
 ("# Gerbil Scheme"
@@ -90,7 +90,7 @@ to include these separator characters in the line strings. Signals an error when
 :::
 
 ## read-file-string
-``` scheme
+```scheme
 (read-file-string path) -> string | error
 
   path := path to file to read contents from
@@ -104,7 +104,7 @@ but it's not terribly interesting for this file reading procedure. Check section
 `17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
 
 ::: tip Examples:
-``` scheme
+```scheme
 $ cat ~/testing/nums.txt    ; unix-like command-line
 1
 2
@@ -119,7 +119,7 @@ $ cat ~/testing/nums.txt    ; unix-like command-line
 :::
 
 ## read-file-lines
-``` scheme
+```scheme
 (read-file-lines path) -> list | error
 
   path := path to file to read contents from
@@ -133,7 +133,7 @@ but it's not terribly interesting for this file reading procedure. Check section
 `17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
 
 ::: tip Examples:
-``` scheme
+```scheme
 $ cat ~/testing/nums.txt    ; unix-like command-line
 1
 2
@@ -158,7 +158,7 @@ $ head -n5 ~/dev/aoc18/01/input.txt
 :::
 
 ## read-all-as-u8vector
-``` scheme
+```scheme
 (read-all-as-u8vector in (bufsize 8192)) -> u8vector | error
 
   in      := input port to read from
@@ -169,7 +169,7 @@ Reads all the contents of port *in*, returning a single u8vector. Signals
 an error when *in* can't be read.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def u8 (call-with-input-file "/path/to/file" read-all-as-u8vector))
 > (u8vector-length u8)
 98526
@@ -177,7 +177,7 @@ an error when *in* can't be read.
 :::
 
 ## read-file-u8vector
-``` scheme
+```scheme
 (read-file-u8vector path settings: [] bufsize: 8192) -> u8vector | error
 
   path     := path to file to read contents from
@@ -192,7 +192,7 @@ Check section `17.7.1 Filesystem devices` of the Gambit Manual if you want
 to know more about the *settings* parameter.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def u8 (read-file-u8vector "/path/to/file" bufsize: 1024))
 > (u8vector-length u8)
 98526
@@ -200,7 +200,7 @@ to know more about the *settings* parameter.
 :::
 
 ## write-file-string
-``` scheme
+```scheme
 (write-file-string file string settings: [] newline-ending: #t) -> void | error
 
   file           := the file to be written to
@@ -214,7 +214,7 @@ Write string to file using the `display` procedure. Check section
 of the Gambit Manual if you want to know more about the `settings` parameter.
 
 ::: tip Examples:
-``` scheme
+```scheme
 ;; write "Hello, world!\n" to /tmp/foo.txt (may overwrite an existing file)
 (write-file-string "/tmp/foo.txt" "Hello, world!")  ; \n is appended automatically
 
@@ -231,7 +231,7 @@ of the Gambit Manual if you want to know more about the `settings` parameter.
 :::
 
 ## write-file-lines
-``` scheme
+```scheme
 (write-file-lines file list settings: [] newline-ending: #t) -> void | error
 
   file           := the file to be written to
@@ -246,7 +246,7 @@ the `display`procedure. Check section
 of the Gambit Manual if you want to know more about the `settings` parameter.
 
 ::: tip Examples:
-``` scheme
+```scheme
 (write-file-lines "/tmp/foo.txt" ["foo" "bar"])
 
 $ cat /tmp/foo.txt    ; unix-like command-line
@@ -256,7 +256,7 @@ bar
 :::
 
 ## force-current-outputs
-``` scheme
+```scheme
 (force-current-outputs) -> (void)
 ```
 
@@ -264,13 +264,13 @@ Force the `current-output-port` and the `current-error-port`.
 Useful before you drop to a REPL, debugger or interactive prompt, or before you `exit` the program.
 
 ::: tip Examples:
-``` scheme
+```scheme
 (force-current-outputs)
 ```
 :::
 
 ## writeln
-``` scheme
+```scheme
 (writeln object [port]) -> (void)
 ```
 
@@ -278,7 +278,7 @@ Display a string representation of the Scheme `object` as per `write`, then disp
 per `newline`, using the optional `port` which defaults to `(current-output-port)`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (writeln ['a 1 "foo"]) ;; response is written, return value is (void), unwritten
 (a 1 \"foo\")
 > (with-output (o #f) (writeln '(a 1 "foo") o))
@@ -287,7 +287,7 @@ per `newline`, using the optional `port` which defaults to `(current-output-port
 :::
 
 ## output-contents
-``` scheme
+```scheme
 (output-contents contents ?port) -> void | error
 
   contents       := a string, byte array or procedure
@@ -303,14 +303,14 @@ makes a port available to a consumer, e.g. by creating a port, using it once or 
 by calling output-contents, then closing it, such as `call-with-output`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 (def (create-foo contents)
   (call-with-output-file ["/tmp/foo"] (cut output-contents foo <>)))
 ```
 :::
 
 ## call-with-output
-``` scheme
+```scheme
 (call-with-output output-spec content-spec) -> output content per spec
 ```
 
@@ -343,7 +343,7 @@ text content, and whose output is as often used standalone or transcluded as par
 (with a port as an argument in the latter case).
 
 ::: tip Examples:
-``` scheme
+```scheme
 ;; pretty printer for a datastructure ms of type my-struct, with optional output-spec o
 (def (pp-my-struct ms (o #f))
   (call-with-output o
@@ -357,7 +357,7 @@ text content, and whose output is as often used standalone or transcluded as par
 :::
 
 ## with-output
-``` scheme
+```scheme
 (with-output (o output-spec) body ...) -> same as (call-with-output output-spec (lambda (o) body ...))
 (with-output (o) body ...) -> (call-with-output o (lambda (o) body ...))
 ```
@@ -369,7 +369,7 @@ and as output binding for a resolved port in the inner scope,
 allowing for seamless resolution of an `output-spec` designator around the inner scope.
 
 ::: tip Examples:
-``` scheme
+```scheme
 ;; same example as above using with-output
 (def (pp-my-struct ms (o #f))
   (with-output (o)
@@ -382,7 +382,7 @@ allowing for seamless resolution of an `output-spec` designator around the inner
 :::
 
 ## call-with-input
-``` scheme
+```scheme
 (call-with-input input-spec f) -> call f with specified input
 ```
 
@@ -392,8 +392,9 @@ calls the function `f` with that port as argument.
 The `input-spec` is interpreted as follows:
 - a port designates itself;
 - the true value `#t` designates the `(current-input-port)`;
-- a string designates a port to be open by passing it to `call-with-output-string`;
-- a list designates the settings to pass to `call-with-output-file`;
+- a string designates a port to be open by passing it to `call-with-input-string`;
+- a u8vector designates a port to be open by passing it to `call-with-input-u8vector`;
+- a list designates the settings to pass to `call-with-input-file`;
 - other values are invalid (a future version of Gerbil might accept additional values).
 
 The result returned is that of the call to function `f`.
@@ -403,7 +404,7 @@ the consumption of a character stream, and whose input is as a complete string o
 a stream passed as part of larger parsing effort (with a port as an argument in the latter case).
 
 ::: tip Examples:
-``` scheme
+```scheme
 ;; parser for a datastructure
 (def (parse-my-struct i)
   (call-with-input i
@@ -415,7 +416,7 @@ a stream passed as part of larger parsing effort (with a port as an argument in 
 :::
 
 ## with-input
-``` scheme
+```scheme
 (with-input (i input-spec) body ...) -> same as (call-with-input input-spec (lambda (i) body ...))
 (with-input (i) body ...) -> (call-with-input i (lambda (i) body ...))
 ```
@@ -427,7 +428,7 @@ and as input binding for a resolved port in the inner scope,
 allowing for seamless resolution of an `input-spec` designator around the inner scope.
 
 ::: tip Examples:
-``` scheme
+```scheme
 ;; same example as above using with-input
 (def (parse-my-struct i)
   (with-input (i)
@@ -437,8 +438,26 @@ allowing for seamless resolution of an `input-spec` designator around the inner 
 ```
 :::
 
+## char-port-eof?
+```scheme
+(char-port-eof? port) -> bool
+```
+
+`char-port-eof?` is function that given a `port` that is an input-port for characters,
+returns `#t` if that port is at the end of file, or else `#f`.
+
+::: tip Examples:
+```scheme
+> (call-with-input-string "a" (lambda (port) (let* ((x (char-port-eof? port))
+                                               (y (read-char port))
+                                               (z (char-port-eof? port)))
+                                          [x y z])))
+(#f #\a #t)
+```
+:::
+
 ## Port Destructor
-``` scheme
+```scheme
 (defmethod {destroy <port>} close-port)
 ```
 
@@ -448,7 +467,7 @@ ensuring that ports will be closed even if an error is signaled somewhere within
 the body.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (define (for-each-dir-entry dir proc)
     (let ((dir-port (open-directory dir)))
       (let loop ()

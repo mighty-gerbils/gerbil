@@ -3,27 +3,47 @@
 ;;; Utility functions and accessors for multiple values
 (import ./sugar)
 
-(export first-value second-value nth-value
-        values->vector vector->values
+(export (rename: first-value% first-value)
+        (rename: second-value% second-value)
+        (rename: nth-value% nth-value)
+        (rename: values->vector% values->vector)
+        vector->values
         list->values ;; NB: values->list is builtin
-        values->cons cons->values)
+        (rename: values->cons% values->cons)
+        cons->values)
 
-(defrules first-value ()
+(def (first-value x . _) x)
+(defrules first-value% ()
   ((_ form) (with ((values x . _) form) x))
   ((_ form forms ...) (syntax-error "Bad syntax"))
-  (_ (lambda (x . _) x)))
+  (_ first-value))
 
-(defrules second-value ()
+(def (second-value _ x . _) x)
+(defrules second-value% ()
   ((_ form) (with ((values _ x . _) form) x))
   ((_ form forms ...) (syntax-error "Bad syntax"))
-  (_ (lambda (_ x . _) x)))
+  (_ second-value))
 
-(defrule (nth-value n form) (with ((values . x) form) (list-ref x n)))
+(defrules nth-value% ()
+  ((_ n form) (with ((values . x) form) (list-ref x n)))
+  ((_ form forms ...) (syntax-error "Bad syntax"))
+  (_ nth-value_))
+(def (nth-value n vals) (nth-value% n vals))
 
-(defrule (values->vector form) (list->vector (values->list form)))
+(defrules values->vector% ()
+  ((_ form) (list->vector (values->list form)))
+  ((_ . _) (syntax-error "Bad syntax"))
+  (_ values->vector))
+(def (values->vector vals) (values->vector% vals))
+
 (def (vector->values v) (list->values (vector->list v)))
 
 (def (list->values l) (apply values l))
 
-(defrule (values->cons form) (let-values (((a b) form)) (cons a b)))
+(defrules values->cons% ()
+  ((_ form) (with ((values a b) form) (cons a b)))
+  ((_ . _) (syntax-error "Bad syntax"))
+  (_ values->cons))
+(def (values->cons vals) (values->cons% vals))
+
 (def (cons->values x) (values (car x) (cdr x)))

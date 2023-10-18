@@ -78,6 +78,12 @@ Various features can be enabled or disabled by passing `--enable-FEATURE` or
 `--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
 features are available.
 
+## Installation using Binary Release Packages
+
+If you want to install the latest release (v0.18), you can also use
+the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS.
+They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
+
 ## Installation on MacOS
 
 Gerbil is available via a homebrew recipe. If you are on MacOS, you can build using the brew formula.
@@ -119,5 +125,6 @@ See the [Docker Gulde](docker.md) for additional information.
 You can install Gerbil using Nix. See [nix.md](nix.md) for more details.
 
 There are also Docker containers based on Nix, with some gerbil libraries also installed,
-at `fahree/gerbil-nix` (`root` only) and `fahree/gerbil-utils` (user `user` working in `/home`).
+at `mukn/gerbil` (with the compiler) and `mukn/glow` (with many libraries installed)
+(user `user` working in `/home`).
 See the `scripts` directory of [Gerbil Clan](https://github.com/fare/gerbil-utils) for details.

@@ -132,7 +132,6 @@
    (and (identifier? #'method) (identifier? #'method-id))
    (def method (checked-bound-method-ref obj 'method-id))))
 
-
 (defrule (with-methods o method ...)
   (begin
     (def $klass (object-type o))
@@ -398,29 +397,30 @@
      (with-syntax ((((id expr) ...)
                     (stx-map (lambda (spec) (syntax-case spec ()
                                          ((id) #'(id 'id))
-                                         ((id ct-expr more ...) #'(id (list ct-expr more ...)))
+                                         ((id str1 str2 ...) #'(id (list str1 str2 ...)))
                                          (id (identifier? #'id) #'(id 'id))))
                              #'(id-spec ...))))
        #'(begin
            (defsyntax/unhygienic (m stx2)
-             (with-syntax ((id (identifierify (stx-car (stx-cdr stx2)) expr)) ...)
+             (with-syntax ((id (stx-identifier (stx-car (stx-cdr stx2)) expr)) ...)
                (... #'(... template))))
            (m ctx))))))
 
 (defrule (with-id/expr stuff ...) (let () (with-id stuff ...)))
 
-;; From CL's ALEXANDRIA library
 (defrules if-let ()
   ((_ () then else) then)
-  ((_ ((ids exprs) ...) then else)
-   (let ((ids exprs) ...)
-     (if (and ids ...)
-       then
-       else)))
+  ((_ ((id expr)) then else) (if-let (id expr) then else))
+  ((_ ((id expr) ...) then else)
+   (let/cc return
+     (def (fail) (return else))
+     (let* ((id (or expr (fail))) ...)
+       then)))
   ((_ (id expr) then else)
-   (let ((id expr)) (if id then else))))
+   (let (test expr) (if test (let (id test) then) else))))
 
-(defrule (when-let bindings body ...) (if-let bindings (begin body ...) (void)))
+(defrule (when-let bindings body ...)
+  (if-let bindings (begin body ...) (void)))
 
 (defrule (defcheck-argument-type type ...)
   (begin
@@ -436,18 +436,17 @@
 (defsyntax (syntax-call stx)
   (syntax-case stx ()
     ((ctx expr) #'(ctx expr ctx))
-    ((_ expr ctx stxs ...)
+    ((_ expr ctx args ...)
      #'(let ()
          (defsyntax (foo stx)
            (datum->syntax (stx-car (stx-cdr stx)) (apply expr (syntax->list (stx-cdr stx)))))
-         (foo ctx stxs ...)))))
+         (foo ctx args ...)))))
 
-(defrules defsyntax-call ()
-  ((_ (macro ctx formals ...) body)
-   (defsyntax (macro stx)
-     (syntax-case stx ()
-       ((_ ctx formals ...)
-        (datum->syntax (stx-car (stx-cdr stx))
-          (apply (lambda (ctx formals ...) body)
-            (stx-car (stx-cdr stx)) (syntax->datum (stx-cdr (stx-cdr stx))))))
-       ((ctx formals ...) #'(ctx ctx formals ...))))))
+(defrule (defsyntax-call (macro ctx formals ...) body ...)
+  (defsyntax (macro stx)
+    (syntax-case stx ()
+      ((_ ctx formals ...)
+       (datum->syntax (stx-car (stx-cdr stx))
+         (apply (lambda (ctx formals ...) body ...)
+           (stx-car (stx-cdr stx)) (syntax->datum (stx-cdr (stx-cdr stx))))))
+      ((ctx formals ...) #'(ctx ctx formals ...)))))

@@ -49,11 +49,13 @@ Please document me!
 ### stx-identifier
 ::: tip usage
 ```
-(stx-identifier ...)
+(stx-identifier ctx ...)
 ```
 :::
 
-Please document me!
+`stx-identifier` creates a new identifier with the context of its first argument. The
+identifier is created by "symbolizing" the remaining arguments with `make-symbol`.
+
 
 ### identifier-list?
 ::: tip usage

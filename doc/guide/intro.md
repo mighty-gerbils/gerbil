@@ -1092,13 +1092,6 @@ Gerbil-specific libraries.
 Here we provide examples and brief documentation for the more
 interesting of the Gerbil-specific libraries.
 
-### Optional Libraries
-
-Note that some standard library modules are not built by default,
-because they have external library dependencies that may not be
-present in your system. You have to enable them during configuration
-by using the appropriate `--enable-feature` configuration options.
-
 ### Additional Syntactic Sugar
 
 The `:std/sugar` library provides some useful macros that are widely applicable.
@@ -1574,7 +1567,7 @@ So how do we build an ensemble?  First we need to generate a cookie
 for our ensemble, which we can do programmatically or using the `gxensemble`
 tool:
 ```
-$ gxensemble cookie
+$ gerbil ensemble admin cookie
 ```
 
 This will generate a random 256-bit cookie in `${GERBIL_PATH:~/.gerbil}/ensemble/cookie`.
@@ -1646,11 +1639,11 @@ $ cat gerbil.pkg
 $ gxc -O wallet-actor.ss
 
 # in one terminal - run this to allow for server registration and lookup
-$ gxensemble registry
+$ gerbil ensemble registry
 ...
 
 # in another terminal
-$ gxensemble run my-wallet-server :tmp/wallet-actor 100
+$ gerbil ensemble run my-wallet-server :tmp/wallet-actor 100
 ...
 ```
 
@@ -1673,7 +1666,7 @@ $ gxi
 If we want to shutdown our ensemble we can do so very easily with the
 gxensemble tool, which is part of the Gerbil distribution:
 ```shell
-$ gxensemble shutdown
+$ gerbil ensemble shutdown -f
 This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]
 y
 ... shutting down my-wallet-server
@@ -1750,34 +1743,37 @@ Gerbil supports XML and HTML with the `:std/xml` library.
 The library supports parsing and querying with Oleg's SXML/SSAX/SXPath and
 provides additional facilities for processing SXML.
 
-Optionally, when configured so, the library can also use `libxml2` to
-parse real world HTML (and plain old XML).  The `libxml2` dependent
-components are not built by default.  You can build them by specifying
-the `--enable-libxml` configuration option when configuring and
-building Gerbil.
+If you want to use `libxml2` library for parsing real world HTML,
+you can install the [gerbil-libxml](https://github.com/mighty-gerbils/gerbil-libxml)
+with
+```shell
+$ gerbil pkg install github.com/mighty-gerbils/gerbil-libxml
+```
 
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
 ```scheme
-> (import :std/net/request :std/xml/libxml)
-> (def req (http-get "https://www.bing.com"))
+> (import :std/net/request :clan/xml/libxml)
+> (def req (http-get "http://hackzen.org"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
-(*TOP* (html (@ (lang "el")
-                (xml:lang "el")
-                (xmlns "http://www.w3.org/1999/xhtml"))
-             (head (meta (@ (content "text/html; charset=utf-8")
-                            (http-equiv "content-type")))
-                   (title "Bing")
-                   (link (@ (rel "icon")
-                            (sizes "any")
-                            (mask "")
-                            (href "/fd/s/a/hp/bing.svg")))
-                   (meta (@ (name "theme-color") (content "#4F4F4F")))
-                   (link (@ (href "/s/a/bing_p.ico") (rel "icon")))
-                   (meta (@ (content "Το Bing σ"))))))
-
-; so much for modern html!
-; everything script, style, and CDATA in the page.
+(*TOP* (html (head (title "(hackzen.org)")
+                   (link (@ (rel "stylesheet") (type "text/css") (href "style.css"))))
+             (body "\n    "
+                   (h1 (@ (id "header")) "(hackzen.org)")
+                   "\n    "
+                   "\n    "
+                   (div (a (@ (href "http://xkcd.com/297/")) (img (@ (src "parens.png")))))
+                   "\n    "
+                   (br)
+                   (div (a (@ (href "robots.html")) "(robots)"))
+                   "\n    "
+                   (div (a (@ (href "gerbil/index.html")) "(gerbils)"))
+                   "\n    "
+                   (div (a (@ (href "humans.html")) "(humans)"))
+                   "\n    "
+                   (div (a (@ (href "nic9/index.html")) "[N1C#09]"))
+                   "\n    "
+                   (br))))
 ```
 ### Web Applications
 
@@ -1792,7 +1788,7 @@ versions of Gambit which didn't have raw devices.
 
 The embedded http server was first introduced in Gerbil v0.12 and
 utilizes raw devices. It is significantly faster and offers a low
-level interface oriented towards API programming, and by now the
+level interface oriented towards API programming, and is by now the
 canonical (and recommended) way to write web applications.
 
 #### Web programming with rack/fastcgi

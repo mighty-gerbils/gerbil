@@ -213,7 +213,20 @@ package: gerbil/runtime
   (declare-type fxshift (@lambda 2 fxarithmetic-shift))
   (declare-type fx/ (@lambda 2 fxquotient))
   (declare-type interned-symbol? (@lambda 1 #f))
-  (declare-type make-symbol (@lambda (0) #f))
+  (declare-type display-as-string (@lambda 2 #f))
+  (declare-type as-string__0 (@lambda 1 #f))
+  (declare-type as-string__1 (@lambda (0) #f))
+  (declare-type as-string (@case-lambda (1 as-string__0) ((0) as-string__1)))
+  (declare-type make-symbol__0 (@lambda 1 #f))
+  (declare-type make-symbol__1 (@lambda (0) #f))
+  (declare-type
+   make-symbol
+   (@case-lambda (1 make-symbol__0) ((0) make-symbol__1)))
+  (declare-type make-keyword__0 (@lambda 1 #f))
+  (declare-type make-keyword__1 (@lambda (0) #f))
+  (declare-type
+   make-keyword
+   (@case-lambda (1 make-keyword__0) ((0) make-keyword__1)))
   (declare-type interned-keyword? (@lambda 1 #f))
   (declare-type symbol->keyword (@lambda 1 #f))
   (declare-type keyword->symbol (@lambda 1 #f))
