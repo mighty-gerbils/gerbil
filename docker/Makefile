@@ -128,7 +128,7 @@ gerbilxx:
 	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg with_db="YES" \
-	--build-arg distro="alpine"
+	--build-arg distro="alpine" \
 	--build-arg shared="no" \
 	-t final $(ROOT_DIR) \
 	--progress=plain
@@ -140,7 +140,7 @@ gerbil:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="alpine"
+	--build-arg distro="alpine" \
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="no" \
