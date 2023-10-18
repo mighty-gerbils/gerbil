@@ -1,4 +1,4 @@
-.PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
+.PHONY: alpine amazonlinux debian ubuntu fedora ubuntu-current-jedi final
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell nproc)
@@ -56,6 +56,16 @@ amazon_packages := cmake \
 		   openssl-devel \
 		   sqlite-devel
 
+centos_packages := cmake \
+		   git \
+		   leveldb-devel \
+                   libsqlite3x-devel \
+                   libxml2-devel \
+                   libyaml-devel \
+                   lmdb-devel \
+                   openssl-devel \
+                   sqlite-devel
+
 fedora_packages := cmake \
 		   leveldb-devel \
 		   libsqlite3x-devel \
@@ -87,6 +97,28 @@ ubuntu_packages := autoconf \
 		   texinfo \
 		   zlib1g-dev
 
+debian_packages := autoconf \
+                   bison \
+                   build-essential \
+                   curl \
+                   gawk \
+                   git \
+                   libleveldb-dev \
+                   libleveldb1d \
+                   liblmdb-dev \
+                   libnss3-dev \
+                   libsnappy1v5 \
+                   libsqlite3-dev \
+                   libssl-dev \
+                   libxml2-dev \
+                   libyaml-dev \
+                   pkg-config \
+                   python3 \
+                   rsync \
+                   rubygems \
+                   texinfo \
+                   zlib1g-dev
+
 gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
@@ -97,59 +129,102 @@ gerbilxx:
 	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg with_db="YES" \
-	--build-arg distro="alpine" -t final $(ROOT_DIR) \
+	--build-arg distro="alpine" \
+	--build-arg shared="no" \
+	-t final $(ROOT_DIR) \
 	--progress=plain
-	docker tag final gerbil/gerbilxx:$(arch)
+	docker tag final gerbil/gerbilxx:$(arch)-$(BRANCH)
 
 gerbil:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg repo="$(REPO)" \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg packages="$(alpine_packages)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="alpine" -t final $(ROOT_DIR) \
+	--build-arg distro="alpine" \
+	--build-arg packages="$(alpine_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="no" \
+	-t final $(ROOT_DIR) \
 	--progress=plain
-	docker tag final gerbil/gerbil:$(arch)
+	docker tag final gerbil/gerbil:$(arch)-$(BRANCH)
 
 amazonlinux:
 	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-c++ --enable-march=" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="amazonlinux" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
-	--build-arg cores=$(cores)  \
-	--build-arg distro="amazonlinux" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/amazonlinux:$(arch)
+	docker tag final gerbil/amazonlinux:$(arch)-$(BRANCH)
 
 centos:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
-	--build-arg packages="$(centos_packages)" \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(centos_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
 	-t final $(ROOT_DIR)
-	docker tag final gerbil/centos:$(arch)
+	docker tag final gerbil/centos:$(arch)-$(BRANCH)
 
 fedora:
 	docker build --target final \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
-	--build-arg packages="$(fedora_packages)" \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
-	-t final $(ROOT_DIR)
-	docker tag final gerbil/fedora:$(arch)
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(fedora_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
+	-t final $(ROOT_DIR) \
+	--progress=plain
+	docker tag final gerbil/fedora:$(arch)-$(BRANCH)
 
 ubuntu:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
-	--build-arg packages="$(ubuntu_packages)" \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-c++ --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
-	-t final $(ROOT_DIR)
-	docker tag final gerbil/ubuntu:$(arch)
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(ubuntu_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
+	-t final $(ROOT_DIR) \
+	--progress=plain
+	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
+
+debian:
+	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-c++ --enable-march=" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="debian" \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(debian_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
+	-t final $(ROOT_DIR) \
+	--progress=plain
+	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
 
 ubuntu-current-jedi:
 	docker build --rm=true --no-cache -t ubuntu-current-jedi $(ROOT_DIR)/ubuntu-current-jedi

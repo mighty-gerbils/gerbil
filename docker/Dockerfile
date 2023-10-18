@@ -5,6 +5,7 @@ ARG branch
 ARG cores
 ARG configure_args
 ARG packages
+ARG shared
 
 FROM ${distro}:latest as base
 ARG cores
@@ -14,7 +15,6 @@ ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 ENV GERBIL_BUILD_CORES=$cores
 ENV DEBIAN_FRONTEND=noninteractive
-ENV GERBIL_GCC=g++
 RUN mkdir -p /src /opt
 RUN case ${distro} in \
     alpine) \
@@ -32,7 +32,7 @@ RUN case ${distro} in \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
     ;; \
-    ubuntu) \
+    debian|ubuntu) \
     apt update -y && \
     eval apt install -y ${packages} \
     ;; \
@@ -43,15 +43,16 @@ RUN case ${distro} in \
     esac
 
 FROM base as gerbil
-ARG cores
-ARG repo
 ARG branch
 ARG configure_args
-ENV GERBIL_GCC=g++
-RUN  cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
-    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=no ${configure_args}
+ARG cores
+ARG repo
+ARG shared
+RUN cd /opt && eval git clone -b "${branch}" "https://github.com/${repo}" gerbil-src \
+    && cd /opt/gerbil-src && eval ./configure --prefix=/opt/gerbil --enable-shared=${shared} ${configure_args}
 
-RUN cd /opt/gerbil-src && make && make install
+RUN cd /opt/gerbil-src && make
+RUN cd /opt/gerbil-src && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /src/leveldb /src/lmdb
