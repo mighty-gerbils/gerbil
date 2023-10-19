@@ -154,12 +154,20 @@
     (using ((self :- bucket)
             (client (bucket-client self) : s3-client))
            (let* ((headers [["x-amz-copy-source" :: src]])
-                  (req (s3-request/error client
+                  (req (s3-client::request client
                                          verb: 'PUT
                                          bucket: (bucket-name self)
                                          path: (string-append "/" dest)
-                                         extra-headers: headers)))
+                                         extra-headers: headers))
+                  (error (s3-response-error? (s3-parse-xml req))))
              (request-close req)
+             (when error
+               (raise-s3-error
+                 bucket::copy-to!
+                 "Unable to perform server-side copy"
+                 ; when error isn't empty, it should be a parsed XML tree
+                 (sxml-find error (sxml-e? 'Code) cadr)
+                 (request-status-text req)))
              (void)))))
 
 
@@ -213,11 +221,14 @@
 
 (defrule (s3-request/error self ...)
   (with-request-error
-    {request self ...}))
+    (s3-client::request self ...)))
 
 (def (s3-parse-xml req)
   (read-xml (request-content req)
     namespaces: '(("http://s3.amazonaws.com/doc/2006-03-01/" . "s3"))))
+
+(defrule (s3-response-error? xml)
+  (sxml-find xml (sxml-e? 'Error)))
 
 (def (with-request-error req)
   (using (req :~ request?)
