@@ -4,7 +4,7 @@
 
 (export #t)
 
-(interface BucketMap
+(interface S3
   (get-bucket (name :~ string?))
   (create-bucket! (name :~ string?)
          (opts :~ (maybe alist?) := #f))
@@ -12,7 +12,7 @@
   (bucket-exists? (name :~ string?))
   (list-buckets))
 
-(interface ObjectMap
+(interface S3Bucket
   (get  (name :~ string?))
   (put! (name :~ string?)
         (data :~ u8vector?)
