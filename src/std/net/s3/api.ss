@@ -13,27 +13,27 @@
         :std/error
         :std/sugar
         :std/srfi/19)
-(export make-s3-client S3ClientError)
 
+(export S3Client S3ClientError)
 
-(def (make-s3-client
+; precomputed empty sha256
+(def emptySHA256 (sha256 #u8()))
+
+(def (S3Client
        (endpoint "s3.amazonaws.com")
        (access-key (getenv "AWS_ACCESS_KEY_ID" #f))
        (secret-key (getenv "AWS_SECRET_ACCESS_KEY" #f))
-       (region (getenv "AWS_DEFAULT_REGION" "us-east-1"))
-       (cond
-         ((not access-key)
-          (raise-s3-error make-s3-client "Must provide access key" "access-key"))
-         ((not secret-key)
-          (raise-s3-error make-s3-client "Must provide secret key" "secret-key")))
-       (S3 (make-s3-client endpoint access-key secret-key region))))
-
-; precomputed empty sha256
-(def emptySHA256 (syntax-eval (sha256 #u8())))
+       (region (getenv "AWS_DEFAULT_REGION" "us-east-1")))
+     (cond
+       ((not access-key)
+        (raise-s3-error make-s3-client "Must provide access key" "access-key"))
+       ((not secret-key)
+        (raise-s3-error make-s3-client "Must provide secret key" "secret-key")))
+     (S3 (make-s3-client endpoint access-key secret-key region)))
 
 (defstruct s3-client (endpoint access-key secret-key region)
   final: #t
-  constructor: make-s3-client)
+  constructor: S3Client)
 
 (defstruct bucket (client name region)
   final: #t)
