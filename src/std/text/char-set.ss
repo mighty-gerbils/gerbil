@@ -65,11 +65,11 @@
       (= c #x0D))) ;; #\return
 
 ;; Whitespace as defined by C, C++ and Python.
+;; To the strict-whitespace above, add two characters:
+;; #\vtab (vertical tab) C'\v' and #\page (page break, form feed) C'\f'
 ;; : Codepoint -> Bool
 (def-codepoint (ascii-whitespace? c)
-  (or (codepoint-strict-whitespace? c)
-      (= c #x0B) ;; #\vtab (vertical tab) C'\v'
-      (= c #x0C))) ;; #\page (page break, form feed) C'\f'
+  (or (= c #x20) (<= #x09 c #x0D)))
 
 ;; Whitespace as defined by the underlying Scheme implementation
 ;; For Gambit and thus Gerbil (so far), it is the union of ASCII whitespace

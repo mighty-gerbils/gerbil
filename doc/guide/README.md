@@ -109,7 +109,7 @@ docker pull gerbil/gerbil:$(uname -m)
 
 To get to the REPL:
 ```bash
-docker run -it gerbil/gebil:$(uname -m)
+docker run -it gerbil/gerbil:$(uname -m)
 ```
 
 To get a bash shell where you can compile programs:
@@ -125,6 +125,6 @@ See the [Docker Gulde](docker.md) for additional information.
 You can install Gerbil using Nix. See [nix.md](nix.md) for more details.
 
 There are also Docker containers based on Nix, with some gerbil libraries also installed,
-at `mukn/gerbil` (with the compiler) and `mukn/glow` (with many libraries installed)
-(user `user` working in `/home`).
+at `mukn/glow:devel` or `ghcr.io/glow-lang/glow:devel` with many libraries installed.
+
 See the `scripts` directory of [Gerbil Clan](https://github.com/fare/gerbil-utils) for details.
