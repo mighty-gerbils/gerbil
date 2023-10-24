@@ -44,12 +44,6 @@
         pkg-retag
         pkg-plist pkg-dependents pkg-dependents*)
 
-;; TODO: move that to general-purpose runtime support, and
-;; have it throw an exception that is caught by the bottom runtime handler.
-(def (abort msg)
-  (eprintf "~a\n" msg)
-  (exit 2))
-
 (def (main . args)
   (def local-flag
     (flag 'local "-l" "--local"
@@ -348,7 +342,7 @@
 (def (pkg-new package-prefix package-name maybe-link)
   (def prefix (or package-prefix
                   (getenv "USER" #f)
-                  (abort "Package prefix not specified with -p or --package, and USER not defined")))
+                  (error "Package prefix not specified with -p or --package, and USER not defined")))
   (def name (or package-name
                 (path-strip-directory (path-normalize* (current-directory)))))
   (def (create-template file template . args)
