@@ -8,7 +8,7 @@
 ## run-process
 ``` scheme
 (run-process cmd
-             [coprocess: read-all-as-string]
+             [coprocess: ...]
              [check-status: #t]
              [environment: #f]
              [directory: #f]
@@ -16,7 +16,7 @@
              [stdout-redirection: #t]
              [stderr-redirection: #f]
              [pseudo-terminal: #f]
-             [show-console: #f]) -> any | error
+             [show-console: ...]) -> any | error
 
   cmd                := list of strings, [path . arguments]
   coprocess          := procedure interacting with process
@@ -38,7 +38,8 @@ The following keyword settings are available:
 - *coprocess*: A procedure that specifies how to interact with the process,
   which it receives as an argument, and what should be returned from
   `run-process`. Defaults to reading the whole output as a string via
-  `std/misc/ports#read-all-as-string`.
+  `std/misc/ports#read-all-as-string` if either `stdout-redirection` or
+  `stderr-redirection` is true, otherwise to `void`.
 - *check-status*: Declares how to handle the exit status of the process upon
   termination. If a procedure is provided, then it will be called with the
   process' exit status and a list of process creation arguments. If
@@ -75,7 +76,7 @@ The following keyword settings are available:
   behave differently when they are used interactively, for example shells.
 - *show-console*: Applies to *Microsoft Windows*. It controls whether the
   process’ console window will be hidden or visible. The default value of this
-  setting is `#f` (i.e. hide the console window).
+  setting is true if any of the port redirection option is false.
 
 More information can be found in section `17.7.2 Process devices` of the Gambit
 manual.
@@ -133,3 +134,48 @@ adding: file2.txt (stored 0%)
 adding: file3.txt (stored 0%)
 ```
 :::
+
+## invoke
+``` scheme
+(invoke program args
+   [stdout-redirection: #f]
+   [stderr-redirection: #f]
+   [stdin-redirection: #f]
+   [coprocess: ...]
+   [check-status: #t]
+   [environment: #f]
+   [directory: #f]
+   [show-console: ...]
+```
+
+Invoke a `program` with arguments `args`, in a way very similar to `run-process` above,
+except that the program is specified separately from the arguments,
+and the defaults for standard port redirections are different.
+
+::: tip Examples:
+``` scheme
+> (invoke "date" ["--utc"] stdout-redirection: #t coprocess: read-line)
+```
+:::
+
+## filter-process
+``` scheme
+(filter-with-process command writer reader
+   [directory: #f]
+   [environment: #f])
+```
+
+Invoke a Unix `command` to filter some data, wherein
+the `writer` procedure takes an output port as argument and writes pre-filtered data to the port,
+the `command` then filters the data, reading it from its standard input,
+processing it and writing the filtered result to its standard output,
+and the `reader` procedure takes an input port as argument and reads the filtered data from it.
+The optional keyword arguments `directory:` and `environment:` are passed to `run-process`.
+
+::: tip Examples:
+``` scheme
+> (check (filter-with-process ["sh" "-c" "echo BEGIN ; cat ; echo END"]
+           (lambda (proc) (display "ab\ncd\nef\n" proc))
+           read-all-as-lines)
+("BEGIN" "ab" "cd" "ef" "END")
+```
