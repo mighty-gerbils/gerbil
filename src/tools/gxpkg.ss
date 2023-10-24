@@ -23,6 +23,7 @@
 ;;; TODO: add private repos support
 
 (import :gerbil/gambit
+        :std/format
         :std/getopt
         :std/sugar
         :std/iter
@@ -85,11 +86,9 @@
   (def new-cmd
     (command 'new help: "create a new package template in the current directory"
       (option 'package "-p" "--package"
-        help: "the package prefix for your project; defaults to the current username"
-        default: (getenv "USER"))
+        help: "the package prefix for your project; defaults to the current username")
       (option 'name "-n" "--name"
-        help: "the package name; defaults to the current directory name"
-        default: (path-strip-directory (path-normalize* (current-directory))))
+        help: "the package name; defaults to the current directory name")
       (option 'link "-l" "--link"
         help: "link this package with a public package name; for example: github.com/your-user/your-package")))
   (def deps-cmd
@@ -340,7 +339,13 @@
       (force once)
       (force +pkg-root-dir+))))
 
-(def (pkg-new prefix name maybe-link)
+(def (pkg-new package-prefix package-name maybe-link)
+  (def prefix (or package-prefix
+                  (getenv "USER" #f)
+                  (begin (eprintf "Package prefix not specified with -p or --package, and USER not defined\n")
+                         (exit 2))))
+  (def name (or package-name
+                (path-strip-directory (path-normalize* (current-directory)))))
   (def (create-template file template . args)
     (call-with-output-file file
       (lambda (output)
