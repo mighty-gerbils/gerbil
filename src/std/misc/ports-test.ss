@@ -1,4 +1,4 @@
-(export ports-test)
+(export #t)
 
 (import
   :std/error

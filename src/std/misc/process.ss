@@ -47,15 +47,16 @@
 ;; That is also coherent with the above pseudo-terminal: default to #f, BTW.
 (def (run-process
       command
-      coprocess: (coprocess read-all-as-string)
-      check-status: (check-status #t)
-      environment: (environment #f)
-      directory: (directory #f)
       stdin-redirection: (stdin-redirection #t)
       stdout-redirection: (stdout-redirection #t)
       stderr-redirection: (stderr-redirection #f)
+      coprocess: (coprocess (if (or stdout-redirection stderr-redirection) read-all-as-string void))
+      check-status: (check-status #t)
+      environment: (environment #f)
+      directory: (directory #f)
       pseudo-terminal: (pseudo-terminal #f)
-      show-console: (show-console #f)) ;; NB: default differs from Gambit. See above.
+      ;; NB: defaults for show-console differ from Gambit. See above.
+      show-console: (show-console #f))
   (let* ((settings
           [path: (car command)
            arguments: (cdr command)
@@ -94,7 +95,7 @@
              stdout-redirection: (stdout-r #f)
              stderr-redirection: (stderr-r #f)
              stdin-redirection:  (stdin-r #f)
-             coprocess: (coprocess (if stdout-r read-all-as-string void))
+             coprocess: (coprocess (if (or stdout-r stderr-r) read-all-as-string void))
              check-status: (check-status #t)
              environment: (environment #f)
              directory: (directory #f)
@@ -103,6 +104,7 @@
                stdout-redirection: stdout-r
                stderr-redirection: stderr-r
                stdin-redirection: stdin-r
+               coprocess: coprocess
                check-status: check-status
                environment: environment
                directory: directory
@@ -111,9 +113,16 @@
 ;; write data into a filter process and read some data back.
 ;; process-options as per open-process, except you should only use
 ;; path: arguments: directory: environment:
-(def (filter-with-process command writer reader)
+(def (filter-with-process command writer reader
+                          directory: (directory #f)
+                          environment: (environment #f))
   (run-process
    command
+   stdin-redirection: #t
+   stdout-redirection: #t
+   stderr-redirection: #f
+   directory: directory
+   environment: environment
    coprocess:
    (lambda (process)
      (spawn/name
