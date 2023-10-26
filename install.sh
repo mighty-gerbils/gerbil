@@ -40,7 +40,7 @@ install_src_files() {
     local dest="${2}"
     local oldpwd="$(pwd)"
     cd "${src}"
-    for f in $(find . -name \*.ss -or -name \*.ssi -or -name \*.scm -or -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
+    for f in $(find . -name \*.ss -o -name \*.ssi -o -name \*.scm -o -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
         mkdir -p $(dirname "${dest}/${f}") || die
         cp -v "${f}" "${dest}/${f}" || die
     done
