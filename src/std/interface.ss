@@ -405,7 +405,7 @@
         ((kw (id default) . rest)
          (stx-keyword? #'kw)
          (lp #'rest (cons* #'(id absent-obj) #'kw args)))
-        ((kw (id . contract) .rest)
+        ((kw (id . contract) . rest)
          (stx-keyword? #'kw)
          (cond
           ((get-contract-default #'contract)
@@ -439,7 +439,7 @@
         ((kw (id default) . rest)
          (stx-keyword? #'kw)
          (lp #'rest (cons* #'(id default) #'kw args)))
-        ((kw (id . contract) .rest)
+        ((kw (id . contract) . rest)
          (stx-keyword? #'kw)
          (cond
           ((get-contract-default #'contract)
