@@ -2,7 +2,7 @@
 
 Gerbil is a growing project and your contributions are welcome!
 
-When working on modifications to the standard library, it's common to encountere errors
+When working on modifications to the standard library, it's common to encounter errors
 such as:
 
 ```
