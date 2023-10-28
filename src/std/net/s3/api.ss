@@ -20,10 +20,10 @@
 (def emptySHA256 (sha256 #u8()))
 
 (def (S3Client
-       (endpoint "s3.amazonaws.com")
-       (access-key (getenv "AWS_ACCESS_KEY_ID" #f))
-       (secret-key (getenv "AWS_SECRET_ACCESS_KEY" #f))
-       (region (getenv "AWS_DEFAULT_REGION" "us-east-1")))
+       endpoint: (endpoint "s3.amazonaws.com")
+       access-key: (access-key (getenv "AWS_ACCESS_KEY_ID" #f))
+       secret-key: (secret-key (getenv "AWS_SECRET_ACCESS_KEY" #f))
+       region: (region (getenv "AWS_DEFAULT_REGION" "us-east-1")))
      (cond
        ((not access-key)
         (raise-s3-error make-s3-client "Must provide access key" "access-key"))
@@ -32,8 +32,7 @@
      (S3 (make-s3-client endpoint access-key secret-key region)))
 
 (defstruct s3-client (endpoint access-key secret-key region)
-  final: #t
-  constructor: S3Client)
+  final: #t)
 
 (defstruct bucket (client name region)
   final: #t)
@@ -103,7 +102,7 @@
 
 (defmethod {bucket s3-client}
   (lambda (self name)
-    (using (self self :- s3-client)
+    (using (self :- s3-client)
       (if (s3-client::bucket-exists? self name)
         (S3Bucket (make-bucket self name (s3-client-region self)))
         (raise-s3-error s3-client::bucket "bucket does not exist" name)))))
@@ -111,8 +110,8 @@
 ; Lists the objects stored within the bucket
 (defmethod {list-objects bucket}
   (lambda (self)
-    (using ((self self :- bucket)
-            (client (self.client) :- s3-client))
+    (using ((self :- bucket)
+            (client self.client :- s3-client))
       (let* ((name (bucket-name self))
              (req (s3-request/error client verb: 'GET bucket: name))
              (xml (s3-parse-xml req))
@@ -123,8 +122,10 @@
 (defmethod {get bucket}
   (lambda (self key)
     (using ((self :- bucket)
-            (client (self.client) :- s3-client))
-           (let* ((req (s3-request/error client verb: 'GET bucket: (bucket-name self)
+            (client self.client :- s3-client))
+           (let* ((req (s3-request/error client
+                                         verb: 'GET
+                                         bucket: (bucket-name self)
                                          path: (string-append "/" key)))
                   (data (request-content req)))
              (request-close req)
@@ -133,7 +134,7 @@
 (defmethod {put! bucket}
   (lambda (self key data content-type: (content-type "binary/octet-stream"))
     (using ((self :- bucket)
-            (client (self.client) :- s3-client))
+            (client self.client :- s3-client))
            (let (req (s3-request/error client verb: 'PUT bucket: (bucket-name self)
                                        path: (string-append "/" key)
                                        body: data
@@ -144,7 +145,7 @@
 (defmethod {delete! bucket}
   (lambda (self key)
     (using ((self :- bucket)
-            (client (self.client) :- s3-client))
+            (client self.client :- s3-client))
            (let (req (s3-request/error client verb: 'DELETE bucket: (bucket-name self)
                      path: (string-append "/" key)))
              (request-close req)
@@ -153,7 +154,7 @@
 (defmethod {copy-to! bucket}
   (lambda (self src dest)
     (using ((self :- bucket)
-            (client (self.client) :- s3-client))
+            (client self.client :- s3-client))
       (let* ((headers [["x-amz-copy-source" :: src]])
              (req (s3-client::request client
                                     verb: 'PUT
