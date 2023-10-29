@@ -94,7 +94,8 @@ module.exports = {
                             "net/uri",
                             "net/address",
                             "net/sasl",
-                            "net/repl"
+                            "net/repl",
+                            "net/s3"
                         ]
                       },
 
