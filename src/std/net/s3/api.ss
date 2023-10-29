@@ -22,7 +22,7 @@
 (def (S3Client
        endpoint: (endpoint "s3.amazonaws.com")
        access-key: (access-key (getenv "AWS_ACCESS_KEY_ID" #f))
-       secret-key: (secret-key (getenv "AWS_SECRET_ACCESS_KEY" #f))
+       secret-key: (secret-key (getenv "AWS_SECRET_KEY" #f))
        region: (region (getenv "AWS_DEFAULT_REGION" "us-east-1")))
      (cond
        ((not access-key)
@@ -61,11 +61,11 @@
 
 ;; NOTE: all bucket operations need the correct region for the bucket or they will 400
 (defmethod {create-bucket! s3-client}
-  (lambda (self bucket)
+  (lambda (self bucket-name)
     (using (self :- s3-client)
-      (let (req (s3-request/error self verb: 'PUT bucket: bucket))
+      (let (req (s3-request/error self verb: 'PUT bucket: bucket-name))
         (request-close req)
-        (void)))))
+        (S3Bucket (make-bucket self bucket-name self.region))))))
 
 ; Gets a bucket struct that can be used to fetch objects.
 (defmethod {get-bucket s3-client} ; => bucket
