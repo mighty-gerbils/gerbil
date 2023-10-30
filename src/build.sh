@@ -267,7 +267,12 @@ build_tags () {
 
 build_doc () {
   feedback_low "Building gerbil hyperspec"
-  (cd "${GERBIL_BASE}/doc" && npm install && node_modules/vuepress/cli.js dev)
+  (## For now we only support old node v18 with this option.
+   ## TODO: update node support to a modern node with a modern SSL module.
+   export NODE_OPTIONS=--openssl-legacy-provider
+   cd "${GERBIL_BASE}/doc" &&
+   npm install &&
+   node_modules/vuepress/cli.js dev)
 }
 
 #===============================================================================
