@@ -76,10 +76,10 @@
              (##port-name port)))
            (filepos
             (##make-filepos line col off)))
-      (##make-locat container filepos))))
+      (##make-locat container filepos #f))))
 
 (def (display-location loc (port (current-output-port)))
-  (##display-locat (location->source-location loc)  #t port))
+  (##display-locat (location->source-location loc) #t port))
 
 ;; location [start end]
 (def (location-delta start end)
