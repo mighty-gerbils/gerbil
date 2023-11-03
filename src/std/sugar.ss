@@ -8,6 +8,7 @@
   catch
   finally
   try
+  ignore-errors
   with-destroy
   defmethod/alias
   using-method
@@ -106,6 +107,8 @@
             (_ (lp #'rest (cons #'hd body)))))
          (() ; no clauses, just a begin
           (cons 'begin (reverse body))))))))
+
+(defrule (ignore-errors form ...) (with-catch false (lambda () form ...)))
 
 (defrule (with-destroy obj body ...)
   (let ($obj obj)
