@@ -121,6 +121,17 @@ module.exports = {
                         ]
                       },
 
+                      { title: "Unix Command Line Interface",
+                        path: "/reference/std/cli/",
+                        children: [
+                            "cli/",
+                            "cli/getopt",
+                            "cli/shell",
+                            "cli/print-exit",
+                            "cli/multicall",
+                        ]
+                      },
+
                       { title: "Databases and Key-Value Stores",
                         path: "/reference/std/db/",
                         children: [

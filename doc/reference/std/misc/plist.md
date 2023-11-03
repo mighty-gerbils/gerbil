@@ -42,7 +42,7 @@ form: `((key1 value1 key2 value2 ...))`
 ```
 :::
 
-## alist-&gt;plist
+## alist->plist
 ``` scheme
 (alist->plist alist) -> plist | error
 

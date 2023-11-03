@@ -20,7 +20,7 @@ it is considered a single value.
 Returns the *n*th value in the object *obj*. If the object is not multiple `values`,
 it returns the object itself.
 
-### values-&gt;list
+### values->list
 ``` scheme
 (values->list obj) -> list
 
@@ -30,7 +30,7 @@ it returns the object itself.
 Converts multiple `values` to a list. If the object *obj* is not multiple `values`,
 it returns a list containing the object.
 
-### subvector-&gt;list
+### subvector->list
 ``` scheme
 (subvector->list obj [start = 0]) -> list
 

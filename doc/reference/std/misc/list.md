@@ -6,7 +6,7 @@
 ```
 :::
 
-## length=?, length&lt;? ... length&gt;=? ##
+## length=?, length<? ... length>=? ##
 
 ```scheme
 (length=?  lst1 lst2) -> boolean
@@ -53,7 +53,7 @@ Also, either of these two lists is allowed to be circular, but not both.
 ```
 :::
 
-## length=n?, length&lt;n? ... length&gt;=n? ##
+## length=n?, length<n? ... length>=n? ##
 
 ```scheme
 (length=n?  lst n) -> boolean | error

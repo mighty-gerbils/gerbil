@@ -2,10 +2,6 @@
 ;;; © vyzo
 ;;; actor ensemble management tool
 (import :gerbil/expander
-        :std/sugar
-        :std/iter
-        :std/getopt
-        :std/logger
         :std/actor
         :std/actor-v18/cookie
         :std/actor-v18/server
@@ -13,9 +9,13 @@
         :std/actor-v18/registry
         :std/actor-v18/path
         :std/actor-v18/tls
-        :std/os/hostname
+        :std/cli/getopt
+        :std/iter
+        :std/logger
         :std/misc/ports
         :std/misc/process
+        :std/os/hostname
+        :std/sugar
         :std/text/hex)
 (export main)
 

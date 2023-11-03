@@ -8,8 +8,8 @@ package: misc/rpc-perf
 
 (import :gerbil/gambit
         :std/actor
+        :std/cli/getopt
         :std/net/address
-        :std/getopt
         :std/sugar)
 (export main (proto-out null-proto))
 

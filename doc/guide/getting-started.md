@@ -180,7 +180,7 @@ $ cat hello/lib.ss
 $ cat hello/main.ss
 ;;; -*- Gerbil -*-
 (import :std/sugar
-        :std/getopt
+        :std/cli/getopt
         ./lib)
 (export main)
 
@@ -192,7 +192,7 @@ $ cat hello/main.ss
   (call-with-getopt hello-main args
     program: "hello"
     help: "A one line description of your program"
-    ;; commands/options/flags for your program; see :std/getopt
+    ;; commands/options/flags for your program; see :std/cli/getopt
     ;; ...
     ))
 
@@ -268,12 +268,12 @@ $ cat hello/lib.ss
   (displayln greeting ", " who))
 ```
 
-And in the generated `hello/main.ss` file, we add a [getopt](/reference/std/getopt.md) option for a single argument and implement `hello-main/options` to greet:
+And in the generated `hello/main.ss` file, we add a [getopt](/reference/std/cli/getopt.md) option for a single argument and implement `hello-main/options` to greet:
 ```scheme
 $ cat hello/main.ss
 ;;; -*- Gerbil -*-
 (import :std/sugar
-        :std/getopt
+        :std/cli/getopt
         ./lib)
 (export main)
 

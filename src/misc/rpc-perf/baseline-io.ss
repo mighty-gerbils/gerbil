@@ -2,9 +2,9 @@
 package: misc/rpc-perf
 
 (import :gerbil/gambit
+        :std/cli/getopt
         :std/net/socket
-        :std/sugar
-        :std/getopt)
+        :std/sugar)
 (export main)
 
 (def (run-client address count)

@@ -1,11 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; transparent TCP proxy using stdio
-(import :std/sugar
+(import :std/cli/getopt
         :std/logger
-        :std/getopt
         :std/net/address
-        :std/io)
+        :std/io
+        :std/sugar)
 (export main)
 
 (deflogger tcp-proxy)

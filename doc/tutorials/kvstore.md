@@ -266,7 +266,7 @@ Here is the code:
     (call-with-input-file input read)))
 ```
 
-The client uses [getopt](/reference/std/getopt.md) to parse the command line arguments,
+The client uses [getopt](/reference/std/cli/getopt.md) to parse the command line arguments,
 and interacts with the kvstore server using the methods defined in [proto.ss](https://github.com/mighty-gerbils/gerbil/blob/master/src/tutorial/kvstore/proto.ss).
 
 ## Example interaction

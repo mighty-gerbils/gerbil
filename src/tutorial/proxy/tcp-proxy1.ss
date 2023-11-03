@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; transparent TCP proxy using low level socket programming
-(import :std/os/socket
-        :std/os/fd
-        :std/os/error
+(import :std/cli/getopt
         :std/event
-        :std/getopt
         :std/logger
+        :std/os/error
+        :std/os/fd
+        :std/os/socket
         :std/sugar)
 (export main)
 

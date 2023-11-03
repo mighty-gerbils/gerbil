@@ -681,7 +681,7 @@ Please document me!
 
 Please document me!
 
-### core-module-export-&gt;import
+### core-module-export->import
 ```
 (core-module-export->import ...)
 ```
