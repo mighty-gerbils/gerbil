@@ -1,14 +1,14 @@
 # List utilities
 
 ::: tip To use the bindings from this module:
-``` scheme
+```scheme
 (import :std/misc/list)
 ```
 :::
 
 ## length=?, length&lt;? ... length&gt;=? ##
 
-``` scheme
+```scheme
 (length=?  lst1 lst2) -> boolean
 (length<?  lst1 lst2) -> boolean
 (length<=? lst1 lst2) -> boolean
@@ -37,7 +37,7 @@ lengths up-front.
 Also, either of these two lists is allowed to be circular, but not both.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (import :std/srfi/1)
 > (def small (iota 10))   ; => (0 1 ... 9)
 > (def large (iota 100))  ; => (0 1 ... 99)
@@ -55,7 +55,7 @@ Also, either of these two lists is allowed to be circular, but not both.
 
 ## length=n?, length&lt;n? ... length&gt;=n? ##
 
-``` scheme
+```scheme
 (length=n?  lst n) -> boolean | error
 (length<n?  lst n) -> boolean | error
 (length<=n? lst n) -> boolean | error
@@ -83,7 +83,7 @@ the list for up to *n* elements instead of calculating *lst*'s length up-front.
 Also, *lst* is allowed to be circular.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (length=n? [#\a #\b #\c] 3)
 #t
 
@@ -98,7 +98,7 @@ Also, *lst* is allowed to be circular.
 
 ## snoc, append1 ##
 
-``` scheme
+```scheme
 (snoc elem lst) -> list | error
 
   elem := element to append to lst
@@ -112,7 +112,7 @@ Different from `cons`: `snoc` will signal an error when *lst* is not a proper
 list. `cons`, in contrast, constructs a pair out of these two input values.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (cons 4 [1 2 3])
 (4 1 2 3)
 
@@ -132,7 +132,7 @@ error    ; expects a list as second argument
 
 ## append1 ##
 
-``` scheme
+```scheme
 (append1 lst elem) -> list | error
 
   lst  := proper list
@@ -150,7 +150,7 @@ Note that `snoc` and `append1` have the same function body, just with
 their two arguments swapped.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (append [1 2 3] 4)
 (1 2 3 . 4)
 
@@ -170,7 +170,7 @@ error    ; expects a list as first argument
 
 ## for-each! ##
 
-``` scheme
+```scheme
 (for-each! lst proc) -> void
 
   lst  := proper or even improper list
@@ -182,7 +182,7 @@ swapped which allows better nesting. Another slight difference: `for-each!` even
 accepts improper lists.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def exprs [[2 + 0] [2 - 0] [0 * 2] [2 / 0] [0 / 2]])
 
 > (for-each (match <>
@@ -217,7 +217,7 @@ error    ; list expected
 
 ## push! ##
 
-``` scheme
+```scheme
 (push! elem lst) -> unspecified | error
 
   elem := element to cons onto lst
@@ -231,7 +231,7 @@ Note that the argument order is element first and list second,
 as is traditional with the original Lisp `PUSH` macro.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def lst [])
 > (push! 10 lst)
 > (push! 20 lst)
@@ -251,7 +251,7 @@ error    ; uses set! internally, requires valid binding
 
 ## pop! ##
 
-``` scheme
+```scheme
 (pop! lst) -> #f | elem
 
   elem := first element from lst
@@ -263,7 +263,7 @@ the car of that cons cell, and sets *lst* to the cdr of that cons cell,
 otherwise returns `#f`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def lst [])
 > (pop! lst)
 #f
@@ -280,7 +280,7 @@ otherwise returns `#f`.
 
 ## flatten ##
 
-``` scheme
+```scheme
 (flatten tree) -> list
 
   tree := nested list of lists
@@ -306,7 +306,7 @@ left to right into a list, that is returned.
 
 ## flatten1 ##
 
-``` scheme
+```scheme
 (flatten1 lst) -> list | error
 
   lst := proper nested list-of-lists
@@ -320,7 +320,7 @@ Note: *lst* is expected to be a list of proper lists, association lists will
 signal an error.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (flatten1 [1 [2 3] [[4 5]]])
 (1 2 3 (4 5))
 
@@ -340,7 +340,7 @@ error    ; expects proper non-dotted list-of-lists
 
 ## unique, unique! ##
 
-``` scheme
+```scheme
 (unique lst [test = equal?]) -> list
 
   lst  := proper list
@@ -349,7 +349,7 @@ error    ; expects proper non-dotted list-of-lists
 Alias for `delete-duplicates` and `delete-duplicates!` ([SRFI 1](https://srfi.schemers.org/srfi-1/srfi-1.html#delete-duplicates)).
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (unique [1 2 3 2])
 (1 2 3)
 
@@ -359,9 +359,56 @@ Alias for `delete-duplicates` and `delete-duplicates!` ([SRFI 1](https://srfi.sc
 ```
 :::
 
+## delete-duplicates/hash ##
+```scheme
+(delete-duplicates/hash lst
+  [table: (make-hash-table)]
+  [key: identity]
+  [from-end?: #f]) -> list
+
+  lst       := list from which to delete elements
+  table     := a hash-table with suitable test function and initial elements to detect duplicates
+  key       := optional unary procedure to get the to compare item out of a list element
+  from-end? := optional boolean to delete from the end rather than from the start
+```
+`delete-duplicates/hash` returns a copy of the list
+from which duplicates are removed,
+using an algorithm in `O(n)` backed by the optional hash-table `table`.
+
+If no `table` is specified, the default is to create a new one that uses
+the `equal?` predicate. By overriding this default, the user may select
+a different equality predicate, pre-fill a number of already seen entries to
+remove, and/or keep a set of entries seen for later use or reuse.
+
+The `key` function, which defaults to `identity`, specifies
+which part of each element must be seen only once.
+The `from-end?:` flag if true specifies that latter elements will be deleted,
+instead or earlier elements (if the flag is false, the default).
+Thus, for instance, keyword arguments `key: car from-end? #t` can be used
+to remove redundant entries in an `alist`.
+
+`delete-duplicates/hash` is more efficient than
+`unique`, `unique!`, `delete-duplicates`, `delete-duplicates!`
+that have quadratic cost, in exchange for which it only works
+for the builtin equality predicates `equal?`, `eqv?`, `eq?`.
+
+::: tip Examples:
+```scheme
+> (delete-duplicates/hash '(a b c d a e f c))
+(b d a e f c)
+> (delete-duplicates/hash '(a b c d a e f c) from-end?: #t)
+(a b c d e f)
+> (delete-duplicates/hash '(a b c d a e f c) table: (hash (a #f)))
+(b d e f c)
+> (delete-duplicates/hash '((a 1) (b 2) (c 3) (a 4) (d 5) (c 6))
+                          from-end?: #t key: car)
+((a 1) (b 2) (c 3) (d 5))
+```
+:::
+
 ## duplicates ##
 
-``` scheme
+```scheme
 (duplicates lst [test = equal?] [key: #f]) -> list
 
   lst  := proper list
@@ -373,7 +420,7 @@ that occurs more than once in `lst`. If `key:` is not `#f`
 the unary procedure is applied to every element before comparison.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (duplicates ['a 1 'a])
 ((a . 2))
 
@@ -387,7 +434,7 @@ the unary procedure is applied to every element before comparison.
 
 ## rassoc ##
 
-``` scheme
+```scheme
 (rassoc elem alist [pred = eqv?]) -> pair | #f
 
   elem  := element to search for in alist
@@ -403,7 +450,7 @@ Returns the first pair in *alist* whose `cdr` satisfies the predicate *pred*, or
 otherwise.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (rassoc 2 '((a . 1) (b . 2) (c . 2) (d . 1)))
 (b . 2)
 
@@ -420,7 +467,7 @@ otherwise.
 
 ## when/list ##
 
-``` scheme
+```scheme
 (when/list cond lst) -> list  | []
 
   cond := expression that evaluates to a generalized boolean
@@ -432,7 +479,7 @@ It is meant to be used when a list is expected, for instance, a list of options 
 that are only defined when some feature is enabled or other condition is true.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (when/list #t [mykw: 42])
 (mykw: 42)
 > (when/list #f [mykw: 42])
@@ -444,7 +491,7 @@ that are only defined when some feature is enabled or other condition is true.
 
 ## when-list-or-empty ##
 
-``` scheme
+```scheme
 (when-list-or-empty lst body ...) -> body ... | []
 
   lst := value or list on which expansion depends
@@ -454,7 +501,7 @@ Macro which expands to *body* expressions only if *lst* is a non-empty list,
 otherwise an empty list is returned.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (let (nums [1 2 3])
     (when-list-or-empty nums
       (cdr nums)))
@@ -468,7 +515,7 @@ otherwise an empty list is returned.
 
 ## listify ##
 
-``` scheme
+```scheme
 (listify x) -> list
 
   x := expression that is returned if a list, or else [] is returned
@@ -478,7 +525,7 @@ otherwise an empty list is returned.
 otherwise return the empty list `[]`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (listify 42)
 ()
 > (listify [])
@@ -492,7 +539,7 @@ otherwise return the empty list `[]`.
 
 ## keyword-when ##
 
-``` scheme
+```scheme
 (keyword-when cond [value]) -> list
 
   keyword := arbitrary value, usually a keyword
@@ -507,7 +554,7 @@ If `value` is not specified, the non-false value returned by `cond` is used
 `keyword` doesn't actually have to be a keyword.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (keyword-when mykw: #t 42)
 (mykw: 42)
 > (keyword-when mykw: #f 42)
@@ -525,7 +572,7 @@ If `value` is not specified, the non-false value returned by `cond` is used
 
 ## slice ##
 
-``` scheme
+```scheme
 (slice lst start [limit = #f]) -> list
 
   lst   := proper list
@@ -537,7 +584,7 @@ Returns a list from `lst`, starting from the left at `start`,
 containing `limit` elements.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (slice [1 2 3 4] 2)
 (3 4)
 
@@ -548,7 +595,7 @@ containing `limit` elements.
 
 ## slice-right ##
 
-``` scheme
+```scheme
 (slice-right lst start [limit = #f]) -> list
 
   lst   := proper list
@@ -560,7 +607,7 @@ Returns a list from `lst`, starting from the right at `start`,
 containing `limit` elements.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (slice-right [1 2 3 4] 2)
 (1 2)
 
@@ -571,7 +618,7 @@ containing `limit` elements.
 
 ## slice! ##
 
-``` scheme
+```scheme
 (slice! lst start [limit = #f]) -> list
 
   lst   := proper list
@@ -583,7 +630,7 @@ Returns a sublist by potentially updating the input list `lst`.
 Starting from the left at `start`, containing `limit` elements.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def lst [1 2 3 4 5])
 > (slice! lst 2 2)
 (3 4)
@@ -592,7 +639,7 @@ Starting from the left at `start`, containing `limit` elements.
 
 ## slice-right! ##
 
-``` scheme
+```scheme
 (slice-right! lst start [limit = #f]) -> list
 
   lst   := proper list
@@ -604,7 +651,7 @@ Returns a sublist by potentially updating the input list `lst`.
 Starting from the right at `start`, containing `limit` elements.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def lst [1 2 3 4 5])
 > (slice-right! lst 2 2)
 (2 3)
@@ -613,7 +660,7 @@ Starting from the right at `start`, containing `limit` elements.
 
 ## butlast ##
 
-``` scheme
+```scheme
 (butlast lst) -> list
 
   lst   := proper list
@@ -623,7 +670,7 @@ Starting from the right at `start`, containing `limit` elements.
 When `lst` is empty, `lst` is returned as it is.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (butlast [1 2 3])
 (1 2)
 
@@ -634,7 +681,7 @@ When `lst` is empty, `lst` is returned as it is.
 
 ## split ##
 
-``` scheme
+```scheme
 (split lst proc [limit = #f]) -> list
 
   lst   := proper list
@@ -645,7 +692,7 @@ split the list `lst` into a list-of-lists using the value or
 unary procedure `stop`. If limit is set, split the list only limit times.
 
 ::: tip Examples:
-``` scheme
+```scheme
 (split '(1 2 "hi" 3 4) string?)
 > ((1 2) (3 4))
 
@@ -661,7 +708,7 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 
 ## take-until! ##
 
-``` scheme
+```scheme
 (take-until pred lst) -> list
 
   pred := predicate
@@ -672,7 +719,7 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 `take-until!` is the linear-update variant of `take-until`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (take-until number? ['a "hi" 1 'c])
 (a "hi")
 ```
@@ -680,7 +727,7 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 
 ## drop-until ##
 
-``` scheme
+```scheme
 (drop-until pred lst) -> list
 
   pred := predicate
@@ -690,7 +737,7 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 `drop-until` returns a list with all elements from the point on `pred` returns `#t`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (drop-until number? ['a [] "hi" 1 'c])
 (1 c)
 ```
@@ -698,7 +745,7 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 
 ## group-consecutive ##
 
-``` scheme
+```scheme
 (group-consecutive lst [test = equal?]) -> list
 
   lst  := proper list
@@ -709,7 +756,7 @@ wherein elements that satisfy the predicate with the previous element
 are put in the same list, but those that don't are put in the next list.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (group-consecutive [1 2 2 3 1 1])
 ((1) (2 2) (3) (1 1))
 
@@ -724,7 +771,7 @@ are put in the same list, but those that don't are put in the next list.
 
 ## group-n-consecutive ##
 
-``` scheme
+```scheme
 (group-n-consecutive n lst) -> list-of-list
 
   n    := a positive integer
@@ -740,7 +787,7 @@ If `lst` is an improper list, the last element of the result will be an
 improper list with the same terminator.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (group-n-consecutive 2 [1 2 2 3 1 1])
 ((1 2) (2 3) (1 1))
 
@@ -761,7 +808,7 @@ improper list with the same terminator.
 
 ## group-same ##
 
-``` scheme
+```scheme
 (group-same lst key: [key] table: [table]) -> list-of-list
 
   lst   := list
@@ -781,7 +828,7 @@ and are each lists containing elements with the same key
 in the same order as their appear in the original list.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (group-same [1 2 2 3 1])
 ((1 1) (2 2) (3))
 
@@ -792,7 +839,7 @@ in the same order as their appear in the original list.
 
 ## map/car ##
 
-``` scheme
+```scheme
 (map/car f pair)
 
   f    := function acting on the car of the pair
@@ -801,7 +848,7 @@ in the same order as their appear in the original list.
 returns a new pair where the first element (car) has been transformed by the function `f`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (map/car (cut * 10 <>) (cons 3 4))
 (30 . 4)
 ```
@@ -809,7 +856,7 @@ returns a new pair where the first element (car) has been transformed by the fun
 
 ## every-consecutive? ##
 
-``` scheme
+```scheme
 (every-consecutive? pred lst)
 ```
 returns a boolean that is true if any two consecutive terms in the list satisfy the predicate.
@@ -818,7 +865,7 @@ order predicate), then the list is totally ordered (respectively strictly totall
 according to the predicate.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (every-consecutive? <= [1 2 2 3 10 100])
 #t
 
@@ -829,7 +876,7 @@ according to the predicate.
 
 ## separate-keyword-arguments ##
 
-``` scheme
+```scheme
 (separate-keyword-arguments args [positionals-only]) -> (values positional-args keyword-args)
 ```
 Given a list of arguments passed to a function, return two values,
@@ -847,7 +894,7 @@ are filtered off so the first value is ready to be matched positionally
 against a list of variables of the same length (and/or with a rest argument).
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (separate-keyword-arguments '(x a: 1 y b: 2 c: 3 z))
 (x y z)
 (a: 1 b: 2 c: 3)
@@ -864,14 +911,14 @@ against a list of variables of the same length (and/or with a rest argument).
 
 ## first-and-only ##
 
-``` scheme
+```scheme
 (first-and-only lst)
 ```
 returns the first and only value of a singleton list,
 or raises an error if the argument wasn't a singleton list.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (first-and-only '(42))
 42
 
