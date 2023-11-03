@@ -47,9 +47,8 @@
   (or (codepoint-ascii-alphanumeric? c) (= c 95)))
 
 ;; : Codepoint -> Bool
-(def-codepoint (ascii-graphic? c) ;; any ascii "graphic" character
-  (<= 32 c 127))
-
+(def-codepoint (ascii-printable? c) ;; any ascii printable character
+  (<= 32 c 126)) ;; see https://en.wikipedia.org/wiki/ASCII
 
 ;;; There is no consensus on what a Unicode "whitespace" is.
 ;; See https://en.wikipedia.org/wiki/Whitespace_character
@@ -91,11 +90,11 @@
 ;; to identify its specific definition of "whitespace".
 
 ;; : Codepoint -> Bool
-(def-codepoint (ascii-printable? c) ;; Should we really include 127 though?
-  (or (codepoint-ascii-graphic? c) (codepoint-ascii-whitespace? c)))
+(def-codepoint (ascii-printable-or-whitespace? c)
+  (or (codepoint-ascii-printable? c) (codepoint-ascii-whitespace? c)))
 
 ;; Assume ASCII, base 2 to 36
-;; : Codepoint -> (OrFalse (IntegerRange min: 0 max: 35))
+;; : Codepoint ?(IntegerRange min: 2 max: 36) -> (OrFalse (IntegerRange min: 0 max: 35))
 (def (codepoint-ascii-digit c (base 10))
   (let (found (lambda (d) (and (< d base) d)))
     (cond

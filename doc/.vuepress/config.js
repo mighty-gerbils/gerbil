@@ -137,6 +137,7 @@ module.exports = {
                         children: [
                             "text/",
                             "text/json",
+                            "text/char-set",
                             "text/csv",
                             "text/utf8",
                             "text/utf16",
