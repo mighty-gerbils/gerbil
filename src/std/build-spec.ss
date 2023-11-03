@@ -74,6 +74,7 @@
     "io/socket/socket"
     "io/socket/api"
     ;; debugging
+    "debug/DBG"
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"
     (gxc: "debug/threads" ,@(include-gambit-sharp))
