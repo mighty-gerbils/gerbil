@@ -57,6 +57,11 @@
       (check-exception (in-ctx (lambda () (check depth => 1) (error "foo"))) true)
       (check depth => 0))
 
+    (test-case "ignore-errors"
+      (check (ignore-errors 1 2 3) => 3)
+      (check (ignore-errors 1 (error "foo") 3) => #f)
+      (check (ignore-errors 1 2 #f) => #f))
+
     (test-case "with-destroy"
       (check (let (a (A)) [(with-destroy a (A-a a)) (A-a a)]) => '(open closed))
       (def b (A))
