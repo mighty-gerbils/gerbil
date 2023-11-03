@@ -294,7 +294,7 @@ Accesses *obj*'s field with absolute offset *off*; there is no type check.
 
 Mutates *obj*'s field with absolute offset *off* to *val*; there is no type check.
 
-## struct-&gt;list
+## struct->list
 ``` scheme
 (struct->list obj) -> list
 
@@ -482,7 +482,7 @@ Returns the value associated with slot *slot* in *obj*, without any checks.
 
 Sets the value associated with slot *slot* in *obj* to *val*, without any checks.
 
-## class-&gt;list
+## class->list
 ``` scheme
 (class->list obj)
 

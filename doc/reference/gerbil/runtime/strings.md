@@ -1,6 +1,6 @@
 # Strings
 
-## bytes-&gt;string
+## bytes->string
 ```
 (bytes->string bstr [encoding = 'UTF-8]) -> string
 
@@ -12,7 +12,7 @@ Decodes a byte vector *bstr* to a string.
 Note: if you are decoding UTF-8, then you should consider using `string->utf8`
 from `:std/text/utf8` which is considerably faster.
 
-## string-&gt;bytes
+## string->bytes
 ``` scheme
 (string->bytes str [encoding = 'UTF-8]) -> u8vector
 
@@ -25,7 +25,7 @@ Note: if you are encoding UTF-8, then you should consider using `utf8->string`
 from `:std/text/utf8` which is considerably faster.
 
 
-## substring-&gt;bytes
+## substring->bytes
 ``` scheme
 (substring->bytes str start end [encoding = 'UTF-8]) -> u8vector
 

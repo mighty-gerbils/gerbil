@@ -32,7 +32,7 @@ Returns true if the object *obj* is an interned symbol.
 
 Returns true if the object *obj* is an interned keyword.
 
-## symbol-&gt;keyword
+## symbol->keyword
 ``` scheme
 (symbol->keyword sym) -> keyword
 
@@ -41,7 +41,7 @@ Returns true if the object *obj* is an interned keyword.
 
 Converts a symbol *sym* to a keyword.
 
-## keyword-&gt;symbol
+## keyword->symbol
 ``` scheme
 (keyword->symbol kw) -> symbol
 

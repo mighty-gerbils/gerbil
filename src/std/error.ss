@@ -29,7 +29,11 @@
         (rename: raise-bug BUG)
         is-it-bug?
         with-exception-stack-trace
-        dump-stack-trace!)
+        dump-stack-trace!
+        exit-with-error
+        exit-on-error?
+        call-with-exit-on-error
+        with-exit-on-error)
 
 ;; utility macro for definint error classes
 (defsyntax (deferror-class stx)
@@ -126,7 +130,7 @@
   (IOError message irritants: [irritants ...]))
 
 (defraise/context (raise-premature-end-of-input where irritants ...)
-  (PrematureEndOfInput "premature end of input"  irritants: [irritants ...]))
+  (PrematureEndOfInput "premature end of input" irritants: [irritants ...]))
 
 (defraise/context (raise-io-closed where message irritants ...)
   (Closed message irritants: [irritants ...]))
@@ -352,3 +356,31 @@
    wrong-number-of-values-exception-vals)
 
   (wrong-processor-c-return-exception?))
+
+(def exit-on-error? (make-parameter #t))
+
+(def (exit-with-error e)
+  (def port (current-error-port))
+  (defrules ignore-errors () ((_ body ...) (with-catch void (lambda () body ...))))
+  (ignore-errors (force-output port))
+  (ignore-errors (display-build-manifest build-manifest port))
+  (ignore-errors (newline port))
+  (ignore-errors (display-exception e port))
+  ;; If the stack trace was printed, making the message out of reach of the user,
+  ;; then redundantly print the error message at the bottom without the stack trace.
+  (ignore-errors
+   (when (StackTrace? e)
+     (display-exception e port)))
+  (ignore-errors (force-output port))
+  (exit 2))
+
+(def (call-with-exit-on-error thunk)
+  (with-catch
+    (lambda (e)
+      (if (exit-on-error?)
+        (exit-with-error e)
+        (raise e)))
+    thunk))
+
+(defrules with-exit-on-error ()
+  ((_ body ...) (call-with-exit-on-error (lambda () body ...))))

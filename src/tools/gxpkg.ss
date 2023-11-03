@@ -23,17 +23,17 @@
 ;;; TODO: add private repos support
 
 (import :gerbil/gambit
+        :std/cli/getopt
         :std/format
-        :std/getopt
-        :std/sugar
         :std/iter
-        :std/sort
-        :std/pregexp
-        :std/net/request
         :std/misc/process
         :std/misc/template
+        :std/net/request
+        :std/pregexp
+        :std/sort
+        (only-in :std/srfi/1 reverse!)
         (only-in :std/srfi/13 string-trim)
-        (only-in :std/srfi/1 reverse!))
+        :std/sugar)
 (export main
         ;; script api
         pkg-root-dir
@@ -1108,7 +1108,7 @@ END
 ;;; -*- Gerbil -*-
 (import :std/error
         :std/sugar
-        :std/getopt
+        :std/cli/getopt
         ./lib)
 (export main)
 
@@ -1120,7 +1120,7 @@ END
   (call-with-getopt ${name}-main args
     program: "${name}"
     help: "A one line description of your program"
-    ;; commands/options/flags for your program; see :std/getopt
+    ;; commands/options/flags for your program; see :std/cli/getopt
     ;; ...
     ))
 

@@ -40,7 +40,7 @@ A proper association list is a list of pairs and may be of the following forms:
 ```
 :::
 
-## plist-&gt;alist
+## plist->alist
 ``` scheme
 (plist->alist plist) -> alist | error
 

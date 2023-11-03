@@ -37,6 +37,11 @@
     "amb"
     "contract"
     (gxc: "interface" ,@(include-gambit-sharp))
+    ;; cli
+    "cli/getopt"
+    "cli/shell"
+    "cli/print-exit"
+    "cli/multicall"
     ;; stdio
     "io"
     "io/interface"

@@ -1,6 +1,6 @@
 ;; -*- Gerbil -*-
-(import :std/io
-        :std/getopt
+(import :std/cli/getopt
+        :std/io
         :std/sugar
         :std/text/utf8)
 (export main)

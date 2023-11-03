@@ -2,8 +2,8 @@
 package: misc/rpc-perf
 
 (import :gerbil/gambit
-        :std/sugar
-        :std/getopt)
+        :std/cli/getopt
+        :std/sugar)
 (export main)
 
 (defstruct message ()

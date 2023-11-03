@@ -1,9 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; "production  httpd executable
-(import :std/getopt
-        :std/actor
+(import :std/actor
         :std/actor-v18/registry
+        :std/cli/getopt
         :std/sugar)
 (export main)
 
