@@ -10,18 +10,20 @@
   string-trim-eol
   string-subst
   string-substitute-char
+  string-substitute-char-if
   string-whitespace?
   random-string
   str str-format
-  +cr+ +lf+ +crlf+)
+  +cr+ +lf+ +crlf+
+  as-string<?)
 
 (import
   (only-in :gerbil/gambit write-substring write-string random-integer)
-  :std/error
-  :std/srfi/13
-  :std/format
-  :std/iter
-  ./number)
+  (only-in :std/error raise-bad-argument)
+  (only-in :std/srfi/13 string-every string-suffix? string-drop-right string-drop)
+  (only-in :std/format format fprintf)
+  (only-in :std/iter for in-range)
+  (only-in ./number decrement!))
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -300,8 +302,11 @@
           (cond
            (test (lambda (x) (test oldchar (key x))))
            (test-not (lambda (x) (not (test-not oldchar (key x)))))
-           (key (lambda (x) (eqv? oldchar (key x))))
+           (key (lambda (x) (equal? oldchar (key x))))
            (else (cut eqv? oldchar <>)))))
     (string-substitute-char-if
      string newchar predicate
      start: start end: end count: count from-end: from-end? in-place: in-place?)))
+
+(def (as-string<? x y)
+  (string<? (as-string x) (as-string y)))
