@@ -52,7 +52,7 @@
 
 ;; Note how the current implementation ensures that the cons cell whose car
 ;; holds the value for a given key will never change, though there is
-;; currently no agetq-cell function to get to it.
+;; currently no assgetq-cell function to get to it.
 ;; Also, we privilege recently added keys by pushing them to the front of the
 ;; alist rather than to its end.
 (defrule (define-aset! aset! cmp)

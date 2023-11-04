@@ -99,6 +99,27 @@ closed
 ```
 :::
 
+## ignore-errors
+```scheme
+(ignore-errors body ...)
+```
+
+Evaluates body with an exception catcher that returns `#f` if an exception happened.
+This is useful when attempting recovery side-effects on a “best effort” basis,
+when trying out some user-specified computation that ought to return
+something other than `#f` (or for which `#f` is otherwise a useful way to flag error), etc.
+
+::: tip Examples:
+```scheme
+> (ignore-errors 1 2 3)
+3
+> (ignore-errors 1 (error "foo") 3)
+#f
+> (ignore-errors 1 2 #f)
+#f
+```
+:::
+
 ## defmethod/alias
 ```scheme
 (defmethod/alias {method (alias ...) type}

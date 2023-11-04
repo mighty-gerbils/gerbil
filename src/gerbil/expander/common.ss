@@ -26,7 +26,7 @@ namespace: gx
          (generate1 hd #'pat #t #'body E))
         ((pat fender body)
          (generate1 hd #'pat #'fender #'body E))
-        (_ (raise-syntax-error #f "Bad syntax" stx hd))))
+        (_ (raise-syntax-error #f "Bad syntax; invalid syntax-case pattern" stx hd))))
 
     (def (generate1 where hd fender body E)
       (def (recur hd tgt K)
@@ -79,7 +79,7 @@ namespace: gx
                  [#'if #'(eql (stx-e target) 'datum)
                    K E]))
               (else
-               (raise-syntax-error #f "Bad syntax" stx where hd))))))
+               (raise-syntax-error #f "Bad syntax; invalid syntax-case head" stx where hd))))))
 
       (recur hd tgt [#'if fender body E]))
 
@@ -95,7 +95,7 @@ namespace: gx
                             #'(lambda () (begin . body))
                             (stx-source #'hd))]
                         r)
-                  (raise-syntax-error #f "Bad syntax" stx #'hd))
+                  (raise-syntax-error #f "Bad syntax; invalid else body" stx #'hd))
                 (raise-syntax-error #f "Bad syntax; misplaced else"
                                     stx #'hd)))
              (_ (with-syntax* (($E (genident 'E))
@@ -108,7 +108,7 @@ namespace: gx
                   (lp #'rest #'$E (cons [E #'try] r))))))
           (_ (with-syntax ((target tgt))
                (cons [E (stx-wrap-source
-                         #'(lambda () (raise-syntax-error #f "Bad syntax" target))
+                         #'(lambda () (raise-syntax-error #f "Bad syntax; invalid syntax-case clause" target))
                          (stx-source stx))]
                      r))))))
 
