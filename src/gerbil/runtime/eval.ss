@@ -128,7 +128,7 @@ namespace: #f
        => (lambda (bind)
             ((__syntax-e bind) stx)))
       (else
-       (__raise-syntax-error #f "Bad syntax" stx form))))))
+       (__raise-syntax-error #f "Bad syntax; cannot resolve form" stx form))))))
 
 (def (__compile-error stx (detail #f))
   (__raise-syntax-error 'compile "Bad syntax; cannot compile" stx detail))
