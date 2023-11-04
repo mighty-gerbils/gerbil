@@ -8,14 +8,14 @@ These are miscallenous libraries useful for debugging running programs.
 :::
 
 ### memory-usage
-```
+```scheme
 (memory-usage)
 ```
 
 Aggregates useful memory statistics.
 
 Example:
-```
+```scheme
 > (memory-usage)
 ((gc-heap-size . 31101000)
  (gc-alloc . 35786424)
@@ -26,7 +26,7 @@ Example:
 ```
 
 ### heap-type-stats
-```
+```scheme
 (heap-type-stats) -> (values live-objects type-table)
 ```
 
@@ -34,14 +34,14 @@ Returns two values, the number of live objects and a table containing
 a count for each type of live object.
 
 ### dump-heap-stats!
-```
+```scheme
 (dump-heap-stats! (port (current-error-port)))
 ```
 
 Dumps the current live heap statistics to `port`.
 
 Example:
-```
+```scheme
 > (dump-heap-stats!)
 === memory usage ===
 gc-heap-size: 31118680
@@ -140,7 +140,7 @@ gx#root-context::t 1
 ```
 
 ### walk-heap!
-```
+```scheme
 (walk-heap! walk: (walk #f) root: (root #f)) -> hash-table
 ```
 
@@ -150,7 +150,7 @@ and optionally using `walk` as the function for walking container objects.
 Returns a table of all visited objects.
 
 ### count-still
-```
+```scheme
 (count-still) -> (values still refcounted)
 ```
 
@@ -158,14 +158,14 @@ Returns two values: the number of still objects and how many of them are
 reference counted in the heap.
 
 ### still-objects
-```
+```scheme
 (still-objects ...)
 ```
 
 Counts the still objects in the heap.
 
 ### still-objects/refcount
-```
+```scheme
 (still-objects/refcount ...)
 ```
 
@@ -178,28 +178,28 @@ Counts the reference counted objects in the heap.
 :::
 
 ### heap-summary
-```
+```scheme
 (heap-summary)
 ```
 
 Returns a differentiable heap summary.
 
 ### heap-summary-delta
-```
+```scheme
 (heap-summary-delta old new)
 ```
 
 Differentiates two heap summaries.
 
 ### dump-heap-summary!
-```
+```scheme
 (dump-heap-summary! summary (port (current-error-port)))
 ```
 
 Dumps a heap summary to `port`.
 
 Example:
-```
+```scheme
 > (dump-heap-summary! (heap-summary))
 ==================================
 timestamp: 1696260626.4030066
@@ -303,7 +303,7 @@ gx#root-context::t: 1
 ```
 
 ### watch-heap!
-```
+```scheme
 (watch-heap! (port (current-error-port))
               delay: (initial-delay 60)
               period: (period (* 60 15))
@@ -320,7 +320,7 @@ after `initial-delay`.
 :::
 
 ### dump-all-threads!
-```
+```scheme
 (dump-all-threads! (port (current-error-port))
                    (filter true))
 ```
@@ -329,7 +329,7 @@ Dumps the state of all threads that satisfy the `filter` procedure.
 
 
 ### dump-all-threads/queue!
-```
+```scheme
 (dump-all-threads/queue! (port (current-error-port)))
 ```
 
@@ -337,7 +337,7 @@ Dumps all threads with a non empty message queue (mailbox).
 
 
 ### dump-thread-group!
-```
+```scheme
 (dump-thread-group! (tg (current-thread-group))
                     (port (current-error-port))
                     (filter true))
@@ -348,7 +348,7 @@ the filter `filter`.
 
 
 ### dump-thread-group!*
-```
+```scheme
 (dump-thread-group!* (tg (current-thread-group))
                           (port (current-error-port))
                           (filter true))
@@ -357,7 +357,7 @@ the filter `filter`.
 Like `dump-thread-group!`, but also recursively dumps all child thread groups.
 
 ### dump-thread!
-```
+```scheme
 (dump-thread! thread (port (current-error-port)))
 ```
 
@@ -365,22 +365,71 @@ Dumps the state of a thread, including the size of its message queue
 and stack trace.
 
 ### dump-thread-stack-trace!
-```
+```scheme
 (dump-thread-stack-trace! thread (port (current-error-port)))
 ```
 
 Dumps a thread's stack trace.
 
 ### thread-queue-length
-```
+```scheme
 (thread-queue-length thread)
 ```
 
 Returns the current length of a thread's message queue.
 
 ### thread-queue-empty?
-```
+```scheme
 (thread-queue-empty? thread)
 ```
 
 Returns true if the `thread`'s message queue is empty.
+
+
+## Print-debugging utilities
+::: tip To use bindings from this module
+(import :std/debug/DBG)
+:::
+
+### DBG
+```scheme
+(DBG tag expr1 ... exprN) => values-of-the-last-expression
+```
+
+If the `tag` doesn't evaluate to `#f`, print the tag, then on separate lines
+the source of each expression `expr1` to `exprN` (as by `write`)
+followed by its single or multiple return values (as by `prn`).
+Finally, return the values of the last expression `exprN`.
+
+You can easily wrap an expression in a `DBG` form so as to print its value,
+together with the values of other relevant expressions,
+when trying to figure out where and how evaluation is failing your expectations
+in some part of your code.
+
+Example:
+```scheme
+> (define-values (x y z) (values 1 2 3))
+> (* 10 (DBG foo: x (values [(+ x y) z] #t) (+ x y z)))
+foo
+  x => 1
+  (values (@list (+ x y) z) #t) => [3 3] #t
+  (+ x y z) => 6
+60
+```
+In the above example the tag `foo` and the indented lines are printed by `DBG`,
+whereas the 60 is the final value returned and printed by the REPL.
+Notice how the `DBG` form returns the value of the last expression, 6,
+that subsequently got multiplied by 10 as per regular evaluation,
+to result in the final 60.
+
+### DBG-helper
+```
+(DBG-helper tag dbg-exprs dbg-thunks expr thunk) => values of the thunk
+```
+
+This is the function that `DBG` expands into, taking as parameters
+the `tag`, a list `dbg-exprs` of all-but-the-last expressions (quoted),
+a list `dbg-thunks` of thunks for all-but-the-last expressions,
+then the last expression `expr` (quoted) and the `thunk` for it.
+Your code can conceivably expand to calls to `DBG-helper` with e.g.
+suitable wrappings to tweak what expressions are printed.
