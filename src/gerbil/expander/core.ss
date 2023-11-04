@@ -251,7 +251,7 @@ namespace: gx
         (core-apply-expander (&syntax-binding-e bind) stx))
        ((not bind) stx)
        (else
-        (raise-syntax-error #f "Bad syntax" stx)))))
+        (raise-syntax-error #f "Bad syntax; no binding for head" stx)))))
 
   (core-syntax-case stx ()
     ((hd . _)
@@ -283,7 +283,7 @@ namespace: gx
   (def (expand-splice hd body rest r)
     (if (stx-list? body)
       (K (stx-foldr cons rest body) r)
-      (raise-syntax-error #f "Bad syntax" stx hd)))
+      (raise-syntax-error #f "Bad syntax; splice body isn't a list" stx hd)))
 
   (def (expand-cond-expand hd rest r)
     (K (cons (core-expand-cond-expand% hd) rest) r))
@@ -370,7 +370,7 @@ namespace: gx
          ((or)      (stx-ormap satisfied? body))
          ((defined) (stx-andmap core-resolve-identifier body))
          (else
-          (raise-syntax-error #f "Bad syntax" stx combinator))))))
+          (raise-syntax-error #f "Bad syntax; bad cond-expannd combinator" stx combinator))))))
 
   (def (loop rest)
     (core-syntax-case rest ()
@@ -380,7 +380,7 @@ namespace: gx
           (cond
            ((stx-eq? condition 'else)
             (if (stx-null? rest) body
-                (raise-syntax-error #f "Bad syntax" stx hd)))
+                (raise-syntax-error #f "Bad syntax; clauses after else" stx hd)))
            ((satisfied? condition)
             body)
            (else
@@ -419,11 +419,11 @@ namespace: gx
      (else (K stx))))
    ((bound-method-ref K method) => (cut core-apply-expander <> stx method))
    (else
-    (raise-syntax-error #f "Bad syntax" stx method))))
+    (raise-syntax-error #f "Bad syntax; no expander method" stx method))))
 
 (defmethod {apply-macro-expander expander}
   (lambda (self stx)
-    (raise-syntax-error #f "Bad syntax" stx)))
+    (raise-syntax-error #f "Bad syntax; bottom method for apply-macro-expander" stx)))
 
 (defmethod {apply-macro-expander macro-expander}
   (lambda (self stx)

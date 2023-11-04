@@ -1568,7 +1568,7 @@ package: gerbil
                     (values (foldl cons tail hd)
                             (foldl cons (list tail) body)
                             #t))
-                  (raise-syntax-error #f "Bad syntax" stx #'e)))
+                  (raise-syntax-error #f "Bad syntax; cut ellipsis <...> not in tail position" stx #'e)))
                (_ (lp #'rest hd (cons #'e body)))))
             (_ (values (reverse hd) (reverse body) #f)))))
 
@@ -2077,7 +2077,7 @@ package: gerbil
            (generate-typedef stx #'id #'super fields body #t))
           (_ (if (identifier? hd)
                (generate-typedef stx hd #f fields body #t)
-               (raise-syntax-error #f "Bad syntax" stx hd)))))
+               (raise-syntax-error #f "Bad syntax; struct name not an identifier" stx hd)))))
 
       (syntax-case stx ()
         ((_ hd fields . rest)
@@ -2096,7 +2096,7 @@ package: gerbil
            (generate-typedef stx #'id (syntax->list #'super) slots body #f))
           (_ (if (identifier? hd)
                (generate-typedef stx hd [] slots body #f)
-               (raise-syntax-error #f "Bad syntax" stx hd)))))
+               (raise-syntax-error #f "Bad syntax; class name should be an identifier" stx hd)))))
 
       (syntax-case stx ()
         ((_ hd slots . rest)
@@ -2972,7 +2972,7 @@ package: gerbil
     ((recur id match-e)
      (recur id match-e
             (lambda ($stx)
-              (raise-syntax-error #f "Bad syntax" $stx)))))
+              (raise-syntax-error #f "Bad syntax; no macro definition for defsyntax-for-match" $stx)))))
 
   (defrules defrules-for-match ()
     ((_ id . body)
@@ -3064,11 +3064,11 @@ package: gerbil
       (lambda () postlude rest ...))))
 
   (defsyntax (@bytes stx)
-  (syntax-case stx ()
-    ((_ str)
-     (stx-string? #'str)
-     (with-syntax ((e (string->bytes (stx-e #'str))))
-       #'(quote e)))))
+    (syntax-case stx ()
+      ((_ str)
+       (stx-string? #'str)
+       (with-syntax ((e (string->bytes (stx-e #'str))))
+         #'(quote e)))))
 
   ;; ...
   )
