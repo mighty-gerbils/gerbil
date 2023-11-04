@@ -384,7 +384,7 @@ The `key` function, which defaults to `identity`, specifies
 which part of each element must be seen only once.
 The `from-end?:` flag if true specifies that latter elements will be deleted,
 instead or earlier elements (if the flag is false, the default).
-Thus, for instance, keyword arguments `key: car from-end? #t` can be used
+Thus, for instance, keyword arguments `key: car from-end?: #t` can be used
 to remove redundant entries in an `alist`.
 
 `delete-duplicates/hash` is more efficient than
