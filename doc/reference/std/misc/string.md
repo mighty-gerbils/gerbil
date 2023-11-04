@@ -184,6 +184,109 @@ perform, otherwise an error is signaled.
 ```
 :::
 
+## string-substitute-char-if
+``` scheme
+(string-substitute-char-if string newchar predicate
+  [start: #f]
+  [end: #f]
+  [from-end: #f]
+  [count: #f]
+  [in-place: #f]) => string-with-substitutions
+```
+
+Substitutes/replaces in *string* the characters matching the *predicate*
+with the character *newchar*.
+
+Only substitute characters in the substring
+defined by the *start* index (included, defaults to `0`) and
+the *end* index (excluded, defaults to the length of the string).
+
+The replacement starts *from-end* if specified as true,
+which only matters if *count* is specified, in which case,
+that *count* is a maximum limit on the number of replacements to be done.
+
+If *in-place* is true then the string itself is modified,
+otherwise a modified copy is made.
+
+::: tip Examples:
+``` scheme
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>))
+"bonono"
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>) start: 3)
+"banono"
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>) end: 5)
+"bonona"
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>)start: 1 end: 5)
+"bonona"
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>) count: 2)
+"bonona"
+> (string-substitute-char-if "banana" #\o (cut eqv? #\a <>) count: 2 from-end: #t)
+"banono"
+> (string-substitute-char-if "banana" #\o (cut char>? #\c <>))
+"oonono"
+> (string-substitute-char-if "banana" #\o (lambda (x) (not (equal? x #\a))))
+"oaoaoa"
+> (string-substitute-char-if "banana" #\o (lambda (x) (equal? (char-upcase x) #\A)))
+"bonono"
+```
+:::
+
+## string-substitute-char
+``` scheme
+(string-substitute-char-if string newchar oldchar
+  [test: #f]
+  [test-not: #f]
+  [key: #f]
+  [start: #f]
+  [end: #f]
+  [from-end: #f]
+  [count: #f]
+  [in-place: #f]) => string-with-substitutions
+```
+
+Substitutes/replaces in *string* the characters matching the *oldchar*
+with the character *newchar*.
+
+A character *char* matches if `(test oldchar (key char))`, where:
+  - for *key*, `#f` designates the `identity` function
+  - if `test` is `#f` and `test-not` isn't, then the test is
+    `(lambda (x y) (not (test-not x y)))`
+  - if both `test` and `test-not` are `#f`, then the test is `equal?`.
+
+Only substitute characters in the substring
+defined by the *start* index (included, defaults to `0`) and
+the *end* index (excluded, defaults to the length of the string).
+
+The replacement starts *from-end* if specified as true,
+which only matters if *count* is specified, in which case,
+that *count* is a maximum limit on the number of replacements to be done.
+
+If *in-place* is true then the string itself is modified,
+otherwise a modified copy is made.
+
+::: tip Examples:
+``` scheme
+> (string-substitute-char "banana" #\o #\a)
+"bonono"
+> (string-substitute-char "banana" #\o #\a start: 3)
+"banono"
+> (string-substitute-char "banana" #\o #\a end: 5)
+"bonona"
+> (string-substitute-char "banana" #\o #\a start: 1 end: 5)
+"bonona"
+> (string-substitute-char "banana" #\o #\a count: 2)
+"bonona"
+> (string-substitute-char "banana" #\o #\a count: 2 from-end: #t)
+"banono"
+> (string-substitute-char "banana" #\o #\c test: char>?)
+"oonono"
+> (string-substitute-char "banana" #\o #\a test-not: equal?)
+"oaoaoa"
+> (string-substitute-char "banana" #\o #\A key: char-upcase)
+"bonono"
+```
+:::
+
 ## string-whitespace?
 ``` scheme
 (string-whitespace? str) -> boolean
@@ -297,3 +400,19 @@ used by the `:std/format` family of procedures. Considers the `:pr`
 ```
 
 Global line ending convenience definitions.
+
+## as-string<?
+``` scheme
+(as-string<? x y) -> bool
+```
+`as-string<?` takes two values that can be converted to strings via `as-string`
+and returns true if once converted the first is `string<?` to the second.
+
+::: tip Examples:
+``` scheme
+> (as-string<? '(foo: 1 bar) #(f #\o "o1" baz))
+#t
+> (as-string<? 'foo "foo")
+#f
+```
+:::

@@ -2,9 +2,13 @@
 
 (import
   :std/error
-  :std/misc/string :std/srfi/13
-  :std/test
-  :std/pregexp :std/misc/repr :std/sugar :std/format)
+  :std/format
+  :std/misc/repr
+  :std/misc/string
+  :std/pregexp
+  :std/srfi/13
+  :std/sugar
+  :std/test)
 
 (defstruct point (x y))
 (defmethod {:pr point}
@@ -81,14 +85,26 @@
       (check (str #(1 2))             => "(vector 1 2)")
       (check (str (values 1 2))       => "(values 1 2)")
       (check (str (make-point 1 2))   => "(point 1 2)"))
-    (test-case "test string-substitute-char"
-      (check-equal? (string-substitute-char "banana" #\o #\a) "bonono")
-      (check-equal? (string-substitute-char "banana" #\o #\a start: 3) "banono")
-      (check-equal? (string-substitute-char "banana" #\o #\a end: 5) "bonona")
-      (check-equal? (string-substitute-char "banana" #\o #\a start: 1 end: 5) "bonona")
-      (check-equal? (string-substitute-char "banana" #\o #\a count: 2) "bonona")
-      (check-equal? (string-substitute-char "banana" #\o #\a count: 2 from-end: #t) "banono")
-      (check-equal? (string-substitute-char "banana" #\o #\c test: char>?) "oonono")
-      (check-equal? (string-substitute-char "banana" #\o #\a test-not: equal?) "oaoaoa")
-      (check-equal? (string-substitute-char "banana" #\o #\A key: char-upcase) "bonono"))
-    ))
+    (test-case "test string-substitute-char-if, string-substitute-char"
+      (defrule (checks ((args ...) result) ...)
+        (begin (begin (check (string-substitute-char "banana" #\o #\a args ...)
+                             => result)
+                      (check (string-substitute-char-if "banana" #\o (cut eqv? <> #\a) args ...)
+                             => result)) ...))
+      (checks (() "bonono")
+              ((start: 3) "banono")
+              ((end: 5) "bonona")
+              ((start: 1 end: 5) "bonona")
+              ((count: 2) "bonona")
+              ((count: 2 from-end: #t) "banono"))
+      (defrule (checks2 ((args ...) pred result) ...)
+        (begin (begin (check (string-substitute-char "banana" #\o args ...)
+                             => result)
+                      (check (string-substitute-char-if "banana" #\o pred)
+                             => result)) ...))
+      (checks2 ((#\c test: char>?) (cut char>? #\c <>) "oonono")
+               ((#\a test-not: equal?) (lambda (x) (not (equal? x #\a))) "oaoaoa")
+               ((#\A key: char-upcase) (lambda (x) (equal? (char-upcase x) #\A)) "bonono")))
+    (test-case "test as-string<?"
+      (check (as-string<? '(foo: 1 bar) #(f #\o "o1" baz)) => #t)
+      (check (as-string<? 'foo "foo") => #f))))
