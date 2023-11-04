@@ -321,6 +321,7 @@
     "crypto"
     ;; :std/misc
     "misc/atom"
+    "misc/dag"
     "misc/decimal"
     "misc/evector"
     "misc/prime"
