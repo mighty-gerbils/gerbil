@@ -4,6 +4,7 @@
   :std/error
   :std/misc/list
   :std/sort
+  :std/sugar
   :std/test)
 
 (def (copy-list lst) (foldr cons '() lst))
@@ -200,13 +201,18 @@
       (check-equal? (values->list (separate-keyword-arguments
                                    '(x a: 1 y #!key b: 2 c: 3 z #!rest t d: 4) #f))
                     '((x y #!key b: 2 z #!rest t d: 4) (a: 1 c: 3))))
+    (test-case "test delete-duplicates/hash"
+      (check (delete-duplicates/hash '(a b c d a e f c)) => '(b d a e f c))
+      (check (delete-duplicates/hash '(a b c d a e f c) from-end?: #t) => '(a b c d e f))
+      (check (delete-duplicates/hash '(a b c d a e f c) table: (hash (a #f))) => '(b d e f c))
+      (check (delete-duplicates/hash '((a 1) (b 2) (c 3) (a 4) (d 5) (c 6))
+                                     from-end?: #t key: car) => '((a 1) (b 2) (c 3) (d 5))))
     (test-case "test duplicates"
       (check (duplicates []) => [])
       (check (duplicates ['a 'b]) => [])
       (check (duplicates ['a 1 'a 2]) => ['(a . 2)])
       (check (duplicates ['a 'b 'a 'a] eq?) => ['(a . 3)])
       (check (duplicates '((a . 10) (b . 10)) key: cdr) => ['(10 . 2)]))
-
     (test-case "test push! pop!"
       (def l [])
       (check (pop! l) => #f)

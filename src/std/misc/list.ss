@@ -3,7 +3,7 @@
 ;;;; List utilities
 
 (export
-  unique unique! duplicates
+  unique unique! duplicates delete-duplicates/hash
   length=? length=n?
   length<? length<n? length<=? length<=n?
   length>? length>n? length>=? length>=n?
@@ -43,6 +43,17 @@
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
+
+;; delete-duplicates variant with a O(n) algorithm
+;; from-end?: if #t discard the latter duplicates, keep the earliest;
+;; otherwise, discard the earlier duplicates, keep the latests.
+(def (delete-duplicates/hash
+      l table: (h (make-hash-table)) key: (key identity) from-end?: (from-end? #f))
+  (def (run c l)
+    (for-each (lambda (x) (def k (key x)) (unless (hash-key? h k) (hash-put! h k #t) (c x))) l))
+  (if from-end?
+    (with-list-builder (c) (run c l))
+    (let (r '()) (run (cut push! <> r) (reverse l)) r)))
 
 ;; duplicates returns a cons cells (item . count) for every element
 ;; that occurs more than once in the list. If key: is not false
