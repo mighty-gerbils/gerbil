@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; ̧© vyzo
+;;; © vyzo
 ;;; embedded HTTP/1.1 server
 
 (import :std/sugar

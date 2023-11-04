@@ -155,7 +155,7 @@ namespace: gx
         (else
          (let* ((body
                  (match body
-                   ([] (raise-syntax-error #f "Bad syntax" stx))
+                   ([] (raise-syntax-error #f "Bad syntax; empty body" stx))
                    ([expr] expr)
                    (else
                     (core-quote-syntax
@@ -210,7 +210,7 @@ namespace: gx
            (core-cons '%#extern (reverse r))
            (stx-source stx)))
          (else
-          (raise-syntax-error #f "Bad syntax" stx)))))))
+          (raise-syntax-error #f "Bad syntax; %#extern expects list of (internal external) identifier lists" stx)))))))
 
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
@@ -453,7 +453,7 @@ namespace: gx
                    ((or (stx-string? ns) (stx-false? ns))
                     (stx-e ns))
                    (else
-                    (raise-syntax-error #f "Bad syntax" stx ns))))
+                    (raise-syntax-error #f "Bad syntax; extern expects namespace identifier" stx ns))))
            (lp rest ns r)))
         ((hd . rest)
          (if (identifier? hd)

@@ -45,12 +45,12 @@
                 => values)
                (else
                 (raise-syntax-error #f errmsg stx)))
-              (raise-syntax-error #f "Bad syntax" stx))))))
+              (raise-syntax-error #f "Bad syntax; defsyntax-parameter* expects a macro definition" stx))))))
 
   (syntax-case stx ()
     ((_ macro param)
      (identifier-list? #'(macro param))
-     (defparam #'macro #'param "Bad syntax"))
+     (defparam #'macro #'param "Bad syntax; syntax parameter* unbound"))
     ((_ macro param errmsg)
      (identifier-list? #'(macro param))
      (defparam #'macro #'param #'errmsg))))
