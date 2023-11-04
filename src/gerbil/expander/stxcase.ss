@@ -206,7 +206,7 @@ namespace: gx
       (generate (parse form))
       (stx-source stx)))
     (else
-     (raise-syntax-error #f "Bad syntax" stx))))
+     (raise-syntax-error #f "Bad syntax; expand-syntax expects a single argument" stx))))
 
 ;;; syntax-case
 (def (macro-expand-syntax-case stx
@@ -488,7 +488,7 @@ namespace: gx
       ((not (identifier-list? ids))
        (raise-syntax-error #f "Bad template identifier list" stx ids))
       ((not (stx-list? clauses))
-       (raise-syntax-error #f "Bad syntax" stx))
+       (raise-syntax-error #f "Bad syntax; clauses expected" stx))
       (else
        (let* ((ids (syntax->list ids))
               (clauses (syntax->list clauses))
@@ -502,7 +502,7 @@ namespace: gx
              (core-list 'let-values
                [[[E] (core-list 'lambda%
                        [target] (core-list 'raise-syntax-error
-                                  #f "Bad syntax" target))]]
+                                  #f "Bad syntax; invalid match target" target))]]
                (generate-body
                 (generate-bindings target ids clauses clause-ids E)
                 [first expr]))

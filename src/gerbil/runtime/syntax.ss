@@ -63,7 +63,7 @@ namespace: #f
                              (generate1 #'pat #'tgt #'(if fender expr E) #'E #'kws)))))
             #'(let ($E (lambda () continue))
                 body)))
-         ([] #'(__raise-syntax-error #f "Bad syntax" tgt)))))))
+         ([] #'(__raise-syntax-error #f "Bad syntax; malformed ast clause" tgt)))))))
 
 
 ;; we really don't want stack traces in syntax error, they are worse than useless.
