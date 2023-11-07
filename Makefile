@@ -14,4 +14,4 @@ clean:
 	rm -rf bootstrap
 	cd src/gambit && make clean
 
-.PHONY: all install check clean
+.PHONY: all build install check clean
