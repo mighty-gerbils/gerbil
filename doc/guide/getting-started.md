@@ -93,7 +93,7 @@ add_path() {
     fi
 }
 
-GERBIL_INSTAL_PREFIX=/usr/local/gerbil # no need to export this
+GERBIL_INSTALL_PREFIX=/usr/local/gerbil # no need to export this
 add_path $GERBIL_INSTALL_PREFIX/bin
 add_path $HOME/.gerbil/bin
 ```
