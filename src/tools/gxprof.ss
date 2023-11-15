@@ -67,13 +67,14 @@
     (error "module does not export symbol" (expander-context-id ctx) id))))
 
 (def (profile fun args heartbeat)
-  (try
-   (dynamic-wind
-       (cut profile-start! heartbeat)
-       (cut apply fun args)
-       profile-end!)
-   (finally
-    (call-with-output-file "gxprof.out" (cut write-samples samples <>)))))
+  (let-hash opt
+    (try
+     (dynamic-wind
+	 (cut profile-start! heartbeat)
+	 (cut apply fun args)
+	 profile-end!)
+     (finally
+      (call-with-output-file (or .?output "gxprof.out") (cut write-samples samples <>))))))
 
 (def samples [])
 
