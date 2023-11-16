@@ -75,10 +75,11 @@
         (strbuf-output-drain! strbuf buf whi)
         (void)))))
 
-(def (strbuf-reset-output! strbuf writer)
+(def (strbuf-reset-output! strbuf writer close?)
   (using (strbuf :- string-output-buffer)
     (let (writer (StringWriter writer))
-      (strbuf-close-output strbuf)
+      (when close?
+        (strbuf-close-output strbuf))
       (strbuf-output-consume! strbuf)
       (set! strbuf.writer writer)
       (set! strbuf.closed? #f)

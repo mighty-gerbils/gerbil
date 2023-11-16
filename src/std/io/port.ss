@@ -63,7 +63,7 @@
 
 (defport-method raw-port       (close port)
   => close-port)
-(defport-method raw-port       (reset! port reader)
+(defport-method raw-port       (reset! port reader close?)
   (raise-unsupported-method reset!))
 
 (defport-method raw-input-port (close port)
@@ -134,7 +134,7 @@
 (defsimple-port-method delimited-binary-input-port (close self)
   (delimited-close! self))
 
-(defsimple-port-method delimited-binary-input-port (reset! self)
+(defsimple-port-method delimited-binary-input-port (reset! self close?)
   (raise-unsupported-method reset!))
 
 (defsimple-port-method delimited-binary-input-port (put-back self previous-input)
@@ -181,7 +181,7 @@
 (defsimple-port-method delimited-textual-input-port (close self)
   (delimited-close! self))
 
-(defsimple-port-method delimited-textual-input-port (reset! self)
+(defsimple-port-method delimited-textual-input-port (reset! self close?)
   (raise-unsupported-method reset!))
 
 (defsimple-port-method delimited-textual-input-port (put-back self previous-input)

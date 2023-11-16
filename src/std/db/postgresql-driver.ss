@@ -1,13 +1,16 @@
 ;;; -*- Gerbil -*-
-;;; ̧© vyzo, drew
+;;; © vyzo, drew
 ;;; PostgreSQL driver
+;; https://www.postgresql.org/docs/current/protocol-message-formats.html
 
 (import :std/actor
         :std/io
         :std/contract
         :std/misc/channel
         :std/misc/list
+        :std/misc/timeout
         :std/net/sasl
+        :std/net/ssl
         :std/text/utf8
         :std/text/hex
         :std/crypto
@@ -169,7 +172,7 @@
   error: "error closing connection")
 
 ;;; driver implementation
-(def (postgresql-connect! host port user passwd db)
+(def (postgresql-connect! host port user passwd db ssl? ssl-context timeout)
   (def sock
     (tcp-connect (cons host port)))
 
@@ -252,7 +255,26 @@
 
   (start-logger!)
   (DEBUG "STARTUP")
+
   (try
+   (match ssl?
+     (#f (void))
+     ((? (cut member <> '(try #t)))
+      (send! '(SSLRequest))
+      (match (BufferedReader-read-u8 reader)
+        (78 ;; (char->integer #\N)
+         ;; Exceptionally, this N isn't followed by a notice message to unmarshal:
+         ;; https://www.postgresql.org/docs/current/protocol-flow.html
+         (when (eq? ssl? #t)
+           (error "Postgres Server does not support SSL encryption.")))
+        (83 ;; (char->integer #\S)
+         (ssl-client-upgrade sock (make-timeout timeout #f)
+                             context: ssl-context
+                             host: host)
+         (BufferedReader-reset! reader (StreamSocket-reader sock) #f)
+         (BufferedWriter-reset! writer (StreamSocket-writer sock) #f))
+        (c (error "Invalid server response" c)))))
+
    (send! ['StartupMessage ["user" . user] (if db [["database" . db]] []) ...])
    (recv!
     (['AuthenticationRequest what . rest]
@@ -831,6 +853,10 @@
   (with ([data] body)
     (string->utf8 data)))
 
+(def (marshal-ssl-request body)
+  (with ([] body)
+    #u8(4 210 22 47))) ;; (uint->u8vector 80877103 big)
+
 ;;; marshal buffer cache
 (def +buffer-cache+ [])
 (def +buffer-cache-mx+ (make-mutex 'buffer-cache))
@@ -867,7 +893,7 @@
 (defrules defmessage-frontend ()
   ((_ (id char marshal) ...)
    (begin
-     (let (t (char->integer char))
+     (let (t (and char (char->integer char)))
        (hash-put! +frontend-messages+ 'id (cons t marshal)))
      ...)))
 
@@ -913,5 +939,6 @@
   (Query                    #\Q  marshal-query)
   (SASLInitialResponse      #\p  marshal-sasl-initial-reponse)
   (SASLResponse             #\p  marshal-sasl-response)
+  (SSLRequest               #f   marshal-ssl-request)
   (Sync                     #\S  marshal-empty)
   (Terminate                #\X  marshal-empty))

@@ -522,6 +522,7 @@
         (raise-io-error read-line "too many characters" x))))))
 
 ;; writer
+;; numbers are written in "network order", i.e. big endian
 (defwriter-ext (write-u16 writer uint)
   (write-uint writer uint 2))
 (defwriter-ext (write-s16 writer int)

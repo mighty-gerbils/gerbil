@@ -73,10 +73,11 @@
         (bio-output-drain! bio buf whi)
         (void)))))
 
-(def (bio-reset-output! bio writer)
+(def (bio-reset-output! bio writer close?)
   (using (bio :- output-buffer)
     (let (writer (Writer writer))
-      (bio-close-output bio)
+      (when close?
+        (bio-close-output bio))
       (bio-output-consume! bio)
       (set! bio.writer writer)
       (set! bio.closed? #f)

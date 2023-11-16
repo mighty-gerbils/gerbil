@@ -130,6 +130,7 @@
                         (when event-handler
                           (signal-handler-dispatch event-handler))))
                     (raise-os-error signal-handler-wait
+                                    EIO
                                     (kevent-data events i)
                                     signal-handler-wait))
                   (event-loop (fx1+ i))))))

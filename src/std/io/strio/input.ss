@@ -254,10 +254,11 @@
 (def (strbuf-delimit-input strbuf limit)
   (BufferedStringReader (make-delimited-string-input-buffer strbuf limit limit)))
 
-(def (strbuf-reset-input! strbuf reader)
+(def (strbuf-reset-input! strbuf reader close?)
   (using (strbuf :- string-input-buffer)
     (let (reader (StringReader reader))
-      (strbuf-close-input strbuf)
+      (when close?
+        (strbuf-close-input strbuf))
       (strbuf-input-consume! strbuf)
       (set! strbuf.reader reader)
       (set! strbuf.closed? #f)

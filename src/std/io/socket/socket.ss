@@ -32,7 +32,7 @@
               sock
               (begin
                 (socket-close sock)
-                (raise-os-error errno connect address timeo)))))))))
+                (raise-os-error connect errno address timeo)))))))))
 
 (def (listen address backlog sockopts)
   (let* ((sockaddr (socket-address address))

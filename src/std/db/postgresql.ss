@@ -9,6 +9,7 @@
         :std/iter
         :std/misc/channel
         :std/misc/list
+        :std/net/ssl
         :std/srfi/19)
 (export postgresql-connect
         (struct-out postgresql-command
@@ -37,8 +38,11 @@
                          port: (port 5432)
                          user: user
                          passwd: passwd
-                         db: (db #f))
-  (let (driver (postgresql-connect! host port user passwd db))
+                         db: (db #f)
+                         ssl?: (ssl? 'try)
+                         ssl-context: (ssl-context (default-client-ssl-context))
+                         timeout: (timeout #f))
+  (let (driver (postgresql-connect! host port user passwd db ssl? ssl-context timeout))
     (make-postgresql-connection driver host port user db)))
 
 (defmethod {close postgresql-connection}
