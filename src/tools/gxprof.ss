@@ -73,7 +73,7 @@
        (cut apply fun args)
        profile-end!)
      (finally
-      (call-with-output-file output (cut write-samples samples <>))))))
+      (call-with-output-file output (cut write-samples samples <>)))))
 
 (def samples [])
 
