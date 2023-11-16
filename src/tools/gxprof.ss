@@ -38,7 +38,7 @@
       (let* ((ctx (import-module (module-path .module) #f #t))
              (main-id (find-runtime-symbol ctx 'main))
              (main-fn (eval main-id)))
-        (profile main-fn .module-args .heartbeat (or .?output "gxprof.out"))
+        (profile main-fn .module-args .heartbeat .output))
       (analyze .output .?ignore-kernel-frames))))
 
 (def (module-path str)
