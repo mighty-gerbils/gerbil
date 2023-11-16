@@ -38,7 +38,7 @@
       (let* ((ctx (import-module (module-path .module) #f #t))
              (main-id (find-runtime-symbol ctx 'main))
              (main-fn (eval main-id)))
-        (profile main-fn .module-args .heartbeat))
+        (profile main-fn .module-args .heartbeat .output))
       (analyze .output .?ignore-kernel-frames))))
 
 (def (module-path str)
@@ -66,14 +66,14 @@
    (else
     (error "module does not export symbol" (expander-context-id ctx) id))))
 
-(def (profile fun args heartbeat)
+(def (profile fun args heartbeat output)
   (try
    (dynamic-wind
        (cut profile-start! heartbeat)
        (cut apply fun args)
        profile-end!)
-   (finally
-    (call-with-output-file "gxprof.out" (cut write-samples samples <>)))))
+     (finally
+      (call-with-output-file output (cut write-samples samples <>)))))
 
 (def samples [])
 
