@@ -195,9 +195,9 @@
          (when (eq? ssl? #t)
            (error "Postgres Server does not support SSL encryption.")))
         ((= response 83) ;; (char->integer #\S)
-         (ssl-client-upgrade sock (make-timeout timeout #f)
-                             context: ssl-context
-                             host: host))
+         (set! sock (ssl-client-upgrade sock (make-timeout timeout #f)
+                                        context: ssl-context
+                                        host: host)))
         (else
          ;; read as much as we can from the server response to give the best error context
          (let* ((len (StreamSocket-recv sock buf 1 2048 MSG_DONTWAIT))
@@ -627,13 +627,19 @@
                   (DEBUG "RECEIVE " msg)
                   msg))))
          (else
-          (let* ((bio (interface-instance-object reader))
-                 (n-bytes (+ 5 (- (input-buffer-rhi bio) (input-buffer-rlo bio))))
-                 (buf (make-u8vector n-bytes 0)))
-            (reader.read buf 5 n-bytes 0)
-            (u8vector-set! buf 0 tid)
-            (u8vector-uint-set! buf 1 (+ 4 payload-len) big 4)
-            (raise-io-error postgresql-recv! "unexpected backend message" buf))))))))
+          (raise-io-error postgresql-recv! "unexpected backend message"
+                          (u8vector-append
+                           (nat->u8vector tid 1)
+                           (nat->u8vector (+ payload-len 4) 4)
+                           (input-buffer-read/flush (interface-instance-object reader))))))))))
+
+;; TODO: move this to a better place
+(import :std/io/bio/input)
+(def (input-buffer-read/flush bio)
+  (let* ((n-bytes (- (input-buffer-rhi bio) (input-buffer-rlo bio)))
+         (buf (make-u8vector n-bytes 0)))
+    (bio-read-bytes bio buf 0 n-bytes 0)
+    buf))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore buf)
