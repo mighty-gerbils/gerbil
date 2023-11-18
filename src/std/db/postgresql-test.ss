@@ -45,6 +45,14 @@
 
    (def postgresql-test
      (test-suite "db/postgresql"
+       (test-case "postgresql url parsing"
+         (defrule (checks (url . res) ...)
+           (begin (check (parse-postgres-database-url url) => 'res) ...))
+         (checks ("postgres://server/db" "server" #f "db" #f #f #f)
+                 ("postgres://foo@server/db" "server" #f "db" "foo" #f #f)
+                 ("postgres://foo:bar@server:5432/blah?connect_timeout=10"
+                  "server" 5432 "blah" "foo" "bar" "connect_timeout=10")
+                 ("mysql://server/db" . #f)))
        (test-case "postgresql driver"
          (def pg (postgresql-connect! "127.0.0.1" 5432 "test" "test" "test"))
          (def (values? . args)

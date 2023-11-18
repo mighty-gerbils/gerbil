@@ -10,6 +10,7 @@
         :std/misc/channel
         :std/misc/list
         :std/net/ssl
+        :std/pregexp
         :std/srfi/19)
 (export postgresql-connect
         (struct-out postgresql-command
@@ -44,6 +45,19 @@
                          timeout: (timeout #f))
   (let (driver (postgresql-connect! host port user passwd db ssl? ssl-context timeout))
     (make-postgresql-connection driver host port user db)))
+
+;; Parse a Postgres connection string as per
+;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
+;; also used by e.g. heroku's DATABASE_URL, or JDBC.
+;; : String -> (Tuple String (OrFalse Nat) String (OrFalse String) (OrFalse String) (OrFalse String))
+(def (parse-postgres-database-url url)
+  (match (pregexp-match "^postgres://(([^:/@?]+)(:([^:/@?]*))?@)?([^:/@?]+)(:([0-9]+))?/([^:/@?]+)([?](.*))?$" url)
+    ([_ userpass user pass? pass host port? port database params? params]
+     [host (and port (string->number port)) database
+           (and userpass user) (and pass? pass) (and params? params)])
+    (else #f)))
+
+
 
 (defmethod {close postgresql-connection}
   postgresql-close!)
@@ -411,3 +425,4 @@
 
 (def current-catalog
   (make-parameter default-catalog))
+
