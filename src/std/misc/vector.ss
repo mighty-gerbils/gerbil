@@ -19,7 +19,7 @@
                       vector-count) srfi43-)
   (only-in :std/iter for in-range in-iota)
   (only-in :std/misc/list-builder with-list-builder)
-  (only-in :std/misc/number least-integer)
+  (only-in :std/misc/number least-integer most-integer)
   (only-in :std/sugar while))
 
 ;; Enable (set! (vector-ref v i) x)
