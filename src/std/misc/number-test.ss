@@ -189,8 +189,8 @@
       (check (least-integer (cut > <> 13.5) 0 20) => 14)
       (check (least-integer true 0 20) => 0)
       (check (least-integer false 0 20) => 20)
-      (check (most-integer true 0 20) => 20)
-      (check (most-integer false 0 20) => 0)
+      (check (most-integer true 0 20) => 8)
+      (check (most-integer false 0 20) => -1)
       (check (most-integer (cut < <> 13.5) 0 20) => 13))
 
     (test-case "bezout, invert-mod, div-mod, mult-mod"

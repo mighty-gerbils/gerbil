@@ -39,7 +39,7 @@
 ;;; return the most index such that all previous vector elements in the interval [start, env)
 ;;; satisfy the predicate, or the start if none does.
 (def (vector-most-index pred? vector start: (start 0) end: (end (vector-length vector)))
-  (most-integer (lambda (i) (pred? (vector-ref vector i))) start end))
+  (least-integer (lambda (i) (not (pred? (vector-ref vector i)))) start end))
 
 ;;; Copy a vector if necessary: return the same if no change in start and end requested.
 (def (maybe-subvector vector (start 0) (end #f))
@@ -63,9 +63,9 @@
       (function (vector-ref vector i)))))
 
 (def (subvector-reverse-for-each/index function vector start: (start 0) end: (end #f))
-  (def end (or end (vector-length vector)))
+  (let (end (or end (vector-length vector)))
     (for ((i (in-iota (- end start) (- end 1) -1)))
-      (function i (vector-ref vector i))))
+      (function i (vector-ref vector i)))))
 
 (def (subvector->list vector start: (start 0) end: (end #f))
   (with-list-builder (c!) (subvector-for-each c! vector start: start end: end)))
@@ -82,5 +82,5 @@
   (list->vector
    (with-list-builder (c)
      (for (i (in-range start end))
-       (def e (vector-ref v i))
-       (when (pred? e) (c e))))))
+       (let (e (vector-ref v i))
+         (when (pred? e) (c e)))))))
