@@ -185,13 +185,10 @@
       (defrule (checks (a b) ...) (begin (check (half a) => b) ...))
       (checks (4 2) (3 1) (2 1) (1 0) (0 0) (-1 -1) (-2 -1) (-3 -2) (-4 -2)))
 
-    (test-case "least-integer, most integer"
+    (test-case "least-integer"
       (check (least-integer (cut > <> 13.5) 0 20) => 14)
       (check (least-integer true 0 20) => 0)
-      (check (least-integer false 0 20) => 20)
-      (check (most-integer true 0 20) => 8)
-      (check (most-integer false 0 20) => -1)
-      (check (most-integer (cut < <> 13.5) 0 20) => 13))
+      (check (least-integer false 0 20) => 20))
 
     (test-case "bezout, invert-mod, div-mod, mult-mod"
       (defrule (checks (a b x y d) ...)

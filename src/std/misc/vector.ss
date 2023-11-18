@@ -19,7 +19,7 @@
                       vector-count) srfi43-)
   (only-in :std/iter for in-range in-iota)
   (only-in :std/misc/list-builder with-list-builder)
-  (only-in :std/misc/number least-integer most-integer)
+  (only-in :std/misc/number least-integer)
   (only-in :std/sugar while))
 
 ;; Enable (set! (vector-ref v i) x)
@@ -32,14 +32,6 @@
 ;;; that satisfies the predicate, or the end if none does.
 (def (vector-least-index pred? vector start: (start 0) end: (end (vector-length vector)))
   (least-integer (lambda (i) (pred? (vector-ref vector i))) start end))
-
-;;; Assuming a sorted vector, a predicate on vector elements that is "decreasing",
-;;; i.e. if true, true on all preceding elements, and optionally
-;;; a start (inclusive, defaults to 0) and an end (exclusive, defaults to vector length),
-;;; return the most index such that all previous vector elements in the interval [start, env)
-;;; satisfy the predicate, or the start if none does.
-(def (vector-most-index pred? vector start: (start 0) end: (end (vector-length vector)))
-  (least-integer (lambda (i) (not (pred? (vector-ref vector i)))) start end))
 
 ;;; Copy a vector if necessary: return the same if no change in start and end requested.
 (def (maybe-subvector vector (start 0) (end #f))

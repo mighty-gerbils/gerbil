@@ -1,4 +1,17 @@
-# Extended Real Number Line
+# Miscellaneous Number Functions
+
+This module offers various functions to manipulate numbers
+that are not otherwise offered by R7RS, Gambit,
+`:std/srfi/141`, `:srfi/144`, or `:srfi/151`.
+
+::: tip To use the bindings from this module:
+```scheme
+(import :std/misc/number)
+```
+:::
+
+## Extended Real Number Line
+
 The (affine) extended real number line, where real numbers are enriched
 with positive and negative infinity, compactifying their order.
 Positive infinity is represented by IEEE number `+inf.0` while
@@ -13,13 +26,32 @@ work better with infinities. Notably:
     where `(max -inf.0 (+ 1 (expt 2 54)))` returns the rounded `1.8014398509481984e16`.
     More generally, `xmin` and `xmax` preserve the type of the argument they return.
 
-::: tip To use the bindings from this module:
+### real->sign
 ```scheme
-(import :std/misc/number)
+(real->sign x) -> -1, 0 or 1
+```
+
+Given an extended real number `x`, return an integer, `-1` if the number is negative,
+`0` if it is zero, and `1` if it is positive.
+
+::: tip Examples:
+```scheme
+> (real->sign 2.7)
+1
+> (real->sign 1e-100)
+1
+> (real->sign -42)
+-1
+> (real->sign -inf.0)
+-1
+> (real->sign 0.0)
+0
+> (real->sign 0)
+0
 ```
 :::
 
-## xmin
+### xmin
 ```scheme
 (xmin <x1> ... <xn>) -> real
 ```
@@ -28,7 +60,7 @@ work better with infinities. Notably:
 In particular, it returns `+inf.0` (the positive infinity) if provided zero arguments,
 and is the identity function when given a single argument.
 
-## xmin/list
+### xmin/list
 ```scheme
 (xmin/list <l>) -> real
 ```
@@ -37,7 +69,7 @@ and is the identity function when given a single argument.
 passed as its arguments. In particular, it returns `+inf.0` (the positive
 infinity) if provided an empty list.
 
-## xmin!
+### xmin!
 ```scheme
 (xmin! <var> <x> ...) -> void
 ```
@@ -45,7 +77,7 @@ infinity) if provided an empty list.
 `xmin!` side-effects a variable to change it to the `xmin`
 of the previous value and the provided arguments.
 
-## xmin/map
+### xmin/map
 ```scheme
 (xmin/map <f> <l> [<base>]) -> real
 ```
@@ -56,7 +88,7 @@ and of a `<base>` real, by default `+inf.0` (the positive infinity).
 The function is short-circuiting and will not evaluate further values and their side-effects
 after the bottom value `-inf.0` is reached.
 
-## xmax
+### xmax
 ```scheme
 (xmax <x1> ... <xn>) -> real
 ```
@@ -65,7 +97,7 @@ after the bottom value `-inf.0` is reached.
 In particular, it returns `-inf.0` (the negative infinity) if provided zero arguments,
 and is the identity function when given a single argument.
 
-## xmax/list
+### xmax/list
 ```scheme
 (xmax/list <l>) -> real
 ```
@@ -73,7 +105,7 @@ and is the identity function when given a single argument.
 `xmax/list` returns the lower bound of the list of extended real arguments passed as its arguments.
 In particular, it returns `-inf.0` (the negative infinity) if provided an empty list.
 
-## xmax!
+### xmax!
 ```scheme
 (xmax! <var> <x> ...) -> void
 ```
@@ -81,7 +113,7 @@ In particular, it returns `-inf.0` (the negative infinity) if provided an empty 
 `xmax!` side-effects a variable to change it to the `xmax`
 of the previous value and the provided arguments.
 
-## xmax/map
+### xmax/map
 ```scheme
 (xmax/map <f> <l> [<base>]) -> real
 ```
@@ -92,7 +124,9 @@ and of a `<base>` xreal, by default `-inf.0` (the negative infinity).
 The function is short-circuiting and will not evaluate further values and their side-effects
 after the top value `+inf.0` is reached.
 
-## increment!, pre-increment!, post-increment!, decrement!, pre-decrement!, post-decrement!
+## Counters
+
+### increment!, pre-increment!, post-increment!, decrement!, pre-decrement!, post-decrement!
 ```scheme
 (increment! place) -> (void)
 (increment! place increment ...) -> (void)
@@ -115,7 +149,7 @@ one (if no further argument is specified) or the provided arguments (if specifie
 *pre-increment!* and *pre-decrement!* return the value after addition (respectively, subtraction), and
 *post-increment!* and *post-decrement!* return the value before addition (respectively, subtraction).
 
-## make-counter
+### make-counter
 ```scheme
 (make-counter) -> counter
 (make-counter n) -> counter
@@ -125,8 +159,11 @@ This function creates a new counter, a function that takes zero or more argument
 adds the sum of these arguments to the counter (or `1`, not `0`, if no argument was provided),
 and returns the original value of the counter before the addition (post-increment).
 You can thus reserve how many entries you are counting before the next call.
+Note that this function provides no guarantee of atomicity in case of multithreaded use.
 
-## integer-part
+## Euclidian Division
+
+### integer-part
 ```scheme
 (integer-part x) -> integer
 ```
@@ -168,54 +205,30 @@ if alignment is negative, the roles of `floor-align` and `ceiling-align` are swa
 ```
 :::
 
-## real->sign
-```scheme
-(real->sign x) -> -1, 0 or 1
-```
+## Natural Numbers
 
-Given a real number `x`, return an integer, `-1` if the number is negative,
-`0` if it is zero, and `1` if it is positive.
-
-::: tip Examples:
-```scheme
-> (real->sign 2.7)
-1
-> (real->sign 1e-100)
-1
-> (real->sign -42)
--1
-> (real->sign -inf.0)
--1
-> (real->sign 0.0)
-0
-> (real->sign 0)
-0
-```
-:::
-
-
-## nat?
+### nat?
 ```scheme
 (nat? x) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer.
 
-## fxnat?
+### fxnat?
 ```scheme
 (fxnat? x) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative fixnum.
 
-## nat-below?
+### nat-below?
 ```scheme
 (nat-below? x end) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer less than `end` (not included).
 
-## nat-of-length?
+### nat-of-length?
 ```scheme
 (nat-of-length? x length-in-bits) -> Bool
 ```
@@ -224,7 +237,7 @@ Given any object `x`, return true if it is an non-negative exact integer
 that can be stored in `length-in-bits` bits, as witnessed by
 its `integer-length` being no greater than `length-in-bits` (included).
 
-## integer-of-length?
+### integer-of-length?
 ```scheme
 (nat-of-length? x length-in-bits) -> Bool
 ```
@@ -233,7 +246,9 @@ Given any object `x`, return true if it is a (negative, zero or positive)
 exact integer that can be stored in `length-in-bits` bits, as witnessed by
 its `integer-length` being strictly less than `length-in-bits` (not included).
 
-## for-each-integer
+## Iteration
+
+### for-each-integer
 ```scheme
 (for-each-integer fun from below)
 ```
@@ -241,14 +256,16 @@ its `integer-length` being strictly less than `length-in-bits` (not included).
 Given `fun` a function of one argument, call `fun` with each successive increasing integer
 starting with `from` up to and not including `below`.
 
-## half
+## Binary Search (a.k.a. Dichotomy)
+
+### half
 ```scheme
 (half n)
 ```
 
 Given an integer `n`, return half of `n` if it is even, or half of `n-1` if it is odd.
 
-## least-integer?
+### least-integer?
 ```scheme
 (least-integer pred? start end) -> integer
 ```
@@ -259,19 +276,9 @@ it is true for all greater integers in the interval.
 If no integer in the interval satisfies `pred?`, return `end`. If all do, return `start`.
 If `pred?` isn't actually increasing, return some integer in the interval.
 
+## Modular Arithmetics
 
-## most-integer?
-```scheme
-(most-integer pred? start end) -> integer
-```
-
-Do a binary search in interval (`start`, `end`] to find the most integer for which `pred?` holds,
-assuming `pred?` is “decreasing”, i.e. if true for some integer in the interval,
-it is true for all lesser integers in the interval.
-If no integer in the interval satisfies `pred?`, return `start`. If all do, return `end`.
-If `pred?` isn't actually decreasing, return some integer in the interval.
-
-## bezout
+### bezout
 ```scheme
 (bezout a b) -> (values integer integer integer)
 ```
@@ -283,7 +290,7 @@ thus forming a Bezout relationship.
 Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 
-## mult-mod a b n
+### mult-mod a b n
 ```scheme
 (mult-mod a b n) -> integer
 ```
@@ -295,7 +302,7 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
-## invert-mod
+### invert-mod
 ```scheme
 (invert-mod a n) -> integer
 ```
@@ -308,7 +315,7 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
-## invert-mod
+### invert-mod
 ```scheme
 (invert-mod a n) -> integer
 ```
@@ -322,7 +329,7 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
-## mult-expt-mod
+### mult-expt-mod
 ```scheme
 (mult-expt-mod a x e n) -> integer
 ```
@@ -335,7 +342,7 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
-## expt-mod
+### expt-mod
 ```scheme
 (expt-mod x e n) -> integer
 ```
@@ -347,24 +354,29 @@ Note: the current implementation doesn't use constant-time computations
 and shouldn't be used for production-grade cryptography.
 Its performance is only moderate.
 
-## integer-log
+## Logarithms
+
+### integer-log
 ```scheme
 (integer-log a b) -> integer
 ```
 
 Given two integers `a` and `b`, return the largest natural integer n such that `b**n <= a`.
 
-
-## factor-out-powers-of-2
+### factor-out-powers-of-2
 ```scheme
 (factor-out-powers-of-2 n) -> integer
 ```
 
-Given an integer `n`, return the smallest integer `m` such that `n = m*2**k` for some integer `k`.
+Given an integer `n`, return two values:
+the smallest integer `m` such that `n = m*2**k` for some integer `k`,
+and the integer `k`.
 
-## factor-out-powers
+### factor-out-powers
 ```scheme
 (factor-out-powers a b) -> integer
 ```
 
-Given integers `a` and `b`, return the smallest integer `m` such that `a = m*b**k` for some integer `k`.
+Given integers `a` and `b`, return two values:
+the smallest integer `m` such that `a = m*b**k` for some integer `k`,
+and the integer `k`.

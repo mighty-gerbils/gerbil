@@ -17,7 +17,7 @@
         normalize-nat
         normalize-integer
         for-each-integer
-        half least-integer most-integer
+        half least-integer
         bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
         integer-log
         factor-out-powers-of-2 factor-out-powers)
@@ -177,17 +177,6 @@
         (if (pred? mid)
           (least-integer pred? start mid)
           (least-integer pred? (1+ mid) end)))))
-
-;;; Binary search in interval (start, end] to find the most integer i for which pred? holds
-;;; for all indexes in [start i), assuming pred? is "decreasing",
-;;; i.e. if true for some integer, true for all smaller integers.
-;;; If no integer in the interval satisfies pred?, return start. If all do, return end.
-(def (most-integer pred? start end)
-  (if (<= end start) start ; empty interval, return start.
-      (let (mid (half (+ end start 1))) ;; round up, trust bignums for no overflow
-        (if (pred? mid)
-          (most-integer pred? mid end)
-          (most-integer pred? start (1- mid))))))
 
 ;; NOTE: the following functions are NOT cryptographic-quality constant-time!
 ;; Do NOT use them for cryptography in production.

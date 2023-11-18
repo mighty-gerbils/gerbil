@@ -1,7 +1,7 @@
 # Vector
 
 The `:std/misc/vector` library provides common vector functions
-that complement those provided by RnRS, Gambit and `:std/srfi/43`.
+that complement those provided by RnRS, Gambit, `:std/srfi/43` and `:std/srfi/133`.
 
 ::: tip To use the bindings from this module:
 ```scheme
@@ -45,28 +45,6 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 0
 > (vector-least-index false #(35 21 16 11 10 9 7 4 1))
 9
-```
-:::
-
-### vector-most-index
-```scheme
-(vector-most-index pred vector [start: 0] [end: #f])
-```
-
-Given a predicate `pred` on the elements of given `vector`, that is “decreasing”,
-i.e. if false for a given element, false on all subsequent elements, and optionally
-a `start` (inclusive, defaults to `0`) and an end (exclusive, defaults to `#f`
-which designates the vector length), return the most index of a vector element
-in the interval [start, env) that satisfies the predicate, or the end if none does.
-
-::: tip Examples:
-```scheme
-> (vector-most-index (cut < <> 10) #(2 3 5 7 11 13 17 19 23))
-4
-> (vector-most-index true #(2 3 5 7 11 13 17 19 23))
-9
-> (vector-most-index false #(2 3 5 7 11 13 17 19 23))
-0
 ```
 :::
 
