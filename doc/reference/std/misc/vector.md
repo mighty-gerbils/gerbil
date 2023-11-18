@@ -10,7 +10,7 @@ that complement those provided by RnRS, Gambit and `:std/srfi/43`.
 :::
 
 ## vector-ref-set!
-``` scheme
+```scheme
 (def vector-ref-set! vector-set!)
 (set! (vector-ref v i) x)
 ```
@@ -18,7 +18,7 @@ that complement those provided by RnRS, Gambit and `:std/srfi/43`.
 This binding enables you to use `set!` with `vector-ref`.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (def foo (vector 1 2 3))
 > (set! (vector-ref foo 1) 4)
 > foo
@@ -27,7 +27,7 @@ This binding enables you to use `set!` with `vector-ref`.
 :::
 
 ### vector-least-index
-``` scheme
+```scheme
 (vector-least-index pred vector [start: 0] [end: #f])
 ```
 
@@ -38,7 +38,7 @@ which designates the vector length), return the least index of a vector element
 in the interval [start, env) that satisfies the predicate, or the end if none does.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (vector-least-index (cut < <> 10) #(35 21 16 11 10 9 7 4 1))
 5
 > (vector-least-index true #(35 21 16 11 10 9 7 4 1))
@@ -49,7 +49,7 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### vector-most-index
-``` scheme
+```scheme
 (vector-most-index pred vector [start: 0] [end: #f])
 ```
 
@@ -60,7 +60,7 @@ which designates the vector length), return the most index of a vector element
 in the interval [start, env) that satisfies the predicate, or the end if none does.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (vector-most-index (cut < <> 10) #(2 3 5 7 11 13 17 19 23))
 4
 > (vector-most-index true #(2 3 5 7 11 13 17 19 23))
@@ -71,9 +71,15 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### maybe-subvector
+```scheme
+(maybe-subvector vector [start 0] [end #f]) => vector
+```
+
+Copy a vector if necessary: return the same if no change in start and end requested.
+(This is unlike `subvector` that always generates a fresh vector.)
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (maybe-subvector #(1 3 5 7) 2)
 #(5 7)
 > (def foo #(a b c))
@@ -83,9 +89,12 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### subvector-for-each
+```scheme
+(subvector-for-each function vector start: (start 0) end: (end #f))
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (with-list-builder (c)
    (subvector-for-each
     c #(a b c d e f g h) start: 2 end: 5))
@@ -94,9 +103,12 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### subvector-for-each/index
+```scheme
+(subvector-for-each/index function vector start: (start 0) end: (end #f))
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (with-list-builder (c)
    (subvector-for-each/index
     (lambda (x y) (c [x y])) #(a b c d e f g h) start: 5))
@@ -105,9 +117,12 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### subvector-reverse-for-each
+```scheme
+(subvector-reverse-for-each function vector start: (start 0) end: (end #f))
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (with-list-builder (c)
    (subvector-reverse-for-each c #(a b c d e f g h) start: 2 end: 5))
 (e d c)
@@ -115,9 +130,12 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### subvector-reverse-for-each/index
+```scheme
+(subvector-reverse-for-each/index function vector start: (start 0) end: (end #f))
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (with-list-builder (c)
    (subvector-reverse-for-each/index
     (lambda (x y) (c [x y])) #(a b c d e f g h) start: 5))
@@ -126,18 +144,24 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### subvector->list
+```scheme
+(subvector->list vector start: (start 0) end: (end #f))
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (subvector->list #(a b c d e f g h) start: 5)
 (f g h)
 ```
 :::
 
 ### cons->vector
+```scheme
+(cons->vector pair)
+```
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (cons->vector '(a . b))
 #(a b)
 > (cons->vector 'foo)
@@ -146,6 +170,15 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 :::
 
 ### vector-filter
+```scheme
+(vector-filter pred? v start: (start 0) end: (end (vector-length v)))
+```
+
+Filter entries of a vector `v` to those that satisfy the predicate `pred?`
+and having indexes between the optional `start` (inclusive, defaults to `0`)
+and an end (exclusive, defaults to `#f` which designates the vector length).
+Return a fresh vector with the filtered entries.
+
 ::: tip Examples:
 ```
 > (vector-filter odd? #(1 2 3 4 5 6 7 8 9) start: 1 end: 7)

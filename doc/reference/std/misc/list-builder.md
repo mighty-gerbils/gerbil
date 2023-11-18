@@ -1,8 +1,17 @@
 # List builder
 
+The `:std/misc/list-builder` library provides
+common bindings for building lists.
+
+::: tip To use the bindings from this module:
+```scheme
+(import :std/misc/list-builder)
+```
+:::
+
 ## with-list-builder
 
-``` scheme
+```scheme
 (with-list-builder (put! [peek]) body ...) -> list
 
   put! := function identifier that modifies internal list
@@ -14,7 +23,7 @@ so *put!* and *peek* can be used without wrapping them in a lambda first.
 `with-list-builder` returns the internal list at the end.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (import :std/iter)
 > (with-list-builder (put!)
     (for (n (in-iota 100 1))
@@ -30,7 +39,7 @@ so *put!* and *peek* can be used without wrapping them in a lambda first.
 
 ## call-with-list-builder
 
-``` scheme
+```scheme
 (call-with-list-builder proc) -> list
 
   proc := procedure that takes two proc identifiers as input
@@ -49,7 +58,7 @@ with `copy-list` if you want not to be affected by these mutations.
 Finally, `call-with-list-builder` returns the constructed list.
 
 ::: tip Examples:
-``` scheme
+```scheme
 > (import :std/iter)
 > (call-with-list-builder
     (lambda (put! peek)
