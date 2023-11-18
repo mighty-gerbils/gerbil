@@ -191,7 +191,7 @@
         ((not (= count 1))
          (error "Postgres connection failed immediately"))
         ((= response 78) ;; (char->integer #\N)
-          ;; Exceptionally, this N isn't followed by a notice message to unmarshal:
+         ;; Exceptionally (see URL above), this N isn't followed by a notice message
          (when (eq? ssl? #t)
            (error "Postgres Server does not support SSL encryption.")))
         ((= response 83) ;; (char->integer #\S)
