@@ -907,7 +907,7 @@
 (defrules defmessage-frontend ()
   ((_ (id char marshal) ...)
    (begin
-     (let (t (and char (char->integer char)))
+     (let (t (char->integer char))
        (hash-put! +frontend-messages+ 'id (cons t marshal)))
      ...)))
 
