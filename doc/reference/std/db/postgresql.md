@@ -27,7 +27,7 @@ https://www.postgresql.org/docs/current/libpq-connect.html
 
 Or provide separately the `host` (defaults to `"localhost"`),
 the `port` (defaults to `5432`),
-the `user` (defaults to the value of the `LOGNAME` environment variable),
+the `user` (defaults to the value of the `USER` environment variable),
 the `passwd` (defaults to `#f` which designates the empty password `""`),
 the `db` (defaults to the value of `user`).
 

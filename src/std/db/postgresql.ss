@@ -47,12 +47,12 @@
   (when url
     (match (parse-postgres-database-url url)
       ([h p d u pw params]
-       ;; TODO handle all parameters in
+       ;; TODO handle all parameters (that make sense) in
        ;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
        (set! (values host port db user passwd) (values h p d u pw)))
-      (else (error "Invalid database url" database-url))))
+      (else (error "Invalid database url" url))))
   (unless user
-    (set! user (or (getenv "LOGNAME" #f)
+    (set! user (or (getenv "USER" #f)
                    (error "No user specified"))))
   (unless passwd
     (set! passwd ""))
@@ -64,7 +64,7 @@
 ;; Parse a Postgres connection string as per
 ;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
 ;; also used by e.g. heroku's DATABASE_URL, or JDBC.
-;; TODO: make database optional, default to user, default to $LOGNAME or such?
+;; TODO: make database optional, default to user, default to $USER or such?
 ;; : String -> (Tuple String (OrFalse Nat) String (OrFalse String) (OrFalse String) (OrFalse String))
 (def (parse-postgres-database-url url)
   (match (pregexp-match "^postgres://(([^:/@?]+)(:([^:/@?]*))?@)?([^:/@?]+)(:([0-9]+))?/([^:/@?]+)([?](.*))?$" url)
