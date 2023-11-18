@@ -1,37 +1,55 @@
 # PostgreSQL driver
 
-    (import :std/db/postgresql)
+The `:std/db/postgresql` library provides a way to connect to a PostgreSQL database.
 
-Have a look at [the postgresql-test.ss file](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/db/postgresql-test.ss) to see more of how it is used with
-the `:std/db/dbi`.
+::: tip To use the bindings from this module:
+```scheme
+(import :std/db/postgresql)
+```
+:::
 
-
-<a id="org04d26f9"></a>
+Have a look at [the postgresql-test.ss file](https://github.com/mighty-gerbils/gerbil/blob/master/src/std/db/postgresql-test.ss)
+to see more of how it is used with the `:std/db/dbi`.
 
 ## postgresql-connect
+```scheme
+(postgresql-connect url
+   [ssl?: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
+OR
+(postgresql-connect [host: "localhost"] user: u passwd: p db: d
+   [ssl?: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
+=> postgresql-connection
+```
 
-The first way is simply to use the function.
+To connect to a database, you can simply to use the function.
+Either provide a `url` as a positional argument, following the general format below:
+https://www.postgresql.org/docs/current/libpq-connect.html
 
-    (postgresql-connect host: "localhost" user: "foo" passwd: "bar")
-    ;; => #<postgresql-connection #36>
+Or provide separately the `host` (defaults to `"localhost"`),
+the `port` (defaults to `5432`),
+the `user` (defaults to the value of the `LOGNAME` environment variable),
+the `passwd` (defaults to `#f` which designates the empty password `""`),
+the `db` (defaults to the value of `user`).
 
-But, often, we may want to close the connection when garbage collected so we,
-the developer, don&rsquo;t need to worry about hanging connections. Thus,
-`std/db/dbi#sql-connect` is often the better choice as it `will`&rsquo;s the
+Either way, you may specify the keyword arguments
+`ssl?` (defaults to `'try`), which unless false will cause an SSL connection to be attempted,
+though unless it is `#t` will not cause an error if SSL is unsupported by the server.
+The `ssl-context` will be used for the connection, as well as the `timeout`.
+
+Now, often, we may want to close the connection when garbage collected so we,
+the developer, don’t need to worry about hanging connections. Thus,
+`std/db/dbi#sql-connect` is often the better choice as it `will`’s the
 `sql-close` into being.
 
     (import :std/db/dbi)
     (def pg (sql-connect postgresql-connect host: "localhost" user: "foo" passwd: "bar"))
     ;; => #<postgresql-connection #36>
 
-
-<a id="defcatalog"></a>
-
 ## defcatalog, Postgresql->Gerbil->Postgresql mapping
 
 A catalog tells us what to do with what postgresql gives us.
 
-Here&rsquo;s the basic syntax.
+Here’s the basic syntax.
 
     ((_ (name mixin ...) (oids serialize deserialize) ...)
 
@@ -43,14 +61,11 @@ A mixin is not always needed. Here is our first version.
       ;; INT8OID INT2OID INT4OID FLOAT4OID FLOAT8OID NUMERICOID
       ((20 21 23 700 701 1700) (lambda _ "42") (lambda _ 42)))
 
-Try it out by `parameterize`&rsquo;ing the [`current-catalog`](#currentCatalog).
+Try it out by `parameterize`’ing the [`current-catalog`](#currentCatalog).
 
     (parameterize ((current-catalog my-default-catalog))
       (sql-eval-query pg "SELECT 1, FALSE WHERE $1" 'hey-you))
     ;; => (#(42 42))
-
-
-<a id="orgd307da2"></a>
 
 ## defcatalog-default
 
@@ -67,7 +82,7 @@ For example, **PostgreSQL** has a **JSON** type.
 
 And, **Gerbil** does as well! Actually, the `:std/test/json` just turns it into a hash table.
 
-First we see the `oid`&rsquo;s for postgres&rsquo; json types. Select them as JSON to see
+First we see the `oid`’s for postgres’ json types. Select them as JSON to see
 that as well.
 
     (import :std/text/json)
@@ -89,7 +104,7 @@ that as well.
     ;; => (((json . "114")) ((jsonb . "3802")) ((jsonpath . "4072"))
     ;;    ((_json . "199")) ((_jsonb . "3807")) ((_jsonpath . "4073")))
 
-All we need is to (de)serialize them&#x2026;
+All we need is to (de)serialize them…
 
     (def (serialize-json gerbil-json)
      (call-with-output-string "" (cut write-json gerbil-json <>)))
@@ -97,7 +112,7 @@ All we need is to (de)serialize them&#x2026;
     (def (deserialize-json str)
       (call-with-input-string str read-json))
 
-&#x2026; and add them to the default catalog.
+… and add them to the default catalog.
 
     (defcatalog-default ((114 3802) serialize-json deserialize-json))
 
@@ -114,9 +129,6 @@ Even better, we can pass them to queries!
       (cons (sql-columns stmt) (begin (sql-bind stmt (list->hash-table '(("foo" . 1) ("bar" . "baz"))))
                                       (sql-query stmt))))
     ;; => (("key" "value") #("bar" "baz") #("foo" "1"))
-
-
-<a id="defaultCatalog"></a>
 
 ## default-catalog
 
@@ -147,8 +159,6 @@ Which works as expected.
     ;;         year: 2021 zone-offset: 0> 42))
 
 
-<a id="currentCatalog"></a>
-
 ## current-catalog
 
 The `current-catalog` parameter determines which catalog is used by default.
@@ -171,7 +181,7 @@ Use it to declare a global default.
 
     (sql-eval-query pg "SELECT 1") ;; => (42)
 
-Don&rsquo;t forget to set it back :).
+Don’t forget to set it back :).
 
     (current-catalog default-catalog)
 

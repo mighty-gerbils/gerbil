@@ -127,7 +127,7 @@ module.exports = {
                             "db/",
                             "db/dbi",
                             "db/sqlite",
-                            "db/postgres",
+                            "db/postgresql",
                             "db/conpool",
                         ]
                       },
