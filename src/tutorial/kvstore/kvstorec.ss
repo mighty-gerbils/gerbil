@@ -38,7 +38,7 @@
 
   (def get-object-cmd
     (command 'get-object
-      help: "get a serialized object fromt he store"
+      help: "get a serialized object from the store"
       server-option
       output-option
       key-argument))
