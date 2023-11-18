@@ -36,8 +36,8 @@
       (set! self.db db))))
 
 (def (postgresql-connect (url #f)
-                         host: (host "127.0.0.1")
-                         port: (port 5432)
+                         host: (host #f)
+                         port: (port #f)
                          user: (user #f)
                          passwd: (passwd #f)
                          db: (db #f)
@@ -51,6 +51,10 @@
        ;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
        (set! (values host port db user passwd) (values h p d u pw)))
       (else (error "Invalid database url" url))))
+  (unless host
+    (set! host "127.0.0.1"))
+  (unless port
+    (set! port 5432))
   (unless user
     (set! user (or (getenv "USER" #f)
                    (error "No user specified"))))

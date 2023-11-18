@@ -22,14 +22,18 @@ OR
 ```
 
 To connect to a database, you can simply to use the function.
-Either provide a `url` as a positional argument, following the general format below:
+Either provide a `url` as a positional argument
+(defaults to `#f` which designates using the mechanism below instead),
+or provide separately the `host`, `port`, `user`, `passwd`, `db`,
+which all default to `#f`.
+The `url` and its components roughly follow the same meaning as in `libpq`:
 https://www.postgresql.org/docs/current/libpq-connect.html
 
-Or provide separately the `host` (defaults to `"localhost"`),
-the `port` (defaults to `5432`),
-the `user` (defaults to the value of the `USER` environment variable),
-the `passwd` (defaults to `#f` which designates the empty password `""`),
-the `db` (defaults to the value of `user`).
+A `host` value of `#f` designates the local address `"127.0.0.1"`.
+A `port` value of `#f` designates port `5432`.
+A `user` value of `#f` designates the value of the `USER` environment variable.
+A `passwd` value of `#f` designates the empty password `""`.
+A `db` value of `#f` designates the same value as `user`.
 
 Either way, you may specify the keyword arguments
 `ssl?` (defaults to `'try`), which unless false will cause an SSL connection to be attempted,
