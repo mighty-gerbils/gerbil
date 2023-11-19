@@ -6,7 +6,7 @@
 (import :std/actor
         :std/interface
         :std/io
-        :std/io/bio/types
+        :std/io/bio/util
         :std/contract
         :std/misc/bytes
         :std/misc/channel
@@ -171,7 +171,7 @@
   error: "error closing connection")
 
 ;;; driver implementation
-(def (postgresql-connect! host port user passwd db ssl? ssl-context timeout)
+(def (postgresql-connect! host port user passwd db ssl ssl-context timeout)
   (def sock
     (tcp-connect (cons host port)))
 
@@ -180,11 +180,11 @@
    (start-logger!)
    (DEBUG "STARTUP")
 
-   (when ssl?
+   (when ssl
      ;; Send magic SSLRequest message with non-version 80877103, instead of StartupMessage
      ;; https://www.postgresql.org/docs/current/protocol-flow.html
      (StreamSocket-send sock #u8(0 0 0 8 4 210 22 47) 0 8 0)
-     (let* ((buf (make-u8vector 2048 0))
+     (let* ((buf (make-u8vector 1 0))
             (count (StreamSocket-recv sock buf 0 1 MSG_WAITALL))
             (response (u8vector-ref buf 0)))
        (cond
@@ -192,7 +192,7 @@
          (error "Postgres connection failed immediately"))
         ((= response 78) ;; (char->integer #\N)
          ;; Exceptionally (see URL above), this N isn't followed by a notice message
-         (when (eq? ssl? #t)
+         (when (eq? ssl #t)
            (error "Postgres Server does not support SSL encryption.")))
         ((= response 83) ;; (char->integer #\S)
          (set! sock (ssl-client-upgrade sock (make-timeout timeout #f)
@@ -200,9 +200,11 @@
                                         host: host)))
         (else
          ;; read as much as we can from the server response to give the best error context
-         (let* ((len (StreamSocket-recv sock buf 1 2048 MSG_DONTWAIT))
-                (len1 (if (negative? len) 1 (1+ len))))
-           (error "Invalid server response" (subu8vector buf 0 len1)))))))
+         (let* ((buf1 (make-u8vector 2048 0))
+                (len0 (StreamSocket-recv sock buf1 1 2048 MSG_DONTWAIT))
+                (len1 (if (positive? len0) (1+ len0) 1)))
+           (vector-set! buf1 0 response)
+           (error "Invalid server response" (subu8vector buf1 0 len1)))))))
 
    (def reader
      (open-buffered-reader
@@ -627,19 +629,10 @@
                   (DEBUG "RECEIVE " msg)
                   msg))))
          (else
-          (raise-io-error postgresql-recv! "unexpected backend message"
-                          (u8vector-append
-                           (nat->u8vector tid 1)
-                           (nat->u8vector (+ payload-len 4) 4)
-                           (input-buffer-read/flush (interface-instance-object reader))))))))))
-
-;; TODO: move this to a better place
-(import :std/io/bio/input)
-(def (input-buffer-read/flush bio)
-  (let* ((n-bytes (- (input-buffer-rhi bio) (input-buffer-rlo bio)))
-         (buf (make-u8vector n-bytes 0)))
-    (bio-read-bytes bio buf 0 n-bytes 0)
-    buf))
+          (let ((buffer (read-available-u8 reader start: 5 end: 2048)))
+            (u8vector-set! buffer 0 tid)
+            (u8vector-uint-set! buffer 1 (+ payload-len 4) big 4)
+            (raise-io-error postgresql-recv! "unexpected backend message" buffer))))))))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore buf)

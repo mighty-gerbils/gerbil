@@ -10,7 +10,8 @@
         ./inline)
 (declare (not safe))
 
-(export defstring-reader-ext defstring-reader-ext*  defstring-writer-ext defstring-writer-ext*)
+(export defstring-reader-ext defstring-reader-ext*  defstring-writer-ext defstring-writer-ext*
+        read-available-chars read-available-chars-into)
 
 (defsyntax (defstring-reader-ext stx)
   (syntax-case stx ()
@@ -99,3 +100,20 @@
       (begin
         (writer.write-char-inline separator)
         (fx+ result 1)))))
+
+(def (read-available-chars reader start: (start 0) end: (end #f))
+  (using (reader :- BufferedStringReader)
+    (let* ((available (reader.available-chars))
+           (available-end (+ start available))
+           (actual-end (if end (min end available-end) available-end))
+           (buffer (make-string actual-end #\space)))
+      (reader.read-string buffer start actual-end 0)
+      buffer)))
+
+(def (read-available-chars-into reader buffer start: (start 0) end: (end #f))
+  (using (reader :- BufferedStringReader)
+    (let* ((available (reader.available-chars))
+           (len (string-length buffer))
+           (count (min available (- (if end (min len end) len) start))))
+      (reader.read-string buffer start (+ start count) 0)
+      count)))

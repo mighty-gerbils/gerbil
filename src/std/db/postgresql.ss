@@ -41,7 +41,7 @@
                          user: (user #f)
                          passwd: (passwd #f)
                          db: (db #f)
-                         ssl?: (ssl? 'try)
+                         ssl: (ssl 'try)
                          ssl-context: (ssl-context (default-client-ssl-context))
                          timeout: (timeout #f))
   (when url
@@ -62,7 +62,7 @@
     (set! passwd ""))
   (unless db
     (set! db user))
-  (let (driver (postgresql-connect! host port user passwd db ssl? ssl-context timeout))
+  (let (driver (postgresql-connect! host port user passwd db ssl ssl-context timeout))
     (make-postgresql-connection driver host port user db)))
 
 ;; Parse a Postgres connection string as per

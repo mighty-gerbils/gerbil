@@ -2,9 +2,6 @@
 
     (import :std/db/dbi)
 
-
-<a id="orgc142ed3"></a>
-
 ## sql-connect
 
 First things first we must connect to a database. Though the actual function to
@@ -16,8 +13,6 @@ connection is automagically closed using [`sql-close`](#sqlClose) when garbage c
     ;; => #<postgresql-connection #36>
 
 
-<a id="org1572080"></a>
-
 ## connection?
 
 This predicate asks if the thing passed is in fact a connection.
@@ -25,8 +20,6 @@ This predicate asks if the thing passed is in fact a connection.
     (connection? db) ;; => #t
     (connection? car) ;; => #f
 
-
-<a id="sqlEval"></a>
 
 ## sql-eval
 
@@ -43,8 +36,6 @@ It can take arguments.
 
     (sql-eval db "INSERT INTO foo VALUES ($1)" "yay!") ;; => #!void
 
-
-<a id="sqlEvalQuery"></a>
 
 ## sql-eval-query
 
@@ -73,18 +64,16 @@ arguments as well.
     ;; => ("huh?" "bar" "bar")
 
 
-<a id="sqlPrepare"></a>
-
 ## sql-prepare
 
 Often an evaluation of a query is not enough.
 
--   There&rsquo;s the simple matter of column names as we only return a list of
+-   There’s the simple matter of column names as we only return a list of
     results.
 
 -   We may want to pass arguments.
 
-For that purpose there&rsquo;s a prepared statement. They are `willed to run`
+For that purpose there’s a prepared statement. They are `willed to run`
 [`sql-finalize`](#sqlFinalize) before taking out the trash.
 
     (def istmt (sql-prepare db "INSERT INTO foo VALUES ('bar') RETURNING foo.*;"))
@@ -95,8 +84,6 @@ For that purpose there&rsquo;s a prepared statement. They are `willed to run`
     (def bind-stmt (sql-prepare db "SELECT true AS funnyColumn, * FROM foo WHERE bar = $1"))
 
 
-<a id="org7432ad3"></a>
-
 ## statement?
 
 Is this an **SQL Statement**?
@@ -105,11 +92,9 @@ Is this an **SQL Statement**?
     (statement? 'foobar) ;; =? #f
 
 
-<a id="orgacd84d5"></a>
-
 ## sql-columns
 
-We&rsquo;ve got some predicative-ly confirmed prepared statements. `sql-columns` gives
+We’ve got some predicative-ly confirmed prepared statements. `sql-columns` gives
 us the column names.
 
     (map sql-columns [ istmt bind-istmt stmt bind-stmt ])
@@ -149,7 +134,7 @@ as well.
     ; prepared statement "stmt539" requires 1) (F . postgres.c) (L . 1665) (R .
     ; exec_bind_message)
 
-That&rsquo;s because arguments need to be bound with [`sql-bind`](#sqlBind).
+That’s because arguments need to be bound with [`sql-bind`](#sqlBind).
 
 
 <a id="sqlQuery"></a>
@@ -157,7 +142,7 @@ That&rsquo;s because arguments need to be bound with [`sql-bind`](#sqlBind).
 ## sql-query
 
 Similar to [`sql-eval-query`](#sqlEvalQuery) `sql-query` returns the results of the
-[`sql-prepare`](#sqlPrepare)&rsquo;d statement in list form.
+[`sql-prepare`](#sqlPrepare)’d statement in list form.
 
     (sql-query stmt) => ("(bar)" "(bar)" "(bar)")
 
@@ -188,7 +173,7 @@ especially with [reset](#sqlReset), or even [reset/clear](#sqlResetClear).
 
 ## sql-bind
 
-For [`sql-prepare`](#sqlPrepare)&rsquo;d statements that take arguments `sql-bind` sets them to the
+For [`sql-prepare`](#sqlPrepare)’d statements that take arguments `sql-bind` sets them to the
 value before we run the statement.
 
     (sql-bind bind-istmt "yay!") ;; => #!void
@@ -216,7 +201,7 @@ A statement can be rebound.
     (sql-query stmt)
     ;; => ("(bar)" "(bar)" "(bar)" "(yay!)" "(yay!)" "(huh?)")
 
-It can also be [cleared](#sqlClear), [reset](#sqlReset), or even [reset/clear](#sqlResetClear)&rsquo;d.
+It can also be [cleared](#sqlClear), [reset](#sqlReset), or even [reset/clear](#sqlResetClear)’d.
 
 
 <a id="sqlClear"></a>
@@ -314,7 +299,7 @@ one is.
 
 ## sql-txn-commit
 
-Commits a transaction if there&rsquo;s one that can be commited. It errors if the
+Commits a transaction if there’s one that can be commited. It errors if the
 transaction cannot be commited and otherwise, if there is no transaction, does
 nothing at all.
 

@@ -269,3 +269,7 @@
     (unless strbuf.closed?
       (set! strbuf.closed? #t)
       (&StringReader-close strbuf.reader))))
+
+(def (strbuf-available-chars buf)
+  (using (buf :- string-input-buffer)
+    (- buf.rhi buf.rlo)))

@@ -14,10 +14,10 @@ to see more of how it is used with the `:std/db/dbi`.
 ## postgresql-connect
 ```scheme
 (postgresql-connect url
-   [ssl?: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
+   [ssl: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
 OR
 (postgresql-connect [host: "localhost"] user: u passwd: p db: d
-   [ssl?: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
+   [ssl: 'try] [ssl-context: (default-client-ssl-context)] [timeout: #f])
 => postgresql-connection
 ```
 
@@ -36,13 +36,13 @@ A `passwd` value of `#f` designates the empty password `""`.
 A `db` value of `#f` designates the same value as `user`.
 
 Either way, you may specify the keyword arguments
-`ssl?` (defaults to `'try`), which unless false will cause an SSL connection to be attempted,
+`ssl` (defaults to `'try`), which unless false will cause an SSL connection to be attempted,
 though unless it is `#t` will not cause an error if SSL is unsupported by the server.
 The `ssl-context` will be used for the connection, as well as the `timeout`.
 
 Now, often, we may want to close the connection when garbage collected so we,
 the developer, don’t need to worry about hanging connections. Thus,
-`std/db/dbi#sql-connect` is often the better choice as it `will`’s the
+[`std/db/dbi#sql-connect`](dbi.md#sql-connect) is often the better choice as it `will`’s the
 `sql-close` into being.
 
     (import :std/db/dbi)

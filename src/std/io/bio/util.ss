@@ -14,7 +14,8 @@
         ./output)
 (declare (not safe))
 
-(export defreader-ext defreader-ext*  defwriter-ext defwriter-ext*)
+(export defreader-ext defreader-ext*  defwriter-ext defwriter-ext*
+        read-available-u8 read-available-u8-into)
 
 (defsyntax (defreader-ext stx)
   (syntax-case stx ()
@@ -654,3 +655,20 @@
 
 (def (expt-cache-get len)
   (vector-ref +expt-cache+ (fx- len 1)))
+
+(def (read-available-u8 reader start: (start 0) end: (end #f))
+  (using (reader :- BufferedReader)
+    (let* ((available (reader.available-u8))
+           (available-end (+ start available))
+           (actual-end (if end (min end available-end) available-end))
+           (buffer (make-u8vector actual-end 0)))
+      (reader.read buffer start actual-end 0)
+      buffer)))
+
+(def (read-available-u8-into reader buffer start: (start 0) end: (end #f))
+  (using (reader :- BufferedReader)
+    (let* ((available (reader.available-u8))
+           (len (u8vector-length buffer))
+           (count (min available (- (if end (min len end) len) start))))
+      (reader.read buffer start (+ start count) 0)
+      count)))
