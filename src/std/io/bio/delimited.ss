@@ -91,13 +91,13 @@
         (bio-reset-input! in reader close?)
         (bio-delimited-reset-input! in reader close?)))))
 
-(def (bio-delimited-available-u8 delim)
+(def (bio-delimited-available delim)
   (using (delim :- delimited-input-buffer)
     (let (in delim.in)
       (min delim.remaining
            ((if (input-buffer? in)
-              bio-available-u8
-              bio-delimited-available-u8)
+              bio-available
+              bio-delimited-available)
             in)))))
 
 (def (bio-delimited-close delim)

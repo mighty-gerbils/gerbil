@@ -57,7 +57,7 @@
   (reset! (reader : Reader) (close? := #t))
 
   ;; returns the number of buffered bytes available to read without further I/O
-  (available-u8))
+  (available))
 
 
 (interface (BufferedWriter Writer)
@@ -100,7 +100,7 @@
   (reset! (reader : StringReader) (close? := #t))
 
   ;; returns the number of buffered chars available to read without further I/O
-  (available-chars))
+  (available))
 
 
 (interface (StringWriter Closer)

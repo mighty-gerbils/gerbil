@@ -10,8 +10,7 @@
         ./inline)
 (declare (not safe))
 
-(export defstring-reader-ext defstring-reader-ext*  defstring-writer-ext defstring-writer-ext*
-        read-available-chars read-available-chars-into)
+(export defstring-reader-ext defstring-reader-ext*  defstring-writer-ext defstring-writer-ext*)
 
 (defsyntax (defstring-reader-ext stx)
   (syntax-case stx ()
@@ -87,6 +86,21 @@
        (else
         (raise-io-error strbuf-read-line "too many characters" x))))))
 
+(defstring-reader-ext (read-available reader (start 0) (end #f))
+  (let* ((available (reader.available))
+         (available-end (+ start available))
+         (actual-end (if end (min end available-end) available-end))
+         (buffer (make-string actual-end #\space)))
+    (reader.read-string buffer start actual-end 0)
+    buffer))
+
+(defstring-reader-ext (read-available-into reader buffer (start 0) (end #f))
+  (let* ((available (reader.available))
+         (len (string-length buffer))
+         (count (min available (- (if end (min len end) len) start))))
+    (reader.read-string buffer start (+ start count) 0)
+    count))
+
 
 (defstring-writer-ext (write-line writer input (separator #\newline))
   (let (result (writer.write-string input 0 (string-length input)))
@@ -100,20 +114,3 @@
       (begin
         (writer.write-char-inline separator)
         (fx+ result 1)))))
-
-(def (read-available-chars reader start: (start 0) end: (end #f))
-  (using (reader :- BufferedStringReader)
-    (let* ((available (reader.available-chars))
-           (available-end (+ start available))
-           (actual-end (if end (min end available-end) available-end))
-           (buffer (make-string actual-end #\space)))
-      (reader.read-string buffer start actual-end 0)
-      buffer)))
-
-(def (read-available-chars-into reader buffer start: (start 0) end: (end #f))
-  (using (reader :- BufferedStringReader)
-    (let* ((available (reader.available-chars))
-           (len (string-length buffer))
-           (count (min available (- (if end (min len end) len) start))))
-      (reader.read-string buffer start (+ start count) 0)
-      count)))

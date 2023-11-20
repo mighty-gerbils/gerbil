@@ -14,8 +14,7 @@
         ./output)
 (declare (not safe))
 
-(export defreader-ext defreader-ext*  defwriter-ext defwriter-ext*
-        read-available-u8 read-available-u8-into)
+(export defreader-ext defreader-ext*  defwriter-ext defwriter-ext*)
 
 (defsyntax (defreader-ext stx)
   (syntax-case stx ()
@@ -60,6 +59,8 @@
            (def (unchecked-method writer . args)
              (using (writer :- BufferedWriter)
                body ...)))))))
+
+;; NB: Numbers are read and written in "network order", i.e. big endian
 
 ;; reader
 (defreader-ext (read-u16 reader)
@@ -522,8 +523,22 @@
        (else
         (raise-io-error read-line "too many characters" x))))))
 
+(defreader-ext (read-available reader (start 0) (end #f))
+  (let* ((available (reader.available))
+         (available-end (+ start available))
+         (actual-end (if end (min end available-end) available-end))
+         (buffer (make-u8vector actual-end 0)))
+    (reader.read buffer start actual-end 0)
+    buffer))
+
+(defreader-ext (read-available-into reader buffer (start 0) (end #f))
+  (let* ((available (reader.available))
+         (len (u8vector-length buffer))
+         (count (min available (- (if end (min len end) len) start))))
+    (reader.read buffer start (+ start count) 0)
+    count))
+
 ;; writer
-;; numbers are written in "network order", i.e. big endian
 (defwriter-ext (write-u16 writer uint)
   (write-uint writer uint 2))
 (defwriter-ext (write-s16 writer int)
@@ -655,20 +670,3 @@
 
 (def (expt-cache-get len)
   (vector-ref +expt-cache+ (fx- len 1)))
-
-(def (read-available-u8 reader start: (start 0) end: (end #f))
-  (using (reader :- BufferedReader)
-    (let* ((available (reader.available-u8))
-           (available-end (+ start available))
-           (actual-end (if end (min end available-end) available-end))
-           (buffer (make-u8vector actual-end 0)))
-      (reader.read buffer start actual-end 0)
-      buffer)))
-
-(def (read-available-u8-into reader buffer start: (start 0) end: (end #f))
-  (using (reader :- BufferedReader)
-    (let* ((available (reader.available-u8))
-           (len (u8vector-length buffer))
-           (count (min available (- (if end (min len end) len) start))))
-      (reader.read buffer start (+ start count) 0)
-      count)))

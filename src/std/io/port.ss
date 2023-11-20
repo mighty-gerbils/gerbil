@@ -78,7 +78,7 @@
   => read-u8)
 (defport-method raw-binary-input-port (peek-u8 port)
   => peek-u8)
-(defport-method raw-binary-input-port (available-u8 port)
+(defport-method raw-binary-input-port (available port)
   0) ;; TODO: improve upon that by peering into Gambit to see if there is some peek-u8 information
 
 (defport-method raw-textual-input-port (read-string port str start end need)
@@ -90,7 +90,7 @@
   => read-char)
 (defport-method raw-textual-input-port (peek-char port)
   => peek-char)
-(defport-method raw-input-port (available-chars port)
+(defport-method raw-input-port (available port)
   0) ;; TODO: improve upon that by peering into Gambit to see if there is some peek-u8 information
 
 (defport-method raw-output-port (close port)
@@ -134,7 +134,7 @@
 (defcooked-port-method cooked-binary-input-port (read port buffer u8v start end need)
   (cooked-input-port-read* port buffer u8v start end need read-subu8vector subu8vector-move!))
 
-(defcooked-port-method cooked-binary-input-port (available-u8 port buffer)
+(defcooked-port-method cooked-binary-input-port (available port buffer)
   (cooked-buffer-available buffer))
 
 ;;; Delimited Binary Input
@@ -162,8 +162,8 @@
 (defsimple-port-method delimited-binary-input-port (read self u8v start end need)
   (delimited-read* self u8v start end need cooked-binary-input-port::read))
 
-(defsimple-port-method delimited-binary-input-port (available-u8 self)
-  (delimited-available-u8 self))
+(defsimple-port-method delimited-binary-input-port (available self)
+  (delimited-available self cooked-binary-input-port::available))
 
 ;;; Cooked Textual Input
 (defmethod {:init! cooked-textual-input-port}
@@ -187,7 +187,7 @@
 (defcooked-port-method cooked-textual-input-port (read-string port buffer str start end need)
   (cooked-input-port-read* port buffer str start end need read-substring substring-move!))
 
-(defcooked-port-method cooked-textual-input-port (available-chars port buffer)
+(defcooked-port-method cooked-textual-input-port (available port buffer)
   (cooked-buffer-available buffer))
 
 ;;; Delimited Textual Input
@@ -215,8 +215,8 @@
 (defsimple-port-method delimited-textual-input-port (read-string self str start end need)
   (delimited-read* self str start end need cooked-textual-input-port::read-string))
 
-(defsimple-port-method delimited-textual-input-port (available-chars self)
-  (delimited-available-chars self))
+(defsimple-port-method delimited-textual-input-port (available self)
+  (delimited-available self cooked-textual-input-port::available))
 
 ;;; Cooked Port Utilities
 (def (cooked-buffer-consume! buffer n)
@@ -392,18 +392,11 @@
            (raise-premature-end-of-input macro)
            rd))))))
 
-(defrule (delimited-available-u8 self)
+(defrule (delimited-available self cooked-available)
   (let recur ((obj self))
     (min (&delimited-limit obj)
          (let (in (&delimited-e obj))
            (if (delimited? in)
              (recur in)
-             (cooked-binary-input-port::available-u8 in))))))
+             (cooked-available in))))))
 
-(defrule (delimited-available-chars self)
-  (let recur ((obj self))
-    (min (&delimited-limit obj)
-         (let (in (&delimited-e obj))
-           (if (delimited? in)
-             (recur in)
-             (cooked-textual-input-port::available-chars in))))))

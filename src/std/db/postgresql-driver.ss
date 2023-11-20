@@ -629,7 +629,7 @@
                   (DEBUG "RECEIVE " msg)
                   msg))))
          (else
-          (let ((buffer (read-available-u8 reader start: 5 end: 2048)))
+          (let (buffer (reader.read-available 5 2048))
             (u8vector-set! buffer 0 tid)
             (u8vector-uint-set! buffer 1 (+ payload-len 4) big 4)
             (raise-io-error postgresql-recv! "unexpected backend message" buffer))))))))

@@ -90,13 +90,13 @@
         (strbuf-delimited-reset-input! in reader close?)))
     (set! delim.remaining delim.limit)))
 
-(def (strbuf-delimited-available-chars delim)
+(def (strbuf-delimited-available delim)
   (using (delim :- delimited-string-input-buffer)
     (let (in delim.in)
       (min delim.remaining
            (if (string-input-buffer? in)
-             (strbuf-available-chars in)
-             (strbuf-delimited-available-chars in))))))
+             (strbuf-available in)
+             (strbuf-delimited-available in))))))
 
 (def (strbuf-delimited-close delim)
   (using (delim :- delimited-string-input-buffer)
