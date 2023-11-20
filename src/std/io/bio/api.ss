@@ -145,6 +145,8 @@
   bio-delimit-input)
 (defmethod {reset! input-buffer}
   bio-reset-input!)
+(defmethod {available-u8 input-buffer}
+  bio-available-u8)
 (defmethod {close input-buffer}
   bio-close-input)
 
@@ -163,6 +165,8 @@
   bio-delimited-delimit-input)
 (defmethod {reset! delimited-input-buffer}
   bio-delimited-reset-input!)
+(defmethod {available-u8 delimited-input-buffer}
+  bio-delimited-available-u8)
 (defmethod {close delimited-input-buffer}
   bio-delimited-close)
 

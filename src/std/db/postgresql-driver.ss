@@ -200,11 +200,11 @@
                                         host: host)))
         (else
          ;; read as much as we can from the server response to give the best error context
-         (let* ((buf1 (make-u8vector 2048 0))
-                (len0 (StreamSocket-recv sock buf1 1 2048 MSG_DONTWAIT))
-                (len1 (if (positive? len0) (1+ len0) 1)))
-           (vector-set! buf1 0 response)
-           (error "Invalid server response" (subu8vector buf1 0 len1)))))))
+         (let* ((buf (make-u8vector 2048 0))
+                (len (StreamSocket-recv sock buf 1 2048 MSG_DONTWAIT))
+                (len (if (positive? len) (1+ len) 1)))
+           (vector-set! buf 0 response)
+           (error "Invalid server response" (subu8vector buf 0 len)))))))
 
    (def reader
      (open-buffered-reader

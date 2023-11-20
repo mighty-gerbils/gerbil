@@ -1,6 +1,6 @@
 # PostgreSQL driver
 
-The `:std/db/postgresql` library provides a way to connect to a PostgreSQL database.
+The `:std/db/postgresql` library provides a driver for a PostgreSQL database.
 
 ::: tip To use the bindings from this module:
 ```scheme

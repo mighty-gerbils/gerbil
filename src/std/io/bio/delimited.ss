@@ -67,7 +67,6 @@
         (bio-delimited-put-back in previous-input))
       (set! delim.remaining new-remaining))))
 
-
 (def (bio-delimited-skip-input delim count)
   (using (delim :- delimited-input-buffer)
     (let (remaining delim.remaining)
@@ -91,6 +90,15 @@
       (if (input-buffer? in)
         (bio-reset-input! in reader close?)
         (bio-delimited-reset-input! in reader close?)))))
+
+(def (bio-delimited-available-u8 delim)
+  (using (delim :- delimited-input-buffer)
+    (let (in delim.in)
+      (min delim.remaining
+           ((if (input-buffer? in)
+              bio-available-u8
+              bio-delimited-available-u8)
+            in)))))
 
 (def (bio-delimited-close delim)
   (using (delim :- delimited-input-buffer)

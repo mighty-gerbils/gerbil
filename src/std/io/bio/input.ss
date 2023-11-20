@@ -282,6 +282,6 @@
       (set! bio.closed? #t)
       (&Reader-close bio.reader))))
 
-(def (bio-available bio)
+(def (bio-available-u8 bio)
   (using (bio :- input-buffer)
     (- bio.rhi bio.rlo)))

@@ -42,11 +42,15 @@
             (set! self.remaining (fx- remaining read))
             read)))))))
 
+(defmethod {available-u8 delimited-reader}
+  (lambda (self)
+    (using (self :- delimited-reader)
+      (min self.remaining (BufferedReader-available-u8 self.reader)))))
+
 (defmethod {close delimited-reader}
   (lambda (self)
     (using (self :- delimited-reader)
       (&Reader-close self.reader))))
-
 
 (defmethod {read-string delimited-string-reader}
   (lambda (self output output-start output-end input-need)
@@ -65,6 +69,11 @@
                  (read (&StringReader-read-string self.reader  output output-start output-end input-need)))
             (set! self.remaining (fx- remaining read))
             read)))))))
+
+(defmethod {available-chars delimited-string-reader}
+  (lambda (self)
+    (using (self :- delimited-string-reader)
+      (min self.remaining (BufferedStringReader-available-chars self.reader)))))
 
 (defmethod {close delimited-string-reader}
   (lambda (self)
