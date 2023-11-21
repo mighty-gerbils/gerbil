@@ -203,7 +203,7 @@
          (let* ((buf (make-u8vector 2048 0))
                 (len (StreamSocket-recv sock buf 1 2048 MSG_DONTWAIT))
                 (len (if (positive? len) (1+ len) 1)))
-           (vector-set! buf 0 response)
+           (u8vector-set! buf 0 response)
            (error "Invalid server response" (subu8vector buf 0 len)))))))
 
    (def reader
