@@ -323,6 +323,7 @@
     "misc/atom"
     "misc/dag"
     "misc/decimal"
+    "misc/vector"
     "misc/evector"
     "misc/prime"
     "misc/concurrent-plan"
