@@ -149,7 +149,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 
 ### vector-filter
 ```scheme
-(vector-filter pred? v start: (start 0) end: (end (vector-length v)))
+(vector-filter pred? v start: (start 0) end: (end #f))
 ```
 
 Filter entries of a vector `v` to those that satisfy the predicate `pred?`

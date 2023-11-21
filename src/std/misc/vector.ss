@@ -30,8 +30,8 @@
 ;;; a start (inclusive, defaults to 0) and an end (exclusive, defaults to vector length),
 ;;; return the least index of a vector element in the interval [start, env)
 ;;; that satisfies the predicate, or the end if none does.
-(def (vector-least-index pred? vector start: (start 0) end: (end (vector-length vector)))
-  (least-integer (lambda (i) (pred? (vector-ref vector i))) start end))
+(def (vector-least-index pred? vector start: (start 0) end: (end #f))
+  (least-integer (lambda (i) (pred? (vector-ref vector i))) start (or end (vector-length vector))))
 
 ;;; Copy a vector if necessary: return the same if no change in start and end requested.
 (def (maybe-subvector vector (start 0) (end #f))
@@ -70,9 +70,9 @@
 ;;  (vector-set! vector index (fun (vector-ref vector index))))
 
 ;; Filter entries of a vector to those that satisfy the predicate
-(def (vector-filter pred? v start: (start 0) end: (end (vector-length v)))
+(def (vector-filter pred? v start: (start 0) end: (end #f))
   (list->vector
    (with-list-builder (c)
-     (for (i (in-range start end))
+     (for (i (in-range start (or end (vector-length v))))
        (let (e (vector-ref v i))
          (when (pred? e) (c e)))))))
