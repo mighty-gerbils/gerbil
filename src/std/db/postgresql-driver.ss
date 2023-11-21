@@ -1,13 +1,20 @@
 ;;; -*- Gerbil -*-
-;;; ̧© vyzo, drew
+;;; © vyzo, drew
 ;;; PostgreSQL driver
+;; https://www.postgresql.org/docs/current/protocol-message-formats.html
 
 (import :std/actor
+        :std/interface
         :std/io
+        :std/io/bio/util
         :std/contract
+        :std/misc/bytes
         :std/misc/channel
         :std/misc/list
+        :std/misc/timeout
         :std/net/sasl
+        :std/net/ssl
+        :std/os/socket
         :std/text/utf8
         :std/text/hex
         :std/crypto
@@ -87,12 +94,7 @@
    (lambda (msg irritants)
      (warnf "NoticeResponse: ~a ~a" msg irritants))))
 
-#;(defrules DEBUG ()
-  ((_ what arg ...)
-   (begin
-     (display what (current-error-port))
-     (begin (write arg (current-error-port)) (display " " (current-error-port))) ...
-     (newline (current-error-port)))))
+#;(import (rename-in :std/debug/DBG (DBG DEBUG)))
 
 (defrules DEBUG ()
   ((_ what arg ...)
@@ -169,90 +171,118 @@
   error: "error closing connection")
 
 ;;; driver implementation
-(def (postgresql-connect! host port user passwd db)
+(def (postgresql-connect! host port user passwd db ssl ssl-context timeout)
   (def sock
     (tcp-connect (cons host port)))
 
-  (def reader
-    (open-buffered-reader
-     (StreamSocket-reader sock)))
+  (try
 
-  (def writer
-    (open-buffered-writer
-     (StreamSocket-writer sock)))
+   (start-logger!)
+   (DEBUG "STARTUP")
 
-  (def (start-driver!)
-    (DEBUG "STARTING DRIVER")
-    (let lp ()
+   (when ssl
+     ;; Send magic SSLRequest message with non-version 80877103, instead of StartupMessage
+     ;; https://www.postgresql.org/docs/current/protocol-flow.html
+     (StreamSocket-send sock #u8(0 0 0 8 4 210 22 47) 0 8 0)
+     (let* ((buf (make-u8vector 1 0))
+            (count (StreamSocket-recv sock buf 0 1 MSG_WAITALL))
+            (response (u8vector-ref buf 0)))
+       (cond
+        ((not (= count 1))
+         (error "Postgres connection failed immediately"))
+        ((= response 78) ;; (char->integer #\N)
+         ;; Exceptionally (see URL above), this N isn't followed by a notice message
+         (when (eq? ssl #t)
+           (error "Postgres Server does not support SSL encryption.")))
+        ((= response 83) ;; (char->integer #\S)
+         (set! sock (ssl-client-upgrade sock (make-timeout timeout #f)
+                                        context: ssl-context
+                                        host: host)))
+        (else
+         ;; read as much as we can from the server response to give the best error context
+         (let* ((buf (make-u8vector 2048 0))
+                (len (StreamSocket-recv sock buf 1 2048 MSG_DONTWAIT))
+                (len (if (positive? len) (1+ len) 1)))
+           (u8vector-set! buf 0 response)
+           (error "Invalid server response" (subu8vector buf 0 len)))))))
+
+   (def reader
+     (open-buffered-reader
+      (StreamSocket-reader sock)))
+
+   (def writer
+     (open-buffered-writer
+      (StreamSocket-writer sock)))
+
+   (def (start-driver!)
+     (DEBUG "STARTING DRIVER")
+     (let lp ()
+       (match (postgresql-recv! reader)
+         (['ReadyForQuery _]
+          (spawn/name 'postgresql-connection postgresql-driver sock reader writer))
+         (['ErrorResponse msg . irritants]
+          (raise-io-error postgresql-connect! msg irritants))
+         (['NoticeResponse msg . irritants]
+          ((current-notice-handler) msg irritants)
+          (lp))
+         (other
+          (DEBUG "unprocessed message" other)
+          (lp)))))
+
+   (defrules send! ()
+     ((_ msg)
+      (postgresql-send! writer msg)))
+
+   (defrules recv! ()
+     ((_ clause ...)
       (match (postgresql-recv! reader)
-        (['ReadyForQuery _]
-         (spawn/name 'postgresql-connection postgresql-driver sock reader writer))
+        clause ...
         (['ErrorResponse msg . irritants]
          (raise-io-error postgresql-connect! msg irritants))
-        (['NoticeResponse msg . irritants]
-         ((current-notice-handler) msg irritants)
-         (lp))
-        (other
-         (DEBUG "unprocessed message" other)
-         (lp)))))
+        (unexpected
+         (raise-io-error postgresql-connect! "unexpected message" unexpected)))))
 
-  (defrules send! ()
-    ((_ msg)
-     (postgresql-send! writer msg)))
+   (def (authen-pass pass)
+     (send! ['PasswordMessage pass])
+     (recv!
+      (['AuthenticationRequest 'AuthenticationOk]
+       (start-driver!))))
 
-  (defrules recv! ()
-    ((_ clause ...)
-     (match (postgresql-recv! reader)
-       clause ...
-       (['ErrorResponse msg . irritants]
-        (raise-io-error postgresql-connect! msg irritants))
-       (unexpected
-        (raise-io-error postgresql-connect! "unexpected message" unexpected)))))
+   (def (authen-cleartext)
+     (DEBUG "AUTHEN CLEARTEXT")
+     (authen-pass passwd))
 
-  (def (authen-pass pass)
-    (send! ['PasswordMessage pass])
-    (recv!
-     (['AuthenticationRequest 'AuthenticationOk]
-      (start-driver!))))
+   (def (authen-md5 salt)
+     (def (md5-hex data)
+       (hex-encode (md5 data)))
 
-  (def (authen-cleartext)
-    (DEBUG "AUTHEN CLEARTEXT")
-    (authen-pass passwd))
+     (DEBUG "AUTHEN MD5")
+     (let* ((word1 (string-append passwd user))
+            (word2 (md5-hex word1))
+            (word3 (u8vector-append (string->utf8 word2) salt))
+            (word4 (md5-hex word3))
+            (pass (string-append "md5" word4)))
+       (authen-pass pass)))
 
-  (def (authen-md5 salt)
-    (def (md5-hex data)
-      (hex-encode (md5 data)))
+   (def (authen-sasl mechanisms)
+     (DEBUG "AUTHEN SASL")
+     (unless (member "SCRAM-SHA-256" mechanisms)
+       (raise-io-error postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
+     (let* ((ctx (scram-sha-256-begin "" passwd))
+            (msg (scram-client-first-message ctx)))
+       (send! ['SASLInitialResponse "SCRAM-SHA-256" msg])
+       (recv!
+        (['AuthenticationRequest 'AuthenticationSASLContinue msg]
+         (scram-client-first-server-message! ctx msg)
+         (let (msg (scram-client-final-message ctx))
+           (send! ['SASLResponse msg])
+           (recv!
+            (['AuthenticationRequest 'AuthenticationSASLFinal msg]
+             (scram-client-final-server-message! ctx msg)
+             (recv!
+              (['AuthenticationRequest 'AuthenticationOk]
+               (start-driver!))))))))))
 
-    (DEBUG "AUTHEN MD5")
-    (let* ((word1 (string-append passwd user))
-           (word2 (md5-hex word1))
-           (word3 (u8vector-append (string->utf8 word2) salt))
-           (word4 (md5-hex word3))
-           (pass (string-append "md5" word4)))
-      (authen-pass pass)))
-
-  (def (authen-sasl mechanisms)
-    (DEBUG "AUTHEN SASL")
-    (unless (member "SCRAM-SHA-256" mechanisms)
-      (raise-io-error postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
-    (let* ((ctx (scram-sha-256-begin "" passwd))
-           (msg (scram-client-first-message ctx)))
-      (send! ['SASLInitialResponse "SCRAM-SHA-256" msg])
-      (recv!
-       (['AuthenticationRequest 'AuthenticationSASLContinue msg]
-        (scram-client-first-server-message! ctx msg)
-        (let (msg (scram-client-final-message ctx))
-          (send! ['SASLResponse msg])
-          (recv!
-           (['AuthenticationRequest 'AuthenticationSASLFinal msg]
-            (scram-client-final-server-message! ctx msg)
-            (recv!
-             (['AuthenticationRequest 'AuthenticationOk]
-              (start-driver!))))))))))
-
-  (start-logger!)
-  (DEBUG "STARTUP")
-  (try
    (send! ['StartupMessage ["user" . user] (if db [["database" . db]] []) ...])
    (recv!
     (['AuthenticationRequest what . rest]
@@ -599,7 +629,10 @@
                   (DEBUG "RECEIVE " msg)
                   msg))))
          (else
-          (raise-io-error postgresql-recv! "unexpected backend message" tid)))))))
+          (let (buffer (reader.read-available 5 2048))
+            (u8vector-set! buffer 0 tid)
+            (u8vector-uint-set! buffer 1 (+ payload-len 4) big 4)
+            (raise-io-error postgresql-recv! "unexpected backend message" buffer))))))))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore buf)

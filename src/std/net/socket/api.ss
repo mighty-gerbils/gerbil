@@ -39,7 +39,7 @@
           ssock
           (begin
             (close ssock 'inout #f)
-            (raise-os-error errno ssocket-connect addr timeo)))))))
+            (raise-os-error ssocket-connect errno addr timeo)))))))
 
 ;; => !socket that is bound and listening
 (def (ssocket-listen addr (backlog 10) (opts default-listen-sockopts))

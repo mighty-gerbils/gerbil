@@ -225,6 +225,8 @@
   strbuf-delimit-input)
 (defmethod {reset! string-input-buffer}
   strbuf-reset-input!)
+(defmethod {available string-input-buffer}
+  strbuf-available)
 (defmethod {close string-input-buffer}
   strbuf-close-input)
 
@@ -243,6 +245,8 @@
   strbuf-delimited-delimit-input)
 (defmethod {reset! delimited-string-input-buffer}
   strbuf-delimited-reset-input!)
+(defmethod {available delimited-string-input-buffer}
+  strbuf-delimited-available)
 (defmethod {close delimited-string-input-buffer}
   strbuf-delimited-close)
 

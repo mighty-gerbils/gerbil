@@ -60,6 +60,8 @@
              (using (writer :- BufferedWriter)
                body ...)))))))
 
+;; NB: Numbers are read and written in "network order", i.e. big endian
+
 ;; reader
 (defreader-ext (read-u16 reader)
   (read-uint reader 2))
@@ -520,6 +522,21 @@
             (lp (fx+ x 1) separators 0 (cons next chars))))))
        (else
         (raise-io-error read-line "too many characters" x))))))
+
+(defreader-ext (read-available reader (start 0) (end #f))
+  (let* ((available (reader.available))
+         (available-end (+ start available))
+         (actual-end (if end (min end available-end) available-end))
+         (buffer (make-u8vector actual-end 0)))
+    (reader.read buffer start actual-end 0)
+    buffer))
+
+(defreader-ext (read-available-into reader buffer (start 0) (end #f))
+  (let* ((available (reader.available))
+         (len (u8vector-length buffer))
+         (count (min available (- (if end (min len end) len) start))))
+    (reader.read buffer start (+ start count) 0)
+    count))
 
 ;; writer
 (defwriter-ext (write-u16 writer uint)

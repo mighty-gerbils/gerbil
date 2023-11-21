@@ -54,7 +54,11 @@
   (delimit (limit :~ nonnegative-fixnum?))
 
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! (reader : Reader)))
+  (reset! (reader : Reader) (close? := #t))
+
+  ;; returns the number of buffered bytes available to read without further I/O
+  (available))
+
 
 (interface (BufferedWriter Writer)
   ;; writes a single byte
@@ -64,7 +68,7 @@
   (flush)
 
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! (output : Writer)))
+  (reset! (output : Writer) (close? := #t)))
 
 ;; string/textual IO
 (interface (StringReader Closer)
@@ -93,7 +97,11 @@
   (delimit (limit :~ nonnegative-fixnum?))
 
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! (reader : StringReader)))
+  (reset! (reader : StringReader) (close? := #t))
+
+  ;; returns the number of buffered chars available to read without further I/O
+  (available))
+
 
 (interface (StringWriter Closer)
   ;; write a string
@@ -107,7 +115,7 @@
   ;; flush output
   (flush)
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! (writer : StringWriter)))
+  (reset! (writer : StringWriter) (close? := #t)))
 
 ;; socket interfaces
 (interface (Socket Closer)

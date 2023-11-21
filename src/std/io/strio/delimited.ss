@@ -67,7 +67,6 @@
         (strbuf-delimited-put-back in previous-input))
       (set! delim.remaining new-remaining))))
 
-
 (def (strbuf-delimited-skip-input delim count)
   (using (delim :- delimited-string-input-buffer)
     (let (remaining delim.remaining)
@@ -83,13 +82,21 @@
 (def (strbuf-delimited-delimit-input delim limit)
   (BufferedReader (make-delimited-string-input-buffer delim limit limit)))
 
-(def (strbuf-delimited-reset-input! delim reader)
+(def (strbuf-delimited-reset-input! delim reader close?)
   (using (delim :- delimited-string-input-buffer)
     (let (in delim.in)
       (if (string-input-buffer? in)
-        (strbuf-reset-input! in reader)
-        (strbuf-delimited-reset-input! in reader)))
+        (strbuf-reset-input! in reader close?)
+        (strbuf-delimited-reset-input! in reader close?)))
     (set! delim.remaining delim.limit)))
+
+(def (strbuf-delimited-available delim)
+  (using (delim :- delimited-string-input-buffer)
+    (let (in delim.in)
+      (min delim.remaining
+           (if (string-input-buffer? in)
+             (strbuf-available in)
+             (strbuf-delimited-available in))))))
 
 (def (strbuf-delimited-close delim)
   (using (delim :- delimited-string-input-buffer)

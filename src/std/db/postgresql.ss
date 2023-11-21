@@ -9,6 +9,8 @@
         :std/iter
         :std/misc/channel
         :std/misc/list
+        :std/net/ssl
+        :std/pregexp
         :std/srfi/19)
 (export postgresql-connect
         (struct-out postgresql-command
@@ -33,13 +35,47 @@
       (set! self.user user)
       (set! self.db db))))
 
-(def (postgresql-connect host: (host "127.0.0.1")
-                         port: (port 5432)
-                         user: user
-                         passwd: passwd
-                         db: (db #f))
-  (let (driver (postgresql-connect! host port user passwd db))
+(def (postgresql-connect (url #f)
+                         host: (host #f)
+                         port: (port #f)
+                         user: (user #f)
+                         passwd: (passwd #f)
+                         db: (db #f)
+                         ssl: (ssl 'try)
+                         ssl-context: (ssl-context (default-client-ssl-context))
+                         timeout: (timeout #f))
+  (when url
+    (match (parse-postgres-database-url url)
+      ([h p d u pw params]
+       ;; TODO handle all parameters (that make sense) in
+       ;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS
+       (set! (values host port db user passwd) (values h p d u pw)))
+      (else (error "Invalid database url" url))))
+  (unless host
+    (set! host "127.0.0.1"))
+  (unless port
+    (set! port 5432))
+  (unless user
+    (set! user (or (getenv "USER" #f)
+                   (error "No user specified"))))
+  (unless passwd
+    (set! passwd ""))
+  (unless db
+    (set! db user))
+  (let (driver (postgresql-connect! host port user passwd db ssl ssl-context timeout))
     (make-postgresql-connection driver host port user db)))
+
+;; Parse a Postgres connection string as per
+;; https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
+;; also used by e.g. heroku's DATABASE_URL, or JDBC.
+;; TODO: make database optional, default to user, default to $USER or such?
+;; : String -> (Tuple String (OrFalse Nat) String (OrFalse String) (OrFalse String) (OrFalse String))
+(def (parse-postgres-database-url url)
+  (match (pregexp-match "^postgres://(([^:/@?]+)(:([^:/@?]*))?@)?([^:/@?]+)(:([0-9]+))?/([^:/@?]+)([?](.*))?$" url)
+    ([_ userpass user pass? pass host port? port database params? params]
+     [host (and port (string->number port)) database
+           (and userpass user) (and pass? pass) (and params? params)])
+    (else #f)))
 
 (defmethod {close postgresql-connection}
   postgresql-close!)
@@ -407,3 +443,4 @@
 
 (def current-catalog
   (make-parameter default-catalog))
+

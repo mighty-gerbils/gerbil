@@ -59,16 +59,82 @@
    (let (r (make arg ...))
      (if r r (raise-allocation-error make '(make arg ...))))))
 
-(begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK
-                     EBADF ECONNABORTED ECONNREFUSED ECONNRESET)
+(begin-ffi (strerror EINPROGRESS EWOULDBLOCK
+                     ECONNABORTED ECONNREFUSED ECONNRESET
+                     EPERM
+                     ENOENT
+                     ESRCH
+                     EINTR
+                     EIO
+                     ENXIO
+                     E2BIG
+                     ENOEXEC
+                     EBADF
+                     ECHILD
+                     EAGAIN
+                     ENOMEM
+                     EACCES
+                     EFAULT
+                     ENOTBLK
+                     EBUSY
+                     EEXIST
+                     EXDEV
+                     ENODEV
+                     ENOTDIR
+                     EISDIR
+                     EINVAL
+                     ENFILE
+                     EMFILE
+                     ENOTTY
+                     ETXTBSY
+                     EFBIG
+                     ENOSPC
+                     ESPIPE
+                     EROFS
+                     EMLINK
+                     EPIPE
+                     EDOM
+                     ERANGE)
   (c-declare "#include <errno.h>")
   (c-declare "#include <string.h>")
 
-  (define-const EAGAIN)
+  (define-const EPERM)
+  (define-const ENOENT)
+  (define-const ESRCH)
   (define-const EINTR)
+  (define-const EIO)
+  (define-const ENXIO)
+  (define-const E2BIG)
+  (define-const ENOEXEC)
+  (define-const EBADF)
+  (define-const ECHILD)
+  (define-const EAGAIN)
+  (define-const ENOMEM)
+  (define-const EACCES)
+  (define-const EFAULT)
+  (define-const ENOTBLK)
+  (define-const EBUSY)
+  (define-const EEXIST)
+  (define-const EXDEV)
+  (define-const ENODEV)
+  (define-const ENOTDIR)
+  (define-const EISDIR)
+  (define-const EINVAL)
+  (define-const ENFILE)
+  (define-const EMFILE)
+  (define-const ENOTTY)
+  (define-const ETXTBSY)
+  (define-const EFBIG)
+  (define-const ENOSPC)
+  (define-const ESPIPE)
+  (define-const EROFS)
+  (define-const EMLINK)
+  (define-const EPIPE)
+  (define-const EDOM)
+  (define-const ERANGE)
+
   (define-const EINPROGRESS)
   (define-const EWOULDBLOCK)
-  (define-const EBADF)
   (define-const ECONNABORTED)
   (define-const ECONNREFUSED)
   (define-const ECONNRESET)
