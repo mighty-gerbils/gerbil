@@ -1,11 +1,11 @@
-(export extensible-vector-test)
+(export evector-test)
 
 (import
   :std/test
   ./number ./evector)
 
-(def extensible-vector-test
-  (test-suite "test suite for std/misc/extensible-vector"
+(def evector-test
+  (test-suite "test suite for std/misc/evector"
     (test-case "evector"
       (def e (list->evector '(a b c d)))
       (check-equal? (evector? e) #t)

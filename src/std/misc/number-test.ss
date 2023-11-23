@@ -190,7 +190,7 @@
       (check (least-integer true 0 20) => 0)
       (check (least-integer false 0 20) => 20))
 
-    (test-case "bezout, invert-mod, div-mod, mult-mod"
+    (test-case "divides?, bezout, invert-mod, div-mod, mult-mod"
       (defrule (checks (a b x y d) ...)
         (begin
           (begin (check (values->list (bezout a b)) => [x y d])
@@ -198,6 +198,8 @@
                  (if (zero? d)
                    (check (+ (abs a) (abs b)) => 0)
                    (begin
+                     (check (divides? d a) => #t)
+                     (check (divides? d b) => #t)
                      (check (modulo a d) => 0)
                      (check (modulo b d) => 0)
                      (check (div-mod d a b) => x)

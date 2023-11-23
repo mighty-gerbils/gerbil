@@ -9,6 +9,42 @@ that complement those provided by RnRS, Gambit, `:std/srfi/43` and `:std/srfi/13
 ```
 :::
 
+## vector-map/index
+
+This is the variant of `vector-map` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
+## vector-for-each/index
+
+This is the variant of `vector-for-each` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
+## vector-map!/index
+
+This is the variant of `vector-map!` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
+## vector-fold/index
+
+This is the variant of `vector-fold` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
+## vector-fold-right/index
+
+This is the variant of `vector-fold-right` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
+## vector-count/index
+
+This is the variant of `vector-count` from `:std/srfi/43`,
+that passes an index as well as a value to the function argument,
+unlike the variant in R7RS or in `:std/srfi/133`.
+
 ## vector-ref-set!
 ```scheme
 (def vector-ref-set! vector-set!)
@@ -26,7 +62,7 @@ This binding enables you to use `set!` with `vector-ref`.
 ```
 :::
 
-### vector-least-index
+## vector-least-index
 ```scheme
 (vector-least-index pred vector [start: 0] [end: #f])
 ```
@@ -48,7 +84,7 @@ in the interval [start, env) that satisfies the predicate, or the end if none do
 ```
 :::
 
-### maybe-subvector
+## maybe-subvector
 ```scheme
 (maybe-subvector vector [start 0] [end #f]) => vector
 ```
@@ -66,7 +102,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### subvector-for-each
+## subvector-for-each
 ```scheme
 (subvector-for-each function vector start: (start 0) end: (end #f))
 ```
@@ -80,7 +116,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### subvector-for-each/index
+## subvector-for-each/index
 ```scheme
 (subvector-for-each/index function vector start: (start 0) end: (end #f))
 ```
@@ -94,7 +130,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### subvector-reverse-for-each
+## subvector-reverse-for-each
 ```scheme
 (subvector-reverse-for-each function vector start: (start 0) end: (end #f))
 ```
@@ -107,7 +143,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### subvector-reverse-for-each/index
+## subvector-reverse-for-each/index
 ```scheme
 (subvector-reverse-for-each/index function vector start: (start 0) end: (end #f))
 ```
@@ -121,7 +157,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### subvector->list
+## subvector->list
 ```scheme
 (subvector->list vector start: (start 0) end: (end #f))
 ```
@@ -133,7 +169,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### cons->vector
+## cons->vector
 ```scheme
 (cons->vector pair)
 ```
@@ -147,7 +183,7 @@ Copy a vector if necessary: return the same if no change in start and end reques
 ```
 :::
 
-### vector-filter
+## vector-filter
 ```scheme
 (vector-filter pred? v start: (start 0) end: (end #f))
 ```

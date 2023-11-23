@@ -1,14 +1,21 @@
-;; Dealing with small prime numbers (say up to 1e8, if using a few GiB of memory)
+;;; -*- Gerbil -*-
+;;; © fare
+;;; Prime numbers
+
+;; 1. The Genuine Sieve of Erathostenes
+;; See the paper by Melissa E. O'Neill: https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+;; The algorithm will scale up to around 1e8 using a few GiB of memory.
 ;; NB: This code maintains global tables and is generally not thread-safe.
-;; See also "The Genuine Sieve of Erathostenes" by Melissa E. O'Neill:
-;;      https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+
+;; 2. Miller-Rabin probabilistic primality test, and deterministic variants for small enough numbers
+;; https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 
 (export #t)
 
 (import
   (only-in :gerbil/gambit random-integer integer-sqrt bit-set?)
   (only-in :std/srfi/1 every reduce)
-  (only-in :std/srfi/141 floor/ floor-quotient)
+  (only-in :std/srfi/141 floor/ ceiling-quotient)
   (only-in :std/error check-argument raise-bad-argument)
   (only-in :std/iter for in-range for/collect)
   (only-in :std/misc/evector memoize-recursive-sequence
@@ -16,7 +23,8 @@
            evector-fill-pointer evector-fill-pointer-set! list->evector evector->list
            make-ebits ebits-ref ebits-set-fill-pointer! ebits-set? ebits-set! ebits-fill-pointer)
   (only-in :std/misc/list-builder with-list-builder)
-  (only-in :std/misc/number nat? mult-mod expt-mod pre-increment! half ceiling-align))
+  (only-in :std/misc/number nat? mult-mod expt-mod pre-increment! half ceiling-align
+           factor-out-powers-of-2))
 
 ;; An extensible vector containing the increasing sequence of all small enough primes
 ;; NB: the initial 0 is so the useful array indices start with 1, keeping with convention.
@@ -59,10 +67,24 @@
    (lambda (n) (next-prime-above (nth-prime (1- n))))))
 
 ;; sieve: 1 if the number is prime, 0 if composite. Must be initialized to 1 beyond the fill-pointer.
-;; To save half the space, we only storing a bitmask for odd numbers.
+;; To save half the space, we only store a bitmask for odd numbers.
 ;; We could further save space, by using a variant of the 2,3,5,7-wheel,
 ;; from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
 (def prime-sieve (make-ebits #u8(#x6E) 8))
+
+;; Return how far we can use the sieve
+(def (sieve-end)
+  (* 2 (ebits-fill-pointer prime-sieve)))
+
+;; return true if the sieve found the number to be prime,
+;; false if the number was found to be composite,
+;; raise an error if the sieve wasn’t run far enough to tell
+(def (sieve-prime? n)
+  (unless (< n (sieve-end))
+    (error "sieve not run far enough to test prime"))
+  (if (bit-set? 0 n)
+    (ebits-set? prime-sieve (half n))
+    (= n 2))) ;; handle even numbers
 
 ;; Return the next prime number P such that P > N
 (def (next-prime-above n)
@@ -83,20 +105,20 @@
     (def fp (evector-fill-pointer primes))
     (for (i (in-range 2 fp)) ;; 0 is not prime, 2 already handled
       (let (p (evector-ref primes i))
-        (when (< n (* p p)) (return #t))
-        (when (zero? (modulo n p)) (return #f))))
+        (when (zero? (modulo n p)) (return #f))
+        (when (< n (* p p)) (return #t))))
     (erathostenes-sieve (integer-sqrt n)) ;; extend sieve up to sqrt(n)
     (for (i (in-range fp (evector-fill-pointer primes)))
       (when (zero? (modulo n (evector-ref primes i))) (return #f)))
     #t))
 
 ;; The largest small prime computed so far
-(def (largest-known-prime)
+(def (largest-sieve-prime)
   (evector-ref primes (1- (evector-fill-pointer primes))))
 
 ;; Run the sieve of Erathostenes up to `n`
 (def (erathostenes-sieve n)
-  (def m (1+ (* 2 (ebits-fill-pointer prime-sieve)))) ; smallest number not sieved yet
+  (def m (1+ (* 2 (ebits-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
   (def u (1+ (half n)))
   (def (sieve! p) ;; sieve away multiples of an odd prime number
     (def p2 (* p p))
@@ -116,7 +138,7 @@
           (when (> p r) (return))
           (sieve! p)))
       ;; Collect new primes under sqrt(n) and sieve off their multiples
-      (def p (largest-known-prime))
+      (def p (largest-sieve-prime))
       (let loop ((p p) (wp (wheel-position wheel p)))
         (defvalues (q wq) (wheel-next wheel p wp))
         (when (> q r) (return))
@@ -125,7 +147,7 @@
           (sieve! q))
         (loop q wq)))
     ;; Collect new primes above sqrt(n)
-    (let ((p (largest-known-prime)))
+    (let ((p (largest-sieve-prime)))
       (when (< p n)
         (let loop ((p p) (wp (wheel-position wheel p)))
           (defvalues (q wq) (wheel-next wheel p wp))
@@ -134,30 +156,15 @@
               (evector-push! primes q))
             (loop q wq)))))))
 
-
 ;; (pi-function n) is the number of positive prime integers no greater than n
-;; TODO: compute it rather by dichotomizing the position in the list of primes that reaches it.
+;; This is a naive implementation using the sieve of Erathostenes.
 (def pi-cache (list->evector '(0 0 1 2 2 3 3 4 4 4 4)))
 (def pi-function
   (memoize-recursive-sequence
    cache: pi-cache
    (lambda (n)
-     (def m (evector-fill-pointer pi-cache))
-     (def sp (evector-ref pi-cache (1- m)))
-     (extend-evector! pi-cache (1+ n))
-     (set! (evector-fill-pointer pi-cache) (1+ n))
-     (erathostenes-sieve n)
-     (for (m (in-range m (1+ n)))
-       (set! (evector-ref pi-cache m) (pre-increment! sp (ebits-ref prime-sieve m))))
-     sp)))
-
-;; Does `f` divide `n`?
-(def (divides? f n)
-  (check-argument (nat? f) "natural" f)
-  (check-argument (nat? n) "natural" n)
-  (if (zero? f)
-      (zero? n)
-      (zero? (modulo n f))))
+     (erathostenes-sieve (1+ n))
+     (+ (pi-function (1- n)) (if (sieve-prime? n) 1 0)))))
 
 ;; Given an integer N, return a non-decreasing list of its prime factors, using the sieve
 (def (factor n)
@@ -183,8 +190,10 @@
   ;; (check-argument (= (1- n) n-1) "n - 1 = n-1" [n n-1])
   ;; (check-argument (= n-1 (* (expt 2 r) d)) "n-1 = d*2**r" [n-1 d r])
   ;; (check-argument (odd? d) "odd" d)
-  (def x (expt-mod a d n))
   (let/cc return
+    (def aa (modulo a n))
+    (when (zero? aa) (return #f))
+    (def x (expt-mod aa d n))
     (when (or (= x 1) (= x n-1))
       (return #f)) ;; not a witness
     (for (_ (in-range (1- r)))
@@ -193,17 +202,16 @@
       (when (= x n-1) (return #f))) ;; not a witness
     #t)) ;; witness that n is composite
 
-;; How many times does 2 divide N? Return -1 for 0.
-(def (valuation-of-2 n)
-  (1- (integer-length (bitwise-xor n (1- n)))))
-
 ;; Is integer N a prime number? Use Miller method to check,
-;; with a list of candidate witnesses AS.
+;; with a list of candidate witnesses AS,
+;; typically the list of the N first prime numbers for N large enough.
+;; Actual Miller deterministic test says to try all (prime?) numbers below 2(ln n)
 (def (prime?/miller n as)
-  (let* ((n-1 (- n 1))
-         (r (valuation-of-2 n-1))
-         (d (arithmetic-shift n-1 (- r))))
-    (every (cut witness-of-compositeness? <> n n-1 r d) as)))
+  (if (even? n)
+    (= n 2)
+    (let* ((n-1 (- n 1))
+           ((values d r) (factor-out-powers-of-2 n-1)))
+      (not (ormap (cut witness-of-compositeness? <> n n-1 r d) as)))))
 
 ;; Is integer `n` a prime number? Use Rabin-Miller method to check, which is probabilistic.
 ;; The number of extra checks determine how much heuristic assurance we have that the number is prime:
@@ -211,23 +219,39 @@
 ;; so 16 (the default) makes for 2**-64 chances of error.
 (def (prime?/miller-rabin n (extra-checks 16))
   (let* ((n-1 (- n 1))
-         (r (valuation-of-2 n-1))
-         (d (arithmetic-shift n-1 (- r))))
+         ((values d r) (factor-out-powers-of-2 n-1)))
     ;; Each independent test reduces the probability of primality by 1/4
     ;; By default we add a constant 4^16 = 2^64 error factor.
     (let/cc return
-      (for (_ (in-range (- extra-checks (floor-quotient (- (integer-length n)) 4))))
+      (for (_ (in-range (+ extra-checks (ceiling-quotient (integer-length n) 4))))
         (let (a (+ 2 (random-integer (- n 3))))
           (when (witness-of-compositeness? a n n-1 r d) (return #f))))
       #t)))
 
-;; Is natural integer `n` a prime number?
+;; Is natural integer `n` a prime number? Find out quickly.
+;; https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
+;; https://miller-rabin.appspot.com/
 (def (prime? n)
   (check-argument (nat? n) "natural" n)
   (cond
-    ((< n 2) #f)
-    ((< n 1000000000) (prime?/sieve n))
-    ((< n 3317044064679887385961981)
-     ;; This is the smallest false-positive for this test with these witnesses. Its integer-length is 82
-     (prime?/miller n '(2 3 5 7 11 13 17 19 23 29 31 37 41)))
-    (else (prime?/miller-rabin n))))
+   ((< n (sieve-end))
+    (sieve-prime? n))
+   ((< n 341531)
+    (prime?/miller n '(9345883071009581737)))
+   ((< n 1050535501)
+    (prime?/miller n '(336781006125 9639812373923155)))
+   ((< n 350269456337)
+    (prime?/miller n '(4230279247111683200 14694767155120705706 16641139526367750375)))
+   ((< n 55245642489451)
+    (prime?/miller n '(2 141889084524735 1199124725622454117 11096072698276303650)))
+   ((< n 7999252175582851)
+    (prime?/miller n '(2 4130806001517 149795463772692060 186635894390467037 3967304179347715805)))
+   ((< n 585226005592931977)
+    (prime?/miller n '(2 123635709730000 9233062284813009 43835965440333360 761179012939631437 1263739024124850375)))
+   ((< (integer-length n) 64)
+    (prime?/miller n '(2 325 9375 28178 450775 9780504 1795265022)))
+   ((< n 318665857834031151167461)
+    (prime?/miller n '(2 3 5 7 11 13 17 19 23 29 31 37)))
+   ((< n 3317044064679887385961981)
+    (prime?/miller n '(2 3 5 7 11 13 17 19 23 29 31 37 41)))
+   (else (prime?/miller-rabin n))))

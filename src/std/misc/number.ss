@@ -18,7 +18,7 @@
         normalize-integer
         for-each-integer
         half least-integer
-        bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
+        divides? bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
         integer-log
         factor-out-powers-of-2 factor-out-powers)
 
@@ -182,6 +182,14 @@
 ;; Do NOT use them for cryptography in production.
 ;; TODO: offer an alternate module that offers cryptographic-ready arithmetic primitives via FFI
 
+;; Does `f` divide `n`?
+(def (divides? f n)
+  (check-argument (nat? f) "natural" f)
+  (check-argument (nat? n) "natural" n)
+  (if (zero? f)
+      (zero? n)
+      (zero? (modulo n f))))
+
 ;; Given integers a and b, return values x y d such that
 ;; d is (non-negative) gcd of a and b, and a*x+b+y=d
 (def (bezout a b)
@@ -255,14 +263,14 @@
   (upward a b 1 []))
 
 ;; return (values q p) such a=q*2**p and q is odd
-;; : Integer -> Integer Nat
+;; : Integer* -> Integer* Nat
 (def (factor-out-powers-of-2 n)
   (check-argument (and (exact-integer? n) (not (zero? n))) "non-zero integer" n)
-  (def p (first-set-bit n))
-  (values (arithmetic-shift n (- p)) p))
+  (let (p (first-set-bit n))
+    (values (arithmetic-shift n (- p)) p)))
 
 ;; return (values q p) such a=q*b**p and b does not divide q
-;; : Integer Nat -> Integer Nat
+;; : Integer* Nat -> Integer* Nat
 (def (factor-out-powers a b)
   (check-argument (and (exact-integer? a) (not (zero? a))) "non-zero integer" a)
   (check-argument (and (nat? b) (< 1 b)) "integer base" b)
