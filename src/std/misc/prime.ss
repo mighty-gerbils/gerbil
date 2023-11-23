@@ -106,7 +106,7 @@
     #t))
 
 ;; The largest small prime computed so far
-(def (largest-known-prime)
+(def (largest-sieve-prime)
   (evector-ref primes (1- (evector-fill-pointer primes))))
 
 ;; Run the sieve of Erathostenes up to `n`
@@ -131,7 +131,7 @@
           (when (> p r) (return))
           (sieve! p)))
       ;; Collect new primes under sqrt(n) and sieve off their multiples
-      (def p (largest-known-prime))
+      (def p (largest-sieve-prime))
       (let loop ((p p) (wp (wheel-position wheel p)))
         (defvalues (q wq) (wheel-next wheel p wp))
         (when (> q r) (return))
@@ -140,7 +140,7 @@
           (sieve! q))
         (loop q wq)))
     ;; Collect new primes above sqrt(n)
-    (let ((p (largest-known-prime)))
+    (let ((p (largest-sieve-prime)))
       (when (< p n)
         (let loop ((p p) (wp (wheel-position wheel p)))
           (defvalues (q wq) (wheel-next wheel p wp))

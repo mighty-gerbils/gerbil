@@ -181,10 +181,10 @@ After running this function, `(sieve-end)` is guaranteed to be strictly larger t
 ::: tip Examples:
 ```scheme
 > (import :std/misc/evector :std/misc/prime)
-> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
+> (list (evector->list primes) (largest-sieve-prime) (values->list (ebits->bits prime-sieve)))
 ((0 2 3 5 7 11 13) 13 (0 0 1 2 2 3 3 4 4 4 4) (110 8))
 > (erathostenes-sieve 100)
-> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
+> (list (evector->list primes) (largest-sieve-prime) (values->list (ebits->bits prime-sieve)))
 ((0 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97) 97 (0 0 1 2 2 3 3 4 4 4 4) (1427829207386990 51))
 ```
 :::
@@ -205,28 +205,27 @@ Return the next prime number `p` such that `p > n`
 ```
 :::
 
-## largest-known-prime
+## largest-sieve-prime
 ```scheme
-(largest-known-prime) => prime
+(largest-sieve-prime) => prime
 ```
 
-Return the largest small prime computed so far using the sieve of Erathostenes.
+Return the largest prime number found so far using the sieve of Erathostenes.
 
 ::: tip Examples:
 ```scheme
-> (largest-known-prime) ;; initially
+> (largest-sieve-prime) ;; initially
 13
 > (next-prime-above 19890604)
 19890631
-> (largest-known-prime) ;; based on using the sieve of Erathostenes
+> (largest-sieve-prime) ;; based on using the sieve of Erathostenes
 4457
 ```
 :::
 
 Note that we checked that 19890631 was a prime number, but we only ran the sieve up to 4457,
 so we don’t have (and didn’t need) a definitive list of prime numbers above 4457,
-which is the largest prime number *known* to the algorithms in this module.
-Possibly not the best-named function in the module.
+which is the largest prime number found by the sieve of Erathostenes so far.
 
 ## pi-function, pi-cache
 ```scheme
