@@ -3,6 +3,9 @@
 ;; See also "The Genuine Sieve of Erathostenes" by Melissa E. O'Neill:
 ;;      https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
 
+;; Also dealing with somewhat larger prime numbers, using variants of
+;; the Miller and Miller-Rabin primality test.
+
 (export #t)
 
 (import
