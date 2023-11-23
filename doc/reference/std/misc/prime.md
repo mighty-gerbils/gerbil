@@ -134,6 +134,61 @@ To save half the space, we only storing a bitmask for odd numbers.
 We could further save space, by using a variant of the 2,3,5,7-wheel,
 from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
 
+## sieve-end
+```
+(sieve-end) => integer
+```
+
+Returns an upper limit (excluded) below which the so-far-computed sieve of Erathostenes
+can tell whether a number is prime.
+
+## sieve-prime?
+```
+(sieve-prime? n) => bool
+```
+
+Given a integer `n` between 0 (included) and `(sieve-end)` (excluded),
+return true if `n` is prime.
+
+## prime?/sieve
+```scheme
+(prime?/sieve n)
+```
+
+Given a small integer `n`, is it a prime number?
+Answer using Erathostenes' sieve, extending the sieve as needed
+to be larger than `(integer-sqrt n)`.
+
+::: tip Examples:
+```scheme
+> (prime?/sieve 19890604)
+#f
+> (prime?/sieve (next-prime-above 19890604))
+#t
+```
+:::
+
+## erathostenes-sieve
+```scheme
+(erathostenes-sieve n)
+```
+
+Run the sieve of Erathostenes up to `n`,
+which can help easily factor numbers up to `n` squared.
+Doesn’t return a value, but will update various internal data structures.
+After running this function, `(sieve-end)` is guaranteed to be strictly larger than `n`.
+
+::: tip Examples:
+```scheme
+> (import :std/misc/evector :std/misc/prime)
+> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
+((0 2 3 5 7 11 13) 13 (0 0 1 2 2 3 3 4 4 4 4) (110 8))
+> (erathostenes-sieve 100)
+> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
+((0 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97) 97 (0 0 1 2 2 3 3 4 4 4 4) (1427829207386990 51))
+```
+:::
+
 ## next-prime-above
 ```scheme
 (next-prime-above n) => prime
@@ -147,23 +202,6 @@ Return the next prime number `p` such that `p > n`
 307
 > (next-prime-above 1000)
 1009
-```
-:::
-
-## prime?/sieve
-```scheme
-(prime?/sieve n)
-```
-
-Given a small integer `n`, is it a prime number?
-Answer using Erathostenes' sieve.
-
-::: tip Examples:
-```scheme
-> (prime?/sieve 19890604)
-#f
-> (prime?/sieve (next-prime-above 19890604))
-#t
 ```
 :::
 
@@ -189,26 +227,6 @@ Note that we checked that 19890631 was a prime number, but we only ran the sieve
 so we don’t have (and didn’t need) a definitive list of prime numbers above 4457,
 which is the largest prime number *known* to the algorithms in this module.
 Possibly not the best-named function in the module.
-
-## erathostenes-sieve
-```scheme
-(erathostenes-sieve n)
-```
-
-Run the sieve of Erathostenes up to `n`,
-which can help easily factor numbers up to `n` squared.
-Doesn’t return a value, but will update various internal data structures.
-
-::: tip Examples:
-```scheme
-> (import :std/misc/evector :std/misc/prime)
-> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
-((0 2 3 5 7 11 13) 13 (0 0 1 2 2 3 3 4 4 4 4) (110 8))
-> (erathostenes-sieve 100)
-> (list (evector->list primes) (largest-known-prime) (values->list (ebits->bits prime-sieve)))
-((0 2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97) 97 (0 0 1 2 2 3 3 4 4 4 4) (1427829207386990 51))
-```
-:::
 
 ## pi-function, pi-cache
 ```scheme

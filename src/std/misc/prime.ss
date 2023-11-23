@@ -65,12 +65,13 @@
 ;; from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
 (def prime-sieve (make-ebits #u8(#x6E) 8))
 
-;; return true if the sieve found the number to be prime,
-;; false if the number was found to be composite,
-;; raise an error if the sieve wasn’t run far enough to tell
+;; Return how far we can use the sieve
 (def (sieve-end)
   (* 2 (ebits-fill-pointer prime-sieve)))
 
+;; return true if the sieve found the number to be prime,
+;; false if the number was found to be composite,
+;; raise an error if the sieve wasn’t run far enough to tell
 (def (sieve-prime? n)
   (unless (< n (sieve-end))
     (error "sieve not run far enough to test prime"))
@@ -110,7 +111,7 @@
 
 ;; Run the sieve of Erathostenes up to `n`
 (def (erathostenes-sieve n)
-  (def m (1+ (* 2 (ebits-fill-pointer prime-sieve)))) ; smallest number not sieved yet
+  (def m (1+ (* 2 (ebits-fill-pointer prime-sieve)))) ; smallest odd number not sieved yet
   (def u (1+ (half n)))
   (def (sieve! p) ;; sieve away multiples of an odd prime number
     (def p2 (* p p))
