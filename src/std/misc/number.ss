@@ -18,7 +18,7 @@
         normalize-integer
         for-each-integer
         half least-integer
-        bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
+        divides? bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
         integer-log
         factor-out-powers-of-2 factor-out-powers)
 
