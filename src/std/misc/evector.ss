@@ -4,10 +4,13 @@
         make-ebytes ebytes?
         make-ebits ebits?
         (rename: evector-set-fill-pointer! evector-fill-pointer-set!)
+        (rename: &evector-set-fill-pointer! &evector-fill-pointer-set!)
         evector-fill-pointer
         (rename: ebytes-set-fill-pointer! ebytes-fill-pointer-set!)
+        (rename: &ebytes-set-fill-pointer! &ebytes-fill-pointer-set!)
         ebytes-fill-pointer
         (rename: ebits-set-fill-pointer! ebits-fill-pointer-set!)
+        (rename: &ebits-set-fill-pointer! &ebits-fill-pointer-set!)
         ebits-fill-pointer)
 
 ;; Simple extensible vectors, byte-vectors, and bit-vectors

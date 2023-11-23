@@ -160,6 +160,7 @@ module.exports = {
                             'misc/channel',
                             'misc/completion',
                             'misc/decimal',
+                            'misc/evector',
                             'misc/deque',
                             'misc/func',
                             'misc/hash',
