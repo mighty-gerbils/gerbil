@@ -15,7 +15,7 @@
 (import
   (only-in :gerbil/gambit random-integer integer-sqrt bit-set?)
   (only-in :std/srfi/1 every reduce)
-  (only-in :std/srfi/141 floor/ floor-quotient)
+  (only-in :std/srfi/141 floor/ ceiling-quotient)
   (only-in :std/error check-argument raise-bad-argument)
   (only-in :std/iter for in-range for/collect)
   (only-in :std/misc/evector memoize-recursive-sequence
@@ -223,7 +223,7 @@
     ;; Each independent test reduces the probability of primality by 1/4
     ;; By default we add a constant 4^16 = 2^64 error factor.
     (let/cc return
-      (for (_ (in-range (- extra-checks (floor-quotient (- (integer-length n)) 4))))
+      (for (_ (in-range (+ extra-checks (ceiling-quotient (integer-length n) 4))))
         (let (a (+ 2 (random-integer (- n 3))))
           (when (witness-of-compositeness? a n n-1 r d) (return #f))))
       #t)))
