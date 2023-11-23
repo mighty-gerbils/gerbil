@@ -1,10 +1,14 @@
-;; Dealing with small prime numbers (say up to 1e8, if using a few GiB of memory)
-;; NB: This code maintains global tables and is generally not thread-safe.
-;; See also "The Genuine Sieve of Erathostenes" by Melissa E. O'Neill:
-;;      https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+;;; -*- Gerbil -*-
+;;; © fare
+;;; Prime numbers
 
-;; Also dealing with somewhat larger prime numbers, using variants of
-;; the Miller and Miller-Rabin primality test.
+;; 1. The Genuine Sieve of Erathostenes
+;; See the paper by Melissa E. O'Neill: https://www.cs.hmc.edu/~oneill/papers/Sieve-JFP.pdf
+;; The algorithm will scale up to around 1e8 using a few GiB of memory.
+;; NB: This code maintains global tables and is generally not thread-safe.
+
+;; 2. Miller-Rabin probabilistic primality test, and deterministic variants for small enough numbers
+;; https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 
 (export #t)
 
@@ -101,8 +105,8 @@
     (def fp (evector-fill-pointer primes))
     (for (i (in-range 2 fp)) ;; 0 is not prime, 2 already handled
       (let (p (evector-ref primes i))
-        (when (< n (* p p)) (return #t))
-        (when (zero? (modulo n p)) (return #f))))
+        (when (zero? (modulo n p)) (return #f))
+        (when (< n (* p p)) (return #t))))
     (erathostenes-sieve (integer-sqrt n)) ;; extend sieve up to sqrt(n)
     (for (i (in-range fp (evector-fill-pointer primes)))
       (when (zero? (modulo n (evector-ref primes i))) (return #f)))
@@ -159,7 +163,7 @@
   (memoize-recursive-sequence
    cache: pi-cache
    (lambda (n)
-     (erathostenes-sieve n)
+     (erathostenes-sieve (1+ n))
      (+ (pi-function (1- n)) (if (sieve-prime? n) 1 0)))))
 
 ;; Given an integer N, return a non-decreasing list of its prime factors, using the sieve
@@ -203,10 +207,11 @@
 ;; typically the list of the N first prime numbers for N large enough.
 ;; Actual Miller deterministic test says to try all (prime?) numbers below 2(ln n)
 (def (prime?/miller n as)
-  (let* ((n-1 (- n 1))
-         ((values d r) (factor-out-powers-of-2 n-1)))
-    (if (zero? r) (= d 1) ;; handle n even
-        (not (ormap (cut witness-of-compositeness? <> n n-1 r d) as)))))
+  (if (even? n)
+    (= n 2)
+    (let* ((n-1 (- n 1))
+           ((values d r) (factor-out-powers-of-2 n-1)))
+      (not (ormap (cut witness-of-compositeness? <> n n-1 r d) as)))))
 
 ;; Is integer `n` a prime number? Use Rabin-Miller method to check, which is probabilistic.
 ;; The number of extra checks determine how much heuristic assurance we have that the number is prime:
