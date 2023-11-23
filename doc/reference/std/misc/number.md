@@ -278,6 +278,23 @@ If `pred?` isn't actually increasing, return some integer in the interval.
 
 ## Modular Arithmetics
 
+### divides?
+```scheme
+(divides f n) -> bool
+```
+
+Given two integers `f` and `n`, return true if `f` is a dividing factor of `n`,
+i.e. there exists a `g` such that `n=f*g`.
+
+::: tip Examples:
+```scheme
+> (divides? 2 256)
+#t
+> (divides? 2 255)
+#f
+```
+:::
+
 ### bezout
 ```scheme
 (bezout a b) -> (values integer integer integer)

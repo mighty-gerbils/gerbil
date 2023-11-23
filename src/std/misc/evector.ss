@@ -76,7 +76,6 @@
     (unless (fx< i len)
       (raise-bad-argument (exception-context i) "fixnum in range" i len))))
 
-
 (defrule (defchecked (checked arg ...) (unchecked xarg ...) check ... body)
   (begin
     (def (checked arg ...)

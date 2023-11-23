@@ -2,6 +2,7 @@
 
 (import
   :std/srfi/1
+  :std/iter
   :std/misc/evector
   :std/misc/func
   :std/misc/number
@@ -119,10 +120,17 @@
                         7649 7669 7673 7681 7687 7691 7699 7703 7717 7723
                         7727 7741 7753 7757 7759 7789 7793 7817 7823 7829
                         7841 7853 7867 7873 7877 7879 7883 7901 7907 7919)))
+    (test-case "pi function"
+      (check (pi-function 100) => 25))
     (test-case "simple factor"
       ;; order or the Friendly Giant
       (check-equal? (factor 808017424794512875886459904961710757005754368000000000)
                     [(repeat 2 46)... (repeat 3 20)... (repeat 5 9)...
                      (repeat 7 6)... (repeat 11 2)... (repeat 13 3)...
                      17 19 23 29 31 41 47 59 71])
-      (check-equal? (factor 625) '(5 5 5 5)))))
+      (check-equal? (factor 625) '(5 5 5 5)))
+    (test-case "miller / miller-rabin primality testing"
+      (for (i (in-range 2 1000))
+        (check [i (prime?/miller i '(9345883071009581737))] => [i (prime?/sieve i)]))
+      (check (prime?/miller 3317044064679887385961981 '(2 3 5 7 11 13 17 19 23 29 31 37 41)) => #t)
+      (check (prime? 3317044064679887385961981) => #f))))
