@@ -311,7 +311,7 @@
 (def ca-domain-option
   (option 'domain "--domain"
     default: "ensemble.local"
-    help: "ensembe TLS domain"))
+    help: "ensemble TLS domain"))
 
 (def ca-subject/C-option
   (option 'subject/C "--subject/C"
@@ -433,8 +433,8 @@
     (let* ((pubk-path (default-admin-pubkey-path))
            (pubk-raw (read-file-u8vector pubk-path)))
       (displayln (hex-encode pubk-raw)))
-    (let* ((passphrase (read-password prompt: "Enter passphprase: "))
-           (again      (read-password prompt: "Re-enter passphprase: ")))
+    (let* ((passphrase (read-password prompt: "Enter passphrase: "))
+           (again      (read-password prompt: "Re-enter passphrase: ")))
       (unless (equal? passphrase again)
         (error "administrative passphrases don't match"))
       (generate-admin-keypair! passphrase force: (hash-get opt 'force)))))
@@ -501,16 +501,16 @@
    ((file-exists? (path-expand "caroot.pem" (ensemble-tls-base-path)))
     (displayln "caroot.pem already exists"))
    (else
-    (let* ((root-passphrase (read-password prompt: "Enter root CA passphprase: "))
-           (again           (read-password prompt: "Re-enter passphprase: ")))
+    (let* ((root-passphrase (read-password prompt: "Enter root CA passphrase: "))
+           (again           (read-password prompt: "Re-enter passphrase: ")))
       (unless (equal? root-passphrase again)
         (error "root CA passphrases don't match"))
       (generate-actor-tls-root-ca! root-passphrase
                                    domain: (hash-ref opt 'domain)
                                    country-name: (hash-ref opt 'subject/C)
                                    organization-name: (hash-ref opt 'subject/O))
-      (let* ((sub-passphrase (read-password prompt: "Enter subordinate CA passphprase: "))
-             (again          (read-password prompt: "Re-enter passphprase: ")))
+      (let* ((sub-passphrase (read-password prompt: "Enter subordinate CA passphrase: "))
+             (again          (read-password prompt: "Re-enter passphrase: ")))
       (unless (equal? sub-passphrase again)
         (error "subordinate CA passphrases don't match"))
       (generate-actor-tls-sub-ca! root-passphrase sub-passphrase

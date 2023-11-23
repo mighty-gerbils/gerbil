@@ -241,7 +241,7 @@ Arguments:
  server-id                        the server id
 ```
 
-The repl suppors a few control commands:
+The repl supports a few control commands:
 ```
 Control commands:
   ,(import module-id)    -- import a module locally for expansion
@@ -343,7 +343,7 @@ $ gerbil build
 ...
 ```
 
-Firt let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/server.ss):
+First let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://github.com/mighty-gerbils/gerbil/tree/master/src/tutorial/ensemble/server.ss):
 ```scheme
 (import :gerbil/gambit/threads
         :std/net/httpd
@@ -452,7 +452,7 @@ the code with the handlers lives in [src/tutorial/ensemble/handler.ss](https://g
 ```
 
 This code registers a root handler, and provides two more handlers
-that are not initially registerd anywhere.
+that are not initially registered anywhere.
 
 Here is how we can load the code:
 ```
@@ -632,7 +632,7 @@ even these networks can be breached as we know.
 So what do you need to do in order to enable TLS? Well, not all that
 much, as TLS is deeply integrated in the actors package:
 - You need to generate an actor ensemble CA; the is handled by the
-  `gerbil ensembe ca` tool, as we will see shortly.
+  `gerbil ensemble ca` tool, as we will see shortly.
 - You need to generate certificates for your servers; this again is
   handled by the `gerbil ensemble ca` tool.
 - You need to bundle and ship your servers'  ensemble environment
@@ -661,7 +661,7 @@ Usage: gxensemble ca setup [command-option ...]
 
 Command Options:
  --view                           inspect existing, don't generate
- --domain  <domain>               ensembe TLS domain [default: ensemble.local]
+ --domain  <domain>               ensemble TLS domain [default: ensemble.local]
  --subject/C  <subject/C>         ensemble TLS CA Country [default: UN]
  --subject/O  <subject/O>         ensemble TLS CA Organization [default: Mighty Gerbils]
  --subject/L  <subject/L>         ensemble TLS certificate location [default: Internet]
@@ -670,9 +670,9 @@ Command Options:
 So let's set up a new CA for our tutorial project:
 ```
 $ gerbil ensemble ca setup
-Enter root CA passphprase: ...
+Enter root CA passphrase: ...
 ....
-Enter subordinate CA passphprase: ...
+Enter subordinate CA passphrase: ...
 ...
 ```
 
@@ -804,7 +804,7 @@ Next we are going to generate two server certificates: one for the
 registry and one for the httpd we are going to run; we will not grant
 any capabilities to the servers.
 
-Here is the usage of the `gerbil ensmeble ca cert` tool:
+Here is the usage of the `gerbil ensemble ca cert` tool:
 ```
 $ gerbil ensemble ca help cert
 Usage: gxensemble ca cert [command-option ...] <server-id> [<capabilities>]
@@ -825,10 +825,10 @@ Arguments:
 And here is how we generate the certificates:
 ```
 $ gerbil ensemble ca cert registry
-Enter subordinate CA passphprase: ...
+Enter subordinate CA passphrase: ...
 ...
 $ gerbil ensemble ca cert httpd
-Enter subordinate CA passphprase: ...
+Enter subordinate CA passphrase: ...
 ...
 ```
 
