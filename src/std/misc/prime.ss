@@ -67,7 +67,7 @@
    (lambda (n) (next-prime-above (nth-prime (1- n))))))
 
 ;; sieve: 1 if the number is prime, 0 if composite. Must be initialized to 1 beyond the fill-pointer.
-;; To save half the space, we only storing a bitmask for odd numbers.
+;; To save half the space, we only store a bitmask for odd numbers.
 ;; We could further save space, by using a variant of the 2,3,5,7-wheel,
 ;; from 50% to under 23% (48/210), but that would mean a much larger access factor constant.
 (def prime-sieve (make-ebits #u8(#x6E) 8))
