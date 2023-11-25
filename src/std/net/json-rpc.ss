@@ -20,7 +20,7 @@
   json-rpc-request json-rpc-request?
   json-rpc-response json-rpc-response?
   parser-error invalid-request method-not-found invalid-params internal-error
-  application-error system-error tranport-error
+  application-error system-error transport-error
   JSON-RPCError JSON-RPCError? json-rpc-error?
   MalformedRequest MalformedRequest? malformed-request?
   MalformedResponse MalformedResponse? malformed-response?
@@ -113,7 +113,7 @@
   (json-rpc-error code: -32500 message: m data: e))
 (def (system-error m (e (void)))
   (json-rpc-error code: -32400 message: m data: e))
-(def (tranport-error m (e (void)))
+(def (transport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
 (deferror-class (MalformedRequest JSON Error) (method params message)
