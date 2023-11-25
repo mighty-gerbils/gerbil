@@ -97,7 +97,7 @@ in case you are working with the transport layer.
   json-rpc-error json-rpc-error?
   json-rpc-error-code json-rpc-error-message json-rpc-error-data
   parser-error invalid-request method-not-found invalid-params
-  internal-error application-error system-error tranport-error
+  internal-error application-error system-error transport-error
   JSON-RPCError JSON-RPCError? json-rpc-error?
   MalformedRequest MalformedRequest? malformed-request?
   MalformedResponse MalformedResponse? malformed-response?

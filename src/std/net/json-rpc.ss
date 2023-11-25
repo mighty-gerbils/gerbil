@@ -20,7 +20,7 @@
   json-rpc-request json-rpc-request?
   json-rpc-response json-rpc-response?
   parser-error invalid-request method-not-found invalid-params internal-error
-  application-error system-error tranport-error
+  application-error system-error transport-error
   JSON-RPCError JSON-RPCError? json-rpc-error?
   MalformedRequest MalformedRequest? malformed-request?
   MalformedResponse MalformedResponse? malformed-response?
@@ -113,7 +113,7 @@
   (json-rpc-error code: -32500 message: m data: e))
 (def (system-error m (e (void)))
   (json-rpc-error code: -32400 message: m data: e))
-(def (tranport-error m (e (void)))
+(def (transport-error m (e (void)))
   (json-rpc-error code: -32300 message: m data: e))
 
 (deferror-class (MalformedRequest JSON Error) (method params message)
@@ -238,7 +238,7 @@
 (def (json-rpc-handler processor log: (log #f))
   (lambda (req res)
     ;; NB: the JSON RPC over HTTP says that the client MUST specify
-    ;; application/json-rpc (preferrably) or else application/json or application/jsonrequest
+    ;; application/json-rpc (preferably) or else application/json or application/jsonrequest
     ;; in a Content-Type header, and MUST specify and Accept header with one (or many) of them
     ;; and that a Content-Length header MUST be present... but frankly, no one bothers,
     ;; and enforcing any of it would make the server needlessly incompatible with clients,
