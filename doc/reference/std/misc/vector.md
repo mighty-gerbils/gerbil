@@ -10,36 +10,110 @@ that complement those provided by RnRS, Gambit, `:std/srfi/43` and `:std/srfi/13
 :::
 
 ## vector-map/index
+```
+(vector-map/index f vector ...) => new-vector
+```
+
+Constructs a new vector of the shortest length of the `vector` arguments.
+Each element at index `i` of the new-vector is mapped
+from the old `vector`s by `(f i (vector-ref vec i) ...)`.
+The dynamic order of application of `f` is unspecified.
+There must be a least one `vector` argument.
 
 This is the variant of `vector-map` from `:std/srfi/43`,
-that passes an index as well as a value to the function argument,
+that passes an index as well as vector elements to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
 ## vector-for-each/index
+```
+(vector-for-each/index f vector ...) => unspecified
+```
+
+Simple vector iterator: applies `f` to each index in the range `[0, length)`,
+where `length` is the length of the smallest vector argument passed, and
+the respective elements of each vector argument at that index.
+In contrast with `vector-map/index`,
+`f` is reliably applied to each subsequent elements,
+starting at index 0 from left to right, in the vectors.
+The function is called for side-effects, and the value returned is unspecified.
+There must be a least one `vector` argument.
 
 This is the variant of `vector-for-each` from `:std/srfi/43`,
-that passes an index as well as a value to the function argument,
+that passes an index as well as elements of each vector argument to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
 ## vector-map!/index
+```
+(vector-map!/index f vector ...) => unspecified
+```
+
+Similar to `vector-map/index`, but
+rather than mapping the new elements into a new vector,
+the new mapped elements are destructively inserted into the first `vector`.
+Again, the dynamic order of application of `f` is unspecified,
+so it is dangerous for `f` to manipulate the first `vector`.
+There must be a least one `vector` argument.
 
 This is the variant of `vector-map!` from `:std/srfi/43`,
 that passes an index as well as a value to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
 ## vector-fold/index
+```
+(vector-fold/index kons knil vector ...) => unspecified
+```
+The fundamental vector iterator.
+`kons` is iterated over each index in all of the vectors in parallel,
+stopping at the end of the shortest;
+`kons` is applied to an argument list of
+`(list i state (vector-ref vector i) ...)`,
+where `state` is the current state value —
+the state value begins with `knil` and becomes
+whatever `kons` returned at the respective iteration —,
+and `i` is the current index in the iteration.
+The iteration is strictly left-to-right.
+There must be a least one `vector` argument.
+
+```
+(vector-fold kons knil (vector e_1 e_2 ... e_n))
+  <=>
+(kons (... (kons (kons knil e_1) e_2) ... e_n-1) e_n)
+```
 
 This is the variant of `vector-fold` from `:std/srfi/43`,
-that passes an index as well as a value to the function argument,
+that passes an index as well as vector elements to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
 ## vector-fold-right/index
+```
+(vector-fold-right/index kons knil vector ...) => unspecified
+```
+
+The fundamental vector recursor.
+Iterates in parallel across `vector ...` right to left,
+applying `kons` to the elements and the current state value;
+the state value becomes what `kons` returns at each next iteration.
+`knil` is the initial state value.
+There must be a least one `vector` argument.
+```
+(vector-fold-right kons knil (vector e_1 e_2 ... e_n))
+  <=>
+(kons (... (kons (kons knil e_n) e_n-1) ... e_2) e_1)
+```
 
 This is the variant of `vector-fold-right` from `:std/srfi/43`,
 that passes an index as well as a value to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
 ## vector-count/index
+```scheme
+(vector-count predicate? vector ...) => exact, nonnegative integer
+```
+
+`predicate?` is applied element-wise to the index and the elements of `vector ...`,
+and a count is tallied of the number of elements for which
+a true value is produced by `predicate?`.  This count is returned.
+There must be a least one `vector` argument.
 
 This is the variant of `vector-count` from `:std/srfi/43`,
 that passes an index as well as a value to the function argument,

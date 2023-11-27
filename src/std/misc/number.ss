@@ -10,12 +10,16 @@
         integer-part fractional-part
         floor-align ceiling-align
         real->sign
-        nat? fxnat?
-        nat-below?
-        nat-of-length?
-        integer-of-length?
-        normalize-nat
-        normalize-integer
+        uint? sint? positive-integer?
+        n-bits->n-u8 uint-length-in-u8 sint-length-in-u8
+        check-argument-uint check-argument-sint
+        check-argument-exact-integer
+        check-argument-positive-integer
+        uint-below?
+        uint-of-length?
+        sint-of-length?
+        normalize-uint
+        normalize-sint
         for-each-integer
         half least-integer
         divides? bezout invert-mod div-mod mult-mod mult-expt-mod expt-mod
@@ -27,7 +31,7 @@
   (only-in :std/srfi/1 reduce)
   (only-in :std/srfi/141 floor/)
   (only-in :std/error check-argument)
-  (only-in :std/sugar defrule))
+  (only-in :std/sugar defrule defcheck-argument-type))
 
 ;;; xmin and xmax on the (affine) extended real number line.
 ;;; An element is either a real number or a positive infinite +inf.0 (+∞)
@@ -125,27 +129,44 @@
 (def (real->sign x)
   (cond ((< 0 x) +1) ((> 0 x) -1) (else 0)))
 
-(def (nat? n)
+(def (uint? n)
   (and (exact-integer? n) (not (negative? n))))
 
-(def (fxnat? n)
-  (and (fixnum? n) (fx<= 0 n)))
+(def (sint? n)
+  (exact-integer? n))
 
-(def (nat-below? n end)
-  (and (nat? n) (< n end)))
+(def (positive-integer? n)
+  (and (exact-integer? n) (positive? n)))
 
-(def (nat-of-length? x length-in-bits)
-  (and (nat? x) (<= (integer-length x) length-in-bits)))
+(def (n-bits->n-u8 n-bits)
+  (arithmetic-shift (+ n-bits 7) -3))
 
-(def (integer-of-length? x length-in-bits)
+(def (uint-length-in-u8 n)
+  (n-bits->n-u8 (integer-length n)))
+
+(def (sint-length-in-u8 n)
+  (if (zero? n) 0 (n-bits->n-u8 (1+ (integer-length n)))))
+
+(defcheck-argument-type uint)
+(defcheck-argument-type sint)
+(defcheck-argument-type exact-integer)
+(defcheck-argument-type positive-integer)
+
+(def (uint-below? n end)
+  (and (uint? n) (< n end)))
+
+(def (uint-of-length? x length-in-bits)
+  (and (uint? x) (<= (integer-length x) length-in-bits)))
+
+(def (sint-of-length? x length-in-bits)
   (and (exact-integer? x) (< (integer-length x) length-in-bits)))
 
 ;; Normalize an integer into an unsigned integer of given length in bits
-(def (normalize-nat x length-in-bits)
+(def (normalize-uint x length-in-bits)
   (extract-bit-field length-in-bits 0 x))
 
 ;; Normalize an integer into a signed integer of given length in bits
-(def (normalize-integer x length-in-bits)
+(def (normalize-sint x length-in-bits)
   (cond
    ((< (integer-length x) length-in-bits) x)
    ((bit-set? (1- length-in-bits) x) (replace-bit-field length-in-bits 0 x -1))
@@ -184,8 +205,7 @@
 
 ;; Does `f` divide `n`?
 (def (divides? f n)
-  (check-argument (nat? f) "natural" f)
-  (check-argument (nat? n) "natural" n)
+  (check-argument-uint f n)
   (if (zero? f)
       (zero? n)
       (zero? (modulo n f))))
@@ -193,8 +213,7 @@
 ;; Given integers a and b, return values x y d such that
 ;; d is (non-negative) gcd of a and b, and a*x+b+y=d
 (def (bezout a b)
-  (check-argument (exact-integer? a) "integer" a)
-  (check-argument (exact-integer? b) "integer" b)
+  (check-argument-exact-integer a b)
   (def (eea a b) ;; Extended Euclid's Algorithm, where b is non-negative
     (if (zero? b)
       (values 1 0 a)
@@ -223,10 +242,7 @@
 
 ;; same as (modulo (* a (expt x e)) n)
 (def (mult-expt-mod a x e n)
-  (check-argument (exact-integer? a) "integer" a)
-  (check-argument (exact-integer? x) "integer" x)
-  (check-argument (exact-integer? e) "integer" e)
-  (check-argument (exact-integer? n) "integer" n)
+  (check-argument-exact-integer a x e n)
   (if (zero? n) (* a (expt x e))
       (letrec (f (lambda (a x e)
                    (if (zero? e)
@@ -244,7 +260,7 @@
   (mult-expt-mod 1 x e n))
 
 (def (integer-log a b) ;; largest natural integer n such that b**n <= a
-  (check-argument (and (exact-integer? a) (positive? a)) "positive integer" a)
+  (check-argument-positive-integer a)
   (check-argument (and (exact-integer? b) (< 1 b)) "valid base" b)
   (def (downward q n p bs)
     ;; q is a divided n times by b already, b**p is too large to divide q,
@@ -273,7 +289,7 @@
 ;; : Integer* Nat -> Integer* Nat
 (def (factor-out-powers a b)
   (check-argument (and (exact-integer? a) (not (zero? a))) "non-zero integer" a)
-  (check-argument (and (nat? b) (< 1 b)) "integer base" b)
+  (check-argument-positive-integer b)
   (def (downward a bp p n bps) ;; we know (what remains of) a is not divisible by bp*bp
     (define-values (q r) (floor/ a bp))
     (define-values (aa nn) (if (zero? r) (values q (+ n p)) (values a n)))

@@ -511,6 +511,17 @@ namespace: #f
   fxarithmetic-shift)
 (def fx/
   fxquotient)
+(def (fx>=0? x)
+  (and (fixnum? x) (##fx>= x 0)))
+(def (fx>0? x)
+  (and (fixnum? x) (##fx> x 0)))
+(def (fx=0? x)
+  (eq? x 0))
+(def (fx<0? x)
+  (and (fixnum? x) (##fx< x 0)))
+(def (fx<=0? x)
+  (and (fixnum? x) (##fx<= x 0)))
+
 
 (def (interned-symbol? x)
   (and (symbol? x)

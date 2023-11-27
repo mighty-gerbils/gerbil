@@ -136,45 +136,57 @@
       (checks 0 0.0 0 -0.0)
       (checks -1 -1 -42 -1e-100 -1e100 -inf.0))
 
-    (test-case "nat?"
-      (defrule (checks res num ...) (begin (check (nat? num) => res) ...))
+    (test-case "uint?"
+      (defrule (checks res num ...) (begin (check (uint? num) => res) ...))
       (checks #t 0 1 42 (expt 10 100))
       (checks #f "foo" 'not-a-number [] #(1)
               0.0 -0.0 -1 -42 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
-    (test-case "fxnat?"
-      (defrule (checks res num ...) (begin (check (fxnat? num) => res) ...))
+    (test-case "fx>=0?"
+      (defrule (checks res num ...) (begin (check (fx>=0? num) => res) ...))
       (checks #t 0 1 42)
       (checks #f "foo" 'not-a-number [] #(1) (expt 10 100)
               0.0 -0.0 -1 -42 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
-    (test-case "nat-below?"
-      (defrule (checks res end num ...) (begin (check (nat-below? num end) => res) ...))
+    (test-case "uint-below?"
+      (defrule (checks res end num ...) (begin (check (uint-below? num end) => res) ...))
       (checks #t 100 0 1 42 99)
       (checks #f 100 100 "foo" 'not-a-number [] #(1) (expt 10 100)
               0.0 -0.0 -1 -42 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
-    (test-case "nat-of-length?"
-      (defrule (checks res len num ...) (begin (check (nat-of-length? num len) => res) ...))
+    (test-case "n-bits->n-u8"
+      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
+             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
+
+    (test-case "n-bits->n-u8"
+      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
+             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
+
+    (test-case "uint-length-in-u8"
+      (check (map (lambda (x) (list x (uint-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536)) =>
+             '((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))))
+
+    (test-case "uint-of-length?"
+      (defrule (checks res len num ...) (begin (check (uint-of-length? num len) => res) ...))
       (checks #t 8 0 1 42 99 100 255)
       (checks #f 8 256 257 "foo" 'not-a-number [] #(1) (expt 10 100)
               0.0 -0.0 -1 -42 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
-    (test-case "integer-of-length?"
-      (defrule (checks res len num ...) (begin (check (integer-of-length? num len) => res) ...))
+    (test-case "sint-of-length?"
+      (defrule (checks res len num ...) (begin (check (sint-of-length? num len) => res) ...))
       (checks #t 8 -128 127 0 1 42 99 100 127 -1 -42 -99 -100 -127)
       (checks #f 8 -129 128 -255 255 256 257 "foo" 'not-a-number [] #(1) (expt 10 100)
               0.0 -0.0 1e100 1e-100 -1e-100 -1e100 -inf.0 +inf.0))
 
-    (test-case "normalize-nat, normalize-integer"
+    (test-case "normalize-uint, normalize-sint"
       (defrule (check-normalize normalize (denormal normal) ...)
         (begin
           (begin
             (check-equal? (normalize normal) normal)
             (check-equal? (normalize denormal) normal)) ...))
-      (check-normalize (cut normalize-nat <> 10)
+      (check-normalize (cut normalize-uint <> 10)
                        (65536 0) (1025 1) (-32001 767))
-      (check-normalize (cut normalize-integer <> 10)
+      (check-normalize (cut normalize-sint <> 10)
                        (65536 0) (1025 1) (-32001 -257)))
 
     (test-case "for-each-integer"

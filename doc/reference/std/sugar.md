@@ -627,6 +627,60 @@ as per [`check-argument`](errors.md#check-argument).
 ```
 :::
 
+## check-argument-boolean
+```scheme
+(check-argument-boolean x ...)
+```
+Check that all arguments `x ...` are booleans, or raise an error.
+
+## check-argument-fixnum
+```scheme
+(check-argument-fixnum x ...)
+```
+Check that all arguments `x ...` are fixnums, or raise an error.
+
+## check-argument-fx>=0
+```scheme
+(check-argument-fx>=0 x ...)
+```
+Check that all arguments `x ...` are non-negative fixnums, or raise an error.
+
+## check-argument-vector
+```scheme
+(check-argument-vector x ...)
+```
+Check that all arguments `x ...` are vectors, or raise an error.
+
+## check-argument-u8vector
+```scheme
+(check-argument-u8vector x ...)
+```
+Check that all arguments `x ...` are u8vectors, or raise an error.
+
+## check-argument-string
+```scheme
+(check-argument-string x ...)
+```
+Check that all arguments `x ...` are strings, or raise an error.
+
+## check-argument-pair
+```scheme
+(check-argument-pair x ...)
+```
+Check that all arguments `x ...` are pairs, or raise an error.
+
+## check-argument-list
+```scheme
+(check-argument-list x ...)
+```
+Check that all arguments `x ...` are lists, or raise an error.
+
+## check-argument-procedure
+```scheme
+(check-argument-procedure x ...)
+```
+Check that all arguments `x ...` are procedures, or raise an error.
+
 ## syntax-eval
 ```scheme
 (syntax-eval expression)

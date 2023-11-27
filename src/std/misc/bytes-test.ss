@@ -128,62 +128,50 @@
       (check-equal? (u8vector->uint u4) (- (expt 2 16) 1))
       (check-equal? (u8vector->uint u5) (- (expt 2 80) 1)))
 
-    (test-case "nat<->u8vector"
-      (check-rep u8vector->nat nat->u8vector #u8() 0)
-      (check-rep u8vector->nat nat->u8vector #u8(1) 1)
-      (check-rep u8vector->nat nat->u8vector #u8(233) 233)
-      (check-rep u8vector->nat nat->u8vector #u8(255) 255)
-      (check-rep u8vector->nat nat->u8vector #u8(3 219) 987)
-      (check-rep u8vector->nat nat->u8vector #u8(130 255) 33535)
-      (check-rep u8vector->nat nat->u8vector #u8(1 37 17) 75025))
-    (test-case "integer<->u8vector"
-      (check-rep u8vector->integer integer->u8vector #u8() 0)
-      (check-rep u8vector->integer integer->u8vector #u8(1) 1)
-      (check-rep u8vector->integer integer->u8vector #u8(0 233) 233)
-      (check-rep u8vector->integer integer->u8vector #u8(233) -23)
-      (check-rep u8vector->integer integer->u8vector #u8(255) -1)
-      (check-rep u8vector->integer integer->u8vector #u8(128) -128)
-      (check-rep u8vector->integer integer->u8vector #u8(0 255) 255)
-      (check-rep u8vector->integer integer->u8vector #u8(3 219) 987)
-      (check-rep u8vector->integer integer->u8vector #u8(130 255) -32001)
-      (check-rep u8vector->integer integer->u8vector #u8(1 37 17) 75025))
+    (test-case "uint<->u8vector"
+      (check-rep u8vector->uint uint->u8vector #u8() 0)
+      (check-rep u8vector->uint uint->u8vector #u8(1) 1)
+      (check-rep u8vector->uint uint->u8vector #u8(233) 233)
+      (check-rep u8vector->uint uint->u8vector #u8(255) 255)
+      (check-rep u8vector->uint uint->u8vector #u8(3 219) 987)
+      (check-rep u8vector->uint uint->u8vector #u8(130 255) 33535)
+      (check-rep u8vector->uint uint->u8vector #u8(1 37 17) 75025))
+    (test-case "sint<->u8vector"
+      (check-rep u8vector->sint sint->u8vector #u8() 0)
+      (check-rep u8vector->sint sint->u8vector #u8(1) 1)
+      (check-rep u8vector->sint sint->u8vector #u8(0 233) 233)
+      (check-rep u8vector->sint sint->u8vector #u8(233) -23)
+      (check-rep u8vector->sint sint->u8vector #u8(255) -1)
+      (check-rep u8vector->sint sint->u8vector #u8(128) -128)
+      (check-rep u8vector->sint sint->u8vector #u8(0 255) 255)
+      (check-rep u8vector->sint sint->u8vector #u8(3 219) 987)
+      (check-rep u8vector->sint sint->u8vector #u8(130 255) -32001)
+      (check-rep u8vector->sint sint->u8vector #u8(1 37 17) 75025))
 
     (test-case "u8vector-every"
       (check (u8vector-every odd? #u8(1 3 5)) => #t)
       (check (u8vector-every odd? #u8(1 2 3)) => #f))
 
-    (test-case "n-bits->n-u8"
-      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
-             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
-
-    (test-case "n-bits->n-u8"
-      (check (map (lambda (x) (list x (n-bits->n-u8 x))) '(0 1 2 7 8 9 16 21 63 100 1000)) =>
-             '((0 0) (1 1) (2 1) (7 1) (8 1) (9 2) (16 2) (21 3) (63 8) (100 13) (1000 125))))
-
-    (test-case "nat-length-in-u8"
-      (check (map (lambda (x) (list x (nat-length-in-u8 x))) '(0 42 127 128 255 256 65535 65536)) =>
-             '((0 0) (42 1) (127 1) (128 1) (255 1) (256 2) (65535 2) (65536 3))))
-
-    (test-case "nat<->u8vector"
+    (test-case "uint<->u8vector"
       (defrule (checks (v n a ...) ...)
-        (begin (begin (check (nat->u8vector n a ...) => v)
-                      (check (u8vector->nat v a ...) => n)) ...))
+        (begin (begin (check (uint->u8vector n a ...) => v)
+                      (check (u8vector->uint v a ...) => n)) ...))
       (checks (#u8(1 2 3) 66051)
-              (#u8(3 2 1 0) 66051 4 little)
+              (#u8(3 2 1 0) 66051 little 4)
               (#u8(104 101 108 108 111) 448378203247))
-      (check (nat->u8vector 25642 1 big) => #u8(42))
-      (check (nat->u8vector 25642 1 little) => #u8(42)))
+      (check (uint->u8vector 25642 big 1) => #u8(42))
+      (check (uint->u8vector 25642 little 1) => #u8(42)))
 
-    (test-case "integer<->u8vector"
+    (test-case "sint<->u8vector"
       (defrule (checks (v n a ...) ...)
-        (begin (begin (check (integer->u8vector n a ...) => v)
-                      (check (u8vector->integer v a ...) => n)) ...))
+        (begin (begin (check (sint->u8vector n a ...) => v)
+                      (check (u8vector->sint v a ...) => n)) ...))
       (checks (#u8(1 2 3) 66051)
-              (#u8(3 2 1 0) 66051 4 little)
+              (#u8(3 2 1 0) 66051 little 4)
               (#u8(104 101 108 108 111) 448378203247)
               (#u8(255 1) -255)
               (#u8(254 253 253) -66051)
-              (#u8(253 253 254 255) -66051 4 little))
-      (check (integer->u8vector 25642 1 big) => #u8(42))
-      (check (integer->u8vector 25642 1 little) => #u8(42)))
+              (#u8(253 253 254 255) -66051 little 4))
+      (check (sint->u8vector 25642 big 1) => #u8(42))
+      (check (sint->u8vector 25642 little 1) => #u8(42)))
     ))

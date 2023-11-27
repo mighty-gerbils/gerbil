@@ -300,23 +300,14 @@ no delimiter. Each byte consists of two hexadecimal characters.
 
 ## u8vector->uint
 ```scheme
-(u8vector->uint v (endianness big)) -> uint
+(u8vector->uint v (endianness big) (size (u8vector-length v))) -> uint
 
   v          := u8vector
   endianness := endianness symbol
+  size       := size of the uint in bytes
 ```
 
 Decodes a u8vector as an unsigned integer.
-
-## uint->u8vector
-```scheme
-(uint->u8vector n (endianness big)) -> u8vector
-
-  n          := exact nonnegative integer
-  endianness := endianness symbol
-```
-
-Encodes an unsigned integer to its binary representation.
 
 ::: tip Examples:
 ```scheme
@@ -328,6 +319,97 @@ Encodes an unsigned integer to its binary representation.
 18446744073709551615
 > (equal? (- (expt 2 64) 1) (u8vector->uint (make-u8vector 8 #xFF)))
 #t
+> (u8vector->uint #(1 2 3))
+66051
+> (u8vector->uint #u8(3 2 1 0) little 4)
+66051
+```
+:::
+
+## uint->u8vector
+```scheme
+(uint->u8vector n (endianness big) (size uint-length-in-u8 uint)) -> u8vector
+
+  n          := exact nonnegative integer
+  endianness := endianness symbol
+  size       := size of the uint in bytes
+```
+
+Encodes an unsigned integer to its binary representation.
+
+::: tip Examples:
+```scheme
+> (uint->u8vector 1 big 2)
+#u8(0 1)
+> (uint->u8vector 1 little 2)
+#u8(1 0)
+> (uint->u8vector 258)
+#u8(1 2)
+> (uint->u8vector 18446744073709551615)
+#u8(255 255 255 255 255 255 255 255)
+> (uint->u8vector 66051)
+#(1 2 3)
+> (uint->u8vector 66051 little 4)
+#u8(3 2 1 0)
+```
+:::
+
+## u8vector->sint
+```scheme
+(u8vector->sint v (endianness big) (size (u8vector-length v))) -> sint
+  v          := u8vector
+  endianness := endianness symbol
+  size       := size of the sint in bytes
+```
+
+Decodes a u8vector as an unsigned integer.
+
+::: tip Examples:
+```scheme
+> (u8vector->sint #u8(0 1))
+1
+> (u8vector->sint (make-u8vector 2 #xFF))
+-1
+> (u8vector->sint #(1 2 3))
+66051
+> (u8vector->sint #u8(3 2 1 0) little 4)
+66051
+> (u8vector->sint u8(0 233))
+233
+> (u8vector->sint #u8(233))
+-23
+```
+:::
+
+## sint->u8vector
+```scheme
+(sint->u8vector n (endianness big) (size sint-length-in-u8 sint)) -> u8vector
+
+  n          := exact nonnegative integer
+  endianness := endianness symbol
+  size       := size of the sint in bytes
+```
+
+Encodes an unsigned integer to its binary representation.
+
+::: tip Examples:
+```scheme
+> (sint->u8vector 1 big 2)
+#u8(0 1)
+> (sint->u8vector 1 little 2)
+#u8(1 0)
+> (sint->u8vector 258)
+#u8(1 2)
+> (sint->u8vector 18446744073709551615)
+#u8(0 255 255 255 255 255 255 255 255)
+> (sint->u8vector 66051)
+#(1 2 3)
+> (sint->u8vector 66051 little 4)
+#u8(3 2 1 0)
+> (sint->u8vector 233)
+u8(0 233))
+> (sint->u8vector -23)
+#u8(233)
 ```
 :::
 

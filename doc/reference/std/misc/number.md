@@ -207,44 +207,114 @@ if alignment is negative, the roles of `floor-align` and `ceiling-align` are swa
 
 ## Natural Numbers
 
-### nat?
+### uint?
 ```scheme
-(nat? x) -> Bool
+(uint? x) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer.
 
-### fxnat?
+### sint?
 ```scheme
-(fxnat? x) -> Bool
+(sint? x) -> Bool
 ```
 
-Given any object `x`, return true if it is an non-negative fixnum.
+Given any object `x`, return true if it is an exact integer.
 
-### nat-below?
+### positive-integer?
 ```scheme
-(nat-below? x end) -> Bool
+(positive-integer? x) -> Bool
+```
+
+Given any object `x`, return true if it is an positive exact integer.
+
+### n-bits->n-u8
+```scheme
+(n-bits->n-u8 n) -> integer
+```
+Given a number of bits, return the number of bytes necessary to store those bits.
+
+### uint-length-in-u8
+```scheme
+(uint-length-in-u8 n) -> integer
+```
+Given a non-negative exact integer `n`, return the number of 8-bit bytes necessary
+to encode all the bits of `n`.
+
+### sint-length-in-u8
+```scheme
+(sint-length-in-u8 n) -> integer
+```
+Given an exact integer `n` (that may be positive, negative or zero),
+return the number of 8-bit bytes necessary to encode all the bits of `n`
+including the sign bit.
+
+### check-argument-uint
+```scheme
+(check-argument-uint n) -> unspecified
+```
+Check that argument `n` is a non-negative exact integer, or raise an error.
+
+### check-argument-sint
+```scheme
+(check-argument-sint n) -> unspecified
+```
+Check that argument `n` is an exact integer, or raise an error.
+
+### check-argument-exact-integer
+```scheme
+(check-argument-exact-integer n) -> unspecified
+```
+Check that argument `n` is an exact integer, or raise an error.
+
+### check-argument-positive-integer
+```scheme
+(check-argument-positive-integer n) -> unspecified
+```
+Check that argument `n` is a positive exact integer, or raise an error.
+
+### normalize-uint
+```scheme
+(normalize-uint x length-in-bits) => uint
+```
+Given an exact integer `x` and a `length-in-bits`, return
+a non-negative exact integer of given length
+that has the same `length-in-bits` lower order bits as `x`.
+
+### normalize-sint
+```scheme
+(normalize-sint x length-in-bits) => sint
+```
+Given an exact integer `x` and a `length-in-bits`, return
+a (signed) exact integer of given length
+that has the same `length-in-bits` lower order bits as `x`,
+including the sign bit as the (`length-in-bits` minus 1)th.
+
+### uint-below?
+```scheme
+(uint-below? x end) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer less than `end` (not included).
 
-### nat-of-length?
+### uint-of-length?
 ```scheme
-(nat-of-length? x length-in-bits) -> Bool
+(uint-of-length? x length-in-bits) -> Bool
 ```
 
 Given any object `x`, return true if it is an non-negative exact integer
 that can be stored in `length-in-bits` bits, as witnessed by
 its `integer-length` being no greater than `length-in-bits` (included).
 
-### integer-of-length?
+### sint-of-length?
 ```scheme
-(nat-of-length? x length-in-bits) -> Bool
+(sint-of-length? x length-in-bits) -> Bool
 ```
 
 Given any object `x`, return true if it is a (negative, zero or positive)
-exact integer that can be stored in `length-in-bits` bits, as witnessed by
-its `integer-length` being strictly less than `length-in-bits` (not included).
+exact integer that can be stored in `length-in-bits` bits (including sign bit),
+as witnessed by its `integer-length` being strictly less
+than `length-in-bits` (not included).
 
 ## Iteration
 
