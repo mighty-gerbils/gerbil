@@ -14,14 +14,45 @@
         check-ptr
         foreign-allocation-error?
         strerror
+        E2BIG
+        EACCES
         EAGAIN
-        EINTR
-        EINPROGRESS
-        EWOULDBLOCK
         EBADF
+        EBUSY
+        ECHILD
         ECONNABORTED
         ECONNREFUSED
-        ECONNRESET)
+        ECONNRESET
+        EDOM
+        EEXIST
+        EFAULT
+        EFBIG
+        EINPROGRESS
+        EINTR
+        EINVAL
+        EIO
+        EISDIR
+        EMFILE
+        EMLINK
+        ENFILE
+        ENODEV
+        ENOENT
+        ENOEXEC
+        ENOMEM
+        ENOSPC
+        ENOTBLK
+        ENOTDIR
+        ENOTTY
+        ENXIO
+        EPERM
+        EPIPE
+        ERANGE
+        EROFS
+        ESPIPE
+        ESRCH
+        ETXTBSY
+        EWOULDBLOCK
+        EXDEV)
 
 (deferror-class OSError (errno) os-error?)
 (defrule (raise-os-error where errno irritants ...)
@@ -59,42 +90,46 @@
    (let (r (make arg ...))
      (if r r (raise-allocation-error make '(make arg ...))))))
 
-(begin-ffi (strerror EINPROGRESS EWOULDBLOCK
-                     ECONNABORTED ECONNREFUSED ECONNRESET
-                     EPERM
-                     ENOENT
-                     ESRCH
-                     EINTR
-                     EIO
-                     ENXIO
-                     E2BIG
-                     ENOEXEC
-                     EBADF
-                     ECHILD
-                     EAGAIN
-                     ENOMEM
-                     EACCES
-                     EFAULT
-                     ENOTBLK
-                     EBUSY
-                     EEXIST
-                     EXDEV
-                     ENODEV
-                     ENOTDIR
-                     EISDIR
-                     EINVAL
-                     ENFILE
-                     EMFILE
-                     ENOTTY
-                     ETXTBSY
-                     EFBIG
-                     ENOSPC
-                     ESPIPE
-                     EROFS
-                     EMLINK
-                     EPIPE
-                     EDOM
-                     ERANGE)
+(begin-ffi (strerror
+            E2BIG
+            EACCES
+            EAGAIN
+            EBADF
+            EBUSY
+            ECHILD
+            ECONNABORTED
+            ECONNREFUSED
+            ECONNRESET
+            EDOM
+            EEXIST
+            EFAULT
+            EFBIG
+            EINPROGRESS
+            EINTR
+            EINVAL
+            EIO
+            EISDIR
+            EMFILE
+            EMLINK
+            ENFILE
+            ENODEV
+            ENOENT
+            ENOEXEC
+            ENOMEM
+            ENOSPC
+            ENOTBLK
+            ENOTDIR
+            ENOTTY
+            ENXIO
+            EPERM
+            EPIPE
+            ERANGE
+            EROFS
+            ESPIPE
+            ESRCH
+            ETXTBSY
+            EWOULDBLOCK
+            EXDEV)
   (c-declare "#include <errno.h>")
   (c-declare "#include <string.h>")
 
