@@ -184,9 +184,8 @@ namespace: gxc
            (output-scm       (path-expand output-scm))
            (output-c         (replace-extension output-scm ".c"))
            (output-o         (replace-extension output-scm ".o"))
-           (output_          (string-append (path-strip-extension output-scm) "_"))
-           (output_-c        (string-append output_ ".c"))
-           (output_-o        (string-append output_ ".o"))
+           (output_-c        (replace-extension output-scm "_.c"))
+           (output_-o        (replace-extension output-scm "_.o"))
            (gsc-link-opts    (gsc-link-options))
            (gsc-cc-opts      (gsc-cc-options))
            (gsc-static-opts  (gsc-static-include-options gerbil-staticdir))
@@ -239,7 +238,7 @@ namespace: gxc
         (delete-directory* tmp))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
-         (output-scm (string-append output-bin ".scmx")))
+         (output-scm (string-append output-bin "__exe.scm")))
     (compile-stub output-scm output-bin)
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
@@ -364,7 +363,7 @@ namespace: gxc
                  default-ld-options ...]))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
-         (output-scm (string-append output-bin ".scmx")))
+         (output-scm (string-append output-bin "__exe.scm")))
     (compile-stub output-scm output-bin)
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
@@ -851,11 +850,7 @@ namespace: gxc
   (cond
    ((pgetq output-file: opts) => values)
    (else
-    (let (mod-str (symbol->string (expander-context-id ctx)))
-      (cond
-       ((string-rindex mod-str #\/)
-        => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
-       (else mod-str))))))
+    (path-strip-directory (symbol->string (expander-context-id ctx))))))
 
 (def (static-module-name idstr)
   (cond
