@@ -3,22 +3,23 @@
 ;;; safe type descriptor accessors
 (import :std/error)
 (export (rename: checked-object-type object-type)
-        type? type-id type-name type-super
+        type? type=? type-id type-name type-super
         type-descriptor?
-        (rename: checked-type-descriptor-mixin type-descriptor-mixin)
-        (rename: checked-type-descriptor-fields type-descriptor-fields)
-        (rename: checked-type-descriptor-plist type-descriptor-plist)
-        (rename: checked-type-descriptor-ctor type-descriptor-ctor)
-        (rename: checked-type-descriptor-slots type-descriptor-slots)
+        (rename: checked-type-descriptor-precedence-list type-descriptor-precedence-list)
+        (rename: checked-type-descriptor-all-slots type-descriptor-all-slots)
+        (rename: checked-type-descriptor-alist type-descriptor-alist)
+        (rename: checked-type-descriptor-constructor type-descriptor-constructor)
+        (rename: checked-type-descriptor-slot-table type-descriptor-slot-table)
         (rename: checked-type-descriptor-methods type-descriptor-methods))
 
 (extern namespace: #f
-  type-descriptor-mixin
-  type-descriptor-fields
-  type-descriptor-plist
-  type-descriptor-ctor
-  type-descriptor-slots
-  type-descriptor-methods)
+  type-descriptor-precedence-list
+  type-descriptor-all-slots
+  type-descriptor-alist
+  type-descriptor-constructor
+  type-descriptor-slot-table
+  type-descriptor-methods
+  type=?)
 
 (def (checked-object-type obj)
   (if (object? obj)
@@ -46,9 +47,9 @@
 (defcheck-type type-name ##type-name)
 (defcheck-type type-super ##type-super)
 
-(defcheck-type-descriptor checked-type-descriptor-mixin type-descriptor-mixin)
-(defcheck-type-descriptor checked-type-descriptor-fields type-descriptor-fields)
-(defcheck-type-descriptor checked-type-descriptor-plist type-descriptor-plist)
-(defcheck-type-descriptor checked-type-descriptor-ctor type-descriptor-ctor)
-(defcheck-type-descriptor checked-type-descriptor-slots type-descriptor-slots)
+(defcheck-type-descriptor checked-type-descriptor-precedence-list type-descriptor-precedence-list)
+(defcheck-type-descriptor checked-type-descriptor-all-slots type-descriptor-all-slots)
+(defcheck-type-descriptor checked-type-descriptor-alist type-descriptor-alist)
+(defcheck-type-descriptor checked-type-descriptor-constructor type-descriptor-constructor)
+(defcheck-type-descriptor checked-type-descriptor-slot-table type-descriptor-slot-table)
 (defcheck-type-descriptor checked-type-descriptor-methods type-descriptor-methods)

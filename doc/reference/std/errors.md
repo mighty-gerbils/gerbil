@@ -426,7 +426,23 @@ displaying the exception with `display-exception`).
 ```
 
 Invokes `thunk` with an exception handler that dumps the exception
-stack trace with `dump-stack-trace!`.
+stack trace with `dump-stack-trace!`
+if `(dump-stack-trace?)` is true (the default).
+
+### dump-stack-trace?
+```scheme
+(define dump-stack-trace? (make-parameter #t))
+```
+A parameter that controls whether `with-exception-stack-trace`
+will actually dump a stack trace to standard error.
+
+You can `(dump-stack-trace? #f)`
+or locally `(parameterize ((dump-stack-trace? #f)) ...)`
+to disable this stack trace dump,
+in case you are building a program for end-users rather than for developers,
+and want to control what limited error output they see.
+Or you can re-enable them based on a debug flag at the CLI
+in cases you want them to provide you with extra debugging information.
 
 ### dump-stack-trace!
 ```scheme

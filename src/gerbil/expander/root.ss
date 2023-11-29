@@ -162,6 +162,8 @@ namespace: gx
 
 (defmethod {:init! root-context}
   (lambda (self (bind? #t))
+    ;;(display "root-context-init!-000000000000000:") (newline)
+    ;;(write [root-context-init!: (struct->list self) (##structure-length self)]) (newline)
     (struct-instance-init! self 'root (make-hash-table-eq))
     (when bind?
       {bind-core-syntax-expanders! self}
@@ -171,6 +173,7 @@ namespace: gx
 (defmethod {:init! top-context}
   (lambda (self (super #f))
     (let (super (or super (core-context-root) (make-root-context)))
+      ;;(write [top-context-init!: (struct->list self) (##structure-length self) super]) (newline)
       (struct-instance-init! self 'top (make-hash-table-eq)
                                     super #f #f))))
 

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1701718670)
+  (define gerbil/compiler/optimize-base::timestamp 1701927552)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -93,7 +93,11 @@
                 (declare (not safe))
                 (##vector-set! _self20720_ '3 __tmp20726)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self20720_))))
+                   _self20720_
+                   '3
+                   (let ()
+                     (declare (not safe))
+                     (##vector-length _self20720_))))))
     (let ()
       (declare (not safe))
       (bind-method!
@@ -959,7 +963,11 @@
                 (##vector-set! _self20530_ '6 _plist20536_))
               (let () (declare (not safe)) (##vector-set! _self20530_ '7 '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self20530_))))
+                   _self20530_
+                   '7
+                   (let ()
+                     (declare (not safe))
+                     (##vector-length _self20530_))))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#!struct-type::t ':init! gxc#!struct-type:::init! '#f))
@@ -1002,7 +1010,11 @@
                 (##vector-set! _self20399_ '7 _plist20406_))
               (let () (declare (not safe)) (##vector-set! _self20399_ '8 '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self20399_))))
+                   _self20399_
+                   '8
+                   (let ()
+                     (declare (not safe))
+                     (##vector-length _self20399_))))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#!class-type::t ':init! gxc#!class-type:::init! '#f))
@@ -1036,7 +1048,11 @@
                 (declare (not safe))
                 (##vector-set! _self20243_ '5 _typedecl20248_)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self20243_))))
+                   _self20243_
+                   '5
+                   (let ()
+                     (declare (not safe))
+                     (##vector-length _self20243_))))))
     (define gxc#!lambda:::init!__0
       (lambda (_self20253_ _id20254_ _arity20255_ _dispatch20256_)
         (let* ((_inline20258_ '#f) (_typedecl20260_ '#f))
@@ -1063,7 +1079,11 @@
                   (declare (not safe))
                   (##vector-set! _self20253_ '5 _typedecl20260_)))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self20253_)))))
+                     _self20253_
+                     '5
+                     (let ()
+                       (declare (not safe))
+                       (##vector-length _self20253_)))))))
     (define gxc#!lambda:::init!__1
       (lambda (_self20262_
                _id20263_
@@ -1094,7 +1114,11 @@
                   (declare (not safe))
                   (##vector-set! _self20262_ '5 _typedecl20268_)))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self20262_)))))
+                     _self20262_
+                     '5
+                     (let ()
+                       (declare (not safe))
+                       (##vector-length _self20262_)))))))
     (define gxc#!lambda:::init!
       (lambda _g20738_
         (let ((_g20737_ (let () (declare (not safe)) (##length _g20738_))))
@@ -1162,7 +1186,11 @@
                                    '5
                                    _typedecl20275_)))
                               (error '"struct-instance-init!: too many arguments for struct"
-                                     _self20270_)))
+                                     _self20270_
+                                     '5
+                                     (let ()
+                                       (declare (not safe))
+                                       (##vector-length _self20270_)))))
                         _g20738_))
                 (else
                  (##raise-wrong-number-of-arguments-exception

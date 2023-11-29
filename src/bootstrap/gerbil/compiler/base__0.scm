@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1701718669)
+  (define gerbil/compiler/base::timestamp 1701927551)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -82,7 +82,11 @@
                 (declare (not safe))
                 (##vector-set! _self596_ '2 __tmp5416)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self596_))))
+                   _self596_
+                   '2
+                   (let ()
+                     (declare (not safe))
+                     (##vector-length _self596_))))))
     (let ()
       (declare (not safe))
       (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f))

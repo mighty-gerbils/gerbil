@@ -294,6 +294,7 @@ namespace: gxc
 (def (basic-expression-type-make-struct-field-unchecked-mutator stx args)
   (basic-expression-type-make-struct-field-mutator stx args #t))
 
+;; TODO: FIXME
 (def (basic-expression-type-make-class-type stx args)
   (def (mixin-expr->list stx)
     (let/cc return

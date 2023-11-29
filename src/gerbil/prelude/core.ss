@@ -159,16 +159,20 @@ package: gerbil
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
+    ;; c3 linearization
+    c3-linearize not-null? remove-nulls append-reverse
     ;; MOP
     type-descriptor?
-    struct-type?
-    class-type?
-    make-struct-type
+    type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-alist type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
+    type-final? type-struct? struct-type? class-type?
+    make-struct-type make-struct-type*
     make-struct-predicate
-    make-struct-field-accessor
-    make-struct-field-mutator
-    make-struct-field-unchecked-accessor
-    make-struct-field-unchecked-mutator
+    make-struct-field-accessor make-struct-field-accessor*
+    make-struct-field-mutator make-struct-field-mutator*
+    make-struct-field-unchecked-accessor make-struct-field-unchecked-accessor*
+    make-struct-field-unchecked-mutator make-struct-field-unchecked-mutator*
+    base-struct/1 base-struct/2 base-struct/list base-struct* base-struct
+    class-precedence-list struct-precedence-list
     struct-field-ref
     struct-field-set!
     unchecked-field-ref
@@ -181,13 +185,13 @@ package: gerbil
     make-class-slot-unchecked-mutator
     class-slot-ref
     class-slot-set!
-    class-slot-offset
+    class-slot-offset class-slot-offset*
     unchecked-slot-ref
     unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
     direct-instance? direct-struct-instance? direct-class-instance?
-    make-object
+    make-object make-object*
     struct-copy
     struct->list class->list
     make-struct-instance
@@ -203,6 +207,7 @@ package: gerbil
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
+    substruct? subclass?
     ;; write-env style
     write-style
     ;; control
@@ -217,7 +222,7 @@ package: gerbil
     error raise
     exception? error-object?
     error-message error-irritants error-trace
-    display-exception
+    display-exception dump-stack-trace?
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
@@ -270,7 +275,9 @@ package: gerbil
     ;; keyword argument dispatch
     keyword-dispatch keyword-rest
     ;; gerbil specifics
-    gerbil-version-string gerbil-system-version-string system-version
+    gerbil-version-string gerbil-system-version-string system-version gerbil-system-manifest
+    ;; build manifest
+    build-manifest build-manifest/layer build-manifest/head display-build-manifest build-manifest-string
     ;; system type information
     gerbil-system system-type
     ;; voodoo doll
@@ -628,7 +635,10 @@ package: gerbil
         ((_ message detail ...)
          (stx-string? #'message)
          (apply raise-syntax-error #f (stx-e #'message) stx
-                (syntax->list #'(detail ...)))))))
+                (syntax->list #'(detail ...))))))
+
+    (defrules defmutable ()
+      ((_ var value) (begin (def var value) (set! var var) (void)))))
 
   (import <sugar:1>
           (phi: +1 <sugar:1>))
@@ -1653,16 +1663,12 @@ package: gerbil
             ((field getf setf)
              [off #'getf #'setf])))
 
-        (def (field-id field)
-          (syntax-case field ()
-            ((getf setf) ':)
-            ((field getf setf) #'field)))
+        (def (slot-name slot-spec)
+          (syntax-case slot-spec ()
+            ((slot getf setf) #'slot)))
 
-        (def (struct-opt? key)
-          (memq (stx-e key) '(fields: id: name: plist: constructor: unchecked:)))
-
-        (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: plist: constructor: unchecked:)))
+       (def (class-opt? key)
+          (memq (stx-e key) '(slots: id: name: alist: constructor: unchecked:)))
 
         (def (module-type-id type-t)
           (cond
@@ -1678,10 +1684,10 @@ package: gerbil
                 (or (identifier? #'make)
                     (stx-false? #'make))
                 (identifier? #'instance?)
-                (stx-plist? #'rest (if struct? struct-opt? class-opt?)))
+                (stx-plist? #'rest class-opt?))
 
-           (with-syntax* (((values els)
-                           (or (stx-getq (if struct? fields: slots:) #'rest)
+           (with-syntax* (((values slots)
+                           (or (stx-getq slots: #'rest)
                                []))
                           ((make-instance make-predicate
                                           make-getf make-setf
@@ -1707,27 +1713,24 @@ package: gerbil
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
-                          (type-plist
-                           (or (stx-getq plist: #'rest)
+                          (type-alist
+                           (or (stx-getq alist: #'rest)
                                #'[]))
-                          (type-ctor
+                          (type-constructor
                            (stx-getq constructor: #'rest))
+                          ((slot ...)
+                           (stx-map slot-name slots))
                           (type-rtd
                            (if struct?
-                             (with-syntax ((fields (stx-length els))
-                                           ((field-id ...)
-                                            (stx-map field-id els)))
+                             (with-syntax ((fields (stx-length slots)))
                                #'(make-struct-type 'type-id
                                    super fields
-                                   'type-name type-plist 'type-ctor
-                                   '(field-id ...)))
-                             (with-syntax (((super ...)
-                                            #'super)
-                                           ((slot ...)
-                                            (stx-map stx-car els)))
+                                   'type-name type-alist 'type-constructor
+                                   '(slot ...)))
+                             (with-syntax (((super ...) #'super))
                                #'(make-class-type 'type-id
                                    [super ...] '(slot ...)
-                                   'type-name type-plist 'type-ctor))))
+                                   'type-name type-alist 'type-constructor))))
                           (def-type
                             (wrap #'(def type-t type-rtd)))
                           (def-make
@@ -1740,8 +1743,8 @@ package: gerbil
                             (wrap #'(def instance? (make-predicate type-t))))
                           ((values attrs)
                            (if struct?
-                             (stx-map slotify els (iota (stx-length els)))
-                             els))
+                             (stx-map slotify slots (iota (stx-length slots)))
+                             slots))
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
@@ -1801,8 +1804,8 @@ package: gerbil
                   runtime-type-id    runtime-type-id-set!
                   runtime-type-super runtime-type-super-set!
                   runtime-type-name  runtime-type-name-set!
-                  runtime-type-ctor  runtime-type-ctor-set!
-                  runtime-type-plist runtime-type-plist-set!
+                  runtime-type-constructor  runtime-type-constructor-set!
+                  runtime-type-alist runtime-type-alist-set!
                   runtime-struct-fields runtime-struct-fields-set!
                   runtime-class-slots runtime-class-slots-set!
                   expander-type-identifiers expander-type-identifiers-set!
@@ -1865,24 +1868,30 @@ package: gerbil
 
       (defstruct-type runtime-rtd-exhibitor::t #f
         #f runtime-type-exhibitor?
-        fields:
-        ((id    runtime-type-id    runtime-type-id-set!)
-         (super runtime-type-super runtime-type-super-set!)
-         (name  runtime-type-name  runtime-type-name-set!)
-         (ctor  runtime-type-ctor  runtime-type-ctor-set!)
-         (plist runtime-type-plist runtime-type-plist-set!))
+        slots:
+        ((id             runtime-type-id             runtime-type-id-set!)
+         (super          runtime-type-super          runtime-type-super-set!)
+         (name           runtime-type-name           runtime-type-name-set!)
+         (constructor    runtime-type-constructor    runtime-type-constructor-set!)
+         (alist          runtime-type-alist          runtime-type-alist-set!))
         id:   gerbil.core#runtime-rtd-exhibitor::t)
+
+      ;; TODO: remove after bootstrap
+      (def runtime-type-ctor runtime-type-constructor)
+      (def runtime-type-ctor-set! runtime-type-constructor-set!)
+      (def runtime-type-plist runtime-type-alist)
+      (def runtime-type-plist-set! runtime-type-alist-set!)
 
       (defstruct-type runtime-struct-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-struct-exhibitor runtime-struct-exhibitor?
-        fields:
+        slots:
         ((fields runtime-struct-fields runtime-struct-fields-set!))
         id:   gerbil.core#runtime-struct-exhibitor::t
         name: struct-exhibitor)
 
       (defstruct-type runtime-class-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-class-exhibitor runtime-class-exhibitor?
-        fields:
+        slots:
         ((slots runtime-class-slots runtime-class-slots-set!))
         id:   gerbil.core#runtime-class-exhibitor::t
         name: class-exhibitor)
@@ -1916,10 +1925,10 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: plist: unchecked: print: equal:)))
+                '(id: name: constructor: transparent: final: alist: unchecked: print: equal:)))
         (stx-plist? stx body-opt?))
 
-      (def (generate-typedef stx id super-ref els body struct?)
+      (def (generate-typedef stx id super-ref slots body struct?)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
 
@@ -1929,7 +1938,7 @@ package: gerbil
             (lambda args
               (apply stx-identifier id args))))
 
-        (check-duplicate-identifiers els stx)
+        (check-duplicate-identifiers slots stx)
 
         (with-syntax* (((values name)
                         (symbol->string (stx-e id)))
@@ -1949,58 +1958,57 @@ package: gerbil
                         (if struct?
                           (and super (runtime-type-identifier super))
                           (map runtime-type-identifier super)))
-                       ((attr ...)
-                        els)
+                       ((slot ...)
+                        slots)
                        ((getf ...)
-                        (stx-map (cut make-id name "-" <>) els))
+                        (stx-map (cut make-id name "-" <>) slots))
                        ((setf ...)
-                        (stx-map (cut make-id name "-" <> "-set!") els))
+                        (stx-map (cut make-id name "-" <> "-set!") slots))
                        ((values type-attr)
                         (cond
-                         ((stx-null? els) [])
-                         (struct?         [fields: #'((attr getf setf) ...)])
-                         (else            [slots:  #'((attr getf setf) ...)])))
+                         ((stx-null? slots) [])
+                         (else              [slots: #'((slot getf setf) ...)])))
                        ((values type-name)
                         [name: (or (stx-getq name: body) id)])
                        ((values type-id)
                         (or (alet (e (stx-getq id: body))
                               [id: e])
                             []))
-                       ((values type-ctor)
+                       ((values type-constructor)
                         (or (alet (e (stx-getq constructor: body))
                               [constructor: e])
                             []))
-                       ((values plist)
-                        (let* ((plist
-                                (or (stx-getq plist: body)
+                       ((values alist)
+                        (let* ((alist
+                                (or (stx-getq alist: body)
                                     []))
-                               (plist
+                               (alist
                                 (if (stx-e (stx-getq transparent: body))
-                                  (cons [transparent: . #t] plist)
-                                  plist))
-                               (plist
+                                  (cons [transparent: . #t] alist)
+                                  alist))
+                               (alist
                                 (if (stx-e (stx-getq final: body))
-                                  (cons [final: . #t] plist)
-                                  plist))
-                               (plist
+                                  (cons [final: . #t] alist)
+                                  alist))
+                               (alist
                                 (cond
                                  ((stx-e (stx-getq print: body))
                                   => (lambda (print)
-                                       (let (print (if (eq? print #t) els print))
-                                         (cons [print: . print] plist))))
-                                 (else plist)))
-                               (plist
+                                       (let (print (if (eq? print #t) slots print))
+                                         (cons [print: . print] alist))))
+                                 (else alist)))
+                               (alist
                                 (cond
                                  ((stx-e (stx-getq equal: body))
                                   => (lambda (equal)
-                                       (let (equal (if (eq? equal #t) els equal))
-                                         (cons [equal: . equal] plist))))
-                                 (else plist))))
-                          plist))
-                       ((values type-plist)
-                        (if (null? plist) plist
-                            (with-syntax ((plist plist))
-                              [plist: #'(quote plist)])))
+                                       (let (equal (if (eq? equal #t) slots equal))
+                                         (cons [equal: . equal] alist))))
+                                 (else alist))))
+                          alist))
+                       ((values type-alist)
+                        (if (null? alist) alist
+                            (with-syntax ((alist alist))
+                              [alist: #'(quote alist)])))
                        ((values type-unchecked)
                         (or (alet (e (stx-getq unchecked: body))
                               [unchecked: e])
@@ -2009,8 +2017,8 @@ package: gerbil
                         [type-attr ...
                          type-id ...
                          type-name ...
-                         type-ctor ...
-                         type-plist ...
+                         type-constructor ...
+                         type-alist ...
                          type-unchecked ...])
                        (typedef
                          (wrap
@@ -2044,10 +2052,10 @@ package: gerbil
                             (cons 'list (map quote-e super-ref)))))
                        (meta-rtd-name
                         (cadr type-name))
-                       (meta-rtd-ctor
-                        (and (not (null? type-ctor))
-                             (cadr type-ctor)))
-                       (meta-rtd-plist plist)
+                       (meta-rtd-constructor
+                        (and (not (null? type-constructor))
+                             (cadr type-constructor)))
+                       (meta-rtd-alist alist)
                        (metadef
                         (wrap
                          #'(defsyntax type
@@ -2064,9 +2072,9 @@ package: gerbil
                               (make-exhibitor (quote meta-rtd-id)
                                               meta-rtd-super
                                               (quote meta-rtd-name)
-                                              (quote meta-rtd-ctor)
-                                              (quote meta-rtd-plist)
-                                              (quote (attr ...))))))))
+                                              (quote meta-rtd-constructor)
+                                              (quote meta-rtd-alist)
+                                              (quote (slot ...))))))))
           (wrap
            #'(begin typedef metadef)))))
 
@@ -2687,7 +2695,7 @@ package: gerbil
                                 (fx+ (length (runtime-struct-fields rtd)) k))
                             k)))
                        ((values final?)
-                        (and rtd (assgetq final: (runtime-type-plist rtd))))
+                        (and rtd (assgetq final: (syntax->datum (runtime-type-alist rtd)))))
                        (target tgt)
                        (instance-check
                         (if (expander-type-info? info)
@@ -2730,7 +2738,7 @@ package: gerbil
             false))
 
         (def final?
-          (and rtd (assgetq final: (runtime-type-plist rtd))))
+          (and rtd (assgetq final: (syntax->datum (runtime-type-alist rtd)))))
 
         (def (rtd-known-slot? rtd slot)
           (and rtd

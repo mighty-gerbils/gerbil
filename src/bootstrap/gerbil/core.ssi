@@ -418,17 +418,46 @@ namespace: gerbil/core
                     (make-uninterned-keyword make-uninterned-keyword)
                     (symbol->keyword symbol->keyword)
                     (keyword->symbol keyword->symbol)
+                    (c3-linearize c3-linearize)
+                    (not-null? not-null?)
+                    (remove-nulls remove-nulls)
+                    (append-reverse append-reverse)
                     (type-descriptor? type-descriptor?)
+                    (type-id type-id)
+                    (type-descriptor-precedence-all-slots
+                     type-descriptor-precedence-all-slots)
+                    (type-descriptor-precedence-list
+                     type-descriptor-precedence-list)
+                    (type-descriptor-alist type-descriptor-alist)
+                    (type-descriptor-constructor type-descriptor-constructor)
+                    (type-descriptor-slot-table type-descriptor-slot-table)
+                    (type-descriptor-methods type-descriptor-methods)
+                    (type-final? type-final?)
+                    (type-struct? type-struct?)
                     (struct-type? struct-type?)
                     (class-type? class-type?)
                     (make-struct-type make-struct-type)
+                    (make-struct-type* make-struct-type*)
                     (make-struct-predicate make-struct-predicate)
                     (make-struct-field-accessor make-struct-field-accessor)
+                    (make-struct-field-accessor* make-struct-field-accessor*)
                     (make-struct-field-mutator make-struct-field-mutator)
+                    (make-struct-field-mutator* make-struct-field-mutator*)
                     (make-struct-field-unchecked-accessor
                      make-struct-field-unchecked-accessor)
+                    (make-struct-field-unchecked-accessor*
+                     make-struct-field-unchecked-accessor*)
                     (make-struct-field-unchecked-mutator
                      make-struct-field-unchecked-mutator)
+                    (make-struct-field-unchecked-mutator*
+                     make-struct-field-unchecked-mutator*)
+                    (base-struct/1 base-struct/1)
+                    (base-struct/2 base-struct/2)
+                    (base-struct/list base-struct/list)
+                    (base-struct* base-struct*)
+                    (base-struct base-struct)
+                    (class-precedence-list class-precedence-list)
+                    (struct-precedence-list struct-precedence-list)
                     (struct-field-ref struct-field-ref)
                     (struct-field-set! struct-field-set!)
                     (unchecked-field-ref unchecked-field-ref)
@@ -444,6 +473,7 @@ namespace: gerbil/core
                     (class-slot-ref class-slot-ref)
                     (class-slot-set! class-slot-set!)
                     (class-slot-offset class-slot-offset)
+                    (class-slot-offset* class-slot-offset*)
                     (unchecked-slot-ref unchecked-slot-ref)
                     (unchecked-slot-set! unchecked-slot-set!)
                     (object? object?)
@@ -454,6 +484,7 @@ namespace: gerbil/core
                     (direct-struct-instance? direct-struct-instance?)
                     (direct-class-instance? direct-class-instance?)
                     (make-object make-object)
+                    (make-object* make-object*)
                     (struct-copy struct-copy)
                     (struct->list struct->list)
                     (class->list class->list)
@@ -477,6 +508,8 @@ namespace: gerbil/core
                     (call-next-method call-next-method)
                     (struct-subtype? struct-subtype?)
                     (class-subtype? class-subtype?)
+                    (substruct? substruct?)
+                    (subclass? subclass?)
                     (write-style write-style)
                     (current-error-port current-error-port)
                     (make-promise make-promise)
@@ -495,6 +528,7 @@ namespace: gerbil/core
                     (error-irritants error-irritants)
                     (error-trace error-trace)
                     (display-exception display-exception)
+                    (dump-stack-trace? dump-stack-trace?)
                     (exit exit)
                     (getenv getenv)
                     (setenv setenv)
@@ -586,6 +620,12 @@ namespace: gerbil/core
                     (gerbil-version-string gerbil-version-string)
                     (gerbil-system-version-string gerbil-system-version-string)
                     (system-version system-version)
+                    (gerbil-system-manifest gerbil-system-manifest)
+                    (build-manifest build-manifest)
+                    (build-manifest/layer build-manifest/layer)
+                    (build-manifest/head build-manifest/head)
+                    (display-build-manifest display-build-manifest)
+                    (build-manifest-string build-manifest-string)
                     (gerbil-system gerbil-system)
                     (system-type system-type)
                     (gerbil-runtime-smp? gerbil-runtime-smp?)
@@ -939,7 +979,10 @@ namespace: gerbil/core
                               |gerbil/core$<sugar>$<sugar:1>[:0:]#unless|)
                              (%#define-syntax
                               syntax-error
-                              |gerbil/core$<sugar>$<sugar:1>[:0:]#syntax-error|)))
+                              |gerbil/core$<sugar>$<sugar:1>[:0:]#syntax-error|)
+                             (%#define-syntax
+                              defmutable
+                              |gerbil/core$<sugar>$<sugar:1>[:0:]#defmutable|)))
                    (%#import (in: #f <sugar:1>) (phi: 1 (in: #f <sugar:1>)))
                    (%#module
                     <sugar:2>
@@ -1160,16 +1203,19 @@ namespace: gerbil/core
                                1
                                runtime-type-name-set!
                                runtime-type-name-set!)
-                              (spec: 1 runtime-type-ctor runtime-type-ctor)
                               (spec:
                                1
-                               runtime-type-ctor-set!
-                               runtime-type-ctor-set!)
-                              (spec: 1 runtime-type-plist runtime-type-plist)
+                               runtime-type-constructor
+                               runtime-type-constructor)
                               (spec:
                                1
-                               runtime-type-plist-set!
-                               runtime-type-plist-set!)
+                               runtime-type-constructor-set!
+                               runtime-type-constructor-set!)
+                              (spec: 1 runtime-type-alist runtime-type-alist)
+                              (spec:
+                               1
+                               runtime-type-alist-set!
+                               runtime-type-alist-set!)
                               (spec:
                                1
                                runtime-struct-fields
@@ -1322,11 +1368,11 @@ namespace: gerbil/core
                                runtime-type-name
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name|)
                               (%#define-runtime
-                               runtime-type-ctor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor|)
+                               runtime-type-constructor
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor|)
                               (%#define-runtime
-                               runtime-type-plist
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|)
+                               runtime-type-alist
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-alist|)
                               (%#define-runtime
                                runtime-type-id-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id-set!|)
@@ -1337,8 +1383,20 @@ namespace: gerbil/core
                                runtime-type-name-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name-set!|)
                               (%#define-runtime
+                               runtime-type-constructor-set!
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor-set!|)
+                              (%#define-runtime
+                               runtime-type-alist-set!
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-alist-set!|)
+                              (%#define-runtime
+                               runtime-type-ctor
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor|)
+                              (%#define-runtime
                                runtime-type-ctor-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor-set!|)
+                              (%#define-runtime
+                               runtime-type-plist
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|)
                               (%#define-runtime
                                runtime-type-plist-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist-set!|)

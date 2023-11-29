@@ -257,4 +257,5 @@ package: gerbil/runtime
   (declare-type read-u8vector (@lambda 2 #f))
   (declare-type write-u8vector (@lambda 2 #f))
   (declare-type read-string (@lambda 2 #f))
-  (declare-type write-string (@lambda 2 #f)))
+  (declare-type write-string (@lambda 2 #f))
+  (declare-type DBG-helper (@lambda 5 #f)))

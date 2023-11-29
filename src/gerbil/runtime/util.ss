@@ -689,3 +689,60 @@ namespace: #f
   (read-substring str 0 (string-length str) port))
 (def (write-string str port)
   (write-substring str 0 (string-length str) port))
+
+(define-syntax DBG
+  (syntax-rules ()
+    ((_ . a) (DBG/1 1 . a))))
+
+(define-syntax DBG/1
+  (syntax-rules (quote)
+    ;; Each expr can be optionally prefixed by a quoted name, which defaults to the quoted expr
+    ;; 1. Specially recognize the last expression and its name (if any)
+    ((d 1 tag exprs ... 'name expr)
+     (d 2 () (exprs ...) tag name expr))
+    ((d 1 tag exprs ... expr)
+     (d 2 () (exprs ...) tag expr expr))
+    ((_ 1 tag)
+     (DBG-helper tag '() '() #f #f))
+    ;; 2. Process each intermediate expr and its name, accumulating (name expr) in reverse
+    ((d 2 l ('name expr . r) . a)
+     (d 2 ((name expr) . l) r . a))
+    ((d 2 l (expr . r) . a)
+     (d 2 ((expr expr) . l) r . a))
+    ((d 2 l () . a)
+     (d 3 () l . a))
+    ;; 3. reverse intermediate exprs back in order, then expand to DBG-helper
+    ((d 3 l (h . r) . a)
+     (d 3 (h . l) r . a))
+    ((d 3 ((names exprs) ...) () tag name expr)
+     (let ((tagval tag)
+           (thunk (lambda () expr)))
+       (if tagval
+         (DBG-helper tagval '(names ...) (list (lambda () exprs) ...)
+                     'name thunk)
+         (thunk))))))
+
+(def DBG-printer (make-parameter write))
+
+;; NB: fprintf uses the current-error-port and calls force-output
+(def (DBG-helper tag dbg-exprs dbg-thunks expr thunk)
+  (letrec
+      ((fo (lambda () (force-output (current-error-port))
+              (force-output (current-output-port))))
+       (d (lambda (x) (display x (current-error-port))))
+       (p (DBG-printer))
+       (w (lambda (x) (p x (current-error-port))))
+       (n (lambda () (newline (current-error-port))))
+       (v (lambda (l)
+            (for-each (lambda (x) (d " ") (w x)) l)
+            (n)))
+       (x (lambda (expr thunk)
+            (d "  ")
+            (w expr) (d " =>")
+            (call-with-values thunk (lambda x (v x) (apply values x))))))
+    (if tag
+      (begin
+        (unless (void? tag) (d tag) (n))
+        (for-each x dbg-exprs dbg-thunks)
+        (if thunk (x expr thunk) (void)))
+      (if thunk (thunk) (void)))))

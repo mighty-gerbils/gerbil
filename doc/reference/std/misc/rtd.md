@@ -71,6 +71,35 @@ type object.
 ```
 :::
 
+## type=?
+``` scheme
+(type=? typ1 type2) -> bool
+
+  typ1 := type object
+  typ2 := other type object
+```
+
+Returns true if the two type objects have the same `type-id`.
+This is the preferred equality predicate for types.
+`eq?` and `eqv?` should also work, but at present
+`equal?` seems to be broken, by considering types as equal
+that you would want to distinguish.
+
+::: tip Examples:
+``` scheme
+> (defstruct a ())
+> (defclass  b ())
+> (type-id a::t)
+#:a::t45
+> (type-id b::t)
+#:b::t49
+> (type=? a::t a::t)
+#t
+> (type=? a::t b::t)
+#f
+```
+:::
+
 ## type-name
 ``` scheme
 (type-name typ) -> type name | error

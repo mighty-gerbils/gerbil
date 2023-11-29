@@ -191,11 +191,11 @@
                    (id id))
       #'(begin
           (defstruct-type id::t #f make-id id?
-            fields: ((field-id getf setf) ...)
+            slots: ((field-id getf setf) ...)
             name: id
             constructor: :init!
             unchecked: #t
-            plist: '((final: . #t) (transparent: . #t)))
+            alist: '((final: . #t) (transparent: . #t)))
           (defsyntax id
             (make-message-type-info
              runtime-identifier: (quote-syntax id::t)

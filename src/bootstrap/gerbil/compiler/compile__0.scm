@@ -1,10 +1,10 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1701718670)
+  (define gerbil/compiler/compile::timestamp 1701927552)
   (begin
     (define gxc#_g18463_
       (gx#core-deserialize-mark
-       '(0 (hd . _hd16778_) (else . _else16755_))
+       '(0 (else . _else16755_) (hd . _hd16778_))
        (gx#current-expander-context)))
     (define gxc#_g18464_
       (##structure
@@ -15,7 +15,7 @@
        (list gxc#_g18463_)))
     (define gxc#_g18469_
       (gx#core-deserialize-mark
-       '(0 (hd . _hd16839_) (else . _else16816_))
+       '(0 (else . _else16816_) (hd . _hd16839_))
        (gx#current-expander-context)))
     (define gxc#_g18470_
       (##structure
@@ -26,7 +26,7 @@
        (list gxc#_g18469_)))
     (define gxc#_g18475_
       (gx#core-deserialize-mark
-       '(0 (hd . _hd16901_) (else . _else16878_))
+       '(0 (else . _else16878_) (hd . _hd16901_))
        (gx#current-expander-context)))
     (define gxc#_g18476_
       (##structure
@@ -37,7 +37,7 @@
        (list gxc#_g18475_)))
     (define gxc#_g18481_
       (gx#core-deserialize-mark
-       '(0 (hd . _hd16964_) (else . _else16941_))
+       '(0 (else . _else16941_) (hd . _hd16964_))
        (gx#current-expander-context)))
     (define gxc#_g18482_
       (##structure
@@ -17699,7 +17699,11 @@
                   (declare (not safe))
                   (##vector-set! _self7336_ '4 '())))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self7336_))))
+                     _self7336_
+                     '4
+                     (let ()
+                       (declare (not safe))
+                       (##vector-length _self7336_))))))
       (let ()
         (declare (not safe))
         (bind-method! gxc#meta-state::t ':init! gxc#meta-state:::init! '#f))

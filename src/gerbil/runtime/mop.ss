@@ -6,13 +6,9 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "util")
+(import "gambit" "util" "c3")
 
-;; Gerbil rtd [runtime type descriptor]:
-;;  {##struct-t id super fields name plist ctor slots methods}
-;;  {##class-t  id super fields name plist ctor slots methods}
-;;
-;; Gambit structure rtd:
+;; Gambit structure rtd [runtime type descriptor]
 ;;  (define-type type
 ;;    (id      unprintable: equality-test:)
 ;;    (name    unprintable: equality-skip:)
@@ -20,130 +16,170 @@ namespace: #f
 ;;    (super   unprintable: equality-skip:)
 ;;    (fields  unprintable: equality-skip:))
 ;;
-;; Gerbil rtd on gambit
-;; ##structure ##type-type
-;;  1  ##type-id
-;;  2  ##type-name
-;;  3  ##type-flags
-;;  4  ##type-super
-;;  5  ##type-fields
-;;  6                       type-descriptor-mixin
-;;  7                       type-descriptor-fields
-;;  8                       type-descriptor-plist
-;;  9                       type-descriptor-ctor
-;; 10                       type-descriptor-slots
-;; 11                       type-descriptor-methods
+;; Gerbil rtd on Gambit, extending the above (index, accessor, type)
+;;  0  ##structure-type                 : (Exactly ##type-type)
+;;  1  ##type-id                        : Symbol ; sometimes uninterned
+;;  2  ##type-name                      : Symbol
+;;  3  ##type-flags                     : Fixnum
+;;  4  ##type-super                     : (OrFalse StructTypeDescriptor)
+;;  5  ##type-fields                    : (Vector [Symbol Fixnum default-value] ...)
+;;  6  type-descriptor-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
+;;  7  type-descriptor-all-slots        : (Vector (OrFalse Symbol)) ; first is false
+;;  8  type-descriptor-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
+;;  9  type-descriptor-alist            : AList
+;; 10  type-descriptor-constructor      : (OrFalse Symbol)
+;; 11  type-descriptor-methods          : (Table Symbol -> Function)
+;;
+;; The ##type-fields contains 3 entries by Gambit structure field, field name, flags and default value
+;;
+;; Standard "alist" keys:
+;; direct-slots:   (List Symbol)          list of direct slots in order, for inheritance
+;; direct-supers:  (List TypeDescriptor)  list of direct supers in order, for introspection only
+;; struct:         Bool                   is this a struct? i.e. only single inheritance for structs
+;; final:          Bool                   is this class final? i.e. no subclasses allowed
+;; equal:          Bool                   all new slots will be compared during objects equal?
+;; print:          Bool                   all new slots will be printed when printing an object
+;; transparent:    Bool                   is this class transparent? i.e. equal and print all slots
+
+(def (type-id klass)
+  (cond
+   ((type-descriptor? klass) (##type-id klass))
+   ((not klass) #f)
+   (else (error "Not a class or #f" klass))))
+
+(def (type=? x y)
+  (eq? (type-id x) (type-id y)))
 
 (def (type-descriptor? klass)
   (and (##type? klass)
        (eq? (##structure-length klass) 12)))
 
+(def (type-struct? klass)
+  (assgetq struct: (type-descriptor-alist klass)))
+
+(def (type-final? klass)
+  (assgetq final: (type-descriptor-alist klass)))
+
 (def (struct-type? klass)
-  (and (type-descriptor? klass)
-       (not (type-descriptor-mixin klass))))
+  (and (type-descriptor? klass) (type-struct? klass)))
 
 (def (class-type? klass)
-  (and (type-descriptor? klass)
-       (type-descriptor-mixin klass)
-       #t))
+  (and (type-descriptor? klass) (not (type-struct? klass))))
 
-;;; meta constructor: create type descriptors for struct or class types
+;; TODO for debugging only
+(def (alist-form alist)
+  (map (match <>
+         ([key . val]
+          (if (eq? key 'direct-supers:)
+            [key :: (map type-id val)]
+            [key :: val])))
+       alist))
+
 (def (make-type-descriptor type-id type-name type-super
                            rtd-mixin rtd-fields rtd-plist
                            rtd-ctor rtd-slots rtd-methods)
+  ;;(DBG make-type-descriptor:)
+  (make-type-descriptor* type-id type-name type-super
+                         rtd-mixin rtd-fields rtd-plist
+                         rtd-ctor rtd-slots rtd-methods))
 
+;; Bootstrap issue: all-slots is now a vector, not a list
+;; Compute the flags and field-info and create a type-descriptor
+(def (make-type-descriptor* type-id type-name type-super
+                            precedence-list all-slots alist
+                            constructor slot-table methods)
+  #;(DBG make-type-descriptor*:
+       type-id type-name 'type-super (and type-super (##type-id type-super))
+       (map ##type-id precedence-list) all-slots (alist-form alist)
+       constructor (hash->list slot-table) methods)
+  ;; compute a table of slots with print: or equal: or transparent: flag
+  ;; ht: table to which to add according slots
+  ;; key: either print: or equal: (both implied by transparent:)
   (def (put-props! ht key)
-    (def (put-plist! ht key plist)
-      (cond
-       ((assgetq key plist)
-        => (lambda (lst)
-             (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
+    (def (put-slots! ht slots)
+      (for-each (cut hash-put! ht <> #t) slots))
+    (def (put-alist! ht key alist)
+      (cond ((assgetq key alist) => (cut put-slots! ht <>))))
+    (put-alist! ht key alist)
+    (for-each (lambda (mixin)
+                (let (alist (type-descriptor-alist mixin))
+                  (if (assgetq transparent: alist)
+                    (put-slots! ht (cdr (vector->list (type-descriptor-all-slots mixin))))
+                    (put-alist! ht key alist))))
+              precedence-list))
 
-    (put-plist! ht key rtd-plist)
-    (when rtd-mixin
-      (for-each (lambda (klass)
-                  (when (type-descriptor-mixin klass) ; ignore structs
-                    (let (plist (type-descriptor-plist klass))
-                      (if (assgetq transparent: plist)
-                        (put-plist! ht slots: plist)
-                        (put-plist! ht key plist)))))
-                rtd-mixin)))
-
-  (let* ((transparent? (assgetq transparent: rtd-plist))
-         (field-names
-          (cond
-           ((assq fields: rtd-plist) => cdr)
-           (else '())))
-         (field-names
-          (cond
-           ((assq slots: rtd-plist)
-            => (lambda (slots)
-                 (append field-names (cdr slots))))
-           (else field-names)))
-         (_
-          (unless (fx= rtd-fields (length field-names))
-            (error "Bad field descriptor; length mismatch" type-id rtd-fields field-names)))
-         (canonical-fields
-          (if type-super
-            (list-tail field-names (type-descriptor-fields type-super))
-            field-names))
+  (let* ((transparent? (assgetq transparent: alist))
+         (all-slots-printable? (or transparent? (assgetq print: alist)))
          (printable
-          (if transparent?
+          (if all-slots-printable?
             #f                          ; all printable
             (let (ht (make-hash-table-eq))
               (put-props! ht print:)
               ht)))
-         (equality
-          (if transparent?
+         (all-slots-equalable? (or transparent? (assgetq equal: alist)))
+         (equalable
+          (if all-slots-equalable?
             #f                          ; all equality comparable
             (let (ht (make-hash-table-eq))
               (put-props! ht equal:)
               ht)))
-         (field-info
-          (let recur ((rest canonical-fields))
-            (match rest
-              ([id . rest]
-               (let (flags
-                     (if transparent? 0
-                         (##fxior (if (hash-get printable id) 0 1)
-                                  (if (hash-get equality id)  0 4))))
-                 (cons* id flags #f (recur rest))))
-              (else '()))))
+         (first-new-field
+          (if type-super
+            (vector-length (type-descriptor-all-slots type-super))
+            1))
+         (field-info-length (* 3 (- (vector-length all-slots) first-new-field)))
+         (field-info (make-vector field-info-length #f))
          (opaque?
-          (if (or transparent? (assq equal: rtd-plist))
-            (if type-super
-              (##fx= (##fxand (##type-flags type-super) 1) 1)
-              #f)
-            #t)))
+          (or (not all-slots-equalable?)
+              (and type-super (##fx= (##fxand (##type-flags type-super) 1) 1)))))
+    (let loop ((i first-new-field)
+               (j 0))
+      (when (< j field-info-length)
+        (let* ((slot (vector-ref all-slots i))
+               (flags
+                (if transparent? 0
+                    (##fxior (if (or all-slots-printable? (hash-get printable slot)) 0 1)
+                             (if (or all-slots-equalable? (hash-get equalable slot)) 0 4)))))
+          (vector-set! field-info j slot)
+          (vector-set! field-info (fx1+ j) flags)
+          (loop (fx1+ i) (##fx+ j 3)))))
+
     (##structure ##type-type
                  type-id type-name
-                 (+ 24 (if opaque? 1 0))
+                 (if opaque? 25 24)
                  type-super
-                 (list->vector field-info)
-                 rtd-mixin rtd-fields rtd-plist rtd-ctor
-                 rtd-slots rtd-methods)))
+                 field-info
+                 precedence-list all-slots slot-table alist constructor methods)))
 
 ;;; type descriptor utilities
-(def (make-struct-type-descriptor id name super fields plist ctor)
-  (make-type-descriptor id name super #f fields plist ctor #f #f))
-
-(def (make-class-type-descriptor id name super mixin fields plist ctor slots)
-  (make-type-descriptor id name super mixin fields plist ctor slots #f))
-
-(def (type-descriptor-mixin klass)
+(def (type-descriptor-precedence-list klass)
   (##vector-ref klass 6))
-(def (type-descriptor-fields klass)
+(def (type-descriptor-all-slots klass)
   (##vector-ref klass 7))
-(def (type-descriptor-plist klass)
+(def (type-descriptor-slot-table klass)
   (##vector-ref klass 8))
-(def (type-descriptor-ctor klass)
+(def (type-descriptor-alist klass)
   (##vector-ref klass 9))
-(def (type-descriptor-slots klass)
+(def (type-descriptor-constructor klass)
   (##vector-ref klass 10))
 (def (type-descriptor-methods klass)
   (##vector-ref klass 11))
 (def (type-descriptor-methods-set! klass ht)
   (##vector-set! klass 11 ht))
+
+;; TODO: remove after bootstrap
+(def type-descriptor-mixin type-descriptor-precedence-list)
+(def type-descriptor-plist type-descriptor-alist)
+(def type-descriptor-ctor type-descriptor-constructor)
+(def (type-descriptor-fields klass)
+  ;;(DBG type-descriptor-fields: 'klass (type-id klass))
+  (fx1- (vector-length (type-descriptor-all-slots klass))))
+(def (type-descriptor-slots klass)
+  ;;(DBG type-descriptor-slots: 'klass (type-id klass))
+  (let (h (make-hash-table-eq))
+    (hash-for-each (lambda (k v) (hash-put! h k (fx1+ v)))
+                   (type-descriptor-slot-table klass))
+    h))
 
 (def (type-descriptor-sealed? klass)
   (##fxbit-set? 20 (##type-flags klass)))
@@ -151,304 +187,373 @@ namespace: #f
   (##vector-set! klass 3 (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))))
 
 ;;; struct types
-(def (make-struct-type id super fields name plist ctor (field-names #f))
+;; TODO: rename after bootstrap
+(def (make-struct-type id super n-direct-slots name alist constructor (direct-slots #f))
+  #;(DBG make-struct-type: id (type-id super) direct-slots name (alist-form alist) constructor
+       direct-slots)
+  (make-struct-type* id name super
+                     (or direct-slots
+                         (map (cut make-symbol "_" <>)
+                              (iota n-direct-slots
+                                    (if super (vector-length (type-descriptor-all-slots super))
+                                        1))))
+                     alist constructor))
+
+;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
+(def (make-struct-type* id name super direct-slots alist constructor)
+  #;(DBG make-struct-type*: id name (type-id super) direct-slots (alist-form alist) constructor)
+
   (when (and super (not (struct-type? super)))
     (error "Illegal super type; not a struct-type" super))
-  (when (and super (assgetq final: (type-descriptor-plist super)))
-    (error "Cannot extend final struct" super))
-
-  (let* ((super-fields
-          (if super (type-descriptor-fields super) 0))
-         (std-fields
-          (fx+ fields super-fields))
-         (std-field-names
-          (let* ((super-fields
-                  (if super
-                    (assgetq fields: (type-descriptor-plist super))
-                    '()))
-                 (field-names
-                  (or field-names (make-list fields ':))))
-            (append super-fields field-names)))
-         (_
-          (unless (##fx= std-fields (length std-field-names))
-            (error "Bad field specification; length mismatch" id std-fields std-field-names)))
-         (std-plist
-          (cons (cons fields: std-field-names) plist))
-         (ctor
-          (or ctor (and super (type-descriptor-ctor super)))))
-    (make-struct-type-descriptor id name super std-fields std-plist ctor)))
+  ;; Consistency check for slots: they must all be new
+  (let* ((type (make-class-type* id name (if super [super] []) direct-slots
+                                 [[struct: . #t] . alist] constructor))
+         (all-slots (type-descriptor-all-slots type))
+         (len (length direct-slots))
+         (start (- (vector-length all-slots) len)))
+    #;(DBG make-struct-type*/2: all-slots len start)
+    (unless (andmap (lambda (slot i) ;;(DBG make-struct-type*/3: slot i 'vslot (vector-ref all-slots i) ':
+                                     (eq? slot (vector-ref all-slots i)));;)
+                    direct-slots (iota len start))
+      (error "Non-unique slots in struct" name direct-slots))
+    type))
 
 (def (make-struct-predicate klass)
   (let (tid (##type-id klass))
-    (if (assgetq final: (type-descriptor-plist klass))
+    (if (type-final? klass)
       (lambda (obj)
         (##structure-direct-instance-of? obj tid))
       (lambda (obj)
         (##structure-instance-of? obj tid)))))
 
 (def (make-struct-field-accessor klass field)
-  (let (off (##fx+ (struct-field-offset klass field) 1))
-    (lambda (obj)
-      (##structure-ref obj off klass #f))))
+  ;;(DBG make-struct-field-accessor:)
+  (make-struct-field-accessor* klass (struct-field-offset* klass field)))
+
+(def (make-struct-field-accessor* klass field)
+  ;;(DBG make-struct-field-accessor*: (type-id klass) field)
+  (lambda (obj) (##structure-ref obj field klass #f)))
 
 (def (make-struct-field-mutator klass field)
-  (let (off (##fx+ (struct-field-offset klass field) 1))
-    (lambda (obj val)
-      (##structure-set! obj val off klass #f))))
+  ;;(DBG make-struct-field-mutator:)
+  (make-struct-field-mutator* klass (struct-field-offset* klass field)))
+
+(def (make-struct-field-mutator* klass field)
+  ;;(DBG make-struct-field-mutator*: (type-id klass) field)
+  (lambda (obj val) (##structure-set! obj val field klass #f)))
 
 (def (make-struct-field-unchecked-accessor klass field)
-  (let (off (##fx+ (struct-field-offset klass field) 1))
-    (lambda (obj)
-      (##unchecked-structure-ref obj off klass #f))))
+  ;;(DBG make-struct-field-unchecked-accessor:)
+  (make-struct-field-unchecked-accessor* klass (struct-field-offset* klass field)))
+
+(def (make-struct-field-unchecked-accessor* klass field)
+  ;;(DBG make-struct-field-unchecked-accessor*: (type-id klass) field)
+  (lambda (obj) (##unchecked-structure-ref obj field klass #f)))
 
 (def (make-struct-field-unchecked-mutator klass field)
-  (let (off (##fx+ (struct-field-offset klass field) 1))
-    (lambda (obj val)
-      (##unchecked-structure-set! obj val off klass #f))))
+  ;;(DBG make-struct-field-unchecked-mutator:)
+  (make-struct-field-unchecked-mutator* klass (struct-field-offset* klass field)))
 
-(def (struct-field-offset klass field)
+(def (make-struct-field-unchecked-mutator* klass field)
+  ;;(DBG make-struct-field-unchecked-mutator*: (type-id klass) field)
+  (lambda (obj val) (##unchecked-structure-set! obj val field klass #f)))
+
+(def (struct-field-offset* klass field)
   (##fx+ field
          (cond
           ((##type-super klass) => type-descriptor-fields)
-          (else 0))))
+          (else 0))
+         1))
 
-(def (struct-field-ref klass obj off)
-  (##structure-ref obj (##fx+ off 1) klass #f))
+;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
+(def (struct-field-ref klass obj field)
+  ;;(DBG struct-field-ref: (type-id klass) #;obj field)
+  (##structure-ref obj field klass #f))
 
-(def (struct-field-set! klass obj off val)
-  (##structure-set! obj val (##fx+ off 1) klass #f))
+;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
+(def (struct-field-set! klass obj field val)
+  ;;(DBG struct-field-set!: (type-id klass) #;obj field val)
+  (##structure-set! obj val field klass #f))
 
-(def (struct-subtype? klass xklass)
-  (let (klass-t (##type-id klass))
-    (let lp ((next xklass))
+;; Is maybe-sub-struct a subclass of maybe-super-struct?
+; : TypeDescriptor TypeDescriptor -> Bool
+(def (substruct? maybe-sub-struct maybe-super-struct)
+  ;;(DBG substruct?: (type-id maybe-sub-struct) (type-id maybe-super-struct))
+  (let (maybe-super-struct-id (##type-id maybe-super-struct))
+    (let lp ((super-struct maybe-sub-struct))
       (cond
-       ((not next)
+       ((not super-struct)
         #f)
-       ((eq? klass-t (##type-id next))
+       ((eq? maybe-super-struct-id (type-id super-struct))
         #t)
        (else
-        (lp (##type-super next)))))))
+        (lp (##type-super super-struct)))))))
 
-;;; class types
-(def (make-class-type id super slots name plist ctor)
-  (def (class-slots klass)
-    (assgetq slots: (type-descriptor-plist klass)))
+(def (struct-subtype? maybe-super-struct maybe-sub-struct)
+  (substruct? maybe-sub-struct maybe-super-struct)) ;; TODO: remove after bootstrap
 
-  (def (make-slots off)
-    (let (slot-table (make-hash-table-eq))
-      (let lp ((rest super) (off off) (slot-list '()))
-        (match rest
-          ([hd . rest]
-           (merge-slots slot-table (class-slots hd) off slot-list
-                        (lambda (off slot-list)
-                          (lp rest off slot-list))))
-          (else
-           (merge-slots slot-table slots off slot-list
-                        (lambda (off slot-list)
-                          (values off slot-table (reverse slot-list)))))))))
-
-  (def (merge-slots ht lst off r K)
-    (let lp ((rest lst) (off off) (r r))
-      (match rest
-        ([slot . rest]
-         (if (hash-get ht slot)
-           (lp rest off r)
-           (begin
-             (hash-put! ht slot off)
-             (hash-put! ht (symbol->keyword slot) off)
-             (lp rest (##fx+ off 1) (cons slot r)))))
-        (else
-         (K off r)))))
-
-  (def (find-super-ctor super)
-    (let lp ((rest super) (ctor #f))
-      (match rest
-        ([hd . rest]
-         (cond
-          ((type-descriptor-ctor hd)
-           => (lambda (xctor)
-                (if (or (not ctor) (eq? ctor xctor))
-                  (lp rest xctor)
-                  (error "Conflicting implicit constructors" ctor xctor))))
-          (else (lp rest ctor))))
-        (else ctor))))
-
-  (def (find-super-struct super)
-    (def (base-struct super-struct klass)
-      (cond
-       (super-struct
-        (cond
-         ((struct-subtype? super-struct klass)
-          (let lp ((klass klass))
-            (if (struct-type? klass)
-              klass
-              (lp (##type-super klass)))))
-         ((struct-subtype? klass super-struct)
-          super-struct)
-         (else
-          (error "Bad mixin: incompatible struct bases" klass super-struct))))
-       ((struct-type? klass) klass)
-       ((class-type? klass)
-        (let lp ((next (##type-super klass)))
-          (cond
-           ((not next)
-            #f)
-           ((struct-type? next)
-            next)
-           ((class-type? next)
-            (lp next))
-           (else #f))))
-       (else #f)))
-
-    (let lp ((rest super) (super-struct #f))
-      (match rest
-        ([hd . rest]
-         (lp rest (base-struct super-struct hd)))
-        (else super-struct))))
-
-  (def (expand-struct-mixin super)
-    (let lp ((rest super) (mixin '()))
-      (match rest
-        ([hd . rest]
-         (if (struct-type? hd)
-           (let lp2 ((next hd) (mixin mixin))
-             (cond
-              ((not next)
-               (lp rest mixin))
-              ((struct-type? next)
-               (lp2 (##type-super next) (cons next mixin)))
-              (else
-               (lp rest mixin))))
-           (lp rest (cons hd mixin))))
-        (else
-         (reverse mixin)))))
-
+;; Which is the most specific struct class if any that klass is or inherits from?
+;; : TypeDescriptor -> (OrFalse StructTypeDescriptor)
+(def (base-struct/1 klass)
+  ;;(DBG base-struct/1: (type-id klass) 'super (type-id (##type-super klass)) ':
   (cond
-   ((find (lambda (klass) (not (type-descriptor? klass))) super)
-    => (lambda (klass)
-         (error "Illegal super class; not a type descriptor" klass)))
-   ((find (lambda (klass)
-             (assgetq final: (type-descriptor-plist klass)))
-           super)
-    => (lambda (klass)
-         (error "Cannot extend final class" klass))))
+   ((struct-type? klass) klass)
+   ((class-type? klass) (##type-super klass))
+   ((not klass) #f)
+   (else (error "Not a class or false" klass))));;)
 
-  (let* ((std-super (find-super-struct super))
-         (mixin (if std-super (expand-struct-mixin super) super)))
-    (let-values (((std-fields std-slots std-slot-list)
-                  (make-slots (if std-super (type-descriptor-fields std-super) 0))))
-      (let* ((std-mixin  (class-linearize-mixins mixin))
-             (std-plist  (if std-super
-                           (let (fields (assgetq fields: (type-descriptor-plist std-super)))
-                             (cons (cons fields: fields) plist))
-                           plist))
-             (std-plist  (cons (cons slots: std-slot-list) std-plist))
-             (std-ctor   (or ctor (find-super-ctor super))))
-        (make-class-type-descriptor id name std-super std-mixin std-fields std-plist std-ctor std-slots)))))
+;; Which is the most specific struct class if any that both klass1 and klass2 are or inherit from?
+;; : TypeDescriptor TypeDescriptor -> (OrFalse StructTypeDescriptor)
+(def (base-struct/2 klass1 klass2)
+  (def s1 (base-struct/1 klass1))
+  (def s2 (base-struct/1 klass2))
+  (cond
+   ((or (not s1) (and s2 (substruct? s1 s2))) s2)
+   ((or (not s2) (and s1 (substruct? s2 s1))) s1)
+   (else (error "Bad mixin: incompatible struct bases" klass1 klass2 s1 s2))))
 
-(def (class-linearize-mixins klass-lst)
-  (def (class->list klass)
-    (cons klass (or (type-descriptor-mixin klass) '())))
+;; Which is the most specific struct class if any that all argument classes are or inherit from?
+;; : TypeDescriptor ... -> (OrFalse StructTypeDescriptor)
+(def (base-struct/list all-supers)
+  (match all-supers
+    ([] #f)
+    ([x] (base-struct/1 x))
+    ([x y] (base-struct/2 x y))
+    ([x y ...] (foldr base-struct/2 x y))))
 
-  (match klass-lst
-    ([] [])
-    ([klass]
-     (class->list klass))
-    (else
-     (__linearize-mixins
-      (map class->list klass-lst)))))
+(def (base-struct* . all-supers)
+  (base-struct/list all-supers))
 
-(def (__linearize-mixins lst)
-  (def (K rest r)
+;; TODO: remove after bootstrap
+(def (base-struct . all-supers)
+  ;;(DBG base-struct: (map type-id all-supers))
+  (apply base-struct/list all-supers))
+
+;; Find the constructor method name for the TypeDescriptor
+;; : (List TypeDescriptor) -> Symbol
+(def (find-super-ctor super)
+  ;;(DBG find-super-ctor: (type-id super))
+  (find-super-constructor super))
+
+(def (find-super-constructor super)
+  (let lp ((rest super) (constructor #f))
     (match rest
       ([hd . rest]
-       (linearize1 hd rest r))
-      (else
-       (reverse r))))
+       (cond
+        ((type-descriptor-constructor hd)
+         => (lambda (xconstructor)
+              (if (or (not constructor) (eq? constructor xconstructor))
+                (lp rest xconstructor)
+                (error "Conflicting implicit constructors" constructor xconstructor))))
+        (else (lp rest constructor))))
+      (else constructor))))
 
-  (def (linearize1 hd rest r)
-    (match hd
-      ([hd-first . hd-rest]
-       (if (findq hd-first rest)
-         (linearize2 rest (list hd) r)
-         (K (cons hd-rest rest)
-            (putq hd-first r))))
-      (else
-       (K rest r))))
+;; Given a struct super class (or false if none),
+;; a list of super-classes (not including the class being created), and
+;; a list of direct slots from the class being created,
+;; return the all-slots vector of slots (with #f in position 0) and the slot-table.
+;; a table mapping symbol and keyword names to offset, and
+;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
+;; -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
+(def (compute-class-slots super-struct class-precedence-list direct-slots)
+  ;;(DBG compute-class-slots: super-struct 'class-precedence-list (map type-id class-precedence-list) direct-slots)
+  (let* ((previous-slots
+          (if super-struct (type-descriptor-all-slots super-struct) '#(#f)))
+         (next-slot
+          (vector-length previous-slots))
+         (slot-table
+          (if super-struct
+            (hash-copy (type-descriptor-slot-table super-struct))
+            (make-hash-table-eq)))
+         (r-slots [])
+         (process-slot
+          (lambda (slot)
+            (unless (symbol? slot)
+              (error "invalid slot name" slot))
+            (unless (hash-key? slot-table slot) ;; ignore if already registered as a slot
+              (hash-put! slot-table slot next-slot)
+              (hash-put! slot-table (symbol->keyword slot) next-slot)
+              (set! r-slots (cons slot r-slots))
+              (set! next-slot (fx1+ next-slot)))))
+         (process-slots (cut for-each process-slot <>)))
+    (for-each (lambda (mixin)
+                (unless (type-struct? mixin) ;; skip structure classes, already processed via super
+                  (process-slots
+                   (assgetq direct-slots: (type-descriptor-alist mixin) []))))
+              (reverse class-precedence-list))
+    (process-slots direct-slots)
+    (let (all-slots (make-vector next-slot #f))
+      (vector-copy! all-slots 0 previous-slots)
+      (for-each (lambda (slot)
+                  (set! next-slot (fx1- next-slot))
+                  (vector-set! all-slots next-slot slot))
+                r-slots)
+      (values all-slots slot-table))))
 
-  (def (linearize2 rest pre r)
-    (let lp ((rest rest) (pre pre))
-      (match rest
-        ([hd . rest]
-         (match hd
-           ([hd-first . hd-rest]
-            (if (findq hd-first rest)
-              (lp rest (cons hd pre))
-              (K (foldl cons (cons hd-rest rest) pre)
-                 (putq hd-first r))))
-           (else
-            (lp rest pre)))))))
+;;; ClassTypeDescriptor
+;; : Symbol (List TypeDescriptor) (List Symbol) Symbol Alist Constructor -> ClassTypeDescriptor
+(def (make-class-type id direct-supers direct-slots name alist constructor)
+  ;;(DBG make-class-type:)
+  (make-class-type* id name direct-supers direct-slots alist constructor))
 
-  (def (putq hd lst)
-    (if (memq hd lst) lst
-        (cons hd lst)))
+;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
+(def (make-class-type* id name direct-supers direct-slots alist constructor)
+  ;;(DBG make-class-type*: id name 'direct-supers (map type-id direct-supers) direct-slots (alist-form alist) constructor)
+  (cond
+   ((find (lambda (klass) (not (type-descriptor? klass))) direct-supers)
+    => (cut error "Illegal super class; not a type descriptor" <>))
+   ((find type-final? direct-supers)
+    => (cut error "Cannot extend final class" <>)))
 
-  (def (findq hd rest)
-    (find (lambda (lst) (memq hd lst)) rest))
+  (let* ((struct-super (base-struct/list direct-supers)) ;; super struct, if any
+         (precedence-list (class-linearize-mixins direct-supers)) ;; class precedence list, excluding current class
+         ((values all-slots slot-table)
+          (compute-class-slots struct-super precedence-list direct-slots))
+         (alist
+          [[direct-slots: . direct-slots]
+           [direct-supers: . direct-supers]
+           alist ...])
+         (constructor* (or constructor (find-super-constructor direct-supers))))
 
-  (K lst '()))
+    (make-type-descriptor* id name struct-super
+                           precedence-list all-slots alist
+                           constructor* slot-table #f)))
+
+(def (class-precedence-list klass)
+  (cons klass (type-descriptor-precedence-list klass)))
+
+(def (struct-precedence-list strukt)
+  (cons strukt (cond ((##type-super strukt) => struct-precedence-list) (else []))))
+
+(def (class-linearize-mixins klass-lst)
+  (c3-linearize [] klass-lst class-precedence-list eqv? ##type-name))
 
 (def (make-class-predicate klass)
-  (if (assgetq final: (type-descriptor-plist klass))
-    (lambda (obj)
-      (direct-class-instance? klass obj))
-    (lambda (obj)
-      (class-instance? klass obj))))
+  (if (type-final? klass)
+    (cut direct-class-instance? klass <>)
+    (cut class-instance? klass <>)))
+
+(def (if-class-slot-field klass slot if-struct if-struct-field if-class-slot)
+  ;;(DBG if-class-slot-field: (type-id klass) slot if-struct if-struct-slot if-class-slot)
+  (let (field (hash-get (type-descriptor-slot-table klass) slot))
+    #;(DBG if-class-slot-field-2: field (type-final? klass) (type-struct? klass)
+         'base-struct (type-id (base-struct/1 klass))
+         'vector-length (let (strukt (base-struct/1 klass))
+                          (and strukt (vector-length (type-descriptor-all-slots strukt)))) 'result:)
+    (cond
+     ((or (type-final? klass) (type-struct? klass))
+      (if-struct klass field))
+     ((let (strukt (base-struct/1 klass))
+        (and strukt (< field (vector-length (type-descriptor-all-slots strukt)))))
+      (if-struct-field klass field))
+     (else
+      (if-class-slot klass slot field)))));;)
 
 (def (make-class-slot-accessor klass slot)
+  ;;(DBG make-class-slot-accessor: (type-id klass) slot ':
+  (if-class-slot-field klass slot
+    make-struct-field-accessor*
+    make-struct-subclass-field-accessor
+    make-class-cached-slot-accessor));;)
+
+(def (make-struct-subclass-field-accessor klass field)
   (lambda (obj)
-    (slot-ref obj slot)))
+    (if (class-instance? klass obj)
+      (unchecked-field-ref obj field)
+      (error "Trying to get a slot of an object that is not a class instance"
+        (vector-ref (type-descriptor-all-slots klass) field) obj klass))))
+
+(def (make-class-cached-slot-accessor klass slot field)
+  (lambda (obj)
+    (cond
+     ((direct-instance? klass obj)
+      (unchecked-field-ref obj field))
+     ((class-instance? klass obj)
+      (slot-ref obj slot))
+     (else
+      (error "Trying to get a slot of an object that is not a class instance"
+        slot obj klass)))))
 
 (def (make-class-slot-mutator klass slot)
+  ;;(DBG make-class-slot-mutator: (type-id klass) slot)
+  (if-class-slot-field klass slot
+     make-struct-field-mutator*
+     make-struct-subclass-field-mutator
+     make-class-cached-slot-mutator))
+
+(def (make-struct-subclass-field-mutator klass field)
   (lambda (obj val)
-    (slot-set! obj slot val)))
+    (if (class-instance? klass obj)
+      (unchecked-field-set! obj field val)
+      (error "Trying to set a slot of an object that is not a class instance"
+        (vector-ref (type-descriptor-all-slots klass) field) obj klass val))))
+
+(def (make-class-cached-slot-mutator klass slot field)
+  (lambda (obj val)
+    (if (direct-instance? klass obj)
+      (unchecked-field-set! obj field val)
+      (slot-set! obj slot val))))
 
 (def (make-class-slot-unchecked-accessor klass slot)
+  ;;(DBG make-class-slot-unchecked-accessor: (type-id klass) slot)
+  (if-class-slot-field klass slot
+    make-struct-field-unchecked-accessor*
+    make-struct-field-unchecked-accessor*
+    make-class-cached-slot-unchecked-accessor))
+
+(def (make-class-cached-slot-unchecked-accessor klass slot field)
   (lambda (obj)
-    (unchecked-slot-ref obj slot)))
+    (if (direct-instance? klass obj)
+      (unchecked-field-ref obj field)
+      (unchecked-slot-ref obj slot))))
 
 (def (make-class-slot-unchecked-mutator klass slot)
+  ;;(DBG make-class-slot-unchecked-mutator: (type-id klass) slot)
+  (if-class-slot-field klass slot
+     make-struct-field-unchecked-mutator*
+     make-struct-field-unchecked-mutator*
+     make-class-cached-slot-unchecked-mutator))
+
+(def (make-class-cached-slot-unchecked-mutator klass slot field)
   (lambda (obj val)
-    (unchecked-slot-set! obj slot val)))
+    (if (direct-instance? klass obj)
+      (unchecked-field-set! obj field val)
+      (unchecked-slot-set! obj slot val))))
 
 (def (class-slot-offset klass slot)
-  (cond
-   ((type-descriptor-slots klass)
-    => (lambda (slots) (hash-get slots slot)))
-   (else #f)))
+  ;;(DBG class-slot-offset: (type-id klass) slot ':
+  (let (off (class-slot-offset* klass slot))
+    (and off (fx1- off))))
+
+(def (class-slot-offset* klass slot)
+  ;;(DBG class-slot-offset*: (type-id klass) slot ':
+  (hash-get (type-descriptor-slot-table klass) slot));;)
 
 (def (class-slot-ref klass obj slot)
+  ;;(DBG class-slot-ref: (type-id klass) #;obj slot)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
-      (##unchecked-structure-ref obj (##fx+ off 1) klass #f))
+    (let (off (class-slot-offset* (object-type obj) slot))
+      (##unchecked-structure-ref obj off klass #f))
     (error "not an instance" klass obj)))
 
 (def (class-slot-set! klass obj slot val)
+  ;;(DBG class-slot-set!: (type-id klass) #;obj slot val)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
-      (##unchecked-structure-set! obj val (##fx+ off 1) klass #f))
+    (let (off (class-slot-offset* (object-type obj) slot))
+      (##unchecked-structure-set! obj val off klass #f))
     (error "not an instance" klass obj)))
 
-(def (class-subtype? klass xklass)
-  (let (klass-t (##type-id klass))
-    (cond
-     ((eq? klass-t (##type-id xklass)))
-     ((type-descriptor-mixin xklass)
-      => (lambda (mixin)
-           (and (find (lambda (xklass) (eq? klass-t (##type-id xklass)))
-                      mixin)
-                #t)))
-     (else #f))))
+;; Is maybe-sub-class a subclass of maybe-super-class?
+; : TypeDescriptor TypeDescriptor -> Bool
+(def (subclass? maybe-sub-class maybe-super-class)
+  (let (maybe-super-class-id (##type-id maybe-super-class))
+    (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
+        (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
+               (type-descriptor-precedence-list maybe-sub-class)))))
+;; Is maybe-sub-class a subclass of maybe-super-class?
+;; NB: Reverse order of argument. TODO: remove after bootstrap
+(def (class-subtype? maybe-super-class maybe-sub-class)
+  (subclass? maybe-sub-class maybe-super-class))
 
 ;;; generic object utilities
 (def object?
@@ -466,49 +571,56 @@ namespace: #f
   direct-instance?)
 
 (def (class-instance? klass obj)
+  ;;(DBG class-instance?: (type-id klass) #;obj ':
   (and (object? obj)
-       (let ((klass-id (##type-id klass))
-             (type (object-type obj)))
+       (let (type (object-type obj))
          (and (type-descriptor? type)
-              (or (eq? (##type-id type) klass-id)
-                  (cond
-                   ((type-descriptor-mixin type)
-                    => (lambda (mixin)
-                         (ormap (lambda (type) (eq? (##type-id type) klass-id))
-                                mixin)))
-                   (else #f)))))))
+              (subclass? type klass)))));;)
 
 (def direct-class-instance?
   direct-instance?)
 
 (def (make-object klass k)
-  (let (obj (##make-vector (##fx+ k 1) #f))
+  (make-object* klass (fx1+ k)))
+
+(def (make-object* klass (k (vector-length (type-descriptor-all-slots klass))))
+  ;;(DBG make-object: (type-id klass) k)
+  (let (obj (##make-vector k #f))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
 
 (def (make-struct-instance klass . args)
-  (let (fields (type-descriptor-fields klass))
+  (let* ((all-slots (type-descriptor-all-slots klass))
+         (size (vector-length all-slots)))
+    #;(DBG make-struct-instance:
+         (##type-id klass) (##type-name klass)
+         all-slots size (length args)
+         (type-descriptor-constructor klass))
     (cond
-     ((type-descriptor-ctor klass)
+     ((type-descriptor-constructor klass)
       => (lambda (kons-id)
-           (__constructor-init! klass kons-id (make-object klass fields) args)))
-     ((##fx= fields (length args))
+           (__constructor-init! klass kons-id (make-object* klass size) args)))
+     ((##fx= (fx1- size) (length args))
       (apply ##structure klass args))
      (else
+      #;(DBG make-struct-instance/9: (##type-id klass) (##type-name klass)
+           all-slots size (length args))
       (error "Arguments don't match object size"
-        klass fields args)))))
+        klass (fx1- size) args)))))
 
 (def (make-class-instance klass . args)
-  (let (obj (make-object klass (type-descriptor-fields klass)))
+  ;;(DBG make-class-instance: (##type-name klass) (length args))
+  (let ((obj (make-object* klass (vector-length (type-descriptor-all-slots klass)))))
     (cond
-     ((type-descriptor-ctor klass)
+     ((type-descriptor-constructor klass)
       => (lambda (kons-id)
            (__constructor-init! klass kons-id obj args)))
      (else
       (__class-instance-init! klass obj args)))))
 
 (def (struct-instance-init! obj . args)
+  ;;(DBG struct-instance-init!: (length args) (##structure-length obj))
   (if (##fx< (length args) (##structure-length obj))
     (__struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
@@ -518,7 +630,7 @@ namespace: #f
     (match rest
       ([hd . rest]
        (##vector-set! obj k hd)
-       (lp (##fx+ k 1) rest))
+       (lp (fx1+ k) rest))
       (else obj))))
 
 (def (class-instance-init! obj . args)
@@ -529,9 +641,9 @@ namespace: #f
     (match rest
       ([key val . rest]
        (cond
-        ((class-slot-offset klass key)
+        ((class-slot-offset* klass key)
          => (lambda (off)
-              (##vector-set! obj (##fx+ off 1) val)
+              (##vector-set! obj off val)
               (lp rest)))
         (else
          (error "No slot for keyword initializer" klass key))))
@@ -540,6 +652,7 @@ namespace: #f
            (error "Unexpected class initializer arguments" rest))))))
 
 (def (constructor-init! klass kons-id obj . args)
+  ;;(DBG constructor-init!: (type-id klass) kons-id #;obj args)
   (__constructor-init! klass kons-id obj args))
 
 (def (__constructor-init! klass kons-id obj args)
@@ -562,48 +675,53 @@ namespace: #f
     (error "Not an object" obj)))
 
 (def (class->list obj)
+  ;;(DBG class->list: #;obj ':
   (if (object? obj)
     (let (klass (object-type obj))
       (if (type-descriptor? klass)
-        (cond
-         ((type-descriptor-slots klass)
-          => (lambda (slots)
-               (cons klass
-                     (hash-fold
-                      (lambda (slot off r)
-                        (if (keyword? slot)
-                          (cons* slot (unchecked-field-ref obj off) r)
-                          r))
-                      '() slots))))
-         (else
-          (list klass)))
+        (let (all-slots (type-descriptor-all-slots klass))
+          (let loop ((index (fx1- (vector-length all-slots)))
+                     (plist []))
+            (if (< index 1)
+              (cons klass plist)
+              (let ((slot (vector-ref all-slots index)))
+                (loop (fx1- index)
+                      (cons* (symbol->keyword slot)
+                             (unchecked-field-ref obj index)
+                             plist))))))
         (error "Not a class type" obj klass)))
-    (error "Not an object" obj)))
+    (error "Not an object" obj)));;)
 
 (def (unchecked-field-ref obj off)
-  (##vector-ref obj (##fx+ off 1)))
+  ;;(DBG unchecked-field-ref: #;obj off)
+  (##vector-ref obj off))
 (def (unchecked-field-set! obj off val)
-  (##vector-set! obj (##fx+ off 1) val))
+  ;;(DBG unchecked-field-set!: #;obj off val)
+  (##vector-set! obj off val))
 (def (unchecked-slot-ref obj slot)
-  (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
+  ;;(DBG unchecked-slot-ref: #;obj slot)
+  (unchecked-field-ref obj (class-slot-offset* (object-type obj) slot)))
 (def (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset (object-type obj) slot) val))
+  ;;(DBG unchecked-slot-set!: #;obj slot val)
+  (unchecked-field-set! obj (class-slot-offset* (object-type obj) slot) val))
 
 (defrules __slot-e ()
   ((_ obj slot K E)
    (if (object? obj)
      (let (klass (object-type obj))
        (cond
-        ((and (type-descriptor? klass) (class-slot-offset klass slot))
+        ((and (type-descriptor? klass) (class-slot-offset* klass slot))
          => K)
         (else (E obj slot))))
      (E obj slot))))
 
 (def (slot-ref obj slot (E __slot-error))
-  (__slot-e obj slot (lambda (off) (##vector-ref obj (##fx+ off 1))) E))
+  ;;(DBG slot-ref: obj slot E)
+  (__slot-e obj slot (lambda (off) (##vector-ref obj off)) E))
 
 (def (slot-set! obj slot val (E __slot-error))
-  (__slot-e obj slot (lambda (off) (##vector-set! obj (##fx+ off 1) val)) E))
+  ;;(DBG slot-set!: obj slot val E)
+  (__slot-e obj slot (lambda (off) (##vector-set! obj off val)) E))
 
 (def (__slot-error obj slot)
   (error "Cannot find slot" obj slot))
@@ -641,47 +759,27 @@ namespace: #f
       (apply method obj args))))
 
 (def (find-method klass id)
-  (cond
-   ((type-descriptor? klass)
-    (__find-method klass id))
-   ((##type? klass)
-    (or (builtin-method-ref klass id)
-        (builtin-find-method (##type-super klass) id)))
-   (else #f)))
+  ;;(DBG find-method: 'klass (if (##type? klass) (##type-id klass) 'other) id)
+  (if (type-descriptor? klass)
+    (__find-method klass id)
+    (builtin-find-method klass id)))
 
 (def (__find-method klass id)
   (cond
    ((direct-method-ref klass id))
    ((type-descriptor-sealed? klass)
     #f)
-   ((type-descriptor-mixin klass)
-    => (lambda (mixin)
-         (mixin-find-method mixin id)))
    (else
-    (struct-find-method (##type-super klass) id))))
+    (mixin-method-ref klass id))))
 
-(def (struct-find-method klass id)
-  (cond
-   ((type-descriptor? klass)
-    (or (direct-method-ref klass id)
-        (struct-find-method (##type-super klass) id)))
-   ((##type? klass)
-    (or (builtin-method-ref klass id)
-        (builtin-find-method (##type-super klass) id)))
-   (else #f)))
+(def struct-find-method find-method) ;; TODO: remove after bootstrap
 
 (def (class-find-method klass id)
   (and (type-descriptor? klass)
-       (or (direct-method-ref klass id)
-           (mixin-method-ref klass id))))
+       (__find-method klass id)))
 
-(def (mixin-find-method mixin id)
-  (let lp ((rest mixin))
-    (match rest
-      ([klass . rest]
-       (or (direct-method-ref klass id)
-           (lp rest)))
-      (else #f))))
+(def (mixin-find-method mixins id)
+  (ormap (cut direct-method-ref <> id) mixins))
 
 (def (builtin-find-method klass id)
   (and (##type? klass)
@@ -695,17 +793,13 @@ namespace: #f
    (else #f)))
 
 (def (mixin-method-ref klass id)
-  (cond
-   ((type-descriptor-mixin klass)
-    => (lambda (mixin)
-         (mixin-find-method mixin id)))
-   (else #f)))
+  ;;(DBG mixin-method-ref: (type-id klass) id)
+  (mixin-find-method (type-descriptor-precedence-list klass) id))
 
 (def (builtin-method-ref klass id)
   (cond
    ((hash-get __builtin-type-methods (##type-id klass))
-    => (lambda (mtab)
-         (hash-get mtab id)))
+    => (lambda (mtab) (hash-get mtab id)))
    (else #f)))
 
 (def (bind-method! klass id proc (rebind? #t))
@@ -753,35 +847,13 @@ namespace: #f
       (cond
        ((type-descriptor-methods klass) => merge!)))
 
-    (cond
-     ((type-descriptor-mixin klass)
-      => (lambda (mixin)
-           (let recur ((rest mixin))
-             (match rest
-               ([klass . rest]
-                (recur rest)
-                (cond
-                 ((type-descriptor? klass)
-                  (collect-direct-methods! klass))
-                 ((and (##type? klass) (hash-get __builtin-type-methods (##type-id klass)))
-                  => merge!)))
-               (else (void))))))
-     (else
-      (let recur ((klass (##type-super klass)))
-        (cond
-         ((type-descriptor? klass)
-          (recur (##type-super klass))
-          (collect-direct-methods! klass))
-         ((##type? klass)
-          (recur (##type-super klass))
-          (cond
-           ((hash-get __builtin-type-methods (##type-id klass))
-            => merge!)))))))
-    (collect-direct-methods! klass))
+    ;;(DBG seal-class!: (type-id klass) (map type-id (class-precedence-list klass)))
+    (for-each collect-direct-methods!
+              (reverse (class-precedence-list klass))))
 
   (when (type-descriptor? klass)
     (unless (type-descriptor-sealed? klass)
-      (unless (assgetq final: (type-descriptor-plist klass))
+      (unless (type-final? klass)
         (error "Cannot seal non-final class" klass))
       (let ((vtab (make-hash-table-eq))
             (mtab (make-hash-table-eq)))
@@ -793,7 +865,7 @@ namespace: #f
              => (lambda (specializer)
                   (let ((proc (specializer klass))
                         (gid (make-symbol (##type-id klass) "::[" id "]")))
-                    ;; give the proecure a name and make it accesible to the debugger
+                    ;; give the procedure a name and make it accessible to the debugger
                     (eval `(def ,gid (quote ,proc)))
                     (hash-put! vtab id proc))))
             (else
@@ -802,29 +874,26 @@ namespace: #f
         (type-descriptor-methods-set! klass vtab)
         (type-descriptor-seal! klass)))))
 
+;; NB: 1. This implementation has quadratic complexity, and
+;; 2. it relies on methods using next-method to be actually location dependent
+;; and NOT things you can share between different classes.
+;; Changing the protocol to access an explicit super argument would be semantically nicer
+;; and would enable linear complexity for next-method (in the number of classes,
+;; or even just in the number of applicable method, if resolved only once),
+;; but would be somewhat incompatible.
 (def (next-method subklass obj id)
+  ;;(DBG next-method: (type-id subklass) #;obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
     (cond
      ((type-descriptor? klass)
-      (cond
-       ((type-descriptor-mixin klass)
-        => (lambda (mixin)
-             (let lp ((rest (cons klass mixin)))
-               (match rest
-                 ([klass . rest]
-                  (if (eq? type-id (##type-id klass))
-                    (mixin-find-method rest id)
-                    (lp rest)))
-                 (else #f)))))
-       (else
-        (let lp ((klass klass))
-          (cond
-           ((eq? type-id (##type-id klass))
-            (struct-find-method (##type-super klass) id))
-           ((##type-super klass)
-            => lp)
-           (else #f))))))
+      (let lp ((rest (class-precedence-list klass)))
+        (match rest
+          ([klass . rest]
+           (if (eq? type-id (##type-id klass))
+             (mixin-find-method rest id)
+             (lp rest)))
+          (else #f))))
      ((##type? klass)
       (let lp ((klass klass))
         (cond

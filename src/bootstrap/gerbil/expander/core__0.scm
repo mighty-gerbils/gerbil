@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1701718654)
+  (define gerbil/expander/core::timestamp 1701927547)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -230,7 +230,9 @@
               (##vector-set! _self10072_ '2 (make-table 'test: eq?))
               (##vector-set! _self10072_ '3 _super10074_))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self10072_))))
+                   _self10072_
+                   '3
+                   (##vector-length _self10072_)))))
     (define gx#phi-context:::init!__0
       (lambda (_self10079_ _id10080_)
         (let ((_super10082_ (gx#current-expander-context)))
@@ -262,7 +264,9 @@
               (##vector-set! _self9936_ '2 (make-table 'test: eq?))
               (##vector-set! _self9936_ '3 _super9937_))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self9936_))))
+                   _self9936_
+                   '3
+                   (##vector-length _self9936_)))))
     (define gx#local-context:::init!__0
       (lambda (_self9942_)
         (let ((_super9944_ (gx#current-expander-context)))

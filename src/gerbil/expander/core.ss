@@ -66,10 +66,12 @@ namespace: gx
 
 (defmethod {:init! phi-context}
   (lambda (self id (super (current-expander-context)))
+    ;;(write [phi-context-init!: (struct->list self) (##structure-length self) id super]) (newline)
     (struct-instance-init! self id (make-hash-table-eq) super)))
 
 (defmethod {:init! local-context}
   (lambda (self (super (current-expander-context)))
+    ;;(write [local-context-init!: (struct->list self) (##structure-length self) super]) (newline)
     (struct-instance-init! self (gensym 'L) (make-hash-table-eq) super)))
 
 ;; bindings

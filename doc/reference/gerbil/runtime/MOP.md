@@ -305,15 +305,16 @@ Converts *obj* to a list, which conses its type and to its fields.
 
 ## make-class-type
 ``` scheme
-(make-class-type id super slots name plist ctor) -> type-descriptor
+(make-class-type id name direct-supers direct-slots alist constructor) -> type-descriptor
 
-  id     := symbol; the type id
-  super  := list of type-descriptors or #f; super types
-  slots  := list of symbols; class slot names
-  plist  := alist; type properties
-  ctor   := symbol or #f; id of constructor method
+  id             := symbol; the unique type id
+  name           := symbol; the possibly not unique source type name
+  direct-supers  := list of type-descriptors or #f; super types
+  direct-slots   := list of symbols; class slot names
+  alist          := alist; type properties
+  constructor    := symbol or #f; id of constructor method
 
-plist elements:
+alist elements:
  (transparent: . boolean) ; controls whether the object is transparent
                             in equality and printing
  (final: . boolean)       ; controls whether the class if final

@@ -85,6 +85,7 @@ namespace: #f
                   (%#define-runtime
                    Error:::init!::specialize
                    Error:::init!::specialize))
+         (%#define-runtime dump-stack-trace? dump-stack-trace?)
          (%#begin (%#define-runtime
                    Error::display-exception
                    Error::display-exception)

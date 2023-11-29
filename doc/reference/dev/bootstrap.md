@@ -30,7 +30,7 @@ summarized in a quotable one liner:
 
 ## The Long and Arduous History of Bootstrap
 
-The first version of the Gerbil, let's call that the proto-Gerbil, was
+The first version of the Gerbil, let’s call that the proto-Gerbil, was
 bootstrapped by vyzo a long time ago using a hand-written unhygienic
 interpreter for the core language.  Once that was done, vyzo wrote the
 expander and the first version of the compiler, then the expander
@@ -41,7 +41,7 @@ Initially, the runtime was written in Gambit with a set of macros;
 that was called `gx-gambc`.  In the v0.18 release cycle, where Gerbil
 became fully self hosted, all the traces have disappeared from the
 source tree, as they are dead code. They still exist in the
-repo's commit history if you want to do some historical research and
+repo’s commit history if you want to do some historical research and
 peek into the deep past to understand the evolution of Gerbil.
 
 
@@ -71,7 +71,7 @@ This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`
 
 - To compile the bootstrap runtime:
 ```
-gxc -d bootstrap -s -S -O gerbil/runtime/{gambit,system,util,loader,control,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss
+gxc -d bootstrap -s -S -O gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss
 ```
 
 - To compile the bootstrap core prelude:
@@ -91,13 +91,60 @@ gxc -d bootstrap -s -S -O gerbil/expander/{common,stx,core,top,module,compile,ro
 
 - To compile the bootstrap compiler:
 ```
-gxc  -d bootstrap -s -S -O gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss
+gxc -d bootstrap -s -S -O gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss
 ```
 
-- Finally, if you've made changes to it, you should also copy the core.ssxi.ss optimizer prelude:
+- Finally, if you’ve made changes to it, you should also copy the core.ssxi.ss optimizer prelude:
 ```
 cp gerbil/prelude/core.ssxi.ss bootstrap/gerbil
 ```
+
+### Strictures on Modifying Parts of the Gerbil Bootstrap
+
+***Every change to the Gerbil Bootstrap
+must be API-compatible from one version to the next***:
+both the old and new versions of Gerbil
+(before and after recompiling the bootstrap) must be able to use them.
+
+You *can* make API-incompatible changes from one version to another version,
+but this must necessarily involve *several steps*
+each of which will be API-compatible.
+
+- First, you cannot make any backward-incompatible API change, such as
+  changing the calling convention of a function or macro e.g.
+  so you must use a symbol instead of a string,
+  or a 1-based index instead of a 0-based index, etc.
+- You *could* modify a function to temporarily accept either a symbol or string
+  and do a conversion inside; but you obviously cannot determine whether
+  an user-provided index should be interpreted as 1-based or 0-based.
+- The solution is to create a *new* API with *new* names that
+  must absolutely not clash with the old names.
+  Add a suffix or prefix such as `*`, `/2` or `%`, or take the opportunity
+  to give functions better and more systematic names.
+- The *old* API will temporarily coexist with use the *new* API.
+- When shared data structures are involved, the *old* API may have
+  to be translated in terms of the *new* API.
+- The internal representations used by the new API may thus have to include
+  extra information needed by the old API that it doesn’t need,
+  or the new API may have to maintain two redundant representations together,
+  until after the old API is removed. This extra information
+  or redundant representation can be removed in a later phase.
+- You can now bootstrap a next version that uses the new API,
+  while the old API remains available to the old version.
+- In one or many iterations, you can make sure the old API is not used anywhere
+  anymore in Gerbil and its libraries.
+- Only after you bootstrapped a version of Gerbil that does not at all
+  use the old API, you may wholly remove that old API:
+  this is now a backward-compatible change.
+- If for some reason you really like the old name or hate the new name,
+  and “just” wanted to make an incompatible API change,
+  the name is made available anew after the old API was wholly removed
+  and a version that doesn’t use it has been bootstrapped into existence.
+  You may therefore start a new cycle of API changes as above to modify the API
+  to use this now-available-again name.
+
+These strictures mean that you must stage your changes in multiple commits,
+and regenerate the bootstrap compiler at each step.
 
 ### Debugging
 
@@ -124,7 +171,7 @@ will and supports serveral commands:
   easily navigate code in emacs.
 - `env` applies the arguments in the build environment.
 
-So if you have made changes and want to rebuild gerbil, you don't have
+So if you have made changes and want to rebuild gerbil, you don’t have
 to redo everything from scratch with `make`; you can simply build the
 stage you want, and once you are satisfied you can move to the next
 stage or push your branch so that CI does the job for you.
@@ -160,4 +207,4 @@ $ ./build.sh env gerbil test ./...
 ...
 ```
 
-And that's it! Happy Hacking.
+And that’s it! Happy Hacking.

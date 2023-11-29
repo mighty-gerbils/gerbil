@@ -9,6 +9,7 @@
     "gerbil/runtime/system.ss"
     "gerbil/runtime/loader.ss"
     "gerbil/runtime/control.ss"
+    "gerbil/runtime/c3.ss"
     "gerbil/runtime/mop.ss"
     "gerbil/runtime/error.ss"
     "gerbil/runtime/thread.ss"

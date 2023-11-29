@@ -4,7 +4,7 @@
 
 (import :std/generic/dispatch
         (for-syntax :std/stxutil)
-        (rename-in <MOP> (defmethod defmethod~)))
+        (rename-in (only-in <MOP> defmethod) (defmethod defmethod~)))
 (export #t (phi: +1 #t))
 
 (begin-syntax

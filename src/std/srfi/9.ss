@@ -48,8 +48,8 @@
                      (module-type-id type-id)
                      (gensym (stx-e type-id))))
                   (field-count (length fields))
-                  (plist [[fields: fields ...]]))
-      #'(define klass (make-struct-type 'id #f field-count 'klass 'plist #f))))
+                  ((field ...) fields))
+      #'(define klass (make-struct-type 'id #f field-count 'klass '() #f '(field ...)))))
 
   (def (generate-predicate type-id predicate-id)
     (with-syntax ((klass type-id)

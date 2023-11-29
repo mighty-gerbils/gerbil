@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; ̧© vyzo, fare
+;;; © vyzo, fare
 ;;; json utilities
 (import
   :gerbil/gambit
@@ -84,51 +84,50 @@
         ,@(plist->alist plist))))))
 
 (def (trivial-json-object->class klass json)
-  (def (find-key s)
-    (or (and (symbol? s) s)
-        (##find-interned-keyword s)
-        (error "invalid json key for class" s klass)))
+  (def (find-key key)
+    (or (and (symbol? key) key)
+        (##find-interned-keyword key)
+        (error "invalid json key for class" key klass)))
   (apply make-class-instance klass (alist->plist (map (cut map/car find-key <>) (hash->list json)))))
 
 (def (trivial-struct->json-object struct)
-  (defvalues (strukt fields) (cons->values (struct->list struct)))
-  (def names (cdr (assoc fields: (type-descriptor-plist strukt))))
-  (def json (make-hash-table))
-  (def f (if (json-symbolic-keys) identity symbol->string))
-  (for ((name names) (v fields)) (hash-put! json (f name) v))
-  json)
+  (with ([strukt . fields] (struct->list struct))
+    (let (f (if (json-symbolic-keys) cons (lambda (slot v) (cons (symbol->string slot) v))))
+      (walist (map f (cdr (vector->list (type-descriptor-all-slots strukt))) fields)))))
 
 (def (trivial-json-object->struct strukt json (defaults #f))
   (unless defaults (set! defaults (hash)))
-  (def names (list->vector (cdr (assoc fields: (type-descriptor-plist strukt)))))
-  (def positions (invert-hash<-vector names))
-  (def (pos<-field f)
-    (def s (cond
-            ((symbol? f) f)
-            ((string? f) (##find-interned-symbol f))
-            (else #f)))
-    (or (hash-get positions s)
-        (error "invalid json key for struct" f strukt json)))
-  (def n (vector-length names))
-  (def fields (make-vector n #f))
+  (def offsets (type-descriptor-slot-table strukt))
+  (def slots (type-descriptor-all-slots strukt))
+  (def n (vector-length slots))
+  (def (get-pos key)
+    (def slot
+      (cond
+       ((symbol? key) key)
+       ((string? key) (##find-interned-symbol key))
+       (else #f)))
+    (or (hash-get offsets slot)
+        (error "invalid json key for struct" key strukt json)))
+  (def object (make-object* strukt n))
   (def bound? (make-vector n #f))
+  (vector-set! bound? 0 #t)
   (for (((values k v) (in-hash json)))
-    (let (p (pos<-field k))
+    (let (p (get-pos k))
       (when (vector-ref bound? p) (error "field multiply defined" k strukt json))
       (vector-set! bound? p #t)
-      (vector-set! fields p v)))
+      (##vector-set! object p v)))
   (def unbounds
     (with-list-builder (c)
-     (for ((i (in-naturals))
-           (b? bound?)
-           (name names))
-       (cond
-        (b? (void))
-        ((hash-key? defaults name) (vector-set! fields i (hash-ref defaults name)))
-        (else (c name))))))
+     (for ((p (in-range 1 n)))
+       (let ((b? (vector-ref bound? p))
+             (slot (vector-ref slots p)))
+         (cond
+          (b? (void))
+          ((hash-key? defaults slot) (##vector-set! object p (hash-ref defaults slot)))
+          (else (c slot)))))))
   (unless (null? unbounds)
     (error "unbound fields" unbounds strukt json))
-  (apply make-struct-instance strukt (vector->list fields)))
+  object)
 
 ;; Mixin for a trivial method that just lists all slots
 (defclass JSON ())
