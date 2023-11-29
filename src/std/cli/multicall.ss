@@ -57,7 +57,7 @@
   (help: "Print help about available commands"
    getopt: [(optional-argument 'command help: "subcommand for which to display help")])
   #;(displayln (display-build-manifest (build-manifest/head))) ;; only available in v0.19
-  (def gopt (getopt (entry-points-getopt-spec)))
+  (def gopt (apply getopt (entry-points-getopt-spec)))
   (def program (current-program-string (cdr (current-program))))
   (if command
     (getopt-display-help-topic gopt (make-symbol command) program)
