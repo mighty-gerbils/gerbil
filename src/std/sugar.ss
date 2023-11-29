@@ -30,6 +30,15 @@
   if-let
   when-let
   defcheck-argument-type
+  check-argument-boolean
+  check-argument-fixnum
+  check-argument-fx>=0
+  check-argument-vector
+  check-argument-u8vector
+  check-argument-string
+  check-argument-pair
+  check-argument-list
+  check-argument-procedure
   syntax-eval
   syntax-call
   defsyntax-call)
@@ -432,6 +441,17 @@
                    (a #'type "-instance")) ; go get location for context
       (defrule (check a (... ...))
         (begin (check-argument (pred? a) (symbol->string 'type) a) (... ...)))) ...))
+
+
+(defcheck-argument-type boolean)
+(defcheck-argument-type fixnum)
+(defcheck-argument-type fx>=0)
+(defcheck-argument-type vector)
+(defcheck-argument-type u8vector)
+(defcheck-argument-type string)
+(defcheck-argument-type pair)
+(defcheck-argument-type list)
+(defcheck-argument-type procedure)
 
 (defsyntax (syntax-eval stx)
   (syntax-case stx () ((_ expr) #'(let () (defsyntax (foo _) expr) (foo)))))

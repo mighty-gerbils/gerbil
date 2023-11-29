@@ -19,7 +19,7 @@
   (only-in :std/contract using)
   (only-in :std/io PeekableStringReader open-buffered-string-reader
            PeekableStringReader-read-char PeekableStringReader-peek-char)
-  (only-in :std/misc/number decrement! nat? integer-part
+  (only-in :std/misc/number decrement! check-argument-uint integer-part
            integer-log factor-out-powers factor-out-powers-of-2)
   (only-in :std/misc/ports with-output)
   (only-in :std/parser/base raise-parse-error)
@@ -227,7 +227,7 @@
 ;; For 0, return 0.
 ;; : Nat -> Nat
 (def (count-significant-digits n)
-  (check-argument (nat? n) "natural" n)
+  (check-argument-uint n)
   (cond
    ((zero? n) 1) ;; special case: 0 requires 1 digit to display
    ;; We'd like to use the below formula for small enough numbers, except that

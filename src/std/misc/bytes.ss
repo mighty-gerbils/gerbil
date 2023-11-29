@@ -5,8 +5,9 @@
 (import (for-syntax :std/stxutil)
         :gerbil/gambit
         :std/error
-        :std/text/hex
-        :std/foreign)
+        :std/foreign
+        :std/misc/number
+        :std/text/hex)
 (export
   ;; Endianness
   endianness big little native native-endianness
@@ -74,6 +75,8 @@
   bytestring->u8vector bytestring->bytevector
   u8vector->uint bytevector->uint
   uint->u8vector uint->bytevector
+  u8vector->sint bytevector->sint
+  sint->u8vector sint->bytevector
   u8vector-init! bytevector-init!
 
   ;; unchecked operations
@@ -109,10 +112,7 @@
 
   &u8vector-swap!
 
-  u8vector-every
-  n-bits->n-u8
-  nat-length-in-u8 nat->u8vector u8vector->nat
-  integer-length-in-u8 integer->u8vector u8vector->integer)
+  u8vector-every)
 
 ;;; Endianness
 
@@ -147,12 +147,12 @@
    (begin
      (unless (u8vector? v)
        (raise-bad-argument u8vector-int-ref/set! "u8vector" v))
-     (unless (and (fixnum? k)
-                  (fx<= 0 k (fx1- (##u8vector-length v))))
-       (raise-bad-argument u8vector-int-ref/set! "u8vector index" v k))
      (unless (and (fixnum? size)
-                  (fx<= 0 size (fx- (##u8vector-length v) k)))
-       (raise-bad-argument u8vector-int-ref/set! "integer size" v k size))))
+                  (fx<= 0 size (##u8vector-length v)))
+       (raise-bad-argument u8vector-int-ref/set! "integer size" v size))
+     (unless (and (fixnum? k)
+                  (fx<= 0 k (fx- (##u8vector-length v) size)))
+       (raise-bad-argument u8vector-int-ref/set! "u8vector index" v k size))))
   ((_ v size)
    (begin
      (unless (u8vector? v)
@@ -265,10 +265,12 @@
 
 (defrules do-sint-ref ()
   ((_ size getq)
-   (let (uint getq)
-     (if (> uint (1- (expt 2 (1- (fx* size 8)))))
-      (- uint (expt 2 (fx* size 8)))
-      uint))))
+   (if (fx> size 0)
+     (let ((uint getq) (bits (fx* size 8)))
+       (if (bit-set? (1- bits) uint)
+         (replace-bit-field bits 0 uint -1)
+         uint))
+     0)))
 
 (def (&u8vector-sint-ref/be v k size)
   (do-sint-ref size (&u8vector-uint-ref/be v k size)))
@@ -478,6 +480,8 @@
 (defalias bytestring->bytevector bytestring->u8vector)
 (defalias bytevector->uint u8vector->uint)
 (defalias uint->bytevector uint->u8vector)
+(defalias bytevector->sint u8vector->sint)
+(defalias sint->bytevector sint->u8vector)
 
 (def (u8vector-swap! v j k)
   (unless (u8vector? v)
@@ -555,65 +559,23 @@
       (u8vector-init! (quotient (1+ blen) 3) parse-byte))
     (hex-decode bs)))
 
-(def (u8vector->uint v (endianness big))
-  (unless (u8vector? v)
-    (raise-bad-argument u8vector->uint "u8vector" v))
-  (do-endianness endianness
-    (&u8vector->uint/be v)
-    (&u8vector->uint/le v)))
+(def (u8vector->uint v (endianness big) (size (u8vector-length v)))
+  (u8vector-uint-ref v 0 endianness size))
 
-(def (&u8vector->uint/be v)
-  (declare (not safe))
-  (let (len (u8vector-length v))
-    (let lp ((i 0) (r 0))
-      (if (fx< i len)
-        (lp (fx1+ i)
-            (bitwise-ior (arithmetic-shift r 8)
-                         (u8vector-ref v i)))
-        r))))
+(def (uint->u8vector uint (endianness big) (size (uint-length-in-u8 uint)))
+  (check-argument-uint uint)
+  (let ((res (make-u8vector size)))
+    (u8vector-uint-set! res 0 uint endianness size)
+    res))
 
-(def (&u8vector->uint/le v)
-  (declare (not safe))
-  (let (len (u8vector-length v))
-    (let lp ((i (fx1- len)) (r 0))
-      (if (fx>= i 0)
-        (lp (fx1- i)
-            (bitwise-ior (arithmetic-shift r 8)
-                         (u8vector-ref v i)))
-        r))))
+(def (u8vector->sint v (endianness big) (size (u8vector-length v)))
+  (u8vector-sint-ref v 0 endianness size))
 
-(def (uint->u8vector uint (endianness big))
-  (unless (and (exact-integer? uint) (>= uint 0))
-    (raise-bad-argument uint->u8vector "nonnegative exact integer" uint))
-  (do-endianness endianness
-    (&uint->u8vector/be uint)
-    (&uint->u8vector/le uint)))
-
-(def (&uint->u8vector/be uint)
-  (declare (not safe))
-  (let* ((bits (integer-length uint))
-         (bytes (fx+ (fxquotient bits 8) (if (fx> (fxremainder bits 8) 0) 1 0)))
-         (res (make-u8vector bytes)))
-    (let lp ((uint uint) (i (fx- bytes 1)))
-      (if (> uint 0)
-        (begin
-          (u8vector-set! res i (bitwise-and uint #xff))
-          (lp (arithmetic-shift uint -8)
-              (fx1- i)))
-        res))))
-
-(def (&uint->u8vector/le uint)
-  (declare (not safe))
-  (let* ((bits (integer-length uint))
-         (bytes (fx+ (fxquotient bits 8) (if (fx> (fxremainder bits 8) 0) 1 0)))
-         (res (make-u8vector bytes)))
-    (let lp ((uint uint) (i 0))
-      (if (> uint 0)
-        (begin
-          (u8vector-set! res i (bitwise-and uint #xff))
-          (lp (arithmetic-shift uint -8)
-              (fx1+ i)))
-        res))))
+(def (sint->u8vector sint (endianness big) (size (sint-length-in-u8 sint)))
+  (check-argument-sint sint)
+  (let ((res (make-u8vector size)))
+    (u8vector-sint-set! res 0 sint endianness size)
+    res))
 
 (def (u8vector-init! len fun)
   (declare (fixnum) (not safe))
@@ -703,29 +665,3 @@ END-C
   (declare (fixnum))
   (let lp ((i (1- (u8vector-length bytes))))
     (or (< i 0) (and (pred (u8vector-ref bytes i)) (lp (1- i))))))
-
-(def (n-bits->n-u8 n-bits)
-  (arithmetic-shift (+ n-bits 7) -3))
-
-(def (nat-length-in-u8 n) (n-bits->n-u8 (integer-length n)))
-
-(def (nat->u8vector n (n-u8 (nat-length-in-u8 n)) (endianness big))
-  (def u8vector (make-u8vector n-u8 0))
-  (when (positive? n-u8)
-    (u8vector-uint-set! u8vector 0 n endianness n-u8))
-  u8vector)
-
-(def (u8vector->nat u8vector (n-u8 (u8vector-length u8vector)) (endianness big))
-  (if (zero? n-u8) 0 (u8vector-uint-ref u8vector 0 endianness n-u8)))
-
-(def (integer-length-in-u8 n)
-  (if (zero? n) 0 (n-bits->n-u8 (1+ (integer-length n)))))
-
-(def (integer->u8vector n (n-u8 (integer-length-in-u8 n)) (endianness big))
-  (def u8vector (make-u8vector n-u8 0))
-  (when (positive? n-u8)
-    (u8vector-sint-set! u8vector 0 n endianness n-u8))
-  u8vector)
-
-(def (u8vector->integer u8vector (n-u8 (u8vector-length u8vector)) (endianness big))
-  (if (zero? n-u8) 0 (u8vector-sint-ref u8vector 0 endianness n-u8)))

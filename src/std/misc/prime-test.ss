@@ -7,6 +7,7 @@
   :std/misc/func
   :std/misc/number
   :std/misc/prime
+  :std/sugar
   :std/test)
 
 (def prime-test
@@ -123,13 +124,16 @@
       (check (pi-function 100) => 25))
     (test-case "simple factor"
       ;; order or the Friendly Giant
-      (check-equal? (factor 808017424794512875886459904961710757005754368000000000)
-                    [(repeat 2 46)... (repeat 3 20)... (repeat 5 9)...
-                     (repeat 7 6)... (repeat 11 2)... (repeat 13 3)...
-                     17 19 23 29 31 41 47 59 71])
-      (check-equal? (factor 625) '(5 5 5 5)))
+      (check (factor 808017424794512875886459904961710757005754368000000000)
+             => [(repeat 2 46)... (repeat 3 20)... (repeat 5 9)...
+                 (repeat 7 6)... (repeat 11 2)... (repeat 13 3)...
+                 17 19 23 29 31 41 47 59 71])
+      (check (factor 625) => '(5 5 5 5)))
     (test-case "miller / miller-rabin primality testing"
       (for (i (in-range 2 1000))
         (check [i (prime?/miller i '(9345883071009581737))] => [i (prime?/sieve i)]))
       (check (prime?/miller 3317044064679887385961981 '(2 3 5 7 11 13 17 19 23 29 31 37 41)) => #t)
-      (check (prime? 3317044064679887385961981) => #f))))
+      (defrule (checks n ...)
+        (begin (check (prime? n) => #f) ...))
+      (checks 341531 1050535501 350269456337 55245642489451 7999252175582851 585226005592931977
+              (expt 2 64) 318665857834031151167461 3317044064679887385961981))))

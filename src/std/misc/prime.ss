@@ -16,15 +16,16 @@
   (only-in :gerbil/gambit random-integer integer-sqrt bit-set?)
   (only-in :std/srfi/1 every reduce)
   (only-in :std/srfi/141 floor/ ceiling-quotient)
-  (only-in :std/error check-argument raise-bad-argument)
+  (only-in :std/error raise-bad-argument)
   (only-in :std/iter for in-range for/collect)
   (only-in :std/misc/evector memoize-recursive-sequence
            evector-ref evector-ref-set! evector-push! extend-evector!
            evector-fill-pointer evector-fill-pointer-set! list->evector evector->list
            make-ebits ebits-ref ebits-set-fill-pointer! ebits-set? ebits-set! ebits-fill-pointer)
   (only-in :std/misc/list-builder with-list-builder)
-  (only-in :std/misc/number nat? mult-mod expt-mod pre-increment! half ceiling-align
-           factor-out-powers-of-2))
+  (only-in :std/misc/number mult-mod expt-mod pre-increment! half ceiling-align
+           check-argument-positive-integer check-argument-uint
+           factor-out-powers-of-2 least-integer))
 
 ;; An extensible vector containing the increasing sequence of all small enough primes
 ;; NB: the initial 0 is so the useful array indices start with 1, keeping with convention.
@@ -168,7 +169,7 @@
 
 ;; Given an integer N, return a non-decreasing list of its prime factors, using the sieve
 (def (factor n)
-  (check-argument (and (nat? n) (positive? n)) "positive integer" n)
+  (check-argument-positive-integer n)
   (with-list-builder (f)
     (let loop ((i 1) ;; index of the next prime to try
                (n n) ;; product of remaining factors
@@ -231,27 +232,24 @@
 ;; Is natural integer `n` a prime number? Find out quickly.
 ;; https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 ;; https://miller-rabin.appspot.com/
+(def prime-lookup
+  (let (pm (lambda l (cut prime?/miller <> l)))
+    (vector
+     [341531 :: (pm 9345883071009581737)]
+     [1050535501 :: (pm 336781006125 9639812373923155)]
+     [350269456337 :: (pm 4230279247111683200 14694767155120705706 16641139526367750375)]
+     [55245642489451 :: (pm 2 141889084524735 1199124725622454117 11096072698276303650)]
+     [7999252175582851 :: (pm 2 4130806001517 149795463772692060 186635894390467037 3967304179347715805)]
+     [585226005592931977 :: (pm 2 123635709730000 9233062284813009 43835965440333360 761179012939631437 1263739024124850375)]
+     [(expt 2 64) :: (pm 2 325 9375 28178 450775 9780504 1795265022)]
+     [318665857834031151167461 :: (pm 2 3 5 7 11 13 17 19 23 29 31 37)]
+     [3317044064679887385961981 :: (pm 2 3 5 7 11 13 17 19 23 29 31 37 41)]
+     [+inf.0 :: prime?/miller-rabin])))
+
 (def (prime? n)
-  (check-argument (nat? n) "natural" n)
-  (cond
-   ((< n (sieve-end))
-    (sieve-prime? n))
-   ((< n 341531)
-    (prime?/miller n '(9345883071009581737)))
-   ((< n 1050535501)
-    (prime?/miller n '(336781006125 9639812373923155)))
-   ((< n 350269456337)
-    (prime?/miller n '(4230279247111683200 14694767155120705706 16641139526367750375)))
-   ((< n 55245642489451)
-    (prime?/miller n '(2 141889084524735 1199124725622454117 11096072698276303650)))
-   ((< n 7999252175582851)
-    (prime?/miller n '(2 4130806001517 149795463772692060 186635894390467037 3967304179347715805)))
-   ((< n 585226005592931977)
-    (prime?/miller n '(2 123635709730000 9233062284813009 43835965440333360 761179012939631437 1263739024124850375)))
-   ((< (integer-length n) 64)
-    (prime?/miller n '(2 325 9375 28178 450775 9780504 1795265022)))
-   ((< n 318665857834031151167461)
-    (prime?/miller n '(2 3 5 7 11 13 17 19 23 29 31 37)))
-   ((< n 3317044064679887385961981)
-    (prime?/miller n '(2 3 5 7 11 13 17 19 23 29 31 37 41)))
-   (else (prime?/miller-rabin n))))
+  (check-argument-uint n)
+  (if (< n (sieve-end))
+    (sieve-prime? n)
+    (let (i (least-integer (lambda (i) (< n (car (vector-ref prime-lookup i))))
+                           0 (1- (vector-length prime-lookup))))
+      ((cdr (vector-ref prime-lookup i)) n))))

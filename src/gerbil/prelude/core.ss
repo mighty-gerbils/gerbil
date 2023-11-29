@@ -114,7 +114,7 @@ package: gerbil
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxmodulo
     fxbit-set? fxarithmetic-shift fxarithmetic-shift-left fxarithmetic-shift-right
     fxshift
-    fx< fx<= fx= fx>= fx>
+    fx< fx<= fx= fx>= fx> fx<0? fx<=0? fx=0? fx>=0? fx>0?
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
     flzero? flpositive? flnegative?

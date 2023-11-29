@@ -1,8 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © fare, vyzo
-(export make-evector evector?
-        make-ebytes ebytes?
-        make-ebits ebits?
+(export make-evector evector? check-argument-evector
+        make-ebytes ebytes? check-argument-ebytes
+        make-ebits ebits? check-argument-ebits
         (rename: evector-set-fill-pointer! evector-fill-pointer-set!)
         (rename: &evector-set-fill-pointer! &evector-fill-pointer-set!)
         evector-fill-pointer
@@ -39,43 +39,31 @@
   transparent: #t unchecked: #t
   constructor: :init!)
 
+(defcheck-argument-type evector)
+(defcheck-argument-type ebytes)
+(defcheck-argument-type ebits)
+
 (defmethod {:init! evector}
   (lambda (self vector fp)
     (check-argument-vector vector)
-    (check-argument-fxlength fp)
+    (check-argument-fx>=0 fp)
     (struct-instance-init! self vector fp)))
 
 (defmethod {:init! ebytes}
   (lambda (self bytes fp)
     (check-argument-u8vector bytes)
-    (check-argument-fxlength fp)
+    (check-argument-fx>=0 fp)
     (struct-instance-init! self bytes fp)))
 
 (defmethod {:init! ebits}
   (lambda (self bytes fp)
     (check-argument-u8vector bytes)
-    (check-argument-fxlength fp)
+    (check-argument-fx>=0 fp)
     (struct-instance-init! self bytes fp)))
-
-(defcheck-argument-type evector)
-(defcheck-argument-type ebytes)
-(defcheck-argument-type ebits)
-
-;; TODO these could be moved to a stdlib module, say :std/typecheck
-(def (fxlength? o)
-  (and (fixnum? o) (fx>= o 0)))
-
-(defcheck-argument-type fixnum)
-(defcheck-argument-type fxlength)
-(defcheck-argument-type vector)
-(defcheck-argument-type u8vector)
-(defcheck-argument-type string)
-(defcheck-argument-type list)
-(defcheck-argument-type procedure)
 
 (defrule (check-argument-range i len)
   (begin
-    (check-argument-fxlength i)
+    (check-argument-fx>=0 i)
     (unless (fx< i len)
       (raise-bad-argument (exception-context i) "fixnum in range" i len))))
 
@@ -115,7 +103,7 @@
 (defchecked (extend-evector! e ll initial-value: (iv #f))
   (&extend-evector! e ll iv)
   (check-argument-evector e)
-  (check-argument-fxlength ll)
+  (check-argument-fx>=0 ll)
   (let (v (&evector-vector e))
     (when (fx> ll (vector-length v))
       (set! (&evector-vector e) (vector-copy v 0 ll iv)))))
@@ -123,7 +111,7 @@
 (defchecked (evector-set-fill-pointer! e fp initial-value: (iv #f) extend: (extend #t))
   (&evector-set-fill-pointer! e fp iv extend)
   (check-argument-evector e)
-  (check-argument-fxlength fp)
+  (check-argument-fx>=0 fp)
   (let (l (vector-length (&evector-vector e)))
     (let/cc return
       (when (fx> fp l)
@@ -203,7 +191,7 @@
 (defchecked (extend-ebytes! e ll initial-value: (iv 0))
   (&extend-ebytes! e ll iv)
   (check-argument-ebytes e)
-  (check-argument-fxlength ll)
+  (check-argument-fx>=0 ll)
   (let (b (&ebytes-bytes e))
     (when (> ll (u8vector-length b))
       (let (bb (make-u8vector ll iv))
@@ -213,7 +201,7 @@
 (defchecked (ebytes-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #t))
   (&ebytes-set-fill-pointer! e fp iv extend)
   (check-argument-ebytes e)
-  (check-argument-fxlength fp)
+  (check-argument-fx>=0 fp)
   (let (l (u8vector-length (&ebytes-bytes e)))
     (let/cc return
       (when (> fp l)
@@ -283,7 +271,7 @@
 (defchecked (extend-ebits! e ll initial-value: (iv 0))
   (&extend-ebits! e ll iv)
   (check-argument-ebits e)
-  (check-argument-fxlength ll)
+  (check-argument-fx>=0 ll)
   (let ((b (&ebits-bits e))
         (bl (n-bits->n-u8 ll)))
     (when (fx> bl (u8vector-length b))
@@ -294,7 +282,7 @@
 (defchecked (ebits-set-fill-pointer! e fp initial-value: (iv 0) extend: (extend #t))
   (&ebits-set-fill-pointer! e fp iv extend)
   (check-argument-ebits e)
-  (check-argument-fxlength fp)
+  (check-argument-fx>=0 fp)
   (let ((l (u8vector-length (&ebits-bits e)))
         (bl (n-bits->n-u8 fp)))
   (let/cc return

@@ -5,7 +5,8 @@
   :std/srfi/13
   (only-in :std/srfi/141 floor/)
   :std/error
-  :std/misc/number
+  (only-in :std/misc/number uint?
+           check-argument-uint check-argument-positive-integer)
   :std/misc/ports
   :std/sugar
   :std/text/char-set)
@@ -25,11 +26,11 @@
 
 (def (display-integer/fit n width (out #t))
   (with-output (out)
-    (check-argument (nat? n) "natural" n)
-    (check-argument (and (exact-integer? width) (positive? width)) "positive integer" width)
+    (check-argument-uint n)
+    (check-argument-positive-integer width)
     (let* ((digits (number->string n))
            (padding (- width (string-length digits))))
-      (check-argument (nat? padding) "integer small enough for width" [n width])
+      (check-argument (uint? padding) "integer small enough for width" [n width])
       (display (make-string padding #\0) out)
       (display digits out))))
 
