@@ -20,16 +20,16 @@ in gerbil-utils.
 
 Returns true if the `character` if a string may contain the character in any position
 without that this fact requiring the string to be quoted in any shell.
-This include alphanumeric characters and those in `"@%-_=+:,./"`
+This include alphanumeric characters and those in `"%+,-./:=@_"`
 (not including the double quotes).
 
-All other ASCII characters may require the string to be quoted.
+All other ASCII characters may require the string to be quoted in some circumstances.
 For good measure we also quote strings containing non-ASCII characters.
 
 ::: tip Examples:
 ```scheme
 > (string-for-each (lambda (c) (or (easy-shell-character? c) (error "foo")))
-    "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ012345678@%-_=+:,./") ;; no error
+    "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ012345678@%+,-./:=@_") ;; no error
 > (string-for-each (lambda (c) (or (not (easy-shell-character? c)) (error "foo")))
     "!`~#$^&*()[{]}\\|;'\"<>? \r\n\t\v") ;; no error either
 ```
@@ -39,17 +39,18 @@ For good measure we also quote strings containing non-ASCII characters.
 ```scheme
 (needs-shell-escape? string) => bool
 ```
-Returns true if the `string` is known not to require quoting in a Unix shell.
+Returns true if the `string` contains any character known or suspected
+to sometimes or always require quoting in any Unix shell.
 
 The current implementation only trusts strings where every character
 satisfies `easy-shell-character?` to not require quoting.
 
 ::: tip Examples:
 ```scheme
-> (map needs-shell-escape ["foo?" "~user" "$1" "*.*" "!1" "ab\\cd" "{}" "a;b" "&amp;" "|" "a b  c"])
-(#t #t #t #t #t #t #t #t #t #t #t)
-> (map needs-shell-escape ["foo" "%-_=+:,./" "1" "..." "abcd" "x=y:z,t.z/u+v_w"])
-(#f #f #f #f #f #f)
+> (andmap needs-shell-escape? ["foo?" "~user" "$1" "*.*" "!1" "ab\\cd" "{}" "a;b" "&amp;" "|" "a b  c"])
+#t
+> (ormap needs-shell-escape? ["foo" "%-_=+:,./" "1" "..." "abcd" "x=y:z,t.z/u+v_w"])
+#f
 ```
 :::
 
