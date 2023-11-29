@@ -2,10 +2,10 @@
 package: misc/rpc-perf
 
 (import :gerbil/gambit
+        :std/cli/getopt
         :std/net/socket
         :std/net/bio
-        :std/sugar
-        :std/getopt)
+        :std/sugar)
 (export main)
 
 (defstruct message ()

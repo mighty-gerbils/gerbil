@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Simple web server
-(import :std/net/httpd
-        :std/net/address
-        :std/text/json
-        :std/sugar
+(import :std/cli/getopt
         :std/iter
-        :std/getopt)
+        :std/net/address
+        :std/net/httpd
+        :std/sugar
+        :std/text/json)
 (export main)
 
 (def (run address)

@@ -1,16 +1,16 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; tool to run tests without the need of glue code
-(import :gerbil/gambit
-        :gerbil/expander
-        :std/sugar
-        :std/getopt
-        :std/iter
+(import :gerbil/expander
+        :gerbil/gambit
+        :std/cli/getopt
         :std/format
-        :std/sort
-        :std/test
+        :std/iter
         :std/pregexp
-        :std/srfi/13)
+        :std/sort
+        :std/srfi/13
+        :std/sugar
+        :std/test)
 (export main)
 
 (def (main . args)

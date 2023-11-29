@@ -2,10 +2,10 @@
 ;;; © vyzo
 ;;; kvstore command line client
 (import :gerbil/gambit
-        :std/sugar
-        :std/getopt
         :std/actor
+        :std/cli/getopt
         :std/misc/ports
+        :std/sugar
         ./proto)
 (export main)
 

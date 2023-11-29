@@ -8,13 +8,13 @@
         (only-in :gerbil/compiler/base ast-case)
         (only-in <syntax-case> syntax)
         :gerbil/gambit
-        :std/getopt
-        :std/sugar
-        :std/sort
-        :std/text/utf8
+        :std/cli/getopt
         :std/misc/ports
         :std/os/temporaries
-        (only-in :std/srfi/1 delete-duplicates reverse!))
+        :std/sort
+        (only-in :std/srfi/1 delete-duplicates reverse!)
+        :std/sugar
+        :std/text/utf8)
 (export main make-tags)
 
 (def (main . args)

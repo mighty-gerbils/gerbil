@@ -240,7 +240,7 @@ Merges *more* hash tables into *hash*. Entries in hash tables on the left take p
 ((a . 1) (z . 6) (b . 2) (c . 3))
 ```
 
-## hash-&gt;list
+## hash->list
 ``` scheme
 (hash->list hash) -> list
 
@@ -249,7 +249,7 @@ Merges *more* hash tables into *hash*. Entries in hash tables on the left take p
 
 Returns the bindings of *hash* as an alist.
 
-## list-&gt;hash-table
+## list->hash-table
 ``` scheme
 (list->hash-table lst . options) -> hash table
 
@@ -258,7 +258,7 @@ Returns the bindings of *hash* as an alist.
 
 Creates a hash table from an alist *lst*.
 
-## list-&gt;hash-table-eq
+## list->hash-table-eq
 ``` scheme
 (list->hash-table-eq lst . options) -> hash table
 
@@ -267,7 +267,7 @@ Creates a hash table from an alist *lst*.
 
 Same as `list->hash-table`, but using `eq?` as the test function for the table.
 
-## list-&gt;hash-table-eqv
+## list->hash-table-eqv
 ``` scheme
 (list->hash-table-eqv lst . options) -> hash table
 
@@ -276,7 +276,7 @@ Same as `list->hash-table`, but using `eq?` as the test function for the table.
 
 Same as `list->hash-table`, but using `eqv?` as the test function for the table.
 
-## hash-&gt;plist
+## hash->plist
 ``` scheme
 (hash->plist hash) -> list
 
@@ -285,7 +285,7 @@ Same as `list->hash-table`, but using `eqv?` as the test function for the table.
 
 Returns the bindings of *hash* as a plist.
 
-## plist-&gt;hash-table
+## plist->hash-table
 ``` scheme
 (plist->hash-table lst) -> hash table
 
@@ -294,7 +294,7 @@ Returns the bindings of *hash* as a plist.
 
 Creates a hash table from a plist *lst*.
 
-## plist-&gt;hash-table-eq
+## plist->hash-table-eq
 ``` scheme
 (plist->hash-table-eq lst) -> hash table
 
@@ -303,7 +303,7 @@ Creates a hash table from a plist *lst*.
 
 Same as `plist->hash-table`, but using `eq?` as the test function for the table.
 
-## plist-&gt;hash-table-eqv
+## plist->hash-table-eqv
 ``` scheme
 (plist->hash-table-eqv lst) -> hash table
 

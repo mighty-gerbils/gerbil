@@ -8,10 +8,10 @@
 ;;;         as a list [[procedure-name ....] ...]
 
 (import :gerbil/expander
-        :std/sugar
-        :std/getopt
+        :std/cli/getopt
         :std/format
-        :std/sort)
+        :std/sort
+        :std/sugar)
 (export main)
 
 (def (main . args)

@@ -212,7 +212,7 @@ $ cat scraper/main.ss
 ;;; -*- Gerbil -*-
 (import :std/error
         :std/sugar
-        :std/getopt
+        :std/cli/getopt
         :gerbil/gambit
         ./lib)
 (export main)
@@ -494,7 +494,7 @@ $ cat scraper/main.ss
 ;;; -*- Gerbil -*-
 (import :std/error
         :std/sugar
-        :std/getopt
+        :std/cli/getopt
         :gerbil/gambit
         ./lib)
 (export main)

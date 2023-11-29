@@ -1,9 +1,9 @@
 ;; -*- Gerbil -*-
-(import :std/net/httpd
-        :std/getopt
-        :std/sugar
-        :gerbil/gambit
-        :std/misc/threads)
+(import :gerbil/gambit
+        :std/cli/getopt
+        :std/misc/threads
+        :std/net/httpd
+        :std/sugar)
 (export main)
 
 (def (run-server address count)
