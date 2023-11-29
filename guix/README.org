@@ -1,0 +1,212 @@
+#+TITLE: Gerbil and Guix : More Scheme!
+
+#+begin_src sh
+  guix package -f guix/gerbil.scm
+#+end_src
+
+* Building from "git" without =.git=.
+
+I like to use guix. It builds a replicatable package and confirms it
+is as expected from source through binary. Which is great, but it
+means a consistent source tree.
+
+That means no =.git=. But for both conveniences and the fact that the
+=Gerbil= developers are not package managers (or, at least, the gerbil
+source tree is not meant to be a package ... or some such), =Gerbil=
+and =Gambit= in general rely on a git tree to tell them certain
+things.
+
+
+https://github.com/MuKnIO/nixpkgs/tree/dbee0d9a81487c79d7e11a9e3e3da589ac5c0fc6/pkgs/development/compilers/gerbil
+https://gist.github.com/gitaarik/8735255
+
+* Gambit: versions and dates.
+
+Gambit has 3 things that are set from git and/or defaulted to something that we need to change
+
+  - STAMP_VERSION :: ~git describe --tag --always~
+  - STAMP_YMD :: ~(TZ=UTC git show --quiet --date='format-local:%Y%m%d' --format=%cd)~
+  - STAMP_HMS :: ~(TZ=UTC git show --quiet --date='format-local:%H%M%S' --format=%cd)~
+
+#+begin_src sh :shebang #!/bin/sh :tangle update-gambit-stamp.sh
+  set -eu
+  cd $(dirname "$0") # Change to this directory
+  GS_FILE="$(pwd)/gambit-stamp.scm"
+
+  cd ../src/gambit
+
+  STAMP_VERSION=$(git describe --tag --always)
+  STAMP_YMD=$(TZ=UTC git show --quiet --date='format-local:%Y%m%d' --format=%cd)
+  STAMP_HMS=$(TZ=UTC git show --quiet --date='format-local:%H%M%S' --format=%cd)
+
+  echo "(define gambit-stamp-version \"$STAMP_VERSION\")" | tee "$GS_FILE"
+  echo "(define gambit-stamp-ymd \"$STAMP_YMD\")" | tee -a "$GS_FILE"
+  echo "(define gambit-stamp-hms \"$STAMP_HMS\")" | tee -a "$GS_FILE"
+#+end_src
+
+
+Then we just need to update certain things in gambit.
+
+#+begin_src scheme :tangle gambit-build-utils.scm
+  (include "gambit-stamp.scm")
+
+  (define gambit-sub-config
+    `(substitute* "src/gambit/configure"
+  	      (("^PACKAGE_VERSION=.*")
+  	       ,(string-append "PACKAGE_VERSION='"gambit-stamp-version"'\n"))
+  	      (("^PACKAGE_STRING=.*")
+  	       ,(string-append "PACKAGE_STRING='Gambit "gambit-stamp-version"'\n"))))
+
+
+  (define gambit-stamp.h
+    `(begin (with-output-to-file "src/gambit/include/stamp.h.new"
+  	    (lambda () (display (string-append "
+  /* Automatically generated */
+
+  #ifndef ___STAMP_VERSION
+  #define ___STAMP_VERSION \"",gambit-stamp-version"\"
+  #endif
+
+  #ifndef ___STAMP_YMD
+  #define ___STAMP_YMD ",gambit-stamp-ymd"
+  #endif
+
+  #ifndef ___STAMP_HMS
+  #define ___STAMP_HMS ",gambit-stamp-hms"
+  #endif\n"))))
+  	  (substitute* "src/gambit/include/makefile.in"
+  		       (("^(.*)echo > stamp.h;" _ ws)
+  			(string-append ws "mv -f stamp.h.new stamp.h;")))))
+  			    
+  	     
+#+end_src
+
+* Gerbil versions
+
+At build time gerbil defines the version by looking at git. We don't have git.
+
+I think the only place is =src/gerbil/runtime/version.ss=.
+
+That gets built by =src/build/build-version.scm= so let us replace that.
+
+#+begin_src sh :shebang #!/bin/sh :tangle update-gerbil-stamp.sh
+  set -eu
+  cd $(dirname "$0") # Change to this directory
+  GS_FILE="$(pwd)/gerbil-stamp.scm"
+
+  STAMP_VERSION=$(git describe --tag --always)
+
+  echo "(define gerbil-stamp-version \"$STAMP_VERSION\")" | tee "$GS_FILE"
+#+end_src
+
+#+begin_src scheme :tangle gerbil-build-utils.scm
+  (include "gerbil-stamp.scm")
+
+  (define gerbil-build-version
+    `(with-output-to-file "src/build/build-version.scm"
+       (lambda ()
+         (write
+  	'(let* ((gerbil-version-path
+  		 (path-expand "gerbil/runtime/version.ss" (getenv "GERBIL_SOURCE")))
+  		(gerbil-version-text
+  		 (string-append "(def (gerbil-version-string) \"" ,gerbil-stamp-version "\")\n")))
+  	   (display "... write ") (display gerbil-version-path) (newline)
+  	   (call-with-output-file `(path: ,gerbil-version-path create: maybe append: #f truncate: #t)
+  	     (lambda (port) (display gerbil-version-text port))))))))
+  
+#+end_src
+
+And Gerbil's =./configure= calls git a bunch. As luck would have it
+this only time it uses the value AND is not already done by guix's
+git-fetch is to see the version.
+
+#+begin_src scheme :tangle gerbil-build-utils.scm
+    (define gerbil-conf-sub-git
+     `(substitute* "configure"
+       (("set -e") (string-append "set -e ; git () { echo \"",gerbil-stamp-version"\" ;}\n"))))
+#+end_src
+
+* The =--install-from-file= file
+
+#+begin_src scheme :tangle gerbil.scm
+  (define-module (gerbil packages)
+    #:use-module (gnu packages commencement)
+    #:use-module (gnu packages linux)
+    #:use-module (guix packages)
+    #:use-module (guix build-system gnu)
+    #:use-module ((guix licenses) #:prefix l:)
+    #:use-module (gnu packages compression)
+    #:use-module (gnu packages)
+    #:use-module (gnu packages version-control)
+    #:use-module (gnu packages base)
+    #:use-module (guix git-download)
+    #:use-module (guix derivations)
+    #:use-module (gnu packages tls)
+    #:use-module (gnu packages web)
+    #:use-module (gnu packages serialization)
+    #:use-module (gnu packages sqlite)
+    #:use-module (gnu packages xml)
+    #:use-module (gnu packages databases)
+    #:use-module (guix store))
+
+  (include "gambit-build-utils.scm")
+  (include "gerbil-build-utils.scm")
+
+  (include "gerbil-package.scm")
+
+
+#+end_src
+* The package form
+
+#+begin_src scheme :tangle gerbil-package.scm
+  (package
+   (name "gerbil")
+   (version "0.18")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+  	 (recursive? #t)
+           (url "https://github.com/mighty-gerbils/gerbil.git")
+           (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32 "1rfyzy900kdl58p3gd02k5xryyzvw6xdw1awnlqd5zszh60gj4c4"))))
+   (arguments
+    `(#:phases
+      (modify-phases
+       %standard-phases
+       (delete 'bootstrap)
+       (add-after
+        'unpack 'create-versions
+        (lambda* (#:key source #:allow-other-keys)
+  	       ,gambit-sub-config
+  	       ,gambit-stamp.h
+  	       ,gerbil-build-version
+  	       ,gerbil-conf-sub-git))
+       (add-before 'build 'add-tmp-home
+         (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
+       (delete 'check))
+      #:make-flags '("CC=gcc")))
+   (native-inputs
+    `(("coreutils" ,coreutils)
+      ("util-linuxr" ,util-linux)))
+   (propagated-inputs
+    `(("zlib" ,zlib)
+      ("openssl" ,openssl)
+      ("sqlite" ,sqlite)))
+   (build-system gnu-build-system)
+   (synopsis "Meta-dialect of Scheme with post-modern features")
+   (description "Gerbil is an opinionated dialect of Scheme designed for Systems
+  Programming, with a state of the art macro and module system on top of the Gambit
+  runtime.  The macro system is based on quote-syntax, and provides the full meta-syntactic
+  tower with a native implementation of syntax-case.  It also provides a full-blown module
+  system, similar to PLT Scheme's (sorry, Racket) modules.  The main difference from Racket
+  is that Gerbil modules are single instantiation, supporting high performance ahead of
+  time compilation and compiled macros.")
+   (home-page "https://cons.io")
+   (license `(,l:lgpl2.1 ,l:asl2.0)))
+
+
+#+end_src
+
