@@ -2,7 +2,7 @@
 (export #t (import: ./interface ./session ./connection ./headers ./data))
 
 (def (send-mail smtp return-path forward-path . data)
-  (using (smtp :- SMTP)
+  (using (smtp : SMTP)
     (def sredaeh []) ;;(headers interted)
     (def body #f) ;; The body
     (def body? (? (or string? u8vector? procedure?)))
