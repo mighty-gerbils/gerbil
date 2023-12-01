@@ -6,7 +6,7 @@
 (defstruct session (address sock reader writer) constructor: :init!)
     ;;; Socket interface implementation passhtrough
 (defmethod {socket session}
- (lambda (self) (using (s self : session) s.sock)) rebind: #t)
+ (lambda (self) (using (s self : session) s.sock)))
 (defmethod {reader session}
   (lambda (self) (using (s self :- session) s.reader)))
 (defmethod {writer session}
@@ -73,7 +73,7 @@
        ((string? thing) (send-command sess (->u8vector thing)))
        (else (error "Trying to send a non-u8vector or non-string" thing))))
 
-(defmethod {send-command session} send-command rebind: #t)
+(defmethod {send-command session} send-command)
 
 (def (u8vector-find-crlf u8v (start 0))
   (def len (u8vector-length u8v))
@@ -95,4 +95,4 @@
 	      (else (cons (->s u8v start (- crlf 1))
 			   (readln (+ 1 crlf)))))))))
     
-(defmethod {read-lines session} session-read-lines rebind: #t)
+(defmethod {read-lines session} session-read-lines)

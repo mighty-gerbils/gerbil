@@ -572,7 +572,7 @@ https://datatracker.ietf.org/doc/html/rfc5321
 	(export #t)
 
 	(interface (SMTP Socket)
-	 (send-mail return-path forward-path)
+	 (send-mail return-path forward-path . data)
 	 (send-command cmd)
 	 (read-all) (read-lines) (keywords)
 	 (socket) (reader) (writer)
@@ -604,7 +604,7 @@ https://datatracker.ietf.org/doc/html/rfc5321
      (defstruct session (address sock reader writer) constructor: :init!)
          ;;; Socket interface implementation passhtrough
      (defmethod {socket session}
-      (lambda (self) (using (s self : session) s.sock)) rebind: #t)
+      (lambda (self) (using (s self : session) s.sock)))
      (defmethod {reader session}
        (lambda (self) (using (s self :- session) s.reader)))
      (defmethod {writer session}
@@ -689,7 +689,7 @@ https://datatracker.ietf.org/doc/html/rfc5321
             ((string? thing) (send-command sess (->u8vector thing)))
             (else (error "Trying to send a non-u8vector or non-string" thing))))
 
-     (defmethod {send-command session} send-command rebind: #t)
+     (defmethod {send-command session} send-command)
 
    #+end_src
 
@@ -733,7 +733,7 @@ https://datatracker.ietf.org/doc/html/rfc5321
      	      (else (cons (->s u8v start (- crlf 1))
      			   (readln (+ 1 crlf)))))))))
          
-     (defmethod {read-lines session} session-read-lines rebind: #t)
+     (defmethod {read-lines session} session-read-lines)
    #+end_src
 
    

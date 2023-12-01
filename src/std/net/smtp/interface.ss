@@ -2,7 +2,7 @@
 (export #t)
 
 (interface (SMTP Socket)
- (send-mail return-path forward-path)
+ (send-mail return-path forward-path . data)
  (send-command cmd)
  (read-all) (read-lines) (keywords)
  (socket) (reader) (writer)
