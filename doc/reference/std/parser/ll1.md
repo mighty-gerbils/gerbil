@@ -288,7 +288,7 @@ as there are in the reader, and returns `(void)`.
 
 ### ll1-skip-space*
 ```
-(ll1-skip-space* spec) => parser
+ll1-skip-space* => parser
 ```
 Return a parser that always succeeds.
 It consumes as many space characters (as per `char-strict-whitespace?`)

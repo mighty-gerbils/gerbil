@@ -23,7 +23,7 @@
            integer-log factor-out-powers factor-out-powers-of-2)
   (only-in :std/misc/ports with-output)
   (only-in :std/parser/base raise-parse-error)
-  (only-in :std/parser/ll1 ll1-skip-space* ll1-eof)
+  (only-in :std/parser/ll1 ll1-skip-char* ll1-eof)
   (only-in :std/sugar syntax-eval)
   (only-in :std/text/basic-printers write-n-chars)
   (only-in :std/text/char-set digit-char char-ascii-digit char-strict-whitespace?)
@@ -199,7 +199,7 @@
    (lambda (port)
      (def reader (PeekableStringReader (open-buffered-string-reader port)))
      (when allow-leading-whitespace?
-       (ll1-skip-space* reader (make-space? allow-leading-whitespace?)))
+       (ll1-skip-char* reader (make-space? allow-leading-whitespace?)))
      (begin0
          (ll1-decimal reader
                       sign-allowed?: sign-allowed?
@@ -207,7 +207,7 @@
                       group-separator: group-separator
                       exponent-allowed: exponent-allowed)
        (when allow-trailing-whitespace?
-         (ll1-skip-space* reader (make-space? allow-trailing-whitespace?)))
+         (ll1-skip-char* reader (make-space? allow-trailing-whitespace?)))
        (ll1-eof reader)))))
 
 ;; Given a positive integer d of the form 2^m*5^n (reduced denominator of a decimal number),
