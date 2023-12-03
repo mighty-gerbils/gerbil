@@ -39,16 +39,16 @@
 (def (string->json-object str)
   (let (reader (open-buffered-string-reader str))
     (begin0 (read-json-object/reader reader (make-env))
-      ((ll1-skip-space-to-eof) (PeekableStringReader reader)))))
+      (ll1-skip-space-to-eof (PeekableStringReader reader)))))
 
 (def (bytes->json-object bytes)
   (let (buffer (open-buffered-reader bytes))
     (begin0 (read-json-object/buffer buffer (make-env))
-      ((ll1-skip-space-to-eof) (PeekableStringReader (open-buffered-string-reader buffer))))))
+      (ll1-skip-space-to-eof (PeekableStringReader (open-buffered-string-reader buffer))))))
 
 (def (port->json-object port)
   (begin0 (read-json-object/port port (make-env))
-    ((ll1-skip-space-to-eof) (PeekableStringReader (open-buffered-string-reader port)))))
+    (ll1-skip-space-to-eof (PeekableStringReader (open-buffered-string-reader port)))))
 
 (def (write-json obj (output (current-output-port)))
   (cond
