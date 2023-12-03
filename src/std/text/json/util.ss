@@ -16,10 +16,10 @@
   :std/misc/plist
   :std/misc/rtd
   :std/misc/walist
+  :std/parser/ll1-parser
   :std/sort
   :std/srfi/43
   :std/sugar
-  :std/text/basic-parsers
   :std/values
   ./env ./input ./output)
 
@@ -39,16 +39,16 @@
 (def (string->json-object str)
   (let (reader (open-buffered-string-reader str))
     (begin0 (read-json-object/reader reader (make-env))
-      ((parse-whitespace-to-eof) (PeekableStringReader reader)))))
+      ((ll1-skip-space-to-eof) (PeekableStringReader reader)))))
 
 (def (bytes->json-object bytes)
   (let (buffer (open-buffered-reader bytes))
     (begin0 (read-json-object/buffer buffer (make-env))
-      ((parse-whitespace-to-eof) (PeekableStringReader (open-buffered-string-reader buffer))))))
+      ((ll1-skip-space-to-eof) (PeekableStringReader (open-buffered-string-reader buffer))))))
 
 (def (port->json-object port)
   (begin0 (read-json-object/port port (make-env))
-    ((parse-whitespace-to-eof) (PeekableStringReader (open-buffered-string-reader port)))))
+    ((ll1-skip-space-to-eof) (PeekableStringReader (open-buffered-string-reader port)))))
 
 (def (write-json obj (output (current-output-port)))
   (cond

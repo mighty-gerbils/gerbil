@@ -319,7 +319,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 
 ::: tip Examples:
 ```scheme
-> (import :std/text/basic-parsers)
+> (import :std/text/char-set)
 > (def (foo c) (awhen (v (char-ascii-digit c)) (* v v)))
 > (foo #\3)
 9
@@ -561,7 +561,7 @@ the `if-let` offered in Common Lisp by Alexandria and UIOP.
 
 ::: tip Examples:
 ```scheme
-> (import :std/text/basic-parsers)
+> (import :std/text/char-set)
 > (def (foo a b c)
     (if-let ((x (char-ascii-digit a))
              (y (char-ascii-digit b))

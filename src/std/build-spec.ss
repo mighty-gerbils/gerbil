@@ -176,10 +176,10 @@
     "parser/deflexer"
     "parser/grammar-reader"
     "parser/grammar"
+    "parser/ll1-parser"
     "parser"
     ;; :std/text
     "text/char-set"
-    "text/basic-parsers"
     "text/basic-printers"
     "text/utf8"
     "text/utf16"

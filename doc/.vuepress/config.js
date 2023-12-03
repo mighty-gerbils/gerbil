@@ -143,6 +143,14 @@ module.exports = {
                         ]
                       },
 
+                      { title: "Text Parser Libraries",
+                        path: "/reference/std/parser/",
+                        children: [
+                            "parser/",
+                            "parser/ll1-parser"
+                        ]
+                      },
+
                       { title: "Text Encoding and Decoding Libraries",
                         path: "/reference/std/text/",
                         children: [

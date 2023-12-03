@@ -87,7 +87,7 @@ before and/or after calling `parse-decimal`.
 
 `: PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal`
 
-You may use utilities from [:std/text/basic-parsers](../text/basic-parsers.md)
+You may use utilities from [:std/parser/ll1-parser](../parser/ll1-parser.md)
 to parse decimals as part of something bigger, or just use `string->decimal` below.
 
 ## string->decimal
