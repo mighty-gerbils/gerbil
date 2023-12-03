@@ -243,8 +243,7 @@ package: gerbil
         (tool-main program-name args)
         ;; our main -- process arguments and dispatch
         (bach-main program-name args)))
-    (begin
-      (with-catch void (cut force-output (current-output-port)))
-      (with-catch void (cut force-output (current-error-port))))))
+    (with-catch void (cut force-output (current-output-port)))
+    (with-catch void (cut force-output (current-error-port)))))
 
 (##main-set! main)
