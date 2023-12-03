@@ -23,7 +23,7 @@
            integer-log factor-out-powers factor-out-powers-of-2)
   (only-in :std/misc/ports with-output)
   (only-in :std/parser/base raise-parse-error)
-  (only-in :std/parser/ll1-parsers ll1-skip-space* ll1-eof)
+  (only-in :std/parser/ll1-parser ll1-skip-space* ll1-eof)
   (only-in :std/sugar syntax-eval)
   (only-in :std/text/basic-printers write-n-chars)
   (only-in :std/text/char-set digit-char char-ascii-digit char-strict-whitespace?)
