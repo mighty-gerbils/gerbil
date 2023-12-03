@@ -145,8 +145,8 @@ namespace: gxc
                       (gerbil-runtime-init! builtin-modules)
                       (apply ,mod-main (cdr (command-line))))
                     (lambda ()
-                      (with-catch void (cut force-output (current-output-port)))
-                      (with-catch void (cut force-output (current-error-port)))))))
+                      (with-catch void (lambda () (force-output (current-output-port))))
+                      (with-catch void (lambda () (force-output (current-error-port))))))))
       (write '(gerbil-main))
       (newline)))
 
