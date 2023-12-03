@@ -199,7 +199,7 @@
    (lambda (port)
      (def reader (PeekableStringReader (open-buffered-string-reader port)))
      (when allow-leading-whitespace?
-       (ll1-skip-char* reader (make-space? allow-leading-whitespace?)))
+       ((ll1-skip-char* (make-space? allow-leading-whitespace?)) reader))
      (begin0
          (ll1-decimal reader
                       sign-allowed?: sign-allowed?
@@ -207,7 +207,7 @@
                       group-separator: group-separator
                       exponent-allowed: exponent-allowed)
        (when allow-trailing-whitespace?
-         (ll1-skip-char* reader (make-space? allow-trailing-whitespace?)))
+         ((ll1-skip-char* (make-space? allow-trailing-whitespace?)) reader))
        (ll1-eof reader)))))
 
 ;; Given a positive integer d of the form 2^m*5^n (reduced denominator of a decimal number),
