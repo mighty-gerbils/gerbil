@@ -1,6 +1,6 @@
 (export
   decimal?
-  parse-decimal
+  ll1-decimal
   string->decimal
   write-decimal
   decimal->string
