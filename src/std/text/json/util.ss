@@ -16,7 +16,7 @@
   :std/misc/plist
   :std/misc/rtd
   :std/misc/walist
-  :std/parser/ll1-parser
+  :std/parser/ll1
   :std/sort
   :std/srfi/43
   :std/sugar

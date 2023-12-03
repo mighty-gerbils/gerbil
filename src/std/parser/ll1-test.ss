@@ -4,9 +4,9 @@
   :std/sugar
   :std/test
   :std/text/char-set
-  "./ll1-parser")
+  "./ll1")
 
-(export ll1-parser-test)
+(export ll1-test)
 
 (defrule (check-parse parser string result)
   (begin
@@ -17,8 +17,8 @@
     (check-exception (ll1/string parser string) parse-error?)
     (check-exception (call-with-input-string string (cut ll1/port parser <>)) parse-error?)))
 
-(def ll1-parser-test
-  (test-suite "test suite for std/parser/ll1-parser"
+(def ll1-test
+  (test-suite "test suite for std/parser/ll1"
     (test-case "empty"
       (check-parse ll1-empty "" (void))
       (check-parse (ll1-result 42) "" 42)

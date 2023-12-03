@@ -176,7 +176,7 @@
     "parser/deflexer"
     "parser/grammar-reader"
     "parser/grammar"
-    "parser/ll1-parser"
+    "parser/ll1"
     "parser"
     ;; :std/text
     "text/char-set"

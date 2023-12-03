@@ -7,7 +7,7 @@ Build your parser with combinators then use one of `ll1/reader`,
 
 ::: tip To use the bindings from this module:
 ``` scheme
-(import :std/parser/ll1-parser)
+(import :std/parser/ll1)
 ```
 :::
 

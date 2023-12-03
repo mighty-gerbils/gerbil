@@ -147,7 +147,7 @@ module.exports = {
                         path: "/reference/std/parser/",
                         children: [
                             "parser/",
-                            "parser/ll1-parser"
+                            "parser/ll1"
                         ]
                       },
 
