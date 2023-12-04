@@ -22,9 +22,6 @@
   (only-in :std/misc/number least-integer)
   (only-in :std/sugar while))
 
-;; Enable (set! (vector-ref v i) x)
-(defalias vector-ref-set! vector-set!)
-
 ;;; Assuming a sorted vector, a predicate on vector elements that is "increasing",
 ;;; i.e. if true, true on all subsequent elements, and optionally
 ;;; a start (inclusive, defaults to 0) and an end (exclusive, defaults to vector length),

@@ -223,7 +223,6 @@ Evaluates body in a loop while the test expression evaluates to true.
 ::: tip Examples:
 ```scheme
 > (import :std/misc/number)
-> (def vector-ref-set! vector-set!)
 > (def a #(1 2 3 4 5 6))
 > (def i 5)
 > (while (<= 0 i)
@@ -244,7 +243,6 @@ Evaluates body in a loop until the test expression evaluates to true.
 ::: tip Examples:
 ```scheme
 > (import :std/misc/number)
-> (def vector-ref-set! vector-set!)
 > (def a #(2 3 4 5 6 7))
 > (def i 0)
 > (until (= i (vector-length a))

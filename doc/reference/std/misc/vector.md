@@ -119,23 +119,6 @@ This is the variant of `vector-count` from `:std/srfi/43`,
 that passes an index as well as a value to the function argument,
 unlike the variant in R7RS or in `:std/srfi/133`.
 
-## vector-ref-set!
-```scheme
-(def vector-ref-set! vector-set!)
-(set! (vector-ref v i) x)
-```
-
-This binding enables you to use `set!` with `vector-ref`.
-
-::: tip Examples:
-```scheme
-> (def foo (vector 1 2 3))
-> (set! (vector-ref foo 1) 4)
-> foo
-#(1 4 3)
-```
-:::
-
 ## vector-least-index
 ```scheme
 (vector-least-index pred vector [start: 0] [end: #f])

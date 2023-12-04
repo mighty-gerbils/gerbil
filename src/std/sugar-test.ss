@@ -25,8 +25,6 @@
 (defmethod {foo C} (lambda (self) (+ 10 (@ self c))))
 (defmethod {frob C} (lambda (self (increment 1)) (pre-increment! (@ self c) increment)))
 
-(def vector-ref-set! vector-set!)
-
 (def sugar-test
   (test-suite "test :std/sugar"
     (test-case "defrule"
