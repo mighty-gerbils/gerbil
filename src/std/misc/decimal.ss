@@ -1,5 +1,6 @@
 (export
   decimal?
+  ll1-decimal
   parse-decimal
   string->decimal
   write-decimal
@@ -23,8 +24,8 @@
            integer-log factor-out-powers factor-out-powers-of-2)
   (only-in :std/misc/ports with-output)
   (only-in :std/parser/base raise-parse-error)
+  (only-in :std/parser/ll1 ll1-skip-char* ll1-eof)
   (only-in :std/sugar syntax-eval)
-  (only-in :std/text/basic-parsers parse-and-skip-any-whitespace parse-eof)
   (only-in :std/text/basic-printers write-n-chars)
   (only-in :std/text/char-set digit-char char-ascii-digit char-strict-whitespace?)
   (only-in :std/values first-value))
@@ -36,6 +37,7 @@
            (power-of-5 (first-value (factor-out-powers-of-2 (denominator x))))
            #t)))
 
+;; If n is a power of 5, return which power that is, otherwise return #f
 ;; : Integer -> (OrFalse Nat)
 (def (power-of-5 n)
   (and (exact-integer? n) (positive? n)
@@ -48,7 +50,8 @@
                 (let (l (power-of-5 q))
                   (and l (+ l (* 440 k)))))))))
 
-;; `parse-decimal` expects and parses a decimal number on the PeekableStringReader.
+;; LL(1) parser for a decimal number, in a style compatible with std/parser/ll1.
+;; `ll1-decimal` parses a decimal number from a PeekableStringReader.
 ;; The character parameters `decimal-mark` and `group-separator` provide
 ;; support for different (typically cultural) numerical conventions.
 ;; For convenience, a `group-separator` of #t will be treated as the comma character.
@@ -60,15 +63,14 @@
 ;; when `exponent-allowed` is a string.
 ;; Side-effects the PeekableStringReader, and returns the decimal number, or raises an exception.
 ;; It is up to the caller to ignore and leading or trailing whitespace and check for eof
-;; before and/or after calling `parse-decimal`.
+;; before and/or after calling `ll1-decimal`.
 ;; : PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
-(def (parse-decimal
-      pre-reader
+(def (ll1-decimal
+      reader
       sign-allowed?: (sign-allowed? #t)
       decimal-mark: (decimal-mark #\.)
       group-separator: (group-separator_ #f)
       exponent-allowed: (exponent-allowed_ #f))
-  (def reader (PeekableStringReader (open-buffered-string-reader pre-reader)))
   (check-argument (boolean? sign-allowed?) "boolean" sign-allowed?)
   (check-argument (or (char? decimal-mark) (boolean? decimal-mark)) "char or boolean" decimal-mark)
   (check-argument (or (boolean? group-separator_) (char? group-separator_))
@@ -94,25 +96,25 @@
     (def valid? #f) ;; have we seen at least one digit
     (def (peek) (reader.peek-char))
     (def c (peek))
-    (def (bad) (raise-parse-error parse-decimal "Unexpected character" #f pre-reader))
+    (def (bad) (raise-parse-error ll1-decimal "Unexpected character" #f reader))
     (def (next) (reader.read-char) (set! c (peek)))
-    (def (parse-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
+    (def (ll1-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
 
     (let/cc return
-      (when (eof-object? c) (raise-parse-error parse-decimal "Unexpected EOF" #!eof pre-reader))
-      (when sign-allowed? (set! sign (parse-sign)))
+      (when (eof-object? c) (raise-parse-error ll1-decimal "Unexpected EOF" #!eof reader))
+      (when sign-allowed? (set! sign (ll1-sign)))
       (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
-      (def (parse-left-digit-or-group-separator)
+      (def (ll1-left-digit-or-group-separator)
         (cond
          ((char-ascii-digit c) =>
           (lambda (d)
             (set! numerator (+ (* numerator 10) d))
             (set! valid? #t)
             (next)
-            (parse-left-digit-or-group-separator)))
+            (ll1-left-digit-or-group-separator)))
          ((and group-separator (eqv? group-separator c))
           (next)
-          (parse-left-digit-or-group-separator))
+          (ll1-left-digit-or-group-separator))
          (else (maybe-decimal-mark))))
       (def (maybe-decimal-mark)
         (cond
@@ -120,12 +122,12 @@
           (next)
           (if valid? ;; if we have seen a left digit
             (maybe-right-digit)
-            (parse-right-digit)))
+            (ll1-right-digit)))
          (valid?
           (maybe-exponent-marker))
          (else
           (bad))))
-      (def (parse-right-digit)
+      (def (ll1-right-digit)
         (cond
          ((char-ascii-digit c) =>
           (lambda (d)
@@ -153,9 +155,9 @@
           (maybe-exponent-sign))
          (else (done))))
       (def (maybe-exponent-sign)
-        (set! exponent-sign (parse-sign))
-        (parse-exponent-digit))
-      (def (parse-exponent-digit)
+        (set! exponent-sign (ll1-sign))
+        (ll1-exponent-digit))
+      (def (ll1-exponent-digit)
         (cond
          ((char-ascii-digit c) =>
           (lambda (d)
@@ -174,7 +176,18 @@
             (maybe-exponent-digit)))
          (else
           (done))))
-      (parse-left-digit-or-group-separator))))
+      (ll1-left-digit-or-group-separator))))
+
+;; Cast some input to a buffered-string-reader and parse it as a decimal
+;; The input can be a string, input port, BufferedStringReader, StringReader, or Reader.
+(def (parse-decimal input
+                    sign-allowed?: (sign-allowed? #t)
+                    decimal-mark: (decimal-mark #\.)
+                    group-separator: (group-separator #f)
+                    exponent-allowed: (exponent-allowed #f))
+  (ll1-decimal (PeekableStringReader (open-buffered-string-reader input))
+               sign-allowed?: sign-allowed? decimal-mark: decimal-mark
+               group-separator: group-separator exponent-allowed: exponent-allowed))
 
 ;; String sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) allow-leading-whitespace?:Bool allow-trailing-whitespace?:Bool start:Nat end:(OrFalse Nat) -> Decimal
 (def (string->decimal s
@@ -199,16 +212,16 @@
    (lambda (port)
      (def reader (PeekableStringReader (open-buffered-string-reader port)))
      (when allow-leading-whitespace?
-       (parse-and-skip-any-whitespace reader (make-space? allow-leading-whitespace?)))
+       ((ll1-skip-char* (make-space? allow-leading-whitespace?)) reader))
      (begin0
-         (parse-decimal reader
-                        sign-allowed?: sign-allowed?
-                        decimal-mark: decimal-mark
-                        group-separator: group-separator
-                        exponent-allowed: exponent-allowed)
+         (ll1-decimal reader
+                      sign-allowed?: sign-allowed?
+                      decimal-mark: decimal-mark
+                      group-separator: group-separator
+                      exponent-allowed: exponent-allowed)
        (when allow-trailing-whitespace?
-         (parse-and-skip-any-whitespace reader (make-space? allow-trailing-whitespace?)))
-       (parse-eof reader)))))
+         ((ll1-skip-char* (make-space? allow-trailing-whitespace?)) reader))
+       (ll1-eof reader)))))
 
 ;; Given a positive integer d of the form 2^m*5^n (reduced denominator of a decimal number),
 ;; compute c such that c*d = c*(2^m*5^n) = 10^max(m,n).
