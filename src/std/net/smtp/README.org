@@ -1,0 +1,902 @@
+#+TITLE: SMTP: Simple Mail Tranfser Protocol
+
+#+begin_src scheme :tangle ../smtp.ss
+  (import ./smtp/api) (export (import: ./smtp/api))
+#+end_src
+
+* Documentation
+:PROPERTIES:
+:EXPORT_FILE_NAME: ../../../../doc/reference/std/net/smtp.md
+:EXPORT_OPTIONS: toc:nil
+:EXPORT_TITLE: SMTP: Simple Mail Tranfser Protocol
+:END:
+** SMTP: Simple Mail Tranfser Protocol
+
+#+begin_src scheme
+(import :std/net/smtp)
+#+end_src
+
+
+#+begin_src scheme
+  > (def mail (smtp-connect "localhost:8025"))
+  > (send-mail mail "<postfix@drewc.ca>" "me@drewc.ca"
+      To: "All Users <me@drewc.ca>"
+      From: "No Reply <no@reply.here>"
+      Subject: "This is a subject"
+      "Body not by itself")
+  ("250 2.0.0 Ok: queued as 1E29D10201C2")
+
+  > (send-mail mail "<postfix@drewc.ca>" "me@drewc.ca" "No headers just body")
+  ("250 2.0.0 Ok: queued as 1111A10201C2")
+
+  > (send-mail mail "<postfix@drewc.ca>" "me@drewc.ca"
+    [Subject: "Headers can be a plist"] From: "Nested even!"
+    "because who knows")
+  ("250 2.0.0 Ok: queued as 5C4F810201C2")
+  
+  > (SMTP-QUIT mail)
+  ("221 2.0.0 Bye")
+#+end_src
+
+* Tests
+
+The SMTP library is a client that allows one to send mail from within
+gerbil.
+
+https://www.wpoven.com/tools/free-smtp-server-for-testing
+
+#+begin_src scheme :tangle ../smtp-test.ss
+  (import :std/net/smtp)
+#+end_src
+
+#+begin_src scheme :exports none :tangle ../smtp-test.ss :noweb yes
+  (import :std/test)
+  (export smtp-client-test)
+
+  (defsyntax (REPL-doc-test stx)
+    (syntax-case stx ()
+      ((_mac description rest ...)
+       (stx-string? #'description)
+       #'(test-case description (_mac rest ...)))
+      ((_mac :> expr result rest ...)
+       (and (identifier? #':>) (free-identifier=? #':> #'>))
+       #'(begin (check expr => result) (_mac rest ...)))
+      ((_mac form rest ...) #'(begin form (_mac rest ...)))
+      ((_) #'())))
+
+  (def smtp-client-test
+    (test-suite "Testing SMTP client"
+    (REPL-doc-test
+      "The Free Public SMTP server"
+     ))
+#+end_src
+
+** smtp-connect
+
+The easy way to connect and interact with an SMTP server.
+
+(ssl-context (default-client-ssl-context))
+
+#+begin_src scheme :noweb-ref public-smtp-server
+  (def smtp-sess (smtp-connect (##getenv "TEST_SMTP_ADDRESS" "localhost:8025")
+                   timeout: 4.2))
+#+end_src
+
+** SMTP interface
+
+
+      #+begin_src scheme  :noweb-ref SMTP-interface
+	(interface (SMTP Socket)
+	 (send-command cmd)
+	 (read-all) (read-lines) (keywords)
+	 (socket) (reader) (writer)
+	 (EHLO domain-or-address)
+	 (HELO domain)
+	 (MAIL from)
+	 (RCPT to)
+	 (DATA)
+	 (RSET)
+	 (NOOP str)
+	 (QUIT)
+	 (VRFY)
+	 (STARTTLS))
+      #+end_src
+
+
+
+* API
+
+#+begin_src scheme :tangle api.ss
+  (import ./interface ./session ./connection ./headers ./data :std/text/utf8 :std/contract)
+  (export #t (import: ./interface ./session ./connection ./headers ./data))
+
+  #+end_src
+
+
+
+#+begin_src scheme :tangle api.ss
+  (def (send-mail smtp return-path forward-path . data)
+    (using (smtp : SMTP)
+      (def sredaeh []) ;;(headers interted)
+      (def body #f) ;; The body
+      (def body? (? (or string? u8vector? procedure?)))
+
+      (def (positive? res (p #\2))
+        (match res ([str rest ...] (char=? (string-ref str 0) p))))
+
+      (def (send-hs)
+        (send-headers (headers->alist (reverse sredaeh))
+  		    (cut smtp.send-command <>))
+        (smtp.send-command ""))
+
+      (def (send-body)
+        (def wr (smtp.writer))
+        (def (wrt x) (write-data wr x))
+        (def (snd item)
+  	(match item
+  	  ((? u8vector?) (wrt item))
+  	  ((? string?) (wrt (string->utf8 item)))
+  	  ((? procedure?) (item smtp))))
+
+        (when body (for-each snd body))
+        (end-data wr))
+
+      (let lp ((lst data))
+        (match lst
+  	;; First the 'Key: Val' header
+  	([(? keyword? key) (? string? val) rest ...]
+  	 (set! sredaeh [[key . val] sredaeh ...])
+  	 (lp rest))
+  	;; Now an [a|p] list of headers
+  	([(? list? hs) rest ...]
+  	 (set! sredaeh (append (reverse (headers->alist hs)) sredaeh))
+  	 (lp rest))
+  	([(? body? kar) kdr ...]
+  	 (set! body (cons kar kdr)))))
+
+      (let (res (smtp.MAIL return-path))
+        (unless (positive? res) (error "MAIL FROM:" res)))
+
+      (let (fwds (if (list? forward-path) forward-path (list forward-path)))
+        (def (rcpt to)
+  	(let (res (smtp.RCPT to))
+  	  (unless (positive? res) (error "RCPT TO:" res))))
+        (for-each rcpt fwds))
+
+      (let (res (smtp.DATA))
+        (unless (positive? res #\3) (error "DATA:" res)))
+      
+      (send-hs)
+      (send-body)
+
+      (let (res (smtp.read-lines))
+        (unless (positive? res) (error "Cannot send data:" res))
+        res)))
+
+  (defmethod {send-mail smtp-connection} send-mail)
+
+#+end_src
+* A =DATA= buffered writer
+
+Text and encodings are almost the bane of existence for any programmer.
+
+Because I want things to be taken care of for me I think I've got a
+translator that works.
+
+#+begin_src scheme :tangle ./data-test.ss
+  (import :std/test :std/net/smtp/data :std/io :std/io/bio/types
+  	:std/text/utf8 :std/contract :std/interface)
+  (export test-data-transform)
+
+  (def (test-data-transform)
+    (test-suite "Test `write-data` transformation"
+      
+#+end_src
+
+The =write-data= method is backed by a function of the same name. It expects a buffered writer.
+
+#+begin_src scheme :tangle ./data-test.ss
+  ;;;; 
+     (def writer (open-buffered-writer #f))
+
+#+end_src
+
+One rule is that "CR and LF MUST only occur together as CRLF; they
+MUST NOT appear independently in the body".
+
+#+begin_src scheme :tangle ./data-test.ss
+  (test-case "BARE CR not allowed"
+    (def str1 "\rline2 ")
+    (set! writer (open-buffered-writer #f))
+    (write-data writer (string->utf8 str1))
+    (end-data writer)
+       (using (bio (interface-instance-object writer) :- output-buffer)
+       (displayln "Wrote "  (get-buffer-output-u8vector bio.writer))
+       (displayln "Buffer:" bio.whi (subu8vector bio.buf 0 bio.whi)))
+   )
+#+end_src
+
+** =4.1.1.4.=  DATA (DATA)
+
+   The receiver normally sends a 354 response to DATA, and then treats
+   the lines (strings ending in <CRLF> sequences, as described in
+   Section 2.3.7) following the command as mail data from the sender.
+   This command causes the mail data to be appended to the mail data
+   buffer.  The mail data may contain any of the 128 ASCII character
+   codes, although experience has indicated that use of control
+   characters other than SP, HT, CR, and LF may cause problems and
+   SHOULD be avoided when possible.
+
+   The mail data are terminated by a line containing only a period, that
+   is, the character sequence "<CRLF>.<CRLF>", where the first <CRLF> is
+   actually the terminator of the previous line (see Section 4.5.2).
+   This is the end of mail data indication.  The first <CRLF> of this
+   terminating sequence is also the <CRLF> that ends the final line of
+   the data (message text) or, if there was no mail data, ends the DATA
+   command itself (the "no mail data" case does not conform to this
+   specification since it would require that neither the trace header
+   fields required by this specification nor the message header section
+   required by RFC 5322 [4] be transmitted).  An extra <CRLF> MUST NOT
+   be added, as that would cause an empty line to be added to the
+   message.
+
+   #+begin_src scheme :noweb-ref end-data
+     (def CR (##char->integer #\return))
+     (def LF (##char->integer #\linefeed))
+     (def FULLSTOP (##char->integer #\.))
+     	
+
+     (def (end-data writer)
+       (using ((wr writer :- BufferedWriter)
+     	  (ob (interface-instance-object writer) :- output-buffer))
+
+       ;; This takes care of a trailing bare CR.
+       (write-data writer #u8())
+
+       ;; To avoid adding one check the buffer. If it has been used
+       ;; correctly there's at least one buffered char.
+       (let (last-char (and (< 0 ob.whi) (u8vector-ref ob.buf (1- ob.whi))))
+         (when (or (not last-char) (not (= last-char LF)))
+           (wr.write (u8vector CR LF))))
+
+       (wr.write (u8vector FULLSTOP CR LF))
+       (wr.flush)))
+
+   #+end_src
+
+** =RFC 5322=  2.3.  Body
+
+   The body of a message is simply lines of US-ASCII characters.  The
+   only two limitations on the body are as follows:
+
+   o  CR and LF MUST only occur together as CRLF; they MUST NOT appear
+      independently in the body.
+   o  Lines of characters in the body MUST be limited to 998 characters,
+      and SHOULD be limited to 78 characters, excluding the CRLF.
+
+
+      #+begin_src scheme :tangle ./data.ss :noweb yes
+	(import :std/io/bio/types :std/io :std/contract :std/interface
+		./interface ./session)
+	(export #t)
+
+	<<end-data>>
+
+	(def (write-data writer u8v (start 0) (end (u8vector-length u8v)))
+	  (using ((wr writer :- BufferedWriter)
+		  (ob (interface-instance-object writer) :- output-buffer))
+
+	        (def (ref n) (u8vector-ref u8v n))
+
+	    (def (write-flush start end (u8v u8v))
+	       ;; (displayln "writing and flushing " (subu8vector u8v start end))
+	      (wr.write u8v start end)
+	      (wr.flush))
+
+	    (def (write-buff start end (u8v u8v))
+	      (cond
+	       ((= start end) #t)
+	       ((= 1 (- end start))
+		;; (displayln "Buffering one char" (ref start))
+		(wr.write-u8 (ref start)))
+	       (else
+		(write-flush start (1- end))
+		(write-buff (1- end) end))))
+		  
+	      
+	    (def (next n) (and (not (= end (1+ n))) (ref (1+ n))))
+	    (def (prev n (idx (- n 1)))
+	      (if (< idx 0)
+		(let ((pidx (+ ob.whi idx)))
+		  (if (< pidx 0) #f (u8vector-ref ob.buf pidx)))
+		(ref idx)))
+			
+	    (let lp ((start start) (n start))
+	      (def code (if (= n end) #f (ref n)))
+	     ;; (displayln "n: " n " prev " (prev n))
+
+	      ;; CR in the buffer and not writing LF to start
+	      (when (and (= n 0)
+			 (or (not code)
+			     (not (= code LF)))
+			 (let (p (prev n)) (and p (= p CR))))
+		  (wr.write-u8 LF))
+	     ;    
+	    (cond 
+	     ((not code)
+	     ;; We are at the end. We want to keep a char in tne buffer and
+	      ;; flush the rest.
+	      ;; (displayln "No code" start " - " end)
+	      (write-buff start end))
+
+	     ;; First, what happens if there is a CR?
+
+	     ((= code CR)
+	      (let (nxt (next n))
+		(cond
+		 ((and nxt (= nxt LF)) ;; CRLF
+		  (if (= end (+ 2 n))
+		    ;; if this is the end we set the buffer after writing the
+		    ;; prev.  This is so if the next character in the next
+		    ;; write is a #\. it's doubled
+		    (begin (write-flush start n)
+			   (wr.write (u8vector CR LF)))
+		    ;; otherwise keep going.
+		    (lp start (+ 2 n))))
+
+		 ;; BARE CR with a next char
+		 ((and nxt (not (= nxt LF)))
+		  (write-flush start (1+ n))
+		  (wr.write-u8 LF)
+		  (lp (1+ n) (+ 1 n)))
+		 ;; Bare CR at the end of the u8v
+		 ((not nxt) ;(write-flush start n)
+		  ;; add it to the buffer
+		  (wr.write-u8 CR)))))
+	     
+	     ; Bare LF 
+	     ((= code LF)
+	      (let (prv (prev n))
+		(cond ((and prv (= prv CR))
+		       (if (= (1+ n) end)
+			 (wr.write-u8 LF)
+			 (lp start (1+ n))))
+		      (else (write-flush start n)
+			    (wr.write (u8vector CR LF))
+			    ;; if it's the end leave it in the buffer
+			    (unless (= (1+ n) end)
+			      (lp (1+ n) (1+ n)))))))
+
+	     ;; 4.5.2.  Transparency
+
+	     ;;    Without some provision for data transparency, the character
+	     ;;    sequence "<CRLF>.<CRLF>" ends the mail text and cannot be
+	     ;;    sent by the user.  In general, users are not aware of such
+	     ;;    "forbidden" sequences.  To allow all user composed text to
+	     ;;    be transmitted transparently, the following procedures are
+	     ;;    used:
+
+	     ;;    o Before sending a line of mail text, the SMTP client
+	     ;;    checks the first character of the line.  If it is a period,
+	     ;;    one additional period is inserted at the beginning of the
+	     ;;    line.
+	     
+	     ;;    o When a line of mail text is received by the SMTP server,
+	     ;;    it checks the line.  If the line is composed of a single
+	     ;;    period, it is treated as the end of mail indicator.  If the
+	     ;;    first character is a period and there are other characters
+	     ;;    on the line, the first character is deleted.
+	     
+	     ((= code FULLSTOP)
+	      (let (prv (prev n))
+		(cond
+		 ;; First character of line?
+		 ((or (and (not prev) (= n 0))
+		      (and prv (or (= prv CR) (= prv LF))))
+		  (write-flush start (1+ n))
+		  (wr.write-u8 FULLSTOP)
+		  (lp (1+ n) (1+ n)))
+		 (else (lp start (1+ n))))))
+
+	     ;; otherwise skip onto next char
+	     (else (lp start (1+ n)))))))
+      #+end_src
+
+The way 
+
+* The =headers= 
+
+#+begin_src scheme :tangle ./headers.ss
+  (import ./session) (export #t)
+
+  (def (headers->alist hlist)
+    (let lp ((hs hlist) (alist []))
+      (if (null? hs) (reverse alist)
+  	(with ([item rest ...] hs)
+  	  (if (pair? item) (lp rest [item alist ...])
+  	      (with ([key val rest ...] hs)
+  		(lp rest [[key . val] alist ...])))))))
+
+  (def (send-headers headers send-one)
+    (set! headers (headers->alist headers))
+    (def (key->string key)
+      (cond ((string? key) key)
+  	  ((or (keyword? key)
+  	       (symbol? key))
+  	   (with-output-to-string "" (cut write key)))
+  	  (else (error "Header key must be a keyword, symbol or string"))))
+    (def header->string
+      (cut match <>
+  	 ([k . v] (string-append (key->string k) " " v))))
+
+    (for-each send-one (map header->string headers)))
+#+end_src
+* The connection 
+
+#+begin_src scheme :tangle ./connection.ss
+  (import :std/contract :std/net/ssl :std/io :std/srfi/13
+  	./session ./interface ./client)
+  (export #t)
+
+  (defstruct (smtp-connection client-session) (ehlo data))
+
+  (defmethod {keywords smtp-connection}
+    (lambda (self) (using (s self :- smtp-connection)
+  		   (map (cut substring/shared <> 4) s.ehlo))))
+     
+  (def (smtp-connect address
+                     timeout: (timeo #f)
+                     input-timeout: (itimeo #f)
+  		   domain: (domain (##host-name))
+  		   tls: (tls 'maybe)
+  		   ssl-context: (context (insecure-client-ssl-context)))
+    
+    ;; An SMTP session is initiated when a client opens a connection to a
+    ;; server and the server responds with an opening message.
+    (def conn (smtp-connection address timeo))
+    (when itimeo (using (s conn : Socket) (s.set-input-timeout! itimeo)))
+    (def smtp (begin {read-lines conn} (SMTP conn)))
+
+    (using ((sess conn :- smtp-connection)
+            (smtp :- SMTP))
+      
+      ;; Normally, the response to EHLO will be a multiline reply.  Each
+      ;; line of the response contains a keyword and, optionally, one or
+      ;; more parameters.
+      (set! sess.ehlo (smtp.EHLO domain))
+      
+      ;; The STARTTLS keyword is used to tell the SMTP client that the
+      ;; SMTP server is currently able to negotiate the use of TLS.  It
+      ;; takes no parameters.
+      
+      (let (tls? (and tls (member "250-STARTTLS" sess.ehlo)))
+        (cond (tls?
+              ;; (display "Trying to start TLS\n")
+  	     (let (msg (car (smtp.STARTTLS)))
+  	       ; (displayln "Got msg" msg)
+  	       (unless (string=? "220" (substring msg 0 3))
+  		 (error "No TLS" msg))
+  	       (session-put-socket!
+  		conn (ssl-client-upgrade sess.sock host: #f context: context))))
+  	    ((and tls (not (eq? tls 'maybe)))
+  	     (error "No STARTTLS on " sess.address))))
+      
+      smtp))
+#+end_src
+
+* Netcat : see what/when we are sending/recving things
+
+#+begin_src sh
+  cd /tmp
+  mkdir smtp
+  cd smtp
+  mknod pipe p
+  netcat -nl -p 8025 < pipe | tee -a inbound | netcat maxbakuntu.lan 25 | tee -a outbound > pipe
+#+end_src
+
+* PKG HACKING
+
+#+begin_src sh
+  pwd #=> /Users/drewc/me/src/gerbil/src/std
+  gerbil pkg link stdlib `pwd`
+  gerbil build stdlib
+#+end_src
+
+https://ics.uci.edu/~pattis/common/handouts/macmingweclipse/allexperimental/mac-gdb-install.html
+#+begin_src sh
+  brew install gdb
+#+end_src
+
+#+begin_src xml :tangle gdb-entitlement.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+"http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+    <key>com.apple.security.cs.disable-executable-page-protection</key>
+    <true/>
+    <key>com.apple.security.cs.debugger</key>
+    <true/>
+    <key>com.apple.security.get-task-allow</key>
+    <true/>
+</dict>
+</plist>
+
+#+end_src
+
+#+begin_src sh
+  codesign --entitlements gdb-entitlement.xml -fs gdb-cert `which gdb`
+#+end_src
+
+* The SMTP Standard: RFC5231
+
+
+https://datatracker.ietf.org/doc/html/rfc5321
+
+
+** =4.5.1=.  Minimum Implementation
+
+   In order to make SMTP workable, the following minimum implementation
+   MUST be provided by all receivers.  The following commands MUST be
+   supported to conform to this specification:
+
+      EHLO
+      HELO
+      MAIL
+      RCPT
+      DATA
+      RSET
+      NOOP
+      QUIT
+      VRFY
+#+begin_quote
+  The STARTTLS Command
+
+   The format for the STARTTLS command is:
+
+   STARTTLS
+
+   with no parameters.
+#+end_quote
+
+      #+begin_src scheme :tangle ./interface.ss :noweb yes
+	(import :std/interface :std/io :std/contract)
+	(export #t)
+
+	(interface (SMTP Socket)
+	 (send-mail return-path forward-path . data)
+	 (send-command cmd)
+	 (read-all) (read-lines) (keywords)
+	 (socket) (reader) (writer)
+	 (EHLO domain-or-address)
+	 (HELO domain)
+	 (MAIL from)
+	 (RCPT to)
+	 (DATA)
+	 (RSET)
+	 (NOOP (str ""))
+	 (QUIT)
+	 (VRFY address)
+	 (STARTTLS))
+      #+end_src
+
+      
+
+** =3.1.=  Session Initiation
+
+   An SMTP session is initiated when a client opens a connection to a
+   server and the server responds with an opening message.
+
+   #+begin_src scheme :tangle session.ss
+     (import :std/interface :std/contract :std/io :std/text/utf8 :std/sugar
+     	:std/os/socket
+     	./interface)
+     (export #t)
+
+     (defstruct session (address sock reader writer) constructor: :init!)
+         ;;; Socket interface implementation passhtrough
+     (defmethod {socket session}
+      (lambda (self) (using (s self : session) s.sock)))
+     (defmethod {reader session}
+       (lambda (self) (using (s self :- session) s.reader)))
+     (defmethod {writer session}
+       (lambda (self) (using (s self :- session) s.writer)))
+
+     (def (session-put-socket! sess sock)
+       (using ((self sess :- session)
+     	    (sock :- StreamSocket))
+         (set! self.sock sock)
+         (set! self.reader
+     	(open-buffered-reader (sock.reader)))
+         (set! self.writer
+     	(open-buffered-writer (sock.writer)))))
+
+     (defsyntax (defsocket-dispatch-method stx)
+       (syntax-case stx ()
+         ((_ (method arg ...))
+          (with-syntax ((sock.method (make-symbol 'sock "." (stx-e #'method))))
+            #'(defmethod {method session}
+              (lambda (self arg ...)
+                (using (self :- session)
+                  (let (sock self.sock)
+                    (using (sock :- StreamSocket)
+                      (sock.method arg ...))))))))))
+
+     (defsocket-dispatch-method (close))
+     (defsocket-dispatch-method (domain))
+     (defsocket-dispatch-method (address))
+     (defsocket-dispatch-method (peer-address))
+     (defsocket-dispatch-method (getsockopt level option))
+     (defsocket-dispatch-method (setsockopt level option value))
+     (defsocket-dispatch-method (set-input-timeout! timeo))
+     (defsocket-dispatch-method (set-output-timeout! timeo))
+
+     (def (session-read-all sess (buffer-size 256))
+       (using ((s sess :- session)
+     	  (r s.reader :- BufferedReader))
+
+         (def buffs
+           (let lp ((full? #t))
+     	(if (not full?) []
+     	    (let (buff (make-u8vector buffer-size))
+     	      (def n (r.read buff))
+     	      (def full? (= n (u8vector-length buff)))
+     	      (unless full? (u8vector-shrink! buff n))
+     	      (cons buff (lp full?))))))
+
+         
+         (match buffs ([b . rest]
+     		  (if (null? rest) b (u8vector-concatenate buffs))))))
+
+     (defmethod {read-all session} session-read-all)
+   #+end_src
+
+
+**  2.3.7.  Commands and Replies
+
+   SMTP commands and, unless altered by a service extension, message
+   data, are transmitted from the sender to the receiver via the
+   transmission channel in "lines".
+
+   An SMTP reply is an acknowledgment (positive or negative) sent in
+   "lines" from receiver to sender via the transmission channel in
+   response to a command.  The general form of a reply is a numeric
+   completion code (indicating failure or success) usually followed by a
+   text string.  The codes are for use by programs and the text is
+   usually intended for human users.  RFC 3463 [25], specifies further
+   structuring of the reply strings, including the use of supplemental
+   and more specific completion codes (see also RFC 5248 [26]).
+
+   #+begin_src scheme :tangle session.ss
+     (def (send-command sess thing (->u8vector string->utf8))
+      (cond ((u8vector? thing)
+     	(let* ((len (u8vector-length thing))
+     	       (crlf? (and (>= len 2)
+     			   (fx= (u8vector-ref thing (- len 2)) 13)
+     			   (fx= (u8vector-ref thing (- len 1)) 10))))
+     	  (using ((s sess :- session)
+     		  (w s.writer :- BufferedWriter))
+     	    (w.write thing) (unless crlf? (w.write (u8vector 13 10)))
+     	    (w.flush))))
+            ((string? thing) (send-command sess (->u8vector thing)))
+            (else (error "Trying to send a non-u8vector or non-string" thing))))
+
+     (defmethod {send-command session} send-command)
+
+   #+end_src
+
+   
+** 2.3.8.  Lines
+
+   Lines consist of zero or more data characters terminated by the
+   sequence ASCII character "CR" (hex value 0D) followed immediately by
+   ASCII character "LF" (hex value 0A).  This termination sequence is
+   denoted as <CRLF> in this document.  Conforming implementations MUST
+   NOT recognize or generate any other character or character sequence
+   as a line terminator.  Limits MAY be imposed on line lengths by
+   servers (see Section 4).
+
+   In addition, the appearance of "bare" "CR" or "LF" characters in text
+   (i.e., either without the other) has a long history of causing
+   problems in mail implementations and applications that use the mail
+   system as a tool.  SMTP client implementations MUST NOT transmit
+   these characters except when they are intended as line terminators
+   and then MUST, as indicated above, transmit them only as a <CRLF>
+   sequence.
+
+   #+begin_src scheme :tangle session.ss
+     (def (u8vector-find-crlf u8v (start 0))
+       (def len (u8vector-length u8v))
+       (let lp ((n start) (prev 0))
+         (if (= n len) #f
+     	(let (c (u8vector-ref u8v n))
+     	  (if (and (= prev 13) (= c 10))
+     	    n
+     	    (lp (+ 1 n) c))))))
+
+     (def (session-read-lines sess to-string: (->s utf8->string)
+     			 (buffer-size 256))
+       (def u8v (session-read-all sess))
+       (def end (u8vector-length u8v))
+         (let readln ((start 0))
+           (if (= start end) []
+           (let (crlf (u8vector-find-crlf u8v start))
+     	(cond ((not crlf) (error "No lines in " u8v start end) )
+     	      (else (cons (->s u8v start (- crlf 1))
+     			   (readln (+ 1 crlf)))))))))
+         
+     (defmethod {read-lines session} session-read-lines)
+   #+end_src
+
+   
+** =4.1.1.1.=  Extended HELLO (EHLO) or HELLO (HELO)
+
+   These commands are used to identify the SMTP client to the SMTP
+   server.  The argument clause contains the fully-qualified domain name
+   of the SMTP client, if one is available.  In situations in which the
+   SMTP client system does not have a meaningful domain name (e.g., when
+   its address is dynamically allocated and no reverse mapping record is
+   available), the client SHOULD send an address literal
+
+   #+begin_src scheme :tangle ./client.ss
+     (import ./interface ./session :std/text/utf8 :std/io :std/net/ssl :std/interface :std/contract)
+     (export #t)
+
+     (defstruct (client-session session) ())
+
+     (defmethod {:init! client-session}
+       (lambda (self address (timeo #f))
+         (def sock (tcp-connect address timeo))
+         (session-put-socket! self sock)
+         (set! (session-address self) address)))
+
+     (defsyntax (defsmtp-command stx)
+       (syntax-case stx ()
+         ((_ name write)
+            #'(defmethod {name client-session}
+              (lambda (self (arg (u8vector)))
+     	   (using ((sess self :- client-session)
+     		   (smtp self : SMTP)
+     		   (w sess.writer :- BufferedWriter))
+     	     (w.write (string->utf8 write))
+     	     (smtp.send-command arg)
+     	     (smtp.read-lines)))))))
+
+
+     (defsmtp-command EHLO "EHLO ")
+     (defsmtp-command HELO "HELO ")
+     (defsmtp-command DATA "DATA")
+     (defsmtp-command MAIL "MAIL FROM:")
+     (defsmtp-command RCPT "RCPT TO:")
+     (defsmtp-command NOOP "NOOP ")
+     (defsmtp-command RSET "RSET")
+     (defsmtp-command VRFY "VRFY ")
+     (defsmtp-command QUIT "QUIT")
+   #+end_src
+
+   
+* RFC 2487 SMTP Service Extension for Secure SMTP over TLS
+
+https://datatracker.ietf.org/doc/html/rfc2487
+
+5. The STARTTLS Command
+
+   The format for the STARTTLS command is:
+
+   STARTTLS
+
+   with no parameters.
+
+   After the client gives the STARTTLS command, the server responds with
+   one of the following reply codes:
+
+   220 Ready to start TLS
+   501 Syntax error (no parameters allowed)
+   454 TLS not available due to temporary reason
+
+   #+begin_src scheme :tangle ./client.ss
+     (defsmtp-command STARTTLS "STARTTLS")
+   #+end_src
+* HACKING
+
+https://github.com/iraikov/chicken-smtp/blob/master/smtp.scm
+
+
+#+begin_src sh
+  sudo apt install postfix
+#+end_src
+
+#+begin_quote
+First, log in to your Gmail account and navigate to Security and search for app passwords
+
+https://myaccount.google.com/?pli=1
+
+Configure Postfix To Relay emails using Gmail SMTP Server
+
+Once here, create the app by selecting Mail
+
+
+Configure Postfix To Relay emails using Gmail SMTP Server 1
+
+https://computingforgeeks.com/configure-postfix-to-relay-emails-using-gmail-smtp/
+#+end_quote
+
+#+begin_quote
+https://wpaq.com/configure-postfix-smtp-relay/
+
+#+end_quote
+
+#+begin_src sh
+  cd /tmp/
+  sudo cat /etc/postfix/main.cf | sed 's/relayhost =.*$/relayhost = [smtp.gmail.com]:587/' > main.cf
+
+  cat >> main.cf <<EOF
+
+  #############################
+  # Enable SASL authentication
+  smtp_sasl_auth_enable = yes
+
+  # Disallow methods that allow anonymous authentication
+  smtp_sasl_security_options = noanonymous
+
+  # Location of sasl_passwd
+  smtp_sasl_password_maps = hash:/etc/postfix/sasl/passwd
+
+  EOF
+
+  echo '[smtp.gmail.com]:587 postfix@drewc.ca:PASS WORD COME HERE ' > passwd
+
+  sudo cp main.cf /etc/postfix/
+  sudo cp passwd /etc/postfix/sasl
+
+  sudo postmap /etc/postfix/sasl/passwd
+
+  sudo chown root:root /etc/postfix/sasl/passwd /etc/postfix/sasl/passwd.db
+  sudo chmod 0600 /etc/postfix/sasl/passwd /etc/postfix/sasl/passwd.db
+
+  sudo apt update
+  sudo apt install libsasl2-modules
+
+  sudo systemctl restart postfix
+#+end_src
+
+** Telnet
+#+begin_src sh
+ecm@maxbakuntu:~/src/gerbil$ rlwrap telnet localhost 25
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+220 maxbakuntu ESMTP Postfix (Ubuntu)
+EHLO drewc.ca
+250-maxbakuntu
+250-PIPELINING
+250-SIZE 10240000
+250-VRFY
+250-ETRN
+250-STARTTLS
+250-ENHANCEDSTATUSCODES
+250-8BITMIME
+250-DSN
+250-SMTPUTF8
+250 CHUNKING                                                                                                                                                                                                                          MAIL FROM: <test@drewc.ca>
+250 2.1.0 Ok
+RCPT TO: <me@drewc.ca>
+250 2.1.5 Ok
+DATA
+354 End data with <CR><LF>.<CR><LF>
+This is a test from telnet!
+
+.
+250 2.0.0 Ok: queued as ED040102036D
+QUIT
+221 2.0.0 Bye
+Connection closed by foreign host.
+#+end_src
