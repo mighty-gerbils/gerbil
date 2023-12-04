@@ -233,7 +233,8 @@ module.exports = {
                       'debug',
                       'profiler',
                       'optimizing',
-                      'bootstrap'
+                      'bootstrap',
+                      'release'
                   ]
               },
               { title: "< Back to Reference", path: '/reference/'}
