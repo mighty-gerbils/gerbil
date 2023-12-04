@@ -233,14 +233,17 @@ package: gerbil
 
 (def (main)
   (init!)
-  (let* ((cmdline      (command-line))
-         (program      (car cmdline))
-         (program-name (path-strip-directory program))
-         (args         (cdr cmdline)))
-    (if (string-prefix? "gx" program-name)
-      ;; a gerbil tool
-      (tool-main program-name args)
-      ;; our main -- process arguments and dispatch
-      (bach-main program-name args))))
+  (unwind-protect
+    (let* ((cmdline      (command-line))
+           (program      (car cmdline))
+           (program-name (path-strip-directory program))
+           (args         (cdr cmdline)))
+      (if (string-prefix? "gx" program-name)
+        ;; a gerbil tool
+        (tool-main program-name args)
+        ;; our main -- process arguments and dispatch
+        (bach-main program-name args)))
+    (with-catch void (cut force-output (current-output-port)))
+    (with-catch void (cut force-output (current-error-port)))))
 
 (##main-set! main)
