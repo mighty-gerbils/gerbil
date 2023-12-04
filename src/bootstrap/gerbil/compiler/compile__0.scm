@@ -1,10 +1,10 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1697117338)
+  (define gerbil/compiler/compile::timestamp 1701718670)
   (begin
     (define gxc#_g18463_
       (gx#core-deserialize-mark
-       '(0 (else . _else16755_) (hd . _hd16778_))
+       '(0 (hd . _hd16778_) (else . _else16755_))
        (gx#current-expander-context)))
     (define gxc#_g18464_
       (##structure
@@ -15,7 +15,7 @@
        (list gxc#_g18463_)))
     (define gxc#_g18469_
       (gx#core-deserialize-mark
-       '(0 (else . _else16816_) (hd . _hd16839_))
+       '(0 (hd . _hd16839_) (else . _else16816_))
        (gx#current-expander-context)))
     (define gxc#_g18470_
       (##structure
@@ -26,7 +26,7 @@
        (list gxc#_g18469_)))
     (define gxc#_g18475_
       (gx#core-deserialize-mark
-       '(0 (else . _else16878_) (hd . _hd16901_))
+       '(0 (hd . _hd16901_) (else . _else16878_))
        (gx#current-expander-context)))
     (define gxc#_g18476_
       (##structure
@@ -37,7 +37,7 @@
        (list gxc#_g18475_)))
     (define gxc#_g18481_
       (gx#core-deserialize-mark
-       '(0 (else . _else16941_) (hd . _hd16964_))
+       '(0 (hd . _hd16964_) (else . _else16941_))
        (gx#current-expander-context)))
     (define gxc#_g18482_
       (##structure
@@ -107,7 +107,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1698016981_)))))
             (let ((___kont1698216983_
                    (lambda (_L16770_)
@@ -160,7 +160,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1699416995_)))))
             (let ((___kont1699616997_
                    (lambda (_L16831_)
@@ -213,7 +213,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1700817009_)))))
             (let ((___kont1701017011_
                    (lambda (_L16893_)
@@ -269,7 +269,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1702217023_)))))
             (let ((___kont1702417025_
                    (lambda (_L16956_)
@@ -1835,7 +1835,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1642616432_))))
                  (_g1642416469_
                   (lambda (_g1642616438_)
@@ -1921,7 +1921,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1635216362_))))
                  (_g1635016415_
                   (lambda (_g1635216368_)
@@ -2030,7 +2030,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1627516288_))))
                  (_g1627316345_
                   (lambda (_g1627516294_)
@@ -2143,7 +2143,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1619816211_))))
                  (_g1619616268_
                   (lambda (_g1619816217_)
@@ -2256,7 +2256,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1612016133_))))
                  (_g1611816191_
                   (lambda (_g1612016139_)
@@ -2376,7 +2376,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1604316056_))))
                  (_g1604116113_
                   (lambda (_g1604316062_)
@@ -2489,7 +2489,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1591815942_))))
                  (_g1591616036_
                   (lambda (_g1591815948_)
@@ -2687,7 +2687,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1576415795_))))
                  (_g1576215911_
                   (lambda (_g1576415801_)
@@ -2953,7 +2953,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1568715700_))))
                  (_g1568515757_
                   (lambda (_g1568715706_)
@@ -3066,7 +3066,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1559315608_))))
                  (_g1559115680_
                   (lambda (_g1559315614_)
@@ -3209,7 +3209,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1552315536_))))
                  (_g1552115586_
                   (lambda (_g1552315542_)
@@ -3303,7 +3303,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1545615469_))))
                  (_g1545415517_
                   (lambda (_g1545615475_)
@@ -3387,7 +3387,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1539915409_))))
                  (_g1539715450_
                   (lambda (_g1539915415_)
@@ -3974,7 +3974,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1509215098_))))
                    (_g1509015130_
                     (lambda (_g1509215104_)
@@ -4019,7 +4019,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1505215058_))))
                  (_g1505015084_
                   (lambda (_g1505215064_)
@@ -4060,7 +4060,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1715317154_)))))
             (let ((___kont1715517156_
                    (lambda (_L15031_ _L15032_)
@@ -4456,7 +4456,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1477714783_))))
                  (_g1477514811_
                   (lambda (_g1477714789_)
@@ -4500,7 +4500,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1452414537_))))
                  (_g1452214771_
                   (lambda (_g1452414543_)
@@ -4564,7 +4564,7 @@
                          (not safe))
                        (gx#raise-syntax-error
                         '#f
-                        '"Bad syntax"
+                        '"Bad syntax; invalid match target"
                         ___stx1726117262_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ((___kont1726317264_
@@ -4624,7 +4624,7 @@
                                             (declare (not safe))
                                             (gx#raise-syntax-error
                                              '#f
-                                             '"Bad syntax"
+                                             '"Bad syntax; invalid match target"
                                              ___stx1723117232_)))))
                                   (let ((___kont1723317234_
                                          (lambda (_L14704_)
@@ -5337,7 +5337,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1441814431_))))
                  (_g1441614479_
                   (lambda (_g1441814437_)
@@ -5477,7 +5477,7 @@
                                   (declare (not safe))
                                   (gx#raise-syntax-error
                                    '#f
-                                   '"Bad syntax"
+                                   '"Bad syntax; invalid match target"
                                    ___stx1729317294_)))))
                         (let ((___kont1729517296_
                                (lambda (_L14293_ _L14294_ _L14295_) '#t))
@@ -7476,7 +7476,7 @@
                                   (declare (not safe))
                                   (gx#raise-syntax-error
                                    '#f
-                                   '"Bad syntax"
+                                   '"Bad syntax; invalid match target"
                                    ___stx1743717438_)))))
                         (let ((___kont1743917440_
                                (lambda (_L13569_ _L13570_ _L13571_)
@@ -8646,7 +8646,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1292312947_))))
                    (_g1292113052_
                     (lambda (_g1292312953_)
@@ -9549,7 +9549,7 @@
                                     (declare (not safe))
                                     (gx#raise-syntax-error
                                      '#f
-                                     '"Bad syntax"
+                                     '"Bad syntax; invalid match target"
                                      ___stx1774817749_)))))
                           (let ((___kont1775017751_
                                  (lambda (_L12359_ _L12360_)
@@ -9560,7 +9560,7 @@
                                                (declare (not safe))
                                                (gx#raise-syntax-error
                                                 '#f
-                                                '"Bad syntax"
+                                                '"Bad syntax; invalid match target"
                                                 ___stx1770417705_)))))
                                      (let ((___kont1770617707_
                                             (lambda (_L12473_ _L12474_)
@@ -9862,7 +9862,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1220112214_))))
                    (_g1219912263_
                     (lambda (_g1220112220_)
@@ -9986,7 +9986,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          ___stx1776217763_)))))
               (let ((___kont1776417765_
                      (lambda (_L12176_)
@@ -10111,7 +10111,7 @@
                                     (declare (not safe))
                                     (gx#raise-syntax-error
                                      '#f
-                                     '"Bad syntax"
+                                     '"Bad syntax; invalid match target"
                                      ___stx1783617837_)))))
                           (let ((___kont1783817839_
                                  (lambda (_L11899_ _L11900_)
@@ -10122,7 +10122,7 @@
                                                (declare (not safe))
                                                (gx#raise-syntax-error
                                                 '#f
-                                                '"Bad syntax"
+                                                '"Bad syntax; invalid match target"
                                                 ___stx1779217793_)))))
                                      (let ((___kont1779417795_
                                             (lambda (_L12047_ _L12048_)
@@ -10456,7 +10456,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1177511788_))))
                    (_g1177311837_
                     (lambda (_g1177511794_)
@@ -10602,7 +10602,7 @@
                                               (declare (not safe))
                                               (gx#raise-syntax-error
                                                '#f
-                                               '"Bad syntax"
+                                               '"Bad syntax; invalid match target"
                                                ___stx1785017851_)))))
                                     (let ((___kont1785217853_
                                            (lambda (_L11732_ _L11733_)
@@ -10846,7 +10846,7 @@
                                               (declare (not safe))
                                               (gx#raise-syntax-error
                                                '#f
-                                               '"Bad syntax"
+                                               '"Bad syntax; invalid match target"
                                                _g1151111524_))))
                                          (_g1150911578_
                                           (lambda (_g1151111530_)
@@ -10954,7 +10954,7 @@
                                   (declare (not safe))
                                   (gx#raise-syntax-error
                                    '#f
-                                   '"Bad syntax"
+                                   '"Bad syntax; invalid match target"
                                    ___stx1789417895_)))))
                         (let ((___kont1789617897_
                                (lambda (_L11465_ _L11466_) '#t))
@@ -11011,7 +11011,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1135511368_))))
                    (_g1135311417_
                     (lambda (_g1135511374_)
@@ -11390,7 +11390,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1111011119_))))
                    (_g1110811156_
                     (lambda (_g1111011125_)
@@ -11468,7 +11468,7 @@
                                     (declare (not safe))
                                     (gx#raise-syntax-error
                                      '#f
-                                     '"Bad syntax"
+                                     '"Bad syntax; invalid match target"
                                      ___stx1794117942_)))))
                           (let ((___kont1794317944_
                                  (lambda (_L11032_ _L11033_ _L11034_ _L11035_)
@@ -11885,7 +11885,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1062810638_))))
                    (_g1062610846_
                     (lambda (_g1062810644_)
@@ -11936,7 +11936,7 @@
                                                          (declare (not safe))
                                                          (gx#raise-syntax-error
                                                           '#f
-                                                          '"Bad syntax"
+                                                          '"Bad syntax; invalid match target"
                                                           ___stx1805718058_)))))
                                                (let ((___kont1805918060_
                                                       (lambda ()
@@ -11982,7 +11982,7 @@
                                               (declare (not safe))
                                               (gx#raise-syntax-error
                                                '#f
-                                               '"Bad syntax"
+                                               '"Bad syntax; invalid match target"
                                                ___stx1801118012_)))))
                                     (let ((___kont1801318014_
                                            (lambda ()
@@ -12220,7 +12220,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1812918130_)))))
             (let ((___kont1813118132_
                    (lambda (_L10478_ _L10479_)
@@ -12279,7 +12279,7 @@
                                                    (declare (not safe))
                                                    (gx#raise-syntax-error
                                                     '#f
-                                                    '"Bad syntax"
+                                                    '"Bad syntax; invalid match target"
                                                     ___stx1808318084_)))))
                                          (let ((___kont1808518086_
                                                 (lambda ()
@@ -12698,7 +12698,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g1022910246_))))
                    (_g1022710308_
                     (lambda (_g1022910252_)
@@ -12867,7 +12867,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1017610185_))))
                  (_g1017410221_
                   (lambda (_g1017610191_)
@@ -12929,7 +12929,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        _g1010910122_))))
                  (_g1010710170_
                   (lambda (_g1010910128_)
@@ -13024,7 +13024,10 @@
                   (lambda (_g99219934_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g99219934_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g99219934_))))
                  (_g991910103_
                   (lambda (_g99219940_)
                     (if (let ()
@@ -13134,7 +13137,7 @@
                                        (declare (not safe))
                                        (gx#raise-syntax-error
                                         '#f
-                                        '"Bad syntax"
+                                        '"Bad syntax; invalid match target"
                                         ___stx1816718168_)))))
                              (let ((___kont1816918170_
                                     (lambda ()
@@ -13312,7 +13315,10 @@
                   (lambda (_g97339746_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g97339746_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g97339746_))))
                  (_g97319915_
                   (lambda (_g97339752_)
                     (if (let ()
@@ -13422,7 +13428,7 @@
                                        (declare (not safe))
                                        (gx#raise-syntax-error
                                         '#f
-                                        '"Bad syntax"
+                                        '"Bad syntax; invalid match target"
                                         ___stx1821318214_)))))
                              (let ((___kont1821518216_
                                     (lambda ()
@@ -13599,7 +13605,10 @@
                   (lambda (_g96509667_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g96509667_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g96509667_))))
                  (_g96489727_
                   (lambda (_g96509673_)
                     (if (let ()
@@ -13723,7 +13732,10 @@
                   (lambda (_g95519572_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g95519572_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g95519572_))))
                  (_g95499644_
                   (lambda (_g95519578_)
                     (if (let ()
@@ -13870,7 +13882,10 @@
                   (lambda (_g94689485_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g94689485_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g94689485_))))
                  (_g94669545_
                   (lambda (_g94689491_)
                     (if (let ()
@@ -13994,7 +14009,10 @@
                   (lambda (_g93699390_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g93699390_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g93699390_))))
                  (_g93679462_
                   (lambda (_g93699396_)
                     (if (let ()
@@ -14141,7 +14159,10 @@
                   (lambda (_g91659182_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g91659182_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g91659182_))))
                  (_g91639363_
                   (lambda (_g91659188_)
                     (if (let ()
@@ -14292,7 +14313,7 @@
                                                (declare (not safe))
                                                (gx#raise-syntax-error
                                                 '#f
-                                                '"Bad syntax"
+                                                '"Bad syntax; invalid match target"
                                                 ___stx1825918260_)))))
                                      (let ((___kont1826118262_
                                             (lambda ()
@@ -14471,7 +14492,10 @@
                   (lambda (_g89458966_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g89458966_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g89458966_))))
                  (_g89439159_
                   (lambda (_g89458972_)
                     (if (let ()
@@ -14644,7 +14668,7 @@
                                                        (declare (not safe))
                                                        (gx#raise-syntax-error
                                                         '#f
-                                                        '"Bad syntax"
+                                                        '"Bad syntax; invalid match target"
                                                         ___stx1830518306_)))))
                                              (let ((___kont1830718308_
                                                     (lambda ()
@@ -14972,7 +14996,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g88018807_))))
                    (_g87998891_
                     (lambda (_g88018813_)
@@ -15540,7 +15564,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g86258634_))))
                    (_g86238676_
                     (lambda (_g86258640_)
@@ -15632,7 +15656,10 @@
                   (lambda (_g85488561_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g85488561_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g85488561_))))
                  (_g85468609_
                   (lambda (_g85488567_)
                     (if (let ()
@@ -15723,7 +15750,10 @@
                   (lambda (_g84988504_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g84988504_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g84988504_))))
                  (_g84968542_
                   (lambda (_g84988510_)
                     (if (let ()
@@ -15775,7 +15805,10 @@
                   (lambda (_g84068412_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g84068412_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g84068412_))))
                  (_g84048491_
                   (lambda (_g84068418_)
                     (if (let ()
@@ -15833,7 +15866,7 @@
                                              (declare (not safe))
                                              (gx#raise-syntax-error
                                               '#f
-                                              '"Bad syntax"
+                                              '"Bad syntax; invalid match target"
                                               _g84478453_))))
                                         (_g84458488_
                                          (lambda (_g84478459_)
@@ -15935,7 +15968,10 @@
                   (lambda (_g83378347_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g83378347_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g83378347_))))
                  (_g83358399_
                   (lambda (_g83378353_)
                     (if (let ()
@@ -16255,7 +16291,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g80968102_))))
                    (_g80948246_
                     (lambda (_g80968108_)
@@ -16550,7 +16586,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g79047910_))))
                    (_g79028082_
                     (lambda (_g79047916_)
@@ -16785,7 +16821,10 @@
                   (lambda (_g78627868_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g78627868_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g78627868_))))
                  (_g78607894_
                   (lambda (_g78627874_)
                     (if (let ()
@@ -16847,7 +16886,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g77357759_))))
                    (_g77337850_
                     (lambda (_g77357765_)
@@ -17076,7 +17115,7 @@
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; invalid match target"
                          _g75267539_))))
                    (_g75247689_
                     (lambda (_g75267545_)
@@ -17141,7 +17180,7 @@
                            (declare (not safe))
                            (gx#raise-syntax-error
                             '#f
-                            '"Bad syntax"
+                            '"Bad syntax; invalid match target"
                             ___stx1838218383_)))))
                  (let ((___kont1838418385_
                         (lambda (_L7676_)
@@ -17243,7 +17282,10 @@
                   (lambda (_g74207433_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g74207433_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g74207433_))))
                  (_g74187516_
                   (lambda (_g74207439_)
                     (if (let ()
@@ -17319,7 +17361,7 @@
                          (declare (not safe))
                          (gx#raise-syntax-error
                           '#f
-                          '"Bad syntax"
+                          '"Bad syntax; invalid match target"
                           _g74897492_))))
                     (_g74877513_
                      (lambda (_g74897498_)
@@ -17442,7 +17484,10 @@
                   (lambda (_g73527365_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g73527365_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g73527365_))))
                  (_g73507413_
                   (lambda (_g73527371_)
                     (if (let ()
@@ -17929,7 +17974,10 @@
                   (lambda (_g70547063_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g70547063_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g70547063_))))
                  (_g70527104_
                   (lambda (_g70547069_)
                     (if (let ()
@@ -18005,7 +18053,10 @@
                   (lambda (_g69816994_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g69816994_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g69816994_))))
                  (_g69797047_
                   (lambda (_g69817000_)
                     (if (let ()
@@ -18108,7 +18159,10 @@
                   (lambda (_g69426948_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g69426948_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g69426948_))))
                  (_g69406974_
                   (lambda (_g69426954_)
                     (if (let ()
@@ -18142,7 +18196,10 @@
                   (lambda (_g69046910_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g69046910_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g69046910_))))
                  (_g69026936_
                   (lambda (_g69046916_)
                     (if (let ()
@@ -18179,7 +18236,10 @@
                   (lambda (_g68376850_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g68376850_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g68376850_))))
                  (_g68356898_
                   (lambda (_g68376856_)
                     (if (let ()
@@ -18257,7 +18317,10 @@
                   (lambda (_g67706783_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g67706783_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g67706783_))))
                  (_g67686831_
                   (lambda (_g67706789_)
                     (if (let ()
@@ -18336,7 +18399,10 @@
                   (lambda (_g66866701_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g66866701_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g66866701_))))
                  (_g66846762_
                   (lambda (_g66866707_)
                     (if (let ()
@@ -18449,7 +18515,10 @@
                   (lambda (_g66196632_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g66196632_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g66196632_))))
                  (_g66176680_
                   (lambda (_g66196638_)
                     (if (let ()
@@ -18527,7 +18596,10 @@
                   (lambda (_g65526565_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g65526565_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g65526565_))))
                  (_g65506613_
                   (lambda (_g65526571_)
                     (if (let ()
@@ -18608,7 +18680,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx1841218413_)))))
             (let ((___kont1841418415_
                    (lambda (_L6516_ _L6517_)
@@ -18798,7 +18870,10 @@
                   (lambda (_g63236340_)
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _g63236340_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; invalid match target"
+                       _g63236340_))))
                  (_g63216413_
                   (lambda (_g63236346_)
                     (if (let ()

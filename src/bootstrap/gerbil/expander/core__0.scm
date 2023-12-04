@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1697117331)
+  (define gerbil/expander/core::timestamp 1701718654)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -958,7 +958,7 @@
                                   _stx9556_
                                   (gx#raise-syntax-error
                                    '#f
-                                   '"Bad syntax"
+                                   '"Bad syntax; no binding for head"
                                    _stx9556_))))))))
           (let* ((_e95599567_ _stx9556_)
                  (_E95659571_ (lambda () _stx9556_))
@@ -1010,7 +1010,7 @@
                                  _r9499_)
                         (gx#raise-syntax-error
                          '#f
-                         '"Bad syntax"
+                         '"Bad syntax; splice body isn't a list"
                          _stx9328_
                          _hd9496_))))
                  (_expand-cond-expand9334_
@@ -1025,7 +1025,7 @@
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
-                               '"Bad syntax"
+                               '"Bad syntax; invalid syntax-case clause"
                                _e94449454_)))
                            (_E94459488_
                             (lambda ()
@@ -1167,7 +1167,10 @@
           (let* ((_e93389345_ _stx9328_)
                  (_E93409349_
                   (lambda ()
-                    (gx#raise-syntax-error '#f '"Bad syntax" _e93389345_)))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid syntax-case clause"
+                     _e93389345_)))
                  (_E93399363_
                   (lambda ()
                     (if (gx#stx-pair? _e93389345_)
@@ -1272,7 +1275,7 @@
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
-                               '"Bad syntax"
+                               '"Bad syntax; invalid syntax-case clause"
                                _e92059220_)))
                            (_E92089243_
                             (lambda ()
@@ -1305,7 +1308,7 @@
                       (gx#stx-andmap gx#core-resolve-identifier _body9238_)
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; bad cond-expannd combinator"
                        _stx9104_
                        _combinator9236_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1365,7 +1368,7 @@
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
-                               '"Bad syntax"
+                               '"Bad syntax; invalid syntax-case clause"
                                _e91389146_)))
                            (_E91409154_
                             (lambda ()
@@ -1387,7 +1390,7 @@
                                                     (lambda ()
                                                       (gx#raise-syntax-error
                                                        '#f
-                                                       '"Bad syntax"
+                                                       '"Bad syntax; invalid syntax-case clause"
                                                        _e91699176_)))
                                                    (_E91709196_
                                                     (lambda ()
@@ -1406,7 +1409,7 @@
                                     _body9194_
                                     (gx#raise-syntax-error
                                      '#f
-                                     '"Bad syntax"
+                                     '"Bad syntax; clauses after else"
                                      _stx9104_
                                      _hd9166_))
                                 (if (_satisfied?9106_ _condition9192_)
@@ -1422,7 +1425,10 @@
           (let* ((_e91089115_ _stx9104_)
                  (_E91109119_
                   (lambda ()
-                    (gx#raise-syntax-error '#f '"Bad syntax" _e91089115_)))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid syntax-case clause"
+                     _e91089115_)))
                  (_E91099133_
                   (lambda ()
                     (if (gx#stx-pair? _e91089115_)
@@ -1442,7 +1448,10 @@
         (let* ((_e90499059_ _stx9047_)
                (_E90519063_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e90499059_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e90499059_)))
                (_E90509090_
                 (lambda ()
                   (if (gx#stx-pair? _e90499059_)
@@ -1522,7 +1531,7 @@
                    _$e9027_)
                   (gx#raise-syntax-error
                    '#f
-                   '"Bad syntax"
+                   '"Bad syntax; no expander method"
                    _stx9017_
                    _method9018_))))))
     (define gx#core-apply-expander__0
@@ -1549,7 +1558,10 @@
                   _g10134_))))))
     (define gx#expander::apply-macro-expander
       (lambda (_self9012_ _stx9013_)
-        (gx#raise-syntax-error '#f '"Bad syntax" _stx9013_)))
+        (gx#raise-syntax-error
+         '#f
+         '"Bad syntax; bottom method for apply-macro-expander"
+         _stx9013_)))
     (bind-method!
      gx#expander::t
      'apply-macro-expander
@@ -1658,7 +1670,7 @@
                           (lambda ()
                             (gx#raise-syntax-error
                              '#f
-                             '"Bad syntax"
+                             '"Bad syntax; invalid syntax-case clause"
                              _e82958302_)))
                          (_E82968320_
                           (lambda ()

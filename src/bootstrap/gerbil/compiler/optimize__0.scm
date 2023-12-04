@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize::timestamp 1697117343)
+  (define gerbil/compiler/optimize::timestamp 1701718675)
   (begin
     (define gxc#optimizer-info-init!
       (lambda ()
@@ -427,7 +427,10 @@
                 (lambda (_g6921269218_)
                   (let ()
                     (declare (not safe))
-                    (gx#raise-syntax-error '#f '"Bad syntax" _g6921269218_))))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid match target"
+                     _g6921269218_))))
                (_g6921069245_
                 (lambda (_g6921269224_)
                   (if (let ()
@@ -474,7 +477,10 @@
                 (lambda (_g6915269162_)
                   (let ()
                     (declare (not safe))
-                    (gx#raise-syntax-error '#f '"Bad syntax" _g6915269162_))))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid match target"
+                     _g6915269162_))))
                (_g6915069206_
                 (lambda (_g6915269168_)
                   (if (let ()
@@ -596,7 +602,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid match target"
                        ___stx6938169382_)))))
             (let ((___kont6938369384_
                    (lambda (_L69120_)
@@ -922,7 +928,7 @@
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
-                     '"Bad syntax"
+                     '"Bad syntax; invalid match target"
                      ___stx6943969440_)))))
           (let ((___kont6944169442_
                  (lambda (_L68909_ _L68910_ _L68911_ _L68912_ _L68913_)
