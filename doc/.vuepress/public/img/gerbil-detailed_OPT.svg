@@ -70,7 +70,7 @@
     <dc:format>image/svg+xml</dc:format>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
     <dc:title/>
-    <cc:license rdf:resource="https://github.com/vyzo/gerbil#logo"/>
+    <cc:license rdf:resource="https://github.com/mighty-gerbils/gerbil#logo"/>
     <dc:creator>
      <cc:Agent>
       <dc:title>Brad Christensen</dc:title>

@@ -17,7 +17,7 @@
       <dc:title>Brad Christensen</dc:title>
      </cc:Agent>
     </dc:creator>
-    <cc:license rdf:resource="https://github.com/vyzo/gerbil#logo"/>
+    <cc:license rdf:resource="https://github.com/mighty-gerbils/gerbil#logo"/>
    </cc:Work>
   </rdf:RDF>
  </metadata>

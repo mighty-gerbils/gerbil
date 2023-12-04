@@ -3,7 +3,7 @@
 ;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
 ;;
 ;; Author: Dimitris Vyzovitis <vyzo@hackzen.org>
-;; URL: https://github.com/vyzo/gerbil
+;; URL: https://github.com/mighty-gerbils/gerbil
 ;; Version: 1.0
 ;; Keywords: gerbil major-mode
 ;;

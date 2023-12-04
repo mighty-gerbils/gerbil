@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vyzo/gerbil.git"
+    "url": "git+https://github.com/mighty-gerbils/gerbil.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/vyzo/gerbil/issues"
+    "url": "https://github.com/mighty-gerbils/gerbil/issues"
   },
-  "homepage": "https://github.com/vyzo/gerbil#readme",
+  "homepage": "https://github.com/mighty-gerbils/gerbil#readme",
   "dependencies": {
     "vuepress": "^1.1.0"
   },
