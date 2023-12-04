@@ -489,3 +489,14 @@ namespace: #f
 
 (defalias random-bytes random-u8vector)
 (defalias random-source-make-bytes random-source-make-u8vectors)
+
+(defalias s8vector-ref-set! s8vector-set!)
+(defalias u8vector-ref-set! u8vector-set!)
+(defalias s16vector-ref-set! s16vector-set!)
+(defalias u16vector-ref-set! u16vector-set!)
+(defalias s32vector-ref-set! s32vector-set!)
+(defalias u32vector-ref-set! u32vector-set!)
+(defalias s64vector-ref-set! s64vector-set!)
+(defalias u64vector-ref-set! u64vector-set!)
+(defalias f32vector-ref-set! f32vector-set!)
+(defalias f64vector-ref-set! f64vector-set!)
