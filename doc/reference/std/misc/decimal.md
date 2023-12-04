@@ -54,14 +54,30 @@ i.e. a rational number that is not a floating-point number.
    exponent-allowed: (exponent-allowed_ #f)) -> decimal
 ```
 
-`parse-decimal` expects and parses a decimal number on an `input`,
+`parse-decimal` parses a decimal number on a `input`
 with the options specifed via keyword arguments.
 
-The `input` will be cast to a `BufferedStringReader` using
+The `input` can be a string, input port, BufferedStringReader, StringReader, or Reader,
+and will be cast to a `BufferedStringReader` using
 [`open-buffered-string-reader`](../stdio.md#open-buffered-string-reader).
 `parse-decimal` will then side-effect this reader as it parses,
 and finally return the decimal number,
-or raises a `parse-error` (from `:std/parser/base`).
+or raise a `parse-error` (from `:std/parser/base`).
+
+The options are as for `ll1-decimal` below.
+
+## ll1-decimal
+```scheme
+(ll1-decimal
+   reader
+   sign-allowed?: (sign-allowed? #t)
+   decimal-mark: (decimal-mark #\.)
+   group-separator: (group-separator_ #f)
+   exponent-allowed: (exponent-allowed_ #f)) -> decimal
+```
+`parse-decimal` parses a decimal number from a `reader` object
+that satisfies the `PeekableStringReader` interface,
+with the options specifed via keyword arguments.
 
 The keyword arguments `decimal-mark` and `group-separator` are each a character or false,
 and specify optional allowed decimal mark and group separator characters,

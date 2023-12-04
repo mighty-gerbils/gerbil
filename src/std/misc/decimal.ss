@@ -1,6 +1,7 @@
 (export
   decimal?
   ll1-decimal
+  parse-decimal
   string->decimal
   write-decimal
   decimal->string
@@ -36,6 +37,7 @@
            (power-of-5 (first-value (factor-out-powers-of-2 (denominator x))))
            #t)))
 
+;; If n is a power of 5, return which power that is, otherwise return #f
 ;; : Integer -> (OrFalse Nat)
 (def (power-of-5 n)
   (and (exact-integer? n) (positive? n)
@@ -48,7 +50,8 @@
                 (let (l (power-of-5 q))
                   (and l (+ l (* 440 k)))))))))
 
-;; `ll1-decimal` expects and parses a decimal number on the PeekableStringReader.
+;; LL(1) parser for a decimal number, in a style compatible with std/parser/ll1.
+;; `ll1-decimal` parses a decimal number from a PeekableStringReader.
 ;; The character parameters `decimal-mark` and `group-separator` provide
 ;; support for different (typically cultural) numerical conventions.
 ;; For convenience, a `group-separator` of #t will be treated as the comma character.
@@ -63,12 +66,11 @@
 ;; before and/or after calling `ll1-decimal`.
 ;; : PeekableStringReader sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) -> Decimal
 (def (ll1-decimal
-      pre-reader
+      reader
       sign-allowed?: (sign-allowed? #t)
       decimal-mark: (decimal-mark #\.)
       group-separator: (group-separator_ #f)
       exponent-allowed: (exponent-allowed_ #f))
-  (def reader (PeekableStringReader (open-buffered-string-reader pre-reader)))
   (check-argument (boolean? sign-allowed?) "boolean" sign-allowed?)
   (check-argument (or (char? decimal-mark) (boolean? decimal-mark)) "char or boolean" decimal-mark)
   (check-argument (or (boolean? group-separator_) (char? group-separator_))
@@ -175,6 +177,17 @@
          (else
           (done))))
       (ll1-left-digit-or-group-separator))))
+
+;; Cast some input to a buffered-string-reader and parse it as a decimal
+;; The input can be a string, input port, BufferedStringReader, StringReader, or Reader.
+(def (parse-decimal input
+                    sign-allowed?: (sign-allowed? #t)
+                    decimal-mark: (decimal-mark #\.)
+                    group-separator: (group-separator #f)
+                    exponent-allowed: (exponent-allowed #f))
+  (ll1-decimal (PeekableStringReader (open-buffered-string-reader input))
+               sign-allowed?: sign-allowed? decimal-mark: decimal-mark
+               group-separator: group-separator exponent-allowed: exponent-allowed))
 
 ;; String sign-allowed?:Bool decimal-mark:Char group-separator:(Or Char Bool) exponent-allowed:(or Bool String) allow-leading-whitespace?:Bool allow-trailing-whitespace?:Bool start:Nat end:(OrFalse Nat) -> Decimal
 (def (string->decimal s
