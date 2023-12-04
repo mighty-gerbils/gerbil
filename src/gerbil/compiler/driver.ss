@@ -139,14 +139,13 @@ namespace: gxc
       (write `(define builtin-modules
                 (append (quote ,builtin-modules) libgerbil-builtin-modules)))
       (write `(define (gerbil-main)
-                (dynamic-wind
-                    void
-                    (lambda ()
-                      (gerbil-runtime-init! builtin-modules)
-                      (apply ,mod-main (cdr (command-line))))
-                    (lambda ()
-                      (with-catch void (lambda () (force-output (current-output-port))))
-                      (with-catch void (lambda () (force-output (current-error-port))))))))
+                (with-unwind-protect
+                 (lambda ()
+                   (gerbil-runtime-init! builtin-modules)
+                   (apply ,mod-main (cdr (command-line))))
+                 (lambda ()
+                   (with-catch void (lambda () (force-output (current-output-port))))
+                   (with-catch void (lambda () (force-output (current-error-port))))))))
       (write '(gerbil-main))
       (newline)))
 
