@@ -133,6 +133,11 @@
   (pregexp-match "([a-z ]+;)*" "lather; rinse; repeat;")
   ("lather; rinse; repeat;" " repeat;")
 
+  (pregexp-match "^$" "")
+  ("")
+
+  (pregexp-match "^$" "" 0 0)
+  ("")
   )
 
 (define date-re
