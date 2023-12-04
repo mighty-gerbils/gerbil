@@ -26,9 +26,8 @@ regarding platforms you can't support yourself.
 - Update the version everywhere in in-repo release scripts (homebrew, guix)
 - Generate a `src/gerbil/runtime/version.ss` for the release
 - Temporarily remove `src/gerbil/runtime/version.ss` from the `.gitignore`
-- **TODO: tweak the build scripts so they work better without `git`?**
-- **TODO: also handle generation of Gambit version in `src/gambit/include/stamp.h` or some such?**
-- Include a summary of changes in the PR. **TODO: in the commit message? in a file?**
+- Include a high-level summary of changes in the
+  [CHANGELOG.md](https://github.com/mighty-gerbils/gerbil/blob/master/CHANGELOG.md)
 - Check that the release scripts work on macOS, etc.
 Note that the website will be automatically re-generated from the PR.
 
@@ -36,16 +35,20 @@ Note that the website will be automatically re-generated from the PR.
 Once the release PR is merged:
 - Create a release announcement on
   [GitHub discussions](https://github.com/mighty-gerbils/gerbil/discussions),
-  with a `release` label.
-- Create a release on GitHub. **TODO: what URL? what other details?**
-- GitHub will automatically generate a template summarizing the PRs included / bugs fixed.
+  with a `release` label, a one-paragraph blurb introduction,
+  and the contents of the CHANGELOG.md entry above.
+  See e.g. [this previous announcement](https://github.com/mighty-gerbils/gerbil/discussions/1009)
+- Create [a release on GitHub](https://github.com/mighty-gerbils/gerbil/releases).
+  GitHub will automatically generate a template summarizing the PRs included / bugs fixed.
   Use that as the basis for the GitHub release note page.
+  See e.g. [this previous release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18).
 
 ## Update Tarballs
 - Generate tarball for the source code, including Gambit module
-- Generate binary tarball for Linux x86-64.
-  **TODO: include .so's for sqlite, etc.? in a separate tarbal?**
-- Publish the tarballs as artifacts on GitHub. **TODO: page URL?**
+- Generate binary tarball for Linux x86-64. - ask @ober for help
+- Generate rpm and deb packages for Linux x86-64. - ask @ober for help
+- Publish the tarballs as artifacts on GitHub on the
+  [release page](https://github.com/mighty-gerbils/gerbil/releases/)
 
 ## Update Other Build Recipes
 - Update Homebrew (macOS) — ask @drewc for help
@@ -59,5 +62,12 @@ Assuming the release happened on the `master` branch, undo it:
 
 ## Announce the Release to the World
 Point to the announcement page on GitHub.
-- Announce on [twitter](https://twitter.com)
-- Announce on reddit. **TODO: what subreddits?**
+- Announce [on gitter](https://app.element.io/#/room/#gerbil-scheme_community:gitter.im)
+- Announce on reddit: [r/scheme](https://www.reddit.com/r/scheme/).
+  See e.g. [this previous announcement](https://www.reddit.com/r/scheme/comments/176f9rt/gerbil_v018_has_been_released/)
+- Announce on [Hacker News](https://news.ycombinator.com/).
+  See e.g. [this previous announcement](https://news.ycombinator.com/item?id=37864501)
+- Announce on [Lobsters](https://lobste.rs/).
+  See e.g. [this previous announcement](https://lobste.rs/s/aojohz/gerbil_v0_18_released)
+- Announce on [twitter](https://twitter.com).
+  See e.g. [this previous announcement](https://twitter.com/Ngnghm/status/1712612201935073297)
