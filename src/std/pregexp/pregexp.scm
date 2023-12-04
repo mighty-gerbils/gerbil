@@ -703,10 +703,10 @@
            (start
             (if start
               (if (fixnum? start)
-                (if (and (>= start 0) (< start str-len))
+                (if (<= 0 start str-len)
                   start
                   (raise-bad-argument 'pregexp "start index: out of range" start))
-                (raise-bad-argument 'pregexp "nonnegative fixnum" start))
+                (raise-bad-argument 'pregexp "non-negative fixnum or #f" start))
               0))
            (end
             (if end
