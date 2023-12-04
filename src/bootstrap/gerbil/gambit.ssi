@@ -541,6 +541,14 @@ namespace: #f
           (current-processor current-processor)
           (processor-id processor-id))
          (%#define-alias random-bytes random-u8vector)
-         (%#define-alias
-          random-source-make-bytes
-          random-source-make-u8vectors))
+         (%#define-alias random-source-make-bytes random-source-make-u8vectors)
+         (%#define-alias s8vector-ref-set! s8vector-set!)
+         (%#define-alias u8vector-ref-set! u8vector-set!)
+         (%#define-alias s16vector-ref-set! s16vector-set!)
+         (%#define-alias u16vector-ref-set! u16vector-set!)
+         (%#define-alias s32vector-ref-set! s32vector-set!)
+         (%#define-alias u32vector-ref-set! u32vector-set!)
+         (%#define-alias s64vector-ref-set! s64vector-set!)
+         (%#define-alias u64vector-ref-set! u64vector-set!)
+         (%#define-alias f32vector-ref-set! f32vector-set!)
+         (%#define-alias f64vector-ref-set! f64vector-set!))

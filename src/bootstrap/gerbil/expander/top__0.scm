@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/top::timestamp 1697117331)
+  (define gerbil/expander/top::timestamp 1701718655)
   (begin
     (declare (not safe))
     (define gx#core-expand-begin%
@@ -23,7 +23,7 @@
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
-                               '"Bad syntax"
+                               '"Bad syntax; invalid syntax-case clause"
                                _e1360113630_)))
                            (_E1362113646_
                             (lambda ()
@@ -292,7 +292,10 @@
         (let* ((_e1344213449_ _stx13441_)
                (_E1344413453_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1344213449_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1344213449_)))
                (_E1344313467_
                 (lambda ()
                   (if (gx#stx-pair? _e1344213449_)
@@ -315,7 +318,10 @@
         (let* ((_e1338613399_ _stx13385_)
                (_E1338813403_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1338613399_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1338613399_)))
                (_E1338713435_
                 (lambda ()
                   (if (gx#stx-pair? _e1338613399_)
@@ -382,7 +388,7 @@
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
-                               '"Bad syntax"
+                               '"Bad syntax; invalid syntax-case clause"
                                _e1327513300_)))
                            (_E1329113316_
                             (lambda ()
@@ -523,7 +529,7 @@
                                                  (lambda ()
                                                    (gx#raise-syntax-error
                                                     '#f
-                                                    '"Bad syntax"
+                                                    '"Bad syntax; empty body"
                                                     _stx13109_)))
                                                 (_K1314013159_
                                                  (lambda (_expr13157_)
@@ -683,7 +689,10 @@
         (let* ((_e1304813055_ _stx13047_)
                (_E1305013059_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1304813055_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1304813055_)))
                (_E1304913105_
                 (lambda ()
                   (if (gx#stx-pair? _e1304813055_)
@@ -702,7 +711,7 @@
                                              (lambda ()
                                                (gx#raise-syntax-error
                                                 '#f
-                                                '"Bad syntax"
+                                                '"Bad syntax; invalid syntax-case clause"
                                                 _e1307413081_)))
                                             (_E1307513101_
                                              (lambda ()
@@ -736,7 +745,10 @@
         (let* ((_e1295212959_ _stx12951_)
                (_E1295412963_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1295212959_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1295212959_)))
                (_E1295313043_
                 (lambda ()
                   (if (gx#stx-pair? _e1295212959_)
@@ -752,7 +764,7 @@
                                           (lambda ()
                                             (gx#raise-syntax-error
                                              '#f
-                                             '"Bad syntax"
+                                             '"Bad syntax; %#extern expects list of (internal external) identifier lists"
                                              _stx12951_)))
                                          (_E1298313003_
                                           (lambda ()
@@ -821,7 +833,10 @@
         (let* ((_e1289812911_ _stx12897_)
                (_E1290012915_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1289812911_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1289812911_)))
                (_E1289912947_
                 (lambda ()
                   (if (gx#stx-pair? _e1289812911_)
@@ -869,7 +884,10 @@
         (let* ((_e1284212855_ _stx12841_)
                (_E1284412859_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1284212855_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1284212855_)))
                (_E1284312893_
                 (lambda ()
                   (if (gx#stx-pair? _e1284212855_)
@@ -921,7 +939,10 @@
         (let* ((_e1278512798_ _stx12784_)
                (_E1278712802_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1278512798_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1278512798_)))
                (_E1278612837_
                 (lambda ()
                   (if (gx#stx-pair? _e1278512798_)
@@ -977,7 +998,10 @@
         (let* ((_e1272912742_ _stx12728_)
                (_E1273112746_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1272912742_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1272912742_)))
                (_E1273012780_
                 (lambda ()
                   (if (gx#stx-pair? _e1272912742_)
@@ -1029,7 +1053,10 @@
         (let* ((_e1267312683_ _stx12671_)
                (_E1267512687_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1267312683_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1267312683_)))
                (_E1267412714_
                 (lambda ()
                   (if (gx#stx-pair? _e1267312683_)
@@ -1097,7 +1124,10 @@
         (let* ((_e1263612643_ _stx12635_)
                (_E1263812647_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1263612643_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1263612643_)))
                (_E1263712666_
                 (lambda ()
                   (if (gx#stx-pair? _e1263612643_)
@@ -1131,7 +1161,10 @@
         (let* ((_e1259012600_ _stx12589_)
                (_E1259212604_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1259012600_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1259012600_)))
                (_E1259112631_
                 (lambda ()
                   (if (gx#stx-pair? _e1259012600_)
@@ -1186,7 +1219,10 @@
         (let* ((_e1253612546_ _stx12534_)
                (_E1253812550_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1253612546_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1253612546_)))
                (_E1253712575_
                 (lambda ()
                   (if (gx#stx-pair? _e1253612546_)
@@ -1293,7 +1329,10 @@
         (let* ((_e1244812458_ _bind12447_)
                (_E1245012462_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1244812458_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1244812458_)))
                (_E1244912484_
                 (lambda ()
                   (if (gx#stx-pair? _e1244812458_)
@@ -1320,7 +1359,10 @@
         (let* ((_e1240712417_ _bind12406_)
                (_E1240912421_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1240712417_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1240712417_)))
                (_E1240812443_
                 (lambda ()
                   (if (gx#stx-pair? _e1240712417_)
@@ -1346,7 +1388,10 @@
         (let* ((_e1236612376_ _bind12364_)
                (_E1236812380_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1236612376_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1236612376_)))
                (_E1236712402_
                 (lambda ()
                   (if (gx#stx-pair? _e1236612376_)
@@ -1374,7 +1419,10 @@
         (let* ((_e1231912329_ _stx12318_)
                (_E1232112333_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1231912329_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1231912329_)))
                (_E1232012360_
                 (lambda ()
                   (if (gx#stx-pair? _e1231912329_)
@@ -1420,7 +1468,10 @@
         (let* ((_e1226812278_ _stx12267_)
                (_E1227012282_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1226812278_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1226812278_)))
                (_E1226912314_
                 (lambda ()
                   (if (gx#stx-pair? _e1226812278_)
@@ -1506,7 +1557,10 @@
         (let* ((_e1218212192_ _bind12181_)
                (_E1218412196_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1218212192_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1218212192_)))
                (_E1218312220_
                 (lambda ()
                   (if (gx#stx-pair? _e1218212192_)
@@ -1548,7 +1602,10 @@
         (let* ((_e1212912139_ _bind12126_)
                (_E1213112143_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1212912139_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1212912139_)))
                (_E1213012165_
                 (lambda ()
                   (if (gx#stx-pair? _e1212912139_)
@@ -1604,7 +1661,10 @@
         (let* ((_e1208512095_ _stx12084_)
                (_E1208712099_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1208512095_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1208512095_)))
                (_E1208612121_
                 (lambda ()
                   (if (gx#stx-pair? _e1208512095_)
@@ -1631,7 +1691,10 @@
         (let* ((_e1204412054_ _stx12043_)
                (_E1204612058_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1204412054_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1204412054_)))
                (_E1204512080_
                 (lambda ()
                   (if (gx#stx-pair? _e1204412054_)
@@ -1663,7 +1726,10 @@
         (let* ((_e1200312013_ _stx12002_)
                (_E1200512017_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1200312013_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1200312013_)))
                (_E1200412039_
                 (lambda ()
                   (if (gx#stx-pair? _e1200312013_)
@@ -1695,7 +1761,10 @@
         (let* ((_e1196011970_ _stx11959_)
                (_E1196211974_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1196011970_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1196011970_)))
                (_E1196111998_
                 (lambda ()
                   (if (gx#stx-pair? _e1196011970_)
@@ -1728,7 +1797,10 @@
         (let* ((_e1189311909_ _stx11892_)
                (_E1189511913_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1189311909_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1189311909_)))
                (_E1189411955_
                 (lambda ()
                   (if (gx#stx-pair? _e1189311909_)
@@ -1784,7 +1856,10 @@
         (let* ((_e1185211862_ _stx11851_)
                (_E1185411866_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1185211862_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1185211862_)))
                (_E1185311888_
                 (lambda ()
                   (if (gx#stx-pair? _e1185211862_)
@@ -1817,7 +1892,10 @@
         (let* ((_e1179811811_ _stx11797_)
                (_E1180011815_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1179811811_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1179811811_)))
                (_E1179911847_
                 (lambda ()
                   (if (gx#stx-pair? _e1179811811_)
@@ -1869,7 +1947,7 @@
                               (lambda ()
                                 (gx#raise-syntax-error
                                  '#f
-                                 '"Bad syntax"
+                                 '"Bad syntax; invalid syntax-case clause"
                                  _e1168411699_)))
                              (_E1169311707_
                               (lambda ()
@@ -1910,7 +1988,7 @@
                                                           (lambda ()
                                                             (gx#raise-syntax-error
                                                              '#f
-                                                             '"Bad syntax"
+                                                             '"Bad syntax; invalid syntax-case clause"
                                                              _e1172211732_)))
                                                          (_E1172311760_
                                                           (lambda ()
@@ -1983,7 +2061,7 @@
                                  (gx#stx-e _ns11784_)
                                  (gx#raise-syntax-error
                                   '#f
-                                  '"Bad syntax"
+                                  '"Bad syntax; extern expects namespace identifier"
                                   _stx11645_
                                   _ns11784_)))))
                     (_lp11679_ _rest11786_ _ns11791_ _r11683_))
@@ -1996,7 +2074,10 @@
           (let* ((_e1164811655_ _stx11645_)
                  (_E1165011659_
                   (lambda ()
-                    (gx#raise-syntax-error '#f '"Bad syntax" _e1164811655_)))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid syntax-case clause"
+                     _e1164811655_)))
                  (_E1164911673_
                   (lambda ()
                     (if (gx#stx-pair? _e1164811655_)
@@ -2016,7 +2097,10 @@
         (let* ((_e1159211605_ _stx11591_)
                (_E1159411609_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1159211605_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1159211605_)))
                (_E1159311641_
                 (lambda ()
                   (if (gx#stx-pair? _e1159211605_)
@@ -2060,7 +2144,10 @@
         (let* ((_e1153811551_ _stx11537_)
                (_E1154011555_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1153811551_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1153811551_)))
                (_E1153911587_
                 (lambda ()
                   (if (gx#stx-pair? _e1153811551_)
@@ -2101,7 +2188,10 @@
         (let* ((_e1148411497_ _stx11483_)
                (_E1148611501_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1148411497_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1148411497_)))
                (_E1148511533_
                 (lambda ()
                   (if (gx#stx-pair? _e1148411497_)
@@ -2145,7 +2235,10 @@
         (let* ((_e1144111451_ _stx11440_)
                (_E1144311455_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1144111451_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1144111451_)))
                (_E1144211479_
                 (lambda ()
                   (if (gx#stx-pair? _e1144111451_)
@@ -2215,7 +2308,10 @@
           (let* ((_e1137911386_ _stx11376_)
                  (_E1138111390_
                   (lambda ()
-                    (gx#raise-syntax-error '#f '"Bad syntax" _e1137911386_)))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid syntax-case clause"
+                     _e1137911386_)))
                  (_E1138011404_
                   (lambda ()
                     (if (gx#stx-pair? _e1137911386_)
@@ -2283,7 +2379,10 @@
           (let* ((_e1128111291_ _stx11277_)
                  (_E1128311295_
                   (lambda ()
-                    (gx#raise-syntax-error '#f '"Bad syntax" _e1128111291_)))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid syntax-case clause"
+                     _e1128111291_)))
                  (_E1128211319_
                   (lambda ()
                     (if (gx#stx-pair? _e1128111291_)
@@ -2343,7 +2442,10 @@
         (let* ((_e1116411190_ _stx11163_)
                (_E1117611194_
                 (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1116411190_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid syntax-case clause"
+                   _e1116411190_)))
                (_E1116611236_
                 (lambda ()
                   (if (gx#stx-pair? _e1116411190_)

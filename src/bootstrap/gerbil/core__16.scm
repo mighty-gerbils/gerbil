@@ -3,7 +3,10 @@
   (lambda (_stx36940_)
     (let* ((_g3694336957_
             (lambda (_g3694436953_)
-              (gx#raise-syntax-error '#f '"Bad syntax" _g3694436953_)))
+              (gx#raise-syntax-error
+               '#f
+               '"Bad syntax; invalid match target"
+               _g3694436953_)))
            (_g3694236999_
             (lambda (_g3694436961_)
               (if (gx#stx-pair? _g3694436961_)

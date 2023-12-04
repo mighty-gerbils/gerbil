@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/stxcase::timestamp 1697117331)
+  (define gerbil/expander/stxcase::timestamp 1701718655)
   (begin
     (define gx#syntax-pattern::t
       (let ()
@@ -755,7 +755,7 @@
                                                               (not safe))
                                                             (gx#raise-syntax-error
                                                              '#f
-                                                             '"Bad syntax"
+                                                             '"Bad syntax; invalid syntax-case clause"
                                                              _e2060820615_))))
                                                        (_E2060920698_
                                                         (lambda ()
@@ -1059,7 +1059,10 @@
                   (lambda ()
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _stx20548_))))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; expand-syntax expects a single argument"
+                       _stx20548_))))
                  (_E2055320588_
                   (lambda ()
                     (if (let ()
@@ -1443,7 +1446,7 @@
                                   (declare (not safe))
                                   (gx#raise-syntax-error
                                    '#f
-                                   '"Bad syntax"
+                                   '"Bad syntax; invalid syntax-case clause"
                                    _e2024120261_))))
                              (_E2024320299_
                               (lambda ()
@@ -2535,7 +2538,7 @@
                                           (declare (not safe))
                                           (gx#raise-syntax-error
                                            '#f
-                                           '"Bad syntax"
+                                           '"Bad syntax; invalid syntax-case clause"
                                            _e1990219909_))))
                                      (_E1990319974_
                                       (lambda ()
@@ -2802,7 +2805,7 @@
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
-                       '"Bad syntax"
+                       '"Bad syntax; invalid syntax-case clause"
                        _e1982219835_))))
                  (_E1982319886_
                   (lambda ()
@@ -2880,7 +2883,10 @@
                       (not __tmp21305))
                     (let ()
                       (declare (not safe))
-                      (gx#raise-syntax-error '#f '"Bad syntax" _stx19812_))
+                      (gx#raise-syntax-error
+                       '#f
+                       '"Bad syntax; clauses expected"
+                       _stx19812_))
                     (let* ((_ids19873_
                             (let ()
                               (declare (not safe))
@@ -2925,7 +2931,7 @@
                                         (gx#core-list
                                          'raise-syntax-error
                                          '#f
-                                         '"Bad syntax"
+                                         '"Bad syntax; invalid match target"
                                          _target19881_))))
                                  (declare (not safe))
                                  (gx#core-list

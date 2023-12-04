@@ -2542,7 +2542,10 @@
                 (lambda (_g71267135_)
                   (let ()
                     (declare (not safe))
-                    (gx#raise-syntax-error '#f '"Bad syntax" _g71267135_))))
+                    (gx#raise-syntax-error
+                     '#f
+                     '"Bad syntax; invalid match target"
+                     _g71267135_))))
                (_g71247181_
                 (lambda (_g71267143_)
                   (if (let () (declare (not safe)) (gx#stx-pair? _g71267143_))

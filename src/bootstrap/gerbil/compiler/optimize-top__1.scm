@@ -5,7 +5,10 @@
             (lambda (_g2419624220_)
               (let ()
                 (declare (not safe))
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2419624220_))))
+                (gx#raise-syntax-error
+                 '#f
+                 '"Bad syntax; invalid match target"
+                 _g2419624220_))))
            (_g2419424325_
             (lambda (_g2419624228_)
               (if (let () (declare (not safe)) (gx#stx-pair? _g2419624228_))

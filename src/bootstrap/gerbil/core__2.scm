@@ -11,7 +11,10 @@
     (define |gerbil/core$<syntax-sugar>[:0:]#syntax-rules|
       (lambda (_stx42_)
         (let* ((_g4569_ (lambda (_g4665_)
-                          (gx#raise-syntax-error '#f '"Bad syntax" _g4665_)))
+                          (gx#raise-syntax-error
+                           '#f
+                           '"Bad syntax; invalid match target"
+                           _g4665_)))
                (_g44374_
                 (lambda (_g4673_)
                   (if (gx#stx-pair? _g4673_)
@@ -86,7 +89,7 @@
                                                     (lambda ()
                                                       (gx#raise-syntax-error
                                                        '#f
-                                                       '"Bad syntax"
+                                                       '"Bad syntax; invalid match target"
                                                        ___stx3700637007_))))
                                               (let ((___kont3700937010_
                                                      (lambda (_L264_ _L266_)
@@ -162,7 +165,7 @@
                                          (lambda (_g295307_)
                                            (gx#raise-syntax-error
                                             '#f
-                                            '"Bad syntax"
+                                            '"Bad syntax; invalid match target"
                                             _g295307_)))
                                         (_g293370_
                                          (lambda (_g295315_)
@@ -268,7 +271,7 @@
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
-                   '"Bad syntax"
+                   '"Bad syntax; invalid match target"
                    ___stx3705037051_))))
           (let ((___kont3705337054_
                  (lambda (_L810_)
@@ -919,7 +922,7 @@
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
-                   '"Bad syntax"
+                   '"Bad syntax; invalid match target"
                    ___stx3715437155_))))
           (let ((___kont3715737158_
                  (lambda (_L1221_)
@@ -1431,7 +1434,10 @@
       (lambda (_stx1253_)
         (let* ((_g12561274_
                 (lambda (_g12571270_)
-                  (gx#raise-syntax-error '#f '"Bad syntax" _g12571270_)))
+                  (gx#raise-syntax-error
+                   '#f
+                   '"Bad syntax; invalid match target"
+                   _g12571270_)))
                (_g12551329_
                 (lambda (_g12571278_)
                   (if (gx#stx-pair? _g12571278_)
