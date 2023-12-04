@@ -339,6 +339,8 @@ package: gerbil
   (define-alias car-set! set-car!)
   (define-alias cdr-set! set-cdr!)
   (define-alias box-set! set-box!)
+  (define-alias vector-ref-set! vector-set!)
+  (define-alias u8vector-ref-set! u8vector-set!)
   (define-alias call/cc         call-with-current-continuation)
   (define-alias call/esc        call-with-current-continuation)
   (define-alias call/values     call-with-values)

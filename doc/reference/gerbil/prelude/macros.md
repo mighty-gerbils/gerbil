@@ -353,6 +353,24 @@ Converts a utf8 encoded string to a u8vector at expansion time.
 
 Raises a syntax error; used for meaningful error reporting in syntax-rules macros.
 
+## vector-ref-set!
+
+```scheme
+(defalias vector-ref-set! vector-set!)
+(set! (vector-ref v i) x)
+```
+
+This binding enables you to use `set!` with `vector-ref`.
+
+::: tip Examples:
+```scheme
+> (def foo (vector 1 2 3))
+> (set! (vector-ref foo 1) 4)
+> foo
+#(1 4 3)
+```
+:::
+
 ## MOP Macros
 
 ### defstruct-type defclass-type
