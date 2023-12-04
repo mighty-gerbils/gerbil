@@ -96,12 +96,12 @@
     (def valid? #f) ;; have we seen at least one digit
     (def (peek) (reader.peek-char))
     (def c (peek))
-    (def (bad) (raise-parse-error ll1-decimal "Unexpected character" #f pre-reader))
+    (def (bad) (raise-parse-error ll1-decimal "Unexpected character" #f reader))
     (def (next) (reader.read-char) (set! c (peek)))
     (def (ll1-sign) (case c ((#\+) (next) 1) ((#\-) (next) -1) (else 1)))
 
     (let/cc return
-      (when (eof-object? c) (raise-parse-error ll1-decimal "Unexpected EOF" #!eof pre-reader))
+      (when (eof-object? c) (raise-parse-error ll1-decimal "Unexpected EOF" #!eof reader))
       (when sign-allowed? (set! sign (ll1-sign)))
       (def (done) (return (* sign (/ numerator denominator) (expt 10 (* exponent-sign exponent)))))
       (def (ll1-left-digit-or-group-separator)
