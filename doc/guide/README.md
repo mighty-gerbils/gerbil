@@ -80,9 +80,9 @@ features are available.
 
 ## Installation using Binary Release Packages
 
-If you want to install the latest release (v0.18), you can also use
+If you want to install the latest release (v0.18.1), you can also use
 the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS.
-They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
+They are available in the [v0.18.1 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18.1) page.
 
 ## Installation on MacOS
 
@@ -95,7 +95,7 @@ $ brew install --formula -vd gerbil-scheme.rb
 Feel free to check out the [MacOS Details](./macos.md) if needed.
 
 **Note** Currently, this is not yet upstreamed. The brew recipe will
-be updated for v0.18 once the release is ready and available by
+be updated for v0.18.1 once the release is ready and available by
 default for all homebrew users.
 
 ## Skip the Install, Get Started on Docker

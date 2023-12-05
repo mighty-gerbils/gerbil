@@ -1,4 +1,47 @@
 # Gerbil Release Notes
+
+## Gerbil v0.18.1, NimzoLarsen
+
+- Gerbil v0.18.1; December 4, 2023
+
+**TL;DR** Gerbil v0.18.1 is a patch release,
+that consolidates the foundations laid out by v0.18 and fixes minor bugs,
+paving the way for Gerbil v1.0 in the near future.
+Since this is a patch for the v0.18 **Nimzowitsch** release, we call it
+Nimzowitsch-Larsen after the most famous Chess opening popularized by
+Nimzowitsch.
+
+As notable new features:
+- `:std/net/s3` is a S3 client (for remote data storage on e.g. AWS)
+- `:std/net/smtp` is an SMTP client (for sending email), and
+- `:std/db/postgresql` now supports SSL (notably enabling Gerbil on Heroku).
+
+Also, the library `:std/getopt` was moved to `:std/cli/getopt`
+(old name available as an alias), next to new CLI modules:
+`:std/cli/multicall` (multicall programs),
+`:std/cli/print-exit` (display Scheme results to CLI),
+`:std/cli/shell` (escape strings for Unix shells).
+
+A lot of standard library modules, many of them added just before v0.18,
+were tested, documented, fixed, tweaked and/or extended with new functionality:
+`:std/error`, `:std/debug/DBG` (great for "print-debugging"), `:std/io`,
+`:std/misc/bytes`, `:std/misc/evector` (extensible vectors), `:std/misc/list`,
+`:std/misc/number`, `:std/misc/ports`, `:std/misc/prime`, `:std/misc/process`,
+`:std/misc/string`, `:std/misc/vector`, `:std/net/json-rpc`, `:std/os/error`,
+`:std/parser/ll1` (LL(1) parser combinators, née `:std/text/basic-parsers`),
+`:std/pregexp`, `:std/sugar`, `:std/text/char-set`.
+
+The runtime exports a few more functions (`vector-ref-set!`, `fx>=0` and such),
+and a few bugs were fixed (#1048, #1064).
+
+Last but not least, upgrading the Gambit embedded in Gerbil (#1030) fixed
+a long-standing issue with [`letrec*`](https://github.com/gambit/gambit/issues/659),
+also affected Gerbil's `def` (that expands to it), causing evaluation to be
+reordered in sometimes incorrect way wrt the order of expressions in the source.
+Un-reordering of code evaluations may also surprisingly affect correct code:
+e.g. unit-tests in Glow depended on a given evaluation order in the compiler,
+and broke when the reordering of some evaluations didn't happen anymore.
+
 ## Gerbil v0.18, Nimzowitsch
 
 - Gerbil v0.18; October 12, 2023
@@ -19,11 +62,11 @@ install it.
 
 The build system has been reworked from the ground up. We start from
 the precompiled bootstrap sources, which we compile with a build
-script using gsi.  The bootstrap compiler then compiles the runtime,
+script using `gsi`.  The bootstrap compiler then compiles the runtime,
 the expander and the prelude, and after that we build the universal
-`gerbil` binary to build the rest of the system. All this is described
-in detail in [The Gerbil
-Bootstrap](https://cons.io/reference/dev/bootstrap.html).
+`gerbil` binary to build the rest of the system.
+All this is described in detail in
+[The Gerbil Bootstrap](https://cons.io/reference/dev/bootstrap.html).
 
 The executable compilation model has been also reworked from the
 ground up.  Gone are the dynamic executable stubs, we don't need them
