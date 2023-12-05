@@ -30,21 +30,17 @@ regarding platforms you can't support yourself.
 
 ## Merge a PR for the Release itself
 - Update the version everywhere in documentation
-- Generate a `MANIFEST` for the release
-  (copy/paste the body of the `write_manifest` function in `./configure`)
 - Include a high-level summary of changes in the
   [CHANGELOG.md](https://github.com/mighty-gerbils/gerbil/blob/master/CHANGELOG.md)
+- Generate a `MANIFEST` for the release with the following shell command
+  from the Gerbil repository top directory,
+  where the argument is the desired release name:
+  `./manifest.sh v0.19`
 
 Note that:
 - The release PR should not contain anything but this version bump.
   Make any other necessary change in the pre-release PRs.
 - The website will be automatically re-generated from the PR. No action needed.
-
-## Merge Post-Release PRs
-- Remove the `MANIFEST` file.
-- Update to homebrew (macOS) recipe - ask @drewc for help
-- Update to Guix (Linux) recipe - ask @drewc for help
-- Update to Nixpkgs (Linux, macOS) recipe - ask @fare for help
 
 ## Create Official Announcements
 Once the release PR is merged:
@@ -58,6 +54,9 @@ Once the release PR is merged:
   Use that as the basis for the GitHub release note page.
   See e.g. [this previous release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18).
 
+Note that creating the release on GitHub should create a git tag,
+that you can pull in your local repository with: `git pull --tags`
+
 ## Update Tarballs
 - Generate tarball for the Gerbil source code,
   *including the Gambit submodule at the correct version* in `src/gambit`.
@@ -68,6 +67,12 @@ Once the release PR is merged:
 - Generate rpm and deb packages for Linux x86-64. - ask @ober for help
 - Publish each of these tarballs as artifacts on GitHub on the
   [release page](https://github.com/mighty-gerbils/gerbil/releases/)
+
+## Merge Post-Release PRs
+- Remove the `MANIFEST` file.
+- Update to homebrew (macOS) recipe - ask @drewc for help
+- Update to Guix (Linux) recipe - ask @drewc for help
+- Update to Nixpkgs (Linux, macOS) recipe - ask @fare for help
 
 ## Announce the Release to the World
 Point to the announcement page on GitHub.
