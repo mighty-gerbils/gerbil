@@ -20,21 +20,6 @@ There is *Fare*'s nix package which helped.
 
 https://github.com/MuKnIO/nixpkgs/tree/dbee0d9a81487c79d7e11a9e3e3da589ac5c0fc6/pkgs/development/compilers/gerbil
 
-Here some git s
-https://gist.github.com/gitaarik/8735255
-
-* Gerbil, Gambit, and git submodules
-
-#+begin_src sh
-  cd $(mktemp -d /tmp/gerbil-build.XXXXX);
-  git clone git@github.com:mighty-gerbils/gerbil.git
-  cd gerbil
-  git checkout b060fb9
-  git submodule update --init
-
-  
-#+end_src
-
 * Gambit: versions and dates.
 
 Gambit has 3 things that are set from git and/or defaulted to something that we need to change
