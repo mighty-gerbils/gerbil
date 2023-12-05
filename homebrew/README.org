@@ -158,7 +158,7 @@ Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
   url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
-       revision: "b71a9f"
+      revision: "0917172a519d28c7833886b445938fd250717b2a"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18.1"
   revision 1
