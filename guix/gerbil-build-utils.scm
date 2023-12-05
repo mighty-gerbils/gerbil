@@ -1,10 +1,5 @@
 (include "gerbil-stamp.scm")
 
-(define gerbil-make-gambit
- `(substitute* "src/build.sh"
-  (("\\s+\\(cd gambit && make -j \\$\\{GERBIL_BUILD_CORES:-1\\} core\\) \\|\\| die")
-   "   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} bootstrap) || die\n   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} from-scratch) || die")))
-
 (define gerbil-build-version
   `(with-output-to-file "src/build/build-version.scm"
      (lambda ()

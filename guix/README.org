@@ -102,11 +102,6 @@ That gets built by =src/build/build-version.scm= so let us replace that.
 #+begin_src scheme :tangle gerbil-build-utils.scm
     (include "gerbil-stamp.scm")
 
-    (define gerbil-make-gambit
-     `(substitute* "src/build.sh"
-      (("\\s+\\(cd gambit && make -j \\$\\{GERBIL_BUILD_CORES:-1\\} core\\) \\|\\| die")
-       "   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} bootstrap) || die\n   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} from-scratch) || die")))
-
     (define gerbil-build-version
       `(with-output-to-file "src/build/build-version.scm"
          (lambda ()
@@ -188,8 +183,7 @@ git-fetch is to see the version.
     	       ,gambit-sub-config
     	       ,gambit-stamp.h
     	       ,gerbil-build-version
-    	       ,gerbil-conf-sub-git
-               ,gerbil-make-gambit))
+    	       ,gerbil-conf-sub-git))
          (add-before 'build 'add-tmp-home
            (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
          (delete 'check))

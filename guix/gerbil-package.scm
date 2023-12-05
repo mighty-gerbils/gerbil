@@ -22,8 +22,7 @@
 	       ,gambit-sub-config
 	       ,gambit-stamp.h
 	       ,gerbil-build-version
-	       ,gerbil-conf-sub-git
-           ,gerbil-make-gambit))
+	       ,gerbil-conf-sub-git))
      (add-before 'build 'add-tmp-home
        (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
      (delete 'check))
