@@ -16,9 +16,24 @@ source tree is not meant to be a package ... or some such), =Gerbil=
 and =Gambit= in general rely on a git tree to tell them certain
 things.
 
+There is *Fare*'s nix package which helped.
 
 https://github.com/MuKnIO/nixpkgs/tree/dbee0d9a81487c79d7e11a9e3e3da589ac5c0fc6/pkgs/development/compilers/gerbil
+
+Here some git s
 https://gist.github.com/gitaarik/8735255
+
+* Gerbil, Gambit, and git submodules
+
+#+begin_src sh
+  cd $(mktemp -d /tmp/gerbil-build.XXXXX);
+  git clone git@github.com:mighty-gerbils/gerbil.git
+  cd gerbil
+  git checkout b060fb9
+  git submodule update --init
+
+  
+#+end_src
 
 * Gambit: versions and dates.
 
@@ -76,7 +91,7 @@ Then we just need to update certain things in gambit.
   #endif\n"))))
   	  (substitute* "src/gambit/include/makefile.in"
   		       (("^(.*)echo > stamp.h;" _ ws)
-  			(string-append ws "mv -f stamp.h.new stamp.h;")))))
+  			(string-append ws "cp -v stamp.h.new stamp.h;")))))
   			    
   	     
 #+end_src
@@ -100,20 +115,25 @@ That gets built by =src/build/build-version.scm= so let us replace that.
 #+end_src
 
 #+begin_src scheme :tangle gerbil-build-utils.scm
-  (include "gerbil-stamp.scm")
+    (include "gerbil-stamp.scm")
 
-  (define gerbil-build-version
-    `(with-output-to-file "src/build/build-version.scm"
-       (lambda ()
-         (write
-  	'(let* ((gerbil-version-path
-  		 (path-expand "gerbil/runtime/version.ss" (getenv "GERBIL_SOURCE")))
-  		(gerbil-version-text
-  		 (string-append "(def (gerbil-version-string) \"" ,gerbil-stamp-version "\")\n")))
-  	   (display "... write ") (display gerbil-version-path) (newline)
-  	   (call-with-output-file `(path: ,gerbil-version-path create: maybe append: #f truncate: #t)
-  	     (lambda (port) (display gerbil-version-text port))))))))
-  
+    (define gerbil-make-gambit
+     `(substitute* "src/build.sh"
+      (("\\s+\\(cd gambit && make -j \\$\\{GERBIL_BUILD_CORES:-1\\} core\\) \\|\\| die")
+       "   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} bootstrap) || die\n   (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} from-scratch) || die")))
+
+    (define gerbil-build-version
+      `(with-output-to-file "src/build/build-version.scm"
+         (lambda ()
+           (write
+    	'(let* ((gerbil-version-path
+    		 (path-expand "gerbil/runtime/version.ss" (getenv "GERBIL_SOURCE")))
+    		(gerbil-version-text
+    		 (string-append "(def (gerbil-version-string) \"" ,gerbil-stamp-version "\")\n")))
+    	   (display "... write ") (display gerbil-version-path) (newline)
+    	   (call-with-output-file `(path: ,gerbil-version-path create: maybe append: #f truncate: #t)
+    	     (lambda (port) (display gerbil-version-text port))))))))
+
 #+end_src
 
 And Gerbil's =./configure= calls git a bunch. As luck would have it
@@ -159,53 +179,54 @@ git-fetch is to see the version.
 * The package form
 
 #+begin_src scheme :tangle gerbil-package.scm
-  (package
-   (name "gerbil")
-   (version "0.18")
-   (source
-    (origin
-     (method git-fetch)
-     (uri (git-reference
-  	 (recursive? #t)
-           (url "https://github.com/mighty-gerbils/gerbil.git")
-           (commit (string-append "v" version))))
-     (file-name (git-file-name name version))
-     (sha256
-      (base32 "1rfyzy900kdl58p3gd02k5xryyzvw6xdw1awnlqd5zszh60gj4c4"))))
-   (arguments
-    `(#:phases
-      (modify-phases
-       %standard-phases
-       (delete 'bootstrap)
-       (add-after
-        'unpack 'create-versions
-        (lambda* (#:key source #:allow-other-keys)
-  	       ,gambit-sub-config
-  	       ,gambit-stamp.h
-  	       ,gerbil-build-version
-  	       ,gerbil-conf-sub-git))
-       (add-before 'build 'add-tmp-home
-         (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
-       (delete 'check))
-      #:make-flags '("CC=gcc")))
-   (native-inputs
-    `(("coreutils" ,coreutils)
-      ("util-linuxr" ,util-linux)))
-   (propagated-inputs
-    `(("zlib" ,zlib)
-      ("openssl" ,openssl)
-      ("sqlite" ,sqlite)))
-   (build-system gnu-build-system)
-   (synopsis "Meta-dialect of Scheme with post-modern features")
-   (description "Gerbil is an opinionated dialect of Scheme designed for Systems
-  Programming, with a state of the art macro and module system on top of the Gambit
-  runtime.  The macro system is based on quote-syntax, and provides the full meta-syntactic
-  tower with a native implementation of syntax-case.  It also provides a full-blown module
-  system, similar to PLT Scheme's (sorry, Racket) modules.  The main difference from Racket
-  is that Gerbil modules are single instantiation, supporting high performance ahead of
-  time compilation and compiled macros.")
-   (home-page "https://cons.io")
-   (license `(,l:lgpl2.1 ,l:asl2.0)))
+    (package
+     (name "gerbil")
+     (version "0.18.1")
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+    	 (recursive? #t)
+             (url "https://github.com/mighty-gerbils/gerbil.git")
+             (commit "v0.18-45-gb71a9fcc")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0hplshr5wsb71w255w59di02h9frw29rcqngksqv6k5bicicl6pd"))))
+     (arguments
+      `(#:phases
+        (modify-phases
+         %standard-phases
+         (delete 'bootstrap)
+         (add-after
+          'unpack 'create-versions
+          (lambda* (#:key source #:allow-other-keys)
+    	       ,gambit-sub-config
+    	       ,gambit-stamp.h
+    	       ,gerbil-build-version
+    	       ,gerbil-conf-sub-git
+               ,gerbil-make-gambit))
+         (add-before 'build 'add-tmp-home
+           (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
+         (delete 'check))
+        #:make-flags '("CC=gcc")))
+     (native-inputs
+      `(("coreutils" ,coreutils)
+        ("util-linux" ,util-linux)))
+     (propagated-inputs
+      `(("zlib" ,zlib)
+        ("openssl" ,openssl)
+        ("sqlite" ,sqlite)))
+     (build-system gnu-build-system)
+     (synopsis "Meta-dialect of Scheme with post-modern features")
+     (description "Gerbil is an opinionated dialect of Scheme designed for Systems
+    Programming, with a state of the art macro and module system on top of the Gambit
+    runtime.  The macro system is based on quote-syntax, and provides the full meta-syntactic
+    tower with a native implementation of syntax-case.  It also provides a full-blown module
+    system, similar to PLT Scheme's (sorry, Racket) modules.  The main difference from Racket
+    is that Gerbil modules are single instantiation, supporting high performance ahead of
+    time compilation and compiled macros.")
+     (home-page "https://cons.io")
+     (license `(,l:lgpl2.1 ,l:asl2.0)))
 
 
 #+end_src

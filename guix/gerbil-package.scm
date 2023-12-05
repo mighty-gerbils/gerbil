@@ -1,16 +1,16 @@
 (package
  (name "gerbil")
- (version "0.18")
+ (version "0.18.1")
  (source
   (origin
    (method git-fetch)
    (uri (git-reference
 	 (recursive? #t)
          (url "https://github.com/mighty-gerbils/gerbil.git")
-         (commit (string-append "v" version))))
+         (commit "v0.18-45-gb71a9fcc")))
    (file-name (git-file-name name version))
    (sha256
-    (base32 "1rfyzy900kdl58p3gd02k5xryyzvw6xdw1awnlqd5zszh60gj4c4"))))
+    (base32 "0hplshr5wsb71w255w59di02h9frw29rcqngksqv6k5bicicl6pd"))))
  (arguments
   `(#:phases
     (modify-phases
@@ -22,14 +22,15 @@
 	       ,gambit-sub-config
 	       ,gambit-stamp.h
 	       ,gerbil-build-version
-	       ,gerbil-conf-sub-git))
+	       ,gerbil-conf-sub-git
+               ,gerbil-make-gambit))
      (add-before 'build 'add-tmp-home
        (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
      (delete 'check))
     #:make-flags '("CC=gcc")))
  (native-inputs
   `(("coreutils" ,coreutils)
-    ("util-linuxr" ,util-linux)))
+    ("util-linux" ,util-linux)))
  (propagated-inputs
   `(("zlib" ,zlib)
     ("openssl" ,openssl)
