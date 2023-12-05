@@ -7,10 +7,10 @@
    (uri (git-reference
 	 (recursive? #t)
          (url "https://github.com/mighty-gerbils/gerbil.git")
-         (commit "v0.18-45-gb71a9fcc")))
+         (commit "0917172a519d28c7833886b445938fd250717b2a")))
    (file-name (git-file-name name version))
    (sha256
-    (base32 "0hplshr5wsb71w255w59di02h9frw29rcqngksqv6k5bicicl6pd"))))
+    (base32 "0cxpsf7n9nbk39i2n11kpvgm81qkzkskymq32d40cqajfixd5k9x"))))
  (arguments
   `(#:phases
     (modify-phases
@@ -23,7 +23,7 @@
 	       ,gambit-stamp.h
 	       ,gerbil-build-version
 	       ,gerbil-conf-sub-git
-               ,gerbil-make-gambit))
+           ,gerbil-make-gambit))
      (add-before 'build 'add-tmp-home
        (lambda _ (setenv "HOME" "/tmp/gerbil-build")))
      (delete 'check))
