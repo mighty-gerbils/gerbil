@@ -1,3 +1,3 @@
-(define gambit-stamp-version "v4.9.5-40-g24201248")
-(define gambit-stamp-ymd "20230917")
-(define gambit-stamp-hms "182043")
+(define gambit-stamp-version "v4.9.5-78-g8b18ab69")
+(define gambit-stamp-ymd "20231029")
+(define gambit-stamp-hms "203035")
