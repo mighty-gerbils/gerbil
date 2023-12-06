@@ -76,12 +76,12 @@ that you can pull in your local repository with: `git pull --tags`
 
 ## Announce the Release to the World
 Point to the announcement page on GitHub.
-- Announce [on gitter](https://app.element.io/#/room/#gerbil-scheme_community:gitter.im)
+- Announce [on gitter](https://app.element.io/#/room/#gerbil-scheme_community:gitter.im).
 - Announce on reddit: [r/scheme](https://www.reddit.com/r/scheme/).
-  See e.g. [this previous announcement](https://www.reddit.com/r/scheme/comments/176f9rt/gerbil_v018_has_been_released/)
+  See e.g. [this previous announcement](https://www.reddit.com/r/scheme/comments/18buf4g/gerbil_v0181_nimzolarsen_released/).
 - Announce on [Hacker News](https://news.ycombinator.com/).
-  See e.g. [this previous announcement](https://news.ycombinator.com/item?id=37864501)
+  See e.g. [this previous announcement](https://news.ycombinator.com/item?id=38540155).
 - Announce on [Lobsters](https://lobste.rs/).
-  See e.g. [this previous announcement](https://lobste.rs/s/aojohz/gerbil_v0_18_released)
+  See e.g. [this previous announcement](https://lobste.rs/s/lydbxm/gerbil_v0_18_1_nimzolarsen_released).
 - Announce on [twitter](https://twitter.com).
-  See e.g. [this previous announcement](https://twitter.com/Ngnghm/status/1712612201935073297)
+  See e.g. [this previous announcement](https://twitter.com/Ngnghm/status/1732234985845796879).
