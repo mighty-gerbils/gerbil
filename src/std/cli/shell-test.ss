@@ -11,7 +11,7 @@
   (test-suite "test :std/misc/shell"
     (test-case "easy-shell-character?"
       (string-for-each (lambda (c) (check (easy-shell-character? c) => #t))
-                       "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ012345678%+,-./:=@_")
+                       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789%+,-./:=@_")
       (string-for-each (lambda (c) (check (easy-shell-character? c) => #f))
                        "!`~#$^&*()[{]}\\|;'\"<>? \r\n\t\v"))
     (test-case "needs-shell-escape?, escape-shell-token"

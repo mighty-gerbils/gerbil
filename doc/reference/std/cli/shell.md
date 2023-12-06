@@ -29,7 +29,7 @@ For good measure we also quote strings containing non-ASCII characters.
 ::: tip Examples:
 ```scheme
 > (string-for-each (lambda (c) (or (easy-shell-character? c) (error "foo")))
-    "abcdefghijklmnopqrstuvwxzABCDEFGHIJKLMNOPQRSTUVWXZ012345678@%+,-./:=@_") ;; no error
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@%+,-./:=@_") ;; no error
 > (string-for-each (lambda (c) (or (not (easy-shell-character? c)) (error "foo")))
     "!`~#$^&*()[{]}\\|;'\"<>? \r\n\t\v") ;; no error either
 ```
