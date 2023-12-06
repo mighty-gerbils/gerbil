@@ -143,7 +143,7 @@ Homebrew uses [[#RubyIsms][Ruby]] for its DSL. That means =GerbilScheme= is a su
 
 #+begin_src ruby
 class GerbilScheme < Formula
-# This .rb file is tangled (AKA generated) from README.org
+  # This .rb file is tangled (AKA generated) from README.org
 #+end_src
 
 There's some meta-info that's nice to have.
@@ -157,11 +157,11 @@ There's some meta-info that's nice to have.
 Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
-    url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
-         revision: "8ca36a928bc9345f9d28e5f2dfcb55ca558e85f9"
-    head "https://github.com/mighty-gerbils/gerbil.git", using: :git
-    version "0.18"
-    revision 1
+  url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
+      revision: "0917172a519d28c7833886b445938fd250717b2a"
+  head "https://github.com/mighty-gerbils/gerbil.git", using: :git
+  version "0.18.1"
+  revision 1
 #+end_src
 
 Now the things it depends on.
@@ -181,11 +181,12 @@ Now the dirt. The install process is as it should be! ~./configure && make && ma
 
 
 #+begin_src ruby
-    def install
-        system "./configure", "--prefix=#{prefix}"
-        system "make"
-        ENV.deparallelize
-        system "make", "install"
+  def install
+    system "./configure", "--prefix=#{prefix}"
+    system "make"
+    ENV.deparallelize
+    system "make", "install"
+
 #+end_src
 
 
@@ -196,13 +197,13 @@ way we can choose what files actually go in the global bin.
 
 #+begin_src ruby
   
-      rm prefix/"bin"
-      mkdir prefix/"bin"
+    rm prefix/"bin"
+    mkdir prefix/"bin"
 
-      cd prefix/"current/bin" do
-         ln "gerbil", prefix/"bin", verbose: true
-         cp %w(gxc gxensemble gxi gxpkg gxprof gxtags gxtest), prefix/"bin"
-      end
+    cd prefix/"current/bin" do
+       ln "gerbil", prefix/"bin", verbose: true
+       cp %w(gxc gxensemble gxi gxpkg gxprof gxtags gxtest), prefix/"bin"
+     end
   end
 
 #+end_src
@@ -221,3 +222,8 @@ That's that!
 #+begin_src ruby
 end
 #+end_src
+
+
+# Local Variables:
+# org-src-preserve-indentation: t
+# End:
