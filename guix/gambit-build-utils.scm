@@ -26,4 +26,4 @@
 #endif\n"))))
 	  (substitute* "src/gambit/include/makefile.in"
 		       (("^(.*)echo > stamp.h;" _ ws)
-			(string-append ws "mv -f stamp.h.new stamp.h;")))))
+			(string-append ws "cp -v stamp.h.new stamp.h;")))))
