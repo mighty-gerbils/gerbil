@@ -8,7 +8,7 @@ We offer two official docker images based on Alpine Linux:
   It also includes all the foreign dependencies required by the officially supported
   external packages.
 - Supported architectures are `aarch64` and `x86_64`.
-- `:latest` always points at the last release, e.g. `v0.18`
+- `:latest` always points at the last release, e.g. `v0.18.1`
 - `:master` points to the latest merge into the `master` branch.
 
 Alpine was chosen due to the static compilation environment and capabilities it provides.

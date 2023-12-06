@@ -2,7 +2,7 @@
 (begin
   (define gerbil/runtime/system::timestamp 1701718632)
   (begin
-    (define gerbil-version-string (lambda () '"v0.18-43-g9dc17ae7"))
+    (define gerbil-version-string (lambda () '"v0.18.1"))
     (define gerbil-system-version-string
       (lambda ()
         (string-append
