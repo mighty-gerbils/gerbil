@@ -116,7 +116,7 @@ build_gambit() {
   feedback_low "Building Gambit in ${GERBIL_BUILD_PREFIX}/gambit"
   feedback_mid "Building core gambit"
   (cd gambit && rm -rf boot gsc-boot) || die
-  (cd gambit && make -j ${GERBIL_BUILD_CORES:-1} core) || die
+  (cd gambit && m="make -j ${GERBIL_BUILD_CORES:-1}" && $m bootstrap && $m from-scratch)
 
   feedback_mid "Installing Gambit to ${GERBIL_BUILD_PREFIX}"
   cp -v gambit/gsi/gsi "${GERBIL_STAGE0}/bin"
