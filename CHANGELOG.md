@@ -2,13 +2,13 @@
 
 ## Gerbil v0.18.1, NimzoLarsen
 
-- Gerbil v0.18.1; December 4, 2023
+- Gerbil v0.18.1; December 5, 2023
 
 **TL;DR** Gerbil v0.18.1 is a patch release,
 that consolidates the foundations laid out by v0.18 and fixes minor bugs,
 paving the way for Gerbil v1.0 in the near future.
 Since this is a patch for the v0.18 **Nimzowitsch** release, we call it
-Nimzowitsch-Larsen after the most famous Chess opening popularized by
+NimzoLarsen after the most famous Chess opening popularized by
 Nimzowitsch.
 
 As notable new features:
