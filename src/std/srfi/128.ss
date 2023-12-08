@@ -319,4 +319,4 @@
          equal
          greater))))
   ((recur o1 o2 less equal greater)
-   (recur (default-comparator) o1 o2 less equal greater)))
+   (recur (make-default-comparator) o1 o2 less equal greater)))
