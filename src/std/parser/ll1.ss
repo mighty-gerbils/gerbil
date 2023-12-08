@@ -250,4 +250,4 @@
 
 ;; Parse an entire file line-by-line
 (def (ll1/file-lines parse-line file (description file) (where 'll1/file-lines))
-  (ll1/file file (cut ll1-lines <> parse-line) description where))
+  (ll1/file (cut ll1-lines <> parse-line) file description where))
