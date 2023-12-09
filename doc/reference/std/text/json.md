@@ -44,7 +44,7 @@ The output sink can be:
   str := a string of JSON data
 ```
 
-Parses given *str* and returns JSON object or signals an error fails to parse.
+Parses given *str* and returns JSON object or signals an error if it fails to parse.
 
 ## json-object->string
 ``` scheme
@@ -54,15 +54,43 @@ Parses given *str* and returns JSON object or signals an error fails to parse.
 ```
 
 Returns a newly allocated string with JSON object as a string. Signals an error if
-fails to parse JSON.
+fails to print JSON.
+
+## bytes->json-object
+``` scheme
+(bytes->json-object str) -> json | error
+
+  bytes := u8vector encoding a UTF-8 string of JSON data
+```
+
+Parses given *bytes* and returns JSON object or signals an error if it fails to parse.
+
+## json-object->bytes
+``` scheme
+(json-object->bytes obj) -> u8vector | error
+
+  obj := JSON object
+```
+
+Returns a newly allocated u8vector with JSON object as bytes.
+Signals an error if it fails to print JSON.
+
+## port->json-object
+``` scheme
+(port->json-object port) -> json | error
+
+  port := input port
+```
+
+Parses data on given *port* and returns JSON object or signals an error if it fails to parse.
 
 ## json-symbolic-keys
 ``` scheme
 json-symbolic-keys
 ```
 
-Boolean parameter to control should decoded hashes have symbols as keys? Defaults to #t.
-#f means that keys will be strings.
+Boolean parameter to control should decoded hashes have symbols as keys? Defaults to `#t`.
+`#f` means that keys will be strings.
 
 ::: tip Examples
 ``` scheme
@@ -92,3 +120,42 @@ If bound to `list->vector` then JSON lists will be parsed as vectors.
     (string->json-object "[\"a\",1]"))
 #("a" 1)
 ```
+
+## trivial-class->json-object
+``` scheme
+(trivial-class->json-object object) -> json | error
+
+  object := an object
+```
+
+Extracts a printable JSON object from the slots of an `object`,
+or signals an error if it fails.
+
+## json-object->trivial-class
+``` scheme
+(json-object->trivial-class class-descriptor json) -> object | error
+
+  class-descriptor := class-descriptor
+  json := hash-table
+```
+
+Creates an object of the class corresponding to the `class-descriptor`
+by extracting its slots from a `json` hash-table.
+
+## JSON
+``` scheme
+JSON -> class
+JSON::t -> class-descriptor
+```
+A class for object that can be printed as JSON.
+The default `:json` method is `trivial-class->json-object`.
+
+## pretty-json
+```scheme
+(pretty-json object [output])
+```
+A function that pretty-prints a JSON `object` to the specified `output`
+as per [with-output](../misc/ports.md#with-output)
+(defaults to `#f`, i.e. print to string).
+
+Internally this function uses the external program `jq -M .` to do the pretty-printing.

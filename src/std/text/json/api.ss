@@ -8,4 +8,4 @@
         json-symbolic-keys json-list-wrapper json-sort-keys
         trivial-class->json-object trivial-json-object->class
         trivial-struct->json-object trivial-json-object->struct
-        JSON pretty-json)
+        JSON JSON::t pretty-json)

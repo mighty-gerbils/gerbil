@@ -1,38 +1,18 @@
-(export #t)
+(export
+  write-n-chars
+  display-integer/fit
+  display-integer/base)
 
 (import
-  :gerbil/gambit
-  :std/srfi/13
+  (only-in :std/srfi/13 string-reverse)
   (only-in :std/srfi/141 floor/)
-  :std/error
-  (only-in :std/misc/number uint?
-           check-argument-uint check-argument-positive-integer)
-  :std/misc/ports
-  :std/sugar
-  :std/text/char-set)
-
-(def (repeat-call n thunk)
-  (let loop ((i n))
-    (cond
-     ((< i 1) (void))
-     ((= i 1) (thunk)) ;; put thunk in tail position
-     (else (thunk) (loop (1- i))))))
-
-(defrule (repeat-do n body ...)
-  (repeat-call n (lambda () body ...)))
+  (only-in :std/error check-argument)
+  (only-in :std/misc/number uint? check-argument-exact-integer check-argument-positive-integer)
+  (only-in :std/misc/ports with-output)
+  (only-in :std/text/char-set digit-char))
 
 (def (write-n-chars n char port)
-  (repeat-do n (write-char char port)))
-
-(def (display-integer/fit n width (out #t))
-  (with-output (out)
-    (check-argument-uint n)
-    (check-argument-positive-integer width)
-    (let* ((digits (number->string n))
-           (padding (- width (string-length digits))))
-      (check-argument (uint? padding) "integer small enough for width" [n width])
-      (display (make-string padding #\0) out)
-      (display digits out))))
+  (display (make-string n char) port))
 
 (def (display-integer/base integer base (out #t))
   (def s
@@ -52,3 +32,14 @@
   (if out
     (with-output (out) (display s out))
     s))
+
+(def (display-integer/fit n width (out #t) base: (base 10))
+  (with-output (out)
+    (check-argument-exact-integer n)
+    (check-argument-positive-integer width)
+    (let* ((digits (display-integer/base (abs n) base #f))
+           (padding (- width (string-length digits) (if (negative? n) 1 0))))
+      (check-argument (uint? padding) "integer small enough for width" [n width])
+      (when (negative? n) (display #\- out))
+      (write-n-chars padding #\0 out)
+      (display digits out))))
