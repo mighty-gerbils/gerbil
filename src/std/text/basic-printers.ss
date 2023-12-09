@@ -7,7 +7,7 @@
   (only-in :std/srfi/13 string-reverse)
   (only-in :std/srfi/141 floor/)
   (only-in :std/error check-argument)
-  (only-in :std/misc/number uint? check-argument-uint check-argument-positive-integer)
+  (only-in :std/misc/number uint? check-argument-exact-integer check-argument-positive-integer)
   (only-in :std/misc/ports with-output)
   (only-in :std/text/char-set digit-char))
 
@@ -35,7 +35,7 @@
 
 (def (display-integer/fit n width (out #t) base: (base 10))
   (with-output (out)
-    (check-argument-uint n)
+    (check-argument-exact-integer n)
     (check-argument-positive-integer width)
     (let* ((digits (display-integer/base (abs n) base #f))
            (padding (- width (string-length digits) (if (negative? n) 1 0))))
