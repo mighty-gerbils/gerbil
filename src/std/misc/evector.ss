@@ -144,7 +144,9 @@
   (vector->list (&evector->vector e)))
 
 ;;; memoize the start of a recursively defined sequence
-(def (memoize-recursive-sequence fun cache: (cache (list->evector '())))
+(def (memoize-recursive-sequence fun
+                                 init: (init '())
+                                 cache: (cache (list->evector init)))
   (check-argument-procedure fun)
   (check-argument-evector cache)
   (lambda (n)

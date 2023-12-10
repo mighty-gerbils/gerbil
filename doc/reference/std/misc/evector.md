@@ -169,10 +169,12 @@ if the fill-pointer could be incremented, set the value at last index to `x`.
 
 ### memoize-recursive-sequence
 ```scheme
-(memoize-recursive-sequence fun cache: (cache (list->evector '())))
+(memoize-recursive-sequence fun init: (init '()) cache: (cache (list->evector init))) => function
 ```
 Define a function `f` from a non-negative fixnum `n`
-that caches its initial values in an extensible vector `cache`.
+that caches its initial values (zero-based) in extensible vector `cache`,
+that by default is initialized from list `init`, that defaults to the empty list.
+
 The function body `fun` may make recursive calls to the outer function `f`
 with strictly lower values of the integer argument `n`;
 the `cache` can be initialized with the initial values for `f`;
@@ -183,9 +185,15 @@ entries filled after `fun` returns.
 ```scheme
 > (def fibonacci
     (memoize-recursive-sequence (λ (n) (+ (fibonacci (- n 1)) (fibonacci (- n 2))))
-       cache: (list->evector '(0 1))))
+       init: '(0 1)))
 > (fibonacci 8)
 21
+> (def fact-e (list->evector '(1)))
+> (def fact (memoize-recursive-sequence (λ (n) (* n (fact (1- n)))) cache: fact-e))
+> (fact 7)
+5040
+> (subvector (evector->vector fact-e) 3 8)
+#(6 24 120 720 5040)
 ```
 :::
 
