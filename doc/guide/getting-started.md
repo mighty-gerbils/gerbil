@@ -159,7 +159,7 @@ At this point we have a new project template, which is ready to build
 and is waiting for you to fill your code.
 
 The tool has created the following files in the current directory:
-- `gerbil.pkg` -- this includes project meta-data, the most important being the package namesace.
+- `gerbil.pkg` -- this includes project meta-data, the most important being the package namespace.
   As we can see, this is my `vyzo` user name in this example
 - `build.ss` -- this is the project build script, pre-filled with the two source files the
   tool generated.
