@@ -26,7 +26,7 @@ $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 
 * Configure Gerbil
 
-I usually configure Gerbil for devlopment with the following incantation:
+I usually configure Gerbil for development with the following incantation:
 ```shell
 ./configure --prefix=/usr/local/gerbil
 ```
@@ -323,7 +323,7 @@ hello, world
 
 Note that by default your program will be compiled with separate
 module compilation semantics and link to `libgerbil`.  If you are
-willing to wait a bit for your proggram to compile, you can build
+willing to wait a bit for your program to compile, you can build
 your project with `gerbil build --optimized` or use the `optimized-exe:`
 build spec for your executable in the build script.
 
@@ -378,7 +378,7 @@ way to build release binaries is by using [docker](docker.md).
 ## Using the Makefile
 
 The generated Makefile has two main rules: the default `linux-static`
-rule which builds static executables for your poject, and the utility
+rule which builds static executables for your project, and the utility
 `clean` rule to clean build artifacts.
 
 So all you have to do to build a release executable is this:
