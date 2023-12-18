@@ -1,6 +1,6 @@
 # Iterators
 
-The `:std/iter` library provides iterator support; see the [Guide](../guide/intro.md#iteration)
+The `:std/iter` library provides iterator support; see the [Guide](/guide/intro.html#iteration)
 for an introduction.
 
 ::: tip To use bindings from this module:
@@ -10,6 +10,7 @@ for an introduction.
 ## Macros
 
 ### for
+
 ```scheme
 (for <bind> body ...)
 (for (<bind> ...) body ...)
@@ -30,7 +31,8 @@ produced to the binding pattern, and evaluates the body for each value.
 For each iterable object an iterator is constructed using `(iter ...)`;
 the iteration completes as soon as one of the iterators completes.
 
-### for*
+### for\*
+
 ```scheme
 (for* (<bind> ...) body ...)
 (for* (<bind> when <filter-expr> ...) body ...)
@@ -40,6 +42,7 @@ the iteration completes as soon as one of the iterators completes.
 `for*` iterates one or more iterables sequentially.
 
 ### for/collect
+
 ```scheme
 (for/collect <bind> body ...)
 (for/collect (<bind> ...) body ...)
@@ -51,6 +54,7 @@ the iteration completes as soon as one of the iterators completes.
 for each iteration into a list.
 
 ### for/fold
+
 ```scheme
 (for/fold <iv-bind> <bind> body ...)
 (for/fold <iv-bind> (<bind> ...) body ...)
@@ -68,6 +72,7 @@ result of the final iteration.
 ## Iterator Constructors
 
 ### iter
+
 ```scheme
 (iter obj) -> iterator
 ```
@@ -76,8 +81,8 @@ This is the fundamental iterator constructor for iterable objects.
 If the object is already an iterator then it is returned; otherwise
 the generic `:iter` is applied.
 
-
 ### :iter
+
 ```scheme
 (:iter obj) -> iterator
 
@@ -92,6 +97,7 @@ procedures which are iterated as coroutines; objects without any
 method binding dispatch to the `:iter` object method.
 
 ### in-iota
+
 ```scheme
 (in-iota count [start = 0] [step = 1]) -> iterator
 
@@ -103,6 +109,7 @@ Creates an iterator that yields `count` values starting from `start`
 and incrementing by `step`.
 
 ### in-range
+
 ```scheme
 (in-range end) -> iterator
 
@@ -127,6 +134,7 @@ Before v0.15, it was like `in-iota` except that `start` came before `count`
 when 2 or 3 parameters were used.
 
 ### in-naturals
+
 ```scheme
 (in-naturals [start = 0] [step = 1]) -> iterator
 
@@ -145,6 +153,7 @@ and doesn't accept an optional step, always using 1,
 whereas Gerbil accepts any number for start and step.
 
 ### in-hash
+
 ```scheme
 (in-hash ht) -> iterator
 
@@ -155,6 +164,7 @@ Creates an iterator that yields the key/value pairs (as two values) for each ass
 in the hash table. This is the same as `(:iter <hash-table>)`.
 
 ### in-hash-keys
+
 ```scheme
 (in-hash-keys ht) -> iterator
 
@@ -164,6 +174,7 @@ in the hash table. This is the same as `(:iter <hash-table>)`.
 Creates an iterator that yields the keys for each association in the hash table.
 
 ### in-hash-values
+
 ```scheme
 (in-hash-values ht) -> iterator
 ```
@@ -171,6 +182,7 @@ Creates an iterator that yields the keys for each association in the hash table.
 Creates an iterator that yields the values for each association in the hash table.
 
 ### in-input-port
+
 ```
 (in-input-port port [read]) -> iterator
 
@@ -181,6 +193,7 @@ Creates an iterator that yields the values read with `read` from the `port`.
 The unary version is the same as `(:iter port)`.
 
 ### in-input-lines
+
 ```
 (in-input-lines port) -> iterator
 
@@ -190,6 +203,7 @@ The unary version is the same as `(:iter port)`.
 Same as `(in-input-port port read-line)`.
 
 ### in-input-chars
+
 ```scheme
 (in-input-chars port) -> iterator
 
@@ -199,6 +213,7 @@ Same as `(in-input-port port read-line)`.
 Same as `(in-input-port port read-char)`.
 
 ### in-input-bytes
+
 ```scheme
 (in-input-bytes port) -> iterator
 
@@ -208,6 +223,7 @@ Same as `(in-input-port port read-char)`.
 Same as `(in-input-port port read-u8)`.
 
 ### in-coroutine
+
 ```scheme
 (in-coroutine proc arg ...) -> iterator
 
@@ -218,6 +234,7 @@ Creates an iterator that applies `(proc arg ...)` in a coroutine.
 The unary version is the same as `(:iter <procedure>)`.
 
 ### in-cothread
+
 ```scheme
 (in-cothread proc arg ...) -> iterator
 
@@ -226,10 +243,10 @@ The unary version is the same as `(:iter <procedure>)`.
 
 Creates an iterator that applies `(proc arg ...)` in a cothread.
 
-
 ## Iterator Protocol
 
 ### iterator
+
 ```scheme
 (defstruct iterator (e next fini))
 
@@ -239,6 +256,7 @@ fini := lambda (iterator)
 ```
 
 This is the type of iterator objects:
+
 - The element `e` is the state associated with the iterator
 - The procedure `next` advances the iterator and returns the current value; `iter-end` signals the end of the iteration.
 - The procedure `fini` finalizes the iterator. It is invoked at the end of the iteration by the `for` family of macros.
@@ -248,6 +266,7 @@ If the iterator has hard state associated (e.g. a thread or some other expensive
 will should be attached to it.
 
 ### iter-end
+
 ```scheme
 (def iter-end ...)
 ```
@@ -255,6 +274,7 @@ will should be attached to it.
 Special object signalling the end of iteration.
 
 ### iter-end?
+
 ```scheme
 (iter-end? obj) -> boolean
 ```
@@ -262,6 +282,7 @@ Special object signalling the end of iteration.
 Returns true if the object is the end of iteration object.
 
 ### iter-next!
+
 ```scheme
 (iter-next! it) -> any
 
@@ -271,6 +292,7 @@ Returns true if the object is the end of iteration object.
 Advances the iterator and returns the current value.
 
 ### iter-fini!
+
 ```scheme
 (iter-fini! it) -> unspecified
 
@@ -280,25 +302,26 @@ Advances the iterator and returns the current value.
 Finalizes the iterator.
 
 ### yield
-``` scheme
+
+```scheme
 (yield val ...) -> unspecified
 ```
 
 Yields one or more values from a coroutine procedure associated with an iterator.
 This is the `yield` defined in `:std/coroutine`.
 
-
 ## Examples
 
 Here is the definition for an iterator that produces a constant value,
 using the iterator protocol:
+
 ```scheme
 (def (iter-const val)
   (make-iterator val iterator-e))
 ```
 
-
 Here is a definition of the list iterator using the iterator protocol:
+
 ```scheme
 (def (iter-list lst)
   (def (next it)
@@ -312,6 +335,7 @@ Here is a definition of the list iterator using the iterator protocol:
 ```
 
 Here is a definition of the list iterator using coroutines:
+
 ```scheme
 (def (iter-list lst)
   (def (iterate lst)
