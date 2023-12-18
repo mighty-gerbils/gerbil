@@ -35,8 +35,8 @@
         cppflags
         append-options)
 
-(def default-gambit-gsc "gsc")
-(def default-gerbil-gxc "gxc")
+(def default-gambit-gsc (path-expand "~~bin/gsc"))
+(def default-gerbil-gxc (path-expand "~~bin/gxc"))
 
 #|
 TODO:
