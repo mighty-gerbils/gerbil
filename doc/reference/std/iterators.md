@@ -1,6 +1,6 @@
 # Iterators
 
-The `:std/iter` library provides iterator support; see the [Guide](../guide/intro.md#iteration)
+The `:std/iter` library provides iterator support; see the [Guide](/guide/intro.md#iteration)
 for an introduction.
 
 ::: tip To use bindings from this module:
@@ -30,7 +30,7 @@ produced to the binding pattern, and evaluates the body for each value.
 For each iterable object an iterator is constructed using `(iter ...)`;
 the iteration completes as soon as one of the iterators completes.
 
-### for*
+### for\*
 ```scheme
 (for* (<bind> ...) body ...)
 (for* (<bind> when <filter-expr> ...) body ...)

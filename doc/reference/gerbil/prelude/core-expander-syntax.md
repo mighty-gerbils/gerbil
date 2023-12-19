@@ -4,7 +4,7 @@ Gerbil is a Meta-Scheme that bases the expansion of forms on the
 context present while expanding.
 When expanded by the compiler or interpreter a form could have very
 different meanings depending on the
-[current-expander-context](/reference/core-expander.html#current-expander-context).
+[current-expander-context](/reference/gerbil/expander/#current-expander-context).
 
 
 These syntactic forms come from the root context, which is the parent context
@@ -105,7 +105,7 @@ Include the contents of path, wrapped with a `begin`.
  [(else body ...)])
 
 <feature>:
- (and feature ...)             ; boolean and of `feature ...`
+ (and feature ...)            ; boolean and of `feature ...`
  (or feature ...)             ; boolean or of `feature ...`
  (not feature)                ; negation of feature
  id                           ; satisfied if `id` is bound as an identifier
@@ -159,7 +159,7 @@ Plain old Scheme `lambda`, without optional and keyword argument support
 (case-lambda (lambda-formals body ...) ...)
 ```
 
-### let-values letrec-values letrec*-values
+### let-values letrec-values letrec\*-values
 ``` scheme
 (let-values (((id ...) expr) ...) body ...)
 (letrec-values (((id ...) expr) ...) body ...)
