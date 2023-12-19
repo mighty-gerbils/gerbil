@@ -6,6 +6,7 @@ When expanded by the compiler or interpreter a form could have very
 different meanings depending on the
 [current-expander-context](/reference/gerbil/expander/#current-expander-context).
 
+
 These syntactic forms come from the root context, which is the parent context
 of all syntactic contexts in Gerbil. They are not a part of the core prelude
 per se, but they are documented here for completeness.
@@ -20,7 +21,6 @@ per se, but they are documented here for completeness.
 ``` scheme
 (begin-syntax form ...)
 ```
-
 Like begin, but at syntax phase `phi +1`.
 
 ### begin-annotation
@@ -196,7 +196,6 @@ Quote an identifier `id`, capturing its syntactic context.
 (%%ref id)
 (%%begin-module body ...)
 ```
-
 Special expander indirection hooks; explained elsewhere in the documentation.
 
 ## Reserved Syntactic Tokens

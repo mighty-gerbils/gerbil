@@ -1,4 +1,5 @@
 # Iterators
+
 The `:std/iter` library provides iterator support; see the [Guide](/guide/intro.html#iteration)
 for an introduction.
 
@@ -238,7 +239,6 @@ fini := lambda (iterator)
 ```
 
 This is the type of iterator objects:
-
 - The element `e` is the state associated with the iterator
 - The procedure `next` advances the iterator and returns the current value; `iter-end` signals the end of the iteration.
 - The procedure `fini` finalizes the iterator. It is invoked at the end of the iteration by the `for` family of macros.
@@ -297,6 +297,7 @@ using the iterator protocol:
   (make-iterator val iterator-e))
 ```
 
+
 Here is a definition of the list iterator using the iterator protocol:
 ```scheme
 (def (iter-list lst)
@@ -309,7 +310,6 @@ Here is a definition of the list iterator using the iterator protocol:
         (else iter-end))))
   (make-iterator lst next))
 ```
-
 
 Here is a definition of the list iterator using coroutines:
 ```scheme
