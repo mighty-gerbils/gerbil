@@ -1,6 +1,6 @@
 # Iterators
 
-The `:std/iter` library provides iterator support; see the [Guide](/guide/intro.html#iteration)
+The `:std/iter` library provides iterator support; see the [Guide](/guide/intro.md#iteration)
 for an introduction.
 
 ::: tip To use bindings from this module:
