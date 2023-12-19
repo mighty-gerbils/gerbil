@@ -11,15 +11,12 @@ of all syntactic contexts in Gerbil. They are not a part of the core prelude
 per se, but they are documented here for completeness.
 
 ## Top Forms
-
 ### begin
-
 ``` scheme
 (begin form ....)
 ```
 
 ### begin-syntax
-
 ``` scheme
 (begin-syntax form ...)
 ```
@@ -27,7 +24,6 @@ per se, but they are documented here for completeness.
 Like begin, but at syntax phase `phi +1`.
 
 ### begin-annotation
-
 ``` scheme
 (begin-annotation annotation form ...)
 ```
@@ -36,7 +32,6 @@ Effect the declarations in `annotation` in the scope of the body.
 Not implemented yet.
 
 ### import
-
 ``` scheme
 (import import-spec ...)
 
@@ -65,7 +60,6 @@ Not implemented yet.
 Imports bindings to the current syntactic context. Must appear at top or module context.
 
 ### module
-
 ``` scheme
 (module id module-body ...)
 ```
@@ -74,7 +68,6 @@ Creates a module and binds it to `id`. The module may be defined at top context 
 a top module or as a nested module inside another module.
 
 ### export
-
 ``` scheme
 (export export-spec ...)
 
@@ -92,7 +85,6 @@ a top module or as a nested module inside another module.
 Exports bindings from the current module.
 
 ### declare
-
 ``` scheme
 (declare declaration ...)
 ```
@@ -100,7 +92,6 @@ Exports bindings from the current module.
 Make declarations that the compiler finds useful
 
 ### include
-
 ``` scheme
 (include path)
 ```
@@ -108,7 +99,6 @@ Make declarations that the compiler finds useful
 Include the contents of path, wrapped with a `begin`.
 
 ### cond-expand
-
 ``` scheme
 (cond-expand
  (feature body ...) ...
@@ -124,7 +114,6 @@ Include the contents of path, wrapped with a `begin`.
 Conditionally expands the body for the first satisfied feature. Must appear at top scope.
 
 ### provide
-
 ``` scheme
 (provide id ...)
 ```
@@ -132,19 +121,16 @@ Conditionally expands the body for the first satisfied feature. Must appear at t
 Binds `id ...` as features provided by a module.
 
 ### define-values
-
 ``` scheme
 (define-values (id ...) expr)
 ```
 
 ### define-syntax
-
 ``` scheme
 (define-syntax id expr)
 ```
 
 ### define-alias
-
 ``` scheme
 (define-alias id alias-id)
 ```
@@ -152,7 +138,6 @@ Binds `id ...` as features provided by a module.
 Defines a syntactic alias for `id` to be the same as `alias-id`
 
 ### extern
-
 ``` scheme
 (extern id ...)
 (extern namespace: [namespace-id | #f] id ...)
@@ -162,9 +147,7 @@ Create runtime bindings for `id`, with the symbols bound at runtime through an
 external mechanism (eg builtin or defined at a foreign library).
 
 ## Expressions
-
 ### lambda%
-
 ``` scheme
 (lambda% lambda-formals body ...)
 ```
@@ -172,13 +155,11 @@ external mechanism (eg builtin or defined at a foreign library).
 Plain old Scheme `lambda`, without optional and keyword argument support
 
 ### case-lambda
-
 ``` scheme
 (case-lambda (lambda-formals body ...) ...)
 ```
 
 ### let-values letrec-values letrec\*-values
-
 ``` scheme
 (let-values (((id ...) expr) ...) body ...)
 (letrec-values (((id ...) expr) ...) body ...)
@@ -186,27 +167,23 @@ Plain old Scheme `lambda`, without optional and keyword argument support
 ```
 
 ### let-syntax letrec-syntax
-
 ``` scheme
 (let-syntax ((id syntax-expr) ...) body ...)
 (letrec-syntax ((id syntax-expr) ...) body ...)
 ```
 
 ### if
-
 ``` scheme
 (if test-expr then-expr else-expr)
 (if test-expr then-expr)
 ```
 
 ### quote
-
 ``` scheme
 (quote datum)
 ```
 
 ### quote-syntax
-
 ``` scheme
 (quote-syntax id)
 ```
@@ -214,7 +191,6 @@ Plain old Scheme `lambda`, without optional and keyword argument support
 Quote an identifier `id`, capturing its syntactic context.
 
 ## Expander Hooks
-
 ```
 (%%app rator rand ...)
 (%%ref id)
@@ -224,9 +200,8 @@ Quote an identifier `id`, capturing its syntactic context.
 Special expander indirection hooks; explained elsewhere in the documentation.
 
 ## Reserved Syntactic Tokens
-
 The following widely used syntactic tokens are defined as reserved expanders:
-
 ```
 _ ... else => unquote unquote-splicing unsyntax unsyntax-splicing
 ```
+
