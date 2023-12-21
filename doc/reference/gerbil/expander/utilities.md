@@ -1,5 +1,12 @@
 ## Utilities
 
+Working with syntax is easy if you use the correct utilities. Because
+Gerbil is a meta-scheme almost all such things are somewhere in the
+[Expander Runtime](README.md.)
+
+So, if you've moved beyond [Identifiers](identifiers.md), this could
+be what you're looking for.
+
 ### stx-boolean?
 ```scheme
 (stx-boolean? ...)
@@ -12,7 +19,18 @@ Please document me!
 (stx-keyword? ...)
 ```
 
-Please document me!
+Determine if the syntax represents a `keyword`.
+
+```scheme
+> (defsyntax (foo stx) 
+    (syntax-case stx () 
+	  ((_ key) (stx-keyword? #'key) #'"YAY!")
+      ((_ no) #'"NAY")))
+> (foo bar:)
+"YAY!"
+> (foo 'bar)
+"NAY
+```
 
 ### stx-char?
 ```scheme
@@ -37,8 +55,21 @@ Please document me!
 
 ### stx-string?
 ```scheme
-(stx-string? ...)
+(stx-string? stx)
 ```
+
+Determines if the syntax is a string.
+
+```scheme
+> (defsyntax (foo stx) 
+   (syntax-case stx () 
+    ((_ str) (stx-string? #'key) #'"YAY!") ((_ no) #'"Nay")))
+> (foo bar:)
+"Nay"
+> (foo "bar")
+"YAY!
+```
+
 
 Please document me!
 
@@ -126,16 +157,71 @@ Please document me!
 
 Please document me!
 
+### locat 
+ 
+ A "locat" object represents a source code location.  The location is
+ a 2 or 3 element vector composed of the container of the source code
+ (a file, a text editor window, etc) and one or two positions within
+ that container (a character offset, a line/column index, a text
+ bookmark, an expression, etc). When there are two positions they are
+ the start and end positions of the source code location.
+
+ Source code location containers and positions can be encoded with any
+ concrete type, except that positions cannot be pairs.  The procedure
+ `##container->path` takes a container object and returns #f if the
+ container does not denote a file, otherwise it returns the absolute
+ path of the file as a string.  The procedure `##container->id` takes
+ a container object and returns a string that can be used to identify
+ the container when it is not a file (e.g. the name of a text editor
+ window).
+ 
+ The procedure `##position->filepos` takes a position object and
+ returns a fixnum encoding the line and column position (see function
+ `##make-filepos`).
+ 
 ### stx-source
 ```scheme
 (stx-source stx) -> locat | #f
   stx := syntax
 ```
-:::
 
 Returns the source location of a syntax object AST `stx`.
 
-The `locat` structure includes the container and filepos, accessed by `##locat-container` and `##locat-filepos`. The filepos has line and column information, accessed with `##filepos-line` and `##filepos-col`.
+The `locat` structure includes the container and one or two positions,
+accessed by `##locat-container`, `##locat-start-position` and
+`##locat-end-position`. 
+
+
+The procedure `##position->filepos` takes a position object and
+returns a `##filepos` The filepos has line and column information,
+accessed with `##filepos-line` and `##filepos-col`.
+
+```shell
+$ cat > /tmp/foo.ss <<'EOF'
+(defsyntax (foo stx) 
+  (let* ((locat (stx-source stx))
+         (con (##locat-container locat))
+		 (path (##container->path con))
+		 (start-pos (##locat-start-position locat))
+		 (start-filepos (##position->filepos start-pos))
+		 (start-line (##filepos-line start-filepos))
+		 (start-col (##filepos-col start-filepos))
+		 (end-pos (##locat-end-position locat))
+		 (end-filepos (##position->filepos end-pos))
+		 (end-line (##filepos-line end-filepos))
+		 (end-col (##filepos-col end-filepos)))
+    (displayln "Where? " path "start: line " start-line " col " start-col
+	            " end: line " end-line " col " end-col)
+ #'()))
+       
+	   (foo
+	   
+	   
+)
+EOF
+$ gxc /tmp/foo.ss
+Where? /private/tmp/foo.ssstart: line 16 col 7 end: line 19 col 1
+```
 
 ### stx-wrap-source
 
@@ -150,13 +236,17 @@ Produces a new syntax object with source location `src`
 if `stx` is not wrapped as an AST already, otherwise returns `stx` unchanged.
 
 The `locat` structure can be constructed with
-`(##make-locat container filepos filepos-end)`, where:
+`(##make-locat container start-position end-position)`, where:
+
   - `container` is a string denoting a file path, or a list containing
     a symbol denoting the provenance (string, port, etc.).
-  - `filepos` can be constructed with `(##make-filepos line col off)`.
-  - `filepos-end` can be `#f` if the location is a position, or
-    a number similar to `filepos` indicating the end position (not included)
-    if the location is a range.
+	
+  - `start-position` can be constructed with: 
+    `(##filepos->position (##make-filepos line col off))`.
+	
+  - `end-position` can be `#f` if the location is a position, or a
+    number similar to `start-position` indicating the end position
+    (not included) if the location is a range.
 
 ### stx-car
 ```scheme
