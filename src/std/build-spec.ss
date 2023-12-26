@@ -325,7 +325,7 @@
     "xml/print"
     "xml"
     ;; :std/html
-    (gxc: "html/parser" (extra-inputs: ("html/html-parser.scm")))
+    (gxc: "html/parser" (extra-inputs: ("html/html-parser.scm" "xml/sxml-to-xml.scm")))
     "html/tal/toplevel"
     "html/tal/iter"
     "html/tal/expander"
