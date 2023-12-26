@@ -1,5 +1,5 @@
 (import :gerbil/gambit :std/error :std/srfi/1 :std/srfi/13 :std/text/utf8
-  :std/xml :std/xml/sxml :std/xml/sxml-to-xml)
+  :std/xml :std/xml/sxml)
 (export
   html->sxml
   default-html->sxml-plist
