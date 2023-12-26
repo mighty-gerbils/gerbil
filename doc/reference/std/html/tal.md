@@ -9,7 +9,7 @@ A `TAL Statement` is an attribute in an HTML tag that has a `tal:` prefix. For t
 To define a `TAL` procedure we take `HTML` code that may have Template Attributes and transform it into a compiled function
 
 
-# Attributes
+## Attributes
 
 -   **define:** creates local variables, valid in the element bearing the attribute (including contained elements) or sets a "global".
 -   **switch:** Set up a switch statement
@@ -25,7 +25,7 @@ To define a `TAL` procedure we take `HTML` code that may have Template Attribute
 If a tag has more than one TAL attribute they are evaluated in the above (fairly logical) order.
 
 
-# define-TAL
+## define-TAL
 
 ```scheme
 (define-TAL (name args ...) /key/ string-or-filename)
@@ -101,7 +101,7 @@ We can then use it creatively.
 As you can see it enables a fairly easy interaction between **HTML** syntax and **Lisp**.
 
 
-# current-tal-output-port
+## current-tal-output-port
 
 Output to where? The `current-tal-output-port` parameter of course!
 
@@ -133,7 +133,7 @@ As well as have a more documentation friendly output.
 ```
 
 
-# tal:attributes: Replace element attributes
+## tal:attributes: Replace element attributes
 
 *Syntax*:
 
@@ -208,7 +208,7 @@ EOF
 ```
 
 
-# tal:condition: Conditionally insert or remove an element
+## tal:condition: Conditionally insert or remove an element
 
 *Syntax*
 
@@ -303,7 +303,7 @@ Which kinda looks like what I'm trying to portray.
 ```
 
 
-# tal:content: Replace the content of an element
+## tal:content: Replace the content of an element
 
 *Syntax*
 
@@ -395,7 +395,7 @@ EOF
 ```
 
 
-# tal:define
+## tal:define
 
 The `tal:define` command either wraps a `let*` around the tag (by default or with the `local:` keyword) and/or `set!`'ing things with the `set!:` keyword.
 
@@ -445,7 +445,7 @@ EOF
 ```
 
 
-# tal:switch: Set up a switch statement
+## tal:switch: Set up a switch statement
 
 If everything is testing the same item, and only one can succeed, a bunch of conditionals gets hairy. There's a `tal:switch` and some `tal:case` statements to round it up.
 
@@ -479,7 +479,7 @@ EOF
 ```
 
 
-# tal:omit-tag: Remove an element leaving its contents
+## tal:omit-tag: Remove an element leaving its contents
 
 *Syntax*
 
@@ -513,14 +513,14 @@ EOF
 ```
 
 
-# current-tal:on-error and tal:on-error.
+## current-tal:on-error and tal:on-error.
 
 Handling errors in a decent way is built into our `TAL` be default. This is, from experience, made to make most of the page work if there is an unwanted and unseen error.
 
 To update the "outside" error handler outside of the `TAL` form/file there is a `current-tal:on-error`. For "inside" use the `tal:on-error` attribute is very useful.
 
 
-## Default and current-tal:on-error
+### Default and current-tal:on-error
 
 By default the form that errors will write the error message prefixed with `ERROR:` in place of what is most likely its contents.
 
@@ -553,7 +553,7 @@ We can change it.
 But in reality that abstraction's just there so pages still run with bugs in them. Even better for all involved is the `tal:on-error` attribute.
 
 
-## tal:on-error
+### tal:on-error
 
 *Syntax*
 
@@ -684,7 +684,7 @@ EOF
 ```
 
 
-# tal:repeat: Repeat an element
+## tal:repeat: Repeat an element
 
 *Syntax*
 
@@ -723,7 +723,7 @@ If the iterator is empty then the statement element is deleted, otherwise it is 
 The `variable-name` is used to define a local variable and a `repeat/variable-name` for a `Repeat` interface variable. For each repetition, the local variable is set to the current sequence element, and the repeat variable is set to an interface around the iteration object.
 
 
-## The Repeat Interface
+### The Repeat Interface
 
 You use the `Repeat` interface to access information about the current repetition (such as the repeat index). The repeat interface has the same name as the local variable prefixed with `repeat/` and has the following methods.
 
