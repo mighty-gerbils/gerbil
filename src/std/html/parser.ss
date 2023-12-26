@@ -5,12 +5,9 @@
   html-strip
   make-html-parser
 
-  print-sxml
   sxml->html
   html-escape
-  html-character-escapes
-
-)
+  html-character-escapes)
 
 (def (integer->utf8-string n) (utf8->string (u8vector n)))
 
@@ -19,7 +16,8 @@
 
 (def (sxml->html sxml (port #f))
   (if port (print-sxml sxml port) (%sxml->html sxml)))
-(def (html-escape str (port #f) escapes: (esc html-character-escapes))
+(def (html-escape str (port #f) escapes: (esc #f))
+  (unless esc (set! esc html-character-escapes))
  (if port (html-display-escaped-string str port esc) (%html-escape str esc)))
 
 (def default-html->sxml-plist

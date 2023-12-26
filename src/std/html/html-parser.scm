@@ -9,111 +9,24 @@
 ;;  Changed (##sys#char->utf8-string (integer->char name)))
 ;;  to (integer->utf8-string name)
 ;;
-;;  Add % in front of sxml->html, html->sxml, make-html-parser, html-escape
+;;  Add % in front of sxml->html, html->sxml, make-html-parser,
+;;  html-escape
+;;
+;;  Make a function that returns sxml valid for printing
+;;
+;;  Removed some comments. Have a look at the README.org 
 
 
 ;; BSD-style license: http://synthcode.com/license.txt
 
-;;> A permissive HTML parser supporting scalable streaming with a
-;;> folding interface.  This copies the interface of Oleg Kiselyov's
-;;> SSAX parser, as well as providing simple convenience utilities.
-;;> It correctly handles all invalid HTML, inserting "virtual"
-;;> starting and closing tags as needed to maintain the proper tree
-;;> structure needed for the foldts down/up logic.  A major goal of
-;;> this parser is bug-for-bug compatibility with the way common web
-;;> browsers parse HTML.
-
-;;> Procedure: make-html-parser . keys
-
-;;   Returns a procedure of two arguments, and initial seed and an
-;;   optional input port, which parses the HTML document from the port
-;;   with the callbacks specified in the plist KEYS (using normal,
-;;   quoted symbols, for portability and to avoid making this a
-;;   macro).  The following callbacks are recognized:
-;;
-;;   START: TAG ATTRS SEED VIRTUAL?
-;;       fdown in foldts, called when a start-tag is encountered.
-;;     TAG:         tag name
-;;     ATTRS:       tag attributes as a alist
-;;     SEED:        current seed value
-;;     VIRTUAL?:    #t iff this start tag was inserted to fix the HTML tree
-;;
-;;   END: TAG ATTRS PARENT-SEED SEED VIRTUAL?
-;;       fup in foldts, called when an end-tag is encountered.
-;;     TAG:         tag name
-;;     ATTRS:       tag attributes of the corresponding start tag
-;;     PARENT-SEED: parent seed value (i.e. seed passed to the start tag)
-;;     SEED:        current seed value
-;;     VIRTUAL?:    #t iff this end tag was inserted to fix the HTML tree
-;;
-;;   TEXT: TEXT SEED
-;;       fhere in foldts, called when any text is encountered.  May be
-;;       called multiple times between a start and end tag, so you need
-;;       to string-append yourself if desired.
-;;     TEXT:        entity-decoded text
-;;     SEED:        current seed value
-;;
-;;   COMMENT: TEXT SEED
-;;       fhere on comment data
-;;
-;;   DECL: NAME ATTRS SEED
-;;       fhere on declaration data
-;;       
-;;   PROCESS: LIST SEED
-;;       fhere on process-instruction data
-;;
-;;   ENTITY: NAME-OR-NUM SEED
-;;       convert an entity with a given name, or number via &#NNNN;
-;;       to a string
-;;       
-;;   In addition, entity-mappings may be overriden with the ENTITIES:
-;;   keyword.
-
-;; Procedure: html->sxml [port]
-;;   Returns the SXML representation of the document from PORT, using
-;;   the default parsing options.
-
-;; Procedure: html-strip [port]
-;;   Returns a string representation of the document from PORT with all
-;;   tags removed.  No whitespace reduction or other rendering is done.
-
-;; Example:
-;;
-;;   The parser for html-strip could be defined as:
-;;
-;; (make-html-parser
-;;   'start: (lambda (tag attrs seed virtual?) seed)
-;;   'end:   (lambda (tag attrs parent-seed seed virtual?) seed)
-;;   'text:  (lambda (text seed) (display text)))
-;;
-;;   Also see the parser for html->sxml.
-
-;; (module html-parser
-;;   (make-html-parser make-string-reader/ci
-;;    html->sxml html-strip html-escape html-display-escaped-string
-;;    html-tag->string html-attr->string
-;;    sxml->html sxml-display-as-html)
-;; (import scheme
-;;         (only srfi-13 string-downcase)
-;;         (only (chicken port) call-with-output-string with-output-to-string)
-;;         (only (chicken base) error open-input-string))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; from SRFI-13
-
-;; (define (string-downcase str)
-;;   (let lp ((i (- (string-length str) 1)) (res '()))
-;;     (if (negative? i)
-;;         (list->string res)
-;;         (lp (- i 1) (cons (char-downcase (string-ref str i)) res)))))
-
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; SRFI-6 extension if not defined
-
-;; (define (call-with-output-string proc)
-;;   (let ((out (open-output-string)))
-;;     (proc out)
-;;     (get-output-string out)))
+;; A permissive HTML parser supporting scalable streaming with a
+;; folding interface.  This copies the interface of Oleg Kiselyov's
+;; SSAX parser, as well as providing simple convenience utilities.  It
+;; correctly handles all invalid HTML, inserting "virtual" starting
+;; and closing tags as needed to maintain the proper tree structure
+;; needed for the foldts down/up logic.  A major goal of this parser
+;; is bug-for-bug compatibility with the way common web browsers parse
+;; HTML.
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; text parsing utils
@@ -652,7 +565,7 @@
   (let ((parse
          (%make-html-parser
           'start: (lambda (tag attrs seed virtual?) '())
-          'end:   (lambda (tag attrs parent-seed seed virtual?)
+           'end:   (lambda (tag attrs parent-seed seed virtual?)
                     `((,tag ,@(if (pair? attrs)
                                   `((@ ,@attrs) ,@(reverse seed))
                                   (reverse seed)))

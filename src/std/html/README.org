@@ -8,34 +8,20 @@ As a web developer HTML is all over the place. This helps tame it.
 :END:
 :CONTENTS:
 - [[#documentation][Documentation]]
+  - [[#html-parser-and-printer][HTML Parser and Printer]]
   - [[#reading][Reading]]
     - [[#html-sxml][html->sxml]]
     - [[#default-html-sxml-plist][default-html->sxml-plist]]
     - [[#html-strip][html-strip]]
     - [[#make-html-parser][make-html-parser]]
   - [[#writing][Writing]]
-    - [[#html-escape][html-escape]]
-- [[#convenience-functions][Convenience functions]]
-  - [[#misc][Misc]]
-    - [[#make-string-readerci][make-string-reader/ci]]
-    - [[#html-display-escaped-string][html-display-escaped-string]]
-    - [[#html-escape-0][html-escape]]
-    - [[#html-attr-string][html-attr->string]]
-    - [[#html-tag-string][html-tag->string]]
-    - [[#sxml-display-as-html][sxml-display-as-html]]
     - [[#sxml-html][sxml->html]]
-- [[#parser][Parser]]
+    - [[#html-escape][html-escape]]
+    - [[#html-character-escapes][html-character-escapes]]
+- [[#parser-and-printer][Parser and printer]]
   - [[#some-make-html-parser-changes][Some make-html-parser changes]]
-  - [[#some-html-sxnl-fixes][Some html->sxnl fixes]]
+  - [[#some-html-sxml-fixes][Some html->sxml fixes]]
   - [[#file-html-parserscm][File html-parser.scm]]
-- [[#tal-the-template-attribute-language-tal-standard][TAL: The Template Attribute Language (TAL) standard]]
-  - [[#attributes][Attributes]]
-  - [[#the-first-step-parse][The first step: Parse]]
-  - [[#step-2-first-expansion][Step 2: First expansion]]
-  - [[#step-3-tal-expansion][Step 3: TAL expansion]]
-    - [[#talcontent-to-replace-the-content][tal:content to replace the content]]
-  - [[#the-attributes-attribute][The attributes attribute.]]
-  - [[#repeat][repeat]]
 :END:
 
 * Documentation
@@ -43,20 +29,32 @@ As a web developer HTML is all over the place. This helps tame it.
 :EXPORT_FILE_NAME: ../../../doc/reference/std/html.md
 :EXPORT_OPTIONS: toc:nil
 :EXPORT_TITLE: HTML: Hyper Text Markup Language
+:Custom: documentation
 :CUSTOM_ID: documentation
 :END:
 
+** HTML Parser and Printer
+:PROPERTIES:
+:CUSTOM_ID: html-parser-and-printer
+:END:
 
 HTML is a widely used Markup Language that, while very similar to [[./xml.md][XML]],
 differs enough to have its own specific libraries.
 
+/Usage/
 #+begin_src scheme
   (import :std/html)
 #+end_src
 
+
+This is for parsing and printing HTML. For HTML usage and templates
+for web development have a look at [[file:tal/README.org][The Template Attribute Language
+(TAL)]].
+
 #+begin_src scheme :export no :tangle ../html.ss
   (import ./html/parser)
   (export (import: ./html/parser))
+  ;;; This library is tangled from html/README.org
 #+end_src
 
 
@@ -96,6 +94,8 @@ default parsing options.
 :PROPERTIES:
 :CUSTOM_ID: default-html-sxml-plist
 :END:
+
+This is where the default parsing options come from.
 
 #+begin_src scheme :noweb-ref default-keys
   (def default-html->sxml-plist
@@ -191,7 +191,7 @@ The following callbacks are recognized:
      fhere on process-instruction data
 #+end_example
 
-In addition, entity-mappings may be overriden with the =ENTITIES:=
+In addition, entity-mappings may be overriden with the =entities:=
 keyword.
 
 
@@ -200,114 +200,79 @@ keyword.
 :CUSTOM_ID: writing
 :END:
 
+*** sxml->html
+:PROPERTIES:
+:CUSTOM_ID: sxml-html
+:END:
+
+#+begin_src scheme
+  (sxml->html sxml (port #f))
+#+end_src
+
+Convert the HTML representation of =sxml= to a string which it outputs
+to the passed port.
+
+If the port is =#f=, or not provided, return a string.
+
 *** html-escape
 :PROPERTIES:
 :CUSTOM_ID: html-escape
 :END:
 
+
 #+begin_src scheme
-  (html-escape str (port #f))
+  (html-escape str (port #f) escapes: (esc #f))
 #+end_src
 
-
-Returns or writes an HTML escaped string to the port, replacing the
-characters =<>&"'= with the appropriate HTML entities.
+Returns or writes an HTML escaped string to the port by default
+replacing the characters =<>&"'= with the appropriate HTML entities.
 
 If the port is =#f=, or not provided, return a string.
 
-* Convenience functions
+If other escapes are wanted a list can be passed with the =escapes:=
+keyword. If false the defaults are in [[#html-character-escapes][html-character-escapes]].
+
+#+begin_src scheme
+> html-character-escapes
+((#\< . "&lt;")
+ (#\> . "&gt;")
+ (#\& . "&amp;")
+ (#\" . "&quot;")
+ (#\' . "&#39;"))
+> (html-escape "< ' >")
+"&lt; &#39; &gt;"
+> (html-escape "< ' >" escapes: '((#\< . "Less Than")))
+"Less Than ' >"
+#+end_src
+
+*** html-character-escapes
 :PROPERTIES:
-:CUSTOM_ID: convenience-functions
+:CUSTOM_ID: html-character-escapes
 :END:
-[[#html-sxml][]]
-** Misc
+
+These are the characters that are escaped when writing HTML.
+
+#+begin_src scheme
+> html-character-escapes
+((#\< . "&lt;")
+ (#\> . "&gt;")
+ (#\& . "&amp;")
+ (#\" . "&quot;")
+ (#\' . "&#39;")
+#+end_src
+
+
+
+* Parser and printer
 :PROPERTIES:
-:CUSTOM_ID: misc
-:END:
-[[#make-string-readerci][]]
-*** make-string-reader/ci
-:PROPERTIES:
-:CUSTOM_ID: make-string-readerci
-:END:
-/[procedure]/ =(make-string-reader/ci str)=\\
-Generates a KMP reader that works on ports, returning the text read up
-until the search string (or the entire port if the search string isn't
-found). This is O(n) in the length of the string returned, as opposed to
-the =find-string-from-port?= in SSAX which uses backtracking for an
-O(nm) algorithm. This is hard-coded to case-insensitively match, since
-that's what we need for HTML. A more general utility would abstract the
-character matching predicate and possibly provide a limit on the length
-of the string read.
-
-[[#html-display-escaped-string][]]
-*** html-display-escaped-string
-:PROPERTIES:
-:CUSTOM_ID: html-display-escaped-string
-:END:
-/[procedure]/ =(html-display-escaped-string str out)=\\
-Writes a HTML escaped string to the output port, replacing the
-characters =<>&"'= with the appropriate HTML entities.
-
-[[#html-escape][]]
-*** html-escape
-:PROPERTIES:
-:CUSTOM_ID: html-escape-0
-:END:
-/[procedure]/ =(html-escape str)=\\
-Returns a HTML escaped string. Equivalent to using
-=html-display-escaped-string= with a string output port.
-
-[[#html-attr-string][]]
-*** html-attr->string
-:PROPERTIES:
-:CUSTOM_ID: html-attr-string
-:END:
-/[procedure]/ =(html-attr->string attr)=\\
-Format an attribute pair as string. Both =(name . "value")= and
-=(name "value")= are supported and are turned into ="name=\"value\""=.
-
-[[#html-tag-string][]]
-*** html-tag->string
-:PROPERTIES:
-:CUSTOM_ID: html-tag-string
-:END:
-/[procedure]/ =(html-tag->string tag attrs)=\\
-Format tag and attribute list as string. The tag must be a symbol, the
-attribute list is processed using =html-attr->string=. For example
-=(html-tag->string 'a '((href "#")))= is turned into ="<a href=\"#\">"=.
-
-[[#sxml-display-as-html][]]
-*** sxml-display-as-html
-:PROPERTIES:
-:CUSTOM_ID: sxml-display-as-html
-:END:
-/[procedure]/ =(sxml-display-as-html sxml [port])=\\
-Write the HTML representation of =sxml=, with the optional port argument
-defaulting to =(current-output-port)=. Processing instructions,
-declarations, comments, top nodes and regular nodes are handled.
-
-[[#sxml-html][]]
-*** sxml->html
-:PROPERTIES:
-:CUSTOM_ID: sxml-html
-:END:
-/[procedure]/ =(sxml->html sxml)=\\
-Convert the HTML representation of =sxml= to a string. Equivalent to
-using =sxml-display-as-html= with a string output port.
-
-[[#examples][]]
-
-
-
-* Parser
-:PROPERTIES:
-:CUSTOM_ID: parser
+:CUSTOM_ID: parser-and-printer
 :END:
 
 While we do have a way to use the =libxml= library I want it more scheme-y.
 
-A quick search brought me to a [[https://code.call-cc.org/svn/chicken-eggs/release/5/html-parser/trunk/html-parser.scm][Chicken Scheme Egg]] with a permissive
-licence that does exactly what I want!
+A quick search brought me to a
+[[https://code.call-cc.org/svn/chicken-eggs/release/5/html-parser/trunk/html-parser.scm][Chicken
+Scheme Egg]] with a permissive licence that does exactly what I want!
 
 So docs are here [[http://wiki.call-cc.org/eggref/5/html-parser][in their wiki]].
 
@@ -321,12 +286,9 @@ Time to *Gerbilize* it.
     html-strip
     make-html-parser
 
-    print-sxml
     sxml->html
     html-escape
-    html-character-escapes
-
-  )
+    html-character-escapes)
 
   (def (integer->utf8-string n) (utf8->string (u8vector n)))
 
@@ -335,7 +297,8 @@ Time to *Gerbilize* it.
 
   (def (sxml->html sxml (port #f))
     (if port (print-sxml sxml port) (%sxml->html sxml)))
-  (def (html-escape str (port #f) escapes: (esc html-character-escapes))
+  (def (html-escape str (port #f) escapes: (esc #f))
+    (unless esc (set! esc html-character-escapes))
    (if port (html-display-escaped-string str port esc) (%html-escape str esc)))
 
   <<default-keys>>
@@ -382,9 +345,9 @@ Then a wrapper around the now-renamed =%make-html-parser= procedure.
 
 #+end_src
 
-** Some =html->sxnl= fixes
+** Some =html->sxml= fixes
 :PROPERTIES:
-:CUSTOM_ID: some-html-sxnl-fixes
+:CUSTOM_ID: some-html-sxml-fixes
 :END:
 
 #+begin_src scheme :tangle parser.ss
@@ -447,113 +410,24 @@ Then a wrapper around the now-renamed =%make-html-parser= procedure.
   ;;  Changed (##sys#char->utf8-string (integer->char name)))
   ;;  to (integer->utf8-string name)
   ;;
-  ;;  Add % in front of sxml->html, html->sxml, make-html-parser, html-escape
+  ;;  Add % in front of sxml->html, html->sxml, make-html-parser,
+  ;;  html-escape
   ;;
   ;;  Make a function that returns sxml valid for printing
+  ;;
+  ;;  Removed some comments. Have a look at the README.org 
 
 
   ;; BSD-style license: http://synthcode.com/license.txt
 
-  ;;> A permissive HTML parser supporting scalable streaming with a
-  ;;> folding interface.  This copies the interface of Oleg Kiselyov's
-  ;;> SSAX parser, as well as providing simple convenience utilities.
-  ;;> It correctly handles all invalid HTML, inserting "virtual"
-  ;;> starting and closing tags as needed to maintain the proper tree
-  ;;> structure needed for the foldts down/up logic.  A major goal of
-  ;;> this parser is bug-for-bug compatibility with the way common web
-  ;;> browsers parse HTML.
-
-  ;;> Procedure: make-html-parser . keys
-
-  ;;   Returns a procedure of two arguments, and initial seed and an
-  ;;   optional input port, which parses the HTML document from the port
-  ;;   with the callbacks specified in the plist KEYS (using normal,
-  ;;   quoted symbols, for portability and to avoid making this a
-  ;;   macro).  The following callbacks are recognized:
-  ;;
-  ;;   START: TAG ATTRS SEED VIRTUAL?
-  ;;       fdown in foldts, called when a start-tag is encountered.
-  ;;     TAG:         tag name
-  ;;     ATTRS:       tag attributes as a alist
-  ;;     SEED:        current seed value
-  ;;     VIRTUAL?:    #t iff this start tag was inserted to fix the HTML tree
-  ;;
-  ;;   END: TAG ATTRS PARENT-SEED SEED VIRTUAL?
-  ;;       fup in foldts, called when an end-tag is encountered.
-  ;;     TAG:         tag name
-  ;;     ATTRS:       tag attributes of the corresponding start tag
-  ;;     PARENT-SEED: parent seed value (i.e. seed passed to the start tag)
-  ;;     SEED:        current seed value
-  ;;     VIRTUAL?:    #t iff this end tag was inserted to fix the HTML tree
-  ;;
-  ;;   TEXT: TEXT SEED
-  ;;       fhere in foldts, called when any text is encountered.  May be
-  ;;       called multiple times between a start and end tag, so you need
-  ;;       to string-append yourself if desired.
-  ;;     TEXT:        entity-decoded text
-  ;;     SEED:        current seed value
-  ;;
-  ;;   COMMENT: TEXT SEED
-  ;;       fhere on comment data
-  ;;
-  ;;   DECL: NAME ATTRS SEED
-  ;;       fhere on declaration data
-  ;;       
-  ;;   PROCESS: LIST SEED
-  ;;       fhere on process-instruction data
-  ;;
-  ;;   ENTITY: NAME-OR-NUM SEED
-  ;;       convert an entity with a given name, or number via &#NNNN;
-  ;;       to a string
-  ;;       
-  ;;   In addition, entity-mappings may be overriden with the ENTITIES:
-  ;;   keyword.
-
-  ;; Procedure: html->sxml [port]
-  ;;   Returns the SXML representation of the document from PORT, using
-  ;;   the default parsing options.
-
-  ;; Procedure: html-strip [port]
-  ;;   Returns a string representation of the document from PORT with all
-  ;;   tags removed.  No whitespace reduction or other rendering is done.
-
-  ;; Example:
-  ;;
-  ;;   The parser for html-strip could be defined as:
-  ;;
-  ;; (make-html-parser
-  ;;   'start: (lambda (tag attrs seed virtual?) seed)
-  ;;   'end:   (lambda (tag attrs parent-seed seed virtual?) seed)
-  ;;   'text:  (lambda (text seed) (display text)))
-  ;;
-  ;;   Also see the parser for html->sxml.
-
-  ;; (module html-parser
-  ;;   (make-html-parser make-string-reader/ci
-  ;;    html->sxml html-strip html-escape html-display-escaped-string
-  ;;    html-tag->string html-attr->string
-  ;;    sxml->html sxml-display-as-html)
-  ;; (import scheme
-  ;;         (only srfi-13 string-downcase)
-  ;;         (only (chicken port) call-with-output-string with-output-to-string)
-  ;;         (only (chicken base) error open-input-string))
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; ;; from SRFI-13
-
-  ;; (define (string-downcase str)
-  ;;   (let lp ((i (- (string-length str) 1)) (res '()))
-  ;;     (if (negative? i)
-  ;;         (list->string res)
-  ;;         (lp (- i 1) (cons (char-downcase (string-ref str i)) res)))))
-
-  ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; ;; SRFI-6 extension if not defined
-
-  ;; (define (call-with-output-string proc)
-  ;;   (let ((out (open-output-string)))
-  ;;     (proc out)
-  ;;     (get-output-string out)))
+  ;; A permissive HTML parser supporting scalable streaming with a
+  ;; folding interface.  This copies the interface of Oleg Kiselyov's
+  ;; SSAX parser, as well as providing simple convenience utilities.  It
+  ;; correctly handles all invalid HTML, inserting "virtual" starting
+  ;; and closing tags as needed to maintain the proper tree structure
+  ;; needed for the foldts down/up logic.  A major goal of this parser
+  ;; is bug-for-bug compatibility with the way common web browsers parse
+  ;; HTML.
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; text parsing utils
@@ -1092,7 +966,7 @@ Then a wrapper around the now-renamed =%make-html-parser= procedure.
     (let ((parse
            (%make-html-parser
             'start: (lambda (tag attrs seed virtual?) '())
-            'end:   (lambda (tag attrs parent-seed seed virtual?)
+             'end:   (lambda (tag attrs parent-seed seed virtual?)
                       `((,tag ,@(if (pair? attrs)
                                     `((@ ,@attrs) ,@(reverse seed))
                                     (reverse seed)))
@@ -1212,5 +1086,4 @@ Then a wrapper around the now-renamed =%make-html-parser= procedure.
   ;)
 
 #+end_src
-
 

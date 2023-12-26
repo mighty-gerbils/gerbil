@@ -1,4 +1,4 @@
-#+TITLE: TAL: The Template Attribute Language (TAL)
+#+TITLE: TAL: The Template Attribute Language
 
 * Contents
 :PROPERTIES:
@@ -42,7 +42,6 @@
   - [[#the-talhtml-metacircular-syntax][The tal:html metacircular syntax]]
   - [[#the-talform-syntax][The tal:form syntax]]
   - [[#the-define-tal-supersyntax][The define-TAL supersyntax.]]
-- [[#hacking][HACKING]]
 :END:
 
 * Introduction
@@ -55,7 +54,7 @@ I, (drewc <me at drewc dot ca>), first got introduced to =TAL= around
 
 Its usefulness cannot be understated!
 
-Here is my attempt at a [[https://zope.readthedocs.io/en/latest/zopebook/AppendixC.html][Zope Template Attribute Language]].
+Here is my attempt at the [[https://zope.readthedocs.io/en/latest/zopebook/AppendixC.html][Zope Template Attribute Language]].
 
 * Documentation
 :PROPERTIES:
@@ -2439,33 +2438,6 @@ Gerbil has named nested modules so I think they'll do.
 
 
 
-#+end_src
-
-
-
-* HACKING
-:PROPERTIES:
-:CUSTOM_ID: hacking
-:END:
-
-
-#+begin_src scheme :tangle ./tal-test.ss
-  (import :std/html/tal :std/html) (export #t)
- 
-  (defsyntax (test-forms stx)
-
-    (def make-systring (syms)
-      (apply (string-append (map symbol->string (reverse syms)))))
-    (syntax-case stx (:>)
-      ((_ :> case html rest ...)
-       (and (identifier? #'html)
-            (equal? (string-ref (symbol->string (stx-e #'html)) 0) #\<))
-       (let* ((next-case #f)
-  	    (rest-html (let lp ((n #'(rest ...)))
-  			 (unless (stx-null? n)
-                           (let ((tag? (stx-car n)))
-                            (display tag?))))))
-        #''html))))
 #+end_src
 
 
