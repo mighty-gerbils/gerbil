@@ -16,7 +16,7 @@
   - [[#talcondition-conditionally-insert-or-remove-an-element][tal:condition: Conditionally insert or remove an element]]
   - [[#talcontent-replace-the-content-of-an-element][tal:content: Replace the content of an element]]
   - [[#taldefine][tal:define]]
-  - [[#talswitch-and-talcase-set-up-a-switch-statement][tal:switch and tal:case: Set up a switch statement]]
+  - [[#talswitch-set-up-a-switch-statement][tal:switch: Set up a switch statement]]
   - [[#talomit-tag-remove-an-element-leaving-its-contents][tal:omit-tag: Remove an element leaving its contents]]
   - [[#current-talon-error-and-talon-error-error-handling][current-tal:on-error and tal:on-error: Error Handling.]]
     - [[#default-and-current-talon-error][Default and current-tal:on-error]]
@@ -583,9 +583,9 @@ the =set!:= keyword.
   >
 #+end_src
 
-** =tal:switch= and =tal:case=: Set up a switch statement
+** =tal:switch=: Set up a switch statement
 :PROPERTIES:
-:CUSTOM_ID: talswitch-and-talcase-set-up-a-switch-statement
+:CUSTOM_ID: talswitch-set-up-a-switch-statement
 :END:
 
 If everything is testing the same item, and only one can succeed, a
