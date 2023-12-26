@@ -18,7 +18,7 @@
   - [[#taldefine][tal:define]]
   - [[#talswitch-set-up-a-switch-statement][tal:switch: Set up a switch statement]]
   - [[#talomit-tag-remove-an-element-leaving-its-contents][tal:omit-tag: Remove an element leaving its contents]]
-  - [[#current-talon-error-and-talon-error-error-handling][current-tal:on-error and tal:on-error: Error Handling.]]
+  - [[#current-talon-error-and-talon-error][current-tal:on-error and tal:on-error.]]
     - [[#default-and-current-talon-error][Default and current-tal:on-error]]
     - [[#talon-error][tal:on-error]]
   - [[#talrepeat-repeat-an-element][tal:repeat: Repeat an element]]
@@ -27,14 +27,14 @@
   - [[#toplevel-a-place-to-push-while-printing]["Toplevel" A place to push while printing.]]
   - [[#the-expanders][The Expanders]]
     - [[#bind-or-set-with-taldefine][Bind or set! with tal:define]]
-    - [[#talswitch-and-talcase---set-up-a-switch-statement][tal:switch and tal:case ::  Set up a switch statement]]
+    - [[#talswitch-set-up-a-switch-statement-0][tal:switch: Set up a switch statement]]
     - [[#more-recursion-with-expand-tal-element][More recursion with expand-tal-element.]]
     - [[#the-talcondition-short-form][The tal:condition short form]]
     - [[#the-talrepeat-attribute-type-and-interface][The tal:repeat attribute, type and interface]]
     - [[#replace-the-seed-with-talcontent][Replace the seed with tal:content]]
     - [[#just-talreplace-it][Just tal:replace it!]]
     - [[#the-talon-error-handler][The tal:on-error handler]]
-    - [[#talattributes-a-template-attribute-to-set-attributes][tal:attributes A Template Attribute to set Attributes]]
+    - [[#talattributes-set-attributes][tal:attributes: set attributes]]
     - [[#talomit-tag][tal:omit-tag]]
 - [[#syntax-make-a-tal-form-compile-and-run][Syntax: Make a tal form compile and run]]
   - [[#the-talwriter-and-talstringify][The tal:writer and tal:stringify]]
@@ -114,7 +114,7 @@ Attributes and transform it into a compiled function
 If a tag has more than one TAL attribute they are evaluated in the
 above (fairly logical) order.
 
-** =define-TAL=
+** define-TAL
 :PROPERTIES:
 :CUSTOM_ID: define-tal
 :END:
@@ -199,7 +199,7 @@ We can then use it creatively.
 As you can see it enables a fairly easy interaction between *HTML*
 syntax and *Lisp*.
 
-** =current-tal-output-port=
+** current-tal-output-port
 :PROPERTIES:
 :CUSTOM_ID: current-tal-output-port
 :END:
@@ -234,7 +234,7 @@ As well as have a more documentation friendly output.
 </html>
 #+end_src
 
-** =tal:attributes=: Replace element attributes
+** tal:attributes: Replace element attributes
 :PROPERTIES:
 :CUSTOM_ID: talattributes-replace-element-attributes
 :END:
@@ -316,7 +316,7 @@ It can, of course, set more than one attribute.
 "<textarea rows=\"10\" cols=\"42\"></textarea>"
 #+end_src
 
-** =tal:condition=: Conditionally insert or remove an element
+** tal:condition: Conditionally insert or remove an element
 :PROPERTIES:
 :CUSTOM_ID: talcondition-conditionally-insert-or-remove-an-element
 :END:
@@ -418,7 +418,7 @@ Which kinda looks like what I'm trying to portray.
 #+end_src
 
 
-** =tal:content=: Replace the content of an element
+** tal:content: Replace the content of an element
 :PROPERTIES:
 :CUSTOM_ID: talcontent-replace-the-content-of-an-element
 :END:
@@ -527,7 +527,7 @@ the right thing,
 
 
 
-** =tal:define=
+** tal:define
 :PROPERTIES:
 :CUSTOM_ID: taldefine
 :END:
@@ -583,7 +583,7 @@ the =set!:= keyword.
   >
 #+end_src
 
-** =tal:switch=: Set up a switch statement
+** tal:switch: Set up a switch statement
 :PROPERTIES:
 :CUSTOM_ID: talswitch-set-up-a-switch-statement
 :END:
@@ -622,7 +622,7 @@ bunch of conditionals gets hairy. There's a =tal:switch= and some
 #+end_src
 
 
-** =tal:omit-tag=: Remove an element leaving its contents
+** tal:omit-tag: Remove an element leaving its contents
 :PROPERTIES:
 :CUSTOM_ID: talomit-tag-remove-an-element-leaving-its-contents
 :END:
@@ -663,9 +663,9 @@ element is replaced with its contents.
 "<p> Is this a Paragraph? Who knows!</p>"
 #+end_src
 
-** =current-tal:on-error= and =tal:on-error=: Error Handling.
+** current-tal:on-error and tal:on-error.
 :PROPERTIES:
-:CUSTOM_ID: current-talon-error-and-talon-error-error-handling
+:CUSTOM_ID: current-talon-error-and-talon-error
 :END:
 
 Handling errors in a decent way is built into our =TAL= be
@@ -676,7 +676,7 @@ To update the "outside" error handler outside of the =TAL= form/file
 there is a =current-tal:on-error=. For "inside" use the =tal:on-error=
 attribute is very useful.
 
-*** Default and =current-tal:on-error=
+*** Default and current-tal:on-error
 :PROPERTIES:
 :CUSTOM_ID: default-and-current-talon-error
 :END:
@@ -715,7 +715,7 @@ But in reality that abstraction's just there so pages still run with
 bugs in them. Even better for all involved is the =tal:on-error=
 attribute.
 
-*** =tal:on-error=
+*** tal:on-error
 :PROPERTIES:
 :CUSTOM_ID: talon-error
 :END:
@@ -864,7 +864,7 @@ we can do that as well.
 #+end_src
 
 
-** =tal:repeat=: Repeat an element
+** tal:repeat: Repeat an element
 :PROPERTIES:
 :CUSTOM_ID: talrepeat-repeat-an-element
 :END:
@@ -1319,9 +1319,9 @@ filling in also does.
 #+end_src
 
 
-*** =tal:switch= and =tal:case= ::  Set up a switch statement
+*** tal:switch: Set up a switch statement
 :PROPERTIES:
-:CUSTOM_ID: talswitch-and-talcase---set-up-a-switch-statement
+:CUSTOM_ID: talswitch-set-up-a-switch-statement-0
 :END:
 
 Defines a switch clause.
@@ -2085,9 +2085,9 @@ Yay!
 #+end_src
 
 
-*** =tal:attributes= A =Template Attribute= to set =Attributes=
+*** tal:attributes: set =attributes=
 :PROPERTIES:
-:CUSTOM_ID: talattributes-a-template-attribute-to-set-attributes
+:CUSTOM_ID: talattributes-set-attributes
 :END:
 
 
