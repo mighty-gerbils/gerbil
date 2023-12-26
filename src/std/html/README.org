@@ -52,8 +52,8 @@ for web development have a look at [[file:tal/README.org][The Template Attribute
 (TAL)]].
 
 #+begin_src scheme :export no :tangle ../html.ss
-  (import ./html/parser)
-  (export (import: ./html/parser))
+  (import :std/html/parser)
+  (export (import: :std/html/parser))
   ;;; This library is tangled from html/README.org
 #+end_src
 

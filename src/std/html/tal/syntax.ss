@@ -3,7 +3,8 @@
 	  (for-syntax :std/misc/ports) :std/misc/ports
 	  (for-syntax :std/source) :std/source
 	  (for-syntax :gerbil/runtime/syntax)
-	../parser ./toplevel (for-syntax ./expander) ./expander)
+	  :std/html/parser :std/html/tal/toplevel
+      (for-syntax :std/html/tal/expander) :std/html/tal/expander)
 (export #t)
 (def current-tal-output-port (make-parameter (current-output-port)))
 

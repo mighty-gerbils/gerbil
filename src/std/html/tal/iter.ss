@@ -1,4 +1,4 @@
-(import :std/interface :std/contract :std/iter :std/generic ./toplevel)
+(import :std/interface :std/contract :std/iter :std/generic :std/html/tal/toplevel)
 (export #t)
 
 ;; Tangled from README.org

@@ -1074,7 +1074,7 @@ So there's only =define-TAL=, =current-tal-output-port=
 
 #+begin_src scheme :tangle ../tal.ss
   ;; See ./tal/README.org for the implementation.
-  (import (only-in ./tal/syntax
+  (import (only-in :std/html/tal/syntax
   		 define-TAL current-tal-output-port
   		 current-tal:on-error tal:write))
   (export define-TAL current-tal-output-port current-tal:on-error tal:write)
@@ -1092,7 +1092,7 @@ expansion so after "printing" we have a form that can be compiled.
 
 
 #+begin_src scheme :tangle toplevel.ss
-  (import ../parser :std/srfi/1)
+  (import :std/html/parser :std/srfi/1)
   (export #t)
 
   (def current-toplevel (make-parameter #f))
@@ -1175,7 +1175,7 @@ form.
 So we get a circular recursive =expand-tal-element= 
 
 #+begin_src scheme :tangle expander.ss
-    (import :std/misc/alist ./toplevel ../parser :std/format)
+    (import :std/misc/alist :std/html/tal/toplevel :std/html/parser :std/format)
     (export #t)
 
     (def (fmt sym . args) (apply format (symbol->string sym) args))
@@ -1715,7 +1715,7 @@ The result looks good.
 **** The Iterator and Interface for =tal:repeat=
 
 #+begin_src scheme :tangle iter.ss
-  (import :std/interface :std/contract :std/iter :std/generic ./toplevel)
+  (import :std/interface :std/contract :std/iter :std/generic :std/html/tal/toplevel)
   (export #t)
 
   ;; Tangled from README.org
@@ -2264,26 +2264,27 @@ We've got 4 pieces of syntax with 3 inside it.
 
 
 #+begin_src scheme :tangle ./syntax.ss
-  (import :std/sugar (for-syntax :std/text/utf8) :std/text/utf8
-  	  (for-syntax :std/error) :std/error
-  	  (for-syntax :std/misc/ports) :std/misc/ports
-  	  (for-syntax :std/source) :std/source
-  	  (for-syntax :gerbil/runtime/syntax)
-  	../parser ./toplevel (for-syntax ./expander) ./expander)
-  (export #t)
-  (def current-tal-output-port (make-parameter (current-output-port)))
+    (import :std/sugar (for-syntax :std/text/utf8) :std/text/utf8
+    	  (for-syntax :std/error) :std/error
+    	  (for-syntax :std/misc/ports) :std/misc/ports
+    	  (for-syntax :std/source) :std/source
+    	  (for-syntax :gerbil/runtime/syntax)
+    	  :std/html/parser :std/html/tal/toplevel
+          (for-syntax :std/html/tal/expander) :std/html/tal/expander)
+    (export #t)
+    (def current-tal-output-port (make-parameter (current-output-port)))
 
-  (defrule (tal:write thing)
-    (let ((t thing)
-          (p (current-tal-output-port)))
-      (if (u8vector? t) (write-u8vector t p)
-          (display t p))
-      ""))
+    (defrule (tal:write thing)
+      (let ((t thing)
+            (p (current-tal-output-port)))
+        (if (u8vector? t) (write-u8vector t p)
+            (display t p))
+        ""))
 
-  (defrule (tal:stringify thing)
-    (let ((str thing))
-      (if (string? str) str
-  	(if (not str) "" (with-output-to-string "" (cut display str))))))
+    (defrule (tal:stringify thing)
+      (let ((str thing))
+        (if (string? str) str
+    	(if (not str) "" (with-output-to-string "" (cut display str))))))
 
 #+end_src
 

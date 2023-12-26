@@ -1,4 +1,4 @@
-(import ../parser :std/srfi/1)
+(import :std/html/parser :std/srfi/1)
 (export #t)
 
 (def current-toplevel (make-parameter #f))
