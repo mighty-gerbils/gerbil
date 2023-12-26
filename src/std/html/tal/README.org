@@ -232,7 +232,7 @@ As well as have a more documentation friendly output.
 </html>
 #+end_src
 
-*** tal:attributes: Replace element attributes
+*** tal:attributes : Replace element attributes
 :PROPERTIES:
 :CUSTOM_ID: talattributes-replace-element-attributes
 :END:
@@ -314,7 +314,7 @@ It can, of course, set more than one attribute.
 "<textarea rows=\"10\" cols=\"42\"></textarea>"
 #+end_src
 
-*** tal:condition: Conditionally insert or remove an element
+*** tal:condition : Conditionally insert or remove an element
 :PROPERTIES:
 :CUSTOM_ID: talcondition-conditionally-insert-or-remove-an-element
 :END:
@@ -416,7 +416,7 @@ Which kinda looks like what I'm trying to portray.
 #+end_src
 
 
-*** tal:content: Replace the content of an element
+*** tal:content : Replace the content of an element
 :PROPERTIES:
 :CUSTOM_ID: talcontent-replace-the-content-of-an-element
 :END:
@@ -581,7 +581,7 @@ the =set!:= keyword.
   >
 #+end_src
 
-*** tal:switch: Set up a switch statement
+*** tal:switch : Set up a switch statement
 :PROPERTIES:
 :CUSTOM_ID: talswitch-set-up-a-switch-statement
 :END:
@@ -620,7 +620,7 @@ bunch of conditionals gets hairy. There's a =tal:switch= and some
 #+end_src
 
 
-*** tal:omit-tag: Remove an element leaving its contents
+*** tal:omit-tag : Remove an element leaving its contents
 :PROPERTIES:
 :CUSTOM_ID: talomit-tag-remove-an-element-leaving-its-contents
 :END:
@@ -862,7 +862,7 @@ we can do that as well.
 #+end_src
 
 
-*** tal:repeat: Repeat an element
+*** tal:repeat : Repeat an element
 :PROPERTIES:
 :CUSTOM_ID: talrepeat-repeat-an-element
 :END:

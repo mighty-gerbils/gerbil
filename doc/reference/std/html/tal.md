@@ -133,7 +133,7 @@ As well as have a more documentation friendly output.
 ```
 
 
-## tal:attributes: Replace element attributes
+## tal:attributes : Replace element attributes
 
 *Syntax*:
 
@@ -208,7 +208,7 @@ EOF
 ```
 
 
-## tal:condition: Conditionally insert or remove an element
+## tal:condition : Conditionally insert or remove an element
 
 *Syntax*
 
@@ -303,7 +303,7 @@ Which kinda looks like what I'm trying to portray.
 ```
 
 
-## tal:content: Replace the content of an element
+## tal:content : Replace the content of an element
 
 *Syntax*
 
@@ -445,7 +445,7 @@ EOF
 ```
 
 
-## tal:switch: Set up a switch statement
+## tal:switch : Set up a switch statement
 
 If everything is testing the same item, and only one can succeed, a bunch of conditionals gets hairy. There's a `tal:switch` and some `tal:case` statements to round it up.
 
@@ -479,7 +479,7 @@ EOF
 ```
 
 
-## tal:omit-tag: Remove an element leaving its contents
+## tal:omit-tag : Remove an element leaving its contents
 
 *Syntax*
 
@@ -684,7 +684,7 @@ EOF
 ```
 
 
-## tal:repeat: Repeat an element
+## tal:repeat : Repeat an element
 
 *Syntax*
 
