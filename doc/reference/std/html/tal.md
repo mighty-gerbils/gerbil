@@ -1,4 +1,4 @@
-# TAL: The Template Attribute Language (TAL)
+# TAL: The Template Attribute Language
 
 > The Template Attribute Language (TAL) is a templating language used to generate dynamic HTML and XML pages. Its main goal is to simplify the collaboration between programmers and designers. This is achieved by embedding TAL statements inside valid HTML (or XML) tags which can then be worked on using common design tools.
 > 
@@ -26,8 +26,6 @@ If a tag has more than one TAL attribute they are evaluated in the above (fairly
 
 
 # define-TAL
-
-*Syntax*
 
 ```scheme
 (define-TAL (name args ...) /key/ string-or-filename)

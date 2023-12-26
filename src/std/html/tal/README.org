@@ -8,7 +8,7 @@
 :CONTENTS:
 - [[#introduction][Introduction]]
 - [[#documentation][Documentation]]
-  - [[#tal-the-template-attribute-language-tal][TAL: The Template Attribute Language (TAL)]]
+  - [[#tal-the-template-attribute-language][TAL: The Template Attribute Language]]
   - [[#attributes][Attributes]]
   - [[#define-tal][define-TAL]]
   - [[#current-tal-output-port][current-tal-output-port]]
@@ -59,14 +59,14 @@ Here is my attempt at the [[https://zope.readthedocs.io/en/latest/zopebook/Appen
 * Documentation
 :PROPERTIES:
 :EXPORT_FILE_NAME: ../../../../doc/reference/std/html/tal.md
-:EXPORT_TITLE: TAL: The Template Attribute Language (TAL)
+:EXPORT_TITLE: TAL: The Template Attribute Language
 :EXPORT_OPTIONS: toc:nil
 :CUSTOM_ID: documentation
 :END:
 
-** TAL: The Template Attribute Language (TAL)
+** TAL: The Template Attribute Language
 :PROPERTIES:
-:CUSTOM_ID: tal-the-template-attribute-language-tal
+:CUSTOM_ID: tal-the-template-attribute-language
 :END:
 
 #+begin_quote
@@ -118,8 +118,6 @@ above (fairly logical) order.
 :PROPERTIES:
 :CUSTOM_ID: define-tal
 :END:
-
-/Syntax/
 
 #+begin_src scheme
   (define-TAL (name args ...) /key/ string-or-filename)
