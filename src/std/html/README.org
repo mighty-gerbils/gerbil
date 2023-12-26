@@ -279,31 +279,32 @@ So docs are here [[http://wiki.call-cc.org/eggref/5/html-parser][in their wiki]]
 Time to *Gerbilize* it.
 
 #+begin_src scheme :tangle parser.ss :noweb yes
-  (import :gerbil/gambit :std/error :std/srfi/1 :std/srfi/13 :std/text/utf8 :std/xml)
-  (export
-    html->sxml
-    default-html->sxml-plist
-    html-strip
-    make-html-parser
+    (import :gerbil/gambit :std/error :std/srfi/1 :std/srfi/13 :std/text/utf8
+      :std/xml :std/xml/sxml :std/xml/sxml-to-sml)
+    (export
+      html->sxml
+      default-html->sxml-plist
+      html-strip
+      make-html-parser
 
-    sxml->html
-    html-escape
-    html-character-escapes)
+      sxml->html
+      html-escape
+      html-character-escapes)
 
-  (def (integer->utf8-string n) (utf8->string (u8vector n)))
+    (def (integer->utf8-string n) (utf8->string (u8vector n)))
 
-  (def (print-sxml sxml (out (current-output-port)))
-    (sxml-display-as-html sxml out))
+    (def (print-sxml sxml (out (current-output-port)))
+      (sxml-display-as-html sxml out))
 
-  (def (sxml->html sxml (port #f))
-    (if port (print-sxml sxml port) (%sxml->html sxml)))
-  (def (html-escape str (port #f) escapes: (esc #f))
-    (unless esc (set! esc html-character-escapes))
-   (if port (html-display-escaped-string str port esc) (%html-escape str esc)))
+    (def (sxml->html sxml (port #f))
+      (if port (print-sxml sxml port) (%sxml->html sxml)))
+    (def (html-escape str (port #f) escapes: (esc #f))
+      (unless esc (set! esc html-character-escapes))
+     (if port (html-display-escaped-string str port esc) (%html-escape str esc)))
 
-  <<default-keys>>
+    <<default-keys>>
 
-  (include "html-parser.scm")
+    (include "html-parser.scm")
 
 #+end_src
 
