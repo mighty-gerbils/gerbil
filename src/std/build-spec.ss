@@ -316,6 +316,15 @@
     "net/httpd/api"
     "net/httpd"
     "net/sasl"
+    ;; :std/html
+    (gxc: "html/parser" (extra-inputs: ("html/html-parser.scm")))
+    "html/tal/toplevel"
+    "html/tal/iter"
+    "html/tal/expander"
+    "html/tal/syntax"
+    "html/tal"
+    "html"
+    
     ;; :std/xml
     (gxc: "xml/ssax")
     "xml/sxpath"

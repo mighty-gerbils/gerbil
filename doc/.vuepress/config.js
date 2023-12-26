@@ -63,6 +63,7 @@ module.exports = {
                       'generic',
                       'ref',
                       'iterators',
+		      'html/tal',
                       'coroutine',
                       'events',
                       'amb',
