@@ -8,6 +8,7 @@ The module provides XML parsing and printing procedures. It also exports the [SX
 (import :std/xml)
 ```
 
+::: 
 
 ## Parsing
 
@@ -31,6 +32,7 @@ Reads and parses XML from *source* and returns SXML result. *namespaces* is opti
 (*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
 ```
 
+::: 
 
 ## Printing
 
