@@ -316,22 +316,23 @@
     "net/httpd/api"
     "net/httpd"
     "net/sasl"
-    ;; :std/xml
-    (gxc: "xml/ssax")
-    "xml/sxpath"
-    "xml/sxml"
-    (gsc: "xml/sxml-to-xml")
-    (ssi: "xml/sxml-to-xml")
-    "xml/print"
-    "xml"
-    ;; :std/html
-    (gxc: "html/parser" (extra-inputs: ("html/html-parser.scm" "xml/sxml-to-xml.scm")))
-    "html/tal/toplevel"
-    "html/tal/iter"
-    "html/tal/expander"
-    "html/tal/syntax"
-    "html/tal"
+    ;; :std/sxml
+    "sxml/print"
+    (gxc: "sxml/ssax")
+    "sxml/sxpath"
+    "sxml/xml"
+    "sxml/sxml"
+    (gxc: "sxml/html/parser" (extra-inputs: ("sxml/html/html-parser.scm")))
+    "sxml/tal/toplevel"
+    "sxml/tal/iter"
+    "sxml/tal/expander"
+    "sxml/tal/syntax"
+    ;; :std/tal
+    "tal"
+    ;:std/html
     "html"
+    ;; :std/xml
+    "xml"
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
     (gxc: "crypto/libcrypto"

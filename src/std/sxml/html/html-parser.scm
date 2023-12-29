@@ -623,49 +623,8 @@
 
 (define (sxml-display-as-html sxml . o)
   (let ((out (if (pair? o) (car o) (current-output-port))))
-    (cond
-     ((pair? sxml)
-      (let ((tag (car sxml)))
-        (if (symbol? tag)
-            (case tag
-              ((*PI* *DECL*)
-               (display (if (eq? tag '*PI*) "<?" "<!") out)
-               (cond
-                ((pair? (cdr sxml))
-                 (display (cadr sxml) out)
-                 (for-each
-                  (lambda (x) (display " " out) (display x out))
-                  (cddr sxml))))
-               (display (if (eq? tag '*PI*) "?>" ">") out))
-              ((*COMMENT*)
-               (display "<!--" out)
-               (for-each (lambda (x) (display x out)) (cdr sxml))
-               (display "-->" out))
-              ((*TOP*)
-               (for-each (lambda (x) (sxml-display-as-html x out)) (cdr sxml)))
-              (else
-                (print-sxml->html* sxml out)
-              #;(let ((rest (cdr sxml)))
-                 (cond
-                  ((and (pair? rest)
-                        (pair? (car rest))
-                        (eq? '@ (caar rest)))
-                   (display (html-tag->string tag (cdar rest)) out)
-                   (for-each (lambda (x) (sxml-display-as-html x out)) (cdr rest))
-                   (display "</" out) (display tag out) (display ">" out))
-                  (else
-                   (display (html-tag->string tag '()) out)
-                   (for-each (lambda (x) (sxml-display-as-html x out)) rest)
-                   (display "</" out) (display tag out) (display ">" out))))))
-            (for-each (lambda (x) (sxml-display-as-html x out)) sxml))))
-     ((null? sxml))
-     ((procedure? sxml) (sxml-display-as-html (sxml) out))
-     (else
-      (html-display-escaped-string
-       (if (string? sxml)
-           sxml
-           (call-with-output-string (lambda (out) (display sxml out))))
-       out)))))
+    (write-sxml sxml port: o xml?: #f)))
+
 
 (define (%sxml->html sxml . o)
   (call-with-output-string
