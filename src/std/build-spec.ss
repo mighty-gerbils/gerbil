@@ -327,6 +327,7 @@
     "sxml/tal/iter"
     "sxml/tal/expander"
     "sxml/tal/syntax"
+    "sxml"
     ;; :std/tal
     "tal"
     ;:std/html

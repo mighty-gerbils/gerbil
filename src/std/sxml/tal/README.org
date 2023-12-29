@@ -122,8 +122,9 @@ above (fairly logical) order.
 #+begin_src scheme
   (define-TAL (name args ...) /key/ string-or-filename)
 
-     (name args ...) := a definition for a function name nd arguments
+     (name args ...) := a definition for a function and parameters
                         similar to `def`
+
      /key/   := Optional, default `string:`, can also be file:
 
      string-or-filename := A literal string if the key is string:

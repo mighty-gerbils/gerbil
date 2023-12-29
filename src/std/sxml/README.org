@@ -1,0 +1,603 @@
+#+TITLE: SXML: XML and HTML (AKA XML Infoset) data as S-expressions
+
+* Contents
+
+* XML Documentation
+
+* SXML Documentation
+:PROPERTIES:
+:EXPORT_FILE_NAME: ../../../doc/reference/std/sxml.md
+:EXPORT_OPTIONS: toc:nil
+:EXPORT_TITLE: SXML: S-expression eXtensible Markup Language
+:CUSTOM_ID: sxmldocumentation
+:END:
+
+** SXML: S-expression eXtensible Markup Language
+:PROPERTIES:
+:CUSTOM_ID: sxml
+:END:
+
+This module adds utilities to work with XML and HTML. It has been
+inspired by Oleg's SXML package. See more detailed info about SXML can
+be found [[http://okmij.org/ftp/Scheme/xml.html][here]].
+
+::: tip To use the bindings from this module:
+
+#+begin_src scheme
+(import :std/sxml)
+#+end_src
+
+#+begin_src scheme :export no :tangle ../sxml.ss
+  (import :std/build-config
+          :std/sxml/sxpath
+          :std/sxml/sxml)
+  (export (import:
+           :std/sxml/sxpath
+           :std/sxml/sxml))
+
+
+#+end_src
+
+*** Concepts
+:PROPERTIES:
+:CUSTOM_ID: concepts
+:END:
+
+"SXML is an abstract syntax tree of an XML document. SXML is also a
+concrete representation of the XML Infoset in the form of
+S-expressions."
+
+When developing in Gerbil we generally use sexps. XML and HTML are not
+quite sexps.
+
+For parsing and printing have a look at [[./xml.md][XML docs]] or the [[./html.md][HTML docs]]
+depending on your needs.
+
+There's a lot more detail in the [[https://okmij.org/ftp/Scheme/SXML.html][SMXL Specification]] so for basics a
+simple =<select>= tag.
+
+#+begin_src scheme
+  > (import :std/html)
+  > (begin (print-sxml->html '(select (@ (name "Examiner"))
+    (option (@ (value "1")) "Mr. Scruff") 
+    (option (@ (value "2")) "Beetlejuice")))
+    (newline))
+  <select name="Examiner"
+   ><option value="1"
+    >Mr. Scruff</option
+   ><option value="2"
+    >Beetlejuice</option
+   ></select
+  >
+#+end_src
+
+If the second item is a list that starts with an =@= symbol, =(@ ...}=
+marks the start of the attributes alist.
+
+Otherwise it's an element or a block of text. Simple!
+
+If you notice, the =print-sxml->html= function indents the html in a
+whitespace sensitive way to ensure there are no extra characters in the
+actual output.
+
+*** SXML Queries
+:PROPERTIES:
+:CUSTOM_ID: sxml-queries
+:END:
+
+**** sxpath
+:PROPERTIES:
+:CUSTOM_ID: sxpath
+:END:
+#+begin_src scheme
+(sxpath path) -> sxml
+
+  path := list
+#+end_src
+
+Evaluate an abbreviated SXPath
+
+#+begin_example
+    sxpath:: AbbrPath -> Converter, or
+    sxpath:: AbbrPath -> Node|Nodeset -> Nodeset
+#+end_example
+
+AbbrPath is a list. It is translated to the full SXPath according to the
+following rewriting rules:
+
+#+begin_src scheme
+ (sxpath '()) -> (node-join)
+ (sxpath '(path-component ...)) ->
+        (node-join (sxpath1 path-component) (sxpath '(...)))
+ (sxpath1 '//) -> (node-or
+             (node-self (node-typeof? '*any*))
+              (node-closure (node-typeof? '*any*)))
+ (sxpath1 '(equal? x)) -> (select-kids (node-equal? x))
+ (sxpath1 '(eq? x))    -> (select-kids (node-eq? x))
+ (sxpath1 ?symbol)     -> (select-kids (node-typeof? ?symbol)
+ (sxpath1 procedure)   -> procedure
+ (sxpath1 '(?symbol ...)) -> (sxpath1 '((?symbol) ...))
+ (sxpath1 '(path reducer ...)) ->
+        (node-reduce (sxpath path) (sxpathr reducer) ...)
+ (sxpathr number)      -> (node-pos number)
+ (sxpathr path-filter) -> (filter (sxpath path-filter))
+#+end_src
+
+**** sxml-select
+:PROPERTIES:
+:CUSTOM_ID: sxml-select
+:END:
+#+begin_src scheme
+(sxml-select n predf [mapf = values]) -> sxml
+
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+#+end_src
+
+Collects all children from node /n/ that satisfy a predicate /predf/;
+optionally transforms result with mapping function /mapf/ once a node
+satisfies a predicate, its children are not traversed.
+
+**** sxml-attributes
+:PROPERTIES:
+:CUSTOM_ID: sxml-attributes
+:END:
+#+begin_src scheme
+(sxml-attributes n) -> list | #f
+
+  n := sxml node
+#+end_src
+
+Returns the attributes of given node /n/ or #f if node does have any
+attributes.
+
+**** sxml-e
+:PROPERTIES:
+:CUSTOM_ID: sxml-e
+:END:
+#+begin_src scheme
+(sxml-e n) -> symbol | #f
+
+  n := sxml node
+#+end_src
+
+Returns the element type of node /n/ or #f if no type is found.
+
+**** sxml-find
+:PROPERTIES:
+:CUSTOM_ID: sxml-find
+:END:
+#+begin_src scheme
+(sxml-find n predf [mapf = values]) -> sxml
+
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+#+end_src
+
+Find the first child that satisfies a predicate /predf/, using
+depth-first search. Predicate /predf/ is a lambda which takes an node as
+parameter and returns an boolean. If optional /mapf/ is given the
+results satisfying /predf/ are transformed with it.
+
+**** sxml-select*
+:PROPERTIES:
+:CUSTOM_ID: sxml-select-1
+:END:
+#+begin_src scheme
+(sxml-select* n predf [mapf = values]) -> sxml
+
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+#+end_src
+
+Select from immediate children of node /n/ using predicate function
+/predf/. Results satisfying /predf/ are transformed if given optional
+mapping function /mapf/.
+
+**** sxml-attribute-e
+:PROPERTIES:
+:CUSTOM_ID: sxml-attribute-e
+:END:
+#+begin_src scheme
+(sxml-attribute-e n key) -> any | #f
+
+  n   := sxml node
+  key := string; node key
+#+end_src
+
+Returns the node /n/ attribute value for given /key/ or #f if value is
+not found.
+
+**** sxml-attribute-getq
+:PROPERTIES:
+:CUSTOM_ID: sxml-attribute-getq
+:END:
+#+begin_src scheme
+(sxml-attribute-getq key attrs) -> any
+
+  key   := string; node key
+  attrs := alist?
+#+end_src
+
+attribute list => value
+
+**** sxml-class?
+:PROPERTIES:
+:CUSTOM_ID: sxml-class
+:END:
+#+begin_src scheme
+(sxml-class? klass) -> lambda
+
+  klass := string; node class to match
+#+end_src
+
+returns dom class
+
+**** sxml-find*
+:PROPERTIES:
+:CUSTOM_ID: sxml-find-1
+:END:
+#+begin_src scheme
+(sxml-find* n pred [mapf = values]) -> sxml | #f
+
+  n    := sxml node
+  pred := predicate fn
+  mapf := transform fn
+#+end_src
+
+find in immediate children
+
+**** sxml-e?
+:PROPERTIES:
+:CUSTOM_ID: sxml-e-1
+:END:
+#+begin_src scheme
+(sxml-e? el) -> lambda
+
+  el := sxml element
+#+end_src
+
+returns element type
+
+**** sxml-id?
+:PROPERTIES:
+:CUSTOM_ID: sxml-id
+:END:
+#+begin_src scheme
+(sxml-id? id) -> lambda
+
+  id := sxml node id value
+#+end_src
+
+returns dom id
+
+**** sxml-children
+:PROPERTIES:
+:CUSTOM_ID: sxml-children
+:END:
+#+begin_src scheme
+(sxml-children n) -> list
+
+  n := sxml node
+#+end_src
+
+returns nodes children as a list
+
+**** sxml-find/context
+:PROPERTIES:
+:CUSTOM_ID: sxml-findcontext
+:END:
+#+begin_src scheme
+(sxml-find/context n predf [mapf values]) -> sxml
+
+  n     := sxml node
+  predf := predicate fn to match
+  mapf  := transform fn to apply to matches
+#+end_src
+
+find with context
+
+
+* XML
+
+We want a toplevel =xml= module.
+
+#+begin_src scheme :tangle ./xml.ss
+  ;;; -*- Gerbil -*-
+  ;;; (C) vyzo at hackzen.org
+  ;;; (C) me at drewc.ca
+  ;;; XML interface
+
+  (import :std/build-config
+          :std/sxml/ssax
+          :std/sxml/print)
+          
+  (export (import: :std/sxml/ssax)
+   #t)
+
+  (def (write-xml sxml (port (current-output-port)))
+    (write-sxml sxml xml?: #t port: port))
+
+  (def (print-sxml->xml sxml (port (current-output-port))
+  		      indent: (maybe-indent 1))
+    (write-sxml sxml xml?: #t port: port indent: maybe-indent))
+
+
+#+end_src
+
+* Printer
+:PROPERTIES:
+:header-args:scheme: :tangle print.ss
+:END:
+
+SXML is, well, sexps! So we know that things are either a "list" or an
+"atom".
+
+An SXML element is a list that starts with a symbol. If the cadr is a
+list starting with the =@= the cdr of that is the attributes as a
+alist.
+
+#+begin_src scheme
+  (import :std/srfi/13)
+  (export #t)
+
+  ;;; This source file is tangled from README,org
+  
+  (def (sxml-element? t) (and (pair? t) (symbol? (car t))))
+  (def (sxml-element-attributes el)
+    (match el
+      ([name [(eq? '@) attr ...] _ ...] attr)
+      (else #f)))
+#+end_src
+
+We are outputing/translating SXML into some kind of markup. Possibly XML.
+#+begin_src scheme
+  (def current-sxml-output-port (make-parameter (current-output-port)))
+  (def current-sxml-output-xml? (make-parameter #f))
+#+end_src
+
+#+begin_src scheme
+  (def (write-sxml
+        sxml
+        port: (port (current-sxml-output-port))
+        indent: (indent #f)
+        xml?: (xml? (current-sxml-output-xml?))
+        quote-char: (quote-char #\"))
+    (def args [port: port indent: indent xml?: xml? quote-char: quote-char])
+    
+    (match sxml
+      ([(? symbol? sym) _ ...]
+       (if (eqv? (string-ref (symbol->string sym) 0) #\*)
+         (apply write-sxml-special-tag sxml args)
+         (apply write-sxml-element sxml args)))
+      ((? pair?) (for-each (cut apply write-sxml <> args) sxml))
+      ((? (or null? not)) (void))
+      ((? procedure?) (apply write-sxml (sxml) args))
+      (else (write-sxml-atom sxml port: port in-attribute?: #f))))
+     
+#+end_src
+
+** Atoms
+So an atom is simple enough as every atom in (X)(HT)ML is really just
+a string of text with certain chars escaped.
+
+Inside an attribute the quote character needs escaping as well.
+
+
+#+begin_src scheme
+  (def (write-sxml-atom
+        thing
+        port: (port (current-sxml-output-port))
+        in-attribute?: (in-attribute? #f)
+        quote-char: (quote-char #\"))
+    
+    (def html-character-escapes
+      '((#\< . "&lt;")
+        (#\> . "&gt;")
+        (#\& . "&amp;")
+        (#\" . "&quot;")
+        (#\' . "&apos;")))
+
+    (def (escape-char? char)
+      (case char
+        ((#\" #\') in-attribute?)
+        ((#\< #\> #\&) #t)
+        (else #f)))
+         
+    (cond
+     ((char? thing)
+      (case thing
+        ((#\' #\") (if (and in-attribute? (eqv? thing quote-char))
+  		   (write-string (assget thing html-character-escapes) port)
+  		   (write-char thing port)))
+        ((#\< #\> #\&)
+         (write-string (assget thing html-character-escapes) port))
+        (else (write-char thing port))))
+     ((string? thing)
+      (let* ((str thing)
+  	   (start 0)
+             (end (string-length str)))
+        (let lp ((from start) (to start))
+          (if (>= to end)
+            (display (substring str from to) port)
+  	  (let (char (string-ref str to))
+              (cond
+               ((escape-char? char)
+                (display (substring str from to) port)
+                (write-sxml-atom
+  	       char port: port in-attribute?: in-attribute? quote-char: quote-char)
+                (lp (+ to 1) (+ to 1)))
+               (else
+                (lp from (+ to 1)))))))))
+     (else (write-sxml-atom (call-with-output-string "" (cut write thing <>))))))
+  	 
+#+end_src
+
+** Attributes
+
+#+begin_src scheme
+  (def (write-sxml-attribute
+        attr
+        port: (port (current-sxml-output-port))
+        xml?: (xml? (current-sxml-output-xml?))
+        quote-char: (quote-char #\"))
+
+    (def (write-name n)
+      (match n
+      ((? symbol?) (write n port))
+      ((? string?) (write-string n port))))
+    (match attr
+      ((cons name val)
+       (when (and (null? val) xml?)
+         (error "Invalid attribute, XML needs a value." attr))
+       (set! val (if (not (pair? val)) val (car val)))
+       (unless (not val)
+         (write-name name)
+         (when (not (null? val))
+  	 (write-char #\= port)
+  	 (write-char quote-char port)
+  	 (write-sxml-atom
+  	  val in-attribute?: #t port: port quote-char: quote-char)
+  	 (write-char quote-char port))))
+      ((? (or symbol? string?))
+       (write-sxml-attribute
+        [attr] port: port quote-char: quote-char xml?: xml?))
+      ((? not) (void))))
+      
+#+end_src
+
+** Printing an HTML/XML element from SXML
+
+There are two types of "elements" in SXML. What I call "special"
+elements are those whose names start with =#\*= as that's not valid
+(X)(HT)ML but valid scheme
+
+Special *XML* tags are, case insensitive, =*comment*=, =*cdata*= and
+=*unencoded*=.
+
+Special *HTML* tags are, case insensitive, =*decl*= (mostly for
+doctype), =*pi*= (for processing instruction AKA php), =*comment*=,
+=*unencoded*=.
+
+#+begin_src scheme
+  (def (sxml-special-tag? t)
+   (and (pair? t) (symbol? (car t)) (eqv? #\* (string-ref (symbol->string t) 0))))
+  (def (write-sxml-special-tag sxml
+        port: (port (current-sxml-output-port))
+        xml?: (xml? (current-sxml-output-xml?))
+        quote-char: (quote-char #\")
+        indent: (indent #f))
+    (def both-specials '("*comment*" "*unencoded*"))
+    (def xml-specials ["*cdata*" both-specials ...])
+    (def html-specials ["*decl*" "*pi*" "*top*" both-specials ...])
+    (def tag (string-downcase (symbol->string (car sxml))))
+    (def xml-special? (member tag xml-specials))
+    (def html-special? (member tag html-specials))
+
+    (def (display-pi-or-decl bdy)
+      (when (car bdy) (display (car bdy) port))
+      (for-each (lambda (x) (display " " port) (display x port))
+  	      (cdr bdy)))
+      
+
+    (unless (or (and xml? xml-special?) (and (not xml?) html-special?))
+      (if xml? (error "Invalid XML tag" tag)
+  	(error "Invalid HTML tag" tag)))
+
+    (let* ((name (car sxml))
+  	 (attributes (and (pair? (cadr sxml)) (eq? '@ (caadr sxml))
+  			  (sxml-element-attributes sxml)))
+  	 (body (if (not attributes) (cdr sxml) (cddr sxml))))
+
+      (case (string->symbol tag)
+        ((*top*)
+         (write-sxml
+  	body port: port xml?: xml? quote-char: quote-char indent: indent))
+        ((*comment*)
+         (write-string "<!--" port) (for-each (cut display <> port) body)
+         (write-string "-->" port))
+        ((*cdata*)
+         (write-string "<![CDATA[" port) (for-each (cut display <> port) body)
+         (write-string "]]>" port))
+        ((*decl*)
+         (write-string "<!" port) (display-pi-or-decl body) (write ">" port))
+        ((*pi*)
+         (write-string "<?" port) (display-pi-or-decl body) (write "?>" port))
+        ((*unencoded*) (for-each (cut display <> port) body))))
+
+    (void))
+        
+        
+
+
+#+end_src
+
+Now the guts. Pretty much self explanatory. 
+
+#+begin_src scheme
+  (def current-indentation-width (make-parameter 0))
+  (def current-html-never-empty-tags
+    (make-parameter (map symbol->string '(iframe div span textarea script style ul))))
+
+  (def (sxml-never-empty? name)
+    (member (symbol->string name) (current-html-never-empty-tags)
+  	  string-ci=))
+
+  (def current-html-CDATA-tags
+    (make-parameter '("script" "style")))
+
+  (def (html-cdata? name)
+    (member (symbol->string name) (current-html-CDATA-tags)
+  	  string-ci=))
+    
+  (def (write-sxml-element
+        el
+        port: (port (current-sxml-output-port))
+        indent: (maybe-level #f)
+        xml?: (xml? (current-sxml-output-xml?))
+        quote-char: (quote-char #\"))
+    (def name (car el))
+    (def attrs (sxml-element-attributes el))
+    (def body (if attrs (cddr el) (cdr el)))
+
+    (def (indent (end #f))
+      (def n (if end maybe-level (current-indentation-width)))
+      (when maybe-level
+        (write-char #\newline port)
+        (let lp ((n n)) (write-char #\space port)
+  	   (when (>= n 1) (lp (1- n))))))
+
+    (parameterize ((current-indentation-width
+  		  (+ (current-indentation-width) (or maybe-level 0))))
+      ;; Open Tag
+      (write-char #\< port)
+      (write-string (symbol->string name) port)
+      (when attrs
+        (write-char #\space port)
+        (for-each (cut write-sxml-attribute
+  		     <> port: port xml?: xml? quote-char: quote-char)
+  		attrs))
+
+      (unless (and (null? body) (not (sxml-never-empty? name)))
+        (indent))
+      (when (and xml? (null? body) (not (sxml-never-empty? name)))
+        (write-char #\space port)
+        (write-char #\/ port))
+      (write-char #\> port)
+      ;; Body
+      (if (and (not xml?) (html-cdata? name))
+        (for-each (cut display <> port) body)
+        (write-sxml
+         body port: port xml?: xml?
+         quote-char: quote-char
+         indent: (and maybe-level (current-indentation-width))))
+      ;; End Tag
+      (unless (and (null? body) (not (sxml-never-empty? name)))
+        (write-char #\< port) (write-char #\/ port)
+        (write-string (symbol->string name) port)
+        (indent #t) (write-char #\> port)))
+    (void))
+#+end_src

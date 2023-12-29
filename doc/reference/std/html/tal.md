@@ -30,8 +30,9 @@ If a tag has more than one TAL attribute they are evaluated in the above (fairly
 ```scheme
 (define-TAL (name args ...) /key/ string-or-filename)
 
-   (name args ...) := a definition for a function name nd arguments
+   (name args ...) := a definition for a function and parameters
                       similar to `def`
+
    /key/   := Optional, default `string:`, can also be file:
 
    string-or-filename := A literal string if the key is string:
@@ -41,8 +42,7 @@ If a tag has more than one TAL attribute they are evaluated in the above (fairly
 A function that outputs **HTML** makes up a portion of a web application. Using `define-TAL` makes it easy to use a block of **HTML/XHTML** as a function.
 
 ```scheme
-(import :std/html/tal
-        :std/format :std/text/utf8 :std/sugar)
+(import :std/tal :std/format :std/text/utf8 :std/sugar)
 
 (define-TAL (htmlist items)
   "<ul><li
