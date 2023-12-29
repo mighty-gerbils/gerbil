@@ -12,9 +12,10 @@
 - [[#sxml-documentation][SXML Documentation]]
   - [[#sxml-s-expression-extensible-markup-language][SXML: S-expression eXtensible Markup Language]]
     - [[#concepts][Concepts]]
+    - [[#printer][Printer]]
     - [[#sxml-queries][SXML Queries]]
 - [[#xml-0][XML]]
-- [[#printer][Printer]]
+- [[#printer-0][Printer]]
   - [[#atoms][Atoms]]
   - [[#attributes][Attributes]]
   - [[#printing-an-htmlxml-element-from-sxml][Printing an HTML/XML element from SXML]]
@@ -125,15 +126,15 @@ be found [[http://okmij.org/ftp/Scheme/xml.html][here]].
 (import :std/sxml)
 #+end_src
 
-#+begin_src scheme :export no :tangle ../sxml.ss
+#+begin_src scheme :exports none :tangle ../sxml.ss
   (import :std/build-config
+          :std/sxml/print
           :std/sxml/sxpath
           :std/sxml/sxml)
   (export (import:
+           :std/sxml/print
            :std/sxml/sxpath
            :std/sxml/sxml))
-
-
 #+end_src
 
 *** Concepts
@@ -155,10 +156,11 @@ There's a lot more detail in the [[https://okmij.org/ftp/Scheme/SXML.html][SMXL 
 simple =<select>= tag.
 
 #+begin_src scheme
-  > (import :std/html)
-  > (begin (print-sxml->html '(select (@ (name "Examiner"))
+  > (import :std/sxml)
+  > (begin (write-sxml '(select (@ (name "Examiner"))
     (option (@ (value "1")) "Mr. Scruff") 
-    (option (@ (value "2")) "Beetlejuice")))
+    (option (@ (value "2")) "Beetlejuice"))
+  		     indent: #t)
     (newline))
   <select name="Examiner"
    ><option value="1"
@@ -174,9 +176,113 @@ marks the start of the attributes alist.
 
 Otherwise it's an element or a block of text. Simple!
 
-If you notice, the =print-sxml->html= function indents the html in a
+If you notice, the =write-sxml= function indents the html in a
 whitespace sensitive way to ensure there are no extra characters in the
 actual output.
+
+*** Printer
+:PROPERTIES:
+:CUSTOM_ID: printer
+:END:
+
+All of HTML, XML and XHTML are printed from the same function.
+
+**** write-sxml
+
+#+begin_src scheme
+  (def (write-sxml
+       sxml
+       port: (port (current-sxml-output-port))
+       xml?: (xml? (current-sxml-output-xml?))
+       indent: (indent #f)
+       quote-char: (quote-char #\")) ...)
+
+  sxml   := An sxml element, a list of elements, or text.
+  port   := A keyword for binding the output port
+  xml?   := A keyword for boolean choosing XML or HTML. Defaults to #f
+  indent := A keyword where #f means no indentation and a number means indent (aka
+            pretty print) the output hiegenically staring at this level.
+  quote-char := A keyword that chooses the quote character, either #\"
+                or #\', for attributess.
+#+end_src
+
+This is a generic abstract markup printer.  The =:std/xml= and
+=:std/html= printers are based off of this one for more specific
+usage.
+
+
+#+begin_src scheme
+  > (write-sxml '(*TOP*
+  		(div
+  		 (p "I'm paragraph one")
+  		 (p "I'm paragraph two"))))
+  <div><p>I'm paragraph one</p><p>I'm paragraph two</p></div>
+#+end_src
+
+By default the =(current-sxml-output-port)= is set to
+=(current-output-port)=. It may not be what is expected and is really
+just for REPL use so set the port or parameterize
+=(current-sxml-output-port)= for best results.
+
+The XML/HTML can be indented. It does so inside the tags so as not to
+pollute or change semantics.
+
+#+begin_src scheme
+  > (write-sxml '(*TOP*
+  		(div
+  		 (p "I'm paragraph one")
+  		 (p "I'm paragraph two"))) indent: 1)
+  <div
+    ><p
+     >I'm paragraph one</p
+    ><p
+     >I'm paragraph two</p
+    ></div
+    > 
+#+end_src
+
+For HTML, the default, empty tags with no close are allowed.
+
+#+begin_src scheme
+  > (write-sxml'(*TOP*
+                 (area)
+                 (base)
+                 (br)
+                 (col)
+                 (embed)
+                 (hr)
+                 (img)
+                 (input)
+                 (link)
+                 (meta)
+                 (track)
+                 (wbr)))
+          
+  <area><base><br><col><embed><hr><img><input><link><meta><track><wbr>
+#+end_src
+
+When set to =xml?= things are different.
+
+#+begin_src scheme
+  > (write-sxml'(*TOP*
+                 (area)
+                 (base)
+                 (br)
+                 (col)
+                 (embed)
+                 (hr)
+                 (img)
+                 (input)
+                 (link)
+                 (meta)
+                 (track)
+                 (wbr)) xml?: #t)
+          
+  <area /><base /><br /><col /><embed /><hr /><img /><input /><link /><meta /><track /><wbr />
+#+end_src
+
+
+
 
 *** SXML Queries
 :PROPERTIES:
@@ -432,7 +538,7 @@ We want a toplevel =xml= module.
 * Printer
 :PROPERTIES:
 :header-args:scheme: :tangle print.ss
-:CUSTOM_ID: printer
+:CUSTOM_ID: printer-0
 :END:
 
 SXML is, well, sexps! So we know that things are either a "list" or an

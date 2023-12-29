@@ -58,7 +58,7 @@ Here is my attempt at the [[https://zope.readthedocs.io/en/latest/zopebook/Appen
 
 * Documentation
 :PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/html/tal.md
+:EXPORT_FILE_NAME: ../../../../doc/reference/std/tal.md
 :EXPORT_TITLE: TAL: The Template Attribute Language
 :EXPORT_OPTIONS: toc:nil
 :CUSTOM_ID: documentation

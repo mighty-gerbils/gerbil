@@ -1,20 +1,20 @@
-(export xml-test)
+(export sxml-test)
 
-(import :std/test :std/xml)
+(import :std/test :std/sxml)
 
-(def xml-test
-  (test-suite "test :std/xml"
+(def sxml-test
+  (test-suite "test :std/sxml"
     (test-case "converting elements from sxml to html"
       ; normal elements with children include a closing tag
-      (check-output (print-sxml->html*
+      (check-output (write-sxml
         '(*TOP*
           (div
             (p "I'm paragraph one")
-            (p "I'm paragraph two"))))
+            (p "I'm paragraph two"))) port: (current-output-port))
         "<div><p>I'm paragraph one</p><p>I'm paragraph two</p></div>")
 
       ; void elements must never include a closing tag
-      (check-output (print-sxml->html*
+      (check-output (write-sxml
         '(*TOP*
           (area)
           (base)
@@ -27,5 +27,5 @@
           (link)
           (meta)
           (track)
-          (wbr)))
+          (wbr)) port: (current-output-port))
         "<area><base><br><col><embed><hr><img><input><link><meta><track><wbr>"))))

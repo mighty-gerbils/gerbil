@@ -20,10 +20,11 @@ For parsing and printing have a look at [XML docs](./xml.md) or the [HTML docs](
 There's a lot more detail in the [SMXL Specification](https://okmij.org/ftp/Scheme/SXML.html) so for basics a simple `<select>` tag.
 
 ```scheme
-> (import :std/html)
-> (begin (print-sxml->html '(select (@ (name "Examiner"))
+> (import :std/sxml)
+> (begin (write-sxml '(select (@ (name "Examiner"))
   (option (@ (value "1")) "Mr. Scruff") 
-  (option (@ (value "2")) "Beetlejuice")))
+  (option (@ (value "2")) "Beetlejuice"))
+                     indent: #t)
   (newline))
 <select name="Examiner"
  ><option value="1"
@@ -38,7 +39,100 @@ If the second item is a list that starts with an `@` symbol, `(@ ...}` marks the
 
 Otherwise it's an element or a block of text. Simple!
 
-If you notice, the `print-sxml->html` function indents the html in a whitespace sensitive way to ensure there are no extra characters in the actual output.
+If you notice, the `write-sxml` function indents the html in a whitespace sensitive way to ensure there are no extra characters in the actual output.
+
+
+## Printer
+
+All of HTML, XML and XHTML are printed from the same function.
+
+
+### write-sxml
+
+```scheme
+(def (write-sxml
+     sxml
+     port: (port (current-sxml-output-port))
+     xml?: (xml? (current-sxml-output-xml?))
+     indent: (indent #f)
+     quote-char: (quote-char #\")) ...)
+
+sxml   := An sxml element, a list of elements, or text.
+port   := A keyword for binding the output port
+xml?   := A keyword for boolean choosing XML or HTML. Defaults to #f
+indent := A keyword where #f means no indentation and a number means indent (aka
+          pretty print) the output hiegenically staring at this level.
+quote-char := A keyword that chooses the quote character, either #\"
+              or #\', for attributess.
+```
+
+This is a generic abstract markup printer. The `:std/xml` and `:std/html` printers are based off of this one for more specific usage.
+
+```scheme
+> (write-sxml '(*TOP*
+                (div
+                 (p "I'm paragraph one")
+                 (p "I'm paragraph two"))))
+<div><p>I'm paragraph one</p><p>I'm paragraph two</p></div>
+```
+
+By default the `(current-sxml-output-port)` is set to `(current-output-port)`. It may not be what is expected and is really just for REPL use so set the port or parameterize `(current-sxml-output-port)` for best results.
+
+The XML/HTML can be indented. It does so inside the tags so as not to pollute or change semantics.
+
+```scheme
+> (write-sxml '(*TOP*
+                (div
+                 (p "I'm paragraph one")
+                 (p "I'm paragraph two"))) indent: 1)
+<div
+  ><p
+   >I'm paragraph one</p
+  ><p
+   >I'm paragraph two</p
+  ></div
+  > 
+```
+
+For HTML, the default, empty tags with no close are allowed.
+
+```scheme
+> (write-sxml'(*TOP*
+               (area)
+               (base)
+               (br)
+               (col)
+               (embed)
+               (hr)
+               (img)
+               (input)
+               (link)
+               (meta)
+               (track)
+               (wbr)))
+
+<area><base><br><col><embed><hr><img><input><link><meta><track><wbr>
+```
+
+When set to `xml?` things are different.
+
+```scheme
+> (write-sxml'(*TOP*
+               (area)
+               (base)
+               (br)
+               (col)
+               (embed)
+               (hr)
+               (img)
+               (input)
+               (link)
+               (meta)
+               (track)
+               (wbr)) xml?: #t)
+
+<area /><base /><br /><col /><embed /><hr /><img /><input /><link /><meta /><track /><wbr />
+```
 
 
 ## SXML Queries
