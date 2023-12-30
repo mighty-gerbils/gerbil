@@ -1,4 +1,4 @@
-#+TITLE: SMTP: Simple Mail Tranfser Protocol
+#+TITLE: SMTP: Simple Mail Transfer Protocol
 
 #+begin_src scheme :tangle ../smtp.ss
   (import ./smtp/api) (export (import: ./smtp/api))
@@ -8,7 +8,7 @@
 :PROPERTIES:
 :EXPORT_FILE_NAME: ../../../../doc/reference/std/net/smtp.md
 :EXPORT_OPTIONS: toc:nil
-:EXPORT_TITLE: SMTP: Simple Mail Tranfser Protocol
+:EXPORT_TITLE: SMTP: Simple Mail Transfer Protocol
 :END:
 ** SMTP: Simple Mail Tranfser Protocol
 

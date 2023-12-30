@@ -152,12 +152,16 @@
   (void))
 
 (def current-indentation-width (make-parameter 0))
-(def current-html-never-empty-tags
-  (make-parameter (map symbol->string '(iframe div span textarea script style ul))))
 
-(def (sxml-never-empty? name)
-  (member (symbol->string name) (current-html-never-empty-tags)
-	  string-ci=))
+(def current-html-void-tags
+  (make-parameter
+   (map symbol->string
+	'(area base br col command embed hr img input keygen
+	       link meta param source track wbr))))
+
+(def (sxml-void-tag? name)
+  (member (symbol->string name) (current-html-void-tags)
+	       string-ci=))
 
 (def current-html-CDATA-tags
   (make-parameter '("script" "style")))
@@ -189,14 +193,14 @@
     (write-char #\< port)
     (write-string (symbol->string name) port)
     (when attrs
-      (write-char #\space port)
-      (for-each (cut write-sxml-attribute
-		     <> port: port xml?: xml? quote-char: quote-char)
-		attrs))
-
-    (unless (and (null? body) (not (sxml-never-empty? name)))
-      (indent))
-    (when (and xml? (null? body) (not (sxml-never-empty? name)))
+      (for-each
+	(lambda (attr)
+	  (write-char #\space port)
+	  (write-sxml-attribute
+	   attr port: port xml?: xml? quote-char: quote-char))
+	attrs))
+    (unless (sxml-void-tag? name) (indent))
+    (when (and xml? (sxml-void-tag? name))
       (write-char #\space port)
       (write-char #\/ port))
     (write-char #\> port)
@@ -208,7 +212,7 @@
        quote-char: quote-char
        indent: (and maybe-level (current-indentation-width))))
     ;; End Tag
-    (unless (and (null? body) (not (sxml-never-empty? name)))
+    (unless (sxml-void-tag? name)
       (write-char #\< port) (write-char #\/ port)
       (write-string (symbol->string name) port)
       (indent #t) (write-char #\> port)))
