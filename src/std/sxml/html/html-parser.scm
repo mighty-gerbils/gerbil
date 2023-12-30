@@ -623,7 +623,7 @@
 
 (define (sxml-display-as-html sxml . o)
   (let ((out (if (pair? o) (car o) (current-output-port))))
-    (write-sxml sxml port: o xml?: #f)))
+    (write-sxml sxml port: out xml?: #f)))
 
 
 (define (%sxml->html sxml . o)

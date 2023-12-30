@@ -7,6 +7,7 @@
 (def (sxml->tal-form sxml)
   (def top [html:])
   (def str (open-output-string ""))
+  ;; (display str)
   (parameterize ((current-toplevel top)
 		 (current-out-str str))
     (sxml->html sxml str)
