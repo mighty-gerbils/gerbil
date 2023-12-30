@@ -144,9 +144,9 @@
        (write-string "<![CDATA[" port) (for-each (cut display <> port) body)
        (write-string "]]>" port))
       ((*decl*)
-       (write-string "<!" port) (display-pi-or-decl body) (write ">" port))
+       (write-string "<!" port) (display-pi-or-decl body) (write-string ">" port))
       ((*pi*)
-       (write-string "<?" port) (display-pi-or-decl body) (write "?>" port))
+       (write-string "<?" port) (display-pi-or-decl body) (write-string "?>" port))
       ((*unencoded*) (for-each (cut display <> port) body))))
 
   (void))
