@@ -74,7 +74,13 @@
               (lp (+ to 1) (+ to 1)))
              (else
               (lp from (+ to 1)))))))))
-   (else (write-sxml-atom (call-with-output-string "" (cut write thing <>))))))
+   (else (write-sxml-atom
+          (if (symbol? thing)
+	    (symbol->string thing)
+	    (call-with-output-string "" (cut write thing <>)))
+	    port: port
+	    in-attribute?: in-attribute?
+	    quote-char: quote-char))))
 
 (def (write-sxml-attribute
       attr
