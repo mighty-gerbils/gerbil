@@ -13,8 +13,12 @@ HTML is a widely used Markup Language that, while very similar to [XML](./xml.md
 If HTML templates for web development are up your alley have a look at our [Template Attribute Language (TAL)](tal/README.md) which uses this parser and printer.
 
 ```scheme
-(import :std/sxml/html/parser)
-(export (import: :std/sxml/html/parser))
+(import :std/sxml/html/parser :std/sxml/print)
+(export (import: :std/sxml/html/parser)
+        current-html-void-tags
+        html-void-tag?
+        current-html-raw-tags
+        html-raw-tag?)
 ;;; This library is tangled from sxml/html/README.org
 ```
 
@@ -28,9 +32,15 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
 
 ### Void: `current-html-void-tags` and `html-void-tag?`
 
-> Void elements area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr --<https://html.spec.whatwg.org/multipage/syntax.html#void-elements>
+> Void elements
+> 
+> area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr
+> 
+> Void elements can't have any contents (since there's no end tag, no content can be put between the start tag and the end tag).
+> 
+> --<https://html.spec.whatwg.org/multipage/syntax.html#void-elements>
 
-The void tags are stored in a parameter `current-html-void-tags`. It seems to have more than the spec says but there's more than one spec and version so we try to be complete,
+The void tags are stored in a parameter `current-html-void-tags`. It has more than the spec says but there's more than one spec and version so we try to be complete,
 
 ```scheme
 > (current-html-void-tags)
@@ -48,6 +58,22 @@ There's an `html-void-tag?` procedure to test. It's case-insensitive as HTML is 
 ```
 
 
+### Raw Text: `current-html-raw-tags` and `html-raw-tag?`
+
+> Raw text elements script, style --<https://html.spec.whatwg.org/multipage/syntax.html#raw-text-elements>
+
+These are not escaped non-html contents.
+
+```scheme
+> (current-html-raw-tags)
+(script style xmp)
+> (html-raw-tag? 'ScRipt)
+(script style xmp)
+> (html-raw-tag? 'html)
+#f
+```
+
+
 ## Reading
 
 `html-parser` is intended as a permissive HTML parser for people who prefer the scalable interface described in Oleg Kiselyov's SSAX parser, as well as providing simple convenience utilities. It correctly handles all invalid HTML, inserting "virtual" starting and closing tags as needed to maintain the proper tree structure. A major goal of this parser is bug-for-bug compatibility with the way common web browsers parse HTML.
@@ -57,20 +83,16 @@ There's an `html-void-tag?` procedure to test. It's case-insensitive as HTML is 
 
 ```scheme
 (def (html->sxml
-        port-or-string
-        start: (start (pgetq start: default-html->sxml-plist))
-        end: (end (pgetq end: default-html->sxml-plist))
-        decl: (decl (pgetq decl: default-html->sxml-plist))
-        process: (process (pgetq process: default-html->sxml-plist))
-        comment: (comment (pgetq comment: default-html->sxml-plist))
-        text: (text (pgetq text: default-html->sxml-plist))
-        bodyless: (bodyless (current-html-void-tags)))
+      port-or-string
+      start: (start (pgetq start: default-html->sxml-plist))
+      end: (end (pgetq end: default-html->sxml-plist))
+      decl: (decl (pgetq decl: default-html->sxml-plist))
+      process: (process (pgetq process: default-html->sxml-plist))
+      comment: (comment (pgetq comment: default-html->sxml-plist))
+      text: (text (pgetq text: default-html->sxml-plist))
+      bodyless: (bodyless (current-html-void-tags))
+      literals: (literals (current-http-raw-tags)))
   ...)
-
-
-
-
-
 ```
 
 Returns the SXML representation of the document from `port-or-string`, using the default or provided parsing options.
@@ -118,7 +140,7 @@ Returns a string representation of the document from PORT with all tags removed.
                   tag-levels: *tag-levels*
                   unnestables: *unnestables*
                   bodyless:  (current-html-void-tags)
-                  literals: *literals*
+                  literals:  (current-html-raw-tags)
                   terminators: *terminators*)
 ```
 

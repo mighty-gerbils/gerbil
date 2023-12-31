@@ -160,15 +160,15 @@
 
 (def (html-void-tag? name)
   (member name (current-html-void-tags)
-	       (lambda xy (apply string-ci= (map symbol->string xy)))))
+	  (lambda xy (apply string-ci= (map symbol->string xy)))))
 
-(def current-html-CDATA-tags
-  (make-parameter '("script" "style")))
+(def current-html-raw-tags
+  (make-parameter '(script style xmp)))
 
-(def (html-cdata? name)
-  (member (symbol->string name) (current-html-CDATA-tags)
-	  string-ci=))
-  
+(def (html-raw-tag? name)
+  (member name (current-html-raw-tags)
+	  (lambda xy (apply string-ci= (map symbol->string xy)))))
+
 (def (write-sxml-element
       el
       port: (port (current-sxml-output-port))
@@ -204,7 +204,7 @@
       (write-char #\/ port))
     (write-char #\> port)
     ;; Body
-    (if (and (not xml?) (html-cdata? name))
+    (if (and (not xml?) (html-raw-tag? name))
       (for-each (cut display <> port) body)
       (write-sxml
        body port: port xml?: xml?

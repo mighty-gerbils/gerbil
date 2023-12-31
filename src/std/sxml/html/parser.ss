@@ -47,7 +47,7 @@
       tag-levels: (tag-levels *tag-levels*)
       unnestables: (unnestables *unnestables*)
       bodyless: (bodyless (current-html-void-tags))
-      literals: (literals *literals*)
+      literals: (literals (current-html-raw-tags))
       terminators: (terminators *terminators*))
   (apply %make-html-parser
     (%mkref start end text comment decl process entity entities tag-levels
@@ -65,7 +65,7 @@
       tag-levels: (tag-levels *tag-levels*)
       unnestables: (unnestables *unnestables*)
       bodyless: (bodyless (current-html-void-tags))
-      literals: (literals *literals*)
+      literals: (literals (current-html-raw-tags))
       terminators: (terminators *terminators*))
   (let ((parse
 	 (apply %make-html-parser

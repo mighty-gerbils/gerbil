@@ -313,7 +313,7 @@
 #;(define *bodyless*
   '(img hr br meta link))
 
-(define *literals*
+#;(define *literals*
   '(script xmp))
 
 (define *terminators*
@@ -404,7 +404,7 @@
           (map (lambda (x)
                  (cons x (make-string-reader/ci
                           (string-append "</" (symbol->string x) ">"))))
-               (%key-ref o 'literals: *literals*)))
+               (%key-ref o 'literals: (current-html-raw-tags))))
          (terminators (%key-ref o 'terminators: *terminators*))
          (entity (%key-ref o 'entity:
                            (lambda (t s)
@@ -435,7 +435,8 @@
                x))
            ls))
     (lambda (seed . o)
-      (parameterize ((current-html-void-tags bodyless))
+      (parameterize ((current-html-void-tags bodyless)
+		     (current-html-raw-tags (map car literals)))
 	(let* ((src (if (pair? o) (car o) (current-input-port)))
                (in (if (string? src) (open-input-string src) src)))
           (let lp ((tok (read-html-token in entities))
