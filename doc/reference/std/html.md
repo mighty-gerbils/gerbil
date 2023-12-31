@@ -2,43 +2,81 @@
 
 HTML is a widely used Markup Language that, while very similar to [XML](./xml.md), differs enough to have its own specific libraries.
 
-*Usage*
+::: tip To use the bindings from this module:
 
 ```scheme
 (import :std/html)
 ```
 
-This is for parsing and printing HTML. For HTML usage and templates for web development have a look at [The Template Attribute Language (TAL)](tal/README.md).
+:::
+
+If HTML templates for web development are up your alley have a look at our [Template Attribute Language (TAL)](tal/README.md) which uses this parser and printer.
 
 ```scheme
-(import ./html/parser)
-(export (import: ./html/parser))
-;;; This library is tangled from html/README.org
+(import :std/sxml/html/parser)
+(export (import: :std/sxml/html/parser))
+;;; This library is tangled from sxml/html/README.org
 ```
 
 
-# Reading
+## Element, aka Tag Types
 
-`html-parser` is intended as a permissive HTML parser for people who prefer the scalable interface described in Oleg Kiselyov's SSAX parser, as well as providing simple convenience utilities. It correctly handles all invalid HTML, inserting "virtual" starting and closing tags as needed to maintain the proper tree structure needed for the foldts down/up logic. A major goal of this parser is bug-for-bug compatibility with the way common web browsers parse HTML.
+"There are six different kinds of elements: void elements, the template element, raw text elements, escapable raw text elements, foreign elements, and normal elements."
+
+While HTML and XML are friends there are some elements in HTML that cannot be expressed in XML. Knowing what/where they are is important for both parsing and printing.
 
 
-## html->sxml
+### Void: `current-html-void-tags` and `html-void-tag?`
+
+> Void elements area, base, br, col, embed, hr, img, input, link, meta, source, track, wbr --<https://html.spec.whatwg.org/multipage/syntax.html#void-elements>
+
+The void tags are stored in a parameter `current-html-void-tags`. It seems to have more than the spec says but there's more than one spec and version so we try to be complete,
 
 ```scheme
-(html->sxml
- port-or-string
- start: /default/ end: /default/ text: /default/ comment: /default/
- decl: /default/ process: /default/ entity: #f entities: *default-entities*
- tag-levels: *tag-levels* unnestables: *unnestables* bodyless: *bodyless*
- literals: *literals*
- terminators: *terminators*) 
+> (current-html-void-tags)
+(area base br col command embed hr img input keygen
+ link meta param source track wbr)
+```
+
+There's an `html-void-tag?` procedure to test. It's case-insensitive as HTML is meant to be.
+
+```scheme
+ > (html-void-tag? 'InPut)
+(input keygen link meta param source track wbr)
+> (html-void-tag? 'InPuter)
+#f
+```
+
+
+## Reading
+
+`html-parser` is intended as a permissive HTML parser for people who prefer the scalable interface described in Oleg Kiselyov's SSAX parser, as well as providing simple convenience utilities. It correctly handles all invalid HTML, inserting "virtual" starting and closing tags as needed to maintain the proper tree structure. A major goal of this parser is bug-for-bug compatibility with the way common web browsers parse HTML.
+
+
+### html->sxml
+
+```scheme
+(def (html->sxml
+        port-or-string
+        start: (start (pgetq start: default-html->sxml-plist))
+        end: (end (pgetq end: default-html->sxml-plist))
+        decl: (decl (pgetq decl: default-html->sxml-plist))
+        process: (process (pgetq process: default-html->sxml-plist))
+        comment: (comment (pgetq comment: default-html->sxml-plist))
+        text: (text (pgetq text: default-html->sxml-plist))
+        bodyless: (bodyless (current-html-void-tags)))
+  ...)
+
+
+
+
 
 ```
 
-Returns the SXML representation of the document from `port-or-string`, using the default parsing options.
+Returns the SXML representation of the document from `port-or-string`, using the default or provided parsing options.
 
 
-## default-html->sxml-plist
+### default-html->sxml-plist
 
 This is where the default parsing options come from.
 
@@ -57,7 +95,7 @@ This is where the default parsing options come from.
 ```
 
 
-## html-strip
+### html-strip
 
 ```scheme
 (html-strip port-or-string)
@@ -71,7 +109,7 @@ Returns a string representation of the document from PORT with all tags removed.
 ```
 
 
-## make-html-parser
+### make-html-parser
 
 ```scheme
 (make-html-parser start: #f end: #f text: #f
@@ -79,7 +117,7 @@ Returns a string representation of the document from PORT with all tags removed.
                   entity: #f entities: *default-entities*
                   tag-levels: *tag-levels*
                   unnestables: *unnestables*
-                  bodyless: *bodyless*
+                  bodyless:  (current-html-void-tags)
                   literals: *literals*
                   terminators: *terminators*)
 ```

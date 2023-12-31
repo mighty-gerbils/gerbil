@@ -155,13 +155,12 @@
 
 (def current-html-void-tags
   (make-parameter
-   (map symbol->string
-	'(area base br col command embed hr img input keygen
-	       link meta param source track wbr))))
+   '(area base br col command embed hr img input keygen
+     link meta param source track wbr)))
 
-(def (sxml-void-tag? name)
-  (member (symbol->string name) (current-html-void-tags)
-	       string-ci=))
+(def (html-void-tag? name)
+  (member name (current-html-void-tags)
+	       (lambda xy (apply string-ci= (map symbol->string xy)))))
 
 (def current-html-CDATA-tags
   (make-parameter '("script" "style")))
@@ -199,8 +198,8 @@
 	  (write-sxml-attribute
 	   attr port: port xml?: xml? quote-char: quote-char))
 	attrs))
-    (unless (sxml-void-tag? name) (indent))
-    (when (and xml? (sxml-void-tag? name))
+    (unless (html-void-tag? name) (indent))
+    (when (and xml? (html-void-tag? name))
       (write-char #\space port)
       (write-char #\/ port))
     (write-char #\> port)
@@ -212,7 +211,7 @@
        quote-char: quote-char
        indent: (and maybe-level (current-indentation-width))))
     ;; End Tag
-    (unless (sxml-void-tag? name)
+    (unless (html-void-tag? name)
       (write-char #\< port) (write-char #\/ port)
       (write-string (symbol->string name) port)
       (indent #t) (write-char #\> port)))

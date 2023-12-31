@@ -45,7 +45,8 @@
       decl: (decl #f) process: (process #f) entity: (entity #f)
       entities: (entities *default-entities*)
       tag-levels: (tag-levels *tag-levels*)
-      unnestables: (unnestables *unnestables*) bodyless: (bodyless *bodyless*)
+      unnestables: (unnestables *unnestables*)
+      bodyless: (bodyless (current-html-void-tags))
       literals: (literals *literals*)
       terminators: (terminators *terminators*))
   (apply %make-html-parser
@@ -62,7 +63,8 @@
       text: (text (pgetq text: default-html->sxml-plist))
       entity: (entity #f) entities: (entities *default-entities*)
       tag-levels: (tag-levels *tag-levels*)
-      unnestables: (unnestables *unnestables*) bodyless: (bodyless *bodyless*)
+      unnestables: (unnestables *unnestables*)
+      bodyless: (bodyless (current-html-void-tags))
       literals: (literals *literals*)
       terminators: (terminators *terminators*))
   (let ((parse

@@ -3,7 +3,10 @@
 ;; Copyright (c) 2023 Drew Crampsie <me at drewc dot ca>
 
 ;; CHANGELOG
-;;
+;; 2023-12-30:
+
+;; Use `current-html-void-tags` for bodyless:.
+
 ;; 2023-12-08:
 ;;
 ;;  Changed (##sys#char->utf8-string (integer->char name)))
@@ -307,7 +310,7 @@
 (define *unnestables*
   '(p li td tr))
 
-(define *bodyless*
+#;(define *bodyless*
   '(img hr br meta link))
 
 (define *literals*
@@ -396,7 +399,7 @@
          (entities (%key-ref o 'entities: *default-entities*))
          (tag-levels (%key-ref o 'tag-levels: *tag-levels*))
          (unnestables (%key-ref o 'unnestables: *unnestables*))
-         (bodyless (%key-ref o 'bodyless: *bodyless*))
+         (bodyless (%key-ref o 'bodyless: (current-html-void-tags)))
          (literals
           (map (lambda (x)
                  (cons x (make-string-reader/ci
@@ -410,153 +413,154 @@
                                    s)))))
     (define (entity->string sxml seed out)
       (if (pair? sxml)
-          (if (eq? 'entity (car sxml))
-              (entity->string (entity (cdr sxml) seed) seed out)
-              (for-each (lambda (x) (entity->string x seed out)) sxml))
-          (display sxml out)))
+        (if (eq? 'entity (car sxml))
+          (entity->string (entity (cdr sxml) seed) seed out)
+          (for-each (lambda (x) (entity->string x seed out)) sxml))
+        (display sxml out)))
     (define (fix-attrs ls seed)
       (map
-       (lambda (x)
-         (cons (car x)
-               (if (pair? (cdr x))
-                   (list
-                    (call-with-output-string
-                      (lambda (out) (entity->string (cadr x) seed out))))
-                   (cdr x))))
-       ls))
+	(lambda (x)
+          (cons (car x)
+		(if (pair? (cdr x))
+                  (list
+                   (call-with-output-string
+                    (lambda (out) (entity->string (cadr x) seed out))))
+                  (cdr x))))
+	ls))
     (define (fix-decl ls seed)
       (map (lambda (x)
              (if (pair? x)
-                 (call-with-output-string
-                   (lambda (out) (entity->string x seed out)))
-                 x))
+               (call-with-output-string
+                (lambda (out) (entity->string x seed out)))
+               x))
            ls))
     (lambda (seed . o)
-      (let* ((src (if (pair? o) (car o) (current-input-port)))
-             (in (if (string? src) (open-input-string src) src)))
-        (let lp ((tok (read-html-token in entities))
-                 (seed seed)
-                 (seeds '())
-                 (tags '()))
-          (case (car tok)
-            ((eof)                      ; close all open tags
-             (let lp ((t tags) (s seeds) (seed seed))
-               (if (null? t)
+      (parameterize ((current-html-void-tags bodyless))
+	(let* ((src (if (pair? o) (car o) (current-input-port)))
+               (in (if (string? src) (open-input-string src) src)))
+          (let lp ((tok (read-html-token in entities))
+                   (seed seed)
+                   (seeds '())
+                   (tags '()))
+            (case (car tok)
+              ((eof)			; close all open tags
+               (let lp ((t tags) (s seeds) (seed seed))
+		 (if (null? t)
                    seed
                    (lp (cdr t) (cdr s)
                        (end (caar t) (cadar t) (car s) seed 'eof)))))
-            ((start/end)
-             (let* ((tag (cadr tok))
-                    (rest (cons (fix-attrs (caddr tok) seed) (cdddr tok)))
-                    (tok (cons tag rest)))
-               (lp `(end . ,tag)
-                   (start tag (car rest) seed #f)
-                   (cons seed seeds)
-                   (cons tok tags))))
-            ((start)
-             (let* ((tag (cadr tok))
-                    (rest (cons (fix-attrs (caddr tok) seed) (cdddr tok)))
-                    (tok (cons tag rest)))
-               (cond
-                ((memq tag terminators)
-                 (lp `(text . ,(read-until (lambda (c) #f) in))
+              ((start/end)
+               (let* ((tag (cadr tok))
+                      (rest (cons (fix-attrs (caddr tok) seed) (cdddr tok)))
+                      (tok (cons tag rest)))
+		 (lp `(end . ,tag)
                      (start tag (car rest) seed #f)
                      (cons seed seeds)
-                     (cons tok tags)))
-                ((assq tag literals)
-                 => (lambda (lit)
-                      (let ((body ((cdr lit) in))
-                            (seed2 (start tag (car rest) seed #f)))
-                        (lp `(end . ,tag)
-                            (if (equal? "" body) seed2 (text body seed2))
-                            (cons seed seeds)
-                            (cons tok tags)))))
-                ((memq tag bodyless)
-                 (lp `(end . ,tag)
-                     (start tag (car rest) seed #f)
-                     (cons seed seeds)
-                     (cons tok tags)))
-                ((and (pair? tags) (eq? tag (caar tags))
-                      (memq tag unnestables))
-                 ;; <p> ... <p> implies siblings, not nesting
-                 (let ((seed2
-                        (end tag (cadar tags) (car seeds) seed 'sibling)))
+                     (cons tok tags))))
+              ((start)
+               (let* ((tag (cadr tok))
+                      (rest (cons (fix-attrs (caddr tok) seed) (cdddr tok)))
+                      (tok (cons tag rest)))
+		 (cond
+                  ((memq tag terminators)
+                   (lp `(text . ,(read-until (lambda (c) #f) in))
+                       (start tag (car rest) seed #f)
+                       (cons seed seeds)
+                       (cons tok tags)))
+                  ((assq tag literals)
+                   => (lambda (lit)
+			(let ((body ((cdr lit) in))
+                              (seed2 (start tag (car rest) seed #f)))
+                          (lp `(end . ,tag)
+                              (if (equal? "" body) seed2 (text body seed2))
+                              (cons seed seeds)
+                              (cons tok tags)))))
+                  ((html-void-tag? tag)
+                   (lp `(end . ,tag)
+                       (start tag (car rest) seed #f)
+                       (cons seed seeds)
+                       (cons tok tags)))
+                  ((and (pair? tags) (eq? tag (caar tags))
+			(memq tag unnestables))
+                   ;; <p> ... <p> implies siblings, not nesting
+                   (let ((seed2
+                          (end tag (cadar tags) (car seeds) seed 'sibling)))
+                     (lp (read-html-token in entities)
+			 (start tag (car rest) seed #f)
+			 (cons seed2 (cdr seeds))
+			 (cons tok (cdr tags)))))
+                  (else
                    (lp (read-html-token in entities)
                        (start tag (car rest) seed #f)
-                       (cons seed2 (cdr seeds))
-                       (cons tok (cdr tags)))))
-                (else
-                 (lp (read-html-token in entities)
-                     (start tag (car rest) seed #f)
-                     (cons seed seeds)
-                     (cons tok tags))))))
-            ((end)
-             (cond
-              ((not (cdr tok)) ;; nameless closing tag
-               (lp (read-html-token in entities) seed seeds tags))
-              ((and (pair? tags) (eq? (cdr tok) (caar tags)))
-               (lp (read-html-token in entities)
-                   (end (cdr tok) (fix-attrs (cadar tags) seed)
-                        (car seeds) seed #f)
-                   (cdr seeds)
-                   (cdr tags)))
-              (else
-               (let ((this-level (tag-level tag-levels (cdr tok)))
-                     (expected-level
-                      (if (pair? tags)
+                       (cons seed seeds)
+                       (cons tok tags))))))
+              ((end)
+               (cond
+		((not (cdr tok)) ;; nameless closing tag
+		 (lp (read-html-token in entities) seed seeds tags))
+		((and (pair? tags) (eq? (cdr tok) (caar tags)))
+		 (lp (read-html-token in entities)
+                     (end (cdr tok) (fix-attrs (cadar tags) seed)
+                          (car seeds) seed #f)
+                     (cdr seeds)
+                     (cdr tags)))
+		(else
+		 (let ((this-level (tag-level tag-levels (cdr tok)))
+                       (expected-level
+			(if (pair? tags)
                           (tag-level tag-levels (caar tags))
                           -1)))
-                 (cond
-                  ((< this-level expected-level)
-                   ;; higher-level tag, forcefully close preceding tags
-                   (lp tok
-                       (end (caar tags) (fix-attrs (cadar tags) seed)
-                            (car seeds) seed 'parent-closed)
-                       (cdr seeds)
-                       (cdr tags)))
-                  ((and (= this-level expected-level) (pair? (cdr tags)))
-                   ;; equal, interleave (close prec tag, close this,
-                   ;; re-open prec)
-                   ;; <b><i></b> => <b><i></i></b><i>
-                   ;;                     ^^^^    ^^^
-                   ;; XXXX handle backups > 1 here
-                   (let* ((seed2 (end (caar tags) (cadar tags)
-                                      (car seeds) seed 'interleave))
-                          (seed3 (end (caadr tags) (cadadr tags)
-                                      (cadr seeds) seed2 #f)))
-                     (let ((tok2 (read-html-token in entities)))
-                       (cond
-                        ((and (eq? 'end (car tok2))
-                              (eq? (caar tags) (cdr tok2)))
-                         ;; simple case where the closing tag
-                         ;; immediately follows
-                         (lp (read-html-token in entities) seed3
-                             (cddr seeds) (cddr tags)))
-                        (else
-                         (lp tok2
-                             (start (caar tags) (cadar tags) seed3
-                                    'interleave)
-                             (cons seed3 (cddr seeds))
-                             (cons (car tags) (cddr tags))))))))
-                  (else
-                   ;; spurious end for a lower-level tag, add
-                   ;; imaginary start
-                   (let* ((seed2 (start (cdr tok) '() seed 'no-start))
-                          (seed3 (end (cdr tok) '() seed seed2 #f)))
-                     (lp (read-html-token in entities) seed3 seeds tags))))))))
-            ((text)
-             (lp (read-html-token in entities) (text (cdr tok) seed) seeds tags))
-            ((entity)
-             (lp (read-html-token in entities) (entity (cdr tok) seed) seeds tags))
-            ((comment)
-             (lp (read-html-token in entities) (comment (cdr tok) seed) seeds tags))
-            ((decl)
-             (lp (read-html-token in entities)
-                 (decl (cadr tok) (fix-decl (cddr tok) seed) seed) seeds tags))
-            ((process)
-             (lp (read-html-token in entities) (process (cdr tok) seed) seeds tags))
-            (else
-             (error "invalid token: " tok))))))))
+                   (cond
+                    ((< this-level expected-level)
+                     ;; higher-level tag, forcefully close preceding tags
+                     (lp tok
+			 (end (caar tags) (fix-attrs (cadar tags) seed)
+                              (car seeds) seed 'parent-closed)
+			 (cdr seeds)
+			 (cdr tags)))
+                    ((and (= this-level expected-level) (pair? (cdr tags)))
+                     ;; equal, interleave (close prec tag, close this,
+                     ;; re-open prec)
+                     ;; <b><i></b> => <b><i></i></b><i>
+                     ;;                     ^^^^    ^^^
+                     ;; XXXX handle backups > 1 here
+                     (let* ((seed2 (end (caar tags) (cadar tags)
+					(car seeds) seed 'interleave))
+                            (seed3 (end (caadr tags) (cadadr tags)
+					(cadr seeds) seed2 #f)))
+                       (let ((tok2 (read-html-token in entities)))
+			 (cond
+                          ((and (eq? 'end (car tok2))
+				(eq? (caar tags) (cdr tok2)))
+                           ;; simple case where the closing tag
+                           ;; immediately follows
+                           (lp (read-html-token in entities) seed3
+                               (cddr seeds) (cddr tags)))
+                          (else
+                           (lp tok2
+                               (start (caar tags) (cadar tags) seed3
+                                      'interleave)
+                               (cons seed3 (cddr seeds))
+                               (cons (car tags) (cddr tags))))))))
+                    (else
+                     ;; spurious end for a lower-level tag, add
+                     ;; imaginary start
+                     (let* ((seed2 (start (cdr tok) '() seed 'no-start))
+                            (seed3 (end (cdr tok) '() seed seed2 #f)))
+                       (lp (read-html-token in entities) seed3 seeds tags))))))))
+              ((text)
+               (lp (read-html-token in entities) (text (cdr tok) seed) seeds tags))
+              ((entity)
+               (lp (read-html-token in entities) (entity (cdr tok) seed) seeds tags))
+              ((comment)
+               (lp (read-html-token in entities) (comment (cdr tok) seed) seeds tags))
+              ((decl)
+               (lp (read-html-token in entities)
+                   (decl (cadr tok) (fix-decl (cddr tok) seed) seed) seeds tags))
+              ((process)
+               (lp (read-html-token in entities) (process (cdr tok) seed) seeds tags))
+              (else
+               (error "invalid token: " tok)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; simple conversions
