@@ -71,8 +71,8 @@
                 (re (open-file-reader tmp)))
             (Seeker-seek wr 8 from: 'start)
             (check (Writer-write wr #u8(123)) => text-length)
-            (Writer-flush wr)
+            (BufferedWriter-flush wr)
             (Writer-close wr)
-            (check (Reader-read-u8 re)) => 0
+            (check (PeekableReader-read-u8 re) => 0)
             (Seeker-seek re 8 from: 'start)
-            (check (Reader-read-u8 re) => 123)))))))
+            (check (PeekableReader-read-u8 re) => 123)))))))
