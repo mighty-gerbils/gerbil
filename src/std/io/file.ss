@@ -53,7 +53,7 @@
       (let (fd self.fd)
         (let lp ((input-start input-start) (result 0))
           (when self.closed?
-            (raise-io-closed file-io-wrte "file is closed"))
+            (raise-io-closed output-file-io "file is closed"))
           (if (fx< input-start input-end)
             (let (wrote (fdwrite fd input input-start input-end))
               (cond
@@ -70,6 +70,15 @@
       (unless self.closed?
         (set! self.closed? #t)
         (close-port self.fd)))))
+
+(defmethod {seek file-io}
+  (lambda (self position from: (from 'start))
+    (using ((self :- file-io)
+            (position :~ fixnum?)
+            (from :~ (cut memq <> '(start end current))))
+      (when self.closed?
+        (raise-io-closed file-io "file is closed"))
+      (seek position from))))
 
 (defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))

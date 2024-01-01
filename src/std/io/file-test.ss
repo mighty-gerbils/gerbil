@@ -63,4 +63,16 @@
            (check (BufferedWriter-write bwr (string->utf8 text)) => text-length)
            (BufferedWriter-close bwr))
          ;; read the file and make sure it matches the expected text
-         (check (read-file-string tmp) => text))))))
+         (check (read-file-string tmp) => text))))
+    (test-case "file seek"
+      (call-with-temporary-file-name "text"
+        (lambda (tmp)
+          (let ((wr (open-file-writer tmp))
+                (re (open-file-reader tmp)))
+            (Seeker-seek wr 8 from: 'start)
+            (check (Writer-write wr #u8(123)) => text-length)
+            (Writer-flush wr)
+            (Writer-close wr)
+            (check (Reader-read-u8 re)) => 0
+            (Seeker-seek re 8 from: 'start)
+            (check (Reader-read-u8 re) => 123)))))))

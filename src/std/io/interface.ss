@@ -11,6 +11,14 @@
 (interface Closer
   (close))
 
+;; Cursor-based IO
+(interface Seeker
+  ;; Seek to a particular position in the backing IO source.
+  ;; - position denotes where, relative to `from` that the cursor should be moved to
+  ;; - from is one of 3 possible origins to seek about. Defaults to `'start`.
+  (seek (position :~ fixnum?)
+        (from :~ (cut memq <> ['start 'end 'current]) := 'start)))
+
 ;; generic binary IO
 (interface (Reader Closer)
   ;; read into a buffer; it _must_ be a u8vector.
