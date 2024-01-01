@@ -49,7 +49,7 @@
   (def from 'start)
   (def position 5))
 
-(def (seek raw position from)
+(def (fdseek raw position from)
   (let ((fd (if (fd? raw) (fd-e raw) raw))
         (whence (match from
                   ('start SEEK_SET)
