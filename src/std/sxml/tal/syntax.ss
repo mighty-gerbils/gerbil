@@ -12,7 +12,8 @@
   (let ((t thing)
         (p (current-tal-output-port)))
     (if (u8vector? t) (write-u8vector t p)
-        (display t p))
+        (if (string? t) (write-u8vector (string->utf8 t) p)
+	    (display t p)))
     ""))
 
 (defrule (tal:stringify thing)

@@ -114,7 +114,7 @@ Attributes and transform it into a compiled function
 If a tag has more than one TAL attribute they are evaluated in the
 above (fairly logical) order.
 
-*** define-TAL
+*** =define-TAL=
 :PROPERTIES:
 :CUSTOM_ID: define-tal
 :END:
@@ -525,12 +525,12 @@ the right thing,
 
 
 
-*** tal:define
+*** =tal:define=
 :PROPERTIES:
 :CUSTOM_ID: taldefine
 :END:
 
-The =tal:define= command either wraps a =let*= around the tag (by
+The =tal:define= command either wraps a =with*= around the tag (by
 default or with the =local:= keyword) and/or =set!='ing things with
 the =set!:= keyword.
 
@@ -1264,9 +1264,8 @@ This form is a wrapper with other TAL forms being inside or following it.
   	...
   	(if (null? locals)
   	  (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)
-  	  ['let* (reverse locals) 
-  	    (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)
-  	    ])]))
+  	  ['with* (reverse locals) 
+  	    (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)])]))
 #+end_src
 
 **** Testing
@@ -2084,7 +2083,7 @@ Yay!
 #+end_src
 
 
-*** tal:attributes: set =attributes=
+*** =tal:attributes=: set =attributes=
 :PROPERTIES:
 :CUSTOM_ID: talattributes-set-attributes
 :END:
@@ -2265,27 +2264,28 @@ We've got 4 pieces of syntax with 3 inside it.
 
 
 #+begin_src scheme :tangle ./syntax.ss
-    (import :std/sugar (for-syntax :std/text/utf8) :std/text/utf8
-    	  (for-syntax :std/error) :std/error
-    	  (for-syntax :std/misc/ports) :std/misc/ports
-    	  (for-syntax :std/source) :std/source
-    	  (for-syntax :gerbil/runtime/syntax)
-    	  :std/sxml/html/parser :std/sxml/tal/toplevel
-          (for-syntax :std/sxml/tal/expander) :std/sxml/tal/expander)
-    (export #t)
-    (def current-tal-output-port (make-parameter (current-output-port)))
+  (import :std/sugar (for-syntax :std/text/utf8) :std/text/utf8
+  	  (for-syntax :std/error) :std/error
+  	  (for-syntax :std/misc/ports) :std/misc/ports
+  	  (for-syntax :std/source) :std/source
+  	  (for-syntax :gerbil/runtime/syntax)
+  	  :std/sxml/html/parser :std/sxml/tal/toplevel
+        (for-syntax :std/sxml/tal/expander) :std/sxml/tal/expander)
+  (export #t)
+  (def current-tal-output-port (make-parameter (current-output-port)))
 
-    (defrule (tal:write thing)
-      (let ((t thing)
-            (p (current-tal-output-port)))
-        (if (u8vector? t) (write-u8vector t p)
-            (display t p))
-        ""))
+  (defrule (tal:write thing)
+    (let ((t thing)
+          (p (current-tal-output-port)))
+      (if (u8vector? t) (write-u8vector t p)
+          (if (string? t) (write-u8vector (string->utf8 t) p)
+  	    (display t p)))
+      ""))
 
-    (defrule (tal:stringify thing)
-      (let ((str thing))
-        (if (string? str) str
-    	(if (not str) "" (with-output-to-string "" (cut display str))))))
+  (defrule (tal:stringify thing)
+    (let ((str thing))
+      (if (string? str) str
+  	(if (not str) "" (with-output-to-string "" (cut display str))))))
 
 #+end_src
 

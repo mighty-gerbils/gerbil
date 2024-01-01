@@ -64,9 +64,8 @@
 	...
 	(if (null? locals)
 	  (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)
-	  ['let* (reverse locals) 
-	    (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)
-	    ])]))
+	  ['with* (reverse locals) 
+	    (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)])]))
 
 (def (tal:switch? attrs) (tal-attr? 'tal:switch attrs))
 (def (tal:case? attrs) (tal-attr? 'tal:case attrs))
