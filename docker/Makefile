@@ -126,7 +126,7 @@ gerbilxx:
 	--build-arg repo="$(REPO)" \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg with_db="YES" \
 	--build-arg distro="alpine" \
@@ -153,7 +153,7 @@ amazonlinux:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="amazonlinux" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -168,7 +168,7 @@ centos:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -182,7 +182,7 @@ centos:
 fedora:
 	docker build --target final \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -198,7 +198,7 @@ ubuntu:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
@@ -214,7 +214,7 @@ debian:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="--enable-cplusplus --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="debian" \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
