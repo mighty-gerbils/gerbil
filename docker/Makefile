@@ -1,6 +1,6 @@
 .PHONY: alpine amazonlinux debian ubuntu fedora ubuntu-current-jedi final
 
-ROOT_DIR := $(shell dirname $(relpath $(firstword $(MAKEFILE_LIST))))
+ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell nproc)
 arch := $(shell uname -m)
 DEFAULT=gerbilxx
