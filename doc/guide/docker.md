@@ -34,7 +34,7 @@ Here is an example of building a static binary for a gerbil project.
 
 (defbuild-script
   '("confluence/client"
-  (static-exe: "confluence/confluence")))
+	(exe: "confluence/confluence")))
 ```
 
 ### `Makefile`
@@ -48,7 +48,8 @@ default: linux-static-docker
 
 build-release:
 	/opt/gerbil/bin/gxpkg link $(PROJECT) /src || true
-	/opt/gerbil/bin/gxpkg build $(PROJECT)
+	/opt/gerbil/bin/gxpkg deps -i
+    /opt/gerbil/bin/gxpkg build --release $(PROJECT)
 
 linux-static-docker: clean
 	docker run -it \
