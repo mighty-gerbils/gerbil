@@ -122,7 +122,6 @@ debian_packages := autoconf \
 gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg repo="$(REPO)" \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg packages="$(alpine_packages)" \
@@ -156,7 +155,6 @@ amazonlinux:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="amazonlinux" \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -171,7 +169,6 @@ centos:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -185,7 +182,6 @@ fedora:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="fedora" \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -201,7 +197,6 @@ ubuntu:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="ubuntu" \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -217,7 +212,6 @@ debian:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="debian" \
-	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(debian_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
