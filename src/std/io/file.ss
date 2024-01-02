@@ -72,7 +72,7 @@
         (close-port self.fd)))))
 
 (defmethod {seek file-io}
-  (lambda (self position (from 'start))
+  (lambda (self position from)
     (using (self :- file-io)
       (when self.closed?
         (raise-io-closed file-io "file is closed"))

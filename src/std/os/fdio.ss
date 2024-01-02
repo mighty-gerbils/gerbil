@@ -43,18 +43,20 @@
     (do-retry-nonblock (_close raw)
       (close raw))))
 
-(def (flush raw)
+(def (fdflush raw)
   (if (fd? raw)
-    (check-os-error (_flush raw)
-      (flush raw))
-    (force-output raw 2)))
+    (let (fd (if (fd? raw) (fd-e raw) raw))
+      (check-os-error (_flush fd)
+        (flush raw)))))
 
+; TODO: this should probably use the port position functions instead of C FFI
 (def (fdseek raw position from)
   (let ((fd (if (fd? raw) (fd-e raw) raw))
-        (whence (match from
-                  ('start SEEK_SET)
-                  ('current SEEK_CUR)
-                  ('end SEEK_END))))
+        (whence (case from
+                  ((start) SEEK_SET)
+                  ((current) SEEK_CUR)
+                  ((end) SEEK_END)
+                  (else (error "Unknown from to seek about" from)))))
     (check-os-error (_seek fd position whence)
       (seek fd position whence))))
 
