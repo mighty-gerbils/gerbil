@@ -72,10 +72,8 @@
         (close-port self.fd)))))
 
 (defmethod {seek file-io}
-  (lambda (self position from: (from 'start))
-    (using ((self :- file-io)
-            (position :~ fixnum?)
-            (from :~ (cut memq <> '(start end current))))
+  (lambda (self position (from 'start))
+    (using (self :- file-io)
       (when self.closed?
         (raise-io-closed file-io "file is closed"))
       (fdseek self.fd position from))))
