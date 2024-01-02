@@ -34,7 +34,7 @@ Here is an example of building a static binary for a gerbil project.
 
 (defbuild-script
   '("confluence/client"
-    (exe: "confluence/confluence")))
+	(exe: "confluence/confluence")))
 ```
 
 ### `Makefile`
@@ -48,11 +48,13 @@ default: linux-static-docker
 
 build-release:
 	/opt/gerbil/bin/gxpkg link $(PROJECT) /src || true
-	/opt/gerbil/bin/gxpkg build --release $(PROJECT)
+	/opt/gerbil/bin/gxpkg deps -i
+    /opt/gerbil/bin/gxpkg build --release $(PROJECT)
 
 linux-static-docker: clean
 	docker run -it \
 	-e GERBIL_PATH=/src/.gerbil \
+	-e USER=$(USER) \
 	-v $(PWD):/src:z \
 	$(DOCKER_IMAGE) \
 	make -C /src build-release
@@ -67,6 +69,8 @@ install:
 ## Building docker images
 
 There are several variations you can build out on docker.
+We produce `ubuntu` and `fedora` images for `x86_64` used in
+the creation of the `deb` and `rpm` packages.
 
 ### Build using custom branch
 
