@@ -43,11 +43,11 @@
     (do-retry-nonblock (_close raw)
       (close raw))))
 
-#;
-(begin
-  (def fd 1)
-  (def from 'start)
-  (def position 5))
+(def (flush raw)
+  (if (fd? raw)
+    (check-os-error (_flush raw)
+      (flush raw))
+    (force-output raw 2)))
 
 (def (fdseek raw position from)
   (let ((fd (if (fd? raw) (fd-e raw) raw))
@@ -70,7 +70,7 @@
     (raise-bad-argument fdio "file direction: unspecified" flags))))
 
 ;;; FFI impl
-(begin-ffi (_read _write _open _close _seek
+(begin-ffi (_read _write _open _close _seek _flush
             S_IRWXU S_IWUSR S_IRUSR S_IXUSR
             S_IRWXG S_IRGRP S_IWGRP S_IXGRP
             S_IRWXO S_IROTH S_IWOTH S_IXOTH
@@ -98,7 +98,7 @@
   (define-const SEEK_END)
 
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __close __seek))
+  (namespace ("std/os/fdio#" __read __write __open __close __seek __flush))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")
@@ -111,6 +111,8 @@
     "open")
   (define-c-lambda __close (int) int
     "close")
+  (define-c-lambda __flush (int) int
+    "fsync")
   (define-c-lambda __seek (int int int) int
     "lseek")
 
@@ -118,6 +120,7 @@
   (define-with-errno _write __write (fd bytes start end))
   (define-with-errno _open __open (path flags mode))
   (define-with-errno _seek __seek (fd offset whence))
+  (define-with-errno _flush __flush (fd))
   (define-with-errno _close __close (fd))
 
   (c-declare #<<END-C
