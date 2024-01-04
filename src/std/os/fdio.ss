@@ -43,6 +43,23 @@
     (do-retry-nonblock (_close raw)
       (close raw))))
 
+(def (fdsync raw)
+  (if (fd? raw)
+    (let (fd (if (fd? raw) (fd-e raw) raw))
+      (check-os-error (_fsync fd)
+        (fdsync raw)))))
+
+; TODO: this should probably use the port position functions instead of C FFI
+(def (fdseek raw position from)
+  (let ((fd (if (fd? raw) (fd-e raw) raw))
+        (whence (case from
+                  ((start) SEEK_SET)
+                  ((current) SEEK_CUR)
+                  ((end) SEEK_END)
+                  (else (error "Unknown from to seek about" from)))))
+    (check-os-error (_seek fd position whence)
+      (seek fd position whence))))
+
 (def (file-direction flags)
   (cond
    ((##fx= (##fxand flags O_RDWR) O_RDWR)
@@ -55,10 +72,11 @@
     (raise-bad-argument fdio "file direction: unspecified" flags))))
 
 ;;; FFI impl
-(begin-ffi (_read _write _open _close
+(begin-ffi (_read _write _open _close _seek _fsync
             S_IRWXU S_IWUSR S_IRUSR S_IXUSR
             S_IRWXG S_IRGRP S_IWGRP S_IXGRP
-            S_IRWXO S_IROTH S_IWOTH S_IXOTH)
+            S_IRWXO S_IROTH S_IWOTH S_IXOTH
+            SEEK_SET SEEK_CUR SEEK_END)
 
   (c-declare "#include <unistd.h>")
   (c-declare "#include <sys/types.h>")
@@ -77,9 +95,12 @@
   (define-const S_IROTH)
   (define-const S_IWOTH)
   (define-const S_IXOTH)
+  (define-const SEEK_SET)
+  (define-const SEEK_CUR)
+  (define-const SEEK_END)
 
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __close))
+  (namespace ("std/os/fdio#" __read __write __open __close __seek __fsync))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")
@@ -92,10 +113,16 @@
     "open")
   (define-c-lambda __close (int) int
     "close")
+  (define-c-lambda __fsync (int) int
+    "fsync")
+  (define-c-lambda __seek (int int int) int
+    "lseek")
 
   (define-with-errno _read __read (fd bytes start end))
   (define-with-errno _write __write (fd bytes start end))
   (define-with-errno _open __open (path flags mode))
+  (define-with-errno _seek __seek (fd offset whence))
+  (define-with-errno _fsync __fsync (fd))
   (define-with-errno _close __close (fd))
 
   (c-declare #<<END-C
