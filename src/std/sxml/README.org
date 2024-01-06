@@ -564,7 +564,7 @@ alist.
 We are outputing/translating SXML into some kind of markup. Possibly XML.
 #+begin_src scheme
   (def current-sxml-output-port (make-parameter (current-output-port)))
-  (def current-sxml-output-xml? (make-parameter #f))
+  (def current-sxml-output-xml? (make-parameter #t))
 #+end_src
 
 #+begin_src scheme

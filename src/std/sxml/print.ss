@@ -10,7 +10,7 @@
     (else #f)))
 
 (def current-sxml-output-port (make-parameter (current-output-port)))
-(def current-sxml-output-xml? (make-parameter #f))
+(def current-sxml-output-xml? (make-parameter #t))
 
 (def (write-sxml
       sxml
