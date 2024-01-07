@@ -15,7 +15,7 @@
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
-;; (repeat random-interger 3 10) -> (8 3 5)      ; repeated function call with passed argument
+;; (repeat random-integer 3 10)  -> (8 3 5)      ; repeated function call with passed argument
 (def (repeat v-or-fn n-times . args)
   (declare (fixnum) (not safe))
   (unless (fixnum? n-times)

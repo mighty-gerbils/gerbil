@@ -102,9 +102,7 @@ namespace: #f
       l2)))
 
 ;; Append the reverse of the list in first argument and the list in second argument
-;; = (append (reverse rev-head) tail) = (fold cons tail rev-head) ;; same as in SRFI 1.
+;; = (append (reverse rev-head) tail) ;; same as in SRFI 1.
 ;; : (List X) (List X) -> (List X)
 (def (append-reverse rev-head tail)
-  (match rev-head
-    ([hd . tl] (append-reverse tl (cons hd tail)))
-    ([] tail)))
+  (foldl cons tail rev-head))

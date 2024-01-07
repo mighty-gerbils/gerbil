@@ -33,13 +33,13 @@ namespace: #f
 ;; The ##type-fields contains 3 entries by Gambit structure field, field name, flags and default value
 ;;
 ;; Standard "alist" keys:
-;; direct-slots:   (List Symbol)          list of direct slots in order, for inheritance
-;; direct-supers:  (List TypeDescriptor)  list of direct supers in order, for introspection only
-;; struct:         Bool                   is this a struct? i.e. only single inheritance for structs
-;; final:          Bool                   is this class final? i.e. no subclasses allowed
-;; equal:          Bool                   all new slots will be compared during objects equal?
-;; print:          Bool                   all new slots will be printed when printing an object
-;; transparent:    Bool                   is this class transparent? i.e. equal and print all slots
+;; direct-slots:   (List Symbol)           list of direct slots in order, for inheritance
+;; direct-supers:  (List TypeDescriptor)   list of direct supers in order, for introspection only
+;; struct:         Bool                    is this a struct? i.e. only single inheritance for structs
+;; final:          Bool                    is this class final? i.e. no subclasses allowed
+;; equal:          (Or Bool (List Symbol)  all new slots will be compared during objects equal?
+;; print:          (Or Bool (List Symbol)  all new slots will be printed when printing an object
+;; transparent:    Bool                    is this class transparent? i.e. equal and print all slots
 
 (def (type-id klass)
   (cond
@@ -78,7 +78,6 @@ namespace: #f
 (def (make-type-descriptor type-id type-name type-super
                            rtd-mixin rtd-fields rtd-plist
                            rtd-ctor rtd-slots rtd-methods)
-  ;;(DBG make-type-descriptor:)
   (make-type-descriptor* type-id type-name type-super
                          rtd-mixin rtd-fields rtd-plist
                          rtd-ctor rtd-slots rtd-methods))
@@ -88,10 +87,6 @@ namespace: #f
 (def (make-type-descriptor* type-id type-name type-super
                             precedence-list all-slots alist
                             constructor slot-table methods)
-  #;(DBG make-type-descriptor*:
-       type-id type-name 'type-super (and type-super (##type-id type-super))
-       (map ##type-id precedence-list) all-slots (alist-form alist)
-       constructor (hash->list slot-table) methods)
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
@@ -172,10 +167,8 @@ namespace: #f
 (def type-descriptor-plist type-descriptor-alist)
 (def type-descriptor-ctor type-descriptor-constructor)
 (def (type-descriptor-fields klass)
-  ;;(DBG type-descriptor-fields: 'klass (type-id klass))
   (fx1- (vector-length (type-descriptor-all-slots klass))))
 (def (type-descriptor-slots klass)
-  ;;(DBG type-descriptor-slots: 'klass (type-id klass))
   (let (h (make-hash-table-eq))
     (hash-for-each (lambda (k v) (hash-put! h k (fx1+ v)))
                    (type-descriptor-slot-table klass))
@@ -189,8 +182,6 @@ namespace: #f
 ;;; struct types
 ;; TODO: rename after bootstrap
 (def (make-struct-type id super n-direct-slots name alist constructor (direct-slots #f))
-  #;(DBG make-struct-type: id (type-id super) direct-slots name (alist-form alist) constructor
-       direct-slots)
   (make-struct-type* id name super
                      (or direct-slots
                          (map (cut make-symbol "_" <>)
@@ -201,8 +192,6 @@ namespace: #f
 
 ;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
 (def (make-struct-type* id name super direct-slots alist constructor)
-  #;(DBG make-struct-type*: id name (type-id super) direct-slots (alist-form alist) constructor)
-
   (when (and super (not (struct-type? super)))
     (error "Illegal super type; not a struct-type" super))
   ;; Consistency check for slots: they must all be new
@@ -211,9 +200,7 @@ namespace: #f
          (all-slots (type-descriptor-all-slots type))
          (len (length direct-slots))
          (start (- (vector-length all-slots) len)))
-    #;(DBG make-struct-type*/2: all-slots len start)
-    (unless (andmap (lambda (slot i) ;;(DBG make-struct-type*/3: slot i 'vslot (vector-ref all-slots i) ':
-                                     (eq? slot (vector-ref all-slots i)));;)
+    (unless (andmap (lambda (slot i) (eq? slot (vector-ref all-slots i)))
                     direct-slots (iota len start))
       (error "Non-unique slots in struct" name direct-slots))
     type))
@@ -227,35 +214,27 @@ namespace: #f
         (##structure-instance-of? obj tid)))))
 
 (def (make-struct-field-accessor klass field)
-  ;;(DBG make-struct-field-accessor:)
   (make-struct-field-accessor* klass (struct-field-offset* klass field)))
 
 (def (make-struct-field-accessor* klass field)
-  ;;(DBG make-struct-field-accessor*: (type-id klass) field)
   (lambda (obj) (##structure-ref obj field klass #f)))
 
 (def (make-struct-field-mutator klass field)
-  ;;(DBG make-struct-field-mutator:)
   (make-struct-field-mutator* klass (struct-field-offset* klass field)))
 
 (def (make-struct-field-mutator* klass field)
-  ;;(DBG make-struct-field-mutator*: (type-id klass) field)
   (lambda (obj val) (##structure-set! obj val field klass #f)))
 
 (def (make-struct-field-unchecked-accessor klass field)
-  ;;(DBG make-struct-field-unchecked-accessor:)
   (make-struct-field-unchecked-accessor* klass (struct-field-offset* klass field)))
 
 (def (make-struct-field-unchecked-accessor* klass field)
-  ;;(DBG make-struct-field-unchecked-accessor*: (type-id klass) field)
   (lambda (obj) (##unchecked-structure-ref obj field klass #f)))
 
 (def (make-struct-field-unchecked-mutator klass field)
-  ;;(DBG make-struct-field-unchecked-mutator:)
   (make-struct-field-unchecked-mutator* klass (struct-field-offset* klass field)))
 
 (def (make-struct-field-unchecked-mutator* klass field)
-  ;;(DBG make-struct-field-unchecked-mutator*: (type-id klass) field)
   (lambda (obj val) (##unchecked-structure-set! obj val field klass #f)))
 
 (def (struct-field-offset* klass field)
@@ -267,18 +246,15 @@ namespace: #f
 
 ;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
 (def (struct-field-ref klass obj field)
-  ;;(DBG struct-field-ref: (type-id klass) #;obj field)
   (##structure-ref obj field klass #f))
 
 ;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
 (def (struct-field-set! klass obj field val)
-  ;;(DBG struct-field-set!: (type-id klass) #;obj field val)
   (##structure-set! obj val field klass #f))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : TypeDescriptor TypeDescriptor -> Bool
 (def (substruct? maybe-sub-struct maybe-super-struct)
-  ;;(DBG substruct?: (type-id maybe-sub-struct) (type-id maybe-super-struct))
   (let (maybe-super-struct-id (##type-id maybe-super-struct))
     (let lp ((super-struct maybe-sub-struct))
       (cond
@@ -295,12 +271,11 @@ namespace: #f
 ;; Which is the most specific struct class if any that klass is or inherits from?
 ;; : TypeDescriptor -> (OrFalse StructTypeDescriptor)
 (def (base-struct/1 klass)
-  ;;(DBG base-struct/1: (type-id klass) 'super (type-id (##type-super klass)) ':
   (cond
    ((struct-type? klass) klass)
    ((class-type? klass) (##type-super klass))
    ((not klass) #f)
-   (else (error "Not a class or false" klass))));;)
+   (else (error "Not a class or false" klass))))
 
 ;; Which is the most specific struct class if any that both klass1 and klass2 are or inherit from?
 ;; : TypeDescriptor TypeDescriptor -> (OrFalse StructTypeDescriptor)
@@ -326,13 +301,11 @@ namespace: #f
 
 ;; TODO: remove after bootstrap
 (def (base-struct . all-supers)
-  ;;(DBG base-struct: (map type-id all-supers))
   (apply base-struct/list all-supers))
 
 ;; Find the constructor method name for the TypeDescriptor
 ;; : (List TypeDescriptor) -> Symbol
 (def (find-super-ctor super)
-  ;;(DBG find-super-ctor: (type-id super))
   (find-super-constructor super))
 
 (def (find-super-constructor super)
@@ -356,7 +329,6 @@ namespace: #f
 ;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
 ;; -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
 (def (compute-class-slots super-struct class-precedence-list direct-slots)
-  ;;(DBG compute-class-slots: super-struct 'class-precedence-list (map type-id class-precedence-list) direct-slots)
   (let* ((previous-slots
           (if super-struct (type-descriptor-all-slots super-struct) '#(#f)))
          (next-slot
@@ -393,12 +365,10 @@ namespace: #f
 ;;; ClassTypeDescriptor
 ;; : Symbol (List TypeDescriptor) (List Symbol) Symbol Alist Constructor -> ClassTypeDescriptor
 (def (make-class-type id direct-supers direct-slots name alist constructor)
-  ;;(DBG make-class-type:)
   (make-class-type* id name direct-supers direct-slots alist constructor))
 
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
 (def (make-class-type* id name direct-supers direct-slots alist constructor)
-  ;;(DBG make-class-type*: id name 'direct-supers (map type-id direct-supers) direct-slots (alist-form alist) constructor)
   (cond
    ((find (lambda (klass) (not (type-descriptor? klass))) direct-supers)
     => (cut error "Illegal super class; not a type descriptor" <>))
@@ -434,12 +404,7 @@ namespace: #f
     (cut class-instance? klass <>)))
 
 (def (if-class-slot-field klass slot if-struct if-struct-field if-class-slot)
-  ;;(DBG if-class-slot-field: (type-id klass) slot if-struct if-struct-slot if-class-slot)
   (let (field (hash-get (type-descriptor-slot-table klass) slot))
-    #;(DBG if-class-slot-field-2: field (type-final? klass) (type-struct? klass)
-         'base-struct (type-id (base-struct/1 klass))
-         'vector-length (let (strukt (base-struct/1 klass))
-                          (and strukt (vector-length (type-descriptor-all-slots strukt)))) 'result:)
     (cond
      ((or (type-final? klass) (type-struct? klass))
       (if-struct klass field))
@@ -447,14 +412,13 @@ namespace: #f
         (and strukt (< field (vector-length (type-descriptor-all-slots strukt)))))
       (if-struct-field klass field))
      (else
-      (if-class-slot klass slot field)))));;)
+      (if-class-slot klass slot field)))))
 
 (def (make-class-slot-accessor klass slot)
-  ;;(DBG make-class-slot-accessor: (type-id klass) slot ':
   (if-class-slot-field klass slot
     make-struct-field-accessor*
     make-struct-subclass-field-accessor
-    make-class-cached-slot-accessor));;)
+    make-class-cached-slot-accessor))
 
 (def (make-struct-subclass-field-accessor klass field)
   (lambda (obj)
@@ -475,7 +439,6 @@ namespace: #f
         slot obj klass)))))
 
 (def (make-class-slot-mutator klass slot)
-  ;;(DBG make-class-slot-mutator: (type-id klass) slot)
   (if-class-slot-field klass slot
      make-struct-field-mutator*
      make-struct-subclass-field-mutator
@@ -495,7 +458,6 @@ namespace: #f
       (slot-set! obj slot val))))
 
 (def (make-class-slot-unchecked-accessor klass slot)
-  ;;(DBG make-class-slot-unchecked-accessor: (type-id klass) slot)
   (if-class-slot-field klass slot
     make-struct-field-unchecked-accessor*
     make-struct-field-unchecked-accessor*
@@ -508,7 +470,6 @@ namespace: #f
       (unchecked-slot-ref obj slot))))
 
 (def (make-class-slot-unchecked-mutator klass slot)
-  ;;(DBG make-class-slot-unchecked-mutator: (type-id klass) slot)
   (if-class-slot-field klass slot
      make-struct-field-unchecked-mutator*
      make-struct-field-unchecked-mutator*
@@ -521,23 +482,19 @@ namespace: #f
       (unchecked-slot-set! obj slot val))))
 
 (def (class-slot-offset klass slot)
-  ;;(DBG class-slot-offset: (type-id klass) slot ':
   (let (off (class-slot-offset* klass slot))
     (and off (fx1- off))))
 
 (def (class-slot-offset* klass slot)
-  ;;(DBG class-slot-offset*: (type-id klass) slot ':
-  (hash-get (type-descriptor-slot-table klass) slot));;)
+  (hash-get (type-descriptor-slot-table klass) slot))
 
 (def (class-slot-ref klass obj slot)
-  ;;(DBG class-slot-ref: (type-id klass) #;obj slot)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset* (object-type obj) slot))
       (##unchecked-structure-ref obj off klass #f))
     (error "not an instance" klass obj)))
 
 (def (class-slot-set! klass obj slot val)
-  ;;(DBG class-slot-set!: (type-id klass) #;obj slot val)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset* (object-type obj) slot))
       (##unchecked-structure-set! obj val off klass #f))
@@ -571,11 +528,10 @@ namespace: #f
   direct-instance?)
 
 (def (class-instance? klass obj)
-  ;;(DBG class-instance?: (type-id klass) #;obj ':
   (and (object? obj)
        (let (type (object-type obj))
          (and (type-descriptor? type)
-              (subclass? type klass)))));;)
+              (subclass? type klass)))))
 
 (def direct-class-instance?
   direct-instance?)
@@ -584,7 +540,6 @@ namespace: #f
   (make-object* klass (fx1+ k)))
 
 (def (make-object* klass (k (vector-length (type-descriptor-all-slots klass))))
-  ;;(DBG make-object: (type-id klass) k)
   (let (obj (##make-vector k #f))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
@@ -593,10 +548,6 @@ namespace: #f
 (def (make-struct-instance klass . args)
   (let* ((all-slots (type-descriptor-all-slots klass))
          (size (vector-length all-slots)))
-    #;(DBG make-struct-instance:
-         (##type-id klass) (##type-name klass)
-         all-slots size (length args)
-         (type-descriptor-constructor klass))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
@@ -604,13 +555,10 @@ namespace: #f
      ((##fx= (fx1- size) (length args))
       (apply ##structure klass args))
      (else
-      #;(DBG make-struct-instance/9: (##type-id klass) (##type-name klass)
-           all-slots size (length args))
       (error "Arguments don't match object size"
         klass (fx1- size) args)))))
 
 (def (make-class-instance klass . args)
-  ;;(DBG make-class-instance: (##type-name klass) (length args))
   (let ((obj (make-object* klass (vector-length (type-descriptor-all-slots klass)))))
     (cond
      ((type-descriptor-constructor klass)
@@ -620,7 +568,6 @@ namespace: #f
       (__class-instance-init! klass obj args)))))
 
 (def (struct-instance-init! obj . args)
-  ;;(DBG struct-instance-init!: (length args) (##structure-length obj))
   (if (##fx< (length args) (##structure-length obj))
     (__struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
@@ -652,7 +599,6 @@ namespace: #f
            (error "Unexpected class initializer arguments" rest))))))
 
 (def (constructor-init! klass kons-id obj . args)
-  ;;(DBG constructor-init!: (type-id klass) kons-id #;obj args)
   (__constructor-init! klass kons-id obj args))
 
 (def (__constructor-init! klass kons-id obj args)
@@ -675,7 +621,6 @@ namespace: #f
     (error "Not an object" obj)))
 
 (def (class->list obj)
-  ;;(DBG class->list: #;obj ':
   (if (object? obj)
     (let (klass (object-type obj))
       (if (type-descriptor? klass)
@@ -690,19 +635,15 @@ namespace: #f
                              (unchecked-field-ref obj index)
                              plist))))))
         (error "Not a class type" obj klass)))
-    (error "Not an object" obj)));;)
+    (error "Not an object" obj)))
 
 (def (unchecked-field-ref obj off)
-  ;;(DBG unchecked-field-ref: #;obj off)
   (##vector-ref obj off))
 (def (unchecked-field-set! obj off val)
-  ;;(DBG unchecked-field-set!: #;obj off val)
   (##vector-set! obj off val))
 (def (unchecked-slot-ref obj slot)
-  ;;(DBG unchecked-slot-ref: #;obj slot)
   (unchecked-field-ref obj (class-slot-offset* (object-type obj) slot)))
 (def (unchecked-slot-set! obj slot val)
-  ;;(DBG unchecked-slot-set!: #;obj slot val)
   (unchecked-field-set! obj (class-slot-offset* (object-type obj) slot) val))
 
 (defrules __slot-e ()
@@ -716,11 +657,9 @@ namespace: #f
      (E obj slot))))
 
 (def (slot-ref obj slot (E __slot-error))
-  ;;(DBG slot-ref: obj slot E)
   (__slot-e obj slot (lambda (off) (##vector-ref obj off)) E))
 
 (def (slot-set! obj slot val (E __slot-error))
-  ;;(DBG slot-set!: obj slot val E)
   (__slot-e obj slot (lambda (off) (##vector-set! obj off val)) E))
 
 (def (__slot-error obj slot)
@@ -759,7 +698,6 @@ namespace: #f
       (apply method obj args))))
 
 (def (find-method klass id)
-  ;;(DBG find-method: 'klass (if (##type? klass) (##type-id klass) 'other) id)
   (if (type-descriptor? klass)
     (__find-method klass id)
     (builtin-find-method klass id)))
@@ -793,7 +731,6 @@ namespace: #f
    (else #f)))
 
 (def (mixin-method-ref klass id)
-  ;;(DBG mixin-method-ref: (type-id klass) id)
   (mixin-find-method (type-descriptor-precedence-list klass) id))
 
 (def (builtin-method-ref klass id)
@@ -847,7 +784,6 @@ namespace: #f
       (cond
        ((type-descriptor-methods klass) => merge!)))
 
-    ;;(DBG seal-class!: (type-id klass) (map type-id (class-precedence-list klass)))
     (for-each collect-direct-methods!
               (reverse (class-precedence-list klass))))
 
@@ -882,7 +818,6 @@ namespace: #f
 ;; or even just in the number of applicable method, if resolved only once),
 ;; but would be somewhat incompatible.
 (def (next-method subklass obj id)
-  ;;(DBG next-method: (type-id subklass) #;obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
     (cond

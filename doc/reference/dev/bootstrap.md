@@ -1,30 +1,133 @@
 # The Gerbil Bootstrap
 
-Gerbil is fully self-hosted, 100% written in itself. So how does it
-all fit together?
+Gerbil is fully self-hosted, with both its compiler and runtime 100% written in itself.
+So how does it all fit together?
+
+## Overview of Bootstrapping in General
+
+At all times, a bootstrapped language keeps alongside the source code
+of its implementation (runtime and compiler), written in the language itself,
+a precompiled "bootstrap" version of its implementation,
+sufficient to build the current version.
+This "bootstrap" version is either source code in a *host* language,
+or object code for a host environment or collection of host environments
+(typically, either a single bytecode binary for a VM implemented in C, or
+a series of executables for each of many supported platforms,
+e.g. each of Linux, Windows, macOS on each of x86-64, aa64, etc.).
+
+When building the bootstrapped language,
+we start from the host language or environment,
+use it to build and run the bootstrap version of the implementation,
+with which build the current version of the implementation.
+That current version can at times be blessed as a new bootstrap implementation.
+
+A bootstrapped implementation is in contrast with a *cross-implementation*:
+an implementation _manually_ written in a *host* language
+that differs from the target language being implemented.
+Confusingly, the host language is often called
+the meta-language when talking about a compiler, or
+the base language when talking a runtime or an interpreter,
+even though meta- and base- are used as mutual opposites in such context.
+
+Every bootstrapped implementation started with a regular cross-implementation
+as its bootstrap implementation, though that cross-implementation may have
+long since been superseded by many subsequent compiled versions where
+the manually written host code was replaced by code automatically generated
+from source code in the bootstrapped language.
+
+In the case of Gerbil, we use Gambit Scheme as a host language, and
+we keep a precompiled bootstrap implementation in the directory
+`GERBIL_SRCDIR/src/bootstrap/`.
+
+## Pros and Cons of Bootstrapping
+
+### Pros of Bootstrapping
+
+There are many advantages to bootstrapping the implementation of
+a programming language:
+
+  - You can use all the features of your language while developping it,
+    instead of being stuck with another language, necessarily unsatisfying
+    in enough ways that you're developing a different one.
+
+  - You don't have to rely on other people with respect to
+    the implementation language: bugs, tooling, standards, compatibility,
+    release cycles, etc. You can do it all yourself!
+
+  - If there is a language or compiler feature you wish you had
+    while developing your implementation, you can first implement it
+    then later use it to write further features or rewrite existing ones.
+
+  - You don't have to cultivate and simultaneously hold in your head
+    two different languages, their semantics, pragmatics, libraries, and
+    colloquial styles as you develop your implementation.
+
+### Cons of Bootstrapping
+
+There are also a few disadvantages to bootstrapping the implementation of
+a programming language:
+
+  - Once you bootstrap, you forfeit any advanced feature or tooling of
+    your previous cross-implementation's host language that
+    you haven't yet reimplemented in your own language.
+
+  - You can't rely on other people with respect to the implementation language:
+    bugs, tooling, standards, compatibility, release cycles, etc.
+    You must do it all yourself!
+
+  - You must follow strict constraints (detailed below for Gerbil)
+    to ensure that at any time you have a working bootstrap implementation
+    capable of running all programs in your language
+    including your current implementation.
+
+  - In particular, when making changes to implementation, you cannot make
+    incompatible changes to any feature used by the implementation itself:
+    renaming a function, deleting anything, modifying some encoding, etc.
+    Changes must be introduced in several steps, each generation maintaining
+    compatibility with both the immediate previous and next generations.
+
+  - The semantics of your language, the meaning of programs written in it,
+    become more difficult to assess by either humans or automated analyses,
+    each time you regenerate the bootstrap implementation.
+
+  - In some rare but egregious cases, unintended bugs introduced in one version
+    of the code can cause problems after several "generations" of bootstrapping
+    especially in the case of insufficient regression testing,
+    causing a lot of confusion and ultimately necessitating for developers
+    to "go back in time" and run again a potentially long chain
+    of bootstrap versions each suitably fixed.
+
+  - In extreme cases, malicious behavior can be deliberately hidden
+    in the bootstrap implementation without visible trace in the source code.
+    See Ken Thompson's famous 1984 Turing Award Lecture
+    ["Reflections on Trusting Trust"](http://genius.cat-v.org/ken-thompson/texts/trusting-trust/).
 
 ## The Chain of Trust
 
-The key premise of Gerbil is simple: it is a meta-language, a
-meta-dialect of Scheme that bootstraps from precompiled sources using
-Gambit.
+The last point on "trusting trust" has implications, whereby
+the security of your software against "supply chain attacks"
+depends on a chain of trust that includes your host environment
+and every part of your language implementation.
+Gerbil's choice of bootstrapping with Gambit Scheme as a host language
+has several implications:
 
-This has implications for the chain of trust regarding the security of
-your software:
-- There is _no precompiled binary involved_, nor will there ever be
-  one. The bootstrap is purely source based, which means you can
-  actually read and audit the bootstrap sources. It is not pretty, but
-  it is readable; so if you feel so inclined I recommend taking a look
-  at `GERBIL_SRCDIR/src/bootstrap`.
-- Just like Gerbil bootstraps from precompiled Gambit code, Gambit
-  bootstraps from precompiled C code. This is also auditable, albeit
-  not an easy read.
-- The bootstrap chain is anchored on the C compiler. Ultimately, If
-  you trust your C compiler, then you can _verifiably_ trust the
-  Gerbil bootstrap.
+  - There is _no precompiled binary involved_, nor will there ever be one.
+    The bootstrap is purely source based, which means you can
+    actually read and audit the bootstrap sources in Gambit Scheme.
+    That code is not pretty, yet remains readable and amenable to audit;
+    if you feel so inclined you may take a look at
+    `GERBIL_SRCDIR/src/bootstrap`.
 
-For the Gerbil core team, where we all use GCC, this can be
-summarized in a quotable one liner:
+  - Just like Gerbil bootstraps from precompiled Gambit code,
+    Gambit bootstraps from precompiled C code.
+    This is also auditable, albeit not an easy read.
+
+  - The bootstrap chain is anchored on the C compiler.
+    Ultimately, If you trust your C compiler,
+    then you can _verifiably_ trust the Gerbil bootstrap.
+
+For the Gerbil core team, where we all use GCC,
+this can be summarized in a quotable one liner:
 
 > In GNU we trust; everyone else pays cash.
 
@@ -44,7 +147,6 @@ source tree, as they are dead code. They still exist in the
 repo’s commit history if you want to do some historical research and
 peek into the deep past to understand the evolution of Gerbil.
 
-
 ## How Gerbil Builds Itself
 
 The build process can be summarized in the following steps:
@@ -58,7 +160,6 @@ The build process can be summarized in the following steps:
    4. the Gerbil bootstrap is compiled to object code using `gsc` (stage 0).
    5. the Gerbil core system and universal binary is compiled using the bootstrap compiler with `boot-gxi` (stage 1).
    6. the newly compiled `gerbil` binary compiles the rest of the system.
-
 
 ## Practical Matters
 
@@ -108,7 +209,7 @@ both the old and new versions of Gerbil
 
 You *can* make API-incompatible changes from one version to another version,
 but this must necessarily involve *several steps*
-each of which will be API-compatible.
+each of which will be API-compatible:
 
 - First, you cannot make any backward-incompatible API change, such as
   changing the calling convention of a function or macro e.g.
@@ -120,16 +221,18 @@ each of which will be API-compatible.
 - The solution is to create a *new* API with *new* names that
   must absolutely not clash with the old names.
   Add a suffix or prefix such as `*`, `/2` or `%`, or take the opportunity
-  to give functions better and more systematic names.
+  to give functions better, longer and/or more systematic names.
 - The *old* API will temporarily coexist with use the *new* API.
-- When shared data structures are involved, the *old* API may have
-  to be translated in terms of the *new* API.
+- When shared data structures are involved, the *old* API
+  as called by the previous bootstrap implementation may have to be
+  reimplemented in terms of the *new* API used by the next generation.
 - The internal representations used by the new API may thus have to include
   extra information needed by the old API that it doesn’t need,
   or the new API may have to maintain two redundant representations together,
   until after the old API is removed. This extra information
   or redundant representation can be removed in a later phase.
-- You can now bootstrap a next version that uses the new API,
+- You can use the old bootstrap implementation to generate a next version
+  of the bootstrap implementation that uses the new API,
   while the old API remains available to the old version.
 - In one or many iterations, you can make sure the old API is not used anywhere
   anymore in Gerbil and its libraries.
@@ -137,7 +240,7 @@ each of which will be API-compatible.
   use the old API, you may wholly remove that old API:
   this is now a backward-compatible change.
 - If for some reason you really like the old name or hate the new name,
-  and “just” wanted to make an incompatible API change,
+  and “just” want to make an incompatible API change,
   the name is made available anew after the old API was wholly removed
   and a version that doesn’t use it has been bootstrapped into existence.
   You may therefore start a new cycle of API changes as above to modify the API

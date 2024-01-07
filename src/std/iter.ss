@@ -45,6 +45,8 @@
   (iter-vector obj))
 (defmethod (:iter (obj <string>))
   (iter-string obj))
+(defmethod (:iter (obj <u8vector>))
+  (iter-u8vector obj))
 (defmethod (:iter (obj <hash-table>))
   (iter-hash-table obj))
 (defmethod (:iter (obj <procedure>))
@@ -85,6 +87,7 @@
 
 (defiter-vector iter-vector ##vector-length ##vector-ref)
 (defiter-vector iter-string ##string-length ##string-ref)
+(defiter-vector iter-u8vector ##u8vector-length ##u8vector-ref)
 
 (def (iter-hash-table ht)
   (def (iterate)

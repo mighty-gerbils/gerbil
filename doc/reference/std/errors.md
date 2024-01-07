@@ -442,7 +442,8 @@ to disable this stack trace dump,
 in case you are building a program for end-users rather than for developers,
 and want to control what limited error output they see.
 Or you can re-enable them based on a debug flag at the CLI
-in cases you want them to provide you with extra debugging information.
+in cases you want them to provide you with extra debugging information,
+or log bug reports directly to your servers, etc.
 
 ### dump-stack-trace!
 ```scheme
