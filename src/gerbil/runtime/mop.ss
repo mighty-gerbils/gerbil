@@ -90,7 +90,8 @@ namespace: #f
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
-  (def (put-props! ht key)
+  (def (make-props! key)
+    (def ht (make-hash-table-eq))
     (def (put-slots! ht slots)
       (for-each (cut hash-put! ht <> #t) slots))
     (def (put-alist! ht key alist)
@@ -98,26 +99,17 @@ namespace: #f
     (put-alist! ht key alist)
     (for-each (lambda (mixin)
                 (let (alist (type-descriptor-alist mixin))
-                  (if (assgetq transparent: alist)
+                  (if (or (assgetq transparent: alist) (eq? #t (assgetq key alist)))
                     (put-slots! ht (cdr (vector->list (type-descriptor-all-slots mixin))))
                     (put-alist! ht key alist))))
-              precedence-list))
+              precedence-list)
+    ht)
 
   (let* ((transparent? (assgetq transparent: alist))
-         (all-slots-printable? (or transparent? (assgetq print: alist)))
-         (printable
-          (if all-slots-printable?
-            #f                          ; all printable
-            (let (ht (make-hash-table-eq))
-              (put-props! ht print:)
-              ht)))
-         (all-slots-equalable? (or transparent? (assgetq equal: alist)))
-         (equalable
-          (if all-slots-equalable?
-            #f                          ; all equality comparable
-            (let (ht (make-hash-table-eq))
-              (put-props! ht equal:)
-              ht)))
+         (all-slots-printable? (or transparent? (eq? #t (assgetq print: alist))))
+         (printable (and (not all-slots-printable?) (make-props! print:)))
+         (all-slots-equalable? (or transparent? (eq? #t (assgetq equal: alist))))
+         (equalable (and (not all-slots-equalable?) (make-props! equal:)))
          (first-new-field
           (if type-super
             (vector-length (type-descriptor-all-slots type-super))
@@ -138,7 +130,6 @@ namespace: #f
           (vector-set! field-info j slot)
           (vector-set! field-info (fx1+ j) flags)
           (loop (fx1+ i) (##fx+ j 3)))))
-
     (##structure ##type-type
                  type-id type-name
                  (if opaque? 25 24)
@@ -403,6 +394,13 @@ namespace: #f
     (cut direct-class-instance? klass <>)
     (cut class-instance? klass <>)))
 
+;; Given a klass descriptor, a slot name (symbol), and three accessor-makers
+;; for the respective cases of (a) the descriptor being a struct or final
+;; (so all direct or indirect instances have the slot is at a fixed field),
+;; (b) the field being part of the struct base of the class
+;; (same as above but you have a more expensive argument class check to be safe)
+;; or (c) the slot being a regular class slot (the more expensive code path),
+;; return an accessor for this klass and slot.
 (def (if-class-slot-field klass slot if-struct if-struct-field if-class-slot)
   (let (field (hash-get (type-descriptor-slot-table klass) slot))
     (cond
@@ -424,7 +422,7 @@ namespace: #f
   (lambda (obj)
     (if (class-instance? klass obj)
       (unchecked-field-ref obj field)
-      (error "Trying to get a slot of an object that is not a class instance"
+      (error "Trying to access a slot of a value that is not an instance of the declared class"
         (vector-ref (type-descriptor-all-slots klass) field) obj klass))))
 
 (def (make-class-cached-slot-accessor klass slot field)
@@ -813,10 +811,14 @@ namespace: #f
 ;; NB: 1. This implementation has quadratic complexity, and
 ;; 2. it relies on methods using next-method to be actually location dependent
 ;; and NOT things you can share between different classes.
-;; Changing the protocol to access an explicit super argument would be semantically nicer
-;; and would enable linear complexity for next-method (in the number of classes,
-;; or even just in the number of applicable method, if resolved only once),
-;; but would be somewhat incompatible.
+;; In exchange for which 3. it's somewhat simpler and slightly faster in
+;; the usual case that doesn't involve a call to next-method.
+;;
+;; Changing the protocol to access an explicit super argument would be
+;; semantically nicer and would enable linear complexity for next-method
+;; (in the number of classes, or even just in the number of applicable method,
+;; if resolved only once), but would be notably more complex and somewhat
+;; incompatible (or involve much cleverness for backward compatibility).
 (def (next-method subklass obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
