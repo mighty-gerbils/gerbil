@@ -402,6 +402,8 @@ Low level struct and class type definition facilities.
  id: id                      ; type id
  constructor: id             ; constructor method id
  final: bool                 ; #t for final types
+ equal: bool or list         ; a list of fields to consider for equal? checks, #t for all fields
+ transparent: bool           ; #t for equality checks and printability
 
 (defstruct id (field) ...)
 => (begin
