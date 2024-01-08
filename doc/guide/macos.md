@@ -21,7 +21,7 @@ When updating/upgrading or hacking it's often needed to clear things.
   rm -rf $(brew --cache)/gerbil-scheme--git
 ```
 
-And, if worse comes to worse, uninstall and delete the rest.
+And, if worse comes to Worcestershire, uninstall and delete the rest.
 
 ```sh
 brew uninstall gerbil-scheme
