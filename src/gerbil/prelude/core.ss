@@ -163,7 +163,7 @@ package: gerbil
     c3-linearize not-null? remove-nulls append-reverse
     ;; MOP
     type-descriptor?
-    type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-alist type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
+    type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
     make-struct-type make-struct-type*
     make-struct-predicate

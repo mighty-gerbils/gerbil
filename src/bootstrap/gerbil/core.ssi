@@ -428,7 +428,7 @@ namespace: gerbil/core
                      type-descriptor-precedence-all-slots)
                     (type-descriptor-precedence-list
                      type-descriptor-precedence-list)
-                    (type-descriptor-alist type-descriptor-alist)
+                    (type-descriptor-properties type-descriptor-properties)
                     (type-descriptor-constructor type-descriptor-constructor)
                     (type-descriptor-slot-table type-descriptor-slot-table)
                     (type-descriptor-methods type-descriptor-methods)

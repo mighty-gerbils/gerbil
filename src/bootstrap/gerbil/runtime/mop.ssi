@@ -14,7 +14,7 @@ namespace: #f
          (%#define-runtime type-final? type-final?)
          (%#define-runtime struct-type? struct-type?)
          (%#define-runtime class-type? class-type?)
-         (%#define-runtime alist-form alist-form)
+         (%#define-runtime properties-form properties-form)
          (%#define-runtime make-type-descriptor make-type-descriptor)
          (%#define-runtime make-type-descriptor* make-type-descriptor*)
          (%#define-runtime
@@ -24,7 +24,9 @@ namespace: #f
          (%#define-runtime
           type-descriptor-slot-table
           type-descriptor-slot-table)
-         (%#define-runtime type-descriptor-alist type-descriptor-alist)
+         (%#define-runtime
+          type-descriptor-properties
+          type-descriptor-properties)
          (%#define-runtime
           type-descriptor-constructor
           type-descriptor-constructor)

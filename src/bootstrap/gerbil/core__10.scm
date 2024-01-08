@@ -97,11 +97,11 @@
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g42944_|
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g42945_|
+  (define |gerbil/core$<match>[1]#_g43007_|
     (##structure gx#syntax-quote::t 'not #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g42946_|
+  (define |gerbil/core$<match>[1]#_g43008_|
     (##structure gx#syntax-quote::t 'or #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g42947_|
+  (define |gerbil/core$<match>[1]#_g43009_|
     (##structure gx#syntax-quote::t 'and #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<match>[1]#match-macro::t|
@@ -7485,7 +7485,7 @@
                                              (##car _e3164232329_))))
                                       (if (gx#identifier? _hd3164132333_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core$<match>[1]#_g42947_|
+                                               |gerbil/core$<match>[1]#_g43009_|
                                                _hd3164132333_)
                                               (if (gx#stx-pair/null?
                                                    _tl3164032336_)
@@ -7764,7 +7764,7 @@
                   (let () (declare (not safe)) (_g3162931775_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core$<match>[1]#_g42946_|
+                                                   |gerbil/core$<match>[1]#_g43008_|
                                                    _hd3164132333_)
                                                   (if (gx#stx-pair/null?
                                                        _tl3164032336_)
@@ -8037,7 +8037,7 @@
                       (let () (declare (not safe)) (_g3162931775_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core$<match>[1]#_g42945_|
+                                                       |gerbil/core$<match>[1]#_g43007_|
                                                        _hd3164132333_)
                                                       (if (gx#stx-pair?
                                                            _tl3164032336_)

@@ -7,7 +7,7 @@
         type-descriptor?
         (rename: checked-type-descriptor-precedence-list type-descriptor-precedence-list)
         (rename: checked-type-descriptor-all-slots type-descriptor-all-slots)
-        (rename: checked-type-descriptor-alist type-descriptor-alist)
+        (rename: checked-type-descriptor-properties type-descriptor-properties)
         (rename: checked-type-descriptor-constructor type-descriptor-constructor)
         (rename: checked-type-descriptor-slot-table type-descriptor-slot-table)
         (rename: checked-type-descriptor-methods type-descriptor-methods))
@@ -15,7 +15,7 @@
 (extern namespace: #f
   type-descriptor-precedence-list
   type-descriptor-all-slots
-  type-descriptor-alist
+  type-descriptor-properties
   type-descriptor-constructor
   type-descriptor-slot-table
   type-descriptor-methods
@@ -49,7 +49,7 @@
 
 (defcheck-type-descriptor checked-type-descriptor-precedence-list type-descriptor-precedence-list)
 (defcheck-type-descriptor checked-type-descriptor-all-slots type-descriptor-all-slots)
-(defcheck-type-descriptor checked-type-descriptor-alist type-descriptor-alist)
+(defcheck-type-descriptor checked-type-descriptor-properties type-descriptor-properties)
 (defcheck-type-descriptor checked-type-descriptor-constructor type-descriptor-constructor)
 (defcheck-type-descriptor checked-type-descriptor-slot-table type-descriptor-slot-table)
 (defcheck-type-descriptor checked-type-descriptor-methods type-descriptor-methods)
