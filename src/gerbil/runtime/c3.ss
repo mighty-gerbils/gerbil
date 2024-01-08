@@ -33,14 +33,14 @@ namespace: #f
 ;;   (passed around because somehow equal? doesn't work correctly on runtime type-descriptors).
 ;; - get-name gets the name of a object/class, for debugging only.
 ;; : (List X) (List X) (X -> (NonEmptyList X)) ?(X X -> Bool) ?(X -> Y) -> (List X)
-(def (c3-linearize rhead supers get-precedence-list (eqpred eqv?) (get-name identity))
+(def (c3-linearize rhead supers get-precedence-list (eqpred eq?) (get-name identity))
   (let (tails (map get-precedence-list supers)) ;; : (List (NonEmptyList X))
     (append1! tails supers)
     (c3-linearize-loop rhead tails eqpred get-name)))
 
 ;; The main loop for c3
 ;; : (List X) (List (NonEmptyList X)) ?(X X -> Bool) ?(X -> Y) -> (List X)
-(def (c3-linearize-loop rhead tails (eqpred eqv?) (get-name identity))
+(def (c3-linearize-loop rhead tails (eqpred eq?) (get-name identity))
   (let loop ((rhead rhead) (tails tails))
     (let (tails (remove-nulls! tails))
       (match tails
@@ -69,7 +69,7 @@ namespace: #f
 
 ;; Cleanup after lists after next element in the precedence list was chosen
 ;; : X (List (NonEmptyList X)) ?(X X -> Bool) -> (List (NonEmptyList X))
-(def (remove-next! next tails (eqpred eqv?))
+(def (remove-next! next tails (eqpred eq?))
   (let loop ((t tails))
     (match t
       ([] tails)

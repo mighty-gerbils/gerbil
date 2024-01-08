@@ -435,6 +435,8 @@ if `(dump-stack-trace?)` is true (the default).
 ```
 A parameter that controls whether `with-exception-stack-trace`
 will actually dump a stack trace to standard error.
+(`with-exception-stack-trace` is itself notably used by
+the primordial thread exception handler installed by `spawn-actor`).
 
 You can `(dump-stack-trace? #f)`
 or locally `(parameterize ((dump-stack-trace? #f)) ...)`
