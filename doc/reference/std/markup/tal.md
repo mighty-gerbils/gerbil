@@ -8,6 +8,10 @@ A `TAL Statement` is an attribute in an HTML tag that has a `tal:` prefix. For t
 
 To define a `TAL` procedure we take `HTML` code that may have Template Attributes and transform it into a compiled function
 
+```scheme
+(import :std/markup/tal)
+```
+
 
 ## Attributes
 
@@ -25,7 +29,7 @@ To define a `TAL` procedure we take `HTML` code that may have Template Attribute
 If a tag has more than one TAL attribute they are evaluated in the above (fairly logical) order.
 
 
-## define-TAL
+## `define-TAL`
 
 ```scheme
 (define-TAL (name args ...) /key/ string-or-filename)
@@ -42,7 +46,7 @@ If a tag has more than one TAL attribute they are evaluated in the above (fairly
 A function that outputs **HTML** makes up a portion of a web application. Using `define-TAL` makes it easy to use a block of **HTML/XHTML** as a function.
 
 ```scheme
-(import :std/tal :std/format :std/text/utf8 :std/sugar)
+(import :std/markup/tal :std/format :std/text/utf8 :std/sugar)
 
 (define-TAL (htmlist items)
   "<ul><li
@@ -395,9 +399,9 @@ EOF
 ```
 
 
-## tal:define
+## `tal:define`
 
-The `tal:define` command either wraps a `let*` around the tag (by default or with the `local:` keyword) and/or `set!`'ing things with the `set!:` keyword.
+The `tal:define` command either wraps a `with*` around the tag (by default or with the `local:` keyword) and/or `set!`'ing things with the `set!:` keyword.
 
 ```scheme
 (define-TAL (let-and-set x y) #<<EOF
