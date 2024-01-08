@@ -4,10 +4,10 @@ class GerbilScheme < Formula
   homepage "https://cons.io"
   license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
   url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
-      revision: "0917172a519d28c7833886b445938fd250717b2a"
+      revision: "f7d8efcf4a25014b4b969eb6e21a3006d256f22e"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18.1"
-  revision 1
+  revision 2
   depends_on "openssl@3"
   depends_on "sqlite"
   depends_on "zlib"

@@ -18,6 +18,20 @@ The run the bleeding edge master build simply pass the =--HEAD= argument.
 brew install --HEAD --formula -vd gerbil-scheme.rb
 #+end_src
 
+When updating/upgrading or hacking it's often needed to clear things.
+
+#+begin_src sh
+  brew unlink gerbil-scheme
+  # Clear the build cache. Helps with subtrees and versions
+  rm -rf $(brew --cache)/gerbil-scheme--git
+#+end_src
+
+And, if worse comes to Worcestershire, uninstall and delete the rest.
+
+#+begin_src sh
+brew uninstall gerbil-scheme
+rm -rf ~/.gerbil
+#+end_src
 
 * Documentation
 
@@ -158,10 +172,10 @@ Now where it will install from, and how it gets it. The tag is the version.
 
 #+begin_src ruby
   url "https://github.com/mighty-gerbils/gerbil.git", using: :git,
-      revision: "0917172a519d28c7833886b445938fd250717b2a"
+      revision: "f7d8efcf4a25014b4b969eb6e21a3006d256f22e"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18.1"
-  revision 1
+  revision 2
 #+end_src
 
 Now the things it depends on.
