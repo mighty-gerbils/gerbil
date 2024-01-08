@@ -210,7 +210,7 @@ $ cat > /tmp/foo.ss <<'EOF'
 		 (end-filepos (##position->filepos end-pos))
 		 (end-line (##filepos-line end-filepos))
 		 (end-col (##filepos-col end-filepos)))
-    (displayln "Where? " path "start: line " start-line " col " start-col
+    (displayln "Where? " path " start: line " start-line " col " start-col
 	            " end: line " end-line " col " end-col)
  #'()))
        
@@ -220,7 +220,7 @@ $ cat > /tmp/foo.ss <<'EOF'
 )
 EOF
 $ gxc /tmp/foo.ss
-Where? /private/tmp/foo.ssstart: line 16 col 7 end: line 19 col 1
+Where? /private/tmp/foo.ss start: line 16 col 7 end: line 19 col 1
 ```
 
 ### stx-wrap-source
