@@ -3,8 +3,8 @@
 	  (for-syntax :std/misc/ports) :std/misc/ports
 	  (for-syntax :std/source) :std/source
 	  (for-syntax :gerbil/runtime/syntax)
-	  :std/markup/sxml/html/parser :std/markup/sxml/tal/toplevel
-      (for-syntax :std/markup/sxml/tal/expander) :std/markup/sxml/tal/expander)
+	  :std/sxml/html/parser :std/sxml/tal/toplevel
+      (for-syntax :std/sxml/tal/expander) :std/sxml/tal/expander)
 (export #t)
 (def current-tal-output-port (make-parameter (current-output-port)))
 
@@ -121,9 +121,9 @@
 	    (module ,mod
 	      (export (rename-out #t (,nname ,exprt)))
 	      (import :std/contract :std/interface :std/sugar :std/text/utf8
-		      :std/html (rename-in :std/markup/sxml/tal/iter (tal:repeat? tal-iter?))
-		      :std/markup/sxml/tal/toplevel :std/markup/sxml/tal/expander
-		      :std/markup/sxml/tal/syntax)
+		      :std/html (rename-in :std/sxml/tal/iter (tal:repeat? tal-iter?))
+		      :std/sxml/tal/toplevel :std/sxml/tal/expander
+		      :std/sxml/tal/syntax)
 	      (def (,nname ,@aargs)
 		,(html->tal-form (stx-e #'str))))
 	    (import ,mod)

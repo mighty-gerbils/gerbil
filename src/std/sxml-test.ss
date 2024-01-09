@@ -1,6 +1,6 @@
 (export sxml-test)
 
-(import :std/test :std/markup/sxml)
+(import :std/test :std/sxml)
 
 (def sxml-test
   (test-suite "test :std/sxml"

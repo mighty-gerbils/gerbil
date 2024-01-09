@@ -5,11 +5,10 @@ The module provides XML parsing and printing procedures. It also exports the [SX
 ::: tip To use the bindings from this module:
 
 ```scheme
-(import :std/markup/xml)
+(import :std/xml)
 ```
 
-:::
-
+::: 
 
 ## Parsing
 
@@ -28,11 +27,12 @@ Reads and parses XML from *source* and returns SXML result. *namespaces* is opti
 ::: tip Examples
 
 ```scheme
-> (import :std/markup/xml)
+> (import :std/xml)
 > (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
 (*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
 ```
 
+::: 
 
 ## Printing
 

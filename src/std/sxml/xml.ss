@@ -4,10 +4,10 @@
 ;;; XML interface
 
 (import :std/build-config
-        :std/markup/sxml/ssax
-        :std/markup/sxml/print)
+        :std/sxml/ssax
+        :std/sxml/print)
         
-(export (import: :std/markup/sxml/ssax)
+(export (import: :std/sxml/ssax)
  #t)
 
 (def (write-xml sxml (port (current-output-port)))

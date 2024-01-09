@@ -26,7 +26,7 @@ As a web developer HTML is all over the place. This helps tame it.
 
 * Documentation
 :PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/html.md
+:EXPORT_FILE_NAME: ../../../../doc/reference/std/html.md
 :EXPORT_OPTIONS: toc:nil
 :EXPORT_TITLE: HTML: Hyper Text Markup Language
 :CUSTOM_ID: documentation
@@ -43,7 +43,7 @@ differs enough to have its own specific libraries.
 
 ::: tip To use the bindings from this module:
 #+begin_src scheme
-  (import :std/markup/html)
+  (import :std/html)
 #+end_src
 :::
 
@@ -52,8 +52,8 @@ our [[file:tal/README.org][Template Attribute Language (TAL)]] which uses this p
 printer.
 
 #+begin_src scheme :export no :tangle ../../html.ss
-  (import :std/markup/sxml/html/parser :std/markup/sxml/print)
-  (export (import: :std/markup/sxml/html/parser)
+  (import :std/sxml/html/parser :std/sxml/print)
+  (export (import: :std/sxml/html/parser)
   	current-html-void-tags
   	html-void-tag?
   	current-html-raw-tags
@@ -354,7 +354,7 @@ Time to *Gerbilize* it.
 
 #+begin_src scheme :tangle parser.ss :noweb yes
     (import :gerbil/gambit :std/error :std/srfi/1 :std/srfi/13 :std/text/utf8
-      :std/markup/sxml/print)
+      :std/sxml/print)
     (export
       html->sxml
       default-html->sxml-plist
