@@ -1,7 +1,14 @@
 (import :std/srfi/13)
 (export #t)
 
-;;; This source file is tangled from README,org
+;; * Printer
+
+;; SXML is, well, sexps! So we know that things are either a "list" or an
+;; "atom".
+
+;; An SXML element is a list that starts with a symbol. If the cadr is a
+;; list starting with the =@= the cdr of that is the attributes as a
+;; alist.
 
 (def (sxml-element? t) (and (pair? t) (symbol? (car t))))
 (def (sxml-element-attributes el)
@@ -9,6 +16,7 @@
     ([name [(eq? '@) attr ...] _ ...] attr)
     (else #f)))
 
+;; We are outputing/translating SXML into some kind of markup. Possibly XML.
 (def current-sxml-output-port (make-parameter (current-output-port)))
 (def current-sxml-output-xml? (make-parameter #t))
 
@@ -29,6 +37,15 @@
     ((? (or null? not)) (void))
     ((? procedure?) (apply write-sxml (sxml) args))
     (else (write-sxml-atom sxml port: port in-attribute?: #f))))
+
+
+;; ** Atoms
+
+;; So an atom is simple enough as every atom in (X)(HT)ML is really just
+;; a string of text with certain chars escaped.
+
+;; Inside an attribute the quote character needs escaping as well.
+
 
 (def (write-sxml-atom
       thing
@@ -82,6 +99,9 @@
 	    in-attribute?: in-attribute?
 	    quote-char: quote-char))))
 
+
+;; ** Attributes
+
 (def (write-sxml-attribute
       attr
       port: (port (current-sxml-output-port))
@@ -110,8 +130,22 @@
       [attr] port: port quote-char: quote-char xml?: xml?))
     ((? not) (void))))
 
+;; ** Printing an HTML/XML element from SXML
+
+;; There are two types of "elements" in SXML. What I call "special"
+;; elements are those whose names start with `#\*` as that's not valid
+;; (X)(HT)ML but valid scheme
+
+;; Special *XML* tags are, case insensitive, `*comment*`, `*cdata*` and
+;; `*unencoded*`.
+
+;; Special *HTML* tags are, case insensitive, `*decl*` (mostly for
+;; doctype), `*pi*` (for processing instruction AKA php), `*comment*`,
+;; `*unencoded*`.
+
 (def (sxml-special-tag? t)
- (and (pair? t) (symbol? (car t)) (eqv? #\* (string-ref (symbol->string t) 0))))
+  (and (pair? t) (symbol? (car t)) (eqv? #\* (string-ref (symbol->string t) 0))))
+
 (def (write-sxml-special-tag sxml
       port: (port (current-sxml-output-port))
       xml?: (xml? (current-sxml-output-xml?))
@@ -156,6 +190,10 @@
       ((*unencoded*) (for-each (cut display <> port) body))))
 
   (void))
+
+;; ** The Printer
+
+;; Now the guts. Pretty much self explanatory.
 
 (def current-indentation-width (make-parameter 0))
 
