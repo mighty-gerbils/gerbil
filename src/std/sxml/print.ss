@@ -1,7 +1,7 @@
 (import :std/srfi/13)
 (export #t)
 
-;; * Printer
+; * Printer
 
 ;; SXML is, well, sexps! So we know that things are either a "list" or an
 ;; "atom".
@@ -39,7 +39,7 @@
     (else (write-sxml-atom sxml port: port in-attribute?: #f))))
 
 
-;; ** Atoms
+; ** Atoms
 
 ;; So an atom is simple enough as every atom in (X)(HT)ML is really just
 ;; a string of text with certain chars escaped.
@@ -100,7 +100,7 @@
 	    quote-char: quote-char))))
 
 
-;; ** Attributes
+; ** Attributes
 
 (def (write-sxml-attribute
       attr
@@ -130,7 +130,7 @@
       [attr] port: port quote-char: quote-char xml?: xml?))
     ((? not) (void))))
 
-;; ** Printing an HTML/XML element from SXML
+; ** Printing an HTML/XML element from SXML
 
 ;; There are two types of "elements" in SXML. What I call "special"
 ;; elements are those whose names start with `#\*` as that's not valid
@@ -143,6 +143,8 @@
 ;; doctype), `*pi*` (for processing instruction AKA php), `*comment*`,
 ;; `*unencoded*`.
 
+
+; *** Write Special Elements
 (def (sxml-special-tag? t)
   (and (pair? t) (symbol? (car t)) (eqv? #\* (string-ref (symbol->string t) 0))))
 
@@ -191,7 +193,7 @@
 
   (void))
 
-;; ** The Printer
+; *** The Printer for everything
 
 ;; Now the guts. Pretty much self explanatory.
 
