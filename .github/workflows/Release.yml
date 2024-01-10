@@ -1,0 +1,47 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build_release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: print out github context
+      env:
+        GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: echo "$GITHUB_CONTEXT"
+    - name: list all github action env vars
+      run: env
+    - name: build artifacts
+      run: make -C docker fedora ubuntu package-tgz package-fedora package-ubuntu
+    - name: upload fedora artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: gerbil-${{ github.event.release.tag_name }}-fedora-1.0-1.x86_64.rpm
+        asset_name: gerbil-${{ github.event.release.tag_name }}-fedora-1.0-1.x86_64.rpm
+    - name: upload ubuntu artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: gerbil-${{ github.event.release.tag_name }}.ubuntu-1.0_.amd64.rpm
+        asset_name: gerbil-${{ github.event.release.tag_name }}.ubuntu_1.0_.amd64.rpm
+    - name: upload tgz
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: gerbil-${{ github.event.release.tag_name }}.ubuntu-1.0_.amd64.deb
+        asset_name: gerbil-${{ github.event.release.tag_name }}.ubuntu_1.0_.amd64.deb
