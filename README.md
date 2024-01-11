@@ -1,15 +1,14 @@
 # Gerbil Scheme
 
 Gerbil is an opinionated, some might even say tendentious, dialect of
-Scheme designed for Systems Programming. It provides a state of the
+Scheme designed for systems programming. It provides a state of the
 art macro and module system on top of the Gambit runtime and compiler
-and an extensive standard library. One way to think of Gerbil is as
-the C++ to Marc Feeley's C.
+and an extensive standard library. One way to think of Gerbil is that Gerbil is to Gambit as C++ is to Marc Feeley's C.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
 It also provides a full-blown module system, similar to PLT Scheme's
-(sorry, Racket) modules. The main difference from Racket is that
+(sorry, Racket's) modules. The main difference from Racket is that
 Gerbil modules are single instantiation, supporting high performance
 ahead of time compilation and compiled macros.
 
@@ -24,10 +23,12 @@ ahead of time compilation and compiled macros.
 <!-- tocstop -->
 
 # Installation
-The source code for Gerbil is hosted on [Github](https://github.com/mighty-gerbils/gerbil),
+
+The source code for Gerbil is hosted on [GitHub](https://github.com/mighty-gerbils/gerbil),
 with the latest release available in [releases](https://github.com/mighty-gerbils/gerbil/releases).
 
 **If you are on Linux** installation from source is straightforward:
+
 ```shell
 $ git clone git@github.com:mighty-gerbils/gerbil.git
 $ cd gerbil
@@ -44,6 +45,7 @@ configure option.
 **Note** the default configuration has some dependencies you may need
 to install: sqlite, zlib, and libcrypto/openssl.
 You can install them in ubuntu with:
+
 ```shell
 $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 ```
@@ -51,6 +53,7 @@ $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 **Note** If you want to install the latest release (v0.18), you can also use the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS. They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
 
 **If you are on MacOS** you can install Gerbil using our [brew formula](https://github.com/mighty-gerbils/gerbil/blob/master/homebrew/gerbil-scheme.rb):
+
 ```shell
 $ wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
 
@@ -67,6 +70,7 @@ $ brew install --HEAD --formula -vd gerbil-scheme.rb
 for more detailed installation instructions see the [Guide](https://cons.io/guide/).
 
 # Using Gerbil
+
 The Gerbil interpreter is `gxi`, and the compiler is `gxc`.
 
 If you want an interactive Gerbil shell just execute the interpreter
@@ -78,6 +82,7 @@ For "hello, world" see the [Guide](https://cons.io/guide/intro.html#hello-world)
 
 The [documentation](https://cons.io) is a work in progress, but there are some resources
 that should get you started:
+
 - The [Introduction to Gerbil](https://cons.io/guide/intro.html) is an introductory guide
   for seasoned Schemers.
 - The [Getting Started](https://cons.io/guide/getting-started.html) page covers the very basics
@@ -101,6 +106,7 @@ as all the main language features are exercised in one way or another
 within the implementation.
 
 Depending on your inclinations, there are several starting points:
+
 - If you are interested in general purpose programming, then you should look at
   the [stdlib sources](src/std).
 - If you are interested in Gerbil macrology, then the place to start is the [core prelude](src/gerbil/prelude/core.ss).
@@ -135,7 +141,6 @@ The implementations of srfi 115 and srfi 159 come from Chibi, as these
 are the only available reference implementations. As such, they are
 © Alex Shinn and distributed under a BSD-style license.
 
-
 ## Logo
 
 The Gerbil Scheme logo is © 2019 Brad Christensen. The logo, its
@@ -162,7 +167,7 @@ any of its variations or derivitives in the future.
 Gerbil had been vyzo's private Scheme for many years, evolved out of a
 set of common macros that were used across different implementations
 and eventually a full-blown PLT macro language for actor oriented
-distributed programming.  As such, there have been multiple backends
+distributed programming. As such, there have been multiple backends
 that supported the evolution of the Gerbil dialect, but vyzo elected
 to base the canonical version of Gerbil on Gambit because it is the
 most portable, performant and low-level Scheme kernel available.
@@ -170,7 +175,7 @@ most portable, performant and low-level Scheme kernel available.
 At the prompting of some friends (they know who they are), who had
 seen private versions of Gerbil, vyzo decided to release it in public
 with a clean source-based bootstrap version that bootstraps on gambit
-with a precompiled version of the macro system and compiler.  That
+with a precompiled version of the macro system and compiler. That
 means that the system could be (and now is) entirely self-hosted.
 
 Gerbil is under continuous use and development.
