@@ -3,7 +3,7 @@
 Gerbil is an opinionated, some might even say tendentious, dialect of
 Scheme designed for systems programming. It provides a state of the
 art macro and module system on top of the Gambit runtime and compiler
-and an extensive standard library. One way to think of Gerbil is that Gerbil is to Gambit as C++ is to Marc Feeley's C.
+and an extensive standard library. One way to think of Gerbil is as the C++ to Marc Feeley's C.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
