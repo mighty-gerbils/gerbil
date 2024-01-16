@@ -80,6 +80,7 @@ module.exports = {
                       'xml',
                       'parser',
                       'values',
+		      'mime/',
 
                       { title: "Networking Libraries",
                         path: "/reference/std/net/",

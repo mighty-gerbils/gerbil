@@ -166,6 +166,9 @@
     "srfi/160/c64"
     "srfi/160/c128"
     "srfi/212"
+    ;; :std/mime
+    "mime/struct"
+    (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))
     ;; :std/parser
     "parser/rlang"
     "parser/base"
@@ -207,10 +210,11 @@
     ,(cond-expand
       (darwin
        `(gxc: "net/ssl/libssl"
-	     "-ld-options" ,(append-options
-			     (ldflags "libssl" "-lssl")
-			     (ldflags "libcrypto" "-lcrypto")
-			     (string-append "-L" (gerbil-libdir)) "-lgambit")))
+	      "-cc-options" ,(cppflags "libssl" "")
+	      "-ld-options" ,(append-options
+			      (ldflags "libssl" "-lssl")
+			      (ldflags "libcrypto" "-lcrypto")
+			      (string-append "-L" (gerbil-libdir)) "-lgambit")))
       (else `(gxc: "net/ssl/libssl"
 		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
     "net/ssl/error"
