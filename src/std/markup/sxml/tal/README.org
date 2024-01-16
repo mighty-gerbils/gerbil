@@ -136,7 +136,7 @@ above (fairly logical) order.
  *HTML/XHTML* as a function.
 
  #+begin_src scheme
-   (import :std/tal :std/format :std/text/utf8 :std/sugar)
+   (import :std/markup/tal :std/format :std/text/utf8 :std/sugar)
 
    (define-TAL (htmlist items)
      "<ul><li
@@ -1073,8 +1073,7 @@ So there's only =define-TAL=, =current-tal-output-port=
 =current-tal:on-error= and =tal:write=.
 
 #+begin_src scheme :tangle ../../tal.ss
-  ;; See ./tal/README.org for the implementation.
-  (import (only-in :std/sxml/tal/syntax
+  (import (only-in :std/markup/sxml/tal/syntax
   		 define-TAL current-tal-output-port
   		 current-tal:on-error tal:write))
   (export define-TAL current-tal-output-port current-tal:on-error tal:write)
@@ -1092,7 +1091,7 @@ expansion so after "printing" we have a form that can be compiled.
 
 
 #+begin_src scheme :tangle toplevel.ss
-  (import :std/sxml/html/parser :std/srfi/1)
+  (import :std/markup/sxml/html/parser :std/srfi/1)
   (export #t)
 
   (def current-toplevel (make-parameter #f))
@@ -1142,7 +1141,7 @@ that, when run, pushes the TAL form to the toplevel.
 A quick test shows what it does. First we parse it.
 
 #+begin_src scheme
-  (import :std/sxml/tal/toplevel :std/html)
+  (import :std/markup/sxml/tal/toplevel :std/html)
 
   (def html "<html><body><h1 tal:content=\"print me\">Here</h1>")
   (def sxml
@@ -1176,26 +1175,28 @@ form.
 So we get a circular recursive =expand-tal-element= 
 
 #+begin_src scheme :tangle expander.ss
-    (import :std/misc/alist :std/sxml/tal/toplevel :std/sxml/html/parser :std/format)
-    (export #t)
+  (import :std/misc/alist
+  	:std/markup/sxml/tal/toplevel
+  	:std/markup/sxml/html/parser :std/format)
+  (export #t)
 
-    (def (fmt sym . args) (apply format (symbol->string sym) args))
+  (def (fmt sym . args) (apply format (symbol->string sym) args))
 
-    (def tal-end
-      (lambda (tag attrs parent-seed seed v?)
-        ;;(displayln "Got " tag seed " and pssed" parent-seed)
-        (if (tal-attrs? attrs)
-          (let (el (expand-tal-element tag attrs [] seed v?))
-    	[(cut push-toplevel-element el) ;]
-    	 (identity parent-seed) ...])
-          (html-end tag attrs parent-seed seed v?))))
+  (def tal-end
+    (lambda (tag attrs parent-seed seed v?)
+      ;;(displayln "Got " tag seed " and pssed" parent-seed)
+      (if (tal-attrs? attrs)
+        (let (el (expand-tal-element tag attrs [] seed v?))
+  	[(cut push-toplevel-element el) ;]
+  	 (identity parent-seed) ...])
+        (html-end tag attrs parent-seed seed v?))))
 
-    (def (html->tal-form html) (sxml->tal-form (html->sxml html end: tal-end)))
-        
-    (def (tal-attr? attr attrs)
-      (let (alist (member attr attrs (lambda (a b) (eq? a (and (pair? b) (car b))))))
-        (and alist (car alist))))
-      	  
+  (def (html->tal-form html) (sxml->tal-form (html->sxml html end: tal-end)))
+      
+  (def (tal-attr? attr attrs)
+    (let (alist (member attr attrs (lambda (a b) (eq? a (and (pair? b) (car b))))))
+      (and alist (car alist))))
+    	  
 #+end_src
 
 
@@ -1273,7 +1274,7 @@ This form is a wrapper with other TAL forms being inside or following it.
 Here's our test HTML and SXML
 
 #+begin_src scheme
-  (import :std/sxml/tal/toplevel :std/html)
+  (import :std/markup/sxml/tal/toplevel :std/html)
 
   (def html "
    <html>
@@ -1358,7 +1359,7 @@ whitespace and in a case that may not appear anything outside of it
 still will.
 
 #+begin_src scheme
-  (import :std/sxml/tal/toplevel :std/html)
+  (import :std/markup/sxml/tal/toplevel :std/html)
 
   (def html "
    <html>
@@ -1715,7 +1716,7 @@ The result looks good.
 **** The Iterator and Interface for =tal:repeat=
 
 #+begin_src scheme :tangle iter.ss
-  (import :std/interface :std/contract :std/iter :std/generic :std/sxml/tal/toplevel)
+  (import :std/interface :std/contract :std/iter :std/generic :std/markup/sxml/tal/toplevel)
   (export #t)
 
   ;; Tangled from README.org
@@ -2269,8 +2270,8 @@ We've got 4 pieces of syntax with 3 inside it.
   	  (for-syntax :std/misc/ports) :std/misc/ports
   	  (for-syntax :std/source) :std/source
   	  (for-syntax :gerbil/runtime/syntax)
-  	  :std/sxml/html/parser :std/sxml/tal/toplevel
-        (for-syntax :std/sxml/tal/expander) :std/sxml/tal/expander)
+  	  :std/markup/sxml/html/parser :std/markup/sxml/tal/toplevel
+        (for-syntax :std/markup/sxml/tal/expander) :std/markup/sxml/tal/expander)
   (export #t)
   (def current-tal-output-port (make-parameter (current-output-port)))
 
@@ -2428,9 +2429,9 @@ Gerbil has named nested modules so I think they'll do.
   	    (module ,mod
   	      (export (rename-out #t (,nname ,exprt)))
   	      (import :std/contract :std/interface :std/sugar :std/text/utf8
-  		      :std/html (rename-in :std/sxml/tal/iter (tal:repeat? tal-iter?))
-  		      :std/sxml/tal/toplevel :std/sxml/tal/expander
-  		      :std/sxml/tal/syntax)
+  		      :std/html (rename-in :std/markup/sxml/tal/iter (tal:repeat? tal-iter?))
+  		      :std/markup/sxml/tal/toplevel :std/markup/sxml/tal/expander
+  		      :std/markup/sxml/tal/syntax)
   	      (def (,nname ,@aargs)
   		,(html->tal-form (stx-e #'str))))
   	    (import ,mod)

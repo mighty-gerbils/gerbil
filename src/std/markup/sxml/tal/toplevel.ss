@@ -1,4 +1,4 @@
-(import :std/sxml/html/parser :std/srfi/1)
+(import :std/markup/sxml/html/parser :std/srfi/1)
 (export #t)
 
 (def current-toplevel (make-parameter #f))

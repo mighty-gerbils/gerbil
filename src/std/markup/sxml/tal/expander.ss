@@ -1,4 +1,6 @@
-(import :std/misc/alist :std/sxml/tal/toplevel :std/sxml/html/parser :std/format)
+(import :std/misc/alist
+	:std/markup/sxml/tal/toplevel
+	:std/markup/sxml/html/parser :std/format)
 (export #t)
 
 (def (fmt sym . args) (apply format (symbol->string sym) args))
