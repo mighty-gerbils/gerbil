@@ -32,7 +32,9 @@ files of any kind. Email extensions evolved into "Media Types".
 
 
 ::: tip To use bindings from this module
+
 ~(import :std/mime/types)~
+
 :::
 
 

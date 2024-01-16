@@ -4,7 +4,11 @@ There's often a need to know content types.
 
 Email can contain other documents of varying types. The Web can serve files of any kind. Email extensions evolved into "Media Types".
 
-::: tip To use bindings from this module `(import :std/mime/types)` :::
+::: tip To use bindings from this module
+
+`(import :std/mime/types)`
+
+:::
 
 
 ## `path-extension->mime-type-name`
