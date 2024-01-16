@@ -18,7 +18,7 @@
 
 * XML Documentation
 :PROPERTIES:
-:EXPORT_FILE_NAME: ../../../doc/reference/std/xml.md
+:EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/xml.md
 :EXPORT_OPTIONS: toc:nil
 :CUSTOM_ID: xml-documentation
 :END:
@@ -34,7 +34,7 @@ exports the [[./sxml.md][SXML]] procedures.
 ::: tip To use the bindings from this module:
 
 #+begin_src scheme
-(import :std/xml)
+(import :std/markup/xml)
 #+end_src
 
 
