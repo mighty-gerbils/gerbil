@@ -2,9 +2,12 @@
 
 cd ${0%/*}
 
+weave () {
+    emacs  $1 --batch -l `pwd`/ox-gfm.el -f org-gfm-export-to-markdown --kill ||
+	echo "Cannot export from org to markdown using emacs"
+}
 
-emacs ../src/std/mime/README.org --batch -f org-gfm-export-to-markdown --kill ||
-    echo "Cannot export from org to markdown using emacs"
+weave ../src/std/mime/README.org
 
 
 npm install
