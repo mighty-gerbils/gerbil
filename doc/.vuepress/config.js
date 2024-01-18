@@ -85,9 +85,9 @@ module.exports = {
 			  path: "/reference/std/markup/",
 			  children: [
 			      "markup/sxml/",
-			      "markup/xml",
+			      "markup/sxml/xml",
 			      "markup/sxml/html/",
-			      //xg"markup/sxml/tal/"
+			      "markup/sxml/tal/"
 			  ]
 		      },
 

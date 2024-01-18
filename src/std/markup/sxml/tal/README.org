@@ -1,5 +1,5 @@
 #+TITLE: TAL: The Template Attribute Language
-#+EXPORT_FILE_NAME: ../../../../../doc/reference/std/markup/tal/README.org
+#+EXPORT_FILE_NAME: ../../../../../doc/reference/std/markup/sxml/tal/README.org
 #+OPTIONS: toc:nil
 
 * Contents                                                         :noexport:
