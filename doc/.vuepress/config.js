@@ -84,7 +84,7 @@ module.exports = {
 			  title: "Markup Languages",
 			  path: "/reference/std/markup/",
 			  children: [
-			      // "markup/sxml/",
+			      "markup/sxml/",
 			      // "markup/sxml/xml",
 			      // "markup/sxml/html/",
 			      // "markup/sxml/tal/"
