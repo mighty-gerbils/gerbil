@@ -239,7 +239,8 @@ contextual information."
 (defun org-gfm-footnote-section (info)
   "Format the footnote section.
 INFO is a plist used as a communication channel."
-  (and-let* ((fn-alist (org-export-collect-footnote-definitions info)))
+  (let* ((fn-alist (org-export-collect-footnote-definitions info)))
+    (and fn-alst
     (format
      "## Footnotes\n\n%s\n"
      (mapconcat (pcase-lambda (`(,n ,_type ,def))
@@ -252,7 +253,7 @@ INFO is a plist used as a communication channel."
                             (format " class=\"footnum\" href=\"#fnr.%d\"" n)
                             info))
                    (org-trim (org-export-data def info))))
-                fn-alist "\n"))))
+                fn-alist "\n")))))
 
 ;;;; Template
 

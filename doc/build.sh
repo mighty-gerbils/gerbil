@@ -18,6 +18,7 @@ weave_subtree () {
 
 
 weave ../src/std/mime/README.org
+weave ../src/std/markup/README.org
 weave ../src/std/markup/sxml/README.org
 weave ../src/std/markup/sxml/xml.org
 weave ../src/std/markup/sxml/html/README.org
