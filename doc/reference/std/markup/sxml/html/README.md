@@ -1,20 +1,3 @@
-As a web developer HTML is all over the place. This helps tame it.
-
-
-# Contents
-
--   [HTML: Hyper Text Markup Language Module](#html-hyper-text-markup-language-module)
-    -   [HTML Parser and Printer](#html-parser-and-printer)
-        -   [Element, aka Tag Types](#element-aka-tag-types)
-        -   [Reading](#reading)
-    -   [Writing](#writing)
-        -   [sxml->html](#sxml-html)
-        -   [html-escape](#html-escape)
-        -   [html-character-escapes](#html-character-escapes)
-
-
-<a id="html-hyper-text-markup-language-module"></a>
-
 # HTML: Hyper Text Markup Language Module
 
 HTML is a widely used Markup Language that, while very similar to [XML](./xml.md), differs enough to have its own specific libraries.
@@ -30,22 +13,8 @@ HTML is a widely used Markup Language that, while very similar to [XML](./xml.md
 If HTML templates for web development are up your alley have a look at our [Template Attribute Language (TAL)](tal/README.md) which uses this parser and printer.
 
 
-<a id="html-parser-and-printer"></a>
-
 ## HTML Parser and Printer
 
-```scheme
-(import :std/markup/sxml/html/parser :std/markup/sxml/print)
-(export (import: :std/markup/sxml/html/parser)
-      current-html-void-tags
-      html-void-tag?
-      current-html-raw-tags
-      html-raw-tag?)
-;;; This library is tangled from sxml/html/README.org
-```
-
-
-<a id="element-aka-tag-types"></a>
 
 ### Element, aka Tag Types
 
@@ -95,8 +64,6 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
     #f
     ```
 
-
-<a id="reading"></a>
 
 ### Reading
 
@@ -155,13 +122,13 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
 
     ```scheme
     (make-html-parser start: #f end: #f text: #f
-                    comment: #f decl: #f process: #f
-                    entity: #f entities: *default-entities*
-                    tag-levels: *tag-levels*
-                    unnestables: *unnestables*
-                    bodyless:  (current-html-void-tags)
-                    literals:  (current-html-raw-tags)
-                    terminators: *terminators*)
+                      comment: #f decl: #f process: #f
+                      entity: #f entities: *default-entities*
+                      tag-levels: *tag-levels*
+                      unnestables: *unnestables*
+                      bodyless:  (current-html-void-tags)
+                      literals:  (current-html-raw-tags)
+                      terminators: *terminators*)
     ```
     
     Returns a procedure of two arguments, an initial seed and an optional input port, which parses the HTML document from the port with the callbacks specified by a keyword.
@@ -204,7 +171,7 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
     ```
     decl: name attrs seed
         fhere on declaration data
-    
+        
     process: list seed
         fhere on process-instruction data
     ```
@@ -212,12 +179,8 @@ While HTML and XML are friends there are some elements in HTML that cannot be ex
     In addition, entity-mappings may be overriden with the `entities:` keyword.
 
 
-<a id="writing"></a>
-
 ## Writing
 
-
-<a id="sxml-html"></a>
 
 ### sxml->html
 
@@ -229,8 +192,6 @@ Convert the HTML representation of `sxml` to a string which it outputs to the pa
 
 If the port is `#f`, or not provided, return a string.
 
-
-<a id="html-escape"></a>
 
 ### html-escape
 

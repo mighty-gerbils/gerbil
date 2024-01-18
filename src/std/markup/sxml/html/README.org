@@ -2,9 +2,7 @@
 #+EXPORT_FILE_NAME: ../../../../../doc/reference/std/markup/sxml/html/README.org
 #+OPTIONS: toc:nil
 
-As a web developer HTML is all over the place. This helps tame it.
-
-* Contents 
+* Contents                                                         :noexport:
 :PROPERTIES:
 :TOC:      :include siblings :depth 3 :ignore (this)
 :END:
@@ -46,15 +44,6 @@ printer.
 :PROPERTIES:
 :CUSTOM_ID: html-parser-and-printer
 :END:
-#+begin_src scheme :export no :tangle ../../html.ss
-  (import :std/markup/sxml/html/parser :std/markup/sxml/print)
-  (export (import: :std/markup/sxml/html/parser)
-  	current-html-void-tags
-  	html-void-tag?
-  	current-html-raw-tags
-  	html-raw-tag?)
-  ;;; This library is tangled from sxml/html/README.org
-#+end_src
 
 
 *** Element, aka Tag Types
