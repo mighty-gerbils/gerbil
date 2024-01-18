@@ -334,6 +334,7 @@
     "markup/html"
     ;; :std/xml
     "markup/xml"
+    "xml"
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
     (gxc: "crypto/libcrypto"
