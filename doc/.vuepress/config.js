@@ -82,7 +82,7 @@ module.exports = {
 		      'mime/',
 		      {
 			  title: "Markup Languages",
-			  path: "/reference/std/markup/" //,
+			  path: "/reference/std/markup/",
 			  children: [
 			      // "markup/sxml/",
 			      // "markup/sxml/xml",
