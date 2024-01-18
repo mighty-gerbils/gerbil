@@ -1,9 +1,3 @@
-- [Markup Languages](#org882a336)
-
-
-
-<a id="org882a336"></a>
-
 # Markup Languages
 
 Gerbil supports many different markup languages using [SXML](README.md) for parsing, searching, manipulating and printing.
