@@ -321,7 +321,7 @@
     (gxc: "markup/sxml/ssax")
     "markup/sxml/sxpath"
     "markup/sxml/xml"
-    "markup/sxml/sxml"
+    "markup/sxml/sxml-inf"
     (gxc: "markup/sxml/html/parser" (extra-inputs: ("markup/sxml/html/html-parser.scm")))
     "markup/sxml/tal/toplevel"
     "markup/sxml/tal/iter"
