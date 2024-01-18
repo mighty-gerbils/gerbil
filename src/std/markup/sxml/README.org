@@ -1,26 +1,34 @@
 #+TITLE: SXML: XML and HTML (AKA XML Infoset) data as S-expressions
+#+EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/sxml/README.md
+#+OPTIONS: toc:nil
 
-* Contents
+* Contents                                                         :noexport:
 :PROPERTIES:
 :TOC:      :include siblings :depth 3 :ignore (this)
 :END:
 :CONTENTS:
-- [[#sxml-documentation][SXML Documentation]]
-  - [[#sxml-s-expression-extensible-markup-language][SXML: S-expression eXtensible Markup Language]]
-    - [[#concepts][Concepts]]
-    - [[#printer][Printer]]
-    - [[#sxml-queries][SXML Queries]]
+- [[#sxml-s-expression-extensible-markup-language][SXML: S-expression eXtensible Markup Language]]
+  - [[#concepts][Concepts]]
+  - [[#printer][Printer]]
+    - [[#write-sxml][write-sxml]]
+  - [[#sxml-queries][SXML Queries]]
+    - [[#sxpath][sxpath]]
+    - [[#sxml-select][sxml-select]]
+    - [[#sxml-attributes][sxml-attributes]]
+    - [[#sxml-e][sxml-e]]
+    - [[#sxml-find][sxml-find]]
+    - [[#sxml-select-0][sxml-select*]]
+    - [[#sxml-attribute-e][sxml-attribute-e]]
+    - [[#sxml-attribute-getq][sxml-attribute-getq]]
+    - [[#sxml-class][sxml-class?]]
+    - [[#sxml-find-0][sxml-find*]]
+    - [[#sxml-e-0][sxml-e?]]
+    - [[#sxml-id][sxml-id?]]
+    - [[#sxml-children][sxml-children]]
+    - [[#sxml-findcontext][sxml-find/context]]
 :END:
 
-* SXML Documentation
-:PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/sxml/README.md
-:EXPORT_OPTIONS: toc:nil
-:EXPORT_TITLE: SXML: S-expression eXtensible Markup Language
-:CUSTOM_ID: sxml-documentation
-:END:
-
-** SXML: S-expression eXtensible Markup Language
+* SXML: S-expression eXtensible Markup Language
 :PROPERTIES:
 :CUSTOM_ID: sxml-s-expression-extensible-markup-language
 :END:
@@ -37,7 +45,7 @@ be found [[http://okmij.org/ftp/Scheme/xml.html][here]].
 
 ::: 
 
-*** Concepts
+** Concepts
 :PROPERTIES:
 :CUSTOM_ID: concepts
 :END:
@@ -80,14 +88,17 @@ If you notice, the =write-sxml= function indents the html in a
 whitespace sensitive way to ensure there are no extra characters in the
 actual output.
 
-*** Printer
+** Printer
 :PROPERTIES:
 :CUSTOM_ID: printer
 :END:
 
 All of HTML, XML and XHTML are printed from the same function.
 
-**** write-sxml
+*** write-sxml
+:PROPERTIES:
+:CUSTOM_ID: write-sxml
+:END:
 
 #+begin_src scheme
   (def (write-sxml
@@ -184,12 +195,12 @@ When set to =xml?= things are different.
 
 
 
-*** SXML Queries
+** SXML Queries
 :PROPERTIES:
 :CUSTOM_ID: sxml-queries
 :END:
 
-**** sxpath
+*** sxpath
 :PROPERTIES:
 :CUSTOM_ID: sxpath
 :END:
@@ -227,7 +238,7 @@ following rewriting rules:
  (sxpathr path-filter) -> (filter (sxpath path-filter))
 #+end_src
 
-**** sxml-select
+*** sxml-select
 :PROPERTIES:
 :CUSTOM_ID: sxml-select
 :END:
@@ -243,7 +254,7 @@ Collects all children from node /n/ that satisfy a predicate /predf/;
 optionally transforms result with mapping function /mapf/ once a node
 satisfies a predicate, its children are not traversed.
 
-**** sxml-attributes
+*** sxml-attributes
 :PROPERTIES:
 :CUSTOM_ID: sxml-attributes
 :END:
@@ -256,7 +267,7 @@ satisfies a predicate, its children are not traversed.
 Returns the attributes of given node /n/ or #f if node does have any
 attributes.
 
-**** sxml-e
+*** sxml-e
 :PROPERTIES:
 :CUSTOM_ID: sxml-e
 :END:
@@ -268,7 +279,7 @@ attributes.
 
 Returns the element type of node /n/ or #f if no type is found.
 
-**** sxml-find
+*** sxml-find
 :PROPERTIES:
 :CUSTOM_ID: sxml-find
 :END:
@@ -285,9 +296,9 @@ depth-first search. Predicate /predf/ is a lambda which takes an node as
 parameter and returns an boolean. If optional /mapf/ is given the
 results satisfying /predf/ are transformed with it.
 
-**** sxml-select*
+*** sxml-select*
 :PROPERTIES:
-:CUSTOM_ID: sxml-select-1
+:CUSTOM_ID: sxml-select-0
 :END:
 #+begin_src scheme
 (sxml-select* n predf [mapf = values]) -> sxml
@@ -301,7 +312,7 @@ Select from immediate children of node /n/ using predicate function
 /predf/. Results satisfying /predf/ are transformed if given optional
 mapping function /mapf/.
 
-**** sxml-attribute-e
+*** sxml-attribute-e
 :PROPERTIES:
 :CUSTOM_ID: sxml-attribute-e
 :END:
@@ -315,7 +326,7 @@ mapping function /mapf/.
 Returns the node /n/ attribute value for given /key/ or #f if value is
 not found.
 
-**** sxml-attribute-getq
+*** sxml-attribute-getq
 :PROPERTIES:
 :CUSTOM_ID: sxml-attribute-getq
 :END:
@@ -328,7 +339,7 @@ not found.
 
 attribute list => value
 
-**** sxml-class?
+*** sxml-class?
 :PROPERTIES:
 :CUSTOM_ID: sxml-class
 :END:
@@ -340,9 +351,9 @@ attribute list => value
 
 returns dom class
 
-**** sxml-find*
+*** sxml-find*
 :PROPERTIES:
-:CUSTOM_ID: sxml-find-1
+:CUSTOM_ID: sxml-find-0
 :END:
 #+begin_src scheme
 (sxml-find* n pred [mapf = values]) -> sxml | #f
@@ -354,9 +365,9 @@ returns dom class
 
 find in immediate children
 
-**** sxml-e?
+*** sxml-e?
 :PROPERTIES:
-:CUSTOM_ID: sxml-e-1
+:CUSTOM_ID: sxml-e-0
 :END:
 #+begin_src scheme
 (sxml-e? el) -> lambda
@@ -366,7 +377,7 @@ find in immediate children
 
 returns element type
 
-**** sxml-id?
+*** sxml-id?
 :PROPERTIES:
 :CUSTOM_ID: sxml-id
 :END:
@@ -378,7 +389,7 @@ returns element type
 
 returns dom id
 
-**** sxml-children
+*** sxml-children
 :PROPERTIES:
 :CUSTOM_ID: sxml-children
 :END:
@@ -390,7 +401,7 @@ returns dom id
 
 returns nodes children as a list
 
-**** sxml-find/context
+*** sxml-find/context
 :PROPERTIES:
 :CUSTOM_ID: sxml-findcontext
 :END:
