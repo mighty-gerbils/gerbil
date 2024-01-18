@@ -1,4 +1,6 @@
 #+TITLE: Hyper Text Markup Language
+#+EXPORT_FILE_NAME: ../../../../../doc/reference/std/markup/sxml/html/README.org
+#+OPTIONS: toc:nil
 
 As a web developer HTML is all over the place. This helps tame it.
 
@@ -24,18 +26,7 @@ As a web developer HTML is all over the place. This helps tame it.
   - [[#file-html-parserscm][File html-parser.scm]]
 :END:
 
-* Documentation
-:PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/html.md
-:EXPORT_OPTIONS: toc:nil
-:EXPORT_TITLE: HTML: Hyper Text Markup Language
-:CUSTOM_ID: documentation
-:END:
-
-** HTML Parser and Printer
-:PROPERTIES:
-:CUSTOM_ID: html-parser-and-printer
-:END:
+* HTML: Hyper Text Markup Language Module
 
 HTML is a widely used Markup Language that, while very similar to [[./xml.md][XML]],
 differs enough to have its own specific libraries.
@@ -53,6 +44,12 @@ If HTML templates for web development are up your alley have a look at
 our [[file:tal/README.org][Template Attribute Language (TAL)]] which uses this parser and
 printer.
 
+
+
+** HTML Parser and Printer
+:PROPERTIES:
+:CUSTOM_ID: html-parser-and-printer
+:END:
 #+begin_src scheme :export no :tangle ../../html.ss
   (import :std/markup/sxml/html/parser :std/markup/sxml/print)
   (export (import: :std/markup/sxml/html/parser)

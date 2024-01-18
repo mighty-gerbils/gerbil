@@ -5,10 +5,6 @@
 :TOC:      :include siblings :depth 3 :ignore (this)
 :END:
 :CONTENTS:
-- [[#xml-documentation][XML Documentation]]
-  - [[#xml][XML]]
-    - [[#parsing][Parsing]]
-    - [[#printing][Printing]]
 - [[#sxml-documentation][SXML Documentation]]
   - [[#sxml-s-expression-extensible-markup-language][SXML: S-expression eXtensible Markup Language]]
     - [[#concepts][Concepts]]
@@ -16,91 +12,9 @@
     - [[#sxml-queries][SXML Queries]]
 :END:
 
-* XML Documentation
-:PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/xml.md
-:EXPORT_OPTIONS: toc:nil
-:CUSTOM_ID: xml-documentation
-:END:
-
-** XML
-:PROPERTIES:
-:CUSTOM_ID: xml
-:END:
-
-The module provides XML parsing and printing procedures. It also
-exports the [[./sxml.md][SXML]] procedures.
-
-::: tip To use the bindings from this module:
-
-#+begin_src scheme
-(import :std/markup/xml)
-#+end_src
-
-
-*** Parsing
-:PROPERTIES:
-:CUSTOM_ID: parsing
-:END:
-**** read-xml
-:PROPERTIES:
-:CUSTOM_ID: read-xml
-:END:
-#+begin_src scheme
-(read-xml source [namespaces: ()]) -> sxml | error
-
-  source     := port | string | u8vector
-  namespaces := alist or hash-table mapping urls to namespace prefixes
-#+end_src
-
-Reads and parses XML from /source/ and returns SXML result. /namespaces/
-is optional alist or a hash table of mapping uri (string) -> namespace
-(string) same interface as =parse-xml= so that implementations can be
-swapped. Signals an error on invalid /source/ value.
-
-::: tip Examples
-
-#+begin_src scheme
-> (import :std/xml)
-> (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
-(*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
-#+end_src
-
-*** Printing
-:PROPERTIES:
-:CUSTOM_ID: printing
-:END:
-**** write-xml
-:PROPERTIES:
-:CUSTOM_ID: write-xml
-:END:
-#+begin_src scheme
-(write-xml sxml [port = (current-output-port)]) -> void
-
-  sxml := SXML nodes
-  port := output port
-#+end_src
-
-Writes given /sxml/ data as XML into output /port/. Signals an error on
-invalid /port/.
-
-**** print-sxml->xml
-:PROPERTIES:
-:CUSTOM_ID: print-sxml-xml
-:END:
-#+begin_src scheme
-(print-sxml->xml sxml [port = (current-output-port)]) -> void
-
-  sxml := SXML nodes
-  port := output port
-#+end_src
-
-Write given /sxml/ into /port/ after converting it to XML. Indents the
-result to multiple lines.
-
 * SXML Documentation
 :PROPERTIES:
-:EXPORT_FILE_NAME: ../../../doc/reference/std/sxml.md
+:EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/sxml/README.md
 :EXPORT_OPTIONS: toc:nil
 :EXPORT_TITLE: SXML: S-expression eXtensible Markup Language
 :CUSTOM_ID: sxml-documentation
@@ -118,19 +32,10 @@ be found [[http://okmij.org/ftp/Scheme/xml.html][here]].
 ::: tip To use the bindings from this module:
 
 #+begin_src scheme
-(import :std/sxml)
+(import :std/markup/sxml)
 #+end_src
+
 ::: 
-#+begin_src scheme :exports none :tangle ../sxml.ss
-  (import :std/build-config
-          :std/sxml/print
-          :std/sxml/sxpath
-          :std/sxml/sxml)
-  (export (import:
-           :std/sxml/print
-           :std/sxml/sxpath
-           :std/sxml/sxml))
-#+end_src
 
 *** Concepts
 :PROPERTIES:
@@ -144,14 +49,14 @@ S-expressions."
 When developing in Gerbil we generally use sexps. XML and HTML are not
 quite sexps.
 
-For parsing and printing have a look at [[./xml.md][XML docs]] or the [[./html.md][HTML docs]]
+For parsing and printing have a look at [[file:xml.org][XML]] or the [[./html.md][HTML docs]]
 depending on your needs.
 
 There's a lot more detail in the [[https://okmij.org/ftp/Scheme/SXML.html][SMXL Specification]] so for basics a
 simple =<select>= tag.
 
 #+begin_src scheme
-  > (import :std/sxml)
+  > (import :std/markup/sxml)
   > (begin (write-sxml '(select (@ (name "Examiner"))
     (option (@ (value "1")) "Mr. Scruff") 
     (option (@ (value "2")) "Beetlejuice"))
