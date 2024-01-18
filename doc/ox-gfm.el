@@ -240,7 +240,7 @@ contextual information."
   "Format the footnote section.
 INFO is a plist used as a communication channel."
   (let* ((fn-alist (org-export-collect-footnote-definitions info)))
-    (and fn-alst
+    (and fn-alist
     (format
      "## Footnotes\n\n%s\n"
      (mapconcat (pcase-lambda (`(,n ,_type ,def))
