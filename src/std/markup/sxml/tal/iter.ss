@@ -1,7 +1,6 @@
 (import :std/interface :std/contract :std/iter :std/generic :std/markup/sxml/tal/toplevel)
 (export #t)
-
-;; Tangled from README.org
+(declare (fixnum))
 
 (defstruct tal:repeat (iter next-item index)
   constructor: :init! transparent: #t)
