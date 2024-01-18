@@ -1,52 +1,33 @@
 #+TITLE: TAL: The Template Attribute Language
+#+EXPORT_FILE_NAME: ../../../../../doc/reference/std/markup/tal/README.org
+#+OPTIONS: toc:nil
 
-* Contents
+* Contents                                                         :noexport:
 :PROPERTIES:
 :TOC:      :include all :depth 3 :ignore this
 :CUSTOM_ID: contents
 :END:
 :CONTENTS:
-- [[#introduction][Introduction]]
-- [[#documentation][Documentation]]
-  - [[#tal-the-template-attribute-language][TAL: The Template Attribute Language]]
+- [[#tal-the-template-attribute-language][TAL: The Template Attribute Language]]
   - [[#attributes][Attributes]]
   - [[#define-tal][define-TAL]]
   - [[#current-tal-output-port][current-tal-output-port]]
-  - [[#talattributes-replace-element-attributes][tal:attributes: Replace element attributes]]
-  - [[#talcondition-conditionally-insert-or-remove-an-element][tal:condition: Conditionally insert or remove an element]]
-  - [[#talcontent-replace-the-content-of-an-element][tal:content: Replace the content of an element]]
+  - [[#talattributes--replace-element-attributes][tal:attributes : Replace element attributes]]
+  - [[#talcondition--conditionally-insert-or-remove-an-element][tal:condition : Conditionally insert or remove an element]]
+  - [[#talcontent--replace-the-content-of-an-element][tal:content : Replace the content of an element]]
   - [[#taldefine][tal:define]]
-  - [[#talswitch-set-up-a-switch-statement][tal:switch: Set up a switch statement]]
-  - [[#talomit-tag-remove-an-element-leaving-its-contents][tal:omit-tag: Remove an element leaving its contents]]
+  - [[#talswitch--set-up-a-switch-statement][tal:switch : Set up a switch statement]]
+  - [[#talomit-tag--remove-an-element-leaving-its-contents][tal:omit-tag : Remove an element leaving its contents]]
   - [[#current-talon-error-and-talon-error][current-tal:on-error and tal:on-error.]]
     - [[#default-and-current-talon-error][Default and current-tal:on-error]]
     - [[#talon-error][tal:on-error]]
-  - [[#talrepeat-repeat-an-element][tal:repeat: Repeat an element]]
+  - [[#talrepeat--repeat-an-element][tal:repeat : Repeat an element]]
     - [[#the-repeat-interface][The Repeat Interface]]
-- [[#implementation][Implementation]]
-  - [[#toplevel-a-place-to-push-while-printing]["Toplevel" A place to push while printing.]]
-  - [[#the-expanders][The Expanders]]
-    - [[#bind-or-set-with-taldefine][Bind or set! with tal:define]]
-    - [[#talswitch-set-up-a-switch-statement-0][tal:switch: Set up a switch statement]]
-    - [[#more-recursion-with-expand-tal-element][More recursion with expand-tal-element.]]
-    - [[#the-talcondition-short-form][The tal:condition short form]]
-    - [[#the-talrepeat-attribute-type-and-interface][The tal:repeat attribute, type and interface]]
-    - [[#replace-the-seed-with-talcontent][Replace the seed with tal:content]]
-    - [[#just-talreplace-it][Just tal:replace it!]]
-    - [[#the-talon-error-handler][The tal:on-error handler]]
-    - [[#talattributes-set-attributes][tal:attributes: set attributes]]
-    - [[#talomit-tag][tal:omit-tag]]
-- [[#syntax-make-a-tal-form-compile-and-run][Syntax: Make a tal form compile and run]]
-  - [[#the-talwriter-and-talstringify][The tal:writer and tal:stringify]]
-  - [[#trivial-talswitch-and-talcase][Trivial tal:switch and tal:case]]
-  - [[#the-talhtml-metacircular-syntax][The tal:html metacircular syntax]]
-  - [[#the-talform-syntax][The tal:form syntax]]
-  - [[#the-define-tal-supersyntax][The define-TAL supersyntax.]]
 :END:
 
-* Introduction
+* TAL: The Template Attribute Language
 :PROPERTIES:
-:CUSTOM_ID: introduction
+:CUSTOM_ID: tal-the-template-attribute-language
 :END:
 
 I, (drewc <me at drewc dot ca>), first got introduced to =TAL= around
@@ -56,18 +37,15 @@ Its usefulness cannot be understated!
 
 Here is my attempt at the [[https://zope.readthedocs.io/en/latest/zopebook/AppendixC.html][Zope Template Attribute Language]].
 
-* Documentation
-:PROPERTIES:
-:EXPORT_FILE_NAME: ../../../../doc/reference/std/tal.md
-:EXPORT_TITLE: TAL: The Template Attribute Language
-:EXPORT_OPTIONS: toc:nil
-:CUSTOM_ID: documentation
-:END:
+::: tip To use the bindings from this module:
 
-** TAL: The Template Attribute Language
-:PROPERTIES:
-:CUSTOM_ID: tal-the-template-attribute-language
-:END:
+#+begin_src scheme
+(import :std/markup/tal)
+#+end_src
+
+:::
+
+
 
 #+begin_quote
 The Template Attribute Language (TAL) is a templating language used to
@@ -86,7 +64,7 @@ prefix. For the most part the attribute value is *Gerbil* code.
 To define a =TAL= procedure we take =HTML= code that may have Template
 Attributes and transform it into a compiled function 
 
-*** Attributes
+** Attributes
 :PROPERTIES:
 :CUSTOM_ID: attributes
 :END:
@@ -114,7 +92,7 @@ Attributes and transform it into a compiled function
 If a tag has more than one TAL attribute they are evaluated in the
 above (fairly logical) order.
 
-*** =define-TAL=
+** =define-TAL=
 :PROPERTIES:
 :CUSTOM_ID: define-tal
 :END:
@@ -197,7 +175,7 @@ We can then use it creatively.
 As you can see it enables a fairly easy interaction between *HTML*
 syntax and *Lisp*.
 
-*** current-tal-output-port
+** current-tal-output-port
 :PROPERTIES:
 :CUSTOM_ID: current-tal-output-port
 :END:
@@ -232,9 +210,9 @@ As well as have a more documentation friendly output.
 </html>
 #+end_src
 
-*** tal:attributes : Replace element attributes
+** tal:attributes : Replace element attributes
 :PROPERTIES:
-:CUSTOM_ID: talattributes-replace-element-attributes
+:CUSTOM_ID: talattributes--replace-element-attributes
 :END:
 
 /Syntax/:
@@ -314,9 +292,9 @@ It can, of course, set more than one attribute.
 "<textarea rows=\"10\" cols=\"42\"></textarea>"
 #+end_src
 
-*** tal:condition : Conditionally insert or remove an element
+** tal:condition : Conditionally insert or remove an element
 :PROPERTIES:
-:CUSTOM_ID: talcondition-conditionally-insert-or-remove-an-element
+:CUSTOM_ID: talcondition--conditionally-insert-or-remove-an-element
 :END:
 
 /Syntax/
@@ -416,9 +394,9 @@ Which kinda looks like what I'm trying to portray.
 #+end_src
 
 
-*** tal:content : Replace the content of an element
+** tal:content : Replace the content of an element
 :PROPERTIES:
-:CUSTOM_ID: talcontent-replace-the-content-of-an-element
+:CUSTOM_ID: talcontent--replace-the-content-of-an-element
 :END:
 
 /Syntax/
@@ -525,7 +503,7 @@ the right thing,
 
 
 
-*** =tal:define=
+** =tal:define=
 :PROPERTIES:
 :CUSTOM_ID: taldefine
 :END:
@@ -581,9 +559,9 @@ the =set!:= keyword.
   >
 #+end_src
 
-*** tal:switch : Set up a switch statement
+** tal:switch : Set up a switch statement
 :PROPERTIES:
-:CUSTOM_ID: talswitch-set-up-a-switch-statement
+:CUSTOM_ID: talswitch--set-up-a-switch-statement
 :END:
 
 If everything is testing the same item, and only one can succeed, a
@@ -620,9 +598,9 @@ bunch of conditionals gets hairy. There's a =tal:switch= and some
 #+end_src
 
 
-*** tal:omit-tag : Remove an element leaving its contents
+** tal:omit-tag : Remove an element leaving its contents
 :PROPERTIES:
-:CUSTOM_ID: talomit-tag-remove-an-element-leaving-its-contents
+:CUSTOM_ID: talomit-tag--remove-an-element-leaving-its-contents
 :END:
 
 /Syntax/
@@ -661,7 +639,7 @@ element is replaced with its contents.
 "<p> Is this a Paragraph? Who knows!</p>"
 #+end_src
 
-*** current-tal:on-error and tal:on-error.
+** current-tal:on-error and tal:on-error.
 :PROPERTIES:
 :CUSTOM_ID: current-talon-error-and-talon-error
 :END:
@@ -674,7 +652,7 @@ To update the "outside" error handler outside of the =TAL= form/file
 there is a =current-tal:on-error=. For "inside" use the =tal:on-error=
 attribute is very useful.
 
-**** Default and current-tal:on-error
+*** Default and current-tal:on-error
 :PROPERTIES:
 :CUSTOM_ID: default-and-current-talon-error
 :END:
@@ -713,7 +691,7 @@ But in reality that abstraction's just there so pages still run with
 bugs in them. Even better for all involved is the =tal:on-error=
 attribute.
 
-**** tal:on-error
+*** tal:on-error
 :PROPERTIES:
 :CUSTOM_ID: talon-error
 :END:
@@ -862,9 +840,9 @@ we can do that as well.
 #+end_src
 
 
-*** tal:repeat : Repeat an element
+** tal:repeat : Repeat an element
 :PROPERTIES:
-:CUSTOM_ID: talrepeat-repeat-an-element
+:CUSTOM_ID: talrepeat--repeat-an-element
 :END:
 
 /Syntax/
@@ -911,7 +889,7 @@ repetition, the local variable is set to the current sequence element,
 and the repeat variable is set to an interface around the iteration
 object.
 
-**** The Repeat Interface
+*** The Repeat Interface
 :PROPERTIES:
 :CUSTOM_ID: the-repeat-interface
 :END:
@@ -1061,1385 +1039,3 @@ That's also nice to see in long form.
 #+end_src
 
 
-* Implementation
-:PROPERTIES:
-:CUSTOM_ID: implementation
-:END:
-
-The idea I have is to avoid any polluting of the namespace or module
-while using =TAL=..
-
-So there's only =define-TAL=, =current-tal-output-port=
-=current-tal:on-error= and =tal:write=.
-
-#+begin_src scheme :tangle ../../tal.ss
-  (import (only-in :std/markup/sxml/tal/syntax
-  		 define-TAL current-tal-output-port
-  		 current-tal:on-error tal:write))
-  (export define-TAL current-tal-output-port current-tal:on-error tal:write)
-#+end_src
-
-
-** "Toplevel" A place to push while printing.
-:PROPERTIES:
-:CUSTOM_ID: toplevel-a-place-to-push-while-printing
-:END:
-
-
-The idea is that we can print non-tal HTML to a string and push the
-expansion so after "printing" we have a form that can be compiled.
-
-
-#+begin_src scheme :tangle toplevel.ss
-  (import :std/markup/sxml/html/parser :std/srfi/1)
-  (export #t)
-
-  (def current-toplevel (make-parameter #f))
-  (def current-out-str (make-parameter #f))
-
-  (def (sxml->tal-form sxml)
-    (def top [html:])
-    (def str (open-output-string ""))
-    ;; (display str)
-    (parameterize ((current-toplevel top)
-  		 (current-out-str str))
-      (sxml->html sxml str)
-      (push-toplevel (get-output-string (current-out-str)))
-      (cons 'tal:form (reverse (cdr top)) #;
-  	  (concatenate (map (lambda (x) (if (list? x) x [x]))
-  			    )))))
-  (def (push-toplevel thing)
-    (def top (current-toplevel))
-    ;;(unless (string? thing) (displayln "pushing " thing))
-    (match top
-      ([title . smrof] (set! (cdr top) (cons thing smrof)))))
-
-
-  (def (push-toplevel-element el)
-    (push-toplevel (get-output-string (current-out-str)))
-    (push-toplevel el)
-    [])
-
-#+end_src
-
-We go through the document and make any TAL forms into a function
-that, when run, pushes the TAL form to the toplevel.
-
-#+begin_src scheme :tangle toplevel.ss
-   (def (tal-attrs? attrs)
-    (let lp ((ats attrs))
-      (if (null? ats) #f
-  	(with ([name . rest] (car ats))
-  	  (if (string-prefix? "tal:" (symbol->string name))
-  	    #t
-  	    (lp (cdr ats)))))))
-
-  (def html-end (pgetq end: default-html->sxml-plist))
-#+end_src
-
-
-A quick test shows what it does. First we parse it.
-
-#+begin_src scheme
-  (import :std/markup/sxml/tal/toplevel :std/html)
-
-  (def html "<html><body><h1 tal:content=\"print me\">Here</h1>")
-  (def sxml
-    (html->sxml
-     html end: (lambda (tag attrs parent-seed seed v?) 
-  	       (if (tal-attrs? attrs)
-  		 [(lambda () (push-toplevel-element [(cons* tag (cons '@ attrs) seed)]))
-  		  (reverse parent-seed)]
-  		 (html-end tag attrs parent-seed seed v?)))))
-#+end_src
-
-Then we turn in into a =tal-form=.
-
-#+begin_src scheme
-  > (sxml->tal-form sxml)
-  (tal-form:
-   "<html><body>"
-   (h1 (@ (tal:content "print me")) "Here")
-   "</body></html>"
-#+end_src
-
-
-** The Expanders
-:PROPERTIES:
-:CUSTOM_ID: the-expanders
-:END:
-
-For a =tal-form= we want all non-textual elements to be a valid scheme
-form.
-
-So we get a circular recursive =expand-tal-element= 
-
-#+begin_src scheme :tangle expander.ss
-  (import :std/misc/alist
-  	:std/markup/sxml/tal/toplevel
-  	:std/markup/sxml/html/parser :std/format)
-  (export #t)
-
-  (def (fmt sym . args) (apply format (symbol->string sym) args))
-
-  (def tal-end
-    (lambda (tag attrs parent-seed seed v?)
-      ;;(displayln "Got " tag seed " and pssed" parent-seed)
-      (if (tal-attrs? attrs)
-        (let (el (expand-tal-element tag attrs [] seed v?))
-  	[(cut push-toplevel-element el) ;]
-  	 (identity parent-seed) ...])
-        (html-end tag attrs parent-seed seed v?))))
-
-  (def (html->tal-form html) (sxml->tal-form (html->sxml html end: tal-end)))
-      
-  (def (tal-attr? attr attrs)
-    (let (alist (member attr attrs (lambda (a b) (eq? a (and (pair? b) (car b))))))
-      (and alist (car alist))))
-    	  
-#+end_src
-
-
-#+begin_src scheme :tangle expander.ss
-  (def (expand-tal-element tag attrs parent-seed seed v?)
-    (def els [[tal:define? . expand-tal:define]
-  	    [tal:switch? . expand-tal:switch]
-  	    [tal:condition? . expand-tal:condition]
-  	    [tal:repeat? . expand-tal:repeat]
-  	    [tal:case? . expand-tal:case]
-  	    [tal:content? . expand-tal:content]
-  	    [tal:replace? . expand-tal:replace]
-  	    [tal:attributes? . expand-tal:attributes]
-  	    [tal:omit-tag? . expand-tal:omit-tag]
-              [tal:on-error? . expand-tal:on-error]])
-    (def (tal?)
-      (let lp ((els els))
-        (if (null? els) #f
-  	  (with* (([this rest ...] els)
-  		  ([t? . exp] this))
-  	    (if (t? attrs) exp (lp rest))))))
-    (cond ((tal?) => (cut <> tag attrs parent-seed seed v?))
-  	(else 
-  	 (let (tag (html-end tag attrs parent-seed seed v?))
-  	   (sxml->tal-form tag))))) 
-#+end_src
-*** Bind or set! with =tal:define=
-:PROPERTIES:
-:CUSTOM_ID: bind-or-set-with-taldefine
-:END:
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:define? attrs) (tal-attr? 'tal:define attrs))
-#+end_src
-
-This form is a wrapper with other TAL forms being inside or following it.
-
-#+begin_src bnf
-  argument       ::= define_scope [ define_scope]*
-  define_scope   ::= (['local:'] | 'set!:') define_var
-  define_var     ::= ( variable_name expression )
-  variable_name  ::= Name
-#+end_src
-
-#+begin_src scheme :tangle expander.ss
-
-  (def (expand-tal:define tag attrs parent-seed seed virtual?)
-    (def attr (tal:define? attrs))
-       (with* (([_ bindings] attr) (globals []) (locals [])
-  	     (in (open-input-string bindings)))
-         (def (push-g b) (set! globals (cons b globals)))
-         (def (push-l b) (set! locals (cons b locals)))
-         
-         (let lp ()
-  	 (let* ((form (read in))
-  		(binding (if (keyword? form) (read in) form)))
-  	   ;(displayln form)
-  	   (unless (eof-object? binding)
-  	     (if (eq? form set!:)
-  	       (push-g binding)
-  	       (push-l binding))
-  	     (lp))))
-         ['tal:form
-  	(if (null? globals) globals
-  	    [(cons 'begin (map (cut cons 'set! <>) globals))])
-  	...
-  	(if (null? locals)
-  	  (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)
-  	  ['with* (reverse locals) 
-  	    (expand-tal-element tag (remove1 attr attrs) parent-seed seed virtual?)])]))
-#+end_src
-
-**** Testing
-
-Here's our test HTML and SXML
-
-#+begin_src scheme
-  (import :std/markup/sxml/tal/toplevel :std/html)
-
-  (def html "
-   <html>
-    <body>
-     <h1 tal:define=\"(foo 41)\">
-        preseed
-       <span tal:define=\"global: (foo (1+ foo))\">Here</span>
-       postseed
-     </h1>")
-
-  (def sxml
-    (html->sxml
-     html end: (lambda (tag attrs parent-seed seed v?) 
-  	       (if (tal:define? attrs)
-  		 [(let (el (expand-tal:define tag attrs [] seed v?))
-  		    (cut push-toplevel-element el))
-  		  (identity parent-seed) ...]
-  		 (html-end tag attrs parent-seed seed v?)))))
-#+end_src
-
-The result is great! Note that it automatically adds the closing tags
-for =<body>= and =<html>=. Has our back!
-
-Another thing to note is that it includes the whitespace. This matters
-for web browsers, still, and we like html, no x involved.
-
-Recreating what I see from a raw file in the browser helps, and
-filling in also does. 
-
-#+begin_src scheme
-  > (sxml->tal-form sxml)
-  (tal:form
-   "\n <html>\n  <body>\n   "
-   (tal:form
-    (let* ((foo 41))
-      (tal:form
-       "<h1>\n      preseed\n     "
-       (tal:form (begin (set! foo (1+ foo))) (tal:form "<span>Here</span>"))
-       "\n     postseed\n   </h1>")))
-   "</body></html>")
-#+end_src
-
-
-*** tal:switch: Set up a switch statement
-:PROPERTIES:
-:CUSTOM_ID: talswitch-set-up-a-switch-statement-0
-:END:
-
-Defines a switch clause.
-
-<ul tal:switch="(odd? (random-integer 1))">
-  <li tal:case="#t">odd</li>
-  <li tal:case="#f">even</li>
-</ul>
-
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:switch? attrs) (tal-attr? 'tal:switch attrs))
-  (def (tal:case? attrs) (tal-attr? 'tal:case attrs))
-#+end_src
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (expand-tal:switch tag attrs parent-seed seed v?)
-   (def attr (tal:switch? attrs))
-   (with* (([_ str] attr) (in (open-input-string str)) (switch (read in)))
-     ['tal:switch switch (expand-tal-element tag (remove1 attr attrs) parent-seed seed v?)]))
-
-  (def (expand-tal:case tag attrs parent-seed seed v?)
-    (def attr (tal:case? attrs))
-   ;; (displayln "ws" (call-with-output-string (cut write parent-seed <>)) "seed" seed)
-   (with* (([_ str] attr) (in (open-input-string str)) (case (read in)))
-     ['tal:case
-       case (expand-tal-element tag (remove1 attr attrs) parent-seed seed v?)]))
-  		 
-   
-#+end_src
-
-**** Testing
-
-If you notice the identation on the =li='s that because I keep all the
-whitespace and in a case that may not appear anything outside of it
-still will.
-
-#+begin_src scheme
-  (import :std/markup/sxml/tal/toplevel :std/html)
-
-  (def html "
-   <html>
-    <body> ddiv pssed
-     <div> defpseed <hr>
-     <h1 tal:define=\"(foo 41)\">
-       <span tal:define=\"global: (foo (1+ foo))\">Here</span>
-         <ul tal:switch=\"(odd? (random-integer 1))\">
-          preseed
-          <li tal:case=\"#t\">odd</li
-          ><li tal:case=\"#f\">even</li>-postseed
-        </ul>
-     </h1>
-   </div>
-   ")
-
-
-  (def tal-def-and-switch-end
-    (lambda (tag attrs parent-seed seed v?)
-      ;;(displayln "Got " tag seed " and pssed" parent-seed)
-     
-      (let (el
-  	   (cond
-  	    ((tal:define? attrs)
-  	     (expand-tal:define tag attrs [] seed v?))
-  	    ((tal:switch? attrs)
-  	     (expand-tal:switch tag attrs [] seed v?))
-  	    ((tal:case? attrs)
-  	     (expand-tal:case tag attrs [] seed v?))
-  	    (else #f)))
-         (if el
-  	 [(cut push-toplevel-element el) ;]
-  	   (identity parent-seed) ...]
-         (html-end tag attrs parent-seed seed v?)))))
-
-  (def sxml
-    (html->sxml
-     html end: tal-def-and-switch-end))
-#+end_src
-
-
-The results are what we want. All the the "seed" texts are there as I
-was reversing parent seed and couldn't figure out what was going on.
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- "\n <html>\n  <body> ddiv pssed\n   <div> defpseed <hr>\n   "
- (tal:form
-  (let* ((foo 41))
-    (tal:form
-     "<h1>\n     "
-     (tal:form (begin (set! foo (1+ foo))) (tal:form "<span>Here</span>"))
-     "\n       "
-     (tal:switch
-      (odd? (random-integer 1))
-      (tal:form
-       "<ul>\n        preseed\n        "
-       (tal:case #t (tal:form "<li>odd</li>"))
-       ""
-       (tal:case #f (tal:form "<li>even</li>"))
-       "-postseed\n      </ul>"))
-     "\n   </h1>")))
- "\n </div>\n </body></html>")
-#+end_src
-
-*** More recursion with =expand-tal-element=.
-:PROPERTIES:
-:CUSTOM_ID: more-recursion-with-expand-tal-element
-:END:
-
-At this point an HTM: element can only contain one TAL attribute.
-
-IE:
-
-#+begin_src scheme
-  (def html "<h1 tal:define=\"(foo bar)\" tal:switch=\"foo\"> baz </h1>")
-  (def sxml (html->sxml html end: tal-def-and-switch-end))
-#+end_src
-
-And at the REPL
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- ""
- (tal:form (let* ((foo bar)) (tal:form "<h1 tal:switch=\"foo\"> baz </h1>")))
- "")
-#+end_src
-
-That needs to be changed. Most of the expanders call
-=expand-tal-element= so that's where it needs taken care of.
-
-#+begin_src scheme
-  (def (expand-tal-element tag attrs parent-seed seed v?)
-    (cond
-     ((tal:define? attrs)
-      (expand-tal:define tag attrs parent-seed seed v?))
-     ((tal:switch? attrs)
-      (expand-tal:switch tag attrs parent-seed seed v?))
-     ((tal:case? attrs)
-      (expand-tal:case tag attrs parent-seed seed v?))
-     (else 
-      (let* ((tag (html-end tag attrs parent-seed seed v?))
-    	   (form (sxml->tal-form tag)))
-        (cons 'tal:form (cdr form))))))
-
-  (def tal-end
-    (lambda (tag attrs parent-seed seed v?)
-      ;;(displayln "Got " tag seed " and pssed" parent-seed)
-      (if (tal-attrs? attrs)
-        (let (el (expand-tal-element tag attrs [] seed v?))
-    	[(cut push-toplevel-element el) ;]
-    	 (identity parent-seed) ...])
-        (html-end tag attrs parent-seed seed v?))))
-
-  (def sxml
-    (html->sxml
-     html end: tal-end))
-
-#+end_src
-
-
-Does it work?
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- ""
- (tal:form (let* ((foo bar)) (tal:switch foo (tal:write "<h1> baz </h1>"))))
- "")
-#+end_src
-
-
-Yay! We'll keep adding and eventually make it "upstream".
-
-
-*** The =tal:condition= short form
-:PROPERTIES:
-:CUSTOM_ID: the-talcondition-short-form
-:END:
-
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:condition? attrs) (tal-attr? 'tal:condition attrs))
-  (def (expand-tal:condition tag attrs parent-seed seed v?)
-    (def attr (tal:condition? attrs))
-    ;; (displayln attrs: attrs " ws" (call-with-output-string (cut write parent-seed <>)) "seed" seed)
-   (with* (([_ str] attr) (in (open-input-string str)) (case (read in)))
-     ['when case (expand-tal-element tag (remove1 attr attrs) parent-seed seed v?)]))
-#+end_src
-
-
-
-
-
-#+begin_src scheme
-
-
-
-  (def html "
-   <html tal:define=\"(ltuae 42)\">
-    <body>
-     <div> This is a Test! <hr>
-     <h1 tal:define=\"(foo 41)\">
-       <span tal:define=\"global: (foo (1+ foo))\">Here</span>
-         <ul tal:switch=\"(odd? (random-integer 1))\">
-          preseed
-          <li tal:case=\"#t\">odd</li
-          ><li tal:case=\"#f\">even</li>-postseed
-        </ul>
-     </h1>
-
-    <p tal:condition=\"(odd? ltuae)\"> Odd Con </P>
-    <P tal:condition=\"(even? ltuae)\"> Even Con </p>
-
-     Nested in one tag?
-
-    <div tal:condition=\"(not what?)\"
-         tal:define=\"(what? (odd? (random-integer 1)))\">
-      What? Here!
-    </div>
-
-     
-   </div>
-   ")
-
-  (def sxml
-    (html->sxml
-     html end: tal-end))
-
-#+end_src
-
-Nice! That was an easy one.
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- "\n "
- (tal:form
-  (let* ((ltuae 42))
-    (tal:form
-     "<html>\n  <body> ddiv pssed\n   <div> defpseed <hr>\n   "
-     (tal:form
-      (let* ((foo 41))
-        (tal:form
-         "<h1>\n     "
-         (tal:form (begin (set! foo (1+ foo))) (tal:form "<span>Here</span>"))
-         "\n       "
-         (tal:switch
-          (odd? (random-integer 1))
-          (tal:form
-           "<ul>\n        preseed\n        "
-           (tal:case #t (tal:form "<li>odd</li>"))
-           ""
-           (tal:case #f (tal:form "<li>even</li>"))
-           "-postseed\n      </ul>"))
-         "\n   </h1>")))
-     "\n\n  "
-     (when (odd? ltuae) (tal:form "<p> Odd Con </p>"))
-     "\n  "
-     (when (even? ltuae) (tal:form "<p> Even Con </p>"))
-     "\n </div>\n </body></html>")))
- "")
-
-#+end_src
-
-*** The =tal:repeat= attribute, type and interface
-:PROPERTIES:
-:CUSTOM_ID: the-talrepeat-attribute-type-and-interface
-:END:
-
-
-#+begin_src scheme :tangle expander.ss
-  (def  (tal:repeat? attrs) (tal-attr? 'tal:repeat attrs))
-  (def (expand-tal:repeat tag attrs ps seed v?)
-    (def attr (tal:repeat? attrs))
-    (set! attrs (remove1 attr attrs))
-    (with* (([_ str] attr)
-  	  ([var expression] (read (open-input-string str)))
-  	  (var.repeat (string->symbol
-  		       (string-append (symbol->string var) ".repeat")))
-  	  (repeat/var (string->symbol
-  		       (string-append "repeat/" (symbol->string var)))))
-      `(let (,var.repeat (tal:repeat ,expression))
-         (using (,repeat/var ,var.repeat : Repeat)
-  	 (let tal:loop ()
-  	   (unless (Repeat-end? ,repeat/var)
-  	     (let (,var (tal:repeat-next! ,var.repeat))
-  	       ,(expand-tal-element tag attrs ps seed v?)
-  	       (tal:loop))))))))
-
-
-#+end_src
-
-
-**** Testing
-
-
-
-#+begin_src scheme
-
-
-
-  (def html "
-   <html tal:define=\"(ltuae 42)\">
-    <body>
-     <div> This is a Test! <hr>
-     <h1 tal:define=\"(foo 41)\">
-       <span tal:define=\"global: (foo (1+ foo))\">Here</span>
-         <ul tal:switch=\"(odd? (random-integer 1))\">
-          preseed
-          <li tal:case=\"#t\">odd</li
-          ><li tal:case=\"#f\">even</li>-postseed
-        </ul>
-     </h1>
-
-    <p tal:condition=\"(odd? ltuae)\"> Odd Con </P>
-    <P tal:condition=\"(even? ltuae)\"> Even Con </p>
-
-     Nested in one tag?
-
-    <div tal:condition=\"(not what?)\"
-         tal:define=\"(what? (odd? (random-integer 1)))\">
-      What? Here!
-    </div>
-
-    <ul>
-      <li tal:repeat=\"(n '(1 2 3 42))\">
-        <p tal:condition=\"(odd? n)\"> Odd li </P>
-        <P tal:condition=\"(even? n)\"> Even li </p>
-        <P tal:condition=\"(repeat/n.end?)\"> End </p>
-       </li>
-    </ul>
-   </div>
-   ")
-
-  (def sxml
-    (html->sxml
-     html end: tal-end))
-#+end_src
-
-The result looks good.
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- "\n "
- (tal:form
-  (let* ((ltuae 42))
-    (tal:form
-     "<html>\n  <body>\n   <div> This is a Test! <hr>\n   "
-     (tal:form
-      (let* ((foo 41))
-        (tal:form
-         "<h1>\n     "
-         (tal:form (begin (set! foo (1+ foo))) (tal:form "<span>Here</span>"))
-         "\n       "
-         (tal:switch
-          (odd? (random-integer 1))
-          (tal:form
-           "<ul>\n        preseed\n        "
-           (tal:case #t (tal:form "<li>odd</li>"))
-           ""
-           (tal:case #f (tal:form "<li>even</li>"))
-           "-postseed\n      </ul>"))
-         "\n   </h1>")))
-     "\n\n  "
-     (when (odd? ltuae) (tal:form "<p> Odd Con </p>"))
-     "\n  "
-     (when (even? ltuae) (tal:form "<p> Even Con </p>"))
-     "\n\n   Nested in one tag?\n\n  "
-     (tal:form
-      (let* ((what? (odd? (random-integer 1))))
-        (when (not what?) (tal:form "<div>\n    What? Here!\n  </div>"))))
-     "\n\n  <ul>\n    "
-     (let (n.repeat (tal:repeat '(1 2 3 42)))
-       (using (repeat/n n.repeat : Repeat)
-              (let tal:loop ()
-                (unless (Repeat-end? repeat/n)
-                  (let (num (tal:repeat-next! n.repeat))
-                    (tal:form
-                     "<li>\n      "
-                     (when (odd? n) (tal:form "<p> Odd li </p>"))
-                     "\n      "
-                     (when (even? n) (tal:form "<p> Even li </p>"))
-                     "\n      "
-                     (when (repeat/n.end?) (tal:form "<p> End </p>"))
-                     "\n     </li>")
-                    (tal:loop))))))
-     "\n  </ul>\n </div>\n </body></html>")))
- "")
-#+end_src
-**** The Iterator and Interface for =tal:repeat=
-
-#+begin_src scheme :tangle iter.ss
-  (import :std/interface :std/contract :std/iter :std/generic :std/markup/sxml/tal/toplevel)
-  (export #t)
-
-  ;; Tangled from README.org
-
-  (defstruct tal:repeat (iter next-item index)
-    constructor: :init! transparent: #t)
-
-  (defmethod {:init! tal:repeat}
-    (lambda (self seq)
-      (def itr (iter seq))
-      (using (self :- tal:repeat)
-        (set! self.index -1)
-        (set! self.iter itr)
-        (set! self.next-item (iter-next! itr)))))
-
-  (def (tal:repeat-next! self)
-    (if (iterator? self) (set! self (iterator-e self))) 
-    (using (self : tal:repeat)
-      (def item self.next-item)
-      (set! self.index (1+ self.index))
-      (set! self.next-item (iter-next! self.iter))
-      item))
-
-  (defmethod (:iter (self tal:repeat)) (make-iterator self tal:repeat-next!))
-
-  (interface Repeat
-    (index) ;; repetition number, starting from zero.
-    (number) ;; repetition number, starting from one. 
-    (even? )  ;; true for even-indexed repetitions (0, 2, 4, …).
-    (odd?) ;; true for odd-indexed repetitions (1, 3, 5, …).
-    (start?) ;; true for the starting repetition (index 0).
-    (end?)  ;; true for the ending, or final, repetition.
-   ; (first?)  ;; true for the first item in a group - see note below
-    ;(last?)  ;; true for the last item in a group - see note below
-    ;; length- - length of the sequence, which will be the total number of repetitions "
-    (letter)  ;; repetition number as a lower-case letter: “a” - “z”,
-  	    ;; “aa” - “az”, “ba” - “bz”, …, “za” - “zz”, “aaa” -
-  	    ;; “aaz”, and so forth.
-
-    (Letter)  ;; upper-case version of - letter- .
-
-    (roman)  ;; repetition number as a lower-case roman numeral: “i”,
-  	   ;; “ii”, “iii”, “iv”, “v”, etc.
-
-    ;; upper-case version of - roman- .
-    (Roman))
-
-
-  (defmethod {index tal:repeat} tal:repeat-index)
-  (defmethod {number tal:repeat} (lambda (r) (1+ (tal:repeat-index r))))
-  (defmethod {even? tal:repeat} (lambda (r) (even? (tal:repeat-index r)))) 
-  (defmethod {odd? tal:repeat} (lambda (r) (odd? (tal:repeat-index r)))) 
-  (defmethod {start? tal:repeat} (lambda (r) (= 0 (tal:repeat-index r))))
-  (defmethod {end? tal:repeat} (lambda (r) (eq? iter-end (tal:repeat-next-item r))))
-  (def (integer->letters number (base-char #\a))
-    (def bn (char->integer base-char))
-    (list->string
-     (reverse 
-      (let lp ((number number))
-        (set! number (1- number))
-        ;(displayln "Get Num:" number )
-        (if (< number 0) []
-  	  (cons (integer->char (+ bn (modulo number 26)))
-  		(lp (floor (/ number 26)))))))))
-
-  (defmethod {letter tal:repeat}
-    (lambda (r) (integer->letters (1+ (tal:repeat-index r)))))
-      
-  (defmethod {Letter tal:repeat}
-    (lambda (r) (integer->letters (1+ (tal:repeat-index r)) #\A)))
-
-  (def roman-decimal
-    '(("M"  . 1000)
-      ("CM" . 900)
-      ("D"  . 500)
-      ("CD" . 400)
-      ("C"  . 100)
-      ("XC" .  90)
-      ("L"  .  50)
-      ("XL" .  40)
-      ("X"  .  10)
-      ("IX" .   9)
-      ("V"  .   5)
-      ("IV" .   4)
-      ("I"  .   1)))
-
-  (def (integer->roman value)
-    (apply string-append
-           (let loop ((v value)
-                      (decode roman-decimal))
-             (let ((r (caar decode))
-                   (d (cdar decode)))
-               (cond
-                ((= v 0) '())
-                ((>= v d) (cons r (loop (- v d) decode)))
-                (else (loop v (cdr decode))))))))
-
-  (defmethod {roman tal:repeat} 
-    (lambda (r) (string-downcase (integer->roman (1+ (tal:repeat-index r))))))
-
-  (defmethod {Roman tal:repeat}
-    (lambda (r) (integer->roman (1+ (tal:repeat-index r)))))
-
-#+end_src
-
-
-*** Replace the seed with =tal:content=
-:PROPERTIES:
-:CUSTOM_ID: replace-the-seed-with-talcontent
-:END:
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:content? attrs) (tal-attr? 'tal:content attrs))
-
-  (def (expand-tal:content tag attrs parent-seed seed virtual?)
-    (def cnt (tal:content? attrs))
-    (with* (([_ content] cnt)
-  	  (type text:)
-    	  (body [])
-    	  (p (open-input-string content)))
-      (let lp ((bdy []))
-        (def form (read p))
-        (if (and (null? bdy) (keyword? form))
-    	(begin (if (member form [text: as-is: raw:])
-  		 (set! type form)
-    		 (error "Unknown content type" form))
-  	       (lp []))
-    	(if (eof-object? form)
-    	  (set! body (reverse bdy))
-    	  (lp (cons form bdy)))))
-  	
-      (when (null? body) (set! body [""]))
-
-      (set! body (cons 'begin body))
-
-      (unless (eq? type raw:)
-        (set! body
-  	`(let ((%body ,body))
-  	   (if (eq? %body default:)
-  	     ,(sxml->tal-form (reverse seed))
-  	     ,['tal:write (if (eq? type as-is:) '%body
-  			      `(html-escape (tal:stringify %body)))]))))
-          
-
-      (expand-tal-element
-       tag (remove1 cnt attrs) parent-seed
-       [(cut push-toplevel-element body)] virtual?)))
-
-#+end_src
-
-**** Testing
-
-
-
-#+begin_src scheme
-  (def html "
-   <html tal:define=\"(ltuae 42)\">
-    <body>
-     <div> This is a Test! <hr>
-     <h1 tal:define=\"(foo 41)\">
-       <span tal:define=\"global: (foo (1+ foo))\">Here</span>
-         <ul tal:switch=\"(odd? (random-integer 1))\">
-          preseed
-          <li tal:case=\"#t\">odd</li
-          ><li tal:case=\"#f\">even</li>-postseed
-        </ul>
-     </h1>
-
-    <p tal:condition=\"(odd? ltuae)\"> Odd Con </P>
-    <P tal:condition=\"(even? ltuae)\"> Even Con </p>
-
-     Nested in one tag?
-
-    <div tal:condition=\"(not what?)\"
-         tal:define=\"(what? (odd? (random-integer 1)))\">
-      What? Here!
-    </div>
-
-    <ul>
-      <li tal:repeat=\"(n '(1 2 3 42))\">
-        <span tal:condition=\"(= n 42)\" tal:content=\"n\"> number </span>
-        <p tal:condition=\"(odd? n)\"> Odd li </P>
-        <P tal:condition=\"(even? n)\"> Even li </p>
-        <P tal:condition=\"(repeat/n.end?)\"> End </p>
-       </li>
-    </ul>
-   </div>
-   ")
-
-  (def sxml
-    (html->sxml
-     html end: tal-end))
-#+end_src
-
-That's working nice!
-
-#+begin_src scheme
->  (sxml->tal-form sxml)
-(tal:form
- "\n "
- (tal:form
-  (let* ((ltuae 42))
-    (tal:form
-     "<html>\n  <body>\n   <div> This is a Test! <hr>\n   "
-     (tal:form
-      (let* ((foo 41))
-        (tal:form
-         "<h1>\n     "
-         (tal:form (begin (set! foo (1+ foo))) (tal:form "<span>Here</span>"))
-         "\n       "
-         (tal:switch
-          (odd? (random-integer 1))
-          (tal:form
-           "<ul>\n        preseed\n        "
-           (tal:case #t (tal:form "<li>odd</li>"))
-           ""
-           (tal:case #f (tal:form "<li>even</li>"))
-           "-postseed\n      </ul>"))
-         "\n   </h1>")))
-     "\n\n  "
-     (when (odd? ltuae) (tal:form "<p> Odd Con </p>"))
-     "\n  "
-     (when (even? ltuae) (tal:form "<p> Even Con </p>"))
-     "\n\n   Nested in one tag?\n\n  "
-     (tal:form
-      (let* ((what? (odd? (random-integer 1))))
-        (when (not what?) (tal:form "<div>\n    What? Here!\n  </div>"))))
-     "\n\n  <ul>\n    "
-     (let (n.repeat (tal:repeat '(1 2 3 42)))
-       (using (repeat/n n.repeat : Repeat)
-              (let tal:loop ()
-                (unless (Repeat-end? repeat/n)
-                  (let (num (tal:repeat-next! n.repeat))
-                    (tal:form
-                     "<li>\n      "
-                     (when (= n 42)
-                       (tal:form
-                        "<span>"
-                        (tal:write (html-escape (tal:stringify (begin n))))
-                        "</span>"))
-                     "\n      "
-                     (when (odd? n) (tal:form "<p> Odd li </p>"))
-                     "\n      "
-                     (when (even? n) (tal:form "<p> Even li </p>"))
-                     "\n      "
-                     (when (repeat/n.end?) (tal:form "<p> End </p>"))
-                     "\n     </li>")
-                    (tal:loop))))))
-     "\n  </ul>\n </div>\n </body></html>")))
- "")
-#+end_src
-
-*** Just =tal:replace= it!
-:PROPERTIES:
-:CUSTOM_ID: just-talreplace-it
-:END:
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:replace? attrs) (tal-attr? 'tal:replace attrs))
-
-  (def (expand-tal:replace tag attrs parent-seed seed virtual?)
-    (def attr (tal:replace? attrs))
-    (with* (([_ content] attr) (type text:) (body [])
-  	  (p (open-input-string content)))
-      (let lp ((bdy []))
-        (def form (read p))
-        (if (and (null? bdy) (keyword? form))
-    	(begin (if (member form [text: as-is: raw:])
-  		 (set! type form)
-    		 (error "Unknown content type for replace" attr))
-  	       (lp []))
-    	(if (eof-object? form)
-    	  (set! body (reverse bdy))
-    	  (lp (cons form bdy)))))
-  	
-      (when (null? body) (set! body [""]))
-
-      (set! body (cons 'begin body))
-      (unless (eq? type raw:)
-        (set! body ['tal:write (if (eq? type as-is:) body
-  				 `(html-escape (tal:stringify ,body)))]))
-
-      body))
-#+end_src
-
-
-
-#+begin_src scheme
-  (def html "
-   <html tal:define=\"(ltuae 42)\">
-    <body>
-     <div> This is a Test! <hr tal:replace=\"ltuae\">>
-     
-       <br tal:replace=\"as-is: &quot;&lt;strong> eh? &lt;/strong>&quot;\">
-      </div> </body> </html> 
-   ")
-
-  (def sxml (html->sxml html end: tal-end))
-
-#+end_src
-
-Yay!
-
-#+begin_src scheme
-> (sxml->tal-form sxml)
-(tal:form
- "\n "
- (tal:form
-  (let* ((ltuae 42))
-    (tal:form
-     "<html>\n  <body>\n   <div> This is a Test! "
-     (tal:write (html-escape (tal:stringify (begin ltuae))))
-     "&gt;\n   \n     "
-     (tal:write (identity (tal:stringify (begin "<strong> eh? </strong>"))))
-     "\n    </div> </body> </html>")))
- " \n ")
-#+end_src
-
-*** The =tal:on-error= handler
-:PROPERTIES:
-:CUSTOM_ID: the-talon-error-handler
-:END:
-
-
-#+begin_src scheme :tangle ./expander.ss
-  (def (tal:on-error? attrs) (tal-attr? 'tal:on-error attrs))
-
-  (def (expand-tal:on-error tag attrs parent-seed seed virtual?)
-    (def attr (tal:on-error? attrs))
-    (with* (([_ handler] attr) (type text:) (body [])
-  	  (p (open-input-string handler)))
-      (let lp ((bdy []))
-        (def form (read p))
-        (if (and (null? bdy)
-  	       (or (keyword? form) (eq? form 'ignore)))
-    	(begin (if (member form [text: as-is: raw: ignore: 'ignore])
-  		 (set! type form)
-    		 (error "Unknown content type for replace" attr))
-  	       (lp []))
-    	(if (eof-object? form)
-    	  (set! body (reverse bdy))
-    	  (lp (cons form bdy)))))
-      ;;(displayln "Type: " type " body: " body)
-
-      (when (null? body) (set! body [""]))
-      
-      (set! body (cons 'begin body))
-      (unless (member type [raw: 'ignore ignore:])
-        (set! body ['tal:write (if (eq? type as-is:) body
-  				 `(html-escape (tal:stringify ,body)))]))
-      `(try
-        (let (u8v (call-with-output-u8vector
-  		 #u8() (lambda (p) (parameterize ((current-tal-output-port p))
-  			(parameterize ((current-tal-catcher #t))
-                        ,(expand-tal-element
-  			    tag (remove1 attr attrs) parent-seed seed virtual?))))))
-  	     (write-u8vector u8v (current-tal-output-port)))
-  	   (catch (err)
-  	     ,(if (member type ['ignore ignore:])
-  		  body
-  		  (expand-tal-element
-  		   tag (remove1 attr attrs) parent-seed
-  		   [(cut push-toplevel-element body)]
-  		   virtual?))))))
-#+end_src
-
-
-*** =tal:attributes=: set =attributes=
-:PROPERTIES:
-:CUSTOM_ID: talattributes-set-attributes
-:END:
-
-
-#+begin_src scheme :tangle expander.ss
-  (def (tal:attributes? attrs) (tal-attr? 'tal:attributes attrs))
-
-  (def (expand-tal:attributes tag attrs parent-seed seed virtual?)
-    (def _attrs (tal:attributes? attrs))
-    (set! attrs (remove1 _attrs attrs))
-    ;; (error _attrs)
-    (with* (([_ attrs-str] _attrs)
-    	  (alst (read (open-input-string
-    		       (string-append "(" attrs-str ")")))))
-      ;;(displayln "attrs:" attrs alst)
-      (if (null? attrs) (set! attrs alst)
-    	(for-each (lambda (kv) (with ([k . v] kv) (aset! attrs k v)))
-    		  alst))
-       ['tal:html
-        ['quasiquote [tag
-         ['@ (map (lambda (kv) `(,(car kv) ,['unquote (cadr kv)])) attrs) ...]
-         ['unquote
-  	`(lambda ()
-             (begin0 []
-  	     (push-toplevel-element
-  	      (call-with-output-u8vector
-  	       #u8() (lambda (p)
-  		       (parameterize((current-tal-output-port p))
-  			  ,(sxml->tal-form (reverse seed))))))))]]]]))
-#+end_src
-
-
-#+begin_src scheme
-  (def html "<html><body>
-    <div tal:content=\"var\"></div>
-
-    <a href=\"#\" tal:attributes=\"(href link-url)\">Foo</a>
-    <select name=\"examiner\">
-     <option tal:repeat=\"(e (list-examiners))\"
-             tal:content=\"(examiner-name e)\"
-             tal:attributes=\"(value (examiner-id e))\"
-      >Ex Name</option>
-    </select>
-
-    </body> </html>")
-   
-              
-  (def sxml (html->sxml html end: tal-end))
-      
-#+end_src
-
-#+begin_src scheme
->  (begin (def sxml (html->sxml html end: tal-end)) (sxml->tal-form sxml))
-(tal:form
- "<html><body>\n  "
- (tal:form
-  "<div>"
-  (tal:write (html-escape (tal:stringify (begin var))))
-  "</div>")
- "\n\n  "
- (tal:write (tal->html `(a (@ (href ,link-url)) (tal:form "Foo"))))
- "\n  <select name=\"examiner\">\n   "
- (let (e.repeat (tal:repeat (list-examiners)))
-   (using (repeat/e e.repeat : Repeat)
-          (let tal:loop ()
-            (unless (Repeat-end? repeat/e)
-              (let (num (tal:repeat-next! e.repeat))
-                (tal:write
-                 (tal:html
-                  `(option (@ (value ,(examiner-id e)))
-                           (tal:form
-                            ""
-                            (tal:write
-                             (html-escape
-                              (tal:stringify (begin (examiner-name e)))))
-                            ""))))
-                (tal:loop))))))
- "\n  </select>\n\n  </body> </html>")
-#+end_src
-
-*** =tal:omit-tag=
-:PROPERTIES:
-:CUSTOM_ID: talomit-tag
-:END:
-
-
-There are times when development is quite cool as when I started on
-these expanders I would not have anywhere near a clue on how do this
-whereas of now it takes care of itself.
-
-
-#+begin_src scheme :tangle expander.ss
-  (def (tal:omit-tag? attrs) (tal-attr? 'tal:omit-tag attrs))
-
-  (def (expand-tal:omit-tag tag attrs parent-seed seed virtual?)
-    (def attr (tal:omit-tag? attrs))
-    ;; (error _attrs)
-    (with* (([_ str] attr)
-    	  (in (open-input-string
-    	       (string-append "(" str ")")))
-  	  (cnd (read in)))
-      
-      (if (null? cnd)
-        (sxml->tal-form (reverse seed))
-        ['if (cons 'begin cnd)
-  	(sxml->tal-form (reverse seed))
-  	(expand-tal-element
-  	 tag (remove1 attr attrs) parent-seed seed virtual?)])))
-#+end_src
-
-
-#+begin_src scheme
-  (def html "<html><body>
-    <div tal:content=\"var\"></div>
-    <div tal:omit-tag=\"\" tal:define=\"(link-url this-url)\">
-     <a href=\"#\" tal:attributes=\"(href link-url)\">Foo</a>
-     <b tal:omit-tag=\"maybe-bold\"> Maybe I'm Bold!
-         <h1 tal:replace=\"who\">ME?</h1>
-     </b>
-    </div>
-    </body> </html>")
-   
-              
-  (def sxml (html->sxml html end: tal-end))
-      
-#+end_src
-
-I notice one thing in the result with an escaped string. I'll leave it for now.
-
-#+begin_src scheme
-> (begin (def sxml (html->sxml html end: tal-end)) (sxml->tal-form sxml))
-(tal:form
- "<html><body>\n  "
- (tal:form
-  "<div>"
-  (tal:write (html-escape (tal:stringify (begin var))))
-  "</div>")
- "\n  "
- (tal:form
-  (let* ((link-url this-url))
-    (tal:form
-     "\n   "
-     (tal:write (tal:html `(a (@ (href ,link-url)) (tal:form "Foo"))))
-     "\n   "
-     (if (begin maybe-bold)
-         (tal:form
-          " Maybe I&#39;m Bold!\n       "
-          #0=(tal:write (html-escape (tal:stringify (begin who))))
-          "\n   ")
-         (tal:form "<b> Maybe I'm Bold!\n       " #0# "\n   </b>"))
-     "\n  ")))
- "\n  </body> </html>")
-#+end_src
-
-
-* Syntax: Make a tal form compile and run
-:PROPERTIES:
-:CUSTOM_ID: syntax-make-a-tal-form-compile-and-run
-:END:
-
-There's a parser that outputs a =tal-form=. We want to actually take
-that form and output bytes that can be read as a valid *html*.
-
-We've got 4 pieces of syntax with 3 inside it.
- - tal:form :: A list of strings and code
- - tal:write :: Just write something to our output.
- - tal:stringify :: Make sure the item passed is a string. 
- - tal:html :: Take the passed sxml + body and =tal:write= the
-   =tal:form= it generates
-   
-
- 
-** The =tal:writer= and =tal:stringify=
-:PROPERTIES:
-:CUSTOM_ID: the-talwriter-and-talstringify
-:END:
-
-
-#+begin_src scheme :tangle ./syntax.ss
-  (import :std/sugar (for-syntax :std/text/utf8) :std/text/utf8
-  	  (for-syntax :std/error) :std/error
-  	  (for-syntax :std/misc/ports) :std/misc/ports
-  	  (for-syntax :std/source) :std/source
-  	  (for-syntax :gerbil/runtime/syntax)
-  	  :std/markup/sxml/html/parser :std/markup/sxml/tal/toplevel
-        (for-syntax :std/markup/sxml/tal/expander) :std/markup/sxml/tal/expander)
-  (export #t)
-  (def current-tal-output-port (make-parameter (current-output-port)))
-
-  (defrule (tal:write thing)
-    (let ((t thing)
-          (p (current-tal-output-port)))
-      (if (u8vector? t) (write-u8vector t p)
-          (if (string? t) (write-u8vector (string->utf8 t) p)
-  	    (display t p)))
-      ""))
-
-  (defrule (tal:stringify thing)
-    (let ((str thing))
-      (if (string? str) str
-  	(if (not str) "" (with-output-to-string "" (cut display str))))))
-
-#+end_src
-
-** Trivial =tal:switch= and =tal:case=
-:PROPERTIES:
-:CUSTOM_ID: trivial-talswitch-and-talcase
-:END:
-
-Trying to make it into a =cond= or =case= or =if= statement has my
-head broken. So, this attempt will make it a bit simpler.
-
-#+begin_src scheme :tangle ./syntax.ss
-
-  (defstruct tal:switch-value (e))
-  (def current-tal-switch (make-parameter #f))
-
-  (defsyntax (tal:switch-test stx)
-    (syntax-case stx ()
-      ((_ (value test: test))
-       #'(let* ((ts (current-tal-switch))
-  	      (tv (and (tal:switch-value? ts)
-  		       (tal:switch-value-e ts))))
-  	 (and ts (test tv value))))
-      ((macro else:) #'(macro (#t test: (lambda _ #t))))
-      ((macro value) #'(macro (value test: equal?)))))
-
-  (defrule (tal:switch exp body ...)
-    (parameterize ((current-tal-switch (make-tal:switch-value exp)))
-      body ...))
-
-  (defrule (tal:case exp body ...)
-    (when (tal:switch-test exp)
-      (current-tal-switch #f)
-      body ...))
-
-#+end_src
-** The =tal:html= metacircular syntax
-:PROPERTIES:
-:CUSTOM_ID: the-talhtml-metacircular-syntax
-:END:
-
-
-#+begin_src scheme :tangle ./syntax.ss
-  (defrule (tal:html sxml)
-    (tal:write
-     (u8vector-concatenate
-      (map (lambda (x)
-  	   (cond
-  	    ((u8vector? x) x)
-  	    ((string? x) (string->utf8 x))
-  	    (else (call-with-output-u8vector #u8() (cut write x <>)))))
-  	 (cdr (sxml->tal-form sxml))))))
-
-#+end_src
-
-** The =tal:form= syntax
-:PROPERTIES:
-:CUSTOM_ID: the-talform-syntax
-:END:
-
-#+begin_src scheme :tangle ./syntax.ss
-  (def current-tal-catcher (make-parameter #f))
-
-  (extern namespace: #f RuntimeException-exception)
-  (def (tal-error-to-string e)
-    (cond ((RuntimeException? e)
-  	 (tal-error-to-string (RuntimeException-exception e)))
-  	(else (or (error-message e)
-  		  (call-with-output-string
-  		   ""
-  		   (lambda (p) (parameterize ((current-error-port p))
-  			    (display-exception e))))))))
-
-  (def current-tal:on-error
-    (make-parameter
-     (lambda (e) (tal:write (html-escape (string-append
-  		      "ERROR: " (tal-error-to-string e)))))))
-
-  (defsyntax (tal:form stx)
-   (syntax-case stx (tal:form)
-     ((_ out rest ...)
-      (stx-string? #'out)
-      (let* ((str (stx-e #'out))
-  	   (vec (string->utf8 str)))
-        (with-syntax ((u8v vec))
-  	#'(begin (write-u8vector u8v (current-tal-output-port))
-  		 (tal:form rest ...)))))
-     ((_ (tal:form nest ...) rest ...)
-      #'(tal:form nest ... rest ...))
-     ((_ form rest ...)
-      #'(begin ;;(tal:write "Where are we") (displayln 'form)
-  	(let (tal-raise? (current-tal-catcher))
-  	  (try
-  	   (let (u8v (call-with-output-u8vector
-  		      #u8() (lambda (p) (parameterize ((current-tal-output-port p))
-  				     form))))
-  	     (write-u8vector u8v (current-tal-output-port)))
-  	   (catch (e)
-  	     (if tal-raise? (raise e)
-  		 ((current-tal:on-error) e)))))
-  	     (tal:form rest ...)))
-     ((_) #'(void))))
-#+end_src
-
-
-** The =define-TAL= supersyntax.
-:PROPERTIES:
-:CUSTOM_ID: the-define-tal-supersyntax
-:END:
-
-I want an easy way to define a TAL function without having to import
-the things that a =tal:form= expands to.
-
-Gerbil has named nested modules so I think they'll do.
-
-#+begin_src scheme :tangle ./syntax.ss
-  (defsyntax (define-TAL stx)
-    (syntax-case stx ()
-      ((_ (name args ...) str)
-       (stx-string? #'str)
-       #'(define-TAL (name args ...) string: str))
-      ((_ (name args ...) file: pathname)
-       (stx-string? #'pathname)
-       (let* ((file (stx-e #'pathname))
-  	    (locat (stx-source stx))
-              (con (##locat-container locat))
-  	    (path (##container->path con))
-  	    (dir (if path (path-directory path) (current-directory)))
-  	    (str (read-file-string (path-expand file dir))))
-         (with-syntax ((syn str))
-  	 #'(define-TAL (name args ...) string: syn))))
-      ((macro (name args ...) string: str)
-       (let* ((nname  (stx-e #'name))
-  	    (aargs (stx-e #'(args ...)))
-  	    (mod (make-symbol (gensym) nname '::module))
-              (exprt (make-symbol (gensym) nname '::proc)))
-         (datum->syntax
-  	   #'name
-  	 `(begin
-  	    (module ,mod
-  	      (export (rename-out #t (,nname ,exprt)))
-  	      (import :std/contract :std/interface :std/sugar :std/text/utf8
-  		      :std/html (rename-in :std/markup/sxml/tal/iter (tal:repeat? tal-iter?))
-  		      :std/markup/sxml/tal/toplevel :std/markup/sxml/tal/expander
-  		      :std/markup/sxml/tal/syntax)
-  	      (def (,nname ,@aargs)
-  		,(html->tal-form (stx-e #'str))))
-  	    (import ,mod)
-  	    (def ,nname ,exprt)))))))
-
-
-
-#+end_src
-
-
-#  LocalWords:  TAL TOC tal

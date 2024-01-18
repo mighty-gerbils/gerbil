@@ -3,7 +3,8 @@
 cd ${0%/*}
 
 weave () {
-    emacs  $1 --batch -l `pwd`/ox-gfm.el -f org-gfm-export-to-markdown --kill ||
+    emacs  $1 --batch -l `pwd`/ox-gfm.el \
+	   --eval '(print (org-gfm-export-to-markdown nil nil nil))' --kill ||
 	echo "Cannot export from org $1 to markdown using emacs"
 }
 weave_subtree () {
@@ -17,7 +18,10 @@ weave_subtree () {
 
 
 weave ../src/std/mime/README.org
-weave_subtree ../src/std/markup/sxml/README.org "xml-documentation"
+weave ../src/std/markup/sxml/README.org
+weave ../src/std/markup/sxml/xml.org
+weave ../src/std/markup/sxml/html/README.org
+weave ../src/std/markup/sxml/tal/README.org
 
 
 npm install

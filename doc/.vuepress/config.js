@@ -63,10 +63,6 @@ module.exports = {
                       'generic',
                       'ref',
                       'iterators',
-                      'sxml',
-		      'tal',
-		      'html',
-                      'xml',
                       'coroutine',
                       'events',
                       'amb',
@@ -84,6 +80,16 @@ module.exports = {
                       'parser',
                       'values',
 		      'mime/',
+		      {
+			  title: "Markup Languages"
+			  path: "/reference/std/markup/"
+			  children: [
+			      "markup/sxml/",
+			      "markup/sxml/xml",
+			      "markup/sxml/html/",
+			      "markup/sxml/tal/"
+			  ]
+		      },
 
                       { title: "Networking Libraries",
                         path: "/reference/std/net/",

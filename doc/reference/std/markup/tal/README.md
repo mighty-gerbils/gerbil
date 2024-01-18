@@ -1,5 +1,19 @@
 # TAL: The Template Attribute Language
 
+I, (drewc <me at drewc dot ca>), first got introduced to `TAL` around '05 by [@segv](https://github.com/segv) in his [Common Lisp YACLML](https://web.archive.org/web/20160315020505/http://www.3ofcoins.net/2010/01/21/yaclml-in-pictures-part-ii-templating/) library.
+
+Its usefulness cannot be understated!
+
+Here is my attempt at the [Zope Template Attribute Language](https://zope.readthedocs.io/en/latest/zopebook/AppendixC.html).
+
+::: tip To use the bindings from this module:
+
+```scheme
+(import :std/markup/tal)
+```
+
+:::
+
 > The Template Attribute Language (TAL) is a templating language used to generate dynamic HTML and XML pages. Its main goal is to simplify the collaboration between programmers and designers. This is achieved by embedding TAL statements inside valid HTML (or XML) tags which can then be worked on using common design tools.
 > 
 > &#x2013; <https://en.wikipedia.org/wiki/Template_Attribute_Language>
@@ -25,7 +39,7 @@ To define a `TAL` procedure we take `HTML` code that may have Template Attribute
 If a tag has more than one TAL attribute they are evaluated in the above (fairly logical) order.
 
 
-## define-TAL
+## `define-TAL`
 
 ```scheme
 (define-TAL (name args ...) /key/ string-or-filename)
@@ -42,7 +56,7 @@ If a tag has more than one TAL attribute they are evaluated in the above (fairly
 A function that outputs **HTML** makes up a portion of a web application. Using `define-TAL` makes it easy to use a block of **HTML/XHTML** as a function.
 
 ```scheme
-(import :std/tal :std/format :std/text/utf8 :std/sugar)
+(import :std/markup/tal :std/format :std/text/utf8 :std/sugar)
 
 (define-TAL (htmlist items)
   "<ul><li
@@ -110,8 +124,8 @@ Most of the time it will be over a socket but for testing purposes we'll tear it
 ```scheme
 (defrule (:> tal ...)
   (let ((u8v (call-with-output-u8vector
-              #u8() (lambda (p) (parameterize ((current-tal-output-port p))
-                             tal ...)))))
+            #u8() (lambda (p) (parameterize ((current-tal-output-port p))
+                           tal ...)))))
     (utf8->string u8v)))
 ```
 
@@ -389,15 +403,15 @@ EOF
 ```scheme
 > (:> (div-proc-content
        (lambda ()
-         (div-text-content "esc: <hr>")
-         (div-html-content "hr: <hr>"))))
+       (div-text-content "esc: <hr>")
+       (div-html-content "hr: <hr>"))))
 "<div><div>esc: &lt;hr&gt;</div><div>hr: <hr></div></div>"
 ```
 
 
-## tal:define
+## `tal:define`
 
-The `tal:define` command either wraps a `let*` around the tag (by default or with the `local:` keyword) and/or `set!`'ing things with the `set!:` keyword.
+The `tal:define` command either wraps a `with*` around the tag (by default or with the `local:` keyword) and/or `set!`'ing things with the `set!:` keyword.
 
 ```scheme
 (define-TAL (let-and-set x y) #<<EOF
@@ -544,9 +558,9 @@ We can change it.
 
 ```scheme
 > (:> (parameterize ((current-tal:on-error
-                      (lambda (e) '(log-error e)
-                         (tal:write "Nothing wrong here!"))))
-        (test-no-on-error (cut error "Something Wrong!"))))
+                    (lambda (e) '(log-error e)
+                       (tal:write "Nothing wrong here!"))))
+      (test-no-on-error (cut error "Something Wrong!"))))
 "<ul>\n  <li>Nothing wrong here!</li>\n</ul>"
 ```
 
