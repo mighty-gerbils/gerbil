@@ -27,8 +27,8 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: gerbil-${{ github.event.release.tag_name }}-fedora-1.0-1.x86_64.rpm
-        asset_name: gerbil-${{ github.event.release.tag_name }}-fedora-1.0-1.x86_64.rpm
+        asset_path: gerbil-${{ github.event.release.tag_name }}.fedora-1.0-1.x86_64.rpm
+        asset_name: gerbil-${{ github.event.release.tag_name }}.fedora-1.0-1.x86_64.rpm
         asset_content_type: application/zip
 
     - name: upload ubuntu artifact
@@ -37,8 +37,8 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: gerbil-${{ github.event.release.tag_name }}.ubuntu-1.0_.amd64.deb
-        asset_name: gerbil-${{ github.event.release.tag_name }}.ubuntu_1.0_.amd64.deb
+        asset_path: gerbil-${{ github.event.release.tag_name }}.ubuntu-1.0_amd64.deb
+        asset_name: gerbil-${{ github.event.release.tag_name }}.ubuntu_1.0_amd64.deb
         asset_content_type: application/zip
 
     - name: upload tgz
