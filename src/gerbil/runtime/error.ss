@@ -27,6 +27,7 @@ namespace: #f
   unchecked: #t
   transparent: #t)
 
+;; TODO: use with-exception-stack-trace and/or dump-stack-trace?
 ;;; exception control
 (def (gerbil-exception-handler-hook exn continue)
   (let (exn (wrap-runtime-exception exn))
