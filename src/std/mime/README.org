@@ -1,0 +1,150 @@
+#+TITLE: Media types and Multipurpose Internet Mail Extensions
+#+EXPORT_FILE_NAME: ../../../doc/reference/std/mime/README.md
+#+OPTIONS: toc:nil
+
+* Contents                                                         :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 3 :ignore (this)
+:END:
+
+:CONTENTS:
+- [[#media-aka-mime-types][Media (AKA MIME) types]]
+  - [[#path-extension-mime-type-name][path-extension->mime-type-name]]
+  - [[#extension-mime-type][extension->mime-type]]
+  - [[#mime-extensions][mime-extensions]]
+  - [[#mime-types][mime-types]]
+  - [[#add-mime-type][add-mime-type]]
+  - [[#make-mime-type][make-mime-type]]
+  - [[#mime-type][mime-type]]
+  - [[#define-mime-types][define-mime-types]]
+:END:
+
+
+* Media (AKA MIME) types
+:PROPERTIES:
+:CUSTOM_ID: media-aka-mime-types
+:END:
+
+There's often a need to know content types.
+
+Email can contain other documents of varying types. The Web can serve
+files of any kind. Email extensions evolved into "Media Types".
+
+
+::: tip To use bindings from this module
+
+~(import :std/mime/types)~
+
+:::
+
+
+** =path-extension->mime-type-name=
+:PROPERTIES:
+:CUSTOM_ID: path-extension-mime-type-name
+:END:
+
+#+begin_src scheme
+  (path-extension->mime-type-name path) => string or #f
+
+       path := a filename
+#+end_src
+
+The [[#define-mime-types][=define-mime-types=]] database has a [[#mime-extensions][=mime-extensions=]] map the get a
+[[#mime-type][=mime-type=]] from an extension via [[#extension-mime-type][=extension->mime-type=]]. This
+procedure unites them.
+
+#+begin_src scheme
+> (path-extension->mime-type-name "foo.ss")
+"text/x-scheme.gerbil"
+> (path-extension->mime-type-name "around-the-world.mp3")
+"audio/mpeg"
+> (path-extension->mime-type-name "Urgent: Outlook mail!.msg")
+"application/vnd.ms-outlook"
+#+end_src
+
+
+** =extension->mime-type=
+:PROPERTIES:
+:CUSTOM_ID: extension-mime-type
+:END:
+
+#+begin_src scheme
+  (extension->mime-type str) => mime-type or #f
+#+end_src
+
+** =mime-extensions= 
+:PROPERTIES:
+:CUSTOM_ID: mime-extensions
+:END:
+
+#+begin_src scheme
+  (def mime-extensions (make-hash-table))
+#+end_src
+
+A map of extensions to =mime-type='s.
+** =mime-types= 
+:PROPERTIES:
+:CUSTOM_ID: mime-types
+:END:
+
+#+begin_src scheme
+  (def mime-types (make-hash-table))
+#+end_src
+
+A map of names to =mime-types=
+
+** =add-mime-type=
+:PROPERTIES:
+:CUSTOM_ID: add-mime-type
+:END:
+
+#+begin_src scheme
+  (add-mime-type name ext ...) => mime-type
+#+end_src
+
+Add a newly created =mime=type= to the =mime-types= and
+=mime-extensions= mapping.
+
+
+** =make-mime-type=
+:PROPERTIES:
+:CUSTOM_ID: make-mime-type
+:END:
+
+#+begin_src scheme
+  (make-mime-type name ext ...) => mime-type
+#+end_src
+
+
+** =mime-type= 
+:PROPERTIES:
+:CUSTOM_ID: mime-type
+:END:
+
+
+#+begin_src scheme
+  (defstruct mime-type (name extensions) transparent: #t constructor: :init!)
+#+end_src
+
+** =define-mime-types=
+:PROPERTIES:
+:CUSTOM_ID: define-mime-types
+:END:
+
+#+begin_src scheme
+  (define-mime-types
+    file-or-definition ...)
+
+  file := A path tp a file like `/etc/mime.types`
+  definition := ("type/name" "ext" ...)
+#+end_src
+
+#+begin_src scheme
+  (define-mime-types
+    "./mime.types"
+    ("text/x-scheme"		"scm" "sps" "sls" "sld")
+    ("text/x-scheme.gerbil"	"ss")
+    ("application/vnd.ms-outlook"	"msg"))
+#+end_src
+
+

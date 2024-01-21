@@ -9,7 +9,7 @@
         :std/net/uri
         :std/crypto/digest
         :std/text/hex
-        :std/xml
+        :std/markup/xml
         :std/error
         :std/sugar
         :std/srfi/19)

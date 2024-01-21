@@ -166,6 +166,9 @@
     "srfi/160/c64"
     "srfi/160/c128"
     "srfi/212"
+    ;; :std/mime
+    "mime/struct"
+    (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))
     ;; :std/parser
     "parser/rlang"
     "parser/base"
@@ -207,10 +210,11 @@
     ,(cond-expand
       (darwin
        `(gxc: "net/ssl/libssl"
-	     "-ld-options" ,(append-options
-			     (ldflags "libssl" "-lssl")
-			     (ldflags "libcrypto" "-lcrypto")
-			     (string-append "-L" (gerbil-libdir)) "-lgambit")))
+	      "-cc-options" ,(cppflags "libssl" "")
+	      "-ld-options" ,(append-options
+			      (ldflags "libssl" "-lssl")
+			      (ldflags "libcrypto" "-lcrypto")
+			      (string-append "-L" (gerbil-libdir)) "-lgambit")))
       (else `(gxc: "net/ssl/libssl"
 		   "-ld-options" ,(ldflags "libssl" "-lssl"))))
     "net/ssl/error"
@@ -312,13 +316,24 @@
     "net/httpd/api"
     "net/httpd"
     "net/sasl"
+    ;; :std/markup/sxml
+    "markup/sxml/print"
+    (gxc: "markup/sxml/ssax")
+    "markup/sxml/sxpath"
+    "markup/sxml/xml"
+    "markup/sxml/sxml-inf"
+    (gxc: "markup/sxml/html/parser" (extra-inputs: ("markup/sxml/html/html-parser.scm")))
+    "markup/sxml/tal/toplevel"
+    "markup/sxml/tal/iter"
+    "markup/sxml/tal/expander"
+    "markup/sxml/tal/syntax"
+    "markup/sxml"
+    ;; :std/markup/tal
+    "markup/tal"
+    ;:std/markup/html
+    "markup/html"
     ;; :std/xml
-    (gxc: "xml/ssax")
-    "xml/sxpath"
-    "xml/sxml"
-    (gsc: "xml/sxml-to-xml")
-    (ssi: "xml/sxml-to-xml")
-    "xml/print"
+    "markup/xml"
     "xml"
     ;; :std/crypto
     (static-include: "crypto/libcrypto-rfc5114.c")
