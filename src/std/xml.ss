@@ -2,12 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; XML interface
 
-(import :std/build-config
-        :std/xml/ssax
-        :std/xml/sxpath
-        :std/xml/sxml
-        :std/xml/print)
-(export (import: :std/xml/ssax
-                 :std/xml/sxpath
-                 :std/xml/sxml
-                 :std/xml/print))
+;;; DEPRECATED: Please use :std/markup/xml
+(import :std/markup/xml)
+(export (import: :std/markup/xml))
