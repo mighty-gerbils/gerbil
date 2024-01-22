@@ -191,6 +191,7 @@ centos:
 
 fedora:
 	docker build --target final \
+	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
@@ -206,6 +207,7 @@ fedora:
 
 opensuse:
 	docker build --target final \
+	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="CC=gcc-13 --enable-march=" \
 	--build-arg cores=$(cores) \
