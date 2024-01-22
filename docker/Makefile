@@ -120,7 +120,8 @@ debian_packages := autoconf \
                    zlib1g-dev
 
 opensuse_packages := cmake \
-		     leveldb-devel \
+		     git \
+	             leveldb-devel \
 		     sqlite3-devel \
 		     libxml2-devel \
 		     libyaml-devel \
