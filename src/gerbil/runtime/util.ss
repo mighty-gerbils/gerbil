@@ -294,6 +294,34 @@ namespace: #f
                 rest))
       iv)))
 
+;; Destructively remove the empty lists from a list of lists, returns the list.
+;; : (List (List X)) -> (List (NonEmptyList X))
+(def (remove-nulls! l)
+  (match l
+    ([[] . r]
+     (remove-nulls! r))
+    ([_ . r]
+     (let loop ((l l) (r r))
+       (match r
+         ([[] . rr] (set-cdr! l (remove-nulls! rr)))
+         ([_ . rr] (loop r rr))
+         (_ (void))))
+     l)
+    (_ l))) ;; []
+
+;; : (List X) X -> (NonEmptyList X)
+(def (append1! l x)
+  (let (l2 [x])
+    (if (pair? l)
+      (set-cdr! (##last-pair l) l2)
+      l2)))
+
+;; Append the reverse of the list in first argument and the list in second argument
+;; = (append (reverse rev-head) tail) ;; same as in SRFI 1.
+;; : (List X) (List X) -> (List X)
+(def (append-reverse rev-head tail)
+  (foldl cons tail rev-head))
+
 (def (andmap1 f lst)
   (let lp ((rest lst))
     (match rest
@@ -746,3 +774,4 @@ namespace: #f
         (for-each x dbg-exprs dbg-thunks)
         (if thunk (x expr thunk) (void)))
       (if thunk (thunk) (void)))))
+

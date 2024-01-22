@@ -81,9 +81,9 @@ type object.
 
 Returns true if the two type objects have the same `type-id`.
 This is the preferred equality predicate for types.
-`eq?` and `eqv?` should also work, but at present
-`equal?` seems to be broken, by considering types as equal
-that you would want to distinguish.
+`eq?` and `eqv?` should also work;
+however, `equal?` may yield surprising results, due to how
+the Gerbil type descriptor implementation extends Gambit internals.
 
 ::: tip Examples:
 ``` scheme

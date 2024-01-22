@@ -80,7 +80,6 @@ namespace: #f
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)
          (%#define-runtime base-struct/list base-struct/list)
-         (%#define-runtime base-struct* base-struct*)
          (%#define-runtime base-struct base-struct)
          (%#define-runtime find-super-ctor find-super-ctor)
          (%#define-runtime find-super-constructor find-super-constructor)

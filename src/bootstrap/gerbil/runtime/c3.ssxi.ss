@@ -22,7 +22,4 @@ package: gerbil/runtime
   (declare-type remove-next!__0 (@lambda 2 #f))
   (declare-type
    remove-next!
-   (@case-lambda (2 remove-next!__0) (3 remove-next!__%)))
-  (declare-type remove-nulls! (@lambda 1 #f))
-  (declare-type append1! (@lambda 2 #f))
-  (declare-type append-reverse (@lambda 2 #f)))
+   (@case-lambda (2 remove-next!__0) (3 remove-next!__%))))

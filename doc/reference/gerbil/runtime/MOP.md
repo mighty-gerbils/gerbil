@@ -150,7 +150,7 @@ Same as `(direct-instance? klass obj)`.
   super       := type-descriptor or #f; the struct type to inherit from
   fields      := fixnum; number of (new) fields in the type
   name        := symbol; the (displayed) type name
-  plist       := alist; type properties
+  properties  := alist; type properties
   ctor        := symbol or #f; id of constructor method
   field-names := list of symbols or #f; (displayed) field names
 

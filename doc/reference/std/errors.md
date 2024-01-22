@@ -433,10 +433,14 @@ if `(dump-stack-trace?)` is true (the default).
 ```scheme
 (define dump-stack-trace? (make-parameter #t))
 ```
-A parameter that controls whether `with-exception-stack-trace`
-will actually dump a stack trace to standard error.
-(`with-exception-stack-trace` is itself notably used by
-the primordial thread exception handler installed by `spawn-actor`).
+A parameter that controls whether some a stack trace will be dumped
+when an exception is presented to the user.
+
+This parameter is notably used by the `display-exception` method for
+the `Error` type in the runtime, and by `with-exception-stack-trace`
+(see above) that is also used in the default exceptio handler installed
+in threads spawned with `spawn-actor`.
+It is also heeded by `exit-with-error` (see below).
 
 You can `(dump-stack-trace? #f)`
 or locally `(parameterize ((dump-stack-trace? #f)) ...)`
@@ -469,6 +473,10 @@ This parameter controls whether `call-with-exit-on-error`, `with-exit-on-error`,
 `call-with-getopt`, and any function that indirectly uses them,
 will exit if an error is caught, rather than pass on the error
 and return to the REPL (or let a more fundamental function exit).
+
+If `dump-stack-trace?` is true, then the exception will be reprinted
+a second time with `dump-stack-trace?` bound to false, so that
+the text of the exception should be printed a second time after the stack dump.
 
 ### call-with-exit-on-error
 ```scheme

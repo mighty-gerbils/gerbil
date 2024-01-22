@@ -23,7 +23,8 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
-(export #t)
+(export c3-linearize)
+(import "util")
 
 ;; C3 linearization algorithm: given a top object x from which to compute the precedence list,
 ;; - rhead is [x] or [] depending on whether to include x as head of the result.
@@ -39,13 +40,15 @@ namespace: #f
     (c3-linearize-loop rhead tails eqpred get-name)))
 
 ;; The main loop for c3
-;; : (List X) (List (NonEmptyList X)) ?(X X -> Bool) ?(X -> Y) -> (List X)
+;; : (List X) (List X) ?(X X -> Bool) ?(X -> Y) -> (List X)
 (def (c3-linearize-loop rhead tails (eqpred eq?) (get-name identity))
   (let loop ((rhead rhead) (tails tails))
     (let (tails (remove-nulls! tails))
       (match tails
-        ([] (reverse rhead))
-        ([tail] (append-reverse rhead tail))
+        ([]
+         (reverse rhead))
+        ([tail]
+         (append-reverse rhead tail))
         (else
          (let* ((err (cut error "Inconsistent precedence graph"
                           head: (map get-name (reverse rhead))
@@ -63,7 +66,9 @@ namespace: #f
     (let loop ((ts tails))
       (match ts
         ([[c . _] . rts]
-         (if (candidate? c) c (loop rts)))
+         (if (candidate? c)
+           c
+           (loop rts)))
         (else
          (err))))))
 
@@ -77,32 +82,3 @@ namespace: #f
        (when (eqpred head next)
          (set-car! t tail))
        (loop more)))))
-
-;;; General-Purpose Utilities
-
-;; Destructively remove the empty lists from a list of lists, returns the list.
-;; : (List (List X)) -> (List (NonEmptyList X))
-(def (remove-nulls! l)
-  (match l
-    ([[] . r]
-     (remove-nulls! r))
-    ([_ . r]
-     (let loop ((l l) (r r))
-       (match r
-         ([[] . rr] (set-cdr! l (remove-nulls! rr)))
-         ([_ . rr] (loop r rr))
-         (_ (void))))
-     l)
-    (_ l))) ;; []
-
-(def (append1! l x)
-  (let (l2 [x])
-    (if (pair? l)
-      (set-cdr! (##last-pair l) l2)
-      l2)))
-
-;; Append the reverse of the list in first argument and the list in second argument
-;; = (append (reverse rev-head) tail) ;; same as in SRFI 1.
-;; : (List X) (List X) -> (List X)
-(def (append-reverse rev-head tail)
-  (foldl cons tail rev-head))

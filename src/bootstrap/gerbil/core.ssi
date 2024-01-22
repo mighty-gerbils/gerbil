@@ -440,21 +440,11 @@ namespace: gerbil/core
                     (make-struct-type* make-struct-type*)
                     (make-struct-predicate make-struct-predicate)
                     (make-struct-field-accessor make-struct-field-accessor)
-                    (make-struct-field-accessor* make-struct-field-accessor*)
                     (make-struct-field-mutator make-struct-field-mutator)
-                    (make-struct-field-mutator* make-struct-field-mutator*)
                     (make-struct-field-unchecked-accessor
                      make-struct-field-unchecked-accessor)
-                    (make-struct-field-unchecked-accessor*
-                     make-struct-field-unchecked-accessor*)
                     (make-struct-field-unchecked-mutator
                      make-struct-field-unchecked-mutator)
-                    (make-struct-field-unchecked-mutator*
-                     make-struct-field-unchecked-mutator*)
-                    (base-struct/1 base-struct/1)
-                    (base-struct/2 base-struct/2)
-                    (base-struct/list base-struct/list)
-                    (base-struct* base-struct*)
                     (base-struct base-struct)
                     (class-precedence-list class-precedence-list)
                     (struct-precedence-list struct-precedence-list)

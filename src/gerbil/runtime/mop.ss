@@ -271,12 +271,12 @@ namespace: #f
 ;; Which is the most specific struct class if any that both klass1 and klass2 are or inherit from?
 ;; : TypeDescriptor TypeDescriptor -> (OrFalse StructTypeDescriptor)
 (def (base-struct/2 klass1 klass2)
-  (def s1 (base-struct/1 klass1))
-  (def s2 (base-struct/1 klass2))
-  (cond
-   ((or (not s1) (and s2 (substruct? s1 s2))) s2)
-   ((or (not s2) (and s1 (substruct? s2 s1))) s1)
-   (else (error "Bad mixin: incompatible struct bases" klass1 klass2 s1 s2))))
+  (let ((s1 (base-struct/1 klass1))
+        (s2 (base-struct/1 klass2)))
+    (cond
+     ((or (not s1) (and s2 (substruct? s1 s2))) s2)
+     ((or (not s2) (and s1 (substruct? s2 s1))) s1)
+     (else (error "Bad mixin: incompatible struct bases" klass1 klass2 s1 s2)))))
 
 ;; Which is the most specific struct class if any that all argument classes are or inherit from?
 ;; : TypeDescriptor ... -> (OrFalse StructTypeDescriptor)
@@ -287,12 +287,8 @@ namespace: #f
     ([x y] (base-struct/2 x y))
     ([x y ...] (foldr base-struct/2 x y))))
 
-(def (base-struct* . all-supers)
-  (base-struct/list all-supers))
-
-;; TODO: remove after bootstrap
 (def (base-struct . all-supers)
-  (apply base-struct/list all-supers))
+  (base-struct/list all-supers))
 
 ;; Find the constructor method name for the TypeDescriptor
 ;; : (List TypeDescriptor) -> Symbol

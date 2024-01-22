@@ -167,11 +167,11 @@ package: gerbil
     type-final? type-struct? struct-type? class-type?
     make-struct-type make-struct-type*
     make-struct-predicate
-    make-struct-field-accessor make-struct-field-accessor*
-    make-struct-field-mutator make-struct-field-mutator*
-    make-struct-field-unchecked-accessor make-struct-field-unchecked-accessor*
-    make-struct-field-unchecked-mutator make-struct-field-unchecked-mutator*
-    base-struct/1 base-struct/2 base-struct/list base-struct* base-struct
+    make-struct-field-accessor
+    make-struct-field-mutator
+    make-struct-field-unchecked-accessor
+    make-struct-field-unchecked-mutator
+    base-struct
     class-precedence-list struct-precedence-list
     struct-field-ref
     struct-field-set!
@@ -638,7 +638,11 @@ package: gerbil
                 (syntax->list #'(detail ...))))))
 
     (defrules defmutable ()
-      ((_ var value) (begin (def var value) (set! var var) (void)))))
+      ((_ var value)
+       (begin
+         (def var value)
+         (set! var var)
+         (void)))))
 
   (import <sugar:1>
           (phi: +1 <sugar:1>))
@@ -2695,7 +2699,7 @@ package: gerbil
                                 (fx+ (length (runtime-struct-fields rtd)) k))
                             k)))
                        ((values final?)
-                        (and rtd (assgetq final: (syntax->datum (runtime-type-alist rtd)))))
+                        (and rtd (assgetq final: (runtime-type-alist rtd))))
                        (target tgt)
                        (instance-check
                         (if (expander-type-info? info)
@@ -2738,7 +2742,7 @@ package: gerbil
             false))
 
         (def final?
-          (and rtd (assgetq final: (syntax->datum (runtime-type-alist rtd)))))
+          (and rtd (assgetq final: (runtime-type-alist rtd))))
 
         (def (rtd-known-slot? rtd slot)
           (and rtd
