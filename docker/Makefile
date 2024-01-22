@@ -212,7 +212,7 @@ opensuse:
 	--build-arg configure_args="CC=gcc-13 --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="opensuse" \
-	--build-arg image="opensuse/leap" \
+	--build-arg image="opensuse/tumbleweed" \
 	--build-arg packages="$(opensuse_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
