@@ -40,8 +40,7 @@ RUN case ${distro} in \
     ;; \
     opensuse) \
     zypper update -y && \
-    zypper install -y -t pattern devel_basis && \
-    eval zypper install -y ${packages} \
+    eval zypper install -t pattern -y ${packages} \
     ;; \
     *) \
     echo "Unknown distro ${distro}" \

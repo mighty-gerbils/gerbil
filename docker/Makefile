@@ -119,14 +119,16 @@ debian_packages := autoconf \
                    texinfo \
                    zlib1g-dev
 
-opensuse_packages := cmake \
-		   leveldb-devel \
-		   libsqlite3x-devel \
-		   libxml2-devel \
-		   libyaml-devel \
-		   lmdb-devel \
-		   openssl-devel \
-		   sqlite-devel
+opensuse_packages := devel_basis \
+		     devel_C_C++ \
+		     cmake \
+		     leveldb-devel \
+		     sqlite3-devel \
+		     libxml2-devel \
+		     libyaml-devel \
+		     lmdb-devel \
+		     libopenssl-devel \
+		     sqlite-devel
 
 gerbilxx:
 	docker build --target final \
