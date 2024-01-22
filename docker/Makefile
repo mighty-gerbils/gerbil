@@ -120,6 +120,7 @@ debian_packages := autoconf \
                    zlib1g-dev
 
 opensuse_packages := cmake \
+		     gcc13 \
 		     git \
 	             leveldb-devel \
 		     sqlite3-devel \
@@ -270,6 +271,14 @@ package-fedora:
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
 	-n gerbil-$(BRANCH).fedora \
+	--description 'Gerbil Scheme Package' /opt/gerbil"
+
+package-opensuse:
+	docker run -v $(PWD):/src:z -t gerbil/opensuse:$(arch)-$(BRANCH) \
+	bash -c "yum install -y ruby ruby-devel rpm-build && \
+	gem install fpm && \
+	/usr/lib64/ruby/gems/2.5.0/gems/fpm-1.15.1/bin/fpm -s dir -p /src/ -t rpm \
+	-n gerbil-$(BRANCH).opensuse \
 	--description 'Gerbil Scheme Package' /opt/gerbil"
 
 package-amazonlinux:
