@@ -40,7 +40,7 @@ RUN case ${distro} in \
     ;; \
     opensuse) \
     zypper update -y && \
-    zypper install -y devel_basis && \
+    zypper install -y -t pattern devel_basis && \
     eval zypper install -y ${packages} \
     ;; \
     *) \
