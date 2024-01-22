@@ -2,14 +2,16 @@ ARG distro
 ARG with_db
 ARG repo
 ARG branch
+ARG image
 ARG cores
 ARG configure_args
 ARG packages
 ARG shared
 
-FROM ${image}:latest as base
+FROM ${image} as base
 ARG cores
 ARG distro
+ARG image
 ARG with_db
 ARG packages
 ENV PATH=/opt/gerbil/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin

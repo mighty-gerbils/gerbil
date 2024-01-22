@@ -208,7 +208,7 @@ opensuse:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="opensuse" \
-	--build-arg image="opensuse/leap:latest" \
+	--build-arg image="opensuse/leap" \
 	--build-arg packages="$(opensuse_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -223,7 +223,7 @@ ubuntu:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="ubuntu:latest" \
+	--build-arg image="ubuntu:latest" \
 	--build-arg distro="ubuntu" \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg repo="$(REPO)" \
@@ -239,7 +239,7 @@ debian:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
-	--build-arg distro="debian:latest" \
+	--build-arg image="debian:latest" \
 	--build-arg distro="debian" \
 	--build-arg packages="$(debian_packages)" \
 	--build-arg repo="$(REPO)" \
