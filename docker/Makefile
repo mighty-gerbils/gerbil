@@ -207,7 +207,7 @@ fedora:
 opensuse:
 	docker build --target final \
 	--build-arg branch="$(BRANCH)" \
-	--build-arg configure_args="--enable-march=" \
+	--build-arg configure_args="CC=gcc-13 --enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="opensuse" \
 	--build-arg image="opensuse/leap" \
