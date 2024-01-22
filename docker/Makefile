@@ -119,9 +119,7 @@ debian_packages := autoconf \
                    texinfo \
                    zlib1g-dev
 
-opensuse_packages := devel_basis \
-		     devel_C_C++ \
-		     cmake \
+opensuse_packages := cmake \
 		     leveldb-devel \
 		     sqlite3-devel \
 		     libxml2-devel \
