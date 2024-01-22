@@ -7,7 +7,7 @@ ARG configure_args
 ARG packages
 ARG shared
 
-FROM ${distro}:latest as base
+FROM ${image}:latest as base
 ARG cores
 ARG distro
 ARG with_db
@@ -35,6 +35,11 @@ RUN case ${distro} in \
     debian|ubuntu) \
     apt update -y && \
     eval apt install -y ${packages} \
+    ;; \
+    opensuse) \
+    zypper update -y && \
+    zypper install -y devel_basis && \
+    eval zypper install -y ${packages} \
     ;; \
     *) \
     echo "Unknown distro ${distro}" \

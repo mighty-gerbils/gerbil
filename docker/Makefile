@@ -119,6 +119,15 @@ debian_packages := autoconf \
                    texinfo \
                    zlib1g-dev
 
+opensuse_packages := cmake \
+		   leveldb-devel \
+		   libsqlite3x-devel \
+		   libxml2-devel \
+		   libyaml-devel \
+		   lmdb-devel \
+		   openssl-devel \
+		   sqlite-devel
+
 gerbilxx:
 	docker build --target final \
 	--rm=true --no-cache \
@@ -154,6 +163,7 @@ amazonlinux:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
+	--build-arg image="amazonlinux:2" \
 	--build-arg distro="amazonlinux" \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg repo="$(REPO)" \
@@ -169,6 +179,7 @@ centos:
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
 	--build-arg distro="centos" \
+	--build-arg image="centos:latest" \
 	--build-arg packages="$(centos_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
@@ -181,6 +192,7 @@ fedora:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
+	--build-arg image="fedora:latest" \
 	--build-arg distro="fedora" \
 	--build-arg packages="$(fedora_packages)" \
 	--build-arg repo="$(REPO)" \
@@ -190,12 +202,28 @@ fedora:
 	--progress=plain
 	docker tag final gerbil/fedora:$(arch)-$(BRANCH)
 
+opensuse:
+	docker build --target final \
+	--build-arg branch="$(BRANCH)" \
+	--build-arg configure_args="--enable-march=" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="opensuse" \
+	--build-arg image="opensuse/leap:latest" \
+	--build-arg packages="$(opensuse_packages)" \
+	--build-arg repo="$(REPO)" \
+	--build-arg shared="yes" \
+	--build-arg with_db="YES" \
+	-t final $(ROOT_DIR) \
+	--progress=plain
+	docker tag final gerbil/opensuse:$(arch)-$(BRANCH)
+
 ubuntu:
 	docker build --target final \
 	--rm=true --no-cache \
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
+	--build-arg distro="ubuntu:latest" \
 	--build-arg distro="ubuntu" \
 	--build-arg packages="$(ubuntu_packages)" \
 	--build-arg repo="$(REPO)" \
@@ -211,6 +239,7 @@ debian:
 	--build-arg branch="$(BRANCH)" \
 	--build-arg configure_args="--enable-march=" \
 	--build-arg cores=$(cores) \
+	--build-arg distro="debian:latest" \
 	--build-arg distro="debian" \
 	--build-arg packages="$(debian_packages)" \
 	--build-arg repo="$(REPO)" \
