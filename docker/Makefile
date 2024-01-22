@@ -6,7 +6,7 @@ arch := $(shell uname -m)
 DEFAULT=gerbilxx
 
 ifeq ($(BRANCH),)
-BRANCH := "master"
+BRANCH := master
 endif
 
 ifeq ($(REPO),)
