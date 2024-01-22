@@ -6,13 +6,9 @@
 
 (import
   ;;  :gerbil/runtime/c3
-  :gerbil/runtime/mop
-  :std/error
-  :std/misc/list
-  :std/sort
-  :std/srfi/1
-  :std/sugar
-  :std/test)
+  (only-in :gerbil/runtime/mop type-descriptor-all-slots)
+  (only-in :std/sugar defrule)
+  (only-in :std/test test-suite test-case check check-exception))
 
 (define gerbil/runtime 'gerbil/runtime)
 (define :gerbil/core ':gerbil/core)
