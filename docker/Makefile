@@ -10,7 +10,7 @@ BRANCH := master
 endif
 
 ifeq ($(REPO),)
-REPO := "mighty-gerbils/gerbil"
+REPO := mighty-gerbils/gerbil
 endif
 
 cores := $(shell nproc)
