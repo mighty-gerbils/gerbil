@@ -280,9 +280,7 @@ package-opensuse:
 	docker run -v $(PWD):/src:z -t gerbil/opensuse:$(arch)-$(BRANCH) \
 	bash -c "zypper install -t package -y ruby ruby-devel rpm-build && \
 	gem install fpm && \
-	find /usr/lib64/ruby/gems -name fpm -type f -exec {} -s dir -p /src/ -t rpm \;" \
-	-n gerbil-$(BRANCH).opensuse \
-	--description 'Gerbil Scheme Package' /opt/gerbil"
+	find /usr/lib64/ruby/gems -name fpm -type f -exec {} -s dir -p /src/ -t rpm -n gerbil-$(BRANCH).opensuse --description 'Gerbil Scheme Package' /opt/gerbil \;"
 
 package-amazonlinux:
 	docker run -v $(PWD):/src:z -t gerbil/amazonlinux:$(arch)-$(BRANCH) \
