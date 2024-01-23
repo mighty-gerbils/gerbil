@@ -232,7 +232,7 @@ package-ubuntu:
 
 package-tgz:
 	docker run -v $(PWD):/src:z -t gerbil/ubuntu:$(arch)-$(BRANCH) \
-	bash -c "tar -czvf /src/gerbil.tgz /opt/gerbil"
+	bash -c "tar -czvf /src/gerbil-$(BRANCH).$(arch).tgz /opt/gerbil"
 
 package-fedora:
 	docker run -v $(PWD):/src:z -t gerbil/fedora:$(arch)-$(BRANCH) \
