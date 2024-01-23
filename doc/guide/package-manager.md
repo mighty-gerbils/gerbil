@@ -65,7 +65,7 @@ gerbil pkg build github.com/mighty-gerbils/gerbil-utils
 
 - To rebuild all packages:
 ```shell
-gerbil pkg build all`
+gerbil pkg build all
 ```
 
 ## Package Directories
