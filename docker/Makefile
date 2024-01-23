@@ -128,6 +128,7 @@ opensuse_packages := cmake \
 		     libyaml-devel \
 		     lmdb-devel \
 		     libopenssl-devel \
+		     which \
 		     sqlite-devel
 
 gerbilxx:
