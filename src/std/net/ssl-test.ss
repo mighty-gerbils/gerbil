@@ -96,19 +96,21 @@ END
     (test-case "ssl connection: google"
       (test-request-ok "www.google.com:443"))
 
-    (test-case "ssl connection failure: badssl"
-      (test-request-error "expired.badssl.com:443")
-      (test-request-error "wrong.host.badssl.com:443")
-      (test-request-error "self-signed.badssl.com:443")
-      (test-request-error "untrusted-root.badssl.com:443")
-      (test-request-error "revoked.badssl.com:443"))
+    (cond-expand
+      (enable-badssl-test
+       (test-case "ssl connection failure: badssl"
+	 (test-request-error "expired.badssl.com:443")
+	 (test-request-error "wrong.host.badssl.com:443")
+	 (test-request-error "self-signed.badssl.com:443")
+	 (test-request-error "untrusted-root.badssl.com:443")
+	 (test-request-error "revoked.badssl.com:443"))
 
-    (test-case "ssl insecure connection: badssl"
-      (test-request-ok "expired.badssl.com:443" (insecure-client-ssl-context))
-      (test-request-ok "wrong.host.badssl.com:443" (insecure-client-ssl-context))
-      (test-request-ok "self-signed.badssl.com:443" (insecure-client-ssl-context))
-      (test-request-ok "untrusted-root.badssl.com:443" (insecure-client-ssl-context))
-      (test-request-ok "revoked.badssl.com:443" (insecure-client-ssl-context)))))
+       (test-case "ssl insecure connection: badssl"
+	 (test-request-ok "expired.badssl.com:443" (insecure-client-ssl-context))
+	 (test-request-ok "wrong.host.badssl.com:443" (insecure-client-ssl-context))
+	 (test-request-ok "self-signed.badssl.com:443" (insecure-client-ssl-context))
+	 (test-request-ok "untrusted-root.badssl.com:443" (insecure-client-ssl-context))
+	 (test-request-ok "revoked.badssl.com:443" (insecure-client-ssl-context)))))))
 
 (def ssl-server-test
   (test-suite "ssl server"
@@ -147,9 +149,11 @@ END
       (let (req (http-get "https://www.google.com"))
         (check (request-status req) => 200)
         (request-close req)))
-    (test-case "https request failure: badssl"
-      (check-exception (http-get "https://expired.badssl.com") ssl-error?))
-    (test-case "https request insecure: badssl"
+    (cond-expand
+      (enable-badssl-test
+       (test-case "https request failure: badssl"
+	 (check-exception (http-get "https://expired.badssl.com") ssl-error?))))
+    (test-case "https request insecure: www.google.com"
       (let (req (http-get "https://www.google.com" ssl-context: (insecure-client-ssl-context)))
         (check (request-status req) => 200)
         (request-close req)))))
