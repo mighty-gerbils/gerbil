@@ -250,6 +250,13 @@
       (path-expand "lib" build-home)))
   +gerbil-lib-dir+)
 
+(cond-expand
+  (darwin
+   (let (hblp (getenv "HOMEBREW_LIBRARY_PATHS" #f))
+     (when hblp (setenv "HOMEBREW_LIBRARY_PATHS"
+			(string-append (gerbil-libdir)":"hblp)))))
+  (else #f))
+
 (def +gerbil-static-dir+ #f)
 (def (gerbil-static-dir)
   (unless +gerbil-static-dir+
