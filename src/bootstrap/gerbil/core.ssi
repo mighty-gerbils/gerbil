@@ -1201,11 +1201,14 @@ namespace: gerbil/core
                                1
                                runtime-type-constructor-set!
                                runtime-type-constructor-set!)
-                              (spec: 1 runtime-type-alist runtime-type-alist)
                               (spec:
                                1
-                               runtime-type-alist-set!
-                               runtime-type-alist-set!)
+                               runtime-type-properties
+                               runtime-type-properties)
+                              (spec:
+                               1
+                               runtime-type-properties-set!
+                               runtime-type-properties-set!)
                               (spec:
                                1
                                runtime-struct-fields
@@ -1361,8 +1364,8 @@ namespace: gerbil/core
                                runtime-type-constructor
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor|)
                               (%#define-runtime
-                               runtime-type-alist
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-alist|)
+                               runtime-type-properties
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-properties|)
                               (%#define-runtime
                                runtime-type-id-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id-set!|)
@@ -1376,8 +1379,8 @@ namespace: gerbil/core
                                runtime-type-constructor-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor-set!|)
                               (%#define-runtime
-                               runtime-type-alist-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-alist-set!|)
+                               runtime-type-properties-set!
+                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-properties-set!|)
                               (%#define-runtime
                                runtime-type-ctor
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor|)

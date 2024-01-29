@@ -804,17 +804,16 @@ namespace: #f
         (type-descriptor-methods-set! klass vtab)
         (type-descriptor-seal! klass)))))
 
-;; NB: 1. This implementation has quadratic complexity, and
-;; 2. it relies on methods using next-method to be actually location dependent
-;; and NOT things you can share between different classes.
-;; In exchange for which 3. it's somewhat simpler and slightly faster in
-;; the usual case that doesn't involve a call to next-method.
+;; NB: 1. This implementation has quadratic complexity in the general case, but
+;; 2. is somewhat simpler and slightly faster in the common case that has no
+;; next-method, while not being too slow if the method list remains short.
 ;;
+;; The trade-off may or may not be acceptable to all users.
 ;; Changing the protocol to access an explicit super argument would be
 ;; semantically nicer and would enable linear complexity for next-method
 ;; (in the number of classes, or even just in the number of applicable method,
 ;; if resolved only once), but would be notably more complex and somewhat
-;; incompatible (or involve much cleverness for backward compatibility).
+;; incompatible (or involve some cleverness for backward compatibility).
 (def (next-method subklass obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1705947033)
+  (define gerbil/runtime/util::timestamp 1706556807)
   (begin
     (define displayln
       (lambda _args7760_
