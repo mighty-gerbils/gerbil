@@ -195,7 +195,7 @@
             name: id
             constructor: :init!
             unchecked: #t
-            alist: '((final: . #t) (transparent: . #t)))
+            properties: '((final: . #t) (transparent: . #t)))
           (defsyntax id
             (make-message-type-info
              runtime-identifier: (quote-syntax id::t)
