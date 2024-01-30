@@ -23,7 +23,6 @@ package: gerbil/runtime
   (declare-type type-descriptor-plist (@lambda 1 #f))
   (declare-type type-descriptor-ctor (@lambda 1 #f))
   (declare-type type-descriptor-fields (@lambda 1 #f))
-  (declare-type type-descriptor-slots (@lambda 1 #f))
   (declare-type type-descriptor-sealed? (@lambda 1 #f))
   (declare-type type-descriptor-seal! (@lambda 1 #f))
   (declare-type make-struct-type__% (@lambda 7 #f))

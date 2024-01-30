@@ -141,15 +141,22 @@ isn't a type object.
 ```
 :::
 
-## type-descriptor-mixin
+## type-descriptor-precedence-list
 ``` scheme
-(type-descriptor-mixin typ) -> list | error
+(type-descriptor-precedence-list typ) -> list | error
 
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-mixin`. Returns the mixins of the type
-as a list. *typ* must be a type descriptor or an error is signaled.
+Safe variant of `runtime#type-descriptor-precedence-list`.
+Returns all the super-classes of the type as a list.
+The precedence-list is sorted in the order used for method resolution,
+from the most-specific element first (not including the type-descriptor itself)
+to its least-specific super-class (e.g. a base class it may share with other super-classes, if any).
+The precedence-list includes neither the type itself,
+nor the special pseudo-classes `object` and `t` as used by `:std/generic`
+(but not used by methods defined with the builtin `defmethod`).
+*typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
 ``` scheme
@@ -166,52 +173,88 @@ as a list. *typ* must be a type descriptor or an error is signaled.
 ```
 :::
 
-## type-descriptor-fields
+## type-descriptor-all-slots
 ``` scheme
-(type-descriptor-fields typ) -> fixnum | error
+(type-descriptor-fields typ) -> vector | error
 
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-fields`. Returns the number of fields
-of the type as a fixnum. *typ* must be a type descriptor or an error is
-signaled.
+Safe variant of `runtime#type-descriptor-all-slots`.
+Returns a vector containing names of the slots of a direct instance of the type,
+including slots inherited from super-classes.
+The first entry of the vector returned is `#f`, because the slot indexes are 1-based,
+with the 0th entry in a direct instance's underlying vector being the type descriptor itself.
+The slots have the same index as in the value returned by `struct->list`.
+*typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
 ``` scheme
-> (defstruct color (r g b a))
-> (type-descriptor-fields color::t)
-4
+> (defstruct point (x y))
+> (defclass color (r g b a))
+> (defclass (3d-point point) (z))
+> (defclass (colored-3d-point color 3d-point) ())
+> (type-descriptor-all-slots colored-3d-point::t)
+#(#f x y z r g b a)
+> (struct->list (colored-3d-point r: 1 g: 2 b: 3 a: 4 x: 10 y: 20 z: 30))
+(#<type #1 colored-3d-point> 10 20 30 1 2 3 4)
 ```
 :::
 
-## type-descriptor-plist
+## type-descriptor-slot-table
 ``` scheme
-(type-descriptor-plist typ) -> alist | error
+(type-descriptor-slot-table typ) -> hash-table | error
 
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-plist`. Returns the type properties of
-the type as an alist. *typ* must be a type descriptor or an error is signaled.
+Safe variant of `runtime#type-descriptor-slot-table`.
+Returns the slots of the type as a hash-table, associated to their offset in a direct instance
+(as per `type-descriptor-all-slots` above, e.g. `struct->list`). *typ* must be a type descriptor or an error is signaled.
+Note that the offsets are 1-based, since offset 0 will be used by the type descriptor itself.
 
 ::: tip Examples:
 ``` scheme
-> (defstruct vec4d (x y z w) final: #t)
-> (type-descriptor-plist vec4d::t)
-((fields: x y z w) (final: . #t))
+> (defclass color (r g b a))
+> (type-descriptor-slot-table color::t)
+#<table #6>
+> (hash->list #6)
+((r . 1) (g . 2) (b . 3) (a: . 4) (g: . 2) (b: . 3) (r: . 1) (a . 4))
 ```
 :::
 
-## type-descriptor-ctor
+## type-descriptor-properties
 ``` scheme
-(type-descriptor-ctor typ) -> symbol | error
+(type-descriptor-properties typ) -> alist | error
 
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-ctor`. Returns the constructor ID of
-the type as a symbol. *typ* must be a type descriptor or an error is signaled.
+Safe variant of `runtime#type-descriptor-properties`. Returns the type properties of
+the type as an alist (NB: not a plist, whatever the name suggests).
+*typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (defclass color (r g b a))
+> (defclass (3d-point point) (z))
+> (defclass (my-point color 3d-point) (name id) final: #t)
+> (type-descriptor-properties my-point::t)
+((direct-slots: name id) (direct-supers: #<type #15 color> #<type #16 3d-point>) (final: . #t))
+```
+:::
+
+## type-descriptor-constructor
+``` scheme
+(type-descriptor-constructor typ) -> symbol | error
+
+  typ := type descriptor to inspect
+```
+
+Safe variant of `runtime#type-descriptor-constructor`.
+Returns the constructor ID of the type as a symbol.
+*typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
 ``` scheme
@@ -219,28 +262,8 @@ the type as a symbol. *typ* must be a type descriptor or an error is signaled.
 > (defmethod {:init! A}
     (lambda (self x)
       (set! (A-x self) (* x 2))))
-> (type-descriptor-ctor A::t)
+> (type-descriptor-constructor A::t)
 :init!
-```
-:::
-
-## type-descriptor-slots
-``` scheme
-(type-descriptor-slots typ) -> hash-table | error
-
-  typ := type descriptor to inspect
-```
-
-Safe variant of `runtime#type-descriptor-slots`. Returns the slots of the type
-as a hash-table. *typ* must be a type descriptor or an error is signaled.
-
-::: tip Examples:
-``` scheme
-> (defclass color (r g b a))
-> (type-descriptor-slots color::t)
-#<table #6>
-> (hash->list #6)
-((r . 0) (g . 1) (b . 2) (a: . 3) (g: . 1) (b: . 2) (r: . 0) (a . 3))
 ```
 :::
 

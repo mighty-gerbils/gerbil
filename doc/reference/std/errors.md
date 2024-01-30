@@ -438,7 +438,7 @@ when an exception is presented to the user.
 
 This parameter is notably used by the `display-exception` method for
 the `Error` type in the runtime, and by `with-exception-stack-trace`
-(see above) that is also used in the default exceptio handler installed
+(see above) that is also used in the default exception handler installed
 in threads spawned with `spawn-actor`.
 It is also heeded by `exit-with-error` (see below).
 

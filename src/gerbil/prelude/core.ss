@@ -129,6 +129,7 @@ package: gerbil
     list-set list-set!
     remove1 remq remv remf
     pgetq pgetv pget
+    append-reverse append1! remove-nulls!
     subvector subvector->list subvector-fill!
     vector-copy!
     vector-map vector-for-each vector-copy vector-copy! vector-append
@@ -160,7 +161,7 @@ package: gerbil
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
     ;; c3 linearization
-    c3-linearize not-null? remove-nulls append-reverse
+    c3-linearize
     ;; MOP
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods

@@ -112,24 +112,24 @@ namespace: #f
          (equalable (and (not all-slots-equalable?) (make-props! equal:)))
          (first-new-field
           (if type-super
-            (vector-length (type-descriptor-all-slots type-super))
+            (##vector-length (type-descriptor-all-slots type-super))
             1))
-         (field-info-length (* 3 (- (vector-length all-slots) first-new-field)))
+         (field-info-length (##fx* 3 (##fx- (##vector-length all-slots) first-new-field)))
          (field-info (make-vector field-info-length #f))
          (opaque?
           (or (not all-slots-equalable?)
               (and type-super (##fx= (##fxand (##type-flags type-super) 1) 1)))))
     (let loop ((i first-new-field)
                (j 0))
-      (when (< j field-info-length)
-        (let* ((slot (vector-ref all-slots i))
+      (when (##fx< j field-info-length)
+        (let* ((slot (##vector-ref all-slots i))
                (flags
                 (if transparent? 0
                     (##fxior (if (or all-slots-printable? (hash-get printable slot)) 0 1)
                              (if (or all-slots-equalable? (hash-get equalable slot)) 0 4)))))
           (vector-set! field-info j slot)
-          (vector-set! field-info (fx1+ j) flags)
-          (loop (fx1+ i) (##fx+ j 3)))))
+          (vector-set! field-info (##fx+ j 1) flags)
+          (loop (##fx+ i 1) (##fx+ j 3)))))
     (##structure ##type-type
                  type-id type-name
                  (if opaque? 25 24)
@@ -153,18 +153,12 @@ namespace: #f
 (def (type-descriptor-methods-set! klass ht)
   (##vector-set! klass 11 ht))
 
-;; TODO: remove after bootstrap
+;; TODO: remove after cleanup of clients + new bootstrap
 (def type-descriptor-mixin type-descriptor-precedence-list)
 (def type-descriptor-plist type-descriptor-properties)
 (def type-descriptor-ctor type-descriptor-constructor)
 (def (type-descriptor-fields klass)
-  (##fx- (vector-length (type-descriptor-all-slots klass)) 1))
-(def (type-descriptor-slots klass)
-  (let (h (make-hash-table-eq))
-    (hash-for-each (lambda (k v) (hash-put! h k (fx1+ v)))
-                   (type-descriptor-slot-table klass))
-    h))
-
+  (##fx- (##vector-length (type-descriptor-all-slots klass)) 1))
 (def (type-descriptor-sealed? klass)
   (##fxbit-set? 20 (##type-flags klass)))
 (def (type-descriptor-seal! klass)
@@ -177,7 +171,7 @@ namespace: #f
                      (or direct-slots
                          (map (cut make-symbol "_" <>)
                               (iota n-direct-slots
-                                    (if super (vector-length (type-descriptor-all-slots super))
+                                    (if super (##vector-length (type-descriptor-all-slots super))
                                         1))))
                      properties constructor))
 
@@ -190,8 +184,8 @@ namespace: #f
                                  [[struct: . #t] . properties] constructor))
          (all-slots (type-descriptor-all-slots type))
          (len (length direct-slots))
-         (start (- (vector-length all-slots) len)))
-    (unless (andmap (lambda (slot i) (eq? slot (vector-ref all-slots i)))
+         (start (##fx- (##vector-length all-slots) len)))
+    (unless (andmap (lambda (slot i) (eq? slot (##vector-ref all-slots i)))
                     direct-slots (iota len start))
       (error "Non-unique slots in struct" name direct-slots))
     type))
@@ -230,10 +224,9 @@ namespace: #f
 
 (def (struct-field-offset* klass field)
   (##fx+ field
-         (cond
-          ((##type-super klass) => type-descriptor-fields)
-          (else 0))
-         1))
+         (if (##type-super klass)
+           (##vector-length (type-descriptor-all-slots klass))
+           1)))
 
 ;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
 (def (struct-field-ref klass obj field)
@@ -319,7 +312,7 @@ namespace: #f
   (let* ((previous-slots
           (if super-struct (type-descriptor-all-slots super-struct) '#(#f)))
          (next-slot
-          (vector-length previous-slots))
+          (##vector-length previous-slots))
          (slot-table
           (if super-struct
             (hash-copy (type-descriptor-slot-table super-struct))
@@ -333,7 +326,7 @@ namespace: #f
               (hash-put! slot-table slot next-slot)
               (hash-put! slot-table (symbol->keyword slot) next-slot)
               (set! r-slots (cons slot r-slots))
-              (set! next-slot (fx1+ next-slot)))))
+              (set! next-slot (##fx+ next-slot 1)))))
          (process-slots (cut for-each process-slot <>)))
     (for-each (lambda (mixin)
                 (unless (type-struct? mixin) ;; skip structure classes, already processed via super
@@ -383,7 +376,7 @@ namespace: #f
   (cons strukt (cond ((##type-super strukt) => struct-precedence-list) (else []))))
 
 (def (class-linearize-mixins klass-lst)
-  (c3-linearize [] klass-lst class-precedence-list eqv? ##type-name))
+  (c3-linearize [] klass-lst class-precedence-list eq? ##type-name))
 
 (def (make-class-predicate klass)
   (if (type-final? klass)
@@ -403,7 +396,7 @@ namespace: #f
      ((or (type-final? klass) (type-struct? klass))
       (if-struct klass field))
      ((let (strukt (base-struct/1 klass))
-        (and strukt (< field (vector-length (type-descriptor-all-slots strukt)))))
+        (and strukt (##fx< field (##vector-length (type-descriptor-all-slots strukt)))))
       (if-struct-field klass field))
      (else
       (if-class-slot klass slot field)))))
@@ -533,7 +526,7 @@ namespace: #f
 (def (make-object klass k)
   (make-object* klass (##fx+ k 1)))
 
-(def (make-object* klass (k (vector-length (type-descriptor-all-slots klass))))
+(def (make-object* klass (k (##vector-length (type-descriptor-all-slots klass))))
   (let (obj (##make-vector k #f))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
@@ -541,7 +534,7 @@ namespace: #f
 
 (def (make-struct-instance klass . args)
   (let* ((all-slots (type-descriptor-all-slots klass))
-         (size (vector-length all-slots)))
+         (size (##vector-length all-slots)))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
@@ -553,7 +546,7 @@ namespace: #f
         klass (##fx- size 1) args)))))
 
 (def (make-class-instance klass . args)
-  (let ((obj (make-object* klass (vector-length (type-descriptor-all-slots klass)))))
+  (let ((obj (make-object* klass (##vector-length (type-descriptor-all-slots klass)))))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
@@ -619,11 +612,11 @@ namespace: #f
     (let (klass (object-type obj))
       (if (type-descriptor? klass)
         (let (all-slots (type-descriptor-all-slots klass))
-          (let loop ((index (##fx- (vector-length all-slots) 1))
+          (let loop ((index (##fx- (##vector-length all-slots) 1))
                      (plist []))
             (if (##fx< index 1)
               (cons klass plist)
-              (let ((slot (vector-ref all-slots index)))
+              (let ((slot (##vector-ref all-slots index)))
                 (loop (##fx- index 1)
                       (cons* (symbol->keyword slot)
                              (unchecked-field-ref obj index)

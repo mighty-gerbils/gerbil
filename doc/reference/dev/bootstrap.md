@@ -221,7 +221,7 @@ each of which will be API-compatible:
 - The solution is to create a *new* API with *new* names that
   must absolutely not clash with the old names.
   Add a suffix or prefix such as `*`, `/2` or `%`, or take the opportunity
-  to give functions better, longer and/or more systematic names.
+  to give functions better and/or more systematic names.
 - The *old* API will temporarily coexist with use the *new* API.
 - When shared data structures are involved, the *old* API
   as called by the previous bootstrap implementation may have to be
@@ -245,6 +245,12 @@ each of which will be API-compatible:
   and a version that doesn’t use it has been bootstrapped into existence.
   You may therefore start a new cycle of API changes as above to modify the API
   to use this now-available-again name.
+- As a cultural requirement meant to facilitate semantic analysis and
+  a well-founded reproducible and debuggable bootstrapping history,
+  we ask you to commit a separate PR for each phase of such an API change,
+  such that each committed version of Gerbil can be compiled
+  by the immediate previous one (but usually not by arbitrary older ones,
+  which would be overconstraining and prevent refactoring and progress).
 
 These strictures mean that you must stage your changes in multiple commits,
 and regenerate the bootstrap compiler at each step.

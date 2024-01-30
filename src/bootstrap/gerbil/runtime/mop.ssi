@@ -38,7 +38,6 @@ namespace: #f
          (%#define-runtime type-descriptor-plist type-descriptor-plist)
          (%#define-runtime type-descriptor-ctor type-descriptor-ctor)
          (%#define-runtime type-descriptor-fields type-descriptor-fields)
-         (%#define-runtime type-descriptor-slots type-descriptor-slots)
          (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
          (%#begin (%#define-runtime make-struct-type__% make-struct-type__%)
