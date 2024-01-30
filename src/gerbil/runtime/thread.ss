@@ -151,7 +151,8 @@ namespace: #f
      (lambda (exn)
        (continuation-capture
         (lambda (cont)
-          (dump-stack-trace! cont exn error-port)
+          (when (dump-stack-trace?)
+            (dump-stack-trace! cont exn error-port))
           (E exn)))))
    thunk))
 

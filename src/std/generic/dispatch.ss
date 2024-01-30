@@ -77,33 +77,21 @@
        ((##eq? obj #!eof)  '(eof t))
        (else '(unknown)))))))
 
-(extern namespace: #f type-descriptor-mixin) ; runtime
+(extern namespace: #f class-precedence-list) ; runtime
 
 (def (type-linearize-class klass)
-  (if (type-descriptor? klass)
-    (if (type-descriptor-mixin klass)
-      (type-linearize-class-type klass)
-      (type-linearize-struct-type klass))
-    (type-linearize-record-type klass)))
+  (cond
+   ((type-descriptor? klass) (type-linearize-class-type klass))
+   ((##type? klass) (type-linearize-struct-type klass))
+   (else (error "Not a type object"))))
 
 (def (type-linearize-class-type klass)
-  (let lp ((rest (type-descriptor-mixin klass))
-           (r [(##type-id klass)]))
-    (match rest
-      ([klass . rest]
-       (lp rest (cons (##type-id klass) r)))
-      (else
-       (foldl cons '(object t) r)))))
+  (append (map ##type-id (class-precedence-list klass))
+          '(object t)))
 
 (def (type-linearize-struct-type klass)
-  (type-linearize-record-type klass '(object t)))
-
-(def (type-linearize-record-type klass (base '(t)))
-  (let lp ((klass klass) (r []))
-    (if (##type? klass)
-      (lp (##type-super klass)
-          (cons (##type-id klass) r))
-      (foldl cons base r))))
+  (append (map ##type-id (struct-precedence-list klass))
+          '(object t)))
 
 (def +subtype-id+ (make-vector 32 'unknown))
 (def +subtype-linear+ (make-vector 32 '(unknown)))

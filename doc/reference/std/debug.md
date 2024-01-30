@@ -399,6 +399,9 @@ Returns true if the `thread`'s message queue is empty.
 If the `tag` doesn't evaluate to `#f`, print the tag, then on separate lines
 the source of each expression `expr1` to `exprN` (as by `write`)
 followed by its single or multiple return values (as by `prn`).
+When an expression is preceded by a quoted form (as in `'form`)
+then that form is printed instead of the following expression
+(which can help when the expression is large and uninformative to print).
 Finally, return the values of the last expression `exprN`.
 
 You can easily wrap an expression in a `DBG` form so as to print its value,
@@ -409,11 +412,11 @@ in some part of your code.
 Example:
 ```scheme
 > (define-values (x y z) (values 1 2 3))
-> (* 10 (DBG foo: x (values [(+ x y) z] #t) (+ x y z)))
+> (* 10 (DBG foo: x (values [(+ x y) z] #t) 'result (+ x y z)))
 foo
   x => 1
   (values (@list (+ x y) z) #t) => [3 3] #t
-  (+ x y z) => 6
+  result => 6
 60
 ```
 In the above example the tag `foo` and the indented lines are printed by `DBG`,

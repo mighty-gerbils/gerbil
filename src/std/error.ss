@@ -29,6 +29,7 @@
         (rename: raise-bug BUG)
         is-it-bug?
         with-exception-stack-trace
+        dump-stack-trace?
         dump-stack-trace!
         exit-with-error
         exit-on-error?
@@ -363,14 +364,15 @@
   (def port (current-error-port))
   (defrules ignore-errors () ((_ body ...) (with-catch void (lambda () body ...))))
   (ignore-errors (force-output port))
-  #;(ignore-errors (display-build-manifest build-manifest port)) ;; only available in v0.19
+  (ignore-errors (display-build-manifest build-manifest port))
   (ignore-errors (newline port))
   (ignore-errors (display-exception e port))
   ;; If the stack trace was printed, making the message out of reach of the user,
   ;; then redundantly print the error message at the bottom without the stack trace.
   (ignore-errors
-   (when (StackTrace? e)
-     (display-exception e port)))
+   (when (and (dump-stack-trace?) (StackTrace? e))
+     (parameterize ((dump-stack-trace? #f))
+       (display-exception e port))))
   (ignore-errors (force-output port))
   (exit 2))
 

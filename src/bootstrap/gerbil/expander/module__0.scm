@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1701718655)
+  (define gerbil/expander/module::timestamp 1704735491)
   (begin
     (declare (not safe))
     (define gx#module-import::t
@@ -236,7 +236,9 @@
               (##vector-set! _self17184_ '10 '#f)
               (##vector-set! _self17184_ '11 '#f))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self17184_))))
+                   _self17184_
+                   '11
+                   (##vector-length _self17184_)))))
     (bind-method! gx#module-context::t ':init! gx#module-context:::init! '#f)
     (define gx#prelude-context:::init!__%
       (lambda (_self17028_ _ctx17029_ _root17030_)
@@ -280,7 +282,9 @@
                       (##vector-set! _self17028_ '7 _in17043_)
                       (##vector-set! _self17028_ '8 _e17044_))
                     (error '"struct-instance-init!: too many arguments for struct"
-                           _self17028_))
+                           _self17028_
+                           '8
+                           (##vector-length _self17028_)))
                 (for-each
                  (lambda (_g1704517047_)
                    (gx#core-bind-weak-import!__% _g1704517047_ _self17028_))
@@ -296,7 +300,9 @@
                     (##vector-set! _self17028_ '7 '())
                     (##vector-set! _self17028_ '8 '#f))
                   (error '"struct-instance-init!: too many arguments for struct"
-                         _self17028_))))))
+                         _self17028_
+                         '8
+                         (##vector-length _self17028_)))))))
     (define gx#prelude-context:::init!__0
       (lambda (_self17053_ _ctx17054_)
         (let ((_root17056_ '#f))
@@ -333,7 +339,9 @@
                '3
                (fx- (gx#current-expander-phi) '1)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self16902_))))
+                   _self16902_
+                   '3
+                   (##vector-length _self16902_)))))
     (define gx#import-expander:::init! gx#import-export-expander-init!)
     (bind-method! gx#import-expander::t ':init! gx#import-expander:::init! '#f)
     (define gx#export-expander:::init! gx#import-export-expander-init!)

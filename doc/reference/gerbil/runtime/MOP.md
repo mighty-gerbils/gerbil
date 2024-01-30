@@ -150,7 +150,7 @@ Same as `(direct-instance? klass obj)`.
   super       := type-descriptor or #f; the struct type to inherit from
   fields      := fixnum; number of (new) fields in the type
   name        := symbol; the (displayed) type name
-  plist       := alist; type properties
+  properties  := alist; type properties
   ctor        := symbol or #f; id of constructor method
   field-names := list of symbols or #f; (displayed) field names
 
@@ -305,20 +305,21 @@ Converts *obj* to a list, which conses its type and to its fields.
 
 ## make-class-type
 ``` scheme
-(make-class-type id super slots name plist ctor) -> type-descriptor
+(make-class-type id name direct-supers direct-slots properties constructor) -> type-descriptor
 
-  id     := symbol; the type id
-  super  := list of type-descriptors or #f; super types
-  slots  := list of symbols; class slot names
-  plist  := alist; type properties
-  ctor   := symbol or #f; id of constructor method
+  id             := symbol; the unique type id
+  name           := symbol; the possibly not unique source type name used when displaying the class
+  direct-supers  := list of type-descriptors or #f; super types
+  direct-slots   := list of symbols; class slot names
+  properties     := alist; type properties (NB: not a plist)
+  constructor    := symbol or #f; id of constructor method
 
-plist elements:
+alist elements:
  (transparent: . boolean) ; controls whether the object is transparent
                             in equality and printing
  (final: . boolean)       ; controls whether the class if final
- (print: slot ...)        ; printable slots
- (equal: slot ...)        ; equality comparable slots
+ (print: slot ...)        ; list of printable slots, or boolean
+ (equal: slot ...)        ; list of equality comparable slots, or boolean
 ```
 
 Creates a new class type descriptor.
