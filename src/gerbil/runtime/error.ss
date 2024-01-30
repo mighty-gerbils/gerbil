@@ -136,6 +136,8 @@ namespace: #f
       (unchecked-slot-set! self 'message message)
       (apply class-instance-init! self rest))))
 
+(def dump-stack-trace? (make-parameter #t))
+
 (defmethod {display-exception Error}
   (lambda (self port)
     (let ((tmp-port (open-output-string))
@@ -158,7 +160,7 @@ namespace: #f
               (lambda (obj) (write obj) (write-char #\space))
               irritants)
             (newline)))
-        (when (StackTrace? self)
+        (when (and (StackTrace? self) (dump-stack-trace?))
           (alet (cont (&StackTrace-continuation self))
             (displayln "--- continuation backtrace:")
             (display-continuation-backtrace cont))))

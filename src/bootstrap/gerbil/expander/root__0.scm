@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1701718655)
+  (define gerbil/expander/root::timestamp 1704735491)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -268,7 +268,9 @@
               (##vector-set! _self19658_ '1 'root)
               (##vector-set! _self19658_ '2 (make-table 'test: eq?)))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self19658_))
+                   _self19658_
+                   '2
+                   (##vector-length _self19658_)))
         (if _bind?19659_
             (begin
               (let ((__method19709
@@ -316,36 +318,36 @@
                   _g19714_))))))
     (define gx#root-context:::init!::specialize
       (lambda (__t19670)
-        (let ((__bind-core-features!19671
+        (let ((__bind-core-syntax-expanders!19671
                (make-promise
                 (lambda ()
                   (let ((__tmp19674
-                         (direct-method-ref __t19670 'bind-core-features!)))
+                         (direct-method-ref
+                          __t19670
+                          'bind-core-syntax-expanders!)))
                     (if __tmp19674
                         __tmp19674
-                        (error '"Missing method" 'bind-core-features!))))))
-              (__bind-core-syntax-expanders!19672
+                        (error '"Missing method"
+                               'bind-core-syntax-expanders!))))))
+              (__bind-core-macro-expanders!19672
                (make-promise
                 (lambda ()
                   (let ((__tmp19675
                          (direct-method-ref
                           __t19670
-                          'bind-core-syntax-expanders!)))
+                          'bind-core-macro-expanders!)))
                     (if __tmp19675
                         __tmp19675
                         (error '"Missing method"
-                               'bind-core-syntax-expanders!))))))
-              (__bind-core-macro-expanders!19673
+                               'bind-core-macro-expanders!))))))
+              (__bind-core-features!19673
                (make-promise
                 (lambda ()
                   (let ((__tmp19676
-                         (direct-method-ref
-                          __t19670
-                          'bind-core-macro-expanders!)))
+                         (direct-method-ref __t19670 'bind-core-features!)))
                     (if __tmp19676
                         __tmp19676
-                        (error '"Missing method"
-                               'bind-core-macro-expanders!)))))))
+                        (error '"Missing method" 'bind-core-features!)))))))
           (let ((_opt-lambda1965619661_
                  (lambda (_self19658_ _bind?19659_)
                    (if (##fx< '2 (##vector-length _self19658_))
@@ -356,14 +358,16 @@
                           '2
                           (make-table 'test: eq?)))
                        (error '"struct-instance-init!: too many arguments for struct"
-                              _self19658_))
+                              _self19658_
+                              '2
+                              (##vector-length _self19658_)))
                    (if _bind?19659_
                        (begin
-                         ((force __bind-core-syntax-expanders!19672)
+                         ((force __bind-core-syntax-expanders!19671)
                           _self19658_)
-                         ((force __bind-core-macro-expanders!19673)
+                         ((force __bind-core-macro-expanders!19672)
                           _self19658_)
-                         ((force __bind-core-features!19671) _self19658_))
+                         ((force __bind-core-features!19673) _self19658_))
                        '#!void))))
             (lambda _g19716_
               (let ((_g19715_ (##length _g19716_)))
@@ -409,7 +413,9 @@
                 (##vector-set! _self19514_ '4 '#f)
                 (##vector-set! _self19514_ '5 '#f))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self19514_)))))
+                     _self19514_
+                     '5
+                     (##vector-length _self19514_))))))
     (define gx#top-context:::init!__0
       (lambda (_self19528_)
         (let ((_super19530_ '#f))

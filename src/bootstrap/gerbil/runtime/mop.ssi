@@ -3,26 +3,41 @@ package: gerbil/runtime
 namespace: #f
 
 (%#begin (%#export #t)
-         (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+         (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/c3)
+         (%#define-runtime type-id type-id)
+         (%#define-runtime type=? type=?)
          (%#define-runtime type-descriptor? type-descriptor?)
+         (%#define-runtime type-struct? type-struct?)
+         (%#define-runtime type-final? type-final?)
          (%#define-runtime struct-type? struct-type?)
          (%#define-runtime class-type? class-type?)
+         (%#define-runtime properties-form properties-form)
          (%#define-runtime make-type-descriptor make-type-descriptor)
+         (%#define-runtime make-type-descriptor* make-type-descriptor*)
          (%#define-runtime
-          make-struct-type-descriptor
-          make-struct-type-descriptor)
+          type-descriptor-precedence-list
+          type-descriptor-precedence-list)
+         (%#define-runtime type-descriptor-all-slots type-descriptor-all-slots)
          (%#define-runtime
-          make-class-type-descriptor
-          make-class-type-descriptor)
-         (%#define-runtime type-descriptor-mixin type-descriptor-mixin)
-         (%#define-runtime type-descriptor-fields type-descriptor-fields)
-         (%#define-runtime type-descriptor-plist type-descriptor-plist)
-         (%#define-runtime type-descriptor-ctor type-descriptor-ctor)
-         (%#define-runtime type-descriptor-slots type-descriptor-slots)
+          type-descriptor-slot-table
+          type-descriptor-slot-table)
+         (%#define-runtime
+          type-descriptor-properties
+          type-descriptor-properties)
+         (%#define-runtime
+          type-descriptor-constructor
+          type-descriptor-constructor)
          (%#define-runtime type-descriptor-methods type-descriptor-methods)
          (%#define-runtime
           type-descriptor-methods-set!
           type-descriptor-methods-set!)
+         (%#define-runtime type-descriptor-mixin type-descriptor-mixin)
+         (%#define-runtime type-descriptor-plist type-descriptor-plist)
+         (%#define-runtime type-descriptor-ctor type-descriptor-ctor)
+         (%#define-runtime type-descriptor-fields type-descriptor-fields)
          (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
          (%#begin (%#define-runtime make-struct-type__% make-struct-type__%)
@@ -32,36 +47,80 @@ namespace: #f
                            (%#define-runtime
                             make-struct-type
                             make-struct-type)))
+         (%#define-runtime make-struct-type* make-struct-type*)
          (%#define-runtime make-struct-predicate make-struct-predicate)
          (%#define-runtime
           make-struct-field-accessor
           make-struct-field-accessor)
+         (%#define-runtime
+          make-struct-field-accessor*
+          make-struct-field-accessor*)
          (%#define-runtime make-struct-field-mutator make-struct-field-mutator)
+         (%#define-runtime
+          make-struct-field-mutator*
+          make-struct-field-mutator*)
          (%#define-runtime
           make-struct-field-unchecked-accessor
           make-struct-field-unchecked-accessor)
          (%#define-runtime
+          make-struct-field-unchecked-accessor*
+          make-struct-field-unchecked-accessor*)
+         (%#define-runtime
           make-struct-field-unchecked-mutator
           make-struct-field-unchecked-mutator)
-         (%#define-runtime struct-field-offset struct-field-offset)
+         (%#define-runtime
+          make-struct-field-unchecked-mutator*
+          make-struct-field-unchecked-mutator*)
+         (%#define-runtime struct-field-offset* struct-field-offset*)
          (%#define-runtime struct-field-ref struct-field-ref)
          (%#define-runtime struct-field-set! struct-field-set!)
+         (%#define-runtime substruct? substruct?)
          (%#define-runtime struct-subtype? struct-subtype?)
+         (%#define-runtime base-struct/1 base-struct/1)
+         (%#define-runtime base-struct/2 base-struct/2)
+         (%#define-runtime base-struct/list base-struct/list)
+         (%#define-runtime base-struct base-struct)
+         (%#define-runtime find-super-ctor find-super-ctor)
+         (%#define-runtime find-super-constructor find-super-constructor)
+         (%#define-runtime compute-class-slots compute-class-slots)
          (%#define-runtime make-class-type make-class-type)
+         (%#define-runtime make-class-type* make-class-type*)
+         (%#define-runtime class-precedence-list class-precedence-list)
+         (%#define-runtime struct-precedence-list struct-precedence-list)
          (%#define-runtime class-linearize-mixins class-linearize-mixins)
-         (%#define-runtime __linearize-mixins __linearize-mixins)
          (%#define-runtime make-class-predicate make-class-predicate)
+         (%#define-runtime if-class-slot-field if-class-slot-field)
          (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
+         (%#define-runtime
+          make-struct-subclass-field-accessor
+          make-struct-subclass-field-accessor)
+         (%#define-runtime
+          make-class-cached-slot-accessor
+          make-class-cached-slot-accessor)
          (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
+         (%#define-runtime
+          make-struct-subclass-field-mutator
+          make-struct-subclass-field-mutator)
+         (%#define-runtime
+          make-class-cached-slot-mutator
+          make-class-cached-slot-mutator)
          (%#define-runtime
           make-class-slot-unchecked-accessor
           make-class-slot-unchecked-accessor)
          (%#define-runtime
+          make-class-cached-slot-unchecked-accessor
+          make-class-cached-slot-unchecked-accessor)
+         (%#define-runtime
           make-class-slot-unchecked-mutator
           make-class-slot-unchecked-mutator)
+         (%#define-runtime
+          make-class-cached-slot-unchecked-mutator
+          make-class-cached-slot-unchecked-mutator)
          (%#define-runtime class-slot-offset class-slot-offset)
+         (%#define-runtime class-slot-offset* class-slot-offset*)
          (%#define-runtime class-slot-ref class-slot-ref)
          (%#define-runtime class-slot-set! class-slot-set!)
+         (%#define-runtime subclass? subclass?)
          (%#define-runtime class-subtype? class-subtype?)
          (%#define-runtime object? object?)
          (%#define-runtime object-type object-type)
@@ -71,6 +130,9 @@ namespace: #f
          (%#define-runtime class-instance? class-instance?)
          (%#define-runtime direct-class-instance? direct-class-instance?)
          (%#define-runtime make-object make-object)
+         (%#begin (%#define-runtime make-object*__% make-object*__%)
+                  (%#begin (%#define-runtime make-object*__0 make-object*__0)
+                           (%#define-runtime make-object* make-object*)))
          (%#define-runtime make-struct-instance make-struct-instance)
          (%#define-runtime make-class-instance make-class-instance)
          (%#define-runtime struct-instance-init! struct-instance-init!)

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1701718675)
+  (define gerbil/compiler/driver::timestamp 1704735502)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -55,6 +55,7 @@
         "gerbil/runtime/system"
         "gerbil/runtime/loader"
         "gerbil/runtime/control"
+        "gerbil/runtime/c3"
         "gerbil/runtime/mop"
         "gerbil/runtime/error"
         "gerbil/runtime/thread"

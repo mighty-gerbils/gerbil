@@ -48,7 +48,7 @@
   (begin (def (id . formals) body ...)
          (register-entry-point id id: 'id options ...)))
 
-(def multicall-default 'help) ;; NB: after v0.19, we can use defmutable
+(defmutable multicall-default 'help)
 
 (def (set-default-entry-point! x)
   (set! multicall-default x))
@@ -56,7 +56,7 @@
 (define-entry-point (help (command #f))
   (help: "Print help about available commands"
    getopt: [(optional-argument 'command help: "subcommand for which to display help")])
-  #;(displayln (display-build-manifest (build-manifest/head))) ;; only available in v0.19
+  (displayln (display-build-manifest (build-manifest/head)))
   (def gopt (apply getopt (entry-points-getopt-spec)))
   (def program (current-program-string (cdr (current-program))))
   (if command
@@ -69,9 +69,7 @@
    getopt: [])
   (displayln (string-join (sort (map as-string (hash-keys entry-points)) string<?) " ")))
 
-;; Only available in v0.19
 ;; TODO: add a flag for shortening the layer names?
-#;
 (define-entry-point (version all?: (all? #f) layer: (layer #f))
   (help: "Print software version"
    getopt: [(flag 'all? "-a" "--all" help: "also show versions of previous layers")

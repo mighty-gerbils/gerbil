@@ -294,6 +294,9 @@ namespace: gxc
 (def (basic-expression-type-make-struct-field-unchecked-mutator stx args)
   (basic-expression-type-make-struct-field-mutator stx args #t))
 
+;; TODO: Support the new unified struct-and-class type descriptors from mop.ss
+;; In particular, struct fields are now also class slots, and the same name if
+;; repeated should not lead to distinct fields but to the same slot.
 (def (basic-expression-type-make-class-type stx args)
   (def (mixin-expr->list stx)
     (let/cc return

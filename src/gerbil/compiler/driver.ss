@@ -64,6 +64,7 @@ namespace: gxc
     "gerbil/runtime/system"
     "gerbil/runtime/loader"
     "gerbil/runtime/control"
+    "gerbil/runtime/c3"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/thread"

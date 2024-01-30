@@ -6,7 +6,7 @@
 (import
   (only-in :std/cli/getopt argument optional-argument option)
   (only-in :std/cli/multicall define-multicall-main define-entry-point set-default-entry-point!)
-  #;(only-in :std/error dump-stack-trace?) ;; Only in v0.19
+  (only-in :std/error dump-stack-trace?)
   (only-in :std/misc/list when/list)
   (only-in :std/misc/path path-absolute?)
   (only-in :std/misc/ports read-file-string read-all-as-lines)
@@ -124,5 +124,5 @@ sudo mkdir /opt/src ; sudo chown $USER /opt/src"))
                        " -zcf " deps-tarball)] directory: "/"))
 
 (set-default-entry-point! 'build-tarballs)
-#;(dump-stack-trace? #f) ;; Only in v0.19
+(dump-stack-trace? #f)
 (define-multicall-main)

@@ -1,0 +1,25 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#export (spec: 0 c3-linearize c3-linearize))
+         (%#import :gerbil/runtime/util)
+         (%#begin (%#define-runtime c3-linearize__% c3-linearize__%)
+                  (%#begin (%#define-runtime c3-linearize__0 c3-linearize__0)
+                           (%#define-runtime c3-linearize__1 c3-linearize__1)
+                           (%#define-runtime c3-linearize c3-linearize)))
+         (%#begin (%#define-runtime c3-linearize-loop__% c3-linearize-loop__%)
+                  (%#begin (%#define-runtime
+                            c3-linearize-loop__0
+                            c3-linearize-loop__0)
+                           (%#define-runtime
+                            c3-linearize-loop__1
+                            c3-linearize-loop__1)
+                           (%#define-runtime
+                            c3-linearize-loop
+                            c3-linearize-loop)))
+         (%#define-runtime c3-select-next c3-select-next)
+         (%#begin (%#define-runtime remove-next!__% remove-next!__%)
+                  (%#begin (%#define-runtime remove-next!__0 remove-next!__0)
+                           (%#define-runtime remove-next! remove-next!))))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/c3__0"))

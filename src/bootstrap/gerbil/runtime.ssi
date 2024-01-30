@@ -8,6 +8,7 @@ namespace: gerbil/runtime
           :gerbil/runtime/util
           :gerbil/runtime/loader
           :gerbil/runtime/control
+          :gerbil/runtime/c3
           :gerbil/runtime/mop
           :gerbil/runtime/error
           :gerbil/runtime/thread
@@ -20,6 +21,7 @@ namespace: gerbil/runtime
           (import: :gerbil/runtime/util)
           (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/control)
+          (import: :gerbil/runtime/c3)
           (import: :gerbil/runtime/mop)
           (import: :gerbil/runtime/error)
           (import: :gerbil/runtime/syntax)
