@@ -224,9 +224,10 @@ namespace: #f
 
 (def (struct-field-offset* klass field)
   (##fx+ field
-         (if (##type-super klass)
-           (##vector-length (type-descriptor-all-slots klass))
-           1)))
+         (let (super (##type-super klass))
+           (if super
+             (##vector-length (type-descriptor-all-slots super))
+             1))))
 
 ;; TODO: this seems exported but otherwise unused, and we changed the offset meaning by 1. Remove?
 (def (struct-field-ref klass obj field)

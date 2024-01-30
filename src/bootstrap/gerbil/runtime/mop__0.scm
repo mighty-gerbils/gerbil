@@ -1,650 +1,654 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1706581965)
+  (define gerbil/runtime/mop::timestamp 1706585167)
   (begin
     (define type-id
-      (lambda (_klass10613_)
-        (if (let () (declare (not safe)) (type-descriptor? _klass10613_))
-            (let () (declare (not safe)) (##type-id _klass10613_))
-            (if (let () (declare (not safe)) (not _klass10613_))
+      (lambda (_klass10615_)
+        (if (let () (declare (not safe)) (type-descriptor? _klass10615_))
+            (let () (declare (not safe)) (##type-id _klass10615_))
+            (if (let () (declare (not safe)) (not _klass10615_))
                 '#f
-                (error '"Not a class or #f" _klass10613_)))))
+                (error '"Not a class or #f" _klass10615_)))))
     (define type=?
-      (lambda (_x10610_ _y10611_)
-        (let ((__tmp10638 (let () (declare (not safe)) (type-id _x10610_)))
-              (__tmp10637 (let () (declare (not safe)) (type-id _y10611_))))
+      (lambda (_x10612_ _y10613_)
+        (let ((__tmp10640 (let () (declare (not safe)) (type-id _x10612_)))
+              (__tmp10639 (let () (declare (not safe)) (type-id _y10613_))))
           (declare (not safe))
-          (eq? __tmp10638 __tmp10637))))
+          (eq? __tmp10640 __tmp10639))))
     (define type-descriptor?
-      (lambda (_klass10608_)
-        (if (let () (declare (not safe)) (##type? _klass10608_))
-            (let ((__tmp10639
+      (lambda (_klass10610_)
+        (if (let () (declare (not safe)) (##type? _klass10610_))
+            (let ((__tmp10641
                    (let ()
                      (declare (not safe))
-                     (##structure-length _klass10608_))))
+                     (##structure-length _klass10610_))))
               (declare (not safe))
-              (eq? __tmp10639 '12))
+              (eq? __tmp10641 '12))
             '#f)))
     (define type-struct?
+      (lambda (_klass10608_)
+        (let ((__tmp10642
+               (let ()
+                 (declare (not safe))
+                 (type-descriptor-properties _klass10608_))))
+          (declare (not safe))
+          (assgetq 'struct: __tmp10642))))
+    (define type-final?
       (lambda (_klass10606_)
-        (let ((__tmp10640
+        (let ((__tmp10643
                (let ()
                  (declare (not safe))
                  (type-descriptor-properties _klass10606_))))
           (declare (not safe))
-          (assgetq 'struct: __tmp10640))))
-    (define type-final?
-      (lambda (_klass10604_)
-        (let ((__tmp10641
-               (let ()
-                 (declare (not safe))
-                 (type-descriptor-properties _klass10604_))))
-          (declare (not safe))
-          (assgetq 'final: __tmp10641))))
+          (assgetq 'final: __tmp10643))))
     (define struct-type?
-      (lambda (_klass10602_)
-        (if (let () (declare (not safe)) (type-descriptor? _klass10602_))
-            (let () (declare (not safe)) (type-struct? _klass10602_))
+      (lambda (_klass10604_)
+        (if (let () (declare (not safe)) (type-descriptor? _klass10604_))
+            (let () (declare (not safe)) (type-struct? _klass10604_))
             '#f)))
     (define class-type?
-      (lambda (_klass10600_)
-        (if (let () (declare (not safe)) (type-descriptor? _klass10600_))
-            (let ((__tmp10642
-                   (let () (declare (not safe)) (type-struct? _klass10600_))))
+      (lambda (_klass10602_)
+        (if (let () (declare (not safe)) (type-descriptor? _klass10602_))
+            (let ((__tmp10644
+                   (let () (declare (not safe)) (type-struct? _klass10602_))))
               (declare (not safe))
-              (not __tmp10642))
+              (not __tmp10644))
             '#f)))
     (define properties-form
-      (lambda (_properties10566_)
-        (map (lambda (_e1056710569_)
-               (let* ((_g1057110578_ _e1056710569_)
-                      (_E1057310582_
-                       (lambda () (error '"No clause matching" _g1057110578_)))
-                      (_K1057410588_
-                       (lambda (_val10585_ _key10586_)
+      (lambda (_properties10568_)
+        (map (lambda (_e1056910571_)
+               (let* ((_g1057310580_ _e1056910571_)
+                      (_E1057510584_
+                       (lambda () (error '"No clause matching" _g1057310580_)))
+                      (_K1057610590_
+                       (lambda (_val10587_ _key10588_)
                          (if (let ()
                                (declare (not safe))
-                               (eq? _key10586_ 'direct-supers:))
-                             (let ((__tmp10643 (map type-id _val10585_)))
+                               (eq? _key10588_ 'direct-supers:))
+                             (let ((__tmp10645 (map type-id _val10587_)))
                                (declare (not safe))
-                               (cons _key10586_ __tmp10643))
+                               (cons _key10588_ __tmp10645))
                              (let ()
                                (declare (not safe))
-                               (cons _key10586_ _val10585_))))))
-                 (if (let () (declare (not safe)) (##pair? _g1057110578_))
-                     (let ((_hd1057510591_
+                               (cons _key10588_ _val10587_))))))
+                 (if (let () (declare (not safe)) (##pair? _g1057310580_))
+                     (let ((_hd1057710593_
                             (let ()
                               (declare (not safe))
-                              (##car _g1057110578_)))
-                           (_tl1057610593_
+                              (##car _g1057310580_)))
+                           (_tl1057810595_
                             (let ()
                               (declare (not safe))
-                              (##cdr _g1057110578_))))
-                       (let* ((_key10596_ _hd1057510591_)
-                              (_val10598_ _tl1057610593_))
+                              (##cdr _g1057310580_))))
+                       (let* ((_key10598_ _hd1057710593_)
+                              (_val10600_ _tl1057810595_))
                          (declare (not safe))
-                         (_K1057410588_ _val10598_ _key10596_)))
-                     (let () (declare (not safe)) (_E1057310582_)))))
-             _properties10566_)))
+                         (_K1057610590_ _val10600_ _key10598_)))
+                     (let () (declare (not safe)) (_E1057510584_)))))
+             _properties10568_)))
     (define make-type-descriptor
-      (lambda (_type-id10556_
-               _type-name10557_
-               _type-super10558_
-               _rtd-mixin10559_
-               _rtd-fields10560_
-               _rtd-plist10561_
-               _rtd-ctor10562_
-               _rtd-slots10563_
-               _rtd-methods10564_)
+      (lambda (_type-id10558_
+               _type-name10559_
+               _type-super10560_
+               _rtd-mixin10561_
+               _rtd-fields10562_
+               _rtd-plist10563_
+               _rtd-ctor10564_
+               _rtd-slots10565_
+               _rtd-methods10566_)
         (let ()
           (declare (not safe))
           (make-type-descriptor*
-           _type-id10556_
-           _type-name10557_
-           _type-super10558_
-           _rtd-mixin10559_
-           _rtd-fields10560_
-           _rtd-plist10561_
-           _rtd-ctor10562_
-           _rtd-slots10563_
-           _rtd-methods10564_))))
+           _type-id10558_
+           _type-name10559_
+           _type-super10560_
+           _rtd-mixin10561_
+           _rtd-fields10562_
+           _rtd-plist10563_
+           _rtd-ctor10564_
+           _rtd-slots10565_
+           _rtd-methods10566_))))
     (define make-type-descriptor*
-      (lambda (_type-id10469_
-               _type-name10470_
-               _type-super10471_
-               _precedence-list10472_
-               _all-slots10473_
-               _properties10474_
-               _constructor10475_
-               _slot-table10476_
-               _methods10477_)
-        (letrec ((_make-props!10479_
-                  (lambda (_key10525_)
-                    (letrec* ((_ht10527_
+      (lambda (_type-id10471_
+               _type-name10472_
+               _type-super10473_
+               _precedence-list10474_
+               _all-slots10475_
+               _properties10476_
+               _constructor10477_
+               _slot-table10478_
+               _methods10479_)
+        (letrec ((_make-props!10481_
+                  (lambda (_key10527_)
+                    (letrec* ((_ht10529_
                                (let ()
                                  (declare (not safe))
                                  (make-table 'test: eq?)))
-                              (_put-slots!10528_
-                               (lambda (_ht10549_ _slots10550_)
+                              (_put-slots!10530_
+                               (lambda (_ht10551_ _slots10552_)
                                  (for-each
-                                  (lambda (_g1055110553_)
+                                  (lambda (_g1055310555_)
                                     (let ()
                                       (declare (not safe))
                                       (table-set!
-                                       _ht10549_
-                                       _g1055110553_
+                                       _ht10551_
+                                       _g1055310555_
                                        '#t)))
-                                  _slots10550_)))
-                              (_put-alist!10529_
-                               (lambda (_ht10538_ _key10539_ _alist10540_)
-                                 (let ((_$e10542_
+                                  _slots10552_)))
+                              (_put-alist!10531_
+                               (lambda (_ht10540_ _key10541_ _alist10542_)
+                                 (let ((_$e10544_
                                         (let ()
                                           (declare (not safe))
-                                          (assgetq _key10539_ _alist10540_))))
-                                   (if _$e10542_
-                                       ((lambda (_g1054410546_)
+                                          (assgetq _key10541_ _alist10542_))))
+                                   (if _$e10544_
+                                       ((lambda (_g1054610548_)
                                           (let ()
                                             (declare (not safe))
-                                            (_put-slots!10528_
-                                             _ht10538_
-                                             _g1054410546_)))
-                                        _$e10542_)
+                                            (_put-slots!10530_
+                                             _ht10540_
+                                             _g1054610548_)))
+                                        _$e10544_)
                                        '#!void)))))
                       (let ()
                         (declare (not safe))
-                        (_put-alist!10529_
-                         _ht10527_
-                         _key10525_
-                         _properties10474_))
+                        (_put-alist!10531_
+                         _ht10529_
+                         _key10527_
+                         _properties10476_))
                       (for-each
-                       (lambda (_mixin10531_)
-                         (let ((_alist10533_
+                       (lambda (_mixin10533_)
+                         (let ((_alist10535_
                                 (let ()
                                   (declare (not safe))
-                                  (type-descriptor-properties _mixin10531_))))
+                                  (type-descriptor-properties _mixin10533_))))
                            (if (or (let ()
                                      (declare (not safe))
-                                     (assgetq 'transparent: _alist10533_))
-                                   (let ((__tmp10645
+                                     (assgetq 'transparent: _alist10535_))
+                                   (let ((__tmp10647
                                           (let ()
                                             (declare (not safe))
-                                            (assgetq _key10525_
-                                                     _alist10533_))))
+                                            (assgetq _key10527_
+                                                     _alist10535_))))
                                      (declare (not safe))
-                                     (eq? '#t __tmp10645)))
-                               (let ((__tmp10644
+                                     (eq? '#t __tmp10647)))
+                               (let ((__tmp10646
                                       (cdr (vector->list
                                             (let ()
                                               (declare (not safe))
                                               (type-descriptor-all-slots
-                                               _mixin10531_))))))
+                                               _mixin10533_))))))
                                  (declare (not safe))
-                                 (_put-slots!10528_ _ht10527_ __tmp10644))
+                                 (_put-slots!10530_ _ht10529_ __tmp10646))
                                (let ()
                                  (declare (not safe))
-                                 (_put-alist!10529_
-                                  _ht10527_
-                                  _key10525_
-                                  _alist10533_)))))
-                       _precedence-list10472_)
-                      _ht10527_))))
-          (let* ((_transparent?10481_
+                                 (_put-alist!10531_
+                                  _ht10529_
+                                  _key10527_
+                                  _alist10535_)))))
+                       _precedence-list10474_)
+                      _ht10529_))))
+          (let* ((_transparent?10483_
                   (let ()
                     (declare (not safe))
-                    (assgetq 'transparent: _properties10474_)))
-                 (_all-slots-printable?10486_
-                  (let ((_$e10483_ _transparent?10481_))
-                    (if _$e10483_
-                        _$e10483_
-                        (let ((__tmp10646
+                    (assgetq 'transparent: _properties10476_)))
+                 (_all-slots-printable?10488_
+                  (let ((_$e10485_ _transparent?10483_))
+                    (if _$e10485_
+                        _$e10485_
+                        (let ((__tmp10648
                                (let ()
                                  (declare (not safe))
-                                 (assgetq 'print: _properties10474_))))
+                                 (assgetq 'print: _properties10476_))))
                           (declare (not safe))
-                          (eq? '#t __tmp10646)))))
-                 (_printable10488_
+                          (eq? '#t __tmp10648)))))
+                 (_printable10490_
                   (if (let ()
                         (declare (not safe))
-                        (not _all-slots-printable?10486_))
+                        (not _all-slots-printable?10488_))
                       (let ()
                         (declare (not safe))
-                        (_make-props!10479_ 'print:))
+                        (_make-props!10481_ 'print:))
                       '#f))
-                 (_all-slots-equalable?10493_
-                  (let ((_$e10490_ _transparent?10481_))
-                    (if _$e10490_
-                        _$e10490_
-                        (let ((__tmp10647
+                 (_all-slots-equalable?10495_
+                  (let ((_$e10492_ _transparent?10483_))
+                    (if _$e10492_
+                        _$e10492_
+                        (let ((__tmp10649
                                (let ()
                                  (declare (not safe))
-                                 (assgetq 'equal: _properties10474_))))
+                                 (assgetq 'equal: _properties10476_))))
                           (declare (not safe))
-                          (eq? '#t __tmp10647)))))
-                 (_equalable10495_
+                          (eq? '#t __tmp10649)))))
+                 (_equalable10497_
                   (if (let ()
                         (declare (not safe))
-                        (not _all-slots-equalable?10493_))
+                        (not _all-slots-equalable?10495_))
                       (let ()
                         (declare (not safe))
-                        (_make-props!10479_ 'equal:))
+                        (_make-props!10481_ 'equal:))
                       '#f))
-                 (_first-new-field10497_
-                  (if _type-super10471_
-                      (let ((__tmp10648
+                 (_first-new-field10499_
+                  (if _type-super10473_
+                      (let ((__tmp10650
                              (let ()
                                (declare (not safe))
-                               (type-descriptor-all-slots _type-super10471_))))
+                               (type-descriptor-all-slots _type-super10473_))))
                         (declare (not safe))
-                        (##vector-length __tmp10648))
+                        (##vector-length __tmp10650))
                       '1))
-                 (_field-info-length10499_
-                  (let ((__tmp10649
-                         (let ((__tmp10650
+                 (_field-info-length10501_
+                  (let ((__tmp10651
+                         (let ((__tmp10652
                                 (let ()
                                   (declare (not safe))
-                                  (##vector-length _all-slots10473_))))
+                                  (##vector-length _all-slots10475_))))
                            (declare (not safe))
-                           (##fx- __tmp10650 _first-new-field10497_))))
+                           (##fx- __tmp10652 _first-new-field10499_))))
                     (declare (not safe))
-                    (##fx* '3 __tmp10649)))
-                 (_field-info10501_ (make-vector _field-info-length10499_ '#f))
-                 (_opaque?10506_
-                  (let ((_$e10503_
+                    (##fx* '3 __tmp10651)))
+                 (_field-info10503_ (make-vector _field-info-length10501_ '#f))
+                 (_opaque?10508_
+                  (let ((_$e10505_
                          (let ()
                            (declare (not safe))
-                           (not _all-slots-equalable?10493_))))
-                    (if _$e10503_
-                        _$e10503_
-                        (if _type-super10471_
-                            (let ((__tmp10651
-                                   (let ((__tmp10652
+                           (not _all-slots-equalable?10495_))))
+                    (if _$e10505_
+                        _$e10505_
+                        (if _type-super10473_
+                            (let ((__tmp10653
+                                   (let ((__tmp10654
                                           (let ()
                                             (declare (not safe))
-                                            (##type-flags _type-super10471_))))
+                                            (##type-flags _type-super10473_))))
                                      (declare (not safe))
-                                     (##fxand __tmp10652 '1))))
+                                     (##fxand __tmp10654 '1))))
                               (declare (not safe))
-                              (##fx= __tmp10651 '1))
+                              (##fx= __tmp10653 '1))
                             '#f)))))
-            (let _loop10509_ ((_i10511_ _first-new-field10497_) (_j10512_ '0))
+            (let _loop10511_ ((_i10513_ _first-new-field10499_) (_j10514_ '0))
               (if (let ()
                     (declare (not safe))
-                    (##fx< _j10512_ _field-info-length10499_))
-                  (let* ((_slot10514_
+                    (##fx< _j10514_ _field-info-length10501_))
+                  (let* ((_slot10516_
                           (let ()
                             (declare (not safe))
-                            (##vector-ref _all-slots10473_ _i10511_)))
-                         (_flags10522_
-                          (if _transparent?10481_
+                            (##vector-ref _all-slots10475_ _i10513_)))
+                         (_flags10524_
+                          (if _transparent?10483_
                               '0
-                              (let ((__tmp10654
-                                     (if (or _all-slots-printable?10486_
+                              (let ((__tmp10656
+                                     (if (or _all-slots-printable?10488_
                                              (let ()
                                                (declare (not safe))
                                                (table-ref
-                                                _printable10488_
-                                                _slot10514_
+                                                _printable10490_
+                                                _slot10516_
                                                 '#f)))
                                          '0
                                          '1))
-                                    (__tmp10653
-                                     (if (or _all-slots-equalable?10493_
+                                    (__tmp10655
+                                     (if (or _all-slots-equalable?10495_
                                              (let ()
                                                (declare (not safe))
                                                (table-ref
-                                                _equalable10495_
-                                                _slot10514_
+                                                _equalable10497_
+                                                _slot10516_
                                                 '#f)))
                                          '0
                                          '4)))
                                 (declare (not safe))
-                                (##fxior __tmp10654 __tmp10653)))))
-                    (vector-set! _field-info10501_ _j10512_ _slot10514_)
+                                (##fxior __tmp10656 __tmp10655)))))
+                    (vector-set! _field-info10503_ _j10514_ _slot10516_)
                     (vector-set!
-                     _field-info10501_
-                     (let () (declare (not safe)) (##fx+ _j10512_ '1))
-                     _flags10522_)
-                    (let ((__tmp10656
-                           (let () (declare (not safe)) (##fx+ _i10511_ '1)))
-                          (__tmp10655
-                           (let () (declare (not safe)) (##fx+ _j10512_ '3))))
+                     _field-info10503_
+                     (let () (declare (not safe)) (##fx+ _j10514_ '1))
+                     _flags10524_)
+                    (let ((__tmp10658
+                           (let () (declare (not safe)) (##fx+ _i10513_ '1)))
+                          (__tmp10657
+                           (let () (declare (not safe)) (##fx+ _j10514_ '3))))
                       (declare (not safe))
-                      (_loop10509_ __tmp10656 __tmp10655)))
+                      (_loop10511_ __tmp10658 __tmp10657)))
                   '#!void))
-            (let ((__tmp10657 (if _opaque?10506_ '25 '24)))
+            (let ((__tmp10659 (if _opaque?10508_ '25 '24)))
               (declare (not safe))
               (##structure
                ##type-type
-               _type-id10469_
-               _type-name10470_
-               __tmp10657
-               _type-super10471_
-               _field-info10501_
-               _precedence-list10472_
-               _all-slots10473_
-               _slot-table10476_
-               _properties10474_
-               _constructor10475_
-               _methods10477_))))))
+               _type-id10471_
+               _type-name10472_
+               __tmp10659
+               _type-super10473_
+               _field-info10503_
+               _precedence-list10474_
+               _all-slots10475_
+               _slot-table10478_
+               _properties10476_
+               _constructor10477_
+               _methods10479_))))))
     (define type-descriptor-precedence-list
-      (lambda (_klass10467_)
-        (let () (declare (not safe)) (##vector-ref _klass10467_ '6))))
+      (lambda (_klass10469_)
+        (let () (declare (not safe)) (##vector-ref _klass10469_ '6))))
     (define type-descriptor-all-slots
-      (lambda (_klass10465_)
-        (let () (declare (not safe)) (##vector-ref _klass10465_ '7))))
+      (lambda (_klass10467_)
+        (let () (declare (not safe)) (##vector-ref _klass10467_ '7))))
     (define type-descriptor-slot-table
-      (lambda (_klass10463_)
-        (let () (declare (not safe)) (##vector-ref _klass10463_ '8))))
+      (lambda (_klass10465_)
+        (let () (declare (not safe)) (##vector-ref _klass10465_ '8))))
     (define type-descriptor-properties
-      (lambda (_klass10461_)
-        (let () (declare (not safe)) (##vector-ref _klass10461_ '9))))
+      (lambda (_klass10463_)
+        (let () (declare (not safe)) (##vector-ref _klass10463_ '9))))
     (define type-descriptor-constructor
-      (lambda (_klass10459_)
-        (let () (declare (not safe)) (##vector-ref _klass10459_ '10))))
+      (lambda (_klass10461_)
+        (let () (declare (not safe)) (##vector-ref _klass10461_ '10))))
     (define type-descriptor-methods
-      (lambda (_klass10457_)
-        (let () (declare (not safe)) (##vector-ref _klass10457_ '11))))
+      (lambda (_klass10459_)
+        (let () (declare (not safe)) (##vector-ref _klass10459_ '11))))
     (define type-descriptor-methods-set!
-      (lambda (_klass10454_ _ht10455_)
+      (lambda (_klass10456_ _ht10457_)
         (let ()
           (declare (not safe))
-          (##vector-set! _klass10454_ '11 _ht10455_))))
+          (##vector-set! _klass10456_ '11 _ht10457_))))
     (define type-descriptor-mixin type-descriptor-precedence-list)
     (define type-descriptor-plist type-descriptor-properties)
     (define type-descriptor-ctor type-descriptor-constructor)
     (define type-descriptor-fields
-      (lambda (_klass10452_)
-        (let ((__tmp10658
-               (let ((__tmp10659
+      (lambda (_klass10454_)
+        (let ((__tmp10660
+               (let ((__tmp10661
                       (let ()
                         (declare (not safe))
-                        (type-descriptor-all-slots _klass10452_))))
+                        (type-descriptor-all-slots _klass10454_))))
                  (declare (not safe))
-                 (##vector-length __tmp10659))))
+                 (##vector-length __tmp10661))))
           (declare (not safe))
-          (##fx- __tmp10658 '1))))
+          (##fx- __tmp10660 '1))))
     (define type-descriptor-sealed?
-      (lambda (_klass10450_)
-        (let ((__tmp10660
-               (let () (declare (not safe)) (##type-flags _klass10450_))))
+      (lambda (_klass10452_)
+        (let ((__tmp10662
+               (let () (declare (not safe)) (##type-flags _klass10452_))))
           (declare (not safe))
-          (##fxbit-set? '20 __tmp10660))))
+          (##fxbit-set? '20 __tmp10662))))
     (define type-descriptor-seal!
-      (lambda (_klass10448_)
-        (let ((__tmp10661
-               (let ((__tmp10663
+      (lambda (_klass10450_)
+        (let ((__tmp10663
+               (let ((__tmp10665
                       (let ()
                         (declare (not safe))
                         (##fxarithmetic-shift '1 '20)))
-                     (__tmp10662
+                     (__tmp10664
                       (let ()
                         (declare (not safe))
-                        (##type-flags _klass10448_))))
+                        (##type-flags _klass10450_))))
                  (declare (not safe))
-                 (##fxior __tmp10663 __tmp10662))))
+                 (##fxior __tmp10665 __tmp10664))))
           (declare (not safe))
-          (##vector-set! _klass10448_ '3 __tmp10661))))
+          (##vector-set! _klass10450_ '3 __tmp10663))))
     (define make-struct-type__%
-      (lambda (_id10413_
-               _super10414_
-               _n-direct-slots10415_
-               _name10416_
-               _properties10417_
-               _constructor10418_
-               _direct-slots10419_)
-        (let ((__tmp10664
-               (let ((_$e10421_ _direct-slots10419_))
-                 (if _$e10421_
-                     _$e10421_
-                     (map (lambda (_g1042310425_)
+      (lambda (_id10415_
+               _super10416_
+               _n-direct-slots10417_
+               _name10418_
+               _properties10419_
+               _constructor10420_
+               _direct-slots10421_)
+        (let ((__tmp10666
+               (let ((_$e10423_ _direct-slots10421_))
+                 (if _$e10423_
+                     _$e10423_
+                     (map (lambda (_g1042510427_)
                             (let ()
                               (declare (not safe))
-                              (make-symbol__1 '"_" _g1042310425_)))
-                          (let ((__tmp10665
-                                 (if _super10414_
-                                     (let ((__tmp10666
+                              (make-symbol__1 '"_" _g1042510427_)))
+                          (let ((__tmp10667
+                                 (if _super10416_
+                                     (let ((__tmp10668
                                             (let ()
                                               (declare (not safe))
                                               (type-descriptor-all-slots
-                                               _super10414_))))
+                                               _super10416_))))
                                        (declare (not safe))
-                                       (##vector-length __tmp10666))
+                                       (##vector-length __tmp10668))
                                      '1)))
                             (declare (not safe))
-                            (iota _n-direct-slots10415_ __tmp10665)))))))
+                            (iota _n-direct-slots10417_ __tmp10667)))))))
           (declare (not safe))
           (make-struct-type*
-           _id10413_
-           _name10416_
-           _super10414_
-           __tmp10664
-           _properties10417_
-           _constructor10418_))))
+           _id10415_
+           _name10418_
+           _super10416_
+           __tmp10666
+           _properties10419_
+           _constructor10420_))))
     (define make-struct-type__0
-      (lambda (_id10431_
-               _super10432_
-               _n-direct-slots10433_
-               _name10434_
-               _properties10435_
-               _constructor10436_)
-        (let ((_direct-slots10438_ '#f))
+      (lambda (_id10433_
+               _super10434_
+               _n-direct-slots10435_
+               _name10436_
+               _properties10437_
+               _constructor10438_)
+        (let ((_direct-slots10440_ '#f))
           (declare (not safe))
           (make-struct-type__%
-           _id10431_
-           _super10432_
-           _n-direct-slots10433_
-           _name10434_
-           _properties10435_
-           _constructor10436_
-           _direct-slots10438_))))
+           _id10433_
+           _super10434_
+           _n-direct-slots10435_
+           _name10436_
+           _properties10437_
+           _constructor10438_
+           _direct-slots10440_))))
     (define make-struct-type
-      (lambda _g10668_
-        (let ((_g10667_ (let () (declare (not safe)) (##length _g10668_))))
-          (cond ((let () (declare (not safe)) (##fx= _g10667_ 6))
-                 (apply (lambda (_id10431_
-                                 _super10432_
-                                 _n-direct-slots10433_
-                                 _name10434_
-                                 _properties10435_
-                                 _constructor10436_)
+      (lambda _g10670_
+        (let ((_g10669_ (let () (declare (not safe)) (##length _g10670_))))
+          (cond ((let () (declare (not safe)) (##fx= _g10669_ 6))
+                 (apply (lambda (_id10433_
+                                 _super10434_
+                                 _n-direct-slots10435_
+                                 _name10436_
+                                 _properties10437_
+                                 _constructor10438_)
                           (let ()
                             (declare (not safe))
                             (make-struct-type__0
-                             _id10431_
-                             _super10432_
-                             _n-direct-slots10433_
-                             _name10434_
-                             _properties10435_
-                             _constructor10436_)))
-                        _g10668_))
-                ((let () (declare (not safe)) (##fx= _g10667_ 7))
-                 (apply (lambda (_id10440_
-                                 _super10441_
-                                 _n-direct-slots10442_
-                                 _name10443_
-                                 _properties10444_
-                                 _constructor10445_
-                                 _direct-slots10446_)
+                             _id10433_
+                             _super10434_
+                             _n-direct-slots10435_
+                             _name10436_
+                             _properties10437_
+                             _constructor10438_)))
+                        _g10670_))
+                ((let () (declare (not safe)) (##fx= _g10669_ 7))
+                 (apply (lambda (_id10442_
+                                 _super10443_
+                                 _n-direct-slots10444_
+                                 _name10445_
+                                 _properties10446_
+                                 _constructor10447_
+                                 _direct-slots10448_)
                           (let ()
                             (declare (not safe))
                             (make-struct-type__%
-                             _id10440_
-                             _super10441_
-                             _n-direct-slots10442_
-                             _name10443_
-                             _properties10444_
-                             _constructor10445_
-                             _direct-slots10446_)))
-                        _g10668_))
+                             _id10442_
+                             _super10443_
+                             _n-direct-slots10444_
+                             _name10445_
+                             _properties10446_
+                             _constructor10447_
+                             _direct-slots10448_)))
+                        _g10670_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-struct-type
-                  _g10668_))))))
+                  _g10670_))))))
     (define make-struct-type*
-      (lambda (_id10393_
-               _name10394_
-               _super10395_
-               _direct-slots10396_
-               _properties10397_
-               _constructor10398_)
-        (if (and _super10395_
-                 (let ((__tmp10669
+      (lambda (_id10395_
+               _name10396_
+               _super10397_
+               _direct-slots10398_
+               _properties10399_
+               _constructor10400_)
+        (if (and _super10397_
+                 (let ((__tmp10671
                         (let ()
                           (declare (not safe))
-                          (struct-type? _super10395_))))
+                          (struct-type? _super10397_))))
                    (declare (not safe))
-                   (not __tmp10669)))
-            (error '"Illegal super type; not a struct-type" _super10395_)
+                   (not __tmp10671)))
+            (error '"Illegal super type; not a struct-type" _super10397_)
             '#!void)
-        (let* ((_type10400_
-                (let ((__tmp10672
-                       (if _super10395_
+        (let* ((_type10402_
+                (let ((__tmp10674
+                       (if _super10397_
                            (let ()
                              (declare (not safe))
-                             (cons _super10395_ '()))
+                             (cons _super10397_ '()))
                            '()))
-                      (__tmp10670
-                       (let ((__tmp10671
+                      (__tmp10672
+                       (let ((__tmp10673
                               (let ()
                                 (declare (not safe))
                                 (cons 'struct: '#t))))
                          (declare (not safe))
-                         (cons __tmp10671 _properties10397_))))
+                         (cons __tmp10673 _properties10399_))))
                   (declare (not safe))
                   (make-class-type*
-                   _id10393_
-                   _name10394_
+                   _id10395_
+                   _name10396_
+                   __tmp10674
+                   _direct-slots10398_
                    __tmp10672
-                   _direct-slots10396_
-                   __tmp10670
-                   _constructor10398_)))
-               (_all-slots10402_
+                   _constructor10400_)))
+               (_all-slots10404_
                 (let ()
                   (declare (not safe))
-                  (type-descriptor-all-slots _type10400_)))
-               (_len10404_ (length _direct-slots10396_))
-               (_start10406_
-                (let ((__tmp10673
+                  (type-descriptor-all-slots _type10402_)))
+               (_len10406_ (length _direct-slots10398_))
+               (_start10408_
+                (let ((__tmp10675
                        (let ()
                          (declare (not safe))
-                         (##vector-length _all-slots10402_))))
+                         (##vector-length _all-slots10404_))))
                   (declare (not safe))
-                  (##fx- __tmp10673 _len10404_))))
-          (if (let ((__tmp10675
-                     (lambda (_slot10409_ _i10410_)
-                       (let ((__tmp10676
+                  (##fx- __tmp10675 _len10406_))))
+          (if (let ((__tmp10677
+                     (lambda (_slot10411_ _i10412_)
+                       (let ((__tmp10678
                               (let ()
                                 (declare (not safe))
-                                (##vector-ref _all-slots10402_ _i10410_))))
+                                (##vector-ref _all-slots10404_ _i10412_))))
                          (declare (not safe))
-                         (eq? _slot10409_ __tmp10676))))
-                    (__tmp10674
+                         (eq? _slot10411_ __tmp10678))))
+                    (__tmp10676
                      (let ()
                        (declare (not safe))
-                       (iota _len10404_ _start10406_))))
+                       (iota _len10406_ _start10408_))))
                 (declare (not safe))
-                (andmap2 __tmp10675 _direct-slots10396_ __tmp10674))
+                (andmap2 __tmp10677 _direct-slots10398_ __tmp10676))
               '#!void
               (error '"Non-unique slots in struct"
-                     _name10394_
-                     _direct-slots10396_))
-          _type10400_)))
+                     _name10396_
+                     _direct-slots10398_))
+          _type10402_)))
     (define make-struct-predicate
-      (lambda (_klass10385_)
-        (let ((_tid10387_
-               (let () (declare (not safe)) (##type-id _klass10385_))))
-          (if (let () (declare (not safe)) (type-final? _klass10385_))
-              (lambda (_obj10389_)
-                (let ()
-                  (declare (not safe))
-                  (##structure-direct-instance-of? _obj10389_ _tid10387_)))
+      (lambda (_klass10387_)
+        (let ((_tid10389_
+               (let () (declare (not safe)) (##type-id _klass10387_))))
+          (if (let () (declare (not safe)) (type-final? _klass10387_))
               (lambda (_obj10391_)
                 (let ()
                   (declare (not safe))
-                  (##structure-instance-of? _obj10391_ _tid10387_)))))))
+                  (##structure-direct-instance-of? _obj10391_ _tid10389_)))
+              (lambda (_obj10393_)
+                (let ()
+                  (declare (not safe))
+                  (##structure-instance-of? _obj10393_ _tid10389_)))))))
     (define make-struct-field-accessor
-      (lambda (_klass10382_ _field10383_)
-        (let ((__tmp10677
-               (let ()
-                 (declare (not safe))
-                 (struct-field-offset* _klass10382_ _field10383_))))
-          (declare (not safe))
-          (make-struct-field-accessor* _klass10382_ __tmp10677))))
-    (define make-struct-field-accessor*
-      (lambda (_klass10377_ _field10378_)
-        (lambda (_obj10380_)
-          (let ()
-            (declare (not safe))
-            (##structure-ref _obj10380_ _field10378_ _klass10377_ '#f)))))
-    (define make-struct-field-mutator
-      (lambda (_klass10374_ _field10375_)
-        (let ((__tmp10678
-               (let ()
-                 (declare (not safe))
-                 (struct-field-offset* _klass10374_ _field10375_))))
-          (declare (not safe))
-          (make-struct-field-mutator* _klass10374_ __tmp10678))))
-    (define make-struct-field-mutator*
-      (lambda (_klass10368_ _field10369_)
-        (lambda (_obj10371_ _val10372_)
-          (let ()
-            (declare (not safe))
-            (##structure-set!
-             _obj10371_
-             _val10372_
-             _field10369_
-             _klass10368_
-             '#f)))))
-    (define make-struct-field-unchecked-accessor
-      (lambda (_klass10365_ _field10366_)
+      (lambda (_klass10384_ _field10385_)
         (let ((__tmp10679
                (let ()
                  (declare (not safe))
-                 (struct-field-offset* _klass10365_ _field10366_))))
+                 (struct-field-offset* _klass10384_ _field10385_))))
           (declare (not safe))
-          (make-struct-field-unchecked-accessor* _klass10365_ __tmp10679))))
-    (define make-struct-field-unchecked-accessor*
-      (lambda (_klass10360_ _field10361_)
-        (lambda (_obj10363_)
+          (make-struct-field-accessor* _klass10384_ __tmp10679))))
+    (define make-struct-field-accessor*
+      (lambda (_klass10379_ _field10380_)
+        (lambda (_obj10382_)
           (let ()
             (declare (not safe))
-            (##unchecked-structure-ref
-             _obj10363_
-             _field10361_
-             _klass10360_
-             '#f)))))
-    (define make-struct-field-unchecked-mutator
-      (lambda (_klass10357_ _field10358_)
+            (##structure-ref _obj10382_ _field10380_ _klass10379_ '#f)))))
+    (define make-struct-field-mutator
+      (lambda (_klass10376_ _field10377_)
         (let ((__tmp10680
                (let ()
                  (declare (not safe))
-                 (struct-field-offset* _klass10357_ _field10358_))))
+                 (struct-field-offset* _klass10376_ _field10377_))))
           (declare (not safe))
-          (make-struct-field-unchecked-mutator* _klass10357_ __tmp10680))))
+          (make-struct-field-mutator* _klass10376_ __tmp10680))))
+    (define make-struct-field-mutator*
+      (lambda (_klass10370_ _field10371_)
+        (lambda (_obj10373_ _val10374_)
+          (let ()
+            (declare (not safe))
+            (##structure-set!
+             _obj10373_
+             _val10374_
+             _field10371_
+             _klass10370_
+             '#f)))))
+    (define make-struct-field-unchecked-accessor
+      (lambda (_klass10367_ _field10368_)
+        (let ((__tmp10681
+               (let ()
+                 (declare (not safe))
+                 (struct-field-offset* _klass10367_ _field10368_))))
+          (declare (not safe))
+          (make-struct-field-unchecked-accessor* _klass10367_ __tmp10681))))
+    (define make-struct-field-unchecked-accessor*
+      (lambda (_klass10362_ _field10363_)
+        (lambda (_obj10365_)
+          (let ()
+            (declare (not safe))
+            (##unchecked-structure-ref
+             _obj10365_
+             _field10363_
+             _klass10362_
+             '#f)))))
+    (define make-struct-field-unchecked-mutator
+      (lambda (_klass10359_ _field10360_)
+        (let ((__tmp10682
+               (let ()
+                 (declare (not safe))
+                 (struct-field-offset* _klass10359_ _field10360_))))
+          (declare (not safe))
+          (make-struct-field-unchecked-mutator* _klass10359_ __tmp10682))))
     (define make-struct-field-unchecked-mutator*
-      (lambda (_klass10351_ _field10352_)
-        (lambda (_obj10354_ _val10355_)
+      (lambda (_klass10353_ _field10354_)
+        (lambda (_obj10356_ _val10357_)
           (let ()
             (declare (not safe))
             (##unchecked-structure-set!
-             _obj10354_
-             _val10355_
-             _field10352_
-             _klass10351_
+             _obj10356_
+             _val10357_
+             _field10354_
+             _klass10353_
              '#f)))))
     (define struct-field-offset*
       (lambda (_klass10348_ _field10349_)
-        (let ((__tmp10681
-               (if (let () (declare (not safe)) (##type-super _klass10348_))
-                   (let ((__tmp10682
-                          (let ()
-                            (declare (not safe))
-                            (type-descriptor-all-slots _klass10348_))))
-                     (declare (not safe))
-                     (##vector-length __tmp10682))
-                   '1)))
+        (let ((__tmp10683
+               (let ((_super10351_
+                      (let ()
+                        (declare (not safe))
+                        (##type-super _klass10348_))))
+                 (if _super10351_
+                     (let ((__tmp10684
+                            (let ()
+                              (declare (not safe))
+                              (type-descriptor-all-slots _super10351_))))
+                       (declare (not safe))
+                       (##vector-length __tmp10684))
+                     '1))))
           (declare (not safe))
-          (##fx+ _field10349_ __tmp10681))))
+          (##fx+ _field10349_ __tmp10683))))
     (define struct-field-ref
       (lambda (_klass10344_ _obj10345_ _field10346_)
         (let ()
@@ -669,19 +673,19 @@
           (let _lp10335_ ((_super-struct10337_ _maybe-sub-struct10330_))
             (if (let () (declare (not safe)) (not _super-struct10337_))
                 '#f
-                (if (let ((__tmp10684
+                (if (let ((__tmp10686
                            (let ()
                              (declare (not safe))
                              (type-id _super-struct10337_))))
                       (declare (not safe))
-                      (eq? _maybe-super-struct-id10333_ __tmp10684))
+                      (eq? _maybe-super-struct-id10333_ __tmp10686))
                     '#t
-                    (let ((__tmp10683
+                    (let ((__tmp10685
                            (let ()
                              (declare (not safe))
                              (##type-super _super-struct10337_))))
                       (declare (not safe))
-                      (_lp10335_ __tmp10683))))))))
+                      (_lp10335_ __tmp10685))))))))
     (define struct-subtype?
       (lambda (_maybe-super-struct10327_ _maybe-sub-struct10328_)
         (let ()
@@ -739,7 +743,7 @@
                    (let ()
                      (declare (not safe))
                      (foldr1 base-struct/2 _x10232_ _y10231_)))))
-            (let* ((___match1063510636_
+            (let* ((___match1063710638_
                     (lambda (_hd1020510237_ _tl1020610239_)
                       (let ((_x10242_ _hd1020510237_))
                         (letrec ((_splice-rest1020810244_
@@ -758,38 +762,38 @@
                                            _rest1021210257_
                                            _y1020710258_)
                                     (let ((_y10261_ _hd1021110255_))
-                                      (let ((__tmp10686
+                                      (let ((__tmp10688
                                              (let ()
                                                (declare (not safe))
                                                (##cdr _rest1021210257_)))
-                                            (__tmp10685
+                                            (__tmp10687
                                              (let ()
                                                (declare (not safe))
                                                (cons _y10261_ _y1020710258_))))
                                         (declare (not safe))
                                         (_splice-loop1020910248_
-                                         __tmp10686
-                                         __tmp10685)))))
+                                         __tmp10688
+                                         __tmp10687)))))
                                  (_splice-loop1020910248_
                                   (lambda (_rest1021210263_ _y1020710264_)
                                     (if (let ()
                                           (declare (not safe))
                                           (pair? _rest1021210263_))
-                                        (let ((__tmp10688
+                                        (let ((__tmp10690
                                                (let ()
                                                  (declare (not safe))
                                                  (##car _rest1021210263_))))
                                           (declare (not safe))
                                           (_splice-try1021010246_
-                                           __tmp10688
+                                           __tmp10690
                                            _rest1021210263_
                                            _y1020710264_))
-                                        (let ((__tmp10687
+                                        (let ((__tmp10689
                                                (reverse _y1020710264_)))
                                           (declare (not safe))
                                           (_splice-rest1020810244_
                                            _rest1021210263_
-                                           __tmp10687))))))
+                                           __tmp10689))))))
                           (let ()
                             (declare (not safe))
                             (_splice-loop1020910248_ _tl1020610239_ '()))))))
@@ -833,10 +837,10 @@
                                               (_K1021310273_
                                                _y10288_
                                                _x10281_)))
-                                          (___match1063510636_
+                                          (___match1063710638_
                                            _hd1021910299_
                                            _tl1022010301_)))
-                                    (___match1063510636_
+                                    (___match1063710638_
                                      _hd1021910299_
                                      _tl1022010301_))))
                           (let () (declare (not safe)) (_E1020310227_))))))
@@ -907,13 +911,13 @@
                   (##vector-length _previous-slots10120_)))
                (_slot-table10124_
                 (if _super-struct10116_
-                    (let ((__tmp10689
+                    (let ((__tmp10691
                            (let ()
                              (declare (not safe))
                              (type-descriptor-slot-table
                               _super-struct10116_))))
                       (declare (not safe))
-                      (hash-copy __tmp10689))
+                      (hash-copy __tmp10691))
                     (let () (declare (not safe)) (make-table 'test: eq?))))
                (_r-slots10126_ '())
                (_process-slot10130_
@@ -932,11 +936,11 @@
                            _slot-table10124_
                            _slot10128_
                            _next-slot10122_))
-                        (let ((__tmp10690 (symbol->keyword _slot10128_)))
+                        (let ((__tmp10692 (symbol->keyword _slot10128_)))
                           (declare (not safe))
                           (table-set!
                            _slot-table10124_
-                           __tmp10690
+                           __tmp10692
                            _next-slot10122_))
                         (set! _r-slots10126_
                               (let ()
@@ -953,15 +957,15 @@
            (lambda (_mixin10139_)
              (if (let () (declare (not safe)) (type-struct? _mixin10139_))
                  '#!void
-                 (let ((__tmp10691
-                        (let ((__tmp10692
+                 (let ((__tmp10693
+                        (let ((__tmp10694
                                (let ()
                                  (declare (not safe))
                                  (type-descriptor-properties _mixin10139_))))
                           (declare (not safe))
-                          (assgetq 'direct-slots: __tmp10692 '()))))
+                          (assgetq 'direct-slots: __tmp10694 '()))))
                    (declare (not safe))
-                   (_process-slots10136_ __tmp10691))))
+                   (_process-slots10136_ __tmp10693))))
            (reverse _class-precedence-list10117_))
           (let ()
             (declare (not safe))
@@ -999,16 +1003,16 @@
                _properties10075_
                _constructor10076_)
         (let ((_$e10080_
-               (let ((__tmp10693
+               (let ((__tmp10695
                       (lambda (_klass10078_)
-                        (let ((__tmp10694
+                        (let ((__tmp10696
                                (let ()
                                  (declare (not safe))
                                  (type-descriptor? _klass10078_))))
                           (declare (not safe))
-                          (not __tmp10694)))))
+                          (not __tmp10696)))))
                  (declare (not safe))
-                 (find __tmp10693 _direct-supers10073_))))
+                 (find __tmp10695 _direct-supers10073_))))
           (if _$e10080_
               ((lambda (_g1008210084_)
                  (error '"Illegal super class; not a type descriptor"
@@ -1031,7 +1035,7 @@
                 (let ()
                   (declare (not safe))
                   (class-linearize-mixins _direct-supers10073_)))
-               (_g10695_
+               (_g10697_
                 (let ()
                   (declare (not safe))
                   (compute-class-slots
@@ -1039,31 +1043,31 @@
                    _precedence-list10096_
                    _direct-slots10074_))))
           (begin
-            (let ((_g10696_
+            (let ((_g10698_
                    (let ()
                      (declare (not safe))
-                     (if (##values? _g10695_) (##vector-length _g10695_) 1))))
-              (if (not (let () (declare (not safe)) (##fx= _g10696_ 2)))
-                  (error "Context expects 2 values" _g10696_)))
+                     (if (##values? _g10697_) (##vector-length _g10697_) 1))))
+              (if (not (let () (declare (not safe)) (##fx= _g10698_ 2)))
+                  (error "Context expects 2 values" _g10698_)))
             (let ((_all-slots10098_
-                   (let () (declare (not safe)) (##vector-ref _g10695_ 0)))
+                   (let () (declare (not safe)) (##vector-ref _g10697_ 0)))
                   (_slot-table10099_
-                   (let () (declare (not safe)) (##vector-ref _g10695_ 1))))
+                   (let () (declare (not safe)) (##vector-ref _g10697_ 1))))
               (let* ((_properties10101_
-                      (let ((__tmp10699
+                      (let ((__tmp10701
                              (let ()
                                (declare (not safe))
                                (cons 'direct-slots: _direct-slots10074_)))
-                            (__tmp10697
-                             (let ((__tmp10698
+                            (__tmp10699
+                             (let ((__tmp10700
                                     (let ()
                                       (declare (not safe))
                                       (cons 'direct-supers:
                                             _direct-supers10073_))))
                                (declare (not safe))
-                               (cons __tmp10698 _properties10075_))))
+                               (cons __tmp10700 _properties10075_))))
                         (declare (not safe))
-                        (cons __tmp10699 __tmp10697)))
+                        (cons __tmp10701 __tmp10699)))
                      (_constructor*10106_
                       (let ((_$e10103_ _constructor10076_))
                         (if _$e10103_
@@ -1086,15 +1090,15 @@
                    '#f))))))))
     (define class-precedence-list
       (lambda (_klass10069_)
-        (let ((__tmp10700
+        (let ((__tmp10702
                (let ()
                  (declare (not safe))
                  (type-descriptor-precedence-list _klass10069_))))
           (declare (not safe))
-          (cons _klass10069_ __tmp10700))))
+          (cons _klass10069_ __tmp10702))))
     (define struct-precedence-list
       (lambda (_strukt10064_)
-        (let ((__tmp10701
+        (let ((__tmp10703
                (let ((_$e10066_
                       (let ()
                         (declare (not safe))
@@ -1105,7 +1109,7 @@
                        (struct-precedence-list _$e10066_))
                      '()))))
           (declare (not safe))
-          (cons _strukt10064_ __tmp10701))))
+          (cons _strukt10064_ __tmp10703))))
     (define class-linearize-mixins
       (lambda (_klass-lst10062_)
         (let ()
@@ -1120,10 +1124,10 @@
       (lambda (_klass10052_)
         (if (let () (declare (not safe)) (type-final? _klass10052_))
             (lambda (_g1005310055_)
-              (let ((__tmp10702
+              (let ((__tmp10704
                      (let () (declare (not safe)) (##type-id _klass10052_))))
                 (declare (not safe))
-                (##structure-direct-instance-of? _g1005310055_ __tmp10702)))
+                (##structure-direct-instance-of? _g1005310055_ __tmp10704)))
             (lambda (_g1005710059_)
               (let ()
                 (declare (not safe))
@@ -1135,12 +1139,12 @@
                _if-struct-field10042_
                _if-class-slot10043_)
         (let ((_field10045_
-               (let ((__tmp10703
+               (let ((__tmp10705
                       (let ()
                         (declare (not safe))
                         (type-descriptor-slot-table _klass10039_))))
                  (declare (not safe))
-                 (table-ref __tmp10703 _slot10040_ '#f))))
+                 (table-ref __tmp10705 _slot10040_ '#f))))
           (if (or (let () (declare (not safe)) (type-final? _klass10039_))
                   (let () (declare (not safe)) (type-struct? _klass10039_)))
               (_if-struct10041_ _klass10039_ _field10045_)
@@ -1149,16 +1153,16 @@
                            (declare (not safe))
                            (base-struct/1 _klass10039_))))
                     (and _strukt10050_
-                         (let ((__tmp10704
-                                (let ((__tmp10705
+                         (let ((__tmp10706
+                                (let ((__tmp10707
                                        (let ()
                                          (declare (not safe))
                                          (type-descriptor-all-slots
                                           _strukt10050_))))
                                   (declare (not safe))
-                                  (##vector-length __tmp10705))))
+                                  (##vector-length __tmp10707))))
                            (declare (not safe))
-                           (##fx< _field10045_ __tmp10704))))
+                           (##fx< _field10045_ __tmp10706))))
                   (_if-struct-field10042_ _klass10039_ _field10045_)
                   (_if-class-slot10043_
                    _klass10039_
@@ -1194,10 +1198,10 @@
     (define make-class-cached-slot-accessor
       (lambda (_klass10025_ _slot10026_ _field10027_)
         (lambda (_obj10029_)
-          (if (let ((__tmp10706
+          (if (let ((__tmp10708
                      (let () (declare (not safe)) (##type-id _klass10025_))))
                 (declare (not safe))
-                (##structure-direct-instance-of? _obj10029_ __tmp10706))
+                (##structure-direct-instance-of? _obj10029_ __tmp10708))
               (let ()
                 (declare (not safe))
                 (unchecked-field-ref _obj10029_ _field10027_))
@@ -1242,10 +1246,10 @@
     (define make-class-cached-slot-mutator
       (lambda (_klass10009_ _slot10010_ _field10011_)
         (lambda (_obj10013_ _val10014_)
-          (if (let ((__tmp10707
+          (if (let ((__tmp10709
                      (let () (declare (not safe)) (##type-id _klass10009_))))
                 (declare (not safe))
-                (##structure-direct-instance-of? _obj10013_ __tmp10707))
+                (##structure-direct-instance-of? _obj10013_ __tmp10709))
               (let ()
                 (declare (not safe))
                 (unchecked-field-set! _obj10013_ _field10011_ _val10014_))
@@ -1265,10 +1269,10 @@
     (define make-class-cached-slot-unchecked-accessor
       (lambda (_klass10000_ _slot10001_ _field10002_)
         (lambda (_obj10004_)
-          (if (let ((__tmp10708
+          (if (let ((__tmp10710
                      (let () (declare (not safe)) (##type-id _klass10000_))))
                 (declare (not safe))
-                (##structure-direct-instance-of? _obj10004_ __tmp10708))
+                (##structure-direct-instance-of? _obj10004_ __tmp10710))
               (let ()
                 (declare (not safe))
                 (unchecked-field-ref _obj10004_ _field10002_))
@@ -1288,10 +1292,10 @@
     (define make-class-cached-slot-unchecked-mutator
       (lambda (_klass9990_ _slot9991_ _field9992_)
         (lambda (_obj9994_ _val9995_)
-          (if (let ((__tmp10709
+          (if (let ((__tmp10711
                      (let () (declare (not safe)) (##type-id _klass9990_))))
                 (declare (not safe))
-                (##structure-direct-instance-of? _obj9994_ __tmp10709))
+                (##structure-direct-instance-of? _obj9994_ __tmp10711))
               (let ()
                 (declare (not safe))
                 (unchecked-field-set! _obj9994_ _field9992_ _val9995_))
@@ -1309,24 +1313,24 @@
               '#f))))
     (define class-slot-offset*
       (lambda (_klass9982_ _slot9983_)
-        (let ((__tmp10710
+        (let ((__tmp10712
                (let ()
                  (declare (not safe))
                  (type-descriptor-slot-table _klass9982_))))
           (declare (not safe))
-          (table-ref __tmp10710 _slot9983_ '#f))))
+          (table-ref __tmp10712 _slot9983_ '#f))))
     (define class-slot-ref
       (lambda (_klass9976_ _obj9977_ _slot9978_)
         (if (let ()
               (declare (not safe))
               (class-instance? _klass9976_ _obj9977_))
             (let ((_off9980_
-                   (let ((__tmp10711
+                   (let ((__tmp10713
                           (let ()
                             (declare (not safe))
                             (object-type _obj9977_))))
                      (declare (not safe))
-                     (class-slot-offset* __tmp10711 _slot9978_))))
+                     (class-slot-offset* __tmp10713 _slot9978_))))
               (declare (not safe))
               (##unchecked-structure-ref _obj9977_ _off9980_ _klass9976_ '#f))
             (error '"not an instance" _klass9976_ _obj9977_))))
@@ -1336,12 +1340,12 @@
               (declare (not safe))
               (class-instance? _klass9969_ _obj9970_))
             (let ((_off9974_
-                   (let ((__tmp10712
+                   (let ((__tmp10714
                           (let ()
                             (declare (not safe))
                             (object-type _obj9970_))))
                      (declare (not safe))
-                     (class-slot-offset* __tmp10712 _slot9971_))))
+                     (class-slot-offset* __tmp10714 _slot9971_))))
               (declare (not safe))
               (##unchecked-structure-set!
                _obj9970_
@@ -1357,29 +1361,29 @@
                   (declare (not safe))
                   (##type-id _maybe-super-class9960_)))
                (_$e9964_
-                (let ((__tmp10713
+                (let ((__tmp10715
                        (let ()
                          (declare (not safe))
                          (##type-id _maybe-sub-class9959_))))
                   (declare (not safe))
-                  (eq? _maybe-super-class-id9962_ __tmp10713))))
+                  (eq? _maybe-super-class-id9962_ __tmp10715))))
           (if _$e9964_
               _$e9964_
-              (let ((__tmp10715
+              (let ((__tmp10717
                      (lambda (_super-class9967_)
-                       (let ((__tmp10716
+                       (let ((__tmp10718
                               (let ()
                                 (declare (not safe))
                                 (##type-id _super-class9967_))))
                          (declare (not safe))
-                         (eq? __tmp10716 _maybe-super-class-id9962_))))
-                    (__tmp10714
+                         (eq? __tmp10718 _maybe-super-class-id9962_))))
+                    (__tmp10716
                      (let ()
                        (declare (not safe))
                        (type-descriptor-precedence-list
                         _maybe-sub-class9959_))))
                 (declare (not safe))
-                (ormap1 __tmp10715 __tmp10714))))))
+                (ormap1 __tmp10717 __tmp10716))))))
     (define class-subtype?
       (lambda (_maybe-super-class9956_ _maybe-sub-class9957_)
         (let ()
@@ -1389,16 +1393,16 @@
     (define object-type ##structure-type)
     (define direct-instance?
       (lambda (_klass9953_ _obj9954_)
-        (let ((__tmp10717
+        (let ((__tmp10719
                (let () (declare (not safe)) (##type-id _klass9953_))))
           (declare (not safe))
-          (##structure-direct-instance-of? _obj9954_ __tmp10717))))
+          (##structure-direct-instance-of? _obj9954_ __tmp10719))))
     (define struct-instance?
       (lambda (_klass9950_ _obj9951_)
-        (let ((__tmp10718
+        (let ((__tmp10720
                (let () (declare (not safe)) (##type-id _klass9950_))))
           (declare (not safe))
-          (##structure-instance-of? _obj9951_ __tmp10718))))
+          (##structure-instance-of? _obj9951_ __tmp10720))))
     (define direct-struct-instance? direct-instance?)
     (define class-instance?
       (lambda (_klass9945_ _obj9946_)
@@ -1414,9 +1418,9 @@
     (define direct-class-instance? direct-instance?)
     (define make-object
       (lambda (_klass9942_ _k9943_)
-        (let ((__tmp10719 (let () (declare (not safe)) (##fx+ _k9943_ '1))))
+        (let ((__tmp10721 (let () (declare (not safe)) (##fx+ _k9943_ '1))))
           (declare (not safe))
-          (make-object*__% _klass9942_ __tmp10719))))
+          (make-object*__% _klass9942_ __tmp10721))))
     (define make-object*__%
       (lambda (_klass9927_ _k9928_)
         (let ((_obj9930_
@@ -1424,39 +1428,39 @@
           (let ()
             (declare (not safe))
             (##vector-set! _obj9930_ '0 _klass9927_))
-          (let ((__tmp10720 (macro-subtype-structure)))
+          (let ((__tmp10722 (macro-subtype-structure)))
             (declare (not safe))
-            (##subtype-set! _obj9930_ __tmp10720))
+            (##subtype-set! _obj9930_ __tmp10722))
           _obj9930_)))
     (define make-object*__0
       (lambda (_klass9935_)
-        (let ((_k9937_ (let ((__tmp10721
+        (let ((_k9937_ (let ((__tmp10723
                               (let ()
                                 (declare (not safe))
                                 (type-descriptor-all-slots _klass9935_))))
                          (declare (not safe))
-                         (##vector-length __tmp10721))))
+                         (##vector-length __tmp10723))))
           (declare (not safe))
           (make-object*__% _klass9935_ _k9937_))))
     (define make-object*
-      (lambda _g10723_
-        (let ((_g10722_ (let () (declare (not safe)) (##length _g10723_))))
-          (cond ((let () (declare (not safe)) (##fx= _g10722_ 1))
+      (lambda _g10725_
+        (let ((_g10724_ (let () (declare (not safe)) (##length _g10725_))))
+          (cond ((let () (declare (not safe)) (##fx= _g10724_ 1))
                  (apply (lambda (_klass9935_)
                           (let ()
                             (declare (not safe))
                             (make-object*__0 _klass9935_)))
-                        _g10723_))
-                ((let () (declare (not safe)) (##fx= _g10722_ 2))
+                        _g10725_))
+                ((let () (declare (not safe)) (##fx= _g10724_ 2))
                  (apply (lambda (_klass9939_ _k9940_)
                           (let ()
                             (declare (not safe))
                             (make-object*__% _klass9939_ _k9940_)))
-                        _g10723_))
+                        _g10725_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-object*
-                  _g10723_))))))
+                  _g10725_))))))
     (define make-struct-instance
       (lambda (_klass9913_ . _args9914_)
         (let* ((_all-slots9916_
@@ -1473,7 +1477,7 @@
                    (type-descriptor-constructor _klass9913_))))
             (if _$e9921_
                 ((lambda (_kons-id9924_)
-                   (let ((__tmp10726
+                   (let ((__tmp10728
                           (let ()
                             (declare (not safe))
                             (make-object*__% _klass9913_ _size9918_))))
@@ -1481,14 +1485,14 @@
                      (__constructor-init!
                       _klass9913_
                       _kons-id9924_
-                      __tmp10726
+                      __tmp10728
                       _args9914_)))
                  _$e9921_)
-                (if (let ((__tmp10725
+                (if (let ((__tmp10727
                            (let () (declare (not safe)) (##fx- _size9918_ '1)))
-                          (__tmp10724 (length _args9914_)))
+                          (__tmp10726 (length _args9914_)))
                       (declare (not safe))
-                      (##fx= __tmp10725 __tmp10724))
+                      (##fx= __tmp10727 __tmp10726))
                     (apply ##structure _klass9913_ _args9914_)
                     (error '"Arguments don't match object size"
                            _klass9913_
@@ -1497,15 +1501,15 @@
     (define make-class-instance
       (lambda (_klass9903_ . _args9904_)
         (let* ((_obj9906_
-                (let ((__tmp10727
-                       (let ((__tmp10728
+                (let ((__tmp10729
+                       (let ((__tmp10730
                               (let ()
                                 (declare (not safe))
                                 (type-descriptor-all-slots _klass9903_))))
                          (declare (not safe))
-                         (##vector-length __tmp10728))))
+                         (##vector-length __tmp10730))))
                   (declare (not safe))
-                  (make-object*__% _klass9903_ __tmp10727)))
+                  (make-object*__% _klass9903_ __tmp10729)))
                (_$e9908_
                 (let ()
                   (declare (not safe))
@@ -1525,13 +1529,13 @@
                 (__class-instance-init! _klass9903_ _obj9906_ _args9904_))))))
     (define struct-instance-init!
       (lambda (_obj9900_ . _args9901_)
-        (if (let ((__tmp10730 (length _args9901_))
-                  (__tmp10729
+        (if (let ((__tmp10732 (length _args9901_))
+                  (__tmp10731
                    (let ()
                      (declare (not safe))
                      (##structure-length _obj9900_))))
               (declare (not safe))
-              (##fx< __tmp10730 __tmp10729))
+              (##fx< __tmp10732 __tmp10731))
             (let ()
               (declare (not safe))
               (__struct-instance-init! _obj9900_ _args9901_))
@@ -1546,10 +1550,10 @@
                     (let ()
                       (declare (not safe))
                       (##vector-set! _obj9859_ _k9864_ _hd9886_))
-                    (let ((__tmp10731
+                    (let ((__tmp10733
                            (let () (declare (not safe)) (##fx+ _k9864_ '1))))
                       (declare (not safe))
-                      (_lp9862_ __tmp10731 _rest9885_)))))
+                      (_lp9862_ __tmp10733 _rest9885_)))))
             (if (let () (declare (not safe)) (##pair? _rest98669874_))
                 (let ((_hd98719891_
                        (let () (declare (not safe)) (##car _rest98669874_)))
@@ -1561,10 +1565,10 @@
                 (let () (declare (not safe)) (_else98689882_)))))))
     (define class-instance-init!
       (lambda (_obj9856_ . _args9857_)
-        (let ((__tmp10732
+        (let ((__tmp10734
                (let () (declare (not safe)) (object-type _obj9856_))))
           (declare (not safe))
-          (__class-instance-init! __tmp10732 _obj9856_ _args9857_))))
+          (__class-instance-init! __tmp10734 _obj9856_ _args9857_))))
     (define __class-instance-init!
       (lambda (_klass9800_ _obj9801_ _args9802_)
         (let _lp9804_ ((_rest9806_ _args9802_))
@@ -1657,13 +1661,13 @@
                            (declare (not safe))
                            (type-descriptor-all-slots _klass9770_))))
                     (let _loop9774_ ((_index9776_
-                                      (let ((__tmp10738
+                                      (let ((__tmp10740
                                              (let ()
                                                (declare (not safe))
                                                (##vector-length
                                                 _all-slots9772_))))
                                         (declare (not safe))
-                                        (##fx- __tmp10738 '1)))
+                                        (##fx- __tmp10740 '1)))
                                      (_plist9777_ '()))
                       (if (let () (declare (not safe)) (##fx< _index9776_ '1))
                           (let ()
@@ -1675,26 +1679,26 @@
                                    (##vector-ref
                                     _all-slots9772_
                                     _index9776_))))
-                            (let ((__tmp10737
+                            (let ((__tmp10739
                                    (let ()
                                      (declare (not safe))
                                      (##fx- _index9776_ '1)))
-                                  (__tmp10733
-                                   (let ((__tmp10736
+                                  (__tmp10735
+                                   (let ((__tmp10738
                                           (symbol->keyword _slot9779_))
-                                         (__tmp10734
-                                          (let ((__tmp10735
+                                         (__tmp10736
+                                          (let ((__tmp10737
                                                  (let ()
                                                    (declare (not safe))
                                                    (unchecked-field-ref
                                                     _obj9768_
                                                     _index9776_))))
                                             (declare (not safe))
-                                            (cons __tmp10735 _plist9777_))))
+                                            (cons __tmp10737 _plist9777_))))
                                      (declare (not safe))
-                                     (cons __tmp10736 __tmp10734))))
+                                     (cons __tmp10738 __tmp10736))))
                               (declare (not safe))
-                              (_loop9774_ __tmp10737 __tmp10733))))))
+                              (_loop9774_ __tmp10739 __tmp10735))))))
                   (error '"Not a class type" _obj9768_ _klass9770_)))
             (error '"Not an object" _obj9768_))))
     (define unchecked-field-ref
@@ -1707,22 +1711,22 @@
           (##vector-set! _obj9761_ _off9762_ _val9763_))))
     (define unchecked-slot-ref
       (lambda (_obj9758_ _slot9759_)
-        (let ((__tmp10739
-               (let ((__tmp10740
-                      (let () (declare (not safe)) (object-type _obj9758_))))
-                 (declare (not safe))
-                 (class-slot-offset* __tmp10740 _slot9759_))))
-          (declare (not safe))
-          (unchecked-field-ref _obj9758_ __tmp10739))))
-    (define unchecked-slot-set!
-      (lambda (_obj9754_ _slot9755_ _val9756_)
         (let ((__tmp10741
                (let ((__tmp10742
+                      (let () (declare (not safe)) (object-type _obj9758_))))
+                 (declare (not safe))
+                 (class-slot-offset* __tmp10742 _slot9759_))))
+          (declare (not safe))
+          (unchecked-field-ref _obj9758_ __tmp10741))))
+    (define unchecked-slot-set!
+      (lambda (_obj9754_ _slot9755_ _val9756_)
+        (let ((__tmp10743
+               (let ((__tmp10744
                       (let () (declare (not safe)) (object-type _obj9754_))))
                  (declare (not safe))
-                 (class-slot-offset* __tmp10742 _slot9755_))))
+                 (class-slot-offset* __tmp10744 _slot9755_))))
           (declare (not safe))
-          (unchecked-field-set! _obj9754_ __tmp10741 _val9756_))))
+          (unchecked-field-set! _obj9754_ __tmp10743 _val9756_))))
     (define slot-ref__%
       (lambda (_obj9730_ _slot9731_ _E9732_)
         (if (let () (declare (not safe)) (object? _obj9730_))
@@ -1750,24 +1754,24 @@
           (declare (not safe))
           (slot-ref__% _obj9745_ _slot9746_ _E9748_))))
     (define slot-ref
-      (lambda _g10744_
-        (let ((_g10743_ (let () (declare (not safe)) (##length _g10744_))))
-          (cond ((let () (declare (not safe)) (##fx= _g10743_ 2))
+      (lambda _g10746_
+        (let ((_g10745_ (let () (declare (not safe)) (##length _g10746_))))
+          (cond ((let () (declare (not safe)) (##fx= _g10745_ 2))
                  (apply (lambda (_obj9745_ _slot9746_)
                           (let ()
                             (declare (not safe))
                             (slot-ref__0 _obj9745_ _slot9746_)))
-                        _g10744_))
-                ((let () (declare (not safe)) (##fx= _g10743_ 3))
+                        _g10746_))
+                ((let () (declare (not safe)) (##fx= _g10745_ 3))
                  (apply (lambda (_obj9750_ _slot9751_ _E9752_)
                           (let ()
                             (declare (not safe))
                             (slot-ref__% _obj9750_ _slot9751_ _E9752_)))
-                        _g10744_))
+                        _g10746_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   slot-ref
-                  _g10744_))))))
+                  _g10746_))))))
     (define slot-set!__%
       (lambda (_obj9702_ _slot9703_ _val9704_ _E9705_)
         (if (let () (declare (not safe)) (object? _obj9702_))
@@ -1795,15 +1799,15 @@
           (declare (not safe))
           (slot-set!__% _obj9718_ _slot9719_ _val9720_ _E9722_))))
     (define slot-set!
-      (lambda _g10746_
-        (let ((_g10745_ (let () (declare (not safe)) (##length _g10746_))))
-          (cond ((let () (declare (not safe)) (##fx= _g10745_ 3))
+      (lambda _g10748_
+        (let ((_g10747_ (let () (declare (not safe)) (##length _g10748_))))
+          (cond ((let () (declare (not safe)) (##fx= _g10747_ 3))
                  (apply (lambda (_obj9718_ _slot9719_ _val9720_)
                           (let ()
                             (declare (not safe))
                             (slot-set!__0 _obj9718_ _slot9719_ _val9720_)))
-                        _g10746_))
-                ((let () (declare (not safe)) (##fx= _g10745_ 4))
+                        _g10748_))
+                ((let () (declare (not safe)) (##fx= _g10747_ 4))
                  (apply (lambda (_obj9724_ _slot9725_ _val9726_ _E9727_)
                           (let ()
                             (declare (not safe))
@@ -1812,11 +1816,11 @@
                              _slot9725_
                              _val9726_
                              _E9727_)))
-                        _g10746_))
+                        _g10748_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   slot-set!
-                  _g10746_))))))
+                  _g10748_))))))
     (define __slot-error
       (lambda (_obj9698_ _slot9699_)
         (error '"Cannot find slot" _obj9698_ _slot9699_)))
@@ -1833,10 +1837,10 @@
     (define method-ref
       (lambda (_obj9686_ _id9687_)
         (if (let () (declare (not safe)) (object? _obj9686_))
-            (let ((__tmp10747
+            (let ((__tmp10749
                    (let () (declare (not safe)) (object-type _obj9686_))))
               (declare (not safe))
-              (find-method __tmp10747 _id9687_))
+              (find-method __tmp10749 _id9687_))
             '#f)))
     (define checked-method-ref
       (lambda (_obj9680_ _id9681_)
@@ -1891,13 +1895,13 @@
             '#f)))
     (define mixin-find-method
       (lambda (_mixins9644_ _id9645_)
-        (let ((__tmp10748
+        (let ((__tmp10750
                (lambda (_g96469648_)
                  (let ()
                    (declare (not safe))
                    (direct-method-ref _g96469648_ _id9645_)))))
           (declare (not safe))
-          (ormap1 __tmp10748 _mixins9644_))))
+          (ormap1 __tmp10750 _mixins9644_))))
     (define builtin-find-method
       (lambda (_klass9638_ _id9639_)
         (if (let () (declare (not safe)) (##type? _klass9638_))
@@ -1907,12 +1911,12 @@
                      (builtin-method-ref _klass9638_ _id9639_))))
               (if _$e9641_
                   _$e9641_
-                  (let ((__tmp10749
+                  (let ((__tmp10751
                          (let ()
                            (declare (not safe))
                            (##type-super _klass9638_))))
                     (declare (not safe))
-                    (builtin-find-method __tmp10749 _id9639_))))
+                    (builtin-find-method __tmp10751 _id9639_))))
             '#f)))
     (define direct-method-ref
       (lambda (_klass9630_ _id9631_)
@@ -1929,19 +1933,19 @@
               '#f))))
     (define mixin-method-ref
       (lambda (_klass9627_ _id9628_)
-        (let ((__tmp10750
+        (let ((__tmp10752
                (let ()
                  (declare (not safe))
                  (type-descriptor-precedence-list _klass9627_))))
           (declare (not safe))
-          (mixin-find-method __tmp10750 _id9628_))))
+          (mixin-find-method __tmp10752 _id9628_))))
     (define builtin-method-ref
       (lambda (_klass9619_ _id9620_)
         (let ((_$e9622_
-               (let ((__tmp10751
+               (let ((__tmp10753
                       (let () (declare (not safe)) (##type-id _klass9619_))))
                  (declare (not safe))
-                 (table-ref __builtin-type-methods __tmp10751 '#f))))
+                 (table-ref __builtin-type-methods __tmp10753 '#f))))
           (if _$e9622_
               ((lambda (_mtab9625_)
                  (let ()
@@ -1982,14 +1986,14 @@
               (if (let () (declare (not safe)) (##type? _klass9585_))
                   (let ((_ht9601_
                          (let ((_$e9596_
-                                (let ((__tmp10752
+                                (let ((__tmp10754
                                        (let ()
                                          (declare (not safe))
                                          (##type-id _klass9585_))))
                                   (declare (not safe))
                                   (table-ref
                                    __builtin-type-methods
-                                   __tmp10752
+                                   __tmp10754
                                    '#f))))
                            (if _$e9596_
                                _$e9596_
@@ -1997,14 +2001,14 @@
                                       (let ()
                                         (declare (not safe))
                                         (make-table 'test: eq?))))
-                                 (let ((__tmp10753
+                                 (let ((__tmp10755
                                         (let ()
                                           (declare (not safe))
                                           (##type-id _klass9585_))))
                                    (declare (not safe))
                                    (table-set!
                                     __builtin-type-methods
-                                    __tmp10753
+                                    __tmp10755
                                     _ht9599_))
                                  _ht9599_)))))
                     (declare (not safe))
@@ -2017,15 +2021,15 @@
           (declare (not safe))
           (bind-method!__% _klass9608_ _id9609_ _proc9610_ _rebind?9612_))))
     (define bind-method!
-      (lambda _g10755_
-        (let ((_g10754_ (let () (declare (not safe)) (##length _g10755_))))
-          (cond ((let () (declare (not safe)) (##fx= _g10754_ 3))
+      (lambda _g10757_
+        (let ((_g10756_ (let () (declare (not safe)) (##length _g10757_))))
+          (cond ((let () (declare (not safe)) (##fx= _g10756_ 3))
                  (apply (lambda (_klass9608_ _id9609_ _proc9610_)
                           (let ()
                             (declare (not safe))
                             (bind-method!__0 _klass9608_ _id9609_ _proc9610_)))
-                        _g10755_))
-                ((let () (declare (not safe)) (##fx= _g10754_ 4))
+                        _g10757_))
+                ((let () (declare (not safe)) (##fx= _g10756_ 4))
                  (apply (lambda (_klass9614_ _id9615_ _proc9616_ _rebind?9617_)
                           (let ()
                             (declare (not safe))
@@ -2034,11 +2038,11 @@
                              _id9615_
                              _proc9616_
                              _rebind?9617_)))
-                        _g10755_))
+                        _g10757_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   bind-method!
-                  _g10755_))))))
+                  _g10757_))))))
     (define __method-specializers (make-table 'test: eq?))
     (define bind-specializer!
       (lambda (_proc9581_ _specializer9582_)
@@ -2051,7 +2055,7 @@
                   (lambda (_mtab9566_)
                     (letrec ((_merge!9568_
                               (lambda (_tab9576_)
-                                (let ((__tmp10756
+                                (let ((__tmp10758
                                        (lambda (_id9578_ _proc9579_)
                                          (let ()
                                            (declare (not safe))
@@ -2060,7 +2064,7 @@
                                             _id9578_
                                             _proc9579_)))))
                                   (declare (not safe))
-                                  (table-for-each __tmp10756 _tab9576_))))
+                                  (table-for-each __tmp10758 _tab9576_))))
                              (_collect-direct-methods!9569_
                               (lambda (_klass9571_)
                                 (let ((_$e9573_
@@ -2098,7 +2102,7 @@
                       (let ()
                         (declare (not safe))
                         (_collect-methods!9550_ _mtab9553_))
-                      (let ((__tmp10757
+                      (let ((__tmp10759
                              (lambda (_id9555_ _proc9556_)
                                (let ((_$e9558_
                                       (let ()
@@ -2112,34 +2116,34 @@
                                         (let ((_proc9563_
                                                (_specializer9561_ _klass9548_))
                                               (_gid9564_
-                                               (let ((__tmp10758
+                                               (let ((__tmp10760
                                                       (let ()
                                                         (declare (not safe))
                                                         (##type-id
                                                          _klass9548_))))
                                                  (declare (not safe))
                                                  (make-symbol__1
-                                                  __tmp10758
+                                                  __tmp10760
                                                   '"::["
                                                   _id9555_
                                                   '"]"))))
-                                          (eval (let ((__tmp10759
-                                                       (let ((__tmp10760
-                                                              (let ((__tmp10761
+                                          (eval (let ((__tmp10761
+                                                       (let ((__tmp10762
+                                                              (let ((__tmp10763
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp10762
+                             (let ((__tmp10764
                                     (let ()
                                       (declare (not safe))
                                       (cons _proc9563_ '()))))
                                (declare (not safe))
-                               (cons 'quote __tmp10762))))
+                               (cons 'quote __tmp10764))))
                         (declare (not safe))
-                        (cons __tmp10761 '()))))
+                        (cons __tmp10763 '()))))
                  (declare (not safe))
-                 (cons _gid9564_ __tmp10760))))
+                 (cons _gid9564_ __tmp10762))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons 'def __tmp10759)))
+                                                  (cons 'def __tmp10761)))
                                           (let ()
                                             (declare (not safe))
                                             (table-set!
@@ -2154,7 +2158,7 @@
                                         _id9555_
                                         _proc9556_)))))))
                         (declare (not safe))
-                        (table-for-each __tmp10757 _mtab9553_))
+                        (table-for-each __tmp10759 _mtab9553_))
                       (let ()
                         (declare (not safe))
                         (type-descriptor-methods-set! _klass9548_ _vtab9552_))
@@ -2177,12 +2181,12 @@
                        (_else95099523_ (lambda () '#f))
                        (_K95119529_
                         (lambda (_rest9526_ _klass9527_)
-                          (if (let ((__tmp10765
+                          (if (let ((__tmp10767
                                      (let ()
                                        (declare (not safe))
                                        (##type-id _klass9527_))))
                                 (declare (not safe))
-                                (eq? _type-id9502_ __tmp10765))
+                                (eq? _type-id9502_ __tmp10767))
                               (let ()
                                 (declare (not safe))
                                 (mixin-find-method _rest9526_ _id9499_))
@@ -2205,18 +2209,18 @@
                       (let () (declare (not safe)) (_else95099523_)))))
               (if (let () (declare (not safe)) (##type? _klass9501_))
                   (let _lp9541_ ((_klass9543_ _klass9501_))
-                    (if (let ((__tmp10764
+                    (if (let ((__tmp10766
                                (let ()
                                  (declare (not safe))
                                  (##type-id _klass9543_))))
                           (declare (not safe))
-                          (eq? _type-id9502_ __tmp10764))
-                        (let ((__tmp10763
+                          (eq? _type-id9502_ __tmp10766))
+                        (let ((__tmp10765
                                (let ()
                                  (declare (not safe))
                                  (##type-super _klass9543_))))
                           (declare (not safe))
-                          (builtin-find-method __tmp10763 _id9499_))
+                          (builtin-find-method __tmp10765 _id9499_))
                         (let ((_$e9545_
                                (let ()
                                  (declare (not safe))
