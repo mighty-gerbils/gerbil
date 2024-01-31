@@ -7,21 +7,24 @@ class GerbilSchemeClang < Formula
       revision: "f7d8efcf4a25014b4b969eb6e21a3006d256f22e"
   head "https://github.com/mighty-gerbils/gerbil.git", using: :git
   version "0.18.1"
-  revision 3
+  revision 2
   depends_on "openssl@3"
   depends_on "sqlite"
   depends_on "zlib"
-  #depends_on "gcc"
+  depends_on "llvm"
+  depends_on "coreutils"
 
   #fails_with :clang do
   #  cause "gerbil-scheme is built with GCC"
   #end
   def install
+    nproc = `nproc`.to_i - 1
     ENV["GERBIL_GCC"] = "clang"
     ENV["CC"] = "clang"
+
+    system "clang", "--version"
     system "./configure", "--prefix=#{prefix}"
-    system "make"
-    ENV.deparallelize
+    system "make", "-j#{nproc}"
     system "make", "install"
     rm prefix/"bin"
     mkdir prefix/"bin"
