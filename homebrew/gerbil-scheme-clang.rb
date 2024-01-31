@@ -19,6 +19,10 @@ class GerbilSchemeClang < Formula
   #end
   def install
     nproc = `nproc`.to_i - 1
+
+    ENV.prepend_path("PATH", "/opt/homebrew/opt/llvm/bin")
+    ENV["LDFLAGS"] = "-L/opt/homebrew/opt/llvm/lib"
+    ENV["CPPFLAGS"] = "-I/opt/homebrew/opt/llvm/include"
     ENV["GERBIL_GCC"] = "clang"
     ENV["CC"] = "clang"
 
