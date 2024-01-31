@@ -162,20 +162,26 @@ package: gerbil
     symbol->keyword keyword->symbol
     ;; c3 linearization
     c3-linearize
+
     ;; MOP
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
     make-struct-type make-struct-type*
     make-struct-predicate
+
+    make-struct-slot-accessor
+    make-struct-slot-mutator
+    make-struct-slot-unchecked-accessor
+    make-struct-slot-unchecked-mutator
+
     make-struct-field-accessor
     make-struct-field-mutator
     make-struct-field-unchecked-accessor
     make-struct-field-unchecked-mutator
+
     base-struct
     class-precedence-list struct-precedence-list
-    struct-field-ref
-    struct-field-set!
     unchecked-field-ref
     unchecked-field-set!
     make-class-type
@@ -191,8 +197,8 @@ package: gerbil
     unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
-    direct-instance? direct-struct-instance? direct-class-instance?
-    make-object make-object*
+    direct-instance?
+    make-object make-object* make-instance
     struct-copy
     struct->list class->list
     make-struct-instance
