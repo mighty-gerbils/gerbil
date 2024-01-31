@@ -13,16 +13,17 @@ class GerbilSchemeClang < Formula
   depends_on "zlib"
   depends_on "llvm"
   depends_on "coreutils"
+  depends_on "gcc"
 
-  #fails_with :clang do
-  #  cause "gerbil-scheme is built with GCC"
-  #end
+  
+
   def install
     nproc = `nproc`.to_i - 1
 
+    ENV.prepend_path("PATH", "/usr/local/opt/llvm/bin")
     ENV.prepend_path("PATH", "/opt/homebrew/opt/llvm/bin")
-    ENV["LDFLAGS"] = "-L/opt/homebrew/opt/llvm/lib"
-    ENV["CPPFLAGS"] = "-I/opt/homebrew/opt/llvm/include"
+    ENV["LDFLAGS"] = "-L/opt/homebrew/opt/llvm/lib -L/usr/local/opt/llvm/lib"
+    ENV["CPPFLAGS"] = "-I/opt/homebrew/opt/llvm/include -I/usr/local/opt/llvm/include"
     ENV["GERBIL_GCC"] = "clang"
     ENV["CC"] = "clang"
 
