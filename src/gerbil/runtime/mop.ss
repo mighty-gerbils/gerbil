@@ -513,10 +513,9 @@ namespace: #f
       (unchecked-field-set! obj field val)
       (unchecked-slot-set! obj slot val))))
 
-(defrules ignore-slot ()
-  ((_ proc)
+(def (ignore-slot proc)
    (lambda (klass slot field)
-     (proc klass field))))
+     (proc klass field)))
 
 ;; TODO become class-slot-offset*
 (def (class-slot-offset klass slot)
