@@ -45,7 +45,7 @@ namespace: #f
   (cond
    ((type-descriptor? klass) (##type-id klass))
    ((not klass) #f)
-   (else (error "Not a class or #f" klass))))
+   (else (error "not a type descriptor" klass))))
 
 (def (type=? x y)
   (eq? (type-id x) (type-id y)))
@@ -179,16 +179,19 @@ namespace: #f
 ;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
 (def (make-struct-type* id name super direct-slots properties constructor)
   (when (and super (not (struct-type? super)))
-    (error "Illegal super type; not a struct-type" super))
+    (error "illegal super type; not a struct-type" super))
   ;; Consistency check for slots: they must all be new
   (let* ((type (make-class-type* id name (if super [super] []) direct-slots
-                                 [[struct: . #t] . properties] constructor))
+                                 (if (assgetq struct: properties)
+                                   properties
+                                   [[struct: . #t] . properties])
+                                 constructor))
          (all-slots (type-descriptor-all-slots type))
          (len (length direct-slots))
          (start (##fx- (##vector-length all-slots) len)))
     (unless (andmap (lambda (slot i) (eq? slot (##vector-ref all-slots i)))
                     direct-slots (iota len start))
-      (error "Non-unique slots in struct" name direct-slots))
+      (error "non-unique slots in struct" name direct-slots))
     type))
 
 (def (make-struct-predicate klass)
@@ -300,7 +303,7 @@ namespace: #f
    ((struct-type? klass) klass)
    ((class-type? klass) (##type-super klass))
    ((not klass) #f)
-   (else (error "Not a class or false" klass))))
+   (else (error "not a class or false" klass))))
 
 ;; Which is the most specific struct class if any that both klass1 and klass2 are or inherit from?
 ;; : TypeDescriptor TypeDescriptor -> (OrFalse StructTypeDescriptor)
@@ -310,7 +313,7 @@ namespace: #f
     (cond
      ((or (not s1) (and s2 (substruct? s1 s2))) s2)
      ((or (not s2) (and s1 (substruct? s2 s1))) s1)
-     (else (error "Bad mixin: incompatible struct bases" klass1 klass2 s1 s2)))))
+     (else (error "bad mixin: incompatible struct bases" klass1 klass2 s1 s2)))))
 
 ;; Which is the most specific struct class if any that all argument classes are or inherit from?
 ;; : TypeDescriptor ... -> (OrFalse StructTypeDescriptor)
@@ -338,7 +341,7 @@ namespace: #f
          => (lambda (xconstructor)
               (if (or (not constructor) (eq? constructor xconstructor))
                 (lp rest xconstructor)
-                (error "Conflicting implicit constructors" constructor xconstructor))))
+                (error "conflicting implicit constructors" constructor xconstructor))))
         (else (lp rest constructor))))
       (else constructor))))
 
@@ -415,7 +418,10 @@ namespace: #f
   (cons klass (type-descriptor-precedence-list klass)))
 
 (def (struct-precedence-list strukt)
-  (cons strukt (cond ((##type-super strukt) => struct-precedence-list) (else []))))
+  (cons strukt
+        (cond
+         ((##type-super strukt) => struct-precedence-list)
+         (else []))))
 
 (def (class-linearize-mixins klass-lst)
   (c3-linearize [] klass-lst class-precedence-list eq? ##type-name))
@@ -535,7 +541,7 @@ namespace: #f
   (if (class-instance? klass obj)
     (let (off (class-slot-offset* (object-type obj) slot))
       (##unchecked-structure-set! obj val off klass #f))
-    (error "not an instance" klass obj)))
+    (error "not an instance" class: klass object: obj)))
 
 (def (unchecked-field-ref obj off)
   (##unchecked-structure-ref obj off (##structure-type obj) #f))
@@ -620,8 +626,8 @@ namespace: #f
      ((##fx= (##fx- size 1) (length args))
       (apply ##structure klass args))
      (else
-      (error "Arguments don't match object size"
-        klass (##fx- size 1) args)))))
+      (error "arguments don't match object size"
+        class: klass slots: (##fx- size 1) args: args)))))
 
 (def (make-class-instance klass . args)
   (let ((obj (make-object* klass (##vector-length (type-descriptor-all-slots klass)))))
@@ -635,7 +641,7 @@ namespace: #f
 (def (struct-instance-init! obj . args)
   (if (##fx< (length args) (##structure-length obj))
     (__struct-instance-init! obj args)
-    (error "Too many arguments for struct" obj args)))
+    (error "too many arguments for struct" object: obj args: args)))
 
 (def (__struct-instance-init! obj args)
   (let lp ((k 1) (rest args))
@@ -661,7 +667,7 @@ namespace: #f
          (error "unknown slot" class: klass slot: key))))
       (else
        (if (null? rest) obj
-           (error "unexpected class initializer arguments" rest))))))
+           (error "unexpected class initializer arguments" class: klass rest: rest))))))
 
 (def (constructor-init! klass kons-id obj . args)
   (__constructor-init! klass kons-id obj args))
@@ -673,17 +679,17 @@ namespace: #f
          (apply kons obj args)
          obj))
    (else
-    (error "missing constructor" klass kons-id))))
+    (error "missing constructor" class: klass method: kons-id))))
 
 (def (struct-copy struct)
   (unless (##structure? struct)
-    (error "Not a structure" 'struct-copy struct))
+    (error "not a structure" struct))
   (##structure-copy struct))
 
 (def (struct->list obj)
   (if (object? obj)
     (##vector->list obj)
-    (error "Not an object" obj)))
+    (error "not an object" obj)))
 
 (def (class->list obj)
   (if (object? obj)
@@ -700,7 +706,7 @@ namespace: #f
                              (unchecked-field-ref obj index)
                              plist))))))
         (error "not a class type" object: obj class: klass)))
-    (error "not an object" object: obj)))
+    (error "not an object" obj)))
 
 ;;; Methods
 (def (call-method obj id . args)
@@ -708,7 +714,7 @@ namespace: #f
    ((method-ref obj id)
     => (lambda (method) (apply method obj args)))
    (else
-    (error "cannot find method" obj id))))
+    (error "cannot find method" object: obj method: id))))
 
 (def __builtin-type-methods
   (make-table test: eq?))
@@ -719,7 +725,7 @@ namespace: #f
 
 (def (checked-method-ref obj id)
   (or (method-ref obj id)
-      (error "missing method" obj id)))
+      (error "missing method" object: obj method: id)))
 
 (def (bound-method-ref obj id)
   (cond
@@ -779,7 +785,7 @@ namespace: #f
 (def (bind-method! klass id proc (rebind? #t))
   (def (bind! ht)
     (if (and (not rebind?) (hash-get ht id))
-      (error "method already bound" klass id)
+      (error "method already bound" class: klass method: id)
       (hash-put! ht id proc)))
 
   (unless (procedure? proc)
@@ -803,7 +809,7 @@ namespace: #f
               ht))))
       (bind! ht)))
    (else
-    (error "bad class; expected type-descriptor or builting type" class: klass))))
+    (error "bad class; expected type-descriptor or builtin type" klass))))
 
 (def __method-specializers
   (make-table test: eq?))
@@ -827,7 +833,7 @@ namespace: #f
   (when (type-descriptor? klass)
     (unless (type-descriptor-sealed? klass)
       (unless (type-final? klass)
-        (error "Cannot seal non-final class" klass))
+        (error "cannot seal non-final class" klass))
       (let ((vtab (make-hash-table-eq))
             (mtab (make-hash-table-eq)))
         (collect-methods! mtab)
@@ -884,7 +890,7 @@ namespace: #f
    ((next-method subklass obj id)
     => (lambda (methodf) (apply methodf obj args)))
    (else
-    (error "Cannot find next method" obj id))))
+    (error "cannot find next method" object: obj method: id))))
 
 ;;; custom writers
 (def (write-style we)
