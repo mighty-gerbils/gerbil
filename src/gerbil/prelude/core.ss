@@ -1667,19 +1667,12 @@ package: gerbil
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
 
-        (def (slotify field off)
-          (syntax-case field ()
-            ((getf setf)
-             [off #'getf #'setf])
-            ((field getf setf)
-             [off #'getf #'setf])))
-
         (def (slot-name slot-spec)
           (syntax-case slot-spec ()
             ((slot getf setf) #'slot)))
 
        (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: properties: constructor: unchecked:)))
+          (memq (stx-e key) '(slots: id: name: properties: constructor: final:)))
 
         (def (module-type-id type-t)
           (cond
@@ -1692,6 +1685,10 @@ package: gerbil
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
            (and (identifier? #'type-t)
+                (if struct?
+                  (or (identifier? #'super)
+                      (stx-false? #'super))
+                  (identifier-list? #'super))
                 (or (identifier? #'make)
                     (stx-false? #'make))
                 (identifier? #'instance?)
@@ -1700,17 +1697,23 @@ package: gerbil
            (with-syntax* (((values slots)
                            (or (stx-getq slots: #'rest)
                                []))
-                          ((make-instance make-predicate
-                                          make-getf make-setf
-                                          make-ugetf make-usetf)
+                          ((slot ...)
+                           (stx-map slot-name slots))
+                          ((make-type
+                            make-instance
+                            make-predicate
+                            make-getf make-setf
+                            make-ugetf make-usetf)
                            (if struct?
-                             #'(make-struct-instance
+                             #'(make-struct-type*
+                                make-struct-instance
                                 make-struct-predicate
-                                make-struct-field-accessor
-                                make-struct-field-mutator
-                                make-struct-field-unchecked-accessor
-                                make-struct-field-unchecked-mutator)
-                             #'(make-class-instance
+                                make-struct-slot-accessor
+                                make-struct-slot-mutator
+                                make-struct-slot-unchecked-accessor
+                                make-struct-slot-unchecked-mutator)
+                             #'(make-class-type*
+                                make-class-instance
                                 make-class-predicate
                                 make-class-slot-accessor
                                 make-class-slot-mutator
@@ -1724,62 +1727,92 @@ package: gerbil
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
+                          (type-constructor
+                           (stx-getq constructor: #'rest))
+                          (mop-type-t (core-quote-syntax #'type-t))
+                          (mop-super
+                           (if struct?
+                             (and (stx-e #'super) (core-quote-syntax #'super))
+                             (stx-map core-quote-syntax #'super)))
+                          (mop-struct? struct?)
+                          (mop-final? (stx-getq final: #'rest))
                           (type-properties
                            (or (stx-getq properties: #'rest)
                                #'[]))
-                          (type-constructor
-                           (stx-getq constructor: #'rest))
-                          ((slot ...)
-                           (stx-map slot-name slots))
-                          (type-rtd
+                          (type-properties
+                           (if (stx-e #'mop-final?)
+                             #'[[final: . #t] :: type-properties]
+                             #'type-properties))
+                          (type-properties
                            (if struct?
-                             (with-syntax ((fields (stx-length slots)))
-                               #'(make-struct-type 'type-id
-                                   super fields
-                                   'type-name type-properties 'type-constructor
-                                   '(slot ...)))
-                             (with-syntax (((super ...) #'super))
-                               #'(make-class-type 'type-id
-                                   [super ...] '(slot ...)
-                                   'type-name type-properties 'type-constructor))))
+                             #'[[struct: . #t] :: type-properties]
+                             #'type-properties))
+                          (type-super
+                           (if struct?
+                             #'super
+                             (cons #'list #'super)))
+                          (make-type-rtd
+                           #'(make-type 'type-id 'type-name
+                                        type-super '(slot ...)
+                                        type-properties 'type-constructor))
                           (def-type
-                            (wrap #'(def type-t type-rtd)))
+                            (wrap
+                             #'(def type-t
+                                 (begin-annotation (@mop.type type-id
+                                                              mop-super
+                                                              (slot ...)
+                                                              type-constructor
+                                                              mop-struct?
+                                                              mop-final?)
+                                   make-type-rtd))))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
                               (wrap
-                               #'(def (make . $args)
-                                   (apply make-instance type-t $args)))))
+                               #'(def make
+                                   (begin-annotation (@mop.constructor mop-type-t
+                                                                       mop-struct?)
+                                     (lambda $args
+                                       (apply make-instance type-t $args)))))))
                           (def-predicate
-                            (wrap #'(def instance? (make-predicate type-t))))
-                          ((values attrs)
-                           (if struct?
-                             (stx-map slotify slots (iota (stx-length slots)))
-                             slots))
+                            (wrap
+                             #'(def instance?
+                                 (begin-annotation (@mop.predicate mop-type-t)
+                                   (make-predicate type-t)))))
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
                               (syntax-case ref ()
-                                ((key getf setf)
+                                ((slot getf setf)
                                  [(wrap
-                                   #'(def getf (make-getf type-t 'key)))
+                                   #'(def getf
+                                       (begin-annotation (@mop.accessor mop-type-t
+                                                                        slot #t)
+                                         (make-getf type-t 'slot))))
                                   (wrap
-                                   #'(def setf (make-setf type-t 'key)))])))
-                            attrs))
+                                   #'(def setf
+                                       (begin-annotation (@mop.mutator mop-type-t
+                                                                       slot #t)
+                                         (make-setf type-t 'slot))))])))
+                            slots))
                           (((def-ugetf def-usetf) ...)
-                           (if (stx-e (stx-getq unchecked: #'rest))
-                             (stx-map
-                              (lambda (ref)
-                                (syntax-case ref ()
-                                  ((key getf setf)
-                                   (with-syntax ((ugetf (stx-identifier #'getf "&" #'getf))
-                                                 (usetf (stx-identifier #'setf "&" #'setf)))
-                                     [(wrap
-                                       #'(def ugetf (make-ugetf type-t 'key)))
-                                      (wrap
-                                       #'(def usetf (make-usetf type-t 'key)))]))))
-                              attrs)
-                             [])))
+                           (stx-map
+                            (lambda (ref)
+                              (syntax-case ref ()
+                                (slot getf setf)
+                                (with-syntax ((ugetf (stx-identifier #'getf "&" #'getf))
+                                              (usetf (stx-identifier #'setf "&" #'setf)))
+                                  [(wrap
+                                    #'(def ugetf
+                                        (begin-annotation (@mop.accessor mop-type-t
+                                                                         slot #f)
+                                          (make-ugetf type-t 'key))))
+                                   (wrap
+                                    #'(def usetf
+                                        (begin-annotation (@mop.mutator mop-type-t
+                                                                        slot #f)
+                                          (make-usetf type-t 'key))))])))
+                            slots)))
              (wrap
               #'(begin def-type
                        def-predicate
@@ -1936,7 +1969,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: properties: unchecked: print: equal:)))
+                '(id: name: constructor: transparent: final: properties: print: equal:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref slots body struct?)
