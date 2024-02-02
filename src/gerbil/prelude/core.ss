@@ -1672,7 +1672,7 @@ package: gerbil
             ((slot getf setf) #'slot)))
 
        (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: properties: constructor: final:)))
+          (memq (stx-e key) '(slots: id: name: properties: constructor: final: mixin:)))
 
         (def (module-type-id type-t)
           (cond
@@ -1697,6 +1697,11 @@ package: gerbil
            (with-syntax* (((values slots)
                            (or (stx-getq slots: #'rest)
                                []))
+                          ((values mixin-slots)
+                           (or (stx-getq mixin: #'rest)
+                               []))
+                          ((values accessible-slots)
+                           (append slots mxin-slots))
                           ((slot ...)
                            (stx-map slot-name slots))
                           ((make-type
@@ -1732,7 +1737,9 @@ package: gerbil
                           (mop-type-t (core-quote-syntax #'type-t))
                           (mop-super
                            (if struct?
-                             (and (stx-e #'super) (core-quote-syntax #'super))
+                             (if (stx-e #'super)
+                               [(core-quote-syntax #'super)]
+                               [])
                              (stx-map core-quote-syntax #'super)))
                           (mop-struct? struct?)
                           (mop-final? (stx-getq final: #'rest))
@@ -1758,20 +1765,19 @@ package: gerbil
                           (def-type
                             (wrap
                              #'(def type-t
-                                 (begin-annotation (@mop.type type-id
-                                                              mop-super
-                                                              (slot ...)
-                                                              type-constructor
-                                                              mop-struct?
-                                                              mop-final?)
+                                 (begin-annotation (@mop.class type-id
+                                                               mop-super
+                                                               (slot ...)
+                                                               type-constructor
+                                                               mop-struct?
+                                                               mop-final?)
                                    make-type-rtd))))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
                               (wrap
                                #'(def make
-                                   (begin-annotation (@mop.constructor mop-type-t
-                                                                       mop-struct?)
+                                   (begin-annotation (@mop.constructor mop-type-t)
                                      (lambda $args
                                        (apply make-instance type-t $args)))))))
                           (def-predicate
@@ -1794,7 +1800,7 @@ package: gerbil
                                        (begin-annotation (@mop.mutator mop-type-t
                                                                        slot #t)
                                          (make-setf type-t 'slot))))])))
-                            slots))
+                            accessible-slots))
                           (((def-ugetf def-usetf) ...)
                            (stx-map
                             (lambda (ref)
@@ -1812,7 +1818,7 @@ package: gerbil
                                         (begin-annotation (@mop.mutator mop-type-t
                                                                         slot #f)
                                           (make-usetf type-t 'key))))])))
-                            slots)))
+                            accessible-slots)))
              (wrap
               #'(begin def-type
                        def-predicate
