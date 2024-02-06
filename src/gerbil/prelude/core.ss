@@ -1732,7 +1732,7 @@ package: gerbil
                            (or (stx-getq id: #'rest)
                                (if (module-context? (current-expander-context))
                                  (module-type-id #'type-t)
-                                 (genident #'type-t))))
+                                 (make-symbol "__" (gensym (stx-e #'type-t)) "::t"))))
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
