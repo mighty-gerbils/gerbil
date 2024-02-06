@@ -18,6 +18,7 @@ namespace: gxc
   (%#define-values    collect-top-level-type-define-values%))
 
 (defcompile-method apply-basic-expression-top-level-type (&basic-expression-top-level-type &false)
+  (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#call             basic-expression-type-call%))
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
@@ -128,10 +129,66 @@ namespace: gxc
      (compile-e #'expr))
     (_ #f)))
 
+(def basic-expression-type-annotations (make-hash-table-eq))
+(defrules defbasic-expression-type-annotations ()
+  ((_ (id type-e) ...)
+   (begin
+     (hash-put! basic-expression-type-annotations 'id type-e) ...)))
+
 (def (basic-expression-type-begin-annotation% stx)
   (ast-case stx ()
     ((_ ann expr)
-     (compile-e #'expr))))
+     (ast-case #'ann ()
+       ((annotation . args)
+        (identifier? #'annotation)
+        (cond
+         ((hash-get basic-expression-type-annotations (stx-e #'annotation))
+          => (lambda (type-e) (type-e stx #'ann)))
+         (else
+          (compile-e #'expr))))
+       (_ (compile-e #'expr))))))
+
+(def (basic-expression-type-annotation-mop.class stx ann)
+  (ast-case ann ()
+    ((_ type-id super slots ctor-method struct? final?)
+     (let ((type-id (stx-e #'type-id))
+           (super (map identifier-symbol #'super))
+           (slots (map stx-e #'slots))
+           (ctor-method (stx-e #'ctor-method))
+           (struct? (stx-e #'struct?))
+           (final? (stx-e #'final?)))
+       (make-!class type-id super slots ctor-method struct? final?)))))
+
+(def (basic-expression-type-annotation-mop.constructor stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!constructor (identifier-symbol #'type-t)))))
+
+(def (basic-expression-type-annotation-mop.predicate stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!predicate (identifier-symbol #'type-t)))))
+
+(def (basic-expression-type-annotation-mop.accessor stx ann)
+  (ast-case ann ()
+    ((_ type-t slot checked?)
+     (make-!accessor (identifier-symbol #'type-t)
+                     (stx-e #'slot)
+                     (stx-e #'checked?)))))
+
+(def (basic-expression-type-annotation-mop.mutator stx ann)
+  (ast-case ann ()
+    ((_ type-t slot checked?)
+     (make-!mutator (identifier-symbol #'type-t)
+                    (stx-e #'slot)
+                    (stx-e #'checked?)))))
+
+(defbasic-expression-type-annotations
+  (@mop.class       basic-expression-type-annotation-mop.class)
+  (@mop.constructor basic-expression-type-annotation-mop.constructor)
+  (@mop.predicate   basic-expression-type-annotation-mop.predicate)
+  (@mop.accessor    basic-expression-type-annotation-mop.accessor)
+  (@mop.mutator     basic-expression-type-annotation-mop.mutator))
 
 (def (basic-expression-type-lambda% stx)
   (begin-annotation @match:prefix
@@ -141,6 +198,7 @@ namespace: gxc
        ;; don't capture local dispatch references, just enough to arity check
        (make-!lambda 'lambda (lambda-form-arity #'form) #f))
 
+      ;; TODO: remove
       ((_ args (%#call (%#ref -apply) (%#ref -make-struct-instance) (%#ref type-t) (%#ref xargs)))
        ;; defstruct constructor
        (and (identifier? #'args)
@@ -152,6 +210,7 @@ namespace: gxc
          (and (!struct-type? type)
               (make-!struct-cons type-t))))
 
+      ;; TODO: remove
       ((_ args (%#call (%#ref -apply) (%#ref -make-class-instance) (%#ref type-t) (%#ref xargs)))
        ;; defclass constructor
        (and (identifier? #'args)
@@ -163,6 +222,7 @@ namespace: gxc
          (and (!class-type? type)
               (make-!class-cons type-t))))
 
+      ;; TODO: remove
       ((_ (arg ...) (%#call (%#ref -make-struct-instance) (%#ref type-t) (%#ref xarg) ...))
        ;; srfi/9 defrecord constructor
        (and (identifier-list? #'(arg ...))
@@ -235,6 +295,7 @@ namespace: gxc
    (begin
      (hash-put! basic-expression-type-builtin 'id type-e) ...)))
 
+
 (def (basic-expression-type-call% stx)
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
@@ -242,6 +303,7 @@ namespace: gxc
        (type-e stx #'args)))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-type stx args)
   (ast-case args (%#quote %#ref)
     (((%#quote type-id) (%#quote #f) (%#quote fields) name (%#quote plist) (%#quote ctor) . _)
@@ -270,33 +332,36 @@ namespace: gxc
        (verbose "make-struct-type: can't infer type " (syntax->datum stx))
        #f))))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-predicate stx args)
   (ast-case args (%#ref)
     (((%#ref type-t))
      (make-!struct-pred (identifier-symbol #'type-t)))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-field-accessor stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote off))
      (make-!struct-getf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-field-mutator stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote off))
      (make-!struct-setf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-field-unchecked-accessor stx args)
   (basic-expression-type-make-struct-field-accessor stx args #t))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-struct-field-unchecked-mutator stx args)
   (basic-expression-type-make-struct-field-mutator stx args #t))
 
-;; TODO: Support the new unified struct-and-class type descriptors from mop.ss
-;; In particular, struct fields are now also class slots, and the same name if
-;; repeated should not lead to distinct fields but to the same slot.
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-type stx args)
   (def (mixin-expr->list stx)
     (let/cc return
@@ -450,31 +515,37 @@ namespace: gxc
        (verbose "make-class-type: can't infer type " (syntax->datum stx))
        #f))))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-predicate stx args)
   (ast-case args (%#ref)
     (((%#ref type-t))
      (make-!class-pred (identifier-symbol #'type-t)))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-slot-accessor stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote slot))
      (make-!class-getf (identifier-symbol #'type-t) (stx-e #'slot) unchecked?))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-slot-mutator stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote slot))
      (make-!class-setf (identifier-symbol #'type-t) (stx-e #'slot) unchecked?))
     (_ #f)))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-slot-unchecked-accessor stx args)
   (basic-expression-type-make-class-slot-accessor stx args #t))
 
+;; TODO deprecated; remove after (re)bootstrap
 (def (basic-expression-type-make-class-slot-unchecked-mutator stx args)
   (basic-expression-type-make-class-slot-mutator stx args #t))
 
 (defbasic-expression-type-builtin
+  ;; TODO deprecated; remove after (re)bootstrap
   (make-struct-type basic-expression-type-make-struct-type)
   (make-struct-predicate basic-expression-type-make-struct-predicate)
   (make-struct-field-accessor basic-expression-type-make-struct-field-accessor)

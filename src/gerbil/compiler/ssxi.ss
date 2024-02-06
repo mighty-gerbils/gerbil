@@ -41,6 +41,29 @@ namespace: gxc
   ((_ alias-id)
    (make-!alias 'alias-id)))
 
+;; MOP
+(defrules @class ()
+  ((_ type-id super-ids precedence-list slots fields constructor struct? final? methods)
+   (make-!class 'type-id 'super-ids 'precedence-lists 'slots 'fields 'constructor 'struct? 'final? 'methods)))
+
+(defrules @predicate ()
+  ((_ type-id)
+   (make-!predicate 'type-id)))
+
+(defrules @constructor ()
+  ((_ type-id)
+   (make-!constructor 'type-id)))
+
+(defrules @accessor ()
+  ((_ type-id slot checked?)
+   (make-!accessor 'type-id 'slot checked?)))
+
+(defrules @mutator ()
+  ((_ type-id slot checked?)
+   (make-!mutator 'type-id 'slot checked?)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; TODO DEPRECATED remove after (re)boostrap
 ;; struct types
 (defrules @struct-type ()
   ((_ type-id super fields ctor plist)
@@ -110,6 +133,8 @@ namespace: gxc
    (make-!class-setf 'type 'slot unchecked?))
   ((_ type slot)
    (make-!class-setf 'type 'slot #f)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;; lambdas
 (defrules @lambda ()

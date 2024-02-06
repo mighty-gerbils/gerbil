@@ -185,6 +185,33 @@ namespace: gxc
     (with ((!alias alias-id) self)
       ['@alias alias-id])))
 
+;; MOP
+(defmethod {typedecl !class}
+  (lambda (self)
+    (with ((!class id super precendence-list slots fields constructor struct? final? methods) self)
+      ['@class id super precendence-list slots fields constructor struct? final? (and methods (hash->list methods))])))
+
+(defmethod {typedecl !predicate}
+  (lambda (self)
+    (with ((!predicate klass-id) self)
+      ['@predicate klass-id])))
+
+(defmethod {typedecl !constructor}
+  (lambda (self)
+    (with ((!constructor klass-id) self)
+      ['@constrctuor klass-id])))
+
+(defmethod {typedecl !accessor}
+  (with ((!accessor klass-id slot checked?) self)
+    ['@accessor klass-id slot checked?]))
+
+(defmethod {typedecl !mutator}
+  (lambda (self)
+    (with ((!mutator klass-id slot checked?) self)
+      ['@mutator klass-id slot checked?])))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO DEPRECATED remove after (re)boostrap
 (defmethod {typedecl !struct-type}
   (lambda (self)
     (with ((!struct-type type-id super fields _ ctor plist) self)
@@ -234,7 +261,9 @@ namespace: gxc
   (lambda (self)
     (with ((!class-setf class-t slot unchecked?) self)
       ['@class-setf class-t slot unchecked?])))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)
     (with ((!lambda _ arity dispatch inline typedecl) self)

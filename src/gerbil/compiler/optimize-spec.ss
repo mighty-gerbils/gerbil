@@ -62,11 +62,11 @@ namespace: gxc
     (let ($tmp (make-symbol (gensym '__tmp)))
       [[$id]
        ['%#let-values [[[$tmp]
-                        ['%#call ['%#ref 'class-slot-offset]
+                        ['%#call ['%#ref 'class-slot-offset*]
                                  ['%#ref $t]
                                  ['%#quote id]]]]
                       ['%#if ['%#ref $tmp]
-                             ['%#call ['%#ref '##fx+] ['%#ref $tmp] ['%#quote 1]]
+                             ['%#ref $tmp]
                              ['%#call ['%#ref 'error]
                                       ['%#quote "Unknown slot"]
                                       ['%#quote id]]]]]))
@@ -515,6 +515,8 @@ namespace: gxc
 
 ;;; apply-collect-objec-refs
 
+;; TODO: simplify this (and the caller) after (re)boostrap when the old MOP residues
+;; disappear.
 (def (collect-object-refs-call% stx self methods slots class-check struct-check struct-assert)
   (begin-annotation @match:prefix
   (ast-case stx (%#ref %#quote)
@@ -546,6 +548,21 @@ namespace: gxc
      (begin
        (hash-put! slots (stx-e #'slot) #t)
        (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+
+    ;; MOP
+    ((_ (%#ref getf) (%#ref -self))
+     (and (!accessor? (optimizer-resolve-type (identifier-symbol #'getf)))
+          (free-identifier=? #'-self self))
+     (hash-put! slots (!accessor-slot (optimizer-resolve-type (identifier-symbol #'getf)) ) #t))
+    ((_ (%#ref setf) (%#ref -self) expr)
+     (and (!mutator? (optimizer-resolve-type (identifier-symbol #'setf)))
+          (free-identifier=? #'-self self))
+     (begin
+       (hash-put! slots (!mutator-slot (optimizer-resolve-type (identifier-symbol #'setf))) #t)
+       (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; TODO DEPRECATED; remove after (re)bootstrap
     ((_ (%#ref getf) (%#ref -self))
      (and (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf)))
           (free-identifier=? #'-self self))
@@ -589,10 +606,14 @@ namespace: gxc
        (unless (!struct-setf-unchecked? setf)
          (hash-put! struct-assert (!type-id setf) #t))
        (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     (_ (collect-operands stx self methods slots class-check struct-check struct-assert)))))
 
 ;;; apply-subst-object-refs
 
+;; TODO: simplify this (and the caller) after (re)boostrap when the old MOP residues
+;; disappear.
 (def (subst-object-refs-call% stx self $t methods slots class-check struct-check struct-assert)
   (def (force-e what)
     ['%#call ['%#ref 'force] ['%#ref what]])
@@ -635,6 +656,29 @@ namespace: gxc
        (xform-wrap-source
         ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
+
+    ;; MOP
+    ((_ (%#ref getf) (%#ref -self))
+     (and (free-identifier=? #'-self self)
+          (!accessor? (optimizer-resolve-type (identifier-symbol #'getf))))
+     (let* ((slot (!accessor-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+            ($field (hash-ref slots slot)))
+       (xform-wrap-source
+        ['%#struct-unchecked-ref ['%#ref $t] ['%#ref $field] ['%#ref self]]
+        stx)))
+
+    ((_ (%#ref setf) (%#ref -self) expr)
+     (and (free-identifier=? #'-self self)
+          (!mutator? (optimizer-resolve-type (identifier-symbol #'setf))))
+     (let* ((slot (!mutator-slot (optimizer-resolve-type (identifier-symbol #'setf))))
+            ($field (hash-ref slots slot))
+            (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
+       (xform-wrap-source
+        ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self]]
+        stx)))
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; TODO DEPRECATED remove after (re)bootstrap
     ((_ (%#ref getf) (%#ref -self))
      (and (free-identifier=? #'-self self)
           (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf))))
@@ -646,7 +690,7 @@ namespace: gxc
     ((_ (%#ref setf) (%#ref -self) expr)
      (and (free-identifier=? #'-self self)
           (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf))))
-     (let* ((slot (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+     (let* ((slot (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'setf))))
             ($field (hash-ref slots slot))
             (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (xform-wrap-source
@@ -726,4 +770,6 @@ namespace: gxc
                                 ['%#ref self]]])))
         (else
          ['%#call #'(%#ref setf) #'(%#ref -self) expr]))))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     (_ (xform-operands stx self $t methods slots class-check struct-check struct-assert)))))
