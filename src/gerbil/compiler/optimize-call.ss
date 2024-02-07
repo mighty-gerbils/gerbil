@@ -1,11 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -67,22 +67,23 @@ namespace: gxc
       (cond
        ((!class-constructor klass)
         => (lambda (ctor)
-             (let (($obj (gensym '__obj))
+             (let (($obj (make-symbol (gensym '__obj)))
                    (ctor-impl (!class-lookup-method klass ctor)))
                (xform-wrap-source
                 ['%#let-values [[[$obj]
                                  ['%#call ['%#ref 'make-object*]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
-                               (if ctor-impl
-                                 ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
-                                 (let ($ctor (gensym '__constructor))
-                                   ['%#let-values [[[$ctor]
-                                                    ['%#call ['%#ref 'find-method] ['%#ref (!type-id self)] ['%#quote ctor]]]]
-                                                  ['%#if ['%#ref $ctor]
-                                                         ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
-                                                         ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))
-                               ['%#ref $obj]]
+                               ['%#begin
+                                (if ctor-impl
+                                  ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
+                                  (let ($ctor (make-symbol (gensym '__constructor)))
+                                    ['%#let-values [[[$ctor]
+                                                     ['%#call ['%#ref 'find-method] ['%#ref (!type-id self)] ['%#quote ctor]]]]
+                                                   ['%#if ['%#ref $ctor]
+                                                          ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
+                                                          ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))
+                                ['%#ref $obj]]]
                 stx))))
        ((!class-struct? klass)
         (if (fx= (length args) (fx1- fields))
@@ -94,7 +95,7 @@ namespace: gxc
           (raise-compile-error "illegal struct constructor application; arity mismatch"
                                stx (!type-id self) (length (!class-fields klass)))))
        (else
-        (let ($obj (gensym '__obj))
+        (let ($obj (make-symbol (gensym '__obj)))
           (let lp ((rest args) (initializers []))
             (ast-case rest (%#quote)
               (((%#quote kw) expr . rest)
@@ -110,16 +111,17 @@ namespace: gxc
                                  ['%#call ['%#ref 'make-object*]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
-                               (foldl (lambda (i r)
-                                        (cons ['%#struct-unchecked-set!
-                                               ['%#ref (!type-id self)]
-                                               ['%#quote (car i)]
-                                               ['%#ref $obj]
-                                               (cdr i)]
-                                              r))
-                                      [] initializers)
-                               ...
-                               ['%#ref $obj]]
+                               ['%#begin
+                                (foldl (lambda (i r)
+                                         (cons ['%#struct-unchecked-set!
+                                                ['%#ref (!type-id self)]
+                                                ['%#quote (car i)]
+                                                ['%#ref $obj]
+                                                (cdr i)]
+                                               r))
+                                       [] initializers)
+                                ...
+                               ['%#ref $obj]]]
                 stx))
               (_
                ;; not canonical static keyword -> value initialization list
@@ -129,16 +131,17 @@ namespace: gxc
                                  ['%#call ['%#ref 'make-object*]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
-                               ['%#call ['%#ref 'class-instance-init!]
-                                        ['%#ref $obj]
-                                        args ...]
-                               ['%#ref $obj]]
+                               ['%#begin
+                                ['%#call ['%#ref 'class-instance-init!]
+                                         ['%#ref $obj]
+                                         args ...]
+                                ['%#ref $obj]]]
                 stx))))))))))
 
 (defmethod {optimize-call !accessor}
   (lambda (self stx args)
     (ast-case args ()
-      ((_ object)
+      ((object)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (field (!class-slot->field-offset klass (!accessor-slot self)))
               (object (compile-e #'object)))
@@ -173,7 +176,7 @@ namespace: gxc
                  stx)))
           ((!accessor-checked? self)
            (xform-wrap-source
-            (let ($obj (gensym '__obj))
+            (let ($obj (make-symbol (gensym '__obj)))
               ['%#let-values [[[$obj] object]]
                              ['%#if ['%#struct-direct-instance?
                                      ['%#quote (!type-id klass)]
@@ -198,7 +201,7 @@ namespace: gxc
 (defmethod {optimize-call !mutator}
   (lambda (self stx args)
     (ast-case args ()
-      ((_ object value)
+      ((object value)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (field (!class-slot->field-offset klass (!mutator-slot self)))
               (object (compile-e #'object))
@@ -237,7 +240,7 @@ namespace: gxc
                  stx)))
           ((!mutator-checked? self)
            (xform-wrap-source
-            (let ($obj (gensym '__obj))
+            (let ($obj (make-symbol (gensym '__obj)))
               ['%#let-values [[[$obj] object]]
                              ['%#if ['%#struct-direct-instance?
                                      ['%#quote (!type-id klass)]

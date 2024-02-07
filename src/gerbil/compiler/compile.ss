@@ -1,14 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler compilation methods
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         <syntax-case> <syntax-sugar>
-        (only-in :gerbil/gambit
+        (only-in "../prelude/gambit"
                  s8vector? u8vector? s16vector? u16vector?
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?))

@@ -1,11 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         <syntax-case> <syntax-sugar>)
@@ -129,8 +129,9 @@ namespace: gxc
              ;; 4. compute super precedence list
              (c3-linearize [] super
                            (lambda (klass-id)
-                             (!class-precedence-list
-                              (optimizer-resolve-class `(!class ,id) klass-id)))
+                             (cons klass-id
+                                   (!class-precedence-list
+                                    (optimizer-resolve-class `(!class ,id) klass-id))))
                            eq? identity))
             (fields
              ;; 5. compute slot->field mapping for direct instances/structs

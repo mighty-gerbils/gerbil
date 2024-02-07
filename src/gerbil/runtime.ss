@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; Gerbil runtime in Gerbil
 ;;; Recursion; See Recursion
-prelude: :gerbil/core
+prelude: "prelude/core"
 package: gerbil
 
 (provide gerbil-runtime)

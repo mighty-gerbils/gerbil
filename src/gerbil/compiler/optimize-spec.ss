@@ -1,11 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -675,7 +675,7 @@ namespace: gxc
             ($field (hash-ref slots slot))
             (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (xform-wrap-source
-        ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self]]
+        ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

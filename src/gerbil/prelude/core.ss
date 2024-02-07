@@ -1664,16 +1664,21 @@ package: gerbil
            (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4>)))
 
   (module <MOP:1>
-    (export #t (phi: +1 module-type-id))
+    (export #t (phi: +1 module-type-id make-class-type-id))
 
     (begin-syntax
       (def (module-type-id type-t)
         (cond
          ((module-context-ns (current-expander-context))
-          => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
+          => (lambda (ns) (stx-identifier type-t ns "#" type-t "::t")))
          (else
           (let (mid (expander-context-id (current-expander-context)))
-            (stx-identifier type-t mid "#" type-t)))))
+            (stx-identifier type-t mid "#" type-t "::t")))))
+
+      (def (make-class-type-id type-t)
+        (if (module-context? (current-expander-context))
+          (module-type-id type-t)
+          (make-symbol "__" (gensym (stx-e type-t)) "::t")))
 
       (def (generate-typedef stx struct?)
         (def (wrap e-stx)
@@ -1730,9 +1735,7 @@ package: gerbil
                                 make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
-                               (if (module-context? (current-expander-context))
-                                 (module-type-id #'type-t)
-                                 (make-symbol "__" (gensym (stx-e #'type-t)) "::t"))))
+                               (make-class-type-id type-id)))
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
@@ -2093,9 +2096,7 @@ package: gerbil
                        ((values type-name)
                         [name: (or (stx-getq name: body) id)])
                        ((values type-id)
-                        (or (alet (e (stx-getq id: body))
-                              [id: e])
-                            []))
+                        [id: (or (stx-getq id: body) (make-class-type-id #'type))])
                        ((values type-constructor)
                         (or (alet (e (stx-getq constructor: body))
                               [constructor: e])
@@ -2143,13 +2144,8 @@ package: gerbil
                              make-type type?
                              type-body ...)))
                        (meta-type-id
-                        (if (null? type-id)
-                          (if (module-context? (current-expander-context))
-                            (with-syntax ((id (module-type-id #'type-t)))
-                              #'(quote id))
-                            #f)
-                          (with-syntax (((id: id) type-id))
-                            #'(quote id))))
+                        (with-syntax (((id: id) type-id))
+                          #'(quote id)))
                        (meta-type-name
                         (with-syntax ((type-name (cadr type-name)))
                           #'(quote type-name)))
@@ -2801,11 +2797,10 @@ package: gerbil
         (let recur ((next [info]))
           (if (null? next)
             []
-            (let (ti (cadr next))
-              (append (struct-field-accessors (class-type-super ti))
+            (let (ti (car next))
+              (append (recur (map syntax-local-value (class-type-super ti)))
                       (map (lambda (slot)
-                             (or (assgetq slot (class-type-unchecked-accessors info))
-                                 (assgetq slot (class-type-unchecked-accessors ti))
+                             (or (assgetq slot (class-type-unchecked-accessors ti))
                                  (raise-syntax-error #f "no accessor for struct slot" stx info slot)))
                            (class-type-slots ti)))))))
 

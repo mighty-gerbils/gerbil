@@ -1,13 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler compilation methods
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
-        :gerbil/gambit
-        :gerbil/runtime/error
+(import "../expander"
+        "../prelude/gambit"
+        "../runtime/error"
         "base"
         "compile"
         "optimize")

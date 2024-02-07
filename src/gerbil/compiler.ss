@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil -> gambc compiler
-prelude: :gerbil/core
+prelude: "prelude/core"
 package: gerbil
 namespace: gxc
 

@@ -19,7 +19,7 @@
 ;;;
 ;;; See tests in ../test/c3-test.ss
 
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
