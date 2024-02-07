@@ -19,11 +19,8 @@ package: gerbil
         ((%#call _ klass obj)
          (%#call (%#ref ##structure-direct-instance-of?)
                  obj
-                 (%#call (%#ref ##type-id) klass))))))
- (direct-struct-instance?
-  (@lambda 2 direct-instance?))
- (direct-class-instance?
-  (@lambda 2 direct-instance?)))
+                 (%#call (%#ref ##type-id) klass)))))))
+
 
 ;; runtime: struct-instance-init! [custom struct constructors]
 (declare-type*
@@ -195,18 +192,6 @@ package: gerbil
  (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
  (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
  (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*))))
-
-;; runtime: call/cc and friends
-(declare-type*
- (with-catch (@lambda 2 with-exception-catcher)))
-
-;; expansion time: AST type for optimizing the expander
-(declare-type*
- (AST::t (@struct-type gerbil#AST::t #f 2))
- (AST? (@struct-pred AST::t))
- (AST-e (@struct-getf AST::t 0))
- (AST-source (@struct-getf AST::t 1))
- (make-AST (@struct-cons AST::t)))
 
 ;;; runtime procedure signatures
 (defrules declare-primitive/0 ()

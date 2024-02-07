@@ -53,10 +53,10 @@
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))
 
-(def (compile1 modf gen-ssxi?)
+(def (compile1 modf)
   (displayln "... compile " modf)
   (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
-                        debug: #f optimize: #t generate-ssxi: gen-ssxi?
+                        debug: #f optimize: #t generate-ssxi: #t
                         gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
@@ -70,12 +70,12 @@
 (gxc#optimizer-info-init!)
 (gx#import-module "gerbil/prelude/builtin.ssxi.ss" #t)
 ;; compile runtime
-(compile-group gerbil-modules-runtime #t)
+(compile-group gerbil-modules-runtime)
 ;; compile expander first so that prelude macros have expander visibility
-(compile-group gerbil-modules-expander #t)
-;; compile core prelude; don't clobber core.ssxi
-(compile-group gerbil-prelude-core #f)
+(compile-group gerbil-modules-expander)
+;; compile core prelude
+(compile-group gerbil-prelude-core)
 ;; compile gambit prelude
-(compile-group gerbil-prelude-gambit #t)
+(compile-group gerbil-prelude-gambit)
 ;; compile compiler
-(compile-group gerbil-modules-compiler #t)
+(compile-group gerbil-modules-compiler)
