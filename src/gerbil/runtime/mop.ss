@@ -428,7 +428,7 @@ namespace: #f
 
 (def (make-class-predicate klass)
   (if (type-final? klass)
-    (cut direct-class-instance? klass <>)
+    (cut direct-instance? klass <>)
     (cut class-instance? klass <>)))
 
 ;; Given a klass descriptor, a slot name (symbol), and three accessor-makers
