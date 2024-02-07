@@ -13,18 +13,15 @@ namespace: #f
 (defclass Exception ())
 
 ;; Mixin for getting stack traces
-(defclass StackTrace (continuation)
-  unchecked: #t)
+(defclass StackTrace (continuation))
 
 ;; Error base class
 (defclass (Error StackTrace Exception) (message irritants where)
   constructor: :init!
-  unchecked: #t
   transparent: #t)
 
 ;;; Runtime Errors -- wrapped gambit emitted exceptions
 (defclass (RuntimeException StackTrace Exception) (exception)
-  unchecked: #t
   transparent: #t)
 
 ;;; exception control

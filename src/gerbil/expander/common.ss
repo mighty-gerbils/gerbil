@@ -10,8 +10,7 @@ namespace: gx
 
 (defstruct AST (e source)
   id:   gerbil#AST::t
-  name: syntax
-  unchecked: #t)
+  name: syntax)
 
 (defrules check-procedure ()
   ((_ proc)
