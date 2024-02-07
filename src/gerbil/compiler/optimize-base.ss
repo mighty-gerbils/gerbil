@@ -111,7 +111,7 @@ namespace: gxc
                  (let lp ((rest super) (method #f))
                    (match rest
                      ([super-id . rest]
-                      (let (klass (optimizer-resolve-class super-id))
+                      (let (klass (optimizer-resolve-class `(!class ,id) super-id))
                         (cond
                          ((!class-constructor klass)
                           => (lambda (ctor-method)
@@ -129,7 +129,7 @@ namespace: gxc
              (c3-linearize [] super
                            (lambda (klass-id)
                              (!class-precendence-list
-                              (optimizer-resolve-class klass-id)))
+                              (optimizer-resolve-class `(!class ,id) klass-id)))
                            eq? identity))
             (fields
              ;; 5. compute slot->field mapping for direct instances/structs

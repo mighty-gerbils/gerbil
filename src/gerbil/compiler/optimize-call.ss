@@ -111,7 +111,7 @@ namespace: gxc
                                           ['%#quote fields]]]]
                                (foldl (lambda (i r)
                                         (cons ['%#struct-unchecked-set!
-                                               ['%#quote (!type-id klass)]
+                                               ['%#ref (!type-id self)]
                                                ['%#quote (car i)]
                                                ['%#ref $obj]
                                                (cdr i)]
@@ -147,7 +147,7 @@ namespace: gxc
             [(if (!accessor-checked? self)
                '%#struct-direct-ref
                '%#struct-unchecked-ref)
-             ['%#quote (!type-id klass)]
+             ['%#ref (!type-id self)]
              ['%#quote field]
              object]
             stx))
@@ -156,7 +156,7 @@ namespace: gxc
             [(if (!accessor-checked? self)
                '%#struct-ref
                '%#struct-unchecked-ref)
-             ['%#quote (!type-id klass)]
+             ['%#ref (!type-id self)]
              ['%#quote field]
              object]
             stx))
@@ -166,7 +166,7 @@ namespace: gxc
                  [(if (!accessor-checked? self)
                     '%#struct-ref
                     '%#struct-unchecked-ref)
-                  ['%#quote (!type-id klass)]
+                  ['%#ref (!type-id self)]
                   ['%#quote field]
                   object]
                  stx)))
@@ -178,7 +178,7 @@ namespace: gxc
                                      ['%#quote (!type-id klass)]
                                      ['%#ref $obj]]
                                     ['%#struct-unchecked-ref
-                                     ['%#quote (!type-id klass)]
+                                     ['%#ref (!type-id self)]
                                      ['%#quote field]
                                      ['%#ref $obj]]
                                     ['%#call
@@ -208,7 +208,7 @@ namespace: gxc
             [(if (!mutator-checked? self)
                '%#struct-direct-set!
                '%#struct-unchecked-set!)
-             ['%#quote (!type-id klass)]
+             ['%#ref (!type-id self)]
              ['%#quote field]
              object
              value]
@@ -218,7 +218,7 @@ namespace: gxc
             [(if (!mutator-checked? self)
                '%#struct-set!
                '%#struct-unchecked-set!)
-             ['%#quote (!type-id klass)]
+             ['%#ref (!type-id self)]
              ['%#quote field]
              object
              value]
@@ -229,7 +229,7 @@ namespace: gxc
                  [(if (!mutator-checked? self)
                     '%#struct-set!
                     '%#struct-unchecked-set!)
-                  ['%#quote (!type-id klass)]
+                  ['%#ref (!type-id self)]
                   ['%#quote field]
                   object
                   value]
@@ -242,7 +242,7 @@ namespace: gxc
                                      ['%#quote (!type-id klass)]
                                      ['%#ref $obj]]
                                     ['%#struct-unchecked-set!
-                                     ['%#quote (!type-id klass)]
+                                     ['%#ref (!type-id self)]
                                      ['%#quote field]
                                      ['%#ref $obj]
                                      value]
