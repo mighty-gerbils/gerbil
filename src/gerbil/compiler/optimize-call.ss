@@ -139,7 +139,7 @@ namespace: gxc
     (ast-case args ()
       ((_ object)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (field (!class-slot->field-offset (!accessor-slot self)))
+              (field (!class-slot->field-offset klass (!accessor-slot self)))
               (object (compile-e #'object)))
          (cond
           ((!class-final? klass)
@@ -199,7 +199,7 @@ namespace: gxc
     (ast-case args ()
       ((_ object value)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (field (!class-slot->field-offset (!mutator-slot self)))
+              (field (!class-slot->field-offset klass (!mutator-slot self)))
               (object (compile-e #'object))
               (value (compile-e #'value)))
          (cond
