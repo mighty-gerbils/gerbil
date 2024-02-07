@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil/expander driver
-prelude: :<core>
+prelude: :gerbil/core
 package: gerbil/expander
 namespace: gx
 

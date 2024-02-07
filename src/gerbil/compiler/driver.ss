@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler compilation methods
+prelude: :gerbil/core
 package: gerbil/compiler
 namespace: gxc
 
