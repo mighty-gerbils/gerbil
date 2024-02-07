@@ -117,10 +117,54 @@ namespace: gx
          (%#define-runtime import-expander::t gx#import-expander::t)
          (%#define-runtime import-expander? gx#import-expander?)
          (%#define-runtime make-import-expander gx#make-import-expander)
+         (%#define-runtime import-expander-context gx#import-expander-context)
+         (%#define-runtime import-expander-phi gx#import-expander-phi)
+         (%#define-runtime import-expander-e gx#import-expander-e)
+         (%#define-runtime
+          import-expander-context-set!
+          gx#import-expander-context-set!)
+         (%#define-runtime
+          import-expander-phi-set!
+          gx#import-expander-phi-set!)
+         (%#define-runtime import-expander-e-set! gx#import-expander-e-set!)
+         (%#define-runtime
+          &import-expander-context
+          gx#&import-expander-context)
+         (%#define-runtime &import-expander-phi gx#&import-expander-phi)
+         (%#define-runtime &import-expander-e gx#&import-expander-e)
+         (%#define-runtime
+          &import-expander-context-set!
+          gx#&import-expander-context-set!)
+         (%#define-runtime
+          &import-expander-phi-set!
+          gx#&import-expander-phi-set!)
+         (%#define-runtime &import-expander-e-set! gx#&import-expander-e-set!)
          (%#define-syntax import-expander |gx[:0:]#import-expander|)
          (%#define-runtime export-expander::t gx#export-expander::t)
          (%#define-runtime export-expander? gx#export-expander?)
          (%#define-runtime make-export-expander gx#make-export-expander)
+         (%#define-runtime export-expander-context gx#export-expander-context)
+         (%#define-runtime export-expander-phi gx#export-expander-phi)
+         (%#define-runtime export-expander-e gx#export-expander-e)
+         (%#define-runtime
+          export-expander-context-set!
+          gx#export-expander-context-set!)
+         (%#define-runtime
+          export-expander-phi-set!
+          gx#export-expander-phi-set!)
+         (%#define-runtime export-expander-e-set! gx#export-expander-e-set!)
+         (%#define-runtime
+          &export-expander-context
+          gx#&export-expander-context)
+         (%#define-runtime &export-expander-phi gx#&export-expander-phi)
+         (%#define-runtime &export-expander-e gx#&export-expander-e)
+         (%#define-runtime
+          &export-expander-context-set!
+          gx#&export-expander-context-set!)
+         (%#define-runtime
+          &export-expander-phi-set!
+          gx#&export-expander-phi-set!)
+         (%#define-runtime &export-expander-e-set! gx#&export-expander-e-set!)
          (%#define-syntax export-expander |gx[:0:]#export-expander|)
          (%#define-runtime
           import-export-expander::t
@@ -129,6 +173,42 @@ namespace: gx
          (%#define-runtime
           make-import-export-expander
           gx#make-import-export-expander)
+         (%#define-runtime
+          import-export-expander-context
+          gx#import-export-expander-context)
+         (%#define-runtime
+          import-export-expander-phi
+          gx#import-export-expander-phi)
+         (%#define-runtime
+          import-export-expander-e
+          gx#import-export-expander-e)
+         (%#define-runtime
+          import-export-expander-context-set!
+          gx#import-export-expander-context-set!)
+         (%#define-runtime
+          import-export-expander-phi-set!
+          gx#import-export-expander-phi-set!)
+         (%#define-runtime
+          import-export-expander-e-set!
+          gx#import-export-expander-e-set!)
+         (%#define-runtime
+          &import-export-expander-context
+          gx#&import-export-expander-context)
+         (%#define-runtime
+          &import-export-expander-phi
+          gx#&import-export-expander-phi)
+         (%#define-runtime
+          &import-export-expander-e
+          gx#&import-export-expander-e)
+         (%#define-runtime
+          &import-export-expander-context-set!
+          gx#&import-export-expander-context-set!)
+         (%#define-runtime
+          &import-export-expander-phi-set!
+          gx#&import-export-expander-phi-set!)
+         (%#define-runtime
+          &import-export-expander-e-set!
+          gx#&import-export-expander-e-set!)
          (%#define-syntax
           import-export-expander
           |gx[:0:]#import-export-expander|)

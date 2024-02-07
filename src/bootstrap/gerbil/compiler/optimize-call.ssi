@@ -12,6 +12,30 @@ namespace: gxc
          (%#define-runtime &optimize-call gxc#&optimize-call)
          (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
          (%#define-runtime optimize-call% gxc#optimize-call%)
+         (%#begin (%#define-runtime
+                   !predicate::optimize-call
+                   gxc#!predicate::optimize-call)
+                  (%#define-runtime
+                   !predicate::optimize-call::specialize
+                   gxc#!predicate::optimize-call::specialize))
+         (%#begin (%#define-runtime
+                   !constructor::optimize-call
+                   gxc#!constructor::optimize-call)
+                  (%#define-runtime
+                   !constructor::optimize-call::specialize
+                   gxc#!constructor::optimize-call::specialize))
+         (%#begin (%#define-runtime
+                   !accessor::optimize-call
+                   gxc#!accessor::optimize-call)
+                  (%#define-runtime
+                   !accessor::optimize-call::specialize
+                   gxc#!accessor::optimize-call::specialize))
+         (%#begin (%#define-runtime
+                   !mutator::optimize-call
+                   gxc#!mutator::optimize-call)
+                  (%#define-runtime
+                   !mutator::optimize-call::specialize
+                   gxc#!mutator::optimize-call::specialize))
          (%#define-runtime
           !struct-pred::optimize-call
           gxc#!struct-pred::optimize-call)

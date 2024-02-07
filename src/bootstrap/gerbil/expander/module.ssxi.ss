@@ -4,184 +4,337 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#module-import::t
-   (@struct-type gx#module-import::t #f 4 #f ((final: . #t))))
-  (declare-type gx#module-import? (@struct-pred gx#module-import::t))
-  (declare-type gx#make-module-import (@struct-cons gx#module-import::t))
+   (@class gx#module-import::t
+           ()
+           ()
+           (source name phi weak?)
+           (source name phi weak?)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#module-import? (@predicate gx#module-import::t))
+  (declare-type gx#make-module-import (@constrctuor gx#module-import::t))
   (declare-type
    gx#module-import-source
-   (@struct-getf gx#module-import::t 0 #f))
-  (declare-type gx#module-import-name (@struct-getf gx#module-import::t 1 #f))
-  (declare-type gx#module-import-phi (@struct-getf gx#module-import::t 2 #f))
-  (declare-type gx#module-import-weak? (@struct-getf gx#module-import::t 3 #f))
+   (@accessor gx#module-import::t source #t))
+  (declare-type gx#module-import-name (@accessor gx#module-import::t name #t))
+  (declare-type gx#module-import-phi (@accessor gx#module-import::t phi #t))
+  (declare-type
+   gx#module-import-weak?
+   (@accessor gx#module-import::t weak? #t))
   (declare-type
    gx#module-import-source-set!
-   (@struct-setf gx#module-import::t 0 #f))
+   (@mutator gx#module-import::t source #t))
   (declare-type
    gx#module-import-name-set!
-   (@struct-setf gx#module-import::t 1 #f))
+   (@mutator gx#module-import::t name #t))
   (declare-type
    gx#module-import-phi-set!
-   (@struct-setf gx#module-import::t 2 #f))
+   (@mutator gx#module-import::t phi #t))
   (declare-type
    gx#module-import-weak?-set!
-   (@struct-setf gx#module-import::t 3 #f))
+   (@mutator gx#module-import::t weak? #t))
   (declare-type
    gx#&module-import-source
-   (@struct-getf gx#module-import::t 0 #t))
-  (declare-type gx#&module-import-name (@struct-getf gx#module-import::t 1 #t))
-  (declare-type gx#&module-import-phi (@struct-getf gx#module-import::t 2 #t))
+   (@accessor gx#module-import::t source #f))
+  (declare-type gx#&module-import-name (@accessor gx#module-import::t name #f))
+  (declare-type gx#&module-import-phi (@accessor gx#module-import::t phi #f))
   (declare-type
    gx#&module-import-weak?
-   (@struct-getf gx#module-import::t 3 #t))
+   (@accessor gx#module-import::t weak? #f))
   (declare-type
    gx#&module-import-source-set!
-   (@struct-setf gx#module-import::t 0 #t))
+   (@mutator gx#module-import::t source #f))
   (declare-type
    gx#&module-import-name-set!
-   (@struct-setf gx#module-import::t 1 #t))
+   (@mutator gx#module-import::t name #f))
   (declare-type
    gx#&module-import-phi-set!
-   (@struct-setf gx#module-import::t 2 #t))
+   (@mutator gx#module-import::t phi #f))
   (declare-type
    gx#&module-import-weak?-set!
-   (@struct-setf gx#module-import::t 3 #t))
+   (@mutator gx#module-import::t weak? #f))
   (declare-type
    gx#module-export::t
-   (@struct-type gx#module-export::t #f 5 #f ((final: . #t))))
-  (declare-type gx#module-export? (@struct-pred gx#module-export::t))
-  (declare-type gx#make-module-export (@struct-cons gx#module-export::t))
+   (@class gx#module-export::t
+           ()
+           ()
+           (context key phi name weak?)
+           (context key phi name weak?)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#module-export? (@predicate gx#module-export::t))
+  (declare-type gx#make-module-export (@constrctuor gx#module-export::t))
   (declare-type
    gx#module-export-context
-   (@struct-getf gx#module-export::t 0 #f))
-  (declare-type gx#module-export-key (@struct-getf gx#module-export::t 1 #f))
-  (declare-type gx#module-export-phi (@struct-getf gx#module-export::t 2 #f))
-  (declare-type gx#module-export-name (@struct-getf gx#module-export::t 3 #f))
-  (declare-type gx#module-export-weak? (@struct-getf gx#module-export::t 4 #f))
+   (@accessor gx#module-export::t context #t))
+  (declare-type gx#module-export-key (@accessor gx#module-export::t key #t))
+  (declare-type gx#module-export-phi (@accessor gx#module-export::t phi #t))
+  (declare-type gx#module-export-name (@accessor gx#module-export::t name #t))
+  (declare-type
+   gx#module-export-weak?
+   (@accessor gx#module-export::t weak? #t))
   (declare-type
    gx#module-export-context-set!
-   (@struct-setf gx#module-export::t 0 #f))
+   (@mutator gx#module-export::t context #t))
   (declare-type
    gx#module-export-key-set!
-   (@struct-setf gx#module-export::t 1 #f))
+   (@mutator gx#module-export::t key #t))
   (declare-type
    gx#module-export-phi-set!
-   (@struct-setf gx#module-export::t 2 #f))
+   (@mutator gx#module-export::t phi #t))
   (declare-type
    gx#module-export-name-set!
-   (@struct-setf gx#module-export::t 3 #f))
+   (@mutator gx#module-export::t name #t))
   (declare-type
    gx#module-export-weak?-set!
-   (@struct-setf gx#module-export::t 4 #f))
+   (@mutator gx#module-export::t weak? #t))
   (declare-type
    gx#&module-export-context
-   (@struct-getf gx#module-export::t 0 #t))
-  (declare-type gx#&module-export-key (@struct-getf gx#module-export::t 1 #t))
-  (declare-type gx#&module-export-phi (@struct-getf gx#module-export::t 2 #t))
-  (declare-type gx#&module-export-name (@struct-getf gx#module-export::t 3 #t))
+   (@accessor gx#module-export::t context #f))
+  (declare-type gx#&module-export-key (@accessor gx#module-export::t key #f))
+  (declare-type gx#&module-export-phi (@accessor gx#module-export::t phi #f))
+  (declare-type gx#&module-export-name (@accessor gx#module-export::t name #f))
   (declare-type
    gx#&module-export-weak?
-   (@struct-getf gx#module-export::t 4 #t))
+   (@accessor gx#module-export::t weak? #f))
   (declare-type
    gx#&module-export-context-set!
-   (@struct-setf gx#module-export::t 0 #t))
+   (@mutator gx#module-export::t context #f))
   (declare-type
    gx#&module-export-key-set!
-   (@struct-setf gx#module-export::t 1 #t))
+   (@mutator gx#module-export::t key #f))
   (declare-type
    gx#&module-export-phi-set!
-   (@struct-setf gx#module-export::t 2 #t))
+   (@mutator gx#module-export::t phi #f))
   (declare-type
    gx#&module-export-name-set!
-   (@struct-setf gx#module-export::t 3 #t))
+   (@mutator gx#module-export::t name #f))
   (declare-type
    gx#&module-export-weak?-set!
-   (@struct-setf gx#module-export::t 4 #t))
+   (@mutator gx#module-export::t weak? #f))
   (declare-type
    gx#import-set::t
-   (@struct-type gx#import-set::t #f 3 #f ((final: . #t))))
-  (declare-type gx#import-set? (@struct-pred gx#import-set::t))
-  (declare-type gx#make-import-set (@struct-cons gx#import-set::t))
-  (declare-type gx#import-set-source (@struct-getf gx#import-set::t 0 #f))
-  (declare-type gx#import-set-phi (@struct-getf gx#import-set::t 1 #f))
-  (declare-type gx#import-set-imports (@struct-getf gx#import-set::t 2 #f))
-  (declare-type gx#import-set-source-set! (@struct-setf gx#import-set::t 0 #f))
-  (declare-type gx#import-set-phi-set! (@struct-setf gx#import-set::t 1 #f))
+   (@class gx#import-set::t
+           ()
+           ()
+           (source phi imports)
+           (source phi imports)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#import-set? (@predicate gx#import-set::t))
+  (declare-type gx#make-import-set (@constrctuor gx#import-set::t))
+  (declare-type gx#import-set-source (@accessor gx#import-set::t source #t))
+  (declare-type gx#import-set-phi (@accessor gx#import-set::t phi #t))
+  (declare-type gx#import-set-imports (@accessor gx#import-set::t imports #t))
+  (declare-type
+   gx#import-set-source-set!
+   (@mutator gx#import-set::t source #t))
+  (declare-type gx#import-set-phi-set! (@mutator gx#import-set::t phi #t))
   (declare-type
    gx#import-set-imports-set!
-   (@struct-setf gx#import-set::t 2 #f))
-  (declare-type gx#&import-set-source (@struct-getf gx#import-set::t 0 #t))
-  (declare-type gx#&import-set-phi (@struct-getf gx#import-set::t 1 #t))
-  (declare-type gx#&import-set-imports (@struct-getf gx#import-set::t 2 #t))
+   (@mutator gx#import-set::t imports #t))
+  (declare-type gx#&import-set-source (@accessor gx#import-set::t source #f))
+  (declare-type gx#&import-set-phi (@accessor gx#import-set::t phi #f))
+  (declare-type gx#&import-set-imports (@accessor gx#import-set::t imports #f))
   (declare-type
    gx#&import-set-source-set!
-   (@struct-setf gx#import-set::t 0 #t))
-  (declare-type gx#&import-set-phi-set! (@struct-setf gx#import-set::t 1 #t))
+   (@mutator gx#import-set::t source #f))
+  (declare-type gx#&import-set-phi-set! (@mutator gx#import-set::t phi #f))
   (declare-type
    gx#&import-set-imports-set!
-   (@struct-setf gx#import-set::t 2 #t))
+   (@mutator gx#import-set::t imports #f))
   (declare-type
    gx#export-set::t
-   (@struct-type gx#export-set::t #f 3 #f ((final: . #t))))
-  (declare-type gx#export-set? (@struct-pred gx#export-set::t))
-  (declare-type gx#make-export-set (@struct-cons gx#export-set::t))
-  (declare-type gx#export-set-source (@struct-getf gx#export-set::t 0 #f))
-  (declare-type gx#export-set-phi (@struct-getf gx#export-set::t 1 #f))
-  (declare-type gx#export-set-exports (@struct-getf gx#export-set::t 2 #f))
-  (declare-type gx#export-set-source-set! (@struct-setf gx#export-set::t 0 #f))
-  (declare-type gx#export-set-phi-set! (@struct-setf gx#export-set::t 1 #f))
+   (@class gx#export-set::t
+           ()
+           ()
+           (source phi exports)
+           (source phi exports)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#export-set? (@predicate gx#export-set::t))
+  (declare-type gx#make-export-set (@constrctuor gx#export-set::t))
+  (declare-type gx#export-set-source (@accessor gx#export-set::t source #t))
+  (declare-type gx#export-set-phi (@accessor gx#export-set::t phi #t))
+  (declare-type gx#export-set-exports (@accessor gx#export-set::t exports #t))
+  (declare-type
+   gx#export-set-source-set!
+   (@mutator gx#export-set::t source #t))
+  (declare-type gx#export-set-phi-set! (@mutator gx#export-set::t phi #t))
   (declare-type
    gx#export-set-exports-set!
-   (@struct-setf gx#export-set::t 2 #f))
-  (declare-type gx#&export-set-source (@struct-getf gx#export-set::t 0 #t))
-  (declare-type gx#&export-set-phi (@struct-getf gx#export-set::t 1 #t))
-  (declare-type gx#&export-set-exports (@struct-getf gx#export-set::t 2 #t))
+   (@mutator gx#export-set::t exports #t))
+  (declare-type gx#&export-set-source (@accessor gx#export-set::t source #f))
+  (declare-type gx#&export-set-phi (@accessor gx#export-set::t phi #f))
+  (declare-type gx#&export-set-exports (@accessor gx#export-set::t exports #f))
   (declare-type
    gx#&export-set-source-set!
-   (@struct-setf gx#export-set::t 0 #t))
-  (declare-type gx#&export-set-phi-set! (@struct-setf gx#export-set::t 1 #t))
+   (@mutator gx#export-set::t source #f))
+  (declare-type gx#&export-set-phi-set! (@mutator gx#export-set::t phi #f))
   (declare-type
    gx#&export-set-exports-set!
-   (@struct-setf gx#export-set::t 2 #t))
+   (@mutator gx#export-set::t exports #f))
   (declare-type
    gx#import-expander::t
-   (@class-type
-    gx#import-expander::t
-    gx#user-expander::t
-    (gx#user-expander::t)
-    ()
-    ()
-    :init!
-    ()))
-  (declare-type gx#import-expander? (@class-pred gx#import-expander::t))
-  (declare-type gx#make-import-expander (@class-cons gx#import-expander::t))
+   (@class gx#import-expander::t
+           (gx#user-expander::t)
+           (gx#user-expander::t gx#macro-expander::t gx#expander::t)
+           ()
+           (e context phi)
+           :init!
+           #f
+           #f
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
+  (declare-type gx#import-expander? (@predicate gx#import-expander::t))
+  (declare-type gx#make-import-expander (@constrctuor gx#import-expander::t))
+  (declare-type
+   gx#import-expander-context
+   (@accessor gx#import-expander::t context #t))
+  (declare-type
+   gx#import-expander-phi
+   (@accessor gx#import-expander::t phi #t))
+  (declare-type gx#import-expander-e (@accessor gx#import-expander::t e #t))
+  (declare-type
+   gx#import-expander-context-set!
+   (@mutator gx#import-expander::t context #t))
+  (declare-type
+   gx#import-expander-phi-set!
+   (@mutator gx#import-expander::t phi #t))
+  (declare-type
+   gx#import-expander-e-set!
+   (@mutator gx#import-expander::t e #t))
+  (declare-type
+   gx#&import-expander-context
+   (@accessor gx#import-expander::t context #f))
+  (declare-type
+   gx#&import-expander-phi
+   (@accessor gx#import-expander::t phi #f))
+  (declare-type gx#&import-expander-e (@accessor gx#import-expander::t e #f))
+  (declare-type
+   gx#&import-expander-context-set!
+   (@mutator gx#import-expander::t context #f))
+  (declare-type
+   gx#&import-expander-phi-set!
+   (@mutator gx#import-expander::t phi #f))
+  (declare-type
+   gx#&import-expander-e-set!
+   (@mutator gx#import-expander::t e #f))
   (declare-type
    gx#export-expander::t
-   (@class-type
-    gx#export-expander::t
-    gx#user-expander::t
-    (gx#user-expander::t)
-    ()
-    ()
-    :init!
-    ()))
-  (declare-type gx#export-expander? (@class-pred gx#export-expander::t))
-  (declare-type gx#make-export-expander (@class-cons gx#export-expander::t))
+   (@class gx#export-expander::t
+           (gx#user-expander::t)
+           (gx#user-expander::t gx#macro-expander::t gx#expander::t)
+           ()
+           (e context phi)
+           :init!
+           #f
+           #f
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
+  (declare-type gx#export-expander? (@predicate gx#export-expander::t))
+  (declare-type gx#make-export-expander (@constrctuor gx#export-expander::t))
+  (declare-type
+   gx#export-expander-context
+   (@accessor gx#export-expander::t context #t))
+  (declare-type
+   gx#export-expander-phi
+   (@accessor gx#export-expander::t phi #t))
+  (declare-type gx#export-expander-e (@accessor gx#export-expander::t e #t))
+  (declare-type
+   gx#export-expander-context-set!
+   (@mutator gx#export-expander::t context #t))
+  (declare-type
+   gx#export-expander-phi-set!
+   (@mutator gx#export-expander::t phi #t))
+  (declare-type
+   gx#export-expander-e-set!
+   (@mutator gx#export-expander::t e #t))
+  (declare-type
+   gx#&export-expander-context
+   (@accessor gx#export-expander::t context #f))
+  (declare-type
+   gx#&export-expander-phi
+   (@accessor gx#export-expander::t phi #f))
+  (declare-type gx#&export-expander-e (@accessor gx#export-expander::t e #f))
+  (declare-type
+   gx#&export-expander-context-set!
+   (@mutator gx#export-expander::t context #f))
+  (declare-type
+   gx#&export-expander-phi-set!
+   (@mutator gx#export-expander::t phi #f))
+  (declare-type
+   gx#&export-expander-e-set!
+   (@mutator gx#export-expander::t e #f))
   (declare-type
    gx#import-export-expander::t
-   (@class-type
-    gx#import-export-expander::t
-    gx#user-expander::t
-    (gx#import-expander::t gx#export-expander::t)
-    ()
-    ()
-    :init!
-    ()))
+   (@class gx#import-export-expander::t
+           (gx#import-expander::t gx#export-expander::t)
+           (gx#import-expander::t
+            gx#export-expander::t
+            gx#user-expander::t
+            gx#macro-expander::t
+            gx#expander::t)
+           ()
+           (e context phi)
+           :init!
+           #f
+           #f
+           ((:init! . gx#import-export-expander:::init!))))
   (declare-type
    gx#import-export-expander?
-   (@class-pred gx#import-export-expander::t))
+   (@predicate gx#import-export-expander::t))
   (declare-type
    gx#make-import-export-expander
-   (@class-cons gx#import-export-expander::t))
+   (@constrctuor gx#import-export-expander::t))
+  (declare-type
+   gx#import-export-expander-context
+   (@accessor gx#import-export-expander::t context #t))
+  (declare-type
+   gx#import-export-expander-phi
+   (@accessor gx#import-export-expander::t phi #t))
+  (declare-type
+   gx#import-export-expander-e
+   (@accessor gx#import-export-expander::t e #t))
+  (declare-type
+   gx#import-export-expander-context-set!
+   (@mutator gx#import-export-expander::t context #t))
+  (declare-type
+   gx#import-export-expander-phi-set!
+   (@mutator gx#import-export-expander::t phi #t))
+  (declare-type
+   gx#import-export-expander-e-set!
+   (@mutator gx#import-export-expander::t e #t))
+  (declare-type
+   gx#&import-export-expander-context
+   (@accessor gx#import-export-expander::t context #f))
+  (declare-type
+   gx#&import-export-expander-phi
+   (@accessor gx#import-export-expander::t phi #f))
+  (declare-type
+   gx#&import-export-expander-e
+   (@accessor gx#import-export-expander::t e #f))
+  (declare-type
+   gx#&import-export-expander-context-set!
+   (@mutator gx#import-export-expander::t context #f))
+  (declare-type
+   gx#&import-export-expander-phi-set!
+   (@mutator gx#import-export-expander::t phi #f))
+  (declare-type
+   gx#&import-export-expander-e-set!
+   (@mutator gx#import-export-expander::t e #f))
   (declare-type gx#call-with-input-source-file (@lambda 2 #f))
   (declare-type gx#module-context:::init! (@lambda 5 #f))
   (declare-type gx#prelude-context:::init!__% (@lambda 3 #f))

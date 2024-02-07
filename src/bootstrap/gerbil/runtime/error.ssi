@@ -32,15 +32,19 @@ namespace: #f
          (%#define-runtime Error-message Error-message)
          (%#define-runtime Error-irritants Error-irritants)
          (%#define-runtime Error-where Error-where)
+         (%#define-runtime Error-continuation Error-continuation)
          (%#define-runtime Error-message-set! Error-message-set!)
          (%#define-runtime Error-irritants-set! Error-irritants-set!)
          (%#define-runtime Error-where-set! Error-where-set!)
+         (%#define-runtime Error-continuation-set! Error-continuation-set!)
          (%#define-runtime &Error-message &Error-message)
          (%#define-runtime &Error-irritants &Error-irritants)
          (%#define-runtime &Error-where &Error-where)
+         (%#define-runtime &Error-continuation &Error-continuation)
          (%#define-runtime &Error-message-set! &Error-message-set!)
          (%#define-runtime &Error-irritants-set! &Error-irritants-set!)
          (%#define-runtime &Error-where-set! &Error-where-set!)
+         (%#define-runtime &Error-continuation-set! &Error-continuation-set!)
          (%#define-syntax Error |[:0:]#Error|)
          (%#define-runtime RuntimeException::t RuntimeException::t)
          (%#define-runtime RuntimeException? RuntimeException?)
@@ -49,14 +53,26 @@ namespace: #f
           RuntimeException-exception
           RuntimeException-exception)
          (%#define-runtime
+          RuntimeException-continuation
+          RuntimeException-continuation)
+         (%#define-runtime
           RuntimeException-exception-set!
           RuntimeException-exception-set!)
+         (%#define-runtime
+          RuntimeException-continuation-set!
+          RuntimeException-continuation-set!)
          (%#define-runtime
           &RuntimeException-exception
           &RuntimeException-exception)
          (%#define-runtime
+          &RuntimeException-continuation
+          &RuntimeException-continuation)
+         (%#define-runtime
           &RuntimeException-exception-set!
           &RuntimeException-exception-set!)
+         (%#define-runtime
+          &RuntimeException-continuation-set!
+          &RuntimeException-continuation-set!)
          (%#define-syntax RuntimeException |[:0:]#RuntimeException|)
          (%#define-runtime
           gerbil-exception-handler-hook

@@ -13,16 +13,20 @@ namespace: gx
          (%#define-runtime make-syntax-pattern gx#make-syntax-pattern)
          (%#define-runtime syntax-pattern-id gx#syntax-pattern-id)
          (%#define-runtime syntax-pattern-depth gx#syntax-pattern-depth)
+         (%#define-runtime syntax-pattern-e gx#syntax-pattern-e)
          (%#define-runtime syntax-pattern-id-set! gx#syntax-pattern-id-set!)
          (%#define-runtime
           syntax-pattern-depth-set!
           gx#syntax-pattern-depth-set!)
+         (%#define-runtime syntax-pattern-e-set! gx#syntax-pattern-e-set!)
          (%#define-runtime &syntax-pattern-id gx#&syntax-pattern-id)
          (%#define-runtime &syntax-pattern-depth gx#&syntax-pattern-depth)
+         (%#define-runtime &syntax-pattern-e gx#&syntax-pattern-e)
          (%#define-runtime &syntax-pattern-id-set! gx#&syntax-pattern-id-set!)
          (%#define-runtime
           &syntax-pattern-depth-set!
           gx#&syntax-pattern-depth-set!)
+         (%#define-runtime &syntax-pattern-e-set! gx#&syntax-pattern-e-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/stxcase__1")))

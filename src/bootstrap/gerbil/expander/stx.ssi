@@ -8,13 +8,25 @@ namespace: gx
          (%#define-runtime identifier-wrap? gx#identifier-wrap?)
          (%#define-runtime make-identifier-wrap gx#make-identifier-wrap)
          (%#define-runtime identifier-wrap-marks gx#identifier-wrap-marks)
+         (%#define-runtime identifier-wrap-e gx#identifier-wrap-e)
+         (%#define-runtime identifier-wrap-source gx#identifier-wrap-source)
          (%#define-runtime
           identifier-wrap-marks-set!
           gx#identifier-wrap-marks-set!)
+         (%#define-runtime identifier-wrap-e-set! gx#identifier-wrap-e-set!)
+         (%#define-runtime
+          identifier-wrap-source-set!
+          gx#identifier-wrap-source-set!)
          (%#define-runtime &identifier-wrap-marks gx#&identifier-wrap-marks)
+         (%#define-runtime &identifier-wrap-e gx#&identifier-wrap-e)
+         (%#define-runtime &identifier-wrap-source gx#&identifier-wrap-source)
          (%#define-runtime
           &identifier-wrap-marks-set!
           gx#&identifier-wrap-marks-set!)
+         (%#define-runtime &identifier-wrap-e-set! gx#&identifier-wrap-e-set!)
+         (%#define-runtime
+          &identifier-wrap-source-set!
+          gx#&identifier-wrap-source-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/expander/stx__1")))
@@ -23,27 +35,49 @@ namespace: gx
          (%#define-runtime syntax-wrap? gx#syntax-wrap?)
          (%#define-runtime make-syntax-wrap gx#make-syntax-wrap)
          (%#define-runtime syntax-wrap-mark gx#syntax-wrap-mark)
+         (%#define-runtime syntax-wrap-e gx#syntax-wrap-e)
+         (%#define-runtime syntax-wrap-source gx#syntax-wrap-source)
          (%#define-runtime syntax-wrap-mark-set! gx#syntax-wrap-mark-set!)
+         (%#define-runtime syntax-wrap-e-set! gx#syntax-wrap-e-set!)
+         (%#define-runtime syntax-wrap-source-set! gx#syntax-wrap-source-set!)
          (%#define-runtime &syntax-wrap-mark gx#&syntax-wrap-mark)
+         (%#define-runtime &syntax-wrap-e gx#&syntax-wrap-e)
+         (%#define-runtime &syntax-wrap-source gx#&syntax-wrap-source)
          (%#define-runtime &syntax-wrap-mark-set! gx#&syntax-wrap-mark-set!)
+         (%#define-runtime &syntax-wrap-e-set! gx#&syntax-wrap-e-set!)
+         (%#define-runtime
+          &syntax-wrap-source-set!
+          gx#&syntax-wrap-source-set!)
          (%#define-syntax syntax-wrap |gx[:0:]#syntax-wrap|)
          (%#define-runtime syntax-quote::t gx#syntax-quote::t)
          (%#define-runtime syntax-quote? gx#syntax-quote?)
          (%#define-runtime make-syntax-quote gx#make-syntax-quote)
          (%#define-runtime syntax-quote-context gx#syntax-quote-context)
          (%#define-runtime syntax-quote-marks gx#syntax-quote-marks)
+         (%#define-runtime syntax-quote-e gx#syntax-quote-e)
+         (%#define-runtime syntax-quote-source gx#syntax-quote-source)
          (%#define-runtime
           syntax-quote-context-set!
           gx#syntax-quote-context-set!)
          (%#define-runtime syntax-quote-marks-set! gx#syntax-quote-marks-set!)
+         (%#define-runtime syntax-quote-e-set! gx#syntax-quote-e-set!)
+         (%#define-runtime
+          syntax-quote-source-set!
+          gx#syntax-quote-source-set!)
          (%#define-runtime &syntax-quote-context gx#&syntax-quote-context)
          (%#define-runtime &syntax-quote-marks gx#&syntax-quote-marks)
+         (%#define-runtime &syntax-quote-e gx#&syntax-quote-e)
+         (%#define-runtime &syntax-quote-source gx#&syntax-quote-source)
          (%#define-runtime
           &syntax-quote-context-set!
           gx#&syntax-quote-context-set!)
          (%#define-runtime
           &syntax-quote-marks-set!
           gx#&syntax-quote-marks-set!)
+         (%#define-runtime &syntax-quote-e-set! gx#&syntax-quote-e-set!)
+         (%#define-runtime
+          &syntax-quote-source-set!
+          gx#&syntax-quote-source-set!)
          (%#define-syntax syntax-quote |gx[:0:]#syntax-quote|)
          (%#define-runtime identifier? gx#identifier?)
          (%#define-runtime identifier-quote? gx#identifier-quote?)

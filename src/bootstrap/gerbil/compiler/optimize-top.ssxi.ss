@@ -13,6 +13,19 @@ package: gerbil/compiler
   (declare-type gxc#collect-type-call% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-begin% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-begin-annotation% (@lambda 1 #f))
+  (declare-type gxc#basic-expression-type-annotation-mop.class (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.constructor
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.predicate
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.accessor
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.mutator
+   (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-lambda% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-case-lambda% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-let-values% (@lambda 1 #f))

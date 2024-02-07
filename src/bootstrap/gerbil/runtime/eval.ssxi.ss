@@ -4,113 +4,263 @@ package: gerbil/runtime
 (begin
   (declare-type
    __context::t
-   (@struct-type gerbil/runtime/eval#__context::t #f 4 #f ()))
-  (declare-type __context? (@struct-pred __context::t))
-  (declare-type make-__context (@struct-cons __context::t))
-  (declare-type __context-t (@struct-getf __context::t 0 #f))
-  (declare-type __context-ns (@struct-getf __context::t 1 #f))
-  (declare-type __context-super (@struct-getf __context::t 2 #f))
-  (declare-type __context-table (@struct-getf __context::t 3 #f))
-  (declare-type __context-t-set! (@struct-setf __context::t 0 #f))
-  (declare-type __context-ns-set! (@struct-setf __context::t 1 #f))
-  (declare-type __context-super-set! (@struct-setf __context::t 2 #f))
-  (declare-type __context-table-set! (@struct-setf __context::t 3 #f))
-  (declare-type &__context-t (@struct-getf __context::t 0 #t))
-  (declare-type &__context-ns (@struct-getf __context::t 1 #t))
-  (declare-type &__context-super (@struct-getf __context::t 2 #t))
-  (declare-type &__context-table (@struct-getf __context::t 3 #t))
-  (declare-type &__context-t-set! (@struct-setf __context::t 0 #t))
-  (declare-type &__context-ns-set! (@struct-setf __context::t 1 #t))
-  (declare-type &__context-super-set! (@struct-setf __context::t 2 #t))
-  (declare-type &__context-table-set! (@struct-setf __context::t 3 #t))
+   (@class gerbil/runtime/eval#__context::t
+           ()
+           ()
+           (t ns super table)
+           (t ns super table)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __context? (@predicate __context::t))
+  (declare-type make-__context (@constrctuor __context::t))
+  (declare-type __context-t (@accessor __context::t t #t))
+  (declare-type __context-ns (@accessor __context::t ns #t))
+  (declare-type __context-super (@accessor __context::t super #t))
+  (declare-type __context-table (@accessor __context::t table #t))
+  (declare-type __context-t-set! (@mutator __context::t t #t))
+  (declare-type __context-ns-set! (@mutator __context::t ns #t))
+  (declare-type __context-super-set! (@mutator __context::t super #t))
+  (declare-type __context-table-set! (@mutator __context::t table #t))
+  (declare-type &__context-t (@accessor __context::t t #f))
+  (declare-type &__context-ns (@accessor __context::t ns #f))
+  (declare-type &__context-super (@accessor __context::t super #f))
+  (declare-type &__context-table (@accessor __context::t table #f))
+  (declare-type &__context-t-set! (@mutator __context::t t #f))
+  (declare-type &__context-ns-set! (@mutator __context::t ns #f))
+  (declare-type &__context-super-set! (@mutator __context::t super #f))
+  (declare-type &__context-table-set! (@mutator __context::t table #f))
   (declare-type
    __runtime::t
-   (@struct-type gerbil/runtime/eval#__runtime::t #f 1 #f ()))
-  (declare-type __runtime? (@struct-pred __runtime::t))
-  (declare-type make-__runtime (@struct-cons __runtime::t))
-  (declare-type __runtime-id (@struct-getf __runtime::t 0 #f))
-  (declare-type __runtime-id-set! (@struct-setf __runtime::t 0 #f))
-  (declare-type &__runtime-id (@struct-getf __runtime::t 0 #t))
-  (declare-type &__runtime-id-set! (@struct-setf __runtime::t 0 #t))
+   (@class gerbil/runtime/eval#__runtime::t () () (id) (id) #f #t #f #f))
+  (declare-type __runtime? (@predicate __runtime::t))
+  (declare-type make-__runtime (@constrctuor __runtime::t))
+  (declare-type __runtime-id (@accessor __runtime::t id #t))
+  (declare-type __runtime-id-set! (@mutator __runtime::t id #t))
+  (declare-type &__runtime-id (@accessor __runtime::t id #f))
+  (declare-type &__runtime-id-set! (@mutator __runtime::t id #f))
   (declare-type
    __syntax::t
-   (@struct-type gerbil/runtime/eval#__syntax::t #f 2 #f ()))
-  (declare-type __syntax? (@struct-pred __syntax::t))
-  (declare-type make-__syntax (@struct-cons __syntax::t))
-  (declare-type __syntax-e (@struct-getf __syntax::t 0 #f))
-  (declare-type __syntax-id (@struct-getf __syntax::t 1 #f))
-  (declare-type __syntax-e-set! (@struct-setf __syntax::t 0 #f))
-  (declare-type __syntax-id-set! (@struct-setf __syntax::t 1 #f))
-  (declare-type &__syntax-e (@struct-getf __syntax::t 0 #t))
-  (declare-type &__syntax-id (@struct-getf __syntax::t 1 #t))
-  (declare-type &__syntax-e-set! (@struct-setf __syntax::t 0 #t))
-  (declare-type &__syntax-id-set! (@struct-setf __syntax::t 1 #t))
+   (@class gerbil/runtime/eval#__syntax::t () () (e id) (e id) #f #t #f #f))
+  (declare-type __syntax? (@predicate __syntax::t))
+  (declare-type make-__syntax (@constrctuor __syntax::t))
+  (declare-type __syntax-e (@accessor __syntax::t e #t))
+  (declare-type __syntax-id (@accessor __syntax::t id #t))
+  (declare-type __syntax-e-set! (@mutator __syntax::t e #t))
+  (declare-type __syntax-id-set! (@mutator __syntax::t id #t))
+  (declare-type &__syntax-e (@accessor __syntax::t e #f))
+  (declare-type &__syntax-id (@accessor __syntax::t id #f))
+  (declare-type &__syntax-e-set! (@mutator __syntax::t e #f))
+  (declare-type &__syntax-id-set! (@mutator __syntax::t id #f))
   (declare-type
    __macro::t
-   (@struct-type gerbil/runtime/eval#__macro::t __syntax::t 0 #f ()))
-  (declare-type __macro? (@struct-pred __macro::t))
-  (declare-type make-__macro (@struct-cons __macro::t))
+   (@class gerbil/runtime/eval#__macro::t
+           (__syntax::t)
+           (__syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __macro? (@predicate __macro::t))
+  (declare-type make-__macro (@constrctuor __macro::t))
+  (declare-type __macro-e (@accessor __macro::t e #t))
+  (declare-type __macro-id (@accessor __macro::t id #t))
+  (declare-type __macro-e-set! (@mutator __macro::t e #t))
+  (declare-type __macro-id-set! (@mutator __macro::t id #t))
+  (declare-type &__macro-e (@accessor __macro::t e #f))
+  (declare-type &__macro-id (@accessor __macro::t id #f))
+  (declare-type &__macro-e-set! (@mutator __macro::t e #f))
+  (declare-type &__macro-id-set! (@mutator __macro::t id #f))
   (declare-type
    __special-form::t
-   (@struct-type gerbil/runtime/eval#__special-form::t __macro::t 0 #f ()))
-  (declare-type __special-form? (@struct-pred __special-form::t))
-  (declare-type make-__special-form (@struct-cons __special-form::t))
+   (@class gerbil/runtime/eval#__special-form::t
+           (__macro::t)
+           (__macro::t __syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __special-form? (@predicate __special-form::t))
+  (declare-type make-__special-form (@constrctuor __special-form::t))
+  (declare-type __special-form-e (@accessor __special-form::t e #t))
+  (declare-type __special-form-id (@accessor __special-form::t id #t))
+  (declare-type __special-form-e-set! (@mutator __special-form::t e #t))
+  (declare-type __special-form-id-set! (@mutator __special-form::t id #t))
+  (declare-type &__special-form-e (@accessor __special-form::t e #f))
+  (declare-type &__special-form-id (@accessor __special-form::t id #f))
+  (declare-type &__special-form-e-set! (@mutator __special-form::t e #f))
+  (declare-type &__special-form-id-set! (@mutator __special-form::t id #f))
   (declare-type
    __core-form::t
-   (@struct-type gerbil/runtime/eval#__core-form::t __syntax::t 0 #f ()))
-  (declare-type __core-form? (@struct-pred __core-form::t))
-  (declare-type make-__core-form (@struct-cons __core-form::t))
+   (@class gerbil/runtime/eval#__core-form::t
+           (__syntax::t)
+           (__syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __core-form? (@predicate __core-form::t))
+  (declare-type make-__core-form (@constrctuor __core-form::t))
+  (declare-type __core-form-e (@accessor __core-form::t e #t))
+  (declare-type __core-form-id (@accessor __core-form::t id #t))
+  (declare-type __core-form-e-set! (@mutator __core-form::t e #t))
+  (declare-type __core-form-id-set! (@mutator __core-form::t id #t))
+  (declare-type &__core-form-e (@accessor __core-form::t e #f))
+  (declare-type &__core-form-id (@accessor __core-form::t id #f))
+  (declare-type &__core-form-e-set! (@mutator __core-form::t e #f))
+  (declare-type &__core-form-id-set! (@mutator __core-form::t id #f))
   (declare-type
    __core-expression::t
-   (@struct-type
-    gerbil/runtime/eval#__core-expression::t
-    __core-form::t
-    0
-    #f
-    ()))
-  (declare-type __core-expression? (@struct-pred __core-expression::t))
-  (declare-type make-__core-expression (@struct-cons __core-expression::t))
+   (@class gerbil/runtime/eval#__core-expression::t
+           (__core-form::t)
+           (__core-form::t __syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __core-expression? (@predicate __core-expression::t))
+  (declare-type make-__core-expression (@constrctuor __core-expression::t))
+  (declare-type __core-expression-e (@accessor __core-expression::t e #t))
+  (declare-type __core-expression-id (@accessor __core-expression::t id #t))
+  (declare-type __core-expression-e-set! (@mutator __core-expression::t e #t))
+  (declare-type
+   __core-expression-id-set!
+   (@mutator __core-expression::t id #t))
+  (declare-type &__core-expression-e (@accessor __core-expression::t e #f))
+  (declare-type &__core-expression-id (@accessor __core-expression::t id #f))
+  (declare-type &__core-expression-e-set! (@mutator __core-expression::t e #f))
+  (declare-type
+   &__core-expression-id-set!
+   (@mutator __core-expression::t id #f))
   (declare-type
    __core-special-form::t
-   (@struct-type
-    gerbil/runtime/eval#__core-special-form::t
-    __core-form::t
-    0
-    #f
-    ()))
-  (declare-type __core-special-form? (@struct-pred __core-special-form::t))
-  (declare-type make-__core-special-form (@struct-cons __core-special-form::t))
+   (@class gerbil/runtime/eval#__core-special-form::t
+           (__core-form::t)
+           (__core-form::t __syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __core-special-form? (@predicate __core-special-form::t))
+  (declare-type make-__core-special-form (@constrctuor __core-special-form::t))
+  (declare-type __core-special-form-e (@accessor __core-special-form::t e #t))
+  (declare-type
+   __core-special-form-id
+   (@accessor __core-special-form::t id #t))
+  (declare-type
+   __core-special-form-e-set!
+   (@mutator __core-special-form::t e #t))
+  (declare-type
+   __core-special-form-id-set!
+   (@mutator __core-special-form::t id #t))
+  (declare-type &__core-special-form-e (@accessor __core-special-form::t e #f))
+  (declare-type
+   &__core-special-form-id
+   (@accessor __core-special-form::t id #f))
+  (declare-type
+   &__core-special-form-e-set!
+   (@mutator __core-special-form::t e #f))
+  (declare-type
+   &__core-special-form-id-set!
+   (@mutator __core-special-form::t id #f))
   (declare-type
    __struct-info::t
-   (@struct-type gerbil/runtime/eval#__struct-info::t __syntax::t 0 #f ()))
-  (declare-type __struct-info? (@struct-pred __struct-info::t))
-  (declare-type make-__struct-info (@struct-cons __struct-info::t))
+   (@class gerbil/runtime/eval#__struct-info::t
+           (__syntax::t)
+           (__syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __struct-info? (@predicate __struct-info::t))
+  (declare-type make-__struct-info (@constrctuor __struct-info::t))
+  (declare-type __struct-info-e (@accessor __struct-info::t e #t))
+  (declare-type __struct-info-id (@accessor __struct-info::t id #t))
+  (declare-type __struct-info-e-set! (@mutator __struct-info::t e #t))
+  (declare-type __struct-info-id-set! (@mutator __struct-info::t id #t))
+  (declare-type &__struct-info-e (@accessor __struct-info::t e #f))
+  (declare-type &__struct-info-id (@accessor __struct-info::t id #f))
+  (declare-type &__struct-info-e-set! (@mutator __struct-info::t e #f))
+  (declare-type &__struct-info-id-set! (@mutator __struct-info::t id #f))
   (declare-type
    __feature::t
-   (@struct-type gerbil/runtime/eval#__feature::t __syntax::t 0 #f ()))
-  (declare-type __feature? (@struct-pred __feature::t))
-  (declare-type make-__feature (@struct-cons __feature::t))
+   (@class gerbil/runtime/eval#__feature::t
+           (__syntax::t)
+           (__syntax::t)
+           ()
+           (e id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __feature? (@predicate __feature::t))
+  (declare-type make-__feature (@constrctuor __feature::t))
+  (declare-type __feature-e (@accessor __feature::t e #t))
+  (declare-type __feature-id (@accessor __feature::t id #t))
+  (declare-type __feature-e-set! (@mutator __feature::t e #t))
+  (declare-type __feature-id-set! (@mutator __feature::t id #t))
+  (declare-type &__feature-e (@accessor __feature::t e #f))
+  (declare-type &__feature-id (@accessor __feature::t id #f))
+  (declare-type &__feature-e-set! (@mutator __feature::t e #f))
+  (declare-type &__feature-id-set! (@mutator __feature::t id #f))
   (declare-type
    __module::t
-   (@struct-type gerbil/runtime/eval#__module::t __context::t 4 #f ()))
-  (declare-type __module? (@struct-pred __module::t))
-  (declare-type make-__module (@struct-cons __module::t))
-  (declare-type __module-id (@struct-getf __module::t 0 #f))
-  (declare-type __module-path (@struct-getf __module::t 1 #f))
-  (declare-type __module-import (@struct-getf __module::t 2 #f))
-  (declare-type __module-export (@struct-getf __module::t 3 #f))
-  (declare-type __module-id-set! (@struct-setf __module::t 0 #f))
-  (declare-type __module-path-set! (@struct-setf __module::t 1 #f))
-  (declare-type __module-import-set! (@struct-setf __module::t 2 #f))
-  (declare-type __module-export-set! (@struct-setf __module::t 3 #f))
-  (declare-type &__module-id (@struct-getf __module::t 0 #t))
-  (declare-type &__module-path (@struct-getf __module::t 1 #t))
-  (declare-type &__module-import (@struct-getf __module::t 2 #t))
-  (declare-type &__module-export (@struct-getf __module::t 3 #t))
-  (declare-type &__module-id-set! (@struct-setf __module::t 0 #t))
-  (declare-type &__module-path-set! (@struct-setf __module::t 1 #t))
-  (declare-type &__module-import-set! (@struct-setf __module::t 2 #t))
-  (declare-type &__module-export-set! (@struct-setf __module::t 3 #t))
+   (@class gerbil/runtime/eval#__module::t
+           (__context::t)
+           (__context::t)
+           (id path import export)
+           (t ns super table id path import export)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type __module? (@predicate __module::t))
+  (declare-type make-__module (@constrctuor __module::t))
+  (declare-type __module-id (@accessor __module::t id #t))
+  (declare-type __module-path (@accessor __module::t path #t))
+  (declare-type __module-import (@accessor __module::t import #t))
+  (declare-type __module-export (@accessor __module::t export #t))
+  (declare-type __module-t (@accessor __module::t t #t))
+  (declare-type __module-ns (@accessor __module::t ns #t))
+  (declare-type __module-super (@accessor __module::t super #t))
+  (declare-type __module-table (@accessor __module::t table #t))
+  (declare-type __module-id-set! (@mutator __module::t id #t))
+  (declare-type __module-path-set! (@mutator __module::t path #t))
+  (declare-type __module-import-set! (@mutator __module::t import #t))
+  (declare-type __module-export-set! (@mutator __module::t export #t))
+  (declare-type __module-t-set! (@mutator __module::t t #t))
+  (declare-type __module-ns-set! (@mutator __module::t ns #t))
+  (declare-type __module-super-set! (@mutator __module::t super #t))
+  (declare-type __module-table-set! (@mutator __module::t table #t))
+  (declare-type &__module-id (@accessor __module::t id #f))
+  (declare-type &__module-path (@accessor __module::t path #f))
+  (declare-type &__module-import (@accessor __module::t import #f))
+  (declare-type &__module-export (@accessor __module::t export #f))
+  (declare-type &__module-t (@accessor __module::t t #f))
+  (declare-type &__module-ns (@accessor __module::t ns #f))
+  (declare-type &__module-super (@accessor __module::t super #f))
+  (declare-type &__module-table (@accessor __module::t table #f))
+  (declare-type &__module-id-set! (@mutator __module::t id #f))
+  (declare-type &__module-path-set! (@mutator __module::t path #f))
+  (declare-type &__module-import-set! (@mutator __module::t import #f))
+  (declare-type &__module-export-set! (@mutator __module::t export #f))
+  (declare-type &__module-t-set! (@mutator __module::t t #f))
+  (declare-type &__module-ns-set! (@mutator __module::t ns #f))
+  (declare-type &__module-super-set! (@mutator __module::t super #f))
+  (declare-type &__module-table-set! (@mutator __module::t table #f))
   (declare-type __core-resolve__% (@lambda 2 #f))
   (declare-type __core-resolve__0 (@lambda 1 #f))
   (declare-type

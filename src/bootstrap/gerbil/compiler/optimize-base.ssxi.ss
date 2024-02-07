@@ -4,448 +4,947 @@ package: gerbil/compiler
 (begin
   (declare-type
    gxc#optimizer-info::t
-   (@struct-type gxc#optimizer-info::t #f 3 :init! ()))
-  (declare-type gxc#optimizer-info? (@struct-pred gxc#optimizer-info::t))
-  (declare-type gxc#make-optimizer-info (@struct-cons gxc#optimizer-info::t))
+   (@class gxc#optimizer-info::t
+           ()
+           ()
+           (type ssxi methods)
+           (type ssxi methods)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#optimizer-info:::init!))))
+  (declare-type gxc#optimizer-info? (@predicate gxc#optimizer-info::t))
+  (declare-type gxc#make-optimizer-info (@constrctuor gxc#optimizer-info::t))
   (declare-type
    gxc#optimizer-info-type
-   (@struct-getf gxc#optimizer-info::t 0 #f))
+   (@accessor gxc#optimizer-info::t type #t))
   (declare-type
    gxc#optimizer-info-ssxi
-   (@struct-getf gxc#optimizer-info::t 1 #f))
+   (@accessor gxc#optimizer-info::t ssxi #t))
   (declare-type
    gxc#optimizer-info-methods
-   (@struct-getf gxc#optimizer-info::t 2 #f))
+   (@accessor gxc#optimizer-info::t methods #t))
   (declare-type
    gxc#optimizer-info-type-set!
-   (@struct-setf gxc#optimizer-info::t 0 #f))
+   (@mutator gxc#optimizer-info::t type #t))
   (declare-type
    gxc#optimizer-info-ssxi-set!
-   (@struct-setf gxc#optimizer-info::t 1 #f))
+   (@mutator gxc#optimizer-info::t ssxi #t))
   (declare-type
    gxc#optimizer-info-methods-set!
-   (@struct-setf gxc#optimizer-info::t 2 #f))
+   (@mutator gxc#optimizer-info::t methods #t))
   (declare-type
    gxc#&optimizer-info-type
-   (@struct-getf gxc#optimizer-info::t 0 #t))
+   (@accessor gxc#optimizer-info::t type #f))
   (declare-type
    gxc#&optimizer-info-ssxi
-   (@struct-getf gxc#optimizer-info::t 1 #t))
+   (@accessor gxc#optimizer-info::t ssxi #f))
   (declare-type
    gxc#&optimizer-info-methods
-   (@struct-getf gxc#optimizer-info::t 2 #t))
+   (@accessor gxc#optimizer-info::t methods #f))
   (declare-type
    gxc#&optimizer-info-type-set!
-   (@struct-setf gxc#optimizer-info::t 0 #t))
+   (@mutator gxc#optimizer-info::t type #f))
   (declare-type
    gxc#&optimizer-info-ssxi-set!
-   (@struct-setf gxc#optimizer-info::t 1 #t))
+   (@mutator gxc#optimizer-info::t ssxi #f))
   (declare-type
    gxc#&optimizer-info-methods-set!
-   (@struct-setf gxc#optimizer-info::t 2 #t))
+   (@mutator gxc#optimizer-info::t methods #f))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
-  (declare-type gxc#!type::t (@struct-type gxc#!type::t #f 1 #f ()))
-  (declare-type gxc#!type? (@struct-pred gxc#!type::t))
-  (declare-type gxc#make-!type (@struct-cons gxc#!type::t))
-  (declare-type gxc#!type-id (@struct-getf gxc#!type::t 0 #f))
-  (declare-type gxc#!type-id-set! (@struct-setf gxc#!type::t 0 #f))
-  (declare-type gxc#&!type-id (@struct-getf gxc#!type::t 0 #t))
-  (declare-type gxc#&!type-id-set! (@struct-setf gxc#!type::t 0 #t))
+  (declare-type gxc#!type::t (@class gxc#!type::t () () (id) (id) #f #t #f #f))
+  (declare-type gxc#!type? (@predicate gxc#!type::t))
+  (declare-type gxc#make-!type (@constrctuor gxc#!type::t))
+  (declare-type gxc#!type-id (@accessor gxc#!type::t id #t))
+  (declare-type gxc#!type-id-set! (@mutator gxc#!type::t id #t))
+  (declare-type gxc#&!type-id (@accessor gxc#!type::t id #f))
+  (declare-type gxc#&!type-id-set! (@mutator gxc#!type::t id #f))
   (declare-type
    gxc#!alias::t
-   (@struct-type gxc#!alias::t gxc#!type::t 0 #f ()))
-  (declare-type gxc#!alias? (@struct-pred gxc#!alias::t))
-  (declare-type gxc#make-!alias (@struct-cons gxc#!alias::t))
-  (declare-type
-   gxc#!struct-type::t
-   (@struct-type gxc#!struct-type::t gxc#!type::t 6 :init! ()))
-  (declare-type gxc#!struct-type? (@struct-pred gxc#!struct-type::t))
-  (declare-type gxc#make-!struct-type (@struct-cons gxc#!struct-type::t))
-  (declare-type gxc#!struct-type-super (@struct-getf gxc#!struct-type::t 0 #f))
-  (declare-type
-   gxc#!struct-type-fields
-   (@struct-getf gxc#!struct-type::t 1 #f))
-  (declare-type
-   gxc#!struct-type-xfields
-   (@struct-getf gxc#!struct-type::t 2 #f))
-  (declare-type gxc#!struct-type-ctor (@struct-getf gxc#!struct-type::t 3 #f))
-  (declare-type gxc#!struct-type-plist (@struct-getf gxc#!struct-type::t 4 #f))
-  (declare-type
-   gxc#!struct-type-methods
-   (@struct-getf gxc#!struct-type::t 5 #f))
-  (declare-type
-   gxc#!struct-type-super-set!
-   (@struct-setf gxc#!struct-type::t 0 #f))
-  (declare-type
-   gxc#!struct-type-fields-set!
-   (@struct-setf gxc#!struct-type::t 1 #f))
-  (declare-type
-   gxc#!struct-type-xfields-set!
-   (@struct-setf gxc#!struct-type::t 2 #f))
-  (declare-type
-   gxc#!struct-type-ctor-set!
-   (@struct-setf gxc#!struct-type::t 3 #f))
-  (declare-type
-   gxc#!struct-type-plist-set!
-   (@struct-setf gxc#!struct-type::t 4 #f))
-  (declare-type
-   gxc#!struct-type-methods-set!
-   (@struct-setf gxc#!struct-type::t 5 #f))
-  (declare-type
-   gxc#&!struct-type-super
-   (@struct-getf gxc#!struct-type::t 0 #t))
-  (declare-type
-   gxc#&!struct-type-fields
-   (@struct-getf gxc#!struct-type::t 1 #t))
-  (declare-type
-   gxc#&!struct-type-xfields
-   (@struct-getf gxc#!struct-type::t 2 #t))
-  (declare-type gxc#&!struct-type-ctor (@struct-getf gxc#!struct-type::t 3 #t))
-  (declare-type
-   gxc#&!struct-type-plist
-   (@struct-getf gxc#!struct-type::t 4 #t))
-  (declare-type
-   gxc#&!struct-type-methods
-   (@struct-getf gxc#!struct-type::t 5 #t))
-  (declare-type
-   gxc#&!struct-type-super-set!
-   (@struct-setf gxc#!struct-type::t 0 #t))
-  (declare-type
-   gxc#&!struct-type-fields-set!
-   (@struct-setf gxc#!struct-type::t 1 #t))
-  (declare-type
-   gxc#&!struct-type-xfields-set!
-   (@struct-setf gxc#!struct-type::t 2 #t))
-  (declare-type
-   gxc#&!struct-type-ctor-set!
-   (@struct-setf gxc#!struct-type::t 3 #t))
-  (declare-type
-   gxc#&!struct-type-plist-set!
-   (@struct-setf gxc#!struct-type::t 4 #t))
-  (declare-type
-   gxc#&!struct-type-methods-set!
-   (@struct-setf gxc#!struct-type::t 5 #t))
-  (declare-type
-   gxc#!class-type::t
-   (@struct-type gxc#!class-type::t gxc#!type::t 7 :init! ()))
-  (declare-type gxc#!class-type? (@struct-pred gxc#!class-type::t))
-  (declare-type gxc#make-!class-type (@struct-cons gxc#!class-type::t))
-  (declare-type gxc#!class-type-super (@struct-getf gxc#!class-type::t 0 #f))
-  (declare-type gxc#!class-type-mixin (@struct-getf gxc#!class-type::t 1 #f))
-  (declare-type gxc#!class-type-slots (@struct-getf gxc#!class-type::t 2 #f))
-  (declare-type gxc#!class-type-xslots (@struct-getf gxc#!class-type::t 3 #f))
-  (declare-type gxc#!class-type-ctor (@struct-getf gxc#!class-type::t 4 #f))
-  (declare-type gxc#!class-type-plist (@struct-getf gxc#!class-type::t 5 #f))
-  (declare-type gxc#!class-type-methods (@struct-getf gxc#!class-type::t 6 #f))
-  (declare-type
-   gxc#!class-type-super-set!
-   (@struct-setf gxc#!class-type::t 0 #f))
-  (declare-type
-   gxc#!class-type-mixin-set!
-   (@struct-setf gxc#!class-type::t 1 #f))
-  (declare-type
-   gxc#!class-type-slots-set!
-   (@struct-setf gxc#!class-type::t 2 #f))
-  (declare-type
-   gxc#!class-type-xslots-set!
-   (@struct-setf gxc#!class-type::t 3 #f))
-  (declare-type
-   gxc#!class-type-ctor-set!
-   (@struct-setf gxc#!class-type::t 4 #f))
-  (declare-type
-   gxc#!class-type-plist-set!
-   (@struct-setf gxc#!class-type::t 5 #f))
-  (declare-type
-   gxc#!class-type-methods-set!
-   (@struct-setf gxc#!class-type::t 6 #f))
-  (declare-type gxc#&!class-type-super (@struct-getf gxc#!class-type::t 0 #t))
-  (declare-type gxc#&!class-type-mixin (@struct-getf gxc#!class-type::t 1 #t))
-  (declare-type gxc#&!class-type-slots (@struct-getf gxc#!class-type::t 2 #t))
-  (declare-type gxc#&!class-type-xslots (@struct-getf gxc#!class-type::t 3 #t))
-  (declare-type gxc#&!class-type-ctor (@struct-getf gxc#!class-type::t 4 #t))
-  (declare-type gxc#&!class-type-plist (@struct-getf gxc#!class-type::t 5 #t))
-  (declare-type
-   gxc#&!class-type-methods
-   (@struct-getf gxc#!class-type::t 6 #t))
-  (declare-type
-   gxc#&!class-type-super-set!
-   (@struct-setf gxc#!class-type::t 0 #t))
-  (declare-type
-   gxc#&!class-type-mixin-set!
-   (@struct-setf gxc#!class-type::t 1 #t))
-  (declare-type
-   gxc#&!class-type-slots-set!
-   (@struct-setf gxc#!class-type::t 2 #t))
-  (declare-type
-   gxc#&!class-type-xslots-set!
-   (@struct-setf gxc#!class-type::t 3 #t))
-  (declare-type
-   gxc#&!class-type-ctor-set!
-   (@struct-setf gxc#!class-type::t 4 #t))
-  (declare-type
-   gxc#&!class-type-plist-set!
-   (@struct-setf gxc#!class-type::t 5 #t))
-  (declare-type
-   gxc#&!class-type-methods-set!
-   (@struct-setf gxc#!class-type::t 6 #t))
+   (@class gxc#!alias::t (gxc#!type::t) (gxc#!type::t) () (id) #f #t #f #f))
+  (declare-type gxc#!alias? (@predicate gxc#!alias::t))
+  (declare-type gxc#make-!alias (@constrctuor gxc#!alias::t))
+  (declare-type gxc#!alias-id (@accessor gxc#!alias::t id #t))
+  (declare-type gxc#!alias-id-set! (@mutator gxc#!alias::t id #t))
+  (declare-type gxc#&!alias-id (@accessor gxc#!alias::t id #f))
+  (declare-type gxc#&!alias-id-set! (@mutator gxc#!alias::t id #f))
   (declare-type
    gxc#!procedure::t
-   (@struct-type gxc#!procedure::t gxc#!type::t 0 #f ()))
-  (declare-type gxc#!procedure? (@struct-pred gxc#!procedure::t))
-  (declare-type gxc#make-!procedure (@struct-cons gxc#!procedure::t))
+   (@class gxc#!procedure::t
+           (gxc#!type::t)
+           (gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
+  (declare-type gxc#make-!procedure (@constrctuor gxc#!procedure::t))
+  (declare-type gxc#!procedure-id (@accessor gxc#!procedure::t id #t))
+  (declare-type gxc#!procedure-id-set! (@mutator gxc#!procedure::t id #t))
+  (declare-type gxc#&!procedure-id (@accessor gxc#!procedure::t id #f))
+  (declare-type gxc#&!procedure-id-set! (@mutator gxc#!procedure::t id #f))
+  (declare-type
+   gxc#!struct-type::t
+   (@class gxc#!struct-type::t
+           (gxc#!type::t)
+           (gxc#!type::t)
+           (super fields xfields ctor plist methods)
+           (id super fields xfields ctor plist methods)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#!struct-type:::init!))))
+  (declare-type gxc#!struct-type? (@predicate gxc#!struct-type::t))
+  (declare-type gxc#make-!struct-type (@constrctuor gxc#!struct-type::t))
+  (declare-type
+   gxc#!struct-type-super
+   (@accessor gxc#!struct-type::t super #t))
+  (declare-type
+   gxc#!struct-type-fields
+   (@accessor gxc#!struct-type::t fields #t))
+  (declare-type
+   gxc#!struct-type-xfields
+   (@accessor gxc#!struct-type::t xfields #t))
+  (declare-type gxc#!struct-type-ctor (@accessor gxc#!struct-type::t ctor #t))
+  (declare-type
+   gxc#!struct-type-plist
+   (@accessor gxc#!struct-type::t plist #t))
+  (declare-type
+   gxc#!struct-type-methods
+   (@accessor gxc#!struct-type::t methods #t))
+  (declare-type gxc#!struct-type-id (@accessor gxc#!struct-type::t id #t))
+  (declare-type
+   gxc#!struct-type-super-set!
+   (@mutator gxc#!struct-type::t super #t))
+  (declare-type
+   gxc#!struct-type-fields-set!
+   (@mutator gxc#!struct-type::t fields #t))
+  (declare-type
+   gxc#!struct-type-xfields-set!
+   (@mutator gxc#!struct-type::t xfields #t))
+  (declare-type
+   gxc#!struct-type-ctor-set!
+   (@mutator gxc#!struct-type::t ctor #t))
+  (declare-type
+   gxc#!struct-type-plist-set!
+   (@mutator gxc#!struct-type::t plist #t))
+  (declare-type
+   gxc#!struct-type-methods-set!
+   (@mutator gxc#!struct-type::t methods #t))
+  (declare-type gxc#!struct-type-id-set! (@mutator gxc#!struct-type::t id #t))
+  (declare-type
+   gxc#&!struct-type-super
+   (@accessor gxc#!struct-type::t super #f))
+  (declare-type
+   gxc#&!struct-type-fields
+   (@accessor gxc#!struct-type::t fields #f))
+  (declare-type
+   gxc#&!struct-type-xfields
+   (@accessor gxc#!struct-type::t xfields #f))
+  (declare-type gxc#&!struct-type-ctor (@accessor gxc#!struct-type::t ctor #f))
+  (declare-type
+   gxc#&!struct-type-plist
+   (@accessor gxc#!struct-type::t plist #f))
+  (declare-type
+   gxc#&!struct-type-methods
+   (@accessor gxc#!struct-type::t methods #f))
+  (declare-type gxc#&!struct-type-id (@accessor gxc#!struct-type::t id #f))
+  (declare-type
+   gxc#&!struct-type-super-set!
+   (@mutator gxc#!struct-type::t super #f))
+  (declare-type
+   gxc#&!struct-type-fields-set!
+   (@mutator gxc#!struct-type::t fields #f))
+  (declare-type
+   gxc#&!struct-type-xfields-set!
+   (@mutator gxc#!struct-type::t xfields #f))
+  (declare-type
+   gxc#&!struct-type-ctor-set!
+   (@mutator gxc#!struct-type::t ctor #f))
+  (declare-type
+   gxc#&!struct-type-plist-set!
+   (@mutator gxc#!struct-type::t plist #f))
+  (declare-type
+   gxc#&!struct-type-methods-set!
+   (@mutator gxc#!struct-type::t methods #f))
+  (declare-type gxc#&!struct-type-id-set! (@mutator gxc#!struct-type::t id #f))
+  (declare-type
+   gxc#!class-type::t
+   (@class gxc#!class-type::t
+           (gxc#!type::t)
+           (gxc#!type::t)
+           (super mixin slots xslots ctor plist methods)
+           (id super mixin slots xslots ctor plist methods)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#!class-type:::init!))))
+  (declare-type gxc#!class-type? (@predicate gxc#!class-type::t))
+  (declare-type gxc#make-!class-type (@constrctuor gxc#!class-type::t))
+  (declare-type gxc#!class-type-super (@accessor gxc#!class-type::t super #t))
+  (declare-type gxc#!class-type-mixin (@accessor gxc#!class-type::t mixin #t))
+  (declare-type gxc#!class-type-slots (@accessor gxc#!class-type::t slots #t))
+  (declare-type
+   gxc#!class-type-xslots
+   (@accessor gxc#!class-type::t xslots #t))
+  (declare-type gxc#!class-type-ctor (@accessor gxc#!class-type::t ctor #t))
+  (declare-type gxc#!class-type-plist (@accessor gxc#!class-type::t plist #t))
+  (declare-type
+   gxc#!class-type-methods
+   (@accessor gxc#!class-type::t methods #t))
+  (declare-type gxc#!class-type-id (@accessor gxc#!class-type::t id #t))
+  (declare-type
+   gxc#!class-type-super-set!
+   (@mutator gxc#!class-type::t super #t))
+  (declare-type
+   gxc#!class-type-mixin-set!
+   (@mutator gxc#!class-type::t mixin #t))
+  (declare-type
+   gxc#!class-type-slots-set!
+   (@mutator gxc#!class-type::t slots #t))
+  (declare-type
+   gxc#!class-type-xslots-set!
+   (@mutator gxc#!class-type::t xslots #t))
+  (declare-type
+   gxc#!class-type-ctor-set!
+   (@mutator gxc#!class-type::t ctor #t))
+  (declare-type
+   gxc#!class-type-plist-set!
+   (@mutator gxc#!class-type::t plist #t))
+  (declare-type
+   gxc#!class-type-methods-set!
+   (@mutator gxc#!class-type::t methods #t))
+  (declare-type gxc#!class-type-id-set! (@mutator gxc#!class-type::t id #t))
+  (declare-type gxc#&!class-type-super (@accessor gxc#!class-type::t super #f))
+  (declare-type gxc#&!class-type-mixin (@accessor gxc#!class-type::t mixin #f))
+  (declare-type gxc#&!class-type-slots (@accessor gxc#!class-type::t slots #f))
+  (declare-type
+   gxc#&!class-type-xslots
+   (@accessor gxc#!class-type::t xslots #f))
+  (declare-type gxc#&!class-type-ctor (@accessor gxc#!class-type::t ctor #f))
+  (declare-type gxc#&!class-type-plist (@accessor gxc#!class-type::t plist #f))
+  (declare-type
+   gxc#&!class-type-methods
+   (@accessor gxc#!class-type::t methods #f))
+  (declare-type gxc#&!class-type-id (@accessor gxc#!class-type::t id #f))
+  (declare-type
+   gxc#&!class-type-super-set!
+   (@mutator gxc#!class-type::t super #f))
+  (declare-type
+   gxc#&!class-type-mixin-set!
+   (@mutator gxc#!class-type::t mixin #f))
+  (declare-type
+   gxc#&!class-type-slots-set!
+   (@mutator gxc#!class-type::t slots #f))
+  (declare-type
+   gxc#&!class-type-xslots-set!
+   (@mutator gxc#!class-type::t xslots #f))
+  (declare-type
+   gxc#&!class-type-ctor-set!
+   (@mutator gxc#!class-type::t ctor #f))
+  (declare-type
+   gxc#&!class-type-plist-set!
+   (@mutator gxc#!class-type::t plist #f))
+  (declare-type
+   gxc#&!class-type-methods-set!
+   (@mutator gxc#!class-type::t methods #f))
+  (declare-type gxc#&!class-type-id-set! (@mutator gxc#!class-type::t id #f))
   (declare-type
    gxc#!struct-pred::t
-   (@struct-type gxc#!struct-pred::t gxc#!procedure::t 0 #f ()))
-  (declare-type gxc#!struct-pred? (@struct-pred gxc#!struct-pred::t))
-  (declare-type gxc#make-!struct-pred (@struct-cons gxc#!struct-pred::t))
+   (@class gxc#!struct-pred::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!struct-pred? (@predicate gxc#!struct-pred::t))
+  (declare-type gxc#make-!struct-pred (@constrctuor gxc#!struct-pred::t))
+  (declare-type gxc#!struct-pred-id (@accessor gxc#!struct-pred::t id #t))
+  (declare-type gxc#!struct-pred-id-set! (@mutator gxc#!struct-pred::t id #t))
+  (declare-type gxc#&!struct-pred-id (@accessor gxc#!struct-pred::t id #f))
+  (declare-type gxc#&!struct-pred-id-set! (@mutator gxc#!struct-pred::t id #f))
   (declare-type
    gxc#!struct-cons::t
-   (@struct-type gxc#!struct-cons::t gxc#!procedure::t 0 #f ()))
-  (declare-type gxc#!struct-cons? (@struct-pred gxc#!struct-cons::t))
-  (declare-type gxc#make-!struct-cons (@struct-cons gxc#!struct-cons::t))
+   (@class gxc#!struct-cons::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!struct-cons? (@predicate gxc#!struct-cons::t))
+  (declare-type gxc#make-!struct-cons (@constrctuor gxc#!struct-cons::t))
+  (declare-type gxc#!struct-cons-id (@accessor gxc#!struct-cons::t id #t))
+  (declare-type gxc#!struct-cons-id-set! (@mutator gxc#!struct-cons::t id #t))
+  (declare-type gxc#&!struct-cons-id (@accessor gxc#!struct-cons::t id #f))
+  (declare-type gxc#&!struct-cons-id-set! (@mutator gxc#!struct-cons::t id #f))
   (declare-type
    gxc#!struct-getf::t
-   (@struct-type gxc#!struct-getf::t gxc#!procedure::t 2 #f ()))
-  (declare-type gxc#!struct-getf? (@struct-pred gxc#!struct-getf::t))
-  (declare-type gxc#make-!struct-getf (@struct-cons gxc#!struct-getf::t))
-  (declare-type gxc#!struct-getf-off (@struct-getf gxc#!struct-getf::t 0 #f))
+   (@class gxc#!struct-getf::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (off unchecked?)
+           (id off unchecked?)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!struct-getf? (@predicate gxc#!struct-getf::t))
+  (declare-type gxc#make-!struct-getf (@constrctuor gxc#!struct-getf::t))
+  (declare-type gxc#!struct-getf-off (@accessor gxc#!struct-getf::t off #t))
   (declare-type
    gxc#!struct-getf-unchecked?
-   (@struct-getf gxc#!struct-getf::t 1 #f))
+   (@accessor gxc#!struct-getf::t unchecked? #t))
+  (declare-type gxc#!struct-getf-id (@accessor gxc#!struct-getf::t id #t))
   (declare-type
    gxc#!struct-getf-off-set!
-   (@struct-setf gxc#!struct-getf::t 0 #f))
+   (@mutator gxc#!struct-getf::t off #t))
   (declare-type
    gxc#!struct-getf-unchecked?-set!
-   (@struct-setf gxc#!struct-getf::t 1 #f))
-  (declare-type gxc#&!struct-getf-off (@struct-getf gxc#!struct-getf::t 0 #t))
+   (@mutator gxc#!struct-getf::t unchecked? #t))
+  (declare-type gxc#!struct-getf-id-set! (@mutator gxc#!struct-getf::t id #t))
+  (declare-type gxc#&!struct-getf-off (@accessor gxc#!struct-getf::t off #f))
   (declare-type
    gxc#&!struct-getf-unchecked?
-   (@struct-getf gxc#!struct-getf::t 1 #t))
+   (@accessor gxc#!struct-getf::t unchecked? #f))
+  (declare-type gxc#&!struct-getf-id (@accessor gxc#!struct-getf::t id #f))
   (declare-type
    gxc#&!struct-getf-off-set!
-   (@struct-setf gxc#!struct-getf::t 0 #t))
+   (@mutator gxc#!struct-getf::t off #f))
   (declare-type
    gxc#&!struct-getf-unchecked?-set!
-   (@struct-setf gxc#!struct-getf::t 1 #t))
+   (@mutator gxc#!struct-getf::t unchecked? #f))
+  (declare-type gxc#&!struct-getf-id-set! (@mutator gxc#!struct-getf::t id #f))
   (declare-type
    gxc#!struct-setf::t
-   (@struct-type gxc#!struct-setf::t gxc#!procedure::t 2 #f ()))
-  (declare-type gxc#!struct-setf? (@struct-pred gxc#!struct-setf::t))
-  (declare-type gxc#make-!struct-setf (@struct-cons gxc#!struct-setf::t))
-  (declare-type gxc#!struct-setf-off (@struct-getf gxc#!struct-setf::t 0 #f))
+   (@class gxc#!struct-setf::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (off unchecked?)
+           (id off unchecked?)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!struct-setf? (@predicate gxc#!struct-setf::t))
+  (declare-type gxc#make-!struct-setf (@constrctuor gxc#!struct-setf::t))
+  (declare-type gxc#!struct-setf-off (@accessor gxc#!struct-setf::t off #t))
   (declare-type
    gxc#!struct-setf-unchecked?
-   (@struct-getf gxc#!struct-setf::t 1 #f))
+   (@accessor gxc#!struct-setf::t unchecked? #t))
+  (declare-type gxc#!struct-setf-id (@accessor gxc#!struct-setf::t id #t))
   (declare-type
    gxc#!struct-setf-off-set!
-   (@struct-setf gxc#!struct-setf::t 0 #f))
+   (@mutator gxc#!struct-setf::t off #t))
   (declare-type
    gxc#!struct-setf-unchecked?-set!
-   (@struct-setf gxc#!struct-setf::t 1 #f))
-  (declare-type gxc#&!struct-setf-off (@struct-getf gxc#!struct-setf::t 0 #t))
+   (@mutator gxc#!struct-setf::t unchecked? #t))
+  (declare-type gxc#!struct-setf-id-set! (@mutator gxc#!struct-setf::t id #t))
+  (declare-type gxc#&!struct-setf-off (@accessor gxc#!struct-setf::t off #f))
   (declare-type
    gxc#&!struct-setf-unchecked?
-   (@struct-getf gxc#!struct-setf::t 1 #t))
+   (@accessor gxc#!struct-setf::t unchecked? #f))
+  (declare-type gxc#&!struct-setf-id (@accessor gxc#!struct-setf::t id #f))
   (declare-type
    gxc#&!struct-setf-off-set!
-   (@struct-setf gxc#!struct-setf::t 0 #t))
+   (@mutator gxc#!struct-setf::t off #f))
   (declare-type
    gxc#&!struct-setf-unchecked?-set!
-   (@struct-setf gxc#!struct-setf::t 1 #t))
+   (@mutator gxc#!struct-setf::t unchecked? #f))
+  (declare-type gxc#&!struct-setf-id-set! (@mutator gxc#!struct-setf::t id #f))
   (declare-type
    gxc#!class-pred::t
-   (@struct-type gxc#!class-pred::t gxc#!procedure::t 0 #f ()))
-  (declare-type gxc#!class-pred? (@struct-pred gxc#!class-pred::t))
-  (declare-type gxc#make-!class-pred (@struct-cons gxc#!class-pred::t))
+   (@class gxc#!class-pred::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!class-pred? (@predicate gxc#!class-pred::t))
+  (declare-type gxc#make-!class-pred (@constrctuor gxc#!class-pred::t))
+  (declare-type gxc#!class-pred-id (@accessor gxc#!class-pred::t id #t))
+  (declare-type gxc#!class-pred-id-set! (@mutator gxc#!class-pred::t id #t))
+  (declare-type gxc#&!class-pred-id (@accessor gxc#!class-pred::t id #f))
+  (declare-type gxc#&!class-pred-id-set! (@mutator gxc#!class-pred::t id #f))
   (declare-type
    gxc#!class-cons::t
-   (@struct-type gxc#!class-cons::t gxc#!procedure::t 0 #f ()))
-  (declare-type gxc#!class-cons? (@struct-pred gxc#!class-cons::t))
-  (declare-type gxc#make-!class-cons (@struct-cons gxc#!class-cons::t))
+   (@class gxc#!class-cons::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!class-cons? (@predicate gxc#!class-cons::t))
+  (declare-type gxc#make-!class-cons (@constrctuor gxc#!class-cons::t))
+  (declare-type gxc#!class-cons-id (@accessor gxc#!class-cons::t id #t))
+  (declare-type gxc#!class-cons-id-set! (@mutator gxc#!class-cons::t id #t))
+  (declare-type gxc#&!class-cons-id (@accessor gxc#!class-cons::t id #f))
+  (declare-type gxc#&!class-cons-id-set! (@mutator gxc#!class-cons::t id #f))
   (declare-type
    gxc#!class-getf::t
-   (@struct-type gxc#!class-getf::t gxc#!procedure::t 2 #f ()))
-  (declare-type gxc#!class-getf? (@struct-pred gxc#!class-getf::t))
-  (declare-type gxc#make-!class-getf (@struct-cons gxc#!class-getf::t))
-  (declare-type gxc#!class-getf-slot (@struct-getf gxc#!class-getf::t 0 #f))
+   (@class gxc#!class-getf::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (slot unchecked?)
+           (id slot unchecked?)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!class-getf? (@predicate gxc#!class-getf::t))
+  (declare-type gxc#make-!class-getf (@constrctuor gxc#!class-getf::t))
+  (declare-type gxc#!class-getf-slot (@accessor gxc#!class-getf::t slot #t))
   (declare-type
    gxc#!class-getf-unchecked?
-   (@struct-getf gxc#!class-getf::t 1 #f))
+   (@accessor gxc#!class-getf::t unchecked? #t))
+  (declare-type gxc#!class-getf-id (@accessor gxc#!class-getf::t id #t))
   (declare-type
    gxc#!class-getf-slot-set!
-   (@struct-setf gxc#!class-getf::t 0 #f))
+   (@mutator gxc#!class-getf::t slot #t))
   (declare-type
    gxc#!class-getf-unchecked?-set!
-   (@struct-setf gxc#!class-getf::t 1 #f))
-  (declare-type gxc#&!class-getf-slot (@struct-getf gxc#!class-getf::t 0 #t))
+   (@mutator gxc#!class-getf::t unchecked? #t))
+  (declare-type gxc#!class-getf-id-set! (@mutator gxc#!class-getf::t id #t))
+  (declare-type gxc#&!class-getf-slot (@accessor gxc#!class-getf::t slot #f))
   (declare-type
    gxc#&!class-getf-unchecked?
-   (@struct-getf gxc#!class-getf::t 1 #t))
+   (@accessor gxc#!class-getf::t unchecked? #f))
+  (declare-type gxc#&!class-getf-id (@accessor gxc#!class-getf::t id #f))
   (declare-type
    gxc#&!class-getf-slot-set!
-   (@struct-setf gxc#!class-getf::t 0 #t))
+   (@mutator gxc#!class-getf::t slot #f))
   (declare-type
    gxc#&!class-getf-unchecked?-set!
-   (@struct-setf gxc#!class-getf::t 1 #t))
+   (@mutator gxc#!class-getf::t unchecked? #f))
+  (declare-type gxc#&!class-getf-id-set! (@mutator gxc#!class-getf::t id #f))
   (declare-type
    gxc#!class-setf::t
-   (@struct-type gxc#!class-setf::t gxc#!procedure::t 2 #f ()))
-  (declare-type gxc#!class-setf? (@struct-pred gxc#!class-setf::t))
-  (declare-type gxc#make-!class-setf (@struct-cons gxc#!class-setf::t))
-  (declare-type gxc#!class-setf-slot (@struct-getf gxc#!class-setf::t 0 #f))
+   (@class gxc#!class-setf::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (slot unchecked?)
+           (id slot unchecked?)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!class-setf? (@predicate gxc#!class-setf::t))
+  (declare-type gxc#make-!class-setf (@constrctuor gxc#!class-setf::t))
+  (declare-type gxc#!class-setf-slot (@accessor gxc#!class-setf::t slot #t))
   (declare-type
    gxc#!class-setf-unchecked?
-   (@struct-getf gxc#!class-setf::t 1 #f))
+   (@accessor gxc#!class-setf::t unchecked? #t))
+  (declare-type gxc#!class-setf-id (@accessor gxc#!class-setf::t id #t))
   (declare-type
    gxc#!class-setf-slot-set!
-   (@struct-setf gxc#!class-setf::t 0 #f))
+   (@mutator gxc#!class-setf::t slot #t))
   (declare-type
    gxc#!class-setf-unchecked?-set!
-   (@struct-setf gxc#!class-setf::t 1 #f))
-  (declare-type gxc#&!class-setf-slot (@struct-getf gxc#!class-setf::t 0 #t))
+   (@mutator gxc#!class-setf::t unchecked? #t))
+  (declare-type gxc#!class-setf-id-set! (@mutator gxc#!class-setf::t id #t))
+  (declare-type gxc#&!class-setf-slot (@accessor gxc#!class-setf::t slot #f))
   (declare-type
    gxc#&!class-setf-unchecked?
-   (@struct-getf gxc#!class-setf::t 1 #t))
+   (@accessor gxc#!class-setf::t unchecked? #f))
+  (declare-type gxc#&!class-setf-id (@accessor gxc#!class-setf::t id #f))
   (declare-type
    gxc#&!class-setf-slot-set!
-   (@struct-setf gxc#!class-setf::t 0 #t))
+   (@mutator gxc#!class-setf::t slot #f))
   (declare-type
    gxc#&!class-setf-unchecked?-set!
-   (@struct-setf gxc#!class-setf::t 1 #t))
+   (@mutator gxc#!class-setf::t unchecked? #f))
+  (declare-type gxc#&!class-setf-id-set! (@mutator gxc#!class-setf::t id #f))
+  (declare-type
+   gxc#!class::t
+   (@class gxc#!class::t
+           (gxc#!type::t)
+           (gxc#!type::t)
+           (super precedence-list
+                  slots
+                  fields
+                  constructor
+                  struct?
+                  final?
+                  methods)
+           (id super
+               precedence-list
+               slots
+               fields
+               constructor
+               struct?
+               final?
+               methods)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#!class:::init!))))
+  (declare-type gxc#!class? (@predicate gxc#!class::t))
+  (declare-type gxc#make-!class (@constrctuor gxc#!class::t))
+  (declare-type gxc#!class-super (@accessor gxc#!class::t super #t))
+  (declare-type
+   gxc#!class-precedence-list
+   (@accessor gxc#!class::t precedence-list #t))
+  (declare-type gxc#!class-slots (@accessor gxc#!class::t slots #t))
+  (declare-type gxc#!class-fields (@accessor gxc#!class::t fields #t))
+  (declare-type
+   gxc#!class-constructor
+   (@accessor gxc#!class::t constructor #t))
+  (declare-type gxc#!class-struct? (@accessor gxc#!class::t struct? #t))
+  (declare-type gxc#!class-final? (@accessor gxc#!class::t final? #t))
+  (declare-type gxc#!class-methods (@accessor gxc#!class::t methods #t))
+  (declare-type gxc#!class-id (@accessor gxc#!class::t id #t))
+  (declare-type gxc#!class-super-set! (@mutator gxc#!class::t super #t))
+  (declare-type
+   gxc#!class-precedence-list-set!
+   (@mutator gxc#!class::t precedence-list #t))
+  (declare-type gxc#!class-slots-set! (@mutator gxc#!class::t slots #t))
+  (declare-type gxc#!class-fields-set! (@mutator gxc#!class::t fields #t))
+  (declare-type
+   gxc#!class-constructor-set!
+   (@mutator gxc#!class::t constructor #t))
+  (declare-type gxc#!class-struct?-set! (@mutator gxc#!class::t struct? #t))
+  (declare-type gxc#!class-final?-set! (@mutator gxc#!class::t final? #t))
+  (declare-type gxc#!class-methods-set! (@mutator gxc#!class::t methods #t))
+  (declare-type gxc#!class-id-set! (@mutator gxc#!class::t id #t))
+  (declare-type gxc#&!class-super (@accessor gxc#!class::t super #f))
+  (declare-type
+   gxc#&!class-precedence-list
+   (@accessor gxc#!class::t precedence-list #f))
+  (declare-type gxc#&!class-slots (@accessor gxc#!class::t slots #f))
+  (declare-type gxc#&!class-fields (@accessor gxc#!class::t fields #f))
+  (declare-type
+   gxc#&!class-constructor
+   (@accessor gxc#!class::t constructor #f))
+  (declare-type gxc#&!class-struct? (@accessor gxc#!class::t struct? #f))
+  (declare-type gxc#&!class-final? (@accessor gxc#!class::t final? #f))
+  (declare-type gxc#&!class-methods (@accessor gxc#!class::t methods #f))
+  (declare-type gxc#&!class-id (@accessor gxc#!class::t id #f))
+  (declare-type gxc#&!class-super-set! (@mutator gxc#!class::t super #f))
+  (declare-type
+   gxc#&!class-precedence-list-set!
+   (@mutator gxc#!class::t precedence-list #f))
+  (declare-type gxc#&!class-slots-set! (@mutator gxc#!class::t slots #f))
+  (declare-type gxc#&!class-fields-set! (@mutator gxc#!class::t fields #f))
+  (declare-type
+   gxc#&!class-constructor-set!
+   (@mutator gxc#!class::t constructor #f))
+  (declare-type gxc#&!class-struct?-set! (@mutator gxc#!class::t struct? #f))
+  (declare-type gxc#&!class-final?-set! (@mutator gxc#!class::t final? #f))
+  (declare-type gxc#&!class-methods-set! (@mutator gxc#!class::t methods #f))
+  (declare-type gxc#&!class-id-set! (@mutator gxc#!class::t id #f))
+  (declare-type
+   gxc#!predicate::t
+   (@class gxc#!predicate::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           ((:init! . gxc#!predicate:::init!))))
+  (declare-type gxc#!predicate? (@predicate gxc#!predicate::t))
+  (declare-type gxc#make-!predicate (@constrctuor gxc#!predicate::t))
+  (declare-type gxc#!predicate-id (@accessor gxc#!predicate::t id #t))
+  (declare-type gxc#!predicate-id-set! (@mutator gxc#!predicate::t id #t))
+  (declare-type gxc#&!predicate-id (@accessor gxc#!predicate::t id #f))
+  (declare-type gxc#&!predicate-id-set! (@mutator gxc#!predicate::t id #f))
+  (declare-type
+   gxc#!constructor::t
+   (@class gxc#!constructor::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           ((:init! . gxc#!constructor:::init!))))
+  (declare-type gxc#!constructor? (@predicate gxc#!constructor::t))
+  (declare-type gxc#make-!constructor (@constrctuor gxc#!constructor::t))
+  (declare-type gxc#!constructor-id (@accessor gxc#!constructor::t id #t))
+  (declare-type gxc#!constructor-id-set! (@mutator gxc#!constructor::t id #t))
+  (declare-type gxc#&!constructor-id (@accessor gxc#!constructor::t id #f))
+  (declare-type gxc#&!constructor-id-set! (@mutator gxc#!constructor::t id #f))
+  (declare-type
+   gxc#!accessor::t
+   (@class gxc#!accessor::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (slot checked?)
+           (id slot checked?)
+           #f
+           #t
+           #f
+           ((:init! . gxc#!accessor:::init!))))
+  (declare-type gxc#!accessor? (@predicate gxc#!accessor::t))
+  (declare-type gxc#make-!accessor (@constrctuor gxc#!accessor::t))
+  (declare-type gxc#!accessor-slot (@accessor gxc#!accessor::t slot #t))
+  (declare-type
+   gxc#!accessor-checked?
+   (@accessor gxc#!accessor::t checked? #t))
+  (declare-type gxc#!accessor-id (@accessor gxc#!accessor::t id #t))
+  (declare-type gxc#!accessor-slot-set! (@mutator gxc#!accessor::t slot #t))
+  (declare-type
+   gxc#!accessor-checked?-set!
+   (@mutator gxc#!accessor::t checked? #t))
+  (declare-type gxc#!accessor-id-set! (@mutator gxc#!accessor::t id #t))
+  (declare-type gxc#&!accessor-slot (@accessor gxc#!accessor::t slot #f))
+  (declare-type
+   gxc#&!accessor-checked?
+   (@accessor gxc#!accessor::t checked? #f))
+  (declare-type gxc#&!accessor-id (@accessor gxc#!accessor::t id #f))
+  (declare-type gxc#&!accessor-slot-set! (@mutator gxc#!accessor::t slot #f))
+  (declare-type
+   gxc#&!accessor-checked?-set!
+   (@mutator gxc#!accessor::t checked? #f))
+  (declare-type gxc#&!accessor-id-set! (@mutator gxc#!accessor::t id #f))
+  (declare-type
+   gxc#!mutator::t
+   (@class gxc#!mutator::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (slot checked?)
+           (id slot checked?)
+           #f
+           #t
+           #f
+           ((:init! . gxc#!mutator:::init!))))
+  (declare-type gxc#!mutator? (@predicate gxc#!mutator::t))
+  (declare-type gxc#make-!mutator (@constrctuor gxc#!mutator::t))
+  (declare-type gxc#!mutator-slot (@accessor gxc#!mutator::t slot #t))
+  (declare-type gxc#!mutator-checked? (@accessor gxc#!mutator::t checked? #t))
+  (declare-type gxc#!mutator-id (@accessor gxc#!mutator::t id #t))
+  (declare-type gxc#!mutator-slot-set! (@mutator gxc#!mutator::t slot #t))
+  (declare-type
+   gxc#!mutator-checked?-set!
+   (@mutator gxc#!mutator::t checked? #t))
+  (declare-type gxc#!mutator-id-set! (@mutator gxc#!mutator::t id #t))
+  (declare-type gxc#&!mutator-slot (@accessor gxc#!mutator::t slot #f))
+  (declare-type gxc#&!mutator-checked? (@accessor gxc#!mutator::t checked? #f))
+  (declare-type gxc#&!mutator-id (@accessor gxc#!mutator::t id #f))
+  (declare-type gxc#&!mutator-slot-set! (@mutator gxc#!mutator::t slot #f))
+  (declare-type
+   gxc#&!mutator-checked?-set!
+   (@mutator gxc#!mutator::t checked? #f))
+  (declare-type gxc#&!mutator-id-set! (@mutator gxc#!mutator::t id #f))
   (declare-type
    gxc#!lambda::t
-   (@struct-type gxc#!lambda::t gxc#!procedure::t 4 :init! ()))
-  (declare-type gxc#!lambda? (@struct-pred gxc#!lambda::t))
-  (declare-type gxc#make-!lambda (@struct-cons gxc#!lambda::t))
-  (declare-type gxc#!lambda-arity (@struct-getf gxc#!lambda::t 0 #f))
-  (declare-type gxc#!lambda-dispatch (@struct-getf gxc#!lambda::t 1 #f))
-  (declare-type gxc#!lambda-inline (@struct-getf gxc#!lambda::t 2 #f))
-  (declare-type gxc#!lambda-inline-typedecl (@struct-getf gxc#!lambda::t 3 #f))
-  (declare-type gxc#!lambda-arity-set! (@struct-setf gxc#!lambda::t 0 #f))
-  (declare-type gxc#!lambda-dispatch-set! (@struct-setf gxc#!lambda::t 1 #f))
-  (declare-type gxc#!lambda-inline-set! (@struct-setf gxc#!lambda::t 2 #f))
+   (@class gxc#!lambda::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (arity dispatch inline inline-typedecl)
+           (id arity dispatch inline inline-typedecl)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#!lambda:::init!))))
+  (declare-type gxc#!lambda? (@predicate gxc#!lambda::t))
+  (declare-type gxc#make-!lambda (@constrctuor gxc#!lambda::t))
+  (declare-type gxc#!lambda-arity (@accessor gxc#!lambda::t arity #t))
+  (declare-type gxc#!lambda-dispatch (@accessor gxc#!lambda::t dispatch #t))
+  (declare-type gxc#!lambda-inline (@accessor gxc#!lambda::t inline #t))
+  (declare-type
+   gxc#!lambda-inline-typedecl
+   (@accessor gxc#!lambda::t inline-typedecl #t))
+  (declare-type gxc#!lambda-id (@accessor gxc#!lambda::t id #t))
+  (declare-type gxc#!lambda-arity-set! (@mutator gxc#!lambda::t arity #t))
+  (declare-type
+   gxc#!lambda-dispatch-set!
+   (@mutator gxc#!lambda::t dispatch #t))
+  (declare-type gxc#!lambda-inline-set! (@mutator gxc#!lambda::t inline #t))
   (declare-type
    gxc#!lambda-inline-typedecl-set!
-   (@struct-setf gxc#!lambda::t 3 #f))
-  (declare-type gxc#&!lambda-arity (@struct-getf gxc#!lambda::t 0 #t))
-  (declare-type gxc#&!lambda-dispatch (@struct-getf gxc#!lambda::t 1 #t))
-  (declare-type gxc#&!lambda-inline (@struct-getf gxc#!lambda::t 2 #t))
+   (@mutator gxc#!lambda::t inline-typedecl #t))
+  (declare-type gxc#!lambda-id-set! (@mutator gxc#!lambda::t id #t))
+  (declare-type gxc#&!lambda-arity (@accessor gxc#!lambda::t arity #f))
+  (declare-type gxc#&!lambda-dispatch (@accessor gxc#!lambda::t dispatch #f))
+  (declare-type gxc#&!lambda-inline (@accessor gxc#!lambda::t inline #f))
   (declare-type
    gxc#&!lambda-inline-typedecl
-   (@struct-getf gxc#!lambda::t 3 #t))
-  (declare-type gxc#&!lambda-arity-set! (@struct-setf gxc#!lambda::t 0 #t))
-  (declare-type gxc#&!lambda-dispatch-set! (@struct-setf gxc#!lambda::t 1 #t))
-  (declare-type gxc#&!lambda-inline-set! (@struct-setf gxc#!lambda::t 2 #t))
+   (@accessor gxc#!lambda::t inline-typedecl #f))
+  (declare-type gxc#&!lambda-id (@accessor gxc#!lambda::t id #f))
+  (declare-type gxc#&!lambda-arity-set! (@mutator gxc#!lambda::t arity #f))
+  (declare-type
+   gxc#&!lambda-dispatch-set!
+   (@mutator gxc#!lambda::t dispatch #f))
+  (declare-type gxc#&!lambda-inline-set! (@mutator gxc#!lambda::t inline #f))
   (declare-type
    gxc#&!lambda-inline-typedecl-set!
-   (@struct-setf gxc#!lambda::t 3 #t))
+   (@mutator gxc#!lambda::t inline-typedecl #f))
+  (declare-type gxc#&!lambda-id-set! (@mutator gxc#!lambda::t id #f))
   (declare-type
    gxc#!case-lambda::t
-   (@struct-type gxc#!case-lambda::t gxc#!procedure::t 1 #f ()))
-  (declare-type gxc#!case-lambda? (@struct-pred gxc#!case-lambda::t))
-  (declare-type gxc#make-!case-lambda (@struct-cons gxc#!case-lambda::t))
+   (@class gxc#!case-lambda::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (clauses)
+           (id clauses)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!case-lambda? (@predicate gxc#!case-lambda::t))
+  (declare-type gxc#make-!case-lambda (@constrctuor gxc#!case-lambda::t))
   (declare-type
    gxc#!case-lambda-clauses
-   (@struct-getf gxc#!case-lambda::t 0 #f))
+   (@accessor gxc#!case-lambda::t clauses #t))
+  (declare-type gxc#!case-lambda-id (@accessor gxc#!case-lambda::t id #t))
   (declare-type
    gxc#!case-lambda-clauses-set!
-   (@struct-setf gxc#!case-lambda::t 0 #f))
+   (@mutator gxc#!case-lambda::t clauses #t))
+  (declare-type gxc#!case-lambda-id-set! (@mutator gxc#!case-lambda::t id #t))
   (declare-type
    gxc#&!case-lambda-clauses
-   (@struct-getf gxc#!case-lambda::t 0 #t))
+   (@accessor gxc#!case-lambda::t clauses #f))
+  (declare-type gxc#&!case-lambda-id (@accessor gxc#!case-lambda::t id #f))
   (declare-type
    gxc#&!case-lambda-clauses-set!
-   (@struct-setf gxc#!case-lambda::t 0 #t))
+   (@mutator gxc#!case-lambda::t clauses #f))
+  (declare-type gxc#&!case-lambda-id-set! (@mutator gxc#!case-lambda::t id #f))
   (declare-type
    gxc#!kw-lambda::t
-   (@struct-type gxc#!kw-lambda::t gxc#!procedure::t 2 #f ()))
-  (declare-type gxc#!kw-lambda? (@struct-pred gxc#!kw-lambda::t))
-  (declare-type gxc#make-!kw-lambda (@struct-cons gxc#!kw-lambda::t))
-  (declare-type gxc#!kw-lambda-table (@struct-getf gxc#!kw-lambda::t 0 #f))
-  (declare-type gxc#!kw-lambda-dispatch (@struct-getf gxc#!kw-lambda::t 1 #f))
+   (@class gxc#!kw-lambda::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (table dispatch)
+           (id table dispatch)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!kw-lambda? (@predicate gxc#!kw-lambda::t))
+  (declare-type gxc#make-!kw-lambda (@constrctuor gxc#!kw-lambda::t))
+  (declare-type gxc#!kw-lambda-table (@accessor gxc#!kw-lambda::t table #t))
+  (declare-type
+   gxc#!kw-lambda-dispatch
+   (@accessor gxc#!kw-lambda::t dispatch #t))
+  (declare-type gxc#!kw-lambda-id (@accessor gxc#!kw-lambda::t id #t))
   (declare-type
    gxc#!kw-lambda-table-set!
-   (@struct-setf gxc#!kw-lambda::t 0 #f))
+   (@mutator gxc#!kw-lambda::t table #t))
   (declare-type
    gxc#!kw-lambda-dispatch-set!
-   (@struct-setf gxc#!kw-lambda::t 1 #f))
-  (declare-type gxc#&!kw-lambda-table (@struct-getf gxc#!kw-lambda::t 0 #t))
-  (declare-type gxc#&!kw-lambda-dispatch (@struct-getf gxc#!kw-lambda::t 1 #t))
+   (@mutator gxc#!kw-lambda::t dispatch #t))
+  (declare-type gxc#!kw-lambda-id-set! (@mutator gxc#!kw-lambda::t id #t))
+  (declare-type gxc#&!kw-lambda-table (@accessor gxc#!kw-lambda::t table #f))
+  (declare-type
+   gxc#&!kw-lambda-dispatch
+   (@accessor gxc#!kw-lambda::t dispatch #f))
+  (declare-type gxc#&!kw-lambda-id (@accessor gxc#!kw-lambda::t id #f))
   (declare-type
    gxc#&!kw-lambda-table-set!
-   (@struct-setf gxc#!kw-lambda::t 0 #t))
+   (@mutator gxc#!kw-lambda::t table #f))
   (declare-type
    gxc#&!kw-lambda-dispatch-set!
-   (@struct-setf gxc#!kw-lambda::t 1 #t))
+   (@mutator gxc#!kw-lambda::t dispatch #f))
+  (declare-type gxc#&!kw-lambda-id-set! (@mutator gxc#!kw-lambda::t id #f))
   (declare-type
    gxc#!kw-lambda-primary::t
-   (@struct-type gxc#!kw-lambda-primary::t gxc#!procedure::t 2 #f ()))
-  (declare-type
-   gxc#!kw-lambda-primary?
-   (@struct-pred gxc#!kw-lambda-primary::t))
+   (@class gxc#!kw-lambda-primary::t
+           (gxc#!procedure::t)
+           (gxc#!procedure::t gxc#!type::t)
+           (keys main)
+           (id keys main)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#!kw-lambda-primary? (@predicate gxc#!kw-lambda-primary::t))
   (declare-type
    gxc#make-!kw-lambda-primary
-   (@struct-cons gxc#!kw-lambda-primary::t))
+   (@constrctuor gxc#!kw-lambda-primary::t))
   (declare-type
    gxc#!kw-lambda-primary-keys
-   (@struct-getf gxc#!kw-lambda-primary::t 0 #f))
+   (@accessor gxc#!kw-lambda-primary::t keys #t))
   (declare-type
    gxc#!kw-lambda-primary-main
-   (@struct-getf gxc#!kw-lambda-primary::t 1 #f))
+   (@accessor gxc#!kw-lambda-primary::t main #t))
+  (declare-type
+   gxc#!kw-lambda-primary-id
+   (@accessor gxc#!kw-lambda-primary::t id #t))
   (declare-type
    gxc#!kw-lambda-primary-keys-set!
-   (@struct-setf gxc#!kw-lambda-primary::t 0 #f))
+   (@mutator gxc#!kw-lambda-primary::t keys #t))
   (declare-type
    gxc#!kw-lambda-primary-main-set!
-   (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
+   (@mutator gxc#!kw-lambda-primary::t main #t))
+  (declare-type
+   gxc#!kw-lambda-primary-id-set!
+   (@mutator gxc#!kw-lambda-primary::t id #t))
   (declare-type
    gxc#&!kw-lambda-primary-keys
-   (@struct-getf gxc#!kw-lambda-primary::t 0 #t))
+   (@accessor gxc#!kw-lambda-primary::t keys #f))
   (declare-type
    gxc#&!kw-lambda-primary-main
-   (@struct-getf gxc#!kw-lambda-primary::t 1 #t))
+   (@accessor gxc#!kw-lambda-primary::t main #f))
+  (declare-type
+   gxc#&!kw-lambda-primary-id
+   (@accessor gxc#!kw-lambda-primary::t id #f))
   (declare-type
    gxc#&!kw-lambda-primary-keys-set!
-   (@struct-setf gxc#!kw-lambda-primary::t 0 #t))
+   (@mutator gxc#!kw-lambda-primary::t keys #f))
   (declare-type
    gxc#&!kw-lambda-primary-main-set!
-   (@struct-setf gxc#!kw-lambda-primary::t 1 #t))
+   (@mutator gxc#!kw-lambda-primary::t main #f))
+  (declare-type
+   gxc#&!kw-lambda-primary-id-set!
+   (@mutator gxc#!kw-lambda-primary::t id #f))
   (declare-type
    gxc#!primitive::t
-   (@class-type gxc#!primitive::t #f () () () #f ()))
-  (declare-type gxc#!primitive? (@class-pred gxc#!primitive::t))
-  (declare-type gxc#make-!primitive (@class-cons gxc#!primitive::t))
+   (@class gxc#!primitive::t () () () () #f #f #f #f))
+  (declare-type gxc#!primitive? (@predicate gxc#!primitive::t))
+  (declare-type gxc#make-!primitive (@constrctuor gxc#!primitive::t))
   (declare-type
    gxc#!primitive-lambda::t
-   (@class-type
-    gxc#!primitive-lambda::t
-    gxc#!lambda::t
-    (gxc#!primitive::t gxc#!lambda::t)
-    ()
-    ()
-    :init!
-    ()))
-  (declare-type gxc#!primitive-lambda? (@class-pred gxc#!primitive-lambda::t))
+   (@class gxc#!primitive-lambda::t
+           (gxc#!primitive::t gxc#!lambda::t)
+           (gxc#!primitive::t gxc#!lambda::t gxc#!procedure::t gxc#!type::t)
+           ()
+           (id arity dispatch inline inline-typedecl)
+           :init!
+           #f
+           #f
+           ((:init! . gxc#!primitive-lambda:::init!))))
+  (declare-type gxc#!primitive-lambda? (@predicate gxc#!primitive-lambda::t))
   (declare-type
    gxc#make-!primitive-lambda
-   (@class-cons gxc#!primitive-lambda::t))
+   (@constrctuor gxc#!primitive-lambda::t))
+  (declare-type
+   gxc#!primitive-lambda-arity
+   (@accessor gxc#!primitive-lambda::t arity #t))
+  (declare-type
+   gxc#!primitive-lambda-dispatch
+   (@accessor gxc#!primitive-lambda::t dispatch #t))
+  (declare-type
+   gxc#!primitive-lambda-inline
+   (@accessor gxc#!primitive-lambda::t inline #t))
+  (declare-type
+   gxc#!primitive-lambda-inline-typedecl
+   (@accessor gxc#!primitive-lambda::t inline-typedecl #t))
+  (declare-type
+   gxc#!primitive-lambda-id
+   (@accessor gxc#!primitive-lambda::t id #t))
+  (declare-type
+   gxc#!primitive-lambda-arity-set!
+   (@mutator gxc#!primitive-lambda::t arity #t))
+  (declare-type
+   gxc#!primitive-lambda-dispatch-set!
+   (@mutator gxc#!primitive-lambda::t dispatch #t))
+  (declare-type
+   gxc#!primitive-lambda-inline-set!
+   (@mutator gxc#!primitive-lambda::t inline #t))
+  (declare-type
+   gxc#!primitive-lambda-inline-typedecl-set!
+   (@mutator gxc#!primitive-lambda::t inline-typedecl #t))
+  (declare-type
+   gxc#!primitive-lambda-id-set!
+   (@mutator gxc#!primitive-lambda::t id #t))
+  (declare-type
+   gxc#&!primitive-lambda-arity
+   (@accessor gxc#!primitive-lambda::t arity #f))
+  (declare-type
+   gxc#&!primitive-lambda-dispatch
+   (@accessor gxc#!primitive-lambda::t dispatch #f))
+  (declare-type
+   gxc#&!primitive-lambda-inline
+   (@accessor gxc#!primitive-lambda::t inline #f))
+  (declare-type
+   gxc#&!primitive-lambda-inline-typedecl
+   (@accessor gxc#!primitive-lambda::t inline-typedecl #f))
+  (declare-type
+   gxc#&!primitive-lambda-id
+   (@accessor gxc#!primitive-lambda::t id #f))
+  (declare-type
+   gxc#&!primitive-lambda-arity-set!
+   (@mutator gxc#!primitive-lambda::t arity #f))
+  (declare-type
+   gxc#&!primitive-lambda-dispatch-set!
+   (@mutator gxc#!primitive-lambda::t dispatch #f))
+  (declare-type
+   gxc#&!primitive-lambda-inline-set!
+   (@mutator gxc#!primitive-lambda::t inline #f))
+  (declare-type
+   gxc#&!primitive-lambda-inline-typedecl-set!
+   (@mutator gxc#!primitive-lambda::t inline-typedecl #f))
+  (declare-type
+   gxc#&!primitive-lambda-id-set!
+   (@mutator gxc#!primitive-lambda::t id #f))
   (declare-type
    gxc#!primitive-case-lambda::t
-   (@class-type
-    gxc#!primitive-case-lambda::t
-    gxc#!case-lambda::t
-    (gxc#!primitive::t gxc#!case-lambda::t)
-    ()
-    ()
-    :init!
-    ()))
+   (@class gxc#!primitive-case-lambda::t
+           (gxc#!primitive::t gxc#!case-lambda::t)
+           (gxc#!primitive::t
+            gxc#!case-lambda::t
+            gxc#!procedure::t
+            gxc#!type::t)
+           ()
+           (id clauses)
+           :init!
+           #f
+           #f
+           ((:init! . gxc#!primitive-case-lambda:::init!))))
   (declare-type
    gxc#!primitive-case-lambda?
-   (@class-pred gxc#!primitive-case-lambda::t))
+   (@predicate gxc#!primitive-case-lambda::t))
   (declare-type
    gxc#make-!primitive-case-lambda
-   (@class-cons gxc#!primitive-case-lambda::t))
+   (@constrctuor gxc#!primitive-case-lambda::t))
+  (declare-type
+   gxc#!primitive-case-lambda-clauses
+   (@accessor gxc#!primitive-case-lambda::t clauses #t))
+  (declare-type
+   gxc#!primitive-case-lambda-id
+   (@accessor gxc#!primitive-case-lambda::t id #t))
+  (declare-type
+   gxc#!primitive-case-lambda-clauses-set!
+   (@mutator gxc#!primitive-case-lambda::t clauses #t))
+  (declare-type
+   gxc#!primitive-case-lambda-id-set!
+   (@mutator gxc#!primitive-case-lambda::t id #t))
+  (declare-type
+   gxc#&!primitive-case-lambda-clauses
+   (@accessor gxc#!primitive-case-lambda::t clauses #f))
+  (declare-type
+   gxc#&!primitive-case-lambda-id
+   (@accessor gxc#!primitive-case-lambda::t id #f))
+  (declare-type
+   gxc#&!primitive-case-lambda-clauses-set!
+   (@mutator gxc#!primitive-case-lambda::t clauses #f))
+  (declare-type
+   gxc#&!primitive-case-lambda-id-set!
+   (@mutator gxc#!primitive-case-lambda::t id #f))
+  (declare-type gxc#!class:::init!__0 (@lambda 7 #f))
+  (declare-type gxc#!class:::init!__1 (@lambda 10 #f))
+  (declare-type
+   gxc#!class:::init!
+   (@case-lambda (7 gxc#!class:::init!__0) (10 gxc#!class:::init!__1)))
+  (declare-type gxc#!class:::init!::specialize (@lambda 1 #f))
+  (declare-type gxc#compute-class-fields (@lambda 4 #f))
+  (declare-type gxc#!class-slot->field-offset (@lambda 2 #f))
+  (declare-type gxc#!class-slot-find-struct (@lambda 2 #f))
+  (declare-type gxc#!class-struct-slot? (@lambda 2 #f))
+  (declare-type gxc#!predicate:::init! (@lambda 2 gxc#!type-id-set!))
+  (declare-type gxc#!predicate:::init!::specialize (@lambda 1 #f))
+  (declare-type gxc#!constructor:::init! (@lambda 2 gxc#!type-id-set!))
+  (declare-type gxc#!constructor:::init!::specialize (@lambda 1 #f))
+  (declare-type gxc#!accessor:::init! (@lambda 4 #f))
+  (declare-type gxc#!accessor:::init!::specialize (@lambda 1 #f))
+  (declare-type gxc#!mutator:::init! (@lambda 4 #f))
+  (declare-type gxc#!mutator:::init!::specialize (@lambda 1 #f))
   (declare-type gxc#!struct-type:::init! (@lambda 7 #f))
   (declare-type gxc#!class-type:::init! (@lambda 8 #f))
   (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
@@ -468,9 +967,11 @@ package: gerbil/compiler
    (@kw-lambda-dispatch () struct-instance-init!))
   (declare-type gxc#!struct-type-vtab (@lambda 1 #f))
   (declare-type gxc#!class-type-vtab (@lambda 1 #f))
+  (declare-type gxc#!class-method-table (@lambda 1 #f))
   (declare-type gxc#!type-vtab (@lambda 1 #f))
   (declare-type gxc#!struct-type-lookup-method (@lambda 2 #f))
   (declare-type gxc#!class-type-lookup-method (@lambda 2 #f))
+  (declare-type gxc#!class-lookup-method (@lambda 2 #f))
   (declare-type gxc#!type-lookup-method (@lambda 2 #f))
   (declare-type gxc#!class-type-complete? (@lambda 1 #f))
   (declare-type gxc#optimizer-declare-type!__% (@lambda 3 #f))
@@ -496,6 +997,7 @@ package: gerbil/compiler
     (4 gxc#optimizer-declare-method!__%)))
   (declare-type gxc#optimizer-lookup-type (@lambda 1 #f))
   (declare-type gxc#optimizer-resolve-type (@lambda 1 #f))
+  (declare-type gxc#optimizer-resolve-class (@lambda 2 #f))
   (declare-type gxc#optimizer-lookup-method (@lambda 2 #f))
   (declare-type gxc#optimizer-top-level-method! (@lambda 1 #f))
   (declare-type gxc#optimizer-top-level-method? (@lambda 1 #f))

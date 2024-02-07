@@ -14,6 +14,7 @@ namespace: gerbil/core
           (phi: 1 (import: (in: #f <runtime>)))
           (phi: 1 (import: (in: #f <sugar>)))
           (phi: 1 (import: (in: #f <MOP>)))
+          (phi: 1 (import: (in: #f <macro-object>)))
           (phi: 1 (import: (in: #f <match>)))
           (phi: 1 (import: (in: #f <more-sugar>)))
           (phi: 1 (import: (in: #f <special>)))
@@ -439,6 +440,12 @@ namespace: gerbil/core
                     (make-struct-type make-struct-type)
                     (make-struct-type* make-struct-type*)
                     (make-struct-predicate make-struct-predicate)
+                    (make-struct-slot-accessor make-struct-slot-accessor)
+                    (make-struct-slot-mutator make-struct-slot-mutator)
+                    (make-struct-slot-unchecked-accessor
+                     make-struct-slot-unchecked-accessor)
+                    (make-struct-slot-unchecked-mutator
+                     make-struct-slot-unchecked-mutator)
                     (make-struct-field-accessor make-struct-field-accessor)
                     (make-struct-field-mutator make-struct-field-mutator)
                     (make-struct-field-unchecked-accessor
@@ -448,11 +455,10 @@ namespace: gerbil/core
                     (base-struct base-struct)
                     (class-precedence-list class-precedence-list)
                     (struct-precedence-list struct-precedence-list)
-                    (struct-field-ref struct-field-ref)
-                    (struct-field-set! struct-field-set!)
                     (unchecked-field-ref unchecked-field-ref)
                     (unchecked-field-set! unchecked-field-set!)
                     (make-class-type make-class-type)
+                    (make-class-type* make-class-type*)
                     (make-class-predicate make-class-predicate)
                     (make-class-slot-accessor make-class-slot-accessor)
                     (make-class-slot-mutator make-class-slot-mutator)
@@ -471,10 +477,9 @@ namespace: gerbil/core
                     (struct-instance? struct-instance?)
                     (class-instance? class-instance?)
                     (direct-instance? direct-instance?)
-                    (direct-struct-instance? direct-struct-instance?)
-                    (direct-class-instance? direct-class-instance?)
                     (make-object make-object)
                     (make-object* make-object*)
+                    (make-instance make-instance)
                     (struct-copy struct-copy)
                     (struct->list struct->list)
                     (class->list class->list)
@@ -683,6 +688,7 @@ namespace: gerbil/core
                     (write-string write-string)
                     (read-u8vector read-u8vector)
                     (write-u8vector write-u8vector)
+                    (concatenate concatenate)
                     (list-copy list-copy)
                     (list-set! list-set!)
                     (string-downcase string-downcase)
@@ -1069,14 +1075,26 @@ namespace: gerbil/core
           <MOP>
           (%#begin (%#export
                     (import: (in: #f <MOP:1>))
-                    (import: (in: #f <MOP:2>))
-                    (import: (in: #f <MOP:3>)))
+                    (import: (in: #f <MOP:4>))
+                    (phi: 1 (import: (in: #f <MOP:1>)))
+                    (phi: 1 (import: (in: #f <MOP:2>)))
+                    (phi: 1 (import: (in: #f <MOP:3>)))
+                    (phi: 1 (import: (in: #f <MOP:4>))))
                    (%#module
                     <MOP:1>
-                    (%#begin (%#export #t)
+                    (%#begin (%#export
+                              #t
+                              (spec: 1 module-type-id module-type-id)
+                              (spec: 1 make-class-type-id make-class-type-id))
                              (%#begin-syntax
                               (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__6"))
+                              (%#define-runtime
+                               module-type-id
+                               |gerbil/core$<MOP>$<MOP:1>[1]#module-type-id|)
+                              (%#define-runtime
+                               make-class-type-id
+                               |gerbil/core$<MOP>$<MOP:1>[1]#make-class-type-id|)
                               (%#define-runtime
                                generate-typedef
                                |gerbil/core$<MOP>$<MOP:1>[1]#generate-typedef|))
@@ -1086,462 +1104,301 @@ namespace: gerbil/core
                              (%#define-syntax
                               defclass-type
                               |gerbil/core$<MOP>$<MOP:1>[:0:]#defclass-type|)))
-                   (%#import (in: #f <MOP:1>) (phi: 1 (in: #f <MOP:1>)))
                    (%#module
                     <MOP:2>
-                    (%#begin (%#export
-                              #t
-                              (spec:
-                               1
-                               runtime-type-info::t
-                               runtime-type-info::t)
-                              (spec: 1 runtime-type-info? runtime-type-info?)
-                              (spec:
-                               1
-                               runtime-struct-info::t
-                               runtime-struct-info::t)
-                              (spec:
-                               1
-                               runtime-struct-info?
-                               runtime-struct-info?)
-                              (spec:
-                               1
-                               runtime-class-info::t
-                               runtime-class-info::t)
-                              (spec: 1 runtime-class-info? runtime-class-info?)
-                              (spec:
-                               1
-                               expander-type-info::t
-                               expander-type-info::t)
-                              (spec: 1 expander-type-info? expander-type-info?)
-                              (spec:
-                               1
-                               extended-runtime-type-info::t
-                               extended-runtime-type-info::t)
-                              (spec:
-                               1
-                               extended-runtime-type-info?
-                               extended-runtime-type-info?)
-                              (spec:
-                               1
-                               extended-struct-info::t
-                               extended-struct-info::t)
-                              (spec:
-                               1
-                               extended-struct-info?
-                               extended-struct-info?)
-                              (spec:
-                               1
-                               extended-class-info::t
-                               extended-class-info::t)
-                              (spec:
-                               1
-                               extended-class-info?
-                               extended-class-info?)
-                              (spec:
-                               1
-                               runtime-rtd-exhibitor::t
-                               runtime-rtd-exhibitor::t)
-                              (spec:
-                               1
-                               runtime-type-exhibitor?
-                               runtime-type-exhibitor?)
-                              (spec:
-                               1
-                               runtime-struct-exhibitor::t
-                               runtime-struct-exhibitor::t)
-                              (spec:
-                               1
-                               runtime-struct-exhibitor?
-                               runtime-struct-exhibitor?)
-                              (spec:
-                               1
-                               runtime-class-exhibitor::t
-                               runtime-class-exhibitor::t)
-                              (spec:
-                               1
-                               runtime-class-exhibitor?
-                               runtime-class-exhibitor?)
-                              (spec:
-                               1
-                               runtime-type-identifier
-                               runtime-type-identifier)
-                              (spec:
-                               1
-                               runtime-type-identifier-set!
-                               runtime-type-identifier-set!)
-                              (spec:
-                               1
-                               runtime-type-exhibitor
-                               runtime-type-exhibitor)
-                              (spec:
-                               1
-                               runtime-type-exhibitor-set!
-                               runtime-type-exhibitor-set!)
-                              (spec: 1 runtime-type-id runtime-type-id)
-                              (spec:
-                               1
-                               runtime-type-id-set!
-                               runtime-type-id-set!)
-                              (spec: 1 runtime-type-super runtime-type-super)
-                              (spec:
-                               1
-                               runtime-type-super-set!
-                               runtime-type-super-set!)
-                              (spec: 1 runtime-type-name runtime-type-name)
-                              (spec:
-                               1
-                               runtime-type-name-set!
-                               runtime-type-name-set!)
-                              (spec:
-                               1
-                               runtime-type-constructor
-                               runtime-type-constructor)
-                              (spec:
-                               1
-                               runtime-type-constructor-set!
-                               runtime-type-constructor-set!)
-                              (spec:
-                               1
-                               runtime-type-properties
-                               runtime-type-properties)
-                              (spec:
-                               1
-                               runtime-type-properties-set!
-                               runtime-type-properties-set!)
-                              (spec:
-                               1
-                               runtime-struct-fields
-                               runtime-struct-fields)
-                              (spec:
-                               1
-                               runtime-struct-fields-set!
-                               runtime-struct-fields-set!)
-                              (spec: 1 runtime-class-slots runtime-class-slots)
-                              (spec:
-                               1
-                               runtime-class-slots-set!
-                               runtime-class-slots-set!)
-                              (spec:
-                               1
-                               expander-type-identifiers
-                               expander-type-identifiers)
-                              (spec:
-                               1
-                               expander-type-identifiers-set!
-                               expander-type-identifiers-set!)
-                              (spec:
-                               1
-                               make-runtime-struct-info
-                               make-runtime-struct-info)
-                              (spec:
-                               1
-                               make-runtime-class-info
-                               make-runtime-class-info)
-                              (spec:
-                               1
-                               make-extended-struct-info
-                               make-extended-struct-info)
-                              (spec:
-                               1
-                               make-extended-class-info
-                               make-extended-class-info)
-                              (spec:
-                               1
-                               make-runtime-struct-exhibitor
-                               make-runtime-struct-exhibitor)
-                              (spec:
-                               1
-                               make-runtime-class-exhibitor
-                               make-runtime-class-exhibitor)
-                              (spec:
-                               1
-                               syntax-local-type-info?
-                               syntax-local-type-info?)
-                              (spec:
-                               1
-                               syntax-local-struct-info?
-                               syntax-local-struct-info?)
-                              (spec:
-                               1
-                               syntax-local-class-info?
-                               syntax-local-class-info?)
-                              (spec:
-                               1
-                               runtime-type-exhibitor-e
-                               runtime-type-exhibitor-e))
-                             (%#begin-syntax
-                              (%#call (%#ref load-module)
-                                      (%#quote "gerbil/core__7"))
-                              (%#define-runtime
-                               runtime-type-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|)
-                              (%#define-runtime
-                               runtime-type-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info?|)
-                              (%#define-runtime
-                               runtime-type-identifier
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|)
-                              (%#define-runtime
-                               runtime-type-identifier-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier-set!|)
-                              (%#define-runtime
-                               runtime-struct-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info::t|)
-                              (%#define-runtime
-                               runtime-struct-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info?|)
-                              (%#define-runtime
-                               make-runtime-struct-info
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|)
-                              (%#define-runtime
-                               runtime-class-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info::t|)
-                              (%#define-runtime
-                               runtime-class-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info?|)
-                              (%#define-runtime
-                               make-runtime-class-info
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-info|)
-                              (%#define-runtime
-                               expander-type-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|)
-                              (%#define-runtime
-                               expander-type-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info?|)
-                              (%#define-runtime
-                               expander-type-identifiers
-                               |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-identifiers|)
-                              (%#define-runtime
-                               expander-type-identifiers-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-identifiers-set!|)
-                              (%#define-runtime
-                               extended-runtime-type-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|)
-                              (%#define-runtime
-                               extended-runtime-type-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info?|)
-                              (%#define-runtime
-                               runtime-type-exhibitor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor|)
-                              (%#define-runtime
-                               runtime-type-exhibitor-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-set!|)
-                              (%#define-runtime
-                               extended-struct-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info::t|)
-                              (%#define-runtime
-                               extended-struct-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info?|)
-                              (%#define-runtime
-                               make-extended-struct-info
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|)
-                              (%#define-runtime
-                               extended-class-info::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|)
-                              (%#define-runtime
-                               extended-class-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info?|)
-                              (%#define-runtime
-                               make-extended-class-info
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-extended-class-info|)
-                              (%#define-runtime
-                               runtime-rtd-exhibitor::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|)
-                              (%#define-runtime
-                               runtime-type-exhibitor?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor?|)
-                              (%#define-runtime
-                               runtime-type-id
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id|)
-                              (%#define-runtime
-                               runtime-type-super
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super|)
-                              (%#define-runtime
-                               runtime-type-name
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name|)
-                              (%#define-runtime
-                               runtime-type-constructor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor|)
-                              (%#define-runtime
-                               runtime-type-properties
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-properties|)
-                              (%#define-runtime
-                               runtime-type-id-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id-set!|)
-                              (%#define-runtime
-                               runtime-type-super-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super-set!|)
-                              (%#define-runtime
-                               runtime-type-name-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name-set!|)
-                              (%#define-runtime
-                               runtime-type-constructor-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-constructor-set!|)
-                              (%#define-runtime
-                               runtime-type-properties-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-properties-set!|)
-                              (%#define-runtime
-                               runtime-type-ctor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor|)
-                              (%#define-runtime
-                               runtime-type-ctor-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor-set!|)
-                              (%#define-runtime
-                               runtime-type-plist
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|)
-                              (%#define-runtime
-                               runtime-type-plist-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist-set!|)
-                              (%#define-runtime
-                               runtime-struct-exhibitor::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|)
-                              (%#define-runtime
-                               runtime-struct-exhibitor?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor?|)
-                              (%#define-runtime
-                               make-runtime-struct-exhibitor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|)
-                              (%#define-runtime
-                               runtime-struct-fields
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-fields|)
-                              (%#define-runtime
-                               runtime-struct-fields-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-fields-set!|)
-                              (%#define-runtime
-                               runtime-class-exhibitor::t
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|)
-                              (%#define-runtime
-                               runtime-class-exhibitor?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor?|)
-                              (%#define-runtime
-                               make-runtime-class-exhibitor
-                               |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-exhibitor|)
-                              (%#define-runtime
-                               runtime-class-slots
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots|)
-                              (%#define-runtime
-                               runtime-class-slots-set!
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots-set!|)
-                              (%#begin (%#define-runtime
-                                        syntax-local-type-info?__%
-                                        |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__%|)
-                                       (%#begin (%#define-runtime
-                                                 syntax-local-type-info?__0
-                                                 |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__0|)
-                                                (%#define-runtime
-                                                 syntax-local-type-info?
-                                                 |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|)))
-                              (%#define-runtime
-                               syntax-local-struct-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|)
-                              (%#define-runtime
-                               syntax-local-class-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-class-info?|)
-                              (%#define-runtime
-                               runtime-type-exhibitor-e
-                               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-e|)
-                              (%#define-runtime
-                               expander-type-info::apply-macro-expander
-                               |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::apply-macro-expander|)
-                              (%#define-runtime
-                               typedef-body?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#typedef-body?|)
-                              (%#define-runtime
-                               generate-typedef
-                               |gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|))
-                             (%#define-syntax
-                              defstruct
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#defstruct|)
-                             (%#define-alias define-struct defstruct)
-                             (%#define-syntax
-                              defclass
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#defclass|)
-                             (%#define-alias define-class defclass)
-                             (%#define-syntax
-                              defmethod
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#defmethod|)
-                             (%#define-syntax
-                              @method
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#@method|)
-                             (%#define-syntax
-                              @
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#@|)
-                             (%#define-syntax
-                              @-set!
-                              |gerbil/core$<MOP>$<MOP:2>[:0:]#@-set!|)))
-                   (%#import (in: #f <MOP:2>) (phi: 1 (in: #f <MOP:2>)))
+                    (%#begin (%#import
+                              (in: #f <expander-runtime>)
+                              (in: #f <syntax-case>)
+                              (in: #f <MOP:1>))
+                             (%#export #t)
+                             (%#define-runtime
+                              class-type-info::t
+                              gerbil/core$<MOP>$<MOP:2>#class-type-info::t)
+                             (%#define-runtime
+                              class-type-info?
+                              gerbil/core$<MOP>$<MOP:2>#class-type-info?)
+                             (%#define-runtime
+                              make-class-type-info
+                              gerbil/core$<MOP>$<MOP:2>#make-class-type-info)
+                             (%#define-runtime
+                              class-type-id
+                              gerbil/core$<MOP>$<MOP:2>#class-type-id)
+                             (%#define-runtime
+                              class-type-name
+                              gerbil/core$<MOP>$<MOP:2>#class-type-name)
+                             (%#define-runtime
+                              class-type-super
+                              gerbil/core$<MOP>$<MOP:2>#class-type-super)
+                             (%#define-runtime
+                              class-type-slots
+                              gerbil/core$<MOP>$<MOP:2>#class-type-slots)
+                             (%#define-runtime
+                              class-type-struct?
+                              gerbil/core$<MOP>$<MOP:2>#class-type-struct?)
+                             (%#define-runtime
+                              class-type-final?
+                              gerbil/core$<MOP>$<MOP:2>#class-type-final?)
+                             (%#define-runtime
+                              class-type-constructor-method
+                              gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method)
+                             (%#define-runtime
+                              class-type-descriptor
+                              gerbil/core$<MOP>$<MOP:2>#class-type-descriptor)
+                             (%#define-runtime
+                              class-type-constructor
+                              gerbil/core$<MOP>$<MOP:2>#class-type-constructor)
+                             (%#define-runtime
+                              class-type-predicate
+                              gerbil/core$<MOP>$<MOP:2>#class-type-predicate)
+                             (%#define-runtime
+                              class-type-accessors
+                              gerbil/core$<MOP>$<MOP:2>#class-type-accessors)
+                             (%#define-runtime
+                              class-type-mutators
+                              gerbil/core$<MOP>$<MOP:2>#class-type-mutators)
+                             (%#define-runtime
+                              class-type-unchecked-accessors
+                              gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors)
+                             (%#define-runtime
+                              class-type-unchecked-mutators
+                              gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators)
+                             (%#define-runtime
+                              class-type-id-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-id-set!)
+                             (%#define-runtime
+                              class-type-name-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-name-set!)
+                             (%#define-runtime
+                              class-type-super-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-super-set!)
+                             (%#define-runtime
+                              class-type-slots-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-slots-set!)
+                             (%#define-runtime
+                              class-type-struct?-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-struct?-set!)
+                             (%#define-runtime
+                              class-type-final?-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-final?-set!)
+                             (%#define-runtime
+                              class-type-constructor-method-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method-set!)
+                             (%#define-runtime
+                              class-type-identifier-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-identifier-set!)
+                             (%#define-runtime
+                              class-type-constructor-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-constructor-set!)
+                             (%#define-runtime
+                              class-type-predicate-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-predicate-set!)
+                             (%#define-runtime
+                              class-type-accessors-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-accessors-set!)
+                             (%#define-runtime
+                              class-type-mutators-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-mutators-set!)
+                             (%#define-runtime
+                              class-type-unchecked-accessors-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors-set!)
+                             (%#define-runtime
+                              class-type-unchecked-mutators-set!
+                              gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators-set!)
+                             (%#define-runtime
+                              &class-type-id
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-id)
+                             (%#define-runtime
+                              &class-type-name
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-name)
+                             (%#define-runtime
+                              &class-type-super
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-super)
+                             (%#define-runtime
+                              &class-type-slots
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-slots)
+                             (%#define-runtime
+                              &class-type-struct?
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-struct?)
+                             (%#define-runtime
+                              &class-type-final?
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-final?)
+                             (%#define-runtime
+                              &class-type-constructor-method
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method)
+                             (%#define-runtime
+                              &class-type-descriptor
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-descriptor)
+                             (%#define-runtime
+                              &class-type-constructor
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-constructor)
+                             (%#define-runtime
+                              &class-type-predicate
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-predicate)
+                             (%#define-runtime
+                              &class-type-accessors
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-accessors)
+                             (%#define-runtime
+                              &class-type-mutators
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-mutators)
+                             (%#define-runtime
+                              &class-type-unchecked-accessors
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors)
+                             (%#define-runtime
+                              &class-type-unchecked-mutators
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators)
+                             (%#define-runtime
+                              &class-type-id-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-id-set!)
+                             (%#define-runtime
+                              &class-type-name-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-name-set!)
+                             (%#define-runtime
+                              &class-type-super-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-super-set!)
+                             (%#define-runtime
+                              &class-type-slots-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-slots-set!)
+                             (%#define-runtime
+                              &class-type-struct?-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-struct?-set!)
+                             (%#define-runtime
+                              &class-type-final?-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-final?-set!)
+                             (%#define-runtime
+                              &class-type-constructor-method-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method-set!)
+                             (%#define-runtime
+                              &class-type-identifier-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-identifier-set!)
+                             (%#define-runtime
+                              &class-type-constructor-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-set!)
+                             (%#define-runtime
+                              &class-type-predicate-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-predicate-set!)
+                             (%#define-runtime
+                              &class-type-accessors-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-accessors-set!)
+                             (%#define-runtime
+                              &class-type-mutators-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-mutators-set!)
+                             (%#define-runtime
+                              &class-type-unchecked-accessors-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors-set!)
+                             (%#define-runtime
+                              &class-type-unchecked-mutators-set!
+                              gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators-set!)
+                             (%#define-runtime
+                              class-type-info::apply-macro-expander
+                              gerbil/core$<MOP>$<MOP:2>#class-type-info::apply-macro-expander)
+                             (%#begin (%#define-runtime
+                                       syntax-local-class-type-info?__%
+                                       gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%)
+                                      (%#begin (%#define-runtime
+                                                syntax-local-class-type-info?__0
+                                                gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__0)
+                                               (%#define-runtime
+                                                syntax-local-class-type-info?
+                                                gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?))))
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core$_MOP_$_MOP_2___0")))
                    (%#module
                     <MOP:3>
-                    (%#begin (%#export (phi: 1 #t))
+                    (%#begin (%#import
+                              (in: #f <MOP:2>)
+                              (phi: 1 (in: #f <MOP:2>)))
+                             (%#export #t)
+                             (%#begin (%#begin-syntax
+                                       (%#call (%#ref load-module)
+                                               (%#quote "gerbil/core__7")))
+                                      (%#define-syntax
+                                       class-type-info
+                                       |gerbil/core$<MOP>$<MOP:3>[:0:]#class-type-info|))))
+                   (%#module
+                    <MOP:4>
+                    (%#begin (%#import
+                              (in: #f <MOP:1>)
+                              (phi: 1 (in: #f <MOP:1>))
+                              (phi: 1 (in: #f <MOP:2>))
+                              (phi: 1 (in: #f <MOP:3>)))
+                             (%#export #t)
                              (%#begin-syntax
                               (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__8"))
-                              (%#begin (%#begin-syntax
-                                        (%#call (%#ref load-module)
-                                                (%#quote "gerbil/core__9")))
-                                       (%#define-syntax
-                                        runtime-type-info
-                                        |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-type-info|))
-                              (%#define-syntax
-                               runtime-struct-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-struct-info|)
-                              (%#define-syntax
-                               runtime-class-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-class-info|)
-                              (%#define-syntax
-                               expander-type-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#expander-type-info|)
-                              (%#define-syntax
-                               extended-runtime-type-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#extended-runtime-type-info|)
-                              (%#define-syntax
-                               extended-struct-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#extended-struct-info|)
-                              (%#define-syntax
-                               extended-class-info
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#extended-class-info|)
-                              (%#define-syntax
-                               runtime-rtd-exhibitor
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-rtd-exhibitor|)
-                              (%#define-syntax
-                               runtime-struct-exhibitor
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-struct-exhibitor|)
-                              (%#define-syntax
-                               runtime-class-exhibitor
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-class-exhibitor|)
                               (%#define-runtime
-                               macro-object::t
-                               |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|)
+                               typedef-body?
+                               |gerbil/core$<MOP>$<MOP:4>[1]#typedef-body?|)
                               (%#define-runtime
-                               macro-object?
-                               |gerbil/core$<MOP>$<MOP:3>[1]#macro-object?|)
-                              (%#define-runtime
-                               make-macro-object
-                               |gerbil/core$<MOP>$<MOP:3>[1]#make-macro-object|)
-                              (%#define-runtime
-                               macro-object-macro
-                               |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro|)
-                              (%#define-runtime
-                               macro-object-macro-set!
-                               |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro-set!|)
-                              (%#define-runtime
-                               &macro-object-macro
-                               |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro|)
-                              (%#define-runtime
-                               &macro-object-macro-set!
-                               |gerbil/core$<MOP>$<MOP:3>[1]#&macro-object-macro-set!|)
-                              (%#define-syntax
-                               macro-object
-                               |gerbil/core$<MOP>$<MOP:3>[:1:]#macro-object|)
-                              (%#begin (%#define-runtime
-                                        macro-object::apply-macro-expander
-                                        |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|)
-                                       (%#define-runtime
-                                        macro-object::apply-macro-expander::specialize
-                                        |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander::specialize|)))))
-                   (%#import (in: #f <MOP:3>))))
+                               generate-typedef
+                               |gerbil/core$<MOP>$<MOP:4>[1]#generate-typedef|))
+                             (%#define-syntax
+                              defstruct
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#defstruct|)
+                             (%#define-alias define-struct defstruct)
+                             (%#define-syntax
+                              defclass
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#defclass|)
+                             (%#define-alias define-class defclass)
+                             (%#define-syntax
+                              defmethod
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#defmethod|)
+                             (%#define-syntax
+                              @method
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#@method|)
+                             (%#define-syntax
+                              @
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#@|)
+                             (%#define-syntax
+                              @-set!
+                              |gerbil/core$<MOP>$<MOP:4>[:0:]#@-set!|)))
+                   (%#import
+                    (in: #f <MOP:1>)
+                    (in: #f <MOP:4>)
+                    (phi: 1 (in: #f <MOP:1>))
+                    (phi: 1 (in: #f <MOP:2>))
+                    (phi: 1 (in: #f <MOP:3>))
+                    (phi: 1 (in: #f <MOP:4>)))))
          (%#import (in: #f <MOP>) (phi: 1 (in: #f <MOP>)))
+         (%#module
+          <macro-object>
+          (%#begin (%#import (in: #f <expander-runtime>))
+                   (%#export #t)
+                   (%#define-runtime
+                    macro-object::t
+                    gerbil/core$<macro-object>#macro-object::t)
+                   (%#define-runtime
+                    macro-object?
+                    gerbil/core$<macro-object>#macro-object?)
+                   (%#define-runtime
+                    make-macro-object
+                    gerbil/core$<macro-object>#make-macro-object)
+                   (%#define-runtime
+                    macro-object-macro
+                    gerbil/core$<macro-object>#macro-object-macro)
+                   (%#define-runtime
+                    macro-object-macro-set!
+                    gerbil/core$<macro-object>#macro-object-macro-set!)
+                   (%#define-runtime
+                    &macro-object-macro
+                    gerbil/core$<macro-object>#&macro-object-macro)
+                   (%#define-runtime
+                    &macro-object-macro-set!
+                    gerbil/core$<macro-object>#&macro-object-macro-set!)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core__9")))
+                            (%#define-syntax
+                             macro-object
+                             |gerbil/core$<macro-object>[:0:]#macro-object|))
+                   (%#begin (%#define-runtime
+                             macro-object::apply-macro-expander
+                             gerbil/core$<macro-object>#macro-object::apply-macro-expander)
+                            (%#define-runtime
+                             macro-object::apply-macro-expander::specialize
+                             gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize)))
+          (%#call (%#ref load-module)
+                  (%#quote "gerbil/core$_macro-object___0")))
+         (%#import (phi: 1 (in: #f <macro-object>)))
          (%#module
           <match>
           (%#begin (%#export
@@ -1566,6 +1423,18 @@ namespace: gerbil/core
                     (%#define-runtime
                      make-match-macro
                      |gerbil/core$<match>[1]#make-match-macro|)
+                    (%#define-runtime
+                     match-macro-macro
+                     |gerbil/core$<match>[1]#match-macro-macro|)
+                    (%#define-runtime
+                     match-macro-macro-set!
+                     |gerbil/core$<match>[1]#match-macro-macro-set!|)
+                    (%#define-runtime
+                     &match-macro-macro
+                     |gerbil/core$<match>[1]#&match-macro-macro|)
+                    (%#define-runtime
+                     &match-macro-macro-set!
+                     |gerbil/core$<match>[1]#&match-macro-macro-set!|)
                     (%#begin (%#begin-syntax
                               (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__11")))
@@ -1633,6 +1502,18 @@ namespace: gerbil/core
                     (%#define-runtime
                      make-setq-macro
                      |gerbil/core$<more-sugar>[1]#make-setq-macro|)
+                    (%#define-runtime
+                     setq-macro-macro
+                     |gerbil/core$<more-sugar>[1]#setq-macro-macro|)
+                    (%#define-runtime
+                     setq-macro-macro-set!
+                     |gerbil/core$<more-sugar>[1]#setq-macro-macro-set!|)
+                    (%#define-runtime
+                     &setq-macro-macro
+                     |gerbil/core$<more-sugar>[1]#&setq-macro-macro|)
+                    (%#define-runtime
+                     &setq-macro-macro-set!
+                     |gerbil/core$<more-sugar>[1]#&setq-macro-macro-set!|)
                     (%#begin (%#begin-syntax
                               (%#call (%#ref load-module)
                                       (%#quote "gerbil/core__13")))
@@ -1648,6 +1529,18 @@ namespace: gerbil/core
                     (%#define-runtime
                      make-setf-macro
                      |gerbil/core$<more-sugar>[1]#make-setf-macro|)
+                    (%#define-runtime
+                     setf-macro-macro
+                     |gerbil/core$<more-sugar>[1]#setf-macro-macro|)
+                    (%#define-runtime
+                     setf-macro-macro-set!
+                     |gerbil/core$<more-sugar>[1]#setf-macro-macro-set!|)
+                    (%#define-runtime
+                     &setf-macro-macro
+                     |gerbil/core$<more-sugar>[1]#&setf-macro-macro|)
+                    (%#define-runtime
+                     &setf-macro-macro-set!
+                     |gerbil/core$<more-sugar>[1]#&setf-macro-macro-set!|)
                     (%#define-syntax
                      setf-macro
                      |gerbil/core$<more-sugar>[:1:]#setf-macro|)

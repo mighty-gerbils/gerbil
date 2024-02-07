@@ -46,8 +46,32 @@ namespace: gxc
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
          (%#define-runtime
+          basic-expression-type-annotations
+          gxc#basic-expression-type-annotations)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize-top__1")))
+                  (%#define-syntax
+                   defbasic-expression-type-annotations
+                   |gxc[:0:]#defbasic-expression-type-annotations|))
+         (%#define-runtime
           basic-expression-type-begin-annotation%
           gxc#basic-expression-type-begin-annotation%)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.class
+          gxc#basic-expression-type-annotation-mop.class)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.constructor
+          gxc#basic-expression-type-annotation-mop.constructor)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.predicate
+          gxc#basic-expression-type-annotation-mop.predicate)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.accessor
+          gxc#basic-expression-type-annotation-mop.accessor)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.mutator
+          gxc#basic-expression-type-annotation-mop.mutator)
          (%#define-runtime
           basic-expression-type-lambda%
           gxc#basic-expression-type-lambda%)
@@ -60,12 +84,9 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-builtin
           gxc#basic-expression-type-builtin)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-top__1")))
-                  (%#define-syntax
-                   defbasic-expression-type-builtin
-                   |gxc[:0:]#defbasic-expression-type-builtin|))
+         (%#define-syntax
+          defbasic-expression-type-builtin
+          |gxc[:0:]#defbasic-expression-type-builtin|)
          (%#define-runtime
           basic-expression-type-call%
           gxc#basic-expression-type-call%)

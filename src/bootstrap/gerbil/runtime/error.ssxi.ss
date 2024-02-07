@@ -4,81 +4,101 @@ package: gerbil/runtime
 (begin
   (declare-type
    Exception::t
-   (@class-type gerbil/runtime/error#Exception::t #f () () () #f ()))
-  (declare-type Exception? (@class-pred Exception::t))
-  (declare-type make-Exception (@class-cons Exception::t))
+   (@class gerbil/runtime/error#Exception::t () () () () #f #f #f #f))
+  (declare-type Exception? (@predicate Exception::t))
+  (declare-type make-Exception (@constrctuor Exception::t))
   (declare-type
    StackTrace::t
-   (@class-type
-    gerbil/runtime/error#StackTrace::t
-    #f
-    ()
-    (continuation)
-    (continuation)
-    #f
-    ()))
-  (declare-type StackTrace? (@class-pred StackTrace::t))
-  (declare-type make-StackTrace (@class-cons StackTrace::t))
+   (@class gerbil/runtime/error#StackTrace::t
+           ()
+           ()
+           (continuation)
+           (continuation)
+           #f
+           #f
+           #f
+           #f))
+  (declare-type StackTrace? (@predicate StackTrace::t))
+  (declare-type make-StackTrace (@constrctuor StackTrace::t))
   (declare-type
    StackTrace-continuation
-   (@class-getf StackTrace::t continuation #f))
+   (@accessor StackTrace::t continuation #t))
   (declare-type
    StackTrace-continuation-set!
-   (@class-setf StackTrace::t continuation #f))
+   (@mutator StackTrace::t continuation #t))
   (declare-type
    &StackTrace-continuation
-   (@class-getf StackTrace::t continuation #t))
+   (@accessor StackTrace::t continuation #f))
   (declare-type
    &StackTrace-continuation-set!
-   (@class-setf StackTrace::t continuation #t))
+   (@mutator StackTrace::t continuation #f))
   (declare-type
    Error::t
-   (@class-type
-    gerbil/runtime/error#Error::t
-    #f
-    (StackTrace::t Exception::t)
-    (message irritants where)
-    (continuation message irritants where)
-    :init!
-    ((transparent: . #t))))
-  (declare-type Error? (@class-pred Error::t))
-  (declare-type make-Error (@class-cons Error::t))
-  (declare-type Error-message (@class-getf Error::t message #f))
-  (declare-type Error-irritants (@class-getf Error::t irritants #f))
-  (declare-type Error-where (@class-getf Error::t where #f))
-  (declare-type Error-message-set! (@class-setf Error::t message #f))
-  (declare-type Error-irritants-set! (@class-setf Error::t irritants #f))
-  (declare-type Error-where-set! (@class-setf Error::t where #f))
-  (declare-type &Error-message (@class-getf Error::t message #t))
-  (declare-type &Error-irritants (@class-getf Error::t irritants #t))
-  (declare-type &Error-where (@class-getf Error::t where #t))
-  (declare-type &Error-message-set! (@class-setf Error::t message #t))
-  (declare-type &Error-irritants-set! (@class-setf Error::t irritants #t))
-  (declare-type &Error-where-set! (@class-setf Error::t where #t))
+   (@class gerbil/runtime/error#Error::t
+           (StackTrace::t Exception::t)
+           (StackTrace::t Exception::t)
+           (message irritants where)
+           (continuation message irritants where)
+           :init!
+           #f
+           #f
+           ((display-exception . Error::display-exception)
+            (:init! . Error:::init!))))
+  (declare-type Error? (@predicate Error::t))
+  (declare-type make-Error (@constrctuor Error::t))
+  (declare-type Error-message (@accessor Error::t message #t))
+  (declare-type Error-irritants (@accessor Error::t irritants #t))
+  (declare-type Error-where (@accessor Error::t where #t))
+  (declare-type Error-continuation (@accessor Error::t continuation #t))
+  (declare-type Error-message-set! (@mutator Error::t message #t))
+  (declare-type Error-irritants-set! (@mutator Error::t irritants #t))
+  (declare-type Error-where-set! (@mutator Error::t where #t))
+  (declare-type Error-continuation-set! (@mutator Error::t continuation #t))
+  (declare-type &Error-message (@accessor Error::t message #f))
+  (declare-type &Error-irritants (@accessor Error::t irritants #f))
+  (declare-type &Error-where (@accessor Error::t where #f))
+  (declare-type &Error-continuation (@accessor Error::t continuation #f))
+  (declare-type &Error-message-set! (@mutator Error::t message #f))
+  (declare-type &Error-irritants-set! (@mutator Error::t irritants #f))
+  (declare-type &Error-where-set! (@mutator Error::t where #f))
+  (declare-type &Error-continuation-set! (@mutator Error::t continuation #f))
   (declare-type
    RuntimeException::t
-   (@class-type
-    gerbil/runtime/error#RuntimeException::t
-    #f
-    (StackTrace::t Exception::t)
-    (exception)
-    (continuation exception)
-    #f
-    ((transparent: . #t))))
-  (declare-type RuntimeException? (@class-pred RuntimeException::t))
-  (declare-type make-RuntimeException (@class-cons RuntimeException::t))
+   (@class gerbil/runtime/error#RuntimeException::t
+           (StackTrace::t Exception::t)
+           (StackTrace::t Exception::t)
+           (exception)
+           (continuation exception)
+           #f
+           #f
+           #f
+           ((display-exception . RuntimeException::display-exception))))
+  (declare-type RuntimeException? (@predicate RuntimeException::t))
+  (declare-type make-RuntimeException (@constrctuor RuntimeException::t))
   (declare-type
    RuntimeException-exception
-   (@class-getf RuntimeException::t exception #f))
+   (@accessor RuntimeException::t exception #t))
+  (declare-type
+   RuntimeException-continuation
+   (@accessor RuntimeException::t continuation #t))
   (declare-type
    RuntimeException-exception-set!
-   (@class-setf RuntimeException::t exception #f))
+   (@mutator RuntimeException::t exception #t))
+  (declare-type
+   RuntimeException-continuation-set!
+   (@mutator RuntimeException::t continuation #t))
   (declare-type
    &RuntimeException-exception
-   (@class-getf RuntimeException::t exception #t))
+   (@accessor RuntimeException::t exception #f))
+  (declare-type
+   &RuntimeException-continuation
+   (@accessor RuntimeException::t continuation #f))
   (declare-type
    &RuntimeException-exception-set!
-   (@class-setf RuntimeException::t exception #t))
+   (@mutator RuntimeException::t exception #f))
+  (declare-type
+   &RuntimeException-continuation-set!
+   (@mutator RuntimeException::t continuation #f))
   (declare-type gerbil-exception-handler-hook (@lambda 2 #f))
   (declare-type raise (@lambda 1 #f))
   (declare-type error (@lambda (1) #f))

@@ -2,14 +2,16 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
-  (declare-type gx#AST::t (@struct-type gerbil#AST::t #f 2 #f ()))
-  (declare-type gx#AST? (@struct-pred gx#AST::t))
-  (declare-type gx#make-AST (@struct-cons gx#AST::t))
-  (declare-type gx#AST-e (@struct-getf gx#AST::t 0 #f))
-  (declare-type gx#AST-source (@struct-getf gx#AST::t 1 #f))
-  (declare-type gx#AST-e-set! (@struct-setf gx#AST::t 0 #f))
-  (declare-type gx#AST-source-set! (@struct-setf gx#AST::t 1 #f))
-  (declare-type gx#&AST-e (@struct-getf gx#AST::t 0 #t))
-  (declare-type gx#&AST-source (@struct-getf gx#AST::t 1 #t))
-  (declare-type gx#&AST-e-set! (@struct-setf gx#AST::t 0 #t))
-  (declare-type gx#&AST-source-set! (@struct-setf gx#AST::t 1 #t)))
+  (declare-type
+   gx#AST::t
+   (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f))
+  (declare-type gx#AST? (@predicate gx#AST::t))
+  (declare-type gx#make-AST (@constrctuor gx#AST::t))
+  (declare-type gx#AST-e (@accessor gx#AST::t e #t))
+  (declare-type gx#AST-source (@accessor gx#AST::t source #t))
+  (declare-type gx#AST-e-set! (@mutator gx#AST::t e #t))
+  (declare-type gx#AST-source-set! (@mutator gx#AST::t source #t))
+  (declare-type gx#&AST-e (@accessor gx#AST::t e #f))
+  (declare-type gx#&AST-source (@accessor gx#AST::t source #f))
+  (declare-type gx#&AST-e-set! (@mutator gx#AST::t e #f))
+  (declare-type gx#&AST-source-set! (@mutator gx#AST::t source #f)))
