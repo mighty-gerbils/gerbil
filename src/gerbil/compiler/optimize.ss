@@ -26,6 +26,8 @@ namespace: gxc
   (parameterize ((current-compile-mutators (make-hash-table-eq))
                  (current-compile-local-type (make-hash-table-eq)))
     (optimizer-load-ssxi-deps ctx)
+    ;; load builtins
+    (optimizer-load-builtin-ssxi)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -34,6 +36,12 @@ namespace: gxc
       (set! (module-context-code ctx) code))))
 
 ;;; ssxi loading
+(def (optimizer-load-builtin-ssxi)
+  (optimizer-import-ssxi-by-id 'gerbil/builtin)
+  (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
+             'gerbil/builtin
+             #t))
+
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
     (let (imports (module-context-import ctx))
@@ -85,19 +93,21 @@ namespace: gxc
             val)))))
 
 (def (optimizer-import-ssxi ctx)
+  (and (expander-context-id ctx)
+       (optimizer-import-ssxi-by-id (expander-context-id ctx))))
+
+(def (optimizer-import-ssxi-by-id id)
   ;; check output-dir/id.ssxi.ss for existence; this is a current compilation
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
     (when (current-compile-verbose)
-      (displayln "Failed to load ssxi module for " (expander-context-id ctx))
+      (displayln "Failed to load ssxi module for " id)
       (display-exception exn))
     #f)
 
   (def (import-e)
-    (let* ((str-id (string-append
-                    (module-id->path-string (expander-context-id ctx))
-                    ".ssxi"))
+    (let* ((str-id (string-append (module-id->path-string id) ".ssxi"))
            (artefact-path
             (alet (odir (current-compile-output-dir))
               (path-expand (string-append str-id ".ss") odir)))
@@ -111,8 +121,7 @@ namespace: gxc
       (verbose "Loading ssxi module " ssxi-path)
       (import-module ssxi-path #t #t)))
 
-  (and (expander-context-id ctx)
-       (with-catch catch-e import-e)))
+  (with-catch catch-e import-e))
 
 ;;; source transforms
 (def (optimize-source stx)

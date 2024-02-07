@@ -66,9 +66,9 @@
   (for-each (lambda (x) (apply compile1 x options)) group))
 
 (displayln "building gerbil in " gerbil-libdir)
-;; initialize optimizer and preload core.ssxi so that we have core visibility
+;; initialize optimizer and preload builtin.ssxi so that we have visibility
 (gxc#optimizer-info-init!)
-(gx#import-module "gerbil/prelude/core.ssxi.ss" #t)
+(gx#import-module "gerbil/prelude/builtin.ssxi.ss" #t)
 ;; compile runtime
 (compile-group gerbil-modules-runtime #t)
 ;; compile expander first so that prelude macros have expander visibility
