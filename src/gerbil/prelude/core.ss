@@ -1816,12 +1816,12 @@ package: gerbil
                                      #'(def ugetf
                                          (begin-annotation (@mop.accessor mop-type-t
                                                                           slot #f)
-                                           (make-ugetf type-t 'key))))
+                                           (make-ugetf type-t 'slot))))
                                     (wrap
                                      #'(def usetf
                                          (begin-annotation (@mop.mutator mop-type-t
                                                                          slot #f)
-                                           (make-usetf type-t 'key))))]))))
+                                           (make-usetf type-t 'slot))))]))))
                             accessible-slots)))
              (wrap
               #'(begin def-type
