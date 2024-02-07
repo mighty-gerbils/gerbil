@@ -47,7 +47,7 @@ namespace: gxc
 ;;; MOP
 (defstruct (!class !type)
   (super ;; ListOf Symbol; super type runtime identifiers
-   precendence-list ;; ListOf Symbol; linearized super precendence list
+   precedence-list ;; ListOf Symbol; linearized super precendence list
    slots ;; ListOf Symbol; direct class slots
    fields ;; ListOf Symbol; slot field layout for direct/struct instances
    constructor  ;; OrFalse Symbol; constructor method
@@ -124,11 +124,11 @@ namespace: gxc
                          (else
                           (lp rest method)))))
                      (else method)))))
-            (precendence-list
+            (precedence-list
              ;; 4. compute super precedence list
              (c3-linearize [] super
                            (lambda (klass-id)
-                             (!class-precendence-list
+                             (!class-precedence-list
                               (optimizer-resolve-class `(!class ,id) klass-id)))
                            eq? identity))
             (fields
@@ -149,7 +149,7 @@ namespace: gxc
        (set! (!class-final? self) final?)))
 
     ;; ssxi loader
-    ((self id super precendence-list slots fields constructor struct? final? methods)
+    ((self id super precedence-list slots fields constructor struct? final? methods)
      (set! (!type-id self) id)
      (set! (!class-super self) super)
      (set! (!class-precedence-list self) precedence-list)
@@ -385,10 +385,10 @@ namespace: gxc
     => (lambda (klass)
          (unless (!class? klass)
            (raise-compile-error "bad class reference; not a class type"
-                                where klass-id klpass))
+                                where klass-id klass))
          klass))
    (else
-    (raise-compile-error "unknown class" where klass))))
+    (raise-compile-error "unknown class" where klass-id))))
 
 (def (optimizer-lookup-method type-t method)
   (!type-lookup-method (optimizer-resolve-type type-t) method))

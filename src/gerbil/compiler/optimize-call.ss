@@ -59,8 +59,8 @@ namespace: gxc
             stx))))))))
 
 (defmethod {optimize-call !constructor}
-  (lambda (sef stx args)
-    (let* ((klass (!optimizer-resolve-class stx (!type-id self)))
+  (lambda (self stx args)
+    (let* ((klass (optimizer-resolve-class stx (!type-id self)))
            (fields (fx1+ (length (!class-fields klass))))
            (args (map compile-e args)))
       (cond
@@ -99,7 +99,7 @@ namespace: gxc
               (((%#quote kw) expr . rest)
                (stx-keyword? #'kw)
                (let* ((slot (keyword->symbol (stx-e #'kw)))
-                      (off  (!class-slot->field-offset klass off)))
+                      (off  (!class-slot->field-offset klass slot)))
                  (if off
                    (lp #'rest (cons (cons off #'expr) initializers))
                    (raise-compile-error "unknown slot" stx (!type-id self) slot))))
@@ -138,7 +138,7 @@ namespace: gxc
   (lambda (self stx args)
     (ast-case args ()
       ((_ object)
-       (let* ((klass (!optimizer-resolve-class stx (!type-id self)))
+       (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (field (!class-slot->field-offset (!accessor-slot self)))
               (object (compile-e #'object)))
          (cond
@@ -160,7 +160,7 @@ namespace: gxc
              ['%#quote field]
              object]
             stx))
-          ((!class-slot-find-struct klass slot)
+          ((!class-slot-find-struct klass (!accessor-slot self))
            => (lambda (klass)
                 (xform-wrap-source
                  [(if (!accessor-checked? self)
@@ -198,8 +198,8 @@ namespace: gxc
   (lambda (self stx args)
     (ast-case args ()
       ((_ object value)
-       (let* ((klass (!optimizer-resolve-class stx (!type-id self)))
-              (fielld (!class-slot->field-offset (!mutator-slot self)))
+       (let* ((klass (optimizer-resolve-class stx (!type-id self)))
+              (field (!class-slot->field-offset (!mutator-slot self)))
               (object (compile-e #'object))
               (value (compile-e #'value)))
          (cond
@@ -223,7 +223,7 @@ namespace: gxc
              object
              value]
             stx))
-          ((!class-slot-find-struct klass slot)
+          ((!class-slot-find-struct klass (!mutator-slot self))
            => (lambda (klass)
                 (xform-wrap-source
                  [(if (!mutator-checked? self)

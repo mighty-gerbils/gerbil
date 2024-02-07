@@ -202,8 +202,9 @@ namespace: gxc
       ['@constrctuor klass-id])))
 
 (defmethod {typedecl !accessor}
-  (with ((!accessor klass-id slot checked?) self)
-    ['@accessor klass-id slot checked?]))
+  (lambda (self)
+    (with ((!accessor klass-id slot checked?) self)
+      ['@accessor klass-id slot checked?])))
 
 (defmethod {typedecl !mutator}
   (lambda (self)
