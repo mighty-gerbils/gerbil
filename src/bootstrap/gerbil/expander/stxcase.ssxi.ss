@@ -14,7 +14,7 @@ package: gerbil/expander
            #f
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
   (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))
-  (declare-type gx#make-syntax-pattern (@constrctuor gx#syntax-pattern::t))
+  (declare-type gx#make-syntax-pattern (@constructor gx#syntax-pattern::t))
   (declare-type gx#syntax-pattern-id (@accessor gx#syntax-pattern::t id #t))
   (declare-type
    gx#syntax-pattern-depth

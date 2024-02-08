@@ -138,7 +138,7 @@ package: gerbil/compiler
            #f
            ((:init! . gxc#meta-state:::init!))))
   (declare-type gxc#meta-state? (@predicate gxc#meta-state::t))
-  (declare-type gxc#make-meta-state (@constrctuor gxc#meta-state::t))
+  (declare-type gxc#make-meta-state (@constructor gxc#meta-state::t))
   (declare-type gxc#meta-state-src (@accessor gxc#meta-state::t src #t))
   (declare-type gxc#meta-state-n (@accessor gxc#meta-state::t n #t))
   (declare-type gxc#meta-state-open (@accessor gxc#meta-state::t open #t))
@@ -174,7 +174,7 @@ package: gerbil/compiler
   (declare-type gxc#meta-state-block? (@predicate gxc#meta-state-block::t))
   (declare-type
    gxc#make-meta-state-block
-   (@constrctuor gxc#meta-state-block::t))
+   (@constructor gxc#meta-state-block::t))
   (declare-type
    gxc#meta-state-block-ctx
    (@accessor gxc#meta-state-block::t ctx #t))

@@ -14,7 +14,7 @@ package: gerbil/expander
            #t
            #f))
   (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
-  (declare-type gx#make-identifier-wrap (@constrctuor gx#identifier-wrap::t))
+  (declare-type gx#make-identifier-wrap (@constructor gx#identifier-wrap::t))
   (declare-type
    gx#identifier-wrap-marks
    (@accessor gx#identifier-wrap::t marks #t))
@@ -59,7 +59,7 @@ package: gerbil/expander
            #t
            #f))
   (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
-  (declare-type gx#make-syntax-wrap (@constrctuor gx#syntax-wrap::t))
+  (declare-type gx#make-syntax-wrap (@constructor gx#syntax-wrap::t))
   (declare-type gx#syntax-wrap-mark (@accessor gx#syntax-wrap::t mark #t))
   (declare-type gx#syntax-wrap-e (@accessor gx#syntax-wrap::t e #t))
   (declare-type gx#syntax-wrap-source (@accessor gx#syntax-wrap::t source #t))
@@ -88,7 +88,7 @@ package: gerbil/expander
            #t
            #f))
   (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))
-  (declare-type gx#make-syntax-quote (@constrctuor gx#syntax-quote::t))
+  (declare-type gx#make-syntax-quote (@constructor gx#syntax-quote::t))
   (declare-type
    gx#syntax-quote-context
    (@accessor gx#syntax-quote::t context #t))

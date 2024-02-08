@@ -14,7 +14,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __context? (@predicate __context::t))
-  (declare-type make-__context (@constrctuor __context::t))
+  (declare-type make-__context (@constructor __context::t))
   (declare-type __context-t (@accessor __context::t t #t))
   (declare-type __context-ns (@accessor __context::t ns #t))
   (declare-type __context-super (@accessor __context::t super #t))
@@ -35,7 +35,7 @@ package: gerbil/runtime
    __runtime::t
    (@class gerbil/runtime/eval#__runtime::t () () (id) (id) #f #t #f #f))
   (declare-type __runtime? (@predicate __runtime::t))
-  (declare-type make-__runtime (@constrctuor __runtime::t))
+  (declare-type make-__runtime (@constructor __runtime::t))
   (declare-type __runtime-id (@accessor __runtime::t id #t))
   (declare-type __runtime-id-set! (@mutator __runtime::t id #t))
   (declare-type &__runtime-id (@accessor __runtime::t id #f))
@@ -44,7 +44,7 @@ package: gerbil/runtime
    __syntax::t
    (@class gerbil/runtime/eval#__syntax::t () () (e id) (e id) #f #t #f #f))
   (declare-type __syntax? (@predicate __syntax::t))
-  (declare-type make-__syntax (@constrctuor __syntax::t))
+  (declare-type make-__syntax (@constructor __syntax::t))
   (declare-type __syntax-e (@accessor __syntax::t e #t))
   (declare-type __syntax-id (@accessor __syntax::t id #t))
   (declare-type __syntax-e-set! (@mutator __syntax::t e #t))
@@ -65,7 +65,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __macro? (@predicate __macro::t))
-  (declare-type make-__macro (@constrctuor __macro::t))
+  (declare-type make-__macro (@constructor __macro::t))
   (declare-type __macro-e (@accessor __macro::t e #t))
   (declare-type __macro-id (@accessor __macro::t id #t))
   (declare-type __macro-e-set! (@mutator __macro::t e #t))
@@ -86,7 +86,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __special-form? (@predicate __special-form::t))
-  (declare-type make-__special-form (@constrctuor __special-form::t))
+  (declare-type make-__special-form (@constructor __special-form::t))
   (declare-type __special-form-e (@accessor __special-form::t e #t))
   (declare-type __special-form-id (@accessor __special-form::t id #t))
   (declare-type __special-form-e-set! (@mutator __special-form::t e #t))
@@ -107,7 +107,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __core-form? (@predicate __core-form::t))
-  (declare-type make-__core-form (@constrctuor __core-form::t))
+  (declare-type make-__core-form (@constructor __core-form::t))
   (declare-type __core-form-e (@accessor __core-form::t e #t))
   (declare-type __core-form-id (@accessor __core-form::t id #t))
   (declare-type __core-form-e-set! (@mutator __core-form::t e #t))
@@ -128,7 +128,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __core-expression? (@predicate __core-expression::t))
-  (declare-type make-__core-expression (@constrctuor __core-expression::t))
+  (declare-type make-__core-expression (@constructor __core-expression::t))
   (declare-type __core-expression-e (@accessor __core-expression::t e #t))
   (declare-type __core-expression-id (@accessor __core-expression::t id #t))
   (declare-type __core-expression-e-set! (@mutator __core-expression::t e #t))
@@ -153,7 +153,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __core-special-form? (@predicate __core-special-form::t))
-  (declare-type make-__core-special-form (@constrctuor __core-special-form::t))
+  (declare-type make-__core-special-form (@constructor __core-special-form::t))
   (declare-type __core-special-form-e (@accessor __core-special-form::t e #t))
   (declare-type
    __core-special-form-id
@@ -186,7 +186,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __struct-info? (@predicate __struct-info::t))
-  (declare-type make-__struct-info (@constrctuor __struct-info::t))
+  (declare-type make-__struct-info (@constructor __struct-info::t))
   (declare-type __struct-info-e (@accessor __struct-info::t e #t))
   (declare-type __struct-info-id (@accessor __struct-info::t id #t))
   (declare-type __struct-info-e-set! (@mutator __struct-info::t e #t))
@@ -207,7 +207,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __feature? (@predicate __feature::t))
-  (declare-type make-__feature (@constrctuor __feature::t))
+  (declare-type make-__feature (@constructor __feature::t))
   (declare-type __feature-e (@accessor __feature::t e #t))
   (declare-type __feature-id (@accessor __feature::t id #t))
   (declare-type __feature-e-set! (@mutator __feature::t e #t))
@@ -228,7 +228,7 @@ package: gerbil/runtime
            #f
            #f))
   (declare-type __module? (@predicate __module::t))
-  (declare-type make-__module (@constrctuor __module::t))
+  (declare-type make-__module (@constructor __module::t))
   (declare-type __module-id (@accessor __module::t id #t))
   (declare-type __module-path (@accessor __module::t path #t))
   (declare-type __module-import (@accessor __module::t import #t))

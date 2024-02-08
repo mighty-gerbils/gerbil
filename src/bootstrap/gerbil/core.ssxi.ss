@@ -47,7 +47,7 @@ package: gerbil
    (@predicate gerbil/core$<MOP>$<MOP:2>#class-type-info::t))
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#make-class-type-info
-   (@constrctuor gerbil/core$<MOP>$<MOP:2>#class-type-info::t))
+   (@constructor gerbil/core$<MOP>$<MOP:2>#class-type-info::t))
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#class-type-id
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t id #t))
@@ -286,7 +286,7 @@ package: gerbil
    (@predicate gerbil/core$<macro-object>#macro-object::t))
   (declare-type
    gerbil/core$<macro-object>#make-macro-object
-   (@constrctuor gerbil/core$<macro-object>#macro-object::t))
+   (@constructor gerbil/core$<macro-object>#macro-object::t))
   (declare-type
    gerbil/core$<macro-object>#macro-object-macro
    (@accessor gerbil/core$<macro-object>#macro-object::t macro #t))
@@ -321,7 +321,7 @@ package: gerbil
    (@predicate |gerbil/core$<match>[1]#match-macro::t|))
   (declare-type
    |gerbil/core$<match>[1]#make-match-macro|
-   (@constrctuor |gerbil/core$<match>[1]#match-macro::t|))
+   (@constructor |gerbil/core$<match>[1]#match-macro::t|))
   (declare-type
    |gerbil/core$<match>[1]#match-macro-macro|
    (@accessor |gerbil/core$<match>[1]#match-macro::t| macro #t))
@@ -365,7 +365,7 @@ package: gerbil
    (@predicate |gerbil/core$<more-sugar>[1]#setq-macro::t|))
   (declare-type
    |gerbil/core$<more-sugar>[1]#make-setq-macro|
-   (@constrctuor |gerbil/core$<more-sugar>[1]#setq-macro::t|))
+   (@constructor |gerbil/core$<more-sugar>[1]#setq-macro::t|))
   (declare-type
    |gerbil/core$<more-sugar>[1]#setq-macro-macro|
    (@accessor |gerbil/core$<more-sugar>[1]#setq-macro::t| macro #t))
@@ -394,7 +394,7 @@ package: gerbil
    (@predicate |gerbil/core$<more-sugar>[1]#setf-macro::t|))
   (declare-type
    |gerbil/core$<more-sugar>[1]#make-setf-macro|
-   (@constrctuor |gerbil/core$<more-sugar>[1]#setf-macro::t|))
+   (@constructor |gerbil/core$<more-sugar>[1]#setf-macro::t|))
   (declare-type
    |gerbil/core$<more-sugar>[1]#setf-macro-macro|
    (@accessor |gerbil/core$<more-sugar>[1]#setf-macro::t| macro #t))

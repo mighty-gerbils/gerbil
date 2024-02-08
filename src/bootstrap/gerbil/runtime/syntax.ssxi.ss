@@ -14,7 +14,7 @@ package: gerbil/runtime
            #t
            ((display-exception . SyntaxError::display-exception))))
   (declare-type SyntaxError? (@predicate SyntaxError::t))
-  (declare-type make-SyntaxError (@constrctuor SyntaxError::t))
+  (declare-type make-SyntaxError (@constructor SyntaxError::t))
   (declare-type SyntaxError-message (@accessor SyntaxError::t message #t))
   (declare-type SyntaxError-irritants (@accessor SyntaxError::t irritants #t))
   (declare-type SyntaxError-where (@accessor SyntaxError::t where #t))
@@ -51,7 +51,7 @@ package: gerbil/runtime
    AST::t
    (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f))
   (declare-type AST? (@predicate AST::t))
-  (declare-type make-AST (@constrctuor AST::t))
+  (declare-type make-AST (@constructor AST::t))
   (declare-type AST-e (@accessor AST::t e #t))
   (declare-type AST-source (@accessor AST::t source #t))
   (declare-type AST-e-set! (@mutator AST::t e #t))

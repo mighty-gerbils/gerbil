@@ -14,7 +14,7 @@ package: gerbil/compiler
            #f
            ((:init! . gxc#symbol-table:::init!))))
   (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))
-  (declare-type gxc#make-symbol-table (@constrctuor gxc#symbol-table::t))
+  (declare-type gxc#make-symbol-table (@constructor gxc#symbol-table::t))
   (declare-type
    gxc#symbol-table-gensyms
    (@accessor gxc#symbol-table::t gensyms #t))
