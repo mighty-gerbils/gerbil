@@ -165,39 +165,22 @@ The build process can be summarized in the following steps:
 
 ### Recompiling the Bootstrap
 If you have made non-breaking changes to the core runtime, prelude, expander, or
-the compiler itself, then you may also need to update the precompiled
+the compiler itself, then you may also want to update the precompiled
 bootstrap modules (e.g. because of a bug fix).
 
-This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`.
+This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`:
 
-- To compile the bootstrap runtime:
 ```
-gxc -d bootstrap -s -S -O gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss
-```
+# nuke the old bootstrap
+$ rm -rf bootstrap/*
 
-- To compile the bootstrap core prelude:
-```
-gxc -d bootstrap -s -S -O gerbil/prelude/core.ss
-```
+# copy the builtin ssxi module
+$ mkdir bootstrap/gerbil
+$ cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
 
-- To compile the bootstrap gambit prelude:
-```
-gxc -d bootstrap -s -S gerbil/prelude/gambit.ss
-```
+# compile the bootstrap with the current compiler
+$ gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 
-- To compile the bootstrap expander:
-```
-gxc -d bootstrap -s -S -O gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss
-```
-
-- To compile the bootstrap compiler:
-```
-gxc -d bootstrap -s -S -O gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss
-```
-
-- Finally, if you’ve made changes to it, you should also copy the builtin.ssxi.ss optimizer prelude:
-```
-cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
 ```
 
 ### Recursively Recompiling the bootstrap
