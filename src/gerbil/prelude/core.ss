@@ -2259,9 +2259,9 @@ package: gerbil
                           (type::t
                            (class-type-descriptor klass))
                           (name
-                           (stx-identifier #'id #'type "::" #'id))
+                           (stx-identifier #'type #'type "::" #'id))
                           (@next-method
-                           (stx-identifier #'id '@next-method))
+                           (stx-identifier #'type '@next-method))
                           (defimpl
                             (wrap
                              #'(def name
