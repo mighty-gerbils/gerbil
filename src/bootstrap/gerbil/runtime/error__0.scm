@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1707416388)
+  (define gerbil/runtime/error::timestamp 1707423038)
   (begin
     (define Exception::t
       (let ((__tmp92745 (list)))
@@ -509,12 +509,12 @@
             (##write-string __tmp92760 _port88297_)))))
     (define Error::display-exception::specialize
       (lambda (__t92721)
-        (let ((__where92722
+        (let ((__message92722
                (let ((__tmp92726
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset* __t92721 'where))))
-                 (if __tmp92726 __tmp92726 (error '"Unknown slot" 'where))))
+                        (class-slot-offset* __t92721 'message))))
+                 (if __tmp92726 __tmp92726 (error '"Unknown slot" 'message))))
               (__continuation92723
                (let ((__tmp92727
                       (let ()
@@ -531,12 +531,12 @@
                  (if __tmp92728
                      __tmp92728
                      (error '"Unknown slot" 'irritants))))
-              (__message92725
+              (__where92725
                (let ((__tmp92729
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset* __t92721 'message))))
-                 (if __tmp92729 __tmp92729 (error '"Unknown slot" 'message)))))
+                        (class-slot-offset* __t92721 'where))))
+                 (if __tmp92729 __tmp92729 (error '"Unknown slot" 'where)))))
           (lambda (_self88296_ _port88297_)
             (let ((_tmp-port88299_ (open-output-string))
                   (_display-error-newline88300_
@@ -551,7 +551,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self88296_
-                                 __where92722
+                                 __where92725
                                  __t92721
                                  '#f))))
                          (if _$e88303_ (display _$e88303_) (display '"?")))
@@ -569,7 +569,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self88296_
-                                 __message92725
+                                 __message92722
                                  __t92721
                                  '#f))))
                          (declare (not safe))
