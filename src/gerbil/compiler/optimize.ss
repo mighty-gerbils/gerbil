@@ -221,59 +221,6 @@ namespace: gxc
     (with ((!mutator klass-id slot checked?) self)
       ['@mutator klass-id slot checked?])))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TODO DEPRECATED remove after (re)boostrap
-(defmethod {typedecl !struct-type}
-  (lambda (self)
-    (with ((!struct-type type-id super fields _ ctor plist) self)
-      ['@struct-type type-id super fields ctor plist])))
-
-(defmethod {typedecl !struct-pred}
-  (lambda (self)
-    (with ((!struct-pred struct-t) self)
-      ['@struct-pred struct-t])))
-
-(defmethod {typedecl !struct-cons}
-  (lambda (self)
-    (with ((!struct-cons struct-t) self)
-      ['@struct-cons struct-t])))
-
-(defmethod {typedecl !struct-getf}
-  (lambda (self)
-    (with ((!struct-getf struct-t off unchecked?) self)
-      ['@struct-getf struct-t off unchecked?])))
-
-(defmethod {typedecl !struct-setf}
-  (lambda (self)
-    (with ((!struct-setf struct-t off unchecked?) self)
-      ['@struct-setf struct-t off unchecked?])))
-
-(defmethod {typedecl !class-type}
-  (lambda (self)
-    (with ((!class-type type-id super mixin slots xslots ctor plist) self)
-      ['@class-type type-id super mixin slots xslots ctor plist])))
-
-(defmethod {typedecl !class-pred}
-  (lambda (self)
-    (with ((!class-pred class-t) self)
-      ['@class-pred class-t])))
-
-(defmethod {typedecl !class-cons}
-  (lambda (self)
-    (with ((!class-cons class-t) self)
-      ['@class-cons class-t])))
-
-(defmethod {typedecl !class-getf}
-  (lambda (self)
-    (with ((!class-getf class-t slot unchecked?) self)
-      ['@class-getf class-t slot unchecked?])))
-
-(defmethod {typedecl !class-setf}
-  (lambda (self)
-    (with ((!class-setf class-t slot unchecked?) self)
-      ['@class-setf class-t slot unchecked?])))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)

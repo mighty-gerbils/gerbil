@@ -30,21 +30,6 @@ namespace: gxc
 (defstruct (!alias !type) ())
 (defstruct (!procedure !type) ())
 
-;; TODO: DEPRECATED; to be removed after (re)boostrap
-(defstruct (!struct-type !type) (super fields xfields ctor plist methods)
-  constructor: :init!)
-(defstruct (!class-type !type) (super mixin slots xslots ctor plist methods)
-  constructor: :init!)
-(defstruct (!struct-pred !procedure) ())
-(defstruct (!struct-cons !procedure) ())
-(defstruct (!struct-getf !procedure) (off unchecked?))
-(defstruct (!struct-setf !procedure) (off unchecked?))
-(defstruct (!class-pred !procedure) ())
-(defstruct (!class-cons !procedure) ())
-(defstruct (!class-getf !procedure) (slot unchecked?))
-(defstruct (!class-setf !procedure) (slot unchecked?))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 ;;; MOP
 (defstruct (!class !type)
   (super ;; ListOf Symbol; super type runtime identifiers
@@ -234,16 +219,6 @@ namespace: gxc
     (set! (!mutator-slot self) slot)
     (set! (!mutator-checked? self) checked?)))
 
-;; TODO remove
-(defmethod {:init! !struct-type}
-  (lambda (self id super fields xfields ctor plist)
-    (struct-instance-init! self id super fields xfields ctor plist #f)))
-
-;; TODO remove
-(defmethod {:init! !class-type}
-  (lambda (self id super mixin slots xslots ctor plist)
-    (struct-instance-init! self id super mixin slots xslots ctor plist #f)))
-
 (defmethod {:init! !lambda}
   (lambda (self id arity dispatch (inline #f) (typedecl #f))
     (struct-instance-init! self id arity dispatch inline typedecl)))
@@ -255,52 +230,11 @@ namespace: gxc
   (lambda (self . args)
     (apply struct-instance-init! self args)))
 
-;; TODO remove
-(def (!struct-type-vtab type)
-  (cond
-   ((!struct-type-methods type) => values)
-   (else
-    (let (vtab (make-hash-table-eq))
-      (set! (!struct-type-methods type) vtab)
-      vtab))))
-
-;; TODO remove
-(def (!class-type-vtab type)
-  (cond
-   ((!class-type-methods type) => values)
-   (else
-    (let (vtab (make-hash-table-eq))
-      (set! (!class-type-methods type) vtab)
-      vtab))))
-
-(def (!class-method-table klass)
-  (cond
-   ((!class-methods klass))
-   (else
-    (let (tab (make-hash-table-eq))
-      (set! (!class-methods klass) tab)
-      tab))))
-
 (def (!type-vtab type)
   (cond
    ((!class? type)
     (!class-method-table type))
-   ;; TODO DEPRECATED; remove
-   ((!struct-type? type)
-    (!struct-type-vtab type))
-   ((!class-type? type)
-    (!class-type-vtab type))
    (else #f)))
-
-;; TODO remove
-(def (!struct-type-lookup-method type method)
-  (alet (vtab (!struct-type-methods type))
-    (hash-get vtab method)))
-
-;; TODO remove
-(def (!class-type-lookup-method type method)
-  (alet (vtab (!class-type-methods type))
-    (hash-get vtab method)))
 
 (def (!class-lookup-method klass method)
   (alet (tab (!class-methods klass))
@@ -310,23 +244,7 @@ namespace: gxc
   (cond
    ((!class? type)
     (!class-lookup-method type method))
-   ;; TODO DEPRECATED; remove
-   ((!struct-type? type)
-    (!struct-type-lookup-method type method))
-   ((!class-type? type)
-    (!class-type-lookup-method type method))
    (else #f)))
-
-;; TODO remove
-(def (!class-type-complete? type)
-  (and (!class-type-slots type)
-       (let (super (!class-type-super type))
-         (cond
-          ((not super) #t)
-          ((optimizer-lookup-type super)
-           => (lambda (super-t)
-                (and (!struct-type-xfields super-t) #t)))
-          (else #f)))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
