@@ -40,9 +40,9 @@
 (declare (not safe))
 
 (defstruct http-request (buf sock client method url path params proto headers data)
-  final: #t unchecked: #t)
+  final: #t )
 (defstruct http-response (buf sock output close?)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (http-request-handler sock get-handler)
   (using (sock :- StreamSocket)

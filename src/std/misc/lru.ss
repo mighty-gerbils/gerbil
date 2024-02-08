@@ -17,10 +17,10 @@
 
 (defstruct lru-cache (ht hd tl size cap)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defstruct node (key val prev next)
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! lru-cache}
   (lambda (self cap)

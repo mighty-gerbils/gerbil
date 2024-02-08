@@ -12,7 +12,7 @@
         reference-barrier)
 
 (defstruct ephemeron (will datum)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! ephemeron}

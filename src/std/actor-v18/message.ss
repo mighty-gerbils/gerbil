@@ -53,7 +53,7 @@
 ;; - reply-expected? is set to true if the source is expecting a reply; this is a hint
 ;;   that allows remote servers to respond if the target actor is not registered
 (defstruct envelope (message dest source nonce replyto expiry reply-expected?)
-  final: #t unchecked: #t transparent: #t)
+  final: #t  transparent: #t)
 
 ;; returns true if the envelope has expired
 (def (&envelope-expired? msg)
@@ -67,7 +67,7 @@
 ;; - authorized? is a boolean indicating whether the origin is authorized for
 ;;   for administrative actions.
 (defstruct handle (proxy ref capabilities)
-  unchecked: #t final: #t transparent: #t
+   final: #t transparent: #t
   constructor: :init!)
 
 (defmethod {:init! handle}

@@ -15,14 +15,14 @@
         ./error)
 
 (defstruct (ssl-socket basic-socket) (ssl peer-cert)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defstruct ssl-socket-reader (sock)
-  final: #t unchecked: #t)
+  final: #t )
 
 (defstruct ssl-socket-writer (sock)
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! ssl-socket}
   (lambda (self bsock ssl)

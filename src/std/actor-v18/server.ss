@@ -33,7 +33,7 @@
 ;;   ensemble
 ;; - id is the server-specific identifier of the actor; a symbol or a numeric id.
 (defmessage reference (server id)
-  unchecked: #t)
+  )
 
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))

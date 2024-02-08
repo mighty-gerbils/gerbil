@@ -20,7 +20,7 @@
     (with-basic-socket-read-lock ssock
       (let (sock ssock.sock)
         (let lp ()
-          (when (stream-socket-closed? ssock state-closed-in)
+          (when (stream-socket-state-closed? ssock state-closed-in)
             (raise-io-closed stream-socket-recv "socket input has been shutdown"))
           (let (read (socket-recv sock output output-start output-end flags))
             (cond
@@ -35,7 +35,7 @@
     (with-basic-socket-read-lock ssock
       (let (sock ssock.sock)
         (let lp ()
-          (when (stream-socket-closed? ssock state-closed-out)
+          (when (stream-socket-state-closed? ssock state-closed-out)
             (raise-io-closed stream-socket-send "socket output has been shutdown"))
           (let (wrote (socket-send sock input input-start input-end (fxior flags MSG_NOSIGNAL)))
             (cond
@@ -62,18 +62,18 @@
                (raise-bad-argument stream-socket-shutdown "direction: must be in, out, or inout"))))
            (state-dir (direction->state dir)))
       (with-basic-socket-write-lock ssock
-        (unless (stream-socket-closed? ssock state-dir)
+        (unless (stream-socket-state-closed? ssock state-dir)
           (with-catch void
                       (cut socket-shutdown ssock.sock how))
           (stream-socket-close/lock ssock state-dir))))))
 
 (def (stream-socket-close ssock)
   (with-basic-socket-write-lock ssock
-    (unless (stream-socket-closed? ssock state-closed-inout)
+    (unless (stream-socket-state-closed? ssock state-closed-inout)
       (stream-socket-close/lock ssock state-closed-inout))))
 
 ;; state management
-(def (stream-socket-closed? ssock state-dir)
+(def (stream-socket-state-closed? ssock state-dir)
   ;; caller holds the lock (read or write)
   (using (ssock :- stream-socket)
     (let (state-closed-dir (fxand ssock.state state-dir))

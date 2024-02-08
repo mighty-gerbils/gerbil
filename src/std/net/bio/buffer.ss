@@ -26,7 +26,7 @@
 
 ;; input subbuffers
 (defstruct (delimited-input-buffer input-buffer) (buf limit)
-  unchecked: #t)
+  )
 
 (def (open-delimited-input-buffer buf limit)
   (let* ((rlo (&input-buffer-rlo buf))
@@ -108,7 +108,7 @@
 
 ;; chunked output buffers
 (defstruct (chunked-output-buffer output-buffer) (chunks)
-  unchecked: #t)
+  )
 
 (def (open-chunked-output-buffer (chunksz 1024))
   (make-chunked-output-buffer (make-u8vector chunksz) 0 chunksz

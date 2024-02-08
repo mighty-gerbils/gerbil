@@ -10,7 +10,7 @@
   lazy? eager)
 
 (defstruct lazy (e)
-  final: #t unchecked: #t)
+  final: #t)
 
 (defrules delay-lazy ()
   ((_ expr)

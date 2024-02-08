@@ -15,7 +15,7 @@
 
 (defstruct channel (q mx cv limit eof)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! channel}
   (lambda (self (limit #f))

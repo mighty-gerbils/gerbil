@@ -27,7 +27,7 @@
 
 ;;; input buffers
 (defstruct (ssocket-input-buffer input-buffer) (sock timeo)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (open-ssocket-input-buffer ssock (size default-buffer-size))
   (make-ssocket-input-buffer (make-u8vector size) 0 0
@@ -74,7 +74,7 @@
 
 ;;; output buffers
 (defstruct (ssocket-output-buffer output-buffer) (sock timeo)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (open-ssocket-output-buffer ssock (size default-buffer-size))
   (make-ssocket-output-buffer (make-u8vector size) 0 size

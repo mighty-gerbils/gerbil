@@ -128,9 +128,9 @@
     ((_ {method (alias ...) type} body ...)
      (and (identifier? #'method)
           (stx-andmap identifier? #'(alias ...))
-          (syntax-local-type-info? #'type))
+          (syntax-local-class-type-info? #'type))
      (with-syntax* (((values klass) (syntax-local-value #'type))
-                    (type::t (runtime-type-identifier klass))
+                    (type::t (class-type-descriptor klass))
                     (method-impl (stx-identifier #'method #'type "::" #'method)))
        #'(begin
            (defmethod {method type} body ...)

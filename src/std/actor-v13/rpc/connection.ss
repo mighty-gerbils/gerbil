@@ -79,7 +79,7 @@
    stream-actors           ; wire-id => [actor . dest]
    timeouts                ; timeout => wire-id
    continuation-timeouts)  ; wire-id => timeout
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! continuation-table}

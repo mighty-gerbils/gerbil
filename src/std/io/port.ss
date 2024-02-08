@@ -16,7 +16,7 @@
 (declare (not safe))
 
 ;; Raw wrapper for a port without any buffering
-(defstruct raw-port (port) unchecked: #t)
+(defstruct raw-port (port))
 (defstruct (raw-input-port raw-port) ())
 (defstruct (raw-output-port raw-port) ())
 (defstruct (raw-binary-input-port raw-input-port) ())
@@ -25,15 +25,15 @@
 (defstruct (raw-textual-output-port raw-output-port) ())
 
 ;; Cooked ports
-(defstruct cooked-buffer (buffer lo hi) unchecked: #t final: #t)
-(defstruct (cooked-port raw-port) (buffer) unchecked: #t) ; phantom type for accessor
+(defstruct cooked-buffer (buffer lo hi) final: #t)
+(defstruct (cooked-port raw-port) (buffer)) ; phantom type for accessor
 (defstruct (cooked-binary-input-port raw-input-port) (buffer) final: #t
   constructor: :init!)
 (defstruct (cooked-textual-input-port raw-input-port) (buffer) final: #t
   constructor: :init!)
 
 ;; delimited input
-(defstruct delimited (e limit) unchecked: #t)
+(defstruct delimited (e limit))
 (defstruct (delimited-binary-input-port delimited) () final: #t)
 (defstruct (delimited-textual-input-port delimited) () final: #t)
 

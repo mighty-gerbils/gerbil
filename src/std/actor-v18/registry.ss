@@ -100,7 +100,7 @@
 
 ;; registry implementation
 (defstruct registry (path servers roles dirty?)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! registry}

@@ -15,7 +15,7 @@
 (declare (not safe))
 
 (defstruct rwlock (mx rcv wcv readers writer writers-waiting)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! rwlock}

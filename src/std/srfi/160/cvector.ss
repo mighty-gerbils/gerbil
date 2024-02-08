@@ -7,11 +7,11 @@
 (export #t)
 
 (defstruct c64vector (e)
-  final: #t unchecked: #t equal: #t
+  final: #t  equal: #t
   constructor: :init!)
 
 (defstruct c128vector (e)
-  final: #t unchecked: #t equal: #t
+  final: #t  equal: #t
   constructor: init!)
 
 (defmethod {:init! c64vector}

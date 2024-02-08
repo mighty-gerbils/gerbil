@@ -74,16 +74,17 @@
     (and (identifier? id)
          (let (info (syntax-local-value id false))
            (or (generic-type-info? info)
-               (runtime-type-info? info)))))
+               (class-type-info? info)))))
 
   (def (generic-type-e type-info)
     (cond
      ((primitive-type-info? type-info)
       (with-syntax ((type (@ type-info type)))
         #'(quote type)))
-     ((or (runtime-struct-info? type-info)
-          (runtime-class-info? type-info)
-          (builtin-type-info? type-info))
+     ((class-type-info? type-info)
+      (with-syntax ((klass::t (class-type-descriptor type-info)))
+        #'(type-linearize-class klass::t)))
+     ((builtin-type-info? type-info)
       (with-syntax ((klass::t (@ type-info runtime-identifier)))
         #'(type-linearize-class klass::t)))
      (else

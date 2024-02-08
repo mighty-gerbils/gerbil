@@ -7,109 +7,61 @@
 (export define-record-type)
 
 (defsyntax (define-record-type stx)
-  (def (field-spec? stx)
-    (syntax-case stx ()
-      ((id accessor)
-       (and (identifier? #'id)
-            (identifier? #'accessor)))
-      ((id accessor mutator)
-       (and (identifier? #'id)
-            (identifier? #'accessor)
-            (identifier? #'mutator)))))
+  (def (slot-spec? slot-spec)
+    (syntax-case slot-spec ()
+      ((slot a m) #t)
+      ((slot a) #t)
+      (_ #f)))
 
-  (def (check-fields fields error-msg)
-    (let lp ((rest fields))
-      (match rest
-        ([hd . rest]
-         (if (memq hd rest)
-           (raise-syntax-error 'define-record-type error-msg stx hd)
-           (lp rest)))
-        (else #!void))))
+  (def (slot-accessor slot-spec)
+    (syntax-case slot-spec ()
+      ((slot a m) #'a)
+      ((slot a) #'a)))
 
-  (def (field-offset field fields)
-    (let (field (stx-e field))
-      (let lp ((rest fields) (off 0))
-        (match rest
-          ([(eq? field) . _] off)
-          ([_ . rest] (lp rest (fx1+ off)))))))
-
-  (def (module-type-id type-t)
-    (cond
-     ((module-context-ns (current-expander-context))
-      => (lambda (ns) (format-id type-t "~a#~a" ns type-t)))
-     (else
-      (let (mid (expander-context-id (current-expander-context)))
-        (format-id type-t "~a#~a" mid type-t)))))
-
-  (def (generate-type type-id fields)
-    (with-syntax ((klass type-id)
-                  (id
-                   (if (module-context? (current-expander-context))
-                     (module-type-id type-id)
-                     (gensym (stx-e type-id))))
-                  (field-count (length fields))
-                  ((field ...) fields))
-      #'(define klass (make-struct-type 'id #f field-count 'klass '() #f '(field ...)))))
-
-  (def (generate-predicate type-id predicate-id)
-    (with-syntax ((klass type-id)
-                  (predicate predicate-id))
-      #'(define predicate (make-struct-predicate klass))))
-
-  (def (generate-accessors type fields field-spec)
-    (with-syntax ((klass type))
-      (let lp ((rest field-spec) (accessors []))
-        (syntax-case rest ()
-          (((field accessor . _) . rest)
-           (with-syntax ((offset (field-offset #'field fields)))
-             (let (defn #'(define accessor (make-struct-field-accessor klass offset)))
-               (lp #'rest (cons defn accessors)))))
-          (_ (with-syntax (((defn ...) (reverse accessors)))
-               #'(begin defn ...)))))))
-
-  (def (generate-mutators type fields field-spec)
-    (with-syntax ((klass type))
-      (let lp ((rest field-spec) (mutators []))
-        (syntax-case rest ()
-          (((field accessor) . rest)
-           (lp #'rest mutators))
-          (((field accessor mutator) . rest)
-           (with-syntax ((offset (field-offset #'field fields)))
-             (let (defn #'(define mutator (make-struct-field-mutator klass offset)))
-               (lp #'rest (cons defn mutators)))))
-          (_ (with-syntax (((defn ...) (reverse mutators)))
-               #'(begin defn ...)))))))
-
-  (def (generate-constructor type fields ctor-spec)
-    (with-syntax ((klass type)
-                  ((ctor-name field ...) ctor-spec))
-      #'(define (ctor-name field ...)
-          (make-struct-instance klass field ...))))
+  (def (slot-mutator slot-spec)
+    (syntax-case slot-spec ()
+      ((slot a m) #'m)
+      ((slot a) (stx-identifier #'a #'a "-set!"))))
 
   (syntax-case stx ()
-    ((_ type (constructor field ...) predicate field-spec ...)
+    ((_ type (constructor slot ...) predicate slot-spec ...)
      (and (identifier? #'type)
           (identifier? #'constructor)
-          (stx-andmap identifier? #'(field ...))
-          (stx-andmap field-spec? #'(field-spec ...)))
-     (with-syntax* (((values fields) (stx-map (lambda (f) (stx-e (stx-car f)))
-                                              #'(field-spec ...)))
-                    (_ (check-fields fields "Duplicate record field"))
-                    (_ (check-fields (stx-map stx-e #'(field ...))
-                                     "Duplicate record field initializer"))
-                    (define-struct-type
-                      (generate-type #'type fields))
-                    (define-predicate
-                      (generate-predicate #'type #'predicate))
-                    (define-accessors
-                     (generate-accessors #'type fields #'(field-spec ...)))
-                    (define-mutators
-                     (generate-mutators #'type fields #'(field-spec ...)))
-                    (define-constructor
-                      (generate-constructor #'type fields #'(constructor field ...))))
-       #'(begin
-           define-struct-type
-           define-predicate
-           define-accessors
-           define-mutators
-           define-constructor)))))
+          (stx-andmap identifier? #'(slot ...))
+          (identifier? #'predicate)
+          (stx-andmap slot-spec? #'(slot-spec ...)))
+     (if (fx= (length #'(slot ...)) (length #'(slot-spec ...)))
+       (with-syntax* ((type-id (make-class-type-id #'type))
+                      (type::t (stx-identifier #'type #'type "::t"))
+                      ((accessor ...) (map slot-accessor #'(slot-spec ...)))
+                      ((mutator ...) (map slot-mutator #'(slot-spec ...)))
+                      ((unchecked-accessor ...)
+                       (map (lambda (id) (stx-identifier id "&" id))
+                            #'(accessor ...)))
+                      ((unchecked-mutator ...)
+                       (map (lambda (id) (stx-identifier id "&" id))
+                            #'(mutator ...))))
+         #'(begin
+             (defstruct-type type::t #f constructor predicate
+               id: type-id
+               final: #t
+               slots:
+               ((slot accessor mutator) ...))
+             (defsyntax type
+               (make-class-type-info
+                id: 'type-id
+                name: 'type
+                slots: '(slot ...)
+                super: []
+                struct?: #t
+                final?: #t
+                constructor-method: #f
+                type-descriptor: (quote-syntax type::t)
+                constructor: (quote-syntax constructor)
+                predicate: (quote-syntax predicate)
+                accessors: [['slot :: (quote-syntax accessor)] ...]
+                mutators:  [['slot :: (quote-syntax mutator)] ...]
+                unchecked-accessors: [['slot :: (quote-syntax unchecked-accessor)] ...]
+                unchecked-mutators: [['slot :: (quote-syntax unchecked-mutator)] ...]))))
+       (raise-syntax-error 'define-record-type "constructor - slot mismatch"
+                           stx #'(slot ...) #'(slot-spec ...))))))

@@ -10,7 +10,7 @@
 (declare (not safe))
 
 (defstruct alphabet (enc dec)
-  final: #t unchecked: #t constructor: :init!)
+  final: #t  constructor: :init!)
 
 (defmethod {:init! alphabet}
   (lambda (self str)

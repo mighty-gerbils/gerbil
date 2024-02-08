@@ -46,7 +46,7 @@
 ;; the request structure
 (defstruct request (sock reader writer url history status status-text headers body encoding)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! request}
   (lambda (self sock url history)

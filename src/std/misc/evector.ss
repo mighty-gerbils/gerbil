@@ -28,15 +28,15 @@
 (declare (not safe))
 
 (defstruct evector (vector fill-pointer)
-  transparent: #t unchecked: #t
+  transparent: #t 
   constructor: :init!)
 
 (defstruct ebytes (bytes fill-pointer)
-  transparent: #t unchecked: #t
+  transparent: #t 
   constructor: :init!)
 
 (defstruct ebits (bits fill-pointer)
-  transparent: #t unchecked: #t
+  transparent: #t 
   constructor: :init!)
 
 (defcheck-argument-type evector)

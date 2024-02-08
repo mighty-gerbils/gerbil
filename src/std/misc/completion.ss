@@ -15,7 +15,7 @@
         with-completion-error)
 
 (defstruct completion (mx cv ready? val exn)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! completion}
