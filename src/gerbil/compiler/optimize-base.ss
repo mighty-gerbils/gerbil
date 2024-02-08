@@ -236,6 +236,14 @@ namespace: gxc
     (!class-method-table type))
    (else #f)))
 
+(def (!class-method-table klass)
+  (cond
+   ((!class-methods klass))
+   (else
+    (let (tab (make-hash-table-eq))
+      (set! (!class-methods klass) tab)
+      tab))))
+
 (def (!class-lookup-method klass method)
   (alet (tab (!class-methods klass))
     (hash-get tab method)))
