@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/core::timestamp 1707346616)
+  (define gerbil/expander/core::timestamp 1707384295)
   (begin
     (declare (not safe))
     (define gx#current-expander-context (make-parameter '#f))
@@ -409,11 +409,26 @@
       (make-struct-slot-unchecked-mutator gx#local-context::t 'table))
     (define gx#phi-context:::init!__%
       (lambda (_self138707_ _id138708_ _super138709_)
-        (if (##fx< '3 (##vector-length _self138707_))
+        (if (##fx< '3 (##structure-length _self138707_))
             (begin
-              (##vector-set! _self138707_ '1 _id138708_)
-              (##vector-set! _self138707_ '2 (make-table 'test: eq?))
-              (##vector-set! _self138707_ '3 _super138709_))
+              (##unchecked-structure-set!
+               _self138707_
+               _id138708_
+               '1
+               (##structure-type _self138707_)
+               '#f)
+              (##unchecked-structure-set!
+               _self138707_
+               (make-table 'test: eq?)
+               '2
+               (##structure-type _self138707_)
+               '#f)
+              (##unchecked-structure-set!
+               _self138707_
+               _super138709_
+               '3
+               (##structure-type _self138707_)
+               '#f))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self138707_
                    '3
@@ -443,11 +458,26 @@
     (bind-method! gx#phi-context::t ':init! gx#phi-context:::init! '#f)
     (define gx#local-context:::init!__%
       (lambda (_self138571_ _super138572_)
-        (if (##fx< '3 (##vector-length _self138571_))
+        (if (##fx< '3 (##structure-length _self138571_))
             (begin
-              (##vector-set! _self138571_ '1 (gensym 'L))
-              (##vector-set! _self138571_ '2 (make-table 'test: eq?))
-              (##vector-set! _self138571_ '3 _super138572_))
+              (##unchecked-structure-set!
+               _self138571_
+               (gensym 'L)
+               '1
+               (##structure-type _self138571_)
+               '#f)
+              (##unchecked-structure-set!
+               _self138571_
+               (make-table 'test: eq?)
+               '2
+               (##structure-type _self138571_)
+               '#f)
+              (##unchecked-structure-set!
+               _self138571_
+               _super138572_
+               '3
+               (##structure-type _self138571_)
+               '#f))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self138571_
                    '3

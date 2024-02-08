@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1707346617)
+  (define gerbil/compiler/base::timestamp 1707384297)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -71,21 +71,39 @@
         (make-struct-slot-unchecked-mutator gxc#symbol-table::t 'bindings)))
     (define gxc#symbol-table:::init!
       (lambda (_self181532_)
-        (if (let ((__tmp185779
+        (if (let ((__tmp185781
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self181532_))))
+                     (##structure-length _self181532_))))
               (declare (not safe))
-              (##fx< '2 __tmp185779))
+              (##fx< '2 __tmp185781))
             (begin
-              (let ((__tmp185777
-                     (let () (declare (not safe)) (make-table 'test: eq?))))
-                (declare (not safe))
-                (##vector-set! _self181532_ '1 __tmp185777))
               (let ((__tmp185778
-                     (let () (declare (not safe)) (make-table 'test: eq?))))
+                     (let () (declare (not safe)) (make-table 'test: eq?)))
+                    (__tmp185777
+                     (let ()
+                       (declare (not safe))
+                       (##structure-type _self181532_))))
                 (declare (not safe))
-                (##vector-set! _self181532_ '2 __tmp185778)))
+                (##unchecked-structure-set!
+                 _self181532_
+                 __tmp185778
+                 '1
+                 __tmp185777
+                 '#f))
+              (let ((__tmp185780
+                     (let () (declare (not safe)) (make-table 'test: eq?)))
+                    (__tmp185779
+                     (let ()
+                       (declare (not safe))
+                       (##structure-type _self181532_))))
+                (declare (not safe))
+                (##unchecked-structure-set!
+                 _self181532_
+                 __tmp185780
+                 '2
+                 __tmp185779
+                 '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self181532_
                    '2
@@ -105,9 +123,9 @@
     (define gxc#verbose
       (lambda _args181403_
         (if (gxc#current-compile-verbose)
-            (let ((__tmp185780 (lambda () (apply displayln _args181403_))))
+            (let ((__tmp185782 (lambda () (apply displayln _args181403_))))
               (declare (not safe))
-              (with-lock gxc#+verbose-mutex+ __tmp185780))
+              (with-lock gxc#+verbose-mutex+ __tmp185782))
             '#!void)))
     (define gxc#+verbose-mutex+ (make-mutex 'compiler/driver))
     (define gxc#module-path-reserved-chars '":#<>&!?*;()[]{}|'`\"\\")
@@ -131,8 +149,8 @@
                             '#\_
                             _char181398_)))
                   (string-set! _res181391_ _i181396_ _xchar181400_)
-                  (let ((__tmp185781
+                  (let ((__tmp185783
                          (let () (declare (not safe)) (fx+ _i181396_ '1))))
                     (declare (not safe))
-                    (_lp181394_ __tmp185781)))
+                    (_lp181394_ __tmp185783)))
                 _res181391_)))))))

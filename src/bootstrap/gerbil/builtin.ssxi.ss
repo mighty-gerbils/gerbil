@@ -36,9 +36,9 @@ package: gerbil
                           (count arg-count))
              #'(%#if (%#call (%#ref ##fx<)
                              (%#quote count)
-                             (%#call (%#ref ##vector-length) (%#ref self)))
+                             (%#call (%#ref ##structure-length) (%#ref self)))
                  (%#begin
-                  (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
+                  (%#call (%#ref ##unchecked-structure-set!) (%#ref self) arg (%#quote off) (%#call (%#ref ##structure-type) (%#ref self)) (%#quote #f))
                   ...)
                  (%#call (%#ref error)
                          (%#quote "struct-instance-init!: too many arguments for struct")

@@ -77,212 +77,6 @@ namespace: gxc
          (%#define-runtime &!procedure-id gxc#&!procedure-id)
          (%#define-runtime &!procedure-id-set! gxc#&!procedure-id-set!)
          (%#define-syntax !procedure |gxc[:0:]#!procedure|)
-         (%#define-runtime !struct-type::t gxc#!struct-type::t)
-         (%#define-runtime !struct-type? gxc#!struct-type?)
-         (%#define-runtime make-!struct-type gxc#make-!struct-type)
-         (%#define-runtime !struct-type-super gxc#!struct-type-super)
-         (%#define-runtime !struct-type-fields gxc#!struct-type-fields)
-         (%#define-runtime !struct-type-xfields gxc#!struct-type-xfields)
-         (%#define-runtime !struct-type-ctor gxc#!struct-type-ctor)
-         (%#define-runtime !struct-type-plist gxc#!struct-type-plist)
-         (%#define-runtime !struct-type-methods gxc#!struct-type-methods)
-         (%#define-runtime !struct-type-id gxc#!struct-type-id)
-         (%#define-runtime !struct-type-super-set! gxc#!struct-type-super-set!)
-         (%#define-runtime
-          !struct-type-fields-set!
-          gxc#!struct-type-fields-set!)
-         (%#define-runtime
-          !struct-type-xfields-set!
-          gxc#!struct-type-xfields-set!)
-         (%#define-runtime !struct-type-ctor-set! gxc#!struct-type-ctor-set!)
-         (%#define-runtime !struct-type-plist-set! gxc#!struct-type-plist-set!)
-         (%#define-runtime
-          !struct-type-methods-set!
-          gxc#!struct-type-methods-set!)
-         (%#define-runtime !struct-type-id-set! gxc#!struct-type-id-set!)
-         (%#define-runtime &!struct-type-super gxc#&!struct-type-super)
-         (%#define-runtime &!struct-type-fields gxc#&!struct-type-fields)
-         (%#define-runtime &!struct-type-xfields gxc#&!struct-type-xfields)
-         (%#define-runtime &!struct-type-ctor gxc#&!struct-type-ctor)
-         (%#define-runtime &!struct-type-plist gxc#&!struct-type-plist)
-         (%#define-runtime &!struct-type-methods gxc#&!struct-type-methods)
-         (%#define-runtime &!struct-type-id gxc#&!struct-type-id)
-         (%#define-runtime
-          &!struct-type-super-set!
-          gxc#&!struct-type-super-set!)
-         (%#define-runtime
-          &!struct-type-fields-set!
-          gxc#&!struct-type-fields-set!)
-         (%#define-runtime
-          &!struct-type-xfields-set!
-          gxc#&!struct-type-xfields-set!)
-         (%#define-runtime &!struct-type-ctor-set! gxc#&!struct-type-ctor-set!)
-         (%#define-runtime
-          &!struct-type-plist-set!
-          gxc#&!struct-type-plist-set!)
-         (%#define-runtime
-          &!struct-type-methods-set!
-          gxc#&!struct-type-methods-set!)
-         (%#define-runtime &!struct-type-id-set! gxc#&!struct-type-id-set!)
-         (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
-         (%#define-runtime !class-type::t gxc#!class-type::t)
-         (%#define-runtime !class-type? gxc#!class-type?)
-         (%#define-runtime make-!class-type gxc#make-!class-type)
-         (%#define-runtime !class-type-super gxc#!class-type-super)
-         (%#define-runtime !class-type-mixin gxc#!class-type-mixin)
-         (%#define-runtime !class-type-slots gxc#!class-type-slots)
-         (%#define-runtime !class-type-xslots gxc#!class-type-xslots)
-         (%#define-runtime !class-type-ctor gxc#!class-type-ctor)
-         (%#define-runtime !class-type-plist gxc#!class-type-plist)
-         (%#define-runtime !class-type-methods gxc#!class-type-methods)
-         (%#define-runtime !class-type-id gxc#!class-type-id)
-         (%#define-runtime !class-type-super-set! gxc#!class-type-super-set!)
-         (%#define-runtime !class-type-mixin-set! gxc#!class-type-mixin-set!)
-         (%#define-runtime !class-type-slots-set! gxc#!class-type-slots-set!)
-         (%#define-runtime !class-type-xslots-set! gxc#!class-type-xslots-set!)
-         (%#define-runtime !class-type-ctor-set! gxc#!class-type-ctor-set!)
-         (%#define-runtime !class-type-plist-set! gxc#!class-type-plist-set!)
-         (%#define-runtime
-          !class-type-methods-set!
-          gxc#!class-type-methods-set!)
-         (%#define-runtime !class-type-id-set! gxc#!class-type-id-set!)
-         (%#define-runtime &!class-type-super gxc#&!class-type-super)
-         (%#define-runtime &!class-type-mixin gxc#&!class-type-mixin)
-         (%#define-runtime &!class-type-slots gxc#&!class-type-slots)
-         (%#define-runtime &!class-type-xslots gxc#&!class-type-xslots)
-         (%#define-runtime &!class-type-ctor gxc#&!class-type-ctor)
-         (%#define-runtime &!class-type-plist gxc#&!class-type-plist)
-         (%#define-runtime &!class-type-methods gxc#&!class-type-methods)
-         (%#define-runtime &!class-type-id gxc#&!class-type-id)
-         (%#define-runtime &!class-type-super-set! gxc#&!class-type-super-set!)
-         (%#define-runtime &!class-type-mixin-set! gxc#&!class-type-mixin-set!)
-         (%#define-runtime &!class-type-slots-set! gxc#&!class-type-slots-set!)
-         (%#define-runtime
-          &!class-type-xslots-set!
-          gxc#&!class-type-xslots-set!)
-         (%#define-runtime &!class-type-ctor-set! gxc#&!class-type-ctor-set!)
-         (%#define-runtime &!class-type-plist-set! gxc#&!class-type-plist-set!)
-         (%#define-runtime
-          &!class-type-methods-set!
-          gxc#&!class-type-methods-set!)
-         (%#define-runtime &!class-type-id-set! gxc#&!class-type-id-set!)
-         (%#define-syntax !class-type |gxc[:0:]#!class-type|)
-         (%#define-runtime !struct-pred::t gxc#!struct-pred::t)
-         (%#define-runtime !struct-pred? gxc#!struct-pred?)
-         (%#define-runtime make-!struct-pred gxc#make-!struct-pred)
-         (%#define-runtime !struct-pred-id gxc#!struct-pred-id)
-         (%#define-runtime !struct-pred-id-set! gxc#!struct-pred-id-set!)
-         (%#define-runtime &!struct-pred-id gxc#&!struct-pred-id)
-         (%#define-runtime &!struct-pred-id-set! gxc#&!struct-pred-id-set!)
-         (%#define-syntax !struct-pred |gxc[:0:]#!struct-pred|)
-         (%#define-runtime !struct-cons::t gxc#!struct-cons::t)
-         (%#define-runtime !struct-cons? gxc#!struct-cons?)
-         (%#define-runtime make-!struct-cons gxc#make-!struct-cons)
-         (%#define-runtime !struct-cons-id gxc#!struct-cons-id)
-         (%#define-runtime !struct-cons-id-set! gxc#!struct-cons-id-set!)
-         (%#define-runtime &!struct-cons-id gxc#&!struct-cons-id)
-         (%#define-runtime &!struct-cons-id-set! gxc#&!struct-cons-id-set!)
-         (%#define-syntax !struct-cons |gxc[:0:]#!struct-cons|)
-         (%#define-runtime !struct-getf::t gxc#!struct-getf::t)
-         (%#define-runtime !struct-getf? gxc#!struct-getf?)
-         (%#define-runtime make-!struct-getf gxc#make-!struct-getf)
-         (%#define-runtime !struct-getf-off gxc#!struct-getf-off)
-         (%#define-runtime !struct-getf-unchecked? gxc#!struct-getf-unchecked?)
-         (%#define-runtime !struct-getf-id gxc#!struct-getf-id)
-         (%#define-runtime !struct-getf-off-set! gxc#!struct-getf-off-set!)
-         (%#define-runtime
-          !struct-getf-unchecked?-set!
-          gxc#!struct-getf-unchecked?-set!)
-         (%#define-runtime !struct-getf-id-set! gxc#!struct-getf-id-set!)
-         (%#define-runtime &!struct-getf-off gxc#&!struct-getf-off)
-         (%#define-runtime
-          &!struct-getf-unchecked?
-          gxc#&!struct-getf-unchecked?)
-         (%#define-runtime &!struct-getf-id gxc#&!struct-getf-id)
-         (%#define-runtime &!struct-getf-off-set! gxc#&!struct-getf-off-set!)
-         (%#define-runtime
-          &!struct-getf-unchecked?-set!
-          gxc#&!struct-getf-unchecked?-set!)
-         (%#define-runtime &!struct-getf-id-set! gxc#&!struct-getf-id-set!)
-         (%#define-syntax !struct-getf |gxc[:0:]#!struct-getf|)
-         (%#define-runtime !struct-setf::t gxc#!struct-setf::t)
-         (%#define-runtime !struct-setf? gxc#!struct-setf?)
-         (%#define-runtime make-!struct-setf gxc#make-!struct-setf)
-         (%#define-runtime !struct-setf-off gxc#!struct-setf-off)
-         (%#define-runtime !struct-setf-unchecked? gxc#!struct-setf-unchecked?)
-         (%#define-runtime !struct-setf-id gxc#!struct-setf-id)
-         (%#define-runtime !struct-setf-off-set! gxc#!struct-setf-off-set!)
-         (%#define-runtime
-          !struct-setf-unchecked?-set!
-          gxc#!struct-setf-unchecked?-set!)
-         (%#define-runtime !struct-setf-id-set! gxc#!struct-setf-id-set!)
-         (%#define-runtime &!struct-setf-off gxc#&!struct-setf-off)
-         (%#define-runtime
-          &!struct-setf-unchecked?
-          gxc#&!struct-setf-unchecked?)
-         (%#define-runtime &!struct-setf-id gxc#&!struct-setf-id)
-         (%#define-runtime &!struct-setf-off-set! gxc#&!struct-setf-off-set!)
-         (%#define-runtime
-          &!struct-setf-unchecked?-set!
-          gxc#&!struct-setf-unchecked?-set!)
-         (%#define-runtime &!struct-setf-id-set! gxc#&!struct-setf-id-set!)
-         (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
-         (%#define-runtime !class-pred::t gxc#!class-pred::t)
-         (%#define-runtime !class-pred? gxc#!class-pred?)
-         (%#define-runtime make-!class-pred gxc#make-!class-pred)
-         (%#define-runtime !class-pred-id gxc#!class-pred-id)
-         (%#define-runtime !class-pred-id-set! gxc#!class-pred-id-set!)
-         (%#define-runtime &!class-pred-id gxc#&!class-pred-id)
-         (%#define-runtime &!class-pred-id-set! gxc#&!class-pred-id-set!)
-         (%#define-syntax !class-pred |gxc[:0:]#!class-pred|)
-         (%#define-runtime !class-cons::t gxc#!class-cons::t)
-         (%#define-runtime !class-cons? gxc#!class-cons?)
-         (%#define-runtime make-!class-cons gxc#make-!class-cons)
-         (%#define-runtime !class-cons-id gxc#!class-cons-id)
-         (%#define-runtime !class-cons-id-set! gxc#!class-cons-id-set!)
-         (%#define-runtime &!class-cons-id gxc#&!class-cons-id)
-         (%#define-runtime &!class-cons-id-set! gxc#&!class-cons-id-set!)
-         (%#define-syntax !class-cons |gxc[:0:]#!class-cons|)
-         (%#define-runtime !class-getf::t gxc#!class-getf::t)
-         (%#define-runtime !class-getf? gxc#!class-getf?)
-         (%#define-runtime make-!class-getf gxc#make-!class-getf)
-         (%#define-runtime !class-getf-slot gxc#!class-getf-slot)
-         (%#define-runtime !class-getf-unchecked? gxc#!class-getf-unchecked?)
-         (%#define-runtime !class-getf-id gxc#!class-getf-id)
-         (%#define-runtime !class-getf-slot-set! gxc#!class-getf-slot-set!)
-         (%#define-runtime
-          !class-getf-unchecked?-set!
-          gxc#!class-getf-unchecked?-set!)
-         (%#define-runtime !class-getf-id-set! gxc#!class-getf-id-set!)
-         (%#define-runtime &!class-getf-slot gxc#&!class-getf-slot)
-         (%#define-runtime &!class-getf-unchecked? gxc#&!class-getf-unchecked?)
-         (%#define-runtime &!class-getf-id gxc#&!class-getf-id)
-         (%#define-runtime &!class-getf-slot-set! gxc#&!class-getf-slot-set!)
-         (%#define-runtime
-          &!class-getf-unchecked?-set!
-          gxc#&!class-getf-unchecked?-set!)
-         (%#define-runtime &!class-getf-id-set! gxc#&!class-getf-id-set!)
-         (%#define-syntax !class-getf |gxc[:0:]#!class-getf|)
-         (%#define-runtime !class-setf::t gxc#!class-setf::t)
-         (%#define-runtime !class-setf? gxc#!class-setf?)
-         (%#define-runtime make-!class-setf gxc#make-!class-setf)
-         (%#define-runtime !class-setf-slot gxc#!class-setf-slot)
-         (%#define-runtime !class-setf-unchecked? gxc#!class-setf-unchecked?)
-         (%#define-runtime !class-setf-id gxc#!class-setf-id)
-         (%#define-runtime !class-setf-slot-set! gxc#!class-setf-slot-set!)
-         (%#define-runtime
-          !class-setf-unchecked?-set!
-          gxc#!class-setf-unchecked?-set!)
-         (%#define-runtime !class-setf-id-set! gxc#!class-setf-id-set!)
-         (%#define-runtime &!class-setf-slot gxc#&!class-setf-slot)
-         (%#define-runtime &!class-setf-unchecked? gxc#&!class-setf-unchecked?)
-         (%#define-runtime &!class-setf-id gxc#&!class-setf-id)
-         (%#define-runtime &!class-setf-slot-set! gxc#&!class-setf-slot-set!)
-         (%#define-runtime
-          &!class-setf-unchecked?-set!
-          gxc#&!class-setf-unchecked?-set!)
-         (%#define-runtime &!class-setf-id-set! gxc#&!class-setf-id-set!)
-         (%#define-syntax !class-setf |gxc[:0:]#!class-setf|)
          (%#define-runtime !class::t gxc#!class::t)
          (%#define-runtime !class? gxc#!class?)
          (%#define-runtime make-!class gxc#make-!class)
@@ -609,8 +403,6 @@ namespace: gxc
                   (%#define-runtime
                    !mutator:::init!::specialize
                    gxc#!mutator:::init!::specialize))
-         (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
-         (%#define-runtime !class-type:::init! gxc#!class-type:::init!)
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
@@ -627,19 +419,10 @@ namespace: gxc
          (%#define-runtime
           !primitive-case-lambda:::init!
           gxc#!primitive-case-lambda:::init!)
-         (%#define-runtime !struct-type-vtab gxc#!struct-type-vtab)
-         (%#define-runtime !class-type-vtab gxc#!class-type-vtab)
-         (%#define-runtime !class-method-table gxc#!class-method-table)
          (%#define-runtime !type-vtab gxc#!type-vtab)
-         (%#define-runtime
-          !struct-type-lookup-method
-          gxc#!struct-type-lookup-method)
-         (%#define-runtime
-          !class-type-lookup-method
-          gxc#!class-type-lookup-method)
+         (%#define-runtime !class-method-table gxc#!class-method-table)
          (%#define-runtime !class-lookup-method gxc#!class-lookup-method)
          (%#define-runtime !type-lookup-method gxc#!type-lookup-method)
-         (%#define-runtime !class-type-complete? gxc#!class-type-complete?)
          (%#begin (%#define-runtime
                    optimizer-declare-type!__%
                    gxc#optimizer-declare-type!__%)

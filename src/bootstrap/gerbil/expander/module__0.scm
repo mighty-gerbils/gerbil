@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1707346616)
+  (define gerbil/expander/module::timestamp 1707384296)
   (begin
     (declare (not safe))
     (define gx#module-import::t
@@ -298,19 +298,74 @@
          _fun155560_)))
     (define gx#module-context:::init!
       (lambda (_self155553_ _id155554_ _super155555_ _ns155556_ _path155557_)
-        (if (##fx< '11 (##vector-length _self155553_))
+        (if (##fx< '11 (##structure-length _self155553_))
             (begin
-              (##vector-set! _self155553_ '1 _id155554_)
-              (##vector-set! _self155553_ '2 (make-table 'test: eq?))
-              (##vector-set! _self155553_ '3 _super155555_)
-              (##vector-set! _self155553_ '4 '#f)
-              (##vector-set! _self155553_ '5 '#f)
-              (##vector-set! _self155553_ '6 _ns155556_)
-              (##vector-set! _self155553_ '7 _path155557_)
-              (##vector-set! _self155553_ '8 '())
-              (##vector-set! _self155553_ '9 '())
-              (##vector-set! _self155553_ '10 '#f)
-              (##vector-set! _self155553_ '11 '#f))
+              (##unchecked-structure-set!
+               _self155553_
+               _id155554_
+               '1
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               (make-table 'test: eq?)
+               '2
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               _super155555_
+               '3
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '#f
+               '4
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '#f
+               '5
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               _ns155556_
+               '6
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               _path155557_
+               '7
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '()
+               '8
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '()
+               '9
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '#f
+               '10
+               (##structure-type _self155553_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155553_
+               '#f
+               '11
+               (##structure-type _self155553_)
+               '#f))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self155553_
                    '11
@@ -355,19 +410,56 @@
                            '#f)))
                     (_e155413_
                      (make-promise (lambda () (gx#eval-module _ctx155398_)))))
-                (if (##fx< '8 (##vector-length _self155397_))
+                (if (##fx< '8 (##structure-length _self155397_))
                     (begin
-                      (##vector-set! _self155397_ '1 _id155410_)
-                      (##vector-set!
+                      (##unchecked-structure-set!
                        _self155397_
+                       _id155410_
+                       '1
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       (make-table 'test: eq? 'size: (length _in155412_))
                        '2
-                       (make-table 'test: eq? 'size: (length _in155412_)))
-                      (##vector-set! _self155397_ '3 _super155407_)
-                      (##vector-set! _self155397_ '4 '#f)
-                      (##vector-set! _self155397_ '5 '#f)
-                      (##vector-set! _self155397_ '6 _path155411_)
-                      (##vector-set! _self155397_ '7 _in155412_)
-                      (##vector-set! _self155397_ '8 _e155413_))
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       _super155407_
+                       '3
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       '#f
+                       '4
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       '#f
+                       '5
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       _path155411_
+                       '6
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       _in155412_
+                       '7
+                       (##structure-type _self155397_)
+                       '#f)
+                      (##unchecked-structure-set!
+                       _self155397_
+                       _e155413_
+                       '8
+                       (##structure-type _self155397_)
+                       '#f))
                     (error '"struct-instance-init!: too many arguments for struct"
                            _self155397_
                            '8
@@ -376,16 +468,56 @@
                  (lambda (_g155414155416_)
                    (gx#core-bind-weak-import!__% _g155414155416_ _self155397_))
                  _in155412_))
-              (if (##fx< '8 (##vector-length _self155397_))
+              (if (##fx< '8 (##structure-length _self155397_))
                   (begin
-                    (##vector-set! _self155397_ '1 '#f)
-                    (##vector-set! _self155397_ '2 (make-table 'test: eq?))
-                    (##vector-set! _self155397_ '3 _super155407_)
-                    (##vector-set! _self155397_ '4 '#f)
-                    (##vector-set! _self155397_ '5 '#f)
-                    (##vector-set! _self155397_ '6 '#f)
-                    (##vector-set! _self155397_ '7 '())
-                    (##vector-set! _self155397_ '8 '#f))
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '#f
+                     '1
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     (make-table 'test: eq?)
+                     '2
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     _super155407_
+                     '3
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '#f
+                     '4
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '#f
+                     '5
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '#f
+                     '6
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '()
+                     '7
+                     (##structure-type _self155397_)
+                     '#f)
+                    (##unchecked-structure-set!
+                     _self155397_
+                     '#f
+                     '8
+                     (##structure-type _self155397_)
+                     '#f))
                   (error '"struct-instance-init!: too many arguments for struct"
                          _self155397_
                          '8
@@ -420,14 +552,26 @@
     (bind-method! gx#prelude-context::t ':init! gx#prelude-context:::init! '#f)
     (define gx#import-export-expander-init!
       (lambda (_self155271_ _e155272_)
-        (if (##fx< '3 (##vector-length _self155271_))
+        (if (##fx< '3 (##structure-length _self155271_))
             (begin
-              (##vector-set! _self155271_ '1 _e155272_)
-              (##vector-set! _self155271_ '2 (gx#current-expander-context))
-              (##vector-set!
+              (##unchecked-structure-set!
                _self155271_
+               _e155272_
+               '1
+               (##structure-type _self155271_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155271_
+               (gx#current-expander-context)
+               '2
+               (##structure-type _self155271_)
+               '#f)
+              (##unchecked-structure-set!
+               _self155271_
+               (fx- (gx#current-expander-phi) '1)
                '3
-               (fx- (gx#current-expander-phi) '1)))
+               (##structure-type _self155271_)
+               '#f))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self155271_
                    '3

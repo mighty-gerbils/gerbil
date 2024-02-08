@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1707346617)
+  (define gerbil/expander/root::timestamp 1707384296)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -263,10 +263,20 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     (define gx#root-context:::init!__%
       (lambda (_self166682_ _bind?166683_)
-        (if (##fx< '2 (##vector-length _self166682_))
+        (if (##fx< '2 (##structure-length _self166682_))
             (begin
-              (##vector-set! _self166682_ '1 'root)
-              (##vector-set! _self166682_ '2 (make-table 'test: eq?)))
+              (##unchecked-structure-set!
+               _self166682_
+               'root
+               '1
+               (##structure-type _self166682_)
+               '#f)
+              (##unchecked-structure-set!
+               _self166682_
+               (make-table 'test: eq?)
+               '2
+               (##structure-type _self166682_)
+               '#f))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self166682_
                    '2
@@ -350,13 +360,20 @@
                         (error '"Missing method" 'bind-core-features!)))))))
           (let ((_opt-lambda166680166685_
                  (lambda (_self166682_ _bind?166683_)
-                   (if (##fx< '2 (##vector-length _self166682_))
+                   (if (##fx< '2 (##structure-length _self166682_))
                        (begin
-                         (##vector-set! _self166682_ '1 'root)
-                         (##vector-set!
+                         (##unchecked-structure-set!
                           _self166682_
+                          'root
+                          '1
+                          (##structure-type _self166682_)
+                          '#f)
+                         (##unchecked-structure-set!
+                          _self166682_
+                          (make-table 'test: eq?)
                           '2
-                          (make-table 'test: eq?)))
+                          (##structure-type _self166682_)
+                          '#f))
                        (error '"struct-instance-init!: too many arguments for struct"
                               _self166682_
                               '2
@@ -405,13 +422,38 @@
                                   (make-object* gx#root-context::t '3)))
                              (gx#root-context:::init! __obj170930)
                              __obj170930)))))))
-          (if (##fx< '5 (##vector-length _self166538_))
+          (if (##fx< '5 (##structure-length _self166538_))
               (begin
-                (##vector-set! _self166538_ '1 'top)
-                (##vector-set! _self166538_ '2 (make-table 'test: eq?))
-                (##vector-set! _self166538_ '3 _super166547_)
-                (##vector-set! _self166538_ '4 '#f)
-                (##vector-set! _self166538_ '5 '#f))
+                (##unchecked-structure-set!
+                 _self166538_
+                 'top
+                 '1
+                 (##structure-type _self166538_)
+                 '#f)
+                (##unchecked-structure-set!
+                 _self166538_
+                 (make-table 'test: eq?)
+                 '2
+                 (##structure-type _self166538_)
+                 '#f)
+                (##unchecked-structure-set!
+                 _self166538_
+                 _super166547_
+                 '3
+                 (##structure-type _self166538_)
+                 '#f)
+                (##unchecked-structure-set!
+                 _self166538_
+                 '#f
+                 '4
+                 (##structure-type _self166538_)
+                 '#f)
+                (##unchecked-structure-set!
+                 _self166538_
+                 '#f
+                 '5
+                 (##structure-type _self166538_)
+                 '#f))
               (error '"struct-instance-init!: too many arguments for struct"
                      _self166538_
                      '5
