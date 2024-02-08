@@ -209,7 +209,7 @@ namespace: gxc
 (defmethod {typedecl !constructor}
   (lambda (self)
     (with ((!constructor klass-id) self)
-      ['@constrctuor klass-id])))
+      ['@constructor klass-id])))
 
 (defmethod {typedecl !accessor}
   (lambda (self)

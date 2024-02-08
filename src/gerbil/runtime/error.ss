@@ -169,10 +169,11 @@ namespace: #f
     (let (tmp-port (open-output-string))
       (fix-port-width! tmp-port)
       (##default-display-exception (&RuntimeException-exception self) tmp-port)
-      (alet (cont (&StackTrace-continuation self))
-        (display "--- continuation backtrace:" tmp-port)
-        (newline tmp-port)
-        (display-continuation-backtrace cont tmp-port))
+      (when (dump-stack-trace?)
+        (alet (cont (&StackTrace-continuation self))
+          (display "--- continuation backtrace:" tmp-port)
+          (newline tmp-port)
+          (display-continuation-backtrace cont tmp-port)))
       (##write-string (get-output-string tmp-port) port))))
 
 ;;;; Hack to workaround stack trace line truncation issues with port widths

@@ -3429,7 +3429,7 @@ package: gerbil
 
   (defsyntax-for-export (struct-out stx)
     (def (identifiers id unchecked?)
-      (let (info (syntax-local-value #'id false))
+      (let (info (syntax-local-value id false))
         (if (class-type-info? info)
           [id
            (class-type-descriptor info)

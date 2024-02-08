@@ -225,7 +225,9 @@ namespace: gx
      (if (and (datum-parsing-exception? exn)
               (eq? (datum-parsing-exception-filepos exn) 0))
        (core-read-module/lang path)
-       (raise exn)))
+       (raise-syntax-error 'read-module "error reading module" path
+                           (parameterize ((dump-stack-trace? #f))
+                             (call-with-output-string "" (cut display-exception exn <>))))))
    (cut core-read-module/sexp path)))
 
 (def (core-read-module/sexp path)

@@ -145,12 +145,18 @@ namespace: gx
 
 ;; syntax errors
 (extern namespace: #f make-syntax-error)
-(def (raise-syntax-error where message stx . details)
-  (raise
-    (make-syntax-error message (cons stx details) where
-                       (current-expander-context)
-                       (current-expander-marks)
-                       (current-expander-phi))))
+(def (raise-syntax-error ctx message stx . details)
+  (let (ctx (cond
+             (ctx)
+             ((core-context-top)
+              => (lambda (ctx)
+                   `(expand ,(expander-context-id ctx))))
+             (else #f)))
+    (raise
+     (make-syntax-error message (cons stx details) ctx
+                        (current-expander-context)
+                        (current-expander-marks)
+                        (current-expander-phi)))))
 
 ;;; expander driver
 (def (eval-syntax stx (expression? #f))
