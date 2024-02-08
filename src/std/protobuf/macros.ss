@@ -171,7 +171,7 @@
         (() (reverse fields)))))
 
   (def (make-struct-def id fields)
-    (with-syntax* ((type-id (class-type-id id))
+    (with-syntax* ((type-id (make-class-type-id id))
                    (id::t   (format-id id "~a::t" id))
                    (id?     (format-id id "~a?" id))
                    (make-id (format-id id "make-~a" id))
@@ -203,7 +203,6 @@
             id: type-id
             constructor: :init!
             final: #t
-            struct: #t
             properties: '((transparent: . #t)))
           (defsyntax id
             (make-message-type-info
@@ -215,7 +214,7 @@
              super: []
              struct?: #t
              final?: #t
-             conustructor-method: ':init!
+             constructor-method: ':init!
              type-descriptor: (quote-syntax id::t)
              constructor: (quote-syntax make-id)
              predicate: (quote-syntax id?)
