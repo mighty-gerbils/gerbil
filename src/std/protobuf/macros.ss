@@ -51,7 +51,7 @@
                   ((cases ...)
                    (map (lambda (key val)
                           (with-syntax ((key key) (val val))
-                            #'((key) (&BufferedWriter-write-varint* val buf))))
+                            #'((key) (&BufferedWriter-write-varint* buf val))))
                         keys vals)))
       #'(defwriter-ext* (bio-write buf val)
           (case val

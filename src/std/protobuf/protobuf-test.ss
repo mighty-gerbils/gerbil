@@ -86,6 +86,22 @@
                                BufferedReader-read-Test7 BufferedWriter-write-Test7)
       )
 
+    (test-case "test enum"
+      (defenum E
+        (a 1)
+        (b 2)
+        (c 3))
+
+      (defmessage A
+        optional: (a 1 E))
+
+      (check-marshal-unmarshal (A a: 'a)
+                               BufferedReader-read-A BufferedWriter-write-A)
+      (check-marshal-unmarshal (A a: 'b)
+                               BufferedReader-read-A BufferedWriter-write-A)
+      (check-marshal-unmarshal (A a: 'c)
+                               BufferedReader-read-A BufferedWriter-write-A))
+
     (test-case "test oneof"
       (defmessage A
         oneof: (a (s 1 string) (i 2 int32)))
