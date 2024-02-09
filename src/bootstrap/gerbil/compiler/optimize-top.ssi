@@ -46,8 +46,32 @@ namespace: gxc
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
          (%#define-runtime
+          basic-expression-type-annotations
+          gxc#basic-expression-type-annotations)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize-top__1")))
+                  (%#define-syntax
+                   defbasic-expression-type-annotations
+                   |gxc[:0:]#defbasic-expression-type-annotations|))
+         (%#define-runtime
           basic-expression-type-begin-annotation%
           gxc#basic-expression-type-begin-annotation%)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.class
+          gxc#basic-expression-type-annotation-mop.class)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.constructor
+          gxc#basic-expression-type-annotation-mop.constructor)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.predicate
+          gxc#basic-expression-type-annotation-mop.predicate)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.accessor
+          gxc#basic-expression-type-annotation-mop.accessor)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.mutator
+          gxc#basic-expression-type-annotation-mop.mutator)
          (%#define-runtime
           basic-expression-type-lambda%
           gxc#basic-expression-type-lambda%)
@@ -60,75 +84,12 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-builtin
           gxc#basic-expression-type-builtin)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-top__1")))
-                  (%#define-syntax
-                   defbasic-expression-type-builtin
-                   |gxc[:0:]#defbasic-expression-type-builtin|))
+         (%#define-syntax
+          defbasic-expression-type-builtin
+          |gxc[:0:]#defbasic-expression-type-builtin|)
          (%#define-runtime
           basic-expression-type-call%
           gxc#basic-expression-type-call%)
-         (%#define-runtime
-          basic-expression-type-make-struct-type
-          gxc#basic-expression-type-make-struct-type)
-         (%#define-runtime
-          basic-expression-type-make-struct-predicate
-          gxc#basic-expression-type-make-struct-predicate)
-         (%#begin (%#define-runtime
-                   basic-expression-type-make-struct-field-accessor__%
-                   gxc#basic-expression-type-make-struct-field-accessor__%)
-                  (%#begin (%#define-runtime
-                            basic-expression-type-make-struct-field-accessor__0
-                            gxc#basic-expression-type-make-struct-field-accessor__0)
-                           (%#define-runtime
-                            basic-expression-type-make-struct-field-accessor
-                            gxc#basic-expression-type-make-struct-field-accessor)))
-         (%#begin (%#define-runtime
-                   basic-expression-type-make-struct-field-mutator__%
-                   gxc#basic-expression-type-make-struct-field-mutator__%)
-                  (%#begin (%#define-runtime
-                            basic-expression-type-make-struct-field-mutator__0
-                            gxc#basic-expression-type-make-struct-field-mutator__0)
-                           (%#define-runtime
-                            basic-expression-type-make-struct-field-mutator
-                            gxc#basic-expression-type-make-struct-field-mutator)))
-         (%#define-runtime
-          basic-expression-type-make-struct-field-unchecked-accessor
-          gxc#basic-expression-type-make-struct-field-unchecked-accessor)
-         (%#define-runtime
-          basic-expression-type-make-struct-field-unchecked-mutator
-          gxc#basic-expression-type-make-struct-field-unchecked-mutator)
-         (%#define-runtime
-          basic-expression-type-make-class-type
-          gxc#basic-expression-type-make-class-type)
-         (%#define-runtime
-          basic-expression-type-make-class-predicate
-          gxc#basic-expression-type-make-class-predicate)
-         (%#begin (%#define-runtime
-                   basic-expression-type-make-class-slot-accessor__%
-                   gxc#basic-expression-type-make-class-slot-accessor__%)
-                  (%#begin (%#define-runtime
-                            basic-expression-type-make-class-slot-accessor__0
-                            gxc#basic-expression-type-make-class-slot-accessor__0)
-                           (%#define-runtime
-                            basic-expression-type-make-class-slot-accessor
-                            gxc#basic-expression-type-make-class-slot-accessor)))
-         (%#begin (%#define-runtime
-                   basic-expression-type-make-class-slot-mutator__%
-                   gxc#basic-expression-type-make-class-slot-mutator__%)
-                  (%#begin (%#define-runtime
-                            basic-expression-type-make-class-slot-mutator__0
-                            gxc#basic-expression-type-make-class-slot-mutator__0)
-                           (%#define-runtime
-                            basic-expression-type-make-class-slot-mutator
-                            gxc#basic-expression-type-make-class-slot-mutator)))
-         (%#define-runtime
-          basic-expression-type-make-class-slot-unchecked-accessor
-          gxc#basic-expression-type-make-class-slot-unchecked-accessor)
-         (%#define-runtime
-          basic-expression-type-make-class-slot-unchecked-mutator
-          gxc#basic-expression-type-make-class-slot-unchecked-mutator)
          (%#define-runtime
           basic-expression-type-ref%
           gxc#basic-expression-type-ref%)

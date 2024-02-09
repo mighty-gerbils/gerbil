@@ -52,10 +52,10 @@
 
 (defstruct connection (e driver txn-begin txn-commit txn-abort)
   constructor: :init!
-  unchecked: #t)
+  )
 (defstruct statement (e i)
   constructor: :init!
-  unchecked: #t)
+  )
 
 (defmethod {:init! connection}
   (lambda (self e)

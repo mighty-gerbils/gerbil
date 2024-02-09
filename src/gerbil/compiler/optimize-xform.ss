@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base")

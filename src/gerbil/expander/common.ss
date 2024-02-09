@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander common hooks
-prelude: :<core>
+prelude: "../prelude/core"
 package: gerbil/expander
 namespace: gx
 
@@ -10,8 +10,7 @@ namespace: gx
 
 (defstruct AST (e source)
   id:   gerbil#AST::t
-  name: syntax
-  unchecked: #t)
+  name: syntax)
 
 (defrules check-procedure ()
   ((_ proc)

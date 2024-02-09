@@ -4,55 +4,127 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#identifier-wrap::t
-   (@struct-type gx#identifier-wrap::t gx#AST::t 1 #f ((final: . #t))))
-  (declare-type gx#identifier-wrap? (@struct-pred gx#identifier-wrap::t))
-  (declare-type gx#make-identifier-wrap (@struct-cons gx#identifier-wrap::t))
+   (@class gx#identifier-wrap::t
+           (gx#AST::t)
+           (gx#AST::t)
+           (marks)
+           (e source marks)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
+  (declare-type gx#make-identifier-wrap (@constructor gx#identifier-wrap::t))
   (declare-type
    gx#identifier-wrap-marks
-   (@struct-getf gx#identifier-wrap::t 0 #f))
+   (@accessor gx#identifier-wrap::t marks #t))
+  (declare-type gx#identifier-wrap-e (@accessor gx#identifier-wrap::t e #t))
+  (declare-type
+   gx#identifier-wrap-source
+   (@accessor gx#identifier-wrap::t source #t))
   (declare-type
    gx#identifier-wrap-marks-set!
-   (@struct-setf gx#identifier-wrap::t 0 #f))
+   (@mutator gx#identifier-wrap::t marks #t))
+  (declare-type
+   gx#identifier-wrap-e-set!
+   (@mutator gx#identifier-wrap::t e #t))
+  (declare-type
+   gx#identifier-wrap-source-set!
+   (@mutator gx#identifier-wrap::t source #t))
   (declare-type
    gx#&identifier-wrap-marks
-   (@struct-getf gx#identifier-wrap::t 0 #t))
+   (@accessor gx#identifier-wrap::t marks #f))
+  (declare-type gx#&identifier-wrap-e (@accessor gx#identifier-wrap::t e #f))
+  (declare-type
+   gx#&identifier-wrap-source
+   (@accessor gx#identifier-wrap::t source #f))
   (declare-type
    gx#&identifier-wrap-marks-set!
-   (@struct-setf gx#identifier-wrap::t 0 #t))
+   (@mutator gx#identifier-wrap::t marks #f))
+  (declare-type
+   gx#&identifier-wrap-e-set!
+   (@mutator gx#identifier-wrap::t e #f))
+  (declare-type
+   gx#&identifier-wrap-source-set!
+   (@mutator gx#identifier-wrap::t source #f))
   (declare-type
    gx#syntax-wrap::t
-   (@struct-type gx#syntax-wrap::t gx#AST::t 1 #f ((final: . #t))))
-  (declare-type gx#syntax-wrap? (@struct-pred gx#syntax-wrap::t))
-  (declare-type gx#make-syntax-wrap (@struct-cons gx#syntax-wrap::t))
-  (declare-type gx#syntax-wrap-mark (@struct-getf gx#syntax-wrap::t 0 #f))
-  (declare-type gx#syntax-wrap-mark-set! (@struct-setf gx#syntax-wrap::t 0 #f))
-  (declare-type gx#&syntax-wrap-mark (@struct-getf gx#syntax-wrap::t 0 #t))
+   (@class gx#syntax-wrap::t
+           (gx#AST::t)
+           (gx#AST::t)
+           (mark)
+           (e source mark)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
+  (declare-type gx#make-syntax-wrap (@constructor gx#syntax-wrap::t))
+  (declare-type gx#syntax-wrap-mark (@accessor gx#syntax-wrap::t mark #t))
+  (declare-type gx#syntax-wrap-e (@accessor gx#syntax-wrap::t e #t))
+  (declare-type gx#syntax-wrap-source (@accessor gx#syntax-wrap::t source #t))
+  (declare-type gx#syntax-wrap-mark-set! (@mutator gx#syntax-wrap::t mark #t))
+  (declare-type gx#syntax-wrap-e-set! (@mutator gx#syntax-wrap::t e #t))
   (declare-type
-   gx#&syntax-wrap-mark-set!
-   (@struct-setf gx#syntax-wrap::t 0 #t))
+   gx#syntax-wrap-source-set!
+   (@mutator gx#syntax-wrap::t source #t))
+  (declare-type gx#&syntax-wrap-mark (@accessor gx#syntax-wrap::t mark #f))
+  (declare-type gx#&syntax-wrap-e (@accessor gx#syntax-wrap::t e #f))
+  (declare-type gx#&syntax-wrap-source (@accessor gx#syntax-wrap::t source #f))
+  (declare-type gx#&syntax-wrap-mark-set! (@mutator gx#syntax-wrap::t mark #f))
+  (declare-type gx#&syntax-wrap-e-set! (@mutator gx#syntax-wrap::t e #f))
+  (declare-type
+   gx#&syntax-wrap-source-set!
+   (@mutator gx#syntax-wrap::t source #f))
   (declare-type
    gx#syntax-quote::t
-   (@struct-type gx#syntax-quote::t gx#AST::t 2 #f ((final: . #t))))
-  (declare-type gx#syntax-quote? (@struct-pred gx#syntax-quote::t))
-  (declare-type gx#make-syntax-quote (@struct-cons gx#syntax-quote::t))
-  (declare-type gx#syntax-quote-context (@struct-getf gx#syntax-quote::t 0 #f))
-  (declare-type gx#syntax-quote-marks (@struct-getf gx#syntax-quote::t 1 #f))
+   (@class gx#syntax-quote::t
+           (gx#AST::t)
+           (gx#AST::t)
+           (context marks)
+           (e source context marks)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))
+  (declare-type gx#make-syntax-quote (@constructor gx#syntax-quote::t))
+  (declare-type
+   gx#syntax-quote-context
+   (@accessor gx#syntax-quote::t context #t))
+  (declare-type gx#syntax-quote-marks (@accessor gx#syntax-quote::t marks #t))
+  (declare-type gx#syntax-quote-e (@accessor gx#syntax-quote::t e #t))
+  (declare-type
+   gx#syntax-quote-source
+   (@accessor gx#syntax-quote::t source #t))
   (declare-type
    gx#syntax-quote-context-set!
-   (@struct-setf gx#syntax-quote::t 0 #f))
+   (@mutator gx#syntax-quote::t context #t))
   (declare-type
    gx#syntax-quote-marks-set!
-   (@struct-setf gx#syntax-quote::t 1 #f))
+   (@mutator gx#syntax-quote::t marks #t))
+  (declare-type gx#syntax-quote-e-set! (@mutator gx#syntax-quote::t e #t))
+  (declare-type
+   gx#syntax-quote-source-set!
+   (@mutator gx#syntax-quote::t source #t))
   (declare-type
    gx#&syntax-quote-context
-   (@struct-getf gx#syntax-quote::t 0 #t))
-  (declare-type gx#&syntax-quote-marks (@struct-getf gx#syntax-quote::t 1 #t))
+   (@accessor gx#syntax-quote::t context #f))
+  (declare-type gx#&syntax-quote-marks (@accessor gx#syntax-quote::t marks #f))
+  (declare-type gx#&syntax-quote-e (@accessor gx#syntax-quote::t e #f))
+  (declare-type
+   gx#&syntax-quote-source
+   (@accessor gx#syntax-quote::t source #f))
   (declare-type
    gx#&syntax-quote-context-set!
-   (@struct-setf gx#syntax-quote::t 0 #t))
+   (@mutator gx#syntax-quote::t context #f))
   (declare-type
    gx#&syntax-quote-marks-set!
-   (@struct-setf gx#syntax-quote::t 1 #t))
+   (@mutator gx#syntax-quote::t marks #f))
+  (declare-type gx#&syntax-quote-e-set! (@mutator gx#syntax-quote::t e #f))
+  (declare-type
+   gx#&syntax-quote-source-set!
+   (@mutator gx#syntax-quote::t source #f))
   (declare-type gx#identifier? (@lambda 1 #f))
   (declare-type gx#identifier-quote? (@lambda 1 #f))
   (declare-type gx#sealed-syntax? (@lambda 1 #f))

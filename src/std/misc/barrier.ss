@@ -13,7 +13,7 @@
         with-barrier-error)
 
 (defstruct barrier (mx cv count limit exn)
-  constructor: :init! final: #t unchecked: #t)
+  constructor: :init! final: #t )
 
 (defmethod {:init! barrier}
   (lambda (self limit)

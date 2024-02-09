@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -62,11 +63,11 @@ namespace: gxc
     (let ($tmp (make-symbol (gensym '__tmp)))
       [[$id]
        ['%#let-values [[[$tmp]
-                        ['%#call ['%#ref 'class-slot-offset]
+                        ['%#call ['%#ref 'class-slot-offset*]
                                  ['%#ref $t]
                                  ['%#quote id]]]]
                       ['%#if ['%#ref $tmp]
-                             ['%#call ['%#ref '##fx+] ['%#ref $tmp] ['%#quote 1]]
+                             ['%#ref $tmp]
                              ['%#call ['%#ref 'error]
                                       ['%#quote "Unknown slot"]
                                       ['%#quote id]]]]]))
@@ -515,6 +516,7 @@ namespace: gxc
 
 ;;; apply-collect-objec-refs
 
+;; TODO: simplify this (and the caller) after (re)boostrap when the old MOP residues disappear.
 (def (collect-object-refs-call% stx self methods slots class-check struct-check struct-assert)
   (begin-annotation @match:prefix
   (ast-case stx (%#ref %#quote)
@@ -546,53 +548,24 @@ namespace: gxc
      (begin
        (hash-put! slots (stx-e #'slot) #t)
        (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+
+    ;; MOP
     ((_ (%#ref getf) (%#ref -self))
-     (and (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf)))
+     (and (!accessor? (optimizer-resolve-type (identifier-symbol #'getf)))
           (free-identifier=? #'-self self))
-     (hash-put! slots (!class-getf-slot (optimizer-resolve-type (identifier-symbol #'getf))) #t))
+     (hash-put! slots (!accessor-slot (optimizer-resolve-type (identifier-symbol #'getf)) ) #t))
     ((_ (%#ref setf) (%#ref -self) expr)
-     (and (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf)))
+     (and (!mutator? (optimizer-resolve-type (identifier-symbol #'setf)))
           (free-identifier=? #'-self self))
      (begin
-       (hash-put! slots (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'setf))) #t)
+       (hash-put! slots (!mutator-slot (optimizer-resolve-type (identifier-symbol #'setf))) #t)
        (compile-e #'expr self methods slots class-check struct-check struct-assert)))
-    ((_ (%#ref is?) (%#ref -self))
-     (and (!class-pred? (optimizer-resolve-type (identifier-symbol #'is?)))
-          (free-identifier=? #'-self self))
-     (hash-put! class-check (!type-id (optimizer-resolve-type (identifier-symbol #'is?))) #t))
-    ((_ (%#ref is?) (%#ref -self))
-     (and (!struct-pred? (optimizer-resolve-type (identifier-symbol #'is?)))
-          (free-identifier=? #'-self self))
-     (hash-put! struct-check (!type-id (optimizer-resolve-type (identifier-symbol #'is?))) #t))
-    ((_ (%#ref getf) (%#ref -self))
-     (cond
-      ((not (free-identifier=? #'-self self)) #f)
-      ((optimizer-resolve-type (identifier-symbol #'getf))
-       => (lambda (t)
-            (and (!struct-getf? t)
-                 (alet (struct-t (optimizer-resolve-type (!type-id t)))
-                   (!struct-type-xfields struct-t)))))
-      (else #f))
-     (let (getf (optimizer-resolve-type (identifier-symbol #'getf)))
-       (unless (!struct-getf-unchecked? getf)
-         (hash-put! struct-assert (!type-id getf) #t))))
-    ((_ (%#ref setf) (%#ref -self) expr)
-     (cond
-      ((not (free-identifier=? #'-self self)) #f)
-      ((optimizer-resolve-type (identifier-symbol #'setf))
-       => (lambda (t)
-            (and (!struct-setf? t)
-                 (alet (struct-t (optimizer-resolve-type (!type-id t)))
-                   (!struct-type-xfields struct-t)))))
-      (else #f))
-     (let (setf (optimizer-resolve-type (identifier-symbol #'setf)))
-       (unless (!struct-setf-unchecked? setf)
-         (hash-put! struct-assert (!type-id setf) #t))
-       (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+
     (_ (collect-operands stx self methods slots class-check struct-check struct-assert)))))
 
 ;;; apply-subst-object-refs
 
+;; TODO: simplify this (and the caller) after (re)boostrap when the old MOP residues disappear.
 (def (subst-object-refs-call% stx self $t methods slots class-check struct-check struct-assert)
   (def (force-e what)
     ['%#call ['%#ref 'force] ['%#ref what]])
@@ -635,95 +608,25 @@ namespace: gxc
        (xform-wrap-source
         ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
+
+    ;; MOP
     ((_ (%#ref getf) (%#ref -self))
      (and (free-identifier=? #'-self self)
-          (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf))))
-     (let* ((slot (!class-getf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+          (!accessor? (optimizer-resolve-type (identifier-symbol #'getf))))
+     (let* ((slot (!accessor-slot (optimizer-resolve-type (identifier-symbol #'getf))))
             ($field (hash-ref slots slot)))
        (xform-wrap-source
         ['%#struct-unchecked-ref ['%#ref $t] ['%#ref $field] ['%#ref self]]
         stx)))
+
     ((_ (%#ref setf) (%#ref -self) expr)
      (and (free-identifier=? #'-self self)
-          (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf))))
-     (let* ((slot (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+          (!mutator? (optimizer-resolve-type (identifier-symbol #'setf))))
+     (let* ((slot (!mutator-slot (optimizer-resolve-type (identifier-symbol #'setf))))
             ($field (hash-ref slots slot))
             (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (xform-wrap-source
         ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
-    ((_ (%#ref is?) (%#ref -self))
-     (and (free-identifier=? #'-self self)
-          (!class-pred? (optimizer-resolve-type (identifier-symbol #'is?))))
-     ['%#ref (hash-ref class-check (!type-id (optimizer-resolve-type (identifier-symbol #'is?))))])
-    ((_ (%#ref is?) (%#ref -self))
-     (and (free-identifier=? #'-self self)
-          (!struct-pred? (optimizer-resolve-type (identifier-symbol #'is?))))
-     (let (t (!type-id (optimizer-resolve-type (identifier-symbol #'is?))))
-       (cond
-        ((hash-get struct-assert t)
-         '(%#quote #t))
-        ((hash-get struct-check t)
-         => (lambda (checkq) ['%#ref checkq]))
-        (else stx))))
-    ((_ (%#ref getf) (%#ref -self))
-     (cond
-      ((not (free-identifier=? #'-self self)) #f)
-      ((optimizer-resolve-type (identifier-symbol #'getf))
-       => (lambda (t)
-            (and (!struct-getf? t)
-                 (alet (struct-t (optimizer-resolve-type (!type-id t)))
-                   (!struct-type-xfields struct-t)))))
-      (else #f))
-     (let* ((getf (optimizer-resolve-type (identifier-symbol #'getf)))
-            (t (!type-id getf)))
-       (cond
-        ((!struct-getf-unchecked? getf)
-         stx)
-        ((hash-get struct-assert t)
-         (let* ((struct-t (optimizer-resolve-type t))
-                (off (fx+ (!struct-getf-off getf) (!struct-type-xfields struct-t) 1)))
-           ['%#struct-unchecked-ref ['%#ref t] ['%#quote off] ['%#ref self]]))
-        ((hash-get struct-check t)
-         => (lambda (checkq)
-              (let* ((struct-t (optimizer-resolve-type t))
-                     (off (fx+ (!struct-getf-off getf) (!struct-type-xfields struct-t) 1)))
-                ['%#if ['%#ref checkq]
-                       ['%#struct-unchecked-ref ['%#ref t] ['%#quote off] ['%#ref self]]
-                       ['%#call ['%#ref 'error]
-                                ['%#quote "Type error; concrete type is not a subclass of expected type"]
-                                ['%#ref t]
-                                ['%#ref self]]])))
-        (else stx))))
-    ((_ (%#ref setf) (%#ref -self) expr)
-     (cond
-      ((not (free-identifier=? #'-self self)) #f)
-      ((optimizer-resolve-type (identifier-symbol #'setf))
-       => (lambda (t)
-            (and (!struct-setf? t)
-                 (alet (struct-t (optimizer-resolve-type (!type-id t)))
-                   (!struct-type-xfields struct-t)))))
-      (else #f))
-     (let* ((setf (optimizer-resolve-type (identifier-symbol #'setf)))
-            (t (!type-id setf))
-            (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
-       (cond
-        ((!struct-setf-unchecked? setf)
-         ['%#call #'(%#ref setf) #'(%#ref -self) expr])
-        ((hash-get struct-assert t)
-         (let* ((struct-t (optimizer-resolve-type t))
-                (off (fx+ (!struct-setf-off setf) (!struct-type-xfields struct-t) 1)))
-           ['%#struct-unchecked-set! ['%#ref t] ['%#quote off] ['%#ref self] expr]))
-        ((hash-get struct-check t)
-         => (lambda (checkq)
-              (let* ((struct-t (optimizer-resolve-type t))
-                     (off (fx+ (!struct-setf-off setf) (!struct-type-xfields struct-t) 1)))
-                ['%#if ['%#ref checkq]
-                       ['%#struct-unchecked-set! ['%#ref t] ['%#quote off] ['%#ref self] expr]
-                       ['%#call ['%#ref 'error]
-                                ['%#quote "Type error; concrete type is not a subclass of expected type"]
-                                ['%#ref t]
-                                ['%#ref self]]])))
-        (else
-         ['%#call #'(%#ref setf) #'(%#ref -self) expr]))))
+
     (_ (xform-operands stx self $t methods slots class-check struct-check struct-assert)))))

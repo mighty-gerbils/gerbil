@@ -16,10 +16,16 @@ namespace: gxc
          (%#define-runtime optimizer-info-init! gxc#optimizer-info-init!)
          (%#define-runtime optimize! gxc#optimize!)
          (%#define-runtime
+          optimizer-load-builtin-ssxi
+          gxc#optimizer-load-builtin-ssxi)
+         (%#define-runtime
           optimizer-load-ssxi-deps
           gxc#optimizer-load-ssxi-deps)
          (%#define-runtime optimizer-load-ssxi gxc#optimizer-load-ssxi)
          (%#define-runtime optimizer-import-ssxi gxc#optimizer-import-ssxi)
+         (%#define-runtime
+          optimizer-import-ssxi-by-id
+          gxc#optimizer-import-ssxi-by-id)
          (%#define-runtime optimize-source gxc#optimize-source)
          (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
@@ -32,16 +38,11 @@ namespace: gxc
           gxc#generate-ssxi-define-values%)
          (%#define-runtime generate-ssxi-call% gxc#generate-ssxi-call%)
          (%#define-runtime !alias::typedecl gxc#!alias::typedecl)
-         (%#define-runtime !struct-type::typedecl gxc#!struct-type::typedecl)
-         (%#define-runtime !struct-pred::typedecl gxc#!struct-pred::typedecl)
-         (%#define-runtime !struct-cons::typedecl gxc#!struct-cons::typedecl)
-         (%#define-runtime !struct-getf::typedecl gxc#!struct-getf::typedecl)
-         (%#define-runtime !struct-setf::typedecl gxc#!struct-setf::typedecl)
-         (%#define-runtime !class-type::typedecl gxc#!class-type::typedecl)
-         (%#define-runtime !class-pred::typedecl gxc#!class-pred::typedecl)
-         (%#define-runtime !class-cons::typedecl gxc#!class-cons::typedecl)
-         (%#define-runtime !class-getf::typedecl gxc#!class-getf::typedecl)
-         (%#define-runtime !class-setf::typedecl gxc#!class-setf::typedecl)
+         (%#define-runtime !class::typedecl gxc#!class::typedecl)
+         (%#define-runtime !predicate::typedecl gxc#!predicate::typedecl)
+         (%#define-runtime !constructor::typedecl gxc#!constructor::typedecl)
+         (%#define-runtime !accessor::typedecl gxc#!accessor::typedecl)
+         (%#define-runtime !mutator::typedecl gxc#!mutator::typedecl)
          (%#define-runtime !lambda::typedecl gxc#!lambda::typedecl)
          (%#define-runtime !case-lambda::typedecl gxc#!case-lambda::typedecl)
          (%#define-runtime !kw-lambda::typedecl gxc#!kw-lambda::typedecl)

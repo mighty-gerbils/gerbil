@@ -1,12 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler compilation methods
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
-        :gerbil/gambit
-        :gerbil/runtime/error
+(import "../expander"
+        "../prelude/gambit"
+        "../runtime/error"
         "base"
         "compile"
         "optimize")
@@ -102,6 +103,7 @@ namespace: gxc
                    (current-compile-debug debug)
                    (current-compile-generate-ssxi gen-ssxi)
                    (current-compile-timestamp (compile-timestamp))
+                   (current-compile-context `(compile-module ,srcpath))
                    (current-expander-compiling? #t))
       (verbose "compile " srcpath)
       (compile-top-module (with-driver-mutex (import-module srcpath))))))
@@ -125,6 +127,7 @@ namespace: gxc
                    (current-compile-verbose verbosity)
                    (current-compile-debug debug)
                    (current-compile-timestamp (compile-timestamp))
+                   (current-compile-context `(compile-exe ,srcpath))
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
       (compile-executable-module (with-driver-mutex (import-module srcpath)) opts))))

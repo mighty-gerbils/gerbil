@@ -14,7 +14,7 @@
 
 (defstruct node (e prev next)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! node}
   (lambda (self e)
@@ -36,7 +36,7 @@
 
 (defstruct deque (front back length)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! deque}
   (lambda (self)

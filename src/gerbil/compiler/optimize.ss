@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -25,6 +26,8 @@ namespace: gxc
   (parameterize ((current-compile-mutators (make-hash-table-eq))
                  (current-compile-local-type (make-hash-table-eq)))
     (optimizer-load-ssxi-deps ctx)
+    ;; load builtins
+    (optimizer-load-builtin-ssxi)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -33,6 +36,12 @@ namespace: gxc
       (set! (module-context-code ctx) code))))
 
 ;;; ssxi loading
+(def (optimizer-load-builtin-ssxi)
+  (optimizer-import-ssxi-by-id 'gerbil/builtin)
+  (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
+             'gerbil/builtin
+             #t))
+
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
     (let (imports (module-context-import ctx))
@@ -84,19 +93,21 @@ namespace: gxc
             val)))))
 
 (def (optimizer-import-ssxi ctx)
+  (and (expander-context-id ctx)
+       (optimizer-import-ssxi-by-id (expander-context-id ctx))))
+
+(def (optimizer-import-ssxi-by-id id)
   ;; check output-dir/id.ssxi.ss for existence; this is a current compilation
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
     (when (current-compile-verbose)
-      (displayln "Failed to load ssxi module for " (expander-context-id ctx))
+      (displayln "Failed to load ssxi module for " id)
       (display-exception exn))
     #f)
 
   (def (import-e)
-    (let* ((str-id (string-append
-                    (module-id->path-string (expander-context-id ctx))
-                    ".ssxi"))
+    (let* ((str-id (string-append (module-id->path-string id) ".ssxi"))
            (artefact-path
             (alet (odir (current-compile-output-dir))
               (path-expand (string-append str-id ".ss") odir)))
@@ -110,8 +121,7 @@ namespace: gxc
       (verbose "Loading ssxi module " ssxi-path)
       (import-module ssxi-path #t #t)))
 
-  (and (expander-context-id ctx)
-       (with-catch catch-e import-e)))
+  (with-catch catch-e import-e))
 
 ;;; source transforms
 (def (optimize-source stx)
@@ -185,56 +195,33 @@ namespace: gxc
     (with ((!alias alias-id) self)
       ['@alias alias-id])))
 
-(defmethod {typedecl !struct-type}
+;; MOP
+(defmethod {typedecl !class}
   (lambda (self)
-    (with ((!struct-type type-id super fields _ ctor plist) self)
-      ['@struct-type type-id super fields ctor plist])))
+    (with ((!class id super precendence-list slots fields constructor struct? final? methods) self)
+      ['@class id super precendence-list slots fields constructor struct? final? (and methods (hash->list methods))])))
 
-(defmethod {typedecl !struct-pred}
+(defmethod {typedecl !predicate}
   (lambda (self)
-    (with ((!struct-pred struct-t) self)
-      ['@struct-pred struct-t])))
+    (with ((!predicate klass-id) self)
+      ['@predicate klass-id])))
 
-(defmethod {typedecl !struct-cons}
+(defmethod {typedecl !constructor}
   (lambda (self)
-    (with ((!struct-cons struct-t) self)
-      ['@struct-cons struct-t])))
+    (with ((!constructor klass-id) self)
+      ['@constructor klass-id])))
 
-(defmethod {typedecl !struct-getf}
+(defmethod {typedecl !accessor}
   (lambda (self)
-    (with ((!struct-getf struct-t off unchecked?) self)
-      ['@struct-getf struct-t off unchecked?])))
+    (with ((!accessor klass-id slot checked?) self)
+      ['@accessor klass-id slot checked?])))
 
-(defmethod {typedecl !struct-setf}
+(defmethod {typedecl !mutator}
   (lambda (self)
-    (with ((!struct-setf struct-t off unchecked?) self)
-      ['@struct-setf struct-t off unchecked?])))
+    (with ((!mutator klass-id slot checked?) self)
+      ['@mutator klass-id slot checked?])))
 
-(defmethod {typedecl !class-type}
-  (lambda (self)
-    (with ((!class-type type-id super mixin slots xslots ctor plist) self)
-      ['@class-type type-id super mixin slots xslots ctor plist])))
-
-(defmethod {typedecl !class-pred}
-  (lambda (self)
-    (with ((!class-pred class-t) self)
-      ['@class-pred class-t])))
-
-(defmethod {typedecl !class-cons}
-  (lambda (self)
-    (with ((!class-cons class-t) self)
-      ['@class-cons class-t])))
-
-(defmethod {typedecl !class-getf}
-  (lambda (self)
-    (with ((!class-getf class-t slot unchecked?) self)
-      ['@class-getf class-t slot unchecked?])))
-
-(defmethod {typedecl !class-setf}
-  (lambda (self)
-    (with ((!class-setf class-t slot unchecked?) self)
-      ['@class-setf class-t slot unchecked?])))
-
+;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)
     (with ((!lambda _ arity dispatch inline typedecl) self)

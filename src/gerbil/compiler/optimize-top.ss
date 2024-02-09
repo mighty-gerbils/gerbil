@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -18,6 +19,7 @@ namespace: gxc
   (%#define-values    collect-top-level-type-define-values%))
 
 (defcompile-method apply-basic-expression-top-level-type (&basic-expression-top-level-type &false)
+  (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#call             basic-expression-type-call%))
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
@@ -128,10 +130,66 @@ namespace: gxc
      (compile-e #'expr))
     (_ #f)))
 
+(def basic-expression-type-annotations (make-hash-table-eq))
+(defrules defbasic-expression-type-annotations ()
+  ((_ (id type-e) ...)
+   (begin
+     (hash-put! basic-expression-type-annotations 'id type-e) ...)))
+
 (def (basic-expression-type-begin-annotation% stx)
   (ast-case stx ()
     ((_ ann expr)
-     (compile-e #'expr))))
+     (ast-case #'ann ()
+       ((annotation . args)
+        (identifier? #'annotation)
+        (cond
+         ((hash-get basic-expression-type-annotations (stx-e #'annotation))
+          => (lambda (type-e) (type-e stx #'ann)))
+         (else
+          (compile-e #'expr))))
+       (_ (compile-e #'expr))))))
+
+(def (basic-expression-type-annotation-mop.class stx ann)
+  (ast-case ann ()
+    ((_ type-id super slots ctor-method struct? final?)
+     (let ((type-id (stx-e #'type-id))
+           (super (map identifier-symbol #'super))
+           (slots (map stx-e #'slots))
+           (ctor-method (stx-e #'ctor-method))
+           (struct? (stx-e #'struct?))
+           (final? (stx-e #'final?)))
+       (make-!class type-id super slots ctor-method struct? final?)))))
+
+(def (basic-expression-type-annotation-mop.constructor stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!constructor (identifier-symbol #'type-t)))))
+
+(def (basic-expression-type-annotation-mop.predicate stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!predicate (identifier-symbol #'type-t)))))
+
+(def (basic-expression-type-annotation-mop.accessor stx ann)
+  (ast-case ann ()
+    ((_ type-t slot checked?)
+     (make-!accessor (identifier-symbol #'type-t)
+                     (stx-e #'slot)
+                     (stx-e #'checked?)))))
+
+(def (basic-expression-type-annotation-mop.mutator stx ann)
+  (ast-case ann ()
+    ((_ type-t slot checked?)
+     (make-!mutator (identifier-symbol #'type-t)
+                    (stx-e #'slot)
+                    (stx-e #'checked?)))))
+
+(defbasic-expression-type-annotations
+  (@mop.class       basic-expression-type-annotation-mop.class)
+  (@mop.constructor basic-expression-type-annotation-mop.constructor)
+  (@mop.predicate   basic-expression-type-annotation-mop.predicate)
+  (@mop.accessor    basic-expression-type-annotation-mop.accessor)
+  (@mop.mutator     basic-expression-type-annotation-mop.mutator))
 
 (def (basic-expression-type-lambda% stx)
   (begin-annotation @match:prefix
@@ -140,41 +198,6 @@ namespace: gxc
        (current-compile-type-closure)
        ;; don't capture local dispatch references, just enough to arity check
        (make-!lambda 'lambda (lambda-form-arity #'form) #f))
-
-      ((_ args (%#call (%#ref -apply) (%#ref -make-struct-instance) (%#ref type-t) (%#ref xargs)))
-       ;; defstruct constructor
-       (and (identifier? #'args)
-            (runtime-identifier=? #'-apply 'apply)
-            (runtime-identifier=? #'-make-struct-instance 'make-struct-instance)
-            (free-identifier=? #'args #'xargs))
-       (let* ((type-t (identifier-symbol #'type-t))
-              (type (optimizer-resolve-type type-t)))
-         (and (!struct-type? type)
-              (make-!struct-cons type-t))))
-
-      ((_ args (%#call (%#ref -apply) (%#ref -make-class-instance) (%#ref type-t) (%#ref xargs)))
-       ;; defclass constructor
-       (and (identifier? #'args)
-            (runtime-identifier=? #'-apply 'apply)
-            (runtime-identifier=? #'-make-class-instance 'make-class-instance)
-            (free-identifier=? #'args #'xargs))
-       (let* ((type-t (identifier-symbol #'type-t))
-              (type (optimizer-resolve-type type-t)))
-         (and (!class-type? type)
-              (make-!class-cons type-t))))
-
-      ((_ (arg ...) (%#call (%#ref -make-struct-instance) (%#ref type-t) (%#ref xarg) ...))
-       ;; srfi/9 defrecord constructor
-       (and (identifier-list? #'(arg ...))
-            (runtime-identifier=? #'-make-struct-instance 'make-struct-instance)
-            (fx= (length #'(arg ...)) (length #'(xarg ...)))
-            (andmap free-identifier=?
-                    #'(arg ...)
-                    #'(xarg ...)))
-       (let* ((type-t (identifier-symbol #'type-t))
-              (type (optimizer-resolve-type type-t)))
-         (and (!struct-type? type)
-              (make-!struct-cons type-t))))
 
       ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
                        (%#ref dispatch) (%#ref -args)))
@@ -235,6 +258,7 @@ namespace: gxc
    (begin
      (hash-put! basic-expression-type-builtin 'id type-e) ...)))
 
+
 (def (basic-expression-type-call% stx)
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
@@ -242,255 +266,8 @@ namespace: gxc
        (type-e stx #'args)))
     (_ #f)))
 
-(def (basic-expression-type-make-struct-type stx args)
-  (ast-case args (%#quote %#ref)
-    (((%#quote type-id) (%#quote #f) (%#quote fields) name (%#quote plist) (%#quote ctor) . _)
-     (make-!struct-type (stx-e #'type-id) #f (stx-e #'fields) 0 (stx-e #'ctor) (stx-e #'plist)))
-    (((%#quote type-id) (%#ref super) (%#quote fields) name (%#quote plist) (%#quote ctor) . _)
-     (let* ((super-t (and (stx-e #'super) (identifier-symbol #'super)))
-            (super-type (and super-t (optimizer-resolve-type super-t))))
-       (when (and super-type (not (!struct-type? super-type)))
-         (raise-compile-error "Illegal struct-type construction; invalid super type" stx #'super))
-       (let ((fields (stx-e #'fields))
-             (xfields
-              (and super-type
-                   (alet ((super-fields (!struct-type-fields super-type))
-                          (super-xfields (!struct-type-xfields super-type)))
-                     (fx+ super-fields super-xfields))))
-            (plist (stx-e #'plist))
-            (ctor
-             (cond
-              ((stx-e #'ctor) => values)
-              (super-type (!struct-type-ctor super-type))
-              (super-t #!void)          ; unknown, be conservative
-              (else #f))))              ; no constructor method
-         (make-!struct-type (stx-e #'type-id) super-t fields xfields ctor plist))))
-    (_
-     (begin
-       (verbose "make-struct-type: can't infer type " (syntax->datum stx))
-       #f))))
 
-(def (basic-expression-type-make-struct-predicate stx args)
-  (ast-case args (%#ref)
-    (((%#ref type-t))
-     (make-!struct-pred (identifier-symbol #'type-t)))
-    (_ #f)))
-
-(def (basic-expression-type-make-struct-field-accessor stx args (unchecked? #f))
-  (ast-case args (%#quote %#ref)
-    (((%#ref type-t) (%#quote off))
-     (make-!struct-getf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
-    (_ #f)))
-
-(def (basic-expression-type-make-struct-field-mutator stx args (unchecked? #f))
-  (ast-case args (%#quote %#ref)
-    (((%#ref type-t) (%#quote off))
-     (make-!struct-setf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
-    (_ #f)))
-
-(def (basic-expression-type-make-struct-field-unchecked-accessor stx args)
-  (basic-expression-type-make-struct-field-accessor stx args #t))
-
-(def (basic-expression-type-make-struct-field-unchecked-mutator stx args)
-  (basic-expression-type-make-struct-field-mutator stx args #t))
-
-;; TODO: Support the new unified struct-and-class type descriptors from mop.ss
-;; In particular, struct fields are now also class slots, and the same name if
-;; repeated should not lead to distinct fields but to the same slot.
-(def (basic-expression-type-make-class-type stx args)
-  (def (mixin-expr->list stx)
-    (let/cc return
-      (let recur ((rest stx))
-        (ast-case rest (%#quote %#ref %#call)
-          ((%#call (%#ref -cons) (%#ref klass) rest)
-           (runtime-identifier=? #'-cons 'cons)
-           (cons (identifier-symbol #'klass) (recur #'rest)))
-          ((%#quote ()) [])
-          ((%#call (%#ref -list) (%#ref klass) ...)
-           (runtime-identifier=? #'-list 'list)
-           (map identifier-symbol #'(klass ...)))
-          (_ (return #f))))))
-
-  (def (mixin-resolve-type mixin)
-    (alet (t (optimizer-resolve-type mixin))
-      (unless (or (!class-type? t) (!struct-type? t))
-        (raise-compile-error "Illegal class-type construction; invalid mixin type" stx mixin))
-      t))
-
-  (def (mixin-super mixins ids)
-    (def (super-e a b)
-      (cond
-       ((void? a) #!void)
-       ((not b) a)
-       ((eq? a b) a)
-       (else
-        (let ((ha (struct-hierarchy a))
-              (hb (struct-hierarchy b)))
-          (cond
-           ((equal? ha hb) a)
-           ((struct< ha hb) b)
-           ((struct< hb ha) a)
-           ((and (not (car ha)) (not (car hb))) ; incomplete
-            #!void)
-           (else
-            (raise-compile-error "Illegal class-type construction; incompatible base classes" stx a b)))))))
-
-    (def (struct-hierarchy id)
-      (let lp ((id id) (h []))
-        (cond
-         ((not id) h)
-         ((optimizer-resolve-type id)
-          => (lambda (t)
-               (if (!struct-type? t)
-                 (lp (!struct-type-super t) (cons id h))
-                 (error "Unexpected struct type" id t))))
-         (else (cons #f h)))))
-
-    (def (struct< ha hb)
-      (and (fx< (length ha) (length hb))
-           (let lp ((rest-a ha) (rest-b hb))
-             (match* (rest-a rest-b)
-               (([a . rest-a] [b . rest-b])
-                (and (eq? a b) (lp rest-a rest-b)))
-               (else #t)))))
-
-    (let lp ((rest mixins) (rest-ids ids) (super #f))
-      (match rest
-        ([t . rest]
-         (cond
-          ((!class-type? t)
-           (let* ((t-super (!class-type-super t))
-                  (super (super-e t-super super)))
-             (if (void? super)
-               #!void                 ; incomplete type
-               (lp rest (cdr rest-ids) super))))
-          ((!struct-type? t)
-           (let (super (super-e (car rest-ids) super))
-             (if (void? super)
-               #!void
-               (lp rest (cdr rest-ids) super))))
-          (else
-           (error "Unexpected mixin" t))))
-        (else super))))
-
-  (def (mixin-slots mixins)
-    (let lp ((rest mixins) (slots []))
-      (match rest
-        ([t . rest]
-         (cond
-          ((!class-type? t)
-           (cond
-            ((!class-type-xslots t)
-             => (lambda (xslots)
-                  (lp rest (foldl cons-slot slots xslots))))
-            (else
-             (verbose "make-class-type: incomplete mixin class " (!type-id t))
-             #f)))
-          ((!struct-type? t)
-           (lp rest slots))
-          (else
-           (error "Unexpected mixin" t))))
-        (else slots))))
-
-  (def (mixin-ctor mixins)
-    (def (ctor-e a b)
-      (cond
-       ((or (void? a) (void? b)) #!void)
-       ((not a) b)
-       ((not b) a)
-       ((eq? a b) a)
-       (else
-        (raise-compile-error "Illegal class-type construction; conflicting implicit constructors"
-                             stx a b))))
-
-    (let lp ((rest mixins) (ctor #f))
-      (if (void? ctor)
-        #!void
-        (match rest
-          ([t . rest]
-           (cond
-            ((!class-type? t)
-             (lp rest (ctor-e ctor (!class-type-ctor t))))
-            ((!struct-type? t)
-             (lp rest (ctor-e ctor (!struct-type-ctor t))))
-            (else
-             (error "Unexpected mixin" t))))
-          (else ctor)))))
-
-  (def (cons-slot slot r)
-    (if (memq slot r) r (cons slot r)))
-
-  (ast-case args (%#quote %#ref)
-    (((%#quote type-id) (%#quote ()) (%#quote slots) name (%#quote plist) (%#quote ctor))
-     (let (slots (stx-e #'slots))
-       (make-!class-type (stx-e #'type-id) #f [] slots slots (stx-e #'ctor) (stx-e #'plist))))
-    (((%#quote type-id) mixin (%#quote slots) name (%#quote plist) (%#quote ctor))
-     (cond
-      ((mixin-expr->list #'mixin)
-       => (lambda (mixin)
-            (let (mixin-t (map mixin-resolve-type mixin))
-              (if (ormap not mixin-t)
-                (begin
-                  (verbose "make-class-type: incomplete class" (stx-e #'type-id))
-                  (make-!class-type (stx-e #'type-id) #!void mixin (stx-e #'slots) #f
-                                    (or (stx-e #'ctor) #!void) (stx-e #'plist)))
-                (let* ((super    (mixin-super mixin-t mixin))
-                       (slots    (stx-e #'slots))
-                       (xslots   (mixin-slots mixin-t))
-                       (xslots   (and xslots (reverse (foldl cons-slot xslots slots))))
-                       (ctor     (stx-e #'ctor))
-                       (ctor     (or ctor (mixin-ctor mixin-t))))
-                  (make-!class-type (stx-e #'type-id) super mixin slots xslots ctor (stx-e #'plist)))))))
-      (else
-       (verbose "make-class-type: incomplete class " (stx-e #'type-id))
-       (make-!class-type (stx-e #'type-id) #!void #f (stx-e #'slots) #f
-                         (or (stx-e #'ctor) #!void) (stx-e #'plist)))))
-    (_
-     (begin
-       (verbose "make-class-type: can't infer type " (syntax->datum stx))
-       #f))))
-
-(def (basic-expression-type-make-class-predicate stx args)
-  (ast-case args (%#ref)
-    (((%#ref type-t))
-     (make-!class-pred (identifier-symbol #'type-t)))
-    (_ #f)))
-
-(def (basic-expression-type-make-class-slot-accessor stx args (unchecked? #f))
-  (ast-case args (%#quote %#ref)
-    (((%#ref type-t) (%#quote slot))
-     (make-!class-getf (identifier-symbol #'type-t) (stx-e #'slot) unchecked?))
-    (_ #f)))
-
-(def (basic-expression-type-make-class-slot-mutator stx args (unchecked? #f))
-  (ast-case args (%#quote %#ref)
-    (((%#ref type-t) (%#quote slot))
-     (make-!class-setf (identifier-symbol #'type-t) (stx-e #'slot) unchecked?))
-    (_ #f)))
-
-(def (basic-expression-type-make-class-slot-unchecked-accessor stx args)
-  (basic-expression-type-make-class-slot-accessor stx args #t))
-
-(def (basic-expression-type-make-class-slot-unchecked-mutator stx args)
-  (basic-expression-type-make-class-slot-mutator stx args #t))
-
-(defbasic-expression-type-builtin
-  (make-struct-type basic-expression-type-make-struct-type)
-  (make-struct-predicate basic-expression-type-make-struct-predicate)
-  (make-struct-field-accessor basic-expression-type-make-struct-field-accessor)
-  (make-struct-field-mutator basic-expression-type-make-struct-field-mutator)
-  (make-struct-field-unchecked-accessor
-   basic-expression-type-make-struct-field-unchecked-accessor)
-  (make-struct-field-unchecked-mutator
-   basic-expression-type-make-struct-field-unchecked-mutator)
-  (make-class-type basic-expression-type-make-class-type)
-  (make-class-predicate basic-expression-type-make-class-predicate)
-  (make-class-slot-accessor basic-expression-type-make-class-slot-accessor)
-  (make-class-slot-mutator basic-expression-type-make-class-slot-mutator)
-  (make-class-slot-unchecked-accessor
-   basic-expression-type-make-class-slot-unchecked-accessor)
-  (make-class-slot-unchecked-mutator
-   basic-expression-type-make-class-slot-unchecked-mutator))
+(defbasic-expression-type-builtin)
 
 (def (basic-expression-type-ref% stx)
   (ast-case stx ()

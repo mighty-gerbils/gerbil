@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil syntax-case [gerbil.expander]
-prelude: :<core>
+prelude: "../prelude/core"
 package: gerbil/expander
 namespace: gx
 

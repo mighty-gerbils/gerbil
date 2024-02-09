@@ -17,7 +17,7 @@
 
 (defstruct queue (front back length)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t)
 
 (defmethod {:init! queue}
   (lambda (self)

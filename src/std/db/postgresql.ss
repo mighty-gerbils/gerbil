@@ -24,7 +24,7 @@
 (defstruct (postgresql-connection connection) (host port user db)
   print: (host port user db)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! postgresql-connection}
   (lambda (self driver host port user db)
@@ -82,10 +82,10 @@
 
 (defstruct (postgresql-command statement) (conn complete notices input token)
   constructor: :init!
-  unchecked: #t
+
   print: (complete))
 
-(defstruct !unnamed () final: t)
+(defstruct !unnamed () final: #t)
 (def unnamed-command (make-!unnamed))
 
 (defmethod {:init! postgresql-command}
@@ -123,7 +123,7 @@
 
 (defstruct (postgresql-statement postgresql-command) (cols params bind row)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defalias postgresql-statement-name statement-e)
 
@@ -265,7 +265,7 @@
 (defstruct (postgresql-query postgresql-command) (str cmd greedy)
   constructor: :init!
   print: (greedy str)
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! postgresql-query}
   (lambda (self conn str greedy: (greedy #t))
@@ -443,4 +443,3 @@
 
 (def current-catalog
   (make-parameter default-catalog))
-

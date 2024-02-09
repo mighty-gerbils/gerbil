@@ -61,7 +61,7 @@
 
 (defstruct XDR (read write)
   final: #t
-  unchecked: #t)
+  )
 
 ;; generic i/o inteface
 (def (xdr-read buf)

@@ -21,7 +21,7 @@
 
 (defstruct env (symbolic-keys sort-keys list-wrapper)
   constructor: :init!
-  final: #t unchecked: #t)
+  final: #t )
 
 (defmethod {:init! env}
   (lambda (self)

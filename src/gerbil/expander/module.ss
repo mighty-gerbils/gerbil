@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander modules
-prelude: :<core>
+prelude: "../prelude/core"
 package: gerbil/expander
 namespace: gx
 
@@ -15,17 +15,17 @@ namespace: gx
 
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
-  final: #t unchecked: #t)
+  final: #t)
 (defstruct module-export (context key phi name weak?)
   id: gx#module-export::t
-  final: #t unchecked: #t)
+  final: #t)
 
 (defstruct import-set (source phi imports)
   id: gx#import-set::t
-  final: #t unchecked: #t)
+  final: #t)
 (defstruct export-set (source phi exports)
   id: gx#export-set::t
-  final: #t unchecked: #t)
+  final: #t)
 
 (defclass (import-expander user-expander) ()
   id: gx#import-expander::t
@@ -225,7 +225,9 @@ namespace: gx
      (if (and (datum-parsing-exception? exn)
               (eq? (datum-parsing-exception-filepos exn) 0))
        (core-read-module/lang path)
-       (raise exn)))
+       (raise-syntax-error 'read-module "error reading module" path
+                           (parameterize ((dump-stack-trace? #f))
+                             (call-with-output-string "" (cut display-exception exn <>))))))
    (cut core-read-module/sexp path)))
 
 (def (core-read-module/sexp path)

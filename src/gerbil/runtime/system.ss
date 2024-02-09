@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil runtime system related things
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 

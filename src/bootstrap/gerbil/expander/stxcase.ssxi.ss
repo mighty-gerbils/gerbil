@@ -4,29 +4,41 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#syntax-pattern::t
-   (@struct-type gx#syntax-pattern::t gx#expander::t 2 #f ()))
-  (declare-type gx#syntax-pattern? (@struct-pred gx#syntax-pattern::t))
-  (declare-type gx#make-syntax-pattern (@struct-cons gx#syntax-pattern::t))
-  (declare-type gx#syntax-pattern-id (@struct-getf gx#syntax-pattern::t 0 #f))
+   (@class gx#syntax-pattern::t
+           (gx#expander::t)
+           (gx#expander::t)
+           (id depth)
+           (e id depth)
+           #f
+           #t
+           #f
+           ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
+  (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))
+  (declare-type gx#make-syntax-pattern (@constructor gx#syntax-pattern::t))
+  (declare-type gx#syntax-pattern-id (@accessor gx#syntax-pattern::t id #t))
   (declare-type
    gx#syntax-pattern-depth
-   (@struct-getf gx#syntax-pattern::t 1 #f))
+   (@accessor gx#syntax-pattern::t depth #t))
+  (declare-type gx#syntax-pattern-e (@accessor gx#syntax-pattern::t e #t))
   (declare-type
    gx#syntax-pattern-id-set!
-   (@struct-setf gx#syntax-pattern::t 0 #f))
+   (@mutator gx#syntax-pattern::t id #t))
   (declare-type
    gx#syntax-pattern-depth-set!
-   (@struct-setf gx#syntax-pattern::t 1 #f))
-  (declare-type gx#&syntax-pattern-id (@struct-getf gx#syntax-pattern::t 0 #t))
+   (@mutator gx#syntax-pattern::t depth #t))
+  (declare-type gx#syntax-pattern-e-set! (@mutator gx#syntax-pattern::t e #t))
+  (declare-type gx#&syntax-pattern-id (@accessor gx#syntax-pattern::t id #f))
   (declare-type
    gx#&syntax-pattern-depth
-   (@struct-getf gx#syntax-pattern::t 1 #t))
+   (@accessor gx#syntax-pattern::t depth #f))
+  (declare-type gx#&syntax-pattern-e (@accessor gx#syntax-pattern::t e #f))
   (declare-type
    gx#&syntax-pattern-id-set!
-   (@struct-setf gx#syntax-pattern::t 0 #t))
+   (@mutator gx#syntax-pattern::t id #f))
   (declare-type
    gx#&syntax-pattern-depth-set!
-   (@struct-setf gx#syntax-pattern::t 1 #t))
+   (@mutator gx#syntax-pattern::t depth #f))
+  (declare-type gx#&syntax-pattern-e-set! (@mutator gx#syntax-pattern::t e #f))
   (declare-type gx#syntax-pattern::apply-macro-expander (@lambda 2 #f))
   (declare-type gx#macro-expand-syntax (@lambda 1 #f))
   (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))

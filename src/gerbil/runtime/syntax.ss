@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; syntax and ASTs
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
@@ -72,7 +72,6 @@ namespace: #f
                                    context
                                    phi
                                    marks)
-  unchecked: #t
   final: #t)
 
 (defmethod {display-exception SyntaxError}
@@ -139,8 +138,7 @@ namespace: #f
 ;;; ASTs
 (defstruct AST (e source)
   id:   gerbil#AST::t
-  name: syntax
-  unchecked: #t)
+  name: syntax)
 
 (define (__AST-e stx)
   (if (AST? stx)

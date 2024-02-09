@@ -4,179 +4,415 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#expander-context::t
-   (@struct-type gx#expander-context::t #f 2 :init! ()))
-  (declare-type gx#expander-context? (@struct-pred gx#expander-context::t))
-  (declare-type gx#make-expander-context (@struct-cons gx#expander-context::t))
+   (@class gx#expander-context::t () () (id table) (id table) :init! #t #f #f))
+  (declare-type gx#expander-context? (@predicate gx#expander-context::t))
+  (declare-type gx#make-expander-context (@constructor gx#expander-context::t))
   (declare-type
    gx#expander-context-id
-   (@struct-getf gx#expander-context::t 0 #f))
+   (@accessor gx#expander-context::t id #t))
   (declare-type
    gx#expander-context-table
-   (@struct-getf gx#expander-context::t 1 #f))
+   (@accessor gx#expander-context::t table #t))
   (declare-type
    gx#expander-context-id-set!
-   (@struct-setf gx#expander-context::t 0 #f))
+   (@mutator gx#expander-context::t id #t))
   (declare-type
    gx#expander-context-table-set!
-   (@struct-setf gx#expander-context::t 1 #f))
+   (@mutator gx#expander-context::t table #t))
   (declare-type
    gx#&expander-context-id
-   (@struct-getf gx#expander-context::t 0 #t))
+   (@accessor gx#expander-context::t id #f))
   (declare-type
    gx#&expander-context-table
-   (@struct-getf gx#expander-context::t 1 #t))
+   (@accessor gx#expander-context::t table #f))
   (declare-type
    gx#&expander-context-id-set!
-   (@struct-setf gx#expander-context::t 0 #t))
+   (@mutator gx#expander-context::t id #f))
   (declare-type
    gx#&expander-context-table-set!
-   (@struct-setf gx#expander-context::t 1 #t))
+   (@mutator gx#expander-context::t table #f))
   (declare-type
    gx#root-context::t
-   (@struct-type gx#root-context::t gx#expander-context::t 0 :init! ()))
-  (declare-type gx#root-context? (@struct-pred gx#root-context::t))
-  (declare-type gx#make-root-context (@struct-cons gx#root-context::t))
+   (@class gx#root-context::t
+           (gx#expander-context::t)
+           (gx#expander-context::t)
+           ()
+           (id table)
+           :init!
+           #t
+           #f
+           #f))
+  (declare-type gx#root-context? (@predicate gx#root-context::t))
+  (declare-type gx#make-root-context (@constructor gx#root-context::t))
+  (declare-type gx#root-context-id (@accessor gx#root-context::t id #t))
+  (declare-type gx#root-context-table (@accessor gx#root-context::t table #t))
+  (declare-type gx#root-context-id-set! (@mutator gx#root-context::t id #t))
+  (declare-type
+   gx#root-context-table-set!
+   (@mutator gx#root-context::t table #t))
+  (declare-type gx#&root-context-id (@accessor gx#root-context::t id #f))
+  (declare-type gx#&root-context-table (@accessor gx#root-context::t table #f))
+  (declare-type gx#&root-context-id-set! (@mutator gx#root-context::t id #f))
+  (declare-type
+   gx#&root-context-table-set!
+   (@mutator gx#root-context::t table #f))
   (declare-type
    gx#phi-context::t
-   (@struct-type gx#context-phi::t gx#expander-context::t 3 :init! ()))
-  (declare-type gx#phi-context? (@struct-pred gx#phi-context::t))
-  (declare-type gx#make-phi-context (@struct-cons gx#phi-context::t))
-  (declare-type gx#phi-context-super (@struct-getf gx#phi-context::t 0 #f))
-  (declare-type gx#phi-context-up (@struct-getf gx#phi-context::t 1 #f))
-  (declare-type gx#phi-context-down (@struct-getf gx#phi-context::t 2 #f))
+   (@class gx#context-phi::t
+           (gx#expander-context::t)
+           (gx#expander-context::t)
+           (super up down)
+           (id table super up down)
+           :init!
+           #t
+           #f
+           ((:init! . gx#phi-context:::init!))))
+  (declare-type gx#phi-context? (@predicate gx#phi-context::t))
+  (declare-type gx#make-phi-context (@constructor gx#phi-context::t))
+  (declare-type gx#phi-context-super (@accessor gx#phi-context::t super #t))
+  (declare-type gx#phi-context-up (@accessor gx#phi-context::t up #t))
+  (declare-type gx#phi-context-down (@accessor gx#phi-context::t down #t))
+  (declare-type gx#phi-context-id (@accessor gx#phi-context::t id #t))
+  (declare-type gx#phi-context-table (@accessor gx#phi-context::t table #t))
   (declare-type
    gx#phi-context-super-set!
-   (@struct-setf gx#phi-context::t 0 #f))
-  (declare-type gx#phi-context-up-set! (@struct-setf gx#phi-context::t 1 #f))
-  (declare-type gx#phi-context-down-set! (@struct-setf gx#phi-context::t 2 #f))
-  (declare-type gx#&phi-context-super (@struct-getf gx#phi-context::t 0 #t))
-  (declare-type gx#&phi-context-up (@struct-getf gx#phi-context::t 1 #t))
-  (declare-type gx#&phi-context-down (@struct-getf gx#phi-context::t 2 #t))
+   (@mutator gx#phi-context::t super #t))
+  (declare-type gx#phi-context-up-set! (@mutator gx#phi-context::t up #t))
+  (declare-type gx#phi-context-down-set! (@mutator gx#phi-context::t down #t))
+  (declare-type gx#phi-context-id-set! (@mutator gx#phi-context::t id #t))
+  (declare-type
+   gx#phi-context-table-set!
+   (@mutator gx#phi-context::t table #t))
+  (declare-type gx#&phi-context-super (@accessor gx#phi-context::t super #f))
+  (declare-type gx#&phi-context-up (@accessor gx#phi-context::t up #f))
+  (declare-type gx#&phi-context-down (@accessor gx#phi-context::t down #f))
+  (declare-type gx#&phi-context-id (@accessor gx#phi-context::t id #f))
+  (declare-type gx#&phi-context-table (@accessor gx#phi-context::t table #f))
   (declare-type
    gx#&phi-context-super-set!
-   (@struct-setf gx#phi-context::t 0 #t))
-  (declare-type gx#&phi-context-up-set! (@struct-setf gx#phi-context::t 1 #t))
+   (@mutator gx#phi-context::t super #f))
+  (declare-type gx#&phi-context-up-set! (@mutator gx#phi-context::t up #f))
+  (declare-type gx#&phi-context-down-set! (@mutator gx#phi-context::t down #f))
+  (declare-type gx#&phi-context-id-set! (@mutator gx#phi-context::t id #f))
   (declare-type
-   gx#&phi-context-down-set!
-   (@struct-setf gx#phi-context::t 2 #t))
+   gx#&phi-context-table-set!
+   (@mutator gx#phi-context::t table #f))
   (declare-type
    gx#top-context::t
-   (@struct-type gx#top-context::t gx#phi-context::t 0 :init! ()))
-  (declare-type gx#top-context? (@struct-pred gx#top-context::t))
-  (declare-type gx#make-top-context (@struct-cons gx#top-context::t))
+   (@class gx#top-context::t
+           (gx#phi-context::t)
+           (gx#phi-context::t gx#expander-context::t)
+           ()
+           (id table super up down)
+           :init!
+           #t
+           #f
+           #f))
+  (declare-type gx#top-context? (@predicate gx#top-context::t))
+  (declare-type gx#make-top-context (@constructor gx#top-context::t))
+  (declare-type gx#top-context-super (@accessor gx#top-context::t super #t))
+  (declare-type gx#top-context-up (@accessor gx#top-context::t up #t))
+  (declare-type gx#top-context-down (@accessor gx#top-context::t down #t))
+  (declare-type gx#top-context-id (@accessor gx#top-context::t id #t))
+  (declare-type gx#top-context-table (@accessor gx#top-context::t table #t))
+  (declare-type
+   gx#top-context-super-set!
+   (@mutator gx#top-context::t super #t))
+  (declare-type gx#top-context-up-set! (@mutator gx#top-context::t up #t))
+  (declare-type gx#top-context-down-set! (@mutator gx#top-context::t down #t))
+  (declare-type gx#top-context-id-set! (@mutator gx#top-context::t id #t))
+  (declare-type
+   gx#top-context-table-set!
+   (@mutator gx#top-context::t table #t))
+  (declare-type gx#&top-context-super (@accessor gx#top-context::t super #f))
+  (declare-type gx#&top-context-up (@accessor gx#top-context::t up #f))
+  (declare-type gx#&top-context-down (@accessor gx#top-context::t down #f))
+  (declare-type gx#&top-context-id (@accessor gx#top-context::t id #f))
+  (declare-type gx#&top-context-table (@accessor gx#top-context::t table #f))
+  (declare-type
+   gx#&top-context-super-set!
+   (@mutator gx#top-context::t super #f))
+  (declare-type gx#&top-context-up-set! (@mutator gx#top-context::t up #f))
+  (declare-type gx#&top-context-down-set! (@mutator gx#top-context::t down #f))
+  (declare-type gx#&top-context-id-set! (@mutator gx#top-context::t id #f))
+  (declare-type
+   gx#&top-context-table-set!
+   (@mutator gx#top-context::t table #f))
   (declare-type
    gx#module-context::t
-   (@struct-type gx#module-context::t gx#top-context::t 6 :init! ()))
-  (declare-type gx#module-context? (@struct-pred gx#module-context::t))
-  (declare-type gx#make-module-context (@struct-cons gx#module-context::t))
-  (declare-type gx#module-context-ns (@struct-getf gx#module-context::t 0 #f))
+   (@class gx#module-context::t
+           (gx#top-context::t)
+           (gx#top-context::t gx#phi-context::t gx#expander-context::t)
+           (ns path import export e code)
+           (id table super up down ns path import export e code)
+           :init!
+           #t
+           #f
+           #f))
+  (declare-type gx#module-context? (@predicate gx#module-context::t))
+  (declare-type gx#make-module-context (@constructor gx#module-context::t))
+  (declare-type gx#module-context-ns (@accessor gx#module-context::t ns #t))
   (declare-type
    gx#module-context-path
-   (@struct-getf gx#module-context::t 1 #f))
+   (@accessor gx#module-context::t path #t))
   (declare-type
    gx#module-context-import
-   (@struct-getf gx#module-context::t 2 #f))
+   (@accessor gx#module-context::t import #t))
   (declare-type
    gx#module-context-export
-   (@struct-getf gx#module-context::t 3 #f))
-  (declare-type gx#module-context-e (@struct-getf gx#module-context::t 4 #f))
+   (@accessor gx#module-context::t export #t))
+  (declare-type gx#module-context-e (@accessor gx#module-context::t e #t))
   (declare-type
    gx#module-context-code
-   (@struct-getf gx#module-context::t 5 #f))
+   (@accessor gx#module-context::t code #t))
+  (declare-type
+   gx#module-context-super
+   (@accessor gx#module-context::t super #t))
+  (declare-type gx#module-context-up (@accessor gx#module-context::t up #t))
+  (declare-type
+   gx#module-context-down
+   (@accessor gx#module-context::t down #t))
+  (declare-type gx#module-context-id (@accessor gx#module-context::t id #t))
+  (declare-type
+   gx#module-context-table
+   (@accessor gx#module-context::t table #t))
   (declare-type
    gx#module-context-ns-set!
-   (@struct-setf gx#module-context::t 0 #f))
+   (@mutator gx#module-context::t ns #t))
   (declare-type
    gx#module-context-path-set!
-   (@struct-setf gx#module-context::t 1 #f))
+   (@mutator gx#module-context::t path #t))
   (declare-type
    gx#module-context-import-set!
-   (@struct-setf gx#module-context::t 2 #f))
+   (@mutator gx#module-context::t import #t))
   (declare-type
    gx#module-context-export-set!
-   (@struct-setf gx#module-context::t 3 #f))
-  (declare-type
-   gx#module-context-e-set!
-   (@struct-setf gx#module-context::t 4 #f))
+   (@mutator gx#module-context::t export #t))
+  (declare-type gx#module-context-e-set! (@mutator gx#module-context::t e #t))
   (declare-type
    gx#module-context-code-set!
-   (@struct-setf gx#module-context::t 5 #f))
-  (declare-type gx#&module-context-ns (@struct-getf gx#module-context::t 0 #t))
+   (@mutator gx#module-context::t code #t))
+  (declare-type
+   gx#module-context-super-set!
+   (@mutator gx#module-context::t super #t))
+  (declare-type
+   gx#module-context-up-set!
+   (@mutator gx#module-context::t up #t))
+  (declare-type
+   gx#module-context-down-set!
+   (@mutator gx#module-context::t down #t))
+  (declare-type
+   gx#module-context-id-set!
+   (@mutator gx#module-context::t id #t))
+  (declare-type
+   gx#module-context-table-set!
+   (@mutator gx#module-context::t table #t))
+  (declare-type gx#&module-context-ns (@accessor gx#module-context::t ns #f))
   (declare-type
    gx#&module-context-path
-   (@struct-getf gx#module-context::t 1 #t))
+   (@accessor gx#module-context::t path #f))
   (declare-type
    gx#&module-context-import
-   (@struct-getf gx#module-context::t 2 #t))
+   (@accessor gx#module-context::t import #f))
   (declare-type
    gx#&module-context-export
-   (@struct-getf gx#module-context::t 3 #t))
-  (declare-type gx#&module-context-e (@struct-getf gx#module-context::t 4 #t))
+   (@accessor gx#module-context::t export #f))
+  (declare-type gx#&module-context-e (@accessor gx#module-context::t e #f))
   (declare-type
    gx#&module-context-code
-   (@struct-getf gx#module-context::t 5 #t))
+   (@accessor gx#module-context::t code #f))
+  (declare-type
+   gx#&module-context-super
+   (@accessor gx#module-context::t super #f))
+  (declare-type gx#&module-context-up (@accessor gx#module-context::t up #f))
+  (declare-type
+   gx#&module-context-down
+   (@accessor gx#module-context::t down #f))
+  (declare-type gx#&module-context-id (@accessor gx#module-context::t id #f))
+  (declare-type
+   gx#&module-context-table
+   (@accessor gx#module-context::t table #f))
   (declare-type
    gx#&module-context-ns-set!
-   (@struct-setf gx#module-context::t 0 #t))
+   (@mutator gx#module-context::t ns #f))
   (declare-type
    gx#&module-context-path-set!
-   (@struct-setf gx#module-context::t 1 #t))
+   (@mutator gx#module-context::t path #f))
   (declare-type
    gx#&module-context-import-set!
-   (@struct-setf gx#module-context::t 2 #t))
+   (@mutator gx#module-context::t import #f))
   (declare-type
    gx#&module-context-export-set!
-   (@struct-setf gx#module-context::t 3 #t))
-  (declare-type
-   gx#&module-context-e-set!
-   (@struct-setf gx#module-context::t 4 #t))
+   (@mutator gx#module-context::t export #f))
+  (declare-type gx#&module-context-e-set! (@mutator gx#module-context::t e #f))
   (declare-type
    gx#&module-context-code-set!
-   (@struct-setf gx#module-context::t 5 #t))
+   (@mutator gx#module-context::t code #f))
+  (declare-type
+   gx#&module-context-super-set!
+   (@mutator gx#module-context::t super #f))
+  (declare-type
+   gx#&module-context-up-set!
+   (@mutator gx#module-context::t up #f))
+  (declare-type
+   gx#&module-context-down-set!
+   (@mutator gx#module-context::t down #f))
+  (declare-type
+   gx#&module-context-id-set!
+   (@mutator gx#module-context::t id #f))
+  (declare-type
+   gx#&module-context-table-set!
+   (@mutator gx#module-context::t table #f))
   (declare-type
    gx#prelude-context::t
-   (@struct-type gx#prelude-context::t gx#top-context::t 3 :init! ()))
-  (declare-type gx#prelude-context? (@struct-pred gx#prelude-context::t))
-  (declare-type gx#make-prelude-context (@struct-cons gx#prelude-context::t))
+   (@class gx#prelude-context::t
+           (gx#top-context::t)
+           (gx#top-context::t gx#phi-context::t gx#expander-context::t)
+           (path import e)
+           (id table super up down path import e)
+           :init!
+           #t
+           #f
+           #f))
+  (declare-type gx#prelude-context? (@predicate gx#prelude-context::t))
+  (declare-type gx#make-prelude-context (@constructor gx#prelude-context::t))
   (declare-type
    gx#prelude-context-path
-   (@struct-getf gx#prelude-context::t 0 #f))
+   (@accessor gx#prelude-context::t path #t))
   (declare-type
    gx#prelude-context-import
-   (@struct-getf gx#prelude-context::t 1 #f))
-  (declare-type gx#prelude-context-e (@struct-getf gx#prelude-context::t 2 #f))
+   (@accessor gx#prelude-context::t import #t))
+  (declare-type gx#prelude-context-e (@accessor gx#prelude-context::t e #t))
+  (declare-type
+   gx#prelude-context-super
+   (@accessor gx#prelude-context::t super #t))
+  (declare-type gx#prelude-context-up (@accessor gx#prelude-context::t up #t))
+  (declare-type
+   gx#prelude-context-down
+   (@accessor gx#prelude-context::t down #t))
+  (declare-type gx#prelude-context-id (@accessor gx#prelude-context::t id #t))
+  (declare-type
+   gx#prelude-context-table
+   (@accessor gx#prelude-context::t table #t))
   (declare-type
    gx#prelude-context-path-set!
-   (@struct-setf gx#prelude-context::t 0 #f))
+   (@mutator gx#prelude-context::t path #t))
   (declare-type
    gx#prelude-context-import-set!
-   (@struct-setf gx#prelude-context::t 1 #f))
+   (@mutator gx#prelude-context::t import #t))
   (declare-type
    gx#prelude-context-e-set!
-   (@struct-setf gx#prelude-context::t 2 #f))
+   (@mutator gx#prelude-context::t e #t))
+  (declare-type
+   gx#prelude-context-super-set!
+   (@mutator gx#prelude-context::t super #t))
+  (declare-type
+   gx#prelude-context-up-set!
+   (@mutator gx#prelude-context::t up #t))
+  (declare-type
+   gx#prelude-context-down-set!
+   (@mutator gx#prelude-context::t down #t))
+  (declare-type
+   gx#prelude-context-id-set!
+   (@mutator gx#prelude-context::t id #t))
+  (declare-type
+   gx#prelude-context-table-set!
+   (@mutator gx#prelude-context::t table #t))
   (declare-type
    gx#&prelude-context-path
-   (@struct-getf gx#prelude-context::t 0 #t))
+   (@accessor gx#prelude-context::t path #f))
   (declare-type
    gx#&prelude-context-import
-   (@struct-getf gx#prelude-context::t 1 #t))
+   (@accessor gx#prelude-context::t import #f))
+  (declare-type gx#&prelude-context-e (@accessor gx#prelude-context::t e #f))
   (declare-type
-   gx#&prelude-context-e
-   (@struct-getf gx#prelude-context::t 2 #t))
+   gx#&prelude-context-super
+   (@accessor gx#prelude-context::t super #f))
+  (declare-type gx#&prelude-context-up (@accessor gx#prelude-context::t up #f))
+  (declare-type
+   gx#&prelude-context-down
+   (@accessor gx#prelude-context::t down #f))
+  (declare-type gx#&prelude-context-id (@accessor gx#prelude-context::t id #f))
+  (declare-type
+   gx#&prelude-context-table
+   (@accessor gx#prelude-context::t table #f))
   (declare-type
    gx#&prelude-context-path-set!
-   (@struct-setf gx#prelude-context::t 0 #t))
+   (@mutator gx#prelude-context::t path #f))
   (declare-type
    gx#&prelude-context-import-set!
-   (@struct-setf gx#prelude-context::t 1 #t))
+   (@mutator gx#prelude-context::t import #f))
   (declare-type
    gx#&prelude-context-e-set!
-   (@struct-setf gx#prelude-context::t 2 #t))
+   (@mutator gx#prelude-context::t e #f))
+  (declare-type
+   gx#&prelude-context-super-set!
+   (@mutator gx#prelude-context::t super #f))
+  (declare-type
+   gx#&prelude-context-up-set!
+   (@mutator gx#prelude-context::t up #f))
+  (declare-type
+   gx#&prelude-context-down-set!
+   (@mutator gx#prelude-context::t down #f))
+  (declare-type
+   gx#&prelude-context-id-set!
+   (@mutator gx#prelude-context::t id #f))
+  (declare-type
+   gx#&prelude-context-table-set!
+   (@mutator gx#prelude-context::t table #f))
   (declare-type
    gx#local-context::t
-   (@struct-type gx#local-context::t gx#phi-context::t 0 :init! ()))
-  (declare-type gx#local-context? (@struct-pred gx#local-context::t))
-  (declare-type gx#make-local-context (@struct-cons gx#local-context::t))
+   (@class gx#local-context::t
+           (gx#phi-context::t)
+           (gx#phi-context::t gx#expander-context::t)
+           ()
+           (id table super up down)
+           :init!
+           #t
+           #f
+           ((:init! . gx#local-context:::init!))))
+  (declare-type gx#local-context? (@predicate gx#local-context::t))
+  (declare-type gx#make-local-context (@constructor gx#local-context::t))
+  (declare-type
+   gx#local-context-super
+   (@accessor gx#local-context::t super #t))
+  (declare-type gx#local-context-up (@accessor gx#local-context::t up #t))
+  (declare-type gx#local-context-down (@accessor gx#local-context::t down #t))
+  (declare-type gx#local-context-id (@accessor gx#local-context::t id #t))
+  (declare-type
+   gx#local-context-table
+   (@accessor gx#local-context::t table #t))
+  (declare-type
+   gx#local-context-super-set!
+   (@mutator gx#local-context::t super #t))
+  (declare-type gx#local-context-up-set! (@mutator gx#local-context::t up #t))
+  (declare-type
+   gx#local-context-down-set!
+   (@mutator gx#local-context::t down #t))
+  (declare-type gx#local-context-id-set! (@mutator gx#local-context::t id #t))
+  (declare-type
+   gx#local-context-table-set!
+   (@mutator gx#local-context::t table #t))
+  (declare-type
+   gx#&local-context-super
+   (@accessor gx#local-context::t super #f))
+  (declare-type gx#&local-context-up (@accessor gx#local-context::t up #f))
+  (declare-type gx#&local-context-down (@accessor gx#local-context::t down #f))
+  (declare-type gx#&local-context-id (@accessor gx#local-context::t id #f))
+  (declare-type
+   gx#&local-context-table
+   (@accessor gx#local-context::t table #f))
+  (declare-type
+   gx#&local-context-super-set!
+   (@mutator gx#local-context::t super #f))
+  (declare-type gx#&local-context-up-set! (@mutator gx#local-context::t up #f))
+  (declare-type
+   gx#&local-context-down-set!
+   (@mutator gx#local-context::t down #f))
+  (declare-type gx#&local-context-id-set! (@mutator gx#local-context::t id #f))
+  (declare-type
+   gx#&local-context-table-set!
+   (@mutator gx#local-context::t table #f))
   (declare-type gx#phi-context:::init!__% (@lambda 3 #f))
   (declare-type gx#phi-context:::init!__0 (@lambda 2 #f))
   (declare-type
@@ -191,332 +427,840 @@ package: gerbil/expander
     (2 gx#local-context:::init!__%)))
   (declare-type
    gx#binding::t
-   (@struct-type gx#binding::t #f 3 #f ((transparent: . #t))))
-  (declare-type gx#binding? (@struct-pred gx#binding::t))
-  (declare-type gx#make-binding (@struct-cons gx#binding::t))
-  (declare-type gx#binding-id (@struct-getf gx#binding::t 0 #f))
-  (declare-type gx#binding-key (@struct-getf gx#binding::t 1 #f))
-  (declare-type gx#binding-phi (@struct-getf gx#binding::t 2 #f))
-  (declare-type gx#binding-id-set! (@struct-setf gx#binding::t 0 #f))
-  (declare-type gx#binding-key-set! (@struct-setf gx#binding::t 1 #f))
-  (declare-type gx#binding-phi-set! (@struct-setf gx#binding::t 2 #f))
-  (declare-type gx#&binding-id (@struct-getf gx#binding::t 0 #t))
-  (declare-type gx#&binding-key (@struct-getf gx#binding::t 1 #t))
-  (declare-type gx#&binding-phi (@struct-getf gx#binding::t 2 #t))
-  (declare-type gx#&binding-id-set! (@struct-setf gx#binding::t 0 #t))
-  (declare-type gx#&binding-key-set! (@struct-setf gx#binding::t 1 #t))
-  (declare-type gx#&binding-phi-set! (@struct-setf gx#binding::t 2 #t))
+   (@class gx#binding::t () () (id key phi) (id key phi) #f #t #f #f))
+  (declare-type gx#binding? (@predicate gx#binding::t))
+  (declare-type gx#make-binding (@constructor gx#binding::t))
+  (declare-type gx#binding-id (@accessor gx#binding::t id #t))
+  (declare-type gx#binding-key (@accessor gx#binding::t key #t))
+  (declare-type gx#binding-phi (@accessor gx#binding::t phi #t))
+  (declare-type gx#binding-id-set! (@mutator gx#binding::t id #t))
+  (declare-type gx#binding-key-set! (@mutator gx#binding::t key #t))
+  (declare-type gx#binding-phi-set! (@mutator gx#binding::t phi #t))
+  (declare-type gx#&binding-id (@accessor gx#binding::t id #f))
+  (declare-type gx#&binding-key (@accessor gx#binding::t key #f))
+  (declare-type gx#&binding-phi (@accessor gx#binding::t phi #f))
+  (declare-type gx#&binding-id-set! (@mutator gx#binding::t id #f))
+  (declare-type gx#&binding-key-set! (@mutator gx#binding::t key #f))
+  (declare-type gx#&binding-phi-set! (@mutator gx#binding::t phi #f))
   (declare-type
    gx#runtime-binding::t
-   (@struct-type
-    gx#runtime-binding::t
-    gx#binding::t
-    0
-    #f
-    ((transparent: . #t))))
-  (declare-type gx#runtime-binding? (@struct-pred gx#runtime-binding::t))
-  (declare-type gx#make-runtime-binding (@struct-cons gx#runtime-binding::t))
+   (@class gx#runtime-binding::t
+           (gx#binding::t)
+           (gx#binding::t)
+           ()
+           (id key phi)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#runtime-binding? (@predicate gx#runtime-binding::t))
+  (declare-type gx#make-runtime-binding (@constructor gx#runtime-binding::t))
+  (declare-type gx#runtime-binding-id (@accessor gx#runtime-binding::t id #t))
+  (declare-type
+   gx#runtime-binding-key
+   (@accessor gx#runtime-binding::t key #t))
+  (declare-type
+   gx#runtime-binding-phi
+   (@accessor gx#runtime-binding::t phi #t))
+  (declare-type
+   gx#runtime-binding-id-set!
+   (@mutator gx#runtime-binding::t id #t))
+  (declare-type
+   gx#runtime-binding-key-set!
+   (@mutator gx#runtime-binding::t key #t))
+  (declare-type
+   gx#runtime-binding-phi-set!
+   (@mutator gx#runtime-binding::t phi #t))
+  (declare-type gx#&runtime-binding-id (@accessor gx#runtime-binding::t id #f))
+  (declare-type
+   gx#&runtime-binding-key
+   (@accessor gx#runtime-binding::t key #f))
+  (declare-type
+   gx#&runtime-binding-phi
+   (@accessor gx#runtime-binding::t phi #f))
+  (declare-type
+   gx#&runtime-binding-id-set!
+   (@mutator gx#runtime-binding::t id #f))
+  (declare-type
+   gx#&runtime-binding-key-set!
+   (@mutator gx#runtime-binding::t key #f))
+  (declare-type
+   gx#&runtime-binding-phi-set!
+   (@mutator gx#runtime-binding::t phi #f))
   (declare-type
    gx#local-binding::t
-   (@struct-type
-    gx#local-binding::t
-    gx#runtime-binding::t
-    0
-    #f
-    ((transparent: . #t))))
-  (declare-type gx#local-binding? (@struct-pred gx#local-binding::t))
-  (declare-type gx#make-local-binding (@struct-cons gx#local-binding::t))
+   (@class gx#local-binding::t
+           (gx#runtime-binding::t)
+           (gx#runtime-binding::t gx#binding::t)
+           ()
+           (id key phi)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#local-binding? (@predicate gx#local-binding::t))
+  (declare-type gx#make-local-binding (@constructor gx#local-binding::t))
+  (declare-type gx#local-binding-id (@accessor gx#local-binding::t id #t))
+  (declare-type gx#local-binding-key (@accessor gx#local-binding::t key #t))
+  (declare-type gx#local-binding-phi (@accessor gx#local-binding::t phi #t))
+  (declare-type gx#local-binding-id-set! (@mutator gx#local-binding::t id #t))
+  (declare-type
+   gx#local-binding-key-set!
+   (@mutator gx#local-binding::t key #t))
+  (declare-type
+   gx#local-binding-phi-set!
+   (@mutator gx#local-binding::t phi #t))
+  (declare-type gx#&local-binding-id (@accessor gx#local-binding::t id #f))
+  (declare-type gx#&local-binding-key (@accessor gx#local-binding::t key #f))
+  (declare-type gx#&local-binding-phi (@accessor gx#local-binding::t phi #f))
+  (declare-type gx#&local-binding-id-set! (@mutator gx#local-binding::t id #f))
+  (declare-type
+   gx#&local-binding-key-set!
+   (@mutator gx#local-binding::t key #f))
+  (declare-type
+   gx#&local-binding-phi-set!
+   (@mutator gx#local-binding::t phi #f))
   (declare-type
    gx#top-binding::t
-   (@struct-type
-    gx#top-binding::t
-    gx#runtime-binding::t
-    0
-    #f
-    ((transparent: . #t))))
-  (declare-type gx#top-binding? (@struct-pred gx#top-binding::t))
-  (declare-type gx#make-top-binding (@struct-cons gx#top-binding::t))
+   (@class gx#top-binding::t
+           (gx#runtime-binding::t)
+           (gx#runtime-binding::t gx#binding::t)
+           ()
+           (id key phi)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#top-binding? (@predicate gx#top-binding::t))
+  (declare-type gx#make-top-binding (@constructor gx#top-binding::t))
+  (declare-type gx#top-binding-id (@accessor gx#top-binding::t id #t))
+  (declare-type gx#top-binding-key (@accessor gx#top-binding::t key #t))
+  (declare-type gx#top-binding-phi (@accessor gx#top-binding::t phi #t))
+  (declare-type gx#top-binding-id-set! (@mutator gx#top-binding::t id #t))
+  (declare-type gx#top-binding-key-set! (@mutator gx#top-binding::t key #t))
+  (declare-type gx#top-binding-phi-set! (@mutator gx#top-binding::t phi #t))
+  (declare-type gx#&top-binding-id (@accessor gx#top-binding::t id #f))
+  (declare-type gx#&top-binding-key (@accessor gx#top-binding::t key #f))
+  (declare-type gx#&top-binding-phi (@accessor gx#top-binding::t phi #f))
+  (declare-type gx#&top-binding-id-set! (@mutator gx#top-binding::t id #f))
+  (declare-type gx#&top-binding-key-set! (@mutator gx#top-binding::t key #f))
+  (declare-type gx#&top-binding-phi-set! (@mutator gx#top-binding::t phi #f))
   (declare-type
    gx#module-binding::t
-   (@struct-type
-    gx#module-binding::t
-    gx#top-binding::t
-    1
-    #f
-    ((transparent: . #t))))
-  (declare-type gx#module-binding? (@struct-pred gx#module-binding::t))
-  (declare-type gx#make-module-binding (@struct-cons gx#module-binding::t))
+   (@class gx#module-binding::t
+           (gx#top-binding::t)
+           (gx#top-binding::t gx#runtime-binding::t gx#binding::t)
+           (context)
+           (id key phi context)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#module-binding? (@predicate gx#module-binding::t))
+  (declare-type gx#make-module-binding (@constructor gx#module-binding::t))
   (declare-type
    gx#module-binding-context
-   (@struct-getf gx#module-binding::t 0 #f))
+   (@accessor gx#module-binding::t context #t))
+  (declare-type gx#module-binding-id (@accessor gx#module-binding::t id #t))
+  (declare-type gx#module-binding-key (@accessor gx#module-binding::t key #t))
+  (declare-type gx#module-binding-phi (@accessor gx#module-binding::t phi #t))
   (declare-type
    gx#module-binding-context-set!
-   (@struct-setf gx#module-binding::t 0 #f))
+   (@mutator gx#module-binding::t context #t))
+  (declare-type
+   gx#module-binding-id-set!
+   (@mutator gx#module-binding::t id #t))
+  (declare-type
+   gx#module-binding-key-set!
+   (@mutator gx#module-binding::t key #t))
+  (declare-type
+   gx#module-binding-phi-set!
+   (@mutator gx#module-binding::t phi #t))
   (declare-type
    gx#&module-binding-context
-   (@struct-getf gx#module-binding::t 0 #t))
+   (@accessor gx#module-binding::t context #f))
+  (declare-type gx#&module-binding-id (@accessor gx#module-binding::t id #f))
+  (declare-type gx#&module-binding-key (@accessor gx#module-binding::t key #f))
+  (declare-type gx#&module-binding-phi (@accessor gx#module-binding::t phi #f))
   (declare-type
    gx#&module-binding-context-set!
-   (@struct-setf gx#module-binding::t 0 #t))
+   (@mutator gx#module-binding::t context #f))
+  (declare-type
+   gx#&module-binding-id-set!
+   (@mutator gx#module-binding::t id #f))
+  (declare-type
+   gx#&module-binding-key-set!
+   (@mutator gx#module-binding::t key #f))
+  (declare-type
+   gx#&module-binding-phi-set!
+   (@mutator gx#module-binding::t phi #f))
   (declare-type
    gx#extern-binding::t
-   (@struct-type
-    gx#extern-binding::t
-    gx#top-binding::t
-    0
-    #f
-    ((transparent: . #t))))
-  (declare-type gx#extern-binding? (@struct-pred gx#extern-binding::t))
-  (declare-type gx#make-extern-binding (@struct-cons gx#extern-binding::t))
+   (@class gx#extern-binding::t
+           (gx#top-binding::t)
+           (gx#top-binding::t gx#runtime-binding::t gx#binding::t)
+           ()
+           (id key phi)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#extern-binding? (@predicate gx#extern-binding::t))
+  (declare-type gx#make-extern-binding (@constructor gx#extern-binding::t))
+  (declare-type gx#extern-binding-id (@accessor gx#extern-binding::t id #t))
+  (declare-type gx#extern-binding-key (@accessor gx#extern-binding::t key #t))
+  (declare-type gx#extern-binding-phi (@accessor gx#extern-binding::t phi #t))
+  (declare-type
+   gx#extern-binding-id-set!
+   (@mutator gx#extern-binding::t id #t))
+  (declare-type
+   gx#extern-binding-key-set!
+   (@mutator gx#extern-binding::t key #t))
+  (declare-type
+   gx#extern-binding-phi-set!
+   (@mutator gx#extern-binding::t phi #t))
+  (declare-type gx#&extern-binding-id (@accessor gx#extern-binding::t id #f))
+  (declare-type gx#&extern-binding-key (@accessor gx#extern-binding::t key #f))
+  (declare-type gx#&extern-binding-phi (@accessor gx#extern-binding::t phi #f))
+  (declare-type
+   gx#&extern-binding-id-set!
+   (@mutator gx#extern-binding::t id #f))
+  (declare-type
+   gx#&extern-binding-key-set!
+   (@mutator gx#extern-binding::t key #f))
+  (declare-type
+   gx#&extern-binding-phi-set!
+   (@mutator gx#extern-binding::t phi #f))
   (declare-type
    gx#syntax-binding::t
-   (@struct-type
-    gx#syntax-binding::t
-    gx#binding::t
-    1
-    #f
-    ((final: . #t) (transparent: . #t))))
-  (declare-type gx#syntax-binding? (@struct-pred gx#syntax-binding::t))
-  (declare-type gx#make-syntax-binding (@struct-cons gx#syntax-binding::t))
-  (declare-type gx#syntax-binding-e (@struct-getf gx#syntax-binding::t 0 #f))
+   (@class gx#syntax-binding::t
+           (gx#binding::t)
+           (gx#binding::t)
+           (e)
+           (id key phi e)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#syntax-binding? (@predicate gx#syntax-binding::t))
+  (declare-type gx#make-syntax-binding (@constructor gx#syntax-binding::t))
+  (declare-type gx#syntax-binding-e (@accessor gx#syntax-binding::t e #t))
+  (declare-type gx#syntax-binding-id (@accessor gx#syntax-binding::t id #t))
+  (declare-type gx#syntax-binding-key (@accessor gx#syntax-binding::t key #t))
+  (declare-type gx#syntax-binding-phi (@accessor gx#syntax-binding::t phi #t))
+  (declare-type gx#syntax-binding-e-set! (@mutator gx#syntax-binding::t e #t))
   (declare-type
-   gx#syntax-binding-e-set!
-   (@struct-setf gx#syntax-binding::t 0 #f))
-  (declare-type gx#&syntax-binding-e (@struct-getf gx#syntax-binding::t 0 #t))
+   gx#syntax-binding-id-set!
+   (@mutator gx#syntax-binding::t id #t))
   (declare-type
-   gx#&syntax-binding-e-set!
-   (@struct-setf gx#syntax-binding::t 0 #t))
+   gx#syntax-binding-key-set!
+   (@mutator gx#syntax-binding::t key #t))
+  (declare-type
+   gx#syntax-binding-phi-set!
+   (@mutator gx#syntax-binding::t phi #t))
+  (declare-type gx#&syntax-binding-e (@accessor gx#syntax-binding::t e #f))
+  (declare-type gx#&syntax-binding-id (@accessor gx#syntax-binding::t id #f))
+  (declare-type gx#&syntax-binding-key (@accessor gx#syntax-binding::t key #f))
+  (declare-type gx#&syntax-binding-phi (@accessor gx#syntax-binding::t phi #f))
+  (declare-type gx#&syntax-binding-e-set! (@mutator gx#syntax-binding::t e #f))
+  (declare-type
+   gx#&syntax-binding-id-set!
+   (@mutator gx#syntax-binding::t id #f))
+  (declare-type
+   gx#&syntax-binding-key-set!
+   (@mutator gx#syntax-binding::t key #f))
+  (declare-type
+   gx#&syntax-binding-phi-set!
+   (@mutator gx#syntax-binding::t phi #f))
   (declare-type
    gx#import-binding::t
-   (@struct-type
-    gx#import-binding::t
-    gx#binding::t
-    3
-    #f
-    ((final: . #t) (transparent: . #t))))
-  (declare-type gx#import-binding? (@struct-pred gx#import-binding::t))
-  (declare-type gx#make-import-binding (@struct-cons gx#import-binding::t))
-  (declare-type gx#import-binding-e (@struct-getf gx#import-binding::t 0 #f))
+   (@class gx#import-binding::t
+           (gx#binding::t)
+           (gx#binding::t)
+           (e context weak?)
+           (id key phi e context weak?)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#import-binding? (@predicate gx#import-binding::t))
+  (declare-type gx#make-import-binding (@constructor gx#import-binding::t))
+  (declare-type gx#import-binding-e (@accessor gx#import-binding::t e #t))
   (declare-type
    gx#import-binding-context
-   (@struct-getf gx#import-binding::t 1 #f))
+   (@accessor gx#import-binding::t context #t))
   (declare-type
    gx#import-binding-weak?
-   (@struct-getf gx#import-binding::t 2 #f))
-  (declare-type
-   gx#import-binding-e-set!
-   (@struct-setf gx#import-binding::t 0 #f))
+   (@accessor gx#import-binding::t weak? #t))
+  (declare-type gx#import-binding-id (@accessor gx#import-binding::t id #t))
+  (declare-type gx#import-binding-key (@accessor gx#import-binding::t key #t))
+  (declare-type gx#import-binding-phi (@accessor gx#import-binding::t phi #t))
+  (declare-type gx#import-binding-e-set! (@mutator gx#import-binding::t e #t))
   (declare-type
    gx#import-binding-context-set!
-   (@struct-setf gx#import-binding::t 1 #f))
+   (@mutator gx#import-binding::t context #t))
   (declare-type
    gx#import-binding-weak?-set!
-   (@struct-setf gx#import-binding::t 2 #f))
-  (declare-type gx#&import-binding-e (@struct-getf gx#import-binding::t 0 #t))
+   (@mutator gx#import-binding::t weak? #t))
+  (declare-type
+   gx#import-binding-id-set!
+   (@mutator gx#import-binding::t id #t))
+  (declare-type
+   gx#import-binding-key-set!
+   (@mutator gx#import-binding::t key #t))
+  (declare-type
+   gx#import-binding-phi-set!
+   (@mutator gx#import-binding::t phi #t))
+  (declare-type gx#&import-binding-e (@accessor gx#import-binding::t e #f))
   (declare-type
    gx#&import-binding-context
-   (@struct-getf gx#import-binding::t 1 #t))
+   (@accessor gx#import-binding::t context #f))
   (declare-type
    gx#&import-binding-weak?
-   (@struct-getf gx#import-binding::t 2 #t))
-  (declare-type
-   gx#&import-binding-e-set!
-   (@struct-setf gx#import-binding::t 0 #t))
+   (@accessor gx#import-binding::t weak? #f))
+  (declare-type gx#&import-binding-id (@accessor gx#import-binding::t id #f))
+  (declare-type gx#&import-binding-key (@accessor gx#import-binding::t key #f))
+  (declare-type gx#&import-binding-phi (@accessor gx#import-binding::t phi #f))
+  (declare-type gx#&import-binding-e-set! (@mutator gx#import-binding::t e #f))
   (declare-type
    gx#&import-binding-context-set!
-   (@struct-setf gx#import-binding::t 1 #t))
+   (@mutator gx#import-binding::t context #f))
   (declare-type
    gx#&import-binding-weak?-set!
-   (@struct-setf gx#import-binding::t 2 #t))
+   (@mutator gx#import-binding::t weak? #f))
+  (declare-type
+   gx#&import-binding-id-set!
+   (@mutator gx#import-binding::t id #f))
+  (declare-type
+   gx#&import-binding-key-set!
+   (@mutator gx#import-binding::t key #f))
+  (declare-type
+   gx#&import-binding-phi-set!
+   (@mutator gx#import-binding::t phi #f))
   (declare-type
    gx#alias-binding::t
-   (@struct-type
-    gx#alias-binding::t
-    gx#binding::t
-    1
-    #f
-    ((final: . #t) (transparent: . #t))))
-  (declare-type gx#alias-binding? (@struct-pred gx#alias-binding::t))
-  (declare-type gx#make-alias-binding (@struct-cons gx#alias-binding::t))
-  (declare-type gx#alias-binding-e (@struct-getf gx#alias-binding::t 0 #f))
+   (@class gx#alias-binding::t
+           (gx#binding::t)
+           (gx#binding::t)
+           (e)
+           (id key phi e)
+           #f
+           #t
+           #t
+           #f))
+  (declare-type gx#alias-binding? (@predicate gx#alias-binding::t))
+  (declare-type gx#make-alias-binding (@constructor gx#alias-binding::t))
+  (declare-type gx#alias-binding-e (@accessor gx#alias-binding::t e #t))
+  (declare-type gx#alias-binding-id (@accessor gx#alias-binding::t id #t))
+  (declare-type gx#alias-binding-key (@accessor gx#alias-binding::t key #t))
+  (declare-type gx#alias-binding-phi (@accessor gx#alias-binding::t phi #t))
+  (declare-type gx#alias-binding-e-set! (@mutator gx#alias-binding::t e #t))
+  (declare-type gx#alias-binding-id-set! (@mutator gx#alias-binding::t id #t))
   (declare-type
-   gx#alias-binding-e-set!
-   (@struct-setf gx#alias-binding::t 0 #f))
-  (declare-type gx#&alias-binding-e (@struct-getf gx#alias-binding::t 0 #t))
+   gx#alias-binding-key-set!
+   (@mutator gx#alias-binding::t key #t))
   (declare-type
-   gx#&alias-binding-e-set!
-   (@struct-setf gx#alias-binding::t 0 #t))
-  (declare-type gx#expander::t (@struct-type gx#expander::t #f 1 #f ()))
-  (declare-type gx#expander? (@struct-pred gx#expander::t))
-  (declare-type gx#make-expander (@struct-cons gx#expander::t))
-  (declare-type gx#expander-e (@struct-getf gx#expander::t 0 #f))
-  (declare-type gx#expander-e-set! (@struct-setf gx#expander::t 0 #f))
-  (declare-type gx#&expander-e (@struct-getf gx#expander::t 0 #t))
-  (declare-type gx#&expander-e-set! (@struct-setf gx#expander::t 0 #t))
+   gx#alias-binding-phi-set!
+   (@mutator gx#alias-binding::t phi #t))
+  (declare-type gx#&alias-binding-e (@accessor gx#alias-binding::t e #f))
+  (declare-type gx#&alias-binding-id (@accessor gx#alias-binding::t id #f))
+  (declare-type gx#&alias-binding-key (@accessor gx#alias-binding::t key #f))
+  (declare-type gx#&alias-binding-phi (@accessor gx#alias-binding::t phi #f))
+  (declare-type gx#&alias-binding-e-set! (@mutator gx#alias-binding::t e #f))
+  (declare-type gx#&alias-binding-id-set! (@mutator gx#alias-binding::t id #f))
+  (declare-type
+   gx#&alias-binding-key-set!
+   (@mutator gx#alias-binding::t key #f))
+  (declare-type
+   gx#&alias-binding-phi-set!
+   (@mutator gx#alias-binding::t phi #f))
+  (declare-type
+   gx#expander::t
+   (@class gx#expander::t
+           ()
+           ()
+           (e)
+           (e)
+           #f
+           #t
+           #f
+           ((apply-macro-expander . gx#expander::apply-macro-expander))))
+  (declare-type gx#expander? (@predicate gx#expander::t))
+  (declare-type gx#make-expander (@constructor gx#expander::t))
+  (declare-type gx#expander-e (@accessor gx#expander::t e #t))
+  (declare-type gx#expander-e-set! (@mutator gx#expander::t e #t))
+  (declare-type gx#&expander-e (@accessor gx#expander::t e #f))
+  (declare-type gx#&expander-e-set! (@mutator gx#expander::t e #f))
   (declare-type
    gx#core-expander::t
-   (@struct-type gx#core-expander::t gx#expander::t 2 #f ()))
-  (declare-type gx#core-expander? (@struct-pred gx#core-expander::t))
-  (declare-type gx#make-core-expander (@struct-cons gx#core-expander::t))
-  (declare-type gx#core-expander-id (@struct-getf gx#core-expander::t 0 #f))
+   (@class gx#core-expander::t
+           (gx#expander::t)
+           (gx#expander::t)
+           (id compile-top)
+           (e id compile-top)
+           #f
+           #t
+           #f
+           ((apply-macro-expander . gx#core-expander::apply-macro-expander))))
+  (declare-type gx#core-expander? (@predicate gx#core-expander::t))
+  (declare-type gx#make-core-expander (@constructor gx#core-expander::t))
+  (declare-type gx#core-expander-id (@accessor gx#core-expander::t id #t))
   (declare-type
    gx#core-expander-compile-top
-   (@struct-getf gx#core-expander::t 1 #f))
-  (declare-type
-   gx#core-expander-id-set!
-   (@struct-setf gx#core-expander::t 0 #f))
+   (@accessor gx#core-expander::t compile-top #t))
+  (declare-type gx#core-expander-e (@accessor gx#core-expander::t e #t))
+  (declare-type gx#core-expander-id-set! (@mutator gx#core-expander::t id #t))
   (declare-type
    gx#core-expander-compile-top-set!
-   (@struct-setf gx#core-expander::t 1 #f))
-  (declare-type gx#&core-expander-id (@struct-getf gx#core-expander::t 0 #t))
+   (@mutator gx#core-expander::t compile-top #t))
+  (declare-type gx#core-expander-e-set! (@mutator gx#core-expander::t e #t))
+  (declare-type gx#&core-expander-id (@accessor gx#core-expander::t id #f))
   (declare-type
    gx#&core-expander-compile-top
-   (@struct-getf gx#core-expander::t 1 #t))
-  (declare-type
-   gx#&core-expander-id-set!
-   (@struct-setf gx#core-expander::t 0 #t))
+   (@accessor gx#core-expander::t compile-top #f))
+  (declare-type gx#&core-expander-e (@accessor gx#core-expander::t e #f))
+  (declare-type gx#&core-expander-id-set! (@mutator gx#core-expander::t id #f))
   (declare-type
    gx#&core-expander-compile-top-set!
-   (@struct-setf gx#core-expander::t 1 #t))
+   (@mutator gx#core-expander::t compile-top #f))
+  (declare-type gx#&core-expander-e-set! (@mutator gx#core-expander::t e #f))
   (declare-type
    gx#expression-form::t
-   (@struct-type gx#expression-form::t gx#core-expander::t 0 #f ()))
-  (declare-type gx#expression-form? (@struct-pred gx#expression-form::t))
-  (declare-type gx#make-expression-form (@struct-cons gx#expression-form::t))
+   (@class gx#expression-form::t
+           (gx#core-expander::t)
+           (gx#core-expander::t gx#expander::t)
+           ()
+           (e id compile-top)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#expression-form? (@predicate gx#expression-form::t))
+  (declare-type gx#make-expression-form (@constructor gx#expression-form::t))
+  (declare-type gx#expression-form-id (@accessor gx#expression-form::t id #t))
+  (declare-type
+   gx#expression-form-compile-top
+   (@accessor gx#expression-form::t compile-top #t))
+  (declare-type gx#expression-form-e (@accessor gx#expression-form::t e #t))
+  (declare-type
+   gx#expression-form-id-set!
+   (@mutator gx#expression-form::t id #t))
+  (declare-type
+   gx#expression-form-compile-top-set!
+   (@mutator gx#expression-form::t compile-top #t))
+  (declare-type
+   gx#expression-form-e-set!
+   (@mutator gx#expression-form::t e #t))
+  (declare-type gx#&expression-form-id (@accessor gx#expression-form::t id #f))
+  (declare-type
+   gx#&expression-form-compile-top
+   (@accessor gx#expression-form::t compile-top #f))
+  (declare-type gx#&expression-form-e (@accessor gx#expression-form::t e #f))
+  (declare-type
+   gx#&expression-form-id-set!
+   (@mutator gx#expression-form::t id #f))
+  (declare-type
+   gx#&expression-form-compile-top-set!
+   (@mutator gx#expression-form::t compile-top #f))
+  (declare-type
+   gx#&expression-form-e-set!
+   (@mutator gx#expression-form::t e #f))
   (declare-type
    gx#special-form::t
-   (@struct-type gx#special-form::t gx#core-expander::t 0 #f ()))
-  (declare-type gx#special-form? (@struct-pred gx#special-form::t))
-  (declare-type gx#make-special-form (@struct-cons gx#special-form::t))
+   (@class gx#special-form::t
+           (gx#core-expander::t)
+           (gx#core-expander::t gx#expander::t)
+           ()
+           (e id compile-top)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#special-form? (@predicate gx#special-form::t))
+  (declare-type gx#make-special-form (@constructor gx#special-form::t))
+  (declare-type gx#special-form-id (@accessor gx#special-form::t id #t))
+  (declare-type
+   gx#special-form-compile-top
+   (@accessor gx#special-form::t compile-top #t))
+  (declare-type gx#special-form-e (@accessor gx#special-form::t e #t))
+  (declare-type gx#special-form-id-set! (@mutator gx#special-form::t id #t))
+  (declare-type
+   gx#special-form-compile-top-set!
+   (@mutator gx#special-form::t compile-top #t))
+  (declare-type gx#special-form-e-set! (@mutator gx#special-form::t e #t))
+  (declare-type gx#&special-form-id (@accessor gx#special-form::t id #f))
+  (declare-type
+   gx#&special-form-compile-top
+   (@accessor gx#special-form::t compile-top #f))
+  (declare-type gx#&special-form-e (@accessor gx#special-form::t e #f))
+  (declare-type gx#&special-form-id-set! (@mutator gx#special-form::t id #f))
+  (declare-type
+   gx#&special-form-compile-top-set!
+   (@mutator gx#special-form::t compile-top #f))
+  (declare-type gx#&special-form-e-set! (@mutator gx#special-form::t e #f))
   (declare-type
    gx#definition-form::t
-   (@struct-type gx#definition-form::t gx#special-form::t 0 #f ()))
-  (declare-type gx#definition-form? (@struct-pred gx#definition-form::t))
-  (declare-type gx#make-definition-form (@struct-cons gx#definition-form::t))
+   (@class gx#definition-form::t
+           (gx#special-form::t)
+           (gx#special-form::t gx#core-expander::t gx#expander::t)
+           ()
+           (e id compile-top)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#definition-form? (@predicate gx#definition-form::t))
+  (declare-type gx#make-definition-form (@constructor gx#definition-form::t))
+  (declare-type gx#definition-form-id (@accessor gx#definition-form::t id #t))
+  (declare-type
+   gx#definition-form-compile-top
+   (@accessor gx#definition-form::t compile-top #t))
+  (declare-type gx#definition-form-e (@accessor gx#definition-form::t e #t))
+  (declare-type
+   gx#definition-form-id-set!
+   (@mutator gx#definition-form::t id #t))
+  (declare-type
+   gx#definition-form-compile-top-set!
+   (@mutator gx#definition-form::t compile-top #t))
+  (declare-type
+   gx#definition-form-e-set!
+   (@mutator gx#definition-form::t e #t))
+  (declare-type gx#&definition-form-id (@accessor gx#definition-form::t id #f))
+  (declare-type
+   gx#&definition-form-compile-top
+   (@accessor gx#definition-form::t compile-top #f))
+  (declare-type gx#&definition-form-e (@accessor gx#definition-form::t e #f))
+  (declare-type
+   gx#&definition-form-id-set!
+   (@mutator gx#definition-form::t id #f))
+  (declare-type
+   gx#&definition-form-compile-top-set!
+   (@mutator gx#definition-form::t compile-top #f))
+  (declare-type
+   gx#&definition-form-e-set!
+   (@mutator gx#definition-form::t e #f))
   (declare-type
    gx#top-special-form::t
-   (@struct-type gx#top-special-form::t gx#special-form::t 0 #f ()))
-  (declare-type gx#top-special-form? (@struct-pred gx#top-special-form::t))
-  (declare-type gx#make-top-special-form (@struct-cons gx#top-special-form::t))
+   (@class gx#top-special-form::t
+           (gx#special-form::t)
+           (gx#special-form::t gx#core-expander::t gx#expander::t)
+           ()
+           (e id compile-top)
+           #f
+           #t
+           #f
+           ((apply-macro-expander
+             .
+             gx#top-special-form::apply-macro-expander))))
+  (declare-type gx#top-special-form? (@predicate gx#top-special-form::t))
+  (declare-type gx#make-top-special-form (@constructor gx#top-special-form::t))
+  (declare-type
+   gx#top-special-form-id
+   (@accessor gx#top-special-form::t id #t))
+  (declare-type
+   gx#top-special-form-compile-top
+   (@accessor gx#top-special-form::t compile-top #t))
+  (declare-type gx#top-special-form-e (@accessor gx#top-special-form::t e #t))
+  (declare-type
+   gx#top-special-form-id-set!
+   (@mutator gx#top-special-form::t id #t))
+  (declare-type
+   gx#top-special-form-compile-top-set!
+   (@mutator gx#top-special-form::t compile-top #t))
+  (declare-type
+   gx#top-special-form-e-set!
+   (@mutator gx#top-special-form::t e #t))
+  (declare-type
+   gx#&top-special-form-id
+   (@accessor gx#top-special-form::t id #f))
+  (declare-type
+   gx#&top-special-form-compile-top
+   (@accessor gx#top-special-form::t compile-top #f))
+  (declare-type gx#&top-special-form-e (@accessor gx#top-special-form::t e #f))
+  (declare-type
+   gx#&top-special-form-id-set!
+   (@mutator gx#top-special-form::t id #f))
+  (declare-type
+   gx#&top-special-form-compile-top-set!
+   (@mutator gx#top-special-form::t compile-top #f))
+  (declare-type
+   gx#&top-special-form-e-set!
+   (@mutator gx#top-special-form::t e #f))
   (declare-type
    gx#module-special-form::t
-   (@struct-type gx#module-special-form::t gx#top-special-form::t 0 #f ()))
-  (declare-type
-   gx#module-special-form?
-   (@struct-pred gx#module-special-form::t))
+   (@class gx#module-special-form::t
+           (gx#top-special-form::t)
+           (gx#top-special-form::t
+            gx#special-form::t
+            gx#core-expander::t
+            gx#expander::t)
+           ()
+           (e id compile-top)
+           #f
+           #t
+           #f
+           ((apply-macro-expander
+             .
+             gx#module-special-form::apply-macro-expander))))
+  (declare-type gx#module-special-form? (@predicate gx#module-special-form::t))
   (declare-type
    gx#make-module-special-form
-   (@struct-cons gx#module-special-form::t))
+   (@constructor gx#module-special-form::t))
+  (declare-type
+   gx#module-special-form-id
+   (@accessor gx#module-special-form::t id #t))
+  (declare-type
+   gx#module-special-form-compile-top
+   (@accessor gx#module-special-form::t compile-top #t))
+  (declare-type
+   gx#module-special-form-e
+   (@accessor gx#module-special-form::t e #t))
+  (declare-type
+   gx#module-special-form-id-set!
+   (@mutator gx#module-special-form::t id #t))
+  (declare-type
+   gx#module-special-form-compile-top-set!
+   (@mutator gx#module-special-form::t compile-top #t))
+  (declare-type
+   gx#module-special-form-e-set!
+   (@mutator gx#module-special-form::t e #t))
+  (declare-type
+   gx#&module-special-form-id
+   (@accessor gx#module-special-form::t id #f))
+  (declare-type
+   gx#&module-special-form-compile-top
+   (@accessor gx#module-special-form::t compile-top #f))
+  (declare-type
+   gx#&module-special-form-e
+   (@accessor gx#module-special-form::t e #f))
+  (declare-type
+   gx#&module-special-form-id-set!
+   (@mutator gx#module-special-form::t id #f))
+  (declare-type
+   gx#&module-special-form-compile-top-set!
+   (@mutator gx#module-special-form::t compile-top #f))
+  (declare-type
+   gx#&module-special-form-e-set!
+   (@mutator gx#module-special-form::t e #f))
   (declare-type
    gx#feature-expander::t
-   (@struct-type gx#feature-expander::t gx#expander::t 0 #f ()))
-  (declare-type gx#feature-expander? (@struct-pred gx#feature-expander::t))
-  (declare-type gx#make-feature-expander (@struct-cons gx#feature-expander::t))
+   (@class gx#feature-expander::t
+           (gx#expander::t)
+           (gx#expander::t)
+           ()
+           (e)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#feature-expander? (@predicate gx#feature-expander::t))
+  (declare-type gx#make-feature-expander (@constructor gx#feature-expander::t))
+  (declare-type gx#feature-expander-e (@accessor gx#feature-expander::t e #t))
+  (declare-type
+   gx#feature-expander-e-set!
+   (@mutator gx#feature-expander::t e #t))
+  (declare-type gx#&feature-expander-e (@accessor gx#feature-expander::t e #f))
+  (declare-type
+   gx#&feature-expander-e-set!
+   (@mutator gx#feature-expander::t e #f))
   (declare-type
    gx#private-feature-expander::t
-   (@struct-type
-    gx#private-feature-expander::t
-    gx#feature-expander::t
-    0
-    #f
-    ()))
+   (@class gx#private-feature-expander::t
+           (gx#feature-expander::t)
+           (gx#feature-expander::t gx#expander::t)
+           ()
+           (e)
+           #f
+           #t
+           #f
+           #f))
   (declare-type
    gx#private-feature-expander?
-   (@struct-pred gx#private-feature-expander::t))
+   (@predicate gx#private-feature-expander::t))
   (declare-type
    gx#make-private-feature-expander
-   (@struct-cons gx#private-feature-expander::t))
+   (@constructor gx#private-feature-expander::t))
+  (declare-type
+   gx#private-feature-expander-e
+   (@accessor gx#private-feature-expander::t e #t))
+  (declare-type
+   gx#private-feature-expander-e-set!
+   (@mutator gx#private-feature-expander::t e #t))
+  (declare-type
+   gx#&private-feature-expander-e
+   (@accessor gx#private-feature-expander::t e #f))
+  (declare-type
+   gx#&private-feature-expander-e-set!
+   (@mutator gx#private-feature-expander::t e #f))
   (declare-type
    gx#reserved-expander::t
-   (@struct-type gx#reserved-expander::t gx#expander::t 0 #f ()))
-  (declare-type gx#reserved-expander? (@struct-pred gx#reserved-expander::t))
+   (@class gx#reserved-expander::t
+           (gx#expander::t)
+           (gx#expander::t)
+           ()
+           (e)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#reserved-expander? (@predicate gx#reserved-expander::t))
   (declare-type
    gx#make-reserved-expander
-   (@struct-cons gx#reserved-expander::t))
+   (@constructor gx#reserved-expander::t))
+  (declare-type
+   gx#reserved-expander-e
+   (@accessor gx#reserved-expander::t e #t))
+  (declare-type
+   gx#reserved-expander-e-set!
+   (@mutator gx#reserved-expander::t e #t))
+  (declare-type
+   gx#&reserved-expander-e
+   (@accessor gx#reserved-expander::t e #f))
+  (declare-type
+   gx#&reserved-expander-e-set!
+   (@mutator gx#reserved-expander::t e #f))
   (declare-type
    gx#macro-expander::t
-   (@struct-type gx#core-macro::t gx#expander::t 0 #f ()))
-  (declare-type gx#macro-expander? (@struct-pred gx#macro-expander::t))
-  (declare-type gx#make-macro-expander (@struct-cons gx#macro-expander::t))
+   (@class gx#core-macro::t
+           (gx#expander::t)
+           (gx#expander::t)
+           ()
+           (e)
+           #f
+           #t
+           #f
+           ((apply-macro-expander . gx#macro-expander::apply-macro-expander))))
+  (declare-type gx#macro-expander? (@predicate gx#macro-expander::t))
+  (declare-type gx#make-macro-expander (@constructor gx#macro-expander::t))
+  (declare-type gx#macro-expander-e (@accessor gx#macro-expander::t e #t))
+  (declare-type gx#macro-expander-e-set! (@mutator gx#macro-expander::t e #t))
+  (declare-type gx#&macro-expander-e (@accessor gx#macro-expander::t e #f))
+  (declare-type gx#&macro-expander-e-set! (@mutator gx#macro-expander::t e #f))
   (declare-type
    gx#rename-macro-expander::t
-   (@struct-type gx#rename-macro-expander::t gx#macro-expander::t 0 #f ()))
+   (@class gx#rename-macro-expander::t
+           (gx#macro-expander::t)
+           (gx#macro-expander::t gx#expander::t)
+           ()
+           (e)
+           #f
+           #t
+           #f
+           ((apply-macro-expander
+             .
+             gx#rename-macro-expander::apply-macro-expander))))
   (declare-type
    gx#rename-macro-expander?
-   (@struct-pred gx#rename-macro-expander::t))
+   (@predicate gx#rename-macro-expander::t))
   (declare-type
    gx#make-rename-macro-expander
-   (@struct-cons gx#rename-macro-expander::t))
+   (@constructor gx#rename-macro-expander::t))
+  (declare-type
+   gx#rename-macro-expander-e
+   (@accessor gx#rename-macro-expander::t e #t))
+  (declare-type
+   gx#rename-macro-expander-e-set!
+   (@mutator gx#rename-macro-expander::t e #t))
+  (declare-type
+   gx#&rename-macro-expander-e
+   (@accessor gx#rename-macro-expander::t e #f))
+  (declare-type
+   gx#&rename-macro-expander-e-set!
+   (@mutator gx#rename-macro-expander::t e #f))
   (declare-type
    gx#user-expander::t
-   (@struct-type gx#macro-expander::t gx#macro-expander::t 2 #f ()))
-  (declare-type gx#user-expander? (@struct-pred gx#user-expander::t))
-  (declare-type gx#make-user-expander (@struct-cons gx#user-expander::t))
+   (@class gx#macro-expander::t
+           (gx#macro-expander::t)
+           (gx#macro-expander::t gx#expander::t)
+           (context phi)
+           (e context phi)
+           #f
+           #t
+           #f
+           ((apply-macro-expander . gx#user-expander::apply-macro-expander))))
+  (declare-type gx#user-expander? (@predicate gx#user-expander::t))
+  (declare-type gx#make-user-expander (@constructor gx#user-expander::t))
   (declare-type
    gx#user-expander-context
-   (@struct-getf gx#user-expander::t 0 #f))
-  (declare-type gx#user-expander-phi (@struct-getf gx#user-expander::t 1 #f))
+   (@accessor gx#user-expander::t context #t))
+  (declare-type gx#user-expander-phi (@accessor gx#user-expander::t phi #t))
+  (declare-type gx#user-expander-e (@accessor gx#user-expander::t e #t))
   (declare-type
    gx#user-expander-context-set!
-   (@struct-setf gx#user-expander::t 0 #f))
+   (@mutator gx#user-expander::t context #t))
   (declare-type
    gx#user-expander-phi-set!
-   (@struct-setf gx#user-expander::t 1 #f))
+   (@mutator gx#user-expander::t phi #t))
+  (declare-type gx#user-expander-e-set! (@mutator gx#user-expander::t e #t))
   (declare-type
    gx#&user-expander-context
-   (@struct-getf gx#user-expander::t 0 #t))
-  (declare-type gx#&user-expander-phi (@struct-getf gx#user-expander::t 1 #t))
+   (@accessor gx#user-expander::t context #f))
+  (declare-type gx#&user-expander-phi (@accessor gx#user-expander::t phi #f))
+  (declare-type gx#&user-expander-e (@accessor gx#user-expander::t e #f))
   (declare-type
    gx#&user-expander-context-set!
-   (@struct-setf gx#user-expander::t 0 #t))
+   (@mutator gx#user-expander::t context #f))
   (declare-type
    gx#&user-expander-phi-set!
-   (@struct-setf gx#user-expander::t 1 #t))
+   (@mutator gx#user-expander::t phi #f))
+  (declare-type gx#&user-expander-e-set! (@mutator gx#user-expander::t e #f))
   (declare-type
    gx#expander-mark::t
-   (@struct-type gx#expander-mark::t #f 4 #f ()))
-  (declare-type gx#expander-mark? (@struct-pred gx#expander-mark::t))
-  (declare-type gx#make-expander-mark (@struct-cons gx#expander-mark::t))
-  (declare-type gx#expander-mark-subst (@struct-getf gx#expander-mark::t 0 #f))
+   (@class gx#expander-mark::t
+           ()
+           ()
+           (subst context phi trace)
+           (subst context phi trace)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gx#expander-mark? (@predicate gx#expander-mark::t))
+  (declare-type gx#make-expander-mark (@constructor gx#expander-mark::t))
+  (declare-type
+   gx#expander-mark-subst
+   (@accessor gx#expander-mark::t subst #t))
   (declare-type
    gx#expander-mark-context
-   (@struct-getf gx#expander-mark::t 1 #f))
-  (declare-type gx#expander-mark-phi (@struct-getf gx#expander-mark::t 2 #f))
-  (declare-type gx#expander-mark-trace (@struct-getf gx#expander-mark::t 3 #f))
+   (@accessor gx#expander-mark::t context #t))
+  (declare-type gx#expander-mark-phi (@accessor gx#expander-mark::t phi #t))
+  (declare-type
+   gx#expander-mark-trace
+   (@accessor gx#expander-mark::t trace #t))
   (declare-type
    gx#expander-mark-subst-set!
-   (@struct-setf gx#expander-mark::t 0 #f))
+   (@mutator gx#expander-mark::t subst #t))
   (declare-type
    gx#expander-mark-context-set!
-   (@struct-setf gx#expander-mark::t 1 #f))
+   (@mutator gx#expander-mark::t context #t))
   (declare-type
    gx#expander-mark-phi-set!
-   (@struct-setf gx#expander-mark::t 2 #f))
+   (@mutator gx#expander-mark::t phi #t))
   (declare-type
    gx#expander-mark-trace-set!
-   (@struct-setf gx#expander-mark::t 3 #f))
+   (@mutator gx#expander-mark::t trace #t))
   (declare-type
    gx#&expander-mark-subst
-   (@struct-getf gx#expander-mark::t 0 #t))
+   (@accessor gx#expander-mark::t subst #f))
   (declare-type
    gx#&expander-mark-context
-   (@struct-getf gx#expander-mark::t 1 #t))
-  (declare-type gx#&expander-mark-phi (@struct-getf gx#expander-mark::t 2 #t))
+   (@accessor gx#expander-mark::t context #f))
+  (declare-type gx#&expander-mark-phi (@accessor gx#expander-mark::t phi #f))
   (declare-type
    gx#&expander-mark-trace
-   (@struct-getf gx#expander-mark::t 3 #t))
+   (@accessor gx#expander-mark::t trace #f))
   (declare-type
    gx#&expander-mark-subst-set!
-   (@struct-setf gx#expander-mark::t 0 #t))
+   (@mutator gx#expander-mark::t subst #f))
   (declare-type
    gx#&expander-mark-context-set!
-   (@struct-setf gx#expander-mark::t 1 #t))
+   (@mutator gx#expander-mark::t context #f))
   (declare-type
    gx#&expander-mark-phi-set!
-   (@struct-setf gx#expander-mark::t 2 #t))
+   (@mutator gx#expander-mark::t phi #f))
   (declare-type
    gx#&expander-mark-trace-set!
-   (@struct-setf gx#expander-mark::t 3 #t))
+   (@mutator gx#expander-mark::t trace #f))
   (declare-type gx#raise-syntax-error (@lambda (3) #f))
   (declare-type gx#eval-syntax__% (@lambda 2 #f))
   (declare-type gx#eval-syntax__0 (@lambda 1 #f))

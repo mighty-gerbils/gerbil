@@ -128,87 +128,101 @@ package: gerbil/compiler
   (declare-type gxc#generate-meta-phi-expr (@lambda 2 #f))
   (declare-type
    gxc#meta-state::t
-   (@struct-type gxc#meta-state::t #f 4 :init! ()))
-  (declare-type gxc#meta-state? (@struct-pred gxc#meta-state::t))
-  (declare-type gxc#make-meta-state (@struct-cons gxc#meta-state::t))
-  (declare-type gxc#meta-state-src (@struct-getf gxc#meta-state::t 0 #f))
-  (declare-type gxc#meta-state-n (@struct-getf gxc#meta-state::t 1 #f))
-  (declare-type gxc#meta-state-open (@struct-getf gxc#meta-state::t 2 #f))
-  (declare-type gxc#meta-state-blocks (@struct-getf gxc#meta-state::t 3 #f))
-  (declare-type gxc#meta-state-src-set! (@struct-setf gxc#meta-state::t 0 #f))
-  (declare-type gxc#meta-state-n-set! (@struct-setf gxc#meta-state::t 1 #f))
-  (declare-type gxc#meta-state-open-set! (@struct-setf gxc#meta-state::t 2 #f))
+   (@class gxc#meta-state::t
+           ()
+           ()
+           (src n open blocks)
+           (src n open blocks)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#meta-state:::init!))))
+  (declare-type gxc#meta-state? (@predicate gxc#meta-state::t))
+  (declare-type gxc#make-meta-state (@constructor gxc#meta-state::t))
+  (declare-type gxc#meta-state-src (@accessor gxc#meta-state::t src #t))
+  (declare-type gxc#meta-state-n (@accessor gxc#meta-state::t n #t))
+  (declare-type gxc#meta-state-open (@accessor gxc#meta-state::t open #t))
+  (declare-type gxc#meta-state-blocks (@accessor gxc#meta-state::t blocks #t))
+  (declare-type gxc#meta-state-src-set! (@mutator gxc#meta-state::t src #t))
+  (declare-type gxc#meta-state-n-set! (@mutator gxc#meta-state::t n #t))
+  (declare-type gxc#meta-state-open-set! (@mutator gxc#meta-state::t open #t))
   (declare-type
    gxc#meta-state-blocks-set!
-   (@struct-setf gxc#meta-state::t 3 #f))
-  (declare-type gxc#&meta-state-src (@struct-getf gxc#meta-state::t 0 #t))
-  (declare-type gxc#&meta-state-n (@struct-getf gxc#meta-state::t 1 #t))
-  (declare-type gxc#&meta-state-open (@struct-getf gxc#meta-state::t 2 #t))
-  (declare-type gxc#&meta-state-blocks (@struct-getf gxc#meta-state::t 3 #t))
-  (declare-type gxc#&meta-state-src-set! (@struct-setf gxc#meta-state::t 0 #t))
-  (declare-type gxc#&meta-state-n-set! (@struct-setf gxc#meta-state::t 1 #t))
-  (declare-type
-   gxc#&meta-state-open-set!
-   (@struct-setf gxc#meta-state::t 2 #t))
+   (@mutator gxc#meta-state::t blocks #t))
+  (declare-type gxc#&meta-state-src (@accessor gxc#meta-state::t src #f))
+  (declare-type gxc#&meta-state-n (@accessor gxc#meta-state::t n #f))
+  (declare-type gxc#&meta-state-open (@accessor gxc#meta-state::t open #f))
+  (declare-type gxc#&meta-state-blocks (@accessor gxc#meta-state::t blocks #f))
+  (declare-type gxc#&meta-state-src-set! (@mutator gxc#meta-state::t src #f))
+  (declare-type gxc#&meta-state-n-set! (@mutator gxc#meta-state::t n #f))
+  (declare-type gxc#&meta-state-open-set! (@mutator gxc#meta-state::t open #f))
   (declare-type
    gxc#&meta-state-blocks-set!
-   (@struct-setf gxc#meta-state::t 3 #t))
+   (@mutator gxc#meta-state::t blocks #f))
   (declare-type gxc#meta-state:::init! (@lambda 2 #f))
   (declare-type
    gxc#meta-state-block::t
-   (@struct-type gxc#meta-state-block::t #f 4 #f ()))
-  (declare-type gxc#meta-state-block? (@struct-pred gxc#meta-state-block::t))
+   (@class gxc#meta-state-block::t
+           ()
+           ()
+           (ctx phi n code)
+           (ctx phi n code)
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#meta-state-block? (@predicate gxc#meta-state-block::t))
   (declare-type
    gxc#make-meta-state-block
-   (@struct-cons gxc#meta-state-block::t))
+   (@constructor gxc#meta-state-block::t))
   (declare-type
    gxc#meta-state-block-ctx
-   (@struct-getf gxc#meta-state-block::t 0 #f))
+   (@accessor gxc#meta-state-block::t ctx #t))
   (declare-type
    gxc#meta-state-block-phi
-   (@struct-getf gxc#meta-state-block::t 1 #f))
+   (@accessor gxc#meta-state-block::t phi #t))
   (declare-type
    gxc#meta-state-block-n
-   (@struct-getf gxc#meta-state-block::t 2 #f))
+   (@accessor gxc#meta-state-block::t n #t))
   (declare-type
    gxc#meta-state-block-code
-   (@struct-getf gxc#meta-state-block::t 3 #f))
+   (@accessor gxc#meta-state-block::t code #t))
   (declare-type
    gxc#meta-state-block-ctx-set!
-   (@struct-setf gxc#meta-state-block::t 0 #f))
+   (@mutator gxc#meta-state-block::t ctx #t))
   (declare-type
    gxc#meta-state-block-phi-set!
-   (@struct-setf gxc#meta-state-block::t 1 #f))
+   (@mutator gxc#meta-state-block::t phi #t))
   (declare-type
    gxc#meta-state-block-n-set!
-   (@struct-setf gxc#meta-state-block::t 2 #f))
+   (@mutator gxc#meta-state-block::t n #t))
   (declare-type
    gxc#meta-state-block-code-set!
-   (@struct-setf gxc#meta-state-block::t 3 #f))
+   (@mutator gxc#meta-state-block::t code #t))
   (declare-type
    gxc#&meta-state-block-ctx
-   (@struct-getf gxc#meta-state-block::t 0 #t))
+   (@accessor gxc#meta-state-block::t ctx #f))
   (declare-type
    gxc#&meta-state-block-phi
-   (@struct-getf gxc#meta-state-block::t 1 #t))
+   (@accessor gxc#meta-state-block::t phi #f))
   (declare-type
    gxc#&meta-state-block-n
-   (@struct-getf gxc#meta-state-block::t 2 #t))
+   (@accessor gxc#meta-state-block::t n #f))
   (declare-type
    gxc#&meta-state-block-code
-   (@struct-getf gxc#meta-state-block::t 3 #t))
+   (@accessor gxc#meta-state-block::t code #f))
   (declare-type
    gxc#&meta-state-block-ctx-set!
-   (@struct-setf gxc#meta-state-block::t 0 #t))
+   (@mutator gxc#meta-state-block::t ctx #f))
   (declare-type
    gxc#&meta-state-block-phi-set!
-   (@struct-setf gxc#meta-state-block::t 1 #t))
+   (@mutator gxc#meta-state-block::t phi #f))
   (declare-type
    gxc#&meta-state-block-n-set!
-   (@struct-setf gxc#meta-state-block::t 2 #t))
+   (@mutator gxc#meta-state-block::t n #f))
   (declare-type
    gxc#&meta-state-block-code-set!
-   (@struct-setf gxc#meta-state-block::t 3 #t))
+   (@mutator gxc#meta-state-block::t code #f))
   (declare-type gxc#meta-state-begin-phi! (@lambda 2 #f))
   (declare-type gxc#meta-state-add-phi! (@lambda 3 #f))
   (declare-type gxc#meta-state-end-phi! (@lambda 1 #f))

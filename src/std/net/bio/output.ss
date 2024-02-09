@@ -22,7 +22,7 @@
 ;;;        write unbuffered
 ;;;        precondition: buffer has been drained
 (defstruct output-buffer (e wlo whi drain write)
-  unchecked: #t)
+  )
 
 (def (bio-output-drain! buf need)
   ((&output-buffer-drain buf) buf need))

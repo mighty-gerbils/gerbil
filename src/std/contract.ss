@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; contracts and type assertions
 (export using
-        with-interface with-struct with-class with-contract
+        with-interface with-class with-contract
         maybe list-of? in-range? in-range-inclusive? nonnegative-fixnum?)
 (import (for-syntax :gerbil/expander)
         ./error
@@ -32,9 +32,7 @@
          (raise-syntax-error #f "unknown type" stx  #'Type))
         ((interface-info? meta)
          #'(with-interface (id ~ Type) body ...))
-        ((extended-struct-info? meta)
-         #'(with-struct (id ~ Type) body ...))
-        ((extended-class-info? meta)
+        ((class-type-info? meta)
          #'(with-class (id ~ Type) body ...))
         (else
          (raise-syntax-error #f "bad type; must be an interface, struct, or class with complete type information" stx #'Type meta)))))
@@ -68,124 +66,19 @@
      body ...)))
 
 (begin-syntax
-  (def (meta-type-id rtd-id)
-    (let* (id-str (symbol->string (stx-e rtd-id)))
-      (stx-identifier rtd-id (substring id-str 0 (- (string-length id-str) 3)))))
+  (def (get-slot-accessor stx klass slot)
+    (let (accessors (class-type-unchecked-accessors klass))
+      (cond
+       ((assgetq slot accessors))
+       (else
+        (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
-  (def (get-struct-accessor stx field meta (E #f))
-    (let lp ((meta meta))
-      (let get-e ((fields (runtime-struct-fields (runtime-type-exhibitor meta)))
-                  (accessors (list-ref (expander-type-identifiers meta) 4)))
-        (match fields
-          ([x . rest]
-           (if (eq? x field)
-             (let (getf (car accessors))
-               (stx-identifier getf "&" getf))
-             (get-e rest (cdr accessors))))
-          (else
-           (cond
-            ((car (expander-type-identifiers meta))
-             => (lambda (super)
-                  (cond
-                   ((syntax-local-value (meta-type-id super) false)
-                    => (lambda (meta)
-                         (if (extended-struct-info? meta)
-                           (lp meta)
-                           (raise-syntax-error #f "incomplete type info" stx super))))
-                   (else
-                    (raise-syntax-error #f "unknown type" stx super)))))
-            (else
-             (if E (E)
-                 (raise-syntax-error #f "uknown struct field" stx field)))))))))
-
-
-  (def (get-struct-mutator stx field meta (E #f))
-    (let lp ((meta meta))
-      (let get-e ((fields (runtime-struct-fields (runtime-type-exhibitor meta)))
-                  (mutators (list-ref (expander-type-identifiers meta) 5)))
-        (match fields
-          ([x . rest]
-           (if (eq? x field)
-             (let (getf (car mutators))
-               (stx-identifier getf "&" getf))
-             (get-e rest (cdr mutators))))
-          (else
-           (cond
-            ((car (expander-type-identifiers meta))
-             => (lambda (super)
-                  (cond
-                   ((syntax-local-value (meta-type-id super) false)
-                    => (lambda (meta)
-                         (if (extended-struct-info? meta)
-                           (lp meta)
-                           (raise-syntax-error #f "incomplete type info" stx super))))
-                   (else
-                    (raise-syntax-error #f "incomplete type info" stx super)))))
-            (else
-             (if E (E)
-                 (raise-syntax-error #f "uknown struct field" stx field)))))))))
-
-  (def (get-class-accessor stx field-or-slot meta (E #f))
-    (let get-e ((slots (runtime-class-slots (runtime-type-exhibitor meta))))
-        (match slots
-          ([x . rest]
-           (if (eq? x field-or-slot)
-             #t
-             (get-e rest)))
-          (else
-           (cond
-            ((car (expander-type-identifiers meta))
-             => (lambda (super)
-                  ;; TODO: C3 linearization
-                  (let lp ((rest super))
-                    (match rest
-                      ([super . rest]
-                       (cond
-                        ((syntax-local-value (meta-type-id super) false)
-                         => (lambda (meta)
-                              (cond
-                               ((extended-struct-info? meta)
-                                (get-struct-accessor stx field-or-slot meta (cut lp rest)))
-                               ((extended-class-info? meta)
-                                (get-class-accessor stx field-or-slot meta (cut lp rest)))
-                               (else
-                                (raise-syntax-error #f "incomplete type info" stx super)))))
-                        (else
-                         (raise-syntax-error #f "incomplete type info" stx super))))))))
-            (else
-             (if E (E)
-                 (raise-syntax-error #f "uknown class slot or field" stx field-or-slot))))))))
-
-  (def (get-class-mutator stx field-or-slot meta (E #f))
-    (let get-e ((slots (runtime-class-slots (runtime-type-exhibitor meta))))
-      (match slots
-          ([x . rest]
-           (if (eq? x field-or-slot)
-             #t
-             (get-e rest)))
-          (else
-           (cond
-            ((car (expander-type-identifiers meta))
-             => (lambda (super)
-                  ;; TODO: C3 linearization
-                  (let lp ((rest super))
-                    (match rest
-                      ([super . rest]
-                       (cond
-                        ((syntax-local-value (meta-type-id super) false)
-                         => (lambda (meta)
-                              (cond
-                               ((extended-struct-info? meta)
-                                (get-struct-mutator stx field-or-slot meta (cut lp rest)))
-                               ((extended-class-info? meta)
-                                (get-class-mutator stx field-or-slot meta (cut lp rest)))
-                               (else
-                                (raise-syntax-error #f "incomplete type info" stx super)))))
-                        (else
-                         (raise-syntax-error #f "incomplete type info" stx super))))))))
-            (else
-             (if E (E)
-                 (raise-syntax-error #f "uknown class slot or field" stx field-or-slot))))))))
+  (def (get-slot-mutator stx klass slot)
+    (let (mutators (class-type-unchecked-mutators klass))
+      (cond
+       ((assgetq slot mutators))
+       (else
+        (raise-syntax-error #f "no mutator for slot" stx klass slot)))))
 
   (def (dotted-identifier? id var)
     (and (identifier? id)
@@ -200,91 +93,14 @@
                   (and (fx= (length split) 2)
                        (bound-identifier=? object-local var-local))))))))
 
-(defsyntax (with-struct stx)
-  (def (struct-id? Type)
-    (extended-struct-info? (syntax-local-value Type false)))
-
-  (def (expand-body meta var Type body)
-    (with-syntax ((@ref (syntax-local-introduce '%%ref))
-                  (@set! (stx-identifier var 'set!)) ; need to get the right set! context
-                  (Type::t (runtime-type-identifier meta))
-                  (var-quoted (core-quote-syntax var))
-                  (var var)
-                  (meta meta)
-                  ((body ...) body))
-      #'(let-syntax ((__ref
-                      (syntax-rules ()
-                        ((_ id) (@ref id))))
-                     (__set!
-                      (syntax-rules ()
-                        ((_ place value)
-                         (@set! place value)))))
-          (let-syntax ((@ref
-                        (lambda (stx)
-                          (syntax-case stx ()
-                            ((_ id)
-                             (dotted-identifier? #'id #'var)
-                             (let* ((split (string-split (symbol->string (stx-e #'id)) #\.))
-                                    (object (string->symbol (car split)))
-                                    (field (string->symbol (cadr split))))
-                               (with-syntax ((object (stx-identifier #'id object))
-                                             (getf (get-struct-accessor stx field 'meta)))
-                                 (syntax/loc stx
-                                   (getf object)))))
-                            ((_ id)
-                             (syntax/loc stx
-                               (__ref id))))))
-                       (@set!
-                           (lambda (stx)
-                             (syntax-case stx ()
-                               ((_ id val)
-                                (dotted-identifier? #'id #'var)
-                                (let* ((split (string-split (symbol->string (stx-e #'id)) #\.))
-                                       (object (string->symbol (car split)))
-                                       (field (string->symbol (cadr split))))
-                                  (with-syntax ((object (stx-identifier #'id object))
-                                                (setf (get-struct-mutator stx field 'meta)))
-                                    (syntax/loc stx
-                                      (setf object val)))))
-                               ((_ place val)
-                                (syntax/loc stx
-                                  (__set! place val)))))))
-            (begin-annotation (@type var-quoted struct: Type::t)
-              (let ()
-                body ...))))))
-
-  (def (expand var Type body checked?)
-    (let* ((meta (syntax-local-value Type #f))
-           (expr-body (expand-body meta var Type body)))
-      (if checked?
-        (with-syntax ((instance? (list-ref (expander-type-identifiers meta) 3))
-                      (var var) (expr-body expr-body))
-          #'(with-contract (var :~ instance?)
-              expr-body))
-        expr-body)))
-
-  (syntax-case stx (: :-)
-    ((_ (var : Type) body ...)
-     (and (identifier? #'var)
-          (struct-id? #'Type))
-     (expand #'var #'Type #'(body ...) #t))
-    ((_ (var :- Type) body ...)
-     (and (identifier? #'var)
-          (struct-id? #'Type))
-     (expand #'var #'Type #'(body ...) #f))))
-
-
 (defsyntax (with-class stx)
-  (def (class-id? Type)
-    (extended-class-info? (syntax-local-value Type false)))
-
-  (def (expand-body meta var Type body)
+  (def (expand-body klass var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
                   (@set! (stx-identifier var 'set!))
-                  (Type::t (runtime-type-identifier meta))
+                  (Type::t (class-type-descriptor klass))
                   (var-quoted (core-quote-syntax var))
                   (var var)
-                  (meta meta)
+                  (klass klass)
                   ((body ...) body))
       #'(let-syntax ((__ref
                       (syntax-rules ()
@@ -302,7 +118,7 @@
                                     (object (string->symbol (car split)))
                                     (slot (string->symbol (cadr split))))
                                (with-syntax ((object (stx-identifier #'id object))
-                                             (getf (get-class-accessor stx slot 'meta)))
+                                             (getf (get-slot-accessor stx 'klass slot)))
                                  (if (identifier? #'getf)
                                    (syntax/loc stx
                                      (getf object))
@@ -321,7 +137,7 @@
                                        (object (string->symbol (car split)))
                                        (slot (string->symbol (cadr split))))
                                   (with-syntax ((object (stx-identifier #'id object))
-                                                (setf (get-class-mutator stx slot 'meta)))
+                                                (setf (get-slot-mutator stx 'klass slot)))
                                     (if (identifier? #'setf)
                                       (syntax/loc stx
                                         (setf object val))
@@ -336,10 +152,10 @@
                 body ...))))))
 
   (def (expand var Type body checked?)
-    (let* ((meta (syntax-local-value Type #f))
-           (expr-body (expand-body meta var Type body)))
+    (let* ((klass (syntax-local-value Type #f))
+           (expr-body (expand-body klass var Type body)))
       (if checked?
-        (with-syntax ((instance? (list-ref (expander-type-identifiers meta) 3))
+        (with-syntax ((instance? (class-type-predicate klass))
                       (var var) (expr-body expr-body))
           #'(with-contract (var :~ instance?)
               expr-body))
@@ -348,11 +164,11 @@
   (syntax-case stx (: :-)
     ((_ (var : Type) body ...)
      (and (identifier? #'var)
-          (class-id? #'Type))
+          (syntax-local-class-type-info? #'Type))
      (expand #'var #'Type #'(body ...) #t))
     ((_ (var :- Type) body ...)
      (and (identifier? #'var)
-          (class-id? #'Type))
+          (syntax-local-class-type-info? #'Type))
      (expand #'var #'Type #'(body ...) #f))))
 
 (defsyntax (with-interface stx)

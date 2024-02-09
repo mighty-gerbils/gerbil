@@ -7,7 +7,8 @@ package: gerbil
 (export #t
         (import: <runtime> <sugar> <MOP> <match> <more-sugar>
                  <module-sugar> <special>)
-        (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar> <special>
+        (phi: +1 (import: <runtime> <sugar> <MOP> <macro-object>
+                          <match> <more-sugar> <special>
                           <expander-runtime> <syntax-case> <syntax-sugar>
                           <more-syntax-sugar>))
         (phi: +2 (import: <runtime> <expander-runtime>)))
@@ -162,23 +163,29 @@ package: gerbil
     symbol->keyword keyword->symbol
     ;; c3 linearization
     c3-linearize
+
     ;; MOP
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
     make-struct-type make-struct-type*
     make-struct-predicate
+
+    make-struct-slot-accessor
+    make-struct-slot-mutator
+    make-struct-slot-unchecked-accessor
+    make-struct-slot-unchecked-mutator
+
     make-struct-field-accessor
     make-struct-field-mutator
     make-struct-field-unchecked-accessor
     make-struct-field-unchecked-mutator
+
     base-struct
     class-precedence-list struct-precedence-list
-    struct-field-ref
-    struct-field-set!
     unchecked-field-ref
     unchecked-field-set!
-    make-class-type
+    make-class-type make-class-type*
     make-class-predicate
     make-class-slot-accessor
     make-class-slot-mutator
@@ -191,8 +198,8 @@ package: gerbil
     unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
-    direct-instance? direct-struct-instance? direct-class-instance?
-    make-object make-object*
+    direct-instance?
+    make-object make-object* make-instance
     struct-copy
     struct->list class->list
     make-struct-instance
@@ -332,6 +339,8 @@ package: gerbil
 
     read-string write-string
     read-u8vector write-u8vector
+
+    concatenate
 
     ;; misc r7rs procedures
     list-copy list-set!
@@ -613,7 +622,7 @@ package: gerbil
       ((_ (else body ...))
        (%#expression (begin body ...)))
       ((_ (else . _) . _)
-       (syntax-error "Bad syntax; misplaced else"))
+       (syntax-error "bad syntax; misplaced else"))
       ((recur (test) . rest)
        (let ($e test)
          (if $e $e (recur . rest))))
@@ -718,7 +727,7 @@ package: gerbil
              (stx-keyword? #'kw)
              (let (key (stx-e #'kw))
                (if (find (lambda% (kwarg) (eq? key (car kwarg))) kwargs)
-                 (raise-syntax-error #f "Bad syntax; duplicate keyword argument"
+                 (raise-syntax-error #f "bad syntax; duplicate keyword argument"
                                      stx hd key)
                  (syntax-case #'bind ()
                    ((id default)
@@ -735,7 +744,7 @@ package: gerbil
                         args))))))
             ((#!key id . hd-rest)
              (if kwvar
-               (raise-syntax-error #f "Bad syntax; duplicate #!key argument"
+               (raise-syntax-error #f "bad syntax; duplicate #!key argument"
                                    stx hd #'id)
                (lp #'hd-rest
                    (generate-bind #'id)
@@ -1585,7 +1594,7 @@ package: gerbil
                     (values (foldl cons tail hd)
                             (foldl cons (list tail) body)
                             #t))
-                  (raise-syntax-error #f "Bad syntax; cut ellipsis <...> not in tail position" stx #'e)))
+                  (raise-syntax-error #f "bad syntax; cut ellipsis <...> not in tail position" stx #'e)))
                (_ (lp #'rest hd (cons #'e body)))))
             (_ (values (reverse hd) (reverse body) #f)))))
 
@@ -1651,41 +1660,44 @@ package: gerbil
 (import <sugar> (phi: +1 <sugar>))
 
 (module <MOP>
-  (export (import: <MOP:1> <MOP:2> <MOP:3>))
+  (export  (import: <MOP:1> <MOP:4>)
+           (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4>)))
 
   (module <MOP:1>
-    (export #t)
+    (export #t (phi: +1 module-type-id make-class-type-id))
 
     (begin-syntax
+      (def (module-type-id type-t)
+        (cond
+         ((module-context-ns (current-expander-context))
+          => (lambda (ns) (stx-identifier type-t ns "#" type-t "::t")))
+         (else
+          (let (mid (expander-context-id (current-expander-context)))
+            (stx-identifier type-t mid "#" type-t "::t")))))
+
+      (def (make-class-type-id type-t)
+        (if (module-context? (current-expander-context))
+          (module-type-id type-t)
+          (make-symbol "__" (gensym (stx-e type-t)) "::t")))
+
       (def (generate-typedef stx struct?)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
-
-        (def (slotify field off)
-          (syntax-case field ()
-            ((getf setf)
-             [off #'getf #'setf])
-            ((field getf setf)
-             [off #'getf #'setf])))
 
         (def (slot-name slot-spec)
           (syntax-case slot-spec ()
             ((slot getf setf) #'slot)))
 
        (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: properties: constructor: unchecked:)))
-
-        (def (module-type-id type-t)
-          (cond
-           ((module-context-ns (current-expander-context))
-            => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
-           (else
-            (let (mid (expander-context-id (current-expander-context)))
-              (stx-identifier type-t mid "#" type-t)))))
+          (memq (stx-e key) '(slots: id: name: properties: constructor: final: mixin:)))
 
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
            (and (identifier? #'type-t)
+                (if struct?
+                  (or (identifier? #'super)
+                      (stx-false? #'super))
+                  (identifier-list? #'super))
                 (or (identifier? #'make)
                     (stx-false? #'make))
                 (identifier? #'instance?)
@@ -1694,17 +1706,28 @@ package: gerbil
            (with-syntax* (((values slots)
                            (or (stx-getq slots: #'rest)
                                []))
-                          ((make-instance make-predicate
-                                          make-getf make-setf
-                                          make-ugetf make-usetf)
+                          ((values mixin-slots)
+                           (or (stx-getq mixin: #'rest)
+                               []))
+                          ((values accessible-slots)
+                           (append (syntax->list slots) (syntax->list mixin-slots)))
+                          ((slot ...)
+                           (stx-map slot-name slots))
+                          ((make-type
+                            make-instance
+                            make-predicate
+                            make-getf make-setf
+                            make-ugetf make-usetf)
                            (if struct?
-                             #'(make-struct-instance
+                             #'(make-struct-type*
+                                make-struct-instance
                                 make-struct-predicate
-                                make-struct-field-accessor
-                                make-struct-field-mutator
-                                make-struct-field-unchecked-accessor
-                                make-struct-field-unchecked-mutator)
-                             #'(make-class-instance
+                                make-struct-slot-accessor
+                                make-struct-slot-mutator
+                                make-struct-slot-unchecked-accessor
+                                make-struct-slot-unchecked-mutator)
+                             #'(make-class-type*
+                                make-class-instance
                                 make-class-predicate
                                 make-class-slot-accessor
                                 make-class-slot-mutator
@@ -1712,68 +1735,97 @@ package: gerbil
                                 make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
-                               (if (module-context? (current-expander-context))
-                                 (module-type-id #'type-t)
-                                 (genident #'type-t))))
+                               (make-class-type-id type-id)))
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
+                          (type-constructor
+                           (stx-getq constructor: #'rest))
+                          (mop-type-t (core-quote-syntax #'type-t))
+                          (mop-super
+                           (if struct?
+                             (if (stx-e #'super)
+                               [(core-quote-syntax #'super)]
+                               [])
+                             (stx-map core-quote-syntax #'super)))
+                          (mop-struct? struct?)
+                          (mop-final? (stx-getq final: #'rest))
                           (type-properties
                            (or (stx-getq properties: #'rest)
                                #'[]))
-                          (type-constructor
-                           (stx-getq constructor: #'rest))
-                          ((slot ...)
-                           (stx-map slot-name slots))
-                          (type-rtd
+                          (type-properties
+                           (if (stx-e #'mop-final?)
+                             #'[[final: . #t] :: type-properties]
+                             #'type-properties))
+                          (type-properties
                            (if struct?
-                             (with-syntax ((fields (stx-length slots)))
-                               #'(make-struct-type 'type-id
-                                   super fields
-                                   'type-name type-properties 'type-constructor
-                                   '(slot ...)))
-                             (with-syntax (((super ...) #'super))
-                               #'(make-class-type 'type-id
-                                   [super ...] '(slot ...)
-                                   'type-name type-properties 'type-constructor))))
+                             #'[[struct: . #t] :: type-properties]
+                             #'type-properties))
+                          (type-super
+                           (if struct?
+                             #'super
+                             (cons #'list #'super)))
+                          (make-type-rtd
+                           #'(make-type 'type-id 'type-name
+                                        type-super '(slot ...)
+                                        type-properties 'type-constructor))
                           (def-type
-                            (wrap #'(def type-t type-rtd)))
+                            (wrap
+                             #'(def type-t
+                                 (begin-annotation (@mop.class type-id
+                                                               mop-super
+                                                               (slot ...)
+                                                               type-constructor
+                                                               mop-struct?
+                                                               mop-final?)
+                                   make-type-rtd))))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
                               (wrap
-                               #'(def (make . $args)
-                                   (apply make-instance type-t $args)))))
+                               #'(def make
+                                   (begin-annotation (@mop.constructor mop-type-t)
+                                     (lambda $args
+                                       (apply make-instance type-t $args)))))))
                           (def-predicate
-                            (wrap #'(def instance? (make-predicate type-t))))
-                          ((values attrs)
-                           (if struct?
-                             (stx-map slotify slots (iota (stx-length slots)))
-                             slots))
+                            (wrap
+                             #'(def instance?
+                                 (begin-annotation (@mop.predicate mop-type-t)
+                                   (make-predicate type-t)))))
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
                               (syntax-case ref ()
-                                ((key getf setf)
+                                ((slot getf setf)
                                  [(wrap
-                                   #'(def getf (make-getf type-t 'key)))
+                                   #'(def getf
+                                       (begin-annotation (@mop.accessor mop-type-t
+                                                                        slot #t)
+                                         (make-getf type-t 'slot))))
                                   (wrap
-                                   #'(def setf (make-setf type-t 'key)))])))
-                            attrs))
+                                   #'(def setf
+                                       (begin-annotation (@mop.mutator mop-type-t
+                                                                       slot #t)
+                                         (make-setf type-t 'slot))))])))
+                            accessible-slots))
                           (((def-ugetf def-usetf) ...)
-                           (if (stx-e (stx-getq unchecked: #'rest))
-                             (stx-map
-                              (lambda (ref)
-                                (syntax-case ref ()
-                                  ((key getf setf)
-                                   (with-syntax ((ugetf (stx-identifier #'getf "&" #'getf))
-                                                 (usetf (stx-identifier #'setf "&" #'setf)))
-                                     [(wrap
-                                       #'(def ugetf (make-ugetf type-t 'key)))
-                                      (wrap
-                                       #'(def usetf (make-usetf type-t 'key)))]))))
-                              attrs)
-                             [])))
+                           (stx-map
+                            (lambda (ref)
+                              (syntax-case ref ()
+                                ((slot getf setf)
+                                 (with-syntax ((ugetf (stx-identifier #'getf "&" #'getf))
+                                               (usetf (stx-identifier #'setf "&" #'setf)))
+                                   [(wrap
+                                     #'(def ugetf
+                                         (begin-annotation (@mop.accessor mop-type-t
+                                                                          slot #f)
+                                           (make-ugetf type-t 'slot))))
+                                    (wrap
+                                     #'(def usetf
+                                         (begin-annotation (@mop.mutator mop-type-t
+                                                                         slot #f)
+                                           (make-usetf type-t 'slot))))]))))
+                            accessible-slots)))
              (wrap
               #'(begin def-type
                        def-predicate
@@ -1789,148 +1841,169 @@ package: gerbil
     (defsyntax (defclass-type stx)
       (generate-typedef stx #f)))
 
-  (import <MOP:1> (phi: +1 <MOP:1>))
-
   (module <MOP:2>
-    (export #t
-            (phi: +1
-                  runtime-type-info::t runtime-type-info?
-                  runtime-struct-info::t runtime-struct-info?
-                  runtime-class-info::t  runtime-class-info?
-                  expander-type-info::t expander-type-info?
-                  extended-runtime-type-info::t extended-runtime-type-info?
-                  extended-struct-info::t extended-struct-info?
-                  extended-class-info::t extended-class-info?
-                  runtime-rtd-exhibitor::t runtime-type-exhibitor?
-                  runtime-struct-exhibitor::t runtime-struct-exhibitor?
-                  runtime-class-exhibitor::t runtime-class-exhibitor?
-                  runtime-type-identifier runtime-type-identifier-set!
-                  runtime-type-exhibitor  runtime-type-exhibitor-set!
-                  runtime-type-id    runtime-type-id-set!
-                  runtime-type-super runtime-type-super-set!
-                  runtime-type-name  runtime-type-name-set!
-                  runtime-type-constructor  runtime-type-constructor-set!
-                  runtime-type-properties runtime-type-properties-set!
-                  runtime-struct-fields runtime-struct-fields-set!
-                  runtime-class-slots runtime-class-slots-set!
-                  expander-type-identifiers expander-type-identifiers-set!
-                  make-runtime-struct-info
-                  make-runtime-class-info
-                  make-extended-struct-info
-                  make-extended-class-info
-                  make-runtime-struct-exhibitor
-                  make-runtime-class-exhibitor
-                  syntax-local-type-info?
-                  syntax-local-struct-info?
-                  syntax-local-class-info?
-                  runtime-type-exhibitor-e))
+    (import <expander-runtime> <syntax-case> <MOP:1>)
+    (export #t)
+    ;; class meta type; expansion time class reflection.
+    (defclass-type class-type-info::t ()
+      make-class-type-info
+      class-type-info?
+      id: gerbil.core#class-type-info::t
+      name: class-type-info
+      slots:
+      ((id ;; Symbol
+        ;; thre class's type id
+        class-type-id class-type-id-set!)
+       (name ;; Symbol
+        ;; the class's name
+        class-type-name class-type-name-set!)
+       (super ;; ListOf Identifier
+        ;; the class's super list; identifiers point to class-type-infos
+        class-type-super class-type-super-set!)
+       (slots ;; ListOf Symbol
+        ;; the class's direct slot list
+        class-type-slots class-type-slots-set!)
+       (struct? ;; Boolean
+        ;; #t if the class is a struct type
+        class-type-struct? class-type-struct?-set!)
+       (final? ;; Boolean
+        ;; #t if the class is final
+        class-type-final? class-type-final?-set!)
+       (constructor-method ;; OrFalse Symbol
+        ;; the class's constructor method name, if any
+        class-type-constructor-method class-type-constructor-method-set!)
+       (type-descriptor ;; Identifier
+        ;; the runtime identifier of the class's type descriptor
+        class-type-descriptor class-type-identifier-set!)
+       (constructor ;; OrFalse Identifier
+        ;; the class's constructor procudure identifier, if any
+        class-type-constructor class-type-constructor-set!)
+       (predicate ;; Identifier
+        ;; the class's defined predicate
+        class-type-predicate class-type-predicate-set!)
+       (accessors ;; AListOf Symbol -> Identifier
+        ;; the class's defined slot accessors
+        class-type-accessors class-type-accessors-set!)
+       (mutators ;; AListOf Symbol -> Identifier
+        ;; the class's defined slot mutators
+        class-type-mutators class-type-mutators-set!)
+       (unchecked-accessors ;; AListOf Symbol -> Identifier
+        ;; the class's defined unchecked slot accessors
+        class-type-unchecked-accessors class-type-unchecked-accessors-set!)
+       (unchecked-mutators ;; AListOf Symbol -> Identifier
+        ;; the class's defined unchecked slot mutators
+        class-type-unchecked-mutators class-type-unchecked-mutators-set!)))
 
+    (def (class-type-info::apply-macro-expander self stx)
+      (syntax-case stx ()
+        ((_ arg ...)
+         (cond
+          ((class-type-constructor self)
+           => (lambda (make)
+                (cons make #'(arg ...))))
+          (else
+           (raise-syntax-error #f "no constructor defined for class" stx self))))))
+
+    (bind-method! class-type-info::t 'apply-macro-expander
+                  class-type-info::apply-macro-expander)
+
+    (def (syntax-local-class-type-info? stx (is? true))
+      (and (identifier? stx)
+           (alet (e (syntax-local-value stx false))
+             (and (class-type-info? e)
+                  (is? e))))))
+
+  (module <MOP:3>
+    (import <MOP:2> (phi: +1 <MOP:2>))
+    (export #t)
+
+    ;; meta-circular
+    (defsyntax class-type-info
+      (make-class-type-info
+       id: 'gerbil.core#class-type-info::t
+       name: 'class-type-info
+       super: []
+       slots: '(id name super slots struct? final? constructor-method
+                   type-descriptor constructor predicate
+                   accessors mutators
+                   unchecked-accessors unchecked-mutators)
+       struct?: #f
+       final?: #f
+       constructor-method: #f
+       type-descriptor: (quote-syntax class-type-info::t)
+       constructor: (quote-syntax make-class-type-info)
+       predicate: (quote-syntax class-type-info?)
+       accessors:
+       [['id :: (quote-syntax class-type-id)]
+        ['name :: (quote-syntax class-type-name)]
+        ['super :: (quote-syntax class-type-super)]
+        ['slots :: (quote-syntax class-type-slots)]
+        ['struct? :: (quote-syntax class-type-struct?)]
+        ['final? :: (quote-syntax class-type-final?)]
+        ['constructor-method :: (quote-syntax class-type-constructor-method)]
+        ['type-descriptor :: (quote-syntax class-type-descriptor)]
+        ['constructor :: (quote-syntax class-type-constructor)]
+        ['predicate :: (quote-syntax class-type-predicate)]
+        ['accessors :: (quote-syntax class-type-accessors)]
+        ['mutators :: (quote-syntax class-type-mutators)]
+        ['unchecked-accessors :: (quote-syntax class-type-unchecked-accessors)]
+        ['unchecked-mutators :: (quote-syntax class-type-unchecked-mutators)]]
+       mutators:
+       [['id :: (quote-syntax class-type-id-set!)]
+        ['name :: (quote-syntax class-type-name-set!)]
+        ['super :: (quote-syntax class-type-super-set!)]
+        ['slots :: (quote-syntax class-type-slots-set!)]
+        ['struct? :: (quote-syntax class-type-struct?-set!)]
+        ['final? :: (quote-syntax class-type-final?-set!)]
+        ['constructor-method :: (quote-syntax class-type-constructor-method-set!)]
+        ['type-descriptor :: (quote-syntax class-type-descriptor-set!)]
+        ['constructor :: (quote-syntax class-type-constructor-set!)]
+        ['predicate :: (quote-syntax class-type-predicate-set!)]
+        ['accessors :: (quote-syntax class-type-accessors-set!)]
+        ['mutators :: (quote-syntax class-type-mutators-set!)]
+        ['unchecked-accessors :: (quote-syntax class-type-unchecked-accessors-set!)]
+        ['unchecked-mutators :: (quote-syntax class-type-unchecked-mutators-set!)]]
+       unchecked-accessors:
+       [['id :: (quote-syntax &class-type-id)]
+        ['name :: (quote-syntax &class-type-name)]
+        ['super :: (quote-syntax &class-type-super)]
+        ['slots :: (quote-syntax &class-type-slots)]
+        ['struct? :: (quote-syntax &class-type-struct?)]
+        ['final? :: (quote-syntax &class-type-final?)]
+        ['constructor-method :: (quote-syntax &class-type-constructor-method)]
+        ['type-descriptor :: (quote-syntax &class-type-descriptor)]
+        ['constructor :: (quote-syntax &class-type-constructor)]
+        ['predicate :: (quote-syntax &class-type-predicate)]
+        ['accessors :: (quote-syntax &class-type-accessors)]
+        ['mutators :: (quote-syntax &class-type-mutators)]
+        ['unchecked-accessors :: (quote-syntax &class-type-unchecked-accessors)]
+        ['unchecked-mutators :: (quote-syntax &class-type-unchecked-mutators)]]
+       unchecked-mutators:
+       [['id :: (quote-syntax &class-type-id-set!)]
+        ['name :: (quote-syntax &class-type-name-set!)]
+        ['super :: (quote-syntax &class-type-super-set!)]
+        ['slots :: (quote-syntax &class-type-slots-set!)]
+        ['struct? :: (quote-syntax &class-type-struct?-set!)]
+        ['final? :: (quote-syntax &class-type-final?-set!)]
+        ['constructor-method :: (quote-syntax &class-type-constructor-method-set!)]
+        ['type-descriptor :: (quote-syntax &class-type-descriptor-set!)]
+        ['constructor :: (quote-syntax &class-type-constructor-set!)]
+        ['predicate :: (quote-syntax &class-type-predicate-set!)]
+        ['accessors :: (quote-syntax &class-type-accessors-set!)]
+        ['mutators :: (quote-syntax &class-type-mutators-set!)]
+        ['unchecked-accessors :: (quote-syntax &class-type-unchecked-accessors-set!)]
+        ['unchecked-mutators :: (quote-syntax &class-type-unchecked-mutators-set!)]])))
+
+  (module <MOP:4>
+    (import <MOP:1> (phi: +1 <MOP:1> <MOP:2> <MOP:3>))
+    (export #t)
+
+    ;; and here we define the general MOP macros
     (begin-syntax
-      (defclass-type runtime-type-info::t ()
-        #f runtime-type-info?
-        slots:
-        ((runtime-identifier
-          runtime-type-identifier runtime-type-identifier-set!))
-        id:   gerbil.core#runtime-type-info::t)
-
-      (defclass-type runtime-struct-info::t (runtime-type-info::t)
-        make-runtime-struct-info runtime-struct-info?
-        id:   gerbil.core#runtime-struct-info::t
-        name: struct-info)
-
-      (defclass-type runtime-class-info::t (runtime-type-info::t)
-        make-runtime-class-info runtime-class-info?
-        id:   gerbil.core#runtime-class-info::t
-        name: class-info)
-
-      (defclass-type expander-type-info::t ()
-        #f expander-type-info?
-        slots:
-        ((expander-identifiers
-          expander-type-identifiers expander-type-identifiers-set!))
-        id:   gerbil.core#expander-type-info::t)
-
-      (defclass-type extended-runtime-type-info::t (runtime-type-info::t)
-        #f extended-runtime-type-info?
-        slots:
-        ((type-exhibitor
-          runtime-type-exhibitor runtime-type-exhibitor-set!))
-        id:   gerbil.core#extended-runtime-type-info)
-
-      (defclass-type extended-struct-info::t (runtime-struct-info::t
-                                              extended-runtime-type-info::t
-                                              expander-type-info::t)
-        make-extended-struct-info extended-struct-info?
-        id:   gerbil.core#extended-stuct-info::t
-        name: struct-info)
-
-      (defclass-type extended-class-info::t (runtime-class-info::t
-                                             extended-runtime-type-info::t
-                                             expander-type-info::t)
-        make-extended-class-info extended-class-info?
-        id:   gerbil.core#extended-class-info::t
-        name: class-info)
-
-      (defstruct-type runtime-rtd-exhibitor::t #f
-        #f runtime-type-exhibitor?
-        slots:
-        ((id             runtime-type-id             runtime-type-id-set!)
-         (super          runtime-type-super          runtime-type-super-set!)
-         (name           runtime-type-name           runtime-type-name-set!)
-         (constructor    runtime-type-constructor    runtime-type-constructor-set!)
-         (properties     runtime-type-properties     runtime-type-properties-set!))
-        id:   gerbil.core#runtime-rtd-exhibitor::t)
-
-      ;; TODO: remove after bootstrap
-      (def runtime-type-ctor runtime-type-constructor)
-      (def runtime-type-ctor-set! runtime-type-constructor-set!)
-      (def runtime-type-plist runtime-type-properties)
-      (def runtime-type-plist-set! runtime-type-properties-set!)
-
-      (defstruct-type runtime-struct-exhibitor::t runtime-rtd-exhibitor::t
-        make-runtime-struct-exhibitor runtime-struct-exhibitor?
-        slots:
-        ((fields runtime-struct-fields runtime-struct-fields-set!))
-        id:   gerbil.core#runtime-struct-exhibitor::t
-        name: struct-exhibitor)
-
-      (defstruct-type runtime-class-exhibitor::t runtime-rtd-exhibitor::t
-        make-runtime-class-exhibitor runtime-class-exhibitor?
-        slots:
-        ((slots runtime-class-slots runtime-class-slots-set!))
-        id:   gerbil.core#runtime-class-exhibitor::t
-        name: class-exhibitor)
-
-      (def (syntax-local-type-info? stx (is? true))
-        (and (identifier? stx)
-             (alet (e (syntax-local-value stx false))
-               (and (runtime-type-info? e)
-                    (is? e)))))
-      (def (syntax-local-struct-info? stx)
-        (syntax-local-type-info? stx runtime-struct-info?))
-      (def (syntax-local-class-info? stx)
-        (syntax-local-type-info? stx runtime-class-info?))
-
-      (def (runtime-type-exhibitor-e id)
-        (and id (let ((info (syntax-local-value id)))
-                  (and (extended-runtime-type-info? info)
-                       (runtime-type-exhibitor info)))))
-
-      ;; private
-      (def (expander-type-info::apply-macro-expander self stx)
-        (syntax-case stx ()
-          ((_ arg ...)
-           (with-syntax (((super type::t make type? getf setf)
-                          (expander-type-identifiers self)))
-             #'(make arg ...)))))
-
-      (bind-method! expander-type-info::t 'apply-macro-expander
-                    expander-type-info::apply-macro-expander)
-
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: properties: unchecked: print: equal:)))
+                '(id: name: constructor: transparent: final: print: equal:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref slots body struct?)
@@ -1942,6 +2015,33 @@ package: gerbil
             (lambda _ (genident id))
             (lambda args
               (apply stx-identifier id args))))
+
+        (def (get-mixin-slots super slots)
+          (def tab (make-hash-table-eq))
+          (def (dedup mixins)
+            (let lp ((rest mixins) (r []))
+              (if (pair? rest)
+                (let (slot (car rest))
+                  (if (hash-get tab slot)
+                    (lp (cdr rest) r)
+                    (begin
+                      (hash-put! tab slot #t)
+                      (lp (cdr rest) (cons slot r)))))
+                (reverse r))))
+
+          (stx-for-each (lambda (slot) (hash-put! tab (stx-e slot) #t)) slots)
+          (cond
+           ((not super) [])
+           ((identifier? super)
+            (dedup (get-mixin-slots-r super)))
+           (else
+            (dedup (concatenate (map get-mixin-slots-r super))))))
+
+        (def (get-mixin-slots-r type-id)
+          (let (info (syntax-local-value type-id))
+            (append
+              (class-type-slots info)
+              (concatenate (map get-mixin-slots-r (class-type-super info))))))
 
         (check-duplicate-identifiers slots stx)
 
@@ -1961,40 +2061,51 @@ package: gerbil
                        (type?     (make-id name "?"))
                        (type-super
                         (if struct?
-                          (and super (runtime-type-identifier super))
-                          (map runtime-type-identifier super)))
+                          (and super (class-type-descriptor super))
+                          (map class-type-descriptor super)))
                        ((slot ...)
                         slots)
                        ((getf ...)
                         (stx-map (cut make-id name "-" <>) slots))
                        ((setf ...)
                         (stx-map (cut make-id name "-" <> "-set!") slots))
-                       ((values type-attr)
+                       ((values mixin-slots)
+                        (get-mixin-slots super-ref slots))
+                       ((mixin-slot ...)
+                        mixin-slots)
+                       ((mixin-getf ...)
+                        (stx-map (cut make-id name "-" <>) mixin-slots))
+                       ((mixin-setf ...)
+                        (stx-map (cut make-id name "-" <> "-set!") mixin-slots))
+                       ((ugetf ...)
+                        (stx-map (cut make-id "&" <>) #'(getf ...)))
+                       ((usetf ...)
+                        (stx-map (cut make-id "&" <>) #'(setf ...)))
+                       ((mixin-ugetf ...)
+                        (stx-map (cut make-id "&" <>) #'(mixin-getf ...)))
+                       ((mixin-usetf ...)
+                        (stx-map (cut make-id "&" <>) #'(mixin-setf ...)))
+                       ((values type-slots)
                         (cond
                          ((stx-null? slots) [])
-                         (else              [slots: #'((slot getf setf) ...)])))
+                         (else [slots: #'((slot getf setf) ...)])))
+                       ((values type-mixin-slots)
+                        (cond
+                         ((stx-null? mixin-slots) [])
+                         (else [mixin: #'((mixin-slot mixin-getf mixin-setf) ...)])))
                        ((values type-name)
                         [name: (or (stx-getq name: body) id)])
                        ((values type-id)
-                        (or (alet (e (stx-getq id: body))
-                              [id: e])
-                            []))
+                        [id: (or (stx-getq id: body) (make-class-type-id #'type))])
                        ((values type-constructor)
                         (or (alet (e (stx-getq constructor: body))
                               [constructor: e])
                             []))
                        ((values properties)
                         (let* ((properties
-                                (or (stx-getq properties: body)
-                                    []))
-                               (properties
                                 (if (stx-e (stx-getq transparent: body))
-                                  (cons [transparent: . #t] properties)
-                                  properties))
-                               (properties
-                                (if (stx-e (stx-getq final: body))
-                                  (cons [final: . #t] properties)
-                                  properties))
+                                  [[transparent: . #t]]
+                                  []))
                                (properties
                                 (cond
                                  ((stx-e (stx-getq print: body))
@@ -2011,75 +2122,82 @@ package: gerbil
                                  (else properties))))
                           properties))
                        ((values type-properties)
-                        (if (null? properties) properties
-                            (with-syntax ((properties properties))
-                              [properties: #'(quote properties)])))
-                       ((values type-unchecked)
-                        (or (alet (e (stx-getq unchecked: body))
-                              [unchecked: e])
-                            [unchecked: #t]))
+                        (if (null? properties)
+                          []
+                          (with-syntax ((properties properties))
+                            [properties: #'(quote properties)])))
+                       ((values final?)
+                        (stx-e (stx-getq final: body)))
+                       ((values type-final)
+                        [final: final?])
                        ((type-body ...)
-                        [type-attr ...
-                         type-id ...
+                        [type-id ...
                          type-name ...
                          type-constructor ...
+                         type-final ...
                          type-properties ...
-                         type-unchecked ...])
+                         type-slots ...
+                         type-mixin-slots ...])
                        (typedef
-                         (wrap
-                          #'(deftype-type type::t type-super
-                              make-type type?
-                              type-body ...)))
-                       (make-type-info
-                        (if struct?
-                          #'make-extended-struct-info
-                          #'make-extended-class-info))
+                        (wrap
+                         #'(deftype-type type::t type-super
+                             make-type type?
+                             type-body ...)))
+                       (meta-type-id
+                        (with-syntax (((id: id) type-id))
+                          #'(quote id)))
+                       (meta-type-name
+                        (with-syntax ((type-name (cadr type-name)))
+                          #'(quote type-name)))
                        (meta-type-super
                         (if struct?
-                          (and super #'(quote-syntax type-super))
-                          (with-syntax (((super-id ...) #'type-super))
+                          (if super
+                            (with-syntax ((super-id super-ref))
+                              #'[(quote-syntax super-id)])
+                            #'[])
+                          (with-syntax (((super-id ...) super-ref))
                             #'[(quote-syntax super-id) ...])))
-                       (make-exhibitor
-                        (if struct?
-                          #'make-runtime-struct-exhibitor
-                          #'make-runtime-class-exhibitor))
-                       (meta-rtd-id
-                        (and (not (null? type-id))
-                             (cadr type-id)))
-                       (meta-rtd-super
-                        (let (quote-e
-                              (lambda (x-ref)
-                                (and x-ref
-                                     (with-syntax ((x-ref x-ref))
-                                       #'(quote-syntax x-ref)))))
-                          (if struct?
-                            (quote-e super-ref)
-                            (cons 'list (map quote-e super-ref)))))
-                       (meta-rtd-name
-                        (cadr type-name))
-                       (meta-rtd-constructor
-                        (and (not (null? type-constructor))
-                             (cadr type-constructor)))
-                       (meta-rtd-properties properties)
+                       (meta-type-slots #'(quote (slot ...)))
+                       (meta-type-struct? struct?)
+                       (meta-type-final? final?)
+                       (meta-type-constructor-method
+                        (if (null? type-constructor)
+                          #f
+                          (with-syntax (((constructor: kons) type-constructor))
+                            #'(quote kons))))
+                       (meta-type-descriptor #'(quote-syntax type::t))
+                       (meta-type-constructor #'(quote-syntax make-type))
+                       (meta-type-predicate #'(quote-syntax type?))
+                       (meta-type-accessors
+                        #'[['slot :: (quote-syntax getf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-getf)]...])
+                       (meta-type-mutators
+                        #'[['slot :: (quote-syntax setf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-setf)]...])
+                       (meta-type-unchecked-accessors
+                        #'[['slot :: (quote-syntax ugetf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-ugetf)]...])
+                       (meta-type-unchecked-mutators
+                        #'[['slot :: (quote-syntax usetf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-usetf)]...])
                        (metadef
                         (wrap
                          #'(defsyntax type
-                             (make-type-info
-                              runtime-identifier: (quote-syntax type::t)
-                              expander-identifiers:
-                              [meta-type-super
-                               (quote-syntax type::t)
-                               (quote-syntax make-type)
-                               (quote-syntax type?)
-                               [(quote-syntax getf) ...]
-                               [(quote-syntax setf) ...]]
-                              type-exhibitor:
-                              (make-exhibitor (quote meta-rtd-id)
-                                              meta-rtd-super
-                                              (quote meta-rtd-name)
-                                              (quote meta-rtd-constructor)
-                                              (quote meta-rtd-properties)
-                                              (quote (slot ...))))))))
+                             (make-class-type-info
+                              id: meta-type-id
+                              name: meta-type-name
+                              slots: meta-type-slots
+                              super: meta-type-super
+                              struct?: meta-type-struct?
+                              final?: meta-type-final?
+                              constructor-method: meta-type-constructor-method
+                              type-descriptor: meta-type-descriptor
+                              constructor: meta-type-constructor
+                              predicate: meta-type-predicate
+                              accessors: meta-type-accessors
+                              mutators: meta-type-mutators
+                              unchecked-accessors: meta-type-unchecked-accessors
+                              unchecked-mutators: meta-type-unchecked-mutators)))))
           (wrap
            #'(begin typedef metadef)))))
 
@@ -2088,11 +2206,11 @@ package: gerbil
         (syntax-case hd ()
           ((id super)
            (and (identifier? #'id)
-                (syntax-local-struct-info? #'super))
+                (syntax-local-class-type-info? #'super class-type-struct?))
            (generate-typedef stx #'id #'super fields body #t))
           (_ (if (identifier? hd)
                (generate-typedef stx hd #f fields body #t)
-               (raise-syntax-error #f "Bad syntax; struct name not an identifier" stx hd)))))
+               (raise-syntax-error #f "bad syntax; struct name not an identifier" stx hd)))))
 
       (syntax-case stx ()
         ((_ hd fields . rest)
@@ -2107,11 +2225,11 @@ package: gerbil
         (syntax-case hd ()
           ((id . super)
            (and (stx-list? #'super)
-                (stx-andmap syntax-local-type-info? #'super))
+                (stx-andmap syntax-local-class-type-info? #'super))
            (generate-typedef stx #'id (syntax->list #'super) slots body #f))
           (_ (if (identifier? hd)
                (generate-typedef stx hd [] slots body #f)
-               (raise-syntax-error #f "Bad syntax; class name should be an identifier" stx hd)))))
+               (raise-syntax-error #f "bad syntax; class name should be an identifier" stx hd)))))
 
       (syntax-case stx ()
         ((_ hd slots . rest)
@@ -2132,18 +2250,18 @@ package: gerbil
         ((_ (@method id type) impl . rest)
          (cond
           ((and (identifier? #'id)
-                (syntax-local-type-info? #'type)
+                (syntax-local-class-type-info? #'type)
                 (stx-plist? #'rest method-opt?))
            (with-syntax* (((values klass)
                            (syntax-local-value #'type))
                           ((values rebind?)
                            (and (stx-e (stx-getq rebind: #'rest)) #t))
                           (type::t
-                           (runtime-type-identifier klass))
+                           (class-type-descriptor klass))
                           (name
-                           (stx-identifier #'id #'type "::" #'id))
+                           (stx-identifier #'type #'type "::" #'id))
                           (@next-method
-                           (stx-identifier #'id '@next-method))
+                           (stx-identifier #'type '@next-method))
                           (defimpl
                             (wrap
                              #'(def name
@@ -2158,11 +2276,11 @@ package: gerbil
                            (wrap #'(bind-method! type::t 'id name rebind?))))
              (wrap #'(begin defimpl bind))))
           ((not (identifier? #'id))
-           (raise-syntax-error #f "Bad syntax; expected method identifier" stx #'id))
-          ((not (syntax-local-type-info? #'type))
-           (raise-syntax-error #f "Bad syntax; expected type identifier" stx #'type))
+           (raise-syntax-error #f "bad syntax; expected method identifier" stx #'id))
+          ((not (syntax-local-class-type-info? #'type))
+           (raise-syntax-error #f "bad syntax; expected type identifier" stx #'type))
           (else
-           (raise-syntax-error #f "Bad syntax; illegal method options" stx))))))
+           (raise-syntax-error #f "bad syntax; illegal method options" stx))))))
 
     (defsyntax (@method stx)
       (def (dotted-identifier? id)
@@ -2210,61 +2328,22 @@ package: gerbil
       ((recur obj id path ... last val)
        (recur (@ obj id path ...) last val))))
 
-  (import <MOP:2> (phi: +1 <MOP:2>))
-
-  (module <MOP:3>
-    (export (phi: +1 #t))
-    (begin-syntax
-      (defsyntax runtime-type-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-type-info::t)))
-
-      (defsyntax runtime-struct-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-struct-info::t)))
-
-      (defsyntax runtime-class-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-class-info::t)))
-
-      (defsyntax expander-type-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax expander-type-info::t)))
-
-      (defsyntax extended-runtime-type-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax extended-runtime-type-info::t)))
-
-      (defsyntax extended-struct-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax extended-struct-info::t)))
-
-      (defsyntax extended-class-info
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax extended-class-info::t)))
-
-      (defsyntax runtime-rtd-exhibitor
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-rtd-exhibitor::t)))
-
-      (defsyntax runtime-struct-exhibitor
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-struct-exhibitor::t)))
-
-      (defsyntax runtime-class-exhibitor
-        (make-runtime-class-info
-         runtime-identifier: (quote-syntax runtime-class-exhibitor::t)))
-
-      (defclass macro-object (macro)
-        id: gerbil.core#macro-object::t)
-
-      (defmethod {apply-macro-expander macro-object}
-        (lambda (self stx)
-          (core-apply-expander (macro-object-macro self) stx)))))
-
-  (import <MOP:3>))
+  (import <MOP:1> <MOP:4> (phi: +1 <MOP:1> <MOP:2> <MOP:3> <MOP:4>)))
 
 (import <MOP> (phi: +1 <MOP>))
+
+(module <macro-object>
+  (import <expander-runtime>)
+  (export #t)
+
+  (defclass macro-object (macro)
+    id: gerbil.core#macro-object::t)
+
+  (defmethod {apply-macro-expander macro-object}
+    (lambda (self stx)
+      (core-apply-expander (macro-object-macro self) stx))))
+
+(import (phi: +1 <macro-object>))
 
 (module <match>
   (export #t
@@ -2341,11 +2420,11 @@ package: gerbil
           (#(body ...)
             [vector: (parse-vector #'(body ...))])
           ((struct-id . body)
-           (syntax-local-struct-info? #'struct-id)
+           (syntax-local-class-type-info? #'struct-id class-type-struct?)
            [struct: (syntax-local-value #'struct-id)
                     (parse-vector #'body)])
           ((class-id . body)
-           (syntax-local-class-info? #'class-id)
+           (syntax-local-class-type-info? #'class-id)
            [class: (syntax-local-value #'class-id)
                    (parse-class-body #'body)])
           ;; equality
@@ -2429,7 +2508,7 @@ package: gerbil
 
       (def (parse-error hd)
         (apply raise-syntax-error
-          #f "Bad syntax; illegal pattern"
+          #f "bad syntax; illegal pattern"
           (if match-stx
             [match-stx stx hd]
             [stx hd])))
@@ -2682,107 +2761,70 @@ package: gerbil
                           ((vector->list)
                            #'(##vector->list target))
                           ((struct->list)
-                           #'(##cdr (##vector->list target)))
+                           #'(##cdr (##structure->list target)))
                           (else
                            (raise-syntax-error #f "Unexpected list conversion" stx ->list)))))
           ['let #'(($tgt target->list))
                 (generate1 #'$tgt body K E)]))
 
       (def (generate-struct info tgt body K E)
-        (with-syntax* (((values rtd)
-                        (and (extended-struct-info? info)
-                             (runtime-type-exhibitor info)))
-                       ((values fields)
-                        (let lp ((rtd rtd) (k 0))
-                          (if rtd
-                            (lp (runtime-type-exhibitor-e
-                                 (runtime-type-super rtd))
-                                (fx+ (length (runtime-struct-fields rtd)) k))
-                            k)))
-                       ((values final?)
-                        (and rtd (assgetq final: (runtime-type-properties rtd))))
-                       (target tgt)
-                       (instance-check
-                        (if (expander-type-info? info)
-                          (with-syntax ((instance?
-                                         (cadddr (expander-type-identifiers info))))
-                            #'(instance? target))
-                          (with-syntax ((type::t
-                                         (runtime-type-identifier info))
-                                        (type-instance?
-                                         (if final?
-                                           #'direct-instance?
-                                           #'struct-instance?)))
-                            #'(type-instance? type::t target)))))
-          (syntax-case body ()
-            ((simple: body)
-             (let ((K (generate-simple-vector tgt #'body 1 K E))
-                   (len (stx-length #'body)))
-               (if (and rtd (fx<= len fields))
-                 ['if #'instance-check K E]
-                 (with-syntax ((len len))
-                   ['if #'instance-check
-                     ['if #'(##fx< len (##vector-length target))
-                          K E]
-                     E]))))
-            ((list: body)
-             ['if #'instance-check
-               (generate-list-vector tgt #'body 'struct->list K E)
-               E]))))
+        (syntax-case body ()
+          ((simple: body)
+           (let ((fields (struct-field-accessors info)))
+             ['if [(class-type-predicate info) tgt]
+               (generate-simple-struct-body info tgt #'body K E)
+               E]))
+          ((list: body)
+           ['if [(class-type-predicate info) tgt]
+             (generate-list-vector tgt #'body 'struct->list K E)
+             E])))
+
+      (def (generate-simple-struct-body info tgt body K E)
+        (let recur ((rest body) (fields (struct-field-accessors info)))
+          (syntax-case rest ()
+            ((hd . rest)
+             (if (null? fields)
+               (raise-syntax-error #f "too many parts for struct" stx info (class-type-name info))
+               (let (($tgt (genident 'e))
+                     (getf (car fields)))
+                 ['let [[$tgt [getf tgt]]]
+                   (generate1 $tgt #'hd
+                              (recur #'rest (cdr fields))
+                              E)])))
+            (_ K))))
+
+      (def (struct-field-accessors info)
+        (let recur ((next [info]))
+          (if (null? next)
+            []
+            (let (ti (car next))
+              (append (recur (map syntax-local-value (class-type-super ti)))
+                      (map (lambda (slot)
+                             (or (assgetq slot (class-type-unchecked-accessors ti))
+                                 (raise-syntax-error #f "no accessor for struct slot" stx info slot)))
+                           (class-type-slots ti)))))))
 
       (def (generate-class info tgt body K E)
-        (def rtd
-          (and (extended-class-info? info)
-               (runtime-type-exhibitor info)))
+        ['if [(class-type-predicate info) tgt]
+          (generate-class-body info tgt body K E)
+          E])
 
-        (def known-slot?
-          (if rtd
-            (lambda (key)
-              (let (slot (keyword->symbol (stx-e key)))
-                (rtd-known-slot? rtd slot)))
-            false))
-
-        (def final?
-          (and rtd (assgetq final: (runtime-type-properties rtd))))
-
-        (def (rtd-known-slot? rtd slot)
-          (and rtd
-               (or (memq slot (runtime-class-slots rtd))
-                   (ormap (cut rtd-known-slot? <> slot)
-                          (map runtime-type-exhibitor-e
-                               (runtime-type-super rtd))))))
-
-        (def (recur klass rest)
+      (def (generate-class-body info tgt body K E)
+        (let recur ((rest body))
           (syntax-case rest ()
             ((key pat . rest)
-             (with-syntax* ((target tgt)
-                            ($klass klass)
-                            ($off (genident 'slot))
-                            ($tgt (genident 'e))
-                            ((values K)
-                             ['let #'(($tgt (##vector-ref target (fx1+ $off))))
-                                   (generate1 #'$tgt #'pat
-                                              (recur klass #'rest)
-                                              E)]))
-               (if (known-slot? #'key)
-                 ['let #'(($off (class-slot-offset $klass key)))
-                       K]
-                 ['let #'(($off (class-slot-offset $klass key)))
-                       ['if #'$off K E]])))
-            (_ K)))
-
-        (with-syntax* (($klass (genident 'class))
-                       (target tgt)
-                       (type::t
-                        (runtime-type-identifier info))
-                       (type-instance?
-                        (if final?
-                          #'direct-instance?
-                          #'class-instance?)))
-          ['if #'(type-instance? type::t target)
-               ['let #'(($klass (object-type target)))
-                     (recur #'$klass body)]
-               E]))
+             (cond
+              ((assgetq (string->symbol (keyword->string (stx-e #'key)))
+                        (class-type-unchecked-accessors info))
+               => (lambda (getf)
+                    (let ($tgt (genident 'e))
+                      ['let [[$tgt [getf tgt]]]
+                        (generate1 $tgt #'pat
+                                   (recur #'rest)
+                                   E)])))
+              (else
+               (raise-syntax-error #f "no slot accessor" stx info #'key))))
+            (_ K))))
 
       (generate1 tgt ptree K E))
 
@@ -2803,7 +2845,7 @@ package: gerbil
                               (stx-source stx)))]
                         r)
                   (raise-syntax-error #f
-                    "Bad syntax; misplaced else" stx #'hd)))
+                    "bad syntax; misplaced else" stx #'hd)))
                ((hd-pat . body)
                 (and (stx-list? #'hd-pat)
                      (fx= (stx-length #'hd-pat) hd-len)
@@ -2817,7 +2859,7 @@ package: gerbil
                             (or (stx-source #'hd)
                                 (stx-source stx)))]
                           r)))
-               (_ (raise-syntax-error #f "Bad syntax; illegal match clause"
+               (_ (raise-syntax-error #f "bad syntax; illegal match clause"
                                       stx #'hd))))
             (_ r))))
 
@@ -2892,7 +2934,7 @@ package: gerbil
            (syntax/loc #'clause
              ((hd) . body)))
           (_ (raise-syntax-error #f
-               "Bad syntax; illegal match clause" stx clause))))
+               "bad syntax; illegal match clause" stx clause))))
 
       (generate-match* stx [tgt] (stx-map reclause clauses))))
 
@@ -2987,7 +3029,7 @@ package: gerbil
     ((recur id match-e)
      (recur id match-e
             (lambda ($stx)
-              (raise-syntax-error #f "Bad syntax; no macro definition for defsyntax-for-match" $stx)))))
+              (raise-syntax-error #f "bad syntax; no macro definition for defsyntax-for-match" $stx)))))
 
   (defrules defrules-for-match ()
     ((_ id . body)
@@ -3248,7 +3290,7 @@ package: gerbil
          (for-each
            (lambda (id)
              (unless (hash-get found (core-identifier-key id))
-               (raise-syntax-error #f "Bad syntax; identifier is not in the import set" stx id)))
+               (raise-syntax-error #f "bad syntax; identifier is not in the import set" stx id)))
            #'(id ...))
          (cons begin: new-imports)))))
 
@@ -3361,7 +3403,7 @@ package: gerbil
          (for-each
            (lambda (id)
              (unless (hash-get found (core-identifier-key id))
-               (raise-syntax-error #f "Bad syntax; identifier is not in the export set" stx id)))
+               (raise-syntax-error #f "bad syntax; identifier is not in the export set" stx id)))
            #'(id ...))
          (cons begin: new-exports)))))
 
@@ -3386,20 +3428,33 @@ package: gerbil
          (cons begin: (foldl fold-e [] exports))))))
 
   (defsyntax-for-export (struct-out stx)
-    (syntax-case stx ()
-      ((_ id ...)
-       (let lp ((rest #'(id ...)) (ids []))
-         (syntax-case rest ()
-           ((id . rest)
-            (let (info (syntax-local-value #'id false))
-              (if (expander-type-info? info)
-                (with ([super type::t make-type type? getf setf]
-                       (@ info expander-identifiers))
-                  (lp #'rest [#'id type::t make-type type? getf ... setf ... ids ...]))
-                (raise-syntax-error #f "Incomplete type info" stx #'id))))
-           (_ (cons 'begin: ids)))))))
+    (def (identifiers id unchecked?)
+      (let (info (syntax-local-value id false))
+        (if (class-type-info? info)
+          [id
+           (class-type-descriptor info)
+           (let (ctor (class-type-constructor info))
+             (if ctor [ctor] []))
+           ...
+           (class-type-predicate info)
+           (map cdr (class-type-accessors info)) ...
+           (map cdr (class-type-mutators info)) ...
+           (if unchecked?
+             [(map cdr (class-type-unchecked-accessors info)) ...
+              (map cdr (class-type-unchecked-mutators info)) ...]
+             [])
+           ...]
+          (raise-syntax-error #f "no class type info" stx id))))
 
-  )
+    (syntax-case stx ()
+      ((_ unchecked: unchecked? id ...)
+       (cons 'begin:
+             (concatenate (stx-map (cut identifiers <> (stx-e #'unchecked?))
+                                   #'(id ...)))))
+       ((_ id ...)
+       (cons 'begin:
+             (concatenate (stx-map (cut identifiers <> #f)
+                                   #'(id ...))))))))
 
 (import <module-sugar>)
 

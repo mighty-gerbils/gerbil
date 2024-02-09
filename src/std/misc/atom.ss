@@ -30,7 +30,7 @@
 
 (defstruct Atom
   (mutex value validator watchers)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (atom (initial-value (void)) validator: (validator #f))
   (Atom (make-mutex 'atom) initial-value validator (hash)))

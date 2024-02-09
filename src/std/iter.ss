@@ -8,7 +8,7 @@
         :std/generic
         :std/coroutine)
 (export
-  (struct-out iterator)
+  (struct-out  iterator)
   iter :iter iter-end iter-end? iter-next! iter-fini!
   for for* for/collect for/fold
   in-iota in-range in-naturals in-hash in-hash-keys in-hash-values
@@ -18,7 +18,7 @@
   )
 
 (defstruct iterator (e next fini)
-  constructor: :init! unchecked: #t final: #t)
+  constructor: :init! final: #t)
 
 (defmethod {:init! iterator}
   (lambda (self e next (fini #f))

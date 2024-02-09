@@ -66,6 +66,16 @@ namespace: gx
          (%#define-runtime root-context::t gx#root-context::t)
          (%#define-runtime root-context? gx#root-context?)
          (%#define-runtime make-root-context gx#make-root-context)
+         (%#define-runtime root-context-id gx#root-context-id)
+         (%#define-runtime root-context-table gx#root-context-table)
+         (%#define-runtime root-context-id-set! gx#root-context-id-set!)
+         (%#define-runtime root-context-table-set! gx#root-context-table-set!)
+         (%#define-runtime &root-context-id gx#&root-context-id)
+         (%#define-runtime &root-context-table gx#&root-context-table)
+         (%#define-runtime &root-context-id-set! gx#&root-context-id-set!)
+         (%#define-runtime
+          &root-context-table-set!
+          gx#&root-context-table-set!)
          (%#define-syntax root-context |gx[:0:]#root-context|)
          (%#define-runtime phi-context::t gx#phi-context::t)
          (%#define-runtime phi-context? gx#phi-context?)
@@ -73,19 +83,47 @@ namespace: gx
          (%#define-runtime phi-context-super gx#phi-context-super)
          (%#define-runtime phi-context-up gx#phi-context-up)
          (%#define-runtime phi-context-down gx#phi-context-down)
+         (%#define-runtime phi-context-id gx#phi-context-id)
+         (%#define-runtime phi-context-table gx#phi-context-table)
          (%#define-runtime phi-context-super-set! gx#phi-context-super-set!)
          (%#define-runtime phi-context-up-set! gx#phi-context-up-set!)
          (%#define-runtime phi-context-down-set! gx#phi-context-down-set!)
+         (%#define-runtime phi-context-id-set! gx#phi-context-id-set!)
+         (%#define-runtime phi-context-table-set! gx#phi-context-table-set!)
          (%#define-runtime &phi-context-super gx#&phi-context-super)
          (%#define-runtime &phi-context-up gx#&phi-context-up)
          (%#define-runtime &phi-context-down gx#&phi-context-down)
+         (%#define-runtime &phi-context-id gx#&phi-context-id)
+         (%#define-runtime &phi-context-table gx#&phi-context-table)
          (%#define-runtime &phi-context-super-set! gx#&phi-context-super-set!)
          (%#define-runtime &phi-context-up-set! gx#&phi-context-up-set!)
          (%#define-runtime &phi-context-down-set! gx#&phi-context-down-set!)
+         (%#define-runtime &phi-context-id-set! gx#&phi-context-id-set!)
+         (%#define-runtime &phi-context-table-set! gx#&phi-context-table-set!)
          (%#define-syntax phi-context |gx[:0:]#phi-context|)
          (%#define-runtime top-context::t gx#top-context::t)
          (%#define-runtime top-context? gx#top-context?)
          (%#define-runtime make-top-context gx#make-top-context)
+         (%#define-runtime top-context-super gx#top-context-super)
+         (%#define-runtime top-context-up gx#top-context-up)
+         (%#define-runtime top-context-down gx#top-context-down)
+         (%#define-runtime top-context-id gx#top-context-id)
+         (%#define-runtime top-context-table gx#top-context-table)
+         (%#define-runtime top-context-super-set! gx#top-context-super-set!)
+         (%#define-runtime top-context-up-set! gx#top-context-up-set!)
+         (%#define-runtime top-context-down-set! gx#top-context-down-set!)
+         (%#define-runtime top-context-id-set! gx#top-context-id-set!)
+         (%#define-runtime top-context-table-set! gx#top-context-table-set!)
+         (%#define-runtime &top-context-super gx#&top-context-super)
+         (%#define-runtime &top-context-up gx#&top-context-up)
+         (%#define-runtime &top-context-down gx#&top-context-down)
+         (%#define-runtime &top-context-id gx#&top-context-id)
+         (%#define-runtime &top-context-table gx#&top-context-table)
+         (%#define-runtime &top-context-super-set! gx#&top-context-super-set!)
+         (%#define-runtime &top-context-up-set! gx#&top-context-up-set!)
+         (%#define-runtime &top-context-down-set! gx#&top-context-down-set!)
+         (%#define-runtime &top-context-id-set! gx#&top-context-id-set!)
+         (%#define-runtime &top-context-table-set! gx#&top-context-table-set!)
          (%#define-syntax top-context |gx[:0:]#top-context|)
          (%#define-runtime module-context::t gx#module-context::t)
          (%#define-runtime module-context? gx#module-context?)
@@ -96,6 +134,11 @@ namespace: gx
          (%#define-runtime module-context-export gx#module-context-export)
          (%#define-runtime module-context-e gx#module-context-e)
          (%#define-runtime module-context-code gx#module-context-code)
+         (%#define-runtime module-context-super gx#module-context-super)
+         (%#define-runtime module-context-up gx#module-context-up)
+         (%#define-runtime module-context-down gx#module-context-down)
+         (%#define-runtime module-context-id gx#module-context-id)
+         (%#define-runtime module-context-table gx#module-context-table)
          (%#define-runtime module-context-ns-set! gx#module-context-ns-set!)
          (%#define-runtime
           module-context-path-set!
@@ -110,12 +153,28 @@ namespace: gx
          (%#define-runtime
           module-context-code-set!
           gx#module-context-code-set!)
+         (%#define-runtime
+          module-context-super-set!
+          gx#module-context-super-set!)
+         (%#define-runtime module-context-up-set! gx#module-context-up-set!)
+         (%#define-runtime
+          module-context-down-set!
+          gx#module-context-down-set!)
+         (%#define-runtime module-context-id-set! gx#module-context-id-set!)
+         (%#define-runtime
+          module-context-table-set!
+          gx#module-context-table-set!)
          (%#define-runtime &module-context-ns gx#&module-context-ns)
          (%#define-runtime &module-context-path gx#&module-context-path)
          (%#define-runtime &module-context-import gx#&module-context-import)
          (%#define-runtime &module-context-export gx#&module-context-export)
          (%#define-runtime &module-context-e gx#&module-context-e)
          (%#define-runtime &module-context-code gx#&module-context-code)
+         (%#define-runtime &module-context-super gx#&module-context-super)
+         (%#define-runtime &module-context-up gx#&module-context-up)
+         (%#define-runtime &module-context-down gx#&module-context-down)
+         (%#define-runtime &module-context-id gx#&module-context-id)
+         (%#define-runtime &module-context-table gx#&module-context-table)
          (%#define-runtime &module-context-ns-set! gx#&module-context-ns-set!)
          (%#define-runtime
           &module-context-path-set!
@@ -130,6 +189,17 @@ namespace: gx
          (%#define-runtime
           &module-context-code-set!
           gx#&module-context-code-set!)
+         (%#define-runtime
+          &module-context-super-set!
+          gx#&module-context-super-set!)
+         (%#define-runtime &module-context-up-set! gx#&module-context-up-set!)
+         (%#define-runtime
+          &module-context-down-set!
+          gx#&module-context-down-set!)
+         (%#define-runtime &module-context-id-set! gx#&module-context-id-set!)
+         (%#define-runtime
+          &module-context-table-set!
+          gx#&module-context-table-set!)
          (%#define-syntax module-context |gx[:0:]#module-context|)
          (%#define-runtime prelude-context::t gx#prelude-context::t)
          (%#define-runtime prelude-context? gx#prelude-context?)
@@ -137,6 +207,11 @@ namespace: gx
          (%#define-runtime prelude-context-path gx#prelude-context-path)
          (%#define-runtime prelude-context-import gx#prelude-context-import)
          (%#define-runtime prelude-context-e gx#prelude-context-e)
+         (%#define-runtime prelude-context-super gx#prelude-context-super)
+         (%#define-runtime prelude-context-up gx#prelude-context-up)
+         (%#define-runtime prelude-context-down gx#prelude-context-down)
+         (%#define-runtime prelude-context-id gx#prelude-context-id)
+         (%#define-runtime prelude-context-table gx#prelude-context-table)
          (%#define-runtime
           prelude-context-path-set!
           gx#prelude-context-path-set!)
@@ -144,9 +219,25 @@ namespace: gx
           prelude-context-import-set!
           gx#prelude-context-import-set!)
          (%#define-runtime prelude-context-e-set! gx#prelude-context-e-set!)
+         (%#define-runtime
+          prelude-context-super-set!
+          gx#prelude-context-super-set!)
+         (%#define-runtime prelude-context-up-set! gx#prelude-context-up-set!)
+         (%#define-runtime
+          prelude-context-down-set!
+          gx#prelude-context-down-set!)
+         (%#define-runtime prelude-context-id-set! gx#prelude-context-id-set!)
+         (%#define-runtime
+          prelude-context-table-set!
+          gx#prelude-context-table-set!)
          (%#define-runtime &prelude-context-path gx#&prelude-context-path)
          (%#define-runtime &prelude-context-import gx#&prelude-context-import)
          (%#define-runtime &prelude-context-e gx#&prelude-context-e)
+         (%#define-runtime &prelude-context-super gx#&prelude-context-super)
+         (%#define-runtime &prelude-context-up gx#&prelude-context-up)
+         (%#define-runtime &prelude-context-down gx#&prelude-context-down)
+         (%#define-runtime &prelude-context-id gx#&prelude-context-id)
+         (%#define-runtime &prelude-context-table gx#&prelude-context-table)
          (%#define-runtime
           &prelude-context-path-set!
           gx#&prelude-context-path-set!)
@@ -154,10 +245,55 @@ namespace: gx
           &prelude-context-import-set!
           gx#&prelude-context-import-set!)
          (%#define-runtime &prelude-context-e-set! gx#&prelude-context-e-set!)
+         (%#define-runtime
+          &prelude-context-super-set!
+          gx#&prelude-context-super-set!)
+         (%#define-runtime
+          &prelude-context-up-set!
+          gx#&prelude-context-up-set!)
+         (%#define-runtime
+          &prelude-context-down-set!
+          gx#&prelude-context-down-set!)
+         (%#define-runtime
+          &prelude-context-id-set!
+          gx#&prelude-context-id-set!)
+         (%#define-runtime
+          &prelude-context-table-set!
+          gx#&prelude-context-table-set!)
          (%#define-syntax prelude-context |gx[:0:]#prelude-context|)
          (%#define-runtime local-context::t gx#local-context::t)
          (%#define-runtime local-context? gx#local-context?)
          (%#define-runtime make-local-context gx#make-local-context)
+         (%#define-runtime local-context-super gx#local-context-super)
+         (%#define-runtime local-context-up gx#local-context-up)
+         (%#define-runtime local-context-down gx#local-context-down)
+         (%#define-runtime local-context-id gx#local-context-id)
+         (%#define-runtime local-context-table gx#local-context-table)
+         (%#define-runtime
+          local-context-super-set!
+          gx#local-context-super-set!)
+         (%#define-runtime local-context-up-set! gx#local-context-up-set!)
+         (%#define-runtime local-context-down-set! gx#local-context-down-set!)
+         (%#define-runtime local-context-id-set! gx#local-context-id-set!)
+         (%#define-runtime
+          local-context-table-set!
+          gx#local-context-table-set!)
+         (%#define-runtime &local-context-super gx#&local-context-super)
+         (%#define-runtime &local-context-up gx#&local-context-up)
+         (%#define-runtime &local-context-down gx#&local-context-down)
+         (%#define-runtime &local-context-id gx#&local-context-id)
+         (%#define-runtime &local-context-table gx#&local-context-table)
+         (%#define-runtime
+          &local-context-super-set!
+          gx#&local-context-super-set!)
+         (%#define-runtime &local-context-up-set! gx#&local-context-up-set!)
+         (%#define-runtime
+          &local-context-down-set!
+          gx#&local-context-down-set!)
+         (%#define-runtime &local-context-id-set! gx#&local-context-id-set!)
+         (%#define-runtime
+          &local-context-table-set!
+          gx#&local-context-table-set!)
          (%#define-syntax local-context |gx[:0:]#local-context|)
          (%#begin (%#define-runtime
                    phi-context:::init!__%
@@ -196,38 +332,132 @@ namespace: gx
          (%#define-runtime runtime-binding::t gx#runtime-binding::t)
          (%#define-runtime runtime-binding? gx#runtime-binding?)
          (%#define-runtime make-runtime-binding gx#make-runtime-binding)
+         (%#define-runtime runtime-binding-id gx#runtime-binding-id)
+         (%#define-runtime runtime-binding-key gx#runtime-binding-key)
+         (%#define-runtime runtime-binding-phi gx#runtime-binding-phi)
+         (%#define-runtime runtime-binding-id-set! gx#runtime-binding-id-set!)
+         (%#define-runtime
+          runtime-binding-key-set!
+          gx#runtime-binding-key-set!)
+         (%#define-runtime
+          runtime-binding-phi-set!
+          gx#runtime-binding-phi-set!)
+         (%#define-runtime &runtime-binding-id gx#&runtime-binding-id)
+         (%#define-runtime &runtime-binding-key gx#&runtime-binding-key)
+         (%#define-runtime &runtime-binding-phi gx#&runtime-binding-phi)
+         (%#define-runtime
+          &runtime-binding-id-set!
+          gx#&runtime-binding-id-set!)
+         (%#define-runtime
+          &runtime-binding-key-set!
+          gx#&runtime-binding-key-set!)
+         (%#define-runtime
+          &runtime-binding-phi-set!
+          gx#&runtime-binding-phi-set!)
          (%#define-syntax runtime-binding |gx[:0:]#runtime-binding|)
          (%#define-runtime local-binding::t gx#local-binding::t)
          (%#define-runtime local-binding? gx#local-binding?)
          (%#define-runtime make-local-binding gx#make-local-binding)
+         (%#define-runtime local-binding-id gx#local-binding-id)
+         (%#define-runtime local-binding-key gx#local-binding-key)
+         (%#define-runtime local-binding-phi gx#local-binding-phi)
+         (%#define-runtime local-binding-id-set! gx#local-binding-id-set!)
+         (%#define-runtime local-binding-key-set! gx#local-binding-key-set!)
+         (%#define-runtime local-binding-phi-set! gx#local-binding-phi-set!)
+         (%#define-runtime &local-binding-id gx#&local-binding-id)
+         (%#define-runtime &local-binding-key gx#&local-binding-key)
+         (%#define-runtime &local-binding-phi gx#&local-binding-phi)
+         (%#define-runtime &local-binding-id-set! gx#&local-binding-id-set!)
+         (%#define-runtime &local-binding-key-set! gx#&local-binding-key-set!)
+         (%#define-runtime &local-binding-phi-set! gx#&local-binding-phi-set!)
          (%#define-syntax local-binding |gx[:0:]#local-binding|)
          (%#define-runtime top-binding::t gx#top-binding::t)
          (%#define-runtime top-binding? gx#top-binding?)
          (%#define-runtime make-top-binding gx#make-top-binding)
+         (%#define-runtime top-binding-id gx#top-binding-id)
+         (%#define-runtime top-binding-key gx#top-binding-key)
+         (%#define-runtime top-binding-phi gx#top-binding-phi)
+         (%#define-runtime top-binding-id-set! gx#top-binding-id-set!)
+         (%#define-runtime top-binding-key-set! gx#top-binding-key-set!)
+         (%#define-runtime top-binding-phi-set! gx#top-binding-phi-set!)
+         (%#define-runtime &top-binding-id gx#&top-binding-id)
+         (%#define-runtime &top-binding-key gx#&top-binding-key)
+         (%#define-runtime &top-binding-phi gx#&top-binding-phi)
+         (%#define-runtime &top-binding-id-set! gx#&top-binding-id-set!)
+         (%#define-runtime &top-binding-key-set! gx#&top-binding-key-set!)
+         (%#define-runtime &top-binding-phi-set! gx#&top-binding-phi-set!)
          (%#define-syntax top-binding |gx[:0:]#top-binding|)
          (%#define-runtime module-binding::t gx#module-binding::t)
          (%#define-runtime module-binding? gx#module-binding?)
          (%#define-runtime make-module-binding gx#make-module-binding)
          (%#define-runtime module-binding-context gx#module-binding-context)
+         (%#define-runtime module-binding-id gx#module-binding-id)
+         (%#define-runtime module-binding-key gx#module-binding-key)
+         (%#define-runtime module-binding-phi gx#module-binding-phi)
          (%#define-runtime
           module-binding-context-set!
           gx#module-binding-context-set!)
+         (%#define-runtime module-binding-id-set! gx#module-binding-id-set!)
+         (%#define-runtime module-binding-key-set! gx#module-binding-key-set!)
+         (%#define-runtime module-binding-phi-set! gx#module-binding-phi-set!)
          (%#define-runtime &module-binding-context gx#&module-binding-context)
+         (%#define-runtime &module-binding-id gx#&module-binding-id)
+         (%#define-runtime &module-binding-key gx#&module-binding-key)
+         (%#define-runtime &module-binding-phi gx#&module-binding-phi)
          (%#define-runtime
           &module-binding-context-set!
           gx#&module-binding-context-set!)
+         (%#define-runtime &module-binding-id-set! gx#&module-binding-id-set!)
+         (%#define-runtime
+          &module-binding-key-set!
+          gx#&module-binding-key-set!)
+         (%#define-runtime
+          &module-binding-phi-set!
+          gx#&module-binding-phi-set!)
          (%#define-syntax module-binding |gx[:0:]#module-binding|)
          (%#define-runtime extern-binding::t gx#extern-binding::t)
          (%#define-runtime extern-binding? gx#extern-binding?)
          (%#define-runtime make-extern-binding gx#make-extern-binding)
+         (%#define-runtime extern-binding-id gx#extern-binding-id)
+         (%#define-runtime extern-binding-key gx#extern-binding-key)
+         (%#define-runtime extern-binding-phi gx#extern-binding-phi)
+         (%#define-runtime extern-binding-id-set! gx#extern-binding-id-set!)
+         (%#define-runtime extern-binding-key-set! gx#extern-binding-key-set!)
+         (%#define-runtime extern-binding-phi-set! gx#extern-binding-phi-set!)
+         (%#define-runtime &extern-binding-id gx#&extern-binding-id)
+         (%#define-runtime &extern-binding-key gx#&extern-binding-key)
+         (%#define-runtime &extern-binding-phi gx#&extern-binding-phi)
+         (%#define-runtime &extern-binding-id-set! gx#&extern-binding-id-set!)
+         (%#define-runtime
+          &extern-binding-key-set!
+          gx#&extern-binding-key-set!)
+         (%#define-runtime
+          &extern-binding-phi-set!
+          gx#&extern-binding-phi-set!)
          (%#define-syntax extern-binding |gx[:0:]#extern-binding|)
          (%#define-runtime syntax-binding::t gx#syntax-binding::t)
          (%#define-runtime syntax-binding? gx#syntax-binding?)
          (%#define-runtime make-syntax-binding gx#make-syntax-binding)
          (%#define-runtime syntax-binding-e gx#syntax-binding-e)
+         (%#define-runtime syntax-binding-id gx#syntax-binding-id)
+         (%#define-runtime syntax-binding-key gx#syntax-binding-key)
+         (%#define-runtime syntax-binding-phi gx#syntax-binding-phi)
          (%#define-runtime syntax-binding-e-set! gx#syntax-binding-e-set!)
+         (%#define-runtime syntax-binding-id-set! gx#syntax-binding-id-set!)
+         (%#define-runtime syntax-binding-key-set! gx#syntax-binding-key-set!)
+         (%#define-runtime syntax-binding-phi-set! gx#syntax-binding-phi-set!)
          (%#define-runtime &syntax-binding-e gx#&syntax-binding-e)
+         (%#define-runtime &syntax-binding-id gx#&syntax-binding-id)
+         (%#define-runtime &syntax-binding-key gx#&syntax-binding-key)
+         (%#define-runtime &syntax-binding-phi gx#&syntax-binding-phi)
          (%#define-runtime &syntax-binding-e-set! gx#&syntax-binding-e-set!)
+         (%#define-runtime &syntax-binding-id-set! gx#&syntax-binding-id-set!)
+         (%#define-runtime
+          &syntax-binding-key-set!
+          gx#&syntax-binding-key-set!)
+         (%#define-runtime
+          &syntax-binding-phi-set!
+          gx#&syntax-binding-phi-set!)
          (%#define-syntax syntax-binding |gx[:0:]#syntax-binding|)
          (%#define-runtime import-binding::t gx#import-binding::t)
          (%#define-runtime import-binding? gx#import-binding?)
@@ -235,6 +465,9 @@ namespace: gx
          (%#define-runtime import-binding-e gx#import-binding-e)
          (%#define-runtime import-binding-context gx#import-binding-context)
          (%#define-runtime import-binding-weak? gx#import-binding-weak?)
+         (%#define-runtime import-binding-id gx#import-binding-id)
+         (%#define-runtime import-binding-key gx#import-binding-key)
+         (%#define-runtime import-binding-phi gx#import-binding-phi)
          (%#define-runtime import-binding-e-set! gx#import-binding-e-set!)
          (%#define-runtime
           import-binding-context-set!
@@ -242,9 +475,15 @@ namespace: gx
          (%#define-runtime
           import-binding-weak?-set!
           gx#import-binding-weak?-set!)
+         (%#define-runtime import-binding-id-set! gx#import-binding-id-set!)
+         (%#define-runtime import-binding-key-set! gx#import-binding-key-set!)
+         (%#define-runtime import-binding-phi-set! gx#import-binding-phi-set!)
          (%#define-runtime &import-binding-e gx#&import-binding-e)
          (%#define-runtime &import-binding-context gx#&import-binding-context)
          (%#define-runtime &import-binding-weak? gx#&import-binding-weak?)
+         (%#define-runtime &import-binding-id gx#&import-binding-id)
+         (%#define-runtime &import-binding-key gx#&import-binding-key)
+         (%#define-runtime &import-binding-phi gx#&import-binding-phi)
          (%#define-runtime &import-binding-e-set! gx#&import-binding-e-set!)
          (%#define-runtime
           &import-binding-context-set!
@@ -252,14 +491,33 @@ namespace: gx
          (%#define-runtime
           &import-binding-weak?-set!
           gx#&import-binding-weak?-set!)
+         (%#define-runtime &import-binding-id-set! gx#&import-binding-id-set!)
+         (%#define-runtime
+          &import-binding-key-set!
+          gx#&import-binding-key-set!)
+         (%#define-runtime
+          &import-binding-phi-set!
+          gx#&import-binding-phi-set!)
          (%#define-syntax import-binding |gx[:0:]#import-binding|)
          (%#define-runtime alias-binding::t gx#alias-binding::t)
          (%#define-runtime alias-binding? gx#alias-binding?)
          (%#define-runtime make-alias-binding gx#make-alias-binding)
          (%#define-runtime alias-binding-e gx#alias-binding-e)
+         (%#define-runtime alias-binding-id gx#alias-binding-id)
+         (%#define-runtime alias-binding-key gx#alias-binding-key)
+         (%#define-runtime alias-binding-phi gx#alias-binding-phi)
          (%#define-runtime alias-binding-e-set! gx#alias-binding-e-set!)
+         (%#define-runtime alias-binding-id-set! gx#alias-binding-id-set!)
+         (%#define-runtime alias-binding-key-set! gx#alias-binding-key-set!)
+         (%#define-runtime alias-binding-phi-set! gx#alias-binding-phi-set!)
          (%#define-runtime &alias-binding-e gx#&alias-binding-e)
+         (%#define-runtime &alias-binding-id gx#&alias-binding-id)
+         (%#define-runtime &alias-binding-key gx#&alias-binding-key)
+         (%#define-runtime &alias-binding-phi gx#&alias-binding-phi)
          (%#define-runtime &alias-binding-e-set! gx#&alias-binding-e-set!)
+         (%#define-runtime &alias-binding-id-set! gx#&alias-binding-id-set!)
+         (%#define-runtime &alias-binding-key-set! gx#&alias-binding-key-set!)
+         (%#define-runtime &alias-binding-phi-set! gx#&alias-binding-phi-set!)
          (%#define-syntax alias-binding |gx[:0:]#alias-binding|)
          (%#define-runtime expander::t gx#expander::t)
          (%#define-runtime expander? gx#expander?)
@@ -276,44 +534,172 @@ namespace: gx
          (%#define-runtime
           core-expander-compile-top
           gx#core-expander-compile-top)
+         (%#define-runtime core-expander-e gx#core-expander-e)
          (%#define-runtime core-expander-id-set! gx#core-expander-id-set!)
          (%#define-runtime
           core-expander-compile-top-set!
           gx#core-expander-compile-top-set!)
+         (%#define-runtime core-expander-e-set! gx#core-expander-e-set!)
          (%#define-runtime &core-expander-id gx#&core-expander-id)
          (%#define-runtime
           &core-expander-compile-top
           gx#&core-expander-compile-top)
+         (%#define-runtime &core-expander-e gx#&core-expander-e)
          (%#define-runtime &core-expander-id-set! gx#&core-expander-id-set!)
          (%#define-runtime
           &core-expander-compile-top-set!
           gx#&core-expander-compile-top-set!)
+         (%#define-runtime &core-expander-e-set! gx#&core-expander-e-set!)
          (%#define-syntax core-expander |gx[:0:]#core-expander|)
          (%#define-runtime expression-form::t gx#expression-form::t)
          (%#define-runtime expression-form? gx#expression-form?)
          (%#define-runtime make-expression-form gx#make-expression-form)
+         (%#define-runtime expression-form-id gx#expression-form-id)
+         (%#define-runtime
+          expression-form-compile-top
+          gx#expression-form-compile-top)
+         (%#define-runtime expression-form-e gx#expression-form-e)
+         (%#define-runtime expression-form-id-set! gx#expression-form-id-set!)
+         (%#define-runtime
+          expression-form-compile-top-set!
+          gx#expression-form-compile-top-set!)
+         (%#define-runtime expression-form-e-set! gx#expression-form-e-set!)
+         (%#define-runtime &expression-form-id gx#&expression-form-id)
+         (%#define-runtime
+          &expression-form-compile-top
+          gx#&expression-form-compile-top)
+         (%#define-runtime &expression-form-e gx#&expression-form-e)
+         (%#define-runtime
+          &expression-form-id-set!
+          gx#&expression-form-id-set!)
+         (%#define-runtime
+          &expression-form-compile-top-set!
+          gx#&expression-form-compile-top-set!)
+         (%#define-runtime &expression-form-e-set! gx#&expression-form-e-set!)
          (%#define-syntax expression-form |gx[:0:]#expression-form|)
          (%#define-runtime special-form::t gx#special-form::t)
          (%#define-runtime special-form? gx#special-form?)
          (%#define-runtime make-special-form gx#make-special-form)
+         (%#define-runtime special-form-id gx#special-form-id)
+         (%#define-runtime
+          special-form-compile-top
+          gx#special-form-compile-top)
+         (%#define-runtime special-form-e gx#special-form-e)
+         (%#define-runtime special-form-id-set! gx#special-form-id-set!)
+         (%#define-runtime
+          special-form-compile-top-set!
+          gx#special-form-compile-top-set!)
+         (%#define-runtime special-form-e-set! gx#special-form-e-set!)
+         (%#define-runtime &special-form-id gx#&special-form-id)
+         (%#define-runtime
+          &special-form-compile-top
+          gx#&special-form-compile-top)
+         (%#define-runtime &special-form-e gx#&special-form-e)
+         (%#define-runtime &special-form-id-set! gx#&special-form-id-set!)
+         (%#define-runtime
+          &special-form-compile-top-set!
+          gx#&special-form-compile-top-set!)
+         (%#define-runtime &special-form-e-set! gx#&special-form-e-set!)
          (%#define-syntax special-form |gx[:0:]#special-form|)
          (%#define-runtime definition-form::t gx#definition-form::t)
          (%#define-runtime definition-form? gx#definition-form?)
          (%#define-runtime make-definition-form gx#make-definition-form)
+         (%#define-runtime definition-form-id gx#definition-form-id)
+         (%#define-runtime
+          definition-form-compile-top
+          gx#definition-form-compile-top)
+         (%#define-runtime definition-form-e gx#definition-form-e)
+         (%#define-runtime definition-form-id-set! gx#definition-form-id-set!)
+         (%#define-runtime
+          definition-form-compile-top-set!
+          gx#definition-form-compile-top-set!)
+         (%#define-runtime definition-form-e-set! gx#definition-form-e-set!)
+         (%#define-runtime &definition-form-id gx#&definition-form-id)
+         (%#define-runtime
+          &definition-form-compile-top
+          gx#&definition-form-compile-top)
+         (%#define-runtime &definition-form-e gx#&definition-form-e)
+         (%#define-runtime
+          &definition-form-id-set!
+          gx#&definition-form-id-set!)
+         (%#define-runtime
+          &definition-form-compile-top-set!
+          gx#&definition-form-compile-top-set!)
+         (%#define-runtime &definition-form-e-set! gx#&definition-form-e-set!)
          (%#define-syntax definition-form |gx[:0:]#definition-form|)
          (%#define-runtime top-special-form::t gx#top-special-form::t)
          (%#define-runtime top-special-form? gx#top-special-form?)
          (%#define-runtime make-top-special-form gx#make-top-special-form)
+         (%#define-runtime top-special-form-id gx#top-special-form-id)
+         (%#define-runtime
+          top-special-form-compile-top
+          gx#top-special-form-compile-top)
+         (%#define-runtime top-special-form-e gx#top-special-form-e)
+         (%#define-runtime
+          top-special-form-id-set!
+          gx#top-special-form-id-set!)
+         (%#define-runtime
+          top-special-form-compile-top-set!
+          gx#top-special-form-compile-top-set!)
+         (%#define-runtime top-special-form-e-set! gx#top-special-form-e-set!)
+         (%#define-runtime &top-special-form-id gx#&top-special-form-id)
+         (%#define-runtime
+          &top-special-form-compile-top
+          gx#&top-special-form-compile-top)
+         (%#define-runtime &top-special-form-e gx#&top-special-form-e)
+         (%#define-runtime
+          &top-special-form-id-set!
+          gx#&top-special-form-id-set!)
+         (%#define-runtime
+          &top-special-form-compile-top-set!
+          gx#&top-special-form-compile-top-set!)
+         (%#define-runtime
+          &top-special-form-e-set!
+          gx#&top-special-form-e-set!)
          (%#define-syntax top-special-form |gx[:0:]#top-special-form|)
          (%#define-runtime module-special-form::t gx#module-special-form::t)
          (%#define-runtime module-special-form? gx#module-special-form?)
          (%#define-runtime
           make-module-special-form
           gx#make-module-special-form)
+         (%#define-runtime module-special-form-id gx#module-special-form-id)
+         (%#define-runtime
+          module-special-form-compile-top
+          gx#module-special-form-compile-top)
+         (%#define-runtime module-special-form-e gx#module-special-form-e)
+         (%#define-runtime
+          module-special-form-id-set!
+          gx#module-special-form-id-set!)
+         (%#define-runtime
+          module-special-form-compile-top-set!
+          gx#module-special-form-compile-top-set!)
+         (%#define-runtime
+          module-special-form-e-set!
+          gx#module-special-form-e-set!)
+         (%#define-runtime &module-special-form-id gx#&module-special-form-id)
+         (%#define-runtime
+          &module-special-form-compile-top
+          gx#&module-special-form-compile-top)
+         (%#define-runtime &module-special-form-e gx#&module-special-form-e)
+         (%#define-runtime
+          &module-special-form-id-set!
+          gx#&module-special-form-id-set!)
+         (%#define-runtime
+          &module-special-form-compile-top-set!
+          gx#&module-special-form-compile-top-set!)
+         (%#define-runtime
+          &module-special-form-e-set!
+          gx#&module-special-form-e-set!)
          (%#define-syntax module-special-form |gx[:0:]#module-special-form|)
          (%#define-runtime feature-expander::t gx#feature-expander::t)
          (%#define-runtime feature-expander? gx#feature-expander?)
          (%#define-runtime make-feature-expander gx#make-feature-expander)
+         (%#define-runtime feature-expander-e gx#feature-expander-e)
+         (%#define-runtime feature-expander-e-set! gx#feature-expander-e-set!)
+         (%#define-runtime &feature-expander-e gx#&feature-expander-e)
+         (%#define-runtime
+          &feature-expander-e-set!
+          gx#&feature-expander-e-set!)
          (%#define-syntax feature-expander |gx[:0:]#feature-expander|)
          (%#define-runtime
           private-feature-expander::t
@@ -324,16 +710,40 @@ namespace: gx
          (%#define-runtime
           make-private-feature-expander
           gx#make-private-feature-expander)
+         (%#define-runtime
+          private-feature-expander-e
+          gx#private-feature-expander-e)
+         (%#define-runtime
+          private-feature-expander-e-set!
+          gx#private-feature-expander-e-set!)
+         (%#define-runtime
+          &private-feature-expander-e
+          gx#&private-feature-expander-e)
+         (%#define-runtime
+          &private-feature-expander-e-set!
+          gx#&private-feature-expander-e-set!)
          (%#define-syntax
           private-feature-expander
           |gx[:0:]#private-feature-expander|)
          (%#define-runtime reserved-expander::t gx#reserved-expander::t)
          (%#define-runtime reserved-expander? gx#reserved-expander?)
          (%#define-runtime make-reserved-expander gx#make-reserved-expander)
+         (%#define-runtime reserved-expander-e gx#reserved-expander-e)
+         (%#define-runtime
+          reserved-expander-e-set!
+          gx#reserved-expander-e-set!)
+         (%#define-runtime &reserved-expander-e gx#&reserved-expander-e)
+         (%#define-runtime
+          &reserved-expander-e-set!
+          gx#&reserved-expander-e-set!)
          (%#define-syntax reserved-expander |gx[:0:]#reserved-expander|)
          (%#define-runtime macro-expander::t gx#macro-expander::t)
          (%#define-runtime macro-expander? gx#macro-expander?)
          (%#define-runtime make-macro-expander gx#make-macro-expander)
+         (%#define-runtime macro-expander-e gx#macro-expander-e)
+         (%#define-runtime macro-expander-e-set! gx#macro-expander-e-set!)
+         (%#define-runtime &macro-expander-e gx#&macro-expander-e)
+         (%#define-runtime &macro-expander-e-set! gx#&macro-expander-e-set!)
          (%#define-syntax macro-expander |gx[:0:]#macro-expander|)
          (%#define-runtime
           rename-macro-expander::t
@@ -342,6 +752,16 @@ namespace: gx
          (%#define-runtime
           make-rename-macro-expander
           gx#make-rename-macro-expander)
+         (%#define-runtime rename-macro-expander-e gx#rename-macro-expander-e)
+         (%#define-runtime
+          rename-macro-expander-e-set!
+          gx#rename-macro-expander-e-set!)
+         (%#define-runtime
+          &rename-macro-expander-e
+          gx#&rename-macro-expander-e)
+         (%#define-runtime
+          &rename-macro-expander-e-set!
+          gx#&rename-macro-expander-e-set!)
          (%#define-syntax
           rename-macro-expander
           |gx[:0:]#rename-macro-expander|)
@@ -350,16 +770,20 @@ namespace: gx
          (%#define-runtime make-user-expander gx#make-user-expander)
          (%#define-runtime user-expander-context gx#user-expander-context)
          (%#define-runtime user-expander-phi gx#user-expander-phi)
+         (%#define-runtime user-expander-e gx#user-expander-e)
          (%#define-runtime
           user-expander-context-set!
           gx#user-expander-context-set!)
          (%#define-runtime user-expander-phi-set! gx#user-expander-phi-set!)
+         (%#define-runtime user-expander-e-set! gx#user-expander-e-set!)
          (%#define-runtime &user-expander-context gx#&user-expander-context)
          (%#define-runtime &user-expander-phi gx#&user-expander-phi)
+         (%#define-runtime &user-expander-e gx#&user-expander-e)
          (%#define-runtime
           &user-expander-context-set!
           gx#&user-expander-context-set!)
          (%#define-runtime &user-expander-phi-set! gx#&user-expander-phi-set!)
+         (%#define-runtime &user-expander-e-set! gx#&user-expander-e-set!)
          (%#define-syntax user-expander |gx[:0:]#user-expander|)
          (%#define-runtime expander-mark::t gx#expander-mark::t)
          (%#define-runtime expander-mark? gx#expander-mark?)

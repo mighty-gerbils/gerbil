@@ -13,70 +13,23 @@ package: gerbil/compiler
   (declare-type gxc#collect-type-call% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-begin% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-begin-annotation% (@lambda 1 #f))
+  (declare-type gxc#basic-expression-type-annotation-mop.class (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.constructor
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.predicate
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.accessor
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-annotation-mop.mutator
+   (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-lambda% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-case-lambda% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-let-values% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-call% (@lambda 1 #f))
-  (declare-type gxc#basic-expression-type-make-struct-type (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-make-struct-predicate (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-accessor__%
-   (@lambda 3 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-accessor__0
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-accessor
-   (@case-lambda
-    (2 gxc#basic-expression-type-make-struct-field-accessor__0)
-    (3 gxc#basic-expression-type-make-struct-field-accessor__%)))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-mutator__%
-   (@lambda 3 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-mutator__0
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-mutator
-   (@case-lambda
-    (2 gxc#basic-expression-type-make-struct-field-mutator__0)
-    (3 gxc#basic-expression-type-make-struct-field-mutator__%)))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-unchecked-accessor
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-struct-field-unchecked-mutator
-   (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-make-class-type (@lambda 2 #f))
-  (declare-type gxc#basic-expression-type-make-class-predicate (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-accessor__%
-   (@lambda 3 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-accessor__0
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-accessor
-   (@case-lambda
-    (2 gxc#basic-expression-type-make-class-slot-accessor__0)
-    (3 gxc#basic-expression-type-make-class-slot-accessor__%)))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-mutator__%
-   (@lambda 3 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-mutator__0
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-mutator
-   (@case-lambda
-    (2 gxc#basic-expression-type-make-class-slot-mutator__0)
-    (3 gxc#basic-expression-type-make-class-slot-mutator__%)))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-unchecked-accessor
-   (@lambda 2 #f))
-  (declare-type
-   gxc#basic-expression-type-make-class-slot-unchecked-mutator
-   (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-ref% (@lambda 1 #f))
   (declare-type gxc#dispatch-lambda-form? (@lambda 1 #f))
   (declare-type gxc#dispatch-lambda-form-delegate (@lambda 1 #f))

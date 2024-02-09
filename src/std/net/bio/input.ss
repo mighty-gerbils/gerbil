@@ -22,7 +22,7 @@
 ;;;       read unbuffered
 ;;;       precondition: buffer is empty
 (defstruct input-buffer (e rlo rhi fill read)
-  unchecked: #t)
+  )
 
 (def (bio-input-fill! buf need)
   ((&input-buffer-fill buf) buf need))

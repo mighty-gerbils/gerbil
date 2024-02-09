@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil module loader
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 

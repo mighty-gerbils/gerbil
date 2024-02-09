@@ -22,7 +22,7 @@
 
 ;; default mux implementation -- paths are resolved with an exact match
 (defstruct default-http-mux (t default)
-  constructor: :init! unchecked: #t)
+  constructor: :init! )
 
 (defmethod {:init! default-http-mux}
   (lambda (self (default #f))
@@ -59,7 +59,7 @@
 
 ;; static mux -- paths are resolved in a static hash table, which elides the need for a mutex
 (defstruct static-http-mux (t default)
-  constructor: :init! unchecked: #t)
+  constructor: :init! )
 
 (defmethod {:init! static-http-mux}
   (lambda (self tab (default #f))
@@ -93,7 +93,7 @@
 
 ;; custom mux -- it dispatches all resolutions/registrations to user supplied functions
 (defstruct custom-http-mux (get put)
-  constructor: :init! final: #t unchecked: #t)
+  constructor: :init! final: #t )
 
 (defmethod {:init! custom-http-mux}
   (lambda (self get (put void))

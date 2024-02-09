@@ -4,33 +4,41 @@ package: gerbil/compiler
 (begin
   (declare-type
    gxc#symbol-table::t
-   (@struct-type gxc#symbol-table::t #f 2 :init! ()))
-  (declare-type gxc#symbol-table? (@struct-pred gxc#symbol-table::t))
-  (declare-type gxc#make-symbol-table (@struct-cons gxc#symbol-table::t))
+   (@class gxc#symbol-table::t
+           ()
+           ()
+           (gensyms bindings)
+           (gensyms bindings)
+           :init!
+           #t
+           #f
+           ((:init! . gxc#symbol-table:::init!))))
+  (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))
+  (declare-type gxc#make-symbol-table (@constructor gxc#symbol-table::t))
   (declare-type
    gxc#symbol-table-gensyms
-   (@struct-getf gxc#symbol-table::t 0 #f))
+   (@accessor gxc#symbol-table::t gensyms #t))
   (declare-type
    gxc#symbol-table-bindings
-   (@struct-getf gxc#symbol-table::t 1 #f))
+   (@accessor gxc#symbol-table::t bindings #t))
   (declare-type
    gxc#symbol-table-gensyms-set!
-   (@struct-setf gxc#symbol-table::t 0 #f))
+   (@mutator gxc#symbol-table::t gensyms #t))
   (declare-type
    gxc#symbol-table-bindings-set!
-   (@struct-setf gxc#symbol-table::t 1 #f))
+   (@mutator gxc#symbol-table::t bindings #t))
   (declare-type
    gxc#&symbol-table-gensyms
-   (@struct-getf gxc#symbol-table::t 0 #t))
+   (@accessor gxc#symbol-table::t gensyms #f))
   (declare-type
    gxc#&symbol-table-bindings
-   (@struct-getf gxc#symbol-table::t 1 #t))
+   (@accessor gxc#symbol-table::t bindings #f))
   (declare-type
    gxc#&symbol-table-gensyms-set!
-   (@struct-setf gxc#symbol-table::t 0 #t))
+   (@mutator gxc#symbol-table::t gensyms #f))
   (declare-type
    gxc#&symbol-table-bindings-set!
-   (@struct-setf gxc#symbol-table::t 1 #t))
+   (@mutator gxc#symbol-table::t bindings #f))
   (declare-type gxc#symbol-table:::init! (@lambda 1 #f))
   (declare-type gxc#raise-compile-error (@lambda (2) #f))
   (declare-type gxc#verbose (@lambda (0) #f))

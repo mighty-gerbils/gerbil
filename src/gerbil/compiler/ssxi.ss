@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Prelude for compiler ssxi modules
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
@@ -41,75 +42,26 @@ namespace: gxc
   ((_ alias-id)
    (make-!alias 'alias-id)))
 
-;; struct types
-(defrules @struct-type ()
-  ((_ type-id super fields ctor plist)
-   (@make-struct-type type-id super fields ctor plist))
-  ((recur type-id super fields)
-   (recur type-id super fields #f #f))
-  ((recur type-id super fields ctor)
-   (recur type super fields ctor #f)))
+;; MOP
+(defrules @class ()
+  ((_ type-id super-ids precedence-list slots fields constructor struct? final? methods)
+   (make-!class 'type-id 'super-ids 'precedence-list 'slots 'fields 'constructor 'struct? 'final? 'methods)))
 
-(defrules @make-struct-type ()
-  ((_ type-id #f fields ctor plist)
-   (make-!struct-type 'type-id #f fields 0 'ctor 'plist))
-  ((_ type-id super fields ctor plist)
-   (let* ((super-type (optimizer-resolve-type 'super))
-          (xfields
-           (and super-type
-                (alet (xfields (!struct-type-xfields super-type))
-                  (fx+ xfields (!struct-type-fields super-type)))))
-          (xtor
-           (or 'ctor
-               (if super-type
-                 (!struct-type-ctor super-type)
-                 #!void))))
-     (make-!struct-type 'type-id 'super fields xfields xtor 'plist))))
+(defrules @predicate ()
+  ((_ type-id)
+   (make-!predicate 'type-id)))
 
-(defrules @struct-pred ()
-  ((_ type)
-   (make-!struct-pred 'type)))
+(defrules @constructor ()
+  ((_ type-id)
+   (make-!constructor 'type-id)))
 
-(defrules @struct-cons ()
-  ((_ type)
-   (make-!struct-cons 'type)))
+(defrules @accessor ()
+  ((_ type-id slot checked?)
+   (make-!accessor 'type-id 'slot checked?)))
 
-(defrules @struct-getf ()
-  ((_ type off unchecked?)
-   (make-!struct-getf 'type off unchecked?))
-  ((_ type off)
-   (make-!struct-getf 'type off #f)))
-
-(defrules @struct-setf ()
-  ((_ type off unchecked?)
-   (make-!struct-setf 'type off unchecked?))
-  ((_ type off)
-   (make-!struct-setf 'type off #f)))
-
-;; class types
-(defrules @class-type ()
-  ((_ type-id super mixin slots xslots ctor plist)
-   (make-!class-type 'type-id 'super 'mixin 'slots 'xslots 'ctor 'plist)))
-
-(defrules @class-pred ()
-  ((_ type)
-   (make-!class-pred 'type)))
-
-(defrules @class-cons ()
-  ((_ type)
-   (make-!class-cons 'type)))
-
-(defrules @class-getf ()
-  ((_ type slot unchecked?)
-   (make-!class-getf 'type 'slot unchecked?))
-  ((_ type slot)
-   (make-!class-getf 'type 'slot #f)))
-
-(defrules @class-setf ()
-  ((_ type slot unchecked?)
-   (make-!class-setf 'type 'slot unchecked?))
-  ((_ type slot)
-   (make-!class-setf 'type 'slot #f)))
+(defrules @mutator ()
+  ((_ type-id slot checked?)
+   (make-!mutator 'type-id 'slot checked?)))
 
 ;; lambdas
 (defrules @lambda ()

@@ -9,10 +9,10 @@
 (declare (not safe))
 
 (defstruct delimited-reader (reader remaining)
-  final: #t unchecked: #t)
+  final: #t )
 
 (defstruct delimited-string-reader (reader remaining)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (open-delimited-reader reader limit)
   (unless (Reader? reader)

@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler basic env
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         <syntax-case>)
 
 (export #t)
@@ -55,6 +56,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-decls
   (make-parameter #f))
+(def current-compile-context
+  (make-parameter #f))
 
 (defstruct symbol-table (gensyms bindings)
   id: gxc#symbol-table::t
@@ -65,7 +68,8 @@ namespace: gxc
     (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq))))
 
 (def (raise-compile-error message stx . details)
-  (apply raise-syntax-error 'compile message stx details))
+  (let (ctx (or (current-compile-context) 'compile))
+    (apply raise-syntax-error ctx message stx details)))
 
 (def (verbose . args)
   (when (current-compile-verbose)

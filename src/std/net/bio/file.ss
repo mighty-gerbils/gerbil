@@ -16,7 +16,7 @@
 
 ;;; input buffers
 (defstruct (file-input-buffer input-buffer) (fd)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (open-file-input-buffer path (bufsz 4096))
   (open-fd-input-buffer (open path O_RDONLY) bufsz))
@@ -88,7 +88,7 @@
 
 ;; output buffers
 (defstruct (file-output-buffer output-buffer) (fd)
-  final: #t unchecked: #t)
+  final: #t )
 
 (def (open-file-output-buffer path (bufsz 4096)
                               flags: (flags (fxior O_WRONLY O_CREAT O_EXCL))

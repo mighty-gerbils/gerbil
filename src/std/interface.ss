@@ -20,12 +20,10 @@
   (CastError message irritants: [irritants ...]))
 
 ;; base type for all interface instances
-(defstruct interface-instance (object)
-  unchecked: #t)
+(defstruct interface-instance (object))
 
 ;; interface meta descriptor
-(defstruct interface-descriptor (type methods)
-  final: #t unchecked: #t)
+(defstruct interface-descriptor (type methods) final: #t)
 
 ;; prototype table
 (def (hash-key key)

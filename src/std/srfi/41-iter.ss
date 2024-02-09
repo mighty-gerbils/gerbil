@@ -7,11 +7,7 @@
         :std/srfi/41)
 (export in-stream)
 
-(defsyntax stream-t
-  (make-runtime-struct-info
-   runtime-identifier: (quote-syntax stream-type)))
-
-(defmethod (:iter (s stream-t))
+(defmethod (:iter (s stream-type))
   (in-stream s))
 
 (def (in-stream s)

@@ -145,8 +145,7 @@
 ;; default: the default method invoked if no method matches
 ;; mx: the mutex write-protecting the generic method tables
 (defstruct generic (id tabs default mx)
-  final: #t unchecked: #t
-  constructor: :init!)
+  final: #t constructor: :init!)
 
 (defmethod {:init! generic}
   (lambda (self id (default #f))
@@ -159,8 +158,7 @@
 ;; cache: cache for fast dispatch
 ;; mx: the mutex write-protecting the table
 (defstruct generic-table (methods cache mx)
-  final: #t unchecked: #t
-  constructor: :init!)
+  final: #t constructor: :init!)
 
 (defmethod {:init! generic-table}
   (lambda (self)

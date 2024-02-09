@@ -1,35 +1,24 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; primitive gerbil eval
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
 (export #t)
 (import "gambit" "util" "mop" "error" "syntax")
 
-(defstruct __context (t ns super table)
-  unchecked: #t)
-(defstruct __runtime (id)
-  unchecked: #t)
-(defstruct __syntax (e id)
-  unchecked: #t)
-(defstruct (__macro __syntax) ()
-  unchecked: #t)
-(defstruct (__special-form __macro) ()
-  unchecked: #t)
-(defstruct (__core-form __syntax) ()
-  unchecked: #t)
-(defstruct (__core-expression __core-form) ()
-  unchecked: #t)
-(defstruct (__core-special-form __core-form) ()
-  unchecked: #t)
-(defstruct (__struct-info __syntax) ()
-  unchecked: #t)
-(defstruct (__feature __syntax) ()
-  unchecked: #t)
-(defstruct (__module __context) (id path import export)
-  unchecked: #t)
+(defstruct __context (t ns super table))
+(defstruct __runtime (id))
+(defstruct __syntax (e id))
+(defstruct (__macro __syntax) ())
+(defstruct (__special-form __macro) ())
+(defstruct (__core-form __syntax) ())
+(defstruct (__core-expression __core-form) ())
+(defstruct (__core-special-form __core-form) ())
+(defstruct (__struct-info __syntax) ())
+(defstruct (__feature __syntax) ())
+(defstruct (__module __context) (id path import export))
 
 (def __*modules*
   (make-hash-table))

@@ -30,7 +30,7 @@
     (ServerSocket sslsock)))
 
 (defstruct (ssl-server-socket basic-server-socket) (ctx)
-  final: #t unchecked: #t
+  final: #t 
   constructor: :init!)
 
 (defmethod {:init! ssl-server-socket}

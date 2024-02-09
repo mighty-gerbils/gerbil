@@ -19,13 +19,10 @@ package: gerbil
         ((%#call _ klass obj)
          (%#call (%#ref ##structure-direct-instance-of?)
                  obj
-                 (%#call (%#ref ##type-id) klass))))))
- (direct-struct-instance?
-  (@lambda 2 direct-instance?))
- (direct-class-instance?
-  (@lambda 2 direct-instance?)))
+                 (%#call (%#ref ##type-id) klass)))))))
 
-;; gx-gambc0: struct-instance-init! [custom struct constructors]
+
+;; runtime: struct-instance-init! [custom struct constructors]
 (declare-type*
  (struct-instance-init!
   (@lambda (1) inline:
@@ -39,9 +36,9 @@ package: gerbil
                           (count arg-count))
              #'(%#if (%#call (%#ref ##fx<)
                              (%#quote count)
-                             (%#call (%#ref ##vector-length) (%#ref self)))
+                             (%#call (%#ref ##structure-length) (%#ref self)))
                  (%#begin
-                  (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
+                  (%#call (%#ref ##unchecked-structure-set!) (%#ref self) arg (%#quote off) (%#call (%#ref ##structure-type) (%#ref self)) (%#quote #f))
                   ...)
                  (%#call (%#ref error)
                          (%#quote "struct-instance-init!: too many arguments for struct")
@@ -53,7 +50,7 @@ package: gerbil
              #'(%#let-values ((($self) self))
                   (%#call recur (%#ref $self) arg ...)))))))))
 
-;; gx-gambc0: call-method
+;; runtime: call-method
 (declare-type*
  (call-method
   (@lambda (2) inline:
@@ -72,7 +69,7 @@ package: gerbil
                              (%#call recur (%#ref $self) method arg ...)))))))))
 
 
-;; gx-gambc0: simple runtime functions that should be inlined
+;; runtime: simple runtime functions that should be inlined
 (declare-type*
  (true (@lambda (0) inline:
            (ast-rules (%#call %#ref)
@@ -133,7 +130,7 @@ package: gerbil
                           #'(%#let-values ((($values) expr))
                                           (%#call recur (%#ref $values))))))))))
 
-;; gx-gambc0: simple hash-table ops
+;; runtime: simple hash-table ops
 (declare-type*
  (make-hash-table (@lambda (0) make-table))
  (make-hash-table-eq (@lambda (0) inline:
@@ -167,7 +164,7 @@ package: gerbil
  (hash-for-each (@lambda 2 table-for-each))
  (hash-find (@lambda 2 table-search)))
 
-;; gx-gambc0: simple arithmetic
+;; runtime: simple arithmetic
 (declare-type*
  (1+ (@lambda 1 inline:
          (ast-rules (%#call)
@@ -188,25 +185,13 @@ package: gerbil
  (fx/ (@lambda 2 fxquotient))
  (fxshift (@lambda 2 fxarithmetic-shift)))
 
-;; gx-gambc0: foldings
+;; runtime: foldings
 (declare-type*
  (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) foldl*)))
  (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
  (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
  (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
  (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*))))
-
-;; gx-gambc0: call/cc and friends
-(declare-type*
- (with-catch (@lambda 2 with-exception-catcher)))
-
-;; gx-gambc1: AST type for optimizing the expander
-(declare-type*
- (AST::t (@struct-type gerbil#AST::t #f 2))
- (AST? (@struct-pred AST::t))
- (AST-e (@struct-getf AST::t 0))
- (AST-source (@struct-getf AST::t 1))
- (make-AST (@struct-cons AST::t)))
 
 ;;; runtime procedure signatures
 (defrules declare-primitive/0 ()

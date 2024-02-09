@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil exceptions
-prelude: :gerbil/core
+prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
@@ -13,18 +13,15 @@ namespace: #f
 (defclass Exception ())
 
 ;; Mixin for getting stack traces
-(defclass StackTrace (continuation)
-  unchecked: #t)
+(defclass StackTrace (continuation))
 
 ;; Error base class
 (defclass (Error StackTrace Exception) (message irritants where)
   constructor: :init!
-  unchecked: #t
   transparent: #t)
 
 ;;; Runtime Errors -- wrapped gambit emitted exceptions
 (defclass (RuntimeException StackTrace Exception) (exception)
-  unchecked: #t
   transparent: #t)
 
 ;;; exception control
@@ -172,10 +169,11 @@ namespace: #f
     (let (tmp-port (open-output-string))
       (fix-port-width! tmp-port)
       (##default-display-exception (&RuntimeException-exception self) tmp-port)
-      (alet (cont (&StackTrace-continuation self))
-        (display "--- continuation backtrace:" tmp-port)
-        (newline tmp-port)
-        (display-continuation-backtrace cont tmp-port))
+      (when (dump-stack-trace?)
+        (alet (cont (&StackTrace-continuation self))
+          (display "--- continuation backtrace:" tmp-port)
+          (newline tmp-port)
+          (display-continuation-backtrace cont tmp-port)))
       (##write-string (get-output-string tmp-port) port))))
 
 ;;;; Hack to workaround stack trace line truncation issues with port widths

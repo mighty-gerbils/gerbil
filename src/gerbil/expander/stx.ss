@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander syntax objects
-prelude: :<core>
+prelude: "../prelude/core"
 package: gerbil/expander
 namespace: gx
 
@@ -14,15 +14,15 @@ namespace: gx
 (defstruct (identifier-wrap AST) (marks)
   id:    gx#identifier-wrap::t
   name:  syntax
-  final: #t unchecked: #t)
+  final: #t)
 (defstruct (syntax-wrap AST) (mark)
   id:    gx#syntax-wrap::t
   name:  syntax
-  final: #t unchecked: #t)
+  final: #t)
 (defstruct (syntax-quote AST) (context marks)
   id:    gx#syntax-quote::t
   name:  syntax
-  final: #t unchecked: #t)
+  final: #t)
 
 ;; primitive operations
 (def (identifier? stx)

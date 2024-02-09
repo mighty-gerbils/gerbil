@@ -16,7 +16,7 @@
 (declare (not safe))
 
 (defstruct file-io (fd closed?)
-  unchecked: #t)
+  )
 
 (defstruct (input-file-io file-io) ()
   final: #t)

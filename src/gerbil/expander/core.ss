@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil/expander driver
-prelude: :<core>
+prelude: "../prelude/core"
 package: gerbil/expander
 namespace: gx
 
@@ -46,19 +46,16 @@ namespace: gx
 ;; expander context
 (defstruct expander-context (id table)
   id: gx#expander-context::t
-  constructor: :init!
-  unchecked: #t)
+  constructor: :init!)
 
 (defstruct (root-context expander-context) ()
   id: gx#root-context::t)
 (defstruct (phi-context  expander-context) (super up down)
-  id: gx#context-phi::t
-  unchecked: #t)
+  id: gx#context-phi::t)
 (defstruct (top-context phi-context) ()
   id: gx#top-context::t)
 (defstruct (module-context top-context) (ns path import export e code)
-  id: gx#module-context::t
-  unchecked: #t)
+  id: gx#module-context::t)
 (defstruct (prelude-context top-context) (path import e)
   id: gx#prelude-context::t)
 (defstruct (local-context phi-context) ()
@@ -75,7 +72,7 @@ namespace: gx
 ;; bindings
 (defstruct binding (id key phi)
   id: gx#binding::t
-  unchecked: #t transparent: #t)
+  transparent: #t)
 
 ;; runtime bindings
 (defstruct (runtime-binding binding) ()
@@ -97,13 +94,13 @@ namespace: gx
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
   id: gx#syntax-binding::t
-  final: #t unchecked: #t transparent: #t)
+  final: #t transparent: #t)
 (defstruct (import-binding binding) (e context weak?)
   id: gx#import-binding::t
-  final: #t unchecked: #t transparent: #t)
+  final: #t transparent: #t)
 (defstruct (alias-binding binding) (e)
   id: gx#alias-binding::t
-  final: #t unchecked: #t transparent: #t)
+  final: #t transparent: #t)
 
 ;; expanders [syntax-binding-e]
 (defstruct expander (e)
@@ -144,17 +141,22 @@ namespace: gx
 (defstruct (user-expander macro-expander) (context phi)
   id: gx#macro-expander::t)
 (defstruct expander-mark (subst context phi trace)
-  id: gx#expander-mark::t
-  unchecked: #t)
+  id: gx#expander-mark::t)
 
 ;; syntax errors
 (extern namespace: #f make-syntax-error)
-(def (raise-syntax-error where message stx . details)
-  (raise
-    (make-syntax-error message (cons stx details) where
-                       (current-expander-context)
-                       (current-expander-marks)
-                       (current-expander-phi))))
+(def (raise-syntax-error ctx message stx . details)
+  (let (ctx (cond
+             (ctx)
+             ((core-context-top)
+              => (lambda (ctx)
+                   `(expand ,(expander-context-id ctx))))
+             (else #f)))
+    (raise
+     (make-syntax-error message (cons stx details) ctx
+                        (current-expander-context)
+                        (current-expander-marks)
+                        (current-expander-phi)))))
 
 ;;; expander driver
 (def (eval-syntax stx (expression? #f))

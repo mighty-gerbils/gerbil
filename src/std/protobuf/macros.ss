@@ -14,7 +14,7 @@
   (defclass (scalar-type type) ())
   (defclass (enum-type type) ())
   (defclass (message-type type) ())
-  (defclass (message-type-info message-type extended-struct-info) ())
+  (defclass (message-type-info message-type class-type-info) ())
   (defclass package (id types))
 
   (def (syntax-local-type id)
@@ -171,17 +171,24 @@
         (() (reverse fields)))))
 
   (def (make-struct-def id fields)
-    (with-syntax* ((id::t   (format-id id "~a::t" id))
+    (with-syntax* ((type-id (make-class-type-id id))
+                   (id::t   (format-id id "~a::t" id))
                    (id?     (format-id id "~a?" id))
                    (make-id (format-id id "make-~a" id))
-                   ((field-id ...)
+                   ((slot ...)
                     (map cadr fields))
                    ((getf ...)
                     (map (cut format-id id "~a-~a" id <>)
-                         #'(field-id ...)))
+                         #'(slot ...)))
                    ((setf ...)
                     (map (cut format-id id "~a-~a-set!" id <>)
-                         #'(field-id ...)))
+                         #'(slot ...)))
+                   ((ugetf ...)
+                    (map (cut format-id id "&~a" <>)
+                         #'(getf ...)))
+                   ((usetf ...)
+                    (map (cut format-id id "&~a" <>)
+                         #'(setf ...)))
                    (bio-read  (format-id id "read-~a" id))
                    (bio-write (format-id id "write-~a" id))
                    (bio-read-fqn (format-id id "BufferedReader-~a" #'bio-read))
@@ -191,30 +198,32 @@
                    (id id))
       #'(begin
           (defstruct-type id::t #f make-id id?
-            slots: ((field-id getf setf) ...)
+            slots: ((slot getf setf) ...)
             name: id
+            id: type-id
             constructor: :init!
-            unchecked: #t
-            properties: '((final: . #t) (transparent: . #t)))
+            final: #t
+            properties: '((transparent: . #t)))
           (defsyntax id
             (make-message-type-info
-             runtime-identifier: (quote-syntax id::t)
-             expander-identifiers:
-             [#f
-              (quote-syntax id::t)
-              (quote-syntax make-id)
-              (quote-syntax id?)
-              [(quote-syntax getf) ...]
-              [(quote-syntax setf) ...]]
-             type-exhibitor:
-             (make-runtime-struct-exhibitor
-              #f #f
-              (quote id)
-              (quote :init!)
-              (quote ((final: . #t) (transparent: . #t)))
-              (quote (field-id ...)))
-             name: (quote id)
-             tag: (quote VARLEN)
+             ;; common
+             name: 'id
+             ;; class-type-info
+             id: 'type-id
+             slots: '(slot ...)
+             super: []
+             struct?: #t
+             final?: #t
+             constructor-method: ':init!
+             type-descriptor: (quote-syntax id::t)
+             constructor: (quote-syntax make-id)
+             predicate: (quote-syntax id?)
+             accessors: [['slot :: (quote-syntax getf)] ...]
+             mutators: [['slot :: (quote-syntax setf)] ...]
+             unchecked-accessors: [['slot :: (quote-syntax ugetf)] ...]
+             unchecked-mutators: [['slot :: (quote-syntax usetf)] ...]
+             ;; message-type
+             tag: 'VARLEN
              io-methods: [(quote-syntax bio-read-fqn) (quote-syntax bio-write-fqn)]
              unchecked-io-methods: [(quote-syntax &bio-read-fqn) (quote-syntax &bio-write-fqn)])))))
 

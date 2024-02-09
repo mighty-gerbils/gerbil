@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
+prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander
+(import "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -284,8 +285,8 @@ namespace: gxc
         ((gx#stx-datum?) 'stx-datum)
         (else
          (match (optimizer-resolve-type sym)
-           ((!struct-pred struct-t)
-            (optimizer-resolve-type struct-t))
+           ((!predicate t)
+            (optimizer-resolve-type t))
            (else #f))))))
 
   (def (fold-assert-type expr val env)
@@ -556,10 +557,6 @@ namespace: gxc
             (_ #!void)))))))
 
   (def (assert-type id t)
-    (def (super-e t)
-      (alet (tid (!struct-type-super t))
-        (optimizer-resolve-type tid)))
-
     (let lp ((rest env-type))
       (match rest
         ([type-info . rest]
@@ -569,32 +566,23 @@ namespace: gxc
               (cond
                ((eq? t xt) val)
                (val
-                ;; it's a positive type assertion; we can only satisfy it
+                ;; it's a positive type asserption; we can only satisfy it
                 ;; if it's an assertion for a subtype of ours
-                (if (and (!struct-type? t) (!struct-type? xt))
-                  (let subtype? ((xt (super-e xt)))
-                    (cond
-                     ((not xt) #f)
-                     ((eq? xt t) #t)
-                     (else
-                      (subtype? (super-e xt)))))
-                  #f))
+                (and (!class? t)
+                     (!class? xt)
+                     (memq t (map (cut optimizer-resolve-class xt <>)
+                                  (!class-precedence-list xt)))))
                (else
                 ;; it's a negative type assertion; we cannot satisfy it
                 ;; if it's an assertion for a supertype of ours
-                (if (and (!struct-type? t) (!struct-type? xt))
-                  (let supertype? ((t (super-e t)))
-                    (cond
-                     ((not t)
-                      (lp rest))
-                     ((eq? t xt)
-                      #f)
-                     (else
-                      (supertype? (super-e t)))))
-                  (lp rest))))
+                (if (and (!class? t)
+                         (!class? xt)
+                         (memq xt (map (cut optimizer-resolve-class t <>)
+                                       (!class-precedence-list t))))
+                    #f
+                    (lp rest))))
               (lp rest)))
-           (else
-            (lp rest))))
+           (else (lp rest))))
         (else #!void))))
 
   (def (assert-count id sym count)

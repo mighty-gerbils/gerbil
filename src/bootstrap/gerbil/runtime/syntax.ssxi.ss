@@ -4,71 +4,62 @@ package: gerbil/runtime
 (begin
   (declare-type
    SyntaxError::t
-   (@class-type
-    gerbil/runtime/syntax#SyntaxError::t
-    #f
-    (Exception::t)
-    (message irritants where context phi marks)
-    (message irritants where context phi marks)
-    #f
-    ((final: . #t))))
-  (declare-type SyntaxError? (@class-pred SyntaxError::t))
-  (declare-type make-SyntaxError (@class-cons SyntaxError::t))
-  (declare-type SyntaxError-message (@class-getf SyntaxError::t message #f))
-  (declare-type
-   SyntaxError-irritants
-   (@class-getf SyntaxError::t irritants #f))
-  (declare-type SyntaxError-where (@class-getf SyntaxError::t where #f))
-  (declare-type SyntaxError-context (@class-getf SyntaxError::t context #f))
-  (declare-type SyntaxError-phi (@class-getf SyntaxError::t phi #f))
-  (declare-type SyntaxError-marks (@class-getf SyntaxError::t marks #f))
-  (declare-type
-   SyntaxError-message-set!
-   (@class-setf SyntaxError::t message #f))
+   (@class gerbil/runtime/syntax#SyntaxError::t
+           (Exception::t)
+           (Exception::t)
+           (message irritants where context phi marks)
+           (message irritants where context phi marks)
+           #f
+           #f
+           #t
+           ((display-exception . SyntaxError::display-exception))))
+  (declare-type SyntaxError? (@predicate SyntaxError::t))
+  (declare-type make-SyntaxError (@constructor SyntaxError::t))
+  (declare-type SyntaxError-message (@accessor SyntaxError::t message #t))
+  (declare-type SyntaxError-irritants (@accessor SyntaxError::t irritants #t))
+  (declare-type SyntaxError-where (@accessor SyntaxError::t where #t))
+  (declare-type SyntaxError-context (@accessor SyntaxError::t context #t))
+  (declare-type SyntaxError-phi (@accessor SyntaxError::t phi #t))
+  (declare-type SyntaxError-marks (@accessor SyntaxError::t marks #t))
+  (declare-type SyntaxError-message-set! (@mutator SyntaxError::t message #t))
   (declare-type
    SyntaxError-irritants-set!
-   (@class-setf SyntaxError::t irritants #f))
-  (declare-type SyntaxError-where-set! (@class-setf SyntaxError::t where #f))
-  (declare-type
-   SyntaxError-context-set!
-   (@class-setf SyntaxError::t context #f))
-  (declare-type SyntaxError-phi-set! (@class-setf SyntaxError::t phi #f))
-  (declare-type SyntaxError-marks-set! (@class-setf SyntaxError::t marks #f))
-  (declare-type &SyntaxError-message (@class-getf SyntaxError::t message #t))
-  (declare-type
-   &SyntaxError-irritants
-   (@class-getf SyntaxError::t irritants #t))
-  (declare-type &SyntaxError-where (@class-getf SyntaxError::t where #t))
-  (declare-type &SyntaxError-context (@class-getf SyntaxError::t context #t))
-  (declare-type &SyntaxError-phi (@class-getf SyntaxError::t phi #t))
-  (declare-type &SyntaxError-marks (@class-getf SyntaxError::t marks #t))
-  (declare-type
-   &SyntaxError-message-set!
-   (@class-setf SyntaxError::t message #t))
+   (@mutator SyntaxError::t irritants #t))
+  (declare-type SyntaxError-where-set! (@mutator SyntaxError::t where #t))
+  (declare-type SyntaxError-context-set! (@mutator SyntaxError::t context #t))
+  (declare-type SyntaxError-phi-set! (@mutator SyntaxError::t phi #t))
+  (declare-type SyntaxError-marks-set! (@mutator SyntaxError::t marks #t))
+  (declare-type &SyntaxError-message (@accessor SyntaxError::t message #f))
+  (declare-type &SyntaxError-irritants (@accessor SyntaxError::t irritants #f))
+  (declare-type &SyntaxError-where (@accessor SyntaxError::t where #f))
+  (declare-type &SyntaxError-context (@accessor SyntaxError::t context #f))
+  (declare-type &SyntaxError-phi (@accessor SyntaxError::t phi #f))
+  (declare-type &SyntaxError-marks (@accessor SyntaxError::t marks #f))
+  (declare-type &SyntaxError-message-set! (@mutator SyntaxError::t message #f))
   (declare-type
    &SyntaxError-irritants-set!
-   (@class-setf SyntaxError::t irritants #t))
-  (declare-type &SyntaxError-where-set! (@class-setf SyntaxError::t where #t))
-  (declare-type
-   &SyntaxError-context-set!
-   (@class-setf SyntaxError::t context #t))
-  (declare-type &SyntaxError-phi-set! (@class-setf SyntaxError::t phi #t))
-  (declare-type &SyntaxError-marks-set! (@class-setf SyntaxError::t marks #t))
+   (@mutator SyntaxError::t irritants #f))
+  (declare-type &SyntaxError-where-set! (@mutator SyntaxError::t where #f))
+  (declare-type &SyntaxError-context-set! (@mutator SyntaxError::t context #f))
+  (declare-type &SyntaxError-phi-set! (@mutator SyntaxError::t phi #f))
+  (declare-type &SyntaxError-marks-set! (@mutator SyntaxError::t marks #f))
   (declare-type SyntaxError::display-exception (@lambda 2 #f))
   (declare-type make-syntax-error (@lambda 6 #f))
-  (declare-type syntax-error? (@class-pred SyntaxError::t))
+  (declare-type syntax-error? (@predicate SyntaxError::t))
   (declare-type __raise-syntax-error (@lambda (3) #f))
-  (declare-type AST::t (@struct-type gerbil#AST::t #f 2 #f ()))
-  (declare-type AST? (@struct-pred AST::t))
-  (declare-type make-AST (@struct-cons AST::t))
-  (declare-type AST-e (@struct-getf AST::t 0 #f))
-  (declare-type AST-source (@struct-getf AST::t 1 #f))
-  (declare-type AST-e-set! (@struct-setf AST::t 0 #f))
-  (declare-type AST-source-set! (@struct-setf AST::t 1 #f))
-  (declare-type &AST-e (@struct-getf AST::t 0 #t))
-  (declare-type &AST-source (@struct-getf AST::t 1 #t))
-  (declare-type &AST-e-set! (@struct-setf AST::t 0 #t))
-  (declare-type &AST-source-set! (@struct-setf AST::t 1 #t))
+  (declare-type
+   AST::t
+   (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f))
+  (declare-type AST? (@predicate AST::t))
+  (declare-type make-AST (@constructor AST::t))
+  (declare-type AST-e (@accessor AST::t e #t))
+  (declare-type AST-source (@accessor AST::t source #t))
+  (declare-type AST-e-set! (@mutator AST::t e #t))
+  (declare-type AST-source-set! (@mutator AST::t source #t))
+  (declare-type &AST-e (@accessor AST::t e #f))
+  (declare-type &AST-source (@accessor AST::t source #f))
+  (declare-type &AST-e-set! (@mutator AST::t e #f))
+  (declare-type &AST-source-set! (@mutator AST::t source #f))
   (declare-type __AST-e (@lambda 1 #f))
   (declare-type __AST-source (@lambda 1 #f))
   (declare-type __AST (@lambda 2 #f))
