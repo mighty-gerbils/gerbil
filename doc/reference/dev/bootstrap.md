@@ -201,7 +201,7 @@ $ ./build.sh stage1
 ...
 ```
 
-Once you have built stage1, you can use it build the recursive bootstrap, generating the cross module optimization meta modules this time.
+Once you have built stage1, you can use it to build the recursive bootstrap, generating the cross module optimization meta modules this time.
 
 ```
 $ ./build.sh env bash
