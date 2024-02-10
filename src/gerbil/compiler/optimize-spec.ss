@@ -63,7 +63,7 @@ namespace: gxc
     (let ($tmp (make-symbol (gensym '__tmp)))
       [[$id]
        ['%#let-values [[[$tmp]
-                        ['%#call ['%#ref 'class-slot-offset*]
+                        ['%#call ['%#ref 'class-slot-offset]
                                  ['%#ref $t]
                                  ['%#quote id]]]]
                       ['%#if ['%#ref $tmp]

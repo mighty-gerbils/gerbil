@@ -71,7 +71,7 @@ namespace: gxc
                    (ctor-impl (!class-lookup-method klass ctor)))
                (xform-wrap-source
                 ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object*]
+                                 ['%#call ['%#ref 'make-object]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
                                ['%#begin
@@ -108,7 +108,7 @@ namespace: gxc
               (()
                (xform-wrap-source
                 ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object*]
+                                 ['%#call ['%#ref 'make-object]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
                                ['%#begin
@@ -128,7 +128,7 @@ namespace: gxc
                ;; redirect to class-instance-init!
                (xform-wrap-source
                 ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object*]
+                                 ['%#call ['%#ref 'make-object]
                                           ['%#ref (!type-id self)]
                                           ['%#quote fields]]]]
                                ['%#begin
