@@ -5,11 +5,12 @@ prelude: "../prelude/core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "base" "optimize-base"
-        :gerbil/core)
+(import "../prelude/core"
+        "../expander"
+        "base" "optimize-base")
 (export #t ast-rules ast-case
         syntax with-syntax with-syntax*
-        (import: :gerbil/core))
+        (import: "../prelude/core" "../expander"))
 
 (defrules declare-type ()
   ((_ symbol type-expr)
