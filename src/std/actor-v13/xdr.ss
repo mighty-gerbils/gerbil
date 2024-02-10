@@ -517,7 +517,7 @@
 (def (xdr-read-struct klass buf)
   (let (fields (xdr-read-uint buf))
     (if (##fx= fields (type-descriptor-fields klass))
-      (let (obj (make-object klass fields))
+      (let (obj (make-object klass (fx1+ fields)))
         (let lp ((i 0))
           (if (##fx< i fields)
             (let (i+1 (##fx+ i 1))

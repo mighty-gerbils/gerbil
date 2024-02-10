@@ -305,7 +305,7 @@
                    (make-read-fini id fields)))
       #'(begin
           (defreader-ext* (bio-read buf)
-            (let (obj (make-object id::t field-count))
+            (let (obj (make-object id::t (fx1+ field-count)))
               (&bio-read! buf obj)
               obj))
           (defreader-ext* (bio-read! buf obj)

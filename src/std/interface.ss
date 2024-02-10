@@ -63,7 +63,7 @@
         (else
          (fail! klass method-name))))
       (else
-       (let (prototype (make-object klass (fx+ count 1)))
+       (let (prototype (make-object klass (fx+ count 2)))
          (let lp ((rest methods) (off (fx+ count 1)))
            (match rest
              ([method . rest]
