@@ -132,52 +132,39 @@ namespace: #f
 
 ;;; type descriptor utilities
 (def (type-descriptor-precedence-list klass)
-  (##vector-ref klass 6))
+  (##structure-ref klass 6 ##type-type type-descriptor-precedence-list))
 (def (type-descriptor-all-slots klass)
-  (##vector-ref klass 7))
+  (##structure-ref klass 7 ##type-type type-descriptor-all-slots))
 (def (type-descriptor-slot-table klass)
-  (##vector-ref klass 8))
+  (##structure-ref klass 8 ##type-type type-descriptor-slot-table))
 (def (type-descriptor-properties klass)
-  (##vector-ref klass 9))
+  (##structure-ref klass 9 ##type-type type-descriptor-properties))
 (def (type-descriptor-constructor klass)
-  (##vector-ref klass 10))
+  (##structure-ref klass 10 ##type-type type-descriptor-constructor))
 (def (type-descriptor-methods klass)
-  (##vector-ref klass 11))
+  (##structure-ref klass 11 ##type-type type-descriptor-methods))
 (def (type-descriptor-methods-set! klass ht)
-  (##vector-set! klass 11 ht))
+  (##structure-set! klass ht 11 ##type-type type-descriptor-methods-set!))
 
-;; TODO: remove after cleanup of clients + new bootstrap
-(def type-descriptor-mixin type-descriptor-precedence-list)
-(def type-descriptor-plist type-descriptor-properties)
-(def type-descriptor-ctor type-descriptor-constructor)
 (def (type-descriptor-fields klass)
   (##fx- (##vector-length (type-descriptor-all-slots klass)) 1))
 (def (type-descriptor-sealed? klass)
   (##fxbit-set? 20 (##type-flags klass)))
 (def (type-descriptor-seal! klass)
-  (##vector-set! klass 3 (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))))
+  (##structure-set! klass (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))
+                    3 ##type-type type-descriptor-seal!))
 
 ;;; struct types
-;; TODO become make-struct-type*
-(def (make-struct-type id super n-direct-slots name properties constructor (direct-slots #f))
-  (make-struct-type* id name super
-                     (or direct-slots
-                         (map (cut make-symbol "_" <>)
-                              (iota n-direct-slots
-                                    (if super (##vector-length (type-descriptor-all-slots super))
-                                        1))))
-                     properties constructor))
-
 ;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
-(def (make-struct-type* id name super direct-slots properties constructor)
+(def (make-struct-type id name super direct-slots properties constructor)
   (when (and super (not (struct-type? super)))
     (error "illegal super type; not a struct-type" super))
   ;; Consistency check for slots: they must all be new
-  (let* ((type (make-class-type* id name (if super [super] []) direct-slots
-                                 (if (assgetq struct: properties)
-                                   properties
-                                   [[struct: . #t] . properties])
-                                 constructor))
+  (let* ((type (make-class-type id name (if super [super] []) direct-slots
+                                (if (assgetq struct: properties)
+                                  properties
+                                  [[struct: . #t] . properties])
+                                constructor))
          (all-slots (type-descriptor-all-slots type))
          (len (length direct-slots))
          (start (##fx- (##vector-length all-slots) len)))
@@ -185,6 +172,9 @@ namespace: #f
                     direct-slots (iota len start))
       (error "non-unique slots in struct" name direct-slots))
     type))
+
+;; TODO remove after bootstrap
+(def make-struct-type* make-struct-type)
 
 (def (make-struct-predicate klass)
   (let (tid (##type-id klass))
@@ -379,13 +369,8 @@ namespace: #f
       (values all-slots slot-table))))
 
 ;;; ClassTypeDescriptor
-;; : Symbol (List TypeDescriptor) (List Symbol) Symbol Alist Constructor -> ClassTypeDescriptor
-;; TODO become make-class-type*
-(def (make-class-type id direct-supers direct-slots name properties constructor)
-  (make-class-type* id name direct-supers direct-slots properties constructor))
-
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
-(def (make-class-type* id name direct-supers direct-slots properties constructor)
+(def (make-class-type id name direct-supers direct-slots properties constructor)
   (cond
    ((find (lambda (klass) (not (type-descriptor? klass))) direct-supers)
     => (cut error "Illegal super class; not a type descriptor" <>))
@@ -405,6 +390,9 @@ namespace: #f
     (make-type-descriptor id name struct-super
                           precedence-list all-slots properties
                           constructor* slot-table #f)))
+
+;; TODO remove after bootstrap
+(def make-class-type* make-class-type)
 
 (def (class-precedence-list klass)
   (cons klass (type-descriptor-precedence-list klass)))
