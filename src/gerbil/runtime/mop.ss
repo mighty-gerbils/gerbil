@@ -173,9 +173,6 @@ namespace: #f
       (error "non-unique slots in struct" name direct-slots))
     type))
 
-;; TODO remove after bootstrap
-(def make-struct-type* make-struct-type)
-
 (def (make-struct-predicate klass)
   (let (tid (##type-id klass))
     (if (type-final? klass)
@@ -373,9 +370,6 @@ namespace: #f
                           precedence-list all-slots properties
                           constructor* slot-table #f)))
 
-;; TODO remove after bootstrap
-(def make-class-type* make-class-type)
-
 (def (class-precedence-list klass)
   (cons klass (type-descriptor-precedence-list klass)))
 
@@ -488,9 +482,6 @@ namespace: #f
 (def (class-slot-offset klass slot)
   (hash-get (type-descriptor-slot-table klass) slot))
 
-;; TODO: remove after bootstrap
-(def class-slot-offset* class-slot-offset)
-
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (object-type obj) slot))
@@ -570,9 +561,6 @@ namespace: #f
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
-
-;; TODO remove after bootstrap
-(def make-object* make-object)
 
 (def (make-instance klass)
   (make-object klass (##vector-length (type-descriptor-all-slots klass))))
@@ -713,8 +701,6 @@ namespace: #f
     #f)
    (else
     (mixin-method-ref klass id))))
-
-(def struct-find-method find-method) ;; TODO: remove after bootstrap
 
 (def (class-find-method klass id)
   (and (type-descriptor? klass)

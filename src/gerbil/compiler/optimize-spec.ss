@@ -74,11 +74,11 @@ namespace: gxc
 
   (def (generate-class-check-bind $t class-type $class-type)
     [[$class-type]
-     ['%#call ['%#ref 'class-subtype?] ['%#ref class-type] ['%#ref $t]]])
+     ['%#call ['%#ref 'subclass?] ['%#ref $t] ['%#ref class-type]]])
 
   (def (generate-struct-check-bind $t class-type $class-type)
     [[$class-type]
-     ['%#call ['%#ref 'struct-subtype?] ['%#ref class-type] ['%#ref $t]]])
+     ['%#call ['%#ref 'substruct?] ['%#ref $t] ['%#ref class-type]]])
 
   (def (generate-specializer-impl $t
          methods-bind slots-bind class-check-bind struct-check-bind

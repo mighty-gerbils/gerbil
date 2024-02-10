@@ -5,7 +5,7 @@
 (def (gxc-print-usage!)
   (displayln "gxc [options...] <file> ...")
   (displayln "Options: ")
-  (displayln " -V,--version                display version information")
+  (displayln " -v,--version                display version information")
   (displayln " -h,--help                   display this help message and exit")
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
@@ -15,7 +15,7 @@
   (displayln " -static                     link the executable's external library dependencies statically")
   (displayln " -s                          keep intermediate .scm files")
   (displayln " -S                          don't invoke gsc")
-  (displayln " -v                          be verbose during compilation")
+  (displayln " -V                          be verbose during compilation")
   (displayln " -g                          compile with debug symbols; c code is compiled with -g")
   (displayln " -no-ssxi                    don't generate .ssxi modules for cross-module optimization")
   (displayln " -include-gambit-sharp       include _gambit# with necessary cond expand features")
@@ -62,7 +62,7 @@
     (match rest
       ([arg . rest]
        (case arg
-         (("-V" "--version")
+         (("-v" "--version")
           (displayln (gerbil-system-version-string))
           (force-output)
           (exit 0))
@@ -93,7 +93,7 @@
           (set! keep-scm #t)
           (set! debug #t)
           (lp rest))
-         (("-v")
+         (("-V")
           (set! verbose #t)
           (lp rest))
          (("-O")
