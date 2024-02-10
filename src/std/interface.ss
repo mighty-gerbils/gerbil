@@ -658,17 +658,19 @@
                           #'(unchecked-method-impl-name ...)
                           #'(method-signature ...)
                           (iota (length #'(method-name ...)) 2)))
-                    (field-count
-                     (length #'(method-name ...)))
+                    ((slot ...)
+                     (map  (lambda (method-name)
+                             (make-symbol "::" (stx-e method-name)))
+                           #'(method-name ...)))
                     (defklass
                       #'(def klass
                           (make-struct-type 'klass-type-id          ; type id
+                                            'name                   ; name
                                             interface-instance::t   ; super
-                                            field-count             ; fields
-                                            'name                   ; type name
+                                            '(slot ...)             ; direct slots
                                             '((final: . #t))        ; plist
                                             #f                      ; constructor (none)
-                                            '(method-name ...))))   ; field names
+                                            )))
                     (defdescriptor
                       #'(def descriptor
                           (begin-annotation (@interface klass-quoted (method-name ...))
