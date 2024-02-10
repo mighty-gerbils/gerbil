@@ -62,18 +62,20 @@ namespace: gxc
 (defmethod {optimize-call !constructor}
   (lambda (self stx args)
     (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-           (fields (fx1+ (length (!class-fields klass))))
-           (args (map compile-e args)))
+           (fields (length (!class-fields klass)))
+           (args (map compile-e args))
+           (inline-make-object
+            ['%#call ['%#ref '##structure]
+                     ['%#ref (!type-id self)]
+                     (make-list fields '(%#quote #f))
+                     ...]))
       (cond
        ((!class-constructor klass)
         => (lambda (ctor)
              (let (($obj (make-symbol (gensym '__obj)))
                    (ctor-impl (!class-lookup-method klass ctor)))
                (xform-wrap-source
-                ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object]
-                                          ['%#ref (!type-id self)]
-                                          ['%#quote fields]]]]
+                ['%#let-values [[[$obj] inline-make-object]]
                                ['%#begin
                                 (if ctor-impl
                                   ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
@@ -107,10 +109,7 @@ namespace: gxc
                    (raise-compile-error "unknown slot" stx (!type-id self) slot))))
               (()
                (xform-wrap-source
-                ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object]
-                                          ['%#ref (!type-id self)]
-                                          ['%#quote fields]]]]
+                ['%#let-values [[[$obj] inline-make-object]]
                                ['%#begin
                                 (foldl (lambda (i r)
                                          (cons ['%#struct-unchecked-set!
@@ -127,10 +126,7 @@ namespace: gxc
                ;; not canonical static keyword -> value initialization list
                ;; redirect to class-instance-init!
                (xform-wrap-source
-                ['%#let-values [[[$obj]
-                                 ['%#call ['%#ref 'make-object]
-                                          ['%#ref (!type-id self)]
-                                          ['%#quote fields]]]]
+                ['%#let-values [[[$obj] inline-make-object]]
                                ['%#begin
                                 ['%#call ['%#ref 'class-instance-init!]
                                          ['%#ref $obj]
