@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1707573207)
+  (define gerbil/core$<macro-object>::timestamp 1707601712)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
       (let ((__tmp47587 (list)))

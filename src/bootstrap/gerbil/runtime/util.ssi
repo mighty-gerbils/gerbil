@@ -93,6 +93,7 @@ namespace: #f
          (%#define-runtime remove-nulls! remove-nulls!)
          (%#define-runtime append1! append1!)
          (%#define-runtime append-reverse append-reverse)
+         (%#define-runtime append-reverse-until append-reverse-until)
          (%#define-runtime andmap1 andmap1)
          (%#define-runtime andmap2 andmap2)
          (%#define-runtime andmap andmap)

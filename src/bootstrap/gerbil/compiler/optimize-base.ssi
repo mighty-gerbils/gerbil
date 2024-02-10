@@ -4,6 +4,7 @@ namespace: gxc
 
 (%#begin (%#import
           :gerbil/expander
+          :gerbil/runtime/c3
           :gerbil/compiler/base
           :gerbil/compiler/compile
           (in: :gerbil/core <syntax-case>)

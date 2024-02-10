@@ -33,6 +33,7 @@ namespace: #f
          (%#define-runtime
           type-descriptor-methods-set!
           type-descriptor-methods-set!)
+         (%#define-runtime type-descriptor-slot-list type-descriptor-slot-list)
          (%#define-runtime type-descriptor-fields type-descriptor-fields)
          (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
@@ -68,8 +69,7 @@ namespace: #f
          (%#define-runtime compute-class-slots compute-class-slots)
          (%#define-runtime make-class-type make-class-type)
          (%#define-runtime class-precedence-list class-precedence-list)
-         (%#define-runtime struct-precedence-list struct-precedence-list)
-         (%#define-runtime class-linearize-mixins class-linearize-mixins)
+         (%#define-runtime compute-precedence-list compute-precedence-list)
          (%#define-runtime make-class-predicate make-class-predicate)
          (%#define-runtime if-class-slot-field if-class-slot-field)
          (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
