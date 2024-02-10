@@ -130,6 +130,9 @@
 
 (def c3-test
   (test-suite "test :gerbil/runtime/c3"
+    (test-case "utils"
+      (check (values->list (append-reverse-until odd? [2 4 6 9 12 14 15] '(a b c d e)))
+             '((9 12 14 15) (6 4 2 a b c d e))))
     (test-case "c3 linearization"
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
 

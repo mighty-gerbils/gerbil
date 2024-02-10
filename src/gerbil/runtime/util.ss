@@ -322,6 +322,21 @@ namespace: #f
 (def (append-reverse rev-head tail)
   (foldl cons tail rev-head))
 
+;; Append the elements the list in the first argument to the front of the list
+;; in second argument until an element satisfies a predicate.
+;; Return two values, the rest of the first list including the element
+;; satisfying the predicate if any (or the empty list if none exists),
+;; and the tail with the reverse of the rhead up till then appended in front.
+;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
+(def (append-reverse-until pred rhead tail)
+  (let loop ((rhead rhead) (tail tail))
+    (match rhead
+      ([] (values [] tail))
+      ([a :: r]
+       (if (pred a)
+         (values rhead tail)
+         (loop r (cons a tail)))))))
+
 (def (andmap1 f lst)
   (let lp ((rest lst))
     (match rest
