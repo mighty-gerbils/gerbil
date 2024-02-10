@@ -44,7 +44,12 @@ namespace: #f
 ;;   (passed around because somehow equal? doesn't work correctly on runtime type-descriptors).
 ;; - get-name gets the name of a object/class, for debugging only.
 ;; Returns the linearized precedence list, and the most specific struct superclass if any
-;; : (List X) (List X) (X -> (NonEmptyList X)) ?(X -> Bool) ?(X X -> Bool) ?(X -> Y) -> (List X) (OrFalse X)
+;; : (List X) (List X) \
+;;  get-precedence-list: (X -> (NonEmptyList X)) \
+;;  single-inheritance?: (X -> Bool) \
+;;  eqpred: ?(X X -> Bool) \
+;;  get-name: ?(X -> Y) \
+;; -> (List X) (OrFalse X)
 (def (c4-linearize rhead supers
                    get-precedence-list: get-precedence-list
                    single-inheritance?: single-inheritance?
@@ -85,7 +90,7 @@ namespace: #f
          (else (loop (cdr t1) (cdr t2))))))))
   (def rpls
     (map (lambda (pl)
-           (let-values (((rh tl) (append-reverse-until single-inheritance? pl [])))
+           (let-values (((tl rh) (append-reverse-until single-inheritance? pl [])))
              (merge-sit! tl)
              rh))
          pls))
@@ -103,7 +108,7 @@ namespace: #f
         ([c . plrh]
          (if (member c sit-tail)
            (err direct-super: (last pl-rhead)
-                super-out-of-order-vs-single-inheritance-tail: c)
+                super-out-of-order-vs-single-inheritance-tail: (reverse c))
            (let-values (((sit-rh2 sit-tl2)
                          (append-reverse-until
                           (cut eqpred c <>) sit-rhead sit-tail)))
@@ -146,17 +151,20 @@ namespace: #f
          (loop more)))))
 
   ;; Now for the regular C3 loop
-  (let c3loop ((rhead rhead) (tails pls))
-    (let (tails (remove-nulls! tails))
-      (match tails
-        ([]
-         (append-reverse rhead sit))
-        ([tail]
-         (append-reverse rhead (append tail sit)))
-        (else
-         (let* ((next (c3-select-next tails)))
-           (c3loop (cons next rhead)
-                 (remove-next! next tails))))))))
+  (def precedence-list
+    (let c3loop ((rhead rhead) (tails pls))
+      (let (tails (remove-nulls! tails))
+        (match tails
+          ([]
+           (append-reverse rhead sit))
+          ([tail]
+           (append-reverse rhead (append tail sit)))
+          (else
+           (let* ((next (c3-select-next tails)))
+             (c3loop (cons next rhead)
+                     (remove-next! next tails))))))))
+  (def super-struct (match sit ([s . _] s) (else #f)))
+  (values precedence-list super-struct))
 
 ;; TODO: backward compatibility shim, to remove after bootstrap
 (def (c3-linearize rhead supers get-precedence-list (eqpred eq?) (get-name identity)

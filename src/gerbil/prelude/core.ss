@@ -2002,7 +2002,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: print: equal:)))
+                '(id: struct: name: constructor: transparent: final: print: equal:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref slots body struct?)

@@ -759,32 +759,27 @@ namespace: #f
    (let ((tagval tag)
          (thunk (lambda () expr)))
      (if tagval
-       (DBG-helper tagval '(names ...) (list (lambda () exprs) ...)
-                   'name thunk)
+       (DBG-helper tagval '(names ...) (list (lambda () exprs) ...) 'name thunk)
        (thunk)))))
 
 (def DBG-printer (make-parameter write))
 
-;; NB: fprintf uses the current-error-port and calls force-output
 (def (DBG-helper tag dbg-exprs dbg-thunks expr thunk)
   (letrec
-      ((fo (lambda () (force-output (current-error-port))
-              (force-output (current-output-port))))
-       (d (lambda (x) (display x (current-error-port))))
+      ((o (current-output-port))
+       (e (current-error-port))
        (p (DBG-printer))
-       (w (lambda (x) (p x (current-error-port))))
-       (n (lambda () (newline (current-error-port))))
-       (v (lambda (l)
-            (for-each (lambda (x) (d " ") (w x)) l)
-            (n)))
+       (f (lambda () (force-output o) (force-output e)))
+       (d (lambda (x) (display x e)))
+       (w (lambda (x) (p x e)))
+       (n (lambda () (newline e)))
+       (v (lambda (l) (for-each (lambda (x) (d " ") (w x)) l) (n)))
        (x (lambda (expr thunk)
-            (d "  ")
-            (w expr) (d " =>")
-            (call-with-values thunk (lambda x (v x) (apply values x))))))
+            (f) (d "  ") (w expr) (d " =>")
+            (call-with-values thunk (lambda x (v x) (f) (apply values x))))))
     (if tag
       (begin
-        (unless (void? tag) (d tag) (n))
+        (unless (void? tag) (f) (d tag) (n))
         (for-each x dbg-exprs dbg-thunks)
         (if thunk (x expr thunk) (void)))
       (if thunk (thunk) (void)))))
-

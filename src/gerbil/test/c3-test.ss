@@ -1,31 +1,43 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c3 linearization algorithm
+prelude: "../prelude/core"
 
 (export c3-test)
 
 (import
   ;;  :gerbil/runtime/c3
   (only-in :gerbil/runtime/mop type-descriptor-all-slots)
+  (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)
-  (only-in :std/test test-suite test-case check check-exception))
+  (only-in :std/test test-suite test-case check check-exception)
+  (only-in :std/values first-value))
 
 (define gerbil/runtime 'gerbil/runtime)
 (define :gerbil/core ':gerbil/core)
+;;(include "../../gerbil/runtime/util.ss")
 (include "../../gerbil/runtime/c3.ss")
 
+(module <tsi>
+  (export #t)
+  (import (only-in :std/text/char-set char-ascii-lowercase?))
+  (def (test-single-inheritance? sym)
+    (char-ascii-lowercase? (string-ref (symbol->string sym) 0))))
 
-(def (test-single-inheritance? sym)
-  (char-ascii-lowercase? (string-ref (symbol->string sym) 0)))
+(import <tsi> (phi: +1 <tsi>))
 
 ;;; Test vectors
-(defrule (defhierarchy (my-objects my-supers) (object supers ...) ...)
-  (begin
-    (def my-objects '(object ...))
-    (def my-supers '((object supers ...) ...))
-    (defclass (object supers ...) (object)
-      struct: (test-single-inheritance? 'object)
-      transparent: #t) ...))
+(defsyntax (defhierarchy stx)
+  (syntax-case stx ()
+    ((_ (my-objects my-supers) (object supers ...) ...)
+     (with-syntax (((struct? ...) (stx-map (lambda (o) (test-single-inheritance? (syntax-e o)))
+                                           #'(object ...))))
+       #'(begin
+           (def my-objects '(object ...))
+           (def my-supers '((object supers ...) ...))
+           (defclass (object supers ...) (object)
+             struct: struct?
+             transparent: #t) ...)))))
 
 (defhierarchy (my-objects my-supers)
   (O) (A O) (B O) (C O) (D O) (E O)
@@ -53,7 +65,7 @@
     (P PWB EL SC SM DB WB B O)
     (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O) #;(CG --- error!)
     (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
-    (CC EE FF GG HH) (BB) (AA BB CC DD EE FF GG HH)
+    (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
     (j E k D L M A B N C c b a o O)))
@@ -61,32 +73,19 @@
 (defrule (def-alist-getter getter alist table)
   (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
 (def-alist-getter my-get-supers my-supers my-supers-table)
-(def-alist-getter my-get-precedence-list my-precedence-lists my-precedence-lists-table)
-
+(def-alist-getter my-get-precedence-list my-precedence-lists my-precedence-list-table)
 
 ;;; Test-specialized C4 linearization
-
-(def (get-supers->get-precedence-list
-      get-supers
-      single-inheritance?: single-inheritance?
-      eqpred: (eqpred eq?)
-      get-name: (get-name identity))
-  (def (gpl x) (c4-linearize [x] (get-supers x)
-                             get-precedence-list: gpl
-                             single-inheritance?: single-inheritance?
-                             eqpred: eqpred
-                             get-name: get-name))
-  gpl)
-
-;; This variant of c4-linearize is meant for testing only:
-;; it recursively applies the algorithm on each super,
-;; rather than use a cached precedence lists.
-;; This can take exponential time in the complexity of the DAG.
-;; : X -> (NonEmptyList X)
-(def my-compute-precedence-list
-  (get-supers->get-precedence-list
-   my-get-supers
-   single-inheritance?: test-single-inheritance?))
+(def my-compute-precedence-list-cache (make-hash-table))
+(def (my-compute-precedence-list x)
+  (hash-ensure-ref
+   my-compute-precedence-list-cache x
+   (cut first-value
+        (c4-linearize [x] (my-get-supers x)
+                      get-precedence-list: my-compute-precedence-list
+                      single-inheritance?: test-single-inheritance?
+                      eqpred: eq?
+                      get-name: identity))))
 
 ;;; Previous implementation:
 (def (old-linearize-supers x (get-supers my-get-supers))
@@ -142,19 +141,20 @@
   (test-suite "test :gerbil/runtime/c3"
     (test-case "utils"
       (check (values->list (append-reverse-until odd? [2 4 6 9 12 14 15] '(a b c d e)))
-             '((9 12 14 15) (6 4 2 a b c d e))))
+             => '((9 12 14 15) (6 4 2 a b c d e))))
     (test-case "c3 linearization"
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
 
       ;; check discrepancy with old MRO resolution algorithm
-      (check (my-compute-precedence-list 'Z) => '(Z K1 K2 K3 D A B C E O))
-      (check (old-linearize-supers 'Z) =>       '(Z K1 K2 K3 D B E A C O)) ; different: B A C bad!
-      (check (my-compute-precedence-list 'Y) => '(Y J1 C J3 A J2 B D E O))
-      (check (old-linearize-supers 'Y) =>       '(Y J1 C J3 A J2 B D E O)) ; same
-      (check (my-compute-precedence-list 'P) => '(P PWB EL SC SM DB WB B O))
-      (check (old-linearize-supers 'P) =>       '(P PWB EL SC SM DB WB B O)) ; same
-      (check (my-compute-precedence-list 'a) => '(a b c e d f g h))
-      (check (old-linearize-supers 'a) =>       '(a b c e d f g h)) ; same
+      (check (my-compute-precedence-list 'Z) =>  '(Z K1 K2 K3 D A B C E O))
+      (check (old-linearize-supers 'Z) =>        '(Z K1 K2 K3 D B E A C O)) ; different: B A C bad!
+      (check (my-compute-precedence-list 'Y) =>  '(Y J1 C J3 A J2 B D E O))
+      (check (old-linearize-supers 'Y) =>        '(Y J1 C J3 A J2 B D E O)) ; same
+      (check (my-compute-precedence-list 'P) =>  '(P PWB EL SC SM DB WB B O))
+      (check (old-linearize-supers 'P) =>        '(P PWB EL SC SM DB WB B O)) ; same
+      (check (my-compute-precedence-list 'AA) => '(AA BB CC EE DD FF GG HH))
+      (check (old-linearize-supers 'AA) =>       '(AA BB CC EE DD FF GG HH)) ; same
+      (check (my-compute-precedence-list 'a) =>  '(a o O))
 
       ;; Try and fail to compute a precedence-list for the confused-grid example in the C3 paper
       (hash-put! my-supers-table 'CG '(HVG VHG))
@@ -169,3 +169,5 @@
       (check (type-descriptor-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
       (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))))
+
+;;(map ##trace [test-single-inheritance?])
