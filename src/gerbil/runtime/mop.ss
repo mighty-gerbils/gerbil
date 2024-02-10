@@ -75,19 +75,11 @@ namespace: #f
             [key :: val])))
        properties))
 
-;; TODO become make-type-descriptor*
-(def (make-type-descriptor type-id type-name type-super
-                           rtd-mixin rtd-fields rtd-plist
-                           rtd-ctor rtd-slots rtd-methods)
-  (make-type-descriptor* type-id type-name type-super
-                         rtd-mixin rtd-fields rtd-plist
-                         rtd-ctor rtd-slots rtd-methods))
-
 ;; Bootstrap issue: all-slots is now a vector, not a list
 ;; Compute the flags and field-info and create a type-descriptor
-(def (make-type-descriptor* type-id type-name type-super
-                            precedence-list all-slots properties
-                            constructor slot-table methods)
+(def (make-type-descriptor type-id type-name type-super
+                           precedence-list all-slots properties
+                           constructor slot-table methods)
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
@@ -410,9 +402,9 @@ namespace: #f
            properties ...])
          (constructor* (or constructor (find-super-constructor direct-supers))))
 
-    (make-type-descriptor* id name struct-super
-                           precedence-list all-slots properties
-                           constructor* slot-table #f)))
+    (make-type-descriptor id name struct-super
+                          precedence-list all-slots properties
+                          constructor* slot-table #f)))
 
 (def (class-precedence-list klass)
   (cons klass (type-descriptor-precedence-list klass)))
