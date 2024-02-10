@@ -14,21 +14,32 @@
 (define :gerbil/core ':gerbil/core)
 (include "../../gerbil/runtime/c3.ss")
 
+(def (test-single-inheritance? sym)
+  (char-ascii-lowercase? (string-ref (symbol->string sym) 0)))
+
 ;; This variant of c3-linearize is meant for testing only:
 ;; it recursively applies the algorithm on each super,
 ;; rather than use a cached precedence lists.
 ;; The can take exponential time in the complexity of the DAG.
 ;; : X (X -> (List X)) ?(X -> Y) -> (NonEmptyList X)
-(def (c3-linearize* x get-supers (eqpred eqv?) (get-name identity))
+(def (c3-linearize* x
+                    get-supers
+                    (single-inheritance? test-single-inheritance?)
+                    (eqpred eqv?)
+                    (get-name identity))
   (c3-linearize [x]
                 (get-supers x)
                 (get-supers->get-precedence-list get-supers eqpred get-name)
+                single-inheritance?
                 eqpred
                 get-name))
 
 ;; : (X -> (List X)) ?(X -> Y) -> (X -> (NonEmptyList X))
-(def (get-supers->get-precedence-list get-supers (eqpred eqv?) (get-name identity))
-  (def (gpl x) (c3-linearize [x] (get-supers x) gpl eqpred get-name))
+(def (get-supers->get-precedence-list get-supers
+                                      (single-inheritance? test-single-inheritance?)
+                                      (eqpred eqv?)
+                                      (get-name identity))
+  (def (gpl x) (c3-linearize [x] (get-supers x) gpl single-inheritance? eqpred get-name))
   gpl)
 
 ;;; Previous implementation:
@@ -113,7 +124,8 @@
   ;; object grid-layout horizontal-grid vertical-grid hv-grid vh-grid ;; omitting confused-grid for now
   (GL O) (HG GL) (VG GL) (HVG HG VG) (VHG VG HG) #; (CG HVG VHG)
   ;; https://stackoverflow.com/questions/40478154/does-pythons-mro-c3-linearization-work-depth-first-empirically-it-does-not
-  (h) (g h) (i g) (f h) (e h) (d f) (c e f g) (b) (a b c d))
+  (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF) (CC EE FF GG) (BB) (AA BB CC DD)
+  (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A))
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -122,7 +134,11 @@
     (DB B O) (WB B O) (EL DB B O) (SM DB B O) (PWB EL DB WB B O) (SC SM DB B O)
     (P PWB EL SC SM DB WB B O)
     (GL O) (HG GL O) (VG GL O) (HVG HG VG GL O) (VHG VG HG GL O) #;(CG --- error!)
-    (h) (g h) (i g h) (f h) (e h) (d f h) (c e f g h) (b) (a b c e d f g h)))
+    (HH) (GG HH) (II GG HH) (FF HH) (EE HH) (DD FF HH)
+    (CC EE FF GG HH) (BB) (AA BB CC DD EE FF GG HH)
+    (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
+    (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
+    (j E k D L M A B N C c b a o O)))
 
 (def-alist-getter my-get-supers my-supers my-supers-table)
 (def-alist-getter my-get-precedence-list my-precedence-lists my-precedence-lists-table)
@@ -159,6 +175,4 @@
       (check (type-descriptor-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
       (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y))
-
-      (check (c3-linearize-loop [] (map copy-list '((import-expander user-expander) (export-expander user-expander) (import-expander export-expander)))) => '(import-expander export-expander user-expander))
       )))
