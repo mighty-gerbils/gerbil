@@ -5,6 +5,7 @@
 (def (gxc-print-usage!)
   (displayln "gxc [options...] <file> ...")
   (displayln "Options: ")
+  (displayln " -V,--version                display version information")
   (displayln " -h,--help                   display this help message and exit")
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
@@ -61,6 +62,10 @@
     (match rest
       ([arg . rest]
        (case arg
+         (("-V" "--version")
+          (displayln (gerbil-system-version-string))
+          (force-output)
+          (exit 0))
          (("-h" "--help")
           (gxc-print-usage!)
           (exit 0))
