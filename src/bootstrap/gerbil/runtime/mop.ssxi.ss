@@ -179,6 +179,4 @@ package: gerbil/runtime
   (declare-type next-method (@lambda 3 #f))
   (declare-type call-next-method (@lambda (3) #f))
   (declare-type write-style (@lambda 1 macro-writeenv-style))
-  (declare-type write-object (@lambda 2 #f))
-  (declare-type make-struct-type* (@case-lambda (6 #f) (7 #f)))
-  (declare-type make-class-type* (@lambda 6 #f)))
+  (declare-type write-object (@lambda 2 #f)))

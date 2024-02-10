@@ -420,7 +420,7 @@ package: gerbil
  method-ref direct-method-ref bound-method-ref
  checked-method-ref checked-bound-method-ref
  find-method
- struct-subtype? class-subtype?
+ substruct? subclass?
  with-unwind-protect
  with-catch
  file-newer?)

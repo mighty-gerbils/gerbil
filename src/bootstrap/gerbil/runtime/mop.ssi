@@ -165,7 +165,5 @@ namespace: #f
          (%#define-runtime next-method next-method)
          (%#define-runtime call-next-method call-next-method)
          (%#define-runtime write-style write-style)
-         (%#define-runtime write-object write-object)
-         (%#define-runtime make-struct-type* make-struct-type*)
-         (%#define-runtime make-class-type* make-class-type*))
+         (%#define-runtime write-object write-object))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/mop__0"))

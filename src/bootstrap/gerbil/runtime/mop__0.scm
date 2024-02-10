@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1707554636)
+  (define gerbil/runtime/mop::timestamp 1707555131)
   (begin
     (define type-id
       (lambda (_klass82454_)
@@ -2337,6 +2337,4 @@
               (let ()
                 (declare (not safe))
                 (##default-wr _we81331_ _obj81332_))))))
-    (let () (declare (not safe)) (##wr-set! write-object))
-    (define make-struct-type* make-struct-type)
-    (define make-class-type* make-class-type)))
+    (let () (declare (not safe)) (##wr-set! write-object))))
