@@ -1734,7 +1734,7 @@ package: gerbil
                                 make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
-                               (make-class-type-id type-id)))
+                               (make-class-type-id #'type-t)))
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
