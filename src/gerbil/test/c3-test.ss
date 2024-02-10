@@ -37,7 +37,6 @@
 
 (def (class-linearize-mixins klass-lst (get-supers my-get-supers))
   (def (class->list klass)
-    ;;(cons klass (or (type-descriptor-mixin klass) '()))) ;;<-- in the original code
     (old-linearize-supers klass get-supers))
 
   (match klass-lst
