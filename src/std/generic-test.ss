@@ -32,8 +32,8 @@
 
     (defstruct A (x))
     (generic-bind! my-generic
-                   [(type-linearize-class A::t)
-                    (type-linearize-class A::t)]
+                   [(type-precedence-list A::t)
+                    (type-precedence-list A::t)]
                    (lambda (a b) ['A+ (A-x a) (A-x b)]))
     (test-case "test user type dispatch"
       (check (generic-dispatch my-generic (make-A 1) (make-A 2)) => '(A+ 1 2)))

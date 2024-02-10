@@ -162,7 +162,7 @@ package: gerbil
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
     ;; c3 linearization
-    c3-linearize
+    c4-linearize c3-linearize
 
     ;; MOP
     type-descriptor?
@@ -182,7 +182,7 @@ package: gerbil
     make-struct-field-unchecked-mutator
 
     base-struct
-    class-precedence-list struct-precedence-list
+    class-precedence-list
     unchecked-field-ref
     unchecked-field-set!
     make-class-type

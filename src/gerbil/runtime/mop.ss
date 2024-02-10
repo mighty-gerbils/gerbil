@@ -75,7 +75,6 @@ namespace: #f
             [key :: val])))
        properties))
 
-;; Bootstrap issue: all-slots is now a vector, not a list
 ;; Compute the flags and field-info and create a type-descriptor
 (def (make-type-descriptor type-id type-name type-super
                            precedence-list all-slots properties
@@ -93,7 +92,7 @@ namespace: #f
     (for-each (lambda (mixin)
                 (let (alist (type-descriptor-properties mixin))
                   (if (or (assgetq transparent: alist) (eq? #t (assgetq key alist)))
-                    (put-slots! ht (cdr (vector->list (type-descriptor-all-slots mixin))))
+                    (put-slots! ht (type-descriptor-slot-list mixin))
                     (put-alist! ht key alist))))
               precedence-list)
     ht)
@@ -146,6 +145,8 @@ namespace: #f
 (def (type-descriptor-methods-set! klass ht)
   (##structure-set! klass ht 11 ##type-type type-descriptor-methods-set!))
 
+(def (type-descriptor-slot-list klass)
+  (cdr (vector->list (type-descriptor-all-slots klass))))
 (def (type-descriptor-fields klass)
   (##fx- (##vector-length (type-descriptor-all-slots klass)) 1))
 (def (type-descriptor-sealed? klass)
@@ -157,39 +158,25 @@ namespace: #f
 ;;; struct types
 ;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
 (def (make-struct-type id name super direct-slots properties constructor)
-  (when (and super (not (struct-type? super)))
-    (error "illegal super type; not a struct-type" super))
-  ;; Consistency check for slots: they must all be new
-  (let* ((type (make-class-type id name (if super [super] []) direct-slots
-                                (if (assgetq struct: properties)
-                                  properties
-                                  [[struct: . #t] . properties])
-                                constructor))
-         (all-slots (type-descriptor-all-slots type))
-         (len (length direct-slots))
-         (start (##fx- (##vector-length all-slots) len)))
-    (unless (andmap (lambda (slot i) (eq? slot (##vector-ref all-slots i)))
-                    direct-slots (iota len start))
-      (error "non-unique slots in struct" name direct-slots))
-    type))
+  (make-class-type id name (if super [super] []) direct-slots
+                   (if (assgetq struct: properties)
+                     properties
+                     [[struct: . #t] . properties])
+                   constructor))
 
 (def (make-struct-predicate klass)
   (let (tid (##type-id klass))
     (if (type-final? klass)
-      (lambda (obj)
-        (##structure-direct-instance-of? obj tid))
-      (lambda (obj)
-        (##structure-instance-of? obj tid)))))
+      (cut ##structure-direct-instance-of? <> tid)
+      (cut ##structure-instance-of? <> tid))))
 
 (def (make-struct-slot-accessor klass slot)
   (cond
    ((class-slot-offset klass slot)
     => (lambda (off)
          (if (type-final? klass)
-           (lambda (obj)
-             (##direct-structure-ref obj off klass #f))
-           (lambda (obj)
-             (##structure-ref obj off klass #f)))))
+           (cut ##direct-structure-ref <> off klass #f)
+           (cut ##structure-ref <> off klass #f))))
    (else
     (error "unknown slot" class: klass slot: slot))))
 
@@ -198,10 +185,8 @@ namespace: #f
    ((class-slot-offset klass slot)
     => (lambda (off)
          (if (type-final? klass)
-           (lambda (obj val)
-             (##direct-structure-set! obj val off klass #f))
-           (lambda (obj val)
-             (##structure-set! obj val off klass #f)))))
+           (cut ##direct-structure-set! <> <> off klass #f)
+           (cut ##structure-set! <> <> off klass #f))))
    (else
     (error "unknown slot" class: klass slot: slot))))
 
@@ -209,8 +194,7 @@ namespace: #f
   (cond
    ((class-slot-offset klass slot)
     => (lambda (off)
-         (lambda (obj)
-           (##unchecked-structure-ref obj off klass #f))))
+         (cut ##unchecked-structure-ref <> off klass #f)))
    (else
     (error "unknown slot" class: klass slot: slot))))
 
@@ -310,16 +294,10 @@ namespace: #f
 ;; a table mapping symbol and keyword names to offset, and
 ;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
 ;; -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
-(def (compute-class-slots super-struct class-precedence-list direct-slots)
-  (let* ((previous-slots
-          (if super-struct (type-descriptor-all-slots super-struct) '#(#f)))
-         (next-slot
-          (##vector-length previous-slots))
-         (slot-table
-          (if super-struct
-            (hash-copy (type-descriptor-slot-table super-struct))
-            (make-hash-table-eq)))
-         (r-slots [])
+(def (compute-class-slots class-precedence-list direct-slots)
+  (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
+         (slot-table (make-hash-table-eq))
+         (r-slots [#f])
          (process-slot
           (lambda (slot)
             (unless (symbol? slot)
@@ -331,17 +309,11 @@ namespace: #f
               (set! next-slot (##fx+ next-slot 1)))))
          (process-slots (cut for-each process-slot <>)))
     (for-each (lambda (mixin)
-                (unless (type-struct? mixin) ;; skip structure classes, already processed via super
-                  (process-slots
-                   (assgetq direct-slots: (type-descriptor-properties mixin) []))))
+                (process-slots
+                 (assgetq direct-slots: (type-descriptor-properties mixin) [])))
               (reverse class-precedence-list))
     (process-slots direct-slots)
-    (let (all-slots (make-vector next-slot #f))
-      (vector-copy! all-slots 0 previous-slots)
-      (for-each (lambda (slot)
-                  (set! next-slot (##fx- next-slot 1))
-                  (vector-set! all-slots next-slot slot))
-                r-slots)
+    (let (all-slots (list->vector (reverse r-slots)))
       (values all-slots slot-table))))
 
 ;;; ClassTypeDescriptor
@@ -353,10 +325,10 @@ namespace: #f
    ((find type-final? direct-supers)
     => (cut error "Cannot extend final class" <>)))
 
-  (let* ((struct-super (base-struct/list direct-supers)) ;; super struct, if any
-         (precedence-list (class-linearize-mixins direct-supers)) ;; class precedence list, excluding current class
+  (let* (((values precedence-list struct-super)
+          (compute-precedence-list direct-supers))
          ((values all-slots slot-table)
-          (compute-class-slots struct-super precedence-list direct-slots))
+          (compute-class-slots precedence-list direct-slots))
          (properties
           [[direct-slots: . direct-slots]
            [direct-supers: . direct-supers]
@@ -370,14 +342,14 @@ namespace: #f
 (def (class-precedence-list klass)
   (cons klass (type-descriptor-precedence-list klass)))
 
-(def (struct-precedence-list strukt)
-  (cons strukt
-        (cond
-         ((##type-super strukt) => struct-precedence-list)
-         (else []))))
-
-(def (class-linearize-mixins klass-lst)
-  (c3-linearize [] klass-lst class-precedence-list eq? ##type-name))
+;; class precedence list, excluding current class; super struct if any
+;; (List TypeDescriptor) -> (List TypeDescriptor) (OrFalse TypeDescriptor)
+(def (compute-precedence-list direct-supers)
+  (c4-linearize [] direct-supers
+                get-precedence-list: class-precedence-list
+                single-inheritance?: type-struct?
+                eqpred: eq?
+                get-name: ##type-name))
 
 (def (make-class-predicate klass)
   (if (type-final? klass)
@@ -564,17 +536,17 @@ namespace: #f
   (make-object klass (##vector-length (type-descriptor-all-slots klass))))
 
 (def (make-struct-instance klass . args)
-  (let* ((all-slots (type-descriptor-all-slots klass))
-         (size (##vector-length all-slots)))
+  (let (obj (make-instance klass))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
-           (__constructor-init! klass kons-id (make-object klass size) args)))
-     ((##fx= (##fx- size 1) (length args))
+           (__constructor-init! klass kons-id obj args)))
+     ((##fx= (##fx- (##structure-length obj) 1) (length args))
       (apply ##structure klass args))
      (else
       (error "arguments don't match object size"
-        class: klass slots: (##fx- size 1) args: args)))))
+        class: klass slots: (type-descriptor-slot-list klass)
+        args: args)))))
 
 (def (make-class-instance klass . args)
   (let (obj (make-instance klass))

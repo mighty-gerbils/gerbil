@@ -23,16 +23,18 @@
 ;;;       https://en.wikipedia.org/wiki/C3_linearization
 ;;;       https://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.19.3910
 ;;;
+;;; We dub C4 our extension with the 4th constraints for single-inheritance.
+;;;
 ;;; See tests in ../test/c3-test.ss
 
 prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
-(export c3-linearize)
+(export c4-linearize c3-linearize)
 (import "util")
 
-;; C3 linearization algorithm: given a top object x from which to compute the precedence list,
+;; C4 linearization algorithm: given a top object x from which to compute the precedence list,
 ;; - rhead is [x] or [] depending on whether to include x as head of the result.
 ;; - supers is (get-supers x), the list of direct supers of x
 ;; - get-precedence-list gets the precedence list for a super s, including s itself in front
@@ -41,9 +43,13 @@ namespace: #f
 ;; - eqpred is an equality predicate between list elements
 ;;   (passed around because somehow equal? doesn't work correctly on runtime type-descriptors).
 ;; - get-name gets the name of a object/class, for debugging only.
-;; : (List X) (List X) (X -> (NonEmptyList X)) ?(X -> Bool) ?(X X -> Bool) ?(X -> Y) -> (List X)
-(def (c3-linearize rhead supers get-precedence-list
-                   (single-inheritance? false) (eqpred eq?) (get-name identity))
+;; Returns the linearized precedence list, and the most specific struct superclass if any
+;; : (List X) (List X) (X -> (NonEmptyList X)) ?(X -> Bool) ?(X X -> Bool) ?(X -> Y) -> (List X) (OrFalse X)
+(def (c4-linearize rhead supers
+                   get-precedence-list: get-precedence-list
+                   single-inheritance?: single-inheritance?
+                   eqpred: (eqpred eq?)
+                   get-name: (get-name identity))
   (def pls (map get-precedence-list supers)) ;; (List (List X)) ;; precedence lists to merge
   (def sit []) ;; (List X) ;; single-inheritance tail
 
@@ -151,3 +157,14 @@ namespace: #f
          (let* ((next (c3-select-next tails)))
            (c3loop (cons next rhead)
                  (remove-next! next tails))))))))
+
+;; TODO: backward compatibility shim, to remove after bootstrap
+(def (c3-linearize rhead supers get-precedence-list (eqpred eq?) (get-name identity)
+                   single-inheritance?: (single-inheritance? false))
+  (defvalues (precedence-list super-struct)
+    (c4-linearize rhead supers
+                  single-inheritance?: single-inheritance?
+                  get-precedence-list: get-precedence-list
+                  eqpred: eqpred
+                  get-name: get-name))
+  precedence-list)

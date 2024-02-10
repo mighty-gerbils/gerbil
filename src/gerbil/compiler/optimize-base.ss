@@ -6,6 +6,7 @@ package: gerbil/compiler
 namespace: gxc
 
 (import "../expander"
+        "../runtime/c3"
         "base"
         "compile"
         <syntax-case> <syntax-sugar>)
@@ -39,8 +40,7 @@ namespace: gxc
    constructor  ;; OrFalse Symbol; constructor method
    struct? ;; Boolean; is it a struct?
    final?  ;; Boolean; is it a final class?
-   methods ;; Map Symbol -> Symbol; known method implementations
-   )
+   methods) ;; Map Symbol -> Symbol; known method implementations
   constructor: :init!)
 
 (defstruct (!predicate !procedure) ())
@@ -110,14 +110,20 @@ namespace: gxc
                          (else
                           (lp rest method)))))
                      (else method)))))
-            (precedence-list
+            ((values precedence-list super-struct)
              ;; 4. compute super precedence list
-             (c3-linearize [] super
+             (c4-linearize [] super
+                           get-precedence-list:
                            (lambda (klass-id)
                              (cons klass-id
                                    (!class-precedence-list
                                     (optimizer-resolve-class `(!class ,id) klass-id))))
-                           eq? identity))
+                           single-inheritance?:
+                           (lambda (klass-id)
+                             (!class-struct?
+                              (optimizer-resolve-class `(!class ,id) klass-id)))
+                           eqpred: eq?
+                           get-name: identity))
             (fields
              ;; 5. compute slot->field mapping for direct instances/structs
              (let (base-struct

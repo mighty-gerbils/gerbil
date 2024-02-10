@@ -14,100 +14,18 @@
 (define :gerbil/core ':gerbil/core)
 (include "../../gerbil/runtime/c3.ss")
 
+
 (def (test-single-inheritance? sym)
   (char-ascii-lowercase? (string-ref (symbol->string sym) 0)))
 
-;; This variant of c3-linearize is meant for testing only:
-;; it recursively applies the algorithm on each super,
-;; rather than use a cached precedence lists.
-;; The can take exponential time in the complexity of the DAG.
-;; : X (X -> (List X)) ?(X -> Y) -> (NonEmptyList X)
-(def (c3-linearize* x
-                    get-supers
-                    (single-inheritance? test-single-inheritance?)
-                    (eqpred eqv?)
-                    (get-name identity))
-  (c3-linearize [x]
-                (get-supers x)
-                (get-supers->get-precedence-list get-supers eqpred get-name)
-                single-inheritance?
-                eqpred
-                get-name))
-
-;; : (X -> (List X)) ?(X -> Y) -> (X -> (NonEmptyList X))
-(def (get-supers->get-precedence-list get-supers
-                                      (single-inheritance? test-single-inheritance?)
-                                      (eqpred eqv?)
-                                      (get-name identity))
-  (def (gpl x) (c3-linearize [x] (get-supers x) gpl single-inheritance? eqpred get-name))
-  gpl)
-
-;;; Previous implementation:
-(def (old-linearize-supers x (get-supers my-get-supers))
-  (cons x (class-linearize-mixins (get-supers x) get-supers)))
-
-(def (class-linearize-mixins klass-lst (get-supers my-get-supers))
-  (def (class->list klass)
-    (old-linearize-supers klass get-supers))
-
-  (match klass-lst
-    ([] [])
-    ([klass]
-     (class->list klass))
-    (else
-     (__linearize-mixins
-      (map class->list klass-lst)))))
-
-(def (__linearize-mixins lst)
-  (def (K rest r)
-    (match rest
-      ([hd . rest]
-       (linearize1 hd rest r))
-      (else
-       (reverse r))))
-
-  (def (linearize1 hd rest r)
-    (match hd
-      ([hd-first . hd-rest]
-       (if (findq hd-first rest)
-         (linearize2 rest (list hd) r)
-         (K (cons hd-rest rest)
-            (putq hd-first r))))
-      (else
-       (K rest r))))
-
-  (def (linearize2 rest pre r)
-    (let lp ((rest rest) (pre pre))
-      (match rest
-        ([hd . rest]
-         (match hd
-           ([hd-first . hd-rest]
-            (if (findq hd-first rest)
-              (lp rest (cons hd pre))
-              (K (foldl cons (cons hd-rest rest) pre)
-                 (putq hd-first r))))
-           (else
-            (lp rest pre)))))))
-
-  (def (putq hd lst)
-    (if (memq hd lst) lst
-        (cons hd lst)))
-
-  (def (findq hd rest)
-    (find (lambda (lst) (memq hd lst)) rest))
-
-  (K lst '()))
-
-(def (copy-list lst) (foldr cons '() lst))
-
-(defrule (def-alist-getter getter alist table)
-  (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
-
+;;; Test vectors
 (defrule (defhierarchy (my-objects my-supers) (object supers ...) ...)
   (begin
     (def my-objects '(object ...))
     (def my-supers '((object supers ...) ...))
-    (defclass (object supers ...) (object) transparent: #t) ...))
+    (defclass (object supers ...) (object)
+      struct: (test-single-inheritance? 'object)
+      transparent: #t) ...))
 
 (defhierarchy (my-objects my-supers)
   (O) (A O) (B O) (C O) (D O) (E O)
@@ -140,9 +58,85 @@
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
     (j E k D L M A B N C c b a o O)))
 
+(defrule (def-alist-getter getter alist table)
+  (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
 (def-alist-getter my-get-supers my-supers my-supers-table)
 (def-alist-getter my-get-precedence-list my-precedence-lists my-precedence-lists-table)
-(def (my-compute-precedence-list x) (c3-linearize* x my-get-supers eqv?))
+
+
+;;; Test-specialized C4 linearization
+
+(def (get-supers->get-precedence-list
+      get-supers
+      single-inheritance?: single-inheritance?
+      eqpred: (eqpred eq?)
+      get-name: (get-name identity))
+  (def (gpl x) (c4-linearize [x] (get-supers x)
+                             get-precedence-list: gpl
+                             single-inheritance?: single-inheritance?
+                             eqpred: eqpred
+                             get-name: get-name))
+  gpl)
+
+;; This variant of c4-linearize is meant for testing only:
+;; it recursively applies the algorithm on each super,
+;; rather than use a cached precedence lists.
+;; This can take exponential time in the complexity of the DAG.
+;; : X -> (NonEmptyList X)
+(def my-compute-precedence-list
+  (get-supers->get-precedence-list
+   my-get-supers
+   single-inheritance?: test-single-inheritance?))
+
+;;; Previous implementation:
+(def (old-linearize-supers x (get-supers my-get-supers))
+  (cons x (class-linearize-mixins (get-supers x) get-supers)))
+
+(def (class-linearize-mixins klass-lst (get-supers my-get-supers))
+  (def (class->list klass)
+    (old-linearize-supers klass get-supers))
+  (match klass-lst
+    ([] [])
+    ([klass]
+     (class->list klass))
+    (else
+     (__linearize-mixins
+      (map class->list klass-lst)))))
+
+(def (__linearize-mixins lst)
+  (def (K rest r)
+    (match rest
+      ([hd . rest]
+       (linearize1 hd rest r))
+      (else
+       (reverse r))))
+  (def (linearize1 hd rest r)
+    (match hd
+      ([hd-first . hd-rest]
+       (if (findq hd-first rest)
+         (linearize2 rest (list hd) r)
+         (K (cons hd-rest rest)
+            (putq hd-first r))))
+      (else
+       (K rest r))))
+  (def (linearize2 rest pre r)
+    (let lp ((rest rest) (pre pre))
+      (match rest
+        ([hd . rest]
+         (match hd
+           ([hd-first . hd-rest]
+            (if (findq hd-first rest)
+              (lp rest (cons hd pre))
+              (K (foldl cons (cons hd-rest rest) pre)
+                 (putq hd-first r))))
+           (else
+            (lp rest pre)))))))
+  (def (putq hd lst)
+    (if (memq hd lst) lst
+        (cons hd lst)))
+  (def (findq hd rest)
+    (find (lambda (lst) (memq hd lst)) rest))
+  (K lst '()))
 
 (def c3-test
   (test-suite "test :gerbil/runtime/c3"
@@ -174,5 +168,4 @@
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
       (check (type-descriptor-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y))
-      )))
+      (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))))
