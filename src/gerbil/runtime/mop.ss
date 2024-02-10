@@ -186,7 +186,7 @@ namespace: #f
 
 (def (make-struct-slot-accessor klass slot)
   (cond
-   ((class-slot-offset* klass slot)
+   ((class-slot-offset klass slot)
     => (lambda (off)
          (if (type-final? klass)
            (lambda (obj)
@@ -198,7 +198,7 @@ namespace: #f
 
 (def (make-struct-slot-mutator klass slot)
   (cond
-   ((class-slot-offset* klass slot)
+   ((class-slot-offset klass slot)
     => (lambda (off)
          (if (type-final? klass)
            (lambda (obj val)
@@ -210,7 +210,7 @@ namespace: #f
 
 (def (make-struct-slot-unchecked-accessor klass slot)
   (cond
-   ((class-slot-offset* klass slot)
+   ((class-slot-offset klass slot)
     => (lambda (off)
          (lambda (obj)
            (##unchecked-structure-ref obj off klass #f))))
@@ -219,7 +219,7 @@ namespace: #f
 
 (def (make-struct-slot-unchecked-mutator klass slot)
   (cond
-   ((class-slot-offset* klass slot)
+   ((class-slot-offset klass slot)
     => (lambda (off)
          (lambda (obj val)
            (##unchecked-structure-set! obj val off klass #f))))
@@ -503,23 +503,21 @@ namespace: #f
    (lambda (klass slot field)
      (proc klass field)))
 
-;; TODO become class-slot-offset*
 (def (class-slot-offset klass slot)
-  (let (off (class-slot-offset* klass slot))
-    (and off (##fx- off 1))))
-
-(def (class-slot-offset* klass slot)
   (hash-get (type-descriptor-slot-table klass) slot))
+
+;; TODO: remove after bootstrap
+(def class-slot-offset* class-slot-offset)
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset* (object-type obj) slot))
+    (let (off (class-slot-offset (object-type obj) slot))
       (##unchecked-structure-ref obj off klass #f))
     (error "not an instance" class: klass object: obj)))
 
 (def (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset* (object-type obj) slot))
+    (let (off (class-slot-offset (object-type obj) slot))
       (##unchecked-structure-set! obj val off klass #f))
     (error "not an instance" class: klass object: obj)))
 
@@ -528,9 +526,9 @@ namespace: #f
 (def (unchecked-field-set! obj off val)
   (##unchecked-structure-set! obj val off (##structure-type obj) #f))
 (def (unchecked-slot-ref obj slot)
-  (unchecked-field-ref obj (class-slot-offset* (##structure-type obj) slot)))
+  (unchecked-field-ref obj (class-slot-offset (##structure-type obj) slot)))
 (def (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset* (##structure-type obj) slot) val))
+  (unchecked-field-set! obj (class-slot-offset (##structure-type obj) slot) val))
 
 (defrules __slot-e ()
   ((_ obj slot K E)
@@ -538,7 +536,7 @@ namespace: #f
      (let (klass (object-type obj))
        (cond
         ((and (type-descriptor? klass)
-              (class-slot-offset* klass slot))
+              (class-slot-offset klass slot))
          => K)
         (else (E obj slot))))
      (E obj slot))))
@@ -639,7 +637,7 @@ namespace: #f
     (match rest
       ([key val . rest]
        (cond
-        ((class-slot-offset* klass key)
+        ((class-slot-offset klass key)
          => (lambda (off)
               (unchecked-field-set! obj off val)
               (lp rest)))
