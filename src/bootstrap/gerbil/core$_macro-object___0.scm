@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1707423036)
+  (define gerbil/core$<macro-object>::timestamp 1707552283)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
       (make-class-type*
@@ -67,7 +67,10 @@
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize
       (lambda (__t41600)
         (let ((__macro41601
-               (let ((__tmp41602 (class-slot-offset* __t41600 'macro)))
+               (let ((__tmp41602
+                      (let ()
+                        (declare (not safe))
+                        (class-slot-offset __t41600 'macro))))
                  (if __tmp41602 __tmp41602 (error '"Unknown slot" 'macro)))))
           (lambda (_self23522_ _stx23523_)
             (gx#core-apply-expander
