@@ -189,7 +189,7 @@ core, the simple recompilation approach outlined above is
 insufficient.  What you want to do in this case is a recursive
 bootstrap recompilation.
 
-- First build the base bootstrap, using your extant installed gxc, without generating the cross module optimization meta modules:
+- First build the base bootstrap, using your extant gxc (either latest master or previous recursive bootstrap in your branch), without generating the cross module optimization meta modules:
 ```
 $ cd src
 $ rm -rf bootstrap/*
@@ -210,7 +210,8 @@ $ cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
 $ ../build.sh env gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
-And you have a brand new recursive bootstrap.
+And you have a brand new recursive bootstrap you can use.
+
 
 ### Strictures on Modifying Parts of the Gerbil Bootstrap
 

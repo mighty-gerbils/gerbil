@@ -89,7 +89,24 @@ package: gerbil/runtime
              (%#call (%#ref ##type-id) klass)))))
   (declare-type struct-instance? (@lambda 2 #f))
   (declare-type class-instance? (@lambda 2 #f))
-  (declare-type make-object (@lambda 2 #f))
+  (declare-type
+   make-object
+   (lambda (ast)
+     (ast-case
+      ast
+      (%#call %#quote)
+      ((%#call make-object klass (%#quote len))
+       (with-syntax
+        (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
+        #'(%#call (%#ref ##structure) klass init ...)))
+      ((%#call make-object klass len)
+       (with-syntax
+        (($obj (make-symbol (gensym '__obj))))
+        #'(%#let-values
+           ((($obj) (%#call (%#ref ##make-structure) klass len)))
+           (%#begin (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
+                    (%#ref $obj))))))))
+  (declare-type object-fill! (@lambda 2 #f))
   (declare-type make-instance (@lambda 1 #f))
   (declare-type make-struct-instance (@lambda (1) #f))
   (declare-type make-class-instance (@lambda (1) #f))

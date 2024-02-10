@@ -168,7 +168,7 @@ package: gerbil
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
-    make-struct-type make-struct-type*
+    make-struct-type
     make-struct-predicate
 
     make-struct-slot-accessor
@@ -185,7 +185,7 @@ package: gerbil
     class-precedence-list struct-precedence-list
     unchecked-field-ref
     unchecked-field-set!
-    make-class-type make-class-type*
+    make-class-type
     make-class-predicate
     make-class-slot-accessor
     make-class-slot-mutator
@@ -193,13 +193,13 @@ package: gerbil
     make-class-slot-unchecked-mutator
     class-slot-ref
     class-slot-set!
-    class-slot-offset class-slot-offset*
+    class-slot-offset
     unchecked-slot-ref
     unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
     direct-instance?
-    make-object make-object* make-instance
+    make-object make-instance object-fill!
     struct-copy
     struct->list class->list
     make-struct-instance
