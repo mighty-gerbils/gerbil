@@ -226,41 +226,23 @@ namespace: #f
    (else
     (error "unknown slot" class: klass slot: slot))))
 
-;; TODO become make-struct-field-accessor*
-(def (make-struct-field-accessor klass field)
-  (make-struct-field-accessor* klass (struct-field-offset* klass field)))
+(def ((make-final-field-accessor klass slot field) obj)
+  (##direct-structure-ref obj field klass slot))
 
-(def (make-struct-field-accessor* klass field)
-  (lambda (obj) (##structure-ref obj field klass #f)))
+(def ((make-struct-field-accessor klass slot field) obj)
+  (##structure-ref obj field klass slot))
 
-;; TODO become make-struct-field-mutator*
-(def (make-struct-field-mutator klass field)
-  (make-struct-field-mutator* klass (struct-field-offset* klass field)))
+(def ((make-final-field-mutator klass slot field) obj val)
+  (##direct-structure-set! obj val field klass slot))
 
-(def (make-struct-field-mutator* klass field)
-  (lambda (obj val) (##structure-set! obj val field klass #f)))
+(def ((make-struct-field-mutator klass slot field) obj val)
+  (##structure-set! obj val field klass slot))
 
-;; TODO become make-struct-field-unchecked-accessor*
-(def (make-struct-field-unchecked-accessor klass field)
-  (make-struct-field-unchecked-accessor* klass (struct-field-offset* klass field)))
+(def ((make-struct-field-unchecked-accessor klass slot field) obj)
+  (##unchecked-structure-ref obj field klass slot))
 
-(def (make-struct-field-unchecked-accessor* klass field)
-  (lambda (obj) (##unchecked-structure-ref obj field klass #f)))
-
-;; TODO become make-struct-field-unchecked-mutator*
-(def (make-struct-field-unchecked-mutator klass field)
-  (make-struct-field-unchecked-mutator* klass (struct-field-offset* klass field)))
-
-(def (make-struct-field-unchecked-mutator* klass field)
-  (lambda (obj val) (##unchecked-structure-set! obj val field klass #f)))
-
-;; TODO to be removed; it is only here for the mop transition
-(def (struct-field-offset* klass field)
-  (##fx+ field
-         (let (super (##type-super klass))
-           (if super
-             (##vector-length (type-descriptor-all-slots super))
-             1))))
+(def ((make-struct-field-unchecked-mutator klass slot field) obj val)
+  (##unchecked-structure-set! obj val field klass slot))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : TypeDescriptor TypeDescriptor -> Bool
@@ -418,12 +400,14 @@ namespace: #f
 ;; (same as above but you have a more expensive argument class check to be safe)
 ;; or (c) the slot being a regular class slot (the more expensive code path),
 ;; return an accessor for this klass and slot.
-(def (if-class-slot-field klass slot if-struct if-struct-field if-class-slot)
+(def (if-class-slot-field klass slot if-final if-struct if-struct-field if-class-slot)
   (let (field (hash-get (type-descriptor-slot-table klass) slot))
     (cond
      ((not field)
       (error "unknown slot" class: klass slot: slot))
-     ((or (type-final? klass) (type-struct? klass))
+     ((type-final? klass)
+      (if-final klass slot field))
+     ((type-struct? klass)
       (if-struct klass slot field))
      ((let (strukt (base-struct/1 klass))
         (and strukt (##fx< field (##vector-length (type-descriptor-all-slots strukt)))))
@@ -433,75 +417,73 @@ namespace: #f
 
 (def (make-class-slot-accessor klass slot)
   (if-class-slot-field klass slot
-    (ignore-slot make-struct-field-accessor*)
-    make-struct-subclass-field-accessor
-    make-class-cached-slot-accessor))
+     make-final-field-accessor
+     make-struct-field-accessor
+     make-struct-subclass-field-accessor
+     make-class-cached-slot-accessor))
 
-(def (make-struct-subclass-field-accessor klass slot field)
-  (lambda (obj)
-    (if (class-instance? klass obj)
-      (unchecked-field-ref obj field)
-      (error "not an instance" object: obj class: klass slot: slot))))
+(def (not-an-instance object class (slot #f))
+  (apply error "not an instance" object: object class: class
+         (if slot [slot: slot] [])))
 
-(def (make-class-cached-slot-accessor klass slot field)
-  (lambda (obj)
-    (cond
-     ((direct-instance? klass obj)
-      (unchecked-field-ref obj field))
-     ((class-instance? klass obj)
-      (unchecked-slot-ref obj slot))
-     (else
-      (error "not an instance" object: obj class: klass slot: slot)))))
+(def ((make-struct-subclass-field-accessor klass slot field) obj)
+  (if (class-instance? klass obj)
+    (unchecked-field-ref obj field)
+    (not-an-instance obj klass slot)))
+
+(def ((make-class-cached-slot-accessor klass slot field) obj)
+  (cond
+   ((direct-instance? klass obj)
+    (unchecked-field-ref obj field))
+   ((class-instance? klass obj)
+    (unchecked-slot-ref obj slot))
+   (else
+    (not-an-instance obj klass slot))))
 
 (def (make-class-slot-mutator klass slot)
   (if-class-slot-field klass slot
-     (ignore-slot make-struct-field-mutator*)
+     make-final-field-mutator
+     make-struct-field-mutator
      make-struct-subclass-field-mutator
      make-class-cached-slot-mutator))
 
-(def (make-struct-subclass-field-mutator klass slot field)
-  (lambda (obj val)
-    (if (class-instance? klass obj)
-      (unchecked-field-set! obj field val)
-      (error "not an instance" object: obj class: klass slot: slot))))
+(def ((make-struct-subclass-field-mutator klass slot field) obj val)
+  (if (class-instance? klass obj)
+    (unchecked-field-set! obj field val)
+    (not-an-instance obj klass slot)))
 
-(def (make-class-cached-slot-mutator klass slot field)
-  (lambda (obj val)
-    (cond
-     ((direct-instance? klass obj)
-      (unchecked-field-set! obj field val))
-     ((class-instance? klass obj)
-      (unchecked-slot-set! obj slot val))
-     (else
-      (error "not an instance" object: obj class: klass slot: slot)))))
+(def ((make-class-cached-slot-mutator klass slot field) obj val)
+  (cond
+   ((direct-instance? klass obj)
+    (unchecked-field-set! obj field val))
+   ((class-instance? klass obj)
+    (unchecked-slot-set! obj slot val))
+   (else
+    (not-an-instance obj klass slot))))
 
 (def (make-class-slot-unchecked-accessor klass slot)
   (if-class-slot-field klass slot
-    (ignore-slot make-struct-field-unchecked-accessor*)
-    (ignore-slot make-struct-field-unchecked-accessor*)
-    make-class-cached-slot-unchecked-accessor))
+     make-struct-field-unchecked-accessor
+     make-struct-field-unchecked-accessor
+     make-struct-field-unchecked-accessor
+     make-class-cached-slot-unchecked-accessor))
 
-(def (make-class-cached-slot-unchecked-accessor klass slot field)
-  (lambda (obj)
-    (if (direct-instance? klass obj)
-      (unchecked-field-ref obj field)
-      (unchecked-slot-ref obj slot))))
+(def ((make-class-cached-slot-unchecked-accessor klass slot field) obj)
+  (if (direct-instance? klass obj)
+    (unchecked-field-ref obj field)
+    (unchecked-slot-ref obj slot)))
 
 (def (make-class-slot-unchecked-mutator klass slot)
   (if-class-slot-field klass slot
-     (ignore-slot make-struct-field-unchecked-mutator*)
-     (ignore-slot make-struct-field-unchecked-mutator*)
+     make-struct-field-unchecked-mutator
+     make-struct-field-unchecked-mutator
+     make-struct-field-unchecked-mutator
      make-class-cached-slot-unchecked-mutator))
 
-(def (make-class-cached-slot-unchecked-mutator klass slot field)
-  (lambda (obj val)
-    (if (direct-instance? klass obj)
-      (unchecked-field-set! obj field val)
-      (unchecked-slot-set! obj slot val))))
-
-(def (ignore-slot proc)
-   (lambda (klass slot field)
-     (proc klass field)))
+(def ((make-class-cached-slot-unchecked-mutator klass slot field) obj val)
+  (if (direct-instance? klass obj)
+    (unchecked-field-set! obj field val)
+    (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
   (hash-get (type-descriptor-slot-table klass) slot))
@@ -513,13 +495,13 @@ namespace: #f
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (object-type obj) slot))
       (##unchecked-structure-ref obj off klass #f))
-    (error "not an instance" class: klass object: obj)))
+    (not-an-instance obj klass)))
 
 (def (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (object-type obj) slot))
       (##unchecked-structure-set! obj val off klass #f))
-    (error "not an instance" class: klass object: obj)))
+    (not-an-instance obj klass)))
 
 (def (unchecked-field-ref obj off)
   (##unchecked-structure-ref obj off (##structure-type obj) #f))
@@ -581,18 +563,18 @@ namespace: #f
          (and (type-descriptor? type)
               (subclass? type klass)))))
 
-;; TODO become make-object*
+;;TODO: (def make-object ##make-structure)
 (def (make-object klass k)
-  (make-object* klass (##fx+ k 1)))
-
-(def (make-object* klass k)
   (let (obj (##make-vector k #f))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
 
+;; TODO remove after bootstrap
+(def make-object* make-object)
+
 (def (make-instance klass)
-  (make-object* klass (##vector-length (type-descriptor-all-slots klass))))
+  (make-object klass (##vector-length (type-descriptor-all-slots klass))))
 
 (def (make-struct-instance klass . args)
   (let* ((all-slots (type-descriptor-all-slots klass))
@@ -600,7 +582,7 @@ namespace: #f
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
-           (__constructor-init! klass kons-id (make-object* klass size) args)))
+           (__constructor-init! klass kons-id (make-object klass size) args)))
      ((##fx= (##fx- size 1) (length args))
       (apply ##structure klass args))
      (else
@@ -608,7 +590,7 @@ namespace: #f
         class: klass slots: (##fx- size 1) args: args)))))
 
 (def (make-class-instance klass . args)
-  (let ((obj (make-object* klass (##vector-length (type-descriptor-all-slots klass)))))
+  (let (obj (make-instance klass))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
