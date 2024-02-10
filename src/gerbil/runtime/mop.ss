@@ -851,3 +851,6 @@ namespace: #f
     (##default-wr we obj))))
 
 (##wr-set! write-object)
+
+(define make-struct-type* make-struct-type)
+(define make-class-type* make-class-type)

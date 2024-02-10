@@ -1719,14 +1719,14 @@ package: gerbil
                             make-getf make-setf
                             make-ugetf make-usetf)
                            (if struct?
-                             #'(make-struct-type*
+                             #'(make-struct-type
                                 make-struct-instance
                                 make-struct-predicate
                                 make-struct-slot-accessor
                                 make-struct-slot-mutator
                                 make-struct-slot-unchecked-accessor
                                 make-struct-slot-unchecked-mutator)
-                             #'(make-class-type*
+                             #'(make-class-type
                                 make-class-instance
                                 make-class-predicate
                                 make-class-slot-accessor

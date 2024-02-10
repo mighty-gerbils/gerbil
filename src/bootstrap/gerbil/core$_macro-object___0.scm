@@ -1,15 +1,17 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1707552283)
+  (define gerbil/core$<macro-object>::timestamp 1707554634)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
-      (make-class-type*
-       'gerbil.core#macro-object::t
-       'macro-object
-       (list)
-       '(macro)
-       '()
-       '#f))
+      (let ((__tmp47313 (list)))
+        (declare (not safe))
+        (make-class-type
+         'gerbil.core#macro-object::t
+         'macro-object
+         __tmp47313
+         '(macro)
+         '()
+         '#f)))
     (define gerbil/core$<macro-object>#macro-object?
       (let ()
         (declare (not safe))
