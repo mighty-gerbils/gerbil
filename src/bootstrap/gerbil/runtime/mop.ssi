@@ -128,6 +128,7 @@ namespace: #f
          (%#define-runtime struct-instance? struct-instance?)
          (%#define-runtime class-instance? class-instance?)
          (%#define-runtime make-object make-object)
+         (%#define-runtime object-fill! object-fill!)
          (%#define-runtime make-instance make-instance)
          (%#define-runtime make-struct-instance make-struct-instance)
          (%#define-runtime make-class-instance make-class-instance)

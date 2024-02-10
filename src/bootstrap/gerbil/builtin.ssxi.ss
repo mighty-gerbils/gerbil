@@ -22,6 +22,22 @@ package: gerbil
                  (%#call (%#ref ##type-id) klass)))))))
 
 
+;; runtime: make-object with known size
+(declare-type*
+ (make-object
+  (@lambda (2) inline:
+      (lambda (ast)
+        (ast-case ast (%#call %#quote)
+          ((%#call make-object klass (%#quote len))
+           (with-syntax (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
+             #'(%#call (%#ref ##structure) klass init ...)))
+          ((%#call make-object klass len)
+           (with-syntax (($obj (make-symbol (gensym '__obj))))
+             #'(%#let-values ((($obj) (%#call (%#ref ##make-structure) klass len)))
+                             (%#begin
+                              (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
+                              (%#ref $obj))))))))))
+
 ;; runtime: struct-instance-init! [custom struct constructors]
 (declare-type*
  (struct-instance-init!
