@@ -214,7 +214,6 @@ package: gerbil
     checked-method-ref checked-bound-method-ref
     find-method
     next-method call-next-method
-    struct-subtype? class-subtype?
     substruct? subclass?
     ;; write-env style
     write-style
@@ -1719,14 +1718,14 @@ package: gerbil
                             make-getf make-setf
                             make-ugetf make-usetf)
                            (if struct?
-                             #'(make-struct-type*
+                             #'(make-struct-type
                                 make-struct-instance
                                 make-struct-predicate
                                 make-struct-slot-accessor
                                 make-struct-slot-mutator
                                 make-struct-slot-unchecked-accessor
                                 make-struct-slot-unchecked-mutator)
-                             #'(make-class-type*
+                             #'(make-class-type
                                 make-class-instance
                                 make-class-predicate
                                 make-class-slot-accessor
@@ -1735,7 +1734,7 @@ package: gerbil
                                 make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
-                               (make-class-type-id type-id)))
+                               (make-class-type-id #'type-t)))
                           (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))

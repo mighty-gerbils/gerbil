@@ -566,7 +566,7 @@ namespace: gxc
               (cond
                ((eq? t xt) val)
                (val
-                ;; it's a positive type asserption; we can only satisfy it
+                ;; it's a positive type assertion; we can only satisfy it
                 ;; if it's an assertion for a subtype of ours
                 (and (!class? t)
                      (!class? xt)

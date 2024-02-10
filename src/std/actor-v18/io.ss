@@ -98,7 +98,7 @@
            (unless (fx= fields (type-descriptor-fields klass))
              (raise-io-error unmarshal-message "bad message; field count mismatch"
                              klass-id fields klass (type-descriptor-fields klass)))
-           (let (obj (make-object klass fields))
+           (let (obj (make-object klass (fx1+ fields)))
              (let lp ((i 0))
                (if (fx< i fields)
                  (let ((i+1 (fx+ i 1))

@@ -108,7 +108,7 @@
        (else #f)))
     (or (hash-get offsets slot)
         (error "invalid json key for struct" key strukt json)))
-  (def object (make-object* strukt n))
+  (def object (make-object strukt n))
   (def bound? (make-vector n #f))
   (vector-set! bound? 0 #t)
   (for (((values k v) (in-hash json)))

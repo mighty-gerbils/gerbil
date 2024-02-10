@@ -501,8 +501,6 @@ namespace: gerbil/core
                     (find-method find-method)
                     (next-method next-method)
                     (call-next-method call-next-method)
-                    (struct-subtype? struct-subtype?)
-                    (class-subtype? class-subtype?)
                     (substruct? substruct?)
                     (subclass? subclass?)
                     (write-style write-style)

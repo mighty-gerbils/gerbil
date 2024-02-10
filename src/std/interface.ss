@@ -20,7 +20,11 @@
   (CastError message irritants: [irritants ...]))
 
 ;; base type for all interface instances
-(defstruct interface-instance (object))
+(defstruct-type interface-instance::t
+  #f #f interface-instance?
+  name: interface-instance
+  slots:
+  ((__object interface-instance-object interface-instance-object-set!)))
 
 ;; interface meta descriptor
 (defstruct interface-descriptor (type methods) final: #t)
@@ -63,7 +67,7 @@
         (else
          (fail! klass method-name))))
       (else
-       (let (prototype (make-object klass (fx+ count 1)))
+       (let (prototype (make-object klass (fx+ count 2)))
          (let lp ((rest methods) (off (fx+ count 1)))
            (match rest
              ([method . rest]
@@ -658,17 +662,15 @@
                           #'(unchecked-method-impl-name ...)
                           #'(method-signature ...)
                           (iota (length #'(method-name ...)) 2)))
-                    (field-count
-                     (length #'(method-name ...)))
                     (defklass
                       #'(def klass
                           (make-struct-type 'klass-type-id          ; type id
+                                            'name                   ; name
                                             interface-instance::t   ; super
-                                            field-count             ; fields
-                                            'name                   ; type name
+                                            '(method-name ...)      ; direct slots
                                             '((final: . #t))        ; plist
                                             #f                      ; constructor (none)
-                                            '(method-name ...))))   ; field names
+                                            )))
                     (defdescriptor
                       #'(def descriptor
                           (begin-annotation (@interface klass-quoted (method-name ...))
