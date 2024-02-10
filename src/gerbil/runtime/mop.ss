@@ -546,13 +546,19 @@ namespace: #f
          (and (type-descriptor? type)
               (subclass? type klass)))))
 
-;; TODO: We want (def make-object ##make-structure), except that we initialize to #f, it doesn't.
-;; or cond-expand to use ##make-structure then initialize to #f on the JS target.
 (def (make-object klass k)
-  (let (obj (##make-vector k #f))
-    (##vector-set! obj 0 klass)
-    (##subtype-set! obj (macro-subtype-structure))
+  (let (obj (##make-structure klass k))
+    (object-fill! obj #f)
     obj))
+
+(def (object-fill! obj fill)
+  ;; courtesy of marc feeley
+  (let loop ((i (##fx- (##structure-length obj) 1)))
+    (if (##fx> i 0)
+      (begin
+        (##unchecked-structure-set! obj fill i #f #f)
+        (loop (##fx- i 1)))
+      obj)))
 
 (def (make-instance klass)
   (make-object klass (##vector-length (type-descriptor-all-slots klass))))
