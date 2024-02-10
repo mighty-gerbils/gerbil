@@ -1726,7 +1726,7 @@
                                          (let ()
                                            (declare (not safe))
                                            (|gerbil/core$<MOP>$<MOP:1>[1]#make-class-type-id|
-                                            type-id))))))
+                                            _L17894_))))))
                              (declare (not safe))
                              (_g1816819155_ __tmp49130))))
                        _hd1804618124_

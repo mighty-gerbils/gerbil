@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1707555984)
+  (define gerbil/compiler/optimize-base::timestamp 1707565661)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -1475,68 +1475,70 @@
                   _g210278_))))))
     (define gxc#!class:::init!::specialize
       (lambda (__t210145)
-        (let ((__fields210146
+        (let ((__precedence-list210146
                (let ((__tmp210155
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'fields))))
-                 (if __tmp210155 __tmp210155 (error '"Unknown slot" 'fields))))
-              (__struct?210147
+                        (class-slot-offset __t210145 'precedence-list))))
+                 (if __tmp210155
+                     __tmp210155
+                     (error '"Unknown slot" 'precedence-list))))
+              (__methods210147
                (let ((__tmp210156
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'struct?))))
+                        (class-slot-offset __t210145 'methods))))
                  (if __tmp210156
                      __tmp210156
-                     (error '"Unknown slot" 'struct?))))
-              (__methods210148
+                     (error '"Unknown slot" 'methods))))
+              (__id210148
                (let ((__tmp210157
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'methods))))
-                 (if __tmp210157
-                     __tmp210157
-                     (error '"Unknown slot" 'methods))))
-              (__precedence-list210149
+                        (class-slot-offset __t210145 'id))))
+                 (if __tmp210157 __tmp210157 (error '"Unknown slot" 'id))))
+              (__struct?210149
                (let ((__tmp210158
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'precedence-list))))
+                        (class-slot-offset __t210145 'struct?))))
                  (if __tmp210158
                      __tmp210158
-                     (error '"Unknown slot" 'precedence-list))))
-              (__final?210150
+                     (error '"Unknown slot" 'struct?))))
+              (__constructor210150
                (let ((__tmp210159
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'final?))))
-                 (if __tmp210159 __tmp210159 (error '"Unknown slot" 'final?))))
-              (__slots210151
+                        (class-slot-offset __t210145 'constructor))))
+                 (if __tmp210159
+                     __tmp210159
+                     (error '"Unknown slot" 'constructor))))
+              (__super210151
                (let ((__tmp210160
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'slots))))
-                 (if __tmp210160 __tmp210160 (error '"Unknown slot" 'slots))))
-              (__id210152
+                        (class-slot-offset __t210145 'super))))
+                 (if __tmp210160 __tmp210160 (error '"Unknown slot" 'super))))
+              (__final?210152
                (let ((__tmp210161
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'id))))
-                 (if __tmp210161 __tmp210161 (error '"Unknown slot" 'id))))
-              (__constructor210153
+                        (class-slot-offset __t210145 'final?))))
+                 (if __tmp210161 __tmp210161 (error '"Unknown slot" 'final?))))
+              (__slots210153
                (let ((__tmp210162
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'constructor))))
-                 (if __tmp210162
-                     __tmp210162
-                     (error '"Unknown slot" 'constructor))))
-              (__super210154
+                        (class-slot-offset __t210145 'slots))))
+                 (if __tmp210162 __tmp210162 (error '"Unknown slot" 'slots))))
+              (__fields210154
                (let ((__tmp210163
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210145 'super))))
-                 (if __tmp210163 __tmp210163 (error '"Unknown slot" 'super)))))
+                        (class-slot-offset __t210145 'fields))))
+                 (if __tmp210163
+                     __tmp210163
+                     (error '"Unknown slot" 'fields)))))
           (lambda _g210280_
             (let ((_g210279_
                    (let () (declare (not safe)) (##length _g210280_))))
@@ -1855,7 +1857,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _id205622_
-                                   __id210152
+                                   __id210148
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1863,7 +1865,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _super205623_
-                                   __super210154
+                                   __super210151
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1871,7 +1873,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _precedence-list205760_
-                                   __precedence-list210149
+                                   __precedence-list210146
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1879,7 +1881,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _slots205624_
-                                   __slots210151
+                                   __slots210153
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1887,7 +1889,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _fields205766_
-                                   __fields210146
+                                   __fields210154
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1895,7 +1897,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _ctor-method205756_
-                                   __constructor210153
+                                   __constructor210150
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1903,7 +1905,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _struct?205626_
-                                   __struct?210147
+                                   __struct?210149
                                    __t210145
                                    '#f))
                                 (let ()
@@ -1911,7 +1913,7 @@
                                   (##unchecked-structure-set!
                                    _self205621_
                                    _final?205627_
-                                   __final?210150
+                                   __final?210152
                                    __t210145
                                    '#f))))
                             _g210280_))
@@ -1931,7 +1933,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _id205770_
-                                 __id210152
+                                 __id210148
                                  __t210145
                                  '#f))
                               (let ()
@@ -1939,7 +1941,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _super205771_
-                                 __super210154
+                                 __super210151
                                  __t210145
                                  '#f))
                               (let ()
@@ -1947,7 +1949,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _precedence-list205772_
-                                 __precedence-list210149
+                                 __precedence-list210146
                                  __t210145
                                  '#f))
                               (let ()
@@ -1955,7 +1957,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _slots205773_
-                                 __slots210151
+                                 __slots210153
                                  __t210145
                                  '#f))
                               (let ()
@@ -1963,7 +1965,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _fields205774_
-                                 __fields210146
+                                 __fields210154
                                  __t210145
                                  '#f))
                               (let ()
@@ -1971,7 +1973,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _constructor205775_
-                                 __constructor210153
+                                 __constructor210150
                                  __t210145
                                  '#f))
                               (let ()
@@ -1979,7 +1981,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _struct?205776_
-                                 __struct?210147
+                                 __struct?210149
                                  __t210145
                                  '#f))
                               (let ()
@@ -1987,7 +1989,7 @@
                                 (##unchecked-structure-set!
                                  _self205769_
                                  _final?205777_
-                                 __final?210150
+                                 __final?210152
                                  __t210145
                                  '#f))
                               (if _methods205778_
@@ -2002,7 +2004,7 @@
                                     (##unchecked-structure-set!
                                      _self205769_
                                      __tmp210304
-                                     __methods210148
+                                     __methods210147
                                      __t210145
                                      '#f))
                                   '#!void))
@@ -2260,33 +2262,33 @@
          '#f)))
     (define gxc#!accessor:::init!::specialize
       (lambda (__t210170)
-        (let ((__slot210171
+        (let ((__id210171
                (let ((__tmp210174
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210170 'slot))))
-                 (if __tmp210174 __tmp210174 (error '"Unknown slot" 'slot))))
-              (__checked?210172
+                        (class-slot-offset __t210170 'id))))
+                 (if __tmp210174 __tmp210174 (error '"Unknown slot" 'id))))
+              (__slot210172
                (let ((__tmp210175
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210170 'checked?))))
-                 (if __tmp210175
-                     __tmp210175
-                     (error '"Unknown slot" 'checked?))))
-              (__id210173
+                        (class-slot-offset __t210170 'slot))))
+                 (if __tmp210175 __tmp210175 (error '"Unknown slot" 'slot))))
+              (__checked?210173
                (let ((__tmp210176
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210170 'id))))
-                 (if __tmp210176 __tmp210176 (error '"Unknown slot" 'id)))))
+                        (class-slot-offset __t210170 'checked?))))
+                 (if __tmp210176
+                     __tmp210176
+                     (error '"Unknown slot" 'checked?)))))
           (lambda (_self205132_ _id205133_ _slot205134_ _checked?205135_)
             (let ()
               (declare (not safe))
               (##unchecked-structure-set!
                _self205132_
                _id205133_
-               __id210173
+               __id210171
                __t210170
                '#f))
             (let ()
@@ -2294,7 +2296,7 @@
               (##unchecked-structure-set!
                _self205132_
                _slot205134_
-               __slot210171
+               __slot210172
                __t210170
                '#f))
             (let ()
@@ -2302,7 +2304,7 @@
               (##unchecked-structure-set!
                _self205132_
                _checked?205135_
-               __checked?210172
+               __checked?210173
                __t210170
                '#f))))))
     (let ()
@@ -2325,33 +2327,33 @@
          '#f)))
     (define gxc#!mutator:::init!::specialize
       (lambda (__t210177)
-        (let ((__slot210178
+        (let ((__id210178
                (let ((__tmp210181
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210177 'slot))))
-                 (if __tmp210181 __tmp210181 (error '"Unknown slot" 'slot))))
-              (__checked?210179
+                        (class-slot-offset __t210177 'id))))
+                 (if __tmp210181 __tmp210181 (error '"Unknown slot" 'id))))
+              (__slot210179
                (let ((__tmp210182
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210177 'checked?))))
-                 (if __tmp210182
-                     __tmp210182
-                     (error '"Unknown slot" 'checked?))))
-              (__id210180
+                        (class-slot-offset __t210177 'slot))))
+                 (if __tmp210182 __tmp210182 (error '"Unknown slot" 'slot))))
+              (__checked?210180
                (let ((__tmp210183
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t210177 'id))))
-                 (if __tmp210183 __tmp210183 (error '"Unknown slot" 'id)))))
+                        (class-slot-offset __t210177 'checked?))))
+                 (if __tmp210183
+                     __tmp210183
+                     (error '"Unknown slot" 'checked?)))))
           (lambda (_self205005_ _id205006_ _slot205007_ _checked?205008_)
             (let ()
               (declare (not safe))
               (##unchecked-structure-set!
                _self205005_
                _id205006_
-               __id210180
+               __id210178
                __t210177
                '#f))
             (let ()
@@ -2359,7 +2361,7 @@
               (##unchecked-structure-set!
                _self205005_
                _slot205007_
-               __slot210178
+               __slot210179
                __t210177
                '#f))
             (let ()
@@ -2367,7 +2369,7 @@
               (##unchecked-structure-set!
                _self205005_
                _checked?205008_
-               __checked?210179
+               __checked?210180
                __t210177
                '#f))))))
     (let ()

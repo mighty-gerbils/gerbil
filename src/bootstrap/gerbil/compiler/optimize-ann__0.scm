@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-ann::timestamp 1707555987)
+  (define gerbil/compiler/optimize-ann::timestamp 1707565664)
   (begin
     (declare (inlining-limit 200))
     (define gxc#&optmize-annotated

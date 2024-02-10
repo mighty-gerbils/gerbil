@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1707556024)
+  (define gerbil/runtime/error::timestamp 1707565658)
   (begin
     (define Exception::t
       (let ((__tmp92675 (list)))
@@ -517,26 +517,26 @@
                  (if __tmp92656
                      __tmp92656
                      (error '"Unknown slot" 'continuation))))
-              (__irritants92653
+              (__message92653
                (let ((__tmp92657
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t92651 'irritants))))
-                 (if __tmp92657
-                     __tmp92657
-                     (error '"Unknown slot" 'irritants))))
-              (__where92654
+                        (class-slot-offset __t92651 'message))))
+                 (if __tmp92657 __tmp92657 (error '"Unknown slot" 'message))))
+              (__irritants92654
                (let ((__tmp92658
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t92651 'where))))
-                 (if __tmp92658 __tmp92658 (error '"Unknown slot" 'where))))
-              (__message92655
+                        (class-slot-offset __t92651 'irritants))))
+                 (if __tmp92658
+                     __tmp92658
+                     (error '"Unknown slot" 'irritants))))
+              (__where92655
                (let ((__tmp92659
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t92651 'message))))
-                 (if __tmp92659 __tmp92659 (error '"Unknown slot" 'message)))))
+                        (class-slot-offset __t92651 'where))))
+                 (if __tmp92659 __tmp92659 (error '"Unknown slot" 'where)))))
           (lambda (_self88226_ _port88227_)
             (let ((_tmp-port88229_ (open-output-string))
                   (_display-error-newline88230_
@@ -551,7 +551,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self88226_
-                                 __where92654
+                                 __where92655
                                  __t92651
                                  '#f))))
                          (if _$e88233_ (display _$e88233_) (display '"?")))
@@ -569,7 +569,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self88226_
-                                 __message92655
+                                 __message92653
                                  __t92651
                                  '#f))))
                          (declare (not safe))
@@ -579,7 +579,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self88226_
-                                 __irritants92653
+                                 __irritants92654
                                  __t92651
                                  '#f))))
                          (if (let ()
