@@ -254,9 +254,6 @@ namespace: #f
        (else
         (lp (##type-super super-struct)))))))
 
-(def (struct-subtype? maybe-super-struct maybe-sub-struct)
-  (substruct? maybe-sub-struct maybe-super-struct)) ;; TODO: remove after bootstrap
-
 ;; Which is the most specific struct class if any that klass is or inherits from?
 ;; : TypeDescriptor -> (OrFalse StructTypeDescriptor)
 (def (base-struct/1 klass)
@@ -530,11 +527,6 @@ namespace: #f
     (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
         (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
                (type-descriptor-precedence-list maybe-sub-class)))))
-
-;; Is maybe-sub-class a subclass of maybe-super-class?
-;; NB: Reverse order of argument. TODO: remove after bootstrap
-(def (class-subtype? maybe-super-class maybe-sub-class)
-  (subclass? maybe-sub-class maybe-super-class))
 
 ;;; generic object utilities
 (def object?

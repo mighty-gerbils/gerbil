@@ -59,7 +59,6 @@ namespace: #f
           make-struct-field-unchecked-mutator
           make-struct-field-unchecked-mutator)
          (%#define-runtime substruct? substruct?)
-         (%#define-runtime struct-subtype? struct-subtype?)
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)
          (%#define-runtime base-struct/list base-struct/list)
@@ -123,7 +122,6 @@ namespace: #f
                            (%#define-runtime slot-set! slot-set!)))
          (%#define-runtime __slot-error __slot-error)
          (%#define-runtime subclass? subclass?)
-         (%#define-runtime class-subtype? class-subtype?)
          (%#define-runtime object? object?)
          (%#define-runtime object-type object-type)
          (%#define-runtime direct-instance? direct-instance?)

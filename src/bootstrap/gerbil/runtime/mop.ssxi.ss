@@ -34,7 +34,6 @@ package: gerbil/runtime
   (declare-type make-struct-field-unchecked-accessor (@lambda 2 #f))
   (declare-type make-struct-field-unchecked-mutator (@lambda 2 #f))
   (declare-type substruct? (@lambda 2 #f))
-  (declare-type struct-subtype? (@lambda 2 #f))
   (declare-type base-struct/1 (@lambda 1 #f))
   (declare-type base-struct/2 (@lambda 2 #f))
   (declare-type base-struct/list (@lambda 1 #f))
@@ -78,7 +77,6 @@ package: gerbil/runtime
   (declare-type slot-set! (@case-lambda (3 #f) (4 #f)))
   (declare-type __slot-error (@lambda 2 #f))
   (declare-type subclass? (@lambda 2 #f))
-  (declare-type class-subtype? (@lambda 2 #f))
   (declare-type object? (@lambda 1 #f))
   (declare-type object-type (@lambda 1 #f))
   (declare-type

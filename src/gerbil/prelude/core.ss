@@ -214,7 +214,6 @@ package: gerbil
     checked-method-ref checked-bound-method-ref
     find-method
     next-method call-next-method
-    struct-subtype? class-subtype?
     substruct? subclass?
     ;; write-env style
     write-style

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707555129)
+  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707556022)
   (begin
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::t
       (let ((__tmp47305 (list)))
