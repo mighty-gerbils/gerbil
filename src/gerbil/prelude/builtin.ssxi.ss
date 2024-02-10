@@ -34,8 +34,9 @@ package: gerbil
           ((%#call make-object klass len)
            (with-syntax (($obj (make-symbol (gensym '__obj))))
              #'(%#let-values ((($obj) (%#call (%#ref ##make-structure) klass len)))
-                             (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
-                             (%#ref $obj)))))))))
+                             (%#begin
+                              (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
+                              (%#ref $obj))))))))))
 
 ;; runtime: struct-instance-init! [custom struct constructors]
 (declare-type*
