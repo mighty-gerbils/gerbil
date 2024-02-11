@@ -1,125 +1,125 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1707660400)
+  (define gerbil/runtime/loader::timestamp 1707674929)
   (begin
     (define current-module-library-path (make-parameter '#f))
     (define current-module-registry (make-parameter '#f))
     (define __reload-module (make-parameter '#f))
     (define load-module__%
-      (lambda (_modpath69132_ _reload?69133_)
-        (let ((_$e69135_
-               (if (let () (declare (not safe)) (not _reload?69133_))
-                   (let ((__tmp73622 (current-module-registry)))
+      (lambda (_modpath69537_ _reload?69538_)
+        (let ((_$e69540_
+               (if (let () (declare (not safe)) (not _reload?69538_))
+                   (let ((__tmp74127 (current-module-registry)))
                      (declare (not safe))
-                     (table-ref __tmp73622 _modpath69132_ '#f))
+                     (table-ref __tmp74127 _modpath69537_ '#f))
                    '#f)))
-          (if _$e69135_
-              _$e69135_
-              (let ((_$e69138_
+          (if _$e69540_
+              _$e69540_
+              (let ((_$e69543_
                      (let ()
                        (declare (not safe))
-                       (find-library-module _modpath69132_))))
-                (if _$e69138_
-                    ((lambda (_path69141_)
-                       (let ((_lpath69143_ (load _path69141_)))
-                         (let ((__tmp73623 (current-module-registry)))
+                       (find-library-module _modpath69537_))))
+                (if _$e69543_
+                    ((lambda (_path69546_)
+                       (let ((_lpath69548_ (load _path69546_)))
+                         (let ((__tmp74128 (current-module-registry)))
                            (declare (not safe))
-                           (table-set! __tmp73623 _modpath69132_ _lpath69143_))
-                         _lpath69143_))
-                     _$e69138_)
-                    (error '"module not found" _modpath69132_)))))))
+                           (table-set! __tmp74128 _modpath69537_ _lpath69548_))
+                         _lpath69548_))
+                     _$e69543_)
+                    (error '"module not found" _modpath69537_)))))))
     (define load-module__0
-      (lambda (_modpath69148_)
-        (let ((_reload?69150_ (__reload-module)))
+      (lambda (_modpath69553_)
+        (let ((_reload?69555_ (__reload-module)))
           (declare (not safe))
-          (load-module__% _modpath69148_ _reload?69150_))))
+          (load-module__% _modpath69553_ _reload?69555_))))
     (define load-module
-      (lambda _g73625_
-        (let ((_g73624_ (let () (declare (not safe)) (##length _g73625_))))
-          (cond ((let () (declare (not safe)) (##fx= _g73624_ 1))
-                 (apply (lambda (_modpath69148_)
+      (lambda _g74130_
+        (let ((_g74129_ (let () (declare (not safe)) (##length _g74130_))))
+          (cond ((let () (declare (not safe)) (##fx= _g74129_ 1))
+                 (apply (lambda (_modpath69553_)
                           (let ()
                             (declare (not safe))
-                            (load-module__0 _modpath69148_)))
-                        _g73625_))
-                ((let () (declare (not safe)) (##fx= _g73624_ 2))
-                 (apply (lambda (_modpath69152_ _reload?69153_)
+                            (load-module__0 _modpath69553_)))
+                        _g74130_))
+                ((let () (declare (not safe)) (##fx= _g74129_ 2))
+                 (apply (lambda (_modpath69557_ _reload?69558_)
                           (let ()
                             (declare (not safe))
-                            (load-module__% _modpath69152_ _reload?69153_)))
-                        _g73625_))
+                            (load-module__% _modpath69557_ _reload?69558_)))
+                        _g74130_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   load-module
-                  _g73625_))))))
+                  _g74130_))))))
     (define find-library-module
-      (lambda (_modpath69066_)
-        (letrec ((_find-compiled-file69068_
-                  (lambda (_npath69120_)
-                    (let ((_basepath69122_
+      (lambda (_modpath69471_)
+        (letrec ((_find-compiled-file69473_
+                  (lambda (_npath69525_)
+                    (let ((_basepath69527_
                            (let ()
                              (declare (not safe))
-                             (##string-append _npath69120_ '".o"))))
-                      (let _lp69124_ ((_current69126_ '#f) (_n69127_ '1))
-                        (let ((_next69129_
-                               (let ((__tmp73626 (number->string _n69127_)))
+                             (##string-append _npath69525_ '".o"))))
+                      (let _lp69529_ ((_current69531_ '#f) (_n69532_ '1))
+                        (let ((_next69534_
+                               (let ((__tmp74131 (number->string _n69532_)))
                                  (declare (not safe))
                                  (##string-append
-                                  _basepath69122_
-                                  __tmp73626))))
+                                  _basepath69527_
+                                  __tmp74131))))
                           (if (let ()
                                 (declare (not safe))
-                                (##file-exists? _next69129_))
-                              (let ((__tmp73627
+                                (##file-exists? _next69534_))
+                              (let ((__tmp74132
                                      (let ()
                                        (declare (not safe))
-                                       (##fx+ _n69127_ '1))))
+                                       (##fx+ _n69532_ '1))))
                                 (declare (not safe))
-                                (_lp69124_ _next69129_ __tmp73627))
-                              _current69126_))))))
-                 (_find-source-file69069_
-                  (lambda (_npath69116_)
-                    (let ((_spath69118_ (string-append _npath69116_ '".scm")))
+                                (_lp69529_ _next69534_ __tmp74132))
+                              _current69531_))))))
+                 (_find-source-file69474_
+                  (lambda (_npath69521_)
+                    (let ((_spath69523_ (string-append _npath69521_ '".scm")))
                       (if (let ()
                             (declare (not safe))
-                            (##file-exists? _spath69118_))
-                          _spath69118_
+                            (##file-exists? _spath69523_))
+                          _spath69523_
                           '#f)))))
-          (let _lp69071_ ((_rest69073_ (current-module-library-path)))
-            (let* ((_rest6907469082_ _rest69073_)
-                   (_else6907669090_ (lambda () '#f))
-                   (_K6907869104_
-                    (lambda (_rest69093_ _dir69094_)
-                      (let* ((_npath69096_
+          (let _lp69476_ ((_rest69478_ (current-module-library-path)))
+            (let* ((_rest6947969487_ _rest69478_)
+                   (_else6948169495_ (lambda () '#f))
+                   (_K6948369509_
+                    (lambda (_rest69498_ _dir69499_)
+                      (let* ((_npath69501_
                               (path-expand
-                               _modpath69066_
-                               (path-expand _dir69094_)))
-                             (_$e69098_
+                               _modpath69471_
+                               (path-expand _dir69499_)))
+                             (_$e69503_
                               (let ()
                                 (declare (not safe))
-                                (_find-compiled-file69068_ _npath69096_))))
-                        (if _$e69098_
-                            (path-normalize _$e69098_)
-                            (let ((_$e69101_
+                                (_find-compiled-file69473_ _npath69501_))))
+                        (if _$e69503_
+                            (path-normalize _$e69503_)
+                            (let ((_$e69506_
                                    (let ()
                                      (declare (not safe))
-                                     (_find-source-file69069_ _npath69096_))))
-                              (if _$e69101_
-                                  (path-normalize _$e69101_)
+                                     (_find-source-file69474_ _npath69501_))))
+                              (if _$e69506_
+                                  (path-normalize _$e69506_)
                                   (let ()
                                     (declare (not safe))
-                                    (_lp69071_ _rest69093_)))))))))
-              (if (let () (declare (not safe)) (##pair? _rest6907469082_))
-                  (let ((_hd6907969107_
+                                    (_lp69476_ _rest69498_)))))))))
+              (if (let () (declare (not safe)) (##pair? _rest6947969487_))
+                  (let ((_hd6948469512_
                          (let ()
                            (declare (not safe))
-                           (##car _rest6907469082_)))
-                        (_tl6908069109_
+                           (##car _rest6947969487_)))
+                        (_tl6948569514_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest6907469082_))))
-                    (let* ((_dir69112_ _hd6907969107_)
-                           (_rest69114_ _tl6908069109_))
+                           (##cdr _rest6947969487_))))
+                    (let* ((_dir69517_ _hd6948469512_)
+                           (_rest69519_ _tl6948569514_))
                       (declare (not safe))
-                      (_K6907869104_ _rest69114_ _dir69112_)))
-                  (let () (declare (not safe)) (_else6907669090_))))))))))
+                      (_K6948369509_ _rest69519_ _dir69517_)))
+                  (let () (declare (not safe)) (_else6948169495_))))))))))
