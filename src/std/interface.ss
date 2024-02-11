@@ -20,8 +20,8 @@
   (CastError message irritants: [irritants ...]))
 
 ;; base type for all interface instances
-(defstruct-type interface-instance::t
-  #f #f interface-instance?
+(defstruct-type interface-instance::t ()
+  #f interface-instance?
   name: interface-instance
   slots:
   ((__object interface-instance-object interface-instance-object-set!)))

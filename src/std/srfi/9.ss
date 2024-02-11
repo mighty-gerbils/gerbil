@@ -42,7 +42,7 @@
                        (map (lambda (id) (stx-identifier id "&" id))
                             #'(mutator ...))))
          #'(begin
-             (defstruct-type type::t #f constructor predicate
+             (defstruct-type type::t () constructor predicate
                id: type-id
                final: #t
                slots:
