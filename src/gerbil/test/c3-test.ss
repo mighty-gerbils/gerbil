@@ -16,6 +16,7 @@
 (define gerbil/runtime 'gerbil/runtime)
 (define :gerbil/core ':gerbil/core)
 ;;(include "../../gerbil/runtime/util.ss")
+;;(include "../../gerbil/runtime/c3.ss")
 
 (module <tsi>
   (export #t)
