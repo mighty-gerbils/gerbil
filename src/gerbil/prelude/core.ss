@@ -200,7 +200,7 @@ package: gerbil
     make-object object-fill!
     struct-copy
     struct->list class->list
-    make-class-instance
+    make-instance make-class-instance
     struct-instance-init!
     class-instance-init!
     slot-ref slot-set!
@@ -1696,7 +1696,12 @@ package: gerbil
                 (identifier? #'instance?)
                 (stx-plist? #'rest class-opt?))
 
-           (with-syntax* (((values slots)
+           (with-syntax* (((values struct?)
+                           (cond
+                            (struct?)
+                            ((stx-getq struct: #'rest) => stx-e)
+                            (else #f)))
+                          ((values slots)
                            (or (stx-getq slots: #'rest)
                                []))
                           ((values mixin-slots)
@@ -1706,10 +1711,6 @@ package: gerbil
                            (append (syntax->list slots) (syntax->list mixin-slots)))
                           ((slot ...)
                            (stx-map slot-name slots))
-                          ((values properties-struct?)
-                           (and (stx-getq struct: #'rest) #t))
-                          ((values type-struct?)
-                           (or struct? properties-struct?))
                           (type-id
                            (or (stx-getq id: #'rest)
                                (make-class-type-id #'type-t)))
@@ -1721,7 +1722,7 @@ package: gerbil
                           (mop-type-t (core-quote-syntax #'type-t))
                           (mop-super
                            (stx-map core-quote-syntax #'super))
-                          (mop-struct? type-struct?)
+                          (mop-struct? struct?)
                           (mop-final? (stx-getq final: #'rest))
                           (type-properties
                            (or (stx-getq properties: #'rest)
@@ -1731,7 +1732,7 @@ package: gerbil
                              #'[[final: . #t] :: type-properties]
                              #'type-properties))
                           (type-properties
-                           (if (and struct? (not properties-struct?))
+                           (if struct?
                              #'[[struct: . #t] :: type-properties]
                              #'type-properties))
                           (type-super
@@ -2094,12 +2095,15 @@ package: gerbil
                             [properties: #'(quote properties)])))
                        ((values final?)
                         (stx-e (stx-getq final: body)))
+                       ((values type-struct)
+                        [struct: struct?])
                        ((values type-final)
                         [final: final?])
                        ((type-body ...)
                         [type-id ...
                          type-name ...
                          type-constructor ...
+                         type-struct ...
                          type-final ...
                          type-properties ...
                          type-slots ...

@@ -1,7 +1,7 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c3 linearization algorithm
-prelude: "../prelude/core"
+;;prelude: "../prelude/core"
 
 (export c3-test)
 
@@ -16,7 +16,6 @@ prelude: "../prelude/core"
 (define gerbil/runtime 'gerbil/runtime)
 (define :gerbil/core ':gerbil/core)
 ;;(include "../../gerbil/runtime/util.ss")
-(include "../../gerbil/runtime/c3.ss")
 
 (module <tsi>
   (export #t)

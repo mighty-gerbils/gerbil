@@ -68,7 +68,8 @@ namespace: #f
   ;; Use that as tail of the precedence list,
   ;; and for the (reverse) head, proceed as usual with C3.
 
-  (def get-names (cut map get-name <>))
+  (def (get-names lst)
+    (map get-name lst))
   (def (err . a)
     (apply error "Inconsistent precedence graph"
            head: (get-names (reverse rhead))

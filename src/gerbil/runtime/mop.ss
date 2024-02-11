@@ -174,8 +174,10 @@ namespace: #f
 ;; : TypeDescriptor -> (OrFalse StructTypeDescriptor)
 (def (base-struct/1 klass)
   (cond
-   ((struct-type? klass) klass)
-   ((class-type? klass) (##type-super klass))
+   ((class-type? klass)
+    (if (type-struct? klass)
+      klass
+      (##type-super klass)))
    ((not klass) #f)
    (else (error "not a class or false" klass))))
 
@@ -244,6 +246,20 @@ namespace: #f
     (process-slots direct-slots)
     (let (all-slots (list->vector (reverse r-slots)))
       (values all-slots slot-table))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; bootstrasp compatibility shims
+;; TODO remove after (re)bootstrap
+(def (make-struct-type id name direct-supers direct-slots properties constructor)
+  (make-class-type id name (if direct-supers [direct-supers] []) direct-slots (cons '(struct: . #t) properties) constructor))
+
+(def (make-struct-predicate klass)
+  (make-class-predicate klass))
+
+(def (make-struct-instance klass . args)
+  (apply make-class-instance klass args))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
@@ -346,15 +362,58 @@ namespace: #f
 (def ((make-final-slot-mutator klass slot field) obj val)
   (##direct-structure-set! obj val field klass slot))
 
-(def ((make-struct-slot-accessor klass slot field) obj)
-  (##structure-ref obj field klass slot))
-(def ((make-struct-slot-mutator klass slot field) obj val)
-  (##structure-set! obj val field klass slot))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; compatibility shim for bootstrap
+;; TODO: remove after (re)bootstrap
+(def* make-struct-slot-accessor
+  ((klass slot field)
+   (lambda (obj)
+     (##structure-ref obj field klass slot)))
+  ((klass slot)
+   (let (field (class-slot-offset klass slot))
+     (lambda (obj)
+       (##structure-ref obj field klass slot)))))
 
-(def ((make-struct-slot-unchecked-accessor klass slot field) obj)
-  (##unchecked-structure-ref obj field klass slot))
-(def ((make-struct-slot-unchecked-mutator klass slot field) obj val)
-  (##unchecked-structure-set! obj val field klass slot))
+(def* make-struct-slot-mutator
+  ((klass slot field)
+   (lambda (obj val)
+     (##structure-set! obj val field klass slot)))
+  ((klass slot)
+   (let (field (class-slot-offset klass slot))
+     (lambda (obj)
+       (##structure-ref obj field klass slot)))))
+
+(def* make-struct-slot-unchecked-accessor
+  ((klass slot field)
+   (lambda (obj)
+     (##unchecked-structure-ref obj field klass slot)))
+  ((klass slot)
+   (let (field (class-slot-offset klass slot))
+     (lambda (obj)
+       (##unchecked-structure-ref obj field klass slot)))))
+
+(def* make-struct-slot-unchecked-mutator
+  ((klass slot field)
+   (lambda (obj val)
+     (##unchecked-structure-set! obj val field klass slot)))
+  ((klass slot)
+   (let (field (class-slot-offset klass slot))
+     (lambda (obj val)
+       (##unchecked-structure-set! obj val field klass slot)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; this is what we want
+;; (def ((make-struct-slot-accessor klass slot field) obj)
+;;   (##structure-ref obj field klass field))
+;; (def ((make-struct-slot-mutator klass slot field) obj val)
+;;   (##structure-set! obj val field klass field))
+
+;; (def ((make-struct-slot-unchecked-accessor klass slot field) obj)
+;;   (##unchecked-structure-ref obj field klass field))
+;; (def ((make-struct-slot-unchecked-mutator klass slot field) obj val)
+;;   (##unchecked-structure-set! obj val field klass field))
+;;
 
 (def ((make-struct-subclass-slot-accessor klass slot field) obj)
   (if (class-instance? klass obj)
@@ -474,8 +533,11 @@ namespace: #f
         (loop (##fx- i 1)))
       obj)))
 
+(def (make-instance klass)
+  (make-object klass (##vector-length (type-descriptor-all-slots klass))))
+
 (def (make-class-instance klass . args)
-  (let (obj (make-object klass (##vector-length (type-descriptor-all-slots klass))))
+  (let (obj (make-instance klass))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
