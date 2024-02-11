@@ -32,10 +32,10 @@
                                      (if (gx#current-expander-compiling?)
                                          (gx#eval-syntax _L37370_)
                                          '#!void)
-                                     (let ((__tmp51207
+                                     (let ((__tmp51196
                                             (gx#datum->syntax '#f 'void)))
                                        (declare (not safe))
-                                       (cons __tmp51207 '())))
+                                       (cons __tmp51196 '())))
                                    _hd3733637364_)
                                   (_g3732937343_ _g3733037347_))))
                           (_g3732937343_ _g3733037347_))))

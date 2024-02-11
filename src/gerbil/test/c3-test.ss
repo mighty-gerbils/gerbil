@@ -31,13 +31,15 @@ prelude: "../prelude/core"
   (syntax-case stx ()
     ((_ (my-objects my-supers) (object supers ...) ...)
      (with-syntax (((struct? ...) (stx-map (lambda (o) (test-single-inheritance? (syntax-e o)))
-                                           #'(object ...))))
+                                           #'(object ...)))
+                   ((descr ...) (stx-map (lambda (o) (stx-identifier stx o "::t")) #'(object ...))))
        #'(begin
            (def my-objects '(object ...))
            (def my-supers '((object supers ...) ...))
            (defclass (object supers ...) (object)
              struct: struct?
-             transparent: #t) ...)))))
+             transparent: #t) ...
+           (def my-descriptors [descr ...]))))))
 
 (defhierarchy (my-objects my-supers)
   (O) (A O) (B O) (C O) (D O) (E O)
@@ -144,7 +146,7 @@ prelude: "../prelude/core"
              => '((9 12 14 15) (6 4 2 a b c d e))))
     (test-case "c3 linearization"
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
-
+      (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors) => my-precedence-lists)
       ;; check discrepancy with old MRO resolution algorithm
       (check (my-compute-precedence-list 'Z) =>  '(Z K1 K2 K3 D A B C E O))
       (check (old-linearize-supers 'Z) =>        '(Z K1 K2 K3 D B E A C O)) ; different: B A C bad!

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/c3::timestamp 1707616236)
+  (define gerbil/runtime/c3::timestamp 1707618263)
   (begin
     (define c4-linearize__%
       (lambda (_g83320_
@@ -141,10 +141,23 @@
                            (let ((_K7875578791_ (lambda () _pl-tail78745_))
                                  (_K7875278775_
                                   (lambda (_plrh78765_ _c78766_)
-                                    (if (member _c78766_ _sit-tail78747_)
-                                        (let ((__tmp83333
-                                               (let ((__tmp83334
+                                    (if (member _c78766_
+                                                _sit-tail78747_
+                                                _eqpred78541_)
+                                        (let ((__tmp83336
+                                               (let ((__tmp83337
                                                       (reverse _pl-rhead78744_)))
+                                                 (declare (not safe))
+                                                 (_get-names78547_
+                                                  __tmp83337)))
+                                              (__tmp83335
+                                               (let ()
+                                                 (declare (not safe))
+                                                 (_get-names78547_
+                                                  _pl-tail78745_)))
+                                              (__tmp83333
+                                               (let ((__tmp83334
+                                                      (reverse _sit-rhead78746_)))
                                                  (declare (not safe))
                                                  (_get-names78547_
                                                   __tmp83334)))
@@ -152,14 +165,18 @@
                                                (let ()
                                                  (declare (not safe))
                                                  (_get-names78547_
-                                                  _pl-tail78745_)))
+                                                  _sit-tail78747_)))
                                               (__tmp83331
                                                (_get-name78543_ _c78766_)))
                                           (declare (not safe))
                                           (_err78548_
                                            'precedence-list-head:
-                                           __tmp83333
+                                           __tmp83336
                                            'precedence-list-tail:
+                                           __tmp83335
+                                           'single-inheritance-head:
+                                           __tmp83333
+                                           'single-inheritance-tail:
                                            __tmp83332
                                            'super-out-of-order-vs-single-inheritance-tail:
                                            __tmp83331))
@@ -255,33 +272,33 @@
                                    (let ()
                                      (declare (not safe))
                                      (_try-match7875078787_)))))))))
-                    (_g83335_
-                     (let ((_g83336_
-                            (let ((__tmp83338 (reverse _supers78535_)))
+                    (_g83338_
+                     (let ((_g83339_
+                            (let ((__tmp83341 (reverse _supers78535_)))
                               (declare (not safe))
-                              (append1! _rpls78550_ __tmp83338))))
+                              (append1! _rpls78550_ __tmp83341))))
                        #!void
-                       _g83336_))
-                    (_g83339_
-                     (let ((_g83340_
+                       _g83339_))
+                    (_g83342_
+                     (let ((_g83343_
                             (set! _pls78545_
                                   (map _unsitr-rpl78551_ _rpls78550_))))
                        #!void
-                       _g83340_))
+                       _g83343_))
                     (_c3-select-next78552_
                      (lambda (_tails78690_)
                        (let ((_candidate?78696_
                               (lambda (_c78692_)
-                                (let ((__tmp83342
+                                (let ((__tmp83345
                                        (lambda (_tail78694_)
-                                         (let ((__tmp83343
+                                         (let ((__tmp83346
                                                 (member _c78692_
                                                         (cdr _tail78694_)
                                                         _eqpred78541_)))
                                            (declare (not safe))
-                                           (not __tmp83343)))))
+                                           (not __tmp83346)))))
                                   (declare (not safe))
-                                  (andmap1 __tmp83342 _tails78690_)))))
+                                  (andmap1 __tmp83345 _tails78690_)))))
                          (let _loop78698_ ((_ts78700_ _tails78690_))
                            (let* ((_ts7870178711_ _ts78700_)
                                   (_else7870378719_
@@ -409,18 +426,18 @@
                                           (declare (not safe))
                                           (_c3-select-next78552_
                                            _tails78590_))))
-                                   (let ((__tmp83345
+                                   (let ((__tmp83348
                                           (let ()
                                             (declare (not safe))
                                             (cons _next78609_ _rhead78587_)))
-                                         (__tmp83344
+                                         (__tmp83347
                                           (let ()
                                             (declare (not safe))
                                             (_remove-next!78553_
                                              _next78609_
                                              _tails78590_))))
                                      (declare (not safe))
-                                     (_c3loop78585_ __tmp83345 __tmp83344))))))
+                                     (_c3loop78585_ __tmp83348 __tmp83347))))))
                          (let ((_K7859978632_
                                 (lambda ()
                                   (let ()
@@ -428,12 +445,12 @@
                                     (append-reverse _rhead78587_ _sit78546_))))
                                (_K7859678618_
                                 (lambda (_tail78616_)
-                                  (let ((__tmp83346
+                                  (let ((__tmp83349
                                          (append _tail78616_ _sit78546_)))
                                     (declare (not safe))
                                     (append-reverse
                                      _rhead78587_
-                                     __tmp83346)))))
+                                     __tmp83349)))))
                            (let ((_try-match7859378628_
                                   (lambda ()
                                     (if (let ()
@@ -531,8 +548,8 @@
                      (eq? _single-inheritance?7845478461_ absent-value))
                    false
                    _single-inheritance?7845478461_)))
-          (letrec* ((_g83347_
-                     (let ((_g83348_
+          (letrec* ((_g83350_
+                     (let ((_g83351_
                             (let ()
                               (declare (not safe))
                               (c4-linearize__%
@@ -543,21 +560,21 @@
                                _get-name78467_
                                _rhead78463_
                                _supers78464_))))
-                       (let ((_g83349_
+                       (let ((_g83352_
                               (let ()
                                 (declare (not safe))
-                                (if (##values? _g83348_)
-                                    (##vector-length _g83348_)
+                                (if (##values? _g83351_)
+                                    (##vector-length _g83351_)
                                     1))))
                          (if (not (let ()
                                     (declare (not safe))
-                                    (##fx= _g83349_ 2)))
-                             (error "Context expects 2 values" _g83349_)))
-                       _g83348_))
+                                    (##fx= _g83352_ 2)))
+                             (error "Context expects 2 values" _g83352_)))
+                       _g83351_))
                     (_precedence-list78471_
-                     (let () (declare (not safe)) (##vector-ref _g83347_ 0)))
+                     (let () (declare (not safe)) (##vector-ref _g83350_ 0)))
                     (_super-struct78472_
-                     (let () (declare (not safe)) (##vector-ref _g83347_ 1))))
+                     (let () (declare (not safe)) (##vector-ref _g83350_ 1))))
             _precedence-list78471_))))
     (define c3-linearize__%__0
       (lambda (__7845678477_
@@ -593,9 +610,9 @@
            _eqpred78492_
            _get-name78494_))))
     (define c3-linearize__%
-      (lambda _g83351_
-        (let ((_g83350_ (let () (declare (not safe)) (##length _g83351_))))
-          (cond ((let () (declare (not safe)) (##fx= _g83350_ 5))
+      (lambda _g83354_
+        (let ((_g83353_ (let () (declare (not safe)) (##length _g83354_))))
+          (cond ((let () (declare (not safe)) (##fx= _g83353_ 5))
                  (apply (lambda (__7845678477_
                                  _single-inheritance?7845478478_
                                  _rhead78479_
@@ -609,8 +626,8 @@
                              _rhead78479_
                              _supers78480_
                              _get-precedence-list78481_)))
-                        _g83351_))
-                ((let () (declare (not safe)) (##fx= _g83350_ 6))
+                        _g83354_))
+                ((let () (declare (not safe)) (##fx= _g83353_ 6))
                  (apply (lambda (__7845678487_
                                  _single-inheritance?7845478488_
                                  _rhead78489_
@@ -626,8 +643,8 @@
                              _supers78490_
                              _get-precedence-list78491_
                              _eqpred78492_)))
-                        _g83351_))
-                ((let () (declare (not safe)) (##fx= _g83350_ 7))
+                        _g83354_))
+                ((let () (declare (not safe)) (##fx= _g83353_ 7))
                  (apply (lambda (__7845678496_
                                  _single-inheritance?7845478497_
                                  _rhead78498_
@@ -645,11 +662,11 @@
                              _get-precedence-list78500_
                              _eqpred78501_
                              _get-name78502_)))
-                        _g83351_))
+                        _g83354_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   c3-linearize__%
-                  _g83351_))))))
+                  _g83354_))))))
     (define c3-linearize__@
       (lambda (_keys7845378507_ . _args78509_)
         (apply c3-linearize__%

@@ -106,15 +106,17 @@ namespace: #f
       (match pl-rhead
         ([] pl-tail) ;; done processing -- superclasses not in the sit, most- to least- specific
         ([c . plrh]
-         (if (member c sit-tail) ;; caught a superclass out of order with the sit
+         (if (member c sit-tail eqpred) ;; caught a superclass out of order with the sit
            (err precedence-list-head: (get-names (reverse pl-rhead))
                 precedence-list-tail: (get-names pl-tail)
+                single-inheritance-head: (get-names (reverse sit-rhead))
+                single-inheritance-tail: (get-names sit-tail)
                 super-out-of-order-vs-single-inheritance-tail: (get-name c))
            (let-values (((sit-rh2 sit-tl2)
                          (append-reverse-until
                           (cut eqpred c <>) sit-rhead sit-tail)))
              (if (null? sit-rh2)
-               (u plrh [c . pl-tail] [] sit-tl2)
+               (u plrh (cons c pl-tail) [] sit-tl2)
                (u plrh pl-tail (cdr sit-rh2) sit-tl2))))))))
 
   ;; Add the list of direct-supers to the set of precedence-lists to be
