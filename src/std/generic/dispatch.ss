@@ -79,11 +79,22 @@
 
 (extern namespace: #f class-precedence-list) ; runtime
 
+(def (struct-precedence-list strukt)
+  (cons strukt
+        (cond
+         ((##type-super strukt) => struct-precedence-list)
+         (else []))))
+
 (def (type-precedence-list klass)
-  (if (type-descriptor? klass)
+  (cond
+   ((type-descriptor? klass)
     (append (map ##type-id (class-precedence-list klass))
-            '(object t))
-    (error "Not a type object")))
+            '(object t)))
+   ((##type? klass)
+    (append (map ##type-id (struct-precedence-list klass))
+            '(object t)))
+   (else
+    (error "Not a type object"))))
 
 (def +subtype-id+ (make-vector 32 'unknown))
 (def +subtype-linear+ (make-vector 32 '(unknown)))

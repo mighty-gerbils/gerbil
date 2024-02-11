@@ -96,20 +96,20 @@ namespace: #f
          pls))
   ;; Now that structs can inherit from classes, the superclasses from another
   ;; direct superclass could have inherited from it, so we must remove them
-  ;; from the current rtail, after checking that it was included in the right
+  ;; from the current rpl, after checking that it was included in the right
   ;; order in the overall tail.
   (def (unsitr-rpl rpl)
-    (let u ((pl-rhead rpl)
-            (pl-tail [])
-            (sit-rhead (reverse sit))
-            (sit-tail []))
+    (let u ((pl-rhead rpl) ;; superclasses to process, least-specific to most-specific
+            (pl-tail []) ;; superclasses processed, most-specific to least-specific
+            (sit-rhead (reverse sit)) ;; single-inheritance tail to process, least- to most- specific
+            (sit-tail [])) ;; single-inheritance tail processed, most- to least- specific
       (match pl-rhead
-        ([] pl-tail)
+        ([] pl-tail) ;; done processing -- superclasses not in the sit, most- to least- specific
         ([c . plrh]
-         (if (member c sit-tail)
-           (err precedence-list-head: (reverse pl-rhead)
-                precedence-list-tail: pl-tail
-                super-out-of-order-vs-single-inheritance-tail: c)
+         (if (member c sit-tail) ;; caught a superclass out of order with the sit
+           (err precedence-list-head: (get-names (reverse pl-rhead))
+                precedence-list-tail: (get-names pl-tail)
+                super-out-of-order-vs-single-inheritance-tail: (get-name c))
            (let-values (((sit-rh2 sit-tl2)
                          (append-reverse-until
                           (cut eqpred c <>) sit-rhead sit-tail)))
