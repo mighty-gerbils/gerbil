@@ -11,52 +11,52 @@
                  ___stx4726447265_))))
         (let ((___kont4726747268_
                (lambda ()
-                 (let ((__tmp51064 (gx#datum->syntax '#f 'begin)))
+                 (let ((__tmp51042 (gx#datum->syntax '#f 'begin)))
                    (declare (not safe))
-                   (cons __tmp51064 '()))))
+                   (cons __tmp51042 '()))))
               (___kont4726947270_
                (lambda (_L34773_ _L34775_ _L34776_)
-                 (let ((__tmp51077 (gx#datum->syntax '#f 'cond-expand))
-                       (__tmp51065
-                        (let ((__tmp51074
-                               (let ((__tmp51075
-                                      (let ((__tmp51076
+                 (let ((__tmp51055 (gx#datum->syntax '#f 'cond-expand))
+                       (__tmp51043
+                        (let ((__tmp51052
+                               (let ((__tmp51053
+                                      (let ((__tmp51054
                                              (let ()
                                                (declare (not safe))
                                                (cons _L34776_ _L34773_))))
                                         (declare (not safe))
-                                        (cons __tmp51076 '()))))
+                                        (cons __tmp51054 '()))))
                                  (declare (not safe))
-                                 (cons _L34775_ __tmp51075)))
-                              (__tmp51066
-                               (let ((__tmp51067
-                                      (let ((__tmp51073
+                                 (cons _L34775_ __tmp51053)))
+                              (__tmp51044
+                               (let ((__tmp51045
+                                      (let ((__tmp51051
                                              (gx#datum->syntax '#f 'else))
-                                            (__tmp51068
-                                             (let ((__tmp51069
-                                                    (let ((__tmp51072
+                                            (__tmp51046
+                                             (let ((__tmp51047
+                                                    (let ((__tmp51050
                                                            (gx#datum->syntax
                                                             '#f
                                                             'syntax-error))
-                                                          (__tmp51070
-                                                           (let ((__tmp51071
+                                                          (__tmp51048
+                                                           (let ((__tmp51049
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let () (declare (not safe)) (cons _L34775_ '()))))
                      (declare (not safe))
-                     (cons '"Missing required feature" __tmp51071))))
+                     (cons '"Missing required feature" __tmp51049))))
               (declare (not safe))
-              (cons __tmp51072 __tmp51070))))
+              (cons __tmp51050 __tmp51048))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp51069 '()))))
+                                               (cons __tmp51047 '()))))
                                         (declare (not safe))
-                                        (cons __tmp51073 __tmp51068))))
+                                        (cons __tmp51051 __tmp51046))))
                                  (declare (not safe))
-                                 (cons __tmp51067 '()))))
+                                 (cons __tmp51045 '()))))
                           (declare (not safe))
-                          (cons __tmp51074 __tmp51066))))
+                          (cons __tmp51052 __tmp51044))))
                    (declare (not safe))
-                   (cons __tmp51077 __tmp51065)))))
+                   (cons __tmp51055 __tmp51043)))))
           (if (gx#stx-pair? ___stx4726447265_)
               (let ((_e3473134799_ (gx#syntax-e ___stx4726447265_)))
                 (let ((_tl3472934806_
@@ -92,36 +92,36 @@
                  ___stx4729447295_))))
         (let ((___kont4729747298_
                (lambda (_L35000_ _L35002_)
-                 (let ((__tmp51083 (gx#datum->syntax '#f 'defsyntax))
-                       (__tmp51078
-                        (let ((__tmp51079
-                               (let ((__tmp51080
-                                      (let ((__tmp51082
+                 (let ((__tmp51061 (gx#datum->syntax '#f 'defsyntax))
+                       (__tmp51056
+                        (let ((__tmp51057
+                               (let ((__tmp51058
+                                      (let ((__tmp51060
                                              (gx#datum->syntax
                                               '#f
                                               'make-import-expander))
-                                            (__tmp51081
+                                            (__tmp51059
                                              (let ()
                                                (declare (not safe))
                                                (cons _L35000_ '()))))
                                         (declare (not safe))
-                                        (cons __tmp51082 __tmp51081))))
+                                        (cons __tmp51060 __tmp51059))))
                                  (declare (not safe))
-                                 (cons __tmp51080 '()))))
+                                 (cons __tmp51058 '()))))
                           (declare (not safe))
-                          (cons _L35002_ __tmp51079))))
+                          (cons _L35002_ __tmp51057))))
                    (declare (not safe))
-                   (cons __tmp51083 __tmp51078))))
+                   (cons __tmp51061 __tmp51056))))
               (___kont4729947300_
                (lambda (_L34929_ _L34931_ _L34932_ _L34933_)
-                 (let ((__tmp51084
-                        (let ((__tmp51085
-                               (let ((__tmp51086
-                                      (let ((__tmp51090
+                 (let ((__tmp51062
+                        (let ((__tmp51063
+                               (let ((__tmp51064
+                                      (let ((__tmp51068
                                              (gx#datum->syntax '#f 'lambda))
-                                            (__tmp51087
-                                             (let ((__tmp51088
-                                                    (let ((__tmp51089
+                                            (__tmp51065
+                                             (let ((__tmp51066
+                                                    (let ((__tmp51067
                                                            (lambda (_g3495434957_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _g3495534960_)
@@ -129,18 +129,18 @@
                        (declare (not safe))
                        (cons _g3495434957_ _g3495534960_)))))
               (declare (not safe))
-              (foldr1 __tmp51089 '() _L34929_))))
+              (foldr1 __tmp51067 '() _L34929_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons _L34931_ __tmp51088))))
+                                               (cons _L34931_ __tmp51066))))
                                         (declare (not safe))
-                                        (cons __tmp51090 __tmp51087))))
+                                        (cons __tmp51068 __tmp51065))))
                                  (declare (not safe))
-                                 (cons __tmp51086 '()))))
+                                 (cons __tmp51064 '()))))
                           (declare (not safe))
-                          (cons _L34932_ __tmp51085))))
+                          (cons _L34932_ __tmp51063))))
                    (declare (not safe))
-                   (cons _L34933_ __tmp51084)))))
+                   (cons _L34933_ __tmp51062)))))
           (let* ((___match4734947350_
                   (lambda (_e3484134869_
                            _hd3484034873_
@@ -406,36 +406,36 @@
                  ___stx4735247353_))))
         (let ((___kont4735547356_
                (lambda (_L35205_ _L35207_)
-                 (let ((__tmp51096 (gx#datum->syntax '#f 'defsyntax))
-                       (__tmp51091
-                        (let ((__tmp51092
-                               (let ((__tmp51093
-                                      (let ((__tmp51095
+                 (let ((__tmp51074 (gx#datum->syntax '#f 'defsyntax))
+                       (__tmp51069
+                        (let ((__tmp51070
+                               (let ((__tmp51071
+                                      (let ((__tmp51073
                                              (gx#datum->syntax
                                               '#f
                                               'make-export-expander))
-                                            (__tmp51094
+                                            (__tmp51072
                                              (let ()
                                                (declare (not safe))
                                                (cons _L35205_ '()))))
                                         (declare (not safe))
-                                        (cons __tmp51095 __tmp51094))))
+                                        (cons __tmp51073 __tmp51072))))
                                  (declare (not safe))
-                                 (cons __tmp51093 '()))))
+                                 (cons __tmp51071 '()))))
                           (declare (not safe))
-                          (cons _L35207_ __tmp51092))))
+                          (cons _L35207_ __tmp51070))))
                    (declare (not safe))
-                   (cons __tmp51096 __tmp51091))))
+                   (cons __tmp51074 __tmp51069))))
               (___kont4735747358_
                (lambda (_L35134_ _L35136_ _L35137_ _L35138_)
-                 (let ((__tmp51097
-                        (let ((__tmp51098
-                               (let ((__tmp51099
-                                      (let ((__tmp51103
+                 (let ((__tmp51075
+                        (let ((__tmp51076
+                               (let ((__tmp51077
+                                      (let ((__tmp51081
                                              (gx#datum->syntax '#f 'lambda))
-                                            (__tmp51100
-                                             (let ((__tmp51101
-                                                    (let ((__tmp51102
+                                            (__tmp51078
+                                             (let ((__tmp51079
+                                                    (let ((__tmp51080
                                                            (lambda (_g3515935162_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _g3516035165_)
@@ -443,18 +443,18 @@
                        (declare (not safe))
                        (cons _g3515935162_ _g3516035165_)))))
               (declare (not safe))
-              (foldr1 __tmp51102 '() _L35134_))))
+              (foldr1 __tmp51080 '() _L35134_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons _L35136_ __tmp51101))))
+                                               (cons _L35136_ __tmp51079))))
                                         (declare (not safe))
-                                        (cons __tmp51103 __tmp51100))))
+                                        (cons __tmp51081 __tmp51078))))
                                  (declare (not safe))
-                                 (cons __tmp51099 '()))))
+                                 (cons __tmp51077 '()))))
                           (declare (not safe))
-                          (cons _L35137_ __tmp51098))))
+                          (cons _L35137_ __tmp51076))))
                    (declare (not safe))
-                   (cons _L35138_ __tmp51097)))))
+                   (cons _L35138_ __tmp51075)))))
           (let* ((___match4740747408_
                   (lambda (_e3504635074_
                            _hd3504535078_
@@ -720,36 +720,36 @@
                  ___stx4741047411_))))
         (let ((___kont4741347414_
                (lambda (_L35410_ _L35412_)
-                 (let ((__tmp51109 (gx#datum->syntax '#f 'defsyntax))
-                       (__tmp51104
-                        (let ((__tmp51105
-                               (let ((__tmp51106
-                                      (let ((__tmp51108
+                 (let ((__tmp51087 (gx#datum->syntax '#f 'defsyntax))
+                       (__tmp51082
+                        (let ((__tmp51083
+                               (let ((__tmp51084
+                                      (let ((__tmp51086
                                              (gx#datum->syntax
                                               '#f
                                               'make-import-export-expander))
-                                            (__tmp51107
+                                            (__tmp51085
                                              (let ()
                                                (declare (not safe))
                                                (cons _L35410_ '()))))
                                         (declare (not safe))
-                                        (cons __tmp51108 __tmp51107))))
+                                        (cons __tmp51086 __tmp51085))))
                                  (declare (not safe))
-                                 (cons __tmp51106 '()))))
+                                 (cons __tmp51084 '()))))
                           (declare (not safe))
-                          (cons _L35412_ __tmp51105))))
+                          (cons _L35412_ __tmp51083))))
                    (declare (not safe))
-                   (cons __tmp51109 __tmp51104))))
+                   (cons __tmp51087 __tmp51082))))
               (___kont4741547416_
                (lambda (_L35339_ _L35341_ _L35342_ _L35343_)
-                 (let ((__tmp51110
-                        (let ((__tmp51111
-                               (let ((__tmp51112
-                                      (let ((__tmp51116
+                 (let ((__tmp51088
+                        (let ((__tmp51089
+                               (let ((__tmp51090
+                                      (let ((__tmp51094
                                              (gx#datum->syntax '#f 'lambda))
-                                            (__tmp51113
-                                             (let ((__tmp51114
-                                                    (let ((__tmp51115
+                                            (__tmp51091
+                                             (let ((__tmp51092
+                                                    (let ((__tmp51093
                                                            (lambda (_g3536435367_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _g3536535370_)
@@ -757,18 +757,18 @@
                        (declare (not safe))
                        (cons _g3536435367_ _g3536535370_)))))
               (declare (not safe))
-              (foldr1 __tmp51115 '() _L35339_))))
+              (foldr1 __tmp51093 '() _L35339_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons _L35341_ __tmp51114))))
+                                               (cons _L35341_ __tmp51092))))
                                         (declare (not safe))
-                                        (cons __tmp51116 __tmp51113))))
+                                        (cons __tmp51094 __tmp51091))))
                                  (declare (not safe))
-                                 (cons __tmp51112 '()))))
+                                 (cons __tmp51090 '()))))
                           (declare (not safe))
-                          (cons _L35342_ __tmp51111))))
+                          (cons _L35342_ __tmp51089))))
                    (declare (not safe))
-                   (cons _L35343_ __tmp51110)))))
+                   (cons _L35343_ __tmp51088)))))
           (let* ((___match4746547466_
                   (lambda (_e3525135279_
                            _hd3525035283_
@@ -1045,30 +1045,30 @@
                                 (declare (not safe))
                                 (##cdr _e3544035462_))))
                          (if (gx#stx-pair/null? _tl3543835469_)
-                             (let ((_g51117_
+                             (let ((_g51095_
                                     (gx#syntax-split-splice
                                      _tl3543835469_
                                      '0)))
                                (begin
-                                 (let ((_g51118_
+                                 (let ((_g51096_
                                         (let ()
                                           (declare (not safe))
-                                          (if (##values? _g51117_)
-                                              (##vector-length _g51117_)
+                                          (if (##values? _g51095_)
+                                              (##vector-length _g51095_)
                                               1))))
                                    (if (not (let ()
                                               (declare (not safe))
-                                              (##fx= _g51118_ 2)))
+                                              (##fx= _g51096_ 2)))
                                        (error "Context expects 2 values"
-                                              _g51118_)))
+                                              _g51096_)))
                                  (let ((_target3544135472_
                                         (let ()
                                           (declare (not safe))
-                                          (##vector-ref _g51117_ 0)))
+                                          (##vector-ref _g51095_ 0)))
                                        (_tl3544335475_
                                         (let ()
                                           (declare (not safe))
-                                          (##vector-ref _g51117_ 1))))
+                                          (##vector-ref _g51095_ 1))))
                                    (if (gx#stx-null? _tl3544335475_)
                                        (letrec ((_loop3544435478_
                                                  (lambda (_hd3544235482_
@@ -1092,20 +1092,20 @@
                       (cons _lp-hd3544635492_ _body3544835485_)))))
                (let ((_body3544935498_ (reverse _body3544835485_)))
                  ((lambda (_L35502_)
-                    (let ((__tmp51119
-                           (let ((__tmp51120
-                                  (let ((__tmp51121
+                    (let ((__tmp51097
+                           (let ((__tmp51098
+                                  (let ((__tmp51099
                                          (lambda (_g3551735520_ _g3551835523_)
                                            (let ()
                                              (declare (not safe))
                                              (cons _g3551735520_
                                                    _g3551835523_)))))
                                     (declare (not safe))
-                                    (foldr1 __tmp51121 '() _L35502_))))
+                                    (foldr1 __tmp51099 '() _L35502_))))
                              (declare (not safe))
-                             (cons '1 __tmp51120))))
+                             (cons '1 __tmp51098))))
                       (declare (not safe))
-                      (cons 'phi: __tmp51119)))
+                      (cons 'phi: __tmp51097)))
                   _body3544935498_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_loop3544435478_
@@ -1137,30 +1137,30 @@
                                 (declare (not safe))
                                 (##cdr _e3553935561_))))
                          (if (gx#stx-pair/null? _tl3553735568_)
-                             (let ((_g51122_
+                             (let ((_g51100_
                                     (gx#syntax-split-splice
                                      _tl3553735568_
                                      '0)))
                                (begin
-                                 (let ((_g51123_
+                                 (let ((_g51101_
                                         (let ()
                                           (declare (not safe))
-                                          (if (##values? _g51122_)
-                                              (##vector-length _g51122_)
+                                          (if (##values? _g51100_)
+                                              (##vector-length _g51100_)
                                               1))))
                                    (if (not (let ()
                                               (declare (not safe))
-                                              (##fx= _g51123_ 2)))
+                                              (##fx= _g51101_ 2)))
                                        (error "Context expects 2 values"
-                                              _g51123_)))
+                                              _g51101_)))
                                  (let ((_target3554035571_
                                         (let ()
                                           (declare (not safe))
-                                          (##vector-ref _g51122_ 0)))
+                                          (##vector-ref _g51100_ 0)))
                                        (_tl3554235574_
                                         (let ()
                                           (declare (not safe))
-                                          (##vector-ref _g51122_ 1))))
+                                          (##vector-ref _g51100_ 1))))
                                    (if (gx#stx-null? _tl3554235574_)
                                        (letrec ((_loop3554335577_
                                                  (lambda (_hd3554135581_
@@ -1184,20 +1184,20 @@
                       (cons _lp-hd3554535591_ _body3554735584_)))))
                (let ((_body3554835597_ (reverse _body3554735584_)))
                  ((lambda (_L35601_)
-                    (let ((__tmp51124
-                           (let ((__tmp51125
-                                  (let ((__tmp51126
+                    (let ((__tmp51102
+                           (let ((__tmp51103
+                                  (let ((__tmp51104
                                          (lambda (_g3561635619_ _g3561735622_)
                                            (let ()
                                              (declare (not safe))
                                              (cons _g3561635619_
                                                    _g3561735622_)))))
                                     (declare (not safe))
-                                    (foldr1 __tmp51126 '() _L35601_))))
+                                    (foldr1 __tmp51104 '() _L35601_))))
                              (declare (not safe))
-                             (cons '-1 __tmp51125))))
+                             (cons '-1 __tmp51103))))
                       (declare (not safe))
-                      (cons 'phi: __tmp51124)))
+                      (cons 'phi: __tmp51102)))
                   _body3554835597_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_loop3554335577_
@@ -1240,31 +1240,31 @@
                                         (declare (not safe))
                                         (##cdr _e3564235674_))))
                                  (if (gx#stx-pair/null? _tl3564035681_)
-                                     (let ((_g51127_
+                                     (let ((_g51105_
                                             (gx#syntax-split-splice
                                              _tl3564035681_
                                              '0)))
                                        (begin
-                                         (let ((_g51128_
+                                         (let ((_g51106_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (if (##values? _g51127_)
+                                                  (if (##values? _g51105_)
                                                       (##vector-length
-                                                       _g51127_)
+                                                       _g51105_)
                                                       1))))
                                            (if (not (let ()
                                                       (declare (not safe))
-                                                      (##fx= _g51128_ 2)))
+                                                      (##fx= _g51106_ 2)))
                                                (error "Context expects 2 values"
-                                                      _g51128_)))
+                                                      _g51106_)))
                                          (let ((_target3564335684_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51127_ 0)))
+                                                  (##vector-ref _g51105_ 0)))
                                                (_tl3564535687_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51127_ 1))))
+                                                  (##vector-ref _g51105_ 1))))
                                            (if (gx#stx-null? _tl3564535687_)
                                                (letrec ((_loop3564635690_
                                                          (lambda (_hd3564435694_
@@ -1288,18 +1288,18 @@
                        (let ((_id3565135710_ (reverse _id3565035697_)))
                          ((lambda (_L35714_ _L35716_)
                             (if (gx#identifier-list?
-                                 (let ((__tmp51133
+                                 (let ((__tmp51111
                                         (lambda (_g3573335736_ _g3573435739_)
                                           (let ()
                                             (declare (not safe))
                                             (cons _g3573335736_
                                                   _g3573435739_)))))
                                    (declare (not safe))
-                                   (foldr1 __tmp51133 '() _L35714_)))
+                                   (foldr1 __tmp51111 '() _L35714_)))
                                 (let* ((_keys35750_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (let ((__tmp51129
+                                         (let ((__tmp51107
                                                 (lambda (_g3574135744_
                                                          _g3574235747_)
                                                   (let ()
@@ -1307,7 +1307,7 @@
                                                     (cons _g3574135744_
                                                           _g3574235747_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51129 '() _L35714_))))
+                                           (foldr1 __tmp51107 '() _L35714_))))
                                        (_keytab35761_
                                         (let ((_ht35753_
                                                (let ()
@@ -1331,28 +1331,28 @@
                                                   (lambda (_in35770_ _r35772_)
                                                     (if (gx#module-import?
                                                          _in35770_)
-                                                        (if (let ((__tmp51131
+                                                        (if (let ((__tmp51109
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#module-import-name _in35770_)))
                       (declare (not safe))
-                      (table-ref _keytab35761_ __tmp51131 '#f))
+                      (table-ref _keytab35761_ __tmp51109 '#f))
                     (let () (declare (not safe)) (cons _in35770_ _r35772_))
                     _r35772_)
                 (if (gx#import-set? _in35770_)
-                    (let ((__tmp51130 (gx#import-set-imports _in35770_)))
+                    (let ((__tmp51108 (gx#import-set-imports _in35770_)))
                       (declare (not safe))
-                      (foldl1 _fold-e35767_ _r35772_ __tmp51130))
+                      (foldl1 _fold-e35767_ _r35772_ __tmp51108))
                     _r35772_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           _fold-e35767_)))
-                                  (let ((__tmp51132
+                                  (let ((__tmp51110
                                          (let ()
                                            (declare (not safe))
                                            (foldl1 _fold-e35774_
                                                    '()
                                                    _imports35764_))))
                                     (declare (not safe))
-                                    (cons 'begin: __tmp51132)))
+                                    (cons 'begin: __tmp51110)))
                                 (_g3563335657_ _g3563435661_)))
                           _id3565135710_
                           _hd3564135678_))))))
@@ -1399,31 +1399,31 @@
                                         (declare (not safe))
                                         (##cdr _e3579635828_))))
                                  (if (gx#stx-pair/null? _tl3579435835_)
-                                     (let ((_g51134_
+                                     (let ((_g51112_
                                             (gx#syntax-split-splice
                                              _tl3579435835_
                                              '0)))
                                        (begin
-                                         (let ((_g51135_
+                                         (let ((_g51113_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (if (##values? _g51134_)
+                                                  (if (##values? _g51112_)
                                                       (##vector-length
-                                                       _g51134_)
+                                                       _g51112_)
                                                       1))))
                                            (if (not (let ()
                                                       (declare (not safe))
-                                                      (##fx= _g51135_ 2)))
+                                                      (##fx= _g51113_ 2)))
                                                (error "Context expects 2 values"
-                                                      _g51135_)))
+                                                      _g51113_)))
                                          (let ((_target3579735838_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51134_ 0)))
+                                                  (##vector-ref _g51112_ 0)))
                                                (_tl3579935841_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51134_ 1))))
+                                                  (##vector-ref _g51112_ 1))))
                                            (if (gx#stx-null? _tl3579935841_)
                                                (letrec ((_loop3580035844_
                                                          (lambda (_hd3579835848_
@@ -1447,18 +1447,18 @@
                        (let ((_id3580535864_ (reverse _id3580435851_)))
                          ((lambda (_L35868_ _L35870_)
                             (if (gx#identifier-list?
-                                 (let ((__tmp51140
+                                 (let ((__tmp51118
                                         (lambda (_g3588735890_ _g3588835893_)
                                           (let ()
                                             (declare (not safe))
                                             (cons _g3588735890_
                                                   _g3588835893_)))))
                                    (declare (not safe))
-                                   (foldr1 __tmp51140 '() _L35868_)))
+                                   (foldr1 __tmp51118 '() _L35868_)))
                                 (let* ((_keys35904_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (let ((__tmp51136
+                                         (let ((__tmp51114
                                                 (lambda (_g3589535898_
                                                          _g3589635901_)
                                                   (let ()
@@ -1466,7 +1466,7 @@
                                                     (cons _g3589535898_
                                                           _g3589635901_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51136 '() _L35868_))))
+                                           (foldr1 __tmp51114 '() _L35868_))))
                                        (_keytab35915_
                                         (let ((_ht35907_
                                                (let ()
@@ -1490,30 +1490,30 @@
                                                   (lambda (_in35924_ _r35926_)
                                                     (if (gx#module-import?
                                                          _in35924_)
-                                                        (if (let ((__tmp51138
+                                                        (if (let ((__tmp51116
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#module-import-name _in35924_)))
                       (declare (not safe))
-                      (table-ref _keytab35915_ __tmp51138 '#f))
+                      (table-ref _keytab35915_ __tmp51116 '#f))
                     _r35926_
                     (let () (declare (not safe)) (cons _in35924_ _r35926_)))
                 (if (gx#import-set? _in35924_)
-                    (let ((__tmp51137 (gx#import-set-imports _in35924_)))
+                    (let ((__tmp51115 (gx#import-set-imports _in35924_)))
                       (declare (not safe))
-                      (foldl1 _fold-e35921_ _r35926_ __tmp51137))
+                      (foldl1 _fold-e35921_ _r35926_ __tmp51115))
                     (let ()
                       (declare (not safe))
                       (cons _in35924_ _r35926_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           _fold-e35921_)))
-                                  (let ((__tmp51139
+                                  (let ((__tmp51117
                                          (let ()
                                            (declare (not safe))
                                            (foldl1 _fold-e35928_
                                                    '()
                                                    _imports35918_))))
                                     (declare (not safe))
-                                    (cons 'begin: __tmp51139)))
+                                    (cons 'begin: __tmp51117)))
                                 (_g3578735811_ _g3578835815_)))
                           _id3580535864_
                           _hd3579535832_))))))
@@ -1541,9 +1541,9 @@
               (lambda () (make-symbol _pre35940_ _name35938_)))
              (_K3594535969_
               (lambda (_mark35965_ _id35967_)
-                (let ((__tmp51141 (make-symbol _pre35940_ _id35967_)))
+                (let ((__tmp51119 (make-symbol _pre35940_ _id35967_)))
                   (declare (not safe))
-                  (cons __tmp51141 _mark35965_)))))
+                  (cons __tmp51119 _mark35965_)))))
         (if (let () (declare (not safe)) (##pair? _name3594135949_))
             (let ((_hd3594635973_
                    (let () (declare (not safe)) (##car _name3594135949_)))
@@ -1586,31 +1586,31 @@
                                         (declare (not safe))
                                         (##cdr _e3600236042_))))
                                  (if (gx#stx-pair/null? _tl3600036049_)
-                                     (let ((_g51142_
+                                     (let ((_g51120_
                                             (gx#syntax-split-splice
                                              _tl3600036049_
                                              '0)))
                                        (begin
-                                         (let ((_g51143_
+                                         (let ((_g51121_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (if (##values? _g51142_)
+                                                  (if (##values? _g51120_)
                                                       (##vector-length
-                                                       _g51142_)
+                                                       _g51120_)
                                                       1))))
                                            (if (not (let ()
                                                       (declare (not safe))
-                                                      (##fx= _g51143_ 2)))
+                                                      (##fx= _g51121_ 2)))
                                                (error "Context expects 2 values"
-                                                      _g51143_)))
+                                                      _g51121_)))
                                          (let ((_target3600336052_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51142_ 0)))
+                                                  (##vector-ref _g51120_ 0)))
                                                (_tl3600536055_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51142_ 1))))
+                                                  (##vector-ref _g51120_ 1))))
                                            (if (gx#stx-null? _tl3600536055_)
                                                (letrec ((_loop3600636058_
                                                          (lambda (_hd3600436062_
@@ -1667,7 +1667,7 @@
                              (_id3601336103_ (reverse _id3601136067_)))
                          ((lambda (_L36106_ _L36108_ _L36109_)
                             (if (and (gx#identifier-list?
-                                      (let ((__tmp51154
+                                      (let ((__tmp51132
                                              (lambda (_g3612736130_
                                                       _g3612836133_)
                                                (let ()
@@ -1675,9 +1675,9 @@
                                                  (cons _g3612736130_
                                                        _g3612836133_)))))
                                         (declare (not safe))
-                                        (foldr1 __tmp51154 '() _L36108_)))
+                                        (foldr1 __tmp51132 '() _L36108_)))
                                      (gx#identifier-list?
-                                      (let ((__tmp51153
+                                      (let ((__tmp51131
                                              (lambda (_g3613536138_
                                                       _g3613636141_)
                                                (let ()
@@ -1685,7 +1685,7 @@
                                                  (cons _g3613536138_
                                                        _g3613636141_)))))
                                         (declare (not safe))
-                                        (foldr1 __tmp51153 '() _L36106_))))
+                                        (foldr1 __tmp51131 '() _L36106_))))
                                 (let* ((_keytab36144_
                                         (let ()
                                           (declare (not safe))
@@ -1694,21 +1694,21 @@
                                         (let ()
                                           (declare (not safe))
                                           (make-table)))
-                                       (_g51148_
+                                       (_g51126_
                                         (for-each
                                          (lambda (_id36150_ _new-id36152_)
-                                           (let ((__tmp51145
+                                           (let ((__tmp51123
                                                   (gx#core-identifier-key
                                                    _id36150_))
-                                                 (__tmp51144
+                                                 (__tmp51122
                                                   (gx#core-identifier-key
                                                    _new-id36152_)))
                                              (declare (not safe))
                                              (table-set!
                                               _keytab36144_
-                                              __tmp51145
-                                              __tmp51144)))
-                                         (let ((__tmp51146
+                                              __tmp51123
+                                              __tmp51122)))
+                                         (let ((__tmp51124
                                                 (lambda (_g3615336156_
                                                          _g3615436159_)
                                                   (let ()
@@ -1716,8 +1716,8 @@
                                                     (cons _g3615336156_
                                                           _g3615436159_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51146 '() _L36108_))
-                                         (let ((__tmp51147
+                                           (foldr1 __tmp51124 '() _L36108_))
+                                         (let ((__tmp51125
                                                 (lambda (_g3616136164_
                                                          _g3616236167_)
                                                   (let ()
@@ -1725,7 +1725,7 @@
                                                     (cons _g3616136164_
                                                           _g3616236167_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51147 '() _L36106_))))
+                                           (foldr1 __tmp51125 '() _L36106_))))
                                        (_imports36172_
                                         (gx#core-expand-import-source
                                          _L36109_))
@@ -1747,20 +1747,20 @@
                          (let ()
                            (declare (not safe))
                            (table-set! _found36147_ _name36182_ '#t))
-                         (let ((__tmp51150
+                         (let ((__tmp51128
                                 (let ()
                                   (declare (not safe))
                                   (|gerbil/core$<module-sugar>[1]#module-import-rename|
                                    _in36178_
                                    _rename36189_))))
                            (declare (not safe))
-                           (cons __tmp51150 _r36180_)))
+                           (cons __tmp51128 _r36180_)))
                        _$e36185_)
                       (let () (declare (not safe)) (cons _in36178_ _r36180_))))
                 (if (gx#import-set? _in36178_)
-                    (let ((__tmp51149 (gx#import-set-imports _in36178_)))
+                    (let ((__tmp51127 (gx#import-set-imports _in36178_)))
                       (declare (not safe))
-                      (foldl1 _fold-e36175_ _r36180_ __tmp51149))
+                      (foldl1 _fold-e36175_ _r36180_ __tmp51127))
                     (let ()
                       (declare (not safe))
                       (cons _in36178_ _r36180_)))))))
@@ -1774,13 +1774,13 @@
                                                   _imports36172_))))
                                   (for-each
                                    (lambda (_id36200_)
-                                     (if (let ((__tmp51151
+                                     (if (let ((__tmp51129
                                                 (gx#core-identifier-key
                                                  _id36200_)))
                                            (declare (not safe))
                                            (table-ref
                                             _found36147_
-                                            __tmp51151
+                                            __tmp51129
                                             '#f))
                                          '#!void
                                          (gx#raise-syntax-error
@@ -1788,14 +1788,14 @@
                                           '"bad syntax; identifier is not in the import set"
                                           _stx35989_
                                           _id36200_)))
-                                   (let ((__tmp51152
+                                   (let ((__tmp51130
                                           (lambda (_g3620236205_ _g3620336208_)
                                             (let ()
                                               (declare (not safe))
                                               (cons _g3620236205_
                                                     _g3620336208_)))))
                                      (declare (not safe))
-                                     (foldr1 __tmp51152 '() _L36108_)))
+                                     (foldr1 __tmp51130 '() _L36108_)))
                                   (let ()
                                     (declare (not safe))
                                     (cons 'begin: _new-imports36195_)))
@@ -1879,35 +1879,35 @@
                     (letrec ((_fold-e36305_
                               (lambda (_in36308_ _r36310_)
                                 (if (gx#module-import? _in36308_)
-                                    (let ((__tmp51156
-                                           (let ((__tmp51157
+                                    (let ((__tmp51134
+                                           (let ((__tmp51135
                                                   (_rename-e36302_
                                                    (gx#module-import-name
                                                     _in36308_))))
                                              (declare (not safe))
                                              (|gerbil/core$<module-sugar>[1]#module-import-rename|
                                               _in36308_
-                                              __tmp51157))))
+                                              __tmp51135))))
                                       (declare (not safe))
-                                      (cons __tmp51156 _r36310_))
+                                      (cons __tmp51134 _r36310_))
                                     (if (gx#import-set? _in36308_)
-                                        (let ((__tmp51155
+                                        (let ((__tmp51133
                                                (gx#import-set-imports
                                                 _in36308_)))
                                           (declare (not safe))
                                           (foldl1 _fold-e36305_
                                                   _r36310_
-                                                  __tmp51155))
+                                                  __tmp51133))
                                         (let ()
                                           (declare (not safe))
                                           (cons _in36308_ _r36310_)))))))
                       _fold-e36305_)))
-              (let ((__tmp51158
+              (let ((__tmp51136
                      (let ()
                        (declare (not safe))
                        (foldl1 _fold-e36312_ '() _imports36296_))))
                 (declare (not safe))
-                (cons 'begin: __tmp51158)))
+                (cons 'begin: __tmp51136)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (_g3622036238_
                                                      _g3622136242_)))
@@ -1923,7 +1923,7 @@
      (lambda (_stx36321_)
        (letrec ((_flatten36324_
                  (lambda (_list-of-lists36579_)
-                   (let ((__tmp51159
+                   (let ((__tmp51137
                           (lambda (_v36582_ _acc36584_)
                             (if (let () (declare (not safe)) (null? _v36582_))
                                 _acc36584_
@@ -1936,7 +1936,7 @@
                                       (declare (not safe))
                                       (cons _v36582_ _acc36584_)))))))
                      (declare (not safe))
-                     (foldr1 __tmp51159 '() _list-of-lists36579_))))
+                     (foldr1 __tmp51137 '() _list-of-lists36579_))))
                 (_expand-path36326_
                  (lambda (_top36447_ _mod36449_)
                    (let* ((___stx4746847469_ _mod36449_)
@@ -1959,7 +1959,7 @@
                                            (_expand-path36326_
                                             _L36544_
                                             _g3656136563_))
-                                         (let ((__tmp51160
+                                         (let ((__tmp51138
                                                 (lambda (_g3656636569_
                                                          _g3656736572_)
                                                   (let ()
@@ -1967,7 +1967,7 @@
                                                     (cons _g3656636569_
                                                           _g3656736572_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51160
+                                           (foldr1 __tmp51138
                                                    '()
                                                    _L36542_)))))))
                            (___kont4747547476_
@@ -2099,32 +2099,32 @@
                                           (declare (not safe))
                                           (##cdr _e3633736369_))))
                                    (if (gx#stx-pair/null? _tl3633536376_)
-                                       (let ((_g51161_
+                                       (let ((_g51139_
                                               (gx#syntax-split-splice
                                                _tl3633536376_
                                                '0)))
                                          (begin
-                                           (let ((_g51162_
+                                           (let ((_g51140_
                                                   (let ()
                                                     (declare (not safe))
-                                                    (if (##values? _g51161_)
+                                                    (if (##values? _g51139_)
                                                         (##vector-length
-                                                         _g51161_)
+                                                         _g51139_)
                                                         1))))
                                              (if (not (let ()
                                                         (declare (not safe))
-                                                        (##fx= _g51162_ 2)))
+                                                        (##fx= _g51140_ 2)))
                                                  (error "Context expects 2 values"
-                                                        _g51162_)))
+                                                        _g51140_)))
                                            (let ((_target3633836379_
                                                   (let ()
                                                     (declare (not safe))
-                                                    (##vector-ref _g51161_ 0)))
+                                                    (##vector-ref _g51139_ 0)))
                                                  (_tl3634036382_
                                                   (let ()
                                                     (declare (not safe))
                                                     (##vector-ref
-                                                     _g51161_
+                                                     _g51139_
                                                      1))))
                                              (if (gx#stx-null? _tl3634036382_)
                                                  (letrec ((_loop3634136385_
@@ -2148,13 +2148,13 @@
                                 (cons _lp-hd3634336399_ _mod3634536392_)))))
                          (let ((_mod3634636405_ (reverse _mod3634536392_)))
                            ((lambda (_L36409_ _L36411_)
-                              (let ((__tmp51163
+                              (let ((__tmp51141
                                      (_flatten36324_
                                       (map (lambda (_g3642936431_)
                                              (_expand-path36326_
                                               _L36411_
                                               _g3642936431_))
-                                           (let ((__tmp51164
+                                           (let ((__tmp51142
                                                   (lambda (_g3643436437_
                                                            _g3643536440_)
                                                     (let ()
@@ -2162,11 +2162,11 @@
                                                       (cons _g3643436437_
                                                             _g3643536440_)))))
                                              (declare (not safe))
-                                             (foldr1 __tmp51164
+                                             (foldr1 __tmp51142
                                                      '()
                                                      _L36409_))))))
                                 (declare (not safe))
-                                (cons 'begin: __tmp51163)))
+                                (cons 'begin: __tmp51141)))
                             _mod3634636405_
                             _hd3633636373_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2212,31 +2212,31 @@
                                         (declare (not safe))
                                         (##cdr _e3660036632_))))
                                  (if (gx#stx-pair/null? _tl3659836639_)
-                                     (let ((_g51165_
+                                     (let ((_g51143_
                                             (gx#syntax-split-splice
                                              _tl3659836639_
                                              '0)))
                                        (begin
-                                         (let ((_g51166_
+                                         (let ((_g51144_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (if (##values? _g51165_)
+                                                  (if (##values? _g51143_)
                                                       (##vector-length
-                                                       _g51165_)
+                                                       _g51143_)
                                                       1))))
                                            (if (not (let ()
                                                       (declare (not safe))
-                                                      (##fx= _g51166_ 2)))
+                                                      (##fx= _g51144_ 2)))
                                                (error "Context expects 2 values"
-                                                      _g51166_)))
+                                                      _g51144_)))
                                          (let ((_target3660136642_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51165_ 0)))
+                                                  (##vector-ref _g51143_ 0)))
                                                (_tl3660336645_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51165_ 1))))
+                                                  (##vector-ref _g51143_ 1))))
                                            (if (gx#stx-null? _tl3660336645_)
                                                (letrec ((_loop3660436648_
                                                          (lambda (_hd3660236652_
@@ -2260,18 +2260,18 @@
                        (let ((_id3660936668_ (reverse _id3660836655_)))
                          ((lambda (_L36672_ _L36674_)
                             (if (gx#identifier-list?
-                                 (let ((__tmp51171
+                                 (let ((__tmp51149
                                         (lambda (_g3669136694_ _g3669236697_)
                                           (let ()
                                             (declare (not safe))
                                             (cons _g3669136694_
                                                   _g3669236697_)))))
                                    (declare (not safe))
-                                   (foldr1 __tmp51171 '() _L36672_)))
+                                   (foldr1 __tmp51149 '() _L36672_)))
                                 (let* ((_keys36708_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (let ((__tmp51167
+                                         (let ((__tmp51145
                                                 (lambda (_g3669936702_
                                                          _g3670036705_)
                                                   (let ()
@@ -2279,7 +2279,7 @@
                                                     (cons _g3669936702_
                                                           _g3670036705_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51167 '() _L36672_))))
+                                           (foldr1 __tmp51145 '() _L36672_))))
                                        (_keytab36719_
                                         (let ((_ht36711_
                                                (let ()
@@ -2303,28 +2303,28 @@
                                                   (lambda (_out36728_ _r36730_)
                                                     (if (gx#module-export?
                                                          _out36728_)
-                                                        (if (let ((__tmp51169
+                                                        (if (let ((__tmp51147
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#module-export-name _out36728_)))
                       (declare (not safe))
-                      (table-ref _keytab36719_ __tmp51169 '#f))
+                      (table-ref _keytab36719_ __tmp51147 '#f))
                     _r36730_
                     (let () (declare (not safe)) (cons _out36728_ _r36730_)))
                 (if (gx#export-set? _out36728_)
-                    (let ((__tmp51168 (gx#export-set-exports _out36728_)))
+                    (let ((__tmp51146 (gx#export-set-exports _out36728_)))
                       (declare (not safe))
-                      (foldl1 _fold-e36725_ _r36730_ __tmp51168))
+                      (foldl1 _fold-e36725_ _r36730_ __tmp51146))
                     _r36730_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           _fold-e36725_)))
-                                  (let ((__tmp51170
+                                  (let ((__tmp51148
                                          (let ()
                                            (declare (not safe))
                                            (foldl1 _fold-e36732_
                                                    '()
                                                    _exports36722_))))
                                     (declare (not safe))
-                                    (cons 'begin: __tmp51170)))
+                                    (cons 'begin: __tmp51148)))
                                 (_g3659136615_ _g3659236619_)))
                           _id3660936668_
                           _hd3659936636_))))))
@@ -2379,31 +2379,31 @@
                                         (declare (not safe))
                                         (##cdr _e3675936799_))))
                                  (if (gx#stx-pair/null? _tl3675736806_)
-                                     (let ((_g51172_
+                                     (let ((_g51150_
                                             (gx#syntax-split-splice
                                              _tl3675736806_
                                              '0)))
                                        (begin
-                                         (let ((_g51173_
+                                         (let ((_g51151_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (if (##values? _g51172_)
+                                                  (if (##values? _g51150_)
                                                       (##vector-length
-                                                       _g51172_)
+                                                       _g51150_)
                                                       1))))
                                            (if (not (let ()
                                                       (declare (not safe))
-                                                      (##fx= _g51173_ 2)))
+                                                      (##fx= _g51151_ 2)))
                                                (error "Context expects 2 values"
-                                                      _g51173_)))
+                                                      _g51151_)))
                                          (let ((_target3676036809_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51172_ 0)))
+                                                  (##vector-ref _g51150_ 0)))
                                                (_tl3676236812_
                                                 (let ()
                                                   (declare (not safe))
-                                                  (##vector-ref _g51172_ 1))))
+                                                  (##vector-ref _g51150_ 1))))
                                            (if (gx#stx-null? _tl3676236812_)
                                                (letrec ((_loop3676336815_
                                                          (lambda (_hd3676136819_
@@ -2460,7 +2460,7 @@
                              (_id3677036860_ (reverse _id3676836824_)))
                          ((lambda (_L36863_ _L36865_ _L36866_)
                             (if (and (gx#identifier-list?
-                                      (let ((__tmp51184
+                                      (let ((__tmp51162
                                              (lambda (_g3688436887_
                                                       _g3688536890_)
                                                (let ()
@@ -2468,9 +2468,9 @@
                                                  (cons _g3688436887_
                                                        _g3688536890_)))))
                                         (declare (not safe))
-                                        (foldr1 __tmp51184 '() _L36865_)))
+                                        (foldr1 __tmp51162 '() _L36865_)))
                                      (gx#identifier-list?
-                                      (let ((__tmp51183
+                                      (let ((__tmp51161
                                              (lambda (_g3689236895_
                                                       _g3689336898_)
                                                (let ()
@@ -2478,7 +2478,7 @@
                                                  (cons _g3689236895_
                                                        _g3689336898_)))))
                                         (declare (not safe))
-                                        (foldr1 __tmp51183 '() _L36863_))))
+                                        (foldr1 __tmp51161 '() _L36863_))))
                                 (let* ((_keytab36901_
                                         (let ()
                                           (declare (not safe))
@@ -2487,21 +2487,21 @@
                                         (let ()
                                           (declare (not safe))
                                           (make-table)))
-                                       (_g51178_
+                                       (_g51156_
                                         (for-each
                                          (lambda (_id36907_ _new-id36909_)
-                                           (let ((__tmp51175
+                                           (let ((__tmp51153
                                                   (gx#core-identifier-key
                                                    _id36907_))
-                                                 (__tmp51174
+                                                 (__tmp51152
                                                   (gx#core-identifier-key
                                                    _new-id36909_)))
                                              (declare (not safe))
                                              (table-set!
                                               _keytab36901_
-                                              __tmp51175
-                                              __tmp51174)))
-                                         (let ((__tmp51176
+                                              __tmp51153
+                                              __tmp51152)))
+                                         (let ((__tmp51154
                                                 (lambda (_g3691036913_
                                                          _g3691136916_)
                                                   (let ()
@@ -2509,8 +2509,8 @@
                                                     (cons _g3691036913_
                                                           _g3691136916_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51176 '() _L36865_))
-                                         (let ((__tmp51177
+                                           (foldr1 __tmp51154 '() _L36865_))
+                                         (let ((__tmp51155
                                                 (lambda (_g3691836921_
                                                          _g3691936924_)
                                                   (let ()
@@ -2518,7 +2518,7 @@
                                                     (cons _g3691836921_
                                                           _g3691936924_)))))
                                            (declare (not safe))
-                                           (foldr1 __tmp51177 '() _L36863_))))
+                                           (foldr1 __tmp51155 '() _L36863_))))
                                        (_exports36929_
                                         (gx#core-expand-export-source
                                          _L36866_))
@@ -2540,22 +2540,22 @@
                          (let ()
                            (declare (not safe))
                            (table-set! _found36904_ _name36939_ '#t))
-                         (let ((__tmp51180
+                         (let ((__tmp51158
                                 (let ()
                                   (declare (not safe))
                                   (|gerbil/core$<module-sugar>[1]#module-export-rename|
                                    _out36935_
                                    _rename36946_))))
                            (declare (not safe))
-                           (cons __tmp51180 _r36937_)))
+                           (cons __tmp51158 _r36937_)))
                        _$e36942_)
                       (let ()
                         (declare (not safe))
                         (cons _out36935_ _r36937_))))
                 (if (gx#export-set? _out36935_)
-                    (let ((__tmp51179 (gx#export-set-exports _out36935_)))
+                    (let ((__tmp51157 (gx#export-set-exports _out36935_)))
                       (declare (not safe))
-                      (foldl1 _fold-e36932_ _r36937_ __tmp51179))
+                      (foldl1 _fold-e36932_ _r36937_ __tmp51157))
                     (let ()
                       (declare (not safe))
                       (cons _out36935_ _r36937_)))))))
@@ -2569,13 +2569,13 @@
                                                   _exports36929_))))
                                   (for-each
                                    (lambda (_id36957_)
-                                     (if (let ((__tmp51181
+                                     (if (let ((__tmp51159
                                                 (gx#core-identifier-key
                                                  _id36957_)))
                                            (declare (not safe))
                                            (table-ref
                                             _found36904_
-                                            __tmp51181
+                                            __tmp51159
                                             '#f))
                                          '#!void
                                          (gx#raise-syntax-error
@@ -2583,14 +2583,14 @@
                                           '"bad syntax; identifier is not in the export set"
                                           _stx36746_
                                           _id36957_)))
-                                   (let ((__tmp51182
+                                   (let ((__tmp51160
                                           (lambda (_g3695936962_ _g3696036965_)
                                             (let ()
                                               (declare (not safe))
                                               (cons _g3695936962_
                                                     _g3696036965_)))))
                                      (declare (not safe))
-                                     (foldr1 __tmp51182 '() _L36865_)))
+                                     (foldr1 __tmp51160 '() _L36865_)))
                                   (let ()
                                     (declare (not safe))
                                     (cons 'begin: _new-exports36952_)))
@@ -2674,35 +2674,35 @@
                     (letrec ((_fold-e37062_
                               (lambda (_out37065_ _r37067_)
                                 (if (gx#module-export? _out37065_)
-                                    (let ((__tmp51186
-                                           (let ((__tmp51187
+                                    (let ((__tmp51164
+                                           (let ((__tmp51165
                                                   (_rename-e37059_
                                                    (gx#module-export-name
                                                     _out37065_))))
                                              (declare (not safe))
                                              (|gerbil/core$<module-sugar>[1]#module-export-rename|
                                               _out37065_
-                                              __tmp51187))))
+                                              __tmp51165))))
                                       (declare (not safe))
-                                      (cons __tmp51186 _r37067_))
+                                      (cons __tmp51164 _r37067_))
                                     (if (gx#export-set? _out37065_)
-                                        (let ((__tmp51185
+                                        (let ((__tmp51163
                                                (gx#export-set-exports
                                                 _out37065_)))
                                           (declare (not safe))
                                           (foldl1 _fold-e37062_
                                                   _r37067_
-                                                  __tmp51185))
+                                                  __tmp51163))
                                         (let ()
                                           (declare (not safe))
                                           (cons _out37065_ _r37067_)))))))
                       _fold-e37062_)))
-              (let ((__tmp51188
+              (let ((__tmp51166
                      (let ()
                        (declare (not safe))
                        (foldl1 _fold-e37069_ '() _exports37053_))))
                 (declare (not safe))
-                (cons 'begin: __tmp51188)))
+                (cons 'begin: __tmp51166)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (_g3697736995_
                                                      _g3697836999_)))
@@ -2724,8 +2724,8 @@
                            (class-instance?
                             gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                             _info37317_))
-                         (let ((__tmp51189
-                                (let ((__tmp51201
+                         (let ((__tmp51167
+                                (let ((__tmp51179
                                        (let ((__obj47572 _info37317_))
                                          (if (let ()
                                                (declare (not safe))
@@ -2743,9 +2743,9 @@
                                               gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                                               __obj47572
                                               'type-descriptor))))
-                                      (__tmp51190
-                                       (let ((__tmp51192
-                                              (let ((__tmp51200
+                                      (__tmp51168
+                                       (let ((__tmp51170
+                                              (let ((__tmp51178
                                                      (let ((__obj47573
                                                             _info37317_))
                                                        (if (let ()
@@ -2766,12 +2766,12 @@
                                                             gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                                                             __obj47573
                                                             'predicate))))
-                                                    (__tmp51193
-                                                     (let ((__tmp51195
-                                                            (let ((__tmp51197
+                                                    (__tmp51171
+                                                     (let ((__tmp51173
+                                                            (let ((__tmp51175
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (if _unchecked?37315_
-                               (let ((__tmp51199
+                               (let ((__tmp51177
                                       (map cdr
                                            (let ((__obj47574 _info37317_))
                                              (if (let ()
@@ -2790,7 +2790,7 @@
                                                   gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                                                   __obj47574
                                                   'unchecked-mutators)))))
-                                     (__tmp51198
+                                     (__tmp51176
                                       (map cdr
                                            (let ((__obj47575 _info37317_))
                                              (if (let ()
@@ -2810,9 +2810,9 @@
                                                   __obj47575
                                                   'unchecked-accessors))))))
                                  (declare (not safe))
-                                 (foldr1 cons __tmp51199 __tmp51198))
+                                 (foldr1 cons __tmp51177 __tmp51176))
                                '()))
-                          (__tmp51196
+                          (__tmp51174
                            (map cdr
                                 (let ((__obj47576 _info37317_))
                                   (if (let ()
@@ -2832,8 +2832,8 @@
                                        __obj47576
                                        'mutators))))))
                       (declare (not safe))
-                      (foldr1 cons __tmp51197 __tmp51196)))
-                   (__tmp51194
+                      (foldr1 cons __tmp51175 __tmp51174)))
+                   (__tmp51172
                     (map cdr
                          (let ((__obj47577 _info37317_))
                            (if (let ()
@@ -2853,11 +2853,11 @@
                                 __obj47577
                                 'accessors))))))
                (declare (not safe))
-               (foldr1 cons __tmp51195 __tmp51194))))
+               (foldr1 cons __tmp51173 __tmp51172))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp51200 __tmp51193)))
-                                             (__tmp51191
+                                                (cons __tmp51178 __tmp51171)))
+                                             (__tmp51169
                                               (let ((_ctor37320_
                                                      (let ((__obj47578
                                                             _info37317_))
@@ -2885,11 +2885,11 @@
                                                       (cons _ctor37320_ '()))
                                                     '()))))
                                          (declare (not safe))
-                                         (foldr1 cons __tmp51192 __tmp51191))))
+                                         (foldr1 cons __tmp51170 __tmp51169))))
                                   (declare (not safe))
-                                  (cons __tmp51201 __tmp51190))))
+                                  (cons __tmp51179 __tmp51168))))
                            (declare (not safe))
-                           (cons _id37313_ __tmp51189))
+                           (cons _id37313_ __tmp51167))
                          (gx#raise-syntax-error
                           '#f
                           '"no class type info"
@@ -2904,38 +2904,38 @@
                     ___stx4749447495_))))
            (let ((___kont4749747498_
                   (lambda (_L37274_ _L37276_)
-                    (let ((__tmp51202
+                    (let ((__tmp51180
                            (concatenate
                             (gx#stx-map
                              (lambda (_g3729537297_)
                                (_identifiers37081_
                                 _g3729537297_
                                 (gx#stx-e _L37276_)))
-                             (let ((__tmp51203
+                             (let ((__tmp51181
                                     (lambda (_g3730037303_ _g3730137306_)
                                       (let ()
                                         (declare (not safe))
                                         (cons _g3730037303_ _g3730137306_)))))
                                (declare (not safe))
-                               (foldr1 __tmp51203 '() _L37274_))))))
+                               (foldr1 __tmp51181 '() _L37274_))))))
                       (declare (not safe))
-                      (cons 'begin: __tmp51202))))
+                      (cons 'begin: __tmp51180))))
                  (___kont4750147502_
                   (lambda (_L37173_)
-                    (let ((__tmp51204
+                    (let ((__tmp51182
                            (concatenate
                             (gx#stx-map
                              (lambda (_g3718937191_)
                                (_identifiers37081_ _g3718937191_ '#f))
-                             (let ((__tmp51205
+                             (let ((__tmp51183
                                     (lambda (_g3719437197_ _g3719537200_)
                                       (let ()
                                         (declare (not safe))
                                         (cons _g3719437197_ _g3719537200_)))))
                                (declare (not safe))
-                               (foldr1 __tmp51205 '() _L37173_))))))
+                               (foldr1 __tmp51183 '() _L37173_))))))
                       (declare (not safe))
-                      (cons 'begin: __tmp51204)))))
+                      (cons 'begin: __tmp51182)))))
              (let* ((___match4755147552_
                      (lambda (_e3711137133_
                               _hd3711037137_

@@ -82,9 +82,9 @@ namespace: #f
      ((null? sit) (set! sit sit2)) ;; yes new single inheritance tail
      (else
       (let loop ((t1 sit) (t2 sit2))
-        (cond ;; eq? should be the same as equal? due to single-inheritance
-         ((eq? t1 sit2) (void)) ;; sit is a prefix of sit2
-         ((eq? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
+        (cond ;; equal? should be the same as eq? due to single-inheritance
+         ((equal? t1 sit2) (void)) ;; sit is a prefix of sit2
+         ((equal? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
          ((null? t1) (err)) ;; TODO: better error message
          ((null? t2) (err)) ;; TODO: better error message
          (else (loop (cdr t1) (cdr t2))))))))
@@ -107,8 +107,9 @@ namespace: #f
         ([] pl-tail)
         ([c . plrh]
          (if (member c sit-tail)
-           (err direct-super: (last pl-rhead)
-                super-out-of-order-vs-single-inheritance-tail: (reverse c))
+           (err precedence-list-head: (reverse pl-rhead)
+                precedence-list-tail: pl-tail
+                super-out-of-order-vs-single-inheritance-tail: c)
            (let-values (((sit-rh2 sit-tl2)
                          (append-reverse-until
                           (cut eqpred c <>) sit-rhead sit-tail)))
