@@ -31,7 +31,7 @@ prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
-(export c4-linearize c3-linearize)
+(export c4-linearize)
 (import "util")
 
 ;; C4 linearization algorithm: given a top object x from which to compute the precedence list,

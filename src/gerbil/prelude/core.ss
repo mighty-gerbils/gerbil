@@ -161,8 +161,8 @@ package: gerbil
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
-    ;; c3 linearization
-    c4-linearize c3-linearize
+    ;; class linearization with C4
+    c4-linearize
 
     ;; MOP
     type-descriptor?
