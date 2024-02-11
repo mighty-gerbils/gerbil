@@ -254,11 +254,11 @@ package: gerbil
   ((_ prim ...)
    (declare-primitive* (prim 5) ...)))
 
-(defrules declare-primitive/5/unchecked()
+(defrules declare-primitive/5/unchecked ()
   ((_ prim ...)
    (declare-primitive/unchecked* (prim 5) ...)))
 
-(defrules declare-primitive/6/unchecked()
+(defrules declare-primitive/6/unchecked ()
   ((_ prim ...)
    (declare-primitive/unchecked* (prim 6) ...)))
 ;; r5rs primitives -- <r5rs-runtime>
