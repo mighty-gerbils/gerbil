@@ -85,8 +85,8 @@ namespace: #f
         (cond ;; equal? should be the same as eq? due to single-inheritance
          ((equal? t1 sit2) (void)) ;; sit is a prefix of sit2
          ((equal? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
-         ((null? t1) (err)) ;; TODO: better error message
-         ((null? t2) (err)) ;; TODO: better error message
+         ((or (null? t1) (null? t2))
+          (err single-inheritance-incompatibility: [(get-names sit) (get-names sit2)]))
          (else (loop (cdr t1) (cdr t2))))))))
   (def rpls
     (map (lambda (pl)
