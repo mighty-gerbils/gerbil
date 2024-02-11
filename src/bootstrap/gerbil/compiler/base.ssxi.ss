@@ -10,7 +10,7 @@ package: gerbil/compiler
            (gensyms bindings)
            (gensyms bindings)
            :init!
-           #f
+           #t
            #f
            ((:init! . gxc#symbol-table:::init!))))
   (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))

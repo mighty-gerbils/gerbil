@@ -10,7 +10,7 @@ package: gerbil/expander
            (source name phi weak?)
            (source name phi weak?)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#module-import? (@predicate gx#module-import::t))
@@ -63,7 +63,7 @@ package: gerbil/expander
            (context key phi name weak?)
            (context key phi name weak?)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#module-export? (@predicate gx#module-export::t))
@@ -124,7 +124,7 @@ package: gerbil/expander
            (source phi imports)
            (source phi imports)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#import-set? (@predicate gx#import-set::t))
@@ -157,7 +157,7 @@ package: gerbil/expander
            (source phi exports)
            (source phi exports)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#export-set? (@predicate gx#export-set::t))

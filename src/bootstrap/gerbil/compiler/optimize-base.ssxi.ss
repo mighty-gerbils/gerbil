@@ -10,7 +10,7 @@ package: gerbil/compiler
            (type ssxi methods)
            (type ssxi methods)
            :init!
-           #f
+           #t
            #f
            ((:init! . gxc#optimizer-info:::init!))))
   (declare-type gxc#optimizer-info? (@predicate gxc#optimizer-info::t))
@@ -52,7 +52,7 @@ package: gerbil/compiler
    gxc#&optimizer-info-methods-set!
    (@mutator gxc#optimizer-info::t methods #f))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
-  (declare-type gxc#!type::t (@class gxc#!type::t () () (id) (id) #f #f #f #f))
+  (declare-type gxc#!type::t (@class gxc#!type::t () () (id) (id) #f #t #f #f))
   (declare-type gxc#!type? (@predicate gxc#!type::t))
   (declare-type gxc#make-!type (@constructor gxc#!type::t))
   (declare-type gxc#!type-id (@accessor gxc#!type::t id #t))
@@ -61,7 +61,7 @@ package: gerbil/compiler
   (declare-type gxc#&!type-id-set! (@mutator gxc#!type::t id #f))
   (declare-type
    gxc#!alias::t
-   (@class gxc#!alias::t (gxc#!type::t) (gxc#!type::t) () (id) #f #f #f #f))
+   (@class gxc#!alias::t (gxc#!type::t) (gxc#!type::t) () (id) #f #t #f #f))
   (declare-type gxc#!alias? (@predicate gxc#!alias::t))
   (declare-type gxc#make-!alias (@constructor gxc#!alias::t))
   (declare-type gxc#!alias-id (@accessor gxc#!alias::t id #t))
@@ -76,7 +76,7 @@ package: gerbil/compiler
            ()
            (id)
            #f
-           #f
+           #t
            #f
            #f))
   (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
@@ -106,7 +106,7 @@ package: gerbil/compiler
                final?
                methods)
            :init!
-           #f
+           #t
            #f
            ((:init! . gxc#!class:::init!))))
   (declare-type gxc#!class? (@predicate gxc#!class::t))
@@ -171,7 +171,7 @@ package: gerbil/compiler
            ()
            (id)
            #f
-           #f
+           #t
            #f
            ((:init! . gxc#!predicate:::init!))))
   (declare-type gxc#!predicate? (@predicate gxc#!predicate::t))
@@ -188,7 +188,7 @@ package: gerbil/compiler
            ()
            (id)
            #f
-           #f
+           #t
            #f
            ((:init! . gxc#!constructor:::init!))))
   (declare-type gxc#!constructor? (@predicate gxc#!constructor::t))
@@ -205,7 +205,7 @@ package: gerbil/compiler
            (slot checked?)
            (id slot checked?)
            #f
-           #f
+           #t
            #f
            ((:init! . gxc#!accessor:::init!))))
   (declare-type gxc#!accessor? (@predicate gxc#!accessor::t))
@@ -238,7 +238,7 @@ package: gerbil/compiler
            (slot checked?)
            (id slot checked?)
            #f
-           #f
+           #t
            #f
            ((:init! . gxc#!mutator:::init!))))
   (declare-type gxc#!mutator? (@predicate gxc#!mutator::t))
@@ -267,7 +267,7 @@ package: gerbil/compiler
            (arity dispatch inline inline-typedecl)
            (id arity dispatch inline inline-typedecl)
            :init!
-           #f
+           #t
            #f
            ((:init! . gxc#!lambda:::init!))))
   (declare-type gxc#!lambda? (@predicate gxc#!lambda::t))
@@ -312,7 +312,7 @@ package: gerbil/compiler
            (clauses)
            (id clauses)
            #f
-           #f
+           #t
            #f
            #f))
   (declare-type gxc#!case-lambda? (@predicate gxc#!case-lambda::t))
@@ -341,7 +341,7 @@ package: gerbil/compiler
            (table dispatch)
            (id table dispatch)
            #f
-           #f
+           #t
            #f
            #f))
   (declare-type gxc#!kw-lambda? (@predicate gxc#!kw-lambda::t))
@@ -378,7 +378,7 @@ package: gerbil/compiler
            (keys main)
            (id keys main)
            #f
-           #f
+           #t
            #f
            #f))
   (declare-type gxc#!kw-lambda-primary? (@predicate gxc#!kw-lambda-primary::t))

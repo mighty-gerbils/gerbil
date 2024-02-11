@@ -134,7 +134,7 @@ package: gerbil/compiler
            (src n open blocks)
            (src n open blocks)
            :init!
-           #f
+           #t
            #f
            ((:init! . gxc#meta-state:::init!))))
   (declare-type gxc#meta-state? (@predicate gxc#meta-state::t))
@@ -168,7 +168,7 @@ package: gerbil/compiler
            (ctx phi n code)
            (ctx phi n code)
            #f
-           #f
+           #t
            #f
            #f))
   (declare-type gxc#meta-state-block? (@predicate gxc#meta-state-block::t))

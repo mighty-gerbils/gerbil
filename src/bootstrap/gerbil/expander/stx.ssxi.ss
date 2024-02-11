@@ -10,7 +10,7 @@ package: gerbil/expander
            (marks)
            (e source marks)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
@@ -55,7 +55,7 @@ package: gerbil/expander
            (mark)
            (e source mark)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
@@ -84,7 +84,7 @@ package: gerbil/expander
            (context marks)
            (e source context marks)
            #f
-           #f
+           #t
            #t
            #f))
   (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))

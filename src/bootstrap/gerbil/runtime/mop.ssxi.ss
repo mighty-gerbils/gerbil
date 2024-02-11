@@ -28,6 +28,9 @@ package: gerbil/runtime
   (declare-type base-struct (@lambda (0) #f))
   (declare-type find-super-constructor (@lambda 1 #f))
   (declare-type compute-class-slots (@lambda 2 #f))
+  (declare-type make-struct-type (@case-lambda (6 #f) (7 #f)))
+  (declare-type make-struct-predicate (@lambda 1 #f))
+  (declare-type make-struct-instance (@lambda (1) #f))
   (declare-type make-class-type (@lambda 6 #f))
   (declare-type class-precedence-list (@lambda 1 #f))
   (declare-type compute-precedence-list (@lambda 1 #f))
@@ -44,10 +47,34 @@ package: gerbil/runtime
    (@case-lambda (2 not-an-instance__0) (3 not-an-instance__%)))
   (declare-type make-final-slot-accessor (@lambda 3 #f))
   (declare-type make-final-slot-mutator (@lambda 3 #f))
-  (declare-type make-struct-slot-accessor (@lambda 3 #f))
-  (declare-type make-struct-slot-mutator (@lambda 3 #f))
-  (declare-type make-struct-slot-unchecked-accessor (@lambda 3 #f))
-  (declare-type make-struct-slot-unchecked-mutator (@lambda 3 #f))
+  (declare-type make-struct-slot-accessor__0 (@lambda 3 #f))
+  (declare-type make-struct-slot-accessor__1 (@lambda 2 #f))
+  (declare-type
+   make-struct-slot-accessor
+   (@case-lambda
+    (3 make-struct-slot-accessor__0)
+    (2 make-struct-slot-accessor__1)))
+  (declare-type make-struct-slot-mutator__0 (@lambda 3 #f))
+  (declare-type make-struct-slot-mutator__1 (@lambda 2 #f))
+  (declare-type
+   make-struct-slot-mutator
+   (@case-lambda
+    (3 make-struct-slot-mutator__0)
+    (2 make-struct-slot-mutator__1)))
+  (declare-type make-struct-slot-unchecked-accessor__0 (@lambda 3 #f))
+  (declare-type make-struct-slot-unchecked-accessor__1 (@lambda 2 #f))
+  (declare-type
+   make-struct-slot-unchecked-accessor
+   (@case-lambda
+    (3 make-struct-slot-unchecked-accessor__0)
+    (2 make-struct-slot-unchecked-accessor__1)))
+  (declare-type make-struct-slot-unchecked-mutator__0 (@lambda 3 #f))
+  (declare-type make-struct-slot-unchecked-mutator__1 (@lambda 2 #f))
+  (declare-type
+   make-struct-slot-unchecked-mutator
+   (@case-lambda
+    (3 make-struct-slot-unchecked-mutator__0)
+    (2 make-struct-slot-unchecked-mutator__1)))
   (declare-type make-struct-subclass-slot-accessor (@lambda 3 #f))
   (declare-type make-struct-subclass-slot-mutator (@lambda 3 #f))
   (declare-type make-class-cached-slot-accessor (@lambda 3 #f))
@@ -99,6 +126,7 @@ package: gerbil/runtime
            (%#begin (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
                     (%#ref $obj))))))))
   (declare-type object-fill! (@lambda 2 #f))
+  (declare-type make-instance (@lambda 1 #f))
   (declare-type make-class-instance (@lambda (1) #f))
   (declare-type
    struct-instance-init!
