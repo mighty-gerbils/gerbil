@@ -1,51 +1,51 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/common::timestamp 1707573211)
+  (define gerbil/expander/common::timestamp 1707674930)
   (begin
     (define gx#AST::t
-      (let ((__tmp134250
-             (let ((__tmp134251
+      (let ((__tmp135598 (list))
+            (__tmp135596
+             (let ((__tmp135597
                     (let () (declare (not safe)) (cons 'struct: '#t))))
                (declare (not safe))
-               (cons __tmp134251 '()))))
+               (cons __tmp135597 '()))))
         (declare (not safe))
-        (make-struct-type
+        (make-class-type
          'gerbil#AST::t
          'syntax
-         '#f
+         __tmp135598
          '(e source)
-         __tmp134250
+         __tmp135596
          '#f)))
     (define gx#AST?
-      (let () (declare (not safe)) (make-struct-predicate gx#AST::t)))
+      (let () (declare (not safe)) (make-class-predicate gx#AST::t)))
     (define gx#make-AST
-      (lambda _$args129681_
-        (apply make-struct-instance gx#AST::t _$args129681_)))
+      (lambda _$args130927_ (apply make-instance gx#AST::t _$args130927_)))
     (define gx#AST-e
-      (let () (declare (not safe)) (make-struct-slot-accessor gx#AST::t 'e)))
+      (let () (declare (not safe)) (make-class-slot-accessor gx#AST::t 'e)))
     (define gx#AST-source
       (let ()
         (declare (not safe))
-        (make-struct-slot-accessor gx#AST::t 'source)))
+        (make-class-slot-accessor gx#AST::t 'source)))
     (define gx#AST-e-set!
-      (let () (declare (not safe)) (make-struct-slot-mutator gx#AST::t 'e)))
+      (let () (declare (not safe)) (make-class-slot-mutator gx#AST::t 'e)))
     (define gx#AST-source-set!
       (let ()
         (declare (not safe))
-        (make-struct-slot-mutator gx#AST::t 'source)))
+        (make-class-slot-mutator gx#AST::t 'source)))
     (define gx#&AST-e
       (let ()
         (declare (not safe))
-        (make-struct-slot-unchecked-accessor gx#AST::t 'e)))
+        (make-class-slot-unchecked-accessor gx#AST::t 'e)))
     (define gx#&AST-source
       (let ()
         (declare (not safe))
-        (make-struct-slot-unchecked-accessor gx#AST::t 'source)))
+        (make-class-slot-unchecked-accessor gx#AST::t 'source)))
     (define gx#&AST-e-set!
       (let ()
         (declare (not safe))
-        (make-struct-slot-unchecked-mutator gx#AST::t 'e)))
+        (make-class-slot-unchecked-mutator gx#AST::t 'e)))
     (define gx#&AST-source-set!
       (let ()
         (declare (not safe))
-        (make-struct-slot-unchecked-mutator gx#AST::t 'source)))))
+        (make-class-slot-unchecked-mutator gx#AST::t 'source)))))

@@ -20,8 +20,8 @@
   (CastError message irritants: [irritants ...]))
 
 ;; base type for all interface instances
-(defstruct-type interface-instance::t
-  #f #f interface-instance?
+(defstruct-type interface-instance::t ()
+  #f interface-instance?
   name: interface-instance
   slots:
   ((__object interface-instance-object interface-instance-object-set!)))
@@ -664,13 +664,12 @@
                           (iota (length #'(method-name ...)) 2)))
                     (defklass
                       #'(def klass
-                          (make-struct-type 'klass-type-id          ; type id
-                                            'name                   ; name
-                                            interface-instance::t   ; super
-                                            '(method-name ...)      ; direct slots
-                                            '((final: . #t))        ; plist
-                                            #f                      ; constructor (none)
-                                            )))
+                          (make-class-type 'klass-type-id          ; type id
+                                           'name                   ; name
+                                           [interface-instance::t] ; super
+                                           '(method-name ...)      ; direct slots
+                                           '((final: . #t))        ; plist
+                                           #f)))                   ; constructor (none)
                     (defdescriptor
                       #'(def descriptor
                           (begin-annotation (@interface klass-quoted (method-name ...))

@@ -6,6 +6,7 @@ package: gerbil/compiler
 namespace: gxc
 
 (import "../expander"
+        "../runtime/c3"
         "base"
         "compile"
         <syntax-case> <syntax-sugar>)
@@ -39,8 +40,7 @@ namespace: gxc
    constructor  ;; OrFalse Symbol; constructor method
    struct? ;; Boolean; is it a struct?
    final?  ;; Boolean; is it a final class?
-   methods ;; Map Symbol -> Symbol; known method implementations
-   )
+   methods) ;; Map Symbol -> Symbol; known method implementations
   constructor: :init!)
 
 (defstruct (!predicate !procedure) ())
@@ -76,24 +76,9 @@ namespace: gxc
           (lp rest))
          (else (void))))
 
-     ;; 2. check struct constraint
-     ;; TODO: relax this when we allow structs to extend classes
-     ;;       add check fof incompatible mixins in the general class case
-     (when  struct?
-       (match super
-         ([] (void))
-         ([super-id]
-          (let (klass (optimizer-resolve-class `(!class ,id) super-id))
-            (unless (!class-struct? klass)
-              (raise-compile-error "bad class; struct extending non struct"
-                                   `(!class ,id) super-id))))
-         (else
-          (raise-compile-error "bad class; struct can only extend a single struct"
-                               `(!class ,id) super))))
-
      (let* ((ctor-method
              (or ctor-method
-                 ;; 3. check/infer from super constructor method name
+                 ;; 2. check/infer from super constructor method name
                  (let lp ((rest super) (method #f))
                    (match rest
                      ([super-id . rest]
@@ -110,22 +95,23 @@ namespace: gxc
                          (else
                           (lp rest method)))))
                      (else method)))))
-            (precedence-list
-             ;; 4. compute super precedence list
-             (c3-linearize [] super
+            ((values precedence-list base-struct)
+             ;; 3. compute super precedence list
+             (c4-linearize [] super
+                           get-precedence-list:
                            (lambda (klass-id)
                              (cons klass-id
                                    (!class-precedence-list
                                     (optimizer-resolve-class `(!class ,id) klass-id))))
-                           eq? identity))
+                           struct:
+                           (lambda (klass-id)
+                             (!class-struct?
+                              (optimizer-resolve-class `(!class ,id) klass-id)))
+                           eq: eq?
+                           get-name: identity))
             (fields
-             ;; 5. compute slot->field mapping for direct instances/structs
-             (let (base-struct
-                   (find (lambda (klass-id)
-                           (!class-struct?
-                            (optimizer-resolve-class `(!class ,id) klass-id)))
-                         precedence-list))
-               (compute-class-fields `(!class ,id) base-struct precedence-list slots))))
+             ;; 4. compute slot->field mapping for direct instances/structs
+             (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
        (set! (!type-id self) id)
        (set! (!class-super self) super)
        (set! (!class-precedence-list self) precedence-list)

@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707573207)
+  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707674927)
   (begin
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::t
-      (let ((__tmp47579 (list)))
+      (let ((__tmp47370 (list)))
         (declare (not safe))
         (make-class-type
          'gerbil.core#class-type-info::t
          'class-type-info
-         __tmp47579
+         __tmp47370
          '(id name
               super
               slots
@@ -29,10 +29,10 @@
         (declare (not safe))
         (make-class-predicate gerbil/core$<MOP>$<MOP:2>#class-type-info::t)))
     (define gerbil/core$<MOP>$<MOP:2>#make-class-type-info
-      (lambda _$args19398_
-        (apply make-class-instance
+      (lambda _$args19251_
+        (apply make-instance
                gerbil/core$<MOP>$<MOP:2>#class-type-info::t
-               _$args19398_)))
+               _$args19251_)))
     (define gerbil/core$<MOP>$<MOP:2>#class-type-id
       (let ()
         (declare (not safe))
@@ -370,128 +370,128 @@
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-mutators)))
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::apply-macro-expander
-      (lambda (_self19310_ _stx19311_)
-        (let* ((_g1931319332_
-                (lambda (_g1931419329_)
+      (lambda (_self19163_ _stx19164_)
+        (let* ((_g1916619185_
+                (lambda (_g1916719182_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g1931419329_)))
-               (_g1931219395_
-                (lambda (_g1931419335_)
-                  (if (gx#stx-pair? _g1931419335_)
-                      (let ((_e1931819337_ (gx#syntax-e _g1931419335_)))
-                        (let ((_hd1931719340_
+                   _g1916719182_)))
+               (_g1916519248_
+                (lambda (_g1916719188_)
+                  (if (gx#stx-pair? _g1916719188_)
+                      (let ((_e1917119190_ (gx#syntax-e _g1916719188_)))
+                        (let ((_hd1917019193_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e1931819337_)))
-                              (_tl1931619342_
+                                 (##car _e1917119190_)))
+                              (_tl1916919195_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e1931819337_))))
-                          (if (gx#stx-pair/null? _tl1931619342_)
-                              (let ((_g47580_
+                                 (##cdr _e1917119190_))))
+                          (if (gx#stx-pair/null? _tl1916919195_)
+                              (let ((_g47371_
                                      (gx#syntax-split-splice
-                                      _tl1931619342_
+                                      _tl1916919195_
                                       '0)))
                                 (begin
-                                  (let ((_g47581_
+                                  (let ((_g47372_
                                          (let ()
                                            (declare (not safe))
-                                           (if (##values? _g47580_)
-                                               (##vector-length _g47580_)
+                                           (if (##values? _g47371_)
+                                               (##vector-length _g47371_)
                                                1))))
                                     (if (not (let ()
                                                (declare (not safe))
-                                               (##fx= _g47581_ 2)))
+                                               (##fx= _g47372_ 2)))
                                         (error "Context expects 2 values"
-                                               _g47581_)))
-                                  (let ((_target1931919345_
+                                               _g47372_)))
+                                  (let ((_target1917219198_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g47580_ 0)))
-                                        (_tl1932119347_
+                                           (##vector-ref _g47371_ 0)))
+                                        (_tl1917419200_
                                          (let ()
                                            (declare (not safe))
-                                           (##vector-ref _g47580_ 1))))
-                                    (if (gx#stx-null? _tl1932119347_)
-                                        (letrec ((_loop1932219350_
-                                                  (lambda (_hd1932019353_
-                                                           _arg1932619355_)
+                                           (##vector-ref _g47371_ 1))))
+                                    (if (gx#stx-null? _tl1917419200_)
+                                        (letrec ((_loop1917519203_
+                                                  (lambda (_hd1917319206_
+                                                           _arg1917919208_)
                                                     (if (gx#stx-pair?
-                                                         _hd1932019353_)
-                                                        (let ((_e1932319358_
+                                                         _hd1917319206_)
+                                                        (let ((_e1917619211_
                                                                (gx#syntax-e
-                                                                _hd1932019353_)))
-                                                          (let ((_lp-hd1932419361_
+                                                                _hd1917319206_)))
+                                                          (let ((_lp-hd1917719214_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let () (declare (not safe)) (##car _e1932319358_)))
-                        (_lp-tl1932519363_
-                         (let () (declare (not safe)) (##cdr _e1932319358_))))
-                    (let ((__tmp47584
+                         (let () (declare (not safe)) (##car _e1917619211_)))
+                        (_lp-tl1917819216_
+                         (let () (declare (not safe)) (##cdr _e1917619211_))))
+                    (let ((__tmp47375
                            (let ()
                              (declare (not safe))
-                             (cons _lp-hd1932419361_ _arg1932619355_))))
+                             (cons _lp-hd1917719214_ _arg1917919208_))))
                       (declare (not safe))
-                      (_loop1932219350_ _lp-tl1932519363_ __tmp47584))))
-                (let ((_arg1932719366_ (reverse _arg1932619355_)))
-                  ((lambda (_L19369_)
-                     (let ((_$e19383_
-                            (let ((__obj47553 _self19310_))
+                      (_loop1917519203_ _lp-tl1917819216_ __tmp47375))))
+                (let ((_arg1918019219_ (reverse _arg1917919208_)))
+                  ((lambda (_L19222_)
+                     (let ((_$e19236_
+                            (let ((__obj47345 _self19163_))
                               (if (let ()
                                     (declare (not safe))
                                     (##structure-direct-instance-of?
-                                     __obj47553
+                                     __obj47345
                                      'gerbil.core#class-type-info::t))
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     __obj47553
+                                     __obj47345
                                      '9
                                      gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                                      '#f))
                                   (class-slot-ref
                                    gerbil/core$<MOP>$<MOP:2>#class-type-info::t
-                                   __obj47553
+                                   __obj47345
                                    'constructor)))))
-                       (if _$e19383_
-                           ((lambda (_make19386_)
-                              (let ((__tmp47582
-                                     (let ((__tmp47583
-                                            (lambda (_g1938719390_
-                                                     _g1938819392_)
+                       (if _$e19236_
+                           ((lambda (_make19239_)
+                              (let ((__tmp47373
+                                     (let ((__tmp47374
+                                            (lambda (_g1924019243_
+                                                     _g1924119245_)
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _g1938719390_
-                                                      _g1938819392_)))))
+                                                (cons _g1924019243_
+                                                      _g1924119245_)))))
                                        (declare (not safe))
-                                       (foldr1 __tmp47583 '() _L19369_))))
+                                       (foldr1 __tmp47374 '() _L19222_))))
                                 (declare (not safe))
-                                (cons _make19386_ __tmp47582)))
-                            _$e19383_)
+                                (cons _make19239_ __tmp47373)))
+                            _$e19236_)
                            (gx#raise-syntax-error
                             '#f
                             '"no constructor defined for class"
-                            _stx19311_
-                            _self19310_))))
-                   _arg1932719366_))))))
+                            _stx19164_
+                            _self19163_))))
+                   _arg1918019219_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (let ()
                                             (declare (not safe))
-                                            (_loop1932219350_
-                                             _target1931919345_
+                                            (_loop1917519203_
+                                             _target1917219198_
                                              '())))
                                         (let ()
                                           (declare (not safe))
-                                          (_g1931319332_ _g1931419335_))))))
+                                          (_g1916619185_ _g1916719188_))))))
                               (let ()
                                 (declare (not safe))
-                                (_g1931319332_ _g1931419335_)))))
+                                (_g1916619185_ _g1916719188_)))))
                       (let ()
                         (declare (not safe))
-                        (_g1931319332_ _g1931419335_))))))
+                        (_g1916619185_ _g1916719188_))))))
           (declare (not safe))
-          (_g1931219395_ _stx19311_))))
+          (_g1916519248_ _stx19164_))))
     (let ()
       (declare (not safe))
       (bind-method!
@@ -499,46 +499,46 @@
        'apply-macro-expander
        gerbil/core$<MOP>$<MOP:2>#class-type-info::apply-macro-expander))
     (define gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%
-      (lambda (_stx19291_ _is?19292_)
-        (if (gx#identifier? _stx19291_)
-            (let ((_e1929319295_ (gx#syntax-local-value _stx19291_ false)))
-              (if _e1929319295_
-                  (let ((_e19298_ _e1929319295_))
+      (lambda (_stx19144_ _is?19145_)
+        (if (gx#identifier? _stx19144_)
+            (let ((_e1914619148_ (gx#syntax-local-value _stx19144_ false)))
+              (if _e1914619148_
+                  (let ((_e19151_ _e1914619148_))
                     (if (let ()
                           (declare (not safe))
                           (class-instance?
                            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
-                           _e19298_))
-                        (_is?19292_ _e19298_)
+                           _e19151_))
+                        (_is?19145_ _e19151_)
                         '#f))
                   '#f))
             '#f)))
     (define gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__0
-      (lambda (_stx19303_)
-        (let ((_is?19305_ true))
+      (lambda (_stx19156_)
+        (let ((_is?19158_ true))
           (declare (not safe))
           (gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%
-           _stx19303_
-           _is?19305_))))
+           _stx19156_
+           _is?19158_))))
     (define gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?
-      (lambda _g47586_
-        (let ((_g47585_ (let () (declare (not safe)) (##length _g47586_))))
-          (cond ((let () (declare (not safe)) (##fx= _g47585_ 1))
-                 (apply (lambda (_stx19303_)
+      (lambda _g47377_
+        (let ((_g47376_ (let () (declare (not safe)) (##length _g47377_))))
+          (cond ((let () (declare (not safe)) (##fx= _g47376_ 1))
+                 (apply (lambda (_stx19156_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__0
-                             _stx19303_)))
-                        _g47586_))
-                ((let () (declare (not safe)) (##fx= _g47585_ 2))
-                 (apply (lambda (_stx19307_ _is?19308_)
+                             _stx19156_)))
+                        _g47377_))
+                ((let () (declare (not safe)) (##fx= _g47376_ 2))
+                 (apply (lambda (_stx19160_ _is?19161_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%
-                             _stx19307_
-                             _is?19308_)))
-                        _g47586_))
+                             _stx19160_
+                             _is?19161_)))
+                        _g47377_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?
-                  _g47586_))))))))
+                  _g47377_))))))))

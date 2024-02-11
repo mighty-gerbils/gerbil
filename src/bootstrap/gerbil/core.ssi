@@ -422,7 +422,7 @@ namespace: gerbil/core
                     (make-uninterned-keyword make-uninterned-keyword)
                     (symbol->keyword symbol->keyword)
                     (keyword->symbol keyword->symbol)
-                    (c3-linearize c3-linearize)
+                    (c4-linearize c4-linearize)
                     (type-descriptor? type-descriptor?)
                     (type-id type-id)
                     (type-descriptor-precedence-all-slots
@@ -437,8 +437,6 @@ namespace: gerbil/core
                     (type-struct? type-struct?)
                     (struct-type? struct-type?)
                     (class-type? class-type?)
-                    (make-struct-type make-struct-type)
-                    (make-struct-predicate make-struct-predicate)
                     (make-struct-slot-accessor make-struct-slot-accessor)
                     (make-struct-slot-mutator make-struct-slot-mutator)
                     (make-struct-slot-unchecked-accessor
@@ -453,7 +451,6 @@ namespace: gerbil/core
                      make-struct-field-unchecked-mutator)
                     (base-struct base-struct)
                     (class-precedence-list class-precedence-list)
-                    (struct-precedence-list struct-precedence-list)
                     (unchecked-field-ref unchecked-field-ref)
                     (unchecked-field-set! unchecked-field-set!)
                     (make-class-type make-class-type)
@@ -475,13 +472,12 @@ namespace: gerbil/core
                     (class-instance? class-instance?)
                     (direct-instance? direct-instance?)
                     (make-object make-object)
-                    (make-instance make-instance)
                     (object-fill! object-fill!)
                     (struct-copy struct-copy)
                     (struct->list struct->list)
                     (class->list class->list)
-                    (make-struct-instance make-struct-instance)
-                    (make-class-instance make-class-instance)
+                    (make-new-instance make-new-instance)
+                    (make-instance make-instance)
                     (struct-instance-init! struct-instance-init!)
                     (class-instance-init! class-instance-init!)
                     (slot-ref slot-ref)
@@ -1324,8 +1320,8 @@ namespace: gerbil/core
                                typedef-body?
                                |gerbil/core$<MOP>$<MOP:4>[1]#typedef-body?|)
                               (%#define-runtime
-                               generate-typedef
-                               |gerbil/core$<MOP>$<MOP:4>[1]#generate-typedef|))
+                               generate-defclass
+                               |gerbil/core$<MOP>$<MOP:4>[1]#generate-defclass|))
                              (%#define-syntax
                               defstruct
                               |gerbil/core$<MOP>$<MOP:4>[:0:]#defstruct|)

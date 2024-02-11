@@ -161,15 +161,13 @@ package: gerbil
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
-    ;; c3 linearization
-    c3-linearize
+    ;; class linearization with C4
+    c4-linearize
 
     ;; MOP
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
-    make-struct-type
-    make-struct-predicate
 
     make-struct-slot-accessor
     make-struct-slot-mutator
@@ -182,7 +180,7 @@ package: gerbil
     make-struct-field-unchecked-mutator
 
     base-struct
-    class-precedence-list struct-precedence-list
+    class-precedence-list
     unchecked-field-ref
     unchecked-field-set!
     make-class-type
@@ -199,11 +197,11 @@ package: gerbil
     object? object-type
     struct-instance? class-instance?
     direct-instance?
-    make-object make-instance object-fill!
+    make-object object-fill!
     struct-copy
     struct->list class->list
-    make-struct-instance
-    make-class-instance
+    make-new-instance
+    make-instance
     struct-instance-init!
     class-instance-init!
     slot-ref slot-set!
@@ -1687,22 +1685,24 @@ package: gerbil
           (syntax-case slot-spec ()
             ((slot getf setf) #'slot)))
 
-       (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: properties: constructor: final: mixin:)))
+        (def (class-opt? key)
+          (memq (stx-e key) '(struct: slots: id: name: properties: constructor: final: mixin:)))
 
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
            (and (identifier? #'type-t)
-                (if struct?
-                  (or (identifier? #'super)
-                      (stx-false? #'super))
-                  (identifier-list? #'super))
+                (identifier-list? #'super)
                 (or (identifier? #'make)
                     (stx-false? #'make))
                 (identifier? #'instance?)
                 (stx-plist? #'rest class-opt?))
 
-           (with-syntax* (((values slots)
+           (with-syntax* (((values struct?)
+                           (cond
+                            (struct?)
+                            ((stx-getq struct: #'rest) => stx-e)
+                            (else #f)))
+                          ((values slots)
                            (or (stx-getq slots: #'rest)
                                []))
                           ((values mixin-slots)
@@ -1712,26 +1712,6 @@ package: gerbil
                            (append (syntax->list slots) (syntax->list mixin-slots)))
                           ((slot ...)
                            (stx-map slot-name slots))
-                          ((make-type
-                            make-instance
-                            make-predicate
-                            make-getf make-setf
-                            make-ugetf make-usetf)
-                           (if struct?
-                             #'(make-struct-type
-                                make-struct-instance
-                                make-struct-predicate
-                                make-struct-slot-accessor
-                                make-struct-slot-mutator
-                                make-struct-slot-unchecked-accessor
-                                make-struct-slot-unchecked-mutator)
-                             #'(make-class-type
-                                make-class-instance
-                                make-class-predicate
-                                make-class-slot-accessor
-                                make-class-slot-mutator
-                                make-class-slot-unchecked-accessor
-                                make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
                                (make-class-type-id #'type-t)))
@@ -1742,11 +1722,7 @@ package: gerbil
                            (stx-getq constructor: #'rest))
                           (mop-type-t (core-quote-syntax #'type-t))
                           (mop-super
-                           (if struct?
-                             (if (stx-e #'super)
-                               [(core-quote-syntax #'super)]
-                               [])
-                             (stx-map core-quote-syntax #'super)))
+                           (stx-map core-quote-syntax #'super))
                           (mop-struct? struct?)
                           (mop-final? (stx-getq final: #'rest))
                           (type-properties
@@ -1761,13 +1737,11 @@ package: gerbil
                              #'[[struct: . #t] :: type-properties]
                              #'type-properties))
                           (type-super
-                           (if struct?
-                             #'super
-                             (cons #'list #'super)))
+                           (cons #'list #'super))
                           (make-type-rtd
-                           #'(make-type 'type-id 'type-name
-                                        type-super '(slot ...)
-                                        type-properties 'type-constructor))
+                           #'(make-class-type 'type-id 'type-name
+                                              type-super '(slot ...)
+                                              type-properties 'type-constructor))
                           (def-type
                             (wrap
                              #'(def type-t
@@ -1790,7 +1764,8 @@ package: gerbil
                             (wrap
                              #'(def instance?
                                  (begin-annotation (@mop.predicate mop-type-t)
-                                   (make-predicate type-t)))))
+                                   (make-class-predicate type-t)))))
+
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
@@ -1800,12 +1775,12 @@ package: gerbil
                                    #'(def getf
                                        (begin-annotation (@mop.accessor mop-type-t
                                                                         slot #t)
-                                         (make-getf type-t 'slot))))
+                                         (make-class-slot-accessor type-t 'slot))))
                                   (wrap
                                    #'(def setf
                                        (begin-annotation (@mop.mutator mop-type-t
                                                                        slot #t)
-                                         (make-setf type-t 'slot))))])))
+                                         (make-class-slot-mutator type-t 'slot))))])))
                             accessible-slots))
                           (((def-ugetf def-usetf) ...)
                            (stx-map
@@ -1818,12 +1793,12 @@ package: gerbil
                                      #'(def ugetf
                                          (begin-annotation (@mop.accessor mop-type-t
                                                                           slot #f)
-                                           (make-ugetf type-t 'slot))))
+                                           (make-class-slot-unchecked-accessor type-t 'slot))))
                                     (wrap
                                      #'(def usetf
                                          (begin-annotation (@mop.mutator mop-type-t
                                                                          slot #f)
-                                           (make-usetf type-t 'slot))))]))))
+                                           (make-class-slot-unchecked-mutator type-t 'slot))))]))))
                             accessible-slots)))
              (wrap
               #'(begin def-type
@@ -1851,7 +1826,7 @@ package: gerbil
       name: class-type-info
       slots:
       ((id ;; Symbol
-        ;; thre class's type id
+        ;; the class's type id
         class-type-id class-type-id-set!)
        (name ;; Symbol
         ;; the class's name
@@ -2002,10 +1977,10 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: print: equal:)))
+                '(id: struct: name: constructor: transparent: final: print: equal:)))
         (stx-plist? stx body-opt?))
 
-      (def (generate-typedef stx id super-ref slots body struct?)
+      (def (generate-defclass stx id super-ref slots body)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
 
@@ -2047,21 +2022,15 @@ package: gerbil
         (with-syntax* (((values name)
                         (symbol->string (stx-e id)))
                        ((values super)
-                        (if struct?
-                          (and super-ref (syntax-local-value super-ref))
-                          (map syntax-local-value super-ref)))
-                       (deftype-type
-                         (if struct?
-                           #'defstruct-type
-                           #'defclass-type))
+                        (map syntax-local-value super-ref))
+                       ((values struct?)
+                        (stx-getq struct: body))
                        (type id)
                        (type::t   (make-id name "::t"))
                        (make-type (make-id "make-" name))
                        (type?     (make-id name "?"))
                        (type-super
-                        (if struct?
-                          (and super (class-type-descriptor super))
-                          (map class-type-descriptor super)))
+                        (map class-type-descriptor super))
                        ((slot ...)
                         slots)
                        ((getf ...)
@@ -2127,19 +2096,22 @@ package: gerbil
                             [properties: #'(quote properties)])))
                        ((values final?)
                         (stx-e (stx-getq final: body)))
+                       ((values type-struct)
+                        [struct: struct?])
                        ((values type-final)
                         [final: final?])
                        ((type-body ...)
                         [type-id ...
                          type-name ...
                          type-constructor ...
+                         type-struct ...
                          type-final ...
                          type-properties ...
                          type-slots ...
                          type-mixin-slots ...])
                        (typedef
                         (wrap
-                         #'(deftype-type type::t type-super
+                         #'(defclass-type type::t type-super
                              make-type type?
                              type-body ...)))
                        (meta-type-id
@@ -2149,13 +2121,8 @@ package: gerbil
                         (with-syntax ((type-name (cadr type-name)))
                           #'(quote type-name)))
                        (meta-type-super
-                        (if struct?
-                          (if super
-                            (with-syntax ((super-id super-ref))
-                              #'[(quote-syntax super-id)])
-                            #'[])
-                          (with-syntax (((super-id ...) super-ref))
-                            #'[(quote-syntax super-id) ...])))
+                        (with-syntax (((super-id ...) super-ref))
+                          #'[(quote-syntax super-id) ...]))
                        (meta-type-slots #'(quote (slot ...)))
                        (meta-type-struct? struct?)
                        (meta-type-final? final?)
@@ -2200,22 +2167,8 @@ package: gerbil
           (wrap
            #'(begin typedef metadef)))))
 
-    (defsyntax (defstruct stx)
-      (def (generate hd fields body)
-        (syntax-case hd ()
-          ((id super)
-           (and (identifier? #'id)
-                (syntax-local-class-type-info? #'super class-type-struct?))
-           (generate-typedef stx #'id #'super fields body #t))
-          (_ (if (identifier? hd)
-               (generate-typedef stx hd #f fields body #t)
-               (raise-syntax-error #f "bad syntax; struct name not an identifier" stx hd)))))
-
-      (syntax-case stx ()
-        ((_ hd fields . rest)
-         (and (identifier-list? #'fields)
-              (typedef-body? #'rest))
-         (generate #'hd #'fields #'rest))))
+    (defrules defstruct ()
+      ((_ hd slots . rest) (defclass hd slots struct: #t . rest)))
 
     (defalias define-struct defstruct)
 
@@ -2225,9 +2178,9 @@ package: gerbil
           ((id . super)
            (and (stx-list? #'super)
                 (stx-andmap syntax-local-class-type-info? #'super))
-           (generate-typedef stx #'id (syntax->list #'super) slots body #f))
+           (generate-defclass stx #'id (syntax->list #'super) slots body))
           (_ (if (identifier? hd)
-               (generate-typedef stx hd [] slots body #f)
+               (generate-defclass stx hd [] slots body)
                (raise-syntax-error #f "bad syntax; class name should be an identifier" stx hd)))))
 
       (syntax-case stx ()
@@ -2254,7 +2207,7 @@ package: gerbil
            (with-syntax* (((values klass)
                            (syntax-local-value #'type))
                           ((values rebind?)
-                           (and (stx-e (stx-getq rebind: #'rest)) #t))
+                           (stx-e (stx-getq rebind: #'rest)))
                           (type::t
                            (class-type-descriptor klass))
                           (name

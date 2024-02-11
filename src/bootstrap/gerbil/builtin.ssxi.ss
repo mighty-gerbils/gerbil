@@ -254,10 +254,13 @@ package: gerbil
   ((_ prim ...)
    (declare-primitive* (prim 5) ...)))
 
-(defrules declare-primitive/5/unchecked()
+(defrules declare-primitive/5/unchecked ()
   ((_ prim ...)
    (declare-primitive/unchecked* (prim 5) ...)))
 
+(defrules declare-primitive/6/unchecked ()
+  ((_ prim ...)
+   (declare-primitive/unchecked* (prim 6) ...)))
 ;; r5rs primitives -- <r5rs-runtime>
 (declare-primitive/0/unchecked
  interaction-environment)
@@ -484,6 +487,9 @@ package: gerbil
  substring-move!
  subu8vector-move!)
 
+(declare-primitive/6/unchecked
+ make-class-type)
+
 (declare-primitive/unchecked*
  (iota 1 2 3)
  (assgetq 2 3)
@@ -504,10 +510,7 @@ package: gerbil
  (bytes->string 1 2)
  (string-index 2 3)
  (string-rindex 2 3)
- (make-struct-type 6 7)
- (make-class-type 6)
- (make-struct-instance (1))
- (make-class-instance (1))
+ (make-instance (1))
  (class-instance-init! (1))
  (slot-ref 2 3)
  (slot-set! 3 4)

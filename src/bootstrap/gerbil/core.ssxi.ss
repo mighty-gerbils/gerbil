@@ -267,7 +267,9 @@ package: gerbil
     (1 gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__0)
     (2 gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%)))
   (declare-type |gerbil/core$<MOP>$<MOP:4>[1]#typedef-body?| (@lambda 1 #f))
-  (declare-type |gerbil/core$<MOP>$<MOP:4>[1]#generate-typedef| (@lambda 6 #f))
+  (declare-type
+   |gerbil/core$<MOP>$<MOP:4>[1]#generate-defclass|
+   (@lambda 5 #f))
   (declare-type
    gerbil/core$<macro-object>#macro-object::t
    (@class gerbil.core#macro-object::t

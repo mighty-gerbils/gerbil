@@ -5,7 +5,7 @@
 (import :std/error
         :std/contract
         :gerbil/gambit)
-(export type-of linear-type-of type-linearize-class
+(export type-of linear-type-of type-precedence-list
         make-generic generic? generic-id generic-dispatch
         generic-bind! generic-dispatch generic-dispatch-next
         generic-dispatch1 generic-dispatch2 generic-dispatch3 generic-dispatch4
@@ -56,7 +56,7 @@
         (cond
          ((fx= st (macro-subtype-structure)) ; object
           (let (klass (##structure-type obj))
-            (type-linearize-class klass)))
+            (type-precedence-list klass)))
          ((fx= st (macro-subtype-boxvalues)) ; box or values?
           (if (fx= (##vector-length obj) 1)
             '(box t)
@@ -79,19 +79,22 @@
 
 (extern namespace: #f class-precedence-list) ; runtime
 
-(def (type-linearize-class klass)
+(def (struct-precedence-list strukt)
+  (cons strukt
+        (cond
+         ((##type-super strukt) => struct-precedence-list)
+         (else []))))
+
+(def (type-precedence-list klass)
   (cond
-   ((type-descriptor? klass) (type-linearize-class-type klass))
-   ((##type? klass) (type-linearize-struct-type klass))
-   (else (error "Not a type object"))))
-
-(def (type-linearize-class-type klass)
-  (append (map ##type-id (class-precedence-list klass))
-          '(object t)))
-
-(def (type-linearize-struct-type klass)
-  (append (map ##type-id (struct-precedence-list klass))
-          '(object t)))
+   ((type-descriptor? klass)
+    (append (map ##type-id (class-precedence-list klass))
+            '(object t)))
+   ((##type? klass)
+    (append (map ##type-id (struct-precedence-list klass))
+            '(object t)))
+   (else
+    (error "Not a type object"))))
 
 (def +subtype-id+ (make-vector 32 'unknown))
 (def +subtype-linear+ (make-vector 32 '(unknown)))

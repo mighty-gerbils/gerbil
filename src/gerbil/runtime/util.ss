@@ -322,6 +322,21 @@ namespace: #f
 (def (append-reverse rev-head tail)
   (foldl cons tail rev-head))
 
+;; Append the elements the list in the first argument to the front of the list
+;; in second argument until an element satisfies a predicate.
+;; Return two values, the rest of the first list including the element
+;; satisfying the predicate if any (or the empty list if none exists),
+;; and the tail with the reverse of the rhead up till then appended in front.
+;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
+(def (append-reverse-until pred rhead tail)
+  (let loop ((rhead rhead) (tail tail))
+    (match rhead
+      ([] (values [] tail))
+      ([a :: r]
+       (if (pred a)
+         (values rhead tail)
+         (loop r (cons a tail)))))))
+
 (def (andmap1 f lst)
   (let lp ((rest lst))
     (match rest
@@ -744,32 +759,27 @@ namespace: #f
    (let ((tagval tag)
          (thunk (lambda () expr)))
      (if tagval
-       (DBG-helper tagval '(names ...) (list (lambda () exprs) ...)
-                   'name thunk)
+       (DBG-helper tagval '(names ...) (list (lambda () exprs) ...) 'name thunk)
        (thunk)))))
 
 (def DBG-printer (make-parameter write))
 
-;; NB: fprintf uses the current-error-port and calls force-output
 (def (DBG-helper tag dbg-exprs dbg-thunks expr thunk)
   (letrec
-      ((fo (lambda () (force-output (current-error-port))
-              (force-output (current-output-port))))
-       (d (lambda (x) (display x (current-error-port))))
+      ((o (current-output-port))
+       (e (current-error-port))
        (p (DBG-printer))
-       (w (lambda (x) (p x (current-error-port))))
-       (n (lambda () (newline (current-error-port))))
-       (v (lambda (l)
-            (for-each (lambda (x) (d " ") (w x)) l)
-            (n)))
+       (f (lambda () (force-output o) (force-output e)))
+       (d (lambda (x) (display x e)))
+       (w (lambda (x) (p x e)))
+       (n (lambda () (newline e)))
+       (v (lambda (l) (for-each (lambda (x) (d " ") (w x)) l) (n)))
        (x (lambda (expr thunk)
-            (d "  ")
-            (w expr) (d " =>")
-            (call-with-values thunk (lambda x (v x) (apply values x))))))
+            (f) (d "  ") (w expr) (d " =>")
+            (call-with-values thunk (lambda x (v x) (f) (apply values x))))))
     (if tag
       (begin
-        (unless (void? tag) (d tag) (n))
+        (unless (void? tag) (f) (d tag) (n))
         (for-each x dbg-exprs dbg-thunks)
         (if thunk (x expr thunk) (void)))
       (if thunk (thunk) (void)))))
-

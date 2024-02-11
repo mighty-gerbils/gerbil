@@ -197,7 +197,7 @@
                    (&bio-write-fqn (format-id id "&~a" #'bio-write-fqn))
                    (id id))
       #'(begin
-          (defstruct-type id::t #f make-id id?
+          (defstruct-type id::t () make-id id?
             slots: ((slot getf setf) ...)
             name: id
             id: type-id

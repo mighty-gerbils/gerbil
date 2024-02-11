@@ -156,6 +156,7 @@ package: gerbil/runtime
   (declare-type remove-nulls! (@lambda 1 #f))
   (declare-type append1! (@lambda 2 #f))
   (declare-type append-reverse (@lambda 2 #f))
+  (declare-type append-reverse-until (@lambda 3 #f))
   (declare-type andmap1 (@lambda 2 #f))
   (declare-type andmap2 (@lambda 3 #f))
   (declare-type andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))

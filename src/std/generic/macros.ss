@@ -83,10 +83,10 @@
         #'(quote type)))
      ((class-type-info? type-info)
       (with-syntax ((klass::t (class-type-descriptor type-info)))
-        #'(type-linearize-class klass::t)))
+        #'(type-precedence-list klass::t)))
      ((builtin-type-info? type-info)
       (with-syntax ((klass::t (@ type-info runtime-identifier)))
-        #'(type-linearize-class klass::t)))
+        #'(type-precedence-list klass::t)))
      (else
       (raise-syntax-error #f "Bad syntax; unknown argument type" stx))))
 
