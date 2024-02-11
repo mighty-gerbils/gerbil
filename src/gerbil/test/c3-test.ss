@@ -18,6 +18,8 @@
 ;;(include "../../gerbil/runtime/util.ss")
 ;;(include "../../gerbil/runtime/c3.ss")
 
+(extern namespace: #f append-reverse-until)
+
 (module <tsi>
   (export #t)
   (import (only-in :std/text/char-set char-ascii-lowercase?))
