@@ -12,7 +12,6 @@ namespace: #f
          (%#define-runtime type-descriptor? type-descriptor?)
          (%#define-runtime type-struct? type-struct?)
          (%#define-runtime type-final? type-final?)
-         (%#define-runtime struct-type? struct-type?)
          (%#define-runtime class-type? class-type?)
          (%#define-runtime properties-form properties-form)
          (%#define-runtime make-type-descriptor make-type-descriptor)
@@ -37,8 +36,31 @@ namespace: #f
          (%#define-runtime type-descriptor-fields type-descriptor-fields)
          (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
-         (%#define-runtime make-struct-type make-struct-type)
-         (%#define-runtime make-struct-predicate make-struct-predicate)
+         (%#define-runtime substruct? substruct?)
+         (%#define-runtime base-struct/1 base-struct/1)
+         (%#define-runtime base-struct/2 base-struct/2)
+         (%#define-runtime base-struct/list base-struct/list)
+         (%#define-runtime base-struct base-struct)
+         (%#define-runtime find-super-constructor find-super-constructor)
+         (%#define-runtime compute-class-slots compute-class-slots)
+         (%#define-runtime make-class-type make-class-type)
+         (%#define-runtime class-precedence-list class-precedence-list)
+         (%#define-runtime compute-precedence-list compute-precedence-list)
+         (%#define-runtime make-class-predicate make-class-predicate)
+         (%#define-runtime if-class-slot-field if-class-slot-field)
+         (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
+         (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
+         (%#define-runtime
+          make-class-slot-unchecked-accessor
+          make-class-slot-unchecked-accessor)
+         (%#define-runtime
+          make-class-slot-unchecked-mutator
+          make-class-slot-unchecked-mutator)
+         (%#begin (%#define-runtime not-an-instance__% not-an-instance__%)
+                  (%#begin (%#define-runtime
+                            not-an-instance__0
+                            not-an-instance__0)
+                           (%#define-runtime not-an-instance not-an-instance)))
          (%#define-runtime make-final-slot-accessor make-final-slot-accessor)
          (%#define-runtime make-final-slot-mutator make-final-slot-mutator)
          (%#define-runtime make-struct-slot-accessor make-struct-slot-accessor)
@@ -49,47 +71,21 @@ namespace: #f
          (%#define-runtime
           make-struct-slot-unchecked-mutator
           make-struct-slot-unchecked-mutator)
-         (%#define-runtime substruct? substruct?)
-         (%#define-runtime base-struct/1 base-struct/1)
-         (%#define-runtime base-struct/2 base-struct/2)
-         (%#define-runtime base-struct/list base-struct/list)
-         (%#define-runtime base-struct base-struct)
-         (%#define-runtime find-super-ctor find-super-ctor)
-         (%#define-runtime find-super-constructor find-super-constructor)
-         (%#define-runtime compute-class-slots compute-class-slots)
-         (%#define-runtime make-class-type make-class-type)
-         (%#define-runtime class-precedence-list class-precedence-list)
-         (%#define-runtime compute-precedence-list compute-precedence-list)
-         (%#define-runtime make-class-predicate make-class-predicate)
-         (%#define-runtime if-class-slot-field if-class-slot-field)
-         (%#define-runtime make-class-slot-accessor make-class-slot-accessor)
-         (%#begin (%#define-runtime not-an-instance__% not-an-instance__%)
-                  (%#begin (%#define-runtime
-                            not-an-instance__0
-                            not-an-instance__0)
-                           (%#define-runtime not-an-instance not-an-instance)))
          (%#define-runtime
           make-struct-subclass-slot-accessor
           make-struct-subclass-slot-accessor)
          (%#define-runtime
-          make-class-cached-slot-accessor
-          make-class-cached-slot-accessor)
-         (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
-         (%#define-runtime
           make-struct-subclass-slot-mutator
           make-struct-subclass-slot-mutator)
+         (%#define-runtime
+          make-class-cached-slot-accessor
+          make-class-cached-slot-accessor)
          (%#define-runtime
           make-class-cached-slot-mutator
           make-class-cached-slot-mutator)
          (%#define-runtime
-          make-class-slot-unchecked-accessor
-          make-class-slot-unchecked-accessor)
-         (%#define-runtime
           make-class-cached-slot-unchecked-accessor
           make-class-cached-slot-unchecked-accessor)
-         (%#define-runtime
-          make-class-slot-unchecked-mutator
-          make-class-slot-unchecked-mutator)
          (%#define-runtime
           make-class-cached-slot-unchecked-mutator
           make-class-cached-slot-unchecked-mutator)
@@ -119,8 +115,6 @@ namespace: #f
          (%#define-runtime class-instance? class-instance?)
          (%#define-runtime make-object make-object)
          (%#define-runtime object-fill! object-fill!)
-         (%#define-runtime make-instance make-instance)
-         (%#define-runtime make-struct-instance make-struct-instance)
          (%#define-runtime make-class-instance make-class-instance)
          (%#define-runtime struct-instance-init! struct-instance-init!)
          (%#define-runtime __struct-instance-init! __struct-instance-init!)

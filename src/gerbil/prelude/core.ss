@@ -168,8 +168,6 @@ package: gerbil
     type-descriptor?
     type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
     type-final? type-struct? struct-type? class-type?
-    make-struct-type
-    make-struct-predicate
 
     make-struct-slot-accessor
     make-struct-slot-mutator
@@ -199,10 +197,9 @@ package: gerbil
     object? object-type
     struct-instance? class-instance?
     direct-instance?
-    make-object make-instance object-fill!
+    make-object object-fill!
     struct-copy
     struct->list class->list
-    make-struct-instance
     make-class-instance
     struct-instance-init!
     class-instance-init!
@@ -1713,15 +1710,6 @@ package: gerbil
                            (and (stx-getq struct: #'rest) #t))
                           ((values type-struct?)
                            (or struct? properties-struct?))
-                          (make-type
-                           (if type-struct? #'make-struct-type #'make-class-type))
-                          (make-instance
-                           ;; The main difference between defstruct and defclass is
-                           ;; the implicit constructor, decided *syntactically* between the two
-                           (if type-struct? #'make-struct-instance #'make-class-instance))
-                          (make-predicate
-                           ;; The predicate is determined semantically by whether it's a struct:
-                           (if type-struct? #'make-struct-predicate #'make-class-predicate))
                           (type-id
                            (or (stx-getq id: #'rest)
                                (make-class-type-id #'type-t)))
@@ -1749,9 +1737,9 @@ package: gerbil
                           (type-super
                            (cons #'list #'super))
                           (make-type-rtd
-                           #'(make-type 'type-id 'type-name
-                                        type-super '(slot ...)
-                                        type-properties 'type-constructor))
+                           #'(make-class-type 'type-id 'type-name
+                                              type-super '(slot ...)
+                                              type-properties 'type-constructor))
                           (def-type
                             (wrap
                              #'(def type-t
@@ -1762,7 +1750,6 @@ package: gerbil
                                                                mop-struct?
                                                                mop-final?)
                                    make-type-rtd))))
-                          #;(__ (displayln ["foo:" type-struct? properties-struct? (syntax->datum #'rest) (syntax->datum #'def-type)]))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
@@ -1770,12 +1757,12 @@ package: gerbil
                                #'(def make
                                    (begin-annotation (@mop.constructor mop-type-t)
                                      (lambda $args
-                                       (apply make-instance type-t $args)))))))
+                                       (apply make-class-instance type-t $args)))))))
                           (def-predicate
                             (wrap
                              #'(def instance?
                                  (begin-annotation (@mop.predicate mop-type-t)
-                                   (make-predicate type-t)))))
+                                   (make-class-predicate type-t)))))
 
                           (((def-getf def-setf) ...)
                            (stx-map
