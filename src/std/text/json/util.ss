@@ -88,7 +88,7 @@
     (or (and (symbol? key) key)
         (##find-interned-keyword key)
         (error "invalid json key for class" key klass)))
-  (apply make-class-instance klass (alist->plist (map (cut map/car find-key <>) (hash->list json)))))
+  (apply make-instance klass (alist->plist (map (cut map/car find-key <>) (hash->list json)))))
 
 (def (trivial-struct->json-object struct)
   (with ([strukt . fields] (struct->list struct))
