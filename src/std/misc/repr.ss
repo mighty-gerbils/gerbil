@@ -156,7 +156,7 @@
          (let (t (object-type x))
            (and (type-descriptor? t) (assgetq transparent: (type-descriptor-properties t)))))
     (display-separated
-     (if (struct-type? (object-type x))
+     (if (type-struct? (object-type x))
        (cdr (struct->list x))
        (alist->plist (sort (plist->alist (cdr (class->list x))) keyword<?)))
      port
