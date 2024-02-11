@@ -112,10 +112,8 @@ namespace: gxc
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
              (let (base-struct
-                   (find (lambda (klass-id)
-                           (!class-struct?
-                            (optimizer-resolve-class `(!class ,id) klass-id)))
-                         precedence-list))
+                   (and super-struct
+                        (optimizer-resolve-class `(!class ,id) super-struct)))
                (compute-class-fields `(!class ,id) base-struct precedence-list slots))))
        (set! (!type-id self) id)
        (set! (!class-super self) super)
