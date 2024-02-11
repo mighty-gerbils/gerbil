@@ -29,10 +29,11 @@ prelude: "../prelude/core"
 ;;; Test vectors
 (defsyntax (defhierarchy stx)
   (syntax-case stx ()
-    ((_ (my-objects my-supers) (object supers ...) ...)
-     (with-syntax (((struct? ...) (stx-map (lambda (o) (test-single-inheritance? (syntax-e o)))
-                                           #'(object ...)))
-                   ((descr ...) (stx-map (lambda (o) (stx-identifier stx o "::t")) #'(object ...))))
+    ((ctx (my-objects my-supers my-descriptors) (object supers ...) ...)
+     (with-syntax ((((struct? descr) ...)
+                    (stx-map (lambda (o) [(test-single-inheritance? (syntax-e o))
+                                     (stx-identifier #'ctx o "::t")])
+                             #'(object ...))))
        #'(begin
            (def my-objects '(object ...))
            (def my-supers '((object supers ...) ...))
@@ -41,7 +42,7 @@ prelude: "../prelude/core"
              transparent: #t) ...
            (def my-descriptors [descr ...]))))))
 
-(defhierarchy (my-objects my-supers)
+(defhierarchy (my-objects my-supers my-descriptors)
   (O) (A O) (B O) (C O) (D O) (E O)
   ;; Example from 2021 https://en.wikipedia.org/wiki/C3_linearization
   (K1 A B C) (K2 D B E) (K3 D A) (Z K1 K2 K3)
