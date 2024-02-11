@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1707659877)
+  (define gerbil/runtime/mop::timestamp 1707660400)
   (begin
     (define type-id
       (lambda (_klass84110_)

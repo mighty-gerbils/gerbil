@@ -423,7 +423,6 @@ namespace: gerbil/core
                     (symbol->keyword symbol->keyword)
                     (keyword->symbol keyword->symbol)
                     (c4-linearize c4-linearize)
-                    (c3-linearize c3-linearize)
                     (type-descriptor? type-descriptor?)
                     (type-id type-id)
                     (type-descriptor-precedence-all-slots

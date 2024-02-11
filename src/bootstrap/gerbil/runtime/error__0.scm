@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1707659877)
+  (define gerbil/runtime/error::timestamp 1707660400)
   (begin
     (define Exception::t
       (let ((__tmp94881 (list)))
@@ -527,34 +527,34 @@
             (##write-string __tmp94896 _port90159_)))))
     (define Error::display-exception::specialize
       (lambda (__t94857)
-        (let ((__continuation94858
+        (let ((__message94858
                (let ((__tmp94862
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t94857 'continuation))))
-                 (if __tmp94862
-                     __tmp94862
-                     (error '"Unknown slot" 'continuation))))
-              (__message94859
+                        (class-slot-offset __t94857 'message))))
+                 (if __tmp94862 __tmp94862 (error '"Unknown slot" 'message))))
+              (__continuation94859
                (let ((__tmp94863
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t94857 'message))))
-                 (if __tmp94863 __tmp94863 (error '"Unknown slot" 'message))))
-              (__irritants94860
+                        (class-slot-offset __t94857 'continuation))))
+                 (if __tmp94863
+                     __tmp94863
+                     (error '"Unknown slot" 'continuation))))
+              (__where94860
                (let ((__tmp94864
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t94857 'irritants))))
-                 (if __tmp94864
-                     __tmp94864
-                     (error '"Unknown slot" 'irritants))))
-              (__where94861
+                        (class-slot-offset __t94857 'where))))
+                 (if __tmp94864 __tmp94864 (error '"Unknown slot" 'where))))
+              (__irritants94861
                (let ((__tmp94865
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t94857 'where))))
-                 (if __tmp94865 __tmp94865 (error '"Unknown slot" 'where)))))
+                        (class-slot-offset __t94857 'irritants))))
+                 (if __tmp94865
+                     __tmp94865
+                     (error '"Unknown slot" 'irritants)))))
           (lambda (_self90158_ _port90159_)
             (let ((_tmp-port90161_ (open-output-string))
                   (_display-error-newline90162_
@@ -569,7 +569,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self90158_
-                                 __where94861
+                                 __where94860
                                  __t94857
                                  '#f))))
                          (if _$e90165_ (display _$e90165_) (display '"?")))
@@ -587,7 +587,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self90158_
-                                 __message94859
+                                 __message94858
                                  __t94857
                                  '#f))))
                          (declare (not safe))
@@ -597,7 +597,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self90158_
-                                 __irritants94860
+                                 __irritants94861
                                  __t94857
                                  '#f))))
                          (if (let ()
@@ -621,7 +621,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self90158_
-                                     __continuation94858
+                                     __continuation94859
                                      __t94857
                                      '#f))))
                              (if _cont9017190173_

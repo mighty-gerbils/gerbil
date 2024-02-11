@@ -2,9 +2,7 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
-(%#begin (%#export
-          (spec: 0 c4-linearize c4-linearize)
-          (spec: 0 c3-linearize c3-linearize))
+(%#begin (%#export (spec: 0 c4-linearize c4-linearize))
          (%#import :gerbil/runtime/util)
          (%#begin (%#define-runtime c4-linearize__% c4-linearize__%)
                   (%#define-runtime c4-linearize__@ c4-linearize__@)
