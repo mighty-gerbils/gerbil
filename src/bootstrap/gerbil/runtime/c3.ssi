@@ -8,19 +8,5 @@ namespace: #f
          (%#import :gerbil/runtime/util)
          (%#begin (%#define-runtime c4-linearize__% c4-linearize__%)
                   (%#define-runtime c4-linearize__@ c4-linearize__@)
-                  (%#define-runtime c4-linearize c4-linearize))
-         (%#begin (%#begin (%#define-runtime
-                            c3-linearize__%__%
-                            c3-linearize__%__%)
-                           (%#begin (%#define-runtime
-                                     c3-linearize__%__0
-                                     c3-linearize__%__0)
-                                    (%#define-runtime
-                                     c3-linearize__%__1
-                                     c3-linearize__%__1)
-                                    (%#define-runtime
-                                     c3-linearize__%
-                                     c3-linearize__%)))
-                  (%#define-runtime c3-linearize__@ c3-linearize__@)
-                  (%#define-runtime c3-linearize c3-linearize)))
+                  (%#define-runtime c4-linearize c4-linearize)))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/c3__0"))

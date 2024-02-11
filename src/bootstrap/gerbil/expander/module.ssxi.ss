@@ -238,8 +238,10 @@ package: gerbil/expander
            :init!
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type gx#export-expander? (@predicate gx#export-expander::t))
   (declare-type gx#make-export-expander (@constructor gx#export-expander::t))
   (declare-type
