@@ -200,7 +200,8 @@ package: gerbil
     make-object object-fill!
     struct-copy
     struct->list class->list
-    make-instance make-class-instance
+    make-class-instance
+    make-instance
     struct-instance-init!
     class-instance-init!
     slot-ref slot-set!

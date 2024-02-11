@@ -247,20 +247,6 @@ namespace: #f
     (let (all-slots (list->vector (reverse r-slots)))
       (values all-slots slot-table))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; bootstrasp compatibility shims
-;; TODO remove after (re)bootstrap
-(def (make-struct-type id name direct-supers direct-slots properties constructor)
-  (make-class-type id name (if direct-supers [direct-supers] []) direct-slots (cons '(struct: . #t) properties) constructor))
-
-(def (make-struct-predicate klass)
-  (make-class-predicate klass))
-
-(def (make-struct-instance klass . args)
-  (apply make-class-instance klass args))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
 (def (make-class-type id name direct-supers direct-slots properties constructor)
@@ -362,58 +348,15 @@ namespace: #f
 (def ((make-final-slot-mutator klass slot field) obj val)
   (##direct-structure-set! obj val field klass slot))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; compatibility shim for bootstrap
-;; TODO: remove after (re)bootstrap
-(def* make-struct-slot-accessor
-  ((klass slot field)
-   (lambda (obj)
-     (##structure-ref obj field klass slot)))
-  ((klass slot)
-   (let (field (class-slot-offset klass slot))
-     (lambda (obj)
-       (##structure-ref obj field klass slot)))))
+(def ((make-struct-slot-accessor klass slot field) obj)
+  (##structure-ref obj field klass slot))
+(def ((make-struct-slot-mutator klass slot field) obj val)
+  (##structure-set! obj val field klass slot))
 
-(def* make-struct-slot-mutator
-  ((klass slot field)
-   (lambda (obj val)
-     (##structure-set! obj val field klass slot)))
-  ((klass slot)
-   (let (field (class-slot-offset klass slot))
-     (lambda (obj)
-       (##structure-ref obj field klass slot)))))
-
-(def* make-struct-slot-unchecked-accessor
-  ((klass slot field)
-   (lambda (obj)
-     (##unchecked-structure-ref obj field klass slot)))
-  ((klass slot)
-   (let (field (class-slot-offset klass slot))
-     (lambda (obj)
-       (##unchecked-structure-ref obj field klass slot)))))
-
-(def* make-struct-slot-unchecked-mutator
-  ((klass slot field)
-   (lambda (obj val)
-     (##unchecked-structure-set! obj val field klass slot)))
-  ((klass slot)
-   (let (field (class-slot-offset klass slot))
-     (lambda (obj val)
-       (##unchecked-structure-set! obj val field klass slot)))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;; this is what we want
-;; (def ((make-struct-slot-accessor klass slot field) obj)
-;;   (##structure-ref obj field klass field))
-;; (def ((make-struct-slot-mutator klass slot field) obj val)
-;;   (##structure-set! obj val field klass field))
-
-;; (def ((make-struct-slot-unchecked-accessor klass slot field) obj)
-;;   (##unchecked-structure-ref obj field klass field))
-;; (def ((make-struct-slot-unchecked-mutator klass slot field) obj val)
-;;   (##unchecked-structure-set! obj val field klass field))
-;;
+(def ((make-struct-slot-unchecked-accessor klass slot field) obj)
+  (##unchecked-structure-ref obj field klass slot))
+(def ((make-struct-slot-unchecked-mutator klass slot field) obj val)
+  (##unchecked-structure-set! obj val field klass slot))
 
 (def ((make-struct-subclass-slot-accessor klass slot field) obj)
   (if (class-instance? klass obj)
@@ -456,12 +399,12 @@ namespace: #f
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (object-type obj) slot))
-      (##unchecked-structure-ref obj off klass #f))
+      (##unchecked-structure-ref obj off klass slot))
     (not-an-instance obj klass)))
 (def (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let (off (class-slot-offset (object-type obj) slot))
-      (##unchecked-structure-set! obj val off klass #f))
+      (##unchecked-structure-set! obj val off klass slot))
     (not-an-instance obj klass)))
 
 (def (unchecked-field-ref obj off)
@@ -533,11 +476,11 @@ namespace: #f
         (loop (##fx- i 1)))
       obj)))
 
-(def (make-instance klass)
+(def (make-new-instance klass)
   (make-object klass (##vector-length (type-descriptor-all-slots klass))))
 
-(def (make-class-instance klass . args)
-  (let (obj (make-instance klass))
+(def (make-instance klass . args)
+  (let (obj (make-new-instance klass))
     (cond
      ((type-descriptor-constructor klass)
       => (lambda (kons-id)
@@ -550,6 +493,8 @@ namespace: #f
       (error "arguments don't match object size"
         class: klass slots: (type-descriptor-slot-list klass)
         args: args)))))
+
+(def make-class-instance make-instance)
 
 (def (struct-instance-init! obj . args)
   (if (##fx< (length args) (##structure-length obj))

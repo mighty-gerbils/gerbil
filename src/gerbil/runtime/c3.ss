@@ -169,14 +169,3 @@ namespace: #f
                      (remove-next! next tails))))))))
   (def super-struct (match sit ([s . _] s) (else #f)))
   (values precedence-list super-struct))
-
-;; TODO: backward compatibility shim, to remove after bootstrap
-(def (c3-linearize rhead supers get-precedence-list (eq eq?) (get-name identity)
-                   struct: (struct? false))
-  (defvalues (precedence-list super-struct)
-    (c4-linearize rhead supers
-                  struct: struct?
-                  get-precedence-list: get-precedence-list
-                  eq: eq
-                  get-name: get-name))
-  precedence-list)
