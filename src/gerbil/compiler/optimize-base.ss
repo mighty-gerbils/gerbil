@@ -95,7 +95,7 @@ namespace: gxc
                          (else
                           (lp rest method)))))
                      (else method)))))
-            ((values precedence-list super-struct)
+            ((values precedence-list base-struct)
              ;; 3. compute super precedence list
              (c4-linearize [] super
                            get-precedence-list:
@@ -111,10 +111,7 @@ namespace: gxc
                            get-name: identity))
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
-             (let (base-struct
-                   (and super-struct
-                        (optimizer-resolve-class `(!class ,id) super-struct)))
-               (compute-class-fields `(!class ,id) base-struct precedence-list slots))))
+             (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
        (set! (!type-id self) id)
        (set! (!class-super self) super)
        (set! (!class-precedence-list self) precedence-list)
