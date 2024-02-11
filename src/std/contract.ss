@@ -152,7 +152,7 @@
                 body ...))))))
 
   (def (expand var Type body checked?)
-    (let* ((klass (syntax-local-value Type #f))
+    (let* ((klass (syntax-local-value Type false))
            (expr-body (expand-body klass var Type body)))
       (if checked?
         (with-syntax ((instance? (class-type-predicate klass))

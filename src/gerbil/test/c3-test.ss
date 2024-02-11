@@ -58,7 +58,7 @@ prelude: "../prelude/core"
   (GL O) (HG GL) (VG GL) (HVG HG VG) (VHG VG HG) #; (CG HVG VHG)
   ;; https://stackoverflow.com/questions/40478154/does-pythons-mro-c3-linearization-work-depth-first-empirically-it-does-not
   (HH) (GG HH) (II GG) (FF HH) (EE HH) (DD FF) (CC EE FF GG) (BB) (AA BB CC DD)
-  (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A))
+  (o O) (a o) (b a) (c b o) (d D c) (M A B b a) (N C c) (L M N) (k D L) (j E k A) (I N M))
 
 (def my-precedence-lists
   '((O) (A O) (B O) (C O) (D O) (E O)
@@ -71,7 +71,7 @@ prelude: "../prelude/core"
     (CC EE FF GG HH) (BB) (AA BB CC EE DD FF GG HH)
     (o O) (a o O) (b a o O) (c b a o O) (d D c b a o O) (M A B b a o O)
     (N C c b a o O) (L M A B N C c b a o O) (k D L M A B N C c b a o O)
-    (j E k D L M A B N C c b a o O)))
+    (j E k D L M A B N C c b a o O) (I N C M A B c b a o O)))
 
 (defrule (def-alist-getter getter alist table)
   (begin (def table (list->hash-table alist)) (def getter (cut hash-get table <>))))
@@ -147,7 +147,6 @@ prelude: "../prelude/core"
              => '((9 12 14 15) (6 4 2 a b c d e))))
     (test-case "c3 linearization"
       (check (map my-compute-precedence-list my-objects) => my-precedence-lists)
-      (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors) => my-precedence-lists)
       ;; check discrepancy with old MRO resolution algorithm
       (check (my-compute-precedence-list 'Z) =>  '(Z K1 K2 K3 D A B C E O))
       (check (old-linearize-supers 'Z) =>        '(Z K1 K2 K3 D B E A C O)) ; different: B A C bad!
@@ -163,14 +162,16 @@ prelude: "../prelude/core"
       (hash-put! my-supers-table 'CG '(HVG VHG))
       (check-exception (my-compute-precedence-list 'CG) true)
 
-      ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
-      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O)) ;; FIXED!
-      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O)) ;; same!
-
       ;; Slot computation order now follows the MRO!
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
       (check (type-descriptor-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))))
+      (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))
+    (test-case "class inheritance"
+      (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
+             => my-precedence-lists)
+      ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
+      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O)) ;; FIXED!
+      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O))))) ;; same!
 
 ;;(map ##trace [test-single-inheritance?])

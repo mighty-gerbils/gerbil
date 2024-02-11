@@ -156,9 +156,16 @@ namespace: #f
                     3 ##type-type type-descriptor-seal!))
 
 ;;; struct types
+;; TODO: remove after bootstrap?
 ;; : Symbol Symbol StructTypeDescriptor (List Symbol) Alist Constructor -> StructTypeDescriptor
 (def (make-struct-type id name super direct-slots properties constructor)
-  (make-class-type id name (if super [super] []) direct-slots
+  (make-class-type id
+                   name
+                   (cond ((list? super) super)
+                         ((type-descriptor? super) [super])
+                         ((not super) [])
+                         (else (error "Invalid super for struct" super)))
+                   direct-slots
                    (if (assgetq struct: properties)
                      properties
                      [[struct: . #t] . properties])
@@ -170,59 +177,22 @@ namespace: #f
       (cut ##structure-direct-instance-of? <> tid)
       (cut ##structure-instance-of? <> tid))))
 
-(def (make-struct-slot-accessor klass slot)
-  (cond
-   ((class-slot-offset klass slot)
-    => (lambda (off)
-         (if (type-final? klass)
-           (cut ##direct-structure-ref <> off klass #f)
-           (cut ##structure-ref <> off klass #f))))
-   (else
-    (error "unknown slot" class: klass slot: slot))))
-
-(def (make-struct-slot-mutator klass slot)
-  (cond
-   ((class-slot-offset klass slot)
-    => (lambda (off)
-         (if (type-final? klass)
-           (cut ##direct-structure-set! <> <> off klass #f)
-           (cut ##structure-set! <> <> off klass #f))))
-   (else
-    (error "unknown slot" class: klass slot: slot))))
-
-(def (make-struct-slot-unchecked-accessor klass slot)
-  (cond
-   ((class-slot-offset klass slot)
-    => (lambda (off)
-         (cut ##unchecked-structure-ref <> off klass #f)))
-   (else
-    (error "unknown slot" class: klass slot: slot))))
-
-(def (make-struct-slot-unchecked-mutator klass slot)
-  (cond
-   ((class-slot-offset klass slot)
-    => (lambda (off)
-         (lambda (obj val)
-           (##unchecked-structure-set! obj val off klass #f))))
-   (else
-    (error "unknown slot" class: klass slot: slot))))
-
-(def ((make-final-field-accessor klass slot field) obj)
+(def ((make-final-slot-accessor klass slot field) obj)
   (##direct-structure-ref obj field klass slot))
 
-(def ((make-struct-field-accessor klass slot field) obj)
-  (##structure-ref obj field klass slot))
-
-(def ((make-final-field-mutator klass slot field) obj val)
+(def ((make-final-slot-mutator klass slot field) obj val)
   (##direct-structure-set! obj val field klass slot))
 
-(def ((make-struct-field-mutator klass slot field) obj val)
+(def ((make-struct-slot-accessor klass slot field) obj)
+  (##structure-ref obj field klass slot))
+
+(def ((make-struct-slot-mutator klass slot field) obj val)
   (##structure-set! obj val field klass slot))
 
-(def ((make-struct-field-unchecked-accessor klass slot field) obj)
+(def ((make-struct-slot-unchecked-accessor klass slot field) obj)
   (##unchecked-structure-ref obj field klass slot))
 
-(def ((make-struct-field-unchecked-mutator klass slot field) obj val)
+(def ((make-struct-slot-unchecked-mutator klass slot field) obj val)
   (##unchecked-structure-set! obj val field klass slot))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
@@ -353,7 +323,8 @@ namespace: #f
 
 (def (make-class-predicate klass)
   (if (type-final? klass)
-    (cut direct-instance? klass <>)
+    (let (tid (##type-id klass))
+      (cut ##structure-direct-instance-of? <> tid))
     (cut class-instance? klass <>)))
 
 ;; Given a klass descriptor, a slot name (symbol), and three accessor-makers
@@ -380,18 +351,18 @@ namespace: #f
 
 (def (make-class-slot-accessor klass slot)
   (if-class-slot-field klass slot
-     make-final-field-accessor
-     make-struct-field-accessor
-     make-struct-subclass-field-accessor
+     make-final-slot-accessor
+     make-struct-slot-accessor
+     make-struct-subclass-slot-accessor
      make-class-cached-slot-accessor))
 
 (def (not-an-instance object class (slot #f))
   (apply error "not an instance" object: object class: class
          (if slot [slot: slot] [])))
 
-(def ((make-struct-subclass-field-accessor klass slot field) obj)
+(def ((make-struct-subclass-slot-accessor klass slot field) obj)
   (if (class-instance? klass obj)
-    (unchecked-field-ref obj field)
+    (unchecked-slot-ref obj field)
     (not-an-instance obj klass slot)))
 
 (def ((make-class-cached-slot-accessor klass slot field) obj)
@@ -405,12 +376,12 @@ namespace: #f
 
 (def (make-class-slot-mutator klass slot)
   (if-class-slot-field klass slot
-     make-final-field-mutator
-     make-struct-field-mutator
-     make-struct-subclass-field-mutator
+     make-final-slot-mutator
+     make-struct-slot-mutator
+     make-struct-subclass-slot-mutator
      make-class-cached-slot-mutator))
 
-(def ((make-struct-subclass-field-mutator klass slot field) obj val)
+(def ((make-struct-subclass-slot-mutator klass slot field) obj val)
   (if (class-instance? klass obj)
     (unchecked-field-set! obj field val)
     (not-an-instance obj klass slot)))
@@ -426,9 +397,9 @@ namespace: #f
 
 (def (make-class-slot-unchecked-accessor klass slot)
   (if-class-slot-field klass slot
-     make-struct-field-unchecked-accessor
-     make-struct-field-unchecked-accessor
-     make-struct-field-unchecked-accessor
+     make-struct-slot-unchecked-accessor
+     make-struct-slot-unchecked-accessor
+     make-struct-slot-unchecked-accessor
      make-class-cached-slot-unchecked-accessor))
 
 (def ((make-class-cached-slot-unchecked-accessor klass slot field) obj)
@@ -438,9 +409,9 @@ namespace: #f
 
 (def (make-class-slot-unchecked-mutator klass slot)
   (if-class-slot-field klass slot
-     make-struct-field-unchecked-mutator
-     make-struct-field-unchecked-mutator
-     make-struct-field-unchecked-mutator
+     make-struct-slot-unchecked-mutator
+     make-struct-slot-unchecked-mutator
+     make-struct-slot-unchecked-mutator
      make-class-cached-slot-unchecked-mutator))
 
 (def ((make-class-cached-slot-unchecked-mutator klass slot field) obj val)

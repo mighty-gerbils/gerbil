@@ -664,13 +664,12 @@
                           (iota (length #'(method-name ...)) 2)))
                     (defklass
                       #'(def klass
-                          (make-struct-type 'klass-type-id          ; type id
-                                            'name                   ; name
-                                            interface-instance::t   ; super
-                                            '(method-name ...)      ; direct slots
-                                            '((final: . #t))        ; plist
-                                            #f                      ; constructor (none)
-                                            )))
+                          (make-class-type 'klass-type-id          ; type id
+                                           'name                   ; name
+                                           [interface-instance::t] ; super
+                                           '(method-name ...)      ; direct slots
+                                           '((final: . #t))        ; plist
+                                           #f)))                   ; constructor (none)
                     (defdescriptor
                       #'(def descriptor
                           (begin-annotation (@interface klass-quoted (method-name ...))

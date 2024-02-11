@@ -1687,16 +1687,13 @@ package: gerbil
           (syntax-case slot-spec ()
             ((slot getf setf) #'slot)))
 
-       (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: properties: constructor: final: mixin:)))
+        (def (class-opt? key)
+          (memq (stx-e key) '(struct: slots: id: name: properties: constructor: final: mixin:)))
 
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
            (and (identifier? #'type-t)
-                (if struct?
-                  (or (identifier? #'super)
-                      (stx-false? #'super))
-                  (identifier-list? #'super))
+                (identifier-list? #'super)
                 (or (identifier? #'make)
                     (stx-false? #'make))
                 (identifier? #'instance?)
@@ -1712,26 +1709,17 @@ package: gerbil
                            (append (syntax->list slots) (syntax->list mixin-slots)))
                           ((slot ...)
                            (stx-map slot-name slots))
-                          ((make-type
-                            make-instance
-                            make-predicate
-                            make-getf make-setf
-                            make-ugetf make-usetf)
-                           (if struct?
-                             #'(make-struct-type
-                                make-struct-instance
-                                make-struct-predicate
-                                make-struct-slot-accessor
-                                make-struct-slot-mutator
-                                make-struct-slot-unchecked-accessor
-                                make-struct-slot-unchecked-mutator)
-                             #'(make-class-type
-                                make-class-instance
-                                make-class-predicate
-                                make-class-slot-accessor
-                                make-class-slot-mutator
-                                make-class-slot-unchecked-accessor
-                                make-class-slot-unchecked-mutator)))
+                          ((values properties-struct?)
+                           (and (stx-e (stx-getq struct: #'rest)) #t))
+                          ((values type-struct?)
+                           (or struct? properties-struct?))
+                          (make-instance
+                           ;; The main difference between defstruct and defclass is
+                           ;; the implicit constructor, decided *syntactically* between the two
+                           (if type-struct? #'make-struct-instance #'make-class-instance))
+                          (make-predicate
+                           ;; The predicate is determined semantically by whether it's a struct:
+                           (if type-struct? #'make-struct-predicate #'make-class-predicate))
                           (type-id
                            (or (stx-getq id: #'rest)
                                (make-class-type-id #'type-t)))
@@ -1742,12 +1730,8 @@ package: gerbil
                            (stx-getq constructor: #'rest))
                           (mop-type-t (core-quote-syntax #'type-t))
                           (mop-super
-                           (if struct?
-                             (if (stx-e #'super)
-                               [(core-quote-syntax #'super)]
-                               [])
-                             (stx-map core-quote-syntax #'super)))
-                          (mop-struct? struct?)
+                           (stx-map core-quote-syntax #'super))
+                          (mop-struct? type-struct?)
                           (mop-final? (stx-getq final: #'rest))
                           (type-properties
                            (or (stx-getq properties: #'rest)
@@ -1757,17 +1741,15 @@ package: gerbil
                              #'[[final: . #t] :: type-properties]
                              #'type-properties))
                           (type-properties
-                           (if struct?
+                           (if (and struct? (not properties-struct?))
                              #'[[struct: . #t] :: type-properties]
                              #'type-properties))
                           (type-super
-                           (if struct?
-                             #'super
-                             (cons #'list #'super)))
+                           (cons #'list #'super))
                           (make-type-rtd
-                           #'(make-type 'type-id 'type-name
-                                        type-super '(slot ...)
-                                        type-properties 'type-constructor))
+                           #'(make-class-type 'type-id 'type-name
+                                              type-super '(slot ...)
+                                              type-properties 'type-constructor))
                           (def-type
                             (wrap
                              #'(def type-t
@@ -1775,9 +1757,11 @@ package: gerbil
                                                                mop-super
                                                                (slot ...)
                                                                type-constructor
-                                                               mop-struct?
+                                                               type-struct?
                                                                mop-final?)
                                    make-type-rtd))))
+                          (__
+                           (displayln ["foo:" type-struct? properties-struct? (syntax->datum #'rest) (syntax->datum #'def-type)]))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
@@ -1791,6 +1775,7 @@ package: gerbil
                              #'(def instance?
                                  (begin-annotation (@mop.predicate mop-type-t)
                                    (make-predicate type-t)))))
+
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
@@ -1800,12 +1785,12 @@ package: gerbil
                                    #'(def getf
                                        (begin-annotation (@mop.accessor mop-type-t
                                                                         slot #t)
-                                         (make-getf type-t 'slot))))
+                                         (make-class-slot-accessor type-t 'slot))))
                                   (wrap
                                    #'(def setf
                                        (begin-annotation (@mop.mutator mop-type-t
                                                                        slot #t)
-                                         (make-setf type-t 'slot))))])))
+                                         (make-class-slot-mutator type-t 'slot))))])))
                             accessible-slots))
                           (((def-ugetf def-usetf) ...)
                            (stx-map
@@ -1818,12 +1803,12 @@ package: gerbil
                                      #'(def ugetf
                                          (begin-annotation (@mop.accessor mop-type-t
                                                                           slot #f)
-                                           (make-ugetf type-t 'slot))))
+                                           (make-class-slot-unchecked-accessor type-t 'slot))))
                                     (wrap
                                      #'(def usetf
                                          (begin-annotation (@mop.mutator mop-type-t
                                                                          slot #f)
-                                           (make-usetf type-t 'slot))))]))))
+                                           (make-class-slot-unchecked-mutator type-t 'slot))))]))))
                             accessible-slots)))
              (wrap
               #'(begin def-type
@@ -1851,7 +1836,7 @@ package: gerbil
       name: class-type-info
       slots:
       ((id ;; Symbol
-        ;; thre class's type id
+        ;; the class's type id
         class-type-id class-type-id-set!)
        (name ;; Symbol
         ;; the class's name
@@ -2005,7 +1990,7 @@ package: gerbil
                 '(id: struct: name: constructor: transparent: final: print: equal:)))
         (stx-plist? stx body-opt?))
 
-      (def (generate-typedef stx id super-ref slots body struct?)
+      (def (generate-defclass stx id super-ref slots body)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
 
@@ -2047,13 +2032,9 @@ package: gerbil
         (with-syntax* (((values name)
                         (symbol->string (stx-e id)))
                        ((values super)
-                        (if struct?
-                          (and super-ref (syntax-local-value super-ref))
-                          (map syntax-local-value super-ref)))
-                       (deftype-type
-                         (if struct?
-                           #'defstruct-type
-                           #'defclass-type))
+                        (map syntax-local-value super-ref))
+                       ((values struct?)
+                        (stx-e (stx-getq struct: body)))
                        (type id)
                        (type::t   (make-id name "::t"))
                        (make-type (make-id "make-" name))
@@ -2139,7 +2120,7 @@ package: gerbil
                          type-mixin-slots ...])
                        (typedef
                         (wrap
-                         #'(deftype-type type::t type-super
+                         #'(defclass-type type::t type-super
                              make-type type?
                              type-body ...)))
                        (meta-type-id
@@ -2200,22 +2181,8 @@ package: gerbil
           (wrap
            #'(begin typedef metadef)))))
 
-    (defsyntax (defstruct stx)
-      (def (generate hd fields body)
-        (syntax-case hd ()
-          ((id super)
-           (and (identifier? #'id)
-                (syntax-local-class-type-info? #'super class-type-struct?))
-           (generate-typedef stx #'id #'super fields body #t))
-          (_ (if (identifier? hd)
-               (generate-typedef stx hd #f fields body #t)
-               (raise-syntax-error #f "bad syntax; struct name not an identifier" stx hd)))))
-
-      (syntax-case stx ()
-        ((_ hd fields . rest)
-         (and (identifier-list? #'fields)
-              (typedef-body? #'rest))
-         (generate #'hd #'fields #'rest))))
+    (defrules defstruct ()
+      ((_ hd slots . rest) (defclass hd slots struct: #t . rest)))
 
     (defalias define-struct defstruct)
 
@@ -2225,9 +2192,9 @@ package: gerbil
           ((id . super)
            (and (stx-list? #'super)
                 (stx-andmap syntax-local-class-type-info? #'super))
-           (generate-typedef stx #'id (syntax->list #'super) slots body #f))
+           (generate-defclass stx #'id (syntax->list #'super) slots body))
           (_ (if (identifier? hd)
-               (generate-typedef stx hd [] slots body #f)
+               (generate-defclass stx hd [] slots body)
                (raise-syntax-error #f "bad syntax; class name should be an identifier" stx hd)))))
 
       (syntax-case stx ()
