@@ -200,7 +200,7 @@ package: gerbil
     make-object object-fill!
     struct-copy
     struct->list class->list
-    make-class-instance
+    make-new-instance
     make-instance
     struct-instance-init!
     class-instance-init!
@@ -1759,7 +1759,7 @@ package: gerbil
                                #'(def make
                                    (begin-annotation (@mop.constructor mop-type-t)
                                      (lambda $args
-                                       (apply make-class-instance type-t $args)))))))
+                                       (apply make-instance type-t $args)))))))
                           (def-predicate
                             (wrap
                              #'(def instance?
