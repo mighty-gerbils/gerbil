@@ -46,14 +46,14 @@ namespace: #f
 ;; Returns the linearized precedence list, and the most specific struct superclass if any
 ;; : (List X) (List X) \
 ;;  get-precedence-list: (X -> (NonEmptyList X)) \
-;;  single-inheritance?: (X -> Bool) \
+;;  struct: (X -> Bool) \
 ;;  eqpred: ?(X X -> Bool) \
 ;;  get-name: ?(X -> Y) \
 ;; -> (List X) (OrFalse X)
 (def (c4-linearize rhead supers
                    get-precedence-list: get-precedence-list
-                   single-inheritance?: single-inheritance?
-                   eqpred: (eqpred eq?)
+                   struct: struct?
+                   eq: (eq eq?)
                    get-name: (get-name identity))
   (def pls (map get-precedence-list supers)) ;; (List (List X)) ;; precedence lists to merge
   (def sit []) ;; (List X) ;; single-inheritance tail
@@ -90,7 +90,7 @@ namespace: #f
          (else (loop (cdr t1) (cdr t2))))))))
   (def rpls
     (map (lambda (pl)
-           (let-values (((tl rh) (append-reverse-until single-inheritance? pl [])))
+           (let-values (((tl rh) (append-reverse-until struct? pl [])))
              (merge-sit! tl)
              rh))
          pls))
@@ -106,7 +106,7 @@ namespace: #f
       (match pl-rhead
         ([] pl-tail) ;; done processing -- superclasses not in the sit, most- to least- specific
         ([c . plrh]
-         (if (member c sit-tail eqpred) ;; caught a superclass out of order with the sit
+         (if (member c sit-tail eq) ;; caught a superclass out of order with the sit
            (err precedence-list-head: (get-names (reverse pl-rhead))
                 precedence-list-tail: (get-names pl-tail)
                 single-inheritance-head: (get-names (reverse sit-rhead))
@@ -114,7 +114,7 @@ namespace: #f
                 super-out-of-order-vs-single-inheritance-tail: (get-name c))
            (let-values (((sit-rh2 sit-tl2)
                          (append-reverse-until
-                          (cut eqpred c <>) sit-rhead sit-tail)))
+                          (cut eq c <>) sit-rhead sit-tail)))
              (if (null? sit-rh2)
                (u plrh (cons c pl-tail) [] sit-tl2)
                (u plrh pl-tail (cdr sit-rh2) sit-tl2))))))))
@@ -132,7 +132,7 @@ namespace: #f
   ;; : (NonEmptyList (NonEmptyList X)) -> X
   (def (c3-select-next tails)
     (let (candidate? ;; : X -> Bool
-          (lambda (c) (andmap (lambda (tail) (not (member c (cdr tail) eqpred))) tails)))
+          (lambda (c) (andmap (lambda (tail) (not (member c (cdr tail) eq))) tails)))
       (let loop ((ts tails))
         (match ts
           ([[c . _] . rts]
@@ -149,7 +149,7 @@ namespace: #f
       (match t
         ([] tails)
         ([[head . tail] . more]
-         (when (eqpred head next)
+         (when (eq head next)
            (set-car! t tail))
          (loop more)))))
 
@@ -170,12 +170,12 @@ namespace: #f
   (values precedence-list super-struct))
 
 ;; TODO: backward compatibility shim, to remove after bootstrap
-(def (c3-linearize rhead supers get-precedence-list (eqpred eq?) (get-name identity)
-                   single-inheritance?: (single-inheritance? false))
+(def (c3-linearize rhead supers get-precedence-list (eq eq?) (get-name identity)
+                   struct: (struct? false))
   (defvalues (precedence-list super-struct)
     (c4-linearize rhead supers
-                  single-inheritance?: single-inheritance?
+                  struct: struct?
                   get-precedence-list: get-precedence-list
-                  eqpred: eqpred
+                  eq: eq
                   get-name: get-name))
   precedence-list)

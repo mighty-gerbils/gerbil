@@ -49,7 +49,7 @@ package: gerbil/runtime
   (declare-type __raise-syntax-error (@lambda (3) #f))
   (declare-type
    AST::t
-   (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f))
+   (@class gerbil#AST::t () () (e source) (e source) #f #f #f #f))
   (declare-type AST? (@predicate AST::t))
   (declare-type make-AST (@constructor AST::t))
   (declare-type AST-e (@accessor AST::t e #t))

@@ -21,7 +21,7 @@ prelude: "../prelude/core"
 (module <tsi>
   (export #t)
   (import (only-in :std/text/char-set char-ascii-lowercase?))
-  (def (test-single-inheritance? sym)
+  (def (test-struct? sym)
     (char-ascii-lowercase? (string-ref (symbol->string sym) 0))))
 
 (import <tsi> (phi: +1 <tsi>))
@@ -31,7 +31,7 @@ prelude: "../prelude/core"
   (syntax-case stx ()
     ((ctx (my-objects my-supers my-descriptors) (object supers ...) ...)
      (with-syntax ((((struct? descr) ...)
-                    (stx-map (lambda (o) [(test-single-inheritance? (syntax-e o))
+                    (stx-map (lambda (o) [(test-struct? (syntax-e o))
                                      (stx-identifier #'ctx o "::t")])
                              #'(object ...))))
        #'(begin
@@ -86,8 +86,8 @@ prelude: "../prelude/core"
    (cut first-value
         (c4-linearize [x] (my-get-supers x)
                       get-precedence-list: my-compute-precedence-list
-                      single-inheritance?: test-single-inheritance?
-                      eqpred: eq?
+                      struct: test-struct?
+                      eq: eq?
                       get-name: identity))))
 
 ;;; Previous implementation:
@@ -173,5 +173,3 @@ prelude: "../prelude/core"
       ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
       (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O)) ;; FIXED!
       (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O))))) ;; same!
-
-;;(map ##trace [test-single-inheritance?])

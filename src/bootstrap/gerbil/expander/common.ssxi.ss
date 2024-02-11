@@ -4,7 +4,7 @@ package: gerbil/expander
 (begin
   (declare-type
    gx#AST::t
-   (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f))
+   (@class gerbil#AST::t () () (e source) (e source) #f #f #f #f))
   (declare-type gx#AST? (@predicate gx#AST::t))
   (declare-type gx#make-AST (@constructor gx#AST::t))
   (declare-type gx#AST-e (@accessor gx#AST::t e #t))

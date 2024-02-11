@@ -39,6 +39,8 @@ namespace: #f
          (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
          (%#define-runtime make-struct-type make-struct-type)
          (%#define-runtime make-struct-predicate make-struct-predicate)
+         (%#define-runtime make-final-slot-accessor make-final-slot-accessor)
+         (%#define-runtime make-final-slot-mutator make-final-slot-mutator)
          (%#define-runtime make-struct-slot-accessor make-struct-slot-accessor)
          (%#define-runtime make-struct-slot-mutator make-struct-slot-mutator)
          (%#define-runtime
@@ -47,18 +49,6 @@ namespace: #f
          (%#define-runtime
           make-struct-slot-unchecked-mutator
           make-struct-slot-unchecked-mutator)
-         (%#define-runtime make-final-field-accessor make-final-field-accessor)
-         (%#define-runtime
-          make-struct-field-accessor
-          make-struct-field-accessor)
-         (%#define-runtime make-final-field-mutator make-final-field-mutator)
-         (%#define-runtime make-struct-field-mutator make-struct-field-mutator)
-         (%#define-runtime
-          make-struct-field-unchecked-accessor
-          make-struct-field-unchecked-accessor)
-         (%#define-runtime
-          make-struct-field-unchecked-mutator
-          make-struct-field-unchecked-mutator)
          (%#define-runtime substruct? substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)
@@ -79,15 +69,15 @@ namespace: #f
                             not-an-instance__0)
                            (%#define-runtime not-an-instance not-an-instance)))
          (%#define-runtime
-          make-struct-subclass-field-accessor
-          make-struct-subclass-field-accessor)
+          make-struct-subclass-slot-accessor
+          make-struct-subclass-slot-accessor)
          (%#define-runtime
           make-class-cached-slot-accessor
           make-class-cached-slot-accessor)
          (%#define-runtime make-class-slot-mutator make-class-slot-mutator)
          (%#define-runtime
-          make-struct-subclass-field-mutator
-          make-struct-subclass-field-mutator)
+          make-struct-subclass-slot-mutator
+          make-struct-subclass-slot-mutator)
          (%#define-runtime
           make-class-cached-slot-mutator
           make-class-cached-slot-mutator)

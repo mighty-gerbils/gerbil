@@ -76,24 +76,9 @@ namespace: gxc
           (lp rest))
          (else (void))))
 
-     ;; 2. check struct constraint
-     ;; TODO: relax this when we allow structs to extend classes
-     ;;       add check fof incompatible mixins in the general class case
-     (when  struct?
-       (match super
-         ([] (void))
-         ([super-id]
-          (let (klass (optimizer-resolve-class `(!class ,id) super-id))
-            (unless (!class-struct? klass)
-              (raise-compile-error "bad class; struct extending non struct"
-                                   `(!class ,id) super-id))))
-         (else
-          (raise-compile-error "bad class; struct can only extend a single struct"
-                               `(!class ,id) super))))
-
      (let* ((ctor-method
              (or ctor-method
-                 ;; 3. check/infer from super constructor method name
+                 ;; 2. check/infer from super constructor method name
                  (let lp ((rest super) (method #f))
                    (match rest
                      ([super-id . rest]
@@ -111,21 +96,21 @@ namespace: gxc
                           (lp rest method)))))
                      (else method)))))
             ((values precedence-list super-struct)
-             ;; 4. compute super precedence list
+             ;; 3. compute super precedence list
              (c4-linearize [] super
                            get-precedence-list:
                            (lambda (klass-id)
                              (cons klass-id
                                    (!class-precedence-list
                                     (optimizer-resolve-class `(!class ,id) klass-id))))
-                           single-inheritance?:
+                           struct:
                            (lambda (klass-id)
                              (!class-struct?
                               (optimizer-resolve-class `(!class ,id) klass-id)))
-                           eqpred: eq?
+                           eq: eq?
                            get-name: identity))
             (fields
-             ;; 5. compute slot->field mapping for direct instances/structs
+             ;; 4. compute slot->field mapping for direct instances/structs
              (let (base-struct
                    (find (lambda (klass-id)
                            (!class-struct?

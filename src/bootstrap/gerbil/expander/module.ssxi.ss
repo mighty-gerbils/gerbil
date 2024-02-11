@@ -10,7 +10,7 @@ package: gerbil/expander
            (source name phi weak?)
            (source name phi weak?)
            #f
-           #t
+           #f
            #t
            #f))
   (declare-type gx#module-import? (@predicate gx#module-import::t))
@@ -63,7 +63,7 @@ package: gerbil/expander
            (context key phi name weak?)
            (context key phi name weak?)
            #f
-           #t
+           #f
            #t
            #f))
   (declare-type gx#module-export? (@predicate gx#module-export::t))
@@ -124,7 +124,7 @@ package: gerbil/expander
            (source phi imports)
            (source phi imports)
            #f
-           #t
+           #f
            #t
            #f))
   (declare-type gx#import-set? (@predicate gx#import-set::t))
@@ -157,7 +157,7 @@ package: gerbil/expander
            (source phi exports)
            (source phi exports)
            #f
-           #t
+           #f
            #t
            #f))
   (declare-type gx#export-set? (@predicate gx#export-set::t))
@@ -192,8 +192,10 @@ package: gerbil/expander
            :init!
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type gx#import-expander? (@predicate gx#import-expander::t))
   (declare-type gx#make-import-expander (@constructor gx#import-expander::t))
   (declare-type
@@ -238,8 +240,10 @@ package: gerbil/expander
            :init!
            #f
            #f
-           ((apply-export-expander . gx#export-expander::apply-export-expander)
-            (:init! . gx#export-expander:::init!))))
+           ((:init! . gx#export-expander:::init!)
+            (apply-export-expander
+             .
+             gx#export-expander::apply-export-expander))))
   (declare-type gx#export-expander? (@predicate gx#export-expander::t))
   (declare-type gx#make-export-expander (@constructor gx#export-expander::t))
   (declare-type

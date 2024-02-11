@@ -10,7 +10,7 @@ package: gerbil/runtime
            (t ns super table)
            (t ns super table)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __context? (@predicate __context::t))
@@ -33,7 +33,7 @@ package: gerbil/runtime
   (declare-type &__context-table-set! (@mutator __context::t table #f))
   (declare-type
    __runtime::t
-   (@class gerbil/runtime/eval#__runtime::t () () (id) (id) #f #t #f #f))
+   (@class gerbil/runtime/eval#__runtime::t () () (id) (id) #f #f #f #f))
   (declare-type __runtime? (@predicate __runtime::t))
   (declare-type make-__runtime (@constructor __runtime::t))
   (declare-type __runtime-id (@accessor __runtime::t id #t))
@@ -42,7 +42,7 @@ package: gerbil/runtime
   (declare-type &__runtime-id-set! (@mutator __runtime::t id #f))
   (declare-type
    __syntax::t
-   (@class gerbil/runtime/eval#__syntax::t () () (e id) (e id) #f #t #f #f))
+   (@class gerbil/runtime/eval#__syntax::t () () (e id) (e id) #f #f #f #f))
   (declare-type __syntax? (@predicate __syntax::t))
   (declare-type make-__syntax (@constructor __syntax::t))
   (declare-type __syntax-e (@accessor __syntax::t e #t))
@@ -61,7 +61,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __macro? (@predicate __macro::t))
@@ -82,7 +82,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __special-form? (@predicate __special-form::t))
@@ -103,7 +103,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __core-form? (@predicate __core-form::t))
@@ -124,7 +124,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __core-expression? (@predicate __core-expression::t))
@@ -149,7 +149,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __core-special-form? (@predicate __core-special-form::t))
@@ -182,7 +182,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __struct-info? (@predicate __struct-info::t))
@@ -203,7 +203,7 @@ package: gerbil/runtime
            ()
            (e id)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __feature? (@predicate __feature::t))
@@ -224,7 +224,7 @@ package: gerbil/runtime
            (id path import export)
            (t ns super table id path import export)
            #f
-           #t
+           #f
            #f
            #f))
   (declare-type __module? (@predicate __module::t))

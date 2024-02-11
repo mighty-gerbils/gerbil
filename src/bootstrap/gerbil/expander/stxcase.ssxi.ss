@@ -10,7 +10,7 @@ package: gerbil/expander
            (id depth)
            (e id depth)
            #f
-           #t
+           #f
            #f
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
   (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))

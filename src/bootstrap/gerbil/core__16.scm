@@ -1,43 +1,43 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (define |gerbil/core$<special>[:0:]#eval-when-compile|
-  (lambda (_stx37326_)
-    (let* ((_g3732937343_
-            (lambda (_g3733037339_)
+  (lambda (_stx37133_)
+    (let* ((_g3713637150_
+            (lambda (_g3713737146_)
               (gx#raise-syntax-error
                '#f
                '"Bad syntax; invalid match target"
-               _g3733037339_)))
-           (_g3732837385_
-            (lambda (_g3733037347_)
-              (if (gx#stx-pair? _g3733037347_)
-                  (let ((_e3733437350_ (gx#syntax-e _g3733037347_)))
-                    (let ((_hd3733337354_
-                           (let () (declare (not safe)) (##car _e3733437350_)))
-                          (_tl3733237357_
+               _g3713737146_)))
+           (_g3713537192_
+            (lambda (_g3713737154_)
+              (if (gx#stx-pair? _g3713737154_)
+                  (let ((_e3714137157_ (gx#syntax-e _g3713737154_)))
+                    (let ((_hd3714037161_
+                           (let () (declare (not safe)) (##car _e3714137157_)))
+                          (_tl3713937164_
                            (let ()
                              (declare (not safe))
-                             (##cdr _e3733437350_))))
-                      (if (gx#stx-pair? _tl3733237357_)
-                          (let ((_e3733737360_ (gx#syntax-e _tl3733237357_)))
-                            (let ((_hd3733637364_
+                             (##cdr _e3714137157_))))
+                      (if (gx#stx-pair? _tl3713937164_)
+                          (let ((_e3714437167_ (gx#syntax-e _tl3713937164_)))
+                            (let ((_hd3714337171_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _e3733737360_)))
-                                  (_tl3733537367_
+                                     (##car _e3714437167_)))
+                                  (_tl3714237174_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _e3733737360_))))
-                              (if (gx#stx-null? _tl3733537367_)
-                                  ((lambda (_L37370_)
+                                     (##cdr _e3714437167_))))
+                              (if (gx#stx-null? _tl3714237174_)
+                                  ((lambda (_L37177_)
                                      (if (gx#current-expander-compiling?)
-                                         (gx#eval-syntax _L37370_)
+                                         (gx#eval-syntax _L37177_)
                                          '#!void)
-                                     (let ((__tmp51207
+                                     (let ((__tmp50966
                                             (gx#datum->syntax '#f 'void)))
                                        (declare (not safe))
-                                       (cons __tmp51207 '())))
-                                   _hd3733637364_)
-                                  (_g3732937343_ _g3733037347_))))
-                          (_g3732937343_ _g3733037347_))))
-                  (_g3732937343_ _g3733037347_)))))
-      (_g3732837385_ _stx37326_))))
+                                       (cons __tmp50966 '())))
+                                   _hd3714337171_)
+                                  (_g3713637150_ _g3713737154_))))
+                          (_g3713637150_ _g3713737154_))))
+                  (_g3713637150_ _g3713737154_)))))
+      (_g3713537192_ _stx37133_))))

@@ -317,8 +317,8 @@ namespace: #f
 (def (compute-precedence-list direct-supers)
   (c4-linearize [] direct-supers
                 get-precedence-list: class-precedence-list
-                single-inheritance?: type-struct?
-                eqpred: eq?
+                struct: type-struct?
+                eq: eq?
                 get-name: ##type-name))
 
 (def (make-class-predicate klass)

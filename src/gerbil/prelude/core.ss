@@ -1710,9 +1710,11 @@ package: gerbil
                           ((slot ...)
                            (stx-map slot-name slots))
                           ((values properties-struct?)
-                           (and (stx-e (stx-getq struct: #'rest)) #t))
+                           (and (stx-getq struct: #'rest) #t))
                           ((values type-struct?)
                            (or struct? properties-struct?))
+                          (make-type
+                           (if type-struct? #'make-struct-type #'make-class-type))
                           (make-instance
                            ;; The main difference between defstruct and defclass is
                            ;; the implicit constructor, decided *syntactically* between the two
@@ -1747,9 +1749,9 @@ package: gerbil
                           (type-super
                            (cons #'list #'super))
                           (make-type-rtd
-                           #'(make-class-type 'type-id 'type-name
-                                              type-super '(slot ...)
-                                              type-properties 'type-constructor))
+                           #'(make-type 'type-id 'type-name
+                                        type-super '(slot ...)
+                                        type-properties 'type-constructor))
                           (def-type
                             (wrap
                              #'(def type-t
@@ -1757,11 +1759,10 @@ package: gerbil
                                                                mop-super
                                                                (slot ...)
                                                                type-constructor
-                                                               type-struct?
+                                                               mop-struct?
                                                                mop-final?)
                                    make-type-rtd))))
-                          (__
-                           (displayln ["foo:" type-struct? properties-struct? (syntax->datum #'rest) (syntax->datum #'def-type)]))
+                          #;(__ (displayln ["foo:" type-struct? properties-struct? (syntax->datum #'rest) (syntax->datum #'def-type)]))
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
@@ -2034,15 +2035,13 @@ package: gerbil
                        ((values super)
                         (map syntax-local-value super-ref))
                        ((values struct?)
-                        (stx-e (stx-getq struct: body)))
+                        (stx-getq struct: body))
                        (type id)
                        (type::t   (make-id name "::t"))
                        (make-type (make-id "make-" name))
                        (type?     (make-id name "?"))
                        (type-super
-                        (if struct?
-                          (and super (class-type-descriptor super))
-                          (map class-type-descriptor super)))
+                        (map class-type-descriptor super))
                        ((slot ...)
                         slots)
                        ((getf ...)
@@ -2130,13 +2129,8 @@ package: gerbil
                         (with-syntax ((type-name (cadr type-name)))
                           #'(quote type-name)))
                        (meta-type-super
-                        (if struct?
-                          (if super
-                            (with-syntax ((super-id super-ref))
-                              #'[(quote-syntax super-id)])
-                            #'[])
-                          (with-syntax (((super-id ...) super-ref))
-                            #'[(quote-syntax super-id) ...])))
+                        (with-syntax (((super-id ...) super-ref))
+                          #'[(quote-syntax super-id) ...]))
                        (meta-type-slots #'(quote (slot ...)))
                        (meta-type-struct? struct?)
                        (meta-type-final? final?)
@@ -2221,7 +2215,7 @@ package: gerbil
            (with-syntax* (((values klass)
                            (syntax-local-value #'type))
                           ((values rebind?)
-                           (and (stx-e (stx-getq rebind: #'rest)) #t))
+                           (and (stx-getq rebind: #'rest) #t))
                           (type::t
                            (class-type-descriptor klass))
                           (name

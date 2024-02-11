@@ -1324,8 +1324,8 @@ namespace: gerbil/core
                                typedef-body?
                                |gerbil/core$<MOP>$<MOP:4>[1]#typedef-body?|)
                               (%#define-runtime
-                               generate-typedef
-                               |gerbil/core$<MOP>$<MOP:4>[1]#generate-typedef|))
+                               generate-defclass
+                               |gerbil/core$<MOP>$<MOP:4>[1]#generate-defclass|))
                              (%#define-syntax
                               defstruct
                               |gerbil/core$<MOP>$<MOP:4>[:0:]#defstruct|)
