@@ -2207,7 +2207,7 @@ package: gerbil
            (with-syntax* (((values klass)
                            (syntax-local-value #'type))
                           ((values rebind?)
-                           (and (stx-getq rebind: #'rest) #t))
+                           (stx-e (stx-getq rebind: #'rest)))
                           (type::t
                            (class-type-descriptor klass))
                           (name

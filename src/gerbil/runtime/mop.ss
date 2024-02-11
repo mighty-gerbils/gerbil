@@ -55,11 +55,9 @@ namespace: #f
        (eq? (##structure-length klass) 12)))
 
 (def (type-struct? klass)
-  ;;(assgetq struct: (type-descriptor-properties klass)))
   (##fxbit-set? 21 (##type-flags klass)))
 
 (def (type-final? klass)
-  ;;(assgetq final: (type-descriptor-properties klass)))
   (##fxbit-set? 22 (##type-flags klass)))
 
 (def (class-type? klass)
