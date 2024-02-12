@@ -155,11 +155,11 @@
          (let (t (object-type x))
            (and (class-type? t) (assgetq transparent: (class-type-properties t)))))
     (display-separated
-     (if (type-struct? (object-type x))
+     (if (class-type-struct? (object-type x))
        (cdr (struct->list x))
        (alist->plist (sort (plist->alist (cdr (class->list x))) keyword<?)))
      port
-     prefix: (string-append "(" (symbol->string (type-name (object-type x))))
+     prefix: (string-append "(" (symbol->string (##type-name (object-type x))))
      separate-prefix?: #t
      suffix: ")"
      display-element: p))
