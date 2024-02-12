@@ -44,13 +44,12 @@ namespace: #f
 ;; These type flags are defined by Gambit itself
 (def type-flag-opaque 1) ;; if opaque, instances are only equal? if eq?
 (def type-flag-extensible 2) ;; if 0, no type extension by Gambit
-(def type-flag-macros 4) ;; undocumented ???
-(def type-flag-concrete 8) ;; aka constructor -- has direct instances
-(def type-flag-id 16) ;; aka nongenerative, undocumented ???
+(def type-flag-macros 4) ;; if 1, Gambit generates macros for accessors -- irrelevant for Gerbil
+(def type-flag-concrete 8) ;; aka constructor -- has direct instances -- always set for Gerbil
+(def type-flag-id 16) ;; if set we can compare by ##type-id and not just by eq? -- always set for Gerbl
 ;; These class type flags are Gerbil extensions
 (def class-type-flag-struct 256) ;; precedence-list always tail of subclass's precedence-list
-(def class-type-flag-final 512) ;; class cannot be extended by subclasses (implies struct)
-(def class-type-flag-sealed 1024) ;; no new changes, subclasses or method definitions (implies final)
+(def class-type-flag-sealed 512) ;; no new changes, subclasses or method definitions (implies final)
 
 ;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
@@ -113,10 +112,10 @@ namespace: #f
   (##fxpositive? (##fxand (##type-flags type) type-flag-opaque)))
 (def (type-extensible? type)
   (##fxpositive? (##fxand (##type-flags type) type-flag-extensible)))
+(def (class-type-final? type)
+  (##fxzero? (##fxand (##type-flags type) type-flag-extensible)))
 (def (class-type-struct? klass)
   (##fxpositive? (##fxand (##type-flags klass) class-type-flag-struct)))
-(def (class-type-final? klass)
-  (not (type-extensible? klass)))
 (def (class-type-sealed? klass)
   (##fxpositive? (##fxand (##type-flags klass) class-type-flag-sealed)))
 

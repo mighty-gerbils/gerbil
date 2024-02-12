@@ -90,6 +90,7 @@ namespace: #f
          (%#define-runtime foldr2 foldr2)
          (%#define-runtime foldr foldr)
          (%#define-runtime foldr* foldr*)
+         (%#define-runtime drop drop)
          (%#define-runtime remove-nulls! remove-nulls!)
          (%#define-runtime append1! append1!)
          (%#define-runtime append-reverse append-reverse)

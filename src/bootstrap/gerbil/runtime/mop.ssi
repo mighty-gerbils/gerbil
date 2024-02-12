@@ -7,16 +7,23 @@ namespace: #f
           :gerbil/runtime/gambit
           :gerbil/runtime/util
           :gerbil/runtime/c3)
-         (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
+         (%#define-runtime type-flag-opaque type-flag-opaque)
+         (%#define-runtime type-flag-extensible type-flag-extensible)
+         (%#define-runtime type-flag-macros type-flag-macros)
+         (%#define-runtime type-flag-concrete type-flag-concrete)
+         (%#define-runtime type-flag-id type-flag-id)
          (%#define-runtime class-type-flag-struct class-type-flag-struct)
-         (%#define-runtime class-type-flag-final class-type-flag-final)
+         (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
          (%#define-runtime class::t.id class::t.id)
          (%#define-runtime class::t class::t)
          (%#define-runtime class-type? class-type?)
          (%#define-runtime class-type-id class-type-id)
          (%#define-runtime class-type=? class-type=?)
-         (%#define-runtime class-type-struct? class-type-struct?)
+         (%#define-runtime type-opaque? type-opaque?)
+         (%#define-runtime type-extensible? type-extensible?)
          (%#define-runtime class-type-final? class-type-final?)
+         (%#define-runtime class-type-struct? class-type-struct?)
+         (%#define-runtime class-type-sealed? class-type-sealed?)
          (%#define-runtime properties-form properties-form)
          (%#define-runtime
           make-class-type-descriptor
@@ -24,7 +31,7 @@ namespace: #f
          (%#define-runtime
           class-type-precedence-list
           class-type-precedence-list)
-         (%#define-runtime class-type-all-slots class-type-all-slots)
+         (%#define-runtime class-type-slot-vector class-type-slot-vector)
          (%#define-runtime class-type-slot-table class-type-slot-table)
          (%#define-runtime class-type-properties class-type-properties)
          (%#define-runtime class-type-constructor class-type-constructor)
@@ -32,7 +39,6 @@ namespace: #f
          (%#define-runtime class-type-methods-set! class-type-methods-set!)
          (%#define-runtime class-type-slot-list class-type-slot-list)
          (%#define-runtime class-type-fields class-type-fields)
-         (%#define-runtime class-type-sealed? class-type-sealed?)
          (%#define-runtime class-type-seal! class-type-seal!)
          (%#define-runtime substruct? substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
