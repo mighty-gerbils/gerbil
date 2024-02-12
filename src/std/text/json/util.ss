@@ -14,7 +14,6 @@
   :std/misc/list-builder
   :std/misc/ports
   :std/misc/plist
-  :std/misc/rtd
   :std/misc/walist
   :std/parser/ll1
   :std/sort
@@ -93,12 +92,12 @@
 (def (trivial-struct->json-object struct)
   (with ([strukt . fields] (struct->list struct))
     (let (f (if (json-symbolic-keys) cons (lambda (slot v) (cons (symbol->string slot) v))))
-      (walist (map f (cdr (vector->list (type-descriptor-all-slots strukt))) fields)))))
+      (walist (map f (cdr (vector->list (class-type-all-slots strukt))) fields)))))
 
 (def (trivial-json-object->struct strukt json (defaults #f))
   (unless defaults (set! defaults (hash)))
-  (def offsets (type-descriptor-slot-table strukt))
-  (def slots (type-descriptor-all-slots strukt))
+  (def offsets (class-type-slot-table strukt))
+  (def slots (class-type-all-slots strukt))
   (def n (vector-length slots))
   (def (get-pos key)
     (def slot

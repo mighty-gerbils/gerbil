@@ -364,7 +364,6 @@
     "misc/alist"
     "misc/plist"
     "misc/walist"
-    "misc/rtd"
     "misc/shuffle"
     "misc/uuid"
     "misc/repr"

@@ -154,7 +154,7 @@
 
    ((and (object? x)
          (let (t (object-type x))
-           (and (type-descriptor? t) (assgetq transparent: (type-descriptor-properties t)))))
+           (and (class-type? t) (assgetq transparent: (class-type-properties t)))))
     (display-separated
      (if (type-struct? (object-type x))
        (cdr (struct->list x))

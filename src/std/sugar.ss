@@ -130,7 +130,7 @@
           (stx-andmap identifier? #'(alias ...))
           (syntax-local-class-type-info? #'type))
      (with-syntax* (((values klass) (syntax-local-value #'type))
-                    (type::t (class-type-descriptor klass))
+                    (type::t (!class-type-descriptor klass))
                     (method-impl (stx-identifier #'method #'type "::" #'method)))
        #'(begin
            (defmethod {method type} body ...)

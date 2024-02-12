@@ -86,18 +86,15 @@
           (lp i+1 (fx+ w wo)))
         w))))
 
-(extern namespace: #f
-  type-descriptor-fields)
-
 (defreader-ext* (unmarshal-message buf)
   (let* ((klass-id (buf.unmarshal-symbol))
          (fields (buf.read-varuint)))
     (cond
      ((lookup-message-type klass-id)
       => (lambda (klass)
-           (unless (fx= fields (type-descriptor-fields klass))
+           (unless (fx= fields (class-type-fields klass))
              (raise-io-error unmarshal-message "bad message; field count mismatch"
-                             klass-id fields klass (type-descriptor-fields klass)))
+                             klass-id fields klass (class-type-fields klass)))
            (let (obj (make-object klass (fx1+ fields)))
              (let lp ((i 0))
                (if (fx< i fields)
