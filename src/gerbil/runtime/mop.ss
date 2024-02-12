@@ -513,11 +513,11 @@ namespace: #f
         (loop (##fx- i 1)))
       obj)))
 
-(def (make-new-instance klass)
+(def (new-instance klass)
   (make-object klass (##vector-length (class-type-all-slots klass))))
 
 (def (make-instance klass . args)
-  (let (obj (make-new-instance klass))
+  (let (obj (new-instance klass))
     (cond
      ((class-type-constructor klass)
       => (lambda (kons-id)

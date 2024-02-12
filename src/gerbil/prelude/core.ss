@@ -211,7 +211,7 @@ package: gerbil
     make-object object-fill!
     struct-copy
     struct->list class->list
-    make-new-instance
+    new-instance
     make-instance
     struct-instance-init!
     class-instance-init!
