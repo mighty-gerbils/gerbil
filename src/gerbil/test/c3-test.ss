@@ -7,7 +7,7 @@
 
 (import
   ;;  :gerbil/runtime/c3
-  (only-in :gerbil/runtime/mop type-descriptor-all-slots)
+  (only-in :gerbil/runtime/mop class-type-all-slots)
   (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)
   (only-in :std/test test-suite test-case check check-exception)
@@ -166,9 +166,9 @@
 
       ;; Slot computation order now follows the MRO!
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
-      (check (type-descriptor-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
+      (check (class-type-all-slots Z::t) => #(#f O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (type-descriptor-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))
+      (check (class-type-all-slots Y::t) => #(#f O E D B J2 A J3 C J1 Y)))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => my-precedence-lists)
