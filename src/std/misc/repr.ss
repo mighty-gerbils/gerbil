@@ -23,8 +23,7 @@
 
 (import
   :gerbil/gambit
-  :std/sort
-  ./rtd)
+  :std/sort)
 
 ;; Definition of for-each! copied from :std/misc/list,
 ;; Unlike for-each, also works on improper lists, ended by non-pairs other than '()
