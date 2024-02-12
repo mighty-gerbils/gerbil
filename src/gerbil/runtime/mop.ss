@@ -48,7 +48,9 @@ namespace: #f
            #f                        ; type: self reference, set below
            class::t.id               ; type-id
            'class                    ; type-name
-           (##fxior (##fxarithmetic-shift-left 1 21) 8) ; type-flags: struct
+           (##fxior ;; struct | concrete | nongenerative | extensible
+            (##fxarithmetic-shift-left 1 21)
+            26)
            ##type-type                  ; type-super: vanilla type
            '#(precedence-list
               5 #f
@@ -147,7 +149,8 @@ namespace: #f
           (or (not all-slots-equalable?)
               (and type-super (##fx= (##fxand (##type-flags type-super) 1) 1))))
          (type-flags
-          (##fxior 24 ;; 16 (id) + 8 (constructor)
+          (##fxior 24                   ;; 16 (nongenerative) + 8 (concrete)
+                   (if final? 0 2)      ;; (extensible)
                    (if opaque? 1 0)
                    (if struct? (##fxarithmetic-shift 1 21) 0)
                    (if final? (##fxarithmetic-shift 1 22) 0))))
