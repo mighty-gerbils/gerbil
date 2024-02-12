@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1707773068)
+  (define gerbil/runtime/error::timestamp 1707773925)
   (begin
     (define Exception::t
       (let ((__tmp96019 (list)))
@@ -533,28 +533,28 @@
                         (declare (not safe))
                         (class-slot-offset __t95995 'where))))
                  (if __tmp96000 __tmp96000 (error '"Unknown slot" 'where))))
-              (__irritants95997
+              (__continuation95997
                (let ((__tmp96001
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t95995 'irritants))))
+                        (class-slot-offset __t95995 'continuation))))
                  (if __tmp96001
                      __tmp96001
-                     (error '"Unknown slot" 'irritants))))
+                     (error '"Unknown slot" 'continuation))))
               (__message95998
                (let ((__tmp96002
                       (let ()
                         (declare (not safe))
                         (class-slot-offset __t95995 'message))))
                  (if __tmp96002 __tmp96002 (error '"Unknown slot" 'message))))
-              (__continuation95999
+              (__irritants95999
                (let ((__tmp96003
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t95995 'continuation))))
+                        (class-slot-offset __t95995 'irritants))))
                  (if __tmp96003
                      __tmp96003
-                     (error '"Unknown slot" 'continuation)))))
+                     (error '"Unknown slot" 'irritants)))))
           (lambda (_self91196_ _port91197_)
             (let ((_tmp-port91199_ (open-output-string))
                   (_display-error-newline91200_
@@ -597,7 +597,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self91196_
-                                 __irritants95997
+                                 __irritants95999
                                  __t95995
                                  '#f))))
                          (if (let ()
@@ -621,7 +621,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self91196_
-                                     __continuation95999
+                                     __continuation95997
                                      __t95995
                                      '#f))))
                              (if _cont9120991211_
