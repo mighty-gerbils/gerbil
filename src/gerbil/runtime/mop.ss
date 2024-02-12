@@ -99,16 +99,6 @@ namespace: #f
 (def (class-type-final? klass)
   (##fxbit-set? 22 (##type-flags klass)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TODO remove
-(def type-id class-type-id)
-(def type=? class-type=?)
-(def type-descriptor? class-type?)
-(def type-struct? class-type-struct?)
-(def type-final? class-type-final?)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 ;; TODO for debugging only
 (def (properties-form properties)
   (map (match <>
@@ -203,34 +193,6 @@ namespace: #f
 (def (class-type-seal! klass)
   (##structure-set! klass (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))
                     3 class::t class-type-seal!))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; TODO remove
-(def make-type-descriptor make-class-type-descriptor)
-(def type-descriptor-precedence-list
-  class-type-precedence-list)
-(def type-descriptor-all-slots
-  class-type-all-slots)
-(def type-descriptor-slot-table
-  class-type-slot-table)
-(def type-descriptor-properties
-  class-type-properties)
-(def type-descriptor-constructor
-  class-type-constructor)
-(def type-descriptor-methods
-  class-type-methods)
-(def type-descriptor-methods-set!
-  class-type-methods-set!)
-
-(def type-descriptor-slot-list
-  class-type-slot-list)
-(def type-descriptor-fields
-  class-type-fields)
-(def type-descriptor-sealed?
-  class-type-sealed?)
-(def type-descriptor-seal!
-  class-type-seal!)
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : TypeDescriptor TypeDescriptor -> Bool

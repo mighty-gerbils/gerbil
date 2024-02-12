@@ -180,13 +180,6 @@ package: gerbil
     class-type-final?
     class-type-sealed?
 
-    ;;;;;;;;;;;;;
-    ;; TODO remove
-    type-descriptor?
-    type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
-    type-final? type-struct?
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
     make-struct-slot-accessor
     make-struct-slot-mutator
     make-struct-slot-unchecked-accessor
