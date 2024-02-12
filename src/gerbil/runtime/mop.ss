@@ -110,9 +110,9 @@ namespace: #f
   (eq? (class-type-id x) (class-type-id y)))
 
 (def (type-opaque? type)
-  (##fxpositive? (##fxand (##type-flags klass) type-flag-opaque)))
+  (##fxpositive? (##fxand (##type-flags type) type-flag-opaque)))
 (def (type-extensible? type)
-  (##fxpositive? (##fxand (##type-flags klass) type-flag-extensible)))
+  (##fxpositive? (##fxand (##type-flags type) type-flag-extensible)))
 (def (class-type-struct? klass)
   (##fxpositive? (##fxand (##type-flags klass) class-type-flag-struct)))
 (def (class-type-final? klass)
