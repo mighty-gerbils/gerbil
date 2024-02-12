@@ -24,7 +24,7 @@ namespace: #f
 ;;  4  ##type-super                : (OrFalse StructTypeDescriptor)
 ;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...)
 ;;  6  class-type-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
-;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always ##type
+;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always __class
 ;;  8  class-type-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
 ;;  9  class-type-properties       : AList ; NB: not PList, despite the name "properties"
 ;; 10  class-type-constructor      : (OrFalse Symbol)
@@ -48,8 +48,8 @@ namespace: #f
 (def type-flag-concrete 8) ;; aka constructor -- has direct instances -- always set for Gerbil
 (def type-flag-id 16) ;; if set we can compare by ##type-id and not just by eq? -- always set for Gerbl
 ;; These class type flags are Gerbil extensions
-(def class-type-flag-struct 256) ;; precedence-list always tail of subclass's precedence-list
-(def class-type-flag-sealed 512) ;; no new changes, subclasses or method definitions (implies final)
+(def class-type-flag-struct 1024) ;; precedence-list always tail of subclass's precedence-list
+(def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
 
 ;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
@@ -102,20 +102,24 @@ namespace: #f
 (def (class-type-id klass)
   (cond
    ((class-type? klass) (##type-id klass))
-   ((not klass) #f)
    (else (error "not a type descriptor" klass))))
 
 (def (class-type=? x y)
   (eq? (class-type-id x) (class-type-id y)))
 
+(defrules fxflag-set? ()
+  ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) flag))))
+(defrules fxflag-unset? ()
+  ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) 0))))
+
 (def (type-opaque? type)
-  (##fxpositive? (##fxand (##type-flags type) type-flag-opaque)))
+  (fxflag-set? (##type-flags type) type-flag-opaque))
 (def (type-extensible? type)
-  (##fxpositive? (##fxand (##type-flags type) type-flag-extensible)))
+  (fxflag-set? (##type-flags type) type-flag-extensible))
 (def (class-type-final? type)
-  (##fxzero? (##fxand (##type-flags type) type-flag-extensible)))
+  (fxflag-unset? (##type-flags type) type-flag-extensible))
 (def (class-type-struct? klass)
-  (##fxpositive? (##fxand (##type-flags klass) class-type-flag-struct)))
+  (fxflag-set? (##type-flags klass) class-type-flag-struct))
 (def (class-type-sealed? klass)
   (##fxpositive? (##fxand (##type-flags klass) class-type-flag-sealed)))
 
@@ -213,14 +217,14 @@ namespace: #f
                     3 class::t class-type-seal!))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
-; : TypeDescriptor TypeDescriptor -> Bool
+; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
 (def (substruct? maybe-sub-struct maybe-super-struct)
   (let (maybe-super-struct-id (##type-id maybe-super-struct))
     (let lp ((super-struct maybe-sub-struct))
       (cond
        ((not super-struct)
         #f)
-       ((eq? maybe-super-struct-id (class-type-id super-struct))
+       ((eq? maybe-super-struct-id (##type-id super-struct))
         #t)
        (else
         (lp (##type-super super-struct)))))))
@@ -283,7 +287,7 @@ namespace: #f
 (def (compute-class-slots class-precedence-list direct-slots)
   (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
          (slot-table (make-hash-table-eq))
-         (r-slots '(##type))
+         (r-slots '(__class))
          (process-slot
           (lambda (slot)
             (unless (symbol? slot)

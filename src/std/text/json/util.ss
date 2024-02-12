@@ -92,12 +92,12 @@
 (def (trivial-struct->json-object struct)
   (with ([strukt . fields] (struct->list struct))
     (let (f (if (json-symbolic-keys) cons (lambda (slot v) (cons (symbol->string slot) v))))
-      (walist (map f (cdr (vector->list (class-type-all-slots strukt))) fields)))))
+      (walist (map f (cdr (vector->list (class-type-slot-vector strukt))) fields)))))
 
 (def (trivial-json-object->struct strukt json (defaults #f))
   (unless defaults (set! defaults (hash)))
   (def offsets (class-type-slot-table strukt))
-  (def slots (class-type-all-slots strukt))
+  (def slots (class-type-slot-vector strukt))
   (def n (vector-length slots))
   (def (get-pos key)
     (def slot
