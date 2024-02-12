@@ -166,9 +166,9 @@
 
       ;; Slot computation order now follows the MRO!
       ;; Previously returned (O A B C K1 D E K2 K3 Z), which is so wrong:
-      (check (class-type-slot-vector Z::t) => #(#f O E C B A D K3 K2 K1 Z))
+      (check (class-type-slot-vector Z::t) => #(__class O E C B A D K3 K2 K1 Z))
       ;; Previously returned (O C A B J1 D J3 E J2 Y)), which is so wrong:
-      (check (class-type-slot-vector Y::t) => #(#f O E D B J2 A J3 C J1 Y)))
+      (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
              => my-precedence-lists)
