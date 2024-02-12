@@ -41,15 +41,25 @@ namespace: #f
 ;; print:          (Or Bool (List Symbol)  all new slots will be printed when printing an object
 ;; transparent:    Bool                    is this class transparent? i.e. equal and print all slots
 
+;; type flags
+(def class-type-flag-sealed
+  (##fxarithmetic-shift-left 1 20))
+(def class-type-flag-struct
+  (##fxarithmetic-shift-left 1 21))
+(def class-type-flag-final
+  (##fxarithmetic-shift-left 1 22))
+
+;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
 
+;; the metaclass itself
 (def class::t
   (let (t (##structure
            #f                        ; type: self reference, set below
            class::t.id               ; type-id
            'class                    ; type-name
            (##fxior ;; struct | concrete | nongenerative | extensible
-            (##fxarithmetic-shift-left 1 21)
+            class-type-flag-struct
             26)
            ##type-type                  ; type-super: vanilla type
            '#(precedence-list
@@ -152,8 +162,8 @@ namespace: #f
           (##fxior 24                   ;; 16 (nongenerative) + 8 (concrete)
                    (if final? 0 2)      ;; (extensible)
                    (if opaque? 1 0)
-                   (if struct? (##fxarithmetic-shift 1 21) 0)
-                   (if final? (##fxarithmetic-shift 1 22) 0))))
+                   (if struct? class-type-flag-struct 0)
+                   (if final? class-type-flag-final 0))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -194,7 +204,7 @@ namespace: #f
 (def (class-type-sealed? klass)
   (##fxbit-set? 20 (##type-flags klass)))
 (def (class-type-seal! klass)
-  (##structure-set! klass (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))
+  (##structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
                     3 class::t class-type-seal!))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
