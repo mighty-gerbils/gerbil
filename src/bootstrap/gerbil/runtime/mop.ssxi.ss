@@ -98,7 +98,7 @@ package: gerbil/runtime
            (%#begin (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
                     (%#ref $obj))))))))
   (declare-type object-fill! (@lambda 2 #f))
-  (declare-type make-new-instance (@lambda 1 #f))
+  (declare-type new-instance (@lambda 1 #f))
   (declare-type make-instance (@lambda (1) #f))
   (declare-type make-class-instance (@lambda (1) #f))
   (declare-type

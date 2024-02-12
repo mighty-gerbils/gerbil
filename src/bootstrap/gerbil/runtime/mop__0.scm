@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1707735854)
+  (define gerbil/runtime/mop::timestamp 1707738030)
   (begin
     (define class::t.id 'gerbil#class::t)
     (define class::t
@@ -1482,7 +1482,7 @@
                   (declare (not safe))
                   (_loop84150_ __tmp89493)))
               _obj84147_))))
-    (define make-new-instance
+    (define new-instance
       (lambda (_klass84145_)
         (let ((__obj89413
                (let ((__tmp89495
@@ -1499,7 +1499,7 @@
     (define make-instance
       (lambda (_klass84135_ . _args84136_)
         (let* ((_obj84138_
-                (let () (declare (not safe)) (make-new-instance _klass84135_)))
+                (let () (declare (not safe)) (new-instance _klass84135_)))
                (_$e84140_
                 (let ()
                   (declare (not safe))

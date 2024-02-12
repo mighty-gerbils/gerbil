@@ -475,7 +475,7 @@ namespace: gerbil/core
                     (struct-copy struct-copy)
                     (struct->list struct->list)
                     (class->list class->list)
-                    (make-new-instance make-new-instance)
+                    (new-instance new-instance)
                     (make-instance make-instance)
                     (struct-instance-init! struct-instance-init!)
                     (class-instance-init! class-instance-init!)
