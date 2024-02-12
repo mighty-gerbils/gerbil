@@ -7,6 +7,9 @@ namespace: #f
           :gerbil/runtime/gambit
           :gerbil/runtime/util
           :gerbil/runtime/c3)
+         (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
+         (%#define-runtime class-type-flag-struct class-type-flag-struct)
+         (%#define-runtime class-type-flag-final class-type-flag-final)
          (%#define-runtime class::t.id class::t.id)
          (%#define-runtime class::t class::t)
          (%#define-runtime class-type? class-type?)
