@@ -168,7 +168,7 @@ package: gerbil
     class-type?
     class-type-id
     class-type-precedence-list
-    class-type-all-slots
+    class-type-slot-vector
     class-type-slot-table
     class-type-properties
     class-type-constructor
