@@ -54,42 +54,42 @@ namespace: #f
 
 ;; the metaclass itself
 (def class::t
-  (let (t (##structure
-           #f                        ; type: self reference, set below
-           class::t.id               ; type-id
-           'class                    ; type-name
-           (##fxior ;; struct | concrete | nongenerative | extensible
-            class-type-flag-struct
-            26)
-           ##type-type                  ; type-super: vanilla type
-           '#(precedence-list
-              5 #f
-              all-slots 5 #f
-              slot-table 5 #f
-              properties 5 #f
-              constructor 5 #f
-              methods 5 #f)             ; type-fields
-           [] ; class-type-precedence-list: hide ##type-type as it is not a class
-           '#(#f
-              id name super flags fields
-              precendence-list all-slots slot-table properties constructor method
-              )                         ; class-type-all-slots
-           (let (slot-table (make-hash-table-eq))
-             (for-each
-               (lambda (slot field)
-                 (hash-put! slot-table slot field)
-                 (hash-put! slot-table (symbol->keyword slot) field))
-               '(id name super flags fields
-                    precendence-list all-slots slot-table properties constructor method)
-               (iota 11 1))
-             slot-table)                ; class-type-slot-table
-           '((direct-slots:
-              ;; adopt those, as the hierarchy is shorted
-              id name super flags fields
-              precendence-list all-slots slot-table properties constructor method)
-             (struct: . #t))            ; class-type-properties
-           #f                           ; class-type-constructor
-           #f))                         ; class-type-methods
+  (let* ((slots
+          '(id name super flags fields
+               precendence-list all-slots slot-table properties constructor method))
+         (slot-vector
+          (list->vector (cons #f slots)))
+         (slot-table
+          (let (slot-table (make-hash-table-eq))
+            (for-each
+              (lambda (slot field)
+                (hash-put! slot-table slot field)
+                (hash-put! slot-table (symbol->keyword slot) field))
+              slots
+              (iota (length slots) 1))
+            slot-table))
+         (t (##structure
+             #f                      ; type: self reference, set below
+             class::t.id             ; type-id
+             'class                  ; type-name
+             (##fxior ;; struct | concrete | nongenerative | extensible
+              class-type-flag-struct
+              26)
+             ##type-type                ; type-super: vanilla type
+             '#(precedence-list
+                5 #f
+                all-slots 5 #f
+                slot-table 5 #f
+                properties 5 #f
+                constructor 5 #f
+                methods 5 #f)           ; type-fields
+             [] ; class-type-precedence-list: hide ##type-type as it is not a class
+             slot-vector                ; class-type-all-slots
+             slot-table                 ; class-type-slot-table
+             '((direct-slots: ,@slots)
+               (struct: . #t))          ; class-type-properties
+             #f                         ; class-type-constructor
+             #f)))                      ; class-type-methods
     (##structure-type-set! t t)         ; self reference
     t))
 
