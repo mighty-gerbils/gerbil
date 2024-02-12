@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1707734701)
+  (define gerbil/runtime/mop::timestamp 1707735854)
   (begin
     (define class::t.id 'gerbil#class::t)
     (define class::t
@@ -131,11 +131,6 @@
                (let () (declare (not safe)) (##type-flags _klass84805_))))
           (declare (not safe))
           (##fxbit-set? '22 __tmp89421))))
-    (define type-id class-type-id)
-    (define type=? class-type=?)
-    (define type-descriptor? class-type?)
-    (define type-struct? class-type-struct?)
-    (define type-final? class-type-final?)
     (define properties-form
       (lambda (_properties84771_)
         (map (lambda (_e8477284774_)
@@ -495,18 +490,6 @@
            '3
            class::t
            class-type-seal!))))
-    (define make-type-descriptor make-class-type-descriptor)
-    (define type-descriptor-precedence-list class-type-precedence-list)
-    (define type-descriptor-all-slots class-type-all-slots)
-    (define type-descriptor-slot-table class-type-slot-table)
-    (define type-descriptor-properties class-type-properties)
-    (define type-descriptor-constructor class-type-constructor)
-    (define type-descriptor-methods class-type-methods)
-    (define type-descriptor-methods-set! class-type-methods-set!)
-    (define type-descriptor-slot-list class-type-slot-list)
-    (define type-descriptor-fields class-type-fields)
-    (define type-descriptor-sealed? class-type-sealed?)
-    (define type-descriptor-seal! class-type-seal!)
     (define substruct?
       (lambda (_maybe-sub-struct84646_ _maybe-super-struct84647_)
         (let ((_maybe-super-struct-id84649_
@@ -2056,7 +2039,7 @@
                   (begin
                     (if (let ()
                           (declare (not safe))
-                          (type-final? _klass83850_))
+                          (class-type-final? _klass83850_))
                         '#!void
                         (error '"cannot seal non-final class" _klass83850_))
                     (let ((_vtab83854_

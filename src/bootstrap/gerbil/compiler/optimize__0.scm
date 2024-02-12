@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize::timestamp 1707734709)
+  (define gerbil/compiler/optimize::timestamp 1707735863)
   (begin
     (define gxc#optimizer-info-init!
       (lambda ()

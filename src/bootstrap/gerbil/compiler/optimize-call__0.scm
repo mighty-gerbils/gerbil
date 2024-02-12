@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1707734709)
+  (define gerbil/compiler/optimize-call::timestamp 1707735863)
   (begin
     (define gxc#&optimize-call
       (make-promise
@@ -2596,20 +2596,20 @@
                         (declare (not safe))
                         (class-slot-offset __t281705 'slot))))
                  (if __tmp281709 __tmp281709 (error '"Unknown slot" 'slot))))
-              (__id281707
+              (__checked?281707
                (let ((__tmp281710
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t281705 'id))))
-                 (if __tmp281710 __tmp281710 (error '"Unknown slot" 'id))))
-              (__checked?281708
+                        (class-slot-offset __t281705 'checked?))))
+                 (if __tmp281710
+                     __tmp281710
+                     (error '"Unknown slot" 'checked?))))
+              (__id281708
                (let ((__tmp281711
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t281705 'checked?))))
-                 (if __tmp281711
-                     __tmp281711
-                     (error '"Unknown slot" 'checked?)))))
+                        (class-slot-offset __t281705 'id))))
+                 (if __tmp281711 __tmp281711 (error '"Unknown slot" 'id)))))
           (lambda (_self276475_ _stx276476_ _args276477_)
             (let* ((_g276479276489_
                     (lambda (_g276480276486_)
@@ -2646,7 +2646,7 @@
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
                                                        _self276475_
-                                                       __id281707
+                                                       __id281708
                                                        __t281705
                                                        '#f))))
                                                (declare (not safe))
@@ -2683,7 +2683,7 @@
                          (not safe))
                        (##unchecked-structure-ref
                         _self276475_
-                        __checked?281708
+                        __checked?281707
                         __t281705
                         '#f))
                      '%#struct-direct-ref
@@ -2696,7 +2696,7 @@
                                         (declare (not safe))
                                         (##unchecked-structure-ref
                                          _self276475_
-                                         __id281707
+                                         __id281708
                                          __t281705
                                          '#f))))
                                  (declare (not safe))
@@ -2739,7 +2739,7 @@
                            (declare (not safe))
                            (##unchecked-structure-ref
                             _self276475_
-                            __checked?281708
+                            __checked?281707
                             __t281705
                             '#f))
                          '%#struct-ref
@@ -2752,7 +2752,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self276475_
-                                             __id281707
+                                             __id281708
                                              __t281705
                                              '#f))))
                                      (declare (not safe))
@@ -2805,7 +2805,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self276475_
-                                     __checked?281708
+                                     __checked?281707
                                      __t281705
                                      '#f))
                                   '%#struct-ref
@@ -2818,7 +2818,7 @@
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
                                                       _self276475_
-                                                      __id281707
+                                                      __id281708
                                                       __t281705
                                                       '#f))))
                                               (declare (not safe))
@@ -2852,7 +2852,7 @@
                                                            (declare (not safe))
                                                            (##unchecked-structure-ref
                                                             _self276475_
-                                                            __checked?281708
+                                                            __checked?281707
                                                             __t281705
                                                             '#f))
                                                          (let ((__tmp282419
@@ -2921,7 +2921,7 @@
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
                                                           _self276475_
-                                                          __id281707
+                                                          __id281708
                                                           __t281705
                                                           '#f))))
                                                   (declare (not safe))
@@ -2976,7 +2976,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self276475_
-                                __id281707
+                                __id281708
                                 __t281705
                                 '#f))))
                         (declare (not safe))
@@ -3592,20 +3592,20 @@
                         (declare (not safe))
                         (class-slot-offset __t281712 'slot))))
                  (if __tmp281716 __tmp281716 (error '"Unknown slot" 'slot))))
-              (__id281714
+              (__checked?281714
                (let ((__tmp281717
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t281712 'id))))
-                 (if __tmp281717 __tmp281717 (error '"Unknown slot" 'id))))
-              (__checked?281715
+                        (class-slot-offset __t281712 'checked?))))
+                 (if __tmp281717
+                     __tmp281717
+                     (error '"Unknown slot" 'checked?))))
+              (__id281715
                (let ((__tmp281718
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t281712 'checked?))))
-                 (if __tmp281718
-                     __tmp281718
-                     (error '"Unknown slot" 'checked?)))))
+                        (class-slot-offset __t281712 'id))))
+                 (if __tmp281718 __tmp281718 (error '"Unknown slot" 'id)))))
           (lambda (_self276280_ _stx276281_ _args276282_)
             (let* ((_g276284276298_
                     (lambda (_g276285276295_)
@@ -3658,7 +3658,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self276280_
-                                                               __id281714
+                                                               __id281715
                                                                __t281712
                                                                '#f))))
                                                        (declare (not safe))
@@ -3701,7 +3701,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self276280_
-                                __checked?281715
+                                __checked?281714
                                 __t281712
                                 '#f))
                              '%#struct-direct-set!
@@ -3714,7 +3714,7 @@
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
                                                  _self276280_
-                                                 __id281714
+                                                 __id281715
                                                  __t281712
                                                  '#f))))
                                          (declare (not safe))
@@ -3759,7 +3759,7 @@
                                    (declare (not safe))
                                    (##unchecked-structure-ref
                                     _self276280_
-                                    __checked?281715
+                                    __checked?281714
                                     __t281712
                                     '#f))
                                  '%#struct-set!
@@ -3772,7 +3772,7 @@
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
                                                      _self276280_
-                                                     __id281714
+                                                     __id281715
                                                      __t281712
                                                      '#f))))
                                              (declare (not safe))
@@ -3824,7 +3824,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self276280_
-                                             __checked?281715
+                                             __checked?281714
                                              __t281712
                                              '#f))
                                           '%#struct-set!
@@ -3838,7 +3838,7 @@
                                                                (not safe))
                                                              (##unchecked-structure-ref
                                                               _self276280_
-                                                              __id281714
+                                                              __id281715
                                                               __t281712
                                                               '#f))))
                                                       (declare (not safe))
@@ -3882,7 +3882,7 @@
                            (declare (not safe))
                            (##unchecked-structure-ref
                             _self276280_
-                            __checked?281715
+                            __checked?281714
                             __t281712
                             '#f))
                          (let ((__tmp282602
@@ -3950,7 +3950,7 @@
                          (declare (not safe))
                          (##unchecked-structure-ref
                           _self276280_
-                          __id281714
+                          __id281715
                           __t281712
                           '#f))))
                   (declare (not safe))
@@ -4007,7 +4007,7 @@
                                        (declare (not safe))
                                        (##unchecked-structure-ref
                                         _self276280_
-                                        __id281714
+                                        __id281715
                                         __t281712
                                         '#f))))
                                 (declare (not safe))

@@ -14,11 +14,6 @@ namespace: #f
          (%#define-runtime class-type=? class-type=?)
          (%#define-runtime class-type-struct? class-type-struct?)
          (%#define-runtime class-type-final? class-type-final?)
-         (%#define-runtime type-id type-id)
-         (%#define-runtime type=? type=?)
-         (%#define-runtime type-descriptor? type-descriptor?)
-         (%#define-runtime type-struct? type-struct?)
-         (%#define-runtime type-final? type-final?)
          (%#define-runtime properties-form properties-form)
          (%#define-runtime
           make-class-type-descriptor
@@ -36,28 +31,6 @@ namespace: #f
          (%#define-runtime class-type-fields class-type-fields)
          (%#define-runtime class-type-sealed? class-type-sealed?)
          (%#define-runtime class-type-seal! class-type-seal!)
-         (%#define-runtime make-type-descriptor make-type-descriptor)
-         (%#define-runtime
-          type-descriptor-precedence-list
-          type-descriptor-precedence-list)
-         (%#define-runtime type-descriptor-all-slots type-descriptor-all-slots)
-         (%#define-runtime
-          type-descriptor-slot-table
-          type-descriptor-slot-table)
-         (%#define-runtime
-          type-descriptor-properties
-          type-descriptor-properties)
-         (%#define-runtime
-          type-descriptor-constructor
-          type-descriptor-constructor)
-         (%#define-runtime type-descriptor-methods type-descriptor-methods)
-         (%#define-runtime
-          type-descriptor-methods-set!
-          type-descriptor-methods-set!)
-         (%#define-runtime type-descriptor-slot-list type-descriptor-slot-list)
-         (%#define-runtime type-descriptor-fields type-descriptor-fields)
-         (%#define-runtime type-descriptor-sealed? type-descriptor-sealed?)
-         (%#define-runtime type-descriptor-seal! type-descriptor-seal!)
          (%#define-runtime substruct? substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)

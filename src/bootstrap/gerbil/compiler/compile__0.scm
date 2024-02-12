@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1707734704)
+  (define gerbil/compiler/compile::timestamp 1707735858)
   (begin
     (define gxc#_g212481_
       (gx#core-deserialize-mark
