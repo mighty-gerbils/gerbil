@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707674927)
+  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707734698)
   (begin
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::t
       (let ((__tmp47370 (list)))
@@ -33,337 +33,337 @@
         (apply make-instance
                gerbil/core$<MOP>$<MOP:2>#class-type-info::t
                _$args19251_)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-id
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-id
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'id)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-name
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-name
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'name)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-super
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-super
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'super)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-slots
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-slots
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'slots)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-struct?
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-struct?
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'struct?)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-final?
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-final?
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'final?)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor-method)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-descriptor
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-descriptor
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'type-descriptor)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-constructor
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-constructor
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-predicate
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-predicate
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'predicate)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-accessors
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-accessors
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-mutators
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-mutators
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-accessors
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-mutators
       (let ()
         (declare (not safe))
         (make-class-slot-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-id-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-id-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'id)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-name-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-name-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'name)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-super-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-super-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'super)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-slots-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-slots-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'slots)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-struct?-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-struct?-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'struct?)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-final?-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-final?-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'final?)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor-method)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-identifier-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-descriptor-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'type-descriptor)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-constructor-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-predicate-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-predicate-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'predicate)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-accessors-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-accessors-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-mutators-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-mutators-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-accessors-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators-set!
+    (define gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-mutators-set!
       (let ()
         (declare (not safe))
         (make-class-slot-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-id
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-id
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'id)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-name
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-name
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'name)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-super
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-super
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'super)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-slots
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-slots
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'slots)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-struct?
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-struct?
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'struct?)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-final?
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-final?
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'final?)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor-method)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-descriptor
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-descriptor
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'type-descriptor)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-constructor
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-predicate
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-predicate
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'predicate)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-accessors
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-accessors
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-mutators
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-mutators
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-accessors
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-mutators
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-id-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-id-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'id)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-name-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-name-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'name)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-super-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-super-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'super)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-slots-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-slots-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'slots)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-struct?-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-struct?-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'struct?)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-final?-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-final?-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'final?)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor-method)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-identifier-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-descriptor-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'type-descriptor)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'constructor)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-predicate-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-predicate-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'predicate)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-accessors-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-accessors-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-mutators-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-mutators-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'mutators)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-accessors-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          'unchecked-accessors)))
-    (define gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators-set!
+    (define gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-mutators-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator

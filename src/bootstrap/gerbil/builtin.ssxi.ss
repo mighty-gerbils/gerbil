@@ -377,11 +377,21 @@ package: gerbil
  eq?-hash eqv?-hash equal?-hash
  keyword? uninterned-keyword? interned-keyword?
  string-empty?
- type-descriptor?
- struct-type?
+
  class-type?
- make-struct-predicate
+ class-type-id
+ class-type-precedence-list
+ class-type-all-slots
+ class-type-slot-table
+ class-type-properties
+ class-type-constructor
+ class-type-methods
+ class-type-fields
+ class-type-struct?
+ class-type-final?
+ class-type-sealed?
  make-class-predicate
+
  object? object-type
  struct->list class->list
  exception? error-object?
