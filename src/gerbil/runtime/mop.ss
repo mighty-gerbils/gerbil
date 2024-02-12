@@ -725,7 +725,7 @@ namespace: #f
 
   (when (class-type? klass)
     (unless (class-type-sealed? klass)
-      (unless (type-final? klass)
+      (unless (class-type-final? klass)
         (error "cannot seal non-final class" klass))
       (let ((vtab (make-hash-table-eq))
             (mtab (make-hash-table-eq)))
