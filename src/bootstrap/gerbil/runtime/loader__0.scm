@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1707738030)
+  (define gerbil/runtime/loader::timestamp 1707740665)
   (begin
     (define current-module-library-path (make-parameter '#f))
     (define current-module-registry (make-parameter '#f))
