@@ -294,6 +294,9 @@ namespace: #f
                 rest))
       iv)))
 
+(def (drop l k) ;; unsafe variant, not exported
+  (if (##fxpositive? k) (drop (cdr l) (fx1- k)) l))
+
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
 (def (remove-nulls! l)

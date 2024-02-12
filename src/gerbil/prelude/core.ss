@@ -165,9 +165,20 @@ package: gerbil
     c4-linearize
 
     ;; MOP
-    type-descriptor?
-    type-id type-descriptor-precedence-all-slots type-descriptor-precedence-list type-descriptor-properties type-descriptor-constructor type-descriptor-slot-table type-descriptor-methods
-    type-final? type-struct? struct-type? class-type?
+    class-type?
+    class-type-id
+    class-type-precedence-list
+    class-type-slot-vector
+    class-type-slot-table
+    class-type-properties
+    class-type-constructor
+    class-type-methods
+    class-type-slot-list
+    class-type-fields
+
+    class-type-struct?
+    class-type-final?
+    class-type-sealed?
 
     make-struct-slot-accessor
     make-struct-slot-mutator
@@ -200,7 +211,7 @@ package: gerbil
     make-object object-fill!
     struct-copy
     struct->list class->list
-    make-new-instance
+    new-instance
     make-instance
     struct-instance-init!
     class-instance-init!
@@ -1827,52 +1838,52 @@ package: gerbil
       slots:
       ((id ;; Symbol
         ;; the class's type id
-        class-type-id class-type-id-set!)
+        !class-type-id !class-type-id-set!)
        (name ;; Symbol
         ;; the class's name
-        class-type-name class-type-name-set!)
+        !class-type-name !class-type-name-set!)
        (super ;; ListOf Identifier
         ;; the class's super list; identifiers point to class-type-infos
-        class-type-super class-type-super-set!)
+        !class-type-super !class-type-super-set!)
        (slots ;; ListOf Symbol
         ;; the class's direct slot list
-        class-type-slots class-type-slots-set!)
+        !class-type-slots !class-type-slots-set!)
        (struct? ;; Boolean
         ;; #t if the class is a struct type
-        class-type-struct? class-type-struct?-set!)
+        !class-type-struct? !class-type-struct?-set!)
        (final? ;; Boolean
         ;; #t if the class is final
-        class-type-final? class-type-final?-set!)
+        !class-type-final? !class-type-final?-set!)
        (constructor-method ;; OrFalse Symbol
         ;; the class's constructor method name, if any
-        class-type-constructor-method class-type-constructor-method-set!)
+        !class-type-constructor-method !class-type-constructor-method-set!)
        (type-descriptor ;; Identifier
         ;; the runtime identifier of the class's type descriptor
-        class-type-descriptor class-type-identifier-set!)
+        !class-type-descriptor !class-type-descriptor-set!)
        (constructor ;; OrFalse Identifier
         ;; the class's constructor procudure identifier, if any
-        class-type-constructor class-type-constructor-set!)
+        !class-type-constructor !class-type-constructor-set!)
        (predicate ;; Identifier
         ;; the class's defined predicate
-        class-type-predicate class-type-predicate-set!)
+        !class-type-predicate !class-type-predicate-set!)
        (accessors ;; AListOf Symbol -> Identifier
         ;; the class's defined slot accessors
-        class-type-accessors class-type-accessors-set!)
+        !class-type-accessors !class-type-accessors-set!)
        (mutators ;; AListOf Symbol -> Identifier
         ;; the class's defined slot mutators
-        class-type-mutators class-type-mutators-set!)
+        !class-type-mutators !class-type-mutators-set!)
        (unchecked-accessors ;; AListOf Symbol -> Identifier
         ;; the class's defined unchecked slot accessors
-        class-type-unchecked-accessors class-type-unchecked-accessors-set!)
+        !class-type-unchecked-accessors !class-type-unchecked-accessors-set!)
        (unchecked-mutators ;; AListOf Symbol -> Identifier
         ;; the class's defined unchecked slot mutators
-        class-type-unchecked-mutators class-type-unchecked-mutators-set!)))
+        !class-type-unchecked-mutators !class-type-unchecked-mutators-set!)))
 
     (def (class-type-info::apply-macro-expander self stx)
       (syntax-case stx ()
         ((_ arg ...)
          (cond
-          ((class-type-constructor self)
+          ((!class-type-constructor self)
            => (lambda (make)
                 (cons make #'(arg ...))))
           (else
@@ -1908,65 +1919,65 @@ package: gerbil
        constructor: (quote-syntax make-class-type-info)
        predicate: (quote-syntax class-type-info?)
        accessors:
-       [['id :: (quote-syntax class-type-id)]
-        ['name :: (quote-syntax class-type-name)]
-        ['super :: (quote-syntax class-type-super)]
-        ['slots :: (quote-syntax class-type-slots)]
-        ['struct? :: (quote-syntax class-type-struct?)]
-        ['final? :: (quote-syntax class-type-final?)]
-        ['constructor-method :: (quote-syntax class-type-constructor-method)]
-        ['type-descriptor :: (quote-syntax class-type-descriptor)]
-        ['constructor :: (quote-syntax class-type-constructor)]
-        ['predicate :: (quote-syntax class-type-predicate)]
-        ['accessors :: (quote-syntax class-type-accessors)]
-        ['mutators :: (quote-syntax class-type-mutators)]
-        ['unchecked-accessors :: (quote-syntax class-type-unchecked-accessors)]
-        ['unchecked-mutators :: (quote-syntax class-type-unchecked-mutators)]]
+       [['id :: (quote-syntax !class-type-id)]
+        ['name :: (quote-syntax !class-type-name)]
+        ['super :: (quote-syntax !class-type-super)]
+        ['slots :: (quote-syntax !class-type-slots)]
+        ['struct? :: (quote-syntax !class-type-struct?)]
+        ['final? :: (quote-syntax !class-type-final?)]
+        ['constructor-method :: (quote-syntax !class-type-constructor-method)]
+        ['type-descriptor :: (quote-syntax !class-type-descriptor)]
+        ['constructor :: (quote-syntax !class-type-constructor)]
+        ['predicate :: (quote-syntax !class-type-predicate)]
+        ['accessors :: (quote-syntax !class-type-accessors)]
+        ['mutators :: (quote-syntax !class-type-mutators)]
+        ['unchecked-accessors :: (quote-syntax !class-type-unchecked-accessors)]
+        ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators)]]
        mutators:
-       [['id :: (quote-syntax class-type-id-set!)]
-        ['name :: (quote-syntax class-type-name-set!)]
-        ['super :: (quote-syntax class-type-super-set!)]
-        ['slots :: (quote-syntax class-type-slots-set!)]
-        ['struct? :: (quote-syntax class-type-struct?-set!)]
-        ['final? :: (quote-syntax class-type-final?-set!)]
-        ['constructor-method :: (quote-syntax class-type-constructor-method-set!)]
-        ['type-descriptor :: (quote-syntax class-type-descriptor-set!)]
-        ['constructor :: (quote-syntax class-type-constructor-set!)]
-        ['predicate :: (quote-syntax class-type-predicate-set!)]
-        ['accessors :: (quote-syntax class-type-accessors-set!)]
-        ['mutators :: (quote-syntax class-type-mutators-set!)]
-        ['unchecked-accessors :: (quote-syntax class-type-unchecked-accessors-set!)]
-        ['unchecked-mutators :: (quote-syntax class-type-unchecked-mutators-set!)]]
+       [['id :: (quote-syntax !class-type-id-set!)]
+        ['name :: (quote-syntax !class-type-name-set!)]
+        ['super :: (quote-syntax !class-type-super-set!)]
+        ['slots :: (quote-syntax !class-type-slots-set!)]
+        ['struct? :: (quote-syntax !class-type-struct?-set!)]
+        ['final? :: (quote-syntax !class-type-final?-set!)]
+        ['constructor-method :: (quote-syntax !class-type-constructor-method-set!)]
+        ['type-descriptor :: (quote-syntax !class-type-descriptor-set!)]
+        ['constructor :: (quote-syntax !class-type-constructor-set!)]
+        ['predicate :: (quote-syntax !class-type-predicate-set!)]
+        ['accessors :: (quote-syntax !class-type-accessors-set!)]
+        ['mutators :: (quote-syntax !class-type-mutators-set!)]
+        ['unchecked-accessors :: (quote-syntax !class-type-unchecked-accessors-set!)]
+        ['unchecked-mutators :: (quote-syntax !class-type-unchecked-mutators-set!)]]
        unchecked-accessors:
-       [['id :: (quote-syntax &class-type-id)]
-        ['name :: (quote-syntax &class-type-name)]
-        ['super :: (quote-syntax &class-type-super)]
-        ['slots :: (quote-syntax &class-type-slots)]
-        ['struct? :: (quote-syntax &class-type-struct?)]
-        ['final? :: (quote-syntax &class-type-final?)]
-        ['constructor-method :: (quote-syntax &class-type-constructor-method)]
-        ['type-descriptor :: (quote-syntax &class-type-descriptor)]
-        ['constructor :: (quote-syntax &class-type-constructor)]
-        ['predicate :: (quote-syntax &class-type-predicate)]
-        ['accessors :: (quote-syntax &class-type-accessors)]
-        ['mutators :: (quote-syntax &class-type-mutators)]
-        ['unchecked-accessors :: (quote-syntax &class-type-unchecked-accessors)]
-        ['unchecked-mutators :: (quote-syntax &class-type-unchecked-mutators)]]
+       [['id :: (quote-syntax &!class-type-id)]
+        ['name :: (quote-syntax &!class-type-name)]
+        ['super :: (quote-syntax &!class-type-super)]
+        ['slots :: (quote-syntax &!class-type-slots)]
+        ['struct? :: (quote-syntax &!class-type-struct?)]
+        ['final? :: (quote-syntax &!class-type-final?)]
+        ['constructor-method :: (quote-syntax &!class-type-constructor-method)]
+        ['type-descriptor :: (quote-syntax &!class-type-descriptor)]
+        ['constructor :: (quote-syntax &!class-type-constructor)]
+        ['predicate :: (quote-syntax &!class-type-predicate)]
+        ['accessors :: (quote-syntax &!class-type-accessors)]
+        ['mutators :: (quote-syntax &!class-type-mutators)]
+        ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors)]
+        ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators)]]
        unchecked-mutators:
-       [['id :: (quote-syntax &class-type-id-set!)]
-        ['name :: (quote-syntax &class-type-name-set!)]
-        ['super :: (quote-syntax &class-type-super-set!)]
-        ['slots :: (quote-syntax &class-type-slots-set!)]
-        ['struct? :: (quote-syntax &class-type-struct?-set!)]
-        ['final? :: (quote-syntax &class-type-final?-set!)]
-        ['constructor-method :: (quote-syntax &class-type-constructor-method-set!)]
-        ['type-descriptor :: (quote-syntax &class-type-descriptor-set!)]
-        ['constructor :: (quote-syntax &class-type-constructor-set!)]
-        ['predicate :: (quote-syntax &class-type-predicate-set!)]
-        ['accessors :: (quote-syntax &class-type-accessors-set!)]
-        ['mutators :: (quote-syntax &class-type-mutators-set!)]
-        ['unchecked-accessors :: (quote-syntax &class-type-unchecked-accessors-set!)]
-        ['unchecked-mutators :: (quote-syntax &class-type-unchecked-mutators-set!)]])))
+       [['id :: (quote-syntax &!class-type-id-set!)]
+        ['name :: (quote-syntax &!class-type-name-set!)]
+        ['super :: (quote-syntax &!class-type-super-set!)]
+        ['slots :: (quote-syntax &!class-type-slots-set!)]
+        ['struct? :: (quote-syntax &!class-type-struct?-set!)]
+        ['final? :: (quote-syntax &!class-type-final?-set!)]
+        ['constructor-method :: (quote-syntax &!class-type-constructor-method-set!)]
+        ['type-descriptor :: (quote-syntax &!class-type-descriptor-set!)]
+        ['constructor :: (quote-syntax &!class-type-constructor-set!)]
+        ['predicate :: (quote-syntax &!class-type-predicate-set!)]
+        ['accessors :: (quote-syntax &!class-type-accessors-set!)]
+        ['mutators :: (quote-syntax &!class-type-mutators-set!)]
+        ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors-set!)]
+        ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]])))
 
   (module <MOP:4>
     (import <MOP:1> (phi: +1 <MOP:1> <MOP:2> <MOP:3>))
@@ -2014,8 +2025,8 @@ package: gerbil
         (def (get-mixin-slots-r type-id)
           (let (info (syntax-local-value type-id))
             (append
-              (class-type-slots info)
-              (concatenate (map get-mixin-slots-r (class-type-super info))))))
+              (!class-type-slots info)
+              (concatenate (map get-mixin-slots-r (!class-type-super info))))))
 
         (check-duplicate-identifiers slots stx)
 
@@ -2030,7 +2041,7 @@ package: gerbil
                        (make-type (make-id "make-" name))
                        (type?     (make-id name "?"))
                        (type-super
-                        (map class-type-descriptor super))
+                        (map !class-type-descriptor super))
                        ((slot ...)
                         slots)
                        ((getf ...)
@@ -2209,7 +2220,7 @@ package: gerbil
                           ((values rebind?)
                            (stx-e (stx-getq rebind: #'rest)))
                           (type::t
-                           (class-type-descriptor klass))
+                           (!class-type-descriptor klass))
                           (name
                            (stx-identifier #'type #'type "::" #'id))
                           (@next-method
@@ -2372,7 +2383,7 @@ package: gerbil
           (#(body ...)
             [vector: (parse-vector #'(body ...))])
           ((struct-id . body)
-           (syntax-local-class-type-info? #'struct-id class-type-struct?)
+           (syntax-local-class-type-info? #'struct-id !class-type-struct?)
            [struct: (syntax-local-value #'struct-id)
                     (parse-vector #'body)])
           ((class-id . body)
@@ -2723,11 +2734,11 @@ package: gerbil
         (syntax-case body ()
           ((simple: body)
            (let ((fields (struct-field-accessors info)))
-             ['if [(class-type-predicate info) tgt]
+             ['if [(!class-type-predicate info) tgt]
                (generate-simple-struct-body info tgt #'body K E)
                E]))
           ((list: body)
-           ['if [(class-type-predicate info) tgt]
+           ['if [(!class-type-predicate info) tgt]
              (generate-list-vector tgt #'body 'struct->list K E)
              E])))
 
@@ -2736,7 +2747,7 @@ package: gerbil
           (syntax-case rest ()
             ((hd . rest)
              (if (null? fields)
-               (raise-syntax-error #f "too many parts for struct" stx info (class-type-name info))
+               (raise-syntax-error #f "too many parts for struct" stx info (!class-type-name info))
                (let (($tgt (genident 'e))
                      (getf (car fields)))
                  ['let [[$tgt [getf tgt]]]
@@ -2750,14 +2761,14 @@ package: gerbil
           (if (null? next)
             []
             (let (ti (car next))
-              (append (recur (map syntax-local-value (class-type-super ti)))
+              (append (recur (map syntax-local-value (!class-type-super ti)))
                       (map (lambda (slot)
-                             (or (assgetq slot (class-type-unchecked-accessors ti))
+                             (or (assgetq slot (!class-type-unchecked-accessors ti))
                                  (raise-syntax-error #f "no accessor for struct slot" stx info slot)))
-                           (class-type-slots ti)))))))
+                           (!class-type-slots ti)))))))
 
       (def (generate-class info tgt body K E)
-        ['if [(class-type-predicate info) tgt]
+        ['if [(!class-type-predicate info) tgt]
           (generate-class-body info tgt body K E)
           E])
 
@@ -2767,7 +2778,7 @@ package: gerbil
             ((key pat . rest)
              (cond
               ((assgetq (string->symbol (keyword->string (stx-e #'key)))
-                        (class-type-unchecked-accessors info))
+                        (!class-type-unchecked-accessors info))
                => (lambda (getf)
                     (let ($tgt (genident 'e))
                       ['let [[$tgt [getf tgt]]]
@@ -3384,16 +3395,16 @@ package: gerbil
       (let (info (syntax-local-value id false))
         (if (class-type-info? info)
           [id
-           (class-type-descriptor info)
-           (let (ctor (class-type-constructor info))
+           (!class-type-descriptor info)
+           (let (ctor (!class-type-constructor info))
              (if ctor [ctor] []))
            ...
-           (class-type-predicate info)
-           (map cdr (class-type-accessors info)) ...
-           (map cdr (class-type-mutators info)) ...
+           (!class-type-predicate info)
+           (map cdr (!class-type-accessors info)) ...
+           (map cdr (!class-type-mutators info)) ...
            (if unchecked?
-             [(map cdr (class-type-unchecked-accessors info)) ...
-              (map cdr (class-type-unchecked-mutators info)) ...]
+             [(map cdr (!class-type-unchecked-accessors info)) ...
+              (map cdr (!class-type-unchecked-mutators info)) ...]
              [])
            ...]
           (raise-syntax-error #f "no class type info" stx id))))

@@ -17,65 +17,125 @@ namespace: #f
 ;;    (fields  unprintable: equality-skip:))
 ;;
 ;; Gerbil rtd on Gambit, extending the above (index, accessor, type)
-;;  0  ##structure-type                 : (Exactly ##type-type)
-;;  1  ##type-id                        : Symbol ; sometimes uninterned
-;;  2  ##type-name                      : Symbol
-;;  3  ##type-flags                     : Fixnum
-;;  4  ##type-super                     : (OrFalse StructTypeDescriptor)
-;;  5  ##type-fields                    : (Vector [Symbol Fixnum default-value] ...)
-;;  6  type-descriptor-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
-;;  7  type-descriptor-all-slots        : (Vector (OrFalse Symbol)) ; first is false
-;;  8  type-descriptor-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
-;;  9  type-descriptor-properties       : AList ; NB: not PList, despite the name "properties"
-;; 10  type-descriptor-constructor      : (OrFalse Symbol)
-;; 11  type-descriptor-methods          : (Table Symbol -> Function)
+;;  0  ##structure-type            : (Exactly ##type-type)
+;;  1  ##type-id                   : Symbol ; sometimes uninterned
+;;  2  ##type-name                 : Symbol
+;;  3  ##type-flags                : Fixnum
+;;  4  ##type-super                : (OrFalse StructTypeDescriptor)
+;;  5  ##type-fields               : (Vector [Symbol Fixnum default-value] ...)
+;;  6  class-type-precedence-list  : (List TypeDescriptor) ; doesn't contain the class itself
+;;  7  class-type-slot-vector      : (Vector Symbol) ; first is always __class
+;;  8  class-type-slot-table       : (Table (Or Symbol Keyword) -> Fixnum)
+;;  9  class-type-properties       : AList ; NB: not PList, despite the name "properties"
+;; 10  class-type-constructor      : (OrFalse Symbol)
+;; 11  class-type-methods          : (Table Symbol -> Function)
 ;;
 ;; The ##type-fields contains 3 entries by Gambit structure field, field name, flags and default value
 ;;
 ;; Standard "properties" keys:
-;; direct-slots:   (List Symbol)           list of direct slots in order, for inheritance
-;; direct-supers:  (List TypeDescriptor)   list of direct supers in order, for introspection only
-;; struct:         Bool                    is this a struct? i.e. only single inheritance for structs
-;; final:          Bool                    is this class final? i.e. no subclasses allowed
-;; equal:          (Or Bool (List Symbol)  all new slots will be compared during objects equal?
-;; print:          (Or Bool (List Symbol)  all new slots will be printed when printing an object
-;; transparent:    Bool                    is this class transparent? i.e. equal and print all slots
+;; direct-slots:   (List Symbol)            list of direct slots in order, for inheritance
+;; direct-supers:  (List TypeDescriptor)    list of direct supers in order, for introspection only
+;; struct:         Bool                     is this a struct? i.e. only single inheritance for structs
+;; final:          Bool                     is this class final? i.e. no subclasses allowed
+;; equal:          (Or Bool (List Symbol))  all new slots will be compared during objects equal?
+;; print:          (Or Bool (List Symbol))  all new slots will be printed when printing an object
+;; transparent:    Bool                     is this class transparent? i.e. equal and print all slots
 
-(def (type-id klass)
+;; These type flags are defined by Gambit itself
+(def type-flag-opaque 1) ;; if opaque, instances are only equal? if eq?
+(def type-flag-extensible 2) ;; if 0, no type extension by Gambit
+(def type-flag-macros 4) ;; if 1, Gambit generates macros for accessors -- irrelevant for Gerbil
+(def type-flag-concrete 8) ;; aka constructor -- has direct instances -- always set for Gerbil
+(def type-flag-id 16) ;; if set we can compare by ##type-id and not just by eq? -- always set for Gerbl
+;; These class type flags are Gerbil extensions
+(def class-type-flag-struct 1024) ;; precedence-list always tail of subclass's precedence-list
+(def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
+
+;; the metaclass type id
+(def class::t.id 'gerbil#class::t)
+
+;; the metaclass itself
+(def class::t
+  (let* ((slots
+          '(id name super flags fields
+            precedence-list slot-vector slot-table properties constructor method))
+         (slot-vector
+          (list->vector (cons '##type slots)))
+         (slot-table
+          (let (slot-table (make-hash-table-eq))
+            (for-each
+              (lambda (slot field)
+                (hash-put! slot-table slot field)
+                (hash-put! slot-table (symbol->keyword slot) field))
+              slots
+              (iota (length slots) 1))
+            slot-table))
+         (flags
+          (##fxior type-flag-extensible type-flag-concrete type-flag-id
+                   class-type-flag-struct))
+         (fields ;; exclude those from ##type-type because this is for Gambit type use
+          ;; the field-flags of 5 mean "(1) printable, (4) equalable",
+          ;; the drop of 5 is the number of type-type slots
+          (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
+         (properties
+          '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
+            (struct: . #t)))
+         (t (##structure
+             #f            ; type: self reference, set below
+             class::t.id   ; type-id
+             'class        ; type-name
+             flags         ; type-flags
+             ##type-type   ; type-super
+             fields        ; type-fields
+             []            ; class-type-precedence-list
+             slot-vector   ; class-type-slot-vector
+             slot-table    ; class-type-slot-table
+             properties    ; class-type-properties
+             #f            ; class-type-constructor
+             #f)))         ; class-type-methods
+    (##structure-type-set! t t)         ; self reference
+    t))
+
+(def (class-type? obj)
+  (##structure-instance-of? obj class::t.id))
+
+(def (class-type-id klass)
   (cond
-   ((type-descriptor? klass) (##type-id klass))
-   ((not klass) #f)
+   ((class-type? klass) (##type-id klass))
    (else (error "not a type descriptor" klass))))
 
-(def (type=? x y)
-  (eq? (type-id x) (type-id y)))
+(def (class-type=? x y)
+  (eq? (class-type-id x) (class-type-id y)))
 
-(def (type-descriptor? klass)
-  (and (##type? klass)
-       (eq? (##structure-length klass) 12)))
+(defrules fxflag-set? ()
+  ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) flag))))
+(defrules fxflag-unset? ()
+  ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) 0))))
 
-(def (type-struct? klass)
-  (##fxbit-set? 21 (##type-flags klass)))
-
-(def (type-final? klass)
-  (##fxbit-set? 22 (##type-flags klass)))
-
-(def (class-type? klass)
-  (type-descriptor? klass))
+(def (type-opaque? type)
+  (fxflag-set? (##type-flags type) type-flag-opaque))
+(def (type-extensible? type)
+  (fxflag-set? (##type-flags type) type-flag-extensible))
+(def (class-type-final? type)
+  (fxflag-unset? (##type-flags type) type-flag-extensible))
+(def (class-type-struct? klass)
+  (fxflag-set? (##type-flags klass) class-type-flag-struct))
+(def (class-type-sealed? klass)
+  (##fxpositive? (##fxand (##type-flags klass) class-type-flag-sealed)))
 
 ;; TODO for debugging only
 (def (properties-form properties)
   (map (match <>
          ([key . val]
           (if (eq? key 'direct-supers:)
-            [key :: (map type-id val)]
+            [key :: (map class-type-id val)]
             [key :: val])))
        properties))
 
-;; Compute the flags and field-info and create a type-descriptor
-(def (make-type-descriptor type-id type-name type-super
-                           precedence-list all-slots properties
-                           constructor slot-table methods)
+;; Compute the flags and field-info and create a class type
+(def (make-class-type-descriptor type-id type-name type-super
+                                 precedence-list slot-vector properties
+                                 constructor slot-table methods)
   ;; compute a table of slots with print: or equal: or transparent: flag
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
@@ -87,9 +147,9 @@ namespace: #f
       (cond ((assgetq key alist) => (cut put-slots! ht <>))))
     (put-alist! ht key properties)
     (for-each (lambda (mixin)
-                (let (alist (type-descriptor-properties mixin))
+                (let (alist (class-type-properties mixin))
                   (if (or (assgetq transparent: alist) (eq? #t (assgetq key alist)))
-                    (put-slots! ht (type-descriptor-slot-list mixin))
+                    (put-slots! ht (class-type-slot-list mixin))
                     (put-alist! ht key alist))))
               precedence-list)
     ht)
@@ -100,25 +160,25 @@ namespace: #f
          (all-slots-equalable? (or transparent? (eq? #t (assgetq equal: properties))))
          (equalable (and (not all-slots-equalable?) (make-props! equal:)))
          (first-new-field
-          (if type-super
-            (##vector-length (type-descriptor-all-slots type-super))
+          (if (class-type? type-super)
+            (##vector-length (class-type-slot-vector type-super))
             1))
-         (field-info-length (##fx* 3 (##fx- (##vector-length all-slots) first-new-field)))
+         (field-info-length (##fx* 3 (##fx- (##vector-length slot-vector) first-new-field)))
          (field-info (make-vector field-info-length #f))
          (struct? (assgetq struct: properties))
          (final? (assgetq final: properties))
          (opaque?
           (or (not all-slots-equalable?)
-              (and type-super (##fx= (##fxand (##type-flags type-super) 1) 1))))
+              (and type-super (type-opaque? type-super))))
          (type-flags
-          (##fxior 24 ;; 16 (id) + 8 (constructor)
-                   (if opaque? 1 0)
-                   (if struct? (##fxarithmetic-shift 1 21) 0)
-                   (if final? (##fxarithmetic-shift 1 22) 0))))
+          (##fxior type-flag-id type-flag-concrete
+                   (if final? 0 type-flag-extensible)
+                   (if opaque? type-flag-opaque 0)
+                   (if struct? class-type-flag-struct 0))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
-        (let* ((slot (##vector-ref all-slots i))
+        (let* ((slot (##vector-ref slot-vector i))
                (flags
                 (if transparent? 0
                     (##fxior (if (or all-slots-printable? (hash-get printable slot)) 0 1)
@@ -126,44 +186,45 @@ namespace: #f
           (vector-set! field-info j slot)
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
-    (##structure ##type-type type-id type-name type-flags type-super field-info ;; gambit type
-                 precedence-list all-slots slot-table properties constructor methods))) ;; our extensions
+    (##structure class::t
+                 ;; gambit type fields
+                 type-id type-name type-flags type-super field-info
+                 ;; gerbil class fields
+                 precedence-list slot-vector slot-table properties constructor methods)))
 
-;;; type descriptor utilities
-(def (type-descriptor-precedence-list klass)
-  (##structure-ref klass 6 ##type-type type-descriptor-precedence-list))
-(def (type-descriptor-all-slots klass)
-  (##structure-ref klass 7 ##type-type type-descriptor-all-slots))
-(def (type-descriptor-slot-table klass)
-  (##structure-ref klass 8 ##type-type type-descriptor-slot-table))
-(def (type-descriptor-properties klass)
-  (##structure-ref klass 9 ##type-type type-descriptor-properties))
-(def (type-descriptor-constructor klass)
-  (##structure-ref klass 10 ##type-type type-descriptor-constructor))
-(def (type-descriptor-methods klass)
-  (##structure-ref klass 11 ##type-type type-descriptor-methods))
-(def (type-descriptor-methods-set! klass ht)
-  (##structure-set! klass ht 11 ##type-type type-descriptor-methods-set!))
+;;; class type utilities
+(def (class-type-precedence-list klass)
+  (##structure-ref klass 6 class::t class-type-precedence-list))
+(def (class-type-slot-vector klass)
+  (##structure-ref klass 7 class::t class-type-slot-vector))
+(def (class-type-slot-table klass)
+  (##structure-ref klass 8 class::t class-type-slot-table))
+(def (class-type-properties klass)
+  (##structure-ref klass 9 class::t class-type-properties))
+(def (class-type-constructor klass)
+  (##structure-ref klass 10 class::t class-type-constructor))
+(def (class-type-methods klass)
+  (##structure-ref klass 11 class::t class-type-methods))
+(def (class-type-methods-set! klass ht)
+  (##structure-set! klass ht 11 class::t class-type-methods-set!))
 
-(def (type-descriptor-slot-list klass)
-  (cdr (vector->list (type-descriptor-all-slots klass))))
-(def (type-descriptor-fields klass)
-  (##fx- (##vector-length (type-descriptor-all-slots klass)) 1))
-(def (type-descriptor-sealed? klass)
-  (##fxbit-set? 20 (##type-flags klass)))
-(def (type-descriptor-seal! klass)
-  (##structure-set! klass (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))
-                    3 ##type-type type-descriptor-seal!))
+(def (class-type-slot-list klass)
+  (cdr (vector->list (class-type-slot-vector klass))))
+(def (class-type-fields klass)
+  (##fx- (##vector-length (class-type-slot-vector klass)) 1))
+(def (class-type-seal! klass)
+  (##structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
+                    3 class::t class-type-seal!))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
-; : TypeDescriptor TypeDescriptor -> Bool
+; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
 (def (substruct? maybe-sub-struct maybe-super-struct)
   (let (maybe-super-struct-id (##type-id maybe-super-struct))
     (let lp ((super-struct maybe-sub-struct))
       (cond
        ((not super-struct)
         #f)
-       ((eq? maybe-super-struct-id (type-id super-struct))
+       ((eq? maybe-super-struct-id (##type-id super-struct))
         #t)
        (else
         (lp (##type-super super-struct)))))))
@@ -173,7 +234,7 @@ namespace: #f
 (def (base-struct/1 klass)
   (cond
    ((class-type? klass)
-    (if (type-struct? klass)
+    (if (class-type-struct? klass)
       klass
       (##type-super klass)))
    ((not klass) #f)
@@ -208,7 +269,7 @@ namespace: #f
     (match rest
       ([hd . rest]
        (cond
-        ((type-descriptor-constructor hd)
+        ((class-type-constructor hd)
          => (lambda (xconstructor)
               (if (or (not constructor) (eq? constructor xconstructor))
                 (lp rest xconstructor)
@@ -219,14 +280,14 @@ namespace: #f
 ;; Given a struct super class (or false if none),
 ;; a list of super-classes (not including the class being created), and
 ;; a list of direct slots from the class being created,
-;; return the all-slots vector of slots (with #f in position 0) and the slot-table.
+;; return the slot-vector vector of slots (with #f in position 0) and the slot-table.
 ;; a table mapping symbol and keyword names to offset, and
 ;; : (OrFalse StructTypeDescriptor) (List TypeDescriptor) (List Symbol) \
 ;;   -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
 (def (compute-class-slots class-precedence-list direct-slots)
   (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
          (slot-table (make-hash-table-eq))
-         (r-slots [#f])
+         (r-slots '(__class))
          (process-slot
           (lambda (slot)
             (unless (symbol? slot)
@@ -239,24 +300,24 @@ namespace: #f
          (process-slots (cut for-each process-slot <>)))
     (for-each (lambda (mixin)
                 (process-slots
-                 (assgetq direct-slots: (type-descriptor-properties mixin) [])))
+                 (assgetq direct-slots: (class-type-properties mixin) [])))
               (reverse class-precedence-list))
     (process-slots direct-slots)
-    (let (all-slots (list->vector (reverse r-slots)))
-      (values all-slots slot-table))))
+    (let (slot-vector (list->vector (reverse r-slots)))
+      (values slot-vector slot-table))))
 
 ;;; ClassTypeDescriptor
 ;; : Symbol Symbol (List TypeDescriptor) (List Symbol) Alist Constructor -> ClassTypeDescriptor
 (def (make-class-type id name direct-supers direct-slots properties constructor)
   (cond
-   ((find (lambda (klass) (not (type-descriptor? klass))) direct-supers)
-    => (cut error "Illegal super class; not a type descriptor" <>))
-   ((find type-final? direct-supers)
+   ((find (? (not class-type?)) direct-supers)
+    => (cut error "Illegal super class; not a class descriptor" <>))
+   ((find class-type-final? direct-supers)
     => (cut error "Cannot extend final class" <>)))
 
   (let* (((values precedence-list struct-super)
           (compute-precedence-list direct-supers))
-         ((values all-slots slot-table)
+         ((values slot-vector slot-table)
           (compute-class-slots precedence-list direct-slots))
          (properties
           [[direct-slots: . direct-slots]
@@ -264,27 +325,27 @@ namespace: #f
            properties ...])
          (constructor* (or constructor (find-super-constructor direct-supers))))
 
-    (make-type-descriptor id name struct-super
-                          precedence-list all-slots properties
-                          constructor* slot-table #f)))
+    (make-class-type-descriptor id name struct-super
+                                precedence-list slot-vector properties
+                                constructor* slot-table #f)))
 
 (def (class-precedence-list klass)
-  (cons klass (type-descriptor-precedence-list klass)))
+  (cons klass (class-type-precedence-list klass)))
 
 ;; class precedence list, excluding current class; super struct if any
 ;; (List TypeDescriptor) -> (List TypeDescriptor) (OrFalse TypeDescriptor)
 (def (compute-precedence-list direct-supers)
   (c4-linearize [] direct-supers
                 get-precedence-list: class-precedence-list
-                struct: type-struct?
+                struct: class-type-struct?
                 eq: eq?
                 get-name: ##type-name))
 
 (def (make-class-predicate klass)
   (let (tid (##type-id klass))
     (cond
-     ((type-final? klass) (cut ##structure-direct-instance-of? <> tid))
-     ((type-struct? klass) (cut ##structure-instance-of? <> tid))
+     ((class-type-final? klass) (cut ##structure-direct-instance-of? <> tid))
+     ((class-type-struct? klass) (cut ##structure-instance-of? <> tid))
      (else (cut class-instance? klass <>)))))
 
 ;; Given a klass descriptor, a slot name (symbol), and three accessor-makers
@@ -295,16 +356,17 @@ namespace: #f
 ;; or (c) the slot being a regular class slot (the more expensive code path),
 ;; return an accessor for this klass and slot.
 (def (if-class-slot-field klass slot if-final if-struct if-struct-field if-class-slot)
-  (let (field (hash-get (type-descriptor-slot-table klass) slot))
+  (let (field (hash-get (class-type-slot-table klass) slot))
     (cond
      ((not field)
       (error "unknown slot" class: klass slot: slot))
-     ((type-final? klass)
+     ((class-type-final? klass)
       (if-final klass slot field))
-     ((type-struct? klass)
+     ((class-type-struct? klass)
       (if-struct klass slot field))
      ((let (strukt (base-struct/1 klass))
-        (and strukt (##fx< field (##vector-length (type-descriptor-all-slots strukt)))))
+        (and (class-type? strukt)
+             (##fx< field (##vector-length (class-type-slot-vector strukt)))))
       (if-struct-field klass slot field))
      (else
       (if-class-slot klass slot field)))))
@@ -392,7 +454,7 @@ namespace: #f
     (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
-  (hash-get (type-descriptor-slot-table klass) slot))
+  (hash-get (class-type-slot-table klass) slot))
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -420,7 +482,7 @@ namespace: #f
    (if (object? obj)
      (let (klass (object-type obj))
        (cond
-        ((and (type-descriptor? klass)
+        ((and (class-type? klass)
               (class-slot-offset klass slot))
          => K)
         (else (E obj slot))))
@@ -440,7 +502,7 @@ namespace: #f
   (let (maybe-super-class-id (##type-id maybe-super-class))
     (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
         (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
-               (type-descriptor-precedence-list maybe-sub-class)))))
+               (class-type-precedence-list maybe-sub-class)))))
 
 ;;; generic object utilities
 (def object?
@@ -457,7 +519,7 @@ namespace: #f
 (def (class-instance? klass obj)
   (and (object? obj)
        (let (type (object-type obj))
-         (and (type-descriptor? type)
+         (and (class-type? type)
               (subclass? type klass)))))
 
 (def (make-object klass k)
@@ -474,22 +536,22 @@ namespace: #f
         (loop (##fx- i 1)))
       obj)))
 
-(def (make-new-instance klass)
-  (make-object klass (##vector-length (type-descriptor-all-slots klass))))
+(def (new-instance klass)
+  (make-object klass (##vector-length (class-type-slot-vector klass))))
 
 (def (make-instance klass . args)
-  (let (obj (make-new-instance klass))
+  (let (obj (new-instance klass))
     (cond
-     ((type-descriptor-constructor klass)
+     ((class-type-constructor klass)
       => (lambda (kons-id)
            (__constructor-init! klass kons-id obj args)))
-     ((not (type-struct? klass))
+     ((not (class-type-struct? klass))
       (__class-instance-init! klass obj args))
      ((##fx= (##fx- (##structure-length obj) 1) (length args))
       (apply ##structure klass args))
      (else
       (error "arguments don't match object size"
-        class: klass slots: (type-descriptor-slot-list klass)
+        class: klass slots: (class-type-slot-list klass)
         args: args)))))
 
 (def make-class-instance make-instance)
@@ -550,13 +612,13 @@ namespace: #f
 (def (class->list obj)
   (if (object? obj)
     (let (klass (object-type obj))
-      (if (type-descriptor? klass)
-        (let (all-slots (type-descriptor-all-slots klass))
-          (let loop ((index (##fx- (##vector-length all-slots) 1))
+      (if (class-type? klass)
+        (let (slot-vector (class-type-slot-vector klass))
+          (let loop ((index (##fx- (##vector-length slot-vector) 1))
                      (plist []))
             (if (##fx< index 1)
               (cons klass plist)
-              (let ((slot (##vector-ref all-slots index)))
+              (let ((slot (##vector-ref slot-vector index)))
                 (loop (##fx- index 1)
                       (cons* (symbol->keyword slot)
                              (unchecked-field-ref obj index)
@@ -597,20 +659,20 @@ namespace: #f
       (apply method obj args))))
 
 (def (find-method klass id)
-  (if (type-descriptor? klass)
+  (if (class-type? klass)
     (__find-method klass id)
     (builtin-find-method klass id)))
 
 (def (__find-method klass id)
   (cond
    ((direct-method-ref klass id))
-   ((type-descriptor-sealed? klass)
+   ((class-type-sealed? klass)
     #f)
    (else
     (mixin-method-ref klass id))))
 
 (def (class-find-method klass id)
-  (and (type-descriptor? klass)
+  (and (class-type? klass)
        (__find-method klass id)))
 
 (def (mixin-find-method mixins id)
@@ -623,12 +685,12 @@ namespace: #f
 
 (def (direct-method-ref klass id)
   (cond
-   ((type-descriptor-methods klass)
+   ((class-type-methods klass)
     => (lambda (ht) (hash-get ht id)))
    (else #f)))
 
 (def (mixin-method-ref klass id)
-  (mixin-find-method (type-descriptor-precedence-list klass) id))
+  (mixin-find-method (class-type-precedence-list klass) id))
 
 (def (builtin-method-ref klass id)
   (cond
@@ -646,12 +708,12 @@ namespace: #f
     (error "bad method; expected procedure" proc))
 
   (cond
-   ((type-descriptor? klass)
-    (let (ht (type-descriptor-methods klass))
+   ((class-type? klass)
+    (let (ht (class-type-methods klass))
       (if ht
         (bind! ht)
         (let (ht (make-hash-table-eq))
-          (type-descriptor-methods-set! klass ht)
+          (class-type-methods-set! klass ht)
           (bind! ht)))))
    ((##type? klass)
     (let (ht
@@ -663,7 +725,7 @@ namespace: #f
               ht))))
       (bind! ht)))
    (else
-    (error "bad class; expected type-descriptor or builtin type" klass))))
+    (error "bad class; expected class or builtin type" klass))))
 
 (def __method-specializers
   (make-table test: eq?))
@@ -679,14 +741,14 @@ namespace: #f
 
     (def (collect-direct-methods! klass)
       (cond
-       ((type-descriptor-methods klass) => merge!)))
+       ((class-type-methods klass) => merge!)))
 
     (for-each collect-direct-methods!
               (reverse (class-precedence-list klass))))
 
-  (when (type-descriptor? klass)
-    (unless (type-descriptor-sealed? klass)
-      (unless (type-final? klass)
+  (when (class-type? klass)
+    (unless (class-type-sealed? klass)
+      (unless (class-type-final? klass)
         (error "cannot seal non-final class" klass))
       (let ((vtab (make-hash-table-eq))
             (mtab (make-hash-table-eq)))
@@ -704,8 +766,8 @@ namespace: #f
             (else
              (hash-put! vtab id proc))))
          mtab)
-        (type-descriptor-methods-set! klass vtab)
-        (type-descriptor-seal! klass)))))
+        (class-type-methods-set! klass vtab)
+        (class-type-seal! klass)))))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but
 ;; 2. is somewhat simpler and slightly faster in the common case that has no
@@ -721,7 +783,7 @@ namespace: #f
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
     (cond
-     ((type-descriptor? klass)
+     ((class-type? klass)
       (let lp ((rest (class-precedence-list klass)))
         (match rest
           ([klass . rest]

@@ -49,205 +49,205 @@ package: gerbil
    gerbil/core$<MOP>$<MOP:2>#make-class-type-info
    (@constructor gerbil/core$<MOP>$<MOP:2>#class-type-info::t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-id
+   gerbil/core$<MOP>$<MOP:2>#!class-type-id
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t id #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-name
+   gerbil/core$<MOP>$<MOP:2>#!class-type-name
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t name #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-super
+   gerbil/core$<MOP>$<MOP:2>#!class-type-super
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t super #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-slots
+   gerbil/core$<MOP>$<MOP:2>#!class-type-slots
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t slots #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-struct?
+   gerbil/core$<MOP>$<MOP:2>#!class-type-struct?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t struct? #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-final?
+   gerbil/core$<MOP>$<MOP:2>#!class-type-final?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method
+   gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     constructor-method
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-descriptor
+   gerbil/core$<MOP>$<MOP:2>#!class-type-descriptor
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t type-descriptor #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-constructor
+   gerbil/core$<MOP>$<MOP:2>#!class-type-constructor
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t constructor #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-predicate
+   gerbil/core$<MOP>$<MOP:2>#!class-type-predicate
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t predicate #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-accessors
+   gerbil/core$<MOP>$<MOP:2>#!class-type-accessors
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t accessors #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-mutators
+   gerbil/core$<MOP>$<MOP:2>#!class-type-mutators
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t mutators #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors
+   gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-accessors
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-accessors
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators
+   gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-mutators
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-mutators
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-id-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-id-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t id #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-name-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-name-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t name #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-super-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-super-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t super #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-slots-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-slots-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t slots #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-struct?-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-struct?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t struct? #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-final?-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-final?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-constructor-method-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     constructor-method
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-identifier-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-descriptor-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t type-descriptor #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-constructor-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t constructor #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-predicate-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-predicate-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t predicate #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-accessors-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-accessors-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t accessors #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-mutators-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-mutators-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t mutators #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-accessors-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-accessors-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-accessors
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#class-type-unchecked-mutators-set!
+   gerbil/core$<MOP>$<MOP:2>#!class-type-unchecked-mutators-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-mutators
     #t))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-id
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-id
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t id #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-name
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-name
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t name #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-super
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-super
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t super #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-slots
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-slots
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t slots #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-struct?
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-struct?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t struct? #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-final?
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-final?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     constructor-method
     #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-descriptor
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-descriptor
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t type-descriptor #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-constructor
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t constructor #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-predicate
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-predicate
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t predicate #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-accessors
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-accessors
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t accessors #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-mutators
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-mutators
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t mutators #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-accessors
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-accessors
     #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-mutators
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-mutators
     #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-id-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-id-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t id #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-name-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-name-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t name #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-super-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-super-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t super #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-slots-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-slots-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t slots #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-struct?-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-struct?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t struct? #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-final?-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-final?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-method-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     constructor-method
     #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-identifier-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-descriptor-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t type-descriptor #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-constructor-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t constructor #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-predicate-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-predicate-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t predicate #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-accessors-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-accessors-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t accessors #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-mutators-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-mutators-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t mutators #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-accessors-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-accessors-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-accessors
     #f))
   (declare-type
-   gerbil/core$<MOP>$<MOP:2>#&class-type-unchecked-mutators-set!
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-unchecked-mutators-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
     unchecked-mutators

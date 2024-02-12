@@ -87,7 +87,7 @@
 
 (def (type-precedence-list klass)
   (cond
-   ((type-descriptor? klass)
+   ((class-type? klass)
     (append (map ##type-id (class-precedence-list klass))
             '(object t)))
    ((##type? klass)

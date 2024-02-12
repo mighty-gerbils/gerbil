@@ -206,7 +206,6 @@ module.exports = {
                             'misc/queue',
                             'misc/rbtree',
                             'misc/repr',
-                            'misc/rtd',
                             'misc/rwlock',
                             'misc/shared',
                             'misc/shuffle',

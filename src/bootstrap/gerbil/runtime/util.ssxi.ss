@@ -153,6 +153,7 @@ package: gerbil/runtime
   (declare-type foldr2 (@lambda 4 #f))
   (declare-type foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
   (declare-type foldr* (@lambda (2) #f))
+  (declare-type drop (@lambda 2 #f))
   (declare-type remove-nulls! (@lambda 1 #f))
   (declare-type append1! (@lambda 2 #f))
   (declare-type append-reverse (@lambda 2 #f))

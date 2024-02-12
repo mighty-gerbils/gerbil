@@ -82,7 +82,7 @@
       (with-syntax ((type (@ type-info type)))
         #'(quote type)))
      ((class-type-info? type-info)
-      (with-syntax ((klass::t (class-type-descriptor type-info)))
+      (with-syntax ((klass::t (!class-type-descriptor type-info)))
         #'(type-precedence-list klass::t)))
      ((builtin-type-info? type-info)
       (with-syntax ((klass::t (@ type-info runtime-identifier)))

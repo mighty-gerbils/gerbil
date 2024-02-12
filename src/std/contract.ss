@@ -67,14 +67,14 @@
 
 (begin-syntax
   (def (get-slot-accessor stx klass slot)
-    (let (accessors (class-type-unchecked-accessors klass))
+    (let (accessors (!class-type-unchecked-accessors klass))
       (cond
        ((assgetq slot accessors))
        (else
         (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
 
   (def (get-slot-mutator stx klass slot)
-    (let (mutators (class-type-unchecked-mutators klass))
+    (let (mutators (!class-type-unchecked-mutators klass))
       (cond
        ((assgetq slot mutators))
        (else
@@ -97,7 +97,7 @@
   (def (expand-body klass var Type body)
     (with-syntax ((@ref (syntax-local-introduce '%%ref))
                   (@set! (stx-identifier var 'set!))
-                  (Type::t (class-type-descriptor klass))
+                  (Type::t (!class-type-descriptor klass))
                   (var-quoted (core-quote-syntax var))
                   (var var)
                   (klass klass)
@@ -155,7 +155,7 @@
     (let* ((klass (syntax-local-value Type false))
            (expr-body (expand-body klass var Type body)))
       (if checked?
-        (with-syntax ((instance? (class-type-predicate klass))
+        (with-syntax ((instance? (!class-type-predicate klass))
                       (var var) (expr-body expr-body))
           #'(with-contract (var :~ instance?)
               expr-body))

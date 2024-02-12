@@ -40,8 +40,7 @@ namespace: #f
 ;; - get-precedence-list gets the precedence list for a super s, including s itself in front
 ;; - single-inheritance? is a predicate that tells if a class follows single inheritance, and
 ;;   must have its precedence list be a tail of any subclass'es precedence list.
-;; - eqpred is an equality predicate between list elements
-;;   (passed around because somehow equal? doesn't work correctly on runtime type-descriptors).
+;; - eq is an equality predicate between list elements
 ;; - get-name gets the name of a object/class, for debugging only.
 ;; Returns the linearized precedence list, and the most specific struct superclass if any
 ;; : (List X) (List X) \

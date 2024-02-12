@@ -511,12 +511,9 @@
   (xdr-tag-opaque   xdr-read-opaque   xdr-write-opaque))
 
 ;; struct xdr
-;; FIXME
-(extern namespace: #f type-descriptor-fields)
-
 (def (xdr-read-struct klass buf)
   (let (fields (xdr-read-uint buf))
-    (if (##fx= fields (type-descriptor-fields klass))
+    (if (##fx= fields (class-type-fields klass))
       (let (obj (make-object klass (fx1+ fields)))
         (let lp ((i 0))
           (if (##fx< i fields)
