@@ -19,6 +19,11 @@ namespace: #f
          (%#define-runtime class-type? class-type?)
          (%#define-runtime class-type-id class-type-id)
          (%#define-runtime class-type=? class-type=?)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/mop__1")))
+                  (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|))
+         (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
          (%#define-runtime type-opaque? type-opaque?)
          (%#define-runtime type-extensible? type-extensible?)
          (%#define-runtime class-type-final? class-type-final?)
@@ -100,10 +105,7 @@ namespace: #f
          (%#define-runtime unchecked-field-set! unchecked-field-set!)
          (%#define-runtime unchecked-slot-ref unchecked-slot-ref)
          (%#define-runtime unchecked-slot-set! unchecked-slot-set!)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/mop__1")))
-                  (%#define-syntax __slot-e |[:0:]#__slot-e|))
+         (%#define-syntax __slot-e |[:0:]#__slot-e|)
          (%#begin (%#define-runtime slot-ref__% slot-ref__%)
                   (%#begin (%#define-runtime slot-ref__0 slot-ref__0)
                            (%#define-runtime slot-ref slot-ref)))
