@@ -294,6 +294,9 @@ namespace: #f
                 rest))
       iv)))
 
+(def (drop l k)
+  (if (zero? k) l (drop (cdr l) (- k 1))))
+
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
 (def (remove-nulls! l)
