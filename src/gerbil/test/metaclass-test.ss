@@ -53,5 +53,4 @@
         (lambda (obj . args) 'y))
       (check {b.x} => 'x)
       (check {b.y} => 'y)
-      (check {b.z} => 'z)
-      )))
+      (check {b.z} => 'z))))

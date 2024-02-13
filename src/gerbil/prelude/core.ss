@@ -1745,7 +1745,7 @@ package: gerbil
                           (mop-struct? struct?)
                           (mop-final? (stx-getq final: #'rest))
                           (mop-metaclass
-                           (if metaclass
+                           (if (stx-e metaclass)
                              (core-quote-syntax metaclass)
                              #f))
                           (type-properties
@@ -1760,7 +1760,7 @@ package: gerbil
                              #'[[struct: . #t] :: type-properties]
                              #'type-properties))
                           (type-properties
-                           (if metaclass
+                           (if (stx-e metaclass)
                              (with-syntax ((metaclass metaclass))
                                #'[[metaclass: :: metaclass] :: type-properties])
                              #'type-properties))

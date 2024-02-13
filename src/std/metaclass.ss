@@ -13,7 +13,7 @@
    name: 'class
    super: []
    slots: '(id name super flags fields
-               precedence-list slot-vector slot-table properties constructor method)
+               precedence-list slot-vector slot-table properties constructor methods)
    struct?: #t
    type-descriptor: (quote-syntax class::t)
    constructor: (quote-syntax make-class-type)
