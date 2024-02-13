@@ -45,8 +45,8 @@ namespace: gxc
 
 ;; MOP
 (defrules @class ()
-  ((_ type-id super-ids precedence-list slots fields constructor struct? final? metaclass? methods)
-   (make-!class 'type-id 'super-ids 'precedence-list 'slots 'fields 'constructor struct? final? metaclass? 'methods)))
+  ((_ type-id super-ids precedence-list slots fields constructor struct? final? metaclass methods)
+   (make-!class 'type-id 'super-ids 'precedence-list 'slots 'fields 'constructor struct? final? 'metaclass 'methods)))
 
 (defrules @predicate ()
   ((_ type-id)

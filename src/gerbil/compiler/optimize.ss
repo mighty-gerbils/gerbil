@@ -199,7 +199,7 @@ namespace: gxc
 (defmethod {typedecl !class}
   (lambda (self)
     (with ((!class id super precendence-list slots fields constructor struct? final? metaclass methods) self)
-      ['@class id super precendence-list slots fields constructor struct? final? 'metaclass (and methods (hash->list methods))])))
+      ['@class id super precendence-list slots fields constructor struct? final? metaclass (and methods (hash->list methods))])))
 
 (defmethod {typedecl !predicate}
   (lambda (self)
