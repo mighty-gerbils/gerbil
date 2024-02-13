@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/control::timestamp 1707831892)
+  (define gerbil/runtime/control::timestamp 1707840753)
   (begin
     (define make-promise
       (lambda (_thunk64922_)
@@ -113,25 +113,25 @@
                                   (lambda (_rest64806_ _val64807_)
                                     (if _kwt64760_
                                         (let ((_pos64809_
-                                               (let ((__tmp78931
+                                               (let ((__tmp78933
                                                       (keyword-hash _hd64791_))
-                                                     (__tmp78930
+                                                     (__tmp78932
                                                       (let ()
                                                         (declare (not safe))
                                                         (##vector-length
                                                          _kwt64760_))))
                                                  (declare (not safe))
                                                  (##fxmodulo
-                                                  __tmp78931
-                                                  __tmp78930))))
-                                          (if (let ((__tmp78932
+                                                  __tmp78933
+                                                  __tmp78932))))
+                                          (if (let ((__tmp78934
                                                      (let ()
                                                        (declare (not safe))
                                                        (##vector-ref
                                                         _kwt64760_
                                                         _pos64809_))))
                                                 (declare (not safe))
-                                                (eq? _hd64791_ __tmp78932))
+                                                (eq? _hd64791_ __tmp78934))
                                               '#!void
                                               (error '"Unexpected keyword argument"
                                                      _K64761_
@@ -231,20 +231,20 @@
                                           (##set-cdr!
                                            _tail64770_
                                            _hd-rest64790_))
-                                        (let ((__tmp78933
+                                        (let ((__tmp78931
                                                (let ()
                                                  (declare (not safe))
                                                  (cons _keys64764_
                                                        _args64769_))))
                                           (declare (not safe))
-                                          (##apply _K64761_ __tmp78933)))
-                                      (let ((__tmp78934
+                                          (##apply _K64761_ __tmp78931)))
+                                      (let ((__tmp78930
                                              (let ()
                                                (declare (not safe))
                                                (cons _keys64764_
                                                      _hd-rest64790_))))
                                         (declare (not safe))
-                                        (##apply _K64761_ __tmp78934)))
+                                        (##apply _K64761_ __tmp78930)))
                                   (if _args64769_
                                       (begin
                                         (let ()

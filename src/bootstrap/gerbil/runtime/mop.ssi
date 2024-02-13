@@ -16,14 +16,14 @@ namespace: #f
          (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
          (%#define-runtime class-type-flag-metaclass class-type-flag-metaclass)
          (%#define-runtime class::t.id class::t.id)
-         (%#define-runtime class::t class::t)
-         (%#define-runtime class-type? class-type?)
-         (%#define-runtime class-type-id class-type-id)
-         (%#define-runtime class-type=? class-type=?)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/mop__1")))
-                  (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|))
+                  (%#define-syntax annotate-class |[:0:]#annotate-class|))
+         (%#define-runtime class::t class::t)
+         (%#define-runtime class-type? class-type?)
+         (%#define-runtime class-type=? class-type=?)
+         (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|)
          (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
          (%#define-runtime type-opaque? type-opaque?)
          (%#define-runtime type-extensible? type-extensible?)
@@ -35,19 +35,78 @@ namespace: #f
          (%#define-runtime
           make-class-type-descriptor
           make-class-type-descriptor)
+         (%#define-syntax defrefset |[:0:]#defrefset|)
+         (%#define-syntax defrefset* |[:0:]#defrefset*|)
+         (%#define-runtime class-type-id class-type-id)
+         (%#define-runtime &class-type-id &class-type-id)
+         (%#define-runtime class-type-id-set! class-type-id-set!)
+         (%#define-runtime &class-type-id-set! &class-type-id-set!)
+         (%#define-runtime class-type-name class-type-name)
+         (%#define-runtime &class-type-name &class-type-name)
+         (%#define-runtime class-type-name-set! class-type-name-set!)
+         (%#define-runtime &class-type-name-set! &class-type-name-set!)
+         (%#define-runtime class-type-super class-type-super)
+         (%#define-runtime &class-type-super &class-type-super)
+         (%#define-runtime class-type-super-set! class-type-super-set!)
+         (%#define-runtime &class-type-super-set! &class-type-super-set!)
+         (%#define-runtime class-type-flags class-type-flags)
+         (%#define-runtime &class-type-flags &class-type-flags)
+         (%#define-runtime class-type-flags-set! class-type-flags-set!)
+         (%#define-runtime &class-type-flags-set! &class-type-flags-set!)
+         (%#define-runtime class-type-fields class-type-fields)
+         (%#define-runtime &class-type-fields &class-type-fields)
+         (%#define-runtime class-type-fields-set! class-type-fields-set!)
+         (%#define-runtime &class-type-fields-set! &class-type-fields-set!)
          (%#define-runtime
           class-type-precedence-list
           class-type-precedence-list)
+         (%#define-runtime
+          &class-type-precedence-list
+          &class-type-precedence-list)
+         (%#define-runtime
+          class-type-precedence-list-set!
+          class-type-precedence-list-set!)
+         (%#define-runtime
+          &class-type-precedence-list-set!
+          &class-type-precedence-list-set!)
          (%#define-runtime class-type-slot-vector class-type-slot-vector)
+         (%#define-runtime &class-type-slot-vector &class-type-slot-vector)
+         (%#define-runtime
+          class-type-slot-vector-set!
+          class-type-slot-vector-set!)
+         (%#define-runtime
+          &class-type-slot-vector-set!
+          &class-type-slot-vector-set!)
          (%#define-runtime class-type-slot-table class-type-slot-table)
+         (%#define-runtime &class-type-slot-table &class-type-slot-table)
+         (%#define-runtime
+          class-type-slot-table-set!
+          class-type-slot-table-set!)
+         (%#define-runtime
+          &class-type-slot-table-set!
+          &class-type-slot-table-set!)
          (%#define-runtime class-type-properties class-type-properties)
+         (%#define-runtime &class-type-properties &class-type-properties)
+         (%#define-runtime
+          class-type-properties-set!
+          class-type-properties-set!)
+         (%#define-runtime
+          &class-type-properties-set!
+          &class-type-properties-set!)
          (%#define-runtime class-type-constructor class-type-constructor)
+         (%#define-runtime &class-type-constructor &class-type-constructor)
+         (%#define-runtime
+          class-type-constructor-set!
+          class-type-constructor-set!)
+         (%#define-runtime
+          &class-type-constructor-set!
+          &class-type-constructor-set!)
          (%#define-runtime class-type-methods class-type-methods)
-         (%#define-runtime class-type-methods-set! class-type-methods-set!)
          (%#define-runtime &class-type-methods &class-type-methods)
+         (%#define-runtime class-type-methods-set! class-type-methods-set!)
          (%#define-runtime &class-type-methods-set! &class-type-methods-set!)
          (%#define-runtime class-type-slot-list class-type-slot-list)
-         (%#define-runtime class-type-fields class-type-fields)
+         (%#define-runtime class-type-field-count class-type-field-count)
          (%#define-runtime class-type-seal! class-type-seal!)
          (%#define-runtime &class-type-seal! &class-type-seal!)
          (%#define-runtime substruct? substruct?)

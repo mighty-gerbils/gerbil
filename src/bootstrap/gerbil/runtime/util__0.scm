@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1707831890)
+  (define gerbil/runtime/util::timestamp 1707840752)
   (begin
     (define displayln
       (lambda _args59326_
@@ -1207,16 +1207,16 @@
               (let ((_$e58113_ (apply _f58106_ (map car _rest58111_))))
                 (if _$e58113_
                     ((lambda (_r58116_)
-                       (let ((__tmp64397
-                              (let ((__tmp64398 (map cdr _rest58111_)))
+                       (let ((__tmp64398
+                              (let ((__tmp64399 (map cdr _rest58111_)))
                                 (declare (not safe))
-                                (_recur58109_ __tmp64398))))
+                                (_recur58109_ __tmp64399))))
                          (declare (not safe))
-                         (cons _r58116_ __tmp64397)))
+                         (cons _r58116_ __tmp64398)))
                      _$e58113_)
-                    (let ((__tmp64399 (map cdr _rest58111_)))
+                    (let ((__tmp64397 (map cdr _rest58111_)))
                       (declare (not safe))
-                      (_recur58109_ __tmp64399))))
+                      (_recur58109_ __tmp64397))))
               '()))))
     (define iota__%
       (lambda (_count58074_ _start58075_ _step58076_)
@@ -2045,22 +2045,22 @@
                 (if (let ()
                       (declare (not safe))
                       (##fx< _i57399_ _prefix-len57395_))
-                    (if (let ((__tmp64442
+                    (if (let ((__tmp64443
                                (let ()
                                  (declare (not safe))
                                  (##string-ref _str57392_ _i57399_)))
-                              (__tmp64441
+                              (__tmp64442
                                (let ()
                                  (declare (not safe))
                                  (##string-ref _prefix57391_ _i57399_))))
                           (declare (not safe))
-                          (eq? __tmp64442 __tmp64441))
-                        (let ((__tmp64443
+                          (eq? __tmp64443 __tmp64442))
+                        (let ((__tmp64441
                                (let ()
                                  (declare (not safe))
                                  (##fx+ _i57399_ '1))))
                           (declare (not safe))
-                          (_lp57397_ __tmp64443))
+                          (_lp57397_ __tmp64441))
                         '#f)
                     '#t))
               '#f))))
@@ -2069,17 +2069,17 @@
         (let ((_len57373_ (string-length _str57369_)))
           (let _lp57375_ ((_k57377_ _start57371_))
             (if (let () (declare (not safe)) (##fx< _k57377_ _len57373_))
-                (if (let ((__tmp64444
+                (if (let ((__tmp64445
                            (let ()
                              (declare (not safe))
                              (##string-ref _str57369_ _k57377_))))
                       (declare (not safe))
-                      (eq? _char57370_ __tmp64444))
+                      (eq? _char57370_ __tmp64445))
                     _k57377_
-                    (let ((__tmp64445
+                    (let ((__tmp64444
                            (let () (declare (not safe)) (##fx+ _k57377_ '1))))
                       (declare (not safe))
-                      (_lp57375_ __tmp64445)))
+                      (_lp57375_ __tmp64444)))
                 '#f)))))
     (define string-index__0
       (lambda (_str57382_ _char57383_)
@@ -2118,17 +2118,17 @@
                       (let () (declare (not safe)) (##fx- _len57344_ '1))))))
           (let _lp57352_ ((_k57354_ _start57349_))
             (if (let () (declare (not safe)) (##fx>= _k57354_ '0))
-                (if (let ((__tmp64448
+                (if (let ((__tmp64449
                            (let ()
                              (declare (not safe))
                              (##string-ref _str57340_ _k57354_))))
                       (declare (not safe))
-                      (eq? _char57341_ __tmp64448))
+                      (eq? _char57341_ __tmp64449))
                     _k57354_
-                    (let ((__tmp64449
+                    (let ((__tmp64448
                            (let () (declare (not safe)) (##fx- _k57354_ '1))))
                       (declare (not safe))
-                      (_lp57352_ __tmp64449)))
+                      (_lp57352_ __tmp64448)))
                 '#f)))))
     (define string-rindex__0
       (lambda (_str57359_ _char57360_)
@@ -2167,12 +2167,12 @@
                      (string-index _str57324_ _char57325_ _start57331_))))
               (if _$e57334_
                   ((lambda (_end57337_)
-                     (let ((__tmp64454
+                     (let ((__tmp64455
                             (let ()
                               (declare (not safe))
                               (##fx+ _end57337_ '1)))
-                           (__tmp64452
-                            (let ((__tmp64453
+                           (__tmp64453
+                            (let ((__tmp64454
                                    (let ()
                                      (declare (not safe))
                                      (##substring
@@ -2180,14 +2180,14 @@
                                       _start57331_
                                       _end57337_))))
                               (declare (not safe))
-                              (cons __tmp64453 _r57332_))))
+                              (cons __tmp64454 _r57332_))))
                        (declare (not safe))
-                       (_lp57329_ __tmp64454 __tmp64452)))
+                       (_lp57329_ __tmp64455 __tmp64453)))
                    _$e57334_)
                   (if (let ()
                         (declare (not safe))
                         (##fx< _start57331_ _len57327_))
-                      (let ((__tmp64455
+                      (let ((__tmp64452
                              (list (let ()
                                      (declare (not safe))
                                      (##substring
@@ -2195,7 +2195,7 @@
                                       _start57331_
                                       _len57327_)))))
                         (declare (not safe))
-                        (foldl1 cons __tmp64455 _r57332_))
+                        (foldl1 cons __tmp64452 _r57332_))
                       (reverse _r57332_))))))))
     (define string-join
       (lambda (_strs57229_ _join57230_)
@@ -2212,24 +2212,24 @@
                                     (if (let ()
                                           (declare (not safe))
                                           (pair? _rest57309_))
-                                        (let ((__tmp64456
-                                               (let ((__tmp64457
+                                        (let ((__tmp64457
+                                               (let ((__tmp64458
                                                       (let ()
                                                         (declare (not safe))
                                                         (##string-length
                                                          _hd57310_))))
                                                  (declare (not safe))
-                                                 (##fx+ __tmp64457
+                                                 (##fx+ __tmp64458
                                                         _jlen57284_
                                                         _len57289_))))
                                           (declare (not safe))
-                                          (_lp57286_ _rest57309_ __tmp64456))
-                                        (let ((__tmp64458
+                                          (_lp57286_ _rest57309_ __tmp64457))
+                                        (let ((__tmp64456
                                                (let ()
                                                  (declare (not safe))
                                                  (##string-length _hd57310_))))
                                           (declare (not safe))
-                                          (##fx+ __tmp64458 _len57289_)))
+                                          (##fx+ __tmp64456 _len57289_)))
                                     (error '"expected string" _hd57310_)))))
                         (if (let ()
                               (declare (not safe))

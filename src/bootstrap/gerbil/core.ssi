@@ -432,7 +432,6 @@ namespace: gerbil/core
                     (class-type-constructor class-type-constructor)
                     (class-type-methods class-type-methods)
                     (class-type-slot-list class-type-slot-list)
-                    (class-type-fields class-type-fields)
                     (class-type-struct? class-type-struct?)
                     (class-type-final? class-type-final?)
                     (class-type-sealed? class-type-sealed?)

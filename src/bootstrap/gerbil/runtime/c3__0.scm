@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/c3::timestamp 1707831892)
+  (define gerbil/runtime/c3::timestamp 1707840753)
   (begin
     (define c4-linearize__%
       (lambda (_g83841_
@@ -76,35 +76,35 @@
                                                  (let ()
                                                    (declare (not safe))
                                                    (null? _t279224_)))
-                                             (let ((__tmp83843
-                                                    (let ((__tmp83846
+                                             (let ((__tmp83845
+                                                    (let ((__tmp83848
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (_get-names78967_
                                                               _sit78966_)))
-                                                          (__tmp83844
-                                                           (let ((__tmp83845
+                                                          (__tmp83846
+                                                           (let ((__tmp83847
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
                             (_get-names78967_ _sit279219_))))
                      (declare (not safe))
-                     (cons __tmp83845 '()))))
+                     (cons __tmp83847 '()))))
               (declare (not safe))
-              (cons __tmp83846 __tmp83844))))
+              (cons __tmp83848 __tmp83846))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
                                                (_err78968_
                                                 'single-inheritance-incompatibility:
-                                                __tmp83843))
-                                             (let ((__tmp83848 (cdr _t179223_))
-                                                   (__tmp83847
+                                                __tmp83845))
+                                             (let ((__tmp83844 (cdr _t179223_))
+                                                   (__tmp83843
                                                     (cdr _t279224_)))
                                                (declare (not safe))
                                                (_loop79221_
-                                                __tmp83848
-                                                __tmp83847))))))))))
+                                                __tmp83844
+                                                __tmp83843))))))))))
                     (_rpls78970_
                      (map (lambda (_pl79214_)
                             (let ((_g83849_
@@ -157,82 +157,82 @@
                                     (if (member _c79186_
                                                 _sit-tail79167_
                                                 _eq78961_)
-                                        (let ((__tmp83856
-                                               (let ((__tmp83857
+                                        (let ((__tmp83861
+                                               (let ((__tmp83862
                                                       (reverse _pl-rhead79164_)))
                                                  (declare (not safe))
                                                  (_get-names78967_
-                                                  __tmp83857)))
-                                              (__tmp83855
+                                                  __tmp83862)))
+                                              (__tmp83860
                                                (let ()
                                                  (declare (not safe))
                                                  (_get-names78967_
                                                   _pl-tail79165_)))
-                                              (__tmp83853
-                                               (let ((__tmp83854
+                                              (__tmp83858
+                                               (let ((__tmp83859
                                                       (reverse _sit-rhead79166_)))
                                                  (declare (not safe))
                                                  (_get-names78967_
-                                                  __tmp83854)))
-                                              (__tmp83852
+                                                  __tmp83859)))
+                                              (__tmp83857
                                                (let ()
                                                  (declare (not safe))
                                                  (_get-names78967_
                                                   _sit-tail79167_)))
-                                              (__tmp83851
+                                              (__tmp83856
                                                (_get-name78963_ _c79186_)))
                                           (declare (not safe))
                                           (_err78968_
                                            'precedence-list-head:
-                                           __tmp83856
+                                           __tmp83861
                                            'precedence-list-tail:
-                                           __tmp83855
+                                           __tmp83860
                                            'single-inheritance-head:
-                                           __tmp83853
+                                           __tmp83858
                                            'single-inheritance-tail:
-                                           __tmp83852
+                                           __tmp83857
                                            'super-out-of-order-vs-single-inheritance-tail:
-                                           __tmp83851))
-                                        (let ((_g83858_
-                                               (let ((__tmp83860
+                                           __tmp83856))
+                                        (let ((_g83851_
+                                               (let ((__tmp83853
                                                       (lambda (_g7918779189_)
                                                         (_eq78961_
                                                          _c79186_
                                                          _g7918779189_))))
                                                  (declare (not safe))
                                                  (append-reverse-until
-                                                  __tmp83860
+                                                  __tmp83853
                                                   _sit-rhead79166_
                                                   _sit-tail79167_))))
                                           (begin
-                                            (let ((_g83859_
+                                            (let ((_g83852_
                                                    (let ()
                                                      (declare (not safe))
-                                                     (if (##values? _g83858_)
+                                                     (if (##values? _g83851_)
                                                          (##vector-length
-                                                          _g83858_)
+                                                          _g83851_)
                                                          1))))
                                               (if (not (let ()
                                                          (declare (not safe))
-                                                         (##fx= _g83859_ 2)))
+                                                         (##fx= _g83852_ 2)))
                                                   (error "Context expects 2 values"
-                                                         _g83859_)))
+                                                         _g83852_)))
                                             (let ((_sit-rh279192_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _g83858_
+                                                      _g83851_
                                                       0)))
                                                   (_sit-tl279193_
                                                    (let ()
                                                      (declare (not safe))
                                                      (##vector-ref
-                                                      _g83858_
+                                                      _g83851_
                                                       1))))
                                               (if (let ()
                                                     (declare (not safe))
                                                     (null? _sit-rh279192_))
-                                                  (let ((__tmp83861
+                                                  (let ((__tmp83855
                                                          (let ()
                                                            (declare (not safe))
                                                            (cons _c79186_
@@ -242,16 +242,16 @@
                                                     (declare (not safe))
                                                     (_u79162_
                                                      _plrh79185_
-                                                     __tmp83861
+                                                     __tmp83855
                                                      '()
                                                      _sit-tl279193_))
-                                                  (let ((__tmp83862
+                                                  (let ((__tmp83854
                                                          (cdr _sit-rh279192_)))
                                                     (declare (not safe))
                                                     (_u79162_
                                                      _plrh79185_
                                                      _pl-tail79165_
-                                                     __tmp83862
+                                                     __tmp83854
                                                      _sit-tl279193_))))))))))
                              (let ((_try-match7917079207_
                                     (lambda ()

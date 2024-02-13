@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707831886)
+  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1707840750)
   (begin
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::t
       (let ((__tmp47547 (list)))
@@ -405,19 +405,19 @@
                (_g1926419347_
                 (lambda (_g1926619287_)
                   (if (gx#stx-pair? _g1926619287_)
-                      (let ((_e1926819289_ (gx#syntax-e _g1926619287_)))
+                      (let ((_e1927019289_ (gx#syntax-e _g1926619287_)))
                         (let ((_hd1926919292_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e1926819289_)))
-                              (_tl1927019294_
+                                 (##car _e1927019289_)))
+                              (_tl1926819294_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e1926819289_))))
-                          (if (gx#stx-pair/null? _tl1927019294_)
+                                 (##cdr _e1927019289_))))
+                          (if (gx#stx-pair/null? _tl1926819294_)
                               (let ((_g47548_
                                      (gx#syntax-split-splice
-                                      _tl1927019294_
+                                      _tl1926819294_
                                       '0)))
                                 (begin
                                   (let ((_g47549_
@@ -453,12 +453,12 @@
                          (let () (declare (not safe)) (##car _e1927519310_)))
                         (_lp-tl1927719315_
                          (let () (declare (not safe)) (##cdr _e1927519310_))))
-                    (let ((__tmp47550
+                    (let ((__tmp47552
                            (let ()
                              (declare (not safe))
                              (cons _lp-hd1927619313_ _arg1927819307_))))
                       (declare (not safe))
-                      (_loop1927419302_ _lp-tl1927719315_ __tmp47550))))
+                      (_loop1927419302_ _lp-tl1927719315_ __tmp47552))))
                 (let ((_arg1927919318_ (reverse _arg1927819307_)))
                   ((lambda (_L19321_)
                      (let ((_$e19335_
@@ -481,8 +481,8 @@
                                    'constructor)))))
                        (if _$e19335_
                            ((lambda (_make19338_)
-                              (let ((__tmp47551
-                                     (let ((__tmp47552
+                              (let ((__tmp47550
+                                     (let ((__tmp47551
                                             (lambda (_g1933919342_
                                                      _g1934019344_)
                                               (let ()
@@ -490,9 +490,9 @@
                                                 (cons _g1933919342_
                                                       _g1934019344_)))))
                                        (declare (not safe))
-                                       (foldr1 __tmp47552 '() _L19321_))))
+                                       (foldr1 __tmp47551 '() _L19321_))))
                                 (declare (not safe))
-                                (cons _make19338_ __tmp47551)))
+                                (cons _make19338_ __tmp47550)))
                             _$e19335_)
                            (gx#raise-syntax-error
                             '#f
