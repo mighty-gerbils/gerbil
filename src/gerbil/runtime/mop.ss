@@ -89,7 +89,7 @@ namespace: #f
               ;; the drop of 5 is the number of type-type slots
               (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
              (properties
-              '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
+              `((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
                 (struct: . #t)))
              (t (##structure
                  #f                  ; type: self reference, set below
