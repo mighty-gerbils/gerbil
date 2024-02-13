@@ -16,14 +16,13 @@ namespace: #f
          (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
          (%#define-runtime class-type-flag-metaclass class-type-flag-metaclass)
          (%#define-runtime class::t.id class::t.id)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/mop__1")))
-                  (%#define-syntax annotate-class |[:0:]#annotate-class|))
          (%#define-runtime class::t class::t)
          (%#define-runtime class-type? class-type?)
          (%#define-runtime class-type=? class-type=?)
-         (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/mop__1")))
+                  (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|))
          (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
          (%#define-runtime type-opaque? type-opaque?)
          (%#define-runtime type-extensible? type-extensible?)
