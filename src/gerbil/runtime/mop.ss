@@ -108,8 +108,14 @@ namespace: #f
   (eq? (class-type-id x) (class-type-id y)))
 
 (defrules fxflag-set? ()
+  ((_ value flag)
+   (or (identifier? #'flag) (stx-fixnum? #'flag))
+   (##fx= (##fxand value flag) flag))
   ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) flag))))
 (defrules fxflag-unset? ()
+  ((_ value flag)
+   (or (identifier? #'flag) (stx-fixnum? #'flag))
+   (##fx= (##fxand value flag) 0))
   ((_ value flag) (let (flag flag) (##fx= (##fxand value flag) 0))))
 
 (def (type-opaque? type)
@@ -121,7 +127,7 @@ namespace: #f
 (def (class-type-struct? klass)
   (fxflag-set? (##type-flags klass) class-type-flag-struct))
 (def (class-type-sealed? klass)
-  (##fxpositive? (##fxand (##type-flags klass) class-type-flag-sealed)))
+  (fxflag-set? (##type-flags klass) class-type-flag-sealed))
 
 ;; TODO for debugging only
 (def (properties-form properties)
