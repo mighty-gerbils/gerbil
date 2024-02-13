@@ -56,64 +56,56 @@ namespace: #f
 (def class::t.id 'gerbil#class::t)
 
 ;; the metaclass itself
-;; TODO remove after bootstrap, here due to bug
-(defsyntax (annotate-class stx)
-  (syntax-case stx ()
-    ((_ expr)
-     (with-syntax ((slots  '(id name super flags fields
-                                precedence-list slot-vector slot-table
-                                properties constructor methods)))
-       #'(begin-annotation (@mop.class gerbil#class::t ; type-id
-                                       ()              ; super
-                                       slots           ; slots
-                                       #f  ; constructor method
-                                       #t  ; struct?
-                                       #f  ; final?
-                                       #f) ; metaclass
-           expr)))))
-
-
 (def class::t
-  (annotate-class
-   (let* ((slots
-           '(id name super flags fields
-                precedence-list slot-vector slot-table properties constructor methods))
-          (slot-vector
-           (list->vector (cons '##type slots)))
-          (slot-table
-           (let (slot-table (make-hash-table-eq))
-             (for-each
-               (lambda (slot field)
-                 (hash-put! slot-table slot field)
-                 (hash-put! slot-table (symbol->keyword slot) field))
-               slots
-               (iota (length slots) 1))
-             slot-table))
-          (flags
-           (##fxior type-flag-extensible type-flag-concrete type-flag-id
-                    class-type-flag-struct))
-          (fields ;; exclude those from ##type-type because this is for Gambit type use
-           ;; the field-flags of 5 mean "(1) printable, (4) equalable",
-           ;; the drop of 5 is the number of type-type slots
-           (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
-          (properties
-           '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
-             (struct: . #t)))
-          (t (##structure
-              #f                     ; type: self reference, set below
-              class::t.id            ; type-id
-              'class                 ; type-name
-              flags                  ; type-flags
-              ##type-type            ; type-super
-              fields                 ; type-fields
-              []                     ; class-type-precedence-list
-              slot-vector            ; class-type-slot-vector
-              slot-table             ; class-type-slot-table
-              properties             ; class-type-properties
-              #f                     ; class-type-constructor
-              #f)))                  ; class-type-methods
-     (##structure-type-set! t t)     ; self reference
-     t)))
+    (begin-annotation
+        (@mop.class gerbil#class::t     ; type-id
+                    ()                  ; super
+                    (id name super flags fields
+                        precedence-list slot-vector slot-table
+                        properties constructor methods) ; slots
+                    #f                  ; constructor method
+                    #t                  ; struct?
+                    #f                  ; final?
+                    #f)                 ; metaclass
+      (let* ((slots
+              '(id name super flags fields
+                   precedence-list slot-vector slot-table properties constructor methods))
+             (slot-vector
+              (list->vector (cons '##type slots)))
+             (slot-table
+              (let (slot-table (make-hash-table-eq))
+                (for-each
+                  (lambda (slot field)
+                    (hash-put! slot-table slot field)
+                    (hash-put! slot-table (symbol->keyword slot) field))
+                  slots
+                  (iota (length slots) 1))
+                slot-table))
+             (flags
+              (##fxior type-flag-extensible type-flag-concrete type-flag-id
+                       class-type-flag-struct))
+             (fields ;; exclude those from ##type-type because this is for Gambit type use
+              ;; the field-flags of 5 mean "(1) printable, (4) equalable",
+              ;; the drop of 5 is the number of type-type slots
+              (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
+             (properties
+              '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
+                (struct: . #t)))
+             (t (##structure
+                 #f                  ; type: self reference, set below
+                 class::t.id         ; type-id
+                 'class              ; type-name
+                 flags               ; type-flags
+                 ##type-type         ; type-super
+                 fields              ; type-fields
+                 []                  ; class-type-precedence-list
+                 slot-vector         ; class-type-slot-vector
+                 slot-table          ; class-type-slot-table
+                 properties          ; class-type-properties
+                 #f                  ; class-type-constructor
+                 #f)))               ; class-type-methods
+        (##structure-type-set! t t)  ; self reference
+        t)))
 
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
