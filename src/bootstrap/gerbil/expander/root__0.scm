@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1707844657)
+  (define gerbil/expander/root::timestamp 1707846530)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -328,41 +328,41 @@
                   _g180255_))))))
     (define gx#root-context:::init!::specialize
       (lambda (__t180211)
-        (let ((__bind-core-syntax-expanders!180212
+        (let ((__bind-core-macro-expanders!180212
                (make-promise
                 (lambda ()
                   (let ((__tmp180215
                          (direct-method-ref
                           __t180211
                           '#f
-                          'bind-core-syntax-expanders!)))
+                          'bind-core-macro-expanders!)))
                     (if __tmp180215
                         __tmp180215
                         (error '"Missing method"
-                               'bind-core-syntax-expanders!))))))
-              (__bind-core-macro-expanders!180213
+                               'bind-core-macro-expanders!))))))
+              (__bind-core-features!180213
                (make-promise
                 (lambda ()
                   (let ((__tmp180216
                          (direct-method-ref
                           __t180211
                           '#f
-                          'bind-core-macro-expanders!)))
+                          'bind-core-features!)))
                     (if __tmp180216
                         __tmp180216
-                        (error '"Missing method"
-                               'bind-core-macro-expanders!))))))
-              (__bind-core-features!180214
+                        (error '"Missing method" 'bind-core-features!))))))
+              (__bind-core-syntax-expanders!180214
                (make-promise
                 (lambda ()
                   (let ((__tmp180217
                          (direct-method-ref
                           __t180211
                           '#f
-                          'bind-core-features!)))
+                          'bind-core-syntax-expanders!)))
                     (if __tmp180217
                         __tmp180217
-                        (error '"Missing method" 'bind-core-features!)))))))
+                        (error '"Missing method"
+                               'bind-core-syntax-expanders!)))))))
           (let ((_opt-lambda175629175634_
                  (lambda (_self175631_ _bind?175632_)
                    (if (##fx< '2 (##structure-length _self175631_))
@@ -385,11 +385,11 @@
                               (##vector-length _self175631_)))
                    (if _bind?175632_
                        (begin
-                         ((force __bind-core-syntax-expanders!180212)
+                         ((force __bind-core-syntax-expanders!180214)
                           _self175631_)
-                         ((force __bind-core-macro-expanders!180213)
+                         ((force __bind-core-macro-expanders!180212)
                           _self175631_)
-                         ((force __bind-core-features!180214) _self175631_))
+                         ((force __bind-core-features!180213) _self175631_))
                        '#!void))))
             (lambda _g180257_
               (let ((_g180256_ (##length _g180257_)))

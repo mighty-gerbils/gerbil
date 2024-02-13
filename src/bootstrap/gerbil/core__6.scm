@@ -1525,7 +1525,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 _g1833918350_)))
                                             (__tmp49356
-                                             (if _metaclass17952_
+                                             (if (gx#stx-e _metaclass17952_)
                                                  (let* ((_g1903219040_
                                                          (lambda (_g1903319036_)
                                                            (gx#raise-syntax-error
@@ -1657,7 +1657,7 @@
                                   (_g1825319071_ __tmp49382))))
                             _g1822718238_)))
                         (__tmp49384
-                         (if _metaclass17952_
+                         (if (gx#stx-e _metaclass17952_)
                              (gx#core-quote-syntax _metaclass17952_)
                              '#f)))
                    (declare (not safe))
