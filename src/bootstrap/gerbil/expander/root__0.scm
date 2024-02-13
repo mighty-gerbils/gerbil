@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/root::timestamp 1707841980)
+  (define gerbil/expander/root::timestamp 1707842373)
   (begin
     (declare (not safe))
     (define gx#*core-syntax-expanders*
@@ -328,30 +328,30 @@
                   _g180251_))))))
     (define gx#root-context:::init!::specialize
       (lambda (__t180207)
-        (let ((__bind-core-macro-expanders!180208
+        (let ((__bind-core-syntax-expanders!180208
                (make-promise
                 (lambda ()
                   (let ((__tmp180211
                          (direct-method-ref
                           __t180207
                           '#f
-                          'bind-core-macro-expanders!)))
+                          'bind-core-syntax-expanders!)))
                     (if __tmp180211
                         __tmp180211
                         (error '"Missing method"
-                               'bind-core-macro-expanders!))))))
-              (__bind-core-syntax-expanders!180209
+                               'bind-core-syntax-expanders!))))))
+              (__bind-core-macro-expanders!180209
                (make-promise
                 (lambda ()
                   (let ((__tmp180212
                          (direct-method-ref
                           __t180207
                           '#f
-                          'bind-core-syntax-expanders!)))
+                          'bind-core-macro-expanders!)))
                     (if __tmp180212
                         __tmp180212
                         (error '"Missing method"
-                               'bind-core-syntax-expanders!))))))
+                               'bind-core-macro-expanders!))))))
               (__bind-core-features!180210
                (make-promise
                 (lambda ()
@@ -385,9 +385,9 @@
                               (##vector-length _self175627_)))
                    (if _bind?175628_
                        (begin
-                         ((force __bind-core-syntax-expanders!180209)
+                         ((force __bind-core-syntax-expanders!180208)
                           _self175627_)
-                         ((force __bind-core-macro-expanders!180208)
+                         ((force __bind-core-macro-expanders!180209)
                           _self175627_)
                          ((force __bind-core-features!180210) _self175627_))
                        '#!void))))

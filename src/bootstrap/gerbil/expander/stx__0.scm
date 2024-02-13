@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/stx::timestamp 1707841979)
+  (define gerbil/expander/stx::timestamp 1707842371)
   (begin
     (declare (not safe))
     (define gx#identifier-wrap::t

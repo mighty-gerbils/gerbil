@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/stxcase::timestamp 1707841980)
+  (define gerbil/expander/stxcase::timestamp 1707842373)
   (begin
     (define gx#syntax-pattern::t
       (let ((__tmp186179 (list gx#expander::t))
