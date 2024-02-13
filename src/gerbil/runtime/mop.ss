@@ -56,54 +56,69 @@ namespace: #f
 (def class::t.id 'gerbil#class::t)
 
 ;; the metaclass itself
+;; TODO remove after bootstrap, here due to bug
+(defsyntax (annotate-class stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((slots  '(id name super flags fields
+                                precedence-list slot-vector slot-table
+                                properties constructor methods)))
+       #'(begin-annotation (@mop.class gerbil#class::t ; type-id
+                                       ()              ; super
+                                       slots           ; slots
+                                       #f  ; constructor method
+                                       #t  ; struct?
+                                       #f  ; final?
+                                       #f) ; metaclass
+           expr)))))
+
+
 (def class::t
-  (let* ((slots
-          '(id name super flags fields
-            precedence-list slot-vector slot-table properties constructor method))
-         (slot-vector
-          (list->vector (cons '##type slots)))
-         (slot-table
-          (let (slot-table (make-hash-table-eq))
-            (for-each
-              (lambda (slot field)
-                (hash-put! slot-table slot field)
-                (hash-put! slot-table (symbol->keyword slot) field))
-              slots
-              (iota (length slots) 1))
-            slot-table))
-         (flags
-          (##fxior type-flag-extensible type-flag-concrete type-flag-id
-                   class-type-flag-struct))
-         (fields ;; exclude those from ##type-type because this is for Gambit type use
-          ;; the field-flags of 5 mean "(1) printable, (4) equalable",
-          ;; the drop of 5 is the number of type-type slots
-          (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
-         (properties
-          '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
-            (struct: . #t)))
-         (t (##structure
-             #f            ; type: self reference, set below
-             class::t.id   ; type-id
-             'class        ; type-name
-             flags         ; type-flags
-             ##type-type   ; type-super
-             fields        ; type-fields
-             []            ; class-type-precedence-list
-             slot-vector   ; class-type-slot-vector
-             slot-table    ; class-type-slot-table
-             properties    ; class-type-properties
-             #f            ; class-type-constructor
-             #f)))         ; class-type-methods
-    (##structure-type-set! t t)         ; self reference
-    t))
+  (annotate-class
+   (let* ((slots
+           '(id name super flags fields
+                precedence-list slot-vector slot-table properties constructor methods))
+          (slot-vector
+           (list->vector (cons '##type slots)))
+          (slot-table
+           (let (slot-table (make-hash-table-eq))
+             (for-each
+               (lambda (slot field)
+                 (hash-put! slot-table slot field)
+                 (hash-put! slot-table (symbol->keyword slot) field))
+               slots
+               (iota (length slots) 1))
+             slot-table))
+          (flags
+           (##fxior type-flag-extensible type-flag-concrete type-flag-id
+                    class-type-flag-struct))
+          (fields ;; exclude those from ##type-type because this is for Gambit type use
+           ;; the field-flags of 5 mean "(1) printable, (4) equalable",
+           ;; the drop of 5 is the number of type-type slots
+           (list->vector (apply append (map (cut list <> 5 #f) (drop slots 5)))))
+          (properties
+           '((direct-slots: ,@slots) ;; include those from ##type-type because it's not a class
+             (struct: . #t)))
+          (t (##structure
+              #f                     ; type: self reference, set below
+              class::t.id            ; type-id
+              'class                 ; type-name
+              flags                  ; type-flags
+              ##type-type            ; type-super
+              fields                 ; type-fields
+              []                     ; class-type-precedence-list
+              slot-vector            ; class-type-slot-vector
+              slot-table             ; class-type-slot-table
+              properties             ; class-type-properties
+              #f                     ; class-type-constructor
+              #f)))                  ; class-type-methods
+     (##structure-type-set! t t)     ; self reference
+     t)))
 
-(def (class-type? obj)
-  (##structure-instance-of? obj class::t.id))
-
-(def (class-type-id klass)
-  (cond
-   ((class-type? klass) (##type-id klass))
-   (else (error "not a type descriptor" klass))))
+(def class-type?
+  (begin-annotation (@mop.predicate class::t)
+    (lambda (obj)
+      (##structure-instance-of? obj class::t.id))))
 
 (def (class-type=? x y)
   (eq? (class-type-id x) (class-type-id y)))
@@ -214,30 +229,52 @@ namespace: #f
                    precedence-list slot-vector slot-table properties constructor methods))))
 
 ;;; class type utilities
-(def (class-type-precedence-list klass)
-  (##structure-ref klass 6 class::t class-type-precedence-list))
-(def (class-type-slot-vector klass)
-  (##structure-ref klass 7 class::t class-type-slot-vector))
-(def (class-type-slot-table klass)
-  (##structure-ref klass 8 class::t class-type-slot-table))
-(def (class-type-properties klass)
-  (##structure-ref klass 9 class::t class-type-properties))
-(def (class-type-constructor klass)
-  (##structure-ref klass 10 class::t class-type-constructor))
+(defsyntax (defrefset stx)
+  (syntax-case stx ()
+    ((_ (slot field))
+     (with-syntax* ((klass::t (core-quote-syntax 'class::t))
+                    (ref (stx-identifier #'slot "class-type-" #'slot))
+                    (&ref (stx-identifier #'slot "&" #'ref))
+                    (setq (stx-identifier #'slot #'ref "-set!"))
+                    (&setq (stx-identifier #'slot "&" #'setq)))
+       #'(begin
+           (def ref
+             (begin-annotation (@mop.accessor klass::t slot #t)
+               (lambda (klass)
+                 (##structure-ref klass field class::t 'slot))))
+           (def &ref
+             (begin-annotation (@mop.accessor klass::t slot #f)
+               (lambda (klass)
+                 (##unchecked-structure-ref klass field class::t 'slot))))
+           (def setq
+             (begin-annotation (@mop.mutator klass::t slot #t)
+               (lambda (klass val)
+                 (##structure-set! klass val field class::t 'slot))))
+           (def &setq
+             (begin-annotation (@mop.mutator klass::t slot #f)
+               (lambda (klass val)
+                 (##unchecked-structure-set! klass val field class::t 'slot)))))))))
 
-(def (class-type-methods klass)
-  (##structure-ref klass 11 class::t class-type-methods))
-(def (class-type-methods-set! klass ht)
-  (##structure-set! klass ht 11 class::t class-type-methods-set!))
+(defrules defrefset* ()
+  ((_ (slot field) ...)
+   (begin (defrefset (slot field)) ...)))
 
-(def (&class-type-methods klass)
-  (##unchecked-structure-ref klass 11 class::t class-type-methods))
-(def (&class-type-methods-set! klass ht)
-  (##unchecked-structure-set! klass ht 11 class::t class-type-methods-set!))
+(defrefset*
+  (id 1)
+  (name 2)
+  (super 3)
+  (flags 4)
+  (fields 5)
+  (precedence-list 6)
+  (slot-vector 7)
+  (slot-table 8)
+  (properties 9)
+  (constructor 10)
+  (methods 11))
 
 (def (class-type-slot-list klass)
   (cdr (vector->list (class-type-slot-vector klass))))
-(def (class-type-fields klass)
+(def (class-type-field-count klass)
   (##fx- (##vector-length (class-type-slot-vector klass)) 1))
 (def (class-type-seal! klass)
   (##structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
@@ -299,7 +336,7 @@ namespace: #f
     (match rest
       ([hd . rest]
        (cond
-        ((class-type-constructor hd)
+        ((&class-type-constructor hd)
          => (lambda (xconstructor)
               (if (or (not constructor) (eq? constructor xconstructor))
                 (lp rest xconstructor)
@@ -330,7 +367,7 @@ namespace: #f
          (process-slots (cut for-each process-slot <>)))
     (for-each (lambda (mixin)
                 (process-slots
-                 (assgetq direct-slots: (class-type-properties mixin) [])))
+                 (assgetq direct-slots: (&class-type-properties mixin) [])))
               (reverse class-precedence-list))
     (process-slots direct-slots)
     (let (slot-vector (list->vector (reverse r-slots)))
@@ -360,7 +397,7 @@ namespace: #f
                                 constructor* slot-table #f)))
 
 (def (class-precedence-list klass)
-  (cons klass (class-type-precedence-list klass)))
+  (cons klass (&class-type-precedence-list klass)))
 
 ;; class precedence list, excluding current class; super struct if any
 ;; (List TypeDescriptor) -> (List TypeDescriptor) (OrFalse TypeDescriptor)
@@ -386,7 +423,7 @@ namespace: #f
 ;; or (c) the slot being a regular class slot (the more expensive code path),
 ;; return an accessor for this klass and slot.
 (def (if-class-slot-field klass slot if-final if-struct if-struct-field if-class-slot)
-  (let (field (hash-get (class-type-slot-table klass) slot))
+  (let (field (hash-get (&class-type-slot-table klass) slot))
     (cond
      ((not field)
       (error "unknown slot" class: klass slot: slot))
@@ -396,7 +433,7 @@ namespace: #f
       (if-struct klass slot field))
      ((let (strukt (base-struct/1 klass))
         (and (class-type? strukt)
-             (##fx< field (##vector-length (class-type-slot-vector strukt)))))
+             (##fx< field (##vector-length (&class-type-slot-vector strukt)))))
       (if-struct-field klass slot field))
      (else
       (if-class-slot klass slot field)))))
@@ -484,7 +521,7 @@ namespace: #f
     (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
-  (hash-get (class-type-slot-table klass) slot))
+  (hash-get (&class-type-slot-table klass) slot))
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -532,7 +569,7 @@ namespace: #f
   (let (maybe-super-class-id (##type-id maybe-super-class))
     (or (eq? maybe-super-class-id (##type-id maybe-sub-class))
         (ormap (lambda (super-class) (eq? (##type-id super-class) maybe-super-class-id))
-               (class-type-precedence-list maybe-sub-class)))))
+               (&class-type-precedence-list maybe-sub-class)))))
 
 ;;; generic object utilities
 (def object?
@@ -567,12 +604,12 @@ namespace: #f
       obj)))
 
 (def (new-instance klass)
-  (make-object klass (##vector-length (class-type-slot-vector klass))))
+  (make-object klass (##vector-length (&class-type-slot-vector klass))))
 
 (def (make-instance klass . args)
   (let (obj (new-instance klass))
     (cond
-     ((class-type-constructor klass)
+     ((&class-type-constructor klass)
       => (lambda (kons-id)
            (__constructor-init! klass kons-id obj args)))
      ((class-type-metaclass? klass)
@@ -648,7 +685,7 @@ namespace: #f
   (if (object? obj)
     (let (klass (object-type obj))
       (if (class-type? klass)
-        (let (slot-vector (class-type-slot-vector klass))
+        (let (slot-vector (&class-type-slot-vector klass))
           (let loop ((index (##fx- (##vector-length slot-vector) 1))
                      (plist []))
             (if (##fx< index 1)

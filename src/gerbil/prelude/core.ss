@@ -174,7 +174,6 @@ package: gerbil
     class-type-constructor
     class-type-methods
     class-type-slot-list
-    class-type-fields
 
     class-type-struct?
     class-type-final?
