@@ -56,7 +56,9 @@
 (def (compile1 modf)
   (displayln "... compile " modf)
   (compile-module modf [output-dir: gerbil-libdir invoke-gsc: #t
-                        debug: #f optimize: #t generate-ssxi: #t
+                        debug: #f
+                        optimize: (not (getenv "GERBIL_BUILD_NOOPT" #f))
+                        generate-ssxi: #t
                         gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
