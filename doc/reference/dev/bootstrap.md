@@ -196,7 +196,7 @@ $ rm -rf bootstrap/*
 $ gxc -no-ssxi -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
-If you have made changes in the compiler optimizer meta the extant
+If you have made changes in the compiler optimizer meta and the extant
 compiler does not accept your code, you may want to try without
 optimizations:
 
