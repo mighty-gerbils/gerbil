@@ -52,6 +52,7 @@ namespace: gxc
                       ['%#let-values [[[$tmp]
                                        ['%#call ['%#ref 'direct-method-ref]
                                                 ['%#ref $t]
+                                                ['%#quote #f]
                                                 ['%#quote id]]]]
                                      ['%#if ['%#ref $tmp]
                                             ['%#ref $tmp]

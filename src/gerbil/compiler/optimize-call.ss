@@ -81,7 +81,7 @@ namespace: gxc
                                   ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
                                   (let ($ctor (make-symbol (gensym '__constructor)))
                                     ['%#let-values [[[$ctor]
-                                                     ['%#call ['%#ref 'direct-method-ref] ['%#ref (!type-id self)] ['%#quote ctor]]]]
+                                                     ['%#call ['%#ref 'direct-method-ref] ['%#ref (!type-id self)] ['%#ref $obj] ['%#quote ctor]]]]
                                                    ['%#if ['%#ref $ctor]
                                                           ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
                                                           ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))

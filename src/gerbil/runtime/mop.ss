@@ -715,7 +715,7 @@ namespace: #f
 
 (def (builtin-find-method klass obj id)
   (and (##type? klass)
-       (or (builtin-method-ref klass id)
+       (or (builtin-method-ref klass obj id)
            (builtin-find-method (##type-super klass) obj id))))
 
 (def (direct-method-ref klass obj id)
@@ -849,14 +849,14 @@ namespace: #f
         (match rest
           ([klass . rest]
            (if (eq? type-id (##type-id klass))
-             (mixin-find-method rest id)
+             (mixin-find-method rest obj id)
              (lp rest)))
           (else #f))))
      ((##type? klass)
       (let lp ((klass klass))
         (cond
          ((eq? type-id (##type-id klass))
-          (builtin-find-method (##type-super klass) id))
+          (builtin-find-method (##type-super klass) obj id))
          ((##type-super klass)
           => lp)
          (else #f))))
