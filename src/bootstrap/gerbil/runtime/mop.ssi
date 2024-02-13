@@ -14,6 +14,7 @@ namespace: #f
          (%#define-runtime type-flag-id type-flag-id)
          (%#define-runtime class-type-flag-struct class-type-flag-struct)
          (%#define-runtime class-type-flag-sealed class-type-flag-sealed)
+         (%#define-runtime class-type-flag-metaclass class-type-flag-metaclass)
          (%#define-runtime class::t.id class::t.id)
          (%#define-runtime class::t class::t)
          (%#define-runtime class-type? class-type?)
@@ -29,6 +30,7 @@ namespace: #f
          (%#define-runtime class-type-final? class-type-final?)
          (%#define-runtime class-type-struct? class-type-struct?)
          (%#define-runtime class-type-sealed? class-type-sealed?)
+         (%#define-runtime class-type-metaclass? class-type-metaclass?)
          (%#define-runtime properties-form properties-form)
          (%#define-runtime
           make-class-type-descriptor
@@ -42,9 +44,12 @@ namespace: #f
          (%#define-runtime class-type-constructor class-type-constructor)
          (%#define-runtime class-type-methods class-type-methods)
          (%#define-runtime class-type-methods-set! class-type-methods-set!)
+         (%#define-runtime &class-type-methods &class-type-methods)
+         (%#define-runtime &class-type-methods-set! &class-type-methods-set!)
          (%#define-runtime class-type-slot-list class-type-slot-list)
          (%#define-runtime class-type-fields class-type-fields)
          (%#define-runtime class-type-seal! class-type-seal!)
+         (%#define-runtime &class-type-seal! &class-type-seal!)
          (%#define-runtime substruct? substruct?)
          (%#define-runtime base-struct/1 base-struct/1)
          (%#define-runtime base-struct/2 base-struct/2)
@@ -128,6 +133,9 @@ namespace: #f
          (%#define-runtime __struct-instance-init! __struct-instance-init!)
          (%#define-runtime class-instance-init! class-instance-init!)
          (%#define-runtime __class-instance-init! __class-instance-init!)
+         (%#define-runtime
+          __metaclass-instance-init!
+          __metaclass-instance-init!)
          (%#define-runtime constructor-init! constructor-init!)
          (%#define-runtime __constructor-init! __constructor-init!)
          (%#define-runtime struct-copy struct-copy)

@@ -12,6 +12,7 @@ package: gerbil/compiler
            :init!
            #t
            #f
+           metaclass
            ((:init! . gxc#optimizer-info:::init!))))
   (declare-type gxc#optimizer-info? (@predicate gxc#optimizer-info::t))
   (declare-type gxc#make-optimizer-info (@constructor gxc#optimizer-info::t))
@@ -52,7 +53,9 @@ package: gerbil/compiler
    gxc#&optimizer-info-methods-set!
    (@mutator gxc#optimizer-info::t methods #f))
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
-  (declare-type gxc#!type::t (@class gxc#!type::t () () (id) (id) #f #t #f #f))
+  (declare-type
+   gxc#!type::t
+   (@class gxc#!type::t () () (id) (id) #f #t #f metaclass #f))
   (declare-type gxc#!type? (@predicate gxc#!type::t))
   (declare-type gxc#make-!type (@constructor gxc#!type::t))
   (declare-type gxc#!type-id (@accessor gxc#!type::t id #t))
@@ -61,7 +64,16 @@ package: gerbil/compiler
   (declare-type gxc#&!type-id-set! (@mutator gxc#!type::t id #f))
   (declare-type
    gxc#!alias::t
-   (@class gxc#!alias::t (gxc#!type::t) (gxc#!type::t) () (id) #f #t #f #f))
+   (@class gxc#!alias::t
+           (gxc#!type::t)
+           (gxc#!type::t)
+           ()
+           (id)
+           #f
+           #t
+           #f
+           metaclass
+           #f))
   (declare-type gxc#!alias? (@predicate gxc#!alias::t))
   (declare-type gxc#make-!alias (@constructor gxc#!alias::t))
   (declare-type gxc#!alias-id (@accessor gxc#!alias::t id #t))
@@ -78,6 +90,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            #f))
   (declare-type gxc#!procedure? (@predicate gxc#!procedure::t))
   (declare-type gxc#make-!procedure (@constructor gxc#!procedure::t))
@@ -96,6 +109,7 @@ package: gerbil/compiler
                   constructor
                   struct?
                   final?
+                  metaclass
                   methods)
            (id super
                precedence-list
@@ -104,10 +118,12 @@ package: gerbil/compiler
                constructor
                struct?
                final?
+               metaclass
                methods)
            :init!
            #t
            #f
+           metaclass
            ((:init! . gxc#!class:::init!))))
   (declare-type gxc#!class? (@predicate gxc#!class::t))
   (declare-type gxc#make-!class (@constructor gxc#!class::t))
@@ -122,6 +138,7 @@ package: gerbil/compiler
    (@accessor gxc#!class::t constructor #t))
   (declare-type gxc#!class-struct? (@accessor gxc#!class::t struct? #t))
   (declare-type gxc#!class-final? (@accessor gxc#!class::t final? #t))
+  (declare-type gxc#!class-metaclass (@accessor gxc#!class::t metaclass #t))
   (declare-type gxc#!class-methods (@accessor gxc#!class::t methods #t))
   (declare-type gxc#!class-id (@accessor gxc#!class::t id #t))
   (declare-type gxc#!class-super-set! (@mutator gxc#!class::t super #t))
@@ -135,6 +152,9 @@ package: gerbil/compiler
    (@mutator gxc#!class::t constructor #t))
   (declare-type gxc#!class-struct?-set! (@mutator gxc#!class::t struct? #t))
   (declare-type gxc#!class-final?-set! (@mutator gxc#!class::t final? #t))
+  (declare-type
+   gxc#!class-metaclass-set!
+   (@mutator gxc#!class::t metaclass #t))
   (declare-type gxc#!class-methods-set! (@mutator gxc#!class::t methods #t))
   (declare-type gxc#!class-id-set! (@mutator gxc#!class::t id #t))
   (declare-type gxc#&!class-super (@accessor gxc#!class::t super #f))
@@ -148,6 +168,7 @@ package: gerbil/compiler
    (@accessor gxc#!class::t constructor #f))
   (declare-type gxc#&!class-struct? (@accessor gxc#!class::t struct? #f))
   (declare-type gxc#&!class-final? (@accessor gxc#!class::t final? #f))
+  (declare-type gxc#&!class-metaclass (@accessor gxc#!class::t metaclass #f))
   (declare-type gxc#&!class-methods (@accessor gxc#!class::t methods #f))
   (declare-type gxc#&!class-id (@accessor gxc#!class::t id #f))
   (declare-type gxc#&!class-super-set! (@mutator gxc#!class::t super #f))
@@ -161,6 +182,9 @@ package: gerbil/compiler
    (@mutator gxc#!class::t constructor #f))
   (declare-type gxc#&!class-struct?-set! (@mutator gxc#!class::t struct? #f))
   (declare-type gxc#&!class-final?-set! (@mutator gxc#!class::t final? #f))
+  (declare-type
+   gxc#&!class-metaclass-set!
+   (@mutator gxc#!class::t metaclass #f))
   (declare-type gxc#&!class-methods-set! (@mutator gxc#!class::t methods #f))
   (declare-type gxc#&!class-id-set! (@mutator gxc#!class::t id #f))
   (declare-type
@@ -173,6 +197,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            ((:init! . gxc#!predicate:::init!))))
   (declare-type gxc#!predicate? (@predicate gxc#!predicate::t))
   (declare-type gxc#make-!predicate (@constructor gxc#!predicate::t))
@@ -190,6 +215,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            ((:init! . gxc#!constructor:::init!))))
   (declare-type gxc#!constructor? (@predicate gxc#!constructor::t))
   (declare-type gxc#make-!constructor (@constructor gxc#!constructor::t))
@@ -207,6 +233,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            ((:init! . gxc#!accessor:::init!))))
   (declare-type gxc#!accessor? (@predicate gxc#!accessor::t))
   (declare-type gxc#make-!accessor (@constructor gxc#!accessor::t))
@@ -240,6 +267,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            ((:init! . gxc#!mutator:::init!))))
   (declare-type gxc#!mutator? (@predicate gxc#!mutator::t))
   (declare-type gxc#make-!mutator (@constructor gxc#!mutator::t))
@@ -269,6 +297,7 @@ package: gerbil/compiler
            :init!
            #t
            #f
+           metaclass
            ((:init! . gxc#!lambda:::init!))))
   (declare-type gxc#!lambda? (@predicate gxc#!lambda::t))
   (declare-type gxc#make-!lambda (@constructor gxc#!lambda::t))
@@ -314,6 +343,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            #f))
   (declare-type gxc#!case-lambda? (@predicate gxc#!case-lambda::t))
   (declare-type gxc#make-!case-lambda (@constructor gxc#!case-lambda::t))
@@ -343,6 +373,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            #f))
   (declare-type gxc#!kw-lambda? (@predicate gxc#!kw-lambda::t))
   (declare-type gxc#make-!kw-lambda (@constructor gxc#!kw-lambda::t))
@@ -380,6 +411,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           metaclass
            #f))
   (declare-type gxc#!kw-lambda-primary? (@predicate gxc#!kw-lambda-primary::t))
   (declare-type
@@ -423,7 +455,7 @@ package: gerbil/compiler
    (@mutator gxc#!kw-lambda-primary::t id #f))
   (declare-type
    gxc#!primitive::t
-   (@class gxc#!primitive::t () () () () #f #f #f #f))
+   (@class gxc#!primitive::t () () () () #f #f #f metaclass #f))
   (declare-type gxc#!primitive? (@predicate gxc#!primitive::t))
   (declare-type gxc#make-!primitive (@constructor gxc#!primitive::t))
   (declare-type
@@ -436,6 +468,7 @@ package: gerbil/compiler
            :init!
            #f
            #f
+           metaclass
            ((:init! . gxc#!primitive-lambda:::init!))))
   (declare-type gxc#!primitive-lambda? (@predicate gxc#!primitive-lambda::t))
   (declare-type
@@ -514,6 +547,7 @@ package: gerbil/compiler
            :init!
            #f
            #f
+           metaclass
            ((:init! . gxc#!primitive-case-lambda:::init!))))
   (declare-type
    gxc#!primitive-case-lambda?
@@ -545,11 +579,11 @@ package: gerbil/compiler
   (declare-type
    gxc#&!primitive-case-lambda-id-set!
    (@mutator gxc#!primitive-case-lambda::t id #f))
-  (declare-type gxc#!class:::init!__0 (@lambda 7 #f))
-  (declare-type gxc#!class:::init!__1 (@lambda 10 #f))
+  (declare-type gxc#!class:::init!__0 (@lambda 8 #f))
+  (declare-type gxc#!class:::init!__1 (@lambda 11 #f))
   (declare-type
    gxc#!class:::init!
-   (@case-lambda (7 gxc#!class:::init!__0) (10 gxc#!class:::init!__1)))
+   (@case-lambda (8 gxc#!class:::init!__0) (11 gxc#!class:::init!__1)))
   (declare-type gxc#!class:::init!::specialize (@lambda 1 #f))
   (declare-type gxc#compute-class-fields (@lambda 4 #f))
   (declare-type gxc#!class-slot->field-offset (@lambda 2 #f))

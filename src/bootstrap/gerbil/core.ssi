@@ -436,6 +436,7 @@ namespace: gerbil/core
                     (class-type-struct? class-type-struct?)
                     (class-type-final? class-type-final?)
                     (class-type-sealed? class-type-sealed?)
+                    (class-type-metaclass? class-type-metaclass?)
                     (make-struct-slot-accessor make-struct-slot-accessor)
                     (make-struct-slot-mutator make-struct-slot-mutator)
                     (make-struct-slot-unchecked-accessor
@@ -1129,6 +1130,9 @@ namespace: gerbil/core
                               !class-type-final?
                               gerbil/core$<MOP>$<MOP:2>#!class-type-final?)
                              (%#define-runtime
+                              !class-type-metaclass
+                              gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass)
+                             (%#define-runtime
                               !class-type-constructor-method
                               gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method)
                              (%#define-runtime
@@ -1170,6 +1174,9 @@ namespace: gerbil/core
                              (%#define-runtime
                               !class-type-final?-set!
                               gerbil/core$<MOP>$<MOP:2>#!class-type-final?-set!)
+                             (%#define-runtime
+                              !class-type-metaclass-set!
+                              gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass-set!)
                              (%#define-runtime
                               !class-type-constructor-method-set!
                               gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method-set!)
@@ -1213,6 +1220,9 @@ namespace: gerbil/core
                               &!class-type-final?
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-final?)
                              (%#define-runtime
+                              &!class-type-metaclass
+                              gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass)
+                             (%#define-runtime
                               &!class-type-constructor-method
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method)
                              (%#define-runtime
@@ -1254,6 +1264,9 @@ namespace: gerbil/core
                              (%#define-runtime
                               &!class-type-final?-set!
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-final?-set!)
+                             (%#define-runtime
+                              &!class-type-metaclass-set!
+                              gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass-set!)
                              (%#define-runtime
                               &!class-type-constructor-method-set!
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method-set!)

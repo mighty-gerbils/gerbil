@@ -381,7 +381,7 @@ package: gerbil
  class-type?
  class-type-id
  class-type-precedence-list
- class-type-all-slots
+ class-type-slot-vector
  class-type-slot-table
  class-type-properties
  class-type-constructor
@@ -446,10 +446,9 @@ package: gerbil
  unchecked-field-ref
  unchecked-slot-ref
  struct-instance? class-instance?
- method-ref direct-method-ref bound-method-ref
- checked-method-ref checked-bound-method-ref
- find-method
  substruct? subclass?
+ method-ref bound-method-ref
+ checked-method-ref checked-bound-method-ref
  with-unwind-protect
  with-catch
  file-newer?)
@@ -477,7 +476,9 @@ package: gerbil
  class-slot-ref
  unchecked-field-set!
  unchecked-slot-set!
- next-method)
+ next-method
+ find-method
+ direct-method-ref)
 
 (declare-primitive/3
  subvector

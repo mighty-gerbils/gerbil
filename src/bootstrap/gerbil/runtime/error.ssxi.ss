@@ -4,7 +4,16 @@ package: gerbil/runtime
 (begin
   (declare-type
    Exception::t
-   (@class gerbil/runtime/error#Exception::t () () () () #f #f #f #f))
+   (@class gerbil/runtime/error#Exception::t
+           ()
+           ()
+           ()
+           ()
+           #f
+           #f
+           #f
+           metaclass
+           #f))
   (declare-type Exception? (@predicate Exception::t))
   (declare-type make-Exception (@constructor Exception::t))
   (declare-type
@@ -17,6 +26,7 @@ package: gerbil/runtime
            #f
            #f
            #f
+           metaclass
            #f))
   (declare-type StackTrace? (@predicate StackTrace::t))
   (declare-type make-StackTrace (@constructor StackTrace::t))
@@ -42,8 +52,9 @@ package: gerbil/runtime
            :init!
            #f
            #f
-           ((:init! . Error:::init!)
-            (display-exception . Error::display-exception))))
+           metaclass
+           ((display-exception . Error::display-exception)
+            (:init! . Error:::init!))))
   (declare-type Error? (@predicate Error::t))
   (declare-type make-Error (@constructor Error::t))
   (declare-type Error-message (@accessor Error::t message #t))
@@ -72,6 +83,7 @@ package: gerbil/runtime
            #f
            #f
            #f
+           metaclass
            ((display-exception . RuntimeException::display-exception))))
   (declare-type RuntimeException? (@predicate RuntimeException::t))
   (declare-type make-RuntimeException (@constructor RuntimeException::t))
