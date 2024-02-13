@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1707846528)
+  (define gerbil/runtime/mop::timestamp 1707847726)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -2523,84 +2523,93 @@
                               (error '"Missing method"
                                      _klass84762_
                                      'seal-class!)))
-                        (let ((_vtab84766_
-                               (let ()
-                                 (declare (not safe))
-                                 (make-table 'test: eq?)))
-                              (_mtab84767_
-                               (let ()
-                                 (declare (not safe))
-                                 (make-table 'test: eq?))))
-                          (let ()
-                            (declare (not safe))
-                            (_collect-methods!84764_ _mtab84767_))
-                          (let ((__tmp90722
-                                 (lambda (_id84769_ _proc84770_)
-                                   (let ((_$e84772_
-                                          (let ()
-                                            (declare (not safe))
-                                            (table-ref
-                                             __method-specializers
-                                             _proc84770_
-                                             '#f))))
-                                     (if _$e84772_
-                                         ((lambda (_specializer84775_)
-                                            (let ((_proc84777_
-                                                   (_specializer84775_
-                                                    _klass84762_))
-                                                  (_gid84778_
-                                                   (let ((__tmp90723
-                                                          (let ()
-                                                            (declare
-                                                              (not safe))
-                                                            (##type-id
-                                                             _klass84762_))))
-                                                     (declare (not safe))
-                                                     (make-symbol__1
-                                                      __tmp90723
-                                                      '"::["
-                                                      _id84769_
-                                                      '"]"))))
-                                              (eval (let ((__tmp90724
-                                                           (let ((__tmp90725
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp90726
-                                 (let ((__tmp90727
-                                        (let ()
-                                          (declare (not safe))
-                                          (cons _proc84777_ '()))))
-                                   (declare (not safe))
-                                   (cons 'quote __tmp90727))))
-                            (declare (not safe))
-                            (cons __tmp90726 '()))))
-                     (declare (not safe))
-                     (cons _gid84778_ __tmp90725))))
-              (declare (not safe))
-              (cons 'def __tmp90724)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                        (if (let ((__tmp90728
+                                   (let ()
+                                     (declare (not safe))
+                                     (##unchecked-structure-ref
+                                      _klass84762_
+                                      '6
+                                      class::t
+                                      '#f))))
+                              (declare (not safe))
+                              (find class-type-metaclass? __tmp90728))
+                            (error '"cannot seal class that extends metaclass without a metaclass"
+                                   _klass84762_)
+                            (let ((_vtab84766_
+                                   (let ()
+                                     (declare (not safe))
+                                     (make-table 'test: eq?)))
+                                  (_mtab84767_
+                                   (let ()
+                                     (declare (not safe))
+                                     (make-table 'test: eq?))))
+                              (let ()
+                                (declare (not safe))
+                                (_collect-methods!84764_ _mtab84767_))
+                              (let ((__tmp90722
+                                     (lambda (_id84769_ _proc84770_)
+                                       (let ((_$e84772_
                                               (let ()
                                                 (declare (not safe))
-                                                (table-set!
-                                                 _vtab84766_
-                                                 _id84769_
-                                                 _proc84777_))))
-                                          _$e84772_)
-                                         (let ()
-                                           (declare (not safe))
-                                           (table-set!
-                                            _vtab84766_
-                                            _id84769_
-                                            _proc84770_)))))))
-                            (declare (not safe))
-                            (table-for-each __tmp90722 _mtab84767_))
-                          (let ()
-                            (declare (not safe))
-                            (##unchecked-structure-set!
-                             _klass84762_
-                             _vtab84766_
-                             '11
-                             class::t
-                             '#f))))
+                                                (table-ref
+                                                 __method-specializers
+                                                 _proc84770_
+                                                 '#f))))
+                                         (if _$e84772_
+                                             ((lambda (_specializer84775_)
+                                                (let ((_proc84777_
+                                                       (_specializer84775_
+                                                        _klass84762_))
+                                                      (_gid84778_
+                                                       (let ((__tmp90723
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (##type-id _klass84762_))))
+                 (declare (not safe))
+                 (make-symbol__1 __tmp90723 '"::[" _id84769_ '"]"))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (eval (let ((__tmp90724
+                                                               (let ((__tmp90725
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                              (let ((__tmp90726
+                                     (let ((__tmp90727
+                                            (let ()
+                                              (declare (not safe))
+                                              (cons _proc84777_ '()))))
+                                       (declare (not safe))
+                                       (cons 'quote __tmp90727))))
+                                (declare (not safe))
+                                (cons __tmp90726 '()))))
+                         (declare (not safe))
+                         (cons _gid84778_ __tmp90725))))
+                  (declare (not safe))
+                  (cons 'def __tmp90724)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (let ()
+                                                    (declare (not safe))
+                                                    (table-set!
+                                                     _vtab84766_
+                                                     _id84769_
+                                                     _proc84777_))))
+                                              _$e84772_)
+                                             (let ()
+                                               (declare (not safe))
+                                               (table-set!
+                                                _vtab84766_
+                                                _id84769_
+                                                _proc84770_)))))))
+                                (declare (not safe))
+                                (table-for-each __tmp90722 _mtab84767_))
+                              (let ()
+                                (declare (not safe))
+                                (##unchecked-structure-set!
+                                 _klass84762_
+                                 _vtab84766_
+                                 '11
+                                 class::t
+                                 '#f)))))
                     (let ()
                       (declare (not safe))
                       (&class-type-seal! _klass84762_))))
@@ -2622,12 +2631,12 @@
                        (_else8472384737_ (lambda () '#f))
                        (_K8472584743_
                         (lambda (_rest84740_ _klass84741_)
-                          (if (let ((__tmp90730
+                          (if (let ((__tmp90731
                                      (let ()
                                        (declare (not safe))
                                        (##type-id _klass84741_))))
                                 (declare (not safe))
-                                (eq? _type-id84716_ __tmp90730))
+                                (eq? _type-id84716_ __tmp90731))
                               (let ()
                                 (declare (not safe))
                                 (mixin-find-method
@@ -2653,19 +2662,19 @@
                       (let () (declare (not safe)) (_else8472384737_)))))
               (if (let () (declare (not safe)) (##type? _klass84715_))
                   (let _lp84755_ ((_klass84757_ _klass84715_))
-                    (if (let ((__tmp90729
+                    (if (let ((__tmp90730
                                (let ()
                                  (declare (not safe))
                                  (##type-id _klass84757_))))
                           (declare (not safe))
-                          (eq? _type-id84716_ __tmp90729))
-                        (let ((__tmp90728
+                          (eq? _type-id84716_ __tmp90730))
+                        (let ((__tmp90729
                                (let ()
                                  (declare (not safe))
                                  (##type-super _klass84757_))))
                           (declare (not safe))
                           (builtin-find-method
-                           __tmp90728
+                           __tmp90729
                            _obj84712_
                            _id84713_))
                         (let ((_$e84759_
