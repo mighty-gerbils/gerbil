@@ -167,13 +167,19 @@ package: gerbil
     ;; MOP
     class-type?
     class-type-id
+    class-type-name
+    class-type-super
+    class-type-flags
+    class-type-fields
     class-type-precedence-list
     class-type-slot-vector
     class-type-slot-table
     class-type-properties
     class-type-constructor
     class-type-methods
+
     class-type-slot-list
+    class-type-field-count
 
     class-type-struct?
     class-type-final?
