@@ -838,8 +838,12 @@ namespace: #f
     (unless (class-type-sealed? klass)
       (unless (class-type-final? klass)
         (error "cannot seal non-final class" klass))
-      (if (class-type-metaclass? klass)
-        (call-method klass 'seal-class!)
+      (cond
+       ((class-type-metaclass? klass)
+        (call-method klass 'seal-class!))
+       ((find class-type-metaclass? (&class-type-precedence-list klass))
+        (error "cannot seal class that extends metaclass without a metaclass" klass))
+       (else
         (let ((vtab (make-hash-table-eq))
               (mtab (make-hash-table-eq)))
           (collect-methods! mtab)
@@ -856,7 +860,7 @@ namespace: #f
               (else
                (hash-put! vtab id proc))))
            mtab)
-          (&class-type-methods-set! klass vtab)))
+          (&class-type-methods-set! klass vtab))))
       (&class-type-seal! klass))))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but
