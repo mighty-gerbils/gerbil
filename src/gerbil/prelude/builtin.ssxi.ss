@@ -446,9 +446,6 @@ package: gerbil
  unchecked-field-ref
  unchecked-slot-ref
  struct-instance? class-instance?
- method-ref direct-method-ref bound-method-ref
- checked-method-ref checked-bound-method-ref
- find-method
  substruct? subclass?
  with-unwind-protect
  with-catch
@@ -485,6 +482,9 @@ package: gerbil
  subu8vector)
 
 (declare-primitive/4/unchecked
+ find-method
+ method-ref direct-method-ref bound-method-ref
+ checked-method-ref checked-bound-method-ref
  struct-field-set!
  class-slot-set!)
 

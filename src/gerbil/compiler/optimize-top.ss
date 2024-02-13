@@ -151,14 +151,15 @@ namespace: gxc
 
 (def (basic-expression-type-annotation-mop.class stx ann)
   (ast-case ann ()
-    ((_ type-id super slots ctor-method struct? final?)
+    ((_ type-id super slots ctor-method struct? final? metaclass)
      (let ((type-id (stx-e #'type-id))
            (super (map identifier-symbol #'super))
            (slots (map stx-e #'slots))
            (ctor-method (stx-e #'ctor-method))
            (struct? (stx-e #'struct?))
-           (final? (stx-e #'final?)))
-       (make-!class type-id super slots ctor-method struct? final?)))))
+           (final? (stx-e #'final?))
+           (metaclass (and (stx-e #'metaclass) (identifier-symbol #'metaclass))))
+       (make-!class type-id super slots ctor-method struct? final? metaclass)))))
 
 (def (basic-expression-type-annotation-mop.constructor stx ann)
   (ast-case ann ()

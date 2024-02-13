@@ -87,6 +87,20 @@ namespace: gxc
                                                           ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))
                                 ['%#ref $obj]]]
                 stx))))
+       ((!class-metaclass klass)
+        => (lambda (metaclass)
+             (let* (($obj (make-symbol (gensym '__obj)))
+                    (metakons
+                     (!class-lookup-method (optimizer-resolve-class stx metaclass)
+                                           'instance-init!)))
+               (xform-wrap-source
+                ['%#let-values [[[$obj] inline-make-object]]
+                               ['%#begin
+                                (if metakons
+                                  ['%#call ['%#ref metakons] ['%#ref (!type-id self)] ['%#ref $obj] args ...]
+                                  ['%#call ['%#ref 'call-method] ['%#ref (!type-id self)] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
+                                ['%#ref $obj]]]
+                stx))))
        ((!class-struct? klass)
         (if (fx= (length args) fields)
           (xform-wrap-source

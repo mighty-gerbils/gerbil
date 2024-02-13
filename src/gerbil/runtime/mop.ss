@@ -50,6 +50,7 @@ namespace: #f
 ;; These class type flags are Gerbil extensions
 (def class-type-flag-struct 1024) ;; precedence-list always tail of subclass's precedence-list
 (def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
+(def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
 
 ;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
@@ -128,6 +129,8 @@ namespace: #f
   (fxflag-set? (##type-flags klass) class-type-flag-struct))
 (def (class-type-sealed? klass)
   (fxflag-set? (##type-flags klass) class-type-flag-sealed))
+(def (class-type-metaclass? klass)
+  (fxflag-set? (##type-flags klass) class-type-flag-metaclass))
 
 ;; TODO for debugging only
 (def (properties-form properties)
@@ -173,6 +176,11 @@ namespace: #f
          (field-info (make-vector field-info-length #f))
          (struct? (assgetq struct: properties))
          (final? (assgetq final: properties))
+         (metaclass
+          (alet (metaclass (assgetq metaclass: properties))
+            (unless (class-type? metaclass)
+              (error "metaclass is not a class type" class: type-id metaclass: metaclass))
+            metaclass))
          (opaque?
           (or (not all-slots-equalable?)
               (and type-super (type-opaque? type-super))))
@@ -180,7 +188,8 @@ namespace: #f
           (##fxior type-flag-id type-flag-concrete
                    (if final? 0 type-flag-extensible)
                    (if opaque? type-flag-opaque 0)
-                   (if struct? class-type-flag-struct 0))))
+                   (if struct? class-type-flag-struct 0)
+                   (if metaclass class-type-flag-metaclass 0))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -192,11 +201,17 @@ namespace: #f
           (vector-set! field-info j slot)
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
-    (##structure class::t
-                 ;; gambit type fields
-                 type-id type-name type-flags type-super field-info
-                 ;; gerbil class fields
-                 precedence-list slot-vector slot-table properties constructor methods)))
+    (if metaclass
+      (make-instance metaclass
+                     ;; gambit type fields
+                     type-id type-name type-flags type-super field-info
+                     ;; gerbil class fields
+                     precedence-list slot-vector slot-table properties constructor methods)
+      (##structure class::t
+                   ;; gambit type fields
+                   type-id type-name type-flags type-super field-info
+                   ;; gerbil class fields
+                   precedence-list slot-vector slot-table properties constructor methods))))
 
 ;;; class type utilities
 (def (class-type-precedence-list klass)
@@ -209,10 +224,16 @@ namespace: #f
   (##structure-ref klass 9 class::t class-type-properties))
 (def (class-type-constructor klass)
   (##structure-ref klass 10 class::t class-type-constructor))
+
 (def (class-type-methods klass)
   (##structure-ref klass 11 class::t class-type-methods))
 (def (class-type-methods-set! klass ht)
   (##structure-set! klass ht 11 class::t class-type-methods-set!))
+
+(def (&class-type-methods klass)
+  (##unchecked-structure-ref klass 11 class::t class-type-methods))
+(def (&class-type-methods-set! klass ht)
+  (##unchecked-structure-set! klass ht 11 class::t class-type-methods-set!))
 
 (def (class-type-slot-list klass)
   (cdr (vector->list (class-type-slot-vector klass))))
@@ -221,6 +242,9 @@ namespace: #f
 (def (class-type-seal! klass)
   (##structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
                     3 class::t class-type-seal!))
+(def (&class-type-seal! klass)
+  (##unchecked-structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
+                              3 class::t class-type-seal!))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
@@ -551,6 +575,8 @@ namespace: #f
      ((class-type-constructor klass)
       => (lambda (kons-id)
            (__constructor-init! klass kons-id obj args)))
+     ((class-type-metaclass? klass)
+      (__metaclass-instance-init! klass obj args))
      ((not (class-type-struct? klass))
       (__class-instance-init! klass obj args))
      ((##fx= (##fx- (##structure-length obj) 1) (length args))
@@ -593,12 +619,15 @@ namespace: #f
        (if (null? rest) obj
            (error "unexpected class initializer arguments" class: klass rest: rest))))))
 
+(def (__metaclass-instance-init! klass obj args)
+  (apply call-method klass 'instance-init! obj args))
+
 (def (constructor-init! klass kons-id obj . args)
   (__constructor-init! klass kons-id obj args))
 
 (def (__constructor-init! klass kons-id obj args)
   (cond
-   ((__find-method klass kons-id)
+   ((__find-method klass obj kons-id)
     => (lambda (kons)
          (apply kons obj args)
          obj))
@@ -645,7 +674,7 @@ namespace: #f
 
 (def (method-ref obj id)
   (and (object? obj)
-       (find-method (object-type obj) id)))
+       (find-method (object-type obj) obj id)))
 
 (def (checked-method-ref obj id)
   (or (method-ref obj id)
@@ -664,41 +693,65 @@ namespace: #f
     (lambda args
       (apply method obj args))))
 
-(def (find-method klass id)
+(def (find-method klass obj id)
   (if (class-type? klass)
-    (__find-method klass id)
-    (builtin-find-method klass id)))
+    (__find-method klass obj id)
+    (builtin-find-method klass obj id)))
 
-(def (__find-method klass id)
+(def (__find-method klass obj id)
   (cond
-   ((direct-method-ref klass id))
+   ((direct-method-ref klass obj id))
    ((class-type-sealed? klass)
     #f)
    (else
-    (mixin-method-ref klass id))))
+    (mixin-method-ref klass obj id))))
 
-(def (class-find-method klass id)
+(def (class-find-method klass obj id)
   (and (class-type? klass)
-       (__find-method klass id)))
+       (__find-method klass obj id)))
 
-(def (mixin-find-method mixins id)
-  (ormap (cut direct-method-ref <> id) mixins))
+(def (mixin-find-method mixins obj id)
+  (ormap (cut direct-method-ref <> obj id) mixins))
 
-(def (builtin-find-method klass id)
+(def (builtin-find-method klass obj id)
   (and (##type? klass)
        (or (builtin-method-ref klass id)
-           (builtin-find-method (##type-super klass) id))))
+           (builtin-find-method (##type-super klass) obj id))))
 
-(def (direct-method-ref klass id)
+(def (direct-method-ref klass obj id)
+  (def (metaclass-resolve-method)
+    (call-method klass 'direct-method-ref obj id))
+
+  (def (metaclass-resolve-method!)
+    (let (method (metaclass-resolve-method))
+      (hash-put! (&class-type-methods klass) id
+                 (if method 'resolved 'unknown))
+      method))
+
   (cond
-   ((class-type-methods klass)
-    => (lambda (ht) (hash-get ht id)))
+   ((&class-type-methods klass)
+    => (lambda (ht)
+         (let (method (hash-get ht id))
+           (cond
+            ((procedure? method) method)
+            ((class-type-metaclass? klass)
+             (case method
+               ((resolved)
+                (metaclass-resolve-method))
+               ((uknown) #f)
+               (else
+                (metaclass-resolve-method!))))
+            (else #f)))))
+   ((class-type-metaclass? klass)
+    (let (tab (make-hash-table-eq))
+      (&class-type-methods-set! klass tab)
+      (metaclass-resolve-method!)))
    (else #f)))
 
-(def (mixin-method-ref klass id)
-  (mixin-find-method (class-type-precedence-list klass) id))
+(def (mixin-method-ref klass obj id)
+  (mixin-find-method (class-type-precedence-list klass) obj id))
 
-(def (builtin-method-ref klass id)
+(def (builtin-method-ref klass obj id)
   (cond
    ((hash-get __builtin-type-methods (##type-id klass))
     => (lambda (mtab) (hash-get mtab id)))
@@ -715,11 +768,11 @@ namespace: #f
 
   (cond
    ((class-type? klass)
-    (let (ht (class-type-methods klass))
+    (let (ht (&class-type-methods klass))
       (if ht
         (bind! ht)
         (let (ht (make-hash-table-eq))
-          (class-type-methods-set! klass ht)
+          (&class-type-methods-set! klass ht)
           (bind! ht)))))
    ((##type? klass)
     (let (ht
@@ -747,7 +800,7 @@ namespace: #f
 
     (def (collect-direct-methods! klass)
       (cond
-       ((class-type-methods klass) => merge!)))
+       ((&class-type-methods klass) => merge!)))
 
     (for-each collect-direct-methods!
               (reverse (class-precedence-list klass))))
@@ -756,24 +809,26 @@ namespace: #f
     (unless (class-type-sealed? klass)
       (unless (class-type-final? klass)
         (error "cannot seal non-final class" klass))
-      (let ((vtab (make-hash-table-eq))
-            (mtab (make-hash-table-eq)))
-        (collect-methods! mtab)
-        (hash-for-each
-         (lambda (id proc)
-           (cond
-            ((hash-get __method-specializers proc)
-             => (lambda (specializer)
-                  (let ((proc (specializer klass))
-                        (gid (make-symbol (##type-id klass) "::[" id "]")))
-                    ;; give the procedure a name and make it accessible to the debugger
-                    (eval `(def ,gid (quote ,proc)))
-                    (hash-put! vtab id proc))))
-            (else
-             (hash-put! vtab id proc))))
-         mtab)
-        (class-type-methods-set! klass vtab)
-        (class-type-seal! klass)))))
+      (if (class-type-metaclass? klass)
+        (call-method klass 'seal-class!)
+        (let ((vtab (make-hash-table-eq))
+              (mtab (make-hash-table-eq)))
+          (collect-methods! mtab)
+          (hash-for-each
+           (lambda (id proc)
+             (cond
+              ((hash-get __method-specializers proc)
+               => (lambda (specializer)
+                    (let ((proc (specializer klass))
+                          (gid (make-symbol (##type-id klass) "::[" id "]")))
+                      ;; give the procedure a name and make it accessible to the debugger
+                      (eval `(def ,gid (quote ,proc)))
+                      (hash-put! vtab id proc))))
+              (else
+               (hash-put! vtab id proc))))
+           mtab)
+          (&class-type-methods-set! klass vtab)))
+      (&class-type-seal! klass))))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but
 ;; 2. is somewhat simpler and slightly faster in the common case that has no
