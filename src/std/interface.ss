@@ -62,7 +62,7 @@
     (match rest
       ([method-name . rest]
        (cond
-        ((find-method obj-klass method-name)
+        ((find-method obj-klass #f method-name)
          => (lambda (method) (lp rest (fx+ count 1) (cons method methods))))
         (else
          (fail! klass method-name))))

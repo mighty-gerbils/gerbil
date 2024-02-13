@@ -903,6 +903,6 @@
   ((_ write-@vector)
    (def (write-@vector v (port (current-output-port)))
      (cond
-      ((find-method v ':write) => (cut <> v port))
+      ((method-ref v ':write) => (cut <> v port))
       (else
        (write v (current-output-port)))))))
