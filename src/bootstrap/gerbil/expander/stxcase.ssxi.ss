@@ -12,7 +12,7 @@ package: gerbil/expander
            #f
            #t
            #f
-           metaclass
+           #f
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
   (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))
   (declare-type gx#make-syntax-pattern (@constructor gx#syntax-pattern::t))

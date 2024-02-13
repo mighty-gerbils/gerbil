@@ -136,7 +136,7 @@ package: gerbil/compiler
            :init!
            #t
            #f
-           metaclass
+           #f
            ((:init! . gxc#meta-state:::init!))))
   (declare-type gxc#meta-state? (@predicate gxc#meta-state::t))
   (declare-type gxc#make-meta-state (@constructor gxc#meta-state::t))
@@ -171,7 +171,7 @@ package: gerbil/compiler
            #f
            #t
            #f
-           metaclass
+           #f
            #f))
   (declare-type gxc#meta-state-block? (@predicate gxc#meta-state-block::t))
   (declare-type

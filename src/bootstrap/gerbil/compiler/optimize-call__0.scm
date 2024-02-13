@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1707830029)
+  (define gerbil/compiler/optimize-call::timestamp 1707831913)
   (begin
     (define gxc#&optimize-call
       (make-promise

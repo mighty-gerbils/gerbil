@@ -217,7 +217,7 @@ $ ../build.sh stage1
 
 If you compiled the base bootstrap without optimization, you will also have to set `GERBIL_BUILD_NOOPT` during the stage1 build:
 ```
-GERBIL_BUILD_NOOPT=t ./build.sh stage1
+GERBIL_BUILD_NOOPT=t ../build.sh stage1
 ```
 
 After you have built stage1, you can use it to build the recursive

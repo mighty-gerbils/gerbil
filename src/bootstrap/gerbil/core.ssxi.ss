@@ -43,7 +43,7 @@ package: gerbil
            #f
            #f
            #f
-           metaclass
+           #f
            #f))
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#class-type-info?
@@ -295,7 +295,7 @@ package: gerbil
            #f
            #f
            #f
-           metaclass
+           #f
            ((apply-macro-expander
              .
              gerbil/core$<macro-object>#macro-object::apply-macro-expander))))
@@ -333,7 +333,7 @@ package: gerbil
            #f
            #f
            #f
-           metaclass
+           #f
            #f))
   (declare-type
    |gerbil/core$<match>[1]#match-macro?|
@@ -378,7 +378,7 @@ package: gerbil
            #f
            #f
            #f
-           metaclass
+           #f
            #f))
   (declare-type
    |gerbil/core$<more-sugar>[1]#setq-macro?|
@@ -408,7 +408,7 @@ package: gerbil
            #f
            #f
            #f
-           metaclass
+           #f
            #f))
   (declare-type
    |gerbil/core$<more-sugar>[1]#setf-macro?|

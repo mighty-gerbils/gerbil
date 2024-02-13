@@ -12,7 +12,7 @@ package: gerbil/compiler
            :init!
            #t
            #f
-           metaclass
+           #f
            ((:init! . gxc#symbol-table:::init!))))
   (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))
   (declare-type gxc#make-symbol-table (@constructor gxc#symbol-table::t))

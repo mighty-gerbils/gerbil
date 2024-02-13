@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/compile::timestamp 1707830015)
+  (define gerbil/expander/compile::timestamp 1707831899)
   (begin
     (declare (not safe))
     (define gx#core-compile-top-syntax

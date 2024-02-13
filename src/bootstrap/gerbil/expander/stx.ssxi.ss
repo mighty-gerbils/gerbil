@@ -12,7 +12,7 @@ package: gerbil/expander
            #f
            #t
            #t
-           metaclass
+           #f
            #f))
   (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
   (declare-type gx#make-identifier-wrap (@constructor gx#identifier-wrap::t))
@@ -58,7 +58,7 @@ package: gerbil/expander
            #f
            #t
            #t
-           metaclass
+           #f
            #f))
   (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
   (declare-type gx#make-syntax-wrap (@constructor gx#syntax-wrap::t))
@@ -88,7 +88,7 @@ package: gerbil/expander
            #f
            #t
            #t
-           metaclass
+           #f
            #f))
   (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))
   (declare-type gx#make-syntax-quote (@constructor gx#syntax-quote::t))

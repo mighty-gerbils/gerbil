@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize::timestamp 1707830029)
+  (define gerbil/compiler/optimize::timestamp 1707831913)
   (begin
     (define gxc#optimizer-info-init!
       (lambda ()
@@ -1584,7 +1584,8 @@
                                                   (declare (not safe))
                                                   (cons __tmp291075 '()))))
                                            (declare (not safe))
-                                           (cons 'metaclass __tmp291074))))
+                                           (cons _metaclass285062_
+                                                 __tmp291074))))
                                     (declare (not safe))
                                     (cons _final?285063_ __tmp291073))))
                              (declare (not safe))
