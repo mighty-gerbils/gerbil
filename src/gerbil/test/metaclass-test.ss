@@ -45,7 +45,7 @@
     (test-case "mixin metaclass"
       (defclass A (x y) metaclass: dyn::t)
       (defclass (B A) ())
-      (defmethod {c B} (lambda (self . args) 'z))
+      (defmethod {z B} (lambda (self . args) 'z))
       (def b (B))
       (set! (B-x b)
         (lambda (obj . args) 'x))
