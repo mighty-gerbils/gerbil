@@ -876,16 +876,18 @@ namespace: gxc
              stdout-redirection: (stdout-redirection #f)
              stderr-redirection: (stderr-redirection #f))
   (verbose "invoke " [program . args])
-  (let (proc (open-process [path: program arguments: args
-                                  stdout-redirection: stdout-redirection
-                                  stderr-redirection: stderr-redirection]))
-    (when (or stdout-redirection stderr-redirection)
-      (read-line proc #f))
+  (let* ((proc (open-process [path: program arguments: args
+                                    stdout-redirection: stdout-redirection
+                                    stderr-redirection: stderr-redirection]))
+         (output (and (or stdout-redirection stderr-redirection)
+                      (read-line proc #f))))
     (let (status (process-status proc))
       (close-port proc)
       (unless (zero? status)
+        (display output)
         (raise-compile-error "Compilation error; process exit with nonzero status"
-                             program)))))
+                             [program . args]
+                             status)))))
 
 (defrules go! ()
   ((_ expr)
