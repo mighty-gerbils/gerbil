@@ -197,9 +197,10 @@
 ;; the hash deconstructor macro
 ;; usage: (let-hash a-hash body ...)
 ;; rebinds %%ref so that identifiers starting with a dot are looked up in the hash:
-;;  .x  -> (hash-ref a-hash 'x) ; strong accessor
-;;  .?x -> (hash-get a-hash 'x) ; weak accessor
-;;  ..x -> (%%ref .x)           ; escape
+;;  .x  -> (hash-ref a-hash 'x)  ; strong accessor
+;;  .?x -> (hash-get a-hash 'x)  ; weak accessor
+;;  .$x -> (hash-get a-hash "x") ; string weak accessor
+;;  ..x -> (%%ref .x)            ; escape
 (defsyntax (let-hash stx)
   (syntax-case stx ()
     ((macro expr body ...)
@@ -217,6 +218,8 @@
                         (let (str (symbol->string (stx-e #'id)))
                           (def (str->symbol start)
                             (string->symbol (substring str start (string-length str))))
+                          (def (substr start)
+                            (substring str start (string-length str)))
                           (if (eq? (string-ref str 0) #\.) ; hash accessor?
                             (cond
                              ((eq? (string-ref str 1) #\.) ; escape
@@ -225,6 +228,9 @@
                              ((eq? (string-ref str 1) #\?) ; weak
                               (with-syntax ((sym (str->symbol 2)))
                                 #'(hash-get ht 'sym)))
+                             ((eq? (string-ref str 1) #\$) ; string weak
+                              (with-syntax ((sub (substr 2)))
+                                #'(hash-get ht 'sub)))
                              (else
                               (with-syntax ((sym (str->symbol 1)))
                                 #'(hash-ref ht 'sym))))

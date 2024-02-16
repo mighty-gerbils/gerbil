@@ -294,16 +294,17 @@ resolve as hash references.
 
 More specifically, the macro rebinds `%%ref` so that identifiers starting with a `.`
 are resolved with the following rules:
-- `.x  -> (hash-ref hash 'x)` ; strong accessor
-- `.?x -> (hash-get hash 'x)` ; weak accessor
-- `..x -> (%%ref .x)`         ; escape
+- `.x  -> (hash-ref hash 'x)`  ; strong accessor
+- `.?x -> (hash-get hash 'x)`  ; weak accessor
+- `.$x -> (hash-get hash "x")` ; string weak accessor
+- `..x -> (%%ref .x)`          ; escape
 
 ::: tip Examples:
 ```scheme
 > (def .c 4)
-> (def h (hash (a 1) (b 2) (c 3)))
-> (let-hash h [.a .?b ..c .?d])
-(1 2 4 #f)
+> (def h (hash (a 1) (b 2) (c 3) ("d" 5)))
+> (let-hash h [.a .?b ..c .$d .?e])
+(1 2 4 5 #f)
 ```
 :::
 

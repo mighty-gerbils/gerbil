@@ -113,8 +113,8 @@
 
     (test-case "let-hash"
       (def .c 4)
-      (def h (hash (a 1) (b 2) (c 3)))
-      (check (let-hash h [.a .?b ..c .?d]) => [1 2 4 #f]))
+      (def h (hash (a 1) (b 2) (c 3) ("d" 5)))
+      (check (let-hash h [.a .?b ..c .$d .?e]) => [1 2 4 5 #f]))
 
     (test-case "awhen"
       (def (foo c) (awhen (v (char-ascii-digit c)) (* v v)))
