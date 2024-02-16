@@ -92,9 +92,9 @@
     (cond
      ((lookup-message-type klass-id)
       => (lambda (klass)
-           (unless (fx= fields (class-type-fields klass))
+           (unless (fx= fields (class-type-field-count klass))
              (raise-io-error unmarshal-message "bad message; field count mismatch"
-                             klass-id fields klass (class-type-fields klass)))
+                             klass-id fields klass (class-type-field-count klass)))
            (let (obj (make-object klass (fx1+ fields)))
              (let lp ((i 0))
                (if (fx< i fields)

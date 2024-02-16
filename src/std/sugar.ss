@@ -157,7 +157,7 @@
    (and (identifier? #'method) (identifier? #'method-id))
    (def method
      (cond
-      ((find-method klass 'method-id))
+      ((find-method klass #f 'method-id))
       (else
        (error "Missing method" klass 'method-id)))))
   ((recur klass method)

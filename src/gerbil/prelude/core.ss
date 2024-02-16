@@ -167,18 +167,24 @@ package: gerbil
     ;; MOP
     class-type?
     class-type-id
+    class-type-name
+    class-type-super
+    class-type-flags
+    class-type-fields
     class-type-precedence-list
     class-type-slot-vector
     class-type-slot-table
     class-type-properties
     class-type-constructor
     class-type-methods
+
     class-type-slot-list
-    class-type-fields
+    class-type-field-count
 
     class-type-struct?
     class-type-final?
     class-type-sealed?
+    class-type-metaclass?
 
     make-struct-slot-accessor
     make-struct-slot-mutator
@@ -1697,7 +1703,7 @@ package: gerbil
             ((slot getf setf) #'slot)))
 
         (def (class-opt? key)
-          (memq (stx-e key) '(struct: slots: id: name: properties: constructor: final: mixin:)))
+          (memq (stx-e key) '(struct: slots: id: name: properties: constructor: final: mixin: metaclass:)))
 
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
@@ -1721,6 +1727,8 @@ package: gerbil
                                []))
                           ((values accessible-slots)
                            (append (syntax->list slots) (syntax->list mixin-slots)))
+                          ((values metaclass)
+                           (stx-getq metaclass: #'rest))
                           ((slot ...)
                            (stx-map slot-name slots))
                           (type-id
@@ -1736,6 +1744,10 @@ package: gerbil
                            (stx-map core-quote-syntax #'super))
                           (mop-struct? struct?)
                           (mop-final? (stx-getq final: #'rest))
+                          (mop-metaclass
+                           (if (stx-e metaclass)
+                             (core-quote-syntax metaclass)
+                             #f))
                           (type-properties
                            (or (stx-getq properties: #'rest)
                                #'[]))
@@ -1746,6 +1758,11 @@ package: gerbil
                           (type-properties
                            (if struct?
                              #'[[struct: . #t] :: type-properties]
+                             #'type-properties))
+                          (type-properties
+                           (if (stx-e metaclass)
+                             (with-syntax ((metaclass metaclass))
+                               #'[[metaclass: :: metaclass] :: type-properties])
                              #'type-properties))
                           (type-super
                            (cons #'list #'super))
@@ -1761,7 +1778,8 @@ package: gerbil
                                                                (slot ...)
                                                                type-constructor
                                                                mop-struct?
-                                                               mop-final?)
+                                                               mop-final?
+                                                               mop-metaclass)
                                    make-type-rtd))))
                           (def-make
                             (if (stx-false? #'make)
@@ -1854,6 +1872,9 @@ package: gerbil
        (final? ;; Boolean
         ;; #t if the class is final
         !class-type-final? !class-type-final?-set!)
+       (metaclass ;; OrFalse identifier
+        ;; the metaclass identifier, if any
+        !class-type-metaclass !class-type-metaclass-set!)
        (constructor-method ;; OrFalse Symbol
         ;; the class's constructor method name, if any
         !class-type-constructor-method !class-type-constructor-method-set!)
@@ -1908,7 +1929,9 @@ package: gerbil
        id: 'gerbil.core#class-type-info::t
        name: 'class-type-info
        super: []
-       slots: '(id name super slots struct? final? constructor-method
+       slots: '(id name super slots struct? final?
+                   metaclass
+                   constructor-method
                    type-descriptor constructor predicate
                    accessors mutators
                    unchecked-accessors unchecked-mutators)
@@ -1925,6 +1948,7 @@ package: gerbil
         ['slots :: (quote-syntax !class-type-slots)]
         ['struct? :: (quote-syntax !class-type-struct?)]
         ['final? :: (quote-syntax !class-type-final?)]
+        ['metaclass :: (quote-syntax !class-type-metaclass)]
         ['constructor-method :: (quote-syntax !class-type-constructor-method)]
         ['type-descriptor :: (quote-syntax !class-type-descriptor)]
         ['constructor :: (quote-syntax !class-type-constructor)]
@@ -1940,6 +1964,7 @@ package: gerbil
         ['slots :: (quote-syntax !class-type-slots-set!)]
         ['struct? :: (quote-syntax !class-type-struct?-set!)]
         ['final? :: (quote-syntax !class-type-final?-set!)]
+        ['metaclass :: (quote-syntax !class-type-metaclass-set!)]
         ['constructor-method :: (quote-syntax !class-type-constructor-method-set!)]
         ['type-descriptor :: (quote-syntax !class-type-descriptor-set!)]
         ['constructor :: (quote-syntax !class-type-constructor-set!)]
@@ -1955,6 +1980,7 @@ package: gerbil
         ['slots :: (quote-syntax &!class-type-slots)]
         ['struct? :: (quote-syntax &!class-type-struct?)]
         ['final? :: (quote-syntax &!class-type-final?)]
+        ['metaclass :: (quote-syntax !class-type-metaclass)]
         ['constructor-method :: (quote-syntax &!class-type-constructor-method)]
         ['type-descriptor :: (quote-syntax &!class-type-descriptor)]
         ['constructor :: (quote-syntax &!class-type-constructor)]
@@ -1970,6 +1996,7 @@ package: gerbil
         ['slots :: (quote-syntax &!class-type-slots-set!)]
         ['struct? :: (quote-syntax &!class-type-struct?-set!)]
         ['final? :: (quote-syntax &!class-type-final?-set!)]
+        ['metaclass :: (quote-syntax &!class-type-metaclass-set!)]
         ['constructor-method :: (quote-syntax &!class-type-constructor-method-set!)]
         ['type-descriptor :: (quote-syntax &!class-type-descriptor-set!)]
         ['constructor :: (quote-syntax &!class-type-constructor-set!)]
@@ -1988,7 +2015,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: struct: name: constructor: transparent: final: print: equal:)))
+                '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-defclass stx id super-ref slots body)
@@ -2105,6 +2132,16 @@ package: gerbil
                           []
                           (with-syntax ((properties properties))
                             [properties: #'(quote properties)])))
+                       ((values metaclass)
+                        (cond
+                         ((stx-getq metaclass: body)
+                          => (lambda (metaclass)
+                               (and (identifier? metaclass) metaclass)))
+                         (else #f)))
+                       ((values type-metaclass)
+                        (if metaclass
+                          [metaclass: metaclass]
+                          []))
                        ((values final?)
                         (stx-e (stx-getq final: body)))
                        ((values type-struct)
@@ -2117,6 +2154,7 @@ package: gerbil
                          type-constructor ...
                          type-struct ...
                          type-final ...
+                         type-metaclass ...
                          type-properties ...
                          type-slots ...
                          type-mixin-slots ...])
@@ -2137,6 +2175,11 @@ package: gerbil
                        (meta-type-slots #'(quote (slot ...)))
                        (meta-type-struct? struct?)
                        (meta-type-final? final?)
+                       (meta-type-metaclass
+                        (if metaclass
+                          (with-syntax ((metaclass metaclass))
+                            #'(quote-syntax metaclass))
+                          #f))
                        (meta-type-constructor-method
                         (if (null? type-constructor)
                           #f
@@ -2167,6 +2210,7 @@ package: gerbil
                               super: meta-type-super
                               struct?: meta-type-struct?
                               final?: meta-type-final?
+                              metaclass: meta-type-metaclass
                               constructor-method: meta-type-constructor-method
                               type-descriptor: meta-type-descriptor
                               constructor: meta-type-constructor

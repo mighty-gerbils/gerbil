@@ -81,10 +81,24 @@ namespace: gxc
                                   ['%#call ['%#ref ctor-impl] ['%#ref $obj] args ...]
                                   (let ($ctor (make-symbol (gensym '__constructor)))
                                     ['%#let-values [[[$ctor]
-                                                     ['%#call ['%#ref 'direct-method-ref] ['%#ref (!type-id self)] ['%#quote ctor]]]]
+                                                     ['%#call ['%#ref 'direct-method-ref] ['%#ref (!type-id self)] ['%#ref $obj] ['%#quote ctor]]]]
                                                    ['%#if ['%#ref $ctor]
                                                           ['%#call ['%#ref $ctor] ['%#ref $obj] args ...]
                                                           ['%#call ['%#ref 'error] ['%#quote "missing constructor method implementation"] ['%#quote 'class:] ['%#ref (!type-id self)] ['%#quote 'method:] ['%#quote ctor]]]]))
+                                ['%#ref $obj]]]
+                stx))))
+       ((!class-metaclass klass)
+        => (lambda (metaclass)
+             (let* (($obj (make-symbol (gensym '__obj)))
+                    (metakons
+                     (!class-lookup-method (optimizer-resolve-class stx metaclass)
+                                           'instance-init!)))
+               (xform-wrap-source
+                ['%#let-values [[[$obj] inline-make-object]]
+                               ['%#begin
+                                (if metakons
+                                  ['%#call ['%#ref metakons] ['%#ref (!type-id self)] ['%#ref $obj] args ...]
+                                  ['%#call ['%#ref 'call-method] ['%#ref (!type-id self)] ['%#quote 'instance-init!] ['%#ref $obj] args ...])
                                 ['%#ref $obj]]]
                 stx))))
        ((!class-struct? klass)

@@ -2,26 +2,106 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type class-type? (@lambda 1 #f))
-  (declare-type class-type-id (@lambda 1 #f))
+  (declare-type
+   class::t
+   (@class gerbil#class::t
+           ()
+           ()
+           (id name
+               super
+               flags
+               fields
+               precedence-list
+               slot-vector
+               slot-table
+               properties
+               constructor
+               methods)
+           (id name
+               super
+               flags
+               fields
+               precedence-list
+               slot-vector
+               slot-table
+               properties
+               constructor
+               methods)
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type class-type? (@predicate class::t))
   (declare-type class-type=? (@lambda 2 #f))
   (declare-type type-opaque? (@lambda 1 #f))
   (declare-type type-extensible? (@lambda 1 #f))
   (declare-type class-type-final? (@lambda 1 #f))
   (declare-type class-type-struct? (@lambda 1 #f))
   (declare-type class-type-sealed? (@lambda 1 #f))
+  (declare-type class-type-metaclass? (@lambda 1 #f))
   (declare-type properties-form (@lambda 1 #f))
   (declare-type make-class-type-descriptor (@lambda 9 #f))
-  (declare-type class-type-precedence-list (@lambda 1 #f))
-  (declare-type class-type-slot-vector (@lambda 1 #f))
-  (declare-type class-type-slot-table (@lambda 1 #f))
-  (declare-type class-type-properties (@lambda 1 #f))
-  (declare-type class-type-constructor (@lambda 1 #f))
-  (declare-type class-type-methods (@lambda 1 #f))
-  (declare-type class-type-methods-set! (@lambda 2 #f))
+  (declare-type class-type-id (@accessor class::t id #t))
+  (declare-type &class-type-id (@accessor class::t id #f))
+  (declare-type class-type-id-set! (@mutator class::t id #t))
+  (declare-type &class-type-id-set! (@mutator class::t id #f))
+  (declare-type class-type-name (@accessor class::t name #t))
+  (declare-type &class-type-name (@accessor class::t name #f))
+  (declare-type class-type-name-set! (@mutator class::t name #t))
+  (declare-type &class-type-name-set! (@mutator class::t name #f))
+  (declare-type class-type-super (@accessor class::t super #t))
+  (declare-type &class-type-super (@accessor class::t super #f))
+  (declare-type class-type-super-set! (@mutator class::t super #t))
+  (declare-type &class-type-super-set! (@mutator class::t super #f))
+  (declare-type class-type-flags (@accessor class::t flags #t))
+  (declare-type &class-type-flags (@accessor class::t flags #f))
+  (declare-type class-type-flags-set! (@mutator class::t flags #t))
+  (declare-type &class-type-flags-set! (@mutator class::t flags #f))
+  (declare-type class-type-fields (@accessor class::t fields #t))
+  (declare-type &class-type-fields (@accessor class::t fields #f))
+  (declare-type class-type-fields-set! (@mutator class::t fields #t))
+  (declare-type &class-type-fields-set! (@mutator class::t fields #f))
+  (declare-type
+   class-type-precedence-list
+   (@accessor class::t precedence-list #t))
+  (declare-type
+   &class-type-precedence-list
+   (@accessor class::t precedence-list #f))
+  (declare-type
+   class-type-precedence-list-set!
+   (@mutator class::t precedence-list #t))
+  (declare-type
+   &class-type-precedence-list-set!
+   (@mutator class::t precedence-list #f))
+  (declare-type class-type-slot-vector (@accessor class::t slot-vector #t))
+  (declare-type &class-type-slot-vector (@accessor class::t slot-vector #f))
+  (declare-type class-type-slot-vector-set! (@mutator class::t slot-vector #t))
+  (declare-type
+   &class-type-slot-vector-set!
+   (@mutator class::t slot-vector #f))
+  (declare-type class-type-slot-table (@accessor class::t slot-table #t))
+  (declare-type &class-type-slot-table (@accessor class::t slot-table #f))
+  (declare-type class-type-slot-table-set! (@mutator class::t slot-table #t))
+  (declare-type &class-type-slot-table-set! (@mutator class::t slot-table #f))
+  (declare-type class-type-properties (@accessor class::t properties #t))
+  (declare-type &class-type-properties (@accessor class::t properties #f))
+  (declare-type class-type-properties-set! (@mutator class::t properties #t))
+  (declare-type &class-type-properties-set! (@mutator class::t properties #f))
+  (declare-type class-type-constructor (@accessor class::t constructor #t))
+  (declare-type &class-type-constructor (@accessor class::t constructor #f))
+  (declare-type class-type-constructor-set! (@mutator class::t constructor #t))
+  (declare-type
+   &class-type-constructor-set!
+   (@mutator class::t constructor #f))
+  (declare-type class-type-methods (@accessor class::t methods #t))
+  (declare-type &class-type-methods (@accessor class::t methods #f))
+  (declare-type class-type-methods-set! (@mutator class::t methods #t))
+  (declare-type &class-type-methods-set! (@mutator class::t methods #f))
   (declare-type class-type-slot-list (@lambda 1 #f))
-  (declare-type class-type-fields (@lambda 1 #f))
+  (declare-type class-type-field-count (@lambda 1 #f))
   (declare-type class-type-seal! (@lambda 1 #f))
+  (declare-type &class-type-seal! (@lambda 1 #f))
   (declare-type substruct? (@lambda 2 #f))
   (declare-type base-struct/1 (@lambda 1 #f))
   (declare-type base-struct/2 (@lambda 2 #f))
@@ -139,6 +219,7 @@ package: gerbil/runtime
   (declare-type __struct-instance-init! (@lambda 2 #f))
   (declare-type class-instance-init! (@lambda (1) #f))
   (declare-type __class-instance-init! (@lambda 3 #f))
+  (declare-type __metaclass-instance-init! (@lambda 3 #f))
   (declare-type constructor-init! (@lambda (3) #f))
   (declare-type __constructor-init! (@lambda 4 #f))
   (declare-type struct-copy (@lambda 1 #f))
@@ -171,14 +252,14 @@ package: gerbil/runtime
   (declare-type checked-method-ref (@lambda 2 #f))
   (declare-type bound-method-ref (@lambda 2 #f))
   (declare-type checked-bound-method-ref (@lambda 2 #f))
-  (declare-type find-method (@lambda 2 #f))
-  (declare-type __find-method (@lambda 2 #f))
-  (declare-type class-find-method (@lambda 2 #f))
-  (declare-type mixin-find-method (@lambda 2 #f))
-  (declare-type builtin-find-method (@lambda 2 #f))
-  (declare-type direct-method-ref (@lambda 2 #f))
-  (declare-type mixin-method-ref (@lambda 2 #f))
-  (declare-type builtin-method-ref (@lambda 2 #f))
+  (declare-type find-method (@lambda 3 #f))
+  (declare-type __find-method (@lambda 3 #f))
+  (declare-type class-find-method (@lambda 3 #f))
+  (declare-type mixin-find-method (@lambda 3 #f))
+  (declare-type builtin-find-method (@lambda 3 #f))
+  (declare-type direct-method-ref (@lambda 3 #f))
+  (declare-type mixin-method-ref (@lambda 3 #f))
+  (declare-type builtin-method-ref (@lambda 3 #f))
   (declare-type bind-method!__% (@lambda 4 #f))
   (declare-type bind-method!__0 (@lambda 3 #f))
   (declare-type bind-method! (@case-lambda (3 #f) (4 #f)))

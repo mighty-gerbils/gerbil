@@ -17,6 +17,7 @@ package: gerbil
                slots
                struct?
                final?
+               metaclass
                constructor-method
                type-descriptor
                constructor
@@ -30,6 +31,7 @@ package: gerbil
                slots
                struct?
                final?
+               metaclass
                constructor-method
                type-descriptor
                constructor
@@ -38,6 +40,7 @@ package: gerbil
                mutators
                unchecked-accessors
                unchecked-mutators)
+           #f
            #f
            #f
            #f
@@ -66,6 +69,9 @@ package: gerbil
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#!class-type-final?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #t))
+  (declare-type
+   gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass
+   (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t metaclass #t))
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method
    (@accessor
@@ -118,6 +124,9 @@ package: gerbil
    gerbil/core$<MOP>$<MOP:2>#!class-type-final?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #t))
   (declare-type
+   gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass-set!
+   (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t metaclass #t))
+  (declare-type
    gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method-set!
    (@mutator
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -169,6 +178,9 @@ package: gerbil
    gerbil/core$<MOP>$<MOP:2>#&!class-type-final?
    (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #f))
   (declare-type
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass
+   (@accessor gerbil/core$<MOP>$<MOP:2>#class-type-info::t metaclass #f))
+  (declare-type
    gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method
    (@accessor
     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -219,6 +231,9 @@ package: gerbil
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#&!class-type-final?-set!
    (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t final? #f))
+  (declare-type
+   gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass-set!
+   (@mutator gerbil/core$<MOP>$<MOP:2>#class-type-info::t metaclass #f))
   (declare-type
    gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method-set!
    (@mutator
@@ -280,6 +295,7 @@ package: gerbil
            #f
            #f
            #f
+           #f
            ((apply-macro-expander
              .
              gerbil/core$<macro-object>#macro-object::apply-macro-expander))))
@@ -314,6 +330,7 @@ package: gerbil
            (gerbil/core$<macro-object>#macro-object::t)
            ()
            (macro)
+           #f
            #f
            #f
            #f
@@ -361,6 +378,7 @@ package: gerbil
            #f
            #f
            #f
+           #f
            #f))
   (declare-type
    |gerbil/core$<more-sugar>[1]#setq-macro?|
@@ -387,6 +405,7 @@ package: gerbil
            (gerbil/core$<macro-object>#macro-object::t)
            ()
            (macro)
+           #f
            #f
            #f
            #f

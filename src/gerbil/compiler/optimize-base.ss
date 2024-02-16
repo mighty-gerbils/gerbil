@@ -40,6 +40,7 @@ namespace: gxc
    constructor  ;; OrFalse Symbol; constructor method
    struct? ;; Boolean; is it a struct?
    final?  ;; Boolean; is it a final class?
+   metaclass ;; OrFalse Symbol; the metaclass of the class
    methods) ;; Map Symbol -> Symbol; known method implementations
   constructor: :init!)
 
@@ -65,7 +66,7 @@ namespace: gxc
 ;;; methods
 (defmethod {:init! !class}
   (case-lambda
-    ((self id super slots ctor-method struct? final?)
+    ((self id super slots ctor-method struct? final? metaclass)
      ;; 1. check finality
      (let lp ((rest super))
        (match rest
@@ -119,10 +120,11 @@ namespace: gxc
        (set! (!class-fields self) fields)
        (set! (!class-constructor self) ctor-method)
        (set! (!class-struct? self) struct?)
-       (set! (!class-final? self) final?)))
+       (set! (!class-final? self) final?)
+       (set! (!class-metaclass self) metaclass)))
 
     ;; ssxi loader
-    ((self id super precedence-list slots fields constructor struct? final? methods)
+    ((self id super precedence-list slots fields constructor struct? final? metaclass methods)
      (set! (!type-id self) id)
      (set! (!class-super self) super)
      (set! (!class-precedence-list self) precedence-list)
@@ -131,6 +133,7 @@ namespace: gxc
      (set! (!class-constructor self) constructor)
      (set! (!class-struct? self) struct?)
      (set! (!class-final? self) final?)
+     (set! (!class-metaclass self) metaclass)
      (when methods
        (set! (!class-methods self) (list->hash-table-eq methods))))))
 

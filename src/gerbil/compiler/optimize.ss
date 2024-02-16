@@ -198,8 +198,8 @@ namespace: gxc
 ;; MOP
 (defmethod {typedecl !class}
   (lambda (self)
-    (with ((!class id super precendence-list slots fields constructor struct? final? methods) self)
-      ['@class id super precendence-list slots fields constructor struct? final? (and methods (hash->list methods))])))
+    (with ((!class id super precendence-list slots fields constructor struct? final? metaclass methods) self)
+      ['@class id super precendence-list slots fields constructor struct? final? metaclass (and methods (hash->list methods))])))
 
 (defmethod {typedecl !predicate}
   (lambda (self)

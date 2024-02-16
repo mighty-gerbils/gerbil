@@ -425,6 +425,10 @@ namespace: gerbil/core
                     (c4-linearize c4-linearize)
                     (class-type? class-type?)
                     (class-type-id class-type-id)
+                    (class-type-name class-type-name)
+                    (class-type-super class-type-super)
+                    (class-type-flags class-type-flags)
+                    (class-type-fields class-type-fields)
                     (class-type-precedence-list class-type-precedence-list)
                     (class-type-slot-vector class-type-slot-vector)
                     (class-type-slot-table class-type-slot-table)
@@ -432,10 +436,11 @@ namespace: gerbil/core
                     (class-type-constructor class-type-constructor)
                     (class-type-methods class-type-methods)
                     (class-type-slot-list class-type-slot-list)
-                    (class-type-fields class-type-fields)
+                    (class-type-field-count class-type-field-count)
                     (class-type-struct? class-type-struct?)
                     (class-type-final? class-type-final?)
                     (class-type-sealed? class-type-sealed?)
+                    (class-type-metaclass? class-type-metaclass?)
                     (make-struct-slot-accessor make-struct-slot-accessor)
                     (make-struct-slot-mutator make-struct-slot-mutator)
                     (make-struct-slot-unchecked-accessor
@@ -1129,6 +1134,9 @@ namespace: gerbil/core
                               !class-type-final?
                               gerbil/core$<MOP>$<MOP:2>#!class-type-final?)
                              (%#define-runtime
+                              !class-type-metaclass
+                              gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass)
+                             (%#define-runtime
                               !class-type-constructor-method
                               gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method)
                              (%#define-runtime
@@ -1170,6 +1178,9 @@ namespace: gerbil/core
                              (%#define-runtime
                               !class-type-final?-set!
                               gerbil/core$<MOP>$<MOP:2>#!class-type-final?-set!)
+                             (%#define-runtime
+                              !class-type-metaclass-set!
+                              gerbil/core$<MOP>$<MOP:2>#!class-type-metaclass-set!)
                              (%#define-runtime
                               !class-type-constructor-method-set!
                               gerbil/core$<MOP>$<MOP:2>#!class-type-constructor-method-set!)
@@ -1213,6 +1224,9 @@ namespace: gerbil/core
                               &!class-type-final?
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-final?)
                              (%#define-runtime
+                              &!class-type-metaclass
+                              gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass)
+                             (%#define-runtime
                               &!class-type-constructor-method
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method)
                              (%#define-runtime
@@ -1254,6 +1268,9 @@ namespace: gerbil/core
                              (%#define-runtime
                               &!class-type-final?-set!
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-final?-set!)
+                             (%#define-runtime
+                              &!class-type-metaclass-set!
+                              gerbil/core$<MOP>$<MOP:2>#&!class-type-metaclass-set!)
                              (%#define-runtime
                               &!class-type-constructor-method-set!
                               gerbil/core$<MOP>$<MOP:2>#&!class-type-constructor-method-set!)

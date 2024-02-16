@@ -82,7 +82,8 @@
 (displayln "... compile " bach-main)
 (compile-module (string-append bach-main ".ss")
                 [output-dir: gerbil-libdir
-                 optimize: #t generate-ssxi: #f
+                 optimize: (not (getenv "GERBIL_BUILD_NOOPT" #f))
+                 generate-ssxi: #f
                  invoke-gsc: #t static: #t])
 
 ;; and then compile the binary

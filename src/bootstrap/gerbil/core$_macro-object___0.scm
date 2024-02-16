@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1707773923)
+  (define gerbil/core$<macro-object>::timestamp 1708102798)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
-      (let ((__tmp47378 (list)))
+      (let ((__tmp47555 (list)))
         (declare (not safe))
         (make-class-type
          'gerbil.core#macro-object::t
          'macro-object
-         __tmp47378
+         __tmp47555
          '(macro)
          '()
          '#f)))
@@ -17,10 +17,10 @@
         (declare (not safe))
         (make-class-predicate gerbil/core$<macro-object>#macro-object::t)))
     (define gerbil/core$<macro-object>#make-macro-object
-      (lambda _$args23240_
+      (lambda _$args23417_
         (apply make-instance
                gerbil/core$<macro-object>#macro-object::t
-               _$args23240_)))
+               _$args23417_)))
     (define gerbil/core$<macro-object>#macro-object-macro
       (let ()
         (declare (not safe))
@@ -46,44 +46,44 @@
          gerbil/core$<macro-object>#macro-object::t
          'macro)))
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander
-      (lambda (_self23237_ _stx23238_)
+      (lambda (_self23414_ _stx23415_)
         (gx#core-apply-expander
-         (let ((__obj47351 _self23237_))
+         (let ((__obj47528 _self23414_))
            (if (let ()
                  (declare (not safe))
                  (##structure-direct-instance-of?
-                  __obj47351
+                  __obj47528
                   'gerbil.core#macro-object::t))
                (let ()
                  (declare (not safe))
                  (##unchecked-structure-ref
-                  __obj47351
+                  __obj47528
                   '1
                   gerbil/core$<macro-object>#macro-object::t
                   '#f))
                (class-slot-ref
                 gerbil/core$<macro-object>#macro-object::t
-                __obj47351
+                __obj47528
                 'macro)))
-         _stx23238_)))
+         _stx23415_)))
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize
-      (lambda (__t41690)
-        (let ((__macro41691
-               (let ((__tmp41692
+      (lambda (__t41867)
+        (let ((__macro41868
+               (let ((__tmp41869
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t41690 'macro))))
-                 (if __tmp41692 __tmp41692 (error '"Unknown slot" 'macro)))))
-          (lambda (_self23237_ _stx23238_)
+                        (class-slot-offset __t41867 'macro))))
+                 (if __tmp41869 __tmp41869 (error '"Unknown slot" 'macro)))))
+          (lambda (_self23414_ _stx23415_)
             (gx#core-apply-expander
              (let ()
                (declare (not safe))
                (##unchecked-structure-ref
-                _self23237_
-                __macro41691
-                __t41690
+                _self23414_
+                __macro41868
+                __t41867
                 '#f))
-             _stx23238_)))))
+             _stx23415_)))))
     (bind-specializer!
      gerbil/core$<macro-object>#macro-object::apply-macro-expander
      gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize)
