@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1708102800)
+  (define gerbil/runtime/util::timestamp 1708165427)
   (begin
     (define displayln
       (lambda _args59326_
@@ -739,8 +739,9 @@
     (define drop
       (lambda (_l58742_ _k58743_)
         (if (let () (declare (not safe)) (##fxpositive? _k58743_))
-            (let ((__tmp64385 (cdr _l58742_))
-                  (__tmp64384 (let () (declare (not safe)) (fx- _k58743_ '1))))
+            (let ((__tmp64385 (let () (declare (not safe)) (##cdr _l58742_)))
+                  (__tmp64384
+                   (let () (declare (not safe)) (##fx- _k58743_ '1))))
               (declare (not safe))
               (drop __tmp64385 __tmp64384))
             _l58742_)))

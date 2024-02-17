@@ -4,10 +4,11 @@ namespace: gerbil/runtime
 
 (%#begin (%#provide gerbil-runtime)
          (%#import
-          :gerbil/runtime/system
           :gerbil/runtime/util
+          :gerbil/runtime/table
           :gerbil/runtime/loader
           :gerbil/runtime/control
+          :gerbil/runtime/system
           :gerbil/runtime/c3
           :gerbil/runtime/mop
           :gerbil/runtime/error
@@ -17,10 +18,11 @@ namespace: gerbil/runtime
           :gerbil/runtime/repl
           :gerbil/runtime/init)
          (%#export
-          (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/util)
+          (import: :gerbil/runtime/table)
           (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/control)
+          (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/c3)
           (import: :gerbil/runtime/mop)
           (import: :gerbil/runtime/error)
