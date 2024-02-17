@@ -6,14 +6,12 @@ namespace: #f
          (%#export #t)
          (%#define-runtime __table::t.id __table::t.id)
          (%#define-runtime __table::t __table::t)
-         (%#define-runtime &raw-table-keys &raw-table-keys)
-         (%#define-runtime &raw-table-values &raw-table-values)
+         (%#define-runtime &raw-table-table &raw-table-table)
          (%#define-runtime &raw-table-count &raw-table-count)
          (%#define-runtime &raw-table-free &raw-table-free)
          (%#define-runtime &raw-table-hash &raw-table-hash)
          (%#define-runtime &raw-table-test &raw-table-test)
-         (%#define-runtime &raw-table-keys-set! &raw-table-keys-set!)
-         (%#define-runtime &raw-table-values-set! &raw-table-values-set!)
+         (%#define-runtime &raw-table-table-set! &raw-table-table-set!)
          (%#define-runtime &raw-table-count-set! &raw-table-count-set!)
          (%#define-runtime &raw-table-free-set! &raw-table-free-set!)
          (%#define-runtime &raw-table-hash-set! &raw-table-hash-set!)
@@ -26,6 +24,13 @@ namespace: #f
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
          (%#define-runtime eq-hash eq-hash)
          (%#define-runtime symbolic-hash symbolic-hash)
+         (%#define-runtime string-hash string-hash)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/table__1")))
+                  (%#define-syntax
+                   defspecialized-table
+                   |[:0:]#defspecialized-table|))
          (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
                   (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
                            (%#define-runtime make-eq-table make-eq-table)))
@@ -53,15 +58,11 @@ namespace: #f
                            (%#define-runtime
                             make-string-table
                             make-string-table)))
-         (%#define-runtime string-hash string-hash)
          (%#define-runtime string-table-ref string-table-ref)
          (%#define-runtime string-table-set! string-table-set!)
          (%#define-runtime __string-table-set! __string-table-set!)
          (%#define-runtime string-table-delete! string-table-delete!)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/table__1")))
-                  (%#define-syntax probe-step |[:0:]#probe-step|))
+         (%#define-syntax probe-step |[:0:]#probe-step|)
          (%#define-syntax __table-ref |[:0:]#__table-ref|)
          (%#define-syntax __table-set! |[:0:]#__table-set!|)
          (%#define-syntax __table-del! |[:0:]#__table-del!|))
