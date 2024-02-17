@@ -6,6 +6,7 @@ namespace: #f
          (%#import
           :gerbil/runtime/gambit
           :gerbil/runtime/util
+          :gerbil/runtime/table
           :gerbil/runtime/c3)
          (%#define-runtime type-flag-opaque type-flag-opaque)
          (%#define-runtime type-flag-extensible type-flag-extensible)
