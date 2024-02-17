@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/thread::timestamp 1708202846)
+  (define gerbil/runtime/thread::timestamp 1708203244)
   (begin
     (define spawn
       (lambda (_f95464_ . _args95465_)

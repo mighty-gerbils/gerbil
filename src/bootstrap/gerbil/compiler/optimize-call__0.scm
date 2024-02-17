@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1708202853)
+  (define gerbil/compiler/optimize-call::timestamp 1708203252)
   (begin
     (define gxc#&optimize-call
       (make-promise
@@ -2991,20 +2991,20 @@
           (_g268635268684_ _args268634_))))
     (define gxc#!accessor::optimize-call::specialize
       (lambda (__t273372)
-        (let ((__checked?273373
+        (let ((__id273373
                (let ((__tmp273376
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t273372 'checked?))))
-                 (if __tmp273376
-                     __tmp273376
-                     (error '"Unknown slot" 'checked?))))
-              (__id273374
+                        (class-slot-offset __t273372 'id))))
+                 (if __tmp273376 __tmp273376 (error '"Unknown slot" 'id))))
+              (__checked?273374
                (let ((__tmp273377
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t273372 'id))))
-                 (if __tmp273377 __tmp273377 (error '"Unknown slot" 'id))))
+                        (class-slot-offset __t273372 'checked?))))
+                 (if __tmp273377
+                     __tmp273377
+                     (error '"Unknown slot" 'checked?))))
               (__slot273375
                (let ((__tmp273378
                       (let ()
@@ -3047,7 +3047,7 @@
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
                                                        _self268632_
-                                                       __id273374
+                                                       __id273373
                                                        __t273372
                                                        '#f))))
                                                (declare (not safe))
@@ -3084,7 +3084,7 @@
                          (not safe))
                        (##unchecked-structure-ref
                         _self268632_
-                        __checked?273373
+                        __checked?273374
                         __t273372
                         '#f))
                      '%#struct-direct-ref
@@ -3097,7 +3097,7 @@
                                         (declare (not safe))
                                         (##unchecked-structure-ref
                                          _self268632_
-                                         __id273374
+                                         __id273373
                                          __t273372
                                          '#f))))
                                  (declare (not safe))
@@ -3140,7 +3140,7 @@
                            (declare (not safe))
                            (##unchecked-structure-ref
                             _self268632_
-                            __checked?273373
+                            __checked?273374
                             __t273372
                             '#f))
                          '%#struct-ref
@@ -3153,7 +3153,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self268632_
-                                             __id273374
+                                             __id273373
                                              __t273372
                                              '#f))))
                                      (declare (not safe))
@@ -3206,7 +3206,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self268632_
-                                     __checked?273373
+                                     __checked?273374
                                      __t273372
                                      '#f))
                                   '%#struct-ref
@@ -3219,7 +3219,7 @@
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
                                                       _self268632_
-                                                      __id273374
+                                                      __id273373
                                                       __t273372
                                                       '#f))))
                                               (declare (not safe))
@@ -3253,7 +3253,7 @@
                                                            (declare (not safe))
                                                            (##unchecked-structure-ref
                                                             _self268632_
-                                                            __checked?273373
+                                                            __checked?273374
                                                             __t273372
                                                             '#f))
                                                          (let ((__tmp274168
@@ -3322,7 +3322,7 @@
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
                                                           _self268632_
-                                                          __id273374
+                                                          __id273373
                                                           __t273372
                                                           '#f))))
                                                   (declare (not safe))
@@ -3377,7 +3377,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self268632_
-                                __id273374
+                                __id273373
                                 __t273372
                                 '#f))))
                         (declare (not safe))
@@ -3987,20 +3987,20 @@
           (_g268440268507_ _args268439_))))
     (define gxc#!mutator::optimize-call::specialize
       (lambda (__t273379)
-        (let ((__checked?273380
+        (let ((__id273380
                (let ((__tmp273383
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t273379 'checked?))))
-                 (if __tmp273383
-                     __tmp273383
-                     (error '"Unknown slot" 'checked?))))
-              (__id273381
+                        (class-slot-offset __t273379 'id))))
+                 (if __tmp273383 __tmp273383 (error '"Unknown slot" 'id))))
+              (__checked?273381
                (let ((__tmp273384
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t273379 'id))))
-                 (if __tmp273384 __tmp273384 (error '"Unknown slot" 'id))))
+                        (class-slot-offset __t273379 'checked?))))
+                 (if __tmp273384
+                     __tmp273384
+                     (error '"Unknown slot" 'checked?))))
               (__slot273382
                (let ((__tmp273385
                       (let ()
@@ -4059,7 +4059,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self268437_
-                                                               __id273381
+                                                               __id273380
                                                                __t273379
                                                                '#f))))
                                                        (declare (not safe))
@@ -4102,7 +4102,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self268437_
-                                __checked?273380
+                                __checked?273381
                                 __t273379
                                 '#f))
                              '%#struct-direct-set!
@@ -4115,7 +4115,7 @@
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
                                                  _self268437_
-                                                 __id273381
+                                                 __id273380
                                                  __t273379
                                                  '#f))))
                                          (declare (not safe))
@@ -4160,7 +4160,7 @@
                                    (declare (not safe))
                                    (##unchecked-structure-ref
                                     _self268437_
-                                    __checked?273380
+                                    __checked?273381
                                     __t273379
                                     '#f))
                                  '%#struct-set!
@@ -4173,7 +4173,7 @@
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
                                                      _self268437_
-                                                     __id273381
+                                                     __id273380
                                                      __t273379
                                                      '#f))))
                                              (declare (not safe))
@@ -4225,7 +4225,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self268437_
-                                             __checked?273380
+                                             __checked?273381
                                              __t273379
                                              '#f))
                                           '%#struct-set!
@@ -4239,7 +4239,7 @@
                                                                (not safe))
                                                              (##unchecked-structure-ref
                                                               _self268437_
-                                                              __id273381
+                                                              __id273380
                                                               __t273379
                                                               '#f))))
                                                       (declare (not safe))
@@ -4283,7 +4283,7 @@
                            (declare (not safe))
                            (##unchecked-structure-ref
                             _self268437_
-                            __checked?273380
+                            __checked?273381
                             __t273379
                             '#f))
                          (let ((__tmp274351
@@ -4351,7 +4351,7 @@
                          (declare (not safe))
                          (##unchecked-structure-ref
                           _self268437_
-                          __id273381
+                          __id273380
                           __t273379
                           '#f))))
                   (declare (not safe))
@@ -4408,7 +4408,7 @@
                                        (declare (not safe))
                                        (##unchecked-structure-ref
                                         _self268437_
-                                        __id273381
+                                        __id273380
                                         __t273379
                                         '#f))))
                                 (declare (not safe))
@@ -4881,44 +4881,44 @@
                                                     _keys267850_
                                                     _kw267862_))))
                                            _kwargs267853_)
-                                          (let ((__tmp274493
-                                                 (let ((__tmp274494
-                                                        (let ((__tmp274495
-                                                               (let ((__tmp274500
+                                          (let ((__tmp274494
+                                                 (let ((__tmp274495
+                                                        (let ((__tmp274496
+                                                               (let ((__tmp274501
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp274501
+                              (let ((__tmp274502
                                      (let ()
                                        (declare (not safe))
                                        (cons _main267849_ '()))))
                                 (declare (not safe))
-                                (cons '%#ref __tmp274501)))
-                             (__tmp274496
-                              (let ((__tmp274498
-                                     (let ((__tmp274499
+                                (cons '%#ref __tmp274502)))
+                             (__tmp274497
+                              (let ((__tmp274499
+                                     (let ((__tmp274500
                                             (let ()
                                               (declare (not safe))
                                               (cons '#f '()))))
                                        (declare (not safe))
-                                       (cons '%#quote __tmp274499)))
-                                    (__tmp274497
+                                       (cons '%#quote __tmp274500)))
+                                    (__tmp274498
                                      (let ()
                                        (declare (not safe))
                                        (foldr1 cons
                                                _pargs267852_
                                                _xargs267860_))))
                                 (declare (not safe))
-                                (cons __tmp274498 __tmp274497))))
+                                (cons __tmp274499 __tmp274498))))
                          (declare (not safe))
-                         (cons __tmp274500 __tmp274496))))
+                         (cons __tmp274501 __tmp274497))))
                   (declare (not safe))
-                  (cons '%#call __tmp274495))))
+                  (cons '%#call __tmp274496))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (gxc#xform-wrap-source
-                                                    __tmp274494
+                                                    __tmp274495
                                                     _stx267810_))))
                                             (declare (not safe))
-                                            (gxc#compile-e__0 __tmp274493)))
+                                            (gxc#compile-e__0 __tmp274494)))
                                         (let* ((_kwt267864_
                                                 (let ((__tmp274443
                                                        (gensym '__kwt)))
@@ -5036,7 +5036,7 @@
                                      (let ((__tmp274468
                                             (let ((__tmp274482
                                                    (let ((__tmp274483
-                                                          (let ((__tmp274492
+                                                          (let ((__tmp274493
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let () (declare (not safe)) (cons _kwt267864_ '())))
                         (__tmp274484
@@ -5044,16 +5044,18 @@
                                 (let ((__tmp274486
                                        (let ((__tmp274487
                                               (let ((__tmp274488
-                                                     (let ((__tmp274489
-                                                            (let ((__tmp274490
+                                                     (let ((__tmp274490
+                                                            (let ((__tmp274491
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp274491 (length _kwargs267853_)))
+                           (let ((__tmp274492 (length _kwargs267853_)))
                              (declare (not safe))
-                             (cons __tmp274491 '()))))
+                             (cons __tmp274492 '()))))
                       (declare (not safe))
-                      (cons '%#quote __tmp274490))))
+                      (cons '%#quote __tmp274491)))
+                   (__tmp274489
+                    (let () (declare (not safe)) (cons '(%#quote 0) '()))))
                (declare (not safe))
-               (cons __tmp274489 '()))))
+               (cons __tmp274490 __tmp274489))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
                                                 (cons '(%#ref make-symbolic-table)
@@ -5067,7 +5069,7 @@
                            (declare (not safe))
                            (cons __tmp274485 '()))))
                     (declare (not safe))
-                    (cons __tmp274492 __tmp274484))))
+                    (cons __tmp274493 __tmp274484))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons __tmp274483 '())))
@@ -5228,12 +5230,12 @@
                        ___stx273536273537_)))))
             (let ((___kont273538273539_
                    (lambda (_L267666_ _L267667_)
-                     (let ((__tmp274502
+                     (let ((__tmp274503
                             (let ()
                               (declare (not safe))
                               (cons _L267667_ _pargs267428_))))
                        (declare (not safe))
-                       (_lp267425_ _L267666_ __tmp274502 _kwargs267429_))))
+                       (_lp267425_ _L267666_ __tmp274503 _kwargs267429_))))
                   (___kont273540273541_
                    (lambda (_L267612_)
                      (values (let ()
@@ -5253,26 +5255,26 @@
                               '"Illegal keyword lambda application; duplicate keyword"
                               _stx267422_
                               _kw267578_))
-                           (let ((__tmp274503
-                                  (let ((__tmp274504
+                           (let ((__tmp274504
+                                  (let ((__tmp274505
                                          (let ()
                                            (declare (not safe))
                                            (cons _kw267578_ _L267560_))))
                                     (declare (not safe))
-                                    (cons __tmp274504 _kwargs267429_))))
+                                    (cons __tmp274505 _kwargs267429_))))
                              (declare (not safe))
                              (_lp267425_
                               _L267559_
                               _pargs267428_
-                              __tmp274503))))))
+                              __tmp274504))))))
                   (___kont273544273545_
                    (lambda (_L267507_ _L267508_)
-                     (let ((__tmp274505
+                     (let ((__tmp274506
                             (let ()
                               (declare (not safe))
                               (cons _L267508_ _pargs267428_))))
                        (declare (not safe))
-                       (_lp267425_ _L267507_ __tmp274505 _kwargs267429_))))
+                       (_lp267425_ _L267507_ __tmp274506 _kwargs267429_))))
                   (___kont273546273547_
                    (lambda ()
                      (values (reverse _pargs267428_)

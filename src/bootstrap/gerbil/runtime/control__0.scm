@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/control::timestamp 1708202845)
+  (define gerbil/runtime/control::timestamp 1708203243)
   (begin
     (define make-promise
       (lambda (_thunk69785_)
@@ -80,7 +80,7 @@
             '#!void
             (error '"expected procedure" _K69624_))
         (let ((_keys69627_
-               (let () (declare (not safe)) (make-symbolic-table '#f))))
+               (let () (declare (not safe)) (make-symbolic-table '#f '0))))
           (let _lp69629_ ((_rest69631_ _all-args69625_)
                           (_args69632_ '#f)
                           (_tail69633_ '#f))
