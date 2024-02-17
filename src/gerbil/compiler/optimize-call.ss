@@ -369,7 +369,8 @@ namespace: gxc
                    ['%#let-values [[[kwt]
                                     (xform-wrap-source
                                      ['%#call '(%#ref make-symbolic-table)
-                                              ['%#quote (length kwargs)]]
+                                              ['%#quote (length kwargs)]
+                                              '(%#quote 0)]
                                      stx)]]
                      ['%#begin
                       kwset ...

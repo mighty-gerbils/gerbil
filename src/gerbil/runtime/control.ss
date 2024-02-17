@@ -36,7 +36,7 @@ namespace: #f
       (error "expected vector" kwt)))
   (unless (procedure? K)
     (error "expected procedure" K))
-  (let (keys (make-symbolic-table #f))
+  (let (keys (make-symbolic-table #f 0))
     (let lp ((rest all-args) (args #f) (tail #f))
       (match rest
         ([hd . hd-rest]
