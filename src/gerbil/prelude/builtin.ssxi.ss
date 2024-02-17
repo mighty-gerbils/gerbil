@@ -244,9 +244,7 @@ package: gerbil
  vector?
  procedure?
  input-port? output-port?
- eof-object?
-
- make-symbolic-table)
+ eof-object?)
 
 (declare-primitive/1
  exact->inexact inexact->exact
@@ -505,7 +503,8 @@ package: gerbil
  (call-with-parameters (1))
  (read-syntax 0 1)
  (load-module 1 2)
- (create-directory* 1 2))
+ (create-directory* 1 2)
+ (make-symbolic-table 1 2))
 
 (declare-primitive*
  (make-list 1 2)
