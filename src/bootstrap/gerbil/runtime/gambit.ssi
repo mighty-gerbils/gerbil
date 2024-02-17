@@ -40,6 +40,7 @@ namespace: #f
           (configure-command-string configure-command-string)
           (random-source-randomize! random-source-randomize!)
           (default-random-source default-random-source)
+          (random-integer random-integer)
           (make-thread make-thread)
           (make-thread-group make-thread-group)
           (thread-thread-group thread-thread-group)

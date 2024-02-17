@@ -11,12 +11,18 @@ namespace: #f
          (%#define-runtime &raw-table-free &raw-table-free)
          (%#define-runtime &raw-table-hash &raw-table-hash)
          (%#define-runtime &raw-table-test &raw-table-test)
+         (%#define-runtime &raw-table-seed &raw-table-seed)
          (%#define-runtime &raw-table-table-set! &raw-table-table-set!)
          (%#define-runtime &raw-table-count-set! &raw-table-count-set!)
          (%#define-runtime &raw-table-free-set! &raw-table-free-set!)
          (%#define-runtime &raw-table-hash-set! &raw-table-hash-set!)
          (%#define-runtime &raw-table-test-set! &raw-table-test-set!)
-         (%#define-runtime make-raw-table make-raw-table)
+         (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
+         (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
+                  (%#begin (%#define-runtime
+                            make-raw-table__0
+                            make-raw-table__0)
+                           (%#define-runtime make-raw-table make-raw-table)))
          (%#define-runtime raw-table-ref raw-table-ref)
          (%#define-runtime raw-table-set! raw-table-set!)
          (%#define-runtime raw-table-delete! raw-table-delete!)
@@ -34,6 +40,7 @@ namespace: #f
                    |[:0:]#defspecialized-table|))
          (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
                   (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
+                           (%#define-runtime make-eq-table__1 make-eq-table__1)
                            (%#define-runtime make-eq-table make-eq-table)))
          (%#define-runtime eq-table-ref eq-table-ref)
          (%#define-runtime eq-table-set! eq-table-set!)
@@ -46,6 +53,9 @@ namespace: #f
                             make-symbolic-table__0
                             make-symbolic-table__0)
                            (%#define-runtime
+                            make-symbolic-table__1
+                            make-symbolic-table__1)
+                           (%#define-runtime
                             make-symbolic-table
                             make-symbolic-table)))
          (%#define-runtime symbolic-table-ref symbolic-table-ref)
@@ -56,6 +66,9 @@ namespace: #f
                   (%#begin (%#define-runtime
                             make-string-table__0
                             make-string-table__0)
+                           (%#define-runtime
+                            make-string-table__1
+                            make-string-table__1)
                            (%#define-runtime
                             make-string-table
                             make-string-table)))
