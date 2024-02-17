@@ -67,7 +67,9 @@ namespace: #f
   read-subu8vector
   write-subu8vector
   read-substring
-  write-substring)
+  write-substring
+
+  object->serial-number)
 
 ;; gambit macros
 (extern
