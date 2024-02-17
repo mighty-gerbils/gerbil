@@ -6,7 +6,6 @@ namespace: gerbil/runtime
          (%#import
           :gerbil/runtime/util
           :gerbil/runtime/table
-          :gerbil/runtime/loader
           :gerbil/runtime/control
           :gerbil/runtime/system
           :gerbil/runtime/c3
@@ -16,11 +15,11 @@ namespace: gerbil/runtime
           :gerbil/runtime/syntax
           :gerbil/runtime/eval
           :gerbil/runtime/repl
+          :gerbil/runtime/loader
           :gerbil/runtime/init)
          (%#export
           (import: :gerbil/runtime/util)
           (import: :gerbil/runtime/table)
-          (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/control)
           (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/c3)
@@ -29,5 +28,6 @@ namespace: gerbil/runtime
           (import: :gerbil/runtime/syntax)
           (import: :gerbil/runtime/eval)
           (import: :gerbil/runtime/repl)
+          (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/init)))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime__0"))

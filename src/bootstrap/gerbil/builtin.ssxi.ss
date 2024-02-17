@@ -146,39 +146,6 @@ package: gerbil
                           #'(%#let-values ((($values) expr))
                                           (%#call recur (%#ref $values))))))))))
 
-;; runtime: simple hash-table ops
-(declare-type*
- (make-hash-table (@lambda (0) make-table))
- (make-hash-table-eq (@lambda (0) inline:
-                         (ast-rules (%#call)
-                           ((%#call _ arg ...)
-                            (%#call (%#ref make-table) (%#quote test:) (%#ref eq?) arg ...)))))
- (make-hash-table-eqv (@lambda (0) inline:
-                          (ast-rules (%#call)
-                            ((%#call _ arg ...)
-                             (%#call (%#ref make-table) (%#quote test:) (%#ref eqv?) arg ...)))))
- (list->hash-table (@lambda (1) list->table))
- (list->hash-table-eq (@lambda (1) inline:
-                          (ast-rules (%#call)
-                            ((%#call _ lst arg ...)
-                             (%#call (%#ref list->table) lst (%#quote test:) (%#ref eq?) arg ...)))))
- (list->hash-table-eqv (@lambda (1) inline:
-                           (ast-rules (%#call)
-                             ((%#call _ lst arg ...)
-                              (%#call (%#ref list->table) lst (%#quote test:) (%#ref eqv?) arg ...)))))
- (hash? (@lambda 1 table?))
- (hash-table? (@lambda 1 table?))
- (hash-length (@lambda 1 table-length))
- (hash-ref (@case-lambda (2 table-ref) (3 table-ref)))
- (hash-get (@lambda 2 inline:
-               (ast-rules (%#call)
-                 ((%#call _ ht key)
-                  (%#call (%#ref table-ref) ht key (%#quote #f))))))
- (hash-put! (@lambda 3 table-set!))
- (hash-remove! (@lambda 2 table-set!))
- (hash->list (@lambda 1 table->list))
- (hash-for-each (@lambda 2 table-for-each))
- (hash-find (@lambda 2 table-search)))
 
 ;; runtime: simple arithmetic
 (declare-type*
@@ -277,7 +244,9 @@ package: gerbil
  vector?
  procedure?
  input-port? output-port?
- eof-object?)
+ eof-object?
+
+ make-symbolic-table)
 
 (declare-primitive/1
  exact->inexact inexact->exact
@@ -311,7 +280,9 @@ package: gerbil
 
 (declare-primitive/2/unchecked
  eq? eqv? equal?
- cons)
+ cons
+
+ symbolic-table-delete!)
 
 (declare-primitive/2
  set-car! set-cdr!
@@ -326,6 +297,10 @@ package: gerbil
  call-with-output-file
  with-input-from-file
  with-output-to-file)
+
+(declare-primitive/3/unchecked
+ symbolic-table-ref
+ symbolic-table-set!)
 
 (declare-primitive/3
  string-set!

@@ -20,6 +20,7 @@ namespace: #f
          (%#define-runtime raw-table-ref raw-table-ref)
          (%#define-runtime raw-table-set! raw-table-set!)
          (%#define-runtime raw-table-delete! raw-table-delete!)
+         (%#define-runtime raw-table-for-each raw-table-for-each)
          (%#define-runtime __raw-table-set! __raw-table-set!)
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
          (%#define-runtime eq-hash eq-hash)

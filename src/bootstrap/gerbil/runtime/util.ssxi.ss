@@ -74,47 +74,22 @@ package: gerbil/runtime
   (declare-type subvector->list__% (@lambda 2 #f))
   (declare-type subvector->list__0 (@lambda 1 #f))
   (declare-type subvector->list (@case-lambda (1 #f) (2 #f)))
-  (declare-type make-hash-table (@lambda (0) make-table))
-  (declare-type
-   make-hash-table-eq
-   (ast-rules
-    (%#call)
-    ((%#call _ arg ...)
-     (%#call (%#ref make-table) (%#quote test:) (%#ref eq?) arg ...))))
-  (declare-type
-   make-hash-table-eqv
-   (ast-rules
-    (%#call)
-    ((%#call _ arg ...)
-     (%#call (%#ref make-table) (%#quote test:) (%#ref eqv?) arg ...))))
-  (declare-type list->hash-table (@lambda (1) list->table))
-  (declare-type
-   list->hash-table-eq
-   (ast-rules
-    (%#call)
-    ((%#call _ lst arg ...)
-     (%#call (%#ref list->table) lst (%#quote test:) (%#ref eq?) arg ...))))
-  (declare-type
-   list->hash-table-eqv
-   (ast-rules
-    (%#call)
-    ((%#call _ lst arg ...)
-     (%#call (%#ref list->table) lst (%#quote test:) (%#ref eqv?) arg ...))))
-  (declare-type hash? (@lambda 1 table?))
-  (declare-type hash-table? (@lambda 1 table?))
-  (declare-type hash-length (@lambda 1 table-length))
-  (declare-type hash-ref (@case-lambda (2 table-ref) (3 table-ref)))
-  (declare-type
-   hash-get
-   (ast-rules
-    (%#call)
-    ((%#call _ ht key) (%#call (%#ref table-ref) ht key (%#quote #f)))))
+  (declare-type make-hash-table-eq (@lambda (0) #f))
+  (declare-type make-hash-table-eqv (@lambda (0) #f))
+  (declare-type list->hash-table (@lambda (1) #f))
+  (declare-type list->hash-table-eq (@lambda (1) #f))
+  (declare-type list->hash-table-eqv (@lambda (1) #f))
+  (declare-type hash? (@lambda 1 #f))
+  (declare-type hash-table? (@lambda 1 #f))
+  (declare-type hash-length (@lambda 1 #f))
+  (declare-type hash-ref (@case-lambda (2 #f) (3 #f)))
+  (declare-type hash-get (@lambda 2 #f))
   (declare-type hash-put! (@lambda 3 table-set!))
   (declare-type hash-update!__% (@lambda 4 #f))
   (declare-type hash-update!__0 (@lambda 3 #f))
   (declare-type hash-update! (@case-lambda (3 #f) (4 #f)))
   (declare-type hash-remove! (@lambda 2 table-set!))
-  (declare-type hash->list (@lambda 1 table->list))
+  (declare-type hash->list (@lambda 1 #f))
   (declare-type hash->plist (@lambda 1 #f))
   (declare-type plist->hash-table__% (@lambda 2 #f))
   (declare-type plist->hash-table__0 (@lambda 1 #f))
@@ -122,10 +97,10 @@ package: gerbil/runtime
   (declare-type plist->hash-table-eq (@lambda 1 #f))
   (declare-type plist->hash-table-eqv (@lambda 1 #f))
   (declare-type hash-key? (@lambda 2 #f))
-  (declare-type hash-for-each (@lambda 2 table-for-each))
+  (declare-type hash-for-each (@lambda 2 #f))
   (declare-type hash-map (@lambda 2 #f))
   (declare-type hash-fold (@lambda 3 #f))
-  (declare-type hash-find (@lambda 2 table-search))
+  (declare-type hash-find (@lambda 2 #f))
   (declare-type hash-keys (@lambda 1 #f))
   (declare-type hash-values (@lambda 1 #f))
   (declare-type hash-copy (@lambda (1) #f))

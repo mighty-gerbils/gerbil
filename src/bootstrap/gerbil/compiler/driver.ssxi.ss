@@ -62,11 +62,7 @@ package: gerbil/compiler
   (declare-type gxc#compile-exe-output-file (@lambda 2 #f))
   (declare-type gxc#static-module-name (@lambda 1 #f))
   (declare-type gxc#invoke__% (@lambda 5 #f))
-  (declare-type
-   gxc#invoke__@
-   (@kw-lambda-dispatch
-    (stdout-redirection: stderr-redirection:)
-    gxc#invoke__%))
+  (declare-type gxc#invoke__@ (@lambda (1) #f))
   (declare-type
    gxc#invoke
    (@kw-lambda (stderr-redirection: stdout-redirection:) gxc#invoke__@))

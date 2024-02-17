@@ -3,7 +3,6 @@
   (begin
     (load-module "gerbil/runtime/util__rt")
     (load-module "gerbil/runtime/table__rt")
-    (load-module "gerbil/runtime/loader__rt")
     (load-module "gerbil/runtime/control__rt")
     (load-module "gerbil/runtime/system__rt")
     (load-module "gerbil/runtime/c3__rt")
@@ -13,5 +12,6 @@
     (load-module "gerbil/runtime/syntax__rt")
     (load-module "gerbil/runtime/eval__rt")
     (load-module "gerbil/runtime/repl__rt")
+    (load-module "gerbil/runtime/loader__rt")
     (load-module "gerbil/runtime/init__rt"))
   (load-module "gerbil/runtime__0"))

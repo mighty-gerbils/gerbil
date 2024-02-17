@@ -8,10 +8,6 @@ namespace: #f
           :gerbil/runtime/util
           :gerbil/runtime/control)
          (%#define-runtime gerbil-version-string gerbil-version-string)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/system__1")))
-                  (%#define-syntax defmutable |[:0:]#defmutable|))
          (%#define-runtime gerbil-system-manifest gerbil-system-manifest)
          (%#define-runtime build-manifest build-manifest)
          (%#begin (%#define-runtime

@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1708168065)
+  (define gerbil/core$<macro-object>::timestamp 1708194411)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
-      (let ((__tmp47555 (list)))
+      (let ((__tmp47054 (list)))
         (declare (not safe))
         (make-class-type
          'gerbil.core#macro-object::t
          'macro-object
-         __tmp47555
+         __tmp47054
          '(macro)
          '()
          '#f)))
@@ -48,40 +48,40 @@
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander
       (lambda (_self23414_ _stx23415_)
         (gx#core-apply-expander
-         (let ((__obj47528 _self23414_))
+         (let ((__obj47027 _self23414_))
            (if (let ()
                  (declare (not safe))
                  (##structure-direct-instance-of?
-                  __obj47528
+                  __obj47027
                   'gerbil.core#macro-object::t))
                (let ()
                  (declare (not safe))
                  (##unchecked-structure-ref
-                  __obj47528
+                  __obj47027
                   '1
                   gerbil/core$<macro-object>#macro-object::t
                   '#f))
                (class-slot-ref
                 gerbil/core$<macro-object>#macro-object::t
-                __obj47528
+                __obj47027
                 'macro)))
          _stx23415_)))
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize
-      (lambda (__t41867)
-        (let ((__macro41868
-               (let ((__tmp41869
+      (lambda (__t41366)
+        (let ((__macro41367
+               (let ((__tmp41368
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t41867 'macro))))
-                 (if __tmp41869 __tmp41869 (error '"Unknown slot" 'macro)))))
+                        (class-slot-offset __t41366 'macro))))
+                 (if __tmp41368 __tmp41368 (error '"Unknown slot" 'macro)))))
           (lambda (_self23414_ _stx23415_)
             (gx#core-apply-expander
              (let ()
                (declare (not safe))
                (##unchecked-structure-ref
                 _self23414_
-                __macro41868
-                __t41867
+                __macro41367
+                __t41366
                 '#f))
              _stx23415_)))))
     (bind-specializer!
