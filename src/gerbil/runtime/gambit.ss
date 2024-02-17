@@ -72,6 +72,11 @@ namespace: #f
 ;; gambit macros
 (extern
   macro-absent-obj
+  macro-unused-obj
+  macro-deleted-obj
+  macro-slot
+  macro-type-fixnum
+  macro-max-fixnum32
   macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port

@@ -124,6 +124,10 @@ namespace: #f
 (def (list->hash-table-eqv lst . args)
   (apply list->table lst test: eqv? args))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO move to hash.ss, use interfacess
 (def hash?
   table?)
 (def hash-table?
@@ -211,6 +215,8 @@ namespace: #f
   (let ((gcht (##vector-ref ht 5)))
     (if (not (fixnum? gcht))
       (##vector-set! ht 5 size))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def (make-list k (val #f))
   (unless (fixnum? k)
@@ -294,8 +300,8 @@ namespace: #f
                 rest))
       iv)))
 
-(def (drop l k) ;; unsafe variant, not exported
-  (if (##fxpositive? k) (drop (cdr l) (fx1- k)) l))
+(def (drop l k) ;; unsafe variant, not prelude exported
+  (if (##fxpositive? k) (drop (##cdr l) (##fx- k 1)) l))
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))

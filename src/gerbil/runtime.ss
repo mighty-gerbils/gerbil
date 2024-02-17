@@ -8,10 +8,11 @@ package: gerbil
 (provide gerbil-runtime)
 
 (import
-  "runtime/system"
   "runtime/util"
+  "runtime/table"
   "runtime/loader"
   "runtime/control"
+  "runtime/system"
   "runtime/c3"
   "runtime/mop"
   "runtime/error"
@@ -22,10 +23,11 @@ package: gerbil
   "runtime/init")
 (export
   (import:
-   "runtime/system"
    "runtime/util"
+   "runtime/table"
    "runtime/loader"
    "runtime/control"
+   "runtime/system"
    "runtime/c3"
    "runtime/mop"
    "runtime/error"

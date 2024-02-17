@@ -1,9 +1,10 @@
 (define __gerbil-boot-modules
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
-    "gerbil/runtime/system"
+    "gerbil/runtime/table"
     "gerbil/runtime/loader"
     "gerbil/runtime/control"
+    "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"

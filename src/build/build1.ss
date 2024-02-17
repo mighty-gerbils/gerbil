@@ -6,9 +6,10 @@
 (def gerbil-modules-runtime
   '("gerbil/runtime/gambit.ss"
     "gerbil/runtime/util.ss"
-    "gerbil/runtime/system.ss"
+    "gerbil/runtime/table.ss"
     "gerbil/runtime/loader.ss"
     "gerbil/runtime/control.ss"
+    "gerbil/runtime/system.ss"
     "gerbil/runtime/c3.ss"
     "gerbil/runtime/mop.ss"
     "gerbil/runtime/error.ss"
