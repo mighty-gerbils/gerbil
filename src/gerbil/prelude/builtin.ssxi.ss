@@ -244,7 +244,9 @@ package: gerbil
  vector?
  procedure?
  input-port? output-port?
- eof-object?)
+ eof-object?
+
+ make-symbolic-table)
 
 (declare-primitive/1
  exact->inexact inexact->exact
@@ -278,7 +280,9 @@ package: gerbil
 
 (declare-primitive/2/unchecked
  eq? eqv? equal?
- cons)
+ cons
+
+ symbolic-table-delete!)
 
 (declare-primitive/2
  set-car! set-cdr!
@@ -293,6 +297,10 @@ package: gerbil
  call-with-output-file
  with-input-from-file
  with-output-to-file)
+
+(declare-primitive/3/unchecked
+ symbolic-table-ref
+ symbolic-table-set!)
 
 (declare-primitive/3
  string-set!

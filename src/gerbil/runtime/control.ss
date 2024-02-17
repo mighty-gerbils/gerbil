@@ -5,7 +5,7 @@ prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
-(import "gambit" "util")
+(import "gambit" "util" "table")
 (export #t)
 
 (def (make-promise thunk)
@@ -36,7 +36,7 @@ namespace: #f
       (error "expected vector" kwt)))
   (unless (procedure? K)
     (error "expected procedure" K))
-  (let ((keys (make-hash-table-eq hash: keyword-hash)))
+  (let (keys (make-symblic-table #f))
     (let lp ((rest all-args) (args #f) (tail #f))
       (match rest
         ([hd . hd-rest]
@@ -48,9 +48,10 @@ namespace: #f
                 (let ((pos (##fxmodulo (keyword-hash hd) (##vector-length kwt))))
                   (unless (eq? hd (##vector-ref kwt pos))
                     (error "Unexpected keyword argument" K hd))))
-              (when (hash-key? keys hd)
+              (when (eq? (symbolic-table-ref keys hd (macro-absent-obj))
+                         (macro-absent-obj))
                 (error "Duplicate keyword argument" K hd))
-              (hash-put! keys hd val)
+              (symbolic-table-set! keys hd val)
               (lp rest args tail))))
           ((eq? hd #!key)               ; keyword escape
            (match hd-rest
@@ -80,5 +81,10 @@ namespace: #f
            (K keys)))))))
 
 (def (keyword-rest kwt . drop)
-  (for-each (lambda (kw) (hash-remove! kwt kw)) drop)
-  (hash-fold (lambda (k v r) (cons* k v r)) [] kwt))
+  (let (rest [])
+    (raw-table-for-each
+     (lambda (k v)
+       (unless (memq k drop)
+         (set! rest (cons* k v rest))))
+     kwt)
+    rest))

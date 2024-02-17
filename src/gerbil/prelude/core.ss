@@ -161,6 +161,10 @@ package: gerbil
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
+
+    ;; kw dispatch and method tables
+    make-symbolic-table symbolic-table-ref symbolic-table-set! symbolic-table-delete!
+
     ;; class linearization with C4
     c4-linearize
 
@@ -902,7 +906,7 @@ package: gerbil
                          ((get-kw ...)
                           (map (lambda% (kwarg)
                                  (with-syntax ((key (car kwarg)))
-                                   #'(hash-ref kwvar 'key absent-value)))
+                                   #'(symbolic-table-ref kwvar 'key absent-value)))
                                kwargs))
                           (main main))
             (syntax/loc stx

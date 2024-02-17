@@ -70,6 +70,18 @@ namespace: #f
                   (lambda ()
                     (set! (&raw-table-count tab) (fx- (&raw-table-count tab) 1))))))
 
+(def (raw-table-for-each proc tab)
+  (let* ((table (&raw-table-table tab))
+         (size  (vector-length table)))
+    (let loop ((i 0))
+      (when (fx< i size)
+        (let (key (vector-ref table i))
+          (when (and (not (eq? key (macro-unused-obj)))
+                     (not (eq? key (macro-deleted-obj))))
+            (let (value (vector-ref table (fx+ i 1)))
+              (proc key value))))
+        (lp (fx+ i 2))))))
+
 (def (__raw-table-set! tab key value)
   (let ((table (&raw-table-table tab))
         (hash (&raw-table-hash tab))
