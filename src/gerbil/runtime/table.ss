@@ -18,7 +18,7 @@ namespace: #f
                'raw-table    ; name
                26 ; flags: extensible | concrete | nongenerative
                #f ; super
-               '#(table 5 #f count 5 #f free 5 #f hash 5 #f test 5 #f)))
+               '#(table 5 #f count 5 #f free 5 #f hash 5 #f test 5 #f seed 5 #f)))
 
 (def (&raw-table-table tab)
   (##unchecked-structure-ref tab 1 __table::t 'raw-table-table))
@@ -30,6 +30,8 @@ namespace: #f
   (##unchecked-structure-ref tab 4 __table::t 'raw-table-hash))
 (def (&raw-table-test tab)
   (##unchecked-structure-ref tab 5 __table::t 'raw-table-test))
+(def (&raw-table-seed tab)
+  (##unchecked-structure-ref tab 6 __table::t 'raw-table-seed))
 
 (def (&raw-table-table-set! tab val)
   (##unchecked-structure-set! tab val 1 __table::t 'raw-table-table-set!))
@@ -41,20 +43,23 @@ namespace: #f
   (##unchecked-structure-set! tab val 4 __table::t 'raw-table-hash-set!))
 (def (&raw-table-test-set! tab val)
   (##unchecked-structure-set! tab val 5 __table::t 'raw-table-test-set!))
+(def (&raw-table-seed-set! tab val)
+  (##unchecked-structure-set! tab val 6 __table::t 'raw-table-seed-set!))
 
 ;; generic raw tables
-(def (make-raw-table size-hint hash test)
+(def (make-raw-table size-hint hash test (seed (random-integer (macro-max-fixnum32))))
   (let* ((size (if (and (fixnum? size-hint) (fx> size-hint 0))
                  (fx* (max size-hint 2) 4)
                  16))
          (table (make-vector size (macro-unused-obj))))
-    (##structure __table::t table 0 (fxquotient size 2) hash test)))
+    (##structure __table::t table 0 (fxquotient size 2) hash test seed)))
 
 (def (raw-table-ref tab key default)
   (let ((table (&raw-table-table tab))
+        (seed (&raw-table-seed tab))
         (hash (&raw-table-hash tab))
         (test (&raw-table-test tab)))
-    (__table-ref table hash test key default)))
+    (__table-ref table seed hash test key default)))
 
 (def (raw-table-set! tab key value)
   (when (fx< (&raw-table-free tab)
@@ -64,9 +69,10 @@ namespace: #f
 
 (def (raw-table-delete! tab key)
   (let ((table (&raw-table-table tab))
+        (seed (&raw-table-seed tab))
         (hash (&raw-table-hash tab))
         (test (&raw-table-test tab)))
-    (__table-del! table hash test key
+    (__table-del! table seed hash test key
                   (lambda ()
                     (set! (&raw-table-count tab) (fx- (&raw-table-count tab) 1))))))
 
@@ -84,9 +90,10 @@ namespace: #f
 
 (def (__raw-table-set! tab key value)
   (let ((table (&raw-table-table tab))
+        (seed (&raw-table-seed tab))
         (hash (&raw-table-hash tab))
         (test (&raw-table-test tab)))
-    (__table-set! table hash test key value
+    (__table-set! table seed hash test key value
                   (lambda () ; insert
                     (set! (&raw-table-free tab) (fx- (&raw-table-free tab) 1))
                     (set! (&raw-table-count tab) (fx+ (&raw-table-count tab) 1)))
@@ -145,27 +152,30 @@ namespace: #f
 (defrules defspecialized-table ()
   ((_ make ref set __set del hash eq)
    (begin
-     (def (make (size-hint #f))
-       (make-raw-table size-hint hash eq))
+     (def (make (size-hint #f) (seed (random-integer (macro-max-fixnum32))))
+       (make-raw-table size-hint hash eq seed))
      (def (ref tab key default)
-       (let (table (&raw-table-table tab))
-         (__table-ref table hash eq key default)))
+       (let ((table (&raw-table-table tab))
+             (seed (&raw-table-seed tab)))
+         (__table-ref table seed hash eq key default)))
      (def (set tab key value)
        (when (fx< (&raw-table-free tab)
                   (fxquotient (vector-length (&raw-table-table tab)) 4))
          (__raw-table-rehash! tab))
        (__set tab key value))
      (def (__set tab key value)
-       (let (table (&raw-table-table tab))
-         (__table-set! table hash eq key value
+       (let ((table (&raw-table-table tab))
+             (seed (&raw-table-seed tab)))
+         (__table-set! table seed hash eq key value
                        (lambda ()            ; insert
                          (set! (&raw-table-free tab) (fx- (&raw-table-free tab) 1))
                          (set! (&raw-table-count tab) (fx+ (&raw-table-count tab) 1)))
                        (lambda ()            ; ressurect
                          (set! (&raw-table-count tab) (fx+ (&raw-table-count tab) 1))))))
      (def (del tab key)
-       (let (table (&raw-table-table tab))
-         (__table-del! table hash eq key
+       (let ((table (&raw-table-table tab))
+             (seed (&raw-table-seed tab)))
+         (__table-del! table seed hash eq key
                        (lambda ()
                          (set! (&raw-table-count tab) (fx- (&raw-table-count tab) 1)))))))))
 
@@ -196,8 +206,8 @@ namespace: #f
      (fxmodulo next-probe size))))
 
 (defrules __table-ref ()
-  ((_ table hash test key default-value)
-   (let* ((h       (hash key))
+  ((_ table seed hash test key default-value)
+   (let* ((h       (fxxor (hash key) seed))
           (size    (vector-length table))
           (entries (fxquotient size 2))
           (start   (fxarithmetic-shift-left (fxmodulo h entries) 1)))
@@ -214,8 +224,8 @@ namespace: #f
            (loop (probe-step start i size) (fx+ i 1) deleted))))))))
 
 (defrules __table-set! ()
-  ((_ table hash test key value inserted ressurected)
-   (let* ((h       (hash key))
+  ((_ table seed hash test key value inserted ressurected)
+   (let* ((h       (fxxor (hash key) seed))
           (size    (vector-length table))
           (entries (fxquotient size 2))
           (start   (fxarithmetic-shift-left (fxmodulo h entries) 1)))
@@ -241,8 +251,8 @@ namespace: #f
            (loop (probe-step start i size) (fx+ i 1) deleted))))))))
 
 (defrules __table-del! ()
-  ((_ table hash test key deleted)
-   (let* ((h       (hash key))
+  ((_ table seed hash test key deleted)
+   (let* ((h       (fxxor (hash key) seed))
           (size    (vector-length table))
           (entries (fxquotient size 2))
           (start   (fxarithmetic-shift-left (fxmodulo h entries) 1)))

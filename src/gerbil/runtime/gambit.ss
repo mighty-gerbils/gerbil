@@ -52,6 +52,7 @@ namespace: #f
 
   random-source-randomize!
   default-random-source
+  random-integer
 
   make-thread
   make-thread-group
