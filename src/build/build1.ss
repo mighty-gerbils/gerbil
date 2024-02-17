@@ -7,7 +7,6 @@
   '("gerbil/runtime/gambit.ss"
     "gerbil/runtime/util.ss"
     "gerbil/runtime/table.ss"
-    "gerbil/runtime/loader.ss"
     "gerbil/runtime/control.ss"
     "gerbil/runtime/system.ss"
     "gerbil/runtime/c3.ss"
@@ -17,6 +16,7 @@
     "gerbil/runtime/syntax.ss"
     "gerbil/runtime/eval.ss"
     "gerbil/runtime/repl.ss"
+    "gerbil/runtime/loader.ss"
     "gerbil/runtime/init.ss"
     "gerbil/runtime.ss"))
 

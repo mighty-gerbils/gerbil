@@ -63,7 +63,6 @@ namespace: gxc
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
     "gerbil/runtime/table"
-    "gerbil/runtime/loader"
     "gerbil/runtime/control"
     "gerbil/runtime/system"
     "gerbil/runtime/c3"
@@ -73,6 +72,7 @@ namespace: gxc
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"
+    "gerbil/runtime/loader"
     "gerbil/runtime/init"
     "gerbil/runtime"))
 
