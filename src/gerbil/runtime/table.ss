@@ -80,7 +80,7 @@ namespace: #f
                      (not (eq? key (macro-deleted-obj))))
             (let (value (vector-ref table (fx+ i 1)))
               (proc key value))))
-        (lp (fx+ i 2))))))
+        (loop (fx+ i 2))))))
 
 (def (__raw-table-set! tab key value)
   (let ((table (&raw-table-table tab))

@@ -36,7 +36,7 @@ namespace: #f
       (error "expected vector" kwt)))
   (unless (procedure? K)
     (error "expected procedure" K))
-  (let (keys (make-symblic-table #f))
+  (let (keys (make-symbolic-table #f))
     (let lp ((rest all-args) (args #f) (tail #f))
       (match rest
         ([hd . hd-rest]
@@ -48,8 +48,8 @@ namespace: #f
                 (let ((pos (##fxmodulo (keyword-hash hd) (##vector-length kwt))))
                   (unless (eq? hd (##vector-ref kwt pos))
                     (error "Unexpected keyword argument" K hd))))
-              (when (eq? (symbolic-table-ref keys hd (macro-absent-obj))
-                         (macro-absent-obj))
+              (unless (eq? (symbolic-table-ref keys hd absent-value)
+                           absent-value)
                 (error "Duplicate keyword argument" K hd))
               (symbolic-table-set! keys hd val)
               (lp rest args tail))))
