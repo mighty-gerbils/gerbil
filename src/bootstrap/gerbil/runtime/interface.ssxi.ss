@@ -108,8 +108,8 @@ package: gerbil/runtime
   (declare-type
    &interface-descriptor-methods-set!
    (@mutator interface-descriptor::t methods #f))
-  (declare-type hash-key (@lambda 1 #f))
-  (declare-type test-key (@lambda 2 #f))
+  (declare-type __interface-hash-key (@lambda 1 #f))
+  (declare-type __interface-test-key (@lambda 2 #f))
   (declare-type make-prototype-table__% (@lambda 2 #f))
   (declare-type make-prototype-table__0 (@lambda 0 #f))
   (declare-type make-prototype-table__1 (@lambda 1 #f))

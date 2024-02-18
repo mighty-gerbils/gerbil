@@ -8,6 +8,7 @@ namespace: #f
           :gerbil/runtime/util
           :gerbil/runtime/mop
           :gerbil/runtime/error
+          :gerbil/runtime/hash
           :gerbil/runtime/syntax)
          (%#define-runtime __context::t __context::t)
          (%#define-runtime __context? __context?)

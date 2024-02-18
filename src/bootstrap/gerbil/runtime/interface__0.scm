@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/interface::timestamp 1708271167)
+  (define gerbil/runtime/interface::timestamp 1708271948)
   (begin
     (define CastError::t
       (let ((__tmp101320 (list Error::t)))
@@ -193,7 +193,7 @@
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator interface-descriptor::t 'methods)))
-    (define hash-key
+    (define __interface-hash-key
       (lambda (_key97115_)
         (let ((__tmp101330
                (macro-slot
@@ -205,22 +205,26 @@
                 (let () (declare (not safe)) (##cdr _key97115_)))))
           (declare (not safe))
           (##fxxor __tmp101330 __tmp101329))))
-    (define test-key
+    (define __interface-test-key
       (lambda (_a97112_ _b97113_)
-        (if (let ((__tmp101332 (let () (declare (not safe)) (##car _a97112_)))
-                  (__tmp101331 (let () (declare (not safe)) (##car _b97113_))))
-              (declare (not safe))
-              (##eq? __tmp101332 __tmp101331))
-            (let ((__tmp101334 (let () (declare (not safe)) (##cdr _a97112_)))
-                  (__tmp101333 (let () (declare (not safe)) (##cdr _b97113_))))
+        (if (let ((__tmp101334 (let () (declare (not safe)) (##car _a97112_)))
+                  (__tmp101333 (let () (declare (not safe)) (##car _b97113_))))
               (declare (not safe))
               (##eq? __tmp101334 __tmp101333))
+            (let ((__tmp101332 (let () (declare (not safe)) (##cdr _a97112_)))
+                  (__tmp101331 (let () (declare (not safe)) (##cdr _b97113_))))
+              (declare (not safe))
+              (##eq? __tmp101332 __tmp101331))
             '#f)))
     (define make-prototype-table__%
       (lambda (_size-hint97093_ _seed97095_)
         (let ()
           (declare (not safe))
-          (make-raw-table__% _size-hint97093_ hash-key test-key _seed97095_))))
+          (make-raw-table__%
+           _size-hint97093_
+           __interface-hash-key
+           __interface-test-key
+           _seed97095_))))
     (define make-prototype-table__0
       (lambda ()
         (let* ((_size-hint97101_ '#f) (_seed97103_ '0))
@@ -265,7 +269,9 @@
               (_seed97055_
                (let () (declare (not safe)) (&raw-table-seed _tab97050_))))
           (let* ((_h97057_
-                  (fxxor (let () (declare (not safe)) (hash-key _key97051_))
+                  (fxxor (let ()
+                           (declare (not safe))
+                           (__interface-hash-key _key97051_))
                          _seed97055_))
                  (_size97060_ (vector-length _table97054_))
                  (_entries97063_ (fxquotient _size97060_ '2))
@@ -277,13 +283,13 @@
                               (_i97075_ '1)
                               (_deleted97077_ '#f))
               (let ((_k97080_ (vector-ref _table97054_ _probe97073_)))
-                (if (let ((__tmp101337 (macro-unused-obj)))
+                (if (let ((__tmp101343 (macro-unused-obj)))
                       (declare (not safe))
-                      (eq? _k97080_ __tmp101337))
+                      (eq? _k97080_ __tmp101343))
                     _default97052_
-                    (if (let ((__tmp101338 (macro-deleted-obj)))
+                    (if (let ((__tmp101342 (macro-deleted-obj)))
                           (declare (not safe))
-                          (eq? _k97080_ __tmp101338))
+                          (eq? _k97080_ __tmp101342))
                         (let ((__tmp101341
                                (let ((_next-probe97083_
                                       (fx+ _start97066_
@@ -298,19 +304,19 @@
                           (_loop97070_ __tmp101341 __tmp101340 __tmp101339))
                         (if (let ()
                               (declare (not safe))
-                              (test-key _key97051_ _k97080_))
+                              (__interface-test-key _key97051_ _k97080_))
                             (vector-ref _table97054_ (fx+ _probe97073_ '1))
-                            (let ((__tmp101343
+                            (let ((__tmp101338
                                    (let ((_next-probe97089_
                                           (fx+ _start97066_
                                                _i97075_
                                                (fx* _i97075_ _i97075_))))
                                      (fxmodulo _next-probe97089_ _size97060_)))
-                                  (__tmp101342 (fx+ _i97075_ '1)))
+                                  (__tmp101337 (fx+ _i97075_ '1)))
                               (declare (not safe))
                               (_loop97070_
-                               __tmp101343
-                               __tmp101342
+                               __tmp101338
+                               __tmp101337
                                _deleted97077_)))))))))))
     (define prototype-table-set!
       (lambda (_tab97046_ _key97047_ _value97048_)
@@ -331,7 +337,9 @@
               (_seed97007_
                (let () (declare (not safe)) (&raw-table-seed _tab97001_))))
           (let* ((_h97009_
-                  (fxxor (let () (declare (not safe)) (hash-key _key97002_))
+                  (fxxor (let ()
+                           (declare (not safe))
+                           (__interface-hash-key _key97002_))
                          _seed97007_))
                  (_size97012_ (vector-length _table97006_))
                  (_entries97015_ (fxquotient _size97012_ '2))
@@ -343,9 +351,9 @@
                               (_i97027_ '1)
                               (_deleted97029_ '#f))
               (let ((_k97032_ (vector-ref _table97006_ _probe97025_)))
-                (if (let ((__tmp101344 (macro-unused-obj)))
+                (if (let ((__tmp101353 (macro-unused-obj)))
                       (declare (not safe))
-                      (eq? _k97032_ __tmp101344))
+                      (eq? _k97032_ __tmp101353))
                     (if _deleted97029_
                         (begin
                           (vector-set! _table97006_ _deleted97029_ _key97002_)
@@ -354,7 +362,7 @@
                            (fx+ _deleted97029_ '1)
                            _value97003_)
                           ((lambda ()
-                             (let ((__tmp101345
+                             (let ((__tmp101352
                                     (fx+ (let ()
                                            (declare (not safe))
                                            (&raw-table-count _tab97001_))
@@ -362,7 +370,7 @@
                                (declare (not safe))
                                (&raw-table-count-set!
                                 _tab97001_
-                                __tmp101345)))))
+                                __tmp101352)))))
                         (begin
                           (vector-set! _table97006_ _probe97025_ _key97002_)
                           (vector-set!
@@ -370,14 +378,14 @@
                            (fx+ _probe97025_ '1)
                            _value97003_)
                           ((lambda ()
-                             (let ((__tmp101346
+                             (let ((__tmp101350
                                     (fx- (let ()
                                            (declare (not safe))
                                            (&raw-table-free _tab97001_))
                                          '1)))
                                (declare (not safe))
-                               (&raw-table-free-set! _tab97001_ __tmp101346))
-                             (let ((__tmp101347
+                               (&raw-table-free-set! _tab97001_ __tmp101350))
+                             (let ((__tmp101351
                                     (fx+ (let ()
                                            (declare (not safe))
                                            (&raw-table-count _tab97001_))
@@ -385,25 +393,25 @@
                                (declare (not safe))
                                (&raw-table-count-set!
                                 _tab97001_
-                                __tmp101347))))))
-                    (if (let ((__tmp101348 (macro-deleted-obj)))
+                                __tmp101351))))))
+                    (if (let ((__tmp101349 (macro-deleted-obj)))
                           (declare (not safe))
-                          (eq? _k97032_ __tmp101348))
-                        (let ((__tmp101351
+                          (eq? _k97032_ __tmp101349))
+                        (let ((__tmp101348
                                (let ((_next-probe97037_
                                       (fx+ _start97018_
                                            _i97027_
                                            (fx* _i97027_ _i97027_))))
                                  (fxmodulo _next-probe97037_ _size97012_)))
-                              (__tmp101350 (fx+ _i97027_ '1))
-                              (__tmp101349
+                              (__tmp101347 (fx+ _i97027_ '1))
+                              (__tmp101346
                                (let ((_$e97040_ _deleted97029_))
                                  (if _$e97040_ _$e97040_ _probe97025_))))
                           (declare (not safe))
-                          (_loop97022_ __tmp101351 __tmp101350 __tmp101349))
+                          (_loop97022_ __tmp101348 __tmp101347 __tmp101346))
                         (if (let ()
                               (declare (not safe))
-                              (test-key _key97002_ _k97032_))
+                              (__interface-test-key _key97002_ _k97032_))
                             (begin
                               (vector-set!
                                _table97006_
@@ -413,17 +421,17 @@
                                _table97006_
                                (fx+ _probe97025_ '1)
                                _value97003_))
-                            (let ((__tmp101353
+                            (let ((__tmp101345
                                    (let ((_next-probe97043_
                                           (fx+ _start97018_
                                                _i97027_
                                                (fx* _i97027_ _i97027_))))
                                      (fxmodulo _next-probe97043_ _size97012_)))
-                                  (__tmp101352 (fx+ _i97027_ '1)))
+                                  (__tmp101344 (fx+ _i97027_ '1)))
                               (declare (not safe))
                               (_loop97022_
-                               __tmp101353
-                               __tmp101352
+                               __tmp101345
+                               __tmp101344
                                _deleted97029_)))))))))))
     (define prototype-table-update!
       (lambda (_tab96996_
@@ -454,7 +462,9 @@
               (_seed96957_
                (let () (declare (not safe)) (&raw-table-seed _tab96950_))))
           (let* ((_h96959_
-                  (fxxor (let () (declare (not safe)) (hash-key _key96951_))
+                  (fxxor (let ()
+                           (declare (not safe))
+                           (__interface-hash-key _key96951_))
                          _seed96957_))
                  (_size96962_ (vector-length _table96956_))
                  (_entries96965_ (fxquotient _size96962_ '2))
@@ -466,9 +476,9 @@
                               (_i96977_ '1)
                               (_deleted96979_ '#f))
               (let ((_k96982_ (vector-ref _table96956_ _probe96975_)))
-                (if (let ((__tmp101354 (macro-unused-obj)))
+                (if (let ((__tmp101363 (macro-unused-obj)))
                       (declare (not safe))
-                      (eq? _k96982_ __tmp101354))
+                      (eq? _k96982_ __tmp101363))
                     (if _deleted96979_
                         (begin
                           (vector-set! _table96956_ _deleted96979_ _key96951_)
@@ -477,7 +487,7 @@
                            (fx+ _deleted96979_ '1)
                            (_prototype-table-update!96952_ _default96953_))
                           ((lambda ()
-                             (let ((__tmp101355
+                             (let ((__tmp101362
                                     (fx+ (let ()
                                            (declare (not safe))
                                            (&raw-table-count _tab96950_))
@@ -485,7 +495,7 @@
                                (declare (not safe))
                                (&raw-table-count-set!
                                 _tab96950_
-                                __tmp101355)))))
+                                __tmp101362)))))
                         (begin
                           (vector-set! _table96956_ _probe96975_ _key96951_)
                           (vector-set!
@@ -493,14 +503,14 @@
                            (fx+ _probe96975_ '1)
                            (_prototype-table-update!96952_ _default96953_))
                           ((lambda ()
-                             (let ((__tmp101356
+                             (let ((__tmp101360
                                     (fx- (let ()
                                            (declare (not safe))
                                            (&raw-table-free _tab96950_))
                                          '1)))
                                (declare (not safe))
-                               (&raw-table-free-set! _tab96950_ __tmp101356))
-                             (let ((__tmp101357
+                               (&raw-table-free-set! _tab96950_ __tmp101360))
+                             (let ((__tmp101361
                                     (fx+ (let ()
                                            (declare (not safe))
                                            (&raw-table-count _tab96950_))
@@ -508,25 +518,25 @@
                                (declare (not safe))
                                (&raw-table-count-set!
                                 _tab96950_
-                                __tmp101357))))))
-                    (if (let ((__tmp101358 (macro-deleted-obj)))
+                                __tmp101361))))))
+                    (if (let ((__tmp101359 (macro-deleted-obj)))
                           (declare (not safe))
-                          (eq? _k96982_ __tmp101358))
-                        (let ((__tmp101361
+                          (eq? _k96982_ __tmp101359))
+                        (let ((__tmp101358
                                (let ((_next-probe96987_
                                       (fx+ _start96968_
                                            _i96977_
                                            (fx* _i96977_ _i96977_))))
                                  (fxmodulo _next-probe96987_ _size96962_)))
-                              (__tmp101360 (fx+ _i96977_ '1))
-                              (__tmp101359
+                              (__tmp101357 (fx+ _i96977_ '1))
+                              (__tmp101356
                                (let ((_$e96990_ _deleted96979_))
                                  (if _$e96990_ _$e96990_ _probe96975_))))
                           (declare (not safe))
-                          (_loop96972_ __tmp101361 __tmp101360 __tmp101359))
+                          (_loop96972_ __tmp101358 __tmp101357 __tmp101356))
                         (if (let ()
                               (declare (not safe))
-                              (test-key _key96951_ _k96982_))
+                              (__interface-test-key _key96951_ _k96982_))
                             (begin
                               (vector-set!
                                _table96956_
@@ -539,17 +549,17 @@
                                 (vector-ref
                                  _table96956_
                                  (fx+ _probe96975_ '1)))))
-                            (let ((__tmp101363
+                            (let ((__tmp101355
                                    (let ((_next-probe96993_
                                           (fx+ _start96968_
                                                _i96977_
                                                (fx* _i96977_ _i96977_))))
                                      (fxmodulo _next-probe96993_ _size96962_)))
-                                  (__tmp101362 (fx+ _i96977_ '1)))
+                                  (__tmp101354 (fx+ _i96977_ '1)))
                               (declare (not safe))
                               (_loop96972_
-                               __tmp101363
-                               __tmp101362
+                               __tmp101355
+                               __tmp101354
                                _deleted96979_)))))))))))
     (define prototype-trable-delete!
       (lambda (_tab96909_ _key96911_)
@@ -558,7 +568,9 @@
               (_seed96916_
                (let () (declare (not safe)) (&raw-table-seed _tab96909_))))
           (let* ((_h96919_
-                  (fxxor (let () (declare (not safe)) (hash-key _key96911_))
+                  (fxxor (let ()
+                           (declare (not safe))
+                           (__interface-hash-key _key96911_))
                          _seed96916_))
                  (_size96922_ (vector-length _table96914_))
                  (_entries96925_ (fxquotient _size96922_ '2))
@@ -568,25 +580,25 @@
                    '1)))
             (let _loop96932_ ((_probe96935_ _start96928_) (_i96937_ '1))
               (let ((_k96940_ (vector-ref _table96914_ _probe96935_)))
-                (if (let ((__tmp101364 (macro-unused-obj)))
+                (if (let ((__tmp101370 (macro-unused-obj)))
                       (declare (not safe))
-                      (eq? _k96940_ __tmp101364))
+                      (eq? _k96940_ __tmp101370))
                     '#!void
-                    (if (let ((__tmp101365 (macro-deleted-obj)))
+                    (if (let ((__tmp101369 (macro-deleted-obj)))
                           (declare (not safe))
-                          (eq? _k96940_ __tmp101365))
-                        (let ((__tmp101367
+                          (eq? _k96940_ __tmp101369))
+                        (let ((__tmp101368
                                (let ((_next-probe96943_
                                       (fx+ _start96928_
                                            _i96937_
                                            (fx* _i96937_ _i96937_))))
                                  (fxmodulo _next-probe96943_ _size96922_)))
-                              (__tmp101366 (fx+ _i96937_ '1)))
+                              (__tmp101367 (fx+ _i96937_ '1)))
                           (declare (not safe))
-                          (_loop96932_ __tmp101367 __tmp101366))
+                          (_loop96932_ __tmp101368 __tmp101367))
                         (if (let ()
                               (declare (not safe))
-                              (test-key _key96911_ _k96940_))
+                              (__interface-test-key _key96911_ _k96940_))
                             (begin
                               (vector-set!
                                _table96914_
@@ -597,7 +609,7 @@
                                (fx+ _probe96935_ '1)
                                (macro-absent-obj))
                               ((lambda ()
-                                 (let ((__tmp101368
+                                 (let ((__tmp101366
                                         (fx- (let ()
                                                (declare (not safe))
                                                (&raw-table-count _tab96909_))
@@ -605,16 +617,16 @@
                                    (declare (not safe))
                                    (&raw-table-count-set!
                                     _tab96909_
-                                    __tmp101368)))))
-                            (let ((__tmp101370
+                                    __tmp101366)))))
+                            (let ((__tmp101365
                                    (let ((_next-probe96947_
                                           (fx+ _start96928_
                                                _i96937_
                                                (fx* _i96937_ _i96937_))))
                                      (fxmodulo _next-probe96947_ _size96922_)))
-                                  (__tmp101369 (fx+ _i96937_ '1)))
+                                  (__tmp101364 (fx+ _i96937_ '1)))
                               (declare (not safe))
-                              (_loop96932_ __tmp101370 __tmp101369)))))))))))
+                              (_loop96932_ __tmp101365 __tmp101364)))))))))))
     (define __interface-prototypes-mx (make-mutex 'interface-prototype))
     (define __interface-prototypes
       (let () (declare (not safe)) (make-prototype-table__% '#f '0)))

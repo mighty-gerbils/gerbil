@@ -5,7 +5,8 @@ namespace: #f
 (%#begin (%#import
           :gerbil/runtime/gambit
           :gerbil/runtime/util
-          :gerbil/runtime/error)
+          :gerbil/runtime/error
+          :gerbil/runtime/hash)
          (%#export #t)
          (%#define-runtime spawn spawn)
          (%#define-runtime spawn/name spawn/name)

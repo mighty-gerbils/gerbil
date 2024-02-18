@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/hash::timestamp 1708271168)
+  (define gerbil/runtime/hash::timestamp 1708271948)
   (begin
     (define UnboundKeyError::t
       (let ((__tmp108316 (list Error::t)))
@@ -1038,25 +1038,25 @@
                (&HashTableLock-end-write! _l103672_)))))))
     (define locked-hash-table::update!::specialize
       (lambda (__t108272)
-        (let ((__table108273
+        (let ((__lock108273
                (let ((__tmp108275
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108272 'table))))
-                 (if __tmp108275 __tmp108275 (error '"Unknown slot" 'table))))
-              (__lock108274
+                        (class-slot-offset __t108272 'lock))))
+                 (if __tmp108275 __tmp108275 (error '"Unknown slot" 'lock))))
+              (__table108274
                (let ((__tmp108276
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108272 'lock))))
-                 (if __tmp108276 __tmp108276 (error '"Unknown slot" 'lock)))))
+                        (class-slot-offset __t108272 'table))))
+                 (if __tmp108276 __tmp108276 (error '"Unknown slot" 'table)))))
           (lambda (_self103664_ _key103666_ _update103667_ _default103668_)
             (let ((_h103670_
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103664_
-                      __table108273
+                      __table108274
                       __t108272
                       '#f)))
                   (_l103672_
@@ -1064,7 +1064,7 @@
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103664_
-                      __lock108274
+                      __lock108273
                       __t108272
                       '#f))))
               (dynamic-wind
@@ -1129,25 +1129,25 @@
                (&HashTableLock-end-write! _l103535_)))))))
     (define locked-hash-table::delete!::specialize
       (lambda (__t108277)
-        (let ((__lock108278
+        (let ((__table108278
                (let ((__tmp108280
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108277 'lock))))
-                 (if __tmp108280 __tmp108280 (error '"Unknown slot" 'lock))))
-              (__table108279
+                        (class-slot-offset __t108277 'table))))
+                 (if __tmp108280 __tmp108280 (error '"Unknown slot" 'table))))
+              (__lock108279
                (let ((__tmp108281
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108277 'table))))
-                 (if __tmp108281 __tmp108281 (error '"Unknown slot" 'table)))))
+                        (class-slot-offset __t108277 'lock))))
+                 (if __tmp108281 __tmp108281 (error '"Unknown slot" 'lock)))))
           (lambda (_self103529_ _key103531_)
             (let ((_h103533_
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103529_
-                      __table108279
+                      __table108278
                       __t108277
                       '#f)))
                   (_l103535_
@@ -1155,7 +1155,7 @@
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103529_
-                      __lock108278
+                      __lock108279
                       __t108277
                       '#f))))
               (dynamic-wind
@@ -1216,25 +1216,25 @@
                (&HashTableLock-end-read! _l103400_)))))))
     (define locked-hash-table::for-each::specialize
       (lambda (__t108282)
-        (let ((__lock108283
+        (let ((__table108283
                (let ((__tmp108285
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108282 'lock))))
-                 (if __tmp108285 __tmp108285 (error '"Unknown slot" 'lock))))
-              (__table108284
+                        (class-slot-offset __t108282 'table))))
+                 (if __tmp108285 __tmp108285 (error '"Unknown slot" 'table))))
+              (__lock108284
                (let ((__tmp108286
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108282 'table))))
-                 (if __tmp108286 __tmp108286 (error '"Unknown slot" 'table)))))
+                        (class-slot-offset __t108282 'lock))))
+                 (if __tmp108286 __tmp108286 (error '"Unknown slot" 'lock)))))
           (lambda (_self103394_ _proc103396_)
             (let ((_h103398_
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103394_
-                      __table108284
+                      __table108283
                       __t108282
                       '#f)))
                   (_l103400_
@@ -1242,7 +1242,7 @@
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103394_
-                      __lock108283
+                      __lock108284
                       __t108282
                       '#f))))
               (dynamic-wind
@@ -1301,25 +1301,25 @@
                (&HashTableLock-end-read! _l103265_)))))))
     (define locked-hash-table::length::specialize
       (lambda (__t108287)
-        (let ((__table108288
+        (let ((__lock108288
                (let ((__tmp108290
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108287 'table))))
-                 (if __tmp108290 __tmp108290 (error '"Unknown slot" 'table))))
-              (__lock108289
+                        (class-slot-offset __t108287 'lock))))
+                 (if __tmp108290 __tmp108290 (error '"Unknown slot" 'lock))))
+              (__table108289
                (let ((__tmp108291
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108287 'lock))))
-                 (if __tmp108291 __tmp108291 (error '"Unknown slot" 'lock)))))
+                        (class-slot-offset __t108287 'table))))
+                 (if __tmp108291 __tmp108291 (error '"Unknown slot" 'table)))))
           (lambda (_self103260_)
             (let ((_h103263_
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103260_
-                      __table108288
+                      __table108289
                       __t108287
                       '#f)))
                   (_l103265_
@@ -1327,7 +1327,7 @@
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103260_
-                      __lock108289
+                      __lock108288
                       __t108287
                       '#f))))
               (dynamic-wind
@@ -1384,25 +1384,25 @@
                (&HashTableLock-end-read! _l103131_)))))))
     (define locked-hash-table::copy::specialize
       (lambda (__t108292)
-        (let ((__table108293
+        (let ((__lock108293
                (let ((__tmp108295
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108292 'table))))
-                 (if __tmp108295 __tmp108295 (error '"Unknown slot" 'table))))
-              (__lock108294
+                        (class-slot-offset __t108292 'lock))))
+                 (if __tmp108295 __tmp108295 (error '"Unknown slot" 'lock))))
+              (__table108294
                (let ((__tmp108296
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t108292 'lock))))
-                 (if __tmp108296 __tmp108296 (error '"Unknown slot" 'lock)))))
+                        (class-slot-offset __t108292 'table))))
+                 (if __tmp108296 __tmp108296 (error '"Unknown slot" 'table)))))
           (lambda (_self103126_)
             (let ((_h103129_
                    (let ()
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103126_
-                      __table108293
+                      __table108294
                       __t108292
                       '#f)))
                   (_l103131_
@@ -1410,7 +1410,7 @@
                      (declare (not safe))
                      (##unchecked-structure-ref
                       _self103126_
-                      __lock108294
+                      __lock108293
                       __t108292
                       '#f))))
               (dynamic-wind
@@ -1776,21 +1776,21 @@
                                        make-generic-hash-table
                                        equal?-hash
                                        equal?))
-                                    (if (let ((__tmp108374
+                                    (if (let ((__tmp108375
                                                (let ()
                                                  (declare (not safe))
                                                  (procedure? _test102766_))))
                                           (declare (not safe))
-                                          (not __tmp108374))
+                                          (not __tmp108375))
                                         (error '"bad hash table test function; expected procedure"
                                                _test102766_)
-                                        (if (let ((__tmp108375
+                                        (if (let ((__tmp108374
                                                    (let ()
                                                      (declare (not safe))
                                                      (procedure?
                                                       _hash102768_))))
                                               (declare (not safe))
-                                              (not __tmp108375))
+                                              (not __tmp108374))
                                             (error '"bad hash table hash function; expected procedure"
                                                    _hash102768_)
                                             (let ()

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1708271171)
+  (define gerbil/runtime/init::timestamp 1708271949)
   (begin
     (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
@@ -233,78 +233,78 @@
                        (declare (not safe))
                        (##source-code _src134841_))))
                 (if (and (let () (declare (not safe)) (##pair? _code134847_))
-                         (let ((__tmp139025
-                                (let ((__tmp139026
-                                       (let ((__tmp139027
+                         (let ((__tmp139028
+                                (let ((__tmp139029
+                                       (let ((__tmp139030
                                               (let ()
                                                 (declare (not safe))
                                                 (##car _code134847_))))
                                          (declare (not safe))
                                          (##sourcify
-                                          __tmp139027
+                                          __tmp139030
                                           _src134841_))))
                                   (declare (not safe))
-                                  (##source-code __tmp139026))))
+                                  (##source-code __tmp139029))))
                            (declare (not safe))
-                           (##memq __tmp139025 '(##lambda lambda))))
+                           (##memq __tmp139028 '(##lambda lambda))))
                     (begin
                       (let ()
                         (declare (not safe))
                         (##shape _src134841_ _src134841_ '-3))
-                      (let ((__tmp139028
-                             (let ((__tmp139029
-                                    (let ((__tmp139030
+                      (let ((__tmp139025
+                             (let ((__tmp139026
+                                    (let ((__tmp139027
                                            (let ()
                                              (declare (not safe))
                                              (##cadr _code134847_))))
                                       (declare (not safe))
-                                      (##sourcify __tmp139030 _src134841_))))
+                                      (##sourcify __tmp139027 _src134841_))))
                                (declare (not safe))
-                               (##form-size __tmp139029))))
+                               (##form-size __tmp139026))))
                         (declare (not safe))
-                        (_make-descr134845_ __tmp139028)))
+                        (_make-descr134845_ __tmp139025)))
                     (let () (declare (not safe)) (_fail!134844_))))))))
     (define __source->syntax
       (lambda (_src134835_)
         (let _recur134837_ ((_e134839_ _src134835_))
           (if (let () (declare (not safe)) (##source? _e134839_))
-              (let ((__tmp139032
-                     (let ((__tmp139033
+              (let ((__tmp139038
+                     (let ((__tmp139039
                             (let ()
                               (declare (not safe))
                               (##source-code _e134839_))))
                        (declare (not safe))
-                       (_recur134837_ __tmp139033)))
-                    (__tmp139031
+                       (_recur134837_ __tmp139039)))
+                    (__tmp139037
                      (let () (declare (not safe)) (##source-locat _e134839_))))
                 (declare (not safe))
-                (##structure AST::t __tmp139032 __tmp139031))
+                (##structure AST::t __tmp139038 __tmp139037))
               (if (let () (declare (not safe)) (pair? _e134839_))
-                  (let ((__tmp139036
-                         (let ((__tmp139037
+                  (let ((__tmp139035
+                         (let ((__tmp139036
                                 (let ()
                                   (declare (not safe))
                                   (##car _e134839_))))
                            (declare (not safe))
-                           (_recur134837_ __tmp139037)))
-                        (__tmp139034
-                         (let ((__tmp139035
+                           (_recur134837_ __tmp139036)))
+                        (__tmp139033
+                         (let ((__tmp139034
                                 (let ()
                                   (declare (not safe))
                                   (##cdr _e134839_))))
                            (declare (not safe))
-                           (_recur134837_ __tmp139035))))
+                           (_recur134837_ __tmp139034))))
                     (declare (not safe))
-                    (cons __tmp139036 __tmp139034))
+                    (cons __tmp139035 __tmp139033))
                   (if (let () (declare (not safe)) (vector? _e134839_))
                       (vector-map _recur134837_ _e134839_)
                       (if (let () (declare (not safe)) (box? _e134839_))
-                          (let ((__tmp139038
-                                 (let ((__tmp139039 (unbox _e134839_)))
+                          (let ((__tmp139031
+                                 (let ((__tmp139032 (unbox _e134839_)))
                                    (declare (not safe))
-                                   (_recur134837_ __tmp139039))))
+                                   (_recur134837_ __tmp139032))))
                             (declare (not safe))
-                            (box __tmp139038))
+                            (box __tmp139031))
                           _e134839_)))))))
     (define __compile-top-source
       (lambda (_stx134833_)
@@ -330,11 +330,11 @@
                            (if (let ()
                                  (declare (not safe))
                                  (fxzero? _iphi134825_))
-                               (let ((__tmp139042
+                               (let ((__tmp139043
                                       (gx#module-export-context
                                        (gx#module-import-source _in134822_))))
                                  (declare (not safe))
-                                 (_eval1134816_ __tmp139042))
+                                 (_eval1134816_ __tmp139043))
                                '#!void))
                          (if (gx#module-context? _in134822_)
                              (if (let ()
@@ -351,11 +351,11 @@
                                    (if (let ()
                                          (declare (not safe))
                                          (fxzero? _iphi134827_))
-                                       (let ((__tmp139043
+                                       (let ((__tmp139042
                                               (gx#import-set-source
                                                _in134822_)))
                                          (declare (not safe))
-                                         (_eval1134816_ __tmp139043))
+                                         (_eval1134816_ __tmp139042))
                                        (if (fxpositive? _iphi134827_)
                                            (for-each
                                             (lambda (_in134829_)

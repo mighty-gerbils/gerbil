@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1708271176)
+  (define gerbil/compiler/base::timestamp 1708271951)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -71,38 +71,38 @@
         (make-class-slot-unchecked-mutator gxc#symbol-table::t 'bindings)))
     (define gxc#symbol-table:::init!
       (lambda (_self199183_)
-        (if (let ((__tmp203302
+        (if (let ((__tmp203306
                    (let ()
                      (declare (not safe))
                      (##structure-length _self199183_))))
               (declare (not safe))
-              (##fx< '2 __tmp203302))
+              (##fx< '2 __tmp203306))
             (begin
-              (let ((__tmp203304
+              (let ((__tmp203303
                      (let () (declare (not safe)) (make-hash-table-eq)))
-                    (__tmp203303
+                    (__tmp203302
                      (let ()
                        (declare (not safe))
                        (##structure-type _self199183_))))
                 (declare (not safe))
                 (##unchecked-structure-set!
                  _self199183_
-                 __tmp203304
-                 '1
                  __tmp203303
+                 '1
+                 __tmp203302
                  '#f))
-              (let ((__tmp203306
+              (let ((__tmp203305
                      (let () (declare (not safe)) (make-hash-table-eq)))
-                    (__tmp203305
+                    (__tmp203304
                      (let ()
                        (declare (not safe))
                        (##structure-type _self199183_))))
                 (declare (not safe))
                 (##unchecked-structure-set!
                  _self199183_
-                 __tmp203306
-                 '2
                  __tmp203305
+                 '2
+                 __tmp203304
                  '#f)))
             (error '"struct-instance-init!: too many arguments for struct"
                    _self199183_

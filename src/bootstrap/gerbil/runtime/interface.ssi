@@ -77,8 +77,8 @@ namespace: #f
           &interface-descriptor-methods-set!
           &interface-descriptor-methods-set!)
          (%#define-syntax interface-descriptor |[:0:]#interface-descriptor|)
-         (%#define-runtime hash-key hash-key)
-         (%#define-runtime test-key test-key)
+         (%#define-runtime __interface-hash-key __interface-hash-key)
+         (%#define-runtime __interface-test-key __interface-test-key)
          (%#begin (%#define-runtime
                    make-prototype-table__%
                    make-prototype-table__%)

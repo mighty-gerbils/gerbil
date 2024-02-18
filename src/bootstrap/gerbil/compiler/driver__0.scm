@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1708271191)
+  (define gerbil/compiler/driver::timestamp 1708271957)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -509,20 +509,20 @@
                              '1
                              gx#expander-context::t
                              '#f))))
-                      (if (let ((__tmp300413
+                      (if (let ((__tmp300414
                                  (let ()
                                    (declare (not safe))
                                    (string-prefix?
                                     '"gerbil/"
                                     _id-str296113_))))
                             (declare (not safe))
-                            (not __tmp300413))
-                          (let ((__tmp300414
+                            (not __tmp300414))
+                          (let ((__tmp300413
                                  (let ()
                                    (declare (not safe))
                                    (string-prefix? '"std/" _id-str296113_))))
                             (declare (not safe))
-                            (not __tmp300414))
+                            (not __tmp300413))
                           '#f))))
                  (_not-file-empty?296014_
                   (lambda (_path296109_)
@@ -1188,27 +1188,27 @@
                             (if (let ()
                                   (declare (not safe))
                                   (gerbil-runtime-smp?))
-                                (let ((__tmp300475
-                                       (let ((__tmp300476
-                                              (let ((__tmp300477
+                                (let ((__tmp300476
+                                       (let ((__tmp300477
+                                              (let ((__tmp300478
                                                      (let ()
                                                        (declare (not safe))
                                                        (cons _include-gambit-sharp295856_
                                                              '()))))
                                                 (declare (not safe))
-                                                (cons '"-e" __tmp300477))))
+                                                (cons '"-e" __tmp300478))))
                                          (declare (not safe))
                                          (cons '"(define-cond-expand-feature|enable-smp|)"
-                                               __tmp300476))))
+                                               __tmp300477))))
                                   (declare (not safe))
-                                  (cons '"-e" __tmp300475))
-                                (let ((__tmp300478
+                                  (cons '"-e" __tmp300476))
+                                (let ((__tmp300475
                                        (let ()
                                          (declare (not safe))
                                          (cons _include-gambit-sharp295856_
                                                '()))))
                                   (declare (not safe))
-                                  (cons '"-e" __tmp300478))))
+                                  (cons '"-e" __tmp300475))))
                            (_gsc-link-opts295893_
                             (append _gsc-link-opts295883_
                                     _gsc-gx-macros295891_))
@@ -1510,7 +1510,7 @@
                                        (if (let ()
                                              (declare (not safe))
                                              (fxzero? _iphi295729_))
-                                           (let ((__tmp300511
+                                           (let ((__tmp300517
                                                   (let ()
                                                     (declare (not safe))
                                                     (cons _in295756_
@@ -1518,7 +1518,7 @@
                                              (declare (not safe))
                                              (_lp295732_
                                               _rest295755_
-                                              __tmp300511))
+                                              __tmp300517))
                                            (let ()
                                              (declare (not safe))
                                              (_lp295732_
@@ -1539,8 +1539,8 @@
                                              (if (let ()
                                                    (declare (not safe))
                                                    (fxzero? _iphi295758_))
-                                                 (let ((__tmp300512
-                                                        (let ((__tmp300513
+                                                 (let ((__tmp300515
+                                                        (let ((__tmp300516
                                                                (##direct-structure-ref
                                                                 (##direct-structure-ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1552,12 +1552,12 @@
                         gx#module-export::t
                         '#f)))
                   (declare (not safe))
-                  (cons __tmp300513 _r295735_))))
+                  (cons __tmp300516 _r295735_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (_lp295732_
                                                     _rest295755_
-                                                    __tmp300512))
+                                                    __tmp300515))
                                                  (let ()
                                                    (declare (not safe))
                                                    (_lp295732_
@@ -1578,8 +1578,8 @@
                                                  (if (let ()
                                                        (declare (not safe))
                                                        (fxzero? _xphi295760_))
-                                                     (let ((__tmp300514
-                                                            (let ((__tmp300515
+                                                     (let ((__tmp300513
+                                                            (let ((__tmp300514
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (##direct-structure-ref
                             _in295756_
@@ -1587,14 +1587,14 @@
                             gx#import-set::t
                             '#f)))
                       (declare (not safe))
-                      (cons __tmp300515 _r295735_))))
+                      (cons __tmp300514 _r295735_))))
                (declare (not safe))
-               (_lp295732_ _rest295755_ __tmp300514))
+               (_lp295732_ _rest295755_ __tmp300513))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (if (fxpositive?
                                                           _xphi295760_)
-                                                         (let ((__tmp300516
-                                                                (let ((__tmp300517
+                                                         (let ((__tmp300511
+                                                                (let ((__tmp300512
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (let ()
                                  (declare (not safe))
@@ -1602,9 +1602,9 @@
                                   _in295756_
                                   _iphi295729_))))
                           (declare (not safe))
-                          (foldl1 cons _r295735_ __tmp300517))))
+                          (foldl1 cons _r295735_ __tmp300512))))
                    (declare (not safe))
-                   (_lp295732_ _rest295755_ __tmp300516))
+                   (_lp295732_ _rest295755_ __tmp300511))
                  (let ()
                    (declare (not safe))
                    (_lp295732_ _rest295755_ _r295735_)))))
@@ -1671,13 +1671,13 @@
                                            (if _$e295699_
                                                ((lambda (_pre295702_)
                                                   (let ((_xdeps295704_
-                                                         (let ((__tmp300518
+                                                         (let ((__tmp300530
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
                           (cons _pre295702_ _imports295697_))))
                    (declare (not safe))
-                   (_find-deps295665_ __tmp300518 _deps295673_))))
+                   (_find-deps295665_ __tmp300530 _deps295673_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (let ()
                                                       (declare (not safe))
@@ -1685,7 +1685,7 @@
                                                        _ht295663_
                                                        _id295696_
                                                        _hd295694_))
-                                                    (let ((__tmp300519
+                                                    (let ((__tmp300531
                                                            (let ()
                                                              (declare
                                                                (not safe))
@@ -1693,7 +1693,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _xdeps295704_))))
               (declare (not safe))
-              (_find-deps295665_ _rest295693_ __tmp300519))))
+              (_find-deps295665_ _rest295693_ __tmp300531))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 _$e295699_)
                                                (let ((_xdeps295706_
@@ -1708,7 +1708,7 @@
                                                     _ht295663_
                                                     _id295696_
                                                     _hd295694_))
-                                                 (let ((__tmp300520
+                                                 (let ((__tmp300529
                                                         (let ()
                                                           (declare (not safe))
                                                           (cons _hd295694_
@@ -1716,7 +1716,7 @@
                                                    (declare (not safe))
                                                    (_find-deps295665_
                                                     _rest295693_
-                                                    __tmp300520)))))))
+                                                    __tmp300529)))))))
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
@@ -1739,7 +1739,7 @@
                                                 _rest295693_
                                                 _deps295673_))
                                              (let ((_xdeps295710_
-                                                    (let ((__tmp300521
+                                                    (let ((__tmp300527
                                                            (##structure-ref
                                                             _hd295694_
                                                             '7
@@ -1747,7 +1747,7 @@
                                                             '#f)))
                                                       (declare (not safe))
                                                       (_find-deps295665_
-                                                       __tmp300521
+                                                       __tmp300527
                                                        _deps295673_))))
                                                (if (let ()
                                                      (declare (not safe))
@@ -1766,7 +1766,7 @@
                                                         _ht295663_
                                                         _id295708_
                                                         _hd295694_))
-                                                     (let ((__tmp300522
+                                                     (let ((__tmp300528
                                                             (let ()
                                                               (declare
                                                                 (not safe))
@@ -1774,21 +1774,21 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _xdeps295710_))))
                (declare (not safe))
-               (_find-deps295665_ _rest295693_ __tmp300522)))))))
+               (_find-deps295665_ _rest295693_ __tmp300528)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
                                               _hd295694_
                                               'gx#module-import::t))
-                                           (if (let ((__tmp300523
+                                           (if (let ((__tmp300526
                                                       (##direct-structure-ref
                                                        _hd295694_
                                                        '3
                                                        gx#module-import::t
                                                        '#f)))
                                                  (declare (not safe))
-                                                 (fxzero? __tmp300523))
+                                                 (fxzero? __tmp300526))
                                                (let ((__tmp300524
                                                       (let ((__tmp300525
                                                              (##direct-structure-ref
@@ -1813,35 +1813,35 @@
                                                  (##structure-direct-instance-of?
                                                   _hd295694_
                                                   'gx#module-export::t))
-                                               (let ((__tmp300526
-                                                      (let ((__tmp300527
+                                               (let ((__tmp300522
+                                                      (let ((__tmp300523
                                                              (##direct-structure-ref
                                                               _hd295694_
                                                               '1
                                                               gx#module-export::t
                                                               '#f)))
                                                         (declare (not safe))
-                                                        (cons __tmp300527
+                                                        (cons __tmp300523
                                                               _rest295693_))))
                                                  (declare (not safe))
                                                  (_find-deps295665_
-                                                  __tmp300526
+                                                  __tmp300522
                                                   _deps295673_))
                                                (if (let ()
                                                      (declare (not safe))
                                                      (##structure-direct-instance-of?
                                                       _hd295694_
                                                       'gx#import-set::t))
-                                                   (if (let ((__tmp300528
+                                                   (if (let ((__tmp300521
                                                               (##direct-structure-ref
                                                                _hd295694_
                                                                '2
                                                                gx#import-set::t
                                                                '#f)))
                                                          (declare (not safe))
-                                                         (fxzero? __tmp300528))
-                                                       (let ((__tmp300529
-                                                              (let ((__tmp300530
+                                                         (fxzero? __tmp300521))
+                                                       (let ((__tmp300519
+                                                              (let ((__tmp300520
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (##direct-structure-ref
                               _hd295694_
@@ -1849,9 +1849,9 @@
                               gx#import-set::t
                               '#f)))
                         (declare (not safe))
-                        (cons __tmp300530 _rest295693_))))
+                        (cons __tmp300520 _rest295693_))))
                  (declare (not safe))
-                 (_find-deps295665_ __tmp300529 _deps295673_))
+                 (_find-deps295665_ __tmp300519 _deps295673_))
                (if (fxpositive?
                     (##direct-structure-ref
                      _hd295694_
@@ -1862,12 +1862,12 @@
                            (let ()
                              (declare (not safe))
                              (_import-set-template295664_ _hd295694_ '0)))
-                          (__tmp300531
+                          (__tmp300518
                            (let ()
                              (declare (not safe))
                              (foldl1 cons _rest295693_ _xdeps295712_))))
                      (declare (not safe))
-                     (_find-deps295665_ __tmp300531 _deps295673_))
+                     (_find-deps295665_ __tmp300518 _deps295673_))
                    (let ()
                      (declare (not safe))
                      (_find-deps295665_ _rest295693_ _deps295673_))))
@@ -2027,29 +2027,29 @@
                  (let ()
                    (declare (not safe))
                    (gxc#collect-bindings _ctx295579_))
-                 (if (let ((__tmp300543
+                 (if (let ((__tmp300545
                             (let ()
                               (declare (not safe))
                               (gxc#lift-nested-modules _ctx295579_))))
                        (declare (not safe))
-                       (null? __tmp300543))
+                       (null? __tmp300545))
                      (let* ((_thr1295584_
-                             (let ((__tmp300544
+                             (let ((__tmp300543
                                     (lambda ()
                                       (let ()
                                         (declare (not safe))
                                         (gxc#compile-runtime-code
                                          _ctx295579_)))))
                                (declare (not safe))
-                               (spawn __tmp300544)))
+                               (spawn __tmp300543)))
                             (_thr2295587_
-                             (let ((__tmp300545
+                             (let ((__tmp300544
                                     (lambda ()
                                       (let ()
                                         (declare (not safe))
                                         (gxc#compile-meta-code _ctx295579_)))))
                                (declare (not safe))
-                               (spawn __tmp300545))))
+                               (spawn __tmp300544))))
                        (let () (declare (not safe)) (gxc#join! _thr1295584_))
                        (let () (declare (not safe)) (gxc#join! _thr2295587_)))
                      (begin
@@ -2191,24 +2191,24 @@
                                gxc#current-compile-identifiers
                                __tmp300549)))
                            (_runtime-code295554_
-                            (if (let ((__tmp300552 (unbox _lifts295549_)))
+                            (if (let ((__tmp300555 (unbox _lifts295549_)))
                                   (declare (not safe))
-                                  (null? __tmp300552))
+                                  (null? __tmp300555))
                                 _runtime-code295552_
-                                (let ((__tmp300553
-                                       (let ((__tmp300555
+                                (let ((__tmp300552
+                                       (let ((__tmp300554
                                               (let ()
                                                 (declare (not safe))
                                                 (cons _runtime-code295552_
                                                       '())))
-                                             (__tmp300554
+                                             (__tmp300553
                                               (reverse (unbox _lifts295549_))))
                                          (declare (not safe))
                                          (foldr1 cons
-                                                 __tmp300555
-                                                 __tmp300554))))
+                                                 __tmp300554
+                                                 __tmp300553))))
                                   (declare (not safe))
-                                  (cons 'begin __tmp300553))))
+                                  (cons 'begin __tmp300552))))
                            (_runtime-code295556_
                             (let ((__tmp300556
                                    (let ((__tmp300558
@@ -2682,21 +2682,21 @@
                           (let ()
                             (declare (not safe))
                             (gxc#apply-generate-runtime-phi _stx295389_))))
-                     (if (let ((__tmp300592 (unbox _lifts295391_)))
+                     (if (let ((__tmp300595 (unbox _lifts295391_)))
                            (declare (not safe))
-                           (null? __tmp300592))
+                           (null? __tmp300595))
                          _code295394_
-                         (let ((__tmp300593
-                                (let ((__tmp300595
+                         (let ((__tmp300592
+                                (let ((__tmp300594
                                        (let ()
                                          (declare (not safe))
                                          (cons _code295394_ '())))
-                                      (__tmp300594
+                                      (__tmp300593
                                        (reverse (unbox _lifts295391_))))
                                   (declare (not safe))
-                                  (foldr1 cons __tmp300595 __tmp300594))))
+                                  (foldr1 cons __tmp300594 __tmp300593))))
                            (declare (not safe))
-                           (cons 'begin __tmp300593))))))
+                           (cons 'begin __tmp300592))))))
                 (__tmp300590
                  (let () (declare (not safe)) (make-hash-table-eq)))
                 (__tmp300589
@@ -3314,8 +3314,8 @@
                       (if _$e295027_
                           ((lambda (_outdir295030_)
                              (path-expand
-                              (let ((__tmp300649
-                                     (let ((__tmp300650
+                              (let ((__tmp300650
+                                     (let ((__tmp300651
                                             (##structure-ref
                                              _ctx295013_
                                              '1
@@ -3323,19 +3323,19 @@
                                              '#f)))
                                        (declare (not safe))
                                        (gxc#module-id->path-string
-                                        __tmp300650))))
+                                        __tmp300651))))
                                 (declare (not safe))
-                                (_file-name295020_ __tmp300649))
+                                (_file-name295020_ __tmp300650))
                               _outdir295030_))
                            _$e295027_)
                           (path-expand
-                           (let ((__tmp300651
+                           (let ((__tmp300649
                                   (let ()
                                     (declare (not safe))
                                     (_module-relative-path295017_
                                      _ctx295013_))))
                              (declare (not safe))
-                             (_file-name295020_ __tmp300651))
+                             (_file-name295020_ __tmp300649))
                            (let ()
                              (declare (not safe))
                              (_module-source-directory295018_

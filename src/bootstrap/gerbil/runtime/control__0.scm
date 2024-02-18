@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/control::timestamp 1708271165)
+  (define gerbil/runtime/control::timestamp 1708271947)
   (begin
     (define make-promise
       (lambda (_thunk70688_)
@@ -111,31 +111,31 @@
                                   (lambda (_rest70572_ _val70573_)
                                     (if _kwt70526_
                                         (let ((_pos70575_
-                                               (let ((__tmp74770
+                                               (let ((__tmp74772
                                                       (keyword-hash _hd70557_))
-                                                     (__tmp74769
+                                                     (__tmp74771
                                                       (let ()
                                                         (declare (not safe))
                                                         (##vector-length
                                                          _kwt70526_))))
                                                  (declare (not safe))
                                                  (##fxmodulo
-                                                  __tmp74770
-                                                  __tmp74769))))
-                                          (if (let ((__tmp74771
+                                                  __tmp74772
+                                                  __tmp74771))))
+                                          (if (let ((__tmp74773
                                                      (let ()
                                                        (declare (not safe))
                                                        (##vector-ref
                                                         _kwt70526_
                                                         _pos70575_))))
                                                 (declare (not safe))
-                                                (eq? _hd70557_ __tmp74771))
+                                                (eq? _hd70557_ __tmp74773))
                                               '#!void
                                               (error '"Unexpected keyword argument"
                                                      _K70527_
                                                      _hd70557_)))
                                         '#!void)
-                                    (if (let ((__tmp74772
+                                    (if (let ((__tmp74774
                                                (let ()
                                                  (declare (not safe))
                                                  (symbolic-table-ref
@@ -143,7 +143,7 @@
                                                   _hd70557_
                                                   absent-value))))
                                           (declare (not safe))
-                                          (eq? __tmp74772 absent-value))
+                                          (eq? __tmp74774 absent-value))
                                         '#!void
                                         (error '"Duplicate keyword argument"
                                                _K70527_
@@ -235,20 +235,20 @@
                                           (##set-cdr!
                                            _tail70536_
                                            _hd-rest70556_))
-                                        (let ((__tmp74773
+                                        (let ((__tmp74770
                                                (let ()
                                                  (declare (not safe))
                                                  (cons _keys70530_
                                                        _args70535_))))
                                           (declare (not safe))
-                                          (##apply _K70527_ __tmp74773)))
-                                      (let ((__tmp74774
+                                          (##apply _K70527_ __tmp74770)))
+                                      (let ((__tmp74769
                                              (let ()
                                                (declare (not safe))
                                                (cons _keys70530_
                                                      _hd-rest70556_))))
                                         (declare (not safe))
-                                        (##apply _K70527_ __tmp74774)))
+                                        (##apply _K70527_ __tmp74769)))
                                   (if _args70535_
                                       (begin
                                         (let ()
