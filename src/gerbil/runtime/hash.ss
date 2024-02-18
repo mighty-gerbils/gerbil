@@ -456,7 +456,7 @@ namespace: #f
   (&HashTable-delete! h key))
 
 (defhash-method (hash-key? h k)
-  (eq? (&HashTable-ref h k absent-value) absent-value))
+  (not (eq? (&HashTable-ref h k absent-value) absent-value)))
 
 (defhash-method (hash->list h)
   (let (lst [])
