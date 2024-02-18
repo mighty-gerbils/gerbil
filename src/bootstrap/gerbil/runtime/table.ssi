@@ -31,13 +31,12 @@ namespace: #f
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
          (%#define-runtime eq-hash eq-hash)
          (%#define-runtime symbolic-hash symbolic-hash)
-         (%#define-runtime string-hash string-hash)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/runtime/table__1")))
-                  (%#define-syntax
-                   defspecialized-table
-                   |[:0:]#defspecialized-table|))
+                  (%#define-syntax __symbolic-hash |[:0:]#__symbolic-hash|))
+         (%#define-runtime string-hash string-hash)
+         (%#define-syntax defspecialized-table |[:0:]#defspecialized-table|)
          (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
                   (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
                            (%#define-runtime make-eq-table__1 make-eq-table__1)

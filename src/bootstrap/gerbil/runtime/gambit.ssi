@@ -81,5 +81,8 @@ namespace: #f
           (macro-character-port-wchars macro-character-port-wchars)
           (macro-character-port-output-width macro-character-port-output-width)
           (macro-character-port-output-width-set!
-           macro-character-port-output-width-set!)))
+           macro-character-port-output-width-set!)
+          (macro-mutex-lock! macro-mutex-lock!)
+          (macro-mutex-unlock! macro-mutex-unlock!)
+          (macro-current-thread macro-current-thread)))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime/gambit__0"))
