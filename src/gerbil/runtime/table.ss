@@ -47,10 +47,15 @@ namespace: #f
   (##unchecked-structure-set! tab val 6 __table::t 'raw-table-seed-set!))
 
 ;; generic raw tables
+(def (raw-table-size-hint->size size-hint)
+  (if (and (fixnum? size-hint) (fx> size-hint 0))
+    ;; make it a power of 2 so that quadratic probing produces
+    ;; a full table probe; we multiply by 4 to avoid rehashing.
+    (fx* (fxmax 2 (expt 2 (integer-length size-hint))) 4)
+    16))
+
 (def (make-raw-table size-hint hash test (seed 0))
-  (let* ((size (if (and (fixnum? size-hint) (fx> size-hint 0))
-                 (fx* (max size-hint 2) 4)
-                 16))
+  (let* ((size (raw-table-size-hint->size size-hint))
          (table (make-vector size (macro-unused-obj))))
     (##structure __table::t table 0 (fxquotient size 2) hash test seed)))
 

@@ -323,9 +323,7 @@ namespace: #f
                       weak-keys: (weak-keys #f)
                       weak-values: (weak-values #f))
   (def (make kons hash test)
-    (let* ((size (if (and (fixnum? size-hint) (fx> size-hint 0))
-                   (fx* (max size-hint 2) 4)
-                   16))
+    (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (cast HashTable::interface
                      (kons table 0 (fxquotient size 2) hash test seed))))
