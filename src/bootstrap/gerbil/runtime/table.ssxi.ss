@@ -32,6 +32,7 @@ package: gerbil/runtime
   (declare-type __raw-table-rehash! (@lambda 1 #f))
   (declare-type eq-hash (@lambda 1 #f))
   (declare-type eqv-hash (@lambda 1 #f))
+  (declare-type symbolic? (@lambda 1 #f))
   (declare-type symbolic-hash (@lambda 1 #f))
   (declare-type string-hash (@lambda 1 ##string=?-hash))
   (declare-type make-eq-table__% (@lambda 2 #f))

@@ -36,6 +36,7 @@ namespace: #f
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
          (%#define-runtime eq-hash eq-hash)
          (%#define-runtime eqv-hash eqv-hash)
+         (%#define-runtime symbolic? symbolic?)
          (%#define-runtime symbolic-hash symbolic-hash)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)

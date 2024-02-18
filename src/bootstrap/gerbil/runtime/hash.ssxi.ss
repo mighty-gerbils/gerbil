@@ -196,14 +196,14 @@ package: gerbil/runtime
            #t
            #t
            #f
-           ((clear! . _locked-hash-table::clear!102426_)
-            (update! . _locked-hash-table::update!102416_)
-            (for-each . _locked-hash-table::for-each102420_)
-            (ref . _locked-hash-table::ref102412_)
-            (delete! . _locked-hash-table::delete!102418_)
-            (set! . _locked-hash-table::set!102414_)
-            (length . _locked-hash-table::length102422_)
-            (copy . _locked-hash-table::copy102424_))))
+           ((clear! . _locked-hash-table::clear!102428_)
+            (for-each . _locked-hash-table::for-each102422_)
+            (update! . _locked-hash-table::update!102418_)
+            (delete! . _locked-hash-table::delete!102420_)
+            (ref . _locked-hash-table::ref102414_)
+            (copy . _locked-hash-table::copy102426_)
+            (length . _locked-hash-table::length102424_)
+            (set! . _locked-hash-table::set!102416_))))
   (declare-type locked-hash-table? (@predicate locked-hash-table::t))
   (declare-type make-locked-hash-table (@constructor locked-hash-table::t))
   (declare-type
@@ -230,6 +230,51 @@ package: gerbil/runtime
   (declare-type
    &locked-hash-table-lock-set!
    (@mutator locked-hash-table::t lock #f))
+  (declare-type
+   checked-hash-table::t
+   (@class gerbil/runtime/hash#checked-hash-table::t
+           ()
+           ()
+           (table key-check)
+           (table key-check)
+           #f
+           #t
+           #t
+           #f
+           ((update! . _checked-hash-table::update!102710_)
+            (for-each . _checked-hash-table::for-each102714_)
+            (clear! . _checked-hash-table::clear!102720_)
+            (length . _checked-hash-table::length102716_)
+            (copy . _checked-hash-table::copy102718_)
+            (set! . _checked-hash-table::set!102708_)
+            (delete! . _checked-hash-table::delete!102712_)
+            (ref . _checked-hash-table::ref102706_))))
+  (declare-type checked-hash-table? (@predicate checked-hash-table::t))
+  (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
+  (declare-type
+   checked-hash-table-table
+   (@accessor checked-hash-table::t table #t))
+  (declare-type
+   checked-hash-table-key-check
+   (@accessor checked-hash-table::t key-check #t))
+  (declare-type
+   checked-hash-table-table-set!
+   (@mutator checked-hash-table::t table #t))
+  (declare-type
+   checked-hash-table-key-check-set!
+   (@mutator checked-hash-table::t key-check #t))
+  (declare-type
+   &checked-hash-table-table
+   (@accessor checked-hash-table::t table #f))
+  (declare-type
+   &checked-hash-table-key-check
+   (@accessor checked-hash-table::t key-check #f))
+  (declare-type
+   &checked-hash-table-table-set!
+   (@mutator checked-hash-table::t table #f))
+  (declare-type
+   &checked-hash-table-key-check-set!
+   (@mutator checked-hash-table::t key-check #f))
   (declare-type
    eq-hash-table::t
    (@class gerbil#eq-hash-table
@@ -306,29 +351,45 @@ package: gerbil/runtime
   (declare-type &HashTableLock-end-read! (@lambda 1 #f))
   (declare-type &HashTableLock-begin-write! (@lambda 1 #f))
   (declare-type &HashTableLock-end-write! (@lambda 1 #f))
-  (declare-type _locked-hash-table::ref102412_ (@lambda 3 #f))
+  (declare-type _locked-hash-table::ref102414_ (@lambda 3 #f))
   (declare-type locked-hash-table::ref::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::set!102414_ (@lambda 3 #f))
+  (declare-type _locked-hash-table::set!102416_ (@lambda 3 #f))
   (declare-type locked-hash-table::set!::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::update!102416_ (@lambda 4 #f))
+  (declare-type _locked-hash-table::update!102418_ (@lambda 4 #f))
   (declare-type locked-hash-table::update!::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::delete!102418_ (@lambda 2 #f))
+  (declare-type _locked-hash-table::delete!102420_ (@lambda 2 #f))
   (declare-type locked-hash-table::delete!::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::for-each102420_ (@lambda 2 #f))
+  (declare-type _locked-hash-table::for-each102422_ (@lambda 2 #f))
   (declare-type locked-hash-table::for-each::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::length102422_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::length102424_ (@lambda 1 #f))
   (declare-type locked-hash-table::length::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::copy102424_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::copy102426_ (@lambda 1 #f))
   (declare-type locked-hash-table::copy::specialize (@lambda 1 #f))
-  (declare-type _locked-hash-table::clear!102426_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::clear!102428_ (@lambda 1 #f))
   (declare-type locked-hash-table::clear!::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::ref102706_ (@lambda 3 #f))
+  (declare-type checked-hash-table::ref::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::set!102708_ (@lambda 3 #f))
+  (declare-type checked-hash-table::set!::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::update!102710_ (@lambda 4 #f))
+  (declare-type checked-hash-table::update!::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::delete!102712_ (@lambda 2 #f))
+  (declare-type checked-hash-table::delete!::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::for-each102714_ (@lambda 2 #f))
+  (declare-type checked-hash-table::for-each::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::length102716_ (@lambda 1 #f))
+  (declare-type checked-hash-table::length::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::copy102718_ (@lambda 1 #f))
+  (declare-type checked-hash-table::copy::specialize (@lambda 1 #f))
+  (declare-type _checked-hash-table::clear!102720_ (@lambda 1 #f))
+  (declare-type checked-hash-table::clear!::specialize (@lambda 1 #f))
   (declare-type make-generic-hash-table (@lambda 6 #f))
-  (declare-type make-hash-table__% (@lambda 8 #f))
+  (declare-type make-hash-table__% (@lambda 9 #f))
   (declare-type make-hash-table__@ (@lambda (1) #f))
   (declare-type
    make-hash-table
    (@kw-lambda
-    (weak-values: lock: test: weak-keys: hash: seed: size:)
+    (weak-values: test: hash: size: seed: weak-keys: check: lock:)
     make-hash-table__@))
   (declare-type make-hash-table-eq (@lambda (0) #f))
   (declare-type make-hash-table-eqv (@lambda (0) #f))
