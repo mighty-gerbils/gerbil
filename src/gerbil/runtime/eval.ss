@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "util" "mop" "error" "syntax")
+(import "gambit" "util" "mop" "error" "hash" "syntax")
 
 (defstruct __context (t ns super table))
 (defstruct __runtime (id))

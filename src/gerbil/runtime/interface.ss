@@ -33,9 +33,9 @@ namespace: #f
 (defstruct interface-descriptor (type methods) final: #t)
 
 ;; prototype table
-(def (hash-key key)
+(def (__interface-hash-key key)
   (##fxxor (__symbolic-hash (##car key)) (__symbolic-hash (##cdr key))))
-(def (test-key a b)
+(def (__interface-test-key a b)
   (and (##eq? (##car a) (##car b))
        (##eq? (##cdr a) (##cdr b))))
 
@@ -44,7 +44,7 @@ namespace: #f
   prototype-table-set! __prototype-table-set!
   prototype-table-update! __prototype-table-update!
   prototype-trable-delete!
-  hash-key test-key)
+  __interface-hash-key __interface-test-key)
 
 (def __interface-prototypes-mx (make-mutex 'interface-prototype))
 (def __interface-prototypes (make-prototype-table #f 0))
