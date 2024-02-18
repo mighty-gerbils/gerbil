@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/syntax::timestamp 1708271949)
+  (define gerbil/runtime/syntax::timestamp 1708280332)
   (begin
     (declare (not safe))
     (define SyntaxError::t
@@ -13,8 +13,8 @@
        '#f))
     (define SyntaxError? (make-class-predicate SyntaxError::t))
     (define make-SyntaxError
-      (lambda _$args114459_
-        (apply make-instance SyntaxError::t _$args114459_)))
+      (lambda _$args114487_
+        (apply make-instance SyntaxError::t _$args114487_)))
     (define SyntaxError-message
       (make-class-slot-accessor SyntaxError::t 'message))
     (define SyntaxError-irritants
@@ -60,107 +60,107 @@
     (define &SyntaxError-marks-set!
       (make-class-slot-unchecked-mutator SyntaxError::t 'marks))
     (define SyntaxError::display-exception
-      (lambda (_self114362_ _port114363_)
-        (letrec ((_location114365_
+      (lambda (_self114390_ _port114391_)
+        (letrec ((_location114393_
                   (lambda ()
-                    (let _lp114419_ ((_rest114421_
+                    (let _lp114447_ ((_rest114449_
                                       (##unchecked-structure-ref
-                                       _self114362_
+                                       _self114390_
                                        '2
                                        SyntaxError::t
                                        '#f)))
-                      (let* ((_rest114422114430_ _rest114421_)
-                             (_else114424114438_ (lambda () '#f))
-                             (_K114426114447_
-                              (lambda (_rest114441_ _hd114442_)
-                                (let ((_$e114444_ (__AST-source _hd114442_)))
-                                  (if _$e114444_
-                                      _$e114444_
-                                      (_lp114419_ _rest114441_))))))
-                        (if (##pair? _rest114422114430_)
-                            (let ((_hd114427114450_ (##car _rest114422114430_))
-                                  (_tl114428114452_
-                                   (##cdr _rest114422114430_)))
-                              (let* ((_hd114455_ _hd114427114450_)
-                                     (_rest114457_ _tl114428114452_))
-                                (_K114426114447_ _rest114457_ _hd114455_)))
-                            (_else114424114438_)))))))
+                      (let* ((_rest114450114458_ _rest114449_)
+                             (_else114452114466_ (lambda () '#f))
+                             (_K114454114475_
+                              (lambda (_rest114469_ _hd114470_)
+                                (let ((_$e114472_ (__AST-source _hd114470_)))
+                                  (if _$e114472_
+                                      _$e114472_
+                                      (_lp114447_ _rest114469_))))))
+                        (if (##pair? _rest114450114458_)
+                            (let ((_hd114455114478_ (##car _rest114450114458_))
+                                  (_tl114456114480_
+                                   (##cdr _rest114450114458_)))
+                              (let* ((_hd114483_ _hd114455114478_)
+                                     (_rest114485_ _tl114456114480_))
+                                (_K114454114475_ _rest114485_ _hd114483_)))
+                            (_else114452114466_)))))))
           (call-with-parameters
            (lambda ()
              (newline)
              (display '"*** ERROR IN ")
-             (let ((_$e114368_ (_location114365_)))
-               (if _$e114368_
-                   ((lambda (_where114371_)
+             (let ((_$e114396_ (_location114393_)))
+               (if _$e114396_
+                   ((lambda (_where114399_)
                       (##display-locat
-                       _where114371_
+                       _where114399_
                        '#t
                        (current-output-port)))
-                    _$e114368_)
+                    _$e114396_)
                    (display '"?")))
              (newline)
              (display '"--- Syntax Error")
-             (let ((_$e114373_
+             (let ((_$e114401_
                     (##unchecked-structure-ref
-                     _self114362_
+                     _self114390_
                      '3
                      SyntaxError::t
                      '#f)))
-               (if _$e114373_
-                   ((lambda (_where114376_)
+               (if _$e114401_
+                   ((lambda (_where114404_)
                       (displayln
                        '" at "
-                       _where114376_
+                       _where114404_
                        '": "
                        (##unchecked-structure-ref
-                        _self114362_
+                        _self114390_
                         '1
                         SyntaxError::t
                         '#f)))
-                    _$e114373_)
+                    _$e114401_)
                    (displayln
                     '": "
                     (##unchecked-structure-ref
-                     _self114362_
+                     _self114390_
                      '1
                      SyntaxError::t
                      '#f))))
-             (let* ((_g114377114385_
+             (let* ((_g114405114413_
                      (##unchecked-structure-ref
-                      _self114362_
+                      _self114390_
                       '2
                       SyntaxError::t
                       '#f))
-                    (_else114379114393_ (lambda () '#!void))
-                    (_K114381114406_
-                     (lambda (_rest114396_ _stx114397_)
+                    (_else114407114421_ (lambda () '#!void))
+                    (_K114409114434_
+                     (lambda (_rest114424_ _stx114425_)
                        (display '"... form:   ")
-                       (__pp-syntax _stx114397_)
+                       (__pp-syntax _stx114425_)
                        (for-each
-                        (lambda (_detail114399_)
+                        (lambda (_detail114427_)
                           (display '"... detail: ")
-                          (write (__AST->datum _detail114399_))
-                          (let ((_$e114401_ (__AST-source _detail114399_)))
-                            (if _$e114401_
-                                ((lambda (_loc114404_)
+                          (write (__AST->datum _detail114427_))
+                          (let ((_$e114429_ (__AST-source _detail114427_)))
+                            (if _$e114429_
+                                ((lambda (_loc114432_)
                                    (display '" at ")
                                    (##display-locat
-                                    _loc114404_
+                                    _loc114432_
                                     '#t
                                     (current-output-port)))
-                                 _$e114401_)
+                                 _$e114429_)
                                 '#!void))
                           (newline))
-                        _rest114396_))))
-               (if (##pair? _g114377114385_)
-                   (let ((_hd114382114409_ (##car _g114377114385_))
-                         (_tl114383114411_ (##cdr _g114377114385_)))
-                     (let* ((_stx114414_ _hd114382114409_)
-                            (_rest114416_ _tl114383114411_))
-                       (_K114381114406_ _rest114416_ _stx114414_)))
+                        _rest114424_))))
+               (if (##pair? _g114405114413_)
+                   (let ((_hd114410114437_ (##car _g114405114413_))
+                         (_tl114411114439_ (##cdr _g114405114413_)))
+                     (let* ((_stx114442_ _hd114410114437_)
+                            (_rest114444_ _tl114411114439_))
+                       (_K114409114434_ _rest114444_ _stx114442_)))
                    '#!void)))
            current-output-port
-           _port114363_))))
+           _port114391_))))
     (bind-method!
      SyntaxError::t
      'display-exception
@@ -168,62 +168,61 @@
      '#f)
     (seal-class! SyntaxError::t)
     (define make-syntax-error
-      (lambda (_message114233_
-               _irritants114234_
-               _where114235_
-               _context114236_
-               _marks114237_
-               _phi114238_)
-        (let ((__obj118621
+      (lambda (_message114261_
+               _irritants114262_
+               _where114263_
+               _context114264_
+               _marks114265_
+               _phi114266_)
+        (let ((__obj118649
                (##structure SyntaxError::t '#f '#f '#f '#f '#f '#f)))
           (##unchecked-structure-set!
-           __obj118621
-           _message114233_
+           __obj118649
+           _message114261_
            '1
            SyntaxError::t
            '#f)
           (##unchecked-structure-set!
-           __obj118621
-           _irritants114234_
+           __obj118649
+           _irritants114262_
            '2
            SyntaxError::t
            '#f)
           (##unchecked-structure-set!
-           __obj118621
-           _where114235_
+           __obj118649
+           _where114263_
            '3
            SyntaxError::t
            '#f)
           (##unchecked-structure-set!
-           __obj118621
-           _context114236_
+           __obj118649
+           _context114264_
            '4
            SyntaxError::t
            '#f)
           (##unchecked-structure-set!
-           __obj118621
-           _marks114237_
+           __obj118649
+           _marks114265_
            '6
            SyntaxError::t
            '#f)
           (##unchecked-structure-set!
-           __obj118621
-           _phi114238_
+           __obj118649
+           _phi114266_
            '5
            SyntaxError::t
            '#f)
-          __obj118621)))
+          __obj118649)))
     (define syntax-error? SyntaxError?)
     (define __raise-syntax-error
-      (lambda (_where114228_ _message114229_ _stx114230_ . _details114231_)
+      (lambda (_where114256_ _message114257_ _stx114258_ . _details114259_)
         (raise (make-syntax-error
-                _message114229_
-                (cons _stx114230_ _details114231_)
-                _where114228_
-                (__current-context)
+                _message114257_
+                (cons _stx114258_ _details114259_)
+                _where114256_
+                '#f
                 '#f
                 '#f))))
-    (define __current-context (make-parameter '#f))
     (define AST::t
       (make-class-type
        'gerbil#AST::t
@@ -234,7 +233,7 @@
        '#f))
     (define AST? (make-class-predicate AST::t))
     (define make-AST
-      (lambda _$args114225_ (apply make-instance AST::t _$args114225_)))
+      (lambda _$args114253_ (apply make-instance AST::t _$args114253_)))
     (define AST-e (make-class-slot-accessor AST::t 'e))
     (define AST-source (make-class-slot-accessor AST::t 'source))
     (define AST-e-set! (make-class-slot-mutator AST::t 'e))
@@ -245,172 +244,172 @@
     (define &AST-source-set!
       (make-class-slot-unchecked-mutator AST::t 'source))
     (define __AST-e
-      (lambda (_stx114223_)
-        (if (##structure-instance-of? _stx114223_ 'gerbil#AST::t)
-            (##unchecked-structure-ref _stx114223_ '1 AST::t '#f)
-            _stx114223_)))
+      (lambda (_stx114251_)
+        (if (##structure-instance-of? _stx114251_ 'gerbil#AST::t)
+            (##unchecked-structure-ref _stx114251_ '1 AST::t '#f)
+            _stx114251_)))
     (define __AST-source
-      (lambda (_stx114217_)
-        (let _lp114219_ ((_src114221_ _stx114217_))
-          (if (##structure-instance-of? _src114221_ 'gerbil#AST::t)
-              (_lp114219_
-               (##unchecked-structure-ref _src114221_ '2 AST::t '#f))
-              (if (##locat? _src114221_) _src114221_ '#f)))))
+      (lambda (_stx114245_)
+        (let _lp114247_ ((_src114249_ _stx114245_))
+          (if (##structure-instance-of? _src114249_ 'gerbil#AST::t)
+              (_lp114247_
+               (##unchecked-structure-ref _src114249_ '2 AST::t '#f))
+              (if (##locat? _src114249_) _src114249_ '#f)))))
     (define __AST
-      (lambda (_e114209_ _src-stx114210_)
-        (let ((_src114212_ (__AST-source _src-stx114210_)))
-          (if (or (##structure-instance-of? _e114209_ 'gerbil#AST::t)
-                  (not _src114212_))
-              _e114209_
-              (##structure AST::t _e114209_ _src114212_)))))
+      (lambda (_e114237_ _src-stx114238_)
+        (let ((_src114240_ (__AST-source _src-stx114238_)))
+          (if (or (##structure-instance-of? _e114237_ 'gerbil#AST::t)
+                  (not _src114240_))
+              _e114237_
+              (##structure AST::t _e114237_ _src114240_)))))
     (define __AST-eq?
-      (lambda (_stx114206_ _obj114207_)
-        (eq? (__AST-e _stx114206_) _obj114207_)))
-    (define __AST-pair? (lambda (_stx114204_) (pair? (__AST-e _stx114204_))))
-    (define __AST-null? (lambda (_stx114202_) (null? (__AST-e _stx114202_))))
+      (lambda (_stx114234_ _obj114235_)
+        (eq? (__AST-e _stx114234_) _obj114235_)))
+    (define __AST-pair? (lambda (_stx114232_) (pair? (__AST-e _stx114232_))))
+    (define __AST-null? (lambda (_stx114230_) (null? (__AST-e _stx114230_))))
     (define __AST-datum?
-      (lambda (_stx114183_)
-        (let* ((_e114185_ (__AST-e _stx114183_))
-               (_$e114187_ (number? _e114185_)))
-          (if _$e114187_
-              _$e114187_
-              (let ((_$e114190_ (string? _e114185_)))
-                (if _$e114190_
-                    _$e114190_
-                    (let ((_$e114193_ (char? _e114185_)))
-                      (if _$e114193_
-                          _$e114193_
-                          (let ((_$e114196_ (keyword? _e114185_)))
-                            (if _$e114196_
-                                _$e114196_
-                                (let ((_$e114199_ (boolean? _e114185_)))
-                                  (if _$e114199_
-                                      _$e114199_
-                                      (eq? _e114185_ '#!void)))))))))))))
-    (define __AST-id? (lambda (_stx114181_) (symbol? (__AST-e _stx114181_))))
+      (lambda (_stx114211_)
+        (let* ((_e114213_ (__AST-e _stx114211_))
+               (_$e114215_ (number? _e114213_)))
+          (if _$e114215_
+              _$e114215_
+              (let ((_$e114218_ (string? _e114213_)))
+                (if _$e114218_
+                    _$e114218_
+                    (let ((_$e114221_ (char? _e114213_)))
+                      (if _$e114221_
+                          _$e114221_
+                          (let ((_$e114224_ (keyword? _e114213_)))
+                            (if _$e114224_
+                                _$e114224_
+                                (let ((_$e114227_ (boolean? _e114213_)))
+                                  (if _$e114227_
+                                      _$e114227_
+                                      (eq? _e114213_ '#!void)))))))))))))
+    (define __AST-id? (lambda (_stx114209_) (symbol? (__AST-e _stx114209_))))
     (define __AST-id-list?__%
-      (lambda (_stx114132_ _tail?114133_)
-        (let _lp114135_ ((_rest114137_ _stx114132_))
-          (let* ((_$e114139_ _rest114137_)
-                 (_$E114141114154_
+      (lambda (_stx114160_ _tail?114161_)
+        (let _lp114163_ ((_rest114165_ _stx114160_))
+          (let* ((_$e114167_ _rest114165_)
+                 (_$E114169114182_
                   (lambda ()
-                    (let* ((_$E114142114149_
+                    (let* ((_$E114170114177_
                             (lambda ()
                               (__raise-syntax-error
                                '#f
                                '"Bad syntax; malformed ast clause"
-                               _$e114139_)))
-                           (_rest114152_ _$e114139_))
-                      (_tail?114133_ _rest114152_)))))
-            (if (__AST-pair? _$e114139_)
-                (let* ((_$tgt114143114157_ (__AST-e _$e114139_))
-                       (_$hd114144114160_ (##car _$tgt114143114157_))
-                       (_$tl114145114163_ (##cdr _$tgt114143114157_)))
-                  (let* ((_hd114167_ _$hd114144114160_)
-                         (_rest114169_ _$tl114145114163_))
-                    (if (__AST-id? _hd114167_) (_lp114135_ _rest114169_) '#f)))
-                (_$E114141114154_))))))
+                               _$e114167_)))
+                           (_rest114180_ _$e114167_))
+                      (_tail?114161_ _rest114180_)))))
+            (if (__AST-pair? _$e114167_)
+                (let* ((_$tgt114171114185_ (__AST-e _$e114167_))
+                       (_$hd114172114188_ (##car _$tgt114171114185_))
+                       (_$tl114173114191_ (##cdr _$tgt114171114185_)))
+                  (let* ((_hd114195_ _$hd114172114188_)
+                         (_rest114197_ _$tl114173114191_))
+                    (if (__AST-id? _hd114195_) (_lp114163_ _rest114197_) '#f)))
+                (_$E114169114182_))))))
     (define __AST-id-list?__0
-      (lambda (_stx114174_)
-        (let ((_tail?114176_ __AST-null?))
-          (__AST-id-list?__% _stx114174_ _tail?114176_))))
+      (lambda (_stx114202_)
+        (let ((_tail?114204_ __AST-null?))
+          (__AST-id-list?__% _stx114202_ _tail?114204_))))
     (define __AST-id-list?
-      (lambda _g118624_
-        (let ((_g118623_ (##length _g118624_)))
-          (cond ((##fx= _g118623_ 1)
-                 (apply (lambda (_stx114174_) (__AST-id-list?__0 _stx114174_))
-                        _g118624_))
-                ((##fx= _g118623_ 2)
-                 (apply (lambda (_stx114178_ _tail?114179_)
-                          (__AST-id-list?__% _stx114178_ _tail?114179_))
-                        _g118624_))
+      (lambda _g118652_
+        (let ((_g118651_ (##length _g118652_)))
+          (cond ((##fx= _g118651_ 1)
+                 (apply (lambda (_stx114202_) (__AST-id-list?__0 _stx114202_))
+                        _g118652_))
+                ((##fx= _g118651_ 2)
+                 (apply (lambda (_stx114206_ _tail?114207_)
+                          (__AST-id-list?__% _stx114206_ _tail?114207_))
+                        _g118652_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __AST-id-list?
-                  _g118624_))))))
+                  _g118652_))))))
     (define __AST-bind-list?
-      (lambda (_stx114124_)
+      (lambda (_stx114152_)
         (__AST-id-list?__%
-         _stx114124_
-         (lambda (_e114126_)
-           (let ((_$e114128_ (__AST-null? _e114126_)))
-             (if _$e114128_ _$e114128_ (__AST-id? _e114126_)))))))
+         _stx114152_
+         (lambda (_e114154_)
+           (let ((_$e114156_ (__AST-null? _e114154_)))
+             (if _$e114156_ _$e114156_ (__AST-id? _e114154_)))))))
     (define __AST-list?__%
-      (lambda (_stx114077_ _tail?114078_)
-        (let _lp114080_ ((_rest114082_ _stx114077_))
-          (let* ((_$e114084_ _rest114082_)
-                 (_$E114086114099_
+      (lambda (_stx114105_ _tail?114106_)
+        (let _lp114108_ ((_rest114110_ _stx114105_))
+          (let* ((_$e114112_ _rest114110_)
+                 (_$E114114114127_
                   (lambda ()
-                    (let* ((_$E114087114094_
+                    (let* ((_$E114115114122_
                             (lambda ()
                               (__raise-syntax-error
                                '#f
                                '"Bad syntax; malformed ast clause"
-                               _$e114084_)))
-                           (_rest114097_ _$e114084_))
-                      (_tail?114078_ _rest114097_)))))
-            (if (__AST-pair? _$e114084_)
-                (let* ((_$tgt114088114102_ (__AST-e _$e114084_))
-                       (_$hd114089114105_ (##car _$tgt114088114102_))
-                       (_$tl114090114108_ (##cdr _$tgt114088114102_)))
-                  (let ((_rest114112_ _$tl114090114108_))
-                    (_lp114080_ _rest114112_)))
-                (_$E114086114099_))))))
+                               _$e114112_)))
+                           (_rest114125_ _$e114112_))
+                      (_tail?114106_ _rest114125_)))))
+            (if (__AST-pair? _$e114112_)
+                (let* ((_$tgt114116114130_ (__AST-e _$e114112_))
+                       (_$hd114117114133_ (##car _$tgt114116114130_))
+                       (_$tl114118114136_ (##cdr _$tgt114116114130_)))
+                  (let ((_rest114140_ _$tl114118114136_))
+                    (_lp114108_ _rest114140_)))
+                (_$E114114114127_))))))
     (define __AST-list?__0
-      (lambda (_stx114117_)
-        (let ((_tail?114119_ __AST-null?))
-          (__AST-list?__% _stx114117_ _tail?114119_))))
+      (lambda (_stx114145_)
+        (let ((_tail?114147_ __AST-null?))
+          (__AST-list?__% _stx114145_ _tail?114147_))))
     (define __AST-list?
-      (lambda _g118626_
-        (let ((_g118625_ (##length _g118626_)))
-          (cond ((##fx= _g118625_ 1)
-                 (apply (lambda (_stx114117_) (__AST-list?__0 _stx114117_))
-                        _g118626_))
-                ((##fx= _g118625_ 2)
-                 (apply (lambda (_stx114121_ _tail?114122_)
-                          (__AST-list?__% _stx114121_ _tail?114122_))
-                        _g118626_))
+      (lambda _g118654_
+        (let ((_g118653_ (##length _g118654_)))
+          (cond ((##fx= _g118653_ 1)
+                 (apply (lambda (_stx114145_) (__AST-list?__0 _stx114145_))
+                        _g118654_))
+                ((##fx= _g118653_ 2)
+                 (apply (lambda (_stx114149_ _tail?114150_)
+                          (__AST-list?__% _stx114149_ _tail?114150_))
+                        _g118654_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   __AST-list?
-                  _g118626_))))))
+                  _g118654_))))))
     (define __AST->list
-      (lambda (_stx114042_)
-        (let* ((_$e114044_ _stx114042_)
-               (_$E114046114059_
+      (lambda (_stx114070_)
+        (let* ((_$e114072_ _stx114070_)
+               (_$E114074114087_
                 (lambda ()
-                  (let* ((_$E114047114054_
+                  (let* ((_$E114075114082_
                           (lambda ()
                             (__raise-syntax-error
                              '#f
                              '"Bad syntax; malformed ast clause"
-                             _$e114044_)))
-                         (_rest114057_ _$e114044_))
-                    (__AST-e _rest114057_)))))
-          (if (__AST-pair? _$e114044_)
-              (let* ((_$tgt114048114062_ (__AST-e _$e114044_))
-                     (_$hd114049114065_ (##car _$tgt114048114062_))
-                     (_$tl114050114068_ (##cdr _$tgt114048114062_)))
-                (let* ((_hd114072_ _$hd114049114065_)
-                       (_rest114074_ _$tl114050114068_))
-                  (cons _hd114072_ (__AST->list _rest114074_))))
-              (_$E114046114059_)))))
+                             _$e114072_)))
+                         (_rest114085_ _$e114072_))
+                    (__AST-e _rest114085_)))))
+          (if (__AST-pair? _$e114072_)
+              (let* ((_$tgt114076114090_ (__AST-e _$e114072_))
+                     (_$hd114077114093_ (##car _$tgt114076114090_))
+                     (_$tl114078114096_ (##cdr _$tgt114076114090_)))
+                (let* ((_hd114100_ _$hd114077114093_)
+                       (_rest114102_ _$tl114078114096_))
+                  (cons _hd114100_ (__AST->list _rest114102_))))
+              (_$E114074114087_)))))
     (define __AST->datum
-      (lambda (_stx114040_)
-        (if (##structure-instance-of? _stx114040_ 'gerbil#AST::t)
-            (__AST->datum (__AST-e _stx114040_))
-            (if (pair? _stx114040_)
-                (cons (__AST->datum (car _stx114040_))
-                      (__AST->datum (cdr _stx114040_)))
-                (if (vector? _stx114040_)
-                    (vector-map __AST->datum _stx114040_)
-                    (if (box? _stx114040_)
-                        (box (__AST->datum (unbox _stx114040_)))
-                        _stx114040_))))))
+      (lambda (_stx114068_)
+        (if (##structure-instance-of? _stx114068_ 'gerbil#AST::t)
+            (__AST->datum (__AST-e _stx114068_))
+            (if (pair? _stx114068_)
+                (cons (__AST->datum (car _stx114068_))
+                      (__AST->datum (cdr _stx114068_)))
+                (if (vector? _stx114068_)
+                    (vector-map __AST->datum _stx114068_)
+                    (if (box? _stx114068_)
+                        (box (__AST->datum (unbox _stx114068_)))
+                        _stx114068_))))))
     (define get-readenv
-      (lambda (_port114038_)
+      (lambda (_port114066_)
         (##make-readenv
-         _port114038_
+         _port114066_
          (current-readtable)
          __wrap-syntax
          __unwrap-syntax
@@ -418,86 +417,86 @@
          '()
          '#f)))
     (define read-syntax__%
-      (lambda (_in114026_)
-        (let ((_e114028_ (##read-datum-or-eof (get-readenv _in114026_))))
-          (if (eof-object? (__AST-e _e114028_))
-              (__AST-e _e114028_)
-              _e114028_))))
+      (lambda (_in114054_)
+        (let ((_e114056_ (##read-datum-or-eof (get-readenv _in114054_))))
+          (if (eof-object? (__AST-e _e114056_))
+              (__AST-e _e114056_)
+              _e114056_))))
     (define read-syntax__0
       (lambda ()
-        (let ((_in114034_ (current-input-port))) (read-syntax__% _in114034_))))
+        (let ((_in114062_ (current-input-port))) (read-syntax__% _in114062_))))
     (define read-syntax
-      (lambda _g118628_
-        (let ((_g118627_ (##length _g118628_)))
-          (cond ((##fx= _g118627_ 0)
-                 (apply (lambda () (read-syntax__0)) _g118628_))
-                ((##fx= _g118627_ 1)
-                 (apply (lambda (_in114036_) (read-syntax__% _in114036_))
-                        _g118628_))
+      (lambda _g118656_
+        (let ((_g118655_ (##length _g118656_)))
+          (cond ((##fx= _g118655_ 0)
+                 (apply (lambda () (read-syntax__0)) _g118656_))
+                ((##fx= _g118655_ 1)
+                 (apply (lambda (_in114064_) (read-syntax__% _in114064_))
+                        _g118656_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   read-syntax
-                  _g118628_))))))
+                  _g118656_))))))
     (define read-syntax-from-file
-      (lambda (_path114021_)
-        (let ((_r114023_
+      (lambda (_path114049_)
+        (let ((_r114051_
                (##read-all-as-a-begin-expr-from-path
-                (path-normalize _path114021_)
+                (path-normalize _path114049_)
                 (current-readtable)
                 __wrap-syntax
                 __unwrap-syntax)))
-          (if (vector? _r114023_)
-              (cdr (__AST-e (vector-ref _r114023_ '1)))
-              (error (err-code->string _r114023_) _path114021_)))))
+          (if (vector? _r114051_)
+              (cdr (__AST-e (vector-ref _r114051_ '1)))
+              (error (err-code->string _r114051_) _path114049_)))))
     (define __wrap-syntax
-      (lambda (_re114018_ _e114019_)
-        (if (eof-object? _e114019_)
-            _e114019_
-            (##structure AST::t _e114019_ (##readenv->locat _re114018_)))))
+      (lambda (_re114046_ _e114047_)
+        (if (eof-object? _e114047_)
+            _e114047_
+            (##structure AST::t _e114047_ (##readenv->locat _re114046_)))))
     (define __unwrap-syntax
-      (lambda (_re114015_ _e114016_) (__AST-e _e114016_)))
-    (define __pp-syntax (lambda (_stx114013_) (pp (__AST->datum _stx114013_))))
+      (lambda (_re114043_ _e114044_) (__AST-e _e114044_)))
+    (define __pp-syntax (lambda (_stx114041_) (pp (__AST->datum _stx114041_))))
     (define __make-readtable
       (lambda ()
-        (let ((_rt114011_ (##make-standard-readtable)))
-          (macro-readtable-write-extended-read-macros?-set! _rt114011_ '#t)
-          (macro-readtable-bracket-handler-set! _rt114011_ '@list)
-          (macro-readtable-brace-handler-set! _rt114011_ '@method)
+        (let ((_rt114039_ (##make-standard-readtable)))
+          (macro-readtable-write-extended-read-macros?-set! _rt114039_ '#t)
+          (macro-readtable-bracket-handler-set! _rt114039_ '@list)
+          (macro-readtable-brace-handler-set! _rt114039_ '@method)
           (##readtable-char-sharp-handler-set!
-           _rt114011_
+           _rt114039_
            '#\!
            __read-sharp-bang)
-          _rt114011_)))
+          _rt114039_)))
     (define __readtable-bracket-keyword-set!
-      (lambda (_rt114007_ _kw114008_)
-        (macro-readtable-bracket-handler-set! _rt114007_ _kw114008_)))
+      (lambda (_rt114035_ _kw114036_)
+        (macro-readtable-bracket-handler-set! _rt114035_ _kw114036_)))
     (define __readtable-brace-keyword-set!
-      (lambda (_rt114004_ _kw114005_)
-        (macro-readtable-brace-handler-set! _rt114004_ _kw114005_)))
+      (lambda (_rt114032_ _kw114033_)
+        (macro-readtable-brace-handler-set! _rt114032_ _kw114033_)))
     (define __read-sharp-bang
-      (lambda (_re113995_ _next113996_ _start-pos113997_)
-        (if (eq? _start-pos113997_ '0)
-            (let* ((_line113999_
+      (lambda (_re114023_ _next114024_ _start-pos114025_)
+        (if (eq? _start-pos114025_ '0)
+            (let* ((_line114027_
                     (##read-line
-                     (macro-readenv-port _re113995_)
+                     (macro-readenv-port _re114023_)
                      '#\newline
                      '#f
                      ##max-fixnum))
-                   (_script-line114001_
-                    (substring _line113999_ '1 (string-length _line113999_))))
-              (macro-readenv-script-line-set! _re113995_ _script-line114001_)
+                   (_script-line114029_
+                    (substring _line114027_ '1 (string-length _line114027_))))
+              (macro-readenv-script-line-set! _re114023_ _script-line114029_)
               (##script-marker))
-            (##read-sharp-bang _re113995_ _next113996_ _start-pos113997_))))
+            (##read-sharp-bang _re114023_ _next114024_ _start-pos114025_))))
     (set! ##readtable-setup-for-language! void)
     (define __*readtable* (__make-readtable))
     (define source-location? ##locat?)
     (define source-location-path?
-      (lambda (_obj113993_)
-        (if (source-location? _obj113993_)
-            (string? (##locat-container _obj113993_))
+      (lambda (_obj114021_)
+        (if (source-location? _obj114021_)
+            (string? (##locat-container _obj114021_))
             '#f)))
     (define source-location-path
-      (lambda (_obj113991_)
-        (if (##locat? _obj113991_)
-            (##container->path (##locat-container _obj113991_))
+      (lambda (_obj114019_)
+        (if (##locat? _obj114019_)
+            (##container->path (##locat-container _obj114019_))
             '#f)))))

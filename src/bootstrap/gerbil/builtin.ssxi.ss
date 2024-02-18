@@ -531,7 +531,7 @@ package: gerbil
  (substring-fill! 4)
  (substring-move! 5)
  (current-error-port 0 1)
- (make-parameter 1 2)
+ (make-parameter 1 2 3)
  (current-exception-handler 0 1)
  (exit 0 1)
  (getenv 1 2)

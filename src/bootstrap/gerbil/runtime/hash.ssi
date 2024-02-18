@@ -198,50 +198,50 @@ namespace: #f
          (%#define-runtime &HashTableLock-end-write! &HashTableLock-end-write!)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#begin (%#define-runtime
-                   _locked-hash-table::ref102411_
-                   _locked-hash-table::ref102410_)
+                   _locked-hash-table::ref102413_
+                   _locked-hash-table::ref102412_)
                   (%#define-runtime
                    locked-hash-table::ref::specialize
                    locked-hash-table::ref::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::set!102413_
-                   _locked-hash-table::set!102412_)
+                   _locked-hash-table::set!102415_
+                   _locked-hash-table::set!102414_)
                   (%#define-runtime
                    locked-hash-table::set!::specialize
                    locked-hash-table::set!::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::update!102415_
-                   _locked-hash-table::update!102414_)
+                   _locked-hash-table::update!102417_
+                   _locked-hash-table::update!102416_)
                   (%#define-runtime
                    locked-hash-table::update!::specialize
                    locked-hash-table::update!::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::delete!102417_
-                   _locked-hash-table::delete!102416_)
+                   _locked-hash-table::delete!102419_
+                   _locked-hash-table::delete!102418_)
                   (%#define-runtime
                    locked-hash-table::delete!::specialize
                    locked-hash-table::delete!::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::for-each102419_
-                   _locked-hash-table::for-each102418_)
+                   _locked-hash-table::for-each102421_
+                   _locked-hash-table::for-each102420_)
                   (%#define-runtime
                    locked-hash-table::for-each::specialize
                    locked-hash-table::for-each::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::length102421_
-                   _locked-hash-table::length102420_)
+                   _locked-hash-table::length102423_
+                   _locked-hash-table::length102422_)
                   (%#define-runtime
                    locked-hash-table::length::specialize
                    locked-hash-table::length::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::copy102423_
-                   _locked-hash-table::copy102422_)
+                   _locked-hash-table::copy102425_
+                   _locked-hash-table::copy102424_)
                   (%#define-runtime
                    locked-hash-table::copy::specialize
                    locked-hash-table::copy::specialize))
          (%#begin (%#define-runtime
-                   _locked-hash-table::clear!102425_
-                   _locked-hash-table::clear!102424_)
+                   _locked-hash-table::clear!102427_
+                   _locked-hash-table::clear!102426_)
                   (%#define-runtime
                    locked-hash-table::clear!::specialize
                    locked-hash-table::clear!::specialize))

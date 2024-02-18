@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/table::timestamp 1708271947)
+  (define gerbil/runtime/table::timestamp 1708280331)
   (begin
     (declare (not safe))
     (define __table::t.id 'gerbil#__table::t)
@@ -13,77 +13,79 @@
        '#f
        '#(table 5 #f count 5 #f free 5 #f hash 5 #f test 5 #f seed 5 #f)))
     (define &raw-table-table
-      (lambda (_tab65214_)
-        (##unchecked-structure-ref _tab65214_ '1 __table::t 'raw-table-table)))
+      (lambda (_tab65216_)
+        (##unchecked-structure-ref _tab65216_ '1 __table::t 'raw-table-table)))
     (define &raw-table-count
-      (lambda (_tab65212_)
-        (##unchecked-structure-ref _tab65212_ '2 __table::t 'raw-table-count)))
+      (lambda (_tab65214_)
+        (##unchecked-structure-ref _tab65214_ '2 __table::t 'raw-table-count)))
     (define &raw-table-free
-      (lambda (_tab65210_)
-        (##unchecked-structure-ref _tab65210_ '3 __table::t 'raw-table-free)))
+      (lambda (_tab65212_)
+        (##unchecked-structure-ref _tab65212_ '3 __table::t 'raw-table-free)))
     (define &raw-table-hash
-      (lambda (_tab65208_)
-        (##unchecked-structure-ref _tab65208_ '4 __table::t 'raw-table-hash)))
+      (lambda (_tab65210_)
+        (##unchecked-structure-ref _tab65210_ '4 __table::t 'raw-table-hash)))
     (define &raw-table-test
-      (lambda (_tab65206_)
-        (##unchecked-structure-ref _tab65206_ '5 __table::t 'raw-table-test)))
+      (lambda (_tab65208_)
+        (##unchecked-structure-ref _tab65208_ '5 __table::t 'raw-table-test)))
     (define &raw-table-seed
-      (lambda (_tab65204_)
-        (##unchecked-structure-ref _tab65204_ '6 __table::t 'raw-table-seed)))
+      (lambda (_tab65206_)
+        (##unchecked-structure-ref _tab65206_ '6 __table::t 'raw-table-seed)))
     (define &raw-table-table-set!
-      (lambda (_tab65201_ _val65202_)
+      (lambda (_tab65203_ _val65204_)
         (##unchecked-structure-set!
-         _tab65201_
-         _val65202_
+         _tab65203_
+         _val65204_
          '1
          __table::t
          'raw-table-table-set!)))
     (define &raw-table-count-set!
-      (lambda (_tab65198_ _val65199_)
+      (lambda (_tab65200_ _val65201_)
         (##unchecked-structure-set!
-         _tab65198_
-         _val65199_
+         _tab65200_
+         _val65201_
          '2
          __table::t
          'raw-table-count-set!)))
     (define &raw-table-free-set!
-      (lambda (_tab65195_ _val65196_)
+      (lambda (_tab65197_ _val65198_)
         (##unchecked-structure-set!
-         _tab65195_
-         _val65196_
+         _tab65197_
+         _val65198_
          '3
          __table::t
          'raw-table-free-set!)))
     (define &raw-table-hash-set!
-      (lambda (_tab65192_ _val65193_)
+      (lambda (_tab65194_ _val65195_)
         (##unchecked-structure-set!
-         _tab65192_
-         _val65193_
+         _tab65194_
+         _val65195_
          '4
          __table::t
          'raw-table-hash-set!)))
     (define &raw-table-test-set!
-      (lambda (_tab65189_ _val65190_)
+      (lambda (_tab65191_ _val65192_)
         (##unchecked-structure-set!
-         _tab65189_
-         _val65190_
+         _tab65191_
+         _val65192_
          '5
          __table::t
          'raw-table-test-set!)))
     (define &raw-table-seed-set!
-      (lambda (_tab65186_ _val65187_)
+      (lambda (_tab65188_ _val65189_)
         (##unchecked-structure-set!
-         _tab65186_
-         _val65187_
+         _tab65188_
+         _val65189_
          '6
          __table::t
          'raw-table-seed-set!)))
+    (define raw-table-size-hint->size
+      (lambda (_size-hint65186_)
+        (if (and (fixnum? _size-hint65186_) (fx> _size-hint65186_ '0))
+            (fx* (fxmax '2 (expt '2 (integer-length _size-hint65186_))) '4)
+            '16)))
     (define make-raw-table__%
       (lambda (_size-hint65162_ _hash65163_ _test65164_ _seed65165_)
-        (let* ((_size65167_
-                (if (and (fixnum? _size-hint65162_) (fx> _size-hint65162_ '0))
-                    (fx* (max _size-hint65162_ '2) '4)
-                    '16))
+        (let* ((_size65167_ (raw-table-size-hint->size _size-hint65162_))
                (_table65169_ (make-vector _size65167_ (macro-unused-obj))))
           (##structure
            __table::t
@@ -102,16 +104,16 @@
            _test65177_
            _seed65179_))))
     (define make-raw-table
-      (lambda _g69283_
-        (let ((_g69282_ (##length _g69283_)))
-          (cond ((##fx= _g69282_ 3)
+      (lambda _g69285_
+        (let ((_g69284_ (##length _g69285_)))
+          (cond ((##fx= _g69284_ 3)
                  (apply (lambda (_size-hint65175_ _hash65176_ _test65177_)
                           (make-raw-table__0
                            _size-hint65175_
                            _hash65176_
                            _test65177_))
-                        _g69283_))
-                ((##fx= _g69282_ 4)
+                        _g69285_))
+                ((##fx= _g69284_ 4)
                  (apply (lambda (_size-hint65181_
                                  _hash65182_
                                  _test65183_
@@ -121,11 +123,11 @@
                            _hash65182_
                            _test65183_
                            _seed65184_))
-                        _g69283_))
+                        _g69285_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-raw-table
-                  _g69283_))))))
+                  _g69285_))))))
     (define raw-table-ref
       (lambda (_tab65117_ _key65118_ _default65119_)
         (let ((_table65121_ (&raw-table-table _tab65117_))
@@ -491,22 +493,22 @@
         (let ((_seed64907_ '0))
           (make-eq-table__% _size-hint64905_ _seed64907_))))
     (define make-eq-table
-      (lambda _g69285_
-        (let ((_g69284_ (##length _g69285_)))
-          (cond ((##fx= _g69284_ 0)
-                 (apply (lambda () (make-eq-table__0)) _g69285_))
-                ((##fx= _g69284_ 1)
+      (lambda _g69287_
+        (let ((_g69286_ (##length _g69287_)))
+          (cond ((##fx= _g69286_ 0)
+                 (apply (lambda () (make-eq-table__0)) _g69287_))
+                ((##fx= _g69286_ 1)
                  (apply (lambda (_size-hint64905_)
                           (make-eq-table__1 _size-hint64905_))
-                        _g69285_))
-                ((##fx= _g69284_ 2)
+                        _g69287_))
+                ((##fx= _g69286_ 2)
                  (apply (lambda (_size-hint64909_ _seed64910_)
                           (make-eq-table__% _size-hint64909_ _seed64910_))
-                        _g69285_))
+                        _g69287_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-eq-table
-                  _g69285_))))))
+                  _g69287_))))))
     (define eq-table-ref
       (lambda (_tab64850_ _key64851_ _default64852_)
         (let ((_table64854_ (&raw-table-table _tab64850_))
@@ -757,22 +759,22 @@
         (let ((_seed64704_ '0))
           (make-eqv-table__% _size-hint64702_ _seed64704_))))
     (define make-eqv-table
-      (lambda _g69287_
-        (let ((_g69286_ (##length _g69287_)))
-          (cond ((##fx= _g69286_ 0)
-                 (apply (lambda () (make-eqv-table__0)) _g69287_))
-                ((##fx= _g69286_ 1)
+      (lambda _g69289_
+        (let ((_g69288_ (##length _g69289_)))
+          (cond ((##fx= _g69288_ 0)
+                 (apply (lambda () (make-eqv-table__0)) _g69289_))
+                ((##fx= _g69288_ 1)
                  (apply (lambda (_size-hint64702_)
                           (make-eqv-table__1 _size-hint64702_))
-                        _g69287_))
-                ((##fx= _g69286_ 2)
+                        _g69289_))
+                ((##fx= _g69288_ 2)
                  (apply (lambda (_size-hint64706_ _seed64707_)
                           (make-eqv-table__% _size-hint64706_ _seed64707_))
-                        _g69287_))
+                        _g69289_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-eqv-table
-                  _g69287_))))))
+                  _g69289_))))))
     (define eqv-table-ref
       (lambda (_tab64647_ _key64648_ _default64649_)
         (let ((_table64651_ (&raw-table-table _tab64647_))
@@ -1023,24 +1025,24 @@
         (let ((_seed64501_ '0))
           (make-symbolic-table__% _size-hint64499_ _seed64501_))))
     (define make-symbolic-table
-      (lambda _g69289_
-        (let ((_g69288_ (##length _g69289_)))
-          (cond ((##fx= _g69288_ 0)
-                 (apply (lambda () (make-symbolic-table__0)) _g69289_))
-                ((##fx= _g69288_ 1)
+      (lambda _g69291_
+        (let ((_g69290_ (##length _g69291_)))
+          (cond ((##fx= _g69290_ 0)
+                 (apply (lambda () (make-symbolic-table__0)) _g69291_))
+                ((##fx= _g69290_ 1)
                  (apply (lambda (_size-hint64499_)
                           (make-symbolic-table__1 _size-hint64499_))
-                        _g69289_))
-                ((##fx= _g69288_ 2)
+                        _g69291_))
+                ((##fx= _g69290_ 2)
                  (apply (lambda (_size-hint64503_ _seed64504_)
                           (make-symbolic-table__%
                            _size-hint64503_
                            _seed64504_))
-                        _g69289_))
+                        _g69291_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-symbolic-table
-                  _g69289_))))))
+                  _g69291_))))))
     (define symbolic-table-ref
       (lambda (_tab64444_ _key64445_ _default64446_)
         (let ((_table64448_ (&raw-table-table _tab64444_))
@@ -1301,22 +1303,22 @@
         (let ((_seed64298_ '0))
           (make-string-table__% _size-hint64296_ _seed64298_))))
     (define make-string-table
-      (lambda _g69291_
-        (let ((_g69290_ (##length _g69291_)))
-          (cond ((##fx= _g69290_ 0)
-                 (apply (lambda () (make-string-table__0)) _g69291_))
-                ((##fx= _g69290_ 1)
+      (lambda _g69293_
+        (let ((_g69292_ (##length _g69293_)))
+          (cond ((##fx= _g69292_ 0)
+                 (apply (lambda () (make-string-table__0)) _g69293_))
+                ((##fx= _g69292_ 1)
                  (apply (lambda (_size-hint64296_)
                           (make-string-table__1 _size-hint64296_))
-                        _g69291_))
-                ((##fx= _g69290_ 2)
+                        _g69293_))
+                ((##fx= _g69292_ 2)
                  (apply (lambda (_size-hint64300_ _seed64301_)
                           (make-string-table__% _size-hint64300_ _seed64301_))
-                        _g69291_))
+                        _g69293_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-string-table
-                  _g69291_))))))
+                  _g69293_))))))
     (define string-table-ref
       (lambda (_tab64241_ _key64242_ _default64243_)
         (let ((_table64245_ (&raw-table-table _tab64241_))

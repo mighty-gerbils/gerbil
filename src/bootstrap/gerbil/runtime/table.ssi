@@ -18,6 +18,7 @@ namespace: #f
          (%#define-runtime &raw-table-hash-set! &raw-table-hash-set!)
          (%#define-runtime &raw-table-test-set! &raw-table-test-set!)
          (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
+         (%#define-runtime raw-table-size-hint->size raw-table-size-hint->size)
          (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
                   (%#begin (%#define-runtime
                             make-raw-table__0

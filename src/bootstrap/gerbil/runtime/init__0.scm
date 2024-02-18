@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1708271949)
+  (define gerbil/runtime/init::timestamp 1708280333)
   (begin
     (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
@@ -16,48 +16,47 @@
         (gx#current-expander-compile __compile-top)
         (gx#current-expander-eval ##eval)
         (gx#core-bind-root-syntax! ':<root> (gx#make-prelude-context '#f) '#t)
-        (__current-context __*top*)
         (__current-compiler __compile-top)
         (__current-expander gx#core-expand)
         (set! __eval-module gx#core-eval-module)))
     (define __load-gxi
       (lambda ()
-        (letrec* ((_+readtable+134934_ __*readtable*))
+        (letrec* ((_+readtable+134380_ __*readtable*))
           (let () (declare (not safe)) (__init-gx!))
-          (let* ((_core134936_ (gx#import-module ':gerbil/core))
-                 (_pre134938_ (gx#make-prelude-context _core134936_)))
-            (gx#current-expander-module-prelude _pre134938_)
-            (gx#core-bind-root-syntax! ':<core> _pre134938_ '#t)
+          (let* ((_core134382_ (gx#import-module ':gerbil/core))
+                 (_pre134384_ (gx#make-prelude-context _core134382_)))
+            (gx#current-expander-module-prelude _pre134384_)
+            (gx#core-bind-root-syntax! ':<core> _pre134384_ '#t)
             (gx#eval-syntax '(import :gerbil/core)))
           (gx#current-expander-compile __compile-top-source)
           (let () (declare (not safe)) (##expand-source-set! __expand-source))
           (let () (declare (not safe)) (##macro-descr-set! __macro-descr))
           (let () (declare (not safe)) (##main-readtable-set! __*readtable*))
           (for-each
-           (lambda (_port134941_)
-             (input-port-readtable-set! _port134941_ _+readtable+134934_))
+           (lambda (_port134387_)
+             (input-port-readtable-set! _port134387_ _+readtable+134380_))
            (list ##stdin-port ##console-port))
           (for-each
-           (lambda (_port134943_)
+           (lambda (_port134389_)
              (output-port-readtable-set!
-              _port134943_
+              _port134389_
               (readtable-sharing-allowed?-set
-               (output-port-readtable _port134943_)
+               (output-port-readtable _port134389_)
                '#t)))
            (list ##stdout-port ##console-port)))))
-    (define __gxi-init-interactive! (lambda (_cmdline134931_) '#!void))
+    (define __gxi-init-interactive! (lambda (_cmdline134377_) '#!void))
     (define load-scheme
-      (lambda (_path134926_)
-        (let ((__tmp139012
+      (lambda (_path134372_)
+        (let ((__tmp138458
                (lambda ()
-                 (let ((__tmp139013 (lambda _args134929_ '#f)))
+                 (let ((__tmp138459 (lambda _args134375_ '#f)))
                    (declare (not safe))
-                   (##load _path134926_ __tmp139013 '#t '#t '#f)))))
+                   (##load _path134372_ __tmp138459 '#t '#t '#f)))))
           (declare (not safe))
           (call-with-parameters
-           __tmp139012
+           __tmp138458
            __loading-scheme-source
-           _path134926_))))
+           _path134372_))))
     (define load-path
       (lambda ()
         (values (let () (declare (not safe)) (current-module-library-path))
@@ -68,444 +67,433 @@
     (define expander-load-path
       (lambda () (gx#current-expander-module-library-path)))
     (define add-load-path
-      (lambda _paths134921_
-        (apply add-library-load-path _paths134921_)
-        (apply add-expander-load-path _paths134921_)))
+      (lambda _paths134367_
+        (apply add-library-load-path _paths134367_)
+        (apply add-expander-load-path _paths134367_)))
     (define add-library-load-path
-      (lambda _paths134910_
-        (let* ((_current134912_ (current-module-library-path))
-               (_paths134914_ (map path-expand _paths134910_))
-               (_paths134918_
-                (let ((__tmp139014
-                       (lambda (_x134916_)
-                         (let ((__tmp139015
-                                (member _x134916_ _current134912_)))
+      (lambda _paths134356_
+        (let* ((_current134358_ (current-module-library-path))
+               (_paths134360_ (map path-expand _paths134356_))
+               (_paths134364_
+                (let ((__tmp138460
+                       (lambda (_x134362_)
+                         (let ((__tmp138461
+                                (member _x134362_ _current134358_)))
                            (declare (not safe))
-                           (not __tmp139015)))))
+                           (not __tmp138461)))))
                   (declare (not safe))
-                  (filter __tmp139014 _paths134914_))))
+                  (filter __tmp138460 _paths134360_))))
           (current-module-library-path
-           (append _current134912_ _paths134918_)))))
+           (append _current134358_ _paths134364_)))))
     (define add-expander-load-path
-      (lambda _paths134899_
-        (let* ((_current134901_ (gx#current-expander-module-library-path))
-               (_paths134903_ (map path-expand _paths134899_))
-               (_paths134907_
-                (let ((__tmp139016
-                       (lambda (_x134905_)
-                         (let ((__tmp139017
-                                (member _x134905_ _current134901_)))
+      (lambda _paths134345_
+        (let* ((_current134347_ (gx#current-expander-module-library-path))
+               (_paths134349_ (map path-expand _paths134345_))
+               (_paths134353_
+                (let ((__tmp138462
+                       (lambda (_x134351_)
+                         (let ((__tmp138463
+                                (member _x134351_ _current134347_)))
                            (declare (not safe))
-                           (not __tmp139017)))))
+                           (not __tmp138463)))))
                   (declare (not safe))
-                  (filter __tmp139016 _paths134903_))))
+                  (filter __tmp138462 _paths134349_))))
           (gx#current-expander-module-library-path
-           (append _current134901_ _paths134907_)))))
+           (append _current134347_ _paths134353_)))))
     (define cons-load-path
-      (lambda _paths134897_
-        (apply cons-library-load-path _paths134897_)
-        (apply cons-expander-load-path _paths134897_)))
+      (lambda _paths134343_
+        (apply cons-library-load-path _paths134343_)
+        (apply cons-expander-load-path _paths134343_)))
     (define cons-library-load-path
-      (lambda _paths134892_
-        (let ((_current134894_ (current-module-library-path))
-              (_paths134895_ (map path-expand _paths134892_)))
+      (lambda _paths134338_
+        (let ((_current134340_ (current-module-library-path))
+              (_paths134341_ (map path-expand _paths134338_)))
           (current-module-library-path
-           (append _paths134895_ _current134894_)))))
+           (append _paths134341_ _current134340_)))))
     (define cons-expander-load-path
-      (lambda _paths134887_
-        (let ((_current134889_ (gx#current-expander-module-library-path))
-              (_paths134890_ (map path-expand _paths134887_)))
+      (lambda _paths134333_
+        (let ((_current134335_ (gx#current-expander-module-library-path))
+              (_paths134336_ (map path-expand _paths134333_)))
           (gx#current-expander-module-library-path
-           (append _paths134890_ _current134889_)))))
+           (append _paths134336_ _current134335_)))))
     (define with-cons-load-path
-      (lambda (_thunk134883_ . _paths134884_)
+      (lambda (_thunk134329_ . _paths134330_)
         (apply with-cons-library-load-path
                (lambda ()
                  (apply with-cons-expander-load-path
-                        _thunk134883_
-                        _paths134884_))
-               _paths134884_)))
+                        _thunk134329_
+                        _paths134330_))
+               _paths134330_)))
     (define with-cons-library-load-path
-      (lambda (_thunk134876_ . _paths134877_)
-        (let ((_current134879_ (current-module-library-path))
-              (_paths134880_ (map path-expand _paths134877_)))
-          (let ((__tmp139019 (lambda () (_thunk134876_)))
-                (__tmp139018 (append _paths134880_ _current134879_)))
+      (lambda (_thunk134322_ . _paths134323_)
+        (let ((_current134325_ (current-module-library-path))
+              (_paths134326_ (map path-expand _paths134323_)))
+          (let ((__tmp138465 (lambda () (_thunk134322_)))
+                (__tmp138464 (append _paths134326_ _current134325_)))
             (declare (not safe))
             (call-with-parameters
-             __tmp139019
+             __tmp138465
              current-module-library-path
-             __tmp139018)))))
+             __tmp138464)))))
     (define with-cons-expander-load-path
-      (lambda (_thunk134869_ . _paths134870_)
-        (let ((_current134872_ (gx#current-expander-module-library-path))
-              (_paths134873_ (map path-expand _paths134870_)))
-          (let ((__tmp139021 (lambda () (_thunk134869_)))
-                (__tmp139020 (append _paths134873_ _current134872_)))
+      (lambda (_thunk134315_ . _paths134316_)
+        (let ((_current134318_ (gx#current-expander-module-library-path))
+              (_paths134319_ (map path-expand _paths134316_)))
+          (let ((__tmp138467 (lambda () (_thunk134315_)))
+                (__tmp138466 (append _paths134319_ _current134318_)))
             (declare (not safe))
             (call-with-parameters
-             __tmp139021
+             __tmp138467
              gx#current-expander-module-library-path
-             __tmp139020)))))
+             __tmp138466)))))
     (define __expand-source
-      (lambda (_src134855_)
-        (letrec ((_expand134857_
-                  (lambda (_src134867_)
-                    (let ((__tmp139022
+      (lambda (_src134301_)
+        (letrec ((_expand134303_
+                  (lambda (_src134313_)
+                    (let ((__tmp138468
                            (gx#core-expand
                             (let ()
                               (declare (not safe))
-                              (__source->syntax _src134867_)))))
+                              (__source->syntax _src134313_)))))
                       (declare (not safe))
-                      (__compile-top __tmp139022))))
-                 (_no-expand134858_
-                  (lambda (_src134863_)
+                      (__compile-top __tmp138468))))
+                 (_no-expand134304_
+                  (lambda (_src134309_)
                     (if (__loading-scheme-source)
-                        _src134863_
+                        _src134309_
                         (if (let ()
                               (declare (not safe))
-                              (##source? _src134863_))
-                            (let ((_code134865_
+                              (##source? _src134309_))
+                            (let ((_code134311_
                                    (let ()
                                      (declare (not safe))
-                                     (##source-code _src134863_))))
+                                     (##source-code _src134309_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (pair? _code134865_))
-                                  (if (let ((__tmp139023
+                                    (pair? _code134311_))
+                                  (if (let ((__tmp138469
                                              (let ()
                                                (declare (not safe))
-                                               (##car _code134865_))))
+                                               (##car _code134311_))))
                                         (declare (not safe))
-                                        (eq? '__noexpand: __tmp139023))
+                                        (eq? '__noexpand: __tmp138469))
                                       (let ()
                                         (declare (not safe))
-                                        (##cdr _code134865_))
+                                        (##cdr _code134311_))
                                       '#f)
                                   '#f))
                             '#f)))))
-          (let ((_$e134860_
+          (let ((_$e134306_
                  (let ()
                    (declare (not safe))
-                   (_no-expand134858_ _src134855_))))
-            (if _$e134860_
-                _$e134860_
-                (let () (declare (not safe)) (_expand134857_ _src134855_)))))))
+                   (_no-expand134304_ _src134301_))))
+            (if _$e134306_
+                _$e134306_
+                (let () (declare (not safe)) (_expand134303_ _src134301_)))))))
     (define __macro-descr
-      (lambda (_src134841_ _def-syntax?134842_)
-        (letrec ((_fail!134844_
+      (lambda (_src134287_ _def-syntax?134288_)
+        (letrec ((_fail!134290_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (##raise-expression-parsing-exception
                        'ill-formed-macro-transformer
-                       _src134841_))))
-                 (_make-descr134845_
-                  (lambda (_size134849_)
-                    (let ((_expander134852_
-                           (let ((__tmp139024
+                       _src134287_))))
+                 (_make-descr134291_
+                  (lambda (_size134295_)
+                    (let ((_expander134298_
+                           (let ((__tmp138470
                                   (lambda ()
                                     (let ()
                                       (declare (not safe))
                                       (##eval-top
-                                       _src134841_
+                                       _src134287_
                                        ##interaction-cte)))))
                              (declare (not safe))
                              (call-with-parameters
-                              __tmp139024
+                              __tmp138470
                               __loading-scheme-source
                               'macro))))
                       (if (let ()
                             (declare (not safe))
-                            (procedure? _expander134852_))
+                            (procedure? _expander134298_))
                           (let ()
                             (declare (not safe))
                             (##make-macro-descr
-                             _def-syntax?134842_
-                             _size134849_
-                             _expander134852_
-                             _src134841_))
-                          (let () (declare (not safe)) (_fail!134844_)))))))
-          (if _def-syntax?134842_
-              (let () (declare (not safe)) (_make-descr134845_ '-1))
-              (let ((_code134847_
+                             _def-syntax?134288_
+                             _size134295_
+                             _expander134298_
+                             _src134287_))
+                          (let () (declare (not safe)) (_fail!134290_)))))))
+          (if _def-syntax?134288_
+              (let () (declare (not safe)) (_make-descr134291_ '-1))
+              (let ((_code134293_
                      (let ()
                        (declare (not safe))
-                       (##source-code _src134841_))))
-                (if (and (let () (declare (not safe)) (##pair? _code134847_))
-                         (let ((__tmp139028
-                                (let ((__tmp139029
-                                       (let ((__tmp139030
+                       (##source-code _src134287_))))
+                (if (and (let () (declare (not safe)) (##pair? _code134293_))
+                         (let ((__tmp138474
+                                (let ((__tmp138475
+                                       (let ((__tmp138476
                                               (let ()
                                                 (declare (not safe))
-                                                (##car _code134847_))))
+                                                (##car _code134293_))))
                                          (declare (not safe))
                                          (##sourcify
-                                          __tmp139030
-                                          _src134841_))))
+                                          __tmp138476
+                                          _src134287_))))
                                   (declare (not safe))
-                                  (##source-code __tmp139029))))
+                                  (##source-code __tmp138475))))
                            (declare (not safe))
-                           (##memq __tmp139028 '(##lambda lambda))))
+                           (##memq __tmp138474 '(##lambda lambda))))
                     (begin
                       (let ()
                         (declare (not safe))
-                        (##shape _src134841_ _src134841_ '-3))
-                      (let ((__tmp139025
-                             (let ((__tmp139026
-                                    (let ((__tmp139027
+                        (##shape _src134287_ _src134287_ '-3))
+                      (let ((__tmp138471
+                             (let ((__tmp138472
+                                    (let ((__tmp138473
                                            (let ()
                                              (declare (not safe))
-                                             (##cadr _code134847_))))
+                                             (##cadr _code134293_))))
                                       (declare (not safe))
-                                      (##sourcify __tmp139027 _src134841_))))
+                                      (##sourcify __tmp138473 _src134287_))))
                                (declare (not safe))
-                               (##form-size __tmp139026))))
+                               (##form-size __tmp138472))))
                         (declare (not safe))
-                        (_make-descr134845_ __tmp139025)))
-                    (let () (declare (not safe)) (_fail!134844_))))))))
+                        (_make-descr134291_ __tmp138471)))
+                    (let () (declare (not safe)) (_fail!134290_))))))))
     (define __source->syntax
-      (lambda (_src134835_)
-        (let _recur134837_ ((_e134839_ _src134835_))
-          (if (let () (declare (not safe)) (##source? _e134839_))
-              (let ((__tmp139038
-                     (let ((__tmp139039
+      (lambda (_src134281_)
+        (let _recur134283_ ((_e134285_ _src134281_))
+          (if (let () (declare (not safe)) (##source? _e134285_))
+              (let ((__tmp138484
+                     (let ((__tmp138485
                             (let ()
                               (declare (not safe))
-                              (##source-code _e134839_))))
+                              (##source-code _e134285_))))
                        (declare (not safe))
-                       (_recur134837_ __tmp139039)))
-                    (__tmp139037
-                     (let () (declare (not safe)) (##source-locat _e134839_))))
+                       (_recur134283_ __tmp138485)))
+                    (__tmp138483
+                     (let () (declare (not safe)) (##source-locat _e134285_))))
                 (declare (not safe))
-                (##structure AST::t __tmp139038 __tmp139037))
-              (if (let () (declare (not safe)) (pair? _e134839_))
-                  (let ((__tmp139035
-                         (let ((__tmp139036
+                (##structure AST::t __tmp138484 __tmp138483))
+              (if (let () (declare (not safe)) (pair? _e134285_))
+                  (let ((__tmp138481
+                         (let ((__tmp138482
                                 (let ()
                                   (declare (not safe))
-                                  (##car _e134839_))))
+                                  (##car _e134285_))))
                            (declare (not safe))
-                           (_recur134837_ __tmp139036)))
-                        (__tmp139033
-                         (let ((__tmp139034
+                           (_recur134283_ __tmp138482)))
+                        (__tmp138479
+                         (let ((__tmp138480
                                 (let ()
                                   (declare (not safe))
-                                  (##cdr _e134839_))))
+                                  (##cdr _e134285_))))
                            (declare (not safe))
-                           (_recur134837_ __tmp139034))))
+                           (_recur134283_ __tmp138480))))
                     (declare (not safe))
-                    (cons __tmp139035 __tmp139033))
-                  (if (let () (declare (not safe)) (vector? _e134839_))
-                      (vector-map _recur134837_ _e134839_)
-                      (if (let () (declare (not safe)) (box? _e134839_))
-                          (let ((__tmp139031
-                                 (let ((__tmp139032 (unbox _e134839_)))
+                    (cons __tmp138481 __tmp138479))
+                  (if (let () (declare (not safe)) (vector? _e134285_))
+                      (vector-map _recur134283_ _e134285_)
+                      (if (let () (declare (not safe)) (box? _e134285_))
+                          (let ((__tmp138477
+                                 (let ((__tmp138478 (unbox _e134285_)))
                                    (declare (not safe))
-                                   (_recur134837_ __tmp139032))))
+                                   (_recur134283_ __tmp138478))))
                             (declare (not safe))
-                            (box __tmp139031))
-                          _e134839_)))))))
+                            (box __tmp138477))
+                          _e134285_)))))))
     (define __compile-top-source
-      (lambda (_stx134833_)
-        (let ((__tmp139040
-               (let () (declare (not safe)) (__compile-top _stx134833_))))
+      (lambda (_stx134279_)
+        (let ((__tmp138486
+               (let () (declare (not safe)) (__compile-top _stx134279_))))
           (declare (not safe))
-          (cons '__noexpand: __tmp139040))))
+          (cons '__noexpand: __tmp138486))))
     (define __compile-top
-      (lambda (_stx134831_)
-        (let ((__tmp139041 (gx#core-compile-top-syntax _stx134831_)))
+      (lambda (_stx134277_)
+        (let ((__tmp138487 (gx#core-compile-top-syntax _stx134277_)))
           (declare (not safe))
-          (__compile __tmp139041))))
+          (__compile __tmp138487))))
     (define __eval-import
-      (lambda (_in134812_)
-        (letrec* ((_mods134814_
+      (lambda (_in134258_)
+        (letrec* ((_mods134260_
                    (let () (declare (not safe)) (make-hash-table-eq)))
-                  (_import1134815_
-                   (lambda (_in134822_ _phi134823_)
-                     (if (gx#module-import? _in134822_)
-                         (let ((_iphi134825_
-                                (fx+ _phi134823_
-                                     (gx#module-import-phi _in134822_))))
+                  (_import1134261_
+                   (lambda (_in134268_ _phi134269_)
+                     (if (gx#module-import? _in134268_)
+                         (let ((_iphi134271_
+                                (fx+ _phi134269_
+                                     (gx#module-import-phi _in134268_))))
                            (if (let ()
                                  (declare (not safe))
-                                 (fxzero? _iphi134825_))
-                               (let ((__tmp139043
+                                 (fxzero? _iphi134271_))
+                               (let ((__tmp138489
                                       (gx#module-export-context
-                                       (gx#module-import-source _in134822_))))
+                                       (gx#module-import-source _in134268_))))
                                  (declare (not safe))
-                                 (_eval1134816_ __tmp139043))
+                                 (_eval1134262_ __tmp138489))
                                '#!void))
-                         (if (gx#module-context? _in134822_)
+                         (if (gx#module-context? _in134268_)
                              (if (let ()
                                    (declare (not safe))
-                                   (fxzero? _phi134823_))
+                                   (fxzero? _phi134269_))
                                  (let ()
                                    (declare (not safe))
-                                   (_eval1134816_ _in134822_))
+                                   (_eval1134262_ _in134268_))
                                  '#!void)
-                             (if (gx#import-set? _in134822_)
-                                 (let ((_iphi134827_
-                                        (fx+ _phi134823_
-                                             (gx#import-set-phi _in134822_))))
+                             (if (gx#import-set? _in134268_)
+                                 (let ((_iphi134273_
+                                        (fx+ _phi134269_
+                                             (gx#import-set-phi _in134268_))))
                                    (if (let ()
                                          (declare (not safe))
-                                         (fxzero? _iphi134827_))
-                                       (let ((__tmp139042
+                                         (fxzero? _iphi134273_))
+                                       (let ((__tmp138488
                                               (gx#import-set-source
-                                               _in134822_)))
+                                               _in134268_)))
                                          (declare (not safe))
-                                         (_eval1134816_ __tmp139042))
-                                       (if (fxpositive? _iphi134827_)
+                                         (_eval1134262_ __tmp138488))
+                                       (if (fxpositive? _iphi134273_)
                                            (for-each
-                                            (lambda (_in134829_)
+                                            (lambda (_in134275_)
                                               (let ()
                                                 (declare (not safe))
-                                                (_import1134815_
-                                                 _in134829_
-                                                 _iphi134827_)))
+                                                (_import1134261_
+                                                 _in134275_
+                                                 _iphi134273_)))
                                             (gx#module-context-import
                                              (gx#import-set-source
-                                              _in134822_)))
+                                              _in134268_)))
                                            '#!void)))
-                                 (error '"Unexpected import" _in134822_))))))
-                  (_eval1134816_
-                   (lambda (_ctx134820_)
+                                 (error '"Unexpected import" _in134268_))))))
+                  (_eval1134262_
+                   (lambda (_ctx134266_)
                      (if (let ()
                            (declare (not safe))
-                           (hash-get _mods134814_ _ctx134820_))
+                           (hash-get _mods134260_ _ctx134266_))
                          '#!void
                          (begin
                            (let ()
                              (declare (not safe))
-                             (hash-put! _mods134814_ _ctx134820_ '#t))
-                           (__eval-module _ctx134820_))))))
-          (if (let () (declare (not safe)) (pair? _in134812_))
+                             (hash-put! _mods134260_ _ctx134266_ '#t))
+                           (__eval-module _ctx134266_))))))
+          (if (let () (declare (not safe)) (pair? _in134258_))
               (for-each
-               (lambda (_in134818_)
-                 (let () (declare (not safe)) (_import1134815_ _in134818_ '0)))
-               _in134812_)
-              (let () (declare (not safe)) (_import1134815_ _in134812_ '0))))))
+               (lambda (_in134264_)
+                 (let () (declare (not safe)) (_import1134261_ _in134264_ '0)))
+               _in134258_)
+              (let () (declare (not safe)) (_import1134261_ _in134258_ '0))))))
     (define __eval-module
-      (lambda (_obj134805_)
-        (let* ((_key134807_
-                (if (gx#module-context? _obj134805_)
-                    (gx#module-context-path _obj134805_)
-                    _obj134805_))
-               (_$e134809_
-                (let ()
-                  (declare (not safe))
-                  (hash-get __*modules* _key134807_))))
-          (if _$e134809_
-              (values _$e134809_)
-              (gx#core-eval-module _obj134805_)))))
+      (lambda (_obj134256_) (gx#core-eval-module _obj134256_)))
     (define gerbil-runtime-init!
-      (lambda (_builtin-modules134740_)
+      (lambda (_builtin-modules134191_)
         (if __runtime-initialized
             '#!void
             (begin
-              (let* ((_home134742_ (let () (declare (not safe)) (gerbil-home)))
-                     (_libdir134744_ (path-expand '"lib" _home134742_))
-                     (_userpath134746_
+              (let* ((_home134193_ (let () (declare (not safe)) (gerbil-home)))
+                     (_libdir134195_ (path-expand '"lib" _home134193_))
+                     (_userpath134197_
                       (path-expand
                        '"lib"
                        (let () (declare (not safe)) (gerbil-path))))
-                     (_loadpath134748_
+                     (_loadpath134199_
                       (if (getenv '"GERBIL_BUILD_PREFIX" '#f)
                           (let ()
                             (declare (not safe))
-                            (cons _libdir134744_ '()))
-                          (let ((__tmp139044
+                            (cons _libdir134195_ '()))
+                          (let ((__tmp138490
                                  (let ()
                                    (declare (not safe))
-                                   (cons _libdir134744_ '()))))
+                                   (cons _libdir134195_ '()))))
                             (declare (not safe))
-                            (cons _userpath134746_ __tmp139044))))
-                     (_loadpath134757_
-                      (let ((_$e134750_ (getenv '"GERBIL_LOADPATH" '#f)))
-                        (if _$e134750_
-                            ((lambda (_envvar134753_)
-                               (append (let ((__tmp139046
-                                              (lambda (_x134755_)
-                                                (let ((__tmp139047
+                            (cons _userpath134197_ __tmp138490))))
+                     (_loadpath134208_
+                      (let ((_$e134201_ (getenv '"GERBIL_LOADPATH" '#f)))
+                        (if _$e134201_
+                            ((lambda (_envvar134204_)
+                               (append (let ((__tmp138492
+                                              (lambda (_x134206_)
+                                                (let ((__tmp138493
                                                        (let ()
                                                          (declare (not safe))
                                                          (string-empty?
-                                                          _x134755_))))
+                                                          _x134206_))))
                                                   (declare (not safe))
-                                                  (not __tmp139047))))
-                                             (__tmp139045
+                                                  (not __tmp138493))))
+                                             (__tmp138491
                                               (let ()
                                                 (declare (not safe))
                                                 (string-split
-                                                 _envvar134753_
+                                                 _envvar134204_
                                                  '#\:))))
                                          (declare (not safe))
-                                         (filter __tmp139046 __tmp139045))
-                                       _loadpath134748_))
-                             _$e134750_)
-                            _loadpath134748_))))
-                (current-module-library-path _loadpath134757_))
-              (let* ((_registry-entry134762_
-                      (lambda (_m134760_)
+                                         (filter __tmp138492 __tmp138491))
+                                       _loadpath134199_))
+                             _$e134201_)
+                            _loadpath134199_))))
+                (current-module-library-path _loadpath134208_))
+              (let* ((_registry-entry134213_
+                      (lambda (_m134211_)
                         (let ()
                           (declare (not safe))
-                          (cons _m134760_ 'builtin))))
-                     (_module-registry134802_
-                      (let _lp134764_ ((_rest134766_ _builtin-modules134740_)
-                                       (_registry134767_ '()))
-                        (let* ((_rest134768134776_ _rest134766_)
-                               (_else134770134784_
+                          (cons _m134211_ 'builtin))))
+                     (_module-registry134253_
+                      (let _lp134215_ ((_rest134217_ _builtin-modules134191_)
+                                       (_registry134218_ '()))
+                        (let* ((_rest134219134227_ _rest134217_)
+                               (_else134221134235_
                                 (lambda ()
                                   (let ()
                                     (declare (not safe))
-                                    (list->hash-table _registry134767_))))
-                               (_K134772134790_
-                                (lambda (_rest134787_ _mod134788_)
-                                  (let ((__tmp139048
-                                         (let ((__tmp139052
-                                                (let ((__tmp139053
+                                    (list->hash-table _registry134218_))))
+                               (_K134223134241_
+                                (lambda (_rest134238_ _mod134239_)
+                                  (let ((__tmp138494
+                                         (let ((__tmp138498
+                                                (let ((__tmp138499
                                                        (string-append
-                                                        _mod134788_
+                                                        _mod134239_
                                                         '"__0")))
                                                   (declare (not safe))
-                                                  (_registry-entry134762_
-                                                   __tmp139053)))
-                                               (__tmp139049
-                                                (let ((__tmp139050
-                                                       (let ((__tmp139051
+                                                  (_registry-entry134213_
+                                                   __tmp138499)))
+                                               (__tmp138495
+                                                (let ((__tmp138496
+                                                       (let ((__tmp138497
                                                               (string-append
-                                                               _mod134788_
+                                                               _mod134239_
                                                                '"__rt")))
                                                          (declare (not safe))
-                                                         (_registry-entry134762_
-                                                          __tmp139051))))
+                                                         (_registry-entry134213_
+                                                          __tmp138497))))
                                                   (declare (not safe))
-                                                  (cons __tmp139050
-                                                        _registry134767_))))
+                                                  (cons __tmp138496
+                                                        _registry134218_))))
                                            (declare (not safe))
-                                           (cons __tmp139052 __tmp139049))))
+                                           (cons __tmp138498 __tmp138495))))
                                     (declare (not safe))
-                                    (_lp134764_ _rest134787_ __tmp139048)))))
+                                    (_lp134215_ _rest134238_ __tmp138494)))))
                           (if (let ()
                                 (declare (not safe))
-                                (##pair? _rest134768134776_))
-                              (let ((_hd134773134793_
+                                (##pair? _rest134219134227_))
+                              (let ((_hd134224134244_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _rest134768134776_)))
-                                    (_tl134774134795_
+                                       (##car _rest134219134227_)))
+                                    (_tl134225134246_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _rest134768134776_))))
-                                (let* ((_mod134798_ _hd134773134793_)
-                                       (_rest134800_ _tl134774134795_))
+                                       (##cdr _rest134219134227_))))
+                                (let* ((_mod134249_ _hd134224134244_)
+                                       (_rest134251_ _tl134225134246_))
                                   (declare (not safe))
-                                  (_K134772134790_ _rest134800_ _mod134798_)))
+                                  (_K134223134241_ _rest134251_ _mod134249_)))
                               (let ()
                                 (declare (not safe))
-                                (_else134770134784_)))))))
-                (current-module-registry _module-registry134802_))
+                                (_else134221134235_)))))))
+                (current-module-registry _module-registry134253_))
               (current-readtable __*readtable*)
               (random-source-randomize! default-random-source)
               (set! __runtime-initialized '#t)))))

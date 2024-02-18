@@ -14,6 +14,7 @@ package: gerbil/runtime
   (declare-type &raw-table-hash-set! (@lambda 2 #f))
   (declare-type &raw-table-test-set! (@lambda 2 #f))
   (declare-type &raw-table-seed-set! (@lambda 2 #f))
+  (declare-type raw-table-size-hint->size (@lambda 1 #f))
   (declare-type make-raw-table__% (@lambda 4 #f))
   (declare-type make-raw-table__0 (@lambda 3 #f))
   (declare-type
