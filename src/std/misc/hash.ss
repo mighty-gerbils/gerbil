@@ -32,16 +32,13 @@
 (def (hash-empty? h)
   (zero? (hash-length h)))
 
-;; *private* object (a vector) to mark absence of parameter given. NOT EXPORTED.
-(def %none '#(none))
-
 ;; type (Table V K) ;; hash-tables mapping key K to values V (note that V comes before K)
 
 ;; Lookup a table. If the key is missing, compute and return a default value.
 ;; : V <- (Table V K) K (V <-)
 (def (hash-ref/default table key default)
-  (let ((val (hash-ref table key %none)))
-    (if (eq? val %none)
+  (let (val (hash-ref table key absent-value))
+    (if (eq? val absent-value)
       (default)
       val)))
 
@@ -156,8 +153,8 @@
 ;; the value that was removed, if any, or #f if none was found,
 ;; and a boolean that tells if there was a value.
 (def (hash-ensure-removed! table key)
-  (let ((val (hash-ref table key %none)))
-    (if (eq? val %none)
+  (let ((val (hash-ref table key absent-value)))
+    (if (eq? val absent-value)
       (values #f #f)
       (begin
         (hash-remove! table key)
@@ -179,8 +176,10 @@
 ;; This is unlike hash-merge
 ;; : Table <- Table (Optional-Keyword Bool) Table ...
 (def (hash-merge/override base-table . rest)
-  (foldl (lambda (tab r) (table-merge r tab #t))
-         base-table rest))
+  (foldl (lambda (tab r)
+           (hash-for-each (cut hash-put! r <> <>) tab)
+           r)
+         (hash-copy base-table) rest))
 
 ;; Merge hash tables together and update the base table's bindings. If same key exists in both base
 ;; table and rest of other tables then the key/value binding of the other tables takes precedence.
@@ -188,13 +187,15 @@
 ;; in multiple other tables then the rightmost table's binding takes precedence.
 ;; : Table <- Table (Optional-Keyword Bool) Table ...
 (def (hash-merge/override! base-table . rest)
-  (foldl (lambda (tab r) (table-merge! r tab #t))
+  (foldl (lambda (tab r)
+           (hash-for-each (cut hash-put! r <> <>) tab)
+           r)
          base-table rest))
 
 ;; Extract from a hash-table an alist of its key-value pairs, with keys sorted the predicate.
 ;; : (List (Pair K V)) <- (Table V K) (Bool <- K K)
 (def (hash->list/sort hash pred)
-  (sort (table->list hash) (lambda (x y) (pred (car x) (car y)))))
+  (sort (hash->list hash) (lambda (x y) (pred (car x) (car y)))))
 
 (def hash-get-set! hash-put!) ;; allow hash-get to be used as a place
 (def hash-ref-set! ;; allow hash-ref to be used as a place, accepting (ignored) optional default argument

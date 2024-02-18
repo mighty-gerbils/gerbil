@@ -768,7 +768,7 @@ namespace: #f
              (case method
                ((resolved)
                 (metaclass-resolve-method))
-               ((uknown) #f)
+               ((unknown) #f)
                (else
                 (metaclass-resolve-method!))))
             (else #f)))))

@@ -5,7 +5,10 @@
 (def libdir (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
 (add-load-path srcdir)
 
-(eval '(import :std/gambit-sharp))
+(let (gambit-sharp
+      (path-expand "lib/_gambit#.scm"
+                   (getenv "GERBIL_BUILD_PREFIX" (gerbil-home))))
+  (eval `(begin-foreign (include ,gambit-sharp))))
 
 ;; The indirection below allows the build-std to do its imports in a module context, transitively
 (gx#import-module "build-std.ss" #t #t)

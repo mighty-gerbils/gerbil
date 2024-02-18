@@ -8,27 +8,13 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "mop" "error" "hash" "syntax")
 
-(defstruct __context (t ns super table))
-(defstruct __runtime (id))
 (defstruct __syntax (e id))
-(defstruct (__macro __syntax) ())
-(defstruct (__special-form __macro) ())
 (defstruct (__core-form __syntax) ())
 (defstruct (__core-expression __core-form) ())
 (defstruct (__core-special-form __core-form) ())
-(defstruct (__struct-info __syntax) ())
-(defstruct (__feature __syntax) ())
-(defstruct (__module __context) (id path import export))
 
-(def __*modules*
-  (make-hash-table))
-(def __*core*
+(def __core
   (make-hash-table-eq))
-(def __*top*
-  (make-__context
-   'top #f
-   (make-__context 'root #f #f __*core*)
-   (make-hash-table-eq)))
 
 ;; interpretation parameters
 (def __current-expander
@@ -38,55 +24,16 @@ namespace: #f
 (def __current-path
   (make-parameter '()))
 
-(def (__core-resolve id (ctx (__current-context)))
-  (and ctx
-       (let (id (__AST-e id))
-         (let lp ((ctx ctx))
-           (cond
-            ((hash-ref (__context-table ctx) id #f) => values)
-            ((__context-super ctx) => lp)
-            (else #f))))))
+(def (__core-resolve id)
+  (hash-get __core (__AST-e id)))
 
 (def (__core-bound-id? id (is? true))
   (cond
    ((__core-resolve id) => is?)
    (else #f)))
 
-(def (__core-bind-runtime! id eid (ctx (__current-context)))
-  (when eid
-    (hash-put! (__context-table ctx) (__AST-e id) (make-__runtime eid))))
 (def (__core-bind-syntax! id e (make make-__syntax))
-  (hash-put! __*core* id (if (__syntax? e) e (make e id))))
-(def (__core-bind-macro! id e)
-  (__core-bind-syntax! id e make-__macro))
-(def (__core-bind-special-form! id e)
-  (__core-bind-syntax! id e make-__special-form))
-(def (__core-bind-user-syntax! id e (ctx (__current-context)))
-  (hash-put! (__context-table ctx) (__AST-e id)
-             (if (__syntax? e) e
-                 (make-__syntax e (__AST-e id)))))
-
-(def (make-__runtime-id id (ctx (__current-context)))
-  (let (id (__AST-e id))
-    (cond
-     ((eq? id '_) #f)
-     ((uninterned-symbol? id)
-      (gensym id))
-     ((symbol? id)
-      (case (__context-t ctx)
-        ((local)
-         (gensym id))
-        ((module)
-         (make-symbol (__context-ns ctx) "#" id))
-        (else id)))
-     (else
-      (error "Illegal runtime identifier" id)))))
-
-(def (make-__context-local (super (__current-context)))
-  (make-__context 'local #f super (make-hash-table-eq)))
-
-(def (make-__context-module id ns path (super (__current-context)))
-  (make-__module 'module ns super (make-hash-table-eq) id path #f #f))
+  (hash-put! __core id (if (__syntax? e) e (make e id))))
 
 (def (__SRC e (src-stx #f))
   (cond

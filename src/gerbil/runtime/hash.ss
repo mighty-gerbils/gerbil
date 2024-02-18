@@ -204,19 +204,23 @@ namespace: #f
 
 (defhash-method (HashTable-set! h key value)
   (declare (not safe))
-  ((&HashTable-set@ h) (&interface-instance-object h) key value))
+  ((&HashTable-set@ h) (&interface-instance-object h) key value)
+  (void))
 
 (defhash-method (HashTable-update! h key update default)
   (declare (not safe))
-  ((&HashTable-update@ h) (&interface-instance-object h) key update default))
+  ((&HashTable-update@ h) (&interface-instance-object h) key update default)
+  (void))
 
 (defhash-method (HashTable-delete! h key)
   (declare (not safe))
-  ((&HashTable-del@ h) (&interface-instance-object h) key))
+  ((&HashTable-del@ h) (&interface-instance-object h) key)
+  (void))
 
 (defhash-method (HashTable-for-each h proc)
   (declare (not safe))
-  ((&HashTable-each@ h) (&interface-instance-object h) proc))
+  ((&HashTable-each@ h) (&interface-instance-object h) proc)
+  (void))
 
 (defhash-method (HashTable-length h)
   (declare (not safe))
@@ -228,7 +232,8 @@ namespace: #f
 
 (defhash-method (HashTable-clear! h)
   (declare (not safe))
-  ((&HashTable-clear@ h) (&interface-instance-object h)))
+  ((&HashTable-clear@ h) (&interface-instance-object h))
+  (void))
 
 ;; hash table locker methods
 (def (&HashTableLock-begin-read! hl)
@@ -299,7 +304,7 @@ namespace: #f
   &HashTable-clear!
   &HashTableLock-end-write!)
 
-;; make mutexe acceptable hash table locks
+;; make mutexes implement the hash table lock interface
 (bind-method! (macro-type-mutex) 'begin-read! mutex-lock!)
 (bind-method! (macro-type-mutex) 'end-read! mutex-unlock!)
 (bind-method! (macro-type-mutex) 'begin-write! mutex-lock!)
@@ -378,10 +383,10 @@ namespace: #f
     (make make-generic-hash-table hash test))))
 
 (def (make-hash-table-eq . args)
-  (apply make-hash-table test: eq? hash: eq-hash args))
+  (apply make-hash-table test: eq? args))
 
 (def (make-hash-table-eqv . args)
-  (apply make-hash-table test: eqv? hash: eqv-hash args))
+  (apply make-hash-table test: eqv? args))
 
 (def (make-hash-table-symbolic . args)
   (apply make-hash-table test: eq? hash: symbolic-hash args))
@@ -405,7 +410,11 @@ namespace: #f
   (list->hash-table! lst (apply make-hash-table-string size: (length lst) args)))
 
 (def (list->hash-table! lst h)
-  (for-each (lambda (el) (&HashTable-set! h (car el) (cdr el))) lst)
+  (for-each
+    (lambda (el)
+      (with ([k . v] el)
+        (&HashTable-set! h k v)))
+    lst)
   h)
 
 (def (plist->hash-table lst . args)
@@ -440,7 +449,7 @@ namespace: #f
 (defhash-method (hash-ref h key (default (macro-absent-obj)))
   (let (result (&HashTable-ref h key default))
     (if (eq? result (macro-absent-obj))
-      (raise-unbound-key-error 'hash-ref "uknown hash key" hash: h key: key)
+      (raise-unbound-key-error 'hash-ref "unknown hash key" hash: h key: key)
       result)))
 
 (defhash-method (hash-get h key)
