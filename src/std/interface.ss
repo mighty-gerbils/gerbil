@@ -498,7 +498,7 @@
                      (if (module-context? (current-expander-context))
                        (module-type-id #'klass)
                        (genident #'klass)))
-                    (descriptor (stx-identifier #'name #'name "::descriptor"))
+                    (descriptor (stx-identifier #'name #'name "::interface"))
                     (make (stx-identifier #'name "make-" #'name))
                     (make (stx-identifier #'name "try-" #'name))
                     (predicate (stx-identifier #'name #'name "?"))

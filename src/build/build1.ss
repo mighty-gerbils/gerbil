@@ -13,6 +13,7 @@
     "gerbil/runtime/mop.ss"
     "gerbil/runtime/error.ss"
     "gerbil/runtime/interface.ss"
+    "gerbil/runtime/hash.ss"
     "gerbil/runtime/thread.ss"
     "gerbil/runtime/syntax.ss"
     "gerbil/runtime/eval.ss"

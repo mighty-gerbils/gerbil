@@ -42,6 +42,7 @@ namespace: #f
 (defspecialized-table make-prototype-table
   prototype-table-ref
   prototype-table-set! __prototype-table-set!
+  prototype-table-update! __prototype-table-update!
   prototype-trable-delete!
   hash-key test-key)
 

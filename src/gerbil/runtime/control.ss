@@ -83,8 +83,8 @@ namespace: #f
 (def (keyword-rest kwt . drop)
   (let (rest [])
     (raw-table-for-each
+     kwt
      (lambda (k v)
        (unless (memq k drop)
-         (set! rest (cons* k v rest))))
-     kwt)
+         (set! rest (cons* k v rest)))))
     rest))

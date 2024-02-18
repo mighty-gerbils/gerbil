@@ -23,6 +23,7 @@ package: gerbil
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
+    "gerbil/runtime/hash"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"

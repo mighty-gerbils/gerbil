@@ -31,6 +31,7 @@
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
+    "gerbil/runtime/hash"
     "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"

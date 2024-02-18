@@ -66,7 +66,7 @@ namespace: #f
   mutex-lock! mutex-unlock!
 
   read-subu8vector
-  write-subu8vector
+  write-subu8vectorp
   read-substring
   write-substring
 
@@ -79,7 +79,14 @@ namespace: #f
   macro-deleted-obj
   macro-slot
   macro-type-fixnum
+  macro-type-table
+  macro-type-mutex
   macro-max-fixnum32
+  macro-number-dispatch
+  macro-ratnum-numerator
+  macro-ratnum-denominator
+  macro-cpxnum-real
+  macro-cpxnum-imag
   macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port

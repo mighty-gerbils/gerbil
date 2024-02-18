@@ -71,7 +71,7 @@ namespace: #f
               '(id name super flags fields
                    precedence-list slot-vector slot-table properties constructor methods))
              (slot-vector
-              (list->vector (cons '##type slots)))
+              (list->vector (cons #f slots)))
              (slot-table
               (let (slot-table (make-symbolic-table #f 0))
                 (for-each
@@ -825,8 +825,9 @@ namespace: #f
 (def (seal-class! klass)
   (def (collect-methods! mtab)
     (def (merge! tab)
-      (raw-table-for-each (lambda (id proc) (symbolic-table-set! mtab id proc))
-                          tab))
+      (raw-table-for-each
+       tab
+       (lambda (id proc) (symbolic-table-set! mtab id proc))))
 
     (def (collect-direct-methods! klass)
       (cond
@@ -849,6 +850,7 @@ namespace: #f
               (mtab (make-symbolic-table #f 0)))
           (collect-methods! mtab)
           (raw-table-for-each
+           mtab
            (lambda (id proc)
              (cond
               ((eq-table-ref __method-specializers proc #f)
@@ -859,8 +861,7 @@ namespace: #f
                       (eval `(def ,gid (quote ,proc)))
                       (symbolic-table-set! vtab id proc))))
               (else
-               (symbolic-table-set! vtab id proc))))
-           mtab)
+               (symbolic-table-set! vtab id proc)))))
           (&class-type-methods-set! klass vtab))))
       (&class-type-seal! klass))))
 
