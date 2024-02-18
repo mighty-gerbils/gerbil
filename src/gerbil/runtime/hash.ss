@@ -133,6 +133,10 @@ namespace: #f
 (defstruct locked-hash-table (table lock)
   final: #t)
 
+;; checked hash table; wraps a HashTable and performs safety checks
+(defstruct checked-hash-table (table key-check)
+  final: #t)
+
 ;; specializer types
 (defstruct-type eq-hash-table::t (hash-table::t)
   make-eq-hash-table eq-hash-table?
@@ -304,13 +308,61 @@ namespace: #f
   &HashTable-clear!
   &HashTableLock-end-write!)
 
+;; checked hash table methods
 ;; make mutexes implement the hash table lock interface
 (bind-method! (macro-type-mutex) 'begin-read! mutex-lock!)
 (bind-method! (macro-type-mutex) 'end-read! mutex-unlock!)
 (bind-method! (macro-type-mutex) 'begin-write! mutex-lock!)
 (bind-method! (macro-type-mutex) 'end-write! mutex-unlock!)
 
-;; hash table constructors
+(defrules defchecked-hash-method ()
+  ((_ (method self arg ...) check hash-method)
+   (defmethod {method checked-hash-table}
+     (lambda (self arg ...)
+       (let ((h (&checked-hash-table-table self))
+             (key? (&checked-hash-table-key-check self)))
+         (check key?)
+         (hash-method h arg ...))))))
+
+(defrules check-hash-arg ()
+  ((_ check? obj)
+   (unless (check? obj)
+     (error "invalid argument" obj))))
+
+(defchecked-hash-method (ref self key default)
+  (cut check-hash-arg <> key)
+  &HashTable-ref)
+
+(defchecked-hash-method (set! self key value)
+  (cut check-hash-arg <> key)
+  &HashTable-set!)
+
+(defchecked-hash-method (update! self key update default)
+  (lambda (key?)
+    (check-hash-arg key? key)
+    (check-hash-arg procedure? update))
+  &HashTable-update!)
+
+(defchecked-hash-method (delete! self key)
+  (cut check-hash-arg <> key)
+  &HashTable-delete!)
+
+(defchecked-hash-method (for-each self proc)
+  (lambda (_) (check-hash-arg procedure? proc))
+  &HashTable-for-each)
+
+(defchecked-hash-method (length self)
+  void
+  &HashTable-length)
+
+(defchecked-hash-method (copy self)
+  void
+  &HashTable-copy)
+
+(defchecked-hash-method (clear! self)
+  void
+  &HashTable-clear!)
+
 (def (make-generic-hash-table table count free hash test seed)
   (##structure hash-table::t table count free hash test seed))
 
@@ -319,18 +371,30 @@ namespace: #f
                       test: (test equal?)
                       hash: (hash #f)
                       lock: (lock #f)
+                      check: (check #f)
                       ;; these two force gambit hash tables
                       weak-keys: (weak-keys #f)
                       weak-values: (weak-values #f))
-  (def (make kons hash test)
+  (def (wrap-lock ht)
+    (if lock
+      (cast HashTable::interface
+            (make-locked-hash-table ht (cast HashTableLock::interface lock)))
+      ht))
+
+  (def (wrap-checked ht implicit)
+    (if check
+      (cast HashTable::interface
+            (make-checked-hash-table ht (if (procedure? check) check implicit)))
+      ht))
+
+  (def (make kons key? hash test)
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (cast HashTable::interface
                      (kons table 0 (fxquotient size 2) hash test seed))))
-      (if lock
-        (cast HashTable::interface
-              (make-locked-hash-table ht (cast HashTableLock::interface lock)))
-        ht)))
+      (wrap-checked
+       (wrap-lock ht)
+       key?)))
 
   (def (make-gambit-table)
     (let* ((size (or size-hint (macro-absent-obj)))
@@ -351,34 +415,33 @@ namespace: #f
                    hash: hash
                    weak-keys: weak-keys
                    weak-values: weak-values))))
-      (if lock
-        (cast HashTable::interface
-              (make-locked-hash-table ht (cast HashTableLock::interface lock)))
-        ht)))
+      (wrap-checked
+       (wrap-lock ht)
+       true)))
 
   (cond
    ((or weak-keys weak-values)
     (make-gambit-table))
    ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash)))
-    (make make-eq-hash-table eq-hash eq?))
+    (make make-eq-hash-table true eq-hash eq?))
    ((and (or (eq? test eqv?) (eq? test ##eqv?))
          (or (not hash) (eq? hash eqv?-hash) (eq? hash eqv-hash)))
-    (make make-eqv-hash-table eqv-hash eqv?))
+    (make make-eqv-hash-table true eqv-hash eqv?))
    ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (eq? hash symbolic-hash) (eq? hash ##symbol-hash)))
-    (make make-symbol-hash-table symbolic-hash eq?))
+    (make make-symbol-hash-table symbolic? symbolic-hash eq?))
    ((and (or (eq? test equal?) (eq? test ##equal?) (eq? test string=?) (eq? test ##string=?))
          (or (eq? hash string-hash) (eq? hash ##string=?-hash)))
-    (make make-string-hash-table string-hash ##string=?))
+    (make make-string-hash-table string? string-hash ##string=?))
    ((and (eq? test equal?) (not hash))
-    (make make-generic-hash-table equal?-hash equal?))
+    (make make-generic-hash-table true equal?-hash equal?))
    ((not (procedure? test))
     (error "bad hash table test function; expected procedure" test))
    ((not (procedure? hash))
     (error "bad hash table hash function; expected procedure" hash))
    (else
-    (make make-generic-hash-table hash test))))
+    (make make-generic-hash-table true hash test))))
 
 (def (make-hash-table-eq . args)
   (apply make-hash-table test: eq? args))

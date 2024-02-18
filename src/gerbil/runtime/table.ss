@@ -166,7 +166,7 @@ namespace: #f
       (fxand
        (##type-cast obj (macro-type-fixnum))
        (macro-max-fixnum32)))
-     ((or (symbol? obj) (keyword? obj))
+     ((symbolic? obj)
       (symbolic-hash obj))
      (else
       (fxand
@@ -200,6 +200,9 @@ namespace: #f
                (hash (macro-cpxnum-imag obj)))))
 
   (hash obj))
+
+(def (symbolic? obj)
+  (or (symbol? obj) (keyword? obj)))
 
 (def (symbolic-hash obj)
   (__symbolic-hash obj))
