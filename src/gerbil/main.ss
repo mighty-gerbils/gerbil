@@ -22,6 +22,7 @@ package: gerbil
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/interface"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"

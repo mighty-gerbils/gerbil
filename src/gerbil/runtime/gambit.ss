@@ -92,6 +92,9 @@ namespace: #f
   macro-character-port?
   macro-character-port-wchars
   macro-character-port-output-width
-  macro-character-port-output-width-set!)
+  macro-character-port-output-width-set!
+  macro-mutex-lock!
+  macro-mutex-unlock!
+  macro-current-thread)
 
 (void) ;; so that the __0 file exists

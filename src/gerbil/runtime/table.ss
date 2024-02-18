@@ -144,7 +144,11 @@ namespace: #f
        (macro-max-fixnum32))))))
 
 (def (symbolic-hash obj)
-  (macro-slot 1 obj))
+  (__symbolic-hash obj))
+
+(defrules __symbolic-hash ()
+  ((_ obj)
+   (macro-slot 1 obj)))
 
 (def (string-hash obj)
   (##string=?-hash obj))

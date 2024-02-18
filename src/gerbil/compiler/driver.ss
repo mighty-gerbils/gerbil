@@ -68,6 +68,7 @@ namespace: gxc
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/interface"
     "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
