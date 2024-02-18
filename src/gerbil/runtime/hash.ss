@@ -375,7 +375,7 @@ namespace: #f
    ((not (procedure? hash))
     (error "bad hash table hash function; expected procedure" hash))
    (else
-    (make make-hash-table hash test))))
+    (make make-generic-hash-table hash test))))
 
 (def (make-hash-table-eq . args)
   (apply make-hash-table test: eq? hash: eq-hash args))
