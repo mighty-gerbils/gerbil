@@ -43,7 +43,7 @@ namespace: #f
        (let (id (__AST-e id))
          (let lp ((ctx ctx))
            (cond
-            ((table-ref (__context-table ctx) id #f) => values)
+            ((hash-ref (__context-table ctx) id #f) => values)
             ((__context-super ctx) => lp)
             (else #f))))))
 
