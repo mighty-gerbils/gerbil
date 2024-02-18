@@ -403,7 +403,7 @@
                   (port  (fxior (fxarithmetic-shift porthi 8) portlo)))
              (cons host port)))
           (else
-           (raise-io-error socks5-recv-reply "uknown address type" atyp)))))))
+           (raise-io-error socks5-recv-reply "unknown address type" atyp)))))))
 
 (def (socks5-reply-text res)
   (hash-ref +socks5-reply-text+ res "unknown response"))
