@@ -122,6 +122,8 @@ package: gerbil/runtime
   (declare-type prototype-table-ref (@lambda 3 #f))
   (declare-type prototype-table-set! (@lambda 3 #f))
   (declare-type __prototype-table-set! (@lambda 3 #f))
+  (declare-type prototype-table-update! (@lambda 4 #f))
+  (declare-type __prototype-table-update! (@lambda 4 #f))
   (declare-type prototype-trable-delete! (@lambda 2 #f))
   (declare-type interface-subclass? (@lambda 1 #f))
   (declare-type create-prototype (@lambda 3 #f))

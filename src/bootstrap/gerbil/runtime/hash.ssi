@@ -1,0 +1,310 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/table
+          :gerbil/runtime/mop
+          :gerbil/runtime/error
+          :gerbil/runtime/interface)
+         (%#export #t)
+         (%#define-runtime UnboundKeyError::t UnboundKeyError::t)
+         (%#define-runtime UnboundKeyError? UnboundKeyError?)
+         (%#define-runtime make-UnboundKeyError make-UnboundKeyError)
+         (%#define-runtime UnboundKeyError-message UnboundKeyError-message)
+         (%#define-runtime UnboundKeyError-irritants UnboundKeyError-irritants)
+         (%#define-runtime UnboundKeyError-where UnboundKeyError-where)
+         (%#define-runtime
+          UnboundKeyError-continuation
+          UnboundKeyError-continuation)
+         (%#define-runtime
+          UnboundKeyError-message-set!
+          UnboundKeyError-message-set!)
+         (%#define-runtime
+          UnboundKeyError-irritants-set!
+          UnboundKeyError-irritants-set!)
+         (%#define-runtime
+          UnboundKeyError-where-set!
+          UnboundKeyError-where-set!)
+         (%#define-runtime
+          UnboundKeyError-continuation-set!
+          UnboundKeyError-continuation-set!)
+         (%#define-runtime &UnboundKeyError-message &UnboundKeyError-message)
+         (%#define-runtime
+          &UnboundKeyError-irritants
+          &UnboundKeyError-irritants)
+         (%#define-runtime &UnboundKeyError-where &UnboundKeyError-where)
+         (%#define-runtime
+          &UnboundKeyError-continuation
+          &UnboundKeyError-continuation)
+         (%#define-runtime
+          &UnboundKeyError-message-set!
+          &UnboundKeyError-message-set!)
+         (%#define-runtime
+          &UnboundKeyError-irritants-set!
+          &UnboundKeyError-irritants-set!)
+         (%#define-runtime
+          &UnboundKeyError-where-set!
+          &UnboundKeyError-where-set!)
+         (%#define-runtime
+          &UnboundKeyError-continuation-set!
+          &UnboundKeyError-continuation-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/hash__1")))
+                  (%#define-syntax UnboundKeyError |[:0:]#UnboundKeyError|))
+         (%#define-runtime UnboundKeyError:::init! UnboundKeyError:::init!)
+         (%#define-runtime raise-unbound-key-error raise-unbound-key-error)
+         (%#define-runtime unbound-key-error? unbound-key-error?)
+         (%#define-runtime HashTable::t HashTable::t)
+         (%#define-runtime HashTable? HashTable?)
+         (%#define-runtime HashTable-ref@ HashTable-ref@)
+         (%#define-runtime HashTable-set@ HashTable-set@)
+         (%#define-runtime HashTable-update@ HashTable-update@)
+         (%#define-runtime HashTable-del@ HashTable-del@)
+         (%#define-runtime HashTable-each@ HashTable-each@)
+         (%#define-runtime HashTable-length@ HashTable-length@)
+         (%#define-runtime HashTable-copy@ HashTable-copy@)
+         (%#define-runtime HashTable-clear@ HashTable-clear@)
+         (%#define-runtime HashTable-ref@-set! HashTable-ref@-set!)
+         (%#define-runtime HashTable-set@-set! HashTable-set@-set!)
+         (%#define-runtime HashTable-update@-set! HashTable-update@-set!)
+         (%#define-runtime HashTable-del@-set! HashTable-del@-set!)
+         (%#define-runtime HashTable-each@-set! HashTable-each@-set!)
+         (%#define-runtime HashTable-length@-set! HashTable-length@-set!)
+         (%#define-runtime HashTable-copy@-set! HashTable-copy@-set!)
+         (%#define-runtime HashTable-clear@-set! HashTable-clear@-set!)
+         (%#define-runtime &HashTable-ref@ &HashTable-ref@)
+         (%#define-runtime &HashTable-set@ &HashTable-set@)
+         (%#define-runtime &HashTable-update@ &HashTable-update@)
+         (%#define-runtime &HashTable-del@ &HashTable-del@)
+         (%#define-runtime &HashTable-each@ &HashTable-each@)
+         (%#define-runtime &HashTable-length@ &HashTable-length@)
+         (%#define-runtime &HashTable-copy@ &HashTable-copy@)
+         (%#define-runtime &HashTable-clear@ &HashTable-clear@)
+         (%#define-runtime &HashTable-ref@-set! &HashTable-ref@-set!)
+         (%#define-runtime &HashTable-set@-set! &HashTable-set@-set!)
+         (%#define-runtime &HashTable-update@-set! &HashTable-update@-set!)
+         (%#define-runtime &HashTable-del@-set! &HashTable-del@-set!)
+         (%#define-runtime &HashTable-each@-set! &HashTable-each@-set!)
+         (%#define-runtime &HashTable-length@-set! &HashTable-length@-set!)
+         (%#define-runtime &HashTable-copy@-set! &HashTable-copy@-set!)
+         (%#define-runtime &HashTable-clear@-set! &HashTable-clear@-set!)
+         (%#define-runtime HashTable::interface HashTable::interface)
+         (%#define-runtime HashTableLock::t HashTableLock::t)
+         (%#define-runtime HashTableLock? HashTableLock?)
+         (%#define-runtime HashTableLock-begin-read@ HashTableLock-begin-read@)
+         (%#define-runtime HashTableLock-end-read@ HashTableLock-end-read@)
+         (%#define-runtime
+          HashTableLock-begin-write@
+          HashTableLock-begin-write@)
+         (%#define-runtime HashTableLock-end-write@ HashTableLock-end-write@)
+         (%#define-runtime
+          HashTableLock-begin-read@-set!
+          HashTableLock-begin-read@-set!)
+         (%#define-runtime
+          HashTableLock-end-read@-set!
+          HashTableLock-end-read@-set!)
+         (%#define-runtime
+          HashTableLock-begin-write@-set!
+          HashTableLock-begin-write@-set!)
+         (%#define-runtime
+          HashTableLock-end-write@-set!
+          HashTableLock-end-write@-set!)
+         (%#define-runtime
+          &HashTableLock-begin-read@
+          &HashTableLock-begin-read@)
+         (%#define-runtime &HashTableLock-end-read@ &HashTableLock-end-read@)
+         (%#define-runtime
+          &HashTableLock-begin-write@
+          &HashTableLock-begin-write@)
+         (%#define-runtime &HashTableLock-end-write@ &HashTableLock-end-write@)
+         (%#define-runtime
+          &HashTableLock-begin-read@-set!
+          &HashTableLock-begin-read@-set!)
+         (%#define-runtime
+          &HashTableLock-end-read@-set!
+          &HashTableLock-end-read@-set!)
+         (%#define-runtime
+          &HashTableLock-begin-write@-set!
+          &HashTableLock-begin-write@-set!)
+         (%#define-runtime
+          &HashTableLock-end-write@-set!
+          &HashTableLock-end-write@-set!)
+         (%#define-runtime HashTableLock::interface HashTableLock::interface)
+         (%#define-runtime gambit-table-update! gambit-table-update!)
+         (%#define-runtime gambit-table-for-each gambit-table-for-each)
+         (%#define-runtime gambit-table-clear! gambit-table-clear!)
+         (%#define-runtime hash-table::t hash-table::t)
+         (%#define-runtime hash-table? hash-table?)
+         (%#define-runtime locked-hash-table::t locked-hash-table::t)
+         (%#define-runtime locked-hash-table? locked-hash-table?)
+         (%#define-runtime make-locked-hash-table make-locked-hash-table)
+         (%#define-runtime locked-hash-table-table locked-hash-table-table)
+         (%#define-runtime locked-hash-table-lock locked-hash-table-lock)
+         (%#define-runtime
+          locked-hash-table-table-set!
+          locked-hash-table-table-set!)
+         (%#define-runtime
+          locked-hash-table-lock-set!
+          locked-hash-table-lock-set!)
+         (%#define-runtime &locked-hash-table-table &locked-hash-table-table)
+         (%#define-runtime &locked-hash-table-lock &locked-hash-table-lock)
+         (%#define-runtime
+          &locked-hash-table-table-set!
+          &locked-hash-table-table-set!)
+         (%#define-runtime
+          &locked-hash-table-lock-set!
+          &locked-hash-table-lock-set!)
+         (%#define-syntax locked-hash-table |[:0:]#locked-hash-table|)
+         (%#define-runtime eq-hash-table::t eq-hash-table::t)
+         (%#define-runtime eq-hash-table? eq-hash-table?)
+         (%#define-runtime make-eq-hash-table make-eq-hash-table)
+         (%#define-runtime eqv-hash-table::t eqv-hash-table::t)
+         (%#define-runtime eqv-hash-table? eqv-hash-table?)
+         (%#define-runtime make-eqv-hash-table make-eqv-hash-table)
+         (%#define-runtime symbol-hash-table::t symbol-hash-table::t)
+         (%#define-runtime symbol-hash-table? symbol-hash-table?)
+         (%#define-runtime make-symbol-hash-table make-symbol-hash-table)
+         (%#define-runtime string-hash-table::t string-hash-table::t)
+         (%#define-runtime string-hash-table? string-hash-table?)
+         (%#define-runtime make-string-hash-table make-string-hash-table)
+         (%#define-syntax defhash-method |[:0:]#defhash-method|)
+         (%#define-runtime HashTable-ref HashTable-ref)
+         (%#define-runtime &HashTable-ref &HashTable-ref)
+         (%#define-runtime HashTable-set! HashTable-set!)
+         (%#define-runtime &HashTable-set! &HashTable-set!)
+         (%#define-runtime HashTable-update! HashTable-update!)
+         (%#define-runtime &HashTable-update! &HashTable-update!)
+         (%#define-runtime HashTable-delete! HashTable-delete!)
+         (%#define-runtime &HashTable-delete! &HashTable-delete!)
+         (%#define-runtime HashTable-for-each HashTable-for-each)
+         (%#define-runtime &HashTable-for-each &HashTable-for-each)
+         (%#define-runtime HashTable-length HashTable-length)
+         (%#define-runtime &HashTable-length &HashTable-length)
+         (%#define-runtime HashTable-copy HashTable-copy)
+         (%#define-runtime &HashTable-copy &HashTable-copy)
+         (%#define-runtime HashTable-clear! HashTable-clear!)
+         (%#define-runtime &HashTable-clear! &HashTable-clear!)
+         (%#define-runtime
+          &HashTableLock-begin-read!
+          &HashTableLock-begin-read!)
+         (%#define-runtime &HashTableLock-end-read! &HashTableLock-end-read!)
+         (%#define-runtime
+          &HashTableLock-begin-write!
+          &HashTableLock-begin-write!)
+         (%#define-runtime &HashTableLock-end-write! &HashTableLock-end-write!)
+         (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
+         (%#begin (%#define-runtime
+                   _locked-hash-table::ref102411_
+                   _locked-hash-table::ref102410_)
+                  (%#define-runtime
+                   locked-hash-table::ref::specialize
+                   locked-hash-table::ref::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::set!102413_
+                   _locked-hash-table::set!102412_)
+                  (%#define-runtime
+                   locked-hash-table::set!::specialize
+                   locked-hash-table::set!::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::update!102415_
+                   _locked-hash-table::update!102414_)
+                  (%#define-runtime
+                   locked-hash-table::update!::specialize
+                   locked-hash-table::update!::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::delete!102417_
+                   _locked-hash-table::delete!102416_)
+                  (%#define-runtime
+                   locked-hash-table::delete!::specialize
+                   locked-hash-table::delete!::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::for-each102419_
+                   _locked-hash-table::for-each102418_)
+                  (%#define-runtime
+                   locked-hash-table::for-each::specialize
+                   locked-hash-table::for-each::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::length102421_
+                   _locked-hash-table::length102420_)
+                  (%#define-runtime
+                   locked-hash-table::length::specialize
+                   locked-hash-table::length::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::copy102423_
+                   _locked-hash-table::copy102422_)
+                  (%#define-runtime
+                   locked-hash-table::copy::specialize
+                   locked-hash-table::copy::specialize))
+         (%#begin (%#define-runtime
+                   _locked-hash-table::clear!102425_
+                   _locked-hash-table::clear!102424_)
+                  (%#define-runtime
+                   locked-hash-table::clear!::specialize
+                   locked-hash-table::clear!::specialize))
+         (%#define-runtime make-generic-hash-table make-generic-hash-table)
+         (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
+                  (%#define-runtime make-hash-table__@ make-hash-table__@)
+                  (%#define-runtime make-hash-table make-hash-table))
+         (%#define-runtime make-hash-table-eq make-hash-table-eq)
+         (%#define-runtime make-hash-table-eqv make-hash-table-eqv)
+         (%#define-runtime make-hash-table-symbolic make-hash-table-symbolic)
+         (%#define-runtime make-hash-table-string make-hash-table-string)
+         (%#define-runtime list->hash-table list->hash-table)
+         (%#define-runtime list->hash-table-eq list->hash-table-eq)
+         (%#define-runtime list->hash-table-eqv list->hash-table-eqv)
+         (%#define-runtime list->hash-table-symbolic list->hash-table-symbolic)
+         (%#define-runtime list->hash-table-string list->hash-table-string)
+         (%#define-runtime list->hash-table! list->hash-table!)
+         (%#define-runtime plist->hash-table plist->hash-table)
+         (%#define-runtime plist->hash-table-eq plist->hash-table-eq)
+         (%#define-runtime plist->hash-table-eqv plist->hash-table-eqv)
+         (%#define-runtime
+          plist->hash-table-symbolic
+          plist->hash-table-symbolic)
+         (%#define-runtime plist->hash-table-string plist->hash-table-string)
+         (%#define-runtime plist->hash-table! plist->hash-table!)
+         (%#define-runtime hash-length hash-length)
+         (%#define-runtime &hash-length &hash-length)
+         (%#begin (%#define-runtime hash-ref__% hash-ref__%)
+                  (%#begin (%#define-runtime hash-ref__0 hash-ref__0)
+                           (%#define-runtime hash-ref hash-ref)))
+         (%#begin (%#define-runtime &hash-ref__% &hash-ref__%)
+                  (%#begin (%#define-runtime &hash-ref__0 &hash-ref__0)
+                           (%#define-runtime &hash-ref &hash-ref)))
+         (%#define-runtime hash-get hash-get)
+         (%#define-runtime &hash-get &hash-get)
+         (%#define-runtime hash-put! hash-put!)
+         (%#define-runtime &hash-put! &hash-put!)
+         (%#begin (%#define-runtime hash-update!__% hash-update!__%)
+                  (%#begin (%#define-runtime hash-update!__0 hash-update!__0)
+                           (%#define-runtime hash-update! hash-update!)))
+         (%#begin (%#define-runtime &hash-update!__% &hash-update!__%)
+                  (%#begin (%#define-runtime &hash-update!__0 &hash-update!__0)
+                           (%#define-runtime &hash-update! &hash-update!)))
+         (%#define-runtime hash-remove! hash-remove!)
+         (%#define-runtime &hash-remove! &hash-remove!)
+         (%#define-runtime hash-key? hash-key?)
+         (%#define-runtime &hash-key? &hash-key?)
+         (%#define-runtime hash->list hash->list)
+         (%#define-runtime &hash->list &hash->list)
+         (%#define-runtime hash->plist hash->plist)
+         (%#define-runtime &hash->plist &hash->plist)
+         (%#define-runtime hash-for-each hash-for-each)
+         (%#define-runtime hash-map hash-map)
+         (%#define-runtime hash-fold hash-fold)
+         (%#begin (%#define-runtime hash-find__% hash-find__%)
+                  (%#begin (%#define-runtime hash-find__0 hash-find__0)
+                           (%#define-runtime hash-find hash-find)))
+         (%#define-runtime hash-keys hash-keys)
+         (%#define-runtime &hash-keys &hash-keys)
+         (%#define-runtime hash-values hash-values)
+         (%#define-runtime &hash-values &hash-values)
+         (%#define-runtime hash-copy hash-copy)
+         (%#define-runtime &hash-copy &hash-copy)
+         (%#define-runtime hash-merge hash-merge)
+         (%#define-runtime hash-merge! hash-merge!))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/hash__0"))

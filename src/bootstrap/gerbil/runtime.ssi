@@ -12,6 +12,7 @@ namespace: gerbil/runtime
           :gerbil/runtime/mop
           :gerbil/runtime/error
           :gerbil/runtime/interface
+          :gerbil/runtime/hash
           :gerbil/runtime/thread
           :gerbil/runtime/syntax
           :gerbil/runtime/eval
@@ -27,6 +28,7 @@ namespace: gerbil/runtime
           (import: :gerbil/runtime/mop)
           (import: :gerbil/runtime/error)
           (import: :gerbil/runtime/interface)
+          (import: :gerbil/runtime/hash)
           (import: :gerbil/runtime/thread)
           (import: :gerbil/runtime/syntax)
           (import: :gerbil/runtime/eval)
