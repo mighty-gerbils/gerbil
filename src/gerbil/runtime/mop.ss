@@ -700,7 +700,7 @@ namespace: #f
     (error "cannot find method" object: obj method: id))))
 
 (def __builtin-type-methods
-  (make-symbolic-table 0 #f))
+  (make-symbolic-table #f 0))
 
 (def (method-ref obj id)
   (and (object? obj)
