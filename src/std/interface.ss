@@ -10,7 +10,6 @@
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface
         interface-out
-        immediate-instance-of?
         cast try-cast satisfies?
         interface-instance? interface-instance-object &interface-instance-object
         interface-descriptor? interface-descriptor-type interface-descriptor-methods
@@ -27,7 +26,8 @@
                             unchecked-implementation-methods))
 
   (defmethod {apply-macro-expander interface-info}
-    (with-syntax ((cast (quote-syntax cast)))
+    (with-syntax ((cast (quote-syntax cast))
+                  (immediate-instance-of? (quote-syntax immediate-instance-of?)))
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
