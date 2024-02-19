@@ -1,10 +1,10 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1708353891)
+  (define gerbil/compiler/compile::timestamp 1708370114)
   (begin
     (define gxc#_g110238_
       (gx#core-deserialize-mark
-       '(0 (hd . _hd108551_) (else . _else108528_))
+       '(0 (else . _else108528_) (hd . _hd108551_))
        (gx#current-expander-context)))
     (define gxc#_g110239_
       (##structure
@@ -15,7 +15,7 @@
        (list gxc#_g110238_)))
     (define gxc#_g110244_
       (gx#core-deserialize-mark
-       '(0 (else . _else108589_) (hd . _hd108612_))
+       '(0 (hd . _hd108612_) (else . _else108589_))
        (gx#current-expander-context)))
     (define gxc#_g110245_
       (##structure
@@ -26,7 +26,7 @@
        (list gxc#_g110244_)))
     (define gxc#_g110250_
       (gx#core-deserialize-mark
-       '(0 (else . _else108651_) (hd . _hd108674_))
+       '(0 (hd . _hd108674_) (else . _else108651_))
        (gx#current-expander-context)))
     (define gxc#_g110251_
       (##structure
@@ -37,7 +37,7 @@
        (list gxc#_g110250_)))
     (define gxc#_g110256_
       (gx#core-deserialize-mark
-       '(0 (else . _else108714_) (hd . _hd108737_))
+       '(0 (hd . _hd108737_) (else . _else108714_))
        (gx#current-expander-context)))
     (define gxc#_g110257_
       (##structure

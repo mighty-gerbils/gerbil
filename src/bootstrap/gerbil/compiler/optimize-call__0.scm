@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1708353895)
+  (define gerbil/compiler/optimize-call::timestamp 1708370118)
   (begin
     (define gxc#&optimize-call
       (make-promise
@@ -4013,36 +4013,36 @@
           (_g151246151313_ _args151245_))))
     (define gxc#!mutator::optimize-call::specialize
       (lambda (__t152118)
-        (let ((__checked?152119
+        (let ((__slot152119
                (let ((__tmp152122
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t152118 'checked?))))
+                        (class-slot-offset __t152118 'slot))))
                  (if __tmp152122
                      __tmp152122
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'checked?)))))
-              (__slot152120
+                       (error '"Unknown slot" 'slot)))))
+              (__id152120
                (let ((__tmp152123
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t152118 'slot))))
+                        (class-slot-offset __t152118 'id))))
                  (if __tmp152123
                      __tmp152123
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slot)))))
-              (__id152121
+                       (error '"Unknown slot" 'id)))))
+              (__checked?152121
                (let ((__tmp152124
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t152118 'id))))
+                        (class-slot-offset __t152118 'checked?))))
                  (if __tmp152124
                      __tmp152124
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'id))))))
+                       (error '"Unknown slot" 'checked?))))))
           (lambda (_self151243_ _stx151244_ _args151245_)
             (let* ((_g151247151261_
                     (lambda (_g151248151258_)
@@ -4095,7 +4095,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self151243_
-                                                               __id152121
+                                                               __id152120
                                                                __t152118
                                                                '#f))))
                                                        (declare (not safe))
@@ -4109,7 +4109,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self151243_
-                                                               __slot152120
+                                                               __slot152119
                                                                __t152118
                                                                '#f))))
                                                        (declare (not safe))
@@ -4138,7 +4138,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self151243_
-                                __checked?152119
+                                __checked?152121
                                 __t152118
                                 '#f))
                              '%#struct-direct-set!
@@ -4151,7 +4151,7 @@
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
                                                  _self151243_
-                                                 __id152121
+                                                 __id152120
                                                  __t152118
                                                  '#f))))
                                          (declare (not safe))
@@ -4196,7 +4196,7 @@
                                    (declare (not safe))
                                    (##unchecked-structure-ref
                                     _self151243_
-                                    __checked?152119
+                                    __checked?152121
                                     __t152118
                                     '#f))
                                  '%#struct-set!
@@ -4209,7 +4209,7 @@
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
                                                      _self151243_
-                                                     __id152121
+                                                     __id152120
                                                      __t152118
                                                      '#f))))
                                              (declare (not safe))
@@ -4246,7 +4246,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self151243_
-                                __slot152120
+                                __slot152119
                                 __t152118
                                 '#f))))
                         (declare (not safe))
@@ -4261,7 +4261,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self151243_
-                                             __checked?152119
+                                             __checked?152121
                                              __t152118
                                              '#f))
                                           '%#struct-set!
@@ -4275,7 +4275,7 @@
                                                                (not safe))
                                                              (##unchecked-structure-ref
                                                               _self151243_
-                                                              __id152121
+                                                              __id152120
                                                               __t152118
                                                               '#f))))
                                                       (declare (not safe))
@@ -4319,7 +4319,7 @@
                            (declare (not safe))
                            (##unchecked-structure-ref
                             _self151243_
-                            __checked?152119
+                            __checked?152121
                             __t152118
                             '#f))
                          (let ((__tmp153090
@@ -4387,7 +4387,7 @@
                          (declare (not safe))
                          (##unchecked-structure-ref
                           _self151243_
-                          __id152121
+                          __id152120
                           __t152118
                           '#f))))
                   (declare (not safe))
@@ -4444,7 +4444,7 @@
                                        (declare (not safe))
                                        (##unchecked-structure-ref
                                         _self151243_
-                                        __id152121
+                                        __id152120
                                         __t152118
                                         '#f))))
                                 (declare (not safe))
@@ -4467,7 +4467,7 @@
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
                                                       _self151243_
-                                                      __slot152120
+                                                      __slot152119
                                                       __t152118
                                                       '#f))))
                                               (declare (not safe))
@@ -4527,7 +4527,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self151243_
-                                     __slot152120
+                                     __slot152119
                                      __t152118
                                      '#f))))
                              (declare (not safe))
@@ -5046,7 +5046,7 @@
                                (declare (not safe))
                                (cons __tmp153197 __tmp153190))))
                         (declare (not safe))
-                        (cons '(%#ref symoblic-table-set!) __tmp153189))))
+                        (cons '(%#ref symbolic-table-set!) __tmp153189))))
                  (declare (not safe))
                  (cons '%#call __tmp153188)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -68,8 +68,8 @@ package: gerbil/runtime
    (@class gerbil#HashTable::t
            (interface-instance::t)
            (interface-instance::t)
-           (ref set update del each length copy clear)
-           (__object ref set update del each length copy clear)
+           (ref set! update! delete! for-each length copy clear)
+           (__object ref set! update! delete! for-each length copy clear)
            #f
            #t
            #t
@@ -77,34 +77,34 @@ package: gerbil/runtime
            #f))
   (declare-type HashTable? (@predicate HashTable::t))
   (declare-type HashTable-ref@ (@accessor HashTable::t ref #t))
-  (declare-type HashTable-set@ (@accessor HashTable::t set #t))
-  (declare-type HashTable-update@ (@accessor HashTable::t update #t))
-  (declare-type HashTable-del@ (@accessor HashTable::t del #t))
-  (declare-type HashTable-each@ (@accessor HashTable::t each #t))
+  (declare-type HashTable-set@ (@accessor HashTable::t set! #t))
+  (declare-type HashTable-update@ (@accessor HashTable::t update! #t))
+  (declare-type HashTable-del@ (@accessor HashTable::t delete! #t))
+  (declare-type HashTable-each@ (@accessor HashTable::t for-each #t))
   (declare-type HashTable-length@ (@accessor HashTable::t length #t))
   (declare-type HashTable-copy@ (@accessor HashTable::t copy #t))
   (declare-type HashTable-clear@ (@accessor HashTable::t clear #t))
   (declare-type HashTable-ref@-set! (@mutator HashTable::t ref #t))
-  (declare-type HashTable-set@-set! (@mutator HashTable::t set #t))
-  (declare-type HashTable-update@-set! (@mutator HashTable::t update #t))
-  (declare-type HashTable-del@-set! (@mutator HashTable::t del #t))
-  (declare-type HashTable-each@-set! (@mutator HashTable::t each #t))
+  (declare-type HashTable-set@-set! (@mutator HashTable::t set! #t))
+  (declare-type HashTable-update@-set! (@mutator HashTable::t update! #t))
+  (declare-type HashTable-del@-set! (@mutator HashTable::t delete! #t))
+  (declare-type HashTable-each@-set! (@mutator HashTable::t for-each #t))
   (declare-type HashTable-length@-set! (@mutator HashTable::t length #t))
   (declare-type HashTable-copy@-set! (@mutator HashTable::t copy #t))
   (declare-type HashTable-clear@-set! (@mutator HashTable::t clear #t))
   (declare-type &HashTable-ref@ (@accessor HashTable::t ref #f))
-  (declare-type &HashTable-set@ (@accessor HashTable::t set #f))
-  (declare-type &HashTable-update@ (@accessor HashTable::t update #f))
-  (declare-type &HashTable-del@ (@accessor HashTable::t del #f))
-  (declare-type &HashTable-each@ (@accessor HashTable::t each #f))
+  (declare-type &HashTable-set@ (@accessor HashTable::t set! #f))
+  (declare-type &HashTable-update@ (@accessor HashTable::t update! #f))
+  (declare-type &HashTable-del@ (@accessor HashTable::t delete! #f))
+  (declare-type &HashTable-each@ (@accessor HashTable::t for-each #f))
   (declare-type &HashTable-length@ (@accessor HashTable::t length #f))
   (declare-type &HashTable-copy@ (@accessor HashTable::t copy #f))
   (declare-type &HashTable-clear@ (@accessor HashTable::t clear #f))
   (declare-type &HashTable-ref@-set! (@mutator HashTable::t ref #f))
-  (declare-type &HashTable-set@-set! (@mutator HashTable::t set #f))
-  (declare-type &HashTable-update@-set! (@mutator HashTable::t update #f))
-  (declare-type &HashTable-del@-set! (@mutator HashTable::t del #f))
-  (declare-type &HashTable-each@-set! (@mutator HashTable::t each #f))
+  (declare-type &HashTable-set@-set! (@mutator HashTable::t set! #f))
+  (declare-type &HashTable-update@-set! (@mutator HashTable::t update! #f))
+  (declare-type &HashTable-del@-set! (@mutator HashTable::t delete! #f))
+  (declare-type &HashTable-each@-set! (@mutator HashTable::t for-each #f))
   (declare-type &HashTable-length@-set! (@mutator HashTable::t length #f))
   (declare-type &HashTable-copy@-set! (@mutator HashTable::t copy #f))
   (declare-type &HashTable-clear@-set! (@mutator HashTable::t clear #f))
@@ -113,8 +113,8 @@ package: gerbil/runtime
    (@class gerbil#HashTableLock::t
            (interface-instance::t)
            (interface-instance::t)
-           (begin-read end-read begin-write end-write)
-           (__object begin-read end-read begin-write end-write)
+           (begin-read! end-read! begin-write! end-write!)
+           (__object begin-read! end-read! begin-write! end-write!)
            #f
            #t
            #t
@@ -123,52 +123,52 @@ package: gerbil/runtime
   (declare-type HashTableLock? (@predicate HashTableLock::t))
   (declare-type
    HashTableLock-begin-read@
-   (@accessor HashTableLock::t begin-read #t))
+   (@accessor HashTableLock::t begin-read! #t))
   (declare-type
    HashTableLock-end-read@
-   (@accessor HashTableLock::t end-read #t))
+   (@accessor HashTableLock::t end-read! #t))
   (declare-type
    HashTableLock-begin-write@
-   (@accessor HashTableLock::t begin-write #t))
+   (@accessor HashTableLock::t begin-write! #t))
   (declare-type
    HashTableLock-end-write@
-   (@accessor HashTableLock::t end-write #t))
+   (@accessor HashTableLock::t end-write! #t))
   (declare-type
    HashTableLock-begin-read@-set!
-   (@mutator HashTableLock::t begin-read #t))
+   (@mutator HashTableLock::t begin-read! #t))
   (declare-type
    HashTableLock-end-read@-set!
-   (@mutator HashTableLock::t end-read #t))
+   (@mutator HashTableLock::t end-read! #t))
   (declare-type
    HashTableLock-begin-write@-set!
-   (@mutator HashTableLock::t begin-write #t))
+   (@mutator HashTableLock::t begin-write! #t))
   (declare-type
    HashTableLock-end-write@-set!
-   (@mutator HashTableLock::t end-write #t))
+   (@mutator HashTableLock::t end-write! #t))
   (declare-type
    &HashTableLock-begin-read@
-   (@accessor HashTableLock::t begin-read #f))
+   (@accessor HashTableLock::t begin-read! #f))
   (declare-type
    &HashTableLock-end-read@
-   (@accessor HashTableLock::t end-read #f))
+   (@accessor HashTableLock::t end-read! #f))
   (declare-type
    &HashTableLock-begin-write@
-   (@accessor HashTableLock::t begin-write #f))
+   (@accessor HashTableLock::t begin-write! #f))
   (declare-type
    &HashTableLock-end-write@
-   (@accessor HashTableLock::t end-write #f))
+   (@accessor HashTableLock::t end-write! #f))
   (declare-type
    &HashTableLock-begin-read@-set!
-   (@mutator HashTableLock::t begin-read #f))
+   (@mutator HashTableLock::t begin-read! #f))
   (declare-type
    &HashTableLock-end-read@-set!
-   (@mutator HashTableLock::t end-read #f))
+   (@mutator HashTableLock::t end-read! #f))
   (declare-type
    &HashTableLock-begin-write@-set!
-   (@mutator HashTableLock::t begin-write #f))
+   (@mutator HashTableLock::t begin-write! #f))
   (declare-type
    &HashTableLock-end-write@-set!
-   (@mutator HashTableLock::t end-write #f))
+   (@mutator HashTableLock::t end-write! #f))
   (declare-type gambit-table-update! (@lambda 4 #f))
   (declare-type gambit-table-for-each (@lambda 2 #f))
   (declare-type gambit-table-clear! (@lambda 1 #f))
@@ -243,11 +243,11 @@ package: gerbil/runtime
            ((ref . _checked-hash-table::ref68750_)
             (delete! . _checked-hash-table::delete!68756_)
             (set! . _checked-hash-table::set!68752_)
-            (length . _checked-hash-table::length68760_)
             (copy . _checked-hash-table::copy68762_)
+            (length . _checked-hash-table::length68760_)
             (clear! . _checked-hash-table::clear!68764_)
-            (update! . _checked-hash-table::update!68754_)
-            (for-each . _checked-hash-table::for-each68758_))))
+            (for-each . _checked-hash-table::for-each68758_)
+            (update! . _checked-hash-table::update!68754_))))
   (declare-type checked-hash-table? (@predicate checked-hash-table::t))
   (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
   (declare-type
