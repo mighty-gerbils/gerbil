@@ -11,19 +11,26 @@
         ./api)
 (export json-test)
 
+(def (equal-hash? a b)
+  (and (hash-table? a)
+       (hash-table? b)
+       (= (hash-length a) (hash-length b))
+       (andmap (lambda (k v) (and (hash-key? b k) (equal? (hash-ref b k) v)))
+               (hash-keys a) (hash-values a))))
+
 (defstruct foo (a b) transparent: #t)
 (defmethod {:write-json foo}
   (lambda (self output)
     (with ((foo a b) self)
       (write-json (hash (a a) (b b)) output))))
 
-(def (check-encode-decode obj str)
+(def (check-encode-decode obj str (eqf equal?))
   (parameterize ((json-sort-keys #f))
-    (check (string->json-object (json-object->string obj)) => obj))
+    (check (string->json-object (json-object->string obj)) => obj : eqf))
 
   (parameterize ((json-sort-keys #t))
     (check (json-object->string obj) => str)
-    (check (string->json-object str) => obj)))
+    (check (string->json-object str) => obj :: eqf)))
 
 (def (check-encode-decode= obj)
   (checkf = (string->json-object (json-object->string obj)) obj))
@@ -50,10 +57,12 @@
       (check-encode-decode "a string" "\"a string\"")
       (check-encode-decode [1 2 3 [4 5] ["six" "seven"]] "[1,2,3,[4,5],[\"six\",\"seven\"]]")
       (check-encode-decode (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5))))
-                           "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
+                           "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"
+                           equal-hash?)
       (parameterize ((json-symbolic-keys #f))
         (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))
-                             "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
+                             "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"
+                             equal-hash?))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
       (check-encode (walist '((d . 41) (c . 23))) "{\"d\":41,\"c\":23}")
       (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
@@ -66,13 +75,13 @@
         "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
 
       (check (call-with-output-string "" (cut write-json obj <>)) => str)
-      (check (call-with-input-string str read-json) => obj)
+      (check (call-with-input-string str read-json) => obj :: equal-hash?)
 
       (check (do-with-buffered-string-writer (cut write-json obj <>)) => str)
-      (check (do-with-buffered-string-reader str read-json) => obj)
+      (check (do-with-buffered-string-reader str read-json) => obj :: equal-hash?)
 
       (check (do-with-buffered-writer (cut write-json obj <>)) => str)
-      (check (do-with-buffered-reader str read-json) => obj))))
+      (check (do-with-buffered-reader str read-json) => obj :: equal-hash?))))
 
 (def (do-with-buffered-writer proc)
   (let (buf (open-buffered-writer #f))

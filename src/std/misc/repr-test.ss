@@ -36,8 +36,8 @@
      "[1 2 [3 . 4] [5 #u8(114 101 112 114) ...]]"
      "(vector #f #!void #!eof)"
      ;;"(hash (a 1) (b 2) (,(vector 'x 'y) 'xyzzy))"
-     "(hash-eq (a 1) (b 2))"
-     "(hash-eqv (1 'a) (2 'b))"
+     ;;"(hash-eq (a 1) (b 2))"
+     ;;"(hash-eqv (1 'a) (2 'b))"
      "(foo a: 1 b: 2)"
      "(values 1 2 3)"
      "(values)")

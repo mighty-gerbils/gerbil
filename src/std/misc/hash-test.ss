@@ -8,6 +8,12 @@
         :std/test)
 (export hash-test)
 
+(def (equal-hash? a b)
+  (and (hash-table? a)
+       (hash-table? b)
+       (= (hash-length a) (hash-length b))
+       (andmap (lambda (k v) (and (hash-key? b k) (equal? (hash-ref b k) v)))
+               (hash-keys a) (hash-values a))))
 (def hash-test
   (test-suite "test :std/misc/hash"
     (test-case "hash-empty?"
@@ -33,7 +39,7 @@
       (def h (hash ("a" 1) ("b" 2) ("c" 3)))
       (check (hash->list/sort (invert-hash h) <)
              => '((1 . "a") (2 . "b") (3 . "c")))
-      (check (invert-hash (hash (4 "d") (33 "c")) to: h) => h)
+      (check (invert-hash (hash (4 "d") (33 "c")) to: h) => h :: equal-hash?)
       (check (hash->list/sort h string<?)
              => '(("a" . 1) ("b" . 2) ("c" . 33) ("d" . 4))))
     (test-case "invert-hash/fold"
@@ -51,50 +57,52 @@
              => '(("e" . 1) ("h" . 0) ("l" . 5) ("o" . 4))))
     (test-case "hash-restrict-keys"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
-      (check (hash-restrict-keys h '()) => (hash))
-      (check (hash-restrict-keys h '("a" "c" "e")) => (hash ("a" 1) ("c" 3) ("e" 5)))
-      (check (hash-restrict-keys h '("a" "b" "c" "d" "e")) => h))
+      (check (hash-restrict-keys h '()) => (hash) :: equal-hash?)
+      (check (hash-restrict-keys h '("a" "c" "e")) => (hash ("a" 1) ("c" 3) ("e" 5)) :: equal-hash?)
+      (check (hash-restrict-keys h '("a" "b" "c" "d" "e")) => h :: equal-hash?))
     (test-case "hash-value-map"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
       (check (hash-value-map h (lambda (x) (* x 2)))
-             => (hash ("a" 2) ("b" 4) ("c" 6) ("d" 8) ("e" 10))))
+             => (hash ("a" 2) ("b" 4) ("c" 6) ("d" 8) ("e" 10)) :: equal-hash?))
     (test-case "hash-key-value-map"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5) ("f" 6)))
       (check (hash-key-value-map (lambda (k v) (and (even? v) (cons (/ v 2) (string-append k k)))) h)
-             => (hash (1 "bb") (2 "dd") (3 "ff"))))
+             => (hash (1 "bb") (2 "dd") (3 "ff")) :: equal-hash?))
     (test-case "hash-filter"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
       (check (hash-filter h (lambda (k v) (odd? v)))
-             => (hash ("a" 1) ("c" 3) ("e" 5))))
+             => (hash ("a" 1) ("c" 3) ("e" 5)) :: equal-hash?))
     (test-case "hash-remove"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
       (check (hash-remove h (lambda (k v) (odd? v)))
-             => (hash ("b" 2) ("d" 4))))
+             => (hash ("b" 2) ("d" 4)) :: equal-hash?))
     (test-case "hash-remove-value"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
       (check (hash-remove-value h 3)
-             => (hash ("a" 1) ("b" 2) ("d" 4) ("e" 5))))
+             => (hash ("a" 1) ("b" 2) ("d" 4) ("e" 5)) :: equal-hash?))
     (test-case "hash-ensure-removed!"
       (def h (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5)))
       (check (values->list (hash-ensure-removed! h "d")) => '(4 #t))
       (check (values->list (hash-ensure-removed! h "e")) => '(5 #t))
       (check (values->list (hash-ensure-removed! h "e")) => '(#f #f))
       (check (values->list (hash-ensure-removed! h "f")) => '(#f #f))
-      (check h => (hash ("a" 1) ("b" 2) ("c" 3))))
+      (check h => (hash ("a" 1) ("b" 2) ("c" 3)) :: equal-hash?))
     (test-case "hash-merge/override"
       (check (hash-merge/override
               (hash (1 11) (2 12) (3 13) (4 14) (5 15) (6 16) (7 17))
               (hash (0 20) (2 22) (4 24) (6 26) (8 28))
               (hash (3 33) (6 36) (9 39)))
-             => (hash (0 20) (1 11) (2 22) (3 33) (4 24) (5 15) (6 36) (7 17) (8 28) (9 39))))
+             => (hash (0 20) (1 11) (2 22) (3 33) (4 24) (5 15) (6 36) (7 17) (8 28) (9 39))
+             :: equal-hash?))
     (test-case "hash-merge/override!"
       (def h (hash (1 11) (2 12) (3 13) (4 14) (5 15) (6 16) (7 17)))
       (check (hash-merge/override!
               h
               (hash (0 20) (2 22) (4 24) (6 26) (8 28))
               (hash (3 33) (6 36) (9 39)))
-             => h)
-      (check h => (hash (0 20) (1 11) (2 22) (3 33) (4 24) (5 15) (6 36) (7 17) (8 28) (9 39))))
+             => h :: equal-hash?)
+      (check h => (hash (0 20) (1 11) (2 22) (3 33) (4 24) (5 15) (6 36) (7 17) (8 28) (9 39))
+             :: equal-hash?))
     (test-case "hash-get-set!, hash-ref-set!"
       (def h (hash (1 11) (2 12) (3 13)))
       (check (hash-get h 2) => 12)

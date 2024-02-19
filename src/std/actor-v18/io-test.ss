@@ -43,6 +43,13 @@
        (time? b)
        (eqv? (time->seconds a) (time->seconds b))))
 
+(def (equal-hash? a b)
+  (and (hash-table? a)
+       (hash-table? b)
+       (= (hash-length a) (hash-length b))
+       (andmap (lambda (k v) (and (hash-key? b k) (equal? (hash-ref b k) v)))
+               (hash-keys a) (hash-values a))))
+
 (defmessage A (x y))
 (defstruct B (x y) transparent: #t)
 
@@ -77,7 +84,7 @@
       (check-marshal-unmarshal world: keyword-tag)
       (check-marshal-unmarshal "hello world" string-tag)
       (check-marshal-unmarshal '#u8(1 2 3) u8vector-tag)
-      (check-marshal-unmarshal (hash (a 1) (b 2) (c 3)) table-tag)
+      (check-marshal-unmarshal (hash (a 1) (b 2) (c 3)) table-tag equal-hash?)
       (check-marshal-unmarshal (current-time) time-tag equal-time?))
 
     (test-case "serde objects"
