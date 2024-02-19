@@ -26,14 +26,14 @@ namespace: #f
   name: HashTable
   final: #t
   slots:
-  ((ref     HashTable-ref@ HashTable-ref@-set!)
-   (set     HashTable-set@ HashTable-set@-set!)
-   (update  HashTable-update@ HashTable-update@-set!)
-   (del     HashTable-del@ HashTable-del@-set!)
-   (each    HashTable-each@ HashTable-each@-set!)
-   (length  HashTable-length@ HashTable-length@-set!)
-   (copy    HashTable-copy@ HashTable-copy@-set!)
-   (clear   HashTable-clear@ HashTable-clear@-set!)))
+  ((ref      HashTable-ref@ HashTable-ref@-set!)
+   (set!     HashTable-set@ HashTable-set@-set!)
+   (update!  HashTable-update@ HashTable-update@-set!)
+   (delete!  HashTable-del@ HashTable-del@-set!)
+   (for-each HashTable-each@ HashTable-each@-set!)
+   (length   HashTable-length@ HashTable-length@-set!)
+   (copy     HashTable-copy@ HashTable-copy@-set!)
+   (clear    HashTable-clear@ HashTable-clear@-set!)))
 
 (def HashTable::interface
   (interface-descriptor
