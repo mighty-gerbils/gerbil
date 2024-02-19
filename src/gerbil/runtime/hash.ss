@@ -199,7 +199,9 @@ namespace: #f
                              #'(arg ...))))
        #'(begin
            (def (hash-method h arg ...)
-             (&hash-method (cast HashTable::interface h) arg-val ...))
+             (let (h (if (immediate-instance-of? HashTable::t h)
+                       h (cast HashTable::interface h)))
+               (&hash-method h arg-val ...)))
            (def (&hash-method h arg ...)
              body ...))))))
 
