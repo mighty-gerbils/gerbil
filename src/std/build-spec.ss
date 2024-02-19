@@ -4,7 +4,6 @@
 
 (def (build-spec . _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
-    "gambit-sharp"
     "metaclass"
     "interactive"
     "foreign"

@@ -5,7 +5,7 @@ prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
-(import "gambit" "util" "error")
+(import "gambit" "util" "error" "hash")
 (export #t)
 
 ;; spawn an actor thread apply f to args

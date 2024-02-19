@@ -3,7 +3,10 @@ package: gerbil/runtime
 namespace: #f
 
 (%#begin (%#export #t)
-         (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+         (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/hash)
          (%#define-runtime
           current-module-library-path
           current-module-library-path)

@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "util")
+(import "gambit" "util" "hash")
 
 (def current-module-library-path
   (make-parameter #f))

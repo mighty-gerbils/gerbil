@@ -51,7 +51,6 @@ namespace: #f
          (%#define-runtime make-syntax-error make-syntax-error)
          (%#define-runtime syntax-error? syntax-error?)
          (%#define-runtime __raise-syntax-error __raise-syntax-error)
-         (%#define-runtime __current-context __current-context)
          (%#define-runtime AST::t AST::t)
          (%#define-runtime AST? AST?)
          (%#define-runtime make-AST make-AST)

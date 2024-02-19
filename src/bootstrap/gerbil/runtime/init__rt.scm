@@ -8,6 +8,8 @@
     (load-module "gerbil/runtime/control__rt")
     (load-module "gerbil/runtime/mop__rt")
     (load-module "gerbil/runtime/error__rt")
+    (load-module "gerbil/runtime/interface__rt")
+    (load-module "gerbil/runtime/hash__rt")
     (load-module "gerbil/runtime/thread__rt")
     (load-module "gerbil/runtime/syntax__rt")
     (load-module "gerbil/runtime/eval__rt")

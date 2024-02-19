@@ -4,28 +4,35 @@ namespace: gerbil/runtime
 
 (%#begin (%#provide gerbil-runtime)
          (%#import
-          :gerbil/runtime/system
           :gerbil/runtime/util
-          :gerbil/runtime/loader
+          :gerbil/runtime/table
           :gerbil/runtime/control
+          :gerbil/runtime/system
           :gerbil/runtime/c3
           :gerbil/runtime/mop
           :gerbil/runtime/error
+          :gerbil/runtime/interface
+          :gerbil/runtime/hash
           :gerbil/runtime/thread
           :gerbil/runtime/syntax
           :gerbil/runtime/eval
           :gerbil/runtime/repl
+          :gerbil/runtime/loader
           :gerbil/runtime/init)
          (%#export
-          (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/util)
-          (import: :gerbil/runtime/loader)
+          (import: :gerbil/runtime/table)
           (import: :gerbil/runtime/control)
+          (import: :gerbil/runtime/system)
           (import: :gerbil/runtime/c3)
           (import: :gerbil/runtime/mop)
           (import: :gerbil/runtime/error)
+          (import: :gerbil/runtime/interface)
+          (import: :gerbil/runtime/hash)
+          (import: :gerbil/runtime/thread)
           (import: :gerbil/runtime/syntax)
           (import: :gerbil/runtime/eval)
           (import: :gerbil/runtime/repl)
+          (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/init)))
 (%#call (%#ref load-module) (%#quote "gerbil/runtime__0"))

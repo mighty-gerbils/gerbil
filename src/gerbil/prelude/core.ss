@@ -138,16 +138,14 @@ package: gerbil
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
     make-hash-table make-hash-table-eq make-hash-table-eqv
-    hash-table?
+    hash-table? is-hash-table?
     hash->list hash->plist
     list->hash-table list->hash-table-eq list->hash-table-eqv
     plist->hash-table plist->hash-table-eq plist->hash-table-eqv
     hash-length hash-ref hash-get hash-put! hash-remove! hash-update! hash-key?
     hash-find hash-for-each hash-map hash-fold
     hash-keys hash-values
-    hash-copy hash-copy!
-    hash-merge hash-merge!
-    hash-clear!
+    hash-copy hash-merge hash-merge!
     eq?-hash eqv?-hash equal?-hash
     uninterned-symbol? interned-symbol? string->uninterned-symbol
     gensym make-symbol make-uninterned-symbol symbol-hash as-string display-as-string
@@ -161,6 +159,10 @@ package: gerbil
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
+
+    ;; kw dispatch and method tables
+    make-symbolic-table symbolic-table-ref symbolic-table-set! symbolic-table-delete!
+
     ;; class linearization with C4
     c4-linearize
 
@@ -230,6 +232,7 @@ package: gerbil
     find-method
     next-method call-next-method
     substruct? subclass?
+
     ;; write-env style
     write-style
     ;; control
@@ -902,7 +905,7 @@ package: gerbil
                          ((get-kw ...)
                           (map (lambda% (kwarg)
                                  (with-syntax ((key (car kwarg)))
-                                   #'(hash-ref kwvar 'key absent-value)))
+                                   #'(symbolic-table-ref kwvar 'key absent-value)))
                                kwargs))
                           (main main))
             (syntax/loc stx

@@ -62,16 +62,19 @@ namespace: gxc
 (def gerbil-runtime-modules
   '("gerbil/runtime/gambit"
     "gerbil/runtime/util"
-    "gerbil/runtime/system"
-    "gerbil/runtime/loader"
+    "gerbil/runtime/table"
     "gerbil/runtime/control"
+    "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
     "gerbil/runtime/error"
+    "gerbil/runtime/interface"
+    "gerbil/runtime/hash"
     "gerbil/runtime/thread"
     "gerbil/runtime/syntax"
     "gerbil/runtime/eval"
     "gerbil/runtime/repl"
+    "gerbil/runtime/loader"
     "gerbil/runtime/init"
     "gerbil/runtime"))
 

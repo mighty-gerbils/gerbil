@@ -130,10 +130,7 @@ namespace: #f
 
 (def (__raise-syntax-error where message stx . details)
   (raise
-    (make-syntax-error message (cons stx details) where (__current-context) #f #f)))
-
-(def __current-context
-  (make-parameter #f))
+    (make-syntax-error message (cons stx details) where #f #f #f)))
 
 ;;; ASTs
 (defstruct AST (e source)

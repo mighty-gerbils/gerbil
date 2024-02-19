@@ -9,10 +9,14 @@ package: gerbil/runtime
   (declare-type spawn-thread__% (@lambda 3 #f))
   (declare-type spawn-thread__0 (@lambda 1 #f))
   (declare-type spawn-thread__1 (@lambda 2 #f))
-  (declare-type spawn-thread (@case-lambda (1 #f) (2 #f) (3 #f)))
+  (declare-type
+   spawn-thread
+   (@case-lambda (1 spawn-thread__0) (2 spawn-thread__1) (3 spawn-thread__%)))
   (declare-type thread-local-ref__% (@lambda 2 #f))
   (declare-type thread-local-ref__0 (@lambda 1 #f))
-  (declare-type thread-local-ref (@case-lambda (1 #f) (2 #f)))
+  (declare-type
+   thread-local-ref
+   (@case-lambda (1 thread-local-ref__0) (2 thread-local-ref__%)))
   (declare-type thread-local-get (@lambda 1 #f))
   (declare-type thread-local-set! (@lambda 2 #f))
   (declare-type thread-local-clear! (@lambda 1 #f))

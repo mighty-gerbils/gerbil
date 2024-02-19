@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "system" "util" "loader" "control" "mop" "error" "thread" "syntax" "eval"  "repl")
+(import "gambit" "system" "util" "loader" "control" "mop" "error" "interface" "hash" "thread" "syntax" "eval"  "repl")
 
 (def __loading-scheme-source
   (make-parameter #f))
@@ -24,7 +24,6 @@ namespace: #f
   (gx#current-expander-eval            ##eval)
   (gx#core-bind-root-syntax! ':<root> (gx#make-prelude-context #f) #t)
   ;; setup _gx
-  (__current-context  __*top*)
   (__current-compiler __compile-top)
   (__current-expander  gx#core-expand)
   (set! __eval-module gx#core-eval-module))
@@ -228,15 +227,8 @@ namespace: #f
     (for-each (lambda (in) (import1 in 0)) in)
     (import1 in 0)))
 
-;; bootstrap module eval - init-gx! sets to gx#core-eval-module
 (def (__eval-module obj)
-  (let (key (if (gx#module-context? obj)
-               (gx#module-context-path obj)
-               obj))
-    (cond
-     ((hash-get __*modules* key) => values) ; bootstrap import
-     (else
-      (gx#core-eval-module obj)))))
+  (gx#core-eval-module obj))
 
 (def (gerbil-runtime-init! builtin-modules)
   (unless __runtime-initialized

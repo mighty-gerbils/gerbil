@@ -1,0 +1,110 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import :gerbil/runtime/gambit)
+         (%#export #t)
+         (%#define-runtime __table::t.id __table::t.id)
+         (%#define-runtime __table::t __table::t)
+         (%#define-runtime &raw-table-table &raw-table-table)
+         (%#define-runtime &raw-table-count &raw-table-count)
+         (%#define-runtime &raw-table-free &raw-table-free)
+         (%#define-runtime &raw-table-hash &raw-table-hash)
+         (%#define-runtime &raw-table-test &raw-table-test)
+         (%#define-runtime &raw-table-seed &raw-table-seed)
+         (%#define-runtime &raw-table-table-set! &raw-table-table-set!)
+         (%#define-runtime &raw-table-count-set! &raw-table-count-set!)
+         (%#define-runtime &raw-table-free-set! &raw-table-free-set!)
+         (%#define-runtime &raw-table-hash-set! &raw-table-hash-set!)
+         (%#define-runtime &raw-table-test-set! &raw-table-test-set!)
+         (%#define-runtime &raw-table-seed-set! &raw-table-seed-set!)
+         (%#define-runtime raw-table-size-hint->size raw-table-size-hint->size)
+         (%#begin (%#define-runtime make-raw-table__% make-raw-table__%)
+                  (%#begin (%#define-runtime
+                            make-raw-table__0
+                            make-raw-table__0)
+                           (%#define-runtime make-raw-table make-raw-table)))
+         (%#define-runtime raw-table-ref raw-table-ref)
+         (%#define-runtime raw-table-set! raw-table-set!)
+         (%#define-runtime raw-table-update! raw-table-update!)
+         (%#define-runtime raw-table-delete! raw-table-delete!)
+         (%#define-runtime raw-table-for-each raw-table-for-each)
+         (%#define-runtime raw-table-copy raw-table-copy)
+         (%#define-runtime raw-table-clear! raw-table-clear!)
+         (%#define-runtime __raw-table-set! __raw-table-set!)
+         (%#define-runtime __raw-table-update! __raw-table-update!)
+         (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
+         (%#define-runtime eq-hash eq-hash)
+         (%#define-runtime eqv-hash eqv-hash)
+         (%#define-runtime symbolic? symbolic?)
+         (%#define-runtime symbolic-hash symbolic-hash)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/table__1")))
+                  (%#define-syntax __symbolic-hash |[:0:]#__symbolic-hash|))
+         (%#define-runtime string-hash string-hash)
+         (%#define-syntax defspecialized-table |[:0:]#defspecialized-table|)
+         (%#begin (%#define-runtime make-eq-table__% make-eq-table__%)
+                  (%#begin (%#define-runtime make-eq-table__0 make-eq-table__0)
+                           (%#define-runtime make-eq-table__1 make-eq-table__1)
+                           (%#define-runtime make-eq-table make-eq-table)))
+         (%#define-runtime eq-table-ref eq-table-ref)
+         (%#define-runtime eq-table-set! eq-table-set!)
+         (%#define-runtime __eq-table-set! __eq-table-set!)
+         (%#define-runtime eq-table-update! eq-table-update!)
+         (%#define-runtime __eq-table-update! __eq-table-update!)
+         (%#define-runtime eq-table-delete! eq-table-delete!)
+         (%#begin (%#define-runtime make-eqv-table__% make-eqv-table__%)
+                  (%#begin (%#define-runtime
+                            make-eqv-table__0
+                            make-eqv-table__0)
+                           (%#define-runtime
+                            make-eqv-table__1
+                            make-eqv-table__1)
+                           (%#define-runtime make-eqv-table make-eqv-table)))
+         (%#define-runtime eqv-table-ref eqv-table-ref)
+         (%#define-runtime eqv-table-set! eqv-table-set!)
+         (%#define-runtime __eqv-table-set! __eqv-table-set!)
+         (%#define-runtime eqv-table-update! eqv-table-update!)
+         (%#define-runtime __eqv-table-update! __eqv-table-update!)
+         (%#define-runtime eqv-table-delete! eqv-table-delete!)
+         (%#begin (%#define-runtime
+                   make-symbolic-table__%
+                   make-symbolic-table__%)
+                  (%#begin (%#define-runtime
+                            make-symbolic-table__0
+                            make-symbolic-table__0)
+                           (%#define-runtime
+                            make-symbolic-table__1
+                            make-symbolic-table__1)
+                           (%#define-runtime
+                            make-symbolic-table
+                            make-symbolic-table)))
+         (%#define-runtime symbolic-table-ref symbolic-table-ref)
+         (%#define-runtime symbolic-table-set! symbolic-table-set!)
+         (%#define-runtime __symbolic-table-set! __symbolic-table-set!)
+         (%#define-runtime symbolic-table-update! symbolic-table-update!)
+         (%#define-runtime __symbolic-table-update! __symbolic-table-update!)
+         (%#define-runtime symbolic-table-delete! symbolic-table-delete!)
+         (%#begin (%#define-runtime make-string-table__% make-string-table__%)
+                  (%#begin (%#define-runtime
+                            make-string-table__0
+                            make-string-table__0)
+                           (%#define-runtime
+                            make-string-table__1
+                            make-string-table__1)
+                           (%#define-runtime
+                            make-string-table
+                            make-string-table)))
+         (%#define-runtime string-table-ref string-table-ref)
+         (%#define-runtime string-table-set! string-table-set!)
+         (%#define-runtime __string-table-set! __string-table-set!)
+         (%#define-runtime string-table-update! string-table-update!)
+         (%#define-runtime __string-table-update! __string-table-update!)
+         (%#define-runtime string-table-delete! string-table-delete!)
+         (%#define-syntax probe-step |[:0:]#probe-step|)
+         (%#define-syntax __table-ref |[:0:]#__table-ref|)
+         (%#define-syntax __table-set! |[:0:]#__table-set!|)
+         (%#define-syntax __table-update! |[:0:]#__table-update!|)
+         (%#define-syntax __table-del! |[:0:]#__table-del!|))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/table__0"))

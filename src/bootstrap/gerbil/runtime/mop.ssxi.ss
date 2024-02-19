@@ -144,14 +144,12 @@ package: gerbil/runtime
   (declare-type unchecked-slot-set! (@lambda 3 #f))
   (declare-type slot-ref__% (@lambda 3 #f))
   (declare-type slot-ref__0 (@lambda 2 #f))
-  (declare-type slot-ref (@case-lambda (2 #f) (3 #f)))
+  (declare-type slot-ref (@case-lambda (2 slot-ref__0) (3 slot-ref__%)))
   (declare-type slot-set!__% (@lambda 4 #f))
   (declare-type slot-set!__0 (@lambda 3 #f))
-  (declare-type slot-set! (@case-lambda (3 #f) (4 #f)))
+  (declare-type slot-set! (@case-lambda (3 slot-set!__0) (4 slot-set!__%)))
   (declare-type __slot-error (@lambda 2 #f))
   (declare-type subclass? (@lambda 2 #f))
-  (declare-type object? (@lambda 1 #f))
-  (declare-type object-type (@lambda 1 #f))
   (declare-type
    direct-instance?
    (ast-rules
@@ -262,7 +260,9 @@ package: gerbil/runtime
   (declare-type builtin-method-ref (@lambda 3 #f))
   (declare-type bind-method!__% (@lambda 4 #f))
   (declare-type bind-method!__0 (@lambda 3 #f))
-  (declare-type bind-method! (@case-lambda (3 #f) (4 #f)))
+  (declare-type
+   bind-method!
+   (@case-lambda (3 bind-method!__0) (4 bind-method!__%)))
   (declare-type bind-specializer! (@lambda 2 #f))
   (declare-type seal-class! (@lambda 1 #f))
   (declare-type next-method (@lambda 3 #f))

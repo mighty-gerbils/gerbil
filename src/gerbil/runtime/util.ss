@@ -112,106 +112,6 @@ namespace: #f
   (let ((lst (##vector->list obj)))
     (list-tail lst start)))
 
-(def make-hash-table make-table)
-(def (make-hash-table-eq . args)
-  (apply make-table test: eq? args))
-(def (make-hash-table-eqv . args)
-  (apply make-table test: eqv? args))
-
-(def list->hash-table list->table)
-(def (list->hash-table-eq lst . args)
-  (apply list->table lst test: eq? args))
-(def (list->hash-table-eqv lst . args)
-  (apply list->table lst test: eqv? args))
-
-(def hash?
-  table?)
-(def hash-table?
-  table?)
-
-(def hash-length
-  table-length)
-(def hash-ref
-  table-ref)
-(def (hash-get ht k)
-  (table-ref ht k #f))
-(def (hash-put! ht k v)
-  (table-set! ht k v))
-(def (hash-update! ht k update (default #!void))
-  (let ((value (hash-ref ht k default)))
-    (hash-put! ht k (update value))))
-
-(def (hash-remove! ht k)
-  (table-set! ht k))
-
-(def hash->list
-  table->list)
-
-(def (hash->plist ht)
-  (hash-fold cons* [] ht))
-
-(def (plist->hash-table plst (ht (make-hash-table)))
-  (let lp ((rest plst))
-    (match rest
-      ([k v . rest]
-       (hash-put! ht k v)
-       (lp rest))
-      (() ht))))
-
-(def (plist->hash-table-eq plst)
-  (plist->hash-table plst (make-hash-table-eq)))
-(def (plist->hash-table-eqv plst)
-  (plist->hash-table plst (make-hash-table-eqv)))
-
-(def (hash-key? ht k)
-  (not (eq? (hash-ref ht k absent-value) absent-value)))
-
-(def hash-for-each
-  table-for-each)
-
-(def (hash-map fun ht)
-  (hash-fold
-   (lambda (k v r) (cons (fun k v) r))
-   [] ht))
-
-(def (hash-fold fun iv ht)
-  (let ((ret iv))
-    (hash-for-each
-     (lambda (k v) (set! ret (fun k v ret)))
-     ht)
-    ret))
-
-(def hash-find
-  table-search)
-
-(def (hash-keys ht)
-  (hash-map (lambda (k v) k) ht))
-
-(def (hash-values ht)
-  (hash-map (lambda (k v) v) ht))
-
-(def (hash-copy hd . rest)
-  (let ((hd (table-copy hd)))
-    (if (null? rest) hd
-        (apply hash-copy! hd rest))))
-
-(def (hash-copy! hd . rest)
-  (for-each (lambda (r) (table-merge! hd r)) rest)
-  hd)
-
-(def (hash-merge hd . rest)
-  (foldl (lambda (tab r) (table-merge r tab))
-         hd rest))
-
-(def (hash-merge! hd . rest)
-  (foldl (lambda (tab r) (table-merge! r tab))
-         hd rest))
-
-(def (hash-clear! ht (size 0))
-  (let ((gcht (##vector-ref ht 5)))
-    (if (not (fixnum? gcht))
-      (##vector-set! ht 5 size))))
-
 (def (make-list k (val #f))
   (unless (fixnum? k)
     (error "expected argument 1 to be fixnum" k))
@@ -294,8 +194,8 @@ namespace: #f
                 rest))
       iv)))
 
-(def (drop l k) ;; unsafe variant, not exported
-  (if (##fxpositive? k) (drop (cdr l) (fx1- k)) l))
+(def (drop l k) ;; unsafe variant, not prelude exported
+  (if (##fxpositive? k) (drop (##cdr l) (##fx- k 1)) l))
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))

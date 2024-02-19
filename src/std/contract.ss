@@ -178,7 +178,7 @@
 
   (def (expand-body var Interface body checked?)
     (with-syntax ((@app (syntax-local-introduce '%%app))
-                  (Type::t (interface-info-descriptor (syntax-local-value Interface)))
+                  (Type::t (interface-info-interface-descriptor (syntax-local-value Interface)))
                   (var-quoted (core-quote-syntax var))
                   (var var)
                   (Interface Interface)

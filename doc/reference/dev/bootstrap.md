@@ -179,7 +179,7 @@ $ mkdir bootstrap/gerbil
 $ cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
 
 # compile the bootstrap with the current compiler
-$ gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
+$ gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
 ### Recursively Recompiling the bootstrap
@@ -193,15 +193,15 @@ bootstrap recompilation.
 ```
 $ cd src
 $ rm -rf bootstrap/*
-$ gxc -no-ssxi -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
+$ gxc -no-ssxi -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
 If you have made changes in the compiler optimizer meta and the extant
-compiler does not accept your code, you may want to try without
-optimizations:
+compiler does not accept your code (or generates broken code), you may
+want to try without optimizations:
 
 ```
-$ gxc -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
+$ gxc -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
 Otherwise, you are likely violating some of the bootstrap strictures; see below.
@@ -217,7 +217,7 @@ $ ../build.sh stage1
 
 If you compiled the base bootstrap without optimization, you will also have to set `GERBIL_BUILD_NOOPT` during the stage1 build:
 ```
-GERBIL_BUILD_NOOPT=t ../build.sh stage1
+$ GERBIL_BUILD_NOOPT=t ../build.sh stage1
 ```
 
 After you have built stage1, you can use it to build the recursive
@@ -229,7 +229,7 @@ $ cd src
 $ rm -rf bootstrap/*
 $ mkdir -p bootstrap/gerbil
 $ cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
-$ ../build.sh env gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,system,loader,control,c3,mop,error,thread,syntax,eval,repl,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
+$ ../build.sh env gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
 And you have a brand new recursive bootstrap you can use. From here

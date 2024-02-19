@@ -1,177 +1,45 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; Go-style interfaces
-(import :std/error
+;;; interface macros
+(import :gerbil/runtime/interface
         :std/sugar
         (only-in :std/srfi/1 reverse!)
         (for-syntax :gerbil/expander
                     (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
-(export interface interface-out
+(export interface
+        interface-out
+        cast try-cast satisfies?
         interface-instance? interface-instance-object &interface-instance-object
         interface-descriptor? interface-descriptor-type interface-descriptor-methods
         interface-cast-error?
         (for-syntax #t))
-(declare (not safe))
 
-(deferror-class CastError () interface-cast-error?)
-(defraise/context (raise-cast-error where message irritants ...)
-  (CastError message irritants: [irritants ...]))
-
-;; base type for all interface instances
-(defstruct-type interface-instance::t ()
-  #f interface-instance?
-  name: interface-instance
-  slots:
-  ((__object interface-instance-object interface-instance-object-set!)))
-
-;; interface meta descriptor
-(defstruct interface-descriptor (type methods) final: #t)
-
-;; prototype table
-(def (hash-key key)
-  (fxxor (##symbol-hash (car key)) (##symbol-hash (cdr key))))
-(def (test-key a b)
-  (and (eq? (car a) (car b))
-       (eq? (cdr a) (cdr b))))
-
-(def +interface-prototypes-mx+ (make-mutex 'interface-constructor))
-(def +interface-prototypes+ (make-hash-table hash: hash-key test: test-key))
-(def +interface-prototypes-key+ (cons #f #f)) ; pre-allocated key for lookups
-
-(def (interface-subclass? klass)
-  (alet (super (##type-super klass))
-    (eq? (##type-id super) (##type-id interface-instance::t))))
-
-(extern namespace: #f
-  macro-mutex-lock!
-  macro-mutex-unlock!
-  macro-current-thread)
-
-;; using these gives a 35% boost in microbenchmarks
-(defrule (mutex-lock-inline! mx)
-  (macro-mutex-lock! mx #f (macro-current-thread)))
-(defrule (mutex-unlock-inline! mx)
-  (macro-mutex-unlock! mx))
-
-(defrule (do-create-prototype descriptor klass obj-klass continue fail!)
-  (let lp ((rest (&interface-descriptor-methods descriptor))
-           (count 0)
-           (methods []))
-    (match rest
-      ([method-name . rest]
-       (cond
-        ((find-method obj-klass #f method-name)
-         => (lambda (method) (lp rest (fx+ count 1) (cons method methods))))
-        (else
-         (fail! klass method-name))))
-      (else
-       (let (prototype (make-object klass (fx+ count 2)))
-         (let lp ((rest methods) (off (fx+ count 1)))
-           (match rest
-             ([method . rest]
-              (##unchecked-structure-set! prototype method off klass #f)
-              (lp rest (fx- off 1)))
-             (else
-              (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
-                (mutex-lock-inline! +interface-prototypes-mx+)
-                (##table-set! +interface-prototypes+ prototype-key prototype)
-                (mutex-unlock-inline! +interface-prototypes-mx+)
-                (continue prototype))))))))))
-
-(def (create-prototype descriptor klass obj-klass)
-  (do-create-prototype
-   descriptor klass obj-klass
-   (lambda (prototype) prototype)
-   (lambda (klass method-name)
-     (raise-cast-error create-prototype "Cannot create interface instance; missing method" klass method-name))))
-
-(def (try-create-prototype descriptor klass obj-klass)
-  (do-create-prototype
-   descriptor klass obj-klass
-   (lambda (prototype) #t)
-   (lambda (klass method-name) #f)))
-
-;; cast an object to an interface instance
-(def (cast descriptor obj)
-  (if (object? obj)
-    (let ()
-      (declare (not interrupts-enabled))
-      (let* ((klass (&interface-descriptor-type descriptor))
-             (klass-id (##type-id klass))
-             (obj-klass (##structure-type obj))
-             (obj-klass-id (##type-id obj-klass)))
-        (cond
-         ((eq? klass-id obj-klass-id)
-          ;; already an instance of the right interface
-          obj)
-         ((interface-subclass? obj-klass)
-          ;; another interface instance, recast
-          (cast descriptor (&interface-instance-object obj)))
-         (else
-          ;; vanilla object, convert to an interface instance
-          (mutex-lock-inline! +interface-prototypes-mx+)
-          (set-car! +interface-prototypes-key+ klass-id)
-          (set-cdr! +interface-prototypes-key+ obj-klass-id)
-          (let* ((prototype
-                  (cond
-                   ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
-                    => (lambda (prototype)
-                         (mutex-unlock-inline! +interface-prototypes-mx+)
-                         prototype))
-                   (else
-                    (mutex-unlock-inline! +interface-prototypes-mx+)
-                    (create-prototype descriptor klass obj-klass))))
-                 (instance (##structure-copy prototype)))
-            (##unchecked-structure-set! instance obj 1 klass #f)
-            instance)))))
-    (raise-cast-error cast "Cannot cast non-object to interface instance" obj)))
-
-;; check if an object satisfies an interface
-(def (satisfies? descriptor obj)
-  (if (object? obj)
-    (let ()
-      (declare (not interrupts-enabled))
-      (let* ((klass (&interface-descriptor-type descriptor))
-             (klass-id (##type-id klass))
-             (obj-klass (##structure-type obj))
-             (obj-klass-id (##type-id obj-klass)))
-        (cond
-         ((eq? klass-id obj-klass-id)
-          ;; already an instance of the right interface
-          #t)
-         ((interface-subclass? obj-klass)
-          ;; another interface instance, recast
-          (satisfies? descriptor (&interface-instance-object obj)))
-         (else
-          ;; vanilla object, convert to an interface instance
-          (mutex-lock-inline! +interface-prototypes-mx+)
-          (set-car! +interface-prototypes-key+ klass-id)
-          (set-cdr! +interface-prototypes-key+ obj-klass-id)
-          (cond
-           ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
-            => (lambda (prototype)
-                 (mutex-unlock-inline! +interface-prototypes-mx+)
-                 #t))
-           (else
-            (mutex-unlock-inline! +interface-prototypes-mx+)
-            (try-create-prototype descriptor klass obj-klass)))))))
-    #f))
-
-;; the all encompassing macro(s)
 (begin-syntax
-  (defstruct interface-info (name methods type descriptor
-                                  constructor predicate instance-predicate
-                                  method-impl unchecked-method-impl))
+  (defclass interface-info (name
+                            interface-methods
+                            instance-type interface-descriptor
+                            instance-constructor instance-try-constructor
+                            instance-predicate instance-satisfies-predicate
+                            implementation-methods
+                            unchecked-implementation-methods))
 
   (defmethod {apply-macro-expander interface-info}
-    (with-syntax ((cast (quote-syntax cast)))
+    (with-syntax ((cast (quote-syntax cast))
+                  (immediate-instance-of? (quote-syntax immediate-instance-of?)))
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
-           (with-syntax ((descriptor (interface-info-descriptor self)))
-             #'(cast descriptor obj))))))))
+           (with-syntax ((klass (interface-info-instance-type self))
+                         (descriptor (interface-info-interface-descriptor self)))
+             #'(let ($obj obj)
+                 (if (immediate-instance-of? klass $obj)
+                   $obj
+                   (cast descriptor $obj)))))
+          (_ (identifier? stx)
+             (with-syntax ((descriptor (interface-info-interface-descriptor self)))
+               #'descriptor)))))))
 
 (defsyntax (interface stx)
   (def symbol<?
@@ -187,7 +55,7 @@
                      (let (info (syntax-local-value spec false))
                        (unless (interface-info? info)
                          (raise-syntax-error #f "Bad syntax; not an interface type" stx spec))
-                       (foldl cons methods (map syntax-local-introduce (interface-info-methods info))))
+                       (foldl cons methods (map syntax-local-introduce (interface-info-interface-methods info))))
                      (cons spec methods)))
                  []
                  specs))
@@ -635,8 +503,9 @@
                      (if (module-context? (current-expander-context))
                        (module-type-id #'klass)
                        (genident #'klass)))
-                    (descriptor (stx-identifier #'name #'name "::descriptor"))
+                    (descriptor (stx-identifier #'name #'name "::interface"))
                     (make (stx-identifier #'name "make-" #'name))
+                    (make (stx-identifier #'name "try-" #'name))
                     (predicate (stx-identifier #'name #'name "?"))
                     (instance-predicate (stx-identifier #'name "is-" #'name "?"))
                     ((mixin ...)
@@ -677,6 +546,9 @@
                     (defmake
                       #'(def (make obj)
                           (cast descriptor obj)))
+                    (deftry-make
+                      #'(def (try-make obj)
+                          (try-cast descriptor obj)))
                     (defpred
                       #'(def (predicate obj)
                           (direct-instance? klass obj)))
@@ -685,15 +557,17 @@
                           (satisfies? descriptor obj)))
                     (definfo
                       #'(defsyntax name
-                          (make-interface-info 'name
-                                               '(method ...)
-                                               (quote-syntax klass)
-                                               (quote-syntax descriptor)
-                                               (quote-syntax make)
-                                               (quote-syntax predicate)
-                                               (quote-syntax instance-predicate)
-                                               [(quote-syntax method-impl-name) ...]
-                                               [(quote-syntax unchecked-method-impl-name) ...]))))
+                          (make-interface-info
+                           name: 'name
+                           interface-methods: '(method ...)
+                           instance-type: (quote-syntax klass)
+                           interface-descriptor: (quote-syntax descriptor)
+                           instance-constructor: (quote-syntax make)
+                           instance-try-constructor: (quote-syntax try-make)
+                           instance-predicate: (quote-syntax predicate)
+                           instance-satisfies-predicate: (quote-syntax instance-predicate)
+                           implementation-methods: [(quote-syntax method-impl-name) ...]
+                           unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]))))
        #'(begin defklass defdescriptor defmake defpred defpred-instance definfo
                 defmethod-impl ...)))))
 
@@ -708,8 +582,16 @@
             (let (info (syntax-local-value #'id false))
               (unless (interface-info? info)
                 (raise-syntax-error #f "not an interface type" stx #'id))
-              (with ((interface-info _ _ type descriptor constructor predicate instance-predicate method-impl unchecked-impl) info)
-                (lp #'rest [#'id type descriptor constructor predicate instance-predicate method-impl ... (if unchecked? unchecked-impl []) ...]))))
+              (with ((interface-info instance-type: type
+                                     interface-descriptor: descriptor
+                                     instance-constructor: constructor
+                                     instance-try-constructor: try-constructor
+                                     instance-predicate: predicate
+                                     instance-satisfies-predicate: satisfies-predicate
+                                     implementation-methods: method-impl
+                                     unchecked-implementation-methods: unchecked-impl)
+                     info)
+                (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ...]))))
            (_ (cons begin: ids)))))))
 
   (syntax-case stx ()

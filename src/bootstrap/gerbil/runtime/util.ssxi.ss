@@ -7,7 +7,9 @@ package: gerbil/runtime
   (declare-type file-newer? (@lambda 2 #f))
   (declare-type create-directory*__% (@lambda 2 #f))
   (declare-type create-directory*__0 (@lambda 1 #f))
-  (declare-type create-directory* (@case-lambda (1 #f) (2 #f)))
+  (declare-type
+   create-directory*
+   (@case-lambda (1 create-directory*__0) (2 create-directory*__%)))
   (declare-type
    true
    (ast-rules
@@ -74,70 +76,9 @@ package: gerbil/runtime
   (declare-type subvector->list__% (@lambda 2 #f))
   (declare-type subvector->list__0 (@lambda 1 #f))
   (declare-type subvector->list (@case-lambda (1 #f) (2 #f)))
-  (declare-type make-hash-table (@lambda (0) make-table))
-  (declare-type
-   make-hash-table-eq
-   (ast-rules
-    (%#call)
-    ((%#call _ arg ...)
-     (%#call (%#ref make-table) (%#quote test:) (%#ref eq?) arg ...))))
-  (declare-type
-   make-hash-table-eqv
-   (ast-rules
-    (%#call)
-    ((%#call _ arg ...)
-     (%#call (%#ref make-table) (%#quote test:) (%#ref eqv?) arg ...))))
-  (declare-type list->hash-table (@lambda (1) list->table))
-  (declare-type
-   list->hash-table-eq
-   (ast-rules
-    (%#call)
-    ((%#call _ lst arg ...)
-     (%#call (%#ref list->table) lst (%#quote test:) (%#ref eq?) arg ...))))
-  (declare-type
-   list->hash-table-eqv
-   (ast-rules
-    (%#call)
-    ((%#call _ lst arg ...)
-     (%#call (%#ref list->table) lst (%#quote test:) (%#ref eqv?) arg ...))))
-  (declare-type hash? (@lambda 1 table?))
-  (declare-type hash-table? (@lambda 1 table?))
-  (declare-type hash-length (@lambda 1 table-length))
-  (declare-type hash-ref (@case-lambda (2 table-ref) (3 table-ref)))
-  (declare-type
-   hash-get
-   (ast-rules
-    (%#call)
-    ((%#call _ ht key) (%#call (%#ref table-ref) ht key (%#quote #f)))))
-  (declare-type hash-put! (@lambda 3 table-set!))
-  (declare-type hash-update!__% (@lambda 4 #f))
-  (declare-type hash-update!__0 (@lambda 3 #f))
-  (declare-type hash-update! (@case-lambda (3 #f) (4 #f)))
-  (declare-type hash-remove! (@lambda 2 table-set!))
-  (declare-type hash->list (@lambda 1 table->list))
-  (declare-type hash->plist (@lambda 1 #f))
-  (declare-type plist->hash-table__% (@lambda 2 #f))
-  (declare-type plist->hash-table__0 (@lambda 1 #f))
-  (declare-type plist->hash-table (@case-lambda (1 #f) (2 #f)))
-  (declare-type plist->hash-table-eq (@lambda 1 #f))
-  (declare-type plist->hash-table-eqv (@lambda 1 #f))
-  (declare-type hash-key? (@lambda 2 #f))
-  (declare-type hash-for-each (@lambda 2 table-for-each))
-  (declare-type hash-map (@lambda 2 #f))
-  (declare-type hash-fold (@lambda 3 #f))
-  (declare-type hash-find (@lambda 2 table-search))
-  (declare-type hash-keys (@lambda 1 #f))
-  (declare-type hash-values (@lambda 1 #f))
-  (declare-type hash-copy (@lambda (1) #f))
-  (declare-type hash-copy! (@lambda (1) #f))
-  (declare-type hash-merge (@lambda (1) #f))
-  (declare-type hash-merge! (@lambda (1) #f))
-  (declare-type hash-clear!__% (@lambda 2 #f))
-  (declare-type hash-clear!__0 (@lambda 1 #f))
-  (declare-type hash-clear! (@case-lambda (1 #f) (2 #f)))
   (declare-type make-list__% (@lambda 2 #f))
   (declare-type make-list__0 (@lambda 1 #f))
-  (declare-type make-list (@case-lambda (1 #f) (2 #f)))
+  (declare-type make-list (@case-lambda (1 make-list__0) (2 make-list__%)))
   (declare-type
    cons*
    (ast-rules
@@ -147,11 +88,11 @@ package: gerbil/runtime
      (%#call (%#ref cons) x (%#call recur y rest ...)))))
   (declare-type foldl1 (@lambda 3 #f))
   (declare-type foldl2 (@lambda 4 #f))
-  (declare-type foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) foldl*)))
+  (declare-type foldl (@case-lambda (3 foldl1) (4 foldl2) ((4) foldl*)))
   (declare-type foldl* (@lambda (2) #f))
   (declare-type foldr1 (@lambda 3 #f))
   (declare-type foldr2 (@lambda 4 #f))
-  (declare-type foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
+  (declare-type foldr (@case-lambda (3 foldr1) (4 foldr2) ((4) foldr*)))
   (declare-type foldr* (@lambda (2) #f))
   (declare-type drop (@lambda 2 #f))
   (declare-type remove-nulls! (@lambda 1 #f))
@@ -160,43 +101,43 @@ package: gerbil/runtime
   (declare-type append-reverse-until (@lambda 3 #f))
   (declare-type andmap1 (@lambda 2 #f))
   (declare-type andmap2 (@lambda 3 #f))
-  (declare-type andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
+  (declare-type andmap (@case-lambda (2 andmap1) (3 andmap2) ((3) andmap*)))
   (declare-type andmap* (@lambda (1) #f))
   (declare-type ormap1 (@lambda 2 #f))
   (declare-type ormap2 (@lambda 3 #f))
-  (declare-type ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
+  (declare-type ormap (@case-lambda (2 ormap1) (3 ormap2) ((3) ormap*)))
   (declare-type ormap* (@lambda (1) #f))
   (declare-type filter (@lambda 2 #f))
   (declare-type filter-map1 (@lambda 2 #f))
   (declare-type filter-map2 (@lambda 3 #f))
   (declare-type
    filter-map
-   (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*)))
+   (@case-lambda (2 filter-map1) (3 filter-map2) ((3) filter-map*)))
   (declare-type filter-map* (@lambda (1) #f))
   (declare-type iota__% (@lambda 3 #f))
   (declare-type iota__0 (@lambda 1 #f))
   (declare-type iota__1 (@lambda 2 #f))
-  (declare-type iota (@case-lambda (1 #f) (2 #f) (3 #f)))
+  (declare-type iota (@case-lambda (1 iota__0) (2 iota__1) (3 iota__%)))
   (declare-type last-pair (@lambda 1 #f))
   (declare-type last (@lambda 1 #f))
   (declare-type assgetq__% (@lambda 3 #f))
   (declare-type assgetq__0 (@lambda 2 #f))
-  (declare-type assgetq (@case-lambda (2 #f) (3 #f)))
+  (declare-type assgetq (@case-lambda (2 assgetq__0) (3 assgetq__%)))
   (declare-type assgetv__% (@lambda 3 #f))
   (declare-type assgetv__0 (@lambda 2 #f))
-  (declare-type assgetv (@case-lambda (2 #f) (3 #f)))
+  (declare-type assgetv (@case-lambda (2 assgetv__0) (3 assgetv__%)))
   (declare-type assget__% (@lambda 3 #f))
   (declare-type assget__0 (@lambda 2 #f))
-  (declare-type assget (@case-lambda (2 #f) (3 #f)))
+  (declare-type assget (@case-lambda (2 assget__0) (3 assget__%)))
   (declare-type pgetq__% (@lambda 3 #f))
   (declare-type pgetq__0 (@lambda 2 #f))
-  (declare-type pgetq (@case-lambda (2 #f) (3 #f)))
+  (declare-type pgetq (@case-lambda (2 pgetq__0) (3 pgetq__%)))
   (declare-type pgetv__% (@lambda 3 #f))
   (declare-type pgetv__0 (@lambda 2 #f))
-  (declare-type pgetv (@case-lambda (2 #f) (3 #f)))
+  (declare-type pgetv (@case-lambda (2 pgetv__0) (3 pgetv__%)))
   (declare-type pget__% (@lambda 3 #f))
   (declare-type pget__0 (@lambda 2 #f))
-  (declare-type pget (@case-lambda (2 #f) (3 #f)))
+  (declare-type pget (@case-lambda (2 pget__0) (3 pget__%)))
   (declare-type find (@lambda 2 #f))
   (declare-type memf (@lambda 2 #f))
   (declare-type remove1 (@lambda 2 #f))
@@ -253,10 +194,14 @@ package: gerbil/runtime
   (declare-type string-prefix? (@lambda 2 #f))
   (declare-type string-index__% (@lambda 3 #f))
   (declare-type string-index__0 (@lambda 2 #f))
-  (declare-type string-index (@case-lambda (2 #f) (3 #f)))
+  (declare-type
+   string-index
+   (@case-lambda (2 string-index__0) (3 string-index__%)))
   (declare-type string-rindex__% (@lambda 3 #f))
   (declare-type string-rindex__0 (@lambda 2 #f))
-  (declare-type string-rindex (@case-lambda (2 #f) (3 #f)))
+  (declare-type
+   string-rindex
+   (@case-lambda (2 string-rindex__0) (3 string-rindex__%)))
   (declare-type string-split (@lambda 2 #f))
   (declare-type string-join (@lambda 2 #f))
   (declare-type read-u8vector (@lambda 2 #f))

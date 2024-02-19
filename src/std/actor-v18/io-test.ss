@@ -6,6 +6,7 @@
         :std/error
         :std/sugar
         :std/io
+        :std/misc/hash
         ./message
         ./io)
 (export actor-message-io-test)
@@ -77,7 +78,7 @@
       (check-marshal-unmarshal world: keyword-tag)
       (check-marshal-unmarshal "hello world" string-tag)
       (check-marshal-unmarshal '#u8(1 2 3) u8vector-tag)
-      (check-marshal-unmarshal (hash (a 1) (b 2) (c 3)) table-tag)
+      (check-marshal-unmarshal (hash (a 1) (b 2) (c 3)) table-tag equal-hash?)
       (check-marshal-unmarshal (current-time) time-tag equal-time?))
 
     (test-case "serde objects"

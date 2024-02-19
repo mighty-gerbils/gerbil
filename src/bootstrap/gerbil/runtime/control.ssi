@@ -2,7 +2,10 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
-(%#begin (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
+(%#begin (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/table)
          (%#export #t)
          (%#define-runtime make-promise make-promise)
          (%#define-runtime call-with-parameters call-with-parameters)

@@ -1,0 +1,118 @@
+prelude: :gerbil/core
+package: gerbil/runtime
+namespace: #f
+
+(%#begin (%#import
+          :gerbil/runtime/gambit
+          :gerbil/runtime/util
+          :gerbil/runtime/table
+          :gerbil/runtime/mop
+          :gerbil/runtime/error)
+         (%#export #t)
+         (%#define-runtime CastError::t CastError::t)
+         (%#define-runtime CastError? CastError?)
+         (%#define-runtime make-CastError make-CastError)
+         (%#define-runtime CastError-message CastError-message)
+         (%#define-runtime CastError-irritants CastError-irritants)
+         (%#define-runtime CastError-where CastError-where)
+         (%#define-runtime CastError-continuation CastError-continuation)
+         (%#define-runtime CastError-message-set! CastError-message-set!)
+         (%#define-runtime CastError-irritants-set! CastError-irritants-set!)
+         (%#define-runtime CastError-where-set! CastError-where-set!)
+         (%#define-runtime
+          CastError-continuation-set!
+          CastError-continuation-set!)
+         (%#define-runtime &CastError-message &CastError-message)
+         (%#define-runtime &CastError-irritants &CastError-irritants)
+         (%#define-runtime &CastError-where &CastError-where)
+         (%#define-runtime &CastError-continuation &CastError-continuation)
+         (%#define-runtime &CastError-message-set! &CastError-message-set!)
+         (%#define-runtime &CastError-irritants-set! &CastError-irritants-set!)
+         (%#define-runtime &CastError-where-set! &CastError-where-set!)
+         (%#define-runtime
+          &CastError-continuation-set!
+          &CastError-continuation-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/interface__1")))
+                  (%#define-syntax CastError |[:0:]#CastError|))
+         (%#define-runtime CastError:::init! CastError:::init!)
+         (%#define-runtime raise-cast-error raise-cast-error)
+         (%#define-runtime interface-cast-error? interface-cast-error?)
+         (%#define-runtime interface-instance::t interface-instance::t)
+         (%#define-runtime interface-instance? interface-instance?)
+         (%#define-runtime interface-instance-object interface-instance-object)
+         (%#define-runtime
+          interface-instance-object-set!
+          interface-instance-object-set!)
+         (%#define-runtime
+          &interface-instance-object
+          &interface-instance-object)
+         (%#define-runtime
+          &interface-instance-object-set!
+          &interface-instance-object-set!)
+         (%#define-runtime interface-descriptor::t interface-descriptor::t)
+         (%#define-runtime interface-descriptor? interface-descriptor?)
+         (%#define-runtime make-interface-descriptor make-interface-descriptor)
+         (%#define-runtime interface-descriptor-type interface-descriptor-type)
+         (%#define-runtime
+          interface-descriptor-methods
+          interface-descriptor-methods)
+         (%#define-runtime
+          interface-descriptor-type-set!
+          interface-descriptor-type-set!)
+         (%#define-runtime
+          interface-descriptor-methods-set!
+          interface-descriptor-methods-set!)
+         (%#define-runtime
+          &interface-descriptor-type
+          &interface-descriptor-type)
+         (%#define-runtime
+          &interface-descriptor-methods
+          &interface-descriptor-methods)
+         (%#define-runtime
+          &interface-descriptor-type-set!
+          &interface-descriptor-type-set!)
+         (%#define-runtime
+          &interface-descriptor-methods-set!
+          &interface-descriptor-methods-set!)
+         (%#define-syntax interface-descriptor |[:0:]#interface-descriptor|)
+         (%#define-syntax
+          immediate-instance-of?
+          |[:0:]#immediate-instance-of?|)
+         (%#define-runtime __interface-hash-key __interface-hash-key)
+         (%#define-runtime __interface-test-key __interface-test-key)
+         (%#begin (%#define-runtime
+                   make-prototype-table__%
+                   make-prototype-table__%)
+                  (%#begin (%#define-runtime
+                            make-prototype-table__0
+                            make-prototype-table__0)
+                           (%#define-runtime
+                            make-prototype-table__1
+                            make-prototype-table__1)
+                           (%#define-runtime
+                            make-prototype-table
+                            make-prototype-table)))
+         (%#define-runtime prototype-table-ref prototype-table-ref)
+         (%#define-runtime prototype-table-set! prototype-table-set!)
+         (%#define-runtime __prototype-table-set! __prototype-table-set!)
+         (%#define-runtime prototype-table-update! prototype-table-update!)
+         (%#define-runtime __prototype-table-update! __prototype-table-update!)
+         (%#define-runtime prototype-trable-delete! prototype-trable-delete!)
+         (%#define-runtime __interface-prototypes-mx __interface-prototypes-mx)
+         (%#define-runtime __interface-prototypes __interface-prototypes)
+         (%#define-runtime
+          __interface-prototypes-key
+          __interface-prototypes-key)
+         (%#define-runtime interface-subclass? interface-subclass?)
+         (%#define-syntax mutex-lock-inline! |[:0:]#mutex-lock-inline!|)
+         (%#define-syntax mutex-unlock-inline! |[:0:]#mutex-unlock-inline!|)
+         (%#define-syntax do-create-prototype |[:0:]#do-create-prototype|)
+         (%#define-runtime create-prototype create-prototype)
+         (%#define-runtime try-create-prototype try-create-prototype)
+         (%#define-syntax defcast |[:0:]#defcast|)
+         (%#define-runtime cast cast)
+         (%#define-runtime try-cast try-cast)
+         (%#define-runtime satisfies? satisfies?))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/interface__0"))

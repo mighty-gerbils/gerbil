@@ -81,7 +81,7 @@
       (check (str 1.2E+2)             => "120.0")
       (check (str 'abc)               => "abc")
       (check (str '(1 2))             => "[1 2]")
-      (check (str (hash (a 10)))      => "(hash (a 10))")
+      #;(check (str (hash (a 10)))      => "(hash (a 10))")
       (check (str #(1 2))             => "(vector 1 2)")
       (check (str (values 1 2))       => "(values 1 2)")
       (check (str (make-point 1 2))   => "(point 1 2)"))

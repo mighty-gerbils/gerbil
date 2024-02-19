@@ -2,6 +2,7 @@
 ;;; (C) vyzo
 ;;; Gerbil error objects
 (import :gerbil/runtime/error
+        :gerbil/runtime/hash
         :gerbil/runtime/thread
         (for-syntax :gerbil/expander))
 (export Exception Exception?
@@ -21,7 +22,7 @@
         PrematureEndOfInput PrematureEndOfInput? raise-premature-end-of-input
         premature-end-of-input-error?
         Timeout Timeout? raise-timeout timeout-error?
-        UnboundKey UnboundKey? raise-unbound-key unbound-key-error?
+        UnboundKeyError UnboundKeyError? raise-unbound-key unbound-key-error?
         ContextError ContextError? raise-context-error context-error?
         UnsupportedMethod UnsupportedMethod? raise-unsupported-method unsupported-method-error?
         ContractViolation ContractViolation? raise-contract-violation contract-violation-error?
@@ -77,9 +78,6 @@
 
 ;; contextual errors
 (deferror-class ContextError () context-error?)
-
-;; key lookup errors
-(deferror-class UnboundKey () unbound-key-error?)
 
 ;; unsupported interface methods
 (deferror-class UnsupportedMethod () unsupported-method-error?)
@@ -142,9 +140,6 @@
 (defraise/context (raise-context-error where message irritants ...)
   (ContextError message irritants: [irritants ...]))
 
-(defraise/context (raise-unbound-key where irritants ...)
-  (UnboundKey "no value associated with key" irritants: [irritants ...]))
-
 (defraise/context (raise-unsupported-method where)
   (UnsupportedMethod "unsupported method" irritants: []))
 
@@ -153,6 +148,9 @@
 
 (defraise/context (raise-bad-argument where expectation irritants ...)
   (ContractViolation "contract violation" irritants: [expectation irritants ...]))
+
+(defraise/context (raise-unbound-key where irritants ...)
+  (UnboundKeyError "no value associated with key" irritants: [irritants ...]))
 
 ;; it's a bug
 (deferror-class BUG () is-it-bug?)

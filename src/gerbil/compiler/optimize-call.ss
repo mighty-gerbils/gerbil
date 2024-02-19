@@ -349,7 +349,7 @@ namespace: gxc
                           kwargs kwvars))
                     (kwset
                      (map (lambda (kw kwvar)
-                            ['%#call '(%#ref hash-put!) ['%#ref kwt]
+                            ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
                                      ['%#quote (car kw)]
                                      ['%#ref kwvar]])
                           kwargs kwvars))
@@ -368,9 +368,9 @@ namespace: gxc
                  ['%#let-values kwbind
                    ['%#let-values [[[kwt]
                                     (xform-wrap-source
-                                     ['%#call '(%#ref make-hash-table-eq)
-                                             '(%#quote size:)
-                                             ['%#quote (length kwargs)]]
+                                     ['%#call '(%#ref make-symbolic-table)
+                                              ['%#quote (length kwargs)]
+                                              '(%#quote 0)]
                                      stx)]]
                      ['%#begin
                       kwset ...

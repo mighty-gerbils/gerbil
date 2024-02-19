@@ -8,38 +8,8 @@ namespace: #f
           :gerbil/runtime/util
           :gerbil/runtime/mop
           :gerbil/runtime/error
+          :gerbil/runtime/hash
           :gerbil/runtime/syntax)
-         (%#define-runtime __context::t __context::t)
-         (%#define-runtime __context? __context?)
-         (%#define-runtime make-__context make-__context)
-         (%#define-runtime __context-t __context-t)
-         (%#define-runtime __context-ns __context-ns)
-         (%#define-runtime __context-super __context-super)
-         (%#define-runtime __context-table __context-table)
-         (%#define-runtime __context-t-set! __context-t-set!)
-         (%#define-runtime __context-ns-set! __context-ns-set!)
-         (%#define-runtime __context-super-set! __context-super-set!)
-         (%#define-runtime __context-table-set! __context-table-set!)
-         (%#define-runtime &__context-t &__context-t)
-         (%#define-runtime &__context-ns &__context-ns)
-         (%#define-runtime &__context-super &__context-super)
-         (%#define-runtime &__context-table &__context-table)
-         (%#define-runtime &__context-t-set! &__context-t-set!)
-         (%#define-runtime &__context-ns-set! &__context-ns-set!)
-         (%#define-runtime &__context-super-set! &__context-super-set!)
-         (%#define-runtime &__context-table-set! &__context-table-set!)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/eval__1")))
-                  (%#define-syntax __context |[:0:]#__context|))
-         (%#define-runtime __runtime::t __runtime::t)
-         (%#define-runtime __runtime? __runtime?)
-         (%#define-runtime make-__runtime make-__runtime)
-         (%#define-runtime __runtime-id __runtime-id)
-         (%#define-runtime __runtime-id-set! __runtime-id-set!)
-         (%#define-runtime &__runtime-id &__runtime-id)
-         (%#define-runtime &__runtime-id-set! &__runtime-id-set!)
-         (%#define-syntax __runtime |[:0:]#__runtime|)
          (%#define-runtime __syntax::t __syntax::t)
          (%#define-runtime __syntax? __syntax?)
          (%#define-runtime make-__syntax make-__syntax)
@@ -51,31 +21,10 @@ namespace: #f
          (%#define-runtime &__syntax-id &__syntax-id)
          (%#define-runtime &__syntax-e-set! &__syntax-e-set!)
          (%#define-runtime &__syntax-id-set! &__syntax-id-set!)
-         (%#define-syntax __syntax |[:0:]#__syntax|)
-         (%#define-runtime __macro::t __macro::t)
-         (%#define-runtime __macro? __macro?)
-         (%#define-runtime make-__macro make-__macro)
-         (%#define-runtime __macro-e __macro-e)
-         (%#define-runtime __macro-id __macro-id)
-         (%#define-runtime __macro-e-set! __macro-e-set!)
-         (%#define-runtime __macro-id-set! __macro-id-set!)
-         (%#define-runtime &__macro-e &__macro-e)
-         (%#define-runtime &__macro-id &__macro-id)
-         (%#define-runtime &__macro-e-set! &__macro-e-set!)
-         (%#define-runtime &__macro-id-set! &__macro-id-set!)
-         (%#define-syntax __macro |[:0:]#__macro|)
-         (%#define-runtime __special-form::t __special-form::t)
-         (%#define-runtime __special-form? __special-form?)
-         (%#define-runtime make-__special-form make-__special-form)
-         (%#define-runtime __special-form-e __special-form-e)
-         (%#define-runtime __special-form-id __special-form-id)
-         (%#define-runtime __special-form-e-set! __special-form-e-set!)
-         (%#define-runtime __special-form-id-set! __special-form-id-set!)
-         (%#define-runtime &__special-form-e &__special-form-e)
-         (%#define-runtime &__special-form-id &__special-form-id)
-         (%#define-runtime &__special-form-e-set! &__special-form-e-set!)
-         (%#define-runtime &__special-form-id-set! &__special-form-id-set!)
-         (%#define-syntax __special-form |[:0:]#__special-form|)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/eval__1")))
+                  (%#define-syntax __syntax |[:0:]#__syntax|))
          (%#define-runtime __core-form::t __core-form::t)
          (%#define-runtime __core-form? __core-form?)
          (%#define-runtime make-__core-form make-__core-form)
@@ -122,77 +71,11 @@ namespace: #f
           &__core-special-form-id-set!
           &__core-special-form-id-set!)
          (%#define-syntax __core-special-form |[:0:]#__core-special-form|)
-         (%#define-runtime __struct-info::t __struct-info::t)
-         (%#define-runtime __struct-info? __struct-info?)
-         (%#define-runtime make-__struct-info make-__struct-info)
-         (%#define-runtime __struct-info-e __struct-info-e)
-         (%#define-runtime __struct-info-id __struct-info-id)
-         (%#define-runtime __struct-info-e-set! __struct-info-e-set!)
-         (%#define-runtime __struct-info-id-set! __struct-info-id-set!)
-         (%#define-runtime &__struct-info-e &__struct-info-e)
-         (%#define-runtime &__struct-info-id &__struct-info-id)
-         (%#define-runtime &__struct-info-e-set! &__struct-info-e-set!)
-         (%#define-runtime &__struct-info-id-set! &__struct-info-id-set!)
-         (%#define-syntax __struct-info |[:0:]#__struct-info|)
-         (%#define-runtime __feature::t __feature::t)
-         (%#define-runtime __feature? __feature?)
-         (%#define-runtime make-__feature make-__feature)
-         (%#define-runtime __feature-e __feature-e)
-         (%#define-runtime __feature-id __feature-id)
-         (%#define-runtime __feature-e-set! __feature-e-set!)
-         (%#define-runtime __feature-id-set! __feature-id-set!)
-         (%#define-runtime &__feature-e &__feature-e)
-         (%#define-runtime &__feature-id &__feature-id)
-         (%#define-runtime &__feature-e-set! &__feature-e-set!)
-         (%#define-runtime &__feature-id-set! &__feature-id-set!)
-         (%#define-syntax __feature |[:0:]#__feature|)
-         (%#define-runtime __module::t __module::t)
-         (%#define-runtime __module? __module?)
-         (%#define-runtime make-__module make-__module)
-         (%#define-runtime __module-id __module-id)
-         (%#define-runtime __module-path __module-path)
-         (%#define-runtime __module-import __module-import)
-         (%#define-runtime __module-export __module-export)
-         (%#define-runtime __module-t __module-t)
-         (%#define-runtime __module-ns __module-ns)
-         (%#define-runtime __module-super __module-super)
-         (%#define-runtime __module-table __module-table)
-         (%#define-runtime __module-id-set! __module-id-set!)
-         (%#define-runtime __module-path-set! __module-path-set!)
-         (%#define-runtime __module-import-set! __module-import-set!)
-         (%#define-runtime __module-export-set! __module-export-set!)
-         (%#define-runtime __module-t-set! __module-t-set!)
-         (%#define-runtime __module-ns-set! __module-ns-set!)
-         (%#define-runtime __module-super-set! __module-super-set!)
-         (%#define-runtime __module-table-set! __module-table-set!)
-         (%#define-runtime &__module-id &__module-id)
-         (%#define-runtime &__module-path &__module-path)
-         (%#define-runtime &__module-import &__module-import)
-         (%#define-runtime &__module-export &__module-export)
-         (%#define-runtime &__module-t &__module-t)
-         (%#define-runtime &__module-ns &__module-ns)
-         (%#define-runtime &__module-super &__module-super)
-         (%#define-runtime &__module-table &__module-table)
-         (%#define-runtime &__module-id-set! &__module-id-set!)
-         (%#define-runtime &__module-path-set! &__module-path-set!)
-         (%#define-runtime &__module-import-set! &__module-import-set!)
-         (%#define-runtime &__module-export-set! &__module-export-set!)
-         (%#define-runtime &__module-t-set! &__module-t-set!)
-         (%#define-runtime &__module-ns-set! &__module-ns-set!)
-         (%#define-runtime &__module-super-set! &__module-super-set!)
-         (%#define-runtime &__module-table-set! &__module-table-set!)
-         (%#define-syntax __module |[:0:]#__module|)
-         (%#define-runtime __*modules* __*modules*)
-         (%#define-runtime __*core* __*core*)
-         (%#define-runtime __*top* __*top*)
+         (%#define-runtime __core __core)
          (%#define-runtime __current-expander __current-expander)
          (%#define-runtime __current-compiler __current-compiler)
          (%#define-runtime __current-path __current-path)
-         (%#begin (%#define-runtime __core-resolve__% __core-resolve__%)
-                  (%#begin (%#define-runtime
-                            __core-resolve__0
-                            __core-resolve__0)
-                           (%#define-runtime __core-resolve __core-resolve)))
+         (%#define-runtime __core-resolve __core-resolve)
          (%#begin (%#define-runtime __core-bound-id?__% __core-bound-id?__%)
                   (%#begin (%#define-runtime
                             __core-bound-id?__0
@@ -200,15 +83,6 @@ namespace: #f
                            (%#define-runtime
                             __core-bound-id?
                             __core-bound-id?)))
-         (%#begin (%#define-runtime
-                   __core-bind-runtime!__%
-                   __core-bind-runtime!__%)
-                  (%#begin (%#define-runtime
-                            __core-bind-runtime!__0
-                            __core-bind-runtime!__0)
-                           (%#define-runtime
-                            __core-bind-runtime!
-                            __core-bind-runtime!)))
          (%#begin (%#define-runtime
                    __core-bind-syntax!__%
                    __core-bind-syntax!__%)
@@ -218,42 +92,6 @@ namespace: #f
                            (%#define-runtime
                             __core-bind-syntax!
                             __core-bind-syntax!)))
-         (%#define-runtime __core-bind-macro! __core-bind-macro!)
-         (%#define-runtime __core-bind-special-form! __core-bind-special-form!)
-         (%#begin (%#define-runtime
-                   __core-bind-user-syntax!__%
-                   __core-bind-user-syntax!__%)
-                  (%#begin (%#define-runtime
-                            __core-bind-user-syntax!__0
-                            __core-bind-user-syntax!__0)
-                           (%#define-runtime
-                            __core-bind-user-syntax!
-                            __core-bind-user-syntax!)))
-         (%#begin (%#define-runtime make-__runtime-id__% make-__runtime-id__%)
-                  (%#begin (%#define-runtime
-                            make-__runtime-id__0
-                            make-__runtime-id__0)
-                           (%#define-runtime
-                            make-__runtime-id
-                            make-__runtime-id)))
-         (%#begin (%#define-runtime
-                   make-__context-local__%
-                   make-__context-local__%)
-                  (%#begin (%#define-runtime
-                            make-__context-local__0
-                            make-__context-local__0)
-                           (%#define-runtime
-                            make-__context-local
-                            make-__context-local)))
-         (%#begin (%#define-runtime
-                   make-__context-module__%
-                   make-__context-module__%)
-                  (%#begin (%#define-runtime
-                            make-__context-module__0
-                            make-__context-module__0)
-                           (%#define-runtime
-                            make-__context-module
-                            make-__context-module)))
          (%#begin (%#define-runtime __SRC__% __SRC__%)
                   (%#begin (%#define-runtime __SRC__0 __SRC__0)
                            (%#define-runtime __SRC __SRC)))

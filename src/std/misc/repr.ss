@@ -116,7 +116,8 @@
     (display-separated (u8vector->list x) port
                        prefix: "#u8(" suffix: ")"))
 
-   ((hash-table? x) ;; hash-table: print as (hash ...)
+   ;; FIXME
+   #;((hash-table? x) ;; hash-table: print as (hash ...)
     (let* ((prefix
             (let (testf (##vector-ref x 2))
               (cond

@@ -37,10 +37,31 @@ namespace: gxc
 
 ;;; ssxi loading
 (def (optimizer-load-builtin-ssxi)
-  (optimizer-import-ssxi-by-id 'gerbil/builtin)
-  (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
-             'gerbil/builtin
-             #t))
+  (def (load-it! id)
+    (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info)) id)
+      (optimizer-import-ssxi-by-id id)
+      (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
+                 id
+                 #t)))
+  (for-each load-it!
+            '(gerbil/runtime/gambit
+              gerbil/runtime/util
+              gerbil/runtime/table
+              gerbil/runtime/control
+              gerbil/runtime/system
+              gerbil/runtime/c3
+              gerbil/runtime/mop
+              gerbil/runtime/error
+              gerbil/runtime/interface
+              gerbil/runtime/hash
+              gerbil/runtime/thread
+              gerbil/runtime/syntax
+              gerbil/runtime/eval
+              gerbil/runtime/repl
+              gerbil/runtime/loader
+              gerbil/runtime/init
+              gerbil/runtime
+              gerbil/builtin)))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps

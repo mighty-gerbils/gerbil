@@ -4,15 +4,8 @@
 prelude: :gerbil/compiler/ssxi
 package: gerbil
 
-;; gx-gambc0: struct-instance? and direct-instance? [pattern matcher]
+;; runtime direct-instance?
 (declare-type*
- (struct-instance?
-  (@lambda 2 inline:
-      (ast-rules (%#call)
-        ((%#call _ klass obj)
-         (%#call (%#ref ##structure-instance-of?)
-                 obj
-                 (%#call (%#ref ##type-id) klass))))))
  (direct-instance?
   (@lambda 2 inline:
       (ast-rules (%#call)
@@ -146,39 +139,6 @@ package: gerbil
                           #'(%#let-values ((($values) expr))
                                           (%#call recur (%#ref $values))))))))))
 
-;; runtime: simple hash-table ops
-(declare-type*
- (make-hash-table (@lambda (0) make-table))
- (make-hash-table-eq (@lambda (0) inline:
-                         (ast-rules (%#call)
-                           ((%#call _ arg ...)
-                            (%#call (%#ref make-table) (%#quote test:) (%#ref eq?) arg ...)))))
- (make-hash-table-eqv (@lambda (0) inline:
-                          (ast-rules (%#call)
-                            ((%#call _ arg ...)
-                             (%#call (%#ref make-table) (%#quote test:) (%#ref eqv?) arg ...)))))
- (list->hash-table (@lambda (1) list->table))
- (list->hash-table-eq (@lambda (1) inline:
-                          (ast-rules (%#call)
-                            ((%#call _ lst arg ...)
-                             (%#call (%#ref list->table) lst (%#quote test:) (%#ref eq?) arg ...)))))
- (list->hash-table-eqv (@lambda (1) inline:
-                           (ast-rules (%#call)
-                             ((%#call _ lst arg ...)
-                              (%#call (%#ref list->table) lst (%#quote test:) (%#ref eqv?) arg ...)))))
- (hash? (@lambda 1 table?))
- (hash-table? (@lambda 1 table?))
- (hash-length (@lambda 1 table-length))
- (hash-ref (@case-lambda (2 table-ref) (3 table-ref)))
- (hash-get (@lambda 2 inline:
-               (ast-rules (%#call)
-                 ((%#call _ ht key)
-                  (%#call (%#ref table-ref) ht key (%#quote #f))))))
- (hash-put! (@lambda 3 table-set!))
- (hash-remove! (@lambda 2 table-set!))
- (hash->list (@lambda 1 table->list))
- (hash-for-each (@lambda 2 table-for-each))
- (hash-find (@lambda 2 table-search)))
 
 ;; runtime: simple arithmetic
 (declare-type*
@@ -200,14 +160,6 @@ package: gerbil
               (%#call (%#ref fx-) arg (%#quote 1))))))
  (fx/ (@lambda 2 fxquotient))
  (fxshift (@lambda 2 fxarithmetic-shift)))
-
-;; runtime: foldings
-(declare-type*
- (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) foldl*)))
- (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) foldr*)))
- (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) andmap*)))
- (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) ormap*)))
- (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) filter-map*))))
 
 ;;; runtime procedure signatures
 (defrules declare-primitive/0 ()
@@ -360,40 +312,17 @@ package: gerbil
  (write-char 1 2))
 
 ;; core runtime primitives -- <host-runtime>
-(declare-primitive/0/unchecked
- gerbil-system system-type)
-
 (declare-primitive/1/unchecked
  immediate?
  fixnum? nonnegative-fixnum?
  fxzero?
  flonum?
  box? box
- last last-pair
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
- plist->hash-table-eq plist->hash-table-eqv
- hash-keys
- hash-values
  eq?-hash eqv?-hash equal?-hash
  keyword? uninterned-keyword? interned-keyword?
  string-empty?
 
- class-type?
- class-type-id
- class-type-precedence-list
- class-type-slot-vector
- class-type-slot-table
- class-type-properties
- class-type-constructor
- class-type-methods
- class-type-fields
- class-type-struct?
- class-type-final?
- class-type-sealed?
- make-class-predicate
-
- object? object-type
- struct->list class->list
  exception? error-object?
  error? error-message error-irritants error-trace
  read-syntax-from-file
@@ -401,7 +330,6 @@ package: gerbil
  promise?)
 
 (declare-primitive/1
- fixnum? nonnegative-fixnum?
  fxpositive? fxnegative? fxodd? fxeven?
  fixnum->flonum
  flzero? flpositive? flnegative?
@@ -427,32 +355,6 @@ package: gerbil
  get-output-u8vector
  make-promise)
 
-(declare-primitive/2/unchecked
- memf find
- remove1 remq remv remf
- hash-key?
- hash-map
- string-split string-join
- string-prefix?
- make-struct-field-accessor
- make-struct-field-mutator
- make-struct-field-unchecked-accessor
- make-struct-field-unchecked-mutator
- make-class-slot-accessor
- make-class-slot-mutator
- make-class-slot-unchecked-accessor
- make-class-slot-unchecked-mutator
- class-slot-offset
- unchecked-field-ref
- unchecked-slot-ref
- struct-instance? class-instance?
- substruct? subclass?
- method-ref bound-method-ref
- checked-method-ref checked-bound-method-ref
- with-unwind-protect
- with-catch
- file-newer?)
-
 (declare-primitive/2
  fxmodulo
  fxbit-set?
@@ -470,24 +372,10 @@ package: gerbil
  call-with-input-u8vector with-input-from-u8vector
  call-with-output-u8vector with-output-to-u8vector)
 
-(declare-primitive/3/unchecked
- hash-fold
- struct-field-ref
- class-slot-ref
- unchecked-field-set!
- unchecked-slot-set!
- next-method
- find-method
- direct-method-ref)
-
 (declare-primitive/3
  subvector
  u8vector-set!
  subu8vector)
-
-(declare-primitive/4/unchecked
- struct-field-set!
- class-slot-set!)
 
 (declare-primitive/4
  subvector-fill!
@@ -498,42 +386,7 @@ package: gerbil
  substring-move!
  subu8vector-move!)
 
-(declare-primitive/6/unchecked
- make-class-type)
-
-(declare-primitive/unchecked*
- (iota 1 2 3)
- (assgetq 2 3)
- (assgetv 2 3)
- (assget 2 3)
- (pgetq 2 3)
- (pgetv 2 3)
- (pget 2 3)
- (plist->hash-table 1 2)
- (hash-update! 3 4)
- (hash-copy (1))
- (hash-copy! (1))
- (hash-merge (1))
- (hash-merge! (1))
- (hash-clear! 1 2)
- (string->bytes 1 2)
- (substring->bytes 3 4)
- (bytes->string 1 2)
- (string-index 2 3)
- (string-rindex 2 3)
- (make-instance (1))
- (class-instance-init! (1))
- (slot-ref 2 3)
- (slot-set! 3 4)
- (bind-method! 3 4)
- (call-next-method (3))
- (call-with-parameters (1))
- (read-syntax 0 1)
- (load-module 1 2)
- (create-directory* 1 2))
-
 (declare-primitive*
- (make-list 1 2)
  (subvector->list 1 2)
  (vector->list 1 2 3)
  (vector->string 1 2 3)
@@ -557,7 +410,7 @@ package: gerbil
  (substring-fill! 4)
  (substring-move! 5)
  (current-error-port 0 1)
- (make-parameter 1 2)
+ (make-parameter 1 2 3)
  (current-exception-handler 0 1)
  (exit 0 1)
  (getenv 1 2)
@@ -908,7 +761,6 @@ package: gerbil
  replace-bit-field copy-bit-field)
 
 (declare-primitive*
- (error (1))
  (continuation-graft (2))
  (continuation-return (1))
  (display-exception 1 2)
@@ -979,134 +831,6 @@ package: gerbil
  (thread-interrupt! 1 2)
  (thread-init! 2 3 4)
  (tty-mode-set! 5 6))
-
-;; exceptions
-(declare-primitive/1
- fixnum-overflow-exception?
- fixnum-overflow-exception-procedure
- fixnum-overflow-exception-arguments
-
- initialized-thread-exception?
- initialized-thread-exception-procedure
- initialized-thread-exception-arguments
- uninitialized-thread-exception?
- uninitialized-thread-exception-procedure
- uninitialized-thread-exception-arguments
- inactive-thread-exception?
- inactive-thread-exception-procedure
- inactive-thread-exception-arguments
-
- unterminated-process-exception?
- unterminated-process-exception-procedure
- unterminated-process-exception-arguments
-
- nonempty-input-port-character-buffer-exception?
- nonempty-input-port-character-buffer-exception-arguments
- nonempty-input-port-character-buffer-exception-procedure
-
- unbound-serial-number-exception?
- unbound-serial-number-exception-procedure
- unbound-serial-number-exception-arguments
- unbound-table-key-exception?
- unbound-table-key-exception-procedure
- unbound-table-key-exception-arguments
-
- mailbox-receive-timeout-exception?
- mailbox-receive-timeout-exception-procedure
- mailbox-receive-timeout-exception-arguments
- heap-overflow-exception?
- stack-overflow-exception?
- os-exception?
- os-exception-procedure
- os-exception-arguments
- os-exception-code
- os-exception-message
- no-such-file-or-directory-exception?
- no-such-file-or-directory-exception-procedure
- no-such-file-or-directory-exception-arguments
- unbound-os-environment-variable-exception?
- unbound-os-environment-variable-exception-procedure
- unbound-os-environment-variable-exception-arguments
- scheduler-exception?
- scheduler-exception-reason
- deadlock-exception?
- abandoned-mutex-exception?
- join-timeout-exception?
- join-timeout-exception-procedure
- join-timeout-exception-arguments
- started-thread-exception?
- started-thread-exception-procedure
- started-thread-exception-arguments
- terminated-thread-exception?
- terminated-thread-exception-procedure
- terminated-thread-exception-arguments
- uncaught-exception?
- uncaught-exception-procedure
- uncaught-exception-arguments
- uncaught-exception-reason
- cfun-conversion-exception?
- cfun-conversion-exception-procedure
- cfun-conversion-exception-arguments
- cfun-conversion-exception-code
- cfun-conversion-exception-message
- sfun-conversion-exception?
- sfun-conversion-exception-procedure
- sfun-conversion-exception-arguments
- sfun-conversion-exception-code
- sfun-conversion-exception-message
- multiple-c-return-exception?
- datum-parsing-exception?
- datum-parsing-exception-kind
- datum-parsing-exception-parameters
- datum-parsing-exception-readenv
- expression-parsing-exception?
- expression-parsing-exception-kind
- expression-parsing-exception-parameters
- expression-parsing-exception-source
- unbound-global-exception?
- unbound-global-exception-variable
- unbound-global-exception-code
- unbound-global-exception-rte
- type-exception?
- type-exception-procedure
- type-exception-arguments
- type-exception-arg-num
- type-exception-type-id
- range-exception?
- range-exception-procedure
- range-exception-arguments
- range-exception-arg-num
- divide-by-zero-exception?
- divide-by-zero-exception-procedure
- divide-by-zero-exception-arguments
- improper-length-list-exception?
- improper-length-list-exception-procedure
- improper-length-list-exception-arguments
- improper-length-list-exception-arg-num
- wrong-number-of-arguments-exception?
- wrong-number-of-arguments-exception-procedure
- wrong-number-of-arguments-exception-arguments
- number-of-arguments-limit-exception?
- number-of-arguments-limit-exception-procedure
- number-of-arguments-limit-exception-arguments
- nonprocedure-operator-exception?
- nonprocedure-operator-exception-operator
- nonprocedure-operator-exception-arguments
- nonprocedure-operator-exception-code
- nonprocedure-operator-exception-rte
- unknown-keyword-argument-exception?
- unknown-keyword-argument-exception-procedure
- unknown-keyword-argument-exception-arguments
- keyword-expected-exception?
- keyword-expected-exception-procedure
- keyword-expected-exception-arguments
- error-exception?
- error-exception-message
- error-exception-parameters
-
- invalid-hash-number-exception?
- invalid-hash-number-exception-procedure
- invalid-hash-number-exception-arguments)
 
 ;; hvectors
 (declare-primitive*
@@ -1253,19 +977,3 @@ package: gerbil
  (f64vector-copy! 3 4 5)
  (subf64vector-move! 5)
  (f64vector-shrink! 2))
-
-(declare-primitive/unchecked*
- (spawn (1))
- (spawn/name (2))
- (spawn/group (2))
- (spawn-actor 4)
- (spawn-thread 1 2 3)
- (thread-local-ref 1 2)
- (thread-local-set! 2)
- (thread-local-clear! 1)
- (current-thread-group 0)
- (actor-thread? 1)
- (read-string 2)
- (write-string 2)
- (read-u8vector 2)
- (write-u8vector 2))

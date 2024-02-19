@@ -9,10 +9,6 @@ namespace: #f
 (import "gambit" "util" "control")
 (include "version.ss")
 
-;; Redundantly define this macro here until the version in the prelude is fully bootstrapped.
-(defrules defmutable ()
-  ((_ var value) (begin (def var value) (set! var var) (void))))
-
 (def gerbil-system-manifest
   [["Gerbil" :: (gerbil-version-string)]
    ["Gambit" :: (system-version-string)]])

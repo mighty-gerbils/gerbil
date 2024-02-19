@@ -52,6 +52,7 @@ namespace: #f
 
   random-source-randomize!
   default-random-source
+  random-integer
 
   make-thread
   make-thread-group
@@ -65,13 +66,27 @@ namespace: #f
   mutex-lock! mutex-unlock!
 
   read-subu8vector
-  write-subu8vector
+  write-subu8vectorp
   read-substring
-  write-substring)
+  write-substring
+
+  object->serial-number)
 
 ;; gambit macros
 (extern
   macro-absent-obj
+  macro-unused-obj
+  macro-deleted-obj
+  macro-slot
+  macro-type-fixnum
+  macro-type-table
+  macro-type-mutex
+  macro-max-fixnum32
+  macro-number-dispatch
+  macro-ratnum-numerator
+  macro-ratnum-denominator
+  macro-cpxnum-real
+  macro-cpxnum-imag
   macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port
@@ -84,6 +99,9 @@ namespace: #f
   macro-character-port?
   macro-character-port-wchars
   macro-character-port-output-width
-  macro-character-port-output-width-set!)
+  macro-character-port-output-width-set!
+  macro-mutex-lock!
+  macro-mutex-unlock!
+  macro-current-thread)
 
 (void) ;; so that the __0 file exists

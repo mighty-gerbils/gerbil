@@ -6,7 +6,7 @@ package: gerbil/runtime
 namespace: #f
 
 (export #t)
-(import "gambit" "util" "c3")
+(import "gambit" "util" "table" "c3")
 
 ;; Gambit structure rtd [runtime type descriptor]
 ;;  (define-type type
@@ -71,13 +71,13 @@ namespace: #f
               '(id name super flags fields
                    precedence-list slot-vector slot-table properties constructor methods))
              (slot-vector
-              (list->vector (cons '##type slots)))
+              (list->vector (cons #f slots)))
              (slot-table
-              (let (slot-table (make-hash-table-eq))
+              (let (slot-table (make-symbolic-table #f 0))
                 (for-each
                   (lambda (slot field)
-                    (hash-put! slot-table slot field)
-                    (hash-put! slot-table (symbol->keyword slot) field))
+                    (symbolic-table-set! slot-table slot field)
+                    (symbolic-table-set! slot-table (symbol->keyword slot) field))
                   slots
                   (iota (length slots) 1))
                 slot-table))
@@ -156,9 +156,9 @@ namespace: #f
   ;; ht: table to which to add according slots
   ;; key: either print: or equal: (both implied by transparent:)
   (def (make-props! key)
-    (def ht (make-hash-table-eq))
+    (def ht (make-symbolic-table #f 0))
     (def (put-slots! ht slots)
-      (for-each (cut hash-put! ht <> #t) slots))
+      (for-each (cut symbolic-table-set! ht <> #t) slots))
     (def (put-alist! ht key alist)
       (cond ((assgetq key alist) => (cut put-slots! ht <>))))
     (put-alist! ht key properties)
@@ -203,8 +203,8 @@ namespace: #f
         (let* ((slot (##vector-ref slot-vector i))
                (flags
                 (if transparent? 0
-                    (##fxior (if (or all-slots-printable? (hash-get printable slot)) 0 1)
-                             (if (or all-slots-equalable? (hash-get equalable slot)) 0 4)))))
+                    (##fxior (if (or all-slots-printable? (symbolic-table-ref printable slot #f)) 0 1)
+                             (if (or all-slots-equalable? (symbolic-table-ref equalable slot #f)) 0 4)))))
           (vector-set! field-info j slot)
           (vector-set! field-info (##fx+ j 1) flags)
           (loop (##fx+ i 1) (##fx+ j 3)))))
@@ -345,15 +345,16 @@ namespace: #f
 ;;   -> (Vector Symbol) (Table (Or Symbol Keyword) -> Fixnum)
 (def (compute-class-slots class-precedence-list direct-slots)
   (let* ((next-slot 1) ;; 0 is special slot for type-descriptor
-         (slot-table (make-hash-table-eq))
+         (slot-table (make-symbolic-table #f 0))
          (r-slots '(__class))
          (process-slot
           (lambda (slot)
             (unless (symbol? slot)
               (error "invalid slot name" slot))
-            (unless (hash-key? slot-table slot) ;; ignore if already registered as a slot
-              (hash-put! slot-table slot next-slot)
-              (hash-put! slot-table (symbol->keyword slot) next-slot)
+            (when (eq? (symbolic-table-ref slot-table slot absent-value)
+                       absent-value);; ignore if already registered as a slot
+              (symbolic-table-set! slot-table slot next-slot)
+              (symbolic-table-set! slot-table (symbol->keyword slot) next-slot)
               (set! r-slots (cons slot r-slots))
               (set! next-slot (##fx+ next-slot 1)))))
          (process-slots (cut for-each process-slot <>)))
@@ -415,7 +416,7 @@ namespace: #f
 ;; or (c) the slot being a regular class slot (the more expensive code path),
 ;; return an accessor for this klass and slot.
 (def (if-class-slot-field klass slot if-final if-struct if-struct-field if-class-slot)
-  (let (field (hash-get (&class-type-slot-table klass) slot))
+  (let (field (symbolic-table-ref (&class-type-slot-table klass) slot #f))
     (cond
      ((not field)
       (error "unknown slot" class: klass slot: slot))
@@ -513,7 +514,7 @@ namespace: #f
     (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
-  (hash-get (&class-type-slot-table klass) slot))
+  (symbolic-table-ref (&class-type-slot-table klass) slot #f))
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -699,7 +700,7 @@ namespace: #f
     (error "cannot find method" object: obj method: id))))
 
 (def __builtin-type-methods
-  (make-table test: eq?))
+  (make-symbolic-table #f 0))
 
 (def (method-ref obj id)
   (and (object? obj)
@@ -753,26 +754,26 @@ namespace: #f
 
   (def (metaclass-resolve-method!)
     (let (method (metaclass-resolve-method))
-      (hash-put! (&class-type-methods klass) id
-                 (if method 'resolved 'unknown))
+      (symbolic-table-set! (&class-type-methods klass) id
+                           (if method 'resolved 'unknown))
       method))
 
   (cond
    ((&class-type-methods klass)
     => (lambda (ht)
-         (let (method (hash-get ht id))
+         (let (method (symbolic-table-ref ht id #f))
            (cond
             ((procedure? method) method)
             ((class-type-metaclass? klass)
              (case method
                ((resolved)
                 (metaclass-resolve-method))
-               ((uknown) #f)
+               ((unknown) #f)
                (else
                 (metaclass-resolve-method!))))
             (else #f)))))
    ((class-type-metaclass? klass)
-    (let (tab (make-hash-table-eq))
+    (let (tab (make-symbolic-table #f 0))
       (&class-type-methods-set! klass tab)
       (metaclass-resolve-method!)))
    (else #f)))
@@ -782,15 +783,15 @@ namespace: #f
 
 (def (builtin-method-ref klass obj id)
   (cond
-   ((hash-get __builtin-type-methods (##type-id klass))
-    => (lambda (mtab) (hash-get mtab id)))
+   ((symbolic-table-ref __builtin-type-methods (##type-id klass) #f)
+    => (lambda (mtab) (symbolic-table-ref mtab id #f)))
    (else #f)))
 
 (def (bind-method! klass id proc (rebind? #t))
   (def (bind! ht)
-    (if (and (not rebind?) (hash-get ht id))
+    (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
-      (hash-put! ht id proc)))
+      (symbolic-table-set! ht id proc)))
 
   (unless (procedure? proc)
     (error "bad method; expected procedure" proc))
@@ -800,32 +801,33 @@ namespace: #f
     (let (ht (&class-type-methods klass))
       (if ht
         (bind! ht)
-        (let (ht (make-hash-table-eq))
+        (let (ht (make-symbolic-table #f 0))
           (&class-type-methods-set! klass ht)
           (bind! ht)))))
    ((##type? klass)
     (let (ht
           (cond
-           ((hash-get __builtin-type-methods (##type-id klass)))
+           ((symbolic-table-ref __builtin-type-methods (##type-id klass) #f))
            (else
-            (let (ht (make-hash-table-eq))
-              (hash-put! __builtin-type-methods (##type-id klass) ht)
+            (let (ht (make-symbolic-table #f 0))
+              (symbolic-table-set! __builtin-type-methods (##type-id klass) ht)
               ht))))
       (bind! ht)))
    (else
     (error "bad class; expected class or builtin type" klass))))
 
 (def __method-specializers
-  (make-table test: eq?))
+  (make-eq-table #f 0))
 
 (def (bind-specializer! proc specializer)
-  (hash-put! __method-specializers proc specializer))
+  (eq-table-set! __method-specializers proc specializer))
 
 (def (seal-class! klass)
   (def (collect-methods! mtab)
     (def (merge! tab)
-      (hash-for-each (lambda (id proc) (hash-put! mtab id proc))
-                     tab))
+      (raw-table-for-each
+       tab
+       (lambda (id proc) (symbolic-table-set! mtab id proc))))
 
     (def (collect-direct-methods! klass)
       (cond
@@ -844,22 +846,22 @@ namespace: #f
        ((find class-type-metaclass? (&class-type-precedence-list klass))
         (error "cannot seal class that extends metaclass without a metaclass" klass))
        (else
-        (let ((vtab (make-hash-table-eq))
-              (mtab (make-hash-table-eq)))
+        (let ((vtab (make-symbolic-table #f 0))
+              (mtab (make-symbolic-table #f 0)))
           (collect-methods! mtab)
-          (hash-for-each
+          (raw-table-for-each
+           mtab
            (lambda (id proc)
              (cond
-              ((hash-get __method-specializers proc)
+              ((eq-table-ref __method-specializers proc #f)
                => (lambda (specializer)
                     (let ((proc (specializer klass))
                           (gid (make-symbol (##type-id klass) "::[" id "]")))
                       ;; give the procedure a name and make it accessible to the debugger
                       (eval `(def ,gid (quote ,proc)))
-                      (hash-put! vtab id proc))))
+                      (symbolic-table-set! vtab id proc))))
               (else
-               (hash-put! vtab id proc))))
-           mtab)
+               (symbolic-table-set! vtab id proc)))))
           (&class-type-methods-set! klass vtab))))
       (&class-type-seal! klass))))
 
