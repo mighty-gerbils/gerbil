@@ -349,7 +349,7 @@ namespace: gxc
                           kwargs kwvars))
                     (kwset
                      (map (lambda (kw kwvar)
-                            ['%#call '(%#ref symoblic-table-set!) ['%#ref kwt]
+                            ['%#call '(%#ref symbolic-table-set!) ['%#ref kwt]
                                      ['%#quote (car kw)]
                                      ['%#ref kwvar]])
                           kwargs kwvars))
