@@ -24,6 +24,7 @@ namespace: #f
   #f HashTable?
   id: gerbil#HashTable::t
   name: HashTable
+  final: #t
   slots:
   ((ref     HashTable-ref@ HashTable-ref@-set!)
    (set     HashTable-set@ HashTable-set@-set!)
@@ -43,6 +44,7 @@ namespace: #f
   #f HashTableLock?
   id: gerbil#HashTableLock::t
   name: HashTableLock
+  final: #t
   slots:
   ((begin-read  HashTableLock-begin-read@ HashTableLock-begin-read@-set!)
    (end-read    HashTableLock-end-read@ HashTableLock-end-read@-set!)
