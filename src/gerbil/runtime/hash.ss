@@ -240,7 +240,8 @@ namespace: #f
 
 (defhash-method (HashTable-copy h)
   (declare (not safe))
-  ((&HashTable-copy@ h) (&interface-instance-object h)))
+  (cast HashTable::interface
+        ((&HashTable-copy@ h) (&interface-instance-object h))))
 
 (defhash-method (HashTable-clear! h)
   (declare (not safe))
@@ -575,8 +576,7 @@ namespace: #f
     result))
 
 (defhash-method (hash-copy h)
-  (cast HashTable::interface
-        (&HashTable-copy h)))
+  (&HashTable-copy h))
 
 (def (hash-merge h . rest)
   (let (copy (hash-copy h))
