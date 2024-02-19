@@ -1,8 +1,8 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/system::timestamp 1708289478)
+  (define gerbil/runtime/system::timestamp 1708334572)
   (begin
-    (define gerbil-version-string (lambda () '"v0.18.1-70-gebb9fbca"))
+    (define gerbil-version-string (lambda () '"v0.18.1-73-g91733f65"))
     (define gerbil-system-manifest
       (let ((__tmp78938
              (let ((__tmp78939
