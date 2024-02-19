@@ -46,10 +46,10 @@ namespace: #f
   name: HashTableLock
   final: #t
   slots:
-  ((begin-read  HashTableLock-begin-read@ HashTableLock-begin-read@-set!)
-   (end-read    HashTableLock-end-read@ HashTableLock-end-read@-set!)
-   (begin-write HashTableLock-begin-write@ HashTableLock-begin-write@-set!)
-   (end-write   HashTableLock-end-write@ HashTableLock-end-write@-set!)))
+  ((begin-read!  HashTableLock-begin-read@ HashTableLock-begin-read@-set!)
+   (end-read!    HashTableLock-end-read@ HashTableLock-end-read@-set!)
+   (begin-write! HashTableLock-begin-write@ HashTableLock-begin-write@-set!)
+   (end-write!   HashTableLock-end-write@ HashTableLock-end-write@-set!)))
 
 (def HashTableLock::interface
   (interface-descriptor
