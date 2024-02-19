@@ -5,6 +5,7 @@
   :gerbil/gambit
   :gerbil/runtime/hash
   :std/error
+  :std/interface
   :std/io
   :std/misc/ports
   :std/misc/process
@@ -97,7 +98,7 @@
 
 (def (trivial-json-object->struct strukt json (defaults #f))
   (unless defaults (set! defaults (hash)))
-  (def offsets (cast HastTable::interface (class-type-slot-table strukt)))
+  (def offsets (cast HashTable::interface (class-type-slot-table strukt)))
   (def slots (class-type-slot-vector strukt))
   (def n (vector-length slots))
   (def (get-pos key)
