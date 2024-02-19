@@ -5,14 +5,20 @@
 (import :std/test
         :std/sugar
         :std/protobuf/io
-        :std/protobuf/macros)
+        :std/protobuf/macros
+        :std/misc/hash)
 (export protobuf-test)
 
 (extern (this-source-file this-source-file))
 
-(def (check-marshal-unmarshal obj bio-read-e bio-write-e)
+(def (with-equal-hash? a b)
+  (if (hash-table? a)
+    (equal-hash? a b)
+    (equal? a b)))
+
+(def (check-marshal-unmarshal obj bio-read-e bio-write-e (eqf equal?))
   (check (unmarshal (marshal obj bio-write-e) bio-read-e)
-         => obj))
+         => obj :: eqf))
 
 (def protobuf-test
   (test-suite "test :std/protobuf"
@@ -120,7 +126,11 @@
         map: (c 1 string A))
 
       (check-marshal-unmarshal (B c: (hash ("a" (A a: "a" b: 1)) ("b" (A a: "b" b: 2))))
-                               BufferedReader-read-B BufferedWriter-write-B))
+                               BufferedReader-read-B BufferedWriter-write-B
+                               (lambda (x y)
+                                 (andmap with-equal-hash?
+                                         (struct->list x)
+                                         (struct->list y)))))
 
     (test-case "test parser"
       (check (gx#import-module (path-expand "potpourri-test.proto"
