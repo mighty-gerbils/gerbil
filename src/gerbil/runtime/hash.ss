@@ -128,9 +128,6 @@ namespace: #f
        #f                            ; class-type-constructor
        #f))))
 
-(def (hash-table? obj)
-  (##structure-instance-of? obj (##type-id hash-table::t)))
-
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
 (defstruct locked-hash-table (table lock)
   final: #t)
@@ -187,6 +184,13 @@ namespace: #f
 (bind-method! string-hash-table::t 'delete! string-table-delete!)
 
 ;; HashTable interface methods
+(def (hash-table? obj)
+  (immediate-instance-of? HashTable::t obj))
+
+(def (is-hash-table? obj)
+  (or (immediate-instance-of? HashTable::t obj)
+      (satisfies? HashTable::interface obj)))
+
 (defsyntax (defhash-method stx)
   (syntax-case stx ()
     ((_ (hash-method h arg ...) body ...)

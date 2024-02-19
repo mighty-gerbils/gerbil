@@ -138,7 +138,7 @@ package: gerbil
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
     make-hash-table make-hash-table-eq make-hash-table-eqv
-    hash-table?
+    hash-table? is-hash-table?
     hash->list hash->plist
     list->hash-table list->hash-table-eq list->hash-table-eqv
     plist->hash-table plist->hash-table-eq plist->hash-table-eqv
