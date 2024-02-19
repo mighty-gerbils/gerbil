@@ -3,6 +3,7 @@
 ;;; Hash-table utilities
 
 (export
+  equal-hash?
   hash-empty?
   hash-ref/default
   hash-ensure-ref
@@ -28,6 +29,18 @@
   :gerbil/gambit
   :std/iter
   :std/sort)
+
+(def (equal-hash? a b)
+  (and (hash-table? a)
+       (hash-table? b)
+       (= (hash-length a) (hash-length b))
+       (andmap (lambda (kv)
+                 (with ([k . v] kv)
+                   (and (hash-key? b k)
+                        (if (hash-table? v)
+                          (equal-hash? (hash-ref b k) v)
+                          (equal? (hash-ref b (car kv)) v)))))
+               (hash->list a))))
 
 (def (hash-empty? h)
   (zero? (hash-length h)))

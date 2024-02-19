@@ -2,18 +2,11 @@
 ;;; © fare
 ;;; :std/misc/hash test
 
-(import "hash"
+(import ./hash
         :std/misc/repr
         :std/sugar
         :std/test)
 (export hash-test)
-
-(def (equal-hash? a b)
-  (and (hash-table? a)
-       (hash-table? b)
-       (= (hash-length a) (hash-length b))
-       (andmap (lambda (k v) (and (hash-key? b k) (equal? (hash-ref b k) v)))
-               (hash-keys a) (hash-values a))))
 (def hash-test
   (test-suite "test :std/misc/hash"
     (test-case "hash-empty?"

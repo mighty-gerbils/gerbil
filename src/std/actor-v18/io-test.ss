@@ -6,6 +6,7 @@
         :std/error
         :std/sugar
         :std/io
+        :std/misc/hash
         ./message
         ./io)
 (export actor-message-io-test)
@@ -42,13 +43,6 @@
   (and (time? a)
        (time? b)
        (eqv? (time->seconds a) (time->seconds b))))
-
-(def (equal-hash? a b)
-  (and (hash-table? a)
-       (hash-table? b)
-       (= (hash-length a) (hash-length b))
-       (andmap (lambda (k v) (and (hash-key? b k) (equal? (hash-ref b k) v)))
-               (hash-keys a) (hash-values a))))
 
 (defmessage A (x y))
 (defstruct B (x y) transparent: #t)
