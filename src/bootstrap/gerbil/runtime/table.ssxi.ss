@@ -68,7 +68,12 @@ package: gerbil/runtime
   (declare-type make-symbolic-table__% (@lambda 2 #f))
   (declare-type make-symbolic-table__0 (@lambda 0 #f))
   (declare-type make-symbolic-table__1 (@lambda 1 #f))
-  (declare-type make-symbolic-table (@case-lambda (1 #f) (2 #f)))
+  (declare-type
+   make-symbolic-table
+   (@case-lambda
+    (0 make-symbolic-table__0)
+    (1 make-symbolic-table__1)
+    (2 make-symbolic-table__%)))
   (declare-type symbolic-table-ref (@lambda 3 #f))
   (declare-type symbolic-table-set! (@lambda 3 #f))
   (declare-type __symbolic-table-set! (@lambda 3 #f))
