@@ -575,7 +575,8 @@ namespace: #f
     result))
 
 (defhash-method (hash-copy h)
-  (&HashTable-copy h))
+  (cast HashTable::interface
+        (&HashTable-copy h)))
 
 (def (hash-merge h . rest)
   (let (copy (hash-copy h))
