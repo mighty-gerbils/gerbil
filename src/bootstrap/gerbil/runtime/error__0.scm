@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1708352923)
+  (define gerbil/runtime/error::timestamp 1708353890)
   (begin
     (define Exception::t
       (let ((__tmp65508 (list)))
@@ -538,46 +538,46 @@
             (##write-string __tmp65523 _port65254_)))))
     (define Error::display-exception::specialize
       (lambda (__t65484)
-        (let ((__continuation65485
+        (let ((__message65485
                (let ((__tmp65489
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t65484 'continuation))))
+                        (class-slot-offset __t65484 'message))))
                  (if __tmp65489
                      __tmp65489
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'continuation)))))
-              (__where65486
+                       (error '"Unknown slot" 'message)))))
+              (__irritants65486
                (let ((__tmp65490
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t65484 'where))))
+                        (class-slot-offset __t65484 'irritants))))
                  (if __tmp65490
                      __tmp65490
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'where)))))
-              (__irritants65487
+                       (error '"Unknown slot" 'irritants)))))
+              (__where65487
                (let ((__tmp65491
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t65484 'irritants))))
+                        (class-slot-offset __t65484 'where))))
                  (if __tmp65491
                      __tmp65491
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'irritants)))))
-              (__message65488
+                       (error '"Unknown slot" 'where)))))
+              (__continuation65488
                (let ((__tmp65492
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __t65484 'message))))
+                        (class-slot-offset __t65484 'continuation))))
                  (if __tmp65492
                      __tmp65492
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'message))))))
+                       (error '"Unknown slot" 'continuation))))))
           (lambda (_self65253_ _port65254_)
             (let ((_tmp-port65256_ (open-output-string))
                   (_display-error-newline65257_
@@ -592,7 +592,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self65253_
-                                 __where65486
+                                 __where65487
                                  __t65484
                                  '#f))))
                          (if _$e65260_ (display _$e65260_) (display '"?")))
@@ -607,7 +607,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self65253_
-                                 __message65488
+                                 __message65485
                                  __t65484
                                  '#f))))
                          (declare (not safe))
@@ -617,7 +617,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self65253_
-                                 __irritants65487
+                                 __irritants65486
                                  __t65484
                                  '#f))))
                          (if (let ()
@@ -641,7 +641,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self65253_
-                                     __continuation65485
+                                     __continuation65488
                                      __t65484
                                      '#f))))
                              (if _cont6526665268_
