@@ -357,6 +357,7 @@ namespace: gerbil/core
                     (make-hash-table-eq make-hash-table-eq)
                     (make-hash-table-eqv make-hash-table-eqv)
                     (hash-table? hash-table?)
+                    (is-hash-table? is-hash-table?)
                     (hash->list hash->list)
                     (hash->plist hash->plist)
                     (list->hash-table list->hash-table)
