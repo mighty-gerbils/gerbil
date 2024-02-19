@@ -26,7 +26,7 @@
 
 (def (check-encode-decode obj str (eqf equal?))
   (parameterize ((json-sort-keys #f))
-    (check (string->json-object (json-object->string obj)) => obj : eqf))
+    (check (string->json-object (json-object->string obj)) => obj :: eqf))
 
   (parameterize ((json-sort-keys #t))
     (check (json-object->string obj) => str)
