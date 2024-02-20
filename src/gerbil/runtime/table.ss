@@ -189,9 +189,9 @@ namespace: #f
      (__object->eq-hash obj))))
 
 (def __object-eq-hash-next 0)
-(def __object-eq-hash-loads '#f64(0.0 0.75))
+(def __object-eq-hash-loads '#f64(0.25 0.75))
 (def __object-eq-hash
-  (##gc-hash-table-allocate 16384
+  (##gc-hash-table-allocate 1024
                             (##fxior
                              (macro-gc-hash-table-flag-mem-alloc-keys)
                              (macro-gc-hash-table-flag-weak-keys))
