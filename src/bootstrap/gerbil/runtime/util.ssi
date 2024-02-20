@@ -4,6 +4,11 @@ namespace: #f
 
 (%#begin (%#import :gerbil/runtime/gambit)
          (%#export #t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/runtime/util__1")))
+                  (%#define-syntax __lock-inline! |[:0:]#__lock-inline!|))
+         (%#define-syntax __unlock-inline! |[:0:]#__unlock-inline!|)
          (%#define-runtime displayln displayln)
          (%#define-runtime display* display*)
          (%#define-runtime file-newer? file-newer?)
@@ -73,10 +78,7 @@ namespace: #f
                            (%#define-runtime iota iota)))
          (%#define-runtime last-pair last-pair)
          (%#define-runtime last last)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/util__1")))
-                  (%#define-syntax defassget |[:0:]#defassget|))
+         (%#define-syntax defassget |[:0:]#defassget|)
          (%#begin (%#define-runtime assgetq__% assgetq__%)
                   (%#begin (%#define-runtime assgetq__0 assgetq__0)
                            (%#define-runtime assgetq assgetq)))
