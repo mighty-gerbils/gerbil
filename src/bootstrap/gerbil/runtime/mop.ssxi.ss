@@ -264,6 +264,27 @@ package: gerbil/runtime
    bind-method!
    (@case-lambda (3 bind-method!__0) (4 bind-method!__%)))
   (declare-type bind-specializer! (@lambda 2 #f))
+  (declare-type __class-specializer-hash-key (@lambda 1 #f))
+  (declare-type make-class-specializer-table__% (@lambda 2 #f))
+  (declare-type make-class-specializer-table__0 (@lambda 0 #f))
+  (declare-type make-class-specializer-table__1 (@lambda 1 #f))
+  (declare-type
+   make-class-specializer-table
+   (@case-lambda
+    (0 make-class-specializer-table__0)
+    (1 make-class-specializer-table__1)
+    (2 make-class-specializer-table__%)))
+  (declare-type class-specializer-table-ref (@lambda 3 #f))
+  (declare-type class-specializer-table-set! (@lambda 3 #f))
+  (declare-type __class-specializer-table-set! (@lambda 3 #f))
+  (declare-type class-specializer-table-update! (@lambda 4 #f))
+  (declare-type __class-specializer-table-update! (@lambda 4 #f))
+  (declare-type class-specializer-trable-delete! (@lambda 2 #f))
+  (declare-type specialize-class (@lambda 1 #f))
+  (declare-type __lookup-class-specializer (@lambda 1 #f))
+  (declare-type __bind-class-specializer! (@lambda 2 #f))
+  (declare-type __specialize-method (@lambda 4 #f))
+  (declare-type __specialize-class (@lambda 1 #f))
   (declare-type seal-class! (@lambda 1 #f))
   (declare-type next-method (@lambda 3 #f))
   (declare-type call-next-method (@lambda (3) #f))
