@@ -58,12 +58,27 @@ namespace: #f
   (alet (super (##type-super klass))
     (eq? (##type-id super) (##type-id interface-instance::t))))
 
-(defrules lock-inline! ()
-  ((_ mx)
-   (let again ()
-     (unless (##fx= (##vector-cas! mx 0 1 0) 0)
-       (##thread-yield!)
-       (again)))))
+(cond-expand
+  (gerbil-smp
+   (defrules lock-inline! ()
+     ((_ mx)
+      (let ()
+        (declare (not interrupts-enabled))
+        (let again ((spin 0))
+          (cond
+           ((##fx= (##vector-cas! mx 0 1 0) 0))
+           ((##fx< spin 100)
+            (again (##fx+ spin 1)))
+           (else
+            (##thread-yield!)
+            (again 0))))))))
+  (else
+   (defrules lock-inline! ()
+     ((_ mx)
+      (let again ()
+        (unless (##fx= (##vector-cas! mx 0 1 0) 0)
+          (##thread-yield!)
+          (again)))))))
 
 (defrules unlock-inline! ()
   ((_ mx)
