@@ -175,13 +175,19 @@ namespace: #f
   (gerbil-smp
    (def (__eq-hash obj)
      (declare (not interrupts-enabled))
-     (let again ()
-       (if (##fx= (##vector-cas! __eq-hash-lock 0 1 0) 0)
+     (let again ((spin 0))
+       (cond
+        ((##fx= (##vector-cas! __eq-hash-lock 0 1 0) 0)
          (let (h (__object->eq-hash obj))
            (##vector-cas! __eq-hash-lock 0 0 1)
-           h)
+           h))
+        ((##fx< spin 100)
          ;; spin lock
-         (again))))
+         (again (##fx+ spin 1)))
+        (else
+         ;; stop spinning and let someone else run
+         (##thread-yield!)
+         (again 0)))))
    (def __eq-hash-lock (vector 0)))
   (else
    (def (__eq-hash obj)
