@@ -168,14 +168,8 @@ namespace: #f
      ((symbolic? obj)
       (symbolic-hash obj))
      (else
-      (fxand
-       (let (h (__eq-hash obj))
-         (if (fixnum? h)
-           h
-           (fxarithmetic-shift-left
-            (##bignum.mdigit-ref h 0)
-            10)))
-       (macro-max-fixnum32))))))
+      (fxand (__eq-hash obj)
+             (macro-max-fixnum32))))))
 
 (cond-expand
   (gerbil-smp
@@ -216,7 +210,7 @@ namespace: #f
   (let (val (##gc-hash-table-ref __object-eq-hash obj))
     (if (##eq? val (macro-unused-obj))
       (let (val __object-eq-hash-next)
-        (set! __object-eq-hash-next (##fx+ __object-eq-hash-next 1))
+        (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
         (when (##gc-hash-table-set! __object-eq-hash obj val)
           (let (new-table
                 (##gc-hash-table-rehash!
