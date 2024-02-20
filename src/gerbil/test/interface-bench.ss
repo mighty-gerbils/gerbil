@@ -31,13 +31,19 @@
     (for (i (in-range niters))
       (A obj))))
 
+(def (yield-and-run caster obj niters)
+  (thread-yield!)
+  (caster obj niters))
+
 (def (cast-benchmark niters nthreads caster)
-  (let ((obj (A-impl))
-        (threads  []))
-    (for (i (in-range nthreads))
-      (set! threads (cons (spawn caster obj niters) threads)))
-    (for (thread threads)
-      (thread-join! thread))))
+  (if (> nthreads 1)
+    (let ((obj (A-impl))
+          (threads  []))
+      (for (i (in-range nthreads))
+        (set! threads (cons (spawn yield-and-run caster obj niters) threads)))
+      (for (thread threads)
+        (thread-join! thread)))
+    (caster (A-impl) niters)))
 
 (def (main . args)
   (match args
