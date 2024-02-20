@@ -75,10 +75,12 @@ namespace: #f
   (else
    (defrules lock-inline! ()
      ((_ mx)
-      (let again ()
-        (unless (##fx= (##vector-cas! mx 0 1 0) 0)
-          (##thread-yield!)
-          (again)))))))
+      (let ()
+        (declare (not interrupts-enabled))
+        (let again ()
+          (unless (##fx= (##vector-cas! mx 0 1 0) 0)
+            (##thread-yield!)
+            (again))))))))
 
 (defrules unlock-inline! ()
   ((_ mx)
