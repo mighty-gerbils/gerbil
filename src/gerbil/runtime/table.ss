@@ -180,9 +180,8 @@ namespace: #f
          (begin
            (__object->eq-hash obj)
            (##vector-cas! __eq-hash-lock 0 0 1))
-         (begin
-           ;; spin lock
-           (again)))))
+         ;; spin lock
+         (again))))
    (def __eq-hash-lock (vector 0)))
   (else
    (def (__eq-hash obj)
