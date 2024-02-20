@@ -8,6 +8,37 @@ namespace: #f
 (import "gambit")
 (export #t)
 
+;;; low level locks
+(cond-expand
+  (gerbil-smp
+   (defrules __lock-inline! ()
+     ((_ mx)
+      (let ()
+        (declare (not interrupts-enabled))
+        (let again ((spin 0))
+          (cond
+           ((##fx= (##vector-cas! mx 0 1 0) 0))
+           ((##fx< spin 100)
+            (again (##fx+ spin 1)))
+           (else
+            (##thread-yield!)
+            (again 0))))))))
+  (else
+   (defrules __lock-inline! ()
+     ((_ mx)
+      (let ()
+        (declare (not interrupts-enabled))
+        (let again ()
+          (unless (##fx= (##vector-cas! mx 0 1 0) 0)
+            (##thread-yield!)
+            (again))))))))
+
+(defrules __unlock-inline! ()
+  ((_ mx)
+   (##vector-cas! mx 0 0 1)))
+
+;;;
+
 (def (displayln . args)
   (let lp ((rest args))
     (match rest
