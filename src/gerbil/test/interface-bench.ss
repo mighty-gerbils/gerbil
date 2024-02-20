@@ -2,8 +2,8 @@
 ;;; © vyzo
 ;;; simple benchmark for evaluating cast and satisfies? performance
 (import :gerbil/gambit
-        ./iter
-        ./interface)
+        :std/iter
+        :std/interface)
 (export main)
 
 (interface A
