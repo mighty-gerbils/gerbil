@@ -171,14 +171,16 @@ bootstrap modules (e.g. because of a bug fix).
 This can be accomplished with the following incantations in `$GERBIL_SRCDIR/src`:
 
 ```
+$ cd src
+
 # nuke the old bootstrap
 $ rm -rf bootstrap/*
 
 # copy the builtin ssxi module
-$ mkdir bootstrap/gerbil
+$ mkdir -p bootstrap/gerbil
 $ cp gerbil/prelude/builtin.ssxi.ss bootstrap/gerbil
 
-# compile the bootstrap with the current compiler
+# compile the bootstrap with the current installed compiler
 $ gxc -O -d bootstrap -s -S gerbil/prelude/core.ss gerbil/runtime/{gambit,util,table,control,system,c3,mop,error,interface,hash,thread,syntax,eval,repl,loader,init}.ss gerbil/runtime.ss gerbil/expander/{common,stx,core,top,module,compile,root,stxcase}.ss gerbil/expander.ss gerbil/compiler/{base,compile,optimize-base,optimize-xform,optimize-top,optimize-spec,optimize-ann,optimize-call,optimize,driver,ssxi}.ss gerbil/compiler.ss gerbil/prelude/gambit.ss
 ```
 
