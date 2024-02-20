@@ -157,7 +157,6 @@ namespace: #f
         (lp (fx+ i 2))))))
 
 ;;; specialized tables
-;;; in-module eq?-hash to avoid cross runtime call cost,.
 (def (eq-hash obj)
   (let (t (##type obj))
     (cond
@@ -169,14 +168,63 @@ namespace: #f
      ((symbolic? obj)
       (symbolic-hash obj))
      (else
-      (fxand
-       (let ((sn (object->serial-number obj)))
-         (if (fixnum? sn)
-           sn
-           (fxarithmetic-shift-left
-            (##bignum.mdigit-ref sn 0)
-            10)))
-       (macro-max-fixnum32))))))
+      (fxand (__eq-hash obj)
+             (macro-max-fixnum32))))))
+
+(cond-expand
+  (gerbil-smp
+   (def (__eq-hash obj)
+     (declare (not interrupts-enabled))
+     (let again ((spin 0))
+       (cond
+        ((##fx= (##vector-cas! __eq-hash-lock 0 1 0) 0)
+         (let (h (__object->eq-hash obj))
+           (##vector-cas! __eq-hash-lock 0 0 1)
+           h))
+        ((##fx< spin 100)
+         ;; spin lock
+         (again (##fx+ spin 1)))
+        (else
+         ;; stop spinning and let someone else run
+         (##thread-yield!)
+         (again 0)))))
+   (def __eq-hash-lock (vector 0)))
+  (else
+   (def (__eq-hash obj)
+     (__object->eq-hash obj))))
+
+(def __object-eq-hash-next 0)
+(def __object-eq-hash-loads '#f64(0.25 0.75))
+(def __object-eq-hash
+  (##gc-hash-table-allocate 1024
+                            (##fxior
+                             (macro-gc-hash-table-flag-mem-alloc-keys)
+                             (macro-gc-hash-table-flag-weak-keys))
+                            __object-eq-hash-loads))
+
+(def (__object->eq-hash obj)
+  (declare (not interrupts-enabled))
+  (unless (##fx= 0
+                 (##fxand
+                  (macro-gc-hash-table-flags __object-eq-hash)
+                  (macro-gc-hash-table-flag-need-rehash)))
+    (set! __object-eq-hash
+      (##gc-hash-table-rehash!
+       __object-eq-hash
+       (##gc-hash-table-resize! __object-eq-hash  __object-eq-hash-loads))))
+  (let (val (##gc-hash-table-ref __object-eq-hash obj))
+    (if (##eq? val (macro-unused-obj))
+      (let (val __object-eq-hash-next)
+        (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
+        (when (##gc-hash-table-set! __object-eq-hash obj val)
+          (let (new-table
+                (##gc-hash-table-rehash!
+                 __object-eq-hash
+                 (##gc-hash-table-resize! __object-eq-hash  __object-eq-hash-loads)))
+            (##gc-hash-table-set! new-table obj val)
+            (set! __object-eq-hash new-table)))
+        val)
+      val)))
 
 (def (eqv-hash obj)
   (define (combine a b)

@@ -77,6 +77,10 @@ namespace: #f
   macro-absent-obj
   macro-unused-obj
   macro-deleted-obj
+  macro-gc-hash-table-flags
+  macro-gc-hash-table-flag-need-rehash
+  macro-gc-hash-table-flag-mem-alloc-keys
+  macro-gc-hash-table-flag-weak-keys
   macro-slot
   macro-type-fixnum
   macro-type-table

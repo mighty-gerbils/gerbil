@@ -31,6 +31,8 @@ package: gerbil/runtime
   (declare-type __raw-table-update! (@lambda 4 #f))
   (declare-type __raw-table-rehash! (@lambda 1 #f))
   (declare-type eq-hash (@lambda 1 #f))
+  (declare-type __eq-hash (@lambda 1 __object->eq-hash))
+  (declare-type __object->eq-hash (@lambda 1 #f))
   (declare-type eqv-hash (@lambda 1 #f))
   (declare-type symbolic? (@lambda 1 #f))
   (declare-type symbolic-hash (@lambda 1 #f))
