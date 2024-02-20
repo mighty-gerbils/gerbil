@@ -219,6 +219,49 @@ namespace: #f
                            (%#define-runtime bind-method! bind-method!)))
          (%#define-runtime __method-specializers __method-specializers)
          (%#define-runtime bind-specializer! bind-specializer!)
+         (%#define-runtime
+          __class-specializer-hash-key
+          __class-specializer-hash-key)
+         (%#begin (%#define-runtime
+                   make-class-specializer-table__%
+                   make-class-specializer-table__%)
+                  (%#begin (%#define-runtime
+                            make-class-specializer-table__0
+                            make-class-specializer-table__0)
+                           (%#define-runtime
+                            make-class-specializer-table__1
+                            make-class-specializer-table__1)
+                           (%#define-runtime
+                            make-class-specializer-table
+                            make-class-specializer-table)))
+         (%#define-runtime
+          class-specializer-table-ref
+          class-specializer-table-ref)
+         (%#define-runtime
+          class-specializer-table-set!
+          class-specializer-table-set!)
+         (%#define-runtime
+          __class-specializer-table-set!
+          __class-specializer-table-set!)
+         (%#define-runtime
+          class-specializer-table-update!
+          class-specializer-table-update!)
+         (%#define-runtime
+          __class-specializer-table-update!
+          __class-specializer-table-update!)
+         (%#define-runtime
+          class-specializer-trable-delete!
+          class-specializer-trable-delete!)
+         (%#define-runtime __class-specializers-mx __class-specializers-mx)
+         (%#define-runtime __class-specializers __class-specializers)
+         (%#define-runtime __class-specializers-key __class-specializers-key)
+         (%#define-runtime specialize-class specialize-class)
+         (%#define-runtime
+          __lookup-class-specializer
+          __lookup-class-specializer)
+         (%#define-runtime __bind-class-specializer! __bind-class-specializer!)
+         (%#define-runtime __specialize-method __specialize-method)
+         (%#define-runtime __specialize-class __specialize-class)
          (%#define-runtime seal-class! seal-class!)
          (%#define-runtime next-method next-method)
          (%#define-runtime call-next-method call-next-method)

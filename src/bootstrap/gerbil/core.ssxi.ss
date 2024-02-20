@@ -322,7 +322,7 @@ package: gerbil
    (@lambda 2 #f))
   (declare-type
    gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize
-   (@lambda 1 #f))
+   (@lambda 2 #f))
   (declare-method
    gerbil/core$<macro-object>#macro-object::t
    apply-macro-expander

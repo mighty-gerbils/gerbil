@@ -816,26 +816,111 @@ namespace: #f
    (else
     (error "bad class; expected class or builtin type" klass))))
 
+;;; specializers
+;;; ___method-specializers is a table mapping procedures implementing
+;;; methods for some class, to a specializer procediure.
+;;; The specializer procedure is applied with the concrete class being
+;;; specialized and a method table that (will) contain all specialized
+;;; class methods at runtime.
+;;; It is expected to return a (new) procecure where all slot and method
+;;; lookups in the concrete receiver class have been resolved, possibly with
+;;; a delay. This allows us to remove most of the dynamic MOP overhead within
+;;; methods at the interface boundary.
+;;;;
+;; procedure method => lambda (klass method-table) => procedure method
+;; compiler populated
+;; TODO maybe add lock for dynamic loading intereference protection
 (def __method-specializers
   (make-eq-table #f 0))
 
-(def (bind-specializer! proc specializer)
-  (eq-table-set! __method-specializers proc specializer))
+;;; binds a specializer procedure for a method procedure
+(def (bind-specializer! method-proc specializer)
+  (eq-table-set! __method-specializers method-proc specializer))
 
+(def (__class-specializer-hash-key klass)
+  (symbolic-hash (##type-id klass)))
+
+(defspecialized-table make-class-specializer-table
+  class-specializer-table-ref
+  class-specializer-table-set! __class-specializer-table-set!
+  class-specializer-table-update! __class-specializer-table-update!
+  class-specializer-trable-delete!
+  __class-specializer-hash-key eq?)
+
+(def __class-specializers-mx (vector 0))
+(def __class-specializers (make-class-specializer-table #f 0))
+(def __class-specializers-key (cons #f #f)) ; pre-allocated key for lookups
+
+;; Specializes all current class methods in the hierarchy
+;; returns symbolic table mapping method => specialized procedure
+;; the result is cached in the __class-specializers table
+(def (specialize-class klass)
+  (cond
+   ((__lookup-class-specializer klass))
+   (else
+    (let (method-table (__specialize-class klass))
+      (__bind-class-specializer! klass method-table)
+      method-table))))
+
+(def (__lookup-class-specializer klass)
+  (__lock-inline! __class-specializers-mx)
+  (let (method-table (class-specializer-table-ref __class-specializers klass #f))
+    (__unlock-inline! __class-specializers-mx)
+    method-table))
+
+(def (__bind-class-specializer! klass method-table)
+  (__lock-inline! __class-specializers-mx)
+  (class-specializer-table-set! __class-specializers klass method-table)
+  (__unlock-inline! __class-specializers-mx))
+
+(def (__specialize-method klass method-table method proc)
+  (cond
+   ((symbolic-table-ref method-table method #f))
+   ((eq-table-ref __method-specializers proc #f)
+    => (lambda (specialize)
+         (let (specialized-proc (specialize klass method-table))
+           ;; ideally we want to name the procedure and bind the global
+           ;; table to be accessible in the debugger, but this is
+           ;; not SMP safe (and it is also quite slow)
+           (symbolic-table-set! method-table method specialized-proc))))
+   (else
+    ;; no specializer -- identity transform
+    (symbolic-table-set! method-table method proc))))
+
+;;; class => symbolic-table method => proccedure for all object methods
+(def (__specialize-class klass)
+  (cond
+   ((not (class-type? klass))
+    (if (##type? klass)
+      ;; builtin type
+      (let (method-table (make-symbolic-table #f 0))
+        (let loop ((xklass klass))
+          (when xklass
+            (alet (xmethod-table (symbolic-table-ref __builtin-type-methods (##type-id xklass) #f))
+              (raw-table-for-each
+               xmethod-table
+               (cut __specialize-method klass method-table <> <>)))
+            (loop (##type-super xklass))))
+        method-table)
+      (error "bad class; cannot specialize" klass)))
+   ((class-type-metaclass? klass)
+    (call-method klass 'specialize-class))
+   ((find class-type-metaclass? (&class-type-precedence-list klass))
+    (error "cannot specialize class that extends metaclass without a metaclass" klass))
+   (else
+    (let (method-table (make-symbolic-table #f 0))
+      (let loop ((rest (class-precedence-list klass)))
+        (match rest
+          ([xklass . rest]
+           (alet (xmethod-table (&class-type-methods xklass))
+             (raw-table-for-each
+              xmethod-table
+              (cut __specialize-method klass method-table <> <>)))
+           (loop rest))
+          (else method-table)))))))
+
+;;; class sealing
 (def (seal-class! klass)
-  (def (collect-methods! mtab)
-    (def (merge! tab)
-      (raw-table-for-each
-       tab
-       (lambda (id proc) (symbolic-table-set! mtab id proc))))
-
-    (def (collect-direct-methods! klass)
-      (cond
-       ((&class-type-methods klass) => merge!)))
-
-    (for-each collect-direct-methods!
-              (reverse (class-precedence-list klass))))
-
   (when (class-type? klass)
     (unless (class-type-sealed? klass)
       (unless (class-type-final? klass)
@@ -846,23 +931,8 @@ namespace: #f
        ((find class-type-metaclass? (&class-type-precedence-list klass))
         (error "cannot seal class that extends metaclass without a metaclass" klass))
        (else
-        (let ((vtab (make-symbolic-table #f 0))
-              (mtab (make-symbolic-table #f 0)))
-          (collect-methods! mtab)
-          (raw-table-for-each
-           mtab
-           (lambda (id proc)
-             (cond
-              ((eq-table-ref __method-specializers proc #f)
-               => (lambda (specializer)
-                    (let ((proc (specializer klass))
-                          (gid (make-symbol (##type-id klass) "::[" id "]")))
-                      ;; give the procedure a name and make it accessible to the debugger
-                      (eval `(def ,gid (quote ,proc)))
-                      (symbolic-table-set! vtab id proc))))
-              (else
-               (symbolic-table-set! vtab id proc)))))
-          (&class-type-methods-set! klass vtab))))
+        (let (method-table (specialize-class klass))
+          (&class-type-methods-set! klass method-table))))
       (&class-type-seal! klass))))
 
 ;; NB: 1. This implementation has quadratic complexity in the general case, but

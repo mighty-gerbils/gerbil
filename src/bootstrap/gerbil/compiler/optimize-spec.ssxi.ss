@@ -6,5 +6,5 @@ package: gerbil/compiler
   (declare-type gxc#apply-collect-object-refs (@lambda (1) #f))
   (declare-type gxc#apply-subst-object-refs (@lambda (1) #f))
   (declare-type gxc#generate-method-specializers-define-values% (@lambda 1 #f))
-  (declare-type gxc#collect-object-refs-call% (@lambda 7 #f))
-  (declare-type gxc#subst-object-refs-call% (@lambda 8 #f)))
+  (declare-type gxc#collect-object-refs-call% (@lambda 4 #f))
+  (declare-type gxc#subst-object-refs-call% (@lambda 5 #f)))
