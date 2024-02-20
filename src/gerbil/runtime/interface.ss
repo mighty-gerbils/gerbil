@@ -60,29 +60,30 @@ namespace: #f
 
 (defrules do-create-prototype ()
   ((_ descriptor klass obj-klass continue fail!)
-   (let loop ((rest (&interface-descriptor-methods descriptor))
-              (count 0)
-              (methods []))
-     (match rest
-       ([method-name . rest]
-        (cond
-         ((find-method obj-klass #f method-name)
-          => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
+   (let (method-table (specialize-class obj-klass))
+     (let loop ((rest (&interface-descriptor-methods descriptor))
+                (count 0)
+                (methods []))
+       (match rest
+         ([method-name . rest]
+          (cond
+           ((symbolic-table-ref method-table method-name #f)
+            => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
+           (else
+            (fail! klass method-name))))
          (else
-          (fail! klass method-name))))
-       (else
-        (let (prototype (make-object klass (##fx+ count 2)))
-          (let loop ((rest methods) (off (##fx+ count 1)))
-            (match rest
-              ([method . rest]
-               (##unchecked-structure-set! prototype method off klass #f)
-               (loop rest (##fx- off 1)))
-              (else
-               (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
-                 (__lock-inline! __interface-prototypes-mx)
-                 (prototype-table-set! __interface-prototypes prototype-key prototype)
-                 (__unlock-inline! __interface-prototypes-mx)
-                 (continue prototype)))))))))))
+          (let (prototype (make-object klass (##fx+ count 2)))
+            (let loop ((rest methods) (off (##fx+ count 1)))
+              (match rest
+                ([method . rest]
+                 (##unchecked-structure-set! prototype method off klass #f)
+                 (loop rest (##fx- off 1)))
+                (else
+                 (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
+                   (__lock-inline! __interface-prototypes-mx)
+                   (prototype-table-set! __interface-prototypes prototype-key prototype)
+                   (__unlock-inline! __interface-prototypes-mx)
+                   (continue prototype))))))))))))
 
 (def (create-prototype descriptor klass obj-klass)
   (do-create-prototype
