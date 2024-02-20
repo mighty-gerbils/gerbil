@@ -817,11 +817,23 @@ namespace: #f
     (error "bad class; expected class or builtin type" klass))))
 
 ;;; specializers
+;;; ___method-specializers is a table mapping procedures implementing
+;;; methods for some class, to a specializer procediure.
+;;; The specializer procedure is applied with the concrete class being
+;;; specialized and a method table that (will) contain all specialized
+;;; class methods at runtime.
+;;; It is expected to return a (new) procecure where all slot and method
+;;; lookups in the concrete receiver class have been resolved, possibly with
+;;; a delay. This allows us to remove most of the dynamic MOP overhead within
+;;; methods at the interface boundary.
+;;;;
 ;; procedure method => lambda (klass method-table) => procedure method
 ;; compiler populated
+;; TODO maybe add lock for dynamic loading intereference protection
 (def __method-specializers
   (make-eq-table #f 0))
 
+;;; binds a specializer procedure for a method procedure
 (def (bind-specializer! method-proc specializer)
   (eq-table-set! __method-specializers method-proc specializer))
 
@@ -875,6 +887,7 @@ namespace: #f
     ;; no specializer -- identity transform
     (symbolic-table-set! method-table method proc))))
 
+;;; class => symbolic-table method => proccedure for all object methods
 (def (__specialize-class klass)
   (cond
    ((not (class-type? klass))
