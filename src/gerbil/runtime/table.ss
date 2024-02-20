@@ -177,9 +177,9 @@ namespace: #f
      (declare (not interrupts-enabled))
      (let again ()
        (if (##fx= (##vector-cas! __eq-hash-lock 0 1 0) 0)
-         (begin
-           (__object->eq-hash obj)
-           (##vector-cas! __eq-hash-lock 0 0 1))
+         (let (h (__object->eq-hash obj))
+           (##vector-cas! __eq-hash-lock 0 0 1)
+           h)
          ;; spin lock
          (again))))
    (def __eq-hash-lock (vector 0)))
