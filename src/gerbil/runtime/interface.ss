@@ -50,20 +50,13 @@ namespace: #f
   prototype-trable-delete!
   __interface-hash-key __interface-test-key)
 
-(def __interface-prototypes-mx (make-mutex 'interface-prototype))
+(def __interface-prototypes-mx (vector 0))
 (def __interface-prototypes (make-prototype-table #f 0))
 (def __interface-prototypes-key (cons #f #f)) ; pre-allocated key for lookups
 
 (def (interface-subclass? klass)
   (alet (super (##type-super klass))
     (eq? (##type-id super) (##type-id interface-instance::t))))
-
-(defrules mutex-lock-inline! ()
-  ((_ mx)
-   (macro-mutex-lock! mx #f (macro-current-thread))))
-(defrules mutex-unlock-inline! ()
-  ((_ mx)
-   (macro-mutex-unlock! mx)))
 
 (defrules do-create-prototype ()
   ((_ descriptor klass obj-klass continue fail!)
@@ -86,9 +79,9 @@ namespace: #f
                (loop rest (##fx- off 1)))
               (else
                (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
-                 (mutex-lock-inline! __interface-prototypes-mx)
+                 (__lock-inline! __interface-prototypes-mx)
                  (prototype-table-set! __interface-prototypes prototype-key prototype)
-                 (mutex-unlock-inline! __interface-prototypes-mx)
+                 (__unlock-inline! __interface-prototypes-mx)
                  (continue prototype)))))))))))
 
 (def (create-prototype descriptor klass obj-klass)
@@ -123,17 +116,17 @@ namespace: #f
              (cast-it descriptor (&interface-instance-object obj)))
             (else
              ;; vanilla object, convert to an interface instance
-             (mutex-lock-inline! __interface-prototypes-mx)
+             (__lock-inline! __interface-prototypes-mx)
              (##set-car! __interface-prototypes-key klass-id)
              (##set-cdr! __interface-prototypes-key obj-klass-id)
              (let (prototype
                    (cond
                     ((prototype-table-ref __interface-prototypes __interface-prototypes-key #f)
                      => (lambda (prototype)
-                          (mutex-unlock-inline! __interface-prototypes-mx)
+                          (__unlock-inline! __interface-prototypes-mx)
                           prototype))
                     (else
-                     (mutex-unlock-inline! __interface-prototypes-mx)
+                     (__unlock-inline! __interface-prototypes-mx)
                      (do-prototype descriptor klass obj-klass))))
                (do-instance prototype obj))))))
        (do-fail obj)))))

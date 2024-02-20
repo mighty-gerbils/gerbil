@@ -2,7 +2,7 @@ prelude: :gerbil/core
 package: gerbil/runtime
 namespace: #f
 
-(%#begin (%#import :gerbil/runtime/gambit)
+(%#begin (%#import :gerbil/runtime/gambit :gerbil/runtime/util)
          (%#export #t)
          (%#define-runtime __table::t.id __table::t.id)
          (%#define-runtime __table::t __table::t)

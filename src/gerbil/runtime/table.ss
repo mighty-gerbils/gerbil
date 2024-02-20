@@ -5,7 +5,7 @@ prelude: "../prelude/core"
 package: gerbil/runtime
 namespace: #f
 
-(import "gambit")
+(import "gambit" "util")
 (export #t)
 (declare (not safe))
 
@@ -173,24 +173,16 @@ namespace: #f
 
 (cond-expand
   (gerbil-smp
+   (def __eq-hash-lock (vector 0))
    (def (__eq-hash obj)
      (declare (not interrupts-enabled))
-     (let again ((spin 0))
-       (cond
-        ((##fx= (##vector-cas! __eq-hash-lock 0 1 0) 0)
-         (let (h (__object->eq-hash obj))
-           (##vector-cas! __eq-hash-lock 0 0 1)
-           h))
-        ((##fx< spin 100)
-         ;; spin lock
-         (again (##fx+ spin 1)))
-        (else
-         ;; stop spinning and let someone else run
-         (##thread-yield!)
-         (again 0)))))
-   (def __eq-hash-lock (vector 0)))
+     (__lock-inline! __eq-hash-lock)
+     (let (h (__object->eq-hash obj))
+       (__unlock-inline! __eq-hash-lock)
+       h)))
   (else
    (def (__eq-hash obj)
+     (declare (not interrupts-enabled))
      (__object->eq-hash obj))))
 
 (def __object-eq-hash-next 0)

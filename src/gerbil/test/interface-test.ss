@@ -1,8 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; :std/interface unit-test
-(import ./test
-        ./interface)
+;;; interface unit-test
+(import :std/test
+        :std/interface)
 (export interface-test)
 
 (defstruct X (x))

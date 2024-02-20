@@ -106,8 +106,6 @@ namespace: #f
           __interface-prototypes-key
           __interface-prototypes-key)
          (%#define-runtime interface-subclass? interface-subclass?)
-         (%#define-syntax mutex-lock-inline! |[:0:]#mutex-lock-inline!|)
-         (%#define-syntax mutex-unlock-inline! |[:0:]#mutex-unlock-inline!|)
          (%#define-syntax do-create-prototype |[:0:]#do-create-prototype|)
          (%#define-runtime create-prototype create-prototype)
          (%#define-runtime try-create-prototype try-create-prototype)
