@@ -832,10 +832,20 @@ namespace: #f
 ;; TODO maybe add lock for dynamic loading intereference protection
 (def __method-specializers
   (make-eq-table #f 0))
+(def __method-specializers-mx
+  (__make-inline-lock))
 
 ;;; binds a specializer procedure for a method procedure
 (def (bind-specializer! method-proc specializer)
-  (eq-table-set! __method-specializers method-proc specializer))
+  (__lock-inline! __method-specializers-mx)
+  (eq-table-set! __method-specializers method-proc specializer)
+  (__unlock-inline! __method-specializers-mx))
+
+(def (__lookup-method-specializer proc)
+  (__lock-inline! __method-specializers-mx)
+  (let (specializer (eq-table-ref __method-specializers proc #f))
+    (__unlock-inline! __method-specializers-mx)
+    specializer))
 
 (def (__class-specializer-hash-key klass)
   (symbolic-hash (##type-id klass)))
@@ -876,7 +886,7 @@ namespace: #f
 (def (__specialize-method klass method-table method proc)
   (cond
    ((symbolic-table-ref method-table method #f))
-   ((eq-table-ref __method-specializers proc #f)
+   ((__lookup-method-specializer proc)
     => (lambda (specialize)
          (let (specialized-proc (specialize klass method-table))
            ;; ideally we want to name the procedure and bind the global
