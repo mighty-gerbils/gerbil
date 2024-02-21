@@ -37,6 +37,9 @@ namespace: #f
   ((_ mx)
    (##vector-cas! mx 0 0 1)))
 
+(defrules __make-inline-lock ()
+  ((_) (vector 0)))
+
 ;;;
 
 (def (displayln . args)

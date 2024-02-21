@@ -847,7 +847,7 @@ namespace: #f
   class-specializer-trable-delete!
   __class-specializer-hash-key eq?)
 
-(def __class-specializers-mx (vector 0))
+(def __class-specializers-mx (__make-inline-lock))
 (def __class-specializers (make-class-specializer-table #f 0))
 (def __class-specializers-key (cons #f #f)) ; pre-allocated key for lookups
 
