@@ -829,7 +829,6 @@ namespace: #f
 ;;;;
 ;; procedure method => lambda (klass method-table) => procedure method
 ;; compiler populated
-;; TODO maybe add lock for dynamic loading intereference protection
 (def __method-specializers
   (make-eq-table #f 0))
 (def __method-specializers-mx
