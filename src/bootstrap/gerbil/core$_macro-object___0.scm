@@ -1,72 +1,91 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1708451987)
+  (define gerbil/core$<macro-object>::timestamp 1708510098)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
-      (make-class-type
-       'gerbil.core#macro-object::t
-       'macro-object
-       (list)
-       '(macro)
-       '()
-       '#f))
+      (let ((__tmp49659 (list)))
+        (declare (not safe))
+        (make-class-type
+         'gerbil.core#macro-object::t
+         'macro-object
+         __tmp49659
+         '(macro)
+         '()
+         '#f)))
     (define gerbil/core$<macro-object>#macro-object?
-      (make-class-predicate gerbil/core$<macro-object>#macro-object::t))
+      (let ()
+        (declare (not safe))
+        (make-class-predicate gerbil/core$<macro-object>#macro-object::t)))
     (define gerbil/core$<macro-object>#make-macro-object
       (lambda _$args23417_
         (apply make-instance
                gerbil/core$<macro-object>#macro-object::t
                _$args23417_)))
     (define gerbil/core$<macro-object>#macro-object-macro
-      (make-class-slot-accessor
-       gerbil/core$<macro-object>#macro-object::t
-       'macro))
+      (let ()
+        (declare (not safe))
+        (make-class-slot-accessor
+         gerbil/core$<macro-object>#macro-object::t
+         'macro)))
     (define gerbil/core$<macro-object>#macro-object-macro-set!
-      (make-class-slot-mutator
-       gerbil/core$<macro-object>#macro-object::t
-       'macro))
+      (let ()
+        (declare (not safe))
+        (make-class-slot-mutator
+         gerbil/core$<macro-object>#macro-object::t
+         'macro)))
     (define gerbil/core$<macro-object>#&macro-object-macro
-      (make-class-slot-unchecked-accessor
-       gerbil/core$<macro-object>#macro-object::t
-       'macro))
+      (let ()
+        (declare (not safe))
+        (make-class-slot-unchecked-accessor
+         gerbil/core$<macro-object>#macro-object::t
+         'macro)))
     (define gerbil/core$<macro-object>#&macro-object-macro-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core$<macro-object>#macro-object::t
-       'macro))
+      (let ()
+        (declare (not safe))
+        (make-class-slot-unchecked-mutator
+         gerbil/core$<macro-object>#macro-object::t
+         'macro)))
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander
       (lambda (_self23414_ _stx23415_)
         (gx#core-apply-expander
-         (let ((__obj46947 _self23414_))
+         (let ((__obj49633 _self23414_))
            (if (let ()
                  (declare (not safe))
                  (##structure-direct-instance-of?
-                  __obj46947
+                  __obj49633
                   'gerbil.core#macro-object::t))
                (let ()
                  (declare (not safe))
                  (##unchecked-structure-ref
-                  __obj46947
+                  __obj49633
                   '1
                   gerbil/core$<macro-object>#macro-object::t
                   '#f))
                (class-slot-ref
                 gerbil/core$<macro-object>#macro-object::t
-                __obj46947
+                __obj49633
                 'macro)))
          _stx23415_)))
     (define gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize
-      (lambda (__klass41285 __method-table41286)
-        (let ((__macro41287
-               (let ((__slot41288 (class-slot-offset __klass41285 'macro)))
-                 (if __slot41288 __slot41288 (error '"Unknown slot" 'macro)))))
+      (lambda (__klass43971 __method-table43972)
+        (let ((__macro43973
+               (let ((__slot43974
+                      (let ()
+                        (declare (not safe))
+                        (class-slot-offset __klass43971 'macro))))
+                 (if __slot43974
+                     __slot43974
+                     (let ()
+                       (declare (not safe))
+                       (error '"Unknown slot" 'macro))))))
           (lambda (_self23414_ _stx23415_)
             (gx#core-apply-expander
              (let ()
                (declare (not safe))
                (##unchecked-structure-ref
                 _self23414_
-                __macro41287
-                __klass41285
+                __macro43973
+                __klass43971
                 '#f))
              _stx23415_)))))
     (bind-specializer!

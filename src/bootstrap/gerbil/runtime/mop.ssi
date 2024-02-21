@@ -218,7 +218,11 @@ namespace: #f
                   (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
                            (%#define-runtime bind-method! bind-method!)))
          (%#define-runtime __method-specializers __method-specializers)
+         (%#define-runtime __method-specializers-mx __method-specializers-mx)
          (%#define-runtime bind-specializer! bind-specializer!)
+         (%#define-runtime
+          __lookup-method-specializer
+          __lookup-method-specializer)
          (%#define-runtime
           __class-specializer-hash-key
           __class-specializer-hash-key)

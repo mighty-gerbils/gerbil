@@ -1,104 +1,104 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<more-sugar>[2]#_g49635_|
+  (define |gerbil/core$<more-sugar>[2]#_g52741_|
     (##structure
      gx#syntax-quote::t
      'macro-object
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49637_|
+  (define |gerbil/core$<more-sugar>[2]#_g52743_|
     (##structure
      gx#syntax-quote::t
      'setq-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49639_|
+  (define |gerbil/core$<more-sugar>[2]#_g52745_|
     (##structure
      gx#syntax-quote::t
      'make-setq-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49641_|
+  (define |gerbil/core$<more-sugar>[2]#_g52747_|
     (##structure
      gx#syntax-quote::t
      'setq-macro?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49645_|
+  (define |gerbil/core$<more-sugar>[2]#_g52751_|
     (##structure
      gx#syntax-quote::t
      'setq-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49649_|
+  (define |gerbil/core$<more-sugar>[2]#_g52755_|
     (##structure
      gx#syntax-quote::t
      'setq-macro-macro-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49653_|
+  (define |gerbil/core$<more-sugar>[2]#_g52759_|
     (##structure
      gx#syntax-quote::t
      '&setq-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49657_|
+  (define |gerbil/core$<more-sugar>[2]#_g52763_|
     (##structure
      gx#syntax-quote::t
      '&setq-macro-macro-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49661_|
+  (define |gerbil/core$<more-sugar>[2]#_g52767_|
     (##structure
      gx#syntax-quote::t
      'setf-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49663_|
+  (define |gerbil/core$<more-sugar>[2]#_g52769_|
     (##structure
      gx#syntax-quote::t
      'make-setf-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49665_|
+  (define |gerbil/core$<more-sugar>[2]#_g52771_|
     (##structure
      gx#syntax-quote::t
      'setf-macro?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49669_|
+  (define |gerbil/core$<more-sugar>[2]#_g52775_|
     (##structure
      gx#syntax-quote::t
      'setf-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49673_|
+  (define |gerbil/core$<more-sugar>[2]#_g52779_|
     (##structure
      gx#syntax-quote::t
      'setf-macro-macro-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49677_|
+  (define |gerbil/core$<more-sugar>[2]#_g52783_|
     (##structure
      gx#syntax-quote::t
      '&setf-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<more-sugar>[2]#_g49681_|
+  (define |gerbil/core$<more-sugar>[2]#_g52787_|
     (##structure
      gx#syntax-quote::t
      '&setf-macro-macro-set!
@@ -107,7 +107,7 @@
      '()))
   (begin
     (define |gerbil/core$<more-sugar>[:1:]#setq-macro|
-      (let ((__obj46957
+      (let ((__obj49643
              (let ()
                (declare (not safe))
                (##structure
@@ -130,7 +130,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            'gerbil.core#setq-macro::t
            '1
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -138,7 +138,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            'setq-macro
            '2
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -146,26 +146,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            '()
            '4
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49633
-               (let ((__tmp49634 |gerbil/core$<more-sugar>[2]#_g49635_|))
+        (let ((__tmp52739
+               (let ((__tmp52740 |gerbil/core$<more-sugar>[2]#_g52741_|))
                  (declare (not safe))
-                 (cons __tmp49634 '()))))
+                 (cons __tmp52740 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49633
+           __obj49643
+           __tmp52739
            '3
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            '#f
            '5
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -173,7 +173,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            '#f
            '6
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -181,7 +181,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            '#f
            '7
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -189,98 +189,98 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
+           __obj49643
            '#f
            '8
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49636 |gerbil/core$<more-sugar>[2]#_g49637_|))
+        (let ((__tmp52742 |gerbil/core$<more-sugar>[2]#_g52743_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49636
+           __obj49643
+           __tmp52742
            '9
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49638 |gerbil/core$<more-sugar>[2]#_g49639_|))
+        (let ((__tmp52744 |gerbil/core$<more-sugar>[2]#_g52745_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49638
+           __obj49643
+           __tmp52744
            '10
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49640 |gerbil/core$<more-sugar>[2]#_g49641_|))
+        (let ((__tmp52746 |gerbil/core$<more-sugar>[2]#_g52747_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49640
+           __obj49643
+           __tmp52746
            '11
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49642
-               (let ((__tmp49643
-                      (let ((__tmp49644
-                             |gerbil/core$<more-sugar>[2]#_g49645_|))
+        (let ((__tmp52748
+               (let ((__tmp52749
+                      (let ((__tmp52750
+                             |gerbil/core$<more-sugar>[2]#_g52751_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49644))))
+                        (cons 'macro __tmp52750))))
                  (declare (not safe))
-                 (cons __tmp49643 '()))))
+                 (cons __tmp52749 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49642
+           __obj49643
+           __tmp52748
            '12
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49646
-               (let ((__tmp49647
-                      (let ((__tmp49648
-                             |gerbil/core$<more-sugar>[2]#_g49649_|))
+        (let ((__tmp52752
+               (let ((__tmp52753
+                      (let ((__tmp52754
+                             |gerbil/core$<more-sugar>[2]#_g52755_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49648))))
+                        (cons 'macro __tmp52754))))
                  (declare (not safe))
-                 (cons __tmp49647 '()))))
+                 (cons __tmp52753 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49646
+           __obj49643
+           __tmp52752
            '13
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49650
-               (let ((__tmp49651
-                      (let ((__tmp49652
-                             |gerbil/core$<more-sugar>[2]#_g49653_|))
+        (let ((__tmp52756
+               (let ((__tmp52757
+                      (let ((__tmp52758
+                             |gerbil/core$<more-sugar>[2]#_g52759_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49652))))
+                        (cons 'macro __tmp52758))))
                  (declare (not safe))
-                 (cons __tmp49651 '()))))
+                 (cons __tmp52757 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49650
+           __obj49643
+           __tmp52756
            '14
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49654
-               (let ((__tmp49655
-                      (let ((__tmp49656
-                             |gerbil/core$<more-sugar>[2]#_g49657_|))
+        (let ((__tmp52760
+               (let ((__tmp52761
+                      (let ((__tmp52762
+                             |gerbil/core$<more-sugar>[2]#_g52763_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49656))))
+                        (cons 'macro __tmp52762))))
                  (declare (not safe))
-                 (cons __tmp49655 '()))))
+                 (cons __tmp52761 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46957
-           __tmp49654
+           __obj49643
+           __tmp52760
            '15
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        __obj46957))
+        __obj49643))
     (define |gerbil/core$<more-sugar>[:1:]#setf-macro|
-      (let ((__obj46958
+      (let ((__obj49644
              (let ()
                (declare (not safe))
                (##structure
@@ -303,7 +303,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            'gerbil.core#setf-macro::t
            '1
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -311,7 +311,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            'setf-macro
            '2
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -319,26 +319,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            '()
            '4
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49658
-               (let ((__tmp49659 |gerbil/core$<more-sugar>[2]#_g49635_|))
+        (let ((__tmp52764
+               (let ((__tmp52765 |gerbil/core$<more-sugar>[2]#_g52741_|))
                  (declare (not safe))
-                 (cons __tmp49659 '()))))
+                 (cons __tmp52765 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49658
+           __obj49644
+           __tmp52764
            '3
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            '#f
            '5
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -346,7 +346,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            '#f
            '6
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -354,7 +354,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            '#f
            '7
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
@@ -362,93 +362,93 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
+           __obj49644
            '#f
            '8
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49660 |gerbil/core$<more-sugar>[2]#_g49661_|))
+        (let ((__tmp52766 |gerbil/core$<more-sugar>[2]#_g52767_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49660
+           __obj49644
+           __tmp52766
            '9
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49662 |gerbil/core$<more-sugar>[2]#_g49663_|))
+        (let ((__tmp52768 |gerbil/core$<more-sugar>[2]#_g52769_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49662
+           __obj49644
+           __tmp52768
            '10
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49664 |gerbil/core$<more-sugar>[2]#_g49665_|))
+        (let ((__tmp52770 |gerbil/core$<more-sugar>[2]#_g52771_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49664
+           __obj49644
+           __tmp52770
            '11
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49666
-               (let ((__tmp49667
-                      (let ((__tmp49668
-                             |gerbil/core$<more-sugar>[2]#_g49669_|))
+        (let ((__tmp52772
+               (let ((__tmp52773
+                      (let ((__tmp52774
+                             |gerbil/core$<more-sugar>[2]#_g52775_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49668))))
+                        (cons 'macro __tmp52774))))
                  (declare (not safe))
-                 (cons __tmp49667 '()))))
+                 (cons __tmp52773 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49666
+           __obj49644
+           __tmp52772
            '12
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49670
-               (let ((__tmp49671
-                      (let ((__tmp49672
-                             |gerbil/core$<more-sugar>[2]#_g49673_|))
+        (let ((__tmp52776
+               (let ((__tmp52777
+                      (let ((__tmp52778
+                             |gerbil/core$<more-sugar>[2]#_g52779_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49672))))
+                        (cons 'macro __tmp52778))))
                  (declare (not safe))
-                 (cons __tmp49671 '()))))
+                 (cons __tmp52777 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49670
+           __obj49644
+           __tmp52776
            '13
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49674
-               (let ((__tmp49675
-                      (let ((__tmp49676
-                             |gerbil/core$<more-sugar>[2]#_g49677_|))
+        (let ((__tmp52780
+               (let ((__tmp52781
+                      (let ((__tmp52782
+                             |gerbil/core$<more-sugar>[2]#_g52783_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49676))))
+                        (cons 'macro __tmp52782))))
                  (declare (not safe))
-                 (cons __tmp49675 '()))))
+                 (cons __tmp52781 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49674
+           __obj49644
+           __tmp52780
            '14
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp49678
-               (let ((__tmp49679
-                      (let ((__tmp49680
-                             |gerbil/core$<more-sugar>[2]#_g49681_|))
+        (let ((__tmp52784
+               (let ((__tmp52785
+                      (let ((__tmp52786
+                             |gerbil/core$<more-sugar>[2]#_g52787_|))
                         (declare (not safe))
-                        (cons 'macro __tmp49680))))
+                        (cons 'macro __tmp52786))))
                  (declare (not safe))
-                 (cons __tmp49679 '()))))
+                 (cons __tmp52785 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj46958
-           __tmp49678
+           __obj49644
+           __tmp52784
            '15
            gerbil/core$<MOP>$<MOP:2>#class-type-info::t
            '#f))
-        __obj46958))))
+        __obj49644))))
