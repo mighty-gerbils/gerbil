@@ -9,6 +9,7 @@ namespace: #f
                            (%#quote "gerbil/runtime/util__1")))
                   (%#define-syntax __lock-inline! |[:0:]#__lock-inline!|))
          (%#define-syntax __unlock-inline! |[:0:]#__unlock-inline!|)
+         (%#define-syntax __make-inline-lock |[:0:]#__make-inline-lock|)
          (%#define-runtime displayln displayln)
          (%#define-runtime display* display*)
          (%#define-runtime file-newer? file-newer?)

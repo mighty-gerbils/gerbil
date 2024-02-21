@@ -264,6 +264,7 @@ package: gerbil/runtime
    bind-method!
    (@case-lambda (3 bind-method!__0) (4 bind-method!__%)))
   (declare-type bind-specializer! (@lambda 2 #f))
+  (declare-type __lookup-method-specializer (@lambda 1 #f))
   (declare-type __class-specializer-hash-key (@lambda 1 #f))
   (declare-type make-class-specializer-table__% (@lambda 2 #f))
   (declare-type make-class-specializer-table__0 (@lambda 0 #f))

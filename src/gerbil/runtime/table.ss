@@ -173,7 +173,7 @@ namespace: #f
 
 (cond-expand
   (gerbil-smp
-   (def __eq-hash-lock (vector 0))
+   (def __eq-hash-lock (__make-inline-lock))
    (def (__eq-hash obj)
      (declare (not interrupts-enabled))
      (__lock-inline! __eq-hash-lock)

@@ -1,127 +1,127 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1708451992)
+  (define gerbil/runtime/loader::timestamp 1708510101)
   (begin
     (define current-module-library-path (make-parameter '#f))
     (define current-module-registry (make-parameter '#f))
     (define __reload-module (make-parameter '#f))
     (define load-module__%
-      (lambda (_modpath75034_ _reload?75035_)
-        (let ((_$e75037_
-               (if (let () (declare (not safe)) (not _reload?75035_))
-                   (let ((__tmp75056 (current-module-registry)))
+      (lambda (_modpath77795_ _reload?77796_)
+        (let ((_$e77798_
+               (if (let () (declare (not safe)) (not _reload?77796_))
+                   (let ((__tmp77817 (current-module-registry)))
                      (declare (not safe))
-                     (hash-get __tmp75056 _modpath75034_))
+                     (hash-get __tmp77817 _modpath77795_))
                    '#f)))
-          (if _$e75037_
-              _$e75037_
-              (let ((_$e75040_
+          (if _$e77798_
+              _$e77798_
+              (let ((_$e77801_
                      (let ()
                        (declare (not safe))
-                       (find-library-module _modpath75034_))))
-                (if _$e75040_
-                    ((lambda (_path75043_)
-                       (let ((_lpath75045_ (load _path75043_)))
-                         (let ((__tmp75057 (current-module-registry)))
+                       (find-library-module _modpath77795_))))
+                (if _$e77801_
+                    ((lambda (_path77804_)
+                       (let ((_lpath77806_ (load _path77804_)))
+                         (let ((__tmp77818 (current-module-registry)))
                            (declare (not safe))
-                           (hash-put! __tmp75057 _modpath75034_ _lpath75045_))
-                         _lpath75045_))
-                     _$e75040_)
+                           (hash-put! __tmp77818 _modpath77795_ _lpath77806_))
+                         _lpath77806_))
+                     _$e77801_)
                     (let ()
                       (declare (not safe))
-                      (error '"module not found" _modpath75034_))))))))
+                      (error '"module not found" _modpath77795_))))))))
     (define load-module__0
-      (lambda (_modpath75050_)
-        (let ((_reload?75052_ (__reload-module)))
+      (lambda (_modpath77811_)
+        (let ((_reload?77813_ (__reload-module)))
           (declare (not safe))
-          (load-module__% _modpath75050_ _reload?75052_))))
+          (load-module__% _modpath77811_ _reload?77813_))))
     (define load-module
-      (lambda _g75059_
-        (let ((_g75058_ (let () (declare (not safe)) (##length _g75059_))))
-          (cond ((let () (declare (not safe)) (##fx= _g75058_ 1))
-                 (apply (lambda (_modpath75050_)
+      (lambda _g77820_
+        (let ((_g77819_ (let () (declare (not safe)) (##length _g77820_))))
+          (cond ((let () (declare (not safe)) (##fx= _g77819_ 1))
+                 (apply (lambda (_modpath77811_)
                           (let ()
                             (declare (not safe))
-                            (load-module__0 _modpath75050_)))
-                        _g75059_))
-                ((let () (declare (not safe)) (##fx= _g75058_ 2))
-                 (apply (lambda (_modpath75054_ _reload?75055_)
+                            (load-module__0 _modpath77811_)))
+                        _g77820_))
+                ((let () (declare (not safe)) (##fx= _g77819_ 2))
+                 (apply (lambda (_modpath77815_ _reload?77816_)
                           (let ()
                             (declare (not safe))
-                            (load-module__% _modpath75054_ _reload?75055_)))
-                        _g75059_))
+                            (load-module__% _modpath77815_ _reload?77816_)))
+                        _g77820_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   load-module
-                  _g75059_))))))
+                  _g77820_))))))
     (define find-library-module
-      (lambda (_modpath74968_)
-        (letrec ((_find-compiled-file74970_
-                  (lambda (_npath75022_)
-                    (let ((_basepath75024_
+      (lambda (_modpath77729_)
+        (letrec ((_find-compiled-file77731_
+                  (lambda (_npath77783_)
+                    (let ((_basepath77785_
                            (let ()
                              (declare (not safe))
-                             (##string-append _npath75022_ '".o"))))
-                      (let _lp75026_ ((_current75028_ '#f) (_n75029_ '1))
-                        (let ((_next75031_
-                               (let ((__tmp75060 (number->string _n75029_)))
+                             (##string-append _npath77783_ '".o"))))
+                      (let _lp77787_ ((_current77789_ '#f) (_n77790_ '1))
+                        (let ((_next77792_
+                               (let ((__tmp77821 (number->string _n77790_)))
                                  (declare (not safe))
                                  (##string-append
-                                  _basepath75024_
-                                  __tmp75060))))
+                                  _basepath77785_
+                                  __tmp77821))))
                           (if (let ()
                                 (declare (not safe))
-                                (##file-exists? _next75031_))
-                              (let ((__tmp75061
+                                (##file-exists? _next77792_))
+                              (let ((__tmp77822
                                      (let ()
                                        (declare (not safe))
-                                       (##fx+ _n75029_ '1))))
+                                       (##fx+ _n77790_ '1))))
                                 (declare (not safe))
-                                (_lp75026_ _next75031_ __tmp75061))
-                              _current75028_))))))
-                 (_find-source-file74971_
-                  (lambda (_npath75018_)
-                    (let ((_spath75020_ (string-append _npath75018_ '".scm")))
+                                (_lp77787_ _next77792_ __tmp77822))
+                              _current77789_))))))
+                 (_find-source-file77732_
+                  (lambda (_npath77779_)
+                    (let ((_spath77781_ (string-append _npath77779_ '".scm")))
                       (if (let ()
                             (declare (not safe))
-                            (##file-exists? _spath75020_))
-                          _spath75020_
+                            (##file-exists? _spath77781_))
+                          _spath77781_
                           '#f)))))
-          (let _lp74973_ ((_rest74975_ (current-module-library-path)))
-            (let* ((_rest7497674984_ _rest74975_)
-                   (_else7497874992_ (lambda () '#f))
-                   (_K7498075006_
-                    (lambda (_rest74995_ _dir74996_)
-                      (let* ((_npath74998_
+          (let _lp77734_ ((_rest77736_ (current-module-library-path)))
+            (let* ((_rest7773777745_ _rest77736_)
+                   (_else7773977753_ (lambda () '#f))
+                   (_K7774177767_
+                    (lambda (_rest77756_ _dir77757_)
+                      (let* ((_npath77759_
                               (path-expand
-                               _modpath74968_
-                               (path-expand _dir74996_)))
-                             (_$e75000_
+                               _modpath77729_
+                               (path-expand _dir77757_)))
+                             (_$e77761_
                               (let ()
                                 (declare (not safe))
-                                (_find-compiled-file74970_ _npath74998_))))
-                        (if _$e75000_
-                            (path-normalize _$e75000_)
-                            (let ((_$e75003_
+                                (_find-compiled-file77731_ _npath77759_))))
+                        (if _$e77761_
+                            (path-normalize _$e77761_)
+                            (let ((_$e77764_
                                    (let ()
                                      (declare (not safe))
-                                     (_find-source-file74971_ _npath74998_))))
-                              (if _$e75003_
-                                  (path-normalize _$e75003_)
+                                     (_find-source-file77732_ _npath77759_))))
+                              (if _$e77764_
+                                  (path-normalize _$e77764_)
                                   (let ()
                                     (declare (not safe))
-                                    (_lp74973_ _rest74995_)))))))))
-              (if (let () (declare (not safe)) (##pair? _rest7497674984_))
-                  (let ((_hd7498175009_
+                                    (_lp77734_ _rest77756_)))))))))
+              (if (let () (declare (not safe)) (##pair? _rest7773777745_))
+                  (let ((_hd7774277770_
                          (let ()
                            (declare (not safe))
-                           (##car _rest7497674984_)))
-                        (_tl7498275011_
+                           (##car _rest7773777745_)))
+                        (_tl7774377772_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest7497674984_))))
-                    (let* ((_dir75014_ _hd7498175009_)
-                           (_rest75016_ _tl7498275011_))
+                           (##cdr _rest7773777745_))))
+                    (let* ((_dir77775_ _hd7774277770_)
+                           (_rest77777_ _tl7774377772_))
                       (declare (not safe))
-                      (_K7498075006_ _rest75016_ _dir75014_)))
-                  (let () (declare (not safe)) (_else7497874992_))))))))))
+                      (_K7774177767_ _rest77777_ _dir77775_)))
+                  (let () (declare (not safe)) (_else7773977753_))))))))))

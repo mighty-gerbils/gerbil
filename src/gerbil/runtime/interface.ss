@@ -50,7 +50,7 @@ namespace: #f
   prototype-trable-delete!
   __interface-hash-key __interface-test-key)
 
-(def __interface-prototypes-mx (vector 0))
+(def __interface-prototypes-mx (__make-inline-lock))
 (def __interface-prototypes (make-prototype-table #f 0))
 (def __interface-prototypes-key (cons #f #f)) ; pre-allocated key for lookups
 
