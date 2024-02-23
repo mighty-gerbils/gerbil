@@ -505,7 +505,7 @@
                        (genident #'klass)))
                     (descriptor (stx-identifier #'name #'name "::interface"))
                     (make (stx-identifier #'name "make-" #'name))
-                    (make (stx-identifier #'name "try-" #'name))
+                    (try-make (stx-identifier #'name "try-" #'name))
                     (predicate (stx-identifier #'name #'name "?"))
                     (instance-predicate (stx-identifier #'name "is-" #'name "?"))
                     ((mixin ...)
