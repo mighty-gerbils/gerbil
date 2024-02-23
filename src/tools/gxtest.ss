@@ -30,7 +30,7 @@
 (def (gxtest-main opt)
   ;; local package context
   (unless (getenv "GERBIL_PATH" #f)
-    (let* ((here (path-normalize* (current-directory)))
+    (let* ((here (path-normalize (current-directory)))
            (gerbil-path (path-expand ".gerbil" here)))
       (when (file-exists? gerbil-path)
         (setenv "GERBIL_PATH" gerbil-path))))
