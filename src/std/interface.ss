@@ -591,7 +591,7 @@
                                      implementation-methods: method-impl
                                      unchecked-implementation-methods: unchecked-impl)
                      info)
-                (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ...]))))
+                (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ... ids ...]))))
            (_ (cons begin: ids)))))))
 
   (syntax-case stx ()
