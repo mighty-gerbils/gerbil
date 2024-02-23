@@ -10,7 +10,8 @@
         :std/sort
         :std/srfi/13
         :std/sugar
-        :std/test)
+        :std/test
+        (only-in :gerbil/runtime/init cons-load-path))
 (export main)
 
 (def (main . args)
@@ -33,7 +34,8 @@
     (let* ((here (path-normalize (current-directory)))
            (gerbil-path (path-expand ".gerbil" here)))
       (when (file-exists? gerbil-path)
-        (setenv "GERBIL_PATH" gerbil-path))))
+        (setenv "GERBIL_PATH" gerbil-path)
+        (cons-load-path (path-expand "lib" gerbil-path)))))
 
   (let-hash opt
     (cond
