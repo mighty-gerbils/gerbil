@@ -14,7 +14,8 @@
         :std/sort
         (only-in :std/srfi/1 delete-duplicates reverse!)
         :std/sugar
-        :std/text/utf8)
+        :std/text/utf8
+        ./env)
 (export main make-tags)
 
 (def (main . args)
@@ -33,6 +34,7 @@
       help: "source file or directory")))
 
 (def (gxtags-main opt)
+  (setup-local-env!)
   (run (hash-ref opt 'input ["."])
        (hash-get opt 'output)
        (hash-get opt 'append)
