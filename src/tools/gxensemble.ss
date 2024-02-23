@@ -16,7 +16,8 @@
         :std/misc/process
         :std/os/hostname
         :std/sugar
-        :std/text/hex)
+        :std/text/hex
+        ./env)
 (export main)
 
 (def (main . args)
@@ -414,6 +415,7 @@
         gopts ...))))
 
 (def (gxensemble-main cmd opt)
+  (setup-local-env!)
   (dispatch-command cmd opt main-commands))
 
 (defcommand-nested do-admin admin-commands "gxensemble admin"

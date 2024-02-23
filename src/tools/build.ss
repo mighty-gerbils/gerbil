@@ -3,7 +3,8 @@
 (import :std/build-script)
 
 (defbuild-script
-  '("gxprof"
+  '("env"
+    "gxprof"
     "gxtags"
     "gxpkg"
     "gxtest"

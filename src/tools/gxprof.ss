@@ -11,7 +11,8 @@
         :std/cli/getopt
         :std/format
         :std/sort
-        :std/sugar)
+        :std/sugar
+        ./env)
 (export main)
 
 (def (main . args)
@@ -33,6 +34,7 @@
       help: "arguments to pass to the executable module's main")))
 
 (def (gxprof-main opt)
+  (setup-local-env!)
   (let-hash opt
     (if .?module
       (let* ((ctx (import-module (module-path .module) #f #t))
