@@ -10,7 +10,8 @@
         :std/sort
         :std/srfi/13
         :std/sugar
-        :std/test)
+        :std/test
+        ./env)
 (export main)
 
 (def (main . args)
@@ -28,6 +29,7 @@
                      help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
 
 (def (gxtest-main opt)
+  (setup-local-env!)
   (let-hash opt
     (cond
      ((null? .args)

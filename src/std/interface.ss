@@ -568,7 +568,7 @@
                            instance-satisfies-predicate: (quote-syntax instance-predicate)
                            implementation-methods: [(quote-syntax method-impl-name) ...]
                            unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]))))
-       #'(begin defklass defdescriptor defmake defpred defpred-instance definfo
+       #'(begin defklass defdescriptor defmake deftry-make defpred defpred-instance definfo
                 defmethod-impl ...)))))
 
 (defsyntax-for-export (interface-out stx)
