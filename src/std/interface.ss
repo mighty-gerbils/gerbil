@@ -505,7 +505,7 @@
                        (genident #'klass)))
                     (descriptor (stx-identifier #'name #'name "::interface"))
                     (make (stx-identifier #'name "make-" #'name))
-                    (make (stx-identifier #'name "try-" #'name))
+                    (try-make (stx-identifier #'name "try-" #'name))
                     (predicate (stx-identifier #'name #'name "?"))
                     (instance-predicate (stx-identifier #'name "is-" #'name "?"))
                     ((mixin ...)
@@ -591,7 +591,7 @@
                                      implementation-methods: method-impl
                                      unchecked-implementation-methods: unchecked-impl)
                      info)
-                (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ...]))))
+                (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ... ids ...]))))
            (_ (cons begin: ids)))))))
 
   (syntax-case stx ()
