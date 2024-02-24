@@ -22,6 +22,7 @@
   (call-with-getopt gxtags-main args
     program: "gxtags"
     help: "generate emacs/vim tags for Gerbil code"
+    global-env-flag
     (flag 'append "-a"
       help: "append to existing tag file")
     (option 'output "-o" default: "TAGS"
@@ -34,7 +35,7 @@
       help: "source file or directory")))
 
 (def (gxtags-main opt)
-  (setup-local-env!)
+  (setup-local-env! opt)
   (run (hash-ref opt 'input ["."])
        (hash-get opt 'output)
        (hash-get opt 'append)

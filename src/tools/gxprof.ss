@@ -19,6 +19,7 @@
   (call-with-getopt gxprof-main args
     program: "gxprof"
     help: "The Gerbil profiler"
+    global-env-flag
     (option 'output "-o" "--output"
       help: "gxprof output file"
       default: "gxprof.out")
@@ -34,7 +35,7 @@
       help: "arguments to pass to the executable module's main")))
 
 (def (gxprof-main opt)
-  (setup-local-env!)
+  (setup-local-env! opt)
   (let-hash opt
     (if .?module
       (let* ((ctx (import-module (module-path .module) #f #t))

@@ -18,18 +18,19 @@
   (call-with-getopt gxtest-main args
     program: "gxtest"
     help: "run Gerbil tests in the command line"
-     (flag 'verbose "-v"
+    global-env-flag
+    (flag 'verbose "-v"
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
-     (option 'run "-r" "--run"
-             help: "only run test suites whose name matches a given regex")
+    (option 'run "-r" "--run"
+            help: "only run test suites whose name matches a given regex")
      ;; TODO this should be a multi-option for multiple features
-     (option 'features "-D"
-             help: "define one or more conditional expansion feature (comma separated) for enabling tests that require external services")
-     (rest-arguments 'args
-                     help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
+    (option 'features "-D"
+            help: "define one or more conditional expansion feature (comma separated) for enabling tests that require external services")
+    (rest-arguments 'args
+                    help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
 
 (def (gxtest-main opt)
-  (setup-local-env!)
+  (setup-local-env! opt)
   (let-hash opt
     (cond
      ((null? .args)
