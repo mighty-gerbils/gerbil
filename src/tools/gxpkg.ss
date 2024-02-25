@@ -181,11 +181,12 @@
       ((dir)
        (manage-dirs .directories .?add .?remove .?global))
       ((env)
-       (env-exec .command .command-args)))))
+       (env-exec .command .command-args .?global)))))
 
 ;;; commands
-(def (env-exec command args)
-  (setup-local-pkg-env! #t)
+(def (env-exec command args global?)
+  (unless global?
+    (setup-local-pkg-env! #t))
   (setup-local-path!)
   (invoke command args
           stdin-redirection: #f
