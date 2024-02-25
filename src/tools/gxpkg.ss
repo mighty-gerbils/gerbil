@@ -185,7 +185,7 @@
 
 ;;; commands
 (def (env-exec command args)
-  (setup-local-pkg-env!)
+  (setup-local-pkg-env! #t)
   (setup-local-path!)
   (invoke command args
           stdin-redirection: #f
@@ -210,17 +210,17 @@
 
 (def (install-pkgs pkgs global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (fold-pkgs-retag pkgs pkg-install))
 
 (def (uninstall-pkgs pkgs force? global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (fold-pkgs-retag pkgs pkg-uninstall force?))
 
 (def (update-pkgs pkgs global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (when (fold-pkgs pkgs pkg-update)
     ;; the package dependencies might have changed, so install them
     (for-each
@@ -235,17 +235,17 @@
 
 (def (link-pkg pkg src global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (pkg-link pkg src))
 
 (def (unlink-pkgs pkgs force? global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (for-each (cut pkg-unlink <> force?) pkgs))
 
 (def (build-pkgs pkgs release? optimized? debug? global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (when release?
     (setenv "GERBIL_BUILD_RELEASE" "t"))
   (when optimized?
@@ -259,7 +259,7 @@
 
 (def (clean-pkgs pkgs global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (if (null? pkgs)
     ;; do local clean
     (pkg-clean ".")
@@ -267,7 +267,7 @@
 
 (def (list-pkgs global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (for (pkg (pkg-list))
     (let (tag (pkg-tag-get pkg))
       (display pkg)
@@ -277,7 +277,7 @@
 
 (def (retag-pkgs global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (pkg-retag))
 
 (def (search-pkgs keywords dir as-list?)
@@ -288,20 +288,8 @@
 
 (def (manage-deps deps add? install? update? remove? global?)
   (unless global?
-    (setup-local-pkg-env!))
+    (setup-local-pkg-env! #t))
   (pkg-deps-manage deps add? install? update? remove?))
-
-(def (setup-local-pkg-env!)
-  (unless (getenv "GERBIL_PATH" #f)
-    (let* ((here (path-normalize* (current-directory)))
-           (gerbil-path (path-expand ".gerbil" here)))
-      (if (file-exists? gerbil-path)
-        (setenv "GERBIL_PATH" gerbil-path)
-        (if (file-exists? (path-expand "gerbil.pkg" here))
-          (begin
-            (create-directory* gerbil-path)
-            (setenv "GERBIL_PATH" gerbil-path))
-          (error "not in local package context"))))))
 
 (def (setup-local-path!)
   (let* (($GERBIL_PATH (gerbil-path))
