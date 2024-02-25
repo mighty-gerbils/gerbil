@@ -161,7 +161,7 @@
       ((clean)
        (clean-pkgs .pkg .?global))
       ((deps)
-       (manage-deps .deps .?add .?install .?update .?remove))
+       (manage-deps .deps .?add .?install .?update .?remove .?global))
       ((link)
        (link-pkg .pkg .src .?global))
       ((unlink)
@@ -254,9 +254,7 @@
     (setenv "GERBIL_BUILD_DEBUG" "t"))
   (if (null? pkgs)
     ;; do local build
-    (begin
-      (setup-local-pkg-env!)
-      (pkg-build "." #f))
+    (pkg-build "." #f)
     (for-each pkg-build pkgs)))
 
 (def (clean-pkgs pkgs global?)
@@ -264,9 +262,7 @@
     (setup-local-pkg-env!))
   (if (null? pkgs)
     ;; do local clean
-    (begin
-      (setup-local-pkg-env!)
-      (pkg-clean "."))
+    (pkg-clean ".")
     (for-each pkg-clean pkgs)))
 
 (def (list-pkgs global?)
@@ -290,8 +286,9 @@
 (def (manage-dirs dirs add? remove? global?)
   (pkg-directory-manage dirs add? remove? global?))
 
-(def (manage-deps deps add? install? update? remove?)
-  (setup-local-pkg-env!)
+(def (manage-deps deps add? install? update? remove? global?)
+  (unless global?
+    (setup-local-pkg-env!))
   (pkg-deps-manage deps add? install? update? remove?))
 
 (def (setup-local-pkg-env!)
