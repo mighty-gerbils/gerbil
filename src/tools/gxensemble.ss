@@ -24,6 +24,7 @@
   (call-with-getopt gxensemble-main args
     program: "gxensemble"
     help: "the Gerbil Actor Ensemble Manager"
+    global-env-flag
     run-cmd
     registry-cmd
     load-cmd
@@ -415,7 +416,7 @@
         gopts ...))))
 
 (def (gxensemble-main cmd opt)
-  (setup-local-env!)
+  (setup-local-env! opt)
   (dispatch-command cmd opt main-commands))
 
 (defcommand-nested do-admin admin-commands "gxensemble admin"
