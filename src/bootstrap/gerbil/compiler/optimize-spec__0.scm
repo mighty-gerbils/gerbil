@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-spec::timestamp 1708510103)
+  (define gerbil/compiler/optimize-spec::timestamp 1709038444)
   (begin
     (define gxc#&generate-method-specializers
       (make-promise
@@ -6849,14 +6849,14 @@
                                 _$klass128568_
                                 _methods128569_
                                 _slots128570_))))
-                       (if (and (let ((__tmp135004
+                       (if (and (let ((__tmp135010
                                        (##structure-ref
                                         _mutator128909_
                                         '3
                                         gxc#!mutator::t
                                         '#f)))
                                   (declare (not safe))
-                                  (not __tmp135004))
+                                  (not __tmp135010))
                                 (or (let ()
                                       (declare (not safe))
                                       (gxc#!class-struct-slot?
@@ -6869,17 +6869,41 @@
                                      '#f)))
                            (let ((__tmp135000
                                   (let ((__tmp135001
-                                         (let ((__tmp135002
-                                                (let ((__tmp135003
+                                         (let ((__tmp135007
+                                                (let ((__tmp135009
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _expr128915_
+                                                         (gx#datum->syntax__0
+                                                          '#f
+                                                          '%#ref)))
+                                                      (__tmp135008
+                                                       (let ()
+                                                         (declare (not safe))
+                                                         (cons _L128880_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '(%#ref -self)
+                                                  (cons __tmp135009
+                                                        __tmp135008)))
+                                               (__tmp135002
+                                                (let ((__tmp135004
+                                                       (let ((__tmp135006
+                                                              (let ()
+                                                                (declare
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (not safe))
+                        (gx#datum->syntax__0 '#f '%#ref)))
+                     (__tmp135005
+                      (let () (declare (not safe)) (cons _L128879_ '()))))
+                 (declare (not safe))
+                 (cons __tmp135006 __tmp135005)))
+              (__tmp135003
+               (let () (declare (not safe)) (cons _expr128915_ '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (declare (not safe))
+                                                  (cons __tmp135004
                                                         __tmp135003))))
                                            (declare (not safe))
-                                           (cons '(%#ref setf) __tmp135002))))
+                                           (cons __tmp135007 __tmp135002))))
                                     (declare (not safe))
                                     (cons '%#call __tmp135001))))
                              (declare (not safe))
@@ -6975,18 +6999,18 @@
                                      (gx#free-identifier=?
                                       _L128879_
                                       _self128567_))
-                                   (let ((__tmp135005
-                                          (let ((__tmp135006
+                                   (let ((__tmp135011
+                                          (let ((__tmp135012
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#identifier-symbol
                                                     _L128880_))))
                                             (declare (not safe))
                                             (gxc#optimizer-resolve-type
-                                             __tmp135006))))
+                                             __tmp135012))))
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      __tmp135005
+                                      __tmp135011
                                       'gxc#!mutator::t)))
                               (___kont134160134161_
                                _L128878_
@@ -7143,18 +7167,18 @@
                                      (gx#free-identifier=?
                                       _L128984_
                                       _self128567_))
-                                   (let ((__tmp135007
-                                          (let ((__tmp135008
+                                   (let ((__tmp135013
+                                          (let ((__tmp135014
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#identifier-symbol
                                                     _L128985_))))
                                             (declare (not safe))
                                             (gxc#optimizer-resolve-type
-                                             __tmp135008))))
+                                             __tmp135014))))
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      __tmp135007
+                                      __tmp135013
                                       'gxc#!accessor::t)))
                               (___kont134158134159_ _L128984_ _L128985_)
                               (___kont134162134163_)))))
@@ -7818,7 +7842,7 @@
                                                  (let ()
                                                    (declare (not safe))
                                                    (##car _e128673129396_))))
-                                            (let ((__tmp135009
+                                            (let ((__tmp135015
                                                    (let ()
                                                      (declare (not safe))
                                                      (cons _lp-hd128674129399_
@@ -7826,7 +7850,7 @@
                                               (declare (not safe))
                                               (_loop128672129388_
                                                _lp-tl128675129401_
-                                               __tmp135009))))
+                                               __tmp135015))))
                                         (let ((_args128677129404_
                                                (reverse _args128676129393_)))
                                           (let ((_L129407_ _args128677129404_)
@@ -8196,7 +8220,7 @@
                                                  (let ()
                                                    (declare (not safe))
                                                    (##car _e128620129564_))))
-                                            (let ((__tmp135010
+                                            (let ((__tmp135016
                                                    (let ()
                                                      (declare (not safe))
                                                      (cons _lp-hd128621129567_
@@ -8204,7 +8228,7 @@
                                               (declare (not safe))
                                               (_loop128619129556_
                                                _lp-tl128622129569_
-                                               __tmp135010))))
+                                               __tmp135016))))
                                         (let ((_args128624129572_
                                                (reverse _args128623129561_)))
                                           (let ((_L129575_ _args128624129572_)
