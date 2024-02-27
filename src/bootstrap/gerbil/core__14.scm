@@ -21,23 +21,23 @@
                                (declare (not safe))
                                (##cdr _e3455934572_))))
                         ((lambda (_L34582_)
-                           (let ((__tmp52861
+                           (let ((__tmp52907
                                   (gx#datum->syntax '#f 'make-setq-macro))
-                                 (__tmp52857
-                                  (let ((__tmp52858
-                                         (let ((__tmp52859
-                                                (let ((__tmp52860
+                                 (__tmp52903
+                                  (let ((__tmp52904
+                                         (let ((__tmp52905
+                                                (let ((__tmp52906
                                                        (gx#datum->syntax
                                                         '#f
                                                         'syntax-rules)))
                                                   (declare (not safe))
-                                                  (cons __tmp52860 _L34582_))))
+                                                  (cons __tmp52906 _L34582_))))
                                            (declare (not safe))
-                                           (cons __tmp52859 '()))))
+                                           (cons __tmp52905 '()))))
                                     (declare (not safe))
-                                    (cons 'macro: __tmp52858))))
+                                    (cons 'macro: __tmp52904))))
                              (declare (not safe))
-                             (cons __tmp52861 __tmp52857)))
+                             (cons __tmp52907 __tmp52903)))
                          _tl3455734579_)))
                     (_g3455434565_ _g3455534569_)))))
         (_g3455334595_ _$stx34550_))))

@@ -485,7 +485,7 @@ namespace: gxc
                 (or (!class-struct-slot? klass slot)
                     (!class-final? klass)))
          (xform-wrap-source
-          ['%#call '(%#ref setf) '(%#ref -self) expr]
+          ['%#call #'(%#ref setf) #'(%#ref -self) expr]
           stx)
          (let ($field (hash-ref slots slot))
            (xform-wrap-source

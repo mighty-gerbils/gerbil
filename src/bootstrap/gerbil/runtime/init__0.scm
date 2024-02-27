@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1708510101)
+  (define gerbil/runtime/init::timestamp 1709038442)
   (begin
     (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
