@@ -440,8 +440,8 @@ namespace: #f
 (def (&gc-table-immediate-set! tab val)
   (##unchecked-structure-set! tab val 2 __gc-table::t 'gc-table-immediate-set!))
 
-(def (make-gc-table size-hint (klass __gc-table::t))
-  (let (gcht (__gc-table-new (if (fixnum? size-hint) size-hint 16)))
+(def (make-gc-table size-hint (klass __gc-table::t) (flags 0))
+  (let (gcht (__gc-table-new (if (fixnum? size-hint) size-hint 16) flags))
     (##structure klass gcht #f)))
 
 (def (__gc-table-immediate tab)
@@ -452,11 +452,11 @@ namespace: #f
       (set! (&gc-table-immediate tab) immediate)
       immediate))))
 
-(def (__gc-table-new size)
+(def (__gc-table-new size flags)
   (let (gcht
         (##gc-hash-table-allocate
          size
-         (macro-gc-hash-table-flag-mem-alloc-keys)
+         (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys))
          __gc-table-loads))
     (macro-gc-hash-table-free-set! gcht (macro-gc-hash-table-size gcht))
     (macro-gc-hash-table-count-set! gcht 0)
@@ -484,7 +484,10 @@ namespace: #f
 (def (__gc-table-grow! tab)
   (declare (not interrupts-enabled))
   (let* ((old-table (&gc-table-gcht tab))
-         (new-table (__gc-table-new (fx* 2 (macro-gc-hash-table-size old-table))))
+         (new-table
+          (__gc-table-new
+           (fx* 2 (macro-gc-hash-table-size old-table))
+           (macro-gc-hash-table-flags old-table)))
          (gcht (##gc-hash-table-rehash! old-table new-table)))
     (set! (&gc-table-gcht tab) gcht)))
 
@@ -554,9 +557,9 @@ namespace: #f
 (def (gc-table-copy tab)
   (let* ((gcht (__gc-table-e tab))
          (new-table
-          (##gc-hash-table-allocate (macro-gc-hash-table-count gcht)
-                                    (macro-gc-hash-table-flag-mem-alloc-keys)
-                                    __gc-table-loads))
+          (__gc-table-new
+           (macro-gc-hash-table-count gcht)
+           (macro-gc-hash-table-flags gcht)))
          (result
           (##structure (##structure-type tab)
                        new-table #f)))
@@ -567,7 +570,7 @@ namespace: #f
   (let* ((gcht (__gc-table-e tab))
          (new-table
           (##gc-hash-table-allocate (macro-gc-hash-table-count gcht)
-                                    (macro-gc-hash-table-flag-mem-alloc-keys)
+                                    (macro-gc-hash-table-flags gcht)
                                     __gc-table-loads)))
     (set! (&gc-table-gcht tab) new-table)
     (set! (&gc-table-immediate tab) #f)))
@@ -582,7 +585,7 @@ namespace: #f
 ;;; object->eq-hash
 (def __object-eq-hash-next 0)
 (def __object-eq-hash
-  (make-gc-table 1024))
+  (make-gc-table 1024 __gc-table::t (macro-gc-hash-table-flag-weak-keys)))
 
 (def (__object->eq-hash obj)
   (declare (not interrupts-enabled))
