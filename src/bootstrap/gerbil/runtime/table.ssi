@@ -137,6 +137,7 @@ namespace: #f
          (%#define-runtime &gc-table-immediate-set! &gc-table-immediate-set!)
          (%#begin (%#define-runtime make-gc-table__% make-gc-table__%)
                   (%#begin (%#define-runtime make-gc-table__0 make-gc-table__0)
+                           (%#define-runtime make-gc-table__1 make-gc-table__1)
                            (%#define-runtime make-gc-table make-gc-table)))
          (%#define-runtime __gc-table-immediate __gc-table-immediate)
          (%#define-runtime __gc-table-new __gc-table-new)

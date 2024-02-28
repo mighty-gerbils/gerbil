@@ -117,13 +117,17 @@ package: gerbil/runtime
   (declare-type &gc-table-immediate (@lambda 1 #f))
   (declare-type &gc-table-gcht-set! (@lambda 2 #f))
   (declare-type &gc-table-immediate-set! (@lambda 2 #f))
-  (declare-type make-gc-table__% (@lambda 2 #f))
+  (declare-type make-gc-table__% (@lambda 3 #f))
   (declare-type make-gc-table__0 (@lambda 1 #f))
+  (declare-type make-gc-table__1 (@lambda 2 #f))
   (declare-type
    make-gc-table
-   (@case-lambda (1 make-gc-table__0) (2 make-gc-table__%)))
+   (@case-lambda
+    (1 make-gc-table__0)
+    (2 make-gc-table__1)
+    (3 make-gc-table__%)))
   (declare-type __gc-table-immediate (@lambda 1 #f))
-  (declare-type __gc-table-new (@lambda 1 #f))
+  (declare-type __gc-table-new (@lambda 2 #f))
   (declare-type __gc-table-e (@lambda 1 #f))
   (declare-type __gc-table-rehash! (@lambda 1 #f))
   (declare-type __gc-table-grow! (@lambda 1 #f))
