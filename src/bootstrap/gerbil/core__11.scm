@@ -1,55 +1,55 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<match>[2]#_g52713_|
+  (define |gerbil/core$<match>[2]#_g52787_|
     (##structure
      gx#syntax-quote::t
      'macro-object
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52715_|
+  (define |gerbil/core$<match>[2]#_g52789_|
     (##structure
      gx#syntax-quote::t
      'match-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52717_|
+  (define |gerbil/core$<match>[2]#_g52791_|
     (##structure
      gx#syntax-quote::t
      'make-match-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52719_|
+  (define |gerbil/core$<match>[2]#_g52793_|
     (##structure
      gx#syntax-quote::t
      'match-macro?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52723_|
+  (define |gerbil/core$<match>[2]#_g52797_|
     (##structure
      gx#syntax-quote::t
      'match-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52727_|
+  (define |gerbil/core$<match>[2]#_g52801_|
     (##structure
      gx#syntax-quote::t
      'match-macro-macro-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52731_|
+  (define |gerbil/core$<match>[2]#_g52805_|
     (##structure
      gx#syntax-quote::t
      '&match-macro-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g52735_|
+  (define |gerbil/core$<match>[2]#_g52809_|
     (##structure
      gx#syntax-quote::t
      '&match-macro-macro-set!
@@ -101,14 +101,14 @@
          '4
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52711
-             (let ((__tmp52712 |gerbil/core$<match>[2]#_g52713_|))
+      (let ((__tmp52785
+             (let ((__tmp52786 |gerbil/core$<match>[2]#_g52787_|))
                (declare (not safe))
-               (cons __tmp52712 '()))))
+               (cons __tmp52786 '()))))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52711
+         __tmp52785
          '3
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
@@ -144,83 +144,83 @@
          '8
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52714 |gerbil/core$<match>[2]#_g52715_|))
+      (let ((__tmp52788 |gerbil/core$<match>[2]#_g52789_|))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52714
+         __tmp52788
          '9
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52716 |gerbil/core$<match>[2]#_g52717_|))
+      (let ((__tmp52790 |gerbil/core$<match>[2]#_g52791_|))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52716
+         __tmp52790
          '10
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52718 |gerbil/core$<match>[2]#_g52719_|))
+      (let ((__tmp52792 |gerbil/core$<match>[2]#_g52793_|))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52718
+         __tmp52792
          '11
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52720
-             (let ((__tmp52721
-                    (let ((__tmp52722 |gerbil/core$<match>[2]#_g52723_|))
+      (let ((__tmp52794
+             (let ((__tmp52795
+                    (let ((__tmp52796 |gerbil/core$<match>[2]#_g52797_|))
                       (declare (not safe))
-                      (cons 'macro __tmp52722))))
+                      (cons 'macro __tmp52796))))
                (declare (not safe))
-               (cons __tmp52721 '()))))
+               (cons __tmp52795 '()))))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52720
+         __tmp52794
          '12
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52724
-             (let ((__tmp52725
-                    (let ((__tmp52726 |gerbil/core$<match>[2]#_g52727_|))
+      (let ((__tmp52798
+             (let ((__tmp52799
+                    (let ((__tmp52800 |gerbil/core$<match>[2]#_g52801_|))
                       (declare (not safe))
-                      (cons 'macro __tmp52726))))
+                      (cons 'macro __tmp52800))))
                (declare (not safe))
-               (cons __tmp52725 '()))))
+               (cons __tmp52799 '()))))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52724
+         __tmp52798
          '13
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52728
-             (let ((__tmp52729
-                    (let ((__tmp52730 |gerbil/core$<match>[2]#_g52731_|))
+      (let ((__tmp52802
+             (let ((__tmp52803
+                    (let ((__tmp52804 |gerbil/core$<match>[2]#_g52805_|))
                       (declare (not safe))
-                      (cons 'macro __tmp52730))))
+                      (cons 'macro __tmp52804))))
                (declare (not safe))
-               (cons __tmp52729 '()))))
+               (cons __tmp52803 '()))))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52728
+         __tmp52802
          '14
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp52732
-             (let ((__tmp52733
-                    (let ((__tmp52734 |gerbil/core$<match>[2]#_g52735_|))
+      (let ((__tmp52806
+             (let ((__tmp52807
+                    (let ((__tmp52808 |gerbil/core$<match>[2]#_g52809_|))
                       (declare (not safe))
-                      (cons 'macro __tmp52734))))
+                      (cons 'macro __tmp52808))))
                (declare (not safe))
-               (cons __tmp52733 '()))))
+               (cons __tmp52807 '()))))
         (declare (not safe))
         (##unchecked-structure-set!
          __obj49634
-         __tmp52732
+         __tmp52806
          '15
          gerbil/core$<MOP>$<MOP:2>#class-type-info::t
          '#f))
