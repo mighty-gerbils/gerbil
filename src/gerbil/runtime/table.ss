@@ -453,11 +453,12 @@ namespace: #f
       immediate))))
 
 (def (__gc-table-new size flags)
-  (let (gcht
-        (##gc-hash-table-allocate
-         size
-         (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys))
-         __gc-table-loads))
+  (let* ((flags
+          (fxand flags (fxnot (macro-gc-hash-table-flag-need-rehash))))
+         (flags
+          (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys)))
+         (gcht
+          (##gc-hash-table-allocate size flags __gc-table-loads)))
     (macro-gc-hash-table-free-set! gcht (macro-gc-hash-table-size gcht))
     (macro-gc-hash-table-count-set! gcht 0)
     gcht))
@@ -508,11 +509,11 @@ namespace: #f
 (def (gc-table-set! tab key value)
   (declare (not interrupts-enabled))
   (if (##mem-allocated? key)
-    (let (gcht (__gc-table-e tab))
+    (let* ((gcht (__gc-table-e tab))
+           (half-full (fxquotient (macro-gc-hash-table-size gcht) 2)))
       (cond
-       ((fx< (macro-gc-hash-table-free gcht)
-             (fxquotient (macro-gc-hash-table-size gcht) 2))
-        (if (fx> (macro-gc-hash-table-count gcht) (fxquotient (macro-gc-hash-table-size gcht) 2))
+       ((fx< (macro-gc-hash-table-free gcht) half-full)
+        (if (fx> (macro-gc-hash-table-count gcht) half-full)
           (__gc-table-grow! tab)
           (__gc-table-rehash! tab))
         (gc-table-set! tab key value))
@@ -547,7 +548,7 @@ namespace: #f
         (let (key (##vector-ref gcht i))
           (if (and (not (eq? key (macro-unused-obj)))
                    (not (eq? key (macro-deleted-obj))))
-            (proc key (vector-ref gcht (fx+ i 1))))
+            (proc key (##vector-ref gcht (fx+ i 1))))
           (let ()
             (declare (interrupts-enabled))
             (loop (fx+ i 2)))))))
