@@ -197,39 +197,6 @@ namespace: #f
      (declare (not interrupts-enabled))
      (__object->eq-hash obj))))
 
-(def __object-eq-hash-next 0)
-(def __object-eq-hash-loads '#f64(0.05 0.75))
-(def __object-eq-hash
-  (##gc-hash-table-allocate 1024
-                            (##fxior
-                             (macro-gc-hash-table-flag-mem-alloc-keys)
-                             (macro-gc-hash-table-flag-weak-keys))
-                            __object-eq-hash-loads))
-
-(def (__object->eq-hash obj)
-  (declare (not interrupts-enabled))
-  (unless (##fx= 0
-                 (##fxand
-                  (macro-gc-hash-table-flags __object-eq-hash)
-                  (macro-gc-hash-table-flag-need-rehash)))
-    (set! __object-eq-hash
-      (##gc-hash-table-rehash!
-       __object-eq-hash
-       (##gc-hash-table-resize! __object-eq-hash  __object-eq-hash-loads))))
-  (let (val (##gc-hash-table-ref __object-eq-hash obj))
-    (if (##eq? val (macro-unused-obj))
-      (let (val __object-eq-hash-next)
-        (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
-        (when (##gc-hash-table-set! __object-eq-hash obj val)
-          (let (new-table
-                (##gc-hash-table-rehash!
-                 __object-eq-hash
-                 (##gc-hash-table-resize! __object-eq-hash  __object-eq-hash-loads)))
-            (##gc-hash-table-set! new-table obj val)
-            (set! __object-eq-hash new-table)))
-        val)
-      val)))
-
 (def (eqv-hash obj)
   (define (combine a b)
     (fxand
@@ -447,87 +414,153 @@ namespace: #f
                'gc-table                ; name
                26       ; flags: extensible | concrete | nongenerative
                #f       ; super
-               '#(table 5 #f)))
+               '#(gcht 5 #f immediate 5 #f)))
 
-(def __gc-table-loads '#(0.05 0.75))
+(def __gc-table-loads '#(0.0 0.75))
 
-(def (&gc-table-table tab)
-  (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-table))
-(def (&gc-table-table-set! tab val)
-  (##unchecked-structure-set! tab val 1 __gc-table::t 'gc-table-table-set!))
+(def (&gc-table-gcht tab)
+  (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-gcht))
+(def (&gc-table-immediate tab)
+  (##unchecked-structure-ref tab 2 __gc-table::t 'gc-table-immediate))
+(def (&gc-table-gcht-set! tab val)
+  (##unchecked-structure-set! tab val 1 __gc-table::t 'gc-table-gcht-set!))
+(def (&gc-table-immediate-set! tab val)
+  (##unchecked-structure-set! tab val 1 __gc-table::t 'gc-table-immediate-set!))
 
 (def (make-gc-table size-hint (klass __gc-table::t))
-  (let (table
-        (##gc-hash-table-allocate (if (fixnum? size-hint) size-hint 16)
-                                  (macro-gc-hash-table-flag-mem-alloc-keys)
-                                  __gc-table-loads))
-    (##structure klass table)))
+  (let ((gcht (__gc-table-new (if (fixnum? size-hint) size-hint 16)))
+        (immediate (make-eq-table size-hint 0)))
+    (##structure klass gcht immediate)))
+
+(def (__gc-table-new size)
+  (let (gcht
+        (##gc-hash-table-allocate
+         size
+         (macro-gc-hash-table-flag-mem-alloc-keys)
+         __gc-table-loads))
+    (macro-gc-hash-table-free-set! gcht (macro-gc-hash-table-size gcht))
+    (macro-gc-hash-table-count-set! gcht 0)
+    gcht))
 
 (def (__gc-table-e tab)
   (declare (not interrupts-enabled))
-  (let (table (&gc-table-table tab))
-    (if (##fx= 0
-               (##fxand
-                (macro-gc-hash-table-flags table)
-                (macro-gc-hash-table-flag-need-rehash)))
-      table
-      (let (new-table (__gc-table-rehash! table))
-        (set! (&gc-table-table tab) new-table)
-        new-table))))
+  (let (gcht (&gc-table-gcht tab))
+    (if (fx= 0
+             (fxand
+              (macro-gc-hash-table-flags gcht)
+              (macro-gc-hash-table-flag-need-rehash)))
+      gcht
+      (begin
+        (__gc-table-rehash! tab)
+        (&gc-table-gcht tab)))))
 
-(def (__gc-table-rehash! gctab)
+(def (__gc-table-rehash! tab)
   (declare (not interrupts-enabled))
-  (##gc-hash-table-rehash!
-   gctab
-   (##gc-hash-table-resize! gctab  __gc-table-loads)))
+  (let* ((old-table (&gc-table-gcht tab))
+         (new-table (##gc-hash-table-resize! old-table __gc-table-loads))
+         (gcht (##gc-hash-table-rehash! old-table new-table)))
+    (set! (&gc-table-gcht tab) gcht)))
+
+(def (__gc-table-grow! tab)
+  (declare (not interrupts-enabled))
+  (let* ((old-table (&gc-table-gcht tab))
+         (new-table (__gc-table-new (fx* 2 (macro-gc-hash-table-size old-table))))
+         (gcht (##gc-hash-table-rehash! old-table new-table)))
+    (set! (&gc-table-gcht tab) gcht)))
 
 (def (gc-table-ref tab key default)
   (declare (not interrupts-enabled))
-  (let (table (__gc-table-e tab))
-    (let (value (##gc-hash-table-ref table key))
-      (if (##eq? value (macro-unused-obj))
-        default
-        value))))
+  (if (##mem-allocated? key)
+    (let (gcht (__gc-table-e tab))
+      (let (value (##gc-hash-table-ref gcht key))
+        (if (eq? value (macro-unused-obj))
+          default
+          value)))
+    (eq-table-ref (&gc-table-immediate tab) key default)))
 
 (def (gc-table-set! tab key value)
   (declare (not interrupts-enabled))
-  (let (table (__gc-table-e tab))
-    (when (##gc-hash-table-set! table key value)
-      (let (new-table (__gc-table-rehash! table))
-        (##gc-hash-table-set! new-table key value)
-        (set! (&gc-table-table tab) new-table)
-        (void)))))
+  (if (##mem-allocated? key)
+    (let (gcht (__gc-table-e tab))
+      (cond
+       ((fx< (macro-gc-hash-table-free gcht)
+             (fxquotient (macro-gc-hash-table-size gcht) 2))
+        (if (fx> (macro-gc-hash-table-count gcht) (fxquotient (macro-gc-hash-table-size gcht) 2))
+          (__gc-table-grow! tab)
+          (__gc-table-rehash! tab))
+        (gc-table-set! tab key value))
+       ((##gc-hash-table-set! gcht key value)
+        (__gc-table-rehash! tab)
+        (gc-table-set! tab key value))))
+    (eq-table-set! (&gc-table-immediate tab) key value)))
 
 (def (gc-table-update! tab key update default)
-  (let (value (gc-table-ref tab key default))
-    (gc-table-set! tab key (update value))))
+  (if (##mem-allocated? key)
+    (let (value (gc-table-ref tab key default))
+      (gc-table-set! tab key (update value)))
+    (eq-table-update! (&gc-table-immediate tab) key update default)))
 
 (def (gc-table-delete! tab key)
-  (gc-table-set! tab key (macro-absent-obj)))
+  (if (##mem-allocated? key)
+    (gc-table-set! tab key (macro-absent-obj))
+    (eq-table-delete! (&gc-table-immediate tab) key)))
 
 (def (gc-table-for-each tab proc)
-  (let (table (__gc-table-e tab))
-    (##gc-hash-table-for-each proc tab)))
+  (declare (not interrupts-enabled))
+  ;; mem allocated first
+  (let (gcht (__gc-table-e tab))
+    (let loop ((i (macro-gc-hash-table-key0)))
+      (when (fx< i (##vector-length gcht))
+        (let (key (##vector-ref gcht i))
+          (if (and (not (eq? key (macro-unused-obj)))
+                   (not (eq? key (macro-deleted-obj))))
+            (proc key (vector-ref gcht (fx+ i 1))))
+          (let ()
+            (declare (interrupts-enabled))
+            (loop (fx+ i 2)))))))
+  ;; immediates next
+  (raw-table-for-each (&gc-table-immediate tab) proc))
 
 (def (gc-table-copy tab)
-  (let* ((table (__gc-table-e tab))
+  (let* ((gcht (__gc-table-e tab))
          (new-table
-          (##gc-hash-table-allocate (macro-gc-hash-table-count table)
+          (##gc-hash-table-allocate (macro-gc-hash-table-count gcht)
                                     (macro-gc-hash-table-flag-mem-alloc-keys)
                                     __gc-table-loads))
          (result
-          (##structure (##structure-type tab) new-table)))
+          (##structure (##structure-type tab)
+                       new-table
+                       (raw-table-copy (&gc-table-immediate tab)))))
     (gc-table-for-each tab (lambda (k v) (gc-table-set! result k v)))
     result))
 
 (def (gc-table-clear! tab)
-  (let* ((table (__gc-table-e tab))
+  (let* ((gcht (__gc-table-e tab))
          (new-table
-          (##gc-hash-table-allocate (macro-gc-hash-table-count table)
+          (##gc-hash-table-allocate (macro-gc-hash-table-count gcht)
                                     (macro-gc-hash-table-flag-mem-alloc-keys)
                                     __gc-table-loads)))
-    (set! (&gc-table-table tab) new-table)))
+    (set! (&gc-table-gcht tab) new-table)
+    (raw-table-clear! (&gc-table-immediate tab))))
 
 (def (gc-table-length tab)
-  (let (table (__gc-table-e tab))
-    (macro-gc-hash-table-count table)))
+  (let (gcht (__gc-table-e tab))
+    (+ (macro-gc-hash-table-count gcht)
+       (&raw-table-count (&gc-table-immediate tab)))))
+
+;;; object->eq-hash
+(def __object-eq-hash-next 0)
+(def __object-eq-hash
+  (make-gc-table 1024))
+
+(def (__object->eq-hash obj)
+  (declare (not interrupts-enabled))
+  (let (val (gc-table-ref __object-eq-hash obj #f))
+    (if val
+      val
+      (let* ((mix __object-eq-hash-next)
+             (ptr (##type-cast obj 0))
+             (h (fxand (fxxor mix ptr) (macro-max-fixnum32))))
+        (set! __object-eq-hash-next (or (##fx+? __object-eq-hash-next 1) 0))
+        (gc-table-set! __object-eq-hash obj h)
+        h))))

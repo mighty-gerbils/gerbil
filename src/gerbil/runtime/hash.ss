@@ -142,12 +142,12 @@ namespace: #f
   (begin-annotation
       (@mop.class gerbil#gc-hash-table::t ; type-id
                   ()                      ; super
-                  (table)                 ; slots
+                  (gcht immediate)        ; slots
                   #f                      ; constructor
                   #t                      ; struct?
                   #f                      ; final?
                   #f)                               ; metaclass
-    (let* ((slots '(table))
+    (let* ((slots '(gcht immediaste))
            (slot-vector
             (list->vector (cons #f slots)))
            (slot-table
