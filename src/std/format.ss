@@ -76,7 +76,7 @@
 
 ;; format methods
 (def dispatch-table
-  (make-hash-table-eq))
+  (make-hash-table-immediate))
 
 (defrules with-args ()
   ((_ rest (arg . rest-args) body ...)
