@@ -12,13 +12,16 @@
     (bench/equal-table n els)
     (bench/eq-table n els)
     (bench/symbolic-table n els)
+    (bench/gc-table n els)
 
     (bench/direct-equal-table n els)
     (bench/direct-eq-table n els)
     (bench/direct-symbolic-table n els)
+    (bench/direct-gc-table n els)
 
     (bench/raw-eq-table n els)
     (bench/raw-symbolic-table n els)
+    (bench/raw-gc-table n els)
     (bench/gambit-equal-table n els)
     (bench/gambit-eq-table n els)
     (bench/gambit-symbol-table n els)))
@@ -34,7 +37,7 @@
 (def (bench/eq-table n els)
   (run "specialized eq-table"
        n els
-       (cut make-hash-table-eq size: <>)
+       (cut make-hash-table-eq size: <> seed: 0)
        hash-get
        hash-put!
        hash-remove!))
@@ -47,6 +50,15 @@
        hash-put!
        hash-remove!))
 
+(def (bench/gc-table n els)
+  (run "gc table"
+       n els
+       (cut make-hash-table-eq size: <>)
+       hash-get
+       hash-put!
+       hash-remove!))
+
+
 (def (bench/direct-equal-table n els)
   (run "generic table (direct)"
        n els
@@ -58,7 +70,7 @@
 (def (bench/direct-eq-table n els)
   (run "specialized eq-table (direct)"
        n els
-       (cut make-hash-table-eq size: <>)
+       (cut make-hash-table-eq size: <> seed: 0)
        (cut &HashTable-ref <> <> #f)
        &HashTable-set!
        &HashTable-delete!))
@@ -67,6 +79,14 @@
   (run "specialized symbolic-table (direct)"
        n els
        (cut make-hash-table-symbolic size: <>)
+       (cut &HashTable-ref <> <> #f)
+       &HashTable-set!
+       &HashTable-delete!))
+
+(def (bench/direct-gc-table n els)
+  (run "gc table (direct)"
+       n els
+       (cut make-hash-table-eq size: <>)
        (cut &HashTable-ref <> <> #f)
        &HashTable-set!
        &HashTable-delete!))
@@ -86,6 +106,14 @@
        (cut symbolic-table-ref <> <> #f)
        symbolic-table-set!
        symbolic-table-delete!))
+
+(def (bench/raw-gc-table n els)
+  (run "raw gc table"
+       n els
+       make-gc-table
+       (cut gc-table-ref <> <> #f)
+       gc-table-set!
+       gc-table-delete!))
 
 (def (bench/gambit-equal-table n els)
   (run "gambit equal-table"
