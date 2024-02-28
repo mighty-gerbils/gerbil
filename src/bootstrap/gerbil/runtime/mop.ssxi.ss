@@ -263,6 +263,21 @@ package: gerbil/runtime
   (declare-type
    bind-method!
    (@case-lambda (3 bind-method!__0) (4 bind-method!__%)))
+  (declare-type make-method-specializer-table__% (@lambda 2 #f))
+  (declare-type make-method-specializer-table__0 (@lambda 0 #f))
+  (declare-type make-method-specializer-table__1 (@lambda 1 #f))
+  (declare-type
+   make-method-specializer-table
+   (@case-lambda
+    (0 make-method-specializer-table__0)
+    (1 make-method-specializer-table__1)
+    (2 make-method-specializer-table__%)))
+  (declare-type method-specializer-table-ref (@lambda 3 #f))
+  (declare-type method-specializer-table-set! (@lambda 3 #f))
+  (declare-type __method-specializer-table-set! (@lambda 3 #f))
+  (declare-type method-specializer-table-update! (@lambda 4 #f))
+  (declare-type __method-specializer-table-update! (@lambda 4 #f))
+  (declare-type method-specializer-table-delete! (@lambda 2 #f))
   (declare-type bind-specializer! (@lambda 2 #f))
   (declare-type __lookup-method-specializer (@lambda 1 #f))
   (declare-type __class-specializer-hash-key (@lambda 1 #f))
@@ -280,7 +295,7 @@ package: gerbil/runtime
   (declare-type __class-specializer-table-set! (@lambda 3 #f))
   (declare-type class-specializer-table-update! (@lambda 4 #f))
   (declare-type __class-specializer-table-update! (@lambda 4 #f))
-  (declare-type class-specializer-trable-delete! (@lambda 2 #f))
+  (declare-type class-specializer-table-delete! (@lambda 2 #f))
   (declare-type specialize-class (@lambda 1 #f))
   (declare-type __lookup-class-specializer (@lambda 1 #f))
   (declare-type __bind-class-specializer! (@lambda 2 #f))
