@@ -66,6 +66,15 @@ namespace: #f
 (bind-method! __table::t 'copy raw-table-copy)
 (bind-method! __table::t 'clear! raw-table-clear!)
 
+(bind-method! __gc-table::t 'ref gc-table-ref)
+(bind-method! __gc-table::t 'set! gc-table-set!)
+(bind-method! __gc-table::t 'update! gc-table-update!)
+(bind-method! __gc-table::t 'delete! gc-table-delete!)
+(bind-method! __gc-table::t 'for-each gc-table-for-each)
+(bind-method! __gc-table::t 'length gc-table-length)
+(bind-method! __gc-table::t 'copy gc-table-copy)
+(bind-method! __gc-table::t 'clear! gc-table-clear!)
+
 (def (gambit-table-update! table key update default)
   (let (result (table-ref table key default))
     (table-set! table key (update default))))
@@ -128,6 +137,49 @@ namespace: #f
        #f                            ; class-type-constructor
        #f))))
 
+;; immediate gc-hash-table class; reifies the gc-table type
+(def gc-hash-table::t
+  (begin-annotation
+      (@mop.class gerbil#gc-hash-table::t ; type-id
+                  ()                      ; super
+                  (gcht immediate)        ; slots
+                  #f                      ; constructor
+                  #t                      ; struct?
+                  #f                      ; final?
+                  #f)                               ; metaclass
+    (let* ((slots '(gcht immediate))
+           (slot-vector
+            (list->vector (cons #f slots)))
+           (slot-table
+            (let (slot-table (make-symbolic-table #f 0))
+              (for-each
+                (lambda (slot field)
+                  (symbolic-table-set! slot-table slot field)
+                  (symbolic-table-set! slot-table (symbol->keyword slot) field))
+                slots
+                (iota (length slots) 1))
+              slot-table))
+           (flags
+            (##fxior type-flag-extensible type-flag-concrete type-flag-id
+                     class-type-flag-struct))
+           (fields '#())
+           (properties
+            `((direct-slots: ,@slots)
+              (struct: . #t))))
+      (##structure
+       class::t                         ; type
+       'gerbil#gc-hash-table::t         ; type-id
+       'gc-hash-table                   ; type-name
+       flags                            ; type-flags
+       __gc-table::t                    ; type-super
+       fields                           ; type-fields
+       []                               ; class-type-precedence-list
+       slot-vector                      ; class-type-slot-vector
+       slot-table                       ; class-type-slot-table
+       properties                       ; class-type-properties
+       #f                               ; class-type-constructor
+       #f))))
+
 ;; locked hash table; wraps a HashTable instance to lock on primitive operations
 (defstruct locked-hash-table (table lock)
   final: #t)
@@ -152,6 +204,10 @@ namespace: #f
 (defstruct-type string-hash-table::t (hash-table::t)
   make-string-hash-table string-hash-table?
   id: gerbil#string-hash-table
+  name: hash-table)
+(defstruct-type immediate-hash-table::t (hash-table::t)
+  make-immediate-hash-table immediate-hash-table?
+  id: gerbil#immediate-hash-table
   name: hash-table)
 
 (bind-method! hash-table::t 'ref raw-table-ref)
@@ -182,6 +238,20 @@ namespace: #f
 (bind-method! string-hash-table::t 'set! string-table-set!)
 (bind-method! string-hash-table::t 'update! string-table-update!)
 (bind-method! string-hash-table::t 'delete! string-table-delete!)
+
+(bind-method! immediate-hash-table::t 'ref immediate-table-ref)
+(bind-method! immediate-hash-table::t 'set! immediate-table-set!)
+(bind-method! immediate-hash-table::t 'update! immediate-table-update!)
+(bind-method! immediate-hash-table::t 'delete! immediate-table-delete!)
+
+(bind-method! gc-hash-table::t 'ref gc-table-ref)
+(bind-method! gc-hash-table::t 'set! gc-table-set!)
+(bind-method! gc-hash-table::t 'update! gc-table-update!)
+(bind-method! gc-hash-table::t 'delete! gc-table-delete!)
+(bind-method! gc-hash-table::t 'for-each gc-table-for-each)
+(bind-method! gc-hash-table::t 'length gc-table-length)
+(bind-method! gc-hash-table::t 'copy gc-table-copy)
+(bind-method! gc-hash-table::t 'clear! gc-table-clear!)
 
 ;; HashTable interface methods
 (def (hash-table? obj)
@@ -376,7 +446,7 @@ namespace: #f
   (##structure hash-table::t table count free hash test seed))
 
 (def (make-hash-table size: (size-hint #f)
-                      seed: (seed (random-integer (macro-max-fixnum32)))
+                      seed: (seed #f)
                       test: (test equal?)
                       hash: (hash #f)
                       lock: (lock #f)
@@ -384,6 +454,12 @@ namespace: #f
                       ;; these two force gambit hash tables
                       weak-keys: (weak-keys #f)
                       weak-values: (weak-values #f))
+
+  (def (table-seed)
+    (if (fixnum? seed)
+      seed
+      (random-integer (macro-max-fixnum32))))
+
   (def (wrap-lock ht)
     (if lock
       (cast HashTable::interface
@@ -400,10 +476,18 @@ namespace: #f
     (let* ((size (raw-table-size-hint->size size-hint))
            (table (make-vector size (macro-unused-obj)))
            (ht (cast HashTable::interface
-                     (kons table 0 (fxquotient size 2) hash test seed))))
+                     (kons table 0 (fxquotient size 2) hash test (table-seed)))))
       (wrap-checked
        (wrap-lock ht)
        key?)))
+
+  (def (make-gc-hash-table)
+    (let (ht
+          (cast HashTable::interface
+                (make-gc-table size-hint gc-hash-table::t)))
+      (wrap-checked
+       (wrap-lock ht)
+       true)))
 
   (def (make-gambit-table)
     (let* ((size (or size-hint (macro-absent-obj)))
@@ -432,6 +516,10 @@ namespace: #f
    ((or weak-keys weak-values)
     (make-gambit-table))
    ((and (or (eq? test eq?) (eq? test ##eq?))
+         (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash))
+         (not seed))
+    (make-gc-hash-table))
+   ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (not hash) (eq? hash eq?-hash) (eq? hash eq-hash)))
     (make make-eq-hash-table true eq-hash eq?))
    ((and (or (eq? test eqv?) (eq? test ##eqv?))
@@ -440,6 +528,9 @@ namespace: #f
    ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (eq? hash symbolic-hash) (eq? hash ##symbol-hash)))
     (make make-symbol-hash-table symbolic? symbolic-hash eq?))
+   ((and (or (eq? test eq?) (eq? test ##eq?))
+         (eq? hash immediate-hash))
+    (make make-immediate-hash-table immediate? immediate-hash eq?))
    ((and (or (eq? test equal?) (eq? test ##equal?) (eq? test string=?) (eq? test ##string=?))
          (or (eq? hash string-hash) (eq? hash ##string=?-hash)))
     (make make-string-hash-table string? string-hash ##string=?))
@@ -463,6 +554,9 @@ namespace: #f
 
 (def (make-hash-table-string . args)
   (apply make-hash-table test: string=? hash: string-hash args))
+
+(def (make-hash-table-immediate . args)
+  (apply make-hash-table test: eq? hash: immediate-hash args))
 
 (def (list->hash-table lst . args)
   (list->hash-table! lst (apply make-hash-table size: (length lst) args)))

@@ -81,6 +81,12 @@ namespace: #f
   macro-gc-hash-table-flag-need-rehash
   macro-gc-hash-table-flag-mem-alloc-keys
   macro-gc-hash-table-flag-weak-keys
+  macro-gc-hash-table-count
+  macro-gc-hash-table-count-set!
+  macro-gc-hash-table-free
+  macro-gc-hash-table-free-set!
+  macro-gc-hash-table-size
+  macro-gc-hash-table-key0
   macro-slot
   macro-type-fixnum
   macro-type-table
