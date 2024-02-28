@@ -147,7 +147,7 @@ namespace: #f
                   #t                      ; struct?
                   #f                      ; final?
                   #f)                               ; metaclass
-    (let* ((slots '(gcht immediaste))
+    (let* ((slots '(gcht immediate))
            (slot-vector
             (list->vector (cons #f slots)))
            (slot-table
