@@ -205,6 +205,10 @@ namespace: #f
   make-string-hash-table string-hash-table?
   id: gerbil#string-hash-table
   name: hash-table)
+(defstruct-type immediate-hash-table::t (hash-table::t)
+  make-immediate-hash-table immediate-hash-table?
+  id: gerbil#immediate-hash-table
+  name: hash-table)
 
 (bind-method! hash-table::t 'ref raw-table-ref)
 (bind-method! hash-table::t 'set! raw-table-set!)
@@ -234,6 +238,11 @@ namespace: #f
 (bind-method! string-hash-table::t 'set! string-table-set!)
 (bind-method! string-hash-table::t 'update! string-table-update!)
 (bind-method! string-hash-table::t 'delete! string-table-delete!)
+
+(bind-method! immediate-hash-table::t 'ref immediate-table-ref)
+(bind-method! immediate-hash-table::t 'set! immediate-table-set!)
+(bind-method! immediate-hash-table::t 'update! immediate-table-update!)
+(bind-method! immediate-hash-table::t 'delete! immediate-table-delete!)
 
 (bind-method! gc-hash-table::t 'ref gc-table-ref)
 (bind-method! gc-hash-table::t 'set! gc-table-set!)
@@ -519,6 +528,9 @@ namespace: #f
    ((and (or (eq? test eq?) (eq? test ##eq?))
          (or (eq? hash symbolic-hash) (eq? hash ##symbol-hash)))
     (make make-symbol-hash-table symbolic? symbolic-hash eq?))
+   ((and (or (eq? test eq?) (eq? test ##eq?))
+         (eq? hash immediate-hash))
+    (make make-immediate-hash-table immediate? immediate-hash eq?))
    ((and (or (eq? test equal?) (eq? test ##equal?) (eq? test string=?) (eq? test ##string=?))
          (or (eq? hash string-hash) (eq? hash ##string=?-hash)))
     (make make-string-hash-table string? string-hash ##string=?))
@@ -542,6 +554,9 @@ namespace: #f
 
 (def (make-hash-table-string . args)
   (apply make-hash-table test: string=? hash: string-hash args))
+
+(def (make-hash-table-immediate . args)
+  (apply make-hash-table test: eq? hash: immediate-hash args))
 
 (def (list->hash-table lst . args)
   (list->hash-table! lst (apply make-hash-table size: (length lst) args)))
