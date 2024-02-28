@@ -569,9 +569,7 @@ namespace: #f
 (def (gc-table-clear! tab)
   (let* ((gcht (__gc-table-e tab))
          (new-table
-          (##gc-hash-table-allocate (macro-gc-hash-table-count gcht)
-                                    (macro-gc-hash-table-flags gcht)
-                                    __gc-table-loads)))
+          (__gc-table-new 16 (macro-gc-hash-table-flags gcht))))
     (set! (&gc-table-gcht tab) new-table)
     (set! (&gc-table-immediate tab) #f)))
 
