@@ -81,6 +81,7 @@ namespace: #f
   macro-gc-hash-table-flag-need-rehash
   macro-gc-hash-table-flag-mem-alloc-keys
   macro-gc-hash-table-flag-weak-keys
+  macro-gc-hash-table-count
   macro-slot
   macro-type-fixnum
   macro-type-table
