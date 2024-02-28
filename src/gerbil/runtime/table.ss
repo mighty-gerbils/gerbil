@@ -530,7 +530,10 @@ namespace: #f
 (def (gc-table-delete! tab key)
   (cond
    ((##mem-allocated? key)
-    (gc-table-set! tab key (macro-absent-obj)))
+    (let (gcht (__gc-table-e tab))
+      (when (##gc-hash-table-set! gcht key (macro-absent-obj))
+        (__gc-table-rehash! tab)
+        (gc-table-delete! tab key))))
    ((&gc-table-immediate tab)
     => (lambda (immediate)
          (immediate-table-delete! immediate key)))))
