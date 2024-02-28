@@ -217,6 +217,36 @@ namespace: #f
          (%#begin (%#define-runtime bind-method!__% bind-method!__%)
                   (%#begin (%#define-runtime bind-method!__0 bind-method!__0)
                            (%#define-runtime bind-method! bind-method!)))
+         (%#begin (%#define-runtime
+                   make-method-specializer-table__%
+                   make-method-specializer-table__%)
+                  (%#begin (%#define-runtime
+                            make-method-specializer-table__0
+                            make-method-specializer-table__0)
+                           (%#define-runtime
+                            make-method-specializer-table__1
+                            make-method-specializer-table__1)
+                           (%#define-runtime
+                            make-method-specializer-table
+                            make-method-specializer-table)))
+         (%#define-runtime
+          method-specializer-table-ref
+          method-specializer-table-ref)
+         (%#define-runtime
+          method-specializer-table-set!
+          method-specializer-table-set!)
+         (%#define-runtime
+          __method-specializer-table-set!
+          __method-specializer-table-set!)
+         (%#define-runtime
+          method-specializer-table-update!
+          method-specializer-table-update!)
+         (%#define-runtime
+          __method-specializer-table-update!
+          __method-specializer-table-update!)
+         (%#define-runtime
+          method-specializer-table-delete!
+          method-specializer-table-delete!)
          (%#define-runtime __method-specializers __method-specializers)
          (%#define-runtime __method-specializers-mx __method-specializers-mx)
          (%#define-runtime bind-specializer! bind-specializer!)
@@ -254,8 +284,8 @@ namespace: #f
           __class-specializer-table-update!
           __class-specializer-table-update!)
          (%#define-runtime
-          class-specializer-trable-delete!
-          class-specializer-trable-delete!)
+          class-specializer-table-delete!
+          class-specializer-table-delete!)
          (%#define-runtime __class-specializers-mx __class-specializers-mx)
          (%#define-runtime __class-specializers __class-specializers)
          (%#define-runtime __class-specializers-key __class-specializers-key)

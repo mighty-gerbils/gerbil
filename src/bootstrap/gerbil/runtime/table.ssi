@@ -35,6 +35,7 @@ namespace: #f
          (%#define-runtime __raw-table-update! __raw-table-update!)
          (%#define-runtime __raw-table-rehash! __raw-table-rehash!)
          (%#define-runtime eq-hash eq-hash)
+         (%#define-runtime procedure-hash procedure-hash)
          (%#define-runtime __eq-hash __eq-hash)
          (%#define-runtime __object-eq-hash-next __object-eq-hash-next)
          (%#define-runtime __object-eq-hash-loads __object-eq-hash-loads)

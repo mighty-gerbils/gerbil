@@ -167,9 +167,21 @@ namespace: #f
        (macro-max-fixnum32)))
      ((symbolic? obj)
       (symbolic-hash obj))
+     ((procedure? obj)
+      (procedure-hash obj))
      (else
       (fxand (__eq-hash obj)
              (macro-max-fixnum32))))))
+
+(def (procedure-hash obj)
+  (let (h (if (##closure? obj)
+            ;; avoid collisions for closures from the same parent
+            ;; they point to the same label, and this is particularly
+            ;; eggregious for interpreted procedures
+            (__eq-hash obj)
+            ;; top level procedure, use the pointer directly
+            (##type-cast obj 0)))
+    (fxand h (macro-max-fixnum32))))
 
 (cond-expand
   (gerbil-smp

@@ -829,20 +829,27 @@ namespace: #f
 ;;;;
 ;; procedure method => lambda (klass method-table) => procedure method
 ;; compiler populated
+(defspecialized-table make-method-specializer-table
+  method-specializer-table-ref
+  method-specializer-table-set! __method-specializer-table-set!
+  method-specializer-table-update! __method-specializer-table-update!
+  method-specializer-table-delete!
+  procedure-hash eq?)
+
 (def __method-specializers
-  (make-eq-table #f 0))
+  (make-method-specializer-table #f 0))
 (def __method-specializers-mx
   (__make-inline-lock))
 
 ;;; binds a specializer procedure for a method procedure
 (def (bind-specializer! method-proc specializer)
   (__lock-inline! __method-specializers-mx)
-  (eq-table-set! __method-specializers method-proc specializer)
+  (method-specializer-table-set! __method-specializers method-proc specializer)
   (__unlock-inline! __method-specializers-mx))
 
 (def (__lookup-method-specializer proc)
   (__lock-inline! __method-specializers-mx)
-  (let (specializer (eq-table-ref __method-specializers proc #f))
+  (let (specializer (method-specializer-table-ref __method-specializers proc #f))
     (__unlock-inline! __method-specializers-mx)
     specializer))
 
@@ -853,7 +860,7 @@ namespace: #f
   class-specializer-table-ref
   class-specializer-table-set! __class-specializer-table-set!
   class-specializer-table-update! __class-specializer-table-update!
-  class-specializer-trable-delete!
+  class-specializer-table-delete!
   __class-specializer-hash-key eq?)
 
 (def __class-specializers-mx (__make-inline-lock))
