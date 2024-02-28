@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/table::timestamp 1709127355)
+  (define gerbil/runtime/table::timestamp 1709128371)
   (begin
     (declare (not safe))
     (define __table::t.id 'gerbil#__table::t)
@@ -2092,10 +2092,7 @@
       (lambda (_tab58553_)
         (let* ((_gcht58555_ (__gc-table-e _tab58553_))
                (_new-table58557_
-                (##gc-hash-table-allocate
-                 (macro-gc-hash-table-count _gcht58555_)
-                 (macro-gc-hash-table-flags _gcht58555_)
-                 __gc-table-loads)))
+                (__gc-table-new '16 (macro-gc-hash-table-flags _gcht58555_))))
           (&gc-table-gcht-set! _tab58553_ _new-table58557_)
           (&gc-table-immediate-set! _tab58553_ '#f))))
     (define gc-table-length

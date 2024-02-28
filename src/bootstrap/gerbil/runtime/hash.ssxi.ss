@@ -207,14 +207,14 @@ package: gerbil/runtime
            #t
            #t
            #f
-           ((copy . _locked-hash-table::copy69568_)
-            (length . _locked-hash-table::length69566_)
-            (set! . _locked-hash-table::set!69558_)
+           ((clear! . _locked-hash-table::clear!69570_)
+            (update! . _locked-hash-table::update!69560_)
+            (for-each . _locked-hash-table::for-each69564_)
             (delete! . _locked-hash-table::delete!69562_)
             (ref . _locked-hash-table::ref69556_)
-            (for-each . _locked-hash-table::for-each69564_)
-            (update! . _locked-hash-table::update!69560_)
-            (clear! . _locked-hash-table::clear!69570_))))
+            (length . _locked-hash-table::length69566_)
+            (copy . _locked-hash-table::copy69568_)
+            (set! . _locked-hash-table::set!69558_))))
   (declare-type locked-hash-table? (@predicate locked-hash-table::t))
   (declare-type make-locked-hash-table (@constructor locked-hash-table::t))
   (declare-type
@@ -252,14 +252,14 @@ package: gerbil/runtime
            #t
            #t
            #f
-           ((set! . _checked-hash-table::set!69850_)
+           ((update! . _checked-hash-table::update!69852_)
+            (for-each . _checked-hash-table::for-each69856_)
+            (clear! . _checked-hash-table::clear!69862_)
             (length . _checked-hash-table::length69858_)
             (copy . _checked-hash-table::copy69860_)
-            (ref . _checked-hash-table::ref69848_)
+            (set! . _checked-hash-table::set!69850_)
             (delete! . _checked-hash-table::delete!69854_)
-            (update! . _checked-hash-table::update!69852_)
-            (for-each . _checked-hash-table::for-each69856_)
-            (clear! . _checked-hash-table::clear!69862_))))
+            (ref . _checked-hash-table::ref69848_))))
   (declare-type checked-hash-table? (@predicate checked-hash-table::t))
   (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
   (declare-type
