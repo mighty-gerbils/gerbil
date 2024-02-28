@@ -198,7 +198,7 @@ namespace: #f
      (__object->eq-hash obj))))
 
 (def __object-eq-hash-next 0)
-(def __object-eq-hash-loads '#f64(0.25 0.75))
+(def __object-eq-hash-loads '#f64(0.05 0.75))
 (def __object-eq-hash
   (##gc-hash-table-allocate 1024
                             (##fxior
@@ -449,7 +449,7 @@ namespace: #f
                #f       ; super
                '#(table 5 #f)))
 
-(def __gc-table-loads '#(0.25 0.75))
+(def __gc-table-loads '#(0.05 0.75))
 
 (def (&gc-table-table tab)
   (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-table))
