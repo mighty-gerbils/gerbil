@@ -438,15 +438,15 @@ namespace: #f
           (else
            (loop (probe-step start i size) (fx+ i 1)))))))))
 
-;;; gc tables -- specialized eq? tables that use gambit's gcht's directly
+;;; gc tables -- specialized eq? tables that use gambit's gchts directly
 (def __gc-table::t.id 'gerbil#__gc-table::t)
 
 (def __gc-table::t
-  (##structure ##type-type  ; type
-               __gc-table::t.id ; id
-               'gc-table    ; name
-               26 ; flags: extensible | concrete | nongenerative
-               #f ; super
+  (##structure ##type-type              ; type
+               __gc-table::t.id         ; id
+               'gc-table                ; name
+               26       ; flags: extensible | concrete | nongenerative
+               #f       ; super
                '#(table 5 #f)))
 
 (def __gc-table-loads '#(0.25 0.75))
@@ -455,7 +455,6 @@ namespace: #f
   (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-table))
 (def (&gc-table-table-set! tab val)
   (##unchecked-structure-set! tab val 1 __gc-table::t 'gc-table-table-set!))
-
 
 (def (make-gc-table size-hint (klass __gc-table::t))
   (let (table
@@ -471,10 +470,10 @@ namespace: #f
                (##fxand
                 (macro-gc-hash-table-flags table)
                 (macro-gc-hash-table-flag-need-rehash)))
+      table
       (let (new-table (__gc-table-rehash! table))
         (set! (&gc-table-table tab) new-table)
-        new-table)
-      table)))
+        new-table))))
 
 (def (__gc-table-rehash! gctab)
   (declare (not interrupts-enabled))
