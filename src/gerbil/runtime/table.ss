@@ -429,7 +429,7 @@ namespace: #f
                #f       ; super
                '#(gcht 5 #f immediate 5 #f)))
 
-(def __gc-table-loads '#(0.0 0.75))
+(def __gc-table-loads '#f64(.25 0.4330127018922193 .75))
 
 (def (&gc-table-gcht tab)
   (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-gcht))
@@ -459,8 +459,6 @@ namespace: #f
           (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys)))
          (gcht
           (##gc-hash-table-allocate size flags __gc-table-loads)))
-    (macro-gc-hash-table-free-set! gcht (macro-gc-hash-table-size gcht))
-    (macro-gc-hash-table-count-set! gcht 0)
     gcht))
 
 (def (__gc-table-e tab)
@@ -476,14 +474,12 @@ namespace: #f
         (&gc-table-gcht tab)))))
 
 (def (__gc-table-rehash! tab)
-  (declare (not interrupts-enabled))
   (let* ((old-table (&gc-table-gcht tab))
          (new-table (##gc-hash-table-resize! old-table __gc-table-loads))
          (gcht (##gc-hash-table-rehash! old-table new-table)))
     (set! (&gc-table-gcht tab) gcht)))
 
 (def (__gc-table-grow! tab)
-  (declare (not interrupts-enabled))
   (let* ((old-table (&gc-table-gcht tab))
          (new-table
           (__gc-table-new
@@ -510,12 +506,13 @@ namespace: #f
   (declare (not interrupts-enabled))
   (if (##mem-allocated? key)
     (let* ((gcht (__gc-table-e tab))
-           (half-full (fxquotient (macro-gc-hash-table-size gcht) 2)))
+           (quarter-size (fxquotient (macro-gc-hash-table-size gcht) 4)))
       (cond
-       ((fx< (macro-gc-hash-table-free gcht) half-full)
-        (if (fx> (macro-gc-hash-table-count gcht) half-full)
-          (__gc-table-grow! tab)
-          (__gc-table-rehash! tab))
+       ((fx< (macro-gc-hash-table-free gcht) quarter-size)
+        (let (half-size (fxquotient (macro-gc-hash-table-size gcht) 2))
+          (if (fx> (macro-gc-hash-table-count gcht) half-size)
+            (__gc-table-grow! tab)
+            (__gc-table-rehash! tab)))
         (gc-table-set! tab key value))
        ((##gc-hash-table-set! gcht key value)
         (__gc-table-rehash! tab)
@@ -529,6 +526,7 @@ namespace: #f
     (immediate-table-update! (__gc-table-immediate tab) key update default)))
 
 (def (gc-table-delete! tab key)
+  (declare (not interrupts-enabled))
   (cond
    ((##mem-allocated? key)
     (let (gcht (__gc-table-e tab))
