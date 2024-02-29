@@ -429,7 +429,7 @@ namespace: #f
                #f       ; super
                '#(gcht 5 #f immediate 5 #f)))
 
-(def __gc-table-loads '#(0.0 0.75))
+(def __gc-table-loads '#f64(.45 .6363961030678927 .9))
 
 (def (&gc-table-gcht tab)
   (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-gcht))
@@ -453,13 +453,12 @@ namespace: #f
       immediate))))
 
 (def (__gc-table-new size flags)
-  (let (gcht
-        (##gc-hash-table-allocate
-         size
-         (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys))
-         __gc-table-loads))
-    (macro-gc-hash-table-free-set! gcht (macro-gc-hash-table-size gcht))
-    (macro-gc-hash-table-count-set! gcht 0)
+  (let* ((flags
+          (fxand flags (fxnot (macro-gc-hash-table-flag-need-rehash))))
+         (flags
+          (fxior flags (macro-gc-hash-table-flag-mem-alloc-keys)))
+         (gcht
+          (##gc-hash-table-allocate size flags __gc-table-loads)))
     gcht))
 
 (def (__gc-table-e tab)
@@ -475,19 +474,8 @@ namespace: #f
         (&gc-table-gcht tab)))))
 
 (def (__gc-table-rehash! tab)
-  (declare (not interrupts-enabled))
   (let* ((old-table (&gc-table-gcht tab))
          (new-table (##gc-hash-table-resize! old-table __gc-table-loads))
-         (gcht (##gc-hash-table-rehash! old-table new-table)))
-    (set! (&gc-table-gcht tab) gcht)))
-
-(def (__gc-table-grow! tab)
-  (declare (not interrupts-enabled))
-  (let* ((old-table (&gc-table-gcht tab))
-         (new-table
-          (__gc-table-new
-           (fx* 2 (macro-gc-hash-table-size old-table))
-           (macro-gc-hash-table-flags old-table)))
          (gcht (##gc-hash-table-rehash! old-table new-table)))
     (set! (&gc-table-gcht tab) gcht)))
 
@@ -509,16 +497,9 @@ namespace: #f
   (declare (not interrupts-enabled))
   (if (##mem-allocated? key)
     (let (gcht (__gc-table-e tab))
-      (cond
-       ((fx< (macro-gc-hash-table-free gcht)
-             (fxquotient (macro-gc-hash-table-size gcht) 2))
-        (if (fx> (macro-gc-hash-table-count gcht) (fxquotient (macro-gc-hash-table-size gcht) 2))
-          (__gc-table-grow! tab)
-          (__gc-table-rehash! tab))
-        (gc-table-set! tab key value))
-       ((##gc-hash-table-set! gcht key value)
+      (when (##gc-hash-table-set! gcht key value)
         (__gc-table-rehash! tab)
-        (gc-table-set! tab key value))))
+        (gc-table-set! tab key value)))
     (immediate-table-set! (__gc-table-immediate tab) key value)))
 
 (def (gc-table-update! tab key update default)
@@ -528,9 +509,13 @@ namespace: #f
     (immediate-table-update! (__gc-table-immediate tab) key update default)))
 
 (def (gc-table-delete! tab key)
+  (declare (not interrupts-enabled))
   (cond
    ((##mem-allocated? key)
-    (gc-table-set! tab key (macro-absent-obj)))
+    (let (gcht (__gc-table-e tab))
+      (when (##gc-hash-table-set! gcht key (macro-absent-obj))
+        (__gc-table-rehash! tab)
+        (gc-table-delete! tab key))))
    ((&gc-table-immediate tab)
     => (lambda (immediate)
          (immediate-table-delete! immediate key)))))
@@ -544,7 +529,7 @@ namespace: #f
         (let (key (##vector-ref gcht i))
           (if (and (not (eq? key (macro-unused-obj)))
                    (not (eq? key (macro-deleted-obj))))
-            (proc key (vector-ref gcht (fx+ i 1))))
+            (proc key (##vector-ref gcht (fx+ i 1))))
           (let ()
             (declare (interrupts-enabled))
             (loop (fx+ i 2)))))))

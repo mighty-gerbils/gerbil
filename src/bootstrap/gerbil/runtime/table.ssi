@@ -143,7 +143,6 @@ namespace: #f
          (%#define-runtime __gc-table-new __gc-table-new)
          (%#define-runtime __gc-table-e __gc-table-e)
          (%#define-runtime __gc-table-rehash! __gc-table-rehash!)
-         (%#define-runtime __gc-table-grow! __gc-table-grow!)
          (%#define-runtime gc-table-ref gc-table-ref)
          (%#define-runtime gc-table-set! gc-table-set!)
          (%#define-runtime gc-table-update! gc-table-update!)
