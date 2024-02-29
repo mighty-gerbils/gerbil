@@ -1,9 +1,9 @@
 (import :std/test
         :std/iter
         :gerbil/runtime/table)
-(export table-test)
+(export raw-table-test gc-table-test)
 
-(def table-test
+(def raw-table-test
   (test-suite "raw-table"
     (test-case "basic ops"
       (let (h (make-raw-table #f eq-hash eq?))
@@ -23,7 +23,7 @@
           (raw-table-set! h x x))
         (for (x (iota 200))
           (check (raw-table-ref h x #f) => x))))
-    (test-case "put/remove interleaving"
+    (test-case "put/remove 1"
       (let (h (make-raw-table #f eq-hash eq?))
         (for (x (iota 200))
           (raw-table-set! h x x))
@@ -36,4 +36,57 @@
         (for (x (iota 100))
           (raw-table-set! h x x))
         (for (x (iota 200))
+          (check (raw-table-ref h x #f) => x))))
+    (test-case "put/remove 2"
+      (let (h (make-raw-table #f eq-hash eq?))
+        (for (x (iota 200))
+          (raw-table-set! h x x)
+          (raw-table-delete! h x))
+        (for (x (iota 200))
+          (raw-table-set! h x x))
+        (for (x (iota 200))
           (check (raw-table-ref h x #f) => x))))))
+
+(def gc-table-test
+  (test-suite "gc-table"
+    (test-case "basic ops"
+      (let (h (make-gc-table #f))
+        (for ((k '(a b c d e f g))
+              (v (in-naturals)))
+          (gc-table-set! h k v)
+          (check (gc-table-ref h k #f) => v))
+        (for ((k '(a b c d e f g))
+              (v (in-naturals)))
+          (check (gc-table-ref h k #f) => v))
+        (for (k '(a b c d e f g))
+          (gc-table-delete! h k)
+          (check (gc-table-ref h k #f) => #f))))
+    (test-case "rehashing"
+      (let (h (make-gc-table #f))
+        (for (x (iota 200))
+          (gc-table-set! h x x))
+        (for (x (iota 200))
+          (check (gc-table-ref h x #f) => x))))
+    (test-case "put/remove 1"
+      (let (h (make-gc-table #f))
+        (for (x (iota 200))
+          (gc-table-set! h x x))
+        (for (x (iota 200))
+          (check (gc-table-ref h x #f) => x))
+        (for (x (iota 100))
+          (gc-table-delete! h x))
+        (for (x (iota 100 100))
+          (check (gc-table-ref h x #f) => x))
+        (for (x (iota 100))
+          (gc-table-set! h x x))
+        (for (x (iota 200))
+          (check (gc-table-ref h x #f) => x))))
+    (test-case "put/remove 2"
+      (let (h (make-gc-table #f))
+        (for (x (iota 200))
+          (gc-table-set! h x x)
+          (gc-table-delete! h x))
+        (for (x (iota 200))
+          (gc-table-set! h x x))
+        (for (x (iota 200))
+          (check (gc-table-ref h x #f) => x))))))
