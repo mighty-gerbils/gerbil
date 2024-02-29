@@ -429,7 +429,7 @@ namespace: #f
                #f       ; super
                '#(gcht 5 #f immediate 5 #f)))
 
-(def __gc-table-loads '#f64(.25 0.4330127018922193 .75))
+(def __gc-table-loads '#f64(.45 .6363961030678927 .9))
 
 (def (&gc-table-gcht tab)
   (##unchecked-structure-ref tab 1 __gc-table::t 'gc-table-gcht))
@@ -479,15 +479,6 @@ namespace: #f
          (gcht (##gc-hash-table-rehash! old-table new-table)))
     (set! (&gc-table-gcht tab) gcht)))
 
-(def (__gc-table-grow! tab)
-  (let* ((old-table (&gc-table-gcht tab))
-         (new-table
-          (__gc-table-new
-           (fx* 2 (macro-gc-hash-table-size old-table))
-           (macro-gc-hash-table-flags old-table)))
-         (gcht (##gc-hash-table-rehash! old-table new-table)))
-    (set! (&gc-table-gcht tab) gcht)))
-
 (def (gc-table-ref tab key default)
   (declare (not interrupts-enabled))
   (cond
@@ -505,18 +496,10 @@ namespace: #f
 (def (gc-table-set! tab key value)
   (declare (not interrupts-enabled))
   (if (##mem-allocated? key)
-    (let* ((gcht (__gc-table-e tab))
-           (quarter-size (fxquotient (macro-gc-hash-table-size gcht) 4)))
-      (cond
-       ((fx< (macro-gc-hash-table-free gcht) quarter-size)
-        (let (half-size (fxquotient (macro-gc-hash-table-size gcht) 2))
-          (if (fx> (macro-gc-hash-table-count gcht) half-size)
-            (__gc-table-grow! tab)
-            (__gc-table-rehash! tab)))
-        (gc-table-set! tab key value))
-       ((##gc-hash-table-set! gcht key value)
+    (let (gcht (__gc-table-e tab))
+      (when (##gc-hash-table-set! gcht key value)
         (__gc-table-rehash! tab)
-        (gc-table-set! tab key value))))
+        (gc-table-set! tab key value)))
     (immediate-table-set! (__gc-table-immediate tab) key value)))
 
 (def (gc-table-update! tab key update default)
