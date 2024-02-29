@@ -130,7 +130,6 @@ package: gerbil/runtime
   (declare-type __gc-table-new (@lambda 2 #f))
   (declare-type __gc-table-e (@lambda 1 #f))
   (declare-type __gc-table-rehash! (@lambda 1 #f))
-  (declare-type __gc-table-grow! (@lambda 1 #f))
   (declare-type gc-table-ref (@lambda 3 #f))
   (declare-type gc-table-set! (@lambda 3 #f))
   (declare-type gc-table-update! (@lambda 4 #f))
