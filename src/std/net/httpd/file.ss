@@ -12,12 +12,11 @@
 (declare (not safe))
 
 (def (http-response-file res headers path)
-  (let (reader (open-file-reader path))
-    (using (reader :- Reader)
-      (try
-       (http-response-write-file res headers reader)
-       (finally
-        (reader.close))))))
+  (using (reader (open-file-reader path) :- Reader)
+    (try
+     (http-response-write-file res headers reader)
+     (finally
+      (reader.close)))))
 
 (def (http-response-write-file res headers reader)
   (using (reader :- Reader)

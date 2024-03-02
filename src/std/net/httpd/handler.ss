@@ -16,6 +16,7 @@
                     :std/misc/string))
 
 (export http-request-handler
+        http-request
         http-request?
         http-request-method http-request-url http-request-path http-request-params
         http-request-proto http-request-client http-request-headers
@@ -44,7 +45,7 @@
 (defstruct http-response (buf sock output close?)
   final: #t )
 
-(def (http-request-handler sock get-handler)
+(def (http-request-handler sock get-handler request-logger)
   (using (sock :- StreamSocket)
     (def ibuf (get-input-buffer sock))
     (def obuf (get-output-buffer sock))
@@ -70,6 +71,9 @@
              (set! res.close? #t)
              (http-response-write res 400 [] #f)
              (raise 'abort)))
+
+          (when request-logger
+            (request-logger req))
 
           (let* ((method  req.method)
                  (path    req.path)

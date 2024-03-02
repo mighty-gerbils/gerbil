@@ -19,6 +19,7 @@
         make-recursive-static-http-mux
         make-custom-http-mux
 
+        http-request
         http-request?
         http-request-method http-request-url http-request-path http-request-params
         http-request-proto http-request-client http-request-headers
