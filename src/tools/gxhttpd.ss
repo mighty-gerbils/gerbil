@@ -12,6 +12,7 @@
         (only-in :std/logger start-logger!)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
         :gerbil/expander
+        :gerbil/gambit
         ./env)
 (export main
         current-http-server-config
@@ -78,11 +79,12 @@
   (call-with-input-file path read-all))
 
 (def (config-get cfg key)
-  (pegetq key cfg))
+  (pgetq key cfg))
 
 (def (config-set! cfg key val)
   (cond
-   ((memq key config) => (cut set-cadr! <> val))
+   ((memq key cfg)
+    => (lambda (pos) (set-car! (cdr pos) val)))
    (else
     (append cfg [key val]))))
 
@@ -95,16 +97,16 @@
             [SO_REUSEADDR]))
          (mux (make-mux cfg))
          (request-logger (make-request-logger cfg))
-         (addresses (confg-get cfg listen:))
-         (srv (parameterize ((current-http-config cfg))
+         (addresses (config-get cfg listen:))
+         (srv (parameterize ((current-http-server-config cfg))
                 (apply start-http-server!
                   mux: mux
                   sockopts: sockopts
                   request-logger: request-logger
                   addresses))))
-    (thread-join! src)))
+    (thread-join! srv)))
 
-(def (create-paths cfg)
+(def (create-paths! cfg)
   (create-directory* (config-get cfg root:))
   (create-directory* (path-directory (config-get cfg request-log:)))
   (create-directory* (path-directory (config-get cfg server-log:))))
@@ -161,7 +163,7 @@
                   (if (eq? "/" (string-ref file-path (fx1- (string-length file-path))))
                     (string-append file-path "index.html")
                     file-path)))
-            (if (file-existx? file-path)
+            (if (file-exists? file-path)
               (file-handler file-path)
               not-found-handler))))))))
 
@@ -184,7 +186,8 @@
            (http-response-write
             res 200
             [["Content-Length" :: (file-info-size info)]
-             ["Last-Modified" :: (time->seconds (file-info-last-modification-time))]])))
+             ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
+            #f)))
         (else
          (http-response-write-condition res Forbidden))))))
 

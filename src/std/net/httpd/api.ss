@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; httpd api
-(import ./base
+(import :std/interface
+        ./base
         ./control
         ./mux
         ./handler
@@ -13,6 +14,7 @@
         current-http-server
         http-register-handler
 
+        (interface-out Mux)
         make-default-http-mux
         make-recursive-http-mux
         make-static-http-mux
