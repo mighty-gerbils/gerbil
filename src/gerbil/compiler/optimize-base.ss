@@ -266,14 +266,18 @@ namespace: gxc
      ((!type-vtab type)
       => (lambda (vtab)
            (cond
-            ((hash-key? vtab method)
-             (if rebind?
-               (begin
+            ((hash-get vtab method) =>
+             (lambda (existing)
+               (cond
+                (rebind?
                  (verbose "declare-method: rebind existing method" type-t " " method)
                  (hash-put! vtab method sym))
-               (raise-compile-error
-                "declare-method: duplicate method declaration"
-                `(bind-method! ,type-t ,method ,sym) method)))
+                ((eq? existing sym)
+                 (void))
+                (else
+                 (raise-compile-error
+                  "declare-method: duplicate method declaration"
+                  `(bind-method! ,type-t ,method ,sym) method)))))
             (else
              (verbose "declare-method " type-t " " method " => " sym)
              (hash-put! vtab method sym)))))

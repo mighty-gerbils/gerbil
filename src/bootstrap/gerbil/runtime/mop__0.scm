@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1709229969)
+  (define gerbil/runtime/mop::timestamp 1709375797)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
