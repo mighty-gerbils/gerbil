@@ -42,7 +42,7 @@ though `GET` is supported for debugging purposes mainly),
 and the `auth`, `headers`, `cookies` and `ssl-context` are passed to the
 [HTTP client interface](request).
 The provided `log` function is called, if any, with some JSON information about the request.
-The JSON returned by the server is transformed by `param-encoder`.
+The JSON returned by the server is transformed by `result-decoder`.
 
 A variety of HTTP or JSON-RPC errors can be raised during the query
 that you may or may not want to report, log or inspect, but otherwise
