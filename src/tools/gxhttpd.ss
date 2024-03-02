@@ -165,7 +165,10 @@
      listen: (config-get cfg ensemble-listen: [])
      announce: (config-get cfg ensemble-announce:)
      registry: (config-get cfg ensemble-registry:)
-     roles: '(httpd-supervisor)))))
+     roles: '(httpd-supervisor)
+     ;; for testing mostly
+     auth: (alet (auth (config-get cfg ensemble-auth:))
+             (list->hash-table-eq auth))))))
 
 (def (start-httpd-ensemble! cfg)
   (let (thread (spawn 'ensemble-supervisor ensemble-supervisor cfg))
