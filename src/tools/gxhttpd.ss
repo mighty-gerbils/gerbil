@@ -301,7 +301,7 @@
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
 
-(defstruct dynamic-mux (root handlers servlets)
+(defstruct dynamic-mux (root handlers servlets mx)
   constructor: :init! final: #t)
 
 (defmethod {:init! dynamic-mux}
@@ -312,7 +312,9 @@
             (servlets? (config-get cfg enable-servlets:)))
         (set! self.root root)
         (set! self.handlers (make-hash-table-string))
-        (set! self.servlets (and servlets? (make-hash-table-string)))
+        (when servlets?
+          (set! self.servlets (make-hash-table-string))
+          (set! self.mx (make-mutex 'mux-loader)))
         (for ([path . handler-module] handlers)
           (let* ((ctx (import-module handler-module #f #t))
                  (init! (find-runtime-symbol ctx 'handler-init!))
@@ -340,7 +342,7 @@
                     file-path)))
             (if (file-exists? file-path)
               (if (and self.servlets (equal? ".ss" (path-extension file-path)))
-                (find-servlet-handler self.servlets file-path)
+                (find-servlet-handler self.servlets self.mx file-path)
                 (file-handler file-path))
               not-found-handler))))))))
 
@@ -354,10 +356,10 @@
 
 (defstruct servlet (handler path timestamp))
 
-(def (find-servlet-handler servlet-tab file-path)
+(def (find-servlet-handler servlet-tab mx file-path)
   (def (load-servlet! file-path reload?)
     (let* ((load-time (time->seconds (current-time)))
-           (ctx (import-module file-path #f reload?))
+           (ctx (with-lock mx (import-module file-path reload? #t)))
            (init! (find-runtime-symbol ctx 'handler-init!))
            (handle-request (find-runtime-symbol ctx 'handle-request)))
       (unless handle-request
