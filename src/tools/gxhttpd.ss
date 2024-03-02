@@ -64,6 +64,8 @@
 ;;; ;;; if the module also exports a handler-init! procedure, it will be invoked
 ;;; ;;; with the current config after loading the module.
 ;;; handlers: (("path/to/handler" . module) ...)
+;;; ;;; servlets: a boolean indicating whether servlets are enabled
+;;; enable-servlets: #t | #f
 ;;; ;;; request-log: the file path for logging requests
 ;;; request-log: "path/to/request-log-file"
 ;;; ;;; server-log: the file path for the server logger
@@ -84,7 +86,7 @@
 ;;;----------------------------------------------------------------
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Server Config: a flat (keyword) plist with the following keys
+;;; Ensemble Config: a flat (keyword) plist with the following keys
 ;;; Additional configuration keys are _ignored_
 ;;;----------------------------------------------------------------
 ;;; ;;; config: config versioned type, current is httpd-ensemble-v0
@@ -100,15 +102,7 @@
 ;;; ensemble-listen: (actor-address ...)
 ;;; ;;; ensemble-announce: [optional] list of supervisor announced addresses
 ;;; ensemble-announce: (actor-address ...) | #f
-;;; ;;; server-root: the root for serving files
-;;; server-root: "path/to/server/root"
-;;; ;;; server-listen: list of addresses where http servers will listen,
-;;; ;;; using SO_REUSEPORT. Same semantics as above.
-;;; server-listen: (server-address ...)
-;;; ;;; server-handlers: alist of server handlers, same semantics as above.
-;;; server-handlers: (("path/to/handler" . module) ...)
-;;; ;;; server-configuration: [optional] additional configuration to be passed
-;;  ;;; as part of the server config; must be a plist.
+;;; ;;; server-configuration: the server specific configuration
 ;;; server-configuration: (key: value ...)
 ;;; ;;; log-level: [optional] log level
 ;;; log-level: symbol
@@ -225,7 +219,6 @@
     (-> supervisor (process-dead srv-id status))))
 
 (def (create-ensemble-paths! cfg)
-  (create-directory* (config-get! cfg server-root:))
   (create-directory* (ensemble-server-path (config-get ensemble-supervisor-id: 'httpd-ensemble)))
   (for (srv-id (config-get! cfg ensemble-servers:))
     (let* ((srv-path (ensemble-server-path srv-id))
@@ -240,8 +233,6 @@
   (let (srv-path (ensemble-server-path srv-id))
     `(config:
       httpd-v0
-      root: ,(config-get! cfg server-root:)
-      handlers: ,(config-get! cfg server-handlers:)
       request-log: ,(path-expand "request.log" srv-path)
       server-log: ,(path-expand "server.log" srv-path)
       listen: ,(config-get! cfg server-listen:)
@@ -255,6 +246,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Server Implementation
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(def current-http-server-config
+  (make-parameter #f))
+
 (def (run-server! cfg)
   (create-server-paths! cfg)
   (current-logger-options (config-get cfg log-level: 'INFO))
@@ -268,12 +262,13 @@
          (addresses (config-get! cfg listen:))
          (run-httpd
           (lambda ()
-            (let (srv (apply start-http-server!
-                        mux: mux
-                        sockopts: sockopts
-                        request-logger: request-logger
-                        addresses))
-              (thread-join! srv)))))
+            (parameterize ((current-http-server-config cfg))
+              (let (srv (apply start-http-server!
+                          mux: mux
+                          sockopts: sockopts
+                          request-logger: request-logger
+                          addresses))
+                (thread-join! srv))))))
     (cond
      ((config-get cfg ensemble-server-id:)
       => (lambda (server-id)
@@ -306,29 +301,28 @@
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
 
-(defstruct dynamic-mux (root handlers)
+(defstruct dynamic-mux (root handlers servlets)
   constructor: :init! final: #t)
 
 (defmethod {:init! dynamic-mux}
   (lambda (self cfg)
     (using (self :- dynamic-mux)
       (let ((root (config-get! cfg root:))
-            (handlers (config-get! cfg handlers:)))
+            (handlers (config-get cfg handlers: []))
+            (servlets? (config-get cfg enable-servlets:)))
         (set! self.root root)
         (set! self.handlers (make-hash-table-string))
-        (for-each
-          (lambda (p)
-            (with ([path . handler-module] p)
-              (let* ((ctx (import-module handler-module #f #t))
-                     (init! (find-runtime-symbol ctx 'handler-init!))
-                     (handle-request (find-runtime-symbol ctx 'handle-request)))
-                (unless handle-request
-                  (error "handler module does not export handle-request"
-                    module: handler-module))
-                (when init!
-                  ((eval init!) cfg))
-                (hash-put! self.handlers path (eval handle-request)))))
-          handlers)))))
+        (set! self.servlets (and servlets? (make-hash-table-string)))
+        (for ([path . handler-module] handlers)
+          (let* ((ctx (import-module handler-module #f #t))
+                 (init! (find-runtime-symbol ctx 'handler-init!))
+                 (handle-request (find-runtime-symbol ctx 'handle-request)))
+            (unless handle-request
+              (error "handler module does not export handle-request"
+                module: handler-module))
+            (when init!
+              ((eval init!) cfg))
+            (hash-put! self.handlers path (eval handle-request))))))))
 
 (defmethod {get-handler dynamic-mux}
   (lambda (self host path)
@@ -345,7 +339,9 @@
                     (string-append file-path "index.html")
                     file-path)))
             (if (file-exists? file-path)
-              (file-handler file-path)
+              (if (and self.servlets (equal? ".ss" (path-extension file-path)))
+                (find-servlet-handler self.servlets file-path)
+                (file-handler file-path))
               not-found-handler))))))))
 
 (defmethod {put-handler dynamic-mux}
@@ -355,6 +351,37 @@
 
 (def (not-found-handler req res)
   (http-response-write-condition res Not-Found))
+
+(defstruct servlet (handler path timestamp))
+
+(def (find-servlet-handler servlet-tab file-path)
+  (def (load-servlet! file-path reload?)
+    (let* ((load-time (time->seconds (current-time)))
+           (ctx (import-module file-path #f reload?))
+           (init! (find-runtime-symbol ctx 'handler-init!))
+           (handle-request (find-runtime-symbol ctx 'handle-request)))
+      (unless handle-request
+        (error "servlet does not export handle-request" file-path))
+      (when init!
+        ((eval init!) (current-http-server-config)))
+      (let* ((handle-request (eval handle-request))
+             (srv (servlet handle-request file-path load-time)))
+        (hash-put! servlet-tab file-path srv)
+        srv)))
+
+  (cond
+   ((hash-get servlet-tab file-path)
+    => (lambda (srv)
+         (using (srv :- servlet)
+           (let (modtime
+                 (time->seconds
+                  (file-info-last-modification-time
+                   (file-info srv.path #t))))
+             (if (> modtime srv.timestamp)
+               (servlet-handler (load-servlet! file-path #t))
+               srv.handler)))))
+   (else
+    (servlet-handler (load-servlet! file-path #f)))))
 
 (def (file-handler path)
   (lambda (req res)
