@@ -227,7 +227,9 @@
       (create-directory* srv-path)
       (call-with-output-file [path: srv-config-path create: #t truncate: #t]
         (lambda (output)
-          (pretty-print srv-config output))))))
+          (for (el srv-config)
+            (write el output)
+            (newline output)))))))
 
 (def (make-ensemble-server-config cfg srv-id)
   (let (srv-path (ensemble-server-path srv-id))
