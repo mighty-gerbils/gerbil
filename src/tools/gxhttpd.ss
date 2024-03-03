@@ -434,7 +434,7 @@
              (http-response-write
               res 200
               [["Content-Length" :: (u8vector-length buf)]
-               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+               ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
               #f))
             (else
              (http-response-write-condition res Forbidden))))))
@@ -452,7 +452,7 @@
            (http-response-write
             res 200
             [["Content-Length" :: (file-info-size info)]
-             ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+             ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
             #f))
           (else
            (http-response-write-condition res Forbidden)))))))
