@@ -444,8 +444,8 @@
 
 (def max-file-cache-size 32768) ; size of i/o buffer for http-response-file
 
-(def (serve-file path maybe-info)
-  (if (and maybe-info (fx< (file-info-size maybe-info) max-file-cache-size))
+(def (serve-file path info)
+  (if (fx<= (file-info-size info) max-file-cache-size)
     ;; cache the content
     (let (buf (read-file-u8vector path))
       (lambda (req res)
@@ -459,7 +459,7 @@
              (http-response-write
               res 200
               [["Content-Length" :: (u8vector-length buf)]
-               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time maybe-info)))]]
+               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
               #f))
             (else
              (http-response-write-condition res Forbidden))))))
@@ -474,12 +474,11 @@
           ((HEAD)
            ;; TODO Content-Type from extension
            ;;      format Last-Modified as date?
-           (let (info (or maybe-info (file-info path #t)))
-             (http-response-write
-              res 200
-              [["Content-Length" :: (file-info-size info)]
-               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
-              #f)))
+           (http-response-write
+            res 200
+            [["Content-Length" :: (file-info-size info)]
+             ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+            #f))
           (else
            (http-response-write-condition res Forbidden)))))))
 
