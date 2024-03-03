@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1709375795)
+  (define gerbil/core$<MOP>$<MOP:2>::timestamp 1709457366)
   (begin
     (define gerbil/core$<MOP>$<MOP:2>#class-type-info::t
       (let ((__tmp49652 (list)))
@@ -453,12 +453,12 @@
                          (let () (declare (not safe)) (##car _e1927519310_)))
                         (_lp-tl1927719315_
                          (let () (declare (not safe)) (##cdr _e1927519310_))))
-                    (let ((__tmp49656
+                    (let ((__tmp49657
                            (let ()
                              (declare (not safe))
                              (cons _lp-hd1927619313_ _arg1927819307_))))
                       (declare (not safe))
-                      (_loop1927419302_ _lp-tl1927719315_ __tmp49656))))
+                      (_loop1927419302_ _lp-tl1927719315_ __tmp49657))))
                 (let ((_arg1927919318_ (reverse _arg1927819307_)))
                   ((lambda (_L19321_)
                      (let ((_$e19335_
@@ -482,14 +482,15 @@
                        (if _$e19335_
                            ((lambda (_make19338_)
                               (let ((__tmp49655
-                                     (foldr (lambda (_g1933919342_
+                                     (let ((__tmp49656
+                                            (lambda (_g1933919342_
                                                      _g1934019344_)
                                               (let ()
                                                 (declare (not safe))
                                                 (cons _g1933919342_
-                                                      _g1934019344_)))
-                                            '()
-                                            _L19321_)))
+                                                      _g1934019344_)))))
+                                       (declare (not safe))
+                                       (foldr1 __tmp49656 '() _L19321_))))
                                 (declare (not safe))
                                 (cons _make19338_ __tmp49655)))
                             _$e19335_)
@@ -516,10 +517,12 @@
                         (_g1926519284_ _g1926619287_))))))
           (declare (not safe))
           (_g1926419347_ _stx19263_))))
-    (bind-method!
-     gerbil/core$<MOP>$<MOP:2>#class-type-info::t
-     'apply-macro-expander
-     gerbil/core$<MOP>$<MOP:2>#class-type-info::apply-macro-expander)
+    (let ()
+      (declare (not safe))
+      (bind-method!__0
+       gerbil/core$<MOP>$<MOP:2>#class-type-info::t
+       'apply-macro-expander
+       gerbil/core$<MOP>$<MOP:2>#class-type-info::apply-macro-expander))
     (define gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%
       (lambda (_stx19243_ _is?19244_)
         (if (gx#identifier? _stx19243_)
@@ -543,24 +546,24 @@
            _stx19255_
            _is?19257_))))
     (define gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?
-      (lambda _g49658_
-        (let ((_g49657_ (let () (declare (not safe)) (##length _g49658_))))
-          (cond ((let () (declare (not safe)) (##fx= _g49657_ 1))
+      (lambda _g49659_
+        (let ((_g49658_ (let () (declare (not safe)) (##length _g49659_))))
+          (cond ((let () (declare (not safe)) (##fx= _g49658_ 1))
                  (apply (lambda (_stx19255_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__0
                              _stx19255_)))
-                        _g49658_))
-                ((let () (declare (not safe)) (##fx= _g49657_ 2))
+                        _g49659_))
+                ((let () (declare (not safe)) (##fx= _g49658_ 2))
                  (apply (lambda (_stx19259_ _is?19260_)
                           (let ()
                             (declare (not safe))
                             (gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?__%
                              _stx19259_
                              _is?19260_)))
-                        _g49658_))
+                        _g49659_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/core$<MOP>$<MOP:2>#syntax-local-class-type-info?
-                  _g49658_))))))))
+                  _g49659_))))))))

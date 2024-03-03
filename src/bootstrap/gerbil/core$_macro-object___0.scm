@@ -1,14 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core$<macro-object>::timestamp 1709375795)
+  (define gerbil/core$<macro-object>::timestamp 1709457366)
   (begin
     (define gerbil/core$<macro-object>#macro-object::t
-      (let ((__tmp49659 (list)))
+      (let ((__tmp49660 (list)))
         (declare (not safe))
         (make-class-type
          'gerbil.core#macro-object::t
          'macro-object
-         __tmp49659
+         __tmp49660
          '(macro)
          '()
          '#f)))
@@ -88,11 +88,15 @@
                 __klass43971
                 '#f))
              _stx23415_)))))
-    (bind-specializer!
-     gerbil/core$<macro-object>#macro-object::apply-macro-expander
-     gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize)
-    (bind-method!
-     gerbil/core$<macro-object>#macro-object::t
-     'apply-macro-expander
-     gerbil/core$<macro-object>#macro-object::apply-macro-expander
-     '#f)))
+    (let ()
+      (declare (not safe))
+      (bind-specializer!
+       gerbil/core$<macro-object>#macro-object::apply-macro-expander
+       gerbil/core$<macro-object>#macro-object::apply-macro-expander::specialize))
+    (let ()
+      (declare (not safe))
+      (bind-method!__%
+       gerbil/core$<macro-object>#macro-object::t
+       'apply-macro-expander
+       gerbil/core$<macro-object>#macro-object::apply-macro-expander
+       '#f))))
