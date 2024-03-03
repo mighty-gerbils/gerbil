@@ -28,43 +28,60 @@
            (open-file-writer path flags: (if exists? O_APPEND O_CREAT)))
           (writer
            (open-buffered-writer output)))
+
     (using ((output :- Writer)
             (writer :- BufferedWriter))
+
+      (def (log-request ts req)
+        (using (req :- http-request)
+          (let* ((wr 0)
+                 ;; timestamp
+                 (wr (fx+ wr (writer.write-string (number->string ts))))
+                 (wr (fx+ wr (writer.write-char #\space)))
+                 ;; client IP
+                 (wr (fx+ wr (writer.write-string
+                              (let (ip (car req.client))
+                                (case (u8vector-length ip)
+                                  ((4) (ip4-address->string ip))
+                                  ((6) (ip6-address->string ip))
+                                  (else "???"))))))
+                 (wr (fx+ wr (writer.write-char #\space)))
+                 ;; request protocol
+                 (wr (fx+ wr (writer.write-string req.proto)))
+                 (wr (fx+ wr (writer.write-char #\space)))
+                 ;; request method
+                 (wr (fx+ wr (writer.write-string
+                              (if (symbol? req.method)
+                                (symbol->string req.method)
+                                req.method))))
+                 (wr (fx+ wr (writer.write-char #\space)))
+                 ;; URL
+                 (wr (fx+ wr (writer.write-string req.url)))
+                 (wr (fx+ wr (writer.write-char #\newline))))
+            (set! current-size (fx+ current-size wr)))))
+
       (while #t
         (with ([ts . req] (thread-receive))
-          (using (req :- http-request)
-            (let* ((wr 0)
-                   ;; timestamp
-                   (wr (fx+ wr (writer.write-string (number->string ts))))
-                   (wr (fx+ wr (writer.write-char #\space)))
-                   ;; client IP
-                   (wr (fx+ wr (writer.write-string
-                                (let (ip (car req.client))
-                                  (case (u8vector-length ip)
-                                    ((4) (ip4-address->string ip))
-                                    ((6) (ip6-address->string ip))
-                                    (else "???"))))))
-                   (wr (fx+ wr (writer.write-char #\space)))
-                   ;; request protocol
-                   (wr (fx+ wr (writer.write-string req.proto)))
-                   (wr (fx+ wr (writer.write-char #\space)))
-                   ;; request method
-                   (wr (fx+ wr (writer.write-string
-                                (if (symbol? req.method)
-                                  (symbol->string req.method)
-                                  req.method))))
-                   (wr (fx+ wr (writer.write-char #\space)))
-                   ;; URL
-                   (wr (fx+ wr (writer.write-string req.url)))
-                   (wr (fx+ wr (writer.write-char #\newline))))
-              (writer.flush)
-              (set! current-size (fx+ current-size wr))
-              (when (fx>= current-size rotate-size)
-                (output.close)
-                (log-rotate! path)
-                (set! output (open-file-writer path flags: O_CREAT))
-                (writer.reset! output #f)
-                (set! current-size 0)))))))))
+          (log-request ts req))
+
+        ;; coalesce to avoid extraneous flushes
+        (let coalesce ()
+          (match (thread-receive .1 #f)
+            ([ts . req]
+             (log-request ts req)
+             (when (fx< current-size rotate-size)
+               (coalesce)))
+            (else
+             (writer.flush))))
+
+        ;; check if we need to rotate
+        (when (fx>= current-size rotate-size)
+          (writer.flush)
+          (output.close)
+          (log-rotate! path)
+          (set! output (open-file-writer path flags: O_CREAT))
+          (writer.reset! output #f)
+          (set! current-size 0))))))
 
 (def (log-rotate! path)
   (let* ((log0 (string-append path ".1"))
