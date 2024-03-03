@@ -12,32 +12,46 @@ package: gerbil/runtime
    (@case-lambda (1 create-directory*__0) (2 create-directory*__%)))
   (declare-type
    true
-   (ast-rules
-    (%#call %#ref)
-    ((%#call _ (%#ref arg) ...) (%#quote #t))
-    ((%#call _ arg ...) (%#begin arg ... (%#quote #t)))))
+   (@lambda (0)
+            inline:
+            (ast-rules
+             (%#call %#ref)
+             ((%#call _ (%#ref arg) ...) (%#quote #t))
+             ((%#call _ arg ...) (%#begin arg ... (%#quote #t))))))
   (declare-type
    true?
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #t)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #t))))))
   (declare-type
    false
-   (ast-rules
-    (%#call %#ref)
-    ((%#call _ (%#ref arg) ...) (%#quote #f))
-    ((%#call _ arg ...) (%#begin arg ... (%#quote #f)))))
+   (@lambda (0)
+            inline:
+            (ast-rules
+             (%#call %#ref)
+             ((%#call _ (%#ref arg) ...) (%#quote #f))
+             ((%#call _ arg ...) (%#begin arg ... (%#quote #f))))))
   (declare-type
    void
-   (ast-rules
-    (%#call %#ref)
-    ((%#call _ (%#ref arg) ...) (%#quote #!void))
-    ((%#call _ arg ...) (%#begin arg ... (%#quote #!void)))))
+   (@lambda (0)
+            inline:
+            (ast-rules
+             (%#call %#ref)
+             ((%#call _ (%#ref arg) ...) (%#quote #!void))
+             ((%#call _ arg ...) (%#begin arg ... (%#quote #!void))))))
   (declare-type
    void?
-   (ast-rules
-    (%#call)
-    ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #!void)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #!void))))))
   (declare-type eof-object (@lambda (0) #f))
-  (declare-type identity (ast-rules (%#call) ((%#call _ arg) arg)))
+  (declare-type
+   identity
+   (@lambda 1 inline: (ast-rules (%#call) ((%#call _ arg) arg))))
   (declare-type dssl-object? (@lambda 1 #f))
   (declare-type dssl-key-object? (@lambda 1 #f))
   (declare-type dssl-rest-object? (@lambda 1 #f))
@@ -46,33 +60,41 @@ package: gerbil/runtime
   (declare-type nonnegative-fixnum? (@lambda 1 #f))
   (declare-type
    values-count
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#ref)
-      ((%#call _ (%#ref var))
-       #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector-length) (%#ref var))
-               (%#quote 1)))
-      ((%#call recur expr)
-       (with-syntax
-        (($values (make-symbol (gensym '__values))))
-        #'(%#let-values ((($values) expr)) (%#call recur (%#ref $values))))))))
+   (@lambda 1
+            inline:
+            (lambda (ast)
+              (ast-case
+               ast
+               (%#call %#ref)
+               ((%#call _ (%#ref var))
+                #'(%#if (%#call (%#ref ##values?) (%#ref var))
+                        (%#call (%#ref ##vector-length) (%#ref var))
+                        (%#quote 1)))
+               ((%#call recur expr)
+                (with-syntax
+                 (($values (make-symbol (gensym '__values))))
+                 #'(%#let-values
+                    ((($values) expr))
+                    (%#call recur (%#ref $values)))))))))
   (declare-type values-ref (@lambda 2 #f))
   (declare-type
    values->list
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#ref)
-      ((%#call _ (%#ref var))
-       #'(%#if (%#call (%#ref ##values?) (%#ref var))
-               (%#call (%#ref ##vector->list) (%#ref var))
-               (%#call (%#ref list) (%#ref var))))
-      ((%#call recur expr)
-       (with-syntax
-        (($values (make-symbol (gensym '__values))))
-        #'(%#let-values ((($values) expr)) (%#call recur (%#ref $values))))))))
+   (@lambda 1
+            inline:
+            (lambda (ast)
+              (ast-case
+               ast
+               (%#call %#ref)
+               ((%#call _ (%#ref var))
+                #'(%#if (%#call (%#ref ##values?) (%#ref var))
+                        (%#call (%#ref ##vector->list) (%#ref var))
+                        (%#call (%#ref list) (%#ref var))))
+               ((%#call recur expr)
+                (with-syntax
+                 (($values (make-symbol (gensym '__values))))
+                 #'(%#let-values
+                    ((($values) expr))
+                    (%#call recur (%#ref $values)))))))))
   (declare-type subvector->list__% (@lambda 2 #f))
   (declare-type subvector->list__0 (@lambda 1 #f))
   (declare-type subvector->list (@case-lambda (1 #f) (2 #f)))
@@ -81,11 +103,13 @@ package: gerbil/runtime
   (declare-type make-list (@case-lambda (1 make-list__0) (2 make-list__%)))
   (declare-type
    cons*
-   (ast-rules
-    (%#call)
-    ((%#call _ x y) (%#call (%#ref cons) x y))
-    ((%#call recur x y rest ...)
-     (%#call (%#ref cons) x (%#call recur y rest ...)))))
+   (@lambda (2)
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ x y) (%#call (%#ref cons) x y))
+             ((%#call recur x y rest ...)
+              (%#call (%#ref cons) x (%#call recur y rest ...))))))
   (declare-type foldl1 (@lambda 3 #f))
   (declare-type foldl2 (@lambda 4 #f))
   (declare-type foldl (@case-lambda (3 foldl1) (4 foldl2) ((4) foldl*)))
@@ -146,16 +170,32 @@ package: gerbil/runtime
   (declare-type remf (@lambda 2 #f))
   (declare-type
    1+
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref +) arg (%#quote 1)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref +) arg (%#quote 1))))))
   (declare-type
    1-
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref -) arg (%#quote 1)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref -) arg (%#quote 1))))))
   (declare-type
    fx1+
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref fx+) arg (%#quote 1)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref fx+) arg (%#quote 1))))))
   (declare-type
    fx1-
-   (ast-rules (%#call) ((%#call _ arg) (%#call (%#ref fx-) arg (%#quote 1)))))
+   (@lambda 1
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ arg) (%#call (%#ref fx-) arg (%#quote 1))))))
   (declare-type fxshift (@lambda 2 fxarithmetic-shift))
   (declare-type fx/ (@lambda 2 fxquotient))
   (declare-type fx>=0? (@lambda 1 #f))

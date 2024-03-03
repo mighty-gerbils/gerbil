@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/table::timestamp 1709375797)
+  (define gerbil/runtime/table::timestamp 1709457368)
   (begin
     (declare (not safe))
     (define __table::t.id 'gerbil#__table::t)
@@ -13,1843 +13,1843 @@
        '#f
        '#(table 5 #f count 5 #f free 5 #f hash 5 #f test 5 #f seed 5 #f)))
     (define &raw-table-table
-      (lambda (_tab60024_)
-        (##unchecked-structure-ref _tab60024_ '1 __table::t 'raw-table-table)))
+      (lambda (_tab60286_)
+        (##unchecked-structure-ref _tab60286_ '1 __table::t 'raw-table-table)))
     (define &raw-table-count
-      (lambda (_tab60022_)
-        (##unchecked-structure-ref _tab60022_ '2 __table::t 'raw-table-count)))
+      (lambda (_tab60284_)
+        (##unchecked-structure-ref _tab60284_ '2 __table::t 'raw-table-count)))
     (define &raw-table-free
-      (lambda (_tab60020_)
-        (##unchecked-structure-ref _tab60020_ '3 __table::t 'raw-table-free)))
+      (lambda (_tab60282_)
+        (##unchecked-structure-ref _tab60282_ '3 __table::t 'raw-table-free)))
     (define &raw-table-hash
-      (lambda (_tab60018_)
-        (##unchecked-structure-ref _tab60018_ '4 __table::t 'raw-table-hash)))
+      (lambda (_tab60280_)
+        (##unchecked-structure-ref _tab60280_ '4 __table::t 'raw-table-hash)))
     (define &raw-table-test
-      (lambda (_tab60016_)
-        (##unchecked-structure-ref _tab60016_ '5 __table::t 'raw-table-test)))
+      (lambda (_tab60278_)
+        (##unchecked-structure-ref _tab60278_ '5 __table::t 'raw-table-test)))
     (define &raw-table-seed
-      (lambda (_tab60014_)
-        (##unchecked-structure-ref _tab60014_ '6 __table::t 'raw-table-seed)))
+      (lambda (_tab60276_)
+        (##unchecked-structure-ref _tab60276_ '6 __table::t 'raw-table-seed)))
     (define &raw-table-table-set!
-      (lambda (_tab60011_ _val60012_)
+      (lambda (_tab60273_ _val60274_)
         (##unchecked-structure-set!
-         _tab60011_
-         _val60012_
+         _tab60273_
+         _val60274_
          '1
          __table::t
          'raw-table-table-set!)))
     (define &raw-table-count-set!
-      (lambda (_tab60008_ _val60009_)
+      (lambda (_tab60270_ _val60271_)
         (##unchecked-structure-set!
-         _tab60008_
-         _val60009_
+         _tab60270_
+         _val60271_
          '2
          __table::t
          'raw-table-count-set!)))
     (define &raw-table-free-set!
-      (lambda (_tab60005_ _val60006_)
+      (lambda (_tab60267_ _val60268_)
         (##unchecked-structure-set!
-         _tab60005_
-         _val60006_
+         _tab60267_
+         _val60268_
          '3
          __table::t
          'raw-table-free-set!)))
     (define &raw-table-hash-set!
-      (lambda (_tab60002_ _val60003_)
+      (lambda (_tab60264_ _val60265_)
         (##unchecked-structure-set!
-         _tab60002_
-         _val60003_
+         _tab60264_
+         _val60265_
          '4
          __table::t
          'raw-table-hash-set!)))
     (define &raw-table-test-set!
-      (lambda (_tab59999_ _val60000_)
+      (lambda (_tab60261_ _val60262_)
         (##unchecked-structure-set!
-         _tab59999_
-         _val60000_
+         _tab60261_
+         _val60262_
          '5
          __table::t
          'raw-table-test-set!)))
     (define &raw-table-seed-set!
-      (lambda (_tab59996_ _val59997_)
+      (lambda (_tab60258_ _val60259_)
         (##unchecked-structure-set!
-         _tab59996_
-         _val59997_
+         _tab60258_
+         _val60259_
          '6
          __table::t
          'raw-table-seed-set!)))
     (define raw-table-size-hint->size
-      (lambda (_size-hint59994_)
-        (if (and (fixnum? _size-hint59994_) (fx> _size-hint59994_ '0))
-            (fx* (fxmax '2 (expt '2 (integer-length _size-hint59994_))) '4)
+      (lambda (_size-hint60256_)
+        (if (and (fixnum? _size-hint60256_) (fx> _size-hint60256_ '0))
+            (fx* (fxmax '2 (expt '2 (integer-length _size-hint60256_))) '4)
             '16)))
     (define make-raw-table__%
-      (lambda (_size-hint59970_ _hash59971_ _test59972_ _seed59973_)
-        (let* ((_size59975_ (raw-table-size-hint->size _size-hint59970_))
-               (_table59977_ (make-vector _size59975_ (macro-unused-obj))))
+      (lambda (_size-hint60232_ _hash60233_ _test60234_ _seed60235_)
+        (let* ((_size60237_ (raw-table-size-hint->size _size-hint60232_))
+               (_table60239_ (make-vector _size60237_ (macro-unused-obj))))
           (##structure
            __table::t
-           _table59977_
+           _table60239_
            '0
-           (fxquotient _size59975_ '2)
-           _hash59971_
-           _test59972_
-           _seed59973_))))
+           (fxquotient _size60237_ '2)
+           _hash60233_
+           _test60234_
+           _seed60235_))))
     (define make-raw-table__0
-      (lambda (_size-hint59983_ _hash59984_ _test59985_)
-        (let ((_seed59987_ '0))
+      (lambda (_size-hint60245_ _hash60246_ _test60247_)
+        (let ((_seed60249_ '0))
           (make-raw-table__%
-           _size-hint59983_
-           _hash59984_
-           _test59985_
-           _seed59987_))))
+           _size-hint60245_
+           _hash60246_
+           _test60247_
+           _seed60249_))))
     (define make-raw-table
-      (lambda _g60026_
-        (let ((_g60025_ (##length _g60026_)))
-          (cond ((##fx= _g60025_ 3)
-                 (apply (lambda (_size-hint59983_ _hash59984_ _test59985_)
+      (lambda _g60288_
+        (let ((_g60287_ (##length _g60288_)))
+          (cond ((##fx= _g60287_ 3)
+                 (apply (lambda (_size-hint60245_ _hash60246_ _test60247_)
                           (make-raw-table__0
-                           _size-hint59983_
-                           _hash59984_
-                           _test59985_))
-                        _g60026_))
-                ((##fx= _g60025_ 4)
-                 (apply (lambda (_size-hint59989_
-                                 _hash59990_
-                                 _test59991_
-                                 _seed59992_)
+                           _size-hint60245_
+                           _hash60246_
+                           _test60247_))
+                        _g60288_))
+                ((##fx= _g60287_ 4)
+                 (apply (lambda (_size-hint60251_
+                                 _hash60252_
+                                 _test60253_
+                                 _seed60254_)
                           (make-raw-table__%
-                           _size-hint59989_
-                           _hash59990_
-                           _test59991_
-                           _seed59992_))
-                        _g60026_))
+                           _size-hint60251_
+                           _hash60252_
+                           _test60253_
+                           _seed60254_))
+                        _g60288_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-raw-table
-                  _g60026_))))))
+                  _g60288_))))))
     (define raw-table-ref
-      (lambda (_tab59925_ _key59926_ _default59927_)
-        (let ((_table59929_ (&raw-table-table _tab59925_))
-              (_seed59930_ (&raw-table-seed _tab59925_))
-              (_hash59931_ (&raw-table-hash _tab59925_))
-              (_test59932_ (&raw-table-test _tab59925_)))
-          (let* ((_h59934_ (fxxor (_hash59931_ _key59926_) _seed59930_))
-                 (_size59937_ (vector-length _table59929_))
-                 (_entries59940_ (fxquotient _size59937_ '2))
-                 (_start59943_
+      (lambda (_tab60187_ _key60188_ _default60189_)
+        (let ((_table60191_ (&raw-table-table _tab60187_))
+              (_seed60192_ (&raw-table-seed _tab60187_))
+              (_hash60193_ (&raw-table-hash _tab60187_))
+              (_test60194_ (&raw-table-test _tab60187_)))
+          (let* ((_h60196_ (fxxor (_hash60193_ _key60188_) _seed60192_))
+                 (_size60199_ (vector-length _table60191_))
+                 (_entries60202_ (fxquotient _size60199_ '2))
+                 (_start60205_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59934_ _entries59940_)
+                   (fxmodulo _h60196_ _entries60202_)
                    '1)))
-            (let _loop59947_ ((_probe59950_ _start59943_)
-                              (_i59952_ '1)
-                              (_deleted59954_ '#f))
-              (let ((_k59957_ (vector-ref _table59929_ _probe59950_)))
-                (if (eq? _k59957_ (macro-unused-obj))
-                    _default59927_
-                    (if (eq? _k59957_ (macro-deleted-obj))
-                        (_loop59947_
-                         (let ((_next-probe59960_
-                                (fx+ _start59943_
-                                     _i59952_
-                                     (fx* _i59952_ _i59952_))))
-                           (fxmodulo _next-probe59960_ _size59937_))
-                         (fx+ _i59952_ '1)
-                         (let ((_$e59963_ _deleted59954_))
-                           (if _$e59963_ _$e59963_ _probe59950_)))
-                        (if (_test59932_ _key59926_ _k59957_)
-                            (vector-ref _table59929_ (fx+ _probe59950_ '1))
-                            (_loop59947_
-                             (let ((_next-probe59966_
-                                    (fx+ _start59943_
-                                         _i59952_
-                                         (fx* _i59952_ _i59952_))))
-                               (fxmodulo _next-probe59966_ _size59937_))
-                             (fx+ _i59952_ '1)
-                             _deleted59954_))))))))))
+            (let _loop60209_ ((_probe60212_ _start60205_)
+                              (_i60214_ '1)
+                              (_deleted60216_ '#f))
+              (let ((_k60219_ (vector-ref _table60191_ _probe60212_)))
+                (if (eq? _k60219_ (macro-unused-obj))
+                    _default60189_
+                    (if (eq? _k60219_ (macro-deleted-obj))
+                        (_loop60209_
+                         (let ((_next-probe60222_
+                                (fx+ _start60205_
+                                     _i60214_
+                                     (fx* _i60214_ _i60214_))))
+                           (fxmodulo _next-probe60222_ _size60199_))
+                         (fx+ _i60214_ '1)
+                         (let ((_$e60225_ _deleted60216_))
+                           (if _$e60225_ _$e60225_ _probe60212_)))
+                        (if (_test60194_ _key60188_ _k60219_)
+                            (vector-ref _table60191_ (fx+ _probe60212_ '1))
+                            (_loop60209_
+                             (let ((_next-probe60228_
+                                    (fx+ _start60205_
+                                         _i60214_
+                                         (fx* _i60214_ _i60214_))))
+                               (fxmodulo _next-probe60228_ _size60199_))
+                             (fx+ _i60214_ '1)
+                             _deleted60216_))))))))))
     (define raw-table-set!
-      (lambda (_tab59921_ _key59922_ _value59923_)
-        (if (fx< (&raw-table-free _tab59921_)
-                 (fxquotient (vector-length (&raw-table-table _tab59921_)) '4))
-            (__raw-table-rehash! _tab59921_)
+      (lambda (_tab60183_ _key60184_ _value60185_)
+        (if (fx< (&raw-table-free _tab60183_)
+                 (fxquotient (vector-length (&raw-table-table _tab60183_)) '4))
+            (__raw-table-rehash! _tab60183_)
             '#!void)
-        (__raw-table-set! _tab59921_ _key59922_ _value59923_)))
+        (__raw-table-set! _tab60183_ _key60184_ _value60185_)))
     (define raw-table-update!
-      (lambda (_tab59916_ _key59917_ _update59918_ _default59919_)
-        (if (fx< (&raw-table-free _tab59916_)
-                 (fxquotient (vector-length (&raw-table-table _tab59916_)) '4))
-            (__raw-table-rehash! _tab59916_)
+      (lambda (_tab60178_ _key60179_ _update60180_ _default60181_)
+        (if (fx< (&raw-table-free _tab60178_)
+                 (fxquotient (vector-length (&raw-table-table _tab60178_)) '4))
+            (__raw-table-rehash! _tab60178_)
             '#!void)
         (__raw-table-update!
-         _tab59916_
-         _key59917_
-         _update59918_
-         _default59919_)))
+         _tab60178_
+         _key60179_
+         _update60180_
+         _default60181_)))
     (define raw-table-delete!
-      (lambda (_tab59877_ _key59878_)
-        (let ((_table59880_ (&raw-table-table _tab59877_))
-              (_seed59881_ (&raw-table-seed _tab59877_))
-              (_hash59882_ (&raw-table-hash _tab59877_))
-              (_test59883_ (&raw-table-test _tab59877_)))
-          (let* ((_h59885_ (fxxor (_hash59882_ _key59878_) _seed59881_))
-                 (_size59888_ (vector-length _table59880_))
-                 (_entries59891_ (fxquotient _size59888_ '2))
-                 (_start59894_
+      (lambda (_tab60139_ _key60140_)
+        (let ((_table60142_ (&raw-table-table _tab60139_))
+              (_seed60143_ (&raw-table-seed _tab60139_))
+              (_hash60144_ (&raw-table-hash _tab60139_))
+              (_test60145_ (&raw-table-test _tab60139_)))
+          (let* ((_h60147_ (fxxor (_hash60144_ _key60140_) _seed60143_))
+                 (_size60150_ (vector-length _table60142_))
+                 (_entries60153_ (fxquotient _size60150_ '2))
+                 (_start60156_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59885_ _entries59891_)
+                   (fxmodulo _h60147_ _entries60153_)
                    '1)))
-            (let _loop59898_ ((_probe59901_ _start59894_) (_i59903_ '1))
-              (let ((_k59906_ (vector-ref _table59880_ _probe59901_)))
-                (if (eq? _k59906_ (macro-unused-obj))
+            (let _loop60160_ ((_probe60163_ _start60156_) (_i60165_ '1))
+              (let ((_k60168_ (vector-ref _table60142_ _probe60163_)))
+                (if (eq? _k60168_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k59906_ (macro-deleted-obj))
-                        (_loop59898_
-                         (let ((_next-probe59909_
-                                (fx+ _start59894_
-                                     _i59903_
-                                     (fx* _i59903_ _i59903_))))
-                           (fxmodulo _next-probe59909_ _size59888_))
-                         (fx+ _i59903_ '1))
-                        (if (_test59883_ _key59878_ _k59906_)
+                    (if (eq? _k60168_ (macro-deleted-obj))
+                        (_loop60160_
+                         (let ((_next-probe60171_
+                                (fx+ _start60156_
+                                     _i60165_
+                                     (fx* _i60165_ _i60165_))))
+                           (fxmodulo _next-probe60171_ _size60150_))
+                         (fx+ _i60165_ '1))
+                        (if (_test60145_ _key60140_ _k60168_)
                             (begin
                               (vector-set!
-                               _table59880_
-                               _probe59901_
+                               _table60142_
+                               _probe60163_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table59880_
-                               (fx+ _probe59901_ '1)
+                               _table60142_
+                               (fx+ _probe60163_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab59877_
-                                  (fx- (&raw-table-count _tab59877_) '1)))))
-                            (_loop59898_
-                             (let ((_next-probe59913_
-                                    (fx+ _start59894_
-                                         _i59903_
-                                         (fx* _i59903_ _i59903_))))
-                               (fxmodulo _next-probe59913_ _size59888_))
-                             (fx+ _i59903_ '1)))))))))))
+                                  _tab60139_
+                                  (fx- (&raw-table-count _tab60139_) '1)))))
+                            (_loop60160_
+                             (let ((_next-probe60175_
+                                    (fx+ _start60156_
+                                         _i60165_
+                                         (fx* _i60165_ _i60165_))))
+                               (fxmodulo _next-probe60175_ _size60150_))
+                             (fx+ _i60165_ '1)))))))))))
     (define raw-table-for-each
-      (lambda (_tab59861_ _proc59862_)
-        (let* ((_table59864_ (&raw-table-table _tab59861_))
-               (_size59866_ (vector-length _table59864_)))
-          (let _loop59869_ ((_i59871_ '0))
-            (if (fx< _i59871_ _size59866_)
+      (lambda (_tab60123_ _proc60124_)
+        (let* ((_table60126_ (&raw-table-table _tab60123_))
+               (_size60128_ (vector-length _table60126_)))
+          (let _loop60131_ ((_i60133_ '0))
+            (if (fx< _i60133_ _size60128_)
                 (begin
-                  (let ((_key59873_ (vector-ref _table59864_ _i59871_)))
-                    (if (and (not (eq? _key59873_ (macro-unused-obj)))
-                             (not (eq? _key59873_ (macro-deleted-obj))))
-                        (let ((_value59875_
-                               (vector-ref _table59864_ (fx+ _i59871_ '1))))
-                          (_proc59862_ _key59873_ _value59875_))
+                  (let ((_key60135_ (vector-ref _table60126_ _i60133_)))
+                    (if (and (not (eq? _key60135_ (macro-unused-obj)))
+                             (not (eq? _key60135_ (macro-deleted-obj))))
+                        (let ((_value60137_
+                               (vector-ref _table60126_ (fx+ _i60133_ '1))))
+                          (_proc60124_ _key60135_ _value60137_))
                         '#!void))
-                  (_loop59869_ (fx+ _i59871_ '2)))
+                  (_loop60131_ (fx+ _i60133_ '2)))
                 '#!void)))))
     (define raw-table-copy
-      (lambda (_tab59857_)
-        (let ((_new-tab59859_ (##structure-copy _tab59857_)))
+      (lambda (_tab60119_)
+        (let ((_new-tab60121_ (##structure-copy _tab60119_)))
           (&raw-table-table-set!
-           _new-tab59859_
-           (vector-copy (&raw-table-table _tab59857_)))
-          _new-tab59859_)))
+           _new-tab60121_
+           (vector-copy (&raw-table-table _tab60119_)))
+          _new-tab60121_)))
     (define raw-table-clear!
-      (lambda (_tab59855_)
-        (vector-fill! (&raw-table-table _tab59855_) (macro-unused-obj))
-        (&raw-table-count-set! _tab59855_ '0)
+      (lambda (_tab60117_)
+        (vector-fill! (&raw-table-table _tab60117_) (macro-unused-obj))
+        (&raw-table-count-set! _tab60117_ '0)
         (&raw-table-free-set!
-         _tab59855_
-         (fxquotient (vector-length (&raw-table-table _tab59855_)) '2))))
+         _tab60117_
+         (fxquotient (vector-length (&raw-table-table _tab60117_)) '2))))
     (define __raw-table-set!
-      (lambda (_tab59809_ _key59810_ _value59811_)
-        (let ((_table59813_ (&raw-table-table _tab59809_))
-              (_seed59814_ (&raw-table-seed _tab59809_))
-              (_hash59815_ (&raw-table-hash _tab59809_))
-              (_test59816_ (&raw-table-test _tab59809_)))
-          (let* ((_h59818_ (fxxor (_hash59815_ _key59810_) _seed59814_))
-                 (_size59821_ (vector-length _table59813_))
-                 (_entries59824_ (fxquotient _size59821_ '2))
-                 (_start59827_
+      (lambda (_tab60071_ _key60072_ _value60073_)
+        (let ((_table60075_ (&raw-table-table _tab60071_))
+              (_seed60076_ (&raw-table-seed _tab60071_))
+              (_hash60077_ (&raw-table-hash _tab60071_))
+              (_test60078_ (&raw-table-test _tab60071_)))
+          (let* ((_h60080_ (fxxor (_hash60077_ _key60072_) _seed60076_))
+                 (_size60083_ (vector-length _table60075_))
+                 (_entries60086_ (fxquotient _size60083_ '2))
+                 (_start60089_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59818_ _entries59824_)
+                   (fxmodulo _h60080_ _entries60086_)
                    '1)))
-            (let _loop59831_ ((_probe59834_ _start59827_)
-                              (_i59836_ '1)
-                              (_deleted59838_ '#f))
-              (let ((_k59841_ (vector-ref _table59813_ _probe59834_)))
-                (if (eq? _k59841_ (macro-unused-obj))
-                    (if _deleted59838_
+            (let _loop60093_ ((_probe60096_ _start60089_)
+                              (_i60098_ '1)
+                              (_deleted60100_ '#f))
+              (let ((_k60103_ (vector-ref _table60075_ _probe60096_)))
+                (if (eq? _k60103_ (macro-unused-obj))
+                    (if _deleted60100_
                         (begin
-                          (vector-set! _table59813_ _deleted59838_ _key59810_)
+                          (vector-set! _table60075_ _deleted60100_ _key60072_)
                           (vector-set!
-                           _table59813_
-                           (fx+ _deleted59838_ '1)
-                           _value59811_)
+                           _table60075_
+                           (fx+ _deleted60100_ '1)
+                           _value60073_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59809_
-                              (fx+ (&raw-table-count _tab59809_) '1)))))
+                              _tab60071_
+                              (fx+ (&raw-table-count _tab60071_) '1)))))
                         (begin
-                          (vector-set! _table59813_ _probe59834_ _key59810_)
+                          (vector-set! _table60075_ _probe60096_ _key60072_)
                           (vector-set!
-                           _table59813_
-                           (fx+ _probe59834_ '1)
-                           _value59811_)
+                           _table60075_
+                           (fx+ _probe60096_ '1)
+                           _value60073_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59809_
-                              (fx- (&raw-table-free _tab59809_) '1))
+                              _tab60071_
+                              (fx- (&raw-table-free _tab60071_) '1))
                              (&raw-table-count-set!
-                              _tab59809_
-                              (fx+ (&raw-table-count _tab59809_) '1))))))
-                    (if (eq? _k59841_ (macro-deleted-obj))
-                        (_loop59831_
-                         (let ((_next-probe59846_
-                                (fx+ _start59827_
-                                     _i59836_
-                                     (fx* _i59836_ _i59836_))))
-                           (fxmodulo _next-probe59846_ _size59821_))
-                         (fx+ _i59836_ '1)
-                         (let ((_$e59849_ _deleted59838_))
-                           (if _$e59849_ _$e59849_ _probe59834_)))
-                        (if (_test59816_ _key59810_ _k59841_)
+                              _tab60071_
+                              (fx+ (&raw-table-count _tab60071_) '1))))))
+                    (if (eq? _k60103_ (macro-deleted-obj))
+                        (_loop60093_
+                         (let ((_next-probe60108_
+                                (fx+ _start60089_
+                                     _i60098_
+                                     (fx* _i60098_ _i60098_))))
+                           (fxmodulo _next-probe60108_ _size60083_))
+                         (fx+ _i60098_ '1)
+                         (let ((_$e60111_ _deleted60100_))
+                           (if _$e60111_ _$e60111_ _probe60096_)))
+                        (if (_test60078_ _key60072_ _k60103_)
                             (begin
                               (vector-set!
-                               _table59813_
-                               _probe59834_
-                               _key59810_)
+                               _table60075_
+                               _probe60096_
+                               _key60072_)
                               (vector-set!
-                               _table59813_
-                               (fx+ _probe59834_ '1)
-                               _value59811_))
-                            (_loop59831_
-                             (let ((_next-probe59852_
-                                    (fx+ _start59827_
-                                         _i59836_
-                                         (fx* _i59836_ _i59836_))))
-                               (fxmodulo _next-probe59852_ _size59821_))
-                             (fx+ _i59836_ '1)
-                             _deleted59838_))))))))))
+                               _table60075_
+                               (fx+ _probe60096_ '1)
+                               _value60073_))
+                            (_loop60093_
+                             (let ((_next-probe60114_
+                                    (fx+ _start60089_
+                                         _i60098_
+                                         (fx* _i60098_ _i60098_))))
+                               (fxmodulo _next-probe60114_ _size60083_))
+                             (fx+ _i60098_ '1)
+                             _deleted60100_))))))))))
     (define __raw-table-update!
-      (lambda (_tab59762_ _key59763_ _update59764_ _default59765_)
-        (let ((_table59767_ (&raw-table-table _tab59762_))
-              (_seed59768_ (&raw-table-seed _tab59762_))
-              (_hash59769_ (&raw-table-hash _tab59762_))
-              (_test59770_ (&raw-table-test _tab59762_)))
-          (let* ((_h59772_ (fxxor (_hash59769_ _key59763_) _seed59768_))
-                 (_size59775_ (vector-length _table59767_))
-                 (_entries59778_ (fxquotient _size59775_ '2))
-                 (_start59781_
+      (lambda (_tab60024_ _key60025_ _update60026_ _default60027_)
+        (let ((_table60029_ (&raw-table-table _tab60024_))
+              (_seed60030_ (&raw-table-seed _tab60024_))
+              (_hash60031_ (&raw-table-hash _tab60024_))
+              (_test60032_ (&raw-table-test _tab60024_)))
+          (let* ((_h60034_ (fxxor (_hash60031_ _key60025_) _seed60030_))
+                 (_size60037_ (vector-length _table60029_))
+                 (_entries60040_ (fxquotient _size60037_ '2))
+                 (_start60043_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59772_ _entries59778_)
+                   (fxmodulo _h60034_ _entries60040_)
                    '1)))
-            (let _loop59785_ ((_probe59788_ _start59781_)
-                              (_i59790_ '1)
-                              (_deleted59792_ '#f))
-              (let ((_k59795_ (vector-ref _table59767_ _probe59788_)))
-                (if (eq? _k59795_ (macro-unused-obj))
-                    (if _deleted59792_
+            (let _loop60047_ ((_probe60050_ _start60043_)
+                              (_i60052_ '1)
+                              (_deleted60054_ '#f))
+              (let ((_k60057_ (vector-ref _table60029_ _probe60050_)))
+                (if (eq? _k60057_ (macro-unused-obj))
+                    (if _deleted60054_
                         (begin
-                          (vector-set! _table59767_ _deleted59792_ _key59763_)
+                          (vector-set! _table60029_ _deleted60054_ _key60025_)
                           (vector-set!
-                           _table59767_
-                           (fx+ _deleted59792_ '1)
-                           (_update59764_ _default59765_))
+                           _table60029_
+                           (fx+ _deleted60054_ '1)
+                           (_update60026_ _default60027_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59762_
-                              (fx+ (&raw-table-count _tab59762_) '1)))))
+                              _tab60024_
+                              (fx+ (&raw-table-count _tab60024_) '1)))))
                         (begin
-                          (vector-set! _table59767_ _probe59788_ _key59763_)
+                          (vector-set! _table60029_ _probe60050_ _key60025_)
                           (vector-set!
-                           _table59767_
-                           (fx+ _probe59788_ '1)
-                           (_update59764_ _default59765_))
+                           _table60029_
+                           (fx+ _probe60050_ '1)
+                           (_update60026_ _default60027_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59762_
-                              (fx- (&raw-table-free _tab59762_) '1))
+                              _tab60024_
+                              (fx- (&raw-table-free _tab60024_) '1))
                              (&raw-table-count-set!
-                              _tab59762_
-                              (fx+ (&raw-table-count _tab59762_) '1))))))
-                    (if (eq? _k59795_ (macro-deleted-obj))
-                        (_loop59785_
-                         (let ((_next-probe59800_
-                                (fx+ _start59781_
-                                     _i59790_
-                                     (fx* _i59790_ _i59790_))))
-                           (fxmodulo _next-probe59800_ _size59775_))
-                         (fx+ _i59790_ '1)
-                         (let ((_$e59803_ _deleted59792_))
-                           (if _$e59803_ _$e59803_ _probe59788_)))
-                        (if (_test59770_ _key59763_ _k59795_)
+                              _tab60024_
+                              (fx+ (&raw-table-count _tab60024_) '1))))))
+                    (if (eq? _k60057_ (macro-deleted-obj))
+                        (_loop60047_
+                         (let ((_next-probe60062_
+                                (fx+ _start60043_
+                                     _i60052_
+                                     (fx* _i60052_ _i60052_))))
+                           (fxmodulo _next-probe60062_ _size60037_))
+                         (fx+ _i60052_ '1)
+                         (let ((_$e60065_ _deleted60054_))
+                           (if _$e60065_ _$e60065_ _probe60050_)))
+                        (if (_test60032_ _key60025_ _k60057_)
                             (begin
                               (vector-set!
-                               _table59767_
-                               _probe59788_
-                               _key59763_)
+                               _table60029_
+                               _probe60050_
+                               _key60025_)
                               (vector-set!
-                               _table59767_
-                               (fx+ _probe59788_ '1)
-                               (_update59764_
+                               _table60029_
+                               (fx+ _probe60050_ '1)
+                               (_update60026_
                                 (vector-ref
-                                 _table59767_
-                                 (fx+ _probe59788_ '1)))))
-                            (_loop59785_
-                             (let ((_next-probe59806_
-                                    (fx+ _start59781_
-                                         _i59790_
-                                         (fx* _i59790_ _i59790_))))
-                               (fxmodulo _next-probe59806_ _size59775_))
-                             (fx+ _i59790_ '1)
-                             _deleted59792_))))))))))
+                                 _table60029_
+                                 (fx+ _probe60050_ '1)))))
+                            (_loop60047_
+                             (let ((_next-probe60068_
+                                    (fx+ _start60043_
+                                         _i60052_
+                                         (fx* _i60052_ _i60052_))))
+                               (fxmodulo _next-probe60068_ _size60037_))
+                             (fx+ _i60052_ '1)
+                             _deleted60054_))))))))))
     (define __raw-table-rehash!
-      (lambda (_tab59743_)
-        (let* ((_old-table59745_ (&raw-table-table _tab59743_))
-               (_old-size59747_ (vector-length _old-table59745_))
-               (_new-size59749_
-                (if (fx< (&raw-table-count _tab59743_)
-                         (fxquotient _old-size59747_ '4))
-                    (vector-length _old-table59745_)
-                    (fx* '2 (vector-length _old-table59745_))))
-               (_new-table59751_
-                (make-vector _new-size59749_ (macro-unused-obj))))
-          (&raw-table-table-set! _tab59743_ _new-table59751_)
-          (&raw-table-count-set! _tab59743_ '0)
-          (&raw-table-free-set! _tab59743_ (fxquotient _new-size59749_ '2))
-          (let _lp59754_ ((_i59756_ '0))
-            (if (fx< _i59756_ _old-size59747_)
+      (lambda (_tab60005_)
+        (let* ((_old-table60007_ (&raw-table-table _tab60005_))
+               (_old-size60009_ (vector-length _old-table60007_))
+               (_new-size60011_
+                (if (fx< (&raw-table-count _tab60005_)
+                         (fxquotient _old-size60009_ '4))
+                    (vector-length _old-table60007_)
+                    (fx* '2 (vector-length _old-table60007_))))
+               (_new-table60013_
+                (make-vector _new-size60011_ (macro-unused-obj))))
+          (&raw-table-table-set! _tab60005_ _new-table60013_)
+          (&raw-table-count-set! _tab60005_ '0)
+          (&raw-table-free-set! _tab60005_ (fxquotient _new-size60011_ '2))
+          (let _lp60016_ ((_i60018_ '0))
+            (if (fx< _i60018_ _old-size60009_)
                 (begin
-                  (let ((_key59758_ (vector-ref _old-table59745_ _i59756_)))
-                    (if (and (not (eq? _key59758_ (macro-unused-obj)))
-                             (not (eq? _key59758_ (macro-deleted-obj))))
-                        (let ((_value59760_
+                  (let ((_key60020_ (vector-ref _old-table60007_ _i60018_)))
+                    (if (and (not (eq? _key60020_ (macro-unused-obj)))
+                             (not (eq? _key60020_ (macro-deleted-obj))))
+                        (let ((_value60022_
                                (vector-ref
-                                _old-table59745_
-                                (fx+ _i59756_ '1))))
+                                _old-table60007_
+                                (fx+ _i60018_ '1))))
                           (__raw-table-set!
-                           _tab59743_
-                           _key59758_
-                           _value59760_))
+                           _tab60005_
+                           _key60020_
+                           _value60022_))
                         '#!void))
-                  (_lp59754_ (fx+ _i59756_ '2)))
+                  (_lp60016_ (fx+ _i60018_ '2)))
                 '#!void)))))
     (define eq-hash
-      (lambda (_obj59739_)
-        (let ((_t59741_ (##type _obj59739_)))
-          (if (fx= (fxand _t59741_ '1) '0)
-              (fxand (##type-cast _obj59739_ (macro-type-fixnum))
+      (lambda (_obj60001_)
+        (let ((_t60003_ (##type _obj60001_)))
+          (if (fx= (fxand _t60003_ '1) '0)
+              (fxand (##type-cast _obj60001_ (macro-type-fixnum))
                      (macro-max-fixnum32))
-              (if (symbolic? _obj59739_)
-                  (symbolic-hash _obj59739_)
-                  (if (procedure? _obj59739_)
-                      (procedure-hash _obj59739_)
-                      (fxand (__eq-hash _obj59739_) (macro-max-fixnum32))))))))
+              (if (symbolic? _obj60001_)
+                  (symbolic-hash _obj60001_)
+                  (if (procedure? _obj60001_)
+                      (procedure-hash _obj60001_)
+                      (fxand (__eq-hash _obj60001_) (macro-max-fixnum32))))))))
     (define procedure-hash
-      (lambda (_obj59735_)
-        (let ((_h59737_
-               (if (##closure? _obj59735_)
-                   (__eq-hash _obj59735_)
-                   (##type-cast _obj59735_ '0))))
-          (fxand _h59737_ (macro-max-fixnum32)))))
+      (lambda (_obj59997_)
+        (let ((_h59999_
+               (if (##closure? _obj59997_)
+                   (__eq-hash _obj59997_)
+                   (##type-cast _obj59997_ '0))))
+          (fxand _h59999_ (macro-max-fixnum32)))))
     (define __eq-hash
-      (lambda (_obj59732_)
+      (lambda (_obj59994_)
         (declare (not interrupts-enabled))
-        (__object->eq-hash _obj59732_)))
+        (__object->eq-hash _obj59994_)))
     (define eqv-hash
-      (lambda (_obj59722_)
-        (letrec ((_combine59724_
-                  (lambda (_a59729_ _b59730_)
-                    (fxand (fx* (fx+ _a59729_
-                                     (fxarithmetic-shift-left _b59730_ '1))
+      (lambda (_obj59984_)
+        (letrec ((_combine59986_
+                  (lambda (_a59991_ _b59992_)
+                    (fxand (fx* (fx+ _a59991_
+                                     (fxarithmetic-shift-left _b59992_ '1))
                                 '331804471)
                            (macro-max-fixnum32))))
-                 (_hash59725_
-                  (lambda (_obj59727_)
+                 (_hash59987_
+                  (lambda (_obj59989_)
                     (macro-number-dispatch
-                     _obj59727_
-                     (eq-hash _obj59727_)
-                     (fxand _obj59727_ (macro-max-fixnum32))
-                     (modulo _obj59727_ '331804481)
-                     (_combine59724_
-                      (_hash59725_ (macro-ratnum-numerator _obj59727_))
-                      (_hash59725_ (macro-ratnum-denominator _obj59727_)))
-                     (_combine59724_
-                      (##u16vector-ref _obj59727_ '0)
-                      (_combine59724_
-                       (##u16vector-ref _obj59727_ '1)
-                       (_combine59724_
-                        (##u16vector-ref _obj59727_ '2)
-                        (##u16vector-ref _obj59727_ '3))))
-                     (_combine59724_
-                      (_hash59725_ (macro-cpxnum-real _obj59727_))
-                      (_hash59725_ (macro-cpxnum-imag _obj59727_)))))))
-          (_hash59725_ _obj59722_))))
+                     _obj59989_
+                     (eq-hash _obj59989_)
+                     (fxand _obj59989_ (macro-max-fixnum32))
+                     (modulo _obj59989_ '331804481)
+                     (_combine59986_
+                      (_hash59987_ (macro-ratnum-numerator _obj59989_))
+                      (_hash59987_ (macro-ratnum-denominator _obj59989_)))
+                     (_combine59986_
+                      (##u16vector-ref _obj59989_ '0)
+                      (_combine59986_
+                       (##u16vector-ref _obj59989_ '1)
+                       (_combine59986_
+                        (##u16vector-ref _obj59989_ '2)
+                        (##u16vector-ref _obj59989_ '3))))
+                     (_combine59986_
+                      (_hash59987_ (macro-cpxnum-real _obj59989_))
+                      (_hash59987_ (macro-cpxnum-imag _obj59989_)))))))
+          (_hash59987_ _obj59984_))))
     (define symbolic?
-      (lambda (_obj59717_)
-        (let ((_$e59719_ (symbol? _obj59717_)))
-          (if _$e59719_ _$e59719_ (keyword? _obj59717_)))))
-    (define symbolic-hash (lambda (_obj59715_) (macro-slot '1 _obj59715_)))
-    (define string-hash (lambda (_obj59713_) (##string=?-hash _obj59713_)))
+      (lambda (_obj59979_)
+        (let ((_$e59981_ (symbol? _obj59979_)))
+          (if _$e59981_ _$e59981_ (keyword? _obj59979_)))))
+    (define symbolic-hash (lambda (_obj59977_) (macro-slot '1 _obj59977_)))
+    (define string-hash (lambda (_obj59975_) (##string=?-hash _obj59975_)))
     (define immediate-hash
-      (lambda (_obj59711_) (##type-cast _obj59711_ (macro-type-fixnum))))
+      (lambda (_obj59973_) (##type-cast _obj59973_ (macro-type-fixnum))))
     (define make-eq-table__%
-      (lambda (_size-hint59692_ _seed59694_)
-        (make-raw-table__% _size-hint59692_ eq-hash eq? _seed59694_)))
+      (lambda (_size-hint59954_ _seed59956_)
+        (make-raw-table__% _size-hint59954_ eq-hash eq? _seed59956_)))
     (define make-eq-table__0
       (lambda ()
-        (let* ((_size-hint59700_ '#f) (_seed59702_ '0))
-          (make-eq-table__% _size-hint59700_ _seed59702_))))
+        (let* ((_size-hint59962_ '#f) (_seed59964_ '0))
+          (make-eq-table__% _size-hint59962_ _seed59964_))))
     (define make-eq-table__1
-      (lambda (_size-hint59704_)
-        (let ((_seed59706_ '0))
-          (make-eq-table__% _size-hint59704_ _seed59706_))))
+      (lambda (_size-hint59966_)
+        (let ((_seed59968_ '0))
+          (make-eq-table__% _size-hint59966_ _seed59968_))))
     (define make-eq-table
-      (lambda _g60028_
-        (let ((_g60027_ (##length _g60028_)))
-          (cond ((##fx= _g60027_ 0)
-                 (apply (lambda () (make-eq-table__0)) _g60028_))
-                ((##fx= _g60027_ 1)
-                 (apply (lambda (_size-hint59704_)
-                          (make-eq-table__1 _size-hint59704_))
-                        _g60028_))
-                ((##fx= _g60027_ 2)
-                 (apply (lambda (_size-hint59708_ _seed59709_)
-                          (make-eq-table__% _size-hint59708_ _seed59709_))
-                        _g60028_))
+      (lambda _g60290_
+        (let ((_g60289_ (##length _g60290_)))
+          (cond ((##fx= _g60289_ 0)
+                 (apply (lambda () (make-eq-table__0)) _g60290_))
+                ((##fx= _g60289_ 1)
+                 (apply (lambda (_size-hint59966_)
+                          (make-eq-table__1 _size-hint59966_))
+                        _g60290_))
+                ((##fx= _g60289_ 2)
+                 (apply (lambda (_size-hint59970_ _seed59971_)
+                          (make-eq-table__% _size-hint59970_ _seed59971_))
+                        _g60290_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-eq-table
-                  _g60028_))))))
+                  _g60290_))))))
     (define eq-table-ref
-      (lambda (_tab59649_ _key59650_ _default59651_)
-        (let ((_table59653_ (&raw-table-table _tab59649_))
-              (_seed59654_ (&raw-table-seed _tab59649_)))
-          (let* ((_h59656_ (fxxor (eq-hash _key59650_) _seed59654_))
-                 (_size59659_ (vector-length _table59653_))
-                 (_entries59662_ (fxquotient _size59659_ '2))
-                 (_start59665_
+      (lambda (_tab59911_ _key59912_ _default59913_)
+        (let ((_table59915_ (&raw-table-table _tab59911_))
+              (_seed59916_ (&raw-table-seed _tab59911_)))
+          (let* ((_h59918_ (fxxor (eq-hash _key59912_) _seed59916_))
+                 (_size59921_ (vector-length _table59915_))
+                 (_entries59924_ (fxquotient _size59921_ '2))
+                 (_start59927_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59656_ _entries59662_)
+                   (fxmodulo _h59918_ _entries59924_)
                    '1)))
-            (let _loop59669_ ((_probe59672_ _start59665_)
-                              (_i59674_ '1)
-                              (_deleted59676_ '#f))
-              (let ((_k59679_ (vector-ref _table59653_ _probe59672_)))
-                (if (eq? _k59679_ (macro-unused-obj))
-                    _default59651_
-                    (if (eq? _k59679_ (macro-deleted-obj))
-                        (_loop59669_
-                         (let ((_next-probe59682_
-                                (fx+ _start59665_
-                                     _i59674_
-                                     (fx* _i59674_ _i59674_))))
-                           (fxmodulo _next-probe59682_ _size59659_))
-                         (fx+ _i59674_ '1)
-                         (let ((_$e59685_ _deleted59676_))
-                           (if _$e59685_ _$e59685_ _probe59672_)))
-                        (if (eq? _key59650_ _k59679_)
-                            (vector-ref _table59653_ (fx+ _probe59672_ '1))
-                            (_loop59669_
-                             (let ((_next-probe59688_
-                                    (fx+ _start59665_
-                                         _i59674_
-                                         (fx* _i59674_ _i59674_))))
-                               (fxmodulo _next-probe59688_ _size59659_))
-                             (fx+ _i59674_ '1)
-                             _deleted59676_))))))))))
+            (let _loop59931_ ((_probe59934_ _start59927_)
+                              (_i59936_ '1)
+                              (_deleted59938_ '#f))
+              (let ((_k59941_ (vector-ref _table59915_ _probe59934_)))
+                (if (eq? _k59941_ (macro-unused-obj))
+                    _default59913_
+                    (if (eq? _k59941_ (macro-deleted-obj))
+                        (_loop59931_
+                         (let ((_next-probe59944_
+                                (fx+ _start59927_
+                                     _i59936_
+                                     (fx* _i59936_ _i59936_))))
+                           (fxmodulo _next-probe59944_ _size59921_))
+                         (fx+ _i59936_ '1)
+                         (let ((_$e59947_ _deleted59938_))
+                           (if _$e59947_ _$e59947_ _probe59934_)))
+                        (if (eq? _key59912_ _k59941_)
+                            (vector-ref _table59915_ (fx+ _probe59934_ '1))
+                            (_loop59931_
+                             (let ((_next-probe59950_
+                                    (fx+ _start59927_
+                                         _i59936_
+                                         (fx* _i59936_ _i59936_))))
+                               (fxmodulo _next-probe59950_ _size59921_))
+                             (fx+ _i59936_ '1)
+                             _deleted59938_))))))))))
     (define eq-table-set!
-      (lambda (_tab59645_ _key59646_ _value59647_)
-        (if (fx< (&raw-table-free _tab59645_)
-                 (fxquotient (vector-length (&raw-table-table _tab59645_)) '4))
-            (__raw-table-rehash! _tab59645_)
+      (lambda (_tab59907_ _key59908_ _value59909_)
+        (if (fx< (&raw-table-free _tab59907_)
+                 (fxquotient (vector-length (&raw-table-table _tab59907_)) '4))
+            (__raw-table-rehash! _tab59907_)
             '#!void)
-        (__eq-table-set! _tab59645_ _key59646_ _value59647_)))
+        (__eq-table-set! _tab59907_ _key59908_ _value59909_)))
     (define __eq-table-set!
-      (lambda (_tab59600_ _key59601_ _value59602_)
-        (let ((_table59605_ (&raw-table-table _tab59600_))
-              (_seed59606_ (&raw-table-seed _tab59600_)))
-          (let* ((_h59608_ (fxxor (eq-hash _key59601_) _seed59606_))
-                 (_size59611_ (vector-length _table59605_))
-                 (_entries59614_ (fxquotient _size59611_ '2))
-                 (_start59617_
+      (lambda (_tab59862_ _key59863_ _value59864_)
+        (let ((_table59867_ (&raw-table-table _tab59862_))
+              (_seed59868_ (&raw-table-seed _tab59862_)))
+          (let* ((_h59870_ (fxxor (eq-hash _key59863_) _seed59868_))
+                 (_size59873_ (vector-length _table59867_))
+                 (_entries59876_ (fxquotient _size59873_ '2))
+                 (_start59879_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59608_ _entries59614_)
+                   (fxmodulo _h59870_ _entries59876_)
                    '1)))
-            (let _loop59621_ ((_probe59624_ _start59617_)
-                              (_i59626_ '1)
-                              (_deleted59628_ '#f))
-              (let ((_k59631_ (vector-ref _table59605_ _probe59624_)))
-                (if (eq? _k59631_ (macro-unused-obj))
-                    (if _deleted59628_
+            (let _loop59883_ ((_probe59886_ _start59879_)
+                              (_i59888_ '1)
+                              (_deleted59890_ '#f))
+              (let ((_k59893_ (vector-ref _table59867_ _probe59886_)))
+                (if (eq? _k59893_ (macro-unused-obj))
+                    (if _deleted59890_
                         (begin
-                          (vector-set! _table59605_ _deleted59628_ _key59601_)
+                          (vector-set! _table59867_ _deleted59890_ _key59863_)
                           (vector-set!
-                           _table59605_
-                           (fx+ _deleted59628_ '1)
-                           _value59602_)
+                           _table59867_
+                           (fx+ _deleted59890_ '1)
+                           _value59864_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59600_
-                              (fx+ (&raw-table-count _tab59600_) '1)))))
+                              _tab59862_
+                              (fx+ (&raw-table-count _tab59862_) '1)))))
                         (begin
-                          (vector-set! _table59605_ _probe59624_ _key59601_)
+                          (vector-set! _table59867_ _probe59886_ _key59863_)
                           (vector-set!
-                           _table59605_
-                           (fx+ _probe59624_ '1)
-                           _value59602_)
+                           _table59867_
+                           (fx+ _probe59886_ '1)
+                           _value59864_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59600_
-                              (fx- (&raw-table-free _tab59600_) '1))
+                              _tab59862_
+                              (fx- (&raw-table-free _tab59862_) '1))
                              (&raw-table-count-set!
-                              _tab59600_
-                              (fx+ (&raw-table-count _tab59600_) '1))))))
-                    (if (eq? _k59631_ (macro-deleted-obj))
-                        (_loop59621_
-                         (let ((_next-probe59636_
-                                (fx+ _start59617_
-                                     _i59626_
-                                     (fx* _i59626_ _i59626_))))
-                           (fxmodulo _next-probe59636_ _size59611_))
-                         (fx+ _i59626_ '1)
-                         (let ((_$e59639_ _deleted59628_))
-                           (if _$e59639_ _$e59639_ _probe59624_)))
-                        (if (eq? _key59601_ _k59631_)
+                              _tab59862_
+                              (fx+ (&raw-table-count _tab59862_) '1))))))
+                    (if (eq? _k59893_ (macro-deleted-obj))
+                        (_loop59883_
+                         (let ((_next-probe59898_
+                                (fx+ _start59879_
+                                     _i59888_
+                                     (fx* _i59888_ _i59888_))))
+                           (fxmodulo _next-probe59898_ _size59873_))
+                         (fx+ _i59888_ '1)
+                         (let ((_$e59901_ _deleted59890_))
+                           (if _$e59901_ _$e59901_ _probe59886_)))
+                        (if (eq? _key59863_ _k59893_)
                             (begin
                               (vector-set!
-                               _table59605_
-                               _probe59624_
-                               _key59601_)
+                               _table59867_
+                               _probe59886_
+                               _key59863_)
                               (vector-set!
-                               _table59605_
-                               (fx+ _probe59624_ '1)
-                               _value59602_))
-                            (_loop59621_
-                             (let ((_next-probe59642_
-                                    (fx+ _start59617_
-                                         _i59626_
-                                         (fx* _i59626_ _i59626_))))
-                               (fxmodulo _next-probe59642_ _size59611_))
-                             (fx+ _i59626_ '1)
-                             _deleted59628_))))))))))
+                               _table59867_
+                               (fx+ _probe59886_ '1)
+                               _value59864_))
+                            (_loop59883_
+                             (let ((_next-probe59904_
+                                    (fx+ _start59879_
+                                         _i59888_
+                                         (fx* _i59888_ _i59888_))))
+                               (fxmodulo _next-probe59904_ _size59873_))
+                             (fx+ _i59888_ '1)
+                             _deleted59890_))))))))))
     (define eq-table-update!
-      (lambda (_tab59595_ _key59596_ _eq-table-update!59597_ _default59598_)
-        (if (fx< (&raw-table-free _tab59595_)
-                 (fxquotient (vector-length (&raw-table-table _tab59595_)) '4))
-            (__raw-table-rehash! _tab59595_)
+      (lambda (_tab59857_ _key59858_ _eq-table-update!59859_ _default59860_)
+        (if (fx< (&raw-table-free _tab59857_)
+                 (fxquotient (vector-length (&raw-table-table _tab59857_)) '4))
+            (__raw-table-rehash! _tab59857_)
             '#!void)
         (__eq-table-update!
-         _tab59595_
-         _key59596_
-         _eq-table-update!59597_
-         _default59598_)))
+         _tab59857_
+         _key59858_
+         _eq-table-update!59859_
+         _default59860_)))
     (define __eq-table-update!
-      (lambda (_tab59549_ _key59550_ _eq-table-update!59551_ _default59552_)
-        (let ((_table59555_ (&raw-table-table _tab59549_))
-              (_seed59556_ (&raw-table-seed _tab59549_)))
-          (let* ((_h59558_ (fxxor (eq-hash _key59550_) _seed59556_))
-                 (_size59561_ (vector-length _table59555_))
-                 (_entries59564_ (fxquotient _size59561_ '2))
-                 (_start59567_
+      (lambda (_tab59811_ _key59812_ _eq-table-update!59813_ _default59814_)
+        (let ((_table59817_ (&raw-table-table _tab59811_))
+              (_seed59818_ (&raw-table-seed _tab59811_)))
+          (let* ((_h59820_ (fxxor (eq-hash _key59812_) _seed59818_))
+                 (_size59823_ (vector-length _table59817_))
+                 (_entries59826_ (fxquotient _size59823_ '2))
+                 (_start59829_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59558_ _entries59564_)
+                   (fxmodulo _h59820_ _entries59826_)
                    '1)))
-            (let _loop59571_ ((_probe59574_ _start59567_)
-                              (_i59576_ '1)
-                              (_deleted59578_ '#f))
-              (let ((_k59581_ (vector-ref _table59555_ _probe59574_)))
-                (if (eq? _k59581_ (macro-unused-obj))
-                    (if _deleted59578_
+            (let _loop59833_ ((_probe59836_ _start59829_)
+                              (_i59838_ '1)
+                              (_deleted59840_ '#f))
+              (let ((_k59843_ (vector-ref _table59817_ _probe59836_)))
+                (if (eq? _k59843_ (macro-unused-obj))
+                    (if _deleted59840_
                         (begin
-                          (vector-set! _table59555_ _deleted59578_ _key59550_)
+                          (vector-set! _table59817_ _deleted59840_ _key59812_)
                           (vector-set!
-                           _table59555_
-                           (fx+ _deleted59578_ '1)
-                           (_eq-table-update!59551_ _default59552_))
+                           _table59817_
+                           (fx+ _deleted59840_ '1)
+                           (_eq-table-update!59813_ _default59814_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59549_
-                              (fx+ (&raw-table-count _tab59549_) '1)))))
+                              _tab59811_
+                              (fx+ (&raw-table-count _tab59811_) '1)))))
                         (begin
-                          (vector-set! _table59555_ _probe59574_ _key59550_)
+                          (vector-set! _table59817_ _probe59836_ _key59812_)
                           (vector-set!
-                           _table59555_
-                           (fx+ _probe59574_ '1)
-                           (_eq-table-update!59551_ _default59552_))
+                           _table59817_
+                           (fx+ _probe59836_ '1)
+                           (_eq-table-update!59813_ _default59814_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59549_
-                              (fx- (&raw-table-free _tab59549_) '1))
+                              _tab59811_
+                              (fx- (&raw-table-free _tab59811_) '1))
                              (&raw-table-count-set!
-                              _tab59549_
-                              (fx+ (&raw-table-count _tab59549_) '1))))))
-                    (if (eq? _k59581_ (macro-deleted-obj))
-                        (_loop59571_
-                         (let ((_next-probe59586_
-                                (fx+ _start59567_
-                                     _i59576_
-                                     (fx* _i59576_ _i59576_))))
-                           (fxmodulo _next-probe59586_ _size59561_))
-                         (fx+ _i59576_ '1)
-                         (let ((_$e59589_ _deleted59578_))
-                           (if _$e59589_ _$e59589_ _probe59574_)))
-                        (if (eq? _key59550_ _k59581_)
+                              _tab59811_
+                              (fx+ (&raw-table-count _tab59811_) '1))))))
+                    (if (eq? _k59843_ (macro-deleted-obj))
+                        (_loop59833_
+                         (let ((_next-probe59848_
+                                (fx+ _start59829_
+                                     _i59838_
+                                     (fx* _i59838_ _i59838_))))
+                           (fxmodulo _next-probe59848_ _size59823_))
+                         (fx+ _i59838_ '1)
+                         (let ((_$e59851_ _deleted59840_))
+                           (if _$e59851_ _$e59851_ _probe59836_)))
+                        (if (eq? _key59812_ _k59843_)
                             (begin
                               (vector-set!
-                               _table59555_
-                               _probe59574_
-                               _key59550_)
+                               _table59817_
+                               _probe59836_
+                               _key59812_)
                               (vector-set!
-                               _table59555_
-                               (fx+ _probe59574_ '1)
-                               (_eq-table-update!59551_
+                               _table59817_
+                               (fx+ _probe59836_ '1)
+                               (_eq-table-update!59813_
                                 (vector-ref
-                                 _table59555_
-                                 (fx+ _probe59574_ '1)))))
-                            (_loop59571_
-                             (let ((_next-probe59592_
-                                    (fx+ _start59567_
-                                         _i59576_
-                                         (fx* _i59576_ _i59576_))))
-                               (fxmodulo _next-probe59592_ _size59561_))
-                             (fx+ _i59576_ '1)
-                             _deleted59578_))))))))))
+                                 _table59817_
+                                 (fx+ _probe59836_ '1)))))
+                            (_loop59833_
+                             (let ((_next-probe59854_
+                                    (fx+ _start59829_
+                                         _i59838_
+                                         (fx* _i59838_ _i59838_))))
+                               (fxmodulo _next-probe59854_ _size59823_))
+                             (fx+ _i59838_ '1)
+                             _deleted59840_))))))))))
     (define eq-table-delete!
-      (lambda (_tab59508_ _key59510_)
-        (let ((_table59513_ (&raw-table-table _tab59508_))
-              (_seed59515_ (&raw-table-seed _tab59508_)))
-          (let* ((_h59518_ (fxxor (eq-hash _key59510_) _seed59515_))
-                 (_size59521_ (vector-length _table59513_))
-                 (_entries59524_ (fxquotient _size59521_ '2))
-                 (_start59527_
+      (lambda (_tab59770_ _key59772_)
+        (let ((_table59775_ (&raw-table-table _tab59770_))
+              (_seed59777_ (&raw-table-seed _tab59770_)))
+          (let* ((_h59780_ (fxxor (eq-hash _key59772_) _seed59777_))
+                 (_size59783_ (vector-length _table59775_))
+                 (_entries59786_ (fxquotient _size59783_ '2))
+                 (_start59789_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59518_ _entries59524_)
+                   (fxmodulo _h59780_ _entries59786_)
                    '1)))
-            (let _loop59531_ ((_probe59534_ _start59527_) (_i59536_ '1))
-              (let ((_k59539_ (vector-ref _table59513_ _probe59534_)))
-                (if (eq? _k59539_ (macro-unused-obj))
+            (let _loop59793_ ((_probe59796_ _start59789_) (_i59798_ '1))
+              (let ((_k59801_ (vector-ref _table59775_ _probe59796_)))
+                (if (eq? _k59801_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k59539_ (macro-deleted-obj))
-                        (_loop59531_
-                         (let ((_next-probe59542_
-                                (fx+ _start59527_
-                                     _i59536_
-                                     (fx* _i59536_ _i59536_))))
-                           (fxmodulo _next-probe59542_ _size59521_))
-                         (fx+ _i59536_ '1))
-                        (if (eq? _key59510_ _k59539_)
+                    (if (eq? _k59801_ (macro-deleted-obj))
+                        (_loop59793_
+                         (let ((_next-probe59804_
+                                (fx+ _start59789_
+                                     _i59798_
+                                     (fx* _i59798_ _i59798_))))
+                           (fxmodulo _next-probe59804_ _size59783_))
+                         (fx+ _i59798_ '1))
+                        (if (eq? _key59772_ _k59801_)
                             (begin
                               (vector-set!
-                               _table59513_
-                               _probe59534_
+                               _table59775_
+                               _probe59796_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table59513_
-                               (fx+ _probe59534_ '1)
+                               _table59775_
+                               (fx+ _probe59796_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab59508_
-                                  (fx- (&raw-table-count _tab59508_) '1)))))
-                            (_loop59531_
-                             (let ((_next-probe59546_
-                                    (fx+ _start59527_
-                                         _i59536_
-                                         (fx* _i59536_ _i59536_))))
-                               (fxmodulo _next-probe59546_ _size59521_))
-                             (fx+ _i59536_ '1)))))))))))
+                                  _tab59770_
+                                  (fx- (&raw-table-count _tab59770_) '1)))))
+                            (_loop59793_
+                             (let ((_next-probe59808_
+                                    (fx+ _start59789_
+                                         _i59798_
+                                         (fx* _i59798_ _i59798_))))
+                               (fxmodulo _next-probe59808_ _size59783_))
+                             (fx+ _i59798_ '1)))))))))))
     (define make-eqv-table__%
-      (lambda (_size-hint59489_ _seed59491_)
-        (make-raw-table__% _size-hint59489_ eqv-hash eqv? _seed59491_)))
+      (lambda (_size-hint59751_ _seed59753_)
+        (make-raw-table__% _size-hint59751_ eqv-hash eqv? _seed59753_)))
     (define make-eqv-table__0
       (lambda ()
-        (let* ((_size-hint59497_ '#f) (_seed59499_ '0))
-          (make-eqv-table__% _size-hint59497_ _seed59499_))))
+        (let* ((_size-hint59759_ '#f) (_seed59761_ '0))
+          (make-eqv-table__% _size-hint59759_ _seed59761_))))
     (define make-eqv-table__1
-      (lambda (_size-hint59501_)
-        (let ((_seed59503_ '0))
-          (make-eqv-table__% _size-hint59501_ _seed59503_))))
+      (lambda (_size-hint59763_)
+        (let ((_seed59765_ '0))
+          (make-eqv-table__% _size-hint59763_ _seed59765_))))
     (define make-eqv-table
-      (lambda _g60030_
-        (let ((_g60029_ (##length _g60030_)))
-          (cond ((##fx= _g60029_ 0)
-                 (apply (lambda () (make-eqv-table__0)) _g60030_))
-                ((##fx= _g60029_ 1)
-                 (apply (lambda (_size-hint59501_)
-                          (make-eqv-table__1 _size-hint59501_))
-                        _g60030_))
-                ((##fx= _g60029_ 2)
-                 (apply (lambda (_size-hint59505_ _seed59506_)
-                          (make-eqv-table__% _size-hint59505_ _seed59506_))
-                        _g60030_))
+      (lambda _g60292_
+        (let ((_g60291_ (##length _g60292_)))
+          (cond ((##fx= _g60291_ 0)
+                 (apply (lambda () (make-eqv-table__0)) _g60292_))
+                ((##fx= _g60291_ 1)
+                 (apply (lambda (_size-hint59763_)
+                          (make-eqv-table__1 _size-hint59763_))
+                        _g60292_))
+                ((##fx= _g60291_ 2)
+                 (apply (lambda (_size-hint59767_ _seed59768_)
+                          (make-eqv-table__% _size-hint59767_ _seed59768_))
+                        _g60292_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-eqv-table
-                  _g60030_))))))
+                  _g60292_))))))
     (define eqv-table-ref
-      (lambda (_tab59446_ _key59447_ _default59448_)
-        (let ((_table59450_ (&raw-table-table _tab59446_))
-              (_seed59451_ (&raw-table-seed _tab59446_)))
-          (let* ((_h59453_ (fxxor (eqv-hash _key59447_) _seed59451_))
-                 (_size59456_ (vector-length _table59450_))
-                 (_entries59459_ (fxquotient _size59456_ '2))
-                 (_start59462_
+      (lambda (_tab59708_ _key59709_ _default59710_)
+        (let ((_table59712_ (&raw-table-table _tab59708_))
+              (_seed59713_ (&raw-table-seed _tab59708_)))
+          (let* ((_h59715_ (fxxor (eqv-hash _key59709_) _seed59713_))
+                 (_size59718_ (vector-length _table59712_))
+                 (_entries59721_ (fxquotient _size59718_ '2))
+                 (_start59724_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59453_ _entries59459_)
+                   (fxmodulo _h59715_ _entries59721_)
                    '1)))
-            (let _loop59466_ ((_probe59469_ _start59462_)
-                              (_i59471_ '1)
-                              (_deleted59473_ '#f))
-              (let ((_k59476_ (vector-ref _table59450_ _probe59469_)))
-                (if (eq? _k59476_ (macro-unused-obj))
-                    _default59448_
-                    (if (eq? _k59476_ (macro-deleted-obj))
-                        (_loop59466_
-                         (let ((_next-probe59479_
-                                (fx+ _start59462_
-                                     _i59471_
-                                     (fx* _i59471_ _i59471_))))
-                           (fxmodulo _next-probe59479_ _size59456_))
-                         (fx+ _i59471_ '1)
-                         (let ((_$e59482_ _deleted59473_))
-                           (if _$e59482_ _$e59482_ _probe59469_)))
-                        (if (eqv? _key59447_ _k59476_)
-                            (vector-ref _table59450_ (fx+ _probe59469_ '1))
-                            (_loop59466_
-                             (let ((_next-probe59485_
-                                    (fx+ _start59462_
-                                         _i59471_
-                                         (fx* _i59471_ _i59471_))))
-                               (fxmodulo _next-probe59485_ _size59456_))
-                             (fx+ _i59471_ '1)
-                             _deleted59473_))))))))))
+            (let _loop59728_ ((_probe59731_ _start59724_)
+                              (_i59733_ '1)
+                              (_deleted59735_ '#f))
+              (let ((_k59738_ (vector-ref _table59712_ _probe59731_)))
+                (if (eq? _k59738_ (macro-unused-obj))
+                    _default59710_
+                    (if (eq? _k59738_ (macro-deleted-obj))
+                        (_loop59728_
+                         (let ((_next-probe59741_
+                                (fx+ _start59724_
+                                     _i59733_
+                                     (fx* _i59733_ _i59733_))))
+                           (fxmodulo _next-probe59741_ _size59718_))
+                         (fx+ _i59733_ '1)
+                         (let ((_$e59744_ _deleted59735_))
+                           (if _$e59744_ _$e59744_ _probe59731_)))
+                        (if (eqv? _key59709_ _k59738_)
+                            (vector-ref _table59712_ (fx+ _probe59731_ '1))
+                            (_loop59728_
+                             (let ((_next-probe59747_
+                                    (fx+ _start59724_
+                                         _i59733_
+                                         (fx* _i59733_ _i59733_))))
+                               (fxmodulo _next-probe59747_ _size59718_))
+                             (fx+ _i59733_ '1)
+                             _deleted59735_))))))))))
     (define eqv-table-set!
-      (lambda (_tab59442_ _key59443_ _value59444_)
-        (if (fx< (&raw-table-free _tab59442_)
-                 (fxquotient (vector-length (&raw-table-table _tab59442_)) '4))
-            (__raw-table-rehash! _tab59442_)
+      (lambda (_tab59704_ _key59705_ _value59706_)
+        (if (fx< (&raw-table-free _tab59704_)
+                 (fxquotient (vector-length (&raw-table-table _tab59704_)) '4))
+            (__raw-table-rehash! _tab59704_)
             '#!void)
-        (__eqv-table-set! _tab59442_ _key59443_ _value59444_)))
+        (__eqv-table-set! _tab59704_ _key59705_ _value59706_)))
     (define __eqv-table-set!
-      (lambda (_tab59397_ _key59398_ _value59399_)
-        (let ((_table59402_ (&raw-table-table _tab59397_))
-              (_seed59403_ (&raw-table-seed _tab59397_)))
-          (let* ((_h59405_ (fxxor (eqv-hash _key59398_) _seed59403_))
-                 (_size59408_ (vector-length _table59402_))
-                 (_entries59411_ (fxquotient _size59408_ '2))
-                 (_start59414_
+      (lambda (_tab59659_ _key59660_ _value59661_)
+        (let ((_table59664_ (&raw-table-table _tab59659_))
+              (_seed59665_ (&raw-table-seed _tab59659_)))
+          (let* ((_h59667_ (fxxor (eqv-hash _key59660_) _seed59665_))
+                 (_size59670_ (vector-length _table59664_))
+                 (_entries59673_ (fxquotient _size59670_ '2))
+                 (_start59676_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59405_ _entries59411_)
+                   (fxmodulo _h59667_ _entries59673_)
                    '1)))
-            (let _loop59418_ ((_probe59421_ _start59414_)
-                              (_i59423_ '1)
-                              (_deleted59425_ '#f))
-              (let ((_k59428_ (vector-ref _table59402_ _probe59421_)))
-                (if (eq? _k59428_ (macro-unused-obj))
-                    (if _deleted59425_
+            (let _loop59680_ ((_probe59683_ _start59676_)
+                              (_i59685_ '1)
+                              (_deleted59687_ '#f))
+              (let ((_k59690_ (vector-ref _table59664_ _probe59683_)))
+                (if (eq? _k59690_ (macro-unused-obj))
+                    (if _deleted59687_
                         (begin
-                          (vector-set! _table59402_ _deleted59425_ _key59398_)
+                          (vector-set! _table59664_ _deleted59687_ _key59660_)
                           (vector-set!
-                           _table59402_
-                           (fx+ _deleted59425_ '1)
-                           _value59399_)
+                           _table59664_
+                           (fx+ _deleted59687_ '1)
+                           _value59661_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59397_
-                              (fx+ (&raw-table-count _tab59397_) '1)))))
+                              _tab59659_
+                              (fx+ (&raw-table-count _tab59659_) '1)))))
                         (begin
-                          (vector-set! _table59402_ _probe59421_ _key59398_)
+                          (vector-set! _table59664_ _probe59683_ _key59660_)
                           (vector-set!
-                           _table59402_
-                           (fx+ _probe59421_ '1)
-                           _value59399_)
+                           _table59664_
+                           (fx+ _probe59683_ '1)
+                           _value59661_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59397_
-                              (fx- (&raw-table-free _tab59397_) '1))
+                              _tab59659_
+                              (fx- (&raw-table-free _tab59659_) '1))
                              (&raw-table-count-set!
-                              _tab59397_
-                              (fx+ (&raw-table-count _tab59397_) '1))))))
-                    (if (eq? _k59428_ (macro-deleted-obj))
-                        (_loop59418_
-                         (let ((_next-probe59433_
-                                (fx+ _start59414_
-                                     _i59423_
-                                     (fx* _i59423_ _i59423_))))
-                           (fxmodulo _next-probe59433_ _size59408_))
-                         (fx+ _i59423_ '1)
-                         (let ((_$e59436_ _deleted59425_))
-                           (if _$e59436_ _$e59436_ _probe59421_)))
-                        (if (eqv? _key59398_ _k59428_)
+                              _tab59659_
+                              (fx+ (&raw-table-count _tab59659_) '1))))))
+                    (if (eq? _k59690_ (macro-deleted-obj))
+                        (_loop59680_
+                         (let ((_next-probe59695_
+                                (fx+ _start59676_
+                                     _i59685_
+                                     (fx* _i59685_ _i59685_))))
+                           (fxmodulo _next-probe59695_ _size59670_))
+                         (fx+ _i59685_ '1)
+                         (let ((_$e59698_ _deleted59687_))
+                           (if _$e59698_ _$e59698_ _probe59683_)))
+                        (if (eqv? _key59660_ _k59690_)
                             (begin
                               (vector-set!
-                               _table59402_
-                               _probe59421_
-                               _key59398_)
+                               _table59664_
+                               _probe59683_
+                               _key59660_)
                               (vector-set!
-                               _table59402_
-                               (fx+ _probe59421_ '1)
-                               _value59399_))
-                            (_loop59418_
-                             (let ((_next-probe59439_
-                                    (fx+ _start59414_
-                                         _i59423_
-                                         (fx* _i59423_ _i59423_))))
-                               (fxmodulo _next-probe59439_ _size59408_))
-                             (fx+ _i59423_ '1)
-                             _deleted59425_))))))))))
+                               _table59664_
+                               (fx+ _probe59683_ '1)
+                               _value59661_))
+                            (_loop59680_
+                             (let ((_next-probe59701_
+                                    (fx+ _start59676_
+                                         _i59685_
+                                         (fx* _i59685_ _i59685_))))
+                               (fxmodulo _next-probe59701_ _size59670_))
+                             (fx+ _i59685_ '1)
+                             _deleted59687_))))))))))
     (define eqv-table-update!
-      (lambda (_tab59392_ _key59393_ _eqv-table-update!59394_ _default59395_)
-        (if (fx< (&raw-table-free _tab59392_)
-                 (fxquotient (vector-length (&raw-table-table _tab59392_)) '4))
-            (__raw-table-rehash! _tab59392_)
+      (lambda (_tab59654_ _key59655_ _eqv-table-update!59656_ _default59657_)
+        (if (fx< (&raw-table-free _tab59654_)
+                 (fxquotient (vector-length (&raw-table-table _tab59654_)) '4))
+            (__raw-table-rehash! _tab59654_)
             '#!void)
         (__eqv-table-update!
-         _tab59392_
-         _key59393_
-         _eqv-table-update!59394_
-         _default59395_)))
+         _tab59654_
+         _key59655_
+         _eqv-table-update!59656_
+         _default59657_)))
     (define __eqv-table-update!
-      (lambda (_tab59346_ _key59347_ _eqv-table-update!59348_ _default59349_)
-        (let ((_table59352_ (&raw-table-table _tab59346_))
-              (_seed59353_ (&raw-table-seed _tab59346_)))
-          (let* ((_h59355_ (fxxor (eqv-hash _key59347_) _seed59353_))
-                 (_size59358_ (vector-length _table59352_))
-                 (_entries59361_ (fxquotient _size59358_ '2))
-                 (_start59364_
+      (lambda (_tab59608_ _key59609_ _eqv-table-update!59610_ _default59611_)
+        (let ((_table59614_ (&raw-table-table _tab59608_))
+              (_seed59615_ (&raw-table-seed _tab59608_)))
+          (let* ((_h59617_ (fxxor (eqv-hash _key59609_) _seed59615_))
+                 (_size59620_ (vector-length _table59614_))
+                 (_entries59623_ (fxquotient _size59620_ '2))
+                 (_start59626_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59355_ _entries59361_)
+                   (fxmodulo _h59617_ _entries59623_)
                    '1)))
-            (let _loop59368_ ((_probe59371_ _start59364_)
-                              (_i59373_ '1)
-                              (_deleted59375_ '#f))
-              (let ((_k59378_ (vector-ref _table59352_ _probe59371_)))
-                (if (eq? _k59378_ (macro-unused-obj))
-                    (if _deleted59375_
+            (let _loop59630_ ((_probe59633_ _start59626_)
+                              (_i59635_ '1)
+                              (_deleted59637_ '#f))
+              (let ((_k59640_ (vector-ref _table59614_ _probe59633_)))
+                (if (eq? _k59640_ (macro-unused-obj))
+                    (if _deleted59637_
                         (begin
-                          (vector-set! _table59352_ _deleted59375_ _key59347_)
+                          (vector-set! _table59614_ _deleted59637_ _key59609_)
                           (vector-set!
-                           _table59352_
-                           (fx+ _deleted59375_ '1)
-                           (_eqv-table-update!59348_ _default59349_))
+                           _table59614_
+                           (fx+ _deleted59637_ '1)
+                           (_eqv-table-update!59610_ _default59611_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59346_
-                              (fx+ (&raw-table-count _tab59346_) '1)))))
+                              _tab59608_
+                              (fx+ (&raw-table-count _tab59608_) '1)))))
                         (begin
-                          (vector-set! _table59352_ _probe59371_ _key59347_)
+                          (vector-set! _table59614_ _probe59633_ _key59609_)
                           (vector-set!
-                           _table59352_
-                           (fx+ _probe59371_ '1)
-                           (_eqv-table-update!59348_ _default59349_))
+                           _table59614_
+                           (fx+ _probe59633_ '1)
+                           (_eqv-table-update!59610_ _default59611_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59346_
-                              (fx- (&raw-table-free _tab59346_) '1))
+                              _tab59608_
+                              (fx- (&raw-table-free _tab59608_) '1))
                              (&raw-table-count-set!
-                              _tab59346_
-                              (fx+ (&raw-table-count _tab59346_) '1))))))
-                    (if (eq? _k59378_ (macro-deleted-obj))
-                        (_loop59368_
-                         (let ((_next-probe59383_
-                                (fx+ _start59364_
-                                     _i59373_
-                                     (fx* _i59373_ _i59373_))))
-                           (fxmodulo _next-probe59383_ _size59358_))
-                         (fx+ _i59373_ '1)
-                         (let ((_$e59386_ _deleted59375_))
-                           (if _$e59386_ _$e59386_ _probe59371_)))
-                        (if (eqv? _key59347_ _k59378_)
+                              _tab59608_
+                              (fx+ (&raw-table-count _tab59608_) '1))))))
+                    (if (eq? _k59640_ (macro-deleted-obj))
+                        (_loop59630_
+                         (let ((_next-probe59645_
+                                (fx+ _start59626_
+                                     _i59635_
+                                     (fx* _i59635_ _i59635_))))
+                           (fxmodulo _next-probe59645_ _size59620_))
+                         (fx+ _i59635_ '1)
+                         (let ((_$e59648_ _deleted59637_))
+                           (if _$e59648_ _$e59648_ _probe59633_)))
+                        (if (eqv? _key59609_ _k59640_)
                             (begin
                               (vector-set!
-                               _table59352_
-                               _probe59371_
-                               _key59347_)
+                               _table59614_
+                               _probe59633_
+                               _key59609_)
                               (vector-set!
-                               _table59352_
-                               (fx+ _probe59371_ '1)
-                               (_eqv-table-update!59348_
+                               _table59614_
+                               (fx+ _probe59633_ '1)
+                               (_eqv-table-update!59610_
                                 (vector-ref
-                                 _table59352_
-                                 (fx+ _probe59371_ '1)))))
-                            (_loop59368_
-                             (let ((_next-probe59389_
-                                    (fx+ _start59364_
-                                         _i59373_
-                                         (fx* _i59373_ _i59373_))))
-                               (fxmodulo _next-probe59389_ _size59358_))
-                             (fx+ _i59373_ '1)
-                             _deleted59375_))))))))))
+                                 _table59614_
+                                 (fx+ _probe59633_ '1)))))
+                            (_loop59630_
+                             (let ((_next-probe59651_
+                                    (fx+ _start59626_
+                                         _i59635_
+                                         (fx* _i59635_ _i59635_))))
+                               (fxmodulo _next-probe59651_ _size59620_))
+                             (fx+ _i59635_ '1)
+                             _deleted59637_))))))))))
     (define eqv-table-delete!
-      (lambda (_tab59305_ _key59307_)
-        (let ((_table59310_ (&raw-table-table _tab59305_))
-              (_seed59312_ (&raw-table-seed _tab59305_)))
-          (let* ((_h59315_ (fxxor (eqv-hash _key59307_) _seed59312_))
-                 (_size59318_ (vector-length _table59310_))
-                 (_entries59321_ (fxquotient _size59318_ '2))
-                 (_start59324_
+      (lambda (_tab59567_ _key59569_)
+        (let ((_table59572_ (&raw-table-table _tab59567_))
+              (_seed59574_ (&raw-table-seed _tab59567_)))
+          (let* ((_h59577_ (fxxor (eqv-hash _key59569_) _seed59574_))
+                 (_size59580_ (vector-length _table59572_))
+                 (_entries59583_ (fxquotient _size59580_ '2))
+                 (_start59586_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59315_ _entries59321_)
+                   (fxmodulo _h59577_ _entries59583_)
                    '1)))
-            (let _loop59328_ ((_probe59331_ _start59324_) (_i59333_ '1))
-              (let ((_k59336_ (vector-ref _table59310_ _probe59331_)))
-                (if (eq? _k59336_ (macro-unused-obj))
+            (let _loop59590_ ((_probe59593_ _start59586_) (_i59595_ '1))
+              (let ((_k59598_ (vector-ref _table59572_ _probe59593_)))
+                (if (eq? _k59598_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k59336_ (macro-deleted-obj))
-                        (_loop59328_
-                         (let ((_next-probe59339_
-                                (fx+ _start59324_
-                                     _i59333_
-                                     (fx* _i59333_ _i59333_))))
-                           (fxmodulo _next-probe59339_ _size59318_))
-                         (fx+ _i59333_ '1))
-                        (if (eqv? _key59307_ _k59336_)
+                    (if (eq? _k59598_ (macro-deleted-obj))
+                        (_loop59590_
+                         (let ((_next-probe59601_
+                                (fx+ _start59586_
+                                     _i59595_
+                                     (fx* _i59595_ _i59595_))))
+                           (fxmodulo _next-probe59601_ _size59580_))
+                         (fx+ _i59595_ '1))
+                        (if (eqv? _key59569_ _k59598_)
                             (begin
                               (vector-set!
-                               _table59310_
-                               _probe59331_
+                               _table59572_
+                               _probe59593_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table59310_
-                               (fx+ _probe59331_ '1)
+                               _table59572_
+                               (fx+ _probe59593_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab59305_
-                                  (fx- (&raw-table-count _tab59305_) '1)))))
-                            (_loop59328_
-                             (let ((_next-probe59343_
-                                    (fx+ _start59324_
-                                         _i59333_
-                                         (fx* _i59333_ _i59333_))))
-                               (fxmodulo _next-probe59343_ _size59318_))
-                             (fx+ _i59333_ '1)))))))))))
+                                  _tab59567_
+                                  (fx- (&raw-table-count _tab59567_) '1)))))
+                            (_loop59590_
+                             (let ((_next-probe59605_
+                                    (fx+ _start59586_
+                                         _i59595_
+                                         (fx* _i59595_ _i59595_))))
+                               (fxmodulo _next-probe59605_ _size59580_))
+                             (fx+ _i59595_ '1)))))))))))
     (define make-symbolic-table__%
-      (lambda (_size-hint59286_ _seed59288_)
-        (make-raw-table__% _size-hint59286_ symbolic-hash eq? _seed59288_)))
+      (lambda (_size-hint59548_ _seed59550_)
+        (make-raw-table__% _size-hint59548_ symbolic-hash eq? _seed59550_)))
     (define make-symbolic-table__0
       (lambda ()
-        (let* ((_size-hint59294_ '#f) (_seed59296_ '0))
-          (make-symbolic-table__% _size-hint59294_ _seed59296_))))
+        (let* ((_size-hint59556_ '#f) (_seed59558_ '0))
+          (make-symbolic-table__% _size-hint59556_ _seed59558_))))
     (define make-symbolic-table__1
-      (lambda (_size-hint59298_)
-        (let ((_seed59300_ '0))
-          (make-symbolic-table__% _size-hint59298_ _seed59300_))))
+      (lambda (_size-hint59560_)
+        (let ((_seed59562_ '0))
+          (make-symbolic-table__% _size-hint59560_ _seed59562_))))
     (define make-symbolic-table
-      (lambda _g60032_
-        (let ((_g60031_ (##length _g60032_)))
-          (cond ((##fx= _g60031_ 0)
-                 (apply (lambda () (make-symbolic-table__0)) _g60032_))
-                ((##fx= _g60031_ 1)
-                 (apply (lambda (_size-hint59298_)
-                          (make-symbolic-table__1 _size-hint59298_))
-                        _g60032_))
-                ((##fx= _g60031_ 2)
-                 (apply (lambda (_size-hint59302_ _seed59303_)
+      (lambda _g60294_
+        (let ((_g60293_ (##length _g60294_)))
+          (cond ((##fx= _g60293_ 0)
+                 (apply (lambda () (make-symbolic-table__0)) _g60294_))
+                ((##fx= _g60293_ 1)
+                 (apply (lambda (_size-hint59560_)
+                          (make-symbolic-table__1 _size-hint59560_))
+                        _g60294_))
+                ((##fx= _g60293_ 2)
+                 (apply (lambda (_size-hint59564_ _seed59565_)
                           (make-symbolic-table__%
-                           _size-hint59302_
-                           _seed59303_))
-                        _g60032_))
+                           _size-hint59564_
+                           _seed59565_))
+                        _g60294_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-symbolic-table
-                  _g60032_))))))
+                  _g60294_))))))
     (define symbolic-table-ref
-      (lambda (_tab59243_ _key59244_ _default59245_)
-        (let ((_table59247_ (&raw-table-table _tab59243_))
-              (_seed59248_ (&raw-table-seed _tab59243_)))
-          (let* ((_h59250_ (fxxor (symbolic-hash _key59244_) _seed59248_))
-                 (_size59253_ (vector-length _table59247_))
-                 (_entries59256_ (fxquotient _size59253_ '2))
-                 (_start59259_
+      (lambda (_tab59505_ _key59506_ _default59507_)
+        (let ((_table59509_ (&raw-table-table _tab59505_))
+              (_seed59510_ (&raw-table-seed _tab59505_)))
+          (let* ((_h59512_ (fxxor (symbolic-hash _key59506_) _seed59510_))
+                 (_size59515_ (vector-length _table59509_))
+                 (_entries59518_ (fxquotient _size59515_ '2))
+                 (_start59521_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59250_ _entries59256_)
+                   (fxmodulo _h59512_ _entries59518_)
                    '1)))
-            (let _loop59263_ ((_probe59266_ _start59259_)
-                              (_i59268_ '1)
-                              (_deleted59270_ '#f))
-              (let ((_k59273_ (vector-ref _table59247_ _probe59266_)))
-                (if (eq? _k59273_ (macro-unused-obj))
-                    _default59245_
-                    (if (eq? _k59273_ (macro-deleted-obj))
-                        (_loop59263_
-                         (let ((_next-probe59276_
-                                (fx+ _start59259_
-                                     _i59268_
-                                     (fx* _i59268_ _i59268_))))
-                           (fxmodulo _next-probe59276_ _size59253_))
-                         (fx+ _i59268_ '1)
-                         (let ((_$e59279_ _deleted59270_))
-                           (if _$e59279_ _$e59279_ _probe59266_)))
-                        (if (eq? _key59244_ _k59273_)
-                            (vector-ref _table59247_ (fx+ _probe59266_ '1))
-                            (_loop59263_
-                             (let ((_next-probe59282_
-                                    (fx+ _start59259_
-                                         _i59268_
-                                         (fx* _i59268_ _i59268_))))
-                               (fxmodulo _next-probe59282_ _size59253_))
-                             (fx+ _i59268_ '1)
-                             _deleted59270_))))))))))
+            (let _loop59525_ ((_probe59528_ _start59521_)
+                              (_i59530_ '1)
+                              (_deleted59532_ '#f))
+              (let ((_k59535_ (vector-ref _table59509_ _probe59528_)))
+                (if (eq? _k59535_ (macro-unused-obj))
+                    _default59507_
+                    (if (eq? _k59535_ (macro-deleted-obj))
+                        (_loop59525_
+                         (let ((_next-probe59538_
+                                (fx+ _start59521_
+                                     _i59530_
+                                     (fx* _i59530_ _i59530_))))
+                           (fxmodulo _next-probe59538_ _size59515_))
+                         (fx+ _i59530_ '1)
+                         (let ((_$e59541_ _deleted59532_))
+                           (if _$e59541_ _$e59541_ _probe59528_)))
+                        (if (eq? _key59506_ _k59535_)
+                            (vector-ref _table59509_ (fx+ _probe59528_ '1))
+                            (_loop59525_
+                             (let ((_next-probe59544_
+                                    (fx+ _start59521_
+                                         _i59530_
+                                         (fx* _i59530_ _i59530_))))
+                               (fxmodulo _next-probe59544_ _size59515_))
+                             (fx+ _i59530_ '1)
+                             _deleted59532_))))))))))
     (define symbolic-table-set!
-      (lambda (_tab59239_ _key59240_ _value59241_)
-        (if (fx< (&raw-table-free _tab59239_)
-                 (fxquotient (vector-length (&raw-table-table _tab59239_)) '4))
-            (__raw-table-rehash! _tab59239_)
+      (lambda (_tab59501_ _key59502_ _value59503_)
+        (if (fx< (&raw-table-free _tab59501_)
+                 (fxquotient (vector-length (&raw-table-table _tab59501_)) '4))
+            (__raw-table-rehash! _tab59501_)
             '#!void)
-        (__symbolic-table-set! _tab59239_ _key59240_ _value59241_)))
+        (__symbolic-table-set! _tab59501_ _key59502_ _value59503_)))
     (define __symbolic-table-set!
-      (lambda (_tab59194_ _key59195_ _value59196_)
-        (let ((_table59199_ (&raw-table-table _tab59194_))
-              (_seed59200_ (&raw-table-seed _tab59194_)))
-          (let* ((_h59202_ (fxxor (symbolic-hash _key59195_) _seed59200_))
-                 (_size59205_ (vector-length _table59199_))
-                 (_entries59208_ (fxquotient _size59205_ '2))
-                 (_start59211_
+      (lambda (_tab59456_ _key59457_ _value59458_)
+        (let ((_table59461_ (&raw-table-table _tab59456_))
+              (_seed59462_ (&raw-table-seed _tab59456_)))
+          (let* ((_h59464_ (fxxor (symbolic-hash _key59457_) _seed59462_))
+                 (_size59467_ (vector-length _table59461_))
+                 (_entries59470_ (fxquotient _size59467_ '2))
+                 (_start59473_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59202_ _entries59208_)
+                   (fxmodulo _h59464_ _entries59470_)
                    '1)))
-            (let _loop59215_ ((_probe59218_ _start59211_)
-                              (_i59220_ '1)
-                              (_deleted59222_ '#f))
-              (let ((_k59225_ (vector-ref _table59199_ _probe59218_)))
-                (if (eq? _k59225_ (macro-unused-obj))
-                    (if _deleted59222_
+            (let _loop59477_ ((_probe59480_ _start59473_)
+                              (_i59482_ '1)
+                              (_deleted59484_ '#f))
+              (let ((_k59487_ (vector-ref _table59461_ _probe59480_)))
+                (if (eq? _k59487_ (macro-unused-obj))
+                    (if _deleted59484_
                         (begin
-                          (vector-set! _table59199_ _deleted59222_ _key59195_)
+                          (vector-set! _table59461_ _deleted59484_ _key59457_)
                           (vector-set!
-                           _table59199_
-                           (fx+ _deleted59222_ '1)
-                           _value59196_)
+                           _table59461_
+                           (fx+ _deleted59484_ '1)
+                           _value59458_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59194_
-                              (fx+ (&raw-table-count _tab59194_) '1)))))
+                              _tab59456_
+                              (fx+ (&raw-table-count _tab59456_) '1)))))
                         (begin
-                          (vector-set! _table59199_ _probe59218_ _key59195_)
+                          (vector-set! _table59461_ _probe59480_ _key59457_)
                           (vector-set!
-                           _table59199_
-                           (fx+ _probe59218_ '1)
-                           _value59196_)
+                           _table59461_
+                           (fx+ _probe59480_ '1)
+                           _value59458_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59194_
-                              (fx- (&raw-table-free _tab59194_) '1))
+                              _tab59456_
+                              (fx- (&raw-table-free _tab59456_) '1))
                              (&raw-table-count-set!
-                              _tab59194_
-                              (fx+ (&raw-table-count _tab59194_) '1))))))
-                    (if (eq? _k59225_ (macro-deleted-obj))
-                        (_loop59215_
-                         (let ((_next-probe59230_
-                                (fx+ _start59211_
-                                     _i59220_
-                                     (fx* _i59220_ _i59220_))))
-                           (fxmodulo _next-probe59230_ _size59205_))
-                         (fx+ _i59220_ '1)
-                         (let ((_$e59233_ _deleted59222_))
-                           (if _$e59233_ _$e59233_ _probe59218_)))
-                        (if (eq? _key59195_ _k59225_)
+                              _tab59456_
+                              (fx+ (&raw-table-count _tab59456_) '1))))))
+                    (if (eq? _k59487_ (macro-deleted-obj))
+                        (_loop59477_
+                         (let ((_next-probe59492_
+                                (fx+ _start59473_
+                                     _i59482_
+                                     (fx* _i59482_ _i59482_))))
+                           (fxmodulo _next-probe59492_ _size59467_))
+                         (fx+ _i59482_ '1)
+                         (let ((_$e59495_ _deleted59484_))
+                           (if _$e59495_ _$e59495_ _probe59480_)))
+                        (if (eq? _key59457_ _k59487_)
                             (begin
                               (vector-set!
-                               _table59199_
-                               _probe59218_
-                               _key59195_)
+                               _table59461_
+                               _probe59480_
+                               _key59457_)
                               (vector-set!
-                               _table59199_
-                               (fx+ _probe59218_ '1)
-                               _value59196_))
-                            (_loop59215_
-                             (let ((_next-probe59236_
-                                    (fx+ _start59211_
-                                         _i59220_
-                                         (fx* _i59220_ _i59220_))))
-                               (fxmodulo _next-probe59236_ _size59205_))
-                             (fx+ _i59220_ '1)
-                             _deleted59222_))))))))))
+                               _table59461_
+                               (fx+ _probe59480_ '1)
+                               _value59458_))
+                            (_loop59477_
+                             (let ((_next-probe59498_
+                                    (fx+ _start59473_
+                                         _i59482_
+                                         (fx* _i59482_ _i59482_))))
+                               (fxmodulo _next-probe59498_ _size59467_))
+                             (fx+ _i59482_ '1)
+                             _deleted59484_))))))))))
     (define symbolic-table-update!
-      (lambda (_tab59189_
-               _key59190_
-               _symbolic-table-update!59191_
-               _default59192_)
-        (if (fx< (&raw-table-free _tab59189_)
-                 (fxquotient (vector-length (&raw-table-table _tab59189_)) '4))
-            (__raw-table-rehash! _tab59189_)
+      (lambda (_tab59451_
+               _key59452_
+               _symbolic-table-update!59453_
+               _default59454_)
+        (if (fx< (&raw-table-free _tab59451_)
+                 (fxquotient (vector-length (&raw-table-table _tab59451_)) '4))
+            (__raw-table-rehash! _tab59451_)
             '#!void)
         (__symbolic-table-update!
-         _tab59189_
-         _key59190_
-         _symbolic-table-update!59191_
-         _default59192_)))
+         _tab59451_
+         _key59452_
+         _symbolic-table-update!59453_
+         _default59454_)))
     (define __symbolic-table-update!
-      (lambda (_tab59143_
-               _key59144_
-               _symbolic-table-update!59145_
-               _default59146_)
-        (let ((_table59149_ (&raw-table-table _tab59143_))
-              (_seed59150_ (&raw-table-seed _tab59143_)))
-          (let* ((_h59152_ (fxxor (symbolic-hash _key59144_) _seed59150_))
-                 (_size59155_ (vector-length _table59149_))
-                 (_entries59158_ (fxquotient _size59155_ '2))
-                 (_start59161_
+      (lambda (_tab59405_
+               _key59406_
+               _symbolic-table-update!59407_
+               _default59408_)
+        (let ((_table59411_ (&raw-table-table _tab59405_))
+              (_seed59412_ (&raw-table-seed _tab59405_)))
+          (let* ((_h59414_ (fxxor (symbolic-hash _key59406_) _seed59412_))
+                 (_size59417_ (vector-length _table59411_))
+                 (_entries59420_ (fxquotient _size59417_ '2))
+                 (_start59423_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59152_ _entries59158_)
+                   (fxmodulo _h59414_ _entries59420_)
                    '1)))
-            (let _loop59165_ ((_probe59168_ _start59161_)
-                              (_i59170_ '1)
-                              (_deleted59172_ '#f))
-              (let ((_k59175_ (vector-ref _table59149_ _probe59168_)))
-                (if (eq? _k59175_ (macro-unused-obj))
-                    (if _deleted59172_
+            (let _loop59427_ ((_probe59430_ _start59423_)
+                              (_i59432_ '1)
+                              (_deleted59434_ '#f))
+              (let ((_k59437_ (vector-ref _table59411_ _probe59430_)))
+                (if (eq? _k59437_ (macro-unused-obj))
+                    (if _deleted59434_
                         (begin
-                          (vector-set! _table59149_ _deleted59172_ _key59144_)
+                          (vector-set! _table59411_ _deleted59434_ _key59406_)
                           (vector-set!
-                           _table59149_
-                           (fx+ _deleted59172_ '1)
-                           (_symbolic-table-update!59145_ _default59146_))
+                           _table59411_
+                           (fx+ _deleted59434_ '1)
+                           (_symbolic-table-update!59407_ _default59408_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab59143_
-                              (fx+ (&raw-table-count _tab59143_) '1)))))
+                              _tab59405_
+                              (fx+ (&raw-table-count _tab59405_) '1)))))
                         (begin
-                          (vector-set! _table59149_ _probe59168_ _key59144_)
+                          (vector-set! _table59411_ _probe59430_ _key59406_)
                           (vector-set!
-                           _table59149_
-                           (fx+ _probe59168_ '1)
-                           (_symbolic-table-update!59145_ _default59146_))
+                           _table59411_
+                           (fx+ _probe59430_ '1)
+                           (_symbolic-table-update!59407_ _default59408_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab59143_
-                              (fx- (&raw-table-free _tab59143_) '1))
+                              _tab59405_
+                              (fx- (&raw-table-free _tab59405_) '1))
                              (&raw-table-count-set!
-                              _tab59143_
-                              (fx+ (&raw-table-count _tab59143_) '1))))))
-                    (if (eq? _k59175_ (macro-deleted-obj))
-                        (_loop59165_
-                         (let ((_next-probe59180_
-                                (fx+ _start59161_
-                                     _i59170_
-                                     (fx* _i59170_ _i59170_))))
-                           (fxmodulo _next-probe59180_ _size59155_))
-                         (fx+ _i59170_ '1)
-                         (let ((_$e59183_ _deleted59172_))
-                           (if _$e59183_ _$e59183_ _probe59168_)))
-                        (if (eq? _key59144_ _k59175_)
+                              _tab59405_
+                              (fx+ (&raw-table-count _tab59405_) '1))))))
+                    (if (eq? _k59437_ (macro-deleted-obj))
+                        (_loop59427_
+                         (let ((_next-probe59442_
+                                (fx+ _start59423_
+                                     _i59432_
+                                     (fx* _i59432_ _i59432_))))
+                           (fxmodulo _next-probe59442_ _size59417_))
+                         (fx+ _i59432_ '1)
+                         (let ((_$e59445_ _deleted59434_))
+                           (if _$e59445_ _$e59445_ _probe59430_)))
+                        (if (eq? _key59406_ _k59437_)
                             (begin
                               (vector-set!
-                               _table59149_
-                               _probe59168_
-                               _key59144_)
+                               _table59411_
+                               _probe59430_
+                               _key59406_)
                               (vector-set!
-                               _table59149_
-                               (fx+ _probe59168_ '1)
-                               (_symbolic-table-update!59145_
+                               _table59411_
+                               (fx+ _probe59430_ '1)
+                               (_symbolic-table-update!59407_
                                 (vector-ref
-                                 _table59149_
-                                 (fx+ _probe59168_ '1)))))
-                            (_loop59165_
-                             (let ((_next-probe59186_
-                                    (fx+ _start59161_
-                                         _i59170_
-                                         (fx* _i59170_ _i59170_))))
-                               (fxmodulo _next-probe59186_ _size59155_))
-                             (fx+ _i59170_ '1)
-                             _deleted59172_))))))))))
+                                 _table59411_
+                                 (fx+ _probe59430_ '1)))))
+                            (_loop59427_
+                             (let ((_next-probe59448_
+                                    (fx+ _start59423_
+                                         _i59432_
+                                         (fx* _i59432_ _i59432_))))
+                               (fxmodulo _next-probe59448_ _size59417_))
+                             (fx+ _i59432_ '1)
+                             _deleted59434_))))))))))
     (define symbolic-table-delete!
-      (lambda (_tab59102_ _key59104_)
-        (let ((_table59107_ (&raw-table-table _tab59102_))
-              (_seed59109_ (&raw-table-seed _tab59102_)))
-          (let* ((_h59112_ (fxxor (symbolic-hash _key59104_) _seed59109_))
-                 (_size59115_ (vector-length _table59107_))
-                 (_entries59118_ (fxquotient _size59115_ '2))
-                 (_start59121_
+      (lambda (_tab59364_ _key59366_)
+        (let ((_table59369_ (&raw-table-table _tab59364_))
+              (_seed59371_ (&raw-table-seed _tab59364_)))
+          (let* ((_h59374_ (fxxor (symbolic-hash _key59366_) _seed59371_))
+                 (_size59377_ (vector-length _table59369_))
+                 (_entries59380_ (fxquotient _size59377_ '2))
+                 (_start59383_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59112_ _entries59118_)
+                   (fxmodulo _h59374_ _entries59380_)
                    '1)))
-            (let _loop59125_ ((_probe59128_ _start59121_) (_i59130_ '1))
-              (let ((_k59133_ (vector-ref _table59107_ _probe59128_)))
-                (if (eq? _k59133_ (macro-unused-obj))
+            (let _loop59387_ ((_probe59390_ _start59383_) (_i59392_ '1))
+              (let ((_k59395_ (vector-ref _table59369_ _probe59390_)))
+                (if (eq? _k59395_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k59133_ (macro-deleted-obj))
-                        (_loop59125_
-                         (let ((_next-probe59136_
-                                (fx+ _start59121_
-                                     _i59130_
-                                     (fx* _i59130_ _i59130_))))
-                           (fxmodulo _next-probe59136_ _size59115_))
-                         (fx+ _i59130_ '1))
-                        (if (eq? _key59104_ _k59133_)
+                    (if (eq? _k59395_ (macro-deleted-obj))
+                        (_loop59387_
+                         (let ((_next-probe59398_
+                                (fx+ _start59383_
+                                     _i59392_
+                                     (fx* _i59392_ _i59392_))))
+                           (fxmodulo _next-probe59398_ _size59377_))
+                         (fx+ _i59392_ '1))
+                        (if (eq? _key59366_ _k59395_)
                             (begin
                               (vector-set!
-                               _table59107_
-                               _probe59128_
+                               _table59369_
+                               _probe59390_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table59107_
-                               (fx+ _probe59128_ '1)
+                               _table59369_
+                               (fx+ _probe59390_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab59102_
-                                  (fx- (&raw-table-count _tab59102_) '1)))))
-                            (_loop59125_
-                             (let ((_next-probe59140_
-                                    (fx+ _start59121_
-                                         _i59130_
-                                         (fx* _i59130_ _i59130_))))
-                               (fxmodulo _next-probe59140_ _size59115_))
-                             (fx+ _i59130_ '1)))))))))))
+                                  _tab59364_
+                                  (fx- (&raw-table-count _tab59364_) '1)))))
+                            (_loop59387_
+                             (let ((_next-probe59402_
+                                    (fx+ _start59383_
+                                         _i59392_
+                                         (fx* _i59392_ _i59392_))))
+                               (fxmodulo _next-probe59402_ _size59377_))
+                             (fx+ _i59392_ '1)))))))))))
     (define make-string-table__%
-      (lambda (_size-hint59083_ _seed59085_)
+      (lambda (_size-hint59345_ _seed59347_)
         (make-raw-table__%
-         _size-hint59083_
+         _size-hint59345_
          string-hash
          ##string=?
-         _seed59085_)))
+         _seed59347_)))
     (define make-string-table__0
       (lambda ()
-        (let* ((_size-hint59091_ '#f) (_seed59093_ '0))
-          (make-string-table__% _size-hint59091_ _seed59093_))))
+        (let* ((_size-hint59353_ '#f) (_seed59355_ '0))
+          (make-string-table__% _size-hint59353_ _seed59355_))))
     (define make-string-table__1
-      (lambda (_size-hint59095_)
-        (let ((_seed59097_ '0))
-          (make-string-table__% _size-hint59095_ _seed59097_))))
+      (lambda (_size-hint59357_)
+        (let ((_seed59359_ '0))
+          (make-string-table__% _size-hint59357_ _seed59359_))))
     (define make-string-table
-      (lambda _g60034_
-        (let ((_g60033_ (##length _g60034_)))
-          (cond ((##fx= _g60033_ 0)
-                 (apply (lambda () (make-string-table__0)) _g60034_))
-                ((##fx= _g60033_ 1)
-                 (apply (lambda (_size-hint59095_)
-                          (make-string-table__1 _size-hint59095_))
-                        _g60034_))
-                ((##fx= _g60033_ 2)
-                 (apply (lambda (_size-hint59099_ _seed59100_)
-                          (make-string-table__% _size-hint59099_ _seed59100_))
-                        _g60034_))
+      (lambda _g60296_
+        (let ((_g60295_ (##length _g60296_)))
+          (cond ((##fx= _g60295_ 0)
+                 (apply (lambda () (make-string-table__0)) _g60296_))
+                ((##fx= _g60295_ 1)
+                 (apply (lambda (_size-hint59357_)
+                          (make-string-table__1 _size-hint59357_))
+                        _g60296_))
+                ((##fx= _g60295_ 2)
+                 (apply (lambda (_size-hint59361_ _seed59362_)
+                          (make-string-table__% _size-hint59361_ _seed59362_))
+                        _g60296_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-string-table
-                  _g60034_))))))
+                  _g60296_))))))
     (define string-table-ref
-      (lambda (_tab59040_ _key59041_ _default59042_)
-        (let ((_table59044_ (&raw-table-table _tab59040_))
-              (_seed59045_ (&raw-table-seed _tab59040_)))
-          (let* ((_h59047_ (fxxor (##string=?-hash _key59041_) _seed59045_))
-                 (_size59050_ (vector-length _table59044_))
-                 (_entries59053_ (fxquotient _size59050_ '2))
-                 (_start59056_
+      (lambda (_tab59302_ _key59303_ _default59304_)
+        (let ((_table59306_ (&raw-table-table _tab59302_))
+              (_seed59307_ (&raw-table-seed _tab59302_)))
+          (let* ((_h59309_ (fxxor (##string=?-hash _key59303_) _seed59307_))
+                 (_size59312_ (vector-length _table59306_))
+                 (_entries59315_ (fxquotient _size59312_ '2))
+                 (_start59318_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h59047_ _entries59053_)
+                   (fxmodulo _h59309_ _entries59315_)
                    '1)))
-            (let _loop59060_ ((_probe59063_ _start59056_)
-                              (_i59065_ '1)
-                              (_deleted59067_ '#f))
-              (let ((_k59070_ (vector-ref _table59044_ _probe59063_)))
-                (if (eq? _k59070_ (macro-unused-obj))
-                    _default59042_
-                    (if (eq? _k59070_ (macro-deleted-obj))
-                        (_loop59060_
-                         (let ((_next-probe59073_
-                                (fx+ _start59056_
-                                     _i59065_
-                                     (fx* _i59065_ _i59065_))))
-                           (fxmodulo _next-probe59073_ _size59050_))
-                         (fx+ _i59065_ '1)
-                         (let ((_$e59076_ _deleted59067_))
-                           (if _$e59076_ _$e59076_ _probe59063_)))
-                        (if (##string=? _key59041_ _k59070_)
-                            (vector-ref _table59044_ (fx+ _probe59063_ '1))
-                            (_loop59060_
-                             (let ((_next-probe59079_
-                                    (fx+ _start59056_
-                                         _i59065_
-                                         (fx* _i59065_ _i59065_))))
-                               (fxmodulo _next-probe59079_ _size59050_))
-                             (fx+ _i59065_ '1)
-                             _deleted59067_))))))))))
+            (let _loop59322_ ((_probe59325_ _start59318_)
+                              (_i59327_ '1)
+                              (_deleted59329_ '#f))
+              (let ((_k59332_ (vector-ref _table59306_ _probe59325_)))
+                (if (eq? _k59332_ (macro-unused-obj))
+                    _default59304_
+                    (if (eq? _k59332_ (macro-deleted-obj))
+                        (_loop59322_
+                         (let ((_next-probe59335_
+                                (fx+ _start59318_
+                                     _i59327_
+                                     (fx* _i59327_ _i59327_))))
+                           (fxmodulo _next-probe59335_ _size59312_))
+                         (fx+ _i59327_ '1)
+                         (let ((_$e59338_ _deleted59329_))
+                           (if _$e59338_ _$e59338_ _probe59325_)))
+                        (if (##string=? _key59303_ _k59332_)
+                            (vector-ref _table59306_ (fx+ _probe59325_ '1))
+                            (_loop59322_
+                             (let ((_next-probe59341_
+                                    (fx+ _start59318_
+                                         _i59327_
+                                         (fx* _i59327_ _i59327_))))
+                               (fxmodulo _next-probe59341_ _size59312_))
+                             (fx+ _i59327_ '1)
+                             _deleted59329_))))))))))
     (define string-table-set!
-      (lambda (_tab59036_ _key59037_ _value59038_)
-        (if (fx< (&raw-table-free _tab59036_)
-                 (fxquotient (vector-length (&raw-table-table _tab59036_)) '4))
-            (__raw-table-rehash! _tab59036_)
+      (lambda (_tab59298_ _key59299_ _value59300_)
+        (if (fx< (&raw-table-free _tab59298_)
+                 (fxquotient (vector-length (&raw-table-table _tab59298_)) '4))
+            (__raw-table-rehash! _tab59298_)
             '#!void)
-        (__string-table-set! _tab59036_ _key59037_ _value59038_)))
+        (__string-table-set! _tab59298_ _key59299_ _value59300_)))
     (define __string-table-set!
-      (lambda (_tab58991_ _key58992_ _value58993_)
-        (let ((_table58996_ (&raw-table-table _tab58991_))
-              (_seed58997_ (&raw-table-seed _tab58991_)))
-          (let* ((_h58999_ (fxxor (##string=?-hash _key58992_) _seed58997_))
-                 (_size59002_ (vector-length _table58996_))
-                 (_entries59005_ (fxquotient _size59002_ '2))
-                 (_start59008_
+      (lambda (_tab59253_ _key59254_ _value59255_)
+        (let ((_table59258_ (&raw-table-table _tab59253_))
+              (_seed59259_ (&raw-table-seed _tab59253_)))
+          (let* ((_h59261_ (fxxor (##string=?-hash _key59254_) _seed59259_))
+                 (_size59264_ (vector-length _table59258_))
+                 (_entries59267_ (fxquotient _size59264_ '2))
+                 (_start59270_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58999_ _entries59005_)
+                   (fxmodulo _h59261_ _entries59267_)
                    '1)))
-            (let _loop59012_ ((_probe59015_ _start59008_)
-                              (_i59017_ '1)
-                              (_deleted59019_ '#f))
-              (let ((_k59022_ (vector-ref _table58996_ _probe59015_)))
-                (if (eq? _k59022_ (macro-unused-obj))
-                    (if _deleted59019_
+            (let _loop59274_ ((_probe59277_ _start59270_)
+                              (_i59279_ '1)
+                              (_deleted59281_ '#f))
+              (let ((_k59284_ (vector-ref _table59258_ _probe59277_)))
+                (if (eq? _k59284_ (macro-unused-obj))
+                    (if _deleted59281_
                         (begin
-                          (vector-set! _table58996_ _deleted59019_ _key58992_)
+                          (vector-set! _table59258_ _deleted59281_ _key59254_)
                           (vector-set!
-                           _table58996_
-                           (fx+ _deleted59019_ '1)
-                           _value58993_)
+                           _table59258_
+                           (fx+ _deleted59281_ '1)
+                           _value59255_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab58991_
-                              (fx+ (&raw-table-count _tab58991_) '1)))))
+                              _tab59253_
+                              (fx+ (&raw-table-count _tab59253_) '1)))))
                         (begin
-                          (vector-set! _table58996_ _probe59015_ _key58992_)
+                          (vector-set! _table59258_ _probe59277_ _key59254_)
                           (vector-set!
-                           _table58996_
-                           (fx+ _probe59015_ '1)
-                           _value58993_)
+                           _table59258_
+                           (fx+ _probe59277_ '1)
+                           _value59255_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab58991_
-                              (fx- (&raw-table-free _tab58991_) '1))
+                              _tab59253_
+                              (fx- (&raw-table-free _tab59253_) '1))
                              (&raw-table-count-set!
-                              _tab58991_
-                              (fx+ (&raw-table-count _tab58991_) '1))))))
-                    (if (eq? _k59022_ (macro-deleted-obj))
-                        (_loop59012_
-                         (let ((_next-probe59027_
-                                (fx+ _start59008_
-                                     _i59017_
-                                     (fx* _i59017_ _i59017_))))
-                           (fxmodulo _next-probe59027_ _size59002_))
-                         (fx+ _i59017_ '1)
-                         (let ((_$e59030_ _deleted59019_))
-                           (if _$e59030_ _$e59030_ _probe59015_)))
-                        (if (##string=? _key58992_ _k59022_)
+                              _tab59253_
+                              (fx+ (&raw-table-count _tab59253_) '1))))))
+                    (if (eq? _k59284_ (macro-deleted-obj))
+                        (_loop59274_
+                         (let ((_next-probe59289_
+                                (fx+ _start59270_
+                                     _i59279_
+                                     (fx* _i59279_ _i59279_))))
+                           (fxmodulo _next-probe59289_ _size59264_))
+                         (fx+ _i59279_ '1)
+                         (let ((_$e59292_ _deleted59281_))
+                           (if _$e59292_ _$e59292_ _probe59277_)))
+                        (if (##string=? _key59254_ _k59284_)
                             (begin
                               (vector-set!
-                               _table58996_
-                               _probe59015_
-                               _key58992_)
+                               _table59258_
+                               _probe59277_
+                               _key59254_)
                               (vector-set!
-                               _table58996_
-                               (fx+ _probe59015_ '1)
-                               _value58993_))
-                            (_loop59012_
-                             (let ((_next-probe59033_
-                                    (fx+ _start59008_
-                                         _i59017_
-                                         (fx* _i59017_ _i59017_))))
-                               (fxmodulo _next-probe59033_ _size59002_))
-                             (fx+ _i59017_ '1)
-                             _deleted59019_))))))))))
+                               _table59258_
+                               (fx+ _probe59277_ '1)
+                               _value59255_))
+                            (_loop59274_
+                             (let ((_next-probe59295_
+                                    (fx+ _start59270_
+                                         _i59279_
+                                         (fx* _i59279_ _i59279_))))
+                               (fxmodulo _next-probe59295_ _size59264_))
+                             (fx+ _i59279_ '1)
+                             _deleted59281_))))))))))
     (define string-table-update!
-      (lambda (_tab58986_
-               _key58987_
-               _string-table-update!58988_
-               _default58989_)
-        (if (fx< (&raw-table-free _tab58986_)
-                 (fxquotient (vector-length (&raw-table-table _tab58986_)) '4))
-            (__raw-table-rehash! _tab58986_)
+      (lambda (_tab59248_
+               _key59249_
+               _string-table-update!59250_
+               _default59251_)
+        (if (fx< (&raw-table-free _tab59248_)
+                 (fxquotient (vector-length (&raw-table-table _tab59248_)) '4))
+            (__raw-table-rehash! _tab59248_)
             '#!void)
         (__string-table-update!
-         _tab58986_
-         _key58987_
-         _string-table-update!58988_
-         _default58989_)))
+         _tab59248_
+         _key59249_
+         _string-table-update!59250_
+         _default59251_)))
     (define __string-table-update!
-      (lambda (_tab58940_
-               _key58941_
-               _string-table-update!58942_
-               _default58943_)
-        (let ((_table58946_ (&raw-table-table _tab58940_))
-              (_seed58947_ (&raw-table-seed _tab58940_)))
-          (let* ((_h58949_ (fxxor (##string=?-hash _key58941_) _seed58947_))
-                 (_size58952_ (vector-length _table58946_))
-                 (_entries58955_ (fxquotient _size58952_ '2))
-                 (_start58958_
+      (lambda (_tab59202_
+               _key59203_
+               _string-table-update!59204_
+               _default59205_)
+        (let ((_table59208_ (&raw-table-table _tab59202_))
+              (_seed59209_ (&raw-table-seed _tab59202_)))
+          (let* ((_h59211_ (fxxor (##string=?-hash _key59203_) _seed59209_))
+                 (_size59214_ (vector-length _table59208_))
+                 (_entries59217_ (fxquotient _size59214_ '2))
+                 (_start59220_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58949_ _entries58955_)
+                   (fxmodulo _h59211_ _entries59217_)
                    '1)))
-            (let _loop58962_ ((_probe58965_ _start58958_)
-                              (_i58967_ '1)
-                              (_deleted58969_ '#f))
-              (let ((_k58972_ (vector-ref _table58946_ _probe58965_)))
-                (if (eq? _k58972_ (macro-unused-obj))
-                    (if _deleted58969_
+            (let _loop59224_ ((_probe59227_ _start59220_)
+                              (_i59229_ '1)
+                              (_deleted59231_ '#f))
+              (let ((_k59234_ (vector-ref _table59208_ _probe59227_)))
+                (if (eq? _k59234_ (macro-unused-obj))
+                    (if _deleted59231_
                         (begin
-                          (vector-set! _table58946_ _deleted58969_ _key58941_)
+                          (vector-set! _table59208_ _deleted59231_ _key59203_)
                           (vector-set!
-                           _table58946_
-                           (fx+ _deleted58969_ '1)
-                           (_string-table-update!58942_ _default58943_))
+                           _table59208_
+                           (fx+ _deleted59231_ '1)
+                           (_string-table-update!59204_ _default59205_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab58940_
-                              (fx+ (&raw-table-count _tab58940_) '1)))))
+                              _tab59202_
+                              (fx+ (&raw-table-count _tab59202_) '1)))))
                         (begin
-                          (vector-set! _table58946_ _probe58965_ _key58941_)
+                          (vector-set! _table59208_ _probe59227_ _key59203_)
                           (vector-set!
-                           _table58946_
-                           (fx+ _probe58965_ '1)
-                           (_string-table-update!58942_ _default58943_))
+                           _table59208_
+                           (fx+ _probe59227_ '1)
+                           (_string-table-update!59204_ _default59205_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab58940_
-                              (fx- (&raw-table-free _tab58940_) '1))
+                              _tab59202_
+                              (fx- (&raw-table-free _tab59202_) '1))
                              (&raw-table-count-set!
-                              _tab58940_
-                              (fx+ (&raw-table-count _tab58940_) '1))))))
-                    (if (eq? _k58972_ (macro-deleted-obj))
-                        (_loop58962_
-                         (let ((_next-probe58977_
-                                (fx+ _start58958_
-                                     _i58967_
-                                     (fx* _i58967_ _i58967_))))
-                           (fxmodulo _next-probe58977_ _size58952_))
-                         (fx+ _i58967_ '1)
-                         (let ((_$e58980_ _deleted58969_))
-                           (if _$e58980_ _$e58980_ _probe58965_)))
-                        (if (##string=? _key58941_ _k58972_)
+                              _tab59202_
+                              (fx+ (&raw-table-count _tab59202_) '1))))))
+                    (if (eq? _k59234_ (macro-deleted-obj))
+                        (_loop59224_
+                         (let ((_next-probe59239_
+                                (fx+ _start59220_
+                                     _i59229_
+                                     (fx* _i59229_ _i59229_))))
+                           (fxmodulo _next-probe59239_ _size59214_))
+                         (fx+ _i59229_ '1)
+                         (let ((_$e59242_ _deleted59231_))
+                           (if _$e59242_ _$e59242_ _probe59227_)))
+                        (if (##string=? _key59203_ _k59234_)
                             (begin
                               (vector-set!
-                               _table58946_
-                               _probe58965_
-                               _key58941_)
+                               _table59208_
+                               _probe59227_
+                               _key59203_)
                               (vector-set!
-                               _table58946_
-                               (fx+ _probe58965_ '1)
-                               (_string-table-update!58942_
+                               _table59208_
+                               (fx+ _probe59227_ '1)
+                               (_string-table-update!59204_
                                 (vector-ref
-                                 _table58946_
-                                 (fx+ _probe58965_ '1)))))
-                            (_loop58962_
-                             (let ((_next-probe58983_
-                                    (fx+ _start58958_
-                                         _i58967_
-                                         (fx* _i58967_ _i58967_))))
-                               (fxmodulo _next-probe58983_ _size58952_))
-                             (fx+ _i58967_ '1)
-                             _deleted58969_))))))))))
+                                 _table59208_
+                                 (fx+ _probe59227_ '1)))))
+                            (_loop59224_
+                             (let ((_next-probe59245_
+                                    (fx+ _start59220_
+                                         _i59229_
+                                         (fx* _i59229_ _i59229_))))
+                               (fxmodulo _next-probe59245_ _size59214_))
+                             (fx+ _i59229_ '1)
+                             _deleted59231_))))))))))
     (define string-table-delete!
-      (lambda (_tab58899_ _key58901_)
-        (let ((_table58904_ (&raw-table-table _tab58899_))
-              (_seed58906_ (&raw-table-seed _tab58899_)))
-          (let* ((_h58909_ (fxxor (##string=?-hash _key58901_) _seed58906_))
-                 (_size58912_ (vector-length _table58904_))
-                 (_entries58915_ (fxquotient _size58912_ '2))
-                 (_start58918_
+      (lambda (_tab59161_ _key59163_)
+        (let ((_table59166_ (&raw-table-table _tab59161_))
+              (_seed59168_ (&raw-table-seed _tab59161_)))
+          (let* ((_h59171_ (fxxor (##string=?-hash _key59163_) _seed59168_))
+                 (_size59174_ (vector-length _table59166_))
+                 (_entries59177_ (fxquotient _size59174_ '2))
+                 (_start59180_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58909_ _entries58915_)
+                   (fxmodulo _h59171_ _entries59177_)
                    '1)))
-            (let _loop58922_ ((_probe58925_ _start58918_) (_i58927_ '1))
-              (let ((_k58930_ (vector-ref _table58904_ _probe58925_)))
-                (if (eq? _k58930_ (macro-unused-obj))
+            (let _loop59184_ ((_probe59187_ _start59180_) (_i59189_ '1))
+              (let ((_k59192_ (vector-ref _table59166_ _probe59187_)))
+                (if (eq? _k59192_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k58930_ (macro-deleted-obj))
-                        (_loop58922_
-                         (let ((_next-probe58933_
-                                (fx+ _start58918_
-                                     _i58927_
-                                     (fx* _i58927_ _i58927_))))
-                           (fxmodulo _next-probe58933_ _size58912_))
-                         (fx+ _i58927_ '1))
-                        (if (##string=? _key58901_ _k58930_)
+                    (if (eq? _k59192_ (macro-deleted-obj))
+                        (_loop59184_
+                         (let ((_next-probe59195_
+                                (fx+ _start59180_
+                                     _i59189_
+                                     (fx* _i59189_ _i59189_))))
+                           (fxmodulo _next-probe59195_ _size59174_))
+                         (fx+ _i59189_ '1))
+                        (if (##string=? _key59163_ _k59192_)
                             (begin
                               (vector-set!
-                               _table58904_
-                               _probe58925_
+                               _table59166_
+                               _probe59187_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table58904_
-                               (fx+ _probe58925_ '1)
+                               _table59166_
+                               (fx+ _probe59187_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab58899_
-                                  (fx- (&raw-table-count _tab58899_) '1)))))
-                            (_loop58922_
-                             (let ((_next-probe58937_
-                                    (fx+ _start58918_
-                                         _i58927_
-                                         (fx* _i58927_ _i58927_))))
-                               (fxmodulo _next-probe58937_ _size58912_))
-                             (fx+ _i58927_ '1)))))))))))
+                                  _tab59161_
+                                  (fx- (&raw-table-count _tab59161_) '1)))))
+                            (_loop59184_
+                             (let ((_next-probe59199_
+                                    (fx+ _start59180_
+                                         _i59189_
+                                         (fx* _i59189_ _i59189_))))
+                               (fxmodulo _next-probe59199_ _size59174_))
+                             (fx+ _i59189_ '1)))))))))))
     (define make-immediate-table__%
-      (lambda (_size-hint58880_ _seed58882_)
-        (make-raw-table__% _size-hint58880_ immediate-hash eq? _seed58882_)))
+      (lambda (_size-hint59142_ _seed59144_)
+        (make-raw-table__% _size-hint59142_ immediate-hash eq? _seed59144_)))
     (define make-immediate-table__0
       (lambda ()
-        (let* ((_size-hint58888_ '#f) (_seed58890_ '0))
-          (make-immediate-table__% _size-hint58888_ _seed58890_))))
+        (let* ((_size-hint59150_ '#f) (_seed59152_ '0))
+          (make-immediate-table__% _size-hint59150_ _seed59152_))))
     (define make-immediate-table__1
-      (lambda (_size-hint58892_)
-        (let ((_seed58894_ '0))
-          (make-immediate-table__% _size-hint58892_ _seed58894_))))
+      (lambda (_size-hint59154_)
+        (let ((_seed59156_ '0))
+          (make-immediate-table__% _size-hint59154_ _seed59156_))))
     (define make-immediate-table
-      (lambda _g60036_
-        (let ((_g60035_ (##length _g60036_)))
-          (cond ((##fx= _g60035_ 0)
-                 (apply (lambda () (make-immediate-table__0)) _g60036_))
-                ((##fx= _g60035_ 1)
-                 (apply (lambda (_size-hint58892_)
-                          (make-immediate-table__1 _size-hint58892_))
-                        _g60036_))
-                ((##fx= _g60035_ 2)
-                 (apply (lambda (_size-hint58896_ _seed58897_)
+      (lambda _g60298_
+        (let ((_g60297_ (##length _g60298_)))
+          (cond ((##fx= _g60297_ 0)
+                 (apply (lambda () (make-immediate-table__0)) _g60298_))
+                ((##fx= _g60297_ 1)
+                 (apply (lambda (_size-hint59154_)
+                          (make-immediate-table__1 _size-hint59154_))
+                        _g60298_))
+                ((##fx= _g60297_ 2)
+                 (apply (lambda (_size-hint59158_ _seed59159_)
                           (make-immediate-table__%
-                           _size-hint58896_
-                           _seed58897_))
-                        _g60036_))
+                           _size-hint59158_
+                           _seed59159_))
+                        _g60298_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-immediate-table
-                  _g60036_))))))
+                  _g60298_))))))
     (define immediate-table-ref
-      (lambda (_tab58837_ _key58838_ _default58839_)
-        (let ((_table58841_ (&raw-table-table _tab58837_))
-              (_seed58842_ (&raw-table-seed _tab58837_)))
-          (let* ((_h58844_ (fxxor (immediate-hash _key58838_) _seed58842_))
-                 (_size58847_ (vector-length _table58841_))
-                 (_entries58850_ (fxquotient _size58847_ '2))
-                 (_start58853_
+      (lambda (_tab59099_ _key59100_ _default59101_)
+        (let ((_table59103_ (&raw-table-table _tab59099_))
+              (_seed59104_ (&raw-table-seed _tab59099_)))
+          (let* ((_h59106_ (fxxor (immediate-hash _key59100_) _seed59104_))
+                 (_size59109_ (vector-length _table59103_))
+                 (_entries59112_ (fxquotient _size59109_ '2))
+                 (_start59115_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58844_ _entries58850_)
+                   (fxmodulo _h59106_ _entries59112_)
                    '1)))
-            (let _loop58857_ ((_probe58860_ _start58853_)
-                              (_i58862_ '1)
-                              (_deleted58864_ '#f))
-              (let ((_k58867_ (vector-ref _table58841_ _probe58860_)))
-                (if (eq? _k58867_ (macro-unused-obj))
-                    _default58839_
-                    (if (eq? _k58867_ (macro-deleted-obj))
-                        (_loop58857_
-                         (let ((_next-probe58870_
-                                (fx+ _start58853_
-                                     _i58862_
-                                     (fx* _i58862_ _i58862_))))
-                           (fxmodulo _next-probe58870_ _size58847_))
-                         (fx+ _i58862_ '1)
-                         (let ((_$e58873_ _deleted58864_))
-                           (if _$e58873_ _$e58873_ _probe58860_)))
-                        (if (eq? _key58838_ _k58867_)
-                            (vector-ref _table58841_ (fx+ _probe58860_ '1))
-                            (_loop58857_
-                             (let ((_next-probe58876_
-                                    (fx+ _start58853_
-                                         _i58862_
-                                         (fx* _i58862_ _i58862_))))
-                               (fxmodulo _next-probe58876_ _size58847_))
-                             (fx+ _i58862_ '1)
-                             _deleted58864_))))))))))
+            (let _loop59119_ ((_probe59122_ _start59115_)
+                              (_i59124_ '1)
+                              (_deleted59126_ '#f))
+              (let ((_k59129_ (vector-ref _table59103_ _probe59122_)))
+                (if (eq? _k59129_ (macro-unused-obj))
+                    _default59101_
+                    (if (eq? _k59129_ (macro-deleted-obj))
+                        (_loop59119_
+                         (let ((_next-probe59132_
+                                (fx+ _start59115_
+                                     _i59124_
+                                     (fx* _i59124_ _i59124_))))
+                           (fxmodulo _next-probe59132_ _size59109_))
+                         (fx+ _i59124_ '1)
+                         (let ((_$e59135_ _deleted59126_))
+                           (if _$e59135_ _$e59135_ _probe59122_)))
+                        (if (eq? _key59100_ _k59129_)
+                            (vector-ref _table59103_ (fx+ _probe59122_ '1))
+                            (_loop59119_
+                             (let ((_next-probe59138_
+                                    (fx+ _start59115_
+                                         _i59124_
+                                         (fx* _i59124_ _i59124_))))
+                               (fxmodulo _next-probe59138_ _size59109_))
+                             (fx+ _i59124_ '1)
+                             _deleted59126_))))))))))
     (define immediate-table-set!
-      (lambda (_tab58833_ _key58834_ _value58835_)
-        (if (fx< (&raw-table-free _tab58833_)
-                 (fxquotient (vector-length (&raw-table-table _tab58833_)) '4))
-            (__raw-table-rehash! _tab58833_)
+      (lambda (_tab59095_ _key59096_ _value59097_)
+        (if (fx< (&raw-table-free _tab59095_)
+                 (fxquotient (vector-length (&raw-table-table _tab59095_)) '4))
+            (__raw-table-rehash! _tab59095_)
             '#!void)
-        (__immediate-table-set! _tab58833_ _key58834_ _value58835_)))
+        (__immediate-table-set! _tab59095_ _key59096_ _value59097_)))
     (define __immediate-table-set!
-      (lambda (_tab58788_ _key58789_ _value58790_)
-        (let ((_table58793_ (&raw-table-table _tab58788_))
-              (_seed58794_ (&raw-table-seed _tab58788_)))
-          (let* ((_h58796_ (fxxor (immediate-hash _key58789_) _seed58794_))
-                 (_size58799_ (vector-length _table58793_))
-                 (_entries58802_ (fxquotient _size58799_ '2))
-                 (_start58805_
+      (lambda (_tab59050_ _key59051_ _value59052_)
+        (let ((_table59055_ (&raw-table-table _tab59050_))
+              (_seed59056_ (&raw-table-seed _tab59050_)))
+          (let* ((_h59058_ (fxxor (immediate-hash _key59051_) _seed59056_))
+                 (_size59061_ (vector-length _table59055_))
+                 (_entries59064_ (fxquotient _size59061_ '2))
+                 (_start59067_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58796_ _entries58802_)
+                   (fxmodulo _h59058_ _entries59064_)
                    '1)))
-            (let _loop58809_ ((_probe58812_ _start58805_)
-                              (_i58814_ '1)
-                              (_deleted58816_ '#f))
-              (let ((_k58819_ (vector-ref _table58793_ _probe58812_)))
-                (if (eq? _k58819_ (macro-unused-obj))
-                    (if _deleted58816_
+            (let _loop59071_ ((_probe59074_ _start59067_)
+                              (_i59076_ '1)
+                              (_deleted59078_ '#f))
+              (let ((_k59081_ (vector-ref _table59055_ _probe59074_)))
+                (if (eq? _k59081_ (macro-unused-obj))
+                    (if _deleted59078_
                         (begin
-                          (vector-set! _table58793_ _deleted58816_ _key58789_)
+                          (vector-set! _table59055_ _deleted59078_ _key59051_)
                           (vector-set!
-                           _table58793_
-                           (fx+ _deleted58816_ '1)
-                           _value58790_)
+                           _table59055_
+                           (fx+ _deleted59078_ '1)
+                           _value59052_)
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab58788_
-                              (fx+ (&raw-table-count _tab58788_) '1)))))
+                              _tab59050_
+                              (fx+ (&raw-table-count _tab59050_) '1)))))
                         (begin
-                          (vector-set! _table58793_ _probe58812_ _key58789_)
+                          (vector-set! _table59055_ _probe59074_ _key59051_)
                           (vector-set!
-                           _table58793_
-                           (fx+ _probe58812_ '1)
-                           _value58790_)
+                           _table59055_
+                           (fx+ _probe59074_ '1)
+                           _value59052_)
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab58788_
-                              (fx- (&raw-table-free _tab58788_) '1))
+                              _tab59050_
+                              (fx- (&raw-table-free _tab59050_) '1))
                              (&raw-table-count-set!
-                              _tab58788_
-                              (fx+ (&raw-table-count _tab58788_) '1))))))
-                    (if (eq? _k58819_ (macro-deleted-obj))
-                        (_loop58809_
-                         (let ((_next-probe58824_
-                                (fx+ _start58805_
-                                     _i58814_
-                                     (fx* _i58814_ _i58814_))))
-                           (fxmodulo _next-probe58824_ _size58799_))
-                         (fx+ _i58814_ '1)
-                         (let ((_$e58827_ _deleted58816_))
-                           (if _$e58827_ _$e58827_ _probe58812_)))
-                        (if (eq? _key58789_ _k58819_)
+                              _tab59050_
+                              (fx+ (&raw-table-count _tab59050_) '1))))))
+                    (if (eq? _k59081_ (macro-deleted-obj))
+                        (_loop59071_
+                         (let ((_next-probe59086_
+                                (fx+ _start59067_
+                                     _i59076_
+                                     (fx* _i59076_ _i59076_))))
+                           (fxmodulo _next-probe59086_ _size59061_))
+                         (fx+ _i59076_ '1)
+                         (let ((_$e59089_ _deleted59078_))
+                           (if _$e59089_ _$e59089_ _probe59074_)))
+                        (if (eq? _key59051_ _k59081_)
                             (begin
                               (vector-set!
-                               _table58793_
-                               _probe58812_
-                               _key58789_)
+                               _table59055_
+                               _probe59074_
+                               _key59051_)
                               (vector-set!
-                               _table58793_
-                               (fx+ _probe58812_ '1)
-                               _value58790_))
-                            (_loop58809_
-                             (let ((_next-probe58830_
-                                    (fx+ _start58805_
-                                         _i58814_
-                                         (fx* _i58814_ _i58814_))))
-                               (fxmodulo _next-probe58830_ _size58799_))
-                             (fx+ _i58814_ '1)
-                             _deleted58816_))))))))))
+                               _table59055_
+                               (fx+ _probe59074_ '1)
+                               _value59052_))
+                            (_loop59071_
+                             (let ((_next-probe59092_
+                                    (fx+ _start59067_
+                                         _i59076_
+                                         (fx* _i59076_ _i59076_))))
+                               (fxmodulo _next-probe59092_ _size59061_))
+                             (fx+ _i59076_ '1)
+                             _deleted59078_))))))))))
     (define immediate-table-update!
-      (lambda (_tab58783_
-               _key58784_
-               _immediate-table-update!58785_
-               _default58786_)
-        (if (fx< (&raw-table-free _tab58783_)
-                 (fxquotient (vector-length (&raw-table-table _tab58783_)) '4))
-            (__raw-table-rehash! _tab58783_)
+      (lambda (_tab59045_
+               _key59046_
+               _immediate-table-update!59047_
+               _default59048_)
+        (if (fx< (&raw-table-free _tab59045_)
+                 (fxquotient (vector-length (&raw-table-table _tab59045_)) '4))
+            (__raw-table-rehash! _tab59045_)
             '#!void)
         (__immediate-table-update!
-         _tab58783_
-         _key58784_
-         _immediate-table-update!58785_
-         _default58786_)))
+         _tab59045_
+         _key59046_
+         _immediate-table-update!59047_
+         _default59048_)))
     (define __immediate-table-update!
-      (lambda (_tab58737_
-               _key58738_
-               _immediate-table-update!58739_
-               _default58740_)
-        (let ((_table58743_ (&raw-table-table _tab58737_))
-              (_seed58744_ (&raw-table-seed _tab58737_)))
-          (let* ((_h58746_ (fxxor (immediate-hash _key58738_) _seed58744_))
-                 (_size58749_ (vector-length _table58743_))
-                 (_entries58752_ (fxquotient _size58749_ '2))
-                 (_start58755_
+      (lambda (_tab58999_
+               _key59000_
+               _immediate-table-update!59001_
+               _default59002_)
+        (let ((_table59005_ (&raw-table-table _tab58999_))
+              (_seed59006_ (&raw-table-seed _tab58999_)))
+          (let* ((_h59008_ (fxxor (immediate-hash _key59000_) _seed59006_))
+                 (_size59011_ (vector-length _table59005_))
+                 (_entries59014_ (fxquotient _size59011_ '2))
+                 (_start59017_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58746_ _entries58752_)
+                   (fxmodulo _h59008_ _entries59014_)
                    '1)))
-            (let _loop58759_ ((_probe58762_ _start58755_)
-                              (_i58764_ '1)
-                              (_deleted58766_ '#f))
-              (let ((_k58769_ (vector-ref _table58743_ _probe58762_)))
-                (if (eq? _k58769_ (macro-unused-obj))
-                    (if _deleted58766_
+            (let _loop59021_ ((_probe59024_ _start59017_)
+                              (_i59026_ '1)
+                              (_deleted59028_ '#f))
+              (let ((_k59031_ (vector-ref _table59005_ _probe59024_)))
+                (if (eq? _k59031_ (macro-unused-obj))
+                    (if _deleted59028_
                         (begin
-                          (vector-set! _table58743_ _deleted58766_ _key58738_)
+                          (vector-set! _table59005_ _deleted59028_ _key59000_)
                           (vector-set!
-                           _table58743_
-                           (fx+ _deleted58766_ '1)
-                           (_immediate-table-update!58739_ _default58740_))
+                           _table59005_
+                           (fx+ _deleted59028_ '1)
+                           (_immediate-table-update!59001_ _default59002_))
                           ((lambda ()
                              (&raw-table-count-set!
-                              _tab58737_
-                              (fx+ (&raw-table-count _tab58737_) '1)))))
+                              _tab58999_
+                              (fx+ (&raw-table-count _tab58999_) '1)))))
                         (begin
-                          (vector-set! _table58743_ _probe58762_ _key58738_)
+                          (vector-set! _table59005_ _probe59024_ _key59000_)
                           (vector-set!
-                           _table58743_
-                           (fx+ _probe58762_ '1)
-                           (_immediate-table-update!58739_ _default58740_))
+                           _table59005_
+                           (fx+ _probe59024_ '1)
+                           (_immediate-table-update!59001_ _default59002_))
                           ((lambda ()
                              (&raw-table-free-set!
-                              _tab58737_
-                              (fx- (&raw-table-free _tab58737_) '1))
+                              _tab58999_
+                              (fx- (&raw-table-free _tab58999_) '1))
                              (&raw-table-count-set!
-                              _tab58737_
-                              (fx+ (&raw-table-count _tab58737_) '1))))))
-                    (if (eq? _k58769_ (macro-deleted-obj))
-                        (_loop58759_
-                         (let ((_next-probe58774_
-                                (fx+ _start58755_
-                                     _i58764_
-                                     (fx* _i58764_ _i58764_))))
-                           (fxmodulo _next-probe58774_ _size58749_))
-                         (fx+ _i58764_ '1)
-                         (let ((_$e58777_ _deleted58766_))
-                           (if _$e58777_ _$e58777_ _probe58762_)))
-                        (if (eq? _key58738_ _k58769_)
+                              _tab58999_
+                              (fx+ (&raw-table-count _tab58999_) '1))))))
+                    (if (eq? _k59031_ (macro-deleted-obj))
+                        (_loop59021_
+                         (let ((_next-probe59036_
+                                (fx+ _start59017_
+                                     _i59026_
+                                     (fx* _i59026_ _i59026_))))
+                           (fxmodulo _next-probe59036_ _size59011_))
+                         (fx+ _i59026_ '1)
+                         (let ((_$e59039_ _deleted59028_))
+                           (if _$e59039_ _$e59039_ _probe59024_)))
+                        (if (eq? _key59000_ _k59031_)
                             (begin
                               (vector-set!
-                               _table58743_
-                               _probe58762_
-                               _key58738_)
+                               _table59005_
+                               _probe59024_
+                               _key59000_)
                               (vector-set!
-                               _table58743_
-                               (fx+ _probe58762_ '1)
-                               (_immediate-table-update!58739_
+                               _table59005_
+                               (fx+ _probe59024_ '1)
+                               (_immediate-table-update!59001_
                                 (vector-ref
-                                 _table58743_
-                                 (fx+ _probe58762_ '1)))))
-                            (_loop58759_
-                             (let ((_next-probe58780_
-                                    (fx+ _start58755_
-                                         _i58764_
-                                         (fx* _i58764_ _i58764_))))
-                               (fxmodulo _next-probe58780_ _size58749_))
-                             (fx+ _i58764_ '1)
-                             _deleted58766_))))))))))
+                                 _table59005_
+                                 (fx+ _probe59024_ '1)))))
+                            (_loop59021_
+                             (let ((_next-probe59042_
+                                    (fx+ _start59017_
+                                         _i59026_
+                                         (fx* _i59026_ _i59026_))))
+                               (fxmodulo _next-probe59042_ _size59011_))
+                             (fx+ _i59026_ '1)
+                             _deleted59028_))))))))))
     (define immediate-table-delete!
-      (lambda (_tab58696_ _key58698_)
-        (let ((_table58701_ (&raw-table-table _tab58696_))
-              (_seed58703_ (&raw-table-seed _tab58696_)))
-          (let* ((_h58706_ (fxxor (immediate-hash _key58698_) _seed58703_))
-                 (_size58709_ (vector-length _table58701_))
-                 (_entries58712_ (fxquotient _size58709_ '2))
-                 (_start58715_
+      (lambda (_tab58958_ _key58960_)
+        (let ((_table58963_ (&raw-table-table _tab58958_))
+              (_seed58965_ (&raw-table-seed _tab58958_)))
+          (let* ((_h58968_ (fxxor (immediate-hash _key58960_) _seed58965_))
+                 (_size58971_ (vector-length _table58963_))
+                 (_entries58974_ (fxquotient _size58971_ '2))
+                 (_start58977_
                   (fxarithmetic-shift-left
-                   (fxmodulo _h58706_ _entries58712_)
+                   (fxmodulo _h58968_ _entries58974_)
                    '1)))
-            (let _loop58719_ ((_probe58722_ _start58715_) (_i58724_ '1))
-              (let ((_k58727_ (vector-ref _table58701_ _probe58722_)))
-                (if (eq? _k58727_ (macro-unused-obj))
+            (let _loop58981_ ((_probe58984_ _start58977_) (_i58986_ '1))
+              (let ((_k58989_ (vector-ref _table58963_ _probe58984_)))
+                (if (eq? _k58989_ (macro-unused-obj))
                     '#!void
-                    (if (eq? _k58727_ (macro-deleted-obj))
-                        (_loop58719_
-                         (let ((_next-probe58730_
-                                (fx+ _start58715_
-                                     _i58724_
-                                     (fx* _i58724_ _i58724_))))
-                           (fxmodulo _next-probe58730_ _size58709_))
-                         (fx+ _i58724_ '1))
-                        (if (eq? _key58698_ _k58727_)
+                    (if (eq? _k58989_ (macro-deleted-obj))
+                        (_loop58981_
+                         (let ((_next-probe58992_
+                                (fx+ _start58977_
+                                     _i58986_
+                                     (fx* _i58986_ _i58986_))))
+                           (fxmodulo _next-probe58992_ _size58971_))
+                         (fx+ _i58986_ '1))
+                        (if (eq? _key58960_ _k58989_)
                             (begin
                               (vector-set!
-                               _table58701_
-                               _probe58722_
+                               _table58963_
+                               _probe58984_
                                (macro-deleted-obj))
                               (vector-set!
-                               _table58701_
-                               (fx+ _probe58722_ '1)
+                               _table58963_
+                               (fx+ _probe58984_ '1)
                                (macro-absent-obj))
                               ((lambda ()
                                  (&raw-table-count-set!
-                                  _tab58696_
-                                  (fx- (&raw-table-count _tab58696_) '1)))))
-                            (_loop58719_
-                             (let ((_next-probe58734_
-                                    (fx+ _start58715_
-                                         _i58724_
-                                         (fx* _i58724_ _i58724_))))
-                               (fxmodulo _next-probe58734_ _size58709_))
-                             (fx+ _i58724_ '1)))))))))))
+                                  _tab58958_
+                                  (fx- (&raw-table-count _tab58958_) '1)))))
+                            (_loop58981_
+                             (let ((_next-probe58996_
+                                    (fx+ _start58977_
+                                         _i58986_
+                                         (fx* _i58986_ _i58986_))))
+                               (fxmodulo _next-probe58996_ _size58971_))
+                             (fx+ _i58986_ '1)))))))))))
     (define __gc-table::t.id 'gerbil#__gc-table::t)
     (define __gc-table::t
       (##structure
@@ -1861,231 +1861,231 @@
        '#(gcht 5 #f immediate 5 #f)))
     (define __gc-table-loads '#f64(.45 .6363961030678927 .9))
     (define &gc-table-gcht
-      (lambda (_tab58694_)
+      (lambda (_tab58956_)
         (##unchecked-structure-ref
-         _tab58694_
+         _tab58956_
          '1
          __gc-table::t
          'gc-table-gcht)))
     (define &gc-table-immediate
-      (lambda (_tab58692_)
+      (lambda (_tab58954_)
         (##unchecked-structure-ref
-         _tab58692_
+         _tab58954_
          '2
          __gc-table::t
          'gc-table-immediate)))
     (define &gc-table-gcht-set!
-      (lambda (_tab58689_ _val58690_)
+      (lambda (_tab58951_ _val58952_)
         (##unchecked-structure-set!
-         _tab58689_
-         _val58690_
+         _tab58951_
+         _val58952_
          '1
          __gc-table::t
          'gc-table-gcht-set!)))
     (define &gc-table-immediate-set!
-      (lambda (_tab58686_ _val58687_)
+      (lambda (_tab58948_ _val58949_)
         (##unchecked-structure-set!
-         _tab58686_
-         _val58687_
+         _tab58948_
+         _val58949_
          '2
          __gc-table::t
          'gc-table-immediate-set!)))
     (define make-gc-table__%
-      (lambda (_size-hint58662_ _klass58663_ _flags58664_)
-        (let ((_gcht58666_
+      (lambda (_size-hint58924_ _klass58925_ _flags58926_)
+        (let ((_gcht58928_
                (__gc-table-new
-                (if (fixnum? _size-hint58662_) _size-hint58662_ '16)
-                _flags58664_)))
-          (##structure _klass58663_ _gcht58666_ '#f))))
+                (if (fixnum? _size-hint58924_) _size-hint58924_ '16)
+                _flags58926_)))
+          (##structure _klass58925_ _gcht58928_ '#f))))
     (define make-gc-table__0
-      (lambda (_size-hint58671_)
-        (let* ((_klass58673_ __gc-table::t) (_flags58675_ '0))
-          (make-gc-table__% _size-hint58671_ _klass58673_ _flags58675_))))
+      (lambda (_size-hint58933_)
+        (let* ((_klass58935_ __gc-table::t) (_flags58937_ '0))
+          (make-gc-table__% _size-hint58933_ _klass58935_ _flags58937_))))
     (define make-gc-table__1
-      (lambda (_size-hint58677_ _klass58678_)
-        (let ((_flags58680_ '0))
-          (make-gc-table__% _size-hint58677_ _klass58678_ _flags58680_))))
+      (lambda (_size-hint58939_ _klass58940_)
+        (let ((_flags58942_ '0))
+          (make-gc-table__% _size-hint58939_ _klass58940_ _flags58942_))))
     (define make-gc-table
-      (lambda _g60038_
-        (let ((_g60037_ (##length _g60038_)))
-          (cond ((##fx= _g60037_ 1)
-                 (apply (lambda (_size-hint58671_)
-                          (make-gc-table__0 _size-hint58671_))
-                        _g60038_))
-                ((##fx= _g60037_ 2)
-                 (apply (lambda (_size-hint58677_ _klass58678_)
-                          (make-gc-table__1 _size-hint58677_ _klass58678_))
-                        _g60038_))
-                ((##fx= _g60037_ 3)
-                 (apply (lambda (_size-hint58682_ _klass58683_ _flags58684_)
+      (lambda _g60300_
+        (let ((_g60299_ (##length _g60300_)))
+          (cond ((##fx= _g60299_ 1)
+                 (apply (lambda (_size-hint58933_)
+                          (make-gc-table__0 _size-hint58933_))
+                        _g60300_))
+                ((##fx= _g60299_ 2)
+                 (apply (lambda (_size-hint58939_ _klass58940_)
+                          (make-gc-table__1 _size-hint58939_ _klass58940_))
+                        _g60300_))
+                ((##fx= _g60299_ 3)
+                 (apply (lambda (_size-hint58944_ _klass58945_ _flags58946_)
                           (make-gc-table__%
-                           _size-hint58682_
-                           _klass58683_
-                           _flags58684_))
-                        _g60038_))
+                           _size-hint58944_
+                           _klass58945_
+                           _flags58946_))
+                        _g60300_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-gc-table
-                  _g60038_))))))
+                  _g60300_))))))
     (define __gc-table-immediate
-      (lambda (_tab58654_)
-        (let ((_$e58656_ (&gc-table-immediate _tab58654_)))
-          (if _$e58656_
-              _$e58656_
-              (let ((_immediate58659_ (make-immediate-table__% '#f '0)))
-                (&gc-table-immediate-set! _tab58654_ _immediate58659_)
-                _immediate58659_)))))
+      (lambda (_tab58916_)
+        (let ((_$e58918_ (&gc-table-immediate _tab58916_)))
+          (if _$e58918_
+              _$e58918_
+              (let ((_immediate58921_ (make-immediate-table__% '#f '0)))
+                (&gc-table-immediate-set! _tab58916_ _immediate58921_)
+                _immediate58921_)))))
     (define __gc-table-new
-      (lambda (_size58644_ _flags58645_)
-        (let* ((_flags58647_
-                (fxand _flags58645_
+      (lambda (_size58906_ _flags58907_)
+        (let* ((_flags58909_
+                (fxand _flags58907_
                        (fxnot (macro-gc-hash-table-flag-need-rehash))))
-               (_flags58649_
-                (fxior _flags58647_ (macro-gc-hash-table-flag-mem-alloc-keys)))
-               (_gcht58651_
+               (_flags58911_
+                (fxior _flags58909_ (macro-gc-hash-table-flag-mem-alloc-keys)))
+               (_gcht58913_
                 (##gc-hash-table-allocate
-                 _size58644_
-                 _flags58649_
+                 _size58906_
+                 _flags58911_
                  __gc-table-loads)))
-          _gcht58651_)))
+          _gcht58913_)))
     (define __gc-table-e
-      (lambda (_tab58639_)
+      (lambda (_tab58901_)
         (declare (not interrupts-enabled))
-        (let ((_gcht58642_ (&gc-table-gcht _tab58639_)))
+        (let ((_gcht58904_ (&gc-table-gcht _tab58901_)))
           (if (fx= '0
-                   (fxand (macro-gc-hash-table-flags _gcht58642_)
+                   (fxand (macro-gc-hash-table-flags _gcht58904_)
                           (macro-gc-hash-table-flag-need-rehash)))
-              _gcht58642_
+              _gcht58904_
               (begin
-                (__gc-table-rehash! _tab58639_)
-                (&gc-table-gcht _tab58639_))))))
+                (__gc-table-rehash! _tab58901_)
+                (&gc-table-gcht _tab58901_))))))
     (define __gc-table-rehash!
-      (lambda (_tab58630_)
-        (let* ((_old-table58632_ (&gc-table-gcht _tab58630_))
-               (_new-table58634_
-                (##gc-hash-table-resize! _old-table58632_ __gc-table-loads))
-               (_gcht58636_
-                (##gc-hash-table-rehash! _old-table58632_ _new-table58634_)))
-          (&gc-table-gcht-set! _tab58630_ _gcht58636_))))
+      (lambda (_tab58892_)
+        (let* ((_old-table58894_ (&gc-table-gcht _tab58892_))
+               (_new-table58896_
+                (##gc-hash-table-resize! _old-table58894_ __gc-table-loads))
+               (_gcht58898_
+                (##gc-hash-table-rehash! _old-table58894_ _new-table58896_)))
+          (&gc-table-gcht-set! _tab58892_ _gcht58898_))))
     (define gc-table-ref
-      (lambda (_tab58616_ _key58617_ _default58618_)
+      (lambda (_tab58878_ _key58879_ _default58880_)
         (declare (not interrupts-enabled))
-        (if (##mem-allocated? _key58617_)
-            (let* ((_gcht58621_ (__gc-table-e _tab58616_))
-                   (_value58623_ (##gc-hash-table-ref _gcht58621_ _key58617_)))
-              (if (eq? _value58623_ (macro-unused-obj))
-                  _default58618_
-                  _value58623_))
-            (let ((_$e58625_ (&gc-table-immediate _tab58616_)))
-              (if _$e58625_
-                  ((lambda (_immediate58628_)
+        (if (##mem-allocated? _key58879_)
+            (let* ((_gcht58883_ (__gc-table-e _tab58878_))
+                   (_value58885_ (##gc-hash-table-ref _gcht58883_ _key58879_)))
+              (if (eq? _value58885_ (macro-unused-obj))
+                  _default58880_
+                  _value58885_))
+            (let ((_$e58887_ (&gc-table-immediate _tab58878_)))
+              (if _$e58887_
+                  ((lambda (_immediate58890_)
                      (immediate-table-ref
-                      _immediate58628_
-                      _key58617_
-                      _default58618_))
-                   _$e58625_)
-                  _default58618_)))))
+                      _immediate58890_
+                      _key58879_
+                      _default58880_))
+                   _$e58887_)
+                  _default58880_)))))
     (define gc-table-set!
-      (lambda (_tab58609_ _key58610_ _value58611_)
+      (lambda (_tab58871_ _key58872_ _value58873_)
         (declare (not interrupts-enabled))
-        (if (##mem-allocated? _key58610_)
-            (let ((_gcht58614_ (__gc-table-e _tab58609_)))
-              (if (##gc-hash-table-set! _gcht58614_ _key58610_ _value58611_)
+        (if (##mem-allocated? _key58872_)
+            (let ((_gcht58876_ (__gc-table-e _tab58871_)))
+              (if (##gc-hash-table-set! _gcht58876_ _key58872_ _value58873_)
                   (begin
-                    (__gc-table-rehash! _tab58609_)
-                    (gc-table-set! _tab58609_ _key58610_ _value58611_))
+                    (__gc-table-rehash! _tab58871_)
+                    (gc-table-set! _tab58871_ _key58872_ _value58873_))
                   '#!void))
             (immediate-table-set!
-             (__gc-table-immediate _tab58609_)
-             _key58610_
-             _value58611_))))
+             (__gc-table-immediate _tab58871_)
+             _key58872_
+             _value58873_))))
     (define gc-table-update!
-      (lambda (_tab58602_ _key58603_ _update58604_ _default58605_)
-        (if (##mem-allocated? _key58603_)
-            (let ((_value58607_
-                   (gc-table-ref _tab58602_ _key58603_ _default58605_)))
+      (lambda (_tab58864_ _key58865_ _update58866_ _default58867_)
+        (if (##mem-allocated? _key58865_)
+            (let ((_value58869_
+                   (gc-table-ref _tab58864_ _key58865_ _default58867_)))
               (gc-table-set!
-               _tab58602_
-               _key58603_
-               (_update58604_ _value58607_)))
+               _tab58864_
+               _key58865_
+               (_update58866_ _value58869_)))
             (immediate-table-update!
-             (__gc-table-immediate _tab58602_)
-             _key58603_
-             _update58604_
-             _default58605_))))
+             (__gc-table-immediate _tab58864_)
+             _key58865_
+             _update58866_
+             _default58867_))))
     (define gc-table-delete!
-      (lambda (_tab58591_ _key58592_)
+      (lambda (_tab58853_ _key58854_)
         (declare (not interrupts-enabled))
-        (if (##mem-allocated? _key58592_)
-            (let ((_gcht58595_ (__gc-table-e _tab58591_)))
+        (if (##mem-allocated? _key58854_)
+            (let ((_gcht58857_ (__gc-table-e _tab58853_)))
               (if (##gc-hash-table-set!
-                   _gcht58595_
-                   _key58592_
+                   _gcht58857_
+                   _key58854_
                    (macro-absent-obj))
                   (begin
-                    (__gc-table-rehash! _tab58591_)
-                    (gc-table-delete! _tab58591_ _key58592_))
+                    (__gc-table-rehash! _tab58853_)
+                    (gc-table-delete! _tab58853_ _key58854_))
                   '#!void))
-            (let ((_$e58597_ (&gc-table-immediate _tab58591_)))
-              (if _$e58597_
-                  ((lambda (_immediate58600_)
-                     (immediate-table-delete! _immediate58600_ _key58592_))
-                   _$e58597_)
+            (let ((_$e58859_ (&gc-table-immediate _tab58853_)))
+              (if _$e58859_
+                  ((lambda (_immediate58862_)
+                     (immediate-table-delete! _immediate58862_ _key58854_))
+                   _$e58859_)
                   '#!void)))))
     (define gc-table-for-each
-      (lambda (_tab58572_ _proc58573_)
+      (lambda (_tab58834_ _proc58835_)
         (declare (not interrupts-enabled))
         (begin
-          (let ((_gcht58576_ (__gc-table-e _tab58572_)))
-            (let _loop58578_ ((_i58580_ (macro-gc-hash-table-key0)))
-              (if (fx< _i58580_ (##vector-length _gcht58576_))
-                  (let ((_key58582_ (##vector-ref _gcht58576_ _i58580_)))
-                    (if (and (not (eq? _key58582_ (macro-unused-obj)))
-                             (not (eq? _key58582_ (macro-deleted-obj))))
-                        (_proc58573_
-                         _key58582_
-                         (##vector-ref _gcht58576_ (fx+ _i58580_ '1)))
+          (let ((_gcht58838_ (__gc-table-e _tab58834_)))
+            (let _loop58840_ ((_i58842_ (macro-gc-hash-table-key0)))
+              (if (fx< _i58842_ (##vector-length _gcht58838_))
+                  (let ((_key58844_ (##vector-ref _gcht58838_ _i58842_)))
+                    (if (and (not (eq? _key58844_ (macro-unused-obj)))
+                             (not (eq? _key58844_ (macro-deleted-obj))))
+                        (_proc58835_
+                         _key58844_
+                         (##vector-ref _gcht58838_ (fx+ _i58842_ '1)))
                         '#!void)
                     (let ()
                       (declare (interrupts-enabled))
-                      (_loop58578_ (fx+ _i58580_ '2))))
+                      (_loop58840_ (fx+ _i58842_ '2))))
                   '#!void)))
-          (let ((_$e58586_ (&gc-table-immediate _tab58572_)))
-            (if _$e58586_
-                ((lambda (_immediate58589_)
-                   (raw-table-for-each _immediate58589_ _proc58573_))
-                 _$e58586_)
+          (let ((_$e58848_ (&gc-table-immediate _tab58834_)))
+            (if _$e58848_
+                ((lambda (_immediate58851_)
+                   (raw-table-for-each _immediate58851_ _proc58835_))
+                 _$e58848_)
                 '#!void)))))
     (define gc-table-copy
-      (lambda (_tab58560_)
-        (let* ((_gcht58562_ (__gc-table-e _tab58560_))
-               (_new-table58564_
+      (lambda (_tab58822_)
+        (let* ((_gcht58824_ (__gc-table-e _tab58822_))
+               (_new-table58826_
                 (__gc-table-new
-                 (macro-gc-hash-table-count _gcht58562_)
-                 (macro-gc-hash-table-flags _gcht58562_)))
-               (_result58566_
+                 (macro-gc-hash-table-count _gcht58824_)
+                 (macro-gc-hash-table-flags _gcht58824_)))
+               (_result58828_
                 (##structure
-                 (##structure-type _tab58560_)
-                 _new-table58564_
+                 (##structure-type _tab58822_)
+                 _new-table58826_
                  '#f)))
           (gc-table-for-each
-           _tab58560_
-           (lambda (_k58569_ _v58570_)
-             (gc-table-set! _result58566_ _k58569_ _v58570_)))
-          _result58566_)))
+           _tab58822_
+           (lambda (_k58831_ _v58832_)
+             (gc-table-set! _result58828_ _k58831_ _v58832_)))
+          _result58828_)))
     (define gc-table-clear!
-      (lambda (_tab58553_)
-        (let* ((_gcht58555_ (__gc-table-e _tab58553_))
-               (_new-table58557_
-                (__gc-table-new '16 (macro-gc-hash-table-flags _gcht58555_))))
-          (&gc-table-gcht-set! _tab58553_ _new-table58557_)
-          (&gc-table-immediate-set! _tab58553_ '#f))))
+      (lambda (_tab58815_)
+        (let* ((_gcht58817_ (__gc-table-e _tab58815_))
+               (_new-table58819_
+                (__gc-table-new '16 (macro-gc-hash-table-flags _gcht58817_))))
+          (&gc-table-gcht-set! _tab58815_ _new-table58819_)
+          (&gc-table-immediate-set! _tab58815_ '#f))))
     (define gc-table-length
-      (lambda (_tab58546_)
-        (let ((_gcht58548_ (__gc-table-e _tab58546_)))
-          (fx+ (macro-gc-hash-table-count _gcht58548_)
-               (let ((_$e58550_ (&gc-table-immediate _tab58546_)))
-                 (if _$e58550_ (&raw-table-count _$e58550_) '0))))))
+      (lambda (_tab58808_)
+        (let ((_gcht58810_ (__gc-table-e _tab58808_)))
+          (fx+ (macro-gc-hash-table-count _gcht58810_)
+               (let ((_$e58812_ (&gc-table-immediate _tab58808_)))
+                 (if _$e58812_ (&raw-table-count _$e58812_) '0))))))
     (define __object-eq-hash-next '0)
     (define __object-eq-hash
       (make-gc-table__%
@@ -2093,18 +2093,18 @@
        __gc-table::t
        (macro-gc-hash-table-flag-weak-keys)))
     (define __object->eq-hash
-      (lambda (_obj58531_)
+      (lambda (_obj58793_)
         (declare (not interrupts-enabled))
-        (let ((_val58534_ (gc-table-ref __object-eq-hash _obj58531_ '#f)))
-          (if _val58534_
-              _val58534_
-              (let* ((_mix58536_ __object-eq-hash-next)
-                     (_ptr58538_ (##type-cast _obj58531_ '0))
-                     (_h58540_
-                      (fxand (fxxor _mix58536_ _ptr58538_)
+        (let ((_val58796_ (gc-table-ref __object-eq-hash _obj58793_ '#f)))
+          (if _val58796_
+              _val58796_
+              (let* ((_mix58798_ __object-eq-hash-next)
+                     (_ptr58800_ (##type-cast _obj58793_ '0))
+                     (_h58802_
+                      (fxand (fxxor _mix58798_ _ptr58800_)
                              (macro-max-fixnum32))))
                 (set! __object-eq-hash-next
-                      (let ((_$e58543_ (##fx+? __object-eq-hash-next '1)))
-                        (if _$e58543_ _$e58543_ '0)))
-                (gc-table-set! __object-eq-hash _obj58531_ _h58540_)
-                _h58540_)))))))
+                      (let ((_$e58805_ (##fx+? __object-eq-hash-next '1)))
+                        (if _$e58805_ _$e58805_ '0)))
+                (gc-table-set! __object-eq-hash _obj58793_ _h58802_)
+                _h58802_)))))))
