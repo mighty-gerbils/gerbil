@@ -159,8 +159,9 @@
      registry: (config-get cfg ensemble-registry:)
      roles: '(httpd-supervisor)
      ;; for testing mostly
-     auth: (alet (auth (config-get cfg ensemble-auth:))
-             (list->hash-table-eq auth))))))
+     auth: (or (alet (auth (config-get cfg ensemble-auth:))
+                 (list->hash-table-eq auth))
+               (hash-eq (console '(admin))))))))
 
 (def (start-httpd-ensemble! cfg)
   (let (thread (spawn/name 'ensemble-supervisor ensemble-supervisor cfg))
@@ -183,11 +184,12 @@
         (spawn process-monitor (current-thread) srv-id process)))
 
     (def (shutdown!)
-      (for (srv-id (hash-keys servers))
+      (for ((values srv-id process) (in-hash servers))
         (try
          (infof "shutting down ~a" srv-id)
          (remote-stop-server! srv-id)
          ;; TODO maybe kill it after a second or two?
+         (process-status process)
          (catch (e)
            (warnf "error shutting down ~a: ~a" srv-id e)))))
 
