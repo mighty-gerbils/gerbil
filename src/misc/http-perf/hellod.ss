@@ -3,7 +3,8 @@
         :std/cli/getopt
         :std/misc/threads
         :std/net/httpd
-        :std/sugar)
+        :std/sugar
+        :gerbil/runtime/thread)
 (export main)
 
 (def (run-server address count)
