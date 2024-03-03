@@ -8,11 +8,10 @@
         :std/net/address
         :std/net/httpd
         :std/actor
-        :std/format
         :std/iter
-        (only-in :std/srfi/19 current-date date->string)
         (only-in :std/logger start-logger! deflogger current-logger-options)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
+        (only-in :std/srfi/13 string-contains)
         :gerbil/expander
         :gerbil/gambit
         ./env)
@@ -292,17 +291,33 @@
   (create-directory* (path-directory (config-get! cfg server-log:))))
 
 (def (make-request-logger cfg)
+  (def (logger file)
+    (let loop ()
+      (with ([ts . req] (thread-receive))
+        (using (req :- http-request)
+          (display (time->seconds ts) file)
+          (display "Z " file)
+          (display
+           (let (ip (car req.client))
+             (case (u8vector-length ip)
+               ((4) (ip4-address->string ip))
+               ((6) (ip6-address->string ip))
+               (else "???")))
+           file)
+          (display " " file)
+          (display req.proto file)
+          (display " " file)
+          (display req.method file)
+          (display " " file)
+          (display req.url file)
+          (newline file)))
+      (force-output file)
+      (loop)))
   (let* ((path (config-get! cfg request-log:))
-         (file (open-output-file [path: path append: #t])))
+         (file (open-output-file [path: path append: #t]))
+         (logger-thread (spawn/name 'request-logger logger file)))
     (lambda (req)
-      (using (req : http-request)
-        (fprintf file "~a ~a ~a ~a ~a~n"
-                 (date->string (current-date) "~4")
-                 (inet-address->string req.client)
-                 req.proto
-                 req.method
-                 req.url)
-        (force-output file)))))
+      (thread-send logger-thread (cons (current-time) req)))))
 
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
@@ -343,17 +358,9 @@
          (else
           (let (file-path (string-append self.root server-path))
             (if (file-exists? file-path)
-              (let (info (file-info file-path #t))
-                (cond
-                 ((eq? (file-info-type info) 'directory)
-                  (let (file-path (path-expand "index.html" file-path))
-                    (if (file-exists? file-path)
-                      (file-handler file-path (file-info file-path #t))
-                      not-found-handler)))
-                 ((and self.servlets (equal? ".ss" (path-extension file-path)))
-                  (find-servlet-handler self.servlets self.mx file-path info))
-                 (else
-                  (file-handler file-path info))))
+              (if (and self.servlets (equal? ".ss" (path-extension file-path)))
+                (find-servlet-handler self.servlets self.mx file-path)
+                (file-handler file-path))
               not-found-handler))))))))
 
 (defmethod {put-handler! dynamic-mux}
@@ -364,9 +371,12 @@
 (def (not-found-handler req res)
   (http-response-write-condition res Not-Found))
 
+(def (forbidden-handler req res)
+  (http-response-write-condition res Forbidden))
+
 (defstruct servlet (handler path timestamp))
 
-(def (find-servlet-handler servlet-tab mx file-path info)
+(def (find-servlet-handler servlet-tab mx file-path)
   (def (load-servlet! file-path reload?)
     (let* ((load-time (time->seconds (current-time)))
            (ctx (with-lock mx (cut import-module file-path reload? #t)))
@@ -387,14 +397,24 @@
          (using (srv :- servlet)
            (let (modtime
                  (time->seconds
-                  (file-info-last-modification-time info)))
+                  (file-info-last-modification-time
+                   (file-info file-path #t))))
              (if (> modtime srv.timestamp)
                (servlet-handler (load-servlet! file-path #t))
                srv.handler)))))
    (else
     (servlet-handler (load-servlet! file-path #f)))))
 
-(def (file-handler path info)
+(def (file-handler path)
+  (let (info (file-info path #t))
+    (if (eq? (file-info-type info) 'directory)
+      (let (index-html-path (path-expand "index.html" path))
+        (if (file-exists? index-html-path)
+          (serve-file index-html-path #f)
+          forbidden-handler))
+      (serve-file path info))))
+
+(def (serve-file path maybe-info)
   (lambda (req res)
     (using (req :- http-request)
       (case req.method
@@ -405,24 +425,25 @@
         ((HEAD)
          ;; TODO Content-Type from extension
          ;;      format Last-Modified as date?
-         (http-response-write
-          res 200
-          [["Content-Length" :: (file-info-size info)]
-           ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
-          #f))
+         (let (info (or maybe-info (file-info path #t)))
+           (http-response-write
+            res 200
+            [["Content-Length" :: (file-info-size info)]
+             ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+            #f)))
         (else
          (http-response-write-condition res Forbidden))))))
 
 (def (find-handler tab server-path)
   (let loop ((path server-path))
     (cond
+     ((string-empty? path) #f)
      ((hash-get tab path))
      ((string-rindex path #\/)
       => (lambda (index) (loop (substring path 0 index))))
      (else #f))))
 
 (def (server-request-path path)
-  ;; process . and .. to confine the path within the server root
   (let (components (string-split path #\/))
     (let loop ((rest components) (r []))
       (match rest
@@ -431,7 +452,7 @@
            (("" ".") (loop rest r))
            (("..")
             (if (null? r)
-              #f ; invalid
+              #f                        ; invalid, out of root bounds
               (loop rest (cdr r))))
            (else
             (loop rest (cons hd r)))))
