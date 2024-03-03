@@ -38,7 +38,7 @@
 (def (gxhttpd-main opt)
   (setup-local-env! opt)
   (let-hash opt
-    (if .?ensembe
+    (if .?ensemble
       (let (cfg
             (cond
              (.?config => load-ensemble-config)
@@ -149,10 +149,7 @@
   (create-ensemble-paths! cfg)
   (let ((log-level (config-get cfg log-level: 'INFO))
         (server-id (config-get cfg ensemble-supervisor-id: 'httpd-ensemble)))
-  (let (run-ensemble
-        (lambda ()
-          (let (srv (start-httpd-ensemble! cfg))
-            (thread-join! srv))))
+  (let (run-ensemble (cut start-httpd-ensemble! cfg))
     (call-with-ensemble-server
      server-id run-ensemble
      log-level: log-level
@@ -166,7 +163,7 @@
              (list->hash-table-eq auth))))))
 
 (def (start-httpd-ensemble! cfg)
-  (let (thread (spawn 'ensemble-supervisor ensemble-supervisor cfg))
+  (let (thread (spawn/name 'ensemble-supervisor ensemble-supervisor cfg))
     (thread-join! thread)))
 
 (def (ensemble-supervisor cfg)
@@ -176,6 +173,9 @@
     (def servers (make-hash-table-symbolic))
 
     (def (start-server! srv-id)
+      (let (srv-address (path-expand (symbol->string srv-id) "/tmp/ensemble"))
+        (when (file-exists? srv-address)
+          (delete-file srv-address)))
       (let* ((config-path (path-expand "config" (ensemble-server-path srv-id)))
              (process (open-process [path: "gerbil"
                                            arguments: ["httpd" "-c" config-path]])))
@@ -183,7 +183,7 @@
         (spawn process-monitor (current-thread) srv-id process)))
 
     (def (shutdown!)
-      (for ((values srv-id process) (hash-keys servers))
+      (for (srv-id (hash-keys servers))
         (try
          (infof "shutting down ~a" srv-id)
          (remote-stop-server! srv-id)
@@ -220,13 +220,13 @@
     (-> supervisor (process-dead srv-id status))))
 
 (def (create-ensemble-paths! cfg)
-  (create-directory* (ensemble-server-path (config-get ensemble-supervisor-id: 'httpd-ensemble)))
+  (create-directory* (ensemble-server-path (config-get cfg ensemble-supervisor-id: 'httpd-ensemble)))
   (for (srv-id (config-get! cfg ensemble-servers:))
     (let* ((srv-path (ensemble-server-path srv-id))
            (srv-config-path (path-expand "config" srv-path))
            (srv-config (make-ensemble-server-config cfg srv-id)))
       (create-directory* srv-path)
-      (call-with-output-file [path: srv-config-path create: #t truncate: #t]
+      (call-with-output-file [path: srv-config-path truncate: #t]
         (lambda (output)
           (for (el srv-config)
             (write el output)
@@ -238,7 +238,6 @@
       httpd-v0
       request-log: ,(path-expand "request.log" srv-path)
       server-log: ,(path-expand "server.log" srv-path)
-      listen: ,(config-get! cfg server-listen:)
       reuse-port: #t
       log-level: ,(config-get cfg log-level: 'INFO)
       ensemble-server-id: ,srv-id
