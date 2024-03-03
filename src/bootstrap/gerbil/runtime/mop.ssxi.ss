@@ -152,68 +152,79 @@ package: gerbil/runtime
   (declare-type subclass? (@lambda 2 #f))
   (declare-type
    direct-instance?
-   (ast-rules
-    (%#call)
-    ((%#call _ klass obj)
-     (%#call (%#ref ##structure-direct-instance-of?)
-             obj
-             (%#call (%#ref ##type-id) klass)))))
+   (@lambda 2
+            inline:
+            (ast-rules
+             (%#call)
+             ((%#call _ klass obj)
+              (%#call (%#ref ##structure-direct-instance-of?)
+                      obj
+                      (%#call (%#ref ##type-id) klass))))))
   (declare-type struct-instance? (@lambda 2 #f))
   (declare-type class-instance? (@lambda 2 #f))
   (declare-type
    make-object
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#quote)
-      ((%#call make-object klass (%#quote len))
-       (with-syntax
-        (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
-        #'(%#call (%#ref ##structure) klass init ...)))
-      ((%#call make-object klass len)
-       (with-syntax
-        (($obj (make-symbol (gensym '__obj))))
-        #'(%#let-values
-           ((($obj) (%#call (%#ref ##make-structure) klass len)))
-           (%#begin (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
-                    (%#ref $obj))))))))
+   (@lambda (2)
+            inline:
+            (lambda (ast)
+              (ast-case
+               ast
+               (%#call %#quote)
+               ((%#call make-object klass (%#quote len))
+                (with-syntax
+                 (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
+                 #'(%#call (%#ref ##structure) klass init ...)))
+               ((%#call make-object klass len)
+                (with-syntax
+                 (($obj (make-symbol (gensym '__obj))))
+                 #'(%#let-values
+                    ((($obj) (%#call (%#ref ##make-structure) klass len)))
+                    (%#begin (%#call (%#ref object-fill!)
+                                     (%#ref $obj)
+                                     (%#quote #f))
+                             (%#ref $obj)))))))))
   (declare-type object-fill! (@lambda 2 #f))
   (declare-type new-instance (@lambda 1 #f))
   (declare-type make-instance (@lambda (1) #f))
   (declare-type make-class-instance (@lambda (1) #f))
   (declare-type
    struct-instance-init!
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#ref)
-      ((%#call _ self) #'(%#quote #!void))
-      ((%#call _ (%#ref self) arg ...)
-       (with-syntax*
-        (((values arg-count) (length #'(arg ...)))
-         ((off ...) (iota arg-count 1))
-         (count arg-count))
-        #'(%#if (%#call (%#ref ##fx<)
-                        (%#quote count)
-                        (%#call (%#ref ##structure-length) (%#ref self)))
-                (%#begin (%#call (%#ref ##unchecked-structure-set!)
+   (@lambda (1)
+            inline:
+            (lambda (ast)
+              (ast-case
+               ast
+               (%#call %#ref)
+               ((%#call _ self) #'(%#quote #!void))
+               ((%#call _ (%#ref self) arg ...)
+                (with-syntax*
+                 (((values arg-count) (length #'(arg ...)))
+                  ((off ...) (iota arg-count 1))
+                  (count arg-count))
+                 #'(%#if (%#call (%#ref ##fx<)
+                                 (%#quote count)
+                                 (%#call (%#ref ##structure-length)
+                                         (%#ref self)))
+                         (%#begin (%#call (%#ref ##unchecked-structure-set!)
+                                          (%#ref self)
+                                          arg
+                                          (%#quote off)
+                                          (%#call (%#ref ##structure-type)
+                                                  (%#ref self))
+                                          (%#quote #f))
+                                  ...)
+                         (%#call (%#ref error)
+                                 (%#quote "struct-instance-init!: too many arguments for struct")
                                  (%#ref self)
-                                 arg
-                                 (%#quote off)
-                                 (%#call (%#ref ##structure-type) (%#ref self))
-                                 (%#quote #f))
-                         ...)
-                (%#call (%#ref error)
-                        (%#quote "struct-instance-init!: too many arguments for struct")
-                        (%#ref self)
-                        (%#quote count)
-                        (%#call (%#ref ##vector-length) (%#ref self))))))
-      ((%#call recur self arg ...)
-       (with-syntax
-        (($self (make-symbol (gensym '__self))))
-        #'(%#let-values
-           ((($self) self))
-           (%#call recur (%#ref $self) arg ...)))))))
+                                 (%#quote count)
+                                 (%#call (%#ref ##vector-length)
+                                         (%#ref self))))))
+               ((%#call recur self arg ...)
+                (with-syntax
+                 (($self (make-symbol (gensym '__self))))
+                 #'(%#let-values
+                    ((($self) self))
+                    (%#call recur (%#ref $self) arg ...))))))))
   (declare-type __struct-instance-init! (@lambda 2 #f))
   (declare-type class-instance-init! (@lambda (1) #f))
   (declare-type __class-instance-init! (@lambda 3 #f))
@@ -225,27 +236,30 @@ package: gerbil/runtime
   (declare-type class->list (@lambda 1 #f))
   (declare-type
    call-method
-   (lambda (ast)
-     (ast-case
-      ast
-      (%#call %#ref)
-      ((%#call _ (%#ref self) method arg ...)
-       (with-syntax
-        (($method (make-symbol (gensym '__method))))
-        #'(%#let-values
-           ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
-           (%#if (%#ref $method)
-                 (%#call (%#ref $method) (%#ref self) arg ...)
-                 (%#call (%#ref error)
-                         (%#quote "Missing method")
-                         (%#ref self)
-                         method)))))
-      ((%#call recur self method arg ...)
-       (with-syntax
-        (($self (make-symbol (gensym '__self))))
-        #'(%#let-values
-           ((($self) self))
-           (%#call recur (%#ref $self) method arg ...)))))))
+   (@lambda (2)
+            inline:
+            (lambda (ast)
+              (ast-case
+               ast
+               (%#call %#ref)
+               ((%#call _ (%#ref self) method arg ...)
+                (with-syntax
+                 (($method (make-symbol (gensym '__method))))
+                 #'(%#let-values
+                    ((($method)
+                      (%#call (%#ref method-ref) (%#ref self) method)))
+                    (%#if (%#ref $method)
+                          (%#call (%#ref $method) (%#ref self) arg ...)
+                          (%#call (%#ref error)
+                                  (%#quote "Missing method")
+                                  (%#ref self)
+                                  method)))))
+               ((%#call recur self method arg ...)
+                (with-syntax
+                 (($self (make-symbol (gensym '__self))))
+                 #'(%#let-values
+                    ((($self) self))
+                    (%#call recur (%#ref $self) method arg ...))))))))
   (declare-type method-ref (@lambda 2 #f))
   (declare-type checked-method-ref (@lambda 2 #f))
   (declare-type bound-method-ref (@lambda 2 #f))
