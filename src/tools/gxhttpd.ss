@@ -402,7 +402,8 @@
 (def (forbidden-handler req res)
   (http-response-write-condition res Forbidden))
 
-(defstruct servlet (handler path timestamp))
+(defstruct servlet (handler path timestamp)
+  final: #t)
 
 (def (find-servlet-handler servlet-tab mx file-path)
   (def (load-servlet! file-path reload?)
@@ -428,7 +429,7 @@
                   (file-info-last-modification-time
                    (file-info file-path #t))))
              (if (> modtime srv.timestamp)
-               (servlet-handler (load-servlet! file-path #t))
+               (&servlet-handler (load-servlet! file-path #t))
                srv.handler)))))
    (else
     (servlet-handler (load-servlet! file-path #f)))))
