@@ -50,7 +50,7 @@
         (run-server! cfg)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Server Config: a flat (keyword) plist with the following required keys
+;;; Server Config: a flat (keyword) plist with the following keys
 ;;; User is free to have additional configuration, interpreted by handlers
 ;;;-----------------------------------------------------------------
 ;;; ;;; config: config versioned type, current is httpd-v0
@@ -65,8 +65,8 @@
 ;;; handlers: (("path/to/handler" . module) ...)
 ;;; ;;; servlets: a boolean indicating whether servlets are enabled
 ;;; enable-servlets: #t | #f
-;;; ;;; request-log: the file path for logging requests
-;;; request-log: "path/to/request-log-file"
+;;; ;;; request-log: [optional] the file path for logging requests
+;;; request-log: "path/to/request-log-file" | #f
 ;;; ;;; server-log: the file path for the server logger
 ;;; server-log:  "path/to/server-log-file"
 ;;; ;;; listen: a list of addresses where the server should listen
@@ -101,6 +101,8 @@
 ;;; ensemble-listen: (actor-address ...)
 ;;; ;;; ensemble-announce: [optional] list of supervisor announced addresses
 ;;; ensemble-announce: (actor-address ...) | #f
+;;; ;;; ensemble-request-log: boolean, whether to enable request logging
+;;; ensemble-request-log: #t | #f
 ;;; ;;; server-configuration: the server specific configuration
 ;;; server-configuration: (key: value ...)
 ;;; ;;; log-level: [optional] log level
@@ -237,7 +239,7 @@
   (let (srv-path (ensemble-server-path srv-id))
     `(config:
       httpd-v0
-      request-log: ,(path-expand "request.log" srv-path)
+      request-log: ,(and (config-get cfg ensemble-request-log:) (path-expand "request.log" srv-path))
       server-log: ,(path-expand "server.log" srv-path)
       reuse-port: #t
       log-level: ,(config-get cfg log-level: 'INFO)
@@ -258,7 +260,7 @@
   (start-logger! (config-get! cfg server-log:))
   (let* ((sockopts
           (if (config-get cfg reuse-port:)
-            [SO_REUSEADDR SO_REUSEPORT]
+            [SO_REUSEPORT]
             [SO_REUSEADDR]))
          (mux (make-mux cfg))
          (request-logger (make-request-logger cfg))
@@ -287,7 +289,8 @@
 
 (def (create-server-paths! cfg)
   (create-directory* (config-get! cfg root:))
-  (create-directory* (path-directory (config-get! cfg request-log:)))
+  (alet (request-log (config-get cfg request-log:))
+    (create-directory* (path-directory request-log)))
   (create-directory* (path-directory (config-get! cfg server-log:))))
 
 (def (make-request-logger cfg)
@@ -313,16 +316,17 @@
           (newline file)))
       (force-output file)
       (loop)))
-  (let* ((path (config-get! cfg request-log:))
-         (file (open-output-file [path: path append: #t]))
-         (logger-thread (spawn/name 'request-logger logger file)))
-    (lambda (req)
-      (thread-send logger-thread (cons (current-time) req)))))
+
+  (alet (path (config-get cfg request-log:))
+    (let* ((file (open-output-file [path: path append: #t]))
+           (logger-thread (spawn/name 'request-logger logger file)))
+      (lambda (req)
+        (thread-send logger-thread (cons (current-time) req))))))
 
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
 
-(defstruct dynamic-mux (root handlers servlets mx)
+(defstruct dynamic-mux (root handlers servlets mx cache cache-ttl cache-max-size)
   constructor: :init! final: #t)
 
 (defmethod {:init! dynamic-mux}
@@ -332,6 +336,9 @@
             (handlers (config-get cfg handlers: []))
             (servlets? (config-get cfg enable-servlets:)))
         (set! self.root root)
+        (set! self.cache (make-hash-table-string))
+        (set! self.cache-ttl (config-get cfg cache-ttl: 120))
+        (set! self.cache-max-size (config-get cfg cache-max-size: 1000000))
         (set! self.handlers (make-hash-table-string))
         (when servlets?
           (set! self.servlets (make-hash-table-string))
@@ -350,18 +357,38 @@
 (defmethod {get-handler dynamic-mux}
   (lambda (self host path)
     (using (self :- dynamic-mux)
-      (let (server-path (server-request-path path))
-        (cond
-         ((not server-path)
-          not-found-handler)
-         ((find-handler self.handlers server-path))
-         (else
-          (let (file-path (string-append self.root server-path))
-            (if (file-exists? file-path)
-              (if (and self.servlets (equal? ".ss" (path-extension file-path)))
-                (find-servlet-handler self.servlets self.mx file-path)
-                (file-handler file-path))
-              not-found-handler))))))))
+      ;; flush the cache if it gets too big
+      (when (fx> (hash-length self.cache) self.cache-max-size)
+        (set! self.cache (make-hash-table-string)))
+      (cond
+       ((hash-get self.cache path)
+        => (lambda (cache-entry)
+             (with ([handler . expire] cache-entry)
+               (if (< (##current-time-point) expire)
+                 handler
+                 {self.__get-handler path}))))
+       (else
+        {self.__get-handler path})))))
+
+(defmethod {__get-handler dynamic-mux}
+  (lambda (self path)
+    (using (self :- dynamic-mux)
+      (let (handler
+            (let (server-path (server-request-path path))
+              (cond
+               ((not server-path)
+                not-found-handler)
+               ((find-handler self.handlers server-path))
+               (else
+                (let (file-path (string-append self.root server-path))
+                  (if (file-exists? file-path)
+                    (if (and self.servlets (equal? ".ss" (path-extension file-path)))
+                      (find-servlet-handler self.servlets self.mx file-path)
+                      (file-handler file-path))
+                    not-found-handler))))))
+        (hash-put! self.cache path
+                   (cons handler (+ (##current-time-point) self.cache-ttl)))
+        handler))))
 
 (defmethod {put-handler! dynamic-mux}
   (lambda (self host path handler)
