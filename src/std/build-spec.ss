@@ -313,6 +313,7 @@
     (gxc: "net/httpd/handler"  ,@(include-gambit-sharp))
     "net/httpd/server"
     "net/httpd/file"
+    "net/httpd/logger"
     "net/httpd/api"
     "net/httpd"
     "net/sasl"

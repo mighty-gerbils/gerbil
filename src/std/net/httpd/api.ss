@@ -7,6 +7,7 @@
         ./mux
         ./handler
         ./file
+        ./logger
         ./server)
 (export start-http-server!
         stop-http-server!
@@ -43,6 +44,8 @@
         set-httpd-output-buffer-size!
         http-response-write-condition
         condition-handler
+
+        make-request-logger
 
         Continue
         Switching-Protocols
