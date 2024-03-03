@@ -342,17 +342,17 @@
          (else
           (let (file-path (string-append self.root server-path))
             (if (file-exists? file-path)
-              (cond
-               ((eq? (file-info-type (file-info file-path))
-                     'directory)
-                (let (file-path (path-expand "index.html" file-path))
-                  (if (file-exists? file-path)
-                    (file-handler file-path)
-                    not-found-handler)))
-               ((and self.servlets (equal? ".ss" (path-extension file-path)))
-                (find-servlet-handler self.servlets self.mx file-path))
-               (else
-                (file-handler file-path)))
+              (let (info (file-info file-path #t))
+                (cond
+                 ((eq? (file-info-type info) 'directory)
+                  (let (file-path (path-expand "index.html" file-path))
+                    (if (file-exists? file-path)
+                      (file-handler file-path (file-info file-path #t))
+                      not-found-handler)))
+                 ((and self.servlets (equal? ".ss" (path-extension file-path)))
+                  (find-servlet-handler self.servlets self.mx file-path info))
+                 (else
+                  (file-handler file-path info))))
               not-found-handler))))))))
 
 (defmethod {put-handler! dynamic-mux}
@@ -365,7 +365,7 @@
 
 (defstruct servlet (handler path timestamp))
 
-(def (find-servlet-handler servlet-tab mx file-path)
+(def (find-servlet-handler servlet-tab mx file-path info)
   (def (load-servlet! file-path reload?)
     (let* ((load-time (time->seconds (current-time)))
            (ctx (with-lock mx (cut import-module file-path reload? #t)))
@@ -386,29 +386,29 @@
          (using (srv :- servlet)
            (let (modtime
                  (time->seconds
-                  (file-info-last-modification-time
-                   (file-info srv.path #t))))
+                  (file-info-last-modification-time info)))
              (if (> modtime srv.timestamp)
                (servlet-handler (load-servlet! file-path #t))
                srv.handler)))))
    (else
     (servlet-handler (load-servlet! file-path #f)))))
 
-(def (file-handler path)
+(def (file-handler path info)
   (lambda (req res)
     (using (req :- http-request)
       (case req.method
         ((GET)
-         ;; TODO: Headers!
+         ;; TODO Headers!
          ;; Content-Type from extension
          (http-response-file res [] path))
         ((HEAD)
-         (let (info (file-info path #t))
-           (http-response-write
-            res 200
-            [["Content-Length" :: (file-info-size info)]
-             ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
-            #f)))
+         ;; TODO Content-Type from extension
+         ;;      format Last-Modified as date?
+         (http-response-write
+          res 200
+          [["Content-Length" :: (file-info-size info)]
+           ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+          #f))
         (else
          (http-response-write-condition res Forbidden))))))
 
