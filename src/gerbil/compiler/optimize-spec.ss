@@ -26,7 +26,7 @@ namespace: gxc
   (%#case-lambda                  collect-body-case-lambda%)
   (%#let-values              collect-body-let-values%)
   (%#letrec-values           collect-body-let-values%)
-  (%#letrec-values*          collect-body-let-values%)
+  (%#letrec*-values          collect-body-let-values%)
   (%#call                    collect-object-refs-call%)
   (%#if                      collect-operands)
   (%#set!                    collect-body-setq%)
