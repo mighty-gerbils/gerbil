@@ -299,7 +299,7 @@
     (let loop ()
       (with ([ts . req] (thread-receive))
         (using (req :- http-request)
-          (display (time->seconds ts) file)
+          (display ts file)
           (display "Z " file)
           (display
            (let (ip (car req.client))
@@ -322,7 +322,7 @@
     (let* ((file (open-output-file [path: path append: #t]))
            (logger-thread (spawn/name 'request-logger logger file)))
       (lambda (req)
-        (thread-send logger-thread (cons (current-time) req))))))
+        (thread-send logger-thread (cons (##current-time-point) req))))))
 
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
