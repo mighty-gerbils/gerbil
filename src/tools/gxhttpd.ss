@@ -9,6 +9,7 @@
         :std/net/httpd
         :std/actor
         :std/iter
+        :std/misc/ports
         (only-in :std/logger start-logger! deflogger current-logger-options)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
         (only-in :std/srfi/13 string-contains)
@@ -338,7 +339,7 @@
         (set! self.root root)
         (set! self.cache (make-hash-table-string))
         (set! self.cache-ttl (config-get cfg cache-ttl: 120))
-        (set! self.cache-max-size (config-get cfg cache-max-size: 1000000))
+        (set! self.cache-max-size (config-get cfg cache-max-size: 16384))
         (set! self.handlers (make-hash-table-string))
         (when servlets?
           (set! self.servlets (make-hash-table-string))
@@ -437,29 +438,50 @@
     (if (eq? (file-info-type info) 'directory)
       (let (index-html-path (path-expand "index.html" path))
         (if (file-exists? index-html-path)
-          (serve-file index-html-path #f)
+          (serve-file index-html-path (file-info index-html-path #t))
           forbidden-handler))
       (serve-file path info))))
 
+(def max-file-cache-size 32768) ; size of i/o buffer for http-response-file
+
 (def (serve-file path maybe-info)
-  (lambda (req res)
-    (using (req :- http-request)
-      (case req.method
-        ((GET)
-         ;; TODO Headers!
-         ;; Content-Type from extension
-         (http-response-file res [] path))
-        ((HEAD)
-         ;; TODO Content-Type from extension
-         ;;      format Last-Modified as date?
-         (let (info (or maybe-info (file-info path #t)))
-           (http-response-write
-            res 200
-            [["Content-Length" :: (file-info-size info)]
-             ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
-            #f)))
-        (else
-         (http-response-write-condition res Forbidden))))))
+  (if (and maybe-info (fx< (file-info-size maybe-info) max-file-cache-size))
+    ;; cache the content
+    (let (buf (read-file-u8vector path))
+      (lambda (req res)
+        (using (req :- http-request)
+          (case req.method
+            ((GET)
+             ;; TODO Headers! Content-Type
+             (http-response-write res 200 [] buf))
+            ((HEAD)
+             ;; TODO content-Type from extension
+             (http-response-write
+              res 200
+              [["Content-Length" :: (u8vector-length buf)]
+               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time maybe-info)))]]
+              #f))
+            (else
+             (http-response-write-condition res Forbidden))))))
+    ;; don't cache
+    (lambda (req res)
+      (using (req :- http-request)
+        (case req.method
+          ((GET)
+           ;; TODO Headers!
+           ;; Content-Type from extension
+           (http-response-file res [] path))
+          ((HEAD)
+           ;; TODO Content-Type from extension
+           ;;      format Last-Modified as date?
+           (let (info (or maybe-info (file-info path #t)))
+             (http-response-write
+              res 200
+              [["Content-Length" :: (file-info-size info)]
+               ["Last-Modified" :: (exact (time->seconds (file-info-last-modification-time info)))]]
+              #f)))
+          (else
+           (http-response-write-condition res Forbidden)))))))
 
 (def (find-handler tab server-path)
   (let loop ((path server-path))
