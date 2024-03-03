@@ -9,8 +9,8 @@
         :std/net/httpd
         :std/actor
         :std/format
-        :std/srfi/19
         :std/iter
+        (only-in :std/srfi/19 current-date date->string)
         (only-in :std/logger start-logger! deflogger current-logger-options)
         (only-in :std/os/socket SO_REUSEADDR SO_REUSEPORT)
         :gerbil/expander
@@ -125,14 +125,15 @@
 (def (load-config path type)
   (let (cfg (call-with-input-file path read-all))
     (unless (eq? type (config-get! cfg config:))
-      (error "Bad configuration file; configuration type mismatch" path type cfg))))
+      (error "Bad configuration file; configuration type mismatch" path type cfg))
+    cfg))
 
 (def (config-get cfg key (default #f))
   (pgetq key cfg default))
 
 (def (config-get! cfg key)
   (or (pgetq key cfg)
-      (error "missing configuration key" key: key)))
+      (error "missing configuration key" key: key config: cfg)))
 
 (def (config-set! cfg key val)
   (cond
@@ -256,7 +257,7 @@
   (current-logger-options (config-get cfg log-level: 'INFO))
   (start-logger! (config-get! cfg server-log:))
   (let* ((sockopts
-          (if (config-get! cfg reuse-port:)
+          (if (config-get cfg reuse-port:)
             [SO_REUSEADDR SO_REUSEPORT]
             [SO_REUSEADDR]))
          (mux (make-mux cfg))
@@ -291,14 +292,16 @@
 
 (def (make-request-logger cfg)
   (let* ((path (config-get! cfg request-log:))
-         (file (open-output-file [path: path append: #t create: #t])))
+         (file (open-output-file [path: path append: #t])))
     (lambda (req)
       (using (req : http-request)
-        (printf file "~a ~a ~a ~a"
-                (date->string (current-date) "~4")
-                req.proto
-                req.method
-                req.url)))))
+        (fprintf file "~a ~a ~a ~a ~a~n"
+                 (date->string (current-date) "~4")
+                 (inet-address->string req.client)
+                 req.proto
+                 req.method
+                 req.url)
+        (force-output file)))))
 
 (def (make-mux cfg)
   (Mux (make-dynamic-mux cfg)))
@@ -337,18 +340,22 @@
           not-found-handler)
          ((find-handler self.handlers server-path))
          (else
-          (let* ((file-path (string-append self.root server-path))
-                 (file-path
-                  (if (eq? "/" (string-ref file-path (fx1- (string-length file-path))))
-                    (string-append file-path "index.html")
-                    file-path)))
+          (let (file-path (string-append self.root server-path))
             (if (file-exists? file-path)
-              (if (and self.servlets (equal? ".ss" (path-extension file-path)))
-                (find-servlet-handler self.servlets self.mx file-path)
-                (file-handler file-path))
+              (cond
+               ((eq? (file-info-type (file-info file-path))
+                     'directory)
+                (let (file-path (path-expand "index.html" file-path))
+                  (if (file-exists? file-path)
+                    (file-handler file-path)
+                    not-found-handler)))
+               ((and self.servlets (equal? ".ss" (path-extension file-path)))
+                (find-servlet-handler self.servlets self.mx file-path))
+               (else
+                (file-handler file-path)))
               not-found-handler))))))))
 
-(defmethod {put-handler dynamic-mux}
+(defmethod {put-handler! dynamic-mux}
   (lambda (self host path handler)
     (using (self :- dynamic-mux)
       (hash-put! self.handlers path handler))))
@@ -361,7 +368,7 @@
 (def (find-servlet-handler servlet-tab mx file-path)
   (def (load-servlet! file-path reload?)
     (let* ((load-time (time->seconds (current-time)))
-           (ctx (with-lock mx (import-module file-path reload? #t)))
+           (ctx (with-lock mx (cut import-module file-path reload? #t)))
            (init! (find-runtime-symbol ctx 'handler-init!))
            (handle-request (find-runtime-symbol ctx 'handle-request)))
       (unless handle-request
@@ -392,7 +399,9 @@
     (using (req :- http-request)
       (case req.method
         ((GET)
-         (http-response-file res req.headers path))
+         ;; TODO: Headers!
+         ;; Content-Type from extension
+         (http-response-file res [] path))
         ((HEAD)
          (let (info (file-info path #t))
            (http-response-write
