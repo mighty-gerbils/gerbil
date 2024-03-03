@@ -4,10 +4,12 @@
 (import :std/test
         :std/source
         :std/os/temporaries
-        :gerbil/compiler)
-(export compiler-test)
+        :gerbil/compiler
+        :gerbil/expander
+        :gerbil/runtime/init)
+(export compiler-specializer-test)
 
-(def (must-compile path)
+(def (must-compile-and-execute path)
   (let (output-dir (make-temporary-file-name "compiler.out"))
     (check (compile-module (path-expand path (this-source-directory))
                            [output-dir:
@@ -16,9 +18,21 @@
                             optimize: #t
                             generate-ssxi: #t])
            ? true)
+    (with-cons-load-path
+     (lambda () (check (import-module
+                   (string->symbol
+                    (string-append "test/"
+                                   (path-strip-extension
+                                    (path-strip-directory
+                                     path))))
+                   #f #t)
+                  ? true))
+     output-dir)
     (delete-file-or-directory output-dir #t)))
 
-(def compiler-test
-  (test-suite "compiler tests"
+(def compiler-specializer-test
+  (test-suite "compiler specializer tests"
+    (test-case "specializer methods"
+      (must-compile-and-execute "compiler-test-support/specializer-methods.ss"))
     (test-case "issue #1144"
-      (must-compile "compiler-test-support/issue-1144.ss"))))
+      (must-compile-and-execute "compiler-test-support/issue-1144.ss"))))
