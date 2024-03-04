@@ -6,9 +6,12 @@
 
 (def (get-mime-type name) (hash-get mime-types name))
 (def (extension->mime-type ext) (hash-get mime-extensions ext))
+
 (def (path-extension->mime-type-name path)
-  (def mt (extension->mime-type (string-trim (path-extension path) #\.)))
-  (and mt (mime-type-name mt)))
+  (alet (ext (path-extension path))
+    (let (ext (substring ext 1 (string-length ext)))
+      (alet (mt (extension->mime-type ext))
+        (&mime-type-name mt)))))
 
 (define-mime-types
   "./mime.types"
