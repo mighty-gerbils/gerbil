@@ -528,7 +528,8 @@
     (try
      (if (eq? req.status 200)
        (&request-content req)
-       (error "HTTP request failed" req.status req.status-text))
+       (error "HTTP request failed"
+         req.status req.status-text (ignore-errors (request-text req))))
      (finally
       (&request-close req)))))
 
