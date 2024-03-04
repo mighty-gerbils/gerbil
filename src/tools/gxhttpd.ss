@@ -7,6 +7,7 @@
         :std/cli/getopt
         :std/net/address
         :std/net/httpd
+        :std/mime/types
         :std/actor
         :std/iter
         :std/misc/ports
@@ -420,42 +421,36 @@
 (def max-file-cache-size 32768) ; size of i/o buffer for http-response-file
 
 (def (serve-file path info)
-  (if (fx<= (file-info-size info) max-file-cache-size)
-    ;; cache the content
-    (let (buf (read-file-u8vector path))
+  (let* ((content-type (path-extension->mime-type-name path))
+         (headers
+          [(if content-type
+             ["Content-Type" :: content-type]
+             ["Content-Type" :: "application/octet-stream"])
+           ["Last-Modified" :: (number->string (exact (floor (time->seconds (file-info-last-modification-time info)))))]
+           ["Content-Length" :: (number->string (file-info-size info))]]))
+
+    (if (fx<= (file-info-size info) max-file-cache-size)
+      ;; cache the content
+      (let (buf (read-file-u8vector path))
+        (lambda (req res)
+          (using (req :- http-request)
+            (case req.method
+              ((GET)
+               (http-response-write res 200 headers buf))
+              ((HEAD)
+               (http-response-write res 200 headers #f))
+              (else
+               (http-response-write-condition res Forbidden))))))
+      ;; don't cache
       (lambda (req res)
         (using (req :- http-request)
           (case req.method
             ((GET)
-             ;; TODO Headers! Content-Type
-             (http-response-write res 200 [] buf))
+             (http-response-file res headers path))
             ((HEAD)
-             ;; TODO content-Type from extension
-             (http-response-write
-              res 200
-              [["Content-Length" :: (u8vector-length buf)]
-               ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
-              #f))
+             (http-response-write res 200 headers #f))
             (else
-             (http-response-write-condition res Forbidden))))))
-    ;; don't cache
-    (lambda (req res)
-      (using (req :- http-request)
-        (case req.method
-          ((GET)
-           ;; TODO Headers!
-           ;; Content-Type from extension
-           (http-response-file res [] path))
-          ((HEAD)
-           ;; TODO Content-Type from extension
-           ;;      format Last-Modified as date?
-           (http-response-write
-            res 200
-            [["Content-Length" :: (file-info-size info)]
-             ["Last-Modified" :: (time->seconds (file-info-last-modification-time info))]]
-            #f))
-          (else
-           (http-response-write-condition res Forbidden)))))))
+             (http-response-write-condition res Forbidden))))))))
 
 (def (find-handler tab server-path)
   (let loop ((path server-path))

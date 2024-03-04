@@ -184,7 +184,9 @@
              (else
               (error "Bad response body; expected string, u8vector, or #f" body))))
            (headers
-            (cons (cons "Content-Length" (number->string len)) headers))
+            (if (assoc "Content-Length" headers)
+              headers
+              (cons (cons "Content-Length" (number->string len)) headers)))
            (headers
             (if res.close?
               (cons '("Connection" . "close") headers)
