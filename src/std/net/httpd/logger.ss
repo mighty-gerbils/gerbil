@@ -32,6 +32,40 @@
     (using ((output :- Writer)
             (writer :- BufferedWriter))
 
+      (def (write-ip4-address ip)
+        (let loop ((i 0) (wr 0))
+          (let (next (u8vector-ref ip i))
+            (cond
+             ((fx< next 10)
+              (writer.write-u8 (fx+ next 48))
+              (if (fx< i 3)
+                (begin
+                  (writer.write-char #\.)
+                  (loop (fx+ i 1) (fx+ wr 2)))
+                (fx+ wr 1)))
+             ((fx< next 100)
+              (writer.write-u8 (fx+ (fxquotient next 10) 48))
+              (writer.write-u8 (fx+ (fxremainder next 10) 48))
+              (if (fx< i 3)
+                (begin
+                  (writer.write-char #\.)
+                  (loop (fx+ i 1) (fx+ wr 3)))
+                (fx+ wr 2)))
+             (else
+              (writer.write-u8 (fx+ (fxquotient next 100) 48))
+              (let (next (fxremainder next 100))
+                (writer.write-u8 (fx+ (fxquotient next 10) 48))
+                (writer.write-u8 (fx+ (fxremainder next 10) 48))
+                (if (fx< i 3)
+                  (begin
+                    (writer.write-char #\.)
+                    (loop (fx+ i 1) (fx+ wr 4)))
+                  (fx+ wr 3))))))))
+
+      (def (write-ip6-address ip)
+        ;; TODO optimize this
+        (writer.write-string (ip6-address->string ip)))
+
       (def (log-request ts req)
         (using (req :- http-request)
           (let* ((wr 0)
@@ -39,12 +73,12 @@
                  (wr (fx+ wr (writer.write-string (number->string ts))))
                  (wr (fx+ wr (writer.write-char #\space)))
                  ;; client IP
-                 (wr (fx+ wr (writer.write-string
-                              (let (ip (car req.client))
-                                (case (u8vector-length ip)
-                                  ((4) (ip4-address->string ip))
-                                  ((6) (ip6-address->string ip))
-                                  (else "???"))))))
+                 (wr (fx+ wr (let (ip (car req.client))
+                               (case (u8vector-length ip)
+                                 ((4) (write-ip4-address ip))
+                                 ((6) (write-ip6-address ip))
+                                 (else
+                                  (writer.write-string "???"))))))
                  (wr (fx+ wr (writer.write-char #\space)))
                  ;; request protocol
                  (wr (fx+ wr (writer.write-string req.proto)))
