@@ -12,7 +12,7 @@
 (export make-request-logger)
 (declare (not safe))
 
-(def (make-request-logger path rotate: (rotate-size (expt 2 20)))
+(def (make-request-logger path rotate: (rotate-size (expt 2 22)))
   (let (logger-thread
         (spawn/name 'http-request-logger request-logger path rotate-size))
     (lambda (req)
@@ -70,7 +70,7 @@
         (using (req :- http-request)
           (let* ((wr 0)
                  ;; timestamp
-                 (wr (fx+ wr (writer.write-string (number->string ts))))
+                 (wr (fx+ wr (writer.write-string (number->string (exact (floor ts))))))
                  (wr (fx+ wr (writer.write-char #\space)))
                  ;; client IP
                  (wr (fx+ wr (let (ip (car req.client))
