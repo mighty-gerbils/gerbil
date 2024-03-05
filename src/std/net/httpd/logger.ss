@@ -70,7 +70,7 @@
         (using (req :- http-request)
           (let* ((wr 0)
                  ;; timestamp
-                 (wr (fx+ wr (writer.write-digits (exact (floor ts)))))
+                 (wr (fx+ wr (writer.write-digits (##flonum->fixnum ts))))
                  (wr (fx+ wr (writer.write-char #\space)))
                  ;; client IP
                  (wr (fx+ wr (let (ip (car req.client))
