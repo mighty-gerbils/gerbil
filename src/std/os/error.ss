@@ -56,7 +56,8 @@
 
 (deferror-class OSError (errno) os-error?)
 (defrule (raise-os-error where errno irritants ...)
-  (let (err (OSError (strerror errno) where: (exception-context where) irritants: ['where irritants ...]))
+  (let* ((errno (if (fx< errno 0) (fx- errno) errno))
+         (err (OSError (strerror errno) where: (exception-context where) irritants: ['where irritants ...])))
     (set! (OSError-errno err) errno)
     (raise err)))
 (def os-error-errno OSError-errno)

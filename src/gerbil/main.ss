@@ -67,6 +67,7 @@ package: gerbil
     ("tags"        "gxtags")
     ("prof"        "gxprof")
     ("ensemble"    "gxensemble")
+    ("httpd"       "gxhttpd")
     ("interactive" "gxi")
     ("compile"     "gxc")))
 
@@ -81,6 +82,7 @@ package: gerbil
     ("tags"        "gxtags" "-h")
     ("prof"        "gxprof" "-h")
     ("ensemble"    "gxensemble" "help")
+    ("httpd"       "gxhttpd" "-h")
     ("interactive" "gxi" "-h")
     ("compile"     "gxc" "-h")))
 
@@ -106,6 +108,7 @@ package: gerbil
   (displayln "  tags                             create emacs tags (gxtags)")
   (displayln "  prof                             profile a dynamic executable module (gxprof)")
   (displayln "  ensemble                         invoke the gerbil actor ensemble manager (gxensemble)")
+  (displayln "  httpd                            invoke the gerbil httpd (gxhttpd)")
   (displayln "  interactive                      invoke the gerbil interpreter (gxi)")
   (displayln "  compile                          invoke the gerbil compiler (gxc)")
   (displayln "  help <cmd>                       display help for a tool command")

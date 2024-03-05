@@ -1,11 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; ̧© vyzo
 ;;; httpd api
-(import ./base
+(import :std/interface
+        ./base
         ./control
         ./mux
         ./handler
         ./file
+        ./logger
         ./server)
 (export start-http-server!
         stop-http-server!
@@ -13,12 +15,14 @@
         current-http-server
         http-register-handler
 
+        (interface-out Mux)
         make-default-http-mux
         make-recursive-http-mux
         make-static-http-mux
         make-recursive-static-http-mux
         make-custom-http-mux
 
+        http-request
         http-request?
         http-request-method http-request-url http-request-path http-request-params
         http-request-proto http-request-client http-request-headers
@@ -40,6 +44,8 @@
         set-httpd-output-buffer-size!
         http-response-write-condition
         condition-handler
+
+        make-request-logger
 
         Continue
         Switching-Protocols

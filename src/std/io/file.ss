@@ -15,8 +15,7 @@
         default-file-writer-flags)
 (declare (not safe))
 
-(defstruct file-io (fd closed?)
-  )
+(defstruct file-io (fd closed?))
 
 (defstruct (input-file-io file-io) ()
   final: #t)
