@@ -262,7 +262,7 @@
   (start-logger! (config-get! cfg server-log:))
   (let* ((sockopts
           (if (config-get cfg reuse-port:)
-            [SO_REUSEPORT]
+            [SO_REUSEADDR SO_REUSEPORT]
             [SO_REUSEADDR]))
          (mux (make-mux cfg))
          (request-logger (get-request-logger cfg))
