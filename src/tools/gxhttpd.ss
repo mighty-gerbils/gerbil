@@ -196,7 +196,20 @@
          (catch (e)
            (warnf "error shutting down ~a: ~a" srv-id e)))))
 
+    (def (prepare!)
+      ;; shutdown extant httpd workers in case of restart
+      (let (wait? #f)
+      (for (srv-id (config-get! cfg ensemble-servers:))
+        (ignore-errors
+         (when (eq? 'OK (ping-server srv-id))
+           (infof "shutting down leftover server ~a" srv-id)
+           (remote-stop-server! srv-id)
+           (set! wait? #t))))
+      (when wait?
+        (thread-sleep! 1))))
+
     (try
+     (prepare!)
      (for (srv-id (config-get! cfg ensemble-servers:))
        (start-server! srv-id))
      (catch (e)
