@@ -538,6 +538,27 @@
     (reader.read buffer start (+ start count) 0)
     count))
 
+(defreader-ext (read-digits reader)
+  (let* ((maybe-sign? (reader.peek-u8))
+         (sign (if (eq? maybe-sign? 45)
+                 (begin
+                   (reader.read-u8)
+                   -1)
+                 1)))
+    (let lp ((result 0) (fx? #t))
+      (let (next (reader.peek-u8))
+        (cond
+         ((and (not (eof-object? next)) (fx<= 48 next 57))
+          (let* ((next (reader.read-u8))
+                 (digit (fx- next 48)))
+            (cond
+             ((and fx? (alet (result (##fx*? result 10)) (##fx+? digit result)))
+              => (cut lp <> #t))
+             (else
+              (lp (+ digit (* result 10)) #f)))))
+         (fx? (fx* sign result))
+         (else (* sign result)))))))
+
 ;; writer
 (defwriter-ext (write-u16 writer uint)
   (write-uint writer uint 2))

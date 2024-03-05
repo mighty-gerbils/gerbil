@@ -157,7 +157,23 @@
         (let (brd (open-string-buffered-reader input3))
           (check (BufferedReader-read-line brd '(#\return #\newline)) => input1))
         (let (brd (open-string-buffered-reader input3))
-          (check (BufferedReader-read-line brd '(#\return #\newline) #t) => input3))))))
+          (check (BufferedReader-read-line brd '(#\return #\newline) #t) => input3))))
+
+    (test-case "digit input"
+      (def (read->int str)
+        (let (brd (open-buffered-reader (string->utf8 str)))
+          (BufferedReader-read-digits brd)))
+
+      (check (read->int "0") => 0)
+      (check (read->int "6") => 6)
+      (check (read->int "10") => 10)
+      (check (read->int "666") => 666)
+      (check (read->int "1337") => 1337)
+      (check (read->int "123456789012345678901234567890123456789") => 123456789012345678901234567890123456789)
+      (check (read->int "-6") => -6)
+      (check (read->int "-666") => -666)
+      (check (read->int "-1337") => -1337)
+      (check (read->int "-123456789012345678901234567890123456789") => -123456789012345678901234567890123456789))))
 
 (def bio-output-test
   (test-suite "buffered writer"
@@ -255,7 +271,9 @@
           (BufferedWriter-write-digits bwr int)
           (utf8->string (get-buffer-output-u8vector bwr))))
 
+      (check (write->string 0) => "0")
       (check (write->string 6) => "6")
+      (check (write->string 10) => "10")
       (check (write->string 666) => "666")
       (check (write->string 1337) => "1337")
       (check (write->string 123456789012345678901234567890123456789) => "123456789012345678901234567890123456789")
