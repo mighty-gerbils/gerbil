@@ -661,6 +661,29 @@
       (let (wrote (writer.write-char-inline separator))
         (fx+ result wrote)))))
 
+(defwriter-ext (write-digits writer int)
+  (cond
+   ((fixnum? int)
+    (let (wr (if (fx< int 0)
+               (writer.write-u8 45)
+               0))
+      (let recur ((int (fxabs int)) (wr wr))
+        (let (wr (if (fx>= int 10)
+                   (recur (fxquotient int 10) wr)
+                   wr))
+        (fx+ wr (writer.write-u8 (fx+ (fxremainder int 10) 48)))))))
+   ((##bignum? int)
+    (let (wr (if (< int 0)
+               (writer.write-u8 45)
+               0))
+    (let recur ((int (abs int)) (wr wr))
+      (let (wr (if (>= int 10)
+                 (recur (quotient int 10) wr)
+                 wr))
+        (fx+ wr (writer.write-u8 (fx+ (remainder int 10) 48)))))))
+   (else
+    (raise-bad-argument write-digits "integer" int))))
+
 ;; expt caches
 (def +expt-cache+
   (let (cache (make-vector 64 #f))

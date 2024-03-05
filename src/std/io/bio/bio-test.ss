@@ -247,7 +247,22 @@
           (check (get-buffer-output-u8vector bwr) => output1))
         (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
-          (check (get-buffer-output-u8vector bwr) => output2))))))
+          (check (get-buffer-output-u8vector bwr) => output2))))
+
+    (test-case "digit output"
+      (def (write->string int)
+        (let (bwr (open-buffered-writer #f))
+          (BufferedWriter-write-digits bwr int)
+          (utf8->string (get-buffer-output-u8vector bwr))))
+
+      (check (write->string 6) => "6")
+      (check (write->string 666) => "666")
+      (check (write->string 1337) => "1337")
+      (check (write->string 123456789012345678901234567890123456789) => "123456789012345678901234567890123456789")
+      (check (write->string -6) => "-6")
+      (check (write->string -666) => "-666")
+      (check (write->string -1337) => "-1337")
+      (check (write->string -123456789012345678901234567890123456789) => "-123456789012345678901234567890123456789"))))
 
 (def bio-varint-delimited-test
   (test-suite "varint delimited i/o"
