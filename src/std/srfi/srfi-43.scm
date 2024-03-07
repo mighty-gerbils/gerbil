@@ -1102,7 +1102,7 @@
 ;;;   is 0, and END, whose default is the length of VECTOR, with VALUE.
 ;;;
 ;;; This one can probably be made really fast natively.
-(define %%vector-fill! ;; Gerbil: renamed to vector-fill on export
+#;(define %%vector-fill! ;; Gerbil: renamed to vector-fill on export
   (let ((%vector-fill! vector-fill!))   ; Take the native one, under
                                         ;   the assumption that it's
                                         ;   faster, so we can use it if
@@ -1212,7 +1212,7 @@
 ;;;   [R5RS+] Produce a list containing the elements in the locations
 ;;;   between START, whose default is 0, and END, whose default is the
 ;;;   length of VECTOR, from VECTOR.
-(define %%vector->list ;; Gerbil: renamed to vector->list on export
+#;(define %%vector->list ;; Gerbil: renamed to vector->list on export
   (let ((%vector->list vector->list))
     (lambda (vec . maybe-start+end)
       (if (null? maybe-start+end)       ; Oughta use CASE-LAMBDA.
@@ -1255,7 +1255,7 @@
 ;;; and causes - to fail as well.  Given a LENGTH* that computes the
 ;;; length of a list's cycle, this wouldn't diverge, and would work
 ;;; great for circular lists.
-(define %%list->vector ;; Gerbil: renamed to list->vector on export
+#;(define %%list->vector ;; Gerbil: renamed to list->vector on export
   (let ((%list->vector list->vector))
     (lambda (lst . maybe-start+end)
       ;; Checking the type of a proper list is expensive, so we do it
