@@ -1445,7 +1445,7 @@
 	(or (not (pair? rest))
 	    (let ((s2 (car rest))  (rest (cdr rest)))
 	      (and (or (eq? s2 s1)	; Fast path
-		       (%lset2<= (flip =) s1 s2)) ; Real test
+		       (%lset2<= = s1 s2)) ; Real test
 		   (lp s2 rest)))))))
 
 (define (lset= = . lists)
@@ -1456,8 +1456,8 @@
 	    (let ((s2   (car rest))
 		  (rest (cdr rest)))
 	      (and (or (eq? s1 s2)	; Fast path
-		       (and (%lset2<= (flip =) s1 s2) ; Real test
-                            (%lset2<= = s2 s1)))
+		       (and (%lset2<= = s1 s2) ; Real test
+                            (%lset2<= (flip =) s2 s1)))
 		   (lp s2 rest)))))))
 
 
