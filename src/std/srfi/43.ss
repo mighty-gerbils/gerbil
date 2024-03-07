@@ -35,7 +35,7 @@
   ;; * Mutators
   vector-set!
   vector-swap!
-  (rename: %%vector-fill! vector-fill!)
+  vector-fill!
   vector-reverse!
   vector-copy!                    vector-reverse-copy!
   vector-reverse!

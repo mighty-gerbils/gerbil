@@ -1102,7 +1102,7 @@
 ;;;   is 0, and END, whose default is the length of VECTOR, with VALUE.
 ;;;
 ;;; This one can probably be made really fast natively.
-(define %%vector-fill! ;; Gerbil: renamed to vector-fill on export
+#;(define %%vector-fill! ;; Gerbil: renamed to vector-fill on export
   (let ((%vector-fill! vector-fill!))   ; Take the native one, under
                                         ;   the assumption that it's
                                         ;   faster, so we can use it if
