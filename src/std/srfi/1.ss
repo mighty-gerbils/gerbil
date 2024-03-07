@@ -28,12 +28,10 @@
   (rename: foldl fold)
   (rename: foldr fold-right)
   filter filter-map find
-
-  ;; specialized dispatch implementation
-  (rename: srfi-1-map map)
-  (rename: srfi-1-for-each for-each)
-  (rename: srfi-1-member member)
-  (rename: srfi-1-assoc assoc)
+  map
+  for-each
+  member
+  assoc
 
   ;; olin's implementation
   xcons tree-copy list-tabulate list-copy
@@ -68,58 +66,5 @@
   lset-union! lset-intersection! lset-difference! lset-xor! lset-diff+intersection!)
 
 (declare (fixnum))
-
-(def* srfi-1-map
-  ((f lst) (map f lst))
-  ((f lst1 lst2) (map2 f lst1 lst2))
-  ((f lst1 lst2 . lsts)
-   (apply mapN f lst1 lst2 lsts)))
-
-(def (map2 f lst1 lst2)
-  (let recur ((rest1 lst1) (rest2 lst2))
-    (match* (rest1 rest2)
-      (([x1 . rest1] [x2 . rest2])
-       (cons (f x1 x2) (recur rest1 rest2)))
-      (else []))))
-
-(def (mapN f . lsts)
-  (let recur ((rest lsts))
-    (if (andmap pair? rest)
-      (cons (apply f (map car rest))
-            (recur (map cdr rest)))
-      [])))
-
-(def* srfi-1-for-each
-  ((f lst) (for-each f lst))
-  ((f lst1 lst2)
-   (for-each2 f lst1 lst2))
-  ((f lst1 lst2 . lsts)
-   (apply for-eachN f lst1 lst2 lsts)))
-
-(def (for-each2 f lst1 lst2)
-  (let lp ((rest1 lst1) (rest2 lst2))
-    (match* (rest1 rest2)
-      (([x1 . rest1] [x2 . rest2])
-       (f x1 x2)
-       (lp rest1 rest2))
-      (else (void)))))
-
-(def (for-eachN f . lsts)
-  (let lp ((rest lsts))
-    (when (andmap pair? rest)
-      (apply f (map car rest))
-      (lp (map cdr rest)))))
-
-(def* srfi-1-assoc
-  ((x lst)
-   (assoc x lst))
-  ((x lst eqf)
-   (find (lambda (p) (eqf (car p) x)) lst)))
-
-(def* srfi-1-member
-  ((x lst)
-   (member x lst))
-  ((x lst eqf)
-   (find-tail (cut eqf <> x) lst)))
 
 (include "srfi-1.scm")
