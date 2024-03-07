@@ -21,17 +21,17 @@
   list-ref
   memq memv
   assq assv
-
-  ;; gerbil runtime
-  cons* make-list iota
-  last last-pair
-  (rename: foldl fold)
-  (rename: foldr fold-right)
-  filter filter-map find
   map
   for-each
   member
   assoc
+  fold
+  fold-right
+
+  ;; gerbil runtime
+  cons* make-list iota
+  last last-pair
+  filter filter-map find
 
   ;; olin's implementation
   xcons tree-copy list-tabulate list-copy
@@ -66,5 +66,6 @@
   lset-union! lset-intersection! lset-difference! lset-xor! lset-diff+intersection!)
 
 (declare (fixnum))
-
+;; use the gambit primitives to avoid conflict in the integration
+(extern namespace: #f fold fold-right)
 (include "srfi-1.scm")

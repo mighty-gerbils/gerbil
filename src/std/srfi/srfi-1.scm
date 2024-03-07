@@ -855,9 +855,6 @@
 	    (let ((head (car lis)))
 	      (kons head (recur (cdr lis))))))))
 
-(defalias fold foldl)
-(defalias fold-right foldr)
-
 (define (pair-fold-right f zero lis1 . lists)
   (check-arg procedure? f pair-fold-right)
   (if (pair? lists)
