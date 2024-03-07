@@ -41,8 +41,8 @@
   vector-reverse!
 
   ;; * Conversion
-  (rename: %%vector->list vector->list) reverse-vector->list
-  (rename: %%list->vector list->vector) reverse-list->vector
+  vector->list reverse-vector->list
+  list->vector reverse-list->vector
   )
 
 (include "srfi-43.scm")
