@@ -130,8 +130,7 @@ gerbilxx:
 	--build-arg with_db="YES" \
 	--build-arg distro="alpine" \
 	--build-arg shared="no" \
-	-t final $(ROOT_DIR) \
-	--progress=plain
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/gerbilxx:$(arch)-$(BRANCH)
 
 gerbil:
@@ -144,8 +143,7 @@ gerbil:
 	--build-arg packages="$(alpine_packages)" \
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="no" \
-	-t final $(ROOT_DIR) \
-	--progress=plain
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/gerbil:$(arch)-$(BRANCH)
 
 amazonlinux:
@@ -186,8 +184,7 @@ fedora:
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
 	--build-arg with_db="YES" \
-	-t final $(ROOT_DIR) \
-	--progress=plain
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/fedora:$(arch)-$(BRANCH)
 
 ubuntu:
@@ -201,8 +198,7 @@ ubuntu:
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
 	--build-arg with_db="YES" \
-	-t final $(ROOT_DIR) \
-	--progress=plain
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
 
 debian:
@@ -216,8 +212,7 @@ debian:
 	--build-arg repo="$(REPO)" \
 	--build-arg shared="yes" \
 	--build-arg with_db="YES" \
-	-t final $(ROOT_DIR) \
-	--progress=plain
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu:$(arch)-$(BRANCH)
 
 ubuntu-current-jedi:
