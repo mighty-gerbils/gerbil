@@ -44,12 +44,12 @@
   (make-parameter #f))
 
 ;; the request structure
-(defstruct request (sock reader writer url history status status-text headers body encoding)
+(defstruct request (sock reader writer url history method status status-text headers body encoding)
   constructor: :init!
   final: #t )
 
 (defmethod {:init! request}
-  (lambda (self sock url history)
+  (lambda (self sock url history method)
     (using ((self :- request)
             (sock :- StreamSocket))
       (set! self.sock sock)
@@ -58,7 +58,8 @@
       (set! self.writer
         (open-buffered-writer (sock.writer)))
       (set! self.url url)
-      (set! self.history history))))
+      (set! self.history history)
+      (set! self.method method))))
 
 (def (url-target-e url params)
   (if params
@@ -279,9 +280,9 @@
               (lambda (addr)
                 (tcp-connect addr deadline)))))
            (sock (connect (cons host port)))
-           (req (make-request sock url history)))
+           (req (make-request sock url history method)))
       (using (req :- request)
-        (http-request-write req method target headers body)
+        (http-request-write req target headers body)
         (http-request-read-response! req)
         (cond
          ((and redirect
@@ -303,10 +304,10 @@
                                   deadline))))))
          (else req))))))
 
-(def (http-request-write req method target headers body)
+(def (http-request-write req target headers body)
   (using ((req :- request)
           (writer req.writer :- BufferedWriter))
-    (writeln writer "~a ~a HTTP/1.1" method target)
+    (writeln writer "~a ~a HTTP/1.1" req.method target)
     (for-each (match <> ([key . val](writeln writer "~a: ~a" key val)))
               headers)
     (writeln writer)
@@ -469,6 +470,7 @@
   (using (req :- request)
     (cond
      (req.body)
+     ((eq? req.method 'HEAD) #f)
      (req.sock
       => (lambda (sock)
            (let (headers (request-headers req))
@@ -528,7 +530,8 @@
     (try
      (if (eq? req.status 200)
        (&request-content req)
-       (error "HTTP request failed" req.status req.status-text))
+       (error "HTTP request failed"
+         req.status req.status-text (ignore-errors (request-text req))))
      (finally
       (&request-close req)))))
 

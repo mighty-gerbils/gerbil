@@ -133,7 +133,7 @@ namespace: #f
       (unchecked-slot-set! self 'message message)
       (apply class-instance-init! self rest))))
 
-(def dump-stack-trace? (make-parameter #t))
+(def dump-stack-trace? (make-parameter #f))
 
 (defmethod {display-exception Error}
   (lambda (self port)

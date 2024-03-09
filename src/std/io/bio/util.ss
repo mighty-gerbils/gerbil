@@ -538,6 +538,27 @@
     (reader.read buffer start (+ start count) 0)
     count))
 
+(defreader-ext (read-digits reader)
+  (let* ((maybe-sign? (reader.peek-u8))
+         (sign (if (eq? maybe-sign? 45)
+                 (begin
+                   (reader.read-u8)
+                   -1)
+                 1)))
+    (let lp ((result 0) (fx? #t))
+      (let (next (reader.peek-u8))
+        (cond
+         ((and (not (eof-object? next)) (fx<= 48 next 57))
+          (let* ((next (reader.read-u8))
+                 (digit (fx- next 48)))
+            (cond
+             ((and fx? (alet (result (##fx*? result 10)) (##fx+? digit result)))
+              => (cut lp <> #t))
+             (else
+              (lp (+ digit (* result 10)) #f)))))
+         (fx? (fx* sign result))
+         (else (* sign result)))))))
+
 ;; writer
 (defwriter-ext (write-u16 writer uint)
   (write-uint writer uint 2))
@@ -660,6 +681,29 @@
           (else result)))
       (let (wrote (writer.write-char-inline separator))
         (fx+ result wrote)))))
+
+(defwriter-ext (write-digits writer int)
+  (cond
+   ((fixnum? int)
+    (let (wr (if (fx< int 0)
+               (writer.write-u8 45)
+               0))
+      (let recur ((int (fxabs int)) (wr wr))
+        (let (wr (if (fx>= int 10)
+                   (recur (fxquotient int 10) wr)
+                   wr))
+        (fx+ wr (writer.write-u8 (fx+ (fxremainder int 10) 48)))))))
+   ((##bignum? int)
+    (let (wr (if (< int 0)
+               (writer.write-u8 45)
+               0))
+    (let recur ((int (abs int)) (wr wr))
+      (let (wr (if (>= int 10)
+                 (recur (quotient int 10) wr)
+                 wr))
+        (fx+ wr (writer.write-u8 (fx+ (remainder int 10) 48)))))))
+   (else
+    (raise-bad-argument write-digits "integer" int))))
 
 ;; expt caches
 (def +expt-cache+

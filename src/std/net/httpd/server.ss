@@ -21,10 +21,11 @@
 (def (start-http-server! mux: (mux (make-default-http-mux))
                          backlog: (backlog 10)
                          sockopts: (sockopts [SO_REUSEADDR])
+                         request-logger: (request-logger #f)
                          . addresses)
   (start-logger!)
   (let (socks (map (cut http-listen <> backlog: backlog sockopts: sockopts) addresses))
-    (let (srv (spawn/group 'http-server http-server socks (Mux mux)))
+    (let (srv (spawn/group 'http-server http-server socks (Mux mux) request-logger))
       (current-http-server srv)
       srv)))
 
@@ -41,14 +42,16 @@
     (else
      (tcp-listen addr backlog: backlog sockopts: sockopts))))
 
-(def (http-server socks mux)
+(def (http-server socks mux request-logger)
   (using (mux :- Mux)
     (def acceptors
       (parameterize ((current-http-server (current-thread)))
         (map
           (lambda (sock)
             (spawn/name 'http-server-accept
-                        http-server-accept sock (cut mux.get-handler <> <>)))
+                        http-server-accept sock
+                        (cut mux.get-handler <> <>)
+                        request-logger))
           socks)))
 
     (def (shutdown!)
@@ -99,12 +102,13 @@
      (finally
       (shutdown!)))))
 
-(def (http-server-accept sock get-handler)
+(def (http-server-accept sock get-handler request-logger)
   (using (sock :- ServerSocket)
     (def (loop)
       (let (clisock (sock.accept))
         (spawn/name 'http-request-handler
-                    http-request-handler (StreamSocket clisock) get-handler)
+                    http-request-handler (StreamSocket clisock)
+                    get-handler request-logger)
         (loop)))
 
     (let again ()

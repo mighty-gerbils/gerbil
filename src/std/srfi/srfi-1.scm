@@ -855,9 +855,6 @@
 	    (let ((head (car lis)))
 	      (kons head (recur (cdr lis))))))))
 
-(defalias fold foldl)
-(defalias fold-right foldr)
-
 (define (pair-fold-right f zero lis1 . lists)
   (check-arg procedure? f pair-fold-right)
   (if (pair? lists)
@@ -1434,9 +1431,7 @@
 ;;;   FILTER in this source code share longest common tails between args
 ;;;   and results to get structure sharing in the lset procedures.
 
-;; Note how we use Gambit's member for srfi-1-member, and it uses the = predicate with the
-;; opposite order of arguments than the reference SRFI-1 implementation.
-(define (%lset2<= = lis1 lis2) (every (lambda (x) (srfi-1-member x lis2 =)) lis1))
+(define (%lset2<= = lis1 lis2) (every (lambda (x) (member x lis2 =)) lis1))
 
 (define (flip proc) (lambda (x y) (proc y x)))
 
@@ -1447,7 +1442,7 @@
 	(or (not (pair? rest))
 	    (let ((s2 (car rest))  (rest (cdr rest)))
 	      (and (or (eq? s2 s1)	; Fast path
-		       (%lset2<= (flip =) s1 s2)) ; Real test
+		       (%lset2<= = s1 s2)) ; Real test
 		   (lp s2 rest)))))))
 
 (define (lset= = . lists)
@@ -1458,14 +1453,14 @@
 	    (let ((s2   (car rest))
 		  (rest (cdr rest)))
 	      (and (or (eq? s1 s2)	; Fast path
-		       (and (%lset2<= (flip =) s1 s2) ; Real test
-                            (%lset2<= = s2 s1)))
+		       (and (%lset2<= = s1 s2) ; Real test
+                            (%lset2<= (flip =) s2 s1)))
 		   (lp s2 rest)))))))
 
 
 (define (lset-adjoin = lis . elts)
   (check-arg procedure? = lset-adjoin)
-  (fold (lambda (elt ans) (if (srfi-1-member elt ans =) ans (cons elt ans)))
+  (fold (lambda (elt ans) (if (member elt ans =) ans (cons elt ans)))
 	lis elts))
 
 
@@ -1504,7 +1499,7 @@
     (cond ((any null-list? lists) '())		; Short cut
 	  ((null? lists)          lis1)		; Short cut
 	  (else (filter (lambda (x)
-			  (every (lambda (lis) (srfi-1-member x lis =)) lists))
+			  (every (lambda (lis) (member x lis =)) lists))
 			lis1)))))
 
 (define (lset-intersection! = lis1 . lists)
@@ -1513,7 +1508,7 @@
     (cond ((any null-list? lists) '())		; Short cut
 	  ((null? lists)          lis1)		; Short cut
 	  (else (filter! (lambda (x)
-			   (every (lambda (lis) (srfi-1-member x lis =)) lists))
+			   (every (lambda (lis) (member x lis =)) lists))
 			 lis1)))))
 
 
@@ -1523,7 +1518,7 @@
     (cond ((null? lists)     lis1)	; Short cut
 	  ((memq lis1 lists) '())	; Short cut
 	  (else (filter (lambda (x)
-			  (every (lambda (lis) (not (srfi-1-member x lis =)))
+			  (every (lambda (lis) (not (member x lis =)))
 				 lists))
 			lis1)))))
 
@@ -1533,7 +1528,7 @@
     (cond ((null? lists)     lis1)	; Short cut
 	  ((memq lis1 lists) '())	; Short cut
 	  (else (filter! (lambda (x)
-			   (every (lambda (lis) (not (srfi-1-member x lis =)))
+			   (every (lambda (lis) (not (member x lis =)))
 				  lists))
 			 lis1)))))
 
@@ -1554,7 +1549,7 @@
 	      (cond ((null? a-b)     (lset-difference = b a))
 		    ((null? a-int-b) (append b a))
 		    (else (fold (lambda (xb ans)
-				  (if (srfi-1-member xb a-int-b =) ans (cons xb ans)))
+				  (if (member xb a-int-b =) ans (cons xb ans)))
 				a-b
 				b)))))
 	  '() lists))
@@ -1576,7 +1571,7 @@
 	      (cond ((null? a-b)     (lset-difference! = b a))
 		    ((null? a-int-b) (append! b a))
 		    (else (pair-fold (lambda (b-pair ans)
-				       (if (srfi-1-member (car b-pair) a-int-b =) ans
+				       (if (member (car b-pair) a-int-b =) ans
 					   (begin (set-cdr! b-pair ans) b-pair)))
 				     a-b
 				     b)))))
@@ -1588,7 +1583,7 @@
   (cond ((every null-list? lists) (values lis1 '()))	; Short cut
 	((memq lis1 lists)        (values '() lis1))	; Short cut
 	(else (partition (lambda (elt)
-			   (not (any (lambda (lis) (srfi-1-member elt lis =))
+			   (not (any (lambda (lis) (member elt lis =))
 				     lists)))
 			 lis1))))
 
@@ -1597,6 +1592,6 @@
   (cond ((every null-list? lists) (values lis1 '()))	; Short cut
 	((memq lis1 lists)        (values '() lis1))	; Short cut
 	(else (partition! (lambda (elt)
-			    (not (any (lambda (lis) (srfi-1-member elt lis =))
+			    (not (any (lambda (lis) (member elt lis =))
 				      lists)))
 			  lis1))))
