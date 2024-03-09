@@ -4,6 +4,7 @@
 ;;; Recursion; See Recursion
 prelude: "prelude/core"
 package: gerbil
+namespace: #f
 
 (provide gerbil-runtime)
 
