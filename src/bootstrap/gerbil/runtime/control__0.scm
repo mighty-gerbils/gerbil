@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/control::timestamp 1709457368)
+  (define gerbil/runtime/control::timestamp 1709994212)
   (begin
     (define make-promise
       (lambda (_thunk61697_)

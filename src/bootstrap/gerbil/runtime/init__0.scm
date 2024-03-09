@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/init::timestamp 1709457369)
+  (define gerbil/runtime/init::timestamp 1709994213)
   (begin
     (define __loading-scheme-source (make-parameter '#f))
     (define __init-gx!
@@ -383,6 +383,7 @@
         (if __runtime-initialized
             '#!void
             (begin
+              (dump-stack-trace? '#t)
               (let* ((_home78746_ (let () (declare (not safe)) (gerbil-home)))
                      (_libdir78748_ (path-expand '"lib" _home78746_))
                      (_userpath78750_

@@ -232,6 +232,8 @@ namespace: #f
 
 (def (gerbil-runtime-init! builtin-modules)
   (unless __runtime-initialized
+    ;; set this to true, we want those stack traces in our programs
+    (dump-stack-trace? #t)
     ;; initialize the load path
     (let* ((home (gerbil-home))
            (libdir (path-expand "lib" home))
