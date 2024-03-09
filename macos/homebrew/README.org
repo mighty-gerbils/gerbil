@@ -1,0 +1,128 @@
+#+TITLE: Gerbil Homebrew Tap
+
+#+begin_src sh
+brew install mighty-gerbils/gerbil/gerbil-scheme
+#+end_src
+
+* How do I install these formulae?
+
+`brew install mighty-gerbils/gerbil/<formula>`
+
+Or `brew tap mighty-gerbils/gerbil` and then `brew install <formula>`.
+
+* Documentation
+
+`brew help`, `man brew` or check [Homebrew's documentation](https://docs.brew.sh).
+
+* Packages: =gerbil-scheme=, =gerbil-scheme-gcc= and =gerbil-scheme-clang=
+
+These packages are literate and tangled from this README.org.
+
+#+begin_src ruby :noweb-ref start-pkg
+  # This .rb file is tangled (AKA generated) from README.org
+  desc "Opinionated dialect of Scheme designed for Systems Programming"
+  homepage "https://cons.io"
+  url "https://github.com/mighty-gerbils/gerbil.git",
+      using: :git, revision: "92b1a2f642d6ebbcd3bd223ccc0af7ec0d9a42ad"
+  version "0.18.1"
+  license any_of: ["LGPL-2.1-or-later", "Apache-2.0"]
+#+end_src
+#+begin_src ruby :noweb-ref deps-pkg
+  head "https://github.com/mighty-gerbils/gerbil.git", using: :git, branch: "master"
+
+  depends_on "coreutils" => :build
+  depends_on "pkg-config" => :build
+  depends_on "openssl@3"
+  depends_on "sqlite"
+  depends_on "zlib"
+#+end_src
+#+begin_src ruby :noweb-ref install-pkg
+   def install
+    nproc = `nproc`.to_i - 1
+
+    if OS.mac?
+      ENV.prepend_path("PATH", "/usr/local/opt/llvm/bin")
+      ENV.prepend_path("PATH", "/opt/homebrew/opt/llvm/bin")
+    end
+
+    if OS.linux?
+      ENV.prepend_path("PATH", "/home/linuxbrew/.linuxbrew/bin")
+      ENV.prepend_path("PATH", "/home/linuxbrew/.linuxbrew/sbin")
+    end
+
+    ENV["GERBIL_GCC"] = ENV.cc.to_s
+    ENV["CC"] = ENV.cc.to_s
+
+    system ENV.cc.to_s, "--version"
+    system "./configure", "--prefix=#{prefix}", "--enable-march="
+    system "make", "-j#{nproc}"
+    system "make", "install"
+
+    # We get rid of all the non-LFSH stuff
+
+    rm prefix/"bin"
+    rm prefix/"lib"
+    rm prefix/"share"
+    mkdir prefix/"bin"
+
+    cd prefix/"current/bin" do
+      ln "gerbil", prefix/"bin", verbose: true
+      cp %w[gxc gxensemble gxi gxpkg gxprof gxtags gxtest], prefix/"bin"
+    end
+  end
+  test do
+    assert_equal "0123456789", shell_output("#{bin}/gxi -e \"(for-each write '(0 1 2 3 4 5 6 7 8 9))\"")
+  end
+
+#+end_src
+
+** Gcc
+#+begin_src ruby :tangle Formula/gerbil-scheme.rb :noweb yes
+  class GerbilScheme < Formula
+    <<start-pkg>>
+    # revision 3
+    <<deps-pkg>>
+    on_macos do
+       depends_on "llvm"
+    end
+    on_linux do
+       depends_on "gcc@13"
+    end
+    fails_with :gcc do
+       version "12" # Select new gcc
+       cause "Make it easy with all the same"
+    end
+    <<install-pkg>>
+  end
+#+end_src
+** Clang
+#+begin_src ruby :tangle Formula/gerbil-scheme-clang.rb :noweb yes
+  class GerbilSchemeClang < Formula
+    <<start-pkg>>
+    # revision 0
+    <<deps-pkg>>
+    on_macos do
+       depends_on "llvm"
+    end
+    on_linux do
+       depends_on "llvm"
+    end
+    fails_with :gcc do
+      cause "this is a clang build"
+    end
+    <<install-pkg>>
+  end
+
+
+    
+#+end_src
+
+* HACKING
+
+Trying to make it work for the github thing means fixing a bunch.
+
+==> brew style --fix  mighty-gerbils/gerbil/gerbil-scheme
+
+brew audit mighty-gerbils/gerbil/gerbil-scheme --online --new
+
+
