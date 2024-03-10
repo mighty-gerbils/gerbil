@@ -12,58 +12,58 @@ namespace: gxc
         "optimize-base")
 (export #t)
 
-(defcompile-method #f &identity-expression
-  (%#begin-annotation        xform-identity)
-  (%#lambda                       xform-identity)
-  (%#case-lambda                  xform-identity)
-  (%#let-values              xform-identity)
-  (%#letrec-values           xform-identity)
-  (%#letrec*-values          xform-identity)
-  (%#quote                   xform-identity)
-  (%#quote-syntax            xform-identity)
-  (%#call                    xform-identity)
-  (%#call-unchecked          xform-identity)
-  (%#if                      xform-identity)
-  (%#ref                     xform-identity)
-  (%#set!                    xform-identity)
-  (%#struct-instance?        xform-identity)
-  (%#struct-direct-instance? xform-identity)
-  (%#struct-ref              xform-identity)
-  (%#struct-set!             xform-identity)
-  (%#struct-direct-ref       xform-identity)
-  (%#struct-direct-set!      xform-identity)
-  (%#struct-unchecked-ref    xform-identity)
-  (%#struct-unchecked-set!   xform-identity))
+(defcompile-method #f &identity-expression ()
+  (%#begin-annotation        identity-method)
+  (%#lambda                       identity-method)
+  (%#case-lambda                  identity-method)
+  (%#let-values              identity-method)
+  (%#letrec-values           identity-method)
+  (%#letrec*-values          identity-method)
+  (%#quote                   identity-method)
+  (%#quote-syntax            identity-method)
+  (%#call                    identity-method)
+  (%#call-unchecked          identity-method)
+  (%#if                      identity-method)
+  (%#ref                     identity-method)
+  (%#set!                    identity-method)
+  (%#struct-instance?        identity-method)
+  (%#struct-direct-instance? identity-method)
+  (%#struct-ref              identity-method)
+  (%#struct-set!             identity-method)
+  (%#struct-direct-ref       identity-method)
+  (%#struct-direct-set!      identity-method)
+  (%#struct-unchecked-ref    identity-method)
+  (%#struct-unchecked-set!   identity-method))
 
-(defcompile-method #f &identity-special-form
-  (%#begin          xform-identity)
-  (%#begin-syntax   xform-identity)
-  (%#begin-foreign  xform-identity)
-  (%#module         xform-identity)
-  (%#import         xform-identity)
-  (%#export         xform-identity)
-  (%#provide        xform-identity)
-  (%#extern         xform-identity)
-  (%#define-values  xform-identity)
-  (%#define-syntax  xform-identity)
-  (%#define-alias   xform-identity)
-  (%#declare        xform-identity))
+(defcompile-method #f &identity-special-form ()
+  (%#begin          identity-method)
+  (%#begin-syntax   identity-method)
+  (%#begin-foreign  identity-method)
+  (%#module         identity-method)
+  (%#import         identity-method)
+  (%#export         identity-method)
+  (%#provide        identity-method)
+  (%#extern         identity-method)
+  (%#define-values  identity-method)
+  (%#define-syntax  identity-method)
+  (%#define-alias   identity-method)
+  (%#declare        identity-method))
 
-(defcompile-method #f (&identity &identity-special-form &identity-expression))
+(defcompile-method #f (&identity &identity-special-form &identity-expression) ())
 
-(defcompile-method #f &basic-xform-expression
+(defcompile-method #f &basic-xform-expression ()
   (%#begin-annotation        xform-begin-annotation%)
   (%#lambda                       xform-lambda%)
   (%#case-lambda                  xform-case-lambda%)
   (%#let-values              xform-let-values%)
   (%#letrec-values           xform-let-values%)
   (%#letrec*-values          xform-let-values%)
-  (%#quote                   xform-identity)
-  (%#quote-syntax            xform-identity)
+  (%#quote                   identity-method)
+  (%#quote-syntax            identity-method)
   (%#call                    xform-operands)
   (%#call-unchecked          xform-operands)
   (%#if                      xform-operands)
-  (%#ref                     xform-identity)
+  (%#ref                     identity-method)
   (%#set!                    xform-setq%)
   (%#struct-instance?        xform-operands)
   (%#struct-direct-instance? xform-operands)
@@ -74,14 +74,15 @@ namespace: gxc
   (%#struct-unchecked-ref    xform-operands)
   (%#struct-unchecked-set!   xform-operands))
 
-(defcompile-method #f (&basic-xform &basic-xform-expression &identity)
+(defcompile-method #f (&basic-xform &basic-xform-expression &identity) ()
   (%#begin          xform-begin%)
   (%#begin-syntax   xform-begin-syntax%)
   (%#module         xform-module%)
   (%#define-values  xform-define-values%)
   (%#define-syntax  xform-define-syntax%))
 
-(defcompile-method apply-collect-mutators (&collect-mutators &void)
+(defcompile-method (apply-collect-mutators) (&collect-mutators &void) ()
+  final:
   (%#begin                   collect-begin%)
   (%#begin-syntax            collect-begin-syntax%)
   (%#begin-annotation        collect-begin-annotation%)
@@ -106,23 +107,31 @@ namespace: gxc
   (%#struct-unchecked-ref    collect-operands)
   (%#struct-unchecked-set!   collect-operands))
 
-(defcompile-method apply-collect-methods (&collect-methods &void)
+(defcompile-method (apply-collect-methods) (&collect-methods &void) ()
+  final:
   (%#begin          collect-begin%)
   (%#begin-syntax   collect-begin-syntax%)
   (%#module         collect-module%)
   (%#call           collect-methods-call%)
   (%#call-unchecked collect-methods-call%))
 
-(defcompile-method apply-expression-subst (&expression-subst &basic-xform-expression)
+(defcompile-method (apply-expression-subst id: id new-id: new-id)
+  (&expression-subst &basic-xform-expression)
+  (id new-id)
+  final:
   (%#begin xform-begin%)
   (%#ref   expression-subst-ref%)
   (%#set!  expression-subst-setq%))
 
-(defcompile-method apply-expression-subst* (&expression-subst* &expression-subst)
+(defcompile-method (apply-expression-subst* subst: subst)
+  (&expression-subst* &basic-xform-expression)
+  (subst)
+  final:
+  (%#begin xform-begin%)
   (%#ref   expression-subst*-ref%)
   (%#set!  expression-subst*-setq%))
 
-(defcompile-method #f (&find-expression &false-expression)
+(defcompile-method #f (&find-expression &false-expression) ()
   (%#begin                   find-body%)
   (%#begin-annotation        find-begin-annotation%)
   (%#lambda                       find-lambda%)
@@ -143,93 +152,93 @@ namespace: gxc
   (%#struct-unchecked-ref    find-body%)
   (%#struct-unchecked-set!   find-body%))
 
-(defcompile-method apply-find-var-refs (&find-var-refs &find-expression)
+(defcompile-method (apply-find-var-refs ids: ids)
+  (&find-var-refs &find-expression)
+  (ids)
+  final:
   (%#ref  find-var-refs-ref%)
   (%#set! find-var-refs-setq%))
 
-(defcompile-method apply-collect-runtime-refs (&collect-runtime-refs &collect-expression-refs)
+(defcompile-method (apply-collect-runtime-refs table: table)
+  (&collect-runtime-refs &collect-expression-refs)
+  ()
+  final:
   (%#ref  collect-runtime-refs-ref%)
   (%#set! collect-runtime-refs-setq%))
 
 ;;; basic-xform
-(def (xform-identity stx . args)
-  stx)
-
 (def (xform-wrap-source stx src-stx)
   (stx-wrap-source stx (stx-source src-stx)))
 
-(def (xform-apply-compile-e args)
-  (lambda (stx) (do-apply-compile-e stx args)))
-
-(def (xform-begin% stx . args)
+(def (xform-begin% self stx)
   (ast-case stx ()
     ((_ . forms)
-     (let (forms (map (xform-apply-compile-e args) #'forms))
+     (let (forms (map (cut compile-e self <>) #'forms))
        (xform-wrap-source
         ['%#begin forms ...]
         stx)))))
 
-(def (xform-begin-syntax% stx . args)
+(def (xform-begin-syntax% self stx)
   (ast-case stx ()
     ((_ . forms)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (let (forms (map (xform-apply-compile-e args) #'forms))
+       (let (forms (map (cut compile-e self <>) #'forms))
          (xform-wrap-source
           ['%#begin-syntax forms ...]
           stx))))))
 
-(def (xform-module% stx . args)
+(def (xform-module% self stx)
   (ast-case stx ()
     ((_ id . body)
      (let* ((ctx (syntax-local-e #'id))
             (code (module-context-code ctx))
             (code
              (parameterize ((current-expander-context ctx))
-               (do-apply-compile-e code args))))
+               (compile-e self code))))
        (set! (module-context-code ctx)
          code)
        (xform-wrap-source
         ['%#module #'id code]
         stx)))))
 
-(def (xform-define-values% stx . args)
+(def (xform-define-values% self stx)
   (ast-case stx ()
     ((_ hd expr)
-     (let (expr (do-apply-compile-e #'expr args))
+     (let (expr (compile-e self #'expr))
        (xform-wrap-source
         ['%#define-values #'hd expr]
         stx)))))
 
-(def (xform-define-syntax% stx . args)
+(def (xform-define-syntax% self stx)
   (ast-case stx ()
     ((_ id expr)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (let (expr (do-apply-compile-e #'expr args))
+       (let (expr (compile-e self #'expr))
          (xform-wrap-source
           ['%#define-syntax #'id expr]
           stx))))))
 
-(def (xform-begin-annotation% stx . args)
+(def (xform-begin-annotation% self stx)
   (ast-case stx ()
     ((_ ann expr)
-     (let (expr (do-apply-compile-e #'expr args))
+     (let (expr (compile-e self #'expr))
        (xform-wrap-source
         ['%#begin-annotation #'ann expr]
         stx)))))
 
-(def (xform-lambda% stx . args)
+(def (xform-lambda% self stx)
   (ast-case stx ()
     ((_ hd . body)
-     (let (body (map (xform-apply-compile-e args) #'body))
+     (let (body (map (cut compile-e self <>) #'body))
        (xform-wrap-source
         ['%#lambda #'hd body ...]
         stx)))))
 
-(def (xform-case-lambda% stx . args)
+(def (xform-case-lambda% self stx)
   (def (clause-e clause)
     (ast-case clause ()
       ((hd . body)
-       (let (body (map (xform-apply-compile-e args) #'body))
+       (let (body (map (cut compile-e self <>) #'body))
          [#'hd body ...]))))
 
   (ast-case stx ()
@@ -239,44 +248,44 @@ namespace: gxc
         ['%#case-lambda clauses ...]
         stx)))))
 
-(def (xform-let-values% stx . args)
+(def (xform-let-values% self stx)
   (ast-case stx ()
     ((form ((hd expr) ...) . body)
-     (with-syntax (((expr ...) (map (xform-apply-compile-e args) #'(expr ...))))
-       (let (body (map (xform-apply-compile-e args) #'body))
+     (with-syntax (((expr ...) (map (cut compile-e self <>) #'(expr ...))))
+       (let (body (map (cut compile-e self <>) #'body))
          (xform-wrap-source
           [#'form #'((hd expr) ...) body ...]
           stx))))))
 
-(def (xform-operands stx . args)
+(def (xform-operands self stx)
   (ast-case stx ()
     ((form . rands)
-     (let (rands (map (xform-apply-compile-e args) #'rands))
+     (let (rands (map (cut compile-e self <>) #'rands))
        (xform-wrap-source
         [#'form rands ...]
         stx)))))
 
 (def xform-call% xform-operands)
 
-(def (xform-setq% stx . args)
+(def (xform-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
-     (let (expr (do-apply-compile-e #'expr args))
+     (let (expr (compile-e self #'expr))
        (xform-wrap-source
         ['%#set! #'id expr]
         stx)))))
 
 ;;; apply-collect-mutators
-(def (collect-mutators-setq% stx)
+(def (collect-mutators-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
      (let (sym (identifier-symbol #'id))
        (verbose "collect mutator " sym)
        (hash-put! (current-compile-mutators) sym #t) ; just set for now
-       (compile-e #'expr)))))
+       (compile-e self #'expr)))))
 
 ;;; apply-collect-methods
-(def (collect-methods-call% stx)
+(def (collect-methods-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)
@@ -287,47 +296,47 @@ namespace: gxc
     (_ (void))))
 
 ;;; apply-subst-refs
-(def (expression-subst-ref% stx id new-id)
+(def (expression-subst-ref% self stx)
   (ast-case stx ()
     ((_ xid)
-     (if (free-identifier=? #'xid id)
+     (if (free-identifier=? #'xid (@ self id))
        (xform-wrap-source
-        ['%#ref new-id]
+        ['%#ref (@ self new-id)]
         stx)
        stx))))
 
-(def (expression-subst*-ref% stx subst)
+(def (expression-subst*-ref% self stx)
   (ast-case stx ()
     ((_ xid)
      (cond
       ((find (lambda (sub) (free-identifier=? #'xid (car sub)))
-             subst)
+             (@ self subst))
        => (lambda (sub)
             (xform-wrap-source
              ['%#ref (cdr sub)]
              stx)))
       (else stx)))))
 
-(def (expression-subst-setq% stx id new-id)
+(def (expression-subst-setq% self stx)
   (ast-case stx ()
     ((_ xid expr)
-     (let ((new-expr (compile-e #'expr id new-id))
+     (let ((new-expr (compile-e self #'expr))
            (new-xid
-            (if (free-identifier=? #'xid id)
-              new-id
+            (if (free-identifier=? #'xid (@ self id))
+              (@ self new-id)
               #'xid)))
        (xform-wrap-source
         ['%#set! new-xid new-expr]
         stx)))))
 
-(def (expression-subst*-setq% stx subst)
+(def (expression-subst*-setq% self stx)
   (ast-case stx ()
     ((_ xid expr)
-     (let ((new-expr (compile-e #'expr subst))
+     (let ((new-expr (compile-e self #'expr))
            (new-xid
             (cond
              ((find (lambda (sub) (free-identifier=? #'xid (car sub)))
-                    subst)
+                    (@ self subst))
               => cdr)
              (else #'xid))))
        (xform-wrap-source
@@ -335,59 +344,59 @@ namespace: gxc
         stx)))))
 
 ;;; apply-collect-runtime-refs
-(def (collect-runtime-refs-ref% stx ht)
+(def (collect-runtime-refs-ref% self stx)
   (ast-case stx ()
     ((_ id)
      (let (eid (identifier-symbol #'id))
-       (hash-update! ht eid 1+ 0)))))
+       (hash-update! (@ self table) eid 1+ 0)))))
 
-(def (collect-runtime-refs-setq% stx ht)
+(def (collect-runtime-refs-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
      (let (eid (identifier-symbol #'id))
-       (hash-update! ht eid 1+ 0)
-       (compile-e #'expr ht)))))
+       (hash-update! (@ self table) eid 1+ 0)
+       (compile-e self #'expr)))))
 
 ;;; &find-expression
-(def (find-body% stx arg)
+(def (find-body% self stx)
   (ast-case stx ()
     ((_ expr ...)
-     (ormap (cut compile-e <> arg) #'(expr ...)))))
+     (ormap (cut compile-e self <>) #'(expr ...)))))
 
-(def (find-begin-annotation% stx arg)
+(def (find-begin-annotation% self stx)
   (ast-case stx ()
     ((_ ann expr)
-     (compile-e #'expr arg))))
+     (compile-e self #'expr))))
 
-(def (find-lambda% stx arg)
+(def (find-lambda% self stx)
   (ast-case stx ()
     ((_ hd body)
-     (compile-e #'body arg))))
+     (compile-e self #'body))))
 
-(def (find-case-lambda% stx arg)
+(def (find-case-lambda% self stx)
   (ast-case stx ()
     ((_ (hd body) ...)
-     (ormap (cut compile-e <> arg) #'(body ...)))))
+     (ormap (cut compile-e self <>) #'(body ...)))))
 
-(def (find-let-values% stx arg)
+(def (find-let-values% self stx)
   (ast-case stx ()
     ((_ ((bind expr) ...) body)
-     (or (ormap (cut compile-e <> arg) #'(expr ...))
-         (compile-e #'body arg)))))
+     (or (ormap (cut compile-e self <>) #'(expr ...))
+         (compile-e self #'body)))))
 
-(def (find-setq% stx arg)
+(def (find-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
-     (compile-e #'expr arg))))
+     (compile-e self #'expr))))
 
 ;;; apply-find-var-refs
-(def (find-var-refs-ref% stx ids)
+(def (find-var-refs-ref% self stx)
   (ast-case stx ()
     ((_ id)
-     (find (cut free-identifier=? #'id <>) ids))))
+     (find (cut free-identifier=? #'id <>) (@ self ids)))))
 
-(def (find-var-refs-setq% stx ids)
+(def (find-var-refs-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
-     (or (find (cut free-identifier=? #'id <>) ids)
-         (compile-e #'expr ids)))))
+     (or (find (cut free-identifier=? #'id <>) (@ self ids))
+         (compile-e self #'expr)))))

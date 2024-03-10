@@ -13,11 +13,12 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
-(defcompile-method apply-optimize-call (&optimize-call &basic-xform)
+(defcompile-method (apply-optimize-call) (&optimize-call &basic-xform) ()
+  final:
   (%#call optimize-call%))
 
 ;;; apply-optimize-call
-(def (optimize-call% stx)
+(def (optimize-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref rator) . rands)
      (let* ((rator-id (identifier-symbol #'rator))
@@ -35,10 +36,10 @@ namespace: gxc
                  stx))
                (_ optimized)))))
         ((not rator-type)
-         (xform-call% stx))
+         (xform-call% self stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
-    (_ (xform-call% stx))))
+    (_ (xform-call% self stx))))
 
 (defmethod {optimize-call !predicate}
   (lambda (self stx args)
@@ -296,7 +297,7 @@ namespace: gxc
           ['%#call ['%#ref dispatch] args ...]
           stx)))
        (else
-        (xform-call% stx))))))
+        (xform-call% self stx))))))
 
 (defmethod {optimize-call !case-lambda}
   (lambda (self stx args)
@@ -381,7 +382,7 @@ namespace: gxc
                  stx))))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
-           (xform-call% stx))))))
+           (xform-call% self stx))))))
 
 (def (!kw-lambda-split-args stx args)
   (let lp ((rest args) (pargs []) (kwargs []))
@@ -403,4 +404,4 @@ namespace: gxc
 
 (defmethod {optimize-call !kw-lambda-primary}
   (lambda (self stx args)
-    (xform-call% stx)))
+    (xform-call% self stx)))

@@ -166,7 +166,9 @@ namespace: gxc
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))
 
-(defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
+(defcompile-method (apply-generate-ssxi) (&generate-ssxi &generate-runtime-empty)
+  ()
+  final:
   (%#begin         generate-runtime-begin%)
   (%#begin-syntax  generate-ssxi-begin-syntax%)
   (%#module        generate-ssxi-module%)
@@ -174,21 +176,21 @@ namespace: gxc
   (%#call          generate-ssxi-call%))
 
 ;;; apply-generate-ssxi
-(def (generate-ssxi-begin-syntax% stx)
+(def (generate-ssxi-begin-syntax% self stx)
   (ast-case stx ()
     ((_ . forms)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (generate-runtime-begin% stx)))))
+       (generate-runtime-begin% self stx)))))
 
-(def (generate-ssxi-module% stx)
+(def (generate-ssxi-module% self stx)
   (ast-case stx ()
     ((_ id . body)
      (let* ((ctx (syntax-local-e #'id))
             (code (module-context-code ctx)))
        (parameterize ((current-expander-context ctx))
-         (compile-e code))))))
+         (compile-e self code))))))
 
-(def (generate-ssxi-define-values% stx)
+(def (generate-ssxi-define-values% self stx)
   (def (generate-e id)
     (let (sym (and (identifier? #'id) (identifier-symbol id)))
       (cond
@@ -206,7 +208,7 @@ namespace: gxc
      (let (types (map generate-e #'(id ...)))
        ['begin types ...]))))
 
-(def (generate-ssxi-call% stx)
+(def (generate-ssxi-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)
