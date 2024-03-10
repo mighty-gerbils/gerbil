@@ -6,7 +6,7 @@
 
 (import :gerbil/expander
         (only-in :gerbil/compiler/base ast-case)
-        (only-in <syntax-case> syntax)
+        (only-in :gerbil/core/expander syntax)
         :gerbil/gambit
         :std/cli/getopt
         :std/misc/ports

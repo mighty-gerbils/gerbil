@@ -7,7 +7,7 @@
 
 (import
   ;;  :gerbil/runtime/c3
-  (only-in :gerbil/runtime/mop class-type-slot-vector)
+  :gerbil/runtime/mop
   (only-in :gerbil/runtime/util append-reverse-until)
   (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)

@@ -1412,6 +1412,9 @@ package: gerbil/core
 (module <gerbil-runtime>
   (export #t)
   (extern namespace: #f
+    ;; :gerbil/runtime/gambit
+    max-char-code
+
     ;; :gerbil/runtime/util
     displayln
     display*
@@ -1513,8 +1516,9 @@ package: gerbil/core
     build-manifest/layer
     build-manifest/head
     build-manifest-string
-    gerbil-system-version-string
+    gerbil-version-string
     gerbil-system
+    gerbil-system-version-string
     gerbil-home
     gerbil-path
     gerbil-runtime-smp?
@@ -1569,6 +1573,10 @@ package: gerbil/core
     struct-copy
     struct->list
     class->list
+    slot-ref
+    slot-set!
+    unchecked-slot-ref
+    unchecked-slot-set!
     call-method
     method-ref
     checked-method-ref

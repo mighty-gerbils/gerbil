@@ -2,9 +2,7 @@
 ;;; (C) vyzo
 ;;; std parser grammar reader
 
-(import <syntax-case>
-        <syntax-sugar>
-        <expander-runtime>
+(import :gerbil/core/expander
         ./rlang
         ./base
         ./stream

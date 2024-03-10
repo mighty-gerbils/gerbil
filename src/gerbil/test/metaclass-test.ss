@@ -2,7 +2,8 @@
 ;;; © vyzo
 ;;;; Testing metaclass support
 (import :std/test
-        :std/metaclass)
+        :std/metaclass
+        :gerbil/runtime/mop)
 (export metaclass-test)
 
 (defstruct (dyn class) ())
