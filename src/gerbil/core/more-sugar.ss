@@ -6,7 +6,8 @@ prelude: :<root>
 package: gerbil/core
 
 (import "runtime" "sugar" "mop" "match"
-        (phi: +1 "runtime" "expander" "sugar" "mop" "macro-object" "match"))
+        (phi: +1 "runtime" "expander" "sugar" "mop" "macro-object" "match")
+        (phi: +2 "runtime"))
 (export #t (phi: +1 #t))
 
 ;; checked type contract

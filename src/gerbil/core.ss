@@ -3,7 +3,7 @@
 ;;; gerbil core prelude
 ;;;
 prelude: :<root>
-package: gerbil/core
+package: gerbil
 
 (import "core/runtime"
         "core/sugar"
