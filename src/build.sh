@@ -202,7 +202,7 @@ build_stage1 () {
   ## stage1 build
   feedback_mid "preparing core build"
   mkdir -p "${target_lib_gerbil}"
-  cp -v gerbil/prelude/builtin.ssxi.ss "${target_lib_gerbil}"
+  cp -v gerbil/builtin.ssxi.ss "${target_lib_gerbil}"
   mkdir -p "${target_lib_static}"
 
   feedback_mid "updating gerbil version"
