@@ -140,7 +140,7 @@ package: gerbil/core
     ((_ var value)
      (begin
        (def var value)
-       (set! var var)
+       (%#set! var var)
        (void)))))
 
 (module <sugar:2>

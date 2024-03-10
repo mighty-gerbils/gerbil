@@ -1,7 +1,7 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c3 linearization algorithm
-;;prelude: "../prelude/core"
+;;prelude: "../core"
 
 (export c3-test)
 

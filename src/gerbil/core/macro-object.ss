@@ -5,7 +5,7 @@
 prelude: :<root>
 package: gerbil/core
 
-(import "runtime" "expander" "mop")
+(import "runtime" "expander" "sugar" "mop")
 (export #t)
 
 (defclass macro-object (macro)

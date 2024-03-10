@@ -1548,6 +1548,12 @@ package: gerbil/core
     subclass?
     substruct?
     base-struct
+    make-class-type
+    make-class-predicate
+    make-class-slot-accessor
+    make-class-slot-mutator
+    make-class-slot-unchecked-accessor
+    make-class-slot-unchecked-mutator
     direct-instance?
     struct-instance?
     class-instance?

@@ -5,11 +5,11 @@ prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "../runtime/c3"
         "base"
-        "compile"
-        <syntax-case> <syntax-sugar>)
+        "compile")
 (export #t (import: <syntax-case> <syntax-sugar>))
 
 (def current-compile-optimizer-info

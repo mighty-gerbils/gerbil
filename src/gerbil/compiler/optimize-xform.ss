@@ -5,7 +5,8 @@ prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
         "compile"
         "optimize-base")

@@ -177,7 +177,7 @@ package: gerbil/core
     (generate-typedef stx #f)))
 
 (module <MOP:2>
-  (import <expander-runtime> <syntax-case> <MOP:1>)
+  (import "expander" <MOP:1>)
   (export #t)
   ;; class meta type; expansion time class reflection.
   (defclass-type class-type-info::t ()

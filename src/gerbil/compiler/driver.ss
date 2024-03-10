@@ -6,7 +6,6 @@ package: gerbil/compiler
 namespace: gxc
 
 (import "../expander"
-        "../prelude/gambit"
         "../runtime/error"
         "base"
         "compile"

@@ -6,7 +6,7 @@ package: gerbil/expander
 namespace: gx
 
 (export #t)
-(import <expander-runtime>)
+(import "../core/expander")
 
 (defstruct AST (e source)
   id:   gerbil#AST::t
