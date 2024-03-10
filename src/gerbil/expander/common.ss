@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander common hooks
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/expander
 namespace: gx
 

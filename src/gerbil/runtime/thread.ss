@@ -73,7 +73,7 @@ namespace: #f
   (let (tab (thread-local-table))
     (hash-put! tab key value)))
 
-(def (thread-local-clear! key)
+(def (thread-local-delete! key)
   (let (tab (thread-local-table))
     (hash-remove! tab key)))
 

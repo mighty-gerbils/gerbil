@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Prelude for compiler ssxi modules
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 

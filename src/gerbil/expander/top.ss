@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander top syntax
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/expander
 namespace: gx
 

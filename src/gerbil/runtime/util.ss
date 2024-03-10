@@ -104,12 +104,6 @@ namespace: #f
 (def (void? obj)
   (eq? obj #!void))
 
-(def (eof-object . _)
-  '#!eof)
-
-(def (identity obj)
-  obj)
-
 (def (dssl-object? obj)
   (and (memq obj '(#!key #!rest #!optional)) #t))
 (def (dssl-key-object? obj)
@@ -145,14 +139,6 @@ namespace: #f
 (def (subvector->list obj (start 0))
   (let ((lst (##vector->list obj)))
     (list-tail lst start)))
-
-(def (make-list k (val #f))
-  (unless (fixnum? k)
-    (error "expected argument 1 to be fixnum" k))
-  (let lp ((n 0) (r []))
-    (if (##fx< n k)
-      (lp (##fx+ n 1) (cons val r))
-      r)))
 
 (def (cons* x y . rest)
   (def (recur x rest)
@@ -228,9 +214,6 @@ namespace: #f
                 rest))
       iv)))
 
-(def (drop l k) ;; unsafe variant, not prelude exported
-  (if (##fxpositive? k) (drop (##cdr l) (##fx- k 1)) l))
-
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
 (def (remove-nulls! l)
@@ -252,12 +235,6 @@ namespace: #f
     (if (pair? l)
       (set-cdr! (##last-pair l) l2)
       l2)))
-
-;; Append the reverse of the list in first argument and the list in second argument
-;; = (append (reverse rev-head) tail) ;; same as in SRFI 1.
-;; : (List X) (List X) -> (List X)
-(def (append-reverse rev-head tail)
-  (foldl cons tail rev-head))
 
 ;; Append the elements the list in the first argument to the front of the list
 ;; in second argument until an element satisfies a predicate.
@@ -338,18 +315,6 @@ namespace: #f
           (recur (map cdr rest)))
       #f)))
 
-(def (filter f lst)
-  (let recur ((lst lst))
-    (match lst
-      ([hd . rest]
-       (if (f hd)
-         (let ((tail (recur rest)))
-           (if (eq? tail rest)
-             lst
-             (cons hd tail)))
-         (recur rest)))
-      (else []))))
-
 (def (filter-map1 f lst)
   (let recur ((rest lst))
     (match rest
@@ -388,31 +353,6 @@ namespace: #f
        (else
         (recur (map cdr rest))))
       [])))
-
-(def (iota count (start 0) (step 1))
-  (unless (fixnum? count)
-    (error "expected fixnum" count))
-  (unless (number? start)
-    (error "expected number" start))
-  (unless (number? step)
-    (error "expected number" step))
-  (let ((root (cons #f [])))
-    (let lp ((i 0) (x start) (tl root))
-      (if (##fx< i count)
-        (let ((tl* (cons x [])))
-          (##set-cdr! tl tl*)
-          (lp (##fx+ i 1) (+ x step) tl*))
-        (##cdr root)))))
-
-(def (last-pair lst)
-  (match lst
-    ([_ . rest]
-     (if (pair? rest)
-       (last-pair rest)
-       lst))))
-
-(def (last lst)
-  (car (last-pair lst)))
 
 (defrules defassget ()
   ((_ assget assf)
