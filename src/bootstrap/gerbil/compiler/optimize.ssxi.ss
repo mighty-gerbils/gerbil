@@ -4,7 +4,7 @@ package: gerbil/compiler
 (begin
   (declare-type gxc#optimizer-info-init! (@lambda 0 #f))
   (declare-type gxc#optimize! (@lambda 1 #f))
-  (declare-type gxc#optimizer-load-builtin-ssxi (@lambda 0 #f))
+  (declare-type gxc#optimizer-load-builtin-ssxi (@lambda 1 #f))
   (declare-type gxc#optimizer-load-ssxi-deps (@lambda 1 #f))
   (declare-type gxc#optimizer-load-ssxi (@lambda 1 #f))
   (declare-type gxc#optimizer-import-ssxi (@lambda 1 #f))

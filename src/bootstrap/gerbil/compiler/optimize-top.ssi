@@ -3,6 +3,7 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
           :gerbil/compiler/compile

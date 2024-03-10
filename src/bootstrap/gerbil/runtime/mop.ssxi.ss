@@ -266,7 +266,6 @@ package: gerbil/runtime
   (declare-type checked-bound-method-ref (@lambda 2 #f))
   (declare-type find-method (@lambda 3 #f))
   (declare-type __find-method (@lambda 3 #f))
-  (declare-type class-find-method (@lambda 3 #f))
   (declare-type mixin-find-method (@lambda 3 #f))
   (declare-type builtin-find-method (@lambda 3 #f))
   (declare-type direct-method-ref (@lambda 3 #f))

@@ -1,0 +1,63 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/module-sugar
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          :gerbil/core/sugar
+          :gerbil/core/mop
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/expander)
+          (phi: 1 :gerbil/core/sugar)
+          (phi: 1 :gerbil/core/mop)
+          (phi: 1 :gerbil/core/match))
+         (%#export #t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/core/module-sugar__1")))
+                  (%#define-syntax
+                   require
+                   |gerbil/core/module-sugar[:0:]#require|))
+         (%#define-syntax
+          defsyntax-for-import
+          |gerbil/core/module-sugar[:0:]#defsyntax-for-import|)
+         (%#define-syntax
+          defsyntax-for-export
+          |gerbil/core/module-sugar[:0:]#defsyntax-for-export|)
+         (%#define-syntax
+          defsyntax-for-import-export
+          |gerbil/core/module-sugar[:0:]#defsyntax-for-import-export|)
+         (%#define-syntax
+          for-syntax
+          |gerbil/core/module-sugar[:0:]#for-syntax|)
+         (%#define-syntax
+          for-template
+          |gerbil/core/module-sugar[:0:]#for-template|)
+         (%#define-syntax only-in |gerbil/core/module-sugar[:0:]#only-in|)
+         (%#define-syntax except-in |gerbil/core/module-sugar[:0:]#except-in|)
+         (%#begin-syntax
+          (%#define-runtime
+           module-import-rename
+           |gerbil/core/module-sugar[1]#module-import-rename|)
+          (%#define-runtime
+           prefix-identifier-key
+           |gerbil/core/module-sugar[1]#prefix-identifier-key|))
+         (%#define-syntax rename-in |gerbil/core/module-sugar[:0:]#rename-in|)
+         (%#define-syntax prefix-in |gerbil/core/module-sugar[:0:]#prefix-in|)
+         (%#define-syntax group-in |gerbil/core/module-sugar[:0:]#group-in|)
+         (%#define-syntax
+          except-out
+          |gerbil/core/module-sugar[:0:]#except-out|)
+         (%#begin-syntax
+          (%#define-runtime
+           module-export-rename
+           |gerbil/core/module-sugar[1]#module-export-rename|))
+         (%#define-syntax
+          rename-out
+          |gerbil/core/module-sugar[:0:]#rename-out|)
+         (%#define-syntax
+          prefix-out
+          |gerbil/core/module-sugar[:0:]#prefix-out|)
+         (%#define-syntax
+          struct-out
+          |gerbil/core/module-sugar[:0:]#struct-out|))

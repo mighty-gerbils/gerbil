@@ -1,0 +1,147 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/sugar
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/expander))
+         (%#export
+          (import: (in: #f <sugar:1>))
+          (import: (in: #f <sugar:2>))
+          (import: (in: #f <sugar:3>)))
+         (%#module
+          <sugar:1>
+          (%#begin (%#export #t)
+                   (%#define-alias defalias define-alias)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/sugar__1")))
+                            (%#define-syntax
+                             defrules
+                             |gerbil/core/sugar$<sugar:1>[:0:]#defrules|))
+                   (%#define-alias define-rules defrules)
+                   (%#define-syntax
+                    defsyntax%
+                    |gerbil/core/sugar$<sugar:1>[:0:]#defsyntax%|)
+                   (%#define-syntax
+                    define
+                    |gerbil/core/sugar$<sugar:1>[:0:]#define|)
+                   (%#define-syntax
+                    let*-values
+                    |gerbil/core/sugar$<sugar:1>[:0:]#let*-values|)
+                   (%#define-syntax let |gerbil/core/sugar$<sugar:1>[:0:]#let|)
+                   (%#define-syntax
+                    let*
+                    |gerbil/core/sugar$<sugar:1>[:0:]#let*|)
+                   (%#define-syntax
+                    letrec
+                    |gerbil/core/sugar$<sugar:1>[:0:]#letrec|)
+                   (%#define-syntax
+                    letrec*
+                    |gerbil/core/sugar$<sugar:1>[:0:]#letrec*|)
+                   (%#define-syntax
+                    ~let
+                    |gerbil/core/sugar$<sugar:1>[:0:]#~let|)
+                   (%#define-syntax and |gerbil/core/sugar$<sugar:1>[:0:]#and|)
+                   (%#define-syntax or |gerbil/core/sugar$<sugar:1>[:0:]#or|)
+                   (%#define-syntax
+                    cond
+                    |gerbil/core/sugar$<sugar:1>[:0:]#cond|)
+                   (%#define-syntax
+                    when
+                    |gerbil/core/sugar$<sugar:1>[:0:]#when|)
+                   (%#define-syntax
+                    unless
+                    |gerbil/core/sugar$<sugar:1>[:0:]#unless|)
+                   (%#define-syntax
+                    syntax-error
+                    |gerbil/core/sugar$<sugar:1>[:0:]#syntax-error|)
+                   (%#define-syntax
+                    defmutable
+                    |gerbil/core/sugar$<sugar:1>[:0:]#defmutable|)))
+         (%#module
+          <sugar:2>
+          (%#begin (%#import (in: #f <sugar:1>) (phi: 1 (in: #f <sugar:1>)))
+                   (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/sugar__2")))
+                            (%#define-syntax
+                             lambda
+                             |gerbil/core/sugar$<sugar:2>[:0:]#lambda|))
+                   (%#define-syntax def |gerbil/core/sugar$<sugar:2>[:0:]#def|)
+                   (%#define-syntax
+                    def*
+                    |gerbil/core/sugar$<sugar:2>[:0:]#def*|)
+                   (%#define-syntax
+                    defvalues
+                    |gerbil/core/sugar$<sugar:2>[:0:]#defvalues|)
+                   (%#define-syntax
+                    case
+                    |gerbil/core/sugar$<sugar:2>[:0:]#case|)
+                   (%#define-syntax
+                    ~case
+                    |gerbil/core/sugar$<sugar:2>[:0:]#~case|)
+                   (%#define-syntax
+                    ~case-test
+                    |gerbil/core/sugar$<sugar:2>[:0:]#~case-test|)
+                   (%#define-syntax
+                    ~case-dispatch
+                    |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch|)
+                   (%#define-syntax
+                    ~case-dispatch*
+                    |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch*|)
+                   (%#define-syntax
+                    ~case-dispatch-bsearch
+                    |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch-bsearch|)
+                   (%#define-syntax do |gerbil/core/sugar$<sugar:2>[:0:]#do|)
+                   (%#define-syntax
+                    do-while
+                    |gerbil/core/sugar$<sugar:2>[:0:]#do-while|)
+                   (%#define-syntax
+                    begin0
+                    |gerbil/core/sugar$<sugar:2>[:0:]#begin0|)
+                   (%#define-syntax rec |gerbil/core/sugar$<sugar:2>[:0:]#rec|)
+                   (%#define-syntax
+                    alet
+                    |gerbil/core/sugar$<sugar:2>[:0:]#alet|)
+                   (%#define-syntax
+                    alet*
+                    |gerbil/core/sugar$<sugar:2>[:0:]#alet*|)
+                   (%#define-alias and-let* alet*)
+                   (%#define-syntax
+                    @list
+                    |gerbil/core/sugar$<sugar:2>[:0:]#@list|)
+                   (%#define-syntax
+                    quasiquote
+                    |gerbil/core/sugar$<sugar:2>[:0:]#quasiquote|)
+                   (%#define-syntax
+                    delay
+                    |gerbil/core/sugar$<sugar:2>[:0:]#delay|)
+                   (%#define-syntax cut |gerbil/core/sugar$<sugar:2>[:0:]#cut|)
+                   (%#define-syntax <> |gerbil/core/sugar$<sugar:2>[:0:]#<>|)
+                   (%#define-syntax
+                    <...>
+                    |gerbil/core/sugar$<sugar:2>[:0:]#<...>|)))
+         (%#module
+          <sugar:3>
+          (%#begin (%#import
+                    (in: #f <sugar:1>)
+                    (in: #f <sugar:2>)
+                    (phi: 1 (in: #f <sugar:1>))
+                    (phi: 1 (in: #f <sugar:2>)))
+                   (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/sugar__3")))
+                            (%#define-syntax
+                             defsyntax
+                             |gerbil/core/sugar$<sugar:3>[:0:]#defsyntax|))
+                   (%#define-syntax
+                    definline
+                    |gerbil/core/sugar$<sugar:3>[:0:]#definline|)
+                   (%#define-syntax
+                    defconst
+                    |gerbil/core/sugar$<sugar:3>[:0:]#defconst|)))
+         (%#import (in: #f <sugar:1>) (in: #f <sugar:2>) (in: #f <sugar:3>)))

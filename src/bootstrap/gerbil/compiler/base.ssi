@@ -2,7 +2,7 @@ prelude: :gerbil/core
 package: gerbil/compiler
 namespace: gxc
 
-(%#begin (%#import :gerbil/expander (in: :gerbil/core <syntax-case>))
+(%#begin (%#import :gerbil/core/expander :gerbil/expander)
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)

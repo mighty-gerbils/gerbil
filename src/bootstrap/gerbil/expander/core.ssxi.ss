@@ -1410,6 +1410,7 @@ package: gerbil/expander
     (4 gx#core-bind!__2)
     (5 gx#core-bind!__%)))
   (declare-type gx#core-identifier-key (@lambda 1 #f))
+  (declare-type gx#&phi-context? (@predicate gx#phi-context::t))
   (declare-type gx#core-context-shift (@lambda 2 #f))
   (declare-type gx#core-context-get (@lambda 2 #f))
   (declare-type gx#core-context-put! (@lambda 3 #f))

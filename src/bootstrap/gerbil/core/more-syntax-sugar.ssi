@@ -1,0 +1,19 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/more-syntax-sugar
+
+(%#begin (%#import
+          :gerbil/core/expander
+          :gerbil/core/sugar
+          :gerbil/core/more-sugar
+          (phi: 1 :gerbil/core/runtime))
+         (%#export #t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/core/more-syntax-sugar__1")))
+                  (%#define-syntax
+                   identifier-rules
+                   |gerbil/core/more-syntax-sugar[:0:]#identifier-rules|))
+         (%#define-syntax
+          quasisyntax
+          |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|))

@@ -208,7 +208,6 @@ namespace: #f
          (%#define-runtime checked-bound-method-ref checked-bound-method-ref)
          (%#define-runtime find-method find-method)
          (%#define-runtime __find-method __find-method)
-         (%#define-runtime class-find-method class-find-method)
          (%#define-runtime mixin-find-method mixin-find-method)
          (%#define-runtime builtin-find-method builtin-find-method)
          (%#define-runtime direct-method-ref direct-method-ref)

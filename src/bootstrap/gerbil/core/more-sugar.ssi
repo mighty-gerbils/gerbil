@@ -1,0 +1,96 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/more-sugar
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          :gerbil/core/sugar
+          :gerbil/core/mop
+          :gerbil/core/match
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/expander)
+          (phi: 1 :gerbil/core/sugar)
+          (phi: 1 :gerbil/core/mop)
+          (phi: 1 :gerbil/core/macro-object)
+          (phi: 1 :gerbil/core/match)
+          (phi: 2 :gerbil/core/runtime))
+         (%#export #t (phi: 1 #t))
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/core/more-sugar__1")))
+                  (%#define-syntax : |gerbil/core/more-sugar[:0:]#:|))
+         (%#define-syntax :~ |gerbil/core/more-sugar[:0:]#:~|)
+         (%#define-syntax :- |gerbil/core/more-sugar[:0:]#:-|)
+         (%#define-syntax :~- |gerbil/core/more-sugar[:0:]#:~-|)
+         (%#define-syntax := |gerbil/core/more-sugar[:0:]#:=|)
+         (%#begin-syntax
+          (%#define-runtime
+           setq-macro::t
+           |gerbil/core/more-sugar[1]#setq-macro::t|)
+          (%#define-runtime
+           setq-macro?
+           |gerbil/core/more-sugar[1]#setq-macro?|)
+          (%#define-runtime
+           make-setq-macro
+           |gerbil/core/more-sugar[1]#make-setq-macro|)
+          (%#define-runtime
+           setq-macro-macro
+           |gerbil/core/more-sugar[1]#setq-macro-macro|)
+          (%#define-runtime
+           setq-macro-macro-set!
+           |gerbil/core/more-sugar[1]#setq-macro-macro-set!|)
+          (%#define-runtime
+           &setq-macro-macro
+           |gerbil/core/more-sugar[1]#&setq-macro-macro|)
+          (%#define-runtime
+           &setq-macro-macro-set!
+           |gerbil/core/more-sugar[1]#&setq-macro-macro-set!|)
+          (%#begin (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/more-sugar__2")))
+                   (%#define-syntax
+                    setq-macro
+                    |gerbil/core/more-sugar[:1:]#setq-macro|))
+          (%#define-runtime
+           setf-macro::t
+           |gerbil/core/more-sugar[1]#setf-macro::t|)
+          (%#define-runtime
+           setf-macro?
+           |gerbil/core/more-sugar[1]#setf-macro?|)
+          (%#define-runtime
+           make-setf-macro
+           |gerbil/core/more-sugar[1]#make-setf-macro|)
+          (%#define-runtime
+           setf-macro-macro
+           |gerbil/core/more-sugar[1]#setf-macro-macro|)
+          (%#define-runtime
+           setf-macro-macro-set!
+           |gerbil/core/more-sugar[1]#setf-macro-macro-set!|)
+          (%#define-runtime
+           &setf-macro-macro
+           |gerbil/core/more-sugar[1]#&setf-macro-macro|)
+          (%#define-runtime
+           &setf-macro-macro-set!
+           |gerbil/core/more-sugar[1]#&setf-macro-macro-set!|)
+          (%#define-syntax setf-macro |gerbil/core/more-sugar[:1:]#setf-macro|)
+          (%#define-runtime
+           syntax-local-setf-macro?
+           |gerbil/core/more-sugar[1]#syntax-local-setf-macro?|)
+          (%#define-runtime
+           syntax-local-setq-macro?
+           |gerbil/core/more-sugar[1]#syntax-local-setq-macro?|))
+         (%#define-syntax set! |gerbil/core/more-sugar[:0:]#set!|)
+         (%#define-syntax
+          values-set!
+          |gerbil/core/more-sugar[:0:]#values-set!|)
+         (%#define-syntax
+          parameterize
+          |gerbil/core/more-sugar[:0:]#parameterize|)
+         (%#define-syntax let/cc |gerbil/core/more-sugar[:0:]#let/cc|)
+         (%#define-syntax
+          unwind-protect
+          |gerbil/core/more-sugar[:0:]#unwind-protect|)
+         (%#define-syntax @bytes |gerbil/core/more-sugar[:0:]#@bytes|)
+         (%#define-syntax
+          eval-when-compile
+          |gerbil/core/more-sugar[:0:]#eval-when-compile|))

@@ -1,6 +1,6 @@
 prelude: :gerbil/core
 package: gerbil
-namespace: gerbil/runtime
+namespace: #f
 
 (%#begin (%#provide gerbil-runtime)
          (%#import

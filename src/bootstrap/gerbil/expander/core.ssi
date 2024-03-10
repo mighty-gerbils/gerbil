@@ -953,7 +953,7 @@ namespace: gx
                            (%#define-runtime core-bind!__2 gx#core-bind!__2)
                            (%#define-runtime core-bind! gx#core-bind!)))
          (%#define-runtime core-identifier-key gx#core-identifier-key)
-         (%#define-syntax &phi-context? |gx[:0:]#&phi-context?|)
+         (%#define-runtime &phi-context? gx#&phi-context?)
          (%#define-runtime core-context-shift gx#core-context-shift)
          (%#define-runtime core-context-get gx#core-context-get)
          (%#define-runtime core-context-put! gx#core-context-put!)

@@ -19,7 +19,7 @@ package: gerbil/runtime
    (@case-lambda (1 thread-local-ref__0) (2 thread-local-ref__%)))
   (declare-type thread-local-get (@lambda 1 #f))
   (declare-type thread-local-set! (@lambda 2 #f))
-  (declare-type thread-local-clear! (@lambda 1 #f))
+  (declare-type thread-local-delete! (@lambda 1 #f))
   (declare-type thread-local-table (@lambda 0 #f))
   (declare-type unhandled-actor-exception-hook-set! (@lambda 1 #f))
   (declare-type current-thread-group (@lambda 0 #f))

@@ -3,7 +3,7 @@ package: gerbil/expander
 namespace: gx
 
 (%#begin (%#export #t)
-         (%#import (in: :gerbil/core <expander-runtime>))
+         (%#import :gerbil/core/expander)
          (%#define-runtime AST::t gx#AST::t)
          (%#define-runtime AST? gx#AST?)
          (%#define-runtime make-AST gx#make-AST)

@@ -48,10 +48,6 @@ package: gerbil/runtime
             (ast-rules
              (%#call)
              ((%#call _ arg) (%#call (%#ref eq?) arg (%#quote #!void))))))
-  (declare-type eof-object (@lambda (0) #f))
-  (declare-type
-   identity
-   (@lambda 1 inline: (ast-rules (%#call) ((%#call _ arg) arg))))
   (declare-type dssl-object? (@lambda 1 #f))
   (declare-type dssl-key-object? (@lambda 1 #f))
   (declare-type dssl-rest-object? (@lambda 1 #f))
@@ -98,9 +94,6 @@ package: gerbil/runtime
   (declare-type subvector->list__% (@lambda 2 #f))
   (declare-type subvector->list__0 (@lambda 1 #f))
   (declare-type subvector->list (@case-lambda (1 #f) (2 #f)))
-  (declare-type make-list__% (@lambda 2 #f))
-  (declare-type make-list__0 (@lambda 1 #f))
-  (declare-type make-list (@case-lambda (1 make-list__0) (2 make-list__%)))
   (declare-type
    cons*
    (@lambda (2)
@@ -118,10 +111,8 @@ package: gerbil/runtime
   (declare-type foldr2 (@lambda 4 #f))
   (declare-type foldr (@case-lambda (3 foldr1) (4 foldr2) ((4) foldr*)))
   (declare-type foldr* (@lambda (2) #f))
-  (declare-type drop (@lambda 2 #f))
   (declare-type remove-nulls! (@lambda 1 #f))
   (declare-type append1! (@lambda 2 #f))
-  (declare-type append-reverse (@lambda 2 #f))
   (declare-type append-reverse-until (@lambda 3 #f))
   (declare-type andmap1 (@lambda 2 #f))
   (declare-type andmap2 (@lambda 3 #f))
@@ -131,19 +122,12 @@ package: gerbil/runtime
   (declare-type ormap2 (@lambda 3 #f))
   (declare-type ormap (@case-lambda (2 ormap1) (3 ormap2) ((3) ormap*)))
   (declare-type ormap* (@lambda (1) #f))
-  (declare-type filter (@lambda 2 #f))
   (declare-type filter-map1 (@lambda 2 #f))
   (declare-type filter-map2 (@lambda 3 #f))
   (declare-type
    filter-map
    (@case-lambda (2 filter-map1) (3 filter-map2) ((3) filter-map*)))
   (declare-type filter-map* (@lambda (1) #f))
-  (declare-type iota__% (@lambda 3 #f))
-  (declare-type iota__0 (@lambda 1 #f))
-  (declare-type iota__1 (@lambda 2 #f))
-  (declare-type iota (@case-lambda (1 iota__0) (2 iota__1) (3 iota__%)))
-  (declare-type last-pair (@lambda 1 #f))
-  (declare-type last (@lambda 1 #f))
   (declare-type assgetq__% (@lambda 3 #f))
   (declare-type assgetq__0 (@lambda 2 #f))
   (declare-type assgetq (@case-lambda (2 assgetq__0) (3 assgetq__%)))
