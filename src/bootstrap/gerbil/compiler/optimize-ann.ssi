@@ -10,16 +10,67 @@ namespace: gxc
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)
-         (%#define-runtime &optmize-annotated gxc#&optmize-annotated)
+         (%#define-runtime &optmize-annotated::t gxc#&optmize-annotated::t)
+         (%#define-runtime &optmize-annotated? gxc#&optmize-annotated?)
+         (%#define-runtime make-&optmize-annotated gxc#make-&optmize-annotated)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize-ann__1")))
+                  (%#define-syntax
+                   &optmize-annotated
+                   |gxc[:0:]#&optmize-annotated|))
+         (%#define-runtime
+          &optmize-annotated-bind-methods!
+          gxc#&optmize-annotated-bind-methods!)
          (%#define-runtime
           apply-optimize-annotated
           gxc#apply-optimize-annotated)
-         (%#define-runtime &generate-runtime-repr gxc#&generate-runtime-repr)
+         (%#define-runtime
+          &generate-runtime-repr::t
+          gxc#&generate-runtime-repr::t)
+         (%#define-runtime &generate-runtime-repr? gxc#&generate-runtime-repr?)
+         (%#define-runtime
+          make-&generate-runtime-repr
+          gxc#make-&generate-runtime-repr)
+         (%#define-syntax
+          &generate-runtime-repr
+          |gxc[:0:]#&generate-runtime-repr|)
+         (%#define-runtime
+          &generate-runtime-repr-bind-methods!
+          gxc#&generate-runtime-repr-bind-methods!)
          (%#define-runtime
           apply-generate-runtime-repr
           gxc#apply-generate-runtime-repr)
-         (%#define-runtime &push-match-vars gxc#&push-match-vars)
-         (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
+         (%#define-runtime &push-match-vars::t gxc#&push-match-vars::t)
+         (%#define-runtime &push-match-vars? gxc#&push-match-vars?)
+         (%#define-runtime make-&push-match-vars gxc#make-&push-match-vars)
+         (%#define-runtime &push-match-vars-vars gxc#&push-match-vars-vars)
+         (%#define-runtime &push-match-vars-K gxc#&push-match-vars-K)
+         (%#define-runtime
+          &push-match-vars-vars-set!
+          gxc#&push-match-vars-vars-set!)
+         (%#define-runtime &push-match-vars-K-set! gxc#&push-match-vars-K-set!)
+         (%#define-runtime &&push-match-vars-vars gxc#&&push-match-vars-vars)
+         (%#define-runtime &&push-match-vars-K gxc#&&push-match-vars-K)
+         (%#define-runtime
+          &&push-match-vars-vars-set!
+          gxc#&&push-match-vars-vars-set!)
+         (%#define-runtime
+          &&push-match-vars-K-set!
+          gxc#&&push-match-vars-K-set!)
+         (%#define-syntax &push-match-vars |gxc[:0:]#&push-match-vars|)
+         (%#define-runtime
+          &push-match-vars-bind-methods!
+          gxc#&push-match-vars-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-push-match-vars__%
+                   gxc#apply-push-match-vars__%)
+                  (%#define-runtime
+                   apply-push-match-vars__@
+                   gxc#apply-push-match-vars__@)
+                  (%#define-runtime
+                   apply-push-match-vars
+                   gxc#apply-push-match-vars))
          (%#define-runtime
           current-annotation-optimizer
           gxc#current-annotation-optimizer)
