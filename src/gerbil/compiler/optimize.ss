@@ -1,11 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
         "compile"
         "optimize-base"
@@ -27,7 +28,7 @@ namespace: gxc
                  (current-compile-local-type (make-hash-table-eq)))
     (optimizer-load-ssxi-deps ctx)
     ;; load builtins
-    (optimizer-load-builtin-ssxi)
+    (optimizer-load-builtin-ssxi ctx)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -36,32 +37,40 @@ namespace: gxc
       (set! (module-context-code ctx) code))))
 
 ;;; ssxi loading
-(def (optimizer-load-builtin-ssxi)
+(def (optimizer-load-builtin-ssxi ctx)
   (def (load-it! id)
     (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info)) id)
       (optimizer-import-ssxi-by-id id)
       (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                  id
                  #t)))
-  (for-each load-it!
-            '(gerbil/runtime/gambit
-              gerbil/runtime/util
-              gerbil/runtime/table
-              gerbil/runtime/control
-              gerbil/runtime/system
-              gerbil/runtime/c3
-              gerbil/runtime/mop
-              gerbil/runtime/error
-              gerbil/runtime/interface
-              gerbil/runtime/hash
-              gerbil/runtime/thread
-              gerbil/runtime/syntax
-              gerbil/runtime/eval
-              gerbil/runtime/repl
-              gerbil/runtime/loader
-              gerbil/runtime/init
-              gerbil/runtime
-              gerbil/builtin)))
+
+  (let* ((modid (expander-context-id ctx))
+         (modid-str (symbol->string modid)))
+    (if (string-prefix? "gerbil/core" modid-str)
+      ;; don't load forward references to the runtime inside the prelude
+      ;; as this would create a vicious boostrap cycle
+      (load-it! 'gerbil/builtin)
+      ;; ok, not prelude -- load the runtime optimizer info
+      (for-each load-it!
+                '(gerbil/runtime/gambit
+                  gerbil/runtime/util
+                  gerbil/runtime/table
+                  gerbil/runtime/control
+                  gerbil/runtime/system
+                  gerbil/runtime/c3
+                  gerbil/runtime/mop
+                  gerbil/runtime/error
+                  gerbil/runtime/interface
+                  gerbil/runtime/hash
+                  gerbil/runtime/thread
+                  gerbil/runtime/syntax
+                  gerbil/runtime/eval
+                  gerbil/runtime/repl
+                  gerbil/runtime/loader
+                  gerbil/runtime/init
+                  gerbil/runtime
+                  gerbil/builtin)))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps

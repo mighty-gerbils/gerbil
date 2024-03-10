@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil MOP
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -735,10 +735,6 @@ namespace: #f
     #f)
    (else
     (mixin-method-ref klass obj id))))
-
-(def (class-find-method klass obj id)
-  (and (class-type? klass)
-       (__find-method klass obj id)))
 
 (def (mixin-find-method mixins obj id)
   (ormap (cut direct-method-ref <> obj id) mixins))

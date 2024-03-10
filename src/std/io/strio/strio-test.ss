@@ -155,7 +155,7 @@
         (for (i (in-range 16))
           (check (BufferedStringReader-read-string brd2 buf) => 64)
           (verify-buf 0 64 (* i 64)))
-        (check (BufferedStringReader-peek-char brd2) ? eof-object)))
+        (check (BufferedStringReader-peek-char brd2) ? eof-object?)))
 
     (test-case "line input"
       (let ((input1 "the quick brown fox jumped over the lazy dog")

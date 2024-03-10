@@ -1,24 +1,24 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c3 linearization algorithm
-;;prelude: "../prelude/core"
+;;prelude: "../core"
 
 (export c3-test)
 
 (import
   ;;  :gerbil/runtime/c3
-  (only-in :gerbil/runtime/mop class-type-slot-vector)
+  :gerbil/runtime/mop
+  (only-in :gerbil/runtime/util append-reverse-until)
   (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)
   (only-in :std/test test-suite test-case check check-exception)
   (only-in :std/values first-value))
 
-(define gerbil/runtime 'gerbil/runtime)
-(define :gerbil/core ':gerbil/core)
+;;(define gerbil/runtime 'gerbil/runtime)
+;;(define :gerbil/core ':gerbil/core)
 ;;(include "../../gerbil/runtime/util.ss")
 ;;(include "../../gerbil/runtime/c3.ss")
-
-(extern namespace: #f append-reverse-until)
+;;(extern namespace: #f append-reverse-until)
 
 (module <tsi>
   (export #t)

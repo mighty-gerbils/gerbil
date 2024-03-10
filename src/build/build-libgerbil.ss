@@ -131,7 +131,8 @@
     (symbol->string (expander-context-id modctx)))
 
   (def (module-exclude? modctx)
-    (string-prefix? "gerbil/core" (module-file modctx)))
+    (or (not (expander-context-id modctx)) ; root prelude
+        (string-prefix? "gerbil/core" (symbol->string (expander-context-id modctx)))))
 
   (def (import-set-template in phi)
     (let ((iphi (fx+ phi (import-set-phi in)))

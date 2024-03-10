@@ -6,7 +6,7 @@
 (export #t (for-syntax #t))
 
 (module <util>
-  (import <expander-runtime>)
+  (import :gerbil/core/expander)
   (extern namespace: #f __reload-module)
   (export #t)
   ;; Module reloading

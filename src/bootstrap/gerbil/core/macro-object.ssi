@@ -1,0 +1,45 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/macro-object
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          :gerbil/core/expander
+          :gerbil/core/sugar
+          :gerbil/core/mop
+          (phi: 1 :gerbil/core/runtime))
+         (%#export #t)
+         (%#define-runtime
+          macro-object::t
+          gerbil/core/macro-object#macro-object::t)
+         (%#define-runtime
+          macro-object?
+          gerbil/core/macro-object#macro-object?)
+         (%#define-runtime
+          make-macro-object
+          gerbil/core/macro-object#make-macro-object)
+         (%#define-runtime
+          macro-object-macro
+          gerbil/core/macro-object#macro-object-macro)
+         (%#define-runtime
+          macro-object-macro-set!
+          gerbil/core/macro-object#macro-object-macro-set!)
+         (%#define-runtime
+          &macro-object-macro
+          gerbil/core/macro-object#&macro-object-macro)
+         (%#define-runtime
+          &macro-object-macro-set!
+          gerbil/core/macro-object#&macro-object-macro-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/core/macro-object__1")))
+                  (%#define-syntax
+                   macro-object
+                   |gerbil/core/macro-object[:0:]#macro-object|))
+         (%#begin (%#define-runtime
+                   macro-object::apply-macro-expander
+                   gerbil/core/macro-object#macro-object::apply-macro-expander)
+                  (%#define-runtime
+                   macro-object::apply-macro-expander::specialize
+                   gerbil/core/macro-object#macro-object::apply-macro-expander::specialize)))
+(%#call (%#ref load-module) (%#quote "gerbil/core/macro-object__0"))

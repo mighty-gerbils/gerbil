@@ -1,0 +1,87 @@
+prelude: :<root>
+package: gerbil/core
+namespace: gerbil/core/match
+
+(%#begin (%#import
+          :gerbil/core/runtime
+          :gerbil/core/sugar
+          :gerbil/core/mop
+          (phi: 1 :gerbil/core/runtime)
+          (phi: 1 :gerbil/core/expander)
+          (phi: 1 :gerbil/core/sugar)
+          (phi: 1 :gerbil/core/mop)
+          (phi: 1 :gerbil/core/macro-object)
+          (phi: 2 :gerbil/core/runtime))
+         (%#export
+          #t
+          (spec: 1 match-macro match-macro)
+          (spec: 1 match-macro::t match-macro::t)
+          (spec: 1 make-match-macro make-match-macro)
+          (spec: 1 match-macro? match-macro?)
+          (spec: 1 syntax-local-match-macro? syntax-local-match-macro?)
+          (spec: 1 match-pattern? match-pattern?))
+         (%#begin-syntax
+          (%#call (%#ref load-module) (%#quote "gerbil/core/match__1"))
+          (%#define-runtime
+           match-macro::t
+           |gerbil/core/match[1]#match-macro::t|)
+          (%#define-runtime match-macro? |gerbil/core/match[1]#match-macro?|)
+          (%#define-runtime
+           make-match-macro
+           |gerbil/core/match[1]#make-match-macro|)
+          (%#define-runtime
+           match-macro-macro
+           |gerbil/core/match[1]#match-macro-macro|)
+          (%#define-runtime
+           match-macro-macro-set!
+           |gerbil/core/match[1]#match-macro-macro-set!|)
+          (%#define-runtime
+           &match-macro-macro
+           |gerbil/core/match[1]#&match-macro-macro|)
+          (%#define-runtime
+           &match-macro-macro-set!
+           |gerbil/core/match[1]#&match-macro-macro-set!|)
+          (%#begin (%#begin-syntax
+                    (%#call (%#ref load-module)
+                            (%#quote "gerbil/core/match__2")))
+                   (%#define-syntax
+                    match-macro
+                    |gerbil/core/match[:1:]#match-macro|))
+          (%#define-runtime
+           syntax-local-match-macro?
+           |gerbil/core/match[1]#syntax-local-match-macro?|)
+          (%#begin (%#define-runtime
+                    parse-match-pattern__%
+                    |gerbil/core/match[1]#parse-match-pattern__%|)
+                   (%#begin (%#define-runtime
+                             parse-match-pattern__0
+                             |gerbil/core/match[1]#parse-match-pattern__0|)
+                            (%#define-runtime
+                             parse-match-pattern
+                             |gerbil/core/match[1]#parse-match-pattern|)))
+          (%#define-runtime
+           match-pattern?
+           |gerbil/core/match[1]#match-pattern?|)
+          (%#define-runtime
+           match-pattern-vars
+           |gerbil/core/match[1]#match-pattern-vars|)
+          (%#define-runtime
+           generate-match1
+           |gerbil/core/match[1]#generate-match1|)
+          (%#define-runtime
+           generate-match*
+           |gerbil/core/match[1]#generate-match*|)
+          (%#define-runtime
+           generate-match
+           |gerbil/core/match[1]#generate-match|))
+         (%#define-syntax match |gerbil/core/match[:0:]#match|)
+         (%#define-syntax match* |gerbil/core/match[:0:]#match*|)
+         (%#define-syntax with |gerbil/core/match[:0:]#with|)
+         (%#define-syntax with* |gerbil/core/match[:0:]#with*|)
+         (%#define-syntax ? |gerbil/core/match[:0:]#?|)
+         (%#define-syntax
+          defsyntax-for-match
+          |gerbil/core/match[:0:]#defsyntax-for-match|)
+         (%#define-syntax
+          defrules-for-match
+          |gerbil/core/match[:0:]#defrules-for-match|))

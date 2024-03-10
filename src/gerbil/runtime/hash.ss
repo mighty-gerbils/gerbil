@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil hash table interface
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -573,6 +573,9 @@ namespace: #f
 (def (list->hash-table-string lst . args)
   (list->hash-table! lst (apply make-hash-table-string size: (length lst) args)))
 
+(def (list->hash-table-immediate lst . args)
+  (list->hash-table! lst (apply make-hash-table-immediate size: (length lst) args)))
+
 (def (list->hash-table! lst h)
   (for-each
     (lambda (el)
@@ -595,6 +598,9 @@ namespace: #f
 
 (def (plist->hash-table-string lst . args)
   (plist->hash-table! lst (apply make-hash-table-string size: (length lst) args)))
+
+(def (plist->hash-table-immediate lst . args)
+  (plist->hash-table! lst (apply make-hash-table-immediate size: (length lst) args)))
 
 (def (plist->hash-table! lst h)
   (let loop ((rest lst))

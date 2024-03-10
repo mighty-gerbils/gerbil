@@ -3,16 +3,15 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/runtime/c3
           :gerbil/compiler/base
-          :gerbil/compiler/compile
-          (in: :gerbil/core <syntax-case>)
-          (in: :gerbil/core <syntax-sugar>))
+          :gerbil/compiler/compile)
          (%#export
           #t
-          (import: (in: :gerbil/core <syntax-case>))
-          (import: (in: :gerbil/core <syntax-sugar>)))
+          (import: (in: :gerbil/core/expander <syntax-case>))
+          (import: (in: :gerbil/core/expander <syntax-sugar>)))
          (%#define-runtime
           current-compile-optimizer-info
           gxc#current-compile-optimizer-info)

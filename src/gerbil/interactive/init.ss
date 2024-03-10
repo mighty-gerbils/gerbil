@@ -5,9 +5,6 @@
 ;; Pleasantly greet user
 (displayln gerbil-greeting)
 
-;; Import Gambit prelude
-(import :gerbil/gambit)
-
 ;; Interactive development utilities
 (import :std/interactive)
 
