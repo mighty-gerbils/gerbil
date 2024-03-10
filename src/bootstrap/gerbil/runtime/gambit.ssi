@@ -3,7 +3,6 @@ package: gerbil/runtime
 namespace: #f
 
 (%#begin (%#export #t)
-         (%#define-runtime max-char-code max-char-code)
          (%#extern
           (pp pp)
           (utf8->string utf8->string)

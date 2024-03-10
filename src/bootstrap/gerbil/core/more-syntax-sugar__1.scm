@@ -11,15 +11,15 @@
              (_g4707947121_
               (lambda (_g4708147095_)
                 (if (gx#stx-pair? _g4708147095_)
-                    (let ((_e4708347098_ (gx#syntax-e _g4708147095_)))
+                    (let ((_e4708547098_ (gx#syntax-e _g4708147095_)))
                       (let ((_hd4708447102_
                              (let ()
                                (declare (not safe))
-                               (##car _e4708347098_)))
-                            (_tl4708547105_
+                               (##car _e4708547098_)))
+                            (_tl4708347105_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e4708347098_))))
+                               (##cdr _e4708547098_))))
                         ((lambda (_L47108_)
                            (let ((__tmp47142
                                   (gx#datum->syntax '#f 'make-setq-macro))
@@ -38,7 +38,7 @@
                                     (cons 'macro: __tmp47139))))
                              (declare (not safe))
                              (cons __tmp47142 __tmp47138)))
-                         _tl4708547105_)))
+                         _tl4708347105_)))
                     (_g4708047091_ _g4708147095_)))))
         (_g4707947121_ _$stx47076_))))
   (define |gerbil/core/more-syntax-sugar[:0:]#quasisyntax|
