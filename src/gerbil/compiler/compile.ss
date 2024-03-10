@@ -468,7 +468,7 @@ namespace: gxc
      (let* ((ctx (syntax-local-e #'id))
             (ctx-stx (module-context-code ctx)))
        (parameterize ((current-expander-context ctx))
-         (compile-e self stx))))))
+         (compile-e self ctx-stx))))))
 
 (def (collect-begin-annotation% self stx)
   (ast-case stx ()
