@@ -73,7 +73,7 @@ namespace: gxc
          ((method-ref self (stx-e #'hd))
           => (cut <> self stx))
          (else
-          (raise-compile-error "missing method" stx self (stx-e #'hd))))))))
+          (error "missing method" self (stx-e #'hd) (syntax->datum stx))))))))
   ((self stx)
    (ast-case stx ()
        ((hd . _)
@@ -81,7 +81,7 @@ namespace: gxc
          ((method-ref self (stx-e #'hd))
           => (cut <> self stx))
          (else
-          (raise-compile-error "missing method" stx self (stx-e #'hd))))))))
+          (error "missing method" self (stx-e #'hd) (syntax->datum stx))))))))
 
 (defsyntax (defcompile-method stx)
   (syntax-case stx ()
@@ -1455,7 +1455,7 @@ namespace: gxc
             ['begin (map (cut list 'load-module <>) (reverse loads)) ...])))))))
 
 ;;; runtime-phi
-(def (generate-runtime-quote-syntax% stx)
+(def (generate-runtime-quote-syntax% self stx)
   (def (add-lift! expr)
     (set! (box (current-compile-lift))
       (cons expr (unbox (current-compile-lift)))))

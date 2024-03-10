@@ -151,7 +151,7 @@ namespace: gxc
            ((_ (self . args) . body)
             (begin
               (for-each
-                (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                 #'body)
               (with-specializer
                ((specializer-body
@@ -177,7 +177,7 @@ namespace: gxc
                   (ast-case clause ()
                     (((self . args) . body)
                      (for-each
-                       (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                       (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                        #'body))
                     (_ (void))))
                 #'(clause ...))
@@ -210,7 +210,7 @@ namespace: gxc
               (ast-case #'lambda-expr ()
                 ((_ (self . args) . body)
                  (for-each
-                   (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                   (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                    #'body)))
               (ast-case #'case-lambda-expr ()
                 ((_ clause ...)
@@ -219,7 +219,7 @@ namespace: gxc
                      (ast-case clause ()
                        (((self . args) . body)
                         (for-each
-                          (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                          (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                           #'body))))
                    #'(clause ...))))
               (with-specializer
@@ -274,7 +274,7 @@ namespace: gxc
                      ((_ hd . body)
                       (let (self (list-ref #'hd self-index))
                         (for-each
-                          (cut apply-collect-object-refs <> self method-calls slot-refs)
+                          (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                           #'body)
                         (with-specializer
                          ((specializer-impl
@@ -304,7 +304,7 @@ namespace: gxc
                           ((_ hd . body)
                            (let (self (list-ref #'hd self-index))
                              (for-each
-                               (cut apply-collect-object-refs <> self method-calls slot-refs)
+                               (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                                #'body))))
                         (ast-case #'case-lambda-expr ()
                           ((_ clause ...)
@@ -314,7 +314,7 @@ namespace: gxc
                                  ((hd . body)
                                   (let (self (list-ref #'hd self-index))
                                     (for-each
-                                      (cut apply-collect-object-refs <> self method-calls slot-refs)
+                                      (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                                       #'body)))))
                              #'(clause ...))))
                         (with-specializer

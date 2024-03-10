@@ -698,7 +698,7 @@ namespace: gxc
 
   (for-each
     (lambda (block)
-      (apply-collect-runtime-refs (caddr block) rtab))
+      (apply-collect-runtime-refs (caddr block) table: rtab))
     konts)
 
   (let lp ((rest blocks) (r []))
@@ -708,7 +708,7 @@ namespace: gxc
          ([name type kont . _]
           (if (hash-get rtab (identifier-symbol name))
             (begin
-              (apply-collect-runtime-refs kont rtab)
+              (apply-collect-runtime-refs kont table: rtab)
               (lp rest (cons block r)))
             (lp rest r)))))
       (else
@@ -721,7 +721,7 @@ namespace: gxc
 
      (for-each
        (lambda (block)
-         (apply-collect-runtime-refs (caddr block) rtab))
+         (apply-collect-runtime-refs (caddr block) table: rtab))
        konts)
 
      (if (fx= (hash-ref rtab (identifier-symbol name)) 1)
