@@ -13,17 +13,25 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
-(defcompile-method apply-collect-top-level-type-info (&collect-top-level-type-info &void)
+(defcompile-method (apply-collect-top-level-type-info)
+  (::collect-top-level-type-info ::void)
+  ()
+  final:
   (%#begin            collect-begin%)
   (%#begin-syntax     collect-begin-syntax%)
   (%#module           collect-module%)
   (%#define-values    collect-top-level-type-define-values%))
 
-(defcompile-method apply-basic-expression-top-level-type (&basic-expression-top-level-type &false)
+(defcompile-method (apply-basic-expression-top-level-type)
+  (::basic-expression-top-level-type ::false)
+  ()
+  final:
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#call             basic-expression-type-call%))
 
-(defcompile-method apply-collect-type-info (&collect-type-info &void)
+(defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
+  ()
+  final:
   (%#begin            collect-begin%)
   (%#begin-syntax     collect-begin-syntax%)
   (%#module           collect-module%)
@@ -38,7 +46,9 @@ namespace: gxc
   (%#if               collect-operands)
   (%#set!             collect-body-setq%))
 
-(defcompile-method apply-basic-expression-type (&basic-expression-type &false)
+(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
+  ()
+  final:
   (%#begin            basic-expression-type-begin%)
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#lambda                basic-expression-type-lambda%)
@@ -49,14 +59,16 @@ namespace: gxc
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%))
 
-(defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &basic-xform)
+(defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
+  ()
+  final:
   (%#define-values  lift-top-lambda-define-values%)
   (%#let-values     lift-top-lambda-let-values%)
   (%#letrec-values  lift-top-lambda-letrec-values%)
   (%#letrec*-values lift-top-lambda-letrec-values%))
 
 ;;; apply-collect-top-level-type-infp
-(def (collect-top-level-type-define-values% stx)
+(def (collect-top-level-type-define-values% self stx)
   (ast-case stx ()
     ((_ (id) expr)
      (identifier? #'id)
@@ -68,7 +80,7 @@ namespace: gxc
     (_ (void))))
 
 ;;; apply-collect-type-info
-(def (collect-type-define-values% stx)
+(def (collect-type-define-values% self stx)
   (ast-case stx ()
     ((_ (id) expr)
      (identifier? #'id)
@@ -81,11 +93,11 @@ namespace: gxc
         (else
          (alet (type (apply-basic-expression-type #'expr))
            (optimizer-declare-type! sym type))))
-       (compile-e #'expr)))
+       (compile-e self #'expr)))
     ((_ hd expr)
-     (compile-e #'expr))))
+     (compile-e self #'expr))))
 
-(def (collect-type-let-values% stx)
+(def (collect-type-let-values% self stx)
   (def (collect-e hd expr)
     (ast-case hd ()
       ((id)
@@ -101,10 +113,10 @@ namespace: gxc
     ((_ ((hd expr) ...) body)
      (begin
        (for-each collect-e #'(hd ...) #'(expr ...))
-       (for-each compile-e #'(expr ...))
-       (compile-e #'body)))))
+       (for-each (cut compile-e self <>) #'(expr ...))
+       (compile-e self #'body)))))
 
-(def (collect-type-call% stx)
+(def (collect-type-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)
@@ -118,17 +130,17 @@ namespace: gxc
                                 #f))
 
     ((_ expr ...)
-     (for-each compile-e #'(expr ...)))))
+     (for-each (cut compile-e self <>) #'(expr ...)))))
 
 
 ;;; apply-basic-expression-type
 (def current-compile-type-closure
   (make-parameter #f))
 
-(def (basic-expression-type-begin% stx)
+(def (basic-expression-type-begin% self stx)
   (ast-case stx ()
     ((_ expr)
-     (compile-e #'expr))
+     (compile-e self #'expr))
     (_ #f)))
 
 (def basic-expression-type-annotations (make-hash-table-eq))
@@ -137,7 +149,7 @@ namespace: gxc
    (begin
      (hash-put! basic-expression-type-annotations 'id type-e) ...)))
 
-(def (basic-expression-type-begin-annotation% stx)
+(def (basic-expression-type-begin-annotation% self stx)
   (ast-case stx ()
     ((_ ann expr)
      (ast-case #'ann ()
@@ -147,8 +159,8 @@ namespace: gxc
          ((hash-get basic-expression-type-annotations (stx-e #'annotation))
           => (lambda (type-e) (type-e stx #'ann)))
          (else
-          (compile-e #'expr))))
-       (_ (compile-e #'expr))))))
+          (compile-e self #'expr))))
+       (_ (compile-e self #'expr))))))
 
 (def (basic-expression-type-annotation-mop.class stx ann)
   (ast-case ann ()
@@ -193,7 +205,7 @@ namespace: gxc
   (@mop.accessor    basic-expression-type-annotation-mop.accessor)
   (@mop.mutator     basic-expression-type-annotation-mop.mutator))
 
-(def (basic-expression-type-lambda% stx)
+(def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#call %#ref %#quote)
       ((_ . form)
@@ -237,7 +249,7 @@ namespace: gxc
        ;; generic lambda -- track type for call arity checking
        (make-!lambda 'lambda (lambda-form-arity #'form) #f)))))
 
-(def (basic-expression-type-case-lambda% stx)
+(def (basic-expression-type-case-lambda% self stx)
   (def (clause-e form)
     (make-!lambda 'case-lambda-clause (lambda-form-arity form)
              (and (not (current-compile-type-closure)) ; don't capture local dispatch
@@ -248,11 +260,11 @@ namespace: gxc
      (let (clauses (map clause-e #'clauses))
        (make-!case-lambda 'case-lambda clauses)))))
 
-(def (basic-expression-type-let-values% stx)
+(def (basic-expression-type-let-values% self stx)
   (ast-case stx ()
     ((_ bind body)
      (parameterize ((current-compile-type-closure #t))
-       (compile-e #'body)))))
+       (compile-e self #'body)))))
 
 (def basic-expression-type-builtin (make-hash-table-eq))
 (defrules defbasic-expression-type-builtin ()
@@ -261,7 +273,7 @@ namespace: gxc
      (hash-put! basic-expression-type-builtin 'id type-e) ...)))
 
 
-(def (basic-expression-type-call% stx)
+(def (basic-expression-type-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
      (alet (type-e (hash-get basic-expression-type-builtin (identifier-symbol #'id)))
@@ -271,7 +283,7 @@ namespace: gxc
 
 (defbasic-expression-type-builtin)
 
-(def (basic-expression-type-ref% stx)
+(def (basic-expression-type-ref% self stx)
   (ast-case stx ()
     ((_ id)
      (optimizer-lookup-type (identifier-symbol #'id)))))
@@ -398,10 +410,10 @@ namespace: gxc
       (else
        (values (reverse ids) (reverse impls) (reverse clauses))))))
 
-(def (lift-top-lambda-define-values% stx)
+(def (lift-top-lambda-define-values% self stx)
   (def (case-lambda-clause-def id impl)
     (xform-wrap-source
-     ['%#define-values [id] (compile-e impl)]
+     ['%#define-values [id] (compile-e self impl)]
      stx))
 
   (def (opt-lambda-dispatch-name id)
@@ -452,13 +464,14 @@ namespace: gxc
                (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                (_ (core-bind-runtime! lambda-id))
                (new-case-lambda-expr
-                (apply-expression-subst #'case-lambda-expr #'xid lambda-id)))
+                (apply-expression-subst #'case-lambda-expr id: #'xid new-id: lambda-id)))
        (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
        (xform-wrap-source
         ['%#begin (xform-wrap-source
-                   ['%#define-values [lambda-id] (compile-e #'lambda-expr)]
+                   ['%#define-values [lambda-id] (compile-e self #'lambda-expr)]
                    stx)
                   (lift-top-lambda-define-values%
+                   self
                    (xform-wrap-source
                     ['%#define-values [#'id] new-case-lambda-expr]
                     stx))]
@@ -480,14 +493,15 @@ namespace: gxc
                (_ (core-bind-runtime! get-kws-id))
                (_ (core-bind-runtime! main-id))
                (new-kw-dispatch
-                (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                (apply-expression-subst #'kw-dispatch id: #'get-kws new-id: get-kws-id))
                (new-get-kws
-                (apply-expression-subst #'get-kws-impl #'main main-id)))
+                (apply-expression-subst #'get-kws-impl id: #'main new-id: main-id)))
           (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
                    " => " (identifier-symbol get-kws-id)
                    " => " (identifier-symbol main-id))
           (xform-wrap-source
            ['%#begin (lift-top-lambda-define-values%
+                      self
                       (xform-wrap-source
                        ['%#define-values [main-id] #'main-impl]
                        stx))
@@ -500,12 +514,12 @@ namespace: gxc
            stx)))))
     ((_ hd expr)
      (xform-wrap-source
-      ['%#define-values #'hd (compile-e #'expr)]
+      ['%#define-values #'hd (compile-e self #'expr)]
       stx))))
 
-(def (lift-top-lambda-let-values% stx)
+(def (lift-top-lambda-let-values% self stx)
   (def (bind-e id expr (compile? #t))
-    [[id] (if compile? (compile-e expr) expr)])
+    [[id] (if compile? (compile-e self expr) expr)])
 
   (def (compile-bindings bindings)
     (let lp ((rest bindings) (lift1 []) (lift2 []) (bind []))
@@ -539,13 +553,13 @@ namespace: gxc
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
-                       (apply-expression-subst #'case-lambda-expr #'xid lambda-id)))
+                       (apply-expression-subst #'case-lambda-expr id: #'xid new-id: lambda-id)))
                  (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
                  (lp (cons (bind-e #'id new-case-lambda-expr #f) rest)
                      (cons (bind-e lambda-id #'lambda-expr) lift1)
                      lift2 bind)))))
            ((hd expr)
-            (lp rest lift1 lift2 (cons [#'hd (compile-e #'expr)] bind)))))
+            (lp rest lift1 lift2 (cons [#'hd (compile-e self #'expr)] bind)))))
         (else
          (values (reverse lift1)
                  (reverse lift2)
@@ -579,9 +593,9 @@ namespace: gxc
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
-                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                       (apply-expression-subst #'kw-dispatch id: #'get-kws new-id: get-kws-id))
                       (new-get-kws
-                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                       (apply-expression-subst #'get-kws-impl id: #'main new-id: main-id)))
                  (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
                           " => " (identifier-symbol get-kws-id)
                           " => " (identifier-symbol main-id))
@@ -615,10 +629,10 @@ namespace: gxc
                  (xform-wrap-source
                   ['%#let-values lift1 expr]
                   stx)))
-           (lift-top-lambda-let-values% expr))
+           (lift-top-lambda-let-values% self expr))
          (let* (((values lift1 lift2 hd)
                  (compile-bindings #'(bind ...)))
-                (body (compile-e #'body))
+                (body (compile-e self #'body))
                 (expr
                  (xform-wrap-source
                   ['%#let-values hd body]
@@ -636,11 +650,11 @@ namespace: gxc
                     ['%#let-values lift1 expr]
                     stx))))
            expr))))
-    (_ (xform-let-values% stx))))
+    (_ (xform-let-values% self stx))))
 
-(def (lift-top-lambda-letrec-values% stx)
+(def (lift-top-lambda-letrec-values% self stx)
   (def (bind-e id expr (compile? #t))
-    [[id] (if compile? (compile-e expr) expr)])
+    [[id] (if compile? (compile-e self expr) expr)])
 
   (def (compile-bindings rest)
     (let lp ((rest rest) (bind []))
@@ -674,7 +688,7 @@ namespace: gxc
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
-                       (apply-expression-subst #'case-lambda-expr #'xid lambda-id)))
+                       (apply-expression-subst #'case-lambda-expr id: #'xid new-id: lambda-id)))
                  (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
                  (lp (cons (bind-e #'id new-case-lambda-expr #f) rest)
                      (cons (bind-e lambda-id #'lambda-expr) bind))))))
@@ -695,9 +709,9 @@ namespace: gxc
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
-                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                       (apply-expression-subst #'kw-dispatch id: #'get-kws new-id: get-kws-id))
                       (new-get-kws
-                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                       (apply-expression-subst #'get-kws-impl id: #'main new-id: main-id)))
                  (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
                           " => " (identifier-symbol get-kws-id)
                           " => " (identifier-symbol main-id))
@@ -708,7 +722,7 @@ namespace: gxc
                      bind)
                  ))))
            ((hd expr)
-            (lp rest (cons [#'hd (compile-e #'expr)] bind)))))
+            (lp rest (cons [#'hd (compile-e self #'expr)] bind)))))
         (else
          (reverse bind)))))
 
@@ -717,11 +731,11 @@ namespace: gxc
      (ormap lift-top-lambda-binding? #'(bind ...))
      (parameterize ((current-expander-context (make-local-context)))
        (let ((hd (compile-bindings #'(bind ...)))
-             (body (compile-e #'body)))
+             (body (compile-e self #'body)))
          (xform-wrap-source
           [#'form hd body]
           stx))))
-    (_ (xform-let-values% stx))))
+    (_ (xform-let-values% self stx))))
 
 (def (lift-top-lambda-binding? bind)
   (ast-case bind ()

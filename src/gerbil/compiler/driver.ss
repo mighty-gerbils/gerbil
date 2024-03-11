@@ -692,7 +692,7 @@ namespace: gxc
 (def (generate-meta-code ctx)
   ;; => ssi-code [[phi-ctx phi n phi-code] ...]
   (let* ((state (make-meta-state ctx))
-         (ssi-code (apply-generate-meta (module-context-code ctx) state)))
+         (ssi-code (apply-generate-meta (module-context-code ctx) state: state)))
     (values ssi-code (meta-state-end! state))))
 
 (def (generate-runtime-phi stx)
@@ -706,7 +706,7 @@ namespace: gxc
 
 (def (lift-nested-modules ctx)
   (let (modules (box []))
-    (apply-lift-modules (module-context-code ctx) modules)
+    (apply-lift-modules (module-context-code ctx) modules: modules)
     (reverse (unbox modules))))
 
 ;;; utilities
