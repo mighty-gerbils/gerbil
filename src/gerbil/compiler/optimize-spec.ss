@@ -14,7 +14,8 @@ namespace: gxc
         "optimize-top")
 (export #t)
 
-(defcompile-method (apply-generate-method-specializers) (&generate-method-specializers &identity)
+(defcompile-method (apply-generate-method-specializers)
+  (::generate-method-specializers ::identity)
   ()
   final:
   (%#begin         xform-begin%)
@@ -23,7 +24,7 @@ namespace: gxc
   (%#define-values generate-method-specializers-define-values%))
 
 (defcompile-method (apply-collect-object-refs receiver: receiver methods: methods slots: slots)
-  (&collect-object-refs &void)
+  (::collect-object-refs ::void)
   (receiver methods slots)
   final:
   (%#begin                   collect-begin%)
@@ -44,7 +45,7 @@ namespace: gxc
   (%#struct-unchecked-set!   collect-operands))
 
 (defcompile-method (apply-subst-object-refs receiver: receiver klass: klass methods: methods slots: slots)
-  (&subst-object-refs &basic-xform-expression)
+  (::subst-object-refs ::basic-xform-expression)
   (receiver klass methods slots)
   final:
   (%#begin xform-begin%)

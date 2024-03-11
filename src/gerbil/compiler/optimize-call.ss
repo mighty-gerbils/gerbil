@@ -13,7 +13,7 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
-(defcompile-method (apply-optimize-call) (&optimize-call &basic-xform) ()
+(defcompile-method (apply-optimize-call) (::optimize-call ::basic-xform) ()
   final:
   (%#call optimize-call%))
 

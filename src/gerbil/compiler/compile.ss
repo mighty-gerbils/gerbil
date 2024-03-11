@@ -153,7 +153,7 @@ namespace: gxc
 (def (identity-method self stx)
   stx)
 
-(defcompile-method #f &void-expression ()
+(defcompile-method #f ::void-expression ()
   (%#begin-annotation        void-method)
   (%#lambda                       void-method)
   (%#case-lambda                  void-method)
@@ -176,7 +176,7 @@ namespace: gxc
   (%#struct-unchecked-ref    void-method)
   (%#struct-unchecked-set!   void-method))
 
-(defcompile-method #f &void-special-form ()
+(defcompile-method #f ::void-special-form ()
   (%#begin          void-method)
   (%#begin-syntax   void-method)
   (%#begin-foreign  void-method)
@@ -190,9 +190,9 @@ namespace: gxc
   (%#define-alias   void-method)
   (%#declare        void-method))
 
-(defcompile-method #f (&void &void-special-form &void-expression) ())
+(defcompile-method #f (::void ::void-special-form ::void-expression) ())
 
-(defcompile-method #f &false-expression ()
+(defcompile-method #f ::false-expression ()
   (%#begin-annotation        false-method)
   (%#lambda                       false-method)
   (%#case-lambda                  false-method)
@@ -215,7 +215,7 @@ namespace: gxc
   (%#struct-unchecked-ref    false-method)
   (%#struct-unchecked-set!   false-method))
 
-(defcompile-method #f &false-special-form ()
+(defcompile-method #f ::false-special-form ()
   (%#begin          false-method)
   (%#begin-syntax   false-method)
   (%#begin-foreign  false-method)
@@ -229,10 +229,10 @@ namespace: gxc
   (%#define-alias   false-method)
   (%#declare        false-method))
 
-(defcompile-method #f (&false &false-special-form &false-expression) ())
+(defcompile-method #f (::false ::false-special-form ::false-expression) ())
 
 (defcompile-method (apply-collect-bindings)
-  (&collect-bindings &void-expression &void-special-form) ()
+  (::collect-bindings ::void) ()
   final:
   (%#begin         collect-begin%)
   (%#begin-syntax  collect-begin-syntax%)
@@ -240,13 +240,14 @@ namespace: gxc
   (%#define-values collect-bindings-define-values%)
   (%#define-syntax collect-bindings-define-syntax%))
 
-(defcompile-method (apply-lift-modules modules: modules) (&lift-modules &void)
+(defcompile-method (apply-lift-modules modules: modules)
+  (::lift-modules ::void)
   (modules)
   final:
   (%#begin         collect-begin%)
   (%#module        lift-modules-module%))
 
-(defcompile-method (apply-find-runtime-code) &find-runtime-code ()
+(defcompile-method (apply-find-runtime-code) ::find-runtime-code ()
   final:
   (%#begin                   find-runtime-begin%)
   (%#begin-syntax            false-method)
@@ -281,7 +282,7 @@ namespace: gxc
   (%#struct-unchecked-ref    true-method)
   (%#struct-unchecked-set!   true-method))
 
-(defcompile-method (apply-find-lambda-expression) (&find-lambda-expression &false) ()
+(defcompile-method (apply-find-lambda-expression) (::find-lambda-expression ::false) ()
   final:
   (%#begin                   find-lambda-expression-begin%)
   (%#begin-annotation        find-lambda-expression-begin-annotation%)
@@ -291,7 +292,7 @@ namespace: gxc
   (%#letrec-values           find-lambda-expression-let-values%)
   (%#letrec*-values          find-lambda-expression-let-values%))
 
-(defcompile-method (apply-count-values) (&count-values &false-expression) ()
+(defcompile-method (apply-count-values) (::count-values ::false-expression) ()
   final:
   (%#begin                   count-values-begin%)
   (%#begin-annotation        count-values-begin-annotation%)
@@ -305,7 +306,7 @@ namespace: gxc
   (%#call-unchecked          count-values-call%)
   (%#if                      count-values-if%))
 
-(defcompile-method #f &generate-runtime-empty ()
+(defcompile-method #f ::generate-runtime-empty ()
   (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
   (%#begin-foreign           generate-runtime-empty)
@@ -339,13 +340,13 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-empty)
   (%#struct-unchecked-set!   generate-runtime-empty))
 
-(defcompile-method (apply-generate-loader) (&generate-loader &generate-runtime-empty)
+(defcompile-method (apply-generate-loader) (::generate-loader ::generate-runtime-empty)
   ()
   final:
   (%#begin                   generate-runtime-begin%)
   (%#import                  generate-runtime-loader-import%))
 
-(defcompile-method (apply-generate-runtime) (&generate-runtime &generate-runtime-empty)
+(defcompile-method (apply-generate-runtime) (::generate-runtime ::generate-runtime-empty)
   ()
   (%#begin                   generate-runtime-begin%)
   (%#begin-foreign           generate-runtime-begin-foreign%)
@@ -373,13 +374,13 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-struct-unchecked-ref%)
   (%#struct-unchecked-set!   generate-runtime-struct-unchecked-setq%))
 
-(defcompile-method (apply-generate-runtime-phi) (&generate-runtime-phi
-                                                 &generate-runtime)
+(defcompile-method (apply-generate-runtime-phi) (::generate-runtime-phi
+                                                 ::generate-runtime)
   ()
   final:
   (%#define-runtime generate-runtime-phi-define-runtime%))
 
-(defcompile-method (apply-collect-expression-refs table: table) &collect-expression-refs
+(defcompile-method (apply-collect-expression-refs table: table) ::collect-expression-refs
   (table)
   (%#begin                   collect-begin%)
   (%#begin-annotation        collect-begin-annotation%)
@@ -404,7 +405,7 @@ namespace: gxc
   (%#struct-unchecked-ref    collect-operands)
   (%#struct-unchecked-set!   collect-operands))
 
-(defcompile-method (apply-generate-meta state: state) (&generate-meta &void-expression)
+(defcompile-method (apply-generate-meta state: state) (::generate-meta ::void-expression)
   (state)
   final:
   (%#begin          generate-meta-begin%)
@@ -420,7 +421,7 @@ namespace: gxc
   (%#begin-foreign  void-method)
   (%#declare        void-method))
 
-(defcompile-method (apply-generate-meta-phi state: state) &generate-meta-phi
+(defcompile-method (apply-generate-meta-phi state: state) ::generate-meta-phi
   (state)
   final:
   (%#begin                   generate-meta-begin%)

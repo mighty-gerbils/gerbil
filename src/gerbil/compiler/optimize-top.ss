@@ -14,7 +14,7 @@ namespace: gxc
 (export #t)
 
 (defcompile-method (apply-collect-top-level-type-info)
-  (&collect-top-level-type-info &void)
+  (::collect-top-level-type-info ::void)
   ()
   final:
   (%#begin            collect-begin%)
@@ -22,13 +22,14 @@ namespace: gxc
   (%#module           collect-module%)
   (%#define-values    collect-top-level-type-define-values%))
 
-(defcompile-method (apply-basic-expression-top-level-type) (&basic-expression-top-level-type &false)
+(defcompile-method (apply-basic-expression-top-level-type)
+  (::basic-expression-top-level-type ::false)
   ()
   final:
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#call             basic-expression-type-call%))
 
-(defcompile-method (apply-collect-type-info) (&collect-type-info &void)
+(defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
   ()
   final:
   (%#begin            collect-begin%)
@@ -45,7 +46,7 @@ namespace: gxc
   (%#if               collect-operands)
   (%#set!             collect-body-setq%))
 
-(defcompile-method (apply-basic-expression-type) (&basic-expression-type &false)
+(defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
   ()
   final:
   (%#begin            basic-expression-type-begin%)
@@ -58,7 +59,7 @@ namespace: gxc
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%))
 
-(defcompile-method (apply-lift-top-lambdas) (&lift-top-lambdas &basic-xform)
+(defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
   ()
   final:
   (%#define-values  lift-top-lambda-define-values%)

@@ -12,7 +12,7 @@ namespace: gxc
         "optimize-base")
 (export #t)
 
-(defcompile-method #f &identity-expression ()
+(defcompile-method #f ::identity-expression ()
   (%#begin-annotation        identity-method)
   (%#lambda                       identity-method)
   (%#case-lambda                  identity-method)
@@ -35,7 +35,7 @@ namespace: gxc
   (%#struct-unchecked-ref    identity-method)
   (%#struct-unchecked-set!   identity-method))
 
-(defcompile-method #f &identity-special-form ()
+(defcompile-method #f ::identity-special-form ()
   (%#begin          identity-method)
   (%#begin-syntax   identity-method)
   (%#begin-foreign  identity-method)
@@ -49,9 +49,9 @@ namespace: gxc
   (%#define-alias   identity-method)
   (%#declare        identity-method))
 
-(defcompile-method #f (&identity &identity-special-form &identity-expression) ())
+(defcompile-method #f (::identity ::identity-special-form ::identity-expression) ())
 
-(defcompile-method #f &basic-xform-expression ()
+(defcompile-method #f ::basic-xform-expression ()
   (%#begin-annotation        xform-begin-annotation%)
   (%#lambda                       xform-lambda%)
   (%#case-lambda                  xform-case-lambda%)
@@ -74,14 +74,14 @@ namespace: gxc
   (%#struct-unchecked-ref    xform-operands)
   (%#struct-unchecked-set!   xform-operands))
 
-(defcompile-method #f (&basic-xform &basic-xform-expression &identity) ()
+(defcompile-method #f (::basic-xform ::basic-xform-expression ::identity) ()
   (%#begin          xform-begin%)
   (%#begin-syntax   xform-begin-syntax%)
   (%#module         xform-module%)
   (%#define-values  xform-define-values%)
   (%#define-syntax  xform-define-syntax%))
 
-(defcompile-method (apply-collect-mutators) (&collect-mutators &void) ()
+(defcompile-method (apply-collect-mutators) (::collect-mutators ::void) ()
   final:
   (%#begin                   collect-begin%)
   (%#begin-syntax            collect-begin-syntax%)
@@ -107,7 +107,7 @@ namespace: gxc
   (%#struct-unchecked-ref    collect-operands)
   (%#struct-unchecked-set!   collect-operands))
 
-(defcompile-method (apply-collect-methods) (&collect-methods &void) ()
+(defcompile-method (apply-collect-methods) (::collect-methods ::void) ()
   final:
   (%#begin          collect-begin%)
   (%#begin-syntax   collect-begin-syntax%)
@@ -116,7 +116,7 @@ namespace: gxc
   (%#call-unchecked collect-methods-call%))
 
 (defcompile-method (apply-expression-subst id: id new-id: new-id)
-  (&expression-subst &basic-xform-expression)
+  (::expression-subst ::basic-xform-expression)
   (id new-id)
   final:
   (%#begin xform-begin%)
@@ -124,14 +124,14 @@ namespace: gxc
   (%#set!  expression-subst-setq%))
 
 (defcompile-method (apply-expression-subst* subst: subst)
-  (&expression-subst* &basic-xform-expression)
+  (::expression-subst* ::basic-xform-expression)
   (subst)
   final:
   (%#begin xform-begin%)
   (%#ref   expression-subst*-ref%)
   (%#set!  expression-subst*-setq%))
 
-(defcompile-method #f (&find-expression &false-expression) ()
+(defcompile-method #f (::find-expression ::false-expression) ()
   (%#begin                   find-body%)
   (%#begin-annotation        find-begin-annotation%)
   (%#lambda                       find-lambda%)
@@ -153,14 +153,14 @@ namespace: gxc
   (%#struct-unchecked-set!   find-body%))
 
 (defcompile-method (apply-find-var-refs ids: ids)
-  (&find-var-refs &find-expression)
+  (::find-var-refs ::find-expression)
   (ids)
   final:
   (%#ref  find-var-refs-ref%)
   (%#set! find-var-refs-setq%))
 
 (defcompile-method (apply-collect-runtime-refs table: table)
-  (&collect-runtime-refs &collect-expression-refs)
+  (::collect-runtime-refs ::collect-expression-refs)
   ()
   final:
   (%#ref  collect-runtime-refs-ref%)
@@ -357,7 +357,7 @@ namespace: gxc
        (hash-update! (@ self table) eid 1+ 0)
        (compile-e self #'expr)))))
 
-;;; &find-expression
+;;; ::find-expression
 (def (find-body% self stx)
   (ast-case stx ()
     ((_ expr ...)

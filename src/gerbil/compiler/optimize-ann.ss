@@ -14,17 +14,17 @@ namespace: gxc
 (export #t)
 (declare (inlining-limit 200))
 
-(defcompile-method (apply-optimize-annotated) (&optmize-annotated &basic-xform)
+(defcompile-method (apply-optimize-annotated) (::optimize-annotated ::basic-xform)
   ()
   final:
   (%#begin-annotation optimize-annotation%))
 
-(defcompile-method (apply-generate-runtime-repr) (&generate-runtime-repr &generate-runtime)
+(defcompile-method (apply-generate-runtime-repr) (::generate-runtime-repr ::generate-runtime)
   ()
   final:
   (%#quote-syntax identity-method))
 
-(defcompile-method (apply-push-match-vars vars: vars K: K) &push-match-vars
+(defcompile-method (apply-push-match-vars vars: vars K: K) ::push-match-vars
   (vars K)
   final:
   (%#lambda             xform-lambda%)
