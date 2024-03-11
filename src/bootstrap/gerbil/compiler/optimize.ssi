@@ -28,7 +28,16 @@ namespace: gxc
           optimizer-import-ssxi-by-id
           gxc#optimizer-import-ssxi-by-id)
          (%#define-runtime optimize-source gxc#optimize-source)
-         (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
+         (%#define-runtime ::generate-ssxi::t gxc#::generate-ssxi::t)
+         (%#define-runtime ::generate-ssxi? gxc#::generate-ssxi?)
+         (%#define-runtime make-::generate-ssxi gxc#make-::generate-ssxi)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize__1")))
+                  (%#define-syntax ::generate-ssxi |gxc[:0:]#::generate-ssxi|))
+         (%#define-runtime
+          ::generate-ssxi-bind-methods!
+          gxc#::generate-ssxi-bind-methods!)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
          (%#define-runtime
           generate-ssxi-begin-syntax%

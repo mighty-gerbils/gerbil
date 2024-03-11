@@ -10,11 +10,25 @@ package: gerbil/compiler
   (declare-type gxc#optimizer-import-ssxi (@lambda 1 #f))
   (declare-type gxc#optimizer-import-ssxi-by-id (@lambda 1 #f))
   (declare-type gxc#optimize-source (@lambda 1 #f))
-  (declare-type gxc#apply-generate-ssxi (@lambda (1) #f))
-  (declare-type gxc#generate-ssxi-begin-syntax% (@lambda 1 #f))
-  (declare-type gxc#generate-ssxi-module% (@lambda 1 #f))
-  (declare-type gxc#generate-ssxi-define-values% (@lambda 1 #f))
-  (declare-type gxc#generate-ssxi-call% (@lambda 1 #f))
+  (declare-type
+   gxc#::generate-ssxi::t
+   (@class gxc#::generate-ssxi::t
+           (gxc#::generate-runtime-empty::t)
+           (gxc#::generate-runtime-empty::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f))
+  (declare-type gxc#::generate-ssxi? (@predicate gxc#::generate-ssxi::t))
+  (declare-type gxc#make-::generate-ssxi (@constructor gxc#::generate-ssxi::t))
+  (declare-type gxc#apply-generate-ssxi (@lambda 1 #f))
+  (declare-type gxc#generate-ssxi-begin-syntax% (@lambda 2 #f))
+  (declare-type gxc#generate-ssxi-module% (@lambda 2 #f))
+  (declare-type gxc#generate-ssxi-define-values% (@lambda 2 #f))
+  (declare-type gxc#generate-ssxi-call% (@lambda 2 #f))
   (declare-type gxc#!alias::typedecl (@lambda 1 #f))
   (declare-type gxc#!class::typedecl (@lambda 1 #f))
   (declare-type gxc#!predicate::typedecl (@lambda 1 #f))
