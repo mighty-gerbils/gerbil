@@ -3,6 +3,7 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
+  (declare-type gxc#stx-car-e (@lambda 1 #f))
   (declare-type gxc#compile-e__0 (@lambda 1 #f))
   (declare-type gxc#compile-e__1 (@lambda 2 #f))
   (declare-type

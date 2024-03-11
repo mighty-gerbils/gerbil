@@ -20,6 +20,7 @@ namespace: gxc
          (%#define-runtime
           make-bound-identifier-table
           gxc#make-bound-identifier-table)
+         (%#define-runtime stx-car-e gxc#stx-car-e)
          (%#begin (%#define-runtime compile-e__0 gxc#compile-e__0)
                   (%#define-runtime compile-e__1 gxc#compile-e__1)
                   (%#define-runtime compile-e gxc#compile-e))
