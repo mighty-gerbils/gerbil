@@ -1,4 +1,5 @@
 module.exports = {
+  base: "/",
   title: 'Gerbil Scheme',
   description: '',
   themeConfig: {
