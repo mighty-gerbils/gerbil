@@ -8,7 +8,8 @@ module.exports = {
       { text: 'Tutorials', link: '/tutorials/' },
       { text: 'Reference', link: '/reference/' },
       { text: 'Gitter', link: 'https://gitter.im/gerbil-scheme/community' },
-      { text: 'Matrix', link: 'https://matrix.to/#/#gerbil-scheme-core:gitter.im' }
+      { text: 'Matrix', link: 'https://matrix.to/#/#gerbil-scheme-core:gitter.im' },
+      { text: 'Mailing List', link: 'https://groups.google.com/a/hackzen.org/g/gerbil-users' }
     ],
     sidebarDepth: 2,
       sidebar: {
