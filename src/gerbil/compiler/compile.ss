@@ -64,24 +64,23 @@ namespace: gxc
     (symbol-hash (stx-e id)))
   (make-hash-table test: bound-identifier=? hash: hash-e))
 
+(def (stx-car-e stx)
+  (stx-e (car (stx-e stx))))
+
 (def* compile-e
   ((stx)
    (let (self (current-compile-method))
-     (ast-case stx ()
-       ((hd . _)
-        (cond
-         ((method-ref self (stx-e #'hd))
-          => (cut <> self stx))
-         (else
-          (error "missing method" self (stx-e #'hd) (syntax->datum stx))))))))
+     (cond
+      ((method-ref self (stx-car-e stx))
+       => (lambda (method) (declare (not safe)) (method self stx)))
+      (else
+       (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
   ((self stx)
-   (ast-case stx ()
-       ((hd . _)
-        (cond
-         ((method-ref self (stx-e #'hd))
-          => (cut <> self stx))
-         (else
-          (error "missing method" self (stx-e #'hd) (syntax->datum stx))))))))
+   (cond
+    ((method-ref self (stx-car-e stx))
+     => (lambda (method) (declare (not safe)) (method self stx)))
+    (else
+     (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
 
 (defsyntax (defcompile-method stx)
   (syntax-case stx ()
