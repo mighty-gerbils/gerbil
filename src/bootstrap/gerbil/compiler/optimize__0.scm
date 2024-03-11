@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize::timestamp 1710155063)
+  (define gerbil/compiler/optimize::timestamp 1710170112)
   (begin
     (define gxc#optimizer-info-init!
       (lambda ()
@@ -434,8 +434,8 @@
                    (gxc#apply-optimize-annotated _stx157112_))))
             (declare (not safe))
             (gxc#apply-optimize-call _stx157115_)))))
-    (define gxc#::generate-ssxi::&generate-runtime-empty::t
-      (let ((__tmp157565 (list))
+    (define gxc#::generate-ssxi::t
+      (let ((__tmp157565 (list gxc#::generate-runtime-empty::t))
             (__tmp157563
              (let ((__tmp157564
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -443,70 +443,66 @@
                (cons __tmp157564 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#::generate-ssxi::&generate-runtime-empty::t
-         '::generate-ssxi::&generate-runtime-empty
+         'gxc#::generate-ssxi::t
+         '::generate-ssxi
          __tmp157565
          '()
          __tmp157563
          '#f)))
-    (define gxc#::generate-ssxi::&generate-runtime-empty?
+    (define gxc#::generate-ssxi?
       (let ()
         (declare (not safe))
-        (make-class-predicate
-         gxc#::generate-ssxi::&generate-runtime-empty::t)))
-    (define gxc#make-::generate-ssxi::&generate-runtime-empty
+        (make-class-predicate gxc#::generate-ssxi::t)))
+    (define gxc#make-::generate-ssxi
       (lambda _$args157105_
-        (apply make-instance
-               gxc#::generate-ssxi::&generate-runtime-empty::t
-               _$args157105_)))
-    (define gxc#::generate-ssxi::&generate-runtime-empty-bind-methods!
+        (apply make-instance gxc#::generate-ssxi::t _$args157105_)))
+    (define gxc#::generate-ssxi-bind-methods!
       (let ((__tmp157566
              (lambda ()
+               (force gxc#::generate-runtime-empty-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#::generate-ssxi::&generate-runtime-empty::t
+                  gxc#::generate-ssxi::t
                   '%#begin
                   gxc#generate-runtime-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#::generate-ssxi::&generate-runtime-empty::t
+                  gxc#::generate-ssxi::t
                   '%#begin-syntax
                   gxc#generate-ssxi-begin-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#::generate-ssxi::&generate-runtime-empty::t
+                  gxc#::generate-ssxi::t
                   '%#module
                   gxc#generate-ssxi-module%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#::generate-ssxi::&generate-runtime-empty::t
+                  gxc#::generate-ssxi::t
                   '%#define-values
                   gxc#generate-ssxi-define-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#::generate-ssxi::&generate-runtime-empty::t
+                  gxc#::generate-ssxi::t
                   '%#call
                   gxc#generate-ssxi-call%))
                (let ()
                  (declare (not safe))
-                 (seal-class!
-                  gxc#::generate-ssxi::&generate-runtime-empty::t)))))
+                 (seal-class! gxc#::generate-ssxi::t)))))
         (declare (not safe))
         (make-promise __tmp157566)))
     (define gxc#apply-generate-ssxi
       (lambda (_stx157097_)
-        (force gxc#::generate-ssxi::&generate-runtime-empty-bind-methods!)
+        (force gxc#::generate-ssxi-bind-methods!)
         (let* ((_self157100_
                 (let ((__obj157537
                        (let ()
                          (declare (not safe))
-                         (##structure
-                          gxc#::generate-ssxi::&generate-runtime-empty::t))))
+                         (##structure gxc#::generate-ssxi::t))))
                   __obj157537))
                (__tmp157567
                 (lambda ()
