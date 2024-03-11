@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: /img/gerbil-detailed-consio_OPT.svg
-tagline: Gerbil\: A LISP for the 21st Century
+tagline: A LISP for the 21st Century
 actionText: Get Started →
 actionLink: /guide/
 # footer: XYZ Licensed | Copyright © 2018-present Zyx
