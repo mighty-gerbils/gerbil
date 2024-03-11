@@ -10,16 +10,16 @@ namespace: gxc
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)
-         (%#define-runtime &optimize-call::t gxc#&optimize-call::t)
-         (%#define-runtime &optimize-call? gxc#&optimize-call?)
-         (%#define-runtime make-&optimize-call gxc#make-&optimize-call)
+         (%#define-runtime ::optimize-call::t gxc#::optimize-call::t)
+         (%#define-runtime ::optimize-call? gxc#::optimize-call?)
+         (%#define-runtime make-::optimize-call gxc#make-::optimize-call)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-call__1")))
-                  (%#define-syntax &optimize-call |gxc[:0:]#&optimize-call|))
+                  (%#define-syntax ::optimize-call |gxc[:0:]#::optimize-call|))
          (%#define-runtime
-          &optimize-call-bind-methods!
-          gxc#&optimize-call-bind-methods!)
+          ::optimize-call-bind-methods!
+          gxc#::optimize-call-bind-methods!)
          (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
          (%#define-runtime optimize-call% gxc#optimize-call%)
          (%#begin (%#define-runtime

@@ -1,455 +1,739 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
+  (define |gxc[1]#_g118689_|
+    (##structure
+     gx#syntax-quote::t
+     '::identity-expression::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g118691_|
     (##structure
      gx#syntax-quote::t
-     '&identity-expression::t
+     'make-::identity-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118693_|
     (##structure
      gx#syntax-quote::t
-     'make-&identity-expression
+     '::identity-expression?
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118695_|
     (##structure
      gx#syntax-quote::t
-     '&identity-expression?
+     '::identity-special-form::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118697_|
     (##structure
      gx#syntax-quote::t
-     '&identity-special-form::t
+     'make-::identity-special-form
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118699_|
     (##structure
      gx#syntax-quote::t
-     'make-&identity-special-form
+     '::identity-special-form?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118701_|
+  (define |gxc[1]#_g118703_|
     (##structure
      gx#syntax-quote::t
-     '&identity-special-form?
+     '::identity-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118705_|
     (##structure
      gx#syntax-quote::t
-     '&identity-expression
+     '::identity-special-form
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118707_|
     (##structure
      gx#syntax-quote::t
-     '&identity-special-form
+     '::identity::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118709_|
     (##structure
      gx#syntax-quote::t
-     '&identity::t
+     'make-::identity
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118711_|
     (##structure
      gx#syntax-quote::t
-     'make-&identity
+     '::identity?
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118713_|
     (##structure
      gx#syntax-quote::t
-     '&identity?
+     '::basic-xform-expression::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118715_|
     (##structure
      gx#syntax-quote::t
-     '&basic-xform-expression::t
+     'make-::basic-xform-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118717_|
     (##structure
      gx#syntax-quote::t
-     'make-&basic-xform-expression
+     '::basic-xform-expression?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118719_|
+  (define |gxc[1]#_g118721_|
     (##structure
      gx#syntax-quote::t
-     '&basic-xform-expression?
+     '::identity
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118723_|
     (##structure
      gx#syntax-quote::t
-     '&identity
+     '::basic-xform-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118725_|
     (##structure
      gx#syntax-quote::t
-     '&basic-xform-expression
+     '::basic-xform::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118727_|
     (##structure
      gx#syntax-quote::t
-     '&basic-xform::t
+     'make-::basic-xform
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118729_|
     (##structure
      gx#syntax-quote::t
-     'make-&basic-xform
+     '::basic-xform?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118731_|
+  (define |gxc[1]#_g118732_|
     (##structure
      gx#syntax-quote::t
-     '&basic-xform?
+     '::void
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118734_|
     (##structure
      gx#syntax-quote::t
-     '&void
+     '::collect-mutators::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118736_|
     (##structure
      gx#syntax-quote::t
-     '&collect-mutators::t
+     'make-::collect-mutators
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118738_|
     (##structure
      gx#syntax-quote::t
-     'make-&collect-mutators
+     '::collect-mutators?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118740_|
+  (define |gxc[1]#_g118742_|
     (##structure
      gx#syntax-quote::t
-     '&collect-mutators?
+     '::collect-methods::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118744_|
     (##structure
      gx#syntax-quote::t
-     '&collect-methods::t
+     'make-::collect-methods
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118746_|
     (##structure
      gx#syntax-quote::t
-     'make-&collect-methods
+     '::collect-methods?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118748_|
+  (define |gxc[1]#_g118750_|
     (##structure
      gx#syntax-quote::t
-     '&collect-methods?
+     '::expression-subst::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118752_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst::t
+     'make-::expression-subst
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118754_|
     (##structure
      gx#syntax-quote::t
-     'make-&expression-subst
+     '::expression-subst?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118756_|
+  (define |gxc[1]#_g118759_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst?
+     '::expression-subst-new-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118761_|
+  (define |gxc[1]#_g118762_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst-new-id
+     '::expression-subst-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118764_|
+  (define |gxc[1]#_g118767_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst-id
+     '::expression-subst-new-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118769_|
+  (define |gxc[1]#_g118770_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst-new-id-set!
+     '::expression-subst-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118772_|
+  (define |gxc[1]#_g118775_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst-id-set!
+     '&::expression-subst-new-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118777_|
+  (define |gxc[1]#_g118778_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst-new-id
+     '&::expression-subst-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118780_|
+  (define |gxc[1]#_g118783_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst-id
+     '&::expression-subst-new-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118785_|
+  (define |gxc[1]#_g118786_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst-new-id-set!
+     '&::expression-subst-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118788_|
+  (define |gxc[1]#_g118790_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst-id-set!
+     '::expression-subst*::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118792_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst*::t
+     'make-::expression-subst*
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118794_|
     (##structure
      gx#syntax-quote::t
-     'make-&expression-subst*
+     '::expression-subst*?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118796_|
+  (define |gxc[1]#_g118798_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst*?
+     '::expression-subst*-subst
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118800_|
+  (define |gxc[1]#_g118802_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst*-subst
+     '::expression-subst*-subst-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118804_|
+  (define |gxc[1]#_g118806_|
     (##structure
      gx#syntax-quote::t
-     '&expression-subst*-subst-set!
+     '&::expression-subst*-subst
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118808_|
+  (define |gxc[1]#_g118810_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst*-subst
+     '&::expression-subst*-subst-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118812_|
+  (define |gxc[1]#_g118813_|
     (##structure
      gx#syntax-quote::t
-     '&&expression-subst*-subst-set!
+     '::false-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118815_|
     (##structure
      gx#syntax-quote::t
-     '&false-expression
+     '::find-expression::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118817_|
     (##structure
      gx#syntax-quote::t
-     '&find-expression::t
+     'make-::find-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118819_|
     (##structure
      gx#syntax-quote::t
-     'make-&find-expression
+     '::find-expression?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118821_|
+  (define |gxc[1]#_g118822_|
     (##structure
      gx#syntax-quote::t
-     '&find-expression?
+     '::find-expression
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118824_|
     (##structure
      gx#syntax-quote::t
-     '&find-expression
+     '::find-var-refs::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118826_|
     (##structure
      gx#syntax-quote::t
-     '&find-var-refs::t
+     'make-::find-var-refs
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118828_|
     (##structure
      gx#syntax-quote::t
-     'make-&find-var-refs
+     '::find-var-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118830_|
+  (define |gxc[1]#_g118832_|
     (##structure
      gx#syntax-quote::t
-     '&find-var-refs?
+     '::find-var-refs-ids
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118834_|
+  (define |gxc[1]#_g118836_|
     (##structure
      gx#syntax-quote::t
-     '&find-var-refs-ids
+     '::find-var-refs-ids-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118838_|
+  (define |gxc[1]#_g118840_|
     (##structure
      gx#syntax-quote::t
-     '&find-var-refs-ids-set!
+     '&::find-var-refs-ids
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118842_|
+  (define |gxc[1]#_g118844_|
     (##structure
      gx#syntax-quote::t
-     '&&find-var-refs-ids
+     '&::find-var-refs-ids-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118846_|
+  (define |gxc[1]#_g118847_|
     (##structure
      gx#syntax-quote::t
-     '&&find-var-refs-ids-set!
+     '::collect-expression-refs
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118849_|
     (##structure
      gx#syntax-quote::t
-     '&collect-expression-refs
+     '::collect-runtime-refs::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118851_|
     (##structure
      gx#syntax-quote::t
-     '&collect-runtime-refs::t
+     'make-::collect-runtime-refs
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g118853_|
     (##structure
      gx#syntax-quote::t
-     'make-&collect-runtime-refs
+     '::collect-runtime-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118855_|
+  (define |gxc[1]#_g118857_|
     (##structure
      gx#syntax-quote::t
-     '&collect-runtime-refs?
+     '::collect-runtime-refs-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118859_|
+  (define |gxc[1]#_g118861_|
     (##structure
      gx#syntax-quote::t
-     '&collect-runtime-refs-table
+     '::collect-runtime-refs-table-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118863_|
+  (define |gxc[1]#_g118865_|
     (##structure
      gx#syntax-quote::t
-     '&collect-runtime-refs-table-set!
+     '&::collect-runtime-refs-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g118867_|
+  (define |gxc[1]#_g118869_|
     (##structure
      gx#syntax-quote::t
-     '&&collect-runtime-refs-table
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g118871_|
-    (##structure
-     gx#syntax-quote::t
-     '&&collect-runtime-refs-table-set!
+     '&::collect-runtime-refs-table-set!
      #f
      (gx#current-expander-context)
      '()))
   (begin
-    (define |gxc[:0:]#&identity-expression|
+    (define |gxc[:0:]#::identity-expression|
+      (let ((__obj118530
+             (let ()
+               (declare (not safe))
+               (##structure
+                gerbil/core/mop$<MOP:2>#class-type-info::t
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f))))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           'gxc#::identity-expression::t
+           '1
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '::identity-expression
+           '2
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '4
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '3
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '#f
+           '5
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '#f
+           '6
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '#f
+           '7
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '#f
+           '8
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118688 |gxc[1]#_g118689_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           __tmp118688
+           '9
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118690 |gxc[1]#_g118691_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           __tmp118690
+           '10
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118692 |gxc[1]#_g118693_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           __tmp118692
+           '11
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '12
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '13
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '14
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118530
+           '()
+           '15
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        __obj118530))
+    (define |gxc[:0:]#::identity-special-form|
+      (let ((__obj118531
+             (let ()
+               (declare (not safe))
+               (##structure
+                gerbil/core/mop$<MOP:2>#class-type-info::t
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f
+                '#f))))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           'gxc#::identity-special-form::t
+           '1
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '::identity-special-form
+           '2
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '4
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '3
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '#f
+           '5
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '#f
+           '6
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '#f
+           '7
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '#f
+           '8
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118694 |gxc[1]#_g118695_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           __tmp118694
+           '9
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118696 |gxc[1]#_g118697_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           __tmp118696
+           '10
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118698 |gxc[1]#_g118699_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           __tmp118698
+           '11
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '12
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '13
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '14
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ()
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118531
+           '()
+           '15
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        __obj118531))
+    (define |gxc[:0:]#::identity|
       (let ((__obj118532
              (let ()
                (declare (not safe))
@@ -474,7 +758,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           'gxc#&identity-expression::t
+           'gxc#::identity::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -482,7 +766,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           '&identity-expression
+           '::identity
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -494,11 +778,18 @@
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118700
+               (let ((__tmp118704 |gxc[1]#_g118705_|)
+                     (__tmp118701
+                      (let ((__tmp118702 |gxc[1]#_g118703_|))
+                        (declare (not safe))
+                        (cons __tmp118702 '()))))
+                 (declare (not safe))
+                 (cons __tmp118704 __tmp118701))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           '()
+           __tmp118700
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -534,27 +825,27 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118690 |gxc[1]#_g118691_|))
+        (let ((__tmp118706 |gxc[1]#_g118707_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           __tmp118690
+           __tmp118706
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118692 |gxc[1]#_g118693_|))
+        (let ((__tmp118708 |gxc[1]#_g118709_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           __tmp118692
+           __tmp118708
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118694 |gxc[1]#_g118695_|))
+        (let ((__tmp118710 |gxc[1]#_g118711_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118532
-           __tmp118694
+           __tmp118710
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -591,7 +882,7 @@
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118532))
-    (define |gxc[:0:]#&identity-special-form|
+    (define |gxc[:0:]#::basic-xform-expression|
       (let ((__obj118533
              (let ()
                (declare (not safe))
@@ -616,7 +907,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118533
-           'gxc#&identity-special-form::t
+           'gxc#::basic-xform-expression::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -624,7 +915,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118533
-           '&identity-special-form
+           '::basic-xform-expression
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -676,27 +967,27 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118696 |gxc[1]#_g118697_|))
+        (let ((__tmp118712 |gxc[1]#_g118713_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118533
-           __tmp118696
+           __tmp118712
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118698 |gxc[1]#_g118699_|))
+        (let ((__tmp118714 |gxc[1]#_g118715_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118533
-           __tmp118698
+           __tmp118714
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118700 |gxc[1]#_g118701_|))
+        (let ((__tmp118716 |gxc[1]#_g118717_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118533
-           __tmp118700
+           __tmp118716
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -733,7 +1024,7 @@
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118533))
-    (define |gxc[:0:]#&identity|
+    (define |gxc[:0:]#::basic-xform|
       (let ((__obj118534
              (let ()
                (declare (not safe))
@@ -758,7 +1049,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           'gxc#&identity::t
+           'gxc#::basic-xform::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -766,7 +1057,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           '&identity
+           '::basic-xform
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -778,18 +1069,18 @@
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118702
-               (let ((__tmp118706 |gxc[1]#_g118707_|)
-                     (__tmp118703
-                      (let ((__tmp118704 |gxc[1]#_g118705_|))
+        (let ((__tmp118718
+               (let ((__tmp118722 |gxc[1]#_g118723_|)
+                     (__tmp118719
+                      (let ((__tmp118720 |gxc[1]#_g118721_|))
                         (declare (not safe))
-                        (cons __tmp118704 '()))))
+                        (cons __tmp118720 '()))))
                  (declare (not safe))
-                 (cons __tmp118706 __tmp118703))))
+                 (cons __tmp118722 __tmp118719))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           __tmp118702
+           __tmp118718
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -825,27 +1116,27 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118708 |gxc[1]#_g118709_|))
+        (let ((__tmp118724 |gxc[1]#_g118725_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           __tmp118708
+           __tmp118724
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118710 |gxc[1]#_g118711_|))
+        (let ((__tmp118726 |gxc[1]#_g118727_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           __tmp118710
+           __tmp118726
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118712 |gxc[1]#_g118713_|))
+        (let ((__tmp118728 |gxc[1]#_g118729_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118534
-           __tmp118712
+           __tmp118728
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -882,7 +1173,7 @@
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118534))
-    (define |gxc[:0:]#&basic-xform-expression|
+    (define |gxc[:0:]#::collect-mutators|
       (let ((__obj118535
              (let ()
                (declare (not safe))
@@ -907,7 +1198,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           'gxc#&basic-xform-expression::t
+           'gxc#::collect-mutators::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -915,7 +1206,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           '&basic-xform-expression
+           '::collect-mutators
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -927,11 +1218,14 @@
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118730
+               (let ((__tmp118731 |gxc[1]#_g118732_|))
+                 (declare (not safe))
+                 (cons __tmp118731 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           '()
+           __tmp118730
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -947,7 +1241,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           '#f
+           '#t
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -967,27 +1261,27 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118714 |gxc[1]#_g118715_|))
+        (let ((__tmp118733 |gxc[1]#_g118734_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           __tmp118714
+           __tmp118733
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118716 |gxc[1]#_g118717_|))
+        (let ((__tmp118735 |gxc[1]#_g118736_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           __tmp118716
+           __tmp118735
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118718 |gxc[1]#_g118719_|))
+        (let ((__tmp118737 |gxc[1]#_g118738_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118535
-           __tmp118718
+           __tmp118737
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1024,156 +1318,7 @@
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118535))
-    (define |gxc[:0:]#&basic-xform|
-      (let ((__obj118536
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           'gxc#&basic-xform::t
-           '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '&basic-xform
-           '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '()
-           '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118720
-               (let ((__tmp118724 |gxc[1]#_g118725_|)
-                     (__tmp118721
-                      (let ((__tmp118722 |gxc[1]#_g118723_|))
-                        (declare (not safe))
-                        (cons __tmp118722 '()))))
-                 (declare (not safe))
-                 (cons __tmp118724 __tmp118721))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           __tmp118720
-           '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '#f
-           '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '#f
-           '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '#f
-           '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '#f
-           '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118726 |gxc[1]#_g118727_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           __tmp118726
-           '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118728 |gxc[1]#_g118729_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           __tmp118728
-           '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118730 |gxc[1]#_g118731_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           __tmp118730
-           '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '()
-           '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '()
-           '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '()
-           '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118536
-           '()
-           '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        __obj118536))
-    (define |gxc[:0:]#&collect-mutators|
+    (define |gxc[:0:]#::collect-methods|
       (let ((__obj118537
              (let ()
                (declare (not safe))
@@ -1198,7 +1343,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           'gxc#&collect-mutators::t
+           'gxc#::collect-methods::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1206,7 +1351,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           '&collect-mutators
+           '::collect-methods
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1218,14 +1363,14 @@
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118732
-               (let ((__tmp118733 |gxc[1]#_g118734_|))
+        (let ((__tmp118739
+               (let ((__tmp118740 |gxc[1]#_g118732_|))
                  (declare (not safe))
-                 (cons __tmp118733 '()))))
+                 (cons __tmp118740 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           __tmp118732
+           __tmp118739
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1261,27 +1406,27 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118735 |gxc[1]#_g118736_|))
+        (let ((__tmp118741 |gxc[1]#_g118742_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           __tmp118735
+           __tmp118741
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118737 |gxc[1]#_g118738_|))
+        (let ((__tmp118743 |gxc[1]#_g118744_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           __tmp118737
+           __tmp118743
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118739 |gxc[1]#_g118740_|))
+        (let ((__tmp118745 |gxc[1]#_g118746_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118537
-           __tmp118739
+           __tmp118745
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1318,7 +1463,7 @@
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118537))
-    (define |gxc[:0:]#&collect-methods|
+    (define |gxc[:0:]#::expression-subst|
       (let ((__obj118539
              (let ()
                (declare (not safe))
@@ -1343,7 +1488,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           'gxc#&collect-methods::t
+           'gxc#::expression-subst::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1351,7 +1496,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '&collect-methods
+           '::expression-subst
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1359,18 +1504,18 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '()
+           '(id new-id)
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118741
-               (let ((__tmp118742 |gxc[1]#_g118734_|))
+        (let ((__tmp118747
+               (let ((__tmp118748 |gxc[1]#_g118723_|))
                  (declare (not safe))
-                 (cons __tmp118742 '()))))
+                 (cons __tmp118748 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           __tmp118741
+           __tmp118747
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1406,64 +1551,116 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118743 |gxc[1]#_g118744_|))
+        (let ((__tmp118749 |gxc[1]#_g118750_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           __tmp118743
+           __tmp118749
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118745 |gxc[1]#_g118746_|))
+        (let ((__tmp118751 |gxc[1]#_g118752_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           __tmp118745
+           __tmp118751
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118747 |gxc[1]#_g118748_|))
+        (let ((__tmp118753 |gxc[1]#_g118754_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           __tmp118747
+           __tmp118753
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118755
+               (let ((__tmp118760
+                      (let ((__tmp118761 |gxc[1]#_g118762_|))
+                        (declare (not safe))
+                        (cons 'id __tmp118761)))
+                     (__tmp118756
+                      (let ((__tmp118757
+                             (let ((__tmp118758 |gxc[1]#_g118759_|))
+                               (declare (not safe))
+                               (cons 'new-id __tmp118758))))
+                        (declare (not safe))
+                        (cons __tmp118757 '()))))
+                 (declare (not safe))
+                 (cons __tmp118760 __tmp118756))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '()
+           __tmp118755
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118763
+               (let ((__tmp118768
+                      (let ((__tmp118769 |gxc[1]#_g118770_|))
+                        (declare (not safe))
+                        (cons 'id __tmp118769)))
+                     (__tmp118764
+                      (let ((__tmp118765
+                             (let ((__tmp118766 |gxc[1]#_g118767_|))
+                               (declare (not safe))
+                               (cons 'new-id __tmp118766))))
+                        (declare (not safe))
+                        (cons __tmp118765 '()))))
+                 (declare (not safe))
+                 (cons __tmp118768 __tmp118764))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '()
+           __tmp118763
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118771
+               (let ((__tmp118776
+                      (let ((__tmp118777 |gxc[1]#_g118778_|))
+                        (declare (not safe))
+                        (cons 'id __tmp118777)))
+                     (__tmp118772
+                      (let ((__tmp118773
+                             (let ((__tmp118774 |gxc[1]#_g118775_|))
+                               (declare (not safe))
+                               (cons 'new-id __tmp118774))))
+                        (declare (not safe))
+                        (cons __tmp118773 '()))))
+                 (declare (not safe))
+                 (cons __tmp118776 __tmp118772))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '()
+           __tmp118771
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118779
+               (let ((__tmp118784
+                      (let ((__tmp118785 |gxc[1]#_g118786_|))
+                        (declare (not safe))
+                        (cons 'id __tmp118785)))
+                     (__tmp118780
+                      (let ((__tmp118781
+                             (let ((__tmp118782 |gxc[1]#_g118783_|))
+                               (declare (not safe))
+                               (cons 'new-id __tmp118782))))
+                        (declare (not safe))
+                        (cons __tmp118781 '()))))
+                 (declare (not safe))
+                 (cons __tmp118784 __tmp118780))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118539
-           '()
+           __tmp118779
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118539))
-    (define |gxc[:0:]#&expression-subst|
+    (define |gxc[:0:]#::expression-subst*|
       (let ((__obj118541
              (let ()
                (declare (not safe))
@@ -1488,7 +1685,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           'gxc#&expression-subst::t
+           'gxc#::expression-subst*::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1496,7 +1693,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           '&expression-subst
+           '::expression-subst*
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1504,18 +1701,18 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           '(id new-id)
+           '(subst)
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118749
-               (let ((__tmp118750 |gxc[1]#_g118725_|))
+        (let ((__tmp118787
+               (let ((__tmp118788 |gxc[1]#_g118723_|))
                  (declare (not safe))
-                 (cons __tmp118750 '()))))
+                 (cons __tmp118788 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118749
+           __tmp118787
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1551,116 +1748,88 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118751 |gxc[1]#_g118752_|))
+        (let ((__tmp118789 |gxc[1]#_g118790_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118751
+           __tmp118789
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118753 |gxc[1]#_g118754_|))
+        (let ((__tmp118791 |gxc[1]#_g118792_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118753
+           __tmp118791
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118755 |gxc[1]#_g118756_|))
+        (let ((__tmp118793 |gxc[1]#_g118794_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118755
+           __tmp118793
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118757
-               (let ((__tmp118762
-                      (let ((__tmp118763 |gxc[1]#_g118764_|))
+        (let ((__tmp118795
+               (let ((__tmp118796
+                      (let ((__tmp118797 |gxc[1]#_g118798_|))
                         (declare (not safe))
-                        (cons 'id __tmp118763)))
-                     (__tmp118758
-                      (let ((__tmp118759
-                             (let ((__tmp118760 |gxc[1]#_g118761_|))
-                               (declare (not safe))
-                               (cons 'new-id __tmp118760))))
-                        (declare (not safe))
-                        (cons __tmp118759 '()))))
+                        (cons 'subst __tmp118797))))
                  (declare (not safe))
-                 (cons __tmp118762 __tmp118758))))
+                 (cons __tmp118796 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118757
+           __tmp118795
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118765
-               (let ((__tmp118770
-                      (let ((__tmp118771 |gxc[1]#_g118772_|))
+        (let ((__tmp118799
+               (let ((__tmp118800
+                      (let ((__tmp118801 |gxc[1]#_g118802_|))
                         (declare (not safe))
-                        (cons 'id __tmp118771)))
-                     (__tmp118766
-                      (let ((__tmp118767
-                             (let ((__tmp118768 |gxc[1]#_g118769_|))
-                               (declare (not safe))
-                               (cons 'new-id __tmp118768))))
-                        (declare (not safe))
-                        (cons __tmp118767 '()))))
+                        (cons 'subst __tmp118801))))
                  (declare (not safe))
-                 (cons __tmp118770 __tmp118766))))
+                 (cons __tmp118800 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118765
+           __tmp118799
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118773
-               (let ((__tmp118778
-                      (let ((__tmp118779 |gxc[1]#_g118780_|))
+        (let ((__tmp118803
+               (let ((__tmp118804
+                      (let ((__tmp118805 |gxc[1]#_g118806_|))
                         (declare (not safe))
-                        (cons 'id __tmp118779)))
-                     (__tmp118774
-                      (let ((__tmp118775
-                             (let ((__tmp118776 |gxc[1]#_g118777_|))
-                               (declare (not safe))
-                               (cons 'new-id __tmp118776))))
-                        (declare (not safe))
-                        (cons __tmp118775 '()))))
+                        (cons 'subst __tmp118805))))
                  (declare (not safe))
-                 (cons __tmp118778 __tmp118774))))
+                 (cons __tmp118804 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118773
+           __tmp118803
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118781
-               (let ((__tmp118786
-                      (let ((__tmp118787 |gxc[1]#_g118788_|))
+        (let ((__tmp118807
+               (let ((__tmp118808
+                      (let ((__tmp118809 |gxc[1]#_g118810_|))
                         (declare (not safe))
-                        (cons 'id __tmp118787)))
-                     (__tmp118782
-                      (let ((__tmp118783
-                             (let ((__tmp118784 |gxc[1]#_g118785_|))
-                               (declare (not safe))
-                               (cons 'new-id __tmp118784))))
-                        (declare (not safe))
-                        (cons __tmp118783 '()))))
+                        (cons 'subst __tmp118809))))
                  (declare (not safe))
-                 (cons __tmp118786 __tmp118782))))
+                 (cons __tmp118808 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118541
-           __tmp118781
+           __tmp118807
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118541))
-    (define |gxc[:0:]#&expression-subst*|
+    (define |gxc[:0:]#::find-expression|
       (let ((__obj118543
              (let ()
                (declare (not safe))
@@ -1685,7 +1854,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           'gxc#&expression-subst*::t
+           'gxc#::find-expression::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1693,7 +1862,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           '&expression-subst*
+           '::find-expression
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1701,18 +1870,18 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           '(subst)
+           '()
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118789
-               (let ((__tmp118790 |gxc[1]#_g118725_|))
+        (let ((__tmp118811
+               (let ((__tmp118812 |gxc[1]#_g118813_|))
                  (declare (not safe))
-                 (cons __tmp118790 '()))))
+                 (cons __tmp118812 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118789
+           __tmp118811
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1728,7 +1897,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           '#t
+           '#f
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -1748,89 +1917,65 @@
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118791 |gxc[1]#_g118792_|))
+        (let ((__tmp118814 |gxc[1]#_g118815_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118791
+           __tmp118814
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118793 |gxc[1]#_g118794_|))
+        (let ((__tmp118816 |gxc[1]#_g118817_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118793
+           __tmp118816
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118795 |gxc[1]#_g118796_|))
+        (let ((__tmp118818 |gxc[1]#_g118819_|))
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118795
+           __tmp118818
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118797
-               (let ((__tmp118798
-                      (let ((__tmp118799 |gxc[1]#_g118800_|))
-                        (declare (not safe))
-                        (cons 'subst __tmp118799))))
-                 (declare (not safe))
-                 (cons __tmp118798 '()))))
+        (let ()
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118797
+           '()
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118801
-               (let ((__tmp118802
-                      (let ((__tmp118803 |gxc[1]#_g118804_|))
-                        (declare (not safe))
-                        (cons 'subst __tmp118803))))
-                 (declare (not safe))
-                 (cons __tmp118802 '()))))
+        (let ()
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118801
+           '()
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118805
-               (let ((__tmp118806
-                      (let ((__tmp118807 |gxc[1]#_g118808_|))
-                        (declare (not safe))
-                        (cons 'subst __tmp118807))))
-                 (declare (not safe))
-                 (cons __tmp118806 '()))))
+        (let ()
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118805
+           '()
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118809
-               (let ((__tmp118810
-                      (let ((__tmp118811 |gxc[1]#_g118812_|))
-                        (declare (not safe))
-                        (cons 'subst __tmp118811))))
-                 (declare (not safe))
-                 (cons __tmp118810 '()))))
+        (let ()
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118543
-           __tmp118809
+           '()
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         __obj118543))
-    (define |gxc[:0:]#&find-expression|
-      (let ((__obj118545
+    (define |gxc[:0:]#::find-var-refs|
+      (let ((__obj118544
              (let ()
                (declare (not safe))
                (##structure
@@ -1853,42 +1998,42 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           'gxc#&find-expression::t
+           __obj118544
+           'gxc#::find-var-refs::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '&find-expression
+           __obj118544
+           '::find-var-refs
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '()
+           __obj118544
+           '(ids)
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118813
-               (let ((__tmp118814 |gxc[1]#_g118815_|))
+        (let ((__tmp118820
+               (let ((__tmp118821 |gxc[1]#_g118822_|))
                  (declare (not safe))
-                 (cons __tmp118814 '()))))
+                 (cons __tmp118821 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           __tmp118813
+           __obj118544
+           __tmp118820
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
+           __obj118544
            '#f
            '5
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -1896,15 +2041,15 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '#f
+           __obj118544
+           '#t
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
+           __obj118544
            '#f
            '7
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -1912,69 +2057,93 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
+           __obj118544
            '#f
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118816 |gxc[1]#_g118817_|))
+        (let ((__tmp118823 |gxc[1]#_g118824_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           __tmp118816
+           __obj118544
+           __tmp118823
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118818 |gxc[1]#_g118819_|))
+        (let ((__tmp118825 |gxc[1]#_g118826_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           __tmp118818
+           __obj118544
+           __tmp118825
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118820 |gxc[1]#_g118821_|))
+        (let ((__tmp118827 |gxc[1]#_g118828_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           __tmp118820
+           __obj118544
+           __tmp118827
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118829
+               (let ((__tmp118830
+                      (let ((__tmp118831 |gxc[1]#_g118832_|))
+                        (declare (not safe))
+                        (cons 'ids __tmp118831))))
+                 (declare (not safe))
+                 (cons __tmp118830 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '()
+           __obj118544
+           __tmp118829
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118833
+               (let ((__tmp118834
+                      (let ((__tmp118835 |gxc[1]#_g118836_|))
+                        (declare (not safe))
+                        (cons 'ids __tmp118835))))
+                 (declare (not safe))
+                 (cons __tmp118834 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '()
+           __obj118544
+           __tmp118833
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118837
+               (let ((__tmp118838
+                      (let ((__tmp118839 |gxc[1]#_g118840_|))
+                        (declare (not safe))
+                        (cons 'ids __tmp118839))))
+                 (declare (not safe))
+                 (cons __tmp118838 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '()
+           __obj118544
+           __tmp118837
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ()
+        (let ((__tmp118841
+               (let ((__tmp118842
+                      (let ((__tmp118843 |gxc[1]#_g118844_|))
+                        (declare (not safe))
+                        (cons 'ids __tmp118843))))
+                 (declare (not safe))
+                 (cons __tmp118842 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118545
-           '()
+           __obj118544
+           __tmp118841
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        __obj118545))
-    (define |gxc[:0:]#&find-var-refs|
+        __obj118544))
+    (define |gxc[:0:]#::collect-runtime-refs|
       (let ((__obj118546
              (let ()
                (declare (not safe))
@@ -1999,7 +2168,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118546
-           'gxc#&find-var-refs::t
+           'gxc#::collect-runtime-refs::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -2007,7 +2176,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118546
-           '&find-var-refs
+           '::collect-runtime-refs
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
@@ -2015,194 +2184,25 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj118546
-           '(ids)
-           '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118822
-               (let ((__tmp118823 |gxc[1]#_g118824_|))
-                 (declare (not safe))
-                 (cons __tmp118823 '()))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118822
-           '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           '#f
-           '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           '#t
-           '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           '#f
-           '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           '#f
-           '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118825 |gxc[1]#_g118826_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118825
-           '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118827 |gxc[1]#_g118828_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118827
-           '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118829 |gxc[1]#_g118830_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118829
-           '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118831
-               (let ((__tmp118832
-                      (let ((__tmp118833 |gxc[1]#_g118834_|))
-                        (declare (not safe))
-                        (cons 'ids __tmp118833))))
-                 (declare (not safe))
-                 (cons __tmp118832 '()))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118831
-           '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118835
-               (let ((__tmp118836
-                      (let ((__tmp118837 |gxc[1]#_g118838_|))
-                        (declare (not safe))
-                        (cons 'ids __tmp118837))))
-                 (declare (not safe))
-                 (cons __tmp118836 '()))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118835
-           '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118839
-               (let ((__tmp118840
-                      (let ((__tmp118841 |gxc[1]#_g118842_|))
-                        (declare (not safe))
-                        (cons 'ids __tmp118841))))
-                 (declare (not safe))
-                 (cons __tmp118840 '()))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118839
-           '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118843
-               (let ((__tmp118844
-                      (let ((__tmp118845 |gxc[1]#_g118846_|))
-                        (declare (not safe))
-                        (cons 'ids __tmp118845))))
-                 (declare (not safe))
-                 (cons __tmp118844 '()))))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118546
-           __tmp118843
-           '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        __obj118546))
-    (define |gxc[:0:]#&collect-runtime-refs|
-      (let ((__obj118548
-             (let ()
-               (declare (not safe))
-               (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f
-                '#f))))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118548
-           'gxc#&collect-runtime-refs::t
-           '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118548
-           '&collect-runtime-refs
-           '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ()
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118548
            '()
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118847
-               (let ((__tmp118848 |gxc[1]#_g118849_|))
+        (let ((__tmp118845
+               (let ((__tmp118846 |gxc[1]#_g118847_|))
                  (declare (not safe))
-                 (cons __tmp118848 '()))))
+                 (cons __tmp118846 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
-           __tmp118847
+           __obj118546
+           __tmp118845
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            '#f
            '5
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -2210,7 +2210,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            '#t
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -2218,7 +2218,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            '#f
            '7
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -2226,89 +2226,89 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            '#f
            '8
+           gerbil/core/mop$<MOP:2>#class-type-info::t
+           '#f))
+        (let ((__tmp118848 |gxc[1]#_g118849_|))
+          (declare (not safe))
+          (##unchecked-structure-set!
+           __obj118546
+           __tmp118848
+           '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ((__tmp118850 |gxc[1]#_g118851_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            __tmp118850
-           '9
+           '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ((__tmp118852 |gxc[1]#_g118853_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
+           __obj118546
            __tmp118852
-           '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
-           '#f))
-        (let ((__tmp118854 |gxc[1]#_g118855_|))
-          (declare (not safe))
-          (##unchecked-structure-set!
-           __obj118548
-           __tmp118854
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118856
-               (let ((__tmp118857
-                      (let ((__tmp118858 |gxc[1]#_g118859_|))
+        (let ((__tmp118854
+               (let ((__tmp118855
+                      (let ((__tmp118856 |gxc[1]#_g118857_|))
                         (declare (not safe))
-                        (cons 'table __tmp118858))))
+                        (cons 'table __tmp118856))))
                  (declare (not safe))
-                 (cons __tmp118857 '()))))
+                 (cons __tmp118855 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
-           __tmp118856
+           __obj118546
+           __tmp118854
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118860
-               (let ((__tmp118861
-                      (let ((__tmp118862 |gxc[1]#_g118863_|))
+        (let ((__tmp118858
+               (let ((__tmp118859
+                      (let ((__tmp118860 |gxc[1]#_g118861_|))
                         (declare (not safe))
-                        (cons 'table __tmp118862))))
+                        (cons 'table __tmp118860))))
                  (declare (not safe))
-                 (cons __tmp118861 '()))))
+                 (cons __tmp118859 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
-           __tmp118860
+           __obj118546
+           __tmp118858
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118864
-               (let ((__tmp118865
-                      (let ((__tmp118866 |gxc[1]#_g118867_|))
+        (let ((__tmp118862
+               (let ((__tmp118863
+                      (let ((__tmp118864 |gxc[1]#_g118865_|))
                         (declare (not safe))
-                        (cons 'table __tmp118866))))
+                        (cons 'table __tmp118864))))
                  (declare (not safe))
-                 (cons __tmp118865 '()))))
+                 (cons __tmp118863 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
-           __tmp118864
+           __obj118546
+           __tmp118862
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp118868
-               (let ((__tmp118869
-                      (let ((__tmp118870 |gxc[1]#_g118871_|))
+        (let ((__tmp118866
+               (let ((__tmp118867
+                      (let ((__tmp118868 |gxc[1]#_g118869_|))
                         (declare (not safe))
-                        (cons 'table __tmp118870))))
+                        (cons 'table __tmp118868))))
                  (declare (not safe))
-                 (cons __tmp118869 '()))))
+                 (cons __tmp118867 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj118548
-           __tmp118868
+           __obj118546
+           __tmp118866
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        __obj118548))))
+        __obj118546))))

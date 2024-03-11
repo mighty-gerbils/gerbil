@@ -28,16 +28,24 @@ namespace: gxc
           optimizer-import-ssxi-by-id
           gxc#optimizer-import-ssxi-by-id)
          (%#define-runtime optimize-source gxc#optimize-source)
-         (%#define-runtime &generate-ssxi::t gxc#&generate-ssxi::t)
-         (%#define-runtime &generate-ssxi? gxc#&generate-ssxi?)
-         (%#define-runtime make-&generate-ssxi gxc#make-&generate-ssxi)
+         (%#define-runtime
+          ::generate-ssxi::&generate-runtime-empty::t
+          gxc#::generate-ssxi::&generate-runtime-empty::t)
+         (%#define-runtime
+          ::generate-ssxi::&generate-runtime-empty?
+          gxc#::generate-ssxi::&generate-runtime-empty?)
+         (%#define-runtime
+          make-::generate-ssxi::&generate-runtime-empty
+          gxc#make-::generate-ssxi::&generate-runtime-empty)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize__1")))
-                  (%#define-syntax &generate-ssxi |gxc[:0:]#&generate-ssxi|))
+                  (%#define-syntax
+                   ::generate-ssxi::&generate-runtime-empty
+                   |gxc[:0:]#::generate-ssxi::&generate-runtime-empty|))
          (%#define-runtime
-          &generate-ssxi-bind-methods!
-          gxc#&generate-ssxi-bind-methods!)
+          ::generate-ssxi::&generate-runtime-empty-bind-methods!
+          gxc#::generate-ssxi::&generate-runtime-empty-bind-methods!)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
          (%#define-runtime
           generate-ssxi-begin-syntax%

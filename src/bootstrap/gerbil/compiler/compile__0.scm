@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/compile::timestamp 1710140930)
+  (define gerbil/compiler/compile::timestamp 1710155058)
   (begin
     (define gxc#gambit-annotations
       '(not gambit-scheme
@@ -134,525 +134,525 @@
     (define gxc#true-method (lambda (_self109930_ _stx109931_) '#t))
     (define gxc#identity-method
       (lambda (_self109927_ _stx109928_) _stx109928_))
-    (define gxc#&void-expression::t
+    (define gxc#::void-expression::t
       (let ((__tmp111476 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&void-expression::t
-         '&void-expression
+         'gxc#::void-expression::t
+         '::void-expression
          __tmp111476
          '()
          '()
          '#f)))
-    (define gxc#&void-expression?
+    (define gxc#::void-expression?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&void-expression::t)))
-    (define gxc#make-&void-expression
+        (make-class-predicate gxc#::void-expression::t)))
+    (define gxc#make-::void-expression
       (lambda _$args109924_
-        (apply make-instance gxc#&void-expression::t _$args109924_)))
-    (define gxc#&void-expression-bind-methods!
+        (apply make-instance gxc#::void-expression::t _$args109924_)))
+    (define gxc#::void-expression-bind-methods!
       (let ((__tmp111477
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#begin-annotation
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#lambda
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#case-lambda
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#let-values
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#letrec-values
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#letrec*-values
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#quote
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#quote-syntax
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#call
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#call-unchecked
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#if
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#ref
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#set!
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-instance?
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-direct-instance?
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-ref
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-set!
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-direct-ref
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-direct-set!
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-unchecked-ref
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-expression::t
+                  gxc#::void-expression::t
                   '%#struct-unchecked-set!
                   gxc#void-method)))))
         (declare (not safe))
         (make-promise __tmp111477)))
-    (define gxc#&void-special-form::t
+    (define gxc#::void-special-form::t
       (let ((__tmp111478 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&void-special-form::t
-         '&void-special-form
+         'gxc#::void-special-form::t
+         '::void-special-form
          __tmp111478
          '()
          '()
          '#f)))
-    (define gxc#&void-special-form?
+    (define gxc#::void-special-form?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&void-special-form::t)))
-    (define gxc#make-&void-special-form
+        (make-class-predicate gxc#::void-special-form::t)))
+    (define gxc#make-::void-special-form
       (lambda _$args109920_
-        (apply make-instance gxc#&void-special-form::t _$args109920_)))
-    (define gxc#&void-special-form-bind-methods!
+        (apply make-instance gxc#::void-special-form::t _$args109920_)))
+    (define gxc#::void-special-form-bind-methods!
       (let ((__tmp111479
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#begin
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#begin-syntax
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#begin-foreign
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#module
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#import
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#export
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#provide
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#extern
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#define-values
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#define-syntax
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#define-alias
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&void-special-form::t
+                  gxc#::void-special-form::t
                   '%#declare
                   gxc#void-method)))))
         (declare (not safe))
         (make-promise __tmp111479)))
-    (define gxc#&void::t
+    (define gxc#::void::t
       (let ((__tmp111480
-             (list gxc#&void-special-form::t gxc#&void-expression::t)))
+             (list gxc#::void-special-form::t gxc#::void-expression::t)))
         (declare (not safe))
-        (make-class-type 'gxc#&void::t '&void __tmp111480 '() '() '#f)))
-    (define gxc#&void?
-      (let () (declare (not safe)) (make-class-predicate gxc#&void::t)))
-    (define gxc#make-&void
-      (lambda _$args109916_ (apply make-instance gxc#&void::t _$args109916_)))
-    (define gxc#&void-bind-methods!
+        (make-class-type 'gxc#::void::t '::void __tmp111480 '() '() '#f)))
+    (define gxc#::void?
+      (let () (declare (not safe)) (make-class-predicate gxc#::void::t)))
+    (define gxc#make-::void
+      (lambda _$args109916_ (apply make-instance gxc#::void::t _$args109916_)))
+    (define gxc#::void-bind-methods!
       (let ((__tmp111481
              (lambda ()
-               (force gxc#&void-special-form-bind-methods!)
-               (force gxc#&void-expression-bind-methods!))))
+               (force gxc#::void-special-form-bind-methods!)
+               (force gxc#::void-expression-bind-methods!))))
         (declare (not safe))
         (make-promise __tmp111481)))
-    (define gxc#&false-expression::t
+    (define gxc#::false-expression::t
       (let ((__tmp111482 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&false-expression::t
-         '&false-expression
+         'gxc#::false-expression::t
+         '::false-expression
          __tmp111482
          '()
          '()
          '#f)))
-    (define gxc#&false-expression?
+    (define gxc#::false-expression?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&false-expression::t)))
-    (define gxc#make-&false-expression
+        (make-class-predicate gxc#::false-expression::t)))
+    (define gxc#make-::false-expression
       (lambda _$args109912_
-        (apply make-instance gxc#&false-expression::t _$args109912_)))
-    (define gxc#&false-expression-bind-methods!
+        (apply make-instance gxc#::false-expression::t _$args109912_)))
+    (define gxc#::false-expression-bind-methods!
       (let ((__tmp111483
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#begin-annotation
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#lambda
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#case-lambda
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#let-values
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#letrec-values
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#letrec*-values
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#quote
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#quote-syntax
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#call
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#call-unchecked
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#if
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#ref
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#set!
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-instance?
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-direct-instance?
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-ref
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-set!
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-direct-ref
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-direct-set!
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-unchecked-ref
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-expression::t
+                  gxc#::false-expression::t
                   '%#struct-unchecked-set!
                   gxc#false-method)))))
         (declare (not safe))
         (make-promise __tmp111483)))
-    (define gxc#&false-special-form::t
+    (define gxc#::false-special-form::t
       (let ((__tmp111484 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&false-special-form::t
-         '&false-special-form
+         'gxc#::false-special-form::t
+         '::false-special-form
          __tmp111484
          '()
          '()
          '#f)))
-    (define gxc#&false-special-form?
+    (define gxc#::false-special-form?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&false-special-form::t)))
-    (define gxc#make-&false-special-form
+        (make-class-predicate gxc#::false-special-form::t)))
+    (define gxc#make-::false-special-form
       (lambda _$args109908_
-        (apply make-instance gxc#&false-special-form::t _$args109908_)))
-    (define gxc#&false-special-form-bind-methods!
+        (apply make-instance gxc#::false-special-form::t _$args109908_)))
+    (define gxc#::false-special-form-bind-methods!
       (let ((__tmp111485
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#begin
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#begin-syntax
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#begin-foreign
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#module
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#import
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#export
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#provide
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#extern
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#define-values
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#define-syntax
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#define-alias
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&false-special-form::t
+                  gxc#::false-special-form::t
                   '%#declare
                   gxc#false-method)))))
         (declare (not safe))
         (make-promise __tmp111485)))
-    (define gxc#&false::t
+    (define gxc#::false::t
       (let ((__tmp111486
-             (list gxc#&false-special-form::t gxc#&false-expression::t)))
+             (list gxc#::false-special-form::t gxc#::false-expression::t)))
         (declare (not safe))
-        (make-class-type 'gxc#&false::t '&false __tmp111486 '() '() '#f)))
-    (define gxc#&false?
-      (let () (declare (not safe)) (make-class-predicate gxc#&false::t)))
-    (define gxc#make-&false
-      (lambda _$args109904_ (apply make-instance gxc#&false::t _$args109904_)))
-    (define gxc#&false-bind-methods!
+        (make-class-type 'gxc#::false::t '::false __tmp111486 '() '() '#f)))
+    (define gxc#::false?
+      (let () (declare (not safe)) (make-class-predicate gxc#::false::t)))
+    (define gxc#make-::false
+      (lambda _$args109904_
+        (apply make-instance gxc#::false::t _$args109904_)))
+    (define gxc#::false-bind-methods!
       (let ((__tmp111487
              (lambda ()
-               (force gxc#&false-special-form-bind-methods!)
-               (force gxc#&false-expression-bind-methods!))))
+               (force gxc#::false-special-form-bind-methods!)
+               (force gxc#::false-expression-bind-methods!))))
         (declare (not safe))
         (make-promise __tmp111487)))
-    (define gxc#&collect-bindings::t
-      (let ((__tmp111490
-             (list gxc#&void-expression::t gxc#&void-special-form::t))
+    (define gxc#::collect-bindings::t
+      (let ((__tmp111490 (list gxc#::void::t))
             (__tmp111488
              (let ((__tmp111489
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -660,67 +660,66 @@
                (cons __tmp111489 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&collect-bindings::t
-         '&collect-bindings
+         'gxc#::collect-bindings::t
+         '::collect-bindings
          __tmp111490
          '()
          __tmp111488
          '#f)))
-    (define gxc#&collect-bindings?
+    (define gxc#::collect-bindings?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&collect-bindings::t)))
-    (define gxc#make-&collect-bindings
+        (make-class-predicate gxc#::collect-bindings::t)))
+    (define gxc#make-::collect-bindings
       (lambda _$args109900_
-        (apply make-instance gxc#&collect-bindings::t _$args109900_)))
-    (define gxc#&collect-bindings-bind-methods!
+        (apply make-instance gxc#::collect-bindings::t _$args109900_)))
+    (define gxc#::collect-bindings-bind-methods!
       (let ((__tmp111491
              (lambda ()
-               (force gxc#&void-expression-bind-methods!)
-               (force gxc#&void-special-form-bind-methods!)
+               (force gxc#::void-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-bindings::t
+                  gxc#::collect-bindings::t
                   '%#begin
                   gxc#collect-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-bindings::t
+                  gxc#::collect-bindings::t
                   '%#begin-syntax
                   gxc#collect-begin-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-bindings::t
+                  gxc#::collect-bindings::t
                   '%#module
                   gxc#collect-module%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-bindings::t
+                  gxc#::collect-bindings::t
                   '%#define-values
                   gxc#collect-bindings-define-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-bindings::t
+                  gxc#::collect-bindings::t
                   '%#define-syntax
                   gxc#collect-bindings-define-syntax%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&collect-bindings::t)))))
+                 (seal-class! gxc#::collect-bindings::t)))))
         (declare (not safe))
         (make-promise __tmp111491)))
     (define gxc#apply-collect-bindings
       (lambda (_stx109892_)
-        (force gxc#&collect-bindings-bind-methods!)
+        (force gxc#::collect-bindings-bind-methods!)
         (let* ((_self109895_
                 (let ((__obj111443
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&collect-bindings::t))))
+                         (##structure gxc#::collect-bindings::t))))
                   __obj111443))
                (__tmp111492
                 (lambda ()
@@ -732,8 +731,8 @@
            __tmp111492
            gxc#current-compile-method
            _self109895_))))
-    (define gxc#&lift-modules::t
-      (let ((__tmp111495 (list gxc#&void::t))
+    (define gxc#::lift-modules::t
+      (let ((__tmp111495 (list gxc#::void::t))
             (__tmp111493
              (let ((__tmp111494
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -741,54 +740,54 @@
                (cons __tmp111494 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&lift-modules::t
-         '&lift-modules
+         'gxc#::lift-modules::t
+         '::lift-modules
          __tmp111495
          '(modules)
          __tmp111493
          '#f)))
-    (define gxc#&lift-modules?
+    (define gxc#::lift-modules?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&lift-modules::t)))
-    (define gxc#make-&lift-modules
+        (make-class-predicate gxc#::lift-modules::t)))
+    (define gxc#make-::lift-modules
       (lambda _$args109889_
-        (apply make-instance gxc#&lift-modules::t _$args109889_)))
-    (define gxc#&lift-modules-modules
+        (apply make-instance gxc#::lift-modules::t _$args109889_)))
+    (define gxc#::lift-modules-modules
       (let ()
         (declare (not safe))
-        (make-class-slot-accessor gxc#&lift-modules::t 'modules)))
-    (define gxc#&lift-modules-modules-set!
+        (make-class-slot-accessor gxc#::lift-modules::t 'modules)))
+    (define gxc#::lift-modules-modules-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-mutator gxc#&lift-modules::t 'modules)))
-    (define gxc#&&lift-modules-modules
+        (make-class-slot-mutator gxc#::lift-modules::t 'modules)))
+    (define gxc#&::lift-modules-modules
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-accessor gxc#&lift-modules::t 'modules)))
-    (define gxc#&&lift-modules-modules-set!
+        (make-class-slot-unchecked-accessor gxc#::lift-modules::t 'modules)))
+    (define gxc#&::lift-modules-modules-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-mutator gxc#&lift-modules::t 'modules)))
-    (define gxc#&lift-modules-bind-methods!
+        (make-class-slot-unchecked-mutator gxc#::lift-modules::t 'modules)))
+    (define gxc#::lift-modules-bind-methods!
       (let ((__tmp111496
              (lambda ()
-               (force gxc#&void-bind-methods!)
+               (force gxc#::void-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&lift-modules::t
+                  gxc#::lift-modules::t
                   '%#begin
                   gxc#collect-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&lift-modules::t
+                  gxc#::lift-modules::t
                   '%#module
                   gxc#lift-modules-module%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&lift-modules::t)))))
+                 (seal-class! gxc#::lift-modules::t)))))
         (declare (not safe))
         (make-promise __tmp111496)))
     (define gxc#apply-lift-modules__%
@@ -801,19 +800,19 @@
                      (declare (not safe))
                      (error '"Missing required keyword argument" 'modules:))
                    _modules109860109863_)))
-          (force gxc#&lift-modules-bind-methods!)
+          (force gxc#::lift-modules-bind-methods!)
           (let* ((_self109870_
                   (let ((__obj111445
                          (let ()
                            (declare (not safe))
-                           (##structure gxc#&lift-modules::t '#f))))
+                           (##structure gxc#::lift-modules::t '#f))))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
                        __obj111445
                        _modules109868_
                        '1
-                       gxc#&lift-modules::t
+                       gxc#::lift-modules::t
                        '#f))
                     __obj111445))
                  (__tmp111498
@@ -843,7 +842,7 @@
                '#(modules:)
                gxc#apply-lift-modules__@
                _args109861109885_)))
-    (define gxc#&find-runtime-code::t
+    (define gxc#::find-runtime-code::t
       (let ((__tmp111501 (list))
             (__tmp111499
              (let ((__tmp111500
@@ -852,227 +851,227 @@
                (cons __tmp111500 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&find-runtime-code::t
-         '&find-runtime-code
+         'gxc#::find-runtime-code::t
+         '::find-runtime-code
          __tmp111501
          '()
          __tmp111499
          '#f)))
-    (define gxc#&find-runtime-code?
+    (define gxc#::find-runtime-code?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&find-runtime-code::t)))
-    (define gxc#make-&find-runtime-code
+        (make-class-predicate gxc#::find-runtime-code::t)))
+    (define gxc#make-::find-runtime-code
       (lambda _$args109855_
-        (apply make-instance gxc#&find-runtime-code::t _$args109855_)))
-    (define gxc#&find-runtime-code-bind-methods!
+        (apply make-instance gxc#::find-runtime-code::t _$args109855_)))
+    (define gxc#::find-runtime-code-bind-methods!
       (let ((__tmp111502
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#begin
                   gxc#find-runtime-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#begin-syntax
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#begin-foreign
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#begin-annotation
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#module
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#import
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#export
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#provide
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#extern
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#define-values
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#define-syntax
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#define-alias
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#declare
                   gxc#false-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#lambda
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#case-lambda
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#let-values
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#letrec-values
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#letrec*-values
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#quote
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#call
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#call-unchecked
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#if
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#ref
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#set!
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-instance?
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-direct-instance?
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-ref
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-set!
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-direct-ref
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-direct-set!
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-unchecked-ref
                   gxc#true-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-runtime-code::t
+                  gxc#::find-runtime-code::t
                   '%#struct-unchecked-set!
                   gxc#true-method))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&find-runtime-code::t)))))
+                 (seal-class! gxc#::find-runtime-code::t)))))
         (declare (not safe))
         (make-promise __tmp111502)))
     (define gxc#apply-find-runtime-code
       (lambda (_stx109847_)
-        (force gxc#&find-runtime-code-bind-methods!)
+        (force gxc#::find-runtime-code-bind-methods!)
         (let* ((_self109850_
                 (let ((__obj111447
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&find-runtime-code::t))))
+                         (##structure gxc#::find-runtime-code::t))))
                   __obj111447))
                (__tmp111503
                 (lambda ()
@@ -1084,8 +1083,8 @@
            __tmp111503
            gxc#current-compile-method
            _self109850_))))
-    (define gxc#&find-lambda-expression::t
-      (let ((__tmp111506 (list gxc#&false::t))
+    (define gxc#::find-lambda-expression::t
+      (let ((__tmp111506 (list gxc#::false::t))
             (__tmp111504
              (let ((__tmp111505
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -1093,78 +1092,78 @@
                (cons __tmp111505 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&find-lambda-expression::t
-         '&find-lambda-expression
+         'gxc#::find-lambda-expression::t
+         '::find-lambda-expression
          __tmp111506
          '()
          __tmp111504
          '#f)))
-    (define gxc#&find-lambda-expression?
+    (define gxc#::find-lambda-expression?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&find-lambda-expression::t)))
-    (define gxc#make-&find-lambda-expression
+        (make-class-predicate gxc#::find-lambda-expression::t)))
+    (define gxc#make-::find-lambda-expression
       (lambda _$args109844_
-        (apply make-instance gxc#&find-lambda-expression::t _$args109844_)))
-    (define gxc#&find-lambda-expression-bind-methods!
+        (apply make-instance gxc#::find-lambda-expression::t _$args109844_)))
+    (define gxc#::find-lambda-expression-bind-methods!
       (let ((__tmp111507
              (lambda ()
-               (force gxc#&false-bind-methods!)
+               (force gxc#::false-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#begin
                   gxc#find-lambda-expression-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#begin-annotation
                   gxc#find-lambda-expression-begin-annotation%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#lambda
                   gxc#identity-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#case-lambda
                   gxc#identity-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#let-values
                   gxc#find-lambda-expression-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#letrec-values
                   gxc#find-lambda-expression-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&find-lambda-expression::t
+                  gxc#::find-lambda-expression::t
                   '%#letrec*-values
                   gxc#find-lambda-expression-let-values%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&find-lambda-expression::t)))))
+                 (seal-class! gxc#::find-lambda-expression::t)))))
         (declare (not safe))
         (make-promise __tmp111507)))
     (define gxc#apply-find-lambda-expression
       (lambda (_stx109836_)
-        (force gxc#&find-lambda-expression-bind-methods!)
+        (force gxc#::find-lambda-expression-bind-methods!)
         (let* ((_self109839_
                 (let ((__obj111449
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&find-lambda-expression::t))))
+                         (##structure gxc#::find-lambda-expression::t))))
                   __obj111449))
                (__tmp111508
                 (lambda ()
@@ -1176,8 +1175,8 @@
            __tmp111508
            gxc#current-compile-method
            _self109839_))))
-    (define gxc#&count-values::t
-      (let ((__tmp111511 (list gxc#&false-expression::t))
+    (define gxc#::count-values::t
+      (let ((__tmp111511 (list gxc#::false-expression::t))
             (__tmp111509
              (let ((__tmp111510
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -1185,102 +1184,102 @@
                (cons __tmp111510 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&count-values::t
-         '&count-values
+         'gxc#::count-values::t
+         '::count-values
          __tmp111511
          '()
          __tmp111509
          '#f)))
-    (define gxc#&count-values?
+    (define gxc#::count-values?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&count-values::t)))
-    (define gxc#make-&count-values
+        (make-class-predicate gxc#::count-values::t)))
+    (define gxc#make-::count-values
       (lambda _$args109833_
-        (apply make-instance gxc#&count-values::t _$args109833_)))
-    (define gxc#&count-values-bind-methods!
+        (apply make-instance gxc#::count-values::t _$args109833_)))
+    (define gxc#::count-values-bind-methods!
       (let ((__tmp111512
              (lambda ()
-               (force gxc#&false-expression-bind-methods!)
+               (force gxc#::false-expression-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#begin
                   gxc#count-values-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#begin-annotation
                   gxc#count-values-begin-annotation%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#lambda
                   gxc#count-values-single%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#case-lambda
                   gxc#count-values-single%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#let-values
                   gxc#count-values-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#letrec-values
                   gxc#count-values-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#letrec*-values
                   gxc#count-values-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#quote
                   gxc#count-values-single%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#call
                   gxc#count-values-call%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#call-unchecked
                   gxc#count-values-call%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&count-values::t
+                  gxc#::count-values::t
                   '%#if
                   gxc#count-values-if%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&count-values::t)))))
+                 (seal-class! gxc#::count-values::t)))))
         (declare (not safe))
         (make-promise __tmp111512)))
     (define gxc#apply-count-values
       (lambda (_stx109825_)
-        (force gxc#&count-values-bind-methods!)
+        (force gxc#::count-values-bind-methods!)
         (let* ((_self109828_
                 (let ((__obj111451
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&count-values::t))))
+                         (##structure gxc#::count-values::t))))
                   __obj111451))
                (__tmp111513
                 (lambda ()
@@ -1292,222 +1291,222 @@
            __tmp111513
            gxc#current-compile-method
            _self109828_))))
-    (define gxc#&generate-runtime-empty::t
+    (define gxc#::generate-runtime-empty::t
       (let ((__tmp111514 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-runtime-empty::t
-         '&generate-runtime-empty
+         'gxc#::generate-runtime-empty::t
+         '::generate-runtime-empty
          __tmp111514
          '()
          '()
          '#f)))
-    (define gxc#&generate-runtime-empty?
+    (define gxc#::generate-runtime-empty?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-runtime-empty::t)))
-    (define gxc#make-&generate-runtime-empty
+        (make-class-predicate gxc#::generate-runtime-empty::t)))
+    (define gxc#make-::generate-runtime-empty
       (lambda _$args109822_
-        (apply make-instance gxc#&generate-runtime-empty::t _$args109822_)))
-    (define gxc#&generate-runtime-empty-bind-methods!
+        (apply make-instance gxc#::generate-runtime-empty::t _$args109822_)))
+    (define gxc#::generate-runtime-empty-bind-methods!
       (let ((__tmp111515
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#begin
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#begin-syntax
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#begin-foreign
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#begin-annotation
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#module
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#import
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#export
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#provide
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#extern
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#define-values
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#define-syntax
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#define-alias
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#declare
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#lambda
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#case-lambda
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#let-values
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#letrec-values
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#letrec*-values
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#quote
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#call
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#call-unchecked
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#if
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#ref
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#set!
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-instance?
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-direct-instance?
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-ref
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-set!
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-direct-ref
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-direct-set!
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-unchecked-ref
                   gxc#generate-runtime-empty))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-empty::t
+                  gxc#::generate-runtime-empty::t
                   '%#struct-unchecked-set!
                   gxc#generate-runtime-empty)))))
         (declare (not safe))
         (make-promise __tmp111515)))
-    (define gxc#&generate-loader::t
-      (let ((__tmp111518 (list gxc#&generate-runtime-empty::t))
+    (define gxc#::generate-loader::t
+      (let ((__tmp111518 (list gxc#::generate-runtime-empty::t))
             (__tmp111516
              (let ((__tmp111517
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -1515,48 +1514,48 @@
                (cons __tmp111517 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-loader::t
-         '&generate-loader
+         'gxc#::generate-loader::t
+         '::generate-loader
          __tmp111518
          '()
          __tmp111516
          '#f)))
-    (define gxc#&generate-loader?
+    (define gxc#::generate-loader?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-loader::t)))
-    (define gxc#make-&generate-loader
+        (make-class-predicate gxc#::generate-loader::t)))
+    (define gxc#make-::generate-loader
       (lambda _$args109818_
-        (apply make-instance gxc#&generate-loader::t _$args109818_)))
-    (define gxc#&generate-loader-bind-methods!
+        (apply make-instance gxc#::generate-loader::t _$args109818_)))
+    (define gxc#::generate-loader-bind-methods!
       (let ((__tmp111519
              (lambda ()
-               (force gxc#&generate-runtime-empty-bind-methods!)
+               (force gxc#::generate-runtime-empty-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-loader::t
+                  gxc#::generate-loader::t
                   '%#begin
                   gxc#generate-runtime-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-loader::t
+                  gxc#::generate-loader::t
                   '%#import
                   gxc#generate-runtime-loader-import%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&generate-loader::t)))))
+                 (seal-class! gxc#::generate-loader::t)))))
         (declare (not safe))
         (make-promise __tmp111519)))
     (define gxc#apply-generate-loader
       (lambda (_stx109810_)
-        (force gxc#&generate-loader-bind-methods!)
+        (force gxc#::generate-loader-bind-methods!)
         (let* ((_self109813_
                 (let ((__obj111454
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&generate-loader::t))))
+                         (##structure gxc#::generate-loader::t))))
                   __obj111454))
                (__tmp111520
                 (lambda ()
@@ -1568,187 +1567,187 @@
            __tmp111520
            gxc#current-compile-method
            _self109813_))))
-    (define gxc#&generate-runtime::t
-      (let ((__tmp111521 (list gxc#&generate-runtime-empty::t)))
+    (define gxc#::generate-runtime::t
+      (let ((__tmp111521 (list gxc#::generate-runtime-empty::t)))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-runtime::t
-         '&generate-runtime
+         'gxc#::generate-runtime::t
+         '::generate-runtime
          __tmp111521
          '()
          '()
          '#f)))
-    (define gxc#&generate-runtime?
+    (define gxc#::generate-runtime?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-runtime::t)))
-    (define gxc#make-&generate-runtime
+        (make-class-predicate gxc#::generate-runtime::t)))
+    (define gxc#make-::generate-runtime
       (lambda _$args109807_
-        (apply make-instance gxc#&generate-runtime::t _$args109807_)))
-    (define gxc#&generate-runtime-bind-methods!
+        (apply make-instance gxc#::generate-runtime::t _$args109807_)))
+    (define gxc#::generate-runtime-bind-methods!
       (let ((__tmp111522
              (lambda ()
-               (force gxc#&generate-runtime-empty-bind-methods!)
+               (force gxc#::generate-runtime-empty-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#begin
                   gxc#generate-runtime-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#begin-foreign
                   gxc#generate-runtime-begin-foreign%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#begin-annotation
                   gxc#generate-runtime-begin-annotation%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#define-values
                   gxc#generate-runtime-define-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#declare
                   gxc#generate-runtime-declare%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#lambda
                   gxc#generate-runtime-lambda%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#case-lambda
                   gxc#generate-runtime-case-lambda%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#let-values
                   gxc#generate-runtime-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#letrec-values
                   gxc#generate-runtime-letrec-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#letrec*-values
                   gxc#generate-runtime-letrec*-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#quote
                   gxc#generate-runtime-quote%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#quote-syntax
                   gxc#generate-runtime-quote-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#call
                   gxc#generate-runtime-call%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#call-unchecked
                   gxc#generate-runtime-call-unchecked%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#if
                   gxc#generate-runtime-if%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#ref
                   gxc#generate-runtime-ref%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#set!
                   gxc#generate-runtime-setq%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-instance?
                   gxc#generate-runtime-struct-instancep%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-direct-instance?
                   gxc#generate-runtime-struct-direct-instancep%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-ref
                   gxc#generate-runtime-struct-ref%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-set!
                   gxc#generate-runtime-struct-setq%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-direct-ref
                   gxc#generate-runtime-struct-direct-ref%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-direct-set!
                   gxc#generate-runtime-struct-direct-setq%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-unchecked-ref
                   gxc#generate-runtime-struct-unchecked-ref%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime::t
+                  gxc#::generate-runtime::t
                   '%#struct-unchecked-set!
                   gxc#generate-runtime-struct-unchecked-setq%)))))
         (declare (not safe))
         (make-promise __tmp111522)))
     (define gxc#apply-generate-runtime
       (lambda (_stx109799_)
-        (force gxc#&generate-runtime-bind-methods!)
+        (force gxc#::generate-runtime-bind-methods!)
         (let* ((_self109802_
                 (let ((__obj111456
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&generate-runtime::t))))
+                         (##structure gxc#::generate-runtime::t))))
                   __obj111456))
                (__tmp111523
                 (lambda ()
@@ -1760,8 +1759,8 @@
            __tmp111523
            gxc#current-compile-method
            _self109802_))))
-    (define gxc#&generate-runtime-phi::t
-      (let ((__tmp111526 (list gxc#&generate-runtime::t))
+    (define gxc#::generate-runtime-phi::t
+      (let ((__tmp111526 (list gxc#::generate-runtime::t))
             (__tmp111524
              (let ((__tmp111525
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -1769,42 +1768,42 @@
                (cons __tmp111525 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-runtime-phi::t
-         '&generate-runtime-phi
+         'gxc#::generate-runtime-phi::t
+         '::generate-runtime-phi
          __tmp111526
          '()
          __tmp111524
          '#f)))
-    (define gxc#&generate-runtime-phi?
+    (define gxc#::generate-runtime-phi?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-runtime-phi::t)))
-    (define gxc#make-&generate-runtime-phi
+        (make-class-predicate gxc#::generate-runtime-phi::t)))
+    (define gxc#make-::generate-runtime-phi
       (lambda _$args109796_
-        (apply make-instance gxc#&generate-runtime-phi::t _$args109796_)))
-    (define gxc#&generate-runtime-phi-bind-methods!
+        (apply make-instance gxc#::generate-runtime-phi::t _$args109796_)))
+    (define gxc#::generate-runtime-phi-bind-methods!
       (let ((__tmp111527
              (lambda ()
-               (force gxc#&generate-runtime-bind-methods!)
+               (force gxc#::generate-runtime-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-runtime-phi::t
+                  gxc#::generate-runtime-phi::t
                   '%#define-runtime
                   gxc#generate-runtime-phi-define-runtime%))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&generate-runtime-phi::t)))))
+                 (seal-class! gxc#::generate-runtime-phi::t)))))
         (declare (not safe))
         (make-promise __tmp111527)))
     (define gxc#apply-generate-runtime-phi
       (lambda (_stx109788_)
-        (force gxc#&generate-runtime-phi-bind-methods!)
+        (force gxc#::generate-runtime-phi-bind-methods!)
         (let* ((_self109791_
                 (let ((__obj111458
                        (let ()
                          (declare (not safe))
-                         (##structure gxc#&generate-runtime-phi::t))))
+                         (##structure gxc#::generate-runtime-phi::t))))
                   __obj111458))
                (__tmp111528
                 (lambda ()
@@ -1816,176 +1815,176 @@
            __tmp111528
            gxc#current-compile-method
            _self109791_))))
-    (define gxc#&collect-expression-refs::t
+    (define gxc#::collect-expression-refs::t
       (let ((__tmp111529 (list)))
         (declare (not safe))
         (make-class-type
-         'gxc#&collect-expression-refs::t
-         '&collect-expression-refs
+         'gxc#::collect-expression-refs::t
+         '::collect-expression-refs
          __tmp111529
          '(table)
          '()
          '#f)))
-    (define gxc#&collect-expression-refs?
+    (define gxc#::collect-expression-refs?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&collect-expression-refs::t)))
-    (define gxc#make-&collect-expression-refs
+        (make-class-predicate gxc#::collect-expression-refs::t)))
+    (define gxc#make-::collect-expression-refs
       (lambda _$args109785_
-        (apply make-instance gxc#&collect-expression-refs::t _$args109785_)))
-    (define gxc#&collect-expression-refs-table
+        (apply make-instance gxc#::collect-expression-refs::t _$args109785_)))
+    (define gxc#::collect-expression-refs-table
       (let ()
         (declare (not safe))
-        (make-class-slot-accessor gxc#&collect-expression-refs::t 'table)))
-    (define gxc#&collect-expression-refs-table-set!
+        (make-class-slot-accessor gxc#::collect-expression-refs::t 'table)))
+    (define gxc#::collect-expression-refs-table-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-mutator gxc#&collect-expression-refs::t 'table)))
-    (define gxc#&&collect-expression-refs-table
+        (make-class-slot-mutator gxc#::collect-expression-refs::t 'table)))
+    (define gxc#&::collect-expression-refs-table
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-accessor
-         gxc#&collect-expression-refs::t
+         gxc#::collect-expression-refs::t
          'table)))
-    (define gxc#&&collect-expression-refs-table-set!
+    (define gxc#&::collect-expression-refs-table-set!
       (let ()
         (declare (not safe))
         (make-class-slot-unchecked-mutator
-         gxc#&collect-expression-refs::t
+         gxc#::collect-expression-refs::t
          'table)))
-    (define gxc#&collect-expression-refs-bind-methods!
+    (define gxc#::collect-expression-refs-bind-methods!
       (let ((__tmp111530
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#begin
                   gxc#collect-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#begin-annotation
                   gxc#collect-begin-annotation%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#lambda
                   gxc#collect-body-lambda%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#case-lambda
                   gxc#collect-body-case-lambda%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#let-values
                   gxc#collect-body-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#letrec-values
                   gxc#collect-body-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#letrec*-values
                   gxc#collect-body-let-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#quote
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#quote-syntax
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#call
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#call-unchecked
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#if
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#ref
                   gxc#collect-refs-ref%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#set!
                   gxc#collect-refs-setq%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-instance?
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-direct-instance?
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-ref
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-set!
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-direct-ref
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-direct-set!
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-unchecked-ref
                   gxc#collect-operands))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&collect-expression-refs::t
+                  gxc#::collect-expression-refs::t
                   '%#struct-unchecked-set!
                   gxc#collect-operands)))))
         (declare (not safe))
@@ -2000,19 +1999,21 @@
                      (declare (not safe))
                      (error '"Missing required keyword argument" 'table:))
                    _table109756109759_)))
-          (force gxc#&collect-expression-refs-bind-methods!)
+          (force gxc#::collect-expression-refs-bind-methods!)
           (let* ((_self109766_
                   (let ((__obj111460
                          (let ()
                            (declare (not safe))
-                           (##structure gxc#&collect-expression-refs::t '#f))))
+                           (##structure
+                            gxc#::collect-expression-refs::t
+                            '#f))))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
                        __obj111460
                        _table109764_
                        '1
-                       gxc#&collect-expression-refs::t
+                       gxc#::collect-expression-refs::t
                        '#f))
                     __obj111460))
                  (__tmp111532
@@ -2039,8 +2040,8 @@
                '#(table:)
                gxc#apply-collect-expression-refs__@
                _args109757109781_)))
-    (define gxc#&generate-meta::t
-      (let ((__tmp111535 (list gxc#&void-expression::t))
+    (define gxc#::generate-meta::t
+      (let ((__tmp111535 (list gxc#::void-expression::t))
             (__tmp111533
              (let ((__tmp111534
                     (let () (declare (not safe)) (cons 'final: '#t))))
@@ -2048,114 +2049,114 @@
                (cons __tmp111534 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-meta::t
-         '&generate-meta
+         'gxc#::generate-meta::t
+         '::generate-meta
          __tmp111535
          '(state)
          __tmp111533
          '#f)))
-    (define gxc#&generate-meta?
+    (define gxc#::generate-meta?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-meta::t)))
-    (define gxc#make-&generate-meta
+        (make-class-predicate gxc#::generate-meta::t)))
+    (define gxc#make-::generate-meta
       (lambda _$args109751_
-        (apply make-instance gxc#&generate-meta::t _$args109751_)))
-    (define gxc#&generate-meta-state
+        (apply make-instance gxc#::generate-meta::t _$args109751_)))
+    (define gxc#::generate-meta-state
       (let ()
         (declare (not safe))
-        (make-class-slot-accessor gxc#&generate-meta::t 'state)))
-    (define gxc#&generate-meta-state-set!
+        (make-class-slot-accessor gxc#::generate-meta::t 'state)))
+    (define gxc#::generate-meta-state-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-mutator gxc#&generate-meta::t 'state)))
-    (define gxc#&&generate-meta-state
+        (make-class-slot-mutator gxc#::generate-meta::t 'state)))
+    (define gxc#&::generate-meta-state
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-accessor gxc#&generate-meta::t 'state)))
-    (define gxc#&&generate-meta-state-set!
+        (make-class-slot-unchecked-accessor gxc#::generate-meta::t 'state)))
+    (define gxc#&::generate-meta-state-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-mutator gxc#&generate-meta::t 'state)))
-    (define gxc#&generate-meta-bind-methods!
+        (make-class-slot-unchecked-mutator gxc#::generate-meta::t 'state)))
+    (define gxc#::generate-meta-bind-methods!
       (let ((__tmp111536
              (lambda ()
-               (force gxc#&void-expression-bind-methods!)
+               (force gxc#::void-expression-bind-methods!)
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#begin
                   gxc#generate-meta-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#begin-syntax
                   gxc#generate-meta-begin-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#module
                   gxc#generate-meta-module%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#import
                   gxc#generate-meta-import%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#export
                   gxc#generate-meta-export%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#provide
                   gxc#generate-meta-provide%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#extern
                   gxc#generate-meta-extern%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#define-values
                   gxc#generate-meta-define-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#define-syntax
                   gxc#generate-meta-define-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#define-alias
                   gxc#generate-meta-define-alias%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#begin-foreign
                   gxc#void-method))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta::t
+                  gxc#::generate-meta::t
                   '%#declare
                   gxc#void-method))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&generate-meta::t)))))
+                 (seal-class! gxc#::generate-meta::t)))))
         (declare (not safe))
         (make-promise __tmp111536)))
     (define gxc#apply-generate-meta__%
@@ -2168,19 +2169,19 @@
                      (declare (not safe))
                      (error '"Missing required keyword argument" 'state:))
                    _state109722109725_)))
-          (force gxc#&generate-meta-bind-methods!)
+          (force gxc#::generate-meta-bind-methods!)
           (let* ((_self109732_
                   (let ((__obj111462
                          (let ()
                            (declare (not safe))
-                           (##structure gxc#&generate-meta::t '#f))))
+                           (##structure gxc#::generate-meta::t '#f))))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
                        __obj111462
                        _state109730_
                        '1
-                       gxc#&generate-meta::t
+                       gxc#::generate-meta::t
                        '#f))
                     __obj111462))
                  (__tmp111538
@@ -2207,7 +2208,7 @@
                '#(state:)
                gxc#apply-generate-meta__@
                _args109723109747_)))
-    (define gxc#&generate-meta-phi::t
+    (define gxc#::generate-meta-phi::t
       (let ((__tmp111541 (list))
             (__tmp111539
              (let ((__tmp111540
@@ -2216,203 +2217,205 @@
                (cons __tmp111540 '()))))
         (declare (not safe))
         (make-class-type
-         'gxc#&generate-meta-phi::t
-         '&generate-meta-phi
+         'gxc#::generate-meta-phi::t
+         '::generate-meta-phi
          __tmp111541
          '(state)
          __tmp111539
          '#f)))
-    (define gxc#&generate-meta-phi?
+    (define gxc#::generate-meta-phi?
       (let ()
         (declare (not safe))
-        (make-class-predicate gxc#&generate-meta-phi::t)))
-    (define gxc#make-&generate-meta-phi
+        (make-class-predicate gxc#::generate-meta-phi::t)))
+    (define gxc#make-::generate-meta-phi
       (lambda _$args109717_
-        (apply make-instance gxc#&generate-meta-phi::t _$args109717_)))
-    (define gxc#&generate-meta-phi-state
+        (apply make-instance gxc#::generate-meta-phi::t _$args109717_)))
+    (define gxc#::generate-meta-phi-state
       (let ()
         (declare (not safe))
-        (make-class-slot-accessor gxc#&generate-meta-phi::t 'state)))
-    (define gxc#&generate-meta-phi-state-set!
+        (make-class-slot-accessor gxc#::generate-meta-phi::t 'state)))
+    (define gxc#::generate-meta-phi-state-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-mutator gxc#&generate-meta-phi::t 'state)))
-    (define gxc#&&generate-meta-phi-state
+        (make-class-slot-mutator gxc#::generate-meta-phi::t 'state)))
+    (define gxc#&::generate-meta-phi-state
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-accessor gxc#&generate-meta-phi::t 'state)))
-    (define gxc#&&generate-meta-phi-state-set!
+        (make-class-slot-unchecked-accessor
+         gxc#::generate-meta-phi::t
+         'state)))
+    (define gxc#&::generate-meta-phi-state-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-mutator gxc#&generate-meta-phi::t 'state)))
-    (define gxc#&generate-meta-phi-bind-methods!
+        (make-class-slot-unchecked-mutator gxc#::generate-meta-phi::t 'state)))
+    (define gxc#::generate-meta-phi-bind-methods!
       (let ((__tmp111542
              (lambda ()
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#begin
                   gxc#generate-meta-begin%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#begin-syntax
                   gxc#generate-meta-begin-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#define-syntax
                   gxc#generate-meta-define-syntax%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#define-alias
                   gxc#generate-meta-define-alias%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#define-values
                   gxc#generate-meta-phi-define-values%))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#begin-annotation
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#lambda
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#case-lambda
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#let-values
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#letrec-values
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#letrec*-values
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#quote
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#quote-syntax
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#call
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#call-unchecked
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#if
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#ref
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#set!
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-instance?
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-direct-instance?
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-ref
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-set!
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-direct-ref
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-direct-set!
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-unchecked-ref
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#struct-unchecked-set!
                   gxc#generate-meta-phi-expr))
                (let ()
                  (declare (not safe))
                  (bind-method!__0
-                  gxc#&generate-meta-phi::t
+                  gxc#::generate-meta-phi::t
                   '%#declare
                   gxc#void-method))
                (let ()
                  (declare (not safe))
-                 (seal-class! gxc#&generate-meta-phi::t)))))
+                 (seal-class! gxc#::generate-meta-phi::t)))))
         (declare (not safe))
         (make-promise __tmp111542)))
     (define gxc#apply-generate-meta-phi__%
@@ -2425,19 +2428,19 @@
                      (declare (not safe))
                      (error '"Missing required keyword argument" 'state:))
                    _state109688109691_)))
-          (force gxc#&generate-meta-phi-bind-methods!)
+          (force gxc#::generate-meta-phi-bind-methods!)
           (let* ((_self109698_
                   (let ((__obj111464
                          (let ()
                            (declare (not safe))
-                           (##structure gxc#&generate-meta-phi::t '#f))))
+                           (##structure gxc#::generate-meta-phi::t '#f))))
                     (let ()
                       (declare (not safe))
                       (##unchecked-structure-set!
                        __obj111464
                        _state109696_
                        '1
-                       gxc#&generate-meta-phi::t
+                       gxc#::generate-meta-phi::t
                        '#f))
                     __obj111464))
                  (__tmp111544

@@ -14,24 +14,26 @@ package: gerbil/compiler
   (declare-type gxc#true-method (@lambda 2 #f))
   (declare-type gxc#identity-method (@lambda 2 #f))
   (declare-type
-   gxc#&void-expression::t
-   (@class gxc#&void-expression::t () () () () #f #f #f #f #f))
-  (declare-type gxc#&void-expression? (@predicate gxc#&void-expression::t))
+   gxc#::void-expression::t
+   (@class gxc#::void-expression::t () () () () #f #f #f #f #f))
+  (declare-type gxc#::void-expression? (@predicate gxc#::void-expression::t))
   (declare-type
-   gxc#make-&void-expression
-   (@constructor gxc#&void-expression::t))
+   gxc#make-::void-expression
+   (@constructor gxc#::void-expression::t))
   (declare-type
-   gxc#&void-special-form::t
-   (@class gxc#&void-special-form::t () () () () #f #f #f #f #f))
-  (declare-type gxc#&void-special-form? (@predicate gxc#&void-special-form::t))
+   gxc#::void-special-form::t
+   (@class gxc#::void-special-form::t () () () () #f #f #f #f #f))
   (declare-type
-   gxc#make-&void-special-form
-   (@constructor gxc#&void-special-form::t))
+   gxc#::void-special-form?
+   (@predicate gxc#::void-special-form::t))
   (declare-type
-   gxc#&void::t
-   (@class gxc#&void::t
-           (gxc#&void-special-form::t gxc#&void-expression::t)
-           (gxc#&void-special-form::t gxc#&void-expression::t)
+   gxc#make-::void-special-form
+   (@constructor gxc#::void-special-form::t))
+  (declare-type
+   gxc#::void::t
+   (@class gxc#::void::t
+           (gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void-special-form::t gxc#::void-expression::t)
            ()
            ()
            #f
@@ -39,29 +41,29 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#&void? (@predicate gxc#&void::t))
-  (declare-type gxc#make-&void (@constructor gxc#&void::t))
+  (declare-type gxc#::void? (@predicate gxc#::void::t))
+  (declare-type gxc#make-::void (@constructor gxc#::void::t))
   (declare-type
-   gxc#&false-expression::t
-   (@class gxc#&false-expression::t () () () () #f #f #f #f #f))
-  (declare-type gxc#&false-expression? (@predicate gxc#&false-expression::t))
+   gxc#::false-expression::t
+   (@class gxc#::false-expression::t () () () () #f #f #f #f #f))
+  (declare-type gxc#::false-expression? (@predicate gxc#::false-expression::t))
   (declare-type
-   gxc#make-&false-expression
-   (@constructor gxc#&false-expression::t))
+   gxc#make-::false-expression
+   (@constructor gxc#::false-expression::t))
   (declare-type
-   gxc#&false-special-form::t
-   (@class gxc#&false-special-form::t () () () () #f #f #f #f #f))
+   gxc#::false-special-form::t
+   (@class gxc#::false-special-form::t () () () () #f #f #f #f #f))
   (declare-type
-   gxc#&false-special-form?
-   (@predicate gxc#&false-special-form::t))
+   gxc#::false-special-form?
+   (@predicate gxc#::false-special-form::t))
   (declare-type
-   gxc#make-&false-special-form
-   (@constructor gxc#&false-special-form::t))
+   gxc#make-::false-special-form
+   (@constructor gxc#::false-special-form::t))
   (declare-type
-   gxc#&false::t
-   (@class gxc#&false::t
-           (gxc#&false-special-form::t gxc#&false-expression::t)
-           (gxc#&false-special-form::t gxc#&false-expression::t)
+   gxc#::false::t
+   (@class gxc#::false::t
+           (gxc#::false-special-form::t gxc#::false-expression::t)
+           (gxc#::false-special-form::t gxc#::false-expression::t)
            ()
            ()
            #f
@@ -69,13 +71,13 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#&false? (@predicate gxc#&false::t))
-  (declare-type gxc#make-&false (@constructor gxc#&false::t))
+  (declare-type gxc#::false? (@predicate gxc#::false::t))
+  (declare-type gxc#make-::false (@constructor gxc#::false::t))
   (declare-type
-   gxc#&collect-bindings::t
-   (@class gxc#&collect-bindings::t
-           (gxc#&void-expression::t gxc#&void-special-form::t)
-           (gxc#&void-expression::t gxc#&void-special-form::t)
+   gxc#::collect-bindings::t
+   (@class gxc#::collect-bindings::t
+           (gxc#::void::t)
+           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
            ()
            ()
            #f
@@ -83,16 +85,16 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&collect-bindings? (@predicate gxc#&collect-bindings::t))
+  (declare-type gxc#::collect-bindings? (@predicate gxc#::collect-bindings::t))
   (declare-type
-   gxc#make-&collect-bindings
-   (@constructor gxc#&collect-bindings::t))
+   gxc#make-::collect-bindings
+   (@constructor gxc#::collect-bindings::t))
   (declare-type gxc#apply-collect-bindings (@lambda 1 #f))
   (declare-type
-   gxc#&lift-modules::t
-   (@class gxc#&lift-modules::t
-           (gxc#&void::t)
-           (gxc#&void::t gxc#&void-special-form::t gxc#&void-expression::t)
+   gxc#::lift-modules::t
+   (@class gxc#::lift-modules::t
+           (gxc#::void::t)
+           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
            (modules)
            (modules)
            #f
@@ -100,38 +102,42 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&lift-modules? (@predicate gxc#&lift-modules::t))
-  (declare-type gxc#make-&lift-modules (@constructor gxc#&lift-modules::t))
+  (declare-type gxc#::lift-modules? (@predicate gxc#::lift-modules::t))
+  (declare-type gxc#make-::lift-modules (@constructor gxc#::lift-modules::t))
   (declare-type
-   gxc#&lift-modules-modules
-   (@accessor gxc#&lift-modules::t modules #t))
+   gxc#::lift-modules-modules
+   (@accessor gxc#::lift-modules::t modules #t))
   (declare-type
-   gxc#&lift-modules-modules-set!
-   (@mutator gxc#&lift-modules::t modules #t))
+   gxc#::lift-modules-modules-set!
+   (@mutator gxc#::lift-modules::t modules #t))
   (declare-type
-   gxc#&&lift-modules-modules
-   (@accessor gxc#&lift-modules::t modules #f))
+   gxc#&::lift-modules-modules
+   (@accessor gxc#::lift-modules::t modules #f))
   (declare-type
-   gxc#&&lift-modules-modules-set!
-   (@mutator gxc#&lift-modules::t modules #f))
+   gxc#&::lift-modules-modules-set!
+   (@mutator gxc#::lift-modules::t modules #f))
   (declare-type gxc#apply-lift-modules__% (@lambda 3 #f))
   (declare-type gxc#apply-lift-modules__@ (@lambda (1) #f))
   (declare-type
    gxc#apply-lift-modules
    (@kw-lambda (modules:) gxc#apply-lift-modules__@))
   (declare-type
-   gxc#&find-runtime-code::t
-   (@class gxc#&find-runtime-code::t () () () () #f #f #t #f #f))
-  (declare-type gxc#&find-runtime-code? (@predicate gxc#&find-runtime-code::t))
+   gxc#::find-runtime-code::t
+   (@class gxc#::find-runtime-code::t () () () () #f #f #t #f #f))
   (declare-type
-   gxc#make-&find-runtime-code
-   (@constructor gxc#&find-runtime-code::t))
+   gxc#::find-runtime-code?
+   (@predicate gxc#::find-runtime-code::t))
+  (declare-type
+   gxc#make-::find-runtime-code
+   (@constructor gxc#::find-runtime-code::t))
   (declare-type gxc#apply-find-runtime-code (@lambda 1 #f))
   (declare-type
-   gxc#&find-lambda-expression::t
-   (@class gxc#&find-lambda-expression::t
-           (gxc#&false::t)
-           (gxc#&false::t gxc#&false-special-form::t gxc#&false-expression::t)
+   gxc#::find-lambda-expression::t
+   (@class gxc#::find-lambda-expression::t
+           (gxc#::false::t)
+           (gxc#::false::t
+            gxc#::false-special-form::t
+            gxc#::false-expression::t)
            ()
            ()
            #f
@@ -140,17 +146,17 @@ package: gerbil/compiler
            #f
            #f))
   (declare-type
-   gxc#&find-lambda-expression?
-   (@predicate gxc#&find-lambda-expression::t))
+   gxc#::find-lambda-expression?
+   (@predicate gxc#::find-lambda-expression::t))
   (declare-type
-   gxc#make-&find-lambda-expression
-   (@constructor gxc#&find-lambda-expression::t))
+   gxc#make-::find-lambda-expression
+   (@constructor gxc#::find-lambda-expression::t))
   (declare-type gxc#apply-find-lambda-expression (@lambda 1 #f))
   (declare-type
-   gxc#&count-values::t
-   (@class gxc#&count-values::t
-           (gxc#&false-expression::t)
-           (gxc#&false-expression::t)
+   gxc#::count-values::t
+   (@class gxc#::count-values::t
+           (gxc#::false-expression::t)
+           (gxc#::false-expression::t)
            ()
            ()
            #f
@@ -158,23 +164,23 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&count-values? (@predicate gxc#&count-values::t))
-  (declare-type gxc#make-&count-values (@constructor gxc#&count-values::t))
+  (declare-type gxc#::count-values? (@predicate gxc#::count-values::t))
+  (declare-type gxc#make-::count-values (@constructor gxc#::count-values::t))
   (declare-type gxc#apply-count-values (@lambda 1 #f))
   (declare-type
-   gxc#&generate-runtime-empty::t
-   (@class gxc#&generate-runtime-empty::t () () () () #f #f #f #f #f))
+   gxc#::generate-runtime-empty::t
+   (@class gxc#::generate-runtime-empty::t () () () () #f #f #f #f #f))
   (declare-type
-   gxc#&generate-runtime-empty?
-   (@predicate gxc#&generate-runtime-empty::t))
+   gxc#::generate-runtime-empty?
+   (@predicate gxc#::generate-runtime-empty::t))
   (declare-type
-   gxc#make-&generate-runtime-empty
-   (@constructor gxc#&generate-runtime-empty::t))
+   gxc#make-::generate-runtime-empty
+   (@constructor gxc#::generate-runtime-empty::t))
   (declare-type
-   gxc#&generate-loader::t
-   (@class gxc#&generate-loader::t
-           (gxc#&generate-runtime-empty::t)
-           (gxc#&generate-runtime-empty::t)
+   gxc#::generate-loader::t
+   (@class gxc#::generate-loader::t
+           (gxc#::generate-runtime-empty::t)
+           (gxc#::generate-runtime-empty::t)
            ()
            ()
            #f
@@ -182,16 +188,16 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&generate-loader? (@predicate gxc#&generate-loader::t))
+  (declare-type gxc#::generate-loader? (@predicate gxc#::generate-loader::t))
   (declare-type
-   gxc#make-&generate-loader
-   (@constructor gxc#&generate-loader::t))
+   gxc#make-::generate-loader
+   (@constructor gxc#::generate-loader::t))
   (declare-type gxc#apply-generate-loader (@lambda 1 #f))
   (declare-type
-   gxc#&generate-runtime::t
-   (@class gxc#&generate-runtime::t
-           (gxc#&generate-runtime-empty::t)
-           (gxc#&generate-runtime-empty::t)
+   gxc#::generate-runtime::t
+   (@class gxc#::generate-runtime::t
+           (gxc#::generate-runtime-empty::t)
+           (gxc#::generate-runtime-empty::t)
            ()
            ()
            #f
@@ -199,16 +205,16 @@ package: gerbil/compiler
            #f
            #f
            #f))
-  (declare-type gxc#&generate-runtime? (@predicate gxc#&generate-runtime::t))
+  (declare-type gxc#::generate-runtime? (@predicate gxc#::generate-runtime::t))
   (declare-type
-   gxc#make-&generate-runtime
-   (@constructor gxc#&generate-runtime::t))
+   gxc#make-::generate-runtime
+   (@constructor gxc#::generate-runtime::t))
   (declare-type gxc#apply-generate-runtime (@lambda 1 #f))
   (declare-type
-   gxc#&generate-runtime-phi::t
-   (@class gxc#&generate-runtime-phi::t
-           (gxc#&generate-runtime::t)
-           (gxc#&generate-runtime::t gxc#&generate-runtime-empty::t)
+   gxc#::generate-runtime-phi::t
+   (@class gxc#::generate-runtime-phi::t
+           (gxc#::generate-runtime::t)
+           (gxc#::generate-runtime::t gxc#::generate-runtime-empty::t)
            ()
            ()
            #f
@@ -217,15 +223,15 @@ package: gerbil/compiler
            #f
            #f))
   (declare-type
-   gxc#&generate-runtime-phi?
-   (@predicate gxc#&generate-runtime-phi::t))
+   gxc#::generate-runtime-phi?
+   (@predicate gxc#::generate-runtime-phi::t))
   (declare-type
-   gxc#make-&generate-runtime-phi
-   (@constructor gxc#&generate-runtime-phi::t))
+   gxc#make-::generate-runtime-phi
+   (@constructor gxc#::generate-runtime-phi::t))
   (declare-type gxc#apply-generate-runtime-phi (@lambda 1 #f))
   (declare-type
-   gxc#&collect-expression-refs::t
-   (@class gxc#&collect-expression-refs::t
+   gxc#::collect-expression-refs::t
+   (@class gxc#::collect-expression-refs::t
            ()
            ()
            (table)
@@ -236,33 +242,33 @@ package: gerbil/compiler
            #f
            #f))
   (declare-type
-   gxc#&collect-expression-refs?
-   (@predicate gxc#&collect-expression-refs::t))
+   gxc#::collect-expression-refs?
+   (@predicate gxc#::collect-expression-refs::t))
   (declare-type
-   gxc#make-&collect-expression-refs
-   (@constructor gxc#&collect-expression-refs::t))
+   gxc#make-::collect-expression-refs
+   (@constructor gxc#::collect-expression-refs::t))
   (declare-type
-   gxc#&collect-expression-refs-table
-   (@accessor gxc#&collect-expression-refs::t table #t))
+   gxc#::collect-expression-refs-table
+   (@accessor gxc#::collect-expression-refs::t table #t))
   (declare-type
-   gxc#&collect-expression-refs-table-set!
-   (@mutator gxc#&collect-expression-refs::t table #t))
+   gxc#::collect-expression-refs-table-set!
+   (@mutator gxc#::collect-expression-refs::t table #t))
   (declare-type
-   gxc#&&collect-expression-refs-table
-   (@accessor gxc#&collect-expression-refs::t table #f))
+   gxc#&::collect-expression-refs-table
+   (@accessor gxc#::collect-expression-refs::t table #f))
   (declare-type
-   gxc#&&collect-expression-refs-table-set!
-   (@mutator gxc#&collect-expression-refs::t table #f))
+   gxc#&::collect-expression-refs-table-set!
+   (@mutator gxc#::collect-expression-refs::t table #f))
   (declare-type gxc#apply-collect-expression-refs__% (@lambda 3 #f))
   (declare-type gxc#apply-collect-expression-refs__@ (@lambda (1) #f))
   (declare-type
    gxc#apply-collect-expression-refs
    (@kw-lambda (table:) gxc#apply-collect-expression-refs__@))
   (declare-type
-   gxc#&generate-meta::t
-   (@class gxc#&generate-meta::t
-           (gxc#&void-expression::t)
-           (gxc#&void-expression::t)
+   gxc#::generate-meta::t
+   (@class gxc#::generate-meta::t
+           (gxc#::void-expression::t)
+           (gxc#::void-expression::t)
            (state)
            (state)
            #f
@@ -270,44 +276,46 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&generate-meta? (@predicate gxc#&generate-meta::t))
-  (declare-type gxc#make-&generate-meta (@constructor gxc#&generate-meta::t))
+  (declare-type gxc#::generate-meta? (@predicate gxc#::generate-meta::t))
+  (declare-type gxc#make-::generate-meta (@constructor gxc#::generate-meta::t))
   (declare-type
-   gxc#&generate-meta-state
-   (@accessor gxc#&generate-meta::t state #t))
+   gxc#::generate-meta-state
+   (@accessor gxc#::generate-meta::t state #t))
   (declare-type
-   gxc#&generate-meta-state-set!
-   (@mutator gxc#&generate-meta::t state #t))
+   gxc#::generate-meta-state-set!
+   (@mutator gxc#::generate-meta::t state #t))
   (declare-type
-   gxc#&&generate-meta-state
-   (@accessor gxc#&generate-meta::t state #f))
+   gxc#&::generate-meta-state
+   (@accessor gxc#::generate-meta::t state #f))
   (declare-type
-   gxc#&&generate-meta-state-set!
-   (@mutator gxc#&generate-meta::t state #f))
+   gxc#&::generate-meta-state-set!
+   (@mutator gxc#::generate-meta::t state #f))
   (declare-type gxc#apply-generate-meta__% (@lambda 3 #f))
   (declare-type gxc#apply-generate-meta__@ (@lambda (1) #f))
   (declare-type
    gxc#apply-generate-meta
    (@kw-lambda (state:) gxc#apply-generate-meta__@))
   (declare-type
-   gxc#&generate-meta-phi::t
-   (@class gxc#&generate-meta-phi::t () () (state) (state) #f #f #t #f #f))
-  (declare-type gxc#&generate-meta-phi? (@predicate gxc#&generate-meta-phi::t))
+   gxc#::generate-meta-phi::t
+   (@class gxc#::generate-meta-phi::t () () (state) (state) #f #f #t #f #f))
   (declare-type
-   gxc#make-&generate-meta-phi
-   (@constructor gxc#&generate-meta-phi::t))
+   gxc#::generate-meta-phi?
+   (@predicate gxc#::generate-meta-phi::t))
   (declare-type
-   gxc#&generate-meta-phi-state
-   (@accessor gxc#&generate-meta-phi::t state #t))
+   gxc#make-::generate-meta-phi
+   (@constructor gxc#::generate-meta-phi::t))
   (declare-type
-   gxc#&generate-meta-phi-state-set!
-   (@mutator gxc#&generate-meta-phi::t state #t))
+   gxc#::generate-meta-phi-state
+   (@accessor gxc#::generate-meta-phi::t state #t))
   (declare-type
-   gxc#&&generate-meta-phi-state
-   (@accessor gxc#&generate-meta-phi::t state #f))
+   gxc#::generate-meta-phi-state-set!
+   (@mutator gxc#::generate-meta-phi::t state #t))
   (declare-type
-   gxc#&&generate-meta-phi-state-set!
-   (@mutator gxc#&generate-meta-phi::t state #f))
+   gxc#&::generate-meta-phi-state
+   (@accessor gxc#::generate-meta-phi::t state #f))
+  (declare-type
+   gxc#&::generate-meta-phi-state-set!
+   (@mutator gxc#::generate-meta-phi::t state #f))
   (declare-type gxc#apply-generate-meta-phi__% (@lambda 3 #f))
   (declare-type gxc#apply-generate-meta-phi__@ (@lambda (1) #f))
   (declare-type

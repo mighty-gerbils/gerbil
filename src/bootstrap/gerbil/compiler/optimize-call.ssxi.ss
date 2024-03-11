@@ -3,14 +3,14 @@ package: gerbil/compiler
 
 (begin
   (declare-type
-   gxc#&optimize-call::t
-   (@class gxc#&optimize-call::t
-           (gxc#&basic-xform::t)
-           (gxc#&basic-xform::t
-            gxc#&basic-xform-expression::t
-            gxc#&identity::t
-            gxc#&identity-special-form::t
-            gxc#&identity-expression::t)
+   gxc#::optimize-call::t
+   (@class gxc#::optimize-call::t
+           (gxc#::basic-xform::t)
+           (gxc#::basic-xform::t
+            gxc#::basic-xform-expression::t
+            gxc#::identity::t
+            gxc#::identity-special-form::t
+            gxc#::identity-expression::t)
            ()
            ()
            #f
@@ -18,8 +18,8 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&optimize-call? (@predicate gxc#&optimize-call::t))
-  (declare-type gxc#make-&optimize-call (@constructor gxc#&optimize-call::t))
+  (declare-type gxc#::optimize-call? (@predicate gxc#::optimize-call::t))
+  (declare-type gxc#make-::optimize-call (@constructor gxc#::optimize-call::t))
   (declare-type gxc#apply-optimize-call (@lambda 1 #f))
   (declare-type gxc#optimize-call% (@lambda 2 #f))
   (declare-type gxc#!predicate::optimize-call (@lambda 4 #f))

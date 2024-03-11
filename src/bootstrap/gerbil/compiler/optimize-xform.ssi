@@ -9,103 +9,109 @@ namespace: gxc
           :gerbil/compiler/compile
           :gerbil/compiler/optimize-base)
          (%#export #t)
-         (%#define-runtime &identity-expression::t gxc#&identity-expression::t)
-         (%#define-runtime &identity-expression? gxc#&identity-expression?)
          (%#define-runtime
-          make-&identity-expression
-          gxc#make-&identity-expression)
+          ::identity-expression::t
+          gxc#::identity-expression::t)
+         (%#define-runtime ::identity-expression? gxc#::identity-expression?)
+         (%#define-runtime
+          make-::identity-expression
+          gxc#make-::identity-expression)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-xform__1")))
                   (%#define-syntax
-                   &identity-expression
-                   |gxc[:0:]#&identity-expression|))
+                   ::identity-expression
+                   |gxc[:0:]#::identity-expression|))
          (%#define-runtime
-          &identity-expression-bind-methods!
-          gxc#&identity-expression-bind-methods!)
+          ::identity-expression-bind-methods!
+          gxc#::identity-expression-bind-methods!)
          (%#define-runtime
-          &identity-special-form::t
-          gxc#&identity-special-form::t)
-         (%#define-runtime &identity-special-form? gxc#&identity-special-form?)
+          ::identity-special-form::t
+          gxc#::identity-special-form::t)
          (%#define-runtime
-          make-&identity-special-form
-          gxc#make-&identity-special-form)
+          ::identity-special-form?
+          gxc#::identity-special-form?)
+         (%#define-runtime
+          make-::identity-special-form
+          gxc#make-::identity-special-form)
          (%#define-syntax
-          &identity-special-form
-          |gxc[:0:]#&identity-special-form|)
+          ::identity-special-form
+          |gxc[:0:]#::identity-special-form|)
          (%#define-runtime
-          &identity-special-form-bind-methods!
-          gxc#&identity-special-form-bind-methods!)
-         (%#define-runtime &identity::t gxc#&identity::t)
-         (%#define-runtime &identity? gxc#&identity?)
-         (%#define-runtime make-&identity gxc#make-&identity)
-         (%#define-syntax &identity |gxc[:0:]#&identity|)
-         (%#define-runtime &identity-bind-methods! gxc#&identity-bind-methods!)
+          ::identity-special-form-bind-methods!
+          gxc#::identity-special-form-bind-methods!)
+         (%#define-runtime ::identity::t gxc#::identity::t)
+         (%#define-runtime ::identity? gxc#::identity?)
+         (%#define-runtime make-::identity gxc#make-::identity)
+         (%#define-syntax ::identity |gxc[:0:]#::identity|)
          (%#define-runtime
-          &basic-xform-expression::t
-          gxc#&basic-xform-expression::t)
+          ::identity-bind-methods!
+          gxc#::identity-bind-methods!)
          (%#define-runtime
-          &basic-xform-expression?
-          gxc#&basic-xform-expression?)
+          ::basic-xform-expression::t
+          gxc#::basic-xform-expression::t)
          (%#define-runtime
-          make-&basic-xform-expression
-          gxc#make-&basic-xform-expression)
+          ::basic-xform-expression?
+          gxc#::basic-xform-expression?)
+         (%#define-runtime
+          make-::basic-xform-expression
+          gxc#make-::basic-xform-expression)
          (%#define-syntax
-          &basic-xform-expression
-          |gxc[:0:]#&basic-xform-expression|)
+          ::basic-xform-expression
+          |gxc[:0:]#::basic-xform-expression|)
          (%#define-runtime
-          &basic-xform-expression-bind-methods!
-          gxc#&basic-xform-expression-bind-methods!)
-         (%#define-runtime &basic-xform::t gxc#&basic-xform::t)
-         (%#define-runtime &basic-xform? gxc#&basic-xform?)
-         (%#define-runtime make-&basic-xform gxc#make-&basic-xform)
-         (%#define-syntax &basic-xform |gxc[:0:]#&basic-xform|)
+          ::basic-xform-expression-bind-methods!
+          gxc#::basic-xform-expression-bind-methods!)
+         (%#define-runtime ::basic-xform::t gxc#::basic-xform::t)
+         (%#define-runtime ::basic-xform? gxc#::basic-xform?)
+         (%#define-runtime make-::basic-xform gxc#make-::basic-xform)
+         (%#define-syntax ::basic-xform |gxc[:0:]#::basic-xform|)
          (%#define-runtime
-          &basic-xform-bind-methods!
-          gxc#&basic-xform-bind-methods!)
-         (%#define-runtime &collect-mutators::t gxc#&collect-mutators::t)
-         (%#define-runtime &collect-mutators? gxc#&collect-mutators?)
-         (%#define-runtime make-&collect-mutators gxc#make-&collect-mutators)
-         (%#define-syntax &collect-mutators |gxc[:0:]#&collect-mutators|)
+          ::basic-xform-bind-methods!
+          gxc#::basic-xform-bind-methods!)
+         (%#define-runtime ::collect-mutators::t gxc#::collect-mutators::t)
+         (%#define-runtime ::collect-mutators? gxc#::collect-mutators?)
+         (%#define-runtime make-::collect-mutators gxc#make-::collect-mutators)
+         (%#define-syntax ::collect-mutators |gxc[:0:]#::collect-mutators|)
          (%#define-runtime
-          &collect-mutators-bind-methods!
-          gxc#&collect-mutators-bind-methods!)
+          ::collect-mutators-bind-methods!
+          gxc#::collect-mutators-bind-methods!)
          (%#define-runtime apply-collect-mutators gxc#apply-collect-mutators)
-         (%#define-runtime &collect-methods::t gxc#&collect-methods::t)
-         (%#define-runtime &collect-methods? gxc#&collect-methods?)
-         (%#define-runtime make-&collect-methods gxc#make-&collect-methods)
-         (%#define-syntax &collect-methods |gxc[:0:]#&collect-methods|)
+         (%#define-runtime ::collect-methods::t gxc#::collect-methods::t)
+         (%#define-runtime ::collect-methods? gxc#::collect-methods?)
+         (%#define-runtime make-::collect-methods gxc#make-::collect-methods)
+         (%#define-syntax ::collect-methods |gxc[:0:]#::collect-methods|)
          (%#define-runtime
-          &collect-methods-bind-methods!
-          gxc#&collect-methods-bind-methods!)
+          ::collect-methods-bind-methods!
+          gxc#::collect-methods-bind-methods!)
          (%#define-runtime apply-collect-methods gxc#apply-collect-methods)
-         (%#define-runtime &expression-subst::t gxc#&expression-subst::t)
-         (%#define-runtime &expression-subst? gxc#&expression-subst?)
-         (%#define-runtime make-&expression-subst gxc#make-&expression-subst)
-         (%#define-runtime &expression-subst-id gxc#&expression-subst-id)
+         (%#define-runtime ::expression-subst::t gxc#::expression-subst::t)
+         (%#define-runtime ::expression-subst? gxc#::expression-subst?)
+         (%#define-runtime make-::expression-subst gxc#make-::expression-subst)
+         (%#define-runtime ::expression-subst-id gxc#::expression-subst-id)
          (%#define-runtime
-          &expression-subst-new-id
-          gxc#&expression-subst-new-id)
+          ::expression-subst-new-id
+          gxc#::expression-subst-new-id)
          (%#define-runtime
-          &expression-subst-id-set!
-          gxc#&expression-subst-id-set!)
+          ::expression-subst-id-set!
+          gxc#::expression-subst-id-set!)
          (%#define-runtime
-          &expression-subst-new-id-set!
-          gxc#&expression-subst-new-id-set!)
-         (%#define-runtime &&expression-subst-id gxc#&&expression-subst-id)
+          ::expression-subst-new-id-set!
+          gxc#::expression-subst-new-id-set!)
+         (%#define-runtime &::expression-subst-id gxc#&::expression-subst-id)
          (%#define-runtime
-          &&expression-subst-new-id
-          gxc#&&expression-subst-new-id)
+          &::expression-subst-new-id
+          gxc#&::expression-subst-new-id)
          (%#define-runtime
-          &&expression-subst-id-set!
-          gxc#&&expression-subst-id-set!)
+          &::expression-subst-id-set!
+          gxc#&::expression-subst-id-set!)
          (%#define-runtime
-          &&expression-subst-new-id-set!
-          gxc#&&expression-subst-new-id-set!)
-         (%#define-syntax &expression-subst |gxc[:0:]#&expression-subst|)
+          &::expression-subst-new-id-set!
+          gxc#&::expression-subst-new-id-set!)
+         (%#define-syntax ::expression-subst |gxc[:0:]#::expression-subst|)
          (%#define-runtime
-          &expression-subst-bind-methods!
-          gxc#&expression-subst-bind-methods!)
+          ::expression-subst-bind-methods!
+          gxc#::expression-subst-bind-methods!)
          (%#begin (%#define-runtime
                    apply-expression-subst__%
                    gxc#apply-expression-subst__%)
@@ -115,25 +121,27 @@ namespace: gxc
                   (%#define-runtime
                    apply-expression-subst
                    gxc#apply-expression-subst))
-         (%#define-runtime &expression-subst*::t gxc#&expression-subst*::t)
-         (%#define-runtime &expression-subst*? gxc#&expression-subst*?)
-         (%#define-runtime make-&expression-subst* gxc#make-&expression-subst*)
+         (%#define-runtime ::expression-subst*::t gxc#::expression-subst*::t)
+         (%#define-runtime ::expression-subst*? gxc#::expression-subst*?)
          (%#define-runtime
-          &expression-subst*-subst
-          gxc#&expression-subst*-subst)
+          make-::expression-subst*
+          gxc#make-::expression-subst*)
          (%#define-runtime
-          &expression-subst*-subst-set!
-          gxc#&expression-subst*-subst-set!)
+          ::expression-subst*-subst
+          gxc#::expression-subst*-subst)
          (%#define-runtime
-          &&expression-subst*-subst
-          gxc#&&expression-subst*-subst)
+          ::expression-subst*-subst-set!
+          gxc#::expression-subst*-subst-set!)
          (%#define-runtime
-          &&expression-subst*-subst-set!
-          gxc#&&expression-subst*-subst-set!)
-         (%#define-syntax &expression-subst* |gxc[:0:]#&expression-subst*|)
+          &::expression-subst*-subst
+          gxc#&::expression-subst*-subst)
          (%#define-runtime
-          &expression-subst*-bind-methods!
-          gxc#&expression-subst*-bind-methods!)
+          &::expression-subst*-subst-set!
+          gxc#&::expression-subst*-subst-set!)
+         (%#define-syntax ::expression-subst* |gxc[:0:]#::expression-subst*|)
+         (%#define-runtime
+          ::expression-subst*-bind-methods!
+          gxc#::expression-subst*-bind-methods!)
          (%#begin (%#define-runtime
                    apply-expression-subst*__%
                    gxc#apply-expression-subst*__%)
@@ -143,26 +151,28 @@ namespace: gxc
                   (%#define-runtime
                    apply-expression-subst*
                    gxc#apply-expression-subst*))
-         (%#define-runtime &find-expression::t gxc#&find-expression::t)
-         (%#define-runtime &find-expression? gxc#&find-expression?)
-         (%#define-runtime make-&find-expression gxc#make-&find-expression)
-         (%#define-syntax &find-expression |gxc[:0:]#&find-expression|)
+         (%#define-runtime ::find-expression::t gxc#::find-expression::t)
+         (%#define-runtime ::find-expression? gxc#::find-expression?)
+         (%#define-runtime make-::find-expression gxc#make-::find-expression)
+         (%#define-syntax ::find-expression |gxc[:0:]#::find-expression|)
          (%#define-runtime
-          &find-expression-bind-methods!
-          gxc#&find-expression-bind-methods!)
-         (%#define-runtime &find-var-refs::t gxc#&find-var-refs::t)
-         (%#define-runtime &find-var-refs? gxc#&find-var-refs?)
-         (%#define-runtime make-&find-var-refs gxc#make-&find-var-refs)
-         (%#define-runtime &find-var-refs-ids gxc#&find-var-refs-ids)
-         (%#define-runtime &find-var-refs-ids-set! gxc#&find-var-refs-ids-set!)
-         (%#define-runtime &&find-var-refs-ids gxc#&&find-var-refs-ids)
+          ::find-expression-bind-methods!
+          gxc#::find-expression-bind-methods!)
+         (%#define-runtime ::find-var-refs::t gxc#::find-var-refs::t)
+         (%#define-runtime ::find-var-refs? gxc#::find-var-refs?)
+         (%#define-runtime make-::find-var-refs gxc#make-::find-var-refs)
+         (%#define-runtime ::find-var-refs-ids gxc#::find-var-refs-ids)
          (%#define-runtime
-          &&find-var-refs-ids-set!
-          gxc#&&find-var-refs-ids-set!)
-         (%#define-syntax &find-var-refs |gxc[:0:]#&find-var-refs|)
+          ::find-var-refs-ids-set!
+          gxc#::find-var-refs-ids-set!)
+         (%#define-runtime &::find-var-refs-ids gxc#&::find-var-refs-ids)
          (%#define-runtime
-          &find-var-refs-bind-methods!
-          gxc#&find-var-refs-bind-methods!)
+          &::find-var-refs-ids-set!
+          gxc#&::find-var-refs-ids-set!)
+         (%#define-syntax ::find-var-refs |gxc[:0:]#::find-var-refs|)
+         (%#define-runtime
+          ::find-var-refs-bind-methods!
+          gxc#::find-var-refs-bind-methods!)
          (%#begin (%#define-runtime
                    apply-find-var-refs__%
                    gxc#apply-find-var-refs__%)
@@ -173,30 +183,30 @@ namespace: gxc
                    apply-find-var-refs
                    gxc#apply-find-var-refs))
          (%#define-runtime
-          &collect-runtime-refs::t
-          gxc#&collect-runtime-refs::t)
-         (%#define-runtime &collect-runtime-refs? gxc#&collect-runtime-refs?)
+          ::collect-runtime-refs::t
+          gxc#::collect-runtime-refs::t)
+         (%#define-runtime ::collect-runtime-refs? gxc#::collect-runtime-refs?)
          (%#define-runtime
-          make-&collect-runtime-refs
-          gxc#make-&collect-runtime-refs)
+          make-::collect-runtime-refs
+          gxc#make-::collect-runtime-refs)
          (%#define-runtime
-          &collect-runtime-refs-table
-          gxc#&collect-runtime-refs-table)
+          ::collect-runtime-refs-table
+          gxc#::collect-runtime-refs-table)
          (%#define-runtime
-          &collect-runtime-refs-table-set!
-          gxc#&collect-runtime-refs-table-set!)
+          ::collect-runtime-refs-table-set!
+          gxc#::collect-runtime-refs-table-set!)
          (%#define-runtime
-          &&collect-runtime-refs-table
-          gxc#&&collect-runtime-refs-table)
+          &::collect-runtime-refs-table
+          gxc#&::collect-runtime-refs-table)
          (%#define-runtime
-          &&collect-runtime-refs-table-set!
-          gxc#&&collect-runtime-refs-table-set!)
+          &::collect-runtime-refs-table-set!
+          gxc#&::collect-runtime-refs-table-set!)
          (%#define-syntax
-          &collect-runtime-refs
-          |gxc[:0:]#&collect-runtime-refs|)
+          ::collect-runtime-refs
+          |gxc[:0:]#::collect-runtime-refs|)
          (%#define-runtime
-          &collect-runtime-refs-bind-methods!
-          gxc#&collect-runtime-refs-bind-methods!)
+          ::collect-runtime-refs-bind-methods!
+          gxc#::collect-runtime-refs-bind-methods!)
          (%#begin (%#define-runtime
                    apply-collect-runtime-refs__%
                    gxc#apply-collect-runtime-refs__%)

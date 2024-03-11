@@ -3,14 +3,14 @@ package: gerbil/compiler
 
 (begin
   (declare-type
-   gxc#&optmize-annotated::t
-   (@class gxc#&optmize-annotated::t
-           (gxc#&basic-xform::t)
-           (gxc#&basic-xform::t
-            gxc#&basic-xform-expression::t
-            gxc#&identity::t
-            gxc#&identity-special-form::t
-            gxc#&identity-expression::t)
+   gxc#::optimize-annotated::t
+   (@class gxc#::optimize-annotated::t
+           (gxc#::basic-xform::t)
+           (gxc#::basic-xform::t
+            gxc#::basic-xform-expression::t
+            gxc#::identity::t
+            gxc#::identity-special-form::t
+            gxc#::identity-expression::t)
            ()
            ()
            #f
@@ -18,16 +18,18 @@ package: gerbil/compiler
            #t
            #f
            #f))
-  (declare-type gxc#&optmize-annotated? (@predicate gxc#&optmize-annotated::t))
   (declare-type
-   gxc#make-&optmize-annotated
-   (@constructor gxc#&optmize-annotated::t))
+   gxc#::optimize-annotated?
+   (@predicate gxc#::optimize-annotated::t))
+  (declare-type
+   gxc#make-::optimize-annotated
+   (@constructor gxc#::optimize-annotated::t))
   (declare-type gxc#apply-optimize-annotated (@lambda 1 #f))
   (declare-type
-   gxc#&generate-runtime-repr::t
-   (@class gxc#&generate-runtime-repr::t
-           (gxc#&generate-runtime::t)
-           (gxc#&generate-runtime::t gxc#&generate-runtime-empty::t)
+   gxc#::generate-runtime-repr::t
+   (@class gxc#::generate-runtime-repr::t
+           (gxc#::generate-runtime::t)
+           (gxc#::generate-runtime::t gxc#::generate-runtime-empty::t)
            ()
            ()
            #f
@@ -36,43 +38,43 @@ package: gerbil/compiler
            #f
            #f))
   (declare-type
-   gxc#&generate-runtime-repr?
-   (@predicate gxc#&generate-runtime-repr::t))
+   gxc#::generate-runtime-repr?
+   (@predicate gxc#::generate-runtime-repr::t))
   (declare-type
-   gxc#make-&generate-runtime-repr
-   (@constructor gxc#&generate-runtime-repr::t))
+   gxc#make-::generate-runtime-repr
+   (@constructor gxc#::generate-runtime-repr::t))
   (declare-type gxc#apply-generate-runtime-repr (@lambda 1 #f))
   (declare-type
-   gxc#&push-match-vars::t
-   (@class gxc#&push-match-vars::t () () (vars K) (vars K) #f #f #t #f #f))
-  (declare-type gxc#&push-match-vars? (@predicate gxc#&push-match-vars::t))
+   gxc#::push-match-vars::t
+   (@class gxc#::push-match-vars::t () () (vars K) (vars K) #f #f #t #f #f))
+  (declare-type gxc#::push-match-vars? (@predicate gxc#::push-match-vars::t))
   (declare-type
-   gxc#make-&push-match-vars
-   (@constructor gxc#&push-match-vars::t))
+   gxc#make-::push-match-vars
+   (@constructor gxc#::push-match-vars::t))
   (declare-type
-   gxc#&push-match-vars-vars
-   (@accessor gxc#&push-match-vars::t vars #t))
+   gxc#::push-match-vars-vars
+   (@accessor gxc#::push-match-vars::t vars #t))
   (declare-type
-   gxc#&push-match-vars-K
-   (@accessor gxc#&push-match-vars::t K #t))
+   gxc#::push-match-vars-K
+   (@accessor gxc#::push-match-vars::t K #t))
   (declare-type
-   gxc#&push-match-vars-vars-set!
-   (@mutator gxc#&push-match-vars::t vars #t))
+   gxc#::push-match-vars-vars-set!
+   (@mutator gxc#::push-match-vars::t vars #t))
   (declare-type
-   gxc#&push-match-vars-K-set!
-   (@mutator gxc#&push-match-vars::t K #t))
+   gxc#::push-match-vars-K-set!
+   (@mutator gxc#::push-match-vars::t K #t))
   (declare-type
-   gxc#&&push-match-vars-vars
-   (@accessor gxc#&push-match-vars::t vars #f))
+   gxc#&::push-match-vars-vars
+   (@accessor gxc#::push-match-vars::t vars #f))
   (declare-type
-   gxc#&&push-match-vars-K
-   (@accessor gxc#&push-match-vars::t K #f))
+   gxc#&::push-match-vars-K
+   (@accessor gxc#::push-match-vars::t K #f))
   (declare-type
-   gxc#&&push-match-vars-vars-set!
-   (@mutator gxc#&push-match-vars::t vars #f))
+   gxc#&::push-match-vars-vars-set!
+   (@mutator gxc#::push-match-vars::t vars #f))
   (declare-type
-   gxc#&&push-match-vars-K-set!
-   (@mutator gxc#&push-match-vars::t K #f))
+   gxc#&::push-match-vars-K-set!
+   (@mutator gxc#::push-match-vars::t K #f))
   (declare-type gxc#apply-push-match-vars__% (@lambda 4 #f))
   (declare-type gxc#apply-push-match-vars__@ (@lambda (1) #f))
   (declare-type

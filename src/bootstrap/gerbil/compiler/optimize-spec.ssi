@@ -12,71 +12,75 @@ namespace: gxc
           :gerbil/compiler/optimize-top)
          (%#export #t)
          (%#define-runtime
-          &generate-method-specializers::t
-          gxc#&generate-method-specializers::t)
+          ::generate-method-specializers::t
+          gxc#::generate-method-specializers::t)
          (%#define-runtime
-          &generate-method-specializers?
-          gxc#&generate-method-specializers?)
+          ::generate-method-specializers?
+          gxc#::generate-method-specializers?)
          (%#define-runtime
-          make-&generate-method-specializers
-          gxc#make-&generate-method-specializers)
+          make-::generate-method-specializers
+          gxc#make-::generate-method-specializers)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-spec__1")))
                   (%#define-syntax
-                   &generate-method-specializers
-                   |gxc[:0:]#&generate-method-specializers|))
+                   ::generate-method-specializers
+                   |gxc[:0:]#::generate-method-specializers|))
          (%#define-runtime
-          &generate-method-specializers-bind-methods!
-          gxc#&generate-method-specializers-bind-methods!)
+          ::generate-method-specializers-bind-methods!
+          gxc#::generate-method-specializers-bind-methods!)
          (%#define-runtime
           apply-generate-method-specializers
           gxc#apply-generate-method-specializers)
-         (%#define-runtime &collect-object-refs::t gxc#&collect-object-refs::t)
-         (%#define-runtime &collect-object-refs? gxc#&collect-object-refs?)
          (%#define-runtime
-          make-&collect-object-refs
-          gxc#make-&collect-object-refs)
+          ::collect-object-refs::t
+          gxc#::collect-object-refs::t)
+         (%#define-runtime ::collect-object-refs? gxc#::collect-object-refs?)
          (%#define-runtime
-          &collect-object-refs-receiver
-          gxc#&collect-object-refs-receiver)
+          make-::collect-object-refs
+          gxc#make-::collect-object-refs)
          (%#define-runtime
-          &collect-object-refs-methods
-          gxc#&collect-object-refs-methods)
+          ::collect-object-refs-receiver
+          gxc#::collect-object-refs-receiver)
          (%#define-runtime
-          &collect-object-refs-slots
-          gxc#&collect-object-refs-slots)
+          ::collect-object-refs-methods
+          gxc#::collect-object-refs-methods)
          (%#define-runtime
-          &collect-object-refs-receiver-set!
-          gxc#&collect-object-refs-receiver-set!)
+          ::collect-object-refs-slots
+          gxc#::collect-object-refs-slots)
          (%#define-runtime
-          &collect-object-refs-methods-set!
-          gxc#&collect-object-refs-methods-set!)
+          ::collect-object-refs-receiver-set!
+          gxc#::collect-object-refs-receiver-set!)
          (%#define-runtime
-          &collect-object-refs-slots-set!
-          gxc#&collect-object-refs-slots-set!)
+          ::collect-object-refs-methods-set!
+          gxc#::collect-object-refs-methods-set!)
          (%#define-runtime
-          &&collect-object-refs-receiver
-          gxc#&&collect-object-refs-receiver)
+          ::collect-object-refs-slots-set!
+          gxc#::collect-object-refs-slots-set!)
          (%#define-runtime
-          &&collect-object-refs-methods
-          gxc#&&collect-object-refs-methods)
+          &::collect-object-refs-receiver
+          gxc#&::collect-object-refs-receiver)
          (%#define-runtime
-          &&collect-object-refs-slots
-          gxc#&&collect-object-refs-slots)
+          &::collect-object-refs-methods
+          gxc#&::collect-object-refs-methods)
          (%#define-runtime
-          &&collect-object-refs-receiver-set!
-          gxc#&&collect-object-refs-receiver-set!)
+          &::collect-object-refs-slots
+          gxc#&::collect-object-refs-slots)
          (%#define-runtime
-          &&collect-object-refs-methods-set!
-          gxc#&&collect-object-refs-methods-set!)
+          &::collect-object-refs-receiver-set!
+          gxc#&::collect-object-refs-receiver-set!)
          (%#define-runtime
-          &&collect-object-refs-slots-set!
-          gxc#&&collect-object-refs-slots-set!)
-         (%#define-syntax &collect-object-refs |gxc[:0:]#&collect-object-refs|)
+          &::collect-object-refs-methods-set!
+          gxc#&::collect-object-refs-methods-set!)
          (%#define-runtime
-          &collect-object-refs-bind-methods!
-          gxc#&collect-object-refs-bind-methods!)
+          &::collect-object-refs-slots-set!
+          gxc#&::collect-object-refs-slots-set!)
+         (%#define-syntax
+          ::collect-object-refs
+          |gxc[:0:]#::collect-object-refs|)
+         (%#define-runtime
+          ::collect-object-refs-bind-methods!
+          gxc#::collect-object-refs-bind-methods!)
          (%#begin (%#define-runtime
                    apply-collect-object-refs__%
                    gxc#apply-collect-object-refs__%)
@@ -86,61 +90,63 @@ namespace: gxc
                   (%#define-runtime
                    apply-collect-object-refs
                    gxc#apply-collect-object-refs))
-         (%#define-runtime &subst-object-refs::t gxc#&subst-object-refs::t)
-         (%#define-runtime &subst-object-refs? gxc#&subst-object-refs?)
-         (%#define-runtime make-&subst-object-refs gxc#make-&subst-object-refs)
+         (%#define-runtime ::subst-object-refs::t gxc#::subst-object-refs::t)
+         (%#define-runtime ::subst-object-refs? gxc#::subst-object-refs?)
          (%#define-runtime
-          &subst-object-refs-receiver
-          gxc#&subst-object-refs-receiver)
+          make-::subst-object-refs
+          gxc#make-::subst-object-refs)
          (%#define-runtime
-          &subst-object-refs-klass
-          gxc#&subst-object-refs-klass)
+          ::subst-object-refs-receiver
+          gxc#::subst-object-refs-receiver)
          (%#define-runtime
-          &subst-object-refs-methods
-          gxc#&subst-object-refs-methods)
+          ::subst-object-refs-klass
+          gxc#::subst-object-refs-klass)
          (%#define-runtime
-          &subst-object-refs-slots
-          gxc#&subst-object-refs-slots)
+          ::subst-object-refs-methods
+          gxc#::subst-object-refs-methods)
          (%#define-runtime
-          &subst-object-refs-receiver-set!
-          gxc#&subst-object-refs-receiver-set!)
+          ::subst-object-refs-slots
+          gxc#::subst-object-refs-slots)
          (%#define-runtime
-          &subst-object-refs-klass-set!
-          gxc#&subst-object-refs-klass-set!)
+          ::subst-object-refs-receiver-set!
+          gxc#::subst-object-refs-receiver-set!)
          (%#define-runtime
-          &subst-object-refs-methods-set!
-          gxc#&subst-object-refs-methods-set!)
+          ::subst-object-refs-klass-set!
+          gxc#::subst-object-refs-klass-set!)
          (%#define-runtime
-          &subst-object-refs-slots-set!
-          gxc#&subst-object-refs-slots-set!)
+          ::subst-object-refs-methods-set!
+          gxc#::subst-object-refs-methods-set!)
          (%#define-runtime
-          &&subst-object-refs-receiver
-          gxc#&&subst-object-refs-receiver)
+          ::subst-object-refs-slots-set!
+          gxc#::subst-object-refs-slots-set!)
          (%#define-runtime
-          &&subst-object-refs-klass
-          gxc#&&subst-object-refs-klass)
+          &::subst-object-refs-receiver
+          gxc#&::subst-object-refs-receiver)
          (%#define-runtime
-          &&subst-object-refs-methods
-          gxc#&&subst-object-refs-methods)
+          &::subst-object-refs-klass
+          gxc#&::subst-object-refs-klass)
          (%#define-runtime
-          &&subst-object-refs-slots
-          gxc#&&subst-object-refs-slots)
+          &::subst-object-refs-methods
+          gxc#&::subst-object-refs-methods)
          (%#define-runtime
-          &&subst-object-refs-receiver-set!
-          gxc#&&subst-object-refs-receiver-set!)
+          &::subst-object-refs-slots
+          gxc#&::subst-object-refs-slots)
          (%#define-runtime
-          &&subst-object-refs-klass-set!
-          gxc#&&subst-object-refs-klass-set!)
+          &::subst-object-refs-receiver-set!
+          gxc#&::subst-object-refs-receiver-set!)
          (%#define-runtime
-          &&subst-object-refs-methods-set!
-          gxc#&&subst-object-refs-methods-set!)
+          &::subst-object-refs-klass-set!
+          gxc#&::subst-object-refs-klass-set!)
          (%#define-runtime
-          &&subst-object-refs-slots-set!
-          gxc#&&subst-object-refs-slots-set!)
-         (%#define-syntax &subst-object-refs |gxc[:0:]#&subst-object-refs|)
+          &::subst-object-refs-methods-set!
+          gxc#&::subst-object-refs-methods-set!)
          (%#define-runtime
-          &subst-object-refs-bind-methods!
-          gxc#&subst-object-refs-bind-methods!)
+          &::subst-object-refs-slots-set!
+          gxc#&::subst-object-refs-slots-set!)
+         (%#define-syntax ::subst-object-refs |gxc[:0:]#::subst-object-refs|)
+         (%#define-runtime
+          ::subst-object-refs-bind-methods!
+          gxc#::subst-object-refs-bind-methods!)
          (%#begin (%#define-runtime
                    apply-subst-object-refs__%
                    gxc#apply-subst-object-refs__%)

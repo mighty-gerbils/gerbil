@@ -34,69 +34,71 @@ namespace: gxc
          (%#define-runtime false-method gxc#false-method)
          (%#define-runtime true-method gxc#true-method)
          (%#define-runtime identity-method gxc#identity-method)
-         (%#define-runtime &void-expression::t gxc#&void-expression::t)
-         (%#define-runtime &void-expression? gxc#&void-expression?)
-         (%#define-runtime make-&void-expression gxc#make-&void-expression)
-         (%#define-syntax &void-expression |gxc[:0:]#&void-expression|)
+         (%#define-runtime ::void-expression::t gxc#::void-expression::t)
+         (%#define-runtime ::void-expression? gxc#::void-expression?)
+         (%#define-runtime make-::void-expression gxc#make-::void-expression)
+         (%#define-syntax ::void-expression |gxc[:0:]#::void-expression|)
          (%#define-runtime
-          &void-expression-bind-methods!
-          gxc#&void-expression-bind-methods!)
-         (%#define-runtime &void-special-form::t gxc#&void-special-form::t)
-         (%#define-runtime &void-special-form? gxc#&void-special-form?)
-         (%#define-runtime make-&void-special-form gxc#make-&void-special-form)
-         (%#define-syntax &void-special-form |gxc[:0:]#&void-special-form|)
+          ::void-expression-bind-methods!
+          gxc#::void-expression-bind-methods!)
+         (%#define-runtime ::void-special-form::t gxc#::void-special-form::t)
+         (%#define-runtime ::void-special-form? gxc#::void-special-form?)
          (%#define-runtime
-          &void-special-form-bind-methods!
-          gxc#&void-special-form-bind-methods!)
-         (%#define-runtime &void::t gxc#&void::t)
-         (%#define-runtime &void? gxc#&void?)
-         (%#define-runtime make-&void gxc#make-&void)
-         (%#define-syntax &void |gxc[:0:]#&void|)
-         (%#define-runtime &void-bind-methods! gxc#&void-bind-methods!)
-         (%#define-runtime &false-expression::t gxc#&false-expression::t)
-         (%#define-runtime &false-expression? gxc#&false-expression?)
-         (%#define-runtime make-&false-expression gxc#make-&false-expression)
-         (%#define-syntax &false-expression |gxc[:0:]#&false-expression|)
+          make-::void-special-form
+          gxc#make-::void-special-form)
+         (%#define-syntax ::void-special-form |gxc[:0:]#::void-special-form|)
          (%#define-runtime
-          &false-expression-bind-methods!
-          gxc#&false-expression-bind-methods!)
-         (%#define-runtime &false-special-form::t gxc#&false-special-form::t)
-         (%#define-runtime &false-special-form? gxc#&false-special-form?)
+          ::void-special-form-bind-methods!
+          gxc#::void-special-form-bind-methods!)
+         (%#define-runtime ::void::t gxc#::void::t)
+         (%#define-runtime ::void? gxc#::void?)
+         (%#define-runtime make-::void gxc#make-::void)
+         (%#define-syntax ::void |gxc[:0:]#::void|)
+         (%#define-runtime ::void-bind-methods! gxc#::void-bind-methods!)
+         (%#define-runtime ::false-expression::t gxc#::false-expression::t)
+         (%#define-runtime ::false-expression? gxc#::false-expression?)
+         (%#define-runtime make-::false-expression gxc#make-::false-expression)
+         (%#define-syntax ::false-expression |gxc[:0:]#::false-expression|)
          (%#define-runtime
-          make-&false-special-form
-          gxc#make-&false-special-form)
-         (%#define-syntax &false-special-form |gxc[:0:]#&false-special-form|)
+          ::false-expression-bind-methods!
+          gxc#::false-expression-bind-methods!)
+         (%#define-runtime ::false-special-form::t gxc#::false-special-form::t)
+         (%#define-runtime ::false-special-form? gxc#::false-special-form?)
          (%#define-runtime
-          &false-special-form-bind-methods!
-          gxc#&false-special-form-bind-methods!)
-         (%#define-runtime &false::t gxc#&false::t)
-         (%#define-runtime &false? gxc#&false?)
-         (%#define-runtime make-&false gxc#make-&false)
-         (%#define-syntax &false |gxc[:0:]#&false|)
-         (%#define-runtime &false-bind-methods! gxc#&false-bind-methods!)
-         (%#define-runtime &collect-bindings::t gxc#&collect-bindings::t)
-         (%#define-runtime &collect-bindings? gxc#&collect-bindings?)
-         (%#define-runtime make-&collect-bindings gxc#make-&collect-bindings)
-         (%#define-syntax &collect-bindings |gxc[:0:]#&collect-bindings|)
+          make-::false-special-form
+          gxc#make-::false-special-form)
+         (%#define-syntax ::false-special-form |gxc[:0:]#::false-special-form|)
          (%#define-runtime
-          &collect-bindings-bind-methods!
-          gxc#&collect-bindings-bind-methods!)
+          ::false-special-form-bind-methods!
+          gxc#::false-special-form-bind-methods!)
+         (%#define-runtime ::false::t gxc#::false::t)
+         (%#define-runtime ::false? gxc#::false?)
+         (%#define-runtime make-::false gxc#make-::false)
+         (%#define-syntax ::false |gxc[:0:]#::false|)
+         (%#define-runtime ::false-bind-methods! gxc#::false-bind-methods!)
+         (%#define-runtime ::collect-bindings::t gxc#::collect-bindings::t)
+         (%#define-runtime ::collect-bindings? gxc#::collect-bindings?)
+         (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
+         (%#define-syntax ::collect-bindings |gxc[:0:]#::collect-bindings|)
+         (%#define-runtime
+          ::collect-bindings-bind-methods!
+          gxc#::collect-bindings-bind-methods!)
          (%#define-runtime apply-collect-bindings gxc#apply-collect-bindings)
-         (%#define-runtime &lift-modules::t gxc#&lift-modules::t)
-         (%#define-runtime &lift-modules? gxc#&lift-modules?)
-         (%#define-runtime make-&lift-modules gxc#make-&lift-modules)
-         (%#define-runtime &lift-modules-modules gxc#&lift-modules-modules)
+         (%#define-runtime ::lift-modules::t gxc#::lift-modules::t)
+         (%#define-runtime ::lift-modules? gxc#::lift-modules?)
+         (%#define-runtime make-::lift-modules gxc#make-::lift-modules)
+         (%#define-runtime ::lift-modules-modules gxc#::lift-modules-modules)
          (%#define-runtime
-          &lift-modules-modules-set!
-          gxc#&lift-modules-modules-set!)
-         (%#define-runtime &&lift-modules-modules gxc#&&lift-modules-modules)
+          ::lift-modules-modules-set!
+          gxc#::lift-modules-modules-set!)
+         (%#define-runtime &::lift-modules-modules gxc#&::lift-modules-modules)
          (%#define-runtime
-          &&lift-modules-modules-set!
-          gxc#&&lift-modules-modules-set!)
-         (%#define-syntax &lift-modules |gxc[:0:]#&lift-modules|)
+          &::lift-modules-modules-set!
+          gxc#&::lift-modules-modules-set!)
+         (%#define-syntax ::lift-modules |gxc[:0:]#::lift-modules|)
          (%#define-runtime
-          &lift-modules-bind-methods!
-          gxc#&lift-modules-bind-methods!)
+          ::lift-modules-bind-methods!
+          gxc#::lift-modules-bind-methods!)
          (%#begin (%#define-runtime
                    apply-lift-modules__%
                    gxc#apply-lift-modules__%)
@@ -104,114 +106,116 @@ namespace: gxc
                    apply-lift-modules__@
                    gxc#apply-lift-modules__@)
                   (%#define-runtime apply-lift-modules gxc#apply-lift-modules))
-         (%#define-runtime &find-runtime-code::t gxc#&find-runtime-code::t)
-         (%#define-runtime &find-runtime-code? gxc#&find-runtime-code?)
-         (%#define-runtime make-&find-runtime-code gxc#make-&find-runtime-code)
-         (%#define-syntax &find-runtime-code |gxc[:0:]#&find-runtime-code|)
+         (%#define-runtime ::find-runtime-code::t gxc#::find-runtime-code::t)
+         (%#define-runtime ::find-runtime-code? gxc#::find-runtime-code?)
          (%#define-runtime
-          &find-runtime-code-bind-methods!
-          gxc#&find-runtime-code-bind-methods!)
+          make-::find-runtime-code
+          gxc#make-::find-runtime-code)
+         (%#define-syntax ::find-runtime-code |gxc[:0:]#::find-runtime-code|)
+         (%#define-runtime
+          ::find-runtime-code-bind-methods!
+          gxc#::find-runtime-code-bind-methods!)
          (%#define-runtime apply-find-runtime-code gxc#apply-find-runtime-code)
          (%#define-runtime
-          &find-lambda-expression::t
-          gxc#&find-lambda-expression::t)
+          ::find-lambda-expression::t
+          gxc#::find-lambda-expression::t)
          (%#define-runtime
-          &find-lambda-expression?
-          gxc#&find-lambda-expression?)
+          ::find-lambda-expression?
+          gxc#::find-lambda-expression?)
          (%#define-runtime
-          make-&find-lambda-expression
-          gxc#make-&find-lambda-expression)
+          make-::find-lambda-expression
+          gxc#make-::find-lambda-expression)
          (%#define-syntax
-          &find-lambda-expression
-          |gxc[:0:]#&find-lambda-expression|)
+          ::find-lambda-expression
+          |gxc[:0:]#::find-lambda-expression|)
          (%#define-runtime
-          &find-lambda-expression-bind-methods!
-          gxc#&find-lambda-expression-bind-methods!)
+          ::find-lambda-expression-bind-methods!
+          gxc#::find-lambda-expression-bind-methods!)
          (%#define-runtime
           apply-find-lambda-expression
           gxc#apply-find-lambda-expression)
-         (%#define-runtime &count-values::t gxc#&count-values::t)
-         (%#define-runtime &count-values? gxc#&count-values?)
-         (%#define-runtime make-&count-values gxc#make-&count-values)
-         (%#define-syntax &count-values |gxc[:0:]#&count-values|)
+         (%#define-runtime ::count-values::t gxc#::count-values::t)
+         (%#define-runtime ::count-values? gxc#::count-values?)
+         (%#define-runtime make-::count-values gxc#make-::count-values)
+         (%#define-syntax ::count-values |gxc[:0:]#::count-values|)
          (%#define-runtime
-          &count-values-bind-methods!
-          gxc#&count-values-bind-methods!)
+          ::count-values-bind-methods!
+          gxc#::count-values-bind-methods!)
          (%#define-runtime apply-count-values gxc#apply-count-values)
          (%#define-runtime
-          &generate-runtime-empty::t
-          gxc#&generate-runtime-empty::t)
+          ::generate-runtime-empty::t
+          gxc#::generate-runtime-empty::t)
          (%#define-runtime
-          &generate-runtime-empty?
-          gxc#&generate-runtime-empty?)
+          ::generate-runtime-empty?
+          gxc#::generate-runtime-empty?)
          (%#define-runtime
-          make-&generate-runtime-empty
-          gxc#make-&generate-runtime-empty)
+          make-::generate-runtime-empty
+          gxc#make-::generate-runtime-empty)
          (%#define-syntax
-          &generate-runtime-empty
-          |gxc[:0:]#&generate-runtime-empty|)
+          ::generate-runtime-empty
+          |gxc[:0:]#::generate-runtime-empty|)
          (%#define-runtime
-          &generate-runtime-empty-bind-methods!
-          gxc#&generate-runtime-empty-bind-methods!)
-         (%#define-runtime &generate-loader::t gxc#&generate-loader::t)
-         (%#define-runtime &generate-loader? gxc#&generate-loader?)
-         (%#define-runtime make-&generate-loader gxc#make-&generate-loader)
-         (%#define-syntax &generate-loader |gxc[:0:]#&generate-loader|)
+          ::generate-runtime-empty-bind-methods!
+          gxc#::generate-runtime-empty-bind-methods!)
+         (%#define-runtime ::generate-loader::t gxc#::generate-loader::t)
+         (%#define-runtime ::generate-loader? gxc#::generate-loader?)
+         (%#define-runtime make-::generate-loader gxc#make-::generate-loader)
+         (%#define-syntax ::generate-loader |gxc[:0:]#::generate-loader|)
          (%#define-runtime
-          &generate-loader-bind-methods!
-          gxc#&generate-loader-bind-methods!)
+          ::generate-loader-bind-methods!
+          gxc#::generate-loader-bind-methods!)
          (%#define-runtime apply-generate-loader gxc#apply-generate-loader)
-         (%#define-runtime &generate-runtime::t gxc#&generate-runtime::t)
-         (%#define-runtime &generate-runtime? gxc#&generate-runtime?)
-         (%#define-runtime make-&generate-runtime gxc#make-&generate-runtime)
-         (%#define-syntax &generate-runtime |gxc[:0:]#&generate-runtime|)
+         (%#define-runtime ::generate-runtime::t gxc#::generate-runtime::t)
+         (%#define-runtime ::generate-runtime? gxc#::generate-runtime?)
+         (%#define-runtime make-::generate-runtime gxc#make-::generate-runtime)
+         (%#define-syntax ::generate-runtime |gxc[:0:]#::generate-runtime|)
          (%#define-runtime
-          &generate-runtime-bind-methods!
-          gxc#&generate-runtime-bind-methods!)
+          ::generate-runtime-bind-methods!
+          gxc#::generate-runtime-bind-methods!)
          (%#define-runtime apply-generate-runtime gxc#apply-generate-runtime)
          (%#define-runtime
-          &generate-runtime-phi::t
-          gxc#&generate-runtime-phi::t)
-         (%#define-runtime &generate-runtime-phi? gxc#&generate-runtime-phi?)
+          ::generate-runtime-phi::t
+          gxc#::generate-runtime-phi::t)
+         (%#define-runtime ::generate-runtime-phi? gxc#::generate-runtime-phi?)
          (%#define-runtime
-          make-&generate-runtime-phi
-          gxc#make-&generate-runtime-phi)
+          make-::generate-runtime-phi
+          gxc#make-::generate-runtime-phi)
          (%#define-syntax
-          &generate-runtime-phi
-          |gxc[:0:]#&generate-runtime-phi|)
+          ::generate-runtime-phi
+          |gxc[:0:]#::generate-runtime-phi|)
          (%#define-runtime
-          &generate-runtime-phi-bind-methods!
-          gxc#&generate-runtime-phi-bind-methods!)
+          ::generate-runtime-phi-bind-methods!
+          gxc#::generate-runtime-phi-bind-methods!)
          (%#define-runtime
           apply-generate-runtime-phi
           gxc#apply-generate-runtime-phi)
          (%#define-runtime
-          &collect-expression-refs::t
-          gxc#&collect-expression-refs::t)
+          ::collect-expression-refs::t
+          gxc#::collect-expression-refs::t)
          (%#define-runtime
-          &collect-expression-refs?
-          gxc#&collect-expression-refs?)
+          ::collect-expression-refs?
+          gxc#::collect-expression-refs?)
          (%#define-runtime
-          make-&collect-expression-refs
-          gxc#make-&collect-expression-refs)
+          make-::collect-expression-refs
+          gxc#make-::collect-expression-refs)
          (%#define-runtime
-          &collect-expression-refs-table
-          gxc#&collect-expression-refs-table)
+          ::collect-expression-refs-table
+          gxc#::collect-expression-refs-table)
          (%#define-runtime
-          &collect-expression-refs-table-set!
-          gxc#&collect-expression-refs-table-set!)
+          ::collect-expression-refs-table-set!
+          gxc#::collect-expression-refs-table-set!)
          (%#define-runtime
-          &&collect-expression-refs-table
-          gxc#&&collect-expression-refs-table)
+          &::collect-expression-refs-table
+          gxc#&::collect-expression-refs-table)
          (%#define-runtime
-          &&collect-expression-refs-table-set!
-          gxc#&&collect-expression-refs-table-set!)
+          &::collect-expression-refs-table-set!
+          gxc#&::collect-expression-refs-table-set!)
          (%#define-syntax
-          &collect-expression-refs
-          |gxc[:0:]#&collect-expression-refs|)
+          ::collect-expression-refs
+          |gxc[:0:]#::collect-expression-refs|)
          (%#define-runtime
-          &collect-expression-refs-bind-methods!
-          gxc#&collect-expression-refs-bind-methods!)
+          ::collect-expression-refs-bind-methods!
+          gxc#::collect-expression-refs-bind-methods!)
          (%#begin (%#define-runtime
                    apply-collect-expression-refs__%
                    gxc#apply-collect-expression-refs__%)
@@ -221,21 +225,21 @@ namespace: gxc
                   (%#define-runtime
                    apply-collect-expression-refs
                    gxc#apply-collect-expression-refs))
-         (%#define-runtime &generate-meta::t gxc#&generate-meta::t)
-         (%#define-runtime &generate-meta? gxc#&generate-meta?)
-         (%#define-runtime make-&generate-meta gxc#make-&generate-meta)
-         (%#define-runtime &generate-meta-state gxc#&generate-meta-state)
+         (%#define-runtime ::generate-meta::t gxc#::generate-meta::t)
+         (%#define-runtime ::generate-meta? gxc#::generate-meta?)
+         (%#define-runtime make-::generate-meta gxc#make-::generate-meta)
+         (%#define-runtime ::generate-meta-state gxc#::generate-meta-state)
          (%#define-runtime
-          &generate-meta-state-set!
-          gxc#&generate-meta-state-set!)
-         (%#define-runtime &&generate-meta-state gxc#&&generate-meta-state)
+          ::generate-meta-state-set!
+          gxc#::generate-meta-state-set!)
+         (%#define-runtime &::generate-meta-state gxc#&::generate-meta-state)
          (%#define-runtime
-          &&generate-meta-state-set!
-          gxc#&&generate-meta-state-set!)
-         (%#define-syntax &generate-meta |gxc[:0:]#&generate-meta|)
+          &::generate-meta-state-set!
+          gxc#&::generate-meta-state-set!)
+         (%#define-syntax ::generate-meta |gxc[:0:]#::generate-meta|)
          (%#define-runtime
-          &generate-meta-bind-methods!
-          gxc#&generate-meta-bind-methods!)
+          ::generate-meta-bind-methods!
+          gxc#::generate-meta-bind-methods!)
          (%#begin (%#define-runtime
                    apply-generate-meta__%
                    gxc#apply-generate-meta__%)
@@ -245,25 +249,27 @@ namespace: gxc
                   (%#define-runtime
                    apply-generate-meta
                    gxc#apply-generate-meta))
-         (%#define-runtime &generate-meta-phi::t gxc#&generate-meta-phi::t)
-         (%#define-runtime &generate-meta-phi? gxc#&generate-meta-phi?)
-         (%#define-runtime make-&generate-meta-phi gxc#make-&generate-meta-phi)
+         (%#define-runtime ::generate-meta-phi::t gxc#::generate-meta-phi::t)
+         (%#define-runtime ::generate-meta-phi? gxc#::generate-meta-phi?)
          (%#define-runtime
-          &generate-meta-phi-state
-          gxc#&generate-meta-phi-state)
+          make-::generate-meta-phi
+          gxc#make-::generate-meta-phi)
          (%#define-runtime
-          &generate-meta-phi-state-set!
-          gxc#&generate-meta-phi-state-set!)
+          ::generate-meta-phi-state
+          gxc#::generate-meta-phi-state)
          (%#define-runtime
-          &&generate-meta-phi-state
-          gxc#&&generate-meta-phi-state)
+          ::generate-meta-phi-state-set!
+          gxc#::generate-meta-phi-state-set!)
          (%#define-runtime
-          &&generate-meta-phi-state-set!
-          gxc#&&generate-meta-phi-state-set!)
-         (%#define-syntax &generate-meta-phi |gxc[:0:]#&generate-meta-phi|)
+          &::generate-meta-phi-state
+          gxc#&::generate-meta-phi-state)
          (%#define-runtime
-          &generate-meta-phi-bind-methods!
-          gxc#&generate-meta-phi-bind-methods!)
+          &::generate-meta-phi-state-set!
+          gxc#&::generate-meta-phi-state-set!)
+         (%#define-syntax ::generate-meta-phi |gxc[:0:]#::generate-meta-phi|)
+         (%#define-runtime
+          ::generate-meta-phi-bind-methods!
+          gxc#::generate-meta-phi-bind-methods!)
          (%#begin (%#define-runtime
                    apply-generate-meta-phi__%
                    gxc#apply-generate-meta-phi__%)
