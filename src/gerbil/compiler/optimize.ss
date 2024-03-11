@@ -166,7 +166,7 @@ namespace: gxc
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))
 
-(defcompile-method (apply-generate-ssxi) (::generate-ssxi::&generate-runtime-empty)
+(defcompile-method (apply-generate-ssxi) (::generate-ssxi ::generate-runtime-empty)
   ()
   final:
   (%#begin         generate-runtime-begin%)
