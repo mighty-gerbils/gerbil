@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/syntax::timestamp 1710139353)
+  (define gerbil/runtime/syntax::timestamp 1710140929)
   (begin
     (declare (not safe))
     (define SyntaxError::t

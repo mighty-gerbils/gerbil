@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-ann::timestamp 1710139356)
+  (define gerbil/compiler/optimize-ann::timestamp 1710140933)
   (begin
     (declare (inlining-limit 200))
     (define gxc#&optmize-annotated::t
@@ -18763,12 +18763,6 @@
                          (declare (not safe))
                          (slot-set!__0 _sibling136816_ 'vars _vars136799_))
                        (let ((__tmp151461
-                              (let ()
-                                (declare (not safe))
-                                (slot-ref__0 _self136730_ 'K))))
-                         (declare (not safe))
-                         (slot-set!__0 _sibling136816_ 'K __tmp151461))
-                       (let ((__tmp151462
                               (lambda ()
                                 (if (let ()
                                       (declare (not safe))
@@ -18778,32 +18772,32 @@
                                       (gxc#compile-e__1
                                        _sibling136816_
                                        _L136779_))
-                                    (let ((__tmp151463
-                                           (let ((__tmp151464
-                                                  (let ((__tmp151467
+                                    (let ((__tmp151462
+                                           (let ((__tmp151463
+                                                  (let ((__tmp151466
                                                          (reverse _rebind136798_))
-                                                        (__tmp151465
-                                                         (let ((__tmp151466
+                                                        (__tmp151464
+                                                         (let ((__tmp151465
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
                           (gxc#compile-e__1 _sibling136816_ _L136779_))))
                    (declare (not safe))
-                   (cons __tmp151466 '()))))
+                   (cons __tmp151465 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp151467
-                                                          __tmp151465))))
+                                                    (cons __tmp151466
+                                                          __tmp151464))))
                                              (declare (not safe))
                                              (cons '%#let-values
-                                                   __tmp151464))))
+                                                   __tmp151463))))
                                       (declare (not safe))
                                       (gxc#xform-wrap-source
-                                       __tmp151463
+                                       __tmp151462
                                        _stx136731_))))))
                          (declare (not safe))
                          (call-with-parameters
-                          __tmp151462
+                          __tmp151461
                           gxc#current-compile-method
                           _sibling136816_)))))
                   (_K136804136931_
@@ -18819,7 +18813,7 @@
                                   ___stx150827150828_)))))
                        (let ((___kont150829150830_
                               (lambda (_L136901_ _L136902_)
-                                (let ((__tmp151468
+                                (let ((__tmp151467
                                        (let ()
                                          (declare (not safe))
                                          (cons _bind136823_ _vars136799_))))
@@ -18827,17 +18821,17 @@
                                   (_lp136795_
                                    _rest136822_
                                    _rebind136798_
-                                   __tmp151468))))
+                                   __tmp151467))))
                              (___kont150831150832_
                               (lambda ()
-                                (let ((__tmp151469
+                                (let ((__tmp151468
                                        (let ()
                                          (declare (not safe))
                                          (cons _bind136823_ _rebind136798_))))
                                   (declare (not safe))
                                   (_lp136795_
                                    _rest136822_
-                                   __tmp151469
+                                   __tmp151468
                                    _vars136799_)))))
                          (if (let ()
                                (declare (not safe))
@@ -19066,43 +19060,43 @@
                                                       ((lambda (_L136707_
                                                                 _L136708_
                                                                 _L136709_)
-                                                         (if (let ((__tmp151476
+                                                         (if (let ((__tmp151475
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (map caar
                                  (let ()
                                    (declare (not safe))
                                    (slot-ref__0 _self136646_ 'vars)))))
                        (declare (not safe))
-                       (gxc#apply-find-var-refs _L136709_ 'ids: __tmp151476))
+                       (gxc#apply-find-var-refs _L136709_ 'ids: __tmp151475))
                      (let ()
                        (declare (not safe))
                        (gxc#push-match-vars-stop _self136646_ _stx136647_))
-                     (let ((__tmp151470
-                            (let ((__tmp151471
-                                   (let ((__tmp151472
-                                          (let ((__tmp151475
+                     (let ((__tmp151469
+                            (let ((__tmp151470
+                                   (let ((__tmp151471
+                                          (let ((__tmp151474
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#compile-e__1
                                                     _self136646_
                                                     _L136708_)))
-                                                (__tmp151473
-                                                 (let ((__tmp151474
+                                                (__tmp151472
+                                                 (let ((__tmp151473
                                                         (let ()
                                                           (declare (not safe))
                                                           (gxc#compile-e__1
                                                            _self136646_
                                                            _L136707_))))
                                                    (declare (not safe))
-                                                   (cons __tmp151474 '()))))
+                                                   (cons __tmp151473 '()))))
                                             (declare (not safe))
-                                            (cons __tmp151475 __tmp151473))))
+                                            (cons __tmp151474 __tmp151472))))
                                      (declare (not safe))
-                                     (cons _L136709_ __tmp151472))))
+                                     (cons _L136709_ __tmp151471))))
                               (declare (not safe))
-                              (cons '%#if __tmp151471))))
+                              (cons '%#if __tmp151470))))
                        (declare (not safe))
-                       (gxc#xform-wrap-source __tmp151470 _stx136647_))))
+                       (gxc#xform-wrap-source __tmp151469 _stx136647_))))
                _hd136664136702_
                _hd136661136694_
                _hd136658136686_)
@@ -19209,39 +19203,39 @@
                         (declare (not safe))
                         (gx#stx-null? _tl136583136624_))
                       ((lambda (_L136627_)
-                         (if (and (let ((__tmp151482
+                         (if (and (let ((__tmp151481
                                          (let ()
                                            (declare (not safe))
                                            (slot-ref__0 _self136568_ 'K))))
                                     (declare (not safe))
                                     (gx#free-identifier=?
                                      _L136627_
-                                     __tmp151482))
-                                  (let ((__tmp151481
+                                     __tmp151481))
+                                  (let ((__tmp151480
                                          (let ()
                                            (declare (not safe))
                                            (slot-ref__0 _self136568_ 'vars))))
                                     (declare (not safe))
-                                    (pair? __tmp151481)))
-                             (let ((__tmp151477
-                                    (let ((__tmp151478
-                                           (let ((__tmp151480
+                                    (pair? __tmp151480)))
+                             (let ((__tmp151476
+                                    (let ((__tmp151477
+                                           (let ((__tmp151479
                                                   (reverse (let ()
                                                              (declare
                                                                (not safe))
                                                              (slot-ref__0
                                                               _self136568_
                                                               'vars))))
-                                                 (__tmp151479
+                                                 (__tmp151478
                                                   (let ()
                                                     (declare (not safe))
                                                     (cons _stx136569_ '()))))
                                              (declare (not safe))
-                                             (cons __tmp151480 __tmp151479))))
+                                             (cons __tmp151479 __tmp151478))))
                                       (declare (not safe))
-                                      (cons '%#let-values __tmp151478))))
+                                      (cons '%#let-values __tmp151477))))
                                (declare (not safe))
-                               (gxc#xform-wrap-source __tmp151477 _stx136569_))
+                               (gxc#xform-wrap-source __tmp151476 _stx136569_))
                              _stx136569_))
                        _hd136584136622_)
                       (let ()
@@ -19270,26 +19264,26 @@
           (_g136570136643_ _stx136569_))))
     (define gxc#push-match-vars-stop
       (lambda (_self136565_ _stx136566_)
-        (if (let ((__tmp151487
+        (if (let ((__tmp151486
                    (let ()
                      (declare (not safe))
                      (slot-ref__0 _self136565_ 'vars))))
               (declare (not safe))
-              (null? __tmp151487))
+              (null? __tmp151486))
             _stx136566_
-            (let ((__tmp151483
-                   (let ((__tmp151484
-                          (let ((__tmp151486
+            (let ((__tmp151482
+                   (let ((__tmp151483
+                          (let ((__tmp151485
                                  (reverse (let ()
                                             (declare (not safe))
                                             (slot-ref__0 _self136565_ 'vars))))
-                                (__tmp151485
+                                (__tmp151484
                                  (let ()
                                    (declare (not safe))
                                    (cons _stx136566_ '()))))
                             (declare (not safe))
-                            (cons __tmp151486 __tmp151485))))
+                            (cons __tmp151485 __tmp151484))))
                      (declare (not safe))
-                     (cons '%#let-values __tmp151484))))
+                     (cons '%#let-values __tmp151483))))
               (declare (not safe))
-              (gxc#xform-wrap-source __tmp151483 _stx136566_)))))))
+              (gxc#xform-wrap-source __tmp151482 _stx136566_)))))))
