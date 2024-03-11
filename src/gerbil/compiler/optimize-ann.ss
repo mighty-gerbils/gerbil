@@ -930,7 +930,6 @@ namespace: gxc
          (else
           (let (sibling (struct-copy self))
             (set! (@ sibling vars) vars)
-            (set! (@ sibling K) (@ self K))
             (parameterize ((current-compile-method sibling))
               (if (null? rebind)
                 (compile-e sibling #'body)
