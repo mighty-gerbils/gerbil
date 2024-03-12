@@ -580,11 +580,6 @@ namespace: gxc
 
       (generate-loader-code ctx code rt)))
 
-  (def (context-timestamp ctx)
-    (string->symbol
-     (string-append (symbol->string (expander-context-id ctx))
-                    "::timestamp")))
-
   (def (generate-runtime-code ctx code)
     (let* ((lifts (box []))
            (runtime-code
@@ -599,7 +594,7 @@ namespace: gxc
               runtime-code
               ['begin (reverse (unbox lifts)) ... runtime-code]))
            (runtime-code
-            ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
+            ['begin `(define ,(string->symbol "##timestamp") ,(current-compile-timestamp))
                     runtime-code])
            (scm0 (compile-output-file ctx 0 ".scm")))
       (let (scms (compile-static-output-file ctx))
