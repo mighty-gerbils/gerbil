@@ -8,22 +8,26 @@ namespace: gxc
 (import "../core/expander"
         "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform")
 (export #t)
 (declare (inlining-limit 200))
 
+;; method to optimize with context annotations
 (defcompile-method (apply-optimize-annotated) (::optimize-annotated ::basic-xform)
   ()
   final:
   (%#begin-annotation optimize-annotation%))
 
+;; method to generate the runtime representation of an AST
 (defcompile-method (apply-generate-runtime-repr) (::generate-runtime-repr ::generate-runtime)
   ()
   final:
   (%#quote-syntax identity-method))
 
+;; method to process variable refs in match/syntax-case conte4xt
 (defcompile-method (apply-push-match-vars vars: vars K: K) ::push-match-vars
   (vars K)
   final:
@@ -33,6 +37,7 @@ namespace: gxc
   (%#if            push-match-vars-if%)
   (%#call          push-match-vars-call%))
 
+;; current annotation context stack
 (def current-annotation-optimizer
   (make-parameter []))
 

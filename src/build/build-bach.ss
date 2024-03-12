@@ -53,6 +53,7 @@
     "gerbil/expander"
     ;; :gerbil/compiler
     "gerbil/compiler/base"
+    "gerbil/compiler/method"
     "gerbil/compiler/compile"
     "gerbil/compiler/optimize-base"
     "gerbil/compiler/optimize-xform"

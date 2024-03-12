@@ -8,6 +8,7 @@ namespace: gxc
 (import "../core/expander"
         "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform"
@@ -166,6 +167,7 @@ namespace: gxc
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))
 
+;; method to generate the ssxi optimizer meta module
 (defcompile-method (apply-generate-ssxi) (::generate-ssxi ::generate-runtime-empty)
   ()
   final:

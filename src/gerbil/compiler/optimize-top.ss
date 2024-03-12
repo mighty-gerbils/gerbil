@@ -8,20 +8,23 @@ namespace: gxc
 (import "../core/expander"
         "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform")
 (export #t)
 
+;; method to collect top level type information; types for top level bindings
 (defcompile-method (apply-collect-top-level-type-info)
   (::collect-top-level-type-info ::void)
   ()
   final:
-  (%#begin            collect-begin%)
-  (%#begin-syntax     collect-begin-syntax%)
-  (%#module           collect-module%)
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
   (%#define-values    collect-top-level-type-define-values%))
 
+;; method to extract the type of an expression
 (defcompile-method (apply-basic-expression-top-level-type)
   (::basic-expression-top-level-type ::false)
   ()
@@ -29,23 +32,25 @@ namespace: gxc
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#call             basic-expression-type-call%))
 
+;; method to collect the type
 (defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
   ()
   final:
-  (%#begin            collect-begin%)
-  (%#begin-syntax     collect-begin-syntax%)
-  (%#module           collect-module%)
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
   (%#define-values    collect-type-define-values%)
-  (%#begin-annotation collect-begin-annotation%)
-  (%#lambda                collect-body-lambda%)
-  (%#case-lambda           collect-body-case-lambda%)
+  (%#begin-annotation apply-begin-annotation%)
+  (%#lambda                apply-body-lambda%)
+  (%#case-lambda           apply-body-case-lambda%)
   (%#let-values       collect-type-let-values%)
   (%#letrec-values    collect-type-let-values%)
   (%#letrec*-values   collect-type-let-values%)
   (%#call             collect-type-call%)
-  (%#if               collect-operands)
-  (%#set!             collect-body-setq%))
+  (%#if               apply-operands)
+  (%#set!             apply-body-setq%))
 
+;; method to find the type of an expression
 (defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
   ()
   final:
@@ -59,6 +64,7 @@ namespace: gxc
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%))
 
+;; method to lift sub-lambdas from case/opt/kw lambda definitions
 (defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
   ()
   final:
@@ -279,7 +285,6 @@ namespace: gxc
      (alet (type-e (hash-get basic-expression-type-builtin (identifier-symbol #'id)))
        (type-e stx #'args)))
     (_ #f)))
-
 
 (defbasic-expression-type-builtin)
 

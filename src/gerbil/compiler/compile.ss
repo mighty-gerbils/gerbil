@@ -1,13 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; gerbil compiler compilation methods
+;;; gerbil compiler: code generation
 prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
 (import "../core/expander"
         "../expander"
-        "base")
+        "base"
+        "method")
 (export #t)
 
 (def gambit-annotations
@@ -45,10 +46,6 @@ namespace: gxc
     debug-source
     debug-environments))
 
-;; compilation method instance
-(def current-compile-method
-  (make-parameter #f))
-
 ;; quote-syntax lifts
 (def current-compile-lift
   (make-parameter #f))
@@ -64,189 +61,25 @@ namespace: gxc
     (symbol-hash (stx-e id)))
   (make-hash-table test: bound-identifier=? hash: hash-e))
 
-(def (stx-car-e stx)
-  (stx-e (car (stx-e stx))))
-
-(def* compile-e
-  ((stx)
-   (let (self (current-compile-method))
-     (cond
-      ((method-ref self (stx-car-e stx))
-       => (lambda (method) (declare (not safe)) (method self stx)))
-      (else
-       (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
-  ((self stx)
-   (cond
-    ((method-ref self (stx-car-e stx))
-     => (lambda (method) (declare (not safe)) (method self stx)))
-    (else
-     (error "missing method" self (stx-car-e stx) (syntax->datum stx))))))
-
-(defsyntax (defcompile-method stx)
-  (syntax-case stx ()
-    ((_ compile-method klass slots . methods)
-     (identifier? #'klass)
-     #'(defcompile-method compile-method (klass) slots . methods))
-
-    ((_ #f (klass super ...) slots (method implementation) ...)
-     (with-syntax ((klass-bind-methods! (stx-identifier #'klass #'klass "-bind-methods!"))
-                   ((super-bind-methods! ...)
-                    (map (lambda (super) (stx-identifier super super "-bind-methods!"))
-                         #'(super ...)))
-                   (klass::t (stx-identifier #'klass #'klass "::t")))
-       #'(begin
-           (defclass (klass super ...) slots)
-           (def klass-bind-methods!
-             (delay
-               (begin
-                 (force super-bind-methods!) ...
-                 (bind-method! klass::t 'method implementation) ...))))))
-
-    ((_ (compile-method arg ...) (klass super ...) slots (method implementation) ...)
-     (with-syntax ((klass-bind-methods! (stx-identifier #'klass #'klass "-bind-methods!"))
-                   ((super-bind-methods! ...)
-                    (map (lambda (super) (stx-identifier super super "-bind-methods!"))
-                         #'(super ...)))
-                   (klass::t (stx-identifier #'klass #'klass "::t")))
-       #'(begin
-           (defclass (klass super ...) slots)
-           (def klass-bind-methods!
-             (delay
-               (begin
-                 (force super-bind-methods!) ...
-                 (bind-method! klass::t 'method implementation) ...)))
-           (def (compile-method stx arg ...)
-             (force klass-bind-methods!)
-             (let (self (klass arg ...))
-               (parameterize ((current-compile-method self))
-                 (compile-e self stx)))))))
-
-    ((_ (compile-method arg ...) (klass super ...) slots final: (method implementation) ...)
-     (with-syntax ((klass-bind-methods! (stx-identifier #'klass #'klass "-bind-methods!"))
-                   ((super-bind-methods! ...)
-                    (map (lambda (super) (stx-identifier super super "-bind-methods!"))
-                         #'(super ...)))
-                   (klass::t (stx-identifier #'klass #'klass "::t")))
-       #'(begin
-           (defclass (klass super ...) slots final: #t)
-           (def klass-bind-methods!
-             (delay
-               (begin
-                 (force super-bind-methods!) ...
-                 (bind-method! klass::t 'method implementation) ...
-                 (seal-class! klass::t))))
-           (def (compile-method stx arg ...)
-             (force klass-bind-methods!)
-             (let (self (klass arg ...))
-               (parameterize ((current-compile-method self))
-                 (compile-e self stx)))))))))
-
-(def (void-method self stx)
-  #!void)
-
-(def (false-method self stx)
-  #f)
-
-(def (true-method self stx)
-  #t)
-
-(def (identity-method self stx)
-  stx)
-
-(defcompile-method #f ::void-expression ()
-  (%#begin-annotation        void-method)
-  (%#lambda                       void-method)
-  (%#case-lambda                  void-method)
-  (%#let-values              void-method)
-  (%#letrec-values           void-method)
-  (%#letrec*-values          void-method)
-  (%#quote                   void-method)
-  (%#quote-syntax            void-method)
-  (%#call                    void-method)
-  (%#call-unchecked          void-method)
-  (%#if                      void-method)
-  (%#ref                     void-method)
-  (%#set!                    void-method)
-  (%#struct-instance?        void-method)
-  (%#struct-direct-instance? void-method)
-  (%#struct-ref              void-method)
-  (%#struct-set!             void-method)
-  (%#struct-direct-ref       void-method)
-  (%#struct-direct-set!      void-method)
-  (%#struct-unchecked-ref    void-method)
-  (%#struct-unchecked-set!   void-method))
-
-(defcompile-method #f ::void-special-form ()
-  (%#begin          void-method)
-  (%#begin-syntax   void-method)
-  (%#begin-foreign  void-method)
-  (%#module         void-method)
-  (%#import         void-method)
-  (%#export         void-method)
-  (%#provide        void-method)
-  (%#extern         void-method)
-  (%#define-values  void-method)
-  (%#define-syntax  void-method)
-  (%#define-alias   void-method)
-  (%#declare        void-method))
-
-(defcompile-method #f (::void ::void-special-form ::void-expression) ())
-
-(defcompile-method #f ::false-expression ()
-  (%#begin-annotation        false-method)
-  (%#lambda                       false-method)
-  (%#case-lambda                  false-method)
-  (%#let-values              false-method)
-  (%#letrec-values           false-method)
-  (%#letrec*-values          false-method)
-  (%#quote                   false-method)
-  (%#quote-syntax            false-method)
-  (%#call                    false-method)
-  (%#call-unchecked          false-method)
-  (%#if                      false-method)
-  (%#ref                     false-method)
-  (%#set!                    false-method)
-  (%#struct-instance?        false-method)
-  (%#struct-direct-instance? false-method)
-  (%#struct-ref              false-method)
-  (%#struct-set!             false-method)
-  (%#struct-direct-ref       false-method)
-  (%#struct-direct-set!      false-method)
-  (%#struct-unchecked-ref    false-method)
-  (%#struct-unchecked-set!   false-method))
-
-(defcompile-method #f ::false-special-form ()
-  (%#begin          false-method)
-  (%#begin-syntax   false-method)
-  (%#begin-foreign  false-method)
-  (%#module         false-method)
-  (%#import         false-method)
-  (%#export         false-method)
-  (%#provide        false-method)
-  (%#extern         false-method)
-  (%#define-values  false-method)
-  (%#define-syntax  false-method)
-  (%#define-alias   false-method)
-  (%#declare        false-method))
-
-(defcompile-method #f (::false ::false-special-form ::false-expression) ())
-
+;; method that collects top level bindings
 (defcompile-method (apply-collect-bindings)
   (::collect-bindings ::void) ()
   final:
-  (%#begin         collect-begin%)
-  (%#begin-syntax  collect-begin-syntax%)
-  (%#module        collect-module%)
+  (%#begin         apply-begin%)
+  (%#begin-syntax  apply-begin-syntax%)
+  (%#module        apply-module%)
   (%#define-values collect-bindings-define-values%)
   (%#define-syntax collect-bindings-define-syntax%))
 
+;; method that lifts nested modules
 (defcompile-method (apply-lift-modules modules: modules)
   (::lift-modules ::void)
   (modules)
   final:
-  (%#begin         collect-begin%)
+  (%#begin         apply-begin%)
   (%#module        lift-modules-module%))
 
+;; method that decides whether there is runtime code in the module
 (defcompile-method (apply-find-runtime-code) ::find-runtime-code ()
   final:
   (%#begin                   find-runtime-begin%)
@@ -282,20 +115,22 @@ namespace: gxc
   (%#struct-unchecked-ref    true-method)
   (%#struct-unchecked-set!   true-method))
 
+;; method that finds lambdas
 (defcompile-method (apply-find-lambda-expression) (::find-lambda-expression ::false) ()
   final:
-  (%#begin                   find-lambda-expression-begin%)
-  (%#begin-annotation        find-lambda-expression-begin-annotation%)
+  (%#begin                   find-last-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
   (%#lambda                       identity-method)
   (%#case-lambda                  identity-method)
-  (%#let-values              find-lambda-expression-let-values%)
-  (%#letrec-values           find-lambda-expression-let-values%)
-  (%#letrec*-values          find-lambda-expression-let-values%))
+  (%#let-values              find-body-let-values%)
+  (%#letrec-values           find-body-let-values%)
+  (%#letrec*-values          find-body-let-values%))
 
+;; method that counts return values, where possible.
 (defcompile-method (apply-count-values) (::count-values ::false-expression) ()
   final:
   (%#begin                   count-values-begin%)
-  (%#begin-annotation        count-values-begin-annotation%)
+  (%#begin-annotation        apply-begin-annotation%)
   (%#lambda                       count-values-single%)
   (%#case-lambda                  count-values-single%)
   (%#let-values              count-values-let-values%)
@@ -306,6 +141,7 @@ namespace: gxc
   (%#call-unchecked          count-values-call%)
   (%#if                      count-values-if%))
 
+;; abstact method to generate empty empty runtime code
 (defcompile-method #f ::generate-runtime-empty ()
   (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
@@ -340,12 +176,14 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-empty)
   (%#struct-unchecked-set!   generate-runtime-empty))
 
+;; concrete method to generate runtime loader code
 (defcompile-method (apply-generate-loader) (::generate-loader ::generate-runtime-empty)
   ()
   final:
   (%#begin                   generate-runtime-begin%)
   (%#import                  generate-runtime-loader-import%))
 
+;; concrete method to generate the runtime code of a module
 (defcompile-method (apply-generate-runtime) (::generate-runtime ::generate-runtime-empty)
   ()
   (%#begin                   generate-runtime-begin%)
@@ -374,37 +212,40 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-struct-unchecked-ref%)
   (%#struct-unchecked-set!   generate-runtime-struct-unchecked-setq%))
 
+;; concrete method to generate the runtime code of a phased section of a module
 (defcompile-method (apply-generate-runtime-phi) (::generate-runtime-phi
                                                  ::generate-runtime)
   ()
   final:
   (%#define-runtime generate-runtime-phi-define-runtime%))
 
+;; method to collection expression references
 (defcompile-method (apply-collect-expression-refs table: table) ::collect-expression-refs
   (table)
-  (%#begin                   collect-begin%)
-  (%#begin-annotation        collect-begin-annotation%)
-  (%#lambda                       collect-body-lambda%)
-  (%#case-lambda                  collect-body-case-lambda%)
-  (%#let-values              collect-body-let-values%)
-  (%#letrec-values           collect-body-let-values%)
-  (%#letrec*-values          collect-body-let-values%)
+  (%#begin                   apply-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
+  (%#lambda                       apply-body-lambda%)
+  (%#case-lambda                  apply-body-case-lambda%)
+  (%#let-values              apply-body-let-values%)
+  (%#letrec-values           apply-body-let-values%)
+  (%#letrec*-values          apply-body-let-values%)
   (%#quote                   void-method)
   (%#quote-syntax            void-method)
-  (%#call                    collect-operands)
-  (%#call-unchecked          collect-operands)
-  (%#if                      collect-operands)
+  (%#call                    apply-operands)
+  (%#call-unchecked          apply-operands)
+  (%#if                      apply-operands)
   (%#ref                     collect-refs-ref%)
   (%#set!                    collect-refs-setq%)
-  (%#struct-instance?        collect-operands)
-  (%#struct-direct-instance? collect-operands)
-  (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands)
-  (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands)
-  (%#struct-unchecked-ref    collect-operands)
-  (%#struct-unchecked-set!   collect-operands))
+  (%#struct-instance?        apply-operands)
+  (%#struct-direct-instance? apply-operands)
+  (%#struct-ref              apply-operands)
+  (%#struct-set!             apply-operands)
+  (%#struct-direct-ref       apply-operands)
+  (%#struct-direct-set!      apply-operands)
+  (%#struct-unchecked-ref    apply-operands)
+  (%#struct-unchecked-set!   apply-operands))
 
+;; method to generate the meta parts of a module
 (defcompile-method (apply-generate-meta state: state) (::generate-meta ::void-expression)
   (state)
   final:
@@ -421,6 +262,7 @@ namespace: gxc
   (%#begin-foreign  void-method)
   (%#declare        void-method))
 
+;; method to generate the meta parts of a phased section
 (defcompile-method (apply-generate-meta-phi state: state) ::generate-meta-phi
   (state)
   final:
@@ -452,64 +294,7 @@ namespace: gxc
   (%#struct-unchecked-set!   generate-meta-phi-expr)
   (%#declare                 void-method))
 
-;;; generic collectors
-(def (collect-begin% self stx)
-  (ast-case stx ()
-    ((_ . body)
-     (for-each (cut compile-e self <>) (stx-e #'body)))))
-
-(def (collect-begin-syntax% self stx)
-  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-    (collect-begin% self stx)))
-
-(def (collect-module% self stx)
-  (ast-case stx ()
-    ((_ id . body)
-     (let* ((ctx (syntax-local-e #'id))
-            (ctx-stx (module-context-code ctx)))
-       (parameterize ((current-expander-context ctx))
-         (compile-e self ctx-stx))))))
-
-(def (collect-begin-annotation% self stx)
-  (ast-case stx ()
-    ((_ ann expr)
-     (compile-e self #'expr))))
-
-(def (collect-define-values% self stx)
-  (ast-case stx ()
-    ((_ hd expr)
-     (compile-e self #'expr))))
-
-(def (collect-define-syntax% self stx)
-  (ast-case stx ()
-    ((_ id expr)
-     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (compile-e self #'expr)))))
-
-(def (collect-body-lambda% self stx)
-  (ast-case stx ()
-    ((_ hd body)
-     (compile-e self #'body))))
-
-(def (collect-body-case-lambda% self stx)
-  (ast-case stx ()
-    ((_ (hd body) ...)
-     (for-each (cut compile-e self <>) #'(body ...)))))
-
-(def (collect-body-let-values% self stx)
-  (ast-case stx ()
-    ((_ ((hd expr) ...) body)
-     (for-each (cut compile-e self <>) #'(expr ... body)))))
-
-(def (collect-body-setq% self stx)
-  (ast-case stx ()
-    ((_ id expr)
-     (compile-e self #'expr))))
-
-(def (collect-operands self stx)
-  (ast-case stx ()
-    ((_ rands ...)
-     (for-each (cut compile-e self <>) #'(rands ...)))))
+;;; compile method method implementations [sic]
 
 ;;; collect-bindings
 (def (collect-bindings-define-values% self stx)
@@ -525,7 +310,6 @@ namespace: gxc
   (ast-case stx ()
     ((_ id expr)
      (add-module-binding! #'id #t))))
-
 
 ;;; lift-modules
 (def (lift-modules-module% self stx)
@@ -1875,22 +1659,16 @@ namespace: gxc
     ((_ . body)
      (ormap (cut compile-e self <>) #'body))))
 
-
 ;; find-lambda-expression
-(def (find-lambda-expression-begin% self stx)
+(def (find-last-begin% self stx)
   (ast-case stx ()
     ((_ . body)
      (compile-e self (last #'body)))))
 
-(def (find-lambda-expression-begin-annotation% self stx)
+(def (find-body-let-values% self stx)
   (ast-case stx ()
-    ((_ ann body)
-     (compile-e self #'body))))
-
-(def (find-lambda-expression-let-values% self stx)
-  (ast-case stx ()
-    ((_ bind body)
-     (compile-e self #'body))))
+    ((_ bind . body)
+     (compile-e self (last #'body)))))
 
 ;; count-values
 (def (count-values-single% self stx)
@@ -1901,15 +1679,10 @@ namespace: gxc
     ((_ expr ...)
      (compile-e self (last #'(expr ...))))))
 
-(def (count-values-begin-annotation% self stx)
-  (ast-case stx ()
-    ((_ ann body)
-     (compile-e self #'body))))
-
 (def (count-values-let-values% self stx)
   (ast-case stx ()
-    ((_ bind body)
-     (compile-e self #'body))))
+    ((_ bind . body)
+     (compile-e self (last #'body)))))
 
 (def (count-values-call% self stx)
   (ast-case stx (%#ref)

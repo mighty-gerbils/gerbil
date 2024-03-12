@@ -8,11 +8,12 @@ namespace: gxc
 (import "../core/expander"
         "../expander"
         "base"
-        "compile"
+        "method"
         "optimize-base"
         "optimize-xform")
 (export #t)
 
+;; method to optimize direct procedure calls
 (defcompile-method (apply-optimize-call) (::optimize-call ::basic-xform) ()
   final:
   (%#call optimize-call%))

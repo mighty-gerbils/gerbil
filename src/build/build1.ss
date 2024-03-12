@@ -35,6 +35,7 @@
 
 (def gerbil-modules-compiler
   '("gerbil/compiler/base.ss"
+    "gerbil/compiler/method.ss"
     "gerbil/compiler/compile.ss"
     "gerbil/compiler/optimize-base.ss"
     "gerbil/compiler/optimize-xform.ss"
