@@ -5,10 +5,10 @@ namespace: gxc
 (%#begin (%#import
           :gerbil/core/expander
           :gerbil/expander
-          :gerbil/compiler/base)
+          :gerbil/compiler/base
+          :gerbil/compiler/method)
          (%#export #t)
          (%#define-runtime gambit-annotations gxc#gambit-annotations)
-         (%#define-runtime current-compile-method gxc#current-compile-method)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
          (%#define-runtime current-compile-marks gxc#current-compile-marks)
          (%#define-runtime
@@ -20,66 +20,15 @@ namespace: gxc
          (%#define-runtime
           make-bound-identifier-table
           gxc#make-bound-identifier-table)
-         (%#define-runtime stx-car-e gxc#stx-car-e)
-         (%#begin (%#define-runtime compile-e__0 gxc#compile-e__0)
-                  (%#define-runtime compile-e__1 gxc#compile-e__1)
-                  (%#define-runtime compile-e gxc#compile-e))
+         (%#define-runtime ::collect-bindings::t gxc#::collect-bindings::t)
+         (%#define-runtime ::collect-bindings? gxc#::collect-bindings?)
+         (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/compile__1")))
                   (%#define-syntax
-                   defcompile-method
-                   |gxc[:0:]#defcompile-method|))
-         (%#define-runtime void-method gxc#void-method)
-         (%#define-runtime false-method gxc#false-method)
-         (%#define-runtime true-method gxc#true-method)
-         (%#define-runtime identity-method gxc#identity-method)
-         (%#define-runtime ::void-expression::t gxc#::void-expression::t)
-         (%#define-runtime ::void-expression? gxc#::void-expression?)
-         (%#define-runtime make-::void-expression gxc#make-::void-expression)
-         (%#define-syntax ::void-expression |gxc[:0:]#::void-expression|)
-         (%#define-runtime
-          ::void-expression-bind-methods!
-          gxc#::void-expression-bind-methods!)
-         (%#define-runtime ::void-special-form::t gxc#::void-special-form::t)
-         (%#define-runtime ::void-special-form? gxc#::void-special-form?)
-         (%#define-runtime
-          make-::void-special-form
-          gxc#make-::void-special-form)
-         (%#define-syntax ::void-special-form |gxc[:0:]#::void-special-form|)
-         (%#define-runtime
-          ::void-special-form-bind-methods!
-          gxc#::void-special-form-bind-methods!)
-         (%#define-runtime ::void::t gxc#::void::t)
-         (%#define-runtime ::void? gxc#::void?)
-         (%#define-runtime make-::void gxc#make-::void)
-         (%#define-syntax ::void |gxc[:0:]#::void|)
-         (%#define-runtime ::void-bind-methods! gxc#::void-bind-methods!)
-         (%#define-runtime ::false-expression::t gxc#::false-expression::t)
-         (%#define-runtime ::false-expression? gxc#::false-expression?)
-         (%#define-runtime make-::false-expression gxc#make-::false-expression)
-         (%#define-syntax ::false-expression |gxc[:0:]#::false-expression|)
-         (%#define-runtime
-          ::false-expression-bind-methods!
-          gxc#::false-expression-bind-methods!)
-         (%#define-runtime ::false-special-form::t gxc#::false-special-form::t)
-         (%#define-runtime ::false-special-form? gxc#::false-special-form?)
-         (%#define-runtime
-          make-::false-special-form
-          gxc#make-::false-special-form)
-         (%#define-syntax ::false-special-form |gxc[:0:]#::false-special-form|)
-         (%#define-runtime
-          ::false-special-form-bind-methods!
-          gxc#::false-special-form-bind-methods!)
-         (%#define-runtime ::false::t gxc#::false::t)
-         (%#define-runtime ::false? gxc#::false?)
-         (%#define-runtime make-::false gxc#make-::false)
-         (%#define-syntax ::false |gxc[:0:]#::false|)
-         (%#define-runtime ::false-bind-methods! gxc#::false-bind-methods!)
-         (%#define-runtime ::collect-bindings::t gxc#::collect-bindings::t)
-         (%#define-runtime ::collect-bindings? gxc#::collect-bindings?)
-         (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
-         (%#define-syntax ::collect-bindings |gxc[:0:]#::collect-bindings|)
+                   ::collect-bindings
+                   |gxc[:0:]#::collect-bindings|))
          (%#define-runtime
           ::collect-bindings-bind-methods!
           gxc#::collect-bindings-bind-methods!)
@@ -279,23 +228,6 @@ namespace: gxc
                   (%#define-runtime
                    apply-generate-meta-phi
                    gxc#apply-generate-meta-phi))
-         (%#define-runtime collect-begin% gxc#collect-begin%)
-         (%#define-runtime collect-begin-syntax% gxc#collect-begin-syntax%)
-         (%#define-runtime collect-module% gxc#collect-module%)
-         (%#define-runtime
-          collect-begin-annotation%
-          gxc#collect-begin-annotation%)
-         (%#define-runtime collect-define-values% gxc#collect-define-values%)
-         (%#define-runtime collect-define-syntax% gxc#collect-define-syntax%)
-         (%#define-runtime collect-body-lambda% gxc#collect-body-lambda%)
-         (%#define-runtime
-          collect-body-case-lambda%
-          gxc#collect-body-case-lambda%)
-         (%#define-runtime
-          collect-body-let-values%
-          gxc#collect-body-let-values%)
-         (%#define-runtime collect-body-setq% gxc#collect-body-setq%)
-         (%#define-runtime collect-operands gxc#collect-operands)
          (%#define-runtime
           collect-bindings-define-values%
           gxc#collect-bindings-define-values%)
@@ -542,23 +474,7 @@ namespace: gxc
          (%#define-runtime collect-refs-ref% gxc#collect-refs-ref%)
          (%#define-runtime collect-refs-setq% gxc#collect-refs-setq%)
          (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%)
-         (%#define-runtime
-          find-lambda-expression-begin%
-          gxc#find-lambda-expression-begin%)
-         (%#define-runtime
-          find-lambda-expression-begin-annotation%
-          gxc#find-lambda-expression-begin-annotation%)
-         (%#define-runtime
-          find-lambda-expression-let-values%
-          gxc#find-lambda-expression-let-values%)
          (%#define-runtime count-values-single% gxc#count-values-single%)
-         (%#define-runtime count-values-begin% gxc#count-values-begin%)
-         (%#define-runtime
-          count-values-begin-annotation%
-          gxc#count-values-begin-annotation%)
-         (%#define-runtime
-          count-values-let-values%
-          gxc#count-values-let-values%)
          (%#define-runtime count-values-call% gxc#count-values-call%)
          (%#define-runtime count-values-if% gxc#count-values-if%))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/compile__0"))

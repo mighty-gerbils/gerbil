@@ -8,12 +8,14 @@ namespace: gxc
 (import "../core/expander"
         "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform"
         "optimize-top")
 (export #t)
 
+;; method to generate specializers
 (defcompile-method (apply-generate-method-specializers)
   (::generate-method-specializers ::identity)
   ()
@@ -23,27 +25,29 @@ namespace: gxc
   (%#module        xform-module%)
   (%#define-values generate-method-specializers-define-values%))
 
+;; method to collect method receiver references
 (defcompile-method (apply-collect-object-refs receiver: receiver methods: methods slots: slots)
   (::collect-object-refs ::void)
   (receiver methods slots)
   final:
-  (%#begin                   collect-begin%)
-  (%#begin-annotation        collect-begin-annotation%)
-  (%#lambda                       collect-body-lambda%)
-  (%#case-lambda                  collect-body-case-lambda%)
-  (%#let-values              collect-body-let-values%)
-  (%#letrec-values           collect-body-let-values%)
-  (%#letrec*-values          collect-body-let-values%)
+  (%#begin                   apply-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
+  (%#lambda                       apply-body-lambda%)
+  (%#case-lambda                  apply-body-case-lambda%)
+  (%#let-values              apply-body-let-values%)
+  (%#letrec-values           apply-body-let-values%)
+  (%#letrec*-values          apply-body-let-values%)
   (%#call                    collect-object-refs-call%)
-  (%#if                      collect-operands)
-  (%#set!                    collect-body-setq%)
-  (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands)
-  (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands)
-  (%#struct-unchecked-ref    collect-operands)
-  (%#struct-unchecked-set!   collect-operands))
+  (%#if                      apply-operands)
+  (%#set!                    apply-body-setq%)
+  (%#struct-ref              apply-operands)
+  (%#struct-set!             apply-operands)
+  (%#struct-direct-ref       apply-operands)
+  (%#struct-direct-set!      apply-operands)
+  (%#struct-unchecked-ref    apply-operands)
+  (%#struct-unchecked-set!   apply-operands))
 
+;; method to substitute method receiver references
 (defcompile-method (apply-subst-object-refs receiver: receiver klass: klass methods: methods slots: slots)
   (::subst-object-refs ::basic-xform-expression)
   (receiver klass methods slots)
@@ -52,7 +56,6 @@ namespace: gxc
   (%#call  subst-object-refs-call%))
 
 ;;; apply-generate-method-specializers
-
 (def (generate-method-specializers-define-values% self stx)
   (def (generate-method-bind $klass $method-table id $id)
     (let ($tmp (make-symbol (gensym '__method)))
@@ -419,7 +422,7 @@ namespace: gxc
            (hash-put! (@ self slots) slot #t))
          (compile-e self #'expr)))
 
-      (_ (collect-operands self stx)))))
+      (_ (apply-operands self stx)))))
 
 ;;; apply-subst-object-refs
 (def (subst-object-refs-call% self stx)

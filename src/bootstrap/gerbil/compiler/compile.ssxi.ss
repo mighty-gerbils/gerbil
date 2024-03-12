@@ -3,76 +3,6 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
-  (declare-type gxc#stx-car-e (@lambda 1 #f))
-  (declare-type gxc#compile-e__0 (@lambda 1 #f))
-  (declare-type gxc#compile-e__1 (@lambda 2 #f))
-  (declare-type
-   gxc#compile-e
-   (@case-lambda (1 gxc#compile-e__0) (2 gxc#compile-e__1)))
-  (declare-type gxc#void-method (@lambda 2 #f))
-  (declare-type gxc#false-method (@lambda 2 #f))
-  (declare-type gxc#true-method (@lambda 2 #f))
-  (declare-type gxc#identity-method (@lambda 2 #f))
-  (declare-type
-   gxc#::void-expression::t
-   (@class gxc#::void-expression::t () () () () #f #f #f #f #f))
-  (declare-type gxc#::void-expression? (@predicate gxc#::void-expression::t))
-  (declare-type
-   gxc#make-::void-expression
-   (@constructor gxc#::void-expression::t))
-  (declare-type
-   gxc#::void-special-form::t
-   (@class gxc#::void-special-form::t () () () () #f #f #f #f #f))
-  (declare-type
-   gxc#::void-special-form?
-   (@predicate gxc#::void-special-form::t))
-  (declare-type
-   gxc#make-::void-special-form
-   (@constructor gxc#::void-special-form::t))
-  (declare-type
-   gxc#::void::t
-   (@class gxc#::void::t
-           (gxc#::void-special-form::t gxc#::void-expression::t)
-           (gxc#::void-special-form::t gxc#::void-expression::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f))
-  (declare-type gxc#::void? (@predicate gxc#::void::t))
-  (declare-type gxc#make-::void (@constructor gxc#::void::t))
-  (declare-type
-   gxc#::false-expression::t
-   (@class gxc#::false-expression::t () () () () #f #f #f #f #f))
-  (declare-type gxc#::false-expression? (@predicate gxc#::false-expression::t))
-  (declare-type
-   gxc#make-::false-expression
-   (@constructor gxc#::false-expression::t))
-  (declare-type
-   gxc#::false-special-form::t
-   (@class gxc#::false-special-form::t () () () () #f #f #f #f #f))
-  (declare-type
-   gxc#::false-special-form?
-   (@predicate gxc#::false-special-form::t))
-  (declare-type
-   gxc#make-::false-special-form
-   (@constructor gxc#::false-special-form::t))
-  (declare-type
-   gxc#::false::t
-   (@class gxc#::false::t
-           (gxc#::false-special-form::t gxc#::false-expression::t)
-           (gxc#::false-special-form::t gxc#::false-expression::t)
-           ()
-           ()
-           #f
-           #f
-           #f
-           #f
-           #f))
-  (declare-type gxc#::false? (@predicate gxc#::false::t))
-  (declare-type gxc#make-::false (@constructor gxc#::false::t))
   (declare-type
    gxc#::collect-bindings::t
    (@class gxc#::collect-bindings::t
@@ -321,17 +251,6 @@ package: gerbil/compiler
   (declare-type
    gxc#apply-generate-meta-phi
    (@kw-lambda (state:) gxc#apply-generate-meta-phi__@))
-  (declare-type gxc#collect-begin% (@lambda 2 #f))
-  (declare-type gxc#collect-begin-syntax% (@lambda 2 #f))
-  (declare-type gxc#collect-module% (@lambda 2 #f))
-  (declare-type gxc#collect-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#collect-define-values% (@lambda 2 #f))
-  (declare-type gxc#collect-define-syntax% (@lambda 2 #f))
-  (declare-type gxc#collect-body-lambda% (@lambda 2 #f))
-  (declare-type gxc#collect-body-case-lambda% (@lambda 2 #f))
-  (declare-type gxc#collect-body-let-values% (@lambda 2 #f))
-  (declare-type gxc#collect-body-setq% (@lambda 2 #f))
-  (declare-type gxc#collect-operands (@lambda 2 #f))
   (declare-type gxc#collect-bindings-define-values% (@lambda 2 #f))
   (declare-type gxc#collect-bindings-define-syntax% (@lambda 2 #f))
   (declare-type gxc#lift-modules-module% (@lambda 2 #f))
@@ -526,12 +445,6 @@ package: gerbil/compiler
   (declare-type gxc#collect-refs-ref% (@lambda 2 #f))
   (declare-type gxc#collect-refs-setq% (@lambda 2 #f))
   (declare-type gxc#find-runtime-begin% (@lambda 2 #f))
-  (declare-type gxc#find-lambda-expression-begin% (@lambda 2 #f))
-  (declare-type gxc#find-lambda-expression-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#find-lambda-expression-let-values% (@lambda 2 #f))
   (declare-type gxc#count-values-single% (@lambda 2 #f))
-  (declare-type gxc#count-values-begin% (@lambda 2 #f))
-  (declare-type gxc#count-values-begin-annotation% (@lambda 2 #f))
-  (declare-type gxc#count-values-let-values% (@lambda 2 #f))
   (declare-type gxc#count-values-call% (@lambda 2 #f))
   (declare-type gxc#count-values-if% (@lambda 2 #f)))
