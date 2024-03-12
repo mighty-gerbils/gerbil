@@ -1,0 +1,148 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/core/expander
+          :gerbil/expander
+          :gerbil/compiler/base)
+         (%#export #t)
+         (%#define-runtime current-compile-method gxc#current-compile-method)
+         (%#begin (%#define-runtime compile-e__0 gxc#compile-e__0)
+                  (%#define-runtime compile-e__1 gxc#compile-e__1)
+                  (%#define-runtime compile-e gxc#compile-e))
+         (%#define-runtime stx-car-e gxc#stx-car-e)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/method__1")))
+                  (%#define-syntax
+                   defcompile-method
+                   |gxc[:0:]#defcompile-method|))
+         (%#define-runtime void-method gxc#void-method)
+         (%#define-runtime false-method gxc#false-method)
+         (%#define-runtime true-method gxc#true-method)
+         (%#define-runtime identity-method gxc#identity-method)
+         (%#define-runtime ::void-expression::t gxc#::void-expression::t)
+         (%#define-runtime ::void-expression? gxc#::void-expression?)
+         (%#define-runtime make-::void-expression gxc#make-::void-expression)
+         (%#define-syntax ::void-expression |gxc[:0:]#::void-expression|)
+         (%#define-runtime
+          ::void-expression-bind-methods!
+          gxc#::void-expression-bind-methods!)
+         (%#define-runtime ::void-special-form::t gxc#::void-special-form::t)
+         (%#define-runtime ::void-special-form? gxc#::void-special-form?)
+         (%#define-runtime
+          make-::void-special-form
+          gxc#make-::void-special-form)
+         (%#define-syntax ::void-special-form |gxc[:0:]#::void-special-form|)
+         (%#define-runtime
+          ::void-special-form-bind-methods!
+          gxc#::void-special-form-bind-methods!)
+         (%#define-runtime ::void::t gxc#::void::t)
+         (%#define-runtime ::void? gxc#::void?)
+         (%#define-runtime make-::void gxc#make-::void)
+         (%#define-syntax ::void |gxc[:0:]#::void|)
+         (%#define-runtime ::void-bind-methods! gxc#::void-bind-methods!)
+         (%#define-runtime ::false-expression::t gxc#::false-expression::t)
+         (%#define-runtime ::false-expression? gxc#::false-expression?)
+         (%#define-runtime make-::false-expression gxc#make-::false-expression)
+         (%#define-syntax ::false-expression |gxc[:0:]#::false-expression|)
+         (%#define-runtime
+          ::false-expression-bind-methods!
+          gxc#::false-expression-bind-methods!)
+         (%#define-runtime ::false-special-form::t gxc#::false-special-form::t)
+         (%#define-runtime ::false-special-form? gxc#::false-special-form?)
+         (%#define-runtime
+          make-::false-special-form
+          gxc#make-::false-special-form)
+         (%#define-syntax ::false-special-form |gxc[:0:]#::false-special-form|)
+         (%#define-runtime
+          ::false-special-form-bind-methods!
+          gxc#::false-special-form-bind-methods!)
+         (%#define-runtime ::false::t gxc#::false::t)
+         (%#define-runtime ::false? gxc#::false?)
+         (%#define-runtime make-::false gxc#make-::false)
+         (%#define-syntax ::false |gxc[:0:]#::false|)
+         (%#define-runtime ::false-bind-methods! gxc#::false-bind-methods!)
+         (%#define-runtime
+          ::identity-expression::t
+          gxc#::identity-expression::t)
+         (%#define-runtime ::identity-expression? gxc#::identity-expression?)
+         (%#define-runtime
+          make-::identity-expression
+          gxc#make-::identity-expression)
+         (%#define-syntax
+          ::identity-expression
+          |gxc[:0:]#::identity-expression|)
+         (%#define-runtime
+          ::identity-expression-bind-methods!
+          gxc#::identity-expression-bind-methods!)
+         (%#define-runtime
+          ::identity-special-form::t
+          gxc#::identity-special-form::t)
+         (%#define-runtime
+          ::identity-special-form?
+          gxc#::identity-special-form?)
+         (%#define-runtime
+          make-::identity-special-form
+          gxc#make-::identity-special-form)
+         (%#define-syntax
+          ::identity-special-form
+          |gxc[:0:]#::identity-special-form|)
+         (%#define-runtime
+          ::identity-special-form-bind-methods!
+          gxc#::identity-special-form-bind-methods!)
+         (%#define-runtime ::identity::t gxc#::identity::t)
+         (%#define-runtime ::identity? gxc#::identity?)
+         (%#define-runtime make-::identity gxc#make-::identity)
+         (%#define-syntax ::identity |gxc[:0:]#::identity|)
+         (%#define-runtime
+          ::identity-bind-methods!
+          gxc#::identity-bind-methods!)
+         (%#define-runtime
+          ::basic-xform-expression::t
+          gxc#::basic-xform-expression::t)
+         (%#define-runtime
+          ::basic-xform-expression?
+          gxc#::basic-xform-expression?)
+         (%#define-runtime
+          make-::basic-xform-expression
+          gxc#make-::basic-xform-expression)
+         (%#define-syntax
+          ::basic-xform-expression
+          |gxc[:0:]#::basic-xform-expression|)
+         (%#define-runtime
+          ::basic-xform-expression-bind-methods!
+          gxc#::basic-xform-expression-bind-methods!)
+         (%#define-runtime ::basic-xform::t gxc#::basic-xform::t)
+         (%#define-runtime ::basic-xform? gxc#::basic-xform?)
+         (%#define-runtime make-::basic-xform gxc#make-::basic-xform)
+         (%#define-syntax ::basic-xform |gxc[:0:]#::basic-xform|)
+         (%#define-runtime
+          ::basic-xform-bind-methods!
+          gxc#::basic-xform-bind-methods!)
+         (%#define-runtime apply-begin% gxc#apply-begin%)
+         (%#define-runtime apply-begin-syntax% gxc#apply-begin-syntax%)
+         (%#define-runtime apply-module% gxc#apply-module%)
+         (%#define-runtime apply-begin-annotation% gxc#apply-begin-annotation%)
+         (%#define-runtime apply-define-values% gxc#apply-define-values%)
+         (%#define-runtime apply-define-syntax% gxc#apply-define-syntax%)
+         (%#define-runtime apply-body-lambda% gxc#apply-body-lambda%)
+         (%#define-runtime apply-body-case-lambda% gxc#apply-body-case-lambda%)
+         (%#define-runtime apply-body-let-values% gxc#apply-body-let-values%)
+         (%#define-runtime apply-body-setq% gxc#apply-body-setq%)
+         (%#define-runtime apply-operands gxc#apply-operands)
+         (%#define-runtime xform-wrap-source gxc#xform-wrap-source)
+         (%#define-runtime xform-begin% gxc#xform-begin%)
+         (%#define-runtime xform-begin-syntax% gxc#xform-begin-syntax%)
+         (%#define-runtime xform-module% gxc#xform-module%)
+         (%#define-runtime xform-define-values% gxc#xform-define-values%)
+         (%#define-runtime xform-define-syntax% gxc#xform-define-syntax%)
+         (%#define-runtime xform-begin-annotation% gxc#xform-begin-annotation%)
+         (%#define-runtime xform-lambda% gxc#xform-lambda%)
+         (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
+         (%#define-runtime xform-let-values% gxc#xform-let-values%)
+         (%#define-runtime xform-operands gxc#xform-operands)
+         (%#define-runtime xform-call% gxc#xform-call%)
+         (%#define-runtime xform-setq% gxc#xform-setq%))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/method__0"))

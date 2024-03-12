@@ -6,7 +6,7 @@ namespace: gxc
           :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
-          :gerbil/compiler/compile
+          :gerbil/compiler/method
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)

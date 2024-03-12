@@ -6,73 +6,19 @@ namespace: gxc
           :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
+          :gerbil/compiler/method
           :gerbil/compiler/compile
           :gerbil/compiler/optimize-base)
          (%#export #t)
-         (%#define-runtime
-          ::identity-expression::t
-          gxc#::identity-expression::t)
-         (%#define-runtime ::identity-expression? gxc#::identity-expression?)
-         (%#define-runtime
-          make-::identity-expression
-          gxc#make-::identity-expression)
+         (%#define-runtime ::collect-mutators::t gxc#::collect-mutators::t)
+         (%#define-runtime ::collect-mutators? gxc#::collect-mutators?)
+         (%#define-runtime make-::collect-mutators gxc#make-::collect-mutators)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/optimize-xform__1")))
                   (%#define-syntax
-                   ::identity-expression
-                   |gxc[:0:]#::identity-expression|))
-         (%#define-runtime
-          ::identity-expression-bind-methods!
-          gxc#::identity-expression-bind-methods!)
-         (%#define-runtime
-          ::identity-special-form::t
-          gxc#::identity-special-form::t)
-         (%#define-runtime
-          ::identity-special-form?
-          gxc#::identity-special-form?)
-         (%#define-runtime
-          make-::identity-special-form
-          gxc#make-::identity-special-form)
-         (%#define-syntax
-          ::identity-special-form
-          |gxc[:0:]#::identity-special-form|)
-         (%#define-runtime
-          ::identity-special-form-bind-methods!
-          gxc#::identity-special-form-bind-methods!)
-         (%#define-runtime ::identity::t gxc#::identity::t)
-         (%#define-runtime ::identity? gxc#::identity?)
-         (%#define-runtime make-::identity gxc#make-::identity)
-         (%#define-syntax ::identity |gxc[:0:]#::identity|)
-         (%#define-runtime
-          ::identity-bind-methods!
-          gxc#::identity-bind-methods!)
-         (%#define-runtime
-          ::basic-xform-expression::t
-          gxc#::basic-xform-expression::t)
-         (%#define-runtime
-          ::basic-xform-expression?
-          gxc#::basic-xform-expression?)
-         (%#define-runtime
-          make-::basic-xform-expression
-          gxc#make-::basic-xform-expression)
-         (%#define-syntax
-          ::basic-xform-expression
-          |gxc[:0:]#::basic-xform-expression|)
-         (%#define-runtime
-          ::basic-xform-expression-bind-methods!
-          gxc#::basic-xform-expression-bind-methods!)
-         (%#define-runtime ::basic-xform::t gxc#::basic-xform::t)
-         (%#define-runtime ::basic-xform? gxc#::basic-xform?)
-         (%#define-runtime make-::basic-xform gxc#make-::basic-xform)
-         (%#define-syntax ::basic-xform |gxc[:0:]#::basic-xform|)
-         (%#define-runtime
-          ::basic-xform-bind-methods!
-          gxc#::basic-xform-bind-methods!)
-         (%#define-runtime ::collect-mutators::t gxc#::collect-mutators::t)
-         (%#define-runtime ::collect-mutators? gxc#::collect-mutators?)
-         (%#define-runtime make-::collect-mutators gxc#make-::collect-mutators)
-         (%#define-syntax ::collect-mutators |gxc[:0:]#::collect-mutators|)
+                   ::collect-mutators
+                   |gxc[:0:]#::collect-mutators|))
          (%#define-runtime
           ::collect-mutators-bind-methods!
           gxc#::collect-mutators-bind-methods!)
@@ -216,19 +162,6 @@ namespace: gxc
                   (%#define-runtime
                    apply-collect-runtime-refs
                    gxc#apply-collect-runtime-refs))
-         (%#define-runtime xform-wrap-source gxc#xform-wrap-source)
-         (%#define-runtime xform-begin% gxc#xform-begin%)
-         (%#define-runtime xform-begin-syntax% gxc#xform-begin-syntax%)
-         (%#define-runtime xform-module% gxc#xform-module%)
-         (%#define-runtime xform-define-values% gxc#xform-define-values%)
-         (%#define-runtime xform-define-syntax% gxc#xform-define-syntax%)
-         (%#define-runtime xform-begin-annotation% gxc#xform-begin-annotation%)
-         (%#define-runtime xform-lambda% gxc#xform-lambda%)
-         (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
-         (%#define-runtime xform-let-values% gxc#xform-let-values%)
-         (%#define-runtime xform-operands gxc#xform-operands)
-         (%#define-runtime xform-call% gxc#xform-call%)
-         (%#define-runtime xform-setq% gxc#xform-setq%)
          (%#define-runtime collect-mutators-setq% gxc#collect-mutators-setq%)
          (%#define-runtime collect-methods-call% gxc#collect-methods-call%)
          (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
@@ -242,11 +175,7 @@ namespace: gxc
           collect-runtime-refs-setq%
           gxc#collect-runtime-refs-setq%)
          (%#define-runtime find-body% gxc#find-body%)
-         (%#define-runtime find-begin-annotation% gxc#find-begin-annotation%)
-         (%#define-runtime find-lambda% gxc#find-lambda%)
-         (%#define-runtime find-case-lambda% gxc#find-case-lambda%)
          (%#define-runtime find-let-values% gxc#find-let-values%)
-         (%#define-runtime find-setq% gxc#find-setq%)
          (%#define-runtime find-var-refs-ref% gxc#find-var-refs-ref%)
          (%#define-runtime find-var-refs-setq% gxc#find-var-refs-setq%))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform__0"))
