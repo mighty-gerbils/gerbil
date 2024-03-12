@@ -122,6 +122,7 @@ namespace: gxc
           ::basic-xform-bind-methods!
           gxc#::basic-xform-bind-methods!)
          (%#define-runtime apply-begin% gxc#apply-begin%)
+         (%#define-runtime apply-last-begin% gxc#apply-last-begin%)
          (%#define-runtime apply-begin-syntax% gxc#apply-begin-syntax%)
          (%#define-runtime apply-module% gxc#apply-module%)
          (%#define-runtime apply-begin-annotation% gxc#apply-begin-annotation%)
@@ -130,6 +131,9 @@ namespace: gxc
          (%#define-runtime apply-body-lambda% gxc#apply-body-lambda%)
          (%#define-runtime apply-body-case-lambda% gxc#apply-body-case-lambda%)
          (%#define-runtime apply-body-let-values% gxc#apply-body-let-values%)
+         (%#define-runtime
+          apply-body-last-let-values%
+          gxc#apply-body-last-let-values%)
          (%#define-runtime apply-body-setq% gxc#apply-body-setq%)
          (%#define-runtime apply-operands gxc#apply-operands)
          (%#define-runtime xform-wrap-source gxc#xform-wrap-source)

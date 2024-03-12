@@ -474,13 +474,7 @@ namespace: gxc
          (%#define-runtime collect-refs-ref% gxc#collect-refs-ref%)
          (%#define-runtime collect-refs-setq% gxc#collect-refs-setq%)
          (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%)
-         (%#define-runtime find-last-begin% gxc#find-last-begin%)
-         (%#define-runtime find-body-let-values% gxc#find-body-let-values%)
          (%#define-runtime count-values-single% gxc#count-values-single%)
-         (%#define-runtime count-values-begin% gxc#count-values-begin%)
-         (%#define-runtime
-          count-values-let-values%
-          gxc#count-values-let-values%)
          (%#define-runtime count-values-call% gxc#count-values-call%)
          (%#define-runtime count-values-if% gxc#count-values-if%))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/compile__0"))
