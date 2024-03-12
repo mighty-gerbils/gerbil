@@ -118,24 +118,24 @@ namespace: gxc
 ;; method that finds lambdas
 (defcompile-method (apply-find-lambda-expression) (::find-lambda-expression ::false) ()
   final:
-  (%#begin                   find-last-begin%)
+  (%#begin                   apply-last-begin%)
   (%#begin-annotation        apply-begin-annotation%)
   (%#lambda                       identity-method)
   (%#case-lambda                  identity-method)
-  (%#let-values              find-body-let-values%)
-  (%#letrec-values           find-body-let-values%)
-  (%#letrec*-values          find-body-let-values%))
+  (%#let-values              apply-body-last-let-values%)
+  (%#letrec-values           apply-body-last-let-values%)
+  (%#letrec*-values          apply-body-last-let-values%))
 
 ;; method that counts return values, where possible.
 (defcompile-method (apply-count-values) (::count-values ::false-expression) ()
   final:
-  (%#begin                   count-values-begin%)
+  (%#begin                   apply-last-begin%)
   (%#begin-annotation        apply-begin-annotation%)
   (%#lambda                       count-values-single%)
   (%#case-lambda                  count-values-single%)
-  (%#let-values              count-values-let-values%)
-  (%#letrec-values           count-values-let-values%)
-  (%#letrec*-values          count-values-let-values%)
+  (%#let-values              apply-body-last-let-values%)
+  (%#letrec-values           apply-body-last-let-values%)
+  (%#letrec*-values          apply-body-last-let-values%)
   (%#quote                   count-values-single%)
   (%#call                    count-values-call%)
   (%#call-unchecked          count-values-call%)
@@ -1659,30 +1659,9 @@ namespace: gxc
     ((_ . body)
      (ormap (cut compile-e self <>) #'body))))
 
-;; find-lambda-expression
-(def (find-last-begin% self stx)
-  (ast-case stx ()
-    ((_ . body)
-     (compile-e self (last #'body)))))
-
-(def (find-body-let-values% self stx)
-  (ast-case stx ()
-    ((_ bind . body)
-     (compile-e self (last #'body)))))
-
 ;; count-values
 (def (count-values-single% self stx)
   1)
-
-(def (count-values-begin% self stx)
-  (ast-case stx ()
-    ((_ expr ...)
-     (compile-e self (last #'(expr ...))))))
-
-(def (count-values-let-values% self stx)
-  (ast-case stx ()
-    ((_ bind . body)
-     (compile-e self (last #'body)))))
 
 (def (count-values-call% self stx)
   (ast-case stx (%#ref)

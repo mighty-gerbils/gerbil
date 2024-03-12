@@ -273,11 +273,17 @@ namespace: gxc
 
 
 ;;; Common definitions for compile methods
-;;; applicative methods: the AST is applied to extract a value
+;;; applicative methods: the method is applied to the AST to extract a value,
+;;; possibly by side effect.
 (def (apply-begin% self stx)
   (ast-case stx ()
     ((_ . body)
      (for-each (cut compile-e self <>) (stx-e #'body)))))
+
+(def (apply-last-begin% self stx)
+  (ast-case stx ()
+    ((_ . body)
+     (compile-e self (last #'body)))))
 
 (def (apply-begin-syntax% self stx)
   (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
@@ -321,6 +327,11 @@ namespace: gxc
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
      (for-each (cut compile-e self <>) #'(expr ... body)))))
+
+(def (apply-body-last-let-values% self stx)
+  (ast-case stx ()
+    ((_ bind . body)
+     (compile-e self (last #'body)))))
 
 (def (apply-body-setq% self stx)
   (ast-case stx ()
