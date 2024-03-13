@@ -1,0 +1,10 @@
+diff --git a/doc/.vuepress/config.js b/doc/.vuepress/config.js
+index 53c21536..a1505af2 100644
+--- a/doc/.vuepress/config.js
++++ b/doc/.vuepress/config.js
+@@ -1,4 +1,5 @@
+ module.exports = {
++  base: "/",
+   title: 'Gerbil Scheme',
+   description: '',
+   themeConfig: {
