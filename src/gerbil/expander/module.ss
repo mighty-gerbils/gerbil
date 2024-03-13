@@ -593,7 +593,8 @@ namespace: gx
            (bind-id (stx-e id))
            (mod-id
             (if (module-context? super)
-              (make-symbol (expander-context-id super) "~" bind-id)
+              ;; TODO use -- for section separator until ~ is allowed
+              (make-symbol (expander-context-id super) "--" bind-id)
               bind-id))
            (ns
             (symbol->string mod-id))
