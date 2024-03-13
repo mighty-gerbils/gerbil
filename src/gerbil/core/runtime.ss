@@ -1693,6 +1693,10 @@ package: gerbil/core
     load-module
 
     ;; :gerbil/runtime/init
+    load-path
+    add-load-path!
+    set-load-path!
+    reset-load-path!
     gerbil-load-expander!
     ))
 

@@ -16,7 +16,6 @@ namespace: #f
   (gx#current-expander-marks  '())
   (gx#current-expander-phi     0)
   (gx#current-expander-context (gx#make-top-context))
-  (gx#current-expander-module-library-path (current-module-library-path))
   (gx#current-expander-module-registry (make-hash-table))
   (gx#current-expander-module-import gx#core-import-module)
   (gx#current-expander-module-eval   gx#core-eval-module)
@@ -59,69 +58,26 @@ namespace: #f
 (def (__gxi-init-interactive! cmdline)
   (void))
 
-;; hook load to be able to load raw gambit code when the expander is hooked
-(def (load-scheme path)
-  (parameterize ((__loading-scheme-source path))
-    (##load path (lambda args #f) #t #t #f)))
-
 ;; load path utils
 (def (load-path)
-  (values
-    (library-load-path)
-    (expander-load-path)))
+  (##get-module-search-order))
 
-(def (library-load-path)
-  (current-module-library-path))
-
-(def (expander-load-path)
-  (gx#current-expander-module-library-path))
-
-(def (add-load-path . paths)
-  (apply add-library-load-path paths)
-  (apply add-expander-load-path paths))
-
-(def (add-library-load-path . paths)
-  (let* ((current (current-module-library-path))
+(def (add-load-path! . paths)
+  (let* ((current (load-path))
          (paths (map path-expand paths))
          (paths (filter (lambda (x) (not (member x current))) paths)))
-    (current-module-library-path (append current paths))))
+    (for-each module-search-order-add! (reverse paths))
+    ;; TODO remove after recursive bootstrap
+    (let (current (current-module-library-path))
+      (current-module-library-path (append paths current)))))
 
-(def (add-expander-load-path . paths)
-  (let* ((current (gx#current-expander-module-library-path))
-         (paths (map path-expand paths))
-         (paths (filter (lambda (x) (not (member x current))) paths)))
-    (gx#current-expander-module-library-path (append current paths))))
+(def (set-load-path! paths)
+  (##set-module-search-order! paths)
+  ;; TODO remove after recursive bootstrap
+  (current-module-library-path paths))
 
-(def (cons-load-path . paths)
-  (apply cons-library-load-path paths)
-  (apply cons-expander-load-path paths))
-
-(def (cons-library-load-path . paths)
-  (let ((current (current-module-library-path))
-        (paths (map path-expand paths)))
-    (current-module-library-path (append paths current))))
-
-(def (cons-expander-load-path . paths)
-  (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-expand paths)))
-    (gx#current-expander-module-library-path (append paths current))))
-
-(def (with-cons-load-path thunk . paths)
-  (apply with-cons-library-load-path
-    (lambda () (apply with-cons-expander-load-path thunk paths))
-    paths))
-
-(def (with-cons-library-load-path thunk . paths)
-  (let ((current (current-module-library-path))
-        (paths (map path-expand paths)))
-    (parameterize ((current-module-library-path (append paths current)))
-      (thunk))))
-
-(def (with-cons-expander-load-path thunk . paths)
-  (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-expand paths)))
-    (parameterize ((gx#current-expander-module-library-path (append paths current)))
-      (thunk))))
+(def (reset-load-path!)
+  (set-load-path! []))
 
 ;; stuffs
 (def (__expand-source src)
@@ -230,7 +186,7 @@ namespace: #f
 (def (__eval-module obj)
   (gx#core-eval-module obj))
 
-(def (gerbil-runtime-init! builtin-modules)
+(def (gerbil-runtime-init! (compat-builtin-modules '()))
   (unless __runtime-initialized
     ;; set this to true, we want those stack traces in our programs
     (dump-stack-trace? #t)
@@ -252,12 +208,14 @@ namespace: #f
                             (string-split envvar #\:))
                     loadpath)))
              (else loadpath))))
-      (current-module-library-path loadpath))
+      ;; initialize the loader
+      (set-load-path! loadpath))
 
-    ;; initialize the modue registry
+    ;; TODO remove this after recursive bootstrap
+    ;; initialize the module registry
     (let* ((registry-entry (lambda (m) (cons m 'builtin)))
            (module-registry
-            (let lp ((rest builtin-modules) (registry '()))
+            (let lp ((rest compat-builtin-modules) (registry '()))
               (match rest
                 ([mod . rest]
                  (lp rest
@@ -268,6 +226,7 @@ namespace: #f
                  (list->hash-table
                   registry))))))
       (current-module-registry module-registry))
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;; et the readtable
     (current-readtable __*readtable*)
@@ -282,9 +241,8 @@ namespace: #f
 (def __runtime-initialized #f)
 
 (def (gerbil-load-expander!)
-  (unless __runtime-initialized
-    (error "runtime has not been initialized"))
   (unless __expander-loaded
+    (gerbil-runtime-init! '())
     (__load-gxi)
     ;; and make it idempotent
     (set! __expander-loaded #t)))

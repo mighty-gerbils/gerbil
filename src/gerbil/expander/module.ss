@@ -415,7 +415,7 @@ namespace: gx
                  path)))
     (core-resolve-path path (or (stx-source stx-path) rel))))
 
-;; for each path in current-expander-module-library-path look for
+;; for each path in load-path look for
 ;;  subpath with .ssi (compiled module interface) or .ss
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
@@ -428,7 +428,7 @@ namespace: gx
                  (map (lambda (ext) (string-append spath ext))
                       '(".ss" ".sld" ".scm"))
                  [spath])))
-    (let lp ((rest (current-expander-module-library-path)))
+    (let lp ((rest (load-path)))
       (match rest
         ([dir . rest]
          (def (resolve ssi srcs)

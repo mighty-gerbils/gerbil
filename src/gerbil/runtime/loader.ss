@@ -8,6 +8,8 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "hash")
 
+;; TODO -- deprecated; the old loader.
+;;         remove after recursive bootstrap
 (def current-module-library-path
   (make-parameter #f))
 (def current-module-registry
