@@ -7,10 +7,10 @@ package: gerbil/core
 
 (import "runtime" "sugar"
         (phi: +1 "runtime" "expander" "sugar"))
-(export  (import: <MOP:1> <MOP:4>)
-         (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4>)))
+(export  (import: MOP-1 MOP-4)
+         (phi: +1 (import: MOP-1 MOP-2 MOP-3 MOP-4)))
 
-(module <MOP:1>
+(module MOP-1
   (export #t (phi: +1 module-type-id make-class-type-id))
 
   (begin-syntax
@@ -177,8 +177,8 @@ package: gerbil/core
   (defsyntax (defclass-type stx)
     (generate-typedef stx #f)))
 
-(module <MOP:2>
-  (import "expander" <MOP:1>)
+(module MOP-2
+  (import "expander" MOP-1)
   (export #t)
   ;; class meta type; expansion time class reflection.
   (defclass-type class-type-info::t ()
@@ -252,8 +252,8 @@ package: gerbil/core
            (and (class-type-info? e)
                 (is? e))))))
 
-(module <MOP:3>
-  (import <MOP:2> (phi: +1 <MOP:2>))
+(module MOP-3
+  (import MOP-2 (phi: +1 MOP-2))
   (export #t)
 
   ;; meta-circular
@@ -339,8 +339,8 @@ package: gerbil/core
       ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors-set!)]
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]])))
 
-(module <MOP:4>
-  (import <MOP:1> (phi: +1 <MOP:1> <MOP:2> <MOP:3>))
+(module MOP-4
+  (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))
   (export #t)
 
   ;; and here we define the general MOP macros
@@ -668,4 +668,4 @@ package: gerbil/core
     ((recur obj id path ... last val)
      (recur (@ obj id path ...) last val))))
 
-(import <MOP:1> <MOP:4> (phi: +1 <MOP:1> <MOP:2> <MOP:3> <MOP:4>))
+(import MOP-1 MOP-4 (phi: +1 MOP-1 MOP-2 MOP-3 MOP-4))
