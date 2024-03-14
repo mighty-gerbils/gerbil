@@ -621,7 +621,7 @@ namespace: gx
           ;; such modules do not exist in explicit compiled form, so any character
           ;; is admissible.
           (char=? (string-ref str 0) #\:)
-          ;; otherwise a-z, A-Z, 0-9 and "-"
+          ;; otherwise a-z, A-Z, 0-9,  "-" and "_"
           (let loop ((i (fx- len 1)))
             (if (fx< i 0)
               #t
@@ -629,7 +629,8 @@ namespace: gx
                 (and (or (and (char>=? c #\a) (char<=? c #\z))
                          (and (char>=? c #\A) (char<=? c #\Z))
                          (and (char>=? c #\0) (char<=? c #\9))
-                         (char=? c #\-))
+                         (char=? c #\-)
+                         (char=? c #\_))
                      (loop (fx- i 1))))))))))
 
   (core-syntax-case stx ()

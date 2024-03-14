@@ -165,7 +165,7 @@ namespace: #f
 (def (__eval-module obj)
   (gx#core-eval-module obj))
 
-(def (gerbil-runtime-init! (compat-builtin-modules '()))
+(def (gerbil-runtime-init! builtin-modules)
   (unless __runtime-initialized
     ;; set this to true, we want those stack traces in our programs
     (dump-stack-trace? #t)
@@ -188,19 +188,25 @@ namespace: #f
                     loadpath)))
              (else loadpath))))
       ;; initialize the loader
+      ;; TODO after recursive bootstrap, take gerbil-gambit? option to
+      ;;      add to the load path instead of setting it.
       (set-load-path! loadpath))
+
+    ;; register builtin modules
+    (register-builtin-modules! builtin-modules)
 
     ;; TODO remove this after recursive bootstrap
     ;; initialize the module registry
     (let* ((registry-entry (lambda (m) (cons m 'builtin)))
            (module-registry
-            (let lp ((rest compat-builtin-modules) (registry '()))
+            (let lp ((rest builtin-modules) (registry '()))
               (match rest
                 ([mod . rest]
-                 (lp rest
-                     (cons* (registry-entry (string-append mod "__0"))
-                            (registry-entry (string-append mod "__rt"))
-                            registry)))
+                 (let (modstr (symbol->string mod))
+                   (lp rest
+                       (cons* (registry-entry (string-append modstr "__0"))
+                              (registry-entry (string-append modstr "__rt"))
+                              registry))))
                 (else
                  (list->hash-table
                   registry))))))

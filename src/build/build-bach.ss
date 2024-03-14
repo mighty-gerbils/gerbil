@@ -69,6 +69,9 @@
 (def bach-main
   "gerbil/main")
 
+(def supply-builtin-modules-scm
+  "gerbil/gerbil-builtin-modules.scm")
+
 (def (invoke program args)
   (let* ((proc (open-process [path: program arguments: args
                                     stdout-redirection: #f
@@ -114,9 +117,12 @@
            "-cc-options" cc-options
            gsc-gx-macros ...
            builtin-modules-scm ...
+           supply-builtin-modules-scm
            bach-main-scm])
   ;; clean up
   (delete-file bach-main-scm)
   (for-each (lambda (ext)
-              (delete-file (path-expand (string-append bach-main ext) gerbil-libdir)))
+              (let (f (path-expand (string-append bach-main ext) gerbil-libdir))
+                (when (file-exists? f)
+                  (delete-file f))))
             '(".ssi" "--0.o1" "--1.o1" ".o1")))

@@ -142,14 +142,13 @@ namespace: gxc
 (def (compile-executable-module/separate ctx opts)
   (def (generate-stub builtin-modules)
     (let (mod-main (find-runtime-symbol ctx 'main))
-      (for-each (lambda (modref)
-                  (write `(##supply-module ,(string->symbol modref)))
-                  (newline))
-                builtin-modules)
+      (write `(define builtin-modules
+                (append (quote ,(map string->symbol builtin-modules))
+                        libgerbil-builtin-modules)))
       (write `(define (gerbil-main)
                 (with-unwind-protect
                  (lambda ()
-                   (gerbil-runtime-init!)
+                   (gerbil-runtime-init! builtin-modules)
                    (apply ,mod-main (cdr (command-line))))
                  (lambda ()
                    (with-catch void (lambda () (force-output (current-output-port))))
@@ -603,28 +602,27 @@ namespace: gxc
            (runtime-module-id
             ;; TODO separator to become ~
             (make-symbol (expander-context-id ctx) "--" 0))
-           (runtime-module-code
-            ['begin ['##supply-module runtime-module-id] runtime-code])
            (scm0 (compile-output-file ctx 0 ".scm"))
            (scms (compile-static-output-file ctx)))
       ;; copy compiled scm0 to static and delete when not keep-scm
-      (compile-scm-file scm0 runtime-module-code)
+      (compile-scm-file scm0 runtime-code supply: runtime-module-id)
       (when (file-exists? scms)
         (delete-file scms))
-      (compile-scm-file scms runtime-code)))
+      (parameterize ((current-compile-invoke-gsc #f)
+                     (current-compile-keep-scm #t))
+        (compile-scm-file scms runtime-code))))
 
   (def (generate-loader-code ctx code rt)
-    (let* ((loader-code
-            (parameterize ((current-expander-context ctx))
-              (apply-generate-loader code)))
-           (loader-code
-            (if rt
-              ['begin loader-code ['##demand-module rt]]
-              loader-code))
-           (loader-code
-            ['begin ['##supply-module (expander-context-id ctx)] loader-code]))
+    (let* ((loader-deps (box []))
+           (_ (parameterize ((current-expander-context ctx))
+                (apply-collect-loader-deps code deps: loader-deps)))
+           (loader-deps (reverse (unbox loader-deps)))
+           (loader-deps
+            (if rt (append loader-deps [rt]) loader-deps)))
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
+        (compile-scm-file (compile-output-file ctx #f ".scm") '(void)
+                          supply: (expander-context-id ctx)
+                          demand: loader-deps))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -671,10 +669,9 @@ namespace: gxc
                  (generate-runtime-phi code)))
               (module-id
                ;; TODO separator to become ~
-               (make-symbol (expander-context-id ctx) "--" n))
-              (module-code
-               ['begin ['##supply-module module-id] code]))
-         (compile-scm-file (compile-output-file ctx n ".scm") module-code #t)))))
+               (make-symbol (expander-context-id ctx) "--" n)))
+         (compile-scm-file (compile-output-file ctx n ".scm") code #t
+                           supply: module-id)))))
 
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
@@ -721,7 +718,9 @@ namespace: gxc
     (reverse (unbox modules))))
 
 ;;; utilities
-(def (compile-scm-file path code (phi? #f))
+(def (compile-scm-file path code (phi? #f)
+                       supply: (module-id #f)
+                       demand: (module-deps #f))
   (verbose "compile " path)
   (with-output-to-scheme-file path
     (lambda ()
@@ -731,6 +730,14 @@ namespace: gxc
           (standard-bindings)
           (extended-bindings)
           ,@(if phi? '((inlining-limit 200)) '())))
+      (when module-id
+        (write `(##supply-module ,module-id))
+        (newline))
+      (when module-deps
+        ;; TODO once the builtin module registry situation is resolved
+        ;;      change this code to (##demand-module ,dep)
+        (for-each (lambda (dep) (when dep (write `(load-module ',dep)) (newline)))
+                  module-deps))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
     (gsc-compile-file path phi?))
@@ -787,31 +794,11 @@ namespace: gxc
   (not (string-empty? str)))
 
 (def (gsc-compile-file path phi?)
-  (def (gsc-link-path base-path)
-    (let lp ((n 1))
-      (let (path (string-append base-path ".o" (number->string n)))
-        (if (file-exists? path)
-          (lp (1+ n))
-          path))))
-
-  (let* ((base-path (path-strip-extension path))
-         (path-c (string-append base-path ".c"))
-         (path-o (string-append base-path ".o"))
-         (link-path (gsc-link-path base-path))
-         (link-path-c (string-append link-path ".c"))
-         (link-path-o (string-append link-path ".o"))
-         (gsc-link-opts (gsc-link-options phi?))
+  (let* ((gsc-link-opts (gsc-link-options phi?))
          (gsc-cc-opts (gsc-cc-options phi?))
-         (gcc-ld-opts (gcc-ld-options)))
-    (invoke (gerbil-gsc)
-            ["-link" "-flat" "-o" link-path-c gsc-link-opts ...  path]
-            stdout-redirection: #t)
-    (invoke (gerbil-gsc)
-            ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
-            stdout-redirection: #t)
-    (invoke (gerbil-gcc)
-            ["-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
-    (for-each delete-file [path-c path-o link-path-c link-path-o])))
+         (gcc-ld-opts (gcc-ld-options))
+         (gsc-ld-opts (foldr (lambda (opt r) (cons* "-ld-options" opt r)) [] gcc-ld-opts)))
+    (invoke (gerbil-gsc) [gsc-cc-opts ... gsc-ld-opts ... path])))
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)

@@ -24,21 +24,51 @@ namespace: #f
 (def (reset-load-path!)
   (set-load-path! []))
 
-;; wrapper around ##load-module to set the context; ref to wip by @feeley
-;; TODO rename to load-module after recursive bootstrap
+;; wrapper around ##load-module to intercept builtin modules and set the context;
+;; ref to wip by @feeley
+;; TODO remove old bootstrap deps after recursive bootstrap
 (def (load-module modref)
   (if (string? modref)
     ;; backwards compat for bootstrap
     ;; TODO remove after recursive bootstrap
     (load-module/compat modref)
-    ;; the new loader
-    ;; TODO loader versioned context; wip by @feely
-    ;; TODO remove the exception handler after recursive bootstrap
-    (with-catch
-     (lambda (exn) (load-module/compat (string-append (symbol->string modref) "__rt")))
-     (lambda ()
-       (##load-module modref)
-       ))))
+    ;; don't clobber thyself during bootstrap in the transition
+    ;; TODO remove after bootstrap
+    (let (modstr (symbol->string modref))
+      (if (or (hash-get (current-module-registry) (string-append modstr "__rt"))
+              (hash-get (current-module-registry) (string-append modstr "__0")))
+        (begin
+          (displayln `(ignore ,modref))
+          (void))
+        ;; the new loader
+        (unless (hash-get __modules modref)
+          (displayln `(load ,modref))
+          ;; and finally the new loader
+          ;; TODO loader versioned context; wip by @feeley
+          ;; this broken with compiled modules:
+          ;; (##load-module modref)
+          ;; so use this until it is fixed
+          (__load-module modref)
+          ;; and track it, gambit's module registry is a list!!!!
+          (hash-put! __modules modref 'loaded))))))
+
+(def (__load-module modref)
+  (let* ((modstr (symbol->string modref))
+         (mod.o1 (string-append modstr ".o1")))
+    (let loop ((paths (load-path)))
+      (match paths
+        ([path . rest]
+         (if (file-exists? (path-expand mod.o1 path))
+           (load (path-expand modstr path))
+           (loop rest)))
+        (else
+         (error "module not found" modref))))))
+
+(def __modules
+  (make-hash-table-eq))
+
+(def (register-builtin-modules! builtin-modules)
+  (for-each (cut hash-put! __modules <> 'builtin) builtin-modules))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO -- deprecated; the old loader.

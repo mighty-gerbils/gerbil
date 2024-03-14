@@ -341,13 +341,20 @@
             (library-file-path "libgerbil.so")
             (library-file-path "libgerbil.a"))))
     ;; generate the builtin modules stub
-    (call-with-output-file builtin-modules-scm-path
-      (lambda (p)
-        (for-each (lambda (modstr)
-                    (write `(##supply-module ,(string->symbold modstr)) p)
-                    (newline p))
-                  ordered-modules)
-        (newline p)))
+    (let (ordered-modules (map string->symbol ordered-modules))
+      (call-with-output-file builtin-modules-scm-path
+        (lambda (p)
+          (for-each (lambda (m)
+                      (write `(##supply-module ,m) p)
+                      (newline p))
+                    ordered-modules)
+          (write '(##supply-module libgerbil-builtin-modules)
+                 p)
+          (newline p)
+          (write `(define libgerbil-builtin-modules
+                    (quote ,ordered-modules))
+                 p)
+          (newline p))))
     ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
     (let (wg (make-wg/build-cores))
       (for (scm-path [static-module-scm-paths ... builtin-modules-scm-path])

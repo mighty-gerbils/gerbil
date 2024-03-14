@@ -10,54 +10,50 @@ package: gerbil
 (include "gxi-main.ss")
 (include "gxc-main.ss")
 
-(defrules supply-builtin-modules ()
-  ((_ modid ...)
-   (begin (##supply-module modid) ...)))
-
-(supply-builtin-modules
- ;; :gerbil/runtime
- gerbil/runtime/gambit
- gerbil/runtime/util
- gerbil/runtime/table
- gerbil/runtime/control
- gerbil/runtime/system
- gerbil/runtime/c3
- gerbil/runtime/mop
- gerbil/runtime/error
- gerbil/runtime/interface
- gerbil/runtime/hash
- gerbil/runtime/syntax
- gerbil/runtime/eval
- gerbil/runtime/repl
- gerbil/runtime/loader
- gerbil/runtime/init
- gerbil/runtime
- ;; :gerbil/gambit
- gerbil/gambit
- ;; :gerbil/expander
- gerbil/expander/common
- gerbil/expander/stx
- gerbil/expander/core
- gerbil/expander/top
- gerbil/expander/module
- gerbil/expander/compile
- gerbil/expander/root
- gerbil/expander/stxcase
- gerbil/expander
- ;; :gerbil/compiler
- gerbil/compiler/base
- gerbil/compiler/method
- gerbil/compiler/compile
- gerbil/compiler/optimize-base
- gerbil/compiler/optimize-xform
- gerbil/compiler/optimize-top
- gerbil/compiler/optimize-spec
- gerbil/compiler/optimize-ann
- gerbil/compiler/optimize-call
- gerbil/compiler/optimize
- gerbil/compiler/driver
- gerbil/compiler/ssxi
- gerbil/compiler)
+(def builtin-modules
+  '(;; :gerbil/runtime
+    gerbil/runtime/gambit
+    gerbil/runtime/util
+    gerbil/runtime/table
+    gerbil/runtime/control
+    gerbil/runtime/system
+    gerbil/runtime/c3
+    gerbil/runtime/mop
+    gerbil/runtime/error
+    gerbil/runtime/interface
+    gerbil/runtime/hash
+    gerbil/runtime/syntax
+    gerbil/runtime/eval
+    gerbil/runtime/repl
+    gerbil/runtime/loader
+    gerbil/runtime/init
+    gerbil/runtime
+    ;; :gerbil/gambit
+    gerbil/gambit
+    ;; :gerbil/expander
+    gerbil/expander/common
+    gerbil/expander/stx
+    gerbil/expander/core
+    gerbil/expander/top
+    gerbil/expander/module
+    gerbil/expander/compile
+    gerbil/expander/root
+    gerbil/expander/stxcase
+    gerbil/expander
+    ;; :gerbil/compiler
+    gerbil/compiler/base
+    gerbil/compiler/method
+    gerbil/compiler/compile
+    gerbil/compiler/optimize-base
+    gerbil/compiler/optimize-xform
+    gerbil/compiler/optimize-top
+    gerbil/compiler/optimize-spec
+    gerbil/compiler/optimize-ann
+    gerbil/compiler/optimize-call
+    gerbil/compiler/optimize
+    gerbil/compiler/driver
+    gerbil/compiler/ssxi
+    gerbil/compiler))
 
 (def builtin-tool-commands
   '(("new"         "gxpkg" "new")
@@ -123,7 +119,7 @@ package: gerbil
   gerbil-runtime-init!)
 
 (def (init!)
-  (gerbil-runtime-init!)
+  (gerbil-runtime-init! builtin-modules)
   (gerbil-load-expander!)
   ;; hook ##begin -- gambit wraps it around scripts
   (eval '(define-alias ##begin begin)))

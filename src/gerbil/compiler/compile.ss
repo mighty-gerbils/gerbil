@@ -176,12 +176,12 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-empty)
   (%#struct-unchecked-set!   generate-runtime-empty))
 
-;; concrete method to generate runtime loader code
-(defcompile-method (apply-generate-loader) (::generate-loader ::generate-runtime-empty)
-  ()
+;; concrete method to collect runtime load dependencies
+(defcompile-method (apply-collect-loader-deps deps: deps) (::collect-loader-deps ::void)
+  (deps)
   final:
-  (%#begin                   generate-runtime-begin%)
-  (%#import                  generate-runtime-loader-import%))
+  (%#begin                   apply-begin%)
+  (%#import                  collect-loader-deps-import%))
 
 ;; concrete method to generate the runtime code of a module
 (defcompile-method (apply-generate-runtime) (::generate-runtime ::generate-runtime-empty)
@@ -1172,7 +1172,7 @@ namespace: gxc
            ['##unchecked-structure-set! args ... '(quote #f)]])))))
 
 ;;; loader
-(def (generate-runtime-loader-import% self stx)
+(def (collect-loader-deps-import% self stx)
   (def (import-set-template in phi)
     (let ((iphi (fx+ phi (import-set-phi in)))
           (imports (module-context-import (import-set-source in))))
@@ -1236,7 +1236,7 @@ namespace: gxc
              (else
               (raise-compile-error "Unexpected import" stx in))))
            (else
-            ['begin (map (cut list '##demand-module <>) (reverse loads)) ...])))))))
+            (box-set! (@ self deps) (foldl cons (unbox (@ self deps)) loads)))))))))
 
 ;;; runtime-phi
 (def (generate-runtime-quote-syntax% self stx)
@@ -1363,7 +1363,7 @@ namespace: gxc
             (cond
              (block
               ['%#begin-syntax
-               ['%#call ['%#ref 'load-module] ['%#quote block]]
+               ['%#call ['%#ref 'load-module] ['%#quote (string->symbol block)]]
                c-body ...])
              ((null? c-body) #!void)
              (else

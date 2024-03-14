@@ -1,21 +1,21 @@
 (define __gerbil-boot-modules
-  '("gerbil/runtime/gambit"
-    "gerbil/runtime/util"
-    "gerbil/runtime/table"
-    "gerbil/runtime/control"
-    "gerbil/runtime/system"
-    "gerbil/runtime/c3"
-    "gerbil/runtime/mop"
-    "gerbil/runtime/error"
-    "gerbil/runtime/interface"
-    "gerbil/runtime/hash"
-    "gerbil/runtime/thread"
-    "gerbil/runtime/syntax"
-    "gerbil/runtime/eval"
-    "gerbil/runtime/repl"
-    "gerbil/runtime/loader"
-    "gerbil/runtime/init"
-    "gerbil/runtime"))
+  '(gerbil/runtime/gambit
+    gerbil/runtime/util
+    gerbil/runtime/table
+    gerbil/runtime/control
+    gerbil/runtime/system
+    gerbil/runtime/c3
+    gerbil/runtime/mop
+    gerbil/runtime/error
+    gerbil/runtime/interface
+    gerbil/runtime/hash
+    gerbil/runtime/thread
+    gerbil/runtime/syntax
+    gerbil/runtime/eval
+    gerbil/runtime/repl
+    gerbil/runtime/loader
+    gerbil/runtime/init
+    gerbil/runtime))
 
 ;; predefine some symbols to avoid undefined refences when loading gerbil/runtime/init
 (define-macro (define-forward-reference proc)
@@ -62,7 +62,7 @@
 ;; load runtime
 (for-each
   (lambda (mod)
-    (let* ((mod0 (string-append mod "__0"))
+    (let* ((mod0 (string-append (symbol->string mod) "__0"))
            (modf (path-expand mod0
                    (path-expand "lib" (getenv "GERBIL_STAGE0")))))
       (load modf)))
@@ -72,6 +72,10 @@
 (gerbil-runtime-init! __gerbil-boot-modules)
 
 ;; load and initialize the expander
+;; TODO use 'gerbil/expander
 (load-module "gerbil/expander__rt")
 (gerbil-load-expander!)
 (eval '(define-alias ##begin begin))
+
+;; TODO remove after bootstrap
+(load-module "gerbil/compiler__rt")

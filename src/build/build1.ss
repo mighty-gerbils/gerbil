@@ -72,6 +72,7 @@
                         debug: #f
                         optimize: (not (getenv "GERBIL_BUILD_NOOPT" #f))
                         generate-ssxi: #t
+                        ;; keep-scm: #t
                         gsc-options: ["-e" "(include \"~~lib/_gambit#.scm\")"]]))
 
 (def (compile-group group . options) ;; TODO: parallelize this?
