@@ -1210,9 +1210,9 @@ namespace: gxc
            (let (id (expander-context-id ctx))
              (if (hash-get ht id)
                (lp rest loads)
-               (let (rt (string-append (module-id->path-string id) "__rt"))
-                 (hash-put! ht id rt)
-                 (lp rest (cons rt loads))))))
+               (begin
+                 (hash-put! ht id id)
+                 (lp rest (cons id loads))))))
 
          (match rest
            ([in . rest]
@@ -1236,7 +1236,7 @@ namespace: gxc
              (else
               (raise-compile-error "Unexpected import" stx in))))
            (else
-            ['begin (map (cut list 'load-module <>) (reverse loads)) ...])))))))
+            ['begin (map (cut list '##demand-module <>) (reverse loads)) ...])))))))
 
 ;;; runtime-phi
 (def (generate-runtime-quote-syntax% self stx)
@@ -1565,7 +1565,7 @@ namespace: gxc
        (if block
          ['%#begin
           ['%#begin-syntax
-           ['%#call ['%#ref 'load-module] ['%#quote block]]]
+           ['%#call ['%#ref 'load-module] ['%#quote (string->symbol block)]]]
           ['%#define-syntax (generate-runtime-identifier #'id) eid]]
          ['%#define-syntax (generate-runtime-identifier #'id) eid])))))
 
@@ -1602,7 +1602,7 @@ namespace: gxc
 (def (meta-state-begin-phi! state phi)
   (with ((meta-state src n open) state)
     (if (hash-get open phi) #f
-        (let (block-ref (string-append src "__" (number->string n)))
+        (let (block-ref (string-append src "--" (number->string n)))
           (set! (meta-state-n state) (fx1+ n))
           (hash-put! open phi (make-meta-state-block (current-expander-context)
                                                      phi n []))

@@ -31,8 +31,14 @@ namespace: #f
 
 ;; wrapper around ##load-module to set the context; ref to wip by @feeley
 ;; TODO rename to load-module after recursive bootstrap
-(def (load-module* modref)
-  (##load-module modref))
+(def (load-module modref)
+  (if (string? modref)
+    ;; backwards compat for bootstrap
+    ;; TODO remove after recursive bootstrap
+    (load-module/compat modref)
+    ;; the new loader
+    ;; TODO loader versioned context; wip by @feely
+    (##load-module modref)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO -- deprecated; the old loader.
@@ -46,7 +52,7 @@ namespace: #f
 (def __reload-module
   (make-parameter #f))
 
-(def (load-module modpath (reload? (__reload-module)))
+(def (load-module/compat modpath (reload? (__reload-module)))
   (cond
    ((and (not reload?) (hash-get (current-module-registry) modpath)))
    ((find-library-module modpath)

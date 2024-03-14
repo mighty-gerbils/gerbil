@@ -142,12 +142,14 @@ namespace: gxc
 (def (compile-executable-module/separate ctx opts)
   (def (generate-stub builtin-modules)
     (let (mod-main (find-runtime-symbol ctx 'main))
-      (write `(define builtin-modules
-                (append (quote ,builtin-modules) libgerbil-builtin-modules)))
+      (for-each (lambda (modref)
+                  (write `(##supply-module ,(string->symbol modref)))
+                  (newline))
+                builtin-modules)
       (write `(define (gerbil-main)
                 (with-unwind-protect
                  (lambda ()
-                   (gerbil-runtime-init! builtin-modules)
+                   (gerbil-runtime-init!)
                    (apply ,mod-main (cdr (command-line))))
                  (lambda ()
                    (with-catch void (lambda () (force-output (current-output-port))))
@@ -564,7 +566,8 @@ namespace: gxc
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "__0")))))
+                      ;; TODO separator to become ~
+                      (string->symbol (string-append idstr "--0"))))))
       (cond
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
@@ -579,7 +582,7 @@ namespace: gxc
   (def (context-timestamp ctx)
     (string->symbol
      (string-append (symbol->string (expander-context-id ctx))
-                    "::timestamp")))
+                    "##timestamp")))
 
   (def (generate-runtime-code ctx code)
     (let* ((lifts (box []))
@@ -597,17 +600,20 @@ namespace: gxc
            (runtime-code
             ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
                     runtime-code])
-           (scm0 (compile-output-file ctx 0 ".scm")))
-      (let (scms (compile-static-output-file ctx))
-        ;; copy compiled scm0 to static and delete when not keep-scm
-        (parameterize ((current-compile-keep-scm #t))
-          (compile-scm-file scm0 runtime-code))
-        (when (file-exists? scms)
-          (delete-file scms))
-        (verbose "copy static module " scm0 " => " scms)
-        (copy-file scm0 scms)
-        (unless (current-compile-keep-scm)
-          (delete-file scm0)))))
+           (runtime-module-id
+            ;; TODO separator to become ~
+            (make-symbol (expander-context-id ctx) "--" 0))
+           (runtime-module-code
+            ['begin ['##supply-module runtime-module-id] runtime-code])
+           (scm0 (compile-output-file ctx 0 ".scm"))
+           (scms (compile-static-output-file ctx)))
+      ;; copy compiled scm0 to static and delete when not keep-scm
+      (compile-scm-file scm0 runtime-module-code)
+      (unless (current-compile-keep-scm)
+        (delete-file scm0))
+      (when (file-exists? scms)
+        (delete-file scms))
+      (compile-scm-file scms runtime-code)))
 
   (def (generate-loader-code ctx code rt)
     (let* ((loader-code
@@ -615,10 +621,12 @@ namespace: gxc
               (apply-generate-loader code)))
            (loader-code
             (if rt
-              ['begin loader-code ['load-module rt]]
-              loader-code)))
+              ['begin loader-code ['##demand-module rt]]
+              loader-code))
+           (loader-code
+            ['begin ['##supply-module (expander-context-id ctx)] loader-code ...]))
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code))))
+        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -654,16 +662,21 @@ namespace: gxc
           (pretty-print code)
           (when rt
             (pretty-print
-             ['%#call ['%#ref 'load-module] ['%#quote rt]]))))))
+             ['%#call ['%#ref 'load-module] ['%#quote (expander-context-id ctx)]]))))))
 
   (def (compile-phi part)
     (match part
       ([phi-ctx phi n code]
-       (let (code
-             (parameterize ((current-expander-context phi-ctx)
-                            (current-expander-phi phi))
-               (generate-runtime-phi code)))
-         (compile-scm-file (compile-output-file ctx n ".scm") code #t)))))
+       (let* ((code
+               (parameterize ((current-expander-context phi-ctx)
+                              (current-expander-phi phi))
+                 (generate-runtime-phi code)))
+              (module-id
+               ;; TODO separator to become ~
+               (make-symbol (expander-context-id ctx) "--" n))
+              (module-code
+               ['begin ['##supply-module module-id] code]))
+         (compile-scm-file (compile-output-file ctx n ".scm") module-code #t)))))
 
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
@@ -821,7 +834,8 @@ namespace: gxc
 
   (def (file-name path)
     (if n
-      (string-append path "__" (section-string n) ext)
+      ;; TODO separator to become ~
+      (string-append path "--" (section-string n) ext)
       (string-append path ext)))
 
   (def (file-path)

@@ -343,9 +343,10 @@
     ;; generate the builtin modules stub
     (call-with-output-file builtin-modules-scm-path
       (lambda (p)
-        (write `(define ligerbil-builtin-modules
-                  (quote ,ordered-modules))
-               p)
+        (for-each (lambda (modstr)
+                    (write `(##supply-module ,(string->symbold modstr)) p)
+                    (newline p))
+                  ordered-modules)
         (newline p)))
     ;; compile each .scm to .c separately to avoid using too much memory and parallelize build
     (let (wg (make-wg/build-cores))

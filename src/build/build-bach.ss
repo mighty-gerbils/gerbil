@@ -119,4 +119,4 @@
   (delete-file bach-main-scm)
   (for-each (lambda (ext)
               (delete-file (path-expand (string-append bach-main ext) gerbil-libdir)))
-            '(".ssi" "__0.o1" "__rt.o1")))
+            '(".ssi" "--0.o1" "--1.o1" ".o1")))
