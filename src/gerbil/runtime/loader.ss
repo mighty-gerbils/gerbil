@@ -8,6 +8,33 @@ namespace: #f
 (export #t)
 (import "gambit" "util" "hash")
 
+;; the new loader
+(def (load-path)
+  (##get-module-search-order))
+
+(def (add-load-path! . paths)
+  (let* ((current (load-path))
+         (paths (map path-expand paths))
+         (paths (filter (lambda (x) (not (member x current))) paths)))
+    (for-each module-search-order-add! (reverse paths))
+    ;; TODO remove after recursive bootstrap
+    (let (current (current-module-library-path))
+      (current-module-library-path (append paths current)))))
+
+(def (set-load-path! paths)
+  (##set-module-search-order! paths)
+  ;; TODO remove after recursive bootstrap
+  (current-module-library-path paths))
+
+(def (reset-load-path!)
+  (set-load-path! []))
+
+;; wrapper around ##load-module to set the context; ref to wip by @feeley
+;; TODO rename to load-module after recursive bootstrap
+(def (load-module* modref)
+  (##load-module modref))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO -- deprecated; the old loader.
 ;;         remove after recursive bootstrap
 (def current-module-library-path

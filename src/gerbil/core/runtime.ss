@@ -1690,13 +1690,16 @@ package: gerbil/core
     replx
 
     ;; :gerbil/runtime/loader
-    load-module
-
-    ;; :gerbil/runtime/init
     load-path
     add-load-path!
     set-load-path!
     reset-load-path!
+
+    ;; TODO unify after recursive bootstrap
+    load-module
+    load-module*
+
+    ;; :gerbil/runtime/init
     gerbil-load-expander!
     ))
 

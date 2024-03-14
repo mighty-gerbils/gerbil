@@ -58,27 +58,6 @@ namespace: #f
 (def (__gxi-init-interactive! cmdline)
   (void))
 
-;; load path utils
-(def (load-path)
-  (##get-module-search-order))
-
-(def (add-load-path! . paths)
-  (let* ((current (load-path))
-         (paths (map path-expand paths))
-         (paths (filter (lambda (x) (not (member x current))) paths)))
-    (for-each module-search-order-add! (reverse paths))
-    ;; TODO remove after recursive bootstrap
-    (let (current (current-module-library-path))
-      (current-module-library-path (append paths current)))))
-
-(def (set-load-path! paths)
-  (##set-module-search-order! paths)
-  ;; TODO remove after recursive bootstrap
-  (current-module-library-path paths))
-
-(def (reset-load-path!)
-  (set-load-path! []))
-
 ;; stuffs
 (def (__expand-source src)
   (def (expand src)
