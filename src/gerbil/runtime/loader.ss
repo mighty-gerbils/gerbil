@@ -16,15 +16,10 @@ namespace: #f
   (let* ((current (load-path))
          (paths (map path-expand paths))
          (paths (filter (lambda (x) (not (member x current))) paths)))
-    (for-each module-search-order-add! (reverse paths))
-    ;; TODO remove after recursive bootstrap
-    (let (current (current-module-library-path))
-      (current-module-library-path (append paths current)))))
+    (for-each module-search-order-add! (reverse paths))))
 
 (def (set-load-path! paths)
-  (##set-module-search-order! paths)
-  ;; TODO remove after recursive bootstrap
-  (current-module-library-path paths))
+  (##set-module-search-order! paths))
 
 (def (reset-load-path!)
   (set-load-path! []))
@@ -38,13 +33,16 @@ namespace: #f
     (load-module/compat modref)
     ;; the new loader
     ;; TODO loader versioned context; wip by @feely
-    (##load-module modref)))
+    ;; TODO remove the exception handler after recursive bootstrap
+    (with-catch
+     (lambda (exn) (load-module/compat (string-append (symbol->string modref) "__rt")))
+     (lambda ()
+       (##load-module modref)
+       ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO -- deprecated; the old loader.
 ;;         remove after recursive bootstrap
-(def current-module-library-path
-  (make-parameter #f))
 (def current-module-registry
   (make-parameter #f))
 
@@ -76,7 +74,7 @@ namespace: #f
     (let ((spath (string-append npath ".scm")))
       (and (##file-exists? spath) spath)))
 
-  (let lp ((rest (current-module-library-path)))
+  (let lp ((rest (load-path)))
     (match rest
       ([dir . rest]
        (let ((npath (path-expand modpath (path-expand dir))))

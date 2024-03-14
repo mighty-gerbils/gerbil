@@ -499,7 +499,7 @@ namespace: gxc
             (expander-context-id ctx)
             (string->symbol ctx)))
          (scm (string-append (static-module-name context-id) ".scm"))
-         (dirs (current-expander-module-library-path))
+         (dirs (load-path))
          (dirs
           (let (user-libpath (getenv "GERBIL_PATH" #f))
             ;; this might have changed if we programmatically set it
@@ -609,8 +609,6 @@ namespace: gxc
            (scms (compile-static-output-file ctx)))
       ;; copy compiled scm0 to static and delete when not keep-scm
       (compile-scm-file scm0 runtime-module-code)
-      (unless (current-compile-keep-scm)
-        (delete-file scm0))
       (when (file-exists? scms)
         (delete-file scms))
       (compile-scm-file scms runtime-code)))
@@ -624,7 +622,7 @@ namespace: gxc
               ['begin loader-code ['##demand-module rt]]
               loader-code))
            (loader-code
-            ['begin ['##supply-module (expander-context-id ctx)] loader-code ...]))
+            ['begin ['##supply-module (expander-context-id ctx)] loader-code]))
       (parameterize ((current-compile-gsc-options #f))
         (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
 
