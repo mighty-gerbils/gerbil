@@ -328,7 +328,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -350,7 +350,7 @@
            __obj77438
            'gerbil/runtime/eval#__syntax::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -358,7 +358,7 @@
            __obj77438
            '__syntax
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -366,7 +366,7 @@
            __obj77438
            '(e id)
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -374,7 +374,7 @@
            __obj77438
            '()
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -382,7 +382,7 @@
            __obj77438
            '#t
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -390,7 +390,7 @@
            __obj77438
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -398,7 +398,7 @@
            __obj77438
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -406,7 +406,7 @@
            __obj77438
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77799 |[1]#_g77800_|))
           (declare (not safe))
@@ -414,7 +414,7 @@
            __obj77438
            __tmp77799
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77801 |[1]#_g77802_|))
           (declare (not safe))
@@ -422,7 +422,7 @@
            __obj77438
            __tmp77801
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77803 |[1]#_g77804_|))
           (declare (not safe))
@@ -430,7 +430,7 @@
            __obj77438
            __tmp77803
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77805
                (let ((__tmp77810
@@ -451,7 +451,7 @@
            __obj77438
            __tmp77805
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77813
                (let ((__tmp77818
@@ -472,7 +472,7 @@
            __obj77438
            __tmp77813
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77821
                (let ((__tmp77826
@@ -493,7 +493,7 @@
            __obj77438
            __tmp77821
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77829
                (let ((__tmp77834
@@ -514,7 +514,7 @@
            __obj77438
            __tmp77829
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj77438))
     (define |[:0:]#__core-form|
@@ -522,7 +522,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -544,7 +544,7 @@
            __obj77439
            'gerbil/runtime/eval#__core-form::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -552,7 +552,7 @@
            __obj77439
            '__core-form
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -560,7 +560,7 @@
            __obj77439
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77837
                (let ((__tmp77838 |[1]#_g77839_|))
@@ -571,7 +571,7 @@
            __obj77439
            __tmp77837
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -579,7 +579,7 @@
            __obj77439
            '#t
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -587,7 +587,7 @@
            __obj77439
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -595,7 +595,7 @@
            __obj77439
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -603,7 +603,7 @@
            __obj77439
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77840 |[1]#_g77841_|))
           (declare (not safe))
@@ -611,7 +611,7 @@
            __obj77439
            __tmp77840
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77842 |[1]#_g77843_|))
           (declare (not safe))
@@ -619,7 +619,7 @@
            __obj77439
            __tmp77842
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77844 |[1]#_g77845_|))
           (declare (not safe))
@@ -627,7 +627,7 @@
            __obj77439
            __tmp77844
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77846
                (let ((__tmp77851
@@ -648,7 +648,7 @@
            __obj77439
            __tmp77846
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77854
                (let ((__tmp77859
@@ -669,7 +669,7 @@
            __obj77439
            __tmp77854
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77862
                (let ((__tmp77867
@@ -690,7 +690,7 @@
            __obj77439
            __tmp77862
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77870
                (let ((__tmp77875
@@ -711,7 +711,7 @@
            __obj77439
            __tmp77870
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj77439))
     (define |[:0:]#__core-expression|
@@ -719,7 +719,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -741,7 +741,7 @@
            __obj77440
            'gerbil/runtime/eval#__core-expression::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -749,7 +749,7 @@
            __obj77440
            '__core-expression
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -757,7 +757,7 @@
            __obj77440
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77878
                (let ((__tmp77879 |[1]#_g77880_|))
@@ -768,7 +768,7 @@
            __obj77440
            __tmp77878
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -776,7 +776,7 @@
            __obj77440
            '#t
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -784,7 +784,7 @@
            __obj77440
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -792,7 +792,7 @@
            __obj77440
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -800,7 +800,7 @@
            __obj77440
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77881 |[1]#_g77882_|))
           (declare (not safe))
@@ -808,7 +808,7 @@
            __obj77440
            __tmp77881
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77883 |[1]#_g77884_|))
           (declare (not safe))
@@ -816,7 +816,7 @@
            __obj77440
            __tmp77883
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77885 |[1]#_g77886_|))
           (declare (not safe))
@@ -824,7 +824,7 @@
            __obj77440
            __tmp77885
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77887
                (let ((__tmp77892
@@ -845,7 +845,7 @@
            __obj77440
            __tmp77887
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77895
                (let ((__tmp77900
@@ -866,7 +866,7 @@
            __obj77440
            __tmp77895
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77903
                (let ((__tmp77908
@@ -887,7 +887,7 @@
            __obj77440
            __tmp77903
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77911
                (let ((__tmp77916
@@ -908,7 +908,7 @@
            __obj77440
            __tmp77911
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj77440))
     (define |[:0:]#__core-special-form|
@@ -916,7 +916,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -938,7 +938,7 @@
            __obj77441
            'gerbil/runtime/eval#__core-special-form::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -946,7 +946,7 @@
            __obj77441
            '__core-special-form
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -954,7 +954,7 @@
            __obj77441
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77919
                (let ((__tmp77920 |[1]#_g77880_|))
@@ -965,7 +965,7 @@
            __obj77441
            __tmp77919
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -973,7 +973,7 @@
            __obj77441
            '#t
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -981,7 +981,7 @@
            __obj77441
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -989,7 +989,7 @@
            __obj77441
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -997,7 +997,7 @@
            __obj77441
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77921 |[1]#_g77922_|))
           (declare (not safe))
@@ -1005,7 +1005,7 @@
            __obj77441
            __tmp77921
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77923 |[1]#_g77924_|))
           (declare (not safe))
@@ -1013,7 +1013,7 @@
            __obj77441
            __tmp77923
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77925 |[1]#_g77926_|))
           (declare (not safe))
@@ -1021,7 +1021,7 @@
            __obj77441
            __tmp77925
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77927
                (let ((__tmp77932
@@ -1042,7 +1042,7 @@
            __obj77441
            __tmp77927
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77935
                (let ((__tmp77940
@@ -1063,7 +1063,7 @@
            __obj77441
            __tmp77935
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77943
                (let ((__tmp77948
@@ -1084,7 +1084,7 @@
            __obj77441
            __tmp77943
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp77951
                (let ((__tmp77956
@@ -1105,7 +1105,7 @@
            __obj77441
            __tmp77951
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj77441))
     (define |[:0:]#defcore-forms|

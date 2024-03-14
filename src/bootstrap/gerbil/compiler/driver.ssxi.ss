@@ -38,11 +38,17 @@ package: gerbil/compiler
   (declare-type gxc#generate-meta-code (@lambda 1 #f))
   (declare-type gxc#generate-runtime-phi (@lambda 1 #f))
   (declare-type gxc#lift-nested-modules (@lambda 1 #f))
-  (declare-type gxc#compile-scm-file__% (@lambda 3 #f))
-  (declare-type gxc#compile-scm-file__0 (@lambda 2 #f))
+  (declare-type gxc#compile-scm-file__%__% (@lambda 6 #f))
+  (declare-type gxc#compile-scm-file__%__0 (@lambda 5 #f))
+  (declare-type
+   gxc#compile-scm-file__%
+   (@case-lambda
+    (5 gxc#compile-scm-file__%__0)
+    (6 gxc#compile-scm-file__%__%)))
+  (declare-type gxc#compile-scm-file__@ (@lambda (1) #f))
   (declare-type
    gxc#compile-scm-file
-   (@case-lambda (2 gxc#compile-scm-file__0) (3 gxc#compile-scm-file__%)))
+   (@kw-lambda (demand: supply:) gxc#compile-scm-file__@))
   (declare-type gxc#gsc-link-options__% (@lambda 1 #f))
   (declare-type gxc#gsc-link-options__0 (@lambda 0 #f))
   (declare-type

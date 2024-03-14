@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/mop$<MOP:4>[1]#_g32376_|
+  (define |gerbil/core/mop$MOP-4[1]#_g32376_|
     (##structure
      gx#syntax-quote::t
      '@method
@@ -8,7 +8,7 @@
      (gx#current-expander-context)
      '()))
   (begin
-    (define |gerbil/core/mop$<MOP:4>[1]#typedef-body?|
+    (define |gerbil/core/mop$MOP-4[1]#typedef-body?|
       (lambda (_stx29592_)
         (letrec ((_body-opt?29595_
                   (lambda (_key29598_)
@@ -23,7 +23,7 @@
                             equal:
                             metaclass:)))))
           (gx#stx-plist? _stx29592_ _body-opt?29595_))))
-    (define |gerbil/core/mop$<MOP:4>[1]#generate-defclass|
+    (define |gerbil/core/mop$MOP-4[1]#generate-defclass|
       (lambda (_stx27376_ _id27378_ _super-ref27379_ _slots27380_ _body27381_)
         (letrec* ((_wrap27383_
                    (lambda (_e-stx29589_)
@@ -105,10 +105,10 @@
                                        (##unchecked-structure-ref
                                         __obj31581
                                         '4
-                                        gerbil/core/mop$<MOP:2>#class-type-info::t
+                                        gerbil/core/mop$MOP-2#class-type-info::t
                                         '#f))
                                      (class-slot-ref
-                                      gerbil/core/mop$<MOP:2>#class-type-info::t
+                                      gerbil/core/mop$MOP-2#class-type-info::t
                                       __obj31581
                                       'slots)))
                                (concatenate
@@ -124,10 +124,10 @@
                                              (##unchecked-structure-ref
                                               __obj31582
                                               '3
-                                              gerbil/core/mop$<MOP:2>#class-type-info::t
+                                              gerbil/core/mop$MOP-2#class-type-info::t
                                               '#f))
                                            (class-slot-ref
-                                            gerbil/core/mop$<MOP:2>#class-type-info::t
+                                            gerbil/core/mop$MOP-2#class-type-info::t
                                             __obj31582
                                             'super))))))))))
           (gx#check-duplicate-identifiers _slots27380_ _stx27376_)
@@ -926,7 +926,7 @@
                        _$e28296_
                        (let ()
                          (declare (not safe))
-                         (|gerbil/core/mop$<MOP:1>[1]#make-class-type-id|
+                         (|gerbil/core/mop$MOP-1[1]#make-class-type-id|
                           _L27413_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
@@ -2578,7 +2578,7 @@
                                                (_g2754029530_ _slots27380_))))
                                          _g2751427525_)))
                                      (__tmp32316
-                                      (map gerbil/core/mop$<MOP:2>#!class-type-descriptor
+                                      (map gerbil/core/mop$MOP-2#!class-type-descriptor
                                            _super27392_)))
                                 (declare (not safe))
                                 (_g2751229534_ __tmp32316))))
@@ -2602,7 +2602,7 @@
                      _g2739927410_))))
             (declare (not safe))
             (_g2739729550_ _id27378_)))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#defstruct|
+    (define |gerbil/core/mop$MOP-4[:0:]#defstruct|
       (lambda (_$stx29614_)
         (let* ((_g2961829637_
                 (lambda (_g2961929633_)
@@ -2673,7 +2673,7 @@
                               (_g2961829637_ _g2961929641_))))
                       (_g2961829637_ _g2961929641_)))))
           (_g2961729694_ _$stx29614_))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#defclass|
+    (define |gerbil/core/mop$MOP-4[:0:]#defclass|
       (lambda (_stx29698_)
         (letrec ((_generate29701_
                   (lambda (_hd29785_ _slots29787_ _body29788_)
@@ -2688,7 +2688,7 @@
                              (lambda (_L29831_ _L29833_)
                                (let ((__tmp32325 (gx#syntax->list _L29831_)))
                                  (declare (not safe))
-                                 (|gerbil/core/mop$<MOP:4>[1]#generate-defclass|
+                                 (|gerbil/core/mop$MOP-4[1]#generate-defclass|
                                   _stx29698_
                                   _L29833_
                                   __tmp32325
@@ -2699,7 +2699,7 @@
                                (if (gx#identifier? _hd29785_)
                                    (let ()
                                      (declare (not safe))
-                                     (|gerbil/core/mop$<MOP:4>[1]#generate-defclass|
+                                     (|gerbil/core/mop$MOP-4[1]#generate-defclass|
                                       _stx29698_
                                       _hd29785_
                                       '()
@@ -2718,7 +2718,7 @@
                                        (_L29833_ _hd2979629825_))
                                    (if (and (gx#stx-list? _L29831_)
                                             (gx#stx-andmap
-                                             gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?
+                                             gerbil/core/mop$MOP-2#syntax-local-class-type-info?
                                              _L29831_))
                                        (___kont3130931310_ _L29831_ _L29833_)
                                        (___kont3131131312_))))))
@@ -2785,7 +2785,7 @@
                                                          _L29762_)
                                                         (let ()
                                                           (declare (not safe))
-                                                          (|gerbil/core/mop$<MOP:4>[1]#typedef-body?|
+                                                          (|gerbil/core/mop$MOP-4[1]#typedef-body?|
                                                            _L29760_)))
                                                    (_generate29701_
                                                     _L29763_
@@ -2800,7 +2800,7 @@
                                 (_g2970429723_ _g2970529727_))))
                         (_g2970429723_ _g2970529727_)))))
             (_g2970329781_ _stx29698_)))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#defmethod|
+    (define |gerbil/core/mop$MOP-4[:0:]#defmethod|
       (lambda (_stx29850_)
         (letrec ((_wrap29853_
                   (lambda (_e-stx30190_)
@@ -2851,7 +2851,7 @@
                                                    (##cdr _e2987129913_))))
                                             (if (gx#identifier? _hd2987029917_)
                                                 (if (gx#free-identifier=?
-                                                     |gerbil/core/mop$<MOP:4>[1]#_g32376_|
+                                                     |gerbil/core/mop$MOP-4[1]#_g32376_|
                                                      _hd2987029917_)
                                                     (if (gx#stx-pair?
                                                          _tl2986929920_)
@@ -2892,7 +2892,7 @@
                                            (if (and (gx#identifier? _L29957_)
                                                     (let ()
                                                       (declare (not safe))
-                                                      (gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__0
+                                                      (gerbil/core/mop$MOP-2#syntax-local-class-type-info?__0
                                                        _L29956_))
                                                     (gx#stx-plist?
                                                      _L29953_
@@ -3157,10 +3157,10 @@
                                                           (##unchecked-structure-ref
                                                            __obj31583
                                                            '9
-                                                           gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                           gerbil/core/mop$MOP-2#class-type-info::t
                                                            '#f))
                                                         (class-slot-ref
-                                                         gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                         gerbil/core/mop$MOP-2#class-type-info::t
                                                          __obj31583
                                                          'type-descriptor)))))
                                                (if (let ((__tmp32327
@@ -3178,7 +3178,7 @@
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__0
+                        (gerbil/core/mop$MOP-2#syntax-local-class-type-info?__0
                          _L29956_))))
                  (declare (not safe))
                  (not __tmp32326))
@@ -3209,7 +3209,7 @@
                                 (_g2985729886_ _g2985829890_))))
                         (_g2985729886_ _g2985829890_)))))
             (_g2985630183_ _stx29850_)))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#@method|
+    (define |gerbil/core/mop$MOP-4[:0:]#@method|
       (lambda (_stx30193_)
         (letrec ((_dotted-identifier?30196_
                   (lambda (_id30829_)
@@ -4202,7 +4202,7 @@
                                           (_g3020330290_))))))
                             (let () (declare (not safe)) (_g3020330290_)))))
                     (let () (declare (not safe)) (_g3020330290_)))))))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#@|
+    (define |gerbil/core/mop$MOP-4[:0:]#@|
       (lambda (_$stx30842_)
         (let* ((___stx3144431445_ _$stx30842_)
                (_g3084730887_
@@ -4431,7 +4431,7 @@
                                     (_g3084730887_)))))
                           (let () (declare (not safe)) (_g3084730887_)))))
                   (let () (declare (not safe)) (_g3084730887_))))))))
-    (define |gerbil/core/mop$<MOP:4>[:0:]#@-set!|
+    (define |gerbil/core/mop$MOP-4[:0:]#@-set!|
       (lambda (_$stx31047_)
         (let* ((___stx3150231503_ _$stx31047_)
                (_g3105231104_

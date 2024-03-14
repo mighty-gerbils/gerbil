@@ -223,7 +223,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -245,7 +245,7 @@
            __obj68023
            'gerbil/runtime/interface#CastError::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -253,7 +253,7 @@
            __obj68023
            'CastError
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -261,7 +261,7 @@
            __obj68023
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68102
                (let ((__tmp68103 |[1]#_g68104_|))
@@ -272,7 +272,7 @@
            __obj68023
            __tmp68102
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -280,7 +280,7 @@
            __obj68023
            '#f
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -288,7 +288,7 @@
            __obj68023
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -296,7 +296,7 @@
            __obj68023
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -304,7 +304,7 @@
            __obj68023
            ':init!
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68105 |[1]#_g68106_|))
           (declare (not safe))
@@ -312,7 +312,7 @@
            __obj68023
            __tmp68105
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68107 |[1]#_g68108_|))
           (declare (not safe))
@@ -320,7 +320,7 @@
            __obj68023
            __tmp68107
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68109 |[1]#_g68110_|))
           (declare (not safe))
@@ -328,7 +328,7 @@
            __obj68023
            __tmp68109
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68111
                (let ((__tmp68124
@@ -363,7 +363,7 @@
            __obj68023
            __tmp68111
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68127
                (let ((__tmp68140
@@ -398,7 +398,7 @@
            __obj68023
            __tmp68127
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68143
                (let ((__tmp68156
@@ -433,7 +433,7 @@
            __obj68023
            __tmp68143
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68159
                (let ((__tmp68172
@@ -468,7 +468,7 @@
            __obj68023
            __tmp68159
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj68023))
     (define |[:0:]#interface-descriptor|
@@ -476,7 +476,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop$MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -498,7 +498,7 @@
            __obj68025
            'gerbil/runtime/interface#interface-descriptor::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -506,7 +506,7 @@
            __obj68025
            'interface-descriptor
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -514,7 +514,7 @@
            __obj68025
            '(type methods)
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -522,7 +522,7 @@
            __obj68025
            '()
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -530,7 +530,7 @@
            __obj68025
            '#t
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -538,7 +538,7 @@
            __obj68025
            '#t
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -546,7 +546,7 @@
            __obj68025
            '#f
            '7
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -554,7 +554,7 @@
            __obj68025
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68175 |[1]#_g68176_|))
           (declare (not safe))
@@ -562,7 +562,7 @@
            __obj68025
            __tmp68175
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68177 |[1]#_g68178_|))
           (declare (not safe))
@@ -570,7 +570,7 @@
            __obj68025
            __tmp68177
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68179 |[1]#_g68180_|))
           (declare (not safe))
@@ -578,7 +578,7 @@
            __obj68025
            __tmp68179
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68181
                (let ((__tmp68186
@@ -599,7 +599,7 @@
            __obj68025
            __tmp68181
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68189
                (let ((__tmp68194
@@ -620,7 +620,7 @@
            __obj68025
            __tmp68189
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68197
                (let ((__tmp68202
@@ -641,7 +641,7 @@
            __obj68025
            __tmp68197
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         (let ((__tmp68205
                (let ((__tmp68210
@@ -662,7 +662,7 @@
            __obj68025
            __tmp68205
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop$MOP-2#class-type-info::t
            '#f))
         __obj68025))
     (define |[:0:]#immediate-instance-of?|

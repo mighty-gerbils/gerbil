@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/expander$<syntax-sugar>[1]#_g5680_|
+  (define |gerbil/core/expander$SyntaxSugar[1]#_g5680_|
     (##structure
      gx#syntax-quote::t
      'values
@@ -8,7 +8,7 @@
      (gx#current-expander-context)
      '()))
   (begin
-    (define |gerbil/core/expander$<syntax-sugar>[:0:]#syntax-rules|
+    (define |gerbil/core/expander$SyntaxSugar[:0:]#syntax-rules|
       (lambda (_stx4055_)
         (let* ((_g40584082_
                 (lambda (_g40594078_)
@@ -316,7 +316,7 @@
                               (_g40584082_ _g40594086_))))
                       (_g40584082_ _g40594086_)))))
           (_g40574388_ _stx4055_))))
-    (define |gerbil/core/expander$<syntax-sugar>[:0:]#with-syntax|
+    (define |gerbil/core/expander$SyntaxSugar[:0:]#with-syntax|
       (lambda (_stx4394_)
         (let* ((___stx53915392_ _stx4394_)
                (_g43994484_
@@ -1042,7 +1042,7 @@
                                             (_g43994484_)))))))
                           (let () (declare (not safe)) (_g43994484_)))))
                   (let () (declare (not safe)) (_g43994484_))))))))
-    (define |gerbil/core/expander$<syntax-sugar>[:0:]#with-syntax*|
+    (define |gerbil/core/expander$SyntaxSugar[:0:]#with-syntax*|
       (lambda (_stx4857_)
         (let* ((___stx54955496_ _stx4857_)
                (_g48624939_
@@ -1345,7 +1345,7 @@
                        (let () (declare (not safe)) (##car _e48995087_))))
                   (if (gx#identifier? _hd48985091_)
                       (if (gx#free-identifier=?
-                           |gerbil/core/expander$<syntax-sugar>[1]#_g5680_|
+                           |gerbil/core/expander$SyntaxSugar[1]#_g5680_|
                            _hd48985091_)
                           (if (gx#stx-pair? _tl48945084_)
                               (let ((_e49025097_ (gx#syntax-e _tl48945084_)))
@@ -1611,7 +1611,7 @@
                                         (_g48624939_))))))
                           (let () (declare (not safe)) (_g48624939_)))))
                   (let () (declare (not safe)) (_g48624939_))))))))
-    (define |gerbil/core/expander$<syntax-sugar>[:0:]#syntax/loc|
+    (define |gerbil/core/expander$SyntaxSugar[:0:]#syntax/loc|
       (lambda (_stx5267_)
         (let* ((_g52705288_
                 (lambda (_g52715284_)

@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710238837)
+  (define gerbil/runtime/mop::timestamp 1710440199)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -2401,23 +2401,9 @@
       (lambda (_klass62943_ _id62944_ _proc62945_ _rebind?62946_)
         (letrec ((_bind!62948_
                   (lambda (_ht62961_)
-                    (if (and (let () (declare (not safe)) (not _rebind?62946_))
-                             (let ()
-                               (declare (not safe))
-                               (symbolic-table-ref _ht62961_ _id62944_ '#f)))
-                        (let ()
-                          (declare (not safe))
-                          (error '"method already bound"
-                                 'class:
-                                 _klass62943_
-                                 'method:
-                                 _id62944_))
-                        (let ()
-                          (declare (not safe))
-                          (symbolic-table-set!
-                           _ht62961_
-                           _id62944_
-                           _proc62945_))))))
+                    (let ()
+                      (declare (not safe))
+                      (symbolic-table-set! _ht62961_ _id62944_ _proc62945_)))))
           (if (let () (declare (not safe)) (procedure? _proc62945_))
               '#!void
               (let ()

@@ -107,22 +107,40 @@ package: gerbil/compiler
    gxc#make-::generate-runtime-empty
    (@constructor gxc#::generate-runtime-empty::t))
   (declare-type
-   gxc#::generate-loader::t
-   (@class gxc#::generate-loader::t
-           (gxc#::generate-runtime-empty::t)
-           (gxc#::generate-runtime-empty::t)
-           ()
-           ()
+   gxc#::collect-loader-deps::t
+   (@class gxc#::collect-loader-deps::t
+           (gxc#::void::t)
+           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (deps)
+           (deps)
            #f
            #f
            #t
            #f
            #f))
-  (declare-type gxc#::generate-loader? (@predicate gxc#::generate-loader::t))
   (declare-type
-   gxc#make-::generate-loader
-   (@constructor gxc#::generate-loader::t))
-  (declare-type gxc#apply-generate-loader (@lambda 1 #f))
+   gxc#::collect-loader-deps?
+   (@predicate gxc#::collect-loader-deps::t))
+  (declare-type
+   gxc#make-::collect-loader-deps
+   (@constructor gxc#::collect-loader-deps::t))
+  (declare-type
+   gxc#::collect-loader-deps-deps
+   (@accessor gxc#::collect-loader-deps::t deps #t))
+  (declare-type
+   gxc#::collect-loader-deps-deps-set!
+   (@mutator gxc#::collect-loader-deps::t deps #t))
+  (declare-type
+   gxc#&::collect-loader-deps-deps
+   (@accessor gxc#::collect-loader-deps::t deps #f))
+  (declare-type
+   gxc#&::collect-loader-deps-deps-set!
+   (@mutator gxc#::collect-loader-deps::t deps #f))
+  (declare-type gxc#apply-collect-loader-deps__% (@lambda 3 #f))
+  (declare-type gxc#apply-collect-loader-deps__@ (@lambda (1) #f))
+  (declare-type
+   gxc#apply-collect-loader-deps
+   (@kw-lambda (deps:) gxc#apply-collect-loader-deps__@))
   (declare-type
    gxc#::generate-runtime::t
    (@class gxc#::generate-runtime::t
@@ -321,7 +339,7 @@ package: gerbil/compiler
   (declare-type gxc#generate-runtime-struct-direct-setq% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-struct-unchecked-ref% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-struct-unchecked-setq% (@lambda 2 #f))
-  (declare-type gxc#generate-runtime-loader-import% (@lambda 2 #f))
+  (declare-type gxc#collect-loader-deps-import% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-quote-syntax% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-phi-define-runtime% (@lambda 2 #f))
   (declare-type gxc#generate-meta-begin% (@lambda 2 #f))

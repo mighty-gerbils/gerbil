@@ -106,14 +106,40 @@ namespace: gxc
          (%#define-runtime
           ::generate-runtime-empty-bind-methods!
           gxc#::generate-runtime-empty-bind-methods!)
-         (%#define-runtime ::generate-loader::t gxc#::generate-loader::t)
-         (%#define-runtime ::generate-loader? gxc#::generate-loader?)
-         (%#define-runtime make-::generate-loader gxc#make-::generate-loader)
-         (%#define-syntax ::generate-loader |gxc[:0:]#::generate-loader|)
          (%#define-runtime
-          ::generate-loader-bind-methods!
-          gxc#::generate-loader-bind-methods!)
-         (%#define-runtime apply-generate-loader gxc#apply-generate-loader)
+          ::collect-loader-deps::t
+          gxc#::collect-loader-deps::t)
+         (%#define-runtime ::collect-loader-deps? gxc#::collect-loader-deps?)
+         (%#define-runtime
+          make-::collect-loader-deps
+          gxc#make-::collect-loader-deps)
+         (%#define-runtime
+          ::collect-loader-deps-deps
+          gxc#::collect-loader-deps-deps)
+         (%#define-runtime
+          ::collect-loader-deps-deps-set!
+          gxc#::collect-loader-deps-deps-set!)
+         (%#define-runtime
+          &::collect-loader-deps-deps
+          gxc#&::collect-loader-deps-deps)
+         (%#define-runtime
+          &::collect-loader-deps-deps-set!
+          gxc#&::collect-loader-deps-deps-set!)
+         (%#define-syntax
+          ::collect-loader-deps
+          |gxc[:0:]#::collect-loader-deps|)
+         (%#define-runtime
+          ::collect-loader-deps-bind-methods!
+          gxc#::collect-loader-deps-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-collect-loader-deps__%
+                   gxc#apply-collect-loader-deps__%)
+                  (%#define-runtime
+                   apply-collect-loader-deps__@
+                   gxc#apply-collect-loader-deps__@)
+                  (%#define-runtime
+                   apply-collect-loader-deps
+                   gxc#apply-collect-loader-deps))
          (%#define-runtime ::generate-runtime::t gxc#::generate-runtime::t)
          (%#define-runtime ::generate-runtime? gxc#::generate-runtime?)
          (%#define-runtime make-::generate-runtime gxc#make-::generate-runtime)
@@ -377,8 +403,8 @@ namespace: gxc
           generate-runtime-struct-unchecked-setq%
           gxc#generate-runtime-struct-unchecked-setq%)
          (%#define-runtime
-          generate-runtime-loader-import%
-          gxc#generate-runtime-loader-import%)
+          collect-loader-deps-import%
+          gxc#collect-loader-deps-import%)
          (%#define-runtime
           generate-runtime-quote-syntax%
           gxc#generate-runtime-quote-syntax%)

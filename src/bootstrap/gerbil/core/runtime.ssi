@@ -2,9 +2,9 @@ prelude: :<root>
 package: gerbil/core
 namespace: gerbil/core/runtime
 
-(%#begin (%#export #t (import: (in: #f <runtime>)))
+(%#begin (%#export #t (import: (in: #f Runtime)))
          (%#module
-          <r5rs-runtime>
+          R5RSRuntime
           (%#begin (%#export #t)
                    (%#extern
                     (* *)
@@ -209,7 +209,7 @@ namespace: gerbil/core/runtime
                     (scheme-report-environment scheme-report-environment)
                     (values values))))
          (%#module
-          <r7rs-runtime>
+          R7RSRuntime
           (%#begin (%#export #t)
                    (%#extern
                     (balanced-quotient balanced-quotient)
@@ -318,7 +318,7 @@ namespace: gerbil/core/runtime
                     (write-string write-string)
                     (write-u8 write-u8))))
          (%#module
-          <gambit-runtime>
+          GambitRuntime
           (%#begin (%#export #t)
                    (%#extern
                     (default-random-source default-random-source)
@@ -1514,7 +1514,7 @@ namespace: gerbil/core/runtime
                      wrong-processor-c-return-exception?)
                     (xcons xcons))))
          (%#module
-          <gerbil-runtime>
+          GerbilRuntime
           (%#begin (%#export #t)
                    (%#extern
                     (max-char-code max-char-code)
@@ -1770,10 +1770,14 @@ namespace: gerbil/core/runtime
                     (source-location-path? source-location-path?)
                     (source-location-path source-location-path)
                     (replx replx)
+                    (load-path load-path)
+                    (add-load-path! add-load-path!)
+                    (set-load-path! set-load-path!)
+                    (reset-load-path! reset-load-path!)
                     (load-module load-module)
                     (gerbil-load-expander! gerbil-load-expander!))))
          (%#module
-          <runtime-aliases>
+          RuntimeAliases
           (%#begin (%#export #t)
                    (%#define-alias car-set! set-car!)
                    (%#define-alias cdr-set! set-cdr!)
@@ -1797,17 +1801,17 @@ namespace: gerbil/core/runtime
                     random-source-make-bytes
                     random-source-make-u8vectors)))
          (%#module
-          <runtime>
+          Runtime
           (%#begin (%#import
-                    (in: #f <r5rs-runtime>)
-                    (in: #f <r7rs-runtime>)
-                    (in: #f <gambit-runtime>)
-                    (in: #f <gerbil-runtime>)
-                    (in: #f <runtime-aliases>))
+                    (in: #f R5RSRuntime)
+                    (in: #f R7RSRuntime)
+                    (in: #f GambitRuntime)
+                    (in: #f GerbilRuntime)
+                    (in: #f RuntimeAliases))
                    (%#export
-                    (import: (in: #f <r5rs-runtime>))
-                    (import: (in: #f <r7rs-runtime>))
-                    (import: (in: #f <gambit-runtime>))
-                    (import: (in: #f <gerbil-runtime>))
-                    (import: (in: #f <runtime-aliases>)))))
-         (%#import (in: #f <runtime>)))
+                    (import: (in: #f R5RSRuntime))
+                    (import: (in: #f R7RSRuntime))
+                    (import: (in: #f GambitRuntime))
+                    (import: (in: #f GerbilRuntime))
+                    (import: (in: #f RuntimeAliases)))))
+         (%#import (in: #f Runtime)))

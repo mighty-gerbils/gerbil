@@ -71,15 +71,19 @@ namespace: gxc
          (%#define-runtime generate-meta-code gxc#generate-meta-code)
          (%#define-runtime generate-runtime-phi gxc#generate-runtime-phi)
          (%#define-runtime lift-nested-modules gxc#lift-nested-modules)
-         (%#begin (%#define-runtime
-                   compile-scm-file__%
-                   gxc#compile-scm-file__%)
-                  (%#begin (%#define-runtime
-                            compile-scm-file__0
-                            gxc#compile-scm-file__0)
-                           (%#define-runtime
-                            compile-scm-file
-                            gxc#compile-scm-file)))
+         (%#begin (%#begin (%#define-runtime
+                            compile-scm-file__%__%
+                            gxc#compile-scm-file__%__%)
+                           (%#begin (%#define-runtime
+                                     compile-scm-file__%__0
+                                     gxc#compile-scm-file__%__0)
+                                    (%#define-runtime
+                                     compile-scm-file__%
+                                     gxc#compile-scm-file__%)))
+                  (%#define-runtime
+                   compile-scm-file__@
+                   gxc#compile-scm-file__@)
+                  (%#define-runtime compile-scm-file gxc#compile-scm-file))
          (%#begin (%#define-runtime
                    gsc-link-options__%
                    gxc#gsc-link-options__%)

@@ -2625,7 +2625,7 @@
                      (if (let ()
                            (declare (not safe))
                            (class-instance?
-                            gerbil/core/mop$<MOP:2>#class-type-info::t
+                            gerbil/core/mop$MOP-2#class-type-info::t
                             _info49741_))
                          (let ((__tmp50130
                                 (let ((__tmp50134
@@ -2640,10 +2640,10 @@
                                                (##unchecked-structure-ref
                                                 __obj50038
                                                 '9
-                                                gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                gerbil/core/mop$MOP-2#class-type-info::t
                                                 '#f))
                                              (class-slot-ref
-                                              gerbil/core/mop$<MOP:2>#class-type-info::t
+                                              gerbil/core/mop$MOP-2#class-type-info::t
                                               __obj50038
                                               'type-descriptor))))
                                       (__tmp50131
@@ -2663,10 +2663,10 @@
                                                              (##unchecked-structure-ref
                                                               __obj50039
                                                               '11
-                                                              gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                              gerbil/core/mop$MOP-2#class-type-info::t
                                                               '#f))
                                                            (class-slot-ref
-                                                            gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                            gerbil/core/mop$MOP-2#class-type-info::t
                                                             __obj50039
                                                             'predicate))))
                                                     (__tmp50132
@@ -2687,10 +2687,10 @@
                                                    (##unchecked-structure-ref
                                                     __obj50040
                                                     '15
-                                                    gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                    gerbil/core/mop$MOP-2#class-type-info::t
                                                     '#f))
                                                  (class-slot-ref
-                                                  gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                  gerbil/core/mop$MOP-2#class-type-info::t
                                                   __obj50040
                                                   'unchecked-mutators))))
                                       (map cdr
@@ -2705,10 +2705,10 @@
                                                    (##unchecked-structure-ref
                                                     __obj50041
                                                     '14
-                                                    gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                    gerbil/core/mop$MOP-2#class-type-info::t
                                                     '#f))
                                                  (class-slot-ref
-                                                  gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                  gerbil/core/mop$MOP-2#class-type-info::t
                                                   __obj50041
                                                   'unchecked-accessors)))))
                                '())
@@ -2724,10 +2724,10 @@
                                         (##unchecked-structure-ref
                                          __obj50042
                                          '13
-                                         gerbil/core/mop$<MOP:2>#class-type-info::t
+                                         gerbil/core/mop$MOP-2#class-type-info::t
                                          '#f))
                                       (class-slot-ref
-                                       gerbil/core/mop$<MOP:2>#class-type-info::t
+                                       gerbil/core/mop$MOP-2#class-type-info::t
                                        __obj50042
                                        'mutators)))))
                     (map cdr
@@ -2742,10 +2742,10 @@
                                  (##unchecked-structure-ref
                                   __obj50043
                                   '12
-                                  gerbil/core/mop$<MOP:2>#class-type-info::t
+                                  gerbil/core/mop$MOP-2#class-type-info::t
                                   '#f))
                                (class-slot-ref
-                                gerbil/core/mop$<MOP:2>#class-type-info::t
+                                gerbil/core/mop$MOP-2#class-type-info::t
                                 __obj50043
                                 'accessors)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2766,10 +2766,10 @@
                                                              (##unchecked-structure-ref
                                                               __obj50044
                                                               '10
-                                                              gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                              gerbil/core/mop$MOP-2#class-type-info::t
                                                               '#f))
                                                            (class-slot-ref
-                                                            gerbil/core/mop$<MOP:2>#class-type-info::t
+                                                            gerbil/core/mop$MOP-2#class-type-info::t
                                                             __obj50044
                                                             'constructor)))))
                                                 (if _ctor49744_

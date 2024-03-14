@@ -1,8 +1,8 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/mop$<MOP:2>::timestamp 1710238836)
+  (define gerbil/core/mop$MOP-2::timestamp 1710440197)
   (begin
-    (define gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#class-type-info::t
       (make-class-type
        'gerbil.core#class-type-info::t
        'class-type-info
@@ -23,252 +23,248 @@
             unchecked-mutators)
        '()
        '#f))
-    (define gerbil/core/mop$<MOP:2>#class-type-info?
-      (make-class-predicate gerbil/core/mop$<MOP:2>#class-type-info::t))
-    (define gerbil/core/mop$<MOP:2>#make-class-type-info
+    (define gerbil/core/mop$MOP-2#class-type-info?
+      (make-class-predicate gerbil/core/mop$MOP-2#class-type-info::t))
+    (define gerbil/core/mop$MOP-2#make-class-type-info
       (lambda _$args27367_
         (apply make-instance
-               gerbil/core/mop$<MOP:2>#class-type-info::t
+               gerbil/core/mop$MOP-2#class-type-info::t
                _$args27367_)))
-    (define gerbil/core/mop$<MOP:2>#!class-type-id
+    (define gerbil/core/mop$MOP-2#!class-type-id
+      (make-class-slot-accessor gerbil/core/mop$MOP-2#class-type-info::t 'id))
+    (define gerbil/core/mop$MOP-2#!class-type-name
       (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'name))
+    (define gerbil/core/mop$MOP-2#!class-type-super
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'super))
+    (define gerbil/core/mop$MOP-2#!class-type-slots
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop$MOP-2#!class-type-struct?
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'struct?))
+    (define gerbil/core/mop$MOP-2#!class-type-final?
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'final?))
+    (define gerbil/core/mop$MOP-2#!class-type-metaclass
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'metaclass))
+    (define gerbil/core/mop$MOP-2#!class-type-constructor-method
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor-method))
+    (define gerbil/core/mop$MOP-2#!class-type-descriptor
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'type-descriptor))
+    (define gerbil/core/mop$MOP-2#!class-type-constructor
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor))
+    (define gerbil/core/mop$MOP-2#!class-type-predicate
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'predicate))
+    (define gerbil/core/mop$MOP-2#!class-type-accessors
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'accessors))
+    (define gerbil/core/mop$MOP-2#!class-type-mutators
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'mutators))
+    (define gerbil/core/mop$MOP-2#!class-type-unchecked-accessors
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-accessors))
+    (define gerbil/core/mop$MOP-2#!class-type-unchecked-mutators
+      (make-class-slot-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop$MOP-2#!class-type-id-set!
+      (make-class-slot-mutator gerbil/core/mop$MOP-2#class-type-info::t 'id))
+    (define gerbil/core/mop$MOP-2#!class-type-name-set!
+      (make-class-slot-mutator gerbil/core/mop$MOP-2#class-type-info::t 'name))
+    (define gerbil/core/mop$MOP-2#!class-type-super-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'super))
+    (define gerbil/core/mop$MOP-2#!class-type-slots-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop$MOP-2#!class-type-struct?-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'struct?))
+    (define gerbil/core/mop$MOP-2#!class-type-final?-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'final?))
+    (define gerbil/core/mop$MOP-2#!class-type-metaclass-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'metaclass))
+    (define gerbil/core/mop$MOP-2#!class-type-constructor-method-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor-method))
+    (define gerbil/core/mop$MOP-2#!class-type-descriptor-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'type-descriptor))
+    (define gerbil/core/mop$MOP-2#!class-type-constructor-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor))
+    (define gerbil/core/mop$MOP-2#!class-type-predicate-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'predicate))
+    (define gerbil/core/mop$MOP-2#!class-type-accessors-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'accessors))
+    (define gerbil/core/mop$MOP-2#!class-type-mutators-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'mutators))
+    (define gerbil/core/mop$MOP-2#!class-type-unchecked-accessors-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-accessors))
+    (define gerbil/core/mop$MOP-2#!class-type-unchecked-mutators-set!
+      (make-class-slot-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop$MOP-2#&!class-type-id
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
        'id))
-    (define gerbil/core/mop$<MOP:2>#!class-type-name
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'name))
-    (define gerbil/core/mop$<MOP:2>#!class-type-super
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'super))
-    (define gerbil/core/mop$<MOP:2>#!class-type-slots
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'slots))
-    (define gerbil/core/mop$<MOP:2>#!class-type-struct?
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'struct?))
-    (define gerbil/core/mop$<MOP:2>#!class-type-final?
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'final?))
-    (define gerbil/core/mop$<MOP:2>#!class-type-metaclass
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'metaclass))
-    (define gerbil/core/mop$<MOP:2>#!class-type-constructor-method
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor-method))
-    (define gerbil/core/mop$<MOP:2>#!class-type-descriptor
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'type-descriptor))
-    (define gerbil/core/mop$<MOP:2>#!class-type-constructor
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor))
-    (define gerbil/core/mop$<MOP:2>#!class-type-predicate
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'predicate))
-    (define gerbil/core/mop$<MOP:2>#!class-type-accessors
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'accessors))
-    (define gerbil/core/mop$<MOP:2>#!class-type-mutators
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'mutators))
-    (define gerbil/core/mop$<MOP:2>#!class-type-unchecked-accessors
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-accessors))
-    (define gerbil/core/mop$<MOP:2>#!class-type-unchecked-mutators
-      (make-class-slot-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-mutators))
-    (define gerbil/core/mop$<MOP:2>#!class-type-id-set!
-      (make-class-slot-mutator gerbil/core/mop$<MOP:2>#class-type-info::t 'id))
-    (define gerbil/core/mop$<MOP:2>#!class-type-name-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'name))
-    (define gerbil/core/mop$<MOP:2>#!class-type-super-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'super))
-    (define gerbil/core/mop$<MOP:2>#!class-type-slots-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'slots))
-    (define gerbil/core/mop$<MOP:2>#!class-type-struct?-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'struct?))
-    (define gerbil/core/mop$<MOP:2>#!class-type-final?-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'final?))
-    (define gerbil/core/mop$<MOP:2>#!class-type-metaclass-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'metaclass))
-    (define gerbil/core/mop$<MOP:2>#!class-type-constructor-method-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor-method))
-    (define gerbil/core/mop$<MOP:2>#!class-type-descriptor-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'type-descriptor))
-    (define gerbil/core/mop$<MOP:2>#!class-type-constructor-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor))
-    (define gerbil/core/mop$<MOP:2>#!class-type-predicate-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'predicate))
-    (define gerbil/core/mop$<MOP:2>#!class-type-accessors-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'accessors))
-    (define gerbil/core/mop$<MOP:2>#!class-type-mutators-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'mutators))
-    (define gerbil/core/mop$<MOP:2>#!class-type-unchecked-accessors-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-accessors))
-    (define gerbil/core/mop$<MOP:2>#!class-type-unchecked-mutators-set!
-      (make-class-slot-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-mutators))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-id
+    (define gerbil/core/mop$MOP-2#&!class-type-name
       (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'name))
+    (define gerbil/core/mop$MOP-2#&!class-type-super
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'super))
+    (define gerbil/core/mop$MOP-2#&!class-type-slots
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'slots))
+    (define gerbil/core/mop$MOP-2#&!class-type-struct?
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'struct?))
+    (define gerbil/core/mop$MOP-2#&!class-type-final?
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'final?))
+    (define gerbil/core/mop$MOP-2#&!class-type-metaclass
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'metaclass))
+    (define gerbil/core/mop$MOP-2#&!class-type-constructor-method
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor-method))
+    (define gerbil/core/mop$MOP-2#&!class-type-descriptor
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'type-descriptor))
+    (define gerbil/core/mop$MOP-2#&!class-type-constructor
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'constructor))
+    (define gerbil/core/mop$MOP-2#&!class-type-predicate
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'predicate))
+    (define gerbil/core/mop$MOP-2#&!class-type-accessors
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'accessors))
+    (define gerbil/core/mop$MOP-2#&!class-type-mutators
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'mutators))
+    (define gerbil/core/mop$MOP-2#&!class-type-unchecked-accessors
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-accessors))
+    (define gerbil/core/mop$MOP-2#&!class-type-unchecked-mutators
+      (make-class-slot-unchecked-accessor
+       gerbil/core/mop$MOP-2#class-type-info::t
+       'unchecked-mutators))
+    (define gerbil/core/mop$MOP-2#&!class-type-id-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'id))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-name
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-name-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'name))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-super
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-super-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'super))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-slots
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-slots-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'slots))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-struct?
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-struct?-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'struct?))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-final?
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-final?-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'final?))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-metaclass
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-metaclass-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'metaclass))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-constructor-method
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-constructor-method-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'constructor-method))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-descriptor
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-descriptor-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'type-descriptor))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-constructor
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-constructor-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'constructor))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-predicate
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-predicate-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'predicate))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-accessors
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-accessors-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'accessors))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-mutators
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-mutators-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'mutators))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-unchecked-accessors
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-unchecked-accessors-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'unchecked-accessors))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-unchecked-mutators
-      (make-class-slot-unchecked-accessor
-       gerbil/core/mop$<MOP:2>#class-type-info::t
+    (define gerbil/core/mop$MOP-2#&!class-type-unchecked-mutators-set!
+      (make-class-slot-unchecked-mutator
+       gerbil/core/mop$MOP-2#class-type-info::t
        'unchecked-mutators))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-id-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'id))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-name-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'name))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-super-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'super))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-slots-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'slots))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-struct?-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'struct?))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-final?-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'final?))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-metaclass-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'metaclass))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-constructor-method-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor-method))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-descriptor-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'type-descriptor))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-constructor-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'constructor))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-predicate-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'predicate))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-accessors-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'accessors))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-mutators-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'mutators))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-unchecked-accessors-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-accessors))
-    (define gerbil/core/mop$<MOP:2>#&!class-type-unchecked-mutators-set!
-      (make-class-slot-unchecked-mutator
-       gerbil/core/mop$<MOP:2>#class-type-info::t
-       'unchecked-mutators))
-    (define gerbil/core/mop$<MOP:2>#class-type-info::apply-macro-expander
+    (define gerbil/core/mop$MOP-2#class-type-info::apply-macro-expander
       (lambda (_self27279_ _stx27280_)
         (let* ((_g2728227301_
                 (lambda (_g2728327298_)
@@ -347,10 +343,10 @@
                                     (##unchecked-structure-ref
                                      __obj31579
                                      '10
-                                     gerbil/core/mop$<MOP:2>#class-type-info::t
+                                     gerbil/core/mop$MOP-2#class-type-info::t
                                      '#f))
                                   (class-slot-ref
-                                   gerbil/core/mop$<MOP:2>#class-type-info::t
+                                   gerbil/core/mop$MOP-2#class-type-info::t
                                    __obj31579
                                    'constructor)))))
                        (if _$e27352_
@@ -391,10 +387,10 @@
           (declare (not safe))
           (_g2728127364_ _stx27280_))))
     (bind-method!
-     gerbil/core/mop$<MOP:2>#class-type-info::t
+     gerbil/core/mop$MOP-2#class-type-info::t
      'apply-macro-expander
-     gerbil/core/mop$<MOP:2>#class-type-info::apply-macro-expander)
-    (define gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__%
+     gerbil/core/mop$MOP-2#class-type-info::apply-macro-expander)
+    (define gerbil/core/mop$MOP-2#syntax-local-class-type-info?__%
       (lambda (_stx27260_ _is?27261_)
         (if (gx#identifier? _stx27260_)
             (let ((_e2726227264_ (gx#syntax-local-value _stx27260_ false)))
@@ -403,38 +399,38 @@
                     (if (let ()
                           (declare (not safe))
                           (class-instance?
-                           gerbil/core/mop$<MOP:2>#class-type-info::t
+                           gerbil/core/mop$MOP-2#class-type-info::t
                            _e27267_))
                         (_is?27261_ _e27267_)
                         '#f))
                   '#f))
             '#f)))
-    (define gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__0
+    (define gerbil/core/mop$MOP-2#syntax-local-class-type-info?__0
       (lambda (_stx27272_)
         (let ((_is?27274_ true))
           (declare (not safe))
-          (gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__%
+          (gerbil/core/mop$MOP-2#syntax-local-class-type-info?__%
            _stx27272_
            _is?27274_))))
-    (define gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?
+    (define gerbil/core/mop$MOP-2#syntax-local-class-type-info?
       (lambda _g31589_
         (let ((_g31588_ (let () (declare (not safe)) (##length _g31589_))))
           (cond ((let () (declare (not safe)) (##fx= _g31588_ 1))
                  (apply (lambda (_stx27272_)
                           (let ()
                             (declare (not safe))
-                            (gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__0
+                            (gerbil/core/mop$MOP-2#syntax-local-class-type-info?__0
                              _stx27272_)))
                         _g31589_))
                 ((let () (declare (not safe)) (##fx= _g31588_ 2))
                  (apply (lambda (_stx27276_ _is?27277_)
                           (let ()
                             (declare (not safe))
-                            (gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?__%
+                            (gerbil/core/mop$MOP-2#syntax-local-class-type-info?__%
                              _stx27276_
                              _is?27277_)))
                         _g31589_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
-                  gerbil/core/mop$<MOP:2>#syntax-local-class-type-info?
+                  gerbil/core/mop$MOP-2#syntax-local-class-type-info?
                   _g31589_))))))))

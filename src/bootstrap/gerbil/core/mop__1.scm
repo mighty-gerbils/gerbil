@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/mop$<MOP:1>[1]#module-type-id|
+  (define |gerbil/core/mop$MOP-1[1]#module-type-id|
     (lambda (_type-t27236_)
       (let ((_$e27239_ (gx#module-context-ns (gx#current-expander-context))))
         (if _$e27239_
@@ -20,14 +20,14 @@
                '"#"
                _type-t27236_
                '"::t"))))))
-  (define |gerbil/core/mop$<MOP:1>[1]#make-class-type-id|
+  (define |gerbil/core/mop$MOP-1[1]#make-class-type-id|
     (lambda (_type-t27233_)
       (if (gx#module-context? (gx#current-expander-context))
           (let ()
             (declare (not safe))
-            (|gerbil/core/mop$<MOP:1>[1]#module-type-id| _type-t27233_))
+            (|gerbil/core/mop$MOP-1[1]#module-type-id| _type-t27233_))
           (make-symbol '"__" (gensym (gx#stx-e _type-t27233_)) '"::t"))))
-  (define |gerbil/core/mop$<MOP:1>[1]#generate-typedef|
+  (define |gerbil/core/mop$MOP-1[1]#generate-typedef|
     (lambda (_stx25813_ _struct?25815_)
       (letrec ((_wrap25817_
                 (lambda (_e-stx27230_)
@@ -1688,7 +1688,7 @@
                                               _$e27132_
                                               (let ()
                                                 (declare (not safe))
-                                                (|gerbil/core/mop$<MOP:1>[1]#make-class-type-id|
+                                                (|gerbil/core/mop$MOP-1[1]#make-class-type-id|
                                                  _L25911_))))))
                                   (declare (not safe))
                                   (_g2604627128_ __tmp31811))))
@@ -1735,13 +1735,13 @@
                         (_g2582225849_ _g2582325853_))))))
           (declare (not safe))
           (_g2582127140_ _stx25813_)))))
-  (define |gerbil/core/mop$<MOP:1>[:0:]#defstruct-type|
+  (define |gerbil/core/mop$MOP-1[:0:]#defstruct-type|
     (lambda (_stx27252_)
       (let ()
         (declare (not safe))
-        (|gerbil/core/mop$<MOP:1>[1]#generate-typedef| _stx27252_ '#t))))
-  (define |gerbil/core/mop$<MOP:1>[:0:]#defclass-type|
+        (|gerbil/core/mop$MOP-1[1]#generate-typedef| _stx27252_ '#t))))
+  (define |gerbil/core/mop$MOP-1[:0:]#defclass-type|
     (lambda (_stx27255_)
       (let ()
         (declare (not safe))
-        (|gerbil/core/mop$<MOP:1>[1]#generate-typedef| _stx27255_ '#f)))))
+        (|gerbil/core/mop$MOP-1[1]#generate-typedef| _stx27255_ '#f)))))

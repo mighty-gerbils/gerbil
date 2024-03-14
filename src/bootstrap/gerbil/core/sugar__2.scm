@@ -1,104 +1,104 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g24801_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g24801_|
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g24802_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g24802_|
     (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g24803_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g24803_|
     (##structure
      gx#syntax-quote::t
      'else
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25671_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25671_|
     (##structure
      gx#syntax-quote::t
      'values
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25674_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25674_|
     (##structure
      gx#syntax-quote::t
      'values
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25675_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25675_|
     (##structure
      gx#syntax-quote::t
      'values
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25736_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25736_|
     (##structure
      gx#syntax-quote::t
      'quasiquote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25737_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25737_|
     (##structure
      gx#syntax-quote::t
      'quote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25738_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25738_|
     (##structure
      gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25739_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25739_|
     (##structure
      gx#syntax-quote::t
      'unquote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25783_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25783_|
     (##structure
      gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25784_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25784_|
     (##structure
      gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25785_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25785_|
     (##structure
      gx#syntax-quote::t
      'unquote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25786_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25786_|
     (##structure
      gx#syntax-quote::t
      'quasiquote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25797_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25797_|
     (##structure
      gx#syntax-quote::t
      '<...>
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/sugar$<sugar:2>[1]#_g25798_|
+  (define |gerbil/core/sugar$Sugar-2[1]#_g25798_|
     (##structure gx#syntax-quote::t '<> #f (gx#current-expander-context) '()))
   (begin
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#lambda|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#lambda|
       (lambda (_stx8932_)
         (letrec ((_simple-lambda?8935_
                   (lambda (_hd12332_)
@@ -2939,7 +2939,7 @@
                                  _tl89609413_)))
                             (let () (declare (not safe)) (_g89538984_)))))
                     (let () (declare (not safe)) (_g89538984_)))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#def|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#def|
       (lambda (_$stx12348_)
         (let* ((___stx2301123012_ _$stx12348_)
                (_g1235412418_
@@ -3422,7 +3422,7 @@
                                         (_g1235412418_))))))
                           (let () (declare (not safe)) (_g1235412418_)))))
                   (let () (declare (not safe)) (_g1235412418_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#def*|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#def*|
       (lambda (_$stx12689_)
         (let* ((_g1269312717_
                 (lambda (_g1269412713_)
@@ -3547,7 +3547,7 @@
                               (_g1269312717_ _g1269412721_))))
                       (_g1269312717_ _g1269412721_)))))
           (_g1269212802_ _$stx12689_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#defvalues|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#defvalues|
       (lambda (_$stx12807_)
         (let* ((_g1281112829_
                 (lambda (_g1281212825_)
@@ -3615,7 +3615,7 @@
                               (_g1281112829_ _g1281212833_))))
                       (_g1281112829_ _g1281212833_)))))
           (_g1281012884_ _$stx12807_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#case|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#case|
       (lambda (_$stx12888_)
         (let* ((_g1289212916_
                 (lambda (_g1289312912_)
@@ -3749,7 +3749,7 @@
                               (_g1289212916_ _g1289312920_))))
                       (_g1289212916_ _g1289312920_)))))
           (_g1289113001_ _$stx12888_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#~case|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#~case|
       (lambda (_stx13006_)
         (letrec ((_parse-clauses13009_
                   (lambda (_e15472_ _clauses15474_)
@@ -4072,7 +4072,7 @@
                                         (##car _e1559115793_))))
                                  (if (gx#identifier? _hd1559015797_)
                                      (if (gx#free-identifier=?
-                                          |gerbil/core/sugar$<sugar:2>[1]#_g24801_|
+                                          |gerbil/core/sugar$Sugar-2[1]#_g24801_|
                                           _hd1559015797_)
                                          (if (gx#stx-pair? _tl1558915800_)
                                              (let ((_e1559415803_
@@ -4177,7 +4177,7 @@
                                                (if (gx#identifier?
                                                     _hd1555415962_)
                                                    (if (gx#free-identifier=?
-                                                        |gerbil/core/sugar$<sugar:2>[1]#_g24803_|
+                                                        |gerbil/core/sugar$Sugar-2[1]#_g24803_|
                                                         _hd1555415962_)
                                                        (if (gx#stx-pair?
                                                             _tl1555315965_)
@@ -4194,7 +4194,7 @@
                               (##car _e1555815968_))))
                        (if (gx#identifier? _hd1555715972_)
                            (if (gx#free-identifier=?
-                                |gerbil/core/sugar$<sugar:2>[1]#_g24802_|
+                                |gerbil/core/sugar$Sugar-2[1]#_g24802_|
                                 _hd1555715972_)
                                (if (gx#stx-pair? _tl1555615975_)
                                    (let ((_e1556115978_
@@ -8825,7 +8825,7 @@
                                 (_g1303513059_ _g1303613063_))))
                         (_g1303513059_ _g1303613063_)))))
             (_g1303413155_ _stx13006_)))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#~case-test|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#~case-test|
       (lambda (_stx16057_)
         (let* ((_g1606016078_
                 (lambda (_g1606116074_)
@@ -8951,7 +8951,7 @@
                               (_g1606016078_ _g1606116082_))))
                       (_g1606016078_ _g1606116082_)))))
           (_g1605916144_ _stx16057_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#~case-dispatch|
       (lambda (_$stx16148_)
         (let* ((_g1615216176_
                 (lambda (_g1615316172_)
@@ -9062,7 +9062,7 @@
                               (_g1615216176_ _g1615316180_))))
                       (_g1615216176_ _g1615316180_)))))
           (_g1615116261_ _$stx16148_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch*|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#~case-dispatch*|
       (lambda (_stx16266_)
         (let* ((___stx2327123272_ _stx16266_)
                (_g1627316369_
@@ -9524,7 +9524,7 @@
                                     (_g1627316369_)))))
                           (let () (declare (not safe)) (_g1627316369_)))))
                   (let () (declare (not safe)) (_g1627316369_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#~case-dispatch-bsearch|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#~case-dispatch-bsearch|
       (lambda (_stx16868_)
         (letrec ((_split16871_
                   (lambda (_lst17232_ _mid17234_)
@@ -9955,7 +9955,7 @@
                                 (_g1687416902_ _g1687516906_))))
                         (_g1687416902_ _g1687516906_)))))
             (_g1687317228_ _stx16868_)))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#do|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#do|
       (lambda (_$stx17248_)
         (let* ((_g1725217323_
                 (lambda (_g1725317319_)
@@ -10307,11 +10307,11 @@
                             (gx#datum->syntax '#f 'if))
                            (__tmp25525
                             (let ((__tmp25526
-                                   (let ((__tmp25538
+                                   (let ((__tmp25614
                                           (let ((__tmp25617
                                                  (gx#datum->syntax '#f 'begin))
-                                                (__tmp25539
-                                                 (let ((__tmp25540
+                                                (__tmp25615
+                                                 (let ((__tmp25616
                                                         (foldr (lambda (_g1757217586_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                 _g1757317589_)
@@ -10322,12 +10322,12 @@
                        _L17520_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons '#!void __tmp25540))))
+                                                   (cons '#!void __tmp25616))))
                                             (declare (not safe))
-                                            (cons __tmp25617 __tmp25539)))
+                                            (cons __tmp25617 __tmp25615)))
                                          (__tmp25527
                                           (let ((__tmp25528
-                                                 (let ((__tmp25537
+                                                 (let ((__tmp25613
                                                         (gx#datum->syntax
                                                          '#f
                                                          'begin))
@@ -10339,7 +10339,7 @@
                            (declare (not safe))
                            (cons _g1756517592_ _g1756617595_)))
                        (let ((__tmp25530
-                              (let ((__tmp25536 (gx#datum->syntax '#f '$loop))
+                              (let ((__tmp25612 (gx#datum->syntax '#f '$loop))
                                     (__tmp25531
                                      (begin
                                        (gx#syntax-check-splice-targets
@@ -10348,13 +10348,13 @@
                                        (foldr (lambda (_g1756717598_
                                                        _g1756817601_
                                                        _g1756917603_)
-                                                (let ((__tmp25532
-                                                       (let ((__tmp25535
+                                                (let ((__tmp25608
+                                                       (let ((__tmp25611
                                                               (gx#datum->syntax
                                                                '#f
                                                                'begin))
-                                                             (__tmp25533
-                                                              (let ((__tmp25534
+                                                             (__tmp25609
+                                                              (let ((__tmp25610
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (foldr (lambda (_g1757017606_ _g1757117609_)
                                       (let ()
@@ -10363,29 +10363,29 @@
                                     '()
                                     _g1756717598_)))
                         (declare (not safe))
-                        (cons _g1756817601_ __tmp25534))))
+                        (cons _g1756817601_ __tmp25610))))
                  (declare (not safe))
-                 (cons __tmp25535 __tmp25533))))
+                 (cons __tmp25611 __tmp25609))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp25532
+                                                  (cons __tmp25608
                                                         _g1756917603_)))
                                               '()
                                               _L17522_
                                               _L17524_))))
                                 (declare (not safe))
-                                (cons __tmp25536 __tmp25531))))
+                                (cons __tmp25612 __tmp25531))))
                          (declare (not safe))
                          (cons __tmp25530 '()))
                        _L17518_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp25537
+                                                   (cons __tmp25613
                                                          __tmp25529))))
                                             (declare (not safe))
                                             (cons __tmp25528 '()))))
                                      (declare (not safe))
-                                     (cons __tmp25538 __tmp25527))))
+                                     (cons __tmp25614 __tmp25527))))
                               (declare (not safe))
                               (cons _L17521_ __tmp25526))))
                        (declare (not safe))
@@ -10432,7 +10432,7 @@
                               (_g1725217323_ _g1725317327_))))
                       (_g1725217323_ _g1725317327_)))))
           (_g1725117612_ _$stx17248_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#do-while|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#do-while|
       (lambda (_$stx17620_)
         (let* ((_g1762417647_
                 (lambda (_g1762517643_)
@@ -10525,7 +10525,7 @@
                               (_g1762417647_ _g1762517651_))))
                       (_g1762417647_ _g1762517651_)))))
           (_g1762317718_ _$stx17620_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#begin0|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#begin0|
       (lambda (_$stx17722_)
         (let* ((___stx2343123432_ _$stx17722_)
                (_g1772717758_
@@ -10677,7 +10677,7 @@
                                         (_g1772717758_))))))
                           (let () (declare (not safe)) (_g1772717758_)))))
                   (let () (declare (not safe)) (_g1772717758_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#rec|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#rec|
       (lambda (_$stx17888_)
         (let* ((___stx2347723478_ _$stx17888_)
                (_g1789417947_
@@ -10901,7 +10901,7 @@
                                            (##car _e1791718073_))))
                                     (if (gx#identifier? _hd1791618077_)
                                         (if (gx#free-identifier=?
-                                             |gerbil/core/sugar$<sugar:2>[1]#_g25671_|
+                                             |gerbil/core/sugar$Sugar-2[1]#_g25671_|
                                              _hd1791618077_)
                                             (___match2353823539_
                                              _e1790018119_
@@ -11138,7 +11138,7 @@
                                         (_g1789417947_))))))
                           (let () (declare (not safe)) (_g1789417947_)))))
                   (let () (declare (not safe)) (_g1789417947_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#alet|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#alet|
       (lambda (_stx18171_)
         (letrec ((_let-bind?18174_
                   (lambda (_x19097_)
@@ -11267,7 +11267,7 @@
                                        (##car _e1894818972_))))
                                 (if (gx#identifier? _hd1894718976_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/sugar$<sugar:2>[1]#_g25674_|
+                                         |gerbil/core/sugar$Sugar-2[1]#_g25674_|
                                          _hd1894718976_)
                                         (___kont2363623637_ _tl1894618979_)
                                         (___kont2363823639_))
@@ -11297,7 +11297,7 @@
                                        (##car _e1888818912_))))
                                 (if (gx#identifier? _hd1888718916_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core/sugar$<sugar:2>[1]#_g25675_|
+                                         |gerbil/core/sugar$Sugar-2[1]#_g25675_|
                                          _hd1888718916_)
                                         (___kont2365623657_ _tl1888618919_)
                                         (___kont2365823659_))
@@ -12304,7 +12304,7 @@
                                           (_g1818218254_))))))
                             (let () (declare (not safe)) (_g1818218254_)))))
                     (let () (declare (not safe)) (_g1818218254_)))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#alet*|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#alet*|
       (lambda (_$stx19214_)
         (let* ((___stx2377323774_ _$stx19214_)
                (_g1922019271_
@@ -12545,7 +12545,7 @@
                                         (_g1922019271_))))))
                           (let () (declare (not safe)) (_g1922019271_)))))
                   (let () (declare (not safe)) (_g1922019271_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#@list|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#@list|
       (lambda (_$stx19491_)
         (let* ((___stx2385323854_ _$stx19491_)
                (_g1950219580_
@@ -12684,7 +12684,7 @@
                                          (##car _e1951319891_))))
                                   (if (gx#identifier? _hd1951219895_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/sugar$<sugar:2>[1]#_g25737_|
+                                           |gerbil/core/sugar$Sugar-2[1]#_g25737_|
                                            _hd1951219895_)
                                           (if (gx#stx-pair? _tl1951119898_)
                                               (let ((_e1951619901_
@@ -12717,7 +12717,7 @@
                                                _hd1951219895_
                                                _hd1950519937_))
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/sugar$<sugar:2>[1]#_g25736_|
+                                               |gerbil/core/sugar$Sugar-2[1]#_g25736_|
                                                _hd1951219895_)
                                               (if (gx#stx-pair? _tl1951119898_)
                                                   (let ((_e1952619849_
@@ -12906,7 +12906,7 @@
                                                _hd1950519937_))))))
                               (___kont2387023871_ _tl1950419940_)))))
                   (let () (declare (not safe)) (_g1950219580_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#quasiquote|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#quasiquote|
       (lambda (_stx19951_)
         (letrec ((_simple-quote?19954_
                   (lambda (_e20646_)
@@ -13029,7 +13029,7 @@
                                          (##car _e2065820856_))))
                                   (if (gx#identifier? _hd2065720860_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/sugar$<sugar:2>[1]#_g25739_|
+                                           |gerbil/core/sugar$Sugar-2[1]#_g25739_|
                                            _hd2065720860_)
                                           (if (gx#stx-pair? _tl2065620863_)
                                               (let ((_e2066120866_
@@ -13053,7 +13053,7 @@
                                                _tl2065620863_
                                                _hd2065720860_))
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/sugar$<sugar:2>[1]#_g25738_|
+                                               |gerbil/core/sugar$Sugar-2[1]#_g25738_|
                                                _hd2065720860_)
                                               (if (gx#stx-pair? _tl2065620863_)
                                                   (let ((_e2066720835_
@@ -13516,7 +13516,7 @@
                                          (##car _e2003420578_))))
                                   (if (gx#identifier? _hd2003320582_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core/sugar$<sugar:2>[1]#_g25786_|
+                                           |gerbil/core/sugar$Sugar-2[1]#_g25786_|
                                            _hd2003320582_)
                                           (if (gx#stx-pair? _tl2003220585_)
                                               (let ((_e2003720588_
@@ -13541,7 +13541,7 @@
                                                _tl2003220585_
                                                _hd2003320582_))
                                           (if (gx#free-identifier=?
-                                               |gerbil/core/sugar$<sugar:2>[1]#_g25785_|
+                                               |gerbil/core/sugar$Sugar-2[1]#_g25785_|
                                                _hd2003320582_)
                                               (if (gx#stx-pair? _tl2003220585_)
                                                   (let ((_e2004420517_
@@ -13568,7 +13568,7 @@
                                                    _tl2003220585_
                                                    _hd2003320582_))
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core/sugar$<sugar:2>[1]#_g25784_|
+                                                   |gerbil/core/sugar$Sugar-2[1]#_g25784_|
                                                    _hd2003320582_)
                                                   (if (gx#stx-pair?
                                                        _tl2003220585_)
@@ -13604,7 +13604,7 @@
                                               (if (gx#identifier?
                                                    _hd2005820365_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core/sugar$<sugar:2>[1]#_g25783_|
+                                                       |gerbil/core/sugar$Sugar-2[1]#_g25783_|
                                                        _hd2005820365_)
                                                       (if (gx#stx-pair?
                                                            _tl2005720368_)
@@ -13686,7 +13686,7 @@
                                 (_g1995819972_ _g1995919976_))))
                         (_g1995819972_ _g1995919976_)))))
             (_g1995720014_ _stx19951_)))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#delay|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#delay|
       (lambda (_$stx20886_)
         (let* ((___stx2421724218_ _$stx20886_)
                (_g2089120912_
@@ -13764,7 +13764,7 @@
                                     (_g2089120912_)))))
                           (let () (declare (not safe)) (_g2089120912_)))))
                   (let () (declare (not safe)) (_g2089120912_))))))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#cut|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#cut|
       (lambda (_stx20997_)
         (letrec ((_generate21000_
                   (lambda (_rest21119_)
@@ -13826,11 +13826,11 @@
                                                (cons _L21173_ _body21128_))))))
                                      (if (gx#identifier? ___stx2425524256_)
                                          (if (gx#free-identifier=?
-                                              |gerbil/core/sugar$<sugar:2>[1]#_g25798_|
+                                              |gerbil/core/sugar$Sugar-2[1]#_g25798_|
                                               ___stx2425524256_)
                                              (___kont2425824259_)
                                              (if (gx#free-identifier=?
-                                                  |gerbil/core/sugar$<sugar:2>[1]#_g25797_|
+                                                  |gerbil/core/sugar$Sugar-2[1]#_g25797_|
                                                   ___stx2425524256_)
                                                  (___kont2426024261_)
                                                  (___kont2426224263_)))
@@ -13964,7 +13964,7 @@
                              _tl2100621028_)))
                         (_g2100321014_ _g2100421018_)))))
             (_g2100221115_ _stx20997_)))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#<>|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#<>|
       (lambda (_$stx21245_)
         (let ((_g2124821255_
                (lambda (_g2124921251_)
@@ -13973,7 +13973,7 @@
                   '"Bad syntax; invalid match target"
                   _g2124921251_))))
           (_g2124821255_ _$stx21245_))))
-    (define |gerbil/core/sugar$<sugar:2>[:0:]#<...>|
+    (define |gerbil/core/sugar$Sugar-2[:0:]#<...>|
       (lambda (_$stx21259_)
         (let ((_g2126221269_
                (lambda (_g2126321265_)
