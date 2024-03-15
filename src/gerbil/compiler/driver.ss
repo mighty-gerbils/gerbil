@@ -574,8 +574,7 @@ namespace: gxc
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      ;; TODO separator to become ~
-                      (string->symbol (string-append idstr "--0"))))))
+                      (string->symbol (string-append idstr "~0"))))))
       (cond
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
@@ -609,8 +608,7 @@ namespace: gxc
             ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
                     runtime-code])
            (runtime-module-id
-            ;; TODO separator to become ~
-            (make-symbol (expander-context-id ctx) "--" 0))
+            (make-symbol (expander-context-id ctx) "~" 0))
            (scm0 (compile-output-file ctx 0 ".scm"))
            (scms (compile-static-output-file ctx)))
       ;; copy compiled scm0 to static and delete when not keep-scm
@@ -677,8 +675,7 @@ namespace: gxc
                               (current-expander-phi phi))
                  (generate-runtime-phi code)))
               (module-id
-               ;; TODO separator to become ~
-               (make-symbol (expander-context-id ctx) "--" n)))
+               (make-symbol (expander-context-id ctx) "~" n)))
          (compile-scm-file (compile-output-file ctx n ".scm") code #t
                            supply: module-id)))))
 
@@ -743,7 +740,7 @@ namespace: gxc
         (write `(##supply-module ,module-id))
         (newline))
       (when module-deps
-        ;; TODO once the builtin module registry situation is resolved
+        ;; TODO once the ##load-module situation is resolved
         ;;      change this code to (##demand-module ,dep)
         (for-each (lambda (dep) (when dep (write `(load-module ',dep)) (newline)))
                   module-deps))
@@ -831,8 +828,7 @@ namespace: gxc
 
   (def (file-name path)
     (if n
-      ;; TODO separator to become ~
-      (string-append path "--" (section-string n) ext)
+      (string-append path "~" (section-string n) ext)
       (string-append path ext)))
 
   (def (file-path)

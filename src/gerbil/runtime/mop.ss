@@ -784,8 +784,7 @@ namespace: #f
    (else #f)))
 
 (def (bind-method! klass id proc (rebind? #t))
-  ;; TODO reinstate this
-  #;(def (bind! ht)
+  (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
       (symbolic-table-set! ht id proc)))
