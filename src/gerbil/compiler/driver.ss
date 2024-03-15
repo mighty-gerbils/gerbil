@@ -140,11 +140,19 @@ namespace: gxc
     (compile-executable-module/separate ctx opts)))
 
 (def (compile-executable-module/separate ctx opts)
-  (def (generate-stub builtin-modules)
+  (def (generate-stub linker builtin-modules)
     (let (mod-main (find-runtime-symbol ctx 'main))
+      (for-each
+        (lambda (mod)
+          (write `(##supply-module ,mod))
+          (newline))
+        builtin-modules)
+      (write `(##supply-module ,linker))
+      (newline)
       (write `(define builtin-modules
-                (append (quote ,(map string->symbol builtin-modules))
+                (append (quote ,builtin-modules)
                         libgerbil-builtin-modules)))
+      (newline)
       (write `(define (gerbil-main)
                 (with-unwind-protect
                  (lambda ()
@@ -153,6 +161,7 @@ namespace: gxc
                  (lambda ()
                    (with-catch void (lambda () (force-output (current-output-port))))
                    (with-catch void (lambda () (force-output (current-error-port))))))))
+      (newline)
       (write '(gerbil-main))
       (newline)))
 
@@ -213,12 +222,12 @@ namespace: gxc
              (else
               (raise-compile-error "libgerbil does not exist" libgerbil.a libgerbil.so))))
            (rpath (gerbil-rpath gerbil-libdir))
-           (builtin-modules
-            (map (lambda (mod) (symbol->string (expander-context-id mod)))
-                 (cons ctx deps))))
+           (builtin-modules (map expander-context-id (cons ctx deps))))
       (with-driver-mutex (create-directory* (path-directory output-bin)))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub builtin-modules))
+        (cut generate-stub
+             (string->symbol (path-strip-extension (path-strip-directory output-scm)))
+             builtin-modules))
       (when (current-compile-invoke-gsc)
         (with-driver-mutex (create-directory tmp))
         (for-each copy-file src-deps-scm deps-scm)
