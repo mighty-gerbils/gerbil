@@ -105,7 +105,7 @@ namespace: gxc
           gxc#gsc-static-include-options)
          (%#define-runtime gcc-ld-options gxc#gcc-ld-options)
          (%#define-runtime not-string-empty? gxc#not-string-empty?)
-         (%#define-runtime gsc-compile-file gxc#gsc-compile-file)
+         (%#define-runtime gsc-compile-module gxc#gsc-compile-module)
          (%#define-runtime compile-output-file gxc#compile-output-file)
          (%#define-runtime
           compile-static-output-file

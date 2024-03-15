@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/loader::timestamp 1710487492)
+  (define gerbil/runtime/loader::timestamp 1710488240)
   (begin
     (define load-path
       (lambda () (let () (declare (not safe)) (##get-module-search-order))))

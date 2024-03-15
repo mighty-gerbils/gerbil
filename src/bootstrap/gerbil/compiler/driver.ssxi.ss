@@ -62,7 +62,7 @@ package: gerbil/compiler
   (declare-type gxc#gsc-static-include-options (@lambda 1 #f))
   (declare-type gxc#gcc-ld-options (@lambda 0 #f))
   (declare-type gxc#not-string-empty? (@lambda 1 #f))
-  (declare-type gxc#gsc-compile-file (@lambda 2 #f))
+  (declare-type gxc#gsc-compile-module (@lambda 3 #f))
   (declare-type gxc#compile-output-file (@lambda 3 #f))
   (declare-type gxc#compile-static-output-file (@lambda 1 #f))
   (declare-type gxc#compile-exe-output-file (@lambda 2 #f))
