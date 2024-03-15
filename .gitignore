@@ -16,6 +16,7 @@ doc/.vuepress/dist
 src/gerbil/runtime/version.ss
 src/gerbil/boot-gxi
 src/bootstrap/static
+src/gerbil/builtin-modules.scm
 
 build-deps
 build-env.sh
