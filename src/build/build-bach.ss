@@ -70,7 +70,7 @@
   "gerbil/main")
 
 (def supply-builtin-modules-scm
-  "gerbil/gerbil-builtin-modules.scm")
+  "gerbil/builtin-modules.scm")
 
 (def (invoke program args)
   (let* ((proc (open-process [path: program arguments: args
@@ -92,6 +92,17 @@
                  optimize: (not (getenv "GERBIL_BUILD_NOOPT" #f))
                  generate-ssxi: #f
                  invoke-gsc: #t static: #t])
+
+;; create builtin-modules.scm
+(displayln "... generate " supply-builtin-modules-scm)
+(call-with-output-file supply-builtin-modules-scm
+  (lambda (p)
+    (for-each (lambda (mod)
+                (write `(##supply-module ,(string->symbol mod)) p)
+                (newline p))
+              builtin-modules)
+    (write '(##supply-module gerbil/builtin-modules) p)
+    (newline p)))
 
 ;; and then compile the binary
 (let* ((builtin-modules-scm (map static-file-name builtin-modules))
