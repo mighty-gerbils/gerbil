@@ -749,7 +749,9 @@ namespace: gxc
                   module-deps))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
-    (gsc-compile-file path phi?))
+    (unless module-id
+      (error "cannot compile module without module id" path))
+    (gsc-compile-module path phi? module-id))
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
@@ -802,12 +804,13 @@ namespace: gxc
 (def (not-string-empty? str)
   (not (string-empty? str)))
 
-(def (gsc-compile-file path phi?)
+(def (gsc-compile-module path phi? module-id)
   (let* ((gsc-link-opts (gsc-link-options phi?))
          (gsc-cc-opts (gsc-cc-options phi?))
          (gcc-ld-opts (gcc-ld-options))
-         (gsc-ld-opts (foldr (lambda (opt r) (cons* "-ld-options" opt r)) [] gcc-ld-opts)))
-    (invoke (gerbil-gsc) [gsc-cc-opts ... gsc-ld-opts ... path])))
+         (gsc-ld-opts (foldr (lambda (opt r) (cons* "-ld-options" opt r)) [] gcc-ld-opts))
+         (mod-ref ["-module-ref" (symbol->string module-id)]))
+    (invoke (gerbil-gsc) [mod-ref ... gsc-cc-opts ... gsc-ld-opts ... path])))
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
