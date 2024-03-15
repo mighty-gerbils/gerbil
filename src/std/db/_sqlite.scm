@@ -10,6 +10,8 @@
   (extended-bindings)
   (not safe))
 
+(##supply-module std/db/_sqlite)
+
 (namespace ("std/db/_sqlite#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing

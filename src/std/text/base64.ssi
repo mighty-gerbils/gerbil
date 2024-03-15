@@ -15,4 +15,4 @@ namespace: std/text/base64
 (defalias base64-decode-substring base64-substring->u8vector)
 (defalias base64-encode u8vector->base64-string)
 (defalias base64-encode-subu8vector subu8vector->base64-string)
-(load-module "std/text/base64")
+(load-module std/text/base64)

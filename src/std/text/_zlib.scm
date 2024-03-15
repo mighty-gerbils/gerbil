@@ -4,6 +4,8 @@
 
 ;; compile: -ld-options "-lz"
 
+(##supply-module std/text/_zlib)
+
 (namespace ("std/text/_zlib#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing

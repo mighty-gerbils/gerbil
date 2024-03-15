@@ -59,4 +59,4 @@ package: std/db
   sqlite3_column_int64
   sqlite3_column_double
   )
-(load-module "std/db/_sqlite")
+(load-module std/db/_sqlite)

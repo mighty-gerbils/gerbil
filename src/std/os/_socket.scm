@@ -8,6 +8,8 @@
   (extended-bindings)
   (not safe))
 
+(##supply-module std/os/_socket)
+
 (namespace ("std/os/_socket#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing

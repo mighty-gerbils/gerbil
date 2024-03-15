@@ -726,11 +726,16 @@ TODO:
   (def gsc-opts (gsc-compile-opts opts))
   (def srcpath (source-path mod ".scm" settings))
   (def libpath (gsc-libpath mod settings))
+  (def prefix  (settings-prefix settings))
   (create-directory* libpath)
   (message "... compile foreign " mod)
-  (let* ((proc (open-process [path: (gerbil-gsc)
-                                    arguments: ["-o" libpath gsc-opts ... srcpath]
-                                    stdout-redirection: #f]))
+  (let* ((proc (open-process
+                [path: (gerbil-gsc)
+                       arguments: ["-o" libpath
+                                   "-module-ref" (prefix/ prefix mod)
+                                   gsc-opts ...
+                                   srcpath]
+                       stdout-redirection: #f]))
          (status (process-status proc)))
     (close-port proc)
     (unless (zero? status)
@@ -755,20 +760,7 @@ TODO:
   (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
-  (copy-file srcpath libpath)
-  (message "... compile loader " mod)
-  (with-output-to-file rtpath
-    (lambda ()
-      (for-each (lambda (dep) (pretty-print `(load-module ,dep))) deps)
-      (pretty-print `(load-module ,(prefix/ prefix mod)))))
-  (let* ((proc (open-process [path: (gerbil-gsc)
-                                    arguments: [rtpath]
-                                    stdout-redirection: #f]))
-         (status (process-status proc)))
-    (close-port proc)
-    (unless (zero? status)
-      (error "Compilation error; gsc exited with nonzero status" status))
-    (delete-file rtpath)))
+  (copy-file srcpath libpath))
 
 (def (compile-exe-gsc-opts opts)
   (match opts

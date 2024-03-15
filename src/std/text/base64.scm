@@ -58,6 +58,8 @@
          ; (not interrupts-enabled)
          )
 
+(##supply-module std/text/base64)
+
 ;;==============================================================================
 
 ;; Representation of fifos.
