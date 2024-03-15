@@ -70,6 +70,9 @@ namespace: #f
 (def (register-builtin-modules! builtin-modules)
   (for-each (cut hash-put! __modules <> 'builtin) builtin-modules))
 
+(def (reload-module modref)
+  (error "reload: operation not currently implemented" module: modref))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO -- deprecated; the old loader.
 ;;         remove after recursive bootstrap

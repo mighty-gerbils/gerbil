@@ -1695,6 +1695,7 @@ package: gerbil/core
     set-load-path!
     reset-load-path!
     load-module
+    reload-module
 
     ;; :gerbil/runtime/init
     gerbil-load-expander!

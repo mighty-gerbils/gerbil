@@ -5,9 +5,8 @@
 (import (only-in :gerbil/gambit pretty-print))
 (export #t (for-syntax #t))
 
-(module <util>
+(module Util
   (import :gerbil/core/expander)
-  (extern namespace: #f __reload-module)
   (export #t)
   ;; Module reloading
   (def (reload-module! mod)
@@ -15,18 +14,19 @@
      ((string? mod)                     ; file path, resource it
       (import-module mod #t #t))
      ((symbol? mod)
+      (reload-module mod)
       (let (str (symbol->string mod))
         (cond
          ((string-empty? str)
           (error "Invalid module path" mod))
          ((eq? (string-ref str 0) #\:)  ; library module
-          (parameterize ((__reload-module #t))
-            (import-module mod #t #t)))
+          (reload-module (string->symbol (substring str 1 (string-length str))))
+          (import-module mod #t #t))
          (else                          ; top module
           (void)))))
      (else
       (error "Invalid module path" mod)))))
-(import (for-syntax <util>))
+(import (for-syntax Util))
 
 (defsyntax (reload! stx)
   (syntax-case stx ()
