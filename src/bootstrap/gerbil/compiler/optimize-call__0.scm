@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1710440204)
+  (define gerbil/compiler/optimize-call::timestamp 1710487497)
   (begin
     (define gxc#::optimize-call::t
       (let ((__tmp153300 (list gxc#::basic-xform::t))
@@ -3042,16 +3042,16 @@
           (_g152341152390_ _args152340_))))
     (define gxc#!accessor::optimize-call::specialize
       (lambda (__klass153011 __method-table153012)
-        (let ((__id153013
+        (let ((__slot153013
                (let ((__slot153016
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass153011 'id))))
+                        (class-slot-offset __klass153011 'slot))))
                  (if __slot153016
                      __slot153016
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'id)))))
+                       (error '"Unknown slot" 'slot)))))
               (__checked?153014
                (let ((__slot153017
                       (let ()
@@ -3062,16 +3062,16 @@
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'checked?)))))
-              (__slot153015
+              (__id153015
                (let ((__slot153018
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass153011 'slot))))
+                        (class-slot-offset __klass153011 'id))))
                  (if __slot153018
                      __slot153018
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slot))))))
+                       (error '"Unknown slot" 'id))))))
           (lambda (_self152337_ _ctx152338_ _stx152339_ _args152340_)
             (let* ((_g152342152352_
                     (lambda (_g152343152349_)
@@ -3108,7 +3108,7 @@
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
                                                        _self152337_
-                                                       __id153013
+                                                       __id153015
                                                        __klass153011
                                                        '#f))))
                                                (declare (not safe))
@@ -3121,7 +3121,7 @@
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
                                                        _self152337_
-                                                       __slot153015
+                                                       __slot153013
                                                        __klass153011
                                                        '#f))))
                                                (declare (not safe))
@@ -3160,7 +3160,7 @@
                                         (declare (not safe))
                                         (##unchecked-structure-ref
                                          _self152337_
-                                         __id153013
+                                         __id153015
                                          __klass153011
                                          '#f))))
                                  (declare (not safe))
@@ -3216,7 +3216,7 @@
                                             (declare (not safe))
                                             (##unchecked-structure-ref
                                              _self152337_
-                                             __id153013
+                                             __id153015
                                              __klass153011
                                              '#f))))
                                      (declare (not safe))
@@ -3254,7 +3254,7 @@
                          (not safe))
                        (##unchecked-structure-ref
                         _self152337_
-                        __slot153015
+                        __slot153013
                         __klass153011
                         '#f))))
                 (declare (not safe))
@@ -3282,7 +3282,7 @@
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
                                                       _self152337_
-                                                      __id153013
+                                                      __id153015
                                                       __klass153011
                                                       '#f))))
                                               (declare (not safe))
@@ -3385,7 +3385,7 @@
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
                                                           _self152337_
-                                                          __id153013
+                                                          __id153015
                                                           __klass153011
                                                           '#f))))
                                                   (declare (not safe))
@@ -3440,7 +3440,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self152337_
-                                __id153013
+                                __id153015
                                 __klass153011
                                 '#f))))
                         (declare (not safe))
@@ -3463,7 +3463,7 @@
                                              (declare (not safe))
                                              (##unchecked-structure-ref
                                               _self152337_
-                                              __slot153015
+                                              __slot153013
                                               __klass153011
                                               '#f))))
                                       (declare (not safe))
@@ -3519,7 +3519,7 @@
                             (declare (not safe))
                             (##unchecked-structure-ref
                              _self152337_
-                             __slot153015
+                             __slot153013
                              __klass153011
                              '#f))))
                      (declare (not safe))
@@ -4052,16 +4052,16 @@
           (_g152145152212_ _args152144_))))
     (define gxc#!mutator::optimize-call::specialize
       (lambda (__klass153019 __method-table153020)
-        (let ((__id153021
+        (let ((__slot153021
                (let ((__slot153024
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass153019 'id))))
+                        (class-slot-offset __klass153019 'slot))))
                  (if __slot153024
                      __slot153024
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'id)))))
+                       (error '"Unknown slot" 'slot)))))
               (__checked?153022
                (let ((__slot153025
                       (let ()
@@ -4072,16 +4072,16 @@
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'checked?)))))
-              (__slot153023
+              (__id153023
                (let ((__slot153026
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass153019 'slot))))
+                        (class-slot-offset __klass153019 'id))))
                  (if __slot153026
                      __slot153026
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slot))))))
+                       (error '"Unknown slot" 'id))))))
           (lambda (_self152141_ _ctx152142_ _stx152143_ _args152144_)
             (let* ((_g152146152160_
                     (lambda (_g152147152157_)
@@ -4134,7 +4134,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self152141_
-                                                               __id153021
+                                                               __id153023
                                                                __klass153019
                                                                '#f))))
                                                        (declare (not safe))
@@ -4148,7 +4148,7 @@
                                                                 (not safe))
                                                               (##unchecked-structure-ref
                                                                _self152141_
-                                                               __slot153023
+                                                               __slot153021
                                                                __klass153019
                                                                '#f))))
                                                        (declare (not safe))
@@ -4192,7 +4192,7 @@
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
                                                  _self152141_
-                                                 __id153021
+                                                 __id153023
                                                  __klass153019
                                                  '#f))))
                                          (declare (not safe))
@@ -4250,7 +4250,7 @@
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
                                                      _self152141_
-                                                     __id153021
+                                                     __id153023
                                                      __klass153019
                                                      '#f))))
                                              (declare (not safe))
@@ -4287,7 +4287,7 @@
                                (declare (not safe))
                                (##unchecked-structure-ref
                                 _self152141_
-                                __slot153023
+                                __slot153021
                                 __klass153019
                                 '#f))))
                         (declare (not safe))
@@ -4316,7 +4316,7 @@
                                                                (not safe))
                                                              (##unchecked-structure-ref
                                                               _self152141_
-                                                              __id153021
+                                                              __id153023
                                                               __klass153019
                                                               '#f))))
                                                       (declare (not safe))
@@ -4428,7 +4428,7 @@
                          (declare (not safe))
                          (##unchecked-structure-ref
                           _self152141_
-                          __id153021
+                          __id153023
                           __klass153019
                           '#f))))
                   (declare (not safe))
@@ -4485,7 +4485,7 @@
                                        (declare (not safe))
                                        (##unchecked-structure-ref
                                         _self152141_
-                                        __id153021
+                                        __id153023
                                         __klass153019
                                         '#f))))
                                 (declare (not safe))
@@ -4508,7 +4508,7 @@
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
                                                       _self152141_
-                                                      __slot153023
+                                                      __slot153021
                                                       __klass153019
                                                       '#f))))
                                               (declare (not safe))
@@ -4568,7 +4568,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self152141_
-                                     __slot153023
+                                     __slot153021
                                      __klass153019
                                      '#f))))
                              (declare (not safe))

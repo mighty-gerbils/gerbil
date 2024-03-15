@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-xform::timestamp 1710440201)
+  (define gerbil/compiler/optimize-xform::timestamp 1710487493)
   (begin
     (define gxc#::collect-mutators::t
       (let ((__tmp118104 (list gxc#::void::t))
