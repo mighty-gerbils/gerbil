@@ -101,7 +101,7 @@
                 (write `(##supply-module ,(string->symbol mod)) p)
                 (newline p))
               builtin-modules)
-    (write '(##supply-module gerbil/builtin-modules) p)
+    (write '(##supply-module builtin-modules) p)
     (newline p)))
 
 ;; and then compile the binary
