@@ -676,7 +676,10 @@ package: gerbil/core
     ((recur obj id path ... last val)
      (recur (@ obj id path ...) last val))))
 
-(module <MOP:5>
+;; temporary for first bootstrap
+(module <MOP:5> (void))
+;; uncomment until first bootstrap
+#;(module <MOP:5>
   (import (phi: +1 <MOP:2>))
   (export #t)
   (defsyntax (defsystem-class-info stx)

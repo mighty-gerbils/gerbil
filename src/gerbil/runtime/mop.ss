@@ -109,11 +109,11 @@ namespace: #f
         t)))
 
 ;; the root class for all objects
-(def t::t.id gerbil#t::t)
+(def t::t.id 'gerbil#t::t)
 (def t::t
   (begin-annotation (@mop.system gerbil#t::t ())
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
-          (properties '((direct-slots:) (system: #t)))
+          (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        class::t                         ; type
@@ -710,7 +710,7 @@ namespace: #f
 (def (struct->list obj)
   (if (object? obj)
     (##vector->list obj)
-    (error "not an object" obj)))
+    (error "not a structure" obj)))
 
 (def (class->list obj)
   (if (object? obj)
@@ -1009,31 +1009,27 @@ namespace: #f
 
 (def (__shadow-class type)
   (def (shadow-type-id type)
-    (make-symbol "system:" (##type-id type)))
+    (make-symbol (##type-name type) "::t"))
   (def (shadow-type-name type)
-    (make-symbol "system:" (##type-name type)))
+    (##type-name type))
   (def (make-shadow-class type precedence-list)
     (let* ((super
-            (and (pair? precedence-list)
-                 (car precedence-list)))
+            (if (pair? precedence-list)
+              [(car precedence-list)]
+              []))
            (klass
-            (make-class-type-descriptor
-             (shadow-type-id type)
-             (shadow-type-name type)
-             super
-             precedence-list
-             '#(#f)
-             [[direct-slots:]
-              [direct-supers: (if super [super] []) ...]
-              [struct: . #t]
+            (make-class-type
+             (shadow-type-id type)      ; id
+             (shadow-type-name type)    ; name
+             super                      ; supers
+             []                         ; slots
+             [[struct: . #t]
               [system: . #t]
               (if (type-extensible? type)
                 []
-                [[final: #t]])
-              ...]
-             #f
-             (make-symbolic-table #f 0)
-             #f)))
+                [[final: . #t]])
+              ...]                      ; properties
+             #f)))                      ; constructor
       (symbolic-table-set! __shadow-classes (##type-id type) klass)
       klass))
 
@@ -1141,24 +1137,20 @@ namespace: #f
    (else
     (error "unknown system class" id))))
 
-(defsyntax (defsystem-class stx)
-  (syntax-case stx ()
-    ((_ type id (super ...))
-     (with-syntax ((type-id (make-symbol "system:" id)))
-       #'(def type
-           (begin-annotation (@mop.system type-id (super ...))
-             (__make-system-class 'id [super ...])))))))
+(defrules defsystem-class ()
+  ((_ type id (super ...))
+   (def type
+     (begin-annotation (@mop.system id (super ...))
+       (__make-system-class 'id [super ...])))))
 
 (def (__make-system-class id super)
-  (let (klass (make-class-type (make-symbol "system:" id) id super [] '((system: . #t)) #f))
+  (let (klass (make-class-type id id super [] '((system: . #t)) #f))
     (symbolic-table-set! __system-classes id klass)
     klass))
 
 ;; and shadow class predefinitions
-(defsyntax (defshadow-class stx)
-  (syntax-case stx ()
-    ((_ type (super ...) type-expr)
-     (with-syntax ((type-id (make-symbol "system:" (eval-syntax #'type-expr))))
-       #'(def type
-           (begin-annotation (@mop.system type-id (super ...))
-             (__shadow-class type-expr)))))))
+(defrules defshadow-class ()
+  ((_ type (super ...) type-expr)
+   (def type
+     (begin-annotation (@mop.system type (super ...))
+       (__shadow-class type-expr)))))

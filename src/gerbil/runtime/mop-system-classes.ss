@@ -79,7 +79,7 @@ namespace: #f
 (defshadow-class byte-port::t (character-port::t) (macro-type-byte-port))
 (defshadow-class device-port::t (byte-port::t) (macro-type-device-port))
 (defshadow-class vector-port::t (object-port::t) (macro-type-vector-port))
-(defshadow-class string-port::t (character-port::t) (character-port::t) (macro-type-string-port))
+(defshadow-class string-port::t (character-port::t) (macro-type-string-port))
 (defshadow-class u8vector-port::t (byte-port::t) (macro-type-u8vector-port))
 (defshadow-class raw-device-port::t (port::t) (macro-type-raw-device-port))
 (defshadow-class tcp-server-port::t (object-port::t) (macro-type-tcp-server-port))
@@ -116,8 +116,8 @@ namespace: #f
       (f64vector? obj)))
 
 (def (weak? obj)
-  (and (subtyped? obj)
-       (eq? (##subtype obj) (macro-type-weak))))
+  (and (##subtyped? obj)
+       (eq? (##subtype obj) (macro-subtype-weak))))
 
 (def (object-port? obj)
   (##structure-instance-of? obj (##type-id (macro-type-object-port))))
