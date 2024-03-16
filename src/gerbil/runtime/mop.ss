@@ -109,6 +109,37 @@ namespace: #f
         (##structure-type-set! t t)  ; self reference
         t)))
 
+;; the root class for all objects
+(def t::t.id gerbil#t::t)
+(def t::t
+  (begin-annotation
+      (@mop.class gerbil#t::t           ; type-id
+                  ()                    ; super
+                  ()                    ; slots
+                  #f                    ; constructor method
+                  #t                    ; struct?
+                  #f                    ; final?
+                  #f)
+    (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-struct))
+          (properties '((direct-slots:) (system: #t)))
+          (slot-table (make-symbolic-table #f 0)))
+      (##structure
+       class::t                         ; type
+       t::t.id                          ; type-id
+       't                               ; type-name
+       flags                            ; type-flags
+       #f                               ; type-super
+       '#()                             ; type-fields
+       []                               ; class-type-precedence-list
+       '#(#f)                           ; class-type-slot-vector
+       slot-table                       ; class-type-slot-table
+       properties                       ; class-type-properties
+       #f                               ; class-type-constructor
+       #f))))
+
+;; class::t mixes in t::t as all classes except itself
+(##unchecked-structure-set! class::t [t::t] 6 #f #f)
+
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
     (lambda (obj)
@@ -192,6 +223,7 @@ namespace: #f
             (unless (class-type? metaclass)
               (error "metaclass is not a class type" class: type-id metaclass: metaclass))
             metaclass))
+         (system? (assgetq system: properties))
          (opaque?
           (or (not all-slots-equalable?)
               (and type-super (type-opaque? type-super))))
@@ -200,7 +232,15 @@ namespace: #f
                    (if final? 0 type-flag-extensible)
                    (if opaque? type-flag-opaque 0)
                    (if struct? class-type-flag-struct 0)
-                   (if metaclass class-type-flag-metaclass 0))))
+                   (if metaclass class-type-flag-metaclass 0)
+                   (if system? class-type-flag-system 0)))
+         (precedence-list
+          (if (memq t::t precedence-list)
+            (begin
+              (unless (eq? (last precedence-list) t::t)
+                (error "BUG: t::t is not last in the precedence list"))
+              precedence-list)
+            (append1! precedence-list t::t))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -258,8 +298,8 @@ namespace: #f
 (defrefset*
   (id 1)
   (name 2)
-  (super 3)
-  (flags 4)
+  (flags 3)
+  (super 4)
   (fields 5)
   (precedence-list 6)
   (slot-vector 7)
