@@ -51,6 +51,8 @@ namespace: #f
 (def class-type-flag-struct 1024) ;; precedence-list always tail of subclass's precedence-list
 (def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
 (def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
+(def class-type-flag-system 8192) ;; it is a system class, non instantiable
+
 
 ;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
@@ -138,6 +140,8 @@ namespace: #f
   (fxflag-set? (##type-flags klass) class-type-flag-sealed))
 (def (class-type-metaclass? klass)
   (fxflag-set? (##type-flags klass) class-type-flag-metaclass))
+(def (class-type-system? klass)
+  (fxflag-set? (##type-flags klass) class-type-flag-system))
 
 ;; TODO for debugging only
 (def (properties-form properties)
@@ -583,9 +587,11 @@ namespace: #f
               (subclass? type klass)))))
 
 (def (make-object klass k)
-  (let (obj (##make-structure klass k))
-    (object-fill! obj #f)
-    obj))
+  (if (class-type-system? klass)
+    (error "cannot instantiate system class" class: klass)
+    (let (obj (##make-structure klass k))
+      (object-fill! obj #f)
+      obj)))
 
 (def (object-fill! obj fill)
   ;; courtesy of marc feeley
