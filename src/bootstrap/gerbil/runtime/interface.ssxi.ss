@@ -13,6 +13,7 @@ package: gerbil/runtime
            #f
            #f
            #f
+           #f
            ((:init! . CastError:::init!))))
   (declare-type CastError? (@predicate CastError::t))
   (declare-type make-CastError (@constructor CastError::t))
@@ -54,6 +55,7 @@ package: gerbil/runtime
            #t
            #f
            #f
+           #f
            #f))
   (declare-type interface-instance? (@predicate interface-instance::t))
   (declare-type
@@ -78,6 +80,7 @@ package: gerbil/runtime
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type interface-descriptor? (@predicate interface-descriptor::t))

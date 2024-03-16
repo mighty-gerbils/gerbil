@@ -14,6 +14,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::collect-bindings? (@predicate gxc#::collect-bindings::t))
   (declare-type
@@ -30,6 +31,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type gxc#::lift-modules? (@predicate gxc#::lift-modules::t))
@@ -53,7 +55,7 @@ package: gerbil/compiler
    (@kw-lambda (modules:) gxc#apply-lift-modules__@))
   (declare-type
    gxc#::find-runtime-code::t
-   (@class gxc#::find-runtime-code::t () () () () #f #f #t #f #f))
+   (@class gxc#::find-runtime-code::t () () () () #f #f #t #f #f #f))
   (declare-type
    gxc#::find-runtime-code?
    (@predicate gxc#::find-runtime-code::t))
@@ -74,6 +76,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::find-lambda-expression?
@@ -93,13 +96,14 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::count-values? (@predicate gxc#::count-values::t))
   (declare-type gxc#make-::count-values (@constructor gxc#::count-values::t))
   (declare-type gxc#apply-count-values (@lambda 1 #f))
   (declare-type
    gxc#::generate-runtime-empty::t
-   (@class gxc#::generate-runtime-empty::t () () () () #f #f #f #f #f))
+   (@class gxc#::generate-runtime-empty::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::generate-runtime-empty?
    (@predicate gxc#::generate-runtime-empty::t))
@@ -117,6 +121,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::generate-loader? (@predicate gxc#::generate-loader::t))
   (declare-type
@@ -130,6 +135,7 @@ package: gerbil/compiler
            (gxc#::generate-runtime-empty::t)
            ()
            ()
+           #f
            #f
            #f
            #f
@@ -151,6 +157,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::generate-runtime-phi?
@@ -166,6 +173,7 @@ package: gerbil/compiler
            ()
            (table)
            (table)
+           #f
            #f
            #f
            #f
@@ -205,6 +213,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::generate-meta? (@predicate gxc#::generate-meta::t))
   (declare-type gxc#make-::generate-meta (@constructor gxc#::generate-meta::t))
@@ -227,7 +236,7 @@ package: gerbil/compiler
    (@kw-lambda (state:) gxc#apply-generate-meta__@))
   (declare-type
    gxc#::generate-meta-phi::t
-   (@class gxc#::generate-meta-phi::t () () (state) (state) #f #f #t #f #f))
+   (@class gxc#::generate-meta-phi::t () () (state) (state) #f #f #t #f #f #f))
   (declare-type
    gxc#::generate-meta-phi?
    (@predicate gxc#::generate-meta-phi::t))
@@ -349,6 +358,7 @@ package: gerbil/compiler
            #t
            #f
            #f
+           #f
            ((:init! . gxc#meta-state:::init!))))
   (declare-type gxc#meta-state? (@predicate gxc#meta-state::t))
   (declare-type gxc#make-meta-state (@constructor gxc#meta-state::t))
@@ -382,6 +392,7 @@ package: gerbil/compiler
            (ctx phi n code)
            #f
            #t
+           #f
            #f
            #f
            #f))

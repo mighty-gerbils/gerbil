@@ -1,1986 +1,1975 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/util::timestamp 1710238837)
+  (define gerbil/runtime/util::timestamp 1710617599)
   (begin
     (define displayln
-      (lambda _args56184_
-        (let _lp56186_ ((_rest56188_ _args56184_))
-          (let* ((_rest5618956197_ _rest56188_)
-                 (_else5619156205_ (lambda () (newline)))
-                 (_K5619356211_
-                  (lambda (_rest56208_ _hd56209_)
-                    (display _hd56209_)
-                    (let () (declare (not safe)) (_lp56186_ _rest56208_)))))
-            (if (let () (declare (not safe)) (##pair? _rest5618956197_))
-                (let ((_hd5619456214_
-                       (let () (declare (not safe)) (##car _rest5618956197_)))
-                      (_tl5619556216_
-                       (let () (declare (not safe)) (##cdr _rest5618956197_))))
-                  (let* ((_hd56219_ _hd5619456214_)
-                         (_rest56221_ _tl5619556216_))
+      (lambda _args54304_
+        (let _lp54306_ ((_rest54308_ _args54304_))
+          (let* ((_rest5430954317_ _rest54308_)
+                 (_else5431154325_ (lambda () (newline)))
+                 (_K5431354331_
+                  (lambda (_rest54328_ _hd54329_)
+                    (display _hd54329_)
+                    (let () (declare (not safe)) (_lp54306_ _rest54328_)))))
+            (if (let () (declare (not safe)) (##pair? _rest5430954317_))
+                (let ((_hd5431454334_
+                       (let () (declare (not safe)) (##car _rest5430954317_)))
+                      (_tl5431554336_
+                       (let () (declare (not safe)) (##cdr _rest5430954317_))))
+                  (let* ((_hd54339_ _hd5431454334_)
+                         (_rest54341_ _tl5431554336_))
                     (declare (not safe))
-                    (_K5619356211_ _rest56221_ _hd56219_)))
+                    (_K5431354331_ _rest54341_ _hd54339_)))
                 (let () (declare (not safe)) (newline)))))))
-    (define display* (lambda _args56182_ (for-each display _args56182_)))
+    (define display* (lambda _args54302_ (for-each display _args54302_)))
     (define file-newer?
-      (lambda (_file156175_ _file256176_)
-        (letrec ((_modification-time56178_
-                  (lambda (_file56180_)
-                    (let ((__tmp56605
+      (lambda (_file154295_ _file254296_)
+        (letrec ((_modification-time54298_
+                  (lambda (_file54300_)
+                    (let ((__tmp54725
                            (file-info-last-modification-time
-                            (file-info _file56180_ '#t))))
+                            (file-info _file54300_ '#t))))
                       (declare (not safe))
-                      (##time->seconds __tmp56605)))))
-          (let ((__tmp56607
+                      (##time->seconds __tmp54725)))))
+          (let ((__tmp54727
                  (let ()
                    (declare (not safe))
-                   (_modification-time56178_ _file156175_)))
-                (__tmp56606
+                   (_modification-time54298_ _file154295_)))
+                (__tmp54726
                  (let ()
                    (declare (not safe))
-                   (_modification-time56178_ _file256176_))))
+                   (_modification-time54298_ _file254296_))))
             (declare (not safe))
-            (##fl> __tmp56607 __tmp56606)))))
+            (##fl> __tmp54727 __tmp54726)))))
     (define create-directory*__%
-      (lambda (_dir56149_ _perms56150_)
-        (letrec ((_create156152_
-                  (lambda (_path56163_)
-                    (if (file-exists? _path56163_)
-                        (if (let ((__tmp56608 (file-type _path56163_)))
+      (lambda (_dir54269_ _perms54270_)
+        (letrec ((_create154272_
+                  (lambda (_path54283_)
+                    (if (file-exists? _path54283_)
+                        (if (let ((__tmp54728 (file-type _path54283_)))
                               (declare (not safe))
-                              (eq? __tmp56608 'directory))
+                              (eq? __tmp54728 'directory))
                             '#!void
-                            (let ()
-                              (declare (not safe))
-                              (error '"Path component is not a directory"
-                                     _path56163_)))
-                        (if _perms56150_
+                            (error '"Path component is not a directory"
+                                   _path54283_))
+                        (if _perms54270_
                             (create-directory
                              (list 'path:
-                                   _path56163_
+                                   _path54283_
                                    'permissions:
-                                   _perms56150_))
-                            (create-directory _path56163_))))))
-          (if (file-exists? _dir56149_)
+                                   _perms54270_))
+                            (create-directory _path54283_))))))
+          (if (file-exists? _dir54269_)
               '#!void
-              (let _lp56154_ ((_start56156_ '0))
-                (let ((_$e56158_
+              (let _lp54274_ ((_start54276_ '0))
+                (let ((_$e54278_
                        (let ()
                          (declare (not safe))
-                         (string-index__% _dir56149_ '#\/ _start56156_))))
-                  (if _$e56158_
-                      ((lambda (_x56161_)
-                         (if (let () (declare (not safe)) (##fx> _x56161_ '0))
-                             (let ((__tmp56609
-                                    (substring _dir56149_ '0 _x56161_)))
+                         (string-index__% _dir54269_ '#\/ _start54276_))))
+                  (if _$e54278_
+                      ((lambda (_x54281_)
+                         (if (let () (declare (not safe)) (##fx> _x54281_ '0))
+                             (let ((__tmp54729
+                                    (substring _dir54269_ '0 _x54281_)))
                                (declare (not safe))
-                               (_create156152_ __tmp56609))
+                               (_create154272_ __tmp54729))
                              '#!void)
-                         (let ((__tmp56610
+                         (let ((__tmp54730
                                 (let ()
                                   (declare (not safe))
-                                  (##fx+ _x56161_ '1))))
+                                  (##fx+ _x54281_ '1))))
                            (declare (not safe))
-                           (_lp56154_ __tmp56610)))
-                       _$e56158_)
+                           (_lp54274_ __tmp54730)))
+                       _$e54278_)
                       (let ()
                         (declare (not safe))
-                        (_create156152_ _dir56149_)))))))))
+                        (_create154272_ _dir54269_)))))))))
     (define create-directory*__0
-      (lambda (_dir56168_)
-        (let ((_perms56170_ '493))
+      (lambda (_dir54288_)
+        (let ((_perms54290_ '493))
           (declare (not safe))
-          (create-directory*__% _dir56168_ _perms56170_))))
+          (create-directory*__% _dir54288_ _perms54290_))))
     (define create-directory*
-      (lambda _g56612_
-        (let ((_g56611_ (let () (declare (not safe)) (##length _g56612_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56611_ 1))
-                 (apply (lambda (_dir56168_)
+      (lambda _g54732_
+        (let ((_g54731_ (let () (declare (not safe)) (##length _g54732_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54731_ 1))
+                 (apply (lambda (_dir54288_)
                           (let ()
                             (declare (not safe))
-                            (create-directory*__0 _dir56168_)))
-                        _g56612_))
-                ((let () (declare (not safe)) (##fx= _g56611_ 2))
-                 (apply (lambda (_dir56172_ _perms56173_)
+                            (create-directory*__0 _dir54288_)))
+                        _g54732_))
+                ((let () (declare (not safe)) (##fx= _g54731_ 2))
+                 (apply (lambda (_dir54292_ _perms54293_)
                           (let ()
                             (declare (not safe))
-                            (create-directory*__% _dir56172_ _perms56173_)))
-                        _g56612_))
+                            (create-directory*__% _dir54292_ _perms54293_)))
+                        _g54732_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   create-directory*
-                  _g56612_))))))
+                  _g54732_))))))
     (define absent-obj (let () (declare (not safe)) (##absent-object)))
     (define absent-value '#(#!void))
-    (define true (lambda _g56613_ '#t))
+    (define true (lambda _g54733_ '#t))
     (define true?
-      (lambda (_obj56145_) (let () (declare (not safe)) (eq? _obj56145_ '#t))))
-    (define false (lambda _g56614_ '#f))
-    (define void (lambda _g56615_ '#!void))
+      (lambda (_obj54265_) (let () (declare (not safe)) (eq? _obj54265_ '#t))))
+    (define false (lambda _g54734_ '#f))
+    (define void (lambda _g54735_ '#!void))
     (define void?
-      (lambda (_obj56141_)
-        (let () (declare (not safe)) (eq? _obj56141_ '#!void))))
+      (lambda (_obj54261_)
+        (let () (declare (not safe)) (eq? _obj54261_ '#!void))))
     (define dssl-object?
-      (lambda (_obj56139_)
-        (if (memq _obj56139_ '(#!key #!rest #!optional)) '#t '#f)))
+      (lambda (_obj54259_)
+        (if (memq _obj54259_ '(#!key #!rest #!optional)) '#t '#f)))
     (define dssl-key-object?
-      (lambda (_obj56137_)
-        (let () (declare (not safe)) (eq? _obj56137_ '#!key))))
+      (lambda (_obj54257_)
+        (let () (declare (not safe)) (eq? _obj54257_ '#!key))))
     (define dssl-rest-object?
-      (lambda (_obj56135_)
-        (let () (declare (not safe)) (eq? _obj56135_ '#!rest))))
+      (lambda (_obj54255_)
+        (let () (declare (not safe)) (eq? _obj54255_ '#!rest))))
     (define dssl-optional-object?
-      (lambda (_obj56133_)
-        (let () (declare (not safe)) (eq? _obj56133_ '#!optional))))
+      (lambda (_obj54253_)
+        (let () (declare (not safe)) (eq? _obj54253_ '#!optional))))
     (define immediate?
-      (lambda (_obj56129_)
-        (let* ((_t56131_ (let () (declare (not safe)) (##type _obj56129_)))
-               (__tmp56616
-                (let () (declare (not safe)) (##fxand _t56131_ '1))))
+      (lambda (_obj54249_)
+        (let* ((_t54251_ (let () (declare (not safe)) (##type _obj54249_)))
+               (__tmp54736
+                (let () (declare (not safe)) (##fxand _t54251_ '1))))
           (declare (not safe))
-          (##fxzero? __tmp56616))))
+          (##fxzero? __tmp54736))))
     (define nonnegative-fixnum?
-      (lambda (_obj56127_)
-        (if (let () (declare (not safe)) (fixnum? _obj56127_))
-            (let ((__tmp56617 (fxnegative? _obj56127_)))
+      (lambda (_obj54247_)
+        (if (let () (declare (not safe)) (fixnum? _obj54247_))
+            (let ((__tmp54737 (fxnegative? _obj54247_)))
               (declare (not safe))
-              (not __tmp56617))
+              (not __tmp54737))
             '#f)))
     (define values-count
-      (lambda (_obj56125_)
-        (if (let () (declare (not safe)) (##values? _obj56125_))
-            (let () (declare (not safe)) (##vector-length _obj56125_))
+      (lambda (_obj54245_)
+        (if (let () (declare (not safe)) (##values? _obj54245_))
+            (let () (declare (not safe)) (##vector-length _obj54245_))
             '1)))
     (define values-ref
-      (lambda (_obj56122_ _k56123_)
-        (if (let () (declare (not safe)) (##values? _obj56122_))
-            (let () (declare (not safe)) (##vector-ref _obj56122_ _k56123_))
-            _obj56122_)))
+      (lambda (_obj54242_ _k54243_)
+        (if (let () (declare (not safe)) (##values? _obj54242_))
+            (let () (declare (not safe)) (##vector-ref _obj54242_ _k54243_))
+            _obj54242_)))
     (define values->list
-      (lambda (_obj56120_)
-        (if (let () (declare (not safe)) (##values? _obj56120_))
-            (let () (declare (not safe)) (##vector->list _obj56120_))
-            (list _obj56120_))))
+      (lambda (_obj54240_)
+        (if (let () (declare (not safe)) (##values? _obj54240_))
+            (let () (declare (not safe)) (##vector->list _obj54240_))
+            (list _obj54240_))))
     (define subvector->list__%
-      (lambda (_obj56105_ _start56106_)
-        (let ((_lst56108_
-               (let () (declare (not safe)) (##vector->list _obj56105_))))
-          (list-tail _lst56108_ _start56106_))))
+      (lambda (_obj54225_ _start54226_)
+        (let ((_lst54228_
+               (let () (declare (not safe)) (##vector->list _obj54225_))))
+          (list-tail _lst54228_ _start54226_))))
     (define subvector->list__0
-      (lambda (_obj56113_)
-        (let ((_start56115_ '0))
+      (lambda (_obj54233_)
+        (let ((_start54235_ '0))
           (declare (not safe))
-          (subvector->list__% _obj56113_ _start56115_))))
+          (subvector->list__% _obj54233_ _start54235_))))
     (define subvector->list
-      (lambda _g56619_
-        (let ((_g56618_ (let () (declare (not safe)) (##length _g56619_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56618_ 1))
-                 (apply (lambda (_obj56113_)
+      (lambda _g54739_
+        (let ((_g54738_ (let () (declare (not safe)) (##length _g54739_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54738_ 1))
+                 (apply (lambda (_obj54233_)
                           (let ()
                             (declare (not safe))
-                            (subvector->list__0 _obj56113_)))
-                        _g56619_))
-                ((let () (declare (not safe)) (##fx= _g56618_ 2))
-                 (apply (lambda (_obj56117_ _start56118_)
+                            (subvector->list__0 _obj54233_)))
+                        _g54739_))
+                ((let () (declare (not safe)) (##fx= _g54738_ 2))
+                 (apply (lambda (_obj54237_ _start54238_)
                           (let ()
                             (declare (not safe))
-                            (subvector->list__% _obj56117_ _start56118_)))
-                        _g56619_))
+                            (subvector->list__% _obj54237_ _start54238_)))
+                        _g54739_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   subvector->list
-                  _g56619_))))))
+                  _g54739_))))))
     (define cons*
-      (lambda (_x56095_ _y56096_ . _rest56097_)
-        (letrec ((_recur56099_
-                  (lambda (_x56101_ _rest56102_)
-                    (if (let () (declare (not safe)) (pair? _rest56102_))
-                        (let ((__tmp56620
-                               (let ((__tmp56622
+      (lambda (_x54215_ _y54216_ . _rest54217_)
+        (letrec ((_recur54219_
+                  (lambda (_x54221_ _rest54222_)
+                    (if (let () (declare (not safe)) (pair? _rest54222_))
+                        (let ((__tmp54740
+                               (let ((__tmp54742
                                       (let ()
                                         (declare (not safe))
-                                        (##car _rest56102_)))
-                                     (__tmp56621
+                                        (##car _rest54222_)))
+                                     (__tmp54741
                                       (let ()
                                         (declare (not safe))
-                                        (##cdr _rest56102_))))
+                                        (##cdr _rest54222_))))
                                  (declare (not safe))
-                                 (_recur56099_ __tmp56622 __tmp56621))))
+                                 (_recur54219_ __tmp54742 __tmp54741))))
                           (declare (not safe))
-                          (cons _x56101_ __tmp56620))
-                        _x56101_))))
-          (let ((__tmp56623
+                          (cons _x54221_ __tmp54740))
+                        _x54221_))))
+          (let ((__tmp54743
                  (let ()
                    (declare (not safe))
-                   (_recur56099_ _y56096_ _rest56097_))))
+                   (_recur54219_ _y54216_ _rest54217_))))
             (declare (not safe))
-            (cons _x56095_ __tmp56623)))))
+            (cons _x54215_ __tmp54743)))))
     (define foldl1
-      (lambda (_f56053_ _iv56054_ _lst56055_)
-        (let _lp56057_ ((_rest56059_ _lst56055_) (_r56060_ _iv56054_))
-          (let* ((_rest5606156069_ _rest56059_)
-                 (_else5606356077_ (lambda () _r56060_))
-                 (_K5606556083_
-                  (lambda (_rest56080_ _x56081_)
-                    (let ((__tmp56624 (_f56053_ _x56081_ _r56060_)))
+      (lambda (_f54173_ _iv54174_ _lst54175_)
+        (let _lp54177_ ((_rest54179_ _lst54175_) (_r54180_ _iv54174_))
+          (let* ((_rest5418154189_ _rest54179_)
+                 (_else5418354197_ (lambda () _r54180_))
+                 (_K5418554203_
+                  (lambda (_rest54200_ _x54201_)
+                    (let ((__tmp54744 (_f54173_ _x54201_ _r54180_)))
                       (declare (not safe))
-                      (_lp56057_ _rest56080_ __tmp56624)))))
-            (if (let () (declare (not safe)) (##pair? _rest5606156069_))
-                (let ((_hd5606656086_
-                       (let () (declare (not safe)) (##car _rest5606156069_)))
-                      (_tl5606756088_
-                       (let () (declare (not safe)) (##cdr _rest5606156069_))))
-                  (let* ((_x56091_ _hd5606656086_)
-                         (_rest56093_ _tl5606756088_))
+                      (_lp54177_ _rest54200_ __tmp54744)))))
+            (if (let () (declare (not safe)) (##pair? _rest5418154189_))
+                (let ((_hd5418654206_
+                       (let () (declare (not safe)) (##car _rest5418154189_)))
+                      (_tl5418754208_
+                       (let () (declare (not safe)) (##cdr _rest5418154189_))))
+                  (let* ((_x54211_ _hd5418654206_)
+                         (_rest54213_ _tl5418754208_))
                     (declare (not safe))
-                    (_K5606556083_ _rest56093_ _x56091_)))
-                (let () (declare (not safe)) (_else5606356077_)))))))
+                    (_K5418554203_ _rest54213_ _x54211_)))
+                (let () (declare (not safe)) (_else5418354197_)))))))
     (define foldl2
-      (lambda (_f55976_ _iv55977_ _lst155978_ _lst255979_)
-        (let _lp55981_ ((_rest155983_ _lst155978_)
-                        (_rest255984_ _lst255979_)
-                        (_r55985_ _iv55977_))
-          (let* ((_rest15598655994_ _rest155983_)
-                 (_else5598856002_ (lambda () _r55985_))
-                 (_K5599056041_
-                  (lambda (_rest156005_ _x156006_)
-                    (let* ((_rest25600756015_ _rest255984_)
-                           (_else5600956023_ (lambda () _r55985_))
-                           (_K5601156029_
-                            (lambda (_rest256026_ _x256027_)
-                              (let ((__tmp56625
-                                     (_f55976_ _x156006_ _x256027_ _r55985_)))
+      (lambda (_f54096_ _iv54097_ _lst154098_ _lst254099_)
+        (let _lp54101_ ((_rest154103_ _lst154098_)
+                        (_rest254104_ _lst254099_)
+                        (_r54105_ _iv54097_))
+          (let* ((_rest15410654114_ _rest154103_)
+                 (_else5410854122_ (lambda () _r54105_))
+                 (_K5411054161_
+                  (lambda (_rest154125_ _x154126_)
+                    (let* ((_rest25412754135_ _rest254104_)
+                           (_else5412954143_ (lambda () _r54105_))
+                           (_K5413154149_
+                            (lambda (_rest254146_ _x254147_)
+                              (let ((__tmp54745
+                                     (_f54096_ _x154126_ _x254147_ _r54105_)))
                                 (declare (not safe))
-                                (_lp55981_
-                                 _rest156005_
-                                 _rest256026_
-                                 __tmp56625)))))
+                                (_lp54101_
+                                 _rest154125_
+                                 _rest254146_
+                                 __tmp54745)))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _rest25600756015_))
-                          (let ((_hd5601256032_
+                            (##pair? _rest25412754135_))
+                          (let ((_hd5413254152_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _rest25600756015_)))
-                                (_tl5601356034_
+                                   (##car _rest25412754135_)))
+                                (_tl5413354154_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _rest25600756015_))))
-                            (let* ((_x256037_ _hd5601256032_)
-                                   (_rest256039_ _tl5601356034_))
+                                   (##cdr _rest25412754135_))))
+                            (let* ((_x254157_ _hd5413254152_)
+                                   (_rest254159_ _tl5413354154_))
                               (declare (not safe))
-                              (_K5601156029_ _rest256039_ _x256037_)))
-                          (let () (declare (not safe)) (_else5600956023_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest15598655994_))
-                (let ((_hd5599156044_
-                       (let () (declare (not safe)) (##car _rest15598655994_)))
-                      (_tl5599256046_
+                              (_K5413154149_ _rest254159_ _x254157_)))
+                          (let () (declare (not safe)) (_else5412954143_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest15410654114_))
+                (let ((_hd5411154164_
+                       (let () (declare (not safe)) (##car _rest15410654114_)))
+                      (_tl5411254166_
                        (let ()
                          (declare (not safe))
-                         (##cdr _rest15598655994_))))
-                  (let* ((_x156049_ _hd5599156044_)
-                         (_rest156051_ _tl5599256046_))
+                         (##cdr _rest15410654114_))))
+                  (let* ((_x154169_ _hd5411154164_)
+                         (_rest154171_ _tl5411254166_))
                     (declare (not safe))
-                    (_K5599056041_ _rest156051_ _x156049_)))
-                (let () (declare (not safe)) (_else5598856002_)))))))
+                    (_K5411054161_ _rest154171_ _x154169_)))
+                (let () (declare (not safe)) (_else5410854122_)))))))
     (define foldl
-      (lambda _g56627_
-        (let ((_g56626_ (let () (declare (not safe)) (##length _g56627_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56626_ 3))
-                 (apply (lambda (_f55961_ _iv55962_ _lst55963_)
+      (lambda _g54747_
+        (let ((_g54746_ (let () (declare (not safe)) (##length _g54747_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54746_ 3))
+                 (apply (lambda (_f54081_ _iv54082_ _lst54083_)
                           (let ()
                             (declare (not safe))
-                            (foldl1 _f55961_ _iv55962_ _lst55963_)))
-                        _g56627_))
-                ((let () (declare (not safe)) (##fx= _g56626_ 4))
-                 (apply (lambda (_f55965_ _iv55966_ _lst155967_ _lst255968_)
+                            (foldl1 _f54081_ _iv54082_ _lst54083_)))
+                        _g54747_))
+                ((let () (declare (not safe)) (##fx= _g54746_ 4))
+                 (apply (lambda (_f54085_ _iv54086_ _lst154087_ _lst254088_)
                           (let ()
                             (declare (not safe))
-                            (foldl2 _f55965_
-                                    _iv55966_
-                                    _lst155967_
-                                    _lst255968_)))
-                        _g56627_))
-                ((let () (declare (not safe)) (##fx>= _g56626_ 4))
-                 (apply foldl* _g56627_))
+                            (foldl2 _f54085_
+                                    _iv54086_
+                                    _lst154087_
+                                    _lst254088_)))
+                        _g54747_))
+                ((let () (declare (not safe)) (##fx>= _g54746_ 4))
+                 (apply foldl* _g54747_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   foldl
-                  _g56627_))))))
+                  _g54747_))))))
     (define foldl*
-      (lambda (_f55949_ _iv55950_ . _rest55951_)
-        (let _recur55953_ ((_iv55955_ _iv55950_) (_rest55956_ _rest55951_))
-          (if (let () (declare (not safe)) (andmap1 pair? _rest55956_))
-              (let ((__tmp56629
-                     (apply _f55949_
-                            (let ((__tmp56631
-                                   (lambda (_xs55958_ _r55959_)
-                                     (let ((__tmp56632 (car _xs55958_)))
+      (lambda (_f54069_ _iv54070_ . _rest54071_)
+        (let _recur54073_ ((_iv54075_ _iv54070_) (_rest54076_ _rest54071_))
+          (if (let () (declare (not safe)) (andmap1 pair? _rest54076_))
+              (let ((__tmp54749
+                     (apply _f54069_
+                            (let ((__tmp54751
+                                   (lambda (_xs54078_ _r54079_)
+                                     (let ((__tmp54752 (car _xs54078_)))
                                        (declare (not safe))
-                                       (cons __tmp56632 _r55959_))))
-                                  (__tmp56630 (list _iv55955_)))
+                                       (cons __tmp54752 _r54079_))))
+                                  (__tmp54750 (list _iv54075_)))
                               (declare (not safe))
-                              (foldr1 __tmp56631 __tmp56630 _rest55956_))))
-                    (__tmp56628 (map cdr _rest55956_)))
+                              (foldr1 __tmp54751 __tmp54750 _rest54076_))))
+                    (__tmp54748 (map cdr _rest54076_)))
                 (declare (not safe))
-                (_recur55953_ __tmp56629 __tmp56628))
-              _iv55955_))))
+                (_recur54073_ __tmp54749 __tmp54748))
+              _iv54075_))))
     (define foldr1
-      (lambda (_f55908_ _iv55909_ _lst55910_)
-        (let _recur55912_ ((_rest55914_ _lst55910_))
-          (let* ((_rest5591555923_ _rest55914_)
-                 (_else5591755931_ (lambda () _iv55909_))
-                 (_K5591955937_
-                  (lambda (_rest55934_ _x55935_)
-                    (_f55908_
-                     _x55935_
+      (lambda (_f54028_ _iv54029_ _lst54030_)
+        (let _recur54032_ ((_rest54034_ _lst54030_))
+          (let* ((_rest5403554043_ _rest54034_)
+                 (_else5403754051_ (lambda () _iv54029_))
+                 (_K5403954057_
+                  (lambda (_rest54054_ _x54055_)
+                    (_f54028_
+                     _x54055_
                      (let ()
                        (declare (not safe))
-                       (_recur55912_ _rest55934_))))))
-            (if (let () (declare (not safe)) (##pair? _rest5591555923_))
-                (let ((_hd5592055940_
-                       (let () (declare (not safe)) (##car _rest5591555923_)))
-                      (_tl5592155942_
-                       (let () (declare (not safe)) (##cdr _rest5591555923_))))
-                  (let* ((_x55945_ _hd5592055940_)
-                         (_rest55947_ _tl5592155942_))
+                       (_recur54032_ _rest54054_))))))
+            (if (let () (declare (not safe)) (##pair? _rest5403554043_))
+                (let ((_hd5404054060_
+                       (let () (declare (not safe)) (##car _rest5403554043_)))
+                      (_tl5404154062_
+                       (let () (declare (not safe)) (##cdr _rest5403554043_))))
+                  (let* ((_x54065_ _hd5404054060_)
+                         (_rest54067_ _tl5404154062_))
                     (declare (not safe))
-                    (_K5591955937_ _rest55947_ _x55945_)))
-                (let () (declare (not safe)) (_else5591755931_)))))))
+                    (_K5403954057_ _rest54067_ _x54065_)))
+                (let () (declare (not safe)) (_else5403754051_)))))))
     (define foldr2
-      (lambda (_f55832_ _iv55833_ _lst155834_ _lst255835_)
-        (let _recur55837_ ((_rest155839_ _lst155834_)
-                           (_rest255840_ _lst255835_))
-          (let* ((_rest15584155849_ _rest155839_)
-                 (_else5584355857_ (lambda () _iv55833_))
-                 (_K5584555896_
-                  (lambda (_rest155860_ _x155861_)
-                    (let* ((_rest25586255870_ _rest255840_)
-                           (_else5586455878_ (lambda () _iv55833_))
-                           (_K5586655884_
-                            (lambda (_rest255881_ _x255882_)
-                              (_f55832_
-                               _x155861_
-                               _x255882_
+      (lambda (_f53952_ _iv53953_ _lst153954_ _lst253955_)
+        (let _recur53957_ ((_rest153959_ _lst153954_)
+                           (_rest253960_ _lst253955_))
+          (let* ((_rest15396153969_ _rest153959_)
+                 (_else5396353977_ (lambda () _iv53953_))
+                 (_K5396554016_
+                  (lambda (_rest153980_ _x153981_)
+                    (let* ((_rest25398253990_ _rest253960_)
+                           (_else5398453998_ (lambda () _iv53953_))
+                           (_K5398654004_
+                            (lambda (_rest254001_ _x254002_)
+                              (_f53952_
+                               _x153981_
+                               _x254002_
                                (let ()
                                  (declare (not safe))
-                                 (_recur55837_ _rest155860_ _rest255881_))))))
+                                 (_recur53957_ _rest153980_ _rest254001_))))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _rest25586255870_))
-                          (let ((_hd5586755887_
+                            (##pair? _rest25398253990_))
+                          (let ((_hd5398754007_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _rest25586255870_)))
-                                (_tl5586855889_
+                                   (##car _rest25398253990_)))
+                                (_tl5398854009_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _rest25586255870_))))
-                            (let* ((_x255892_ _hd5586755887_)
-                                   (_rest255894_ _tl5586855889_))
+                                   (##cdr _rest25398253990_))))
+                            (let* ((_x254012_ _hd5398754007_)
+                                   (_rest254014_ _tl5398854009_))
                               (declare (not safe))
-                              (_K5586655884_ _rest255894_ _x255892_)))
-                          (let () (declare (not safe)) (_else5586455878_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest15584155849_))
-                (let ((_hd5584655899_
-                       (let () (declare (not safe)) (##car _rest15584155849_)))
-                      (_tl5584755901_
+                              (_K5398654004_ _rest254014_ _x254012_)))
+                          (let () (declare (not safe)) (_else5398453998_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest15396153969_))
+                (let ((_hd5396654019_
+                       (let () (declare (not safe)) (##car _rest15396153969_)))
+                      (_tl5396754021_
                        (let ()
                          (declare (not safe))
-                         (##cdr _rest15584155849_))))
-                  (let* ((_x155904_ _hd5584655899_)
-                         (_rest155906_ _tl5584755901_))
+                         (##cdr _rest15396153969_))))
+                  (let* ((_x154024_ _hd5396654019_)
+                         (_rest154026_ _tl5396754021_))
                     (declare (not safe))
-                    (_K5584555896_ _rest155906_ _x155904_)))
-                (let () (declare (not safe)) (_else5584355857_)))))))
+                    (_K5396554016_ _rest154026_ _x154024_)))
+                (let () (declare (not safe)) (_else5396353977_)))))))
     (define foldr
-      (lambda _g56634_
-        (let ((_g56633_ (let () (declare (not safe)) (##length _g56634_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56633_ 3))
-                 (apply (lambda (_f55817_ _iv55818_ _lst55819_)
+      (lambda _g54754_
+        (let ((_g54753_ (let () (declare (not safe)) (##length _g54754_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54753_ 3))
+                 (apply (lambda (_f53937_ _iv53938_ _lst53939_)
                           (let ()
                             (declare (not safe))
-                            (foldr1 _f55817_ _iv55818_ _lst55819_)))
-                        _g56634_))
-                ((let () (declare (not safe)) (##fx= _g56633_ 4))
-                 (apply (lambda (_f55821_ _iv55822_ _lst155823_ _lst255824_)
+                            (foldr1 _f53937_ _iv53938_ _lst53939_)))
+                        _g54754_))
+                ((let () (declare (not safe)) (##fx= _g54753_ 4))
+                 (apply (lambda (_f53941_ _iv53942_ _lst153943_ _lst253944_)
                           (let ()
                             (declare (not safe))
-                            (foldr2 _f55821_
-                                    _iv55822_
-                                    _lst155823_
-                                    _lst255824_)))
-                        _g56634_))
-                ((let () (declare (not safe)) (##fx>= _g56633_ 4))
-                 (apply foldr* _g56634_))
+                            (foldr2 _f53941_
+                                    _iv53942_
+                                    _lst153943_
+                                    _lst253944_)))
+                        _g54754_))
+                ((let () (declare (not safe)) (##fx>= _g54753_ 4))
+                 (apply foldr* _g54754_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   foldr
-                  _g56634_))))))
+                  _g54754_))))))
     (define foldr*
-      (lambda (_f55806_ _iv55807_ . _rest55808_)
-        (let _recur55810_ ((_rest55812_ _rest55808_))
-          (if (let () (declare (not safe)) (andmap1 pair? _rest55812_))
-              (apply _f55806_
-                     (let ((__tmp56637
-                            (lambda (_xs55814_ _r55815_)
-                              (let ((__tmp56638 (car _xs55814_)))
+      (lambda (_f53926_ _iv53927_ . _rest53928_)
+        (let _recur53930_ ((_rest53932_ _rest53928_))
+          (if (let () (declare (not safe)) (andmap1 pair? _rest53932_))
+              (apply _f53926_
+                     (let ((__tmp54757
+                            (lambda (_xs53934_ _r53935_)
+                              (let ((__tmp54758 (car _xs53934_)))
                                 (declare (not safe))
-                                (cons __tmp56638 _r55815_))))
-                           (__tmp56635
-                            (list (let ((__tmp56636 (map cdr _rest55812_)))
+                                (cons __tmp54758 _r53935_))))
+                           (__tmp54755
+                            (list (let ((__tmp54756 (map cdr _rest53932_)))
                                     (declare (not safe))
-                                    (_recur55810_ __tmp56636)))))
+                                    (_recur53930_ __tmp54756)))))
                        (declare (not safe))
-                       (foldr1 __tmp56637 __tmp56635 _rest55812_)))
-              _iv55807_))))
+                       (foldr1 __tmp54757 __tmp54755 _rest53932_)))
+              _iv53927_))))
     (define remove-nulls!
-      (lambda (_l55693_)
-        (let* ((_l5569455707_ _l55693_)
-               (_E5569855711_
-                (lambda ()
-                  (let ()
-                    (declare (not safe))
-                    (error '"No clause matching" _l5569455707_)))))
-          (let ((_K5570355796_
-                 (lambda (_r55794_)
-                   (let () (declare (not safe)) (remove-nulls! _r55794_))))
-                (_K5570055783_
-                 (lambda (_r55723_)
-                   (let _loop55725_ ((_l55727_ _l55693_) (_r55728_ _r55723_))
-                     (let* ((_r5572955742_ _r55728_)
-                            (_E5573355746_
+      (lambda (_l53813_)
+        (let* ((_l5381453827_ _l53813_)
+               (_E5381853831_
+                (lambda () (error '"No clause matching" _l5381453827_))))
+          (let ((_K5382353916_
+                 (lambda (_r53914_)
+                   (let () (declare (not safe)) (remove-nulls! _r53914_))))
+                (_K5382053903_
+                 (lambda (_r53843_)
+                   (let _loop53845_ ((_l53847_ _l53813_) (_r53848_ _r53843_))
+                     (let* ((_r5384953862_ _r53848_)
+                            (_E5385353866_
                              (lambda ()
-                               (let ()
-                                 (declare (not safe))
-                                 (error '"No clause matching"
-                                        _r5572955742_)))))
-                       (let ((_K5573855773_
-                              (lambda (_rr55771_)
+                               (error '"No clause matching" _r5384953862_))))
+                       (let ((_K5385853893_
+                              (lambda (_rr53891_)
                                 (set-cdr!
-                                 _l55727_
+                                 _l53847_
                                  (let ()
                                    (declare (not safe))
-                                   (remove-nulls! _rr55771_)))))
-                             (_K5573555760_
-                              (lambda (_rr55758_)
+                                   (remove-nulls! _rr53891_)))))
+                             (_K5385553880_
+                              (lambda (_rr53878_)
                                 (let ()
                                   (declare (not safe))
-                                  (_loop55725_ _r55728_ _rr55758_))))
-                             (_K5573455751_ (lambda () '#!void)))
+                                  (_loop53845_ _r53848_ _rr53878_))))
+                             (_K5385453871_ (lambda () '#!void)))
                          (if (let ()
                                (declare (not safe))
-                               (##pair? _r5572955742_))
-                             (let ((_tl5574055778_
+                               (##pair? _r5384953862_))
+                             (let ((_tl5386053898_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _r5572955742_)))
-                                   (_hd5573955776_
+                                      (##cdr _r5384953862_)))
+                                   (_hd5385953896_
                                     (let ()
                                       (declare (not safe))
-                                      (##car _r5572955742_))))
+                                      (##car _r5384953862_))))
                                (if (let ()
                                      (declare (not safe))
-                                     (##null? _hd5573955776_))
-                                   (let ((_rr55781_ _tl5574055778_))
+                                     (##null? _hd5385953896_))
+                                   (let ((_rr53901_ _tl5386053898_))
                                      (declare (not safe))
-                                     (_K5573855773_ _rr55781_))
-                                   (let ((_rr55766_ _tl5574055778_))
+                                     (_K5385853893_ _rr53901_))
+                                   (let ((_rr53886_ _tl5386053898_))
                                      (declare (not safe))
-                                     (_K5573555760_ _rr55766_))))
+                                     (_K5385553880_ _rr53886_))))
                              '#!void))))
-                   _l55693_))
-                (_K5569955716_ (lambda () _l55693_)))
-            (if (let () (declare (not safe)) (##pair? _l5569455707_))
-                (let ((_tl5570555801_
-                       (let () (declare (not safe)) (##cdr _l5569455707_)))
-                      (_hd5570455799_
-                       (let () (declare (not safe)) (##car _l5569455707_))))
-                  (if (let () (declare (not safe)) (##null? _hd5570455799_))
-                      (let ((_r55804_ _tl5570555801_))
+                   _l53813_))
+                (_K5381953836_ (lambda () _l53813_)))
+            (if (let () (declare (not safe)) (##pair? _l5381453827_))
+                (let ((_tl5382553921_
+                       (let () (declare (not safe)) (##cdr _l5381453827_)))
+                      (_hd5382453919_
+                       (let () (declare (not safe)) (##car _l5381453827_))))
+                  (if (let () (declare (not safe)) (##null? _hd5382453919_))
+                      (let ((_r53924_ _tl5382553921_))
                         (declare (not safe))
-                        (remove-nulls! _r55804_))
-                      (let ((_r55789_ _tl5570555801_))
+                        (remove-nulls! _r53924_))
+                      (let ((_r53909_ _tl5382553921_))
                         (declare (not safe))
-                        (_K5570055783_ _r55789_))))
-                (let () (declare (not safe)) (_K5569955716_)))))))
+                        (_K5382053903_ _r53909_))))
+                (let () (declare (not safe)) (_K5381953836_)))))))
     (define append1!
-      (lambda (_l55688_ _x55689_)
-        (let ((_l255691_ (let () (declare (not safe)) (cons _x55689_ '()))))
-          (if (let () (declare (not safe)) (pair? _l55688_))
+      (lambda (_l53808_ _x53809_)
+        (let ((_l253811_ (let () (declare (not safe)) (cons _x53809_ '()))))
+          (if (let () (declare (not safe)) (pair? _l53808_))
               (set-cdr!
-               (let () (declare (not safe)) (##last-pair _l55688_))
-               _l255691_)
-              _l255691_))))
+               (let () (declare (not safe)) (##last-pair _l53808_))
+               _l253811_)
+              _l253811_))))
     (define append-reverse-until
-      (lambda (_pred55641_ _rhead55642_ _tail55643_)
-        (let _loop55645_ ((_rhead55647_ _rhead55642_)
-                          (_tail55648_ _tail55643_))
-          (let* ((_rhead5564955658_ _rhead55647_)
-                 (_E5565255662_
-                  (lambda ()
-                    (let ()
-                      (declare (not safe))
-                      (error '"No clause matching" _rhead5564955658_)))))
-            (let ((_K5565655685_ (lambda () (values '() _tail55648_)))
-                  (_K5565355669_
-                   (lambda (_r55666_ _a55667_)
-                     (if (_pred55641_ _a55667_)
-                         (values _rhead55647_ _tail55648_)
-                         (let ((__tmp56639
+      (lambda (_pred53761_ _rhead53762_ _tail53763_)
+        (let _loop53765_ ((_rhead53767_ _rhead53762_)
+                          (_tail53768_ _tail53763_))
+          (let* ((_rhead5376953778_ _rhead53767_)
+                 (_E5377253782_
+                  (lambda () (error '"No clause matching" _rhead5376953778_))))
+            (let ((_K5377653805_ (lambda () (values '() _tail53768_)))
+                  (_K5377353789_
+                   (lambda (_r53786_ _a53787_)
+                     (if (_pred53761_ _a53787_)
+                         (values _rhead53767_ _tail53768_)
+                         (let ((__tmp54759
                                 (let ()
                                   (declare (not safe))
-                                  (cons _a55667_ _tail55648_))))
+                                  (cons _a53787_ _tail53768_))))
                            (declare (not safe))
-                           (_loop55645_ _r55666_ __tmp56639))))))
-              (let ((_try-match5565155681_
+                           (_loop53765_ _r53786_ __tmp54759))))))
+              (let ((_try-match5377153801_
                      (lambda ()
                        (if (let ()
                              (declare (not safe))
-                             (##pair? _rhead5564955658_))
-                           (let ((_tl5565555674_
+                             (##pair? _rhead5376953778_))
+                           (let ((_tl5377553794_
                                   (let ()
                                     (declare (not safe))
-                                    (##cdr _rhead5564955658_)))
-                                 (_hd5565455672_
+                                    (##cdr _rhead5376953778_)))
+                                 (_hd5377453792_
                                   (let ()
                                     (declare (not safe))
-                                    (##car _rhead5564955658_))))
-                             (let ((_a55677_ _hd5565455672_)
-                                   (_r55679_ _tl5565555674_))
+                                    (##car _rhead5376953778_))))
+                             (let ((_a53797_ _hd5377453792_)
+                                   (_r53799_ _tl5377553794_))
                                (let ()
                                  (declare (not safe))
-                                 (_K5565355669_ _r55679_ _a55677_))))
-                           (let () (declare (not safe)) (_E5565255662_))))))
-                (if (let () (declare (not safe)) (##null? _rhead5564955658_))
-                    (let () (declare (not safe)) (_K5565655685_))
+                                 (_K5377353789_ _r53799_ _a53797_))))
+                           (let () (declare (not safe)) (_E5377253782_))))))
+                (if (let () (declare (not safe)) (##null? _rhead5376953778_))
+                    (let () (declare (not safe)) (_K5377653805_))
                     (let ()
                       (declare (not safe))
-                      (_try-match5565155681_)))))))))
+                      (_try-match5377153801_)))))))))
     (define andmap1
-      (lambda (_f55601_ _lst55602_)
-        (let _lp55604_ ((_rest55606_ _lst55602_))
-          (let* ((_rest5560755615_ _rest55606_)
-                 (_else5560955623_ (lambda () '#t))
-                 (_K5561155629_
-                  (lambda (_rest55626_ _x55627_)
-                    (if (_f55601_ _x55627_)
-                        (let () (declare (not safe)) (_lp55604_ _rest55626_))
+      (lambda (_f53721_ _lst53722_)
+        (let _lp53724_ ((_rest53726_ _lst53722_))
+          (let* ((_rest5372753735_ _rest53726_)
+                 (_else5372953743_ (lambda () '#t))
+                 (_K5373153749_
+                  (lambda (_rest53746_ _x53747_)
+                    (if (_f53721_ _x53747_)
+                        (let () (declare (not safe)) (_lp53724_ _rest53746_))
                         '#f))))
-            (if (let () (declare (not safe)) (##pair? _rest5560755615_))
-                (let ((_hd5561255632_
-                       (let () (declare (not safe)) (##car _rest5560755615_)))
-                      (_tl5561355634_
-                       (let () (declare (not safe)) (##cdr _rest5560755615_))))
-                  (let* ((_x55637_ _hd5561255632_)
-                         (_rest55639_ _tl5561355634_))
+            (if (let () (declare (not safe)) (##pair? _rest5372753735_))
+                (let ((_hd5373253752_
+                       (let () (declare (not safe)) (##car _rest5372753735_)))
+                      (_tl5373353754_
+                       (let () (declare (not safe)) (##cdr _rest5372753735_))))
+                  (let* ((_x53757_ _hd5373253752_)
+                         (_rest53759_ _tl5373353754_))
                     (declare (not safe))
-                    (_K5561155629_ _rest55639_ _x55637_)))
-                (let () (declare (not safe)) (_else5560955623_)))))))
+                    (_K5373153749_ _rest53759_ _x53757_)))
+                (let () (declare (not safe)) (_else5372953743_)))))))
     (define andmap2
-      (lambda (_f55526_ _lst155527_ _lst255528_)
-        (let _lp55530_ ((_rest155532_ _lst155527_) (_rest255533_ _lst255528_))
-          (let* ((_rest15553455542_ _rest155532_)
-                 (_else5553655550_ (lambda () '#t))
-                 (_K5553855589_
-                  (lambda (_rest155553_ _x155554_)
-                    (let* ((_rest25555555563_ _rest255533_)
-                           (_else5555755571_ (lambda () '#t))
-                           (_K5555955577_
-                            (lambda (_rest255574_ _x255575_)
-                              (if (_f55526_ _x155554_ _x255575_)
+      (lambda (_f53646_ _lst153647_ _lst253648_)
+        (let _lp53650_ ((_rest153652_ _lst153647_) (_rest253653_ _lst253648_))
+          (let* ((_rest15365453662_ _rest153652_)
+                 (_else5365653670_ (lambda () '#t))
+                 (_K5365853709_
+                  (lambda (_rest153673_ _x153674_)
+                    (let* ((_rest25367553683_ _rest253653_)
+                           (_else5367753691_ (lambda () '#t))
+                           (_K5367953697_
+                            (lambda (_rest253694_ _x253695_)
+                              (if (_f53646_ _x153674_ _x253695_)
                                   (let ()
                                     (declare (not safe))
-                                    (_lp55530_ _rest155553_ _rest255574_))
+                                    (_lp53650_ _rest153673_ _rest253694_))
                                   '#f))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _rest25555555563_))
-                          (let ((_hd5556055580_
+                            (##pair? _rest25367553683_))
+                          (let ((_hd5368053700_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _rest25555555563_)))
-                                (_tl5556155582_
+                                   (##car _rest25367553683_)))
+                                (_tl5368153702_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _rest25555555563_))))
-                            (let* ((_x255585_ _hd5556055580_)
-                                   (_rest255587_ _tl5556155582_))
+                                   (##cdr _rest25367553683_))))
+                            (let* ((_x253705_ _hd5368053700_)
+                                   (_rest253707_ _tl5368153702_))
                               (declare (not safe))
-                              (_K5555955577_ _rest255587_ _x255585_)))
-                          (let () (declare (not safe)) (_else5555755571_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest15553455542_))
-                (let ((_hd5553955592_
-                       (let () (declare (not safe)) (##car _rest15553455542_)))
-                      (_tl5554055594_
+                              (_K5367953697_ _rest253707_ _x253705_)))
+                          (let () (declare (not safe)) (_else5367753691_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest15365453662_))
+                (let ((_hd5365953712_
+                       (let () (declare (not safe)) (##car _rest15365453662_)))
+                      (_tl5366053714_
                        (let ()
                          (declare (not safe))
-                         (##cdr _rest15553455542_))))
-                  (let* ((_x155597_ _hd5553955592_)
-                         (_rest155599_ _tl5554055594_))
+                         (##cdr _rest15365453662_))))
+                  (let* ((_x153717_ _hd5365953712_)
+                         (_rest153719_ _tl5366053714_))
                     (declare (not safe))
-                    (_K5553855589_ _rest155599_ _x155597_)))
-                (let () (declare (not safe)) (_else5553655550_)))))))
+                    (_K5365853709_ _rest153719_ _x153717_)))
+                (let () (declare (not safe)) (_else5365653670_)))))))
     (define andmap
-      (lambda _g56641_
-        (let ((_g56640_ (let () (declare (not safe)) (##length _g56641_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56640_ 2))
-                 (apply (lambda (_f55514_ _lst55515_)
+      (lambda _g54761_
+        (let ((_g54760_ (let () (declare (not safe)) (##length _g54761_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54760_ 2))
+                 (apply (lambda (_f53634_ _lst53635_)
                           (let ()
                             (declare (not safe))
-                            (andmap1 _f55514_ _lst55515_)))
-                        _g56641_))
-                ((let () (declare (not safe)) (##fx= _g56640_ 3))
-                 (apply (lambda (_f55517_ _lst155518_ _lst255519_)
+                            (andmap1 _f53634_ _lst53635_)))
+                        _g54761_))
+                ((let () (declare (not safe)) (##fx= _g54760_ 3))
+                 (apply (lambda (_f53637_ _lst153638_ _lst253639_)
                           (let ()
                             (declare (not safe))
-                            (andmap2 _f55517_ _lst155518_ _lst255519_)))
-                        _g56641_))
-                ((let () (declare (not safe)) (##fx>= _g56640_ 3))
-                 (apply andmap* _g56641_))
+                            (andmap2 _f53637_ _lst153638_ _lst253639_)))
+                        _g54761_))
+                ((let () (declare (not safe)) (##fx>= _g54760_ 3))
+                 (apply andmap* _g54761_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   andmap
-                  _g56641_))))))
+                  _g54761_))))))
     (define andmap*
-      (lambda (_f55507_ . _rest55508_)
-        (let _recur55510_ ((_rest55512_ _rest55508_))
-          (if (let () (declare (not safe)) (andmap1 pair? _rest55512_))
-              (if (apply _f55507_ (map car _rest55512_))
-                  (let ((__tmp56642 (map cdr _rest55512_)))
+      (lambda (_f53627_ . _rest53628_)
+        (let _recur53630_ ((_rest53632_ _rest53628_))
+          (if (let () (declare (not safe)) (andmap1 pair? _rest53632_))
+              (if (apply _f53627_ (map car _rest53632_))
+                  (let ((__tmp54762 (map cdr _rest53632_)))
                     (declare (not safe))
-                    (_recur55510_ __tmp56642))
+                    (_recur53630_ __tmp54762))
                   '#f)
               '#t))))
     (define ormap1
-      (lambda (_f55464_ _lst55465_)
-        (let _lp55467_ ((_rest55469_ _lst55465_))
-          (let* ((_rest5547055478_ _rest55469_)
-                 (_else5547255486_ (lambda () '#f))
-                 (_K5547455495_
-                  (lambda (_rest55489_ _x55490_)
-                    (let ((_$e55492_ (_f55464_ _x55490_)))
-                      (if _$e55492_
-                          _$e55492_
+      (lambda (_f53584_ _lst53585_)
+        (let _lp53587_ ((_rest53589_ _lst53585_))
+          (let* ((_rest5359053598_ _rest53589_)
+                 (_else5359253606_ (lambda () '#f))
+                 (_K5359453615_
+                  (lambda (_rest53609_ _x53610_)
+                    (let ((_$e53612_ (_f53584_ _x53610_)))
+                      (if _$e53612_
+                          _$e53612_
                           (let ()
                             (declare (not safe))
-                            (_lp55467_ _rest55489_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest5547055478_))
-                (let ((_hd5547555498_
-                       (let () (declare (not safe)) (##car _rest5547055478_)))
-                      (_tl5547655500_
-                       (let () (declare (not safe)) (##cdr _rest5547055478_))))
-                  (let* ((_x55503_ _hd5547555498_)
-                         (_rest55505_ _tl5547655500_))
+                            (_lp53587_ _rest53609_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest5359053598_))
+                (let ((_hd5359553618_
+                       (let () (declare (not safe)) (##car _rest5359053598_)))
+                      (_tl5359653620_
+                       (let () (declare (not safe)) (##cdr _rest5359053598_))))
+                  (let* ((_x53623_ _hd5359553618_)
+                         (_rest53625_ _tl5359653620_))
                     (declare (not safe))
-                    (_K5547455495_ _rest55505_ _x55503_)))
-                (let () (declare (not safe)) (_else5547255486_)))))))
+                    (_K5359453615_ _rest53625_ _x53623_)))
+                (let () (declare (not safe)) (_else5359253606_)))))))
     (define ormap2
-      (lambda (_f55386_ _lst155387_ _lst255388_)
-        (let _lp55390_ ((_rest155392_ _lst155387_) (_rest255393_ _lst255388_))
-          (let* ((_rest15539455402_ _rest155392_)
-                 (_else5539655410_ (lambda () '#f))
-                 (_K5539855452_
-                  (lambda (_rest155413_ _x155414_)
-                    (let* ((_rest25541555423_ _rest255393_)
-                           (_else5541755431_ (lambda () '#f))
-                           (_K5541955440_
-                            (lambda (_rest255434_ _x255435_)
-                              (let ((_$e55437_ (_f55386_ _x155414_ _x255435_)))
-                                (if _$e55437_
-                                    _$e55437_
+      (lambda (_f53506_ _lst153507_ _lst253508_)
+        (let _lp53510_ ((_rest153512_ _lst153507_) (_rest253513_ _lst253508_))
+          (let* ((_rest15351453522_ _rest153512_)
+                 (_else5351653530_ (lambda () '#f))
+                 (_K5351853572_
+                  (lambda (_rest153533_ _x153534_)
+                    (let* ((_rest25353553543_ _rest253513_)
+                           (_else5353753551_ (lambda () '#f))
+                           (_K5353953560_
+                            (lambda (_rest253554_ _x253555_)
+                              (let ((_$e53557_ (_f53506_ _x153534_ _x253555_)))
+                                (if _$e53557_
+                                    _$e53557_
                                     (let ()
                                       (declare (not safe))
-                                      (_lp55390_
-                                       _rest155413_
-                                       _rest255434_)))))))
+                                      (_lp53510_
+                                       _rest153533_
+                                       _rest253554_)))))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _rest25541555423_))
-                          (let ((_hd5542055443_
+                            (##pair? _rest25353553543_))
+                          (let ((_hd5354053563_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _rest25541555423_)))
-                                (_tl5542155445_
+                                   (##car _rest25353553543_)))
+                                (_tl5354153565_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _rest25541555423_))))
-                            (let* ((_x255448_ _hd5542055443_)
-                                   (_rest255450_ _tl5542155445_))
+                                   (##cdr _rest25353553543_))))
+                            (let* ((_x253568_ _hd5354053563_)
+                                   (_rest253570_ _tl5354153565_))
                               (declare (not safe))
-                              (_K5541955440_ _rest255450_ _x255448_)))
-                          (let () (declare (not safe)) (_else5541755431_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest15539455402_))
-                (let ((_hd5539955455_
-                       (let () (declare (not safe)) (##car _rest15539455402_)))
-                      (_tl5540055457_
+                              (_K5353953560_ _rest253570_ _x253568_)))
+                          (let () (declare (not safe)) (_else5353753551_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest15351453522_))
+                (let ((_hd5351953575_
+                       (let () (declare (not safe)) (##car _rest15351453522_)))
+                      (_tl5352053577_
                        (let ()
                          (declare (not safe))
-                         (##cdr _rest15539455402_))))
-                  (let* ((_x155460_ _hd5539955455_)
-                         (_rest155462_ _tl5540055457_))
+                         (##cdr _rest15351453522_))))
+                  (let* ((_x153580_ _hd5351953575_)
+                         (_rest153582_ _tl5352053577_))
                     (declare (not safe))
-                    (_K5539855452_ _rest155462_ _x155460_)))
-                (let () (declare (not safe)) (_else5539655410_)))))))
+                    (_K5351853572_ _rest153582_ _x153580_)))
+                (let () (declare (not safe)) (_else5351653530_)))))))
     (define ormap
-      (lambda _g56644_
-        (let ((_g56643_ (let () (declare (not safe)) (##length _g56644_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56643_ 2))
-                 (apply (lambda (_f55374_ _lst55375_)
+      (lambda _g54764_
+        (let ((_g54763_ (let () (declare (not safe)) (##length _g54764_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54763_ 2))
+                 (apply (lambda (_f53494_ _lst53495_)
                           (let ()
                             (declare (not safe))
-                            (ormap1 _f55374_ _lst55375_)))
-                        _g56644_))
-                ((let () (declare (not safe)) (##fx= _g56643_ 3))
-                 (apply (lambda (_f55377_ _lst155378_ _lst255379_)
+                            (ormap1 _f53494_ _lst53495_)))
+                        _g54764_))
+                ((let () (declare (not safe)) (##fx= _g54763_ 3))
+                 (apply (lambda (_f53497_ _lst153498_ _lst253499_)
                           (let ()
                             (declare (not safe))
-                            (ormap2 _f55377_ _lst155378_ _lst255379_)))
-                        _g56644_))
-                ((let () (declare (not safe)) (##fx>= _g56643_ 3))
-                 (apply ormap* _g56644_))
+                            (ormap2 _f53497_ _lst153498_ _lst253499_)))
+                        _g54764_))
+                ((let () (declare (not safe)) (##fx>= _g54763_ 3))
+                 (apply ormap* _g54764_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   ormap
-                  _g56644_))))))
+                  _g54764_))))))
     (define ormap*
-      (lambda (_f55364_ . _rest55365_)
-        (let _recur55367_ ((_rest55369_ _rest55365_))
-          (if (let () (declare (not safe)) (andmap1 pair? _rest55369_))
-              (let ((_$e55371_ (apply _f55364_ (map car _rest55369_))))
-                (if _$e55371_
-                    _$e55371_
-                    (let ((__tmp56645 (map cdr _rest55369_)))
+      (lambda (_f53484_ . _rest53485_)
+        (let _recur53487_ ((_rest53489_ _rest53485_))
+          (if (let () (declare (not safe)) (andmap1 pair? _rest53489_))
+              (let ((_$e53491_ (apply _f53484_ (map car _rest53489_))))
+                (if _$e53491_
+                    _$e53491_
+                    (let ((__tmp54765 (map cdr _rest53489_)))
                       (declare (not safe))
-                      (_recur55367_ __tmp56645))))
+                      (_recur53487_ __tmp54765))))
               '#f))))
     (define filter-map1
-      (lambda (_f55319_ _lst55320_)
-        (let _recur55322_ ((_rest55324_ _lst55320_))
-          (let* ((_rest5532555333_ _rest55324_)
-                 (_else5532755341_ (lambda () '()))
-                 (_K5532955352_
-                  (lambda (_rest55344_ _x55345_)
-                    (let ((_$e55347_ (_f55319_ _x55345_)))
-                      (if _$e55347_
-                          ((lambda (_r55350_)
-                             (let ((__tmp56646
+      (lambda (_f53439_ _lst53440_)
+        (let _recur53442_ ((_rest53444_ _lst53440_))
+          (let* ((_rest5344553453_ _rest53444_)
+                 (_else5344753461_ (lambda () '()))
+                 (_K5344953472_
+                  (lambda (_rest53464_ _x53465_)
+                    (let ((_$e53467_ (_f53439_ _x53465_)))
+                      (if _$e53467_
+                          ((lambda (_r53470_)
+                             (let ((__tmp54766
                                     (let ()
                                       (declare (not safe))
-                                      (_recur55322_ _rest55344_))))
+                                      (_recur53442_ _rest53464_))))
                                (declare (not safe))
-                               (cons _r55350_ __tmp56646)))
-                           _$e55347_)
+                               (cons _r53470_ __tmp54766)))
+                           _$e53467_)
                           (let ()
                             (declare (not safe))
-                            (_recur55322_ _rest55344_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest5532555333_))
-                (let ((_hd5533055355_
-                       (let () (declare (not safe)) (##car _rest5532555333_)))
-                      (_tl5533155357_
-                       (let () (declare (not safe)) (##cdr _rest5532555333_))))
-                  (let* ((_x55360_ _hd5533055355_)
-                         (_rest55362_ _tl5533155357_))
+                            (_recur53442_ _rest53464_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest5344553453_))
+                (let ((_hd5345053475_
+                       (let () (declare (not safe)) (##car _rest5344553453_)))
+                      (_tl5345153477_
+                       (let () (declare (not safe)) (##cdr _rest5344553453_))))
+                  (let* ((_x53480_ _hd5345053475_)
+                         (_rest53482_ _tl5345153477_))
                     (declare (not safe))
-                    (_K5532955352_ _rest55362_ _x55360_)))
-                (let () (declare (not safe)) (_else5532755341_)))))))
+                    (_K5344953472_ _rest53482_ _x53480_)))
+                (let () (declare (not safe)) (_else5344753461_)))))))
     (define filter-map2
-      (lambda (_f55239_ _lst155240_ _lst255241_)
-        (let _recur55243_ ((_rest155245_ _lst155240_)
-                           (_rest255246_ _lst255241_))
-          (let* ((_rest15524755255_ _rest155245_)
-                 (_else5524955263_ (lambda () '()))
-                 (_K5525155307_
-                  (lambda (_rest155266_ _x155267_)
-                    (let* ((_rest25526855276_ _rest255246_)
-                           (_else5527055284_ (lambda () '()))
-                           (_K5527255295_
-                            (lambda (_rest255287_ _x255288_)
-                              (let ((_$e55290_ (_f55239_ _x155267_ _x255288_)))
-                                (if _$e55290_
-                                    ((lambda (_r55293_)
-                                       (let ((__tmp56647
+      (lambda (_f53359_ _lst153360_ _lst253361_)
+        (let _recur53363_ ((_rest153365_ _lst153360_)
+                           (_rest253366_ _lst253361_))
+          (let* ((_rest15336753375_ _rest153365_)
+                 (_else5336953383_ (lambda () '()))
+                 (_K5337153427_
+                  (lambda (_rest153386_ _x153387_)
+                    (let* ((_rest25338853396_ _rest253366_)
+                           (_else5339053404_ (lambda () '()))
+                           (_K5339253415_
+                            (lambda (_rest253407_ _x253408_)
+                              (let ((_$e53410_ (_f53359_ _x153387_ _x253408_)))
+                                (if _$e53410_
+                                    ((lambda (_r53413_)
+                                       (let ((__tmp54767
                                               (let ()
                                                 (declare (not safe))
-                                                (_recur55243_
-                                                 _rest155266_
-                                                 _rest255287_))))
+                                                (_recur53363_
+                                                 _rest153386_
+                                                 _rest253407_))))
                                          (declare (not safe))
-                                         (cons _r55293_ __tmp56647)))
-                                     _$e55290_)
+                                         (cons _r53413_ __tmp54767)))
+                                     _$e53410_)
                                     (let ()
                                       (declare (not safe))
-                                      (_recur55243_
-                                       _rest155266_
-                                       _rest255287_)))))))
+                                      (_recur53363_
+                                       _rest153386_
+                                       _rest253407_)))))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _rest25526855276_))
-                          (let ((_hd5527355298_
+                            (##pair? _rest25338853396_))
+                          (let ((_hd5339353418_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _rest25526855276_)))
-                                (_tl5527455300_
+                                   (##car _rest25338853396_)))
+                                (_tl5339453420_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _rest25526855276_))))
-                            (let* ((_x255303_ _hd5527355298_)
-                                   (_rest255305_ _tl5527455300_))
+                                   (##cdr _rest25338853396_))))
+                            (let* ((_x253423_ _hd5339353418_)
+                                   (_rest253425_ _tl5339453420_))
                               (declare (not safe))
-                              (_K5527255295_ _rest255305_ _x255303_)))
-                          (let () (declare (not safe)) (_else5527055284_)))))))
-            (if (let () (declare (not safe)) (##pair? _rest15524755255_))
-                (let ((_hd5525255310_
-                       (let () (declare (not safe)) (##car _rest15524755255_)))
-                      (_tl5525355312_
+                              (_K5339253415_ _rest253425_ _x253423_)))
+                          (let () (declare (not safe)) (_else5339053404_)))))))
+            (if (let () (declare (not safe)) (##pair? _rest15336753375_))
+                (let ((_hd5337253430_
+                       (let () (declare (not safe)) (##car _rest15336753375_)))
+                      (_tl5337353432_
                        (let ()
                          (declare (not safe))
-                         (##cdr _rest15524755255_))))
-                  (let* ((_x155315_ _hd5525255310_)
-                         (_rest155317_ _tl5525355312_))
+                         (##cdr _rest15336753375_))))
+                  (let* ((_x153435_ _hd5337253430_)
+                         (_rest153437_ _tl5337353432_))
                     (declare (not safe))
-                    (_K5525155307_ _rest155317_ _x155315_)))
-                (let () (declare (not safe)) (_else5524955263_)))))))
+                    (_K5337153427_ _rest153437_ _x153435_)))
+                (let () (declare (not safe)) (_else5336953383_)))))))
     (define filter-map
-      (lambda _g56649_
-        (let ((_g56648_ (let () (declare (not safe)) (##length _g56649_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56648_ 2))
-                 (apply (lambda (_f55227_ _lst55228_)
+      (lambda _g54769_
+        (let ((_g54768_ (let () (declare (not safe)) (##length _g54769_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54768_ 2))
+                 (apply (lambda (_f53347_ _lst53348_)
                           (let ()
                             (declare (not safe))
-                            (filter-map1 _f55227_ _lst55228_)))
-                        _g56649_))
-                ((let () (declare (not safe)) (##fx= _g56648_ 3))
-                 (apply (lambda (_f55230_ _lst155231_ _lst255232_)
+                            (filter-map1 _f53347_ _lst53348_)))
+                        _g54769_))
+                ((let () (declare (not safe)) (##fx= _g54768_ 3))
+                 (apply (lambda (_f53350_ _lst153351_ _lst253352_)
                           (let ()
                             (declare (not safe))
-                            (filter-map2 _f55230_ _lst155231_ _lst255232_)))
-                        _g56649_))
-                ((let () (declare (not safe)) (##fx>= _g56648_ 3))
-                 (apply filter-map* _g56649_))
+                            (filter-map2 _f53350_ _lst153351_ _lst253352_)))
+                        _g54769_))
+                ((let () (declare (not safe)) (##fx>= _g54768_ 3))
+                 (apply filter-map* _g54769_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   filter-map
-                  _g56649_))))))
+                  _g54769_))))))
     (define filter-map*
-      (lambda (_f55215_ . _rest55216_)
-        (let _recur55218_ ((_rest55220_ _rest55216_))
-          (if (let () (declare (not safe)) (andmap1 pair? _rest55220_))
-              (let ((_$e55222_ (apply _f55215_ (map car _rest55220_))))
-                (if _$e55222_
-                    ((lambda (_r55225_)
-                       (let ((__tmp56651
-                              (let ((__tmp56652 (map cdr _rest55220_)))
+      (lambda (_f53335_ . _rest53336_)
+        (let _recur53338_ ((_rest53340_ _rest53336_))
+          (if (let () (declare (not safe)) (andmap1 pair? _rest53340_))
+              (let ((_$e53342_ (apply _f53335_ (map car _rest53340_))))
+                (if _$e53342_
+                    ((lambda (_r53345_)
+                       (let ((__tmp54770
+                              (let ((__tmp54771 (map cdr _rest53340_)))
                                 (declare (not safe))
-                                (_recur55218_ __tmp56652))))
+                                (_recur53338_ __tmp54771))))
                          (declare (not safe))
-                         (cons _r55225_ __tmp56651)))
-                     _$e55222_)
-                    (let ((__tmp56650 (map cdr _rest55220_)))
+                         (cons _r53345_ __tmp54770)))
+                     _$e53342_)
+                    (let ((__tmp54772 (map cdr _rest53340_)))
                       (declare (not safe))
-                      (_recur55218_ __tmp56650))))
+                      (_recur53338_ __tmp54772))))
               '()))))
     (define assgetq__%
-      (lambda (_key55193_ _lst55195_ _default55197_)
-        (let ((_$e55200_
-               (if (let () (declare (not safe)) (pair? _lst55195_))
-                   (assq _key55193_ _lst55195_)
+      (lambda (_key53313_ _lst53315_ _default53317_)
+        (let ((_$e53320_
+               (if (let () (declare (not safe)) (pair? _lst53315_))
+                   (assq _key53313_ _lst53315_)
                    '#f)))
-          (if _$e55200_
-              (cdr _$e55200_)
-              (if (let () (declare (not safe)) (procedure? _default55197_))
-                  (_default55197_ _key55193_)
-                  _default55197_)))))
+          (if _$e53320_
+              (cdr _$e53320_)
+              (if (let () (declare (not safe)) (procedure? _default53317_))
+                  (_default53317_ _key53313_)
+                  _default53317_)))))
     (define assgetq__0
-      (lambda (_key55206_ _lst55207_)
-        (let ((_default55209_ '#f))
+      (lambda (_key53326_ _lst53327_)
+        (let ((_default53329_ '#f))
           (declare (not safe))
-          (assgetq__% _key55206_ _lst55207_ _default55209_))))
+          (assgetq__% _key53326_ _lst53327_ _default53329_))))
     (define assgetq
-      (lambda _g56654_
-        (let ((_g56653_ (let () (declare (not safe)) (##length _g56654_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56653_ 2))
-                 (apply (lambda (_key55206_ _lst55207_)
+      (lambda _g54774_
+        (let ((_g54773_ (let () (declare (not safe)) (##length _g54774_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54773_ 2))
+                 (apply (lambda (_key53326_ _lst53327_)
                           (let ()
                             (declare (not safe))
-                            (assgetq__0 _key55206_ _lst55207_)))
-                        _g56654_))
-                ((let () (declare (not safe)) (##fx= _g56653_ 3))
-                 (apply (lambda (_key55211_ _lst55212_ _default55213_)
+                            (assgetq__0 _key53326_ _lst53327_)))
+                        _g54774_))
+                ((let () (declare (not safe)) (##fx= _g54773_ 3))
+                 (apply (lambda (_key53331_ _lst53332_ _default53333_)
                           (let ()
                             (declare (not safe))
-                            (assgetq__% _key55211_ _lst55212_ _default55213_)))
-                        _g56654_))
+                            (assgetq__% _key53331_ _lst53332_ _default53333_)))
+                        _g54774_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   assgetq
-                  _g56654_))))))
+                  _g54774_))))))
     (define assgetv__%
-      (lambda (_key55170_ _lst55172_ _default55174_)
-        (let ((_$e55177_
-               (if (let () (declare (not safe)) (pair? _lst55172_))
-                   (assv _key55170_ _lst55172_)
+      (lambda (_key53290_ _lst53292_ _default53294_)
+        (let ((_$e53297_
+               (if (let () (declare (not safe)) (pair? _lst53292_))
+                   (assv _key53290_ _lst53292_)
                    '#f)))
-          (if _$e55177_
-              (cdr _$e55177_)
-              (if (let () (declare (not safe)) (procedure? _default55174_))
-                  (_default55174_ _key55170_)
-                  _default55174_)))))
+          (if _$e53297_
+              (cdr _$e53297_)
+              (if (let () (declare (not safe)) (procedure? _default53294_))
+                  (_default53294_ _key53290_)
+                  _default53294_)))))
     (define assgetv__0
-      (lambda (_key55183_ _lst55184_)
-        (let ((_default55186_ '#f))
+      (lambda (_key53303_ _lst53304_)
+        (let ((_default53306_ '#f))
           (declare (not safe))
-          (assgetv__% _key55183_ _lst55184_ _default55186_))))
+          (assgetv__% _key53303_ _lst53304_ _default53306_))))
     (define assgetv
-      (lambda _g56656_
-        (let ((_g56655_ (let () (declare (not safe)) (##length _g56656_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56655_ 2))
-                 (apply (lambda (_key55183_ _lst55184_)
+      (lambda _g54776_
+        (let ((_g54775_ (let () (declare (not safe)) (##length _g54776_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54775_ 2))
+                 (apply (lambda (_key53303_ _lst53304_)
                           (let ()
                             (declare (not safe))
-                            (assgetv__0 _key55183_ _lst55184_)))
-                        _g56656_))
-                ((let () (declare (not safe)) (##fx= _g56655_ 3))
-                 (apply (lambda (_key55188_ _lst55189_ _default55190_)
+                            (assgetv__0 _key53303_ _lst53304_)))
+                        _g54776_))
+                ((let () (declare (not safe)) (##fx= _g54775_ 3))
+                 (apply (lambda (_key53308_ _lst53309_ _default53310_)
                           (let ()
                             (declare (not safe))
-                            (assgetv__% _key55188_ _lst55189_ _default55190_)))
-                        _g56656_))
+                            (assgetv__% _key53308_ _lst53309_ _default53310_)))
+                        _g54776_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   assgetv
-                  _g56656_))))))
+                  _g54776_))))))
     (define assget__%
-      (lambda (_key55147_ _lst55149_ _default55151_)
-        (let ((_$e55154_
-               (if (let () (declare (not safe)) (pair? _lst55149_))
-                   (assoc _key55147_ _lst55149_)
+      (lambda (_key53267_ _lst53269_ _default53271_)
+        (let ((_$e53274_
+               (if (let () (declare (not safe)) (pair? _lst53269_))
+                   (assoc _key53267_ _lst53269_)
                    '#f)))
-          (if _$e55154_
-              (cdr _$e55154_)
-              (if (let () (declare (not safe)) (procedure? _default55151_))
-                  (_default55151_ _key55147_)
-                  _default55151_)))))
+          (if _$e53274_
+              (cdr _$e53274_)
+              (if (let () (declare (not safe)) (procedure? _default53271_))
+                  (_default53271_ _key53267_)
+                  _default53271_)))))
     (define assget__0
-      (lambda (_key55160_ _lst55161_)
-        (let ((_default55163_ '#f))
+      (lambda (_key53280_ _lst53281_)
+        (let ((_default53283_ '#f))
           (declare (not safe))
-          (assget__% _key55160_ _lst55161_ _default55163_))))
+          (assget__% _key53280_ _lst53281_ _default53283_))))
     (define assget
-      (lambda _g56658_
-        (let ((_g56657_ (let () (declare (not safe)) (##length _g56658_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56657_ 2))
-                 (apply (lambda (_key55160_ _lst55161_)
+      (lambda _g54778_
+        (let ((_g54777_ (let () (declare (not safe)) (##length _g54778_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54777_ 2))
+                 (apply (lambda (_key53280_ _lst53281_)
                           (let ()
                             (declare (not safe))
-                            (assget__0 _key55160_ _lst55161_)))
-                        _g56658_))
-                ((let () (declare (not safe)) (##fx= _g56657_ 3))
-                 (apply (lambda (_key55165_ _lst55166_ _default55167_)
+                            (assget__0 _key53280_ _lst53281_)))
+                        _g54778_))
+                ((let () (declare (not safe)) (##fx= _g54777_ 3))
+                 (apply (lambda (_key53285_ _lst53286_ _default53287_)
                           (let ()
                             (declare (not safe))
-                            (assget__% _key55165_ _lst55166_ _default55167_)))
-                        _g56658_))
+                            (assget__% _key53285_ _lst53286_ _default53287_)))
+                        _g54778_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   assget
-                  _g56658_))))))
+                  _g54778_))))))
     (define pgetq__%
-      (lambda (_key55076_ _lst55078_ _default55080_)
-        (let _lp55083_ ((_rest55086_ _lst55078_))
-          (let* ((_rest5508855098_ _rest55086_)
-                 (_else5509055106_
+      (lambda (_key53196_ _lst53198_ _default53200_)
+        (let _lp53203_ ((_rest53206_ _lst53198_))
+          (let* ((_rest5320853218_ _rest53206_)
+                 (_else5321053226_
                   (lambda ()
                     (if (let ()
                           (declare (not safe))
-                          (procedure? _default55080_))
-                        (_default55080_ _key55076_)
-                        _default55080_)))
-                 (_K5509255115_
-                  (lambda (_rest55109_ _v55110_ _k55112_)
-                    (if (let () (declare (not safe)) (eq? _k55112_ _key55076_))
-                        _v55110_
+                          (procedure? _default53200_))
+                        (_default53200_ _key53196_)
+                        _default53200_)))
+                 (_K5321253235_
+                  (lambda (_rest53229_ _v53230_ _k53232_)
+                    (if (let () (declare (not safe)) (eq? _k53232_ _key53196_))
+                        _v53230_
                         (let ()
                           (declare (not safe))
-                          (_lp55083_ _rest55109_))))))
-            (if (let () (declare (not safe)) (##pair? _rest5508855098_))
-                (let ((_hd5509355118_
-                       (let () (declare (not safe)) (##car _rest5508855098_)))
-                      (_tl5509455120_
-                       (let () (declare (not safe)) (##cdr _rest5508855098_))))
-                  (let ((_k55123_ _hd5509355118_))
-                    (if (let () (declare (not safe)) (##pair? _tl5509455120_))
-                        (let ((_hd5509555125_
+                          (_lp53203_ _rest53229_))))))
+            (if (let () (declare (not safe)) (##pair? _rest5320853218_))
+                (let ((_hd5321353238_
+                       (let () (declare (not safe)) (##car _rest5320853218_)))
+                      (_tl5321453240_
+                       (let () (declare (not safe)) (##cdr _rest5320853218_))))
+                  (let ((_k53243_ _hd5321353238_))
+                    (if (let () (declare (not safe)) (##pair? _tl5321453240_))
+                        (let ((_hd5321553245_
                                (let ()
                                  (declare (not safe))
-                                 (##car _tl5509455120_)))
-                              (_tl5509655127_
+                                 (##car _tl5321453240_)))
+                              (_tl5321653247_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _tl5509455120_))))
-                          (let* ((_v55130_ _hd5509555125_)
-                                 (_rest55132_ _tl5509655127_))
+                                 (##cdr _tl5321453240_))))
+                          (let* ((_v53250_ _hd5321553245_)
+                                 (_rest53252_ _tl5321653247_))
                             (declare (not safe))
-                            (_K5509255115_ _rest55132_ _v55130_ _k55123_)))
-                        (let () (declare (not safe)) (_else5509055106_)))))
-                (let () (declare (not safe)) (_else5509055106_)))))))
+                            (_K5321253235_ _rest53252_ _v53250_ _k53243_)))
+                        (let () (declare (not safe)) (_else5321053226_)))))
+                (let () (declare (not safe)) (_else5321053226_)))))))
     (define pgetq__0
-      (lambda (_key55137_ _lst55138_)
-        (let ((_default55140_ '#f))
+      (lambda (_key53257_ _lst53258_)
+        (let ((_default53260_ '#f))
           (declare (not safe))
-          (pgetq__% _key55137_ _lst55138_ _default55140_))))
+          (pgetq__% _key53257_ _lst53258_ _default53260_))))
     (define pgetq
-      (lambda _g56660_
-        (let ((_g56659_ (let () (declare (not safe)) (##length _g56660_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56659_ 2))
-                 (apply (lambda (_key55137_ _lst55138_)
+      (lambda _g54780_
+        (let ((_g54779_ (let () (declare (not safe)) (##length _g54780_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54779_ 2))
+                 (apply (lambda (_key53257_ _lst53258_)
                           (let ()
                             (declare (not safe))
-                            (pgetq__0 _key55137_ _lst55138_)))
-                        _g56660_))
-                ((let () (declare (not safe)) (##fx= _g56659_ 3))
-                 (apply (lambda (_key55142_ _lst55143_ _default55144_)
+                            (pgetq__0 _key53257_ _lst53258_)))
+                        _g54780_))
+                ((let () (declare (not safe)) (##fx= _g54779_ 3))
+                 (apply (lambda (_key53262_ _lst53263_ _default53264_)
                           (let ()
                             (declare (not safe))
-                            (pgetq__% _key55142_ _lst55143_ _default55144_)))
-                        _g56660_))
+                            (pgetq__% _key53262_ _lst53263_ _default53264_)))
+                        _g54780_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   pgetq
-                  _g56660_))))))
+                  _g54780_))))))
     (define pgetv__%
-      (lambda (_key55005_ _lst55007_ _default55009_)
-        (let _lp55012_ ((_rest55015_ _lst55007_))
-          (let* ((_rest5501755027_ _rest55015_)
-                 (_else5501955035_
+      (lambda (_key53125_ _lst53127_ _default53129_)
+        (let _lp53132_ ((_rest53135_ _lst53127_))
+          (let* ((_rest5313753147_ _rest53135_)
+                 (_else5313953155_
                   (lambda ()
                     (if (let ()
                           (declare (not safe))
-                          (procedure? _default55009_))
-                        (_default55009_ _key55005_)
-                        _default55009_)))
-                 (_K5502155044_
-                  (lambda (_rest55038_ _v55039_ _k55041_)
+                          (procedure? _default53129_))
+                        (_default53129_ _key53125_)
+                        _default53129_)))
+                 (_K5314153164_
+                  (lambda (_rest53158_ _v53159_ _k53161_)
                     (if (let ()
                           (declare (not safe))
-                          (eqv? _k55041_ _key55005_))
-                        _v55039_
+                          (eqv? _k53161_ _key53125_))
+                        _v53159_
                         (let ()
                           (declare (not safe))
-                          (_lp55012_ _rest55038_))))))
-            (if (let () (declare (not safe)) (##pair? _rest5501755027_))
-                (let ((_hd5502255047_
-                       (let () (declare (not safe)) (##car _rest5501755027_)))
-                      (_tl5502355049_
-                       (let () (declare (not safe)) (##cdr _rest5501755027_))))
-                  (let ((_k55052_ _hd5502255047_))
-                    (if (let () (declare (not safe)) (##pair? _tl5502355049_))
-                        (let ((_hd5502455054_
+                          (_lp53132_ _rest53158_))))))
+            (if (let () (declare (not safe)) (##pair? _rest5313753147_))
+                (let ((_hd5314253167_
+                       (let () (declare (not safe)) (##car _rest5313753147_)))
+                      (_tl5314353169_
+                       (let () (declare (not safe)) (##cdr _rest5313753147_))))
+                  (let ((_k53172_ _hd5314253167_))
+                    (if (let () (declare (not safe)) (##pair? _tl5314353169_))
+                        (let ((_hd5314453174_
                                (let ()
                                  (declare (not safe))
-                                 (##car _tl5502355049_)))
-                              (_tl5502555056_
+                                 (##car _tl5314353169_)))
+                              (_tl5314553176_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _tl5502355049_))))
-                          (let* ((_v55059_ _hd5502455054_)
-                                 (_rest55061_ _tl5502555056_))
+                                 (##cdr _tl5314353169_))))
+                          (let* ((_v53179_ _hd5314453174_)
+                                 (_rest53181_ _tl5314553176_))
                             (declare (not safe))
-                            (_K5502155044_ _rest55061_ _v55059_ _k55052_)))
-                        (let () (declare (not safe)) (_else5501955035_)))))
-                (let () (declare (not safe)) (_else5501955035_)))))))
+                            (_K5314153164_ _rest53181_ _v53179_ _k53172_)))
+                        (let () (declare (not safe)) (_else5313953155_)))))
+                (let () (declare (not safe)) (_else5313953155_)))))))
     (define pgetv__0
-      (lambda (_key55066_ _lst55067_)
-        (let ((_default55069_ '#f))
+      (lambda (_key53186_ _lst53187_)
+        (let ((_default53189_ '#f))
           (declare (not safe))
-          (pgetv__% _key55066_ _lst55067_ _default55069_))))
+          (pgetv__% _key53186_ _lst53187_ _default53189_))))
     (define pgetv
-      (lambda _g56662_
-        (let ((_g56661_ (let () (declare (not safe)) (##length _g56662_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56661_ 2))
-                 (apply (lambda (_key55066_ _lst55067_)
+      (lambda _g54782_
+        (let ((_g54781_ (let () (declare (not safe)) (##length _g54782_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54781_ 2))
+                 (apply (lambda (_key53186_ _lst53187_)
                           (let ()
                             (declare (not safe))
-                            (pgetv__0 _key55066_ _lst55067_)))
-                        _g56662_))
-                ((let () (declare (not safe)) (##fx= _g56661_ 3))
-                 (apply (lambda (_key55071_ _lst55072_ _default55073_)
+                            (pgetv__0 _key53186_ _lst53187_)))
+                        _g54782_))
+                ((let () (declare (not safe)) (##fx= _g54781_ 3))
+                 (apply (lambda (_key53191_ _lst53192_ _default53193_)
                           (let ()
                             (declare (not safe))
-                            (pgetv__% _key55071_ _lst55072_ _default55073_)))
-                        _g56662_))
+                            (pgetv__% _key53191_ _lst53192_ _default53193_)))
+                        _g54782_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   pgetv
-                  _g56662_))))))
+                  _g54782_))))))
     (define pget__%
-      (lambda (_key54934_ _lst54936_ _default54938_)
-        (let _lp54941_ ((_rest54944_ _lst54936_))
-          (let* ((_rest5494654956_ _rest54944_)
-                 (_else5494854964_
+      (lambda (_key53054_ _lst53056_ _default53058_)
+        (let _lp53061_ ((_rest53064_ _lst53056_))
+          (let* ((_rest5306653076_ _rest53064_)
+                 (_else5306853084_
                   (lambda ()
                     (if (let ()
                           (declare (not safe))
-                          (procedure? _default54938_))
-                        (_default54938_ _key54934_)
-                        _default54938_)))
-                 (_K5495054973_
-                  (lambda (_rest54967_ _v54968_ _k54970_)
+                          (procedure? _default53058_))
+                        (_default53058_ _key53054_)
+                        _default53058_)))
+                 (_K5307053093_
+                  (lambda (_rest53087_ _v53088_ _k53090_)
                     (if (let ()
                           (declare (not safe))
-                          (equal? _k54970_ _key54934_))
-                        _v54968_
+                          (equal? _k53090_ _key53054_))
+                        _v53088_
                         (let ()
                           (declare (not safe))
-                          (_lp54941_ _rest54967_))))))
-            (if (let () (declare (not safe)) (##pair? _rest5494654956_))
-                (let ((_hd5495154976_
-                       (let () (declare (not safe)) (##car _rest5494654956_)))
-                      (_tl5495254978_
-                       (let () (declare (not safe)) (##cdr _rest5494654956_))))
-                  (let ((_k54981_ _hd5495154976_))
-                    (if (let () (declare (not safe)) (##pair? _tl5495254978_))
-                        (let ((_hd5495354983_
+                          (_lp53061_ _rest53087_))))))
+            (if (let () (declare (not safe)) (##pair? _rest5306653076_))
+                (let ((_hd5307153096_
+                       (let () (declare (not safe)) (##car _rest5306653076_)))
+                      (_tl5307253098_
+                       (let () (declare (not safe)) (##cdr _rest5306653076_))))
+                  (let ((_k53101_ _hd5307153096_))
+                    (if (let () (declare (not safe)) (##pair? _tl5307253098_))
+                        (let ((_hd5307353103_
                                (let ()
                                  (declare (not safe))
-                                 (##car _tl5495254978_)))
-                              (_tl5495454985_
+                                 (##car _tl5307253098_)))
+                              (_tl5307453105_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _tl5495254978_))))
-                          (let* ((_v54988_ _hd5495354983_)
-                                 (_rest54990_ _tl5495454985_))
+                                 (##cdr _tl5307253098_))))
+                          (let* ((_v53108_ _hd5307353103_)
+                                 (_rest53110_ _tl5307453105_))
                             (declare (not safe))
-                            (_K5495054973_ _rest54990_ _v54988_ _k54981_)))
-                        (let () (declare (not safe)) (_else5494854964_)))))
-                (let () (declare (not safe)) (_else5494854964_)))))))
+                            (_K5307053093_ _rest53110_ _v53108_ _k53101_)))
+                        (let () (declare (not safe)) (_else5306853084_)))))
+                (let () (declare (not safe)) (_else5306853084_)))))))
     (define pget__0
-      (lambda (_key54995_ _lst54996_)
-        (let ((_default54998_ '#f))
+      (lambda (_key53115_ _lst53116_)
+        (let ((_default53118_ '#f))
           (declare (not safe))
-          (pget__% _key54995_ _lst54996_ _default54998_))))
+          (pget__% _key53115_ _lst53116_ _default53118_))))
     (define pget
-      (lambda _g56664_
-        (let ((_g56663_ (let () (declare (not safe)) (##length _g56664_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56663_ 2))
-                 (apply (lambda (_key54995_ _lst54996_)
+      (lambda _g54784_
+        (let ((_g54783_ (let () (declare (not safe)) (##length _g54784_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54783_ 2))
+                 (apply (lambda (_key53115_ _lst53116_)
                           (let ()
                             (declare (not safe))
-                            (pget__0 _key54995_ _lst54996_)))
-                        _g56664_))
-                ((let () (declare (not safe)) (##fx= _g56663_ 3))
-                 (apply (lambda (_key55000_ _lst55001_ _default55002_)
+                            (pget__0 _key53115_ _lst53116_)))
+                        _g54784_))
+                ((let () (declare (not safe)) (##fx= _g54783_ 3))
+                 (apply (lambda (_key53120_ _lst53121_ _default53122_)
                           (let ()
                             (declare (not safe))
-                            (pget__% _key55000_ _lst55001_ _default55002_)))
-                        _g56664_))
+                            (pget__% _key53120_ _lst53121_ _default53122_)))
+                        _g54784_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   pget
-                  _g56664_))))))
+                  _g54784_))))))
     (define find
-      (lambda (_pred54927_ _lst54928_)
-        (let ((_$e54930_
-               (let () (declare (not safe)) (memf _pred54927_ _lst54928_))))
-          (if _$e54930_ (car _$e54930_) '#f))))
+      (lambda (_pred53047_ _lst53048_)
+        (let ((_$e53050_
+               (let () (declare (not safe)) (memf _pred53047_ _lst53048_))))
+          (if _$e53050_ (car _$e53050_) '#f))))
     (define memf
-      (lambda (_proc54887_ _lst54888_)
-        (let _lp54890_ ((_rest54892_ _lst54888_))
-          (let* ((_rest5489354901_ _rest54892_)
-                 (_else5489554909_ (lambda () '#f))
-                 (_K5489754915_
-                  (lambda (_tl54912_ _hd54913_)
-                    (if (_proc54887_ _hd54913_)
-                        _rest54892_
-                        (let () (declare (not safe)) (_lp54890_ _tl54912_))))))
-            (if (let () (declare (not safe)) (##pair? _rest5489354901_))
-                (let ((_hd5489854918_
-                       (let () (declare (not safe)) (##car _rest5489354901_)))
-                      (_tl5489954920_
-                       (let () (declare (not safe)) (##cdr _rest5489354901_))))
-                  (let* ((_hd54923_ _hd5489854918_) (_tl54925_ _tl5489954920_))
+      (lambda (_proc53007_ _lst53008_)
+        (let _lp53010_ ((_rest53012_ _lst53008_))
+          (let* ((_rest5301353021_ _rest53012_)
+                 (_else5301553029_ (lambda () '#f))
+                 (_K5301753035_
+                  (lambda (_tl53032_ _hd53033_)
+                    (if (_proc53007_ _hd53033_)
+                        _rest53012_
+                        (let () (declare (not safe)) (_lp53010_ _tl53032_))))))
+            (if (let () (declare (not safe)) (##pair? _rest5301353021_))
+                (let ((_hd5301853038_
+                       (let () (declare (not safe)) (##car _rest5301353021_)))
+                      (_tl5301953040_
+                       (let () (declare (not safe)) (##cdr _rest5301353021_))))
+                  (let* ((_hd53043_ _hd5301853038_) (_tl53045_ _tl5301953040_))
                     (declare (not safe))
-                    (_K5489754915_ _tl54925_ _hd54923_)))
-                (let () (declare (not safe)) (_else5489554909_)))))))
+                    (_K5301753035_ _tl53045_ _hd53043_)))
+                (let () (declare (not safe)) (_else5301553029_)))))))
     (define remove1
-      (lambda (_el54840_ _lst54842_)
-        (let _lp54845_ ((_rest54848_ _lst54842_) (_r54850_ '()))
-          (let* ((_rest5485254860_ _rest54848_)
-                 (_else5485454868_ (lambda () _lst54842_))
-                 (_K5485654875_
-                  (lambda (_rest54871_ _hd54872_)
+      (lambda (_el52960_ _lst52962_)
+        (let _lp52965_ ((_rest52968_ _lst52962_) (_r52970_ '()))
+          (let* ((_rest5297252980_ _rest52968_)
+                 (_else5297452988_ (lambda () _lst52962_))
+                 (_K5297652995_
+                  (lambda (_rest52991_ _hd52992_)
                     (if (let ()
                           (declare (not safe))
-                          (equal? _el54840_ _hd54872_))
+                          (equal? _el52960_ _hd52992_))
                         (let ()
                           (declare (not safe))
-                          (foldl1 cons _rest54871_ _r54850_))
-                        (let ((__tmp56665
+                          (foldl1 cons _rest52991_ _r52970_))
+                        (let ((__tmp54785
                                (let ()
                                  (declare (not safe))
-                                 (cons _hd54872_ _r54850_))))
+                                 (cons _hd52992_ _r52970_))))
                           (declare (not safe))
-                          (_lp54845_ _rest54871_ __tmp56665))))))
-            (if (let () (declare (not safe)) (##pair? _rest5485254860_))
-                (let ((_hd5485754878_
-                       (let () (declare (not safe)) (##car _rest5485254860_)))
-                      (_tl5485854880_
-                       (let () (declare (not safe)) (##cdr _rest5485254860_))))
-                  (let* ((_hd54883_ _hd5485754878_)
-                         (_rest54885_ _tl5485854880_))
+                          (_lp52965_ _rest52991_ __tmp54785))))))
+            (if (let () (declare (not safe)) (##pair? _rest5297252980_))
+                (let ((_hd5297752998_
+                       (let () (declare (not safe)) (##car _rest5297252980_)))
+                      (_tl5297853000_
+                       (let () (declare (not safe)) (##cdr _rest5297252980_))))
+                  (let* ((_hd53003_ _hd5297752998_)
+                         (_rest53005_ _tl5297853000_))
                     (declare (not safe))
-                    (_K5485654875_ _rest54885_ _hd54883_)))
-                (let () (declare (not safe)) (_else5485454868_)))))))
+                    (_K5297652995_ _rest53005_ _hd53003_)))
+                (let () (declare (not safe)) (_else5297452988_)))))))
     (define remv
-      (lambda (_el54793_ _lst54795_)
-        (let _lp54798_ ((_rest54801_ _lst54795_) (_r54803_ '()))
-          (let* ((_rest5480554813_ _rest54801_)
-                 (_else5480754821_ (lambda () _lst54795_))
-                 (_K5480954828_
-                  (lambda (_rest54824_ _hd54825_)
+      (lambda (_el52913_ _lst52915_)
+        (let _lp52918_ ((_rest52921_ _lst52915_) (_r52923_ '()))
+          (let* ((_rest5292552933_ _rest52921_)
+                 (_else5292752941_ (lambda () _lst52915_))
+                 (_K5292952948_
+                  (lambda (_rest52944_ _hd52945_)
                     (if (let ()
                           (declare (not safe))
-                          (eqv? _el54793_ _hd54825_))
+                          (eqv? _el52913_ _hd52945_))
                         (let ()
                           (declare (not safe))
-                          (foldl1 cons _rest54824_ _r54803_))
-                        (let ((__tmp56666
+                          (foldl1 cons _rest52944_ _r52923_))
+                        (let ((__tmp54786
                                (let ()
                                  (declare (not safe))
-                                 (cons _hd54825_ _r54803_))))
+                                 (cons _hd52945_ _r52923_))))
                           (declare (not safe))
-                          (_lp54798_ _rest54824_ __tmp56666))))))
-            (if (let () (declare (not safe)) (##pair? _rest5480554813_))
-                (let ((_hd5481054831_
-                       (let () (declare (not safe)) (##car _rest5480554813_)))
-                      (_tl5481154833_
-                       (let () (declare (not safe)) (##cdr _rest5480554813_))))
-                  (let* ((_hd54836_ _hd5481054831_)
-                         (_rest54838_ _tl5481154833_))
+                          (_lp52918_ _rest52944_ __tmp54786))))))
+            (if (let () (declare (not safe)) (##pair? _rest5292552933_))
+                (let ((_hd5293052951_
+                       (let () (declare (not safe)) (##car _rest5292552933_)))
+                      (_tl5293152953_
+                       (let () (declare (not safe)) (##cdr _rest5292552933_))))
+                  (let* ((_hd52956_ _hd5293052951_)
+                         (_rest52958_ _tl5293152953_))
                     (declare (not safe))
-                    (_K5480954828_ _rest54838_ _hd54836_)))
-                (let () (declare (not safe)) (_else5480754821_)))))))
+                    (_K5292952948_ _rest52958_ _hd52956_)))
+                (let () (declare (not safe)) (_else5292752941_)))))))
     (define remq
-      (lambda (_el54746_ _lst54748_)
-        (let _lp54751_ ((_rest54754_ _lst54748_) (_r54756_ '()))
-          (let* ((_rest5475854766_ _rest54754_)
-                 (_else5476054774_ (lambda () _lst54748_))
-                 (_K5476254781_
-                  (lambda (_rest54777_ _hd54778_)
-                    (if (let () (declare (not safe)) (eq? _el54746_ _hd54778_))
+      (lambda (_el52866_ _lst52868_)
+        (let _lp52871_ ((_rest52874_ _lst52868_) (_r52876_ '()))
+          (let* ((_rest5287852886_ _rest52874_)
+                 (_else5288052894_ (lambda () _lst52868_))
+                 (_K5288252901_
+                  (lambda (_rest52897_ _hd52898_)
+                    (if (let () (declare (not safe)) (eq? _el52866_ _hd52898_))
                         (let ()
                           (declare (not safe))
-                          (foldl1 cons _rest54777_ _r54756_))
-                        (let ((__tmp56667
+                          (foldl1 cons _rest52897_ _r52876_))
+                        (let ((__tmp54787
                                (let ()
                                  (declare (not safe))
-                                 (cons _hd54778_ _r54756_))))
+                                 (cons _hd52898_ _r52876_))))
                           (declare (not safe))
-                          (_lp54751_ _rest54777_ __tmp56667))))))
-            (if (let () (declare (not safe)) (##pair? _rest5475854766_))
-                (let ((_hd5476354784_
-                       (let () (declare (not safe)) (##car _rest5475854766_)))
-                      (_tl5476454786_
-                       (let () (declare (not safe)) (##cdr _rest5475854766_))))
-                  (let* ((_hd54789_ _hd5476354784_)
-                         (_rest54791_ _tl5476454786_))
+                          (_lp52871_ _rest52897_ __tmp54787))))))
+            (if (let () (declare (not safe)) (##pair? _rest5287852886_))
+                (let ((_hd5288352904_
+                       (let () (declare (not safe)) (##car _rest5287852886_)))
+                      (_tl5288452906_
+                       (let () (declare (not safe)) (##cdr _rest5287852886_))))
+                  (let* ((_hd52909_ _hd5288352904_)
+                         (_rest52911_ _tl5288452906_))
                     (declare (not safe))
-                    (_K5476254781_ _rest54791_ _hd54789_)))
-                (let () (declare (not safe)) (_else5476054774_)))))))
+                    (_K5288252901_ _rest52911_ _hd52909_)))
+                (let () (declare (not safe)) (_else5288052894_)))))))
     (define remf
-      (lambda (_proc54705_ _lst54706_)
-        (let _lp54708_ ((_rest54710_ _lst54706_) (_r54711_ '()))
-          (let* ((_rest5471254720_ _rest54710_)
-                 (_else5471454728_ (lambda () _lst54706_))
-                 (_K5471654734_
-                  (lambda (_rest54731_ _hd54732_)
-                    (if (_proc54705_ _hd54732_)
+      (lambda (_proc52825_ _lst52826_)
+        (let _lp52828_ ((_rest52830_ _lst52826_) (_r52831_ '()))
+          (let* ((_rest5283252840_ _rest52830_)
+                 (_else5283452848_ (lambda () _lst52826_))
+                 (_K5283652854_
+                  (lambda (_rest52851_ _hd52852_)
+                    (if (_proc52825_ _hd52852_)
                         (let ()
                           (declare (not safe))
-                          (foldl1 cons _rest54731_ _r54711_))
-                        (let ((__tmp56668
+                          (foldl1 cons _rest52851_ _r52831_))
+                        (let ((__tmp54788
                                (let ()
                                  (declare (not safe))
-                                 (cons _hd54732_ _r54711_))))
+                                 (cons _hd52852_ _r52831_))))
                           (declare (not safe))
-                          (_lp54708_ _rest54731_ __tmp56668))))))
-            (if (let () (declare (not safe)) (##pair? _rest5471254720_))
-                (let ((_hd5471754737_
-                       (let () (declare (not safe)) (##car _rest5471254720_)))
-                      (_tl5471854739_
-                       (let () (declare (not safe)) (##cdr _rest5471254720_))))
-                  (let* ((_hd54742_ _hd5471754737_)
-                         (_rest54744_ _tl5471854739_))
+                          (_lp52828_ _rest52851_ __tmp54788))))))
+            (if (let () (declare (not safe)) (##pair? _rest5283252840_))
+                (let ((_hd5283752857_
+                       (let () (declare (not safe)) (##car _rest5283252840_)))
+                      (_tl5283852859_
+                       (let () (declare (not safe)) (##cdr _rest5283252840_))))
+                  (let* ((_hd52862_ _hd5283752857_)
+                         (_rest52864_ _tl5283852859_))
                     (declare (not safe))
-                    (_K5471654734_ _rest54744_ _hd54742_)))
-                (let () (declare (not safe)) (_else5471454728_)))))))
-    (define 1+ (lambda (_x54703_) (+ _x54703_ '1)))
-    (define 1- (lambda (_x54701_) (- _x54701_ '1)))
-    (define fx1+ (lambda (_x54699_) (fx+ _x54699_ '1)))
-    (define fx1- (lambda (_x54697_) (fx- _x54697_ '1)))
+                    (_K5283652854_ _rest52864_ _hd52862_)))
+                (let () (declare (not safe)) (_else5283452848_)))))))
+    (define 1+ (lambda (_x52823_) (+ _x52823_ '1)))
+    (define 1- (lambda (_x52821_) (- _x52821_ '1)))
+    (define fx1+ (lambda (_x52819_) (fx+ _x52819_ '1)))
+    (define fx1- (lambda (_x52817_) (fx- _x52817_ '1)))
     (define fxshift fxarithmetic-shift)
     (define fx/ fxquotient)
     (define fx>=0?
-      (lambda (_x54695_)
-        (if (let () (declare (not safe)) (fixnum? _x54695_))
-            (let () (declare (not safe)) (##fx>= _x54695_ '0))
+      (lambda (_x52815_)
+        (if (let () (declare (not safe)) (fixnum? _x52815_))
+            (let () (declare (not safe)) (##fx>= _x52815_ '0))
             '#f)))
     (define fx>0?
-      (lambda (_x54693_)
-        (if (let () (declare (not safe)) (fixnum? _x54693_))
-            (let () (declare (not safe)) (##fx> _x54693_ '0))
+      (lambda (_x52813_)
+        (if (let () (declare (not safe)) (fixnum? _x52813_))
+            (let () (declare (not safe)) (##fx> _x52813_ '0))
             '#f)))
     (define fx=0?
-      (lambda (_x54691_) (let () (declare (not safe)) (eq? _x54691_ '0))))
+      (lambda (_x52811_) (let () (declare (not safe)) (eq? _x52811_ '0))))
     (define fx<0?
-      (lambda (_x54689_)
-        (if (let () (declare (not safe)) (fixnum? _x54689_))
-            (let () (declare (not safe)) (##fx< _x54689_ '0))
+      (lambda (_x52809_)
+        (if (let () (declare (not safe)) (fixnum? _x52809_))
+            (let () (declare (not safe)) (##fx< _x52809_ '0))
             '#f)))
     (define fx<=0?
-      (lambda (_x54687_)
-        (if (let () (declare (not safe)) (fixnum? _x54687_))
-            (let () (declare (not safe)) (##fx<= _x54687_ '0))
+      (lambda (_x52807_)
+        (if (let () (declare (not safe)) (fixnum? _x52807_))
+            (let () (declare (not safe)) (##fx<= _x52807_ '0))
             '#f)))
     (define interned-symbol?
-      (lambda (_x54685_)
-        (if (let () (declare (not safe)) (symbol? _x54685_))
-            (let ((__tmp56669 (uninterned-symbol? _x54685_)))
+      (lambda (_x52805_)
+        (if (let () (declare (not safe)) (symbol? _x52805_))
+            (let ((__tmp54789 (uninterned-symbol? _x52805_)))
               (declare (not safe))
-              (not __tmp56669))
+              (not __tmp54789))
             '#f)))
     (define display-as-string
-      (lambda (_x54657_ _port54658_)
-        (if (or (let () (declare (not safe)) (string? _x54657_))
-                (let () (declare (not safe)) (symbol? _x54657_))
-                (keyword? _x54657_)
-                (let () (declare (not safe)) (number? _x54657_))
-                (let () (declare (not safe)) (char? _x54657_)))
-            (display _x54657_ _port54658_)
-            (if (let () (declare (not safe)) (pair? _x54657_))
+      (lambda (_x52777_ _port52778_)
+        (if (or (let () (declare (not safe)) (string? _x52777_))
+                (let () (declare (not safe)) (symbol? _x52777_))
+                (keyword? _x52777_)
+                (let () (declare (not safe)) (number? _x52777_))
+                (let () (declare (not safe)) (char? _x52777_)))
+            (display _x52777_ _port52778_)
+            (if (let () (declare (not safe)) (pair? _x52777_))
                 (begin
-                  (let ((__tmp56670 (car _x54657_)))
+                  (let ((__tmp54790 (car _x52777_)))
                     (declare (not safe))
-                    (display-as-string __tmp56670 _port54658_))
-                  (let ((__tmp56671 (cdr _x54657_)))
+                    (display-as-string __tmp54790 _port52778_))
+                  (let ((__tmp54791 (cdr _x52777_)))
                     (declare (not safe))
-                    (display-as-string __tmp56671 _port54658_)))
-                (if (let () (declare (not safe)) (vector? _x54657_))
+                    (display-as-string __tmp54791 _port52778_)))
+                (if (let () (declare (not safe)) (vector? _x52777_))
                     (vector-for-each
-                     (lambda (_g5467154673_)
+                     (lambda (_g5279152793_)
                        (let ()
                          (declare (not safe))
-                         (display-as-string _g5467154673_ _port54658_)))
-                     _x54657_)
-                    (if (or (let () (declare (not safe)) (null? _x54657_))
+                         (display-as-string _g5279152793_ _port52778_)))
+                     _x52777_)
+                    (if (or (let () (declare (not safe)) (null? _x52777_))
                             (let ()
                               (declare (not safe))
-                              (eq? _x54657_ '#!void))
+                              (eq? _x52777_ '#!void))
                             (let ()
                               (declare (not safe))
-                              (eof-object? _x54657_))
-                            (let () (declare (not safe)) (boolean? _x54657_)))
+                              (eof-object? _x52777_))
+                            (let () (declare (not safe)) (boolean? _x52777_)))
                         '#!void
-                        (let ()
-                          (declare (not safe))
-                          (error '"cannot convert as string" _x54657_))))))))
+                        (error '"cannot convert as string" _x52777_)))))))
     (define as-string__0
-      (lambda (_x54645_)
-        (if (let () (declare (not safe)) (string? _x54645_))
-            _x54645_
-            (if (let () (declare (not safe)) (symbol? _x54645_))
-                (symbol->string _x54645_)
-                (if (keyword? _x54645_)
-                    (keyword->string _x54645_)
-                    (call-with-output-string
-                     '()
-                     (lambda (_g5464654648_)
-                       (let ()
-                         (declare (not safe))
-                         (display-as-string _x54645_ _g5464654648_)))))))))
+      (lambda (_x52765_)
+        (if (let () (declare (not safe)) (string? _x52765_))
+            _x52765_
+            (if (let () (declare (not safe)) (symbol? _x52765_))
+                (symbol->string _x52765_)
+                (if (keyword? _x52765_)
+                    (keyword->string _x52765_)
+                    (if (let () (declare (not safe)) (number? _x52765_))
+                        (number->string _x52765_)
+                        (call-with-output-string
+                         '()
+                         (lambda (_g5276652768_)
+                           (let ()
+                             (declare (not safe))
+                             (display-as-string
+                              _x52765_
+                              _g5276652768_))))))))))
     (define as-string__1
-      (lambda _args54651_
+      (lambda _args52771_
         (call-with-output-string
          '()
-         (lambda (_g5465254654_)
+         (lambda (_g5277252774_)
            (let ()
              (declare (not safe))
-             (display-as-string _args54651_ _g5465254654_))))))
+             (display-as-string _args52771_ _g5277252774_))))))
     (define as-string
-      (lambda _g56673_
-        (let ((_g56672_ (let () (declare (not safe)) (##length _g56673_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56672_ 1))
-                 (apply (lambda (_x54645_)
+      (lambda _g54793_
+        (let ((_g54792_ (let () (declare (not safe)) (##length _g54793_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54792_ 1))
+                 (apply (lambda (_x52765_)
                           (let ()
                             (declare (not safe))
-                            (as-string__0 _x54645_)))
-                        _g56673_))
-                (#t (apply as-string__1 _g56673_))
+                            (as-string__0 _x52765_)))
+                        _g54793_))
+                (#t (apply as-string__1 _g54793_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   as-string
-                  _g56673_))))))
+                  _g54793_))))))
     (define make-symbol__0
-      (lambda (_x54641_)
-        (if (let () (declare (not safe)) (interned-symbol? _x54641_))
-            _x54641_
+      (lambda (_x52761_)
+        (if (interned-symbol? _x52761_)
+            _x52761_
             (string->symbol
-             (let () (declare (not safe)) (as-string__0 _x54641_))))))
+             (let () (declare (not safe)) (as-string__0 _x52761_))))))
     (define make-symbol__1
-      (lambda _args54643_ (string->symbol (apply as-string _args54643_))))
+      (lambda _args52763_ (string->symbol (apply as-string _args52763_))))
     (define make-symbol
-      (lambda _g56675_
-        (let ((_g56674_ (let () (declare (not safe)) (##length _g56675_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56674_ 1))
-                 (apply (lambda (_x54641_)
+      (lambda _g54795_
+        (let ((_g54794_ (let () (declare (not safe)) (##length _g54795_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54794_ 1))
+                 (apply (lambda (_x52761_)
                           (let ()
                             (declare (not safe))
-                            (make-symbol__0 _x54641_)))
-                        _g56675_))
-                (#t (apply make-symbol__1 _g56675_))
+                            (make-symbol__0 _x52761_)))
+                        _g54795_))
+                (#t (apply make-symbol__1 _g54795_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-symbol
-                  _g56675_))))))
+                  _g54795_))))))
     (define make-keyword__0
-      (lambda (_x54637_)
-        (if (let () (declare (not safe)) (interned-keyword? _x54637_))
-            _x54637_
+      (lambda (_x52757_)
+        (if (interned-keyword? _x52757_)
+            _x52757_
             (string->keyword
-             (let () (declare (not safe)) (as-string__0 _x54637_))))))
+             (let () (declare (not safe)) (as-string__0 _x52757_))))))
     (define make-keyword__1
-      (lambda _args54639_ (string->keyword (apply as-string _args54639_))))
+      (lambda _args52759_ (string->keyword (apply as-string _args52759_))))
     (define make-keyword
-      (lambda _g56677_
-        (let ((_g56676_ (let () (declare (not safe)) (##length _g56677_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56676_ 1))
-                 (apply (lambda (_x54637_)
+      (lambda _g54797_
+        (let ((_g54796_ (let () (declare (not safe)) (##length _g54797_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54796_ 1))
+                 (apply (lambda (_x52757_)
                           (let ()
                             (declare (not safe))
-                            (make-keyword__0 _x54637_)))
-                        _g56677_))
-                (#t (apply make-keyword__1 _g56677_))
+                            (make-keyword__0 _x52757_)))
+                        _g54797_))
+                (#t (apply make-keyword__1 _g54797_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   make-keyword
-                  _g56677_))))))
+                  _g54797_))))))
     (define interned-keyword?
-      (lambda (_x54635_)
-        (if (keyword? _x54635_)
-            (let ((__tmp56678 (uninterned-keyword? _x54635_)))
+      (lambda (_x52755_)
+        (if (keyword? _x52755_)
+            (let ((__tmp54798 (uninterned-keyword? _x52755_)))
               (declare (not safe))
-              (not __tmp56678))
+              (not __tmp54798))
             '#f)))
     (define symbol->keyword
-      (lambda (_sym54633_)
-        ((if (uninterned-symbol? _sym54633_)
+      (lambda (_sym52753_)
+        ((if (uninterned-symbol? _sym52753_)
              string->uninterned-keyword
              string->keyword)
-         (symbol->string _sym54633_))))
+         (symbol->string _sym52753_))))
     (define keyword->symbol
-      (lambda (_kw54631_)
-        ((if (uninterned-keyword? _kw54631_)
+      (lambda (_kw52751_)
+        ((if (uninterned-keyword? _kw52751_)
              string->uninterned-symbol
              string->symbol)
-         (keyword->string _kw54631_))))
+         (keyword->string _kw52751_))))
     (define bytes->string__%
-      (lambda (_bstr54609_ _enc54610_)
-        (if (let () (declare (not safe)) (eq? _enc54610_ 'UTF-8))
-            (utf8->string _bstr54609_)
-            (let* ((_in54612_
+      (lambda (_bstr52729_ _enc52730_)
+        (if (let () (declare (not safe)) (eq? _enc52730_ 'UTF-8))
+            (utf8->string _bstr52729_)
+            (let* ((_in52732_
                     (open-input-u8vector
-                     (let ((__tmp56679
-                            (let ((__tmp56680
-                                   (let ((__tmp56681
+                     (let ((__tmp54799
+                            (let ((__tmp54800
+                                   (let ((__tmp54801
                                           (let ()
                                             (declare (not safe))
-                                            (cons _bstr54609_ '()))))
+                                            (cons _bstr52729_ '()))))
                                      (declare (not safe))
-                                     (cons 'init: __tmp56681))))
+                                     (cons 'init: __tmp54801))))
                               (declare (not safe))
-                              (cons _enc54610_ __tmp56680))))
+                              (cons _enc52730_ __tmp54800))))
                        (declare (not safe))
-                       (cons 'char-encoding: __tmp56679))))
-                   (_len54614_ (u8vector-length _bstr54609_))
-                   (_out54616_ (make-string _len54614_))
-                   (_n54618_
-                    (read-substring _out54616_ '0 _len54614_ _in54612_)))
-              (string-shrink! _out54616_ _n54618_)
-              _out54616_))))
+                       (cons 'char-encoding: __tmp54799))))
+                   (_len52734_ (u8vector-length _bstr52729_))
+                   (_out52736_ (make-string _len52734_))
+                   (_n52738_
+                    (read-substring _out52736_ '0 _len52734_ _in52732_)))
+              (string-shrink! _out52736_ _n52738_)
+              _out52736_))))
     (define bytes->string__0
-      (lambda (_bstr54624_)
-        (let ((_enc54626_ 'UTF-8))
+      (lambda (_bstr52744_)
+        (let ((_enc52746_ 'UTF-8))
           (declare (not safe))
-          (bytes->string__% _bstr54624_ _enc54626_))))
+          (bytes->string__% _bstr52744_ _enc52746_))))
     (define bytes->string
-      (lambda _g56683_
-        (let ((_g56682_ (let () (declare (not safe)) (##length _g56683_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56682_ 1))
-                 (apply (lambda (_bstr54624_)
+      (lambda _g54803_
+        (let ((_g54802_ (let () (declare (not safe)) (##length _g54803_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54802_ 1))
+                 (apply (lambda (_bstr52744_)
                           (let ()
                             (declare (not safe))
-                            (bytes->string__0 _bstr54624_)))
-                        _g56683_))
-                ((let () (declare (not safe)) (##fx= _g56682_ 2))
-                 (apply (lambda (_bstr54628_ _enc54629_)
+                            (bytes->string__0 _bstr52744_)))
+                        _g54803_))
+                ((let () (declare (not safe)) (##fx= _g54802_ 2))
+                 (apply (lambda (_bstr52748_ _enc52749_)
                           (let ()
                             (declare (not safe))
-                            (bytes->string__% _bstr54628_ _enc54629_)))
-                        _g56683_))
+                            (bytes->string__% _bstr52748_ _enc52749_)))
+                        _g54803_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   bytes->string
-                  _g56683_))))))
+                  _g54803_))))))
     (define string->bytes__%
-      (lambda (_str54595_ _enc54596_)
-        (if (let () (declare (not safe)) (eq? _enc54596_ 'UTF-8))
-            (string->utf8 _str54595_)
-            (let ((__tmp56684 (string-length _str54595_)))
-              (declare (not safe))
-              (substring->bytes _str54595_ '0 __tmp56684 _enc54596_)))))
+      (lambda (_str52715_ _enc52716_)
+        (if (let () (declare (not safe)) (eq? _enc52716_ 'UTF-8))
+            (string->utf8 _str52715_)
+            (substring->bytes
+             _str52715_
+             '0
+             (string-length _str52715_)
+             _enc52716_))))
     (define string->bytes__0
-      (lambda (_str54601_)
-        (let ((_enc54603_ 'UTF-8))
+      (lambda (_str52721_)
+        (let ((_enc52723_ 'UTF-8))
           (declare (not safe))
-          (string->bytes__% _str54601_ _enc54603_))))
+          (string->bytes__% _str52721_ _enc52723_))))
     (define string->bytes
-      (lambda _g56686_
-        (let ((_g56685_ (let () (declare (not safe)) (##length _g56686_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56685_ 1))
-                 (apply (lambda (_str54601_)
+      (lambda _g54805_
+        (let ((_g54804_ (let () (declare (not safe)) (##length _g54805_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54804_ 1))
+                 (apply (lambda (_str52721_)
                           (let ()
                             (declare (not safe))
-                            (string->bytes__0 _str54601_)))
-                        _g56686_))
-                ((let () (declare (not safe)) (##fx= _g56685_ 2))
-                 (apply (lambda (_str54605_ _enc54606_)
+                            (string->bytes__0 _str52721_)))
+                        _g54805_))
+                ((let () (declare (not safe)) (##fx= _g54804_ 2))
+                 (apply (lambda (_str52725_ _enc52726_)
                           (let ()
                             (declare (not safe))
-                            (string->bytes__% _str54605_ _enc54606_)))
-                        _g56686_))
+                            (string->bytes__% _str52725_ _enc52726_)))
+                        _g54805_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   string->bytes
-                  _g56686_))))))
+                  _g54805_))))))
     (define substring->bytes__%
-      (lambda (_str54573_ _start54574_ _end54575_ _enc54576_)
-        (if (let () (declare (not safe)) (eq? _enc54576_ 'UTF-8))
-            (string->utf8 _str54573_ _start54574_ _end54575_)
-            (let ((_out54578_
+      (lambda (_str52693_ _start52694_ _end52695_ _enc52696_)
+        (if (let () (declare (not safe)) (eq? _enc52696_ 'UTF-8))
+            (string->utf8 _str52693_ _start52694_ _end52695_)
+            (let ((_out52698_
                    (open-output-u8vector
-                    (let ((__tmp56687
+                    (let ((__tmp54806
                            (let ()
                              (declare (not safe))
-                             (cons _enc54576_ '()))))
+                             (cons _enc52696_ '()))))
                       (declare (not safe))
-                      (cons 'char-encoding: __tmp56687)))))
-              (write-substring _str54573_ _start54574_ _end54575_ _out54578_)
-              (get-output-u8vector _out54578_)))))
+                      (cons 'char-encoding: __tmp54806)))))
+              (write-substring _str52693_ _start52694_ _end52695_ _out52698_)
+              (get-output-u8vector _out52698_)))))
     (define substring->bytes__0
-      (lambda (_str54583_ _start54584_ _end54585_)
-        (let ((_enc54587_ 'UTF-8))
+      (lambda (_str52703_ _start52704_ _end52705_)
+        (let ((_enc52707_ 'UTF-8))
           (declare (not safe))
           (substring->bytes__%
-           _str54583_
-           _start54584_
-           _end54585_
-           _enc54587_))))
+           _str52703_
+           _start52704_
+           _end52705_
+           _enc52707_))))
     (define substring->bytes
-      (lambda _g56689_
-        (let ((_g56688_ (let () (declare (not safe)) (##length _g56689_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56688_ 3))
-                 (apply (lambda (_str54583_ _start54584_ _end54585_)
+      (lambda _g54808_
+        (let ((_g54807_ (let () (declare (not safe)) (##length _g54808_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54807_ 3))
+                 (apply (lambda (_str52703_ _start52704_ _end52705_)
                           (let ()
                             (declare (not safe))
                             (substring->bytes__0
-                             _str54583_
-                             _start54584_
-                             _end54585_)))
-                        _g56689_))
-                ((let () (declare (not safe)) (##fx= _g56688_ 4))
-                 (apply (lambda (_str54589_ _start54590_ _end54591_ _enc54592_)
+                             _str52703_
+                             _start52704_
+                             _end52705_)))
+                        _g54808_))
+                ((let () (declare (not safe)) (##fx= _g54807_ 4))
+                 (apply (lambda (_str52709_ _start52710_ _end52711_ _enc52712_)
                           (let ()
                             (declare (not safe))
                             (substring->bytes__%
-                             _str54589_
-                             _start54590_
-                             _end54591_
-                             _enc54592_)))
-                        _g56689_))
+                             _str52709_
+                             _start52710_
+                             _end52711_
+                             _enc52712_)))
+                        _g54808_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   substring->bytes
-                  _g56689_))))))
+                  _g54808_))))))
     (define string-empty?
-      (lambda (_str54570_)
-        (let ((__tmp56690 (string-length _str54570_)))
+      (lambda (_str52690_)
+        (let ((__tmp54809 (string-length _str52690_)))
           (declare (not safe))
-          (##fxzero? __tmp56690))))
+          (##fxzero? __tmp54809))))
     (define string-prefix?
-      (lambda (_prefix54560_ _str54561_)
-        (let ((_str-len54563_ (string-length _str54561_))
-              (_prefix-len54564_ (string-length _prefix54560_)))
+      (lambda (_prefix52680_ _str52681_)
+        (let ((_str-len52683_ (string-length _str52681_))
+              (_prefix-len52684_ (string-length _prefix52680_)))
           (if (let ()
                 (declare (not safe))
-                (##fx<= _prefix-len54564_ _str-len54563_))
-              (let _lp54566_ ((_i54568_ '0))
+                (##fx<= _prefix-len52684_ _str-len52683_))
+              (let _lp52686_ ((_i52688_ '0))
                 (if (let ()
                       (declare (not safe))
-                      (##fx< _i54568_ _prefix-len54564_))
-                    (if (let ((__tmp56693
+                      (##fx< _i52688_ _prefix-len52684_))
+                    (if (let ((__tmp54811
                                (let ()
                                  (declare (not safe))
-                                 (##string-ref _str54561_ _i54568_)))
-                              (__tmp56692
+                                 (##string-ref _str52681_ _i52688_)))
+                              (__tmp54810
                                (let ()
                                  (declare (not safe))
-                                 (##string-ref _prefix54560_ _i54568_))))
+                                 (##string-ref _prefix52680_ _i52688_))))
                           (declare (not safe))
-                          (eq? __tmp56693 __tmp56692))
-                        (let ((__tmp56691
+                          (eq? __tmp54811 __tmp54810))
+                        (let ((__tmp54812
                                (let ()
                                  (declare (not safe))
-                                 (##fx+ _i54568_ '1))))
+                                 (##fx+ _i52688_ '1))))
                           (declare (not safe))
-                          (_lp54566_ __tmp56691))
+                          (_lp52686_ __tmp54812))
                         '#f)
                     '#t))
               '#f))))
     (define string-index__%
-      (lambda (_str54538_ _char54539_ _start54540_)
-        (let ((_len54542_ (string-length _str54538_)))
-          (let _lp54544_ ((_k54546_ _start54540_))
-            (if (let () (declare (not safe)) (##fx< _k54546_ _len54542_))
-                (if (let ((__tmp56695
+      (lambda (_str52658_ _char52659_ _start52660_)
+        (let ((_len52662_ (string-length _str52658_)))
+          (let _lp52664_ ((_k52666_ _start52660_))
+            (if (let () (declare (not safe)) (##fx< _k52666_ _len52662_))
+                (if (let ((__tmp54813
                            (let ()
                              (declare (not safe))
-                             (##string-ref _str54538_ _k54546_))))
+                             (##string-ref _str52658_ _k52666_))))
                       (declare (not safe))
-                      (eq? _char54539_ __tmp56695))
-                    _k54546_
-                    (let ((__tmp56694
-                           (let () (declare (not safe)) (##fx+ _k54546_ '1))))
+                      (eq? _char52659_ __tmp54813))
+                    _k52666_
+                    (let ((__tmp54814
+                           (let () (declare (not safe)) (##fx+ _k52666_ '1))))
                       (declare (not safe))
-                      (_lp54544_ __tmp56694)))
+                      (_lp52664_ __tmp54814)))
                 '#f)))))
     (define string-index__0
-      (lambda (_str54551_ _char54552_)
-        (let ((_start54554_ '0))
+      (lambda (_str52671_ _char52672_)
+        (let ((_start52674_ '0))
           (declare (not safe))
-          (string-index__% _str54551_ _char54552_ _start54554_))))
+          (string-index__% _str52671_ _char52672_ _start52674_))))
     (define string-index
-      (lambda _g56697_
-        (let ((_g56696_ (let () (declare (not safe)) (##length _g56697_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56696_ 2))
-                 (apply (lambda (_str54551_ _char54552_)
+      (lambda _g54816_
+        (let ((_g54815_ (let () (declare (not safe)) (##length _g54816_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54815_ 2))
+                 (apply (lambda (_str52671_ _char52672_)
                           (let ()
                             (declare (not safe))
-                            (string-index__0 _str54551_ _char54552_)))
-                        _g56697_))
-                ((let () (declare (not safe)) (##fx= _g56696_ 3))
-                 (apply (lambda (_str54556_ _char54557_ _start54558_)
+                            (string-index__0 _str52671_ _char52672_)))
+                        _g54816_))
+                ((let () (declare (not safe)) (##fx= _g54815_ 3))
+                 (apply (lambda (_str52676_ _char52677_ _start52678_)
                           (let ()
                             (declare (not safe))
                             (string-index__%
-                             _str54556_
-                             _char54557_
-                             _start54558_)))
-                        _g56697_))
+                             _str52676_
+                             _char52677_
+                             _start52678_)))
+                        _g54816_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   string-index
-                  _g56697_))))))
+                  _g54816_))))))
     (define string-rindex__%
-      (lambda (_str54509_ _char54510_ _start54511_)
-        (let* ((_len54513_ (string-length _str54509_))
-               (_start54518_
-                (let ((_$e54515_ _start54511_))
-                  (if _$e54515_
-                      _$e54515_
-                      (let () (declare (not safe)) (##fx- _len54513_ '1))))))
-          (let _lp54521_ ((_k54523_ _start54518_))
-            (if (let () (declare (not safe)) (##fx>= _k54523_ '0))
-                (if (let ((__tmp56699
+      (lambda (_str52629_ _char52630_ _start52631_)
+        (let* ((_len52633_ (string-length _str52629_))
+               (_start52638_
+                (let ((_$e52635_ _start52631_))
+                  (if _$e52635_
+                      _$e52635_
+                      (let () (declare (not safe)) (##fx- _len52633_ '1))))))
+          (let _lp52641_ ((_k52643_ _start52638_))
+            (if (let () (declare (not safe)) (##fx>= _k52643_ '0))
+                (if (let ((__tmp54817
                            (let ()
                              (declare (not safe))
-                             (##string-ref _str54509_ _k54523_))))
+                             (##string-ref _str52629_ _k52643_))))
                       (declare (not safe))
-                      (eq? _char54510_ __tmp56699))
-                    _k54523_
-                    (let ((__tmp56698
-                           (let () (declare (not safe)) (##fx- _k54523_ '1))))
+                      (eq? _char52630_ __tmp54817))
+                    _k52643_
+                    (let ((__tmp54818
+                           (let () (declare (not safe)) (##fx- _k52643_ '1))))
                       (declare (not safe))
-                      (_lp54521_ __tmp56698)))
+                      (_lp52641_ __tmp54818)))
                 '#f)))))
     (define string-rindex__0
-      (lambda (_str54528_ _char54529_)
-        (let ((_start54531_ '#f))
+      (lambda (_str52648_ _char52649_)
+        (let ((_start52651_ '#f))
           (declare (not safe))
-          (string-rindex__% _str54528_ _char54529_ _start54531_))))
+          (string-rindex__% _str52648_ _char52649_ _start52651_))))
     (define string-rindex
-      (lambda _g56701_
-        (let ((_g56700_ (let () (declare (not safe)) (##length _g56701_))))
-          (cond ((let () (declare (not safe)) (##fx= _g56700_ 2))
-                 (apply (lambda (_str54528_ _char54529_)
+      (lambda _g54820_
+        (let ((_g54819_ (let () (declare (not safe)) (##length _g54820_))))
+          (cond ((let () (declare (not safe)) (##fx= _g54819_ 2))
+                 (apply (lambda (_str52648_ _char52649_)
                           (let ()
                             (declare (not safe))
-                            (string-rindex__0 _str54528_ _char54529_)))
-                        _g56701_))
-                ((let () (declare (not safe)) (##fx= _g56700_ 3))
-                 (apply (lambda (_str54533_ _char54534_ _start54535_)
+                            (string-rindex__0 _str52648_ _char52649_)))
+                        _g54820_))
+                ((let () (declare (not safe)) (##fx= _g54819_ 3))
+                 (apply (lambda (_str52653_ _char52654_ _start52655_)
                           (let ()
                             (declare (not safe))
                             (string-rindex__%
-                             _str54533_
-                             _char54534_
-                             _start54535_)))
-                        _g56701_))
+                             _str52653_
+                             _char52654_
+                             _start52655_)))
+                        _g54820_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   string-rindex
-                  _g56701_))))))
+                  _g54820_))))))
     (define string-split
-      (lambda (_str54493_ _char54494_)
-        (let ((_len54496_ (string-length _str54493_)))
-          (let _lp54498_ ((_start54500_ '0) (_r54501_ '()))
-            (let ((_$e54503_
+      (lambda (_str52613_ _char52614_)
+        (let ((_len52616_ (string-length _str52613_)))
+          (let _lp52618_ ((_start52620_ '0) (_r52621_ '()))
+            (let ((_$e52623_
                    (let ()
                      (declare (not safe))
-                     (string-index__% _str54493_ _char54494_ _start54500_))))
-              (if _$e54503_
-                  ((lambda (_end54506_)
-                     (let ((__tmp56705
+                     (string-index__% _str52613_ _char52614_ _start52620_))))
+              (if _$e52623_
+                  ((lambda (_end52626_)
+                     (let ((__tmp54823
                             (let ()
                               (declare (not safe))
-                              (##fx+ _end54506_ '1)))
-                           (__tmp56703
-                            (let ((__tmp56704
+                              (##fx+ _end52626_ '1)))
+                           (__tmp54821
+                            (let ((__tmp54822
                                    (let ()
                                      (declare (not safe))
                                      (##substring
-                                      _str54493_
-                                      _start54500_
-                                      _end54506_))))
+                                      _str52613_
+                                      _start52620_
+                                      _end52626_))))
                               (declare (not safe))
-                              (cons __tmp56704 _r54501_))))
+                              (cons __tmp54822 _r52621_))))
                        (declare (not safe))
-                       (_lp54498_ __tmp56705 __tmp56703)))
-                   _$e54503_)
+                       (_lp52618_ __tmp54823 __tmp54821)))
+                   _$e52623_)
                   (if (let ()
                         (declare (not safe))
-                        (##fx< _start54500_ _len54496_))
-                      (let ((__tmp56702
+                        (##fx< _start52620_ _len52616_))
+                      (let ((__tmp54824
                              (list (let ()
                                      (declare (not safe))
                                      (##substring
-                                      _str54493_
-                                      _start54500_
-                                      _len54496_)))))
+                                      _str52613_
+                                      _start52620_
+                                      _len52616_)))))
                         (declare (not safe))
-                        (foldl1 cons __tmp56702 _r54501_))
-                      (reverse _r54501_))))))))
+                        (foldl1 cons __tmp54824 _r52621_))
+                      (reverse _r52621_))))))))
     (define string-join
-      (lambda (_strs54398_ _join54399_)
-        (letrec ((_join-length54401_
-                  (lambda (_strs54452_ _jlen54453_)
-                    (let _lp54455_ ((_rest54457_ _strs54452_) (_len54458_ '0))
-                      (let* ((_rest5445954467_ _rest54457_)
-                             (_else5446154475_ (lambda () '0))
-                             (_K5446354481_
-                              (lambda (_rest54478_ _hd54479_)
+      (lambda (_strs52518_ _join52519_)
+        (letrec ((_join-length52521_
+                  (lambda (_strs52572_ _jlen52573_)
+                    (let _lp52575_ ((_rest52577_ _strs52572_) (_len52578_ '0))
+                      (let* ((_rest5257952587_ _rest52577_)
+                             (_else5258152595_ (lambda () '0))
+                             (_K5258352601_
+                              (lambda (_rest52598_ _hd52599_)
                                 (if (let ()
                                       (declare (not safe))
-                                      (string? _hd54479_))
+                                      (string? _hd52599_))
                                     (if (let ()
                                           (declare (not safe))
-                                          (pair? _rest54478_))
-                                        (let ((__tmp56707
-                                               (let ((__tmp56708
+                                          (pair? _rest52598_))
+                                        (let ((__tmp54825
+                                               (let ((__tmp54826
                                                       (let ()
                                                         (declare (not safe))
                                                         (##string-length
-                                                         _hd54479_))))
+                                                         _hd52599_))))
                                                  (declare (not safe))
-                                                 (##fx+ __tmp56708
-                                                        _jlen54453_
-                                                        _len54458_))))
+                                                 (##fx+ __tmp54826
+                                                        _jlen52573_
+                                                        _len52578_))))
                                           (declare (not safe))
-                                          (_lp54455_ _rest54478_ __tmp56707))
-                                        (let ((__tmp56706
+                                          (_lp52575_ _rest52598_ __tmp54825))
+                                        (let ((__tmp54827
                                                (let ()
                                                  (declare (not safe))
-                                                 (##string-length _hd54479_))))
+                                                 (##string-length _hd52599_))))
                                           (declare (not safe))
-                                          (##fx+ __tmp56706 _len54458_)))
-                                    (let ()
-                                      (declare (not safe))
-                                      (error '"expected string" _hd54479_))))))
+                                          (##fx+ __tmp54827 _len52578_)))
+                                    (error '"expected string" _hd52599_)))))
                         (if (let ()
                               (declare (not safe))
-                              (##pair? _rest5445954467_))
-                            (let ((_hd5446454484_
+                              (##pair? _rest5257952587_))
+                            (let ((_hd5258452604_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _rest5445954467_)))
-                                  (_tl5446554486_
+                                     (##car _rest5257952587_)))
+                                  (_tl5258552606_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _rest5445954467_))))
-                              (let* ((_hd54489_ _hd5446454484_)
-                                     (_rest54491_ _tl5446554486_))
+                                     (##cdr _rest5257952587_))))
+                              (let* ((_hd52609_ _hd5258452604_)
+                                     (_rest52611_ _tl5258552606_))
                                 (declare (not safe))
-                                (_K5446354481_ _rest54491_ _hd54489_)))
+                                (_K5258352601_ _rest52611_ _hd52609_)))
                             (let ()
                               (declare (not safe))
-                              (_else5446154475_))))))))
-          (let* ((_join54403_
-                  (if (let () (declare (not safe)) (char? _join54399_))
-                      (string _join54399_)
-                      (if (let () (declare (not safe)) (string? _join54399_))
-                          _join54399_
-                          (let ()
-                            (declare (not safe))
-                            (error '"expected string or char" _join54399_)))))
-                 (_jlen54405_
-                  (let () (declare (not safe)) (##string-length _join54403_)))
-                 (_olen54407_
+                              (_else5258152595_))))))))
+          (let* ((_join52523_
+                  (if (let () (declare (not safe)) (char? _join52519_))
+                      (string _join52519_)
+                      (if (let () (declare (not safe)) (string? _join52519_))
+                          _join52519_
+                          (error '"expected string or char" _join52519_))))
+                 (_jlen52525_
+                  (let () (declare (not safe)) (##string-length _join52523_)))
+                 (_olen52527_
                   (let ()
                     (declare (not safe))
-                    (_join-length54401_ _strs54398_ _jlen54405_)))
-                 (_ostr54409_ (make-string _olen54407_)))
-            (let _lp54412_ ((_rest54414_ _strs54398_) (_k54415_ '0))
-              (let* ((_rest5441654424_ _rest54414_)
-                     (_else5441854432_ (lambda () '""))
-                     (_K5442054440_
-                      (lambda (_rest54435_ _hd54436_)
-                        (let ((_hdlen54438_
+                    (_join-length52521_ _strs52518_ _jlen52525_)))
+                 (_ostr52529_ (make-string _olen52527_)))
+            (let _lp52532_ ((_rest52534_ _strs52518_) (_k52535_ '0))
+              (let* ((_rest5253652544_ _rest52534_)
+                     (_else5253852552_ (lambda () '""))
+                     (_K5254052560_
+                      (lambda (_rest52555_ _hd52556_)
+                        (let ((_hdlen52558_
                                (let ()
                                  (declare (not safe))
-                                 (##string-length _hd54436_))))
-                          (if (let () (declare (not safe)) (pair? _rest54435_))
+                                 (##string-length _hd52556_))))
+                          (if (let () (declare (not safe)) (pair? _rest52555_))
                               (begin
                                 (let ()
                                   (declare (not safe))
                                   (##substring-move!
-                                   _hd54436_
+                                   _hd52556_
                                    '0
-                                   _hdlen54438_
-                                   _ostr54409_
-                                   _k54415_))
-                                (let ((__tmp56709
+                                   _hdlen52558_
+                                   _ostr52529_
+                                   _k52535_))
+                                (let ((__tmp54828
                                        (let ()
                                          (declare (not safe))
-                                         (##fx+ _k54415_ _hdlen54438_))))
+                                         (##fx+ _k52535_ _hdlen52558_))))
                                   (declare (not safe))
                                   (##substring-move!
-                                   _join54403_
+                                   _join52523_
                                    '0
-                                   _jlen54405_
-                                   _ostr54409_
-                                   __tmp56709))
-                                (let ((__tmp56710
+                                   _jlen52525_
+                                   _ostr52529_
+                                   __tmp54828))
+                                (let ((__tmp54829
                                        (let ()
                                          (declare (not safe))
-                                         (##fx+ _k54415_
-                                                _hdlen54438_
-                                                _jlen54405_))))
+                                         (##fx+ _k52535_
+                                                _hdlen52558_
+                                                _jlen52525_))))
                                   (declare (not safe))
-                                  (_lp54412_ _rest54435_ __tmp56710)))
+                                  (_lp52532_ _rest52555_ __tmp54829)))
                               (begin
                                 (let ()
                                   (declare (not safe))
                                   (##substring-move!
-                                   _hd54436_
+                                   _hd52556_
                                    '0
-                                   _hdlen54438_
-                                   _ostr54409_
-                                   _k54415_))
-                                _ostr54409_))))))
-                (if (let () (declare (not safe)) (##pair? _rest5441654424_))
-                    (let ((_hd5442154443_
+                                   _hdlen52558_
+                                   _ostr52529_
+                                   _k52535_))
+                                _ostr52529_))))))
+                (if (let () (declare (not safe)) (##pair? _rest5253652544_))
+                    (let ((_hd5254152563_
                            (let ()
                              (declare (not safe))
-                             (##car _rest5441654424_)))
-                          (_tl5442254445_
+                             (##car _rest5253652544_)))
+                          (_tl5254252565_
                            (let ()
                              (declare (not safe))
-                             (##cdr _rest5441654424_))))
-                      (let* ((_hd54448_ _hd5442154443_)
-                             (_rest54450_ _tl5442254445_))
+                             (##cdr _rest5253652544_))))
+                      (let* ((_hd52568_ _hd5254152563_)
+                             (_rest52570_ _tl5254252565_))
                         (declare (not safe))
-                        (_K5442054440_ _rest54450_ _hd54448_)))
-                    (let () (declare (not safe)) (_else5441854432_)))))))))
+                        (_K5254052560_ _rest52570_ _hd52568_)))
+                    (let () (declare (not safe)) (_else5253852552_)))))))))
     (define read-u8vector
-      (lambda (_bytes54395_ _port54396_)
+      (lambda (_bytes52515_ _port52516_)
         (read-subu8vector
-         _bytes54395_
+         _bytes52515_
          '0
-         (u8vector-length _bytes54395_)
-         _port54396_)))
+         (u8vector-length _bytes52515_)
+         _port52516_)))
     (define write-u8vector
-      (lambda (_bytes54392_ _port54393_)
+      (lambda (_bytes52512_ _port52513_)
         (write-subu8vector
-         _bytes54392_
+         _bytes52512_
          '0
-         (u8vector-length _bytes54392_)
-         _port54393_)))
+         (u8vector-length _bytes52512_)
+         _port52513_)))
     (define read-string
-      (lambda (_str54389_ _port54390_)
-        (read-substring _str54389_ '0 (string-length _str54389_) _port54390_)))
+      (lambda (_str52509_ _port52510_)
+        (read-substring _str52509_ '0 (string-length _str52509_) _port52510_)))
     (define write-string
-      (lambda (_str54386_ _port54387_)
+      (lambda (_str52506_ _port52507_)
         (write-substring
-         _str54386_
+         _str52506_
          '0
-         (string-length _str54386_)
-         _port54387_)))
+         (string-length _str52506_)
+         _port52507_)))
     (define DBG-printer (make-parameter write))
     (define DBG-helper
-      (lambda (_tag54355_
-               _dbg-exprs54356_
-               _dbg-thunks54357_
-               _expr54358_
-               _thunk54359_)
-        (letrec ((_o54361_ (current-output-port))
-                 (_e54362_ (current-error-port))
-                 (_p54363_ (DBG-printer))
-                 (_f54364_
-                  (lambda () (force-output _o54361_) (force-output _e54362_)))
-                 (_d54365_ (lambda (_x54372_) (display _x54372_ _e54362_)))
-                 (_w54366_ (lambda (_x54374_) (_p54363_ _x54374_ _e54362_)))
-                 (_n54367_ (lambda () (newline _e54362_)))
-                 (_v54368_
-                  (lambda (_l54377_)
+      (lambda (_tag52475_
+               _dbg-exprs52476_
+               _dbg-thunks52477_
+               _expr52478_
+               _thunk52479_)
+        (letrec ((_o52481_ (current-output-port))
+                 (_e52482_ (current-error-port))
+                 (_p52483_ (DBG-printer))
+                 (_f52484_
+                  (lambda () (force-output _o52481_) (force-output _e52482_)))
+                 (_d52485_ (lambda (_x52492_) (display _x52492_ _e52482_)))
+                 (_w52486_ (lambda (_x52494_) (_p52483_ _x52494_ _e52482_)))
+                 (_n52487_ (lambda () (newline _e52482_)))
+                 (_v52488_
+                  (lambda (_l52497_)
                     (for-each
-                     (lambda (_x54379_)
-                       (let () (declare (not safe)) (_d54365_ '" "))
-                       (let () (declare (not safe)) (_w54366_ _x54379_)))
-                     _l54377_)
-                    (let () (declare (not safe)) (_n54367_))))
-                 (_x54369_
-                  (lambda (_expr54381_ _thunk54382_)
-                    (let () (declare (not safe)) (_f54364_))
-                    (let () (declare (not safe)) (_d54365_ '"  "))
-                    (let () (declare (not safe)) (_w54366_ _expr54381_))
-                    (let () (declare (not safe)) (_d54365_ '" =>"))
+                     (lambda (_x52499_)
+                       (let () (declare (not safe)) (_d52485_ '" "))
+                       (let () (declare (not safe)) (_w52486_ _x52499_)))
+                     _l52497_)
+                    (let () (declare (not safe)) (_n52487_))))
+                 (_x52489_
+                  (lambda (_expr52501_ _thunk52502_)
+                    (let () (declare (not safe)) (_f52484_))
+                    (let () (declare (not safe)) (_d52485_ '"  "))
+                    (let () (declare (not safe)) (_w52486_ _expr52501_))
+                    (let () (declare (not safe)) (_d52485_ '" =>"))
                     (call-with-values
-                     _thunk54382_
-                     (lambda _x54384_
-                       (let () (declare (not safe)) (_v54368_ _x54384_))
-                       (let () (declare (not safe)) (_f54364_))
-                       (apply values _x54384_))))))
-          (if _tag54355_
+                     _thunk52502_
+                     (lambda _x52504_
+                       (let () (declare (not safe)) (_v52488_ _x52504_))
+                       (let () (declare (not safe)) (_f52484_))
+                       (apply values _x52504_))))))
+          (if _tag52475_
               (begin
-                (if (let () (declare (not safe)) (eq? _tag54355_ '#!void))
+                (if (let () (declare (not safe)) (eq? _tag52475_ '#!void))
                     '#!void
                     (begin
-                      (let () (declare (not safe)) (_f54364_))
-                      (let () (declare (not safe)) (_d54365_ _tag54355_))
-                      (let () (declare (not safe)) (_n54367_))))
-                (for-each _x54369_ _dbg-exprs54356_ _dbg-thunks54357_)
-                (if _thunk54359_
+                      (let () (declare (not safe)) (_f52484_))
+                      (let () (declare (not safe)) (_d52485_ _tag52475_))
+                      (let () (declare (not safe)) (_n52487_))))
+                (for-each _x52489_ _dbg-exprs52476_ _dbg-thunks52477_)
+                (if _thunk52479_
                     (let ()
                       (declare (not safe))
-                      (_x54369_ _expr54358_ _thunk54359_))
+                      (_x52489_ _expr52478_ _thunk52479_))
                     '#!void))
-              (if _thunk54359_ (_thunk54359_) '#!void)))))))
+              (if _thunk52479_ (_thunk52479_) '#!void)))))))

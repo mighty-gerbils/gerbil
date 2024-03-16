@@ -13,6 +13,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::collect-top-level-type-info?
@@ -34,6 +35,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::basic-expression-top-level-type?
@@ -52,6 +54,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type
@@ -73,6 +76,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type
@@ -97,6 +101,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::lift-top-lambdas? (@predicate gxc#::lift-top-lambdas::t))
   (declare-type
@@ -110,6 +115,7 @@ package: gerbil/compiler
   (declare-type gxc#basic-expression-type-begin% (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-begin-annotation% (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-annotation-mop.class (@lambda 2 #f))
+  (declare-type gxc#basic-expression-type-annotation-mop.system (@lambda 2 #f))
   (declare-type
    gxc#basic-expression-type-annotation-mop.constructor
    (@lambda 2 #f))

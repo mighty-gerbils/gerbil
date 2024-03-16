@@ -17,6 +17,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::optimize-call? (@predicate gxc#::optimize-call::t))
   (declare-type gxc#make-::optimize-call (@constructor gxc#::optimize-call::t))
