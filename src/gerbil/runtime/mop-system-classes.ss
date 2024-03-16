@@ -8,13 +8,15 @@ namespace: #f
 (export #t)
 (import "gambit" "mop")
 
+;; usual immediates
 (defsystem-class immediate::t immediate ())
-
-;; primitive immediates
 (defsystem-class char::t char (immediate::t))
 (defsystem-class boolean::t boolean (immediate::t))
 (defsystem-class void::t void (immediate::t))
 (defsystem-class eof::t eof (immediate::t))
+
+;; special values
+(defsystem-class special::t special (immediate::t))
 
 ;; numbers
 (defsystem-class number::t number ())
@@ -98,6 +100,14 @@ namespace: #f
 (defshadow-class address-info::t () (macro-type-address-info))
 
 ;; some utilities for the prelude part (meta-type definitions)
+(def (special? obj)
+  (and (fx= (##type obj) 2)
+       (not (char? obj))
+       (not (null? obj))
+       (not (boolean? obj))
+       (not (void? obj))
+       (not (eof-object? obj))))
+
 (def (sequence? obj)
   (or (vector? obj)
       (string? obj)

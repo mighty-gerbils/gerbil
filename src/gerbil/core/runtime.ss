@@ -1591,9 +1591,11 @@ package: gerbil/core
     next-method
     call-next-method
     class-of
+    t::t
 
     ;; :gerbil/runtime/mop-system-classes
     immediate::t
+    special::t
     char::t
     boolean::t
     void::t
@@ -1662,6 +1664,7 @@ package: gerbil/core
     socket-info::t
     address-info::t
 
+    special?
     sequence?
     hvector?
     weak?

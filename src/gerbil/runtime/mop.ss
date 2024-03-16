@@ -1078,21 +1078,21 @@ namespace: #f
          ((##vector-ref __subtype-id st)
           => __system-class)
          (else
-          (error "unknown class" object: obj)))))
+          (error "unknown class" subtype: st object: obj)))))
      ((fx= t (macro-type-mem2))       ; pair
       (__system-class 'pair))
      ((fx= t (macro-type-fixnum))     ; fixnum
       (__system-class 'fixnum))
      (else                              ; special (immediate)
       (cond
-       ((##char? obj)      (__system-class 'char))
-       ((##eq? obj '())    (__system-class 'null))
-       ((##eq? obj #f)     (__system-class 'boolean))
-       ((##eq? obj #t)     (__system-class 'boolean))
-       ((##eq? obj #!void) (__system-class 'void))
-       ((##eq? obj #!eof)  (__system-class 'eof))
+       ((char? obj)      (__system-class 'char))
+       ((eq? obj '())    (__system-class 'null))
+       ((eq? obj #f)     (__system-class 'boolean))
+       ((eq? obj #t)     (__system-class 'boolean))
+       ((eq? obj #!void) (__system-class 'void))
+       ((eq? obj #!eof)  (__system-class 'eof))
        (else
-        (error "unknown class" object: obj)))))))
+        (__system-class 'special)))))))
 
 (def __subtype-id (make-vector 32 #f))
 

@@ -193,8 +193,7 @@ bootstrap recompilation.
 
 - First build the base bootstrap, using your extant gxc -- either latest master or previous recursive bootstrap in your branch:
 ```
-$ cd src
-$ ./bootstrap.sh
+$ ./src/bootstrap.sh
 ```
 
 If you have made changes in the compiler optimizer meta and the extant
@@ -202,7 +201,7 @@ compiler does not accept your code (or generates broken code), you will
 want to try without optimizations:
 
 ```
-$ GERBIL_BUILD_NOOPT=t ./bootstrap.sh
+$ GERBIL_BUILD_NOOPT=t ./src/bootstrap.sh
 ```
 
 Otherwise, you are likely violating some of the bootstrap strictures; see below.
@@ -210,22 +209,22 @@ Otherwise, you are likely violating some of the bootstrap strictures; see below.
 Once you have compiled the base bootstrap, you can proceed to build stage1:
 
 ```
-$ ../build.sh stage0
+$ ./build.sh stage0
 ...
-$ ../build.sh stage1
+$ ./build.sh stage1
 ...
 ```
 
 If you compiled the base bootstrap without optimization, you will also have to set `GERBIL_BUILD_NOOPT` during the stage1 build:
 ```
-$ GERBIL_BUILD_NOOPT=t ../build.sh stage1
+$ GERBIL_BUILD_NOOPT=t ./build.sh stage1
 ```
 
 After you have built stage1, you can use it to build the recursive
 bootstrap:
 
 ```
-$ ../build.sh env ./bootstrap.sh
+$ ./build.sh env ./bootstrap.sh
 ```
 
 And you have a brand new recursive bootstrap you can use. From here
