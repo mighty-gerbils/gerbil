@@ -178,7 +178,14 @@ namespace: gxc
            (struct? (stx-e #'struct?))
            (final? (stx-e #'final?))
            (metaclass (and (stx-e #'metaclass) (identifier-symbol #'metaclass))))
-       (make-!class type-id super slots ctor-method struct? final? metaclass)))))
+       (make-!class type-id super slots ctor-method struct? final? #f metaclass)))))
+
+(def (basic-expression-type-annotation-mop.system stx ann)
+  (ast-case ann ()
+    ((_ type-id super)
+     (let ((type-id (stx-e #'type-id))
+           (super (stx-map identifier-symbol #'super)))
+       (make-!class type-id super [] #f #f #f #t #f)))))
 
 (def (basic-expression-type-annotation-mop.constructor stx ann)
   (ast-case ann ()
@@ -209,7 +216,8 @@ namespace: gxc
   (@mop.constructor basic-expression-type-annotation-mop.constructor)
   (@mop.predicate   basic-expression-type-annotation-mop.predicate)
   (@mop.accessor    basic-expression-type-annotation-mop.accessor)
-  (@mop.mutator     basic-expression-type-annotation-mop.mutator))
+  (@mop.mutator     basic-expression-type-annotation-mop.mutator)
+  (@mop.system      basic-expression-type-annotation-mop.system))
 
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix

@@ -91,6 +91,35 @@ namespace: #f
   macro-type-fixnum
   macro-type-table
   macro-type-mutex
+  macro-type-mem1
+  macro-type-mem2
+  macro-subtype-structure
+  macro-subtype-boxvalues
+  macro-subtype-vector
+  macro-subtype-pair
+  macro-subtype-ratnum
+  macro-subtype-cpxnum
+  macro-subtype-symbol
+  macro-subtype-keyword
+  macro-subtype-frame
+  macro-subtype-continuation
+  macro-subtype-promise
+  macro-subtype-weak
+  macro-subtype-procedure
+  macro-subtype-foreign
+  macro-subtype-string
+  macro-subtype-s8vector
+  macro-subtype-u8vector
+  macro-subtype-s16vector
+  macro-subtype-u16vector
+  macro-subtype-s32vector
+  macro-subtype-u32vector
+  macro-subtype-f32vector
+  macro-subtype-s64vector
+  macro-subtype-u64vector
+  macro-subtype-f64vector
+  macro-subtype-flonum
+  macro-subtype-bignum
   macro-max-fixnum32
   macro-number-dispatch
   macro-ratnum-numerator

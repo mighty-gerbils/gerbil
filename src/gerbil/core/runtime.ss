@@ -1535,6 +1535,7 @@ package: gerbil/core
     class-type-struct?
     class-type-sealed?
     class-type-metaclass?
+    class-type-system?
     class-type-id
     class-type-name
     class-type-super
@@ -1589,6 +1590,7 @@ package: gerbil/core
     seal-class!
     next-method
     call-next-method
+    class-of
 
     ;; :gerbil/runtime/error
     raise
