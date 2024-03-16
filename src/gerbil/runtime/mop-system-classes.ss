@@ -12,11 +12,15 @@ namespace: #f
 (defsystem-class immediate::t immediate ())
 (defsystem-class char::t char (immediate::t))
 (defsystem-class boolean::t boolean (immediate::t))
-(defsystem-class void::t void (immediate::t))
-(defsystem-class eof::t eof (immediate::t))
+
+(defsystem-class atom::t atom (immediate::t))
+(defsystem-class void::t void (atom::t))
+(defsystem-class eof::t eof (atom::t))
+(defsystem-class true::t true (boolean::t atom::t))
+(defsystem-class false::t false (boolean::t atom::t))
 
 ;; special values
-(defsystem-class special::t special (immediate::t))
+(defsystem-class special::t special (atom::t))
 
 ;; numbers
 (defsystem-class number::t number ())
@@ -36,7 +40,7 @@ namespace: #f
 ;; lists
 (defsystem-class list::t list ())
 (defsystem-class pair::t pair (list::t))
-(defsystem-class null::t null (list::t immediate::t))
+(defsystem-class null::t null (list::t atom::t))
 
 ;; sequences
 (defsystem-class sequence::t sequence ())
@@ -100,6 +104,11 @@ namespace: #f
 (defshadow-class address-info::t () (macro-type-address-info))
 
 ;; some utilities for the prelude part (meta-type definitions)
+(def (atom? obj)
+  (and (immediate? obj)
+       (not (char? obj))
+       (not (fixnum? obj))))
+
 (def (special? obj)
   (and (fx= (##type obj) 2)
        (not (char? obj))

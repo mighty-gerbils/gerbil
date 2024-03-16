@@ -703,10 +703,16 @@ package: gerbil/core
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes
   (defsystem-class-info :immediate immediate::t () immediate?)
+  (defsystem-class-info :char char::t (immediate::t) char?)
   (defsystem-class-info :boolean boolean::t (immediate::t) boolean?)
-  (defsystem-class-info :void void::t (immediate::t) void?)
-  (defsystem-class-info :eof eof::t (immediate::t) eof-object?)
-  (defsystem-class-info :special special::t (immediate::t) special?)
+
+  (defsystem-class-info :atom atom::t (immediate::t) atom?)
+  (defsystem-class-info :void void::t (atom::t) void?)
+  (defsystem-class-info :eof eof::t (atom::t) eof-object?)
+  (defsystem-class-info :true true::t (boolean::t atom::t) true?)
+  (defsystem-class-info :false false::t (boolean::t atom::t) not)
+
+  (defsystem-class-info :special special::t (atom::t) special?)
 
   (defsystem-class-info :number number::t () number?)
   (defsystem-class-info :real real::t (number::t) real?)
@@ -723,7 +729,7 @@ package: gerbil/core
 
   (defsystem-class-info :list list::t () list?)
   (defsystem-class-info :pair pair::t (list::t) pair?)
-  (defsystem-class-info :null null::t (list::t immediate::t) null?)
+  (defsystem-class-info :null null::t (list::t atom::t) null?)
 
   (defsystem-class-info :sequence sequence::t () sequence?)
   (defsystem-class-info :vector vector::t (sequence::t) vector?)

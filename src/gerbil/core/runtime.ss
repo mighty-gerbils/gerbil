@@ -1595,11 +1595,14 @@ package: gerbil/core
 
     ;; :gerbil/runtime/mop-system-classes
     immediate::t
-    special::t
+    atom::t
     char::t
     boolean::t
+    true::t
+    false::t
     void::t
     eof::t
+    special::t
     number::t
     real::t
     integer::t
