@@ -99,7 +99,7 @@ namespace: #f
    (lambda (klass method-name) #f)))
 
 (defrules defcast ()
-  ((_ cast-it do-prototype do-instance do-fail)
+  ((_ cast-it do-prototype do-instance)
    (def (cast-it descriptor obj)
      (declare (not interrupts-enabled))
      (let* ((klass (&interface-descriptor-type descriptor))
@@ -135,9 +135,7 @@ namespace: #f
   (lambda (prototype obj)
     (let (instance (##structure-copy prototype))
       (##unchecked-structure-set! instance obj 1 #f 'cast)
-      instance))
-  (lambda (obj)
-    (raise-cast-error 'cast "cannot cast non-object to interface instance" obj)))
+      instance)))
 
 ;; try to cast an object to an interface
 (defcast try-cast
@@ -146,12 +144,10 @@ namespace: #f
     (and prototype
          (let (instance (##structure-copy prototype))
            (##unchecked-structure-set! instance obj 1 #f 'cast)
-           instance)))
-  (lambda (obj) #f))
+           instance))))
 
 ;; check if an object satisfies an interface, optimistically creating a prototype
 (defcast satisfies?
   try-create-prototype
   (lambda (prototype obj)
-    (and prototype #t))
-  (lambda (obj) #f))
+    (and prototype #t)))
