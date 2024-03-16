@@ -11,6 +11,7 @@
     "gerbil/runtime/system.ss"
     "gerbil/runtime/c3.ss"
     "gerbil/runtime/mop.ss"
+    "gerbil/runtime/mop-system-classes.ss"
     "gerbil/runtime/error.ss"
     "gerbil/runtime/interface.ss"
     "gerbil/runtime/hash.ss"

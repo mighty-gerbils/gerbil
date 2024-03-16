@@ -1141,13 +1141,24 @@ namespace: #f
    (else
     (error "unknown system class" id))))
 
-(defrules defsystem-class ()
-  ((_ id (type super ...))
-   (def type
-     (begin-annotation (@mop.system id (super ...))
-       (__make-system-class 'id [super ...])))))
+(defsyntax (defsystem-class stx)
+  (syntax-case stx ()
+    ((_ type id (super ...))
+     (with-syntax ((type-id (make-symbol "system:" id)))
+       #'(def type
+           (begin-annotation (@mop.system type-id (super ...))
+             (__make-system-class 'id [super ...])))))))
 
 (def (__make-system-class id super)
   (let (klass (make-class-type (make-symbol "system:" id) id super [] '((system: . #t)) #f))
     (symbolic-table-set! __system-classes id klass)
     klass))
+
+;; and shadow class predefinitions
+(defsyntax (defshadow-class stx)
+  (syntax-case stx ()
+    ((_ type (super ...) type-expr)
+     (with-syntax ((type-id (make-symbol "system:" (eval-syntax #'type-expr))))
+       #'(def type
+           (begin-annotation (@mop.system type-id (super ...))
+             (__shadow-class type-expr)))))))

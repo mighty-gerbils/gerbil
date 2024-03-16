@@ -89,8 +89,6 @@ namespace: #f
   macro-gc-hash-table-key0
   macro-slot
   macro-type-fixnum
-  macro-type-table
-  macro-type-mutex
   macro-type-mem1
   macro-type-mem2
   macro-subtype-structure
@@ -120,13 +118,39 @@ namespace: #f
   macro-subtype-f64vector
   macro-subtype-flonum
   macro-subtype-bignum
+  macro-type-table
+  macro-type-time
+  macro-type-mutex
+  macro-type-condvar
+  macro-type-thread
+  macro-type-tgroup
+  macro-type-port
+  macro-type-object-port
+  macro-type-character-port
+  macro-type-byte-port
+  macro-type-device-port
+  macro-type-vector-port
+  macro-type-string-port
+  macro-type-u8vector-port
+  macro-type-raw-device-port
+  macro-type-tcp-server-port
+  macro-type-udp-port
+  macro-type-directory-port
+  macro-type-event-queue-port
+  macro-type-readenv
+  macro-type-writeenv
+  macro-type-readtable
+  macro-type-processor
+  macro-type-vm
+  macro-type-file-info
+  macro-type-socket-info
+  macro-type-address-info
   macro-max-fixnum32
   macro-number-dispatch
   macro-ratnum-numerator
   macro-ratnum-denominator
   macro-cpxnum-real
   macro-cpxnum-imag
-  macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port
   macro-readenv-filepos
