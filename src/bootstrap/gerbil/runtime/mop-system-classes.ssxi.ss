@@ -10,14 +10,43 @@ package: gerbil/runtime
    boolean::t
    (@class boolean (immediate::t) (immediate::t) () () #f #f #f #f #f #f))
   (declare-type
+   atom::t
+   (@class atom (immediate::t) (immediate::t) () () #f #f #f #f #f #f))
+  (declare-type
    void::t
-   (@class void (immediate::t) (immediate::t) () () #f #f #f #f #f #f))
+   (@class void (atom::t) (atom::t immediate::t) () () #f #f #f #f #f #f))
   (declare-type
    eof::t
-   (@class eof (immediate::t) (immediate::t) () () #f #f #f #f #f #f))
+   (@class eof (atom::t) (atom::t immediate::t) () () #f #f #f #f #f #f))
+  (declare-type
+   true::t
+   (@class true
+           (boolean::t atom::t)
+           (boolean::t atom::t immediate::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   false::t
+   (@class false
+           (boolean::t atom::t)
+           (boolean::t atom::t immediate::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
   (declare-type
    special::t
-   (@class special (immediate::t) (immediate::t) () () #f #f #f #f #f #f))
+   (@class special (atom::t) (atom::t immediate::t) () () #f #f #f #f #f #f))
   (declare-type number::t (@class number () () () () #f #f #f #f #f #f))
   (declare-type
    real::t
@@ -74,8 +103,8 @@ package: gerbil/runtime
   (declare-type
    null::t
    (@class null
-           (list::t immediate::t)
-           (list::t immediate::t)
+           (list::t atom::t)
+           (list::t atom::t immediate::t)
            ()
            ()
            #f
@@ -397,6 +426,7 @@ package: gerbil/runtime
   (declare-type
    address-info::t
    (@class address-info::t () () () () #f #f #f #f #f #f))
+  (declare-type atom? (@lambda 1 #f))
   (declare-type special? (@lambda 1 #f))
   (declare-type sequence? (@lambda 1 #f))
   (declare-type hvector? (@lambda 1 #f))

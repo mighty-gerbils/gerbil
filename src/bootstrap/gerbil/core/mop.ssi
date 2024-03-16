@@ -316,11 +316,17 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     :immediate
                     |gerbil/core/mop$<MOP:5>[:0:]#:immediate|)
+                   (%#define-syntax :char |gerbil/core/mop$<MOP:5>[:0:]#:char|)
                    (%#define-syntax
                     :boolean
                     |gerbil/core/mop$<MOP:5>[:0:]#:boolean|)
+                   (%#define-syntax :atom |gerbil/core/mop$<MOP:5>[:0:]#:atom|)
                    (%#define-syntax :void |gerbil/core/mop$<MOP:5>[:0:]#:void|)
                    (%#define-syntax :eof |gerbil/core/mop$<MOP:5>[:0:]#:eof|)
+                   (%#define-syntax :true |gerbil/core/mop$<MOP:5>[:0:]#:true|)
+                   (%#define-syntax
+                    :false
+                    |gerbil/core/mop$<MOP:5>[:0:]#:false|)
                    (%#define-syntax
                     :special
                     |gerbil/core/mop$<MOP:5>[:0:]#:special|)
