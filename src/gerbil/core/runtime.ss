@@ -1662,6 +1662,26 @@ package: gerbil/core
     socket-info::t
     address-info::t
 
+    sequence?
+    hvector?
+    weak?
+    object-port?
+    character-port?
+    byte-port?
+    character-port?
+    device-port?
+    vector-port?
+    string-port?
+    u8vector-port?
+    raw-device-port?
+    tcp-server-port?
+    udp-port?
+    directory-port?
+    event-queue-port?
+    readenv?
+    writenv?
+    vm?
+
     ;; :gerbil/runtime/error
     raise
     error
