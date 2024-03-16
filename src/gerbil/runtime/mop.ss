@@ -232,7 +232,7 @@ namespace: #f
               (unless (eq? (last precedence-list) t::t)
                 (error "BUG: t::t is not last in the precedence list"))
               precedence-list)
-            (append1! precedence-list t::t))))
+            (append precedence-list [t::t]))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)

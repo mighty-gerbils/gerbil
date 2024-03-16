@@ -70,7 +70,7 @@ namespace: #f
            ((symbolic-table-ref method-table method-name #f)
             => (lambda (method) (loop rest (##fx+ count 1) (cons method methods))))
            (else
-            (fail! klass method-name))))
+            (fail! klass obj-klass method-name))))
          (else
           (let (prototype (make-object klass (##fx+ count 2)))
             (let loop ((rest methods) (off (##fx+ count 1)))
@@ -89,14 +89,17 @@ namespace: #f
   (do-create-prototype
    descriptor klass obj-klass
    (lambda (prototype) prototype)
-   (lambda (klass method-name)
-     (raise-cast-error 'create-prototype "cannot create interface instance; missing method" class: klass method: method-name))))
+   (lambda (klass obj-klass method-name)
+     (raise-cast-error 'create-prototype "cannot create interface instance; missing method"
+                       interface: klass interface-id: (##type-id klass)
+                       class: obj-klass class-id: (##type-id obj-klass)
+                       method: method-name))))
 
 (def (try-create-prototype descriptor klass obj-klass)
   (do-create-prototype
    descriptor klass obj-klass
    (lambda (prototype) prototype)
-   (lambda (klass method-name) #f)))
+   (lambda (klass obj-klass method-name) #f)))
 
 (defrules defcast ()
   ((_ cast-it do-prototype do-instance)
