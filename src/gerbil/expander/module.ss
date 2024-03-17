@@ -9,9 +9,8 @@ namespace: gx
 (import "common" "stx" "core" "top")
 (declare (not safe))
 
-;; required by the module reader to support #lang
-(extern namespace: #f
-  datum-parsing-exception? datum-parsing-exception-filepos)
+(def __module-registry (make-hash-table))
+(def __module-pkg-cache (make-hash-table))
 
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
@@ -137,13 +136,12 @@ namespace: gx
      (else #f))))
 
 (def (core-module->prelude-context ctx)
-  (let (ht (current-expander-module-registry))
-    (cond
-     ((hash-get ht ctx) => values)
-     (else
-      (let (pre (make-prelude-context ctx))
-        (hash-put! ht ctx pre)
-        pre)))))
+  (cond
+   ((hash-get __module-registry ctx))
+   (else
+    (let (pre (make-prelude-context ctx))
+      (hash-put! __module-registry ctx pre)
+      pre))))
 
 (def (core-import-module rpath (reload? #f))
   (def (import-source path)
@@ -182,8 +180,8 @@ namespace: gx
             (delay (eval-syntax* body)))
           (set! (&module-context-code ctx)
             body)
-          (hash-put! (current-expander-module-registry) path ctx)
-          (hash-put! (current-expander-module-registry) id ctx)
+          (hash-put! __module-registry path ctx)
+          (hash-put! __module-registry id ctx)
           ctx))))
 
   (def (import-submodule rpath)
@@ -202,21 +200,19 @@ namespace: gx
             (else ctx))))))
 
   (cond
-   ((and (not reload?) (hash-get (current-expander-module-registry) rpath))
+   ((and (not reload?) (hash-get __module-registry rpath))
     => values)
    ((list? rpath)
     (import-submodule rpath))
    ((core-library-module-path? rpath)
     (let (ctx (core-import-module (core-resolve-library-module-path rpath)
                                   reload?))
-      (hash-put! (current-expander-module-registry) rpath ctx)
+      (hash-put! __module-registry rpath ctx)
       ctx))
    (else
     (let (npath (path-normalize rpath))
       (cond
-       ((and (not reload?)
-             (hash-get (current-expander-module-registry) npath))
-        => values)
+       ((and (not reload?) (hash-get __module-registry npath)))
        (else (import-source npath)))))))
 
 (def (core-read-module path)
@@ -415,8 +411,8 @@ namespace: gx
                  path)))
     (core-resolve-path path (or (stx-source stx-path) rel))))
 
-;; for each path in current-expander-module-library-path look for
-;;  subpath with .ssi (compiled module interface) or .ss
+;; for each path in load-path look for subpath with .ssi
+;; (compiled module interface) or .ss (source)
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
          (spath (substring spath 1 (string-length spath)))
@@ -428,7 +424,7 @@ namespace: gx
                  (map (lambda (ext) (string-append spath ext))
                       '(".ss" ".sld" ".scm"))
                  [spath])))
-    (let lp ((rest (current-expander-module-library-path)))
+    (let lp ((rest (load-path)))
       (match rest
         ([dir . rest]
          (def (resolve ssi srcs)
@@ -498,33 +494,23 @@ namespace: gx
    (else #f)))
 
 (def (core-library-package-plist dir (exists? #f))
-  (let (cache (core-library-package-cache))
-    (cond
-     ((hash-get cache dir)
-      => values)
-     (else
-      (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
-             (plist
-              (if (or exists? (file-exists? gerbil.pkg))
-                (let (e (call-with-input-source-file gerbil.pkg read))
-                  (cond
-                   ((eof-object? e) [])
-                   ((list? e) e)
-                   (else
-                    (raise-syntax-error #f "Malformed package info; unexpected datum"
-                                        gerbil.pkg e))))
-                [])))
-        (hash-put! cache dir plist)
-        plist)))))
-
-(def (core-library-package-cache)
   (cond
-   ((current-expander-module-library-package-cache)
+   ((hash-get __module-pkg-cache dir)
     => values)
    (else
-    (let (cache (make-hash-table))
-      (current-expander-module-library-package-cache cache)
-      cache))))
+    (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
+           (plist
+            (if (or exists? (file-exists? gerbil.pkg))
+              (let (e (call-with-input-source-file gerbil.pkg read))
+                (cond
+                 ((eof-object? e) [])
+                 ((list? e) e)
+                 (else
+                  (raise-syntax-error #f "Malformed package info; unexpected datum"
+                                      gerbil.pkg e))))
+              [])))
+      (hash-put! __module-pkg-cache dir plist)
+      plist))))
 
 (def (core-library-module-path? stx)
   (core-special-module-path? stx #\:))

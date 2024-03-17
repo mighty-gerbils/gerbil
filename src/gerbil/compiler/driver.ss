@@ -498,7 +498,7 @@ namespace: gxc
             (expander-context-id ctx)
             (string->symbol ctx)))
          (scm (string-append (static-module-name context-id) ".scm"))
-         (dirs (current-expander-module-library-path))
+         (dirs (load-path))
          (dirs
           (let (user-libpath (getenv "GERBIL_PATH" #f))
             ;; this might have changed if we programmatically set it

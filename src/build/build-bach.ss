@@ -51,6 +51,7 @@
     "gerbil/expander/compile"
     "gerbil/expander/root"
     "gerbil/expander/stxcase"
+    "gerbil/expander/init"
     "gerbil/expander"
     ;; :gerbil/compiler
     "gerbil/compiler/base"

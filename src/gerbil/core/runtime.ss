@@ -1793,7 +1793,11 @@ package: gerbil/core
     replx
 
     ;; :gerbil/runtime/loader
+    load-path
+    add-load-path!
+    set-load-path!
     load-module
+    reload-module!
 
     ;; :gerbil/runtime/init
     gerbil-load-expander!

@@ -32,6 +32,7 @@
     "gerbil/expander/compile.ss"
     "gerbil/expander/root.ss"
     "gerbil/expander/stxcase.ss"
+    "gerbil/expander/init.ss"
     "gerbil/expander.ss"))
 
 (def gerbil-modules-compiler
