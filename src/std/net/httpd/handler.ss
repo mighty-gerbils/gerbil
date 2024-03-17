@@ -36,7 +36,9 @@
         set-httpd-input-buffer-size!
         set-httpd-output-buffer-size!
         http-response-write-condition
-        condition-handler)
+        condition-handler
+        read-request-headers
+        read-request-body)
 
 (declare (not safe))
 

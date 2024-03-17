@@ -71,6 +71,7 @@ package: gerbil
     ("prof"        "gxprof")
     ("ensemble"    "gxensemble")
     ("httpd"       "gxhttpd")
+    ("lsp"         "gxlsp")
     ("interactive" "gxi")
     ("compile"     "gxc")))
 
@@ -86,6 +87,7 @@ package: gerbil
     ("prof"        "gxprof" "-h")
     ("ensemble"    "gxensemble" "help")
     ("httpd"       "gxhttpd" "-h")
+    ("lsp"         "gxlsp" "-h")
     ("interactive" "gxi" "-h")
     ("compile"     "gxc" "-h")))
 
@@ -112,6 +114,7 @@ package: gerbil
   (displayln "  prof                             profile a dynamic executable module (gxprof)")
   (displayln "  ensemble                         invoke the gerbil actor ensemble manager (gxensemble)")
   (displayln "  httpd                            invoke the gerbil httpd (gxhttpd)")
+  (displayln "  lsp                              invoke the gerbil lsp server (gxlsp)")
   (displayln "  interactive                      invoke the gerbil interpreter (gxi)")
   (displayln "  compile                          invoke the gerbil compiler (gxc)")
   (displayln "  help <cmd>                       display help for a tool command")
