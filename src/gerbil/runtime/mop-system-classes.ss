@@ -55,7 +55,8 @@ namespace: #f
               promise::t
               weak::t
               foreign::t
-              procedure::t))
+              procedure::t
+              return::t))
 
 ;; usual immediates
 (defsystem-class immediate::t immediate ())
@@ -118,6 +119,7 @@ namespace: #f
 
 ;; procedures
 (defsystem-class procedure::t procedure ())
+(defsystem-class return::t return ())
 
 ;; some predefined shadow classes
 ;; time objects

@@ -91,6 +91,7 @@ namespace: #f
   macro-type-fixnum
   macro-type-mem1
   macro-type-mem2
+  macro-type-subtyped
   macro-subtype-structure
   macro-subtype-boxvalues
   macro-subtype-vector
@@ -104,6 +105,7 @@ namespace: #f
   macro-subtype-promise
   macro-subtype-weak
   macro-subtype-procedure
+  macro-subtype-return
   macro-subtype-foreign
   macro-subtype-string
   macro-subtype-s8vector

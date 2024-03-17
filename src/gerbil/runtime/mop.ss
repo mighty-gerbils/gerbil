@@ -1065,7 +1065,7 @@ namespace: #f
   (declare (not interrupts-enabled))
   (let (t (##type obj))
     (cond
-     ((fx= t (macro-type-mem1))       ; subtyped
+     ((fx= t (macro-type-subtyped))       ; subtyped
       (let (st (##subtype obj))
         (cond
          ((fx= st (macro-subtype-structure)) ; object
@@ -1112,6 +1112,7 @@ namespace: #f
   ((macro-subtype-promise)      promise)
   ((macro-subtype-weak)         weak)
   ((macro-subtype-procedure)    procedure)
+  ((macro-subtype-return)       return)
   ((macro-subtype-foreign)      foreign)
   ((macro-subtype-string)       string)
   ((macro-subtype-s8vector)     s8vector)
