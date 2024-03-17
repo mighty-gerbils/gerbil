@@ -688,7 +688,7 @@ TODO:
              (when/list (settings-verbose>=? settings 9) ["-v"]) ...
              (when/list gsc-opts (append-map (lambda (x) ["-gsc-flag" x]) gsc-opts)) ...
              srcpath])
-           (__ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
+           (_ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
            (proc (open-process [path: (gerbil-gxc)
                                 arguments: arguments
                                 stdout-redirection: #f]))
