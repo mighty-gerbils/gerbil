@@ -199,4 +199,4 @@ package: std/os
   MSG_WAITALL
   )
 
-(load-module "std/os/_socket")
+(load-module "std/os/_socket~0")

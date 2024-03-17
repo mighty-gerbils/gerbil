@@ -188,7 +188,7 @@
     "text/utf16"
     "text/utf32"
     "text/hex"
-    (gsc: "text/base64")
+    (gsc: "text/base64~0")
     (ssi: "text/base64")
     "text/base58"
     "text/csv"
@@ -199,7 +199,7 @@
     "text/json/api"
     "text/json"
     ,@(if config-enable-zlib
-        `((gsc: "text/_zlib"
+        `((gsc: "text/_zlib~0"
                 "-cc-options" ,(cppflags "zlib" "")
                 "-ld-options" ,(ldflags "zlib" "-lz"))
           (ssi: "text/_zlib")
@@ -265,7 +265,7 @@
        (linux
         `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
        (else
-        `(gsc: "os/_socket" ,@(include-gambit-sharp))))
+        `(gsc: "os/_socket~0" ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
     "os/socket"
     ,@(cond-expand
@@ -435,7 +435,7 @@
     "db/postgresql-driver"
     "db/postgresql"
     ,@(if config-enable-sqlite
-        `((gsc: "db/_sqlite"
+        `((gsc: "db/_sqlite~0"
                 "-cc-options" ,(cppflags "sqlite3" "")
                 "-ld-options" ,(append-options (ldflags "sqlite3" "-lsqlite3") "-lm"))
           (ssi: "db/_sqlite")

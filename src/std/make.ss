@@ -20,8 +20,6 @@
         ./error
         ./assert)
 
-(extern namespace: #f with-cons-load-path load-path)
-
 (export make
         make-clean
         shell-config
@@ -749,7 +747,7 @@ TODO:
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
   (def libpath (library-path mod ".ssi" settings))
-  (def rtpath  (library-path mod "__rt.scm" settings))
+  (def rtpath  (library-path mod ".scm" settings))
   (def prefix  (settings-prefix settings))
   (message "... copy ssi " mod)
   (create-directory* (path-directory libpath))
@@ -760,7 +758,7 @@ TODO:
   (with-output-to-file rtpath
     (lambda ()
       (for-each (lambda (dep) (pretty-print `(load-module ,dep))) deps)
-      (pretty-print `(load-module ,(prefix/ prefix mod)))))
+      (pretty-print `(load-module ,(string-append (prefix/ prefix mod) "~0")))))
   (let* ((proc (open-process [path: (gerbil-gsc)
                                     arguments: [rtpath]
                                     stdout-redirection: #f]))
@@ -926,3 +924,11 @@ TODO:
 (def (append-options . opts)
   (let (opts (filter (? (not string-empty?)) opts))
     (string-join opts " ")))
+
+;; temporarily sets the load-path
+(def (with-cons-load-path thunk path)
+  (let (current-load-path (load-path))
+    (dynamic-wind
+        (cut add-load-path! path)
+        thunk
+        (cut set-load-path! current-load-path))))

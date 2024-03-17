@@ -26,3 +26,10 @@ package: test/actor-v18
 
        (thread-join! srv)))
    (path-expand "lib" (gerbil-path))))
+
+(def (with-cons-load-path thunk path)
+  (let (current-load-path (load-path))
+    (dynamic-wind
+        (cut add-load-path! path)
+        thunk
+        (cut set-load-path! current-load-path))))
