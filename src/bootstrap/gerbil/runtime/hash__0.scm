@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/hash::timestamp 1710632268)
+  (define gerbil/runtime/hash::timestamp 1710677337)
   (begin
     (define UnboundKeyError::t
       (let ((__tmp73929 (list Error::t)))
@@ -120,7 +120,7 @@
          'gerbil#HashTable::t
          'HashTable
          __tmp73935
-         '(ref set! update! delete! for-each length copy clear)
+         '(ref set! update! delete! for-each length copy clear!)
          __tmp73931
          '#f)))
     (define HashTable?
@@ -156,7 +156,7 @@
     (define HashTable-clear@
       (let ()
         (declare (not safe))
-        (make-class-slot-accessor HashTable::t 'clear)))
+        (make-class-slot-accessor HashTable::t 'clear!)))
     (define HashTable-ref@-set!
       (let ()
         (declare (not safe))
@@ -188,7 +188,7 @@
     (define HashTable-clear@-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-mutator HashTable::t 'clear)))
+        (make-class-slot-mutator HashTable::t 'clear!)))
     (define &HashTable-ref@
       (let ()
         (declare (not safe))
@@ -220,7 +220,7 @@
     (define &HashTable-clear@
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-accessor HashTable::t 'clear)))
+        (make-class-slot-unchecked-accessor HashTable::t 'clear!)))
     (define &HashTable-ref@-set!
       (let ()
         (declare (not safe))
@@ -252,7 +252,7 @@
     (define &HashTable-clear@-set!
       (let ()
         (declare (not safe))
-        (make-class-slot-unchecked-mutator HashTable::t 'clear)))
+        (make-class-slot-unchecked-mutator HashTable::t 'clear!)))
     (define HashTable::interface
       (let ()
         (declare (not safe))

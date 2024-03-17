@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/common::timestamp 1710632268)
+  (define gerbil/expander/common::timestamp 1710677337)
   (begin
     (define gx#AST::t
       (let ((__tmp81205 (list))

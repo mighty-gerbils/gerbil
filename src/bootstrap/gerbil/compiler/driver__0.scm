@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1710632273)
+  (define gerbil/compiler/driver::timestamp 1710677343)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))

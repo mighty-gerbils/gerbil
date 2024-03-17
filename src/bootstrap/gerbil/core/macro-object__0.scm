@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/core/macro-object::timestamp 1710632266)
+  (define gerbil/core/macro-object::timestamp 1710677336)
   (begin
     (define gerbil/core/macro-object#macro-object::t
       (make-class-type
