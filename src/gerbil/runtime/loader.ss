@@ -23,9 +23,7 @@ namespace: #f
 
 (def (load-module modpath)
   (cond
-   ((or (hash-get __modules modpath)
-        ;; TODO remove after recursive bootstrap
-        (hash-get __modules (string-append modpath "__rt"))))
+   ((hash-get __modules modpath))
    ((find-library-module modpath)
     => (lambda (path)
          (let (loaded-path (load path))
@@ -36,9 +34,7 @@ namespace: #f
 
 (def (reload-module! modpath)
   (cond
-   ((or (hash-get __modules modpath)
-        ;; TODO remove after recursive bootstrap
-        (hash-get __modules (string-append modpath "__rt")))
+   ((hash-get __modules modpath)
     => (lambda (current-path)
          (if (eq? current-path 'builtin)
            (let (latest-path (find-library-module modpath))
