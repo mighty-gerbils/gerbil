@@ -63,7 +63,7 @@
 ;; load runtime
 (for-each
   (lambda (mod)
-    (let* ((mod0 (string-append mod "__0"))
+    (let* ((mod0 (string-append mod "~0"))
            (modf (path-expand mod0
                    (path-expand "lib" (getenv "GERBIL_STAGE0")))))
       (load modf)))
@@ -73,6 +73,6 @@
 (gerbil-runtime-init! __gerbil-boot-modules)
 
 ;; load and initialize the expander
-(load-module "gerbil/expander__rt")
+(load-module "gerbil/expander")
 (gerbil-load-expander!)
 (eval '(define-alias ##begin begin))
