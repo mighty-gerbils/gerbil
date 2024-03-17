@@ -263,7 +263,7 @@
     (gxc: "os/pipe" ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
-        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
+        `(gsc: "os/_socket~0" "-cc-options" "-D_GNU_SOURCE -Wno-implicit-function-declaration" ,@(include-gambit-sharp)))
        (else
         `(gsc: "os/_socket~0" ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
