@@ -21,7 +21,7 @@
 ;; predefine some symbols to avoid undefined refences when loading gerbil/runtime/init
 (define-macro (define-forward-reference proc)
   `(define (,proc . args)
-     (error "undefined" 'proc)))
+     (error "undefined" ',proc)))
 
 (define-macro (define-forward-references . procs)
   `(begin ,@(map (lambda (p) `(define-forward-reference ,p)) procs)))

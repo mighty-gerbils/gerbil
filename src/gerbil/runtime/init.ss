@@ -186,10 +186,7 @@ namespace: #f
     (for-each
       (lambda (mod)
         (hash-put! __modules mod 'builtin)
-        (hash-put! __modules (string-append mod "~0") 'builtin)
-        ;; TODO remove after recursive boostrap
-        (hash-put! __modules (string-append mod "__0") 'builtin)
-        (hash-put! __modules (string-append mod "__rt") 'builtin))
+        (hash-put! __modules (string-append mod "~0") 'builtin))
       builtin-modules)
 
     ;; et the readtable
