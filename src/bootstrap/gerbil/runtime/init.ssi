@@ -18,27 +18,10 @@ namespace: #f
           :gerbil/runtime/syntax
           :gerbil/runtime/eval
           :gerbil/runtime/repl)
-         (%#define-runtime __loading-scheme-source __loading-scheme-source)
-         (%#define-runtime __init-gx! __init-gx!)
+         (%#define-runtime __scheme-source __scheme-source)
          (%#define-runtime __load-gxi __load-gxi)
          (%#define-runtime __gxi-init-interactive! __gxi-init-interactive!)
          (%#define-runtime load-scheme load-scheme)
-         (%#define-runtime load-path load-path)
-         (%#define-runtime library-load-path library-load-path)
-         (%#define-runtime expander-load-path expander-load-path)
-         (%#define-runtime add-load-path add-load-path)
-         (%#define-runtime add-library-load-path add-library-load-path)
-         (%#define-runtime add-expander-load-path add-expander-load-path)
-         (%#define-runtime cons-load-path cons-load-path)
-         (%#define-runtime cons-library-load-path cons-library-load-path)
-         (%#define-runtime cons-expander-load-path cons-expander-load-path)
-         (%#define-runtime with-cons-load-path with-cons-load-path)
-         (%#define-runtime
-          with-cons-library-load-path
-          with-cons-library-load-path)
-         (%#define-runtime
-          with-cons-expander-load-path
-          with-cons-expander-load-path)
          (%#define-runtime __expand-source __expand-source)
          (%#define-runtime __macro-descr __macro-descr)
          (%#define-runtime __source->syntax __source->syntax)

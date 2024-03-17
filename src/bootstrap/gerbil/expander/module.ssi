@@ -8,9 +8,8 @@ namespace: gx
           :gerbil/expander/stx
           :gerbil/expander/core
           :gerbil/expander/top)
-         (%#extern
-          (datum-parsing-exception? datum-parsing-exception?)
-          (datum-parsing-exception-filepos datum-parsing-exception-filepos))
+         (%#define-runtime __module-registry gx#__module-registry)
+         (%#define-runtime __module-pkg-cache gx#__module-pkg-cache)
          (%#define-runtime module-import::t gx#module-import::t)
          (%#define-runtime module-import? gx#module-import?)
          (%#define-runtime make-module-import gx#make-module-import)
@@ -321,9 +320,6 @@ namespace: gx
                            (%#define-runtime
                             core-library-package-plist
                             gx#core-library-package-plist)))
-         (%#define-runtime
-          core-library-package-cache
-          gx#core-library-package-cache)
          (%#define-runtime
           core-library-module-path?
           gx#core-library-module-path?)

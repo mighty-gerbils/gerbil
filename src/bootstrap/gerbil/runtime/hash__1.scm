@@ -1,293 +1,293 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |[1]#_g74062_|
+  (define |[1]#_g71438_|
     (##structure
      gx#syntax-quote::t
      'Error
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74064_|
+  (define |[1]#_g71440_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74066_|
+  (define |[1]#_g71442_|
     (##structure
      gx#syntax-quote::t
      'make-UnboundKeyError
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74068_|
+  (define |[1]#_g71444_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError?
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74075_|
+  (define |[1]#_g71451_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-continuation
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74078_|
+  (define |[1]#_g71454_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-where
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74081_|
+  (define |[1]#_g71457_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-irritants
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74084_|
+  (define |[1]#_g71460_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-message
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74091_|
+  (define |[1]#_g71467_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-continuation-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74094_|
+  (define |[1]#_g71470_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-where-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74097_|
+  (define |[1]#_g71473_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-irritants-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74100_|
+  (define |[1]#_g71476_|
     (##structure
      gx#syntax-quote::t
      'UnboundKeyError-message-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74107_|
+  (define |[1]#_g71483_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-continuation
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74110_|
+  (define |[1]#_g71486_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-where
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74113_|
+  (define |[1]#_g71489_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-irritants
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74116_|
+  (define |[1]#_g71492_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-message
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74123_|
+  (define |[1]#_g71499_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-continuation-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74126_|
+  (define |[1]#_g71502_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-where-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74129_|
+  (define |[1]#_g71505_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-irritants-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74132_|
+  (define |[1]#_g71508_|
     (##structure
      gx#syntax-quote::t
      '&UnboundKeyError-message-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74134_|
+  (define |[1]#_g71510_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74136_|
+  (define |[1]#_g71512_|
     (##structure
      gx#syntax-quote::t
      'make-locked-hash-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74138_|
+  (define |[1]#_g71514_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table?
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74143_|
+  (define |[1]#_g71519_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table-lock
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74146_|
+  (define |[1]#_g71522_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74151_|
+  (define |[1]#_g71527_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table-lock-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74154_|
+  (define |[1]#_g71530_|
     (##structure
      gx#syntax-quote::t
      'locked-hash-table-table-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74159_|
+  (define |[1]#_g71535_|
     (##structure
      gx#syntax-quote::t
      '&locked-hash-table-lock
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74162_|
+  (define |[1]#_g71538_|
     (##structure
      gx#syntax-quote::t
      '&locked-hash-table-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74167_|
+  (define |[1]#_g71543_|
     (##structure
      gx#syntax-quote::t
      '&locked-hash-table-lock-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74170_|
+  (define |[1]#_g71546_|
     (##structure
      gx#syntax-quote::t
      '&locked-hash-table-table-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74172_|
+  (define |[1]#_g71548_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74174_|
+  (define |[1]#_g71550_|
     (##structure
      gx#syntax-quote::t
      'make-checked-hash-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74176_|
+  (define |[1]#_g71552_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table?
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74181_|
+  (define |[1]#_g71557_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table-key-check
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74184_|
+  (define |[1]#_g71560_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74189_|
+  (define |[1]#_g71565_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table-key-check-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74192_|
+  (define |[1]#_g71568_|
     (##structure
      gx#syntax-quote::t
      'checked-hash-table-table-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74197_|
+  (define |[1]#_g71573_|
     (##structure
      gx#syntax-quote::t
      '&checked-hash-table-key-check
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74200_|
+  (define |[1]#_g71576_|
     (##structure
      gx#syntax-quote::t
      '&checked-hash-table-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74205_|
+  (define |[1]#_g71581_|
     (##structure
      gx#syntax-quote::t
      '&checked-hash-table-key-check-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |[1]#_g74208_|
+  (define |[1]#_g71584_|
     (##structure
      gx#syntax-quote::t
      '&checked-hash-table-table-set!
@@ -296,7 +296,7 @@
      '()))
   (begin
     (define |[:0:]#UnboundKeyError|
-      (let ((__obj73925
+      (let ((__obj71302
              (let ()
                (declare (not safe))
                (##structure
@@ -320,7 +320,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            'gerbil/runtime/hash#UnboundKeyError::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -328,7 +328,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            'UnboundKeyError
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -336,26 +336,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            '()
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74060
-               (let ((__tmp74061 |[1]#_g74062_|))
+        (let ((__tmp71436
+               (let ((__tmp71437 |[1]#_g71438_|))
                  (declare (not safe))
-                 (cons __tmp74061 '()))))
+                 (cons __tmp71437 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74060
+           __obj71302
+           __tmp71436
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            '#f
            '5
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -363,7 +363,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            '#f
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -371,7 +371,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            '#f
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -379,178 +379,178 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
+           __obj71302
            ':init!
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74063 |[1]#_g74064_|))
+        (let ((__tmp71439 |[1]#_g71440_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74063
+           __obj71302
+           __tmp71439
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74065 |[1]#_g74066_|))
+        (let ((__tmp71441 |[1]#_g71442_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74065
+           __obj71302
+           __tmp71441
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74067 |[1]#_g74068_|))
+        (let ((__tmp71443 |[1]#_g71444_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74067
+           __obj71302
+           __tmp71443
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74069
-               (let ((__tmp74082
-                      (let ((__tmp74083 |[1]#_g74084_|))
+        (let ((__tmp71445
+               (let ((__tmp71458
+                      (let ((__tmp71459 |[1]#_g71460_|))
                         (declare (not safe))
-                        (cons 'message __tmp74083)))
-                     (__tmp74070
-                      (let ((__tmp74079
-                             (let ((__tmp74080 |[1]#_g74081_|))
+                        (cons 'message __tmp71459)))
+                     (__tmp71446
+                      (let ((__tmp71455
+                             (let ((__tmp71456 |[1]#_g71457_|))
                                (declare (not safe))
-                               (cons 'irritants __tmp74080)))
-                            (__tmp74071
-                             (let ((__tmp74076
-                                    (let ((__tmp74077 |[1]#_g74078_|))
+                               (cons 'irritants __tmp71456)))
+                            (__tmp71447
+                             (let ((__tmp71452
+                                    (let ((__tmp71453 |[1]#_g71454_|))
                                       (declare (not safe))
-                                      (cons 'where __tmp74077)))
-                                   (__tmp74072
-                                    (let ((__tmp74073
-                                           (let ((__tmp74074 |[1]#_g74075_|))
+                                      (cons 'where __tmp71453)))
+                                   (__tmp71448
+                                    (let ((__tmp71449
+                                           (let ((__tmp71450 |[1]#_g71451_|))
                                              (declare (not safe))
-                                             (cons 'continuation __tmp74074))))
+                                             (cons 'continuation __tmp71450))))
                                       (declare (not safe))
-                                      (cons __tmp74073 '()))))
+                                      (cons __tmp71449 '()))))
                                (declare (not safe))
-                               (cons __tmp74076 __tmp74072))))
+                               (cons __tmp71452 __tmp71448))))
                         (declare (not safe))
-                        (cons __tmp74079 __tmp74071))))
+                        (cons __tmp71455 __tmp71447))))
                  (declare (not safe))
-                 (cons __tmp74082 __tmp74070))))
+                 (cons __tmp71458 __tmp71446))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74069
+           __obj71302
+           __tmp71445
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74085
-               (let ((__tmp74098
-                      (let ((__tmp74099 |[1]#_g74100_|))
+        (let ((__tmp71461
+               (let ((__tmp71474
+                      (let ((__tmp71475 |[1]#_g71476_|))
                         (declare (not safe))
-                        (cons 'message __tmp74099)))
-                     (__tmp74086
-                      (let ((__tmp74095
-                             (let ((__tmp74096 |[1]#_g74097_|))
+                        (cons 'message __tmp71475)))
+                     (__tmp71462
+                      (let ((__tmp71471
+                             (let ((__tmp71472 |[1]#_g71473_|))
                                (declare (not safe))
-                               (cons 'irritants __tmp74096)))
-                            (__tmp74087
-                             (let ((__tmp74092
-                                    (let ((__tmp74093 |[1]#_g74094_|))
+                               (cons 'irritants __tmp71472)))
+                            (__tmp71463
+                             (let ((__tmp71468
+                                    (let ((__tmp71469 |[1]#_g71470_|))
                                       (declare (not safe))
-                                      (cons 'where __tmp74093)))
-                                   (__tmp74088
-                                    (let ((__tmp74089
-                                           (let ((__tmp74090 |[1]#_g74091_|))
+                                      (cons 'where __tmp71469)))
+                                   (__tmp71464
+                                    (let ((__tmp71465
+                                           (let ((__tmp71466 |[1]#_g71467_|))
                                              (declare (not safe))
-                                             (cons 'continuation __tmp74090))))
+                                             (cons 'continuation __tmp71466))))
                                       (declare (not safe))
-                                      (cons __tmp74089 '()))))
+                                      (cons __tmp71465 '()))))
                                (declare (not safe))
-                               (cons __tmp74092 __tmp74088))))
+                               (cons __tmp71468 __tmp71464))))
                         (declare (not safe))
-                        (cons __tmp74095 __tmp74087))))
+                        (cons __tmp71471 __tmp71463))))
                  (declare (not safe))
-                 (cons __tmp74098 __tmp74086))))
+                 (cons __tmp71474 __tmp71462))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74085
+           __obj71302
+           __tmp71461
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74101
-               (let ((__tmp74114
-                      (let ((__tmp74115 |[1]#_g74116_|))
+        (let ((__tmp71477
+               (let ((__tmp71490
+                      (let ((__tmp71491 |[1]#_g71492_|))
                         (declare (not safe))
-                        (cons 'message __tmp74115)))
-                     (__tmp74102
-                      (let ((__tmp74111
-                             (let ((__tmp74112 |[1]#_g74113_|))
+                        (cons 'message __tmp71491)))
+                     (__tmp71478
+                      (let ((__tmp71487
+                             (let ((__tmp71488 |[1]#_g71489_|))
                                (declare (not safe))
-                               (cons 'irritants __tmp74112)))
-                            (__tmp74103
-                             (let ((__tmp74108
-                                    (let ((__tmp74109 |[1]#_g74110_|))
+                               (cons 'irritants __tmp71488)))
+                            (__tmp71479
+                             (let ((__tmp71484
+                                    (let ((__tmp71485 |[1]#_g71486_|))
                                       (declare (not safe))
-                                      (cons 'where __tmp74109)))
-                                   (__tmp74104
-                                    (let ((__tmp74105
-                                           (let ((__tmp74106 |[1]#_g74107_|))
+                                      (cons 'where __tmp71485)))
+                                   (__tmp71480
+                                    (let ((__tmp71481
+                                           (let ((__tmp71482 |[1]#_g71483_|))
                                              (declare (not safe))
-                                             (cons 'continuation __tmp74106))))
+                                             (cons 'continuation __tmp71482))))
                                       (declare (not safe))
-                                      (cons __tmp74105 '()))))
+                                      (cons __tmp71481 '()))))
                                (declare (not safe))
-                               (cons __tmp74108 __tmp74104))))
+                               (cons __tmp71484 __tmp71480))))
                         (declare (not safe))
-                        (cons __tmp74111 __tmp74103))))
+                        (cons __tmp71487 __tmp71479))))
                  (declare (not safe))
-                 (cons __tmp74114 __tmp74102))))
+                 (cons __tmp71490 __tmp71478))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74101
+           __obj71302
+           __tmp71477
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74117
-               (let ((__tmp74130
-                      (let ((__tmp74131 |[1]#_g74132_|))
+        (let ((__tmp71493
+               (let ((__tmp71506
+                      (let ((__tmp71507 |[1]#_g71508_|))
                         (declare (not safe))
-                        (cons 'message __tmp74131)))
-                     (__tmp74118
-                      (let ((__tmp74127
-                             (let ((__tmp74128 |[1]#_g74129_|))
+                        (cons 'message __tmp71507)))
+                     (__tmp71494
+                      (let ((__tmp71503
+                             (let ((__tmp71504 |[1]#_g71505_|))
                                (declare (not safe))
-                               (cons 'irritants __tmp74128)))
-                            (__tmp74119
-                             (let ((__tmp74124
-                                    (let ((__tmp74125 |[1]#_g74126_|))
+                               (cons 'irritants __tmp71504)))
+                            (__tmp71495
+                             (let ((__tmp71500
+                                    (let ((__tmp71501 |[1]#_g71502_|))
                                       (declare (not safe))
-                                      (cons 'where __tmp74125)))
-                                   (__tmp74120
-                                    (let ((__tmp74121
-                                           (let ((__tmp74122 |[1]#_g74123_|))
+                                      (cons 'where __tmp71501)))
+                                   (__tmp71496
+                                    (let ((__tmp71497
+                                           (let ((__tmp71498 |[1]#_g71499_|))
                                              (declare (not safe))
-                                             (cons 'continuation __tmp74122))))
+                                             (cons 'continuation __tmp71498))))
                                       (declare (not safe))
-                                      (cons __tmp74121 '()))))
+                                      (cons __tmp71497 '()))))
                                (declare (not safe))
-                               (cons __tmp74124 __tmp74120))))
+                               (cons __tmp71500 __tmp71496))))
                         (declare (not safe))
-                        (cons __tmp74127 __tmp74119))))
+                        (cons __tmp71503 __tmp71495))))
                  (declare (not safe))
-                 (cons __tmp74130 __tmp74118))))
+                 (cons __tmp71506 __tmp71494))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73925
-           __tmp74117
+           __obj71302
+           __tmp71493
            '16
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        __obj73925))
+        __obj71302))
     (define |[:0:]#locked-hash-table|
-      (let ((__obj73927
+      (let ((__obj71304
              (let ()
                (declare (not safe))
                (##structure
@@ -574,7 +574,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            'gerbil/runtime/hash#locked-hash-table::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -582,7 +582,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            'locked-hash-table
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -590,7 +590,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '(table lock)
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -598,7 +598,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '()
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -606,7 +606,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '#t
            '5
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -614,7 +614,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '#t
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -622,7 +622,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '#f
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -630,122 +630,122 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
+           __obj71304
            '#f
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74133 |[1]#_g74134_|))
+        (let ((__tmp71509 |[1]#_g71510_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74133
+           __obj71304
+           __tmp71509
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74135 |[1]#_g74136_|))
+        (let ((__tmp71511 |[1]#_g71512_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74135
+           __obj71304
+           __tmp71511
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74137 |[1]#_g74138_|))
+        (let ((__tmp71513 |[1]#_g71514_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74137
+           __obj71304
+           __tmp71513
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74139
-               (let ((__tmp74144
-                      (let ((__tmp74145 |[1]#_g74146_|))
+        (let ((__tmp71515
+               (let ((__tmp71520
+                      (let ((__tmp71521 |[1]#_g71522_|))
                         (declare (not safe))
-                        (cons 'table __tmp74145)))
-                     (__tmp74140
-                      (let ((__tmp74141
-                             (let ((__tmp74142 |[1]#_g74143_|))
+                        (cons 'table __tmp71521)))
+                     (__tmp71516
+                      (let ((__tmp71517
+                             (let ((__tmp71518 |[1]#_g71519_|))
                                (declare (not safe))
-                               (cons 'lock __tmp74142))))
+                               (cons 'lock __tmp71518))))
                         (declare (not safe))
-                        (cons __tmp74141 '()))))
+                        (cons __tmp71517 '()))))
                  (declare (not safe))
-                 (cons __tmp74144 __tmp74140))))
+                 (cons __tmp71520 __tmp71516))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74139
+           __obj71304
+           __tmp71515
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74147
-               (let ((__tmp74152
-                      (let ((__tmp74153 |[1]#_g74154_|))
+        (let ((__tmp71523
+               (let ((__tmp71528
+                      (let ((__tmp71529 |[1]#_g71530_|))
                         (declare (not safe))
-                        (cons 'table __tmp74153)))
-                     (__tmp74148
-                      (let ((__tmp74149
-                             (let ((__tmp74150 |[1]#_g74151_|))
+                        (cons 'table __tmp71529)))
+                     (__tmp71524
+                      (let ((__tmp71525
+                             (let ((__tmp71526 |[1]#_g71527_|))
                                (declare (not safe))
-                               (cons 'lock __tmp74150))))
+                               (cons 'lock __tmp71526))))
                         (declare (not safe))
-                        (cons __tmp74149 '()))))
+                        (cons __tmp71525 '()))))
                  (declare (not safe))
-                 (cons __tmp74152 __tmp74148))))
+                 (cons __tmp71528 __tmp71524))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74147
+           __obj71304
+           __tmp71523
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74155
-               (let ((__tmp74160
-                      (let ((__tmp74161 |[1]#_g74162_|))
+        (let ((__tmp71531
+               (let ((__tmp71536
+                      (let ((__tmp71537 |[1]#_g71538_|))
                         (declare (not safe))
-                        (cons 'table __tmp74161)))
-                     (__tmp74156
-                      (let ((__tmp74157
-                             (let ((__tmp74158 |[1]#_g74159_|))
+                        (cons 'table __tmp71537)))
+                     (__tmp71532
+                      (let ((__tmp71533
+                             (let ((__tmp71534 |[1]#_g71535_|))
                                (declare (not safe))
-                               (cons 'lock __tmp74158))))
+                               (cons 'lock __tmp71534))))
                         (declare (not safe))
-                        (cons __tmp74157 '()))))
+                        (cons __tmp71533 '()))))
                  (declare (not safe))
-                 (cons __tmp74160 __tmp74156))))
+                 (cons __tmp71536 __tmp71532))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74155
+           __obj71304
+           __tmp71531
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74163
-               (let ((__tmp74168
-                      (let ((__tmp74169 |[1]#_g74170_|))
+        (let ((__tmp71539
+               (let ((__tmp71544
+                      (let ((__tmp71545 |[1]#_g71546_|))
                         (declare (not safe))
-                        (cons 'table __tmp74169)))
-                     (__tmp74164
-                      (let ((__tmp74165
-                             (let ((__tmp74166 |[1]#_g74167_|))
+                        (cons 'table __tmp71545)))
+                     (__tmp71540
+                      (let ((__tmp71541
+                             (let ((__tmp71542 |[1]#_g71543_|))
                                (declare (not safe))
-                               (cons 'lock __tmp74166))))
+                               (cons 'lock __tmp71542))))
                         (declare (not safe))
-                        (cons __tmp74165 '()))))
+                        (cons __tmp71541 '()))))
                  (declare (not safe))
-                 (cons __tmp74168 __tmp74164))))
+                 (cons __tmp71544 __tmp71540))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73927
-           __tmp74163
+           __obj71304
+           __tmp71539
            '16
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        __obj73927))
+        __obj71304))
     (define |[:0:]#checked-hash-table|
-      (let ((__obj73928
+      (let ((__obj71305
              (let ()
                (declare (not safe))
                (##structure
@@ -769,7 +769,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            'gerbil/runtime/hash#checked-hash-table::t
            '1
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -777,7 +777,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            'checked-hash-table
            '2
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -785,7 +785,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '(table key-check)
            '4
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -793,7 +793,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '()
            '3
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -801,7 +801,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '#t
            '5
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -809,7 +809,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '#t
            '6
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -817,7 +817,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '#f
            '8
            gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -825,1290 +825,1290 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
+           __obj71305
            '#f
            '9
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74171 |[1]#_g74172_|))
+        (let ((__tmp71547 |[1]#_g71548_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74171
+           __obj71305
+           __tmp71547
            '10
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74173 |[1]#_g74174_|))
+        (let ((__tmp71549 |[1]#_g71550_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74173
+           __obj71305
+           __tmp71549
            '11
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74175 |[1]#_g74176_|))
+        (let ((__tmp71551 |[1]#_g71552_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74175
+           __obj71305
+           __tmp71551
            '12
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74177
-               (let ((__tmp74182
-                      (let ((__tmp74183 |[1]#_g74184_|))
+        (let ((__tmp71553
+               (let ((__tmp71558
+                      (let ((__tmp71559 |[1]#_g71560_|))
                         (declare (not safe))
-                        (cons 'table __tmp74183)))
-                     (__tmp74178
-                      (let ((__tmp74179
-                             (let ((__tmp74180 |[1]#_g74181_|))
+                        (cons 'table __tmp71559)))
+                     (__tmp71554
+                      (let ((__tmp71555
+                             (let ((__tmp71556 |[1]#_g71557_|))
                                (declare (not safe))
-                               (cons 'key-check __tmp74180))))
+                               (cons 'key-check __tmp71556))))
                         (declare (not safe))
-                        (cons __tmp74179 '()))))
+                        (cons __tmp71555 '()))))
                  (declare (not safe))
-                 (cons __tmp74182 __tmp74178))))
+                 (cons __tmp71558 __tmp71554))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74177
+           __obj71305
+           __tmp71553
            '13
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74185
-               (let ((__tmp74190
-                      (let ((__tmp74191 |[1]#_g74192_|))
+        (let ((__tmp71561
+               (let ((__tmp71566
+                      (let ((__tmp71567 |[1]#_g71568_|))
                         (declare (not safe))
-                        (cons 'table __tmp74191)))
-                     (__tmp74186
-                      (let ((__tmp74187
-                             (let ((__tmp74188 |[1]#_g74189_|))
+                        (cons 'table __tmp71567)))
+                     (__tmp71562
+                      (let ((__tmp71563
+                             (let ((__tmp71564 |[1]#_g71565_|))
                                (declare (not safe))
-                               (cons 'key-check __tmp74188))))
+                               (cons 'key-check __tmp71564))))
                         (declare (not safe))
-                        (cons __tmp74187 '()))))
+                        (cons __tmp71563 '()))))
                  (declare (not safe))
-                 (cons __tmp74190 __tmp74186))))
+                 (cons __tmp71566 __tmp71562))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74185
+           __obj71305
+           __tmp71561
            '14
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74193
-               (let ((__tmp74198
-                      (let ((__tmp74199 |[1]#_g74200_|))
+        (let ((__tmp71569
+               (let ((__tmp71574
+                      (let ((__tmp71575 |[1]#_g71576_|))
                         (declare (not safe))
-                        (cons 'table __tmp74199)))
-                     (__tmp74194
-                      (let ((__tmp74195
-                             (let ((__tmp74196 |[1]#_g74197_|))
+                        (cons 'table __tmp71575)))
+                     (__tmp71570
+                      (let ((__tmp71571
+                             (let ((__tmp71572 |[1]#_g71573_|))
                                (declare (not safe))
-                               (cons 'key-check __tmp74196))))
+                               (cons 'key-check __tmp71572))))
                         (declare (not safe))
-                        (cons __tmp74195 '()))))
+                        (cons __tmp71571 '()))))
                  (declare (not safe))
-                 (cons __tmp74198 __tmp74194))))
+                 (cons __tmp71574 __tmp71570))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74193
+           __obj71305
+           __tmp71569
            '15
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        (let ((__tmp74201
-               (let ((__tmp74206
-                      (let ((__tmp74207 |[1]#_g74208_|))
+        (let ((__tmp71577
+               (let ((__tmp71582
+                      (let ((__tmp71583 |[1]#_g71584_|))
                         (declare (not safe))
-                        (cons 'table __tmp74207)))
-                     (__tmp74202
-                      (let ((__tmp74203
-                             (let ((__tmp74204 |[1]#_g74205_|))
+                        (cons 'table __tmp71583)))
+                     (__tmp71578
+                      (let ((__tmp71579
+                             (let ((__tmp71580 |[1]#_g71581_|))
                                (declare (not safe))
-                               (cons 'key-check __tmp74204))))
+                               (cons 'key-check __tmp71580))))
                         (declare (not safe))
-                        (cons __tmp74203 '()))))
+                        (cons __tmp71579 '()))))
                  (declare (not safe))
-                 (cons __tmp74206 __tmp74202))))
+                 (cons __tmp71582 __tmp71578))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj73928
-           __tmp74201
+           __obj71305
+           __tmp71577
            '16
            gerbil/core/mop$<MOP:2>#class-type-info::t
            '#f))
-        __obj73928))
+        __obj71305))
     (define |[:0:]#defhash-method|
-      (lambda (_stx70102_)
-        (let* ((_g7010570146_
-                (lambda (_g7010670142_)
+      (lambda (_stx67479_)
+        (let* ((_g6748267523_
+                (lambda (_g6748367519_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g7010670142_)))
-               (_g7010470436_
-                (lambda (_g7010670150_)
-                  (if (gx#stx-pair? _g7010670150_)
-                      (let ((_e7011370153_ (gx#syntax-e _g7010670150_)))
-                        (let ((_hd7011270157_
+                   _g6748367519_)))
+               (_g6748167813_
+                (lambda (_g6748367527_)
+                  (if (gx#stx-pair? _g6748367527_)
+                      (let ((_e6748867530_ (gx#syntax-e _g6748367527_)))
+                        (let ((_hd6748967534_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e7011370153_)))
-                              (_tl7011170160_
+                                 (##car _e6748867530_)))
+                              (_tl6749067537_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e7011370153_))))
-                          (if (gx#stx-pair? _tl7011170160_)
-                              (let ((_e7011670163_
-                                     (gx#syntax-e _tl7011170160_)))
-                                (let ((_hd7011570167_
+                                 (##cdr _e6748867530_))))
+                          (if (gx#stx-pair? _tl6749067537_)
+                              (let ((_e6749167540_
+                                     (gx#syntax-e _tl6749067537_)))
+                                (let ((_hd6749267544_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e7011670163_)))
-                                      (_tl7011470170_
+                                         (##car _e6749167540_)))
+                                      (_tl6749367547_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e7011670163_))))
-                                  (if (gx#stx-pair? _hd7011570167_)
-                                      (let ((_e7011970173_
-                                             (gx#syntax-e _hd7011570167_)))
-                                        (let ((_hd7011870177_
+                                         (##cdr _e6749167540_))))
+                                  (if (gx#stx-pair? _hd6749267544_)
+                                      (let ((_e6749467550_
+                                             (gx#syntax-e _hd6749267544_)))
+                                        (let ((_hd6749567554_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _e7011970173_)))
-                                              (_tl7011770180_
+                                                 (##car _e6749467550_)))
+                                              (_tl6749667557_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _e7011970173_))))
-                                          (if (gx#stx-pair? _tl7011770180_)
-                                              (let ((_e7012270183_
+                                                 (##cdr _e6749467550_))))
+                                          (if (gx#stx-pair? _tl6749667557_)
+                                              (let ((_e6749767560_
                                                      (gx#syntax-e
-                                                      _tl7011770180_)))
-                                                (let ((_hd7012170187_
+                                                      _tl6749667557_)))
+                                                (let ((_hd6749867564_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _e7012270183_)))
-                                                      (_tl7012070190_
+                                                         (##car _e6749767560_)))
+                                                      (_tl6749967567_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _e7012270183_))))
+                                                         (##cdr _e6749767560_))))
                                                   (if (gx#stx-pair/null?
-                                                       _tl7012070190_)
-                                                      (let ((_g74209_
+                                                       _tl6749967567_)
+                                                      (let ((_g71585_
                                                              (gx#syntax-split-splice
-                                                              _tl7012070190_
+                                                              _tl6749967567_
                                                               '0)))
                                                         (begin
-                                                          (let ((_g74210_
+                                                          (let ((_g71586_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (if (##values? _g74209_)
-                               (##vector-length _g74209_)
+                           (if (##values? _g71585_)
+                               (##vector-length _g71585_)
                                1))))
-                    (if (not (let () (declare (not safe)) (##fx= _g74210_ 2)))
-                        (error "Context expects 2 values" _g74210_)))
-                  (let ((_target7012370193_
+                    (if (not (let () (declare (not safe)) (##fx= _g71586_ 2)))
+                        (error "Context expects 2 values" _g71586_)))
+                  (let ((_target6750067570_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _g74209_ 0)))
-                        (_tl7012570196_
+                           (##vector-ref _g71585_ 0)))
+                        (_tl6750267573_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _g74209_ 1))))
-                    (if (gx#stx-null? _tl7012570196_)
-                        (letrec ((_loop7012670199_
-                                  (lambda (_hd7012470203_ _arg7013070206_)
-                                    (if (gx#stx-pair? _hd7012470203_)
-                                        (let ((_e7012770209_
-                                               (gx#syntax-e _hd7012470203_)))
-                                          (let ((_lp-hd7012870213_
+                           (##vector-ref _g71585_ 1))))
+                    (if (gx#stx-null? _tl6750267573_)
+                        (letrec ((_loop6750367576_
+                                  (lambda (_hd6750167580_ _arg6750767583_)
+                                    (if (gx#stx-pair? _hd6750167580_)
+                                        (let ((_e6750467586_
+                                               (gx#syntax-e _hd6750167580_)))
+                                          (let ((_lp-hd6750567590_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _e7012770209_)))
-                                                (_lp-tl7012970216_
+                                                   (##car _e6750467586_)))
+                                                (_lp-tl6750667593_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _e7012770209_))))
-                                            (_loop7012670199_
-                                             _lp-tl7012970216_
+                                                   (##cdr _e6750467586_))))
+                                            (_loop6750367576_
+                                             _lp-tl6750667593_
                                              (let ()
                                                (declare (not safe))
-                                               (cons _lp-hd7012870213_
-                                                     _arg7013070206_)))))
-                                        (let ((_arg7013170219_
-                                               (reverse _arg7013070206_)))
+                                               (cons _lp-hd6750567590_
+                                                     _arg6750767583_)))))
+                                        (let ((_arg6750867596_
+                                               (reverse _arg6750767583_)))
                                           (if (gx#stx-pair/null?
-                                               _tl7011470170_)
-                                              (let ((_g74211_
+                                               _tl6749367547_)
+                                              (let ((_g71587_
                                                      (gx#syntax-split-splice
-                                                      _tl7011470170_
+                                                      _tl6749367547_
                                                       '0)))
                                                 (begin
-                                                  (let ((_g74212_
+                                                  (let ((_g71588_
                                                          (let ()
                                                            (declare (not safe))
                                                            (if (##values?
-                                                                _g74211_)
+                                                                _g71587_)
                                                                (##vector-length
-                                                                _g74211_)
+                                                                _g71587_)
                                                                1))))
                                                     (if (not (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##fx= _g74212_ 2)))
-                (error "Context expects 2 values" _g74212_)))
+                       (##fx= _g71588_ 2)))
+                (error "Context expects 2 values" _g71588_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ((_target7013270223_
+                                                  (let ((_target6750967600_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g74211_
+                                                            _g71587_
                                                             0)))
-                                                        (_tl7013470226_
+                                                        (_tl6751167603_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g74211_
+                                                            _g71587_
                                                             1))))
                                                     (if (gx#stx-null?
-                                                         _tl7013470226_)
-                                                        (letrec ((_loop7013570229_
+                                                         _tl6751167603_)
+                                                        (letrec ((_loop6751267606_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (lambda (_hd7013370233_ _body7013970236_)
-                            (if (gx#stx-pair? _hd7013370233_)
-                                (let ((_e7013670239_
-                                       (gx#syntax-e _hd7013370233_)))
-                                  (let ((_lp-hd7013770243_
+                          (lambda (_hd6751067610_ _body6751667613_)
+                            (if (gx#stx-pair? _hd6751067610_)
+                                (let ((_e6751367616_
+                                       (gx#syntax-e _hd6751067610_)))
+                                  (let ((_lp-hd6751467620_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _e7013670239_)))
-                                        (_lp-tl7013870246_
+                                           (##car _e6751367616_)))
+                                        (_lp-tl6751567623_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _e7013670239_))))
-                                    (_loop7013570229_
-                                     _lp-tl7013870246_
+                                           (##cdr _e6751367616_))))
+                                    (_loop6751267606_
+                                     _lp-tl6751567623_
                                      (let ()
                                        (declare (not safe))
-                                       (cons _lp-hd7013770243_
-                                             _body7013970236_)))))
-                                (let ((_body7014070249_
-                                       (reverse _body7013970236_)))
-                                  ((lambda (_L70253_
-                                            _L70255_
-                                            _L70256_
-                                            _L70257_)
-                                     (let* ((_g7028670310_
-                                             (lambda (_g7028770306_)
+                                       (cons _lp-hd6751467620_
+                                             _body6751667613_)))))
+                                (let ((_body6751767626_
+                                       (reverse _body6751667613_)))
+                                  ((lambda (_L67630_
+                                            _L67632_
+                                            _L67633_
+                                            _L67634_)
+                                     (let* ((_g6766367687_
+                                             (lambda (_g6766467683_)
                                                (gx#raise-syntax-error
                                                 '#f
                                                 '"Bad syntax; invalid match target"
-                                                _g7028770306_)))
-                                            (_g7028570421_
-                                             (lambda (_g7028770314_)
-                                               (if (gx#stx-pair? _g7028770314_)
-                                                   (let ((_e7029270317_
+                                                _g6766467683_)))
+                                            (_g6766267798_
+                                             (lambda (_g6766467691_)
+                                               (if (gx#stx-pair? _g6766467691_)
+                                                   (let ((_e6766767694_
                                                           (gx#syntax-e
-                                                           _g7028770314_)))
-                                                     (let ((_hd7029170321_
+                                                           _g6766467691_)))
+                                                     (let ((_hd6766867698_
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (##car _e7029270317_)))
-                                                           (_tl7029070324_
+                                                              (##car _e6766767694_)))
+                                                           (_tl6766967701_
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (##cdr _e7029270317_))))
+                                                              (##cdr _e6766767694_))))
                                                        (if (gx#stx-pair?
-                                                            _tl7029070324_)
-                                                           (let ((_e7029570327_
+                                                            _tl6766967701_)
+                                                           (let ((_e6767067704_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (gx#syntax-e _tl7029070324_)))
-                     (let ((_hd7029470331_
+                          (gx#syntax-e _tl6766967701_)))
+                     (let ((_hd6767167708_
                             (let ()
                               (declare (not safe))
-                              (##car _e7029570327_)))
-                           (_tl7029370334_
+                              (##car _e6767067704_)))
+                           (_tl6767267711_
                             (let ()
                               (declare (not safe))
-                              (##cdr _e7029570327_))))
-                       (if (gx#stx-pair/null? _hd7029470331_)
-                           (let ((_g74213_
-                                  (gx#syntax-split-splice _hd7029470331_ '0)))
+                              (##cdr _e6767067704_))))
+                       (if (gx#stx-pair/null? _hd6767167708_)
+                           (let ((_g71589_
+                                  (gx#syntax-split-splice _hd6767167708_ '0)))
                              (begin
-                               (let ((_g74214_
+                               (let ((_g71590_
                                       (let ()
                                         (declare (not safe))
-                                        (if (##values? _g74213_)
-                                            (##vector-length _g74213_)
+                                        (if (##values? _g71589_)
+                                            (##vector-length _g71589_)
                                             1))))
                                  (if (not (let ()
                                             (declare (not safe))
-                                            (##fx= _g74214_ 2)))
+                                            (##fx= _g71590_ 2)))
                                      (error "Context expects 2 values"
-                                            _g74214_)))
-                               (let ((_target7029670337_
+                                            _g71590_)))
+                               (let ((_target6767367714_
                                       (let ()
                                         (declare (not safe))
-                                        (##vector-ref _g74213_ 0)))
-                                     (_tl7029870340_
+                                        (##vector-ref _g71589_ 0)))
+                                     (_tl6767567717_
                                       (let ()
                                         (declare (not safe))
-                                        (##vector-ref _g74213_ 1))))
-                                 (if (gx#stx-null? _tl7029870340_)
-                                     (letrec ((_loop7029970343_
-                                               (lambda (_hd7029770347_
-                                                        _arg-val7030370350_)
+                                        (##vector-ref _g71589_ 1))))
+                                 (if (gx#stx-null? _tl6767567717_)
+                                     (letrec ((_loop6767667720_
+                                               (lambda (_hd6767467724_
+                                                        _arg-val6768067727_)
                                                  (if (gx#stx-pair?
-                                                      _hd7029770347_)
-                                                     (let ((_e7030070353_
+                                                      _hd6767467724_)
+                                                     (let ((_e6767767730_
                                                             (gx#syntax-e
-                                                             _hd7029770347_)))
-                                                       (let ((_lp-hd7030170357_
+                                                             _hd6767467724_)))
+                                                       (let ((_lp-hd6767867734_
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (##car _e7030070353_)))
-                     (_lp-tl7030270360_
-                      (let () (declare (not safe)) (##cdr _e7030070353_))))
-                 (_loop7029970343_
-                  _lp-tl7030270360_
+                        (##car _e6767767730_)))
+                     (_lp-tl6767967737_
+                      (let () (declare (not safe)) (##cdr _e6767767730_))))
+                 (_loop6767667720_
+                  _lp-tl6767967737_
                   (let ()
                     (declare (not safe))
-                    (cons _lp-hd7030170357_ _arg-val7030370350_)))))
+                    (cons _lp-hd6767867734_ _arg-val6768067727_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ((_arg-val7030470363_
-                                                            (reverse _arg-val7030370350_)))
+                                                     (let ((_arg-val6768167740_
+                                                            (reverse _arg-val6768067727_)))
                                                        (if (gx#stx-null?
-                                                            _tl7029370334_)
-                                                           ((lambda (_L70367_
+                                                            _tl6767267711_)
+                                                           ((lambda (_L67744_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _L70369_)
+                             _L67746_)
                       (let ()
-                        (let ((__tmp74259 (gx#datum->syntax '#f 'begin))
-                              (__tmp74215
-                               (let ((__tmp74226
-                                      (let ((__tmp74258
+                        (let ((__tmp71635 (gx#datum->syntax '#f 'begin))
+                              (__tmp71591
+                               (let ((__tmp71602
+                                      (let ((__tmp71634
                                              (gx#datum->syntax '#f 'def))
-                                            (__tmp74227
-                                             (let ((__tmp74254
-                                                    (let ((__tmp74255
-                                                           (let ((__tmp74256
+                                            (__tmp71603
+                                             (let ((__tmp71630
+                                                    (let ((__tmp71631
+                                                           (let ((__tmp71632
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp74257
-                                 (lambda (_g7039470397_ _g7039570400_)
+                          (let ((__tmp71633
+                                 (lambda (_g6776567774_ _g6776667777_)
                                    (let ()
                                      (declare (not safe))
-                                     (cons _g7039470397_ _g7039570400_)))))
+                                     (cons _g6776567774_ _g6776667777_)))))
                             (declare (not safe))
-                            (foldr1 __tmp74257 '() _L70255_))))
+                            (foldr1 __tmp71633 '() _L67632_))))
                      (declare (not safe))
-                     (cons _L70256_ __tmp74256))))
+                     (cons _L67633_ __tmp71632))))
               (declare (not safe))
-              (cons _L70257_ __tmp74255)))
+              (cons _L67634_ __tmp71631)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp74228
-                                                    (let ((__tmp74229
-                                                           (let ((__tmp74253
+                                                   (__tmp71604
+                                                    (let ((__tmp71605
+                                                           (let ((__tmp71629
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (gx#datum->syntax '#f 'let))
-                         (__tmp74230
-                          (let ((__tmp74236
-                                 (let ((__tmp74237
-                                        (let ((__tmp74238
-                                               (let ((__tmp74252
+                         (__tmp71606
+                          (let ((__tmp71612
+                                 (let ((__tmp71613
+                                        (let ((__tmp71614
+                                               (let ((__tmp71628
                                                       (gx#datum->syntax
                                                        '#f
                                                        'if))
-                                                     (__tmp74239
-                                                      (let ((__tmp74247
-                                                             (let ((__tmp74251
+                                                     (__tmp71615
+                                                      (let ((__tmp71623
+                                                             (let ((__tmp71627
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (gx#datum->syntax '#f 'immediate-instance-of?))
-                           (__tmp74248
-                            (let ((__tmp74250
+                           (__tmp71624
+                            (let ((__tmp71626
                                    (gx#datum->syntax '#f 'HashTable::t))
-                                  (__tmp74249
+                                  (__tmp71625
                                    (let ()
                                      (declare (not safe))
-                                     (cons _L70256_ '()))))
+                                     (cons _L67633_ '()))))
                               (declare (not safe))
-                              (cons __tmp74250 __tmp74249))))
+                              (cons __tmp71626 __tmp71625))))
                        (declare (not safe))
-                       (cons __tmp74251 __tmp74248)))
-                    (__tmp74240
-                     (let ((__tmp74241
-                            (let ((__tmp74242
-                                   (let ((__tmp74246
+                       (cons __tmp71627 __tmp71624)))
+                    (__tmp71616
+                     (let ((__tmp71617
+                            (let ((__tmp71618
+                                   (let ((__tmp71622
                                           (gx#datum->syntax '#f 'cast))
-                                         (__tmp74243
-                                          (let ((__tmp74245
+                                         (__tmp71619
+                                          (let ((__tmp71621
                                                  (gx#datum->syntax
                                                   '#f
                                                   'HashTable::interface))
-                                                (__tmp74244
+                                                (__tmp71620
                                                  (let ()
                                                    (declare (not safe))
-                                                   (cons _L70256_ '()))))
+                                                   (cons _L67633_ '()))))
                                             (declare (not safe))
-                                            (cons __tmp74245 __tmp74244))))
+                                            (cons __tmp71621 __tmp71620))))
                                      (declare (not safe))
-                                     (cons __tmp74246 __tmp74243))))
+                                     (cons __tmp71622 __tmp71619))))
                               (declare (not safe))
-                              (cons __tmp74242 '()))))
+                              (cons __tmp71618 '()))))
                        (declare (not safe))
-                       (cons _L70256_ __tmp74241))))
+                       (cons _L67633_ __tmp71617))))
                 (declare (not safe))
-                (cons __tmp74247 __tmp74240))))
+                (cons __tmp71623 __tmp71616))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp74252
-                                                       __tmp74239))))
+                                                 (cons __tmp71628
+                                                       __tmp71615))))
                                           (declare (not safe))
-                                          (cons __tmp74238 '()))))
+                                          (cons __tmp71614 '()))))
                                    (declare (not safe))
-                                   (cons _L70256_ __tmp74237)))
-                                (__tmp74231
-                                 (let ((__tmp74232
-                                        (let ((__tmp74233
-                                               (let ((__tmp74234
-                                                      (let ((__tmp74235
-                                                             (lambda (_g7039270403_
+                                   (cons _L67633_ __tmp71613)))
+                                (__tmp71607
+                                 (let ((__tmp71608
+                                        (let ((__tmp71609
+                                               (let ((__tmp71610
+                                                      (let ((__tmp71611
+                                                             (lambda (_g6776767780_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _g7039370406_)
+                              _g6776867783_)
                        (let ()
                          (declare (not safe))
-                         (cons _g7039270403_ _g7039370406_)))))
+                         (cons _g6776767780_ _g6776867783_)))))
                 (declare (not safe))
-                (foldr1 __tmp74235 '() _L70367_))))
+                (foldr1 __tmp71611 '() _L67744_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons _L70256_ __tmp74234))))
+                                                 (cons _L67633_ __tmp71610))))
                                           (declare (not safe))
-                                          (cons _L70369_ __tmp74233))))
+                                          (cons _L67746_ __tmp71609))))
                                    (declare (not safe))
-                                   (cons __tmp74232 '()))))
+                                   (cons __tmp71608 '()))))
                             (declare (not safe))
-                            (cons __tmp74236 __tmp74231))))
+                            (cons __tmp71612 __tmp71607))))
                      (declare (not safe))
-                     (cons __tmp74253 __tmp74230))))
+                     (cons __tmp71629 __tmp71606))))
               (declare (not safe))
-              (cons __tmp74229 '()))))
+              (cons __tmp71605 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp74254 __tmp74228))))
+                                               (cons __tmp71630 __tmp71604))))
                                         (declare (not safe))
-                                        (cons __tmp74258 __tmp74227)))
-                                     (__tmp74216
-                                      (let ((__tmp74217
-                                             (let ((__tmp74225
+                                        (cons __tmp71634 __tmp71603)))
+                                     (__tmp71592
+                                      (let ((__tmp71593
+                                             (let ((__tmp71601
                                                     (gx#datum->syntax
                                                      '#f
                                                      'def))
-                                                   (__tmp74218
-                                                    (let ((__tmp74221
-                                                           (let ((__tmp74222
+                                                   (__tmp71594
+                                                    (let ((__tmp71597
+                                                           (let ((__tmp71598
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp74223
-                                 (let ((__tmp74224
-                                        (lambda (_g7039070409_ _g7039170412_)
+                          (let ((__tmp71599
+                                 (let ((__tmp71600
+                                        (lambda (_g6776967786_ _g6777067789_)
                                           (let ()
                                             (declare (not safe))
-                                            (cons _g7039070409_
-                                                  _g7039170412_)))))
+                                            (cons _g6776967786_
+                                                  _g6777067789_)))))
                                    (declare (not safe))
-                                   (foldr1 __tmp74224 '() _L70255_))))
+                                   (foldr1 __tmp71600 '() _L67632_))))
                             (declare (not safe))
-                            (cons _L70256_ __tmp74223))))
+                            (cons _L67633_ __tmp71599))))
                      (declare (not safe))
-                     (cons _L70369_ __tmp74222)))
-                  (__tmp74219
-                   (let ((__tmp74220
-                          (lambda (_g7038870415_ _g7038970418_)
+                     (cons _L67746_ __tmp71598)))
+                  (__tmp71595
+                   (let ((__tmp71596
+                          (lambda (_g6777167792_ _g6777267795_)
                             (let ()
                               (declare (not safe))
-                              (cons _g7038870415_ _g7038970418_)))))
+                              (cons _g6777167792_ _g6777267795_)))))
                      (declare (not safe))
-                     (foldr1 __tmp74220 '() _L70253_))))
+                     (foldr1 __tmp71596 '() _L67630_))))
               (declare (not safe))
-              (cons __tmp74221 __tmp74219))))
+              (cons __tmp71597 __tmp71595))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp74225 __tmp74218))))
+                                               (cons __tmp71601 __tmp71594))))
                                         (declare (not safe))
-                                        (cons __tmp74217 '()))))
+                                        (cons __tmp71593 '()))))
                                  (declare (not safe))
-                                 (cons __tmp74226 __tmp74216))))
+                                 (cons __tmp71602 __tmp71592))))
                           (declare (not safe))
-                          (cons __tmp74259 __tmp74215))))
-                    _arg-val7030470363_
-                    _hd7029170321_)
-                   (_g7028670310_ _g7028770314_)))))))
+                          (cons __tmp71635 __tmp71591))))
+                    _arg-val6768167740_
+                    _hd6766867698_)
+                   (_g6766367687_ _g6766467691_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                       (_loop7029970343_
-                                        _target7029670337_
+                                       (_loop6767667720_
+                                        _target6767367714_
                                         '()))
-                                     (_g7028670310_ _g7028770314_)))))
-                           (_g7028670310_ _g7028770314_))))
-                   (_g7028670310_ _g7028770314_))))
+                                     (_g6766367687_ _g6766467691_)))))
+                           (_g6766367687_ _g6766467691_))))
+                   (_g6766367687_ _g6766467691_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (_g7028670310_
-                                                    _g7028770314_)))))
-                                       (_g7028570421_
+                                                   (_g6766367687_
+                                                    _g6766467691_)))))
+                                       (_g6766267798_
                                         (list (gx#stx-identifier
-                                               _L70257_
+                                               _L67634_
                                                '"&"
-                                               _L70257_)
+                                               _L67634_)
                                               (gx#stx-map
-                                               (lambda (_arg70425_)
+                                               (lambda (_arg67802_)
                                                  (if (gx#identifier?
-                                                      _arg70425_)
-                                                     _arg70425_
-                                                     (gx#stx-car _arg70425_)))
-                                               (let ((__tmp74260
-                                                      (lambda (_g7042770430_
-                                                               _g7042870433_)
+                                                      _arg67802_)
+                                                     _arg67802_
+                                                     (gx#stx-car _arg67802_)))
+                                               (let ((__tmp71636
+                                                      (lambda (_g6780467807_
+                                                               _g6780567810_)
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _g7042770430_
-                                                                _g7042870433_)))))
+                                                          (cons _g6780467807_
+                                                                _g6780567810_)))))
                                                  (declare (not safe))
-                                                 (foldr1 __tmp74260
+                                                 (foldr1 __tmp71636
                                                          '()
-                                                         _L70255_)))))))
-                                   _body7014070249_
-                                   _arg7013170219_
-                                   _hd7012170187_
-                                   _hd7011870177_))))))
-                  (_loop7013570229_ _target7013270223_ '()))
-                (_g7010570146_ _g7010670150_)))))
+                                                         _L67632_)))))))
+                                   _body6751767626_
+                                   _arg6750867596_
+                                   _hd6749867564_
+                                   _hd6749567554_))))))
+                  (_loop6751267606_ _target6750967600_ '()))
+                (_g6748267523_ _g6748367527_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7010570146_
-                                               _g7010670150_)))))))
-                          (_loop7012670199_ _target7012370193_ '()))
-                        (_g7010570146_ _g7010670150_)))))
-              (_g7010570146_ _g7010670150_))))
+                                              (_g6748267523_
+                                               _g6748367527_)))))))
+                          (_loop6750367576_ _target6750067570_ '()))
+                        (_g6748267523_ _g6748367527_)))))
+              (_g6748267523_ _g6748367527_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7010570146_ _g7010670150_))))
-                                      (_g7010570146_ _g7010670150_))))
-                              (_g7010570146_ _g7010670150_))))
-                      (_g7010570146_ _g7010670150_)))))
-          (_g7010470436_ _stx70102_))))
+                                              (_g6748267523_ _g6748367527_))))
+                                      (_g6748267523_ _g6748367527_))))
+                              (_g6748267523_ _g6748367527_))))
+                      (_g6748267523_ _g6748367527_)))))
+          (_g6748167813_ _stx67479_))))
     (define |[:0:]#deflocked-hash-method|
-      (lambda (_$stx70443_)
-        (let* ((_g7044770486_
-                (lambda (_g7044870482_)
+      (lambda (_$stx67820_)
+        (let* ((_g6782467863_
+                (lambda (_g6782567859_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g7044870482_)))
-               (_g7044670633_
-                (lambda (_g7044870490_)
-                  (if (gx#stx-pair? _g7044870490_)
-                      (let ((_e7045670493_ (gx#syntax-e _g7044870490_)))
-                        (let ((_hd7045570497_
+                   _g6782567859_)))
+               (_g6782368010_
+                (lambda (_g6782567867_)
+                  (if (gx#stx-pair? _g6782567867_)
+                      (let ((_e6783167870_ (gx#syntax-e _g6782567867_)))
+                        (let ((_hd6783267874_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e7045670493_)))
-                              (_tl7045470500_
+                                 (##car _e6783167870_)))
+                              (_tl6783367877_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e7045670493_))))
-                          (if (gx#stx-pair? _tl7045470500_)
-                              (let ((_e7045970503_
-                                     (gx#syntax-e _tl7045470500_)))
-                                (let ((_hd7045870507_
+                                 (##cdr _e6783167870_))))
+                          (if (gx#stx-pair? _tl6783367877_)
+                              (let ((_e6783467880_
+                                     (gx#syntax-e _tl6783367877_)))
+                                (let ((_hd6783567884_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e7045970503_)))
-                                      (_tl7045770510_
+                                         (##car _e6783467880_)))
+                                      (_tl6783667887_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e7045970503_))))
-                                  (if (gx#stx-pair? _hd7045870507_)
-                                      (let ((_e7046270513_
-                                             (gx#syntax-e _hd7045870507_)))
-                                        (let ((_hd7046170517_
+                                         (##cdr _e6783467880_))))
+                                  (if (gx#stx-pair? _hd6783567884_)
+                                      (let ((_e6783767890_
+                                             (gx#syntax-e _hd6783567884_)))
+                                        (let ((_hd6783867894_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _e7046270513_)))
-                                              (_tl7046070520_
+                                                 (##car _e6783767890_)))
+                                              (_tl6783967897_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _e7046270513_))))
+                                                 (##cdr _e6783767890_))))
                                           (if (gx#stx-pair/null?
-                                               _tl7046070520_)
-                                              (let ((_g74261_
+                                               _tl6783967897_)
+                                              (let ((_g71637_
                                                      (gx#syntax-split-splice
-                                                      _tl7046070520_
+                                                      _tl6783967897_
                                                       '0)))
                                                 (begin
-                                                  (let ((_g74262_
+                                                  (let ((_g71638_
                                                          (let ()
                                                            (declare (not safe))
                                                            (if (##values?
-                                                                _g74261_)
+                                                                _g71637_)
                                                                (##vector-length
-                                                                _g74261_)
+                                                                _g71637_)
                                                                1))))
                                                     (if (not (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##fx= _g74262_ 2)))
-                (error "Context expects 2 values" _g74262_)))
+                       (##fx= _g71638_ 2)))
+                (error "Context expects 2 values" _g71638_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (let ((_target7046370523_
+                                                  (let ((_target6784067900_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g74261_
+                                                            _g71637_
                                                             0)))
-                                                        (_tl7046570526_
+                                                        (_tl6784267903_
                                                          (let ()
                                                            (declare (not safe))
                                                            (##vector-ref
-                                                            _g74261_
+                                                            _g71637_
                                                             1))))
                                                     (if (gx#stx-null?
-                                                         _tl7046570526_)
-                                                        (letrec ((_loop7046670529_
+                                                         _tl6784267903_)
+                                                        (letrec ((_loop6784367906_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (lambda (_hd7046470533_ _arg7047070536_)
-                            (if (gx#stx-pair? _hd7046470533_)
-                                (let ((_e7046770539_
-                                       (gx#syntax-e _hd7046470533_)))
-                                  (let ((_lp-hd7046870543_
+                          (lambda (_hd6784167910_ _arg6784767913_)
+                            (if (gx#stx-pair? _hd6784167910_)
+                                (let ((_e6784467916_
+                                       (gx#syntax-e _hd6784167910_)))
+                                  (let ((_lp-hd6784567920_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _e7046770539_)))
-                                        (_lp-tl7046970546_
+                                           (##car _e6784467916_)))
+                                        (_lp-tl6784667923_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _e7046770539_))))
-                                    (_loop7046670529_
-                                     _lp-tl7046970546_
+                                           (##cdr _e6784467916_))))
+                                    (_loop6784367906_
+                                     _lp-tl6784667923_
                                      (let ()
                                        (declare (not safe))
-                                       (cons _lp-hd7046870543_
-                                             _arg7047070536_)))))
-                                (let ((_arg7047170549_
-                                       (reverse _arg7047070536_)))
-                                  (if (gx#stx-pair? _tl7045770510_)
-                                      (let ((_e7047470553_
-                                             (gx#syntax-e _tl7045770510_)))
-                                        (let ((_hd7047370557_
+                                       (cons _lp-hd6784567920_
+                                             _arg6784767913_)))))
+                                (let ((_arg6784867926_
+                                       (reverse _arg6784767913_)))
+                                  (if (gx#stx-pair? _tl6783667887_)
+                                      (let ((_e6784967930_
+                                             (gx#syntax-e _tl6783667887_)))
+                                        (let ((_hd6785067934_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _e7047470553_)))
-                                              (_tl7047270560_
+                                                 (##car _e6784967930_)))
+                                              (_tl6785167937_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _e7047470553_))))
-                                          (if (gx#stx-pair? _tl7047270560_)
-                                              (let ((_e7047770563_
+                                                 (##cdr _e6784967930_))))
+                                          (if (gx#stx-pair? _tl6785167937_)
+                                              (let ((_e6785267940_
                                                      (gx#syntax-e
-                                                      _tl7047270560_)))
-                                                (let ((_hd7047670567_
+                                                      _tl6785167937_)))
+                                                (let ((_hd6785367944_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _e7047770563_)))
-                                                      (_tl7047570570_
+                                                         (##car _e6785267940_)))
+                                                      (_tl6785467947_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _e7047770563_))))
+                                                         (##cdr _e6785267940_))))
                                                   (if (gx#stx-pair?
-                                                       _tl7047570570_)
-                                                      (let ((_e7048070573_
+                                                       _tl6785467947_)
+                                                      (let ((_e6785567950_
                                                              (gx#syntax-e
-                                                              _tl7047570570_)))
-                                                        (let ((_hd7047970577_
+                                                              _tl6785467947_)))
+                                                        (let ((_hd6785667954_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##car _e7048070573_)))
-                      (_tl7047870580_
-                       (let () (declare (not safe)) (##cdr _e7048070573_))))
-                  (if (gx#stx-null? _tl7047870580_)
-                      ((lambda (_L70583_ _L70585_ _L70586_ _L70587_ _L70588_)
-                         (let ((__tmp74320 (gx#datum->syntax '#f 'defmethod))
-                               (__tmp74263
-                                (let ((__tmp74315
-                                       (let ((__tmp74319
+                         (##car _e6785567950_)))
+                      (_tl6785767957_
+                       (let () (declare (not safe)) (##cdr _e6785567950_))))
+                  (if (gx#stx-null? _tl6785767957_)
+                      ((lambda (_L67960_ _L67962_ _L67963_ _L67964_ _L67965_)
+                         (let ((__tmp71696 (gx#datum->syntax '#f 'defmethod))
+                               (__tmp71639
+                                (let ((__tmp71691
+                                       (let ((__tmp71695
                                               (gx#datum->syntax '#f '@method))
-                                             (__tmp74316
-                                              (let ((__tmp74317
-                                                     (let ((__tmp74318
+                                             (__tmp71692
+                                              (let ((__tmp71693
+                                                     (let ((__tmp71694
                                                             (gx#datum->syntax
                                                              '#f
                                                              'locked-hash-table)))
                                                        (declare (not safe))
-                                                       (cons __tmp74318 '()))))
+                                                       (cons __tmp71694 '()))))
                                                 (declare (not safe))
-                                                (cons _L70588_ __tmp74317))))
+                                                (cons _L67965_ __tmp71693))))
                                          (declare (not safe))
-                                         (cons __tmp74319 __tmp74316)))
-                                      (__tmp74264
-                                       (let ((__tmp74265
-                                              (let ((__tmp74314
+                                         (cons __tmp71695 __tmp71692)))
+                                      (__tmp71640
+                                       (let ((__tmp71641
+                                              (let ((__tmp71690
                                                      (gx#datum->syntax
                                                       '#f
                                                       'lambda))
-                                                    (__tmp74266
-                                                     (let ((__tmp74310
-                                                            (let ((__tmp74313
+                                                    (__tmp71642
+                                                     (let ((__tmp71686
+                                                            (let ((__tmp71689
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (gx#datum->syntax '#f 'self))
-                          (__tmp74311
-                           (let ((__tmp74312
-                                  (lambda (_g7061870621_ _g7061970624_)
+                          (__tmp71687
+                           (let ((__tmp71688
+                                  (lambda (_g6799367998_ _g6799468001_)
                                     (let ()
                                       (declare (not safe))
-                                      (cons _g7061870621_ _g7061970624_)))))
+                                      (cons _g6799367998_ _g6799468001_)))))
                              (declare (not safe))
-                             (foldr1 __tmp74312 '() _L70587_))))
+                             (foldr1 __tmp71688 '() _L67964_))))
                       (declare (not safe))
-                      (cons __tmp74313 __tmp74311)))
-                   (__tmp74267
-                    (let ((__tmp74268
-                           (let ((__tmp74309 (gx#datum->syntax '#f 'let))
-                                 (__tmp74269
-                                  (let ((__tmp74293
-                                         (let ((__tmp74302
-                                                (let ((__tmp74308
+                      (cons __tmp71689 __tmp71687)))
+                   (__tmp71643
+                    (let ((__tmp71644
+                           (let ((__tmp71685 (gx#datum->syntax '#f 'let))
+                                 (__tmp71645
+                                  (let ((__tmp71669
+                                         (let ((__tmp71678
+                                                (let ((__tmp71684
                                                        (gx#datum->syntax
                                                         '#f
                                                         'h))
-                                                      (__tmp74303
-                                                       (let ((__tmp74304
-                                                              (let ((__tmp74307
+                                                      (__tmp71679
+                                                       (let ((__tmp71680
+                                                              (let ((__tmp71683
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#datum->syntax '#f '&locked-hash-table-table))
-                            (__tmp74305
-                             (let ((__tmp74306 (gx#datum->syntax '#f 'self)))
+                            (__tmp71681
+                             (let ((__tmp71682 (gx#datum->syntax '#f 'self)))
                                (declare (not safe))
-                               (cons __tmp74306 '()))))
+                               (cons __tmp71682 '()))))
                         (declare (not safe))
-                        (cons __tmp74307 __tmp74305))))
+                        (cons __tmp71683 __tmp71681))))
                  (declare (not safe))
-                 (cons __tmp74304 '()))))
+                 (cons __tmp71680 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74308
-                                                        __tmp74303)))
-                                               (__tmp74294
-                                                (let ((__tmp74295
-                                                       (let ((__tmp74301
+                                                  (cons __tmp71684
+                                                        __tmp71679)))
+                                               (__tmp71670
+                                                (let ((__tmp71671
+                                                       (let ((__tmp71677
                                                               (gx#datum->syntax
                                                                '#f
                                                                'l))
-                                                             (__tmp74296
-                                                              (let ((__tmp74297
+                                                             (__tmp71672
+                                                              (let ((__tmp71673
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp74300
+                             (let ((__tmp71676
                                     (gx#datum->syntax
                                      '#f
                                      '&locked-hash-table-lock))
-                                   (__tmp74298
-                                    (let ((__tmp74299
+                                   (__tmp71674
+                                    (let ((__tmp71675
                                            (gx#datum->syntax '#f 'self)))
                                       (declare (not safe))
-                                      (cons __tmp74299 '()))))
+                                      (cons __tmp71675 '()))))
                                (declare (not safe))
-                               (cons __tmp74300 __tmp74298))))
+                               (cons __tmp71676 __tmp71674))))
                         (declare (not safe))
-                        (cons __tmp74297 '()))))
+                        (cons __tmp71673 '()))))
                  (declare (not safe))
-                 (cons __tmp74301 __tmp74296))))
+                 (cons __tmp71677 __tmp71672))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74295 '()))))
+                                                  (cons __tmp71671 '()))))
                                            (declare (not safe))
-                                           (cons __tmp74302 __tmp74294)))
-                                        (__tmp74270
-                                         (let ((__tmp74271
-                                                (let ((__tmp74292
+                                           (cons __tmp71678 __tmp71670)))
+                                        (__tmp71646
+                                         (let ((__tmp71647
+                                                (let ((__tmp71668
                                                        (gx#datum->syntax
                                                         '#f
                                                         'dynamic-wind))
-                                                      (__tmp74272
-                                                       (let ((__tmp74287
-                                                              (let ((__tmp74291
+                                                      (__tmp71648
+                                                       (let ((__tmp71663
+                                                              (let ((__tmp71667
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#datum->syntax '#f 'cut))
-                            (__tmp74288
-                             (let ((__tmp74289
-                                    (let ((__tmp74290
+                            (__tmp71664
+                             (let ((__tmp71665
+                                    (let ((__tmp71666
                                            (gx#datum->syntax '#f 'l)))
                                       (declare (not safe))
-                                      (cons __tmp74290 '()))))
+                                      (cons __tmp71666 '()))))
                                (declare (not safe))
-                               (cons _L70586_ __tmp74289))))
+                               (cons _L67963_ __tmp71665))))
                         (declare (not safe))
-                        (cons __tmp74291 __tmp74288)))
-                     (__tmp74273
-                      (let ((__tmp74280
-                             (let ((__tmp74286 (gx#datum->syntax '#f 'cut))
-                                   (__tmp74281
-                                    (let ((__tmp74282
-                                           (let ((__tmp74285
+                        (cons __tmp71667 __tmp71664)))
+                     (__tmp71649
+                      (let ((__tmp71656
+                             (let ((__tmp71662 (gx#datum->syntax '#f 'cut))
+                                   (__tmp71657
+                                    (let ((__tmp71658
+                                           (let ((__tmp71661
                                                   (gx#datum->syntax '#f 'h))
-                                                 (__tmp74283
-                                                  (let ((__tmp74284
-                                                         (lambda (_g7061670627_
+                                                 (__tmp71659
+                                                  (let ((__tmp71660
+                                                         (lambda (_g6799568004_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g7061770630_)
+                          _g6799668007_)
                    (let ()
                      (declare (not safe))
-                     (cons _g7061670627_ _g7061770630_)))))
+                     (cons _g6799568004_ _g6799668007_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (foldr1 __tmp74284
+                                                    (foldr1 __tmp71660
                                                             '()
-                                                            _L70587_))))
+                                                            _L67964_))))
                                              (declare (not safe))
-                                             (cons __tmp74285 __tmp74283))))
+                                             (cons __tmp71661 __tmp71659))))
                                       (declare (not safe))
-                                      (cons _L70585_ __tmp74282))))
+                                      (cons _L67962_ __tmp71658))))
                                (declare (not safe))
-                               (cons __tmp74286 __tmp74281)))
-                            (__tmp74274
-                             (let ((__tmp74275
-                                    (let ((__tmp74279
+                               (cons __tmp71662 __tmp71657)))
+                            (__tmp71650
+                             (let ((__tmp71651
+                                    (let ((__tmp71655
                                            (gx#datum->syntax '#f 'cut))
-                                          (__tmp74276
-                                           (let ((__tmp74277
-                                                  (let ((__tmp74278
+                                          (__tmp71652
+                                           (let ((__tmp71653
+                                                  (let ((__tmp71654
                                                          (gx#datum->syntax
                                                           '#f
                                                           'l)))
                                                     (declare (not safe))
-                                                    (cons __tmp74278 '()))))
+                                                    (cons __tmp71654 '()))))
                                              (declare (not safe))
-                                             (cons _L70583_ __tmp74277))))
+                                             (cons _L67960_ __tmp71653))))
                                       (declare (not safe))
-                                      (cons __tmp74279 __tmp74276))))
+                                      (cons __tmp71655 __tmp71652))))
                                (declare (not safe))
-                               (cons __tmp74275 '()))))
+                               (cons __tmp71651 '()))))
                         (declare (not safe))
-                        (cons __tmp74280 __tmp74274))))
+                        (cons __tmp71656 __tmp71650))))
                  (declare (not safe))
-                 (cons __tmp74287 __tmp74273))))
+                 (cons __tmp71663 __tmp71649))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74292
-                                                        __tmp74272))))
+                                                  (cons __tmp71668
+                                                        __tmp71648))))
                                            (declare (not safe))
-                                           (cons __tmp74271 '()))))
+                                           (cons __tmp71647 '()))))
                                     (declare (not safe))
-                                    (cons __tmp74293 __tmp74270))))
+                                    (cons __tmp71669 __tmp71646))))
                              (declare (not safe))
-                             (cons __tmp74309 __tmp74269))))
+                             (cons __tmp71685 __tmp71645))))
                       (declare (not safe))
-                      (cons __tmp74268 '()))))
+                      (cons __tmp71644 '()))))
                (declare (not safe))
-               (cons __tmp74310 __tmp74267))))
+               (cons __tmp71686 __tmp71643))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp74314 __tmp74266))))
+                                                (cons __tmp71690 __tmp71642))))
                                          (declare (not safe))
-                                         (cons __tmp74265 '()))))
+                                         (cons __tmp71641 '()))))
                                   (declare (not safe))
-                                  (cons __tmp74315 __tmp74264))))
+                                  (cons __tmp71691 __tmp71640))))
                            (declare (not safe))
-                           (cons __tmp74320 __tmp74263)))
-                       _hd7047970577_
-                       _hd7047670567_
-                       _hd7047370557_
-                       _arg7047170549_
-                       _hd7046170517_)
-                      (_g7044770486_ _g7044870490_))))
-              (_g7044770486_ _g7044870490_))))
+                           (cons __tmp71696 __tmp71639)))
+                       _hd6785667954_
+                       _hd6785367944_
+                       _hd6785067934_
+                       _arg6784867926_
+                       _hd6783867894_)
+                      (_g6782467863_ _g6782567867_))))
+              (_g6782467863_ _g6782567867_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7044770486_ _g7044870490_))))
-                                      (_g7044770486_ _g7044870490_)))))))
-                  (_loop7046670529_ _target7046370523_ '()))
-                (_g7044770486_ _g7044870490_)))))
+                                              (_g6782467863_ _g6782567867_))))
+                                      (_g6782467863_ _g6782567867_)))))))
+                  (_loop6784367906_ _target6784067900_ '()))
+                (_g6782467863_ _g6782567867_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7044770486_ _g7044870490_))))
-                                      (_g7044770486_ _g7044870490_))))
-                              (_g7044770486_ _g7044870490_))))
-                      (_g7044770486_ _g7044870490_)))))
-          (_g7044670633_ _$stx70443_))))
+                                              (_g6782467863_ _g6782567867_))))
+                                      (_g6782467863_ _g6782567867_))))
+                              (_g6782467863_ _g6782567867_))))
+                      (_g6782467863_ _g6782567867_)))))
+          (_g6782368010_ _$stx67820_))))
     (define |[:0:]#defchecked-hash-method|
-      (lambda (_$stx70654_)
-        (let* ((_g7065870697_
-                (lambda (_g7065970693_)
+      (lambda (_$stx68031_)
+        (let* ((_g6803568074_
+                (lambda (_g6803668070_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g7065970693_)))
-               (_g7065770844_
-                (lambda (_g7065970701_)
-                  (if (gx#stx-pair? _g7065970701_)
-                      (let ((_e7066770704_ (gx#syntax-e _g7065970701_)))
-                        (let ((_hd7066670708_
+                   _g6803668070_)))
+               (_g6803468221_
+                (lambda (_g6803668078_)
+                  (if (gx#stx-pair? _g6803668078_)
+                      (let ((_e6804268081_ (gx#syntax-e _g6803668078_)))
+                        (let ((_hd6804368085_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e7066770704_)))
-                              (_tl7066570711_
+                                 (##car _e6804268081_)))
+                              (_tl6804468088_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e7066770704_))))
-                          (if (gx#stx-pair? _tl7066570711_)
-                              (let ((_e7067070714_
-                                     (gx#syntax-e _tl7066570711_)))
-                                (let ((_hd7066970718_
+                                 (##cdr _e6804268081_))))
+                          (if (gx#stx-pair? _tl6804468088_)
+                              (let ((_e6804568091_
+                                     (gx#syntax-e _tl6804468088_)))
+                                (let ((_hd6804668095_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e7067070714_)))
-                                      (_tl7066870721_
+                                         (##car _e6804568091_)))
+                                      (_tl6804768098_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e7067070714_))))
-                                  (if (gx#stx-pair? _hd7066970718_)
-                                      (let ((_e7067370724_
-                                             (gx#syntax-e _hd7066970718_)))
-                                        (let ((_hd7067270728_
+                                         (##cdr _e6804568091_))))
+                                  (if (gx#stx-pair? _hd6804668095_)
+                                      (let ((_e6804868101_
+                                             (gx#syntax-e _hd6804668095_)))
+                                        (let ((_hd6804968105_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _e7067370724_)))
-                                              (_tl7067170731_
+                                                 (##car _e6804868101_)))
+                                              (_tl6805068108_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _e7067370724_))))
-                                          (if (gx#stx-pair? _tl7067170731_)
-                                              (let ((_e7067670734_
+                                                 (##cdr _e6804868101_))))
+                                          (if (gx#stx-pair? _tl6805068108_)
+                                              (let ((_e6805168111_
                                                      (gx#syntax-e
-                                                      _tl7067170731_)))
-                                                (let ((_hd7067570738_
+                                                      _tl6805068108_)))
+                                                (let ((_hd6805268115_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _e7067670734_)))
-                                                      (_tl7067470741_
+                                                         (##car _e6805168111_)))
+                                                      (_tl6805368118_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _e7067670734_))))
+                                                         (##cdr _e6805168111_))))
                                                   (if (gx#stx-pair/null?
-                                                       _tl7067470741_)
-                                                      (let ((_g74321_
+                                                       _tl6805368118_)
+                                                      (let ((_g71697_
                                                              (gx#syntax-split-splice
-                                                              _tl7067470741_
+                                                              _tl6805368118_
                                                               '0)))
                                                         (begin
-                                                          (let ((_g74322_
+                                                          (let ((_g71698_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (if (##values? _g74321_)
-                               (##vector-length _g74321_)
+                           (if (##values? _g71697_)
+                               (##vector-length _g71697_)
                                1))))
-                    (if (not (let () (declare (not safe)) (##fx= _g74322_ 2)))
-                        (error "Context expects 2 values" _g74322_)))
-                  (let ((_target7067770744_
+                    (if (not (let () (declare (not safe)) (##fx= _g71698_ 2)))
+                        (error "Context expects 2 values" _g71698_)))
+                  (let ((_target6805468121_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _g74321_ 0)))
-                        (_tl7067970747_
+                           (##vector-ref _g71697_ 0)))
+                        (_tl6805668124_
                          (let ()
                            (declare (not safe))
-                           (##vector-ref _g74321_ 1))))
-                    (if (gx#stx-null? _tl7067970747_)
-                        (letrec ((_loop7068070750_
-                                  (lambda (_hd7067870754_ _arg7068470757_)
-                                    (if (gx#stx-pair? _hd7067870754_)
-                                        (let ((_e7068170760_
-                                               (gx#syntax-e _hd7067870754_)))
-                                          (let ((_lp-hd7068270764_
+                           (##vector-ref _g71697_ 1))))
+                    (if (gx#stx-null? _tl6805668124_)
+                        (letrec ((_loop6805768127_
+                                  (lambda (_hd6805568131_ _arg6806168134_)
+                                    (if (gx#stx-pair? _hd6805568131_)
+                                        (let ((_e6805868137_
+                                               (gx#syntax-e _hd6805568131_)))
+                                          (let ((_lp-hd6805968141_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _e7068170760_)))
-                                                (_lp-tl7068370767_
+                                                   (##car _e6805868137_)))
+                                                (_lp-tl6806068144_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _e7068170760_))))
-                                            (_loop7068070750_
-                                             _lp-tl7068370767_
+                                                   (##cdr _e6805868137_))))
+                                            (_loop6805768127_
+                                             _lp-tl6806068144_
                                              (let ()
                                                (declare (not safe))
-                                               (cons _lp-hd7068270764_
-                                                     _arg7068470757_)))))
-                                        (let ((_arg7068570770_
-                                               (reverse _arg7068470757_)))
-                                          (if (gx#stx-pair? _tl7066870721_)
-                                              (let ((_e7068870774_
+                                               (cons _lp-hd6805968141_
+                                                     _arg6806168134_)))))
+                                        (let ((_arg6806268147_
+                                               (reverse _arg6806168134_)))
+                                          (if (gx#stx-pair? _tl6804768098_)
+                                              (let ((_e6806368151_
                                                      (gx#syntax-e
-                                                      _tl7066870721_)))
-                                                (let ((_hd7068770778_
+                                                      _tl6804768098_)))
+                                                (let ((_hd6806468155_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##car _e7068870774_)))
-                                                      (_tl7068670781_
+                                                         (##car _e6806368151_)))
+                                                      (_tl6806568158_
                                                        (let ()
                                                          (declare (not safe))
-                                                         (##cdr _e7068870774_))))
+                                                         (##cdr _e6806368151_))))
                                                   (if (gx#stx-pair?
-                                                       _tl7068670781_)
-                                                      (let ((_e7069170784_
+                                                       _tl6806568158_)
+                                                      (let ((_e6806668161_
                                                              (gx#syntax-e
-                                                              _tl7068670781_)))
-                                                        (let ((_hd7069070788_
+                                                              _tl6806568158_)))
+                                                        (let ((_hd6806768165_
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (##car _e7069170784_)))
-                      (_tl7068970791_
-                       (let () (declare (not safe)) (##cdr _e7069170784_))))
-                  (if (gx#stx-null? _tl7068970791_)
-                      ((lambda (_L70794_ _L70796_ _L70797_ _L70798_ _L70799_)
-                         (let ((__tmp74364 (gx#datum->syntax '#f 'defmethod))
-                               (__tmp74323
-                                (let ((__tmp74359
-                                       (let ((__tmp74363
+                         (##car _e6806668161_)))
+                      (_tl6806868168_
+                       (let () (declare (not safe)) (##cdr _e6806668161_))))
+                  (if (gx#stx-null? _tl6806868168_)
+                      ((lambda (_L68171_ _L68173_ _L68174_ _L68175_ _L68176_)
+                         (let ((__tmp71740 (gx#datum->syntax '#f 'defmethod))
+                               (__tmp71699
+                                (let ((__tmp71735
+                                       (let ((__tmp71739
                                               (gx#datum->syntax '#f '@method))
-                                             (__tmp74360
-                                              (let ((__tmp74361
-                                                     (let ((__tmp74362
+                                             (__tmp71736
+                                              (let ((__tmp71737
+                                                     (let ((__tmp71738
                                                             (gx#datum->syntax
                                                              '#f
                                                              'checked-hash-table)))
                                                        (declare (not safe))
-                                                       (cons __tmp74362 '()))))
+                                                       (cons __tmp71738 '()))))
                                                 (declare (not safe))
-                                                (cons _L70799_ __tmp74361))))
+                                                (cons _L68176_ __tmp71737))))
                                          (declare (not safe))
-                                         (cons __tmp74363 __tmp74360)))
-                                      (__tmp74324
-                                       (let ((__tmp74325
-                                              (let ((__tmp74358
+                                         (cons __tmp71739 __tmp71736)))
+                                      (__tmp71700
+                                       (let ((__tmp71701
+                                              (let ((__tmp71734
                                                      (gx#datum->syntax
                                                       '#f
                                                       'lambda))
-                                                    (__tmp74326
-                                                     (let ((__tmp74355
-                                                            (let ((__tmp74356
+                                                    (__tmp71702
+                                                     (let ((__tmp71731
+                                                            (let ((__tmp71732
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp74357
-                                  (lambda (_g7082970832_ _g7083070835_)
+                           (let ((__tmp71733
+                                  (lambda (_g6820468209_ _g6820568212_)
                                     (let ()
                                       (declare (not safe))
-                                      (cons _g7082970832_ _g7083070835_)))))
+                                      (cons _g6820468209_ _g6820568212_)))))
                              (declare (not safe))
-                             (foldr1 __tmp74357 '() _L70797_))))
+                             (foldr1 __tmp71733 '() _L68174_))))
                       (declare (not safe))
-                      (cons _L70798_ __tmp74356)))
-                   (__tmp74327
-                    (let ((__tmp74328
-                           (let ((__tmp74354 (gx#datum->syntax '#f 'let))
-                                 (__tmp74329
-                                  (let ((__tmp74340
-                                         (let ((__tmp74348
-                                                (let ((__tmp74353
+                      (cons _L68175_ __tmp71732)))
+                   (__tmp71703
+                    (let ((__tmp71704
+                           (let ((__tmp71730 (gx#datum->syntax '#f 'let))
+                                 (__tmp71705
+                                  (let ((__tmp71716
+                                         (let ((__tmp71724
+                                                (let ((__tmp71729
                                                        (gx#datum->syntax
                                                         '#f
                                                         'h))
-                                                      (__tmp74349
-                                                       (let ((__tmp74350
-                                                              (let ((__tmp74352
+                                                      (__tmp71725
+                                                       (let ((__tmp71726
+                                                              (let ((__tmp71728
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#datum->syntax '#f '&checked-hash-table-table))
-                            (__tmp74351
+                            (__tmp71727
                              (let ()
                                (declare (not safe))
-                               (cons _L70798_ '()))))
+                               (cons _L68175_ '()))))
                         (declare (not safe))
-                        (cons __tmp74352 __tmp74351))))
+                        (cons __tmp71728 __tmp71727))))
                  (declare (not safe))
-                 (cons __tmp74350 '()))))
+                 (cons __tmp71726 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74353
-                                                        __tmp74349)))
-                                               (__tmp74341
-                                                (let ((__tmp74342
-                                                       (let ((__tmp74347
+                                                  (cons __tmp71729
+                                                        __tmp71725)))
+                                               (__tmp71717
+                                                (let ((__tmp71718
+                                                       (let ((__tmp71723
                                                               (gx#datum->syntax
                                                                '#f
                                                                'key?))
-                                                             (__tmp74343
-                                                              (let ((__tmp74344
+                                                             (__tmp71719
+                                                              (let ((__tmp71720
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp74346
+                             (let ((__tmp71722
                                     (gx#datum->syntax
                                      '#f
                                      '&checked-hash-table-key-check))
-                                   (__tmp74345
+                                   (__tmp71721
                                     (let ()
                                       (declare (not safe))
-                                      (cons _L70798_ '()))))
+                                      (cons _L68175_ '()))))
                                (declare (not safe))
-                               (cons __tmp74346 __tmp74345))))
+                               (cons __tmp71722 __tmp71721))))
                         (declare (not safe))
-                        (cons __tmp74344 '()))))
+                        (cons __tmp71720 '()))))
                  (declare (not safe))
-                 (cons __tmp74347 __tmp74343))))
+                 (cons __tmp71723 __tmp71719))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74342 '()))))
+                                                  (cons __tmp71718 '()))))
                                            (declare (not safe))
-                                           (cons __tmp74348 __tmp74341)))
-                                        (__tmp74330
-                                         (let ((__tmp74337
-                                                (let ((__tmp74338
-                                                       (let ((__tmp74339
+                                           (cons __tmp71724 __tmp71717)))
+                                        (__tmp71706
+                                         (let ((__tmp71713
+                                                (let ((__tmp71714
+                                                       (let ((__tmp71715
                                                               (gx#datum->syntax
                                                                '#f
                                                                'key?)))
                                                          (declare (not safe))
-                                                         (cons __tmp74339
+                                                         (cons __tmp71715
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons _L70796_ __tmp74338)))
-                                               (__tmp74331
-                                                (let ((__tmp74332
-                                                       (let ((__tmp74333
-                                                              (let ((__tmp74336
+                                                  (cons _L68173_ __tmp71714)))
+                                               (__tmp71707
+                                                (let ((__tmp71708
+                                                       (let ((__tmp71709
+                                                              (let ((__tmp71712
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (gx#datum->syntax '#f 'h))
-                            (__tmp74334
-                             (let ((__tmp74335
-                                    (lambda (_g7082770838_ _g7082870841_)
+                            (__tmp71710
+                             (let ((__tmp71711
+                                    (lambda (_g6820668215_ _g6820768218_)
                                       (let ()
                                         (declare (not safe))
-                                        (cons _g7082770838_ _g7082870841_)))))
+                                        (cons _g6820668215_ _g6820768218_)))))
                                (declare (not safe))
-                               (foldr1 __tmp74335 '() _L70797_))))
+                               (foldr1 __tmp71711 '() _L68174_))))
                         (declare (not safe))
-                        (cons __tmp74336 __tmp74334))))
+                        (cons __tmp71712 __tmp71710))))
                  (declare (not safe))
-                 (cons _L70794_ __tmp74333))))
+                 (cons _L68171_ __tmp71709))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp74332 '()))))
+                                                  (cons __tmp71708 '()))))
                                            (declare (not safe))
-                                           (cons __tmp74337 __tmp74331))))
+                                           (cons __tmp71713 __tmp71707))))
                                     (declare (not safe))
-                                    (cons __tmp74340 __tmp74330))))
+                                    (cons __tmp71716 __tmp71706))))
                              (declare (not safe))
-                             (cons __tmp74354 __tmp74329))))
+                             (cons __tmp71730 __tmp71705))))
                       (declare (not safe))
-                      (cons __tmp74328 '()))))
+                      (cons __tmp71704 '()))))
                (declare (not safe))
-               (cons __tmp74355 __tmp74327))))
+               (cons __tmp71731 __tmp71703))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp74358 __tmp74326))))
+                                                (cons __tmp71734 __tmp71702))))
                                          (declare (not safe))
-                                         (cons __tmp74325 '()))))
+                                         (cons __tmp71701 '()))))
                                   (declare (not safe))
-                                  (cons __tmp74359 __tmp74324))))
+                                  (cons __tmp71735 __tmp71700))))
                            (declare (not safe))
-                           (cons __tmp74364 __tmp74323)))
-                       _hd7069070788_
-                       _hd7068770778_
-                       _arg7068570770_
-                       _hd7067570738_
-                       _hd7067270728_)
-                      (_g7065870697_ _g7065970701_))))
-              (_g7065870697_ _g7065970701_))))
+                           (cons __tmp71740 __tmp71699)))
+                       _hd6806768165_
+                       _hd6806468155_
+                       _arg6806268147_
+                       _hd6805268115_
+                       _hd6804968105_)
+                      (_g6803568074_ _g6803668078_))))
+              (_g6803568074_ _g6803668078_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7065870697_
-                                               _g7065970701_)))))))
-                          (_loop7068070750_ _target7067770744_ '()))
-                        (_g7065870697_ _g7065970701_)))))
-              (_g7065870697_ _g7065970701_))))
+                                              (_g6803568074_
+                                               _g6803668078_)))))))
+                          (_loop6805768127_ _target6805468121_ '()))
+                        (_g6803568074_ _g6803668078_)))))
+              (_g6803568074_ _g6803668078_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_g7065870697_ _g7065970701_))))
-                                      (_g7065870697_ _g7065970701_))))
-                              (_g7065870697_ _g7065970701_))))
-                      (_g7065870697_ _g7065970701_)))))
-          (_g7065770844_ _$stx70654_))))
+                                              (_g6803568074_ _g6803668078_))))
+                                      (_g6803568074_ _g6803668078_))))
+                              (_g6803568074_ _g6803668078_))))
+                      (_g6803568074_ _g6803668078_)))))
+          (_g6803468221_ _$stx68031_))))
     (define |[:0:]#check-hash-arg|
-      (lambda (_$stx70849_)
-        (let* ((_g7085370871_
-                (lambda (_g7085470867_)
+      (lambda (_$stx68226_)
+        (let* ((_g6823068248_
+                (lambda (_g6823168244_)
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid match target"
-                   _g7085470867_)))
-               (_g7085270926_
-                (lambda (_g7085470875_)
-                  (if (gx#stx-pair? _g7085470875_)
-                      (let ((_e7085970878_ (gx#syntax-e _g7085470875_)))
-                        (let ((_hd7085870882_
+                   _g6823168244_)))
+               (_g6822968303_
+                (lambda (_g6823168252_)
+                  (if (gx#stx-pair? _g6823168252_)
+                      (let ((_e6823468255_ (gx#syntax-e _g6823168252_)))
+                        (let ((_hd6823568259_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e7085970878_)))
-                              (_tl7085770885_
+                                 (##car _e6823468255_)))
+                              (_tl6823668262_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e7085970878_))))
-                          (if (gx#stx-pair? _tl7085770885_)
-                              (let ((_e7086270888_
-                                     (gx#syntax-e _tl7085770885_)))
-                                (let ((_hd7086170892_
+                                 (##cdr _e6823468255_))))
+                          (if (gx#stx-pair? _tl6823668262_)
+                              (let ((_e6823768265_
+                                     (gx#syntax-e _tl6823668262_)))
+                                (let ((_hd6823868269_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e7086270888_)))
-                                      (_tl7086070895_
+                                         (##car _e6823768265_)))
+                                      (_tl6823968272_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e7086270888_))))
-                                  (if (gx#stx-pair? _tl7086070895_)
-                                      (let ((_e7086570898_
-                                             (gx#syntax-e _tl7086070895_)))
-                                        (let ((_hd7086470902_
+                                         (##cdr _e6823768265_))))
+                                  (if (gx#stx-pair? _tl6823968272_)
+                                      (let ((_e6824068275_
+                                             (gx#syntax-e _tl6823968272_)))
+                                        (let ((_hd6824168279_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##car _e7086570898_)))
-                                              (_tl7086370905_
+                                                 (##car _e6824068275_)))
+                                              (_tl6824268282_
                                                (let ()
                                                  (declare (not safe))
-                                                 (##cdr _e7086570898_))))
-                                          (if (gx#stx-null? _tl7086370905_)
-                                              ((lambda (_L70908_ _L70910_)
-                                                 (let ((__tmp74373
+                                                 (##cdr _e6824068275_))))
+                                          (if (gx#stx-null? _tl6824268282_)
+                                              ((lambda (_L68285_ _L68287_)
+                                                 (let ((__tmp71749
                                                         (gx#datum->syntax
                                                          '#f
                                                          'unless))
-                                                       (__tmp74365
-                                                        (let ((__tmp74371
-                                                               (let ((__tmp74372
+                                                       (__tmp71741
+                                                        (let ((__tmp71747
+                                                               (let ((__tmp71748
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (let ()
                                 (declare (not safe))
-                                (cons _L70908_ '()))))
+                                (cons _L68285_ '()))))
                          (declare (not safe))
-                         (cons _L70910_ __tmp74372)))
-                      (__tmp74366
-                       (let ((__tmp74367
-                              (let ((__tmp74370 (gx#datum->syntax '#f 'error))
-                                    (__tmp74368
-                                     (let ((__tmp74369
+                         (cons _L68287_ __tmp71748)))
+                      (__tmp71742
+                       (let ((__tmp71743
+                              (let ((__tmp71746 (gx#datum->syntax '#f 'error))
+                                    (__tmp71744
+                                     (let ((__tmp71745
                                             (let ()
                                               (declare (not safe))
-                                              (cons _L70908_ '()))))
+                                              (cons _L68285_ '()))))
                                        (declare (not safe))
-                                       (cons '"invalid argument" __tmp74369))))
+                                       (cons '"invalid argument" __tmp71745))))
                                 (declare (not safe))
-                                (cons __tmp74370 __tmp74368))))
+                                (cons __tmp71746 __tmp71744))))
                          (declare (not safe))
-                         (cons __tmp74367 '()))))
+                         (cons __tmp71743 '()))))
                   (declare (not safe))
-                  (cons __tmp74371 __tmp74366))))
+                  (cons __tmp71747 __tmp71742))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp74373
-                                                         __tmp74365)))
-                                               _hd7086470902_
-                                               _hd7086170892_)
-                                              (_g7085370871_ _g7085470875_))))
-                                      (_g7085370871_ _g7085470875_))))
-                              (_g7085370871_ _g7085470875_))))
-                      (_g7085370871_ _g7085470875_)))))
-          (_g7085270926_ _$stx70849_))))))
+                                                   (cons __tmp71749
+                                                         __tmp71741)))
+                                               _hd6824168279_
+                                               _hd6823868269_)
+                                              (_g6823068248_ _g6823168252_))))
+                                      (_g6823068248_ _g6823168252_))))
+                              (_g6823068248_ _g6823168252_))))
+                      (_g6823068248_ _g6823168252_)))))
+          (_g6822968303_ _$stx68226_))))))

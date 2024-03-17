@@ -24,15 +24,6 @@ namespace: gx
           current-expander-module-prelude
           gx#current-expander-module-prelude)
          (%#define-runtime
-          current-expander-module-registry
-          gx#current-expander-module-registry)
-         (%#define-runtime
-          current-expander-module-library-path
-          gx#current-expander-module-library-path)
-         (%#define-runtime
-          current-expander-module-library-package-cache
-          gx#current-expander-module-library-package-cache)
-         (%#define-runtime
           current-expander-allow-rebind?
           gx#current-expander-allow-rebind?)
          (%#define-runtime

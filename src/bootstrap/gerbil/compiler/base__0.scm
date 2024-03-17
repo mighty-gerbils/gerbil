@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/base::timestamp 1710687285)
+  (define gerbil/compiler/base::timestamp 1710694204)
   (begin
     (define gxc#current-compile-symbol-table (make-parameter '#f))
     (define gxc#current-compile-runtime-sections (make-parameter '#f))
@@ -18,25 +18,25 @@
     (define gxc#current-compile-decls (make-parameter '#f))
     (define gxc#current-compile-context (make-parameter '#f))
     (define gxc#symbol-table::t
-      (let ((__tmp99262 (list))
-            (__tmp99260
-             (let ((__tmp99261
+      (let ((__tmp96527 (list))
+            (__tmp96525
+             (let ((__tmp96526
                     (let () (declare (not safe)) (cons 'struct: '#t))))
                (declare (not safe))
-               (cons __tmp99261 '()))))
+               (cons __tmp96526 '()))))
         (declare (not safe))
         (make-class-type
          'gxc#symbol-table::t
          'symbol-table
-         __tmp99262
+         __tmp96527
          '(gensyms bindings)
-         __tmp99260
+         __tmp96525
          ':init!)))
     (define gxc#symbol-table?
       (let () (declare (not safe)) (make-class-predicate gxc#symbol-table::t)))
     (define gxc#make-symbol-table
-      (lambda _$args99213_
-        (apply make-instance gxc#symbol-table::t _$args99213_)))
+      (lambda _$args96478_
+        (apply make-instance gxc#symbol-table::t _$args96478_)))
     (define gxc#symbol-table-gensyms
       (let ()
         (declare (not safe))
@@ -70,49 +70,49 @@
         (declare (not safe))
         (make-class-slot-unchecked-mutator gxc#symbol-table::t 'bindings)))
     (define gxc#symbol-table:::init!
-      (lambda (_self99211_)
-        (if (let ((__tmp99268
+      (lambda (_self96476_)
+        (if (let ((__tmp96528
                    (let ()
                      (declare (not safe))
-                     (##structure-length _self99211_))))
+                     (##structure-length _self96476_))))
               (declare (not safe))
-              (##fx< '2 __tmp99268))
+              (##fx< '2 __tmp96528))
             (begin
-              (let ((__tmp99265
+              (let ((__tmp96530
                      (let () (declare (not safe)) (make-hash-table-eq)))
-                    (__tmp99264
+                    (__tmp96529
                      (let ()
                        (declare (not safe))
-                       (##structure-type _self99211_))))
+                       (##structure-type _self96476_))))
                 (declare (not safe))
                 (##unchecked-structure-set!
-                 _self99211_
-                 __tmp99265
+                 _self96476_
+                 __tmp96530
                  '1
-                 __tmp99264
+                 __tmp96529
                  '#f))
-              (let ((__tmp99267
+              (let ((__tmp96532
                      (let () (declare (not safe)) (make-hash-table-eq)))
-                    (__tmp99266
+                    (__tmp96531
                      (let ()
                        (declare (not safe))
-                       (##structure-type _self99211_))))
+                       (##structure-type _self96476_))))
                 (declare (not safe))
                 (##unchecked-structure-set!
-                 _self99211_
-                 __tmp99267
+                 _self96476_
+                 __tmp96532
                  '2
-                 __tmp99266
+                 __tmp96531
                  '#f)))
-            (let ((__tmp99263
+            (let ((__tmp96533
                    (let ()
                      (declare (not safe))
-                     (##vector-length _self99211_))))
+                     (##vector-length _self96476_))))
               (declare (not safe))
               (error '"struct-instance-init!: too many arguments for struct"
-                     _self99211_
+                     _self96476_
                      '2
-                     __tmp99263)))))
+                     __tmp96533)))))
     (let ()
       (declare (not safe))
       (bind-method!__%
@@ -121,46 +121,46 @@
        gxc#symbol-table:::init!
        '#f))
     (define gxc#raise-compile-error
-      (lambda (_message99080_ _stx99081_ . _details99082_)
-        (let ((_ctx99087_
-               (let ((_$e99084_ (gxc#current-compile-context)))
-                 (if _$e99084_ _$e99084_ 'compile))))
+      (lambda (_message96345_ _stx96346_ . _details96347_)
+        (let ((_ctx96352_
+               (let ((_$e96349_ (gxc#current-compile-context)))
+                 (if _$e96349_ _$e96349_ 'compile))))
           (apply gx#raise-syntax-error
-                 _ctx99087_
-                 _message99080_
-                 _stx99081_
-                 _details99082_))))
+                 _ctx96352_
+                 _message96345_
+                 _stx96346_
+                 _details96347_))))
     (define gxc#verbose
-      (lambda _args99077_
+      (lambda _args96342_
         (if (gxc#current-compile-verbose)
-            (let ((__tmp99269 (lambda () (apply displayln _args99077_))))
+            (let ((__tmp96534 (lambda () (apply displayln _args96342_))))
               (declare (not safe))
-              (with-lock gxc#+verbose-mutex+ __tmp99269))
+              (with-lock gxc#+verbose-mutex+ __tmp96534))
             '#!void)))
     (define gxc#+verbose-mutex+ (make-mutex 'compiler/driver))
     (define gxc#module-path-reserved-chars '":#<>&!?*;()[]{}|'`\"\\")
     (define gxc#module-id->path-string
-      (lambda (_id99059_)
-        (let* ((_str99061_
-                (if (let () (declare (not safe)) (symbol? _id99059_))
-                    (symbol->string _id99059_)
-                    _id99059_))
-               (_len99063_ (string-length _str99061_))
-               (_res99065_ (make-string _len99063_)))
-          (let _lp99068_ ((_i99070_ '0))
-            (if (fx< _i99070_ _len99063_)
-                (let* ((_char99072_ (string-ref _str99061_ _i99070_))
-                       (_xchar99074_
+      (lambda (_id96324_)
+        (let* ((_str96326_
+                (if (let () (declare (not safe)) (symbol? _id96324_))
+                    (symbol->string _id96324_)
+                    _id96324_))
+               (_len96328_ (string-length _str96326_))
+               (_res96330_ (make-string _len96328_)))
+          (let _lp96333_ ((_i96335_ '0))
+            (if (fx< _i96335_ _len96328_)
+                (let* ((_char96337_ (string-ref _str96326_ _i96335_))
+                       (_xchar96339_
                         (if (let ()
                               (declare (not safe))
                               (string-index__0
                                gxc#module-path-reserved-chars
-                               _char99072_))
+                               _char96337_))
                             '#\_
-                            _char99072_)))
-                  (string-set! _res99065_ _i99070_ _xchar99074_)
-                  (let ((__tmp99270
-                         (let () (declare (not safe)) (fx+ _i99070_ '1))))
+                            _char96337_)))
+                  (string-set! _res96330_ _i96335_ _xchar96339_)
+                  (let ((__tmp96535
+                         (let () (declare (not safe)) (fx+ _i96335_ '1))))
                     (declare (not safe))
-                    (_lp99068_ __tmp99270)))
-                _res99065_)))))))
+                    (_lp96333_ __tmp96535)))
+                _res96330_)))))))

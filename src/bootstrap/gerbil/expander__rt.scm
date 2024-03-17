@@ -7,4 +7,5 @@
   (load-module "gerbil/expander/module__rt")
   (load-module "gerbil/expander/compile__rt")
   (load-module "gerbil/expander/root__rt")
-  (load-module "gerbil/expander/stxcase__rt"))
+  (load-module "gerbil/expander/stxcase__rt")
+  (load-module "gerbil/expander/init__rt"))

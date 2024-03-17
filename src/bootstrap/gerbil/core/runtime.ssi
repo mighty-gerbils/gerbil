@@ -1869,7 +1869,11 @@ namespace: gerbil/core/runtime
                     (source-location-path? source-location-path?)
                     (source-location-path source-location-path)
                     (replx replx)
+                    (load-path load-path)
+                    (add-load-path! add-load-path!)
+                    (set-load-path! set-load-path!)
                     (load-module load-module)
+                    (reload-module! reload-module!)
                     (gerbil-load-expander! gerbil-load-expander!))))
          (%#module
           <runtime-aliases>

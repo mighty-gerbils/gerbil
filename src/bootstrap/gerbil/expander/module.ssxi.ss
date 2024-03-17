@@ -412,7 +412,6 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#core-library-package-plist__0)
     (2 gx#core-library-package-plist__%)))
-  (declare-type gx#core-library-package-cache (@lambda 0 #f))
   (declare-type gx#core-library-module-path? (@lambda 1 #f))
   (declare-type gx#core-library-relative-module-path? (@lambda 1 #f))
   (declare-type gx#core-special-module-path? (@lambda 2 #f))
