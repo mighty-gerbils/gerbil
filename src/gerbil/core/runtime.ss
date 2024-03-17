@@ -1535,6 +1535,7 @@ package: gerbil/core
     class-type-struct?
     class-type-sealed?
     class-type-metaclass?
+    class-type-system?
     class-type-id
     class-type-name
     class-type-super
@@ -1589,6 +1590,103 @@ package: gerbil/core
     seal-class!
     next-method
     call-next-method
+    class-of
+    t::t
+
+    ;; :gerbil/runtime/mop-system-classes
+    immediate::t
+    atom::t
+    char::t
+    boolean::t
+    true::t
+    false::t
+    void::t
+    eof::t
+    special::t
+    number::t
+    real::t
+    integer::t
+    fixnum::t
+    bignum::t
+    ratnum::t
+    flonum::t
+    cpxnum::t
+    symbolic::t
+    symbol::t
+    keyword::t
+    list::t
+    pair::t
+    null::t
+    sequence::t
+    vector::t
+    string::t
+    hvector::t
+    u8vector::t
+    s8vector::t
+    u16vector::t
+    s16vector::t
+    u32vector::t
+    s32vector::t
+    u64vector::t
+    s64vector::t
+    f32vector::t
+    f64vector::t
+    values::t
+    box::t
+    frame::t
+    continuation::t
+    promise::t
+    weak::t
+    foreign::t
+    procedure::t
+    time::t
+    thread::t
+    thread-group::t
+    mutex::t
+    condvar::t
+    port::t
+    object-port::t
+    character-port::t
+    byte-port::t
+    device-port::t
+    vector-port::t
+    string-port::t
+    u8vector-port::t
+    raw-device-port::t
+    tcp-server-port::t
+    udp-port::t
+    directory-port::t
+    event-queue-port::t
+    table::t
+    readenv::t
+    writeenv::t
+    readtable::t
+    processor::t
+    vm::t
+    file-info::t
+    socket-info::t
+    address-info::t
+
+    special?
+    sequence?
+    hvector?
+    weak?
+    object-port?
+    character-port?
+    byte-port?
+    character-port?
+    device-port?
+    vector-port?
+    string-port?
+    u8vector-port?
+    raw-device-port?
+    tcp-server-port?
+    udp-port?
+    directory-port?
+    event-queue-port?
+    readenv?
+    writenv?
+    vm?
 
     ;; :gerbil/runtime/error
     raise
@@ -1617,6 +1715,11 @@ package: gerbil/core
     unbound-key-error?
     hash-table?
     is-hash-table?
+
+    HashTable::t
+    HashTable::interface
+    HashTableLock::t
+    HashTableLock::interface
 
     make-hash-table
     make-hash-table-eq

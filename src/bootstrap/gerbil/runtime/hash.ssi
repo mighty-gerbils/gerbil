@@ -227,57 +227,57 @@ namespace: #f
          (%#define-runtime &HashTableLock-end-write! &HashTableLock-end-write!)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#define-runtime
-          _locked-hash-table::ref69141_
-          _locked-hash-table::ref69140_)
+          _locked-hash-table::ref70638_
+          _locked-hash-table::ref70637_)
          (%#define-runtime
-          _locked-hash-table::set!69143_
-          _locked-hash-table::set!69142_)
+          _locked-hash-table::set!70640_
+          _locked-hash-table::set!70639_)
          (%#define-runtime
-          _locked-hash-table::update!69145_
-          _locked-hash-table::update!69144_)
+          _locked-hash-table::update!70642_
+          _locked-hash-table::update!70641_)
          (%#define-runtime
-          _locked-hash-table::delete!69147_
-          _locked-hash-table::delete!69146_)
+          _locked-hash-table::delete!70644_
+          _locked-hash-table::delete!70643_)
          (%#define-runtime
-          _locked-hash-table::for-each69149_
-          _locked-hash-table::for-each69148_)
+          _locked-hash-table::for-each70646_
+          _locked-hash-table::for-each70645_)
          (%#define-runtime
-          _locked-hash-table::length69151_
-          _locked-hash-table::length69150_)
+          _locked-hash-table::length70648_
+          _locked-hash-table::length70647_)
          (%#define-runtime
-          _locked-hash-table::copy69153_
-          _locked-hash-table::copy69152_)
+          _locked-hash-table::copy70650_
+          _locked-hash-table::copy70649_)
          (%#define-runtime
-          _locked-hash-table::clear!69155_
-          _locked-hash-table::clear!69154_)
+          _locked-hash-table::clear!70652_
+          _locked-hash-table::clear!70651_)
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
          (%#define-syntax check-hash-arg |[:0:]#check-hash-arg|)
          (%#define-runtime
-          _checked-hash-table::ref69433_
-          _checked-hash-table::ref69432_)
+          _checked-hash-table::ref70930_
+          _checked-hash-table::ref70929_)
          (%#define-runtime
-          _checked-hash-table::set!69435_
-          _checked-hash-table::set!69434_)
+          _checked-hash-table::set!70932_
+          _checked-hash-table::set!70931_)
          (%#define-runtime
-          _checked-hash-table::update!69437_
-          _checked-hash-table::update!69436_)
+          _checked-hash-table::update!70934_
+          _checked-hash-table::update!70933_)
          (%#define-runtime
-          _checked-hash-table::delete!69439_
-          _checked-hash-table::delete!69438_)
+          _checked-hash-table::delete!70936_
+          _checked-hash-table::delete!70935_)
          (%#define-runtime
-          _checked-hash-table::for-each69441_
-          _checked-hash-table::for-each69440_)
+          _checked-hash-table::for-each70938_
+          _checked-hash-table::for-each70937_)
          (%#define-runtime
-          _checked-hash-table::length69443_
-          _checked-hash-table::length69442_)
+          _checked-hash-table::length70940_
+          _checked-hash-table::length70939_)
          (%#define-runtime
-          _checked-hash-table::copy69445_
-          _checked-hash-table::copy69444_)
+          _checked-hash-table::copy70942_
+          _checked-hash-table::copy70941_)
          (%#define-runtime
-          _checked-hash-table::clear!69447_
-          _checked-hash-table::clear!69446_)
+          _checked-hash-table::clear!70944_
+          _checked-hash-table::clear!70943_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
          (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
                   (%#define-runtime make-hash-table__@ make-hash-table__@)

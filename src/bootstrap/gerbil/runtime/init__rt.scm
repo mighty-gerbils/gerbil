@@ -7,6 +7,7 @@
     (load-module "gerbil/runtime/loader__rt")
     (load-module "gerbil/runtime/control__rt")
     (load-module "gerbil/runtime/mop__rt")
+    (load-module "gerbil/runtime/mop-system-classes__rt")
     (load-module "gerbil/runtime/error__rt")
     (load-module "gerbil/runtime/interface__rt")
     (load-module "gerbil/runtime/hash__rt")

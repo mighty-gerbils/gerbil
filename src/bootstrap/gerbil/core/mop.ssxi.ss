@@ -15,6 +15,7 @@ package: gerbil/core
                slots
                struct?
                final?
+               system?
                metaclass
                constructor-method
                type-descriptor
@@ -29,6 +30,7 @@ package: gerbil/core
                slots
                struct?
                final?
+               system?
                metaclass
                constructor-method
                type-descriptor
@@ -38,6 +40,7 @@ package: gerbil/core
                mutators
                unchecked-accessors
                unchecked-mutators)
+           #f
            #f
            #f
            #f
@@ -67,6 +70,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop$<MOP:2>#!class-type-final?
    (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t final? #t))
+  (declare-type
+   gerbil/core/mop$<MOP:2>#!class-type-system?
+   (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t system? #t))
   (declare-type
    gerbil/core/mop$<MOP:2>#!class-type-metaclass
    (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t metaclass #t))
@@ -122,6 +128,9 @@ package: gerbil/core
    gerbil/core/mop$<MOP:2>#!class-type-final?-set!
    (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t final? #t))
   (declare-type
+   gerbil/core/mop$<MOP:2>#!class-type-system?-set!
+   (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t system? #t))
+  (declare-type
    gerbil/core/mop$<MOP:2>#!class-type-metaclass-set!
    (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t metaclass #t))
   (declare-type
@@ -169,6 +178,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop$<MOP:2>#&!class-type-final?
    (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t final? #f))
+  (declare-type
+   gerbil/core/mop$<MOP:2>#&!class-type-system?
+   (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t system? #f))
   (declare-type
    gerbil/core/mop$<MOP:2>#&!class-type-metaclass
    (@accessor gerbil/core/mop$<MOP:2>#class-type-info::t metaclass #f))
@@ -223,6 +235,9 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop$<MOP:2>#&!class-type-final?-set!
    (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t final? #f))
+  (declare-type
+   gerbil/core/mop$<MOP:2>#&!class-type-system?-set!
+   (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t system? #f))
   (declare-type
    gerbil/core/mop$<MOP:2>#&!class-type-metaclass-set!
    (@mutator gerbil/core/mop$<MOP:2>#class-type-info::t metaclass #f))

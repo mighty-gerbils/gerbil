@@ -33,7 +33,7 @@ namespace: #f
    (for-each HashTable-each@ HashTable-each@-set!)
    (length   HashTable-length@ HashTable-length@-set!)
    (copy     HashTable-copy@ HashTable-copy@-set!)
-   (clear    HashTable-clear@ HashTable-clear@-set!)))
+   (clear!   HashTable-clear@ HashTable-clear@-set!)))
 
 (def HashTable::interface
   (interface-descriptor
@@ -207,7 +207,7 @@ namespace: #f
   name: hash-table)
 (defstruct-type immediate-hash-table::t (hash-table::t)
   make-immediate-hash-table immediate-hash-table?
-  id: gerbil#immediate-hash-table
+  id: gerbil#immediate-hash-table::t
   name: hash-table)
 
 (bind-method! hash-table::t 'ref raw-table-ref)

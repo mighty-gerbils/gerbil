@@ -13,6 +13,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#expander-context? (@predicate gx#expander-context::t))
   (declare-type gx#make-expander-context (@constructor gx#expander-context::t))
@@ -51,6 +52,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#root-context? (@predicate gx#root-context::t))
   (declare-type gx#make-root-context (@constructor gx#root-context::t))
@@ -75,6 +77,7 @@ package: gerbil/expander
            (id table super up down)
            :init!
            #t
+           #f
            #f
            #f
            ((:init! . gx#phi-context:::init!))))
@@ -119,6 +122,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#top-context? (@predicate gx#top-context::t))
   (declare-type gx#make-top-context (@constructor gx#top-context::t))
@@ -159,6 +163,7 @@ package: gerbil/expander
            (id table super up down ns path import export e code)
            :init!
            #t
+           #f
            #f
            #f
            #f))
@@ -287,6 +292,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#prelude-context? (@predicate gx#prelude-context::t))
   (declare-type gx#make-prelude-context (@constructor gx#prelude-context::t))
@@ -385,6 +391,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            ((:init! . gx#local-context:::init!))))
   (declare-type gx#local-context? (@predicate gx#local-context::t))
   (declare-type gx#make-local-context (@constructor gx#local-context::t))
@@ -442,7 +449,7 @@ package: gerbil/expander
     (2 gx#local-context:::init!__%)))
   (declare-type
    gx#binding::t
-   (@class gx#binding::t () () (id key phi) (id key phi) #f #t #f #f #f))
+   (@class gx#binding::t () () (id key phi) (id key phi) #f #t #f #f #f #f))
   (declare-type gx#binding? (@predicate gx#binding::t))
   (declare-type gx#make-binding (@constructor gx#binding::t))
   (declare-type gx#binding-id (@accessor gx#binding::t id #t))
@@ -466,6 +473,7 @@ package: gerbil/expander
            (id key phi)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -514,6 +522,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#local-binding? (@predicate gx#local-binding::t))
   (declare-type gx#make-local-binding (@constructor gx#local-binding::t))
@@ -548,6 +557,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#top-binding? (@predicate gx#top-binding::t))
   (declare-type gx#make-top-binding (@constructor gx#top-binding::t))
@@ -572,6 +582,7 @@ package: gerbil/expander
            (id key phi context)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -624,6 +635,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#extern-binding? (@predicate gx#extern-binding::t))
   (declare-type gx#make-extern-binding (@constructor gx#extern-binding::t))
@@ -661,6 +673,7 @@ package: gerbil/expander
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#syntax-binding? (@predicate gx#syntax-binding::t))
@@ -703,6 +716,7 @@ package: gerbil/expander
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#import-binding? (@predicate gx#import-binding::t))
@@ -770,6 +784,7 @@ package: gerbil/expander
            #t
            #t
            #f
+           #f
            #f))
   (declare-type gx#alias-binding? (@predicate gx#alias-binding::t))
   (declare-type gx#make-alias-binding (@constructor gx#alias-binding::t))
@@ -808,6 +823,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            ((apply-macro-expander . gx#expander::apply-macro-expander))))
   (declare-type gx#expander? (@predicate gx#expander::t))
   (declare-type gx#make-expander (@constructor gx#expander::t))
@@ -824,6 +840,7 @@ package: gerbil/expander
            (e id compile-top)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander . gx#core-expander::apply-macro-expander))))
@@ -858,6 +875,7 @@ package: gerbil/expander
            (e id compile-top)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -902,6 +920,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#special-form? (@predicate gx#special-form::t))
   (declare-type gx#make-special-form (@constructor gx#special-form::t))
@@ -934,6 +953,7 @@ package: gerbil/expander
            (e id compile-top)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -976,6 +996,7 @@ package: gerbil/expander
            (e id compile-top)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander
@@ -1027,6 +1048,7 @@ package: gerbil/expander
            (e id compile-top)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander
@@ -1083,6 +1105,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#feature-expander? (@predicate gx#feature-expander::t))
   (declare-type gx#make-feature-expander (@constructor gx#feature-expander::t))
@@ -1103,6 +1126,7 @@ package: gerbil/expander
            (e)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -1135,6 +1159,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            #f))
   (declare-type gx#reserved-expander? (@predicate gx#reserved-expander::t))
   (declare-type
@@ -1163,6 +1188,7 @@ package: gerbil/expander
            #t
            #f
            #f
+           #f
            ((apply-macro-expander . gx#macro-expander::apply-macro-expander))))
   (declare-type gx#macro-expander? (@predicate gx#macro-expander::t))
   (declare-type gx#make-macro-expander (@constructor gx#macro-expander::t))
@@ -1179,6 +1205,7 @@ package: gerbil/expander
            (e)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander
@@ -1211,6 +1238,7 @@ package: gerbil/expander
            (e context phi)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander . gx#user-expander::apply-macro-expander))))
@@ -1249,6 +1277,7 @@ package: gerbil/expander
            (subst context phi trace)
            #f
            #t
+           #f
            #f
            #f
            #f))

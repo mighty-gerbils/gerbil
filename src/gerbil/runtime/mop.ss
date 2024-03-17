@@ -51,6 +51,7 @@ namespace: #f
 (def class-type-flag-struct 1024) ;; precedence-list always tail of subclass's precedence-list
 (def class-type-flag-sealed 2048) ;; no new changes, subclasses or method definitions (implies final)
 (def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
+(def class-type-flag-system 8192) ;; it is a system class, non instantiable
 
 ;; the metaclass type id
 (def class::t.id 'gerbil#class::t)
@@ -107,6 +108,30 @@ namespace: #f
         (##structure-type-set! t t)  ; self reference
         t)))
 
+;; the root class for all objects
+(def t::t.id 'gerbil#t::t)
+(def t::t
+  (begin-annotation (@mop.system gerbil#t::t ())
+    (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
+          (properties '((direct-slots:) (system: . #t)))
+          (slot-table (make-symbolic-table #f 0)))
+      (##structure
+       class::t                         ; type
+       t::t.id                          ; type-id
+       't                               ; type-name
+       flags                            ; type-flags
+       #f                               ; type-super
+       '#()                             ; type-fields
+       []                               ; class-type-precedence-list
+       '#(#f)                           ; class-type-slot-vector
+       slot-table                       ; class-type-slot-table
+       properties                       ; class-type-properties
+       #f                               ; class-type-constructor
+       #f))))
+
+;; class::t mixes in t::t as all classes except itself
+(##unchecked-structure-set! class::t [t::t] 6 #f #f)
+
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
     (lambda (obj)
@@ -138,6 +163,8 @@ namespace: #f
   (fxflag-set? (##type-flags klass) class-type-flag-sealed))
 (def (class-type-metaclass? klass)
   (fxflag-set? (##type-flags klass) class-type-flag-metaclass))
+(def (class-type-system? klass)
+  (fxflag-set? (##type-flags klass) class-type-flag-system))
 
 ;; TODO for debugging only
 (def (properties-form properties)
@@ -188,6 +215,7 @@ namespace: #f
             (unless (class-type? metaclass)
               (error "metaclass is not a class type" class: type-id metaclass: metaclass))
             metaclass))
+         (system? (assgetq system: properties))
          (opaque?
           (or (not all-slots-equalable?)
               (and type-super (type-opaque? type-super))))
@@ -196,7 +224,15 @@ namespace: #f
                    (if final? 0 type-flag-extensible)
                    (if opaque? type-flag-opaque 0)
                    (if struct? class-type-flag-struct 0)
-                   (if metaclass class-type-flag-metaclass 0))))
+                   (if metaclass class-type-flag-metaclass 0)
+                   (if system? class-type-flag-system 0)))
+         (precedence-list
+          (if (memq t::t precedence-list)
+            (begin
+              (unless (eq? (last precedence-list) t::t)
+                (error "BUG: t::t is not last in the precedence list"))
+              precedence-list)
+            (append precedence-list [t::t]))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -254,8 +290,8 @@ namespace: #f
 (defrefset*
   (id 1)
   (name 2)
-  (super 3)
-  (flags 4)
+  (flags 3)
+  (super 4)
   (fields 5)
   (precedence-list 6)
   (slot-vector 7)
@@ -583,9 +619,11 @@ namespace: #f
               (subclass? type klass)))))
 
 (def (make-object klass k)
-  (let (obj (##make-structure klass k))
-    (object-fill! obj #f)
-    obj))
+  (if (class-type-system? klass)
+    (error "cannot instantiate system class" class: klass)
+    (let (obj (##make-structure klass k))
+      (object-fill! obj #f)
+      obj)))
 
 (def (object-fill! obj fill)
   ;; courtesy of marc feeley
@@ -672,7 +710,7 @@ namespace: #f
 (def (struct->list obj)
   (if (object? obj)
     (##vector->list obj)
-    (error "not an object" obj)))
+    (error "not a structure" obj)))
 
 (def (class->list obj)
   (if (object? obj)
@@ -699,12 +737,8 @@ namespace: #f
    (else
     (error "cannot find method" object: obj method: id))))
 
-(def __builtin-type-methods
-  (make-symbolic-table #f 0))
-
 (def (method-ref obj id)
-  (and (object? obj)
-       (find-method (object-type obj) obj id)))
+  (find-method (class-of obj) obj id))
 
 (def (checked-method-ref obj id)
   (or (method-ref obj id)
@@ -724,9 +758,14 @@ namespace: #f
       (apply method obj args))))
 
 (def (find-method klass obj id)
-  (if (class-type? klass)
-    (__find-method klass obj id)
-    (builtin-find-method klass obj id)))
+  (cond
+   ((class-type? klass)
+    (__find-method klass obj id))
+   ((##type? klass)
+    (__find-method (__shadow-class klass) obj id))
+   (else
+    (error "bad class; must be a class-type or builtin type"
+      class: klass method: id))))
 
 (def (__find-method klass obj id)
   (cond
@@ -738,11 +777,6 @@ namespace: #f
 
 (def (mixin-find-method mixins obj id)
   (ormap (cut direct-method-ref <> obj id) mixins))
-
-(def (builtin-find-method klass obj id)
-  (and (##type? klass)
-       (or (builtin-method-ref klass obj id)
-           (builtin-find-method (##type-super klass) obj id))))
 
 (def (direct-method-ref klass obj id)
   (def (metaclass-resolve-method)
@@ -777,12 +811,6 @@ namespace: #f
 (def (mixin-method-ref klass obj id)
   (mixin-find-method (class-type-precedence-list klass) obj id))
 
-(def (builtin-method-ref klass obj id)
-  (cond
-   ((symbolic-table-ref __builtin-type-methods (##type-id klass) #f)
-    => (lambda (mtab) (symbolic-table-ref mtab id #f)))
-   (else #f)))
-
 (def (bind-method! klass id proc (rebind? #t))
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
@@ -801,14 +829,7 @@ namespace: #f
           (&class-type-methods-set! klass ht)
           (bind! ht)))))
    ((##type? klass)
-    (let (ht
-          (cond
-           ((symbolic-table-ref __builtin-type-methods (##type-id klass) #f))
-           (else
-            (let (ht (make-symbolic-table #f 0))
-              (symbolic-table-set! __builtin-type-methods (##type-id klass) ht)
-              ht))))
-      (bind! ht)))
+    (bind-method! (__shadow-class klass) id proc rebind?))
    (else
     (error "bad class; expected class or builtin type" klass))))
 
@@ -904,16 +925,7 @@ namespace: #f
   (cond
    ((not (class-type? klass))
     (if (##type? klass)
-      ;; builtin type
-      (let (method-table (make-symbolic-table #f 0))
-        (let loop ((xklass klass))
-          (when xklass
-            (alet (xmethod-table (symbolic-table-ref __builtin-type-methods (##type-id xklass) #f))
-              (raw-table-for-each
-               xmethod-table
-               (cut __specialize-method klass method-table <> <>)))
-            (loop (##type-super xklass))))
-        method-table)
+      (__specialize-class (__shadow-class klass))
       (error "bad class; cannot specialize" klass)))
    ((class-type-metaclass? klass)
     (call-method klass 'specialize-class))
@@ -958,26 +970,15 @@ namespace: #f
 ;; if resolved only once), but would be notably more complex and somewhat
 ;; incompatible (or involve some cleverness for backward compatibility).
 (def (next-method subklass obj id)
-  (let ((klass (object-type obj))
-        (type-id (##type-id subklass)))
-    (cond
-     ((class-type? klass)
-      (let lp ((rest (class-precedence-list klass)))
+  (def (find-next-method klass)
+    (let lp ((rest (class-precedence-list klass)))
         (match rest
           ([klass . rest]
-           (if (eq? type-id (##type-id klass))
+           (if (eq? (##type-id subklass) (##type-id klass))
              (mixin-find-method rest obj id)
              (lp rest)))
           (else #f))))
-     ((##type? klass)
-      (let lp ((klass klass))
-        (cond
-         ((eq? type-id (##type-id klass))
-          (builtin-find-method (##type-super klass) obj id))
-         ((##type-super klass)
-          => lp)
-         (else #f))))
-     (else #f))))
+  (find-next-method (class-of obj)))
 
 (def (call-next-method subklass obj id . args)
   (cond
@@ -998,3 +999,159 @@ namespace: #f
     (##default-wr we obj))))
 
 (##wr-set! write-object)
+
+;; shadow classes: these are system class automagically created for builtin types
+;; to track their methods
+(def __shadow-classes
+  (make-symbolic-table #f 0))
+(def __shadow-classes-mx
+  (__make-inline-lock))
+
+(def (__shadow-class type)
+  (def (shadow-type-id type)
+    (make-symbol (##type-name type) "::t"))
+  (def (shadow-type-name type)
+    (##type-name type))
+  (def (make-shadow-class type precedence-list)
+    (let* ((super
+            (if (pair? precedence-list)
+              [(car precedence-list)]
+              []))
+           (klass
+            (make-class-type
+             (shadow-type-id type)      ; id
+             (shadow-type-name type)    ; name
+             super                      ; supers
+             []                         ; slots
+             [[struct: . #t]
+              [system: . #t]
+              (if (type-extensible? type)
+                []
+                [[final: . #t]])
+              ...]                      ; properties
+             #f)))                      ; constructor
+      (symbolic-table-set! __shadow-classes (##type-id type) klass)
+      klass))
+
+  (__lock-inline! __shadow-classes-mx)
+  (cond
+   ((symbolic-table-ref __shadow-classes (##type-id type) #f)
+    => (lambda (klass)
+         (__unlock-inline! __shadow-classes-mx)
+         klass))
+   (else
+    (let loop ((super (##type-super type)) (hierarchy []))
+      (cond
+       ((not super)
+        (let loop ((rest hierarchy) (precedence-list []))
+          (match rest
+            ([type . rest]
+             (cond
+              ((symbolic-table-ref __shadow-classes (##type-id type) #f)
+               => (lambda (klass)
+                    (loop rest (cons klass precedence-list))))
+              (else
+               (let (klass (make-shadow-class type precedence-list))
+                 (loop rest (cons klass precedence-list))))))
+            (else
+             (let (klass (make-shadow-class type precedence-list))
+               (__unlock-inline! __shadow-classes-mx)
+               klass)))))
+       (else
+        (loop (##type-super super) (cons super hierarchy))))))))
+
+;; the class-of operator
+(def (class-of obj)
+  (declare (not interrupts-enabled))
+  (let (t (##type obj))
+    (cond
+     ((fx= t (macro-type-subtyped))       ; subtyped
+      (let (st (##subtype obj))
+        (cond
+         ((fx= st (macro-subtype-structure)) ; object
+          (let (klass (##structure-type obj))
+            (if (class-type? klass) klass (__shadow-class klass))))
+         ((fx= st (macro-subtype-boxvalues)) ; box or values?
+          (if (fx= (##vector-length obj) 1)
+            (__system-class 'box)
+            (__system-class 'values)))
+         ((##vector-ref __subtype-id st)
+          => __system-class)
+         (else
+          (error "unknown class" subtype: st object: obj)))))
+     ((fx= t (macro-type-mem2))       ; pair
+      (__system-class 'pair))
+     ((fx= t (macro-type-fixnum))     ; fixnum
+      (__system-class 'fixnum))
+     (else                              ; special (immediate)
+      (cond
+       ((char? obj)      (__system-class 'char))
+       ((eq? obj '())    (__system-class 'null))
+       ((eq? obj #f)     (__system-class 'boolean))
+       ((eq? obj #t)     (__system-class 'boolean))
+       ((eq? obj #!void) (__system-class 'void))
+       ((eq? obj #!eof)  (__system-class 'eof))
+       (else
+        (__system-class 'special)))))))
+
+(def __subtype-id (make-vector 32 #f))
+
+(defrules defsubtype ()
+  ((_ (t name) ...)
+   (begin (vector-set! __subtype-id t 'name) ...)))
+
+(defsubtype
+  ((macro-subtype-vector)       vector)
+  ((macro-subtype-pair)         pair)
+  ((macro-subtype-ratnum)       ratnum)
+  ((macro-subtype-cpxnum)       cpxnum)
+  ((macro-subtype-symbol)       symbol)
+  ((macro-subtype-keyword)      keyword)
+  ((macro-subtype-frame)        frame)
+  ((macro-subtype-continuation) continuation)
+  ((macro-subtype-promise)      promise)
+  ((macro-subtype-weak)         weak)
+  ((macro-subtype-procedure)    procedure)
+  ((macro-subtype-return)       return)
+  ((macro-subtype-foreign)      foreign)
+  ((macro-subtype-string)       string)
+  ((macro-subtype-s8vector)     s8vector)
+  ((macro-subtype-u8vector)     u8vector)
+  ((macro-subtype-s16vector)    s16vector)
+  ((macro-subtype-u16vector)    u16vector)
+  ((macro-subtype-s32vector)    s32vector)
+  ((macro-subtype-u32vector)    u32vector)
+  ((macro-subtype-f32vector)    f32vector)
+  ((macro-subtype-s64vector)    s64vector)
+  ((macro-subtype-u64vector)    u64vector)
+  ((macro-subtype-f64vector)    f64vector)
+  ((macro-subtype-flonum)       flonum)
+  ((macro-subtype-bignum)       bignum))
+
+;; system classes for primitive types
+(def __system-classes
+  (make-symbolic-table #f 0))
+
+(def (__system-class id)
+  (cond
+   ((symbolic-table-ref __system-classes id #f))
+   (else
+    (error "unknown system class" id))))
+
+(defrules defsystem-class ()
+  ((_ type id (super ...))
+   (def type
+     (begin-annotation (@mop.system id (super ...))
+       (__make-system-class 'id [super ...])))))
+
+(def (__make-system-class id super)
+  (let (klass (make-class-type id id super [] '((system: . #t)) #f))
+    (symbolic-table-set! __system-classes id klass)
+    klass))
+
+;; and shadow class predefinitions
+(defrules defshadow-class ()
+  ((_ type (super ...) type-expr)
+   (def type
+     (begin-annotation (@mop.system type (super ...))
+       (__shadow-class type-expr)))))

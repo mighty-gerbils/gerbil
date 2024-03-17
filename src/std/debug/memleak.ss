@@ -4,7 +4,6 @@
 
 (import :gerbil/gambit
         :std/sort
-        (only-in :std/generic type-of)
         ./heap)
 (export heap-summary heap-summary-delta dump-heap-summary! watch-heap!)
 
@@ -18,7 +17,7 @@
          (frame-stats (make-hash-table-eq)))
     (hash-for-each
      (lambda (obj _)
-       (let (t (type-of obj))
+       (let (t (##type-id (class-of obj)))
          (hash-update! heap-stats t 1+ 0)
          (when (eq? t 'frame)
            (let (c (frame-creator-name obj))

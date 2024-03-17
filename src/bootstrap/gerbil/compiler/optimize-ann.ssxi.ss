@@ -17,6 +17,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::optimize-annotated?
@@ -36,6 +37,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::generate-runtime-repr?
@@ -46,7 +48,7 @@ package: gerbil/compiler
   (declare-type gxc#apply-generate-runtime-repr (@lambda 1 #f))
   (declare-type
    gxc#::push-match-vars::t
-   (@class gxc#::push-match-vars::t () () (vars K) (vars K) #f #f #t #f #f))
+   (@class gxc#::push-match-vars::t () () (vars K) (vars K) #f #f #t #f #f #f))
   (declare-type gxc#::push-match-vars? (@predicate gxc#::push-match-vars::t))
   (declare-type
    gxc#make-::push-match-vars

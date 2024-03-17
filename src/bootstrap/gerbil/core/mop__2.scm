@@ -1,433 +1,461 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31815_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32128_|
     (##structure
      gx#syntax-quote::t
      'class-type-info::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31817_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32130_|
     (##structure
      gx#syntax-quote::t
      'make-class-type-info
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31819_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32132_|
     (##structure
      gx#syntax-quote::t
      'class-type-info?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31837_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32151_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31840_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32154_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31843_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32157_|
     (##structure
      gx#syntax-quote::t
      '!class-type-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31846_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32160_|
     (##structure
      gx#syntax-quote::t
      '!class-type-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31849_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32163_|
     (##structure
      gx#syntax-quote::t
      '!class-type-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31852_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32166_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31855_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32169_|
     (##structure
      gx#syntax-quote::t
      '!class-type-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31858_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32172_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-method
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31861_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32175_|
     (##structure
      gx#syntax-quote::t
      '!class-type-metaclass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31864_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32178_|
+    (##structure
+     gx#syntax-quote::t
+     '!class-type-system?
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32181_|
     (##structure
      gx#syntax-quote::t
      '!class-type-final?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31867_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32184_|
     (##structure
      gx#syntax-quote::t
      '!class-type-struct?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31870_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32187_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31873_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32190_|
     (##structure
      gx#syntax-quote::t
      '!class-type-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31876_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32193_|
     (##structure
      gx#syntax-quote::t
      '!class-type-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31879_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32196_|
     (##structure
      gx#syntax-quote::t
      '!class-type-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31897_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32215_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31900_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32218_|
     (##structure
      gx#syntax-quote::t
      '!class-type-unchecked-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31903_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32221_|
     (##structure
      gx#syntax-quote::t
      '!class-type-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31906_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32224_|
     (##structure
      gx#syntax-quote::t
      '!class-type-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31909_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32227_|
     (##structure
      gx#syntax-quote::t
      '!class-type-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31912_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32230_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31915_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32233_|
     (##structure
      gx#syntax-quote::t
      '!class-type-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31918_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32236_|
     (##structure
      gx#syntax-quote::t
      '!class-type-constructor-method-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31921_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32239_|
     (##structure
      gx#syntax-quote::t
      '!class-type-metaclass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31924_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32242_|
+    (##structure
+     gx#syntax-quote::t
+     '!class-type-system?-set!
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32245_|
     (##structure
      gx#syntax-quote::t
      '!class-type-final?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31927_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32248_|
     (##structure
      gx#syntax-quote::t
      '!class-type-struct?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31930_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32251_|
     (##structure
      gx#syntax-quote::t
      '!class-type-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31933_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32254_|
     (##structure
      gx#syntax-quote::t
      '!class-type-super-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31936_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32257_|
     (##structure
      gx#syntax-quote::t
      '!class-type-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31939_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32260_|
     (##structure
      gx#syntax-quote::t
      '!class-type-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31957_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32279_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31960_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32282_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31963_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32285_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-mutators
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31966_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32288_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-accessors
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31969_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32291_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-predicate
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31972_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32294_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31975_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32297_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-descriptor
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31978_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32300_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-method
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31983_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32305_|
+    (##structure
+     gx#syntax-quote::t
+     '&!class-type-system?
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32308_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-final?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31986_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32311_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-struct?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31989_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32314_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31992_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32317_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-super
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31995_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32320_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-name
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g31998_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32323_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32016_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32342_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32019_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32345_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-unchecked-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32022_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32348_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-mutators-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32025_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32351_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-accessors-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32028_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32354_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-predicate-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32031_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32357_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32034_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32360_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-descriptor-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32037_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32363_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-constructor-method-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32040_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32366_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-metaclass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32043_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32369_|
+    (##structure
+     gx#syntax-quote::t
+     '&!class-type-system?-set!
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32372_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-final?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32046_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32375_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-struct?-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32049_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32378_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32052_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32381_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-super-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32055_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32384_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-name-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core/mop$<MOP:3>[1]#_g32058_|
+  (define |gerbil/core/mop$<MOP:3>[1]#_g32387_|
     (##structure
      gx#syntax-quote::t
      '&!class-type-id-set!
@@ -435,7 +463,7 @@
      (gx#current-expander-context)
      '()))
   (define |gerbil/core/mop$<MOP:3>[:0:]#class-type-info|
-    (let ((__obj31580
+    (let ((__obj31820
            (let ()
              (declare (not safe))
              (##structure
@@ -454,11 +482,12 @@
               '#f
               '#f
               '#f
+              '#f
               '#f))))
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          'gerbil.core#class-type-info::t
          '1
          gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -466,7 +495,7 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          'class-type-info
          '2
          gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -474,7 +503,7 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          '()
          '3
          gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -482,12 +511,13 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          '(id name
               super
               slots
               struct?
               final?
+              system?
               metaclass
               constructor-method
               type-descriptor
@@ -503,7 +533,7 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          '#f
          '5
          gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -511,7 +541,7 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          '#f
          '6
          gerbil/core/mop$<MOP:2>#class-type-info::t
@@ -519,577 +549,625 @@
       (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
+         __obj31820
          '#f
-         '8
+         '7
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31814 |gerbil/core/mop$<MOP:3>[1]#_g31815_|))
+      (let ()
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31814
+         __obj31820
+         '#f
          '9
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31816 |gerbil/core/mop$<MOP:3>[1]#_g31817_|))
+      (let ((__tmp32127 |gerbil/core/mop$<MOP:3>[1]#_g32128_|))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31816
+         __obj31820
+         __tmp32127
          '10
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31818 |gerbil/core/mop$<MOP:3>[1]#_g31819_|))
+      (let ((__tmp32129 |gerbil/core/mop$<MOP:3>[1]#_g32130_|))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31818
+         __obj31820
+         __tmp32129
          '11
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31820
-             (let ((__tmp31877
-                    (let ((__tmp31878 |gerbil/core/mop$<MOP:3>[1]#_g31879_|))
-                      (declare (not safe))
-                      (cons 'id __tmp31878)))
-                   (__tmp31821
-                    (let ((__tmp31874
-                           (let ((__tmp31875
-                                  |gerbil/core/mop$<MOP:3>[1]#_g31876_|))
-                             (declare (not safe))
-                             (cons 'name __tmp31875)))
-                          (__tmp31822
-                           (let ((__tmp31871
-                                  (let ((__tmp31872
-                                         |gerbil/core/mop$<MOP:3>[1]#_g31873_|))
-                                    (declare (not safe))
-                                    (cons 'super __tmp31872)))
-                                 (__tmp31823
-                                  (let ((__tmp31868
-                                         (let ((__tmp31869
-                                                |gerbil/core/mop$<MOP:3>[1]#_g31870_|))
-                                           (declare (not safe))
-                                           (cons 'slots __tmp31869)))
-                                        (__tmp31824
-                                         (let ((__tmp31865
-                                                (let ((__tmp31866
-                                                       |gerbil/core/mop$<MOP:3>[1]#_g31867_|))
-                                                  (declare (not safe))
-                                                  (cons 'struct? __tmp31866)))
-                                               (__tmp31825
-                                                (let ((__tmp31862
-                                                       (let ((__tmp31863
-                                                              |gerbil/core/mop$<MOP:3>[1]#_g31864_|))
-                                                         (declare (not safe))
-                                                         (cons 'final?
-                                                               __tmp31863)))
-                                                      (__tmp31826
-                                                       (let ((__tmp31859
-                                                              (let ((__tmp31860
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop$<MOP:3>[1]#_g31861_|))
-                        (declare (not safe))
-                        (cons 'metaclass __tmp31860)))
-                     (__tmp31827
-                      (let ((__tmp31856
-                             (let ((__tmp31857
-                                    |gerbil/core/mop$<MOP:3>[1]#_g31858_|))
-                               (declare (not safe))
-                               (cons 'constructor-method __tmp31857)))
-                            (__tmp31828
-                             (let ((__tmp31853
-                                    (let ((__tmp31854
-                                           |gerbil/core/mop$<MOP:3>[1]#_g31855_|))
-                                      (declare (not safe))
-                                      (cons 'type-descriptor __tmp31854)))
-                                   (__tmp31829
-                                    (let ((__tmp31850
-                                           (let ((__tmp31851
-                                                  |gerbil/core/mop$<MOP:3>[1]#_g31852_|))
-                                             (declare (not safe))
-                                             (cons 'constructor __tmp31851)))
-                                          (__tmp31830
-                                           (let ((__tmp31847
-                                                  (let ((__tmp31848
-                                                         |gerbil/core/mop$<MOP:3>[1]#_g31849_|))
-                                                    (declare (not safe))
-                                                    (cons 'predicate
-                                                          __tmp31848)))
-                                                 (__tmp31831
-                                                  (let ((__tmp31844
-                                                         (let ((__tmp31845
-                                                                |gerbil/core/mop$<MOP:3>[1]#_g31846_|))
-                                                           (declare (not safe))
-                                                           (cons 'accessors
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         __tmp31845)))
-                (__tmp31832
-                 (let ((__tmp31841
-                        (let ((__tmp31842
-                               |gerbil/core/mop$<MOP:3>[1]#_g31843_|))
-                          (declare (not safe))
-                          (cons 'mutators __tmp31842)))
-                       (__tmp31833
-                        (let ((__tmp31838
-                               (let ((__tmp31839
-                                      |gerbil/core/mop$<MOP:3>[1]#_g31840_|))
-                                 (declare (not safe))
-                                 (cons 'unchecked-accessors __tmp31839)))
-                              (__tmp31834
-                               (let ((__tmp31835
-                                      (let ((__tmp31836
-                                             |gerbil/core/mop$<MOP:3>[1]#_g31837_|))
-                                        (declare (not safe))
-                                        (cons 'unchecked-mutators
-                                              __tmp31836))))
-                                 (declare (not safe))
-                                 (cons __tmp31835 '()))))
-                          (declare (not safe))
-                          (cons __tmp31838 __tmp31834))))
-                   (declare (not safe))
-                   (cons __tmp31841 __tmp31833))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (declare (not safe))
-                                                    (cons __tmp31844
-                                                          __tmp31832))))
-                                             (declare (not safe))
-                                             (cons __tmp31847 __tmp31831))))
-                                      (declare (not safe))
-                                      (cons __tmp31850 __tmp31830))))
-                               (declare (not safe))
-                               (cons __tmp31853 __tmp31829))))
-                        (declare (not safe))
-                        (cons __tmp31856 __tmp31828))))
-                 (declare (not safe))
-                 (cons __tmp31859 __tmp31827))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (declare (not safe))
-                                                  (cons __tmp31862
-                                                        __tmp31826))))
-                                           (declare (not safe))
-                                           (cons __tmp31865 __tmp31825))))
-                                    (declare (not safe))
-                                    (cons __tmp31868 __tmp31824))))
-                             (declare (not safe))
-                             (cons __tmp31871 __tmp31823))))
-                      (declare (not safe))
-                      (cons __tmp31874 __tmp31822))))
-               (declare (not safe))
-               (cons __tmp31877 __tmp31821))))
+      (let ((__tmp32131 |gerbil/core/mop$<MOP:3>[1]#_g32132_|))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31820
+         __obj31820
+         __tmp32131
          '12
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31880
-             (let ((__tmp31937
-                    (let ((__tmp31938 |gerbil/core/mop$<MOP:3>[1]#_g31939_|))
+      (let ((__tmp32133
+             (let ((__tmp32194
+                    (let ((__tmp32195 |gerbil/core/mop$<MOP:3>[1]#_g32196_|))
                       (declare (not safe))
-                      (cons 'id __tmp31938)))
-                   (__tmp31881
-                    (let ((__tmp31934
-                           (let ((__tmp31935
-                                  |gerbil/core/mop$<MOP:3>[1]#_g31936_|))
+                      (cons 'id __tmp32195)))
+                   (__tmp32134
+                    (let ((__tmp32191
+                           (let ((__tmp32192
+                                  |gerbil/core/mop$<MOP:3>[1]#_g32193_|))
                              (declare (not safe))
-                             (cons 'name __tmp31935)))
-                          (__tmp31882
-                           (let ((__tmp31931
-                                  (let ((__tmp31932
-                                         |gerbil/core/mop$<MOP:3>[1]#_g31933_|))
+                             (cons 'name __tmp32192)))
+                          (__tmp32135
+                           (let ((__tmp32188
+                                  (let ((__tmp32189
+                                         |gerbil/core/mop$<MOP:3>[1]#_g32190_|))
                                     (declare (not safe))
-                                    (cons 'super __tmp31932)))
-                                 (__tmp31883
-                                  (let ((__tmp31928
-                                         (let ((__tmp31929
-                                                |gerbil/core/mop$<MOP:3>[1]#_g31930_|))
+                                    (cons 'super __tmp32189)))
+                                 (__tmp32136
+                                  (let ((__tmp32185
+                                         (let ((__tmp32186
+                                                |gerbil/core/mop$<MOP:3>[1]#_g32187_|))
                                            (declare (not safe))
-                                           (cons 'slots __tmp31929)))
-                                        (__tmp31884
-                                         (let ((__tmp31925
-                                                (let ((__tmp31926
-                                                       |gerbil/core/mop$<MOP:3>[1]#_g31927_|))
+                                           (cons 'slots __tmp32186)))
+                                        (__tmp32137
+                                         (let ((__tmp32182
+                                                (let ((__tmp32183
+                                                       |gerbil/core/mop$<MOP:3>[1]#_g32184_|))
                                                   (declare (not safe))
-                                                  (cons 'struct? __tmp31926)))
-                                               (__tmp31885
-                                                (let ((__tmp31922
-                                                       (let ((__tmp31923
-                                                              |gerbil/core/mop$<MOP:3>[1]#_g31924_|))
+                                                  (cons 'struct? __tmp32183)))
+                                               (__tmp32138
+                                                (let ((__tmp32179
+                                                       (let ((__tmp32180
+                                                              |gerbil/core/mop$<MOP:3>[1]#_g32181_|))
                                                          (declare (not safe))
                                                          (cons 'final?
-                                                               __tmp31923)))
-                                                      (__tmp31886
-                                                       (let ((__tmp31919
-                                                              (let ((__tmp31920
+                                                               __tmp32180)))
+                                                      (__tmp32139
+                                                       (let ((__tmp32176
+                                                              (let ((__tmp32177
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop$<MOP:3>[1]#_g31921_|))
+                             |gerbil/core/mop$<MOP:3>[1]#_g32178_|))
                         (declare (not safe))
-                        (cons 'metaclass __tmp31920)))
-                     (__tmp31887
-                      (let ((__tmp31916
-                             (let ((__tmp31917
-                                    |gerbil/core/mop$<MOP:3>[1]#_g31918_|))
+                        (cons 'system? __tmp32177)))
+                     (__tmp32140
+                      (let ((__tmp32173
+                             (let ((__tmp32174
+                                    |gerbil/core/mop$<MOP:3>[1]#_g32175_|))
                                (declare (not safe))
-                               (cons 'constructor-method __tmp31917)))
-                            (__tmp31888
-                             (let ((__tmp31913
-                                    (let ((__tmp31914
-                                           |gerbil/core/mop$<MOP:3>[1]#_g31915_|))
+                               (cons 'metaclass __tmp32174)))
+                            (__tmp32141
+                             (let ((__tmp32170
+                                    (let ((__tmp32171
+                                           |gerbil/core/mop$<MOP:3>[1]#_g32172_|))
                                       (declare (not safe))
-                                      (cons 'type-descriptor __tmp31914)))
-                                   (__tmp31889
-                                    (let ((__tmp31910
-                                           (let ((__tmp31911
-                                                  |gerbil/core/mop$<MOP:3>[1]#_g31912_|))
+                                      (cons 'constructor-method __tmp32171)))
+                                   (__tmp32142
+                                    (let ((__tmp32167
+                                           (let ((__tmp32168
+                                                  |gerbil/core/mop$<MOP:3>[1]#_g32169_|))
                                              (declare (not safe))
-                                             (cons 'constructor __tmp31911)))
-                                          (__tmp31890
-                                           (let ((__tmp31907
-                                                  (let ((__tmp31908
-                                                         |gerbil/core/mop$<MOP:3>[1]#_g31909_|))
+                                             (cons 'type-descriptor
+                                                   __tmp32168)))
+                                          (__tmp32143
+                                           (let ((__tmp32164
+                                                  (let ((__tmp32165
+                                                         |gerbil/core/mop$<MOP:3>[1]#_g32166_|))
                                                     (declare (not safe))
-                                                    (cons 'predicate
-                                                          __tmp31908)))
-                                                 (__tmp31891
-                                                  (let ((__tmp31904
-                                                         (let ((__tmp31905
-                                                                |gerbil/core/mop$<MOP:3>[1]#_g31906_|))
+                                                    (cons 'constructor
+                                                          __tmp32165)))
+                                                 (__tmp32144
+                                                  (let ((__tmp32161
+                                                         (let ((__tmp32162
+                                                                |gerbil/core/mop$<MOP:3>[1]#_g32163_|))
                                                            (declare (not safe))
-                                                           (cons 'accessors
+                                                           (cons 'predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         __tmp31905)))
-                (__tmp31892
-                 (let ((__tmp31901
-                        (let ((__tmp31902
-                               |gerbil/core/mop$<MOP:3>[1]#_g31903_|))
+                         __tmp32162)))
+                (__tmp32145
+                 (let ((__tmp32158
+                        (let ((__tmp32159
+                               |gerbil/core/mop$<MOP:3>[1]#_g32160_|))
                           (declare (not safe))
-                          (cons 'mutators __tmp31902)))
-                       (__tmp31893
-                        (let ((__tmp31898
-                               (let ((__tmp31899
-                                      |gerbil/core/mop$<MOP:3>[1]#_g31900_|))
+                          (cons 'accessors __tmp32159)))
+                       (__tmp32146
+                        (let ((__tmp32155
+                               (let ((__tmp32156
+                                      |gerbil/core/mop$<MOP:3>[1]#_g32157_|))
                                  (declare (not safe))
-                                 (cons 'unchecked-accessors __tmp31899)))
-                              (__tmp31894
-                               (let ((__tmp31895
-                                      (let ((__tmp31896
-                                             |gerbil/core/mop$<MOP:3>[1]#_g31897_|))
+                                 (cons 'mutators __tmp32156)))
+                              (__tmp32147
+                               (let ((__tmp32152
+                                      (let ((__tmp32153
+                                             |gerbil/core/mop$<MOP:3>[1]#_g32154_|))
                                         (declare (not safe))
-                                        (cons 'unchecked-mutators
-                                              __tmp31896))))
+                                        (cons 'unchecked-accessors
+                                              __tmp32153)))
+                                     (__tmp32148
+                                      (let ((__tmp32149
+                                             (let ((__tmp32150
+                                                    |gerbil/core/mop$<MOP:3>[1]#_g32151_|))
+                                               (declare (not safe))
+                                               (cons 'unchecked-mutators
+                                                     __tmp32150))))
+                                        (declare (not safe))
+                                        (cons __tmp32149 '()))))
                                  (declare (not safe))
-                                 (cons __tmp31895 '()))))
+                                 (cons __tmp32152 __tmp32148))))
                           (declare (not safe))
-                          (cons __tmp31898 __tmp31894))))
+                          (cons __tmp32155 __tmp32147))))
                    (declare (not safe))
-                   (cons __tmp31901 __tmp31893))))
+                   (cons __tmp32158 __tmp32146))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp31904
-                                                          __tmp31892))))
+                                                    (cons __tmp32161
+                                                          __tmp32145))))
                                              (declare (not safe))
-                                             (cons __tmp31907 __tmp31891))))
+                                             (cons __tmp32164 __tmp32144))))
                                       (declare (not safe))
-                                      (cons __tmp31910 __tmp31890))))
+                                      (cons __tmp32167 __tmp32143))))
                                (declare (not safe))
-                               (cons __tmp31913 __tmp31889))))
+                               (cons __tmp32170 __tmp32142))))
                         (declare (not safe))
-                        (cons __tmp31916 __tmp31888))))
+                        (cons __tmp32173 __tmp32141))))
                  (declare (not safe))
-                 (cons __tmp31919 __tmp31887))))
+                 (cons __tmp32176 __tmp32140))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp31922
-                                                        __tmp31886))))
+                                                  (cons __tmp32179
+                                                        __tmp32139))))
                                            (declare (not safe))
-                                           (cons __tmp31925 __tmp31885))))
+                                           (cons __tmp32182 __tmp32138))))
                                     (declare (not safe))
-                                    (cons __tmp31928 __tmp31884))))
+                                    (cons __tmp32185 __tmp32137))))
                              (declare (not safe))
-                             (cons __tmp31931 __tmp31883))))
+                             (cons __tmp32188 __tmp32136))))
                       (declare (not safe))
-                      (cons __tmp31934 __tmp31882))))
+                      (cons __tmp32191 __tmp32135))))
                (declare (not safe))
-               (cons __tmp31937 __tmp31881))))
+               (cons __tmp32194 __tmp32134))))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31880
+         __obj31820
+         __tmp32133
          '13
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31940
-             (let ((__tmp31996
-                    (let ((__tmp31997 |gerbil/core/mop$<MOP:3>[1]#_g31998_|))
+      (let ((__tmp32197
+             (let ((__tmp32258
+                    (let ((__tmp32259 |gerbil/core/mop$<MOP:3>[1]#_g32260_|))
                       (declare (not safe))
-                      (cons 'id __tmp31997)))
-                   (__tmp31941
-                    (let ((__tmp31993
-                           (let ((__tmp31994
-                                  |gerbil/core/mop$<MOP:3>[1]#_g31995_|))
+                      (cons 'id __tmp32259)))
+                   (__tmp32198
+                    (let ((__tmp32255
+                           (let ((__tmp32256
+                                  |gerbil/core/mop$<MOP:3>[1]#_g32257_|))
                              (declare (not safe))
-                             (cons 'name __tmp31994)))
-                          (__tmp31942
-                           (let ((__tmp31990
-                                  (let ((__tmp31991
-                                         |gerbil/core/mop$<MOP:3>[1]#_g31992_|))
+                             (cons 'name __tmp32256)))
+                          (__tmp32199
+                           (let ((__tmp32252
+                                  (let ((__tmp32253
+                                         |gerbil/core/mop$<MOP:3>[1]#_g32254_|))
                                     (declare (not safe))
-                                    (cons 'super __tmp31991)))
-                                 (__tmp31943
-                                  (let ((__tmp31987
-                                         (let ((__tmp31988
-                                                |gerbil/core/mop$<MOP:3>[1]#_g31989_|))
+                                    (cons 'super __tmp32253)))
+                                 (__tmp32200
+                                  (let ((__tmp32249
+                                         (let ((__tmp32250
+                                                |gerbil/core/mop$<MOP:3>[1]#_g32251_|))
                                            (declare (not safe))
-                                           (cons 'slots __tmp31988)))
-                                        (__tmp31944
-                                         (let ((__tmp31984
-                                                (let ((__tmp31985
-                                                       |gerbil/core/mop$<MOP:3>[1]#_g31986_|))
+                                           (cons 'slots __tmp32250)))
+                                        (__tmp32201
+                                         (let ((__tmp32246
+                                                (let ((__tmp32247
+                                                       |gerbil/core/mop$<MOP:3>[1]#_g32248_|))
                                                   (declare (not safe))
-                                                  (cons 'struct? __tmp31985)))
-                                               (__tmp31945
-                                                (let ((__tmp31981
-                                                       (let ((__tmp31982
-                                                              |gerbil/core/mop$<MOP:3>[1]#_g31983_|))
+                                                  (cons 'struct? __tmp32247)))
+                                               (__tmp32202
+                                                (let ((__tmp32243
+                                                       (let ((__tmp32244
+                                                              |gerbil/core/mop$<MOP:3>[1]#_g32245_|))
                                                          (declare (not safe))
                                                          (cons 'final?
-                                                               __tmp31982)))
-                                                      (__tmp31946
-                                                       (let ((__tmp31979
-                                                              (let ((__tmp31980
+                                                               __tmp32244)))
+                                                      (__tmp32203
+                                                       (let ((__tmp32240
+                                                              (let ((__tmp32241
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop$<MOP:3>[1]#_g31861_|))
+                             |gerbil/core/mop$<MOP:3>[1]#_g32242_|))
                         (declare (not safe))
-                        (cons 'metaclass __tmp31980)))
-                     (__tmp31947
-                      (let ((__tmp31976
-                             (let ((__tmp31977
-                                    |gerbil/core/mop$<MOP:3>[1]#_g31978_|))
+                        (cons 'system? __tmp32241)))
+                     (__tmp32204
+                      (let ((__tmp32237
+                             (let ((__tmp32238
+                                    |gerbil/core/mop$<MOP:3>[1]#_g32239_|))
                                (declare (not safe))
-                               (cons 'constructor-method __tmp31977)))
-                            (__tmp31948
-                             (let ((__tmp31973
-                                    (let ((__tmp31974
-                                           |gerbil/core/mop$<MOP:3>[1]#_g31975_|))
+                               (cons 'metaclass __tmp32238)))
+                            (__tmp32205
+                             (let ((__tmp32234
+                                    (let ((__tmp32235
+                                           |gerbil/core/mop$<MOP:3>[1]#_g32236_|))
                                       (declare (not safe))
-                                      (cons 'type-descriptor __tmp31974)))
-                                   (__tmp31949
-                                    (let ((__tmp31970
-                                           (let ((__tmp31971
-                                                  |gerbil/core/mop$<MOP:3>[1]#_g31972_|))
+                                      (cons 'constructor-method __tmp32235)))
+                                   (__tmp32206
+                                    (let ((__tmp32231
+                                           (let ((__tmp32232
+                                                  |gerbil/core/mop$<MOP:3>[1]#_g32233_|))
                                              (declare (not safe))
-                                             (cons 'constructor __tmp31971)))
-                                          (__tmp31950
-                                           (let ((__tmp31967
-                                                  (let ((__tmp31968
-                                                         |gerbil/core/mop$<MOP:3>[1]#_g31969_|))
+                                             (cons 'type-descriptor
+                                                   __tmp32232)))
+                                          (__tmp32207
+                                           (let ((__tmp32228
+                                                  (let ((__tmp32229
+                                                         |gerbil/core/mop$<MOP:3>[1]#_g32230_|))
                                                     (declare (not safe))
-                                                    (cons 'predicate
-                                                          __tmp31968)))
-                                                 (__tmp31951
-                                                  (let ((__tmp31964
-                                                         (let ((__tmp31965
-                                                                |gerbil/core/mop$<MOP:3>[1]#_g31966_|))
+                                                    (cons 'constructor
+                                                          __tmp32229)))
+                                                 (__tmp32208
+                                                  (let ((__tmp32225
+                                                         (let ((__tmp32226
+                                                                |gerbil/core/mop$<MOP:3>[1]#_g32227_|))
                                                            (declare (not safe))
-                                                           (cons 'accessors
+                                                           (cons 'predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         __tmp31965)))
-                (__tmp31952
-                 (let ((__tmp31961
-                        (let ((__tmp31962
-                               |gerbil/core/mop$<MOP:3>[1]#_g31963_|))
+                         __tmp32226)))
+                (__tmp32209
+                 (let ((__tmp32222
+                        (let ((__tmp32223
+                               |gerbil/core/mop$<MOP:3>[1]#_g32224_|))
                           (declare (not safe))
-                          (cons 'mutators __tmp31962)))
-                       (__tmp31953
-                        (let ((__tmp31958
-                               (let ((__tmp31959
-                                      |gerbil/core/mop$<MOP:3>[1]#_g31960_|))
+                          (cons 'accessors __tmp32223)))
+                       (__tmp32210
+                        (let ((__tmp32219
+                               (let ((__tmp32220
+                                      |gerbil/core/mop$<MOP:3>[1]#_g32221_|))
                                  (declare (not safe))
-                                 (cons 'unchecked-accessors __tmp31959)))
-                              (__tmp31954
-                               (let ((__tmp31955
-                                      (let ((__tmp31956
-                                             |gerbil/core/mop$<MOP:3>[1]#_g31957_|))
+                                 (cons 'mutators __tmp32220)))
+                              (__tmp32211
+                               (let ((__tmp32216
+                                      (let ((__tmp32217
+                                             |gerbil/core/mop$<MOP:3>[1]#_g32218_|))
                                         (declare (not safe))
-                                        (cons 'unchecked-mutators
-                                              __tmp31956))))
+                                        (cons 'unchecked-accessors
+                                              __tmp32217)))
+                                     (__tmp32212
+                                      (let ((__tmp32213
+                                             (let ((__tmp32214
+                                                    |gerbil/core/mop$<MOP:3>[1]#_g32215_|))
+                                               (declare (not safe))
+                                               (cons 'unchecked-mutators
+                                                     __tmp32214))))
+                                        (declare (not safe))
+                                        (cons __tmp32213 '()))))
                                  (declare (not safe))
-                                 (cons __tmp31955 '()))))
+                                 (cons __tmp32216 __tmp32212))))
                           (declare (not safe))
-                          (cons __tmp31958 __tmp31954))))
+                          (cons __tmp32219 __tmp32211))))
                    (declare (not safe))
-                   (cons __tmp31961 __tmp31953))))
+                   (cons __tmp32222 __tmp32210))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp31964
-                                                          __tmp31952))))
+                                                    (cons __tmp32225
+                                                          __tmp32209))))
                                              (declare (not safe))
-                                             (cons __tmp31967 __tmp31951))))
+                                             (cons __tmp32228 __tmp32208))))
                                       (declare (not safe))
-                                      (cons __tmp31970 __tmp31950))))
+                                      (cons __tmp32231 __tmp32207))))
                                (declare (not safe))
-                               (cons __tmp31973 __tmp31949))))
+                               (cons __tmp32234 __tmp32206))))
                         (declare (not safe))
-                        (cons __tmp31976 __tmp31948))))
+                        (cons __tmp32237 __tmp32205))))
                  (declare (not safe))
-                 (cons __tmp31979 __tmp31947))))
+                 (cons __tmp32240 __tmp32204))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp31981
-                                                        __tmp31946))))
+                                                  (cons __tmp32243
+                                                        __tmp32203))))
                                            (declare (not safe))
-                                           (cons __tmp31984 __tmp31945))))
+                                           (cons __tmp32246 __tmp32202))))
                                     (declare (not safe))
-                                    (cons __tmp31987 __tmp31944))))
+                                    (cons __tmp32249 __tmp32201))))
                              (declare (not safe))
-                             (cons __tmp31990 __tmp31943))))
+                             (cons __tmp32252 __tmp32200))))
                       (declare (not safe))
-                      (cons __tmp31993 __tmp31942))))
+                      (cons __tmp32255 __tmp32199))))
                (declare (not safe))
-               (cons __tmp31996 __tmp31941))))
+               (cons __tmp32258 __tmp32198))))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31940
+         __obj31820
+         __tmp32197
          '14
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      (let ((__tmp31999
-             (let ((__tmp32056
-                    (let ((__tmp32057 |gerbil/core/mop$<MOP:3>[1]#_g32058_|))
+      (let ((__tmp32261
+             (let ((__tmp32321
+                    (let ((__tmp32322 |gerbil/core/mop$<MOP:3>[1]#_g32323_|))
                       (declare (not safe))
-                      (cons 'id __tmp32057)))
-                   (__tmp32000
-                    (let ((__tmp32053
-                           (let ((__tmp32054
-                                  |gerbil/core/mop$<MOP:3>[1]#_g32055_|))
+                      (cons 'id __tmp32322)))
+                   (__tmp32262
+                    (let ((__tmp32318
+                           (let ((__tmp32319
+                                  |gerbil/core/mop$<MOP:3>[1]#_g32320_|))
                              (declare (not safe))
-                             (cons 'name __tmp32054)))
-                          (__tmp32001
-                           (let ((__tmp32050
-                                  (let ((__tmp32051
-                                         |gerbil/core/mop$<MOP:3>[1]#_g32052_|))
+                             (cons 'name __tmp32319)))
+                          (__tmp32263
+                           (let ((__tmp32315
+                                  (let ((__tmp32316
+                                         |gerbil/core/mop$<MOP:3>[1]#_g32317_|))
                                     (declare (not safe))
-                                    (cons 'super __tmp32051)))
-                                 (__tmp32002
-                                  (let ((__tmp32047
-                                         (let ((__tmp32048
-                                                |gerbil/core/mop$<MOP:3>[1]#_g32049_|))
+                                    (cons 'super __tmp32316)))
+                                 (__tmp32264
+                                  (let ((__tmp32312
+                                         (let ((__tmp32313
+                                                |gerbil/core/mop$<MOP:3>[1]#_g32314_|))
                                            (declare (not safe))
-                                           (cons 'slots __tmp32048)))
-                                        (__tmp32003
-                                         (let ((__tmp32044
-                                                (let ((__tmp32045
-                                                       |gerbil/core/mop$<MOP:3>[1]#_g32046_|))
+                                           (cons 'slots __tmp32313)))
+                                        (__tmp32265
+                                         (let ((__tmp32309
+                                                (let ((__tmp32310
+                                                       |gerbil/core/mop$<MOP:3>[1]#_g32311_|))
                                                   (declare (not safe))
-                                                  (cons 'struct? __tmp32045)))
-                                               (__tmp32004
-                                                (let ((__tmp32041
-                                                       (let ((__tmp32042
-                                                              |gerbil/core/mop$<MOP:3>[1]#_g32043_|))
+                                                  (cons 'struct? __tmp32310)))
+                                               (__tmp32266
+                                                (let ((__tmp32306
+                                                       (let ((__tmp32307
+                                                              |gerbil/core/mop$<MOP:3>[1]#_g32308_|))
                                                          (declare (not safe))
                                                          (cons 'final?
-                                                               __tmp32042)))
-                                                      (__tmp32005
-                                                       (let ((__tmp32038
-                                                              (let ((__tmp32039
+                                                               __tmp32307)))
+                                                      (__tmp32267
+                                                       (let ((__tmp32303
+                                                              (let ((__tmp32304
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             |gerbil/core/mop$<MOP:3>[1]#_g32040_|))
+                             |gerbil/core/mop$<MOP:3>[1]#_g32305_|))
                         (declare (not safe))
-                        (cons 'metaclass __tmp32039)))
-                     (__tmp32006
-                      (let ((__tmp32035
-                             (let ((__tmp32036
-                                    |gerbil/core/mop$<MOP:3>[1]#_g32037_|))
+                        (cons 'system? __tmp32304)))
+                     (__tmp32268
+                      (let ((__tmp32301
+                             (let ((__tmp32302
+                                    |gerbil/core/mop$<MOP:3>[1]#_g32175_|))
                                (declare (not safe))
-                               (cons 'constructor-method __tmp32036)))
-                            (__tmp32007
-                             (let ((__tmp32032
-                                    (let ((__tmp32033
-                                           |gerbil/core/mop$<MOP:3>[1]#_g32034_|))
+                               (cons 'metaclass __tmp32302)))
+                            (__tmp32269
+                             (let ((__tmp32298
+                                    (let ((__tmp32299
+                                           |gerbil/core/mop$<MOP:3>[1]#_g32300_|))
                                       (declare (not safe))
-                                      (cons 'type-descriptor __tmp32033)))
-                                   (__tmp32008
-                                    (let ((__tmp32029
-                                           (let ((__tmp32030
-                                                  |gerbil/core/mop$<MOP:3>[1]#_g32031_|))
+                                      (cons 'constructor-method __tmp32299)))
+                                   (__tmp32270
+                                    (let ((__tmp32295
+                                           (let ((__tmp32296
+                                                  |gerbil/core/mop$<MOP:3>[1]#_g32297_|))
                                              (declare (not safe))
-                                             (cons 'constructor __tmp32030)))
-                                          (__tmp32009
-                                           (let ((__tmp32026
-                                                  (let ((__tmp32027
-                                                         |gerbil/core/mop$<MOP:3>[1]#_g32028_|))
+                                             (cons 'type-descriptor
+                                                   __tmp32296)))
+                                          (__tmp32271
+                                           (let ((__tmp32292
+                                                  (let ((__tmp32293
+                                                         |gerbil/core/mop$<MOP:3>[1]#_g32294_|))
                                                     (declare (not safe))
-                                                    (cons 'predicate
-                                                          __tmp32027)))
-                                                 (__tmp32010
-                                                  (let ((__tmp32023
-                                                         (let ((__tmp32024
-                                                                |gerbil/core/mop$<MOP:3>[1]#_g32025_|))
+                                                    (cons 'constructor
+                                                          __tmp32293)))
+                                                 (__tmp32272
+                                                  (let ((__tmp32289
+                                                         (let ((__tmp32290
+                                                                |gerbil/core/mop$<MOP:3>[1]#_g32291_|))
                                                            (declare (not safe))
-                                                           (cons 'accessors
+                                                           (cons 'predicate
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         __tmp32024)))
-                (__tmp32011
-                 (let ((__tmp32020
-                        (let ((__tmp32021
-                               |gerbil/core/mop$<MOP:3>[1]#_g32022_|))
+                         __tmp32290)))
+                (__tmp32273
+                 (let ((__tmp32286
+                        (let ((__tmp32287
+                               |gerbil/core/mop$<MOP:3>[1]#_g32288_|))
                           (declare (not safe))
-                          (cons 'mutators __tmp32021)))
-                       (__tmp32012
-                        (let ((__tmp32017
-                               (let ((__tmp32018
-                                      |gerbil/core/mop$<MOP:3>[1]#_g32019_|))
+                          (cons 'accessors __tmp32287)))
+                       (__tmp32274
+                        (let ((__tmp32283
+                               (let ((__tmp32284
+                                      |gerbil/core/mop$<MOP:3>[1]#_g32285_|))
                                  (declare (not safe))
-                                 (cons 'unchecked-accessors __tmp32018)))
-                              (__tmp32013
-                               (let ((__tmp32014
-                                      (let ((__tmp32015
-                                             |gerbil/core/mop$<MOP:3>[1]#_g32016_|))
+                                 (cons 'mutators __tmp32284)))
+                              (__tmp32275
+                               (let ((__tmp32280
+                                      (let ((__tmp32281
+                                             |gerbil/core/mop$<MOP:3>[1]#_g32282_|))
                                         (declare (not safe))
-                                        (cons 'unchecked-mutators
-                                              __tmp32015))))
+                                        (cons 'unchecked-accessors
+                                              __tmp32281)))
+                                     (__tmp32276
+                                      (let ((__tmp32277
+                                             (let ((__tmp32278
+                                                    |gerbil/core/mop$<MOP:3>[1]#_g32279_|))
+                                               (declare (not safe))
+                                               (cons 'unchecked-mutators
+                                                     __tmp32278))))
+                                        (declare (not safe))
+                                        (cons __tmp32277 '()))))
                                  (declare (not safe))
-                                 (cons __tmp32014 '()))))
+                                 (cons __tmp32280 __tmp32276))))
                           (declare (not safe))
-                          (cons __tmp32017 __tmp32013))))
+                          (cons __tmp32283 __tmp32275))))
                    (declare (not safe))
-                   (cons __tmp32020 __tmp32012))))
+                   (cons __tmp32286 __tmp32274))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp32023
-                                                          __tmp32011))))
+                                                    (cons __tmp32289
+                                                          __tmp32273))))
                                              (declare (not safe))
-                                             (cons __tmp32026 __tmp32010))))
+                                             (cons __tmp32292 __tmp32272))))
                                       (declare (not safe))
-                                      (cons __tmp32029 __tmp32009))))
+                                      (cons __tmp32295 __tmp32271))))
                                (declare (not safe))
-                               (cons __tmp32032 __tmp32008))))
+                               (cons __tmp32298 __tmp32270))))
                         (declare (not safe))
-                        (cons __tmp32035 __tmp32007))))
+                        (cons __tmp32301 __tmp32269))))
                  (declare (not safe))
-                 (cons __tmp32038 __tmp32006))))
+                 (cons __tmp32303 __tmp32268))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp32041
-                                                        __tmp32005))))
+                                                  (cons __tmp32306
+                                                        __tmp32267))))
                                            (declare (not safe))
-                                           (cons __tmp32044 __tmp32004))))
+                                           (cons __tmp32309 __tmp32266))))
                                     (declare (not safe))
-                                    (cons __tmp32047 __tmp32003))))
+                                    (cons __tmp32312 __tmp32265))))
                              (declare (not safe))
-                             (cons __tmp32050 __tmp32002))))
+                             (cons __tmp32315 __tmp32264))))
                       (declare (not safe))
-                      (cons __tmp32053 __tmp32001))))
+                      (cons __tmp32318 __tmp32263))))
                (declare (not safe))
-               (cons __tmp32056 __tmp32000))))
+               (cons __tmp32321 __tmp32262))))
         (declare (not safe))
         (##unchecked-structure-set!
-         __obj31580
-         __tmp31999
+         __obj31820
+         __tmp32261
          '15
          gerbil/core/mop$<MOP:2>#class-type-info::t
          '#f))
-      __obj31580)))
+      (let ((__tmp32324
+             (let ((__tmp32385
+                    (let ((__tmp32386 |gerbil/core/mop$<MOP:3>[1]#_g32387_|))
+                      (declare (not safe))
+                      (cons 'id __tmp32386)))
+                   (__tmp32325
+                    (let ((__tmp32382
+                           (let ((__tmp32383
+                                  |gerbil/core/mop$<MOP:3>[1]#_g32384_|))
+                             (declare (not safe))
+                             (cons 'name __tmp32383)))
+                          (__tmp32326
+                           (let ((__tmp32379
+                                  (let ((__tmp32380
+                                         |gerbil/core/mop$<MOP:3>[1]#_g32381_|))
+                                    (declare (not safe))
+                                    (cons 'super __tmp32380)))
+                                 (__tmp32327
+                                  (let ((__tmp32376
+                                         (let ((__tmp32377
+                                                |gerbil/core/mop$<MOP:3>[1]#_g32378_|))
+                                           (declare (not safe))
+                                           (cons 'slots __tmp32377)))
+                                        (__tmp32328
+                                         (let ((__tmp32373
+                                                (let ((__tmp32374
+                                                       |gerbil/core/mop$<MOP:3>[1]#_g32375_|))
+                                                  (declare (not safe))
+                                                  (cons 'struct? __tmp32374)))
+                                               (__tmp32329
+                                                (let ((__tmp32370
+                                                       (let ((__tmp32371
+                                                              |gerbil/core/mop$<MOP:3>[1]#_g32372_|))
+                                                         (declare (not safe))
+                                                         (cons 'final?
+                                                               __tmp32371)))
+                                                      (__tmp32330
+                                                       (let ((__tmp32367
+                                                              (let ((__tmp32368
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             |gerbil/core/mop$<MOP:3>[1]#_g32369_|))
+                        (declare (not safe))
+                        (cons 'system? __tmp32368)))
+                     (__tmp32331
+                      (let ((__tmp32364
+                             (let ((__tmp32365
+                                    |gerbil/core/mop$<MOP:3>[1]#_g32366_|))
+                               (declare (not safe))
+                               (cons 'metaclass __tmp32365)))
+                            (__tmp32332
+                             (let ((__tmp32361
+                                    (let ((__tmp32362
+                                           |gerbil/core/mop$<MOP:3>[1]#_g32363_|))
+                                      (declare (not safe))
+                                      (cons 'constructor-method __tmp32362)))
+                                   (__tmp32333
+                                    (let ((__tmp32358
+                                           (let ((__tmp32359
+                                                  |gerbil/core/mop$<MOP:3>[1]#_g32360_|))
+                                             (declare (not safe))
+                                             (cons 'type-descriptor
+                                                   __tmp32359)))
+                                          (__tmp32334
+                                           (let ((__tmp32355
+                                                  (let ((__tmp32356
+                                                         |gerbil/core/mop$<MOP:3>[1]#_g32357_|))
+                                                    (declare (not safe))
+                                                    (cons 'constructor
+                                                          __tmp32356)))
+                                                 (__tmp32335
+                                                  (let ((__tmp32352
+                                                         (let ((__tmp32353
+                                                                |gerbil/core/mop$<MOP:3>[1]#_g32354_|))
+                                                           (declare (not safe))
+                                                           (cons 'predicate
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         __tmp32353)))
+                (__tmp32336
+                 (let ((__tmp32349
+                        (let ((__tmp32350
+                               |gerbil/core/mop$<MOP:3>[1]#_g32351_|))
+                          (declare (not safe))
+                          (cons 'accessors __tmp32350)))
+                       (__tmp32337
+                        (let ((__tmp32346
+                               (let ((__tmp32347
+                                      |gerbil/core/mop$<MOP:3>[1]#_g32348_|))
+                                 (declare (not safe))
+                                 (cons 'mutators __tmp32347)))
+                              (__tmp32338
+                               (let ((__tmp32343
+                                      (let ((__tmp32344
+                                             |gerbil/core/mop$<MOP:3>[1]#_g32345_|))
+                                        (declare (not safe))
+                                        (cons 'unchecked-accessors
+                                              __tmp32344)))
+                                     (__tmp32339
+                                      (let ((__tmp32340
+                                             (let ((__tmp32341
+                                                    |gerbil/core/mop$<MOP:3>[1]#_g32342_|))
+                                               (declare (not safe))
+                                               (cons 'unchecked-mutators
+                                                     __tmp32341))))
+                                        (declare (not safe))
+                                        (cons __tmp32340 '()))))
+                                 (declare (not safe))
+                                 (cons __tmp32343 __tmp32339))))
+                          (declare (not safe))
+                          (cons __tmp32346 __tmp32338))))
+                   (declare (not safe))
+                   (cons __tmp32349 __tmp32337))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (declare (not safe))
+                                                    (cons __tmp32352
+                                                          __tmp32336))))
+                                             (declare (not safe))
+                                             (cons __tmp32355 __tmp32335))))
+                                      (declare (not safe))
+                                      (cons __tmp32358 __tmp32334))))
+                               (declare (not safe))
+                               (cons __tmp32361 __tmp32333))))
+                        (declare (not safe))
+                        (cons __tmp32364 __tmp32332))))
+                 (declare (not safe))
+                 (cons __tmp32367 __tmp32331))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (declare (not safe))
+                                                  (cons __tmp32370
+                                                        __tmp32330))))
+                                           (declare (not safe))
+                                           (cons __tmp32373 __tmp32329))))
+                                    (declare (not safe))
+                                    (cons __tmp32376 __tmp32328))))
+                             (declare (not safe))
+                             (cons __tmp32379 __tmp32327))))
+                      (declare (not safe))
+                      (cons __tmp32382 __tmp32326))))
+               (declare (not safe))
+               (cons __tmp32385 __tmp32325))))
+        (declare (not safe))
+        (##unchecked-structure-set!
+         __obj31820
+         __tmp32324
+         '16
+         gerbil/core/mop$<MOP:2>#class-type-info::t
+         '#f))
+      __obj31820)))

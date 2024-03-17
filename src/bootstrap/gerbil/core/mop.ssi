@@ -11,10 +11,12 @@ namespace: gerbil/core/mop
          (%#export
           (import: (in: #f <MOP:1>))
           (import: (in: #f <MOP:4>))
+          (import: (in: #f <MOP:5>))
           (phi: 1 (import: (in: #f <MOP:1>)))
           (phi: 1 (import: (in: #f <MOP:2>)))
           (phi: 1 (import: (in: #f <MOP:3>)))
-          (phi: 1 (import: (in: #f <MOP:4>))))
+          (phi: 1 (import: (in: #f <MOP:4>)))
+          (phi: 1 (import: (in: #f <MOP:5>))))
          (%#module
           <MOP:1>
           (%#begin (%#export
@@ -70,6 +72,9 @@ namespace: gerbil/core/mop
                     !class-type-final?
                     gerbil/core/mop$<MOP:2>#!class-type-final?)
                    (%#define-runtime
+                    !class-type-system?
+                    gerbil/core/mop$<MOP:2>#!class-type-system?)
+                   (%#define-runtime
                     !class-type-metaclass
                     gerbil/core/mop$<MOP:2>#!class-type-metaclass)
                    (%#define-runtime
@@ -114,6 +119,9 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     !class-type-final?-set!
                     gerbil/core/mop$<MOP:2>#!class-type-final?-set!)
+                   (%#define-runtime
+                    !class-type-system?-set!
+                    gerbil/core/mop$<MOP:2>#!class-type-system?-set!)
                    (%#define-runtime
                     !class-type-metaclass-set!
                     gerbil/core/mop$<MOP:2>#!class-type-metaclass-set!)
@@ -160,6 +168,9 @@ namespace: gerbil/core/mop
                     &!class-type-final?
                     gerbil/core/mop$<MOP:2>#&!class-type-final?)
                    (%#define-runtime
+                    &!class-type-system?
+                    gerbil/core/mop$<MOP:2>#&!class-type-system?)
+                   (%#define-runtime
                     &!class-type-metaclass
                     gerbil/core/mop$<MOP:2>#&!class-type-metaclass)
                    (%#define-runtime
@@ -204,6 +215,9 @@ namespace: gerbil/core/mop
                    (%#define-runtime
                     &!class-type-final?-set!
                     gerbil/core/mop$<MOP:2>#&!class-type-final?-set!)
+                   (%#define-runtime
+                    &!class-type-system?-set!
+                    gerbil/core/mop$<MOP:2>#&!class-type-system?-set!)
                    (%#define-runtime
                     &!class-type-metaclass-set!
                     gerbil/core/mop$<MOP:2>#&!class-type-metaclass-set!)
@@ -288,10 +302,211 @@ namespace: gerbil/core/mop
                    (%#define-syntax
                     @-set!
                     |gerbil/core/mop$<MOP:4>[:0:]#@-set!|)))
+         (%#module
+          <MOP:5>
+          (%#begin (%#import (phi: 1 (in: #f <MOP:2>)))
+                   (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref load-module)
+                                     (%#quote "gerbil/core/mop__4")))
+                            (%#define-syntax
+                             defsystem-class-info
+                             |gerbil/core/mop$<MOP:5>[:0:]#defsystem-class-info|))
+                   (%#define-syntax :t |gerbil/core/mop$<MOP:5>[:0:]#:t|)
+                   (%#define-syntax
+                    :immediate
+                    |gerbil/core/mop$<MOP:5>[:0:]#:immediate|)
+                   (%#define-syntax :char |gerbil/core/mop$<MOP:5>[:0:]#:char|)
+                   (%#define-syntax
+                    :boolean
+                    |gerbil/core/mop$<MOP:5>[:0:]#:boolean|)
+                   (%#define-syntax :atom |gerbil/core/mop$<MOP:5>[:0:]#:atom|)
+                   (%#define-syntax :void |gerbil/core/mop$<MOP:5>[:0:]#:void|)
+                   (%#define-syntax :eof |gerbil/core/mop$<MOP:5>[:0:]#:eof|)
+                   (%#define-syntax :true |gerbil/core/mop$<MOP:5>[:0:]#:true|)
+                   (%#define-syntax
+                    :false
+                    |gerbil/core/mop$<MOP:5>[:0:]#:false|)
+                   (%#define-syntax
+                    :special
+                    |gerbil/core/mop$<MOP:5>[:0:]#:special|)
+                   (%#define-syntax
+                    :number
+                    |gerbil/core/mop$<MOP:5>[:0:]#:number|)
+                   (%#define-syntax :real |gerbil/core/mop$<MOP:5>[:0:]#:real|)
+                   (%#define-syntax
+                    :integer
+                    |gerbil/core/mop$<MOP:5>[:0:]#:integer|)
+                   (%#define-syntax
+                    :fixnum
+                    |gerbil/core/mop$<MOP:5>[:0:]#:fixnum|)
+                   (%#define-syntax
+                    :bignum
+                    |gerbil/core/mop$<MOP:5>[:0:]#:bignum|)
+                   (%#define-syntax
+                    :ratnum
+                    |gerbil/core/mop$<MOP:5>[:0:]#:ratnum|)
+                   (%#define-syntax
+                    :flonum
+                    |gerbil/core/mop$<MOP:5>[:0:]#:flonum|)
+                   (%#define-syntax
+                    :cpxnum
+                    |gerbil/core/mop$<MOP:5>[:0:]#:cpxnum|)
+                   (%#define-syntax
+                    :symbolic
+                    |gerbil/core/mop$<MOP:5>[:0:]#:symbolic|)
+                   (%#define-syntax
+                    :symbol
+                    |gerbil/core/mop$<MOP:5>[:0:]#:symbol|)
+                   (%#define-syntax
+                    :keyword
+                    |gerbil/core/mop$<MOP:5>[:0:]#:keyword|)
+                   (%#define-syntax :list |gerbil/core/mop$<MOP:5>[:0:]#:list|)
+                   (%#define-syntax :pair |gerbil/core/mop$<MOP:5>[:0:]#:pair|)
+                   (%#define-syntax :null |gerbil/core/mop$<MOP:5>[:0:]#:null|)
+                   (%#define-syntax
+                    :sequence
+                    |gerbil/core/mop$<MOP:5>[:0:]#:sequence|)
+                   (%#define-syntax
+                    :vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:vector|)
+                   (%#define-syntax
+                    :string
+                    |gerbil/core/mop$<MOP:5>[:0:]#:string|)
+                   (%#define-syntax
+                    :hvector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:hvector|)
+                   (%#define-syntax
+                    :u8vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:u8vector|)
+                   (%#define-syntax
+                    :s8vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:s8vector|)
+                   (%#define-syntax
+                    :u16vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:u16vector|)
+                   (%#define-syntax
+                    :s16vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:s16vector|)
+                   (%#define-syntax
+                    :u32vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:u32vector|)
+                   (%#define-syntax
+                    :s32vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:s32vector|)
+                   (%#define-syntax
+                    :u64vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:u64vector|)
+                   (%#define-syntax
+                    :s64vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:s64vector|)
+                   (%#define-syntax
+                    :f32vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:f32vector|)
+                   (%#define-syntax
+                    :f64vector
+                    |gerbil/core/mop$<MOP:5>[:0:]#:f64vector|)
+                   (%#define-syntax
+                    :values
+                    |gerbil/core/mop$<MOP:5>[:0:]#:values|)
+                   (%#define-syntax :box |gerbil/core/mop$<MOP:5>[:0:]#:box|)
+                   (%#define-syntax
+                    :frame
+                    |gerbil/core/mop$<MOP:5>[:0:]#:frame|)
+                   (%#define-syntax
+                    :continuation
+                    |gerbil/core/mop$<MOP:5>[:0:]#:continuation|)
+                   (%#define-syntax
+                    :promise
+                    |gerbil/core/mop$<MOP:5>[:0:]#:promise|)
+                   (%#define-syntax :weak |gerbil/core/mop$<MOP:5>[:0:]#:weak|)
+                   (%#define-syntax
+                    :foreign
+                    |gerbil/core/mop$<MOP:5>[:0:]#:foreign|)
+                   (%#define-syntax
+                    :procedure
+                    |gerbil/core/mop$<MOP:5>[:0:]#:procedure|)
+                   (%#define-syntax :time |gerbil/core/mop$<MOP:5>[:0:]#:time|)
+                   (%#define-syntax
+                    :thread
+                    |gerbil/core/mop$<MOP:5>[:0:]#:thread|)
+                   (%#define-syntax
+                    :thread-group
+                    |gerbil/core/mop$<MOP:5>[:0:]#:thread-group|)
+                   (%#define-syntax
+                    :mutex
+                    |gerbil/core/mop$<MOP:5>[:0:]#:mutex|)
+                   (%#define-syntax
+                    :condvar
+                    |gerbil/core/mop$<MOP:5>[:0:]#:condvar|)
+                   (%#define-syntax :port |gerbil/core/mop$<MOP:5>[:0:]#:port|)
+                   (%#define-syntax
+                    :object-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:object-port|)
+                   (%#define-syntax
+                    :character-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:character-port|)
+                   (%#define-syntax
+                    :byte-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:byte-port|)
+                   (%#define-syntax
+                    :device-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:device-port|)
+                   (%#define-syntax
+                    :vector-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:vector-port|)
+                   (%#define-syntax
+                    :string-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:string-port|)
+                   (%#define-syntax
+                    :u8vector-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:u8vector-port|)
+                   (%#define-syntax
+                    :raw-device-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:raw-device-port|)
+                   (%#define-syntax
+                    :tcp-server-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:tcp-server-port|)
+                   (%#define-syntax
+                    :udp-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:udp-port|)
+                   (%#define-syntax
+                    :directory-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:directory-port|)
+                   (%#define-syntax
+                    :event-queue-port
+                    |gerbil/core/mop$<MOP:5>[:0:]#:event-queue-port|)
+                   (%#define-syntax
+                    :table
+                    |gerbil/core/mop$<MOP:5>[:0:]#:table|)
+                   (%#define-syntax
+                    :readenv
+                    |gerbil/core/mop$<MOP:5>[:0:]#:readenv|)
+                   (%#define-syntax
+                    :writeenv
+                    |gerbil/core/mop$<MOP:5>[:0:]#:writeenv|)
+                   (%#define-syntax
+                    :readtable
+                    |gerbil/core/mop$<MOP:5>[:0:]#:readtable|)
+                   (%#define-syntax
+                    :processor
+                    |gerbil/core/mop$<MOP:5>[:0:]#:processor|)
+                   (%#define-syntax :vm |gerbil/core/mop$<MOP:5>[:0:]#:vm|)
+                   (%#define-syntax
+                    :file-info
+                    |gerbil/core/mop$<MOP:5>[:0:]#:file-info|)
+                   (%#define-syntax
+                    :socket-info
+                    |gerbil/core/mop$<MOP:5>[:0:]#:socket-info|)
+                   (%#define-syntax
+                    :address-info
+                    |gerbil/core/mop$<MOP:5>[:0:]#:address-info|)))
          (%#import
           (in: #f <MOP:1>)
           (in: #f <MOP:4>)
+          (in: #f <MOP:5>)
           (phi: 1 (in: #f <MOP:1>))
           (phi: 1 (in: #f <MOP:2>))
           (phi: 1 (in: #f <MOP:3>))
-          (phi: 1 (in: #f <MOP:4>))))
+          (phi: 1 (in: #f <MOP:4>))
+          (phi: 1 (in: #f <MOP:5>))))

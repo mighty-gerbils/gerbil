@@ -1,7 +1,6 @@
 (export walist-test)
 
 (import
-  :std/generic
   :std/misc/walist
   :std/test)
 
@@ -75,6 +74,6 @@
       (check (walist? "hello world") => #f)
       (check (walist? '((a . 1) (b . 2))) => #f)
       ;; type-of
-      (check (type-of w) => 'std/misc/walist#walist::t)
-      (check (type-of wq!) => 'std/misc/walist#walistq!::t)
-      (check (eq? (type-of w) (type-of wq!)) => #f))))
+      (check (class-of w) => std/misc/walist#walist::t)
+      (check (class-of wq!) => std/misc/walist#walistq!::t)
+      (check (eq? (class-of w) (class-of wq!)) => #f))))

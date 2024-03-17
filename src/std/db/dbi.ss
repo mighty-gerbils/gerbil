@@ -8,8 +8,8 @@
         :std/contract
         (only-in :std/io Closer)
         :std/iter
-        :std/generic
-        :std/error)
+        :std/error
+        :std/generic)
 (export
   (struct-out connection statement SQLError)
   connection:::init!
@@ -51,11 +51,9 @@
   (columns))
 
 (defstruct connection (e driver txn-begin txn-commit txn-abort)
-  constructor: :init!
-  )
+  constructor: :init!)
 (defstruct statement (e i)
-  constructor: :init!
-  )
+  constructor: :init!)
 
 (defmethod {:init! connection}
   (lambda (self e)

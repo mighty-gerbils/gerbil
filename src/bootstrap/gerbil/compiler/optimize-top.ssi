@@ -115,6 +115,9 @@ namespace: gxc
           basic-expression-type-annotation-mop.class
           gxc#basic-expression-type-annotation-mop.class)
          (%#define-runtime
+          basic-expression-type-annotation-mop.system
+          gxc#basic-expression-type-annotation-mop.system)
+         (%#define-runtime
           basic-expression-type-annotation-mop.constructor
           gxc#basic-expression-type-annotation-mop.constructor)
          (%#define-runtime
