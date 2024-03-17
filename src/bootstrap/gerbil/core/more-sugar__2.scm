@@ -111,7 +111,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop~MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -134,7 +134,7 @@
            __obj47745
            'gerbil.core#setq-macro::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -142,7 +142,7 @@
            __obj47745
            'setq-macro
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -150,7 +150,7 @@
            __obj47745
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47806
                (let ((__tmp47807 |gerbil/core/more-sugar[2]#_g47808_|))
@@ -161,7 +161,7 @@
            __obj47745
            __tmp47806
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -169,7 +169,7 @@
            __obj47745
            '#f
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -177,7 +177,7 @@
            __obj47745
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -185,7 +185,7 @@
            __obj47745
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -193,7 +193,7 @@
            __obj47745
            '#f
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47809 |gerbil/core/more-sugar[2]#_g47810_|))
           (declare (not safe))
@@ -201,7 +201,7 @@
            __obj47745
            __tmp47809
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47811 |gerbil/core/more-sugar[2]#_g47812_|))
           (declare (not safe))
@@ -209,7 +209,7 @@
            __obj47745
            __tmp47811
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47813 |gerbil/core/more-sugar[2]#_g47814_|))
           (declare (not safe))
@@ -217,7 +217,7 @@
            __obj47745
            __tmp47813
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47815
                (let ((__tmp47816
@@ -231,7 +231,7 @@
            __obj47745
            __tmp47815
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47819
                (let ((__tmp47820
@@ -245,7 +245,7 @@
            __obj47745
            __tmp47819
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47823
                (let ((__tmp47824
@@ -259,7 +259,7 @@
            __obj47745
            __tmp47823
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47827
                (let ((__tmp47828
@@ -273,7 +273,7 @@
            __obj47745
            __tmp47827
            '16
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         __obj47745))
     (define |gerbil/core/more-sugar[:1:]#setf-macro|
@@ -281,7 +281,7 @@
              (let ()
                (declare (not safe))
                (##structure
-                gerbil/core/mop$<MOP:2>#class-type-info::t
+                gerbil/core/mop~MOP-2#class-type-info::t
                 '#f
                 '#f
                 '#f
@@ -304,7 +304,7 @@
            __obj47746
            'gerbil.core#setf-macro::t
            '1
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -312,7 +312,7 @@
            __obj47746
            'setf-macro
            '2
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -320,7 +320,7 @@
            __obj47746
            '()
            '4
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47831
                (let ((__tmp47832 |gerbil/core/more-sugar[2]#_g47808_|))
@@ -331,7 +331,7 @@
            __obj47746
            __tmp47831
            '3
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -339,7 +339,7 @@
            __obj47746
            '#f
            '5
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -347,7 +347,7 @@
            __obj47746
            '#f
            '6
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -355,7 +355,7 @@
            __obj47746
            '#f
            '8
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
@@ -363,7 +363,7 @@
            __obj47746
            '#f
            '9
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47833 |gerbil/core/more-sugar[2]#_g47834_|))
           (declare (not safe))
@@ -371,7 +371,7 @@
            __obj47746
            __tmp47833
            '10
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47835 |gerbil/core/more-sugar[2]#_g47836_|))
           (declare (not safe))
@@ -379,7 +379,7 @@
            __obj47746
            __tmp47835
            '11
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47837 |gerbil/core/more-sugar[2]#_g47838_|))
           (declare (not safe))
@@ -387,7 +387,7 @@
            __obj47746
            __tmp47837
            '12
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47839
                (let ((__tmp47840
@@ -401,7 +401,7 @@
            __obj47746
            __tmp47839
            '13
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47843
                (let ((__tmp47844
@@ -415,7 +415,7 @@
            __obj47746
            __tmp47843
            '14
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47847
                (let ((__tmp47848
@@ -429,7 +429,7 @@
            __obj47746
            __tmp47847
            '15
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ((__tmp47851
                (let ((__tmp47852
@@ -443,6 +443,6 @@
            __obj47746
            __tmp47851
            '16
-           gerbil/core/mop$<MOP:2>#class-type-info::t
+           gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         __obj47746))))

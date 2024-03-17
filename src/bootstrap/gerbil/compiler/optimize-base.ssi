@@ -8,10 +8,7 @@ namespace: gxc
           :gerbil/runtime/c3
           :gerbil/compiler/base
           :gerbil/compiler/compile)
-         (%#export
-          #t
-          (import: (in: :gerbil/core/expander <syntax-case>))
-          (import: (in: :gerbil/core/expander <syntax-sugar>)))
+         (%#export #t (import: :gerbil/core/expander))
          (%#define-runtime
           current-compile-optimizer-info
           gxc#current-compile-optimizer-info)
