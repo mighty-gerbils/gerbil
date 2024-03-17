@@ -45,16 +45,16 @@
     (test-case "test default dispatch"
       (check (my-add 1 2) => #f))
 
-    (defmethod (my-add (a <number>) (b <number>))
+    (defmethod (my-add (a :number) (b :number))
       ['number+ a b])
-    (defmethod (my-add (a <string>) (b <string>))
+    (defmethod (my-add (a :string) (b :string))
       ['string+ a b])
 
     (test-case "test multimethod dispatch"
       (check (my-add 1 2) => '(number+ 1 2))
       (check (my-add "a" "b") => '(string+ "a" "b")))
 
-    (defmethod (my-add (a <fixnum>) (b <fixnum>))
+    (defmethod (my-add (a :fixnum) (b :fixnum))
       ['fixnum+ a b])
 
     (test-case "test specialization"

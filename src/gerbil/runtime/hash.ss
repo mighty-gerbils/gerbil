@@ -33,7 +33,7 @@ namespace: #f
    (for-each HashTable-each@ HashTable-each@-set!)
    (length   HashTable-length@ HashTable-length@-set!)
    (copy     HashTable-copy@ HashTable-copy@-set!)
-   (clear    HashTable-clear@ HashTable-clear@-set!)))
+   (clear!   HashTable-clear@ HashTable-clear@-set!)))
 
 (def HashTable::interface
   (interface-descriptor

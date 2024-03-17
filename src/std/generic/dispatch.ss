@@ -3,10 +3,8 @@
 ;;; Generic dispatch
 
 (import :std/error
-        :std/contract
-        :gerbil/gambit)
-(export type-of linear-type-of type-precedence-list
-        make-generic generic? generic-id generic-dispatch
+        :std/contract)
+(export make-generic generic? generic-id generic-dispatch
         generic-bind! generic-dispatch generic-dispatch-next
         generic-dispatch1 generic-dispatch2 generic-dispatch3 generic-dispatch4
         dispatch-error?)
@@ -17,128 +15,6 @@
 (defraise/context (raise-dispatch-error where method-id args)
   (DispatchError "generic dispatch failure; no matching method"
                  irritants: (cons method-id args)))
-
-;;; type-of
-(def (type-of obj)
-  (declare (not interrupts-enabled))
-  (let (t (##type obj))
-    (cond
-     ((fx= t (macro-type-mem1))       ; subtyped
-      (let (st (##subtype obj))
-        (cond
-         ((fx= st (macro-subtype-structure)) ; object
-          (##type-id (##structure-type obj)))
-         ((fx= st (macro-subtype-boxvalues)) ; box or values?
-          (if (fx= (##vector-length obj) 1)
-            'box
-            'values))
-         (else
-          (vector-ref +subtype-id+ st)))))
-     ((fx= t (macro-type-mem2))       ; pair
-      'pair)
-     ((fx= t (macro-type-fixnum))     ; fixnum
-      'fixnum)
-     (else                              ; special (immediate)
-      (cond
-       ((##char? obj)      'char)
-       ((##eq? obj '())    'null)
-       ((##eq? obj #f)     'boolean)
-       ((##eq? obj #t)     'boolean)
-       ((##eq? obj #!void) 'void)
-       ((##eq? obj #!eof)  'eof)
-       (else 'unknown))))))
-
-(def (linear-type-of obj)
-  (let (t (##type obj))
-    (cond
-     ((fx= t (macro-type-mem1))       ; subtyped
-      (let (st (##subtype obj))
-        (cond
-         ((fx= st (macro-subtype-structure)) ; object
-          (let (klass (##structure-type obj))
-            (type-precedence-list klass)))
-         ((fx= st (macro-subtype-boxvalues)) ; box or values?
-          (if (fx= (##vector-length obj) 1)
-            '(box t)
-            '(values t)))
-         (else
-          (vector-ref +subtype-linear+ st)))))
-     ((fx= t (macro-type-mem2))       ; pair
-      '(pair t))
-     ((fx= t (macro-type-fixnum))     ; fixnum
-      '(fixnum integer real number t))
-     (else                              ; special (immediate)
-      (cond
-       ((##char? obj)      '(char t))
-       ((##eq? obj '())    '(null t))
-       ((##eq? obj #f)     '(boolean t))
-       ((##eq? obj #t)     '(boolean t))
-       ((##eq? obj #!void) '(void t))
-       ((##eq? obj #!eof)  '(eof t))
-       (else '(unknown)))))))
-
-(extern namespace: #f class-precedence-list) ; runtime
-
-(def (struct-precedence-list strukt)
-  (cons strukt
-        (cond
-         ((##type-super strukt) => struct-precedence-list)
-         (else []))))
-
-(def (type-precedence-list klass)
-  (cond
-   ((class-type? klass)
-    (append (map ##type-id (class-precedence-list klass))
-            '(object t)))
-   ((##type? klass)
-    (append (map ##type-id (struct-precedence-list klass))
-            '(object t)))
-   (else
-    (error "Not a type object"))))
-
-(def +subtype-id+ (make-vector 32 'unknown))
-(def +subtype-linear+ (make-vector 32 '(unknown)))
-
-(defrules defsubtype ()
-  ((_ decl ...)
-   (begin (declare-subtype decl) ...)))
-
-(defrules declare-subtype ()
-  ((_ (st id))
-   (begin
-     (vector-set! +subtype-id+ st 'id)
-     (vector-set! +subtype-linear+ st '(id t))))
-  ((_ (st id lids))
-   (begin
-     (vector-set! +subtype-id+ st 'id)
-     (vector-set! +subtype-linear+ st 'lids))))
-
-(defsubtype
-  ((macro-subtype-vector)       vector)
-  ((macro-subtype-pair)         pair)
-  ((macro-subtype-ratnum)       ratnum  (ratnum real number t))
-  ((macro-subtype-cpxnum)       cpxnum  (cpxnum number t))
-  ((macro-subtype-symbol)       symbol)
-  ((macro-subtype-keyword)      keyword)
-  ((macro-subtype-frame)        frame)
-  ((macro-subtype-continuation) continuation)
-  ((macro-subtype-promise)      promise)
-  ((macro-subtype-weak)         weak)
-  ((macro-subtype-procedure)    procedure)
-  ((macro-subtype-foreign)      foreign)
-  ((macro-subtype-string)       string)
-  ((macro-subtype-s8vector)     s8vector)
-  ((macro-subtype-u8vector)     u8vector)
-  ((macro-subtype-s16vector)    s16vector)
-  ((macro-subtype-u16vector)    u16vector)
-  ((macro-subtype-s32vector)    s32vector)
-  ((macro-subtype-u32vector)    u32vector)
-  ((macro-subtype-f32vector)    f32vector)
-  ((macro-subtype-s64vector)    s64vector)
-  ((macro-subtype-u64vector)    u64vector)
-  ((macro-subtype-f64vector)    f64vector)
-  ((macro-subtype-flonum)       flonum  (flonum real number t))
-  ((macro-subtype-bignum)       bignum (bignum integer real number t)))
 
 ;;; Generic Methods
 
@@ -242,13 +118,14 @@
     (match rest-a
       ([type-a . rest-a]
        (with ([type-b . rest-b] rest-b)
-         (and (not (generic-dispatch-type<? type-b type-a))
-              (or (generic-dispatch-type<? type-a type-b)
+         (and (not (generic-dispatch-type<=? type-b type-a))
+              (or (generic-dispatch-type<=? type-a type-b)
                   (lp rest-a rest-b)))))
       (else #f))))
 
-(def (generic-dispatch-type<? type-a type-b)
-  (memq (car type-b) type-a))
+(def (generic-dispatch-type<=? type-a type-b)
+  (or (eq? type-a type-b)
+      (memq type-a (class-type-precedence-list type-b))))
 
 ;;; Generic Method Dispatch
 
@@ -327,7 +204,7 @@
 (defdispatch* generic-dispatch4 generic-dispatch-method4 generic-dispatch-cache-lookup4 4 arg1 arg2 arg3 arg4)
 
 (def (generic-dispatch-find-method methods args)
-  (let (arg-types (map linear-type-of args))
+  (let (arg-types (map class-of args))
     (let lp ((rest methods))
       (match rest
         ([hd . rest]
@@ -339,12 +216,13 @@
 
 (def (generic-dispatch-match? arg-types signature)
   (let lp ((rest-args arg-types)
-           (rest-sign signature))
+           (rest-sig signature))
     (match rest-args
-      ([arg-tids . rest-args]
-       (with ([sign-tids . rest-sign] rest-sign)
-         (and (memq (car sign-tids) arg-tids)
-              (lp rest-args rest-sign))))
+      ([arg-type . rest-args]
+       (with ([sig-type . rest-sig] rest-sig)
+         (and (or (eq? sig-type arg-type)
+                  (memq sig-type (class-type-precedence-list arg-type)))
+              (lp rest-args rest-sig))))
       (else #t))))
 
 ;; @next-method implementation
@@ -389,11 +267,11 @@
   (def (lookup hash shift rest)
     (match rest
       ([arg . rest]
-       (let* ((tid (type-of arg))
-              (hash (cache-hash-e hash shift tid)))
+       (let* ((klass (class-of arg))
+              (hash (cache-hash-e hash shift klass)))
          (match (lookup hash (fx+ shift 1) rest)
-           ([xtid . xrest]
-            (and (##eq? tid xtid)
+           ([xklass . xrest]
+            (and (##eq? klass xklass)
                  xrest))
            (else #f))))
       (else
@@ -405,33 +283,33 @@
     (and (##procedure? proc) proc)))
 
 (defrules cache-hash-e ()
-  ((_ mix shift tid)
-   (fxxor mix (fxarithmetic-shift (##symbol-hash tid) shift))))
+  ((_ mix shift klass)
+   (fxxor mix (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift))))
 
 (defrules cache-hash-ref ()
-  ((_ obj tid)
+  ((_ obj klass)
    (match obj
-     ([xtid . rest]
-      (and (eq? tid xtid) rest))
+     ([xklass . rest]
+      (and (eq? klass xklass) rest))
      (else #f))))
 
 (def (cache-hash1 cache mix shift arg)
   (declare (not interrupts-enabled))
-  (let* ((tid (type-of arg))
-         (hash (cache-hash-e mix shift tid))
+  (let* ((klass (class-of arg))
+         (hash (cache-hash-e mix shift klass))
          (len (vector-length cache))
          (ix (fxmodulo hash len))
          (obj (vector-ref cache ix)))
-    (cache-hash-ref obj tid)))
+    (cache-hash-ref obj klass)))
 
 (defrules defcache-hash* ()
   ((_ cache-hash cache-hash-next arg1 arg ...)
    (def (cache-hash cache mix shift arg1 arg ...)
      (declare (not interrupts-enabled))
-     (let* ((tid (type-of arg1))
-            (hash (cache-hash-e mix shift tid))
+     (let* ((klass (class-of arg1))
+            (hash (cache-hash-e mix shift klass))
             (obj (cache-hash-next cache hash (fx1+ shift) arg ...)))
-       (cache-hash-ref obj tid)))))
+       (cache-hash-ref obj klass)))))
 
 (defcache-hash* cache-hash2 cache-hash1 arg1 arg2)
 (defcache-hash* cache-hash3 cache-hash2 arg1 arg2 arg3)
@@ -452,10 +330,10 @@
 ;; cache the result of method dispatch
 (def (generic-dispatch-cache! gtab args method)
   (using (gtab :- generic-table)
-    (let* ((arg-types (map type-of args))
+    (let* ((arg-types (map class-of args))
            (entry (foldl cons method arg-types))
-           (hash (foldl (lambda (tid shift r)
-                          (fxxor r (fxarithmetic-shift (##symbol-hash tid) shift)))
+           (hash (foldl (lambda (klass shift r)
+                          (fxxor r (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift)))
                         0 arg-types (iota (length args)))))
       (let lp ((cache gtab.cache))
         (let* ((len (vector-length cache))
@@ -473,11 +351,11 @@
   (def (hash-entry entry)
     (let lp ((rest entry) (count 0) (r []))
       (match rest
-        ([tid . rest]
-         (lp rest (fx+ count 1) (cons tid r)))
+        ([klass . rest]
+         (lp rest (fx+ count 1) (cons klass r)))
         (else
-         (foldl (lambda (tid shift r)
-                  (fxxor r (fxarithmetic-shift (##symbol-hash tid) shift)))
+         (foldl (lambda (klass shift r)
+                  (fxxor r (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift)))
                 0 r (iota count))))))
 
   (def (rehash! new-cache)
@@ -509,36 +387,3 @@
           #f))))
 
 (def +max-cache-size+ (expt 2 16)) ; 64K ought to be enough for everyone -- famous last words
-
-;;; _gambit#
-(extern namespace: #f
-  macro-type-mem1
-  macro-type-mem2
-  macro-type-fixnum
-  macro-subtype-structure
-  macro-subtype-boxvalues
-  macro-subtype-vector
-  macro-subtype-pair
-  macro-subtype-ratnum
-  macro-subtype-cpxnum
-  macro-subtype-symbol
-  macro-subtype-keyword
-  macro-subtype-frame
-  macro-subtype-continuation
-  macro-subtype-promise
-  macro-subtype-weak
-  macro-subtype-procedure
-  macro-subtype-foreign
-  macro-subtype-string
-  macro-subtype-s8vector
-  macro-subtype-u8vector
-  macro-subtype-s16vector
-  macro-subtype-u16vector
-  macro-subtype-s32vector
-  macro-subtype-u32vector
-  macro-subtype-f32vector
-  macro-subtype-s64vector
-  macro-subtype-u64vector
-  macro-subtype-f64vector
-  macro-subtype-flonum
-  macro-subtype-bignum)

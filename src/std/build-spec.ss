@@ -5,6 +5,7 @@
 (def (build-spec . _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "metaclass"
+    "hash-table"
     "interactive"
     "foreign"
     ;; tests for :std/foreign
@@ -21,9 +22,8 @@
     (gxc: "error" ,@(include-gambit-sharp))
     "getopt"
     "logger"
-    (gxc: "generic/dispatch" ,@(include-gambit-sharp))
+    "generic/dispatch"
     "generic/macros"
-    (gxc: "generic/builtin" ,@(include-gambit-sharp))
     "generic"
     "ref"
     (gxc: "event" ,@(include-gambit-sharp))

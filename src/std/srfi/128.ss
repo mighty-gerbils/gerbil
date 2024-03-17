@@ -215,15 +215,15 @@
              ((comparator-ordering-predicate cmp) a b)
              (lp rest))))
         (else
-         (string<? (symbol->string (type-of a)) (symbol->string (type-of b))))))))
+         (string<? (symbol->string (##type-id (class-of a))) (symbol->string (##type-id (class-of b)))))))))
 
-(defmethod (:less (a <null>) (b <pair>))
+(defmethod (:less (a :null) (b :pair))
   #t)
 
-(defmethod (:less (a <pair>) (b <null>))
+(defmethod (:less (a :pair) (b :null))
   #f)
 
-(defmethod (:less (a <pair>) (b <pair>))
+(defmethod (:less (a :pair) (b :pair))
   (let lp ((a a) (b b))
     (match* (a b)
       (([a1 . b1] [a2 . b2])
@@ -233,22 +233,22 @@
       (else
        (if (pair? a) #f (not (null? b)))))))
 
-(defmethod (:less (a <boolean>) (b <boolean>))
+(defmethod (:less (a :boolean) (b :boolean))
   (if a #f b))
 
-(defmethod (:less (a <char>) (b <char>))
+(defmethod (:less (a :char) (b :char))
   (char<? a b))
 
-(defmethod (:less (a <string>) (b <string>))
+(defmethod (:less (a :string) (b :string))
   (string<? a b))
 
-(defmethod (:less (a <symbol>) (b <symbol>))
+(defmethod (:less (a :symbol) (b :symbol))
   (string<? (symbol->string a) (symbol->string b)))
 
-(defmethod (:less (a <keyword>) (b <keyword>))
+(defmethod (:less (a :keyword) (b :keyword))
   (string<? (keyword->string a) (keyword->string b)))
 
-(defmethod (:less (a <vector>) (b <vector>))
+(defmethod (:less (a :vector) (b :vector))
   (let ((len (##vector-length a))
         (lenb (##vector-length b)))
     (if (##fx= len lenb)
@@ -258,7 +258,7 @@
                  (lp (##fx+ i 1)))))
       (##fx< len lenb))))
 
-(defmethod (:less (a <u8vector>) (b <u8vector>))
+(defmethod (:less (a :u8vector) (b :u8vector))
   (let ((len (##u8vector-length a))
         (lenb (##u8vector-length b)))
     (if (##fx= len lenb)
@@ -268,7 +268,7 @@
                  (lp (##fx+ i 1)))))
       (##fx< len lenb))))
 
-(defmethod (:less (a <number>) (b <number>))
+(defmethod (:less (a :number) (b :number))
   (let ((ra (real-part a)) (rb (real-part b)))
     (cond
      ((< ra rb) #t)
