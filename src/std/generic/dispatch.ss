@@ -104,10 +104,10 @@
       ([hd . rest]
        (with ([hd-signature . hd-method] hd)
          (cond
-          ((generic-dispatch-before? signature hd-signature)
-           (cons* (cons signature method) hd rest))
           ((equal? signature hd-signature)
            (cons (cons signature method) rest))
+          ((generic-dispatch-before? signature hd-signature)
+           (cons* (cons signature method) hd rest))
           (else
            (cons hd (recur rest))))))
       (else
@@ -125,13 +125,13 @@
 
 (def (generic-dispatch-type<=? type-a type-b)
   (or (eq? type-a type-b)
-      (memq type-a (class-type-precedence-list type-b))))
+      (memq type-b (class-type-precedence-list type-a))))
 
 ;;; Generic Method Dispatch
 
 (def (generic-dispatch gen . args)
   (using (gen :- generic)
-    (let ((arity (##length args))
+    (let ((arity (length args))
           (tabs gen.tabs))
       (cond
        ((and (fx< arity (vector-length tabs))
@@ -237,7 +237,7 @@
         (else []))))
 
   (using (gen :- generic)
-    (let ((arity (##length args))
+    (let ((arity (length args))
           (tabs gen.tabs))
       (cond
        ((and (fx< arity (vector-length tabs))
@@ -271,7 +271,7 @@
               (hash (cache-hash-e hash shift klass)))
          (match (lookup hash (fx+ shift 1) rest)
            ([xklass . xrest]
-            (and (##eq? klass xklass)
+            (and (eq? klass xklass)
                  xrest))
            (else #f))))
       (else
@@ -280,11 +280,11 @@
          (vector-ref cache ix)))))
 
   (let (proc (lookup 0 0 args))
-    (and (##procedure? proc) proc)))
+    (and (procedure? proc) proc)))
 
 (defrules cache-hash-e ()
   ((_ mix shift klass)
-   (fxxor mix (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift))))
+   (fxxor mix (fxarithmetic-shift (class-hash klass) shift))))
 
 (defrules cache-hash-ref ()
   ((_ obj klass)
@@ -320,7 +320,7 @@
    (def (lookup-e cache arg ...)
      (declare (not interrupts-enabled))
      (let (method (hash-e cache 0 0 arg ...))
-       (and (##procedure? method) method)))))
+       (and (procedure? method) method)))))
 
 (deflookup* generic-dispatch-cache-lookup1 cache-hash1 arg1)
 (deflookup* generic-dispatch-cache-lookup2 cache-hash2 arg1 arg2)
@@ -333,7 +333,7 @@
     (let* ((arg-types (map class-of args))
            (entry (foldl cons method arg-types))
            (hash (foldl (lambda (klass shift r)
-                          (fxxor r (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift)))
+                          (fxxor r (fxarithmetic-shift (class-hash klass) shift)))
                         0 arg-types (iota (length args)))))
       (let lp ((cache gtab.cache))
         (let* ((len (vector-length cache))
@@ -355,7 +355,7 @@
          (lp rest (fx+ count 1) (cons klass r)))
         (else
          (foldl (lambda (klass shift r)
-                  (fxxor r (fxarithmetic-shift (##symbol-hash (##type-id klass)) shift)))
+                  (fxxor r (fxarithmetic-shift (class-hash klass) shift)))
                 0 r (iota count))))))
 
   (def (rehash! new-cache)
@@ -385,5 +385,8 @@
           (display "*** Warning: cannot rehash generic cache; maximum cache size exceeded\n"
                    ##stderr-port)
           #f))))
+
+(def (class-hash klass)
+  (##symbol-hash (##type-id klass)))
 
 (def +max-cache-size+ (expt 2 16)) ; 64K ought to be enough for everyone -- famous last words
