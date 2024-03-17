@@ -10,7 +10,7 @@ namespace: gxc
         "../runtime/c3"
         "base"
         "compile")
-(export #t (import: <syntax-case> <syntax-sugar>))
+(export #t (import: "../core/expander"))
 
 (def current-compile-optimizer-info
   (make-parameter #f))

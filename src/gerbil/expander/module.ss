@@ -579,7 +579,7 @@ namespace: gx
            (bind-id (stx-e id))
            (mod-id
             (if (module-context? super)
-              (make-symbol (expander-context-id super) "$" bind-id)
+              (make-symbol (expander-context-id super) "~" bind-id)
               bind-id))
            (ns
             (symbol->string mod-id))
@@ -593,27 +593,45 @@ namespace: gx
               bind-id)))
       (make-module-context mod-id super ns path)))
 
+  (def (valid-module-id? id)
+    (let* ((str (symbol->string id))
+           (len (string-length str)))
+      (and (fx>= len 1)
+           (let loop ((index (fx- (string-length str) 1)))
+             (if (fx>= index 0)
+               (let (c (string-ref str index))
+                 (and (or (and (char>=? c #\a) (char<=? c #\z))
+                          (and (char>=? c #\A) (char<=? c #\Z))
+                          (and (char>=? c #\0) (char<=? c #\9))
+                          (char=? c #\_)
+                          (char=? c #\-))
+                      (loop (fx- index 1))))
+               #t)))))
+
   (core-syntax-case stx ()
     ((_ id . body)
      (and (identifier? id)
           (stx-list? body))
-     (let* ((ctx (make-context id))
-            (body
-             (core-expand-module-begin body ctx))
-            (body
-             (core-quote-syntax
-              (core-cons '%#begin body)
-              (stx-source stx))))
-       (set! (&module-context-e ctx)
-         (delay (eval-syntax* body)))
-       (set! (&module-context-code ctx)
-         body)
-       (core-bind-syntax! id ctx)
-       (core-quote-syntax
-        (core-list '%#module
-          (core-quote-syntax id)
-          body)
-        (stx-source stx))))))
+     (if (valid-module-id? (stx-e #'id))
+       (let* ((ctx (make-context id))
+              (body
+               (core-expand-module-begin body ctx))
+              (body
+               (core-quote-syntax
+                (core-cons '%#begin body)
+                (stx-source stx))))
+         (set! (&module-context-e ctx)
+           (delay (eval-syntax* body)))
+         (set! (&module-context-code ctx)
+           body)
+         (core-bind-syntax! id ctx)
+         (core-quote-syntax
+          (core-list '%#module
+                     (core-quote-syntax id)
+                     body)
+          (stx-source stx)))
+       (raise-syntax-error #f "invalid module id; allowed characters are A-Z,a-z,0-9,_,-"
+                           stx #'id)))))
 
 (def (core-expand-module-begin body ctx)
   (parameterize ((current-expander-context ctx)
