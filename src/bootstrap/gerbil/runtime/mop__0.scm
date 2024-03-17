@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710677337)
+  (define gerbil/runtime/mop::timestamp 1710687283)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -3992,7 +3992,7 @@
       (lambda (_obj63558_)
         (declare (not interrupts-enabled))
         (let ((_t63561_ (let () (declare (not safe)) (##type _obj63558_))))
-          (if (fx= _t63561_ (macro-type-mem1))
+          (if (fx= _t63561_ (macro-type-subtyped))
               (let ((_st63563_
                      (let () (declare (not safe)) (##subtype _obj63558_))))
                 (if (fx= _st63563_ (macro-subtype-structure))
@@ -4085,6 +4085,7 @@
     (vector-set! __subtype-id (macro-subtype-promise) 'promise)
     (vector-set! __subtype-id (macro-subtype-weak) 'weak)
     (vector-set! __subtype-id (macro-subtype-procedure) 'procedure)
+    (vector-set! __subtype-id (macro-subtype-return) 'return)
     (vector-set! __subtype-id (macro-subtype-foreign) 'foreign)
     (vector-set! __subtype-id (macro-subtype-string) 'string)
     (vector-set! __subtype-id (macro-subtype-s8vector) 's8vector)

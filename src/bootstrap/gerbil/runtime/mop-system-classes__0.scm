@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop-system-classes::timestamp 1710677337)
+  (define gerbil/runtime/mop-system-classes::timestamp 1710687283)
   (begin
     (declare
       (not optimize-dead-definitions
@@ -48,7 +48,8 @@
            promise::t
            weak::t
            foreign::t
-           procedure::t))
+           procedure::t
+           return::t))
     (define immediate::t
       (let () (declare (not safe)) (__make-system-class 'immediate '())))
     (define char::t
@@ -219,6 +220,8 @@
       (let () (declare (not safe)) (__make-system-class 'foreign '())))
     (define procedure::t
       (let () (declare (not safe)) (__make-system-class 'procedure '())))
+    (define return::t
+      (let () (declare (not safe)) (__make-system-class 'return '())))
     (define time::t
       (let ((__tmp66083 (macro-type-time)))
         (declare (not safe))

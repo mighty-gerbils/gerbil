@@ -263,6 +263,7 @@ package: gerbil/runtime
   (declare-type weak::t (@class weak () () () () #f #f #f #f #f #f))
   (declare-type foreign::t (@class foreign () () () () #f #f #f #f #f #f))
   (declare-type procedure::t (@class procedure () () () () #f #f #f #f #f #f))
+  (declare-type return::t (@class return () () () () #f #f #f #f #f #f))
   (declare-type time::t (@class time::t () () () () #f #f #f #f #f #f))
   (declare-type thread::t (@class thread::t () () () () #f #f #f #f #f #f))
   (declare-type

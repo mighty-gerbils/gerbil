@@ -49,6 +49,7 @@ namespace: #f
          (%#define-runtime weak::t weak::t)
          (%#define-runtime foreign::t foreign::t)
          (%#define-runtime procedure::t procedure::t)
+         (%#define-runtime return::t return::t)
          (%#define-runtime time::t time::t)
          (%#define-runtime thread::t thread::t)
          (%#define-runtime thread-group::t thread-group::t)
