@@ -33,4 +33,4 @@ namespace: #f
          (%#define-runtime __expander-loaded __expander-loaded)
          (%#define-runtime __runtime-initialized __runtime-initialized)
          (%#define-runtime gerbil-load-expander! gerbil-load-expander!))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/init__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/init~0"))

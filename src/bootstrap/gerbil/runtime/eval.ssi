@@ -23,7 +23,7 @@ namespace: #f
          (%#define-runtime &__syntax-id-set! &__syntax-id-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/eval__1")))
+                           (%#quote "gerbil/runtime/eval~1")))
                   (%#define-syntax __syntax |[:0:]#__syntax|))
          (%#define-runtime __core-form::t __core-form::t)
          (%#define-runtime __core-form? __core-form?)
@@ -126,4 +126,4 @@ namespace: #f
          (%#define-runtime __compile-quote% __compile-quote%)
          (%#define-runtime __compile-quote-syntax% __compile-quote-syntax%)
          (%#define-syntax defcore-forms |[:0:]#defcore-forms|))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/eval__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/eval~0"))

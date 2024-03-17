@@ -10,7 +10,7 @@ namespace: gerbil/core/more-syntax-sugar
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/core/more-syntax-sugar__1")))
+                           (%#quote "gerbil/core/more-syntax-sugar~1")))
                   (%#define-syntax
                    identifier-rules
                    |gerbil/core/more-syntax-sugar[:0:]#identifier-rules|))

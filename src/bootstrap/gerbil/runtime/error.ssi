@@ -12,7 +12,7 @@ namespace: #f
          (%#define-runtime make-Exception make-Exception)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/error__1")))
+                           (%#quote "gerbil/runtime/error~1")))
                   (%#define-syntax Exception |[:0:]#Exception|))
          (%#define-runtime StackTrace::t StackTrace::t)
          (%#define-runtime StackTrace? StackTrace?)
@@ -791,4 +791,4 @@ namespace: #f
          (%#define-runtime
           wrong-processor-c-return-exception?
           wrong-processor-c-return-exception?))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/error__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/error~0"))

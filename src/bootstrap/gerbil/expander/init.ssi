@@ -8,4 +8,4 @@ namespace: gx
           :gerbil/expander/module
           :gerbil/expander/top
           :gerbil/expander/root))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/init__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/init~0"))

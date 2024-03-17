@@ -41,7 +41,7 @@ namespace: gx
           gx#&module-import-weak?-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/expander/module__1")))
+                           (%#quote "gerbil/expander/module~1")))
                   (%#define-syntax module-import |gx[:0:]#module-import|))
          (%#define-runtime module-export::t gx#module-export::t)
          (%#define-runtime module-export? gx#module-export?)
@@ -421,4 +421,4 @@ namespace: gx
                            (%#define-runtime
                             core-bind-feature!
                             gx#core-bind-feature!))))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/module__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/module~0"))

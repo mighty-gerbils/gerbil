@@ -15,4 +15,4 @@ namespace: #f
          (%#define-runtime load-module load-module)
          (%#define-runtime reload-module! reload-module!)
          (%#define-runtime find-library-module find-library-module))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/loader__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/loader~0"))

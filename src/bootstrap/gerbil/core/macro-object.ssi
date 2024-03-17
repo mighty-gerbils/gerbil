@@ -32,7 +32,7 @@ namespace: gerbil/core/macro-object
           gerbil/core/macro-object#&macro-object-macro-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/core/macro-object__1")))
+                           (%#quote "gerbil/core/macro-object~1")))
                   (%#define-syntax
                    macro-object
                    |gerbil/core/macro-object[:0:]#macro-object|))
@@ -42,4 +42,4 @@ namespace: gerbil/core/macro-object
                   (%#define-runtime
                    macro-object::apply-macro-expander::specialize
                    gerbil/core/macro-object#macro-object::apply-macro-expander::specialize)))
-(%#call (%#ref load-module) (%#quote "gerbil/core/macro-object__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/core/macro-object~0"))

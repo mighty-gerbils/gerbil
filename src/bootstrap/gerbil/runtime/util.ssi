@@ -6,7 +6,7 @@ namespace: #f
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/util__1")))
+                           (%#quote "gerbil/runtime/util~1")))
                   (%#define-syntax __lock-inline! |[:0:]#__lock-inline!|))
          (%#define-syntax __unlock-inline! |[:0:]#__unlock-inline!|)
          (%#define-syntax __make-inline-lock |[:0:]#__make-inline-lock|)
@@ -148,4 +148,4 @@ namespace: #f
          (%#define-syntax DBG/1 |[:0:]#DBG/1|)
          (%#define-runtime DBG-printer DBG-printer)
          (%#define-runtime DBG-helper DBG-helper))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/util__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/util~0"))

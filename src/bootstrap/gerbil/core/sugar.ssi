@@ -16,7 +16,7 @@ namespace: gerbil/core/sugar
                    (%#define-alias defalias define-alias)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/sugar__1")))
+                                     (%#quote "gerbil/core/sugar~1")))
                             (%#define-syntax
                              defrules
                              |gerbil/core/sugar~Sugar-1[:0:]#defrules|))
@@ -58,7 +58,7 @@ namespace: gerbil/core/sugar
                    (%#export #t)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/sugar__2")))
+                                     (%#quote "gerbil/core/sugar~2")))
                             (%#define-syntax
                              lambda
                              |gerbil/core/sugar~Sugar-2[:0:]#lambda|))
@@ -120,7 +120,7 @@ namespace: gerbil/core/sugar
                    (%#export #t)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/sugar__3")))
+                                     (%#quote "gerbil/core/sugar~3")))
                             (%#define-syntax
                              defsyntax
                              |gerbil/core/sugar~Sugar-3[:0:]#defsyntax|))

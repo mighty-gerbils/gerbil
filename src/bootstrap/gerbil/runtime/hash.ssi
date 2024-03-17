@@ -53,7 +53,7 @@ namespace: #f
           &UnboundKeyError-continuation-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/hash__1")))
+                           (%#quote "gerbil/runtime/hash~1")))
                   (%#define-syntax UnboundKeyError |[:0:]#UnboundKeyError|))
          (%#define-runtime UnboundKeyError:::init! UnboundKeyError:::init!)
          (%#define-runtime raise-unbound-key-error raise-unbound-key-error)
@@ -347,4 +347,4 @@ namespace: #f
          (%#define-runtime &hash-copy &hash-copy)
          (%#define-runtime hash-merge hash-merge)
          (%#define-runtime hash-merge! hash-merge!))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/hash__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/hash~0"))

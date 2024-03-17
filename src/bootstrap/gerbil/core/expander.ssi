@@ -175,7 +175,7 @@ namespace: gerbil/core/expander
                     (phi: 1 (in: #f ExpanderRuntime)))
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/expander__1")))
+                                     (%#quote "gerbil/core/expander~1")))
                             (%#define-syntax
                              syntax
                              |gerbil/core/expander~SyntaxCase[:0:]#syntax|))
@@ -192,7 +192,7 @@ namespace: gerbil/core/expander
                     (phi: 1 (in: #f SyntaxCase)))
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/expander__2")))
+                                     (%#quote "gerbil/core/expander~2")))
                             (%#define-syntax
                              syntax-rules
                              |gerbil/core/expander~SyntaxSugar[:0:]#syntax-rules|))

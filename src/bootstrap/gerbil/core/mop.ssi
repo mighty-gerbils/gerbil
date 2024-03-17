@@ -24,7 +24,7 @@ namespace: gerbil/core/mop
                     (spec: 1 module-type-id module-type-id)
                     (spec: 1 make-class-type-id make-class-type-id))
                    (%#begin-syntax
-                    (%#call (%#ref load-module) (%#quote "gerbil/core/mop__1"))
+                    (%#call (%#ref load-module) (%#quote "gerbil/core/mop~1"))
                     (%#define-runtime
                      module-type-id
                      |gerbil/core/mop~MOP-1[1]#module-type-id|)
@@ -257,14 +257,14 @@ namespace: gerbil/core/mop
                                      (%#define-runtime
                                       syntax-local-class-type-info?
                                       gerbil/core/mop~MOP-2#syntax-local-class-type-info?))))
-          (%#call (%#ref load-module) (%#quote "gerbil/core/mop~MOP-2__0")))
+          (%#call (%#ref load-module) (%#quote "gerbil/core/mop~MOP-2~0")))
          (%#module
           MOP-3
           (%#begin (%#import (in: #f MOP-2) (phi: 1 (in: #f MOP-2)))
                    (%#export #t)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/mop__2")))
+                                     (%#quote "gerbil/core/mop~2")))
                             (%#define-syntax
                              class-type-info
                              |gerbil/core/mop~MOP-3[:0:]#class-type-info|))))
@@ -277,7 +277,7 @@ namespace: gerbil/core/mop
                     (phi: 1 (in: #f MOP-3)))
                    (%#export #t)
                    (%#begin-syntax
-                    (%#call (%#ref load-module) (%#quote "gerbil/core/mop__3"))
+                    (%#call (%#ref load-module) (%#quote "gerbil/core/mop~3"))
                     (%#define-runtime
                      typedef-body?
                      |gerbil/core/mop~MOP-4[1]#typedef-body?|)
@@ -308,7 +308,7 @@ namespace: gerbil/core/mop
                    (%#export #t)
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/mop__4")))
+                                     (%#quote "gerbil/core/mop~4")))
                             (%#define-syntax
                              defsystem-class-info
                              |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|))

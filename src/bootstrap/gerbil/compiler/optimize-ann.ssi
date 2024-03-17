@@ -18,7 +18,7 @@ namespace: gxc
           gxc#make-::optimize-annotated)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-ann__1")))
+                           (%#quote "gerbil/compiler/optimize-ann~1")))
                   (%#define-syntax
                    ::optimize-annotated
                    |gxc[:0:]#::optimize-annotated|))
@@ -119,4 +119,4 @@ namespace: gxc
          (%#define-runtime push-match-vars-if% gxc#push-match-vars-if%)
          (%#define-runtime push-match-vars-call% gxc#push-match-vars-call%)
          (%#define-runtime push-match-vars-stop gxc#push-match-vars-stop))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-ann__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-ann~0"))

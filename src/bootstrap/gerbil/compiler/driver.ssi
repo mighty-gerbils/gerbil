@@ -18,7 +18,7 @@ namespace: gxc
          (%#define-runtime +driver-mutex+ gxc#+driver-mutex+)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/driver__1")))
+                           (%#quote "gerbil/compiler/driver~1")))
                   (%#define-syntax
                    with-driver-mutex
                    |gxc[:0:]#with-driver-mutex|))
@@ -113,4 +113,4 @@ namespace: gxc
                   (%#define-runtime invoke gxc#invoke))
          (%#define-syntax go! |gxc[:0:]#go!|)
          (%#define-runtime join! gxc#join!))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/driver__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/driver~0"))

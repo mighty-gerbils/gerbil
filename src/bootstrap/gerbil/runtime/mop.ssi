@@ -25,7 +25,7 @@ namespace: #f
          (%#define-runtime class-type=? class-type=?)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/mop__1")))
+                           (%#quote "gerbil/runtime/mop~1")))
                   (%#define-syntax fxflag-set? |[:0:]#fxflag-set?|))
          (%#define-syntax fxflag-unset? |[:0:]#fxflag-unset?|)
          (%#define-runtime type-opaque? type-opaque?)
@@ -312,4 +312,4 @@ namespace: #f
          (%#define-syntax defsystem-class |[:0:]#defsystem-class|)
          (%#define-runtime __make-system-class __make-system-class)
          (%#define-syntax defshadow-class |[:0:]#defshadow-class|))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/mop__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/mop~0"))
