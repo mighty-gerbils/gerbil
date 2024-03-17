@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-
 set -e
+cd $(dirname "$0")
 
 gerbil_opt="-O"
 if [ ! -z "$GERBIL_BUILD_NOOPT" ]; then
