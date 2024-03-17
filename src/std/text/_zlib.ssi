@@ -16,4 +16,4 @@ package: std/text
   inflateInit inflate inflateEnd
   deflateInit deflateInit_gz deflate deflateEnd deflateBound
   )
-(load-module "std/text/_zlib~0")
+(load-module "std/text/_zlib")

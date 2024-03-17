@@ -747,26 +747,12 @@ TODO:
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
   (def libpath (library-path mod ".ssi" settings))
-  (def rtpath  (library-path mod ".scm" settings))
   (def prefix  (settings-prefix settings))
   (message "... copy ssi " mod)
   (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
-  (copy-file srcpath libpath)
-  (message "... compile loader " mod)
-  (with-output-to-file rtpath
-    (lambda ()
-      (for-each (lambda (dep) (pretty-print `(load-module ,dep))) deps)
-      (pretty-print `(load-module ,(string-append (prefix/ prefix mod) "~0")))))
-  (let* ((proc (open-process [path: (gerbil-gsc)
-                                    arguments: [rtpath]
-                                    stdout-redirection: #f]))
-         (status (process-status proc)))
-    (close-port proc)
-    (unless (zero? status)
-      (error "Compilation error; gsc exited with nonzero status" status))
-    (delete-file rtpath)))
+  (copy-file srcpath libpath))
 
 (def (compile-exe-gsc-opts opts)
   (match opts
