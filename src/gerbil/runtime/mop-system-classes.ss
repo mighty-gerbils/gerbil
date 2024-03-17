@@ -8,6 +8,55 @@ namespace: #f
 (export #t)
 (import "gambit" "mop")
 
+;; this is necessary or system classes will not be present in fpo executables
+;; which breaks the write hook for primitives and results in disaster.
+(declare (not optimize-dead-definitions
+              immediate::t
+              char::t
+              boolean::t
+              atom::t
+              void::t
+              eof::t
+              true::t
+              false::t
+              special::t
+              number::t
+              real::t
+              integer::t
+              fixnum::t
+              bignum::t
+              ratnum::t
+              flonum::t
+              cpxnum::t
+              symbolic::t
+              symbol::t
+              keyword::t
+              list::t
+              pair::t
+              null::t
+              sequence::t
+              vector::t
+              string::t
+              hvector::t
+              u8vector::t
+              s8vector::t
+              u16vector::t
+              s16vector::t
+              u32vector::t
+              s32vector::t
+              u64vector::t
+              s64vector::t
+              f32vector::t
+              f64vector::t
+              values::t
+              box::t
+              frame::t
+              continuation::t
+              promise::t
+              weak::t
+              foreign::t
+              procedure::t))
+
 ;; usual immediates
 (defsystem-class immediate::t immediate ())
 (defsystem-class char::t char (immediate::t))
