@@ -13,13 +13,15 @@
   (test-suite "MOP dispatch"
     (test-case "bottom methods"
       (defmethod {identify :t}
+        (lambda (obj) 't))
+      (defmethod {identify :object}
         (lambda (obj) 'object))
       (check {identify (A)} => 'object)
       (check {identify (B)} => 'object)
       (check {identify (C)} => 'object)
       (check {identify (D)} => 'object)
-      (check {identify '(1 2 3)} => 'object)
-      (check {identify (current-thread)} => 'object))
+      (check {identify '(1 2 3)} => 't)
+      (check {identify (current-thread)} => 't))
 
     (test-case "class methods"
       (defmethod {identify A}
@@ -44,11 +46,14 @@
       (check {identify (D)} => 'D))
 
     (test-case "system class methods"
+      (defmethod {identify :list}
+        (lambda (obj) 'list))
       (defmethod {identify :number}
         (lambda (obj) 'number))
       (defmethod {identify :fixnum}
         (lambda (obj) 'fixnum))
 
+      (check {identify '(1 2 3)} => 'list)
       (check {identify 1} => 'fixnum)
       (check {identify 1.0} => 'number))
 
