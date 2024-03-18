@@ -1685,6 +1685,7 @@ namespace: gerbil/core/runtime
                     (call-next-method call-next-method)
                     (class-of class-of)
                     (t::t t::t)
+                    (object::t object::t)
                     (immediate::t immediate::t)
                     (atom::t atom::t)
                     (char::t char::t)

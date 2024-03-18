@@ -5,12 +5,14 @@ package: gerbil/compiler
   (declare-type
    gxc#::optimize-annotated::t
    (@class gxc#::optimize-annotated::t
-           (gxc#::basic-xform::t)
+           (gxc#::basic-xform::t object::t)
            (gxc#::basic-xform::t
             gxc#::basic-xform-expression::t
             gxc#::identity::t
             gxc#::identity-special-form::t
-            gxc#::identity-expression::t)
+            gxc#::identity-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -29,8 +31,11 @@ package: gerbil/compiler
   (declare-type
    gxc#::generate-runtime-repr::t
    (@class gxc#::generate-runtime-repr::t
-           (gxc#::generate-runtime::t)
-           (gxc#::generate-runtime::t gxc#::generate-runtime-empty::t)
+           (gxc#::generate-runtime::t object::t)
+           (gxc#::generate-runtime::t
+            gxc#::generate-runtime-empty::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -48,7 +53,17 @@ package: gerbil/compiler
   (declare-type gxc#apply-generate-runtime-repr (@lambda 1 #f))
   (declare-type
    gxc#::push-match-vars::t
-   (@class gxc#::push-match-vars::t () () (vars K) (vars K) #f #f #t #f #f #f))
+   (@class gxc#::push-match-vars::t
+           (object::t)
+           (object::t t::t)
+           (vars K)
+           (vars K)
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
   (declare-type gxc#::push-match-vars? (@predicate gxc#::push-match-vars::t))
   (declare-type
    gxc#make-::push-match-vars

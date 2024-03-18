@@ -8,8 +8,8 @@ package: gerbil/core
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info::t
    (@class gerbil.core#class-type-info::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (id name
                super
                slots

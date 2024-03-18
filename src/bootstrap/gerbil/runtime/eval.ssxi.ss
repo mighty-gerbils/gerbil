@@ -5,8 +5,8 @@ package: gerbil/runtime
   (declare-type
    __syntax::t
    (@class gerbil/runtime/eval#__syntax::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (e id)
            (e id)
            #f
@@ -28,8 +28,8 @@ package: gerbil/runtime
   (declare-type
    __core-form::t
    (@class gerbil/runtime/eval#__core-form::t
-           (__syntax::t)
-           (__syntax::t)
+           (__syntax::t object::t)
+           (__syntax::t object::t t::t)
            ()
            (e id)
            #f
@@ -51,8 +51,8 @@ package: gerbil/runtime
   (declare-type
    __core-expression::t
    (@class gerbil/runtime/eval#__core-expression::t
-           (__core-form::t)
-           (__core-form::t __syntax::t)
+           (__core-form::t object::t)
+           (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
            #f
@@ -78,8 +78,8 @@ package: gerbil/runtime
   (declare-type
    __core-special-form::t
    (@class gerbil/runtime/eval#__core-special-form::t
-           (__core-form::t)
-           (__core-form::t __syntax::t)
+           (__core-form::t object::t)
+           (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
            #f

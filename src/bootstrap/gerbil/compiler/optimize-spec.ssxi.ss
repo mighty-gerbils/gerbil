@@ -5,10 +5,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::generate-method-specializers::t
    (@class gxc#::generate-method-specializers::t
-           (gxc#::identity::t)
+           (gxc#::identity::t object::t)
            (gxc#::identity::t
             gxc#::identity-special-form::t
-            gxc#::identity-expression::t)
+            gxc#::identity-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -27,8 +29,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-object-refs::t
    (@class gxc#::collect-object-refs::t
-           (gxc#::void::t)
-           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
            (receiver methods slots)
            (receiver methods slots)
            #f
@@ -87,8 +93,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::subst-object-refs::t
    (@class gxc#::subst-object-refs::t
-           (gxc#::basic-xform-expression::t)
-           (gxc#::basic-xform-expression::t)
+           (gxc#::basic-xform-expression::t object::t)
+           (gxc#::basic-xform-expression::t object::t t::t)
            (receiver klass methods slots)
            (receiver klass methods slots)
            #f

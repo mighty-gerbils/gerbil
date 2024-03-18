@@ -1,32 +1,28 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/repl::timestamp 1710715075)
+  (define gerbil/runtime/repl::timestamp 1710770269)
   (define replx
     (lambda ()
-      (letrec ((_write-reason79479_
-                (lambda (_exn79485_)
-                  (lambda (_cont79487_ _port79488_)
+      (letrec ((_write-reason79810_
+                (lambda (_exn79816_)
+                  (lambda (_cont79818_ _port79819_)
                     (let ()
                       (declare (not safe))
                       (##display-exception-in-context
-                       _exn79485_
-                       _cont79487_
-                       _port79488_))
+                       _exn79816_
+                       _cont79818_
+                       _port79819_))
                     '#f))))
-        (let ((__tmp79489
-               (lambda (_exn79481_)
-                 (let ((__tmp79490
-                        (lambda (_cont79483_)
-                          (let ((__tmp79491
-                                 (let ()
-                                   (declare (not safe))
-                                   (_write-reason79479_ _exn79481_))))
-                            (declare (not safe))
-                            (##repl-within
-                             _cont79483_
-                             __tmp79491
-                             _exn79481_)))))
-                   (declare (not safe))
-                   (##continuation-capture __tmp79490)))))
-          (declare (not safe))
-          (with-exception-handler __tmp79489 ##repl))))))
+        (with-exception-handler
+         (lambda (_exn79812_)
+           (let ((__tmp79820
+                  (lambda (_cont79814_)
+                    (let ((__tmp79821
+                           (let ()
+                             (declare (not safe))
+                             (_write-reason79810_ _exn79812_))))
+                      (declare (not safe))
+                      (##repl-within _cont79814_ __tmp79821 _exn79812_)))))
+             (declare (not safe))
+             (##continuation-capture __tmp79820)))
+         ##repl)))))

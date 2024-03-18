@@ -5,8 +5,8 @@ package: gerbil/runtime
   (declare-type
    CastError::t
    (@class gerbil/runtime/interface#CastError::t
-           (Error::t)
-           (Error::t StackTrace::t Exception::t)
+           (Error::t object::t)
+           (Error::t StackTrace::t Exception::t object::t t::t)
            ()
            (continuation message irritants where)
            :init!
@@ -47,8 +47,8 @@ package: gerbil/runtime
   (declare-type
    interface-instance::t
    (@class gerbil#interface-instance::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (__object)
            (__object)
            #f
@@ -73,8 +73,8 @@ package: gerbil/runtime
   (declare-type
    interface-descriptor::t
    (@class gerbil/runtime/interface#interface-descriptor::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (type methods)
            (type methods)
            #f

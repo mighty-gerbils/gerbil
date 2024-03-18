@@ -2,11 +2,12 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
+  (declare-type t::t (@class gerbil#t::t () () () () #f #f #f #f #f #f))
   (declare-type
    class::t
    (@class gerbil#class::t
-           ()
-           ()
+           (t::t)
+           (t::t)
            (id name
                super
                flags
@@ -33,7 +34,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
-  (declare-type t::t (@class gerbil#t::t () () () () #f #f #f #f #f #f))
+  (declare-type
+   object::t
+   (@class gerbil#object::t (t::t) (t::t) () () #f #f #f #f #f #f))
   (declare-type class-type? (@predicate class::t))
   (declare-type class-type=? (@lambda 2 #f))
   (declare-type type-opaque? (@lambda 1 #f))
