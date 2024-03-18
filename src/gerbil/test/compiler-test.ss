@@ -19,7 +19,7 @@
                             generate-ssxi: #t])
            ? true)
     (let (current-load-path (load-path))
-      (add-load-path! output)
+      (add-load-path! output-dir)
       (check (import-module
               (string->symbol
                (string-append "test/"
