@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; common environment context for tools
-(import (only-in :std/cli/getopt flag)
-        (only-in :gerbil/runtime/init cons-load-path))
+(import (only-in :std/cli/getopt flag))
 (export #t)
 
 (def global-env-flag
@@ -22,4 +21,4 @@
         (when (and create? (not (file-exists? gerbil-path)))
           (create-directory gerbil-path))
         (setenv "GERBIL_PATH" gerbil-path)
-        (cons-load-path (path-expand "lib" gerbil-path))))))
+        (add-load-path! (path-expand "lib" gerbil-path))))))
