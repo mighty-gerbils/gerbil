@@ -6,9 +6,9 @@ prelude: :<root>
 package: gerbil/core
 
 (import "runtime" (phi: +1 "runtime"))
-(export #t (import: <expander-runtime> <syntax-case> <syntax-sugar>))
+(export #t (import: ExpanderRuntime SyntaxCase SyntaxSugar))
 
-(module <expander-runtime>
+(module ExpanderRuntime
   (export #t)
   (extern namespace: gx
     ;; syntax and friends
@@ -82,19 +82,19 @@ package: gerbil/core
     core-expand-import-source
     core-expand-export-source))
 
-(module <syntax-case>
+(module SyntaxCase
   (export #t)
-  (import <expander-runtime>
-          (phi: +1 <expander-runtime>))
+  (import ExpanderRuntime
+          (phi: +1 ExpanderRuntime))
   (define-syntax syntax
     macro-expand-syntax)
   (define-syntax syntax-case
     macro-expand-syntax-case))
 
-(module <syntax-sugar>
+(module SyntaxSugar
   (export #t)
-  (import <expander-runtime> <syntax-case>
-          (phi: +1 <expander-runtime> <syntax-case>))
+  (import ExpanderRuntime SyntaxCase
+          (phi: +1 ExpanderRuntime SyntaxCase))
 
   (define-syntax syntax-rules
     (lambda% (stx)
@@ -148,4 +148,4 @@ package: gerbil/core
             (syntax form)
             (stx-source src-stx)))))))
 
-(import <expander-runtime> <syntax-case> <syntax-sugar>)
+(import ExpanderRuntime SyntaxCase SyntaxSugar)

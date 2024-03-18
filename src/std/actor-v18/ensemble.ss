@@ -47,7 +47,7 @@
                   (if (string-prefix? ":" mod-str)
                     (substring mod-str 1 (string-length mod-str))
                     mod-str)))
-            (string-append mod-str "__rt")))
+            mod-str))
          (else
           (raise-bad-argument load-library-module "string or symbol" mod))))
     (->> (handle srv (reference srv-id 'loader))

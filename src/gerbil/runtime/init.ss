@@ -8,30 +8,17 @@ namespace: #f
 (export #t)
 (import "gambit" "system" "util" "loader" "control" "mop" "mop-system-classes" "error" "interface" "hash" "thread" "syntax" "eval"  "repl")
 
-(def __loading-scheme-source
-  (make-parameter #f))
 
-(def (__init-gx!)
-  ;; setup expander
-  (gx#current-expander-marks  '())
-  (gx#current-expander-phi     0)
-  (gx#current-expander-context (gx#make-top-context))
-  (gx#current-expander-module-library-path (current-module-library-path))
-  (gx#current-expander-module-registry (make-hash-table))
-  (gx#current-expander-module-import gx#core-import-module)
-  (gx#current-expander-module-eval   gx#core-eval-module)
-  (gx#current-expander-compile      __compile-top)
-  (gx#current-expander-eval            ##eval)
-  (gx#core-bind-root-syntax! ':<root> (gx#make-prelude-context #f) #t)
-  ;; setup _gx
-  (__current-compiler __compile-top)
-  (__current-expander  gx#core-expand)
-  (set! __eval-module gx#core-eval-module))
+(def __scheme-source
+  (make-parameter #f))
 
 ;; load the interpreter environment
 (def (__load-gxi)
+  (__current-compiler __compile-top)
+  (__current-expander  gx#core-expand)
+  (set! __eval-module gx#core-eval-module)
+
   (def +readtable+ __*readtable*)
-  (__init-gx!)
   ;; do this here so that import failures can report friendly error messages
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
@@ -61,69 +48,10 @@ namespace: #f
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
 (def (load-scheme path)
-  (parameterize ((__loading-scheme-source path))
+  (parameterize ((__scheme-source path))
     (##load path (lambda args #f) #t #t #f)))
 
-;; load path utils
-(def (load-path)
-  (values
-    (library-load-path)
-    (expander-load-path)))
-
-(def (library-load-path)
-  (current-module-library-path))
-
-(def (expander-load-path)
-  (gx#current-expander-module-library-path))
-
-(def (add-load-path . paths)
-  (apply add-library-load-path paths)
-  (apply add-expander-load-path paths))
-
-(def (add-library-load-path . paths)
-  (let* ((current (current-module-library-path))
-         (paths (map path-expand paths))
-         (paths (filter (lambda (x) (not (member x current))) paths)))
-    (current-module-library-path (append current paths))))
-
-(def (add-expander-load-path . paths)
-  (let* ((current (gx#current-expander-module-library-path))
-         (paths (map path-expand paths))
-         (paths (filter (lambda (x) (not (member x current))) paths)))
-    (gx#current-expander-module-library-path (append current paths))))
-
-(def (cons-load-path . paths)
-  (apply cons-library-load-path paths)
-  (apply cons-expander-load-path paths))
-
-(def (cons-library-load-path . paths)
-  (let ((current (current-module-library-path))
-        (paths (map path-expand paths)))
-    (current-module-library-path (append paths current))))
-
-(def (cons-expander-load-path . paths)
-  (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-expand paths)))
-    (gx#current-expander-module-library-path (append paths current))))
-
-(def (with-cons-load-path thunk . paths)
-  (apply with-cons-library-load-path
-    (lambda () (apply with-cons-expander-load-path thunk paths))
-    paths))
-
-(def (with-cons-library-load-path thunk . paths)
-  (let ((current (current-module-library-path))
-        (paths (map path-expand paths)))
-    (parameterize ((current-module-library-path (append paths current)))
-      (thunk))))
-
-(def (with-cons-expander-load-path thunk . paths)
-  (let ((current (gx#current-expander-module-library-path))
-        (paths (map path-expand paths)))
-    (parameterize ((gx#current-expander-module-library-path (append paths current)))
-      (thunk))))
-
-;; stuffs
+;; expander stuffs
 (def (__expand-source src)
   (def (expand src)
     (__compile-top
@@ -131,7 +59,7 @@ namespace: #f
 
   (def (no-expand src)
     (cond
-     ((__loading-scheme-source)
+     ((__scheme-source)
       src)
      ((##source? src)
       (let (code (##source-code src))
@@ -156,7 +84,7 @@ namespace: #f
 
   (def (make-descr size)
     (let (expander
-          (parameterize ((__loading-scheme-source 'macro))
+          (parameterize ((__scheme-source 'macro))
             (##eval-top src ##interaction-cte)))
       (if (procedure? expander)
         (##make-macro-descr def-syntax? size expander src)
@@ -252,22 +180,14 @@ namespace: #f
                             (string-split envvar #\:))
                     loadpath)))
              (else loadpath))))
-      (current-module-library-path loadpath))
+      (set-load-path! loadpath))
 
     ;; initialize the modue registry
-    (let* ((registry-entry (lambda (m) (cons m 'builtin)))
-           (module-registry
-            (let lp ((rest builtin-modules) (registry '()))
-              (match rest
-                ([mod . rest]
-                 (lp rest
-                     (cons* (registry-entry (string-append mod "__0"))
-                            (registry-entry (string-append mod "__rt"))
-                            registry)))
-                (else
-                 (list->hash-table
-                  registry))))))
-      (current-module-registry module-registry))
+    (for-each
+      (lambda (mod)
+        (hash-put! __modules mod 'builtin)
+        (hash-put! __modules (string-append mod "~0") 'builtin))
+      builtin-modules)
 
     ;; et the readtable
     (current-readtable __*readtable*)

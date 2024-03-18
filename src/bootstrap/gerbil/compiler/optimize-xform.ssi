@@ -15,7 +15,7 @@ namespace: gxc
          (%#define-runtime make-::collect-mutators gxc#make-::collect-mutators)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-xform__1")))
+                           (%#quote "gerbil/compiler/optimize-xform~1")))
                   (%#define-syntax
                    ::collect-mutators
                    |gxc[:0:]#::collect-mutators|))
@@ -178,4 +178,4 @@ namespace: gxc
          (%#define-runtime find-let-values% gxc#find-let-values%)
          (%#define-runtime find-var-refs-ref% gxc#find-var-refs-ref%)
          (%#define-runtime find-var-refs-setq% gxc#find-var-refs-setq%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform~0"))

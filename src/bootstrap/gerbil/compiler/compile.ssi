@@ -25,7 +25,7 @@ namespace: gxc
          (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/compile__1")))
+                           (%#quote "gerbil/compiler/compile~1")))
                   (%#define-syntax
                    ::collect-bindings
                    |gxc[:0:]#::collect-bindings|))
@@ -477,4 +477,4 @@ namespace: gxc
          (%#define-runtime count-values-single% gxc#count-values-single%)
          (%#define-runtime count-values-call% gxc#count-values-call%)
          (%#define-runtime count-values-if% gxc#count-values-if%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/compile__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/compile~0"))

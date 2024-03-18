@@ -98,7 +98,7 @@
              => 'OK)
       ;; load the loader-test-support module
       (check (remote-load-library-module test-server-id ':test/actor-v18/loader-test-support)
-             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__rt.o1"))
+             => (string-append gerbil-path "/lib/test/actor-v18/loader-test-support.o1"))
       ;; eval hello
       (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
              => '(hello . world))
@@ -133,7 +133,7 @@
       (check (ping-server test-server-id)
              => 'OK)
       ;; load the loader-test-support module
-      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1")))
+      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support~0.o1")))
         (check the-code-hash ? string?))
       ;; eval hello
       (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))
@@ -186,7 +186,7 @@
       ;; first try loading without auth; this should fail
       (check-exception (remote-eval test-server-id '(+ 1 1))
                        (actor-error-with? "not authorized"))
-      (check-exception (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1"))
+      (check-exception (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support~0.o1"))
                        (actor-error-with? "not authorized"))
 
 
@@ -195,7 +195,7 @@
                               capabilities: '(loader))
              => (void))
       (check (remote-eval test-server-id '(+ 1 1)) => 2)
-      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support__0.o1")))
+      (let (the-code-hash (remote-load-code test-server-id (string-append gerbil-path "/lib/test/actor-v18/loader-test-support~0.o1")))
         (check the-code-hash ? string?))
       ;; eval hello
       (check (remote-eval test-server-id '(test/actor-v18/loader-test-support#hello 'world))

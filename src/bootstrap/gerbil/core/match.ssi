@@ -21,7 +21,7 @@ namespace: gerbil/core/match
           (spec: 1 syntax-local-match-macro? syntax-local-match-macro?)
           (spec: 1 match-pattern? match-pattern?))
          (%#begin-syntax
-          (%#call (%#ref load-module) (%#quote "gerbil/core/match__1"))
+          (%#call (%#ref load-module) (%#quote "gerbil/core/match~1"))
           (%#define-runtime
            match-macro::t
            |gerbil/core/match[1]#match-macro::t|)
@@ -43,7 +43,7 @@ namespace: gerbil/core/match
            |gerbil/core/match[1]#&match-macro-macro-set!|)
           (%#begin (%#begin-syntax
                     (%#call (%#ref load-module)
-                            (%#quote "gerbil/core/match__2")))
+                            (%#quote "gerbil/core/match~2")))
                    (%#define-syntax
                     match-macro
                     |gerbil/core/match[:1:]#match-macro|))

@@ -5,11 +5,11 @@ namespace: gerbil/core/expander
 (%#begin (%#import :gerbil/core/runtime (phi: 1 :gerbil/core/runtime))
          (%#export
           #t
-          (import: (in: #f <expander-runtime>))
-          (import: (in: #f <syntax-case>))
-          (import: (in: #f <syntax-sugar>)))
+          (import: (in: #f ExpanderRuntime))
+          (import: (in: #f SyntaxCase))
+          (import: (in: #f SyntaxSugar)))
          (%#module
-          <expander-runtime>
+          ExpanderRuntime
           (%#begin (%#export #t)
                    (%#extern
                     (raise-syntax-error gx#raise-syntax-error)
@@ -168,44 +168,44 @@ namespace: gerbil/core/expander
                     (core-expand-import-source gx#core-expand-import-source)
                     (core-expand-export-source gx#core-expand-export-source))))
          (%#module
-          <syntax-case>
+          SyntaxCase
           (%#begin (%#export #t)
                    (%#import
-                    (in: #f <expander-runtime>)
-                    (phi: 1 (in: #f <expander-runtime>)))
+                    (in: #f ExpanderRuntime)
+                    (phi: 1 (in: #f ExpanderRuntime)))
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/expander__1")))
+                                     (%#quote "gerbil/core/expander~1")))
                             (%#define-syntax
                              syntax
-                             |gerbil/core/expander$<syntax-case>[:0:]#syntax|))
+                             |gerbil/core/expander~SyntaxCase[:0:]#syntax|))
                    (%#define-syntax
                     syntax-case
-                    |gerbil/core/expander$<syntax-case>[:0:]#syntax-case|)))
+                    |gerbil/core/expander~SyntaxCase[:0:]#syntax-case|)))
          (%#module
-          <syntax-sugar>
+          SyntaxSugar
           (%#begin (%#export #t)
                    (%#import
-                    (in: #f <expander-runtime>)
-                    (in: #f <syntax-case>)
-                    (phi: 1 (in: #f <expander-runtime>))
-                    (phi: 1 (in: #f <syntax-case>)))
+                    (in: #f ExpanderRuntime)
+                    (in: #f SyntaxCase)
+                    (phi: 1 (in: #f ExpanderRuntime))
+                    (phi: 1 (in: #f SyntaxCase)))
                    (%#begin (%#begin-syntax
                              (%#call (%#ref load-module)
-                                     (%#quote "gerbil/core/expander__2")))
+                                     (%#quote "gerbil/core/expander~2")))
                             (%#define-syntax
                              syntax-rules
-                             |gerbil/core/expander$<syntax-sugar>[:0:]#syntax-rules|))
+                             |gerbil/core/expander~SyntaxSugar[:0:]#syntax-rules|))
                    (%#define-syntax
                     with-syntax
-                    |gerbil/core/expander$<syntax-sugar>[:0:]#with-syntax|)
+                    |gerbil/core/expander~SyntaxSugar[:0:]#with-syntax|)
                    (%#define-syntax
                     with-syntax*
-                    |gerbil/core/expander$<syntax-sugar>[:0:]#with-syntax*|)
+                    |gerbil/core/expander~SyntaxSugar[:0:]#with-syntax*|)
                    (%#define-syntax
                     syntax/loc
-                    |gerbil/core/expander$<syntax-sugar>[:0:]#syntax/loc|)))
+                    |gerbil/core/expander~SyntaxSugar[:0:]#syntax/loc|)))
          (%#import
-          (in: #f <expander-runtime>)
-          (in: #f <syntax-case>)
-          (in: #f <syntax-sugar>)))
+          (in: #f ExpanderRuntime)
+          (in: #f SyntaxCase)
+          (in: #f SyntaxSugar)))

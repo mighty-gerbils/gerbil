@@ -5,12 +5,12 @@
 prelude: :<root>
 package: gerbil/core
 
-(export #t (import: <runtime>))
+(export #t (import: Runtime))
 
 ;;;
 ;;; r5rs scheme
 ;;;
-(module <r5rs-runtime>
+(module R5RSRuntime
   (export #t)
   (extern namespace: #f
     ;; R4RS
@@ -221,7 +221,7 @@ package: gerbil/core
 ;;;
 ;;; r7rs scheme
 ;;;
-(module <r7rs-runtime>
+(module R7RSRuntime
   (export #t)
   (extern namespace: #f
     ;; procedures that R7RS adds to R5RS
@@ -335,7 +335,7 @@ package: gerbil/core
 ;;;
 ;;; gambit scheme
 ;;;
-(module <gambit-runtime>
+(module GambitRuntime
   (export #t)
   (extern namespace: #f
     ;; source: gambit.sld
@@ -1409,7 +1409,7 @@ package: gerbil/core
 ;;;
 ;;; procedures provided by the gerbil runtime
 ;;;
-(module <gerbil-runtime>
+(module GerbilRuntime
   (export #t)
   (extern namespace: #f
     ;; :gerbil/runtime/gambit
@@ -1793,7 +1793,11 @@ package: gerbil/core
     replx
 
     ;; :gerbil/runtime/loader
+    load-path
+    add-load-path!
+    set-load-path!
     load-module
+    reload-module!
 
     ;; :gerbil/runtime/init
     gerbil-load-expander!
@@ -1802,7 +1806,7 @@ package: gerbil/core
 ;;;
 ;;; common runtime aliases
 ;;;
-(module <runtime-aliases>
+(module RuntimeAliases
   (export #t)
   (define-alias car-set! set-car!)
   (define-alias cdr-set! set-cdr!)
@@ -1829,17 +1833,17 @@ package: gerbil/core
 ;;;
 ;;; aggregate runtime module -- all runtime symbols
 ;;;
-(module <runtime>
-  (import <r5rs-runtime>
-          <r7rs-runtime>
-          <gambit-runtime>
-          <gerbil-runtime>
-          <runtime-aliases>)
-  (export (import: <r5rs-runtime>
-                   <r7rs-runtime>
-                   <gambit-runtime>
-                   <gerbil-runtime>
-                   <runtime-aliases>)))
+(module Runtime
+  (import R5RSRuntime
+          R7RSRuntime
+          GambitRuntime
+          GerbilRuntime
+          RuntimeAliases)
+  (export (import: R5RSRuntime
+                   R7RSRuntime
+                   GambitRuntime
+                   GerbilRuntime
+                   RuntimeAliases)))
 
 ;;; get the symbols
-(import <runtime>)
+(import Runtime)

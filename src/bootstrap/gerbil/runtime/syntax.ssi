@@ -10,7 +10,7 @@ namespace: #f
           :gerbil/runtime/error)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/syntax__1")))
+                           (%#quote "gerbil/runtime/syntax~1")))
                   (%#define-syntax core-ast-case |[:0:]#core-ast-case|))
          (%#define-syntax core-ast-case% |[:0:]#core-ast-case%|)
          (%#define-runtime SyntaxError::t SyntaxError::t)
@@ -102,4 +102,4 @@ namespace: #f
          (%#define-runtime source-location? source-location?)
          (%#define-runtime source-location-path? source-location-path?)
          (%#define-runtime source-location-path source-location-path))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/syntax__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/syntax~0"))

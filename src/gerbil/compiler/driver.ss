@@ -498,7 +498,7 @@ namespace: gxc
             (expander-context-id ctx)
             (string->symbol ctx)))
          (scm (string-append (static-module-name context-id) ".scm"))
-         (dirs (current-expander-module-library-path))
+         (dirs (load-path))
          (dirs
           (let (user-libpath (getenv "GERBIL_PATH" #f))
             ;; this might have changed if we programmatically set it
@@ -565,7 +565,7 @@ namespace: gxc
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "__0")))))
+                      (string-append idstr "~0")))))
       (cond
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
@@ -619,7 +619,7 @@ namespace: gxc
               ['begin loader-code ['load-module rt]]
               loader-code)))
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code))))
+        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -822,7 +822,7 @@ namespace: gxc
 
   (def (file-name path)
     (if n
-      (string-append path "__" (section-string n) ext)
+      (string-append path "~" (section-string n) ext)
       (string-append path ext)))
 
   (def (file-path)

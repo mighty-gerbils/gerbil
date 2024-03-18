@@ -14,7 +14,7 @@ namespace: gxc
          (%#define-runtime stx-car-e gxc#stx-car-e)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/method__1")))
+                           (%#quote "gerbil/compiler/method~1")))
                   (%#define-syntax
                    defcompile-method
                    |gxc[:0:]#defcompile-method|))
@@ -149,4 +149,4 @@ namespace: gxc
          (%#define-runtime xform-operands gxc#xform-operands)
          (%#define-runtime xform-call% gxc#xform-call%)
          (%#define-runtime xform-setq% gxc#xform-setq%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/method__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/method~0"))

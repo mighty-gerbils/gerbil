@@ -1210,7 +1210,7 @@ namespace: gxc
            (let (id (expander-context-id ctx))
              (if (hash-get ht id)
                (lp rest loads)
-               (let (rt (string-append (module-id->path-string id) "__rt"))
+               (let (rt (module-id->path-string id))
                  (hash-put! ht id rt)
                  (lp rest (cons rt loads))))))
 
@@ -1602,7 +1602,7 @@ namespace: gxc
 (def (meta-state-begin-phi! state phi)
   (with ((meta-state src n open) state)
     (if (hash-get open phi) #f
-        (let (block-ref (string-append src "__" (number->string n)))
+        (let (block-ref (string-append src "~" (number->string n)))
           (set! (meta-state-n state) (fx1+ n))
           (hash-put! open phi (make-meta-state-block (current-expander-context)
                                                      phi n []))

@@ -256,4 +256,4 @@ namespace: gx
                            (%#define-runtime
                             make-binding-id
                             gx#make-binding-id))))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/top__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/top~0"))

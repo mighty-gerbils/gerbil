@@ -19,7 +19,8 @@ package: gerbil
   "expander/module"
   "expander/compile"
   "expander/root"
-  "expander/stxcase")
+  "expander/stxcase"
+  "expander/init")
 
 (export
   (import: "expander/common"

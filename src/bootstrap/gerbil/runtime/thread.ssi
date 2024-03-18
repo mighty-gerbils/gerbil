@@ -64,4 +64,4 @@ namespace: #f
           (actor-thread-locals-set! actor-thread-locals-set!)
           (actor-thread-nonce actor-thread-nonce)
           (actor-thread-nonce-set! actor-thread-nonce-set!)))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/thread__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/thread~0"))

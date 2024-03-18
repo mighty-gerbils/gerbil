@@ -1,0 +1,18 @@
+(declare (block) (standard-bindings) (extended-bindings))
+(begin
+  (begin
+    (load-module "gerbil/runtime/gambit")
+    (load-module "gerbil/runtime/system")
+    (load-module "gerbil/runtime/util")
+    (load-module "gerbil/runtime/loader")
+    (load-module "gerbil/runtime/control")
+    (load-module "gerbil/runtime/mop")
+    (load-module "gerbil/runtime/mop-system-classes")
+    (load-module "gerbil/runtime/error")
+    (load-module "gerbil/runtime/interface")
+    (load-module "gerbil/runtime/hash")
+    (load-module "gerbil/runtime/thread")
+    (load-module "gerbil/runtime/syntax")
+    (load-module "gerbil/runtime/eval")
+    (load-module "gerbil/runtime/repl"))
+  (load-module "gerbil/runtime/init~0"))

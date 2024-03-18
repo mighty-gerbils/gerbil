@@ -14,7 +14,7 @@ namespace: gerbil/core/module-sugar
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/core/module-sugar__1")))
+                           (%#quote "gerbil/core/module-sugar~1")))
                   (%#define-syntax
                    require
                    |gerbil/core/module-sugar[:0:]#require|))
