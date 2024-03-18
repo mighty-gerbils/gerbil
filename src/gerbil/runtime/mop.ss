@@ -435,7 +435,7 @@ namespace: #f
           (compute-precedence-list direct-supers))
          ((values slot-vector slot-table)
           (compute-class-slots precedence-list direct-slots))
-         (prcedence-list
+         (precedence-list
           (if (or (assgetq properties system:)
                   (memq object::t precedence-list))
             precedence-list
