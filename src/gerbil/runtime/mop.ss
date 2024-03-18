@@ -247,12 +247,13 @@ namespace: #f
                    (if metaclass class-type-flag-metaclass 0)
                    (if system? class-type-flag-system 0)))
          (precedence-list
-          (if (memq t::t precedence-list)
-            (begin
-              (unless (eq? (last precedence-list) t::t)
-                (error "BUG: t::t is not last in the precedence list"))
-              precedence-list)
-            (append precedence-list [t::t]))))
+          (cond
+           ((memq t::t precedence-list)
+            => (lambda (tail)
+                 (if (null? (cdr tail))
+                   precedence-list
+                   (error "BUG: t::t is not last in the precedence list" precedence-list: precedence-list))))
+           (else (append precedence-list [t::t])))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -435,17 +436,23 @@ namespace: #f
           (compute-precedence-list direct-supers))
          ((values slot-vector slot-table)
           (compute-class-slots precedence-list direct-slots))
-         (precedence-list
-          (if (or (assgetq system: properties)
-                  (memq object::t precedence-list))
-            precedence-list
-            (append precedence-list [object::t])))
          (properties
           [[direct-slots: . direct-slots]
            [direct-supers: . direct-supers]
            properties ...])
-         (constructor* (or constructor (find-super-constructor direct-supers))))
-
+         (constructor* (or constructor (find-super-constructor direct-supers)))
+         (precedence-list
+          (if (or (assgetq system: properties)
+                  (memq object::t precedence-list))
+            precedence-list
+            (let loop ((tail precedence-list) (head []))
+              (match tail
+                ([hd . rest]
+                 (if (eq? hd t::t)
+                   (foldl cons (cons object::t tail) head)
+                   (loop rest (cons hd head))))
+                (else
+                 (foldl cons [object::t t::t] head)))))))
     (make-class-type-descriptor id name struct-super
                                 precedence-list slot-vector properties
                                 constructor* slot-table #f)))
