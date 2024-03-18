@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710774315)
+  (define gerbil/runtime/mop::timestamp 1710776830)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -137,7 +137,7 @@
           (##structure
            class::t
            t::t.id
-           't
+           'object
            _flags65657_
            '#f
            '#()
@@ -1293,7 +1293,7 @@
                     (let* ((_precedence-list65136_
                             (if (or (let ()
                                       (declare (not safe))
-                                      (assgetq__0 _properties65107_ 'system:))
+                                      (assgetq__0 'system: _properties65107_))
                                     (memq object::t _precedence-list65127_))
                                 _precedence-list65127_
                                 (append _precedence-list65127_
