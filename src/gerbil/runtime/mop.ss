@@ -53,14 +53,33 @@ namespace: #f
 (def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
 (def class-type-flag-system 8192) ;; it is a system class, non instantiable
 
-;; the metaclass type id
-(def class::t.id 'gerbil#class::t)
+;; the root class
+(def t::t.id 'gerbil#t::t)
+(def t::t
+  (begin-annotation (@mop.system gerbil#t::t ())
+    (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
+          (properties '((direct-slots:) (system: . #t)))
+          (slot-table (make-symbolic-table #f 0)))
+      (##structure
+       #f                               ; type: class::t, set below
+       t::t.id                          ; type-id
+       't                               ; type-name
+       flags                            ; type-flags
+       #f                               ; type-super
+       '#()                             ; type-fields
+       []                               ; class-type-precedence-list
+       '#(#f)                           ; class-type-slot-vector
+       slot-table                       ; class-type-slot-table
+       properties                       ; class-type-properties
+       #f                               ; class-type-constructor
+       #f))))
 
-;; the metaclass itself
+;; the class metaclass
+(def class::t.id 'gerbil#class::t)
 (def class::t
     (begin-annotation
         (@mop.class gerbil#class::t     ; type-id
-                    ()                  ; super
+                    (t::t)              ; super
                     (id name super flags fields
                         precedence-list slot-vector slot-table
                         properties constructor methods) ; slots
@@ -99,7 +118,7 @@ namespace: #f
                  flags               ; type-flags
                  ##type-type         ; type-super
                  fields              ; type-fields
-                 []                  ; class-type-precedence-list
+                 [t::t]              ; class-type-precedence-list
                  slot-vector         ; class-type-slot-vector
                  slot-table          ; class-type-slot-table
                  properties          ; class-type-properties
@@ -108,10 +127,14 @@ namespace: #f
         (##structure-type-set! t t)  ; self reference
         t)))
 
-;; the root class for all objects
-(def t::t.id 'gerbil#t::t)
-(def t::t
-  (begin-annotation (@mop.system gerbil#t::t ())
+
+;; class::t mixes in t::t as all classes except itself
+(##structure-type-set! t::t class::t)
+
+;; standard objects
+(def object::t.id 'gerbil#object::t)
+(def object::t
+  (begin-annotation (@mop.system gerbil#object::t (t::t))
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
@@ -122,15 +145,12 @@ namespace: #f
        flags                            ; type-flags
        #f                               ; type-super
        '#()                             ; type-fields
-       []                               ; class-type-precedence-list
+       [t::t]                           ; class-type-precedence-list
        '#(#f)                           ; class-type-slot-vector
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
        #f))))
-
-;; class::t mixes in t::t as all classes except itself
-(##unchecked-structure-set! class::t [t::t] 6 #f #f)
 
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
@@ -415,6 +435,11 @@ namespace: #f
           (compute-precedence-list direct-supers))
          ((values slot-vector slot-table)
           (compute-class-slots precedence-list direct-slots))
+         (prcedence-list
+          (if (or (assgetq properties system:)
+                  (memq object::t precedence-list))
+            precedence-list
+            (append precedence-list [object::t])))
          (properties
           [[direct-slots: . direct-slots]
            [direct-supers: . direct-supers]

@@ -98,7 +98,7 @@ namespace: #f
 (def hash-table::t
   (begin-annotation
       (@mop.class gerbil#hash-table::t              ; type-id
-                  ()                                ; super
+                  (object::t)                       ; super
                   (table count free hash test seed) ; slots
                   #f                                ; constructor
                   #t                                ; struct?
@@ -141,7 +141,7 @@ namespace: #f
 (def gc-hash-table::t
   (begin-annotation
       (@mop.class gerbil#gc-hash-table::t ; type-id
-                  ()                      ; super
+                  (object::t)             ; super
                   (gcht immediate)        ; slots
                   #f                      ; constructor
                   #t                      ; struct?
@@ -169,7 +169,7 @@ namespace: #f
       (##structure
        class::t                         ; type
        'gerbil#gc-hash-table::t         ; type-id
-       'gc-hash-table                   ; type-name
+       'hash-table                      ; type-name
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields

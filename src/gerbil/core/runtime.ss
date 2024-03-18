@@ -1592,6 +1592,7 @@ package: gerbil/core
     call-next-method
     class-of
     t::t
+    object::t
 
     ;; :gerbil/runtime/mop-system-classes
     immediate::t
