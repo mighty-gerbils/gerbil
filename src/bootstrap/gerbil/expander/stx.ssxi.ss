@@ -5,8 +5,8 @@ package: gerbil/expander
   (declare-type
    gx#identifier-wrap::t
    (@class gx#identifier-wrap::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (marks)
            (e source marks)
            #f
@@ -52,8 +52,8 @@ package: gerbil/expander
   (declare-type
    gx#syntax-wrap::t
    (@class gx#syntax-wrap::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (mark)
            (e source mark)
            #f
@@ -83,8 +83,8 @@ package: gerbil/expander
   (declare-type
    gx#syntax-quote::t
    (@class gx#syntax-quote::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (context marks)
            (e source context marks)
            #f

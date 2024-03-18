@@ -48,31 +48,26 @@ namespace: gxc
 
   (let* ((modid (expander-context-id ctx))
          (modid-str (symbol->string modid)))
-    (if (string-prefix? "gerbil/core" modid-str)
-      ;; don't load forward references to the runtime inside the prelude
-      ;; as this would create a vicious boostrap cycle
-      (load-it! 'gerbil/builtin)
-      ;; ok, not prelude -- load the runtime optimizer info
-      (for-each load-it!
-                '(gerbil/runtime/gambit
-                  gerbil/runtime/util
-                  gerbil/runtime/table
-                  gerbil/runtime/control
-                  gerbil/runtime/system
-                  gerbil/runtime/c3
-                  gerbil/runtime/mop
-                  gerbil/runtime/mop-system-classes
-                  gerbil/runtime/error
-                  gerbil/runtime/interface
-                  gerbil/runtime/hash
-                  gerbil/runtime/thread
-                  gerbil/runtime/syntax
-                  gerbil/runtime/eval
-                  gerbil/runtime/repl
-                  gerbil/runtime/loader
-                  gerbil/runtime/init
-                  gerbil/runtime
-                  gerbil/builtin)))))
+    (for-each load-it!
+              '(gerbil/runtime/gambit
+                gerbil/runtime/util
+                gerbil/runtime/table
+                gerbil/runtime/control
+                gerbil/runtime/system
+                gerbil/runtime/c3
+                gerbil/runtime/mop
+                gerbil/runtime/mop-system-classes
+                gerbil/runtime/error
+                gerbil/runtime/interface
+                gerbil/runtime/hash
+                gerbil/runtime/thread
+                gerbil/runtime/syntax
+                gerbil/runtime/eval
+                gerbil/runtime/repl
+                gerbil/runtime/loader
+                gerbil/runtime/init
+                gerbil/runtime
+                gerbil/builtin))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps

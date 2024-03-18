@@ -5,8 +5,8 @@ package: gerbil/compiler
   (declare-type
    gxc#symbol-table::t
    (@class gxc#symbol-table::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (gensyms bindings)
            (gensyms bindings)
            :init!

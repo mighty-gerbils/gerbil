@@ -5,8 +5,8 @@ package: gerbil/expander
   (declare-type
    gx#module-import::t
    (@class gx#module-import::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (source name phi weak?)
            (source name phi weak?)
            #f
@@ -60,8 +60,8 @@ package: gerbil/expander
   (declare-type
    gx#module-export::t
    (@class gx#module-export::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (context key phi name weak?)
            (context key phi name weak?)
            #f
@@ -123,8 +123,8 @@ package: gerbil/expander
   (declare-type
    gx#import-set::t
    (@class gx#import-set::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (source phi imports)
            (source phi imports)
            #f
@@ -158,8 +158,8 @@ package: gerbil/expander
   (declare-type
    gx#export-set::t
    (@class gx#export-set::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (source phi exports)
            (source phi exports)
            #f
@@ -193,8 +193,12 @@ package: gerbil/expander
   (declare-type
    gx#import-expander::t
    (@class gx#import-expander::t
-           (gx#user-expander::t)
-           (gx#user-expander::t gx#macro-expander::t gx#expander::t)
+           (gx#user-expander::t object::t)
+           (gx#user-expander::t
+            gx#macro-expander::t
+            gx#expander::t
+            object::t
+            t::t)
            ()
            (e context phi)
            :init!
@@ -241,8 +245,12 @@ package: gerbil/expander
   (declare-type
    gx#export-expander::t
    (@class gx#export-expander::t
-           (gx#user-expander::t)
-           (gx#user-expander::t gx#macro-expander::t gx#expander::t)
+           (gx#user-expander::t object::t)
+           (gx#user-expander::t
+            gx#macro-expander::t
+            gx#expander::t
+            object::t
+            t::t)
            ()
            (e context phi)
            :init!
@@ -289,12 +297,14 @@ package: gerbil/expander
   (declare-type
    gx#import-export-expander::t
    (@class gx#import-export-expander::t
-           (gx#import-expander::t gx#export-expander::t)
+           (gx#import-expander::t gx#export-expander::t object::t)
            (gx#import-expander::t
             gx#export-expander::t
             gx#user-expander::t
             gx#macro-expander::t
-            gx#expander::t)
+            gx#expander::t
+            object::t
+            t::t)
            ()
            (e context phi)
            :init!

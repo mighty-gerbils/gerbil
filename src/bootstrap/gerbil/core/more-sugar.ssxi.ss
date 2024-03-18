@@ -5,8 +5,8 @@ package: gerbil/core
   (declare-type
    |gerbil/core/more-sugar[1]#setq-macro::t|
    (@class gerbil.core#setq-macro::t
-           (gerbil/core/macro-object#macro-object::t)
-           (gerbil/core/macro-object#macro-object::t)
+           (gerbil/core/macro-object#macro-object::t object::t)
+           (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
            (macro)
            #f
@@ -36,8 +36,8 @@ package: gerbil/core
   (declare-type
    |gerbil/core/more-sugar[1]#setf-macro::t|
    (@class gerbil.core#setf-macro::t
-           (gerbil/core/macro-object#macro-object::t)
-           (gerbil/core/macro-object#macro-object::t)
+           (gerbil/core/macro-object#macro-object::t object::t)
+           (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
            (macro)
            #f

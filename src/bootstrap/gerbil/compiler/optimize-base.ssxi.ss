@@ -5,8 +5,8 @@ package: gerbil/compiler
   (declare-type
    gxc#optimizer-info::t
    (@class gxc#optimizer-info::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (type ssxi methods)
            (type ssxi methods)
            :init!
@@ -56,7 +56,17 @@ package: gerbil/compiler
   (declare-type gxc#optimizer-info:::init! (@lambda 1 #f))
   (declare-type
    gxc#!type::t
-   (@class gxc#!type::t () () (id) (id) #f #t #f #f #f #f))
+   (@class gxc#!type::t
+           (object::t)
+           (object::t t::t)
+           (id)
+           (id)
+           #f
+           #t
+           #f
+           #f
+           #f
+           #f))
   (declare-type gxc#!type? (@predicate gxc#!type::t))
   (declare-type gxc#make-!type (@constructor gxc#!type::t))
   (declare-type gxc#!type-id (@accessor gxc#!type::t id #t))
@@ -66,8 +76,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!alias::t
    (@class gxc#!alias::t
-           (gxc#!type::t)
-           (gxc#!type::t)
+           (gxc#!type::t object::t)
+           (gxc#!type::t object::t t::t)
            ()
            (id)
            #f
@@ -85,8 +95,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!procedure::t
    (@class gxc#!procedure::t
-           (gxc#!type::t)
-           (gxc#!type::t)
+           (gxc#!type::t object::t)
+           (gxc#!type::t object::t t::t)
            ()
            (id)
            #f
@@ -104,8 +114,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!class::t
    (@class gxc#!class::t
-           (gxc#!type::t)
-           (gxc#!type::t)
+           (gxc#!type::t object::t)
+           (gxc#!type::t object::t t::t)
            (super precedence-list
                   slots
                   fields
@@ -200,8 +210,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!predicate::t
    (@class gxc#!predicate::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            ()
            (id)
            #f
@@ -219,8 +229,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!constructor::t
    (@class gxc#!constructor::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            ()
            (id)
            #f
@@ -238,8 +248,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!accessor::t
    (@class gxc#!accessor::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (slot checked?)
            (id slot checked?)
            #f
@@ -273,8 +283,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!mutator::t
    (@class gxc#!mutator::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (slot checked?)
            (id slot checked?)
            #f
@@ -304,8 +314,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!lambda::t
    (@class gxc#!lambda::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (arity dispatch inline inline-typedecl)
            (id arity dispatch inline inline-typedecl)
            :init!
@@ -351,8 +361,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!case-lambda::t
    (@class gxc#!case-lambda::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (clauses)
            (id clauses)
            #f
@@ -382,8 +392,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!kw-lambda::t
    (@class gxc#!kw-lambda::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (table dispatch)
            (id table dispatch)
            #f
@@ -421,8 +431,8 @@ package: gerbil/compiler
   (declare-type
    gxc#!kw-lambda-primary::t
    (@class gxc#!kw-lambda-primary::t
-           (gxc#!procedure::t)
-           (gxc#!procedure::t gxc#!type::t)
+           (gxc#!procedure::t object::t)
+           (gxc#!procedure::t gxc#!type::t object::t t::t)
            (keys main)
            (id keys main)
            #f
@@ -473,14 +483,29 @@ package: gerbil/compiler
    (@mutator gxc#!kw-lambda-primary::t id #f))
   (declare-type
    gxc#!primitive::t
-   (@class gxc#!primitive::t () () () () #f #f #f #f #f #f))
+   (@class gxc#!primitive::t
+           (object::t)
+           (object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
   (declare-type gxc#!primitive? (@predicate gxc#!primitive::t))
   (declare-type gxc#make-!primitive (@constructor gxc#!primitive::t))
   (declare-type
    gxc#!primitive-lambda::t
    (@class gxc#!primitive-lambda::t
-           (gxc#!primitive::t gxc#!lambda::t)
-           (gxc#!primitive::t gxc#!lambda::t gxc#!procedure::t gxc#!type::t)
+           (gxc#!primitive::t gxc#!lambda::t object::t)
+           (gxc#!primitive::t
+            gxc#!lambda::t
+            gxc#!procedure::t
+            gxc#!type::t
+            object::t
+            t::t)
            ()
            (id arity dispatch inline inline-typedecl)
            :init!
@@ -556,11 +581,13 @@ package: gerbil/compiler
   (declare-type
    gxc#!primitive-case-lambda::t
    (@class gxc#!primitive-case-lambda::t
-           (gxc#!primitive::t gxc#!case-lambda::t)
+           (gxc#!primitive::t gxc#!case-lambda::t object::t)
            (gxc#!primitive::t
             gxc#!case-lambda::t
             gxc#!procedure::t
-            gxc#!type::t)
+            gxc#!type::t
+            object::t
+            t::t)
            ()
            (id clauses)
            :init!

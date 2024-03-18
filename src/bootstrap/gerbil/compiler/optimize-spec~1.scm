@@ -1,279 +1,279 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gxc[1]#_g137304_|
+  (define |gxc[1]#_g137642_|
     (##structure
      gx#syntax-quote::t
      '::identity
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137306_|
+  (define |gxc[1]#_g137644_|
     (##structure
      gx#syntax-quote::t
      '::generate-method-specializers::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137308_|
+  (define |gxc[1]#_g137646_|
     (##structure
      gx#syntax-quote::t
      'make-::generate-method-specializers
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137310_|
+  (define |gxc[1]#_g137648_|
     (##structure
      gx#syntax-quote::t
      '::generate-method-specializers?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137313_|
+  (define |gxc[1]#_g137651_|
     (##structure
      gx#syntax-quote::t
      '::void
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137315_|
+  (define |gxc[1]#_g137653_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137317_|
+  (define |gxc[1]#_g137655_|
     (##structure
      gx#syntax-quote::t
      'make-::collect-object-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137319_|
+  (define |gxc[1]#_g137657_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137325_|
+  (define |gxc[1]#_g137663_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137328_|
+  (define |gxc[1]#_g137666_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137331_|
+  (define |gxc[1]#_g137669_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137337_|
+  (define |gxc[1]#_g137675_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137340_|
+  (define |gxc[1]#_g137678_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137343_|
+  (define |gxc[1]#_g137681_|
     (##structure
      gx#syntax-quote::t
      '::collect-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137349_|
+  (define |gxc[1]#_g137687_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137352_|
+  (define |gxc[1]#_g137690_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137355_|
+  (define |gxc[1]#_g137693_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137361_|
+  (define |gxc[1]#_g137699_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137364_|
+  (define |gxc[1]#_g137702_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137367_|
+  (define |gxc[1]#_g137705_|
     (##structure
      gx#syntax-quote::t
      '&::collect-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137370_|
+  (define |gxc[1]#_g137708_|
     (##structure
      gx#syntax-quote::t
      '::basic-xform-expression
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137372_|
+  (define |gxc[1]#_g137710_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137374_|
+  (define |gxc[1]#_g137712_|
     (##structure
      gx#syntax-quote::t
      'make-::subst-object-refs
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137376_|
+  (define |gxc[1]#_g137714_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137383_|
+  (define |gxc[1]#_g137721_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137386_|
+  (define |gxc[1]#_g137724_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137389_|
+  (define |gxc[1]#_g137727_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-klass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137392_|
+  (define |gxc[1]#_g137730_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137399_|
+  (define |gxc[1]#_g137737_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137402_|
+  (define |gxc[1]#_g137740_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137405_|
+  (define |gxc[1]#_g137743_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-klass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137408_|
+  (define |gxc[1]#_g137746_|
     (##structure
      gx#syntax-quote::t
      '::subst-object-refs-receiver-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137415_|
+  (define |gxc[1]#_g137753_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-slots
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137418_|
+  (define |gxc[1]#_g137756_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-methods
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137421_|
+  (define |gxc[1]#_g137759_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-klass
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137424_|
+  (define |gxc[1]#_g137762_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-receiver
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137431_|
+  (define |gxc[1]#_g137769_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-slots-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137434_|
+  (define |gxc[1]#_g137772_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-methods-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137437_|
+  (define |gxc[1]#_g137775_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-klass-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g137440_|
+  (define |gxc[1]#_g137778_|
     (##structure
      gx#syntax-quote::t
      '&::subst-object-refs-receiver-set!
@@ -282,7 +282,7 @@
      '()))
   (begin
     (define |gxc[:0:]#::generate-method-specializers|
-      (let ((__obj136882
+      (let ((__obj137223
              (let ()
                (declare (not safe))
                (##structure
@@ -306,7 +306,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            'gxc#::generate-method-specializers::t
            '1
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -314,7 +314,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '::generate-method-specializers
            '2
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -322,26 +322,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '()
            '4
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137302
-               (let ((__tmp137303 |gxc[1]#_g137304_|))
+        (let ((__tmp137640
+               (let ((__tmp137641 |gxc[1]#_g137642_|))
                  (declare (not safe))
-                 (cons __tmp137303 '()))))
+                 (cons __tmp137641 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
-           __tmp137302
+           __obj137223
+           __tmp137640
            '3
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '#f
            '5
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -349,7 +349,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '#t
            '6
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -357,7 +357,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '#f
            '8
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -365,39 +365,39 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '#f
            '9
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137305 |gxc[1]#_g137306_|))
+        (let ((__tmp137643 |gxc[1]#_g137644_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
-           __tmp137305
+           __obj137223
+           __tmp137643
            '10
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137307 |gxc[1]#_g137308_|))
+        (let ((__tmp137645 |gxc[1]#_g137646_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
-           __tmp137307
+           __obj137223
+           __tmp137645
            '11
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137309 |gxc[1]#_g137310_|))
+        (let ((__tmp137647 |gxc[1]#_g137648_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
-           __tmp137309
+           __obj137223
+           __tmp137647
            '12
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '()
            '13
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -405,7 +405,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '()
            '14
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -413,7 +413,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '()
            '15
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -421,14 +421,14 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136882
+           __obj137223
            '()
            '16
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        __obj136882))
+        __obj137223))
     (define |gxc[:0:]#::collect-object-refs|
-      (let ((__obj136884
+      (let ((__obj137225
              (let ()
                (declare (not safe))
                (##structure
@@ -452,7 +452,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            'gxc#::collect-object-refs::t
            '1
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -460,7 +460,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '::collect-object-refs
            '2
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -468,26 +468,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '(receiver methods slots)
            '4
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137311
-               (let ((__tmp137312 |gxc[1]#_g137313_|))
+        (let ((__tmp137649
+               (let ((__tmp137650 |gxc[1]#_g137651_|))
                  (declare (not safe))
-                 (cons __tmp137312 '()))))
+                 (cons __tmp137650 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137311
+           __obj137225
+           __tmp137649
            '3
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '#f
            '5
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -495,7 +495,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '#t
            '6
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -503,7 +503,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '#f
            '8
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -511,150 +511,150 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
+           __obj137225
            '#f
            '9
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137314 |gxc[1]#_g137315_|))
+        (let ((__tmp137652 |gxc[1]#_g137653_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137314
+           __obj137225
+           __tmp137652
            '10
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137316 |gxc[1]#_g137317_|))
+        (let ((__tmp137654 |gxc[1]#_g137655_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137316
+           __obj137225
+           __tmp137654
            '11
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137318 |gxc[1]#_g137319_|))
+        (let ((__tmp137656 |gxc[1]#_g137657_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137318
+           __obj137225
+           __tmp137656
            '12
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137320
-               (let ((__tmp137329
-                      (let ((__tmp137330 |gxc[1]#_g137331_|))
+        (let ((__tmp137658
+               (let ((__tmp137667
+                      (let ((__tmp137668 |gxc[1]#_g137669_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137330)))
-                     (__tmp137321
-                      (let ((__tmp137326
-                             (let ((__tmp137327 |gxc[1]#_g137328_|))
+                        (cons 'receiver __tmp137668)))
+                     (__tmp137659
+                      (let ((__tmp137664
+                             (let ((__tmp137665 |gxc[1]#_g137666_|))
                                (declare (not safe))
-                               (cons 'methods __tmp137327)))
-                            (__tmp137322
-                             (let ((__tmp137323
-                                    (let ((__tmp137324 |gxc[1]#_g137325_|))
+                               (cons 'methods __tmp137665)))
+                            (__tmp137660
+                             (let ((__tmp137661
+                                    (let ((__tmp137662 |gxc[1]#_g137663_|))
                                       (declare (not safe))
-                                      (cons 'slots __tmp137324))))
+                                      (cons 'slots __tmp137662))))
                                (declare (not safe))
-                               (cons __tmp137323 '()))))
+                               (cons __tmp137661 '()))))
                         (declare (not safe))
-                        (cons __tmp137326 __tmp137322))))
+                        (cons __tmp137664 __tmp137660))))
                  (declare (not safe))
-                 (cons __tmp137329 __tmp137321))))
+                 (cons __tmp137667 __tmp137659))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137320
+           __obj137225
+           __tmp137658
            '13
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137332
-               (let ((__tmp137341
-                      (let ((__tmp137342 |gxc[1]#_g137343_|))
+        (let ((__tmp137670
+               (let ((__tmp137679
+                      (let ((__tmp137680 |gxc[1]#_g137681_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137342)))
-                     (__tmp137333
-                      (let ((__tmp137338
-                             (let ((__tmp137339 |gxc[1]#_g137340_|))
+                        (cons 'receiver __tmp137680)))
+                     (__tmp137671
+                      (let ((__tmp137676
+                             (let ((__tmp137677 |gxc[1]#_g137678_|))
                                (declare (not safe))
-                               (cons 'methods __tmp137339)))
-                            (__tmp137334
-                             (let ((__tmp137335
-                                    (let ((__tmp137336 |gxc[1]#_g137337_|))
+                               (cons 'methods __tmp137677)))
+                            (__tmp137672
+                             (let ((__tmp137673
+                                    (let ((__tmp137674 |gxc[1]#_g137675_|))
                                       (declare (not safe))
-                                      (cons 'slots __tmp137336))))
+                                      (cons 'slots __tmp137674))))
                                (declare (not safe))
-                               (cons __tmp137335 '()))))
+                               (cons __tmp137673 '()))))
                         (declare (not safe))
-                        (cons __tmp137338 __tmp137334))))
+                        (cons __tmp137676 __tmp137672))))
                  (declare (not safe))
-                 (cons __tmp137341 __tmp137333))))
+                 (cons __tmp137679 __tmp137671))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137332
+           __obj137225
+           __tmp137670
            '14
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137344
-               (let ((__tmp137353
-                      (let ((__tmp137354 |gxc[1]#_g137355_|))
+        (let ((__tmp137682
+               (let ((__tmp137691
+                      (let ((__tmp137692 |gxc[1]#_g137693_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137354)))
-                     (__tmp137345
-                      (let ((__tmp137350
-                             (let ((__tmp137351 |gxc[1]#_g137352_|))
+                        (cons 'receiver __tmp137692)))
+                     (__tmp137683
+                      (let ((__tmp137688
+                             (let ((__tmp137689 |gxc[1]#_g137690_|))
                                (declare (not safe))
-                               (cons 'methods __tmp137351)))
-                            (__tmp137346
-                             (let ((__tmp137347
-                                    (let ((__tmp137348 |gxc[1]#_g137349_|))
+                               (cons 'methods __tmp137689)))
+                            (__tmp137684
+                             (let ((__tmp137685
+                                    (let ((__tmp137686 |gxc[1]#_g137687_|))
                                       (declare (not safe))
-                                      (cons 'slots __tmp137348))))
+                                      (cons 'slots __tmp137686))))
                                (declare (not safe))
-                               (cons __tmp137347 '()))))
+                               (cons __tmp137685 '()))))
                         (declare (not safe))
-                        (cons __tmp137350 __tmp137346))))
+                        (cons __tmp137688 __tmp137684))))
                  (declare (not safe))
-                 (cons __tmp137353 __tmp137345))))
+                 (cons __tmp137691 __tmp137683))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137344
+           __obj137225
+           __tmp137682
            '15
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137356
-               (let ((__tmp137365
-                      (let ((__tmp137366 |gxc[1]#_g137367_|))
+        (let ((__tmp137694
+               (let ((__tmp137703
+                      (let ((__tmp137704 |gxc[1]#_g137705_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137366)))
-                     (__tmp137357
-                      (let ((__tmp137362
-                             (let ((__tmp137363 |gxc[1]#_g137364_|))
+                        (cons 'receiver __tmp137704)))
+                     (__tmp137695
+                      (let ((__tmp137700
+                             (let ((__tmp137701 |gxc[1]#_g137702_|))
                                (declare (not safe))
-                               (cons 'methods __tmp137363)))
-                            (__tmp137358
-                             (let ((__tmp137359
-                                    (let ((__tmp137360 |gxc[1]#_g137361_|))
+                               (cons 'methods __tmp137701)))
+                            (__tmp137696
+                             (let ((__tmp137697
+                                    (let ((__tmp137698 |gxc[1]#_g137699_|))
                                       (declare (not safe))
-                                      (cons 'slots __tmp137360))))
+                                      (cons 'slots __tmp137698))))
                                (declare (not safe))
-                               (cons __tmp137359 '()))))
+                               (cons __tmp137697 '()))))
                         (declare (not safe))
-                        (cons __tmp137362 __tmp137358))))
+                        (cons __tmp137700 __tmp137696))))
                  (declare (not safe))
-                 (cons __tmp137365 __tmp137357))))
+                 (cons __tmp137703 __tmp137695))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136884
-           __tmp137356
+           __obj137225
+           __tmp137694
            '16
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        __obj136884))
+        __obj137225))
     (define |gxc[:0:]#::subst-object-refs|
-      (let ((__obj136886
+      (let ((__obj137227
              (let ()
                (declare (not safe))
                (##structure
@@ -678,7 +678,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            'gxc#::subst-object-refs::t
            '1
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -686,7 +686,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '::subst-object-refs
            '2
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -694,26 +694,26 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '(receiver klass methods slots)
            '4
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137368
-               (let ((__tmp137369 |gxc[1]#_g137370_|))
+        (let ((__tmp137706
+               (let ((__tmp137707 |gxc[1]#_g137708_|))
                  (declare (not safe))
-                 (cons __tmp137369 '()))))
+                 (cons __tmp137707 '()))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137368
+           __obj137227
+           __tmp137706
            '3
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '#f
            '5
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -721,7 +721,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '#t
            '6
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -729,7 +729,7 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '#f
            '8
            gerbil/core/mop~MOP-2#class-type-info::t
@@ -737,177 +737,177 @@
         (let ()
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
+           __obj137227
            '#f
            '9
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137371 |gxc[1]#_g137372_|))
+        (let ((__tmp137709 |gxc[1]#_g137710_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137371
+           __obj137227
+           __tmp137709
            '10
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137373 |gxc[1]#_g137374_|))
+        (let ((__tmp137711 |gxc[1]#_g137712_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137373
+           __obj137227
+           __tmp137711
            '11
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137375 |gxc[1]#_g137376_|))
+        (let ((__tmp137713 |gxc[1]#_g137714_|))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137375
+           __obj137227
+           __tmp137713
            '12
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137377
-               (let ((__tmp137390
-                      (let ((__tmp137391 |gxc[1]#_g137392_|))
+        (let ((__tmp137715
+               (let ((__tmp137728
+                      (let ((__tmp137729 |gxc[1]#_g137730_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137391)))
-                     (__tmp137378
-                      (let ((__tmp137387
-                             (let ((__tmp137388 |gxc[1]#_g137389_|))
+                        (cons 'receiver __tmp137729)))
+                     (__tmp137716
+                      (let ((__tmp137725
+                             (let ((__tmp137726 |gxc[1]#_g137727_|))
                                (declare (not safe))
-                               (cons 'klass __tmp137388)))
-                            (__tmp137379
-                             (let ((__tmp137384
-                                    (let ((__tmp137385 |gxc[1]#_g137386_|))
+                               (cons 'klass __tmp137726)))
+                            (__tmp137717
+                             (let ((__tmp137722
+                                    (let ((__tmp137723 |gxc[1]#_g137724_|))
                                       (declare (not safe))
-                                      (cons 'methods __tmp137385)))
-                                   (__tmp137380
-                                    (let ((__tmp137381
-                                           (let ((__tmp137382
-                                                  |gxc[1]#_g137383_|))
+                                      (cons 'methods __tmp137723)))
+                                   (__tmp137718
+                                    (let ((__tmp137719
+                                           (let ((__tmp137720
+                                                  |gxc[1]#_g137721_|))
                                              (declare (not safe))
-                                             (cons 'slots __tmp137382))))
+                                             (cons 'slots __tmp137720))))
                                       (declare (not safe))
-                                      (cons __tmp137381 '()))))
+                                      (cons __tmp137719 '()))))
                                (declare (not safe))
-                               (cons __tmp137384 __tmp137380))))
+                               (cons __tmp137722 __tmp137718))))
                         (declare (not safe))
-                        (cons __tmp137387 __tmp137379))))
+                        (cons __tmp137725 __tmp137717))))
                  (declare (not safe))
-                 (cons __tmp137390 __tmp137378))))
+                 (cons __tmp137728 __tmp137716))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137377
+           __obj137227
+           __tmp137715
            '13
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137393
-               (let ((__tmp137406
-                      (let ((__tmp137407 |gxc[1]#_g137408_|))
+        (let ((__tmp137731
+               (let ((__tmp137744
+                      (let ((__tmp137745 |gxc[1]#_g137746_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137407)))
-                     (__tmp137394
-                      (let ((__tmp137403
-                             (let ((__tmp137404 |gxc[1]#_g137405_|))
+                        (cons 'receiver __tmp137745)))
+                     (__tmp137732
+                      (let ((__tmp137741
+                             (let ((__tmp137742 |gxc[1]#_g137743_|))
                                (declare (not safe))
-                               (cons 'klass __tmp137404)))
-                            (__tmp137395
-                             (let ((__tmp137400
-                                    (let ((__tmp137401 |gxc[1]#_g137402_|))
+                               (cons 'klass __tmp137742)))
+                            (__tmp137733
+                             (let ((__tmp137738
+                                    (let ((__tmp137739 |gxc[1]#_g137740_|))
                                       (declare (not safe))
-                                      (cons 'methods __tmp137401)))
-                                   (__tmp137396
-                                    (let ((__tmp137397
-                                           (let ((__tmp137398
-                                                  |gxc[1]#_g137399_|))
+                                      (cons 'methods __tmp137739)))
+                                   (__tmp137734
+                                    (let ((__tmp137735
+                                           (let ((__tmp137736
+                                                  |gxc[1]#_g137737_|))
                                              (declare (not safe))
-                                             (cons 'slots __tmp137398))))
+                                             (cons 'slots __tmp137736))))
                                       (declare (not safe))
-                                      (cons __tmp137397 '()))))
+                                      (cons __tmp137735 '()))))
                                (declare (not safe))
-                               (cons __tmp137400 __tmp137396))))
+                               (cons __tmp137738 __tmp137734))))
                         (declare (not safe))
-                        (cons __tmp137403 __tmp137395))))
+                        (cons __tmp137741 __tmp137733))))
                  (declare (not safe))
-                 (cons __tmp137406 __tmp137394))))
+                 (cons __tmp137744 __tmp137732))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137393
+           __obj137227
+           __tmp137731
            '14
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137409
-               (let ((__tmp137422
-                      (let ((__tmp137423 |gxc[1]#_g137424_|))
+        (let ((__tmp137747
+               (let ((__tmp137760
+                      (let ((__tmp137761 |gxc[1]#_g137762_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137423)))
-                     (__tmp137410
-                      (let ((__tmp137419
-                             (let ((__tmp137420 |gxc[1]#_g137421_|))
+                        (cons 'receiver __tmp137761)))
+                     (__tmp137748
+                      (let ((__tmp137757
+                             (let ((__tmp137758 |gxc[1]#_g137759_|))
                                (declare (not safe))
-                               (cons 'klass __tmp137420)))
-                            (__tmp137411
-                             (let ((__tmp137416
-                                    (let ((__tmp137417 |gxc[1]#_g137418_|))
+                               (cons 'klass __tmp137758)))
+                            (__tmp137749
+                             (let ((__tmp137754
+                                    (let ((__tmp137755 |gxc[1]#_g137756_|))
                                       (declare (not safe))
-                                      (cons 'methods __tmp137417)))
-                                   (__tmp137412
-                                    (let ((__tmp137413
-                                           (let ((__tmp137414
-                                                  |gxc[1]#_g137415_|))
+                                      (cons 'methods __tmp137755)))
+                                   (__tmp137750
+                                    (let ((__tmp137751
+                                           (let ((__tmp137752
+                                                  |gxc[1]#_g137753_|))
                                              (declare (not safe))
-                                             (cons 'slots __tmp137414))))
+                                             (cons 'slots __tmp137752))))
                                       (declare (not safe))
-                                      (cons __tmp137413 '()))))
+                                      (cons __tmp137751 '()))))
                                (declare (not safe))
-                               (cons __tmp137416 __tmp137412))))
+                               (cons __tmp137754 __tmp137750))))
                         (declare (not safe))
-                        (cons __tmp137419 __tmp137411))))
+                        (cons __tmp137757 __tmp137749))))
                  (declare (not safe))
-                 (cons __tmp137422 __tmp137410))))
+                 (cons __tmp137760 __tmp137748))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137409
+           __obj137227
+           __tmp137747
            '15
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        (let ((__tmp137425
-               (let ((__tmp137438
-                      (let ((__tmp137439 |gxc[1]#_g137440_|))
+        (let ((__tmp137763
+               (let ((__tmp137776
+                      (let ((__tmp137777 |gxc[1]#_g137778_|))
                         (declare (not safe))
-                        (cons 'receiver __tmp137439)))
-                     (__tmp137426
-                      (let ((__tmp137435
-                             (let ((__tmp137436 |gxc[1]#_g137437_|))
+                        (cons 'receiver __tmp137777)))
+                     (__tmp137764
+                      (let ((__tmp137773
+                             (let ((__tmp137774 |gxc[1]#_g137775_|))
                                (declare (not safe))
-                               (cons 'klass __tmp137436)))
-                            (__tmp137427
-                             (let ((__tmp137432
-                                    (let ((__tmp137433 |gxc[1]#_g137434_|))
+                               (cons 'klass __tmp137774)))
+                            (__tmp137765
+                             (let ((__tmp137770
+                                    (let ((__tmp137771 |gxc[1]#_g137772_|))
                                       (declare (not safe))
-                                      (cons 'methods __tmp137433)))
-                                   (__tmp137428
-                                    (let ((__tmp137429
-                                           (let ((__tmp137430
-                                                  |gxc[1]#_g137431_|))
+                                      (cons 'methods __tmp137771)))
+                                   (__tmp137766
+                                    (let ((__tmp137767
+                                           (let ((__tmp137768
+                                                  |gxc[1]#_g137769_|))
                                              (declare (not safe))
-                                             (cons 'slots __tmp137430))))
+                                             (cons 'slots __tmp137768))))
                                       (declare (not safe))
-                                      (cons __tmp137429 '()))))
+                                      (cons __tmp137767 '()))))
                                (declare (not safe))
-                               (cons __tmp137432 __tmp137428))))
+                               (cons __tmp137770 __tmp137766))))
                         (declare (not safe))
-                        (cons __tmp137435 __tmp137427))))
+                        (cons __tmp137773 __tmp137765))))
                  (declare (not safe))
-                 (cons __tmp137438 __tmp137426))))
+                 (cons __tmp137776 __tmp137764))))
           (declare (not safe))
           (##unchecked-structure-set!
-           __obj136886
-           __tmp137425
+           __obj137227
+           __tmp137763
            '16
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
-        __obj136886))))
+        __obj137227))))

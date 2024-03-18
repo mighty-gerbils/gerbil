@@ -5,8 +5,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-mutators::t
    (@class gxc#::collect-mutators::t
-           (gxc#::void::t)
-           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -23,8 +27,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-methods::t
    (@class gxc#::collect-methods::t
-           (gxc#::void::t)
-           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -41,8 +49,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::expression-subst::t
    (@class gxc#::expression-subst::t
-           (gxc#::basic-xform-expression::t)
-           (gxc#::basic-xform-expression::t)
+           (gxc#::basic-xform-expression::t object::t)
+           (gxc#::basic-xform-expression::t object::t t::t)
            (id new-id)
            (id new-id)
            #f
@@ -87,8 +95,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::expression-subst*::t
    (@class gxc#::expression-subst*::t
-           (gxc#::basic-xform-expression::t)
-           (gxc#::basic-xform-expression::t)
+           (gxc#::basic-xform-expression::t object::t)
+           (gxc#::basic-xform-expression::t object::t t::t)
            (subst)
            (subst)
            #f
@@ -123,8 +131,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::find-expression::t
    (@class gxc#::find-expression::t
-           (gxc#::false-expression::t)
-           (gxc#::false-expression::t)
+           (gxc#::false-expression::t object::t)
+           (gxc#::false-expression::t object::t t::t)
            ()
            ()
            #f
@@ -140,8 +148,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::find-var-refs::t
    (@class gxc#::find-var-refs::t
-           (gxc#::find-expression::t)
-           (gxc#::find-expression::t gxc#::false-expression::t)
+           (gxc#::find-expression::t object::t)
+           (gxc#::find-expression::t gxc#::false-expression::t object::t t::t)
            (ids)
            (ids)
            #f
@@ -172,8 +180,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-runtime-refs::t
    (@class gxc#::collect-runtime-refs::t
-           (gxc#::collect-expression-refs::t)
-           (gxc#::collect-expression-refs::t)
+           (gxc#::collect-expression-refs::t object::t)
+           (gxc#::collect-expression-refs::t object::t t::t)
            ()
            (table)
            #f

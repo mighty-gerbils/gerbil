@@ -5,8 +5,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-top-level-type-info::t
    (@class gxc#::collect-top-level-type-info::t
-           (gxc#::void::t)
-           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -25,10 +29,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::basic-expression-top-level-type::t
    (@class gxc#::basic-expression-top-level-type::t
-           (gxc#::false::t)
+           (gxc#::false::t object::t)
            (gxc#::false::t
             gxc#::false-special-form::t
-            gxc#::false-expression::t)
+            gxc#::false-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -47,8 +53,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::collect-type-info::t
    (@class gxc#::collect-type-info::t
-           (gxc#::void::t)
-           (gxc#::void::t gxc#::void-special-form::t gxc#::void-expression::t)
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -67,10 +77,12 @@ package: gerbil/compiler
   (declare-type
    gxc#::basic-expression-type::t
    (@class gxc#::basic-expression-type::t
-           (gxc#::false::t)
+           (gxc#::false::t object::t)
            (gxc#::false::t
             gxc#::false-special-form::t
-            gxc#::false-expression::t)
+            gxc#::false-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f
@@ -89,12 +101,14 @@ package: gerbil/compiler
   (declare-type
    gxc#::lift-top-lambdas::t
    (@class gxc#::lift-top-lambdas::t
-           (gxc#::basic-xform::t)
+           (gxc#::basic-xform::t object::t)
            (gxc#::basic-xform::t
             gxc#::basic-xform-expression::t
             gxc#::identity::t
             gxc#::identity-special-form::t
-            gxc#::identity-expression::t)
+            gxc#::identity-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f

@@ -314,6 +314,9 @@ namespace: gerbil/core/mop
                              |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|))
                    (%#define-syntax :t |gerbil/core/mop~MOP-5[:0:]#:t|)
                    (%#define-syntax
+                    :object
+                    |gerbil/core/mop~MOP-5[:0:]#:object|)
+                   (%#define-syntax
                     :immediate
                     |gerbil/core/mop~MOP-5[:0:]#:immediate|)
                    (%#define-syntax :char |gerbil/core/mop~MOP-5[:0:]#:char|)

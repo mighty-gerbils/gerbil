@@ -5,8 +5,8 @@ package: gerbil/core
   (declare-type
    gerbil/core/macro-object#macro-object::t
    (@class gerbil.core#macro-object::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (macro)
            (macro)
            #f
@@ -40,9 +40,4 @@ package: gerbil/core
    (@lambda 2 #f))
   (declare-type
    gerbil/core/macro-object#macro-object::apply-macro-expander::specialize
-   (@lambda 2 #f))
-  (declare-method
-   gerbil/core/macro-object#macro-object::t
-   apply-macro-expander
-   gerbil/core/macro-object#macro-object::apply-macro-expander
-   #f))
+   (@lambda 2 #f)))
