@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil hash tables: raw tables
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 

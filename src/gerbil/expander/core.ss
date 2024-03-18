@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil/expander driver
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/expander
 namespace: gx
 
@@ -29,12 +29,6 @@ namespace: gx
 (def current-expander-module-import
   (make-parameter #f))
 (def current-expander-module-prelude
-  (make-parameter #f))
-(def current-expander-module-registry
-  (make-parameter #f))
-(def current-expander-module-library-path
-  (make-parameter #f))
-(def current-expander-module-library-package-cache
   (make-parameter #f))
 
 (def current-expander-allow-rebind?

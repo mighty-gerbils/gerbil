@@ -1,36 +1,48 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform")
 (export #t)
 (declare (inlining-limit 200))
 
-(defcompile-method apply-optimize-annotated (&optmize-annotated &basic-xform)
+;; method to optimize with context annotations
+(defcompile-method (apply-optimize-annotated) (::optimize-annotated ::basic-xform)
+  ()
+  final:
   (%#begin-annotation optimize-annotation%))
 
-(defcompile-method apply-generate-runtime-repr (&generate-runtime-repr &generate-runtime)
-  (%#quote-syntax identity))
+;; method to generate the runtime representation of an AST
+(defcompile-method (apply-generate-runtime-repr) (::generate-runtime-repr ::generate-runtime)
+  ()
+  final:
+  (%#quote-syntax identity-method))
 
-(defcompile-method apply-push-match-vars &push-match-vars
+;; method to process variable refs in match/syntax-case conte4xt
+(defcompile-method (apply-push-match-vars vars: vars K: K) ::push-match-vars
+  (vars K)
+  final:
   (%#lambda             xform-lambda%)
   (%#let-values    push-match-vars-let-values%)
   (%#letrec-values push-match-vars-stop)
   (%#if            push-match-vars-if%)
   (%#call          push-match-vars-call%))
 
+;; current annotation context stack
 (def current-annotation-optimizer
   (make-parameter []))
 
 ;;; apply-optimize-annotated
-(def (optimize-annotation% stx)
+(def (optimize-annotation% self stx)
   (ast-case stx ()
     ((_ ann expr)
      (identifier? #'ann)
@@ -50,7 +62,7 @@ namespace: gxc
      (and (identifier? #'ann)
           (not (memq (stx-e #'ann) gambit-annotations)))
      (compile-e #'expr))
-     (_ (xform-begin-annotation% stx))))
+     (_ (xform-begin-annotation% self stx))))
 
 ;;; optimize-match
 (def (optimize-match stx)
@@ -104,7 +116,7 @@ namespace: gxc
   (def (push-variables clause kont)
     (with (([clause-name . clause-lambda] clause)
            ([K . _] kont))
-      (cons clause-name (apply-push-match-vars clause-lambda [] K))))
+      (cons clause-name (apply-push-match-vars clause-lambda vars: [] K: K))))
 
   (def (start-match kont)
     (ast-case kont (%#lambda)
@@ -335,7 +347,7 @@ namespace: gxc
        (fold-assert-type #'(%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx)) val env))
 
       ((%#call (%#lambda (id) body) (%#ref xid))
-       (fold-assert-type (apply-expression-subst #'body #'id #'xid) val env))
+       (fold-assert-type (apply-expression-subst #'body id: #'id new-id: #'xid) val env))
 
       (_ env)))
 
@@ -552,7 +564,7 @@ namespace: gxc
              (assert #'(%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx))))
 
             ((%#call (%#lambda (id) body) (%#ref xid))
-             (assert (apply-expression-subst #'body #'id #'xid)))
+             (assert (apply-expression-subst #'body id: #'id new-id: #'xid)))
 
             (_ #!void)))))))
 
@@ -641,7 +653,7 @@ namespace: gxc
               (else
                (lp rest subst (cons [[id] expr] locals) (cons (cons sexpr id) env)))))))
         (else
-         (let* ((body (if (null? subst) body (apply-expression-subst* body subst)))
+         (let* ((body (if (null? subst) body (apply-expression-subst* body subst: subst)))
                 (body (do-bind! env (cut continue body))))
            (if (null? locals)
              body
@@ -657,7 +669,7 @@ namespace: gxc
          (if (null? #'(id ...))
            #'body
            (let (subst (map cons #'(id ...) args))
-             (apply-expression-subst* #'body subst)))))))
+             (apply-expression-subst* #'body subst: subst)))))))
 
   (def (nonlinear-block? block)
     (def (nonlinear-expr? expr)
@@ -691,7 +703,7 @@ namespace: gxc
 
   (for-each
     (lambda (block)
-      (apply-collect-runtime-refs (caddr block) rtab))
+      (apply-collect-runtime-refs (caddr block) table: rtab))
     konts)
 
   (let lp ((rest blocks) (r []))
@@ -701,7 +713,7 @@ namespace: gxc
          ([name type kont . _]
           (if (hash-get rtab (identifier-symbol name))
             (begin
-              (apply-collect-runtime-refs kont rtab)
+              (apply-collect-runtime-refs kont table: rtab)
               (lp rest (cons block r)))
             (lp rest r)))))
       (else
@@ -714,12 +726,12 @@ namespace: gxc
 
      (for-each
        (lambda (block)
-         (apply-collect-runtime-refs (caddr block) rtab))
+         (apply-collect-runtime-refs (caddr block) table: rtab))
        konts)
 
      (if (fx= (hash-ref rtab (identifier-symbol name)) 1)
        (let* ((rblock
-               (find (lambda (block) (apply-find-var-refs (caddr block) [name]))
+               (find (lambda (block) (apply-find-var-refs (caddr block) ids: [name]))
                      konts))
               (assert
                (optimize-match-assert-restart rblock name)))
@@ -903,17 +915,17 @@ namespace: gxc
   (with ([id . kont] clause)
     (ast-case kont (%#lambda)
       ((%#lambda (obj) body)
-       (let* ((body (apply-expression-subst #'body #'obj target))
+       (let* ((body (apply-expression-subst #'body id: #'obj new-id: target))
               (body (if negation (closure-e body) body)))
          ;; we need to redeclare the type of the lambda, as it has lost the argument
          (optimizer-declare-type! (identifier-symbol id) (make-!lambda 'lambda 0 #f) #t)
          (cons id ['%#lambda [] body]))))))
 
 ;;; apply-push-match-vars
-(def (push-match-vars-let-values% stx vars K)
+(def (push-match-vars-let-values% self stx)
   (ast-case stx ()
     ((_ bind body)
-     (let lp ((rest #'bind) (rebind []) (vars vars))
+     (let lp ((rest #'bind) (rebind []) (vars (@ self vars)))
        (match rest
          ([bind . rest]
           (ast-case bind (%#ref)
@@ -921,34 +933,37 @@ namespace: gxc
              (lp rest rebind (cons bind vars)))
             (_ (lp rest (cons bind rebind) vars))))
          (else
-          (if (null? rebind)
-            (compile-e #'body vars K)
-            (xform-wrap-source
-             ['%#let-values (reverse rebind) (compile-e #'body vars K)]
-             stx))))))))
+          (let (sibling (struct-copy self))
+            (set! (@ sibling vars) vars)
+            (parameterize ((current-compile-method sibling))
+              (if (null? rebind)
+                (compile-e sibling #'body)
+                (xform-wrap-source
+                 ['%#let-values (reverse rebind) (compile-e sibling #'body)]
+                 stx))))))))))
 
-(def (push-match-vars-if% stx vars K)
+(def (push-match-vars-if% self stx)
   (ast-case stx ()
     ((_ test k e)
-     (if (apply-find-var-refs #'test (map caar vars))
-       (push-match-vars-stop stx vars K)
+     (if (apply-find-var-refs #'test ids: (map caar (@ self vars)))
+       (push-match-vars-stop self stx)
        (xform-wrap-source
         ['%#if #'test
-               (compile-e #'k vars K)
-               (compile-e #'e vars K)]
+               (compile-e self #'k)
+               (compile-e self #'e)]
         stx)))))
 
-(def (push-match-vars-call% stx vars K)
+(def (push-match-vars-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref rator) . _)
-     (if (and (free-identifier=? #'rator K) (pair? vars))
+     (if (and (free-identifier=? #'rator (@ self K)) (pair? (@ self vars)))
        (xform-wrap-source
-        ['%#let-values (reverse vars) stx]
+        ['%#let-values (reverse (@ self vars)) stx]
         stx)
        stx))))
 
-(def (push-match-vars-stop stx vars K)
-  (if (null? vars) stx
+(def (push-match-vars-stop self stx)
+  (if (null? (@ self vars)) stx
       (xform-wrap-source
-       ['%#let-values (reverse vars) stx]
+       ['%#let-values (reverse (@ self vars)) stx]
        stx)))

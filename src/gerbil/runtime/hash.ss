@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil hash table interface
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -33,7 +33,7 @@ namespace: #f
    (for-each HashTable-each@ HashTable-each@-set!)
    (length   HashTable-length@ HashTable-length@-set!)
    (copy     HashTable-copy@ HashTable-copy@-set!)
-   (clear    HashTable-clear@ HashTable-clear@-set!)))
+   (clear!   HashTable-clear@ HashTable-clear@-set!)))
 
 (def HashTable::interface
   (interface-descriptor
@@ -98,7 +98,7 @@ namespace: #f
 (def hash-table::t
   (begin-annotation
       (@mop.class gerbil#hash-table::t              ; type-id
-                  ()                                ; super
+                  (object::t)                       ; super
                   (table count free hash test seed) ; slots
                   #f                                ; constructor
                   #t                                ; struct?
@@ -141,7 +141,7 @@ namespace: #f
 (def gc-hash-table::t
   (begin-annotation
       (@mop.class gerbil#gc-hash-table::t ; type-id
-                  ()                      ; super
+                  (object::t)             ; super
                   (gcht immediate)        ; slots
                   #f                      ; constructor
                   #t                      ; struct?
@@ -169,7 +169,7 @@ namespace: #f
       (##structure
        class::t                         ; type
        'gerbil#gc-hash-table::t         ; type-id
-       'gc-hash-table                   ; type-name
+       'hash-table                      ; type-name
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields
@@ -207,7 +207,7 @@ namespace: #f
   name: hash-table)
 (defstruct-type immediate-hash-table::t (hash-table::t)
   make-immediate-hash-table immediate-hash-table?
-  id: gerbil#immediate-hash-table
+  id: gerbil#immediate-hash-table::t
   name: hash-table)
 
 (bind-method! hash-table::t 'ref raw-table-ref)
@@ -573,6 +573,9 @@ namespace: #f
 (def (list->hash-table-string lst . args)
   (list->hash-table! lst (apply make-hash-table-string size: (length lst) args)))
 
+(def (list->hash-table-immediate lst . args)
+  (list->hash-table! lst (apply make-hash-table-immediate size: (length lst) args)))
+
 (def (list->hash-table! lst h)
   (for-each
     (lambda (el)
@@ -595,6 +598,9 @@ namespace: #f
 
 (def (plist->hash-table-string lst . args)
   (plist->hash-table! lst (apply make-hash-table-string size: (length lst) args)))
+
+(def (plist->hash-table-immediate lst . args)
+  (plist->hash-table! lst (apply make-hash-table-immediate size: (length lst) args)))
 
 (def (plist->hash-table! lst h)
   (let loop ((rest lst))

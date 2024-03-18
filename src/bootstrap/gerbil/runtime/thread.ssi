@@ -25,7 +25,7 @@ namespace: #f
                             thread-local-ref)))
          (%#define-runtime thread-local-get thread-local-get)
          (%#define-runtime thread-local-set! thread-local-set!)
-         (%#define-runtime thread-local-clear! thread-local-clear!)
+         (%#define-runtime thread-local-delete! thread-local-delete!)
          (%#define-runtime thread-local-table thread-local-table)
          (%#define-runtime
           __primordial-thread-locals
@@ -64,4 +64,4 @@ namespace: #f
           (actor-thread-locals-set! actor-thread-locals-set!)
           (actor-thread-nonce actor-thread-nonce)
           (actor-thread-nonce-set! actor-thread-nonce-set!)))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/thread__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/thread~0"))

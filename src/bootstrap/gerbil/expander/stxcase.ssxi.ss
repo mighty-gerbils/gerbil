@@ -5,12 +5,13 @@ package: gerbil/expander
   (declare-type
    gx#syntax-pattern::t
    (@class gx#syntax-pattern::t
-           (gx#expander::t)
-           (gx#expander::t)
+           (gx#expander::t object::t)
+           (gx#expander::t object::t t::t)
            (id depth)
            (e id depth)
            #f
            #t
+           #f
            #f
            #f
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))

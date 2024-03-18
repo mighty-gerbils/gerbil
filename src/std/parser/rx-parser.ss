@@ -6,7 +6,7 @@
         ./rlang
         ./lexer
         ./defparser
-        (only-in <expander-runtime> datum->syntax))
+        (only-in :gerbil/core/expander datum->syntax))
 (export parse-rx current-rx-syntax-context)
 
 (def (simplify e)

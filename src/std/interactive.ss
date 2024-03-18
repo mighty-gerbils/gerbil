@@ -2,12 +2,10 @@
 ;;; © vyzo
 ;;; interactive development utilities
 
-(import (only-in :gerbil/gambit pretty-print))
 (export #t (for-syntax #t))
 
 (module <util>
-  (import <expander-runtime>)
-  (extern namespace: #f __reload-module)
+  (import :gerbil/core/expander)
   (export #t)
   ;; Module reloading
   (def (reload-module! mod)
@@ -20,8 +18,8 @@
          ((string-empty? str)
           (error "Invalid module path" mod))
          ((eq? (string-ref str 0) #\:)  ; library module
-          (parameterize ((__reload-module #t))
-            (import-module mod #t #t)))
+          (reload-module! (substring str 1 (string-length str)))
+          (import-module mod #t #t))
          (else                          ; top module
           (void)))))
      (else

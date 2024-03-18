@@ -3,31 +3,88 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
+          :gerbil/compiler/method
           :gerbil/compiler/compile
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform)
          (%#export #t)
          (%#define-runtime
-          &collect-top-level-type-info
-          gxc#&collect-top-level-type-info)
+          ::collect-top-level-type-info::t
+          gxc#::collect-top-level-type-info::t)
+         (%#define-runtime
+          ::collect-top-level-type-info?
+          gxc#::collect-top-level-type-info?)
+         (%#define-runtime
+          make-::collect-top-level-type-info
+          gxc#make-::collect-top-level-type-info)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize-top~1")))
+                  (%#define-syntax
+                   ::collect-top-level-type-info
+                   |gxc[:0:]#::collect-top-level-type-info|))
+         (%#define-runtime
+          ::collect-top-level-type-info-bind-methods!
+          gxc#::collect-top-level-type-info-bind-methods!)
          (%#define-runtime
           apply-collect-top-level-type-info
           gxc#apply-collect-top-level-type-info)
          (%#define-runtime
-          &basic-expression-top-level-type
-          gxc#&basic-expression-top-level-type)
+          ::basic-expression-top-level-type::t
+          gxc#::basic-expression-top-level-type::t)
+         (%#define-runtime
+          ::basic-expression-top-level-type?
+          gxc#::basic-expression-top-level-type?)
+         (%#define-runtime
+          make-::basic-expression-top-level-type
+          gxc#make-::basic-expression-top-level-type)
+         (%#define-syntax
+          ::basic-expression-top-level-type
+          |gxc[:0:]#::basic-expression-top-level-type|)
+         (%#define-runtime
+          ::basic-expression-top-level-type-bind-methods!
+          gxc#::basic-expression-top-level-type-bind-methods!)
          (%#define-runtime
           apply-basic-expression-top-level-type
           gxc#apply-basic-expression-top-level-type)
-         (%#define-runtime &collect-type-info gxc#&collect-type-info)
+         (%#define-runtime ::collect-type-info::t gxc#::collect-type-info::t)
+         (%#define-runtime ::collect-type-info? gxc#::collect-type-info?)
+         (%#define-runtime
+          make-::collect-type-info
+          gxc#make-::collect-type-info)
+         (%#define-syntax ::collect-type-info |gxc[:0:]#::collect-type-info|)
+         (%#define-runtime
+          ::collect-type-info-bind-methods!
+          gxc#::collect-type-info-bind-methods!)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
-         (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
+         (%#define-runtime
+          ::basic-expression-type::t
+          gxc#::basic-expression-type::t)
+         (%#define-runtime
+          ::basic-expression-type?
+          gxc#::basic-expression-type?)
+         (%#define-runtime
+          make-::basic-expression-type
+          gxc#make-::basic-expression-type)
+         (%#define-syntax
+          ::basic-expression-type
+          |gxc[:0:]#::basic-expression-type|)
+         (%#define-runtime
+          ::basic-expression-type-bind-methods!
+          gxc#::basic-expression-type-bind-methods!)
          (%#define-runtime
           apply-basic-expression-type
           gxc#apply-basic-expression-type)
-         (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
+         (%#define-runtime ::lift-top-lambdas::t gxc#::lift-top-lambdas::t)
+         (%#define-runtime ::lift-top-lambdas? gxc#::lift-top-lambdas?)
+         (%#define-runtime make-::lift-top-lambdas gxc#make-::lift-top-lambdas)
+         (%#define-syntax ::lift-top-lambdas |gxc[:0:]#::lift-top-lambdas|)
+         (%#define-runtime
+          ::lift-top-lambdas-bind-methods!
+          gxc#::lift-top-lambdas-bind-methods!)
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
          (%#define-runtime
           collect-top-level-type-define-values%
@@ -48,18 +105,18 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-annotations
           gxc#basic-expression-type-annotations)
-         (%#begin (%#begin-syntax
-                   (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-top__1")))
-                  (%#define-syntax
-                   defbasic-expression-type-annotations
-                   |gxc[:0:]#defbasic-expression-type-annotations|))
+         (%#define-syntax
+          defbasic-expression-type-annotations
+          |gxc[:0:]#defbasic-expression-type-annotations|)
          (%#define-runtime
           basic-expression-type-begin-annotation%
           gxc#basic-expression-type-begin-annotation%)
          (%#define-runtime
           basic-expression-type-annotation-mop.class
           gxc#basic-expression-type-annotation-mop.class)
+         (%#define-runtime
+          basic-expression-type-annotation-mop.system
+          gxc#basic-expression-type-annotation-mop.system)
          (%#define-runtime
           basic-expression-type-annotation-mop.constructor
           gxc#basic-expression-type-annotation-mop.constructor)
@@ -123,4 +180,4 @@ namespace: gxc
          (%#define-runtime
           lift-top-lambda-binding?
           gxc#lift-top-lambda-binding?))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-top__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-top~0"))

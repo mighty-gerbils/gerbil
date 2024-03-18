@@ -1,16 +1,17 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Prelude for compiler ssxi modules
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../prelude/core"
+(import "../core"
+        "../core/expander"
         "../expander"
         "base" "optimize-base")
 (export #t ast-rules ast-case
         syntax with-syntax with-syntax*
-        (import: "../prelude/core" "../expander"))
+        (import: "../core" "../core/expander" "../expander"))
 
 (defrules declare-type ()
   ((_ symbol type-expr)
@@ -45,8 +46,8 @@ namespace: gxc
 
 ;; MOP
 (defrules @class ()
-  ((_ type-id super-ids precedence-list slots fields constructor struct? final? metaclass methods)
-   (make-!class 'type-id 'super-ids 'precedence-list 'slots 'fields 'constructor struct? final? 'metaclass 'methods)))
+  ((_ type-id super-ids precedence-list slots fields constructor struct? final? system? metaclass methods)
+   (make-!class 'type-id 'super-ids 'precedence-list 'slots 'fields 'constructor struct? final? system? 'metaclass 'methods)))
 
 (defrules @predicate ()
   ((_ type-id)

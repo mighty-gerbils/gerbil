@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gambit builtins
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -89,15 +89,70 @@ namespace: #f
   macro-gc-hash-table-key0
   macro-slot
   macro-type-fixnum
+  macro-type-mem1
+  macro-type-mem2
+  macro-type-subtyped
+  macro-subtype-structure
+  macro-subtype-boxvalues
+  macro-subtype-vector
+  macro-subtype-pair
+  macro-subtype-ratnum
+  macro-subtype-cpxnum
+  macro-subtype-symbol
+  macro-subtype-keyword
+  macro-subtype-frame
+  macro-subtype-continuation
+  macro-subtype-promise
+  macro-subtype-weak
+  macro-subtype-procedure
+  macro-subtype-return
+  macro-subtype-foreign
+  macro-subtype-string
+  macro-subtype-s8vector
+  macro-subtype-u8vector
+  macro-subtype-s16vector
+  macro-subtype-u16vector
+  macro-subtype-s32vector
+  macro-subtype-u32vector
+  macro-subtype-f32vector
+  macro-subtype-s64vector
+  macro-subtype-u64vector
+  macro-subtype-f64vector
+  macro-subtype-flonum
+  macro-subtype-bignum
   macro-type-table
+  macro-type-time
   macro-type-mutex
+  macro-type-condvar
+  macro-type-thread
+  macro-type-tgroup
+  macro-type-port
+  macro-type-object-port
+  macro-type-character-port
+  macro-type-byte-port
+  macro-type-device-port
+  macro-type-vector-port
+  macro-type-string-port
+  macro-type-u8vector-port
+  macro-type-raw-device-port
+  macro-type-tcp-server-port
+  macro-type-udp-port
+  macro-type-directory-port
+  macro-type-event-queue-port
+  macro-type-readenv
+  macro-type-writeenv
+  macro-type-readtable
+  macro-type-processor
+  macro-type-vm
+  macro-type-file-info
+  macro-type-socket-info
+  macro-type-address-info
   macro-max-fixnum32
   macro-number-dispatch
   macro-ratnum-numerator
   macro-ratnum-denominator
   macro-cpxnum-real
   macro-cpxnum-imag
-  macro-subtype-structure
   macro-writeenv-style
   macro-readenv-port
   macro-readenv-filepos

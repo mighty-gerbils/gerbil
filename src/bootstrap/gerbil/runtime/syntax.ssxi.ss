@@ -5,13 +5,14 @@ package: gerbil/runtime
   (declare-type
    SyntaxError::t
    (@class gerbil/runtime/syntax#SyntaxError::t
-           (Exception::t)
-           (Exception::t)
+           (Exception::t object::t)
+           (Exception::t object::t t::t)
            (message irritants where context phi marks)
            (message irritants where context phi marks)
            #f
            #f
            #t
+           #f
            #f
            ((display-exception . SyntaxError::display-exception))))
   (declare-type SyntaxError? (@predicate SyntaxError::t))
@@ -50,7 +51,17 @@ package: gerbil/runtime
   (declare-type __raise-syntax-error (@lambda (3) #f))
   (declare-type
    AST::t
-   (@class gerbil#AST::t () () (e source) (e source) #f #t #f #f #f))
+   (@class gerbil#AST::t
+           (object::t)
+           (object::t t::t)
+           (e source)
+           (e source)
+           #f
+           #t
+           #f
+           #f
+           #f
+           #f))
   (declare-type AST? (@predicate AST::t))
   (declare-type make-AST (@constructor AST::t))
   (declare-type AST-e (@accessor AST::t e #t))

@@ -2,11 +2,11 @@ prelude: :gerbil/core
 package: gerbil/compiler
 namespace: gxc
 
-(%#begin (%#import :gerbil/expander (in: :gerbil/core <syntax-case>))
+(%#begin (%#import :gerbil/core/expander :gerbil/expander)
          (%#export #t)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/base__1")))
+                           (%#quote "gerbil/compiler/base~1")))
                   (%#define-syntax ast-case |gxc[:0:]#ast-case|))
          (%#define-syntax ast-rules |gxc[:0:]#ast-rules|)
          (%#define-runtime
@@ -73,4 +73,4 @@ namespace: gxc
           module-path-reserved-chars
           gxc#module-path-reserved-chars)
          (%#define-runtime module-id->path-string gxc#module-id->path-string))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/base__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/base~0"))

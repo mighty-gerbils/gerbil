@@ -29,6 +29,7 @@
     "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
+    "gerbil/runtime/mop-system-classes"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
     "gerbil/runtime/hash"
@@ -50,9 +51,11 @@
     "gerbil/expander/compile"
     "gerbil/expander/root"
     "gerbil/expander/stxcase"
+    "gerbil/expander/init"
     "gerbil/expander"
     ;; :gerbil/compiler
     "gerbil/compiler/base"
+    "gerbil/compiler/method"
     "gerbil/compiler/compile"
     "gerbil/compiler/optimize-base"
     "gerbil/compiler/optimize-xform"
@@ -117,5 +120,7 @@
   ;; clean up
   (delete-file bach-main-scm)
   (for-each (lambda (ext)
-              (delete-file (path-expand (string-append bach-main ext) gerbil-libdir)))
-            '(".ssi" "__0.o1" "__rt.o1")))
+              (let (path (path-expand (string-append bach-main ext) gerbil-libdir))
+                (when (file-exists? path)
+                  (delete-file path))))
+            '(".ssi" ".o1" "~0.o1" "__0.o1" "__rt.o1")))

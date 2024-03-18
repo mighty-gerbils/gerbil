@@ -1,12 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler compilation methods
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
 (import "../expander"
-        "../prelude/gambit"
         "../runtime/error"
         "base"
         "compile"
@@ -67,6 +66,7 @@ namespace: gxc
     "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
+    "gerbil/runtime/mop-system-classes"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
     "gerbil/runtime/hash"
@@ -498,7 +498,7 @@ namespace: gxc
             (expander-context-id ctx)
             (string->symbol ctx)))
          (scm (string-append (static-module-name context-id) ".scm"))
-         (dirs (current-expander-module-library-path))
+         (dirs (load-path))
          (dirs
           (let (user-libpath (getenv "GERBIL_PATH" #f))
             ;; this might have changed if we programmatically set it
@@ -565,7 +565,7 @@ namespace: gxc
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (module-id->path-string (expander-context-id ctx)))
-                      (string-append idstr "__0")))))
+                      (string-append idstr "~0")))))
       (cond
        (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
@@ -619,7 +619,7 @@ namespace: gxc
               ['begin loader-code ['load-module rt]]
               loader-code)))
       (parameterize ((current-compile-gsc-options #f))
-        (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code))))
+        (compile-scm-file (compile-output-file ctx #f ".scm") loader-code))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each
@@ -693,7 +693,7 @@ namespace: gxc
 (def (generate-meta-code ctx)
   ;; => ssi-code [[phi-ctx phi n phi-code] ...]
   (let* ((state (make-meta-state ctx))
-         (ssi-code (apply-generate-meta (module-context-code ctx) state)))
+         (ssi-code (apply-generate-meta (module-context-code ctx) state: state)))
     (values ssi-code (meta-state-end! state))))
 
 (def (generate-runtime-phi stx)
@@ -707,7 +707,7 @@ namespace: gxc
 
 (def (lift-nested-modules ctx)
   (let (modules (box []))
-    (apply-lift-modules (module-context-code ctx) modules)
+    (apply-lift-modules (module-context-code ctx) modules: modules)
     (reverse (unbox modules))))
 
 ;;; utilities
@@ -822,7 +822,7 @@ namespace: gxc
 
   (def (file-name path)
     (if n
-      (string-append path "__" (section-string n) ext)
+      (string-append path "~" (section-string n) ext)
       (string-append path ext)))
 
   (def (file-path)

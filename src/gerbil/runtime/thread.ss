@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil thread primitives
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -73,7 +73,7 @@ namespace: #f
   (let (tab (thread-local-table))
     (hash-put! tab key value)))
 
-(def (thread-local-clear! key)
+(def (thread-local-delete! key)
   (let (tab (thread-local-table))
     (hash-remove! tab key)))
 

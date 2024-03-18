@@ -39,6 +39,7 @@
     "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
+    "gerbil/runtime/mop-system-classes"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
     "gerbil/runtime/hash"
@@ -62,10 +63,12 @@
     "gerbil/expander/compile"
     "gerbil/expander/root"
     "gerbil/expander/stxcase"
+    "gerbil/expander/init"
     "gerbil/expander"))
 
 (def gerbil-compiler
   '("gerbil/compiler/base"
+    "gerbil/compiler/method"
     "gerbil/compiler/compile"
     "gerbil/compiler/optimize-base"
     "gerbil/compiler/optimize-xform"
@@ -131,7 +134,8 @@
     (symbol->string (expander-context-id modctx)))
 
   (def (module-exclude? modctx)
-    (string-prefix? "gerbil/core" (module-file modctx)))
+    (or (not (expander-context-id modctx)) ; root prelude
+        (string-prefix? "gerbil/core" (symbol->string (expander-context-id modctx)))))
 
   (def (import-set-template in phi)
     (let ((iphi (fx+ phi (import-set-phi in)))

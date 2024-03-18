@@ -88,7 +88,7 @@
         (for (i (in-range 16))
           (check (BufferedReader-read brd2 buf) => 64)
           (verify-buf 0 64 (* i 64)))
-        (check (BufferedReader-peek-u8 brd2) ? eof-object)))
+        (check (BufferedReader-peek-u8 brd2) ? eof-object?)))
 
     (test-case "integer input"
       (let* ((u8v (u8vector

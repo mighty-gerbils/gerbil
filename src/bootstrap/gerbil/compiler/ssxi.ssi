@@ -4,6 +4,7 @@ namespace: gxc
 
 (%#begin (%#import
           :gerbil/core
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
           :gerbil/compiler/optimize-base)
@@ -15,10 +16,11 @@ namespace: gxc
           (spec: 0 with-syntax with-syntax)
           (spec: 0 with-syntax* with-syntax*)
           (import: :gerbil/core)
+          (import: :gerbil/core/expander)
           (import: :gerbil/expander))
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/ssxi__1")))
+                           (%#quote "gerbil/compiler/ssxi~1")))
                   (%#define-syntax declare-type |gxc[:0:]#declare-type|))
          (%#define-syntax declare-type* |gxc[:0:]#declare-type*|)
          (%#define-syntax declare-method |gxc[:0:]#declare-method|)

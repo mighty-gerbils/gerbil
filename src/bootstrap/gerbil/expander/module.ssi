@@ -8,9 +8,8 @@ namespace: gx
           :gerbil/expander/stx
           :gerbil/expander/core
           :gerbil/expander/top)
-         (%#extern
-          (datum-parsing-exception? datum-parsing-exception?)
-          (datum-parsing-exception-filepos datum-parsing-exception-filepos))
+         (%#define-runtime __module-registry gx#__module-registry)
+         (%#define-runtime __module-pkg-cache gx#__module-pkg-cache)
          (%#define-runtime module-import::t gx#module-import::t)
          (%#define-runtime module-import? gx#module-import?)
          (%#define-runtime make-module-import gx#make-module-import)
@@ -42,7 +41,7 @@ namespace: gx
           gx#&module-import-weak?-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/expander/module__1")))
+                           (%#quote "gerbil/expander/module~1")))
                   (%#define-syntax module-import |gx[:0:]#module-import|))
          (%#define-runtime module-export::t gx#module-export::t)
          (%#define-runtime module-export? gx#module-export?)
@@ -322,9 +321,6 @@ namespace: gx
                             core-library-package-plist
                             gx#core-library-package-plist)))
          (%#define-runtime
-          core-library-package-cache
-          gx#core-library-package-cache)
-         (%#define-runtime
           core-library-module-path?
           gx#core-library-module-path?)
          (%#define-runtime
@@ -425,4 +421,4 @@ namespace: gx
                            (%#define-runtime
                             core-bind-feature!
                             gx#core-bind-feature!))))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/module__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/module~0"))

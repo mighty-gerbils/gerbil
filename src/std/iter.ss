@@ -6,7 +6,8 @@
         :std/error
         :std/contract
         :std/generic
-        :std/coroutine)
+        :std/coroutine
+        :std/hash-table)
 (export
   (struct-out  iterator)
   iter :iter iter-end iter-end? iter-next! iter-fini!
@@ -34,32 +35,26 @@
   (if (iterator? obj) obj
       (:iter obj)))
 
-(defgeneric :iter)
+(defgeneric :iter
+  (lambda (obj) {:iter obj}))
 (defmethod (:iter (it iterator))
   it)
-(defmethod (:iter (obj <pair>))
+(defmethod (:iter (obj :list))
   (iter-list obj))
-(defmethod (:iter (obj <null>))
-  (iter-null))
-(defmethod (:iter (obj <vector>))
+(defmethod (:iter (obj :vector))
   (iter-vector obj))
-(defmethod (:iter (obj <string>))
+(defmethod (:iter (obj :string))
   (iter-string obj))
-(defmethod (:iter (obj <u8vector>))
+(defmethod (:iter (obj :u8vector))
   (iter-u8vector obj))
-(defmethod (:iter (obj <hash-table>))
+(defmethod (:iter (obj HashTable))
   (iter-hash-table obj))
-(defmethod (:iter (obj <procedure>))
+(defmethod (:iter (obj :procedure))
   (iter-coroutine obj))
-(defmethod (:iter (obj <port>))
+(defmethod (:iter (obj :port))
   (if (input-port? obj)
     (iter-input-port obj)
     (raise-bad-argument :iter "input-port" obj)))
-(defmethod (:iter (obj <object>))
-  {:iter obj})
-
-(def (iter-null)
-  (make-iterator iter-end iterator-e))
 
 (def (iter-list lst)
   (def (next it)

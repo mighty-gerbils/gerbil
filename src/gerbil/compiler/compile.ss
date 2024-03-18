@@ -1,17 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; gerbil compiler compilation methods
-prelude: "../prelude/core"
+;;; gerbil compiler: code generation
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
-        <syntax-case> <syntax-sugar>
-        (only-in "../prelude/gambit"
-                 s8vector? u8vector? s16vector? u16vector?
-                 s32vector? u32vector? s64vector? u64vector?
-                 f32vector? f64vector?))
+        "method")
 (export #t)
 
 (def gambit-annotations
@@ -49,10 +46,6 @@ namespace: gxc
     debug-source
     debug-environments))
 
-;; compilation method dispatch table
-(def current-compile-methods
-  (make-parameter #f))
-
 ;; quote-syntax lifts
 (def current-compile-lift
   (make-parameter #f))
@@ -68,168 +61,27 @@ namespace: gxc
     (symbol-hash (stx-e id)))
   (make-hash-table test: bound-identifier=? hash: hash-e))
 
-(def* compile-e
-  ((stx)
-   (do-compile-e stx method
-     (method stx)))
-  ((stx arg)
-   (do-compile-e stx method
-     (method stx arg)))
-  ((stx arg1 arg2)
-   (do-compile-e stx method
-     (method stx arg1 arg2)))
-  ((stx arg1 arg2 . args)
-   (do-compile-e stx method
-     (apply method stx arg1 arg2 args))))
-
-(defrules do-compile-e ()
-  ((_ stx method dispatch)
-   (ast-case stx ()
-    ((hd . _)
-     (cond
-      ((hash-get (current-compile-methods) (stx-e #'hd))
-       => (lambda (method)
-            (declare (not safe))
-            dispatch))
-            ))
-      (else
-       (raise-compile-error "Cannot compile; missing method" stx #'hd)))))
-
-(defrules defcompile-method ()
-  ((recur compile-method table . methods)
-   (identifier? #'table)
-   (recur compile-method (table) . methods))
-  ((_ #f (table super ...) (symbol method) ...)
-   (def table
-     (delay
-       (let (tbl (make-hash-table-eq))
-         (hash-merge! tbl (force super)) ...
-         (hash-put! tbl 'symbol method) ...
-         tbl))))
-  ((recur compile-method (table . super) . methods)
-   (identifier? #'compile-method)
-   (begin
-     (recur #f (table . super) . methods)
-     (def (compile-method stx . args)
-       (parameterize ((current-compile-methods (force table)))
-         (declare (not safe))
-         (do-apply-compile-e stx args))))))
-
-(defrules do-apply-compile-e ()
-  ((_ stx args)
-   (if (null? args)
-     (compile-e stx)
-     (let ((arg1 (car args))
-           (rest (cdr args)))
-       (if (null? rest)
-         (compile-e stx arg1)
-         (let ((arg2 (car rest))
-               (rest (cdr rest)))
-           (if (null? rest)
-             (compile-e stx arg1 arg2)
-             (apply compile-e stx arg1 arg2 rest))))))))
-
-(def (void-method stx . args)
-  #!void)
-
-(def (false-method stx . args)
-  #f)
-
-(def (true-method stx . args)
-  #t)
-
-(defcompile-method #f &void-expression
-  (%#begin-annotation        void-method)
-  (%#lambda                       void-method)
-  (%#case-lambda                  void-method)
-  (%#let-values              void-method)
-  (%#letrec-values           void-method)
-  (%#letrec*-values          void-method)
-  (%#quote                   void-method)
-  (%#quote-syntax            void-method)
-  (%#call                    void-method)
-  (%#call-unchecked          void-method)
-  (%#if                      void-method)
-  (%#ref                     void-method)
-  (%#set!                    void-method)
-  (%#struct-instance?        void-method)
-  (%#struct-direct-instance? void-method)
-  (%#struct-ref              void-method)
-  (%#struct-set!             void-method)
-  (%#struct-direct-ref       void-method)
-  (%#struct-direct-set!      void-method)
-  (%#struct-unchecked-ref    void-method)
-  (%#struct-unchecked-set!   void-method))
-
-(defcompile-method #f &void-special-form
-  (%#begin          void-method)
-  (%#begin-syntax   void-method)
-  (%#begin-foreign  void-method)
-  (%#module         void-method)
-  (%#import         void-method)
-  (%#export         void-method)
-  (%#provide        void-method)
-  (%#extern         void-method)
-  (%#define-values  void-method)
-  (%#define-syntax  void-method)
-  (%#define-alias   void-method)
-  (%#declare        void-method))
-
-(defcompile-method #f (&void &void-special-form &void-expression))
-
-(defcompile-method #f &false-expression
-  (%#begin-annotation        false-method)
-  (%#lambda                       false-method)
-  (%#case-lambda                  false-method)
-  (%#let-values              false-method)
-  (%#letrec-values           false-method)
-  (%#letrec*-values          false-method)
-  (%#quote                   false-method)
-  (%#quote-syntax            false-method)
-  (%#call                    false-method)
-  (%#call-unchecked          false-method)
-  (%#if                      false-method)
-  (%#ref                     false-method)
-  (%#set!                    false-method)
-  (%#struct-instance?        false-method)
-  (%#struct-direct-instance? false-method)
-  (%#struct-ref              false-method)
-  (%#struct-set!             false-method)
-  (%#struct-direct-ref       false-method)
-  (%#struct-direct-set!      false-method)
-  (%#struct-unchecked-ref    false-method)
-  (%#struct-unchecked-set!   false-method))
-
-(defcompile-method #f &false-special-form
-  (%#begin          false-method)
-  (%#begin-syntax   false-method)
-  (%#begin-foreign  false-method)
-  (%#module         false-method)
-  (%#import         false-method)
-  (%#export         false-method)
-  (%#provide        false-method)
-  (%#extern         false-method)
-  (%#define-values  false-method)
-  (%#define-syntax  false-method)
-  (%#define-alias   false-method)
-  (%#declare        false-method))
-
-(defcompile-method #f (&false &false-special-form &false-expression))
-
-(defcompile-method apply-collect-bindings (&collect-bindings
-                                           &void-expression
-                                           &void-special-form)
-  (%#begin         collect-begin%)
-  (%#begin-syntax  collect-begin-syntax%)
-  (%#module        collect-module%)
+;; method that collects top level bindings
+(defcompile-method (apply-collect-bindings)
+  (::collect-bindings ::void) ()
+  final:
+  (%#begin         apply-begin%)
+  (%#begin-syntax  apply-begin-syntax%)
+  (%#module        apply-module%)
   (%#define-values collect-bindings-define-values%)
   (%#define-syntax collect-bindings-define-syntax%))
 
-(defcompile-method apply-lift-modules (&lift-modules &void)
-  (%#begin         collect-begin%)
+;; method that lifts nested modules
+(defcompile-method (apply-lift-modules modules: modules)
+  (::lift-modules ::void)
+  (modules)
+  final:
+  (%#begin         apply-begin%)
   (%#module        lift-modules-module%))
 
-(defcompile-method apply-find-runtime-code &find-runtime-code
+;; method that decides whether there is runtime code in the module
+(defcompile-method (apply-find-runtime-code) ::find-runtime-code ()
+  final:
   (%#begin                   find-runtime-begin%)
   (%#begin-syntax            false-method)
   (%#begin-foreign           true-method)
@@ -263,29 +115,34 @@ namespace: gxc
   (%#struct-unchecked-ref    true-method)
   (%#struct-unchecked-set!   true-method))
 
-(defcompile-method apply-find-lambda-expression (&find-lambda-expression &false)
-  (%#begin                   find-lambda-expression-begin%)
-  (%#begin-annotation        find-lambda-expression-begin-annotation%)
-  (%#lambda                       values)
-  (%#case-lambda                  values)
-  (%#let-values              find-lambda-expression-let-values%)
-  (%#letrec-values           find-lambda-expression-let-values%)
-  (%#letrec*-values          find-lambda-expression-let-values%))
+;; method that finds lambdas
+(defcompile-method (apply-find-lambda-expression) (::find-lambda-expression ::false) ()
+  final:
+  (%#begin                   apply-last-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
+  (%#lambda                       identity-method)
+  (%#case-lambda                  identity-method)
+  (%#let-values              apply-body-last-let-values%)
+  (%#letrec-values           apply-body-last-let-values%)
+  (%#letrec*-values          apply-body-last-let-values%))
 
-(defcompile-method apply-count-values (&count-values &false-expression)
-  (%#begin                   count-values-begin%)
-  (%#begin-annotation        count-values-begin-annotation%)
+;; method that counts return values, where possible.
+(defcompile-method (apply-count-values) (::count-values ::false-expression) ()
+  final:
+  (%#begin                   apply-last-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
   (%#lambda                       count-values-single%)
   (%#case-lambda                  count-values-single%)
-  (%#let-values              count-values-let-values%)
-  (%#letrec-values           count-values-let-values%)
-  (%#letrec*-values          count-values-let-values%)
+  (%#let-values              apply-body-last-let-values%)
+  (%#letrec-values           apply-body-last-let-values%)
+  (%#letrec*-values          apply-body-last-let-values%)
   (%#quote                   count-values-single%)
   (%#call                    count-values-call%)
   (%#call-unchecked          count-values-call%)
   (%#if                      count-values-if%))
 
-(defcompile-method #f &generate-runtime-empty
+;; abstact method to generate empty empty runtime code
+(defcompile-method #f ::generate-runtime-empty ()
   (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
   (%#begin-foreign           generate-runtime-empty)
@@ -319,11 +176,16 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-empty)
   (%#struct-unchecked-set!   generate-runtime-empty))
 
-(defcompile-method apply-generate-loader (&generate-loader &generate-runtime-empty)
+;; concrete method to generate runtime loader code
+(defcompile-method (apply-generate-loader) (::generate-loader ::generate-runtime-empty)
+  ()
+  final:
   (%#begin                   generate-runtime-begin%)
   (%#import                  generate-runtime-loader-import%))
 
-(defcompile-method apply-generate-runtime (&generate-runtime &generate-runtime-empty)
+;; concrete method to generate the runtime code of a module
+(defcompile-method (apply-generate-runtime) (::generate-runtime ::generate-runtime-empty)
+  ()
   (%#begin                   generate-runtime-begin%)
   (%#begin-foreign           generate-runtime-begin-foreign%)
   (%#begin-annotation        generate-runtime-begin-annotation%)
@@ -350,35 +212,43 @@ namespace: gxc
   (%#struct-unchecked-ref    generate-runtime-struct-unchecked-ref%)
   (%#struct-unchecked-set!   generate-runtime-struct-unchecked-setq%))
 
-(defcompile-method apply-generate-runtime-phi (&generate-runtime-phi
-                                               &generate-runtime)
+;; concrete method to generate the runtime code of a phased section of a module
+(defcompile-method (apply-generate-runtime-phi) (::generate-runtime-phi
+                                                 ::generate-runtime)
+  ()
+  final:
   (%#define-runtime generate-runtime-phi-define-runtime%))
 
-(defcompile-method apply-collect-expression-refs &collect-expression-refs
-  (%#begin                   collect-begin%)
-  (%#begin-annotation        collect-begin-annotation%)
-  (%#lambda                       collect-body-lambda%)
-  (%#case-lambda                  collect-body-case-lambda%)
-  (%#let-values              collect-body-let-values%)
-  (%#letrec-values           collect-body-let-values%)
-  (%#letrec*-values          collect-body-let-values%)
+;; method to collection expression references
+(defcompile-method (apply-collect-expression-refs table: table) ::collect-expression-refs
+  (table)
+  (%#begin                   apply-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
+  (%#lambda                       apply-body-lambda%)
+  (%#case-lambda                  apply-body-case-lambda%)
+  (%#let-values              apply-body-let-values%)
+  (%#letrec-values           apply-body-let-values%)
+  (%#letrec*-values          apply-body-let-values%)
   (%#quote                   void-method)
   (%#quote-syntax            void-method)
-  (%#call                    collect-operands)
-  (%#call-unchecked          collect-operands)
-  (%#if                      collect-operands)
+  (%#call                    apply-operands)
+  (%#call-unchecked          apply-operands)
+  (%#if                      apply-operands)
   (%#ref                     collect-refs-ref%)
   (%#set!                    collect-refs-setq%)
-  (%#struct-instance?        collect-operands)
-  (%#struct-direct-instance? collect-operands)
-  (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands)
-  (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands)
-  (%#struct-unchecked-ref    collect-operands)
-  (%#struct-unchecked-set!   collect-operands))
+  (%#struct-instance?        apply-operands)
+  (%#struct-direct-instance? apply-operands)
+  (%#struct-ref              apply-operands)
+  (%#struct-set!             apply-operands)
+  (%#struct-direct-ref       apply-operands)
+  (%#struct-direct-set!      apply-operands)
+  (%#struct-unchecked-ref    apply-operands)
+  (%#struct-unchecked-set!   apply-operands))
 
-(defcompile-method apply-generate-meta (&generate-meta &void-expression)
+;; method to generate the meta parts of a module
+(defcompile-method (apply-generate-meta state: state) (::generate-meta ::void-expression)
+  (state)
+  final:
   (%#begin          generate-meta-begin%)
   (%#begin-syntax   generate-meta-begin-syntax%)
   (%#module         generate-meta-module%)
@@ -392,7 +262,10 @@ namespace: gxc
   (%#begin-foreign  void-method)
   (%#declare        void-method))
 
-(defcompile-method apply-generate-meta-phi &generate-meta-phi
+;; method to generate the meta parts of a phased section
+(defcompile-method (apply-generate-meta-phi state: state) ::generate-meta-phi
+  (state)
+  final:
   (%#begin                   generate-meta-begin%)
   (%#begin-syntax            generate-meta-begin-syntax%)
   (%#define-syntax           generate-meta-define-syntax%)
@@ -421,69 +294,10 @@ namespace: gxc
   (%#struct-unchecked-set!   generate-meta-phi-expr)
   (%#declare                 void-method))
 
-;;; generic collectors
-(def (collect-begin% stx . args)
-  (ast-case stx ()
-    ((_ . body)
-     (for-each
-       (lambda (stx) (do-apply-compile-e stx args))
-       (stx-e #'body)))))
-
-(def (collect-begin-syntax% stx . args)
-  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-    (apply collect-begin% stx args)))
-
-(def (collect-module% stx . args)
-  (ast-case stx ()
-    ((_ id . body)
-     (let* ((ctx (syntax-local-e #'id))
-            (ctx-stx (module-context-code ctx)))
-       (parameterize ((current-expander-context ctx))
-         (do-apply-compile-e ctx-stx args))))))
-
-(def (collect-begin-annotation% stx . args)
-  (ast-case stx ()
-    ((_ ann expr)
-     (do-apply-compile-e #'expr args))))
-
-(def (collect-define-values% stx . args)
-  (ast-case stx ()
-    ((_ hd expr)
-     (do-apply-compile-e #'expr args))))
-
-(def (collect-define-syntax% stx . args)
-  (ast-case stx ()
-    ((_ id expr)
-     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (do-apply-compile-e #'expr args)))))
-
-(def (collect-body-lambda% stx . args)
-  (ast-case stx ()
-    ((_ hd body)
-     (do-apply-compile-e #'body args))))
-
-(def (collect-body-case-lambda% stx . args)
-  (ast-case stx ()
-    ((_ (hd body) ...)
-     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(body ...)))))
-
-(def (collect-body-let-values% stx . args)
-  (ast-case stx ()
-    ((_ ((hd expr) ...) body)
-     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(expr ... body)))))
-
-(def (collect-body-setq% stx . args)
-  (ast-case stx ()
-    ((_ id expr)
-     (do-apply-compile-e #'expr args))))
-
-(def (collect-operands stx . args)
-  (ast-case stx ()
-    ((_ rands ...)
-     (for-each (lambda (stx) (do-apply-compile-e stx args)) #'(rands ...)))))
+;;; compile method method implementations [sic]
 
 ;;; collect-bindings
-(def (collect-bindings-define-values% stx)
+(def (collect-bindings-define-values% self stx)
   (ast-case stx ()
     ((_ hd expr)
      (stx-for-each
@@ -492,20 +306,20 @@ namespace: gxc
           (add-module-binding! bind #f)))
       #'hd))))
 
-(def (collect-bindings-define-syntax% stx)
+(def (collect-bindings-define-syntax% self stx)
   (ast-case stx ()
     ((_ id expr)
      (add-module-binding! #'id #t))))
 
-
 ;;; lift-modules
-(def (lift-modules-module% stx modules)
+(def (lift-modules-module% self stx)
   (ast-case stx ()
     ((_ id . body)
      (let (ctx (syntax-local-e #'id))
-       (set! (box modules) (cons ctx (unbox modules)))
+       (set! (box (@ self modules))
+         (cons ctx (unbox (@ self modules))))
        (parameterize ((current-expander-context ctx))
-         (compile-e (module-context-code ctx) modules))))))
+         (compile-e self (module-context-code ctx)))))))
 
 ;;; runtime code generation
 (defrules with-primitive-bind+args ()
@@ -646,10 +460,10 @@ namespace: gxc
           (make-symbol "_" (gensym) "_"))))
     (make-symbol "_" (gensym) "_")))
 
-(def (generate-runtime-empty stx)
+(def (generate-runtime-empty self stx)
   '(begin))
 
-(def (generate-runtime-begin% stx)
+(def (generate-runtime-begin% self stx)
   (def (simplify body)
     (let lp ((rest body) (r []))
       (match rest
@@ -672,50 +486,52 @@ namespace: gxc
 
   (ast-case stx ()
     ((_ . body)
-     (let* ((body (map compile-e #'body))
+     (let* ((body (map (cut compile-e self <>) #'body))
             (body (simplify body)))
        (if (fx= (length body) 1)
          (car body)
          ['begin body ...])))))
 
-(def (generate-runtime-begin-foreign% stx)
+(def (generate-runtime-begin-foreign% self stx)
   (ast-case stx ()
     ((_ . body)
      ['begin (syntax->datum #'body) ...])))
 
-(def (generate-runtime-begin-annotation% stx)
+(def (generate-runtime-begin-annotation% self stx)
   (ast-case stx ()
     ((_ ann expr)
-     (identifier? #'ann) ; optimizer annotation mark
-     (compile-e #'expr))
+     (identifier? #'ann) ; context annotation mark
+     ;; TODO track the annotation context in parameter
+     (compile-e self #'expr))
     ((_ (ann param ...) expr)
      (and (identifier? #'ann) ; extended optimizer annotation?
           (not (memq (stx-e #'ann) gambit-annotations)))
-     (compile-e #'expr))
+     ;; TODO process appropriate annotations
+     (compile-e self #'expr))
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
        (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
          ['begin ['declare decls ...]
-                 (compile-e #'expr)])))))
+                 (compile-e self #'expr)])))))
 
-(def (generate-runtime-declare% stx)
+(def (generate-runtime-declare% self stx)
   (ast-case stx ()
     ((_ . decls)
      (let (decls (map syntax->datum #'decls))
        (current-compile-decls (foldr cons (current-compile-decls) decls))
        ['declare decls ...]))))
 
-(def (generate-runtime-define-values% stx)
+(def (generate-runtime-define-values% self stx)
   (ast-case stx ()
     ((_ hd expr)
      (ast-case #'hd ()
        ((#f)
-        (compile-e #'expr))
+        (compile-e self #'expr))
        ((id)
         (let (eid (generate-runtime-binding-id #'id))
           (alet (lambda-expr (apply-find-lambda-expression #'expr))
             (hash-put! (current-compile-runtime-names) lambda-expr eid))
-          ['define eid (compile-e #'expr)]))
+          ['define eid (compile-e self #'expr)]))
        (_
         (let* ((tmp (generate-runtime-temporary #t))
                (body
@@ -736,7 +552,7 @@ namespace: gxc
                             r))
                     (_ (reverse r))))))
           ['begin
-           ['define tmp (compile-e #'expr)]
+           ['define tmp (compile-e self #'expr)]
            (generate-runtime-check-values tmp #'hd #'expr)
            body ...]))))))
 
@@ -814,14 +630,14 @@ namespace: gxc
         '(declare (not safe))
         ['##list-tail ['##vector->list var] i]]))))
 
-(def (generate-runtime-lambda% stx)
+(def (generate-runtime-lambda% self stx)
   (ast-case stx ()
     ((_ hd body)
-     (generate-runtime-lambda-form #'hd #'body))))
+     (generate-runtime-lambda-form self #'hd #'body))))
 
-(def (generate-runtime-lambda-form hd body)
+(def (generate-runtime-lambda-form self hd body)
   (let* ((hd (generate-runtime-lambda-head hd))
-         (body (compile-e body))
+         (body (compile-e self body))
          (body
           (match body
             (['begin . exprs] exprs)
@@ -831,7 +647,7 @@ namespace: gxc
 (def (generate-runtime-lambda-head hd)
   (stx-map generate-runtime-binding-id* hd))
 
-(def (generate-runtime-case-lambda% stx)
+(def (generate-runtime-case-lambda% self stx)
   (def (dispatch-case? hd body)
     (let (form [hd body])
       (ast-case form (%#call %#ref)
@@ -862,11 +678,11 @@ namespace: gxc
     (let (form [hd body])
       (ast-case form (%#call %#ref)
         (((arg ...) (%#call (%#ref rator) (%#ref xarg) ...))
-         (compile-e #'(%#ref rator)))
+         (compile-e self #'(%#ref rator)))
         (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) . _))
-         (compile-e #'(%#ref rator)))
+         (compile-e self #'(%#ref rator)))
         ((args (%#call (%#ref -apply) (%#ref rator) _))
-         (compile-e #'(%#ref rator))))))
+         (compile-e self #'(%#ref rator))))))
 
   (def (generate1 args arglen hd body)
     (let* ((len (stx-length hd))
@@ -888,7 +704,7 @@ namespace: gxc
            (dispatch
             (if (dispatch-case? hd body)
               (dispatch-case-e hd body)
-              (generate-runtime-lambda-form hd body))))
+              (generate-runtime-lambda-form self hd body))))
       [condition ['apply dispatch args]]))
 
   (ast-case stx ()
@@ -909,11 +725,11 @@ namespace: gxc
             ['else
              ['##raise-wrong-number-of-arguments-exception name args]]]]]))))
 
-(def (generate-runtime-let-values% stx (compiled-body? #f))
+(def (generate-runtime-let-values% self stx (compiled-body? #f))
   (def (generate-simple hd body)
     (coalesce-boolean
      (coalesce-let*
-      (generate-runtime-simple-let 'let hd body compiled-body?))))
+      (generate-runtime-simple-let self 'let hd body compiled-body?))))
 
   (def (coalesce-boolean code)
     (if (current-compile-boolean-context)
@@ -944,18 +760,18 @@ namespace: gxc
          (ast-case #'bind-hd ()
            (((id) expr)
             (let ((eid (generate-runtime-binding-id* #'id))
-                  (expr (compile-e #'expr)))
+                  (expr (compile-e self #'expr)))
               (lp #'rest (cons [eid expr] bind) check post)))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
                    (check-values (generate-runtime-check-values vals #'hd #'expr))
                    (refs (generate-runtime-let-values-bind vals #'hd))
-                   (expr (compile-e #'expr)))
+                   (expr (compile-e self #'expr)))
               (lp #'rest
                   (cons [vals expr] bind)
                   (cons check-values check)
                   (cons refs post))))))
-        (_ (let* ((body (if compiled-body? body (compile-e body)))
+        (_ (let* ((body (if compiled-body? body (compile-e self body)))
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
              ['let (reverse bind) body])))))
@@ -995,9 +811,9 @@ namespace: gxc
               r))
       (_ (reverse r)))))
 
-(def (generate-runtime-letrec-values% stx (compiled-body? #f))
+(def (generate-runtime-letrec-values% self stx (compiled-body? #f))
   (def (generate-simple hd body)
-    (generate-runtime-simple-let 'letrec hd body compiled-body?))
+    (generate-runtime-simple-let self 'letrec hd body compiled-body?))
 
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
@@ -1006,20 +822,20 @@ namespace: gxc
          (ast-case #'bind-hd ()
            (((id) expr)
             (let ((eid (generate-runtime-binding-id* #'id))
-                  (expr (compile-e #'expr)))
+                  (expr (compile-e self #'expr)))
               (lp #'rest (cons [eid expr] bind) check post)))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
                    (check-values (generate-runtime-check-values vals #'hd #'expr))
                    (refs (generate-runtime-let-values-bind vals #'hd))
-                   (expr (compile-e #'expr)))
+                   (expr (compile-e self #'expr)))
               (lp #'rest
                   (foldl cons
                          (cons [vals expr] bind)
                          (map (match <> ([eid _] [eid #!void])) refs))
                   (cons check-values check)
                   (foldl cons refs post))))))
-        (_ (let* ((body (if compiled-body? body (compile-e body)))
+        (_ (let* ((body (if compiled-body? body (compile-e self body)))
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
              ['letrec (reverse bind) body])))))
@@ -1036,7 +852,7 @@ namespace: gxc
        (generate-simple #'hd #'body)
        (generate-values #'hd #'body)))))
 
-(def (generate-runtime-letrec*-values% stx)
+(def (generate-runtime-letrec*-values% self stx)
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []))
       (match rest
@@ -1044,14 +860,14 @@ namespace: gxc
          (ast-case hd-bind ()
            (((id) expr)
             (let ((eid (generate-runtime-binding-id* #'id))
-                  (expr (compile-e #'expr)))
+                  (expr (compile-e self #'expr)))
               (lp rest (cons [eid expr] bind))))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
                    (tmp  (generate-runtime-temporary))
                    (check-values (generate-runtime-check-values tmp #'hd #'expr))
                    (refs (generate-runtime-let-values-bind vals #'hd))
-                   (expr (compile-e #'expr)))
+                   (expr (compile-e self #'expr)))
               (lp rest
                   (foldl cons
                          (cons [vals ['let [[tmp expr]] check-values tmp]]
@@ -1059,7 +875,7 @@ namespace: gxc
                          refs))))))
         (else
          (let ((bind (reverse bind))
-               (body (compile-e body)))
+               (body (compile-e self body)))
            ['letrec* bind body])))))
 
   (def (generate-letrec? hd)
@@ -1081,8 +897,8 @@ namespace: gxc
     ((_ hd body)
      (if (generate-runtime-simple-let? #'hd)
        (if (generate-letrec? #'hd)
-         (generate-runtime-simple-let 'letrec #'hd #'body #f)
-         (generate-runtime-simple-let 'letrec* #'hd #'body #f))
+         (generate-runtime-simple-let self 'letrec #'hd #'body #f)
+         (generate-runtime-simple-let self 'letrec* #'hd #'body #f))
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-simple-let? hd)
@@ -1093,21 +909,21 @@ namespace: gxc
       ([] #t)
       (else #f))))
 
-(def (generate-runtime-simple-let form hd body compiled-body?)
+(def (generate-runtime-simple-let self form hd body compiled-body?)
   (def (generate1 bind)
     (with ([[id] expr] bind)
-      [(generate-runtime-binding-id* id) (compile-e expr)]))
+      [(generate-runtime-binding-id* id) (compile-e self expr)]))
 
   (let* ((bind (map generate1 hd))
          (body (if compiled-body? body
-                   (compile-e body)))
+                   (compile-e self body)))
          (body
           (match body
             (['begin . exprs] exprs)
             (else [body]))))
     [form bind body ...]))
 
-(def (generate-runtime-quote% stx)
+(def (generate-runtime-quote% self stx)
   (def (generate1 datum)
     (cond
      ((or (null? datum)
@@ -1137,10 +953,10 @@ namespace: gxc
     ((_ datum)
      ['quote (generate1 (stx-e #'datum))])))
 
-(def (generate-runtime-call% stx)
+(def (generate-runtime-call% self stx)
   (def (compile-call rator rands)
-    (let ((rator (compile-e rator))
-          (rands (map compile-e rands)))
+    (let ((rator (compile-e self rator))
+          (rands (map (cut compile-e self <>) rands)))
       (ast-case rator (letrec lambda)
         ;; decompile let loops -- Gambit optimizes them
         ((letrec ((id (lambda (arg ...) body ...))) ret)
@@ -1160,7 +976,7 @@ namespace: gxc
      (with-inline-unsafe-primitives (compile-call #'rator #'rands)
        (ast-case #'rator (%#ref)
          ((%#ref _)
-          (let (f (compile-e #'rator))
+          (let (f (compile-e self #'rator))
             (if (string-prefix? "##" (symbol->string f))
               (with-primitive-bind+args (bind args (reverse #'rands))
                 ['let [bind ...]
@@ -1169,19 +985,19 @@ namespace: gxc
               (compile-call #'rator #'rands))))
          (_ (compile-call #'rator #'rands)))))))
 
-(def (generate-runtime-call-unchecked% stx)
+(def (generate-runtime-call-unchecked% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref rator) . rands)
      (if (current-compile-decls-unsafe?)
-       (generate-runtime-call% stx)
-       (let (f (compile-e #'(%#ref rator)))
+       (generate-runtime-call% self stx)
+       (let (f (compile-e self #'(%#ref rator)))
          (with-primitive-bind+args (bind args (reverse #'rands))
            ['let [bind ...]
              '(declare (not safe))
              (cons f args)]))))
-    (_ (generate-runtime-call% stx))))
+    (_ (generate-runtime-call% self stx))))
 
-(def (generate-runtime-if% stx)
+(def (generate-runtime-if% self stx)
   (def (simplify code)
     (match code
       (['if test expr ['quote #f]]
@@ -1195,48 +1011,48 @@ namespace: gxc
   (ast-case stx ()
     ((_ test K E)
      (if (current-compile-boolean-context)
-       (simplify ['if (compile-e #'test) (compile-e #'K) (compile-e #'E)])
+       (simplify ['if (compile-e self #'test) (compile-e self #'K) (compile-e self #'E)])
        ['if (parameterize ((current-compile-boolean-context #t))
-              (compile-e #'test))
-         (compile-e #'K)
-         (compile-e #'E)]))))
+              (compile-e self #'test))
+         (compile-e self #'K)
+         (compile-e self #'E)]))))
 
-(def (generate-runtime-ref% stx)
+(def (generate-runtime-ref% self stx)
   (ast-case stx ()
     ((_ id)
      (generate-runtime-binding-id #'id))))
 
-(def (generate-runtime-setq% stx)
+(def (generate-runtime-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
      ['set! (generate-runtime-binding-id #'id)
-       (compile-e #'expr)])))
+       (compile-e self #'expr)])))
 
-(def (generate-runtime-struct-instancep% stx)
+(def (generate-runtime-struct-instancep% self stx)
   (ast-case stx ()
     ((_ type-id obj)
      ;; see gambit#422
      (with-inline-unsafe-primitives
-         ['##structure-instance-of? (compile-e #'obj) (compile-e #'type-id)]
+         ['##structure-instance-of? (compile-e self #'obj) (compile-e self #'type-id)]
        (with-primitive-bind+args (bind args [#'type-id #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##structure-instance-of? obj type-id)
            ['##structure-instance-of? args ...]])))))
 
-(def (generate-runtime-struct-direct-instancep% stx)
+(def (generate-runtime-struct-direct-instancep% self stx)
   (ast-case stx ()
     ((_ type-id obj)
      ;; see gambit#422
      (with-inline-unsafe-primitives
-         ['##structure-direct-instance-of? (compile-e #'obj) (compile-e #'type-id)]
+         ['##structure-direct-instance-of? (compile-e self #'obj) (compile-e self #'type-id)]
        (with-primitive-bind+args (bind args [#'type-id #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##structure-direct-instance-of? obj type-id)
            ['##structure-direct-instance-of? args ...]])))))
 
-(def (generate-runtime-struct-ref% stx)
+(def (generate-runtime-struct-ref% self stx)
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
@@ -1251,13 +1067,13 @@ namespace: gxc
            '(declare (not safe))
            ;; (##structure-ref obj off type where)
            ['##structure-ref args ... '(quote #f)]]))
-     ['##structure-ref (compile-e #'obj)
-                       (compile-e #'off)
-                       (compile-e #'type)
+     ['##structure-ref (compile-e self #'obj)
+                       (compile-e self #'off)
+                       (compile-e self #'type)
                        '(quote #f)]
      )))
 
-(def (generate-runtime-struct-setq% stx)
+(def (generate-runtime-struct-setq% self stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
@@ -1273,14 +1089,14 @@ namespace: gxc
            '(declare (not safe))
            ;; (##structure-set! obj val off type where)
            ['##structure-set! args ... '(quote #f)]]))
-     ['##structure-set! (compile-e #'obj)
-                        (compile-e #'val)
-                        (compile-e #'off)
-                        (compile-e #'type)
+     ['##structure-set! (compile-e self #'obj)
+                        (compile-e self #'val)
+                        (compile-e self #'off)
+                        (compile-e self #'type)
                         '(quote #f)]
      )))
 
-(def (generate-runtime-struct-direct-ref% stx)
+(def (generate-runtime-struct-direct-ref% self stx)
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
@@ -1295,13 +1111,13 @@ namespace: gxc
            '(declare (not safe))
            ;; (##direct-structure-ref obj off type where)
            ['##direct-structure-ref args ... '(quote #f)]]))
-     ['##direct-structure-ref (compile-e #'obj)
-                              (compile-e #'off)
-                              (compile-e #'type)
+     ['##direct-structure-ref (compile-e self #'obj)
+                              (compile-e self #'off)
+                              (compile-e self #'type)
                               '(quote #f)]
      )))
 
-(def (generate-runtime-struct-direct-setq% stx)
+(def (generate-runtime-struct-direct-setq% self stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
@@ -1317,21 +1133,21 @@ namespace: gxc
            '(declare (not safe))
            ;; (##direct-structure-set! obj val off type where)
            ['##direct-structure-set! args ... '(quote #f)]]))
-     ['##direct-structure-set! (compile-e #'obj)
-                               (compile-e #'val)
-                               (compile-e #'off)
-                               (compile-e #'type)
+     ['##direct-structure-set! (compile-e self #'obj)
+                               (compile-e self #'val)
+                               (compile-e self #'off)
+                               (compile-e self #'type)
                                '(quote #f)]
      )))
 
-(def (generate-runtime-struct-unchecked-ref% stx)
+(def (generate-runtime-struct-unchecked-ref% self stx)
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
      (with-inline-unsafe-primitives
-         ['##unchecked-structure-ref (compile-e #'obj)
-                                     (compile-e #'off)
-                                     (compile-e #'type)
+         ['##unchecked-structure-ref (compile-e self #'obj)
+                                     (compile-e self #'off)
+                                     (compile-e self #'type)
                                      '(quote #f)]
        (with-primitive-bind+args (bind args [#'type #'off #'obj])
          ['let [bind ...]
@@ -1339,15 +1155,15 @@ namespace: gxc
            ;; (##unchecked-structure-ref obj off type where)
            ['##unchecked-structure-ref args ... '(quote #f)]])))))
 
-(def (generate-runtime-struct-unchecked-setq% stx)
+(def (generate-runtime-struct-unchecked-setq% self stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
      (with-inline-unsafe-primitives
-         ['##unchecked-structure-set! (compile-e #'obj)
-                                      (compile-e #'val)
-                                      (compile-e #'off)
-                                      (compile-e #'type)
+         ['##unchecked-structure-set! (compile-e self #'obj)
+                                      (compile-e self #'val)
+                                      (compile-e self #'off)
+                                      (compile-e self #'type)
                                       '(quote #f)]
        (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
          ['let [bind ...]
@@ -1356,7 +1172,7 @@ namespace: gxc
            ['##unchecked-structure-set! args ... '(quote #f)]])))))
 
 ;;; loader
-(def (generate-runtime-loader-import% stx)
+(def (generate-runtime-loader-import% self stx)
   (def (import-set-template in phi)
     (let ((iphi (fx+ phi (import-set-phi in)))
           (imports (module-context-import (import-set-source in))))
@@ -1394,7 +1210,7 @@ namespace: gxc
            (let (id (expander-context-id ctx))
              (if (hash-get ht id)
                (lp rest loads)
-               (let (rt (string-append (module-id->path-string id) "__rt"))
+               (let (rt (module-id->path-string id))
                  (hash-put! ht id rt)
                  (lp rest (cons rt loads))))))
 
@@ -1423,7 +1239,7 @@ namespace: gxc
             ['begin (map (cut list 'load-module <>) (reverse loads)) ...])))))))
 
 ;;; runtime-phi
-(def (generate-runtime-quote-syntax% stx)
+(def (generate-runtime-quote-syntax% self stx)
   (def (add-lift! expr)
     (set! (box (current-compile-lift))
       (cons expr (unbox (current-compile-lift)))))
@@ -1520,27 +1336,27 @@ namespace: gxc
              (generate-serialized #'stxq marks)))))
        (raise-compile-error "Cannot quote non-identifier syntax" #'stxq)))))
 
-(def (generate-runtime-phi-define-runtime% stx)
+(def (generate-runtime-phi-define-runtime% self stx)
   (ast-case stx ()
     ((_ eid expr)
-     ['define (stx-e #'eid) (compile-e #'expr)])))
+     ['define (stx-e #'eid) (compile-e self #'expr)])))
 
 ;;; meta
-(def (generate-meta-begin% stx state)
+(def (generate-meta-begin% self stx)
   (ast-case stx ()
     ((_ . body)
-     (let* ((c-body (map (cut compile-e <> state) #'body))
+     (let* ((c-body (map (cut compile-e self <>) #'body))
             (c-body (filter (? (not void?)) c-body)))
        ['%#begin c-body ...]))))
 
-(def (generate-meta-begin-syntax% stx state)
+(def (generate-meta-begin-syntax% self stx)
   (ast-case stx ()
     ((_ . body)
      (let* ((phi (fx1+ (current-expander-phi)))
-            (block (meta-state-begin-phi! state phi))
+            (block (meta-state-begin-phi! (@ self state) phi))
             (compiled
              (parameterize ((current-expander-phi phi))
-               (apply-generate-meta-phi #'(%#begin . body) state))))
+               (apply-generate-meta-phi #'(%#begin . body) state: (@ self state)))))
        (ast-case compiled (%#begin)
          ((%#begin . body)
           (let (c-body (filter (? (not void?)) #'body))
@@ -1553,8 +1369,8 @@ namespace: gxc
              (else
               ['%#begin-syntax c-body ...])))))))))
 
-(def (generate-meta-module% stx state)
-  (meta-state-end-phi! state)
+(def (generate-meta-module% self stx)
+  (meta-state-end-phi! (@ self state))
   (ast-case stx ()
     ((_ id . body)
      (let (key (core-identifier-key #'id))
@@ -1564,7 +1380,7 @@ namespace: gxc
        (let* ((ctx (syntax-local-e #'id))
               (code
                (parameterize ((current-expander-context ctx))
-                 (compile-e (module-context-code ctx) state)))
+                 (compile-e self (module-context-code ctx))))
               (rt (hash-get (current-compile-runtime-sections) ctx))
               (loader
                (if rt
@@ -1572,7 +1388,7 @@ namespace: gxc
                  []))
               (modid (stx-e #'id)))
          ;; close the module's blocks
-         (meta-state-end-phi! state)
+         (meta-state-end-phi! (@ self state))
          ['%#module modid code loader ...])))))
 
 (def (generate-meta-import-path ctx context-chain)
@@ -1593,7 +1409,7 @@ namespace: gxc
       (lp (phi-context-super ctx) (cons ctx r)))
      (else r))))
 
-(def (generate-meta-import% stx state)
+(def (generate-meta-import% self stx)
   ;; handle the curious case of the cactus, referring to
   ;;  a nested module a parent.
   ;; this also covers submodule references
@@ -1613,7 +1429,7 @@ namespace: gxc
   (def (make-import-spec-in ctx in)
     [spec: (make-import-path ctx) (reverse in) ...])
 
-  (meta-state-end-phi! state)
+  (meta-state-end-phi! (@ self state))
   (ast-case stx ()
     ((_ . body)
      (let lp ((rest #'body) (current-src #f) (current-in []) (r []))
@@ -1665,7 +1481,7 @@ namespace: gxc
                     r))
             ['%#import (reverse r) ...])))))))
 
-(def (generate-meta-export% stx state)
+(def (generate-meta-export% self stx)
   (def context-chain
     (current-context-chain))
 
@@ -1696,13 +1512,13 @@ namespace: gxc
                (lp rest (cons out r))))))
          (else ['%#export (reverse r) ...]))))))
 
-(def (generate-meta-provide% stx state)
-  (meta-state-end-phi! state)
+(def (generate-meta-provide% self stx)
+  (meta-state-end-phi! (@ self state))
   (ast-case stx ()
     ((_ . features)
      ['%#provide (map generate-runtime-identifier #'features) ...])))
 
-(def (generate-meta-extern% stx state)
+(def (generate-meta-extern% self stx)
   (def (generate1 id eid)
     (let (eid (stx-e eid))
       (unless (interned-symbol? eid)
@@ -1713,7 +1529,7 @@ namespace: gxc
     ((_ (id eid) ...)
      ['%#extern (map generate1 #'(id ...) #'(eid ...)) ...])))
 
-(def (generate-meta-define-values% stx state)
+(def (generate-meta-define-values% self stx)
   (def (generate1 id)
     (let ((eid (generate-runtime-binding-id id))
           (ident (generate-runtime-identifier id)))
@@ -1738,14 +1554,14 @@ namespace: gxc
          (_
           (generate* (reverse r))))))))
 
-(def (generate-meta-define-syntax% stx state)
+(def (generate-meta-define-syntax% self stx)
   (ast-case stx ()
     ((_ id expr)
      (let* ((eid (generate-runtime-binding-id #'id))
             (phi (fx1+ (current-expander-phi)))
-            (block (meta-state-begin-phi! state phi)))
+            (block (meta-state-begin-phi! (@ self state) phi)))
        (with-syntax ((rtid eid))
-         (meta-state-add-phi! state phi #'(%#define-runtime rtid expr)))
+         (meta-state-add-phi! (@ self state) phi #'(%#define-runtime rtid expr)))
        (if block
          ['%#begin
           ['%#begin-syntax
@@ -1753,18 +1569,18 @@ namespace: gxc
           ['%#define-syntax (generate-runtime-identifier #'id) eid]]
          ['%#define-syntax (generate-runtime-identifier #'id) eid])))))
 
-(def (generate-meta-define-alias% stx state)
+(def (generate-meta-define-alias% self stx)
   (ast-case stx ()
     ((_ id alias-id)
      ['%#define-alias (generate-runtime-identifier #'id)
                       (generate-runtime-identifier #'alias-id)])))
 
-(def (generate-meta-phi-define-values% stx state)
-  (meta-state-add-phi! state (current-expander-phi) stx)
-  (generate-meta-define-values% stx state))
+(def (generate-meta-phi-define-values% self stx)
+  (meta-state-add-phi! (@ self state) (current-expander-phi) stx)
+  (generate-meta-define-values% self stx))
 
-(def (generate-meta-phi-expr stx state)
-  (meta-state-add-phi! state (current-expander-phi) stx)
+(def (generate-meta-phi-expr self stx)
+  (meta-state-add-phi! (@ self state) (current-expander-phi) stx)
   #!void)
 
 ;; meta generation state
@@ -1786,7 +1602,7 @@ namespace: gxc
 (def (meta-state-begin-phi! state phi)
   (with ((meta-state src n open) state)
     (if (hash-get open phi) #f
-        (let (block-ref (string-append src "__" (number->string n)))
+        (let (block-ref (string-append src "~" (number->string n)))
           (set! (meta-state-n state) (fx1+ n))
           (hash-put! open phi (make-meta-state-block (current-expander-context)
                                                      phi n []))
@@ -1819,76 +1635,44 @@ namespace: gxc
 ;;; collect refs
 (def (collect-expression-refs stx)
   (let (ht (make-hash-table-eq))
-    (apply-collect-expression-refs stx ht)
+    (apply-collect-expression-refs stx table: ht)
     ht))
 
-(def (collect-refs-ref% stx ht)
+(def (collect-refs-ref% self stx)
   (ast-case stx ()
     ((_ id)
      (let* ((bind (resolve-identifier #'id))
             (eid (if bind (binding-id bind) (stx-e #'id))))
-       (hash-put! ht eid eid)))))
+       (hash-put! (@ self table) eid eid)))))
 
-(def (collect-refs-setq% stx ht)
+(def (collect-refs-setq% self stx)
   (ast-case stx ()
     ((_ id expr)
      (let* ((bind (resolve-identifier #'id))
             (eid (if bind (binding-id bind) (stx-e #'id))))
-       (hash-put! ht eid eid)
-       (compile-e #'expr ht)))))
+       (hash-put! (@ self table) eid eid)
+       (compile-e self #'expr)))))
 
 ;;; find runtime
-(def (find-runtime-begin% stx)
+(def (find-runtime-begin% self stx)
   (ast-case stx ()
     ((_ . body)
-     (ormap compile-e #'body))))
-
-
-;; find-lambda-expression
-(def (find-lambda-expression-begin% stx)
-  (ast-case stx ()
-    ((_ . body)
-     (compile-e (last #'body)))))
-
-(def (find-lambda-expression-begin-annotation% stx)
-  (ast-case stx ()
-    ((_ ann body)
-     (compile-e #'body))))
-
-(def (find-lambda-expression-let-values% stx)
-  (ast-case stx ()
-    ((_ bind body)
-     (compile-e #'body))))
+     (ormap (cut compile-e self <>) #'body))))
 
 ;; count-values
-(def (count-values-single% stx)
+(def (count-values-single% self stx)
   1)
 
-(def (count-values-begin% stx)
-  (ast-case stx ()
-    ((_ expr ...)
-     (compile-e (last #'(expr ...))))))
-
-(def (count-values-begin-annotation% stx)
-  (ast-case stx ()
-    ((_ ann body)
-     (compile-e #'body))))
-
-(def (count-values-let-values% stx)
-  (ast-case stx ()
-    ((_ bind body)
-     (compile-e #'body))))
-
-(def (count-values-call% stx)
+(def (count-values-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref -values) rand ...)
      (free-identifier=? #'-values 'values)
      (length #'(rand ...)))
     (_ #f)))
 
-(def (count-values-if% stx)
+(def (count-values-if% self stx)
   (ast-case stx ()
     ((_ test K E)
-     (alet* ((c1 (compile-e #'K))
-             (c2 (compile-e #'E)))
+     (alet* ((c1 (compile-e self #'K))
+             (c2 (compile-e self #'E)))
        (and (fx= c1 c2) c1)))))

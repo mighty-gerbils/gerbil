@@ -1,49 +1,62 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform"
         "optimize-top")
 (export #t)
 
-(defcompile-method apply-generate-method-specializers (&generate-method-specializers &identity)
+;; method to generate specializers
+(defcompile-method (apply-generate-method-specializers)
+  (::generate-method-specializers ::identity)
+  ()
+  final:
   (%#begin         xform-begin%)
   (%#begin-syntax  xform-begin-syntax%)
   (%#module        xform-module%)
   (%#define-values generate-method-specializers-define-values%))
 
-(defcompile-method apply-collect-object-refs (&collect-object-refs &void)
-  (%#begin                   collect-begin%)
-  (%#begin-annotation        collect-begin-annotation%)
-  (%#lambda                       collect-body-lambda%)
-  (%#case-lambda                  collect-body-case-lambda%)
-  (%#let-values              collect-body-let-values%)
-  (%#letrec-values           collect-body-let-values%)
-  (%#letrec*-values          collect-body-let-values%)
+;; method to collect method receiver references
+(defcompile-method (apply-collect-object-refs receiver: receiver methods: methods slots: slots)
+  (::collect-object-refs ::void)
+  (receiver methods slots)
+  final:
+  (%#begin                   apply-begin%)
+  (%#begin-annotation        apply-begin-annotation%)
+  (%#lambda                       apply-body-lambda%)
+  (%#case-lambda                  apply-body-case-lambda%)
+  (%#let-values              apply-body-let-values%)
+  (%#letrec-values           apply-body-let-values%)
+  (%#letrec*-values          apply-body-let-values%)
   (%#call                    collect-object-refs-call%)
-  (%#if                      collect-operands)
-  (%#set!                    collect-body-setq%)
-  (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands)
-  (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands)
-  (%#struct-unchecked-ref    collect-operands)
-  (%#struct-unchecked-set!   collect-operands))
+  (%#if                      apply-operands)
+  (%#set!                    apply-body-setq%)
+  (%#struct-ref              apply-operands)
+  (%#struct-set!             apply-operands)
+  (%#struct-direct-ref       apply-operands)
+  (%#struct-direct-set!      apply-operands)
+  (%#struct-unchecked-ref    apply-operands)
+  (%#struct-unchecked-set!   apply-operands))
 
-(defcompile-method apply-subst-object-refs (&subst-object-refs &basic-xform-expression)
+;; method to substitute method receiver references
+(defcompile-method (apply-subst-object-refs receiver: receiver klass: klass methods: methods slots: slots)
+  (::subst-object-refs ::basic-xform-expression)
+  (receiver klass methods slots)
+  final:
   (%#begin xform-begin%)
   (%#call  subst-object-refs-call%))
 
 ;;; apply-generate-method-specializers
-
-(def (generate-method-specializers-define-values% stx)
+(def (generate-method-specializers-define-values% self stx)
   (def (generate-method-bind $klass $method-table id $id)
     (let ($tmp (make-symbol (gensym '__method)))
       [[$id]
@@ -142,11 +155,11 @@ namespace: gxc
            ((_ (self . args) . body)
             (begin
               (for-each
-                (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                 #'body)
               (with-specializer
                ((specializer-body
-                 (map (cut apply-subst-object-refs <> #'self $klass method-calls slot-refs)
+                 (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
                       #'body))
                 (specializer-impl
                  (xform-wrap-source
@@ -168,7 +181,7 @@ namespace: gxc
                   (ast-case clause ()
                     (((self . args) . body)
                      (for-each
-                       (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                       (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                        #'body))
                     (_ (void))))
                 #'(clause ...))
@@ -179,7 +192,7 @@ namespace: gxc
                      (ast-case clause ()
                        (((self . args) . body)
                         (let (body
-                              (map (cut apply-subst-object-refs <> #'self $klass method-calls slot-refs)
+                              (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
                                    #'body))
                           [#'(self . args) . body]))
                        (_ clause)))
@@ -201,7 +214,7 @@ namespace: gxc
               (ast-case #'lambda-expr ()
                 ((_ (self . args) . body)
                  (for-each
-                   (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                   (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                    #'body)))
               (ast-case #'case-lambda-expr ()
                 ((_ clause ...)
@@ -210,14 +223,14 @@ namespace: gxc
                      (ast-case clause ()
                        (((self . args) . body)
                         (for-each
-                          (cut apply-collect-object-refs <> #'self method-calls slot-refs)
+                          (cut apply-collect-object-refs <> receiver: #'self methods: method-calls slots: slot-refs)
                           #'body))))
                    #'(clause ...))))
               (with-specializer
                ((specializer-lambda-expr
                  (ast-case #'lambda-expr ()
                    ((_ (self . args) . body)
-                    (let (body (map (cut apply-subst-object-refs <> #'self $klass method-calls slot-refs)
+                    (let (body (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
                                     #'body))
                       (xform-wrap-source
                        ['%#lambda #'(self . args) . body]
@@ -230,7 +243,7 @@ namespace: gxc
                             (lambda (clause)
                               (ast-case clause ()
                                 (((self . args) . body)
-                                 (let (body (map (cut apply-subst-object-refs <> #'self $klass method-calls slot-refs)
+                                 (let (body (map (cut apply-subst-object-refs <> receiver: #'self klass: $klass methods: method-calls slots: slot-refs)
                                                  #'body))
                                    [#'(self . args) . body]))
                                 (_ clause)))
@@ -265,13 +278,13 @@ namespace: gxc
                      ((_ hd . body)
                       (let (self (list-ref #'hd self-index))
                         (for-each
-                          (cut apply-collect-object-refs <> self method-calls slot-refs)
+                          (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                           #'body)
                         (with-specializer
                          ((specializer-impl
                            (let (specializer-body
                                  (map
-                                   (cut apply-subst-object-refs <> self $klass method-calls slot-refs)
+                                   (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
                                    #'body))
                              (xform-wrap-source
                               ['%#let-values [[[#'get-kws]
@@ -295,7 +308,7 @@ namespace: gxc
                           ((_ hd . body)
                            (let (self (list-ref #'hd self-index))
                              (for-each
-                               (cut apply-collect-object-refs <> self method-calls slot-refs)
+                               (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                                #'body))))
                         (ast-case #'case-lambda-expr ()
                           ((_ clause ...)
@@ -305,7 +318,7 @@ namespace: gxc
                                  ((hd . body)
                                   (let (self (list-ref #'hd self-index))
                                     (for-each
-                                      (cut apply-collect-object-refs <> self method-calls slot-refs)
+                                      (cut apply-collect-object-refs <> receiver: self methods: method-calls slots: slot-refs)
                                       #'body)))))
                              #'(clause ...))))
                         (with-specializer
@@ -313,7 +326,7 @@ namespace: gxc
                            (ast-case #'lambda-expr ()
                              ((_ hd . body)
                               (let* ((self (list-ref #'hd self-index))
-                                     (body (map (cut apply-subst-object-refs <> self $klass method-calls slot-refs)
+                                     (body (map (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
                                                 #'body)))
                                 (xform-wrap-source
                                  ['%#lambda #'hd . body]
@@ -327,7 +340,7 @@ namespace: gxc
                                         (ast-case clause ()
                                           ((hd . body)
                                            (let* ((self (list-ref #'hd self-index))
-                                                  (body (map (cut apply-subst-object-refs <> self $klass method-calls slot-refs)
+                                                  (body (map (cut apply-subst-object-refs <> receiver: self klass: $klass methods: method-calls slots: slot-refs)
                                                              #'body)))
                                              [#'hd . body]))))
                                       #'(clause ...)))
@@ -356,66 +369,63 @@ namespace: gxc
        (_ stx)))
 
 ;;; apply-collect-objec-refs
-(def (collect-object-refs-call% stx self methods slots)
+(def (collect-object-refs-call% self stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#ref %#quote)
       ((_ (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
        (and (runtime-identifier=? #'-call-method 'call-method)
-            (free-identifier=? #'-self self))
+            (free-identifier=? #'-self (@ self receiver)))
        (begin
-         (hash-put! methods (stx-e #'method) #t)
-         (for-each (cut compile-e <> self methods slots)
-                   #'(args ...))))
+         (hash-put! (@ self methods) (stx-e #'method) #t)
+         (for-each (cut compile-e self <>) #'(args ...))))
       ((_ (%#ref -apply) (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
        (and (runtime-identifier=? #'-apply 'apply)
             (runtime-identifier=? #'-call-method 'call-method)
-            (free-identifier=? #'-self self))
+            (free-identifier=? #'-self (@ self receiver)))
        (begin
-         (hash-put! methods (stx-e #'method) #t)
-         (for-each
-           (cut compile-e <> self methods slots)
-           #'(args ...))))
+         (hash-put! (@ self methods) (stx-e #'method) #t)
+         (for-each (cut compile-e self <>) #'(args ...))))
       ((_ (%#ref -slot-ref) (%#ref -self) (%#quote slot))
        (and (or (runtime-identifier=? #'-slot-ref 'slot-ref)
                 (runtime-identifier=? #'-slot-ref 'unchecked-slot-ref))
-            (free-identifier=? #'-self self))
-       (hash-put! slots (stx-e #'slot) #t))
+            (free-identifier=? #'-self (@ self receiver)))
+       (hash-put! (@ self slots) (stx-e #'slot) #t))
       ((_ (%#ref -slot-set!) (%#ref -self) (%#quote slot) expr)
        (and (or (runtime-identifier=? #'-slot-set! 'slot-set!)
                 (runtime-identifier=? #'-slot-set! 'unchecked-slot-set!))
-            (free-identifier=? #'-self self))
+            (free-identifier=? #'-self (@ self receiver)))
        (begin
-         (hash-put! slots (stx-e #'slot) #t)
-         (compile-e #'expr self methods slots)))
+         (hash-put! (@ self slots) (stx-e #'slot) #t)
+         (compile-e self #'expr)))
 
       ;; MOP
       ((_ (%#ref getf) (%#ref -self))
        (and (!accessor? (optimizer-resolve-type (identifier-symbol #'getf)))
-            (free-identifier=? #'-self self))
+            (free-identifier=? #'-self (@ self receiver)))
        (let* ((accessor (optimizer-resolve-type (identifier-symbol #'getf)))
               (klass (optimizer-resolve-class stx (!type-id accessor)))
               (slot (!accessor-slot accessor)))
          (unless (and (not (!accessor-checked? accessor))
                       (or (!class-struct-slot? klass slot)
                           (!class-final? klass)))
-           (hash-put! slots (!accessor-slot accessor) #t))))
+           (hash-put! (@ self slots) (!accessor-slot accessor) #t))))
 
       ((_ (%#ref setf) (%#ref -self) expr)
        (and (!mutator? (optimizer-resolve-type (identifier-symbol #'setf)))
-            (free-identifier=? #'-self self))
+            (free-identifier=? #'-self (@ self receiver)))
        (let* ((mutator (optimizer-resolve-type (identifier-symbol #'setf)))
               (klass (optimizer-resolve-class stx (!type-id mutator)))
               (slot (!mutator-slot mutator)))
          (unless (and (not (!mutator-checked? mutator))
                       (or (!class-struct-slot? klass slot)
                           (!class-final? klass)))
-           (hash-put! slots slot #t))
-         (compile-e #'expr self methods slots)))
+           (hash-put! (@ self slots) slot #t))
+         (compile-e self #'expr)))
 
-      (_ (collect-operands stx self methods slots)))))
+      (_ (apply-operands self stx)))))
 
 ;;; apply-subst-object-refs
-(def (subst-object-refs-call% stx self $klass methods slots)
+(def (subst-object-refs-call% self stx)
   (def (force-e target)
     ['%#call ['%#ref 'force] ['%#ref target]])
 
@@ -423,44 +433,42 @@ namespace: gxc
     (ast-case stx (%#ref %#quote)
       ((_ (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
        (and (runtime-identifier=? #'-call-method 'call-method)
-            (free-identifier=? #'-self self))
-       (let (($method (hash-ref methods (stx-e #'method)))
-             (args (map (cut compile-e <> self $klass methods slots)
-                        #'(args ...))))
+            (free-identifier=? #'-self (@ self receiver)))
+       (let (($method (hash-ref (@ self methods) (stx-e #'method)))
+             (args (map (cut compile-e self <>) #'(args ...))))
          (xform-wrap-source
-          ['%#call (force-e $method) ['%#ref self] args ...]
+          ['%#call (force-e $method) ['%#ref (@ self receiver)] args ...]
           stx)))
       ((_ (%#ref -apply) (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
        (and (runtime-identifier=? #'-apply 'apply)
             (runtime-identifier=? #'-call-method 'call-method)
-            (free-identifier=? #'-self self))
-       (let (($method (hash-ref methods (stx-e #'method)))
-             (args (map (cut compile-e <> self $klass methods slots)
-                        #'(args ...))))
+            (free-identifier=? #'-self (@ self receiver)))
+       (let (($method (hash-ref (@ self methods) (stx-e #'method)))
+             (args (map (cut compile-e self <>) #'(args ...))))
          (xform-wrap-source
-          ['%#call ['%#ref 'apply] (force-e $method) ['%#ref self] args ...]
+          ['%#call ['%#ref 'apply] (force-e $method) ['%#ref (@ self receiver)] args ...]
           stx)))
       ((_ (%#ref -slot-ref) (%#ref -self) (%#quote slot))
        (and (or (runtime-identifier=? #'-slot-ref 'slot-ref)
                 (runtime-identifier=? #'-slot-ref 'unchecked-slot-ref))
-            (free-identifier=? #'-self self))
-       (let ($field (hash-ref slots (stx-e #'slot)))
+            (free-identifier=? #'-self (@ self receiver)))
+       (let ($field (hash-ref (@ self slots) (stx-e #'slot)))
          (xform-wrap-source
-          ['%#struct-unchecked-ref ['%#ref $klass] ['%#ref $field] ['%#ref self]]
+          ['%#struct-unchecked-ref ['%#ref (@ self klass)] ['%#ref $field] ['%#ref (@ self receiver)]]
           stx)))
       ((_ (%#ref -slot-set!) (%#ref -self) (%#quote slot) expr)
        (and (or (runtime-identifier=? #'-slot-set! 'slot-set!)
                 (runtime-identifier=? #'-slot-set! 'unchecked-slot-set!))
-            (free-identifier=? #'-self self))
-       (let (($field (hash-ref slots (stx-e #'slot)))
-             (expr (compile-e #'expr self $klass methods slots)))
+            (free-identifier=? #'-self (@ self receiver)))
+       (let (($field (hash-ref (@ self slots) (stx-e #'slot)))
+             (expr (compile-e self #'expr)))
          (xform-wrap-source
-          ['%#struct-unchecked-set! ['%#ref $klass] ['%#ref $field] ['%#ref self] expr]
+          ['%#struct-unchecked-set! ['%#ref (@ self klass)] ['%#ref $field] ['%#ref (@ self receiver)] expr]
           stx)))
 
       ;; MOP
       ((_ (%#ref getf) (%#ref -self))
-       (and (free-identifier=? #'-self self)
+       (and (free-identifier=? #'-self (@ self receiver))
             (!accessor? (optimizer-resolve-type (identifier-symbol #'getf))))
        (let* ((accessor (optimizer-resolve-type (identifier-symbol #'getf)))
               (klass (optimizer-resolve-class stx (!type-id accessor)))
@@ -469,27 +477,27 @@ namespace: gxc
                   (or (!class-struct-slot? klass slot)
                       (!class-final? klass)))
            stx
-           (let ($field (hash-ref slots slot))
+           (let ($field (hash-ref (@ self slots) slot))
              (xform-wrap-source
-              ['%#struct-unchecked-ref ['%#ref $klass] ['%#ref $field] ['%#ref self]]
+              ['%#struct-unchecked-ref ['%#ref (@ self klass)] ['%#ref $field] ['%#ref (@ self receiver)]]
               stx)))))
 
     ((_ (%#ref setf) (%#ref -self) expr)
-     (and (free-identifier=? #'-self self)
+     (and (free-identifier=? #'-self (@ self receiver))
           (!mutator? (optimizer-resolve-type (identifier-symbol #'setf))))
      (let* ((mutator (optimizer-resolve-type (identifier-symbol #'setf)))
             (klass (optimizer-resolve-class stx (!type-id mutator)))
             (slot (!mutator-slot mutator))
-            (expr (compile-e #'expr self $klass methods slots)))
+            (expr (compile-e self #'expr)))
        (if (and (not (!mutator-checked? mutator))
                 (or (!class-struct-slot? klass slot)
                     (!class-final? klass)))
          (xform-wrap-source
           ['%#call #'(%#ref setf) #'(%#ref -self) expr]
           stx)
-         (let ($field (hash-ref slots slot))
+         (let ($field (hash-ref (@ self slots) slot))
            (xform-wrap-source
-            ['%#struct-unchecked-set! ['%#ref $klass] ['%#ref $field] ['%#ref self] expr]
+            ['%#struct-unchecked-set! ['%#ref (@ self klass)] ['%#ref $field] ['%#ref (@ self receiver)] expr]
             stx)))))
 
-    (_ (xform-operands stx self $klass methods slots)))))
+    (_ (xform-operands self stx)))))

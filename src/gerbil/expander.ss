@@ -6,7 +6,7 @@
 ;;; Extending the Scope of Syntactic Abstraction, by Oscar Waddell and R. Kent Dybvig, POPL '99.
 ;;; https://guenchi.github.io/Scheme/doc/Extending%20the%20Scope%20of%20Syntactic%20Abstraction.pdf
 ;;; (See also Waddell's thesis with the same title.)
-prelude: "prelude/core"
+prelude: "core"
 package: gerbil
 
 (provide gerbil-expander)
@@ -19,7 +19,8 @@ package: gerbil
   "expander/module"
   "expander/compile"
   "expander/root"
-  "expander/stxcase")
+  "expander/stxcase"
+  "expander/init")
 
 (export
   (import: "expander/common"

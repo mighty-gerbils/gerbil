@@ -21,30 +21,27 @@ install_src() {
     local prefix="${1}"
     mkdir -p "${prefix}/src" || die
     touch "${prefix}/src/gerbil.pkg" || die
-    install_src_files src/gerbil/runtime "${prefix}/src/gerbil/runtime" || die
-    install_src_files src/gerbil/expander "${prefix}/src/gerbil/expander" || die
-    install_src_files src/gerbil/compiler "${prefix}/src/gerbil/compiler" || die
-    install_src_files src/gerbil/prelude "${prefix}/src/gerbil" || die
+    install_src_files src/gerbil/core "${prefix}" || die
+    install_src_files src/gerbil/runtime "${prefix}" || die
+    install_src_files src/gerbil/expander "${prefix}" || die
+    install_src_files src/gerbil/compiler "${prefix}" || die
     cp -v src/gerbil/*.ss "${prefix}/src/gerbil" || die
-    install_src_files src/std "${prefix}/src/std" || die
-    install_src_files src/tools "${prefix}/src/gerbil/tools" || die
-    install_src_files src/lang/gerbil "${prefix}/src/gerbil" || die
-    install_src_files src/lang/scheme "${prefix}/src/scheme" || die
-    install_src_files src/r7rs-large/scheme "${prefix}/src/scheme" || die
-    install_src_files src/srfi "${prefix}/src/srfi" || die
-    install_src_files src/tutorial "${prefix}/src/tutorial" || die
+    install_src_files src/std "${prefix}" || die
+    install_src_files src/tools "${prefix}" || die
+    install_src_files src/lang/gerbil "${prefix}" || die
+    install_src_files src/lang/scheme "${prefix}" || die
+    install_src_files src/r7rs-large/scheme "${prefix}" || die
+    install_src_files src/srfi "${prefix}" || die
+    install_src_files src/tutorial "${prefix}" || die
 }
 
 install_src_files() {
     local src="${1}"
     local dest="${2}"
-    local oldpwd="$(pwd)"
-    cd "${src}"
-    for f in $(find . -name \*.ss -o -name \*.ssi -o -name \*.scm -o -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
+    for f in $(find "${src}" -name \*.ss -o -name \*.ssi -o -name \*.scm -o -name \*.c | egrep -v "/[.]gerbil" | grep -v build.ss); do
         mkdir -p $(dirname "${dest}/${f}") || die
         cp -v "${f}" "${dest}/${f}" || die
     done
-    cd "${oldpwd}"
 }
 
 link_version() {

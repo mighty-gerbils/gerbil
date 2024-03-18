@@ -5,13 +5,14 @@ package: gerbil/expander
   (declare-type
    gx#identifier-wrap::t
    (@class gx#identifier-wrap::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (marks)
            (e source marks)
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#identifier-wrap? (@predicate gx#identifier-wrap::t))
@@ -51,13 +52,14 @@ package: gerbil/expander
   (declare-type
    gx#syntax-wrap::t
    (@class gx#syntax-wrap::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (mark)
            (e source mark)
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#syntax-wrap? (@predicate gx#syntax-wrap::t))
@@ -81,13 +83,14 @@ package: gerbil/expander
   (declare-type
    gx#syntax-quote::t
    (@class gx#syntax-quote::t
-           (gx#AST::t)
-           (gx#AST::t)
+           (gx#AST::t object::t)
+           (gx#AST::t object::t t::t)
            (context marks)
            (e source context marks)
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#syntax-quote? (@predicate gx#syntax-quote::t))

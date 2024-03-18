@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; primitive gerbil eval
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 

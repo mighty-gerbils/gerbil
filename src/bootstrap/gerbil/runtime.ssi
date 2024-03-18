@@ -1,6 +1,6 @@
 prelude: :gerbil/core
 package: gerbil
-namespace: gerbil/runtime
+namespace: #f
 
 (%#begin (%#provide gerbil-runtime)
          (%#import
@@ -35,4 +35,4 @@ namespace: gerbil/runtime
           (import: :gerbil/runtime/repl)
           (import: :gerbil/runtime/loader)
           (import: :gerbil/runtime/init)))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime~0"))

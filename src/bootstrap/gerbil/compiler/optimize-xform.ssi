@@ -3,46 +3,165 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
+          :gerbil/compiler/method
           :gerbil/compiler/compile
           :gerbil/compiler/optimize-base)
          (%#export #t)
-         (%#define-runtime &identity-expression gxc#&identity-expression)
-         (%#define-runtime &identity-special-form gxc#&identity-special-form)
-         (%#define-runtime &identity gxc#&identity)
-         (%#define-runtime &basic-xform-expression gxc#&basic-xform-expression)
-         (%#define-runtime &basic-xform gxc#&basic-xform)
-         (%#define-runtime &collect-mutators gxc#&collect-mutators)
-         (%#define-runtime apply-collect-mutators gxc#apply-collect-mutators)
-         (%#define-runtime &collect-methods gxc#&collect-methods)
-         (%#define-runtime apply-collect-methods gxc#apply-collect-methods)
-         (%#define-runtime &expression-subst gxc#&expression-subst)
-         (%#define-runtime apply-expression-subst gxc#apply-expression-subst)
-         (%#define-runtime &expression-subst* gxc#&expression-subst*)
-         (%#define-runtime apply-expression-subst* gxc#apply-expression-subst*)
-         (%#define-runtime &find-expression gxc#&find-expression)
-         (%#define-runtime &find-var-refs gxc#&find-var-refs)
-         (%#define-runtime apply-find-var-refs gxc#apply-find-var-refs)
-         (%#define-runtime &collect-runtime-refs gxc#&collect-runtime-refs)
+         (%#define-runtime ::collect-mutators::t gxc#::collect-mutators::t)
+         (%#define-runtime ::collect-mutators? gxc#::collect-mutators?)
+         (%#define-runtime make-::collect-mutators gxc#make-::collect-mutators)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize-xform~1")))
+                  (%#define-syntax
+                   ::collect-mutators
+                   |gxc[:0:]#::collect-mutators|))
          (%#define-runtime
-          apply-collect-runtime-refs
-          gxc#apply-collect-runtime-refs)
-         (%#define-runtime xform-identity gxc#xform-identity)
-         (%#define-runtime xform-wrap-source gxc#xform-wrap-source)
-         (%#define-runtime xform-apply-compile-e gxc#xform-apply-compile-e)
-         (%#define-runtime xform-begin% gxc#xform-begin%)
-         (%#define-runtime xform-begin-syntax% gxc#xform-begin-syntax%)
-         (%#define-runtime xform-module% gxc#xform-module%)
-         (%#define-runtime xform-define-values% gxc#xform-define-values%)
-         (%#define-runtime xform-define-syntax% gxc#xform-define-syntax%)
-         (%#define-runtime xform-begin-annotation% gxc#xform-begin-annotation%)
-         (%#define-runtime xform-lambda% gxc#xform-lambda%)
-         (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
-         (%#define-runtime xform-let-values% gxc#xform-let-values%)
-         (%#define-runtime xform-operands gxc#xform-operands)
-         (%#define-runtime xform-call% gxc#xform-call%)
-         (%#define-runtime xform-setq% gxc#xform-setq%)
+          ::collect-mutators-bind-methods!
+          gxc#::collect-mutators-bind-methods!)
+         (%#define-runtime apply-collect-mutators gxc#apply-collect-mutators)
+         (%#define-runtime ::collect-methods::t gxc#::collect-methods::t)
+         (%#define-runtime ::collect-methods? gxc#::collect-methods?)
+         (%#define-runtime make-::collect-methods gxc#make-::collect-methods)
+         (%#define-syntax ::collect-methods |gxc[:0:]#::collect-methods|)
+         (%#define-runtime
+          ::collect-methods-bind-methods!
+          gxc#::collect-methods-bind-methods!)
+         (%#define-runtime apply-collect-methods gxc#apply-collect-methods)
+         (%#define-runtime ::expression-subst::t gxc#::expression-subst::t)
+         (%#define-runtime ::expression-subst? gxc#::expression-subst?)
+         (%#define-runtime make-::expression-subst gxc#make-::expression-subst)
+         (%#define-runtime ::expression-subst-id gxc#::expression-subst-id)
+         (%#define-runtime
+          ::expression-subst-new-id
+          gxc#::expression-subst-new-id)
+         (%#define-runtime
+          ::expression-subst-id-set!
+          gxc#::expression-subst-id-set!)
+         (%#define-runtime
+          ::expression-subst-new-id-set!
+          gxc#::expression-subst-new-id-set!)
+         (%#define-runtime &::expression-subst-id gxc#&::expression-subst-id)
+         (%#define-runtime
+          &::expression-subst-new-id
+          gxc#&::expression-subst-new-id)
+         (%#define-runtime
+          &::expression-subst-id-set!
+          gxc#&::expression-subst-id-set!)
+         (%#define-runtime
+          &::expression-subst-new-id-set!
+          gxc#&::expression-subst-new-id-set!)
+         (%#define-syntax ::expression-subst |gxc[:0:]#::expression-subst|)
+         (%#define-runtime
+          ::expression-subst-bind-methods!
+          gxc#::expression-subst-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-expression-subst__%
+                   gxc#apply-expression-subst__%)
+                  (%#define-runtime
+                   apply-expression-subst__@
+                   gxc#apply-expression-subst__@)
+                  (%#define-runtime
+                   apply-expression-subst
+                   gxc#apply-expression-subst))
+         (%#define-runtime ::expression-subst*::t gxc#::expression-subst*::t)
+         (%#define-runtime ::expression-subst*? gxc#::expression-subst*?)
+         (%#define-runtime
+          make-::expression-subst*
+          gxc#make-::expression-subst*)
+         (%#define-runtime
+          ::expression-subst*-subst
+          gxc#::expression-subst*-subst)
+         (%#define-runtime
+          ::expression-subst*-subst-set!
+          gxc#::expression-subst*-subst-set!)
+         (%#define-runtime
+          &::expression-subst*-subst
+          gxc#&::expression-subst*-subst)
+         (%#define-runtime
+          &::expression-subst*-subst-set!
+          gxc#&::expression-subst*-subst-set!)
+         (%#define-syntax ::expression-subst* |gxc[:0:]#::expression-subst*|)
+         (%#define-runtime
+          ::expression-subst*-bind-methods!
+          gxc#::expression-subst*-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-expression-subst*__%
+                   gxc#apply-expression-subst*__%)
+                  (%#define-runtime
+                   apply-expression-subst*__@
+                   gxc#apply-expression-subst*__@)
+                  (%#define-runtime
+                   apply-expression-subst*
+                   gxc#apply-expression-subst*))
+         (%#define-runtime ::find-expression::t gxc#::find-expression::t)
+         (%#define-runtime ::find-expression? gxc#::find-expression?)
+         (%#define-runtime make-::find-expression gxc#make-::find-expression)
+         (%#define-syntax ::find-expression |gxc[:0:]#::find-expression|)
+         (%#define-runtime
+          ::find-expression-bind-methods!
+          gxc#::find-expression-bind-methods!)
+         (%#define-runtime ::find-var-refs::t gxc#::find-var-refs::t)
+         (%#define-runtime ::find-var-refs? gxc#::find-var-refs?)
+         (%#define-runtime make-::find-var-refs gxc#make-::find-var-refs)
+         (%#define-runtime ::find-var-refs-ids gxc#::find-var-refs-ids)
+         (%#define-runtime
+          ::find-var-refs-ids-set!
+          gxc#::find-var-refs-ids-set!)
+         (%#define-runtime &::find-var-refs-ids gxc#&::find-var-refs-ids)
+         (%#define-runtime
+          &::find-var-refs-ids-set!
+          gxc#&::find-var-refs-ids-set!)
+         (%#define-syntax ::find-var-refs |gxc[:0:]#::find-var-refs|)
+         (%#define-runtime
+          ::find-var-refs-bind-methods!
+          gxc#::find-var-refs-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-find-var-refs__%
+                   gxc#apply-find-var-refs__%)
+                  (%#define-runtime
+                   apply-find-var-refs__@
+                   gxc#apply-find-var-refs__@)
+                  (%#define-runtime
+                   apply-find-var-refs
+                   gxc#apply-find-var-refs))
+         (%#define-runtime
+          ::collect-runtime-refs::t
+          gxc#::collect-runtime-refs::t)
+         (%#define-runtime ::collect-runtime-refs? gxc#::collect-runtime-refs?)
+         (%#define-runtime
+          make-::collect-runtime-refs
+          gxc#make-::collect-runtime-refs)
+         (%#define-runtime
+          ::collect-runtime-refs-table
+          gxc#::collect-runtime-refs-table)
+         (%#define-runtime
+          ::collect-runtime-refs-table-set!
+          gxc#::collect-runtime-refs-table-set!)
+         (%#define-runtime
+          &::collect-runtime-refs-table
+          gxc#&::collect-runtime-refs-table)
+         (%#define-runtime
+          &::collect-runtime-refs-table-set!
+          gxc#&::collect-runtime-refs-table-set!)
+         (%#define-syntax
+          ::collect-runtime-refs
+          |gxc[:0:]#::collect-runtime-refs|)
+         (%#define-runtime
+          ::collect-runtime-refs-bind-methods!
+          gxc#::collect-runtime-refs-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-collect-runtime-refs__%
+                   gxc#apply-collect-runtime-refs__%)
+                  (%#define-runtime
+                   apply-collect-runtime-refs__@
+                   gxc#apply-collect-runtime-refs__@)
+                  (%#define-runtime
+                   apply-collect-runtime-refs
+                   gxc#apply-collect-runtime-refs))
          (%#define-runtime collect-mutators-setq% gxc#collect-mutators-setq%)
          (%#define-runtime collect-methods-call% gxc#collect-methods-call%)
          (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
@@ -56,11 +175,7 @@ namespace: gxc
           collect-runtime-refs-setq%
           gxc#collect-runtime-refs-setq%)
          (%#define-runtime find-body% gxc#find-body%)
-         (%#define-runtime find-begin-annotation% gxc#find-begin-annotation%)
-         (%#define-runtime find-lambda% gxc#find-lambda%)
-         (%#define-runtime find-case-lambda% gxc#find-case-lambda%)
          (%#define-runtime find-let-values% gxc#find-let-values%)
-         (%#define-runtime find-setq% gxc#find-setq%)
          (%#define-runtime find-var-refs-ref% gxc#find-var-refs-ref%)
          (%#define-runtime find-var-refs-setq% gxc#find-var-refs-setq%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-xform~0"))

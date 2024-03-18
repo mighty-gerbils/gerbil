@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Gerbil runtime system related things
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/runtime
 namespace: #f
 
@@ -55,5 +55,9 @@ namespace: #f
   (or (getenv "GERBIL_PATH" #f)
       (path-expand "~/.gerbil")))
 
+(def __smp? (void))
+
 (def (gerbil-runtime-smp?)
-  (member "--enable-smp" (string-split (configure-command-string) #\')))
+  (when (void? __smp?)
+    (set! __smp? (member "--enable-smp" (string-split (configure-command-string) #\'))))
+  __smp?)

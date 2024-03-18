@@ -3,25 +3,12 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
-          (in: :gerbil/core <syntax-case>)
-          (in: :gerbil/core <syntax-sugar>)
-          (spec:
-           (:gerbil/gambit)
-           (0 s32vector? 0 s32vector?)
-           (0 u8vector? 0 u8vector?)
-           (0 s8vector? 0 s8vector?)
-           (0 f32vector? 0 f32vector?)
-           (0 s64vector? 0 s64vector?)
-           (0 f64vector? 0 f64vector?)
-           (0 u16vector? 0 u16vector?)
-           (0 u32vector? 0 u32vector?)
-           (0 u64vector? 0 u64vector?)
-           (0 s16vector? 0 s16vector?)))
+          :gerbil/compiler/method)
          (%#export #t)
          (%#define-runtime gambit-annotations gxc#gambit-annotations)
-         (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
          (%#define-runtime current-compile-marks gxc#current-compile-marks)
          (%#define-runtime
@@ -33,74 +20,214 @@ namespace: gxc
          (%#define-runtime
           make-bound-identifier-table
           gxc#make-bound-identifier-table)
-         (%#begin (%#define-runtime compile-e__0 gxc#compile-e__0)
-                  (%#define-runtime compile-e__1 gxc#compile-e__1)
-                  (%#define-runtime compile-e__2 gxc#compile-e__2)
-                  (%#define-runtime compile-e__3 gxc#compile-e__3)
-                  (%#define-runtime compile-e gxc#compile-e))
+         (%#define-runtime ::collect-bindings::t gxc#::collect-bindings::t)
+         (%#define-runtime ::collect-bindings? gxc#::collect-bindings?)
+         (%#define-runtime make-::collect-bindings gxc#make-::collect-bindings)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/compile__1")))
-                  (%#define-syntax do-compile-e |gxc[:0:]#do-compile-e|))
-         (%#define-syntax defcompile-method |gxc[:0:]#defcompile-method|)
-         (%#define-syntax do-apply-compile-e |gxc[:0:]#do-apply-compile-e|)
-         (%#define-runtime void-method gxc#void-method)
-         (%#define-runtime false-method gxc#false-method)
-         (%#define-runtime true-method gxc#true-method)
-         (%#define-runtime &void-expression gxc#&void-expression)
-         (%#define-runtime &void-special-form gxc#&void-special-form)
-         (%#define-runtime &void gxc#&void)
-         (%#define-runtime &false-expression gxc#&false-expression)
-         (%#define-runtime &false-special-form gxc#&false-special-form)
-         (%#define-runtime &false gxc#&false)
-         (%#define-runtime &collect-bindings gxc#&collect-bindings)
+                           (%#quote "gerbil/compiler/compile~1")))
+                  (%#define-syntax
+                   ::collect-bindings
+                   |gxc[:0:]#::collect-bindings|))
+         (%#define-runtime
+          ::collect-bindings-bind-methods!
+          gxc#::collect-bindings-bind-methods!)
          (%#define-runtime apply-collect-bindings gxc#apply-collect-bindings)
-         (%#define-runtime &lift-modules gxc#&lift-modules)
-         (%#define-runtime apply-lift-modules gxc#apply-lift-modules)
-         (%#define-runtime &find-runtime-code gxc#&find-runtime-code)
+         (%#define-runtime ::lift-modules::t gxc#::lift-modules::t)
+         (%#define-runtime ::lift-modules? gxc#::lift-modules?)
+         (%#define-runtime make-::lift-modules gxc#make-::lift-modules)
+         (%#define-runtime ::lift-modules-modules gxc#::lift-modules-modules)
+         (%#define-runtime
+          ::lift-modules-modules-set!
+          gxc#::lift-modules-modules-set!)
+         (%#define-runtime &::lift-modules-modules gxc#&::lift-modules-modules)
+         (%#define-runtime
+          &::lift-modules-modules-set!
+          gxc#&::lift-modules-modules-set!)
+         (%#define-syntax ::lift-modules |gxc[:0:]#::lift-modules|)
+         (%#define-runtime
+          ::lift-modules-bind-methods!
+          gxc#::lift-modules-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-lift-modules__%
+                   gxc#apply-lift-modules__%)
+                  (%#define-runtime
+                   apply-lift-modules__@
+                   gxc#apply-lift-modules__@)
+                  (%#define-runtime apply-lift-modules gxc#apply-lift-modules))
+         (%#define-runtime ::find-runtime-code::t gxc#::find-runtime-code::t)
+         (%#define-runtime ::find-runtime-code? gxc#::find-runtime-code?)
+         (%#define-runtime
+          make-::find-runtime-code
+          gxc#make-::find-runtime-code)
+         (%#define-syntax ::find-runtime-code |gxc[:0:]#::find-runtime-code|)
+         (%#define-runtime
+          ::find-runtime-code-bind-methods!
+          gxc#::find-runtime-code-bind-methods!)
          (%#define-runtime apply-find-runtime-code gxc#apply-find-runtime-code)
-         (%#define-runtime &find-lambda-expression gxc#&find-lambda-expression)
+         (%#define-runtime
+          ::find-lambda-expression::t
+          gxc#::find-lambda-expression::t)
+         (%#define-runtime
+          ::find-lambda-expression?
+          gxc#::find-lambda-expression?)
+         (%#define-runtime
+          make-::find-lambda-expression
+          gxc#make-::find-lambda-expression)
+         (%#define-syntax
+          ::find-lambda-expression
+          |gxc[:0:]#::find-lambda-expression|)
+         (%#define-runtime
+          ::find-lambda-expression-bind-methods!
+          gxc#::find-lambda-expression-bind-methods!)
          (%#define-runtime
           apply-find-lambda-expression
           gxc#apply-find-lambda-expression)
-         (%#define-runtime &count-values gxc#&count-values)
+         (%#define-runtime ::count-values::t gxc#::count-values::t)
+         (%#define-runtime ::count-values? gxc#::count-values?)
+         (%#define-runtime make-::count-values gxc#make-::count-values)
+         (%#define-syntax ::count-values |gxc[:0:]#::count-values|)
+         (%#define-runtime
+          ::count-values-bind-methods!
+          gxc#::count-values-bind-methods!)
          (%#define-runtime apply-count-values gxc#apply-count-values)
-         (%#define-runtime &generate-runtime-empty gxc#&generate-runtime-empty)
-         (%#define-runtime &generate-loader gxc#&generate-loader)
+         (%#define-runtime
+          ::generate-runtime-empty::t
+          gxc#::generate-runtime-empty::t)
+         (%#define-runtime
+          ::generate-runtime-empty?
+          gxc#::generate-runtime-empty?)
+         (%#define-runtime
+          make-::generate-runtime-empty
+          gxc#make-::generate-runtime-empty)
+         (%#define-syntax
+          ::generate-runtime-empty
+          |gxc[:0:]#::generate-runtime-empty|)
+         (%#define-runtime
+          ::generate-runtime-empty-bind-methods!
+          gxc#::generate-runtime-empty-bind-methods!)
+         (%#define-runtime ::generate-loader::t gxc#::generate-loader::t)
+         (%#define-runtime ::generate-loader? gxc#::generate-loader?)
+         (%#define-runtime make-::generate-loader gxc#make-::generate-loader)
+         (%#define-syntax ::generate-loader |gxc[:0:]#::generate-loader|)
+         (%#define-runtime
+          ::generate-loader-bind-methods!
+          gxc#::generate-loader-bind-methods!)
          (%#define-runtime apply-generate-loader gxc#apply-generate-loader)
-         (%#define-runtime &generate-runtime gxc#&generate-runtime)
+         (%#define-runtime ::generate-runtime::t gxc#::generate-runtime::t)
+         (%#define-runtime ::generate-runtime? gxc#::generate-runtime?)
+         (%#define-runtime make-::generate-runtime gxc#make-::generate-runtime)
+         (%#define-syntax ::generate-runtime |gxc[:0:]#::generate-runtime|)
+         (%#define-runtime
+          ::generate-runtime-bind-methods!
+          gxc#::generate-runtime-bind-methods!)
          (%#define-runtime apply-generate-runtime gxc#apply-generate-runtime)
-         (%#define-runtime &generate-runtime-phi gxc#&generate-runtime-phi)
+         (%#define-runtime
+          ::generate-runtime-phi::t
+          gxc#::generate-runtime-phi::t)
+         (%#define-runtime ::generate-runtime-phi? gxc#::generate-runtime-phi?)
+         (%#define-runtime
+          make-::generate-runtime-phi
+          gxc#make-::generate-runtime-phi)
+         (%#define-syntax
+          ::generate-runtime-phi
+          |gxc[:0:]#::generate-runtime-phi|)
+         (%#define-runtime
+          ::generate-runtime-phi-bind-methods!
+          gxc#::generate-runtime-phi-bind-methods!)
          (%#define-runtime
           apply-generate-runtime-phi
           gxc#apply-generate-runtime-phi)
          (%#define-runtime
-          &collect-expression-refs
-          gxc#&collect-expression-refs)
+          ::collect-expression-refs::t
+          gxc#::collect-expression-refs::t)
          (%#define-runtime
-          apply-collect-expression-refs
-          gxc#apply-collect-expression-refs)
-         (%#define-runtime &generate-meta gxc#&generate-meta)
-         (%#define-runtime apply-generate-meta gxc#apply-generate-meta)
-         (%#define-runtime &generate-meta-phi gxc#&generate-meta-phi)
-         (%#define-runtime apply-generate-meta-phi gxc#apply-generate-meta-phi)
-         (%#define-runtime collect-begin% gxc#collect-begin%)
-         (%#define-runtime collect-begin-syntax% gxc#collect-begin-syntax%)
-         (%#define-runtime collect-module% gxc#collect-module%)
+          ::collect-expression-refs?
+          gxc#::collect-expression-refs?)
          (%#define-runtime
-          collect-begin-annotation%
-          gxc#collect-begin-annotation%)
-         (%#define-runtime collect-define-values% gxc#collect-define-values%)
-         (%#define-runtime collect-define-syntax% gxc#collect-define-syntax%)
-         (%#define-runtime collect-body-lambda% gxc#collect-body-lambda%)
+          make-::collect-expression-refs
+          gxc#make-::collect-expression-refs)
          (%#define-runtime
-          collect-body-case-lambda%
-          gxc#collect-body-case-lambda%)
+          ::collect-expression-refs-table
+          gxc#::collect-expression-refs-table)
          (%#define-runtime
-          collect-body-let-values%
-          gxc#collect-body-let-values%)
-         (%#define-runtime collect-body-setq% gxc#collect-body-setq%)
-         (%#define-runtime collect-operands gxc#collect-operands)
+          ::collect-expression-refs-table-set!
+          gxc#::collect-expression-refs-table-set!)
+         (%#define-runtime
+          &::collect-expression-refs-table
+          gxc#&::collect-expression-refs-table)
+         (%#define-runtime
+          &::collect-expression-refs-table-set!
+          gxc#&::collect-expression-refs-table-set!)
+         (%#define-syntax
+          ::collect-expression-refs
+          |gxc[:0:]#::collect-expression-refs|)
+         (%#define-runtime
+          ::collect-expression-refs-bind-methods!
+          gxc#::collect-expression-refs-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-collect-expression-refs__%
+                   gxc#apply-collect-expression-refs__%)
+                  (%#define-runtime
+                   apply-collect-expression-refs__@
+                   gxc#apply-collect-expression-refs__@)
+                  (%#define-runtime
+                   apply-collect-expression-refs
+                   gxc#apply-collect-expression-refs))
+         (%#define-runtime ::generate-meta::t gxc#::generate-meta::t)
+         (%#define-runtime ::generate-meta? gxc#::generate-meta?)
+         (%#define-runtime make-::generate-meta gxc#make-::generate-meta)
+         (%#define-runtime ::generate-meta-state gxc#::generate-meta-state)
+         (%#define-runtime
+          ::generate-meta-state-set!
+          gxc#::generate-meta-state-set!)
+         (%#define-runtime &::generate-meta-state gxc#&::generate-meta-state)
+         (%#define-runtime
+          &::generate-meta-state-set!
+          gxc#&::generate-meta-state-set!)
+         (%#define-syntax ::generate-meta |gxc[:0:]#::generate-meta|)
+         (%#define-runtime
+          ::generate-meta-bind-methods!
+          gxc#::generate-meta-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-generate-meta__%
+                   gxc#apply-generate-meta__%)
+                  (%#define-runtime
+                   apply-generate-meta__@
+                   gxc#apply-generate-meta__@)
+                  (%#define-runtime
+                   apply-generate-meta
+                   gxc#apply-generate-meta))
+         (%#define-runtime ::generate-meta-phi::t gxc#::generate-meta-phi::t)
+         (%#define-runtime ::generate-meta-phi? gxc#::generate-meta-phi?)
+         (%#define-runtime
+          make-::generate-meta-phi
+          gxc#make-::generate-meta-phi)
+         (%#define-runtime
+          ::generate-meta-phi-state
+          gxc#::generate-meta-phi-state)
+         (%#define-runtime
+          ::generate-meta-phi-state-set!
+          gxc#::generate-meta-phi-state-set!)
+         (%#define-runtime
+          &::generate-meta-phi-state
+          gxc#&::generate-meta-phi-state)
+         (%#define-runtime
+          &::generate-meta-phi-state-set!
+          gxc#&::generate-meta-phi-state-set!)
+         (%#define-syntax ::generate-meta-phi |gxc[:0:]#::generate-meta-phi|)
+         (%#define-runtime
+          ::generate-meta-phi-bind-methods!
+          gxc#::generate-meta-phi-bind-methods!)
+         (%#begin (%#define-runtime
+                   apply-generate-meta-phi__%
+                   gxc#apply-generate-meta-phi__%)
+                  (%#define-runtime
+                   apply-generate-meta-phi__@
+                   gxc#apply-generate-meta-phi__@)
+                  (%#define-runtime
+                   apply-generate-meta-phi
+                   gxc#apply-generate-meta-phi))
          (%#define-runtime
           collect-bindings-define-values%
           gxc#collect-bindings-define-values%)
@@ -347,23 +474,7 @@ namespace: gxc
          (%#define-runtime collect-refs-ref% gxc#collect-refs-ref%)
          (%#define-runtime collect-refs-setq% gxc#collect-refs-setq%)
          (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%)
-         (%#define-runtime
-          find-lambda-expression-begin%
-          gxc#find-lambda-expression-begin%)
-         (%#define-runtime
-          find-lambda-expression-begin-annotation%
-          gxc#find-lambda-expression-begin-annotation%)
-         (%#define-runtime
-          find-lambda-expression-let-values%
-          gxc#find-lambda-expression-let-values%)
          (%#define-runtime count-values-single% gxc#count-values-single%)
-         (%#define-runtime count-values-begin% gxc#count-values-begin%)
-         (%#define-runtime
-          count-values-begin-annotation%
-          gxc#count-values-begin-annotation%)
-         (%#define-runtime
-          count-values-let-values%
-          gxc#count-values-let-values%)
          (%#define-runtime count-values-call% gxc#count-values-call%)
          (%#define-runtime count-values-if% gxc#count-values-if%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/compile__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/compile~0"))

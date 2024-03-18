@@ -3,15 +3,17 @@
 ;;; Generics: macros
 
 (import :std/generic/dispatch
+        :std/interface
         (for-syntax :std/stxutil)
-        (rename-in (only-in <MOP> defmethod) (defmethod defmethod~)))
+        (rename-in (only-in :gerbil/core/mop defmethod) (defmethod defmethod~)))
 (export #t (phi: +1 #t))
 
 (begin-syntax
   (defclass (generic-info macro-object) (table procedure))
-  (defclass generic-type-info ())
-  (defclass (primitive-type-info generic-type-info) (type))
-  (defclass (builtin-type-info generic-type-info) (runtime-identifier)))
+  (def (generic-type-id? id)
+    (alet (info (syntax-local-value id false))
+      (or (class-type-info? info)
+          (interface-info? info)))))
 
 (defsyntax (defgeneric stx)
   (def (generate-generic id default)
@@ -50,45 +52,18 @@
      (identifier? #'id)
      (generate-generic #'id #'default))))
 
-(defrules defprimitive-type ()
-  ((_ id (type-id ...))
-   (and (identifier? #'id)
-        (identifier-list? #'(type-id ...)))
-   (defsyntax id
-     (make-primitive-type-info type: '(type-id ... t)))))
-
-(defsyntax (defbuiltin-type stx)
-  (syntax-case stx ()
-    ((_ id type-expr)
-     (with-syntax ((klass::t (format-id #'id "~a::t" #'id)))
-       #'(begin
-           (def klass::t type-expr)
-           (defsyntax id
-             (make-builtin-type-info runtime-identifier: (quote-syntax klass::t))))))))
-
 (defsyntax (defmethod stx)
   (def (class-method-option? x)
     (memq (stx-e x) '(rebind:)))
 
-  (def (generic-type-id? id)
-    (and (identifier? id)
-         (let (info (syntax-local-value id false))
-           (or (generic-type-info? info)
-               (class-type-info? info)))))
-
   (def (generic-type-e type-info)
     (cond
-     ((primitive-type-info? type-info)
-      (with-syntax ((type (@ type-info type)))
-        #'(quote type)))
      ((class-type-info? type-info)
-      (with-syntax ((klass::t (!class-type-descriptor type-info)))
-        #'(type-precedence-list klass::t)))
-     ((builtin-type-info? type-info)
-      (with-syntax ((klass::t (@ type-info runtime-identifier)))
-        #'(type-precedence-list klass::t)))
+      (!class-type-descriptor type-info))
+     ((interface-info? type-info)
+      (interface-info-instance-type type-info))
      (else
-      (raise-syntax-error #f "Bad syntax; unknown argument type" stx))))
+      (raise-syntax-error #f "Bad syntax; unknown argument type" stx type-info))))
 
   (def (generic-impl-id generic-id type-ids)
     (datum->syntax generic-id
@@ -149,5 +124,5 @@
                              stx bad-id)))
       (else
        (let (bad-id (find (? (not generic-type-id?)) #'(type-id ...)))
-         (raise-syntax-error #f "Bad syntax; expected generic type identifier"
+         (raise-syntax-error #f "Bad syntax; expected class or interface type identifier"
                              stx bad-id)))))))

@@ -1,22 +1,25 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
-        "compile"
+        "method"
         "optimize-base"
         "optimize-xform")
 (export #t)
 
-(defcompile-method apply-optimize-call (&optimize-call &basic-xform)
+;; method to optimize direct procedure calls
+(defcompile-method (apply-optimize-call) (::optimize-call ::basic-xform) ()
+  final:
   (%#call optimize-call%))
 
 ;;; apply-optimize-call
-(def (optimize-call% stx)
+(def (optimize-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref rator) . rands)
      (let* ((rator-id (identifier-symbol #'rator))
@@ -24,7 +27,7 @@ namespace: gxc
        (cond
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-         (let (optimized {optimize-call rator-type stx #'rands})
+         (let (optimized {optimize-call rator-type self stx #'rands})
            (if (!primitive? rator-type)
              optimized        ; %#call-unchecked unsafe for primitives
              (ast-case optimized (%#call)
@@ -34,17 +37,17 @@ namespace: gxc
                  stx))
                (_ optimized)))))
         ((not rator-type)
-         (xform-call% stx))
+         (xform-call% self stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
-    (_ (xform-call% stx))))
+    (_ (xform-call% self stx))))
 
 (defmethod {optimize-call !predicate}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (ast-case args ()
       ((expr)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
-              (object (compile-e #'expr)))
+              (object (compile-e ctx #'expr)))
          (cond
           ((!class-final? klass)
            (xform-wrap-source
@@ -60,10 +63,10 @@ namespace: gxc
             stx))))))))
 
 (defmethod {optimize-call !constructor}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (let* ((klass (optimizer-resolve-class stx (!type-id self)))
            (fields (length (!class-fields klass)))
-           (args (map compile-e args))
+           (args (map (cut compile-e ctx <>) args))
            (inline-make-object
             ['%#call ['%#ref '##structure]
                      ['%#ref (!type-id self)]
@@ -149,12 +152,12 @@ namespace: gxc
                 stx))))))))))
 
 (defmethod {optimize-call !accessor}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (ast-case args ()
       ((object)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (field (!class-slot->field-offset klass (!accessor-slot self)))
-              (object (compile-e #'object)))
+              (object (compile-e ctx #'object)))
          (cond
           ((!class-final? klass)
            (xform-wrap-source
@@ -209,13 +212,13 @@ namespace: gxc
             stx))))))))
 
 (defmethod {optimize-call !mutator}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (ast-case args ()
       ((object value)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (field (!class-slot->field-offset klass (!mutator-slot self)))
-              (object (compile-e #'object))
-              (value (compile-e #'value)))
+              (object (compile-e ctx #'object))
+              (value (compile-e ctx #'value)))
          (cond
           ((!class-final? klass)
            (xform-wrap-source
@@ -276,7 +279,7 @@ namespace: gxc
             stx))))))))
 
 (defmethod {optimize-call !lambda}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (with ((!lambda _ arity dispatch inline) self)
       (unless (!lambda-arity-match? self args)
         (raise-compile-error "Illegal lambda application; arity mismatch"
@@ -285,24 +288,26 @@ namespace: gxc
        (inline
         (verbose "inline lambda")
         (compile-e
+         ctx
          (xform-wrap-source
           (inline stx)
           stx)))
        (dispatch
         (verbose "dispatch lambda => " dispatch)
         (compile-e
+         ctx
          (xform-wrap-source
           ['%#call ['%#ref dispatch] args ...]
           stx)))
        (else
-        (xform-call% stx))))))
+        (xform-call% ctx stx))))))
 
 (defmethod {optimize-call !case-lambda}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (with ((!case-lambda _ clauses) self)
       (cond
        ((find (cut !lambda-arity-match? <> args) clauses)
-        => (lambda (clause) {optimize-call clause stx args}))
+        => (lambda (clause) {optimize-call clause ctx stx args}))
        (else
         (raise-compile-error "Illegal case-lambda application; arity mismatch"
                              stx (map !lambda-arity clauses)))))))
@@ -316,7 +321,7 @@ namespace: gxc
        (fx>= (length args) arity)))))
 
 (defmethod {optimize-call !kw-lambda}
-  (lambda (self stx args)
+  (lambda (self ctx stx args)
     (with ((!kw-lambda _ table dispatch) self)
       (match (optimizer-lookup-type dispatch)
         ((!kw-lambda-primary _ keys main)
@@ -337,6 +342,7 @@ namespace: gxc
                                           stx keys kw)))
                  kwargs)
                (compile-e
+                ctx
                 (xform-wrap-source
                  ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
                  stx)))
@@ -364,6 +370,7 @@ namespace: gxc
                              (else '(%#ref absent-value))))
                           keys)))
                (compile-e
+                ctx
                 (xform-wrap-source
                  ['%#let-values kwbind
                    ['%#let-values [[[kwt]
@@ -380,7 +387,7 @@ namespace: gxc
                  stx))))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
-           (xform-call% stx))))))
+           (xform-call% ctx stx))))))
 
 (def (!kw-lambda-split-args stx args)
   (let lp ((rest args) (pargs []) (kwargs []))
@@ -401,5 +408,5 @@ namespace: gxc
        (values (reverse pargs) (reverse kwargs))))))
 
 (defmethod {optimize-call !kw-lambda-primary}
-  (lambda (self stx args)
-    (xform-call% stx)))
+  (lambda (self ctx stx args)
+    (xform-call% ctx stx)))

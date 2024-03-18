@@ -10,7 +10,6 @@
   (only-in :std/cli/print-exit begin-print-exit)
   (only-in :std/cli/shell easy-shell-character?)
   (only-in :std/format format)
-  (only-in :std/generic defgeneric)
   (only-in :std/iter for/collect)
   (only-in :std/misc/hash hash->list/sort)
   (only-in :std/misc/list flatten)

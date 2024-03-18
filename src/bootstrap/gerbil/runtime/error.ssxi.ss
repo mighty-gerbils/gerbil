@@ -4,16 +4,27 @@ package: gerbil/runtime
 (begin
   (declare-type
    Exception::t
-   (@class gerbil/runtime/error#Exception::t () () () () #f #f #f #f #f))
+   (@class gerbil/runtime/error#Exception::t
+           (object::t)
+           (object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
   (declare-type Exception? (@predicate Exception::t))
   (declare-type make-Exception (@constructor Exception::t))
   (declare-type
    StackTrace::t
    (@class gerbil/runtime/error#StackTrace::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (continuation)
            (continuation)
+           #f
            #f
            #f
            #f
@@ -36,11 +47,12 @@ package: gerbil/runtime
   (declare-type
    Error::t
    (@class gerbil/runtime/error#Error::t
-           (StackTrace::t Exception::t)
-           (StackTrace::t Exception::t)
+           (StackTrace::t Exception::t object::t)
+           (StackTrace::t Exception::t object::t t::t)
            (message irritants where)
            (continuation message irritants where)
            :init!
+           #f
            #f
            #f
            #f
@@ -67,10 +79,11 @@ package: gerbil/runtime
   (declare-type
    RuntimeException::t
    (@class gerbil/runtime/error#RuntimeException::t
-           (StackTrace::t Exception::t)
-           (StackTrace::t Exception::t)
+           (StackTrace::t Exception::t object::t)
+           (StackTrace::t Exception::t object::t t::t)
            (exception)
            (continuation exception)
+           #f
            #f
            #f
            #f

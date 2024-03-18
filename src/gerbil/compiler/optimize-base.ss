@@ -1,16 +1,16 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "../runtime/c3"
         "base"
-        "compile"
-        <syntax-case> <syntax-sugar>)
-(export #t (import: <syntax-case> <syntax-sugar>))
+        "compile")
+(export #t (import: "../core/expander"))
 
 (def current-compile-optimizer-info
   (make-parameter #f))
@@ -40,6 +40,7 @@ namespace: gxc
    constructor  ;; OrFalse Symbol; constructor method
    struct? ;; Boolean; is it a struct?
    final?  ;; Boolean; is it a final class?
+   system? ;; Boolean; is it a system class?
    metaclass ;; OrFalse Symbol; the metaclass of the class
    methods) ;; Map Symbol -> Symbol; known method implementations
   constructor: :init!)
@@ -66,7 +67,7 @@ namespace: gxc
 ;;; methods
 (defmethod {:init! !class}
   (case-lambda
-    ((self id super slots ctor-method struct? final? metaclass)
+    ((self id super slots ctor-method struct? final? system? metaclass)
      ;; 1. check finality
      (let lp ((rest super))
        (match rest
@@ -124,7 +125,7 @@ namespace: gxc
        (set! (!class-metaclass self) metaclass)))
 
     ;; ssxi loader
-    ((self id super precedence-list slots fields constructor struct? final? metaclass methods)
+    ((self id super precedence-list slots fields constructor struct? final? system? metaclass methods)
      (set! (!type-id self) id)
      (set! (!class-super self) super)
      (set! (!class-precedence-list self) precedence-list)

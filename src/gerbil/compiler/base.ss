@@ -1,13 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler basic env
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
-        <syntax-case>)
-
+(import "../core/expander"
+        "../expander")
 (export #t)
 
 (defsyntax (ast-case stx)

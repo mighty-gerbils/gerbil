@@ -1,12 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil compiler optimization passes
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/compiler
 namespace: gxc
 
-(import "../expander"
+(import "../core/expander"
+        "../expander"
         "base"
+        "method"
         "compile"
         "optimize-base"
         "optimize-xform"
@@ -27,7 +29,7 @@ namespace: gxc
                  (current-compile-local-type (make-hash-table-eq)))
     (optimizer-load-ssxi-deps ctx)
     ;; load builtins
-    (optimizer-load-builtin-ssxi)
+    (optimizer-load-builtin-ssxi ctx)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -36,32 +38,36 @@ namespace: gxc
       (set! (module-context-code ctx) code))))
 
 ;;; ssxi loading
-(def (optimizer-load-builtin-ssxi)
+(def (optimizer-load-builtin-ssxi ctx)
   (def (load-it! id)
     (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info)) id)
       (optimizer-import-ssxi-by-id id)
       (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                  id
                  #t)))
-  (for-each load-it!
-            '(gerbil/runtime/gambit
-              gerbil/runtime/util
-              gerbil/runtime/table
-              gerbil/runtime/control
-              gerbil/runtime/system
-              gerbil/runtime/c3
-              gerbil/runtime/mop
-              gerbil/runtime/error
-              gerbil/runtime/interface
-              gerbil/runtime/hash
-              gerbil/runtime/thread
-              gerbil/runtime/syntax
-              gerbil/runtime/eval
-              gerbil/runtime/repl
-              gerbil/runtime/loader
-              gerbil/runtime/init
-              gerbil/runtime
-              gerbil/builtin)))
+
+  (let* ((modid (expander-context-id ctx))
+         (modid-str (symbol->string modid)))
+    (for-each load-it!
+              '(gerbil/runtime/gambit
+                gerbil/runtime/util
+                gerbil/runtime/table
+                gerbil/runtime/control
+                gerbil/runtime/system
+                gerbil/runtime/c3
+                gerbil/runtime/mop
+                gerbil/runtime/mop-system-classes
+                gerbil/runtime/error
+                gerbil/runtime/interface
+                gerbil/runtime/hash
+                gerbil/runtime/thread
+                gerbil/runtime/syntax
+                gerbil/runtime/eval
+                gerbil/runtime/repl
+                gerbil/runtime/loader
+                gerbil/runtime/init
+                gerbil/runtime
+                gerbil/builtin))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
@@ -157,7 +163,10 @@ namespace: gxc
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))
 
-(defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
+;; method to generate the ssxi optimizer meta module
+(defcompile-method (apply-generate-ssxi) (::generate-ssxi ::generate-runtime-empty)
+  ()
+  final:
   (%#begin         generate-runtime-begin%)
   (%#begin-syntax  generate-ssxi-begin-syntax%)
   (%#module        generate-ssxi-module%)
@@ -165,21 +174,21 @@ namespace: gxc
   (%#call          generate-ssxi-call%))
 
 ;;; apply-generate-ssxi
-(def (generate-ssxi-begin-syntax% stx)
+(def (generate-ssxi-begin-syntax% self stx)
   (ast-case stx ()
     ((_ . forms)
      (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (generate-runtime-begin% stx)))))
+       (generate-runtime-begin% self stx)))))
 
-(def (generate-ssxi-module% stx)
+(def (generate-ssxi-module% self stx)
   (ast-case stx ()
     ((_ id . body)
      (let* ((ctx (syntax-local-e #'id))
             (code (module-context-code ctx)))
        (parameterize ((current-expander-context ctx))
-         (compile-e code))))))
+         (compile-e self code))))))
 
-(def (generate-ssxi-define-values% stx)
+(def (generate-ssxi-define-values% self stx)
   (def (generate-e id)
     (let (sym (and (identifier? #'id) (identifier-symbol id)))
       (cond
@@ -197,7 +206,7 @@ namespace: gxc
      (let (types (map generate-e #'(id ...)))
        ['begin types ...]))))
 
-(def (generate-ssxi-call% stx)
+(def (generate-ssxi-call% self stx)
   (ast-case stx (%#ref %#quote)
     ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
      (runtime-identifier=? #'-bind-method 'bind-method!)
@@ -219,8 +228,8 @@ namespace: gxc
 ;; MOP
 (defmethod {typedecl !class}
   (lambda (self)
-    (with ((!class id super precendence-list slots fields constructor struct? final? metaclass methods) self)
-      ['@class id super precendence-list slots fields constructor struct? final? metaclass (and methods (hash->list methods))])))
+    (with ((!class id super precendence-list slots fields constructor struct? final? system? metaclass methods) self)
+      ['@class id super precendence-list slots fields constructor struct? final? system? metaclass (and methods (hash->list methods))])))
 
 (defmethod {typedecl !predicate}
   (lambda (self)

@@ -5,11 +5,12 @@ package: gerbil/runtime
   (declare-type
    UnboundKeyError::t
    (@class gerbil/runtime/hash#UnboundKeyError::t
-           (Error::t)
-           (Error::t StackTrace::t Exception::t)
+           (Error::t object::t)
+           (Error::t StackTrace::t Exception::t object::t t::t)
            ()
            (continuation message irritants where)
            :init!
+           #f
            #f
            #f
            #f
@@ -66,13 +67,14 @@ package: gerbil/runtime
   (declare-type
    HashTable::t
    (@class gerbil#HashTable::t
-           (interface-instance::t)
-           (interface-instance::t)
-           (ref set! update! delete! for-each length copy clear)
-           (__object ref set! update! delete! for-each length copy clear)
+           (interface-instance::t object::t)
+           (interface-instance::t object::t t::t)
+           (ref set! update! delete! for-each length copy clear!)
+           (__object ref set! update! delete! for-each length copy clear!)
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type HashTable? (@predicate HashTable::t))
@@ -83,7 +85,7 @@ package: gerbil/runtime
   (declare-type HashTable-each@ (@accessor HashTable::t for-each #t))
   (declare-type HashTable-length@ (@accessor HashTable::t length #t))
   (declare-type HashTable-copy@ (@accessor HashTable::t copy #t))
-  (declare-type HashTable-clear@ (@accessor HashTable::t clear #t))
+  (declare-type HashTable-clear@ (@accessor HashTable::t clear! #t))
   (declare-type HashTable-ref@-set! (@mutator HashTable::t ref #t))
   (declare-type HashTable-set@-set! (@mutator HashTable::t set! #t))
   (declare-type HashTable-update@-set! (@mutator HashTable::t update! #t))
@@ -91,7 +93,7 @@ package: gerbil/runtime
   (declare-type HashTable-each@-set! (@mutator HashTable::t for-each #t))
   (declare-type HashTable-length@-set! (@mutator HashTable::t length #t))
   (declare-type HashTable-copy@-set! (@mutator HashTable::t copy #t))
-  (declare-type HashTable-clear@-set! (@mutator HashTable::t clear #t))
+  (declare-type HashTable-clear@-set! (@mutator HashTable::t clear! #t))
   (declare-type &HashTable-ref@ (@accessor HashTable::t ref #f))
   (declare-type &HashTable-set@ (@accessor HashTable::t set! #f))
   (declare-type &HashTable-update@ (@accessor HashTable::t update! #f))
@@ -99,7 +101,7 @@ package: gerbil/runtime
   (declare-type &HashTable-each@ (@accessor HashTable::t for-each #f))
   (declare-type &HashTable-length@ (@accessor HashTable::t length #f))
   (declare-type &HashTable-copy@ (@accessor HashTable::t copy #f))
-  (declare-type &HashTable-clear@ (@accessor HashTable::t clear #f))
+  (declare-type &HashTable-clear@ (@accessor HashTable::t clear! #f))
   (declare-type &HashTable-ref@-set! (@mutator HashTable::t ref #f))
   (declare-type &HashTable-set@-set! (@mutator HashTable::t set! #f))
   (declare-type &HashTable-update@-set! (@mutator HashTable::t update! #f))
@@ -107,17 +109,18 @@ package: gerbil/runtime
   (declare-type &HashTable-each@-set! (@mutator HashTable::t for-each #f))
   (declare-type &HashTable-length@-set! (@mutator HashTable::t length #f))
   (declare-type &HashTable-copy@-set! (@mutator HashTable::t copy #f))
-  (declare-type &HashTable-clear@-set! (@mutator HashTable::t clear #f))
+  (declare-type &HashTable-clear@-set! (@mutator HashTable::t clear! #f))
   (declare-type
    HashTableLock::t
    (@class gerbil#HashTableLock::t
-           (interface-instance::t)
-           (interface-instance::t)
+           (interface-instance::t object::t)
+           (interface-instance::t object::t t::t)
            (begin-read! end-read! begin-write! end-write!)
            (__object begin-read! end-read! begin-write! end-write!)
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type HashTableLock? (@predicate HashTableLock::t))
@@ -175,46 +178,49 @@ package: gerbil/runtime
   (declare-type
    hash-table::t
    (@class gerbil#hash-table::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (table count free hash test seed)
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
   (declare-type
    gc-hash-table::t
    (@class gerbil#gc-hash-table::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (gcht immediate)
            (gcht immediate)
            #f
            #t
+           #f
            #f
            #f
            #f))
   (declare-type
    locked-hash-table::t
    (@class gerbil/runtime/hash#locked-hash-table::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (table lock)
            (table lock)
            #f
            #t
            #t
            #f
-           ((set! . _locked-hash-table::set!69817_)
-            (delete! . _locked-hash-table::delete!69821_)
-            (update! . _locked-hash-table::update!69819_)
-            (ref . _locked-hash-table::ref69815_)
-            (length . _locked-hash-table::length69825_)
-            (clear! . _locked-hash-table::clear!69829_)
-            (for-each . _locked-hash-table::for-each69823_)
-            (copy . _locked-hash-table::copy69827_))))
+           #f
+           ((for-each . _locked-hash-table::for-each71039_)
+            (copy . _locked-hash-table::copy71043_)
+            (clear! . _locked-hash-table::clear!71045_)
+            (set! . _locked-hash-table::set!71033_)
+            (update! . _locked-hash-table::update!71035_)
+            (delete! . _locked-hash-table::delete!71037_)
+            (length . _locked-hash-table::length71041_)
+            (ref . _locked-hash-table::ref71031_))))
   (declare-type locked-hash-table? (@predicate locked-hash-table::t))
   (declare-type make-locked-hash-table (@constructor locked-hash-table::t))
   (declare-type
@@ -244,22 +250,23 @@ package: gerbil/runtime
   (declare-type
    checked-hash-table::t
    (@class gerbil/runtime/hash#checked-hash-table::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (table key-check)
            (table key-check)
            #f
            #t
            #t
            #f
-           ((set! . _checked-hash-table::set!70109_)
-            (delete! . _checked-hash-table::delete!70113_)
-            (update! . _checked-hash-table::update!70111_)
-            (ref . _checked-hash-table::ref70107_)
-            (length . _checked-hash-table::length70117_)
-            (clear! . _checked-hash-table::clear!70121_)
-            (for-each . _checked-hash-table::for-each70115_)
-            (copy . _checked-hash-table::copy70119_))))
+           #f
+           ((for-each . _checked-hash-table::for-each71331_)
+            (copy . _checked-hash-table::copy71335_)
+            (clear! . _checked-hash-table::clear!71337_)
+            (set! . _checked-hash-table::set!71325_)
+            (update! . _checked-hash-table::update!71327_)
+            (delete! . _checked-hash-table::delete!71329_)
+            (length . _checked-hash-table::length71333_)
+            (ref . _checked-hash-table::ref71323_))))
   (declare-type checked-hash-table? (@predicate checked-hash-table::t))
   (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
   (declare-type
@@ -289,12 +296,13 @@ package: gerbil/runtime
   (declare-type
    eq-hash-table::t
    (@class gerbil#eq-hash-table
-           (hash-table::t)
-           (hash-table::t)
+           (hash-table::t object::t)
+           (hash-table::t object::t t::t)
            ()
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -303,12 +311,13 @@ package: gerbil/runtime
   (declare-type
    eqv-hash-table::t
    (@class gerbil#eqv-hash-table
-           (hash-table::t)
-           (hash-table::t)
+           (hash-table::t object::t)
+           (hash-table::t object::t t::t)
            ()
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -317,12 +326,13 @@ package: gerbil/runtime
   (declare-type
    symbol-hash-table::t
    (@class gerbil#symbol-hash-table
-           (hash-table::t)
-           (hash-table::t)
+           (hash-table::t object::t)
+           (hash-table::t object::t t::t)
            ()
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -331,12 +341,13 @@ package: gerbil/runtime
   (declare-type
    string-hash-table::t
    (@class gerbil#string-hash-table
-           (hash-table::t)
-           (hash-table::t)
+           (hash-table::t object::t)
+           (hash-table::t object::t t::t)
            ()
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -344,13 +355,14 @@ package: gerbil/runtime
   (declare-type make-string-hash-table (@constructor string-hash-table::t))
   (declare-type
    immediate-hash-table::t
-   (@class gerbil#immediate-hash-table
-           (hash-table::t)
-           (hash-table::t)
+   (@class gerbil#immediate-hash-table::t
+           (hash-table::t object::t)
+           (hash-table::t object::t t::t)
            ()
            (table count free hash test seed)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -380,22 +392,22 @@ package: gerbil/runtime
   (declare-type &HashTableLock-end-read! (@lambda 1 #f))
   (declare-type &HashTableLock-begin-write! (@lambda 1 #f))
   (declare-type &HashTableLock-end-write! (@lambda 1 #f))
-  (declare-type _locked-hash-table::ref69815_ (@lambda 3 #f))
-  (declare-type _locked-hash-table::set!69817_ (@lambda 3 #f))
-  (declare-type _locked-hash-table::update!69819_ (@lambda 4 #f))
-  (declare-type _locked-hash-table::delete!69821_ (@lambda 2 #f))
-  (declare-type _locked-hash-table::for-each69823_ (@lambda 2 #f))
-  (declare-type _locked-hash-table::length69825_ (@lambda 1 #f))
-  (declare-type _locked-hash-table::copy69827_ (@lambda 1 #f))
-  (declare-type _locked-hash-table::clear!69829_ (@lambda 1 #f))
-  (declare-type _checked-hash-table::ref70107_ (@lambda 3 #f))
-  (declare-type _checked-hash-table::set!70109_ (@lambda 3 #f))
-  (declare-type _checked-hash-table::update!70111_ (@lambda 4 #f))
-  (declare-type _checked-hash-table::delete!70113_ (@lambda 2 #f))
-  (declare-type _checked-hash-table::for-each70115_ (@lambda 2 #f))
-  (declare-type _checked-hash-table::length70117_ (@lambda 1 #f))
-  (declare-type _checked-hash-table::copy70119_ (@lambda 1 #f))
-  (declare-type _checked-hash-table::clear!70121_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::ref71031_ (@lambda 3 #f))
+  (declare-type _locked-hash-table::set!71033_ (@lambda 3 #f))
+  (declare-type _locked-hash-table::update!71035_ (@lambda 4 #f))
+  (declare-type _locked-hash-table::delete!71037_ (@lambda 2 #f))
+  (declare-type _locked-hash-table::for-each71039_ (@lambda 2 #f))
+  (declare-type _locked-hash-table::length71041_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::copy71043_ (@lambda 1 #f))
+  (declare-type _locked-hash-table::clear!71045_ (@lambda 1 #f))
+  (declare-type _checked-hash-table::ref71323_ (@lambda 3 #f))
+  (declare-type _checked-hash-table::set!71325_ (@lambda 3 #f))
+  (declare-type _checked-hash-table::update!71327_ (@lambda 4 #f))
+  (declare-type _checked-hash-table::delete!71329_ (@lambda 2 #f))
+  (declare-type _checked-hash-table::for-each71331_ (@lambda 2 #f))
+  (declare-type _checked-hash-table::length71333_ (@lambda 1 #f))
+  (declare-type _checked-hash-table::copy71335_ (@lambda 1 #f))
+  (declare-type _checked-hash-table::clear!71337_ (@lambda 1 #f))
   (declare-type make-generic-hash-table (@lambda 6 #f))
   (declare-type make-hash-table__% (@lambda 9 #f))
   (declare-type make-hash-table__@ (@lambda (1) #f))
@@ -414,12 +426,14 @@ package: gerbil/runtime
   (declare-type list->hash-table-eqv (@lambda (1) #f))
   (declare-type list->hash-table-symbolic (@lambda (1) #f))
   (declare-type list->hash-table-string (@lambda (1) #f))
+  (declare-type list->hash-table-immediate (@lambda (1) #f))
   (declare-type list->hash-table! (@lambda 2 #f))
   (declare-type plist->hash-table (@lambda (1) #f))
   (declare-type plist->hash-table-eq (@lambda (1) #f))
   (declare-type plist->hash-table-eqv (@lambda (1) #f))
   (declare-type plist->hash-table-symbolic (@lambda (1) #f))
   (declare-type plist->hash-table-string (@lambda (1) #f))
+  (declare-type plist->hash-table-immediate (@lambda (1) #f))
   (declare-type plist->hash-table! (@lambda 2 #f))
   (declare-type hash-length (@lambda 1 #f))
   (declare-type &hash-length (@lambda 1 &HashTable-length))

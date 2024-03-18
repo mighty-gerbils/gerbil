@@ -480,7 +480,7 @@
   (gerbil-fontlock-add
    '("\\_<\\(\\sw+\\)\\.\\(\\sw+\\)\\_>"
      (1 font-lock-variable-name-face)
-     (2 font-lock-reference-face)))
+     (2 font-lock-constant-face)))
   (gerbil-fontlock-add
    '("\\_<\\([?!&]+\\)"
      (1 font-lock-builtin-face)))

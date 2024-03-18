@@ -3,44 +3,308 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#make-bound-identifier-table (@lambda 0 #f))
-  (declare-type gxc#compile-e__0 (@lambda 1 #f))
-  (declare-type gxc#compile-e__1 (@lambda 2 #f))
-  (declare-type gxc#compile-e__2 (@lambda 3 #f))
-  (declare-type gxc#compile-e__3 (@lambda (3) #f))
   (declare-type
-   gxc#compile-e
-   (@case-lambda
-    (1 gxc#compile-e__0)
-    (2 gxc#compile-e__1)
-    (3 gxc#compile-e__2)
-    ((3) gxc#compile-e__3)))
-  (declare-type gxc#void-method (@lambda (1) #f))
-  (declare-type gxc#false-method (@lambda (1) #f))
-  (declare-type gxc#true-method (@lambda (1) #f))
-  (declare-type gxc#apply-collect-bindings (@lambda (1) #f))
-  (declare-type gxc#apply-lift-modules (@lambda (1) #f))
-  (declare-type gxc#apply-find-runtime-code (@lambda (1) #f))
-  (declare-type gxc#apply-find-lambda-expression (@lambda (1) #f))
-  (declare-type gxc#apply-count-values (@lambda (1) #f))
-  (declare-type gxc#apply-generate-loader (@lambda (1) #f))
-  (declare-type gxc#apply-generate-runtime (@lambda (1) #f))
-  (declare-type gxc#apply-generate-runtime-phi (@lambda (1) #f))
-  (declare-type gxc#apply-collect-expression-refs (@lambda (1) #f))
-  (declare-type gxc#apply-generate-meta (@lambda (1) #f))
-  (declare-type gxc#apply-generate-meta-phi (@lambda (1) #f))
-  (declare-type gxc#collect-begin% (@lambda (1) #f))
-  (declare-type gxc#collect-begin-syntax% (@lambda (1) #f))
-  (declare-type gxc#collect-module% (@lambda (1) #f))
-  (declare-type gxc#collect-begin-annotation% (@lambda (1) #f))
-  (declare-type gxc#collect-define-values% (@lambda (1) #f))
-  (declare-type gxc#collect-define-syntax% (@lambda (1) #f))
-  (declare-type gxc#collect-body-lambda% (@lambda (1) #f))
-  (declare-type gxc#collect-body-case-lambda% (@lambda (1) #f))
-  (declare-type gxc#collect-body-let-values% (@lambda (1) #f))
-  (declare-type gxc#collect-body-setq% (@lambda (1) #f))
-  (declare-type gxc#collect-operands (@lambda (1) #f))
-  (declare-type gxc#collect-bindings-define-values% (@lambda 1 #f))
-  (declare-type gxc#collect-bindings-define-syntax% (@lambda 1 #f))
+   gxc#::collect-bindings::t
+   (@class gxc#::collect-bindings::t
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type gxc#::collect-bindings? (@predicate gxc#::collect-bindings::t))
+  (declare-type
+   gxc#make-::collect-bindings
+   (@constructor gxc#::collect-bindings::t))
+  (declare-type gxc#apply-collect-bindings (@lambda 1 #f))
+  (declare-type
+   gxc#::lift-modules::t
+   (@class gxc#::lift-modules::t
+           (gxc#::void::t object::t)
+           (gxc#::void::t
+            gxc#::void-special-form::t
+            gxc#::void-expression::t
+            object::t
+            t::t)
+           (modules)
+           (modules)
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type gxc#::lift-modules? (@predicate gxc#::lift-modules::t))
+  (declare-type gxc#make-::lift-modules (@constructor gxc#::lift-modules::t))
+  (declare-type
+   gxc#::lift-modules-modules
+   (@accessor gxc#::lift-modules::t modules #t))
+  (declare-type
+   gxc#::lift-modules-modules-set!
+   (@mutator gxc#::lift-modules::t modules #t))
+  (declare-type
+   gxc#&::lift-modules-modules
+   (@accessor gxc#::lift-modules::t modules #f))
+  (declare-type
+   gxc#&::lift-modules-modules-set!
+   (@mutator gxc#::lift-modules::t modules #f))
+  (declare-type gxc#apply-lift-modules__% (@lambda 3 #f))
+  (declare-type gxc#apply-lift-modules__@ (@lambda (1) #f))
+  (declare-type
+   gxc#apply-lift-modules
+   (@kw-lambda (modules:) gxc#apply-lift-modules__@))
+  (declare-type
+   gxc#::find-runtime-code::t
+   (@class gxc#::find-runtime-code::t
+           (object::t)
+           (object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::find-runtime-code?
+   (@predicate gxc#::find-runtime-code::t))
+  (declare-type
+   gxc#make-::find-runtime-code
+   (@constructor gxc#::find-runtime-code::t))
+  (declare-type gxc#apply-find-runtime-code (@lambda 1 #f))
+  (declare-type
+   gxc#::find-lambda-expression::t
+   (@class gxc#::find-lambda-expression::t
+           (gxc#::false::t object::t)
+           (gxc#::false::t
+            gxc#::false-special-form::t
+            gxc#::false-expression::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::find-lambda-expression?
+   (@predicate gxc#::find-lambda-expression::t))
+  (declare-type
+   gxc#make-::find-lambda-expression
+   (@constructor gxc#::find-lambda-expression::t))
+  (declare-type gxc#apply-find-lambda-expression (@lambda 1 #f))
+  (declare-type
+   gxc#::count-values::t
+   (@class gxc#::count-values::t
+           (gxc#::false-expression::t object::t)
+           (gxc#::false-expression::t object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type gxc#::count-values? (@predicate gxc#::count-values::t))
+  (declare-type gxc#make-::count-values (@constructor gxc#::count-values::t))
+  (declare-type gxc#apply-count-values (@lambda 1 #f))
+  (declare-type
+   gxc#::generate-runtime-empty::t
+   (@class gxc#::generate-runtime-empty::t
+           (object::t)
+           (object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::generate-runtime-empty?
+   (@predicate gxc#::generate-runtime-empty::t))
+  (declare-type
+   gxc#make-::generate-runtime-empty
+   (@constructor gxc#::generate-runtime-empty::t))
+  (declare-type
+   gxc#::generate-loader::t
+   (@class gxc#::generate-loader::t
+           (gxc#::generate-runtime-empty::t object::t)
+           (gxc#::generate-runtime-empty::t object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type gxc#::generate-loader? (@predicate gxc#::generate-loader::t))
+  (declare-type
+   gxc#make-::generate-loader
+   (@constructor gxc#::generate-loader::t))
+  (declare-type gxc#apply-generate-loader (@lambda 1 #f))
+  (declare-type
+   gxc#::generate-runtime::t
+   (@class gxc#::generate-runtime::t
+           (gxc#::generate-runtime-empty::t object::t)
+           (gxc#::generate-runtime-empty::t object::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type gxc#::generate-runtime? (@predicate gxc#::generate-runtime::t))
+  (declare-type
+   gxc#make-::generate-runtime
+   (@constructor gxc#::generate-runtime::t))
+  (declare-type gxc#apply-generate-runtime (@lambda 1 #f))
+  (declare-type
+   gxc#::generate-runtime-phi::t
+   (@class gxc#::generate-runtime-phi::t
+           (gxc#::generate-runtime::t object::t)
+           (gxc#::generate-runtime::t
+            gxc#::generate-runtime-empty::t
+            object::t
+            t::t)
+           ()
+           ()
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::generate-runtime-phi?
+   (@predicate gxc#::generate-runtime-phi::t))
+  (declare-type
+   gxc#make-::generate-runtime-phi
+   (@constructor gxc#::generate-runtime-phi::t))
+  (declare-type gxc#apply-generate-runtime-phi (@lambda 1 #f))
+  (declare-type
+   gxc#::collect-expression-refs::t
+   (@class gxc#::collect-expression-refs::t
+           (object::t)
+           (object::t t::t)
+           (table)
+           (table)
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::collect-expression-refs?
+   (@predicate gxc#::collect-expression-refs::t))
+  (declare-type
+   gxc#make-::collect-expression-refs
+   (@constructor gxc#::collect-expression-refs::t))
+  (declare-type
+   gxc#::collect-expression-refs-table
+   (@accessor gxc#::collect-expression-refs::t table #t))
+  (declare-type
+   gxc#::collect-expression-refs-table-set!
+   (@mutator gxc#::collect-expression-refs::t table #t))
+  (declare-type
+   gxc#&::collect-expression-refs-table
+   (@accessor gxc#::collect-expression-refs::t table #f))
+  (declare-type
+   gxc#&::collect-expression-refs-table-set!
+   (@mutator gxc#::collect-expression-refs::t table #f))
+  (declare-type gxc#apply-collect-expression-refs__% (@lambda 3 #f))
+  (declare-type gxc#apply-collect-expression-refs__@ (@lambda (1) #f))
+  (declare-type
+   gxc#apply-collect-expression-refs
+   (@kw-lambda (table:) gxc#apply-collect-expression-refs__@))
+  (declare-type
+   gxc#::generate-meta::t
+   (@class gxc#::generate-meta::t
+           (gxc#::void-expression::t object::t)
+           (gxc#::void-expression::t object::t t::t)
+           (state)
+           (state)
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type gxc#::generate-meta? (@predicate gxc#::generate-meta::t))
+  (declare-type gxc#make-::generate-meta (@constructor gxc#::generate-meta::t))
+  (declare-type
+   gxc#::generate-meta-state
+   (@accessor gxc#::generate-meta::t state #t))
+  (declare-type
+   gxc#::generate-meta-state-set!
+   (@mutator gxc#::generate-meta::t state #t))
+  (declare-type
+   gxc#&::generate-meta-state
+   (@accessor gxc#::generate-meta::t state #f))
+  (declare-type
+   gxc#&::generate-meta-state-set!
+   (@mutator gxc#::generate-meta::t state #f))
+  (declare-type gxc#apply-generate-meta__% (@lambda 3 #f))
+  (declare-type gxc#apply-generate-meta__@ (@lambda (1) #f))
+  (declare-type
+   gxc#apply-generate-meta
+   (@kw-lambda (state:) gxc#apply-generate-meta__@))
+  (declare-type
+   gxc#::generate-meta-phi::t
+   (@class gxc#::generate-meta-phi::t
+           (object::t)
+           (object::t t::t)
+           (state)
+           (state)
+           #f
+           #f
+           #t
+           #f
+           #f
+           #f))
+  (declare-type
+   gxc#::generate-meta-phi?
+   (@predicate gxc#::generate-meta-phi::t))
+  (declare-type
+   gxc#make-::generate-meta-phi
+   (@constructor gxc#::generate-meta-phi::t))
+  (declare-type
+   gxc#::generate-meta-phi-state
+   (@accessor gxc#::generate-meta-phi::t state #t))
+  (declare-type
+   gxc#::generate-meta-phi-state-set!
+   (@mutator gxc#::generate-meta-phi::t state #t))
+  (declare-type
+   gxc#&::generate-meta-phi-state
+   (@accessor gxc#::generate-meta-phi::t state #f))
+  (declare-type
+   gxc#&::generate-meta-phi-state-set!
+   (@mutator gxc#::generate-meta-phi::t state #f))
+  (declare-type gxc#apply-generate-meta-phi__% (@lambda 3 #f))
+  (declare-type gxc#apply-generate-meta-phi__@ (@lambda (1) #f))
+  (declare-type
+   gxc#apply-generate-meta-phi
+   (@kw-lambda (state:) gxc#apply-generate-meta-phi__@))
+  (declare-type gxc#collect-bindings-define-values% (@lambda 2 #f))
+  (declare-type gxc#collect-bindings-define-syntax% (@lambda 2 #f))
   (declare-type gxc#lift-modules-module% (@lambda 2 #f))
   (declare-type gxc#current-compile-decls-unsafe? (@lambda 0 #f))
   (declare-type gxc#add-module-binding! (@lambda 2 #f))
@@ -63,55 +327,55 @@ package: gerbil/compiler
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)
     (1 gxc#generate-runtime-temporary__%)))
-  (declare-type gxc#generate-runtime-empty (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-begin% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-begin-foreign% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-begin-annotation% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-declare% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-define-values% (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-empty (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-begin% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-begin-foreign% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-begin-annotation% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-declare% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-define-values% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-check-values (@lambda 3 #f))
   (declare-type gxc#generate-runtime-values-count (@lambda 1 #f))
   (declare-type gxc#generate-runtime-values-ref (@lambda 3 #f))
   (declare-type gxc#generate-runtime-values->list (@lambda 2 #f))
-  (declare-type gxc#generate-runtime-lambda% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-lambda-form (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-lambda% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-lambda-form (@lambda 3 #f))
   (declare-type gxc#generate-runtime-lambda-head (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-case-lambda% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-let-values%__% (@lambda 2 #f))
-  (declare-type gxc#generate-runtime-let-values%__0 (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-case-lambda% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-let-values%__% (@lambda 3 #f))
+  (declare-type gxc#generate-runtime-let-values%__0 (@lambda 2 #f))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda
-    (1 gxc#generate-runtime-let-values%__0)
-    (2 gxc#generate-runtime-let-values%__%)))
+    (2 gxc#generate-runtime-let-values%__0)
+    (3 gxc#generate-runtime-let-values%__%)))
   (declare-type gxc#generate-runtime-let-values-bind (@lambda 2 #f))
-  (declare-type gxc#generate-runtime-letrec-values%__% (@lambda 2 #f))
-  (declare-type gxc#generate-runtime-letrec-values%__0 (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-letrec-values%__% (@lambda 3 #f))
+  (declare-type gxc#generate-runtime-letrec-values%__0 (@lambda 2 #f))
   (declare-type
    gxc#generate-runtime-letrec-values%
    (@case-lambda
-    (1 gxc#generate-runtime-letrec-values%__0)
-    (2 gxc#generate-runtime-letrec-values%__%)))
-  (declare-type gxc#generate-runtime-letrec*-values% (@lambda 1 #f))
+    (2 gxc#generate-runtime-letrec-values%__0)
+    (3 gxc#generate-runtime-letrec-values%__%)))
+  (declare-type gxc#generate-runtime-letrec*-values% (@lambda 2 #f))
   (declare-type gxc#generate-runtime-simple-let? (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-simple-let (@lambda 4 #f))
-  (declare-type gxc#generate-runtime-quote% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-call% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-call-unchecked% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-if% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-ref% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-setq% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-instancep% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-direct-instancep% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-ref% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-setq% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-direct-ref% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-direct-setq% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-unchecked-ref% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-struct-unchecked-setq% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-loader-import% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-quote-syntax% (@lambda 1 #f))
-  (declare-type gxc#generate-runtime-phi-define-runtime% (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-simple-let (@lambda 5 #f))
+  (declare-type gxc#generate-runtime-quote% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-call% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-call-unchecked% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-if% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-instancep% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-instancep% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-direct-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-unchecked-ref% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-struct-unchecked-setq% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-loader-import% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-quote-syntax% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-phi-define-runtime% (@lambda 2 #f))
   (declare-type gxc#generate-meta-begin% (@lambda 2 #f))
   (declare-type gxc#generate-meta-begin-syntax% (@lambda 2 #f))
   (declare-type gxc#generate-meta-module% (@lambda 2 #f))
@@ -129,12 +393,13 @@ package: gerbil/compiler
   (declare-type
    gxc#meta-state::t
    (@class gxc#meta-state::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (src n open blocks)
            (src n open blocks)
            :init!
            #t
+           #f
            #f
            #f
            ((:init! . gxc#meta-state:::init!))))
@@ -164,12 +429,13 @@ package: gerbil/compiler
   (declare-type
    gxc#meta-state-block::t
    (@class gxc#meta-state-block::t
-           ()
-           ()
+           (object::t)
+           (object::t t::t)
            (ctx phi n code)
            (ctx phi n code)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -232,13 +498,7 @@ package: gerbil/compiler
   (declare-type gxc#collect-expression-refs (@lambda 1 #f))
   (declare-type gxc#collect-refs-ref% (@lambda 2 #f))
   (declare-type gxc#collect-refs-setq% (@lambda 2 #f))
-  (declare-type gxc#find-runtime-begin% (@lambda 1 #f))
-  (declare-type gxc#find-lambda-expression-begin% (@lambda 1 #f))
-  (declare-type gxc#find-lambda-expression-begin-annotation% (@lambda 1 #f))
-  (declare-type gxc#find-lambda-expression-let-values% (@lambda 1 #f))
-  (declare-type gxc#count-values-single% (@lambda 1 #f))
-  (declare-type gxc#count-values-begin% (@lambda 1 #f))
-  (declare-type gxc#count-values-begin-annotation% (@lambda 1 #f))
-  (declare-type gxc#count-values-let-values% (@lambda 1 #f))
-  (declare-type gxc#count-values-call% (@lambda 1 #f))
-  (declare-type gxc#count-values-if% (@lambda 1 #f)))
+  (declare-type gxc#find-runtime-begin% (@lambda 2 #f))
+  (declare-type gxc#count-values-single% (@lambda 2 #f))
+  (declare-type gxc#count-values-call% (@lambda 2 #f))
+  (declare-type gxc#count-values-if% (@lambda 2 #f)))

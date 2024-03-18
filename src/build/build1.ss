@@ -11,6 +11,7 @@
     "gerbil/runtime/system.ss"
     "gerbil/runtime/c3.ss"
     "gerbil/runtime/mop.ss"
+    "gerbil/runtime/mop-system-classes.ss"
     "gerbil/runtime/error.ss"
     "gerbil/runtime/interface.ss"
     "gerbil/runtime/hash.ss"
@@ -31,10 +32,12 @@
     "gerbil/expander/compile.ss"
     "gerbil/expander/root.ss"
     "gerbil/expander/stxcase.ss"
+    "gerbil/expander/init.ss"
     "gerbil/expander.ss"))
 
 (def gerbil-modules-compiler
   '("gerbil/compiler/base.ss"
+    "gerbil/compiler/method.ss"
     "gerbil/compiler/compile.ss"
     "gerbil/compiler/optimize-base.ss"
     "gerbil/compiler/optimize-xform.ss"
@@ -48,10 +51,19 @@
     "gerbil/compiler.ss"))
 
 (def gerbil-prelude-core
-  '("gerbil/prelude/core.ss"))
+  '("gerbil/core/runtime.ss"
+    "gerbil/core/expander.ss"
+    "gerbil/core/sugar.ss"
+    "gerbil/core/mop.ss"
+    "gerbil/core/macro-object.ss"
+    "gerbil/core/match.ss"
+    "gerbil/core/more-sugar.ss"
+    "gerbil/core/more-syntax-sugar.ss"
+    "gerbil/core/module-sugar.ss"
+    "gerbil/core.ss"))
 
 (def gerbil-prelude-gambit
-  '("gerbil/prelude/gambit.ss"))
+  '("gerbil/gambit.ss"))
 
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_BUILD_PREFIX")))
@@ -73,7 +85,7 @@
 (displayln "building gerbil in " gerbil-libdir)
 ;; initialize optimizer and preload builtin.ssxi so that we have visibility
 (gxc#optimizer-info-init!)
-(gx#import-module "gerbil/prelude/builtin.ssxi.ss" #t)
+(gx#import-module "gerbil/builtin.ssxi.ss" #t)
 ;; compile runtime
 (compile-group gerbil-modules-runtime)
 ;; compile expander first so that prelude macros have expander visibility

@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; gerbil.expander modules
-prelude: "../prelude/core"
+prelude: "../core"
 package: gerbil/expander
 namespace: gx
 
@@ -9,9 +9,8 @@ namespace: gx
 (import "common" "stx" "core" "top")
 (declare (not safe))
 
-;; required by the module reader to support #lang
-(extern namespace: #f
-  datum-parsing-exception? datum-parsing-exception-filepos)
+(def __module-registry (make-hash-table))
+(def __module-pkg-cache (make-hash-table))
 
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
@@ -137,13 +136,12 @@ namespace: gx
      (else #f))))
 
 (def (core-module->prelude-context ctx)
-  (let (ht (current-expander-module-registry))
-    (cond
-     ((hash-get ht ctx) => values)
-     (else
-      (let (pre (make-prelude-context ctx))
-        (hash-put! ht ctx pre)
-        pre)))))
+  (cond
+   ((hash-get __module-registry ctx))
+   (else
+    (let (pre (make-prelude-context ctx))
+      (hash-put! __module-registry ctx pre)
+      pre))))
 
 (def (core-import-module rpath (reload? #f))
   (def (import-source path)
@@ -182,8 +180,8 @@ namespace: gx
             (delay (eval-syntax* body)))
           (set! (&module-context-code ctx)
             body)
-          (hash-put! (current-expander-module-registry) path ctx)
-          (hash-put! (current-expander-module-registry) id ctx)
+          (hash-put! __module-registry path ctx)
+          (hash-put! __module-registry id ctx)
           ctx))))
 
   (def (import-submodule rpath)
@@ -202,21 +200,19 @@ namespace: gx
             (else ctx))))))
 
   (cond
-   ((and (not reload?) (hash-get (current-expander-module-registry) rpath))
+   ((and (not reload?) (hash-get __module-registry rpath))
     => values)
    ((list? rpath)
     (import-submodule rpath))
    ((core-library-module-path? rpath)
     (let (ctx (core-import-module (core-resolve-library-module-path rpath)
                                   reload?))
-      (hash-put! (current-expander-module-registry) rpath ctx)
+      (hash-put! __module-registry rpath ctx)
       ctx))
    (else
     (let (npath (path-normalize rpath))
       (cond
-       ((and (not reload?)
-             (hash-get (current-expander-module-registry) npath))
-        => values)
+       ((and (not reload?) (hash-get __module-registry npath)))
        (else (import-source npath)))))))
 
 (def (core-read-module path)
@@ -415,8 +411,8 @@ namespace: gx
                  path)))
     (core-resolve-path path (or (stx-source stx-path) rel))))
 
-;; for each path in current-expander-module-library-path look for
-;;  subpath with .ssi (compiled module interface) or .ss
+;; for each path in load-path look for subpath with .ssi
+;; (compiled module interface) or .ss (source)
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
          (spath (substring spath 1 (string-length spath)))
@@ -428,7 +424,7 @@ namespace: gx
                  (map (lambda (ext) (string-append spath ext))
                       '(".ss" ".sld" ".scm"))
                  [spath])))
-    (let lp ((rest (current-expander-module-library-path)))
+    (let lp ((rest (load-path)))
       (match rest
         ([dir . rest]
          (def (resolve ssi srcs)
@@ -498,33 +494,23 @@ namespace: gx
    (else #f)))
 
 (def (core-library-package-plist dir (exists? #f))
-  (let (cache (core-library-package-cache))
-    (cond
-     ((hash-get cache dir)
-      => values)
-     (else
-      (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
-             (plist
-              (if (or exists? (file-exists? gerbil.pkg))
-                (let (e (call-with-input-source-file gerbil.pkg read))
-                  (cond
-                   ((eof-object? e) [])
-                   ((list? e) e)
-                   (else
-                    (raise-syntax-error #f "Malformed package info; unexpected datum"
-                                        gerbil.pkg e))))
-                [])))
-        (hash-put! cache dir plist)
-        plist)))))
-
-(def (core-library-package-cache)
   (cond
-   ((current-expander-module-library-package-cache)
+   ((hash-get __module-pkg-cache dir)
     => values)
    (else
-    (let (cache (make-hash-table))
-      (current-expander-module-library-package-cache cache)
-      cache))))
+    (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
+           (plist
+            (if (or exists? (file-exists? gerbil.pkg))
+              (let (e (call-with-input-source-file gerbil.pkg read))
+                (cond
+                 ((eof-object? e) [])
+                 ((list? e) e)
+                 (else
+                  (raise-syntax-error #f "Malformed package info; unexpected datum"
+                                      gerbil.pkg e))))
+              [])))
+      (hash-put! __module-pkg-cache dir plist)
+      plist))))
 
 (def (core-library-module-path? stx)
   (core-special-module-path? stx #\:))
@@ -593,7 +579,7 @@ namespace: gx
            (bind-id (stx-e id))
            (mod-id
             (if (module-context? super)
-              (make-symbol (expander-context-id super) "$" bind-id)
+              (make-symbol (expander-context-id super) "~" bind-id)
               bind-id))
            (ns
             (symbol->string mod-id))
@@ -607,27 +593,45 @@ namespace: gx
               bind-id)))
       (make-module-context mod-id super ns path)))
 
+  (def (valid-module-id? id)
+    (let* ((str (symbol->string id))
+           (len (string-length str)))
+      (and (fx>= len 1)
+           (let loop ((index (fx- (string-length str) 1)))
+             (if (fx>= index 0)
+               (let (c (string-ref str index))
+                 (and (or (and (char>=? c #\a) (char<=? c #\z))
+                          (and (char>=? c #\A) (char<=? c #\Z))
+                          (and (char>=? c #\0) (char<=? c #\9))
+                          (char=? c #\_)
+                          (char=? c #\-))
+                      (loop (fx- index 1))))
+               #t)))))
+
   (core-syntax-case stx ()
     ((_ id . body)
      (and (identifier? id)
           (stx-list? body))
-     (let* ((ctx (make-context id))
-            (body
-             (core-expand-module-begin body ctx))
-            (body
-             (core-quote-syntax
-              (core-cons '%#begin body)
-              (stx-source stx))))
-       (set! (&module-context-e ctx)
-         (delay (eval-syntax* body)))
-       (set! (&module-context-code ctx)
-         body)
-       (core-bind-syntax! id ctx)
-       (core-quote-syntax
-        (core-list '%#module
-          (core-quote-syntax id)
-          body)
-        (stx-source stx))))))
+     (if (valid-module-id? (stx-e #'id))
+       (let* ((ctx (make-context id))
+              (body
+               (core-expand-module-begin body ctx))
+              (body
+               (core-quote-syntax
+                (core-cons '%#begin body)
+                (stx-source stx))))
+         (set! (&module-context-e ctx)
+           (delay (eval-syntax* body)))
+         (set! (&module-context-code ctx)
+           body)
+         (core-bind-syntax! id ctx)
+         (core-quote-syntax
+          (core-list '%#module
+                     (core-quote-syntax id)
+                     body)
+          (stx-source stx)))
+       (raise-syntax-error #f "invalid module id; allowed characters are A-Z,a-z,0-9,_,-"
+                           stx #'id)))))
 
 (def (core-expand-module-begin body ctx)
   (parameterize ((current-expander-context ctx)

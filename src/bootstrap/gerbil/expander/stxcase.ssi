@@ -29,7 +29,7 @@ namespace: gx
          (%#define-runtime &syntax-pattern-e-set! gx#&syntax-pattern-e-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/expander/stxcase__1")))
+                           (%#quote "gerbil/expander/stxcase~1")))
                   (%#define-syntax syntax-pattern |gx[:0:]#syntax-pattern|))
          (%#define-runtime
           syntax-pattern::apply-macro-expander
@@ -55,4 +55,4 @@ namespace: gx
           syntax-check-splice-targets
           gx#syntax-check-splice-targets)
          (%#define-runtime syntax-split-splice gx#syntax-split-splice))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/stxcase__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/stxcase~0"))

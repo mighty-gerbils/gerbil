@@ -1,24 +1,24 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Testing the c3 linearization algorithm
-;;prelude: "../prelude/core"
+;;prelude: "../core"
 
 (export c3-test)
 
 (import
   ;;  :gerbil/runtime/c3
-  (only-in :gerbil/runtime/mop class-type-slot-vector)
+  :gerbil/runtime/mop
+  (only-in :gerbil/runtime/util append-reverse-until)
   (only-in :std/misc/hash hash-ensure-ref)
   (only-in :std/sugar defrule)
   (only-in :std/test test-suite test-case check check-exception)
   (only-in :std/values first-value))
 
-(define gerbil/runtime 'gerbil/runtime)
-(define :gerbil/core ':gerbil/core)
+;;(define gerbil/runtime 'gerbil/runtime)
+;;(define :gerbil/core ':gerbil/core)
 ;;(include "../../gerbil/runtime/util.ss")
 ;;(include "../../gerbil/runtime/c3.ss")
-
-(extern namespace: #f append-reverse-until)
+;;(extern namespace: #f append-reverse-until)
 
 (module <tsi>
   (export #t)
@@ -171,7 +171,7 @@
       (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
-             => my-precedence-lists)
+             => (map (lambda (lst) (append lst '(object t))) my-precedence-lists))
       ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
-      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O)) ;; FIXED!
-      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O))))) ;; same!
+      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O object t)) ;; FIXED!
+      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O object t))))) ;; same!

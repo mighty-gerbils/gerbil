@@ -3,8 +3,10 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/compiler/base
+          :gerbil/compiler/method
           :gerbil/compiler/compile
           :gerbil/compiler/optimize-base
           :gerbil/compiler/optimize-xform
@@ -27,7 +29,16 @@ namespace: gxc
           optimizer-import-ssxi-by-id
           gxc#optimizer-import-ssxi-by-id)
          (%#define-runtime optimize-source gxc#optimize-source)
-         (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
+         (%#define-runtime ::generate-ssxi::t gxc#::generate-ssxi::t)
+         (%#define-runtime ::generate-ssxi? gxc#::generate-ssxi?)
+         (%#define-runtime make-::generate-ssxi gxc#make-::generate-ssxi)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref load-module)
+                           (%#quote "gerbil/compiler/optimize~1")))
+                  (%#define-syntax ::generate-ssxi |gxc[:0:]#::generate-ssxi|))
+         (%#define-runtime
+          ::generate-ssxi-bind-methods!
+          gxc#::generate-ssxi-bind-methods!)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
          (%#define-runtime
           generate-ssxi-begin-syntax%
@@ -49,4 +60,4 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary::typedecl
           gxc#!kw-lambda-primary::typedecl))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize~0"))

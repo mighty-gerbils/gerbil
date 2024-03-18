@@ -3,16 +3,12 @@ package: gerbil/compiler
 namespace: gxc
 
 (%#begin (%#import
+          :gerbil/core/expander
           :gerbil/expander
           :gerbil/runtime/c3
           :gerbil/compiler/base
-          :gerbil/compiler/compile
-          (in: :gerbil/core <syntax-case>)
-          (in: :gerbil/core <syntax-sugar>))
-         (%#export
-          #t
-          (import: (in: :gerbil/core <syntax-case>))
-          (import: (in: :gerbil/core <syntax-sugar>)))
+          :gerbil/compiler/compile)
+         (%#export #t (import: :gerbil/core/expander))
          (%#define-runtime
           current-compile-optimizer-info
           gxc#current-compile-optimizer-info)
@@ -51,7 +47,7 @@ namespace: gxc
           gxc#&optimizer-info-methods-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-base__1")))
+                           (%#quote "gerbil/compiler/optimize-base~1")))
                   (%#define-syntax optimizer-info |gxc[:0:]#optimizer-info|))
          (%#define-runtime optimizer-info:::init! gxc#optimizer-info:::init!)
          (%#define-runtime !type::t gxc#!type::t)
@@ -88,6 +84,7 @@ namespace: gxc
          (%#define-runtime !class-constructor gxc#!class-constructor)
          (%#define-runtime !class-struct? gxc#!class-struct?)
          (%#define-runtime !class-final? gxc#!class-final?)
+         (%#define-runtime !class-system? gxc#!class-system?)
          (%#define-runtime !class-metaclass gxc#!class-metaclass)
          (%#define-runtime !class-methods gxc#!class-methods)
          (%#define-runtime !class-id gxc#!class-id)
@@ -100,6 +97,7 @@ namespace: gxc
          (%#define-runtime !class-constructor-set! gxc#!class-constructor-set!)
          (%#define-runtime !class-struct?-set! gxc#!class-struct?-set!)
          (%#define-runtime !class-final?-set! gxc#!class-final?-set!)
+         (%#define-runtime !class-system?-set! gxc#!class-system?-set!)
          (%#define-runtime !class-metaclass-set! gxc#!class-metaclass-set!)
          (%#define-runtime !class-methods-set! gxc#!class-methods-set!)
          (%#define-runtime !class-id-set! gxc#!class-id-set!)
@@ -110,6 +108,7 @@ namespace: gxc
          (%#define-runtime &!class-constructor gxc#&!class-constructor)
          (%#define-runtime &!class-struct? gxc#&!class-struct?)
          (%#define-runtime &!class-final? gxc#&!class-final?)
+         (%#define-runtime &!class-system? gxc#&!class-system?)
          (%#define-runtime &!class-metaclass gxc#&!class-metaclass)
          (%#define-runtime &!class-methods gxc#&!class-methods)
          (%#define-runtime &!class-id gxc#&!class-id)
@@ -124,6 +123,7 @@ namespace: gxc
           gxc#&!class-constructor-set!)
          (%#define-runtime &!class-struct?-set! gxc#&!class-struct?-set!)
          (%#define-runtime &!class-final?-set! gxc#&!class-final?-set!)
+         (%#define-runtime &!class-system?-set! gxc#&!class-system?-set!)
          (%#define-runtime &!class-metaclass-set! gxc#&!class-metaclass-set!)
          (%#define-runtime &!class-methods-set! gxc#&!class-methods-set!)
          (%#define-runtime &!class-id-set! gxc#&!class-id-set!)
@@ -466,4 +466,4 @@ namespace: gxc
           optimizer-top-level-method?
           gxc#optimizer-top-level-method?)
          (%#define-runtime identifier-symbol gxc#identifier-symbol))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-base~0"))

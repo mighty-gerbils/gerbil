@@ -179,7 +179,7 @@
 (def FCGI-UNKNOWN-ROLE     3)
 
 (def (fcgi-read-record port)
-  (let/esc return
+  (let/cc return
     (let* ((head (make-u8vector 8))
            (rd   (read-subu8vector head 0 8 port))
            (_    (when (zero? rd)
