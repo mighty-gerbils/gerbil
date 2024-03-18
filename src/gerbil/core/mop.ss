@@ -7,8 +7,8 @@ package: gerbil/core
 
 (import "runtime" "sugar"
         (phi: +1 "runtime" "expander" "sugar"))
-(export  (import: <MOP:1> <MOP:4>)
-         (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4>)))
+(export  (import: <MOP:1> <MOP:4> <MOP:5>)
+         (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4> <MOP:5>)))
 
 (module <MOP:1>
   (export #t (phi: +1 module-type-id make-class-type-id))
@@ -205,6 +205,9 @@ package: gerbil/core
      (final? ;; Boolean
       ;; #t if the class is final
       !class-type-final? !class-type-final?-set!)
+     (system? ;; Boolean
+      ;; #t if the class is a system class
+      !class-type-system? !class-type-system?-set!)
      (metaclass ;; OrFalse identifier
       ;; the metaclass identifier, if any
       !class-type-metaclass !class-type-metaclass-set!)
@@ -262,7 +265,7 @@ package: gerbil/core
      id: 'gerbil.core#class-type-info::t
      name: 'class-type-info
      super: []
-     slots: '(id name super slots struct? final?
+     slots: '(id name super slots struct? final? system?
                  metaclass
                  constructor-method
                  type-descriptor constructor predicate
@@ -270,6 +273,7 @@ package: gerbil/core
                  unchecked-accessors unchecked-mutators)
      struct?: #f
      final?: #f
+     system?: #f
      constructor-method: #f
      type-descriptor: (quote-syntax class-type-info::t)
      constructor: (quote-syntax make-class-type-info)
@@ -281,6 +285,7 @@ package: gerbil/core
       ['slots :: (quote-syntax !class-type-slots)]
       ['struct? :: (quote-syntax !class-type-struct?)]
       ['final? :: (quote-syntax !class-type-final?)]
+      ['system? :: (quote-syntax !class-type-system?)]
       ['metaclass :: (quote-syntax !class-type-metaclass)]
       ['constructor-method :: (quote-syntax !class-type-constructor-method)]
       ['type-descriptor :: (quote-syntax !class-type-descriptor)]
@@ -297,6 +302,7 @@ package: gerbil/core
       ['slots :: (quote-syntax !class-type-slots-set!)]
       ['struct? :: (quote-syntax !class-type-struct?-set!)]
       ['final? :: (quote-syntax !class-type-final?-set!)]
+      ['system? :: (quote-syntax !class-type-system?-set!)]
       ['metaclass :: (quote-syntax !class-type-metaclass-set!)]
       ['constructor-method :: (quote-syntax !class-type-constructor-method-set!)]
       ['type-descriptor :: (quote-syntax !class-type-descriptor-set!)]
@@ -313,6 +319,7 @@ package: gerbil/core
       ['slots :: (quote-syntax &!class-type-slots)]
       ['struct? :: (quote-syntax &!class-type-struct?)]
       ['final? :: (quote-syntax &!class-type-final?)]
+      ['system? :: (quote-syntax &!class-type-system?)]
       ['metaclass :: (quote-syntax !class-type-metaclass)]
       ['constructor-method :: (quote-syntax &!class-type-constructor-method)]
       ['type-descriptor :: (quote-syntax &!class-type-descriptor)]
@@ -329,6 +336,7 @@ package: gerbil/core
       ['slots :: (quote-syntax &!class-type-slots-set!)]
       ['struct? :: (quote-syntax &!class-type-struct?-set!)]
       ['final? :: (quote-syntax &!class-type-final?-set!)]
+      ['system? :: (quote-syntax &!class-type-system?-set!)]
       ['metaclass :: (quote-syntax &!class-type-metaclass-set!)]
       ['constructor-method :: (quote-syntax &!class-type-constructor-method-set!)]
       ['type-descriptor :: (quote-syntax &!class-type-descriptor-set!)]
@@ -668,4 +676,112 @@ package: gerbil/core
     ((recur obj id path ... last val)
      (recur (@ obj id path ...) last val))))
 
-(import <MOP:1> <MOP:4> (phi: +1 <MOP:1> <MOP:2> <MOP:3> <MOP:4>))
+(module <MOP:5>
+  (import (phi: +1 <MOP:2>))
+  (export #t)
+  (defsyntax (defsystem-class-info stx)
+    (syntax-case stx ()
+      ((_ id type (super ...) predicate)
+       (let (klass (eval-syntax #'type))
+         (with-syntax ((type-id (class-type-id klass))
+                       (type-name (class-type-name klass)))
+           #'(defsyntax id
+               (make-class-type-info
+                id: 'type-id
+                name: 'type-name
+                super: [(quote-syntax super) ...]
+                slots: []
+                system?: #t
+                type-descriptor: (quote-syntax type)
+                predicate: (quote-syntax predicate)
+                accessors: []
+                mutators: []
+                unchecked-accessors: []
+                unchecked-mutators: [])))))))
+
+  (defsystem-class-info :t t::t () true)
+
+  ;; NOTE: this must match gerbil/runtime/mop-system-classes
+  (defsystem-class-info :immediate immediate::t () immediate?)
+  (defsystem-class-info :char char::t (immediate::t) char?)
+  (defsystem-class-info :boolean boolean::t (immediate::t) boolean?)
+
+  (defsystem-class-info :atom atom::t (immediate::t) atom?)
+  (defsystem-class-info :void void::t (atom::t) void?)
+  (defsystem-class-info :eof eof::t (atom::t) eof-object?)
+  (defsystem-class-info :true true::t (boolean::t atom::t) true?)
+  (defsystem-class-info :false false::t (boolean::t atom::t) not)
+
+  (defsystem-class-info :special special::t (atom::t) special?)
+
+  (defsystem-class-info :number number::t () number?)
+  (defsystem-class-info :real real::t (number::t) real?)
+  (defsystem-class-info :integer integer::t (real::t) integer?)
+  (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
+  (defsystem-class-info :bignum  bignum::t (integer::t) ##bignum?)
+  (defsystem-class-info :ratnum ratnum::t (real::t) ##ratnum?)
+  (defsystem-class-info :flonum flonum::t (real::t) flonum?)
+  (defsystem-class-info :cpxnum cpxnum::t (number::t) ##cpxnum?)
+
+  (defsystem-class-info :symbolic symbolic::t () symbolic?)
+  (defsystem-class-info :symbol symbol::t (symbolic::t) symbol?)
+  (defsystem-class-info :keyword keyword::t (symbolic::t) keyword?)
+
+  (defsystem-class-info :list list::t () list?)
+  (defsystem-class-info :pair pair::t (list::t) pair?)
+  (defsystem-class-info :null null::t (list::t atom::t) null?)
+
+  (defsystem-class-info :sequence sequence::t () sequence?)
+  (defsystem-class-info :vector vector::t (sequence::t) vector?)
+  (defsystem-class-info :string string::t (sequence::t) string?)
+  (defsystem-class-info :hvector hvector::t (sequence::t) hvector?)
+  (defsystem-class-info :u8vector u8vector::t (hvector::t) u8vector?)
+  (defsystem-class-info :s8vector s8vector::t (hvector::t) s8vector?)
+  (defsystem-class-info :u16vector u16vector::t (hvector::t) u16vector?)
+  (defsystem-class-info :s16vector s16vector::t (hvector::t) s16vector?)
+  (defsystem-class-info :u32vector u32vector::t (hvector::t) u32vector?)
+  (defsystem-class-info :s32vector s32vector::t (hvector::t) s32vector?)
+  (defsystem-class-info :u64vector u64vector::t (hvector::t) u64vector?)
+  (defsystem-class-info :s64vector s64vector::t (hvector::t) s64vector?)
+  (defsystem-class-info :f32vector f32vector::t (hvector::t) f32vector?)
+  (defsystem-class-info :f64vector f64vector::t (hvector::t) f64vector?)
+
+  (defsystem-class-info :values values::t () ##values?)
+  (defsystem-class-info :box box::t () box?)
+  (defsystem-class-info :frame frame::t () ##frame?)
+  (defsystem-class-info :continuation continuation::t () continuation?)
+  (defsystem-class-info :promise promise::t () promise?)
+  (defsystem-class-info :weak weak::t () weak?)
+  (defsystem-class-info :foreign foreign::t () foreign?)
+
+  (defsystem-class-info :procedure procedure::t () procedure?)
+
+  (defsystem-class-info :time time::t () time?)
+  (defsystem-class-info :thread thread::t () thread?)
+  (defsystem-class-info :thread-group thread-group::t () thread-group?)
+  (defsystem-class-info :mutex mutex::t () mutex?)
+  (defsystem-class-info :condvar condvar::t () condvar?)
+  (defsystem-class-info :port port::t () port?)
+  (defsystem-class-info :object-port object-port::t (port::t) object-port?)
+  (defsystem-class-info :character-port character-port::t (object-port::t) character-port?)
+  (defsystem-class-info :byte-port byte-port::t (character-port::t) byte-port?)
+  (defsystem-class-info :device-port device-port::t (byte-port::t) device-port?)
+  (defsystem-class-info :vector-port vector-port::t (object-port::t) vector-port?)
+  (defsystem-class-info :string-port string-port::t (character-port::t) string-port?)
+  (defsystem-class-info :u8vector-port u8vector-port::t (byte-port::t) u8vector-port?)
+  (defsystem-class-info :raw-device-port raw-device-port::t (port::t) raw-device-port?)
+  (defsystem-class-info :tcp-server-port tcp-server-port::t (object-port::t) tcp-server-port?)
+  (defsystem-class-info :udp-port udp-port::t (object-port::t) udp-port?)
+  (defsystem-class-info :directory-port directory-port::t (object-port::t) directory-port?)
+  (defsystem-class-info :event-queue-port event-queue-port::t (object-port::t) event-queue-port?)
+  (defsystem-class-info :table table::t () table?)
+  (defsystem-class-info :readenv readenv::t () readenv)
+  (defsystem-class-info :writeenv writeenv::t () writeenv?)
+  (defsystem-class-info :readtable readtable::t () readtable?)
+  (defsystem-class-info :processor processor::t () processor?)
+  (defsystem-class-info :vm vm::t () vm?)
+  (defsystem-class-info :file-info file-info::t () file-info?)
+  (defsystem-class-info :socket-info socket-info::t () socket-info?)
+  (defsystem-class-info :address-info address-info::t () address-info?))
+
+(import <MOP:1> <MOP:4> <MOP:5> (phi: +1 <MOP:1> <MOP:2> <MOP:3> <MOP:4> <MOP:5>))

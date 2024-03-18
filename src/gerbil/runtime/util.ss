@@ -468,6 +468,8 @@ namespace: #f
      (symbol->string x))
     ((keyword? x)
      (keyword->string x))
+    ((number? x)
+     (number->string x))
     (else
      (call-with-output-string [] (cut display-as-string x <>)))))
   (args

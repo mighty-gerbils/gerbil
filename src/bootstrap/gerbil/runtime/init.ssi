@@ -10,6 +10,7 @@ namespace: #f
           :gerbil/runtime/loader
           :gerbil/runtime/control
           :gerbil/runtime/mop
+          :gerbil/runtime/mop-system-classes
           :gerbil/runtime/error
           :gerbil/runtime/interface
           :gerbil/runtime/hash

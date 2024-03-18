@@ -13,6 +13,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::collect-mutators? (@predicate gxc#::collect-mutators::t))
   (declare-type
@@ -30,6 +31,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::collect-methods? (@predicate gxc#::collect-methods::t))
   (declare-type
@@ -46,6 +48,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type gxc#::expression-subst? (@predicate gxc#::expression-subst::t))
@@ -92,6 +95,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::expression-subst*?
@@ -127,6 +131,7 @@ package: gerbil/compiler
            #f
            #f
            #f
+           #f
            #f))
   (declare-type gxc#::find-expression? (@predicate gxc#::find-expression::t))
   (declare-type
@@ -142,6 +147,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type gxc#::find-var-refs? (@predicate gxc#::find-var-refs::t))
@@ -173,6 +179,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type

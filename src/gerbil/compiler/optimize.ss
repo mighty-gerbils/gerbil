@@ -61,6 +61,7 @@ namespace: gxc
                   gerbil/runtime/system
                   gerbil/runtime/c3
                   gerbil/runtime/mop
+                  gerbil/runtime/mop-system-classes
                   gerbil/runtime/error
                   gerbil/runtime/interface
                   gerbil/runtime/hash
@@ -232,8 +233,8 @@ namespace: gxc
 ;; MOP
 (defmethod {typedecl !class}
   (lambda (self)
-    (with ((!class id super precendence-list slots fields constructor struct? final? metaclass methods) self)
-      ['@class id super precendence-list slots fields constructor struct? final? metaclass (and methods (hash->list methods))])))
+    (with ((!class id super precendence-list slots fields constructor struct? final? system? metaclass methods) self)
+      ['@class id super precendence-list slots fields constructor struct? final? system? metaclass (and methods (hash->list methods))])))
 
 (defmethod {typedecl !predicate}
   (lambda (self)

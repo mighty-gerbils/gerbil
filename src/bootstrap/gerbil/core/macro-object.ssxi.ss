@@ -13,6 +13,7 @@ package: gerbil/core
            #f
            #f
            #f
+           #f
            ((apply-macro-expander
              .
              gerbil/core/macro-object#macro-object::apply-macro-expander))))

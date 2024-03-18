@@ -15,6 +15,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type
    gxc#::generate-method-specializers?
@@ -33,6 +34,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type
@@ -92,6 +94,7 @@ package: gerbil/compiler
            #f
            #f
            #t
+           #f
            #f
            #f))
   (declare-type

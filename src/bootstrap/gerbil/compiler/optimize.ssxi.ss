@@ -21,6 +21,7 @@ package: gerbil/compiler
            #f
            #t
            #f
+           #f
            #f))
   (declare-type gxc#::generate-ssxi? (@predicate gxc#::generate-ssxi::t))
   (declare-type gxc#make-::generate-ssxi (@constructor gxc#::generate-ssxi::t))

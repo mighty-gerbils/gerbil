@@ -13,6 +13,7 @@ package: gerbil/compiler
            #t
            #f
            #f
+           #f
            ((:init! . gxc#symbol-table:::init!))))
   (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))
   (declare-type gxc#make-symbol-table (@constructor gxc#symbol-table::t))

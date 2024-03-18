@@ -14,14 +14,14 @@ package: gerbil/compiler
   (declare-type gxc#identity-method (@lambda 2 #f))
   (declare-type
    gxc#::void-expression::t
-   (@class gxc#::void-expression::t () () () () #f #f #f #f #f))
+   (@class gxc#::void-expression::t () () () () #f #f #f #f #f #f))
   (declare-type gxc#::void-expression? (@predicate gxc#::void-expression::t))
   (declare-type
    gxc#make-::void-expression
    (@constructor gxc#::void-expression::t))
   (declare-type
    gxc#::void-special-form::t
-   (@class gxc#::void-special-form::t () () () () #f #f #f #f #f))
+   (@class gxc#::void-special-form::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::void-special-form?
    (@predicate gxc#::void-special-form::t))
@@ -39,19 +39,20 @@ package: gerbil/compiler
            #f
            #f
            #f
+           #f
            #f))
   (declare-type gxc#::void? (@predicate gxc#::void::t))
   (declare-type gxc#make-::void (@constructor gxc#::void::t))
   (declare-type
    gxc#::false-expression::t
-   (@class gxc#::false-expression::t () () () () #f #f #f #f #f))
+   (@class gxc#::false-expression::t () () () () #f #f #f #f #f #f))
   (declare-type gxc#::false-expression? (@predicate gxc#::false-expression::t))
   (declare-type
    gxc#make-::false-expression
    (@constructor gxc#::false-expression::t))
   (declare-type
    gxc#::false-special-form::t
-   (@class gxc#::false-special-form::t () () () () #f #f #f #f #f))
+   (@class gxc#::false-special-form::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::false-special-form?
    (@predicate gxc#::false-special-form::t))
@@ -69,12 +70,13 @@ package: gerbil/compiler
            #f
            #f
            #f
+           #f
            #f))
   (declare-type gxc#::false? (@predicate gxc#::false::t))
   (declare-type gxc#make-::false (@constructor gxc#::false::t))
   (declare-type
    gxc#::identity-expression::t
-   (@class gxc#::identity-expression::t () () () () #f #f #f #f #f))
+   (@class gxc#::identity-expression::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::identity-expression?
    (@predicate gxc#::identity-expression::t))
@@ -83,7 +85,7 @@ package: gerbil/compiler
    (@constructor gxc#::identity-expression::t))
   (declare-type
    gxc#::identity-special-form::t
-   (@class gxc#::identity-special-form::t () () () () #f #f #f #f #f))
+   (@class gxc#::identity-special-form::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::identity-special-form?
    (@predicate gxc#::identity-special-form::t))
@@ -101,12 +103,13 @@ package: gerbil/compiler
            #f
            #f
            #f
+           #f
            #f))
   (declare-type gxc#::identity? (@predicate gxc#::identity::t))
   (declare-type gxc#make-::identity (@constructor gxc#::identity::t))
   (declare-type
    gxc#::basic-xform-expression::t
-   (@class gxc#::basic-xform-expression::t () () () () #f #f #f #f #f))
+   (@class gxc#::basic-xform-expression::t () () () () #f #f #f #f #f #f))
   (declare-type
    gxc#::basic-xform-expression?
    (@predicate gxc#::basic-xform-expression::t))
@@ -123,6 +126,7 @@ package: gerbil/compiler
             gxc#::identity-expression::t)
            ()
            ()
+           #f
            #f
            #f
            #f

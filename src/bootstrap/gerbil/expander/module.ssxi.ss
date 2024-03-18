@@ -13,6 +13,7 @@ package: gerbil/expander
            #t
            #t
            #f
+           #f
            #f))
   (declare-type gx#module-import? (@predicate gx#module-import::t))
   (declare-type gx#make-module-import (@constructor gx#module-import::t))
@@ -66,6 +67,7 @@ package: gerbil/expander
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#module-export? (@predicate gx#module-export::t))
@@ -129,6 +131,7 @@ package: gerbil/expander
            #t
            #t
            #f
+           #f
            #f))
   (declare-type gx#import-set? (@predicate gx#import-set::t))
   (declare-type gx#make-import-set (@constructor gx#import-set::t))
@@ -162,6 +165,7 @@ package: gerbil/expander
            #f
            #t
            #t
+           #f
            #f
            #f))
   (declare-type gx#export-set? (@predicate gx#export-set::t))
@@ -197,8 +201,11 @@ package: gerbil/expander
            #f
            #f
            #f
-           ((apply-import-expander . gx#import-expander::apply-import-expander)
-            (:init! . gx#import-expander:::init!))))
+           #f
+           ((:init! . gx#import-expander:::init!)
+            (apply-import-expander
+             .
+             gx#import-expander::apply-import-expander))))
   (declare-type gx#import-expander? (@predicate gx#import-expander::t))
   (declare-type gx#make-import-expander (@constructor gx#import-expander::t))
   (declare-type
@@ -241,6 +248,7 @@ package: gerbil/expander
            ()
            (e context phi)
            :init!
+           #f
            #f
            #f
            #f
@@ -294,6 +302,7 @@ package: gerbil/expander
            ()
            (e context phi)
            :init!
+           #f
            #f
            #f
            #f

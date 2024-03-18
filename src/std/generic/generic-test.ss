@@ -13,10 +13,10 @@
       (check (generic-dispatch my-generic 1 2) => #f))
 
     (generic-bind! my-generic
-                   '((number t) (number t))
+                   [number::t number::t]
                    (lambda (a b) ['number+ a b]))
     (generic-bind! my-generic
-                   '((string t) (string t))
+                   [string::t string::t]
                    (lambda (a b) ['string+ a b]))
 
     (test-case "test multimethod dispatch"
@@ -24,16 +24,15 @@
       (check (generic-dispatch my-generic "a" "b") => '(string+ "a" "b")))
 
     (generic-bind! my-generic
-                   '((fixnum number t) (fixnum number t))
-                     (lambda (a b) ['fixnum+ a b]))
+                   [fixnum::t fixnum::t]
+                   (lambda (a b) ['fixnum+ a b]))
     (test-case "test specialization"
       (check (generic-dispatch my-generic 1 2) => '(fixnum+ 1 2))
       (check (generic-dispatch my-generic 1.0 2.0) => '(number+ 1.0 2.0)))
 
     (defstruct A (x))
     (generic-bind! my-generic
-                   [(type-precedence-list A::t)
-                    (type-precedence-list A::t)]
+                   [A::t A::t]
                    (lambda (a b) ['A+ (A-x a) (A-x b)]))
     (test-case "test user type dispatch"
       (check (generic-dispatch my-generic (make-A 1) (make-A 2)) => '(A+ 1 2)))
@@ -45,16 +44,16 @@
     (test-case "test default dispatch"
       (check (my-add 1 2) => #f))
 
-    (defmethod (my-add (a <number>) (b <number>))
+    (defmethod (my-add (a :number) (b :number))
       ['number+ a b])
-    (defmethod (my-add (a <string>) (b <string>))
+    (defmethod (my-add (a :string) (b :string))
       ['string+ a b])
 
     (test-case "test multimethod dispatch"
       (check (my-add 1 2) => '(number+ 1 2))
       (check (my-add "a" "b") => '(string+ "a" "b")))
 
-    (defmethod (my-add (a <fixnum>) (b <fixnum>))
+    (defmethod (my-add (a :fixnum) (b :fixnum))
       ['fixnum+ a b])
 
     (test-case "test specialization"

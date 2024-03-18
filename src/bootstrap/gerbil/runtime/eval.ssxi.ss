@@ -4,7 +4,17 @@ package: gerbil/runtime
 (begin
   (declare-type
    __syntax::t
-   (@class gerbil/runtime/eval#__syntax::t () () (e id) (e id) #f #t #f #f #f))
+   (@class gerbil/runtime/eval#__syntax::t
+           ()
+           ()
+           (e id)
+           (e id)
+           #f
+           #t
+           #f
+           #f
+           #f
+           #f))
   (declare-type __syntax? (@predicate __syntax::t))
   (declare-type make-__syntax (@constructor __syntax::t))
   (declare-type __syntax-e (@accessor __syntax::t e #t))
@@ -24,6 +34,7 @@ package: gerbil/runtime
            (e id)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -46,6 +57,7 @@ package: gerbil/runtime
            (e id)
            #f
            #t
+           #f
            #f
            #f
            #f))
@@ -72,6 +84,7 @@ package: gerbil/runtime
            (e id)
            #f
            #t
+           #f
            #f
            #f
            #f))

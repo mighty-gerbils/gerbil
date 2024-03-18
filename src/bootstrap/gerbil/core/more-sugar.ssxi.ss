@@ -13,6 +13,7 @@ package: gerbil/core
            #f
            #f
            #f
+           #f
            #f))
   (declare-type
    |gerbil/core/more-sugar[1]#setq-macro?|
@@ -39,6 +40,7 @@ package: gerbil/core
            (gerbil/core/macro-object#macro-object::t)
            ()
            (macro)
+           #f
            #f
            #f
            #f

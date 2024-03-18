@@ -66,6 +66,7 @@ namespace: gxc
     "gerbil/runtime/system"
     "gerbil/runtime/c3"
     "gerbil/runtime/mop"
+    "gerbil/runtime/mop-system-classes"
     "gerbil/runtime/error"
     "gerbil/runtime/interface"
     "gerbil/runtime/hash"

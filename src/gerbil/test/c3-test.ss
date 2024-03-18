@@ -171,7 +171,7 @@
       (check (class-type-slot-vector Y::t) => #(__class O E D B J2 A J3 C J1 Y)))
     (test-case "class inheritance"
       (check (map (lambda (t) (map ##type-name (class-precedence-list t))) my-descriptors)
-             => my-precedence-lists)
+             => (map (lambda (lst) (append lst '(t))) my-precedence-lists))
       ;; Legacy implementation: BAD. We want everything to match the precedence-list (or its reverse)
-      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O)) ;; FIXED!
-      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O))))) ;; same!
+      (check (map ##type-name (class-precedence-list Z::t)) => '(Z K1 K2 K3 D A B C E O t)) ;; FIXED!
+      (check (map ##type-name (class-precedence-list Y::t)) => '(Y J1 C J3 A J2 B D E O t))))) ;; same!

@@ -13,6 +13,7 @@ package: gerbil/core
            #f
            #f
            #f
+           #f
            #f))
   (declare-type
    |gerbil/core/match[1]#match-macro?|

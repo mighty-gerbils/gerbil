@@ -3,7 +3,6 @@
 ;;; heap debugging utilities
 
 (import :gerbil/gambit
-        :std/generic
         :std/sort)
 (export memory-usage heap-type-stats dump-heap-stats! walk-heap!
         count-still still-objects still-objects/refcount)
@@ -25,7 +24,7 @@
          (types (make-hash-table-eq)))
     (hash-for-each
      (lambda (obj _)
-       (let (t (type-of obj))
+       (let (t (##type-id (class-of obj)))
          (hash-update! types t 1+ 0)))
      live)
     (values (hash-length live) types)))
