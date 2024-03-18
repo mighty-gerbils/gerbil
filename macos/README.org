@@ -1,10 +1,37 @@
-#TITLE: MacOS: Gerbil has an Apple
+#+TITLE: MacOS: Gerbil has an Apple
+#+EXPORT_FILE_NAME: ../doc/guide/macos.md
+#+OPTIONS: toc:nil
+
+MacOS is well supported by gerbil.
+
+  - If you've got [[https://brew.sh/][Homebrew]] you can use the [[#homebrew-formula-and-binaries][Tap and/or Formula]].
+  - If you've got some time to spare it can [[#raw-build][be built]] easily.
+    
+Because there are many different versions and processors your
+configuration may be slightly different than expected. If anything at
+all seems out of the ordinary please [[https://github.com/mighty-gerbils/gerbil/issues][file an issue]] ot get in touch
+another way and we'll be on top of it.
+
+
+* Table of Contents :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 3 :ignore (this)
+:END:
+
+:CONTENTS:
+- [[#homebrew-formula-and-binaries][Homebrew Formula and Binaries]]
+- [[#raw-build][Raw build]]
+:END:
+
 
 * Homebrew Formula and Binaries
+:PROPERTIES:
+:CUSTOM_ID: homebrew-formula-and-binaries
+:END:
 
-The simple way is to use the
-https://github.com/mighty-gerbils/homebrew-gerbil. There are clang and
-GCC binaries as well as the ability to build the HEAD of master.
+The simple way is to use the [[https://github.com/mighty-gerbils/homebrew-gerbil][Homebrew Tap]].
+
+There are binaries as well as the ability to build the HEAD of master.
 
 #+begin_src sh
 brew install mighty-gerbils/gerbil/gerbil-scheme
@@ -17,6 +44,9 @@ That repository is also available in the gerbil source [[file:homebrew/README.or
 #+end_src
 
 * Raw build
+:PROPERTIES:
+:CUSTOM_ID: raw-build
+:END:
 
  - Install XCode :: Open a terminal and run ~xcode-select --install~
 
