@@ -1,29 +1,29 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-call::timestamp 1710776836)
+  (define gerbil/compiler/optimize-call::timestamp 1710781154)
   (begin
     (define gxc#::optimize-call::t
-      (let ((__tmp155016 (list gxc#::basic-xform::t))
-            (__tmp155014
-             (let ((__tmp155015
+      (let ((__tmp155063 (list gxc#::basic-xform::t))
+            (__tmp155061
+             (let ((__tmp155062
                     (let () (declare (not safe)) (cons 'final: '#t))))
                (declare (not safe))
-               (cons __tmp155015 '()))))
+               (cons __tmp155062 '()))))
         (declare (not safe))
         (make-class-type
          'gxc#::optimize-call::t
          '::optimize-call
-         __tmp155016
+         __tmp155063
          '()
-         __tmp155014
+         __tmp155061
          '#f)))
     (define gxc#::optimize-call?
       (let ()
         (declare (not safe))
         (make-class-predicate gxc#::optimize-call::t)))
     (define gxc#make-::optimize-call
-      (lambda _$args154717_
-        (apply make-instance gxc#::optimize-call::t _$args154717_)))
+      (lambda _$args154764_
+        (apply make-instance gxc#::optimize-call::t _$args154764_)))
     (define gxc#::optimize-call-bind-methods!
       (make-promise
        (lambda ()
@@ -33,579 +33,579 @@
            (bind-method!__0 gxc#::optimize-call::t '%#call gxc#optimize-call%))
          (let () (declare (not safe)) (seal-class! gxc#::optimize-call::t)))))
     (define gxc#apply-optimize-call
-      (lambda (_stx154709_)
+      (lambda (_stx154756_)
         (force gxc#::optimize-call-bind-methods!)
-        (let* ((_self154712_
-                (let ((__obj155011
+        (let* ((_self154759_
+                (let ((__obj155058
                        (let ()
                          (declare (not safe))
                          (##structure gxc#::optimize-call::t))))
-                  __obj155011))
-               (__tmp155017
+                  __obj155058))
+               (__tmp155064
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (gxc#compile-e__1 _self154712_ _stx154709_)))))
+                    (gxc#compile-e__1 _self154759_ _stx154756_)))))
           (declare (not safe))
           (call-with-parameters
-           __tmp155017
+           __tmp155064
            gxc#current-compile-method
-           _self154712_))))
+           _self154759_))))
     (define gxc#optimize-call%
-      (lambda (_self154563_ _stx154564_)
-        (let* ((___stx154762154763_ _stx154564_)
-               (_g154567154587_
+      (lambda (_self154610_ _stx154611_)
+        (let* ((___stx154809154810_ _stx154611_)
+               (_g154614154634_
                 (lambda ()
                   (let ()
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     ___stx154762154763_)))))
-          (let ((___kont154764154765_
-                 (lambda (_L154631_ _L154632_)
-                   (let* ((_rator-id154650_
+                     ___stx154809154810_)))))
+          (let ((___kont154811154812_
+                 (lambda (_L154678_ _L154679_)
+                   (let* ((_rator-id154697_
                            (let ()
                              (declare (not safe))
-                             (gxc#identifier-symbol _L154632_)))
-                          (_rator-type154652_
+                             (gxc#identifier-symbol _L154679_)))
+                          (_rator-type154699_
                            (let ()
                              (declare (not safe))
-                             (gxc#optimizer-resolve-type _rator-id154650_))))
+                             (gxc#optimizer-resolve-type _rator-id154697_))))
                      (if (let ()
                            (declare (not safe))
                            (##structure-instance-of?
-                            _rator-type154652_
+                            _rator-type154699_
                             'gxc#!procedure::t))
                          (begin
-                           (let ((__tmp155018
+                           (let ((__tmp155065
                                   (##structure-ref
-                                   _rator-type154652_
+                                   _rator-type154699_
                                    '1
                                    gxc#!type::t
                                    '#f)))
                              (declare (not safe))
                              (gxc#verbose
                               '"optimize-call "
-                              _rator-id154650_
+                              _rator-id154697_
                               '" => "
-                              _rator-type154652_
+                              _rator-type154699_
                               '" "
-                              __tmp155018))
-                           (let ((_optimized154655_
-                                  (let ((__method155012
+                              __tmp155065))
+                           (let ((_optimized154702_
+                                  (let ((__method155059
                                          (let ()
                                            (declare (not safe))
                                            (method-ref
-                                            _rator-type154652_
+                                            _rator-type154699_
                                             'optimize-call))))
-                                    (if __method155012
-                                        (__method155012
-                                         _rator-type154652_
-                                         _self154563_
-                                         _stx154564_
-                                         _L154631_)
+                                    (if __method155059
+                                        (__method155059
+                                         _rator-type154699_
+                                         _self154610_
+                                         _stx154611_
+                                         _L154678_)
                                         (let ()
                                           (declare (not safe))
                                           (error '"Missing method"
-                                                 _rator-type154652_
+                                                 _rator-type154699_
                                                  'optimize-call))))))
                              (if (let ()
                                    (declare (not safe))
                                    (class-instance?
                                     gxc#!primitive::t
-                                    _rator-type154652_))
-                                 _optimized154655_
-                                 (let* ((___stx154744154745_ _optimized154655_)
-                                        (_g154658154668_
+                                    _rator-type154699_))
+                                 _optimized154702_
+                                 (let* ((___stx154791154792_ _optimized154702_)
+                                        (_g154705154715_
                                          (lambda ()
                                            (let ()
                                              (declare (not safe))
                                              (gx#raise-syntax-error
                                               '#f
                                               '"Bad syntax; invalid match target"
-                                              ___stx154744154745_)))))
-                                   (let ((___kont154746154747_
-                                          (lambda (_L154688_)
-                                            (let ((__tmp155019
+                                              ___stx154791154792_)))))
+                                   (let ((___kont154793154794_
+                                          (lambda (_L154735_)
+                                            (let ((__tmp155066
                                                    (let ()
                                                      (declare (not safe))
                                                      (cons '%#call-unchecked
-                                                           _L154688_))))
+                                                           _L154735_))))
                                               (declare (not safe))
                                               (gxc#xform-wrap-source
-                                               __tmp155019
-                                               _stx154564_))))
-                                         (___kont154748154749_
-                                          (lambda () _optimized154655_)))
+                                               __tmp155066
+                                               _stx154611_))))
+                                         (___kont154795154796_
+                                          (lambda () _optimized154702_)))
                                      (if (let ()
                                            (declare (not safe))
-                                           (gx#stx-pair? ___stx154744154745_))
-                                         (let ((_e154663154680_
+                                           (gx#stx-pair? ___stx154791154792_))
+                                         (let ((_e154710154727_
                                                 (let ()
                                                   (declare (not safe))
                                                   (gx#stx-e
-                                                   ___stx154744154745_))))
-                                           (let ((_tl154661154685_
+                                                   ___stx154791154792_))))
+                                           (let ((_tl154708154732_
                                                   (let ()
                                                     (declare (not safe))
-                                                    (##cdr _e154663154680_)))
-                                                 (_hd154662154683_
+                                                    (##cdr _e154710154727_)))
+                                                 (_hd154709154730_
                                                   (let ()
                                                     (declare (not safe))
-                                                    (##car _e154663154680_))))
+                                                    (##car _e154710154727_))))
                                              (if (let ()
                                                    (declare (not safe))
                                                    (gx#identifier?
-                                                    _hd154662154683_))
+                                                    _hd154709154730_))
                                                  (if (let ()
                                                        (declare (not safe))
                                                        (gx#stx-eq?
                                                         '%#call
-                                                        _hd154662154683_))
-                                                     (___kont154746154747_
-                                                      _tl154661154685_)
-                                                     (___kont154748154749_))
-                                                 (___kont154748154749_))))
-                                         (___kont154748154749_)))))))
+                                                        _hd154709154730_))
+                                                     (___kont154793154794_
+                                                      _tl154708154732_)
+                                                     (___kont154795154796_))
+                                                 (___kont154795154796_))))
+                                         (___kont154795154796_)))))))
                          (if (let ()
                                (declare (not safe))
-                               (not _rator-type154652_))
+                               (not _rator-type154699_))
                              (let ()
                                (declare (not safe))
-                               (gxc#xform-call% _self154563_ _stx154564_))
+                               (gxc#xform-call% _self154610_ _stx154611_))
                              (let ()
                                (declare (not safe))
                                (gxc#raise-compile-error
                                 '"illegal application; not a procedure"
-                                _stx154564_
-                                _rator-type154652_)))))))
-                (___kont154766154767_
+                                _stx154611_
+                                _rator-type154699_)))))))
+                (___kont154813154814_
                  (lambda ()
                    (let ()
                      (declare (not safe))
-                     (gxc#xform-call% _self154563_ _stx154564_)))))
+                     (gxc#xform-call% _self154610_ _stx154611_)))))
             (if (let ()
                   (declare (not safe))
-                  (gx#stx-pair? ___stx154762154763_))
-                (let ((_e154573154599_
+                  (gx#stx-pair? ___stx154809154810_))
+                (let ((_e154620154646_
                        (let ()
                          (declare (not safe))
-                         (gx#stx-e ___stx154762154763_))))
-                  (let ((_tl154571154604_
-                         (let () (declare (not safe)) (##cdr _e154573154599_)))
-                        (_hd154572154602_
+                         (gx#stx-e ___stx154809154810_))))
+                  (let ((_tl154618154651_
+                         (let () (declare (not safe)) (##cdr _e154620154646_)))
+                        (_hd154619154649_
                          (let ()
                            (declare (not safe))
-                           (##car _e154573154599_))))
+                           (##car _e154620154646_))))
                     (if (let ()
                           (declare (not safe))
-                          (gx#stx-pair? _tl154571154604_))
-                        (let ((_e154576154607_
+                          (gx#stx-pair? _tl154618154651_))
+                        (let ((_e154623154654_
                                (let ()
                                  (declare (not safe))
-                                 (gx#stx-e _tl154571154604_))))
-                          (let ((_tl154574154612_
+                                 (gx#stx-e _tl154618154651_))))
+                          (let ((_tl154621154659_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _e154576154607_)))
-                                (_hd154575154610_
+                                   (##cdr _e154623154654_)))
+                                (_hd154622154657_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _e154576154607_))))
+                                   (##car _e154623154654_))))
                             (if (let ()
                                   (declare (not safe))
-                                  (gx#stx-pair? _hd154575154610_))
-                                (let ((_e154579154615_
+                                  (gx#stx-pair? _hd154622154657_))
+                                (let ((_e154626154662_
                                        (let ()
                                          (declare (not safe))
-                                         (gx#stx-e _hd154575154610_))))
-                                  (let ((_tl154577154620_
+                                         (gx#stx-e _hd154622154657_))))
+                                  (let ((_tl154624154667_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _e154579154615_)))
-                                        (_hd154578154618_
+                                           (##cdr _e154626154662_)))
+                                        (_hd154625154665_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _e154579154615_))))
+                                           (##car _e154626154662_))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#identifier? _hd154578154618_))
+                                          (gx#identifier? _hd154625154665_))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-eq?
                                                '%#ref
-                                               _hd154578154618_))
+                                               _hd154625154665_))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-pair?
-                                                   _tl154577154620_))
-                                                (let ((_e154582154623_
+                                                   _tl154624154667_))
+                                                (let ((_e154629154670_
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _tl154577154620_))))
-                                                  (let ((_tl154580154628_
+                                                          _tl154624154667_))))
+                                                  (let ((_tl154627154675_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _e154582154623_)))
-                                                        (_hd154581154626_
+                                                           (##cdr _e154629154670_)))
+                                                        (_hd154628154673_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _e154582154623_))))
+                                                           (##car _e154629154670_))))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#stx-null?
-                                                           _tl154580154628_))
-                                                        (___kont154764154765_
-                                                         _tl154574154612_
-                                                         _hd154581154626_)
-                                                        (___kont154766154767_))))
-                                                (___kont154766154767_))
-                                            (___kont154766154767_))
-                                        (___kont154766154767_))))
-                                (___kont154766154767_))))
-                        (___kont154766154767_))))
-                (___kont154766154767_))))))
+                                                           _tl154627154675_))
+                                                        (___kont154811154812_
+                                                         _tl154621154659_
+                                                         _hd154628154673_)
+                                                        (___kont154813154814_))))
+                                                (___kont154813154814_))
+                                            (___kont154813154814_))
+                                        (___kont154813154814_))))
+                                (___kont154813154814_))))
+                        (___kont154813154814_))))
+                (___kont154813154814_))))))
     (define gxc#!predicate::optimize-call
-      (lambda (_self154516_ _ctx154517_ _stx154518_ _args154519_)
-        (let* ((_g154521154531_
-                (lambda (_g154522154528_)
+      (lambda (_self154563_ _ctx154564_ _stx154565_ _args154566_)
+        (let* ((_g154568154578_
+                (lambda (_g154569154575_)
                   (let ()
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _g154522154528_))))
-               (_g154520154560_
-                (lambda (_g154522154534_)
+                     _g154569154575_))))
+               (_g154567154607_
+                (lambda (_g154569154581_)
                   (if (let ()
                         (declare (not safe))
-                        (gx#stx-pair? _g154522154534_))
-                      (let ((_e154526154536_
+                        (gx#stx-pair? _g154569154581_))
+                      (let ((_e154573154583_
                              (let ()
                                (declare (not safe))
-                               (gx#stx-e _g154522154534_))))
-                        (let ((_hd154525154539_
+                               (gx#stx-e _g154569154581_))))
+                        (let ((_hd154572154586_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e154526154536_)))
-                              (_tl154524154541_
+                                 (##car _e154573154583_)))
+                              (_tl154571154588_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e154526154536_))))
+                                 (##cdr _e154573154583_))))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-null? _tl154524154541_))
-                              ((lambda (_L154544_)
-                                 (let* ((_klass154555_
-                                         (let ((__tmp155020
+                                (gx#stx-null? _tl154571154588_))
+                              ((lambda (_L154591_)
+                                 (let* ((_klass154602_
+                                         (let ((__tmp155067
                                                 (##structure-ref
-                                                 _self154516_
+                                                 _self154563_
                                                  '1
                                                  gxc#!type::t
                                                  '#f)))
                                            (declare (not safe))
                                            (gxc#optimizer-resolve-class
-                                            _stx154518_
-                                            __tmp155020)))
-                                        (_object154557_
+                                            _stx154565_
+                                            __tmp155067)))
+                                        (_object154604_
                                          (let ()
                                            (declare (not safe))
                                            (gxc#compile-e__1
-                                            _ctx154517_
-                                            _L154544_))))
+                                            _ctx154564_
+                                            _L154591_))))
                                    (if (##structure-ref
-                                        _klass154555_
+                                        _klass154602_
                                         '8
                                         gxc#!class::t
                                         '#f)
-                                       (let ((__tmp155036
-                                              (let ((__tmp155037
-                                                     (let ((__tmp155039
-                                                            (let ((__tmp155040
+                                       (let ((__tmp155083
+                                              (let ((__tmp155084
+                                                     (let ((__tmp155086
+                                                            (let ((__tmp155087
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155041
+                           (let ((__tmp155088
                                   (##structure-ref
-                                   _klass154555_
+                                   _klass154602_
                                    '1
                                    gxc#!type::t
                                    '#f)))
                              (declare (not safe))
-                             (cons __tmp155041 '()))))
+                             (cons __tmp155088 '()))))
                       (declare (not safe))
-                      (cons '%#quote __tmp155040)))
-                   (__tmp155038
-                    (let () (declare (not safe)) (cons _object154557_ '()))))
+                      (cons '%#quote __tmp155087)))
+                   (__tmp155085
+                    (let () (declare (not safe)) (cons _object154604_ '()))))
                (declare (not safe))
-               (cons __tmp155039 __tmp155038))))
+               (cons __tmp155086 __tmp155085))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
                                                 (cons '%#struct-direct-instance?
-                                                      __tmp155037))))
+                                                      __tmp155084))))
                                          (declare (not safe))
                                          (gxc#xform-wrap-source
-                                          __tmp155036
-                                          _stx154518_))
+                                          __tmp155083
+                                          _stx154565_))
                                        (if (##structure-ref
-                                            _klass154555_
+                                            _klass154602_
                                             '7
                                             gxc#!class::t
                                             '#f)
-                                           (let ((__tmp155030
-                                                  (let ((__tmp155031
-                                                         (let ((__tmp155033
-                                                                (let ((__tmp155034
+                                           (let ((__tmp155077
+                                                  (let ((__tmp155078
+                                                         (let ((__tmp155080
+                                                                (let ((__tmp155081
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp155035
+                               (let ((__tmp155082
                                       (##structure-ref
-                                       _klass154555_
+                                       _klass154602_
                                        '1
                                        gxc#!type::t
                                        '#f)))
                                  (declare (not safe))
-                                 (cons __tmp155035 '()))))
+                                 (cons __tmp155082 '()))))
                           (declare (not safe))
-                          (cons '%#quote __tmp155034)))
-                       (__tmp155032
+                          (cons '%#quote __tmp155081)))
+                       (__tmp155079
                         (let ()
                           (declare (not safe))
-                          (cons _object154557_ '()))))
+                          (cons _object154604_ '()))))
                    (declare (not safe))
-                   (cons __tmp155033 __tmp155032))))
+                   (cons __tmp155080 __tmp155079))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#struct-instance?
-                                                          __tmp155031))))
+                                                          __tmp155078))))
                                              (declare (not safe))
                                              (gxc#xform-wrap-source
-                                              __tmp155030
-                                              _stx154518_))
-                                           (let ((__tmp155021
-                                                  (let ((__tmp155022
-                                                         (let ((__tmp155028
-                                                                (let ((__tmp155029
+                                              __tmp155077
+                                              _stx154565_))
+                                           (let ((__tmp155068
+                                                  (let ((__tmp155069
+                                                         (let ((__tmp155075
+                                                                (let ((__tmp155076
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (let ()
                                  (declare (not safe))
                                  (cons 'class-instance? '()))))
                           (declare (not safe))
-                          (cons '%#ref __tmp155029)))
-                       (__tmp155023
-                        (let ((__tmp155025
-                               (let ((__tmp155026
-                                      (let ((__tmp155027
+                          (cons '%#ref __tmp155076)))
+                       (__tmp155070
+                        (let ((__tmp155072
+                               (let ((__tmp155073
+                                      (let ((__tmp155074
                                              (##structure-ref
-                                              _self154516_
+                                              _self154563_
                                               '1
                                               gxc#!type::t
                                               '#f)))
                                         (declare (not safe))
-                                        (cons __tmp155027 '()))))
+                                        (cons __tmp155074 '()))))
                                  (declare (not safe))
-                                 (cons '%#ref __tmp155026)))
-                              (__tmp155024
+                                 (cons '%#ref __tmp155073)))
+                              (__tmp155071
                                (let ()
                                  (declare (not safe))
-                                 (cons _object154557_ '()))))
+                                 (cons _object154604_ '()))))
                           (declare (not safe))
-                          (cons __tmp155025 __tmp155024))))
+                          (cons __tmp155072 __tmp155071))))
                    (declare (not safe))
-                   (cons __tmp155028 __tmp155023))))
+                   (cons __tmp155075 __tmp155070))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#call
-                                                          __tmp155022))))
+                                                          __tmp155069))))
                                              (declare (not safe))
                                              (gxc#xform-wrap-source
-                                              __tmp155021
-                                              _stx154518_))))))
-                               _hd154525154539_)
+                                              __tmp155068
+                                              _stx154565_))))))
+                               _hd154572154586_)
                               (let ()
                                 (declare (not safe))
-                                (_g154521154531_ _g154522154534_)))))
+                                (_g154568154578_ _g154569154581_)))))
                       (let ()
                         (declare (not safe))
-                        (_g154521154531_ _g154522154534_))))))
+                        (_g154568154578_ _g154569154581_))))))
           (declare (not safe))
-          (_g154520154560_ _args154519_))))
+          (_g154567154607_ _args154566_))))
     (define gxc#!predicate::optimize-call::specialize
-      (lambda (__klass154719 __method-table154720)
-        (let ((__id154721
-               (let ((__slot154722
+      (lambda (__klass154766 __method-table154767)
+        (let ((__id154768
+               (let ((__slot154769
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154719 'id))))
-                 (if __slot154722
-                     __slot154722
+                        (class-slot-offset __klass154766 'id))))
+                 (if __slot154769
+                     __slot154769
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id))))))
-          (lambda (_self154516_ _ctx154517_ _stx154518_ _args154519_)
-            (let* ((_g154521154531_
-                    (lambda (_g154522154528_)
+          (lambda (_self154563_ _ctx154564_ _stx154565_ _args154566_)
+            (let* ((_g154568154578_
+                    (lambda (_g154569154575_)
                       (let ()
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
                          '"Bad syntax; invalid match target"
-                         _g154522154528_))))
-                   (_g154520154560_
-                    (lambda (_g154522154534_)
+                         _g154569154575_))))
+                   (_g154567154607_
+                    (lambda (_g154569154581_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _g154522154534_))
-                          (let ((_e154526154536_
+                            (gx#stx-pair? _g154569154581_))
+                          (let ((_e154573154583_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _g154522154534_))))
-                            (let ((_hd154525154539_
+                                   (gx#stx-e _g154569154581_))))
+                            (let ((_hd154572154586_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _e154526154536_)))
-                                  (_tl154524154541_
+                                     (##car _e154573154583_)))
+                                  (_tl154571154588_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _e154526154536_))))
+                                     (##cdr _e154573154583_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-null? _tl154524154541_))
-                                  ((lambda (_L154544_)
-                                     (let* ((_klass154555_
-                                             (let ((__tmp155042
+                                    (gx#stx-null? _tl154571154588_))
+                                  ((lambda (_L154591_)
+                                     (let* ((_klass154602_
+                                             (let ((__tmp155089
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       _self154516_
-                                                       __id154721
-                                                       __klass154719
+                                                       _self154563_
+                                                       __id154768
+                                                       __klass154766
                                                        '#f))))
                                                (declare (not safe))
                                                (gxc#optimizer-resolve-class
-                                                _stx154518_
-                                                __tmp155042)))
-                                            (_object154557_
+                                                _stx154565_
+                                                __tmp155089)))
+                                            (_object154604_
                                              (let ()
                                                (declare (not safe))
                                                (gxc#compile-e__1
-                                                _ctx154517_
-                                                _L154544_))))
+                                                _ctx154564_
+                                                _L154591_))))
                                        (if (##structure-ref
-                                            _klass154555_
+                                            _klass154602_
                                             '8
                                             gxc#!class::t
                                             '#f)
-                                           (let ((__tmp155058
-                                                  (let ((__tmp155059
-                                                         (let ((__tmp155061
-                                                                (let ((__tmp155062
+                                           (let ((__tmp155105
+                                                  (let ((__tmp155106
+                                                         (let ((__tmp155108
+                                                                (let ((__tmp155109
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp155063
+                               (let ((__tmp155110
                                       (##structure-ref
-                                       _klass154555_
+                                       _klass154602_
                                        '1
                                        gxc#!type::t
                                        '#f)))
                                  (declare (not safe))
-                                 (cons __tmp155063 '()))))
+                                 (cons __tmp155110 '()))))
                           (declare (not safe))
-                          (cons '%#quote __tmp155062)))
-                       (__tmp155060
+                          (cons '%#quote __tmp155109)))
+                       (__tmp155107
                         (let ()
                           (declare (not safe))
-                          (cons _object154557_ '()))))
+                          (cons _object154604_ '()))))
                    (declare (not safe))
-                   (cons __tmp155061 __tmp155060))))
+                   (cons __tmp155108 __tmp155107))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#struct-direct-instance?
-                                                          __tmp155059))))
+                                                          __tmp155106))))
                                              (declare (not safe))
                                              (gxc#xform-wrap-source
-                                              __tmp155058
-                                              _stx154518_))
+                                              __tmp155105
+                                              _stx154565_))
                                            (if (##structure-ref
-                                                _klass154555_
+                                                _klass154602_
                                                 '7
                                                 gxc#!class::t
                                                 '#f)
-                                               (let ((__tmp155052
-                                                      (let ((__tmp155053
-                                                             (let ((__tmp155055
+                                               (let ((__tmp155099
+                                                      (let ((__tmp155100
+                                                             (let ((__tmp155102
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp155056
-                                   (let ((__tmp155057
+                            (let ((__tmp155103
+                                   (let ((__tmp155104
                                           (##structure-ref
-                                           _klass154555_
+                                           _klass154602_
                                            '1
                                            gxc#!type::t
                                            '#f)))
                                      (declare (not safe))
-                                     (cons __tmp155057 '()))))
+                                     (cons __tmp155104 '()))))
                               (declare (not safe))
-                              (cons '%#quote __tmp155056)))
-                           (__tmp155054
+                              (cons '%#quote __tmp155103)))
+                           (__tmp155101
                             (let ()
                               (declare (not safe))
-                              (cons _object154557_ '()))))
+                              (cons _object154604_ '()))))
                        (declare (not safe))
-                       (cons __tmp155055 __tmp155054))))
+                       (cons __tmp155102 __tmp155101))))
                 (declare (not safe))
-                (cons '%#struct-instance? __tmp155053))))
+                (cons '%#struct-instance? __tmp155100))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
                                                  (gxc#xform-wrap-source
-                                                  __tmp155052
-                                                  _stx154518_))
-                                               (let ((__tmp155043
-                                                      (let ((__tmp155044
-                                                             (let ((__tmp155050
+                                                  __tmp155099
+                                                  _stx154565_))
+                                               (let ((__tmp155090
+                                                      (let ((__tmp155091
+                                                             (let ((__tmp155097
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp155051
+                            (let ((__tmp155098
                                    (let ()
                                      (declare (not safe))
                                      (cons 'class-instance? '()))))
                               (declare (not safe))
-                              (cons '%#ref __tmp155051)))
-                           (__tmp155045
-                            (let ((__tmp155047
-                                   (let ((__tmp155048
-                                          (let ((__tmp155049
+                              (cons '%#ref __tmp155098)))
+                           (__tmp155092
+                            (let ((__tmp155094
+                                   (let ((__tmp155095
+                                          (let ((__tmp155096
                                                  (let ()
                                                    (declare (not safe))
                                                    (##unchecked-structure-ref
-                                                    _self154516_
-                                                    __id154721
-                                                    __klass154719
+                                                    _self154563_
+                                                    __id154768
+                                                    __klass154766
                                                     '#f))))
                                             (declare (not safe))
-                                            (cons __tmp155049 '()))))
+                                            (cons __tmp155096 '()))))
                                      (declare (not safe))
-                                     (cons '%#ref __tmp155048)))
-                                  (__tmp155046
+                                     (cons '%#ref __tmp155095)))
+                                  (__tmp155093
                                    (let ()
                                      (declare (not safe))
-                                     (cons _object154557_ '()))))
+                                     (cons _object154604_ '()))))
                               (declare (not safe))
-                              (cons __tmp155047 __tmp155046))))
+                              (cons __tmp155094 __tmp155093))))
                        (declare (not safe))
-                       (cons __tmp155050 __tmp155045))))
+                       (cons __tmp155097 __tmp155092))))
                 (declare (not safe))
-                (cons '%#call __tmp155044))))
+                (cons '%#call __tmp155091))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
                                                  (gxc#xform-wrap-source
-                                                  __tmp155043
-                                                  _stx154518_))))))
-                                   _hd154525154539_)
+                                                  __tmp155090
+                                                  _stx154565_))))))
+                                   _hd154572154586_)
                                   (let ()
                                     (declare (not safe))
-                                    (_g154521154531_ _g154522154534_)))))
+                                    (_g154568154578_ _g154569154581_)))))
                           (let ()
                             (declare (not safe))
-                            (_g154521154531_ _g154522154534_))))))
+                            (_g154568154578_ _g154569154581_))))))
               (declare (not safe))
-              (_g154520154560_ _args154519_))))))
+              (_g154567154607_ _args154566_))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -619,237 +619,237 @@
        gxc#!predicate::optimize-call
        '#f))
     (define gxc#!constructor::optimize-call
-      (lambda (_self154231_ _ctx154232_ _stx154233_ _args154234_)
-        (let* ((_klass154236_
-                (let ((__tmp155064
-                       (##structure-ref _self154231_ '1 gxc#!type::t '#f)))
+      (lambda (_self154278_ _ctx154279_ _stx154280_ _args154281_)
+        (let* ((_klass154283_
+                (let ((__tmp155111
+                       (##structure-ref _self154278_ '1 gxc#!type::t '#f)))
                   (declare (not safe))
-                  (gxc#optimizer-resolve-class _stx154233_ __tmp155064)))
-               (_fields154238_
-                (length (##structure-ref _klass154236_ '5 gxc#!class::t '#f)))
-               (_args154244_
-                (map (lambda (_g154239154241_)
+                  (gxc#optimizer-resolve-class _stx154280_ __tmp155111)))
+               (_fields154285_
+                (length (##structure-ref _klass154283_ '5 gxc#!class::t '#f)))
+               (_args154291_
+                (map (lambda (_g154286154288_)
                        (let ()
                          (declare (not safe))
-                         (gxc#compile-e__1 _ctx154232_ _g154239154241_)))
-                     _args154234_))
-               (_inline-make-object154246_
-                (let ((__tmp155065
-                       (let ((__tmp155071
-                              (let ((__tmp155072
+                         (gxc#compile-e__1 _ctx154279_ _g154286154288_)))
+                     _args154281_))
+               (_inline-make-object154293_
+                (let ((__tmp155112
+                       (let ((__tmp155118
+                              (let ((__tmp155119
                                      (let ()
                                        (declare (not safe))
                                        (cons '##structure '()))))
                                 (declare (not safe))
-                                (cons '%#ref __tmp155072)))
-                             (__tmp155066
-                              (let ((__tmp155068
-                                     (let ((__tmp155069
-                                            (let ((__tmp155070
+                                (cons '%#ref __tmp155119)))
+                             (__tmp155113
+                              (let ((__tmp155115
+                                     (let ((__tmp155116
+                                            (let ((__tmp155117
                                                    (##structure-ref
-                                                    _self154231_
+                                                    _self154278_
                                                     '1
                                                     gxc#!type::t
                                                     '#f)))
                                               (declare (not safe))
-                                              (cons __tmp155070 '()))))
+                                              (cons __tmp155117 '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155069)))
-                                    (__tmp155067
-                                     (make-list _fields154238_ '(%#quote #f))))
+                                       (cons '%#ref __tmp155116)))
+                                    (__tmp155114
+                                     (make-list _fields154285_ '(%#quote #f))))
                                 (declare (not safe))
-                                (cons __tmp155068 __tmp155067))))
+                                (cons __tmp155115 __tmp155114))))
                          (declare (not safe))
-                         (cons __tmp155071 __tmp155066))))
+                         (cons __tmp155118 __tmp155113))))
                   (declare (not safe))
-                  (cons '%#call __tmp155065))))
-          (let ((_$e154249_
-                 (##structure-ref _klass154236_ '6 gxc#!class::t '#f)))
-            (if _$e154249_
-                ((lambda (_ctor154252_)
-                   (let ((_$obj154254_
-                          (let ((__tmp155172 (gensym '__obj)))
+                  (cons '%#call __tmp155112))))
+          (let ((_$e154296_
+                 (##structure-ref _klass154283_ '6 gxc#!class::t '#f)))
+            (if _$e154296_
+                ((lambda (_ctor154299_)
+                   (let ((_$obj154301_
+                          (let ((__tmp155219 (gensym '__obj)))
                             (declare (not safe))
-                            (make-symbol__0 __tmp155172)))
-                         (_ctor-impl154255_
+                            (make-symbol__0 __tmp155219)))
+                         (_ctor-impl154302_
                           (let ()
                             (declare (not safe))
                             (gxc#!class-lookup-method
-                             _klass154236_
-                             _ctor154252_))))
-                     (let ((__tmp155173
-                            (let ((__tmp155174
-                                   (let ((__tmp155242
-                                          (let ((__tmp155243
-                                                 (let ((__tmp155245
+                             _klass154283_
+                             _ctor154299_))))
+                     (let ((__tmp155220
+                            (let ((__tmp155221
+                                   (let ((__tmp155289
+                                          (let ((__tmp155290
+                                                 (let ((__tmp155292
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _$obj154254_
+                                                          (cons _$obj154301_
                                                                 '())))
-                                                       (__tmp155244
+                                                       (__tmp155291
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _inline-make-object154246_
+                                                          (cons _inline-make-object154293_
                                                                 '()))))
                                                    (declare (not safe))
-                                                   (cons __tmp155245
-                                                         __tmp155244))))
+                                                   (cons __tmp155292
+                                                         __tmp155291))))
                                             (declare (not safe))
-                                            (cons __tmp155243 '())))
-                                         (__tmp155175
-                                          (let ((__tmp155176
-                                                 (let ((__tmp155177
-                                                        (let ((__tmp155181
-                                                               (if _ctor-impl154255_
+                                            (cons __tmp155290 '())))
+                                         (__tmp155222
+                                          (let ((__tmp155223
+                                                 (let ((__tmp155224
+                                                        (let ((__tmp155228
+                                                               (if _ctor-impl154302_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155236
-                                  (let ((__tmp155240
-                                         (let ((__tmp155241
+                           (let ((__tmp155283
+                                  (let ((__tmp155287
+                                         (let ((__tmp155288
                                                 (let ()
                                                   (declare (not safe))
-                                                  (cons _ctor-impl154255_
+                                                  (cons _ctor-impl154302_
                                                         '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155241)))
-                                        (__tmp155237
-                                         (let ((__tmp155238
-                                                (let ((__tmp155239
+                                           (cons '%#ref __tmp155288)))
+                                        (__tmp155284
+                                         (let ((__tmp155285
+                                                (let ((__tmp155286
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _$obj154254_
+                                                         (cons _$obj154301_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '%#ref __tmp155239))))
+                                                  (cons '%#ref __tmp155286))))
                                            (declare (not safe))
-                                           (cons __tmp155238 _args154244_))))
+                                           (cons __tmp155285 _args154291_))))
                                     (declare (not safe))
-                                    (cons __tmp155240 __tmp155237))))
+                                    (cons __tmp155287 __tmp155284))))
                              (declare (not safe))
-                             (cons '%#call __tmp155236))
-                           (let* ((_$ctor154257_
-                                   (let ((__tmp155182 (gensym '__constructor)))
+                             (cons '%#call __tmp155283))
+                           (let* ((_$ctor154304_
+                                   (let ((__tmp155229 (gensym '__constructor)))
                                      (declare (not safe))
-                                     (make-symbol__0 __tmp155182)))
-                                  (__tmp155183
-                                   (let ((__tmp155218
-                                          (let ((__tmp155219
-                                                 (let ((__tmp155235
+                                     (make-symbol__0 __tmp155229)))
+                                  (__tmp155230
+                                   (let ((__tmp155265
+                                          (let ((__tmp155266
+                                                 (let ((__tmp155282
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _$ctor154257_
+                                                          (cons _$ctor154304_
                                                                 '())))
-                                                       (__tmp155220
-                                                        (let ((__tmp155221
-                                                               (let ((__tmp155222
+                                                       (__tmp155267
+                                                        (let ((__tmp155268
+                                                               (let ((__tmp155269
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp155233
-                                     (let ((__tmp155234
+                              (let ((__tmp155280
+                                     (let ((__tmp155281
                                             (let ()
                                               (declare (not safe))
                                               (cons 'direct-method-ref '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155234)))
-                                    (__tmp155223
-                                     (let ((__tmp155230
-                                            (let ((__tmp155231
-                                                   (let ((__tmp155232
+                                       (cons '%#ref __tmp155281)))
+                                    (__tmp155270
+                                     (let ((__tmp155277
+                                            (let ((__tmp155278
+                                                   (let ((__tmp155279
                                                           (##structure-ref
-                                                           _self154231_
+                                                           _self154278_
                                                            '1
                                                            gxc#!type::t
                                                            '#f)))
                                                      (declare (not safe))
-                                                     (cons __tmp155232 '()))))
+                                                     (cons __tmp155279 '()))))
                                               (declare (not safe))
-                                              (cons '%#ref __tmp155231)))
-                                           (__tmp155224
-                                            (let ((__tmp155228
-                                                   (let ((__tmp155229
+                                              (cons '%#ref __tmp155278)))
+                                           (__tmp155271
+                                            (let ((__tmp155275
+                                                   (let ((__tmp155276
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (cons _$obj154254_
+                                                            (cons _$obj154301_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155229)))
-                                                  (__tmp155225
-                                                   (let ((__tmp155226
-                                                          (let ((__tmp155227
+                                                           __tmp155276)))
+                                                  (__tmp155272
+                                                   (let ((__tmp155273
+                                                          (let ((__tmp155274
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (cons _ctor154252_ '()))))
+                           (cons _ctor154299_ '()))))
                     (declare (not safe))
-                    (cons '%#quote __tmp155227))))
+                    (cons '%#quote __tmp155274))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155226 '()))))
+                                                     (cons __tmp155273 '()))))
                                               (declare (not safe))
-                                              (cons __tmp155228 __tmp155225))))
+                                              (cons __tmp155275 __tmp155272))))
                                        (declare (not safe))
-                                       (cons __tmp155230 __tmp155224))))
+                                       (cons __tmp155277 __tmp155271))))
                                 (declare (not safe))
-                                (cons __tmp155233 __tmp155223))))
+                                (cons __tmp155280 __tmp155270))))
                          (declare (not safe))
-                         (cons '%#call __tmp155222))))
+                         (cons '%#call __tmp155269))))
                   (declare (not safe))
-                  (cons __tmp155221 '()))))
+                  (cons __tmp155268 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155235
-                                                         __tmp155220))))
+                                                   (cons __tmp155282
+                                                         __tmp155267))))
                                             (declare (not safe))
-                                            (cons __tmp155219 '())))
-                                         (__tmp155184
-                                          (let ((__tmp155185
-                                                 (let ((__tmp155186
-                                                        (let ((__tmp155216
-                                                               (let ((__tmp155217
+                                            (cons __tmp155266 '())))
+                                         (__tmp155231
+                                          (let ((__tmp155232
+                                                 (let ((__tmp155233
+                                                        (let ((__tmp155263
+                                                               (let ((__tmp155264
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (let ()
                                 (declare (not safe))
-                                (cons _$ctor154257_ '()))))
+                                (cons _$ctor154304_ '()))))
                          (declare (not safe))
-                         (cons '%#ref __tmp155217)))
-                      (__tmp155187
-                       (let ((__tmp155209
-                              (let ((__tmp155210
-                                     (let ((__tmp155214
-                                            (let ((__tmp155215
+                         (cons '%#ref __tmp155264)))
+                      (__tmp155234
+                       (let ((__tmp155256
+                              (let ((__tmp155257
+                                     (let ((__tmp155261
+                                            (let ((__tmp155262
                                                    (let ()
                                                      (declare (not safe))
-                                                     (cons _$ctor154257_
+                                                     (cons _$ctor154304_
                                                            '()))))
                                               (declare (not safe))
-                                              (cons '%#ref __tmp155215)))
-                                           (__tmp155211
-                                            (let ((__tmp155212
-                                                   (let ((__tmp155213
+                                              (cons '%#ref __tmp155262)))
+                                           (__tmp155258
+                                            (let ((__tmp155259
+                                                   (let ((__tmp155260
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (cons _$obj154254_
+                                                            (cons _$obj154301_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155213))))
+                                                           __tmp155260))))
                                               (declare (not safe))
-                                              (cons __tmp155212
-                                                    _args154244_))))
+                                              (cons __tmp155259
+                                                    _args154291_))))
                                        (declare (not safe))
-                                       (cons __tmp155214 __tmp155211))))
+                                       (cons __tmp155261 __tmp155258))))
                                 (declare (not safe))
-                                (cons '%#call __tmp155210)))
-                             (__tmp155188
-                              (let ((__tmp155189
-                                     (let ((__tmp155190
-                                            (let ((__tmp155207
-                                                   (let ((__tmp155208
+                                (cons '%#call __tmp155257)))
+                             (__tmp155235
+                              (let ((__tmp155236
+                                     (let ((__tmp155237
+                                            (let ((__tmp155254
+                                                   (let ((__tmp155255
                                                           (let ()
                                                             (declare
                                                               (not safe))
@@ -859,281 +859,281 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155208)))
-                                                  (__tmp155191
-                                                   (let ((__tmp155205
-                                                          (let ((__tmp155206
+                                                           __tmp155255)))
+                                                  (__tmp155238
+                                                   (let ((__tmp155252
+                                                          (let ((__tmp155253
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
                            (cons '"missing constructor method implementation"
                                  '()))))
                     (declare (not safe))
-                    (cons '%#quote __tmp155206)))
-                 (__tmp155192
-                  (let ((__tmp155203
-                         (let ((__tmp155204
+                    (cons '%#quote __tmp155253)))
+                 (__tmp155239
+                  (let ((__tmp155250
+                         (let ((__tmp155251
                                 (let ()
                                   (declare (not safe))
                                   (cons 'class: '()))))
                            (declare (not safe))
-                           (cons '%#quote __tmp155204)))
-                        (__tmp155193
-                         (let ((__tmp155200
-                                (let ((__tmp155201
-                                       (let ((__tmp155202
+                           (cons '%#quote __tmp155251)))
+                        (__tmp155240
+                         (let ((__tmp155247
+                                (let ((__tmp155248
+                                       (let ((__tmp155249
                                               (##structure-ref
-                                               _self154231_
+                                               _self154278_
                                                '1
                                                gxc#!type::t
                                                '#f)))
                                          (declare (not safe))
-                                         (cons __tmp155202 '()))))
+                                         (cons __tmp155249 '()))))
                                   (declare (not safe))
-                                  (cons '%#ref __tmp155201)))
-                               (__tmp155194
-                                (let ((__tmp155198
-                                       (let ((__tmp155199
+                                  (cons '%#ref __tmp155248)))
+                               (__tmp155241
+                                (let ((__tmp155245
+                                       (let ((__tmp155246
                                               (let ()
                                                 (declare (not safe))
                                                 (cons 'method: '()))))
                                          (declare (not safe))
-                                         (cons '%#quote __tmp155199)))
-                                      (__tmp155195
-                                       (let ((__tmp155196
-                                              (let ((__tmp155197
+                                         (cons '%#quote __tmp155246)))
+                                      (__tmp155242
+                                       (let ((__tmp155243
+                                              (let ((__tmp155244
                                                      (let ()
                                                        (declare (not safe))
-                                                       (cons _ctor154252_
+                                                       (cons _ctor154299_
                                                              '()))))
                                                 (declare (not safe))
-                                                (cons '%#quote __tmp155197))))
+                                                (cons '%#quote __tmp155244))))
                                          (declare (not safe))
-                                         (cons __tmp155196 '()))))
+                                         (cons __tmp155243 '()))))
                                   (declare (not safe))
-                                  (cons __tmp155198 __tmp155195))))
+                                  (cons __tmp155245 __tmp155242))))
                            (declare (not safe))
-                           (cons __tmp155200 __tmp155194))))
+                           (cons __tmp155247 __tmp155241))))
                     (declare (not safe))
-                    (cons __tmp155203 __tmp155193))))
+                    (cons __tmp155250 __tmp155240))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155205
-                                                           __tmp155192))))
+                                                     (cons __tmp155252
+                                                           __tmp155239))))
                                               (declare (not safe))
-                                              (cons __tmp155207 __tmp155191))))
+                                              (cons __tmp155254 __tmp155238))))
                                        (declare (not safe))
-                                       (cons '%#call __tmp155190))))
+                                       (cons '%#call __tmp155237))))
                                 (declare (not safe))
-                                (cons __tmp155189 '()))))
+                                (cons __tmp155236 '()))))
                          (declare (not safe))
-                         (cons __tmp155209 __tmp155188))))
+                         (cons __tmp155256 __tmp155235))))
                   (declare (not safe))
-                  (cons __tmp155216 __tmp155187))))
+                  (cons __tmp155263 __tmp155234))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons '%#if __tmp155186))))
+                                                   (cons '%#if __tmp155233))))
                                             (declare (not safe))
-                                            (cons __tmp155185 '()))))
+                                            (cons __tmp155232 '()))))
                                      (declare (not safe))
-                                     (cons __tmp155218 __tmp155184))))
+                                     (cons __tmp155265 __tmp155231))))
                              (declare (not safe))
-                             (cons '%#let-values __tmp155183))))
-                      (__tmp155178
-                       (let ((__tmp155179
-                              (let ((__tmp155180
+                             (cons '%#let-values __tmp155230))))
+                      (__tmp155225
+                       (let ((__tmp155226
+                              (let ((__tmp155227
                                      (let ()
                                        (declare (not safe))
-                                       (cons _$obj154254_ '()))))
+                                       (cons _$obj154301_ '()))))
                                 (declare (not safe))
-                                (cons '%#ref __tmp155180))))
+                                (cons '%#ref __tmp155227))))
                          (declare (not safe))
-                         (cons __tmp155179 '()))))
+                         (cons __tmp155226 '()))))
                   (declare (not safe))
-                  (cons __tmp155181 __tmp155178))))
+                  (cons __tmp155228 __tmp155225))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (cons '%#begin
-                                                         __tmp155177))))
+                                                         __tmp155224))))
                                             (declare (not safe))
-                                            (cons __tmp155176 '()))))
+                                            (cons __tmp155223 '()))))
                                      (declare (not safe))
-                                     (cons __tmp155242 __tmp155175))))
+                                     (cons __tmp155289 __tmp155222))))
                               (declare (not safe))
-                              (cons '%#let-values __tmp155174))))
+                              (cons '%#let-values __tmp155221))))
                        (declare (not safe))
-                       (gxc#xform-wrap-source __tmp155173 _stx154233_))))
-                 _$e154249_)
-                (let ((_$e154259_
-                       (##structure-ref _klass154236_ '10 gxc#!class::t '#f)))
-                  (if _$e154259_
-                      ((lambda (_metaclass154262_)
-                         (let* ((_$obj154264_
-                                 (let ((__tmp155134 (gensym '__obj)))
+                       (gxc#xform-wrap-source __tmp155220 _stx154280_))))
+                 _$e154296_)
+                (let ((_$e154306_
+                       (##structure-ref _klass154283_ '10 gxc#!class::t '#f)))
+                  (if _$e154306_
+                      ((lambda (_metaclass154309_)
+                         (let* ((_$obj154311_
+                                 (let ((__tmp155181 (gensym '__obj)))
                                    (declare (not safe))
-                                   (make-symbol__0 __tmp155134)))
-                                (_metakons154266_
-                                 (let ((__tmp155135
+                                   (make-symbol__0 __tmp155181)))
+                                (_metakons154313_
+                                 (let ((__tmp155182
                                         (let ()
                                           (declare (not safe))
                                           (gxc#optimizer-resolve-class
-                                           _stx154233_
-                                           _metaclass154262_))))
+                                           _stx154280_
+                                           _metaclass154309_))))
                                    (declare (not safe))
                                    (gxc#!class-lookup-method
-                                    __tmp155135
+                                    __tmp155182
                                     'instance-init!))))
-                           (let ((__tmp155136
-                                  (let ((__tmp155137
-                                         (let ((__tmp155168
-                                                (let ((__tmp155169
-                                                       (let ((__tmp155171
+                           (let ((__tmp155183
+                                  (let ((__tmp155184
+                                         (let ((__tmp155215
+                                                (let ((__tmp155216
+                                                       (let ((__tmp155218
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (cons _$obj154264_ '())))
-                     (__tmp155170
+                        (cons _$obj154311_ '())))
+                     (__tmp155217
                       (let ()
                         (declare (not safe))
-                        (cons _inline-make-object154246_ '()))))
+                        (cons _inline-make-object154293_ '()))))
                  (declare (not safe))
-                 (cons __tmp155171 __tmp155170))))
+                 (cons __tmp155218 __tmp155217))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155169 '())))
-                                               (__tmp155138
-                                                (let ((__tmp155139
-                                                       (let ((__tmp155140
-                                                              (let ((__tmp155144
+                                                  (cons __tmp155216 '())))
+                                               (__tmp155185
+                                                (let ((__tmp155186
+                                                       (let ((__tmp155187
+                                                              (let ((__tmp155191
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (if _metakons154266_
-                                 (let ((__tmp155158
-                                        (let ((__tmp155166
-                                               (let ((__tmp155167
+                             (if _metakons154313_
+                                 (let ((__tmp155205
+                                        (let ((__tmp155213
+                                               (let ((__tmp155214
                                                       (let ()
                                                         (declare (not safe))
-                                                        (cons _metakons154266_
+                                                        (cons _metakons154313_
                                                               '()))))
                                                  (declare (not safe))
-                                                 (cons '%#ref __tmp155167)))
-                                              (__tmp155159
-                                               (let ((__tmp155163
-                                                      (let ((__tmp155164
-                                                             (let ((__tmp155165
+                                                 (cons '%#ref __tmp155214)))
+                                              (__tmp155206
+                                               (let ((__tmp155210
+                                                      (let ((__tmp155211
+                                                             (let ((__tmp155212
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (##structure-ref
-                             _self154231_
+                             _self154278_
                              '1
                              gxc#!type::t
                              '#f)))
                        (declare (not safe))
-                       (cons __tmp155165 '()))))
+                       (cons __tmp155212 '()))))
                 (declare (not safe))
-                (cons '%#ref __tmp155164)))
+                (cons '%#ref __tmp155211)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (__tmp155160
-                                                      (let ((__tmp155161
-                                                             (let ((__tmp155162
+                                                     (__tmp155207
+                                                      (let ((__tmp155208
+                                                             (let ((__tmp155209
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (let ()
                               (declare (not safe))
-                              (cons _$obj154264_ '()))))
+                              (cons _$obj154311_ '()))))
                        (declare (not safe))
-                       (cons '%#ref __tmp155162))))
+                       (cons '%#ref __tmp155209))))
                 (declare (not safe))
-                (cons __tmp155161 _args154244_))))
+                (cons __tmp155208 _args154291_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155163
-                                                       __tmp155160))))
+                                                 (cons __tmp155210
+                                                       __tmp155207))))
                                           (declare (not safe))
-                                          (cons __tmp155166 __tmp155159))))
+                                          (cons __tmp155213 __tmp155206))))
                                    (declare (not safe))
-                                   (cons '%#call __tmp155158))
-                                 (let ((__tmp155145
-                                        (let ((__tmp155156
-                                               (let ((__tmp155157
+                                   (cons '%#call __tmp155205))
+                                 (let ((__tmp155192
+                                        (let ((__tmp155203
+                                               (let ((__tmp155204
                                                       (let ()
                                                         (declare (not safe))
                                                         (cons 'call-method
                                                               '()))))
                                                  (declare (not safe))
-                                                 (cons '%#ref __tmp155157)))
-                                              (__tmp155146
-                                               (let ((__tmp155153
-                                                      (let ((__tmp155154
-                                                             (let ((__tmp155155
+                                                 (cons '%#ref __tmp155204)))
+                                              (__tmp155193
+                                               (let ((__tmp155200
+                                                      (let ((__tmp155201
+                                                             (let ((__tmp155202
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (##structure-ref
-                             _self154231_
+                             _self154278_
                              '1
                              gxc#!type::t
                              '#f)))
                        (declare (not safe))
-                       (cons __tmp155155 '()))))
+                       (cons __tmp155202 '()))))
                 (declare (not safe))
-                (cons '%#ref __tmp155154)))
+                (cons '%#ref __tmp155201)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (__tmp155147
-                                                      (let ((__tmp155151
-                                                             (let ((__tmp155152
+                                                     (__tmp155194
+                                                      (let ((__tmp155198
+                                                             (let ((__tmp155199
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (let ()
                               (declare (not safe))
                               (cons 'instance-init! '()))))
                        (declare (not safe))
-                       (cons '%#quote __tmp155152)))
-                    (__tmp155148
-                     (let ((__tmp155149
-                            (let ((__tmp155150
+                       (cons '%#quote __tmp155199)))
+                    (__tmp155195
+                     (let ((__tmp155196
+                            (let ((__tmp155197
                                    (let ()
                                      (declare (not safe))
-                                     (cons _$obj154264_ '()))))
+                                     (cons _$obj154311_ '()))))
                               (declare (not safe))
-                              (cons '%#ref __tmp155150))))
+                              (cons '%#ref __tmp155197))))
                        (declare (not safe))
-                       (cons __tmp155149 _args154244_))))
+                       (cons __tmp155196 _args154291_))))
                 (declare (not safe))
-                (cons __tmp155151 __tmp155148))))
+                (cons __tmp155198 __tmp155195))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155153
-                                                       __tmp155147))))
+                                                 (cons __tmp155200
+                                                       __tmp155194))))
                                           (declare (not safe))
-                                          (cons __tmp155156 __tmp155146))))
+                                          (cons __tmp155203 __tmp155193))))
                                    (declare (not safe))
-                                   (cons '%#call __tmp155145))))
-                            (__tmp155141
-                             (let ((__tmp155142
-                                    (let ((__tmp155143
+                                   (cons '%#call __tmp155192))))
+                            (__tmp155188
+                             (let ((__tmp155189
+                                    (let ((__tmp155190
                                            (let ()
                                              (declare (not safe))
-                                             (cons _$obj154264_ '()))))
+                                             (cons _$obj154311_ '()))))
                                       (declare (not safe))
-                                      (cons '%#ref __tmp155143))))
+                                      (cons '%#ref __tmp155190))))
                                (declare (not safe))
-                               (cons __tmp155142 '()))))
+                               (cons __tmp155189 '()))))
                         (declare (not safe))
-                        (cons __tmp155144 __tmp155141))))
+                        (cons __tmp155191 __tmp155188))))
                  (declare (not safe))
-                 (cons '%#begin __tmp155140))))
+                 (cons '%#begin __tmp155187))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155139 '()))))
+                                                  (cons __tmp155186 '()))))
                                            (declare (not safe))
-                                           (cons __tmp155168 __tmp155138))))
+                                           (cons __tmp155215 __tmp155185))))
                                     (declare (not safe))
-                                    (cons '%#let-values __tmp155137))))
+                                    (cons '%#let-values __tmp155184))))
                              (declare (not safe))
-                             (gxc#xform-wrap-source __tmp155136 _stx154233_))))
-                       _$e154259_)
-                      (if (##structure-ref _klass154236_ '7 gxc#!class::t '#f)
-                          (if (fx= (length _args154244_) _fields154238_)
-                              (let ((__tmp155126
-                                     (let ((__tmp155127
-                                            (let ((__tmp155132
-                                                   (let ((__tmp155133
+                             (gxc#xform-wrap-source __tmp155183 _stx154280_))))
+                       _$e154306_)
+                      (if (##structure-ref _klass154283_ '7 gxc#!class::t '#f)
+                          (if (fx= (length _args154291_) _fields154285_)
+                              (let ((__tmp155173
+                                     (let ((__tmp155174
+                                            (let ((__tmp155179
+                                                   (let ((__tmp155180
                                                           (let ()
                                                             (declare
                                                               (not safe))
@@ -1143,900 +1143,900 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155133)))
-                                                  (__tmp155128
-                                                   (let ((__tmp155129
-                                                          (let ((__tmp155130
+                                                           __tmp155180)))
+                                                  (__tmp155175
+                                                   (let ((__tmp155176
+                                                          (let ((__tmp155177
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp155131
+                         (let ((__tmp155178
                                 (##structure-ref
-                                 _self154231_
+                                 _self154278_
                                  '1
                                  gxc#!type::t
                                  '#f)))
                            (declare (not safe))
-                           (cons __tmp155131 '()))))
+                           (cons __tmp155178 '()))))
                     (declare (not safe))
-                    (cons '%#ref __tmp155130))))
+                    (cons '%#ref __tmp155177))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155129
-                                                           _args154244_))))
+                                                     (cons __tmp155176
+                                                           _args154291_))))
                                               (declare (not safe))
-                                              (cons __tmp155132 __tmp155128))))
+                                              (cons __tmp155179 __tmp155175))))
                                        (declare (not safe))
-                                       (cons '%#call __tmp155127))))
+                                       (cons '%#call __tmp155174))))
                                 (declare (not safe))
                                 (gxc#xform-wrap-source
-                                 __tmp155126
-                                 _stx154233_))
-                              (let ((__tmp155125
+                                 __tmp155173
+                                 _stx154280_))
+                              (let ((__tmp155172
                                      (##structure-ref
-                                      _self154231_
+                                      _self154278_
                                       '1
                                       gxc#!type::t
                                       '#f))
-                                    (__tmp155124
+                                    (__tmp155171
                                      (length (##structure-ref
-                                              _klass154236_
+                                              _klass154283_
                                               '5
                                               gxc#!class::t
                                               '#f))))
                                 (declare (not safe))
                                 (gxc#raise-compile-error
                                  '"illegal struct constructor application; arity mismatch"
-                                 _stx154233_
-                                 __tmp155125
-                                 __tmp155124)))
-                          (let ((_$obj154269_
-                                 (let ((__tmp155073 (gensym '__obj)))
+                                 _stx154280_
+                                 __tmp155172
+                                 __tmp155171)))
+                          (let ((_$obj154316_
+                                 (let ((__tmp155120 (gensym '__obj)))
                                    (declare (not safe))
-                                   (make-symbol__0 __tmp155073))))
-                            (let _lp154271_ ((_rest154273_ _args154244_)
-                                             (_initializers154274_ '()))
-                              (let* ((___stx154800154801_ _rest154273_)
-                                     (_g154278154299_
+                                   (make-symbol__0 __tmp155120))))
+                            (let _lp154318_ ((_rest154320_ _args154291_)
+                                             (_initializers154321_ '()))
+                              (let* ((___stx154847154848_ _rest154320_)
+                                     (_g154325154346_
                                       (lambda ()
                                         (let ()
                                           (declare (not safe))
                                           (gx#raise-syntax-error
                                            '#f
                                            '"Bad syntax; invalid match target"
-                                           ___stx154800154801_)))))
-                                (let ((___kont154802154803_
-                                       (lambda (_L154353_ _L154354_ _L154355_)
-                                         (let* ((_slot154386_
+                                           ___stx154847154848_)))))
+                                (let ((___kont154849154850_
+                                       (lambda (_L154400_ _L154401_ _L154402_)
+                                         (let* ((_slot154433_
                                                  (keyword->symbol
                                                   (let ()
                                                     (declare (not safe))
-                                                    (gx#stx-e _L154355_))))
-                                                (_off154388_
+                                                    (gx#stx-e _L154402_))))
+                                                (_off154435_
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#!class-slot->field-offset
-                                                    _klass154236_
-                                                    _slot154386_))))
-                                           (if _off154388_
-                                               (let ((__tmp155075
-                                                      (let ((__tmp155076
+                                                    _klass154283_
+                                                    _slot154433_))))
+                                           (if _off154435_
+                                               (let ((__tmp155122
+                                                      (let ((__tmp155123
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (cons _off154388_ _L154354_))))
+                       (cons _off154435_ _L154401_))))
                 (declare (not safe))
-                (cons __tmp155076 _initializers154274_))))
+                (cons __tmp155123 _initializers154321_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (_lp154271_
-                                                  _L154353_
-                                                  __tmp155075))
-                                               (let ((__tmp155074
+                                                 (_lp154318_
+                                                  _L154400_
+                                                  __tmp155122))
+                                               (let ((__tmp155121
                                                       (##structure-ref
-                                                       _self154231_
+                                                       _self154278_
                                                        '1
                                                        gxc#!type::t
                                                        '#f)))
                                                  (declare (not safe))
                                                  (gxc#raise-compile-error
                                                   '"unknown slot"
-                                                  _stx154233_
-                                                  __tmp155074
-                                                  _slot154386_))))))
-                                      (___kont154804154805_
+                                                  _stx154280_
+                                                  __tmp155121
+                                                  _slot154433_))))))
+                                      (___kont154851154852_
                                        (lambda ()
-                                         (let ((__tmp155077
-                                                (let ((__tmp155078
-                                                       (let ((__tmp155101
-                                                              (let ((__tmp155102
+                                         (let ((__tmp155124
+                                                (let ((__tmp155125
+                                                       (let ((__tmp155148
+                                                              (let ((__tmp155149
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp155104
+                             (let ((__tmp155151
                                     (let ()
                                       (declare (not safe))
-                                      (cons _$obj154269_ '())))
-                                   (__tmp155103
+                                      (cons _$obj154316_ '())))
+                                   (__tmp155150
                                     (let ()
                                       (declare (not safe))
-                                      (cons _inline-make-object154246_ '()))))
+                                      (cons _inline-make-object154293_ '()))))
                                (declare (not safe))
-                               (cons __tmp155104 __tmp155103))))
+                               (cons __tmp155151 __tmp155150))))
                         (declare (not safe))
-                        (cons __tmp155102 '())))
-                     (__tmp155079
-                      (let ((__tmp155080
-                             (let ((__tmp155081
-                                    (let ((__tmp155098
-                                           (let ((__tmp155099
-                                                  (let ((__tmp155100
+                        (cons __tmp155149 '())))
+                     (__tmp155126
+                      (let ((__tmp155127
+                             (let ((__tmp155128
+                                    (let ((__tmp155145
+                                           (let ((__tmp155146
+                                                  (let ((__tmp155147
                                                          (let ()
                                                            (declare (not safe))
-                                                           (cons _$obj154269_
+                                                           (cons _$obj154316_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#ref
-                                                          __tmp155100))))
+                                                          __tmp155147))))
                                              (declare (not safe))
-                                             (cons __tmp155099 '())))
-                                          (__tmp155082
-                                           (let ((__tmp155083
-                                                  (lambda (_i154313_ _r154314_)
-                                                    (let ((__tmp155084
-                                                           (let ((__tmp155085
+                                             (cons __tmp155146 '())))
+                                          (__tmp155129
+                                           (let ((__tmp155130
+                                                  (lambda (_i154360_ _r154361_)
+                                                    (let ((__tmp155131
+                                                           (let ((__tmp155132
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp155095
-                                 (let ((__tmp155096
-                                        (let ((__tmp155097
+                          (let ((__tmp155142
+                                 (let ((__tmp155143
+                                        (let ((__tmp155144
                                                (##structure-ref
-                                                _self154231_
+                                                _self154278_
                                                 '1
                                                 gxc#!type::t
                                                 '#f)))
                                           (declare (not safe))
-                                          (cons __tmp155097 '()))))
+                                          (cons __tmp155144 '()))))
                                    (declare (not safe))
-                                   (cons '%#ref __tmp155096)))
-                                (__tmp155086
-                                 (let ((__tmp155092
-                                        (let ((__tmp155093
-                                               (let ((__tmp155094
-                                                      (car _i154313_)))
+                                   (cons '%#ref __tmp155143)))
+                                (__tmp155133
+                                 (let ((__tmp155139
+                                        (let ((__tmp155140
+                                               (let ((__tmp155141
+                                                      (car _i154360_)))
                                                  (declare (not safe))
-                                                 (cons __tmp155094 '()))))
+                                                 (cons __tmp155141 '()))))
                                           (declare (not safe))
-                                          (cons '%#quote __tmp155093)))
-                                       (__tmp155087
-                                        (let ((__tmp155090
-                                               (let ((__tmp155091
+                                          (cons '%#quote __tmp155140)))
+                                       (__tmp155134
+                                        (let ((__tmp155137
+                                               (let ((__tmp155138
                                                       (let ()
                                                         (declare (not safe))
-                                                        (cons _$obj154269_
+                                                        (cons _$obj154316_
                                                               '()))))
                                                  (declare (not safe))
-                                                 (cons '%#ref __tmp155091)))
-                                              (__tmp155088
-                                               (let ((__tmp155089
-                                                      (cdr _i154313_)))
+                                                 (cons '%#ref __tmp155138)))
+                                              (__tmp155135
+                                               (let ((__tmp155136
+                                                      (cdr _i154360_)))
                                                  (declare (not safe))
-                                                 (cons __tmp155089 '()))))
+                                                 (cons __tmp155136 '()))))
                                           (declare (not safe))
-                                          (cons __tmp155090 __tmp155088))))
+                                          (cons __tmp155137 __tmp155135))))
                                    (declare (not safe))
-                                   (cons __tmp155092 __tmp155087))))
+                                   (cons __tmp155139 __tmp155134))))
                             (declare (not safe))
-                            (cons __tmp155095 __tmp155086))))
+                            (cons __tmp155142 __tmp155133))))
                      (declare (not safe))
-                     (cons '%#struct-unchecked-set! __tmp155085))))
+                     (cons '%#struct-unchecked-set! __tmp155132))))
               (declare (not safe))
-              (cons __tmp155084 _r154314_)))))
+              (cons __tmp155131 _r154361_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                              (declare (not safe))
-                                             (foldl1 __tmp155083
+                                             (foldl1 __tmp155130
                                                      '()
-                                                     _initializers154274_))))
+                                                     _initializers154321_))))
                                       (declare (not safe))
-                                      (foldr1 cons __tmp155098 __tmp155082))))
+                                      (foldr1 cons __tmp155145 __tmp155129))))
                                (declare (not safe))
-                               (cons '%#begin __tmp155081))))
+                               (cons '%#begin __tmp155128))))
                         (declare (not safe))
-                        (cons __tmp155080 '()))))
+                        (cons __tmp155127 '()))))
                  (declare (not safe))
-                 (cons __tmp155101 __tmp155079))))
+                 (cons __tmp155148 __tmp155126))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
                                                   (cons '%#let-values
-                                                        __tmp155078))))
+                                                        __tmp155125))))
                                            (declare (not safe))
                                            (gxc#xform-wrap-source
-                                            __tmp155077
-                                            _stx154233_))))
-                                      (___kont154806154807_
+                                            __tmp155124
+                                            _stx154280_))))
+                                      (___kont154853154854_
                                        (lambda ()
-                                         (let ((__tmp155105
-                                                (let ((__tmp155106
-                                                       (let ((__tmp155120
-                                                              (let ((__tmp155121
+                                         (let ((__tmp155152
+                                                (let ((__tmp155153
+                                                       (let ((__tmp155167
+                                                              (let ((__tmp155168
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp155123
+                             (let ((__tmp155170
                                     (let ()
                                       (declare (not safe))
-                                      (cons _$obj154269_ '())))
-                                   (__tmp155122
+                                      (cons _$obj154316_ '())))
+                                   (__tmp155169
                                     (let ()
                                       (declare (not safe))
-                                      (cons _inline-make-object154246_ '()))))
+                                      (cons _inline-make-object154293_ '()))))
                                (declare (not safe))
-                               (cons __tmp155123 __tmp155122))))
+                               (cons __tmp155170 __tmp155169))))
                         (declare (not safe))
-                        (cons __tmp155121 '())))
-                     (__tmp155107
-                      (let ((__tmp155108
-                             (let ((__tmp155109
-                                    (let ((__tmp155113
-                                           (let ((__tmp155114
-                                                  (let ((__tmp155118
-                                                         (let ((__tmp155119
+                        (cons __tmp155168 '())))
+                     (__tmp155154
+                      (let ((__tmp155155
+                             (let ((__tmp155156
+                                    (let ((__tmp155160
+                                           (let ((__tmp155161
+                                                  (let ((__tmp155165
+                                                         (let ((__tmp155166
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
                           (cons 'class-instance-init! '()))))
                    (declare (not safe))
-                   (cons '%#ref __tmp155119)))
-                (__tmp155115
-                 (let ((__tmp155116
-                        (let ((__tmp155117
+                   (cons '%#ref __tmp155166)))
+                (__tmp155162
+                 (let ((__tmp155163
+                        (let ((__tmp155164
                                (let ()
                                  (declare (not safe))
-                                 (cons _$obj154269_ '()))))
+                                 (cons _$obj154316_ '()))))
                           (declare (not safe))
-                          (cons '%#ref __tmp155117))))
+                          (cons '%#ref __tmp155164))))
                    (declare (not safe))
-                   (cons __tmp155116 _args154244_))))
+                   (cons __tmp155163 _args154291_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp155118
-                                                          __tmp155115))))
+                                                    (cons __tmp155165
+                                                          __tmp155162))))
                                              (declare (not safe))
-                                             (cons '%#call __tmp155114)))
-                                          (__tmp155110
-                                           (let ((__tmp155111
-                                                  (let ((__tmp155112
+                                             (cons '%#call __tmp155161)))
+                                          (__tmp155157
+                                           (let ((__tmp155158
+                                                  (let ((__tmp155159
                                                          (let ()
                                                            (declare (not safe))
-                                                           (cons _$obj154269_
+                                                           (cons _$obj154316_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#ref
-                                                          __tmp155112))))
+                                                          __tmp155159))))
                                              (declare (not safe))
-                                             (cons __tmp155111 '()))))
+                                             (cons __tmp155158 '()))))
                                       (declare (not safe))
-                                      (cons __tmp155113 __tmp155110))))
+                                      (cons __tmp155160 __tmp155157))))
                                (declare (not safe))
-                               (cons '%#begin __tmp155109))))
+                               (cons '%#begin __tmp155156))))
                         (declare (not safe))
-                        (cons __tmp155108 '()))))
+                        (cons __tmp155155 '()))))
                  (declare (not safe))
-                 (cons __tmp155120 __tmp155107))))
+                 (cons __tmp155167 __tmp155154))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
                                                   (cons '%#let-values
-                                                        __tmp155106))))
+                                                        __tmp155153))))
                                            (declare (not safe))
                                            (gxc#xform-wrap-source
-                                            __tmp155105
-                                            _stx154233_)))))
-                                  (let* ((_g154276154316_
+                                            __tmp155152
+                                            _stx154280_)))))
+                                  (let* ((_g154323154363_
                                           (lambda ()
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-null?
-                                                   ___stx154800154801_))
-                                                (___kont154804154805_)
-                                                (___kont154806154807_))))
-                                         (___match154837154838_
-                                          (lambda (_e154285154321_
-                                                   _hd154284154324_
-                                                   _tl154283154326_
-                                                   _e154288154329_
-                                                   _hd154287154332_
-                                                   _tl154286154334_
-                                                   _e154291154337_
-                                                   _hd154290154340_
-                                                   _tl154289154342_
-                                                   _e154294154345_
-                                                   _hd154293154348_
-                                                   _tl154292154350_)
-                                            (let ((_L154353_ _tl154292154350_)
-                                                  (_L154354_ _hd154293154348_)
-                                                  (_L154355_ _hd154290154340_))
+                                                   ___stx154847154848_))
+                                                (___kont154851154852_)
+                                                (___kont154853154854_))))
+                                         (___match154884154885_
+                                          (lambda (_e154332154368_
+                                                   _hd154331154371_
+                                                   _tl154330154373_
+                                                   _e154335154376_
+                                                   _hd154334154379_
+                                                   _tl154333154381_
+                                                   _e154338154384_
+                                                   _hd154337154387_
+                                                   _tl154336154389_
+                                                   _e154341154392_
+                                                   _hd154340154395_
+                                                   _tl154339154397_)
+                                            (let ((_L154400_ _tl154339154397_)
+                                                  (_L154401_ _hd154340154395_)
+                                                  (_L154402_ _hd154337154387_))
                                               (if (let ()
                                                     (declare (not safe))
                                                     (gx#stx-keyword?
-                                                     _L154355_))
-                                                  (___kont154802154803_
-                                                   _L154353_
-                                                   _L154354_
-                                                   _L154355_)
-                                                  (___kont154806154807_))))))
+                                                     _L154402_))
+                                                  (___kont154849154850_
+                                                   _L154400_
+                                                   _L154401_
+                                                   _L154402_)
+                                                  (___kont154853154854_))))))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-pair? ___stx154800154801_))
-                                        (let ((_e154285154321_
+                                          (gx#stx-pair? ___stx154847154848_))
+                                        (let ((_e154332154368_
                                                (let ()
                                                  (declare (not safe))
                                                  (gx#stx-e
-                                                  ___stx154800154801_))))
-                                          (let ((_tl154283154326_
+                                                  ___stx154847154848_))))
+                                          (let ((_tl154330154373_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _e154285154321_)))
-                                                (_hd154284154324_
+                                                   (##cdr _e154332154368_)))
+                                                (_hd154331154371_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _e154285154321_))))
+                                                   (##car _e154332154368_))))
                                             (if (let ()
                                                   (declare (not safe))
                                                   (gx#stx-pair?
-                                                   _hd154284154324_))
-                                                (let ((_e154288154329_
+                                                   _hd154331154371_))
+                                                (let ((_e154335154376_
                                                        (let ()
                                                          (declare (not safe))
                                                          (gx#stx-e
-                                                          _hd154284154324_))))
-                                                  (let ((_tl154286154334_
+                                                          _hd154331154371_))))
+                                                  (let ((_tl154333154381_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _e154288154329_)))
-                                                        (_hd154287154332_
+                                                           (##cdr _e154335154376_)))
+                                                        (_hd154334154379_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _e154288154329_))))
+                                                           (##car _e154335154376_))))
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#identifier?
-                                                           _hd154287154332_))
+                                                           _hd154334154379_))
                                                         (if (let ()
                                                               (declare
                                                                 (not safe))
                                                               (gx#stx-eq?
                                                                '%#quote
-                                                               _hd154287154332_))
+                                                               _hd154334154379_))
                                                             (if (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
-                          (gx#stx-pair? _tl154286154334_))
-                        (let ((_e154291154337_
+                          (gx#stx-pair? _tl154333154381_))
+                        (let ((_e154338154384_
                                (let ()
                                  (declare (not safe))
-                                 (gx#stx-e _tl154286154334_))))
-                          (let ((_tl154289154342_
+                                 (gx#stx-e _tl154333154381_))))
+                          (let ((_tl154336154389_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _e154291154337_)))
-                                (_hd154290154340_
+                                   (##cdr _e154338154384_)))
+                                (_hd154337154387_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _e154291154337_))))
+                                   (##car _e154338154384_))))
                             (if (let ()
                                   (declare (not safe))
-                                  (gx#stx-null? _tl154289154342_))
+                                  (gx#stx-null? _tl154336154389_))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-pair? _tl154283154326_))
-                                    (let ((_e154294154345_
+                                      (gx#stx-pair? _tl154330154373_))
+                                    (let ((_e154341154392_
                                            (let ()
                                              (declare (not safe))
-                                             (gx#stx-e _tl154283154326_))))
-                                      (let ((_tl154292154350_
+                                             (gx#stx-e _tl154330154373_))))
+                                      (let ((_tl154339154397_
                                              (let ()
                                                (declare (not safe))
-                                               (##cdr _e154294154345_)))
-                                            (_hd154293154348_
+                                               (##cdr _e154341154392_)))
+                                            (_hd154340154395_
                                              (let ()
                                                (declare (not safe))
-                                               (##car _e154294154345_))))
-                                        (___match154837154838_
-                                         _e154285154321_
-                                         _hd154284154324_
-                                         _tl154283154326_
-                                         _e154288154329_
-                                         _hd154287154332_
-                                         _tl154286154334_
-                                         _e154291154337_
-                                         _hd154290154340_
-                                         _tl154289154342_
-                                         _e154294154345_
-                                         _hd154293154348_
-                                         _tl154292154350_)))
-                                    (___kont154806154807_))
-                                (___kont154806154807_))))
-                        (___kont154806154807_))
-                    (___kont154806154807_))
-                (___kont154806154807_))))
+                                               (##car _e154341154392_))))
+                                        (___match154884154885_
+                                         _e154332154368_
+                                         _hd154331154371_
+                                         _tl154330154373_
+                                         _e154335154376_
+                                         _hd154334154379_
+                                         _tl154333154381_
+                                         _e154338154384_
+                                         _hd154337154387_
+                                         _tl154336154389_
+                                         _e154341154392_
+                                         _hd154340154395_
+                                         _tl154339154397_)))
+                                    (___kont154853154854_))
+                                (___kont154853154854_))))
+                        (___kont154853154854_))
+                    (___kont154853154854_))
+                (___kont154853154854_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (___kont154806154807_))))
+                                                (___kont154853154854_))))
                                         (let ()
                                           (declare (not safe))
-                                          (_g154276154316_))))))))))))))))
+                                          (_g154323154363_))))))))))))))))
     (define gxc#!constructor::optimize-call::specialize
-      (lambda (__klass154723 __method-table154724)
-        (let ((__id154725
-               (let ((__slot154726
+      (lambda (__klass154770 __method-table154771)
+        (let ((__id154772
+               (let ((__slot154773
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154723 'id))))
-                 (if __slot154726
-                     __slot154726
+                        (class-slot-offset __klass154770 'id))))
+                 (if __slot154773
+                     __slot154773
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id))))))
-          (lambda (_self154231_ _ctx154232_ _stx154233_ _args154234_)
-            (let* ((_klass154236_
-                    (let ((__tmp155246
+          (lambda (_self154278_ _ctx154279_ _stx154280_ _args154281_)
+            (let* ((_klass154283_
+                    (let ((__tmp155293
                            (let ()
                              (declare (not safe))
                              (##unchecked-structure-ref
-                              _self154231_
-                              __id154725
-                              __klass154723
+                              _self154278_
+                              __id154772
+                              __klass154770
                               '#f))))
                       (declare (not safe))
-                      (gxc#optimizer-resolve-class _stx154233_ __tmp155246)))
-                   (_fields154238_
+                      (gxc#optimizer-resolve-class _stx154280_ __tmp155293)))
+                   (_fields154285_
                     (length (##structure-ref
-                             _klass154236_
+                             _klass154283_
                              '5
                              gxc#!class::t
                              '#f)))
-                   (_args154244_
-                    (map (lambda (_g154239154241_)
+                   (_args154291_
+                    (map (lambda (_g154286154288_)
                            (let ()
                              (declare (not safe))
-                             (gxc#compile-e__1 _ctx154232_ _g154239154241_)))
-                         _args154234_))
-                   (_inline-make-object154246_
-                    (let ((__tmp155247
-                           (let ((__tmp155253
-                                  (let ((__tmp155254
+                             (gxc#compile-e__1 _ctx154279_ _g154286154288_)))
+                         _args154281_))
+                   (_inline-make-object154293_
+                    (let ((__tmp155294
+                           (let ((__tmp155300
+                                  (let ((__tmp155301
                                          (let ()
                                            (declare (not safe))
                                            (cons '##structure '()))))
                                     (declare (not safe))
-                                    (cons '%#ref __tmp155254)))
-                                 (__tmp155248
-                                  (let ((__tmp155250
-                                         (let ((__tmp155251
-                                                (let ((__tmp155252
+                                    (cons '%#ref __tmp155301)))
+                                 (__tmp155295
+                                  (let ((__tmp155297
+                                         (let ((__tmp155298
+                                                (let ((__tmp155299
                                                        (let ()
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
-                                                          _self154231_
-                                                          __id154725
-                                                          __klass154723
+                                                          _self154278_
+                                                          __id154772
+                                                          __klass154770
                                                           '#f))))
                                                   (declare (not safe))
-                                                  (cons __tmp155252 '()))))
+                                                  (cons __tmp155299 '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155251)))
-                                        (__tmp155249
+                                           (cons '%#ref __tmp155298)))
+                                        (__tmp155296
                                          (make-list
-                                          _fields154238_
+                                          _fields154285_
                                           '(%#quote #f))))
                                     (declare (not safe))
-                                    (cons __tmp155250 __tmp155249))))
+                                    (cons __tmp155297 __tmp155296))))
                              (declare (not safe))
-                             (cons __tmp155253 __tmp155248))))
+                             (cons __tmp155300 __tmp155295))))
                       (declare (not safe))
-                      (cons '%#call __tmp155247))))
-              (let ((_$e154249_
-                     (##structure-ref _klass154236_ '6 gxc#!class::t '#f)))
-                (if _$e154249_
-                    ((lambda (_ctor154252_)
-                       (let ((_$obj154254_
-                              (let ((__tmp155354 (gensym '__obj)))
+                      (cons '%#call __tmp155294))))
+              (let ((_$e154296_
+                     (##structure-ref _klass154283_ '6 gxc#!class::t '#f)))
+                (if _$e154296_
+                    ((lambda (_ctor154299_)
+                       (let ((_$obj154301_
+                              (let ((__tmp155401 (gensym '__obj)))
                                 (declare (not safe))
-                                (make-symbol__0 __tmp155354)))
-                             (_ctor-impl154255_
+                                (make-symbol__0 __tmp155401)))
+                             (_ctor-impl154302_
                               (let ()
                                 (declare (not safe))
                                 (gxc#!class-lookup-method
-                                 _klass154236_
-                                 _ctor154252_))))
-                         (let ((__tmp155355
-                                (let ((__tmp155356
-                                       (let ((__tmp155424
-                                              (let ((__tmp155425
-                                                     (let ((__tmp155427
+                                 _klass154283_
+                                 _ctor154299_))))
+                         (let ((__tmp155402
+                                (let ((__tmp155403
+                                       (let ((__tmp155471
+                                              (let ((__tmp155472
+                                                     (let ((__tmp155474
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (cons _$obj154254_
+                                                              (cons _$obj154301_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '())))
-                   (__tmp155426
+                   (__tmp155473
                     (let ()
                       (declare (not safe))
-                      (cons _inline-make-object154246_ '()))))
+                      (cons _inline-make-object154293_ '()))))
                (declare (not safe))
-               (cons __tmp155427 __tmp155426))))
+               (cons __tmp155474 __tmp155473))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp155425 '())))
-                                             (__tmp155357
-                                              (let ((__tmp155358
-                                                     (let ((__tmp155359
-                                                            (let ((__tmp155363
+                                                (cons __tmp155472 '())))
+                                             (__tmp155404
+                                              (let ((__tmp155405
+                                                     (let ((__tmp155406
+                                                            (let ((__tmp155410
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (if _ctor-impl154255_
-                               (let ((__tmp155418
-                                      (let ((__tmp155422
-                                             (let ((__tmp155423
+                           (if _ctor-impl154302_
+                               (let ((__tmp155465
+                                      (let ((__tmp155469
+                                             (let ((__tmp155470
                                                     (let ()
                                                       (declare (not safe))
-                                                      (cons _ctor-impl154255_
+                                                      (cons _ctor-impl154302_
                                                             '()))))
                                                (declare (not safe))
-                                               (cons '%#ref __tmp155423)))
-                                            (__tmp155419
-                                             (let ((__tmp155420
-                                                    (let ((__tmp155421
+                                               (cons '%#ref __tmp155470)))
+                                            (__tmp155466
+                                             (let ((__tmp155467
+                                                    (let ((__tmp155468
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (cons _$obj154254_
+                                                             (cons _$obj154301_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
               (declare (not safe))
-              (cons '%#ref __tmp155421))))
+              (cons '%#ref __tmp155468))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155420
-                                                     _args154244_))))
+                                               (cons __tmp155467
+                                                     _args154291_))))
                                         (declare (not safe))
-                                        (cons __tmp155422 __tmp155419))))
+                                        (cons __tmp155469 __tmp155466))))
                                  (declare (not safe))
-                                 (cons '%#call __tmp155418))
-                               (let* ((_$ctor154257_
-                                       (let ((__tmp155364
+                                 (cons '%#call __tmp155465))
+                               (let* ((_$ctor154304_
+                                       (let ((__tmp155411
                                               (gensym '__constructor)))
                                          (declare (not safe))
-                                         (make-symbol__0 __tmp155364)))
-                                      (__tmp155365
-                                       (let ((__tmp155400
-                                              (let ((__tmp155401
-                                                     (let ((__tmp155417
+                                         (make-symbol__0 __tmp155411)))
+                                      (__tmp155412
+                                       (let ((__tmp155447
+                                              (let ((__tmp155448
+                                                     (let ((__tmp155464
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (cons _$ctor154257_
+                                                              (cons _$ctor154304_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '())))
-                   (__tmp155402
-                    (let ((__tmp155403
-                           (let ((__tmp155404
-                                  (let ((__tmp155415
-                                         (let ((__tmp155416
+                   (__tmp155449
+                    (let ((__tmp155450
+                           (let ((__tmp155451
+                                  (let ((__tmp155462
+                                         (let ((__tmp155463
                                                 (let ()
                                                   (declare (not safe))
                                                   (cons 'direct-method-ref
                                                         '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155416)))
-                                        (__tmp155405
-                                         (let ((__tmp155412
-                                                (let ((__tmp155413
-                                                       (let ((__tmp155414
+                                           (cons '%#ref __tmp155463)))
+                                        (__tmp155452
+                                         (let ((__tmp155459
+                                                (let ((__tmp155460
+                                                       (let ((__tmp155461
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
                         (##unchecked-structure-ref
-                         _self154231_
-                         __id154725
-                         __klass154723
+                         _self154278_
+                         __id154772
+                         __klass154770
                          '#f))))
                  (declare (not safe))
-                 (cons __tmp155414 '()))))
+                 (cons __tmp155461 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons '%#ref __tmp155413)))
-                                               (__tmp155406
-                                                (let ((__tmp155410
-                                                       (let ((__tmp155411
+                                                  (cons '%#ref __tmp155460)))
+                                               (__tmp155453
+                                                (let ((__tmp155457
+                                                       (let ((__tmp155458
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (cons _$obj154254_ '()))))
+                        (cons _$obj154301_ '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155411)))
-              (__tmp155407
-               (let ((__tmp155408
-                      (let ((__tmp155409
+                 (cons '%#ref __tmp155458)))
+              (__tmp155454
+               (let ((__tmp155455
+                      (let ((__tmp155456
                              (let ()
                                (declare (not safe))
-                               (cons _ctor154252_ '()))))
+                               (cons _ctor154299_ '()))))
                         (declare (not safe))
-                        (cons '%#quote __tmp155409))))
+                        (cons '%#quote __tmp155456))))
                  (declare (not safe))
-                 (cons __tmp155408 '()))))
+                 (cons __tmp155455 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155410
-                                                        __tmp155407))))
+                                                  (cons __tmp155457
+                                                        __tmp155454))))
                                            (declare (not safe))
-                                           (cons __tmp155412 __tmp155406))))
+                                           (cons __tmp155459 __tmp155453))))
                                     (declare (not safe))
-                                    (cons __tmp155415 __tmp155405))))
+                                    (cons __tmp155462 __tmp155452))))
                              (declare (not safe))
-                             (cons '%#call __tmp155404))))
+                             (cons '%#call __tmp155451))))
                       (declare (not safe))
-                      (cons __tmp155403 '()))))
+                      (cons __tmp155450 '()))))
                (declare (not safe))
-               (cons __tmp155417 __tmp155402))))
+               (cons __tmp155464 __tmp155449))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp155401 '())))
-                                             (__tmp155366
-                                              (let ((__tmp155367
-                                                     (let ((__tmp155368
-                                                            (let ((__tmp155398
+                                                (cons __tmp155448 '())))
+                                             (__tmp155413
+                                              (let ((__tmp155414
+                                                     (let ((__tmp155415
+                                                            (let ((__tmp155445
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155399
+                           (let ((__tmp155446
                                   (let ()
                                     (declare (not safe))
-                                    (cons _$ctor154257_ '()))))
+                                    (cons _$ctor154304_ '()))))
                              (declare (not safe))
-                             (cons '%#ref __tmp155399)))
-                          (__tmp155369
-                           (let ((__tmp155391
-                                  (let ((__tmp155392
-                                         (let ((__tmp155396
-                                                (let ((__tmp155397
+                             (cons '%#ref __tmp155446)))
+                          (__tmp155416
+                           (let ((__tmp155438
+                                  (let ((__tmp155439
+                                         (let ((__tmp155443
+                                                (let ((__tmp155444
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _$ctor154257_
+                                                         (cons _$ctor154304_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '%#ref __tmp155397)))
-                                               (__tmp155393
-                                                (let ((__tmp155394
-                                                       (let ((__tmp155395
+                                                  (cons '%#ref __tmp155444)))
+                                               (__tmp155440
+                                                (let ((__tmp155441
+                                                       (let ((__tmp155442
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (cons _$obj154254_ '()))))
+                        (cons _$obj154301_ '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155395))))
+                 (cons '%#ref __tmp155442))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155394
-                                                        _args154244_))))
+                                                  (cons __tmp155441
+                                                        _args154291_))))
                                            (declare (not safe))
-                                           (cons __tmp155396 __tmp155393))))
+                                           (cons __tmp155443 __tmp155440))))
                                     (declare (not safe))
-                                    (cons '%#call __tmp155392)))
-                                 (__tmp155370
-                                  (let ((__tmp155371
-                                         (let ((__tmp155372
-                                                (let ((__tmp155389
-                                                       (let ((__tmp155390
+                                    (cons '%#call __tmp155439)))
+                                 (__tmp155417
+                                  (let ((__tmp155418
+                                         (let ((__tmp155419
+                                                (let ((__tmp155436
+                                                       (let ((__tmp155437
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
                         (cons 'error '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155390)))
-              (__tmp155373
-               (let ((__tmp155387
-                      (let ((__tmp155388
+                 (cons '%#ref __tmp155437)))
+              (__tmp155420
+               (let ((__tmp155434
+                      (let ((__tmp155435
                              (let ()
                                (declare (not safe))
                                (cons '"missing constructor method implementation"
                                      '()))))
                         (declare (not safe))
-                        (cons '%#quote __tmp155388)))
-                     (__tmp155374
-                      (let ((__tmp155385
-                             (let ((__tmp155386
+                        (cons '%#quote __tmp155435)))
+                     (__tmp155421
+                      (let ((__tmp155432
+                             (let ((__tmp155433
                                     (let ()
                                       (declare (not safe))
                                       (cons 'class: '()))))
                                (declare (not safe))
-                               (cons '%#quote __tmp155386)))
-                            (__tmp155375
-                             (let ((__tmp155382
-                                    (let ((__tmp155383
-                                           (let ((__tmp155384
+                               (cons '%#quote __tmp155433)))
+                            (__tmp155422
+                             (let ((__tmp155429
+                                    (let ((__tmp155430
+                                           (let ((__tmp155431
                                                   (let ()
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
-                                                     _self154231_
-                                                     __id154725
-                                                     __klass154723
+                                                     _self154278_
+                                                     __id154772
+                                                     __klass154770
                                                      '#f))))
                                              (declare (not safe))
-                                             (cons __tmp155384 '()))))
+                                             (cons __tmp155431 '()))))
                                       (declare (not safe))
-                                      (cons '%#ref __tmp155383)))
-                                   (__tmp155376
-                                    (let ((__tmp155380
-                                           (let ((__tmp155381
+                                      (cons '%#ref __tmp155430)))
+                                   (__tmp155423
+                                    (let ((__tmp155427
+                                           (let ((__tmp155428
                                                   (let ()
                                                     (declare (not safe))
                                                     (cons 'method: '()))))
                                              (declare (not safe))
-                                             (cons '%#quote __tmp155381)))
-                                          (__tmp155377
-                                           (let ((__tmp155378
-                                                  (let ((__tmp155379
+                                             (cons '%#quote __tmp155428)))
+                                          (__tmp155424
+                                           (let ((__tmp155425
+                                                  (let ((__tmp155426
                                                          (let ()
                                                            (declare (not safe))
-                                                           (cons _ctor154252_
+                                                           (cons _ctor154299_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#quote
-                                                          __tmp155379))))
+                                                          __tmp155426))))
                                              (declare (not safe))
-                                             (cons __tmp155378 '()))))
+                                             (cons __tmp155425 '()))))
                                       (declare (not safe))
-                                      (cons __tmp155380 __tmp155377))))
+                                      (cons __tmp155427 __tmp155424))))
                                (declare (not safe))
-                               (cons __tmp155382 __tmp155376))))
+                               (cons __tmp155429 __tmp155423))))
                         (declare (not safe))
-                        (cons __tmp155385 __tmp155375))))
+                        (cons __tmp155432 __tmp155422))))
                  (declare (not safe))
-                 (cons __tmp155387 __tmp155374))))
+                 (cons __tmp155434 __tmp155421))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155389
-                                                        __tmp155373))))
+                                                  (cons __tmp155436
+                                                        __tmp155420))))
                                            (declare (not safe))
-                                           (cons '%#call __tmp155372))))
+                                           (cons '%#call __tmp155419))))
                                     (declare (not safe))
-                                    (cons __tmp155371 '()))))
+                                    (cons __tmp155418 '()))))
                              (declare (not safe))
-                             (cons __tmp155391 __tmp155370))))
+                             (cons __tmp155438 __tmp155417))))
                       (declare (not safe))
-                      (cons __tmp155398 __tmp155369))))
+                      (cons __tmp155445 __tmp155416))))
                (declare (not safe))
-               (cons '%#if __tmp155368))))
+               (cons '%#if __tmp155415))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp155367 '()))))
+                                                (cons __tmp155414 '()))))
                                          (declare (not safe))
-                                         (cons __tmp155400 __tmp155366))))
+                                         (cons __tmp155447 __tmp155413))))
                                  (declare (not safe))
-                                 (cons '%#let-values __tmp155365))))
-                          (__tmp155360
-                           (let ((__tmp155361
-                                  (let ((__tmp155362
+                                 (cons '%#let-values __tmp155412))))
+                          (__tmp155407
+                           (let ((__tmp155408
+                                  (let ((__tmp155409
                                          (let ()
                                            (declare (not safe))
-                                           (cons _$obj154254_ '()))))
+                                           (cons _$obj154301_ '()))))
                                     (declare (not safe))
-                                    (cons '%#ref __tmp155362))))
+                                    (cons '%#ref __tmp155409))))
                              (declare (not safe))
-                             (cons __tmp155361 '()))))
+                             (cons __tmp155408 '()))))
                       (declare (not safe))
-                      (cons __tmp155363 __tmp155360))))
+                      (cons __tmp155410 __tmp155407))))
                (declare (not safe))
-               (cons '%#begin __tmp155359))))
+               (cons '%#begin __tmp155406))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp155358 '()))))
+                                                (cons __tmp155405 '()))))
                                          (declare (not safe))
-                                         (cons __tmp155424 __tmp155357))))
+                                         (cons __tmp155471 __tmp155404))))
                                   (declare (not safe))
-                                  (cons '%#let-values __tmp155356))))
+                                  (cons '%#let-values __tmp155403))))
                            (declare (not safe))
-                           (gxc#xform-wrap-source __tmp155355 _stx154233_))))
-                     _$e154249_)
-                    (let ((_$e154259_
+                           (gxc#xform-wrap-source __tmp155402 _stx154280_))))
+                     _$e154296_)
+                    (let ((_$e154306_
                            (##structure-ref
-                            _klass154236_
+                            _klass154283_
                             '10
                             gxc#!class::t
                             '#f)))
-                      (if _$e154259_
-                          ((lambda (_metaclass154262_)
-                             (let* ((_$obj154264_
-                                     (let ((__tmp155316 (gensym '__obj)))
+                      (if _$e154306_
+                          ((lambda (_metaclass154309_)
+                             (let* ((_$obj154311_
+                                     (let ((__tmp155363 (gensym '__obj)))
                                        (declare (not safe))
-                                       (make-symbol__0 __tmp155316)))
-                                    (_metakons154266_
-                                     (let ((__tmp155317
+                                       (make-symbol__0 __tmp155363)))
+                                    (_metakons154313_
+                                     (let ((__tmp155364
                                             (let ()
                                               (declare (not safe))
                                               (gxc#optimizer-resolve-class
-                                               _stx154233_
-                                               _metaclass154262_))))
+                                               _stx154280_
+                                               _metaclass154309_))))
                                        (declare (not safe))
                                        (gxc#!class-lookup-method
-                                        __tmp155317
+                                        __tmp155364
                                         'instance-init!))))
-                               (let ((__tmp155318
-                                      (let ((__tmp155319
-                                             (let ((__tmp155350
-                                                    (let ((__tmp155351
-                                                           (let ((__tmp155353
+                               (let ((__tmp155365
+                                      (let ((__tmp155366
+                                             (let ((__tmp155397
+                                                    (let ((__tmp155398
+                                                           (let ((__tmp155400
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
-                            (cons _$obj154264_ '())))
-                         (__tmp155352
+                            (cons _$obj154311_ '())))
+                         (__tmp155399
                           (let ()
                             (declare (not safe))
-                            (cons _inline-make-object154246_ '()))))
+                            (cons _inline-make-object154293_ '()))))
                      (declare (not safe))
-                     (cons __tmp155353 __tmp155352))))
+                     (cons __tmp155400 __tmp155399))))
               (declare (not safe))
-              (cons __tmp155351 '())))
+              (cons __tmp155398 '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp155320
-                                                    (let ((__tmp155321
-                                                           (let ((__tmp155322
+                                                   (__tmp155367
+                                                    (let ((__tmp155368
+                                                           (let ((__tmp155369
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp155326
-                                 (if _metakons154266_
-                                     (let ((__tmp155340
-                                            (let ((__tmp155348
-                                                   (let ((__tmp155349
+                          (let ((__tmp155373
+                                 (if _metakons154313_
+                                     (let ((__tmp155387
+                                            (let ((__tmp155395
+                                                   (let ((__tmp155396
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (cons _metakons154266_
+                                                            (cons _metakons154313_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155349)))
-                                                  (__tmp155341
-                                                   (let ((__tmp155345
-                                                          (let ((__tmp155346
+                                                           __tmp155396)))
+                                                  (__tmp155388
+                                                   (let ((__tmp155392
+                                                          (let ((__tmp155393
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp155347
+                         (let ((__tmp155394
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _self154231_
-                                   __id154725
-                                   __klass154723
+                                   _self154278_
+                                   __id154772
+                                   __klass154770
                                    '#f))))
                            (declare (not safe))
-                           (cons __tmp155347 '()))))
+                           (cons __tmp155394 '()))))
                     (declare (not safe))
-                    (cons '%#ref __tmp155346)))
-                 (__tmp155342
-                  (let ((__tmp155343
-                         (let ((__tmp155344
+                    (cons '%#ref __tmp155393)))
+                 (__tmp155389
+                  (let ((__tmp155390
+                         (let ((__tmp155391
                                 (let ()
                                   (declare (not safe))
-                                  (cons _$obj154264_ '()))))
+                                  (cons _$obj154311_ '()))))
                            (declare (not safe))
-                           (cons '%#ref __tmp155344))))
+                           (cons '%#ref __tmp155391))))
                     (declare (not safe))
-                    (cons __tmp155343 _args154244_))))
+                    (cons __tmp155390 _args154291_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155345
-                                                           __tmp155342))))
+                                                     (cons __tmp155392
+                                                           __tmp155389))))
                                               (declare (not safe))
-                                              (cons __tmp155348 __tmp155341))))
+                                              (cons __tmp155395 __tmp155388))))
                                        (declare (not safe))
-                                       (cons '%#call __tmp155340))
-                                     (let ((__tmp155327
-                                            (let ((__tmp155338
-                                                   (let ((__tmp155339
+                                       (cons '%#call __tmp155387))
+                                     (let ((__tmp155374
+                                            (let ((__tmp155385
+                                                   (let ((__tmp155386
                                                           (let ()
                                                             (declare
                                                               (not safe))
@@ -2046,526 +2046,526 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155339)))
-                                                  (__tmp155328
-                                                   (let ((__tmp155335
-                                                          (let ((__tmp155336
+                                                           __tmp155386)))
+                                                  (__tmp155375
+                                                   (let ((__tmp155382
+                                                          (let ((__tmp155383
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp155337
+                         (let ((__tmp155384
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _self154231_
-                                   __id154725
-                                   __klass154723
+                                   _self154278_
+                                   __id154772
+                                   __klass154770
                                    '#f))))
                            (declare (not safe))
-                           (cons __tmp155337 '()))))
+                           (cons __tmp155384 '()))))
                     (declare (not safe))
-                    (cons '%#ref __tmp155336)))
-                 (__tmp155329
-                  (let ((__tmp155333
-                         (let ((__tmp155334
+                    (cons '%#ref __tmp155383)))
+                 (__tmp155376
+                  (let ((__tmp155380
+                         (let ((__tmp155381
                                 (let ()
                                   (declare (not safe))
                                   (cons 'instance-init! '()))))
                            (declare (not safe))
-                           (cons '%#quote __tmp155334)))
-                        (__tmp155330
-                         (let ((__tmp155331
-                                (let ((__tmp155332
+                           (cons '%#quote __tmp155381)))
+                        (__tmp155377
+                         (let ((__tmp155378
+                                (let ((__tmp155379
                                        (let ()
                                          (declare (not safe))
-                                         (cons _$obj154264_ '()))))
+                                         (cons _$obj154311_ '()))))
                                   (declare (not safe))
-                                  (cons '%#ref __tmp155332))))
+                                  (cons '%#ref __tmp155379))))
                            (declare (not safe))
-                           (cons __tmp155331 _args154244_))))
+                           (cons __tmp155378 _args154291_))))
                     (declare (not safe))
-                    (cons __tmp155333 __tmp155330))))
+                    (cons __tmp155380 __tmp155377))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155335
-                                                           __tmp155329))))
+                                                     (cons __tmp155382
+                                                           __tmp155376))))
                                               (declare (not safe))
-                                              (cons __tmp155338 __tmp155328))))
+                                              (cons __tmp155385 __tmp155375))))
                                        (declare (not safe))
-                                       (cons '%#call __tmp155327))))
-                                (__tmp155323
-                                 (let ((__tmp155324
-                                        (let ((__tmp155325
+                                       (cons '%#call __tmp155374))))
+                                (__tmp155370
+                                 (let ((__tmp155371
+                                        (let ((__tmp155372
                                                (let ()
                                                  (declare (not safe))
-                                                 (cons _$obj154264_ '()))))
+                                                 (cons _$obj154311_ '()))))
                                           (declare (not safe))
-                                          (cons '%#ref __tmp155325))))
+                                          (cons '%#ref __tmp155372))))
                                    (declare (not safe))
-                                   (cons __tmp155324 '()))))
+                                   (cons __tmp155371 '()))))
                             (declare (not safe))
-                            (cons __tmp155326 __tmp155323))))
+                            (cons __tmp155373 __tmp155370))))
                      (declare (not safe))
-                     (cons '%#begin __tmp155322))))
+                     (cons '%#begin __tmp155369))))
               (declare (not safe))
-              (cons __tmp155321 '()))))
+              (cons __tmp155368 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155350
-                                                     __tmp155320))))
+                                               (cons __tmp155397
+                                                     __tmp155367))))
                                         (declare (not safe))
-                                        (cons '%#let-values __tmp155319))))
+                                        (cons '%#let-values __tmp155366))))
                                  (declare (not safe))
                                  (gxc#xform-wrap-source
-                                  __tmp155318
-                                  _stx154233_))))
-                           _$e154259_)
+                                  __tmp155365
+                                  _stx154280_))))
+                           _$e154306_)
                           (if (##structure-ref
-                               _klass154236_
+                               _klass154283_
                                '7
                                gxc#!class::t
                                '#f)
-                              (if (fx= (length _args154244_) _fields154238_)
-                                  (let ((__tmp155308
-                                         (let ((__tmp155309
-                                                (let ((__tmp155314
-                                                       (let ((__tmp155315
+                              (if (fx= (length _args154291_) _fields154285_)
+                                  (let ((__tmp155355
+                                         (let ((__tmp155356
+                                                (let ((__tmp155361
+                                                       (let ((__tmp155362
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
                         (cons '##structure '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155315)))
-              (__tmp155310
-               (let ((__tmp155311
-                      (let ((__tmp155312
-                             (let ((__tmp155313
+                 (cons '%#ref __tmp155362)))
+              (__tmp155357
+               (let ((__tmp155358
+                      (let ((__tmp155359
+                             (let ((__tmp155360
                                     (let ()
                                       (declare (not safe))
                                       (##unchecked-structure-ref
-                                       _self154231_
-                                       __id154725
-                                       __klass154723
+                                       _self154278_
+                                       __id154772
+                                       __klass154770
                                        '#f))))
                                (declare (not safe))
-                               (cons __tmp155313 '()))))
+                               (cons __tmp155360 '()))))
                         (declare (not safe))
-                        (cons '%#ref __tmp155312))))
+                        (cons '%#ref __tmp155359))))
                  (declare (not safe))
-                 (cons __tmp155311 _args154244_))))
+                 (cons __tmp155358 _args154291_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155314
-                                                        __tmp155310))))
+                                                  (cons __tmp155361
+                                                        __tmp155357))))
                                            (declare (not safe))
-                                           (cons '%#call __tmp155309))))
+                                           (cons '%#call __tmp155356))))
                                     (declare (not safe))
                                     (gxc#xform-wrap-source
-                                     __tmp155308
-                                     _stx154233_))
-                                  (let ((__tmp155307
+                                     __tmp155355
+                                     _stx154280_))
+                                  (let ((__tmp155354
                                          (let ()
                                            (declare (not safe))
                                            (##unchecked-structure-ref
-                                            _self154231_
-                                            __id154725
-                                            __klass154723
+                                            _self154278_
+                                            __id154772
+                                            __klass154770
                                             '#f)))
-                                        (__tmp155306
+                                        (__tmp155353
                                          (length (##structure-ref
-                                                  _klass154236_
+                                                  _klass154283_
                                                   '5
                                                   gxc#!class::t
                                                   '#f))))
                                     (declare (not safe))
                                     (gxc#raise-compile-error
                                      '"illegal struct constructor application; arity mismatch"
-                                     _stx154233_
-                                     __tmp155307
-                                     __tmp155306)))
-                              (let ((_$obj154269_
-                                     (let ((__tmp155255 (gensym '__obj)))
+                                     _stx154280_
+                                     __tmp155354
+                                     __tmp155353)))
+                              (let ((_$obj154316_
+                                     (let ((__tmp155302 (gensym '__obj)))
                                        (declare (not safe))
-                                       (make-symbol__0 __tmp155255))))
-                                (let _lp154271_ ((_rest154273_ _args154244_)
-                                                 (_initializers154274_ '()))
-                                  (let* ((___stx154842154843_ _rest154273_)
-                                         (_g154278154299_
+                                       (make-symbol__0 __tmp155302))))
+                                (let _lp154318_ ((_rest154320_ _args154291_)
+                                                 (_initializers154321_ '()))
+                                  (let* ((___stx154889154890_ _rest154320_)
+                                         (_g154325154346_
                                           (lambda ()
                                             (let ()
                                               (declare (not safe))
                                               (gx#raise-syntax-error
                                                '#f
                                                '"Bad syntax; invalid match target"
-                                               ___stx154842154843_)))))
-                                    (let ((___kont154844154845_
-                                           (lambda (_L154353_
-                                                    _L154354_
-                                                    _L154355_)
-                                             (let* ((_slot154386_
+                                               ___stx154889154890_)))))
+                                    (let ((___kont154891154892_
+                                           (lambda (_L154400_
+                                                    _L154401_
+                                                    _L154402_)
+                                             (let* ((_slot154433_
                                                      (keyword->symbol
                                                       (let ()
                                                         (declare (not safe))
-                                                        (gx#stx-e _L154355_))))
-                                                    (_off154388_
+                                                        (gx#stx-e _L154402_))))
+                                                    (_off154435_
                                                      (let ()
                                                        (declare (not safe))
                                                        (gxc#!class-slot->field-offset
-                                                        _klass154236_
-                                                        _slot154386_))))
-                                               (if _off154388_
-                                                   (let ((__tmp155257
-                                                          (let ((__tmp155258
+                                                        _klass154283_
+                                                        _slot154433_))))
+                                               (if _off154435_
+                                                   (let ((__tmp155304
+                                                          (let ((__tmp155305
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (cons _off154388_ _L154354_))))
+                           (cons _off154435_ _L154401_))))
                     (declare (not safe))
-                    (cons __tmp155258 _initializers154274_))))
+                    (cons __tmp155305 _initializers154321_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (_lp154271_
-                                                      _L154353_
-                                                      __tmp155257))
-                                                   (let ((__tmp155256
+                                                     (_lp154318_
+                                                      _L154400_
+                                                      __tmp155304))
+                                                   (let ((__tmp155303
                                                           (let ()
                                                             (declare
                                                               (not safe))
                                                             (##unchecked-structure-ref
-                                                             _self154231_
-                                                             __id154725
-                                                             __klass154723
+                                                             _self154278_
+                                                             __id154772
+                                                             __klass154770
                                                              '#f))))
                                                      (declare (not safe))
                                                      (gxc#raise-compile-error
                                                       '"unknown slot"
-                                                      _stx154233_
-                                                      __tmp155256
-                                                      _slot154386_))))))
-                                          (___kont154846154847_
+                                                      _stx154280_
+                                                      __tmp155303
+                                                      _slot154433_))))))
+                                          (___kont154893154894_
                                            (lambda ()
-                                             (let ((__tmp155259
-                                                    (let ((__tmp155260
-                                                           (let ((__tmp155283
+                                             (let ((__tmp155306
+                                                    (let ((__tmp155307
+                                                           (let ((__tmp155330
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp155284
-                                 (let ((__tmp155286
+                          (let ((__tmp155331
+                                 (let ((__tmp155333
                                         (let ()
                                           (declare (not safe))
-                                          (cons _$obj154269_ '())))
-                                       (__tmp155285
+                                          (cons _$obj154316_ '())))
+                                       (__tmp155332
                                         (let ()
                                           (declare (not safe))
-                                          (cons _inline-make-object154246_
+                                          (cons _inline-make-object154293_
                                                 '()))))
                                    (declare (not safe))
-                                   (cons __tmp155286 __tmp155285))))
+                                   (cons __tmp155333 __tmp155332))))
                             (declare (not safe))
-                            (cons __tmp155284 '())))
-                         (__tmp155261
-                          (let ((__tmp155262
-                                 (let ((__tmp155263
-                                        (let ((__tmp155280
-                                               (let ((__tmp155281
-                                                      (let ((__tmp155282
+                            (cons __tmp155331 '())))
+                         (__tmp155308
+                          (let ((__tmp155309
+                                 (let ((__tmp155310
+                                        (let ((__tmp155327
+                                               (let ((__tmp155328
+                                                      (let ((__tmp155329
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (cons _$obj154269_ '()))))
+                       (cons _$obj154316_ '()))))
                 (declare (not safe))
-                (cons '%#ref __tmp155282))))
+                (cons '%#ref __tmp155329))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155281 '())))
-                                              (__tmp155264
-                                               (let ((__tmp155265
-                                                      (lambda (_i154313_
-                                                               _r154314_)
-                                                        (let ((__tmp155266
-                                                               (let ((__tmp155267
+                                                 (cons __tmp155328 '())))
+                                              (__tmp155311
+                                               (let ((__tmp155312
+                                                      (lambda (_i154360_
+                                                               _r154361_)
+                                                        (let ((__tmp155313
+                                                               (let ((__tmp155314
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp155277
-                                     (let ((__tmp155278
-                                            (let ((__tmp155279
+                              (let ((__tmp155324
+                                     (let ((__tmp155325
+                                            (let ((__tmp155326
                                                    (let ()
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
-                                                      _self154231_
-                                                      __id154725
-                                                      __klass154723
+                                                      _self154278_
+                                                      __id154772
+                                                      __klass154770
                                                       '#f))))
                                               (declare (not safe))
-                                              (cons __tmp155279 '()))))
+                                              (cons __tmp155326 '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155278)))
-                                    (__tmp155268
-                                     (let ((__tmp155274
-                                            (let ((__tmp155275
-                                                   (let ((__tmp155276
-                                                          (car _i154313_)))
+                                       (cons '%#ref __tmp155325)))
+                                    (__tmp155315
+                                     (let ((__tmp155321
+                                            (let ((__tmp155322
+                                                   (let ((__tmp155323
+                                                          (car _i154360_)))
                                                      (declare (not safe))
-                                                     (cons __tmp155276 '()))))
+                                                     (cons __tmp155323 '()))))
                                               (declare (not safe))
-                                              (cons '%#quote __tmp155275)))
-                                           (__tmp155269
-                                            (let ((__tmp155272
-                                                   (let ((__tmp155273
+                                              (cons '%#quote __tmp155322)))
+                                           (__tmp155316
+                                            (let ((__tmp155319
+                                                   (let ((__tmp155320
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (cons _$obj154269_
+                                                            (cons _$obj154316_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155273)))
-                                                  (__tmp155270
-                                                   (let ((__tmp155271
-                                                          (cdr _i154313_)))
+                                                           __tmp155320)))
+                                                  (__tmp155317
+                                                   (let ((__tmp155318
+                                                          (cdr _i154360_)))
                                                      (declare (not safe))
-                                                     (cons __tmp155271 '()))))
+                                                     (cons __tmp155318 '()))))
                                               (declare (not safe))
-                                              (cons __tmp155272 __tmp155270))))
+                                              (cons __tmp155319 __tmp155317))))
                                        (declare (not safe))
-                                       (cons __tmp155274 __tmp155269))))
+                                       (cons __tmp155321 __tmp155316))))
                                 (declare (not safe))
-                                (cons __tmp155277 __tmp155268))))
+                                (cons __tmp155324 __tmp155315))))
                          (declare (not safe))
-                         (cons '%#struct-unchecked-set! __tmp155267))))
+                         (cons '%#struct-unchecked-set! __tmp155314))))
                   (declare (not safe))
-                  (cons __tmp155266 _r154314_)))))
+                  (cons __tmp155313 _r154361_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (foldl1 __tmp155265
+                                                 (foldl1 __tmp155312
                                                          '()
-                                                         _initializers154274_))))
+                                                         _initializers154321_))))
                                           (declare (not safe))
                                           (foldr1 cons
-                                                  __tmp155280
-                                                  __tmp155264))))
+                                                  __tmp155327
+                                                  __tmp155311))))
                                    (declare (not safe))
-                                   (cons '%#begin __tmp155263))))
+                                   (cons '%#begin __tmp155310))))
                             (declare (not safe))
-                            (cons __tmp155262 '()))))
+                            (cons __tmp155309 '()))))
                      (declare (not safe))
-                     (cons __tmp155283 __tmp155261))))
+                     (cons __tmp155330 __tmp155308))))
               (declare (not safe))
-              (cons '%#let-values __tmp155260))))
+              (cons '%#let-values __tmp155307))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
                                                (gxc#xform-wrap-source
-                                                __tmp155259
-                                                _stx154233_))))
-                                          (___kont154848154849_
+                                                __tmp155306
+                                                _stx154280_))))
+                                          (___kont154895154896_
                                            (lambda ()
-                                             (let ((__tmp155287
-                                                    (let ((__tmp155288
-                                                           (let ((__tmp155302
+                                             (let ((__tmp155334
+                                                    (let ((__tmp155335
+                                                           (let ((__tmp155349
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp155303
-                                 (let ((__tmp155305
+                          (let ((__tmp155350
+                                 (let ((__tmp155352
                                         (let ()
                                           (declare (not safe))
-                                          (cons _$obj154269_ '())))
-                                       (__tmp155304
+                                          (cons _$obj154316_ '())))
+                                       (__tmp155351
                                         (let ()
                                           (declare (not safe))
-                                          (cons _inline-make-object154246_
+                                          (cons _inline-make-object154293_
                                                 '()))))
                                    (declare (not safe))
-                                   (cons __tmp155305 __tmp155304))))
+                                   (cons __tmp155352 __tmp155351))))
                             (declare (not safe))
-                            (cons __tmp155303 '())))
-                         (__tmp155289
-                          (let ((__tmp155290
-                                 (let ((__tmp155291
-                                        (let ((__tmp155295
-                                               (let ((__tmp155296
-                                                      (let ((__tmp155300
-                                                             (let ((__tmp155301
+                            (cons __tmp155350 '())))
+                         (__tmp155336
+                          (let ((__tmp155337
+                                 (let ((__tmp155338
+                                        (let ((__tmp155342
+                                               (let ((__tmp155343
+                                                      (let ((__tmp155347
+                                                             (let ((__tmp155348
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (let ()
                               (declare (not safe))
                               (cons 'class-instance-init! '()))))
                        (declare (not safe))
-                       (cons '%#ref __tmp155301)))
-                    (__tmp155297
-                     (let ((__tmp155298
-                            (let ((__tmp155299
+                       (cons '%#ref __tmp155348)))
+                    (__tmp155344
+                     (let ((__tmp155345
+                            (let ((__tmp155346
                                    (let ()
                                      (declare (not safe))
-                                     (cons _$obj154269_ '()))))
+                                     (cons _$obj154316_ '()))))
                               (declare (not safe))
-                              (cons '%#ref __tmp155299))))
+                              (cons '%#ref __tmp155346))))
                        (declare (not safe))
-                       (cons __tmp155298 _args154244_))))
+                       (cons __tmp155345 _args154291_))))
                 (declare (not safe))
-                (cons __tmp155300 __tmp155297))))
+                (cons __tmp155347 __tmp155344))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons '%#call __tmp155296)))
-                                              (__tmp155292
-                                               (let ((__tmp155293
-                                                      (let ((__tmp155294
+                                                 (cons '%#call __tmp155343)))
+                                              (__tmp155339
+                                               (let ((__tmp155340
+                                                      (let ((__tmp155341
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (cons _$obj154269_ '()))))
+                       (cons _$obj154316_ '()))))
                 (declare (not safe))
-                (cons '%#ref __tmp155294))))
+                (cons '%#ref __tmp155341))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155293 '()))))
+                                                 (cons __tmp155340 '()))))
                                           (declare (not safe))
-                                          (cons __tmp155295 __tmp155292))))
+                                          (cons __tmp155342 __tmp155339))))
                                    (declare (not safe))
-                                   (cons '%#begin __tmp155291))))
+                                   (cons '%#begin __tmp155338))))
                             (declare (not safe))
-                            (cons __tmp155290 '()))))
+                            (cons __tmp155337 '()))))
                      (declare (not safe))
-                     (cons __tmp155302 __tmp155289))))
+                     (cons __tmp155349 __tmp155336))))
               (declare (not safe))
-              (cons '%#let-values __tmp155288))))
+              (cons '%#let-values __tmp155335))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
                                                (gxc#xform-wrap-source
-                                                __tmp155287
-                                                _stx154233_)))))
-                                      (let* ((_g154276154316_
+                                                __tmp155334
+                                                _stx154280_)))))
+                                      (let* ((_g154323154363_
                                               (lambda ()
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-null?
-                                                       ___stx154842154843_))
-                                                    (___kont154846154847_)
-                                                    (___kont154848154849_))))
-                                             (___match154879154880_
-                                              (lambda (_e154285154321_
-                                                       _hd154284154324_
-                                                       _tl154283154326_
-                                                       _e154288154329_
-                                                       _hd154287154332_
-                                                       _tl154286154334_
-                                                       _e154291154337_
-                                                       _hd154290154340_
-                                                       _tl154289154342_
-                                                       _e154294154345_
-                                                       _hd154293154348_
-                                                       _tl154292154350_)
-                                                (let ((_L154353_
-                                                       _tl154292154350_)
-                                                      (_L154354_
-                                                       _hd154293154348_)
-                                                      (_L154355_
-                                                       _hd154290154340_))
+                                                       ___stx154889154890_))
+                                                    (___kont154893154894_)
+                                                    (___kont154895154896_))))
+                                             (___match154926154927_
+                                              (lambda (_e154332154368_
+                                                       _hd154331154371_
+                                                       _tl154330154373_
+                                                       _e154335154376_
+                                                       _hd154334154379_
+                                                       _tl154333154381_
+                                                       _e154338154384_
+                                                       _hd154337154387_
+                                                       _tl154336154389_
+                                                       _e154341154392_
+                                                       _hd154340154395_
+                                                       _tl154339154397_)
+                                                (let ((_L154400_
+                                                       _tl154339154397_)
+                                                      (_L154401_
+                                                       _hd154340154395_)
+                                                      (_L154402_
+                                                       _hd154337154387_))
                                                   (if (let ()
                                                         (declare (not safe))
                                                         (gx#stx-keyword?
-                                                         _L154355_))
-                                                      (___kont154844154845_
-                                                       _L154353_
-                                                       _L154354_
-                                                       _L154355_)
-                                                      (___kont154848154849_))))))
+                                                         _L154402_))
+                                                      (___kont154891154892_
+                                                       _L154400_
+                                                       _L154401_
+                                                       _L154402_)
+                                                      (___kont154895154896_))))))
                                         (if (let ()
                                               (declare (not safe))
                                               (gx#stx-pair?
-                                               ___stx154842154843_))
-                                            (let ((_e154285154321_
+                                               ___stx154889154890_))
+                                            (let ((_e154332154368_
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#stx-e
-                                                      ___stx154842154843_))))
-                                              (let ((_tl154283154326_
+                                                      ___stx154889154890_))))
+                                              (let ((_tl154330154373_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _e154285154321_)))
-                                                    (_hd154284154324_
+                                                       (##cdr _e154332154368_)))
+                                                    (_hd154331154371_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _e154285154321_))))
+                                                       (##car _e154332154368_))))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-pair?
-                                                       _hd154284154324_))
-                                                    (let ((_e154288154329_
+                                                       _hd154331154371_))
+                                                    (let ((_e154335154376_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#stx-e
-                                                              _hd154284154324_))))
-                                                      (let ((_tl154286154334_
+                                                              _hd154331154371_))))
+                                                      (let ((_tl154333154381_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (##cdr _e154288154329_)))
-                    (_hd154287154332_
-                     (let () (declare (not safe)) (##car _e154288154329_))))
+                       (##cdr _e154335154376_)))
+                    (_hd154334154379_
+                     (let () (declare (not safe)) (##car _e154335154376_))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#identifier? _hd154287154332_))
+                      (gx#identifier? _hd154334154379_))
                     (if (let ()
                           (declare (not safe))
-                          (gx#stx-eq? '%#quote _hd154287154332_))
+                          (gx#stx-eq? '%#quote _hd154334154379_))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _tl154286154334_))
-                            (let ((_e154291154337_
+                              (gx#stx-pair? _tl154333154381_))
+                            (let ((_e154338154384_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _tl154286154334_))))
-                              (let ((_tl154289154342_
+                                     (gx#stx-e _tl154333154381_))))
+                              (let ((_tl154336154389_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _e154291154337_)))
-                                    (_hd154290154340_
+                                       (##cdr _e154338154384_)))
+                                    (_hd154337154387_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _e154291154337_))))
+                                       (##car _e154338154384_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#stx-null? _tl154289154342_))
+                                      (gx#stx-null? _tl154336154389_))
                                     (if (let ()
                                           (declare (not safe))
-                                          (gx#stx-pair? _tl154283154326_))
-                                        (let ((_e154294154345_
+                                          (gx#stx-pair? _tl154330154373_))
+                                        (let ((_e154341154392_
                                                (let ()
                                                  (declare (not safe))
-                                                 (gx#stx-e _tl154283154326_))))
-                                          (let ((_tl154292154350_
+                                                 (gx#stx-e _tl154330154373_))))
+                                          (let ((_tl154339154397_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _e154294154345_)))
-                                                (_hd154293154348_
+                                                   (##cdr _e154341154392_)))
+                                                (_hd154340154395_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _e154294154345_))))
-                                            (___match154879154880_
-                                             _e154285154321_
-                                             _hd154284154324_
-                                             _tl154283154326_
-                                             _e154288154329_
-                                             _hd154287154332_
-                                             _tl154286154334_
-                                             _e154291154337_
-                                             _hd154290154340_
-                                             _tl154289154342_
-                                             _e154294154345_
-                                             _hd154293154348_
-                                             _tl154292154350_)))
-                                        (___kont154848154849_))
-                                    (___kont154848154849_))))
-                            (___kont154848154849_))
-                        (___kont154848154849_))
-                    (___kont154848154849_))))
+                                                   (##car _e154341154392_))))
+                                            (___match154926154927_
+                                             _e154332154368_
+                                             _hd154331154371_
+                                             _tl154330154373_
+                                             _e154335154376_
+                                             _hd154334154379_
+                                             _tl154333154381_
+                                             _e154338154384_
+                                             _hd154337154387_
+                                             _tl154336154389_
+                                             _e154341154392_
+                                             _hd154340154395_
+                                             _tl154339154397_)))
+                                        (___kont154895154896_))
+                                    (___kont154895154896_))))
+                            (___kont154895154896_))
+                        (___kont154895154896_))
+                    (___kont154895154896_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (___kont154848154849_))))
+                                                    (___kont154895154896_))))
                                             (let ()
                                               (declare (not safe))
-                                              (_g154276154316_))))))))))))))))))
+                                              (_g154323154363_))))))))))))))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -2579,958 +2579,958 @@
        gxc#!constructor::optimize-call
        '#f))
     (define gxc#!accessor::optimize-call
-      (lambda (_self154053_ _ctx154054_ _stx154055_ _args154056_)
-        (let* ((_g154058154068_
-                (lambda (_g154059154065_)
+      (lambda (_self154100_ _ctx154101_ _stx154102_ _args154103_)
+        (let* ((_g154105154115_
+                (lambda (_g154106154112_)
                   (let ()
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _g154059154065_))))
-               (_g154057154106_
-                (lambda (_g154059154071_)
+                     _g154106154112_))))
+               (_g154104154153_
+                (lambda (_g154106154118_)
                   (if (let ()
                         (declare (not safe))
-                        (gx#stx-pair? _g154059154071_))
-                      (let ((_e154063154073_
+                        (gx#stx-pair? _g154106154118_))
+                      (let ((_e154110154120_
                              (let ()
                                (declare (not safe))
-                               (gx#stx-e _g154059154071_))))
-                        (let ((_hd154062154076_
+                               (gx#stx-e _g154106154118_))))
+                        (let ((_hd154109154123_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e154063154073_)))
-                              (_tl154061154078_
+                                 (##car _e154110154120_)))
+                              (_tl154108154125_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e154063154073_))))
+                                 (##cdr _e154110154120_))))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-null? _tl154061154078_))
-                              ((lambda (_L154081_)
-                                 (let* ((_klass154092_
-                                         (let ((__tmp155428
+                                (gx#stx-null? _tl154108154125_))
+                              ((lambda (_L154128_)
+                                 (let* ((_klass154139_
+                                         (let ((__tmp155475
                                                 (##structure-ref
-                                                 _self154053_
+                                                 _self154100_
                                                  '1
                                                  gxc#!type::t
                                                  '#f)))
                                            (declare (not safe))
                                            (gxc#optimizer-resolve-class
-                                            _stx154055_
-                                            __tmp155428)))
-                                        (_field154094_
-                                         (let ((__tmp155429
+                                            _stx154102_
+                                            __tmp155475)))
+                                        (_field154141_
+                                         (let ((__tmp155476
                                                 (##structure-ref
-                                                 _self154053_
+                                                 _self154100_
                                                  '2
                                                  gxc#!accessor::t
                                                  '#f)))
                                            (declare (not safe))
                                            (gxc#!class-slot->field-offset
-                                            _klass154092_
-                                            __tmp155429)))
-                                        (_object154096_
+                                            _klass154139_
+                                            __tmp155476)))
+                                        (_object154143_
                                          (let ()
                                            (declare (not safe))
                                            (gxc#compile-e__1
-                                            _ctx154054_
-                                            _L154081_))))
+                                            _ctx154101_
+                                            _L154128_))))
                                    (if (##structure-ref
-                                        _klass154092_
+                                        _klass154139_
                                         '8
                                         gxc#!class::t
                                         '#f)
-                                       (let ((__tmp155506
-                                              (let ((__tmp155515
+                                       (let ((__tmp155553
+                                              (let ((__tmp155562
                                                      (if (##structure-ref
-                                                          _self154053_
+                                                          _self154100_
                                                           '3
                                                           gxc#!accessor::t
                                                           '#f)
                                                          '%#struct-direct-ref
                                                          '%#struct-unchecked-ref))
-                                                    (__tmp155507
-                                                     (let ((__tmp155512
-                                                            (let ((__tmp155513
+                                                    (__tmp155554
+                                                     (let ((__tmp155559
+                                                            (let ((__tmp155560
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155514
+                           (let ((__tmp155561
                                   (##structure-ref
-                                   _self154053_
+                                   _self154100_
                                    '1
                                    gxc#!type::t
                                    '#f)))
                              (declare (not safe))
-                             (cons __tmp155514 '()))))
+                             (cons __tmp155561 '()))))
                       (declare (not safe))
-                      (cons '%#ref __tmp155513)))
-                   (__tmp155508
-                    (let ((__tmp155510
-                           (let ((__tmp155511
+                      (cons '%#ref __tmp155560)))
+                   (__tmp155555
+                    (let ((__tmp155557
+                           (let ((__tmp155558
                                   (let ()
                                     (declare (not safe))
-                                    (cons _field154094_ '()))))
+                                    (cons _field154141_ '()))))
                              (declare (not safe))
-                             (cons '%#quote __tmp155511)))
-                          (__tmp155509
+                             (cons '%#quote __tmp155558)))
+                          (__tmp155556
                            (let ()
                              (declare (not safe))
-                             (cons _object154096_ '()))))
+                             (cons _object154143_ '()))))
                       (declare (not safe))
-                      (cons __tmp155510 __tmp155509))))
+                      (cons __tmp155557 __tmp155556))))
                (declare (not safe))
-               (cons __tmp155512 __tmp155508))))
+               (cons __tmp155559 __tmp155555))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp155515
-                                                      __tmp155507))))
+                                                (cons __tmp155562
+                                                      __tmp155554))))
                                          (declare (not safe))
                                          (gxc#xform-wrap-source
-                                          __tmp155506
-                                          _stx154055_))
+                                          __tmp155553
+                                          _stx154102_))
                                        (if (##structure-ref
-                                            _klass154092_
+                                            _klass154139_
                                             '7
                                             gxc#!class::t
                                             '#f)
-                                           (let ((__tmp155496
-                                                  (let ((__tmp155505
+                                           (let ((__tmp155543
+                                                  (let ((__tmp155552
                                                          (if (##structure-ref
-                                                              _self154053_
+                                                              _self154100_
                                                               '3
                                                               gxc#!accessor::t
                                                               '#f)
                                                              '%#struct-ref
                                                              '%#struct-unchecked-ref))
-                                                        (__tmp155497
-                                                         (let ((__tmp155502
-                                                                (let ((__tmp155503
+                                                        (__tmp155544
+                                                         (let ((__tmp155549
+                                                                (let ((__tmp155550
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp155504
+                               (let ((__tmp155551
                                       (##structure-ref
-                                       _self154053_
+                                       _self154100_
                                        '1
                                        gxc#!type::t
                                        '#f)))
                                  (declare (not safe))
-                                 (cons __tmp155504 '()))))
+                                 (cons __tmp155551 '()))))
                           (declare (not safe))
-                          (cons '%#ref __tmp155503)))
-                       (__tmp155498
-                        (let ((__tmp155500
-                               (let ((__tmp155501
+                          (cons '%#ref __tmp155550)))
+                       (__tmp155545
+                        (let ((__tmp155547
+                               (let ((__tmp155548
                                       (let ()
                                         (declare (not safe))
-                                        (cons _field154094_ '()))))
+                                        (cons _field154141_ '()))))
                                  (declare (not safe))
-                                 (cons '%#quote __tmp155501)))
-                              (__tmp155499
+                                 (cons '%#quote __tmp155548)))
+                              (__tmp155546
                                (let ()
                                  (declare (not safe))
-                                 (cons _object154096_ '()))))
+                                 (cons _object154143_ '()))))
                           (declare (not safe))
-                          (cons __tmp155500 __tmp155499))))
+                          (cons __tmp155547 __tmp155546))))
                    (declare (not safe))
-                   (cons __tmp155502 __tmp155498))))
+                   (cons __tmp155549 __tmp155545))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp155505
-                                                          __tmp155497))))
+                                                    (cons __tmp155552
+                                                          __tmp155544))))
                                              (declare (not safe))
                                              (gxc#xform-wrap-source
-                                              __tmp155496
-                                              _stx154055_))
-                                           (let ((_$e154099_
-                                                  (let ((__tmp155430
+                                              __tmp155543
+                                              _stx154102_))
+                                           (let ((_$e154146_
+                                                  (let ((__tmp155477
                                                          (##structure-ref
-                                                          _self154053_
+                                                          _self154100_
                                                           '2
                                                           gxc#!accessor::t
                                                           '#f)))
                                                     (declare (not safe))
                                                     (gxc#!class-slot-find-struct
-                                                     _klass154092_
-                                                     __tmp155430))))
-                                             (if _$e154099_
-                                                 ((lambda (_klass154102_)
-                                                    (let ((__tmp155486
-                                                           (let ((__tmp155495
+                                                     _klass154139_
+                                                     __tmp155477))))
+                                             (if _$e154146_
+                                                 ((lambda (_klass154149_)
+                                                    (let ((__tmp155533
+                                                           (let ((__tmp155542
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (if (##structure-ref
-                               _self154053_
+                               _self154100_
                                '3
                                gxc#!accessor::t
                                '#f)
                               '%#struct-ref
                               '%#struct-unchecked-ref))
-                         (__tmp155487
-                          (let ((__tmp155492
-                                 (let ((__tmp155493
-                                        (let ((__tmp155494
+                         (__tmp155534
+                          (let ((__tmp155539
+                                 (let ((__tmp155540
+                                        (let ((__tmp155541
                                                (##structure-ref
-                                                _self154053_
+                                                _self154100_
                                                 '1
                                                 gxc#!type::t
                                                 '#f)))
                                           (declare (not safe))
-                                          (cons __tmp155494 '()))))
+                                          (cons __tmp155541 '()))))
                                    (declare (not safe))
-                                   (cons '%#ref __tmp155493)))
-                                (__tmp155488
-                                 (let ((__tmp155490
-                                        (let ((__tmp155491
+                                   (cons '%#ref __tmp155540)))
+                                (__tmp155535
+                                 (let ((__tmp155537
+                                        (let ((__tmp155538
                                                (let ()
                                                  (declare (not safe))
-                                                 (cons _field154094_ '()))))
+                                                 (cons _field154141_ '()))))
                                           (declare (not safe))
-                                          (cons '%#quote __tmp155491)))
-                                       (__tmp155489
+                                          (cons '%#quote __tmp155538)))
+                                       (__tmp155536
                                         (let ()
                                           (declare (not safe))
-                                          (cons _object154096_ '()))))
+                                          (cons _object154143_ '()))))
                                    (declare (not safe))
-                                   (cons __tmp155490 __tmp155489))))
+                                   (cons __tmp155537 __tmp155536))))
                             (declare (not safe))
-                            (cons __tmp155492 __tmp155488))))
+                            (cons __tmp155539 __tmp155535))))
                      (declare (not safe))
-                     (cons __tmp155495 __tmp155487))))
+                     (cons __tmp155542 __tmp155534))))
               (declare (not safe))
-              (gxc#xform-wrap-source __tmp155486 _stx154055_)))
+              (gxc#xform-wrap-source __tmp155533 _stx154102_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  _$e154099_)
+                                                  _$e154146_)
                                                  (if (##structure-ref
-                                                      _self154053_
+                                                      _self154100_
                                                       '3
                                                       gxc#!accessor::t
                                                       '#f)
-                                                     (let ((__tmp155440
-                                                            (let* ((_$obj154104_
+                                                     (let ((__tmp155487
+                                                            (let* ((_$obj154151_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp155441 (gensym '__obj)))
+                            (let ((__tmp155488 (gensym '__obj)))
                               (declare (not safe))
-                              (make-symbol__0 __tmp155441)))
-                           (__tmp155442
-                            (let ((__tmp155482
-                                   (let ((__tmp155483
-                                          (let ((__tmp155485
+                              (make-symbol__0 __tmp155488)))
+                           (__tmp155489
+                            (let ((__tmp155529
+                                   (let ((__tmp155530
+                                          (let ((__tmp155532
                                                  (let ()
                                                    (declare (not safe))
-                                                   (cons _$obj154104_ '())))
-                                                (__tmp155484
+                                                   (cons _$obj154151_ '())))
+                                                (__tmp155531
                                                  (let ()
                                                    (declare (not safe))
-                                                   (cons _object154096_ '()))))
+                                                   (cons _object154143_ '()))))
                                             (declare (not safe))
-                                            (cons __tmp155485 __tmp155484))))
+                                            (cons __tmp155532 __tmp155531))))
                                      (declare (not safe))
-                                     (cons __tmp155483 '())))
-                                  (__tmp155443
-                                   (let ((__tmp155444
-                                          (let ((__tmp155445
-                                                 (let ((__tmp155474
-                                                        (let ((__tmp155475
-                                                               (let ((__tmp155479
+                                     (cons __tmp155530 '())))
+                                  (__tmp155490
+                                   (let ((__tmp155491
+                                          (let ((__tmp155492
+                                                 (let ((__tmp155521
+                                                        (let ((__tmp155522
+                                                               (let ((__tmp155526
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp155480
-                                     (let ((__tmp155481
+                              (let ((__tmp155527
+                                     (let ((__tmp155528
                                             (##structure-ref
-                                             _klass154092_
+                                             _klass154139_
                                              '1
                                              gxc#!type::t
                                              '#f)))
                                        (declare (not safe))
-                                       (cons __tmp155481 '()))))
+                                       (cons __tmp155528 '()))))
                                 (declare (not safe))
-                                (cons '%#quote __tmp155480)))
-                             (__tmp155476
-                              (let ((__tmp155477
-                                     (let ((__tmp155478
+                                (cons '%#quote __tmp155527)))
+                             (__tmp155523
+                              (let ((__tmp155524
+                                     (let ((__tmp155525
                                             (let ()
                                               (declare (not safe))
-                                              (cons _$obj154104_ '()))))
+                                              (cons _$obj154151_ '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155478))))
+                                       (cons '%#ref __tmp155525))))
                                 (declare (not safe))
-                                (cons __tmp155477 '()))))
+                                (cons __tmp155524 '()))))
                          (declare (not safe))
-                         (cons __tmp155479 __tmp155476))))
+                         (cons __tmp155526 __tmp155523))))
                   (declare (not safe))
-                  (cons '%#struct-direct-instance? __tmp155475)))
-               (__tmp155446
-                (let ((__tmp155463
-                       (let ((__tmp155464
-                              (let ((__tmp155471
-                                     (let ((__tmp155472
-                                            (let ((__tmp155473
+                  (cons '%#struct-direct-instance? __tmp155522)))
+               (__tmp155493
+                (let ((__tmp155510
+                       (let ((__tmp155511
+                              (let ((__tmp155518
+                                     (let ((__tmp155519
+                                            (let ((__tmp155520
                                                    (##structure-ref
-                                                    _self154053_
+                                                    _self154100_
                                                     '1
                                                     gxc#!type::t
                                                     '#f)))
                                               (declare (not safe))
-                                              (cons __tmp155473 '()))))
+                                              (cons __tmp155520 '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155472)))
-                                    (__tmp155465
-                                     (let ((__tmp155469
-                                            (let ((__tmp155470
+                                       (cons '%#ref __tmp155519)))
+                                    (__tmp155512
+                                     (let ((__tmp155516
+                                            (let ((__tmp155517
                                                    (let ()
                                                      (declare (not safe))
-                                                     (cons _field154094_
+                                                     (cons _field154141_
                                                            '()))))
                                               (declare (not safe))
-                                              (cons '%#quote __tmp155470)))
-                                           (__tmp155466
-                                            (let ((__tmp155467
-                                                   (let ((__tmp155468
+                                              (cons '%#quote __tmp155517)))
+                                           (__tmp155513
+                                            (let ((__tmp155514
+                                                   (let ((__tmp155515
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (cons _$obj154104_
+                                                            (cons _$obj154151_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155468))))
+                                                           __tmp155515))))
                                               (declare (not safe))
-                                              (cons __tmp155467 '()))))
+                                              (cons __tmp155514 '()))))
                                        (declare (not safe))
-                                       (cons __tmp155469 __tmp155466))))
+                                       (cons __tmp155516 __tmp155513))))
                                 (declare (not safe))
-                                (cons __tmp155471 __tmp155465))))
+                                (cons __tmp155518 __tmp155512))))
                          (declare (not safe))
-                         (cons '%#struct-unchecked-ref __tmp155464)))
-                      (__tmp155447
-                       (let ((__tmp155448
-                              (let ((__tmp155449
-                                     (let ((__tmp155461
-                                            (let ((__tmp155462
+                         (cons '%#struct-unchecked-ref __tmp155511)))
+                      (__tmp155494
+                       (let ((__tmp155495
+                              (let ((__tmp155496
+                                     (let ((__tmp155508
+                                            (let ((__tmp155509
                                                    (let ()
                                                      (declare (not safe))
                                                      (cons 'class-slot-ref
                                                            '()))))
                                               (declare (not safe))
-                                              (cons '%#ref __tmp155462)))
-                                           (__tmp155450
-                                            (let ((__tmp155458
-                                                   (let ((__tmp155459
-                                                          (let ((__tmp155460
+                                              (cons '%#ref __tmp155509)))
+                                           (__tmp155497
+                                            (let ((__tmp155505
+                                                   (let ((__tmp155506
+                                                          (let ((__tmp155507
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (##structure-ref _self154053_ '1 gxc#!type::t '#f)))
+                         (##structure-ref _self154100_ '1 gxc#!type::t '#f)))
                     (declare (not safe))
-                    (cons __tmp155460 '()))))
+                    (cons __tmp155507 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '%#ref
-                                                           __tmp155459)))
-                                                  (__tmp155451
-                                                   (let ((__tmp155456
-                                                          (let ((__tmp155457
+                                                           __tmp155506)))
+                                                  (__tmp155498
+                                                   (let ((__tmp155503
+                                                          (let ((__tmp155504
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (let ()
                            (declare (not safe))
-                           (cons _$obj154104_ '()))))
+                           (cons _$obj154151_ '()))))
                     (declare (not safe))
-                    (cons '%#ref __tmp155457)))
-                 (__tmp155452
-                  (let ((__tmp155453
-                         (let ((__tmp155454
-                                (let ((__tmp155455
+                    (cons '%#ref __tmp155504)))
+                 (__tmp155499
+                  (let ((__tmp155500
+                         (let ((__tmp155501
+                                (let ((__tmp155502
                                        (##structure-ref
-                                        _self154053_
+                                        _self154100_
                                         '2
                                         gxc#!accessor::t
                                         '#f)))
                                   (declare (not safe))
-                                  (cons __tmp155455 '()))))
+                                  (cons __tmp155502 '()))))
                            (declare (not safe))
-                           (cons '%#quote __tmp155454))))
+                           (cons '%#quote __tmp155501))))
                     (declare (not safe))
-                    (cons __tmp155453 '()))))
+                    (cons __tmp155500 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155456
-                                                           __tmp155452))))
+                                                     (cons __tmp155503
+                                                           __tmp155499))))
                                               (declare (not safe))
-                                              (cons __tmp155458 __tmp155451))))
+                                              (cons __tmp155505 __tmp155498))))
                                        (declare (not safe))
-                                       (cons __tmp155461 __tmp155450))))
+                                       (cons __tmp155508 __tmp155497))))
                                 (declare (not safe))
-                                (cons '%#call __tmp155449))))
+                                (cons '%#call __tmp155496))))
                          (declare (not safe))
-                         (cons __tmp155448 '()))))
+                         (cons __tmp155495 '()))))
                   (declare (not safe))
-                  (cons __tmp155463 __tmp155447))))
+                  (cons __tmp155510 __tmp155494))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155474
-                                                         __tmp155446))))
+                                                   (cons __tmp155521
+                                                         __tmp155493))))
                                             (declare (not safe))
-                                            (cons '%#if __tmp155445))))
+                                            (cons '%#if __tmp155492))))
                                      (declare (not safe))
-                                     (cons __tmp155444 '()))))
+                                     (cons __tmp155491 '()))))
                               (declare (not safe))
-                              (cons __tmp155482 __tmp155443))))
+                              (cons __tmp155529 __tmp155490))))
                       (declare (not safe))
-                      (cons '%#let-values __tmp155442))))
+                      (cons '%#let-values __tmp155489))))
                (declare (not safe))
-               (gxc#xform-wrap-source __tmp155440 _stx154055_))
+               (gxc#xform-wrap-source __tmp155487 _stx154102_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (let ((__tmp155431
-                                                            (let ((__tmp155432
+                                                     (let ((__tmp155478
+                                                            (let ((__tmp155479
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155438
-                                  (let ((__tmp155439
+                           (let ((__tmp155485
+                                  (let ((__tmp155486
                                          (let ()
                                            (declare (not safe))
                                            (cons 'unchecked-slot-ref '()))))
                                     (declare (not safe))
-                                    (cons '%#ref __tmp155439)))
-                                 (__tmp155433
-                                  (let ((__tmp155434
-                                         (let ((__tmp155435
-                                                (let ((__tmp155436
-                                                       (let ((__tmp155437
+                                    (cons '%#ref __tmp155486)))
+                                 (__tmp155480
+                                  (let ((__tmp155481
+                                         (let ((__tmp155482
+                                                (let ((__tmp155483
+                                                       (let ((__tmp155484
                                                               (##structure-ref
-                                                               _self154053_
+                                                               _self154100_
                                                                '2
                                                                gxc#!accessor::t
                                                                '#f)))
                                                          (declare (not safe))
-                                                         (cons __tmp155437
+                                                         (cons __tmp155484
                                                                '()))))
                                                   (declare (not safe))
                                                   (cons '%#quote
-                                                        __tmp155436))))
+                                                        __tmp155483))))
                                            (declare (not safe))
-                                           (cons __tmp155435 '()))))
+                                           (cons __tmp155482 '()))))
                                     (declare (not safe))
-                                    (cons _object154096_ __tmp155434))))
+                                    (cons _object154143_ __tmp155481))))
                              (declare (not safe))
-                             (cons __tmp155438 __tmp155433))))
+                             (cons __tmp155485 __tmp155480))))
                       (declare (not safe))
-                      (cons '%#call __tmp155432))))
+                      (cons '%#call __tmp155479))))
                (declare (not safe))
-               (gxc#xform-wrap-source __tmp155431 _stx154055_)))))))))
+               (gxc#xform-wrap-source __tmp155478 _stx154102_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                               _hd154062154076_)
+                               _hd154109154123_)
                               (let ()
                                 (declare (not safe))
-                                (_g154058154068_ _g154059154071_)))))
+                                (_g154105154115_ _g154106154118_)))))
                       (let ()
                         (declare (not safe))
-                        (_g154058154068_ _g154059154071_))))))
+                        (_g154105154115_ _g154106154118_))))))
           (declare (not safe))
-          (_g154057154106_ _args154056_))))
+          (_g154104154153_ _args154103_))))
     (define gxc#!accessor::optimize-call::specialize
-      (lambda (__klass154727 __method-table154728)
-        (let ((__id154729
-               (let ((__slot154732
+      (lambda (__klass154774 __method-table154775)
+        (let ((__id154776
+               (let ((__slot154779
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154727 'id))))
-                 (if __slot154732
-                     __slot154732
+                        (class-slot-offset __klass154774 'id))))
+                 (if __slot154779
+                     __slot154779
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id)))))
-              (__checked?154730
-               (let ((__slot154733
+              (__checked?154777
+               (let ((__slot154780
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154727 'checked?))))
-                 (if __slot154733
-                     __slot154733
+                        (class-slot-offset __klass154774 'checked?))))
+                 (if __slot154780
+                     __slot154780
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'checked?)))))
-              (__slot154731
-               (let ((__slot154734
+              (__slot154778
+               (let ((__slot154781
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154727 'slot))))
-                 (if __slot154734
-                     __slot154734
+                        (class-slot-offset __klass154774 'slot))))
+                 (if __slot154781
+                     __slot154781
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'slot))))))
-          (lambda (_self154053_ _ctx154054_ _stx154055_ _args154056_)
-            (let* ((_g154058154068_
-                    (lambda (_g154059154065_)
+          (lambda (_self154100_ _ctx154101_ _stx154102_ _args154103_)
+            (let* ((_g154105154115_
+                    (lambda (_g154106154112_)
                       (let ()
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
                          '"Bad syntax; invalid match target"
-                         _g154059154065_))))
-                   (_g154057154106_
-                    (lambda (_g154059154071_)
+                         _g154106154112_))))
+                   (_g154104154153_
+                    (lambda (_g154106154118_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _g154059154071_))
-                          (let ((_e154063154073_
+                            (gx#stx-pair? _g154106154118_))
+                          (let ((_e154110154120_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _g154059154071_))))
-                            (let ((_hd154062154076_
+                                   (gx#stx-e _g154106154118_))))
+                            (let ((_hd154109154123_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _e154063154073_)))
-                                  (_tl154061154078_
+                                     (##car _e154110154120_)))
+                                  (_tl154108154125_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _e154063154073_))))
+                                     (##cdr _e154110154120_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-null? _tl154061154078_))
-                                  ((lambda (_L154081_)
-                                     (let* ((_klass154092_
-                                             (let ((__tmp155516
+                                    (gx#stx-null? _tl154108154125_))
+                                  ((lambda (_L154128_)
+                                     (let* ((_klass154139_
+                                             (let ((__tmp155563
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       _self154053_
-                                                       __id154729
-                                                       __klass154727
+                                                       _self154100_
+                                                       __id154776
+                                                       __klass154774
                                                        '#f))))
                                                (declare (not safe))
                                                (gxc#optimizer-resolve-class
-                                                _stx154055_
-                                                __tmp155516)))
-                                            (_field154094_
-                                             (let ((__tmp155517
+                                                _stx154102_
+                                                __tmp155563)))
+                                            (_field154141_
+                                             (let ((__tmp155564
                                                     (let ()
                                                       (declare (not safe))
                                                       (##unchecked-structure-ref
-                                                       _self154053_
-                                                       __slot154731
-                                                       __klass154727
+                                                       _self154100_
+                                                       __slot154778
+                                                       __klass154774
                                                        '#f))))
                                                (declare (not safe))
                                                (gxc#!class-slot->field-offset
-                                                _klass154092_
-                                                __tmp155517)))
-                                            (_object154096_
+                                                _klass154139_
+                                                __tmp155564)))
+                                            (_object154143_
                                              (let ()
                                                (declare (not safe))
                                                (gxc#compile-e__1
-                                                _ctx154054_
-                                                _L154081_))))
+                                                _ctx154101_
+                                                _L154128_))))
                                        (if (##structure-ref
-                                            _klass154092_
+                                            _klass154139_
                                             '8
                                             gxc#!class::t
                                             '#f)
-                                           (let ((__tmp155594
-                                                  (let ((__tmp155603
+                                           (let ((__tmp155641
+                                                  (let ((__tmp155650
                                                          (if (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
                        (##unchecked-structure-ref
-                        _self154053_
-                        __checked?154730
-                        __klass154727
+                        _self154100_
+                        __checked?154777
+                        __klass154774
                         '#f))
                      '%#struct-direct-ref
                      '%#struct-unchecked-ref))
-                (__tmp155595
-                 (let ((__tmp155600
-                        (let ((__tmp155601
-                               (let ((__tmp155602
+                (__tmp155642
+                 (let ((__tmp155647
+                        (let ((__tmp155648
+                               (let ((__tmp155649
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _self154053_
-                                         __id154729
-                                         __klass154727
+                                         _self154100_
+                                         __id154776
+                                         __klass154774
                                          '#f))))
                                  (declare (not safe))
-                                 (cons __tmp155602 '()))))
+                                 (cons __tmp155649 '()))))
                           (declare (not safe))
-                          (cons '%#ref __tmp155601)))
-                       (__tmp155596
-                        (let ((__tmp155598
-                               (let ((__tmp155599
+                          (cons '%#ref __tmp155648)))
+                       (__tmp155643
+                        (let ((__tmp155645
+                               (let ((__tmp155646
                                       (let ()
                                         (declare (not safe))
-                                        (cons _field154094_ '()))))
+                                        (cons _field154141_ '()))))
                                  (declare (not safe))
-                                 (cons '%#quote __tmp155599)))
-                              (__tmp155597
+                                 (cons '%#quote __tmp155646)))
+                              (__tmp155644
                                (let ()
                                  (declare (not safe))
-                                 (cons _object154096_ '()))))
+                                 (cons _object154143_ '()))))
                           (declare (not safe))
-                          (cons __tmp155598 __tmp155597))))
+                          (cons __tmp155645 __tmp155644))))
                    (declare (not safe))
-                   (cons __tmp155600 __tmp155596))))
+                   (cons __tmp155647 __tmp155643))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp155603
-                                                          __tmp155595))))
+                                                    (cons __tmp155650
+                                                          __tmp155642))))
                                              (declare (not safe))
                                              (gxc#xform-wrap-source
-                                              __tmp155594
-                                              _stx154055_))
+                                              __tmp155641
+                                              _stx154102_))
                                            (if (##structure-ref
-                                                _klass154092_
+                                                _klass154139_
                                                 '7
                                                 gxc#!class::t
                                                 '#f)
-                                               (let ((__tmp155584
-                                                      (let ((__tmp155593
+                                               (let ((__tmp155631
+                                                      (let ((__tmp155640
                                                              (if (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (declare (not safe))
                            (##unchecked-structure-ref
-                            _self154053_
-                            __checked?154730
-                            __klass154727
+                            _self154100_
+                            __checked?154777
+                            __klass154774
                             '#f))
                          '%#struct-ref
                          '%#struct-unchecked-ref))
-                    (__tmp155585
-                     (let ((__tmp155590
-                            (let ((__tmp155591
-                                   (let ((__tmp155592
+                    (__tmp155632
+                     (let ((__tmp155637
+                            (let ((__tmp155638
+                                   (let ((__tmp155639
                                           (let ()
                                             (declare (not safe))
                                             (##unchecked-structure-ref
-                                             _self154053_
-                                             __id154729
-                                             __klass154727
+                                             _self154100_
+                                             __id154776
+                                             __klass154774
                                              '#f))))
                                      (declare (not safe))
-                                     (cons __tmp155592 '()))))
+                                     (cons __tmp155639 '()))))
                               (declare (not safe))
-                              (cons '%#ref __tmp155591)))
-                           (__tmp155586
-                            (let ((__tmp155588
-                                   (let ((__tmp155589
+                              (cons '%#ref __tmp155638)))
+                           (__tmp155633
+                            (let ((__tmp155635
+                                   (let ((__tmp155636
                                           (let ()
                                             (declare (not safe))
-                                            (cons _field154094_ '()))))
+                                            (cons _field154141_ '()))))
                                      (declare (not safe))
-                                     (cons '%#quote __tmp155589)))
-                                  (__tmp155587
+                                     (cons '%#quote __tmp155636)))
+                                  (__tmp155634
                                    (let ()
                                      (declare (not safe))
-                                     (cons _object154096_ '()))))
+                                     (cons _object154143_ '()))))
                               (declare (not safe))
-                              (cons __tmp155588 __tmp155587))))
+                              (cons __tmp155635 __tmp155634))))
                        (declare (not safe))
-                       (cons __tmp155590 __tmp155586))))
+                       (cons __tmp155637 __tmp155633))))
                 (declare (not safe))
-                (cons __tmp155593 __tmp155585))))
+                (cons __tmp155640 __tmp155632))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
                                                  (gxc#xform-wrap-source
-                                                  __tmp155584
-                                                  _stx154055_))
-                                               (let ((_$e154099_
-                                                      (let ((__tmp155518
+                                                  __tmp155631
+                                                  _stx154102_))
+                                               (let ((_$e154146_
+                                                      (let ((__tmp155565
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
                        (##unchecked-structure-ref
-                        _self154053_
-                        __slot154731
-                        __klass154727
+                        _self154100_
+                        __slot154778
+                        __klass154774
                         '#f))))
                 (declare (not safe))
-                (gxc#!class-slot-find-struct _klass154092_ __tmp155518))))
+                (gxc#!class-slot-find-struct _klass154139_ __tmp155565))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (if _$e154099_
-                                                     ((lambda (_klass154102_)
-                                                        (let ((__tmp155574
-                                                               (let ((__tmp155583
+                                                 (if _$e154146_
+                                                     ((lambda (_klass154149_)
+                                                        (let ((__tmp155621
+                                                               (let ((__tmp155630
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (if (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     _self154053_
-                                     __checked?154730
-                                     __klass154727
+                                     _self154100_
+                                     __checked?154777
+                                     __klass154774
                                      '#f))
                                   '%#struct-ref
                                   '%#struct-unchecked-ref))
-                             (__tmp155575
-                              (let ((__tmp155580
-                                     (let ((__tmp155581
-                                            (let ((__tmp155582
+                             (__tmp155622
+                              (let ((__tmp155627
+                                     (let ((__tmp155628
+                                            (let ((__tmp155629
                                                    (let ()
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
-                                                      _self154053_
-                                                      __id154729
-                                                      __klass154727
+                                                      _self154100_
+                                                      __id154776
+                                                      __klass154774
                                                       '#f))))
                                               (declare (not safe))
-                                              (cons __tmp155582 '()))))
+                                              (cons __tmp155629 '()))))
                                        (declare (not safe))
-                                       (cons '%#ref __tmp155581)))
-                                    (__tmp155576
-                                     (let ((__tmp155578
-                                            (let ((__tmp155579
+                                       (cons '%#ref __tmp155628)))
+                                    (__tmp155623
+                                     (let ((__tmp155625
+                                            (let ((__tmp155626
                                                    (let ()
                                                      (declare (not safe))
-                                                     (cons _field154094_
+                                                     (cons _field154141_
                                                            '()))))
                                               (declare (not safe))
-                                              (cons '%#quote __tmp155579)))
-                                           (__tmp155577
+                                              (cons '%#quote __tmp155626)))
+                                           (__tmp155624
                                             (let ()
                                               (declare (not safe))
-                                              (cons _object154096_ '()))))
+                                              (cons _object154143_ '()))))
                                        (declare (not safe))
-                                       (cons __tmp155578 __tmp155577))))
+                                       (cons __tmp155625 __tmp155624))))
                                 (declare (not safe))
-                                (cons __tmp155580 __tmp155576))))
+                                (cons __tmp155627 __tmp155623))))
                          (declare (not safe))
-                         (cons __tmp155583 __tmp155575))))
+                         (cons __tmp155630 __tmp155622))))
                   (declare (not safe))
-                  (gxc#xform-wrap-source __tmp155574 _stx154055_)))
-              _$e154099_)
+                  (gxc#xform-wrap-source __tmp155621 _stx154102_)))
+              _$e154146_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (if (let ()
                                                            (declare (not safe))
                                                            (##unchecked-structure-ref
-                                                            _self154053_
-                                                            __checked?154730
-                                                            __klass154727
+                                                            _self154100_
+                                                            __checked?154777
+                                                            __klass154774
                                                             '#f))
-                                                         (let ((__tmp155528
-                                                                (let* ((_$obj154104_
+                                                         (let ((__tmp155575
+                                                                (let* ((_$obj154151_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                (let ((__tmp155529 (gensym '__obj)))
+                                (let ((__tmp155576 (gensym '__obj)))
                                   (declare (not safe))
-                                  (make-symbol__0 __tmp155529)))
-                               (__tmp155530
-                                (let ((__tmp155570
-                                       (let ((__tmp155571
-                                              (let ((__tmp155573
+                                  (make-symbol__0 __tmp155576)))
+                               (__tmp155577
+                                (let ((__tmp155617
+                                       (let ((__tmp155618
+                                              (let ((__tmp155620
                                                      (let ()
                                                        (declare (not safe))
-                                                       (cons _$obj154104_
+                                                       (cons _$obj154151_
                                                              '())))
-                                                    (__tmp155572
+                                                    (__tmp155619
                                                      (let ()
                                                        (declare (not safe))
-                                                       (cons _object154096_
+                                                       (cons _object154143_
                                                              '()))))
                                                 (declare (not safe))
-                                                (cons __tmp155573
-                                                      __tmp155572))))
+                                                (cons __tmp155620
+                                                      __tmp155619))))
                                          (declare (not safe))
-                                         (cons __tmp155571 '())))
-                                      (__tmp155531
-                                       (let ((__tmp155532
-                                              (let ((__tmp155533
-                                                     (let ((__tmp155562
-                                                            (let ((__tmp155563
+                                         (cons __tmp155618 '())))
+                                      (__tmp155578
+                                       (let ((__tmp155579
+                                              (let ((__tmp155580
+                                                     (let ((__tmp155609
+                                                            (let ((__tmp155610
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155567
-                                  (let ((__tmp155568
-                                         (let ((__tmp155569
+                           (let ((__tmp155614
+                                  (let ((__tmp155615
+                                         (let ((__tmp155616
                                                 (##structure-ref
-                                                 _klass154092_
+                                                 _klass154139_
                                                  '1
                                                  gxc#!type::t
                                                  '#f)))
                                            (declare (not safe))
-                                           (cons __tmp155569 '()))))
+                                           (cons __tmp155616 '()))))
                                     (declare (not safe))
-                                    (cons '%#quote __tmp155568)))
-                                 (__tmp155564
-                                  (let ((__tmp155565
-                                         (let ((__tmp155566
+                                    (cons '%#quote __tmp155615)))
+                                 (__tmp155611
+                                  (let ((__tmp155612
+                                         (let ((__tmp155613
                                                 (let ()
                                                   (declare (not safe))
-                                                  (cons _$obj154104_ '()))))
+                                                  (cons _$obj154151_ '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155566))))
+                                           (cons '%#ref __tmp155613))))
                                     (declare (not safe))
-                                    (cons __tmp155565 '()))))
+                                    (cons __tmp155612 '()))))
                              (declare (not safe))
-                             (cons __tmp155567 __tmp155564))))
+                             (cons __tmp155614 __tmp155611))))
                       (declare (not safe))
-                      (cons '%#struct-direct-instance? __tmp155563)))
-                   (__tmp155534
-                    (let ((__tmp155551
-                           (let ((__tmp155552
-                                  (let ((__tmp155559
-                                         (let ((__tmp155560
-                                                (let ((__tmp155561
+                      (cons '%#struct-direct-instance? __tmp155610)))
+                   (__tmp155581
+                    (let ((__tmp155598
+                           (let ((__tmp155599
+                                  (let ((__tmp155606
+                                         (let ((__tmp155607
+                                                (let ((__tmp155608
                                                        (let ()
                                                          (declare (not safe))
                                                          (##unchecked-structure-ref
-                                                          _self154053_
-                                                          __id154729
-                                                          __klass154727
+                                                          _self154100_
+                                                          __id154776
+                                                          __klass154774
                                                           '#f))))
                                                   (declare (not safe))
-                                                  (cons __tmp155561 '()))))
+                                                  (cons __tmp155608 '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155560)))
-                                        (__tmp155553
-                                         (let ((__tmp155557
-                                                (let ((__tmp155558
+                                           (cons '%#ref __tmp155607)))
+                                        (__tmp155600
+                                         (let ((__tmp155604
+                                                (let ((__tmp155605
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _field154094_
+                                                         (cons _field154141_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '%#quote __tmp155558)))
-                                               (__tmp155554
-                                                (let ((__tmp155555
-                                                       (let ((__tmp155556
+                                                  (cons '%#quote __tmp155605)))
+                                               (__tmp155601
+                                                (let ((__tmp155602
+                                                       (let ((__tmp155603
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (cons _$obj154104_ '()))))
+                        (cons _$obj154151_ '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155556))))
+                 (cons '%#ref __tmp155603))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155555 '()))))
+                                                  (cons __tmp155602 '()))))
                                            (declare (not safe))
-                                           (cons __tmp155557 __tmp155554))))
+                                           (cons __tmp155604 __tmp155601))))
                                     (declare (not safe))
-                                    (cons __tmp155559 __tmp155553))))
+                                    (cons __tmp155606 __tmp155600))))
                              (declare (not safe))
-                             (cons '%#struct-unchecked-ref __tmp155552)))
-                          (__tmp155535
-                           (let ((__tmp155536
-                                  (let ((__tmp155537
-                                         (let ((__tmp155549
-                                                (let ((__tmp155550
+                             (cons '%#struct-unchecked-ref __tmp155599)))
+                          (__tmp155582
+                           (let ((__tmp155583
+                                  (let ((__tmp155584
+                                         (let ((__tmp155596
+                                                (let ((__tmp155597
                                                        (let ()
                                                          (declare (not safe))
                                                          (cons 'class-slot-ref
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '%#ref __tmp155550)))
-                                               (__tmp155538
-                                                (let ((__tmp155546
-                                                       (let ((__tmp155547
-                                                              (let ((__tmp155548
+                                                  (cons '%#ref __tmp155597)))
+                                               (__tmp155585
+                                                (let ((__tmp155593
+                                                       (let ((__tmp155594
+                                                              (let ((__tmp155595
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                _self154053_
-                                __id154729
-                                __klass154727
+                                _self154100_
+                                __id154776
+                                __klass154774
                                 '#f))))
                         (declare (not safe))
-                        (cons __tmp155548 '()))))
+                        (cons __tmp155595 '()))))
                  (declare (not safe))
-                 (cons '%#ref __tmp155547)))
-              (__tmp155539
-               (let ((__tmp155544
-                      (let ((__tmp155545
+                 (cons '%#ref __tmp155594)))
+              (__tmp155586
+               (let ((__tmp155591
+                      (let ((__tmp155592
                              (let ()
                                (declare (not safe))
-                               (cons _$obj154104_ '()))))
+                               (cons _$obj154151_ '()))))
                         (declare (not safe))
-                        (cons '%#ref __tmp155545)))
-                     (__tmp155540
-                      (let ((__tmp155541
-                             (let ((__tmp155542
-                                    (let ((__tmp155543
+                        (cons '%#ref __tmp155592)))
+                     (__tmp155587
+                      (let ((__tmp155588
+                             (let ((__tmp155589
+                                    (let ((__tmp155590
                                            (let ()
                                              (declare (not safe))
                                              (##unchecked-structure-ref
-                                              _self154053_
-                                              __slot154731
-                                              __klass154727
+                                              _self154100_
+                                              __slot154778
+                                              __klass154774
                                               '#f))))
                                       (declare (not safe))
-                                      (cons __tmp155543 '()))))
+                                      (cons __tmp155590 '()))))
                                (declare (not safe))
-                               (cons '%#quote __tmp155542))))
+                               (cons '%#quote __tmp155589))))
                         (declare (not safe))
-                        (cons __tmp155541 '()))))
+                        (cons __tmp155588 '()))))
                  (declare (not safe))
-                 (cons __tmp155544 __tmp155540))))
+                 (cons __tmp155591 __tmp155587))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (declare (not safe))
-                                                  (cons __tmp155546
-                                                        __tmp155539))))
+                                                  (cons __tmp155593
+                                                        __tmp155586))))
                                            (declare (not safe))
-                                           (cons __tmp155549 __tmp155538))))
+                                           (cons __tmp155596 __tmp155585))))
                                     (declare (not safe))
-                                    (cons '%#call __tmp155537))))
+                                    (cons '%#call __tmp155584))))
                              (declare (not safe))
-                             (cons __tmp155536 '()))))
+                             (cons __tmp155583 '()))))
                       (declare (not safe))
-                      (cons __tmp155551 __tmp155535))))
+                      (cons __tmp155598 __tmp155582))))
                (declare (not safe))
-               (cons __tmp155562 __tmp155534))))
+               (cons __tmp155609 __tmp155581))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons '%#if __tmp155533))))
+                                                (cons '%#if __tmp155580))))
                                          (declare (not safe))
-                                         (cons __tmp155532 '()))))
+                                         (cons __tmp155579 '()))))
                                   (declare (not safe))
-                                  (cons __tmp155570 __tmp155531))))
+                                  (cons __tmp155617 __tmp155578))))
                           (declare (not safe))
-                          (cons '%#let-values __tmp155530))))
+                          (cons '%#let-values __tmp155577))))
                    (declare (not safe))
-                   (gxc#xform-wrap-source __tmp155528 _stx154055_))
-                 (let ((__tmp155519
-                        (let ((__tmp155520
-                               (let ((__tmp155526
-                                      (let ((__tmp155527
+                   (gxc#xform-wrap-source __tmp155575 _stx154102_))
+                 (let ((__tmp155566
+                        (let ((__tmp155567
+                               (let ((__tmp155573
+                                      (let ((__tmp155574
                                              (let ()
                                                (declare (not safe))
                                                (cons 'unchecked-slot-ref
                                                      '()))))
                                         (declare (not safe))
-                                        (cons '%#ref __tmp155527)))
-                                     (__tmp155521
-                                      (let ((__tmp155522
-                                             (let ((__tmp155523
-                                                    (let ((__tmp155524
-                                                           (let ((__tmp155525
+                                        (cons '%#ref __tmp155574)))
+                                     (__tmp155568
+                                      (let ((__tmp155569
+                                             (let ((__tmp155570
+                                                    (let ((__tmp155571
+                                                           (let ((__tmp155572
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
                             (##unchecked-structure-ref
-                             _self154053_
-                             __slot154731
-                             __klass154727
+                             _self154100_
+                             __slot154778
+                             __klass154774
                              '#f))))
                      (declare (not safe))
-                     (cons __tmp155525 '()))))
+                     (cons __tmp155572 '()))))
               (declare (not safe))
-              (cons '%#quote __tmp155524))))
+              (cons '%#quote __tmp155571))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155523 '()))))
+                                               (cons __tmp155570 '()))))
                                         (declare (not safe))
-                                        (cons _object154096_ __tmp155522))))
+                                        (cons _object154143_ __tmp155569))))
                                  (declare (not safe))
-                                 (cons __tmp155526 __tmp155521))))
+                                 (cons __tmp155573 __tmp155568))))
                           (declare (not safe))
-                          (cons '%#call __tmp155520))))
+                          (cons '%#call __tmp155567))))
                    (declare (not safe))
-                   (gxc#xform-wrap-source __tmp155519 _stx154055_)))))))))
+                   (gxc#xform-wrap-source __tmp155566 _stx154102_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                   _hd154062154076_)
+                                   _hd154109154123_)
                                   (let ()
                                     (declare (not safe))
-                                    (_g154058154068_ _g154059154071_)))))
+                                    (_g154105154115_ _g154106154118_)))))
                           (let ()
                             (declare (not safe))
-                            (_g154058154068_ _g154059154071_))))))
+                            (_g154105154115_ _g154106154118_))))))
               (declare (not safe))
-              (_g154057154106_ _args154056_))))))
+              (_g154104154153_ _args154103_))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -3544,365 +3544,365 @@
        gxc#!accessor::optimize-call
        '#f))
     (define gxc#!mutator::optimize-call
-      (lambda (_self153857_ _ctx153858_ _stx153859_ _args153860_)
-        (let* ((_g153862153876_
-                (lambda (_g153863153873_)
+      (lambda (_self153904_ _ctx153905_ _stx153906_ _args153907_)
+        (let* ((_g153909153923_
+                (lambda (_g153910153920_)
                   (let ()
                     (declare (not safe))
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid match target"
-                     _g153863153873_))))
-               (_g153861153928_
-                (lambda (_g153863153879_)
+                     _g153910153920_))))
+               (_g153908153975_
+                (lambda (_g153910153926_)
                   (if (let ()
                         (declare (not safe))
-                        (gx#stx-pair? _g153863153879_))
-                      (let ((_e153868153881_
+                        (gx#stx-pair? _g153910153926_))
+                      (let ((_e153915153928_
                              (let ()
                                (declare (not safe))
-                               (gx#stx-e _g153863153879_))))
-                        (let ((_hd153867153884_
+                               (gx#stx-e _g153910153926_))))
+                        (let ((_hd153914153931_
                                (let ()
                                  (declare (not safe))
-                                 (##car _e153868153881_)))
-                              (_tl153866153886_
+                                 (##car _e153915153928_)))
+                              (_tl153913153933_
                                (let ()
                                  (declare (not safe))
-                                 (##cdr _e153868153881_))))
+                                 (##cdr _e153915153928_))))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-pair? _tl153866153886_))
-                              (let ((_e153871153889_
+                                (gx#stx-pair? _tl153913153933_))
+                              (let ((_e153918153936_
                                      (let ()
                                        (declare (not safe))
-                                       (gx#stx-e _tl153866153886_))))
-                                (let ((_hd153870153892_
+                                       (gx#stx-e _tl153913153933_))))
+                                (let ((_hd153917153939_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e153871153889_)))
-                                      (_tl153869153894_
+                                         (##car _e153918153936_)))
+                                      (_tl153916153941_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e153871153889_))))
+                                         (##cdr _e153918153936_))))
                                   (if (let ()
                                         (declare (not safe))
-                                        (gx#stx-null? _tl153869153894_))
-                                      ((lambda (_L153897_ _L153898_)
-                                         (let* ((_klass153912_
-                                                 (let ((__tmp155604
+                                        (gx#stx-null? _tl153916153941_))
+                                      ((lambda (_L153944_ _L153945_)
+                                         (let* ((_klass153959_
+                                                 (let ((__tmp155651
                                                         (##structure-ref
-                                                         _self153857_
+                                                         _self153904_
                                                          '1
                                                          gxc#!type::t
                                                          '#f)))
                                                    (declare (not safe))
                                                    (gxc#optimizer-resolve-class
-                                                    _stx153859_
-                                                    __tmp155604)))
-                                                (_field153914_
-                                                 (let ((__tmp155605
+                                                    _stx153906_
+                                                    __tmp155651)))
+                                                (_field153961_
+                                                 (let ((__tmp155652
                                                         (##structure-ref
-                                                         _self153857_
+                                                         _self153904_
                                                          '2
                                                          gxc#!mutator::t
                                                          '#f)))
                                                    (declare (not safe))
                                                    (gxc#!class-slot->field-offset
-                                                    _klass153912_
-                                                    __tmp155605)))
-                                                (_object153916_
+                                                    _klass153959_
+                                                    __tmp155652)))
+                                                (_object153963_
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#compile-e__1
-                                                    _ctx153858_
-                                                    _L153898_)))
-                                                (_value153918_
+                                                    _ctx153905_
+                                                    _L153945_)))
+                                                (_value153965_
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#compile-e__1
-                                                    _ctx153858_
-                                                    _L153897_))))
+                                                    _ctx153905_
+                                                    _L153944_))))
                                            (if (##structure-ref
-                                                _klass153912_
+                                                _klass153959_
                                                 '8
                                                 gxc#!class::t
                                                 '#f)
-                                               (let ((__tmp155687
-                                                      (let ((__tmp155697
+                                               (let ((__tmp155734
+                                                      (let ((__tmp155744
                                                              (if (##structure-ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _self153857_
+                          _self153904_
                           '3
                           gxc#!mutator::t
                           '#f)
                          '%#struct-direct-set!
                          '%#struct-unchecked-set!))
-                    (__tmp155688
-                     (let ((__tmp155694
-                            (let ((__tmp155695
-                                   (let ((__tmp155696
+                    (__tmp155735
+                     (let ((__tmp155741
+                            (let ((__tmp155742
+                                   (let ((__tmp155743
                                           (##structure-ref
-                                           _self153857_
+                                           _self153904_
                                            '1
                                            gxc#!type::t
                                            '#f)))
                                      (declare (not safe))
-                                     (cons __tmp155696 '()))))
+                                     (cons __tmp155743 '()))))
                               (declare (not safe))
-                              (cons '%#ref __tmp155695)))
-                           (__tmp155689
-                            (let ((__tmp155692
-                                   (let ((__tmp155693
+                              (cons '%#ref __tmp155742)))
+                           (__tmp155736
+                            (let ((__tmp155739
+                                   (let ((__tmp155740
                                           (let ()
                                             (declare (not safe))
-                                            (cons _field153914_ '()))))
+                                            (cons _field153961_ '()))))
                                      (declare (not safe))
-                                     (cons '%#quote __tmp155693)))
-                                  (__tmp155690
-                                   (let ((__tmp155691
+                                     (cons '%#quote __tmp155740)))
+                                  (__tmp155737
+                                   (let ((__tmp155738
                                           (let ()
                                             (declare (not safe))
-                                            (cons _value153918_ '()))))
+                                            (cons _value153965_ '()))))
                                      (declare (not safe))
-                                     (cons _object153916_ __tmp155691))))
+                                     (cons _object153963_ __tmp155738))))
                               (declare (not safe))
-                              (cons __tmp155692 __tmp155690))))
+                              (cons __tmp155739 __tmp155737))))
                        (declare (not safe))
-                       (cons __tmp155694 __tmp155689))))
+                       (cons __tmp155741 __tmp155736))))
                 (declare (not safe))
-                (cons __tmp155697 __tmp155688))))
+                (cons __tmp155744 __tmp155735))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
                                                  (gxc#xform-wrap-source
-                                                  __tmp155687
-                                                  _stx153859_))
+                                                  __tmp155734
+                                                  _stx153906_))
                                                (if (##structure-ref
-                                                    _klass153912_
+                                                    _klass153959_
                                                     '7
                                                     gxc#!class::t
                                                     '#f)
-                                                   (let ((__tmp155676
-                                                          (let ((__tmp155686
+                                                   (let ((__tmp155723
+                                                          (let ((__tmp155733
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (if (##structure-ref
-                              _self153857_
+                              _self153904_
                               '3
                               gxc#!mutator::t
                               '#f)
                              '%#struct-set!
                              '%#struct-unchecked-set!))
-                        (__tmp155677
-                         (let ((__tmp155683
-                                (let ((__tmp155684
-                                       (let ((__tmp155685
+                        (__tmp155724
+                         (let ((__tmp155730
+                                (let ((__tmp155731
+                                       (let ((__tmp155732
                                               (##structure-ref
-                                               _self153857_
+                                               _self153904_
                                                '1
                                                gxc#!type::t
                                                '#f)))
                                          (declare (not safe))
-                                         (cons __tmp155685 '()))))
+                                         (cons __tmp155732 '()))))
                                   (declare (not safe))
-                                  (cons '%#ref __tmp155684)))
-                               (__tmp155678
-                                (let ((__tmp155681
-                                       (let ((__tmp155682
+                                  (cons '%#ref __tmp155731)))
+                               (__tmp155725
+                                (let ((__tmp155728
+                                       (let ((__tmp155729
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _field153914_ '()))))
+                                                (cons _field153961_ '()))))
                                          (declare (not safe))
-                                         (cons '%#quote __tmp155682)))
-                                      (__tmp155679
-                                       (let ((__tmp155680
+                                         (cons '%#quote __tmp155729)))
+                                      (__tmp155726
+                                       (let ((__tmp155727
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _value153918_ '()))))
+                                                (cons _value153965_ '()))))
                                          (declare (not safe))
-                                         (cons _object153916_ __tmp155680))))
+                                         (cons _object153963_ __tmp155727))))
                                   (declare (not safe))
-                                  (cons __tmp155681 __tmp155679))))
+                                  (cons __tmp155728 __tmp155726))))
                            (declare (not safe))
-                           (cons __tmp155683 __tmp155678))))
+                           (cons __tmp155730 __tmp155725))))
                     (declare (not safe))
-                    (cons __tmp155686 __tmp155677))))
+                    (cons __tmp155733 __tmp155724))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (gxc#xform-wrap-source
-                                                      __tmp155676
-                                                      _stx153859_))
-                                                   (let ((_$e153921_
-                                                          (let ((__tmp155606
+                                                      __tmp155723
+                                                      _stx153906_))
+                                                   (let ((_$e153968_
+                                                          (let ((__tmp155653
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (##structure-ref
-                          _self153857_
+                          _self153904_
                           '2
                           gxc#!mutator::t
                           '#f)))
                     (declare (not safe))
-                    (gxc#!class-slot-find-struct _klass153912_ __tmp155606))))
+                    (gxc#!class-slot-find-struct _klass153959_ __tmp155653))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (if _$e153921_
-                                                         ((lambda (_klass153924_)
-                                                            (let ((__tmp155665
+                                                     (if _$e153968_
+                                                         ((lambda (_klass153971_)
+                                                            (let ((__tmp155712
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155675
+                           (let ((__tmp155722
                                   (if (##structure-ref
-                                       _self153857_
+                                       _self153904_
                                        '3
                                        gxc#!mutator::t
                                        '#f)
                                       '%#struct-set!
                                       '%#struct-unchecked-set!))
-                                 (__tmp155666
-                                  (let ((__tmp155672
-                                         (let ((__tmp155673
-                                                (let ((__tmp155674
+                                 (__tmp155713
+                                  (let ((__tmp155719
+                                         (let ((__tmp155720
+                                                (let ((__tmp155721
                                                        (##structure-ref
-                                                        _self153857_
+                                                        _self153904_
                                                         '1
                                                         gxc#!type::t
                                                         '#f)))
                                                   (declare (not safe))
-                                                  (cons __tmp155674 '()))))
+                                                  (cons __tmp155721 '()))))
                                            (declare (not safe))
-                                           (cons '%#ref __tmp155673)))
-                                        (__tmp155667
-                                         (let ((__tmp155670
-                                                (let ((__tmp155671
+                                           (cons '%#ref __tmp155720)))
+                                        (__tmp155714
+                                         (let ((__tmp155717
+                                                (let ((__tmp155718
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _field153914_
+                                                         (cons _field153961_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons '%#quote __tmp155671)))
-                                               (__tmp155668
-                                                (let ((__tmp155669
+                                                  (cons '%#quote __tmp155718)))
+                                               (__tmp155715
+                                                (let ((__tmp155716
                                                        (let ()
                                                          (declare (not safe))
-                                                         (cons _value153918_
+                                                         (cons _value153965_
                                                                '()))))
                                                   (declare (not safe))
-                                                  (cons _object153916_
-                                                        __tmp155669))))
+                                                  (cons _object153963_
+                                                        __tmp155716))))
                                            (declare (not safe))
-                                           (cons __tmp155670 __tmp155668))))
+                                           (cons __tmp155717 __tmp155715))))
                                     (declare (not safe))
-                                    (cons __tmp155672 __tmp155667))))
+                                    (cons __tmp155719 __tmp155714))))
                              (declare (not safe))
-                             (cons __tmp155675 __tmp155666))))
+                             (cons __tmp155722 __tmp155713))))
                       (declare (not safe))
-                      (gxc#xform-wrap-source __tmp155665 _stx153859_)))
-                  _$e153921_)
-                 (if (##structure-ref _self153857_ '3 gxc#!mutator::t '#f)
-                     (let ((__tmp155617
-                            (let* ((_$obj153926_
-                                    (let ((__tmp155618 (gensym '__obj)))
+                      (gxc#xform-wrap-source __tmp155712 _stx153906_)))
+                  _$e153968_)
+                 (if (##structure-ref _self153904_ '3 gxc#!mutator::t '#f)
+                     (let ((__tmp155664
+                            (let* ((_$obj153973_
+                                    (let ((__tmp155665 (gensym '__obj)))
                                       (declare (not safe))
-                                      (make-symbol__0 __tmp155618)))
-                                   (__tmp155619
-                                    (let ((__tmp155661
-                                           (let ((__tmp155662
-                                                  (let ((__tmp155664
+                                      (make-symbol__0 __tmp155665)))
+                                   (__tmp155666
+                                    (let ((__tmp155708
+                                           (let ((__tmp155709
+                                                  (let ((__tmp155711
                                                          (let ()
                                                            (declare (not safe))
-                                                           (cons _$obj153926_
+                                                           (cons _$obj153973_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '())))
-                (__tmp155663
-                 (let () (declare (not safe)) (cons _object153916_ '()))))
+                (__tmp155710
+                 (let () (declare (not safe)) (cons _object153963_ '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp155664
-                                                          __tmp155663))))
+                                                    (cons __tmp155711
+                                                          __tmp155710))))
                                              (declare (not safe))
-                                             (cons __tmp155662 '())))
-                                          (__tmp155620
-                                           (let ((__tmp155621
-                                                  (let ((__tmp155622
-                                                         (let ((__tmp155653
-                                                                (let ((__tmp155654
+                                             (cons __tmp155709 '())))
+                                          (__tmp155667
+                                           (let ((__tmp155668
+                                                  (let ((__tmp155669
+                                                         (let ((__tmp155700
+                                                                (let ((__tmp155701
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp155658
-                                      (let ((__tmp155659
-                                             (let ((__tmp155660
+                               (let ((__tmp155705
+                                      (let ((__tmp155706
+                                             (let ((__tmp155707
                                                     (##structure-ref
-                                                     _klass153912_
+                                                     _klass153959_
                                                      '1
                                                      gxc#!type::t
                                                      '#f)))
                                                (declare (not safe))
-                                               (cons __tmp155660 '()))))
+                                               (cons __tmp155707 '()))))
                                         (declare (not safe))
-                                        (cons '%#quote __tmp155659)))
-                                     (__tmp155655
-                                      (let ((__tmp155656
-                                             (let ((__tmp155657
+                                        (cons '%#quote __tmp155706)))
+                                     (__tmp155702
+                                      (let ((__tmp155703
+                                             (let ((__tmp155704
                                                     (let ()
                                                       (declare (not safe))
-                                                      (cons _$obj153926_
+                                                      (cons _$obj153973_
                                                             '()))))
                                                (declare (not safe))
-                                               (cons '%#ref __tmp155657))))
+                                               (cons '%#ref __tmp155704))))
                                         (declare (not safe))
-                                        (cons __tmp155656 '()))))
+                                        (cons __tmp155703 '()))))
                                  (declare (not safe))
-                                 (cons __tmp155658 __tmp155655))))
+                                 (cons __tmp155705 __tmp155702))))
                           (declare (not safe))
-                          (cons '%#struct-direct-instance? __tmp155654)))
-                       (__tmp155623
-                        (let ((__tmp155641
-                               (let ((__tmp155642
-                                      (let ((__tmp155650
-                                             (let ((__tmp155651
-                                                    (let ((__tmp155652
+                          (cons '%#struct-direct-instance? __tmp155701)))
+                       (__tmp155670
+                        (let ((__tmp155688
+                               (let ((__tmp155689
+                                      (let ((__tmp155697
+                                             (let ((__tmp155698
+                                                    (let ((__tmp155699
                                                            (##structure-ref
-                                                            _self153857_
+                                                            _self153904_
                                                             '1
                                                             gxc#!type::t
                                                             '#f)))
                                                       (declare (not safe))
-                                                      (cons __tmp155652 '()))))
+                                                      (cons __tmp155699 '()))))
                                                (declare (not safe))
-                                               (cons '%#ref __tmp155651)))
-                                            (__tmp155643
-                                             (let ((__tmp155648
-                                                    (let ((__tmp155649
+                                               (cons '%#ref __tmp155698)))
+                                            (__tmp155690
+                                             (let ((__tmp155695
+                                                    (let ((__tmp155696
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (cons _field153914_
+                                                             (cons _field153961_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
               (declare (not safe))
-              (cons '%#quote __tmp155649)))
+              (cons '%#quote __tmp155696)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp155644
-                                                    (let ((__tmp155646
-                                                           (let ((__tmp155647
+                                                   (__tmp155691
+                                                    (let ((__tmp155693
+                                                           (let ((__tmp155694
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (let ()
                             (declare (not safe))
-                            (cons _$obj153926_ '()))))
+                            (cons _$obj153973_ '()))))
                      (declare (not safe))
-                     (cons '%#ref __tmp155647)))
-                  (__tmp155645
-                   (let () (declare (not safe)) (cons _value153918_ '()))))
+                     (cons '%#ref __tmp155694)))
+                  (__tmp155692
+                   (let () (declare (not safe)) (cons _value153965_ '()))))
               (declare (not safe))
-              (cons __tmp155646 __tmp155645))))
+              (cons __tmp155693 __tmp155692))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155648
-                                                     __tmp155644))))
+                                               (cons __tmp155695
+                                                     __tmp155691))))
                                         (declare (not safe))
-                                        (cons __tmp155650 __tmp155643))))
+                                        (cons __tmp155697 __tmp155690))))
                                  (declare (not safe))
-                                 (cons '%#struct-unchecked-set! __tmp155642)))
-                              (__tmp155624
-                               (let ((__tmp155625
-                                      (let ((__tmp155626
-                                             (let ((__tmp155639
-                                                    (let ((__tmp155640
+                                 (cons '%#struct-unchecked-set! __tmp155689)))
+                              (__tmp155671
+                               (let ((__tmp155672
+                                      (let ((__tmp155673
+                                             (let ((__tmp155686
+                                                    (let ((__tmp155687
                                                            (let ()
                                                              (declare
                                                                (not safe))
@@ -3910,686 +3910,686 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
               (declare (not safe))
-              (cons '%#ref __tmp155640)))
+              (cons '%#ref __tmp155687)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp155627
-                                                    (let ((__tmp155636
-                                                           (let ((__tmp155637
+                                                   (__tmp155674
+                                                    (let ((__tmp155683
+                                                           (let ((__tmp155684
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp155638
+                          (let ((__tmp155685
                                  (##structure-ref
-                                  _self153857_
+                                  _self153904_
                                   '1
                                   gxc#!type::t
                                   '#f)))
                             (declare (not safe))
-                            (cons __tmp155638 '()))))
+                            (cons __tmp155685 '()))))
                      (declare (not safe))
-                     (cons '%#ref __tmp155637)))
-                  (__tmp155628
-                   (let ((__tmp155634
-                          (let ((__tmp155635
+                     (cons '%#ref __tmp155684)))
+                  (__tmp155675
+                   (let ((__tmp155681
+                          (let ((__tmp155682
                                  (let ()
                                    (declare (not safe))
-                                   (cons _$obj153926_ '()))))
+                                   (cons _$obj153973_ '()))))
                             (declare (not safe))
-                            (cons '%#ref __tmp155635)))
-                         (__tmp155629
-                          (let ((__tmp155631
-                                 (let ((__tmp155632
-                                        (let ((__tmp155633
+                            (cons '%#ref __tmp155682)))
+                         (__tmp155676
+                          (let ((__tmp155678
+                                 (let ((__tmp155679
+                                        (let ((__tmp155680
                                                (##structure-ref
-                                                _self153857_
+                                                _self153904_
                                                 '2
                                                 gxc#!mutator::t
                                                 '#f)))
                                           (declare (not safe))
-                                          (cons __tmp155633 '()))))
+                                          (cons __tmp155680 '()))))
                                    (declare (not safe))
-                                   (cons '%#quote __tmp155632)))
-                                (__tmp155630
+                                   (cons '%#quote __tmp155679)))
+                                (__tmp155677
                                  (let ()
                                    (declare (not safe))
-                                   (cons _value153918_ '()))))
+                                   (cons _value153965_ '()))))
                             (declare (not safe))
-                            (cons __tmp155631 __tmp155630))))
+                            (cons __tmp155678 __tmp155677))))
                      (declare (not safe))
-                     (cons __tmp155634 __tmp155629))))
+                     (cons __tmp155681 __tmp155676))))
               (declare (not safe))
-              (cons __tmp155636 __tmp155628))))
+              (cons __tmp155683 __tmp155675))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155639
-                                                     __tmp155627))))
+                                               (cons __tmp155686
+                                                     __tmp155674))))
                                         (declare (not safe))
-                                        (cons '%#call __tmp155626))))
+                                        (cons '%#call __tmp155673))))
                                  (declare (not safe))
-                                 (cons __tmp155625 '()))))
+                                 (cons __tmp155672 '()))))
                           (declare (not safe))
-                          (cons __tmp155641 __tmp155624))))
+                          (cons __tmp155688 __tmp155671))))
                    (declare (not safe))
-                   (cons __tmp155653 __tmp155623))))
+                   (cons __tmp155700 __tmp155670))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons '%#if __tmp155622))))
+                                                    (cons '%#if __tmp155669))))
                                              (declare (not safe))
-                                             (cons __tmp155621 '()))))
+                                             (cons __tmp155668 '()))))
                                       (declare (not safe))
-                                      (cons __tmp155661 __tmp155620))))
+                                      (cons __tmp155708 __tmp155667))))
                               (declare (not safe))
-                              (cons '%#let-values __tmp155619))))
+                              (cons '%#let-values __tmp155666))))
                        (declare (not safe))
-                       (gxc#xform-wrap-source __tmp155617 _stx153859_))
-                     (let ((__tmp155607
-                            (let ((__tmp155608
-                                   (let ((__tmp155615
-                                          (let ((__tmp155616
+                       (gxc#xform-wrap-source __tmp155664 _stx153906_))
+                     (let ((__tmp155654
+                            (let ((__tmp155655
+                                   (let ((__tmp155662
+                                          (let ((__tmp155663
                                                  (let ()
                                                    (declare (not safe))
                                                    (cons 'unchecked-slot-set!
                                                          '()))))
                                             (declare (not safe))
-                                            (cons '%#ref __tmp155616)))
-                                         (__tmp155609
-                                          (let ((__tmp155610
-                                                 (let ((__tmp155612
-                                                        (let ((__tmp155613
-                                                               (let ((__tmp155614
+                                            (cons '%#ref __tmp155663)))
+                                         (__tmp155656
+                                          (let ((__tmp155657
+                                                 (let ((__tmp155659
+                                                        (let ((__tmp155660
+                                                               (let ((__tmp155661
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (##structure-ref
-                               _self153857_
+                               _self153904_
                                '2
                                gxc#!mutator::t
                                '#f)))
                          (declare (not safe))
-                         (cons __tmp155614 '()))))
+                         (cons __tmp155661 '()))))
                   (declare (not safe))
-                  (cons '%#quote __tmp155613)))
-               (__tmp155611
-                (let () (declare (not safe)) (cons _value153918_ '()))))
+                  (cons '%#quote __tmp155660)))
+               (__tmp155658
+                (let () (declare (not safe)) (cons _value153965_ '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155612
-                                                         __tmp155611))))
+                                                   (cons __tmp155659
+                                                         __tmp155658))))
                                             (declare (not safe))
-                                            (cons _object153916_
-                                                  __tmp155610))))
+                                            (cons _object153963_
+                                                  __tmp155657))))
                                      (declare (not safe))
-                                     (cons __tmp155615 __tmp155609))))
+                                     (cons __tmp155662 __tmp155656))))
                               (declare (not safe))
-                              (cons '%#call __tmp155608))))
+                              (cons '%#call __tmp155655))))
                        (declare (not safe))
-                       (gxc#xform-wrap-source __tmp155607 _stx153859_)))))))))
+                       (gxc#xform-wrap-source __tmp155654 _stx153906_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                       _hd153870153892_
-                                       _hd153867153884_)
+                                       _hd153917153939_
+                                       _hd153914153931_)
                                       (let ()
                                         (declare (not safe))
-                                        (_g153862153876_ _g153863153879_)))))
+                                        (_g153909153923_ _g153910153926_)))))
                               (let ()
                                 (declare (not safe))
-                                (_g153862153876_ _g153863153879_)))))
+                                (_g153909153923_ _g153910153926_)))))
                       (let ()
                         (declare (not safe))
-                        (_g153862153876_ _g153863153879_))))))
+                        (_g153909153923_ _g153910153926_))))))
           (declare (not safe))
-          (_g153861153928_ _args153860_))))
+          (_g153908153975_ _args153907_))))
     (define gxc#!mutator::optimize-call::specialize
-      (lambda (__klass154735 __method-table154736)
-        (let ((__id154737
-               (let ((__slot154740
+      (lambda (__klass154782 __method-table154783)
+        (let ((__id154784
+               (let ((__slot154787
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154735 'id))))
-                 (if __slot154740
-                     __slot154740
+                        (class-slot-offset __klass154782 'id))))
+                 (if __slot154787
+                     __slot154787
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id)))))
-              (__checked?154738
-               (let ((__slot154741
+              (__checked?154785
+               (let ((__slot154788
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154735 'checked?))))
-                 (if __slot154741
-                     __slot154741
+                        (class-slot-offset __klass154782 'checked?))))
+                 (if __slot154788
+                     __slot154788
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'checked?)))))
-              (__slot154739
-               (let ((__slot154742
+              (__slot154786
+               (let ((__slot154789
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass154735 'slot))))
-                 (if __slot154742
-                     __slot154742
+                        (class-slot-offset __klass154782 'slot))))
+                 (if __slot154789
+                     __slot154789
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'slot))))))
-          (lambda (_self153857_ _ctx153858_ _stx153859_ _args153860_)
-            (let* ((_g153862153876_
-                    (lambda (_g153863153873_)
+          (lambda (_self153904_ _ctx153905_ _stx153906_ _args153907_)
+            (let* ((_g153909153923_
+                    (lambda (_g153910153920_)
                       (let ()
                         (declare (not safe))
                         (gx#raise-syntax-error
                          '#f
                          '"Bad syntax; invalid match target"
-                         _g153863153873_))))
-                   (_g153861153928_
-                    (lambda (_g153863153879_)
+                         _g153910153920_))))
+                   (_g153908153975_
+                    (lambda (_g153910153926_)
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _g153863153879_))
-                          (let ((_e153868153881_
+                            (gx#stx-pair? _g153910153926_))
+                          (let ((_e153915153928_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _g153863153879_))))
-                            (let ((_hd153867153884_
+                                   (gx#stx-e _g153910153926_))))
+                            (let ((_hd153914153931_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _e153868153881_)))
-                                  (_tl153866153886_
+                                     (##car _e153915153928_)))
+                                  (_tl153913153933_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _e153868153881_))))
+                                     (##cdr _e153915153928_))))
                               (if (let ()
                                     (declare (not safe))
-                                    (gx#stx-pair? _tl153866153886_))
-                                  (let ((_e153871153889_
+                                    (gx#stx-pair? _tl153913153933_))
+                                  (let ((_e153918153936_
                                          (let ()
                                            (declare (not safe))
-                                           (gx#stx-e _tl153866153886_))))
-                                    (let ((_hd153870153892_
+                                           (gx#stx-e _tl153913153933_))))
+                                    (let ((_hd153917153939_
                                            (let ()
                                              (declare (not safe))
-                                             (##car _e153871153889_)))
-                                          (_tl153869153894_
+                                             (##car _e153918153936_)))
+                                          (_tl153916153941_
                                            (let ()
                                              (declare (not safe))
-                                             (##cdr _e153871153889_))))
+                                             (##cdr _e153918153936_))))
                                       (if (let ()
                                             (declare (not safe))
-                                            (gx#stx-null? _tl153869153894_))
-                                          ((lambda (_L153897_ _L153898_)
-                                             (let* ((_klass153912_
-                                                     (let ((__tmp155698
+                                            (gx#stx-null? _tl153916153941_))
+                                          ((lambda (_L153944_ _L153945_)
+                                             (let* ((_klass153959_
+                                                     (let ((__tmp155745
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (##unchecked-structure-ref
-                                                               _self153857_
-                                                               __id154737
-                                                               __klass154735
+                                                               _self153904_
+                                                               __id154784
+                                                               __klass154782
                                                                '#f))))
                                                        (declare (not safe))
                                                        (gxc#optimizer-resolve-class
-                                                        _stx153859_
-                                                        __tmp155698)))
-                                                    (_field153914_
-                                                     (let ((__tmp155699
+                                                        _stx153906_
+                                                        __tmp155745)))
+                                                    (_field153961_
+                                                     (let ((__tmp155746
                                                             (let ()
                                                               (declare
                                                                 (not safe))
                                                               (##unchecked-structure-ref
-                                                               _self153857_
-                                                               __slot154739
-                                                               __klass154735
+                                                               _self153904_
+                                                               __slot154786
+                                                               __klass154782
                                                                '#f))))
                                                        (declare (not safe))
                                                        (gxc#!class-slot->field-offset
-                                                        _klass153912_
-                                                        __tmp155699)))
-                                                    (_object153916_
+                                                        _klass153959_
+                                                        __tmp155746)))
+                                                    (_object153963_
                                                      (let ()
                                                        (declare (not safe))
                                                        (gxc#compile-e__1
-                                                        _ctx153858_
-                                                        _L153898_)))
-                                                    (_value153918_
+                                                        _ctx153905_
+                                                        _L153945_)))
+                                                    (_value153965_
                                                      (let ()
                                                        (declare (not safe))
                                                        (gxc#compile-e__1
-                                                        _ctx153858_
-                                                        _L153897_))))
+                                                        _ctx153905_
+                                                        _L153944_))))
                                                (if (##structure-ref
-                                                    _klass153912_
+                                                    _klass153959_
                                                     '8
                                                     gxc#!class::t
                                                     '#f)
-                                                   (let ((__tmp155781
-                                                          (let ((__tmp155791
+                                                   (let ((__tmp155828
+                                                          (let ((__tmp155838
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (if (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                _self153857_
-                                __checked?154738
-                                __klass154735
+                                _self153904_
+                                __checked?154785
+                                __klass154782
                                 '#f))
                              '%#struct-direct-set!
                              '%#struct-unchecked-set!))
-                        (__tmp155782
-                         (let ((__tmp155788
-                                (let ((__tmp155789
-                                       (let ((__tmp155790
+                        (__tmp155829
+                         (let ((__tmp155835
+                                (let ((__tmp155836
+                                       (let ((__tmp155837
                                               (let ()
                                                 (declare (not safe))
                                                 (##unchecked-structure-ref
-                                                 _self153857_
-                                                 __id154737
-                                                 __klass154735
+                                                 _self153904_
+                                                 __id154784
+                                                 __klass154782
                                                  '#f))))
                                          (declare (not safe))
-                                         (cons __tmp155790 '()))))
+                                         (cons __tmp155837 '()))))
                                   (declare (not safe))
-                                  (cons '%#ref __tmp155789)))
-                               (__tmp155783
-                                (let ((__tmp155786
-                                       (let ((__tmp155787
+                                  (cons '%#ref __tmp155836)))
+                               (__tmp155830
+                                (let ((__tmp155833
+                                       (let ((__tmp155834
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _field153914_ '()))))
+                                                (cons _field153961_ '()))))
                                          (declare (not safe))
-                                         (cons '%#quote __tmp155787)))
-                                      (__tmp155784
-                                       (let ((__tmp155785
+                                         (cons '%#quote __tmp155834)))
+                                      (__tmp155831
+                                       (let ((__tmp155832
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _value153918_ '()))))
+                                                (cons _value153965_ '()))))
                                          (declare (not safe))
-                                         (cons _object153916_ __tmp155785))))
+                                         (cons _object153963_ __tmp155832))))
                                   (declare (not safe))
-                                  (cons __tmp155786 __tmp155784))))
+                                  (cons __tmp155833 __tmp155831))))
                            (declare (not safe))
-                           (cons __tmp155788 __tmp155783))))
+                           (cons __tmp155835 __tmp155830))))
                     (declare (not safe))
-                    (cons __tmp155791 __tmp155782))))
+                    (cons __tmp155838 __tmp155829))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (gxc#xform-wrap-source
-                                                      __tmp155781
-                                                      _stx153859_))
+                                                      __tmp155828
+                                                      _stx153906_))
                                                    (if (##structure-ref
-                                                        _klass153912_
+                                                        _klass153959_
                                                         '7
                                                         gxc#!class::t
                                                         '#f)
-                                                       (let ((__tmp155770
-                                                              (let ((__tmp155780
+                                                       (let ((__tmp155817
+                                                              (let ((__tmp155827
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (if (let ()
                                    (declare (not safe))
                                    (##unchecked-structure-ref
-                                    _self153857_
-                                    __checked?154738
-                                    __klass154735
+                                    _self153904_
+                                    __checked?154785
+                                    __klass154782
                                     '#f))
                                  '%#struct-set!
                                  '%#struct-unchecked-set!))
-                            (__tmp155771
-                             (let ((__tmp155777
-                                    (let ((__tmp155778
-                                           (let ((__tmp155779
+                            (__tmp155818
+                             (let ((__tmp155824
+                                    (let ((__tmp155825
+                                           (let ((__tmp155826
                                                   (let ()
                                                     (declare (not safe))
                                                     (##unchecked-structure-ref
-                                                     _self153857_
-                                                     __id154737
-                                                     __klass154735
+                                                     _self153904_
+                                                     __id154784
+                                                     __klass154782
                                                      '#f))))
                                              (declare (not safe))
-                                             (cons __tmp155779 '()))))
+                                             (cons __tmp155826 '()))))
                                       (declare (not safe))
-                                      (cons '%#ref __tmp155778)))
-                                   (__tmp155772
-                                    (let ((__tmp155775
-                                           (let ((__tmp155776
+                                      (cons '%#ref __tmp155825)))
+                                   (__tmp155819
+                                    (let ((__tmp155822
+                                           (let ((__tmp155823
                                                   (let ()
                                                     (declare (not safe))
-                                                    (cons _field153914_ '()))))
+                                                    (cons _field153961_ '()))))
                                              (declare (not safe))
-                                             (cons '%#quote __tmp155776)))
-                                          (__tmp155773
-                                           (let ((__tmp155774
+                                             (cons '%#quote __tmp155823)))
+                                          (__tmp155820
+                                           (let ((__tmp155821
                                                   (let ()
                                                     (declare (not safe))
-                                                    (cons _value153918_ '()))))
+                                                    (cons _value153965_ '()))))
                                              (declare (not safe))
-                                             (cons _object153916_
-                                                   __tmp155774))))
+                                             (cons _object153963_
+                                                   __tmp155821))))
                                       (declare (not safe))
-                                      (cons __tmp155775 __tmp155773))))
+                                      (cons __tmp155822 __tmp155820))))
                                (declare (not safe))
-                               (cons __tmp155777 __tmp155772))))
+                               (cons __tmp155824 __tmp155819))))
                         (declare (not safe))
-                        (cons __tmp155780 __tmp155771))))
+                        (cons __tmp155827 __tmp155818))))
                  (declare (not safe))
-                 (gxc#xform-wrap-source __tmp155770 _stx153859_))
-               (let ((_$e153921_
-                      (let ((__tmp155700
+                 (gxc#xform-wrap-source __tmp155817 _stx153906_))
+               (let ((_$e153968_
+                      (let ((__tmp155747
                              (let ()
                                (declare (not safe))
                                (##unchecked-structure-ref
-                                _self153857_
-                                __slot154739
-                                __klass154735
+                                _self153904_
+                                __slot154786
+                                __klass154782
                                 '#f))))
                         (declare (not safe))
                         (gxc#!class-slot-find-struct
-                         _klass153912_
-                         __tmp155700))))
-                 (if _$e153921_
-                     ((lambda (_klass153924_)
-                        (let ((__tmp155759
-                               (let ((__tmp155769
+                         _klass153959_
+                         __tmp155747))))
+                 (if _$e153968_
+                     ((lambda (_klass153971_)
+                        (let ((__tmp155806
+                               (let ((__tmp155816
                                       (if (let ()
                                             (declare (not safe))
                                             (##unchecked-structure-ref
-                                             _self153857_
-                                             __checked?154738
-                                             __klass154735
+                                             _self153904_
+                                             __checked?154785
+                                             __klass154782
                                              '#f))
                                           '%#struct-set!
                                           '%#struct-unchecked-set!))
-                                     (__tmp155760
-                                      (let ((__tmp155766
-                                             (let ((__tmp155767
-                                                    (let ((__tmp155768
+                                     (__tmp155807
+                                      (let ((__tmp155813
+                                             (let ((__tmp155814
+                                                    (let ((__tmp155815
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (##unchecked-structure-ref
-                                                              _self153857_
-                                                              __id154737
-                                                              __klass154735
+                                                              _self153904_
+                                                              __id154784
+                                                              __klass154782
                                                               '#f))))
                                                       (declare (not safe))
-                                                      (cons __tmp155768 '()))))
+                                                      (cons __tmp155815 '()))))
                                                (declare (not safe))
-                                               (cons '%#ref __tmp155767)))
-                                            (__tmp155761
-                                             (let ((__tmp155764
-                                                    (let ((__tmp155765
+                                               (cons '%#ref __tmp155814)))
+                                            (__tmp155808
+                                             (let ((__tmp155811
+                                                    (let ((__tmp155812
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (cons _field153914_
+                                                             (cons _field153961_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
               (declare (not safe))
-              (cons '%#quote __tmp155765)))
+              (cons '%#quote __tmp155812)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp155762
-                                                    (let ((__tmp155763
+                                                   (__tmp155809
+                                                    (let ((__tmp155810
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (cons _value153918_
+                                                             (cons _value153965_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
               (declare (not safe))
-              (cons _object153916_ __tmp155763))))
+              (cons _object153963_ __tmp155810))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp155764
-                                                     __tmp155762))))
+                                               (cons __tmp155811
+                                                     __tmp155809))))
                                         (declare (not safe))
-                                        (cons __tmp155766 __tmp155761))))
+                                        (cons __tmp155813 __tmp155808))))
                                  (declare (not safe))
-                                 (cons __tmp155769 __tmp155760))))
+                                 (cons __tmp155816 __tmp155807))))
                           (declare (not safe))
-                          (gxc#xform-wrap-source __tmp155759 _stx153859_)))
-                      _$e153921_)
+                          (gxc#xform-wrap-source __tmp155806 _stx153906_)))
+                      _$e153968_)
                      (if (let ()
                            (declare (not safe))
                            (##unchecked-structure-ref
-                            _self153857_
-                            __checked?154738
-                            __klass154735
+                            _self153904_
+                            __checked?154785
+                            __klass154782
                             '#f))
-                         (let ((__tmp155711
-                                (let* ((_$obj153926_
-                                        (let ((__tmp155712 (gensym '__obj)))
+                         (let ((__tmp155758
+                                (let* ((_$obj153973_
+                                        (let ((__tmp155759 (gensym '__obj)))
                                           (declare (not safe))
-                                          (make-symbol__0 __tmp155712)))
-                                       (__tmp155713
-                                        (let ((__tmp155755
-                                               (let ((__tmp155756
-                                                      (let ((__tmp155758
+                                          (make-symbol__0 __tmp155759)))
+                                       (__tmp155760
+                                        (let ((__tmp155802
+                                               (let ((__tmp155803
+                                                      (let ((__tmp155805
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (cons _$obj153926_ '())))
-                    (__tmp155757
-                     (let () (declare (not safe)) (cons _object153916_ '()))))
+                       (cons _$obj153973_ '())))
+                    (__tmp155804
+                     (let () (declare (not safe)) (cons _object153963_ '()))))
                 (declare (not safe))
-                (cons __tmp155758 __tmp155757))))
+                (cons __tmp155805 __tmp155804))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155756 '())))
-                                              (__tmp155714
-                                               (let ((__tmp155715
-                                                      (let ((__tmp155716
-                                                             (let ((__tmp155747
+                                                 (cons __tmp155803 '())))
+                                              (__tmp155761
+                                               (let ((__tmp155762
+                                                      (let ((__tmp155763
+                                                             (let ((__tmp155794
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp155748
-                                   (let ((__tmp155752
-                                          (let ((__tmp155753
-                                                 (let ((__tmp155754
+                            (let ((__tmp155795
+                                   (let ((__tmp155799
+                                          (let ((__tmp155800
+                                                 (let ((__tmp155801
                                                         (##structure-ref
-                                                         _klass153912_
+                                                         _klass153959_
                                                          '1
                                                          gxc#!type::t
                                                          '#f)))
                                                    (declare (not safe))
-                                                   (cons __tmp155754 '()))))
+                                                   (cons __tmp155801 '()))))
                                             (declare (not safe))
-                                            (cons '%#quote __tmp155753)))
-                                         (__tmp155749
-                                          (let ((__tmp155750
-                                                 (let ((__tmp155751
+                                            (cons '%#quote __tmp155800)))
+                                         (__tmp155796
+                                          (let ((__tmp155797
+                                                 (let ((__tmp155798
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _$obj153926_
+                                                          (cons _$obj153973_
                                                                 '()))))
                                                    (declare (not safe))
-                                                   (cons '%#ref __tmp155751))))
+                                                   (cons '%#ref __tmp155798))))
                                             (declare (not safe))
-                                            (cons __tmp155750 '()))))
+                                            (cons __tmp155797 '()))))
                                      (declare (not safe))
-                                     (cons __tmp155752 __tmp155749))))
+                                     (cons __tmp155799 __tmp155796))))
                               (declare (not safe))
-                              (cons '%#struct-direct-instance? __tmp155748)))
-                           (__tmp155717
-                            (let ((__tmp155735
-                                   (let ((__tmp155736
-                                          (let ((__tmp155744
-                                                 (let ((__tmp155745
-                                                        (let ((__tmp155746
+                              (cons '%#struct-direct-instance? __tmp155795)))
+                           (__tmp155764
+                            (let ((__tmp155782
+                                   (let ((__tmp155783
+                                          (let ((__tmp155791
+                                                 (let ((__tmp155792
+                                                        (let ((__tmp155793
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
                          (##unchecked-structure-ref
-                          _self153857_
-                          __id154737
-                          __klass154735
+                          _self153904_
+                          __id154784
+                          __klass154782
                           '#f))))
                   (declare (not safe))
-                  (cons __tmp155746 '()))))
+                  (cons __tmp155793 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons '%#ref __tmp155745)))
-                                                (__tmp155737
-                                                 (let ((__tmp155742
-                                                        (let ((__tmp155743
+                                                   (cons '%#ref __tmp155792)))
+                                                (__tmp155784
+                                                 (let ((__tmp155789
+                                                        (let ((__tmp155790
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (cons _field153914_ '()))))
+                         (cons _field153961_ '()))))
                   (declare (not safe))
-                  (cons '%#quote __tmp155743)))
-               (__tmp155738
-                (let ((__tmp155740
-                       (let ((__tmp155741
+                  (cons '%#quote __tmp155790)))
+               (__tmp155785
+                (let ((__tmp155787
+                       (let ((__tmp155788
                               (let ()
                                 (declare (not safe))
-                                (cons _$obj153926_ '()))))
+                                (cons _$obj153973_ '()))))
                          (declare (not safe))
-                         (cons '%#ref __tmp155741)))
-                      (__tmp155739
-                       (let () (declare (not safe)) (cons _value153918_ '()))))
+                         (cons '%#ref __tmp155788)))
+                      (__tmp155786
+                       (let () (declare (not safe)) (cons _value153965_ '()))))
                   (declare (not safe))
-                  (cons __tmp155740 __tmp155739))))
+                  (cons __tmp155787 __tmp155786))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155742
-                                                         __tmp155738))))
+                                                   (cons __tmp155789
+                                                         __tmp155785))))
                                             (declare (not safe))
-                                            (cons __tmp155744 __tmp155737))))
+                                            (cons __tmp155791 __tmp155784))))
                                      (declare (not safe))
                                      (cons '%#struct-unchecked-set!
-                                           __tmp155736)))
-                                  (__tmp155718
-                                   (let ((__tmp155719
-                                          (let ((__tmp155720
-                                                 (let ((__tmp155733
-                                                        (let ((__tmp155734
+                                           __tmp155783)))
+                                  (__tmp155765
+                                   (let ((__tmp155766
+                                          (let ((__tmp155767
+                                                 (let ((__tmp155780
+                                                        (let ((__tmp155781
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
                          (cons 'class-slot-set! '()))))
                   (declare (not safe))
-                  (cons '%#ref __tmp155734)))
-               (__tmp155721
-                (let ((__tmp155730
-                       (let ((__tmp155731
-                              (let ((__tmp155732
+                  (cons '%#ref __tmp155781)))
+               (__tmp155768
+                (let ((__tmp155777
+                       (let ((__tmp155778
+                              (let ((__tmp155779
                                      (let ()
                                        (declare (not safe))
                                        (##unchecked-structure-ref
-                                        _self153857_
-                                        __id154737
-                                        __klass154735
+                                        _self153904_
+                                        __id154784
+                                        __klass154782
                                         '#f))))
                                 (declare (not safe))
-                                (cons __tmp155732 '()))))
+                                (cons __tmp155779 '()))))
                          (declare (not safe))
-                         (cons '%#ref __tmp155731)))
-                      (__tmp155722
-                       (let ((__tmp155728
-                              (let ((__tmp155729
+                         (cons '%#ref __tmp155778)))
+                      (__tmp155769
+                       (let ((__tmp155775
+                              (let ((__tmp155776
                                      (let ()
                                        (declare (not safe))
-                                       (cons _$obj153926_ '()))))
+                                       (cons _$obj153973_ '()))))
                                 (declare (not safe))
-                                (cons '%#ref __tmp155729)))
-                             (__tmp155723
-                              (let ((__tmp155725
-                                     (let ((__tmp155726
-                                            (let ((__tmp155727
+                                (cons '%#ref __tmp155776)))
+                             (__tmp155770
+                              (let ((__tmp155772
+                                     (let ((__tmp155773
+                                            (let ((__tmp155774
                                                    (let ()
                                                      (declare (not safe))
                                                      (##unchecked-structure-ref
-                                                      _self153857_
-                                                      __slot154739
-                                                      __klass154735
+                                                      _self153904_
+                                                      __slot154786
+                                                      __klass154782
                                                       '#f))))
                                               (declare (not safe))
-                                              (cons __tmp155727 '()))))
+                                              (cons __tmp155774 '()))))
                                        (declare (not safe))
-                                       (cons '%#quote __tmp155726)))
-                                    (__tmp155724
+                                       (cons '%#quote __tmp155773)))
+                                    (__tmp155771
                                      (let ()
                                        (declare (not safe))
-                                       (cons _value153918_ '()))))
+                                       (cons _value153965_ '()))))
                                 (declare (not safe))
-                                (cons __tmp155725 __tmp155724))))
+                                (cons __tmp155772 __tmp155771))))
                          (declare (not safe))
-                         (cons __tmp155728 __tmp155723))))
+                         (cons __tmp155775 __tmp155770))))
                   (declare (not safe))
-                  (cons __tmp155730 __tmp155722))))
+                  (cons __tmp155777 __tmp155769))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155733
-                                                         __tmp155721))))
+                                                   (cons __tmp155780
+                                                         __tmp155768))))
                                             (declare (not safe))
-                                            (cons '%#call __tmp155720))))
+                                            (cons '%#call __tmp155767))))
                                      (declare (not safe))
-                                     (cons __tmp155719 '()))))
+                                     (cons __tmp155766 '()))))
                               (declare (not safe))
-                              (cons __tmp155735 __tmp155718))))
+                              (cons __tmp155782 __tmp155765))))
                        (declare (not safe))
-                       (cons __tmp155747 __tmp155717))))
+                       (cons __tmp155794 __tmp155764))))
                 (declare (not safe))
-                (cons '%#if __tmp155716))))
+                (cons '%#if __tmp155763))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp155715 '()))))
+                                                 (cons __tmp155762 '()))))
                                           (declare (not safe))
-                                          (cons __tmp155755 __tmp155714))))
+                                          (cons __tmp155802 __tmp155761))))
                                   (declare (not safe))
-                                  (cons '%#let-values __tmp155713))))
+                                  (cons '%#let-values __tmp155760))))
                            (declare (not safe))
-                           (gxc#xform-wrap-source __tmp155711 _stx153859_))
-                         (let ((__tmp155701
-                                (let ((__tmp155702
-                                       (let ((__tmp155709
-                                              (let ((__tmp155710
+                           (gxc#xform-wrap-source __tmp155758 _stx153906_))
+                         (let ((__tmp155748
+                                (let ((__tmp155749
+                                       (let ((__tmp155756
+                                              (let ((__tmp155757
                                                      (let ()
                                                        (declare (not safe))
                                                        (cons 'unchecked-slot-set!
                                                              '()))))
                                                 (declare (not safe))
-                                                (cons '%#ref __tmp155710)))
-                                             (__tmp155703
-                                              (let ((__tmp155704
-                                                     (let ((__tmp155706
-                                                            (let ((__tmp155707
+                                                (cons '%#ref __tmp155757)))
+                                             (__tmp155750
+                                              (let ((__tmp155751
+                                                     (let ((__tmp155753
+                                                            (let ((__tmp155754
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155708
+                           (let ((__tmp155755
                                   (let ()
                                     (declare (not safe))
                                     (##unchecked-structure-ref
-                                     _self153857_
-                                     __slot154739
-                                     __klass154735
+                                     _self153904_
+                                     __slot154786
+                                     __klass154782
                                      '#f))))
                              (declare (not safe))
-                             (cons __tmp155708 '()))))
+                             (cons __tmp155755 '()))))
                       (declare (not safe))
-                      (cons '%#quote __tmp155707)))
-                   (__tmp155705
-                    (let () (declare (not safe)) (cons _value153918_ '()))))
+                      (cons '%#quote __tmp155754)))
+                   (__tmp155752
+                    (let () (declare (not safe)) (cons _value153965_ '()))))
                (declare (not safe))
-               (cons __tmp155706 __tmp155705))))
+               (cons __tmp155753 __tmp155752))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons _object153916_
-                                                      __tmp155704))))
+                                                (cons _object153963_
+                                                      __tmp155751))))
                                          (declare (not safe))
-                                         (cons __tmp155709 __tmp155703))))
+                                         (cons __tmp155756 __tmp155750))))
                                   (declare (not safe))
-                                  (cons '%#call __tmp155702))))
+                                  (cons '%#call __tmp155749))))
                            (declare (not safe))
                            (gxc#xform-wrap-source
-                            __tmp155701
-                            _stx153859_)))))))))
+                            __tmp155748
+                            _stx153906_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           _hd153870153892_
-                                           _hd153867153884_)
+                                           _hd153917153939_
+                                           _hd153914153931_)
                                           (let ()
                                             (declare (not safe))
-                                            (_g153862153876_
-                                             _g153863153879_)))))
+                                            (_g153909153923_
+                                             _g153910153926_)))))
                                   (let ()
                                     (declare (not safe))
-                                    (_g153862153876_ _g153863153879_)))))
+                                    (_g153909153923_ _g153910153926_)))))
                           (let ()
                             (declare (not safe))
-                            (_g153862153876_ _g153863153879_))))))
+                            (_g153909153923_ _g153910153926_))))))
               (declare (not safe))
-              (_g153861153928_ _args153860_))))))
+              (_g153908153975_ _args153907_))))))
     (let ()
       (declare (not safe))
       (bind-specializer!
@@ -4603,116 +4603,116 @@
        gxc#!mutator::optimize-call
        '#f))
     (define gxc#!lambda::optimize-call
-      (lambda (_self153690_ _ctx153691_ _stx153692_ _args153693_)
-        (let* ((_self153694153703_ _self153690_)
-               (_E153696153707_
+      (lambda (_self153737_ _ctx153738_ _stx153739_ _args153740_)
+        (let* ((_self153741153750_ _self153737_)
+               (_E153743153754_
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (error '"No clause matching" _self153694153703_))))
-               (_K153697153714_
-                (lambda (_inline153710_ _dispatch153711_ _arity153712_)
+                    (error '"No clause matching" _self153741153750_))))
+               (_K153744153761_
+                (lambda (_inline153757_ _dispatch153758_ _arity153759_)
                   (if (let ()
                         (declare (not safe))
-                        (gxc#!lambda-arity-match? _self153690_ _args153693_))
+                        (gxc#!lambda-arity-match? _self153737_ _args153740_))
                       '#!void
                       (let ()
                         (declare (not safe))
                         (gxc#raise-compile-error
                          '"Illegal lambda application; arity mismatch"
-                         _stx153692_
-                         _arity153712_)))
-                  (if _inline153710_
+                         _stx153739_
+                         _arity153759_)))
+                  (if _inline153757_
                       (begin
                         (let ()
                           (declare (not safe))
                           (gxc#verbose '"inline lambda"))
-                        (let ((__tmp155797
-                               (let ((__tmp155798
-                                      (_inline153710_ _stx153692_)))
+                        (let ((__tmp155844
+                               (let ((__tmp155845
+                                      (_inline153757_ _stx153739_)))
                                  (declare (not safe))
                                  (gxc#xform-wrap-source
-                                  __tmp155798
-                                  _stx153692_))))
+                                  __tmp155845
+                                  _stx153739_))))
                           (declare (not safe))
-                          (gxc#compile-e__1 _ctx153691_ __tmp155797)))
-                      (if _dispatch153711_
+                          (gxc#compile-e__1 _ctx153738_ __tmp155844)))
+                      (if _dispatch153758_
                           (begin
                             (let ()
                               (declare (not safe))
                               (gxc#verbose
                                '"dispatch lambda => "
-                               _dispatch153711_))
-                            (let ((__tmp155792
-                                   (let ((__tmp155793
-                                          (let ((__tmp155794
-                                                 (let ((__tmp155795
-                                                        (let ((__tmp155796
+                               _dispatch153758_))
+                            (let ((__tmp155839
+                                   (let ((__tmp155840
+                                          (let ((__tmp155841
+                                                 (let ((__tmp155842
+                                                        (let ((__tmp155843
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (cons _dispatch153711_ '()))))
+                         (cons _dispatch153758_ '()))))
                   (declare (not safe))
-                  (cons '%#ref __tmp155796))))
+                  (cons '%#ref __tmp155843))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons __tmp155795
-                                                         _args153693_))))
+                                                   (cons __tmp155842
+                                                         _args153740_))))
                                             (declare (not safe))
-                                            (cons '%#call __tmp155794))))
+                                            (cons '%#call __tmp155841))))
                                      (declare (not safe))
                                      (gxc#xform-wrap-source
-                                      __tmp155793
-                                      _stx153692_))))
+                                      __tmp155840
+                                      _stx153739_))))
                               (declare (not safe))
-                              (gxc#compile-e__1 _ctx153691_ __tmp155792)))
+                              (gxc#compile-e__1 _ctx153738_ __tmp155839)))
                           (let ()
                             (declare (not safe))
-                            (gxc#xform-call% _ctx153691_ _stx153692_)))))))
+                            (gxc#xform-call% _ctx153738_ _stx153739_)))))))
           (if (let ()
                 (declare (not safe))
-                (##structure-instance-of? _self153694153703_ 'gxc#!lambda::t))
-              (let* ((_e153698153717_
+                (##structure-instance-of? _self153741153750_ 'gxc#!lambda::t))
+              (let* ((_e153745153764_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153694153703_
+                         _self153741153750_
                          '1
                          gxc#!type::t
                          '#f)))
-                     (_e153699153720_
+                     (_e153746153767_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153694153703_
+                         _self153741153750_
                          '2
                          gxc#!lambda::t
                          '#f)))
-                     (_arity153723_ _e153699153720_)
-                     (_e153700153725_
+                     (_arity153770_ _e153746153767_)
+                     (_e153747153772_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153694153703_
+                         _self153741153750_
                          '3
                          gxc#!lambda::t
                          '#f)))
-                     (_dispatch153728_ _e153700153725_)
-                     (_e153701153730_
+                     (_dispatch153775_ _e153747153772_)
+                     (_e153748153777_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153694153703_
+                         _self153741153750_
                          '4
                          gxc#!lambda::t
                          '#f)))
-                     (_inline153733_ _e153701153730_))
+                     (_inline153780_ _e153748153777_))
                 (declare (not safe))
-                (_K153697153714_
-                 _inline153733_
-                 _dispatch153728_
-                 _arity153723_))
-              (let () (declare (not safe)) (_E153696153707_))))))
+                (_K153744153761_
+                 _inline153780_
+                 _dispatch153775_
+                 _arity153770_))
+              (let () (declare (not safe)) (_E153743153754_))))))
     (let ()
       (declare (not safe))
       (bind-method!__%
@@ -4721,77 +4721,77 @@
        gxc#!lambda::optimize-call
        '#f))
     (define gxc#!case-lambda::optimize-call
-      (lambda (_self153528_ _ctx153529_ _stx153530_ _args153531_)
-        (let* ((_self153532153539_ _self153528_)
-               (_E153534153543_
+      (lambda (_self153575_ _ctx153576_ _stx153577_ _args153578_)
+        (let* ((_self153579153586_ _self153575_)
+               (_E153581153590_
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (error '"No clause matching" _self153532153539_))))
-               (_K153535153557_
-                (lambda (_clauses153546_)
-                  (let ((_$e153552_
-                         (let ((__tmp155799
-                                (lambda (_g153547153549_)
+                    (error '"No clause matching" _self153579153586_))))
+               (_K153582153604_
+                (lambda (_clauses153593_)
+                  (let ((_$e153599_
+                         (let ((__tmp155846
+                                (lambda (_g153594153596_)
                                   (let ()
                                     (declare (not safe))
                                     (gxc#!lambda-arity-match?
-                                     _g153547153549_
-                                     _args153531_)))))
+                                     _g153594153596_
+                                     _args153578_)))))
                            (declare (not safe))
-                           (find __tmp155799 _clauses153546_))))
-                    (if _$e153552_
-                        ((lambda (_clause153555_)
-                           (let ((__method155013
+                           (find __tmp155846 _clauses153593_))))
+                    (if _$e153599_
+                        ((lambda (_clause153602_)
+                           (let ((__method155060
                                   (let ()
                                     (declare (not safe))
                                     (method-ref
-                                     _clause153555_
+                                     _clause153602_
                                      'optimize-call))))
-                             (if __method155013
-                                 (__method155013
-                                  _clause153555_
-                                  _ctx153529_
-                                  _stx153530_
-                                  _args153531_)
+                             (if __method155060
+                                 (__method155060
+                                  _clause153602_
+                                  _ctx153576_
+                                  _stx153577_
+                                  _args153578_)
                                  (let ()
                                    (declare (not safe))
                                    (error '"Missing method"
-                                          _clause153555_
+                                          _clause153602_
                                           'optimize-call)))))
-                         _$e153552_)
-                        (let ((__tmp155800
-                               (map gxc#!lambda-arity _clauses153546_)))
+                         _$e153599_)
+                        (let ((__tmp155847
+                               (map gxc#!lambda-arity _clauses153593_)))
                           (declare (not safe))
                           (gxc#raise-compile-error
                            '"Illegal case-lambda application; arity mismatch"
-                           _stx153530_
-                           __tmp155800)))))))
+                           _stx153577_
+                           __tmp155847)))))))
           (if (let ()
                 (declare (not safe))
                 (##structure-instance-of?
-                 _self153532153539_
+                 _self153579153586_
                  'gxc#!case-lambda::t))
-              (let* ((_e153536153560_
+              (let* ((_e153583153607_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153532153539_
+                         _self153579153586_
                          '1
                          gxc#!type::t
                          '#f)))
-                     (_e153537153563_
+                     (_e153584153610_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153532153539_
+                         _self153579153586_
                          '2
                          gxc#!case-lambda::t
                          '#f)))
-                     (_clauses153566_ _e153537153563_))
+                     (_clauses153613_ _e153584153610_))
                 (declare (not safe))
-                (_K153535153557_ _clauses153566_))
-              (let () (declare (not safe)) (_E153534153543_))))))
+                (_K153582153604_ _clauses153613_))
+              (let () (declare (not safe)) (_E153581153590_))))))
     (let ()
       (declare (not safe))
       (bind-method!__%
@@ -4800,496 +4800,496 @@
        gxc#!case-lambda::optimize-call
        '#f))
     (define gxc#!lambda-arity-match?
-      (lambda (_self153342_ _args153343_)
-        (let* ((_self153344153351_ _self153342_)
-               (_E153346153355_
+      (lambda (_self153389_ _args153390_)
+        (let* ((_self153391153398_ _self153389_)
+               (_E153393153402_
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (error '"No clause matching" _self153344153351_))))
-               (_K153347153395_
-                (lambda (_arity153358_)
-                  (let* ((_arity153359153368_ _arity153358_)
-                         (_E153362153372_
+                    (error '"No clause matching" _self153391153398_))))
+               (_K153394153442_
+                (lambda (_arity153405_)
+                  (let* ((_arity153406153415_ _arity153405_)
+                         (_E153409153419_
                           (lambda ()
                             (let ()
                               (declare (not safe))
                               (error '"No clause matching"
-                                     _arity153359153368_)))))
-                    (let ((_K153366153392_
+                                     _arity153406153415_)))))
+                    (let ((_K153413153439_
                            (lambda ()
-                             (fx= (length _args153343_) _arity153358_)))
-                          (_K153363153378_
-                           (lambda (_arity153376_)
-                             (fx>= (length _args153343_) _arity153376_))))
-                      (let ((_try-match153361153388_
+                             (fx= (length _args153390_) _arity153405_)))
+                          (_K153410153425_
+                           (lambda (_arity153423_)
+                             (fx>= (length _args153390_) _arity153423_))))
+                      (let ((_try-match153408153435_
                              (lambda ()
                                (if (let ()
                                      (declare (not safe))
-                                     (##pair? _arity153359153368_))
-                                   (let ((_tl153365153383_
+                                     (##pair? _arity153406153415_))
+                                   (let ((_tl153412153430_
                                           (let ()
                                             (declare (not safe))
-                                            (##cdr _arity153359153368_)))
-                                         (_hd153364153381_
+                                            (##cdr _arity153406153415_)))
+                                         (_hd153411153428_
                                           (let ()
                                             (declare (not safe))
-                                            (##car _arity153359153368_))))
+                                            (##car _arity153406153415_))))
                                      (if (let ()
                                            (declare (not safe))
-                                           (##null? _tl153365153383_))
-                                         (let ((_arity153386_
-                                                _hd153364153381_))
+                                           (##null? _tl153412153430_))
+                                         (let ((_arity153433_
+                                                _hd153411153428_))
                                            (declare (not safe))
-                                           (_K153363153378_ _arity153386_))
+                                           (_K153410153425_ _arity153433_))
                                          (let ()
                                            (declare (not safe))
-                                           (_E153362153372_))))
+                                           (_E153409153419_))))
                                    (let ()
                                      (declare (not safe))
-                                     (_E153362153372_))))))
+                                     (_E153409153419_))))))
                         (if (let ()
                               (declare (not safe))
-                              (fixnum? _arity153359153368_))
-                            (let () (declare (not safe)) (_K153366153392_))
+                              (fixnum? _arity153406153415_))
+                            (let () (declare (not safe)) (_K153413153439_))
                             (let ()
                               (declare (not safe))
-                              (_try-match153361153388_)))))))))
+                              (_try-match153408153435_)))))))))
           (if (let ()
                 (declare (not safe))
-                (##structure-instance-of? _self153344153351_ 'gxc#!lambda::t))
-              (let* ((_e153348153398_
+                (##structure-instance-of? _self153391153398_ 'gxc#!lambda::t))
+              (let* ((_e153395153445_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153344153351_
+                         _self153391153398_
                          '1
                          gxc#!type::t
                          '#f)))
-                     (_e153349153401_
+                     (_e153396153448_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153344153351_
+                         _self153391153398_
                          '2
                          gxc#!lambda::t
                          '#f)))
-                     (_arity153404_ _e153349153401_))
+                     (_arity153451_ _e153396153448_))
                 (declare (not safe))
-                (_K153347153395_ _arity153404_))
-              (let () (declare (not safe)) (_E153346153355_))))))
+                (_K153394153442_ _arity153451_))
+              (let () (declare (not safe)) (_E153393153402_))))))
     (define gxc#!kw-lambda::optimize-call
-      (lambda (_self153226_ _ctx153227_ _stx153228_ _args153229_)
-        (let* ((_self153230153238_ _self153226_)
-               (_E153232153242_
+      (lambda (_self153273_ _ctx153274_ _stx153275_ _args153276_)
+        (let* ((_self153277153285_ _self153273_)
+               (_E153279153289_
                 (lambda ()
                   (let ()
                     (declare (not safe))
-                    (error '"No clause matching" _self153230153238_))))
-               (_K153233153326_
-                (lambda (_dispatch153245_ _table153246_)
-                  (let* ((_g153247153256_
+                    (error '"No clause matching" _self153277153285_))))
+               (_K153280153373_
+                (lambda (_dispatch153292_ _table153293_)
+                  (let* ((_g153294153303_
                           (let ()
                             (declare (not safe))
-                            (gxc#optimizer-lookup-type _dispatch153245_)))
-                         (_else153249153264_
+                            (gxc#optimizer-lookup-type _dispatch153292_)))
+                         (_else153296153311_
                           (lambda ()
                             (let ()
                               (declare (not safe))
                               (gxc#verbose
                                '"unknown keyword dispatch lambda "
-                               _dispatch153245_))
+                               _dispatch153292_))
                             (let ()
                               (declare (not safe))
-                              (gxc#xform-call% _ctx153227_ _stx153228_))))
-                         (_K153251153310_
-                          (lambda (_main153267_ _keys153268_)
-                            (let ((_g155801_
+                              (gxc#xform-call% _ctx153274_ _stx153275_))))
+                         (_K153298153357_
+                          (lambda (_main153314_ _keys153315_)
+                            (let ((_g155848_
                                    (let ()
                                      (declare (not safe))
                                      (gxc#!kw-lambda-split-args
-                                      _stx153228_
-                                      _args153229_))))
+                                      _stx153275_
+                                      _args153276_))))
                               (begin
-                                (let ((_g155802_
+                                (let ((_g155849_
                                        (let ()
                                          (declare (not safe))
-                                         (if (##values? _g155801_)
-                                             (##vector-length _g155801_)
+                                         (if (##values? _g155848_)
+                                             (##vector-length _g155848_)
                                              1))))
                                   (if (not (let ()
                                              (declare (not safe))
-                                             (##fx= _g155802_ 2)))
+                                             (##fx= _g155849_ 2)))
                                       (error "Context expects 2 values"
-                                             _g155802_)))
-                                (let ((_pargs153270_
+                                             _g155849_)))
+                                (let ((_pargs153317_
                                        (let ()
                                          (declare (not safe))
-                                         (##vector-ref _g155801_ 0)))
-                                      (_kwargs153271_
+                                         (##vector-ref _g155848_ 0)))
+                                      (_kwargs153318_
                                        (let ()
                                          (declare (not safe))
-                                         (##vector-ref _g155801_ 1))))
+                                         (##vector-ref _g155848_ 1))))
                                   (begin
                                     (let ()
                                       (declare (not safe))
                                       (gxc#verbose
                                        '"dispatch kw-lambda => "
-                                       _main153267_))
-                                    (if _table153246_
-                                        (let ((_xargs153278_
-                                               (map (lambda (_key153273_)
-                                                      (let ((_$e153275_
+                                       _main153314_))
+                                    (if _table153293_
+                                        (let ((_xargs153325_
+                                               (map (lambda (_key153320_)
+                                                      (let ((_$e153322_
                                                              (let ()
                                                                (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (not safe))
-                       (assgetq__0 _key153273_ _kwargs153271_))))
-                (if _$e153275_ (values _$e153275_) '(%#ref absent-value))))
+                       (assgetq__0 _key153320_ _kwargs153318_))))
+                (if _$e153322_ (values _$e153322_) '(%#ref absent-value))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _keys153268_)))
+                                                    _keys153315_)))
                                           (for-each
-                                           (lambda (_kw153280_)
-                                             (if (memq (car _kw153280_)
-                                                       _keys153268_)
+                                           (lambda (_kw153327_)
+                                             (if (memq (car _kw153327_)
+                                                       _keys153315_)
                                                  '#!void
                                                  (let ()
                                                    (declare (not safe))
                                                    (gxc#raise-compile-error
                                                     '"Illegal keyword lambda application; unexpected keyword"
-                                                    _stx153228_
-                                                    _keys153268_
-                                                    _kw153280_))))
-                                           _kwargs153271_)
-                                          (let ((__tmp155854
-                                                 (let ((__tmp155855
-                                                        (let ((__tmp155856
-                                                               (let ((__tmp155861
+                                                    _stx153275_
+                                                    _keys153315_
+                                                    _kw153327_))))
+                                           _kwargs153318_)
+                                          (let ((__tmp155901
+                                                 (let ((__tmp155902
+                                                        (let ((__tmp155903
+                                                               (let ((__tmp155908
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp155862
+                              (let ((__tmp155909
                                      (let ()
                                        (declare (not safe))
-                                       (cons _main153267_ '()))))
+                                       (cons _main153314_ '()))))
                                 (declare (not safe))
-                                (cons '%#ref __tmp155862)))
-                             (__tmp155857
-                              (let ((__tmp155859
-                                     (let ((__tmp155860
+                                (cons '%#ref __tmp155909)))
+                             (__tmp155904
+                              (let ((__tmp155906
+                                     (let ((__tmp155907
                                             (let ()
                                               (declare (not safe))
                                               (cons '#f '()))))
                                        (declare (not safe))
-                                       (cons '%#quote __tmp155860)))
-                                    (__tmp155858
+                                       (cons '%#quote __tmp155907)))
+                                    (__tmp155905
                                      (let ()
                                        (declare (not safe))
                                        (foldr1 cons
-                                               _pargs153270_
-                                               _xargs153278_))))
+                                               _pargs153317_
+                                               _xargs153325_))))
                                 (declare (not safe))
-                                (cons __tmp155859 __tmp155858))))
+                                (cons __tmp155906 __tmp155905))))
                          (declare (not safe))
-                         (cons __tmp155861 __tmp155857))))
+                         (cons __tmp155908 __tmp155904))))
                   (declare (not safe))
-                  (cons '%#call __tmp155856))))
+                  (cons '%#call __tmp155903))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (gxc#xform-wrap-source
-                                                    __tmp155855
-                                                    _stx153228_))))
+                                                    __tmp155902
+                                                    _stx153275_))))
                                             (declare (not safe))
                                             (gxc#compile-e__1
-                                             _ctx153227_
-                                             __tmp155854)))
-                                        (let* ((_kwt153282_
-                                                (let ((__tmp155803
+                                             _ctx153274_
+                                             __tmp155901)))
+                                        (let* ((_kwt153329_
+                                                (let ((__tmp155850
                                                        (gensym '__kwt)))
                                                   (declare (not safe))
                                                   (make-symbol__0
-                                                   __tmp155803)))
-                                               (_kwvars153285_
-                                                (map (lambda (_g155804_)
-                                                       (let ((__tmp155805
+                                                   __tmp155850)))
+                                               (_kwvars153332_
+                                                (map (lambda (_g155851_)
+                                                       (let ((__tmp155852
                                                               (gensym '__kw)))
                                                          (declare (not safe))
                                                          (make-symbol__0
-                                                          __tmp155805)))
-                                                     _kwargs153271_))
-                                               (_kwbind153290_
-                                                (map (lambda (_kw153287_
-                                                              _kwvar153288_)
-                                                       (let ((__tmp155808
+                                                          __tmp155852)))
+                                                     _kwargs153318_))
+                                               (_kwbind153337_
+                                                (map (lambda (_kw153334_
+                                                              _kwvar153335_)
+                                                       (let ((__tmp155855
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (cons _kwvar153288_ '())))
-                     (__tmp155806
-                      (let ((__tmp155807 (cdr _kw153287_)))
+                        (cons _kwvar153335_ '())))
+                     (__tmp155853
+                      (let ((__tmp155854 (cdr _kw153334_)))
                         (declare (not safe))
-                        (cons __tmp155807 '()))))
+                        (cons __tmp155854 '()))))
                  (declare (not safe))
-                 (cons __tmp155808 __tmp155806)))
+                 (cons __tmp155855 __tmp155853)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _kwargs153271_
-                                                     _kwvars153285_))
-                                               (_kwset153295_
-                                                (map (lambda (_kw153292_
-                                                              _kwvar153293_)
-                                                       (let ((__tmp155809
-                                                              (let ((__tmp155810
+                                                     _kwargs153318_
+                                                     _kwvars153332_))
+                                               (_kwset153342_
+                                                (map (lambda (_kw153339_
+                                                              _kwvar153340_)
+                                                       (let ((__tmp155856
+                                                              (let ((__tmp155857
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (let ((__tmp155818
-                                    (let ((__tmp155819
+                             (let ((__tmp155865
+                                    (let ((__tmp155866
                                            (let ()
                                              (declare (not safe))
-                                             (cons _kwt153282_ '()))))
+                                             (cons _kwt153329_ '()))))
                                       (declare (not safe))
-                                      (cons '%#ref __tmp155819)))
-                                   (__tmp155811
-                                    (let ((__tmp155815
-                                           (let ((__tmp155816
-                                                  (let ((__tmp155817
-                                                         (car _kw153292_)))
+                                      (cons '%#ref __tmp155866)))
+                                   (__tmp155858
+                                    (let ((__tmp155862
+                                           (let ((__tmp155863
+                                                  (let ((__tmp155864
+                                                         (car _kw153339_)))
                                                     (declare (not safe))
-                                                    (cons __tmp155817 '()))))
+                                                    (cons __tmp155864 '()))))
                                              (declare (not safe))
-                                             (cons '%#quote __tmp155816)))
-                                          (__tmp155812
-                                           (let ((__tmp155813
-                                                  (let ((__tmp155814
+                                             (cons '%#quote __tmp155863)))
+                                          (__tmp155859
+                                           (let ((__tmp155860
+                                                  (let ((__tmp155861
                                                          (let ()
                                                            (declare (not safe))
-                                                           (cons _kwvar153293_
+                                                           (cons _kwvar153340_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons '%#ref
-                                                          __tmp155814))))
+                                                          __tmp155861))))
                                              (declare (not safe))
-                                             (cons __tmp155813 '()))))
+                                             (cons __tmp155860 '()))))
                                       (declare (not safe))
-                                      (cons __tmp155815 __tmp155812))))
+                                      (cons __tmp155862 __tmp155859))))
                                (declare (not safe))
-                               (cons __tmp155818 __tmp155811))))
+                               (cons __tmp155865 __tmp155858))))
                         (declare (not safe))
-                        (cons '(%#ref symbolic-table-set!) __tmp155810))))
+                        (cons '(%#ref symbolic-table-set!) __tmp155857))))
                  (declare (not safe))
-                 (cons '%#call __tmp155809)))
+                 (cons '%#call __tmp155856)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _kwargs153271_
-                                                     _kwvars153285_))
-                                               (_xkwargs153300_
-                                                (map (lambda (_kw153297_
-                                                              _kwvar153298_)
-                                                       (let ((__tmp155822
-                                                              (car _kw153297_))
-                                                             (__tmp155820
-                                                              (let ((__tmp155821
+                                                     _kwargs153318_
+                                                     _kwvars153332_))
+                                               (_xkwargs153347_
+                                                (map (lambda (_kw153344_
+                                                              _kwvar153345_)
+                                                       (let ((__tmp155869
+                                                              (car _kw153344_))
+                                                             (__tmp155867
+                                                              (let ((__tmp155868
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (let ()
                                (declare (not safe))
-                               (cons _kwvar153298_ '()))))
+                               (cons _kwvar153345_ '()))))
                         (declare (not safe))
-                        (cons '%#ref __tmp155821))))
+                        (cons '%#ref __tmp155868))))
                  (declare (not safe))
-                 (cons __tmp155822 __tmp155820)))
+                 (cons __tmp155869 __tmp155867)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _kwargs153271_
-                                                     _kwvars153285_))
-                                               (_xargs153307_
-                                                (map (lambda (_key153302_)
-                                                       (let ((_$e153304_
+                                                     _kwargs153318_
+                                                     _kwvars153332_))
+                                               (_xargs153354_
+                                                (map (lambda (_key153349_)
+                                                       (let ((_$e153351_
                                                               (let ()
                                                                 (declare
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (not safe))
-                        (assgetq__0 _key153302_ _xkwargs153300_))))
-                 (if _$e153304_ (values _$e153304_) '(%#ref absent-value))))
+                        (assgetq__0 _key153349_ _xkwargs153347_))))
+                 (if _$e153351_ (values _$e153351_) '(%#ref absent-value))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     _keys153268_)))
-                                          (let ((__tmp155823
-                                                 (let ((__tmp155824
-                                                        (let ((__tmp155825
-                                                               (let ((__tmp155826
+                                                     _keys153315_)))
+                                          (let ((__tmp155870
+                                                 (let ((__tmp155871
+                                                        (let ((__tmp155872
+                                                               (let ((__tmp155873
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp155827
-                                     (let ((__tmp155828
-                                            (let ((__tmp155842
-                                                   (let ((__tmp155843
-                                                          (let ((__tmp155853
+                              (let ((__tmp155874
+                                     (let ((__tmp155875
+                                            (let ((__tmp155889
+                                                   (let ((__tmp155890
+                                                          (let ((__tmp155900
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let () (declare (not safe)) (cons _kwt153282_ '())))
-                        (__tmp155844
-                         (let ((__tmp155845
-                                (let ((__tmp155846
-                                       (let ((__tmp155847
-                                              (let ((__tmp155848
-                                                     (let ((__tmp155850
-                                                            (let ((__tmp155851
+                         (let () (declare (not safe)) (cons _kwt153329_ '())))
+                        (__tmp155891
+                         (let ((__tmp155892
+                                (let ((__tmp155893
+                                       (let ((__tmp155894
+                                              (let ((__tmp155895
+                                                     (let ((__tmp155897
+                                                            (let ((__tmp155898
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (let ((__tmp155852 (length _kwargs153271_)))
+                           (let ((__tmp155899 (length _kwargs153318_)))
                              (declare (not safe))
-                             (cons __tmp155852 '()))))
+                             (cons __tmp155899 '()))))
                       (declare (not safe))
-                      (cons '%#quote __tmp155851)))
-                   (__tmp155849
+                      (cons '%#quote __tmp155898)))
+                   (__tmp155896
                     (let () (declare (not safe)) (cons '(%#quote 0) '()))))
                (declare (not safe))
-               (cons __tmp155850 __tmp155849))))
+               (cons __tmp155897 __tmp155896))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
                                                 (cons '(%#ref make-symbolic-table)
-                                                      __tmp155848))))
+                                                      __tmp155895))))
                                          (declare (not safe))
-                                         (cons '%#call __tmp155847))))
+                                         (cons '%#call __tmp155894))))
                                   (declare (not safe))
                                   (gxc#xform-wrap-source
-                                   __tmp155846
-                                   _stx153228_))))
+                                   __tmp155893
+                                   _stx153275_))))
                            (declare (not safe))
-                           (cons __tmp155845 '()))))
+                           (cons __tmp155892 '()))))
                     (declare (not safe))
-                    (cons __tmp155853 __tmp155844))))
+                    (cons __tmp155900 __tmp155891))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155843 '())))
-                                                  (__tmp155829
-                                                   (let ((__tmp155830
-                                                          (let ((__tmp155831
+                                                     (cons __tmp155890 '())))
+                                                  (__tmp155876
+                                                   (let ((__tmp155877
+                                                          (let ((__tmp155878
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp155832
-                                (let ((__tmp155833
-                                       (let ((__tmp155834
-                                              (let ((__tmp155835
-                                                     (let ((__tmp155840
-                                                            (let ((__tmp155841
+                         (let ((__tmp155879
+                                (let ((__tmp155880
+                                       (let ((__tmp155881
+                                              (let ((__tmp155882
+                                                     (let ((__tmp155887
+                                                            (let ((__tmp155888
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (let ()
                              (declare (not safe))
-                             (cons _main153267_ '()))))
+                             (cons _main153314_ '()))))
                       (declare (not safe))
-                      (cons '%#ref __tmp155841)))
-                   (__tmp155836
-                    (let ((__tmp155838
-                           (let ((__tmp155839
+                      (cons '%#ref __tmp155888)))
+                   (__tmp155883
+                    (let ((__tmp155885
+                           (let ((__tmp155886
                                   (let ()
                                     (declare (not safe))
-                                    (cons _kwt153282_ '()))))
+                                    (cons _kwt153329_ '()))))
                              (declare (not safe))
-                             (cons '%#ref __tmp155839)))
-                          (__tmp155837
+                             (cons '%#ref __tmp155886)))
+                          (__tmp155884
                            (let ()
                              (declare (not safe))
-                             (foldr1 cons _pargs153270_ _xargs153307_))))
+                             (foldr1 cons _pargs153317_ _xargs153354_))))
                       (declare (not safe))
-                      (cons __tmp155838 __tmp155837))))
+                      (cons __tmp155885 __tmp155884))))
                (declare (not safe))
-               (cons __tmp155840 __tmp155836))))
+               (cons __tmp155887 __tmp155883))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons '%#call __tmp155835))))
+                                                (cons '%#call __tmp155882))))
                                          (declare (not safe))
                                          (gxc#xform-wrap-source
-                                          __tmp155834
-                                          _stx153228_))))
+                                          __tmp155881
+                                          _stx153275_))))
                                   (declare (not safe))
-                                  (cons __tmp155833 '()))))
+                                  (cons __tmp155880 '()))))
                            (declare (not safe))
-                           (foldr1 cons __tmp155832 _kwset153295_))))
+                           (foldr1 cons __tmp155879 _kwset153342_))))
                     (declare (not safe))
-                    (cons '%#begin __tmp155831))))
+                    (cons '%#begin __tmp155878))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
-                                                     (cons __tmp155830 '()))))
+                                                     (cons __tmp155877 '()))))
                                               (declare (not safe))
-                                              (cons __tmp155842 __tmp155829))))
+                                              (cons __tmp155889 __tmp155876))))
                                        (declare (not safe))
-                                       (cons '%#let-values __tmp155828))))
+                                       (cons '%#let-values __tmp155875))))
                                 (declare (not safe))
-                                (cons __tmp155827 '()))))
+                                (cons __tmp155874 '()))))
                          (declare (not safe))
-                         (cons _kwbind153290_ __tmp155826))))
+                         (cons _kwbind153337_ __tmp155873))))
                   (declare (not safe))
-                  (cons '%#let-values __tmp155825))))
+                  (cons '%#let-values __tmp155872))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (gxc#xform-wrap-source
-                                                    __tmp155824
-                                                    _stx153228_))))
+                                                    __tmp155871
+                                                    _stx153275_))))
                                             (declare (not safe))
                                             (gxc#compile-e__1
-                                             _ctx153227_
-                                             __tmp155823)))))))))))
+                                             _ctx153274_
+                                             __tmp155870)))))))))))
                     (if (let ()
                           (declare (not safe))
                           (##structure-instance-of?
-                           _g153247153256_
+                           _g153294153303_
                            'gxc#!kw-lambda-primary::t))
-                        (let* ((_e153252153313_
+                        (let* ((_e153299153360_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _g153247153256_
+                                   _g153294153303_
                                    '1
                                    gxc#!type::t
                                    '#f)))
-                               (_e153253153316_
+                               (_e153300153363_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _g153247153256_
+                                   _g153294153303_
                                    '2
                                    gxc#!kw-lambda-primary::t
                                    '#f)))
-                               (_keys153319_ _e153253153316_)
-                               (_e153254153321_
+                               (_keys153366_ _e153300153363_)
+                               (_e153301153368_
                                 (let ()
                                   (declare (not safe))
                                   (##unchecked-structure-ref
-                                   _g153247153256_
+                                   _g153294153303_
                                    '3
                                    gxc#!kw-lambda-primary::t
                                    '#f)))
-                               (_main153324_ _e153254153321_))
+                               (_main153371_ _e153301153368_))
                           (declare (not safe))
-                          (_K153251153310_ _main153324_ _keys153319_))
-                        (let () (declare (not safe)) (_else153249153264_)))))))
+                          (_K153298153357_ _main153371_ _keys153366_))
+                        (let () (declare (not safe)) (_else153296153311_)))))))
           (if (let ()
                 (declare (not safe))
                 (##structure-instance-of?
-                 _self153230153238_
+                 _self153277153285_
                  'gxc#!kw-lambda::t))
-              (let* ((_e153234153329_
+              (let* ((_e153281153376_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153230153238_
+                         _self153277153285_
                          '1
                          gxc#!type::t
                          '#f)))
-                     (_e153235153332_
+                     (_e153282153379_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153230153238_
+                         _self153277153285_
                          '2
                          gxc#!kw-lambda::t
                          '#f)))
-                     (_table153335_ _e153235153332_)
-                     (_e153236153337_
+                     (_table153382_ _e153282153379_)
+                     (_e153283153384_
                       (let ()
                         (declare (not safe))
                         (##unchecked-structure-ref
-                         _self153230153238_
+                         _self153277153285_
                          '3
                          gxc#!kw-lambda::t
                          '#f)))
-                     (_dispatch153340_ _e153236153337_))
+                     (_dispatch153387_ _e153283153384_))
                 (declare (not safe))
-                (_K153233153326_ _dispatch153340_ _table153335_))
-              (let () (declare (not safe)) (_E153232153242_))))))
+                (_K153280153373_ _dispatch153387_ _table153382_))
+              (let () (declare (not safe)) (_E153279153289_))))))
     (let ()
       (declare (not safe))
       (bind-method!__%
@@ -5298,302 +5298,302 @@
        gxc#!kw-lambda::optimize-call
        '#f))
     (define gxc#!kw-lambda-split-args
-      (lambda (_stx152839_ _args152840_)
-        (let _lp152842_ ((_rest152844_ _args152840_)
-                         (_pargs152845_ '())
-                         (_kwargs152846_ '()))
-          (let* ((___stx154893154894_ _rest152844_)
-                 (_g152852152904_
+      (lambda (_stx152886_ _args152887_)
+        (let _lp152889_ ((_rest152891_ _args152887_)
+                         (_pargs152892_ '())
+                         (_kwargs152893_ '()))
+          (let* ((___stx154940154941_ _rest152891_)
+                 (_g152899152951_
                   (lambda ()
                     (let ()
                       (declare (not safe))
                       (gx#raise-syntax-error
                        '#f
                        '"Bad syntax; invalid match target"
-                       ___stx154893154894_)))))
-            (let ((___kont154895154896_
-                   (lambda (_L153083_ _L153084_)
-                     (let ((__tmp155863
+                       ___stx154940154941_)))))
+            (let ((___kont154942154943_
+                   (lambda (_L153130_ _L153131_)
+                     (let ((__tmp155910
                             (let ()
                               (declare (not safe))
-                              (cons _L153084_ _pargs152845_))))
+                              (cons _L153131_ _pargs152892_))))
                        (declare (not safe))
-                       (_lp152842_ _L153083_ __tmp155863 _kwargs152846_))))
-                  (___kont154897154898_
-                   (lambda (_L153029_)
+                       (_lp152889_ _L153130_ __tmp155910 _kwargs152893_))))
+                  (___kont154944154945_
+                   (lambda (_L153076_)
                      (values (let ()
                                (declare (not safe))
-                               (foldl1 cons _L153029_ _pargs152845_))
-                             (reverse _kwargs152846_))))
-                  (___kont154899154900_
-                   (lambda (_L152976_ _L152977_ _L152978_)
-                     (let ((_kw152995_
+                               (foldl1 cons _L153076_ _pargs152892_))
+                             (reverse _kwargs152893_))))
+                  (___kont154946154947_
+                   (lambda (_L153023_ _L153024_ _L153025_)
+                     (let ((_kw153042_
                             (let ()
                               (declare (not safe))
-                              (gx#stx-e _L152978_))))
-                       (if (assq _kw152995_ _kwargs152846_)
+                              (gx#stx-e _L153025_))))
+                       (if (assq _kw153042_ _kwargs152893_)
                            (let ()
                              (declare (not safe))
                              (gxc#raise-compile-error
                               '"Illegal keyword lambda application; duplicate keyword"
-                              _stx152839_
-                              _kw152995_))
-                           (let ((__tmp155864
-                                  (let ((__tmp155865
+                              _stx152886_
+                              _kw153042_))
+                           (let ((__tmp155911
+                                  (let ((__tmp155912
                                          (let ()
                                            (declare (not safe))
-                                           (cons _kw152995_ _L152977_))))
+                                           (cons _kw153042_ _L153024_))))
                                     (declare (not safe))
-                                    (cons __tmp155865 _kwargs152846_))))
+                                    (cons __tmp155912 _kwargs152893_))))
                              (declare (not safe))
-                             (_lp152842_
-                              _L152976_
-                              _pargs152845_
-                              __tmp155864))))))
-                  (___kont154901154902_
-                   (lambda (_L152924_ _L152925_)
-                     (let ((__tmp155866
+                             (_lp152889_
+                              _L153023_
+                              _pargs152892_
+                              __tmp155911))))))
+                  (___kont154948154949_
+                   (lambda (_L152971_ _L152972_)
+                     (let ((__tmp155913
                             (let ()
                               (declare (not safe))
-                              (cons _L152925_ _pargs152845_))))
+                              (cons _L152972_ _pargs152892_))))
                        (declare (not safe))
-                       (_lp152842_ _L152924_ __tmp155866 _kwargs152846_))))
-                  (___kont154903154904_
+                       (_lp152889_ _L152971_ __tmp155913 _kwargs152893_))))
+                  (___kont154950154951_
                    (lambda ()
-                     (values (reverse _pargs152845_)
-                             (reverse _kwargs152846_)))))
-              (let* ((_g152851152911_
+                     (values (reverse _pargs152892_)
+                             (reverse _kwargs152893_)))))
+              (let* ((_g152898152958_
                       (lambda ()
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-null? ___stx154893154894_))
-                            (___kont154903154904_)
-                            (let () (declare (not safe)) (_g152852152904_)))))
-                     (___match155000155001_
-                      (lambda (_e152885152944_
-                               _hd152884152947_
-                               _tl152883152949_
-                               _e152888152952_
-                               _hd152887152955_
-                               _tl152886152957_
-                               _e152891152960_
-                               _hd152890152963_
-                               _tl152889152965_
-                               _e152894152968_
-                               _hd152893152971_
-                               _tl152892152973_)
-                        (let ((_L152976_ _tl152892152973_)
-                              (_L152977_ _hd152893152971_)
-                              (_L152978_ _hd152890152963_))
+                              (gx#stx-null? ___stx154940154941_))
+                            (___kont154950154951_)
+                            (let () (declare (not safe)) (_g152899152951_)))))
+                     (___match155047155048_
+                      (lambda (_e152932152991_
+                               _hd152931152994_
+                               _tl152930152996_
+                               _e152935152999_
+                               _hd152934153002_
+                               _tl152933153004_
+                               _e152938153007_
+                               _hd152937153010_
+                               _tl152936153012_
+                               _e152941153015_
+                               _hd152940153018_
+                               _tl152939153020_)
+                        (let ((_L153023_ _tl152939153020_)
+                              (_L153024_ _hd152940153018_)
+                              (_L153025_ _hd152937153010_))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-keyword? _L152978_))
-                              (___kont154899154900_
-                               _L152976_
-                               _L152977_
-                               _L152978_)
-                              (___kont154901154902_
-                               _tl152883152949_
-                               _hd152884152947_))))))
+                                (gx#stx-keyword? _L153025_))
+                              (___kont154946154947_
+                               _L153023_
+                               _L153024_
+                               _L153025_)
+                              (___kont154948154949_
+                               _tl152930152996_
+                               _hd152931152994_))))))
                 (if (let ()
                       (declare (not safe))
-                      (gx#stx-pair? ___stx154893154894_))
-                    (let ((_e152858153048_
+                      (gx#stx-pair? ___stx154940154941_))
+                    (let ((_e152905153095_
                            (let ()
                              (declare (not safe))
-                             (gx#stx-e ___stx154893154894_))))
-                      (let ((_tl152856153053_
+                             (gx#stx-e ___stx154940154941_))))
+                      (let ((_tl152903153100_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e152858153048_)))
-                            (_hd152857153051_
+                               (##cdr _e152905153095_)))
+                            (_hd152904153098_
                              (let ()
                                (declare (not safe))
-                               (##car _e152858153048_))))
+                               (##car _e152905153095_))))
                         (if (let ()
                               (declare (not safe))
-                              (gx#stx-pair? _hd152857153051_))
-                            (let ((_e152861153056_
+                              (gx#stx-pair? _hd152904153098_))
+                            (let ((_e152908153103_
                                    (let ()
                                      (declare (not safe))
-                                     (gx#stx-e _hd152857153051_))))
-                              (let ((_tl152859153061_
+                                     (gx#stx-e _hd152904153098_))))
+                              (let ((_tl152906153108_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _e152861153056_)))
-                                    (_hd152860153059_
+                                       (##cdr _e152908153103_)))
+                                    (_hd152907153106_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _e152861153056_))))
+                                       (##car _e152908153103_))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (gx#identifier? _hd152860153059_))
+                                      (gx#identifier? _hd152907153106_))
                                     (if (let ()
                                           (declare (not safe))
                                           (gx#stx-eq?
                                            '%#quote
-                                           _hd152860153059_))
+                                           _hd152907153106_))
                                         (if (let ()
                                               (declare (not safe))
-                                              (gx#stx-pair? _tl152859153061_))
-                                            (let ((_e152864153064_
+                                              (gx#stx-pair? _tl152906153108_))
+                                            (let ((_e152911153111_
                                                    (let ()
                                                      (declare (not safe))
                                                      (gx#stx-e
-                                                      _tl152859153061_))))
-                                              (let ((_tl152862153069_
+                                                      _tl152906153108_))))
+                                              (let ((_tl152909153116_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##cdr _e152864153064_)))
-                                                    (_hd152863153067_
+                                                       (##cdr _e152911153111_)))
+                                                    (_hd152910153114_
                                                      (let ()
                                                        (declare (not safe))
-                                                       (##car _e152864153064_))))
+                                                       (##car _e152911153111_))))
                                                 (if (let ()
                                                       (declare (not safe))
                                                       (gx#stx-datum?
-                                                       _hd152863153067_))
-                                                    (let ((_e152865153072_
+                                                       _hd152910153114_))
+                                                    (let ((_e152912153119_
                                                            (let ()
                                                              (declare
                                                                (not safe))
                                                              (gx#stx-e
-                                                              _hd152863153067_))))
+                                                              _hd152910153114_))))
                                                       (if (let ()
                                                             (declare
                                                               (not safe))
-                                                            (equal? _e152865153072_
+                                                            (equal? _e152912153119_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '#!key))
                   (if (let ()
                         (declare (not safe))
-                        (gx#stx-null? _tl152862153069_))
+                        (gx#stx-null? _tl152909153116_))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-pair? _tl152856153053_))
-                          (let ((_e152868153075_
+                            (gx#stx-pair? _tl152903153100_))
+                          (let ((_e152915153122_
                                  (let ()
                                    (declare (not safe))
-                                   (gx#stx-e _tl152856153053_))))
-                            (let ((_tl152866153080_
+                                   (gx#stx-e _tl152903153100_))))
+                            (let ((_tl152913153127_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _e152868153075_)))
-                                  (_hd152867153078_
+                                     (##cdr _e152915153122_)))
+                                  (_hd152914153125_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _e152868153075_))))
-                              (___kont154895154896_
-                               _tl152866153080_
-                               _hd152867153078_)))
-                          (___kont154901154902_
-                           _tl152856153053_
-                           _hd152857153051_))
-                      (___kont154901154902_ _tl152856153053_ _hd152857153051_))
+                                     (##car _e152915153122_))))
+                              (___kont154942154943_
+                               _tl152913153127_
+                               _hd152914153125_)))
+                          (___kont154948154949_
+                           _tl152903153100_
+                           _hd152904153098_))
+                      (___kont154948154949_ _tl152903153100_ _hd152904153098_))
                   (if (let ()
                         (declare (not safe))
-                        (equal? _e152865153072_ '#!rest))
+                        (equal? _e152912153119_ '#!rest))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-null? _tl152862153069_))
-                          (___kont154897154898_ _tl152856153053_)
-                          (___kont154901154902_
-                           _tl152856153053_
-                           _hd152857153051_))
+                            (gx#stx-null? _tl152909153116_))
+                          (___kont154944154945_ _tl152903153100_)
+                          (___kont154948154949_
+                           _tl152903153100_
+                           _hd152904153098_))
                       (if (let ()
                             (declare (not safe))
-                            (gx#stx-null? _tl152862153069_))
+                            (gx#stx-null? _tl152909153116_))
                           (if (let ()
                                 (declare (not safe))
-                                (gx#stx-pair? _tl152856153053_))
-                              (let ((_e152894152968_
+                                (gx#stx-pair? _tl152903153100_))
+                              (let ((_e152941153015_
                                      (let ()
                                        (declare (not safe))
-                                       (gx#stx-e _tl152856153053_))))
-                                (let ((_tl152892152973_
+                                       (gx#stx-e _tl152903153100_))))
+                                (let ((_tl152939153020_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _e152894152968_)))
-                                      (_hd152893152971_
+                                         (##cdr _e152941153015_)))
+                                      (_hd152940153018_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _e152894152968_))))
-                                  (___match155000155001_
-                                   _e152858153048_
-                                   _hd152857153051_
-                                   _tl152856153053_
-                                   _e152861153056_
-                                   _hd152860153059_
-                                   _tl152859153061_
-                                   _e152864153064_
-                                   _hd152863153067_
-                                   _tl152862153069_
-                                   _e152894152968_
-                                   _hd152893152971_
-                                   _tl152892152973_)))
-                              (___kont154901154902_
-                               _tl152856153053_
-                               _hd152857153051_))
-                          (___kont154901154902_
-                           _tl152856153053_
-                           _hd152857153051_)))))
+                                         (##car _e152941153015_))))
+                                  (___match155047155048_
+                                   _e152905153095_
+                                   _hd152904153098_
+                                   _tl152903153100_
+                                   _e152908153103_
+                                   _hd152907153106_
+                                   _tl152906153108_
+                                   _e152911153111_
+                                   _hd152910153114_
+                                   _tl152909153116_
+                                   _e152941153015_
+                                   _hd152940153018_
+                                   _tl152939153020_)))
+                              (___kont154948154949_
+                               _tl152903153100_
+                               _hd152904153098_))
+                          (___kont154948154949_
+                           _tl152903153100_
+                           _hd152904153098_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (if (let ()
                                                           (declare (not safe))
                                                           (gx#stx-null?
-                                                           _tl152862153069_))
+                                                           _tl152909153116_))
                                                         (if (let ()
                                                               (declare
                                                                 (not safe))
                                                               (gx#stx-pair?
-                                                               _tl152856153053_))
-                                                            (let ((_e152894152968_
+                                                               _tl152903153100_))
+                                                            (let ((_e152941153015_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (let ()
                              (declare (not safe))
-                             (gx#stx-e _tl152856153053_))))
-                      (let ((_tl152892152973_
+                             (gx#stx-e _tl152903153100_))))
+                      (let ((_tl152939153020_
                              (let ()
                                (declare (not safe))
-                               (##cdr _e152894152968_)))
-                            (_hd152893152971_
+                               (##cdr _e152941153015_)))
+                            (_hd152940153018_
                              (let ()
                                (declare (not safe))
-                               (##car _e152894152968_))))
-                        (___match155000155001_
-                         _e152858153048_
-                         _hd152857153051_
-                         _tl152856153053_
-                         _e152861153056_
-                         _hd152860153059_
-                         _tl152859153061_
-                         _e152864153064_
-                         _hd152863153067_
-                         _tl152862153069_
-                         _e152894152968_
-                         _hd152893152971_
-                         _tl152892152973_)))
-                    (___kont154901154902_ _tl152856153053_ _hd152857153051_))
-                (___kont154901154902_ _tl152856153053_ _hd152857153051_)))))
+                               (##car _e152941153015_))))
+                        (___match155047155048_
+                         _e152905153095_
+                         _hd152904153098_
+                         _tl152903153100_
+                         _e152908153103_
+                         _hd152907153106_
+                         _tl152906153108_
+                         _e152911153111_
+                         _hd152910153114_
+                         _tl152909153116_
+                         _e152941153015_
+                         _hd152940153018_
+                         _tl152939153020_)))
+                    (___kont154948154949_ _tl152903153100_ _hd152904153098_))
+                (___kont154948154949_ _tl152903153100_ _hd152904153098_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (___kont154901154902_
-                                             _tl152856153053_
-                                             _hd152857153051_))
-                                        (___kont154901154902_
-                                         _tl152856153053_
-                                         _hd152857153051_))
-                                    (___kont154901154902_
-                                     _tl152856153053_
-                                     _hd152857153051_))))
-                            (___kont154901154902_
-                             _tl152856153053_
-                             _hd152857153051_))))
-                    (let () (declare (not safe)) (_g152851152911_)))))))))
+                                            (___kont154948154949_
+                                             _tl152903153100_
+                                             _hd152904153098_))
+                                        (___kont154948154949_
+                                         _tl152903153100_
+                                         _hd152904153098_))
+                                    (___kont154948154949_
+                                     _tl152903153100_
+                                     _hd152904153098_))))
+                            (___kont154948154949_
+                             _tl152903153100_
+                             _hd152904153098_))))
+                    (let () (declare (not safe)) (_g152898152958_)))))))))
     (define gxc#!kw-lambda-primary::optimize-call
-      (lambda (_self152834_ _ctx152835_ _stx152836_ _args152837_)
+      (lambda (_self152881_ _ctx152882_ _stx152883_ _args152884_)
         (let ()
           (declare (not safe))
-          (gxc#xform-call% _ctx152835_ _stx152836_))))
+          (gxc#xform-call% _ctx152882_ _stx152883_))))
     (let ()
       (declare (not safe))
       (bind-method!__%

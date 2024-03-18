@@ -1539,7 +1539,7 @@
           (declare (not safe))
           (##unchecked-structure-set!
            __obj34580
-           't
+           'object
            '2
            gerbil/core/mop~MOP-2#class-type-info::t
            '#f))
