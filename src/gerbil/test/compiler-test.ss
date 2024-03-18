@@ -18,17 +18,18 @@
                             optimize: #t
                             generate-ssxi: #t])
            ? true)
-    (with-cons-load-path
-     (lambda () (check (import-module
-                   (string->symbol
-                    (string-append "test/"
-                                   (path-strip-extension
-                                    (path-strip-directory
-                                     path))))
-                   #f #t)
-                  ? true))
-     output-dir)
-    (delete-file-or-directory output-dir #t)))
+    (let (current-load-path (load-path))
+      (add-load-path! output)
+      (check (import-module
+              (string->symbol
+               (string-append "test/"
+                              (path-strip-extension
+                               (path-strip-directory
+                                path))))
+              #f #t)
+             ? true)
+      (set-load-path! current-load-path)
+      (delete-file-or-directory output-dir #t))))
 
 (def compiler-specializer-test
   (test-suite "compiler specializer tests"
