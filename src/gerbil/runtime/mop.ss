@@ -141,7 +141,7 @@ namespace: #f
       (##structure
        class::t                         ; type
        t::t.id                          ; type-id
-       't                               ; type-name
+       'object                          ; type-name
        flags                            ; type-flags
        #f                               ; type-super
        '#()                             ; type-fields
@@ -436,7 +436,7 @@ namespace: #f
          ((values slot-vector slot-table)
           (compute-class-slots precedence-list direct-slots))
          (precedence-list
-          (if (or (assgetq properties system:)
+          (if (or (assgetq system: properties)
                   (memq object::t precedence-list))
             precedence-list
             (append precedence-list [object::t])))
