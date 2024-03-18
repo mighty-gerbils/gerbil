@@ -213,14 +213,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((ref . _locked-hash-table::ref70984_)
-            (update! . _locked-hash-table::update!70988_)
-            (for-each . _locked-hash-table::for-each70992_)
+           ((delete! . _locked-hash-table::delete!70990_)
+            (clear! . _locked-hash-table::clear!70998_)
             (set! . _locked-hash-table::set!70986_)
-            (delete! . _locked-hash-table::delete!70990_)
-            (length . _locked-hash-table::length70994_)
             (copy . _locked-hash-table::copy70996_)
-            (clear! . _locked-hash-table::clear!70998_))))
+            (ref . _locked-hash-table::ref70984_)
+            (for-each . _locked-hash-table::for-each70992_)
+            (length . _locked-hash-table::length70994_)
+            (update! . _locked-hash-table::update!70988_))))
   (declare-type locked-hash-table? (@predicate locked-hash-table::t))
   (declare-type make-locked-hash-table (@constructor locked-hash-table::t))
   (declare-type
@@ -259,14 +259,14 @@ package: gerbil/runtime
            #t
            #f
            #f
-           ((ref . _checked-hash-table::ref71276_)
-            (update! . _checked-hash-table::update!71280_)
-            (for-each . _checked-hash-table::for-each71284_)
+           ((delete! . _checked-hash-table::delete!71282_)
+            (clear! . _checked-hash-table::clear!71290_)
             (set! . _checked-hash-table::set!71278_)
-            (delete! . _checked-hash-table::delete!71282_)
-            (length . _checked-hash-table::length71286_)
             (copy . _checked-hash-table::copy71288_)
-            (clear! . _checked-hash-table::clear!71290_))))
+            (ref . _checked-hash-table::ref71276_)
+            (for-each . _checked-hash-table::for-each71284_)
+            (length . _checked-hash-table::length71286_)
+            (update! . _checked-hash-table::update!71280_))))
   (declare-type checked-hash-table? (@predicate checked-hash-table::t))
   (declare-type make-checked-hash-table (@constructor checked-hash-table::t))
   (declare-type

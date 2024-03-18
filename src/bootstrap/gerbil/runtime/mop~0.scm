@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710770268)
+  (define gerbil/runtime/mop::timestamp 1710774315)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -1290,7 +1290,7 @@
                          (let ()
                            (declare (not safe))
                            (##vector-ref _g65876_ 1))))
-                    (let* ((_prcedence-list65136_
+                    (let* ((_precedence-list65136_
                             (if (or (let ()
                                       (declare (not safe))
                                       (assgetq__0 _properties65107_ 'system:))
@@ -1330,7 +1330,7 @@
                          _id65103_
                          _name65104_
                          _struct-super65128_
-                         _precedence-list65127_
+                         _precedence-list65136_
                          _slot-vector65130_
                          _properties65138_
                          _constructor*65143_
