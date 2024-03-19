@@ -342,7 +342,7 @@
           (if (eq? mode 'shared)
             (library-file-path
              (cond-expand (darwin "libgerbil.dylib")
-                          "libgerbil.so"))
+                          (else "libgerbil.so")))
             (library-file-path "libgerbil.a"))))
     ;; generate the builtin modules stub
     (call-with-output-file builtin-modules-scm-path
