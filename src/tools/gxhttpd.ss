@@ -376,10 +376,11 @@
     (defrule (file-cache-entry file-path expire created handler)
       (let (preserve?
             (lambda ()
-              (fl< (time->seconds
-                    (file-info-last-modification-time
-                     (file-info file-path #t)))
-                   created)))
+              (and (file-exists? file-path)
+                   (fl< (time->seconds
+                         (file-info-last-modification-time
+                          (file-info file-path #t)))
+                        created))))
         (cache-entry handler expire preserve?)))
 
     (using (self :- dynamic-mux)
