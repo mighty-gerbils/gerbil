@@ -130,7 +130,7 @@ namespace: #f
        flags                         ; type-flags
        __table::t                    ; type-super
        fields                        ; type-fields
-       []                            ; class-type-precedence-list
+       [object::t t::t]              ; class-type-precedence-list
        slot-vector                   ; class-type-slot-vector
        slot-table                    ; class-type-slot-table
        properties                    ; class-type-properties
@@ -173,7 +173,7 @@ namespace: #f
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields
-       []                               ; class-type-precedence-list
+       [object::t t::t]                 ; class-type-precedence-list
        slot-vector                      ; class-type-slot-vector
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
