@@ -56,8 +56,8 @@ package: gerbil/runtime
            #f
            #f
            #f
-           ((display-exception . Error::display-exception)
-            (:init! . Error:::init!))))
+           ((:init! . Error:::init!)
+            (display-exception . Error::display-exception))))
   (declare-type Error? (@predicate Error::t))
   (declare-type make-Error (@constructor Error::t))
   (declare-type Error-message (@accessor Error::t message #t))
