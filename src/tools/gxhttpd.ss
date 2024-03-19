@@ -392,7 +392,7 @@
                   (not-found-cache-entry expire))
                  ((find-handler self.handlers server-path)
                   => (lambda (handler)
-                       (cache-entry handler expire true)))
+                       (cache-entry handler expire (lambda () #t))))
                  (else
                   (let (file-path (string-append self.root server-path))
                     (if (file-exists? file-path)
