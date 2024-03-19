@@ -340,7 +340,9 @@
           '("-e" "(define-cond-expand-feature|gerbil-separate-compilation|)"))
          (libgerbil
           (if (eq? mode 'shared)
-            (library-file-path "libgerbil.so")
+            (library-file-path
+             (cond-expand (darwin "libgerbil.dylib")
+                          "libgerbil.so"))
             (library-file-path "libgerbil.a"))))
     ;; generate the builtin modules stub
     (call-with-output-file builtin-modules-scm-path
