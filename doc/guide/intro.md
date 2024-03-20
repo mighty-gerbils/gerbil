@@ -228,7 +228,7 @@ coordinates of the point its instances represent. `Point3D` adds an additional
 slot, with the 3rd dimension `z`.
 
 After we have defined our classes, we can instantiate objects using
-the class name, taking keyword arguments for the slots:
+the class name, taking keyword arguments for the slot initializers:
 ```
 > (def a (Point x: 1 y: 2))
 > a
@@ -247,7 +247,7 @@ the class name, taking keyword arguments for the slots:
 
 ```
 
-We can also initialize using the generate `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
+We can also initialize using the generated `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
 ```
 > (make-Point x: 1 y: 2)
 #<Point #5>
@@ -396,6 +396,35 @@ and `t`, which is the top class. These are [System Classes](#system-classes),
 which we discuss below.
 
 ##### Structs
+
+As we have mentioned, the slot layout of classes (unless they are
+final) is in general not fixed and can change based on the mixins
+further down the inheritance graph. This is very flexible, but it also
+comes at a cost: unless the class is exact, slot access will incur
+dynamic slot resolution overhead (basically a hash table lookup.
+
+Is there a way to have a fixed layout for performance critical
+classes?  The answer is, of course, yes: Gerbil supports *structs*,
+which are classes with the special property that all structs in the
+inheritance graph form a linear chain.  This ensures that all
+subclasses of a struct will have the same layout for the slots of the
+struct and slot access becomes just a mermory reference.
+
+Struct classes are defined with `defstruct` or by passing the `struct: #t`
+directive in the body of a `defclass` incantation.
+
+So let's redefine the hierarchy above such that `Point` and `Point3D`
+are structs, while `Color` remains a mixin class:
+```
+(defstruct Point (x y))
+(defstruct (Point3D Point) (z))
+
+(defclass Color (r g b))
+
+(defclass (ColoredPoint Point Color) ())
+(defclass (ColoredPoint3D Point3D Color) ())
+
+```
 
 ##### Constructor Methods
 
