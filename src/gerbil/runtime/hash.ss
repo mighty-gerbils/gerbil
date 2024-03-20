@@ -98,7 +98,7 @@ namespace: #f
 (def hash-table::t
   (begin-annotation
       (@mop.class gerbil#hash-table::t              ; type-id
-                  ()                                ; super
+                  (object::t)                       ; super
                   (table count free hash test seed) ; slots
                   #f                                ; constructor
                   #t                                ; struct?
@@ -130,7 +130,7 @@ namespace: #f
        flags                         ; type-flags
        __table::t                    ; type-super
        fields                        ; type-fields
-       []                            ; class-type-precedence-list
+       [object::t t::t]              ; class-type-precedence-list
        slot-vector                   ; class-type-slot-vector
        slot-table                    ; class-type-slot-table
        properties                    ; class-type-properties
@@ -141,7 +141,7 @@ namespace: #f
 (def gc-hash-table::t
   (begin-annotation
       (@mop.class gerbil#gc-hash-table::t ; type-id
-                  ()                      ; super
+                  (object::t)             ; super
                   (gcht immediate)        ; slots
                   #f                      ; constructor
                   #t                      ; struct?
@@ -169,11 +169,11 @@ namespace: #f
       (##structure
        class::t                         ; type
        'gerbil#gc-hash-table::t         ; type-id
-       'gc-hash-table                   ; type-name
+       'hash-table                      ; type-name
        flags                            ; type-flags
        __gc-table::t                    ; type-super
        fields                           ; type-fields
-       []                               ; class-type-precedence-list
+       [object::t t::t]                 ; class-type-precedence-list
        slot-vector                      ; class-type-slot-vector
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties

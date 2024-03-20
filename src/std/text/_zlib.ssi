@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; zlib FFI
+prelude: :std/ssi
 package: std/text
 
 (export #t)
-(extern
+(defruntime
   Z_OK Z_STREAM_END Z_NEED_DICT
   Z_NO_COMPRESSION Z_BEST_SPEED Z_BEST_COMPRESSION Z_DEFAULT_COMPRESSION
   Z_FINISH Z_NO_FLUSH

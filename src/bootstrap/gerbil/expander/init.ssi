@@ -1,0 +1,11 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#import
+          :gerbil/runtime
+          :gerbil/expander/core
+          :gerbil/expander/module
+          :gerbil/expander/top
+          :gerbil/expander/root))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/init~0"))

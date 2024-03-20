@@ -24,15 +24,6 @@ namespace: gx
           current-expander-module-prelude
           gx#current-expander-module-prelude)
          (%#define-runtime
-          current-expander-module-registry
-          gx#current-expander-module-registry)
-         (%#define-runtime
-          current-expander-module-library-path
-          gx#current-expander-module-library-path)
-         (%#define-runtime
-          current-expander-module-library-package-cache
-          gx#current-expander-module-library-package-cache)
-         (%#define-runtime
           current-expander-allow-rebind?
           gx#current-expander-allow-rebind?)
          (%#define-runtime
@@ -59,7 +50,7 @@ namespace: gx
           gx#&expander-context-table-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/expander/core__1")))
+                           (%#quote "gerbil/expander/core~1")))
                   (%#define-syntax
                    expander-context
                    |gx[:0:]#expander-context|))
@@ -1084,4 +1075,4 @@ namespace: gx
                             syntax-local-value
                             gx#syntax-local-value)))
          (%#define-runtime raise-syntax-ref-error gx#raise-syntax-ref-error))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/core__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/core~0"))

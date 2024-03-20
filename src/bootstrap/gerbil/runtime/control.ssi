@@ -12,4 +12,4 @@ namespace: #f
          (%#define-runtime with-unwind-protect with-unwind-protect)
          (%#define-runtime keyword-dispatch keyword-dispatch)
          (%#define-runtime keyword-rest keyword-rest))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/control__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/control~0"))

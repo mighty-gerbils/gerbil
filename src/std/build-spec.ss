@@ -7,6 +7,7 @@
     "metaclass"
     "hash-table"
     "interactive"
+    "ssi"
     "foreign"
     ;; tests for :std/foreign
     "foreign-test-support"

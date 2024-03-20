@@ -53,7 +53,7 @@ namespace: #f
           &UnboundKeyError-continuation-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/hash__1")))
+                           (%#quote "gerbil/runtime/hash~1")))
                   (%#define-syntax UnboundKeyError |[:0:]#UnboundKeyError|))
          (%#define-runtime UnboundKeyError:::init! UnboundKeyError:::init!)
          (%#define-runtime raise-unbound-key-error raise-unbound-key-error)
@@ -227,57 +227,57 @@ namespace: #f
          (%#define-runtime &HashTableLock-end-write! &HashTableLock-end-write!)
          (%#define-syntax deflocked-hash-method |[:0:]#deflocked-hash-method|)
          (%#define-runtime
-          _locked-hash-table::ref70638_
-          _locked-hash-table::ref70637_)
+          _locked-hash-table::ref71014_
+          _locked-hash-table::ref71013_)
          (%#define-runtime
-          _locked-hash-table::set!70640_
-          _locked-hash-table::set!70639_)
+          _locked-hash-table::set!71016_
+          _locked-hash-table::set!71015_)
          (%#define-runtime
-          _locked-hash-table::update!70642_
-          _locked-hash-table::update!70641_)
+          _locked-hash-table::update!71018_
+          _locked-hash-table::update!71017_)
          (%#define-runtime
-          _locked-hash-table::delete!70644_
-          _locked-hash-table::delete!70643_)
+          _locked-hash-table::delete!71020_
+          _locked-hash-table::delete!71019_)
          (%#define-runtime
-          _locked-hash-table::for-each70646_
-          _locked-hash-table::for-each70645_)
+          _locked-hash-table::for-each71022_
+          _locked-hash-table::for-each71021_)
          (%#define-runtime
-          _locked-hash-table::length70648_
-          _locked-hash-table::length70647_)
+          _locked-hash-table::length71024_
+          _locked-hash-table::length71023_)
          (%#define-runtime
-          _locked-hash-table::copy70650_
-          _locked-hash-table::copy70649_)
+          _locked-hash-table::copy71026_
+          _locked-hash-table::copy71025_)
          (%#define-runtime
-          _locked-hash-table::clear!70652_
-          _locked-hash-table::clear!70651_)
+          _locked-hash-table::clear!71028_
+          _locked-hash-table::clear!71027_)
          (%#define-syntax
           defchecked-hash-method
           |[:0:]#defchecked-hash-method|)
          (%#define-syntax check-hash-arg |[:0:]#check-hash-arg|)
          (%#define-runtime
-          _checked-hash-table::ref70930_
-          _checked-hash-table::ref70929_)
+          _checked-hash-table::ref71306_
+          _checked-hash-table::ref71305_)
          (%#define-runtime
-          _checked-hash-table::set!70932_
-          _checked-hash-table::set!70931_)
+          _checked-hash-table::set!71308_
+          _checked-hash-table::set!71307_)
          (%#define-runtime
-          _checked-hash-table::update!70934_
-          _checked-hash-table::update!70933_)
+          _checked-hash-table::update!71310_
+          _checked-hash-table::update!71309_)
          (%#define-runtime
-          _checked-hash-table::delete!70936_
-          _checked-hash-table::delete!70935_)
+          _checked-hash-table::delete!71312_
+          _checked-hash-table::delete!71311_)
          (%#define-runtime
-          _checked-hash-table::for-each70938_
-          _checked-hash-table::for-each70937_)
+          _checked-hash-table::for-each71314_
+          _checked-hash-table::for-each71313_)
          (%#define-runtime
-          _checked-hash-table::length70940_
-          _checked-hash-table::length70939_)
+          _checked-hash-table::length71316_
+          _checked-hash-table::length71315_)
          (%#define-runtime
-          _checked-hash-table::copy70942_
-          _checked-hash-table::copy70941_)
+          _checked-hash-table::copy71318_
+          _checked-hash-table::copy71317_)
          (%#define-runtime
-          _checked-hash-table::clear!70944_
-          _checked-hash-table::clear!70943_)
+          _checked-hash-table::clear!71320_
+          _checked-hash-table::clear!71319_)
          (%#define-runtime make-generic-hash-table make-generic-hash-table)
          (%#begin (%#define-runtime make-hash-table__% make-hash-table__%)
                   (%#define-runtime make-hash-table__@ make-hash-table__@)
@@ -347,4 +347,4 @@ namespace: #f
          (%#define-runtime &hash-copy &hash-copy)
          (%#define-runtime hash-merge hash-merge)
          (%#define-runtime hash-merge! hash-merge!))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/hash__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/hash~0"))

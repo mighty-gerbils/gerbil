@@ -34,7 +34,7 @@ namespace: gxc
          (%#define-runtime make-::generate-ssxi gxc#make-::generate-ssxi)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize__1")))
+                           (%#quote "gerbil/compiler/optimize~1")))
                   (%#define-syntax ::generate-ssxi |gxc[:0:]#::generate-ssxi|))
          (%#define-runtime
           ::generate-ssxi-bind-methods!
@@ -60,4 +60,4 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary::typedecl
           gxc#!kw-lambda-primary::typedecl))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize~0"))

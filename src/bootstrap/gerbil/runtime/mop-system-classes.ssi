@@ -96,4 +96,4 @@ namespace: #f
          (%#define-runtime readenv? readenv?)
          (%#define-runtime writeenv? writeenv?)
          (%#define-runtime vm? vm?))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/mop-system-classes__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/mop-system-classes~0"))

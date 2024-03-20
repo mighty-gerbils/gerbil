@@ -7,10 +7,10 @@ package: gerbil/core
 
 (import "runtime" "sugar"
         (phi: +1 "runtime" "expander" "sugar"))
-(export  (import: <MOP:1> <MOP:4> <MOP:5>)
-         (phi: +1 (import: <MOP:1> <MOP:2> <MOP:3> <MOP:4> <MOP:5>)))
+(export  (import: MOP-1 MOP-4 MOP-5)
+         (phi: +1 (import: MOP-1 MOP-2 MOP-3 MOP-4 MOP-5)))
 
-(module <MOP:1>
+(module MOP-1
   (export #t (phi: +1 module-type-id make-class-type-id))
 
   (begin-syntax
@@ -74,7 +74,8 @@ package: gerbil/core
                          (stx-getq constructor: #'rest))
                         (mop-type-t (core-quote-syntax #'type-t))
                         (mop-super
-                         (stx-map core-quote-syntax #'super))
+                         (append (stx-map core-quote-syntax #'super)
+                                 [(core-quote-syntax 'object::t)]))
                         (mop-struct? struct?)
                         (mop-final? (stx-getq final: #'rest))
                         (mop-metaclass
@@ -177,8 +178,8 @@ package: gerbil/core
   (defsyntax (defclass-type stx)
     (generate-typedef stx #f)))
 
-(module <MOP:2>
-  (import "expander" <MOP:1>)
+(module MOP-2
+  (import "expander" MOP-1)
   (export #t)
   ;; class meta type; expansion time class reflection.
   (defclass-type class-type-info::t ()
@@ -255,8 +256,8 @@ package: gerbil/core
            (and (class-type-info? e)
                 (is? e))))))
 
-(module <MOP:3>
-  (import <MOP:2> (phi: +1 <MOP:2>))
+(module MOP-3
+  (import MOP-2 (phi: +1 MOP-2))
   (export #t)
 
   ;; meta-circular
@@ -347,8 +348,8 @@ package: gerbil/core
       ['unchecked-accessors :: (quote-syntax &!class-type-unchecked-accessors-set!)]
       ['unchecked-mutators :: (quote-syntax &!class-type-unchecked-mutators-set!)]])))
 
-(module <MOP:4>
-  (import <MOP:1> (phi: +1 <MOP:1> <MOP:2> <MOP:3>))
+(module MOP-4
+  (import MOP-1 (phi: +1 MOP-1 MOP-2 MOP-3))
   (export #t)
 
   ;; and here we define the general MOP macros
@@ -676,8 +677,8 @@ package: gerbil/core
     ((recur obj id path ... last val)
      (recur (@ obj id path ...) last val))))
 
-(module <MOP:5>
-  (import (phi: +1 <MOP:2>))
+(module MOP-5
+  (import (phi: +1 MOP-2))
   (export #t)
   (defsyntax (defsystem-class-info stx)
     (syntax-case stx ()
@@ -700,9 +701,10 @@ package: gerbil/core
                 unchecked-mutators: [])))))))
 
   (defsystem-class-info :t t::t () true)
+  (defsystem-class-info :object object::t (t::t) true)
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes
-  (defsystem-class-info :immediate immediate::t () immediate?)
+  (defsystem-class-info :immediate immediate::t (t::t) immediate?)
   (defsystem-class-info :char char::t (immediate::t) char?)
   (defsystem-class-info :boolean boolean::t (immediate::t) boolean?)
 
@@ -714,7 +716,7 @@ package: gerbil/core
 
   (defsystem-class-info :special special::t (atom::t) special?)
 
-  (defsystem-class-info :number number::t () number?)
+  (defsystem-class-info :number number::t (t::t) number?)
   (defsystem-class-info :real real::t (number::t) real?)
   (defsystem-class-info :integer integer::t (real::t) integer?)
   (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
@@ -723,15 +725,15 @@ package: gerbil/core
   (defsystem-class-info :flonum flonum::t (real::t) flonum?)
   (defsystem-class-info :cpxnum cpxnum::t (number::t) ##cpxnum?)
 
-  (defsystem-class-info :symbolic symbolic::t () symbolic?)
+  (defsystem-class-info :symbolic symbolic::t (t::t) symbolic?)
   (defsystem-class-info :symbol symbol::t (symbolic::t) symbol?)
   (defsystem-class-info :keyword keyword::t (symbolic::t) keyword?)
 
-  (defsystem-class-info :list list::t () list?)
+  (defsystem-class-info :list list::t (t::t) list?)
   (defsystem-class-info :pair pair::t (list::t) pair?)
   (defsystem-class-info :null null::t (list::t atom::t) null?)
 
-  (defsystem-class-info :sequence sequence::t () sequence?)
+  (defsystem-class-info :sequence sequence::t (t::t) sequence?)
   (defsystem-class-info :vector vector::t (sequence::t) vector?)
   (defsystem-class-info :string string::t (sequence::t) string?)
   (defsystem-class-info :hvector hvector::t (sequence::t) hvector?)
@@ -746,22 +748,22 @@ package: gerbil/core
   (defsystem-class-info :f32vector f32vector::t (hvector::t) f32vector?)
   (defsystem-class-info :f64vector f64vector::t (hvector::t) f64vector?)
 
-  (defsystem-class-info :values values::t () ##values?)
-  (defsystem-class-info :box box::t () box?)
-  (defsystem-class-info :frame frame::t () ##frame?)
-  (defsystem-class-info :continuation continuation::t () continuation?)
-  (defsystem-class-info :promise promise::t () promise?)
-  (defsystem-class-info :weak weak::t () weak?)
-  (defsystem-class-info :foreign foreign::t () foreign?)
+  (defsystem-class-info :values values::t (t::t) ##values?)
+  (defsystem-class-info :box box::t (t::t) box?)
+  (defsystem-class-info :frame frame::t (t::t) ##frame?)
+  (defsystem-class-info :continuation continuation::t (t::t) continuation?)
+  (defsystem-class-info :promise promise::t (t::t) promise?)
+  (defsystem-class-info :weak weak::t (t::t) weak?)
+  (defsystem-class-info :foreign foreign::t (t::t) foreign?)
 
-  (defsystem-class-info :procedure procedure::t () procedure?)
+  (defsystem-class-info :procedure procedure::t (t::t) procedure?)
 
-  (defsystem-class-info :time time::t () time?)
-  (defsystem-class-info :thread thread::t () thread?)
-  (defsystem-class-info :thread-group thread-group::t () thread-group?)
-  (defsystem-class-info :mutex mutex::t () mutex?)
-  (defsystem-class-info :condvar condvar::t () condvar?)
-  (defsystem-class-info :port port::t () port?)
+  (defsystem-class-info :time time::t (t::t) time?)
+  (defsystem-class-info :thread thread::t (t::t) thread?)
+  (defsystem-class-info :thread-group thread-group::t (t::t) thread-group?)
+  (defsystem-class-info :mutex mutex::t (t::t) mutex?)
+  (defsystem-class-info :condvar condvar::t (t::t) condvar?)
+  (defsystem-class-info :port port::t (t::t) port?)
   (defsystem-class-info :object-port object-port::t (port::t) object-port?)
   (defsystem-class-info :character-port character-port::t (object-port::t) character-port?)
   (defsystem-class-info :byte-port byte-port::t (character-port::t) byte-port?)
@@ -774,14 +776,14 @@ package: gerbil/core
   (defsystem-class-info :udp-port udp-port::t (object-port::t) udp-port?)
   (defsystem-class-info :directory-port directory-port::t (object-port::t) directory-port?)
   (defsystem-class-info :event-queue-port event-queue-port::t (object-port::t) event-queue-port?)
-  (defsystem-class-info :table table::t () table?)
-  (defsystem-class-info :readenv readenv::t () readenv)
-  (defsystem-class-info :writeenv writeenv::t () writeenv?)
-  (defsystem-class-info :readtable readtable::t () readtable?)
-  (defsystem-class-info :processor processor::t () processor?)
-  (defsystem-class-info :vm vm::t () vm?)
-  (defsystem-class-info :file-info file-info::t () file-info?)
-  (defsystem-class-info :socket-info socket-info::t () socket-info?)
-  (defsystem-class-info :address-info address-info::t () address-info?))
+  (defsystem-class-info :table table::t (t::t) table?)
+  (defsystem-class-info :readenv readenv::t (t::t) readenv)
+  (defsystem-class-info :writeenv writeenv::t (t::t) writeenv?)
+  (defsystem-class-info :readtable readtable::t (t::t) readtable?)
+  (defsystem-class-info :processor processor::t (t::t) processor?)
+  (defsystem-class-info :vm vm::t (t::t) vm?)
+  (defsystem-class-info :file-info file-info::t (t::t) file-info?)
+  (defsystem-class-info :socket-info socket-info::t (t::t) socket-info?)
+  (defsystem-class-info :address-info address-info::t (t::t) address-info?))
 
-(import <MOP:1> <MOP:4> <MOP:5> (phi: +1 <MOP:1> <MOP:2> <MOP:3> <MOP:4> <MOP:5>))
+(import MOP-1 MOP-4 MOP-5 (phi: +1 MOP-1 MOP-2 MOP-3 MOP-4 MOP-5))

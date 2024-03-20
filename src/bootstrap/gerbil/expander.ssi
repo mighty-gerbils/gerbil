@@ -11,7 +11,8 @@ namespace: gerbil/expander
           :gerbil/expander/module
           :gerbil/expander/compile
           :gerbil/expander/root
-          :gerbil/expander/stxcase)
+          :gerbil/expander/stxcase
+          :gerbil/expander/init)
          (%#export
           (import: :gerbil/expander/common)
           (import: :gerbil/expander/stx)

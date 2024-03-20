@@ -20,8 +20,6 @@
         ./error
         ./assert)
 
-(extern namespace: #f with-cons-load-path load-path)
-
 (export make
         make-clean
         shell-config
@@ -690,7 +688,7 @@ TODO:
              (when/list (settings-verbose>=? settings 9) ["-v"]) ...
              (when/list gsc-opts (append-map (lambda (x) ["-gsc-flag" x]) gsc-opts)) ...
              srcpath])
-           (__ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
+           (_ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
            (proc (open-process [path: (gerbil-gxc)
                                 arguments: arguments
                                 stdout-redirection: #f]))
@@ -749,26 +747,12 @@ TODO:
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
   (def libpath (library-path mod ".ssi" settings))
-  (def rtpath  (library-path mod "__rt.scm" settings))
   (def prefix  (settings-prefix settings))
   (message "... copy ssi " mod)
   (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
-  (copy-file srcpath libpath)
-  (message "... compile loader " mod)
-  (with-output-to-file rtpath
-    (lambda ()
-      (for-each (lambda (dep) (pretty-print `(load-module ,dep))) deps)
-      (pretty-print `(load-module ,(prefix/ prefix mod)))))
-  (let* ((proc (open-process [path: (gerbil-gsc)
-                                    arguments: [rtpath]
-                                    stdout-redirection: #f]))
-         (status (process-status proc)))
-    (close-port proc)
-    (unless (zero? status)
-      (error "Compilation error; gsc exited with nonzero status" status))
-    (delete-file rtpath)))
+  (copy-file srcpath libpath))
 
 (def (compile-exe-gsc-opts opts)
   (match opts
@@ -926,3 +910,11 @@ TODO:
 (def (append-options . opts)
   (let (opts (filter (? (not string-empty?)) opts))
     (string-join opts " ")))
+
+;; temporarily sets the load-path
+(def (with-cons-load-path thunk path)
+  (let (current-load-path (load-path))
+    (dynamic-wind
+        (cut add-load-path! path)
+        thunk
+        (cut set-load-path! current-load-path))))

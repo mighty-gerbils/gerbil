@@ -20,7 +20,7 @@ namespace: gxc
           (import: :gerbil/expander))
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/ssxi__1")))
+                           (%#quote "gerbil/compiler/ssxi~1")))
                   (%#define-syntax declare-type |gxc[:0:]#declare-type|))
          (%#define-syntax declare-type* |gxc[:0:]#declare-type*|)
          (%#define-syntax declare-method |gxc[:0:]#declare-method|)

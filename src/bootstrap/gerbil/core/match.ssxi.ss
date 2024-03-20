@@ -5,8 +5,8 @@ package: gerbil/core
   (declare-type
    |gerbil/core/match[1]#match-macro::t|
    (@class gerbil.core#match-macro::t
-           (gerbil/core/macro-object#macro-object::t)
-           (gerbil/core/macro-object#macro-object::t)
+           (gerbil/core/macro-object#macro-object::t object::t)
+           (gerbil/core/macro-object#macro-object::t object::t t::t)
            ()
            (macro)
            #f

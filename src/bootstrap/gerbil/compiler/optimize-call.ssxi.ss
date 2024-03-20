@@ -5,12 +5,14 @@ package: gerbil/compiler
   (declare-type
    gxc#::optimize-call::t
    (@class gxc#::optimize-call::t
-           (gxc#::basic-xform::t)
+           (gxc#::basic-xform::t object::t)
            (gxc#::basic-xform::t
             gxc#::basic-xform-expression::t
             gxc#::identity::t
             gxc#::identity-special-form::t
-            gxc#::identity-expression::t)
+            gxc#::identity-expression::t
+            object::t
+            t::t)
            ()
            ()
            #f

@@ -5,7 +5,7 @@ prelude: "../core"
 package: gerbil/expander
 namespace: gx
 
-(export #t)
+(export #t (import: "../core/expander"))
 (import "../core/expander")
 
 (defstruct AST (e source)

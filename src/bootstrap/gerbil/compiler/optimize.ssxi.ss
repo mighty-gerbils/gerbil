@@ -13,8 +13,8 @@ package: gerbil/compiler
   (declare-type
    gxc#::generate-ssxi::t
    (@class gxc#::generate-ssxi::t
-           (gxc#::generate-runtime-empty::t)
-           (gxc#::generate-runtime-empty::t)
+           (gxc#::generate-runtime-empty::t object::t)
+           (gxc#::generate-runtime-empty::t object::t t::t)
            ()
            ()
            #f

@@ -23,7 +23,7 @@ namespace: gxc
           gxc#make-::generate-method-specializers)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-spec__1")))
+                           (%#quote "gerbil/compiler/optimize-spec~1")))
                   (%#define-syntax
                    ::generate-method-specializers
                    |gxc[:0:]#::generate-method-specializers|))
@@ -166,4 +166,4 @@ namespace: gxc
          (%#define-runtime
           subst-object-refs-call%
           gxc#subst-object-refs-call%))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-spec__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-spec~0"))

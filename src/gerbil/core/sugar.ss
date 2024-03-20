@@ -6,9 +6,9 @@ prelude: :<root>
 package: gerbil/core
 
 (import "runtime" (phi: +1 "runtime" "expander"))
-(export (import: <sugar:1> <sugar:2> <sugar:3>))
+(export (import: Sugar-1 Sugar-2 Sugar-3))
 
-(module <sugar:1>
+(module Sugar-1
   (export #t)
 
   (define-alias defalias define-alias)
@@ -143,8 +143,8 @@ package: gerbil/core
        (%#set! var var)
        (void)))))
 
-(module <sugar:2>
-  (import <sugar:1> (phi: +1 <sugar:1>))
+(module Sugar-2
+  (import Sugar-1 (phi: +1 Sugar-1))
   (export #t)
 
   ;; begin with lambda
@@ -1101,8 +1101,8 @@ package: gerbil/core
   (defrules <> ())
   (defrules <...> ()))
 
-(module <sugar:3>
-  (import <sugar:1> <sugar:2> (phi: +1 <sugar:1> <sugar:2>))
+(module Sugar-3
+  (import Sugar-1 Sugar-2 (phi: +1 Sugar-1 Sugar-2))
   (export #t)
 
   (defrules defsyntax ()
@@ -1142,4 +1142,4 @@ package: gerbil/core
      (and (identifier? #'id) (stx-datum? #'expr))
      (recur id (quote expr)))))
 
-(import <sugar:1> <sugar:2> <sugar:3>)
+(import Sugar-1 Sugar-2 Sugar-3)

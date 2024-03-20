@@ -34,7 +34,7 @@ namespace: #f
           &CastError-continuation-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/runtime/interface__1")))
+                           (%#quote "gerbil/runtime/interface~1")))
                   (%#define-syntax CastError |[:0:]#CastError|))
          (%#define-runtime CastError:::init! CastError:::init!)
          (%#define-runtime raise-cast-error raise-cast-error)
@@ -113,4 +113,4 @@ namespace: #f
          (%#define-runtime cast cast)
          (%#define-runtime try-cast try-cast)
          (%#define-runtime satisfies? satisfies?))
-(%#call (%#ref load-module) (%#quote "gerbil/runtime/interface__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/runtime/interface~0"))

@@ -30,12 +30,6 @@ namespace: gx
   (make-parameter #f))
 (def current-expander-module-prelude
   (make-parameter #f))
-(def current-expander-module-registry
-  (make-parameter #f))
-(def current-expander-module-library-path
-  (make-parameter #f))
-(def current-expander-module-library-package-cache
-  (make-parameter #f))
 
 (def current-expander-allow-rebind?
   (make-parameter #f))

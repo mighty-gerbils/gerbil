@@ -63,6 +63,7 @@
     "gerbil/expander/compile"
     "gerbil/expander/root"
     "gerbil/expander/stxcase"
+    "gerbil/expander/init"
     "gerbil/expander"))
 
 (def gerbil-compiler

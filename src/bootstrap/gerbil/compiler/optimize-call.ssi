@@ -15,7 +15,7 @@ namespace: gxc
          (%#define-runtime make-::optimize-call gxc#make-::optimize-call)
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
-                           (%#quote "gerbil/compiler/optimize-call__1")))
+                           (%#quote "gerbil/compiler/optimize-call~1")))
                   (%#define-syntax ::optimize-call |gxc[:0:]#::optimize-call|))
          (%#define-runtime
           ::optimize-call-bind-methods!
@@ -58,4 +58,4 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary::optimize-call
           gxc#!kw-lambda-primary::optimize-call))
-(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-call__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/compiler/optimize-call~0"))

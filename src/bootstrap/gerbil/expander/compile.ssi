@@ -90,4 +90,4 @@ namespace: gx
          (%#define-runtime
           core-compile-top-runtime-bind
           gx#core-compile-top-runtime-bind))
-(%#call (%#ref load-module) (%#quote "gerbil/expander/compile__0"))
+(%#call (%#ref load-module) (%#quote "gerbil/expander/compile~0"))

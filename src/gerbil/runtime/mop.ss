@@ -53,14 +53,33 @@ namespace: #f
 (def class-type-flag-metaclass 4096) ;; it is a class of classes, supporting the metaclass protocol
 (def class-type-flag-system 8192) ;; it is a system class, non instantiable
 
-;; the metaclass type id
-(def class::t.id 'gerbil#class::t)
+;; the root class
+(def t::t.id 'gerbil#t::t)
+(def t::t
+  (begin-annotation (@mop.system gerbil#t::t ())
+    (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
+          (properties '((direct-slots:) (system: . #t)))
+          (slot-table (make-symbolic-table #f 0)))
+      (##structure
+       #f                               ; type: class::t, set below
+       t::t.id                          ; type-id
+       't                               ; type-name
+       flags                            ; type-flags
+       #f                               ; type-super
+       '#()                             ; type-fields
+       []                               ; class-type-precedence-list
+       '#(#f)                           ; class-type-slot-vector
+       slot-table                       ; class-type-slot-table
+       properties                       ; class-type-properties
+       #f                               ; class-type-constructor
+       #f))))
 
-;; the metaclass itself
+;; the class metaclass
+(def class::t.id 'gerbil#class::t)
 (def class::t
     (begin-annotation
         (@mop.class gerbil#class::t     ; type-id
-                    ()                  ; super
+                    (t::t)              ; super
                     (id name super flags fields
                         precedence-list slot-vector slot-table
                         properties constructor methods) ; slots
@@ -99,7 +118,7 @@ namespace: #f
                  flags               ; type-flags
                  ##type-type         ; type-super
                  fields              ; type-fields
-                 []                  ; class-type-precedence-list
+                 [t::t]              ; class-type-precedence-list
                  slot-vector         ; class-type-slot-vector
                  slot-table          ; class-type-slot-table
                  properties          ; class-type-properties
@@ -108,29 +127,30 @@ namespace: #f
         (##structure-type-set! t t)  ; self reference
         t)))
 
-;; the root class for all objects
-(def t::t.id 'gerbil#t::t)
-(def t::t
-  (begin-annotation (@mop.system gerbil#t::t ())
+
+;; class::t mixes in t::t as all classes except itself
+(##structure-type-set! t::t class::t)
+
+;; standard objects
+(def object::t.id 'gerbil#object::t)
+(def object::t
+  (begin-annotation (@mop.system gerbil#object::t (t::t))
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        class::t                         ; type
        t::t.id                          ; type-id
-       't                               ; type-name
+       'object                          ; type-name
        flags                            ; type-flags
        #f                               ; type-super
        '#()                             ; type-fields
-       []                               ; class-type-precedence-list
+       [t::t]                           ; class-type-precedence-list
        '#(#f)                           ; class-type-slot-vector
        slot-table                       ; class-type-slot-table
        properties                       ; class-type-properties
        #f                               ; class-type-constructor
        #f))))
-
-;; class::t mixes in t::t as all classes except itself
-(##unchecked-structure-set! class::t [t::t] 6 #f #f)
 
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
@@ -227,12 +247,13 @@ namespace: #f
                    (if metaclass class-type-flag-metaclass 0)
                    (if system? class-type-flag-system 0)))
          (precedence-list
-          (if (memq t::t precedence-list)
-            (begin
-              (unless (eq? (last precedence-list) t::t)
-                (error "BUG: t::t is not last in the precedence list"))
-              precedence-list)
-            (append precedence-list [t::t]))))
+          (cond
+           ((memq t::t precedence-list)
+            => (lambda (tail)
+                 (if (null? (cdr tail))
+                   precedence-list
+                   (error "BUG: t::t is not last in the precedence list" precedence-list: precedence-list))))
+           (else (append precedence-list [t::t])))))
     (let loop ((i first-new-field)
                (j 0))
       (when (##fx< j field-info-length)
@@ -419,8 +440,19 @@ namespace: #f
           [[direct-slots: . direct-slots]
            [direct-supers: . direct-supers]
            properties ...])
-         (constructor* (or constructor (find-super-constructor direct-supers))))
-
+         (constructor* (or constructor (find-super-constructor direct-supers)))
+         (precedence-list
+          (if (or (assgetq system: properties)
+                  (memq object::t precedence-list))
+            precedence-list
+            (let loop ((tail precedence-list) (head []))
+              (match tail
+                ([hd . rest]
+                 (if (eq? hd t::t)
+                   (foldl cons (cons object::t tail) head)
+                   (loop rest (cons hd head))))
+                (else
+                 (foldl cons [object::t t::t] head)))))))
     (make-class-type-descriptor id name struct-super
                                 precedence-list slot-vector properties
                                 constructor* slot-table #f)))
@@ -550,7 +582,9 @@ namespace: #f
     (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
-  (symbolic-table-ref (&class-type-slot-table klass) slot #f))
+  (if (symbolic? slot)
+    (symbolic-table-ref (&class-type-slot-table klass) slot #f)
+    (error "slot must be a symbol or keyword" slot)))
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -575,14 +609,10 @@ namespace: #f
 
 (defrules __slot-e ()
   ((_ obj slot K E)
-   (if (object? obj)
-     (let (klass (object-type obj))
-       (cond
-        ((and (class-type? klass)
-              (class-slot-offset klass slot))
-         => K)
-        (else (E obj slot))))
-     (E obj slot))))
+   (let (klass (class-of obj))
+     (cond
+      ((class-slot-offset klass slot) => K)
+      (else (E obj slot))))))
 
 (def (slot-ref obj slot (E __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-ref obj off)) E))
@@ -613,10 +643,8 @@ namespace: #f
   (##structure-instance-of? obj (##type-id klass)))
 
 (def (class-instance? klass obj)
-  (and (object? obj)
-       (let (type (object-type obj))
-         (and (class-type? type)
-              (subclass? type klass)))))
+  (let (type (class-of obj))
+    (subclass? type klass)))
 
 (def (make-object klass k)
   (if (class-type-system? klass)
@@ -759,6 +787,8 @@ namespace: #f
 
 (def (find-method klass obj id)
   (cond
+   ((not (symbol? id))
+    (error "method id must be a symbol" method: id))
    ((class-type? klass)
     (__find-method klass obj id))
    ((##type? klass)
