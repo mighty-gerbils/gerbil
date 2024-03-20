@@ -277,6 +277,40 @@ and here is a red point:
 
 ##### Slots
 
+Slots define attributes of the object and represent *state*, as
+encapsulated in the object.  When a class is created, a field layout
+for its slots is created and stored in a table in the class, which
+allows us to map a slot to a field in the object.  Slots are strongly
+named, and synonyumous slots in the class hierarchy coalesce to the
+same field in the object.
+
+We can access or mutate a slot in a type-safe manner using the generated
+accessors and mutators:
+```
+> (Point-x a)
+1
+> (set! (Point-x a) 2)
+#<Point #3>
+> (Point-x a)
+2
+```
+
+Alternatively, we can use the `@` dynamic slot operator:
+```
+> (@ a x)
+2
+> (set! (@ a x) 1)
+#<Point #3>
+> (@ a x)
+1
+```
+
+It should be noted that the slot layout is not guaranteed to be the
+same for subclasses, unless they have the *struct property* (see
+[Structs](#structs) below). So, unless the class is final or a struct,
+or the object is an exact instance when using the type-safe accessors
+and mutators, accessing a slot requires a dynamic lookup.
+
 ##### Methods
 
 ##### Method Resolution Order
