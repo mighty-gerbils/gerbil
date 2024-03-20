@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/expander/module::timestamp 1710833424)
+  (define gerbil/expander/module::timestamp 1710943025)
   (begin
     (declare (not safe))
     (define gx#__module-registry (make-hash-table))
@@ -15,8 +15,8 @@
        '#f))
     (define gx#module-import? (make-class-predicate gx#module-import::t))
     (define gx#make-module-import
-      (lambda _$args94521_
-        (apply make-instance gx#module-import::t _$args94521_)))
+      (lambda _$args94522_
+        (apply make-instance gx#module-import::t _$args94522_)))
     (define gx#module-import-source
       (make-class-slot-accessor gx#module-import::t 'source))
     (define gx#module-import-name
@@ -59,8 +59,8 @@
        '#f))
     (define gx#module-export? (make-class-predicate gx#module-export::t))
     (define gx#make-module-export
-      (lambda _$args94518_
-        (apply make-instance gx#module-export::t _$args94518_)))
+      (lambda _$args94519_
+        (apply make-instance gx#module-export::t _$args94519_)))
     (define gx#module-export-context
       (make-class-slot-accessor gx#module-export::t 'context))
     (define gx#module-export-key
@@ -111,8 +111,8 @@
        '#f))
     (define gx#import-set? (make-class-predicate gx#import-set::t))
     (define gx#make-import-set
-      (lambda _$args94515_
-        (apply make-instance gx#import-set::t _$args94515_)))
+      (lambda _$args94516_
+        (apply make-instance gx#import-set::t _$args94516_)))
     (define gx#import-set-source
       (make-class-slot-accessor gx#import-set::t 'source))
     (define gx#import-set-phi (make-class-slot-accessor gx#import-set::t 'phi))
@@ -146,8 +146,8 @@
        '#f))
     (define gx#export-set? (make-class-predicate gx#export-set::t))
     (define gx#make-export-set
-      (lambda _$args94512_
-        (apply make-instance gx#export-set::t _$args94512_)))
+      (lambda _$args94513_
+        (apply make-instance gx#export-set::t _$args94513_)))
     (define gx#export-set-source
       (make-class-slot-accessor gx#export-set::t 'source))
     (define gx#export-set-phi (make-class-slot-accessor gx#export-set::t 'phi))
@@ -181,8 +181,8 @@
        ':init!))
     (define gx#import-expander? (make-class-predicate gx#import-expander::t))
     (define gx#make-import-expander
-      (lambda _$args94509_
-        (apply make-instance gx#import-expander::t _$args94509_)))
+      (lambda _$args94510_
+        (apply make-instance gx#import-expander::t _$args94510_)))
     (define gx#import-expander-context
       (make-class-slot-accessor gx#import-expander::t 'context))
     (define gx#import-expander-phi
@@ -217,8 +217,8 @@
        ':init!))
     (define gx#export-expander? (make-class-predicate gx#export-expander::t))
     (define gx#make-export-expander
-      (lambda _$args94506_
-        (apply make-instance gx#export-expander::t _$args94506_)))
+      (lambda _$args94507_
+        (apply make-instance gx#export-expander::t _$args94507_)))
     (define gx#export-expander-context
       (make-class-slot-accessor gx#export-expander::t 'context))
     (define gx#export-expander-phi
@@ -254,8 +254,8 @@
     (define gx#import-export-expander?
       (make-class-predicate gx#import-export-expander::t))
     (define gx#make-import-export-expander
-      (lambda _$args94503_
-        (apply make-instance gx#import-export-expander::t _$args94503_)))
+      (lambda _$args94504_
+        (apply make-instance gx#import-export-expander::t _$args94504_)))
     (define gx#import-export-expander-context
       (make-class-slot-accessor gx#import-export-expander::t 'context))
     (define gx#import-export-expander-phi
@@ -290,298 +290,298 @@
     (define gx#current-module-reader-args (make-parameter '#f))
     (define gx#source-file-settings '(char-encoding: UTF-8 eol-encoding: lf))
     (define gx#call-with-input-source-file
-      (lambda (_path94500_ _fun94501_)
+      (lambda (_path94501_ _fun94502_)
         (call-with-input-file
-         (cons 'path: (cons _path94500_ gx#source-file-settings))
-         _fun94501_)))
+         (cons 'path: (cons _path94501_ gx#source-file-settings))
+         _fun94502_)))
     (define gx#module-context:::init!
-      (lambda (_self94494_ _id94495_ _super94496_ _ns94497_ _path94498_)
-        (if (##fx< '11 (##structure-length _self94494_))
+      (lambda (_self94495_ _id94496_ _super94497_ _ns94498_ _path94499_)
+        (if (##fx< '11 (##structure-length _self94495_))
             (begin
               (##unchecked-structure-set!
-               _self94494_
-               _id94495_
+               _self94495_
+               _id94496_
                '1
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                (make-hash-table-eq)
                '2
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
-               _super94496_
+               _self94495_
+               _super94497_
                '3
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '#f
                '4
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '#f
                '5
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
-               _ns94497_
+               _self94495_
+               _ns94498_
                '6
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
-               _path94498_
+               _self94495_
+               _path94499_
                '7
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '()
                '8
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '()
                '9
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '#f
                '10
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f)
               (##unchecked-structure-set!
-               _self94494_
+               _self94495_
                '#f
                '11
-               (##structure-type _self94494_)
+               (##structure-type _self94495_)
                '#f))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self94494_
+                   _self94495_
                    '11
-                   (##vector-length _self94494_)))))
+                   (##vector-length _self94495_)))))
     (bind-method!__%
      gx#module-context::t
      ':init!
      gx#module-context:::init!
      '#f)
     (define gx#prelude-context:::init!__%
-      (lambda (_self94338_ _ctx94339_ _root94340_)
-        (let ((_super94348_
-               (let ((_$e94342_ _root94340_))
-                 (if _$e94342_
-                     _$e94342_
-                     (let ((_$e94345_ (gx#core-context-root__0)))
-                       (if _$e94345_
-                           _$e94345_
-                           (let ((__obj94563
+      (lambda (_self94339_ _ctx94340_ _root94341_)
+        (let ((_super94349_
+               (let ((_$e94343_ _root94341_))
+                 (if _$e94343_
+                     _$e94343_
+                     (let ((_$e94346_ (gx#core-context-root__0)))
+                       (if _$e94346_
+                           _$e94346_
+                           (let ((__obj94564
                                   (##structure gx#root-context::t '#f '#f)))
-                             (let ((__constructor94564
+                             (let ((__constructor94565
                                     (direct-method-ref
                                      gx#root-context::t
-                                     __obj94563
+                                     __obj94564
                                      ':init!)))
-                               (if __constructor94564
-                                   (__constructor94564 __obj94563)
+                               (if __constructor94565
+                                   (__constructor94565 __obj94564)
                                    (error '"missing constructor method implementation"
                                           'class:
                                           gx#root-context::t
                                           'method:
                                           ':init!)))
-                             __obj94563)))))))
-          (if _ctx94339_
-              (let ((_id94351_
+                             __obj94564)))))))
+          (if _ctx94340_
+              (let ((_id94352_
                      (##structure-ref
-                      _ctx94339_
+                      _ctx94340_
                       '1
                       gx#expander-context::t
                       '#f))
-                    (_path94352_
-                     (##structure-ref _ctx94339_ '7 gx#module-context::t '#f))
-                    (_in94353_
+                    (_path94353_
+                     (##structure-ref _ctx94340_ '7 gx#module-context::t '#f))
+                    (_in94354_
                      (map gx#core-module-export->import
                           (##structure-ref
-                           _ctx94339_
+                           _ctx94340_
                            '9
                            gx#module-context::t
                            '#f)))
-                    (_e94354_
-                     (make-promise (lambda () (gx#eval-module _ctx94339_)))))
-                (if (##fx< '8 (##structure-length _self94338_))
+                    (_e94355_
+                     (make-promise (lambda () (gx#eval-module _ctx94340_)))))
+                (if (##fx< '8 (##structure-length _self94339_))
                     (begin
                       (##unchecked-structure-set!
-                       _self94338_
-                       _id94351_
+                       _self94339_
+                       _id94352_
                        '1
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
-                       (make-hash-table-eq 'size: (length _in94353_))
+                       _self94339_
+                       (make-hash-table-eq 'size: (length _in94354_))
                        '2
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
-                       _super94348_
+                       _self94339_
+                       _super94349_
                        '3
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
+                       _self94339_
                        '#f
                        '4
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
+                       _self94339_
                        '#f
                        '5
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
-                       _path94352_
+                       _self94339_
+                       _path94353_
                        '6
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
-                       _in94353_
+                       _self94339_
+                       _in94354_
                        '7
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f)
                       (##unchecked-structure-set!
-                       _self94338_
-                       _e94354_
+                       _self94339_
+                       _e94355_
                        '8
-                       (##structure-type _self94338_)
+                       (##structure-type _self94339_)
                        '#f))
                     (error '"struct-instance-init!: too many arguments for struct"
-                           _self94338_
+                           _self94339_
                            '8
-                           (##vector-length _self94338_)))
+                           (##vector-length _self94339_)))
                 (for-each
-                 (lambda (_g9435594357_)
-                   (gx#core-bind-weak-import!__% _g9435594357_ _self94338_))
-                 _in94353_))
-              (if (##fx< '8 (##structure-length _self94338_))
+                 (lambda (_g9435694358_)
+                   (gx#core-bind-weak-import!__% _g9435694358_ _self94339_))
+                 _in94354_))
+              (if (##fx< '8 (##structure-length _self94339_))
                   (begin
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '#f
                      '1
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      (make-hash-table-eq)
                      '2
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
-                     _super94348_
+                     _self94339_
+                     _super94349_
                      '3
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '#f
                      '4
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '#f
                      '5
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '#f
                      '6
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '()
                      '7
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f)
                     (##unchecked-structure-set!
-                     _self94338_
+                     _self94339_
                      '#f
                      '8
-                     (##structure-type _self94338_)
+                     (##structure-type _self94339_)
                      '#f))
                   (error '"struct-instance-init!: too many arguments for struct"
-                         _self94338_
+                         _self94339_
                          '8
-                         (##vector-length _self94338_)))))))
+                         (##vector-length _self94339_)))))))
     (define gx#prelude-context:::init!__0
-      (lambda (_self94363_ _ctx94364_)
-        (let ((_root94366_ '#f))
-          (gx#prelude-context:::init!__% _self94363_ _ctx94364_ _root94366_))))
+      (lambda (_self94364_ _ctx94365_)
+        (let ((_root94367_ '#f))
+          (gx#prelude-context:::init!__% _self94364_ _ctx94365_ _root94367_))))
     (define gx#prelude-context:::init!
-      (lambda _g94570_
-        (let ((_g94569_ (##length _g94570_)))
-          (cond ((##fx= _g94569_ 2)
-                 (apply (lambda (_self94363_ _ctx94364_)
+      (lambda _g94571_
+        (let ((_g94570_ (##length _g94571_)))
+          (cond ((##fx= _g94570_ 2)
+                 (apply (lambda (_self94364_ _ctx94365_)
                           (gx#prelude-context:::init!__0
-                           _self94363_
-                           _ctx94364_))
-                        _g94570_))
-                ((##fx= _g94569_ 3)
-                 (apply (lambda (_self94368_ _ctx94369_ _root94370_)
+                           _self94364_
+                           _ctx94365_))
+                        _g94571_))
+                ((##fx= _g94570_ 3)
+                 (apply (lambda (_self94369_ _ctx94370_ _root94371_)
                           (gx#prelude-context:::init!__%
-                           _self94368_
-                           _ctx94369_
-                           _root94370_))
-                        _g94570_))
+                           _self94369_
+                           _ctx94370_
+                           _root94371_))
+                        _g94571_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#prelude-context:::init!
-                  _g94570_))))))
+                  _g94571_))))))
     (bind-method!__%
      gx#prelude-context::t
      ':init!
      gx#prelude-context:::init!
      '#f)
     (define gx#import-export-expander-init!
-      (lambda (_self94212_ _e94213_)
-        (if (##fx< '3 (##structure-length _self94212_))
+      (lambda (_self94213_ _e94214_)
+        (if (##fx< '3 (##structure-length _self94213_))
             (begin
               (##unchecked-structure-set!
-               _self94212_
-               _e94213_
+               _self94213_
+               _e94214_
                '1
-               (##structure-type _self94212_)
+               (##structure-type _self94213_)
                '#f)
               (##unchecked-structure-set!
-               _self94212_
+               _self94213_
                (gx#current-expander-context)
                '2
-               (##structure-type _self94212_)
+               (##structure-type _self94213_)
                '#f)
               (##unchecked-structure-set!
-               _self94212_
+               _self94213_
                (fx- (gx#current-expander-phi) '1)
                '3
-               (##structure-type _self94212_)
+               (##structure-type _self94213_)
                '#f))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self94212_
+                   _self94213_
                    '3
-                   (##vector-length _self94212_)))))
+                   (##vector-length _self94213_)))))
     (define gx#import-expander:::init! gx#import-export-expander-init!)
     (bind-method!__%
      gx#import-expander::t
@@ -601,10 +601,10 @@
      gx#import-export-expander:::init!
      '#f)
     (define gx#import-expander::apply-import-expander
-      (lambda (_g9383893841_ _g9383993843_)
+      (lambda (_g9383993842_ _g9384093844_)
         (gx#core-apply-user-expander__%
-         _g9383893841_
-         _g9383993843_
+         _g9383993842_
+         _g9384093844_
          'apply-import-expander)))
     (bind-method!__%
      gx#import-expander::t
@@ -612,10 +612,10 @@
      gx#import-expander::apply-import-expander
      '#f)
     (define gx#export-expander::apply-export-expander
-      (lambda (_g9370993712_ _g9371093714_)
+      (lambda (_g9371093713_ _g9371193715_)
         (gx#core-apply-user-expander__%
-         _g9370993712_
-         _g9371093714_
+         _g9371093713_
+         _g9371193715_
          'apply-export-expander)))
     (bind-method!__%
      gx#export-expander::t
@@ -623,115 +623,115 @@
      gx#export-expander::apply-export-expander
      '#f)
     (define gx#module-source-path
-      (lambda (_ctx93580_)
-        (let* ((_path93582_
-                (##structure-ref _ctx93580_ '7 gx#module-context::t '#f))
-               (_path93584_
-                (if (pair? _path93582_) (last _path93582_) _path93582_)))
-          (if (string? _path93584_) _path93584_ '#f))))
+      (lambda (_ctx93581_)
+        (let* ((_path93583_
+                (##structure-ref _ctx93581_ '7 gx#module-context::t '#f))
+               (_path93585_
+                (if (pair? _path93583_) (last _path93583_) _path93583_)))
+          (if (string? _path93585_) _path93585_ '#f))))
     (define gx#import-module__%
-      (lambda (_path93556_ _reload?93557_ _eval?93558_)
-        (let ((_ctx93560_
+      (lambda (_path93557_ _reload?93558_ _eval?93559_)
+        (let ((_ctx93561_
                ((gx#current-expander-module-import)
-                _path93556_
-                _reload?93557_)))
-          (if (and _ctx93560_ _eval?93558_)
-              (gx#eval-module _ctx93560_)
+                _path93557_
+                _reload?93558_)))
+          (if (and _ctx93561_ _eval?93559_)
+              (gx#eval-module _ctx93561_)
               '#!void)
-          _ctx93560_)))
+          _ctx93561_)))
     (define gx#import-module__0
-      (lambda (_path93565_)
-        (let* ((_reload?93567_ '#f) (_eval?93569_ '#f))
-          (gx#import-module__% _path93565_ _reload?93567_ _eval?93569_))))
+      (lambda (_path93566_)
+        (let* ((_reload?93568_ '#f) (_eval?93570_ '#f))
+          (gx#import-module__% _path93566_ _reload?93568_ _eval?93570_))))
     (define gx#import-module__1
-      (lambda (_path93571_ _reload?93572_)
-        (let ((_eval?93574_ '#f))
-          (gx#import-module__% _path93571_ _reload?93572_ _eval?93574_))))
+      (lambda (_path93572_ _reload?93573_)
+        (let ((_eval?93575_ '#f))
+          (gx#import-module__% _path93572_ _reload?93573_ _eval?93575_))))
     (define gx#import-module
-      (lambda _g94572_
-        (let ((_g94571_ (##length _g94572_)))
-          (cond ((##fx= _g94571_ 1)
-                 (apply (lambda (_path93565_)
-                          (gx#import-module__0 _path93565_))
-                        _g94572_))
-                ((##fx= _g94571_ 2)
-                 (apply (lambda (_path93571_ _reload?93572_)
-                          (gx#import-module__1 _path93571_ _reload?93572_))
-                        _g94572_))
-                ((##fx= _g94571_ 3)
-                 (apply (lambda (_path93576_ _reload?93577_ _eval?93578_)
+      (lambda _g94573_
+        (let ((_g94572_ (##length _g94573_)))
+          (cond ((##fx= _g94572_ 1)
+                 (apply (lambda (_path93566_)
+                          (gx#import-module__0 _path93566_))
+                        _g94573_))
+                ((##fx= _g94572_ 2)
+                 (apply (lambda (_path93572_ _reload?93573_)
+                          (gx#import-module__1 _path93572_ _reload?93573_))
+                        _g94573_))
+                ((##fx= _g94572_ 3)
+                 (apply (lambda (_path93577_ _reload?93578_ _eval?93579_)
                           (gx#import-module__%
-                           _path93576_
-                           _reload?93577_
-                           _eval?93578_))
-                        _g94572_))
+                           _path93577_
+                           _reload?93578_
+                           _eval?93579_))
+                        _g94573_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#import-module
-                  _g94572_))))))
+                  _g94573_))))))
     (define gx#eval-module
-      (lambda (_mod93553_) ((gx#current-expander-module-eval) _mod93553_)))
+      (lambda (_mod93554_) ((gx#current-expander-module-eval) _mod93554_)))
     (define gx#core-eval-module
-      (lambda (_obj93538_)
-        (letrec ((_force-e93540_
-                  (lambda (_getf93549_ _e93550_)
+      (lambda (_obj93539_)
+        (letrec ((_force-e93541_
+                  (lambda (_getf93550_ _e93551_)
                     (call-with-parameters
-                     (lambda () (force (_getf93549_ _e93550_)))
+                     (lambda () (force (_getf93550_ _e93551_)))
                      gx#current-expander-context
-                     _e93550_
+                     _e93551_
                      gx#current-expander-phi
                      '0))))
-          (let _recur93542_ ((_e93544_ _obj93538_))
-            (if (##structure-instance-of? _e93544_ 'gx#module-context::t)
+          (let _recur93543_ ((_e93545_ _obj93539_))
+            (if (##structure-instance-of? _e93545_ 'gx#module-context::t)
                 (begin
-                  (let ((_$e93546_ (gx#core-context-prelude__% _e93544_)))
-                    (if _$e93546_ (_recur93542_ _$e93546_) '#!void))
-                  (_force-e93540_ gx#module-context-e _e93544_))
-                (if (##structure-instance-of? _e93544_ 'gx#prelude-context::t)
-                    (_force-e93540_ gx#prelude-context-e _e93544_)
-                    (if (gx#stx-string? _e93544_)
-                        (_recur93542_
+                  (let ((_$e93547_ (gx#core-context-prelude__% _e93545_)))
+                    (if _$e93547_ (_recur93543_ _$e93547_) '#!void))
+                  (_force-e93541_ gx#module-context-e _e93545_))
+                (if (##structure-instance-of? _e93545_ 'gx#prelude-context::t)
+                    (_force-e93541_ gx#prelude-context-e _e93545_)
+                    (if (gx#stx-string? _e93545_)
+                        (_recur93543_
                          (gx#import-module__0
-                          (gx#core-resolve-module-path__0 _e93544_)))
-                        (if (gx#core-library-module-path? _e93544_)
-                            (_recur93542_
+                          (gx#core-resolve-module-path__0 _e93545_)))
+                        (if (gx#core-library-module-path? _e93545_)
+                            (_recur93543_
                              (gx#import-module__0
-                              (gx#core-resolve-library-module-path _e93544_)))
-                            (error '"Cannot eval module" _obj93538_)))))))))
+                              (gx#core-resolve-library-module-path _e93545_)))
+                            (error '"Cannot eval module" _obj93539_)))))))))
     (define gx#core-context-prelude__%
-      (lambda (_ctx93521_)
-        (let _lp93523_ ((_e93525_ _ctx93521_))
-          (if (or (##structure-instance-of? _e93525_ 'gx#module-context::t)
-                  (##structure-instance-of? _e93525_ 'gx#local-context::t))
-              (_lp93523_
-               (##unchecked-structure-ref _e93525_ '3 gx#phi-context::t '#f))
-              (if (##structure-instance-of? _e93525_ 'gx#prelude-context::t)
-                  _e93525_
+      (lambda (_ctx93522_)
+        (let _lp93524_ ((_e93526_ _ctx93522_))
+          (if (or (##structure-instance-of? _e93526_ 'gx#module-context::t)
+                  (##structure-instance-of? _e93526_ 'gx#local-context::t))
+              (_lp93524_
+               (##unchecked-structure-ref _e93526_ '3 gx#phi-context::t '#f))
+              (if (##structure-instance-of? _e93526_ 'gx#prelude-context::t)
+                  _e93526_
                   '#f)))))
     (define gx#core-context-prelude__0
       (lambda ()
-        (let ((_ctx93534_ (gx#current-expander-context)))
-          (gx#core-context-prelude__% _ctx93534_))))
+        (let ((_ctx93535_ (gx#current-expander-context)))
+          (gx#core-context-prelude__% _ctx93535_))))
     (define gx#core-context-prelude
-      (lambda _g94574_
-        (let ((_g94573_ (##length _g94574_)))
-          (cond ((##fx= _g94573_ 0)
-                 (apply (lambda () (gx#core-context-prelude__0)) _g94574_))
-                ((##fx= _g94573_ 1)
-                 (apply (lambda (_ctx93536_)
-                          (gx#core-context-prelude__% _ctx93536_))
-                        _g94574_))
+      (lambda _g94575_
+        (let ((_g94574_ (##length _g94575_)))
+          (cond ((##fx= _g94574_ 0)
+                 (apply (lambda () (gx#core-context-prelude__0)) _g94575_))
+                ((##fx= _g94574_ 1)
+                 (apply (lambda (_ctx93537_)
+                          (gx#core-context-prelude__% _ctx93537_))
+                        _g94575_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-context-prelude
-                  _g94574_))))))
+                  _g94575_))))))
     (define gx#core-module->prelude-context
-      (lambda (_ctx93513_)
-        (let ((_$e93515_ (hash-get gx#__module-registry _ctx93513_)))
-          (if _$e93515_
-              _$e93515_
-              (let ((_pre93518_
-                     (let ((__obj94565
+      (lambda (_ctx93514_)
+        (let ((_$e93516_ (hash-get gx#__module-registry _ctx93514_)))
+          (if _$e93516_
+              _$e93516_
+              (let ((_pre93519_
+                     (let ((__obj94566
                             (##structure
                              gx#prelude-context::t
                              '#f
@@ -742,51 +742,51 @@
                              '#f
                              '#f
                              '#f)))
-                       (gx#prelude-context:::init! __obj94565 _ctx93513_)
-                       __obj94565)))
-                (hash-put! gx#__module-registry _ctx93513_ _pre93518_)
-                _pre93518_)))))
+                       (gx#prelude-context:::init! __obj94566 _ctx93514_)
+                       __obj94566)))
+                (hash-put! gx#__module-registry _ctx93514_ _pre93519_)
+                _pre93519_)))))
     (define gx#core-import-module__%
-      (lambda (_rpath93394_ _reload?93395_)
-        (letrec ((_import-source93397_
-                  (lambda (_path93482_)
-                    (if (member _path93482_ (gx#current-expander-path))
-                        (error '"Cyclic expansion" _path93482_)
+      (lambda (_rpath93395_ _reload?93396_)
+        (letrec ((_import-source93398_
+                  (lambda (_path93483_)
+                    (if (member _path93483_ (gx#current-expander-path))
+                        (error '"Cyclic expansion" _path93483_)
                         '#!void)
                     (call-with-parameters
                      (lambda ()
-                       (let ((_g94575_ (gx#core-read-module _path93482_)))
+                       (let ((_g94576_ (gx#core-read-module _path93483_)))
                          (begin
-                           (let ((_g94576_
-                                  (if (##values? _g94575_)
-                                      (##vector-length _g94575_)
+                           (let ((_g94577_
+                                  (if (##values? _g94576_)
+                                      (##vector-length _g94576_)
                                       1)))
-                             (if (not (##fx= _g94576_ 4))
-                                 (error "Context expects 4 values" _g94576_)))
-                           (let ((_pre93485_ (##vector-ref _g94575_ 0))
-                                 (_id93486_ (##vector-ref _g94575_ 1))
-                                 (_ns93487_ (##vector-ref _g94575_ 2))
-                                 (_body93488_ (##vector-ref _g94575_ 3)))
-                             (let* ((_prelude93493_
+                             (if (not (##fx= _g94577_ 4))
+                                 (error "Context expects 4 values" _g94577_)))
+                           (let ((_pre93486_ (##vector-ref _g94576_ 0))
+                                 (_id93487_ (##vector-ref _g94576_ 1))
+                                 (_ns93488_ (##vector-ref _g94576_ 2))
+                                 (_body93489_ (##vector-ref _g94576_ 3)))
+                             (let* ((_prelude93494_
                                      (if (##structure-instance-of?
-                                          _pre93485_
+                                          _pre93486_
                                           'gx#prelude-context::t)
-                                         _pre93485_
+                                         _pre93486_
                                          (if (##structure-instance-of?
-                                              _pre93485_
+                                              _pre93486_
                                               'gx#module-context::t)
                                              (gx#core-module->prelude-context
-                                              _pre93485_)
-                                             (if (string? _pre93485_)
+                                              _pre93486_)
+                                             (if (string? _pre93486_)
                                                  (gx#core-module->prelude-context
                                                   (gx#core-import-module__0
-                                                   _pre93485_))
-                                                 (if (not _pre93485_)
-                                                     (let ((_$e93490_
+                                                   _pre93486_))
+                                                 (if (not _pre93486_)
+                                                     (let ((_$e93491_
                                                             (gx#current-expander-module-prelude)))
-                                                       (if _$e93490_
-                                                           _$e93490_
-                                                           (let ((__obj94566
+                                                       (if _$e93491_
+                                                           _$e93491_
+                                                           (let ((__obj94567
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (##structure
                            gx#prelude-context::t
@@ -798,14 +798,14 @@
                            '#f
                            '#f
                            '#f)))
-                     (gx#prelude-context:::init! __obj94566 '#f)
-                     __obj94566)))
+                     (gx#prelude-context:::init! __obj94567 '#f)
+                     __obj94567)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (error '"Cannot import module; unknown prelude"
-                                                            _rpath93394_
-                                                            _pre93485_))))))
-                                    (_ctx93495_
-                                     (let ((__obj94567
+                                                            _rpath93395_
+                                                            _pre93486_))))))
+                                    (_ctx93496_
+                                     (let ((__obj94568
                                             (##structure
                                              gx#module-context::t
                                              '#f
@@ -820,44 +820,44 @@
                                              '#f
                                              '#f)))
                                        (gx#module-context:::init!
-                                        __obj94567
-                                        _id93486_
-                                        _prelude93493_
-                                        _ns93487_
-                                        _path93482_)
-                                       __obj94567))
-                                    (_body93497_
+                                        __obj94568
+                                        _id93487_
+                                        _prelude93494_
+                                        _ns93488_
+                                        _path93483_)
+                                       __obj94568))
+                                    (_body93498_
                                      (gx#core-expand-module-begin
-                                      _body93488_
-                                      _ctx93495_))
-                                    (_body93499_
+                                      _body93489_
+                                      _ctx93496_))
+                                    (_body93500_
                                      (gx#core-quote-syntax__%
-                                      (gx#core-cons '%#begin _body93497_)
-                                      _path93482_
-                                      _ctx93495_
+                                      (gx#core-cons '%#begin _body93498_)
+                                      _path93483_
+                                      _ctx93496_
                                       '())))
                                (##unchecked-structure-set!
-                                _ctx93495_
+                                _ctx93496_
                                 (make-promise
-                                 (lambda () (gx#eval-syntax* _body93499_)))
+                                 (lambda () (gx#eval-syntax* _body93500_)))
                                 '10
                                 gx#module-context::t
                                 '#f)
                                (##unchecked-structure-set!
-                                _ctx93495_
-                                _body93499_
+                                _ctx93496_
+                                _body93500_
                                 '11
                                 gx#module-context::t
                                 '#f)
                                (hash-put!
                                 gx#__module-registry
-                                _path93482_
-                                _ctx93495_)
+                                _path93483_
+                                _ctx93496_)
                                (hash-put!
                                 gx#__module-registry
-                                _id93486_
-                                _ctx93495_)
-                               _ctx93495_)))))
+                                _id93487_
+                                _ctx93496_)
+                               _ctx93496_)))))
                      gx#current-expander-context
                      (gx#core-context-root__0)
                      gx#current-expander-marks
@@ -865,1283 +865,1283 @@
                      gx#current-expander-phi
                      '0
                      gx#current-expander-path
-                     (cons _path93482_ (gx#current-expander-path))
+                     (cons _path93483_ (gx#current-expander-path))
                      gx#current-import-expander-phi
                      '#f
                      gx#current-export-expander-phi
                      '#f)))
-                 (_import-submodule93398_
-                  (lambda (_rpath93410_)
-                    (let* ((_rpath9341193418_ _rpath93410_)
-                           (_E9341393422_
+                 (_import-submodule93399_
+                  (lambda (_rpath93411_)
+                    (let* ((_rpath9341293419_ _rpath93411_)
+                           (_E9341493423_
                             (lambda ()
-                              (error '"No clause matching" _rpath9341193418_)))
-                           (_K9341493470_
-                            (lambda (_refs93425_ _origin93426_)
-                              (let ((_ctx93428_
-                                     (if _origin93426_
+                              (error '"No clause matching" _rpath9341293419_)))
+                           (_K9341593471_
+                            (lambda (_refs93426_ _origin93427_)
+                              (let ((_ctx93429_
+                                     (if _origin93427_
                                          (gx#core-import-module__%
-                                          _origin93426_
-                                          _reload?93395_)
+                                          _origin93427_
+                                          _reload?93396_)
                                          (gx#current-expander-context))))
-                                (let _lp93430_ ((_rest93432_ _refs93425_)
-                                                (_ctx93433_ _ctx93428_))
-                                  (let* ((_rest9343493442_ _rest93432_)
-                                         (_else9343693450_
-                                          (lambda () _ctx93433_))
-                                         (_K9343893458_
-                                          (lambda (_rest93453_ _id93454_)
-                                            (let ((_bind93456_
+                                (let _lp93431_ ((_rest93433_ _refs93426_)
+                                                (_ctx93434_ _ctx93429_))
+                                  (let* ((_rest9343593443_ _rest93433_)
+                                         (_else9343793451_
+                                          (lambda () _ctx93434_))
+                                         (_K9343993459_
+                                          (lambda (_rest93454_ _id93455_)
+                                            (let ((_bind93457_
                                                    (gx#resolve-identifier__%
-                                                    _id93454_
+                                                    _id93455_
                                                     '0
-                                                    _ctx93433_)))
+                                                    _ctx93434_)))
                                               (if (and (##structure-direct-instance-of?
-                                                        _bind93456_
+                                                        _bind93457_
                                                         'gx#syntax-binding::t)
                                                        (##structure-instance-of?
                                                         (##unchecked-structure-ref
-                                                         _bind93456_
+                                                         _bind93457_
                                                          '4
                                                          gx#syntax-binding::t
                                                          '#f)
                                                         'gx#module-context::t))
-                                                  (_lp93430_
-                                                   _rest93453_
+                                                  (_lp93431_
+                                                   _rest93454_
                                                    (##unchecked-structure-ref
-                                                    _bind93456_
+                                                    _bind93457_
                                                     '4
                                                     gx#syntax-binding::t
                                                     '#f))
                                                   (error '"Cannot import submodule; not bound as a module"
-                                                         _rpath93410_
-                                                         _id93454_
-                                                         _bind93456_))))))
-                                    (if (##pair? _rest9343493442_)
-                                        (let ((_hd9343993461_
-                                               (##car _rest9343493442_))
-                                              (_tl9344093463_
-                                               (##cdr _rest9343493442_)))
-                                          (let* ((_id93466_ _hd9343993461_)
-                                                 (_rest93468_ _tl9344093463_))
-                                            (_K9343893458_
-                                             _rest93468_
-                                             _id93466_)))
-                                        (_else9343693450_))))))))
-                      (if (##pair? _rpath9341193418_)
-                          (let ((_hd9341593473_ (##car _rpath9341193418_))
-                                (_tl9341693475_ (##cdr _rpath9341193418_)))
-                            (let* ((_origin93478_ _hd9341593473_)
-                                   (_refs93480_ _tl9341693475_))
-                              (_K9341493470_ _refs93480_ _origin93478_)))
-                          (_E9341393422_))))))
-          (let ((_$e93400_
-                 (if (not _reload?93395_)
-                     (hash-get gx#__module-registry _rpath93394_)
+                                                         _rpath93411_
+                                                         _id93455_
+                                                         _bind93457_))))))
+                                    (if (##pair? _rest9343593443_)
+                                        (let ((_hd9344093462_
+                                               (##car _rest9343593443_))
+                                              (_tl9344193464_
+                                               (##cdr _rest9343593443_)))
+                                          (let* ((_id93467_ _hd9344093462_)
+                                                 (_rest93469_ _tl9344193464_))
+                                            (_K9343993459_
+                                             _rest93469_
+                                             _id93467_)))
+                                        (_else9343793451_))))))))
+                      (if (##pair? _rpath9341293419_)
+                          (let ((_hd9341693474_ (##car _rpath9341293419_))
+                                (_tl9341793476_ (##cdr _rpath9341293419_)))
+                            (let* ((_origin93479_ _hd9341693474_)
+                                   (_refs93481_ _tl9341793476_))
+                              (_K9341593471_ _refs93481_ _origin93479_)))
+                          (_E9341493423_))))))
+          (let ((_$e93401_
+                 (if (not _reload?93396_)
+                     (hash-get gx#__module-registry _rpath93395_)
                      '#f)))
-            (if _$e93400_
-                (values _$e93400_)
-                (if (list? _rpath93394_)
-                    (_import-submodule93398_ _rpath93394_)
-                    (if (gx#core-library-module-path? _rpath93394_)
-                        (let ((_ctx93403_
+            (if _$e93401_
+                (values _$e93401_)
+                (if (list? _rpath93395_)
+                    (_import-submodule93399_ _rpath93395_)
+                    (if (gx#core-library-module-path? _rpath93395_)
+                        (let ((_ctx93404_
                                (gx#core-import-module__%
                                 (gx#core-resolve-library-module-path
-                                 _rpath93394_)
-                                _reload?93395_)))
+                                 _rpath93395_)
+                                _reload?93396_)))
                           (hash-put!
                            gx#__module-registry
-                           _rpath93394_
-                           _ctx93403_)
-                          _ctx93403_)
-                        (let* ((_npath93405_ (path-normalize _rpath93394_))
-                               (_$e93407_
-                                (if (not _reload?93395_)
+                           _rpath93395_
+                           _ctx93404_)
+                          _ctx93404_)
+                        (let* ((_npath93406_ (path-normalize _rpath93395_))
+                               (_$e93408_
+                                (if (not _reload?93396_)
                                     (hash-get
                                      gx#__module-registry
-                                     _npath93405_)
+                                     _npath93406_)
                                     '#f)))
-                          (if _$e93407_
-                              _$e93407_
-                              (_import-source93397_ _npath93405_))))))))))
+                          (if _$e93408_
+                              _$e93408_
+                              (_import-source93398_ _npath93406_))))))))))
     (define gx#core-import-module__0
-      (lambda (_rpath93506_)
-        (let ((_reload?93508_ '#f))
-          (gx#core-import-module__% _rpath93506_ _reload?93508_))))
+      (lambda (_rpath93507_)
+        (let ((_reload?93509_ '#f))
+          (gx#core-import-module__% _rpath93507_ _reload?93509_))))
     (define gx#core-import-module
-      (lambda _g94578_
-        (let ((_g94577_ (##length _g94578_)))
-          (cond ((##fx= _g94577_ 1)
-                 (apply (lambda (_rpath93506_)
-                          (gx#core-import-module__0 _rpath93506_))
-                        _g94578_))
-                ((##fx= _g94577_ 2)
-                 (apply (lambda (_rpath93510_ _reload?93511_)
+      (lambda _g94579_
+        (let ((_g94578_ (##length _g94579_)))
+          (cond ((##fx= _g94578_ 1)
+                 (apply (lambda (_rpath93507_)
+                          (gx#core-import-module__0 _rpath93507_))
+                        _g94579_))
+                ((##fx= _g94578_ 2)
+                 (apply (lambda (_rpath93511_ _reload?93512_)
                           (gx#core-import-module__%
-                           _rpath93510_
-                           _reload?93511_))
-                        _g94578_))
+                           _rpath93511_
+                           _reload?93512_))
+                        _g94579_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-import-module
-                  _g94578_))))))
+                  _g94579_))))))
     (define gx#core-read-module
-      (lambda (_path93383_)
+      (lambda (_path93384_)
         (with-catch
-         (lambda (_exn93385_)
-           (if (and (datum-parsing-exception? _exn93385_)
-                    (eq? (datum-parsing-exception-filepos _exn93385_) '0))
-               (gx#core-read-module/lang _path93383_)
+         (lambda (_exn93386_)
+           (if (and (datum-parsing-exception? _exn93386_)
+                    (eq? (datum-parsing-exception-filepos _exn93386_) '0))
+               (gx#core-read-module/lang _path93384_)
                (gx#raise-syntax-error
                 'read-module
                 '"error reading module"
-                _path93383_
+                _path93384_
                 (call-with-parameters
                  (lambda ()
                    (call-with-output-string
                     '""
-                    (lambda (_g9338793389_)
-                      (display-exception _exn93385_ _g9338793389_))))
+                    (lambda (_g9338893390_)
+                      (display-exception _exn93386_ _g9338893390_))))
                  dump-stack-trace?
                  '#f))))
-         (lambda () (gx#core-read-module/sexp _path93383_)))))
+         (lambda () (gx#core-read-module/sexp _path93384_)))))
     (define gx#core-read-module/sexp
-      (lambda (_path93246_)
-        (let _lp93248_ ((_body93250_ (read-syntax-from-file _path93246_))
-                        (_pre93251_ '#f)
-                        (_ns93252_ '#f)
-                        (_pkg93253_ '#f))
-          (let* ((_e9325493278_ _body93250_)
-                 (_E9327093300_
+      (lambda (_path93247_)
+        (let _lp93249_ ((_body93251_ (read-syntax-from-file _path93247_))
+                        (_pre93252_ '#f)
+                        (_ns93253_ '#f)
+                        (_pkg93254_ '#f))
+          (let* ((_e9325593279_ _body93251_)
+                 (_E9327193301_
                   (lambda ()
-                    (let ((_g94579_
-                           (if _pkg93253_
-                               (values _pre93251_ _ns93252_ _pkg93253_)
+                    (let ((_g94580_
+                           (if _pkg93254_
+                               (values _pre93252_ _ns93253_ _pkg93254_)
                                (gx#core-read-module-package
-                                _path93246_
-                                _pre93251_
-                                _ns93252_))))
+                                _path93247_
+                                _pre93252_
+                                _ns93253_))))
                       (begin
-                        (let ((_g94580_
-                               (if (##values? _g94579_)
-                                   (##vector-length _g94579_)
+                        (let ((_g94581_
+                               (if (##values? _g94580_)
+                                   (##vector-length _g94580_)
                                    1)))
-                          (if (not (##fx= _g94580_ 3))
-                              (error "Context expects 3 values" _g94580_)))
-                        (let ((_pre93282_ (##vector-ref _g94579_ 0))
-                              (_ns93283_ (##vector-ref _g94579_ 1))
-                              (_pkg93284_ (##vector-ref _g94579_ 2)))
-                          (let* ((_prelude93286_
+                          (if (not (##fx= _g94581_ 3))
+                              (error "Context expects 3 values" _g94581_)))
+                        (let ((_pre93283_ (##vector-ref _g94580_ 0))
+                              (_ns93284_ (##vector-ref _g94580_ 1))
+                              (_pkg93285_ (##vector-ref _g94580_ 2)))
+                          (let* ((_prelude93287_
                                   (if (gx#core-bound-module-prelude?
-                                       _pre93282_)
-                                      (gx#syntax-local-e__0 _pre93282_)
+                                       _pre93283_)
+                                      (gx#syntax-local-e__0 _pre93283_)
                                       (if (gx#core-library-module-path?
-                                           _pre93282_)
+                                           _pre93283_)
                                           (gx#core-resolve-library-module-path
-                                           _pre93282_)
-                                          (if (gx#stx-string? _pre93282_)
+                                           _pre93283_)
+                                          (if (gx#stx-string? _pre93283_)
                                               (gx#core-resolve-module-path__%
-                                               _pre93282_
-                                               _path93246_)
-                                              (gx#stx-e _pre93282_)))))
-                                 (_path-id93288_
-                                  (gx#core-module-path->namespace _path93246_))
-                                 (_pkg-id93290_
-                                  (if _pkg93284_
+                                               _pre93283_
+                                               _path93247_)
+                                              (gx#stx-e _pre93283_)))))
+                                 (_path-id93289_
+                                  (gx#core-module-path->namespace _path93247_))
+                                 (_pkg-id93291_
+                                  (if _pkg93285_
                                       (string-append
-                                       _pkg93284_
+                                       _pkg93285_
                                        '"/"
-                                       _path-id93288_)
-                                      _path-id93288_))
-                                 (_module-id93292_
-                                  (string->symbol _pkg-id93290_))
-                                 (_module-ns93297_
-                                  (if (eq? _ns93283_ '#!void)
+                                       _path-id93289_)
+                                      _path-id93289_))
+                                 (_module-id93293_
+                                  (string->symbol _pkg-id93291_))
+                                 (_module-ns93298_
+                                  (if (eq? _ns93284_ '#!void)
                                       '#f
-                                      (let ((_$e93294_ _ns93283_))
-                                        (if _$e93294_
-                                            _$e93294_
-                                            _pkg-id93290_)))))
-                            (values _prelude93286_
-                                    _module-id93292_
-                                    _module-ns93297_
-                                    _body93250_)))))))
-                 (_E9326393329_
+                                      (let ((_$e93295_ _ns93284_))
+                                        (if _$e93295_
+                                            _$e93295_
+                                            _pkg-id93291_)))))
+                            (values _prelude93287_
+                                    _module-id93293_
+                                    _module-ns93298_
+                                    _body93251_)))))))
+                 (_E9326493330_
                   (lambda ()
-                    (if (gx#stx-pair? _e9325493278_)
-                        (let ((_e9327193304_ (gx#syntax-e _e9325493278_)))
-                          (let ((_hd9327293307_ (##car _e9327193304_))
-                                (_tl9327393309_ (##cdr _e9327193304_)))
-                            (if (eq? (gx#stx-e _hd9327293307_) 'package:)
-                                (if (gx#stx-pair? _tl9327393309_)
-                                    (let ((_e9327493312_
-                                           (gx#syntax-e _tl9327393309_)))
-                                      (let ((_hd9327593315_
-                                             (##car _e9327493312_))
-                                            (_tl9327693317_
-                                             (##cdr _e9327493312_)))
-                                        (let* ((_pkg93320_ _hd9327593315_)
-                                               (_rest93322_ _tl9327693317_))
+                    (if (gx#stx-pair? _e9325593279_)
+                        (let ((_e9327293305_ (gx#syntax-e _e9325593279_)))
+                          (let ((_hd9327393308_ (##car _e9327293305_))
+                                (_tl9327493310_ (##cdr _e9327293305_)))
+                            (if (eq? (gx#stx-e _hd9327393308_) 'package:)
+                                (if (gx#stx-pair? _tl9327493310_)
+                                    (let ((_e9327593313_
+                                           (gx#syntax-e _tl9327493310_)))
+                                      (let ((_hd9327693316_
+                                             (##car _e9327593313_))
+                                            (_tl9327793318_
+                                             (##cdr _e9327593313_)))
+                                        (let* ((_pkg93321_ _hd9327693316_)
+                                               (_rest93323_ _tl9327793318_))
                                           (if '#t
-                                              (let ((_pkg93327_
+                                              (let ((_pkg93328_
                                                      (if (gx#identifier?
-                                                          _pkg93320_)
+                                                          _pkg93321_)
                                                          (symbol->string
                                                           (gx#stx-e
-                                                           _pkg93320_))
+                                                           _pkg93321_))
                                                          (if (or (gx#stx-string?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _pkg93320_)
-                         (gx#stx-false? _pkg93320_))
-                     (gx#stx-e _pkg93320_)
+                          _pkg93321_)
+                         (gx#stx-false? _pkg93321_))
+                     (gx#stx-e _pkg93321_)
                      (gx#raise-syntax-error
                       'import
                       '"Bad syntax; Illegal package name"
-                      _pkg93320_)))))
+                      _pkg93321_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (_lp93248_
-                                                 _rest93322_
-                                                 _pre93251_
-                                                 _ns93252_
-                                                 _pkg93327_))
-                                              (_E9327093300_)))))
-                                    (_E9327093300_))
-                                (_E9327093300_))))
-                        (_E9327093300_))))
-                 (_E9325693355_
+                                                (_lp93249_
+                                                 _rest93323_
+                                                 _pre93252_
+                                                 _ns93253_
+                                                 _pkg93328_))
+                                              (_E9327193301_)))))
+                                    (_E9327193301_))
+                                (_E9327193301_))))
+                        (_E9327193301_))))
+                 (_E9325793356_
                   (lambda ()
-                    (if (gx#stx-pair? _e9325493278_)
-                        (let ((_e9326493333_ (gx#syntax-e _e9325493278_)))
-                          (let ((_hd9326593336_ (##car _e9326493333_))
-                                (_tl9326693338_ (##cdr _e9326493333_)))
-                            (if (eq? (gx#stx-e _hd9326593336_) 'namespace:)
-                                (if (gx#stx-pair? _tl9326693338_)
-                                    (let ((_e9326793341_
-                                           (gx#syntax-e _tl9326693338_)))
-                                      (let ((_hd9326893344_
-                                             (##car _e9326793341_))
-                                            (_tl9326993346_
-                                             (##cdr _e9326793341_)))
-                                        (let* ((_ns93349_ _hd9326893344_)
-                                               (_rest93351_ _tl9326993346_))
+                    (if (gx#stx-pair? _e9325593279_)
+                        (let ((_e9326593334_ (gx#syntax-e _e9325593279_)))
+                          (let ((_hd9326693337_ (##car _e9326593334_))
+                                (_tl9326793339_ (##cdr _e9326593334_)))
+                            (if (eq? (gx#stx-e _hd9326693337_) 'namespace:)
+                                (if (gx#stx-pair? _tl9326793339_)
+                                    (let ((_e9326893342_
+                                           (gx#syntax-e _tl9326793339_)))
+                                      (let ((_hd9326993345_
+                                             (##car _e9326893342_))
+                                            (_tl9327093347_
+                                             (##cdr _e9326893342_)))
+                                        (let* ((_ns93350_ _hd9326993345_)
+                                               (_rest93352_ _tl9327093347_))
                                           (if '#t
-                                              (let ((_ns93353_
+                                              (let ((_ns93354_
                                                      (if (gx#identifier?
-                                                          _ns93349_)
+                                                          _ns93350_)
                                                          (symbol->string
-                                                          (gx#stx-e _ns93349_))
+                                                          (gx#stx-e _ns93350_))
                                                          (if (gx#stx-string?
-                                                              _ns93349_)
+                                                              _ns93350_)
                                                              (gx#stx-e
-                                                              _ns93349_)
+                                                              _ns93350_)
                                                              (if (gx#stx-false?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _ns93349_)
+                          _ns93350_)
                          '#!void
                          (gx#raise-syntax-error
                           'import
                           '"Bad syntax; illegal namespace"
-                          _ns93349_))))))
+                          _ns93350_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (_lp93248_
-                                                 _rest93351_
-                                                 _pre93251_
-                                                 _ns93353_
-                                                 _pkg93253_))
-                                              (_E9326393329_)))))
-                                    (_E9326393329_))
-                                (_E9326393329_))))
-                        (_E9326393329_))))
-                 (_E9325593379_
+                                                (_lp93249_
+                                                 _rest93352_
+                                                 _pre93252_
+                                                 _ns93354_
+                                                 _pkg93254_))
+                                              (_E9326493330_)))))
+                                    (_E9326493330_))
+                                (_E9326493330_))))
+                        (_E9326493330_))))
+                 (_E9325693380_
                   (lambda ()
-                    (if (gx#stx-pair? _e9325493278_)
-                        (let ((_e9325793359_ (gx#syntax-e _e9325493278_)))
-                          (let ((_hd9325893362_ (##car _e9325793359_))
-                                (_tl9325993364_ (##cdr _e9325793359_)))
-                            (if (eq? (gx#stx-e _hd9325893362_) 'prelude:)
-                                (if (gx#stx-pair? _tl9325993364_)
-                                    (let ((_e9326093367_
-                                           (gx#syntax-e _tl9325993364_)))
-                                      (let ((_hd9326193370_
-                                             (##car _e9326093367_))
-                                            (_tl9326293372_
-                                             (##cdr _e9326093367_)))
-                                        (let* ((_prelude93375_ _hd9326193370_)
-                                               (_rest93377_ _tl9326293372_))
+                    (if (gx#stx-pair? _e9325593279_)
+                        (let ((_e9325893360_ (gx#syntax-e _e9325593279_)))
+                          (let ((_hd9325993363_ (##car _e9325893360_))
+                                (_tl9326093365_ (##cdr _e9325893360_)))
+                            (if (eq? (gx#stx-e _hd9325993363_) 'prelude:)
+                                (if (gx#stx-pair? _tl9326093365_)
+                                    (let ((_e9326193368_
+                                           (gx#syntax-e _tl9326093365_)))
+                                      (let ((_hd9326293371_
+                                             (##car _e9326193368_))
+                                            (_tl9326393373_
+                                             (##cdr _e9326193368_)))
+                                        (let* ((_prelude93376_ _hd9326293371_)
+                                               (_rest93378_ _tl9326393373_))
                                           (if '#t
-                                              (_lp93248_
-                                               _rest93377_
-                                               _prelude93375_
-                                               _ns93252_
-                                               _pkg93253_)
-                                              (_E9325693355_)))))
-                                    (_E9325693355_))
-                                (_E9325693355_))))
-                        (_E9325693355_)))))
-            (_E9325593379_)))))
+                                              (_lp93249_
+                                               _rest93378_
+                                               _prelude93376_
+                                               _ns93253_
+                                               _pkg93254_)
+                                              (_E9325793356_)))))
+                                    (_E9325793356_))
+                                (_E9325793356_))))
+                        (_E9325793356_)))))
+            (_E9325693380_)))))
     (define gx#core-read-module/lang
-      (lambda (_path93073_)
-        (letrec ((_default-read-module-body93075_
-                  (lambda (_inp93238_)
-                    (let _lp93240_ ((_body93242_ '()))
-                      (let ((_next93244_ (read-syntax _inp93238_)))
-                        (if (eof-object? _next93244_)
-                            (reverse _body93242_)
-                            (_lp93240_ (cons _next93244_ _body93242_)))))))
-                 (_read-body93076_
-                  (lambda (_inp93157_
-                           _pre93158_
-                           _ns93159_
-                           _pkg93160_
-                           _args93161_)
-                    (let ((_g94581_
-                           (if _pkg93160_
-                               (values _pre93158_ _ns93159_ _pkg93160_)
+      (lambda (_path93074_)
+        (letrec ((_default-read-module-body93076_
+                  (lambda (_inp93239_)
+                    (let _lp93241_ ((_body93243_ '()))
+                      (let ((_next93245_ (read-syntax _inp93239_)))
+                        (if (eof-object? _next93245_)
+                            (reverse _body93243_)
+                            (_lp93241_ (cons _next93245_ _body93243_)))))))
+                 (_read-body93077_
+                  (lambda (_inp93158_
+                           _pre93159_
+                           _ns93160_
+                           _pkg93161_
+                           _args93162_)
+                    (let ((_g94582_
+                           (if _pkg93161_
+                               (values _pre93159_ _ns93160_ _pkg93161_)
                                (gx#core-read-module-package
-                                _path93073_
-                                _pre93158_
-                                _ns93159_))))
+                                _path93074_
+                                _pre93159_
+                                _ns93160_))))
                       (begin
-                        (let ((_g94582_
-                               (if (##values? _g94581_)
-                                   (##vector-length _g94581_)
+                        (let ((_g94583_
+                               (if (##values? _g94582_)
+                                   (##vector-length _g94582_)
                                    1)))
-                          (if (not (##fx= _g94582_ 3))
-                              (error "Context expects 3 values" _g94582_)))
-                        (let ((_pre93163_ (##vector-ref _g94581_ 0))
-                              (_ns93164_ (##vector-ref _g94581_ 1))
-                              (_pkg93165_ (##vector-ref _g94581_ 2)))
-                          (let* ((_prelude93167_
-                                  (gx#import-module__0 _pre93163_))
-                                 (_read-module-body93221_
-                                  (let ((_$e93213_
-                                         (find (lambda (_e9316893170_)
-                                                 (let* ((_g9317293182_
-                                                         _e9316893170_)
-                                                        (_else9317493190_
+                          (if (not (##fx= _g94583_ 3))
+                              (error "Context expects 3 values" _g94583_)))
+                        (let ((_pre93164_ (##vector-ref _g94582_ 0))
+                              (_ns93165_ (##vector-ref _g94582_ 1))
+                              (_pkg93166_ (##vector-ref _g94582_ 2)))
+                          (let* ((_prelude93168_
+                                  (gx#import-module__0 _pre93164_))
+                                 (_read-module-body93222_
+                                  (let ((_$e93214_
+                                         (find (lambda (_e9316993171_)
+                                                 (let* ((_g9317393183_
+                                                         _e9316993171_)
+                                                        (_else9317593191_
                                                          (lambda () '#f))
-                                                        (_K9317693194_
+                                                        (_K9317793195_
                                                          (lambda () '#t)))
                                                    (if (##structure-direct-instance-of?
-                                                        _g9317293182_
+                                                        _g9317393183_
                                                         'gx#module-export::t)
-                                                       (let* ((_e9317793197_
+                                                       (let* ((_e9317893198_
                                                                (##unchecked-structure-ref
-                                                                _g9317293182_
+                                                                _g9317393183_
                                                                 '1
                                                                 gx#module-export::t
                                                                 '#f))
-                                                              (_e9317893200_
+                                                              (_e9317993201_
                                                                (##unchecked-structure-ref
-                                                                _g9317293182_
+                                                                _g9317393183_
                                                                 '2
                                                                 gx#module-export::t
                                                                 '#f))
-                                                              (_e9317993203_
+                                                              (_e9318093204_
                                                                (##unchecked-structure-ref
-                                                                _g9317293182_
+                                                                _g9317393183_
                                                                 '3
                                                                 gx#module-export::t
                                                                 '#f)))
-                                                         (if (##eq? _e9317993203_
+                                                         (if (##eq? _e9318093204_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '1)
-                     (let ((_e9318093206_
+                     (let ((_e9318193207_
                             (##unchecked-structure-ref
-                             _g9317293182_
+                             _g9317393183_
                              '4
                              gx#module-export::t
                              '#f)))
-                       (if ((lambda (_g9320893210_)
-                              (eq? _g9320893210_ 'read-module-body))
-                            _e9318093206_)
-                           (_K9317693194_)
-                           (_else9317493190_)))
-                     (_else9317493190_)))
-               (_else9317493190_))))
+                       (if ((lambda (_g9320993211_)
+                              (eq? _g9320993211_ 'read-module-body))
+                            _e9318193207_)
+                           (_K9317793195_)
+                           (_else9317593191_)))
+                     (_else9317593191_)))
+               (_else9317593191_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (##unchecked-structure-ref
-                                                _prelude93167_
+                                                _prelude93168_
                                                 '9
                                                 gx#module-context::t
                                                 '#f))))
-                                    (if _$e93213_
-                                        ((lambda (_xport93216_)
-                                           (let ((_proc93219_
+                                    (if _$e93214_
+                                        ((lambda (_xport93217_)
+                                           (let ((_proc93220_
                                                   (with-catch
                                                    void
                                                    (lambda ()
                                                      (gx#eval-syntax__0
                                                       (##structure-ref
                                                        (gx#core-resolve-module-export
-                                                        _xport93216_)
+                                                        _xport93217_)
                                                        '1
                                                        gx#binding::t
                                                        '#f))))))
-                                             (if (procedure? _proc93219_)
-                                                 _proc93219_
+                                             (if (procedure? _proc93220_)
+                                                 _proc93220_
                                                  (gx#raise-syntax-error
                                                   '#f
                                                   '"Illegal #lang prelude; read-module-body is not a procedure"
-                                                  _path93073_
-                                                  _pre93163_
-                                                  _proc93219_))))
-                                         _$e93213_)
-                                        _default-read-module-body93075_)))
-                                 (_path-id93223_
-                                  (gx#core-module-path->namespace _path93073_))
-                                 (_pkg-id93225_
-                                  (if _pkg93165_
+                                                  _path93074_
+                                                  _pre93164_
+                                                  _proc93220_))))
+                                         _$e93214_)
+                                        _default-read-module-body93076_)))
+                                 (_path-id93224_
+                                  (gx#core-module-path->namespace _path93074_))
+                                 (_pkg-id93226_
+                                  (if _pkg93166_
                                       (string-append
-                                       _pkg93165_
+                                       _pkg93166_
                                        '"/"
-                                       _path-id93223_)
-                                      _path-id93223_))
-                                 (_module-id93227_
-                                  (string->symbol _pkg-id93225_))
-                                 (_module-ns93232_
-                                  (let ((_$e93229_ _ns93164_))
-                                    (if _$e93229_ _$e93229_ _pkg-id93225_)))
-                                 (_body93235_
+                                       _path-id93224_)
+                                      _path-id93224_))
+                                 (_module-id93228_
+                                  (string->symbol _pkg-id93226_))
+                                 (_module-ns93233_
+                                  (let ((_$e93230_ _ns93165_))
+                                    (if _$e93230_ _$e93230_ _pkg-id93226_)))
+                                 (_body93236_
                                   (call-with-parameters
                                    (lambda ()
-                                     (_read-module-body93221_ _inp93157_))
+                                     (_read-module-body93222_ _inp93158_))
                                    gx#current-module-reader-path
-                                   _path93073_
+                                   _path93074_
                                    gx#current-module-reader-args
-                                   _args93161_)))
-                            (values _prelude93167_
-                                    _module-id93227_
-                                    _module-ns93232_
-                                    _body93235_)))))))
-                 (_string-e93077_
-                  (lambda (_obj93154_ _what93155_)
-                    (if (string? _obj93154_)
-                        _obj93154_
-                        (if (symbol? _obj93154_)
-                            (symbol->string _obj93154_)
+                                   _args93162_)))
+                            (values _prelude93168_
+                                    _module-id93228_
+                                    _module-ns93233_
+                                    _body93236_)))))))
+                 (_string-e93078_
+                  (lambda (_obj93155_ _what93156_)
+                    (if (string? _obj93155_)
+                        _obj93155_
+                        (if (symbol? _obj93155_)
+                            (symbol->string _obj93155_)
                             (gx#raise-syntax-error
                              '#f
-                             (string-append '"Illegal module " _what93155_)
-                             _path93073_
-                             _obj93154_)))))
-                 (_read-lang-args93078_
-                  (lambda (_inp93109_ _args93110_)
-                    (let* ((_args9311193119_ _args93110_)
-                           (_else9311393127_
+                             (string-append '"Illegal module " _what93156_)
+                             _path93074_
+                             _obj93155_)))))
+                 (_read-lang-args93079_
+                  (lambda (_inp93110_ _args93111_)
+                    (let* ((_args9311293120_ _args93111_)
+                           (_else9311493128_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Illegal #lang arguments; missing prelude"
-                               _path93073_)))
-                           (_K9311593142_
-                            (lambda (_args93130_ _prelude93131_)
-                              (let* ((_pkg93133_
-                                      (pgetq__0 'package: _args93130_))
-                                     (_pkg93135_
-                                      (if _pkg93133_
-                                          (_string-e93077_
-                                           _pkg93133_
+                               _path93074_)))
+                           (_K9311693143_
+                            (lambda (_args93131_ _prelude93132_)
+                              (let* ((_pkg93134_
+                                      (pgetq__0 'package: _args93131_))
+                                     (_pkg93136_
+                                      (if _pkg93134_
+                                          (_string-e93078_
+                                           _pkg93134_
                                            '"package")
                                           '#f))
-                                     (_ns93137_
-                                      (pgetq__0 'namespace: _args93130_))
-                                     (_ns93139_
-                                      (if _ns93137_
-                                          (_string-e93077_
-                                           _ns93137_
+                                     (_ns93138_
+                                      (pgetq__0 'namespace: _args93131_))
+                                     (_ns93140_
+                                      (if _ns93138_
+                                          (_string-e93078_
+                                           _ns93138_
                                            '"namespace")
                                           '#f)))
-                                (_read-body93076_
-                                 _inp93109_
-                                 _prelude93131_
-                                 _ns93139_
-                                 _pkg93135_
-                                 _args93130_)))))
-                      (if (##pair? _args9311193119_)
-                          (let ((_hd9311693145_ (##car _args9311193119_))
-                                (_tl9311793147_ (##cdr _args9311193119_)))
-                            (let* ((_prelude93150_ _hd9311693145_)
-                                   (_args93152_ _tl9311793147_))
-                              (_K9311593142_ _args93152_ _prelude93150_)))
-                          (_else9311393127_)))))
-                 (_read-lang93079_
-                  (lambda (_inp93084_)
-                    (let* ((_head93086_ (read-line _inp93084_))
-                           (_$e93088_ (string-index__0 _head93086_ '#\space)))
-                      (if _$e93088_
-                          ((lambda (_ix93091_)
-                             (let ((_lang93093_
-                                    (substring _head93086_ '0 _ix93091_)))
-                               (if (equal? _lang93093_ '"#lang")
-                                   (let* ((_rest93095_
+                                (_read-body93077_
+                                 _inp93110_
+                                 _prelude93132_
+                                 _ns93140_
+                                 _pkg93136_
+                                 _args93131_)))))
+                      (if (##pair? _args9311293120_)
+                          (let ((_hd9311793146_ (##car _args9311293120_))
+                                (_tl9311893148_ (##cdr _args9311293120_)))
+                            (let* ((_prelude93151_ _hd9311793146_)
+                                   (_args93153_ _tl9311893148_))
+                              (_K9311693143_ _args93153_ _prelude93151_)))
+                          (_else9311493128_)))))
+                 (_read-lang93080_
+                  (lambda (_inp93085_)
+                    (let* ((_head93087_ (read-line _inp93085_))
+                           (_$e93089_ (string-index__0 _head93087_ '#\space)))
+                      (if _$e93089_
+                          ((lambda (_ix93092_)
+                             (let ((_lang93094_
+                                    (substring _head93087_ '0 _ix93092_)))
+                               (if (equal? _lang93094_ '"#lang")
+                                   (let* ((_rest93096_
                                            (substring
-                                            _head93086_
-                                            (fx+ _ix93091_ '1)
-                                            (string-length _head93086_)))
-                                          (_args93106_
+                                            _head93087_
+                                            (fx+ _ix93092_ '1)
+                                            (string-length _head93087_)))
+                                          (_args93107_
                                            (with-catch
-                                            (lambda (_g9309693098_)
+                                            (lambda (_g9309793099_)
                                               (gx#raise-syntax-error
                                                '#f
                                                '"Illegal #lang arguments"
-                                               _path93073_
-                                               _g9309693098_))
+                                               _path93074_
+                                               _g9309793099_))
                                             (lambda ()
                                               (call-with-input-string
-                                               _rest93095_
-                                               (lambda (_g9310193103_)
+                                               _rest93096_
+                                               (lambda (_g9310293104_)
                                                  (read-all
-                                                  _g9310193103_
+                                                  _g9310293104_
                                                   read)))))))
-                                     (_read-lang-args93078_
-                                      _inp93084_
-                                      _args93106_))
+                                     (_read-lang-args93079_
+                                      _inp93085_
+                                      _args93107_))
                                    (gx#raise-syntax-error
                                     '#f
                                     '"Illegal module syntax"
-                                    _path93073_))))
-                           _$e93088_)
+                                    _path93074_))))
+                           _$e93089_)
                           (gx#raise-syntax-error
                            '#f
                            '"Illegal module syntax"
-                           _path93073_)))))
-                 (_read-e93080_
-                  (lambda (_inp93082_)
-                    (if (eq? (peek-char _inp93082_) '#\#)
-                        (_read-lang93079_ _inp93082_)
+                           _path93074_)))))
+                 (_read-e93081_
+                  (lambda (_inp93083_)
+                    (if (eq? (peek-char _inp93083_) '#\#)
+                        (_read-lang93080_ _inp93083_)
                         (gx#raise-syntax-error
                          '#f
                          '"Illegal module syntax"
-                         _path93073_)))))
-          (gx#call-with-input-source-file _path93073_ _read-e93080_))))
+                         _path93074_)))))
+          (gx#call-with-input-source-file _path93074_ _read-e93081_))))
     (define gx#core-read-module-package
-      (lambda (_path93027_ _pre93028_ _ns93029_)
-        (letrec ((_string-e93031_
-                  (lambda (_e93071_)
-                    (if (symbol? _e93071_)
-                        (symbol->string _e93071_)
-                        (if (string? _e93071_)
-                            _e93071_
+      (lambda (_path93028_ _pre93029_ _ns93030_)
+        (letrec ((_string-e93032_
+                  (lambda (_e93072_)
+                    (if (symbol? _e93072_)
+                        (symbol->string _e93072_)
+                        (if (string? _e93072_)
+                            _e93072_
                             (gx#raise-syntax-error
                              '#f
                              '"Malformed package info; unexpected datum"
-                             _e93071_))))))
-          (let _lp93033_ ((_dir93035_ (path-directory _path93027_))
-                          (_pkg-path93036_ '()))
-            (let ((_gerbil.pkg93038_ (path-expand '"gerbil.pkg" _dir93035_)))
-              (if (file-exists? _gerbil.pkg93038_)
-                  (let ((_plist93040_
-                         (gx#core-library-package-plist__% _dir93035_ '#t)))
-                    (if (null? _plist93040_)
-                        (let ((_pkg93042_
-                               (if (not (null? _pkg-path93036_))
-                                   (string-join _pkg-path93036_ '"/")
+                             _e93072_))))))
+          (let _lp93034_ ((_dir93036_ (path-directory _path93028_))
+                          (_pkg-path93037_ '()))
+            (let ((_gerbil.pkg93039_ (path-expand '"gerbil.pkg" _dir93036_)))
+              (if (file-exists? _gerbil.pkg93039_)
+                  (let ((_plist93041_
+                         (gx#core-library-package-plist__% _dir93036_ '#t)))
+                    (if (null? _plist93041_)
+                        (let ((_pkg93043_
+                               (if (not (null? _pkg-path93037_))
+                                   (string-join _pkg-path93037_ '"/")
                                    '#f)))
-                          (values _pre93028_ _ns93029_ _pkg93042_))
-                        (if (list? _plist93040_)
-                            (let* ((_root93044_
-                                    (pgetq__0 'package: _plist93040_))
-                                   (_pkg93048_
-                                    (let ((_pkg-path93046_
-                                           (if _root93044_
-                                               (cons (_string-e93031_
-                                                      _root93044_)
-                                                     _pkg-path93036_)
-                                               _pkg-path93036_)))
-                                      (if (not (null? _pkg-path93046_))
-                                          (string-join _pkg-path93046_ '"/")
+                          (values _pre93029_ _ns93030_ _pkg93043_))
+                        (if (list? _plist93041_)
+                            (let* ((_root93045_
+                                    (pgetq__0 'package: _plist93041_))
+                                   (_pkg93049_
+                                    (let ((_pkg-path93047_
+                                           (if _root93045_
+                                               (cons (_string-e93032_
+                                                      _root93045_)
+                                                     _pkg-path93037_)
+                                               _pkg-path93037_)))
+                                      (if (not (null? _pkg-path93047_))
+                                          (string-join _pkg-path93047_ '"/")
                                           '#f)))
-                                   (_ns93055_
-                                    (let ((_ns93053_
-                                           (let ((_$e93050_ _ns93029_))
-                                             (if _$e93050_
-                                                 _$e93050_
+                                   (_ns93056_
+                                    (let ((_ns93054_
+                                           (let ((_$e93051_ _ns93030_))
+                                             (if _$e93051_
+                                                 _$e93051_
                                                  (pgetq__0
                                                   'namespace:
-                                                  _plist93040_)))))
-                                      (if _ns93053_
-                                          (_string-e93031_ _ns93053_)
+                                                  _plist93041_)))))
+                                      (if _ns93054_
+                                          (_string-e93032_ _ns93054_)
                                           '#f)))
-                                   (_pre93060_
-                                    (let ((_$e93057_ _pre93028_))
-                                      (if _$e93057_
-                                          _$e93057_
-                                          (pgetq__0 'prelude: _plist93040_)))))
-                              (values _pre93060_ _ns93055_ _pkg93048_))
+                                   (_pre93061_
+                                    (let ((_$e93058_ _pre93029_))
+                                      (if _$e93058_
+                                          _$e93058_
+                                          (pgetq__0 'prelude: _plist93041_)))))
+                              (values _pre93061_ _ns93056_ _pkg93049_))
                             (gx#raise-syntax-error
                              '#f
                              '"Malformed package info; unexpected datum"
-                             _plist93040_))))
-                  (let ((_dir*93063_
-                         (path-strip-trailing-directory-separator _dir93035_)))
-                    (if (or (string-empty? _dir*93063_)
-                            (equal? _dir93035_ _dir*93063_))
-                        (values _pre93028_ _ns93029_ '#f)
-                        (let ((_xpath93068_ (path-strip-directory _dir*93063_))
-                              (_xdir93069_ (path-directory _dir*93063_)))
-                          (_lp93033_
-                           _xdir93069_
-                           (cons _xpath93068_ _pkg-path93036_)))))))))))
+                             _plist93041_))))
+                  (let ((_dir*93064_
+                         (path-strip-trailing-directory-separator _dir93036_)))
+                    (if (or (string-empty? _dir*93064_)
+                            (equal? _dir93036_ _dir*93064_))
+                        (values _pre93029_ _ns93030_ '#f)
+                        (let ((_xpath93069_ (path-strip-directory _dir*93064_))
+                              (_xdir93070_ (path-directory _dir*93064_)))
+                          (_lp93034_
+                           _xdir93070_
+                           (cons _xpath93069_ _pkg-path93037_)))))))))))
     (define gx#core-module-path->namespace
-      (lambda (_path93025_)
-        (path-strip-extension (path-strip-directory _path93025_))))
+      (lambda (_path93026_)
+        (path-strip-extension (path-strip-directory _path93026_))))
     (define gx#core-module-path->id
-      (lambda (_path93023_)
-        (string->symbol (gx#core-module-path->namespace _path93023_))))
+      (lambda (_path93024_)
+        (string->symbol (gx#core-module-path->namespace _path93024_))))
     (define gx#core-resolve-module-path__%
-      (lambda (_stx-path93002_ _rel93003_)
-        (let* ((_path93005_ (gx#stx-e _stx-path93002_))
-               (_path93007_
-                (if (string-empty? (path-extension _path93005_))
-                    (string-append _path93005_ '".ss")
-                    _path93005_)))
+      (lambda (_stx-path93003_ _rel93004_)
+        (let* ((_path93006_ (gx#stx-e _stx-path93003_))
+               (_path93008_
+                (if (string-empty? (path-extension _path93006_))
+                    (string-append _path93006_ '".ss")
+                    _path93006_)))
           (gx#core-resolve-path__%
-           _path93007_
-           (let ((_$e93010_ (gx#stx-source _stx-path93002_)))
-             (if _$e93010_ _$e93010_ _rel93003_))))))
+           _path93008_
+           (let ((_$e93011_ (gx#stx-source _stx-path93003_)))
+             (if _$e93011_ _$e93011_ _rel93004_))))))
     (define gx#core-resolve-module-path__0
-      (lambda (_stx-path93016_)
-        (let ((_rel93018_ '#f))
-          (gx#core-resolve-module-path__% _stx-path93016_ _rel93018_))))
+      (lambda (_stx-path93017_)
+        (let ((_rel93019_ '#f))
+          (gx#core-resolve-module-path__% _stx-path93017_ _rel93019_))))
     (define gx#core-resolve-module-path
-      (lambda _g94584_
-        (let ((_g94583_ (##length _g94584_)))
-          (cond ((##fx= _g94583_ 1)
-                 (apply (lambda (_stx-path93016_)
-                          (gx#core-resolve-module-path__0 _stx-path93016_))
-                        _g94584_))
-                ((##fx= _g94583_ 2)
-                 (apply (lambda (_stx-path93020_ _rel93021_)
+      (lambda _g94585_
+        (let ((_g94584_ (##length _g94585_)))
+          (cond ((##fx= _g94584_ 1)
+                 (apply (lambda (_stx-path93017_)
+                          (gx#core-resolve-module-path__0 _stx-path93017_))
+                        _g94585_))
+                ((##fx= _g94584_ 2)
+                 (apply (lambda (_stx-path93021_ _rel93022_)
                           (gx#core-resolve-module-path__%
-                           _stx-path93020_
-                           _rel93021_))
-                        _g94584_))
+                           _stx-path93021_
+                           _rel93022_))
+                        _g94585_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-resolve-module-path
-                  _g94584_))))))
+                  _g94585_))))))
     (define gx#core-resolve-library-module-path
-      (lambda (_libpath92888_)
-        (let* ((_spath92890_ (symbol->string (gx#stx-e _libpath92888_)))
-               (_spath92892_
-                (substring _spath92890_ '1 (string-length _spath92890_)))
-               (_ext92894_ (path-extension _spath92892_))
-               (_ssi92896_
-                (if (string-empty? _ext92894_)
-                    (string-append _spath92892_ '".ssi")
+      (lambda (_libpath92889_)
+        (let* ((_spath92891_ (symbol->string (gx#stx-e _libpath92889_)))
+               (_spath92893_
+                (substring _spath92891_ '1 (string-length _spath92891_)))
+               (_ext92895_ (path-extension _spath92893_))
+               (_ssi92897_
+                (if (string-empty? _ext92895_)
+                    (string-append _spath92893_ '".ssi")
                     (string-append
-                     (path-strip-extension _spath92892_)
+                     (path-strip-extension _spath92893_)
                      '".ssi")))
-               (_srcs92900_
-                (if (string-empty? _ext92894_)
-                    (map (lambda (_ext92898_)
-                           (string-append _spath92892_ _ext92898_))
+               (_srcs92901_
+                (if (string-empty? _ext92895_)
+                    (map (lambda (_ext92899_)
+                           (string-append _spath92893_ _ext92899_))
                          '(".ss" ".sld" ".scm"))
-                    (cons _spath92892_ '()))))
-          (let _lp92903_ ((_rest92905_ (load-path)))
-            (let* ((_rest9290692915_ _rest92905_)
-                   (_E9290992919_
+                    (cons _spath92893_ '()))))
+          (let _lp92904_ ((_rest92906_ (load-path)))
+            (let* ((_rest9290792916_ _rest92906_)
+                   (_E9291092920_
                     (lambda ()
-                      (error '"No clause matching" _rest9290692915_))))
-              (let ((_K9291192989_
-                     (lambda (_rest92930_ _dir92931_)
-                       (letrec ((_resolve92933_
-                                 (lambda (_ssi92945_ _srcs92946_)
-                                   (let ((_compiled-path92948_
-                                          (path-expand _ssi92945_ _dir92931_)))
-                                     (if (file-exists? _compiled-path92948_)
-                                         (path-normalize _compiled-path92948_)
-                                         (let _lpr92950_ ((_rest-src92952_
-                                                           _srcs92946_))
-                                           (let* ((_rest-src9295392961_
-                                                   _rest-src92952_)
-                                                  (_else9295592969_
+                      (error '"No clause matching" _rest9290792916_))))
+              (let ((_K9291292990_
+                     (lambda (_rest92931_ _dir92932_)
+                       (letrec ((_resolve92934_
+                                 (lambda (_ssi92946_ _srcs92947_)
+                                   (let ((_compiled-path92949_
+                                          (path-expand _ssi92946_ _dir92932_)))
+                                     (if (file-exists? _compiled-path92949_)
+                                         (path-normalize _compiled-path92949_)
+                                         (let _lpr92951_ ((_rest-src92953_
+                                                           _srcs92947_))
+                                           (let* ((_rest-src9295492962_
+                                                   _rest-src92953_)
+                                                  (_else9295692970_
                                                    (lambda ()
-                                                     (_lp92903_ _rest92930_)))
-                                                  (_K9295792977_
-                                                   (lambda (_rest-src92972_
-                                                            _src92973_)
-                                                     (let ((_src-path92975_
+                                                     (_lp92904_ _rest92931_)))
+                                                  (_K9295892978_
+                                                   (lambda (_rest-src92973_
+                                                            _src92974_)
+                                                     (let ((_src-path92976_
                                                             (path-expand
-                                                             _src92973_
-                                                             _dir92931_)))
+                                                             _src92974_
+                                                             _dir92932_)))
                                                        (if (file-exists?
-                                                            _src-path92975_)
+                                                            _src-path92976_)
                                                            (path-normalize
-                                                            _src-path92975_)
-                                                           (_lpr92950_
-                                                            _rest-src92972_))))))
-                                             (if (##pair? _rest-src9295392961_)
-                                                 (let ((_hd9295892980_
-                                                        (##car _rest-src9295392961_))
-                                                       (_tl9295992982_
-                                                        (##cdr _rest-src9295392961_)))
-                                                   (let* ((_src92985_
-                                                           _hd9295892980_)
-                                                          (_rest-src92987_
-                                                           _tl9295992982_))
-                                                     (_K9295792977_
-                                                      _rest-src92987_
-                                                      _src92985_)))
-                                                 (_else9295592969_)))))))))
-                         (let ((_$e92935_
+                                                            _src-path92976_)
+                                                           (_lpr92951_
+                                                            _rest-src92973_))))))
+                                             (if (##pair? _rest-src9295492962_)
+                                                 (let ((_hd9295992981_
+                                                        (##car _rest-src9295492962_))
+                                                       (_tl9296092983_
+                                                        (##cdr _rest-src9295492962_)))
+                                                   (let* ((_src92986_
+                                                           _hd9295992981_)
+                                                          (_rest-src92988_
+                                                           _tl9296092983_))
+                                                     (_K9295892978_
+                                                      _rest-src92988_
+                                                      _src92986_)))
+                                                 (_else9295692970_)))))))))
+                         (let ((_$e92936_
                                 (gx#core-library-package-path-prefix
-                                 _dir92931_)))
-                           (if _$e92935_
-                               ((lambda (_prefix92938_)
+                                 _dir92932_)))
+                           (if _$e92936_
+                               ((lambda (_prefix92939_)
                                   (if (string-prefix?
-                                       _prefix92938_
-                                       _spath92892_)
-                                      (let ((_ssi92942_
+                                       _prefix92939_
+                                       _spath92893_)
+                                      (let ((_ssi92943_
                                              (substring
-                                              _ssi92896_
-                                              (string-length _prefix92938_)
-                                              (string-length _ssi92896_)))
-                                            (_srcs92943_
-                                             (map (lambda (_src92940_)
+                                              _ssi92897_
+                                              (string-length _prefix92939_)
+                                              (string-length _ssi92897_)))
+                                            (_srcs92944_
+                                             (map (lambda (_src92941_)
                                                     (substring
-                                                     _src92940_
+                                                     _src92941_
                                                      (string-length
-                                                      _prefix92938_)
+                                                      _prefix92939_)
                                                      (string-length
-                                                      _src92940_)))
-                                                  _srcs92900_)))
-                                        (_resolve92933_
-                                         _ssi92942_
-                                         _srcs92943_))
-                                      (_lp92903_ _rest92930_)))
-                                _$e92935_)
-                               (_resolve92933_ _ssi92896_ _srcs92900_))))))
-                    (_K9291092924_
+                                                      _src92941_)))
+                                                  _srcs92901_)))
+                                        (_resolve92934_
+                                         _ssi92943_
+                                         _srcs92944_))
+                                      (_lp92904_ _rest92931_)))
+                                _$e92936_)
+                               (_resolve92934_ _ssi92897_ _srcs92901_))))))
+                    (_K9291192925_
                      (lambda ()
                        (gx#raise-syntax-error
                         '#f
                         '"Cannot find library module"
-                        _libpath92888_))))
-                (let ((_try-match9290892927_
+                        _libpath92889_))))
+                (let ((_try-match9290992928_
                        (lambda ()
-                         (if (##null? _rest9290692915_)
-                             (_K9291092924_)
-                             (_E9290992919_)))))
-                  (if (##pair? _rest9290692915_)
-                      (let ((_tl9291392994_ (##cdr _rest9290692915_))
-                            (_hd9291292992_ (##car _rest9290692915_)))
-                        (let ((_dir92997_ _hd9291292992_)
-                              (_rest92999_ _tl9291392994_))
-                          (_K9291192989_ _rest92999_ _dir92997_)))
-                      (_try-match9290892927_)))))))))
+                         (if (##null? _rest9290792916_)
+                             (_K9291192925_)
+                             (_E9291092920_)))))
+                  (if (##pair? _rest9290792916_)
+                      (let ((_tl9291492995_ (##cdr _rest9290792916_))
+                            (_hd9291392993_ (##car _rest9290792916_)))
+                        (let ((_dir92998_ _hd9291392993_)
+                              (_rest93000_ _tl9291492995_))
+                          (_K9291292990_ _rest93000_ _dir92998_)))
+                      (_try-match9290992928_)))))))))
     (define gx#core-resolve-library-relative-module-path
-      (lambda (_modpath92861_)
-        (letrec ((_resolve92863_
-                  (lambda (_path92880_ _base92881_)
-                    (let ((_$e92883_ (string-rindex__0 _base92881_ '#\/)))
-                      (if _$e92883_
-                          ((lambda (_idx92886_)
+      (lambda (_modpath92862_)
+        (letrec ((_resolve92864_
+                  (lambda (_path92881_ _base92882_)
+                    (let ((_$e92884_ (string-rindex__0 _base92882_ '#\/)))
+                      (if _$e92884_
+                          ((lambda (_idx92887_)
                              (gx#core-resolve-library-module-path
                               (string->symbol
                                (string-append
                                 '":"
-                                (substring _base92881_ '0 _idx92886_)
+                                (substring _base92882_ '0 _idx92887_)
                                 '"/"
-                                _path92880_))))
-                           _$e92883_)
+                                _path92881_))))
+                           _$e92884_)
                           (gx#core-resolve-library-module-path
                            (string->symbol
-                            (string-append '":" _path92880_))))))))
-          (let ((_spath92865_ (symbol->string (gx#stx-e _modpath92861_)))
-                (_mod92866_
+                            (string-append '":" _path92881_))))))))
+          (let ((_spath92866_ (symbol->string (gx#stx-e _modpath92862_)))
+                (_mod92867_
                  (gx#core-context-top__%
                   (gx#current-expander-context)
                   gx#module-context?)))
-            (if _mod92866_
+            (if _mod92867_
                 '#!void
                 (gx#raise-syntax-error
                  '#f
                  '"Cannot resolve relative module path; not in module context"
-                 _modpath92861_))
-            (let ((_mpath92868_
+                 _modpath92862_))
+            (let ((_mpath92869_
                    (symbol->string
                     (##structure-ref
-                     _mod92866_
+                     _mod92867_
                      '1
                      gx#expander-context::t
                      '#f))))
-              (let _lp92870_ ((_spath92872_ _spath92865_)
-                              (_mpath92873_ _mpath92868_))
-                (if (string-prefix? '"../" _spath92872_)
-                    (let ((_$e92875_ (string-rindex__0 _mpath92873_ '#\/)))
-                      (if _$e92875_
-                          ((lambda (_idx92878_)
-                             (_lp92870_
+              (let _lp92871_ ((_spath92873_ _spath92866_)
+                              (_mpath92874_ _mpath92869_))
+                (if (string-prefix? '"../" _spath92873_)
+                    (let ((_$e92876_ (string-rindex__0 _mpath92874_ '#\/)))
+                      (if _$e92876_
+                          ((lambda (_idx92879_)
+                             (_lp92871_
                               (substring
-                               _spath92872_
+                               _spath92873_
                                '3
-                               (string-length _spath92872_))
-                              (substring _mpath92873_ '0 _idx92878_)))
-                           _$e92875_)
+                               (string-length _spath92873_))
+                              (substring _mpath92874_ '0 _idx92879_)))
+                           _$e92876_)
                           (gx#raise-syntax-error
                            '#f
                            '"Cannot resolve relative module path; illegal traversal"
-                           _modpath92861_)))
-                    (if (string-prefix? '"./" _spath92872_)
-                        (_lp92870_
+                           _modpath92862_)))
+                    (if (string-prefix? '"./" _spath92873_)
+                        (_lp92871_
                          (substring
-                          _spath92872_
+                          _spath92873_
                           '2
-                          (string-length _spath92872_))
-                         _mpath92873_)
-                        (_resolve92863_ _spath92872_ _mpath92873_)))))))))
+                          (string-length _spath92873_))
+                         _mpath92874_)
+                        (_resolve92864_ _spath92873_ _mpath92874_)))))))))
     (define gx#core-library-package-path-prefix
-      (lambda (_dir92854_)
-        (let ((_$e92856_
+      (lambda (_dir92855_)
+        (let ((_$e92857_
                (pgetq__0
                 'package:
-                (gx#core-library-package-plist__0 _dir92854_))))
-          (if _$e92856_
-              ((lambda (_pkg92859_)
-                 (string-append (symbol->string _pkg92859_) '"/"))
-               _$e92856_)
+                (gx#core-library-package-plist__0 _dir92855_))))
+          (if _$e92857_
+              ((lambda (_pkg92860_)
+                 (string-append (symbol->string _pkg92860_) '"/"))
+               _$e92857_)
               '#f))))
     (define gx#core-library-package-plist__%
-      (lambda (_dir92828_ _exists?92829_)
-        (let ((_$e92831_ (hash-get gx#__module-pkg-cache _dir92828_)))
-          (if _$e92831_
-              (values _$e92831_)
-              (let* ((_gerbil.pkg92834_ (path-expand '"gerbil.pkg" _dir92828_))
-                     (_plist92841_
-                      (if (or _exists?92829_ (file-exists? _gerbil.pkg92834_))
-                          (let ((_e92839_
+      (lambda (_dir92829_ _exists?92830_)
+        (let ((_$e92832_ (hash-get gx#__module-pkg-cache _dir92829_)))
+          (if _$e92832_
+              (values _$e92832_)
+              (let* ((_gerbil.pkg92835_ (path-expand '"gerbil.pkg" _dir92829_))
+                     (_plist92842_
+                      (if (or _exists?92830_ (file-exists? _gerbil.pkg92835_))
+                          (let ((_e92840_
                                  (gx#call-with-input-source-file
-                                  _gerbil.pkg92834_
+                                  _gerbil.pkg92835_
                                   read)))
-                            (if (eof-object? _e92839_)
+                            (if (eof-object? _e92840_)
                                 '()
-                                (if (list? _e92839_)
-                                    _e92839_
+                                (if (list? _e92840_)
+                                    _e92840_
                                     (gx#raise-syntax-error
                                      '#f
                                      '"Malformed package info; unexpected datum"
-                                     _gerbil.pkg92834_
-                                     _e92839_))))
+                                     _gerbil.pkg92835_
+                                     _e92840_))))
                           '())))
-                (hash-put! gx#__module-pkg-cache _dir92828_ _plist92841_)
-                _plist92841_)))))
+                (hash-put! gx#__module-pkg-cache _dir92829_ _plist92842_)
+                _plist92842_)))))
     (define gx#core-library-package-plist__0
-      (lambda (_dir92847_)
-        (let ((_exists?92849_ '#f))
-          (gx#core-library-package-plist__% _dir92847_ _exists?92849_))))
+      (lambda (_dir92848_)
+        (let ((_exists?92850_ '#f))
+          (gx#core-library-package-plist__% _dir92848_ _exists?92850_))))
     (define gx#core-library-package-plist
-      (lambda _g94586_
-        (let ((_g94585_ (##length _g94586_)))
-          (cond ((##fx= _g94585_ 1)
-                 (apply (lambda (_dir92847_)
-                          (gx#core-library-package-plist__0 _dir92847_))
-                        _g94586_))
-                ((##fx= _g94585_ 2)
-                 (apply (lambda (_dir92851_ _exists?92852_)
+      (lambda _g94587_
+        (let ((_g94586_ (##length _g94587_)))
+          (cond ((##fx= _g94586_ 1)
+                 (apply (lambda (_dir92848_)
+                          (gx#core-library-package-plist__0 _dir92848_))
+                        _g94587_))
+                ((##fx= _g94586_ 2)
+                 (apply (lambda (_dir92852_ _exists?92853_)
                           (gx#core-library-package-plist__%
-                           _dir92851_
-                           _exists?92852_))
-                        _g94586_))
+                           _dir92852_
+                           _exists?92853_))
+                        _g94587_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-library-package-plist
-                  _g94586_))))))
+                  _g94587_))))))
     (define gx#core-library-module-path?
-      (lambda (_stx92825_) (gx#core-special-module-path? _stx92825_ '#\:)))
+      (lambda (_stx92826_) (gx#core-special-module-path? _stx92826_ '#\:)))
     (define gx#core-library-relative-module-path?
-      (lambda (_stx92823_) (gx#core-special-module-path? _stx92823_ '#\.)))
+      (lambda (_stx92824_) (gx#core-special-module-path? _stx92824_ '#\.)))
     (define gx#core-special-module-path?
-      (lambda (_stx92818_ _char92819_)
-        (if (gx#identifier? _stx92818_)
-            (if (interned-symbol? (gx#stx-e _stx92818_))
-                (let ((_str92821_ (symbol->string (gx#stx-e _stx92818_))))
-                  (if (fx> (string-length _str92821_) '1)
-                      (eq? (string-ref _str92821_ '0) _char92819_)
+      (lambda (_stx92819_ _char92820_)
+        (if (gx#identifier? _stx92819_)
+            (if (interned-symbol? (gx#stx-e _stx92819_))
+                (let ((_str92822_ (symbol->string (gx#stx-e _stx92819_))))
+                  (if (fx> (string-length _str92822_) '1)
+                      (eq? (string-ref _str92822_ '0) _char92820_)
                       '#f))
                 '#f)
             '#f)))
     (define gx#core-bound-prelude?
-      (lambda (_stx92812_)
+      (lambda (_stx92813_)
         (gx#core-bound-identifier?__%
-         _stx92812_
-         (lambda (_g9281392815_)
-           (gx#expander-binding?__% _g9281392815_ gx#prelude-context?)))))
+         _stx92813_
+         (lambda (_g9281492816_)
+           (gx#expander-binding?__% _g9281492816_ gx#prelude-context?)))))
     (define gx#core-bound-module?
-      (lambda (_stx92806_)
+      (lambda (_stx92807_)
         (gx#core-bound-identifier?__%
-         _stx92806_
-         (lambda (_g9280792809_)
-           (gx#expander-binding?__% _g9280792809_ gx#module-context?)))))
+         _stx92807_
+         (lambda (_g9280892810_)
+           (gx#expander-binding?__% _g9280892810_ gx#module-context?)))))
     (define gx#core-bound-module-prelude?
-      (lambda (_stx92793_)
-        (letrec ((_module-prelude?92795_
-                  (lambda (_e92801_)
-                    (let ((_$e92803_
+      (lambda (_stx92794_)
+        (letrec ((_module-prelude?92796_
+                  (lambda (_e92802_)
+                    (let ((_$e92804_
                            (##structure-instance-of?
-                            _e92801_
+                            _e92802_
                             'gx#module-context::t)))
-                      (if _$e92803_
-                          _$e92803_
+                      (if _$e92804_
+                          _$e92804_
                           (##structure-instance-of?
-                           _e92801_
+                           _e92802_
                            'gx#prelude-context::t))))))
           (gx#core-bound-identifier?__%
-           _stx92793_
-           (lambda (_g9279692798_)
+           _stx92794_
+           (lambda (_g9279792799_)
              (gx#expander-binding?__%
-              _g9279692798_
-              _module-prelude?92795_))))))
+              _g9279792799_
+              _module-prelude?92796_))))))
     (define gx#core-bind-import!__%
-      (lambda (_in92723_ _ctx92724_ _force-weak?92725_)
-        (let* ((_in9272692735_ _in92723_)
-               (_E9272892739_
-                (lambda () (error '"No clause matching" _in9272692735_)))
-               (_K9272992752_
-                (lambda (_weak?92742_ _phi92743_ _key92744_ _source92745_)
+      (lambda (_in92724_ _ctx92725_ _force-weak?92726_)
+        (let* ((_in9272792736_ _in92724_)
+               (_E9272992740_
+                (lambda () (error '"No clause matching" _in9272792736_)))
+               (_K9273092753_
+                (lambda (_weak?92743_ _phi92744_ _key92745_ _source92746_)
                   (gx#core-bind!__%
-                   _key92744_
-                   (let ((_e92747_
-                          (gx#core-resolve-module-export _source92745_)))
+                   _key92745_
+                   (let ((_e92748_
+                          (gx#core-resolve-module-export _source92746_)))
                      (##structure
                       gx#import-binding::t
-                      (##unchecked-structure-ref _e92747_ '1 gx#binding::t '#f)
-                      _key92744_
-                      _phi92743_
-                      _e92747_
+                      (##unchecked-structure-ref _e92748_ '1 gx#binding::t '#f)
+                      _key92745_
+                      _phi92744_
+                      _e92748_
                       (##unchecked-structure-ref
-                       _source92745_
+                       _source92746_
                        '1
                        gx#module-export::t
                        '#f)
-                      (let ((_$e92749_ _force-weak?92725_))
-                        (if _$e92749_ _$e92749_ _weak?92742_))))
+                      (let ((_$e92750_ _force-weak?92726_))
+                        (if _$e92750_ _$e92750_ _weak?92743_))))
                    gx#core-context-rebind?
-                   _phi92743_
-                   _ctx92724_))))
+                   _phi92744_
+                   _ctx92725_))))
           (if (##structure-direct-instance-of?
-               _in9272692735_
+               _in9272792736_
                'gx#module-import::t)
-              (let* ((_e9273092755_
+              (let* ((_e9273192756_
                       (##unchecked-structure-ref
-                       _in9272692735_
+                       _in9272792736_
                        '1
                        gx#module-import::t
                        '#f))
-                     (_source92758_ _e9273092755_)
-                     (_e9273192760_
+                     (_source92759_ _e9273192756_)
+                     (_e9273292761_
                       (##unchecked-structure-ref
-                       _in9272692735_
+                       _in9272792736_
                        '2
                        gx#module-import::t
                        '#f))
-                     (_key92763_ _e9273192760_)
-                     (_e9273292765_
+                     (_key92764_ _e9273292761_)
+                     (_e9273392766_
                       (##unchecked-structure-ref
-                       _in9272692735_
+                       _in9272792736_
                        '3
                        gx#module-import::t
                        '#f))
-                     (_phi92768_ _e9273292765_)
-                     (_e9273392770_
+                     (_phi92769_ _e9273392766_)
+                     (_e9273492771_
                       (##unchecked-structure-ref
-                       _in9272692735_
+                       _in9272792736_
                        '4
                        gx#module-import::t
                        '#f))
-                     (_weak?92773_ _e9273392770_))
-                (_K9272992752_
-                 _weak?92773_
-                 _phi92768_
-                 _key92763_
-                 _source92758_))
-              (_E9272892739_)))))
+                     (_weak?92774_ _e9273492771_))
+                (_K9273092753_
+                 _weak?92774_
+                 _phi92769_
+                 _key92764_
+                 _source92759_))
+              (_E9272992740_)))))
     (define gx#core-bind-import!__0
-      (lambda (_in92778_)
-        (let* ((_ctx92780_ (gx#current-expander-context))
-               (_force-weak?92782_ '#f))
-          (gx#core-bind-import!__% _in92778_ _ctx92780_ _force-weak?92782_))))
+      (lambda (_in92779_)
+        (let* ((_ctx92781_ (gx#current-expander-context))
+               (_force-weak?92783_ '#f))
+          (gx#core-bind-import!__% _in92779_ _ctx92781_ _force-weak?92783_))))
     (define gx#core-bind-import!__1
-      (lambda (_in92784_ _ctx92785_)
-        (let ((_force-weak?92787_ '#f))
-          (gx#core-bind-import!__% _in92784_ _ctx92785_ _force-weak?92787_))))
+      (lambda (_in92785_ _ctx92786_)
+        (let ((_force-weak?92788_ '#f))
+          (gx#core-bind-import!__% _in92785_ _ctx92786_ _force-weak?92788_))))
     (define gx#core-bind-import!
-      (lambda _g94588_
-        (let ((_g94587_ (##length _g94588_)))
-          (cond ((##fx= _g94587_ 1)
-                 (apply (lambda (_in92778_)
-                          (gx#core-bind-import!__0 _in92778_))
-                        _g94588_))
-                ((##fx= _g94587_ 2)
-                 (apply (lambda (_in92784_ _ctx92785_)
-                          (gx#core-bind-import!__1 _in92784_ _ctx92785_))
-                        _g94588_))
-                ((##fx= _g94587_ 3)
-                 (apply (lambda (_in92789_ _ctx92790_ _force-weak?92791_)
+      (lambda _g94589_
+        (let ((_g94588_ (##length _g94589_)))
+          (cond ((##fx= _g94588_ 1)
+                 (apply (lambda (_in92779_)
+                          (gx#core-bind-import!__0 _in92779_))
+                        _g94589_))
+                ((##fx= _g94588_ 2)
+                 (apply (lambda (_in92785_ _ctx92786_)
+                          (gx#core-bind-import!__1 _in92785_ _ctx92786_))
+                        _g94589_))
+                ((##fx= _g94588_ 3)
+                 (apply (lambda (_in92790_ _ctx92791_ _force-weak?92792_)
                           (gx#core-bind-import!__%
-                           _in92789_
-                           _ctx92790_
-                           _force-weak?92791_))
-                        _g94588_))
+                           _in92790_
+                           _ctx92791_
+                           _force-weak?92792_))
+                        _g94589_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-import!
-                  _g94588_))))))
+                  _g94589_))))))
     (define gx#core-bind-weak-import!__%
-      (lambda (_in92709_ _ctx92710_)
-        (gx#core-bind-import!__% _in92709_ _ctx92710_ '#t)))
+      (lambda (_in92710_ _ctx92711_)
+        (gx#core-bind-import!__% _in92710_ _ctx92711_ '#t)))
     (define gx#core-bind-weak-import!__0
-      (lambda (_in92715_)
-        (let ((_ctx92717_ (gx#current-expander-context)))
-          (gx#core-bind-weak-import!__% _in92715_ _ctx92717_))))
+      (lambda (_in92716_)
+        (let ((_ctx92718_ (gx#current-expander-context)))
+          (gx#core-bind-weak-import!__% _in92716_ _ctx92718_))))
     (define gx#core-bind-weak-import!
-      (lambda _g94590_
-        (let ((_g94589_ (##length _g94590_)))
-          (cond ((##fx= _g94589_ 1)
-                 (apply (lambda (_in92715_)
-                          (gx#core-bind-weak-import!__0 _in92715_))
-                        _g94590_))
-                ((##fx= _g94589_ 2)
-                 (apply (lambda (_in92719_ _ctx92720_)
-                          (gx#core-bind-weak-import!__% _in92719_ _ctx92720_))
-                        _g94590_))
+      (lambda _g94591_
+        (let ((_g94590_ (##length _g94591_)))
+          (cond ((##fx= _g94590_ 1)
+                 (apply (lambda (_in92716_)
+                          (gx#core-bind-weak-import!__0 _in92716_))
+                        _g94591_))
+                ((##fx= _g94590_ 2)
+                 (apply (lambda (_in92720_ _ctx92721_)
+                          (gx#core-bind-weak-import!__% _in92720_ _ctx92721_))
+                        _g94591_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-weak-import!
-                  _g94590_))))))
+                  _g94591_))))))
     (define gx#core-resolve-module-export
-      (lambda (_out92600_)
-        (letrec ((_subst92602_
-                  (lambda (_key92648_)
-                    (let* ((_key9264992657_ _key92648_)
-                           (_else9265192665_ (lambda () _key92648_))
-                           (_K9265392696_
-                            (lambda (_mark92668_ _id92669_)
-                              (let* ((_mark9267092676_ _mark92668_)
-                                     (_E9267292680_
+      (lambda (_out92601_)
+        (letrec ((_subst92603_
+                  (lambda (_key92649_)
+                    (let* ((_key9265092658_ _key92649_)
+                           (_else9265292666_ (lambda () _key92649_))
+                           (_K9265492697_
+                            (lambda (_mark92669_ _id92670_)
+                              (let* ((_mark9267192677_ _mark92669_)
+                                     (_E9267392681_
                                       (lambda ()
                                         (error '"No clause matching"
-                                               _mark9267092676_)))
-                                     (_K9267392688_
-                                      (lambda (_subst92683_)
-                                        (let ((_$e92685_
-                                               (if _subst92683_
+                                               _mark9267192677_)))
+                                     (_K9267492689_
+                                      (lambda (_subst92684_)
+                                        (let ((_$e92686_
+                                               (if _subst92684_
                                                    (hash-get
-                                                    _subst92683_
-                                                    _id92669_)
+                                                    _subst92684_
+                                                    _id92670_)
                                                    '#f)))
-                                          (if _$e92685_
-                                              _$e92685_
+                                          (if _$e92686_
+                                              _$e92686_
                                               (gx#raise-syntax-error
                                                '#f
                                                '"Illegal key; missing substitution"
-                                               _key92648_))))))
+                                               _key92649_))))))
                                 (if (##structure-instance-of?
-                                     _mark9267092676_
+                                     _mark9267192677_
                                      'gx#expander-mark::t)
-                                    (let* ((_e9267492691_
+                                    (let* ((_e9267592692_
                                             (##unchecked-structure-ref
-                                             _mark9267092676_
+                                             _mark9267192677_
                                              '1
                                              gx#expander-mark::t
                                              '#f))
-                                           (_subst92694_ _e9267492691_))
-                                      (_K9267392688_ _subst92694_))
-                                    (_E9267292680_))))))
-                      (if (##pair? _key9264992657_)
-                          (let ((_hd9265492699_ (##car _key9264992657_))
-                                (_tl9265592701_ (##cdr _key9264992657_)))
-                            (let* ((_id92704_ _hd9265492699_)
-                                   (_mark92706_ _tl9265592701_))
-                              (_K9265392696_ _mark92706_ _id92704_)))
-                          (_else9265192665_))))))
-          (let* ((_out9260392613_ _out92600_)
-                 (_E9260592617_
-                  (lambda () (error '"No clause matching" _out9260392613_)))
-                 (_K9260692624_
-                  (lambda (_phi92620_ _key92621_ _ctx92622_)
+                                           (_subst92695_ _e9267592692_))
+                                      (_K9267492689_ _subst92695_))
+                                    (_E9267392681_))))))
+                      (if (##pair? _key9265092658_)
+                          (let ((_hd9265592700_ (##car _key9265092658_))
+                                (_tl9265692702_ (##cdr _key9265092658_)))
+                            (let* ((_id92705_ _hd9265592700_)
+                                   (_mark92707_ _tl9265692702_))
+                              (_K9265492697_ _mark92707_ _id92705_)))
+                          (_else9265292666_))))))
+          (let* ((_out9260492614_ _out92601_)
+                 (_E9260692618_
+                  (lambda () (error '"No clause matching" _out9260492614_)))
+                 (_K9260792625_
+                  (lambda (_phi92621_ _key92622_ _ctx92623_)
                     (gx#core-context-resolve
-                     (gx#core-context-shift _ctx92622_ _phi92620_)
-                     (_subst92602_ _key92621_)))))
+                     (gx#core-context-shift _ctx92623_ _phi92621_)
+                     (_subst92603_ _key92622_)))))
             (if (##structure-direct-instance-of?
-                 _out9260392613_
+                 _out9260492614_
                  'gx#module-export::t)
-                (let* ((_e9260792627_
+                (let* ((_e9260892628_
                         (##unchecked-structure-ref
-                         _out9260392613_
+                         _out9260492614_
                          '1
                          gx#module-export::t
                          '#f))
-                       (_ctx92630_ _e9260792627_)
-                       (_e9260892632_
+                       (_ctx92631_ _e9260892628_)
+                       (_e9260992633_
                         (##unchecked-structure-ref
-                         _out9260392613_
+                         _out9260492614_
                          '2
                          gx#module-export::t
                          '#f))
-                       (_key92635_ _e9260892632_)
-                       (_e9260992637_
+                       (_key92636_ _e9260992633_)
+                       (_e9261092638_
                         (##unchecked-structure-ref
-                         _out9260392613_
+                         _out9260492614_
                          '3
                          gx#module-export::t
                          '#f))
-                       (_phi92640_ _e9260992637_)
-                       (_e9261092642_
+                       (_phi92641_ _e9261092638_)
+                       (_e9261192643_
                         (##unchecked-structure-ref
-                         _out9260392613_
+                         _out9260492614_
                          '4
                          gx#module-export::t
                          '#f))
-                       (_e9261192645_
+                       (_e9261292646_
                         (##unchecked-structure-ref
-                         _out9260392613_
+                         _out9260492614_
                          '5
                          gx#module-export::t
                          '#f)))
-                  (_K9260692624_ _phi92640_ _key92635_ _ctx92630_))
-                (_E9260592617_))))))
+                  (_K9260792625_ _phi92641_ _key92636_ _ctx92631_))
+                (_E9260692618_))))))
     (define gx#core-module-export->import__%
-      (lambda (_out92525_ _rename92526_ _dphi92527_)
-        (let* ((_out9252892538_ _out92525_)
-               (_E9253092542_
-                (lambda () (error '"No clause matching" _out9252892538_)))
-               (_K9253192554_
-                (lambda (_weak?92545_
-                         _name92546_
-                         _phi92547_
-                         _key92548_
-                         _ctx92549_)
+      (lambda (_out92526_ _rename92527_ _dphi92528_)
+        (let* ((_out9252992539_ _out92526_)
+               (_E9253192543_
+                (lambda () (error '"No clause matching" _out9252992539_)))
+               (_K9253292555_
+                (lambda (_weak?92546_
+                         _name92547_
+                         _phi92548_
+                         _key92549_
+                         _ctx92550_)
                   (##structure
                    gx#module-import::t
-                   _out92525_
-                   (let ((_$e92551_ _rename92526_))
-                     (if _$e92551_ _$e92551_ _name92546_))
-                   (fx+ _phi92547_ _dphi92527_)
-                   _weak?92545_))))
+                   _out92526_
+                   (let ((_$e92552_ _rename92527_))
+                     (if _$e92552_ _$e92552_ _name92547_))
+                   (fx+ _phi92548_ _dphi92528_)
+                   _weak?92546_))))
           (if (##structure-direct-instance-of?
-               _out9252892538_
+               _out9252992539_
                'gx#module-export::t)
-              (let* ((_e9253292557_
+              (let* ((_e9253392558_
                       (##unchecked-structure-ref
-                       _out9252892538_
+                       _out9252992539_
                        '1
                        gx#module-export::t
                        '#f))
-                     (_ctx92560_ _e9253292557_)
-                     (_e9253392562_
+                     (_ctx92561_ _e9253392558_)
+                     (_e9253492563_
                       (##unchecked-structure-ref
-                       _out9252892538_
+                       _out9252992539_
                        '2
                        gx#module-export::t
                        '#f))
-                     (_key92565_ _e9253392562_)
-                     (_e9253492567_
+                     (_key92566_ _e9253492563_)
+                     (_e9253592568_
                       (##unchecked-structure-ref
-                       _out9252892538_
+                       _out9252992539_
                        '3
                        gx#module-export::t
                        '#f))
-                     (_phi92570_ _e9253492567_)
-                     (_e9253592572_
+                     (_phi92571_ _e9253592568_)
+                     (_e9253692573_
                       (##unchecked-structure-ref
-                       _out9252892538_
+                       _out9252992539_
                        '4
                        gx#module-export::t
                        '#f))
-                     (_name92575_ _e9253592572_)
-                     (_e9253692577_
+                     (_name92576_ _e9253692573_)
+                     (_e9253792578_
                       (##unchecked-structure-ref
-                       _out9252892538_
+                       _out9252992539_
                        '5
                        gx#module-export::t
                        '#f))
-                     (_weak?92580_ _e9253692577_))
-                (_K9253192554_
-                 _weak?92580_
-                 _name92575_
-                 _phi92570_
-                 _key92565_
-                 _ctx92560_))
-              (_E9253092542_)))))
+                     (_weak?92581_ _e9253792578_))
+                (_K9253292555_
+                 _weak?92581_
+                 _name92576_
+                 _phi92571_
+                 _key92566_
+                 _ctx92561_))
+              (_E9253192543_)))))
     (define gx#core-module-export->import__0
-      (lambda (_out92585_)
-        (let* ((_rename92587_ '#f) (_dphi92589_ '0))
+      (lambda (_out92586_)
+        (let* ((_rename92588_ '#f) (_dphi92590_ '0))
           (gx#core-module-export->import__%
-           _out92585_
-           _rename92587_
-           _dphi92589_))))
+           _out92586_
+           _rename92588_
+           _dphi92590_))))
     (define gx#core-module-export->import__1
-      (lambda (_out92591_ _rename92592_)
-        (let ((_dphi92594_ '0))
+      (lambda (_out92592_ _rename92593_)
+        (let ((_dphi92595_ '0))
           (gx#core-module-export->import__%
-           _out92591_
-           _rename92592_
-           _dphi92594_))))
+           _out92592_
+           _rename92593_
+           _dphi92595_))))
     (define gx#core-module-export->import
-      (lambda _g94592_
-        (let ((_g94591_ (##length _g94592_)))
-          (cond ((##fx= _g94591_ 1)
-                 (apply (lambda (_out92585_)
-                          (gx#core-module-export->import__0 _out92585_))
-                        _g94592_))
-                ((##fx= _g94591_ 2)
-                 (apply (lambda (_out92591_ _rename92592_)
+      (lambda _g94593_
+        (let ((_g94592_ (##length _g94593_)))
+          (cond ((##fx= _g94592_ 1)
+                 (apply (lambda (_out92586_)
+                          (gx#core-module-export->import__0 _out92586_))
+                        _g94593_))
+                ((##fx= _g94592_ 2)
+                 (apply (lambda (_out92592_ _rename92593_)
                           (gx#core-module-export->import__1
-                           _out92591_
-                           _rename92592_))
-                        _g94592_))
-                ((##fx= _g94591_ 3)
-                 (apply (lambda (_out92596_ _rename92597_ _dphi92598_)
+                           _out92592_
+                           _rename92593_))
+                        _g94593_))
+                ((##fx= _g94592_ 3)
+                 (apply (lambda (_out92597_ _rename92598_ _dphi92599_)
                           (gx#core-module-export->import__%
-                           _out92596_
-                           _rename92597_
-                           _dphi92598_))
-                        _g94592_))
+                           _out92597_
+                           _rename92598_
+                           _dphi92599_))
+                        _g94593_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-module-export->import
-                  _g94592_))))))
+                  _g94593_))))))
     (define gx#core-expand-module%
-      (lambda (_stx92427_)
-        (letrec ((_make-context92429_
-                  (lambda (_id92506_)
-                    (let* ((_super92508_ (gx#current-expander-context))
-                           (_bind-id92510_ (gx#stx-e _id92506_))
-                           (_mod-id92512_
+      (lambda (_stx92428_)
+        (letrec ((_make-context92430_
+                  (lambda (_id92507_)
+                    (let* ((_super92509_ (gx#current-expander-context))
+                           (_bind-id92511_ (gx#stx-e _id92507_))
+                           (_mod-id92513_
                             (if (##structure-instance-of?
-                                 _super92508_
+                                 _super92509_
                                  'gx#module-context::t)
                                 (make-symbol__1
                                  (##structure-ref
-                                  _super92508_
+                                  _super92509_
                                   '1
                                   gx#expander-context::t
                                   '#f)
                                  '"~"
-                                 _bind-id92510_)
-                                _bind-id92510_))
-                           (_ns92514_ (symbol->string _mod-id92512_))
-                           (_path92521_
+                                 _bind-id92511_)
+                                _bind-id92511_))
+                           (_ns92515_ (symbol->string _mod-id92513_))
+                           (_path92522_
                             (if (##structure-instance-of?
-                                 _super92508_
+                                 _super92509_
                                  'gx#module-context::t)
-                                (let ((_path92516_
+                                (let ((_path92517_
                                        (##unchecked-structure-ref
-                                        _super92508_
+                                        _super92509_
                                         '7
                                         gx#module-context::t
                                         '#f)))
-                                  (if (or (pair? _path92516_)
-                                          (null? _path92516_))
-                                      (cons _bind-id92510_ _path92516_)
-                                      (if (not _path92516_)
-                                          _bind-id92510_
-                                          (cons _bind-id92510_
-                                                (cons _path92516_ '())))))
-                                _bind-id92510_)))
-                      (let ((__obj94568
+                                  (if (or (pair? _path92517_)
+                                          (null? _path92517_))
+                                      (cons _bind-id92511_ _path92517_)
+                                      (if (not _path92517_)
+                                          _bind-id92511_
+                                          (cons _bind-id92511_
+                                                (cons _path92517_ '())))))
+                                _bind-id92511_)))
+                      (let ((__obj94569
                              (##structure
                               gx#module-context::t
                               '#f
@@ -2156,893 +2156,893 @@
                               '#f
                               '#f)))
                         (gx#module-context:::init!
-                         __obj94568
-                         _mod-id92512_
-                         _super92508_
-                         _ns92514_
-                         _path92521_)
-                        __obj94568))))
-                 (_valid-module-id?92430_
-                  (lambda (_id92481_)
-                    (let* ((_str92483_ (symbol->string _id92481_))
-                           (_len92485_ (string-length _str92483_)))
-                      (if (fx>= _len92485_ '1)
-                          (let _loop92488_ ((_index92490_
-                                             (fx- (string-length _str92483_)
+                         __obj94569
+                         _mod-id92513_
+                         _super92509_
+                         _ns92515_
+                         _path92522_)
+                        __obj94569))))
+                 (_valid-module-id?92431_
+                  (lambda (_id92482_)
+                    (let* ((_str92484_ (symbol->string _id92482_))
+                           (_len92486_ (string-length _str92484_)))
+                      (if (fx>= _len92486_ '1)
+                          (let _loop92489_ ((_index92491_
+                                             (fx- (string-length _str92484_)
                                                   '1)))
-                            (if (fx>= _index92490_ '0)
-                                (let ((_c92492_
-                                       (string-ref _str92483_ _index92490_)))
-                                  (if (or (and (char>=? _c92492_ '#\a)
-                                               (char<=? _c92492_ '#\z))
-                                          (and (char>=? _c92492_ '#\A)
-                                               (char<=? _c92492_ '#\Z))
-                                          (and (char>=? _c92492_ '#\0)
-                                               (char<=? _c92492_ '#\9))
-                                          (char=? _c92492_ '#\_)
-                                          (char=? _c92492_ '#\-))
-                                      (_loop92488_ (fx- _index92490_ '1))
+                            (if (fx>= _index92491_ '0)
+                                (let ((_c92493_
+                                       (string-ref _str92484_ _index92491_)))
+                                  (if (or (and (char>=? _c92493_ '#\a)
+                                               (char<=? _c92493_ '#\z))
+                                          (and (char>=? _c92493_ '#\A)
+                                               (char<=? _c92493_ '#\Z))
+                                          (and (char>=? _c92493_ '#\0)
+                                               (char<=? _c92493_ '#\9))
+                                          (char=? _c92493_ '#\_)
+                                          (char=? _c92493_ '#\-))
+                                      (_loop92489_ (fx- _index92491_ '1))
                                       '#f))
                                 '#t))
                           '#f)))))
-          (let* ((_e9243192441_ _stx92427_)
-                 (_E9243392445_
+          (let* ((_e9243292442_ _stx92428_)
+                 (_E9243492446_
                   (lambda ()
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid syntax-case clause"
-                     _e9243192441_)))
-                 (_E9243292477_
+                     _e9243292442_)))
+                 (_E9243392478_
                   (lambda ()
-                    (if (gx#stx-pair? _e9243192441_)
-                        (let ((_e9243492449_ (gx#syntax-e _e9243192441_)))
-                          (let ((_hd9243592452_ (##car _e9243492449_))
-                                (_tl9243692454_ (##cdr _e9243492449_)))
-                            (if (gx#stx-pair? _tl9243692454_)
-                                (let ((_e9243792457_
-                                       (gx#syntax-e _tl9243692454_)))
-                                  (let ((_hd9243892460_ (##car _e9243792457_))
-                                        (_tl9243992462_ (##cdr _e9243792457_)))
-                                    (let* ((_id92465_ _hd9243892460_)
-                                           (_body92467_ _tl9243992462_))
-                                      (if (and (gx#identifier? _id92465_)
-                                               (gx#stx-list? _body92467_))
-                                          (if (_valid-module-id?92430_
+                    (if (gx#stx-pair? _e9243292442_)
+                        (let ((_e9243592450_ (gx#syntax-e _e9243292442_)))
+                          (let ((_hd9243692453_ (##car _e9243592450_))
+                                (_tl9243792455_ (##cdr _e9243592450_)))
+                            (if (gx#stx-pair? _tl9243792455_)
+                                (let ((_e9243892458_
+                                       (gx#syntax-e _tl9243792455_)))
+                                  (let ((_hd9243992461_ (##car _e9243892458_))
+                                        (_tl9244092463_ (##cdr _e9243892458_)))
+                                    (let* ((_id92466_ _hd9243992461_)
+                                           (_body92468_ _tl9244092463_))
+                                      (if (and (gx#identifier? _id92466_)
+                                               (gx#stx-list? _body92468_))
+                                          (if (_valid-module-id?92431_
                                                (gx#stx-e
                                                 (gx#datum->syntax__0 '#f 'id)))
-                                              (let* ((_ctx92469_
-                                                      (_make-context92429_
-                                                       _id92465_))
-                                                     (_body92471_
+                                              (let* ((_ctx92470_
+                                                      (_make-context92430_
+                                                       _id92466_))
+                                                     (_body92472_
                                                       (gx#core-expand-module-begin
-                                                       _body92467_
-                                                       _ctx92469_))
-                                                     (_body92473_
+                                                       _body92468_
+                                                       _ctx92470_))
+                                                     (_body92474_
                                                       (gx#core-quote-syntax__1
                                                        (gx#core-cons
                                                         '%#begin
-                                                        _body92471_)
+                                                        _body92472_)
                                                        (gx#stx-source
-                                                        _stx92427_))))
+                                                        _stx92428_))))
                                                 (##unchecked-structure-set!
-                                                 _ctx92469_
+                                                 _ctx92470_
                                                  (make-promise
                                                   (lambda ()
                                                     (gx#eval-syntax*
-                                                     _body92473_)))
+                                                     _body92474_)))
                                                  '10
                                                  gx#module-context::t
                                                  '#f)
                                                 (##unchecked-structure-set!
-                                                 _ctx92469_
-                                                 _body92473_
+                                                 _ctx92470_
+                                                 _body92474_
                                                  '11
                                                  gx#module-context::t
                                                  '#f)
                                                 (gx#core-bind-syntax!__0
-                                                 _id92465_
-                                                 _ctx92469_)
+                                                 _id92466_
+                                                 _ctx92470_)
                                                 (gx#core-quote-syntax__1
                                                  (gx#core-list
                                                   '%#module
                                                   (gx#core-quote-syntax__0
-                                                   _id92465_)
-                                                  _body92473_)
-                                                 (gx#stx-source _stx92427_)))
+                                                   _id92466_)
+                                                  _body92474_)
+                                                 (gx#stx-source _stx92428_)))
                                               (gx#raise-syntax-error
                                                '#f
                                                '"invalid module id; allowed characters are A-Z,a-z,0-9,_,-"
-                                               _stx92427_
+                                               _stx92428_
                                                (gx#datum->syntax__0 '#f 'id)))
-                                          (_E9243392445_)))))
-                                (_E9243392445_))))
-                        (_E9243392445_)))))
-            (_E9243292477_)))))
+                                          (_E9243492446_)))))
+                                (_E9243492446_))))
+                        (_E9243492446_)))))
+            (_E9243392478_)))))
     (define gx#core-expand-module-begin
-      (lambda (_body92393_ _ctx92394_)
+      (lambda (_body92394_ _ctx92395_)
         (call-with-parameters
          (lambda ()
            (gx#core-bind-feature!__1 'gerbil-module '#t)
-           (let* ((_stx92397_
-                   (gx#core-expand-head (cons '%%begin-module _body92393_)))
-                  (_e9239892405_ _stx92397_)
-                  (_E9240092409_
+           (let* ((_stx92398_
+                   (gx#core-expand-head (cons '%%begin-module _body92394_)))
+                  (_e9239992406_ _stx92398_)
+                  (_E9240192410_
                    (lambda ()
                      (gx#raise-syntax-error
                       '#f
                       '"Illegal module body expansion"
-                      _stx92397_)))
-                  (_E9239992423_
+                      _stx92398_)))
+                  (_E9240092424_
                    (lambda ()
-                     (if (gx#stx-pair? _e9239892405_)
-                         (let ((_e9240192413_ (gx#syntax-e _e9239892405_)))
-                           (let ((_hd9240292416_ (##car _e9240192413_))
-                                 (_tl9240392418_ (##cdr _e9240192413_)))
-                             (if (and (gx#identifier? _hd9240292416_)
+                     (if (gx#stx-pair? _e9239992406_)
+                         (let ((_e9240292414_ (gx#syntax-e _e9239992406_)))
+                           (let ((_hd9240392417_ (##car _e9240292414_))
+                                 (_tl9240492419_ (##cdr _e9240292414_)))
+                             (if (and (gx#identifier? _hd9240392417_)
                                       (gx#core-identifier=?
-                                       _hd9240292416_
+                                       _hd9240392417_
                                        '%#begin-module))
-                                 (let ((_body92421_ _tl9240392418_))
+                                 (let ((_body92422_ _tl9240492419_))
                                    (if '#t
-                                       (if (gx#sealed-syntax? _stx92397_)
-                                           _body92421_
+                                       (if (gx#sealed-syntax? _stx92398_)
+                                           _body92422_
                                            (gx#core-expand-module-body
-                                            _body92421_))
-                                       (_E9240092409_)))
-                                 (_E9240092409_))))
-                         (_E9240092409_)))))
-             (_E9239992423_)))
+                                            _body92422_))
+                                       (_E9240192410_)))
+                                 (_E9240192410_))))
+                         (_E9240192410_)))))
+             (_E9240092424_)))
          gx#current-expander-context
-         _ctx92394_
+         _ctx92395_
          gx#current-expander-phi
          '0)))
     (define gx#core-expand-module-body
-      (lambda (_body92189_)
-        (letrec ((_expand-special92191_
-                  (lambda (_hd92320_ _K92321_ _rest92322_ _r92323_)
-                    (let* ((_e9232492341_ _hd92320_)
-                           (_E9233692345_
+      (lambda (_body92190_)
+        (letrec ((_expand-special92192_
+                  (lambda (_hd92321_ _K92322_ _rest92323_ _r92324_)
+                    (let* ((_e9232592342_ _hd92321_)
+                           (_E9233792346_
                             (lambda ()
-                              (_K92321_
-                               _rest92322_
-                               (cons (gx#core-expand-top _hd92320_)
-                                     _r92323_))))
-                           (_E9232692357_
+                              (_K92322_
+                               _rest92323_
+                               (cons (gx#core-expand-top _hd92321_)
+                                     _r92324_))))
+                           (_E9232792358_
                             (lambda ()
-                              (if (gx#stx-pair? _e9232492341_)
-                                  (let ((_e9233792349_
-                                         (gx#syntax-e _e9232492341_)))
-                                    (let ((_hd9233892352_
-                                           (##car _e9233792349_))
-                                          (_tl9233992354_
-                                           (##cdr _e9233792349_)))
-                                      (if (and (gx#identifier? _hd9233892352_)
+                              (if (gx#stx-pair? _e9232592342_)
+                                  (let ((_e9233892350_
+                                         (gx#syntax-e _e9232592342_)))
+                                    (let ((_hd9233992353_
+                                           (##car _e9233892350_))
+                                          (_tl9234092355_
+                                           (##cdr _e9233892350_)))
+                                      (if (and (gx#identifier? _hd9233992353_)
                                                (gx#core-identifier=?
-                                                _hd9233892352_
+                                                _hd9233992353_
                                                 '%#export))
                                           (if '#t
-                                              (_K92321_
-                                               _rest92322_
-                                               (cons _hd92320_ _r92323_))
-                                              (_E9233692345_))
-                                          (_E9233692345_))))
-                                  (_E9233692345_))))
-                           (_E9232592389_
+                                              (_K92322_
+                                               _rest92323_
+                                               (cons _hd92321_ _r92324_))
+                                              (_E9233792346_))
+                                          (_E9233792346_))))
+                                  (_E9233792346_))))
+                           (_E9232692390_
                             (lambda ()
-                              (if (gx#stx-pair? _e9232492341_)
-                                  (let ((_e9232792361_
-                                         (gx#syntax-e _e9232492341_)))
-                                    (let ((_hd9232892364_
-                                           (##car _e9232792361_))
-                                          (_tl9232992366_
-                                           (##cdr _e9232792361_)))
-                                      (if (and (gx#identifier? _hd9232892364_)
+                              (if (gx#stx-pair? _e9232592342_)
+                                  (let ((_e9232892362_
+                                         (gx#syntax-e _e9232592342_)))
+                                    (let ((_hd9232992365_
+                                           (##car _e9232892362_))
+                                          (_tl9233092367_
+                                           (##cdr _e9232892362_)))
+                                      (if (and (gx#identifier? _hd9232992365_)
                                                (gx#core-identifier=?
-                                                _hd9232892364_
+                                                _hd9232992365_
                                                 '%#define-values))
-                                          (if (gx#stx-pair? _tl9232992366_)
-                                              (let ((_e9233092369_
+                                          (if (gx#stx-pair? _tl9233092367_)
+                                              (let ((_e9233192370_
                                                      (gx#syntax-e
-                                                      _tl9232992366_)))
-                                                (let ((_hd9233192372_
-                                                       (##car _e9233092369_))
-                                                      (_tl9233292374_
-                                                       (##cdr _e9233092369_)))
-                                                  (let ((_hd-bind92377_
-                                                         _hd9233192372_))
+                                                      _tl9233092367_)))
+                                                (let ((_hd9233292373_
+                                                       (##car _e9233192370_))
+                                                      (_tl9233392375_
+                                                       (##cdr _e9233192370_)))
+                                                  (let ((_hd-bind92378_
+                                                         _hd9233292373_))
                                                     (if (gx#stx-pair?
-                                                         _tl9233292374_)
-                                                        (let ((_e9233392379_
+                                                         _tl9233392375_)
+                                                        (let ((_e9233492380_
                                                                (gx#syntax-e
-                                                                _tl9233292374_)))
-                                                          (let ((_hd9233492382_
+                                                                _tl9233392375_)))
+                                                          (let ((_hd9233592383_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (##car _e9233392379_))
-                        (_tl9233592384_ (##cdr _e9233392379_)))
-                    (let ((_expr92387_ _hd9233492382_))
-                      (if (gx#stx-null? _tl9233592384_)
-                          (if (gx#core-bind-values? _hd-bind92377_)
+                         (##car _e9233492380_))
+                        (_tl9233692385_ (##cdr _e9233492380_)))
+                    (let ((_expr92388_ _hd9233592383_))
+                      (if (gx#stx-null? _tl9233692385_)
+                          (if (gx#core-bind-values? _hd-bind92378_)
                               (begin
-                                (gx#core-bind-values!__0 _hd-bind92377_)
-                                (_K92321_
-                                 _rest92322_
-                                 (cons _hd92320_ _r92323_)))
-                              (_E9232692357_))
-                          (_E9232692357_)))))
-                (_E9232692357_)))))
+                                (gx#core-bind-values!__0 _hd-bind92378_)
+                                (_K92322_
+                                 _rest92323_
+                                 (cons _hd92321_ _r92324_)))
+                              (_E9232792358_))
+                          (_E9232792358_)))))
+                (_E9232792358_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_E9232692357_))
-                                          (_E9232692357_))))
-                                  (_E9232692357_)))))
-                      (_E9232592389_))))
-                 (_expand-body92192_
-                  (lambda (_rbody92194_)
-                    (let _lp92196_ ((_rest92198_ _rbody92194_)
-                                    (_body92199_ '()))
-                      (let* ((_rest9220092208_ _rest92198_)
-                             (_else9220292216_ (lambda () _body92199_))
-                             (_K9220492308_
-                              (lambda (_rest92219_ _hd92220_)
-                                (let* ((_e9222192242_ _hd92220_)
-                                       (_E9223792246_
+                                              (_E9232792358_))
+                                          (_E9232792358_))))
+                                  (_E9232792358_)))))
+                      (_E9232692390_))))
+                 (_expand-body92193_
+                  (lambda (_rbody92195_)
+                    (let _lp92197_ ((_rest92199_ _rbody92195_)
+                                    (_body92200_ '()))
+                      (let* ((_rest9220192209_ _rest92199_)
+                             (_else9220392217_ (lambda () _body92200_))
+                             (_K9220592309_
+                              (lambda (_rest92220_ _hd92221_)
+                                (let* ((_e9222292243_ _hd92221_)
+                                       (_E9223892247_
                                         (lambda ()
-                                          (_lp92196_
-                                           _rest92219_
+                                          (_lp92197_
+                                           _rest92220_
                                            (cons (gx#core-expand-expression
-                                                  _hd92220_)
-                                                 _body92199_))))
-                                       (_E9223392260_
+                                                  _hd92221_)
+                                                 _body92200_))))
+                                       (_E9223492261_
                                         (lambda ()
-                                          (if (gx#stx-pair? _e9222192242_)
-                                              (let ((_e9223892250_
+                                          (if (gx#stx-pair? _e9222292243_)
+                                              (let ((_e9223992251_
                                                      (gx#syntax-e
-                                                      _e9222192242_)))
-                                                (let ((_hd9223992253_
-                                                       (##car _e9223892250_))
-                                                      (_tl9224092255_
-                                                       (##cdr _e9223892250_)))
-                                                  (let ((_form92258_
-                                                         _hd9223992253_))
+                                                      _e9222292243_)))
+                                                (let ((_hd9224092254_
+                                                       (##car _e9223992251_))
+                                                      (_tl9224192256_
+                                                       (##cdr _e9223992251_)))
+                                                  (let ((_form92259_
+                                                         _hd9224092254_))
                                                     (if (gx#core-bound-identifier?__%
-                                                         _form92258_
+                                                         _form92259_
                                                          gx#special-form-binding?)
-                                                        (_lp92196_
-                                                         _rest92219_
-                                                         (cons _hd92220_
-                                                               _body92199_))
-                                                        (_E9223792246_)))))
-                                              (_E9223792246_))))
-                                       (_E9222392272_
+                                                        (_lp92197_
+                                                         _rest92220_
+                                                         (cons _hd92221_
+                                                               _body92200_))
+                                                        (_E9223892247_)))))
+                                              (_E9223892247_))))
+                                       (_E9222492273_
                                         (lambda ()
-                                          (if (gx#stx-pair? _e9222192242_)
-                                              (let ((_e9223492264_
+                                          (if (gx#stx-pair? _e9222292243_)
+                                              (let ((_e9223592265_
                                                      (gx#syntax-e
-                                                      _e9222192242_)))
-                                                (let ((_hd9223592267_
-                                                       (##car _e9223492264_))
-                                                      (_tl9223692269_
-                                                       (##cdr _e9223492264_)))
+                                                      _e9222292243_)))
+                                                (let ((_hd9223692268_
+                                                       (##car _e9223592265_))
+                                                      (_tl9223792270_
+                                                       (##cdr _e9223592265_)))
                                                   (if (and (gx#identifier?
-                                                            _hd9223592267_)
+                                                            _hd9223692268_)
                                                            (gx#core-identifier=?
-                                                            _hd9223592267_
+                                                            _hd9223692268_
                                                             '%#export))
                                                       (if '#t
-                                                          (_lp92196_
-                                                           _rest92219_
+                                                          (_lp92197_
+                                                           _rest92220_
                                                            (cons (gx#core-expand-export%__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _hd92220_)
-                         _body92199_))
-                  (_E9223392260_))
-              (_E9223392260_))))
+                          _hd92221_)
+                         _body92200_))
+                  (_E9223492261_))
+              (_E9223492261_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_E9223392260_))))
-                                       (_E9222292304_
+                                              (_E9223492261_))))
+                                       (_E9222392305_
                                         (lambda ()
-                                          (if (gx#stx-pair? _e9222192242_)
-                                              (let ((_e9222492276_
+                                          (if (gx#stx-pair? _e9222292243_)
+                                              (let ((_e9222592277_
                                                      (gx#syntax-e
-                                                      _e9222192242_)))
-                                                (let ((_hd9222592279_
-                                                       (##car _e9222492276_))
-                                                      (_tl9222692281_
-                                                       (##cdr _e9222492276_)))
+                                                      _e9222292243_)))
+                                                (let ((_hd9222692280_
+                                                       (##car _e9222592277_))
+                                                      (_tl9222792282_
+                                                       (##cdr _e9222592277_)))
                                                   (if (and (gx#identifier?
-                                                            _hd9222592279_)
+                                                            _hd9222692280_)
                                                            (gx#core-identifier=?
-                                                            _hd9222592279_
+                                                            _hd9222692280_
                                                             '%#define-values))
                                                       (if (gx#stx-pair?
-                                                           _tl9222692281_)
-                                                          (let ((_e9222792284_
+                                                           _tl9222792282_)
+                                                          (let ((_e9222892285_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#syntax-e _tl9222692281_)))
-                    (let ((_hd9222892287_ (##car _e9222792284_))
-                          (_tl9222992289_ (##cdr _e9222792284_)))
-                      (let ((_hd-bind92292_ _hd9222892287_))
-                        (if (gx#stx-pair? _tl9222992289_)
-                            (let ((_e9223092294_ (gx#syntax-e _tl9222992289_)))
-                              (let ((_hd9223192297_ (##car _e9223092294_))
-                                    (_tl9223292299_ (##cdr _e9223092294_)))
-                                (let ((_expr92302_ _hd9223192297_))
-                                  (if (gx#stx-null? _tl9223292299_)
+                         (gx#syntax-e _tl9222792282_)))
+                    (let ((_hd9222992288_ (##car _e9222892285_))
+                          (_tl9223092290_ (##cdr _e9222892285_)))
+                      (let ((_hd-bind92293_ _hd9222992288_))
+                        (if (gx#stx-pair? _tl9223092290_)
+                            (let ((_e9223192295_ (gx#syntax-e _tl9223092290_)))
+                              (let ((_hd9223292298_ (##car _e9223192295_))
+                                    (_tl9223392300_ (##cdr _e9223192295_)))
+                                (let ((_expr92303_ _hd9223292298_))
+                                  (if (gx#stx-null? _tl9223392300_)
                                       (if '#t
-                                          (_lp92196_
-                                           _rest92219_
+                                          (_lp92197_
+                                           _rest92220_
                                            (cons (gx#core-quote-syntax__1
                                                   (gx#core-list
                                                    '%#define-values
                                                    (gx#core-quote-bind-values
-                                                    _hd-bind92292_)
+                                                    _hd-bind92293_)
                                                    (gx#core-expand-expression
-                                                    _expr92302_))
-                                                  (gx#stx-source _hd92220_))
-                                                 _body92199_))
-                                          (_E9222392272_))
-                                      (_E9222392272_)))))
-                            (_E9222392272_)))))
-                  (_E9222392272_))
-              (_E9222392272_))))
+                                                    _expr92303_))
+                                                  (gx#stx-source _hd92221_))
+                                                 _body92200_))
+                                          (_E9222492273_))
+                                      (_E9222492273_)))))
+                            (_E9222492273_)))))
+                  (_E9222492273_))
+              (_E9222492273_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_E9222392272_)))))
-                                  (_E9222292304_)))))
-                        (if (##pair? _rest9220092208_)
-                            (let ((_hd9220592311_ (##car _rest9220092208_))
-                                  (_tl9220692313_ (##cdr _rest9220092208_)))
-                              (let* ((_hd92316_ _hd9220592311_)
-                                     (_rest92318_ _tl9220692313_))
-                                (_K9220492308_ _rest92318_ _hd92316_)))
-                            (_else9220292216_)))))))
-          (_expand-body92192_
+                                              (_E9222492273_)))))
+                                  (_E9222392305_)))))
+                        (if (##pair? _rest9220192209_)
+                            (let ((_hd9220692312_ (##car _rest9220192209_))
+                                  (_tl9220792314_ (##cdr _rest9220192209_)))
+                              (let* ((_hd92317_ _hd9220692312_)
+                                     (_rest92319_ _tl9220792314_))
+                                (_K9220592309_ _rest92319_ _hd92317_)))
+                            (_else9220392217_)))))))
+          (_expand-body92193_
            (gx#core-expand-block__%
-            (cons '%#begin-module _body92189_)
-            _expand-special92191_
+            (cons '%#begin-module _body92190_)
+            _expand-special92192_
             '#f
             values)))))
     (define gx#core-expand-import/export
-      (lambda (_stx92032_
-               _expanded?92033_
-               _method92034_
-               _current-phi92035_
-               _expand192036_)
-        (letrec ((_K92038_
-                  (lambda (_rest92156_ _r92157_)
-                    (let* ((_e9215892165_ _rest92156_)
-                           (_E9216092169_ (lambda () _r92157_))
-                           (_E9215992185_
+      (lambda (_stx92033_
+               _expanded?92034_
+               _method92035_
+               _current-phi92036_
+               _expand192037_)
+        (letrec ((_K92039_
+                  (lambda (_rest92157_ _r92158_)
+                    (let* ((_e9215992166_ _rest92157_)
+                           (_E9216192170_ (lambda () _r92158_))
+                           (_E9216092186_
                             (lambda ()
-                              (if (gx#stx-pair? _e9215892165_)
-                                  (let ((_e9216192173_
-                                         (gx#syntax-e _e9215892165_)))
-                                    (let ((_hd9216292176_
-                                           (##car _e9216192173_))
-                                          (_tl9216392178_
-                                           (##cdr _e9216192173_)))
-                                      (let* ((_hd92181_ _hd9216292176_)
-                                             (_rest92183_ _tl9216392178_))
+                              (if (gx#stx-pair? _e9215992166_)
+                                  (let ((_e9216292174_
+                                         (gx#syntax-e _e9215992166_)))
+                                    (let ((_hd9216392177_
+                                           (##car _e9216292174_))
+                                          (_tl9216492179_
+                                           (##cdr _e9216292174_)))
+                                      (let* ((_hd92182_ _hd9216392177_)
+                                             (_rest92184_ _tl9216492179_))
                                         (if '#t
-                                            (_step92039_
-                                             _hd92181_
-                                             _rest92183_
-                                             _r92157_)
-                                            (_E9216092169_)))))
-                                  (_E9216092169_)))))
-                      (_E9215992185_))))
-                 (_step92039_
-                  (lambda (_hd92070_ _rest92071_ _r92072_)
-                    (let* ((_e9207392091_ _hd92070_)
-                           (_E9208692095_
+                                            (_step92040_
+                                             _hd92182_
+                                             _rest92184_
+                                             _r92158_)
+                                            (_E9216192170_)))))
+                                  (_E9216192170_)))))
+                      (_E9216092186_))))
+                 (_step92040_
+                  (lambda (_hd92071_ _rest92072_ _r92073_)
+                    (let* ((_e9207492092_ _hd92071_)
+                           (_E9208792096_
                             (lambda ()
-                              (if (_expanded?92033_ (gx#stx-e _hd92070_))
-                                  (_K92038_
-                                   _rest92071_
-                                   (cons (gx#stx-e _hd92070_) _r92072_))
-                                  (_expand192036_
-                                   _hd92070_
-                                   _K92038_
-                                   _rest92071_
-                                   _r92072_))))
-                           (_E9208292111_
+                              (if (_expanded?92034_ (gx#stx-e _hd92071_))
+                                  (_K92039_
+                                   _rest92072_
+                                   (cons (gx#stx-e _hd92071_) _r92073_))
+                                  (_expand192037_
+                                   _hd92071_
+                                   _K92039_
+                                   _rest92072_
+                                   _r92073_))))
+                           (_E9208392112_
                             (lambda ()
-                              (if (gx#stx-pair? _e9207392091_)
-                                  (let ((_e9208792099_
-                                         (gx#syntax-e _e9207392091_)))
-                                    (let ((_hd9208892102_
-                                           (##car _e9208792099_))
-                                          (_tl9208992104_
-                                           (##cdr _e9208792099_)))
-                                      (let* ((_macro92107_ _hd9208892102_)
-                                             (_body92109_ _tl9208992104_))
+                              (if (gx#stx-pair? _e9207492092_)
+                                  (let ((_e9208892100_
+                                         (gx#syntax-e _e9207492092_)))
+                                    (let ((_hd9208992103_
+                                           (##car _e9208892100_))
+                                          (_tl9209092105_
+                                           (##cdr _e9208892100_)))
+                                      (let* ((_macro92108_ _hd9208992103_)
+                                             (_body92110_ _tl9209092105_))
                                         (if (gx#core-bound-identifier?__%
-                                             _macro92107_
+                                             _macro92108_
                                              gx#syntax-binding?)
-                                            (_K92038_
+                                            (_K92039_
                                              (cons (gx#core-apply-expander__%
                                                     (gx#syntax-local-e__0
-                                                     _macro92107_)
-                                                    _hd92070_
-                                                    _method92034_)
-                                                   _rest92071_)
-                                             _r92072_)
-                                            (_E9208692095_)))))
-                                  (_E9208692095_))))
-                           (_E9207592125_
+                                                     _macro92108_)
+                                                    _hd92071_
+                                                    _method92035_)
+                                                   _rest92072_)
+                                             _r92073_)
+                                            (_E9208792096_)))))
+                                  (_E9208792096_))))
+                           (_E9207692126_
                             (lambda ()
-                              (if (gx#stx-pair? _e9207392091_)
-                                  (let ((_e9208392115_
-                                         (gx#syntax-e _e9207392091_)))
-                                    (let ((_hd9208492118_
-                                           (##car _e9208392115_))
-                                          (_tl9208592120_
-                                           (##cdr _e9208392115_)))
-                                      (if (eq? (gx#stx-e _hd9208492118_)
+                              (if (gx#stx-pair? _e9207492092_)
+                                  (let ((_e9208492116_
+                                         (gx#syntax-e _e9207492092_)))
+                                    (let ((_hd9208592119_
+                                           (##car _e9208492116_))
+                                          (_tl9208692121_
+                                           (##cdr _e9208492116_)))
+                                      (if (eq? (gx#stx-e _hd9208592119_)
                                                'begin:)
-                                          (let ((_body92123_ _tl9208592120_))
+                                          (let ((_body92124_ _tl9208692121_))
                                             (if '#t
-                                                (_K92038_
+                                                (_K92039_
                                                  (gx#stx-foldr
                                                   cons
-                                                  _rest92071_
-                                                  _body92123_)
-                                                 _r92072_)
-                                                (_E9208292111_)))
-                                          (_E9208292111_))))
-                                  (_E9208292111_))))
-                           (_E9207492152_
+                                                  _rest92072_
+                                                  _body92124_)
+                                                 _r92073_)
+                                                (_E9208392112_)))
+                                          (_E9208392112_))))
+                                  (_E9208392112_))))
+                           (_E9207592153_
                             (lambda ()
-                              (if (gx#stx-pair? _e9207392091_)
-                                  (let ((_e9207692129_
-                                         (gx#syntax-e _e9207392091_)))
-                                    (let ((_hd9207792132_
-                                           (##car _e9207692129_))
-                                          (_tl9207892134_
-                                           (##cdr _e9207692129_)))
-                                      (if (eq? (gx#stx-e _hd9207792132_) 'phi:)
-                                          (if (gx#stx-pair? _tl9207892134_)
-                                              (let ((_e9207992137_
+                              (if (gx#stx-pair? _e9207492092_)
+                                  (let ((_e9207792130_
+                                         (gx#syntax-e _e9207492092_)))
+                                    (let ((_hd9207892133_
+                                           (##car _e9207792130_))
+                                          (_tl9207992135_
+                                           (##cdr _e9207792130_)))
+                                      (if (eq? (gx#stx-e _hd9207892133_) 'phi:)
+                                          (if (gx#stx-pair? _tl9207992135_)
+                                              (let ((_e9208092138_
                                                      (gx#syntax-e
-                                                      _tl9207892134_)))
-                                                (let ((_hd9208092140_
-                                                       (##car _e9207992137_))
-                                                      (_tl9208192142_
-                                                       (##cdr _e9207992137_)))
-                                                  (let* ((_dphi92145_
-                                                          _hd9208092140_)
-                                                         (_body92147_
-                                                          _tl9208192142_))
+                                                      _tl9207992135_)))
+                                                (let ((_hd9208192141_
+                                                       (##car _e9208092138_))
+                                                      (_tl9208292143_
+                                                       (##cdr _e9208092138_)))
+                                                  (let* ((_dphi92146_
+                                                          _hd9208192141_)
+                                                         (_body92148_
+                                                          _tl9208292143_))
                                                     (if (gx#stx-fixnum?
-                                                         _dphi92145_)
-                                                        (let ((_rbody92150_
+                                                         _dphi92146_)
+                                                        (let ((_rbody92151_
                                                                (call-with-parameters
                                                                 (lambda ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (_K92038_ _body92147_ '()))
-                        _current-phi92035_
-                        (fx+ (gx#stx-e _dphi92145_) (_current-phi92035_)))))
-                  (_K92038_ _rest92071_ (foldr1 cons _r92072_ _rbody92150_)))
-                (_E9207592125_)))))
+                          (_K92039_ _body92148_ '()))
+                        _current-phi92036_
+                        (fx+ (gx#stx-e _dphi92146_) (_current-phi92036_)))))
+                  (_K92039_ _rest92072_ (foldr1 cons _r92073_ _rbody92151_)))
+                (_E9207692126_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_E9207592125_))
-                                          (_E9207592125_))))
-                                  (_E9207592125_)))))
-                      (_E9207492152_)))))
-          (let* ((_e9204092047_ _stx92032_)
-                 (_E9204292051_
+                                              (_E9207692126_))
+                                          (_E9207692126_))))
+                                  (_E9207692126_)))))
+                      (_E9207592153_)))))
+          (let* ((_e9204192048_ _stx92033_)
+                 (_E9204392052_
                   (lambda ()
                     (gx#raise-syntax-error
                      '#f
                      '"Bad syntax; invalid syntax-case clause"
-                     _e9204092047_)))
-                 (_E9204192066_
+                     _e9204192048_)))
+                 (_E9204292067_
                   (lambda ()
-                    (if (gx#stx-pair? _e9204092047_)
-                        (let ((_e9204392055_ (gx#syntax-e _e9204092047_)))
-                          (let ((_hd9204492058_ (##car _e9204392055_))
-                                (_tl9204592060_ (##cdr _e9204392055_)))
-                            (let ((_body92063_ _tl9204592060_))
+                    (if (gx#stx-pair? _e9204192048_)
+                        (let ((_e9204492056_ (gx#syntax-e _e9204192048_)))
+                          (let ((_hd9204592059_ (##car _e9204492056_))
+                                (_tl9204692061_ (##cdr _e9204492056_)))
+                            (let ((_body92064_ _tl9204692061_))
                               (if '#t
-                                  (if (_current-phi92035_)
-                                      (_K92038_ _body92063_ '())
+                                  (if (_current-phi92036_)
+                                      (_K92039_ _body92064_ '())
                                       (call-with-parameters
-                                       (lambda () (_K92038_ _body92063_ '()))
-                                       _current-phi92035_
+                                       (lambda () (_K92039_ _body92064_ '()))
+                                       _current-phi92036_
                                        (gx#current-expander-phi)))
-                                  (_E9204292051_)))))
-                        (_E9204292051_)))))
-            (_E9204192066_)))))
+                                  (_E9204392052_)))))
+                        (_E9204392052_)))))
+            (_E9204292067_)))))
     (define gx#core-expand-import%__%
-      (lambda (_stx91699_ _internal-expand?91700_)
-        (letrec ((_expand191702_
-                  (lambda (_hd92012_ _K92013_ _rest92014_ _r92015_)
-                    (if (gx#core-bound-module? _hd92012_)
-                        (_import191703_
-                         (gx#syntax-local-e__0 _hd92012_)
-                         _K92013_
-                         _rest92014_
-                         _r92015_)
-                        (if (gx#core-library-module-path? _hd92012_)
-                            (_import191703_
+      (lambda (_stx91700_ _internal-expand?91701_)
+        (letrec ((_expand191703_
+                  (lambda (_hd92013_ _K92014_ _rest92015_ _r92016_)
+                    (if (gx#core-bound-module? _hd92013_)
+                        (_import191704_
+                         (gx#syntax-local-e__0 _hd92013_)
+                         _K92014_
+                         _rest92015_
+                         _r92016_)
+                        (if (gx#core-library-module-path? _hd92013_)
+                            (_import191704_
                              (gx#import-module__0
-                              (gx#core-resolve-library-module-path _hd92012_))
-                             _K92013_
-                             _rest92014_
-                             _r92015_)
+                              (gx#core-resolve-library-module-path _hd92013_))
+                             _K92014_
+                             _rest92015_
+                             _r92016_)
                             (if (gx#core-library-relative-module-path?
-                                 _hd92012_)
-                                (_import191703_
+                                 _hd92013_)
+                                (_import191704_
                                  (gx#import-module__0
                                   (gx#core-resolve-library-relative-module-path
-                                   _hd92012_))
-                                 _K92013_
-                                 _rest92014_
-                                 _r92015_)
-                                (let ((_e92017_ (gx#stx-e _hd92012_)))
-                                  (if (pair? _e92017_)
-                                      (let ((_$e92019_
-                                             (gx#stx-e (car _e92017_))))
-                                        (if (eq? 'spec: _$e92019_)
-                                            (_import-spec91706_
-                                             _hd92012_
-                                             _K92013_
-                                             _rest92014_
-                                             _r92015_)
-                                            (if (eq? 'in: _$e92019_)
-                                                (_import-submodule91704_
-                                                 _hd92012_
-                                                 _K92013_
-                                                 _rest92014_
-                                                 _r92015_)
-                                                (if (eq? 'runtime: _$e92019_)
-                                                    (_import-runtime91705_
-                                                     _hd92012_
-                                                     _K92013_
-                                                     _rest92014_
-                                                     _r92015_)
+                                   _hd92013_))
+                                 _K92014_
+                                 _rest92015_
+                                 _r92016_)
+                                (let ((_e92018_ (gx#stx-e _hd92013_)))
+                                  (if (pair? _e92018_)
+                                      (let ((_$e92020_
+                                             (gx#stx-e (car _e92018_))))
+                                        (if (eq? 'spec: _$e92020_)
+                                            (_import-spec91707_
+                                             _hd92013_
+                                             _K92014_
+                                             _rest92015_
+                                             _r92016_)
+                                            (if (eq? 'in: _$e92020_)
+                                                (_import-submodule91705_
+                                                 _hd92013_
+                                                 _K92014_
+                                                 _rest92015_
+                                                 _r92016_)
+                                                (if (eq? 'runtime: _$e92020_)
+                                                    (_import-runtime91706_
+                                                     _hd92013_
+                                                     _K92014_
+                                                     _rest92015_
+                                                     _r92016_)
                                                     (gx#raise-syntax-error
                                                      '#f
                                                      '"Bad syntax; illegal import"
-                                                     _stx91699_
-                                                     _hd92012_)))))
-                                      (if (string? _e92017_)
-                                          (_import191703_
+                                                     _stx91700_
+                                                     _hd92013_)))))
+                                      (if (string? _e92018_)
+                                          (_import191704_
                                            (gx#import-module__0
                                             (gx#core-resolve-module-path__%
-                                             _hd92012_
-                                             (gx#stx-source _stx91699_)))
-                                           _K92013_
-                                           _rest92014_
-                                           _r92015_)
+                                             _hd92013_
+                                             (gx#stx-source _stx91700_)))
+                                           _K92014_
+                                           _rest92015_
+                                           _r92016_)
                                           (if (##structure-instance-of?
-                                               _e92017_
+                                               _e92018_
                                                'gx#module-context::t)
-                                              (_K92013_
-                                               _rest92014_
-                                               (cons _e92017_ _r92015_))
+                                              (_K92014_
+                                               _rest92015_
+                                               (cons _e92018_ _r92016_))
                                               (gx#raise-syntax-error
                                                '#f
                                                '"Bad syntax; illegal import"
-                                               _stx91699_
-                                               _hd92012_))))))))))
-                 (_import191703_
-                  (lambda (_ctx92001_ _K92002_ _rest92003_ _r92004_)
-                    (let ((_dphi92006_
+                                               _stx91700_
+                                               _hd92013_))))))))))
+                 (_import191704_
+                  (lambda (_ctx92002_ _K92003_ _rest92004_ _r92005_)
+                    (let ((_dphi92007_
                            (fx- (gx#current-import-expander-phi)
                                 (gx#current-expander-phi))))
-                      (_K92002_
-                       _rest92003_
+                      (_K92003_
+                       _rest92004_
                        (cons (##structure
                               gx#import-set::t
-                              _ctx92001_
-                              _dphi92006_
-                              (map (lambda (_g9200792009_)
+                              _ctx92002_
+                              _dphi92007_
+                              (map (lambda (_g9200892010_)
                                      (gx#core-module-export->import__%
-                                      _g9200792009_
+                                      _g9200892010_
                                       '#f
-                                      _dphi92006_))
+                                      _dphi92007_))
                                    (##unchecked-structure-ref
-                                    _ctx92001_
+                                    _ctx92002_
                                     '9
                                     gx#module-context::t
                                     '#f)))
-                             _r92004_)))))
-                 (_import-submodule91704_
-                  (lambda (_hd91968_ _K91969_ _rest91970_ _r91971_)
-                    (let* ((_e9197291979_ _hd91968_)
-                           (_E9197491983_
+                             _r92005_)))))
+                 (_import-submodule91705_
+                  (lambda (_hd91969_ _K91970_ _rest91971_ _r91972_)
+                    (let* ((_e9197391980_ _hd91969_)
+                           (_E9197591984_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Bad syntax; invalid syntax-case clause"
-                               _e9197291979_)))
-                           (_E9197391997_
+                               _e9197391980_)))
+                           (_E9197491998_
                             (lambda ()
-                              (if (gx#stx-pair? _e9197291979_)
-                                  (let ((_e9197591987_
-                                         (gx#syntax-e _e9197291979_)))
-                                    (let ((_hd9197691990_
-                                           (##car _e9197591987_))
-                                          (_tl9197791992_
-                                           (##cdr _e9197591987_)))
-                                      (let ((_spath91995_ _tl9197791992_))
+                              (if (gx#stx-pair? _e9197391980_)
+                                  (let ((_e9197691988_
+                                         (gx#syntax-e _e9197391980_)))
+                                    (let ((_hd9197791991_
+                                           (##car _e9197691988_))
+                                          (_tl9197891993_
+                                           (##cdr _e9197691988_)))
+                                      (let ((_spath91996_ _tl9197891993_))
                                         (if '#t
-                                            (_import191703_
-                                             (_import-spec-source91707_
-                                              _spath91995_)
-                                             _K91969_
-                                             _rest91970_
-                                             _r91971_)
-                                            (_E9197491983_)))))
-                                  (_E9197491983_)))))
-                      (_E9197391997_))))
-                 (_import-runtime91705_
-                  (lambda (_hd91935_ _K91936_ _rest91937_ _r91938_)
-                    (let* ((_e9193991946_ _hd91935_)
-                           (_E9194191950_
+                                            (_import191704_
+                                             (_import-spec-source91708_
+                                              _spath91996_)
+                                             _K91970_
+                                             _rest91971_
+                                             _r91972_)
+                                            (_E9197591984_)))))
+                                  (_E9197591984_)))))
+                      (_E9197491998_))))
+                 (_import-runtime91706_
+                  (lambda (_hd91936_ _K91937_ _rest91938_ _r91939_)
+                    (let* ((_e9194091947_ _hd91936_)
+                           (_E9194291951_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Bad syntax; invalid syntax-case clause"
-                               _e9193991946_)))
-                           (_E9194091964_
+                               _e9194091947_)))
+                           (_E9194191965_
                             (lambda ()
-                              (if (gx#stx-pair? _e9193991946_)
-                                  (let ((_e9194291954_
-                                         (gx#syntax-e _e9193991946_)))
-                                    (let ((_hd9194391957_
-                                           (##car _e9194291954_))
-                                          (_tl9194491959_
-                                           (##cdr _e9194291954_)))
-                                      (let ((_spath91962_ _tl9194491959_))
+                              (if (gx#stx-pair? _e9194091947_)
+                                  (let ((_e9194391955_
+                                         (gx#syntax-e _e9194091947_)))
+                                    (let ((_hd9194491958_
+                                           (##car _e9194391955_))
+                                          (_tl9194591960_
+                                           (##cdr _e9194391955_)))
+                                      (let ((_spath91963_ _tl9194591960_))
                                         (if '#t
-                                            (_K91936_
-                                             _rest91937_
-                                             (cons (_import-spec-source91707_
-                                                    _spath91962_)
-                                                   _r91938_))
-                                            (_E9194191950_)))))
-                                  (_E9194191950_)))))
-                      (_E9194091964_))))
-                 (_import-spec91706_
-                  (lambda (_hd91774_ _K91775_ _rest91776_ _r91777_)
-                    (let* ((_e9177891795_ _hd91774_)
-                           (_E9178791799_
+                                            (_K91937_
+                                             _rest91938_
+                                             (cons (_import-spec-source91708_
+                                                    _spath91963_)
+                                                   _r91939_))
+                                            (_E9194291951_)))))
+                                  (_E9194291951_)))))
+                      (_E9194191965_))))
+                 (_import-spec91707_
+                  (lambda (_hd91775_ _K91776_ _rest91777_ _r91778_)
+                    (let* ((_e9177991796_ _hd91775_)
+                           (_E9178891800_
                             (lambda ()
                               (gx#raise-syntax-error
                                '#f
                                '"Bad syntax; invalid syntax-case clause"
-                               _e9177891795_)))
-                           (_E9178091909_
+                               _e9177991796_)))
+                           (_E9178191910_
                             (lambda ()
-                              (if (gx#stx-pair? _e9177891795_)
-                                  (let ((_e9178891803_
-                                         (gx#syntax-e _e9177891795_)))
-                                    (let ((_hd9178991806_
-                                           (##car _e9178891803_))
-                                          (_tl9179091808_
-                                           (##cdr _e9178891803_)))
-                                      (if (gx#stx-pair? _tl9179091808_)
-                                          (let ((_e9179191811_
-                                                 (gx#syntax-e _tl9179091808_)))
-                                            (let ((_hd9179291814_
-                                                   (##car _e9179191811_))
-                                                  (_tl9179391816_
-                                                   (##cdr _e9179191811_)))
-                                              (let* ((_path91819_
-                                                      _hd9179291814_)
-                                                     (_specs91821_
-                                                      _tl9179391816_))
+                              (if (gx#stx-pair? _e9177991796_)
+                                  (let ((_e9178991804_
+                                         (gx#syntax-e _e9177991796_)))
+                                    (let ((_hd9179091807_
+                                           (##car _e9178991804_))
+                                          (_tl9179191809_
+                                           (##cdr _e9178991804_)))
+                                      (if (gx#stx-pair? _tl9179191809_)
+                                          (let ((_e9179291812_
+                                                 (gx#syntax-e _tl9179191809_)))
+                                            (let ((_hd9179391815_
+                                                   (##car _e9179291812_))
+                                                  (_tl9179491817_
+                                                   (##cdr _e9179291812_)))
+                                              (let* ((_path91820_
+                                                      _hd9179391815_)
+                                                     (_specs91822_
+                                                      _tl9179491817_))
                                                 (if '#t
-                                                    (let ((_src-ctx91823_
-                                                           (_import-spec-source91707_
-                                                            _path91819_))
-                                                          (_exports91824_
+                                                    (let ((_src-ctx91824_
+                                                           (_import-spec-source91708_
+                                                            _path91820_))
+                                                          (_exports91825_
                                                            (make-hash-table))
-                                                          (_specs91825_
+                                                          (_specs91826_
                                                            (gx#syntax->list
-                                                            _specs91821_)))
+                                                            _specs91822_)))
                                                       (for-each
-                                                       (lambda (_out91827_)
+                                                       (lambda (_out91828_)
                                                          (hash-put!
-                                                          _exports91824_
+                                                          _exports91825_
                                                           (cons (##unchecked-structure-ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _out91827_
+                         _out91828_
                          '3
                          gx#module-export::t
                          '#f)
                         (##unchecked-structure-ref
-                         _out91827_
+                         _out91828_
                          '4
                          gx#module-export::t
                          '#f))
-                  _out91827_))
+                  _out91828_))
                (##unchecked-structure-ref
-                _src-ctx91823_
+                _src-ctx91824_
                 '9
                 gx#module-context::t
                 '#f))
-              (_K91775_
-               _rest91776_
-               (foldl1 (lambda (_spec91829_ _r91830_)
-                         (let* ((_e9183191847_ _spec91829_)
-                                (_E9183391851_
+              (_K91776_
+               _rest91777_
+               (foldl1 (lambda (_spec91830_ _r91831_)
+                         (let* ((_e9183291848_ _spec91830_)
+                                (_E9183491852_
                                  (lambda ()
                                    (gx#raise-syntax-error
                                     '#f
                                     '"Bad syntax; invalid syntax-case clause"
-                                    _e9183191847_)))
-                                (_E9183291905_
+                                    _e9183291848_)))
+                                (_E9183391906_
                                  (lambda ()
-                                   (if (gx#stx-pair? _e9183191847_)
-                                       (let ((_e9183491855_
-                                              (gx#syntax-e _e9183191847_)))
-                                         (let ((_hd9183591858_
-                                                (##car _e9183491855_))
-                                               (_tl9183691860_
-                                                (##cdr _e9183491855_)))
-                                           (let ((_phi91863_ _hd9183591858_))
-                                             (if (gx#stx-pair? _tl9183691860_)
-                                                 (let ((_e9183791865_
+                                   (if (gx#stx-pair? _e9183291848_)
+                                       (let ((_e9183591856_
+                                              (gx#syntax-e _e9183291848_)))
+                                         (let ((_hd9183691859_
+                                                (##car _e9183591856_))
+                                               (_tl9183791861_
+                                                (##cdr _e9183591856_)))
+                                           (let ((_phi91864_ _hd9183691859_))
+                                             (if (gx#stx-pair? _tl9183791861_)
+                                                 (let ((_e9183891866_
                                                         (gx#syntax-e
-                                                         _tl9183691860_)))
-                                                   (let ((_hd9183891868_
-                                                          (##car _e9183791865_))
-                                                         (_tl9183991870_
-                                                          (##cdr _e9183791865_)))
-                                                     (let ((_name91873_
-                                                            _hd9183891868_))
+                                                         _tl9183791861_)))
+                                                   (let ((_hd9183991869_
+                                                          (##car _e9183891866_))
+                                                         (_tl9184091871_
+                                                          (##cdr _e9183891866_)))
+                                                     (let ((_name91874_
+                                                            _hd9183991869_))
                                                        (if (gx#stx-pair?
-                                                            _tl9183991870_)
-                                                           (let ((_e9184091875_
+                                                            _tl9184091871_)
+                                                           (let ((_e9184191876_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (gx#syntax-e _tl9183991870_)))
-                     (let ((_hd9184191878_ (##car _e9184091875_))
-                           (_tl9184291880_ (##cdr _e9184091875_)))
-                       (let ((_src-phi91883_ _hd9184191878_))
-                         (if (gx#stx-pair? _tl9184291880_)
-                             (let ((_e9184391885_
-                                    (gx#syntax-e _tl9184291880_)))
-                               (let ((_hd9184491888_ (##car _e9184391885_))
-                                     (_tl9184591890_ (##cdr _e9184391885_)))
-                                 (let ((_src-name91893_ _hd9184491888_))
-                                   (if (gx#stx-null? _tl9184591890_)
-                                       (if (and (gx#stx-fixnum? _src-phi91883_)
+                          (gx#syntax-e _tl9184091871_)))
+                     (let ((_hd9184291879_ (##car _e9184191876_))
+                           (_tl9184391881_ (##cdr _e9184191876_)))
+                       (let ((_src-phi91884_ _hd9184291879_))
+                         (if (gx#stx-pair? _tl9184391881_)
+                             (let ((_e9184491886_
+                                    (gx#syntax-e _tl9184391881_)))
+                               (let ((_hd9184591889_ (##car _e9184491886_))
+                                     (_tl9184691891_ (##cdr _e9184491886_)))
+                                 (let ((_src-name91894_ _hd9184591889_))
+                                   (if (gx#stx-null? _tl9184691891_)
+                                       (if (and (gx#stx-fixnum? _src-phi91884_)
                                                 (gx#identifier?
-                                                 _src-name91893_)
-                                                (gx#stx-fixnum? _phi91863_)
-                                                (gx#identifier? _name91873_))
-                                           (let ((_src-phi91895_
-                                                  (gx#stx-e _src-phi91883_))
-                                                 (_src-name91896_
+                                                 _src-name91894_)
+                                                (gx#stx-fixnum? _phi91864_)
+                                                (gx#identifier? _name91874_))
+                                           (let ((_src-phi91896_
+                                                  (gx#stx-e _src-phi91884_))
+                                                 (_src-name91897_
                                                   (gx#core-identifier-key
-                                                   _src-name91893_))
-                                                 (_phi91897_
-                                                  (gx#stx-e _phi91863_))
-                                                 (_name91898_
+                                                   _src-name91894_))
+                                                 (_phi91898_
+                                                  (gx#stx-e _phi91864_))
+                                                 (_name91899_
                                                   (gx#core-identifier-key
-                                                   _name91873_)))
-                                             (let ((_$e91900_
+                                                   _name91874_)))
+                                             (let ((_$e91901_
                                                     (hash-get
-                                                     _exports91824_
-                                                     (cons _src-phi91895_
-                                                           _src-name91896_))))
-                                               (if _$e91900_
-                                                   ((lambda (_out91903_)
+                                                     _exports91825_
+                                                     (cons _src-phi91896_
+                                                           _src-name91897_))))
+                                               (if _$e91901_
+                                                   ((lambda (_out91904_)
                                                       (cons (gx#core-module-export->import__%
-                                                             _out91903_
-                                                             _name91898_
-                                                             (fx- _phi91897_
+                                                             _out91904_
+                                                             _name91899_
+                                                             (fx- _phi91898_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _src-phi91895_))
-                    _r91830_))
+                          _src-phi91896_))
+                    _r91831_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _$e91900_)
+                                                    _$e91901_)
                                                    (gx#raise-syntax-error
                                                     '#f
                                                     '"Bad syntax; no matching export"
-                                                    _stx91699_
-                                                    _hd91774_))))
-                                           (_E9183391851_))
-                                       (_E9183391851_)))))
-                             (_E9183391851_)))))
-                   (_E9183391851_)))))
+                                                    _stx91700_
+                                                    _hd91775_))))
+                                           (_E9183491852_))
+                                       (_E9183491852_)))))
+                             (_E9183491852_)))))
+                   (_E9183491852_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (_E9183391851_)))))
-                                       (_E9183391851_)))))
-                           (_E9183291905_)))
-                       _r91777_
-                       _specs91825_)))
+                                                 (_E9183491852_)))))
+                                       (_E9183491852_)))))
+                           (_E9183391906_)))
+                       _r91778_
+                       _specs91826_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_E9178791799_)))))
-                                          (_E9178791799_))))
-                                  (_E9178791799_))))
-                           (_E9177991931_
+                                                    (_E9178891800_)))))
+                                          (_E9178891800_))))
+                                  (_E9178891800_))))
+                           (_E9178091932_
                             (lambda ()
-                              (if (gx#stx-pair? _e9177891795_)
-                                  (let ((_e9178191913_
-                                         (gx#syntax-e _e9177891795_)))
-                                    (let ((_hd9178291916_
-                                           (##car _e9178191913_))
-                                          (_tl9178391918_
-                                           (##cdr _e9178191913_)))
-                                      (if (gx#stx-pair? _tl9178391918_)
-                                          (let ((_e9178491921_
-                                                 (gx#syntax-e _tl9178391918_)))
-                                            (let ((_hd9178591924_
-                                                   (##car _e9178491921_))
-                                                  (_tl9178691926_
-                                                   (##cdr _e9178491921_)))
-                                              (let ((_path91929_
-                                                     _hd9178591924_))
+                              (if (gx#stx-pair? _e9177991796_)
+                                  (let ((_e9178291914_
+                                         (gx#syntax-e _e9177991796_)))
+                                    (let ((_hd9178391917_
+                                           (##car _e9178291914_))
+                                          (_tl9178491919_
+                                           (##cdr _e9178291914_)))
+                                      (if (gx#stx-pair? _tl9178491919_)
+                                          (let ((_e9178591922_
+                                                 (gx#syntax-e _tl9178491919_)))
+                                            (let ((_hd9178691925_
+                                                   (##car _e9178591922_))
+                                                  (_tl9178791927_
+                                                   (##cdr _e9178591922_)))
+                                              (let ((_path91930_
+                                                     _hd9178691925_))
                                                 (if (gx#stx-null?
-                                                     _tl9178691926_)
+                                                     _tl9178791927_)
                                                     (if '#t
-                                                        (_K91775_
-                                                         _rest91776_
-                                                         (cons (_import-spec-source91707_
-                                                                _path91929_)
-                                                               _r91777_))
-                                                        (_E9178091909_))
-                                                    (_E9178091909_)))))
-                                          (_E9178091909_))))
-                                  (_E9178091909_)))))
-                      (_E9177991931_))))
-                 (_import-spec-source91707_
-                  (lambda (_spath91772_)
-                    (gx#core-import-nested-module _spath91772_ _stx91699_)))
-                 (_import!91708_
-                  (lambda (_rbody91721_)
-                    (letrec* ((_current-ctx91723_
+                                                        (_K91776_
+                                                         _rest91777_
+                                                         (cons (_import-spec-source91708_
+                                                                _path91930_)
+                                                               _r91778_))
+                                                        (_E9178191910_))
+                                                    (_E9178191910_)))))
+                                          (_E9178191910_))))
+                                  (_E9178191910_)))))
+                      (_E9178091932_))))
+                 (_import-spec-source91708_
+                  (lambda (_spath91773_)
+                    (gx#core-import-nested-module _spath91773_ _stx91700_)))
+                 (_import!91709_
+                  (lambda (_rbody91722_)
+                    (letrec* ((_current-ctx91724_
                                (gx#current-expander-context))
-                              (_deps91724_ (make-hash-table-eq))
-                              (_bind!91725_
-                               (lambda (_hd91770_)
+                              (_deps91725_ (make-hash-table-eq))
+                              (_bind!91726_
+                               (lambda (_hd91771_)
                                  (gx#core-bind-import!__1
-                                  _hd91770_
-                                  _current-ctx91723_))))
-                      (let _lp91727_ ((_rest91729_ _rbody91721_)
-                                      (_body91730_ '()))
-                        (let* ((_rest9173191739_ _rest91729_)
-                               (_else9173391749_
+                                  _hd91771_
+                                  _current-ctx91724_))))
+                      (let _lp91728_ ((_rest91730_ _rbody91722_)
+                                      (_body91731_ '()))
+                        (let* ((_rest9173291740_ _rest91730_)
+                               (_else9173491750_
                                 (lambda ()
                                   (if (##structure-instance-of?
-                                       _current-ctx91723_
+                                       _current-ctx91724_
                                        'gx#module-context::t)
                                       (##unchecked-structure-set!
-                                       _current-ctx91723_
+                                       _current-ctx91724_
                                        (foldl1 cons
                                                (##unchecked-structure-ref
-                                                _current-ctx91723_
+                                                _current-ctx91724_
                                                 '8
                                                 gx#module-context::t
                                                 '#f)
-                                               _body91730_)
+                                               _body91731_)
                                        '8
                                        gx#module-context::t
                                        '#f)
                                       '#!void)
                                   (hash-for-each
-                                   (lambda (_ctx91747_ _g94593_)
-                                     (gx#eval-module _ctx91747_))
-                                   _deps91724_)
-                                  _body91730_))
-                               (_K9173591758_
-                                (lambda (_rest91752_ _hd91753_)
+                                   (lambda (_ctx91748_ _g94594_)
+                                     (gx#eval-module _ctx91748_))
+                                   _deps91725_)
+                                  _body91731_))
+                               (_K9173691759_
+                                (lambda (_rest91753_ _hd91754_)
                                   (if (##structure-direct-instance-of?
-                                       _hd91753_
+                                       _hd91754_
                                        'gx#module-import::t)
                                       (begin
-                                        (_bind!91725_ _hd91753_)
+                                        (_bind!91726_ _hd91754_)
                                         (if (and (fxpositive?
                                                   (##unchecked-structure-ref
-                                                   _hd91753_
+                                                   _hd91754_
                                                    '3
                                                    gx#module-import::t
                                                    '#f))
                                                  (fxzero? (##unchecked-structure-ref
                                                            (##unchecked-structure-ref
-                                                            _hd91753_
+                                                            _hd91754_
                                                             '1
                                                             gx#module-import::t
                                                             '#f)
@@ -3050,10 +3050,10 @@
                                                            gx#module-export::t
                                                            '#f)))
                                             (hash-put!
-                                             _deps91724_
+                                             _deps91725_
                                              (##unchecked-structure-ref
                                               (##unchecked-structure-ref
-                                               _hd91753_
+                                               _hd91754_
                                                '1
                                                gx#module-import::t
                                                '#f)
@@ -3063,155 +3063,155 @@
                                              '#t)
                                             '#!void))
                                       (if (##structure-direct-instance-of?
-                                           _hd91753_
+                                           _hd91754_
                                            'gx#import-set::t)
                                           (begin
                                             (for-each
-                                             _bind!91725_
+                                             _bind!91726_
                                              (##unchecked-structure-ref
-                                              _hd91753_
+                                              _hd91754_
                                               '3
                                               gx#import-set::t
                                               '#f))
                                             (if (fxpositive?
                                                  (##unchecked-structure-ref
-                                                  _hd91753_
+                                                  _hd91754_
                                                   '2
                                                   gx#import-set::t
                                                   '#f))
                                                 (hash-put!
-                                                 _deps91724_
+                                                 _deps91725_
                                                  (##unchecked-structure-ref
-                                                  _hd91753_
+                                                  _hd91754_
                                                   '1
                                                   gx#import-set::t
                                                   '#f)
                                                  '#t)
                                                 '#!void))
-                                          (let ((_$e91755_
+                                          (let ((_$e91756_
                                                  (##structure-instance-of?
-                                                  _hd91753_
+                                                  _hd91754_
                                                   'gx#module-context::t)))
-                                            (if _$e91755_
-                                                _$e91755_
+                                            (if _$e91756_
+                                                _$e91756_
                                                 (gx#raise-syntax-error
                                                  '#f
                                                  '"Unexpected import"
-                                                 _stx91699_
-                                                 _hd91753_)))))
-                                  (_lp91727_
-                                   _rest91752_
-                                   (cons _hd91753_ _body91730_)))))
-                          (if (##pair? _rest9173191739_)
-                              (let ((_hd9173691761_ (##car _rest9173191739_))
-                                    (_tl9173791763_ (##cdr _rest9173191739_)))
-                                (let* ((_hd91766_ _hd9173691761_)
-                                       (_rest91768_ _tl9173791763_))
-                                  (_K9173591758_ _rest91768_ _hd91766_)))
-                              (_else9173391749_)))))))
-                 (_expanded-import?91709_
-                  (lambda (_e91713_)
-                    (let ((_$e91715_
+                                                 _stx91700_
+                                                 _hd91754_)))))
+                                  (_lp91728_
+                                   _rest91753_
+                                   (cons _hd91754_ _body91731_)))))
+                          (if (##pair? _rest9173291740_)
+                              (let ((_hd9173791762_ (##car _rest9173291740_))
+                                    (_tl9173891764_ (##cdr _rest9173291740_)))
+                                (let* ((_hd91767_ _hd9173791762_)
+                                       (_rest91769_ _tl9173891764_))
+                                  (_K9173691759_ _rest91769_ _hd91767_)))
+                              (_else9173491750_)))))))
+                 (_expanded-import?91710_
+                  (lambda (_e91714_)
+                    (let ((_$e91716_
                            (##structure-direct-instance-of?
-                            _e91713_
+                            _e91714_
                             'gx#import-set::t)))
-                      (if _$e91715_
-                          _$e91715_
-                          (let ((_$e91718_
+                      (if _$e91716_
+                          _$e91716_
+                          (let ((_$e91719_
                                  (##structure-direct-instance-of?
-                                  _e91713_
+                                  _e91714_
                                   'gx#module-import::t)))
-                            (if _$e91718_
-                                _$e91718_
+                            (if _$e91719_
+                                _$e91719_
                                 (##structure-instance-of?
-                                 _e91713_
+                                 _e91714_
                                  'gx#module-context::t))))))))
-          (let ((_rbody91711_
+          (let ((_rbody91712_
                  (gx#core-expand-import/export
-                  _stx91699_
-                  _expanded-import?91709_
+                  _stx91700_
+                  _expanded-import?91710_
                   'apply-import-expander
                   gx#current-import-expander-phi
-                  _expand191702_)))
-            (if _internal-expand?91700_
-                (reverse _rbody91711_)
+                  _expand191703_)))
+            (if _internal-expand?91701_
+                (reverse _rbody91712_)
                 (gx#core-quote-syntax__1
-                 (gx#core-cons '%#import (_import!91708_ _rbody91711_))
-                 (gx#stx-source _stx91699_)))))))
+                 (gx#core-cons '%#import (_import!91709_ _rbody91712_))
+                 (gx#stx-source _stx91700_)))))))
     (define gx#core-expand-import%__0
-      (lambda (_stx92025_)
-        (let ((_internal-expand?92027_ '#f))
-          (gx#core-expand-import%__% _stx92025_ _internal-expand?92027_))))
+      (lambda (_stx92026_)
+        (let ((_internal-expand?92028_ '#f))
+          (gx#core-expand-import%__% _stx92026_ _internal-expand?92028_))))
     (define gx#core-expand-import%
-      (lambda _g94595_
-        (let ((_g94594_ (##length _g94595_)))
-          (cond ((##fx= _g94594_ 1)
-                 (apply (lambda (_stx92025_)
-                          (gx#core-expand-import%__0 _stx92025_))
-                        _g94595_))
-                ((##fx= _g94594_ 2)
-                 (apply (lambda (_stx92029_ _internal-expand?92030_)
+      (lambda _g94596_
+        (let ((_g94595_ (##length _g94596_)))
+          (cond ((##fx= _g94595_ 1)
+                 (apply (lambda (_stx92026_)
+                          (gx#core-expand-import%__0 _stx92026_))
+                        _g94596_))
+                ((##fx= _g94595_ 2)
+                 (apply (lambda (_stx92030_ _internal-expand?92031_)
                           (gx#core-expand-import%__%
-                           _stx92029_
-                           _internal-expand?92030_))
-                        _g94595_))
+                           _stx92030_
+                           _internal-expand?92031_))
+                        _g94596_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-import%
-                  _g94595_))))))
+                  _g94596_))))))
     (define gx#core-import-nested-module
-      (lambda (_spath91626_ _where91627_)
-        (let* ((_e9162891635_ _spath91626_)
-               (_E9163091639_
+      (lambda (_spath91627_ _where91628_)
+        (let* ((_e9162991636_ _spath91627_)
+               (_E9163191640_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid syntax-case clause"
-                   _e9162891635_)))
-               (_E9162991694_
+                   _e9162991636_)))
+               (_E9163091695_
                 (lambda ()
-                  (if (gx#stx-pair? _e9162891635_)
-                      (let ((_e9163191643_ (gx#syntax-e _e9162891635_)))
-                        (let ((_hd9163291646_ (##car _e9163191643_))
-                              (_tl9163391648_ (##cdr _e9163191643_)))
-                          (let* ((_origin91651_ _hd9163291646_)
-                                 (_sub91653_ _tl9163391648_))
+                  (if (gx#stx-pair? _e9162991636_)
+                      (let ((_e9163291644_ (gx#syntax-e _e9162991636_)))
+                        (let ((_hd9163391647_ (##car _e9163291644_))
+                              (_tl9163491649_ (##cdr _e9163291644_)))
+                          (let* ((_origin91652_ _hd9163391647_)
+                                 (_sub91654_ _tl9163491649_))
                             (if '#t
-                                (let ((_origin-ctx91655_
-                                       (if (gx#stx-false? _origin91651_)
+                                (let ((_origin-ctx91656_
+                                       (if (gx#stx-false? _origin91652_)
                                            (gx#current-expander-context)
                                            (gx#import-module__0
-                                            _origin91651_))))
-                                  (let _lp91657_ ((_rest91659_ _sub91653_)
-                                                  (_ctx91660_
-                                                   _origin-ctx91655_))
-                                    (let* ((_e9166191668_ _rest91659_)
-                                           (_E9166391672_
-                                            (lambda () _ctx91660_))
-                                           (_E9166291690_
+                                            _origin91652_))))
+                                  (let _lp91658_ ((_rest91660_ _sub91654_)
+                                                  (_ctx91661_
+                                                   _origin-ctx91656_))
+                                    (let* ((_e9166291669_ _rest91660_)
+                                           (_E9166491673_
+                                            (lambda () _ctx91661_))
+                                           (_E9166391691_
                                             (lambda ()
-                                              (if (gx#stx-pair? _e9166191668_)
-                                                  (let ((_e9166491676_
+                                              (if (gx#stx-pair? _e9166291669_)
+                                                  (let ((_e9166591677_
                                                          (gx#syntax-e
-                                                          _e9166191668_)))
-                                                    (let ((_hd9166591679_
-                                                           (##car _e9166491676_))
-                                                          (_tl9166691681_
-                                                           (##cdr _e9166491676_)))
-                                                      (let* ((_id91684_
-                                                              _hd9166591679_)
-                                                             (_rest91686_
-                                                              _tl9166691681_))
+                                                          _e9166291669_)))
+                                                    (let ((_hd9166691680_
+                                                           (##car _e9166591677_))
+                                                          (_tl9166791682_
+                                                           (##cdr _e9166591677_)))
+                                                      (let* ((_id91685_
+                                                              _hd9166691680_)
+                                                             (_rest91687_
+                                                              _tl9166791682_))
                                                         (if '#t
-                                                            (let ((_bind91688_
+                                                            (let ((_bind91689_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (gx#resolve-identifier__% _id91684_ '0 _ctx91660_)))
+                           (gx#resolve-identifier__% _id91685_ '0 _ctx91661_)))
                       (if (and (##structure-direct-instance-of?
-                                _bind91688_
+                                _bind91689_
                                 'gx#syntax-binding::t)
                                (##structure-instance-of?
                                 (##unchecked-structure-ref
-                                 _bind91688_
+                                 _bind91689_
                                  '4
                                  gx#syntax-binding::t
                                  '#f)
@@ -3220,821 +3220,821 @@
                           (gx#raise-syntax-error
                            '#f
                            '"Bad syntax; not bound as module"
-                           _where91627_
-                           _spath91626_
-                           _id91684_))
-                      (_lp91657_
-                       _rest91686_
+                           _where91628_
+                           _spath91627_
+                           _id91685_))
+                      (_lp91658_
+                       _rest91687_
                        (##unchecked-structure-ref
-                        _bind91688_
+                        _bind91689_
                         '4
                         gx#syntax-binding::t
                         '#f)))
-                    (_E9166391672_)))))
+                    (_E9166491673_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_E9166391672_)))))
-                                      (_E9166291690_))))
-                                (_E9163091639_)))))
-                      (_E9163091639_)))))
-          (_E9162991694_))))
+                                                  (_E9166491673_)))))
+                                      (_E9166391691_))))
+                                (_E9163191640_)))))
+                      (_E9163191640_)))))
+          (_E9163091695_))))
     (define gx#core-expand-import-source
-      (lambda (_hd91624_)
+      (lambda (_hd91625_)
         (gx#core-expand-import%__%
-         (cons 'import-internal% (cons _hd91624_ '()))
+         (cons 'import-internal% (cons _hd91625_ '()))
          '#t)))
     (define gx#core-expand-export%__%
-      (lambda (_stx91132_ _internal-expand?91133_)
-        (letrec* ((_make-export__9452494525_
-                   (lambda (_bind91572_ _phi91573_ _ctx91574_ _name91575_)
-                     (let* ((_key91577_
+      (lambda (_stx91133_ _internal-expand?91134_)
+        (letrec* ((_make-export__9452594526_
+                   (lambda (_bind91573_ _phi91574_ _ctx91575_ _name91576_)
+                     (let* ((_key91578_
                              (##unchecked-structure-ref
-                              _bind91572_
+                              _bind91573_
                               '2
                               gx#binding::t
                               '#f))
-                            (_export-key91579_
-                             (if _name91575_
-                                 (gx#core-identifier-key _name91575_)
-                                 _key91577_)))
+                            (_export-key91580_
+                             (if _name91576_
+                                 (gx#core-identifier-key _name91576_)
+                                 _key91578_)))
                        (##structure
                         gx#module-export::t
-                        _ctx91574_
-                        _key91577_
-                        _phi91573_
-                        _export-key91579_
-                        (let ((_$e91582_
+                        _ctx91575_
+                        _key91578_
+                        _phi91574_
+                        _export-key91580_
+                        (let ((_$e91583_
                                (##structure-instance-of?
-                                _bind91572_
+                                _bind91573_
                                 'gx#extern-binding::t)))
-                          (if _$e91582_
-                              _$e91582_
+                          (if _$e91583_
+                              _$e91583_
                               (##structure-direct-instance-of?
-                               _bind91572_
+                               _bind91573_
                                'gx#import-binding::t)))))))
-                  (_make-export__0__9452694529_
-                   (lambda (_bind91588_)
-                     (let* ((_phi91590_ (gx#current-export-expander-phi))
-                            (_ctx91592_ (gx#current-expander-context))
-                            (_name91594_ '#f))
-                       (_make-export__9452494525_
-                        _bind91588_
-                        _phi91590_
-                        _ctx91592_
-                        _name91594_))))
-                  (_make-export__1__9452794530_
-                   (lambda (_bind91596_ _phi91597_)
-                     (let* ((_ctx91599_ (gx#current-expander-context))
-                            (_name91601_ '#f))
-                       (_make-export__9452494525_
-                        _bind91596_
-                        _phi91597_
-                        _ctx91599_
-                        _name91601_))))
-                  (_make-export__2__9452894531_
-                   (lambda (_bind91603_ _phi91604_ _ctx91605_)
-                     (let ((_name91607_ '#f))
-                       (_make-export__9452494525_
-                        _bind91603_
-                        _phi91604_
-                        _ctx91605_
-                        _name91607_))))
-                  (_make-export91135_
-                   (lambda _g94597_
-                     (let ((_g94596_ (##length _g94597_)))
-                       (cond ((##fx= _g94596_ 1)
-                              (apply (lambda (_bind91588_)
-                                       (_make-export__0__9452694529_
-                                        _bind91588_))
-                                     _g94597_))
-                             ((##fx= _g94596_ 2)
-                              (apply (lambda (_bind91596_ _phi91597_)
-                                       (_make-export__1__9452794530_
-                                        _bind91596_
-                                        _phi91597_))
-                                     _g94597_))
-                             ((##fx= _g94596_ 3)
-                              (apply (lambda (_bind91603_
-                                              _phi91604_
-                                              _ctx91605_)
-                                       (_make-export__2__9452894531_
-                                        _bind91603_
-                                        _phi91604_
-                                        _ctx91605_))
-                                     _g94597_))
-                             ((##fx= _g94596_ 4)
-                              (apply (lambda (_bind91609_
-                                              _phi91610_
-                                              _ctx91611_
-                                              _name91612_)
-                                       (_make-export__9452494525_
-                                        _bind91609_
-                                        _phi91610_
-                                        _ctx91611_
-                                        _name91612_))
-                                     _g94597_))
+                  (_make-export__0__9452794530_
+                   (lambda (_bind91589_)
+                     (let* ((_phi91591_ (gx#current-export-expander-phi))
+                            (_ctx91593_ (gx#current-expander-context))
+                            (_name91595_ '#f))
+                       (_make-export__9452594526_
+                        _bind91589_
+                        _phi91591_
+                        _ctx91593_
+                        _name91595_))))
+                  (_make-export__1__9452894531_
+                   (lambda (_bind91597_ _phi91598_)
+                     (let* ((_ctx91600_ (gx#current-expander-context))
+                            (_name91602_ '#f))
+                       (_make-export__9452594526_
+                        _bind91597_
+                        _phi91598_
+                        _ctx91600_
+                        _name91602_))))
+                  (_make-export__2__9452994532_
+                   (lambda (_bind91604_ _phi91605_ _ctx91606_)
+                     (let ((_name91608_ '#f))
+                       (_make-export__9452594526_
+                        _bind91604_
+                        _phi91605_
+                        _ctx91606_
+                        _name91608_))))
+                  (_make-export91136_
+                   (lambda _g94598_
+                     (let ((_g94597_ (##length _g94598_)))
+                       (cond ((##fx= _g94597_ 1)
+                              (apply (lambda (_bind91589_)
+                                       (_make-export__0__9452794530_
+                                        _bind91589_))
+                                     _g94598_))
+                             ((##fx= _g94597_ 2)
+                              (apply (lambda (_bind91597_ _phi91598_)
+                                       (_make-export__1__9452894531_
+                                        _bind91597_
+                                        _phi91598_))
+                                     _g94598_))
+                             ((##fx= _g94597_ 3)
+                              (apply (lambda (_bind91604_
+                                              _phi91605_
+                                              _ctx91606_)
+                                       (_make-export__2__9452994532_
+                                        _bind91604_
+                                        _phi91605_
+                                        _ctx91606_))
+                                     _g94598_))
+                             ((##fx= _g94597_ 4)
+                              (apply (lambda (_bind91610_
+                                              _phi91611_
+                                              _ctx91612_
+                                              _name91613_)
+                                       (_make-export__9452594526_
+                                        _bind91610_
+                                        _phi91611_
+                                        _ctx91612_
+                                        _name91613_))
+                                     _g94598_))
                              (else
                               (##raise-wrong-number-of-arguments-exception
                                'case-lambda-dispatch
-                               _g94597_))))))
-                  (_expand191136_
-                   (lambda (_hd91285_ _K91286_ _rest91287_ _r91288_)
-                     (let* ((_e9128991321_ _hd91285_)
-                            (_E9131691325_
+                               _g94598_))))))
+                  (_expand191137_
+                   (lambda (_hd91286_ _K91287_ _rest91288_ _r91289_)
+                     (let* ((_e9129091322_ _hd91286_)
+                            (_E9131791326_
                              (lambda ()
                                (gx#raise-syntax-error
                                 '#f
                                 '"Bad syntax; illegal export"
-                                _stx91132_
-                                _hd91285_)))
-                            (_E9130691404_
+                                _stx91133_
+                                _hd91286_)))
+                            (_E9130791405_
                              (lambda ()
-                               (if (gx#stx-pair? _e9128991321_)
-                                   (let ((_e9131791329_
-                                          (gx#syntax-e _e9128991321_)))
-                                     (let ((_hd9131891332_
-                                            (##car _e9131791329_))
-                                           (_tl9131991334_
-                                            (##cdr _e9131791329_)))
-                                       (if (eq? (gx#stx-e _hd9131891332_)
+                               (if (gx#stx-pair? _e9129091322_)
+                                   (let ((_e9131891330_
+                                          (gx#syntax-e _e9129091322_)))
+                                     (let ((_hd9131991333_
+                                            (##car _e9131891330_))
+                                           (_tl9132091335_
+                                            (##cdr _e9131891330_)))
+                                       (if (eq? (gx#stx-e _hd9131991333_)
                                                 'import:)
-                                           (let ((_in91337_ _tl9131991334_))
-                                             (if (gx#stx-list? _in91337_)
-                                                 (let _lp91339_ ((_in-rest91341_
+                                           (let ((_in91338_ _tl9132091335_))
+                                             (if (gx#stx-list? _in91338_)
+                                                 (let _lp91340_ ((_in-rest91342_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _in91337_)
-                         (_r91342_ _r91288_))
+                          _in91338_)
+                         (_r91343_ _r91289_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (let* ((_e9134391350_
-                                                           _in-rest91341_)
-                                                          (_E9134591354_
+                                                   (let* ((_e9134491351_
+                                                           _in-rest91342_)
+                                                          (_E9134691355_
                                                            (lambda ()
-                                                             (_K91286_
-                                                              _rest91287_
-                                                              _r91342_)))
-                                                          (_E9134491400_
+                                                             (_K91287_
+                                                              _rest91288_
+                                                              _r91343_)))
+                                                          (_E9134591401_
                                                            (lambda ()
                                                              (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _e9134391350_)
-                         (let ((_e9134691358_ (gx#syntax-e _e9134391350_)))
-                           (let ((_hd9134791361_ (##car _e9134691358_))
-                                 (_tl9134891363_ (##cdr _e9134691358_)))
-                             (let* ((_hd91366_ _hd9134791361_)
-                                    (_in-rest91368_ _tl9134891363_))
+                          _e9134491351_)
+                         (let ((_e9134791359_ (gx#syntax-e _e9134491351_)))
+                           (let ((_hd9134891362_ (##car _e9134791359_))
+                                 (_tl9134991364_ (##cdr _e9134791359_)))
+                             (let* ((_hd91367_ _hd9134891362_)
+                                    (_in-rest91369_ _tl9134991364_))
                                (if '#t
-                                   (let ((_src91398_
-                                          (if (gx#core-bound-module? _hd91366_)
-                                              (gx#syntax-local-e__0 _hd91366_)
+                                   (let ((_src91399_
+                                          (if (gx#core-bound-module? _hd91367_)
+                                              (gx#syntax-local-e__0 _hd91367_)
                                               (if (gx#core-library-module-path?
-                                                   _hd91366_)
+                                                   _hd91367_)
                                                   (gx#import-module__0
                                                    (gx#core-resolve-library-module-path
-                                                    _hd91366_))
+                                                    _hd91367_))
                                                   (if (gx#core-library-relative-module-path?
-                                                       _hd91366_)
+                                                       _hd91367_)
                                                       (gx#import-module__0
                                                        (gx#core-resolve-library-relative-module-path
-                                                        _hd91366_))
+                                                        _hd91367_))
                                                       (if (gx#stx-string?
-                                                           _hd91366_)
+                                                           _hd91367_)
                                                           (gx#import-module__0
                                                            (gx#core-resolve-module-path__%
-                                                            _hd91366_
+                                                            _hd91367_
                                                             (gx#stx-source
-                                                             _stx91132_)))
-                                                          (let* ((_e9136991376_
+                                                             _stx91133_)))
+                                                          (let* ((_e9137091377_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _hd91366_)
-                         (_E9137191380_
+                          _hd91367_)
+                         (_E9137291381_
                           (lambda ()
                             (gx#raise-syntax-error
                              '#f
                              '"Bad syntax; illegal re-export"
-                             _stx91132_
-                             _hd91366_)))
-                         (_E9137091394_
+                             _stx91133_
+                             _hd91367_)))
+                         (_E9137191395_
                           (lambda ()
-                            (if (gx#stx-pair? _e9136991376_)
-                                (let ((_e9137291384_
-                                       (gx#syntax-e _e9136991376_)))
-                                  (let ((_hd9137391387_ (##car _e9137291384_))
-                                        (_tl9137491389_ (##cdr _e9137291384_)))
-                                    (if (eq? (gx#stx-e _hd9137391387_) 'in:)
-                                        (let ((_spath91392_ _tl9137491389_))
+                            (if (gx#stx-pair? _e9137091377_)
+                                (let ((_e9137391385_
+                                       (gx#syntax-e _e9137091377_)))
+                                  (let ((_hd9137491388_ (##car _e9137391385_))
+                                        (_tl9137591390_ (##cdr _e9137391385_)))
+                                    (if (eq? (gx#stx-e _hd9137491388_) 'in:)
+                                        (let ((_spath91393_ _tl9137591390_))
                                           (if '#t
                                               (gx#core-import-nested-module
-                                               _spath91392_
-                                               _stx91132_)
-                                              (_E9137191380_)))
-                                        (_E9137191380_))))
-                                (_E9137191380_)))))
-                    (_E9137091394_))))))))
+                                               _spath91393_
+                                               _stx91133_)
+                                              (_E9137291381_)))
+                                        (_E9137291381_))))
+                                (_E9137291381_)))))
+                    (_E9137191395_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     (_lp91339_
-                                      _in-rest91368_
-                                      (_export-imports91137_
-                                       _src91398_
-                                       _r91342_)))
-                                   (_E9134591354_)))))
-                         (_E9134591354_)))))
+                                     (_lp91340_
+                                      _in-rest91369_
+                                      (_export-imports91138_
+                                       _src91399_
+                                       _r91343_)))
+                                   (_E9134691355_)))))
+                         (_E9134691355_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_E9134491400_)))
-                                                 (_E9131691325_)))
-                                           (_E9131691325_))))
-                                   (_E9131691325_))))
-                            (_E9129391443_
+                                                     (_E9134591401_)))
+                                                 (_E9131791326_)))
+                                           (_E9131791326_))))
+                                   (_E9131791326_))))
+                            (_E9129491444_
                              (lambda ()
-                               (if (gx#stx-pair? _e9128991321_)
-                                   (let ((_e9130791408_
-                                          (gx#syntax-e _e9128991321_)))
-                                     (let ((_hd9130891411_
-                                            (##car _e9130791408_))
-                                           (_tl9130991413_
-                                            (##cdr _e9130791408_)))
-                                       (if (eq? (gx#stx-e _hd9130891411_)
+                               (if (gx#stx-pair? _e9129091322_)
+                                   (let ((_e9130891409_
+                                          (gx#syntax-e _e9129091322_)))
+                                     (let ((_hd9130991412_
+                                            (##car _e9130891409_))
+                                           (_tl9131091414_
+                                            (##cdr _e9130891409_)))
+                                       (if (eq? (gx#stx-e _hd9130991412_)
                                                 'rename:)
-                                           (if (gx#stx-pair? _tl9130991413_)
-                                               (let ((_e9131091416_
+                                           (if (gx#stx-pair? _tl9131091414_)
+                                               (let ((_e9131191417_
                                                       (gx#syntax-e
-                                                       _tl9130991413_)))
-                                                 (let ((_hd9131191419_
-                                                        (##car _e9131091416_))
-                                                       (_tl9131291421_
-                                                        (##cdr _e9131091416_)))
-                                                   (let ((_id91424_
-                                                          _hd9131191419_))
+                                                       _tl9131091414_)))
+                                                 (let ((_hd9131291420_
+                                                        (##car _e9131191417_))
+                                                       (_tl9131391422_
+                                                        (##cdr _e9131191417_)))
+                                                   (let ((_id91425_
+                                                          _hd9131291420_))
                                                      (if (gx#stx-pair?
-                                                          _tl9131291421_)
-                                                         (let ((_e9131391426_
+                                                          _tl9131391422_)
+                                                         (let ((_e9131491427_
                                                                 (gx#syntax-e
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _tl9131291421_)))
-                   (let ((_hd9131491429_ (##car _e9131391426_))
-                         (_tl9131591431_ (##cdr _e9131391426_)))
-                     (let ((_name91434_ _hd9131491429_))
-                       (if (gx#stx-null? _tl9131591431_)
+                         _tl9131391422_)))
+                   (let ((_hd9131591430_ (##car _e9131491427_))
+                         (_tl9131691432_ (##cdr _e9131491427_)))
+                     (let ((_name91435_ _hd9131591430_))
+                       (if (gx#stx-null? _tl9131691432_)
                            (if '#t
-                               (let* ((_phi91436_
+                               (let* ((_phi91437_
                                        (gx#current-export-expander-phi))
-                                      (_$e91438_
+                                      (_$e91439_
                                        (gx#core-resolve-identifier__1
-                                        _id91424_
-                                        _phi91436_)))
-                                 (if _$e91438_
-                                     ((lambda (_bind91441_)
-                                        (_K91286_
-                                         _rest91287_
-                                         (cons (_make-export__9452494525_
-                                                _bind91441_
-                                                _phi91436_
+                                        _id91425_
+                                        _phi91437_)))
+                                 (if _$e91439_
+                                     ((lambda (_bind91442_)
+                                        (_K91287_
+                                         _rest91288_
+                                         (cons (_make-export__9452594526_
+                                                _bind91442_
+                                                _phi91437_
                                                 (gx#current-expander-context)
-                                                _name91434_)
-                                               _r91288_)))
-                                      _$e91438_)
+                                                _name91435_)
+                                               _r91289_)))
+                                      _$e91439_)
                                      (gx#raise-syntax-error
                                       '#f
                                       '"Reference to unbound identifier"
-                                      _stx91132_
-                                      _hd91285_
-                                      _id91424_)))
-                               (_E9130691404_))
-                           (_E9130691404_)))))
-                 (_E9130691404_)))))
+                                      _stx91133_
+                                      _hd91286_
+                                      _id91425_)))
+                               (_E9130791405_))
+                           (_E9130791405_)))))
+                 (_E9130791405_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_E9130691404_))
-                                           (_E9130691404_))))
-                                   (_E9130691404_))))
-                            (_E9129291492_
+                                               (_E9130791405_))
+                                           (_E9130791405_))))
+                                   (_E9130791405_))))
+                            (_E9129391493_
                              (lambda ()
-                               (if (gx#stx-pair? _e9128991321_)
-                                   (let ((_e9129491447_
-                                          (gx#syntax-e _e9128991321_)))
-                                     (let ((_hd9129591450_
-                                            (##car _e9129491447_))
-                                           (_tl9129691452_
-                                            (##cdr _e9129491447_)))
-                                       (if (eq? (gx#stx-e _hd9129591450_)
+                               (if (gx#stx-pair? _e9129091322_)
+                                   (let ((_e9129591448_
+                                          (gx#syntax-e _e9129091322_)))
+                                     (let ((_hd9129691451_
+                                            (##car _e9129591448_))
+                                           (_tl9129791453_
+                                            (##cdr _e9129591448_)))
+                                       (if (eq? (gx#stx-e _hd9129691451_)
                                                 'spec:)
-                                           (if (gx#stx-pair? _tl9129691452_)
-                                               (let ((_e9129791455_
+                                           (if (gx#stx-pair? _tl9129791453_)
+                                               (let ((_e9129891456_
                                                       (gx#syntax-e
-                                                       _tl9129691452_)))
-                                                 (let ((_hd9129891458_
-                                                        (##car _e9129791455_))
-                                                       (_tl9129991460_
-                                                        (##cdr _e9129791455_)))
-                                                   (let ((_phi91463_
-                                                          _hd9129891458_))
+                                                       _tl9129791453_)))
+                                                 (let ((_hd9129991459_
+                                                        (##car _e9129891456_))
+                                                       (_tl9130091461_
+                                                        (##cdr _e9129891456_)))
+                                                   (let ((_phi91464_
+                                                          _hd9129991459_))
                                                      (if (gx#stx-pair?
-                                                          _tl9129991460_)
-                                                         (let ((_e9130091465_
+                                                          _tl9130091461_)
+                                                         (let ((_e9130191466_
                                                                 (gx#syntax-e
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _tl9129991460_)))
-                   (let ((_hd9130191468_ (##car _e9130091465_))
-                         (_tl9130291470_ (##cdr _e9130091465_)))
-                     (let ((_id91473_ _hd9130191468_))
-                       (if (gx#stx-pair? _tl9130291470_)
-                           (let ((_e9130391475_ (gx#syntax-e _tl9130291470_)))
-                             (let ((_hd9130491478_ (##car _e9130391475_))
-                                   (_tl9130591480_ (##cdr _e9130391475_)))
-                               (let ((_name91483_ _hd9130491478_))
-                                 (if (gx#stx-null? _tl9130591480_)
-                                     (if (and (gx#stx-fixnum? _phi91463_)
-                                              (gx#identifier? _id91473_)
-                                              (gx#identifier? _name91483_))
-                                         (let* ((_phi91485_
-                                                 (gx#stx-e _phi91463_))
-                                                (_$e91487_
+                         _tl9130091461_)))
+                   (let ((_hd9130291469_ (##car _e9130191466_))
+                         (_tl9130391471_ (##cdr _e9130191466_)))
+                     (let ((_id91474_ _hd9130291469_))
+                       (if (gx#stx-pair? _tl9130391471_)
+                           (let ((_e9130491476_ (gx#syntax-e _tl9130391471_)))
+                             (let ((_hd9130591479_ (##car _e9130491476_))
+                                   (_tl9130691481_ (##cdr _e9130491476_)))
+                               (let ((_name91484_ _hd9130591479_))
+                                 (if (gx#stx-null? _tl9130691481_)
+                                     (if (and (gx#stx-fixnum? _phi91464_)
+                                              (gx#identifier? _id91474_)
+                                              (gx#identifier? _name91484_))
+                                         (let* ((_phi91486_
+                                                 (gx#stx-e _phi91464_))
+                                                (_$e91488_
                                                  (gx#core-resolve-identifier__1
-                                                  _id91473_
-                                                  _phi91485_)))
-                                           (if _$e91487_
-                                               ((lambda (_bind91490_)
-                                                  (_K91286_
-                                                   _rest91287_
-                                                   (cons (_make-export__9452494525_
-                                                          _bind91490_
-                                                          _phi91485_
+                                                  _id91474_
+                                                  _phi91486_)))
+                                           (if _$e91488_
+                                               ((lambda (_bind91491_)
+                                                  (_K91287_
+                                                   _rest91288_
+                                                   (cons (_make-export__9452594526_
+                                                          _bind91491_
+                                                          _phi91486_
                                                           (gx#current-expander-context)
-                                                          _name91483_)
-                                                         _r91288_)))
-                                                _$e91487_)
+                                                          _name91484_)
+                                                         _r91289_)))
+                                                _$e91488_)
                                                (gx#raise-syntax-error
                                                 '#f
                                                 '"Reference to unbound identifier"
-                                                _stx91132_
-                                                _hd91285_
-                                                _id91473_)))
-                                         (_E9129391443_))
-                                     (_E9129391443_)))))
-                           (_E9129391443_)))))
-                 (_E9129391443_)))))
+                                                _stx91133_
+                                                _hd91286_
+                                                _id91474_)))
+                                         (_E9129491444_))
+                                     (_E9129491444_)))))
+                           (_E9129491444_)))))
+                 (_E9129491444_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_E9129391443_))
-                                           (_E9129391443_))))
-                                   (_E9129391443_))))
-                            (_E9129191503_
+                                               (_E9129491444_))
+                                           (_E9129491444_))))
+                                   (_E9129491444_))))
+                            (_E9129291504_
                              (lambda ()
-                               (let ((_id91496_ _e9128991321_))
-                                 (if (gx#identifier? _id91496_)
-                                     (let ((_$e91498_
+                               (let ((_id91497_ _e9129091322_))
+                                 (if (gx#identifier? _id91497_)
+                                     (let ((_$e91499_
                                             (gx#core-resolve-identifier__1
-                                             _id91496_
+                                             _id91497_
                                              (gx#current-export-expander-phi))))
-                                       (if _$e91498_
-                                           ((lambda (_bind91501_)
-                                              (_K91286_
-                                               _rest91287_
-                                               (cons (_make-export__0__9452694529_
-                                                      _bind91501_)
-                                                     _r91288_)))
-                                            _$e91498_)
+                                       (if _$e91499_
+                                           ((lambda (_bind91502_)
+                                              (_K91287_
+                                               _rest91288_
+                                               (cons (_make-export__0__9452794530_
+                                                      _bind91502_)
+                                                     _r91289_)))
+                                            _$e91499_)
                                            (gx#raise-syntax-error
                                             '#f
                                             '"Reference to unbound identifier"
-                                            _stx91132_
-                                            _hd91285_)))
-                                     (_E9129291492_)))))
-                            (_E9129091567_
+                                            _stx91133_
+                                            _hd91286_)))
+                                     (_E9129391493_)))))
+                            (_E9129191568_
                              (lambda ()
-                               (if (eq? (gx#stx-e _e9128991321_) '#t)
+                               (if (eq? (gx#stx-e _e9129091322_) '#t)
                                    (if '#t
-                                       (let* ((_current-ctx91507_
+                                       (let* ((_current-ctx91508_
                                                (gx#current-expander-context))
-                                              (_current-phi91509_
+                                              (_current-phi91510_
                                                (gx#current-export-expander-phi))
-                                              (_phi-ctx91511_
+                                              (_phi-ctx91512_
                                                (gx#core-context-shift
-                                                _current-ctx91507_
-                                                _current-phi91509_))
-                                              (_phi-bind91513_
+                                                _current-ctx91508_
+                                                _current-phi91510_))
+                                              (_phi-bind91514_
                                                (hash->list
                                                 (##unchecked-structure-ref
-                                                 _phi-ctx91511_
+                                                 _phi-ctx91512_
                                                  '2
                                                  gx#expander-context::t
                                                  '#f))))
-                                         (let _lp91516_ ((_bind-rest91518_
-                                                          _phi-bind91513_)
-                                                         (_set91519_ '()))
-                                           (let* ((_bind-rest9152091530_
-                                                   _bind-rest91518_)
-                                                  (_else9152291538_
+                                         (let _lp91517_ ((_bind-rest91519_
+                                                          _phi-bind91514_)
+                                                         (_set91520_ '()))
+                                           (let* ((_bind-rest9152191531_
+                                                   _bind-rest91519_)
+                                                  (_else9152391539_
                                                    (lambda ()
-                                                     (_K91286_
-                                                      _rest91287_
+                                                     (_K91287_
+                                                      _rest91288_
                                                       (cons (##structure
                                                              gx#export-set::t
                                                              '#f
-                                                             _current-phi91509_
-                                                             _set91519_)
-                                                            _r91288_))))
-                                                  (_K9152491548_
-                                                   (lambda (_bind-rest91541_
-                                                            _bind91542_
-                                                            _key91543_)
+                                                             _current-phi91510_
+                                                             _set91520_)
+                                                            _r91289_))))
+                                                  (_K9152591549_
+                                                   (lambda (_bind-rest91542_
+                                                            _bind91543_
+                                                            _key91544_)
                                                      (if (or (##structure-direct-instance-of?
-                                                              _bind91542_
+                                                              _bind91543_
                                                               'gx#import-binding::t)
                                                              (gx#private-feature-binding?
-                                                              _bind91542_))
-                                                         (_lp91516_
-                                                          _bind-rest91541_
-                                                          _set91519_)
-                                                         (_lp91516_
-                                                          _bind-rest91541_
-                                                          (cons (_make-export__2__9452894531_
+                                                              _bind91543_))
+                                                         (_lp91517_
+                                                          _bind-rest91542_
+                                                          _set91520_)
+                                                         (_lp91517_
+                                                          _bind-rest91542_
+                                                          (cons (_make-export__2__9452994532_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _bind91542_
-                         _current-phi91509_
-                         _current-ctx91507_)
-                        _set91519_))))))
+                         _bind91543_
+                         _current-phi91510_
+                         _current-ctx91508_)
+                        _set91520_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             (if (##pair? _bind-rest9152091530_)
-                                                 (let ((_hd9152591551_
-                                                        (##car _bind-rest9152091530_))
-                                                       (_tl9152691553_
-                                                        (##cdr _bind-rest9152091530_)))
-                                                   (if (##pair? _hd9152591551_)
-                                                       (let ((_hd9152791556_
-                                                              (##car _hd9152591551_))
-                                                             (_tl9152891558_
-                                                              (##cdr _hd9152591551_)))
-                                                         (let* ((_key91561_
+                                             (if (##pair? _bind-rest9152191531_)
+                                                 (let ((_hd9152691552_
+                                                        (##car _bind-rest9152191531_))
+                                                       (_tl9152791554_
+                                                        (##cdr _bind-rest9152191531_)))
+                                                   (if (##pair? _hd9152691552_)
+                                                       (let ((_hd9152891557_
+                                                              (##car _hd9152691552_))
+                                                             (_tl9152991559_
+                                                              (##cdr _hd9152691552_)))
+                                                         (let* ((_key91562_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _hd9152791556_)
-                        (_bind91563_ _tl9152891558_)
-                        (_bind-rest91565_ _tl9152691553_))
-                   (_K9152491548_ _bind-rest91565_ _bind91563_ _key91561_)))
-               (_else9152291538_)))
+                         _hd9152891557_)
+                        (_bind91564_ _tl9152991559_)
+                        (_bind-rest91566_ _tl9152791554_))
+                   (_K9152591549_ _bind-rest91566_ _bind91564_ _key91562_)))
+               (_else9152391539_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (_else9152291538_)))))
-                                       (_E9129191503_))
-                                   (_E9129191503_)))))
-                       (_E9129091567_))))
-                  (_export-imports91137_
-                   (lambda (_src91161_ _r91162_)
-                     (letrec* ((_current-ctx91164_
+                                                 (_else9152391539_)))))
+                                       (_E9129291504_))
+                                   (_E9129291504_)))))
+                       (_E9129191568_))))
+                  (_export-imports91138_
+                   (lambda (_src91162_ _r91163_)
+                     (letrec* ((_current-ctx91165_
                                 (gx#current-expander-context))
-                               (_current-phi91165_
+                               (_current-phi91166_
                                 (gx#current-export-expander-phi))
-                               (_import->export91166_
-                                (lambda (_in91247_)
-                                  (let* ((_in9124891256_ _in91247_)
-                                         (_E9125091260_
+                               (_import->export91167_
+                                (lambda (_in91248_)
+                                  (let* ((_in9124991257_ _in91248_)
+                                         (_E9125191261_
                                           (lambda ()
                                             (error '"No clause matching"
-                                                   _in9124891256_)))
-                                         (_K9125191267_
-                                          (lambda (_phi91263_
-                                                   _key91264_
-                                                   _out91265_)
+                                                   _in9124991257_)))
+                                         (_K9125291268_
+                                          (lambda (_phi91264_
+                                                   _key91265_
+                                                   _out91266_)
                                             (##structure
                                              gx#module-export::t
-                                             _current-ctx91164_
-                                             _key91264_
-                                             _phi91263_
-                                             _key91264_
+                                             _current-ctx91165_
+                                             _key91265_
+                                             _phi91264_
+                                             _key91265_
                                              '#t))))
                                     (if (##structure-direct-instance-of?
-                                         _in9124891256_
+                                         _in9124991257_
                                          'gx#module-import::t)
-                                        (let* ((_e9125291270_
+                                        (let* ((_e9125391271_
                                                 (##unchecked-structure-ref
-                                                 _in9124891256_
+                                                 _in9124991257_
                                                  '1
                                                  gx#module-import::t
                                                  '#f))
-                                               (_out91273_ _e9125291270_)
-                                               (_e9125391275_
+                                               (_out91274_ _e9125391271_)
+                                               (_e9125491276_
                                                 (##unchecked-structure-ref
-                                                 _in9124891256_
+                                                 _in9124991257_
                                                  '2
                                                  gx#module-import::t
                                                  '#f))
-                                               (_key91278_ _e9125391275_)
-                                               (_e9125491280_
+                                               (_key91279_ _e9125491276_)
+                                               (_e9125591281_
                                                 (##unchecked-structure-ref
-                                                 _in9124891256_
+                                                 _in9124991257_
                                                  '3
                                                  gx#module-import::t
                                                  '#f))
-                                               (_phi91283_ _e9125491280_))
-                                          (_K9125191267_
-                                           _phi91283_
-                                           _key91278_
-                                           _out91273_))
-                                        (_E9125091260_)))))
-                               (_fold-e91167_
-                                (lambda (_in91169_ _r91170_)
-                                  (let* ((_in9117191185_ _in91169_)
-                                         (_else9117491193_
-                                          (lambda () _r91170_)))
-                                    (let ((_K9118091229_
-                                           (lambda (_phi91225_
-                                                    _key91226_
-                                                    _out91227_)
-                                             (if (and (fx= _phi91225_
-                                                           _current-phi91165_)
-                                                      (eq? _src91161_
+                                               (_phi91284_ _e9125591281_))
+                                          (_K9125291268_
+                                           _phi91284_
+                                           _key91279_
+                                           _out91274_))
+                                        (_E9125191261_)))))
+                               (_fold-e91168_
+                                (lambda (_in91170_ _r91171_)
+                                  (let* ((_in9117291186_ _in91170_)
+                                         (_else9117591194_
+                                          (lambda () _r91171_)))
+                                    (let ((_K9118191230_
+                                           (lambda (_phi91226_
+                                                    _key91227_
+                                                    _out91228_)
+                                             (if (and (fx= _phi91226_
+                                                           _current-phi91166_)
+                                                      (eq? _src91162_
                                                            (##unchecked-structure-ref
-                                                            _out91227_
+                                                            _out91228_
                                                             '1
                                                             gx#module-export::t
                                                             '#f)))
-                                                 (cons (_import->export91166_
-                                                        _in91169_)
-                                                       _r91170_)
-                                                 _r91170_)))
-                                          (_K9117691204_
-                                           (lambda (_imports91197_
-                                                    _phi91198_
-                                                    _ctx91199_)
-                                             (if (and (fx= _phi91198_
-                                                           _current-phi91165_)
-                                                      (eq? _src91161_
-                                                           _ctx91199_))
-                                                 (foldl1 (lambda (_in91201_
+                                                 (cons (_import->export91167_
+                                                        _in91170_)
+                                                       _r91171_)
+                                                 _r91171_)))
+                                          (_K9117791205_
+                                           (lambda (_imports91198_
+                                                    _phi91199_
+                                                    _ctx91200_)
+                                             (if (and (fx= _phi91199_
+                                                           _current-phi91166_)
+                                                      (eq? _src91162_
+                                                           _ctx91200_))
+                                                 (foldl1 (lambda (_in91202_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _r91202_)
-                   (cons (_import->export91166_ _in91201_) _r91202_))
-                 _r91170_
-                 _imports91197_)
+                          _r91203_)
+                   (cons (_import->export91167_ _in91202_) _r91203_))
+                 _r91171_
+                 _imports91198_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 _r91170_))))
-                                      (let ((_try-match9117391222_
+                                                 _r91171_))))
+                                      (let ((_try-match9117491223_
                                              (lambda ()
                                                (if (##structure-direct-instance-of?
-                                                    _in9117191185_
+                                                    _in9117291186_
                                                     'gx#import-set::t)
-                                                   (let* ((_e9117791207_
+                                                   (let* ((_e9117891208_
                                                            (##unchecked-structure-ref
-                                                            _in9117191185_
+                                                            _in9117291186_
                                                             '1
                                                             gx#import-set::t
                                                             '#f))
-                                                          (_e9117891212_
+                                                          (_e9117991213_
                                                            (##unchecked-structure-ref
-                                                            _in9117191185_
+                                                            _in9117291186_
                                                             '2
                                                             gx#import-set::t
                                                             '#f))
-                                                          (_e9117991217_
+                                                          (_e9118091218_
                                                            (##unchecked-structure-ref
-                                                            _in9117191185_
+                                                            _in9117291186_
                                                             '3
                                                             gx#import-set::t
                                                             '#f)))
-                                                     (let ((_ctx91210_
-                                                            _e9117791207_)
-                                                           (_phi91215_
-                                                            _e9117891212_)
-                                                           (_imports91220_
-                                                            _e9117991217_))
-                                                       (_K9117691204_
-                                                        _imports91220_
-                                                        _phi91215_
-                                                        _ctx91210_)))
-                                                   (_else9117491193_)))))
+                                                     (let ((_ctx91211_
+                                                            _e9117891208_)
+                                                           (_phi91216_
+                                                            _e9117991213_)
+                                                           (_imports91221_
+                                                            _e9118091218_))
+                                                       (_K9117791205_
+                                                        _imports91221_
+                                                        _phi91216_
+                                                        _ctx91211_)))
+                                                   (_else9117591194_)))))
                                         (if (##structure-direct-instance-of?
-                                             _in9117191185_
+                                             _in9117291186_
                                              'gx#module-import::t)
-                                            (let* ((_e9118191232_
+                                            (let* ((_e9118291233_
                                                     (##unchecked-structure-ref
-                                                     _in9117191185_
+                                                     _in9117291186_
                                                      '1
                                                      gx#module-import::t
                                                      '#f))
-                                                   (_e9118291237_
+                                                   (_e9118391238_
                                                     (##unchecked-structure-ref
-                                                     _in9117191185_
+                                                     _in9117291186_
                                                      '2
                                                      gx#module-import::t
                                                      '#f))
-                                                   (_e9118391242_
+                                                   (_e9118491243_
                                                     (##unchecked-structure-ref
-                                                     _in9117191185_
+                                                     _in9117291186_
                                                      '3
                                                      gx#module-import::t
                                                      '#f)))
-                                              (let ((_out91235_ _e9118191232_)
-                                                    (_key91240_ _e9118291237_)
-                                                    (_phi91245_ _e9118391242_))
-                                                (_K9118091229_
-                                                 _phi91245_
-                                                 _key91240_
-                                                 _out91235_)))
-                                            (_try-match9117391222_))))))))
+                                              (let ((_out91236_ _e9118291233_)
+                                                    (_key91241_ _e9118391238_)
+                                                    (_phi91246_ _e9118491243_))
+                                                (_K9118191230_
+                                                 _phi91246_
+                                                 _key91241_
+                                                 _out91236_)))
+                                            (_try-match9117491223_))))))))
                        (cons (##structure
                               gx#export-set::t
-                              _src91161_
-                              _current-phi91165_
-                              (foldl1 _fold-e91167_
+                              _src91162_
+                              _current-phi91166_
+                              (foldl1 _fold-e91168_
                                       '()
                                       (##unchecked-structure-ref
-                                       _current-ctx91164_
+                                       _current-ctx91165_
                                        '8
                                        gx#module-context::t
                                        '#f)))
-                             _r91162_))))
-                  (_export!91138_
-                   (lambda (_rbody91151_)
-                     (letrec* ((_current-ctx91153_
+                             _r91163_))))
+                  (_export!91139_
+                   (lambda (_rbody91152_)
+                     (letrec* ((_current-ctx91154_
                                 (gx#current-expander-context))
-                               (_fold-e91154_
-                                (lambda (_out91158_ _r91159_)
+                               (_fold-e91155_
+                                (lambda (_out91159_ _r91160_)
                                   (if (##structure-direct-instance-of?
-                                       _out91158_
+                                       _out91159_
                                        'gx#module-export::t)
-                                      (cons _out91158_ _r91159_)
+                                      (cons _out91159_ _r91160_)
                                       (if (##structure-direct-instance-of?
-                                           _out91158_
+                                           _out91159_
                                            'gx#export-set::t)
                                           (foldl1 cons
-                                                  _r91159_
+                                                  _r91160_
                                                   (##unchecked-structure-ref
-                                                   _out91158_
+                                                   _out91159_
                                                    '3
                                                    gx#export-set::t
                                                    '#f))
-                                          _r91159_)))))
-                       (let ((_body91156_ (reverse _rbody91151_)))
+                                          _r91160_)))))
+                       (let ((_body91157_ (reverse _rbody91152_)))
                          (##unchecked-structure-set!
-                          _current-ctx91153_
-                          (foldl1 _fold-e91154_
+                          _current-ctx91154_
+                          (foldl1 _fold-e91155_
                                   (##unchecked-structure-ref
-                                   _current-ctx91153_
+                                   _current-ctx91154_
                                    '9
                                    gx#module-context::t
                                    '#f)
-                                  _body91156_)
+                                  _body91157_)
                           '9
                           gx#module-context::t
                           '#f)
-                         _body91156_))))
-                  (_expanded-export?91139_
-                   (lambda (_e91146_)
-                     (let ((_$e91148_
+                         _body91157_))))
+                  (_expanded-export?91140_
+                   (lambda (_e91147_)
+                     (let ((_$e91149_
                             (##structure-direct-instance-of?
-                             _e91146_
+                             _e91147_
                              'gx#module-export::t)))
-                       (if _$e91148_
-                           _$e91148_
+                       (if _$e91149_
+                           _$e91149_
                            (##structure-direct-instance-of?
-                            _e91146_
+                            _e91147_
                             'gx#export-set::t))))))
           (if (or (##structure-instance-of?
                    (gx#current-expander-context)
                    'gx#module-context::t)
-                  _internal-expand?91133_)
-              (let ((_rbody91144_
+                  _internal-expand?91134_)
+              (let ((_rbody91145_
                      (gx#core-expand-import/export
-                      _stx91132_
-                      _expanded-export?91139_
+                      _stx91133_
+                      _expanded-export?91140_
                       'apply-export-expander
                       gx#current-export-expander-phi
-                      _expand191136_)))
-                (if _internal-expand?91133_
-                    (reverse _rbody91144_)
+                      _expand191137_)))
+                (if _internal-expand?91134_
+                    (reverse _rbody91145_)
                     (gx#core-quote-syntax__1
-                     (gx#core-cons '%#export (_export!91138_ _rbody91144_))
-                     (gx#stx-source _stx91132_))))
+                     (gx#core-cons '%#export (_export!91139_ _rbody91145_))
+                     (gx#stx-source _stx91133_))))
               (if (##structure-instance-of?
                    (gx#current-expander-context)
                    'gx#top-context::t)
                   (gx#core-quote-syntax__1
                    (gx#core-cons '%#begin '())
-                   (gx#stx-source _stx91132_))
+                   (gx#stx-source _stx91133_))
                   (gx#raise-syntax-error
                    '#f
                    '"Illegal context"
-                   _stx91132_))))))
+                   _stx91133_))))))
     (define gx#core-expand-export%__0
-      (lambda (_stx91617_)
-        (let ((_internal-expand?91619_ '#f))
-          (gx#core-expand-export%__% _stx91617_ _internal-expand?91619_))))
+      (lambda (_stx91618_)
+        (let ((_internal-expand?91620_ '#f))
+          (gx#core-expand-export%__% _stx91618_ _internal-expand?91620_))))
     (define gx#core-expand-export%
-      (lambda _g94599_
-        (let ((_g94598_ (##length _g94599_)))
-          (cond ((##fx= _g94598_ 1)
-                 (apply (lambda (_stx91617_)
-                          (gx#core-expand-export%__0 _stx91617_))
-                        _g94599_))
-                ((##fx= _g94598_ 2)
-                 (apply (lambda (_stx91621_ _internal-expand?91622_)
+      (lambda _g94600_
+        (let ((_g94599_ (##length _g94600_)))
+          (cond ((##fx= _g94599_ 1)
+                 (apply (lambda (_stx91618_)
+                          (gx#core-expand-export%__0 _stx91618_))
+                        _g94600_))
+                ((##fx= _g94599_ 2)
+                 (apply (lambda (_stx91622_ _internal-expand?91623_)
                           (gx#core-expand-export%__%
-                           _stx91621_
-                           _internal-expand?91622_))
-                        _g94599_))
+                           _stx91622_
+                           _internal-expand?91623_))
+                        _g94600_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-expand-export%
-                  _g94599_))))))
+                  _g94600_))))))
     (define gx#core-expand-export-source
-      (lambda (_hd91129_)
+      (lambda (_hd91130_)
         (gx#core-expand-export%__%
-         (cons 'export-macro% (cons _hd91129_ '()))
+         (cons 'export-macro% (cons _hd91130_ '()))
          '#t)))
     (define gx#core-expand-provide%
-      (lambda (_stx91099_)
-        (let* ((_e9110091107_ _stx91099_)
-               (_E9110291111_
+      (lambda (_stx91100_)
+        (let* ((_e9110191108_ _stx91100_)
+               (_E9110391112_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax; invalid syntax-case clause"
-                   _e9110091107_)))
-               (_E9110191125_
+                   _e9110191108_)))
+               (_E9110291126_
                 (lambda ()
-                  (if (gx#stx-pair? _e9110091107_)
-                      (let ((_e9110391115_ (gx#syntax-e _e9110091107_)))
-                        (let ((_hd9110491118_ (##car _e9110391115_))
-                              (_tl9110591120_ (##cdr _e9110391115_)))
-                          (let ((_body91123_ _tl9110591120_))
-                            (if (gx#identifier-list? _body91123_)
+                  (if (gx#stx-pair? _e9110191108_)
+                      (let ((_e9110491116_ (gx#syntax-e _e9110191108_)))
+                        (let ((_hd9110591119_ (##car _e9110491116_))
+                              (_tl9110691121_ (##cdr _e9110491116_)))
+                          (let ((_body91124_ _tl9110691121_))
+                            (if (gx#identifier-list? _body91124_)
                                 (begin
                                   (gx#stx-for-each1
                                    gx#core-bind-feature!
-                                   _body91123_)
+                                   _body91124_)
                                   (gx#core-quote-syntax__1
                                    (gx#core-cons
                                     '%#provide
                                     (gx#stx-map1
                                      gx#core-quote-syntax
-                                     _body91123_))
-                                   (gx#stx-source _stx91099_)))
-                                (_E9110291111_)))))
-                      (_E9110291111_)))))
-          (_E9110191125_))))
+                                     _body91124_))
+                                   (gx#stx-source _stx91100_)))
+                                (_E9110391112_)))))
+                      (_E9110391112_)))))
+          (_E9110291126_))))
     (define gx#core-bind-feature!__%
-      (lambda (_id91065_ _private?91066_ _phi91067_ _ctx91068_)
+      (lambda (_id91066_ _private?91067_ _phi91068_ _ctx91069_)
         (gx#core-bind-syntax!__%
-         _id91065_
-         ((if _private?91066_
+         _id91066_
+         ((if _private?91067_
               gx#make-private-feature-expander
               gx#make-feature-expander)
-          (gx#stx-e _id91065_))
-         _private?91066_
-         _phi91067_
-         _ctx91068_)))
+          (gx#stx-e _id91066_))
+         _private?91067_
+         _phi91068_
+         _ctx91069_)))
     (define gx#core-bind-feature!__0
-      (lambda (_id91073_)
-        (let* ((_private?91075_ '#f)
-               (_phi91077_ (gx#current-expander-phi))
-               (_ctx91079_ (gx#current-expander-context)))
+      (lambda (_id91074_)
+        (let* ((_private?91076_ '#f)
+               (_phi91078_ (gx#current-expander-phi))
+               (_ctx91080_ (gx#current-expander-context)))
           (gx#core-bind-feature!__%
-           _id91073_
-           _private?91075_
-           _phi91077_
-           _ctx91079_))))
+           _id91074_
+           _private?91076_
+           _phi91078_
+           _ctx91080_))))
     (define gx#core-bind-feature!__1
-      (lambda (_id91081_ _private?91082_)
-        (let* ((_phi91084_ (gx#current-expander-phi))
-               (_ctx91086_ (gx#current-expander-context)))
+      (lambda (_id91082_ _private?91083_)
+        (let* ((_phi91085_ (gx#current-expander-phi))
+               (_ctx91087_ (gx#current-expander-context)))
           (gx#core-bind-feature!__%
-           _id91081_
-           _private?91082_
-           _phi91084_
-           _ctx91086_))))
+           _id91082_
+           _private?91083_
+           _phi91085_
+           _ctx91087_))))
     (define gx#core-bind-feature!__2
-      (lambda (_id91088_ _private?91089_ _phi91090_)
-        (let ((_ctx91092_ (gx#current-expander-context)))
+      (lambda (_id91089_ _private?91090_ _phi91091_)
+        (let ((_ctx91093_ (gx#current-expander-context)))
           (gx#core-bind-feature!__%
-           _id91088_
-           _private?91089_
-           _phi91090_
-           _ctx91092_))))
+           _id91089_
+           _private?91090_
+           _phi91091_
+           _ctx91093_))))
     (define gx#core-bind-feature!
-      (lambda _g94601_
-        (let ((_g94600_ (##length _g94601_)))
-          (cond ((##fx= _g94600_ 1)
-                 (apply (lambda (_id91073_)
-                          (gx#core-bind-feature!__0 _id91073_))
-                        _g94601_))
-                ((##fx= _g94600_ 2)
-                 (apply (lambda (_id91081_ _private?91082_)
-                          (gx#core-bind-feature!__1 _id91081_ _private?91082_))
-                        _g94601_))
-                ((##fx= _g94600_ 3)
-                 (apply (lambda (_id91088_ _private?91089_ _phi91090_)
+      (lambda _g94602_
+        (let ((_g94601_ (##length _g94602_)))
+          (cond ((##fx= _g94601_ 1)
+                 (apply (lambda (_id91074_)
+                          (gx#core-bind-feature!__0 _id91074_))
+                        _g94602_))
+                ((##fx= _g94601_ 2)
+                 (apply (lambda (_id91082_ _private?91083_)
+                          (gx#core-bind-feature!__1 _id91082_ _private?91083_))
+                        _g94602_))
+                ((##fx= _g94601_ 3)
+                 (apply (lambda (_id91089_ _private?91090_ _phi91091_)
                           (gx#core-bind-feature!__2
-                           _id91088_
-                           _private?91089_
-                           _phi91090_))
-                        _g94601_))
-                ((##fx= _g94600_ 4)
-                 (apply (lambda (_id91094_
-                                 _private?91095_
-                                 _phi91096_
-                                 _ctx91097_)
+                           _id91089_
+                           _private?91090_
+                           _phi91091_))
+                        _g94602_))
+                ((##fx= _g94601_ 4)
+                 (apply (lambda (_id91095_
+                                 _private?91096_
+                                 _phi91097_
+                                 _ctx91098_)
                           (gx#core-bind-feature!__%
-                           _id91094_
-                           _private?91095_
-                           _phi91096_
-                           _ctx91097_))
-                        _g94601_))
+                           _id91095_
+                           _private?91096_
+                           _phi91097_
+                           _ctx91098_))
+                        _g94602_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gx#core-bind-feature!
-                  _g94601_))))))))
+                  _g94602_))))))))
