@@ -401,7 +401,7 @@ As we have mentioned, the slot layout of classes (unless they are
 final) is in general not fixed and can change based on the mixins
 further down the inheritance graph. This is very flexible, but it also
 comes at a cost: unless the class is exact, slot access will incur
-dynamic slot resolution overhead (basically a hash table lookup.
+dynamic slot resolution overhead (basically a hash table lookup).
 
 Is there a way to have a fixed layout for performance critical
 classes?  The answer is, of course, yes: Gerbil supports *structs*,
@@ -421,16 +421,148 @@ are structs, while `Color` remains a mixin class:
 
 (defclass Color (r g b))
 
-(defclass (ColoredPoint Point Color) ())
-(defclass (ColoredPoint3D Point3D Color) ())
+(defclass (ColoredPoint Color Point) ())
+(defclass (ColoredPoint3D Color Point3D) ())
+
+> (def a (Point 1 2))
+> (def b (Point3D 1 2 3))
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> a
+#<Point #3>
+> b
+#<Point3D #4>
+> (Point? a)
+#t
+> (Point? b)
+#t
+> (Point3D? a)
+#f
+> (Point3D? b)
+#t
+> (Point? c)
+#t
+> (Point3D? c)
+#t
+> (Color? c)
+#t
 
 ```
 
+A couple of things to notice here:
+- when mixing in classes and inheriting structs, the struct type _must_
+  be last in the inheritance list in `defclass` or whatever follows
+  it must be a super class of it. This is by design, in order to retain
+  the properties of the C3 algorithm in C4.
+- the struct constructor is a (faster) positional argument constructor
+  that directly initialize fields in the object. That is, slots are not
+  identified by keyword, but instead by position.
+
+Other than that, nothing changes in terms of usage -- with the
+significant advantage that the type-safe accessors for `Point` and
+`Point3D` slots are significantly faster. They don't have to perform a
+dynamic lookup for the slot offset at runtime, as this is fixed at
+expansion time.
+
 ##### Constructor Methods
+
+So far we have seen that classes by default get a keyword initializing
+constructor, but when they are structs they get a positional argument
+constructor. But what if the desired constructor doesn't match these defaults
+and instead we want a custom behavior? This of course is nto a problem, we can
+define a constructor method with the `constructor: <method-id>` directive in
+`defclass` (or `defstruct`).
+
+For example here is a constructor for Point3D that makes `z` optional and
+initializes it by default to 0:
+```
+(defstruct (Point3D Point) (z)
+  constructor: :init!)
+
+(defmethod {:init! Point3D}
+  (lambda (self x y (z 0))
+    (set! (Point3D-x self) x)
+    (set! (Point3D-y self) y)
+    (set! (Point3D-z self) z)))
+
+> (def a (Point3D 1 2))
+> (Point3D-z a)
+0
+```
+
+Note that if one of your super-classes defines a constructor, you must
+also define a constructor which by default have the same name as the
+super constructor.  If you have conflicting constructor method names
+for your super classes, you must explicitly specify the constructor
+method for your class. This situation is best avoided by using the
+convention of naming the constructor method `:init!`.
 
 ##### System Classes
 
-##### MetaClasses
+If you recall the [Method Resolution Order](#method-resolution-order)
+section, the class precedence list for `ColoredPoint3D` automagically
+contained two classes named `object` and `t` at the tail.
+So what are those classes and where did they come from?
+
+These are what we call _system classes_ -- these are abstract classes
+(they cannot be instantiated with `make-instance`) that represent the
+root of the system hierarchy. Every class created by user programs
+has `object::t` and `t::t` automatically injected at the tail of its
+precedence list. This allows us to have specific classes for every point
+in the hierarchy and allows us to define _default methods_ for every
+standard object by binding a method in `object::t` or every object
+in the system by binding a method in `t::t`.
+
+This begs the question, why are `object::t` and `t::t` separate?
+The answer is that there are objects in the system that are not
+standard objects, ie they don't follow the standard object layout.
+These are primitive types (like pairs, strings and procedures) or
+system defined structured types deep in the bowels of the gambit
+runtime.
+
+So do these objects have a class? The answer is yes, of course --
+_everything has a class_ in Gerbil! So how do we get the class
+of such objects? Easy, use the `class-of` operator or reference
+them by name to define methods in them.
+
+Here is an example for list:
+```
+> (class-of '(1 2 3))
+#<type #33 pair>
+> pair::t
+#<type #33 pair>
+> (class-type-precedence-list pair::t)
+(#<type #34 list> #<type #27 t>)
+```
+
+Here is another example that defines methods at various points in the
+system class hierarchy:
+```
+(defmethod {identify :t}
+  (lambda (obj) 't))
+(defmethod {identify :object}
+  (lambda (obj) 'object))
+(defmethod {identify :list}
+  (lambda (obj) 'list))
+(defmethod {identify :number}
+  (lambda (obj) 'number))
+(defmethod {identify :fixnum}
+  (lambda (obj) 'fixnum))
+
+> {identify (Point 1 2)}
+object
+> {identify '(1 2 3)}
+list
+> {identify 1}
+fixnum
+> {identify 1.0}
+number
+> {identify (current-thread)}
+t
+```
+
+The complete system class hierarchy is out of scope for this introduction,
+but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/runtime/mop-system-classes.ss) and the meta types in the [MOP part of the core prelude](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/core/mop.ss).
+
 
 #### Interfaces
 
