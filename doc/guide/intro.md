@@ -313,6 +313,49 @@ and mutators, accessing a slot requires a dynamic lookup.
 
 ##### Methods
 
+Methods define the behavior for objects of a class. Methods are procedure
+which take the object as first argument with method arguments following.
+Methods are defined with `defmethod` and invoked dynamically with the `{}`
+dynamic call operator.
+
+Here is an example in our color and point hierarchy:
+```
+(defmethod {colorize Color}
+  identity)
+
+(defmethod {colorize Point}
+  (lambda (self)
+    (ColoredPoint x: (@ self x)
+                  y: (@ self y)
+                  r: 0 g: 0 b: 0)))
+
+(defmethod {colorize Point3D}
+  (lambda (self)
+    (ColoredPoint3D x: (@ self x)
+                    y: (@ self y)
+                    z: (@ self z)
+                    r: 0 g: 0 b: 0)))
+```
+
+Here we define a `colorize` method that takes no arguments and returns
+a colored version of a point. We define it as identity for instances
+of `Color`, as the point is colored already. For instances of `Point`
+and `Point3D` we define it as constructor for the color mixin of the
+object, colored black.
+
+And here is example usage:
+```
+> {colorize a}
+#<ColoredPoint #16>
+> {colorize b}
+#<ColoredPoint3D #17>
+> {colorize c}
+#<ColoredPoint3D #18>
+> (def white (Color r: 255 g: 255 b: 255))
+> {colorize white}
+#<Color #19>
+```
+
 ##### Method Resolution Order
 
 ##### Constructor Methods
