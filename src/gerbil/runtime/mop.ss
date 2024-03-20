@@ -582,7 +582,9 @@ namespace: #f
     (unchecked-slot-set! obj slot val)))
 
 (def (class-slot-offset klass slot)
-  (symbolic-table-ref (&class-type-slot-table klass) slot #f))
+  (if (symbolic? slot)
+    (symbolic-table-ref (&class-type-slot-table klass) slot #f)
+    (error "slot must be a symbol or keyword" slot)))
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -607,14 +609,10 @@ namespace: #f
 
 (defrules __slot-e ()
   ((_ obj slot K E)
-   (if (object? obj)
-     (let (klass (object-type obj))
-       (cond
-        ((and (class-type? klass)
-              (class-slot-offset klass slot))
-         => K)
-        (else (E obj slot))))
-     (E obj slot))))
+   (let (klass (class-of obj))
+     (cond
+      ((class-slot-offset klass slot) => K)
+      (else (E obj slot))))))
 
 (def (slot-ref obj slot (E __slot-error))
   (__slot-e obj slot (lambda (off) (unchecked-field-ref obj off)) E))
@@ -645,10 +643,8 @@ namespace: #f
   (##structure-instance-of? obj (##type-id klass)))
 
 (def (class-instance? klass obj)
-  (and (object? obj)
-       (let (type (object-type obj))
-         (and (class-type? type)
-              (subclass? type klass)))))
+  (let (type (class-of obj))
+    (subclass? type klass)))
 
 (def (make-object klass k)
   (if (class-type-system? klass)
@@ -791,6 +787,8 @@ namespace: #f
 
 (def (find-method klass obj id)
   (cond
+   ((not (symbol? id))
+    (error "method id must be a symbol" method: id))
    ((class-type? klass)
     (__find-method klass obj id))
    ((##type? klass)

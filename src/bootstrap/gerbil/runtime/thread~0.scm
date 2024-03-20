@@ -1,226 +1,226 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/thread::timestamp 1710833424)
+  (define gerbil/runtime/thread::timestamp 1710943497)
   (begin
     (define spawn
-      (lambda (_f74932_ . _args74933_)
-        (if (let () (declare (not safe)) (procedure? _f74932_))
+      (lambda (_f74914_ . _args74915_)
+        (if (let () (declare (not safe)) (procedure? _f74914_))
             '#!void
-            (raise (let ((__obj74934
+            (raise (let ((__obj74916
                           (let ()
                             (declare (not safe))
                             (##structure Error::t '#f '#f '#f '#f))))
                      (Error:::init!
-                      __obj74934
+                      __obj74916
                       '"expected procedure"
                       'where:
                       'spawn
                       'irritants:
-                      (let () (declare (not safe)) (cons _f74932_ '())))
-                     __obj74934)))
+                      (let () (declare (not safe)) (cons _f74914_ '())))
+                     __obj74916)))
         (let ()
           (declare (not safe))
-          (spawn-actor _f74932_ _args74933_ '#!void '#f))))
+          (spawn-actor _f74914_ _args74915_ '#!void '#f))))
     (define spawn/name
-      (lambda (_name74928_ _f74929_ . _args74930_)
-        (if (let () (declare (not safe)) (procedure? _f74929_))
+      (lambda (_name74910_ _f74911_ . _args74912_)
+        (if (let () (declare (not safe)) (procedure? _f74911_))
             '#!void
-            (raise (let ((__obj74935
+            (raise (let ((__obj74917
                           (let ()
                             (declare (not safe))
                             (##structure Error::t '#f '#f '#f '#f))))
                      (Error:::init!
-                      __obj74935
+                      __obj74917
                       '"expected procedure"
                       'where:
                       'spawn/name
                       'irritants:
-                      (let () (declare (not safe)) (cons _f74929_ '())))
-                     __obj74935)))
+                      (let () (declare (not safe)) (cons _f74911_ '())))
+                     __obj74917)))
         (let ()
           (declare (not safe))
-          (spawn-actor _f74929_ _args74930_ _name74928_ '#f))))
+          (spawn-actor _f74911_ _args74912_ _name74910_ '#f))))
     (define spawn/group
-      (lambda (_name74922_ _f74923_ . _args74924_)
-        (if (let () (declare (not safe)) (procedure? _f74923_))
+      (lambda (_name74904_ _f74905_ . _args74906_)
+        (if (let () (declare (not safe)) (procedure? _f74905_))
             '#!void
-            (raise (let ((__obj74936
+            (raise (let ((__obj74918
                           (let ()
                             (declare (not safe))
                             (##structure Error::t '#f '#f '#f '#f))))
                      (Error:::init!
-                      __obj74936
+                      __obj74918
                       '"expected procedure"
                       'where:
                       'spawn/group
                       'irritants:
-                      (let () (declare (not safe)) (cons _f74923_ '())))
-                     __obj74936)))
-        (let ((_tgroup74926_ (make-thread-group _name74922_)))
+                      (let () (declare (not safe)) (cons _f74905_ '())))
+                     __obj74918)))
+        (let ((_tgroup74908_ (make-thread-group _name74904_)))
           (declare (not safe))
-          (spawn-actor _f74923_ _args74924_ _name74922_ _tgroup74926_))))
+          (spawn-actor _f74905_ _args74906_ _name74904_ _tgroup74908_))))
     (define spawn-actor
-      (lambda (_f74895_ _args74896_ _name74897_ _tgroup74898_)
-        (letrec ((_thread-main74900_
-                  (lambda (_thunk74914_)
+      (lambda (_f74877_ _args74878_ _name74879_ _tgroup74880_)
+        (letrec ((_thread-main74882_
+                  (lambda (_thunk74896_)
                     (lambda ()
                       (with-exception-handler
-                       (lambda (_exn74917_)
-                         (let ((__tmp74938
-                                (lambda (_cont74919_)
+                       (lambda (_exn74899_)
+                         (let ((__tmp74920
+                                (lambda (_cont74901_)
                                   (if __unhandled-actor-exception-hook
-                                      (let ((__tmp74939
+                                      (let ((__tmp74921
                                              (lambda ()
                                                (__unhandled-actor-exception-hook
-                                                _cont74919_
-                                                _exn74917_))))
+                                                _cont74901_
+                                                _exn74899_))))
                                         (declare (not safe))
-                                        (with-catch void __tmp74939))
+                                        (with-catch void __tmp74921))
                                       '#!void)
-                                  (let ((__tmp74940
+                                  (let ((__tmp74922
                                          (let ()
                                            (declare (not safe))
-                                           (##continuation-last _cont74919_))))
+                                           (##continuation-last _cont74901_))))
                                     (declare (not safe))
                                     (##continuation-graft
-                                     __tmp74940
+                                     __tmp74922
                                      ##primordial-exception-handler
-                                     _exn74917_)))))
+                                     _exn74899_)))))
                            (declare (not safe))
-                           (##continuation-capture __tmp74938)))
-                       _thunk74914_)))))
-          (let* ((_thunk74903_
-                  (if (let () (declare (not safe)) (null? _args74896_))
-                      _f74895_
-                      (lambda () (apply _f74895_ _args74896_))))
-                 (_thunk74906_
+                           (##continuation-capture __tmp74920)))
+                       _thunk74896_)))))
+          (let* ((_thunk74885_
+                  (if (let () (declare (not safe)) (null? _args74878_))
+                      _f74877_
+                      (lambda () (apply _f74877_ _args74878_))))
+                 (_thunk74888_
                   (lambda ()
                     (let ()
                       (declare (not safe))
-                      (with-exception-stack-trace__0 _thunk74903_))))
-                 (_tgroup74911_
-                  (let ((_$e74908_ _tgroup74898_))
-                    (if _$e74908_
-                        _$e74908_
+                      (with-exception-stack-trace__0 _thunk74885_))))
+                 (_tgroup74893_
+                  (let ((_$e74890_ _tgroup74880_))
+                    (if _$e74890_
+                        _$e74890_
                         (let ()
                           (declare (not safe))
                           (current-thread-group))))))
             (thread-start!
              (thread-init!
               (construct-actor-thread '#f '0)
-              (let () (declare (not safe)) (_thread-main74900_ _thunk74906_))
-              _name74897_
-              _tgroup74911_))))))
+              (let () (declare (not safe)) (_thread-main74882_ _thunk74888_))
+              _name74879_
+              _tgroup74893_))))))
     (define spawn-thread__%
-      (lambda (_thunk74873_ _name74874_ _tgroup74875_)
-        (thread-start! (make-thread _thunk74873_ _name74874_ _tgroup74875_))))
+      (lambda (_thunk74855_ _name74856_ _tgroup74857_)
+        (thread-start! (make-thread _thunk74855_ _name74856_ _tgroup74857_))))
     (define spawn-thread__0
-      (lambda (_thunk74880_)
-        (let* ((_name74882_ absent-obj) (_tgroup74884_ absent-obj))
+      (lambda (_thunk74862_)
+        (let* ((_name74864_ absent-obj) (_tgroup74866_ absent-obj))
           (declare (not safe))
-          (spawn-thread__% _thunk74880_ _name74882_ _tgroup74884_))))
+          (spawn-thread__% _thunk74862_ _name74864_ _tgroup74866_))))
     (define spawn-thread__1
-      (lambda (_thunk74886_ _name74887_)
-        (let ((_tgroup74889_ absent-obj))
+      (lambda (_thunk74868_ _name74869_)
+        (let ((_tgroup74871_ absent-obj))
           (declare (not safe))
-          (spawn-thread__% _thunk74886_ _name74887_ _tgroup74889_))))
+          (spawn-thread__% _thunk74868_ _name74869_ _tgroup74871_))))
     (define spawn-thread
-      (lambda _g74942_
-        (let ((_g74941_ (let () (declare (not safe)) (##length _g74942_))))
-          (cond ((let () (declare (not safe)) (##fx= _g74941_ 1))
-                 (apply (lambda (_thunk74880_)
+      (lambda _g74924_
+        (let ((_g74923_ (let () (declare (not safe)) (##length _g74924_))))
+          (cond ((let () (declare (not safe)) (##fx= _g74923_ 1))
+                 (apply (lambda (_thunk74862_)
                           (let ()
                             (declare (not safe))
-                            (spawn-thread__0 _thunk74880_)))
-                        _g74942_))
-                ((let () (declare (not safe)) (##fx= _g74941_ 2))
-                 (apply (lambda (_thunk74886_ _name74887_)
+                            (spawn-thread__0 _thunk74862_)))
+                        _g74924_))
+                ((let () (declare (not safe)) (##fx= _g74923_ 2))
+                 (apply (lambda (_thunk74868_ _name74869_)
                           (let ()
                             (declare (not safe))
-                            (spawn-thread__1 _thunk74886_ _name74887_)))
-                        _g74942_))
-                ((let () (declare (not safe)) (##fx= _g74941_ 3))
-                 (apply (lambda (_thunk74891_ _name74892_ _tgroup74893_)
+                            (spawn-thread__1 _thunk74868_ _name74869_)))
+                        _g74924_))
+                ((let () (declare (not safe)) (##fx= _g74923_ 3))
+                 (apply (lambda (_thunk74873_ _name74874_ _tgroup74875_)
                           (let ()
                             (declare (not safe))
                             (spawn-thread__%
-                             _thunk74891_
-                             _name74892_
-                             _tgroup74893_)))
-                        _g74942_))
+                             _thunk74873_
+                             _name74874_
+                             _tgroup74875_)))
+                        _g74924_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   spawn-thread
-                  _g74942_))))))
+                  _g74924_))))))
     (define thread-local-ref__%
-      (lambda (_key74857_ _default74858_)
-        (let ((_tab74860_ (let () (declare (not safe)) (thread-local-table))))
+      (lambda (_key74839_ _default74840_)
+        (let ((_tab74842_ (let () (declare (not safe)) (thread-local-table))))
           (declare (not safe))
-          (hash-ref__% _tab74860_ _key74857_ _default74858_))))
+          (hash-ref__% _tab74842_ _key74839_ _default74840_))))
     (define thread-local-ref__0
-      (lambda (_key74865_)
-        (let ((_default74867_ absent-obj))
+      (lambda (_key74847_)
+        (let ((_default74849_ absent-obj))
           (declare (not safe))
-          (thread-local-ref__% _key74865_ _default74867_))))
+          (thread-local-ref__% _key74847_ _default74849_))))
     (define thread-local-ref
-      (lambda _g74944_
-        (let ((_g74943_ (let () (declare (not safe)) (##length _g74944_))))
-          (cond ((let () (declare (not safe)) (##fx= _g74943_ 1))
-                 (apply (lambda (_key74865_)
+      (lambda _g74926_
+        (let ((_g74925_ (let () (declare (not safe)) (##length _g74926_))))
+          (cond ((let () (declare (not safe)) (##fx= _g74925_ 1))
+                 (apply (lambda (_key74847_)
                           (let ()
                             (declare (not safe))
-                            (thread-local-ref__0 _key74865_)))
-                        _g74944_))
-                ((let () (declare (not safe)) (##fx= _g74943_ 2))
-                 (apply (lambda (_key74869_ _default74870_)
+                            (thread-local-ref__0 _key74847_)))
+                        _g74926_))
+                ((let () (declare (not safe)) (##fx= _g74925_ 2))
+                 (apply (lambda (_key74851_ _default74852_)
                           (let ()
                             (declare (not safe))
-                            (thread-local-ref__% _key74869_ _default74870_)))
-                        _g74944_))
+                            (thread-local-ref__% _key74851_ _default74852_)))
+                        _g74926_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   thread-local-ref
-                  _g74944_))))))
+                  _g74926_))))))
     (define thread-local-get
-      (lambda (_key74854_)
-        (let () (declare (not safe)) (thread-local-ref__% _key74854_ '#f))))
+      (lambda (_key74836_)
+        (let () (declare (not safe)) (thread-local-ref__% _key74836_ '#f))))
     (define thread-local-set!
-      (lambda (_key74849_ _value74850_)
-        (let ((_tab74852_ (let () (declare (not safe)) (thread-local-table))))
+      (lambda (_key74831_ _value74832_)
+        (let ((_tab74834_ (let () (declare (not safe)) (thread-local-table))))
           (declare (not safe))
-          (hash-put! _tab74852_ _key74849_ _value74850_))))
+          (hash-put! _tab74834_ _key74831_ _value74832_))))
     (define thread-local-delete!
-      (lambda (_key74845_)
-        (let ((_tab74847_ (let () (declare (not safe)) (thread-local-table))))
+      (lambda (_key74827_)
+        (let ((_tab74829_ (let () (declare (not safe)) (thread-local-table))))
           (declare (not safe))
-          (hash-remove! _tab74847_ _key74845_))))
+          (hash-remove! _tab74829_ _key74827_))))
     (define thread-local-table
       (lambda ()
-        (let ((_thr74831_ (current-thread)))
-          (if (actor-thread? _thr74831_)
-              (let ((_$e74833_ (actor-thread-locals _thr74831_)))
-                (if _$e74833_
-                    (values _$e74833_)
-                    (let ((_tab74836_
+        (let ((_thr74813_ (current-thread)))
+          (if (actor-thread? _thr74813_)
+              (let ((_$e74815_ (actor-thread-locals _thr74813_)))
+                (if _$e74815_
+                    (values _$e74815_)
+                    (let ((_tab74818_
                            (let () (declare (not safe)) (make-hash-table-eq))))
-                      (actor-thread-locals-set! _thr74831_ _tab74836_)
-                      _tab74836_)))
+                      (actor-thread-locals-set! _thr74813_ _tab74818_)
+                      _tab74818_)))
               (if (let ()
                     (declare (not safe))
-                    (eq? _thr74831_ ##primordial-thread))
+                    (eq? _thr74813_ ##primordial-thread))
                   __primordial-thread-locals
                   (begin
                     (mutex-lock! __thread-locals-mutex)
-                    (let ((_$e74838_
+                    (let ((_$e74820_
                            (let ()
                              (declare (not safe))
-                             (hash-get __thread-locals _thr74831_))))
-                      (if _$e74838_
-                          ((lambda (_tab74841_)
+                             (hash-get __thread-locals _thr74813_))))
+                      (if _$e74820_
+                          ((lambda (_tab74823_)
                              (mutex-unlock! __thread-locals-mutex)
-                             _tab74841_)
-                           _$e74838_)
-                          (let ((_tab74843_
+                             _tab74823_)
+                           _$e74820_)
+                          (let ((_tab74825_
                                  (let ()
                                    (declare (not safe))
                                    (make-hash-table-eq))))
@@ -228,10 +228,10 @@
                               (declare (not safe))
                               (hash-put!
                                __thread-locals
-                               _thr74831_
-                               _tab74843_))
+                               _thr74813_
+                               _tab74825_))
                             (mutex-unlock! __thread-locals-mutex)
-                            _tab74843_)))))))))
+                            _tab74825_)))))))))
     (define __primordial-thread-locals
       (let () (declare (not safe)) (make-hash-table-eq)))
     (define __thread-locals
@@ -239,138 +239,138 @@
     (define __thread-locals-mutex (make-mutex 'thread-locals))
     (define __unhandled-actor-exception-hook '#f)
     (define unhandled-actor-exception-hook-set!
-      (lambda (_proc74828_)
-        (if (let () (declare (not safe)) (procedure? _proc74828_))
+      (lambda (_proc74810_)
+        (if (let () (declare (not safe)) (procedure? _proc74810_))
             '#!void
-            (raise (let ((__obj74937
+            (raise (let ((__obj74919
                           (let ()
                             (declare (not safe))
                             (##structure Error::t '#f '#f '#f '#f))))
                      (Error:::init!
-                      __obj74937
+                      __obj74919
                       '"Bad argument; expected procedure or #f"
                       'where:
                       'unhandler-actor-exception-hook-set!
                       'irritants:
-                      (let () (declare (not safe)) (cons _proc74828_ '())))
-                     __obj74937)))
-        (set! __unhandled-actor-exception-hook _proc74828_)))
+                      (let () (declare (not safe)) (cons _proc74810_ '())))
+                     __obj74919)))
+        (set! __unhandled-actor-exception-hook _proc74810_)))
     (define current-thread-group
       (lambda () (thread-thread-group (current-thread))))
     (define with-lock
-      (lambda (_mx74816_ _proc74817_)
-        (let ((_handler74819_ (current-exception-handler)))
+      (lambda (_mx74798_ _proc74799_)
+        (let ((_handler74801_ (current-exception-handler)))
           (with-exception-handler
-           (lambda (_e74821_)
-             (let ((__tmp74945
+           (lambda (_e74803_)
+             (let ((__tmp74927
                     (lambda ()
-                      (mutex-unlock! _mx74816_)
-                      (_handler74819_ _e74821_))))
+                      (mutex-unlock! _mx74798_)
+                      (_handler74801_ _e74803_))))
                (declare (not safe))
-               (with-catch void __tmp74945))
+               (with-catch void __tmp74927))
              (let ()
                (declare (not safe))
-               (##thread-end-with-uncaught-exception! _e74821_)))
+               (##thread-end-with-uncaught-exception! _e74803_)))
            (lambda ()
-             (mutex-lock! _mx74816_)
-             (let ((_result74825_ (_proc74817_)))
-               (mutex-unlock! _mx74816_)
-               _result74825_))))))
+             (mutex-lock! _mx74798_)
+             (let ((_result74807_ (_proc74799_)))
+               (mutex-unlock! _mx74798_)
+               _result74807_))))))
     (define with-dynamic-lock
-      (lambda (_mx74811_ _proc74812_)
+      (lambda (_mx74793_ _proc74794_)
         (dynamic-wind
-         (lambda () (mutex-lock! _mx74811_))
-         _proc74812_
-         (lambda () (mutex-unlock! _mx74811_)))))
+         (lambda () (mutex-lock! _mx74793_))
+         _proc74794_
+         (lambda () (mutex-unlock! _mx74793_)))))
     (define with-exception-stack-trace__%
-      (lambda (_thunk74792_ _error-port74793_)
+      (lambda (_thunk74774_ _error-port74775_)
         (with-exception-handler
-         (let ((_E74795_ (current-exception-handler)))
-           (lambda (_exn74797_)
+         (let ((_E74777_ (current-exception-handler)))
+           (lambda (_exn74779_)
              (continuation-capture
-              (lambda (_cont74799_)
+              (lambda (_cont74781_)
                 (if (dump-stack-trace?)
                     (let ()
                       (declare (not safe))
                       (dump-stack-trace!__%
-                       _cont74799_
-                       _exn74797_
-                       _error-port74793_))
+                       _cont74781_
+                       _exn74779_
+                       _error-port74775_))
                     '#!void)
-                (_E74795_ _exn74797_)))))
-         _thunk74792_)))
+                (_E74777_ _exn74779_)))))
+         _thunk74774_)))
     (define with-exception-stack-trace__0
-      (lambda (_thunk74804_)
-        (let ((_error-port74806_ (current-error-port)))
+      (lambda (_thunk74786_)
+        (let ((_error-port74788_ (current-error-port)))
           (declare (not safe))
-          (with-exception-stack-trace__% _thunk74804_ _error-port74806_))))
+          (with-exception-stack-trace__% _thunk74786_ _error-port74788_))))
     (define with-exception-stack-trace
-      (lambda _g74947_
-        (let ((_g74946_ (let () (declare (not safe)) (##length _g74947_))))
-          (cond ((let () (declare (not safe)) (##fx= _g74946_ 1))
-                 (apply (lambda (_thunk74804_)
+      (lambda _g74929_
+        (let ((_g74928_ (let () (declare (not safe)) (##length _g74929_))))
+          (cond ((let () (declare (not safe)) (##fx= _g74928_ 1))
+                 (apply (lambda (_thunk74786_)
                           (let ()
                             (declare (not safe))
-                            (with-exception-stack-trace__0 _thunk74804_)))
-                        _g74947_))
-                ((let () (declare (not safe)) (##fx= _g74946_ 2))
-                 (apply (lambda (_thunk74808_ _error-port74809_)
+                            (with-exception-stack-trace__0 _thunk74786_)))
+                        _g74929_))
+                ((let () (declare (not safe)) (##fx= _g74928_ 2))
+                 (apply (lambda (_thunk74790_ _error-port74791_)
                           (let ()
                             (declare (not safe))
                             (with-exception-stack-trace__%
-                             _thunk74808_
-                             _error-port74809_)))
-                        _g74947_))
+                             _thunk74790_
+                             _error-port74791_)))
+                        _g74929_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   with-exception-stack-trace
-                  _g74947_))))))
+                  _g74929_))))))
     (define dump-stack-trace!__%
-      (lambda (_cont74773_ _exn74774_ _error-port74775_)
-        (let ((_out74777_ (open-output-string)))
-          (let () (declare (not safe)) (fix-port-width! _out74777_))
-          (display '"*** Unhandled exception in " _out74777_)
-          (display (current-thread) _out74777_)
-          (newline _out74777_)
-          (display-exception _exn74774_ _out74777_)
+      (lambda (_cont74755_ _exn74756_ _error-port74757_)
+        (let ((_out74759_ (open-output-string)))
+          (let () (declare (not safe)) (fix-port-width! _out74759_))
+          (display '"*** Unhandled exception in " _out74759_)
+          (display (current-thread) _out74759_)
+          (newline _out74759_)
+          (display-exception _exn74756_ _out74759_)
           (if (let ()
                 (declare (not safe))
-                (class-instance? StackTrace::t _exn74774_))
+                (class-instance? StackTrace::t _exn74756_))
               '#!void
               (begin
-                (display '"Continuation backtrace: " _out74777_)
-                (newline _out74777_)
-                (display-continuation-backtrace _cont74773_ _out74777_)))
-          (let ((__tmp74948 (get-output-string _out74777_)))
+                (display '"Continuation backtrace: " _out74759_)
+                (newline _out74759_)
+                (display-continuation-backtrace _cont74755_ _out74759_)))
+          (let ((__tmp74930 (get-output-string _out74759_)))
             (declare (not safe))
-            (##write-string __tmp74948 _error-port74775_)))))
+            (##write-string __tmp74930 _error-port74757_)))))
     (define dump-stack-trace!__0
-      (lambda (_cont74782_ _exn74783_)
-        (let ((_error-port74785_ (current-error-port)))
+      (lambda (_cont74764_ _exn74765_)
+        (let ((_error-port74767_ (current-error-port)))
           (declare (not safe))
-          (dump-stack-trace!__% _cont74782_ _exn74783_ _error-port74785_))))
+          (dump-stack-trace!__% _cont74764_ _exn74765_ _error-port74767_))))
     (define dump-stack-trace!
-      (lambda _g74950_
-        (let ((_g74949_ (let () (declare (not safe)) (##length _g74950_))))
-          (cond ((let () (declare (not safe)) (##fx= _g74949_ 2))
-                 (apply (lambda (_cont74782_ _exn74783_)
+      (lambda _g74932_
+        (let ((_g74931_ (let () (declare (not safe)) (##length _g74932_))))
+          (cond ((let () (declare (not safe)) (##fx= _g74931_ 2))
+                 (apply (lambda (_cont74764_ _exn74765_)
                           (let ()
                             (declare (not safe))
-                            (dump-stack-trace!__0 _cont74782_ _exn74783_)))
-                        _g74950_))
-                ((let () (declare (not safe)) (##fx= _g74949_ 3))
-                 (apply (lambda (_cont74787_ _exn74788_ _error-port74789_)
+                            (dump-stack-trace!__0 _cont74764_ _exn74765_)))
+                        _g74932_))
+                ((let () (declare (not safe)) (##fx= _g74931_ 3))
+                 (apply (lambda (_cont74769_ _exn74770_ _error-port74771_)
                           (let ()
                             (declare (not safe))
                             (dump-stack-trace!__%
-                             _cont74787_
-                             _exn74788_
-                             _error-port74789_)))
-                        _g74950_))
+                             _cont74769_
+                             _exn74770_
+                             _error-port74771_)))
+                        _g74932_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   dump-stack-trace!
-                  _g74950_))))))
+                  _g74932_))))))
     (define-type-of-thread
      actor-thread
      constructor:
