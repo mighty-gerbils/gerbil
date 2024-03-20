@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/error::timestamp 1710943497)
+  (define gerbil/runtime/error::timestamp 1710954835)
   (begin
     (define Exception::t
       (let ((__tmp68183 (list)))
@@ -538,26 +538,26 @@
             (##write-string __tmp68198 _port67926_)))))
     (define Error::display-exception::specialize
       (lambda (__klass68157 __method-table68158)
-        (let ((__continuation68159
+        (let ((__message68159
                (let ((__slot68163
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass68157 'continuation))))
+                        (class-slot-offset __klass68157 'message))))
                  (if __slot68163
                      __slot68163
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'continuation)))))
-              (__message68160
+                       (error '"Unknown slot" 'message)))))
+              (__where68160
                (let ((__slot68164
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass68157 'message))))
+                        (class-slot-offset __klass68157 'where))))
                  (if __slot68164
                      __slot68164
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'message)))))
+                       (error '"Unknown slot" 'where)))))
               (__irritants68161
                (let ((__slot68165
                       (let ()
@@ -568,16 +568,16 @@
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'irritants)))))
-              (__where68162
+              (__continuation68162
                (let ((__slot68166
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass68157 'where))))
+                        (class-slot-offset __klass68157 'continuation))))
                  (if __slot68166
                      __slot68166
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'where))))))
+                       (error '"Unknown slot" 'continuation))))))
           (lambda (_self67925_ _port67926_)
             (let ((_tmp-port67928_ (open-output-string))
                   (_display-error-newline67929_
@@ -592,7 +592,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self67925_
-                                 __where68162
+                                 __where68160
                                  __klass68157
                                  '#f))))
                          (if _$e67932_ (display _$e67932_) (display '"?")))
@@ -607,7 +607,7 @@
                                 (declare (not safe))
                                 (##unchecked-structure-ref
                                  _self67925_
-                                 __message68160
+                                 __message68159
                                  __klass68157
                                  '#f))))
                          (declare (not safe))
@@ -641,7 +641,7 @@
                                     (declare (not safe))
                                     (##unchecked-structure-ref
                                      _self67925_
-                                     __continuation68159
+                                     __continuation68162
                                      __klass68157
                                      '#f))))
                              (if _cont6793867940_

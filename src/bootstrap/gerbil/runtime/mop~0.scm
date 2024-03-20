@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710943496)
+  (define gerbil/runtime/mop::timestamp 1710954835)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -2535,12 +2535,14 @@
                                  _klass64587_
                                  'method:
                                  _id64588_))
-                        (let ()
-                          (declare (not safe))
-                          (symbolic-table-set!
-                           _ht64598_
-                           _id64588_
-                           _proc64589_))))))
+                        (begin
+                          (let ()
+                            (declare (not safe))
+                            (symbolic-table-set!
+                             _ht64598_
+                             _id64588_
+                             _proc64589_))
+                          '#!void)))))
           (if (let () (declare (not safe)) (procedure? _proc64589_))
               '#!void
               (let ()

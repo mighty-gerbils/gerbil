@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/optimize-base::timestamp 1710943499)
+  (define gerbil/compiler/optimize-base::timestamp 1710954837)
   (begin
     (define gxc#current-compile-optimizer-info (make-parameter '#f))
     (define gxc#current-compile-mutators (make-parameter '#f))
@@ -1492,106 +1492,106 @@
                   _g117172_))))))
     (define gxc#!class:::init!::specialize
       (lambda (__klass117040 __method-table117041)
-        (let ((__metaclass117042
+        (let ((__id117042
                (let ((__slot117052
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'metaclass))))
+                        (class-slot-offset __klass117040 'id))))
                  (if __slot117052
                      __slot117052
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'metaclass)))))
-              (__methods117043
+                       (error '"Unknown slot" 'id)))))
+              (__super117043
                (let ((__slot117053
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'methods))))
+                        (class-slot-offset __klass117040 'super))))
                  (if __slot117053
                      __slot117053
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'methods)))))
-              (__id117044
+                       (error '"Unknown slot" 'super)))))
+              (__slots117044
                (let ((__slot117054
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'id))))
+                        (class-slot-offset __klass117040 'slots))))
                  (if __slot117054
                      __slot117054
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'id)))))
-              (__super117045
+                       (error '"Unknown slot" 'slots)))))
+              (__struct?117045
                (let ((__slot117055
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'super))))
+                        (class-slot-offset __klass117040 'struct?))))
                  (if __slot117055
                      __slot117055
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'super)))))
-              (__constructor117046
+                       (error '"Unknown slot" 'struct?)))))
+              (__methods117046
                (let ((__slot117056
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'constructor))))
+                        (class-slot-offset __klass117040 'methods))))
                  (if __slot117056
                      __slot117056
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'constructor)))))
-              (__final?117047
+                       (error '"Unknown slot" 'methods)))))
+              (__metaclass117047
                (let ((__slot117057
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'final?))))
+                        (class-slot-offset __klass117040 'metaclass))))
                  (if __slot117057
                      __slot117057
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'final?)))))
-              (__struct?117048
+                       (error '"Unknown slot" 'metaclass)))))
+              (__constructor117048
                (let ((__slot117058
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'struct?))))
+                        (class-slot-offset __klass117040 'constructor))))
                  (if __slot117058
                      __slot117058
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'struct?)))))
-              (__slots117049
+                       (error '"Unknown slot" 'constructor)))))
+              (__final?117049
                (let ((__slot117059
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'slots))))
+                        (class-slot-offset __klass117040 'final?))))
                  (if __slot117059
                      __slot117059
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slots)))))
-              (__precedence-list117050
+                       (error '"Unknown slot" 'final?)))))
+              (__fields117050
                (let ((__slot117060
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'precedence-list))))
+                        (class-slot-offset __klass117040 'fields))))
                  (if __slot117060
                      __slot117060
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'precedence-list)))))
-              (__fields117051
+                       (error '"Unknown slot" 'fields)))))
+              (__precedence-list117051
                (let ((__slot117061
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117040 'fields))))
+                        (class-slot-offset __klass117040 'precedence-list))))
                  (if __slot117061
                      __slot117061
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'fields))))))
+                       (error '"Unknown slot" 'precedence-list))))))
           (lambda _g117174_
             (let ((_g117173_
                    (let () (declare (not safe)) (##length _g117174_))))
@@ -1851,7 +1851,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _id116750_
-                                         __id117044
+                                         __id117042
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1859,7 +1859,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _super116751_
-                                         __super117045
+                                         __super117043
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1867,7 +1867,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _precedence-list116850_
-                                         __precedence-list117050
+                                         __precedence-list117051
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1875,7 +1875,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _slots116752_
-                                         __slots117049
+                                         __slots117044
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1883,7 +1883,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _fields116853_
-                                         __fields117051
+                                         __fields117050
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1891,7 +1891,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _ctor-method116844_
-                                         __constructor117046
+                                         __constructor117048
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1899,7 +1899,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _struct?116754_
-                                         __struct?117048
+                                         __struct?117045
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1907,7 +1907,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _final?116755_
-                                         __final?117047
+                                         __final?117049
                                          __klass117040
                                          '#f))
                                       (let ()
@@ -1915,7 +1915,7 @@
                                         (##unchecked-structure-set!
                                          _self116749_
                                          _metaclass116757_
-                                         __metaclass117042
+                                         __metaclass117047
                                          __klass117040
                                          '#f)))))))
                             _g117174_))
@@ -1937,7 +1937,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _id116857_
-                                 __id117044
+                                 __id117042
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1945,7 +1945,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _super116858_
-                                 __super117045
+                                 __super117043
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1953,7 +1953,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _precedence-list116859_
-                                 __precedence-list117050
+                                 __precedence-list117051
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1961,7 +1961,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _slots116860_
-                                 __slots117049
+                                 __slots117044
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1969,7 +1969,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _fields116861_
-                                 __fields117051
+                                 __fields117050
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1977,7 +1977,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _constructor116862_
-                                 __constructor117046
+                                 __constructor117048
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1985,7 +1985,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _struct?116863_
-                                 __struct?117048
+                                 __struct?117045
                                  __klass117040
                                  '#f))
                               (let ()
@@ -1993,7 +1993,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _final?116864_
-                                 __final?117047
+                                 __final?117049
                                  __klass117040
                                  '#f))
                               (let ()
@@ -2001,7 +2001,7 @@
                                 (##unchecked-structure-set!
                                  _self116856_
                                  _metaclass116866_
-                                 __metaclass117042
+                                 __metaclass117047
                                  __klass117040
                                  '#f))
                               (if _methods116867_
@@ -2014,7 +2014,7 @@
                                     (##unchecked-structure-set!
                                      _self116856_
                                      __tmp117194
-                                     __methods117043
+                                     __methods117046
                                      __klass117040
                                      '#f))
                                   '#!void))
@@ -2294,26 +2294,26 @@
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id)))))
-              (__checked?117073
+              (__slot117073
                (let ((__slot117076
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117070 'checked?))))
+                        (class-slot-offset __klass117070 'slot))))
                  (if __slot117076
                      __slot117076
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'checked?)))))
-              (__slot117074
+                       (error '"Unknown slot" 'slot)))))
+              (__checked?117074
                (let ((__slot117077
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117070 'slot))))
+                        (class-slot-offset __klass117070 'checked?))))
                  (if __slot117077
                      __slot117077
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slot))))))
+                       (error '"Unknown slot" 'checked?))))))
           (lambda (_self116260_ _id116261_ _slot116262_ _checked?116263_)
             (let ()
               (declare (not safe))
@@ -2328,7 +2328,7 @@
               (##unchecked-structure-set!
                _self116260_
                _slot116262_
-               __slot117074
+               __slot117073
                __klass117070
                '#f))
             (let ()
@@ -2336,7 +2336,7 @@
               (##unchecked-structure-set!
                _self116260_
                _checked?116263_
-               __checked?117073
+               __checked?117074
                __klass117070
                '#f))))))
     (let ()
@@ -2369,26 +2369,26 @@
                      (let ()
                        (declare (not safe))
                        (error '"Unknown slot" 'id)))))
-              (__checked?117081
+              (__slot117081
                (let ((__slot117084
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117078 'checked?))))
+                        (class-slot-offset __klass117078 'slot))))
                  (if __slot117084
                      __slot117084
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'checked?)))))
-              (__slot117082
+                       (error '"Unknown slot" 'slot)))))
+              (__checked?117082
                (let ((__slot117085
                       (let ()
                         (declare (not safe))
-                        (class-slot-offset __klass117078 'slot))))
+                        (class-slot-offset __klass117078 'checked?))))
                  (if __slot117085
                      __slot117085
                      (let ()
                        (declare (not safe))
-                       (error '"Unknown slot" 'slot))))))
+                       (error '"Unknown slot" 'checked?))))))
           (lambda (_self116133_ _id116134_ _slot116135_ _checked?116136_)
             (let ()
               (declare (not safe))
@@ -2403,7 +2403,7 @@
               (##unchecked-structure-set!
                _self116133_
                _slot116135_
-               __slot117082
+               __slot117081
                __klass117078
                '#f))
             (let ()
@@ -2411,7 +2411,7 @@
               (##unchecked-structure-set!
                _self116133_
                _checked?116136_
-               __checked?117081
+               __checked?117082
                __klass117078
                '#f))))))
     (let ()
