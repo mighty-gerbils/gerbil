@@ -187,6 +187,84 @@ syntactic forms described later in the guide.
 
 ### Objective Gerbil
 
+Gerbil has deeply integrated support for object-oriented programming
+based on a well developed MetaObject Protocol (MOP), power equivalent
+to the CLOS MOP. The fundamental building blocks are *classes*, which
+have arbitrary inheritance graphs, and define slots and methods.
+
+Slots are the attributes of an object, accessible by slot accessors
+and mutators, while methods are procedures attached to the class to
+implement object behavior. We also support *structs* as a special type
+of classes, which have a fixed slot layout and by necessity constrain
+the inheritance graph to have a linear chain of structs.
+
+Furthermore, we support *interfaces*, which are akin to type-classes
+and pack an object together with its resolved and runtime specialized
+methods. This allows us to completely eliminate dynamic dispatch
+overhead and move contract checks at the interface call boundary.
+
+Finally, we also support *generics* with class-based multimethod
+dispatch, as part of the standard library.
+
+#### Classes and Objects
+
+##### Defining Classes
+
+We can define a new class with the `defclass` macro.
+
+For instance, here is a simple class hierarchy:
+```
+(defclass Point (x y))
+(defclass (Point3D Point) (z))
+```
+
+Here we have a class `Point` and its 3D extension, `Point3D`.
+The `Point` class has two slots, `x` and `y`, representing the 2D cartesian
+coordinates of the point its instances represent. `Point3D` adds an additional
+slot, `z`.
+
+After we have defined our classes, we can instantiate objects using
+the class name, taking keyword arguments for the slots:
+```
+> (def a (Point 1 2))
+
+```
+
+```
+(defclass Color (r g b))
+
+(defclass (ColoredPoint Point) ())
+(defclass (ColoredPoint3D Point3D))
+```
+
+
+##### Slots
+
+##### Methods
+
+##### Method Resolution Order
+
+##### Constructor Methods
+
+##### Structs
+
+##### System Classes
+
+##### MetaClasses
+
+#### Interfaces
+
+#### Contracts, Type Annotations, and Dotted Notation
+
+#### Runtime Specialization
+
+##### Class Sealing
+
+##### Interface Instance Specializers
+
+#### Generics
+
+########################################################################
 Gerbil supports object-oriented programming with structs, classes, and
 interfaces. Structs are index-based types with single inheritance,
 while classes are slot-based types with multiple
@@ -570,6 +648,7 @@ Extending the example further:
 
 ```
 
+
 ### Pattern Matching
 
 Gerbil uses pattern matching extensively, so a suitable match
@@ -718,7 +797,7 @@ language at phi=+1 and shift higher with a nested `begin-syntax`. You
 will have to import `:gerbil/core` at higher phases however, as the
 prelude only provides bindings for phi=+1.
 
-## Modules and Libraries
+## Modules, Libraries, and Executables
 
 Modules are self-contained pieces of code. All identifiers
 used in the runtime of the module must be bound. They
@@ -1083,14 +1162,14 @@ To use it in the interpreter, start gxi by specifying `polydactyl` as the langua
 $ gxi --lang polydactyl
 ```
 
-## Standard Library
+## The Standard Library
 
 The gerbil standard library is located at `src/std`; it includes
 several common libraries (SRFIs, and usual scheme libraries like
-`:std/pregexp`, `:std/sort`, and `:std/format`), along with
+`:std/pregexp`, `:std/sort`, and `:std/format`), along with many
 Gerbil-specific libraries.
-Here we provide examples and brief documentation for the more
-interesting of the Gerbil-specific libraries.
+Here we provide examples and brief overview for some of the more
+interesting Gerbil-specific libraries.
 
 ### Additional Syntactic Sugar
 
