@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/runtime/mop::timestamp 1710943024)
+  (define gerbil/runtime/mop::timestamp 1710943496)
   (begin
     (define type-flag-opaque '1)
     (define type-flag-extensible '2)
@@ -1844,26 +1844,19 @@
           (unchecked-field-set! _obj64935_ __tmp65946 _val64937_))))
     (define slot-ref__%
       (lambda (_obj64911_ _slot64912_ _E64913_)
-        (if (object? _obj64911_)
-            (let* ((_klass64915_ (object-type _obj64911_))
-                   (_$e64918_
-                    (if (let ()
-                          (declare (not safe))
-                          (##structure-instance-of?
-                           _klass64915_
-                           'gerbil#class::t))
-                        (let ()
-                          (declare (not safe))
-                          (class-slot-offset _klass64915_ _slot64912_))
-                        '#f)))
-              (if _$e64918_
-                  ((lambda (_off64921_)
-                     (let ()
-                       (declare (not safe))
-                       (unchecked-field-ref _obj64911_ _off64921_)))
-                   _$e64918_)
-                  (_E64913_ _obj64911_ _slot64912_)))
-            (_E64913_ _obj64911_ _slot64912_))))
+        (let* ((_klass64915_
+                (let () (declare (not safe)) (class-of _obj64911_)))
+               (_$e64918_
+                (let ()
+                  (declare (not safe))
+                  (class-slot-offset _klass64915_ _slot64912_))))
+          (if _$e64918_
+              ((lambda (_off64921_)
+                 (let ()
+                   (declare (not safe))
+                   (unchecked-field-ref _obj64911_ _off64921_)))
+               _$e64918_)
+              (_E64913_ _obj64911_ _slot64912_)))))
     (define slot-ref__0
       (lambda (_obj64926_ _slot64927_)
         (let ((_E64929_ __slot-error))
@@ -1890,29 +1883,19 @@
                   _g65949_))))))
     (define slot-set!__%
       (lambda (_obj64883_ _slot64884_ _val64885_ _E64886_)
-        (if (object? _obj64883_)
-            (let* ((_klass64888_ (object-type _obj64883_))
-                   (_$e64891_
-                    (if (let ()
-                          (declare (not safe))
-                          (##structure-instance-of?
-                           _klass64888_
-                           'gerbil#class::t))
-                        (let ()
-                          (declare (not safe))
-                          (class-slot-offset _klass64888_ _slot64884_))
-                        '#f)))
-              (if _$e64891_
-                  ((lambda (_off64894_)
-                     (let ()
-                       (declare (not safe))
-                       (unchecked-field-set!
-                        _obj64883_
-                        _off64894_
-                        _val64885_)))
-                   _$e64891_)
-                  (_E64886_ _obj64883_ _slot64884_)))
-            (_E64886_ _obj64883_ _slot64884_))))
+        (let* ((_klass64888_
+                (let () (declare (not safe)) (class-of _obj64883_)))
+               (_$e64891_
+                (let ()
+                  (declare (not safe))
+                  (class-slot-offset _klass64888_ _slot64884_))))
+          (if _$e64891_
+              ((lambda (_off64894_)
+                 (let ()
+                   (declare (not safe))
+                   (unchecked-field-set! _obj64883_ _off64894_ _val64885_)))
+               _$e64891_)
+              (_E64886_ _obj64883_ _slot64884_)))))
     (define slot-set!__0
       (lambda (_obj64899_ _slot64900_ _val64901_)
         (let ((_E64903_ __slot-error))
@@ -1995,16 +1978,10 @@
           (##structure-instance-of? _obj64864_ __tmp65957))))
     (define class-instance?
       (lambda (_klass64858_ _obj64859_)
-        (if (object? _obj64859_)
-            (let ((_type64861_ (object-type _obj64859_)))
-              (if (let ()
-                    (declare (not safe))
-                    (##structure-instance-of? _type64861_ 'gerbil#class::t))
-                  (let ()
-                    (declare (not safe))
-                    (subclass? _type64861_ _klass64858_))
-                  '#f))
-            '#f)))
+        (let ((_type64861_
+               (let () (declare (not safe)) (class-of _obj64859_))))
+          (declare (not safe))
+          (subclass? _type64861_ _klass64858_))))
     (define make-object
       (lambda (_klass64853_ _k64854_)
         (if (let () (declare (not safe)) (class-type-system? _klass64853_))
