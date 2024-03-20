@@ -325,32 +325,36 @@ Here is an example in our color and point hierarchy:
 
 (defmethod {colorize Point}
   (lambda (self)
-    (ColoredPoint x: (@ self x)
-                  y: (@ self y)
-                  r: 0 g: 0 b: 0)))
+    (if (Color? self)
+      self
+      (ColoredPoint x: (@ self x)
+                    y: (@ self y)
+                    r: 0 g: 0 b: 0))))
 
 (defmethod {colorize Point3D}
   (lambda (self)
-    (ColoredPoint3D x: (@ self x)
-                    y: (@ self y)
-                    z: (@ self z)
-                    r: 0 g: 0 b: 0)))
+    (if (Color? self)
+      self
+      (ColoredPoint3D x: (@ self x)
+                      y: (@ self y)
+                      z: (@ self z)
+                      r: 0 g: 0 b: 0))))
 ```
 
 Here we define a `colorize` method that takes no arguments and returns
 a colored version of a point. We define it as identity for instances
-of `Color`, as the point is colored already. For instances of `Point`
+of `Color`, as the object is colored already. For instances of `Point`
 and `Point3D` we define it as constructor for the color mixin of the
 object, colored black.
 
-And here is example usage:
+And here is some example usage:
 ```
 > {colorize a}
 #<ColoredPoint #16>
 > {colorize b}
 #<ColoredPoint3D #17>
 > {colorize c}
-#<ColoredPoint3D #18>
+#<ColoredPoint3D #7>
 > (def white (Color r: 255 g: 255 b: 255))
 > {colorize white}
 #<Color #19>
@@ -358,9 +362,39 @@ And here is example usage:
 
 ##### Method Resolution Order
 
-##### Constructor Methods
+So how do methods get dispatched? As we have seen we have defined the
+method at several classes, how does the runtime system know which
+method to pick?
+
+This is where the Method Resolution Order comes in place, which is
+enacted by linearizing the class graph in a precedence list. The
+method is first resolved at the concrete class; if it is not defined,
+the precedence list is traversed until a definition is found. If no
+definition is found the method resolution fails.
+
+The algorithm used by Gerbil for class graph linearization is an
+algorithm we dub C4. It is based on the formal [C3](https://en.wikipedia.org/wiki/C3_linearization) algorithm, extended to support linear [struct constraints](#structs).
+
+In the example hierarchy above, here is the precedence list for the
+`ColoredPoint3D` class:
+```
+> (class-precedence-list ColoredPoint3D::t)
+(#<type #23 ColoredPoint3D>
+ #<type #13 Point3D>
+ #<type #24 Point>
+ #<type #25 Color>
+ #<type #26 object>
+ #<type #27 t>)
+```
+
+Here we see the expected classes up until color, and then we have the
+`object` class, which is the class of all standard class instances,
+and `t`, which is the top class. These are [System Classes](#system-classes),
+which we discuss below.
 
 ##### Structs
+
+##### Constructor Methods
 
 ##### System Classes
 
