@@ -190,7 +190,8 @@ syntactic forms described later in the guide.
 Gerbil has deeply integrated support for object-oriented programming
 based on a well developed MetaObject Protocol (MOP), power equivalent
 to the CLOS MOP. The fundamental building blocks are *classes*, which
-have arbitrary inheritance graphs, and define slots and methods.
+can have arbitrary inheritance (acyclic) graphs, and define slots and
+methods.
 
 Slots are the attributes of an object, accessible by slot accessors
 and mutators, while methods are procedures attached to the class to
@@ -221,22 +222,58 @@ For instance, here is a simple class hierarchy:
 Here we have a class `Point` and its 3D extension, `Point3D`.
 The `Point` class has two slots, `x` and `y`, representing the 2D cartesian
 coordinates of the point its instances represent. `Point3D` adds an additional
-slot, `z`.
+slot, with the 3rd dimension `z`.
 
 After we have defined our classes, we can instantiate objects using
 the class name, taking keyword arguments for the slots:
 ```
-> (def a (Point 1 2))
+> (def a (Point x: 1 y: 2))
+> a
+#<Point #3>
+> (def b (Point3D x: 0 y: 1 z: 2))
+> b
+#<Point3D #4>
+> (Point? a)
+#t
+> (Point? b)
+#t
+> (Point3D? a)
+#f
+> (Point3D? b)
+#t
 
 ```
+
+We can also initialize using the generate `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
+```
+> (make-Point x: 1 y: 2)
+#<Point #5>
+> (make-instance Point::t x: 1 y: 2)
+#<Point #6>
+```
+
+Of course, we are not limited to single inheritance. Here is an
+extended hierarchy that defines colored points:
 
 ```
 (defclass Color (r g b))
 
-(defclass (ColoredPoint Point) ())
-(defclass (ColoredPoint3D Point3D))
+(defclass (ColoredPoint Point Color) ())
+(defclass (ColoredPoint3D Point3D Color) ())
 ```
 
+and here is a red point:
+```
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> c
+#<ColoredPoint3D #7>
+> (Point? c)
+#t
+> (Point3D? c)
+#t
+> (Color? c)
+#t
+```
 
 ##### Slots
 
