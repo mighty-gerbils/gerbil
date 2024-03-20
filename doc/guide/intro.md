@@ -207,6 +207,9 @@ overhead and move contract checks at the interface call boundary.
 Finally, we also support *generics* with class-based multimethod
 dispatch, as part of the standard library.
 
+In the following we give a quick overview of Gerbil's object oriented
+programming facilities.
+
 #### Classes and Objects
 
 ##### Defining Classes
