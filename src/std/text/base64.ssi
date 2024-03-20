@@ -1,12 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; base64 encoding
+prelude: :std/ssi
 package: std/text
-namespace: std/text/base64
 
 (import :std/error)
 (export #t)
-(extern
+(defruntime
   base64-string->u8vector
   base64-substring->u8vector
   u8vector->base64-string
