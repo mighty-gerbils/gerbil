@@ -819,10 +819,11 @@ on numbers and strings. We can use the generic method as a procedure:
 We can define methods for any class.
 Here we define an implementation for instances of a struct `A`:
 ```scheme
+(defstruct A (x))
+
 > (my-add (make-A 1) (make-A 2))
 #f
 
-(defstruct A (x))
 (defmethod (my-add (a A) (b A))
   (make-A (+ (A-x a) (A-x b))))
 
