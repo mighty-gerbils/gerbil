@@ -766,21 +766,32 @@ A contract specification in general looks like this
   (some-method (arg contract ... [default ...]) ...))
 
 contract:
-  :  <type check>
-  :- <type assertion>
-  :~ <predicate expression>
+  :  <class-or-interface>   ; type check
+  :- <class-or-interface>   ; type assertion
+  :~ <predicate expression> ; predicate check
 ```
 
-Contracts can also be enacted in arbitrary context with the ubiquitous
-`using` macro. See the [Contracts Reference](/reference/std/contract.md) section of
-the hyperspace for more details.
+For instance, here is an interface with an attached contract:
+```scheme
+(interface Sequence
+  (ref  (index :~ fx>=0?))
+  (set! (index :~ fx>=0?) value)
+  (length))
+```
+
+Here we define a sequence interface with three methods: `ref`,`set!`, and `length`.
+The `ref` method accepts an index, which must be a non negative fixnum.
+The `set!` method accepts an index (again a non negative fixnum) and an arbitrary
+value.
+The `length` method returns the length of the sequence.
 
 ### Type Annotations and Dotted Notation
 
 We briefly touched on contracts above, but there is an important
-detail that is worth elaborating upon. Within the body of a `using`
-incantation, bound variables acquire dotted acces for interface
-methods and slot accesses.
+detail that is worth elaborating upon. Contracts can also be enacted
+in arbitrary context with the ubiquitous `using` macro.  Furthermore,
+within the body of a `using` incantation, bound variables acquire
+dotted acces for interface methods and slot accesses.
 
 Here is an example:
 ```scheme
@@ -799,10 +810,49 @@ Here is an example:
 9
 ```
 
-Furthermore, the `{}` dynamic method call operator also allows the use
-of a dotted identifier at he head. In this manner, `{a.some-method arg ...}`
+For a more interesting example, let's make an extensible vector implementing
+the `Sequence` interface from above:
+```scheme
+(defclass ExtensibleVector (vector))
+
+(defmethod {ref ExtensibleVector}
+  (lambda (self index)
+    (using (self :- ExtensibleVector)
+      (and (< index (vector-length self.vector))
+           (vector-ref self.vector index)))))
+
+(defmethod {set! ExtensibleVector}
+  (lambda (self index value)
+    (using (self :- ExtensibleVector)
+      (if (< index (vector-length self.vector))
+        (vector-set! self.vector index value)
+        ;; extend the vector
+        (let (new-vector (make-vector (1+ index) #f))
+          (subvector-move! self.vector 0 (vector-length self.vector)
+                           new-vector 0)
+          (vector-set! new-vector index value)
+          (set! self.vector new-vector))))))
+
+(defmethod {length ExtensibleVector}
+  (lambda (self)
+    (using (self :- ExtensibleVector)
+      (vector-length self.vector))))
+```
+
+Notice the use of type assertions for self above; this is an unchecked type
+declaration -- unchecked because there is no reason to check if the object
+is behind the interface! Furthermore there is no need to check for a negative
+index, as this is checked at the interface barrier.
+
+Finally, it should also be noted that the `{}` dynamic method call operator
+also allows the use of a dotted identifier at he head.
+In this manner, `{a.some-method arg ...}`
 is equivalent to `{some-method a arg ...}`. This provides symmetry between
 dotted slot access and method invocation.
+
+See the [Contracts Reference](/reference/std/contract.md) section of
+the hyperspace for more details.
+
 
 ### Runtime Specialization
 
