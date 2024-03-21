@@ -217,7 +217,7 @@ programming facilities.
 We can define a new class with the `defclass` macro.
 
 For instance, here is a simple class hierarchy:
-```
+```scheme
 (defclass Point (x y))
 (defclass (Point3D Point) (z))
 ```
@@ -229,7 +229,7 @@ slot, with the 3rd dimension `z`.
 
 After we have defined our classes, we can instantiate objects using
 the class name, taking keyword arguments for the slot initializers:
-```
+```scheme
 > (def a (Point x: 1 y: 2))
 > a
 #<Point #3>
@@ -244,11 +244,10 @@ the class name, taking keyword arguments for the slot initializers:
 #f
 > (Point3D? b)
 #t
-
 ```
 
 We can also initialize using the generated `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
-```
+```scheme
 > (make-Point x: 1 y: 2)
 #<Point #5>
 > (make-instance Point::t x: 1 y: 2)
@@ -258,7 +257,7 @@ We can also initialize using the generated `make-Point` and `make-Point3D` const
 Of course, we are not limited to single inheritance. Here is an
 extended hierarchy that defines colored points:
 
-```
+```scheme
 (defclass Color (r g b))
 
 (defclass (ColoredPoint Point Color) ())
@@ -266,7 +265,7 @@ extended hierarchy that defines colored points:
 ```
 
 and here is a red point:
-```
+```scheme
 > (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
 > c
 #<ColoredPoint3D #7>
@@ -289,7 +288,7 @@ same field in the object.
 
 We can access or mutate a slot in a type-safe manner using the generated
 accessors and mutators:
-```
+```scheme
 > (Point-x a)
 1
 > (set! (Point-x a) 2)
@@ -299,7 +298,7 @@ accessors and mutators:
 ```
 
 Alternatively, we can use the `@` dynamic slot operator:
-```
+```scheme
 > (@ a x)
 2
 > (set! (@ a x) 1)
@@ -322,7 +321,7 @@ Methods are defined with `defmethod` and invoked dynamically with the `{}`
 dynamic call operator.
 
 Here is an example in our color and point hierarchy:
-```
+```scheme
 (defmethod {colorize Color}
   identity)
 
@@ -351,7 +350,7 @@ and `Point3D` we define it as constructor for the color mixin of the
 object, colored black.
 
 And here is some example usage:
-```
+```scheme
 > {colorize a}
 #<ColoredPoint #16>
 > {colorize b}
@@ -380,7 +379,7 @@ algorithm we dub C4. It is based on the formal [C3](https://en.wikipedia.org/wik
 
 In the example hierarchy above, here is the precedence list for the
 `ColoredPoint3D` class:
-```
+```scheme
 > (class-precedence-list ColoredPoint3D::t)
 (#<type #23 ColoredPoint3D>
  #<type #13 Point3D>
@@ -415,7 +414,7 @@ directive in the body of a `defclass` incantation.
 
 So let's redefine the hierarchy above such that `Point` and `Point3D`
 are structs, while `Color` remains a mixin class:
-```
+```scheme
 (defstruct Point (x y))
 (defstruct (Point3D Point) (z))
 
@@ -445,7 +444,6 @@ are structs, while `Color` remains a mixin class:
 #t
 > (Color? c)
 #t
-
 ```
 
 A couple of things to notice here:
@@ -474,7 +472,7 @@ define a constructor method with the `constructor: <method-id>` directive in
 
 For example here is a constructor for Point3D that makes `z` optional and
 initializes it by default to 0:
-```
+```scheme
 (defstruct (Point3D Point) (z)
   constructor: :init!)
 
@@ -525,7 +523,7 @@ of such objects? Easy, use the `class-of` operator or reference
 them by name to define methods in them.
 
 Here is an example for list:
-```
+```scheme
 > (class-of '(1 2 3))
 #<type #33 pair>
 > pair::t
@@ -536,7 +534,7 @@ Here is an example for list:
 
 Here is another example that defines methods at various points in the
 system class hierarchy:
-```
+```scheme
 (defmethod {identify :t}
   (lambda (obj) 't))
 (defmethod {identify :object}
@@ -589,7 +587,7 @@ Interfaces are defined using the `interface` macro from the
 `:std/interface` standard library module.
 
 Here is an example for our colorful point hierarchy:
-```
+```scheme
 (interface Colorizer
  (colorize))
 
@@ -613,7 +611,7 @@ write method implementations knowing that any access through the
 interface ensure that the contract conditions are satisfied.
 
 A contract specification in general looks like this
-```
+```scheme
 (interface SomeInterface
   (some-method (arg contract ... [default ...]) ...))
 
@@ -635,7 +633,7 @@ incantation, bound variables acquire dotted acces for interface
 methods and slot accesses.
 
 Here is an example:
-```
+```scheme
 (import :std/contract)
 (defstruct A (x y))
 (defclass (B A) (z) constructor: :init!)
@@ -702,7 +700,7 @@ In order to better understand the performance effects of runtime
 specialization, let's examine a simple case. Here, we define the
 following code in a module `specialization-example` in the `example`
 package:
-```
+```scheme
 (import :std/interface :std/contract :std/iter)
 (export #t)
 
@@ -744,7 +742,7 @@ of an interface `I`.
 
 After compiling the module (with optimizations enabled of course),
 we can observe the following:
-```
+```scheme
 > (import :example/specialization-example)
 > (def o (E a: 1 b: 2 c: 3 d: 4 e: 5))
 
