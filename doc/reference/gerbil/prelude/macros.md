@@ -353,16 +353,38 @@ Converts a utf8 encoded string to a u8vector at expansion time.
 
 Raises a syntax error; used for meaningful error reporting in syntax-rules macros.
 
-## vector-ref-set!
+
+## Runtime Aliases
+### car-set! cdr-set!
+```scheme
+(defalias car-set! set-car!)
+(defalias cdr-set! set-cdr!)
+
+```
+### string-ref-set!
+```scheme
+(defalias string-ref-set! string-set!)
+```
+
+### *vector-ref-set!
 
 ```scheme
 (defalias vector-ref-set! vector-set!)
-(set! (vector-ref v i) x)
+(defalias s8vector-ref-set! s8vector-set!)
+(defalias u8vector-ref-set! u8vector-set!)
+(defalias s16vector-ref-set! s16vector-set!)
+(defalias u16vector-ref-set! u16vector-set!)
+(defalias s32vector-ref-set! s32vector-set!)
+(defalias u32vector-ref-set! u32vector-set!)
+(defalias s64vector-ref-set! s64vector-set!)
+(defalias u64vector-ref-set! u64vector-set!)
+(defalias f32vector-ref-set! f32vector-set!)
+(defalias f64vector-ref-set! f64vector-set!)
 ```
 
-This binding enables you to use `set!` with `vector-ref`.
+Thes binding enable you to use `set!` with `*vector-ref`.
 
-::: tip Examples:
+::: tip Examples
 ```scheme
 > (def foo (vector 1 2 3))
 > (set! (vector-ref foo 1) 4)
@@ -371,77 +393,61 @@ This binding enables you to use `set!` with `vector-ref`.
 ```
 :::
 
+### call/values call/parameters
+```scheme
+(defalias call/values     call-with-values)
+(defalias call/parameters call-with-parameters)
+```
+### randeom-bytes random-source-make-bytes
+```scheme
+(defalias random-bytes random-u8vector)
+(defalias random-source-make-bytes random-source-make-u8vectors))
+```
+
+
+
 ## MOP Macros
 
-### defstruct-type defclass-type
+### defclass-type defstruct-type
 ``` scheme
+(defclass-type id super make instance? type-body ...)
 (defstruct-type id super make instance? type-body ...)
 
-(defclass-type id super make instance? type-body ...)
 
 <type-body>:
  name: id                    ; type name
  id: id                      ; type id
  constructor: method-id      ; constructor method id
- plist: expr                 ; type plist
- fields: ((getf setf) ...)   ; struct type fields
- slots: ((id getf set) ...)  ; class type slots
+ properties: expr            ; additional type properties
+ slots: ((id getf setf) ...) ; class slots
+ mixin: ((id getf setf) ...) ; mixin class slots
+ struct: <boolean>           ; #t for structs
+ final: <boolean>            ; final class?
+ metaclass: id               ; metaclass type
 ```
 
-Low level struct and class type definition facilities.
+Low level class type definition facilities.
 
-### defstruct define-struct
+### defclass defstruct define-class define-struct
 ``` scheme
-(defstruct id (field ...) typedef-option ...)
-(defstruct (id super) (field ...) typedef-option ...)
+(defclass id (slot ...) typedef-option ...)
+(defclass (id super ...) (slot ...) typedef-option ...)
+(defstruct id (slot ...) typedef-option ...)
+(defstruct (id super ...) (slot ...) typedef-option ...)
 
+(defalias define-class defclass)
 (defalias define-struct defstruct)
 
 <typedef-option>:
  name: id                    ; type name
  id: id                      ; type id
  constructor: id             ; constructor method id
- final: bool                 ; #t for final types
- equal: bool or list         ; a list of fields to consider for equal? checks, #t for all fields
- transparent: bool           ; #t for equality checks and printability
-
-(defstruct id (field) ...)
-=> (begin
-     (defstruct-type id::t #f make-id id?
-       fields: ((field field-set!) ...)
-       type-body ...)
-     (defsyntax id ...))
-
-(defstruct (id super) (field) ...)
-=> (begin
-     (defstruct-type id::t super::t make-id id?
-      fields: ...
-      type-body ...)
-     (defsyntax id ...))
-```
-
-Canonical struct type definition macro.
-
-### defclass define-class
-``` scheme
-(defclass id (slot ...) typedef-option ...)
-(defclass (id super ...) (slot ...) typedef-option ...)
-
-(defalias define-class defclass)
-
-(defclass id (slot ...) typedef-option ...)
-=> (begin
-     (defclass-type id::t [] make-id id?
-       slots: ((slot slot slot-set!) ...)
-       type-body ...)
-     (defsyntax id ...))
-
-(defclass (id super ...) (slot ...) typedef-option ...)
-=> (begin
-     (defclass-type id::t [super::t ...] make-id id?
-       slots: ((slot slot slot-set!) ...)
-       type-body ...)
-     (defsyntax id ...))
+ final: <boolean>            ; #t for final types
+ struct: <boolean>           ; #t for structs
+ transparent: <boolean>      ; #t for equality checks and printability
+ equal: <boolean> or <list>  ; a list of slots to consider for equal? checks, #t for all fields
+ print: <boolean> or <list>  ; a list of slots to print, #t for all fields
+ metaclass: id               ; metaclass type
 ```
 
 Canonical class type definition macro.
@@ -450,18 +456,20 @@ Canonical class type definition macro.
 ``` scheme
 (defmethod {method-id type}
   expr
-  [rebind: bool])
+  [rebind: <boolean>])
 => (begin
     (def type::method-id expr)
     (bind-method! type::t 'method-id type::method-id rebind?))
 ```
 
 Defines a method `method-id` for type `type`, which must be
-a class or struct type.
-The `:std/generic` library extends the form for generic method
+a class type.
+The `:std/generic` library extends the form for generic methods.
 
 ### @method
 ``` scheme
+{obj.id arg ...}
+{id obj arg ...}
 (@method id obj arg ...)
 => (call-method obj 'id arg ...)
 ```
@@ -491,6 +499,94 @@ Slot reference macro.
 ```
 
 Slot mutation macro.
+
+### System Classes
+```scheme
+  (defsystem-class-info :t t::t () true)
+  (defsystem-class-info :object object::t (t::t) true)
+
+  (defsystem-class-info :immediate immediate::t (t::t) immediate?)
+  (defsystem-class-info :char char::t (immediate::t) char?)
+  (defsystem-class-info :boolean boolean::t (immediate::t) boolean?)
+
+  (defsystem-class-info :atom atom::t (immediate::t) atom?)
+  (defsystem-class-info :void void::t (atom::t) void?)
+  (defsystem-class-info :eof eof::t (atom::t) eof-object?)
+  (defsystem-class-info :true true::t (boolean::t atom::t) true?)
+  (defsystem-class-info :false false::t (boolean::t atom::t) not)
+
+  (defsystem-class-info :special special::t (atom::t) special?)
+
+  (defsystem-class-info :number number::t (t::t) number?)
+  (defsystem-class-info :real real::t (number::t) real?)
+  (defsystem-class-info :integer integer::t (real::t) integer?)
+  (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
+  (defsystem-class-info :bignum  bignum::t (integer::t) ##bignum?)
+  (defsystem-class-info :ratnum ratnum::t (real::t) ##ratnum?)
+  (defsystem-class-info :flonum flonum::t (real::t) flonum?)
+  (defsystem-class-info :cpxnum cpxnum::t (number::t) ##cpxnum?)
+
+  (defsystem-class-info :symbolic symbolic::t (t::t) symbolic?)
+  (defsystem-class-info :symbol symbol::t (symbolic::t) symbol?)
+  (defsystem-class-info :keyword keyword::t (symbolic::t) keyword?)
+
+  (defsystem-class-info :list list::t (t::t) list?)
+  (defsystem-class-info :pair pair::t (list::t) pair?)
+  (defsystem-class-info :null null::t (list::t atom::t) null?)
+
+  (defsystem-class-info :sequence sequence::t (t::t) sequence?)
+  (defsystem-class-info :vector vector::t (sequence::t) vector?)
+  (defsystem-class-info :string string::t (sequence::t) string?)
+  (defsystem-class-info :hvector hvector::t (sequence::t) hvector?)
+  (defsystem-class-info :u8vector u8vector::t (hvector::t) u8vector?)
+  (defsystem-class-info :s8vector s8vector::t (hvector::t) s8vector?)
+  (defsystem-class-info :u16vector u16vector::t (hvector::t) u16vector?)
+  (defsystem-class-info :s16vector s16vector::t (hvector::t) s16vector?)
+  (defsystem-class-info :u32vector u32vector::t (hvector::t) u32vector?)
+  (defsystem-class-info :s32vector s32vector::t (hvector::t) s32vector?)
+  (defsystem-class-info :u64vector u64vector::t (hvector::t) u64vector?)
+  (defsystem-class-info :s64vector s64vector::t (hvector::t) s64vector?)
+  (defsystem-class-info :f32vector f32vector::t (hvector::t) f32vector?)
+  (defsystem-class-info :f64vector f64vector::t (hvector::t) f64vector?)
+
+  (defsystem-class-info :values values::t (t::t) ##values?)
+  (defsystem-class-info :box box::t (t::t) box?)
+  (defsystem-class-info :frame frame::t (t::t) ##frame?)
+  (defsystem-class-info :continuation continuation::t (t::t) continuation?)
+  (defsystem-class-info :promise promise::t (t::t) promise?)
+  (defsystem-class-info :weak weak::t (t::t) weak?)
+  (defsystem-class-info :foreign foreign::t (t::t) foreign?)
+
+  (defsystem-class-info :procedure procedure::t (t::t) procedure?)
+
+  (defsystem-class-info :time time::t (t::t) time?)
+  (defsystem-class-info :thread thread::t (t::t) thread?)
+  (defsystem-class-info :thread-group thread-group::t (t::t) thread-group?)
+  (defsystem-class-info :mutex mutex::t (t::t) mutex?)
+  (defsystem-class-info :condvar condvar::t (t::t) condvar?)
+  (defsystem-class-info :port port::t (t::t) port?)
+  (defsystem-class-info :object-port object-port::t (port::t) object-port?)
+  (defsystem-class-info :character-port character-port::t (object-port::t) character-port?)
+  (defsystem-class-info :byte-port byte-port::t (character-port::t) byte-port?)
+  (defsystem-class-info :device-port device-port::t (byte-port::t) device-port?)
+  (defsystem-class-info :vector-port vector-port::t (object-port::t) vector-port?)
+  (defsystem-class-info :string-port string-port::t (character-port::t) string-port?)
+  (defsystem-class-info :u8vector-port u8vector-port::t (byte-port::t) u8vector-port?)
+  (defsystem-class-info :raw-device-port raw-device-port::t (port::t) raw-device-port?)
+  (defsystem-class-info :tcp-server-port tcp-server-port::t (object-port::t) tcp-server-port?)
+  (defsystem-class-info :udp-port udp-port::t (object-port::t) udp-port?)
+  (defsystem-class-info :directory-port directory-port::t (object-port::t) directory-port?)
+  (defsystem-class-info :event-queue-port event-queue-port::t (object-port::t) event-queue-port?)
+  (defsystem-class-info :table table::t (t::t) table?)
+  (defsystem-class-info :readenv readenv::t (t::t) readenv?)
+  (defsystem-class-info :writeenv writeenv::t (t::t) writeenv?)
+  (defsystem-class-info :readtable readtable::t (t::t) readtable?)
+  (defsystem-class-info :processor processor::t (t::t) processor?)
+  (defsystem-class-info :vm vm::t (t::t) vm?)
+  (defsystem-class-info :file-info file-info::t (t::t) file-info?)
+  (defsystem-class-info :socket-info socket-info::t (t::t) socket-info?)
+  (defsystem-class-info :address-info address-info::t (t::t) address-info?)
+```
 
 ## Pattern Matching
 
@@ -688,7 +784,6 @@ The following macros are only available for syntax (phi = 1).
   (pat [fender] body) ...)
 
 (syntax expr)
-
 (syntax/loc src-stx expr)
 
 ```

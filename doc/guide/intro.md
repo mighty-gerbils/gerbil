@@ -713,7 +713,7 @@ t
 ```
 
 The complete system class hierarchy is out of scope for this introduction,
-but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/runtime/mop-system-classes.ss) and the meta types in the [MOP part of the core prelude](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/core/mop.ss).
+but you can find it in the [MOP reference](/reference/gerbil/runtime/MOP.md#predefined-classes) and the meta types in the [MOP System Classes](/reference/gerbil/prelude/macros.md#system-classes)
 
 
 
