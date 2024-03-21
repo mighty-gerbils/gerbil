@@ -791,7 +791,7 @@ We briefly touched on contracts above, but there is an important
 detail that is worth elaborating upon. Contracts can also be enacted
 in arbitrary context with the ubiquitous `using` macro.  Furthermore,
 within the body of a `using` incantation, bound variables acquire
-dotted acces for interface methods and slot accesses.
+dotted access for interface methods and slots.
 
 Here is an example:
 ```scheme
