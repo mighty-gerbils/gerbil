@@ -219,14 +219,14 @@
                   (deps (find-deps modctx))
                   (ordered
                    (foldl
-                    (lambda (dep r)
-                      (if (hash-get visited-modules (expander-context-id dep))
-                        r
-                        (begin
+                     (lambda (dep r)
+                       (if (hash-get visited-modules (expander-context-id dep))
+                         r
+                         (begin
                            (hash-put! visited-modules (expander-context-id dep) #t)
                            (cons (module-file dep) r))))
-                    ordered
-                    (reverse deps))))
+                     ordered
+                     (reverse deps))))
              (lp rest ordered)))))
       (else
        (reverse ordered)))))
@@ -262,7 +262,7 @@
   (darwin
    (let (hblp (getenv "HOMEBREW_LIBRARY_PATHS" #f))
      (when hblp (setenv "HOMEBREW_LIBRARY_PATHS"
-			(string-append (gerbil-libdir)":"hblp)))))
+            (string-append (gerbil-libdir)":"hblp)))))
   (else #f))
 
 (def +gerbil-static-dir+ #f)
@@ -388,24 +388,31 @@
     (displayln "... build " libgerbil)
     (let (libgerbil-ldd (filter (? (not string-empty?)) (string-split ld-options #\space)))
       (if (eq? mode 'shared)
-        (invoke-gcc ["-shared" "-o" libgerbil
-                     libgerbil-ldd ...
-                     static-module-o-paths ...
-                     builtin-modules-o-path
-                     link-o-path])
+        (cond-expand
+          (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
+                               (string-append (getenv "GERBIL_PREFIX") "/lib/libgerbil.dylib")
+                               libgerbil-ldd ...
+                               static-module-o-paths ...
+                               builtin-modules-o-path
+                               link-o-path]))
+          (else (invoke-gcc ["-shared" "-o" libgerbil
+                             libgerbil-ldd ...
+                             static-module-o-paths ...
+                             builtin-modules-o-path
+                             link-o-path])))
         (invoke-ar ["cq" libgerbil
                     static-module-o-paths ...
                     builtin-modules-o-path
                     link-o-path]))
       (call-with-output-file (string-append libgerbil ".ldd")
-	(cut write
-	     (filter
-	      (cond-expand
-		(darwin
-		 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
-		(else true))
-	      libgerbil-ldd)
-	     <>)))
+        (cut write
+             (filter
+              (cond-expand
+                (darwin
+                 (lambda (arg) (not (string-prefix? (string-append "-L" (gerbil-libdir)) arg))))
+                (else true))
+              libgerbil-ldd)
+             <>)))
     ;; cleanup
     (for (f [static-module-c-paths ...
              builtin-modules-c-path
