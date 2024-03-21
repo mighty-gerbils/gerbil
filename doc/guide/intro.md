@@ -616,7 +616,7 @@ expansion time.
 So far we have seen that classes by default get a keyword initializing
 constructor, but when they are structs they get a positional argument
 constructor. But what if the desired constructor doesn't match these defaults
-and instead we want a custom behavior? This of course is nto a problem, we can
+and instead we want a custom behavior? This of course is not a problem, we can
 define a constructor method with the `constructor: <method-id>` directive in
 `defclass` (or `defstruct`).
 
