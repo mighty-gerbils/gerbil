@@ -1529,8 +1529,6 @@ package: gerbil/core
     ;; :gerbil/runtime/mop
     class-type?
     class-type=?
-    type-opaque?
-    type-extensible?
     class-type-final?
     class-type-struct?
     class-type-sealed?
@@ -1592,6 +1590,7 @@ package: gerbil/core
     call-next-method
     class-of
     t::t
+    class::t
     object::t
 
     ;; :gerbil/runtime/mop-system-classes

@@ -631,10 +631,17 @@ namespace: #f
                (&class-type-precedence-list maybe-sub-class)))))
 
 ;;; generic object utilities
-(def object?
-  ##structure?)
-(def object-type
-  ##structure-type)
+(def (object? o)
+  (and (##structure? o)
+       (class-type? (##structure-type o))))
+
+(def (object-type o)
+  (if (##structure? o)
+    (let (klass (##structure-type o))
+      (if (class-type? klass)
+        klass
+        (error "not a standard object" o klass)))
+    (error "not an object" o)))
 
 (def (direct-instance? klass obj)
   (##structure-direct-instance-of? obj (##type-id klass)))
@@ -841,7 +848,7 @@ namespace: #f
 (def (mixin-method-ref klass obj id)
   (mixin-find-method (class-type-precedence-list klass) obj id))
 
-(def (bind-method! klass id proc (rebind? #t))
+(def (bind-method! klass id proc (rebind? #f))
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
