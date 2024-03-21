@@ -185,666 +185,6 @@ application.
 All the usual Scheme macros are available, with common
 syntactic forms described later in the guide.
 
-### Objective Gerbil
-
-Gerbil has deeply integrated support for object-oriented programming
-based on a well developed MetaObject Protocol (MOP), power equivalent
-to the CLOS MOP. The fundamental building blocks are *classes*, which
-can have arbitrary inheritance (acyclic) graphs, and define slots and
-methods.
-
-Slots are the attributes of an object, accessible by slot accessors
-and mutators, while methods are procedures attached to the class to
-implement object behavior. We also support *structs* as a special type
-of classes, which have a fixed slot layout and by necessity constrain
-the inheritance graph to have a linear chain of structs.
-
-Furthermore, we support *interfaces*, which are akin to type-classes
-and pack an object together with its resolved and runtime specialized
-methods. This allows us to completely eliminate dynamic dispatch
-overhead and move contract checks at the interface call boundary.
-
-Finally, we also support *generics* with class-based multimethod
-dispatch, as part of the standard library.
-
-In the following we give a quick overview of Gerbil's object oriented
-programming facilities.
-
-#### Classes and Objects
-
-##### Defining Classes
-
-We can define a new class with the `defclass` macro.
-
-For instance, here is a simple class hierarchy:
-```scheme
-(defclass Point (x y))
-(defclass (Point3D Point) (z))
-```
-
-Here we have a class `Point` and its 3D extension, `Point3D`.
-The `Point` class has two slots, `x` and `y`, representing the 2D cartesian
-coordinates of the point its instances represent. `Point3D` adds an additional
-slot, with the 3rd dimension `z`.
-
-After we have defined our classes, we can instantiate objects using
-the class name, taking keyword arguments for the slot initializers:
-```scheme
-> (def a (Point x: 1 y: 2))
-> a
-#<Point #3>
-> (def b (Point3D x: 0 y: 1 z: 2))
-> b
-#<Point3D #4>
-> (Point? a)
-#t
-> (Point? b)
-#t
-> (Point3D? a)
-#f
-> (Point3D? b)
-#t
-```
-
-We can also initialize using the generated `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
-```scheme
-> (make-Point x: 1 y: 2)
-#<Point #5>
-> (make-instance Point::t x: 1 y: 2)
-#<Point #6>
-```
-
-Of course, we are not limited to single inheritance. Here is an
-extended hierarchy that defines colored points:
-
-```scheme
-(defclass Color (r g b))
-
-(defclass (ColoredPoint Point Color) ())
-(defclass (ColoredPoint3D Point3D Color) ())
-```
-
-and here is a red point:
-```scheme
-> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
-> c
-#<ColoredPoint3D #7>
-> (Point? c)
-#t
-> (Point3D? c)
-#t
-> (Color? c)
-#t
-```
-
-##### Slots
-
-Slots define attributes of the object and represent *state*, as
-encapsulated in the object.  When a class is created, a field layout
-for its slots is created and stored in a table in the class, which
-allows us to map a slot to a field in the object.  Slots are strongly
-named, and synonyumous slots in the class hierarchy coalesce to the
-same field in the object.
-
-We can access or mutate a slot in a type-safe manner using the generated
-accessors and mutators:
-```scheme
-> (Point-x a)
-1
-> (set! (Point-x a) 2)
-#<Point #3>
-> (Point-x a)
-2
-```
-
-Alternatively, we can use the `@` dynamic slot operator:
-```scheme
-> (@ a x)
-2
-> (set! (@ a x) 1)
-#<Point #3>
-> (@ a x)
-1
-```
-
-It should be noted that the slot layout is not guaranteed to be the
-same for subclasses, unless they have the *struct property* (see
-[Structs](#structs) below). So, unless the class is final or a struct,
-or the object is an exact instance when using the type-safe accessors
-and mutators, accessing a slot requires a dynamic lookup.
-
-##### Methods
-
-Methods define the behavior for objects of a class. Methods are procedure
-which take the object as first argument with method arguments following.
-Methods are defined with `defmethod` and invoked dynamically with the `{}`
-dynamic call operator.
-
-Here is an example in our color and point hierarchy:
-```scheme
-(defmethod {colorize Color}
-  identity)
-
-(defmethod {colorize Point}
-  (lambda (self)
-    (if (Color? self)
-      self
-      (ColoredPoint x: (@ self x)
-                    y: (@ self y)
-                    r: 0 g: 0 b: 0))))
-
-(defmethod {colorize Point3D}
-  (lambda (self)
-    (if (Color? self)
-      self
-      (ColoredPoint3D x: (@ self x)
-                      y: (@ self y)
-                      z: (@ self z)
-                      r: 0 g: 0 b: 0))))
-```
-
-Here we define a `colorize` method that takes no arguments and returns
-a colored version of a point. We define it as identity for instances
-of `Color`, as the object is colored already. For instances of `Point`
-and `Point3D` we define it as constructor for the color mixin of the
-object, colored black.
-
-And here is some example usage:
-```scheme
-> {colorize a}
-#<ColoredPoint #16>
-> {colorize b}
-#<ColoredPoint3D #17>
-> {colorize c}
-#<ColoredPoint3D #7>
-> (def white (Color r: 255 g: 255 b: 255))
-> {colorize white}
-#<Color #19>
-```
-
-##### Method Resolution Order
-
-So how do methods get dispatched? As we have seen we have defined the
-method at several classes, how does the runtime system know which
-method to pick?
-
-This is where the Method Resolution Order comes in place, which is
-enacted by linearizing the class graph in a precedence list. The
-method is first resolved at the concrete class; if it is not defined,
-the precedence list is traversed until a definition is found. If no
-definition is found the method resolution fails.
-
-The algorithm used by Gerbil for class graph linearization is an
-algorithm we dub C4. It is based on the formal [C3](https://en.wikipedia.org/wiki/C3_linearization) algorithm, extended to support linear [struct constraints](#structs).
-
-In the example hierarchy above, here is the precedence list for the
-`ColoredPoint3D` class:
-```scheme
-> (class-precedence-list ColoredPoint3D::t)
-(#<type #23 ColoredPoint3D>
- #<type #13 Point3D>
- #<type #24 Point>
- #<type #25 Color>
- #<type #26 object>
- #<type #27 t>)
-```
-
-Here we see the expected classes up until color, and then we have the
-`object` class, which is the class of all standard class instances,
-and `t`, which is the top class. These are [System Classes](#system-classes),
-which we discuss below.
-
-##### Structs
-
-As we have mentioned, the slot layout of classes (unless they are
-final) is in general not fixed and can change based on the mixins
-further down the inheritance graph. This is very flexible, but it also
-comes at a cost: unless the class is exact, slot access will incur
-dynamic slot resolution overhead (basically a hash table lookup).
-
-Is there a way to have a fixed layout for performance critical
-classes?  The answer is, of course, yes: Gerbil supports *structs*,
-which are classes with the special property that all structs in the
-inheritance graph form a linear chain.  This ensures that all
-subclasses of a struct will have the same layout for the slots of the
-struct and slot access becomes just a mermory reference.
-
-Struct classes are defined with `defstruct` or by passing the `struct: #t`
-directive in the body of a `defclass` incantation.
-
-So let's redefine the hierarchy above such that `Point` and `Point3D`
-are structs, while `Color` remains a mixin class:
-```scheme
-(defstruct Point (x y))
-(defstruct (Point3D Point) (z))
-
-(defclass Color (r g b))
-
-(defclass (ColoredPoint Color Point) ())
-(defclass (ColoredPoint3D Color Point3D) ())
-
-> (def a (Point 1 2))
-> (def b (Point3D 1 2 3))
-> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
-> a
-#<Point #3>
-> b
-#<Point3D #4>
-> (Point? a)
-#t
-> (Point? b)
-#t
-> (Point3D? a)
-#f
-> (Point3D? b)
-#t
-> (Point? c)
-#t
-> (Point3D? c)
-#t
-> (Color? c)
-#t
-```
-
-A couple of things to notice here:
-- when mixing in classes and inheriting structs, the struct type _must_
-  be last in the inheritance list in `defclass` or whatever follows
-  it must be a super class of it. This is by design, in order to retain
-  the properties of the C3 algorithm in C4.
-- the struct constructor is a (faster) positional argument constructor
-  that directly initialize fields in the object. That is, slots are not
-  identified by keyword, but instead by position.
-
-Other than that, nothing changes in terms of usage -- with the
-significant advantage that the type-safe accessors for `Point` and
-`Point3D` slots are significantly faster. They don't have to perform a
-dynamic lookup for the slot offset at runtime, as this is fixed at
-expansion time.
-
-##### Constructor Methods
-
-So far we have seen that classes by default get a keyword initializing
-constructor, but when they are structs they get a positional argument
-constructor. But what if the desired constructor doesn't match these defaults
-and instead we want a custom behavior? This of course is nto a problem, we can
-define a constructor method with the `constructor: <method-id>` directive in
-`defclass` (or `defstruct`).
-
-For example here is a constructor for Point3D that makes `z` optional and
-initializes it by default to 0:
-```scheme
-(defstruct (Point3D Point) (z)
-  constructor: :init!)
-
-(defmethod {:init! Point3D}
-  (lambda (self x y (z 0))
-    (set! (Point3D-x self) x)
-    (set! (Point3D-y self) y)
-    (set! (Point3D-z self) z)))
-
-> (def a (Point3D 1 2))
-> (Point3D-z a)
-0
-```
-
-Note that if one of your super-classes defines a constructor, you must
-also define a constructor which by default have the same name as the
-super constructor.  If you have conflicting constructor method names
-for your super classes, you must explicitly specify the constructor
-method for your class. This situation is best avoided by using the
-convention of naming the constructor method `:init!`.
-
-##### System Classes
-
-If you recall the [Method Resolution Order](#method-resolution-order)
-section, the class precedence list for `ColoredPoint3D` automagically
-contained two classes named `object` and `t` at the tail.
-So what are those classes and where did they come from?
-
-These are what we call _system classes_ -- these are abstract classes
-(they cannot be instantiated with `make-instance`) that represent the
-root of the system hierarchy. Every class created by user programs
-has `object::t` and `t::t` automatically injected at the tail of its
-precedence list. This allows us to have specific classes for every point
-in the hierarchy and allows us to define _default methods_ for every
-standard object by binding a method in `object::t` or every object
-in the system by binding a method in `t::t`.
-
-This begs the question, why are `object::t` and `t::t` separate?
-The answer is that there are objects in the system that are not
-standard objects, ie they don't follow the standard object layout.
-These are primitive types (like pairs, strings and procedures) or
-system defined structured types deep in the bowels of the gambit
-runtime.
-
-So do these objects have a class? The answer is yes, of course --
-_everything has a class_ in Gerbil! So how do we get the class
-of such objects? Easy, use the `class-of` operator or reference
-them by name to define methods in them.
-
-Here is an example for list:
-```scheme
-> (class-of '(1 2 3))
-#<type #33 pair>
-> pair::t
-#<type #33 pair>
-> (class-type-precedence-list pair::t)
-(#<type #34 list> #<type #27 t>)
-```
-
-Here is another example that defines methods at various points in the
-system class hierarchy:
-```scheme
-(defmethod {identify :t}
-  (lambda (obj) 't))
-(defmethod {identify :object}
-  (lambda (obj) 'object))
-(defmethod {identify :list}
-  (lambda (obj) 'list))
-(defmethod {identify :number}
-  (lambda (obj) 'number))
-(defmethod {identify :fixnum}
-  (lambda (obj) 'fixnum))
-
-> {identify (Point 1 2)}
-object
-> {identify '(1 2 3)}
-list
-> {identify 1}
-fixnum
-> {identify 1.0}
-number
-> {identify (current-thread)}
-t
-```
-
-The complete system class hierarchy is out of scope for this introduction,
-but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/runtime/mop-system-classes.ss) and the meta types in the [MOP part of the core prelude](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/core/mop.ss).
-
-
-
-
-#### Interfaces
-
-As we have mentioned, interfaces provide a mechanism to pack objects
-together with relevant methods. Interfaces define procedures for their
-methods, which may have contracts that are checked at the interface
-boundary -- see [Contracts](#contracts) below. When an interface
-method is invoked, the receiver is *cast* to the interface, the
-contract (if any) is checked and the method is invoked directly
-from the packed instance thus evading dynamic method dispatch.
-
-The first time an object of a specific class is cast to an interface,
-the class is specialized (see [Interface Instance Specialization](#interface-instance-specializastion) below), the
-methods required by the interface are resolved, and a prototype
-instance of the interface is created and cached. Subsequent casts use
-the cached prototype instance by copying and setting the receiver
-object. Thus interfaces provide a powerful and efficient mechanism for
-defining facades to objects without caring about the underlying
-implementation details.
-
-Interfaces are defined using the `interface` macro from the
-`:std/interface` standard library module.
-
-Here is an example for our colorful point hierarchy:
-```scheme
-(interface Colorizer
- (colorize))
-
-> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
-> (def ci (Colorizer c))
-> ci
-#<Colorizer #9>
-> (ColoredPoint3D? ci)
-#f
-> (Colorizer-colorize ci)
-#<ColoredPoint3D #10>
-```
-
-For more details, please refer to the [Interfaces Reference](/reference/std/interface.md) section of the hyperspec.
-
-#### Contracts
-
-As we mentioned contracts can be attached to interface methods, which
-are then enforced at the interface boundary. Contracts allow us to
-write method implementations knowing that any access through the
-interface ensure that the contract conditions are satisfied.
-
-A contract specification in general looks like this
-```scheme
-(interface SomeInterface
-  (some-method (arg contract ... [default ...]) ...))
-
-contract:
-  :  <type check>
-  :- <type assertion>
-  :~ <predicate expression>
-```
-
-Contracts can also be enacted in arbitrary context with the ubiquitous
-`using` macro. See the [Contracts Reference](/reference/std/contract.md) section of
-the hyperspace for more details.
-
-#### Type Annotations and Dotted Notation
-
-We briefly touched on contracts above, but there is an important
-detail that is worth elaborating upon. Within the body of a `using`
-incantation, bound variables acquire dotted acces for interface
-methods and slot accesses.
-
-Here is an example:
-```scheme
-(import :std/contract)
-(defstruct A (x y))
-(defclass (B A) (z) constructor: :init!)
-(defmethod {:init! B}
-  (lambda (self x y z)
-    (using (self :- B)
-      (set! self.x x)
-      (set! self.y y)
-      (set! self.z z))))
-
-> (def b (B 1 2 3))
-> (using (b : B) (* (+ b.x b.y) b.z))
-9
-```
-
-Furthermore, the `{}` dynamic method call operator also allows the use
-of a dotted identifier at he head. In this manner, `{a.some-method arg ...}`
-is equivalent to `{some-method a arg ...}`. This provides symmetry between
-dotted slot access and method invocation.
-
-#### Runtime Specialization
-
-As we have seen so far, the object oriented facilities of Gerbil are
-quite flexible and powerful; however, there is the issue of dynamic
-dispatch overhead, which is particularly pronounced in heavy method
-interactions and deep class hierarchies.  This makes you wonder, is
-there anything we can do to eliminate this cost? It would be quite
-unfortunate to have such powerful facilities and be afraid to use them
-because of performance concerns!
-
-But fear not, Gerbil supports runtime specialization which provides
-a mechanism to *eliminate dynamic dispatch* overhead for certain
-wide and very important patterns. In brief, when a method is bound
-for some class, the compiler may also generate a *specializer*,
-which is a procedure that can specialize a method for a concrete
-class at runtime and construct a method table where all methods
-are devirtualized on self. This mechanism comes into play with
-*class sealing* and *interface instance specialization*.
-
-##### Class Sealing
-
-Class sealing is applicable to *final classes*, that is classes that
-cannot be extended further. In this case, we can invoke `seal-class!`
-and this will specialize and replace the class method table with a
-new table where all methods are direct and specialized for the
-concrete class.
-
-##### Interface Instance Specialization
-
-This is the more interesting case, as it is applicable to any class
-that is casted to an interface. When the instance prototype is
-constructed, the class is specialized for the concrete runtime class.
-As a result, all resolved methods in the interface instance are
-specialized!
-
-Combine this with passing interface instances as arguments to methods,
-and the entire class hierarchy is devirtualized at the interface
-barrier! And thus you have the freedom to enjoy *fearless* object
-oriented programming.
-
-##### Performance Effects
-
-In order to better understand the performance effects of runtime
-specialization, let's examine a simple case. Here, we define the
-following code in a module `specialization-example` in the `example`
-package:
-```scheme
-(import :std/interface :std/contract :std/iter)
-(export #t)
-
-(defclass A (a))
-(defclass B (b))
-(defclass (C A B) (c))
-(defclass (D A B) (d))
-(defclass (E C D) (e) final: #t)
-
-(interface I
-  (mul-c x y))
-
-(defmethod {add-a A}
-  (lambda (self x)
-    (+ (@ self a) x)))
-
-(defmethod {add-b B}
-  (lambda (self x)
-    (+ (@ self b) x)))
-
-(defmethod {mul-c C}
-  (lambda (self x y)
-    (* (@ self c) {self.add-a x} {self.add-b y})))
-
-(def (do-method o n)
-  (for (x (in-range n))
-    {o.mul-c 1 2}))
-
-(def (do-interface o n)
-  (using (i (I o) : I)
-    (for (x (in-range n))
-      (i.mul-c 1 2))))
-```
-
-Here we define a rather deep hierarchy (for illustration purposes)
-culminating in a final (so that it can be sealed) class `E`. The
-public method of interest is `mul-c`, which we define as part
-of an interface `I`.
-
-After compiling the module (with optimizations enabled of course),
-we can observe the following:
-```scheme
-> (import :example/specialization-example)
-> (def o (E a: 1 b: 2 c: 3 d: 4 e: 5))
-
-> (time (do-method o 10000000))
-(time (example/specialization-example#do-method o '10000000))
-    3.335598 secs real time
-    3.335501 secs cpu time (3.323579 user, 0.011922 system)
-    48 collections accounting for 0.332099 secs real time (0.332040 user, 0.000000 system)
-    1919574560 bytes allocated
-    6747 minor faults
-    no major faults
-    8709941202 cpu cycles
-
-> (seal-class! E::t)
-#<type #9 E>
-> (time (do-method o 10000000))
-(time (example/specialization-example#do-method o '10000000))
-    0.384692 secs real time
-    0.384693 secs cpu time (0.384693 user, 0.000000 system)
-    no collections
-    64 bytes allocated
-    no minor faults
-    no major faults
-    1004504206 cpu cycles
-
-> (time (do-interface o 10000000))
-(time (example/specialization-example#do-interface o '10000000))
-    0.113887 secs real time
-    0.113890 secs cpu time (0.113890 user, 0.000000 system)
-    no collections
-    288 bytes allocated
-    no minor faults
-    no major faults
-    297373376 cpu cycles
-```
-
-So as you can see, the performance effects of runtime specialization
-can be quite spectacular!
-
-
-
-#### Generics
-
-Finally, in true LISP fashion, Gerbil also supports generic
-multimethod dispatch in the `:std/generic` library.
-
-For example, the following defines a generic method `my-add` that
-dispatches on numbers and strings:
-```scheme
-(defgeneric my-add
-  (lambda args #f)) ; default method returns #f
-
-(defmethod (my-add (a :number) (b :number))
-  (+ a b))
-(defmethod (my-add (a :string) (b :string))
-  (string-append a b))
-```
-
-The code defined a generic method with the `defgeneric` macro,
-providing a default method which is dispatched when there are no
-matching methods. Next, we defined the two methods, operating
-on numbers and strings. We can use the generic method as a procedure:
-
-
-```scheme
-> (my-add 1 2)
-3
-> (my-add "a" "b")
-"ab"
-```
-
-We can define methods for any class.
-Here we define an implementation for instances of a struct `A`:
-```scheme
-(defstruct A (x))
-
-> (my-add (make-A 1) (make-A 2))
-#f
-
-(defmethod (my-add (a A) (b A))
-  (make-A (+ (A-x a) (A-x b))))
-
-> (my-add (make-A 1) (make-A 2))
-#<A a: 3>
-```
-
-Inside the body of every method implementation, `@next-method` is bound
-to a procedure which dispatches to the next matching method.
-For example:
-```scheme
-(defmethod (my-add (a :fixnum) (b :fixnum))
-  (displayln "add fixnums")
-  (@next-method a b))
-```
-Normally in the procedure body we would add with `fx+`, but for
-the shake of the example we display a message and let the generic
-number method to add.
-```scheme
-> (my-add 1 2)
-add fixnums
-3
-```
 
 
 ### Pattern Matching
@@ -994,6 +334,667 @@ The full meta-syntactic tower is supported, so you can use the full
 language at phi=+1 and shift higher with a nested `begin-syntax`. You
 will have to import `:gerbil/core` at higher phases however, as the
 prelude only provides bindings for phi=+1.
+
+## Objective Gerbil
+
+Gerbil has deeply integrated support for object-oriented programming
+based on a well developed MetaObject Protocol (MOP), power equivalent
+to the CLOS MOP. The fundamental building blocks are *classes*, which
+can have arbitrary inheritance (acyclic) graphs, and define slots and
+methods.
+
+Slots are the attributes of an object, accessible by slot accessors
+and mutators, while methods are procedures attached to the class to
+implement object behavior. We also support *structs* as a special type
+of classes, which have a fixed slot layout and by necessity constrain
+the inheritance graph to have a linear chain of structs.
+
+Furthermore, we support *interfaces*, which are akin to type-classes
+and pack an object together with its resolved and runtime specialized
+methods. This allows us to completely eliminate dynamic dispatch
+overhead and move contract checks at the interface call boundary.
+
+Finally, we also support *generics* with class-based multimethod
+dispatch, as part of the standard library.
+
+In the following we give a quick overview of Gerbil's object oriented
+programming facilities.
+
+### Classes and Objects
+
+#### Defining Classes
+
+We can define a new class with the `defclass` macro.
+
+For instance, here is a simple class hierarchy:
+```scheme
+(defclass Point (x y))
+(defclass (Point3D Point) (z))
+```
+
+Here we have a class `Point` and its 3D extension, `Point3D`.
+The `Point` class has two slots, `x` and `y`, representing the 2D cartesian
+coordinates of the point its instances represent. `Point3D` adds an additional
+slot, with the 3rd dimension `z`.
+
+After we have defined our classes, we can instantiate objects using
+the class name, taking keyword arguments for the slot initializers:
+```scheme
+> (def a (Point x: 1 y: 2))
+> a
+#<Point #3>
+> (def b (Point3D x: 0 y: 1 z: 2))
+> b
+#<Point3D #4>
+> (Point? a)
+#t
+> (Point? b)
+#t
+> (Point3D? a)
+#f
+> (Point3D? b)
+#t
+```
+
+We can also initialize using the generated `make-Point` and `make-Point3D` constructors, or the low level initializer `make-instance`:
+```scheme
+> (make-Point x: 1 y: 2)
+#<Point #5>
+> (make-instance Point::t x: 1 y: 2)
+#<Point #6>
+```
+
+Of course, we are not limited to single inheritance. Here is an
+extended hierarchy that defines colored points:
+
+```scheme
+(defclass Color (r g b))
+
+(defclass (ColoredPoint Point Color) ())
+(defclass (ColoredPoint3D Point3D Color) ())
+```
+
+and here is a red point:
+```scheme
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> c
+#<ColoredPoint3D #7>
+> (Point? c)
+#t
+> (Point3D? c)
+#t
+> (Color? c)
+#t
+```
+
+#### Slots
+
+Slots define attributes of the object and represent *state*, as
+encapsulated in the object.  When a class is created, a field layout
+for its slots is created and stored in a table in the class, which
+allows us to map a slot to a field in the object.  Slots are strongly
+named, and synonyumous slots in the class hierarchy coalesce to the
+same field in the object.
+
+We can access or mutate a slot in a type-safe manner using the generated
+accessors and mutators:
+```scheme
+> (Point-x a)
+1
+> (set! (Point-x a) 2)
+#<Point #3>
+> (Point-x a)
+2
+```
+
+Alternatively, we can use the `@` dynamic slot operator:
+```scheme
+> (@ a x)
+2
+> (set! (@ a x) 1)
+#<Point #3>
+> (@ a x)
+1
+```
+
+It should be noted that the slot layout is not guaranteed to be the
+same for subclasses, unless they have the *struct property* (see
+[Structs](#structs) below). So, unless the class is final or a struct,
+or the object is an exact instance when using the type-safe accessors
+and mutators, accessing a slot requires a dynamic lookup.
+
+#### Methods
+
+Methods define the behavior for objects of a class. Methods are procedure
+which take the object as first argument with method arguments following.
+Methods are defined with `defmethod` and invoked dynamically with the `{}`
+dynamic call operator.
+
+Here is an example in our color and point hierarchy:
+```scheme
+(defmethod {colorize Color}
+  identity)
+
+(defmethod {colorize Point}
+  (lambda (self)
+    (if (Color? self)
+      self
+      (ColoredPoint x: (@ self x)
+                    y: (@ self y)
+                    r: 0 g: 0 b: 0))))
+
+(defmethod {colorize Point3D}
+  (lambda (self)
+    (if (Color? self)
+      self
+      (ColoredPoint3D x: (@ self x)
+                      y: (@ self y)
+                      z: (@ self z)
+                      r: 0 g: 0 b: 0))))
+```
+
+Here we define a `colorize` method that takes no arguments and returns
+a colored version of a point. We define it as identity for instances
+of `Color`, as the object is colored already. For instances of `Point`
+and `Point3D` we define it as constructor for the color mixin of the
+object, colored black.
+
+And here is some example usage:
+```scheme
+> {colorize a}
+#<ColoredPoint #16>
+> {colorize b}
+#<ColoredPoint3D #17>
+> {colorize c}
+#<ColoredPoint3D #7>
+> (def white (Color r: 255 g: 255 b: 255))
+> {colorize white}
+#<Color #19>
+```
+
+#### Method Resolution Order
+
+So how do methods get dispatched? As we have seen we have defined the
+method at several classes, how does the runtime system know which
+method to pick?
+
+This is where the Method Resolution Order comes in place, which is
+enacted by linearizing the class graph in a precedence list. The
+method is first resolved at the concrete class; if it is not defined,
+the precedence list is traversed until a definition is found. If no
+definition is found the method resolution fails.
+
+The algorithm used by Gerbil for class graph linearization is an
+algorithm we dub C4. It is based on the formal [C3](https://en.wikipedia.org/wiki/C3_linearization) algorithm, extended to support linear [struct constraints](#structs).
+
+In the example hierarchy above, here is the precedence list for the
+`ColoredPoint3D` class:
+```scheme
+> (class-precedence-list ColoredPoint3D::t)
+(#<type #23 ColoredPoint3D>
+ #<type #13 Point3D>
+ #<type #24 Point>
+ #<type #25 Color>
+ #<type #26 object>
+ #<type #27 t>)
+```
+
+Here we see the expected classes up until color, and then we have the
+`object` class, which is the class of all standard class instances,
+and `t`, which is the top class. These are [System Classes](#system-classes),
+which we discuss below.
+
+#### Structs
+
+As we have mentioned, the slot layout of classes (unless they are
+final) is in general not fixed and can change based on the mixins
+further down the inheritance graph. This is very flexible, but it also
+comes at a cost: unless the class is exact, slot access will incur
+dynamic slot resolution overhead (basically a hash table lookup).
+
+Is there a way to have a fixed layout for performance critical
+classes?  The answer is, of course, yes: Gerbil supports *structs*,
+which are classes with the special property that all structs in the
+inheritance graph form a linear chain.  This ensures that all
+subclasses of a struct will have the same layout for the slots of the
+struct and slot access becomes just a mermory reference.
+
+Struct classes are defined with `defstruct` or by passing the `struct: #t`
+directive in the body of a `defclass` incantation.
+
+So let's redefine the hierarchy above such that `Point` and `Point3D`
+are structs, while `Color` remains a mixin class:
+```scheme
+(defstruct Point (x y))
+(defstruct (Point3D Point) (z))
+
+(defclass Color (r g b))
+
+(defclass (ColoredPoint Color Point) ())
+(defclass (ColoredPoint3D Color Point3D) ())
+
+> (def a (Point 1 2))
+> (def b (Point3D 1 2 3))
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> a
+#<Point #3>
+> b
+#<Point3D #4>
+> (Point? a)
+#t
+> (Point? b)
+#t
+> (Point3D? a)
+#f
+> (Point3D? b)
+#t
+> (Point? c)
+#t
+> (Point3D? c)
+#t
+> (Color? c)
+#t
+```
+
+A couple of things to notice here:
+- when mixing in classes and inheriting structs, the struct type _must_
+  be last in the inheritance list in `defclass` or whatever follows
+  it must be a super class of it. This is by design, in order to retain
+  the properties of the C3 algorithm in C4.
+- the struct constructor is a (faster) positional argument constructor
+  that directly initialize fields in the object. That is, slots are not
+  identified by keyword, but instead by position.
+
+Other than that, nothing changes in terms of usage -- with the
+advantage that the type-safe accessors for `Point` and
+`Point3D` slots are significantly faster. They don't have to perform a
+dynamic lookup for the slot offset at runtime, as this is fixed at
+expansion time.
+
+#### Constructor Methods
+
+So far we have seen that classes by default get a keyword initializing
+constructor, but when they are structs they get a positional argument
+constructor. But what if the desired constructor doesn't match these defaults
+and instead we want a custom behavior? This of course is nto a problem, we can
+define a constructor method with the `constructor: <method-id>` directive in
+`defclass` (or `defstruct`).
+
+For example here is a constructor for Point3D that makes `z` optional and
+initializes it by default to 0:
+```scheme
+(defstruct (Point3D Point) (z)
+  constructor: :init!)
+
+(defmethod {:init! Point3D}
+  (lambda (self x y (z 0))
+    (set! (Point3D-x self) x)
+    (set! (Point3D-y self) y)
+    (set! (Point3D-z self) z)))
+
+> (def a (Point3D 1 2))
+> (Point3D-z a)
+0
+```
+
+Note that if one of your super-classes defines a constructor, you must
+also define a constructor which by default have the same name as the
+super constructor.  If you have conflicting constructor method names
+for your super classes, you must explicitly specify the constructor
+method for your class. This situation is best avoided by using the
+convention of naming the constructor method `:init!`.
+
+#### System Classes
+
+If you recall the [Method Resolution Order](#method-resolution-order)
+section, the class precedence list for `ColoredPoint3D` automagically
+contained two classes named `object` and `t` at the tail.
+So what are those classes and where did they come from?
+
+These are what we call _system classes_ -- these are abstract classes
+(they cannot be instantiated with `make-instance`) that represent the
+root of the system hierarchy. Every class created by user programs
+has `object::t` and `t::t` automatically injected at the tail of its
+precedence list. This allows us to have specific classes for every point
+in the hierarchy and allows us to define _default methods_ for every
+standard object by binding a method in `object::t` or every object
+in the system by binding a method in `t::t`.
+
+This begs the question, why are `object::t` and `t::t` separate?
+The answer is that there are objects in the system that are not
+standard objects, ie they don't follow the standard object layout.
+These are primitive types (like pairs, strings and procedures) or
+system defined structured types deep in the bowels of the gambit
+runtime.
+
+So do these objects have a class? The answer is yes, of course --
+_everything has a class_ in Gerbil! So how do we get the class
+of such objects? Easy, use the `class-of` operator or reference
+them by name to define methods in them.
+
+Here is an example for list:
+```scheme
+> (class-of '(1 2 3))
+#<type #33 pair>
+> pair::t
+#<type #33 pair>
+> (class-type-precedence-list pair::t)
+(#<type #34 list> #<type #27 t>)
+```
+
+Here is another example that defines methods at various points in the
+system class hierarchy:
+```scheme
+(defmethod {identify :t}
+  (lambda (obj) 't))
+(defmethod {identify :object}
+  (lambda (obj) 'object))
+(defmethod {identify :list}
+  (lambda (obj) 'list))
+(defmethod {identify :number}
+  (lambda (obj) 'number))
+(defmethod {identify :fixnum}
+  (lambda (obj) 'fixnum))
+
+> {identify (Point 1 2)}
+object
+> {identify '(1 2 3)}
+list
+> {identify 1}
+fixnum
+> {identify 1.0}
+number
+> {identify (current-thread)}
+t
+```
+
+The complete system class hierarchy is out of scope for this introduction,
+but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/runtime/mop-system-classes.ss) and the meta types in the [MOP part of the core prelude](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/core/mop.ss).
+
+
+
+
+### Interfaces
+
+As we have mentioned, interfaces provide a mechanism to pack objects
+together with relevant methods. Interfaces define procedures for their
+methods, which may have contracts that are checked at the interface
+boundary -- see [Contracts](#contracts) below. When an interface
+method is invoked, the receiver is *cast* to the interface, the
+contract (if any) is checked and the method is invoked directly
+from the packed instance thus evading dynamic method dispatch.
+
+The first time an object of a specific class is cast to an interface,
+the class is specialized (see [Interface Instance Specialization](#interface-instance-specializastion) below), the
+methods required by the interface are resolved, and a prototype
+instance of the interface is created and cached. Subsequent casts use
+the cached prototype instance by copying and setting the receiver
+object. Thus interfaces provide a powerful and efficient mechanism for
+defining facades to objects without caring about the underlying
+implementation details.
+
+Interfaces are defined using the `interface` macro from the
+`:std/interface` standard library module.
+
+Here is an example for our colorful point hierarchy:
+```scheme
+(interface Colorizer
+ (colorize))
+
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> (def ci (Colorizer c))
+> ci
+#<Colorizer #9>
+> (ColoredPoint3D? ci)
+#f
+> (Colorizer-colorize ci)
+#<ColoredPoint3D #10>
+```
+
+For more details, please refer to the [Interfaces Reference](/reference/std/interface.md) section of the hyperspec.
+
+### Contracts
+
+As we mentioned contracts can be attached to interface methods, which
+are then enforced at the interface boundary. Contracts allow us to
+write method implementations knowing that any access through the
+interface ensure that the contract conditions are satisfied.
+
+A contract specification in general looks like this
+```scheme
+(interface SomeInterface
+  (some-method (arg contract ... [default ...]) ...))
+
+contract:
+  :  <type check>
+  :- <type assertion>
+  :~ <predicate expression>
+```
+
+Contracts can also be enacted in arbitrary context with the ubiquitous
+`using` macro. See the [Contracts Reference](/reference/std/contract.md) section of
+the hyperspace for more details.
+
+### Type Annotations and Dotted Notation
+
+We briefly touched on contracts above, but there is an important
+detail that is worth elaborating upon. Within the body of a `using`
+incantation, bound variables acquire dotted acces for interface
+methods and slot accesses.
+
+Here is an example:
+```scheme
+(import :std/contract)
+(defstruct A (x y))
+(defclass (B A) (z) constructor: :init!)
+(defmethod {:init! B}
+  (lambda (self x y z)
+    (using (self :- B)
+      (set! self.x x)
+      (set! self.y y)
+      (set! self.z z))))
+
+> (def b (B 1 2 3))
+> (using (b : B) (* (+ b.x b.y) b.z))
+9
+```
+
+Furthermore, the `{}` dynamic method call operator also allows the use
+of a dotted identifier at he head. In this manner, `{a.some-method arg ...}`
+is equivalent to `{some-method a arg ...}`. This provides symmetry between
+dotted slot access and method invocation.
+
+### Runtime Specialization
+
+As we have seen so far, the object oriented facilities of Gerbil are
+quite flexible and powerful; however, there is the issue of dynamic
+dispatch overhead, which is particularly pronounced in heavy method
+interactions and deep class hierarchies.  This makes you wonder, is
+there anything we can do to eliminate this cost? It would be quite
+unfortunate to have such powerful facilities and be afraid to use them
+because of performance concerns!
+
+But fear not, Gerbil supports runtime specialization which provides
+a mechanism to *eliminate dynamic dispatch* overhead for certain
+wide and very important patterns. In brief, when a method is bound
+for some class, the compiler may also generate a *specializer*,
+which is a procedure that can specialize a method for a concrete
+class at runtime and construct a method table where all methods
+are devirtualized on self. This mechanism comes into play with
+*class sealing* and *interface instance specialization*.
+
+#### Class Sealing
+
+Class sealing is applicable to *final classes*, that is classes that
+cannot be extended further. In this case, we can invoke `seal-class!`
+and this will specialize and replace the class method table with a
+new table where all methods are direct and specialized for the
+concrete class.
+
+#### Interface Instance Specialization
+
+This is the more interesting case, as it is applicable to any class
+that is casted to an interface. When the instance prototype is
+constructed, the class is specialized for the concrete runtime class.
+As a result, all resolved methods in the interface instance are
+specialized!
+
+Combine this with passing interface instances as arguments to methods,
+and the entire class hierarchy is devirtualized at the interface
+barrier! And thus you have the freedom to enjoy *fearless* object
+oriented programming.
+
+#### Performance Effects
+
+In order to better understand the performance effects of runtime
+specialization, let's examine a simple case. Here, we define the
+following code in a module `specialization-example` in the `example`
+package:
+```scheme
+(import :std/interface :std/contract :std/iter)
+(export #t)
+
+(defclass A (a))
+(defclass B (b))
+(defclass (C A B) (c))
+(defclass (D A B) (d))
+(defclass (E C D) (e) final: #t)
+
+(interface I
+  (mul-c x y))
+
+(defmethod {add-a A}
+  (lambda (self x)
+    (+ (@ self a) x)))
+
+(defmethod {add-b B}
+  (lambda (self x)
+    (+ (@ self b) x)))
+
+(defmethod {mul-c C}
+  (lambda (self x y)
+    (* (@ self c) {self.add-a x} {self.add-b y})))
+
+(def (do-method o n)
+  (for (x (in-range n))
+    {o.mul-c 1 2}))
+
+(def (do-interface o n)
+  (using (i (I o) : I)
+    (for (x (in-range n))
+      (i.mul-c 1 2))))
+```
+
+Here we define a rather deep hierarchy (for illustration purposes)
+culminating in a final (so that it can be sealed) class `E`. The
+public method of interest is `mul-c`, which we define as part
+of an interface `I`.
+
+After compiling the module (with optimizations enabled of course),
+we can observe the following:
+```scheme
+> (import :example/specialization-example)
+> (def o (E a: 1 b: 2 c: 3 d: 4 e: 5))
+
+> (time (do-method o 10000000))
+(time (example/specialization-example#do-method o '10000000))
+    3.335598 secs real time
+    3.335501 secs cpu time (3.323579 user, 0.011922 system)
+    48 collections accounting for 0.332099 secs real time (0.332040 user, 0.000000 system)
+    1919574560 bytes allocated
+    6747 minor faults
+    no major faults
+    8709941202 cpu cycles
+
+> (seal-class! E::t)
+#<type #9 E>
+> (time (do-method o 10000000))
+(time (example/specialization-example#do-method o '10000000))
+    0.384692 secs real time
+    0.384693 secs cpu time (0.384693 user, 0.000000 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    1004504206 cpu cycles
+
+> (time (do-interface o 10000000))
+(time (example/specialization-example#do-interface o '10000000))
+    0.113887 secs real time
+    0.113890 secs cpu time (0.113890 user, 0.000000 system)
+    no collections
+    288 bytes allocated
+    no minor faults
+    no major faults
+    297373376 cpu cycles
+```
+
+So as you can see, the performance effects of runtime specialization
+can be quite spectacular!
+
+
+
+### Generics
+
+Finally, in true LISP fashion, Gerbil also supports generic
+multimethod dispatch in the `:std/generic` library.
+
+For example, the following defines a generic method `my-add` that
+dispatches on numbers and strings:
+```scheme
+(defgeneric my-add
+  (lambda args #f)) ; default method returns #f
+
+(defmethod (my-add (a :number) (b :number))
+  (+ a b))
+(defmethod (my-add (a :string) (b :string))
+  (string-append a b))
+```
+
+The code defined a generic method with the `defgeneric` macro,
+providing a default method which is dispatched when there are no
+matching methods. Next, we defined the two methods, operating
+on numbers and strings. We can use the generic method as a procedure:
+
+
+```scheme
+> (my-add 1 2)
+3
+> (my-add "a" "b")
+"ab"
+```
+
+We can define methods for any class.
+Here we define an implementation for instances of a struct `A`:
+```scheme
+(defstruct A (x))
+
+> (my-add (make-A 1) (make-A 2))
+#f
+
+(defmethod (my-add (a A) (b A))
+  (make-A (+ (A-x a) (A-x b))))
+
+> (my-add (make-A 1) (make-A 2))
+#<A a: 3>
+```
+
+Inside the body of every method implementation, `@next-method` is bound
+to a procedure which dispatches to the next matching method.
+For example:
+```scheme
+(defmethod (my-add (a :fixnum) (b :fixnum))
+  (displayln "add fixnums")
+  (@next-method a b))
+```
+Normally in the procedure body we would add with `fx+`, but for
+the shake of the example we display a message and let the generic
+number method to add.
+```scheme
+> (my-add 1 2)
+add fixnums
+3
+```
 
 ## Modules, Libraries, and Executables
 
