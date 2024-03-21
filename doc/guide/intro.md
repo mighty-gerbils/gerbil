@@ -564,17 +564,146 @@ The complete system class hierarchy is out of scope for this introduction,
 but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/runtime/mop-system-classes.ss) and the meta types in the [MOP part of the core prelude](https://github.com/mighty-gerbils/gerbil/blob/master/src/gerbil/core/mop.ss).
 
 
+
+
 #### Interfaces
 
-#### Contracts, Type Annotations, and Dotted Notation
+#### Contracts
+
+#### Type Annotations and Dotted Notation
 
 #### Runtime Specialization
 
+As we have seen so far, the object oriented facilities of Gerbil are
+quite flexible and powerful; however, there is the issue of dynamic
+dispatch overhead, which is particularly pronounced in heavy method
+interactions and deep class hierarchies.  This makes you wonder, is
+there anything we can do to eliminate this cost? It would be quite
+unfortunate to have such powerful facilities and be afraid to use them
+because of performance concerns!
+
+But fear not, Gerbil supports runtime specialization which provides
+a mechanism to *eliminate dynamic dispatch* overhead for certain
+wide and very important patterns. In brief, when a method is bound
+for some class, the compiler may also generate a *specializer*,
+which is a procedure that can specialize a method for a concrete
+class at runtime and construct a method table where all methods
+are devirtualized on self. This mechanism comes into play with
+*class sealing* and *interface instance specialization*.
+
 ##### Class Sealing
 
-##### Interface Instance Specializers
+Class sealing is applicable to *final classes*, that is classes that
+cannot be extended further. In this case, we can invoke `seal-class!`
+and this will specialize and replace the class method table with a
+new table where all methods are direct and specialized for the
+concrete class.
+
+##### Interface Instance Specialization
+
+This is the more interesting case, as it is applicable to any class
+that is casted to an interface. When the instance prototype is
+constructed, the class is specialized for the concrete runtime class.
+As a result, all resolved methods in the interface instance are
+specialized!
+
+Combine this with passing interface instances as arguments to methods,
+and the entire class hierarchy is devirtualized at the interface
+barrier! And thus you have the freedom to enjoy *fearless* object
+oriented programming.
+
+##### Performance Effects
+
+In order to better understand the performance effects of runtime
+specialization, let's examine a simple case. Here, we define the
+following code in a module `specialization-example` in the `example`
+package:
+```
+(import :std/interface :std/contract :std/iter)
+(export #t)
+
+(defclass A (a))
+(defclass B (b))
+(defclass (C A B) (c))
+(defclass (D A B) (d))
+(defclass (E C D) (e) final: #t)
+
+(interface I
+  (mul-c x y))
+
+(defmethod {add-a A}
+  (lambda (self x)
+    (+ (@ self a) x)))
+
+(defmethod {add-b B}
+  (lambda (self x)
+    (+ (@ self b) x)))
+
+(defmethod {mul-c C}
+  (lambda (self x y)
+    (* (@ self c) {self.add-a x} {self.add-b y})))
+
+(def (do-method o n)
+  (for (x (in-range n))
+    {o.mul-c 1 2}))
+
+(def (do-interface o n)
+  (using (i (I o) : I)
+    (for (x (in-range n))
+      (i.mul-c 1 2))))
+```
+
+Here we define a rather deep hierarchy (for illustration purposes)
+culminating in a final (so that it can be sealed) class `E`. The
+public method of interest is `mul-c`, which we define as part
+of an interface `I`.
+
+After compiling the module (with optimizations enabled of course),
+we can observe the following:
+```
+> (import :example/specialization-example)
+> (def o (E a: 1 b: 2 c: 3 d: 4 e: 5))
+
+> (time (do-method o 10000000))
+(time (example/specialization-example#do-method o '10000000))
+    3.335598 secs real time
+    3.335501 secs cpu time (3.323579 user, 0.011922 system)
+    48 collections accounting for 0.332099 secs real time (0.332040 user, 0.000000 system)
+    1919574560 bytes allocated
+    6747 minor faults
+    no major faults
+    8709941202 cpu cycles
+
+> (seal-class! E::t)
+#<type #9 E>
+> (time (do-method o 10000000))
+(time (example/specialization-example#do-method o '10000000))
+    0.384692 secs real time
+    0.384693 secs cpu time (0.384693 user, 0.000000 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    1004504206 cpu cycles
+
+> (time (do-interface o 10000000))
+(time (example/specialization-example#do-interface o '10000000))
+    0.113887 secs real time
+    0.113890 secs cpu time (0.113890 user, 0.000000 system)
+    no collections
+    288 bytes allocated
+    no minor faults
+    no major faults
+    297373376 cpu cycles
+```
+
+So as you can see, the performance effects of runtime specialization
+can be quite spectacular!
+
+
 
 #### Generics
+
 
 ########################################################################
 Gerbil supports object-oriented programming with structs, classes, and
