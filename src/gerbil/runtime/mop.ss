@@ -640,7 +640,7 @@ namespace: #f
     (let (klass (##structure-type o))
       (if (class-type? klass)
         klass
-        (error "not a standard object" o klass)))
+        (error "not an object" o klass)))
     (error "not an object" o)))
 
 (def (direct-instance? klass obj)
@@ -749,7 +749,7 @@ namespace: #f
 
 (def (class->list obj)
   (if (object? obj)
-    (let (klass (##structur-type obj))
+    (let (klass (##structure-type obj))
       (if (class-type? klass)
         (let (slot-vector (&class-type-slot-vector klass))
           (let loop ((index (##fx- (##vector-length slot-vector) 1))
