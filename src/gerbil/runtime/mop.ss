@@ -588,12 +588,12 @@ namespace: #f
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
+    (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-ref obj off klass slot))
     (not-an-instance obj klass)))
 (def (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
+    (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-set! obj val off klass slot))
     (not-an-instance obj klass)))
 
@@ -705,7 +705,7 @@ namespace: #f
       (else obj))))
 
 (def (class-instance-init! obj . args)
-  (__class-instance-init! (object-type obj) obj args))
+  (__class-instance-init! (##structure-type obj) obj args))
 
 (def (__class-instance-init! klass obj args)
   (let lp ((rest args))
@@ -743,13 +743,13 @@ namespace: #f
   (##structure-copy struct))
 
 (def (struct->list obj)
-  (if (object? obj)
+  (if (##structure? obj)
     (##vector->list obj)
     (error "not a structure" obj)))
 
 (def (class->list obj)
   (if (object? obj)
-    (let (klass (object-type obj))
+    (let (klass (##structur-type obj))
       (if (class-type? klass)
         (let (slot-vector (&class-type-slot-vector klass))
           (let loop ((index (##fx- (##vector-length slot-vector) 1))

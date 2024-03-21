@@ -1550,7 +1550,6 @@ package: gerbil/core
     class-type-seal!
     subclass?
     substruct?
-    base-struct
     make-class-type
     make-class-predicate
     make-class-slot-accessor
