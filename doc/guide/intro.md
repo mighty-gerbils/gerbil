@@ -568,9 +568,93 @@ but you can find it in the [runtime](https://github.com/mighty-gerbils/gerbil/bl
 
 #### Interfaces
 
+As we have mentioned, interfaces provide a mechanism to pack objects
+together with relevant methods. Interfaces define procedures for their
+methods, which may have contracts that are checked at the interface
+boundary -- see [Contracts](#contracts) below. When an interface
+method is invoked, the receiver is *cast* to the interface, the
+contract (if any) is checked and the method is invoked directly
+from the packed instance thus evading dynamic method dispatch.
+
+The first time an object of a specific class is cast to an interface,
+the class is specialized (see [Interface Instance Specialization](#interface-instance-specializastion) below), the
+methods required by the interface are resolved, and a prototype
+instance of the interface is created and cached. Subsequent casts use
+the cached prototype instance by copying and setting the receiver
+object. Thus interfaces provide a powerful and efficient mechanism for
+defining facades to objects without caring about the underlying
+implementation details.
+
+Interfaces are defined using the `interface` macro from the
+`:std/interface` standard library module.
+
+Here is an example for our colorful point hierarchy:
+```
+(interface Colorizer
+ (colorize))
+
+> (def c (ColoredPoint3D x: 1 y: 2 z: 3 r: 255 g: 0 b: 0))
+> (def ci (Colorizer c))
+> ci
+#<Colorizer #9>
+> (ColoredPoint3D? ci)
+#f
+> (Colorizer-colorize ci)
+#<ColoredPoint3D #10>
+```
+
+For more details, please refer to the [Interfaces Reference](/reference/std/interface.md) section of the hyperspec.
+
 #### Contracts
 
+As we mentioned contracts can be attached to interface methods, which
+are then enforced at the interface boundary. Contracts allow us to
+write method implementations knowing that any access through the
+interface ensure that the contract conditions are satisfied.
+
+A contract specification in general looks like this
+```
+(interface SomeInterface
+  (some-method (arg contract ... [default ...]) ...))
+
+contract:
+  :  <type check>
+  :- <type assertion>
+  :~ <predicate expression>
+```
+
+Contracts can also be enacted in arbitrary context with the ubiquitous
+`using` macro. See the [Contracts Reference](/reference/std/contract.md) section of
+the hyperspace for more details.
+
 #### Type Annotations and Dotted Notation
+
+We briefly touched on contracts above, but there is an important
+detail that is worth elaborating upon. Within the body of a `using`
+incantation, bound variables acquire dotted acces for interface
+methods and slot accesses.
+
+Here is an example:
+```
+(import :std/contract)
+(defstruct A (x y))
+(defclass (B A) (z) constructor: :init!)
+(defmethod {:init! B}
+  (lambda (self x y z)
+    (using (self :- B)
+      (set! self.x x)
+      (set! self.y y)
+      (set! self.z z))))
+
+> (def b (B 1 2 3))
+> (using (b : B) (* (+ b.x b.y) b.z))
+9
+```
+
+Furthermore, the `{}` dynamic method call operator also allows the use
+of a dotted identifier at he head. In this manner, `{a.some-method arg ...}`
+is equivalent to `{some-method a arg ...}`. This provides symmetry between
+dotted slot access and method invocation.
 
 #### Runtime Specialization
 
@@ -704,389 +788,63 @@ can be quite spectacular!
 
 #### Generics
 
+Finally, in true LISP fashion, Gerbil also supports generic
+multimethod dispatch in the `:std/generic` library.
 
-########################################################################
-Gerbil supports object-oriented programming with structs, classes, and
-interfaces. Structs are index-based types with single inheritance,
-while classes are slot-based types with multiple
-inheritance. Interfaces are akin to type-classes, and they pack an
-object with its method implementations for safe and efficient method
-calls.
-
-#### Structs
-
-Structs are defined with `defstruct`:
+For example, the following defines a generic method `my-add` that
+dispatches on numbers and strings:
 ```scheme
-(defstruct point (x y))
-(defstruct (point-3d point) (z))
-> (make-point-3d 1 2 3)
-#<point-3d>
+(defgeneric my-add
+  (lambda args #f)) ; default method returns #f
+
+(defmethod (my-add (a :number) (b :number))
+  (+ a b))
+(defmethod (my-add (a :string) (b :string))
+  (string-append a b))
 ```
 
-For each struct `defstruct` defines a constructor, a type predicate,
-a runtime type descriptor, accessors and mutators, expansion time
-struct info and a match expander.
+The code defined a generic method with the `defgeneric` macro,
+providing a default method which is dispatched when there are no
+matching methods. Next, we defined the two methods, operating
+on numbers and strings. We can use the generic method as a procedure:
 
-So:
+
 ```scheme
-> (def my-point (make-point-3d 1 2 3))
-> (point-x my-point)
-1
-> (point-y my-point)
-2
-> (point-3d-z my-point)
+> (my-add 1 2)
 3
-> (set! (point-3d-z my-point) 0)
-> (point-3d-z my-point)
-0
-
+> (my-add "a" "b")
+"ab"
 ```
 
-#### Classes
-Classes are defined with `defclass` with slot accessed fields and support multiple
-inheritance.
-For example:
+We can define methods for any class.
+Here we define an implementation for instances of a struct `A`:
 ```scheme
-(defclass A (a))
-(defclass B (b))
-(defclass (C A B) (c))
-...
-> (def my (make-C a: 1 b: 2 c: 3))
-> (A? my)
-#t
-> (B? my)
-#t
-> (@ my a)
-1
-> (@ my b)
-2
-> (@ my c)
-3
-> (set! (@ my c) 0)
-> (@ my c)
-0
+> (my-add (make-A 1) (make-A 2))
+#f
 
-```
-
-#### Methods
-
-Gerbil supports single dispatch for methods associated with a struct and class
-type. Methods are defined with `defmethod` and invoked with curly brace `{}`
-s-expressions.
-
-For instance:
-```scheme
-(import :std/format)
-(defmethod {print point}
-  (lambda (self)
-    (with ((point x y) self)
-      (printf "{point x:~a y:~a}~n" x y))))
-> {print my-point}
-{point x:1 y:2}
-
-(defmethod {print point-3d}
-  (lambda (self)
-    (with ((point-3d x y z) self)
-      (printf "{point-3d x:~a y:~a z:~a}~n" x y z))))
-> {print my-point}
-{point-3d x:1 y:2 z:0}
-```
-
-If you want to dispatch to the next method in the hierarchy, then you can use
-the `@next-method` macro that is locally bound inside your method definition:
-```scheme
-(defmethod {identify point}
-  (lambda (self)
-    (displayln 'point)))
-
-(defmethod {identify point-3d}
-  (lambda (self)
-    (displayln 'point-3d)
-    (@next-method self)))
-
-> {identify my-point}
-point-3d
-point
-```
-
-#### Constructors
-
-By default, the constructors generated for structs expect all the fields in
-indexed order, while the class constructor expects optional keywords for
-slots in the class.
-A custom constructor can be defined by specifying a constructor property
-designating a method at struct or class definition.
-For example:
-```scheme
-(defstruct (point-3d point) (z)
-  constructor: :init!)
-(defmethod {:init! point-3d}
-  (lambda (self x y (z 0))
-    (set! (point-x self) x)
-    (set! (point-y self) y)
-    (set! (point-3d-z self) z)))
-> (def my-point (make-point-3d 1 2))
-> (point-3d-z my-point)
-0
-
-```
-
-#### Mixing classes and structs
-
-Structs can only extend other structs with single inheritance.
-In contrast, classes can freely mixin structs, as long as the
-mixins contain a compatible base struct.
-
-For example, the following constructs a diamond hierarchy with a base struct:
-```scheme
 (defstruct A (x))
-(defclass (B A) ())
-(defclass (C A) ())
-(defclass (D B C) () constructor: :init!)
-(defmethod {:init! D}
-  (lambda (self x)
-    (set! (A-x self) x)))
-(def d (make-D 1))
+(defmethod (my-add (a A) (b A))
+  (make-A (+ (A-x a) (A-x b))))
 
-> (A? d)
-#t
-> (A-x d)
-1
-> (B? d)
-#t
-> (C? d)
-#t
-> (D? d)
-#t
-> (type-descriptor-mixin D::t)
-(#<type #5 B> #<type #6 C> #<type #7 A>)
-
+> (my-add (make-A 1) (make-A 2))
+#<A a: 3>
 ```
 
-#### Sealing Classes
-
-Gerbil supports _sealing_ for _final_ class (and struct) types.
-
-By sealing a class, all methods in the hierarchy are coalesced
-into the class' method table, resulting to a single hash table lookup
-for method dispatch.  In addition, as methods are coalesced they are
-specialized for the concrete type when a specializer is available;
-specializers are normally generated by the compiler when compiling with
-optimizations.
-
-Specializing a method resolves all slot accesses into offsets within
-the object at the time of specialization. Similarly, all method calls
-are (lazily) resolved so that they happen exactly once, thus
-eliminating all hash table lookups within the specialized method.
-
-Here is an example that demonstrates the performance effect of class sealing:
+Inside the body of every method implementation, `@next-method` is bound
+to a procedure which dispatches to the next matching method.
+For example:
 ```scheme
-(defclass A (a))
-(defclass B (b))
-(defclass (C A B) (c))
-(defclass (D A B) (d))
-(defclass (E C D) (e) final: #t)
-
-(defmethod {add-a A}
-  (lambda (self x)
-    (+ (@ self a) x)))
-
-(defmethod {add-b B}
-  (lambda (self x)
-    (+ (@ self b) x)))
-
-(defmethod {mul-c C}
-  (lambda (self x y)
-    (* (@ self c) {add-a self x} {add-b self y})))
-
-> (def foo (E a: 1 b: 2 c: 3))
-> (def (do-it o n) (with-methods foo mul-c) (for (_ (in-range n)) (mul-c o 1 2)))
-> (time (do-it foo 1000000))
-(time (do-it foo (##quote 1000000)))
-    0.949492 secs real time
-    0.949490 secs cpu time (0.947454 user, 0.002036 system)
-    105 collections accounting for 0.157004 secs real time (0.156961 user, 0.000026 system)
-    704018864 bytes allocated
-    950 minor faults
-    no major faults
-> (seal-class! E::t)
-#<type #9 E>
-> (time (do-it foo 1000000))
-(time (do-it foo (##quote 1000000)))
-    0.513751 secs real time
-    0.513751 secs cpu time (0.513751 user, 0.000000 system)
-    104 collections accounting for 0.163506 secs real time (0.163501 user, 0.000000 system)
-    704018768 bytes allocated
-    2 minor faults
-    no major faults
+(defmethod (my-add (a :fixnum) (b :fixnum))
+  (displayln "add fixnums")
+  (@next-method a b))
 ```
-
-The effect is even more pronounced in compiled code:
+Normally in the procedure body we would add with `fx+`, but for
+the shake of the example we display a message and let the generic
+number method to add.
 ```scheme
-$ cat classes-test.ss
-(import ./classes :std/sugar)
-(export main)
-
-(def (do-it o n)
-  (declare (not safe))
-  (with-methods o mul-c)
-  (let lp ((i 0))
-    (when (fx< i n)
-      (mul-c o 1 2)
-      (lp (fx1+ i)))))
-
-(extern namespace: #f time)
-
-(def (main n)
-  (let ((n (string->number n))
-        (o (E a: 1 b: 2 c: 3)))
-    (##gc)
-    (time (do-it o n))
-    (seal-class! E::t)
-    (time (do-it o n))))
-
-$ gxc  -O -exe -o clasess-test classes-test.ss
-$ ./clasess-test 10000000
-(time (tmp/classes-test#do-it _o392_ _n391_))
-    3.357118 secs real time
-    3.357061 secs cpu time (3.357061 user, 0.000000 system)
-    no collections
-    32 bytes allocated
-    no minor faults
-    no major faults
-(time (tmp/classes-test#do-it _o392_ _n391_))
-    0.123717 secs real time
-    0.123716 secs cpu time (0.123716 user, 0.000000 system)
-    no collections
-    32 bytes allocated
-    1 minor fault
-    no major faults
-```
-
-
-#### Interfaces
-
-Starting with Gerbil v0.18, The `:std/interface` package provides the
-interface abstraction, which allows you to define facades for your
-class hierarchy, hiding the details of internal implementation and
-preresolving methods for direct dispatch.
-
-In the example above, we can normalize the interface to our class hierarchy as follows:
-```scheme
-(interface F
-  (add-a x)
-  (add-b x)
-  (mul-c x y))
-```
-
-You can create instances of your interfaces by casting objects with the `F` macro.
-Using interfaces, the code becomes both more robust and more efficient:
-```scheme
-(defclass A (a))
-(defclass B (b))
-(defclass (C A B) (c))
-(defclass (D A B) (d))
-(defclass (E C D) (e) final: #t)
-
-(defmethod {add-a A}
-  (lambda (self x)
-    (+ (@ self a) x)))
-
-(defmethod {add-b B}
-  (lambda (self x)
-    (+ (@ self b) x)))
-
-(defmethod {mul-c C}
-  (lambda (self x y)
-    (* (@ self c) {add-a self x} {add-b self y})))
-
-(def (do-it-with-object o n)
-  (for (_ (in-range n)) {mul-c o 1 2}))
-(def (do-it-with-interface o n)
-  (let (o (F o)) (for (_ (in-range n)) (F-mul-c o 1 2))))
-```
-
-Let's compile and time the code above:
-```scheme
-> (def foo (E a: 1 b: 2 c: 3))
-> (time (do-it-with-object foo 1000000))
-(time (tmp/example#do-it-with-object foo (##quote 1000000)))
-    0.226230 secs real time
-    0.226218 secs cpu time (0.225842 user, 0.000376 system)
-    no collections
-    64 bytes allocated
-    no minor faults
-    no major faults
-    590719272 cpu cycles
-> (seal-class! E::t)
-#<type #16 E>
-> (time (do-it-with-object foo 1000000))
-(time (tmp/example#do-it-with-object foo (##quote 1000000)))
-    0.044066 secs real time
-    0.044069 secs cpu time (0.042088 user, 0.001981 system)
-    no collections
-    64 bytes allocated
-    no minor faults
-    no major faults
-    115047186 cpu cycles
-> (time (do-it-with-interface foo 1000000))
-(time (tmp/example#do-it-with-interface foo (##quote 1000000)))
-    0.025100 secs real time
-    0.025104 secs cpu time (0.025103 user, 0.000001 system)
-    no collections
-    704 bytes allocated
-    no minor faults
-    no major faults
-    65530420 cpu cycles
-```
-
-See the [Interfaces](/reference/std/interface.md) package documentation
-for more details.
-
-
-#### Contracts, Type Annotations and Dotted Notation
-
-Starting with Gerbil v0.18, The `:std/contract` package provides macros for contracts and type annotations.
-
-You can attach contracts to interface method definitions (see
-[Interfaces](/reference/std/interface.md)) and you can use the `using`
-macro to provide type checks and assertions, accessors and mutators
-for structs and classes, and interface method calls with the dotted
-notation.
-
-Here is a simple example:
-```scheme
-(import :std/contract)
-(defstruct A (x y))
-(defclass (B A) (z) constructor: :init!)
-(defmethod {:init! B}
-  (lambda (self x y z)
-    (using (self :- B)
-      (set! self.x x)
-      (set! self.y y)
-      (set! self.z z))))
-
-> (def b (B 1 2 3))
-> (using (b : B) (* (+ b.x b.y) b.z))
-9
-
-```
-
-Furthermore, dynamic method calls with the `{...}` notation also expand dotted identifiers.
-So `{obj.method 1 2 2}` is equivalent to `{method obj 1 2 3}`.
-
-Extending the example further:
-```scheme
-(defmethod {do-it B}
-  (lambda (self factor)
-    (using (self :- B)
-      (* (+ self.x self.y) self.z factor))))
-
-> {b.do-it 1}
-9
-> {b.do-it 2}
-18
-
+> (my-add 1 2)
+add fixnums
+3
 ```
 
 
@@ -1651,66 +1409,6 @@ catch-clause:
  (catch _ body ...)
 finally-clause:
  (finally body ...)
-```
-
-### Generics
-
-Gerbil supports generic multi-method dispatch, with the requisite
-runtime support and macros provided by `:std/generic`.
-For example, the following defines a generic method `my-add` that
-dispatches on numbers and strings:
-```scheme
-(import :std/generic)
-(defgeneric my-add
-  (lambda args #f))
-(defmethod (my-add (a <number>) (b <number>))
-  (+ a b))
-(defmethod (my-add (a <string>) (b <string>))
-  (string-append a b))
-```
-
-The code defined a generic method with the `defgeneric` macro,
-providing a default method which is dispatched when there are no
-matching methods. Next, we defined the two methods, operating
-on numbers and strings. We can use the generic method as a procedure:
-
-
-```scheme
-> (my-add 1 2)
-3
-> (my-add "a" "b")
-"ab"
-```
-
-We can similarly define methods for user-defined types as well.
-Here we define an implementation for instances of a struct `A`:
-```scheme
-> (my-add (make-A 1) (make-A 2))
-#f
-
-(defstruct A (x))
-(defmethod (my-add (a A) (b A))
-  (make-A (+ (A-x a) (A-x b))))
-
-> (my-add (make-A 1) (make-A 2))
-#<A a: 3>
-```
-
-Inside the body of every method implementation, `@next-method` is bound
-to a procedure which dispatches to the next matching method.
-For example:
-```scheme
-(defmethod (my-add (a <fixnum>) (b <fixnum>))
-  (displayln "add fixnums")
-  (@next-method a b))
-```
-Normally in the procedure body we would add with `fx+`, but for
-the shake of the example we display a message and let the generic
-number method to add.
-```scheme
-> (my-add 1 2)
-add fixnums
-3
 ```
 
 ### Iteration
