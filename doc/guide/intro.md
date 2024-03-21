@@ -844,6 +844,23 @@ declaration -- unchecked because there is no reason to check if the object
 is behind the interface! Furthermore there is no need to check for a negative
 index, as this is checked at the interface barrier.
 
+And here is some example usage of ExtensibleVectors as Sequences:
+```scheme
+> (def ev (Sequence (ExtensibleVector vector: (vector))))
+> (using (ev : Sequence) (ev.ref 0))
+#f
+> (using (ev : Sequence) (ev.length))
+0
+> (using (ev : Sequence) (ev.set! 0 'hello) (ev.set! 1 'world))
+#<ExtensibleVector #12>
+> (using (ev : Sequence) (ev.ref 0))
+hello
+> (using (ev : Sequence) (ev.ref 1))
+world
+> (using (ev : Sequence) (ev.length))
+2
+```
+
 Finally, it should also be noted that the `{}` dynamic method call operator
 also allows the use of a dotted identifier at he head.
 In this manner, `{a.some-method arg ...}`
