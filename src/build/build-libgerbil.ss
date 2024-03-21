@@ -390,7 +390,7 @@
       (if (eq? mode 'shared)
         (cond-expand
           (darwin (invoke-gcc ["-dynamiclib" "-o" libgerbil "-install_name"
-                               (string-append (getenv "GERBIL_PREFIX") "/lib/libgerbil.dylib")
+                               (path-expand "lib/libgerbil.dylib" (getenv "GERBIL_PREFIX"))
                                libgerbil-ldd ...
                                static-module-o-paths ...
                                builtin-modules-o-path
