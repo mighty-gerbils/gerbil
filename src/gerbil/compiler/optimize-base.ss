@@ -29,7 +29,7 @@ namespace: gxc
 ;;; optimizer-info: types
 (defstruct !type (id))
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) ())
+(defstruct (!procedure !type) (return effect arguments))
 
 ;;; MOP
 (defstruct (!class !type)
@@ -51,7 +51,7 @@ namespace: gxc
 (defstruct (!mutator !procedure) (slot checked?))
 
 ;; procedures
-(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
+(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl signature)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
 (defstruct (!kw-lambda !procedure) (table dispatch))
@@ -191,34 +191,59 @@ namespace: gxc
 
 (defmethod {:init! !predicate}
   (lambda (self id)
-    (set! (!type-id self) id)))
+    (set! (!type-id self) id)
+    (set! (!procedure-return self) 'boolean::t)
+    (set! (!procedure-effect self) '(pure assert))
+    (set! (!procedure-arguments self) `(t::t))))
 
 (defmethod {:init! !constructor}
   (lambda (self id)
-    (set! (!type-id self) id)))
+    (set! (!type-id self) id)
+    (set! (!precedure-return self) id)
+    (set! (!procedure-effect self) '(alloc))))
 
 (defmethod {:init! !accessor}
   (lambda (self id slot checked?)
-    (set! (!type-id self) id)
-    (set! (!accessor-slot self) slot)
-    (set! (!accessor-checked? self) checked?)))
+    (set! (&!type-id self) id)
+    (set! (&!accessor-slot self) slot)
+    (set! (&!accessor-checked? self) checked?)
+    (set! (&!procedure-return self) 't::t)
+    (set! (&!procedure-effect self) '(pure))
+    (set! (&!procedure-arguments self) `(,id))))
 
 (defmethod {:init! !mutator}
   (lambda (self id slot checked?)
-    (set! (!type-id self) id)
-    (set! (!mutator-slot self) slot)
-    (set! (!mutator-checked? self) checked?)))
+    (set! (&!type-id self) id)
+    (set! (&!mutator-slot self) slot)
+    (set! (&!mutator-checked? self) checked?)
+    (set! (&!procedure-return self) 'void::t)
+    (set! (&!procedure-effect self) '(mut))
+    (set! (&!procedure-arguments self) `(,id t::t))))
 
 (defmethod {:init! !lambda}
-  (lambda (self id arity dispatch (inline #f) (typedecl #f))
-    (struct-instance-init! self id arity dispatch inline typedecl)))
+  (lambda (self id arity dispatch (inline #f) (typedecl #f)
+           return: (return #f)
+           effect: (effect #f)
+           arguments: (arguments #f))
+    (set! (&!type-id self) id)
+    (set! (&!lambda-arity self) arity)
+    (set! (&!lambda-dispatch self) dispatch)
+    (set! (&!lambda-iniline self) inline)
+    (set! (&!lambda-inline-typedecl self) typedecl)
+    (set! (&!procedure-return self) return)
+    (set! (&!procedure-effect self) effect)
+    (set! (&!procedure-arguments self) arguments)))
+
+(defmethod {:init! !case-lambda}
+  (lambda (self id clauses)
+    (set! (&!case-lambda-id self) id)
+    (set! (&!case-lambda-clauses self) clauses)))
 
 (defmethod {:init! !primitive-lambda}
   !lambda:::init!)
 
 (defmethod {:init! !primitive-case-lambda}
-  (lambda (self . args)
-    (apply struct-instance-init! self args)))
+  !case-lambda:::init!)
 
 (def (!type-vtab type)
   (cond
