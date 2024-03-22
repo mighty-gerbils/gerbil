@@ -112,7 +112,8 @@ namespace: gxc
          (if (hash-get (current-compile-mutators) sym)
            (verbose "skipping type declaration for mutable binding " sym)
            (alet (type (apply-basic-expression-type expr))
-             (optimizer-declare-type! sym type #t)))))
+             (when type
+               (optimizer-declare-type! sym type #t))))))
       (_ (void))))
 
   (ast-case stx ()
@@ -168,6 +169,12 @@ namespace: gxc
           (compile-e self #'expr))))
        (_ (compile-e self #'expr))))))
 
+(def (basic-expression-type-annotation-typedecl stx ann)
+  (ast-case ann ()
+    ((_ type-id)
+     (or (optimizer-resolve-type (identifier-symbol #'type-id))
+         (raise-compile-error "unknown type" stx #'type-id)))))
+
 (def (basic-expression-type-annotation-mop.class stx ann)
   (ast-case ann ()
     ((_ type-id super slots ctor-method struct? final? metaclass)
@@ -217,7 +224,8 @@ namespace: gxc
   (@mop.predicate   basic-expression-type-annotation-mop.predicate)
   (@mop.accessor    basic-expression-type-annotation-mop.accessor)
   (@mop.mutator     basic-expression-type-annotation-mop.mutator)
-  (@mop.system      basic-expression-type-annotation-mop.system))
+  (@mop.system      basic-expression-type-annotation-mop.system)
+  (@type            basic-expression-type-annotation-typedecl))
 
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
@@ -280,21 +288,22 @@ namespace: gxc
      (parameterize ((current-compile-type-closure #t))
        (compile-e self #'body)))))
 
-(def basic-expression-type-builtin (make-hash-table-eq))
-(defrules defbasic-expression-type-builtin ()
-  ((_ (id type-e) ...)
-   (begin
-     (hash-put! basic-expression-type-builtin 'id type-e) ...)))
-
-
 (def (basic-expression-type-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
-     (alet (type-e (hash-get basic-expression-type-builtin (identifier-symbol #'id)))
-       (type-e stx #'args)))
+     (let (rator-type (optimizer-resolve-type (identifier-symbol #'id)))
+       (cond
+        ((not rator-type) #f)
+        ((!procedure? rator-type)
+         (alet (return (!procedure-return rator-type))
+           (or (optimizer-resolve-type return)
+               (raise-compile-error "unknown procedure return type" stx return))))
+        ((and (!class? rator-type)
+              (eq? (!type-id rator-type) 'procedure))
+         #f)
+        (else
+         (raise-compile-error "operator is not a procedure" stx rator-type)))))
     (_ #f)))
-
-(defbasic-expression-type-builtin)
 
 (def (basic-expression-type-ref% self stx)
   (ast-case stx ()
