@@ -27,9 +27,11 @@ namespace: gxc
     (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq))))
 
 ;;; optimizer-info: types
-(defstruct !type (id))
+(defstruct !type (id)
+  equal: #t)
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) (return effect arguments))
+(defstruct (!procedure !type) (return effect arguments)
+  equal: #t)
 
 ;;; MOP
 (defstruct (!class !type)
@@ -43,26 +45,42 @@ namespace: gxc
    system? ;; Boolean; is it a system class?
    metaclass ;; OrFalse Symbol; the metaclass of the class
    methods) ;; Map Symbol -> Symbol; known method implementations
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 
-(defstruct (!predicate !procedure) ())
-(defstruct (!constructor !procedure)())
-(defstruct (!accessor !procedure) (slot checked?))
-(defstruct (!mutator !procedure) (slot checked?))
+(defstruct (!predicate !procedure) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!constructor !procedure)()
+  constructor: :init!
+  equal: #t)
+(defstruct (!accessor !procedure) (slot checked?)
+  constructor: !init
+  equal: #t)
+(defstruct (!mutator !procedure) (slot checked?)
+  constructor: !init
+  equal: #t)
 
 ;; procedures
 (defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl signature)
+  constructor: :init!
+  equal: #t)
+(defstruct (!case-lambda !procedure) (clauses)
+  constructor: :init!
+  equal: #t)
+(defstruct (!kw-lambda !procedure) (table dispatch)
   constructor: :init!)
-(defstruct (!case-lambda !procedure) (clauses))
-(defstruct (!kw-lambda !procedure) (table dispatch))
-(defstruct (!kw-lambda-primary !procedure) (keys main))
+(defstruct (!kw-lambda-primary !procedure) (keys main)
+  constructor: :init!)
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
 (defclass !primitive ())
 (defclass (!primitive-lambda !primitive !lambda) ()
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 (defclass (!primitive-case-lambda !primitive !case-lambda) ()
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 
 ;;; methods
 (defmethod {:init! !class}
@@ -199,7 +217,7 @@ namespace: gxc
 (defmethod {:init! !constructor}
   (lambda (self id)
     (set! (!type-id self) id)
-    (set! (!precedure-return self) id)
+    (set! (!procedure-return self) id)
     (set! (!procedure-effect self) '(alloc))))
 
 (defmethod {:init! !accessor}
@@ -228,7 +246,7 @@ namespace: gxc
     (set! (&!type-id self) id)
     (set! (&!lambda-arity self) arity)
     (set! (&!lambda-dispatch self) dispatch)
-    (set! (&!lambda-iniline self) inline)
+    (set! (&!lambda-inline self) inline)
     (set! (&!lambda-inline-typedecl self) typedecl)
     (set! (&!procedure-return self) return)
     (set! (&!procedure-effect self) effect)
@@ -270,6 +288,12 @@ namespace: gxc
    (else #f)))
 
 ;; utilities
+(def (same-type? type-a type-b)
+  (or (equal? type-a type-b)
+      (and (!class? type-a) (!class? type-b)
+           (eq? (!type-id type-a) (!type-id type-b)))))
+
+
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
