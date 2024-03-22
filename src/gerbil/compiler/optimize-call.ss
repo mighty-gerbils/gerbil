@@ -25,7 +25,9 @@ namespace: gxc
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-resolve-type rator-id)))
        (cond
-        ((!procedure? rator-type)
+        ((or (!procedure? rator-type)
+             (and (!class? rator-type)
+                  (eq? (!type-id rator-type 'procedure))))
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
          (let (optimized {optimize-call rator-type self stx #'rands})
            (if (!primitive? rator-type)
