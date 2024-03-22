@@ -338,8 +338,8 @@ prelude only provides bindings for phi=+1.
 ## Objective Gerbil
 
 Gerbil has deeply integrated support for object-oriented programming
-based on a well developed MetaObject Protocol (MOP), power equivalent
-to the CLOS MOP. The fundamental building blocks are *classes*, which
+based on a well developed Meta-Object Protocol (MOP), in the same spirit
+as the CLOS MOP. The fundamental building blocks are *classes*, which
 can have arbitrary inheritance (acyclic) graphs, and define slots and
 methods.
 
@@ -347,9 +347,10 @@ Slots are the attributes of an object, accessible by slot accessors
 and mutators, while methods are procedures attached to the class to
 implement object behavior. We also support *structs* as a special type
 of classes, which have a fixed slot layout and by necessity constrain
-the inheritance graph to have a linear chain of structs.
+the inheritance graph to have a linear chain of structs at the tail
+whose slot layout and precedence list are preserved by subclasses.
 
-Furthermore, we support *interfaces*, which are akin to type-classes
+Furthermore, we support *interfaces*, which are akin to typeclasses
 and pack an object together with its resolved and runtime specialized
 methods. This allows us to completely eliminate dynamic dispatch
 overhead and move contract checks at the interface call boundary.
@@ -433,7 +434,7 @@ Slots define attributes of the object and represent *state*, as
 encapsulated in the object.  When a class is created, a field layout
 for its slots is created and stored in a table in the class, which
 allows us to map a slot to a field in the object.  Slots are strongly
-named, and synonyumous slots in the class hierarchy coalesce to the
+named, and synonymous slots in the class hierarchy coalesce to the
 same field in the object.
 
 We can access or mutate a slot in a type-safe manner using the generated
@@ -461,11 +462,11 @@ It should be noted that the slot layout is not guaranteed to be the
 same for subclasses, unless they have the *struct property* (see
 [Structs](#structs) below). So, unless the class is final or a struct,
 or the object is an exact instance when using the type-safe accessors
-and mutators, accessing a slot requires a dynamic lookup.
+and mutators, accessing a slot requires a (slower) dynamic lookup.
 
 #### Methods
 
-Methods define the behavior for objects of a class. Methods are procedure
+Methods define the behavior for objects of a class. Methods are procedures
 which take the object as first argument with method arguments following.
 Methods are defined with `defmethod` and invoked dynamically with the `{}`
 dynamic call operator.
@@ -555,9 +556,12 @@ dynamic slot resolution overhead (basically a hash table lookup).
 Is there a way to have a fixed layout for performance critical
 classes?  The answer is, of course, yes: Gerbil supports *structs*,
 which are classes with the special property that all structs in the
-inheritance graph form a linear chain.  This ensures that all
-subclasses of a struct will have the same layout for the slots of the
-struct and slot access becomes just a mermory reference.
+inheritance graph form a linear chain. More specifically, the
+precedence list of a struct is always a suffix of that of its
+subclasses, and its slot layout is always a prefix of the slot layout
+of its subclasses This ensures that all subclasses of a struct will
+have the same layout for the slots of the struct and slot access
+becomes just a memory reference.
 
 Struct classes are defined with `defstruct` or by passing the `struct: #t`
 directive in the body of a `defclass` incantation.
@@ -638,7 +642,7 @@ initializes it by default to 0:
 ```
 
 Note that if one of your super-classes defines a constructor, you must
-also define a constructor which by default have the same name as the
+also define a constructor which by default has the same name as the
 super constructor.  If you have conflicting constructor method names
 for your super classes, you must explicitly specify the constructor
 method for your class. This situation is best avoided by using the
@@ -725,7 +729,7 @@ contract (if any) is checked and the method is invoked directly
 from the packed instance thus evading dynamic method dispatch.
 
 The first time an object of a specific class is cast to an interface,
-the class is specialized (see [Interface Instance Specialization](#interface-instance-specializastion) below), the
+the class is specialized (see [Interface Instance Specialization](#interface-instance-specialization) below), the
 methods required by the interface are resolved, and a prototype
 instance of the interface is created and cached. Subsequent casts use
 the cached prototype instance by copying and setting the receiver
@@ -901,7 +905,7 @@ concrete class.
 #### Interface Instance Specialization
 
 This is the more interesting case, as it is applicable to any class
-that is casted to an interface. When the instance prototype is
+that is cast to an interface. When the instance prototype is
 constructed, the class is specialized for the concrete runtime class.
 As a result, all resolved methods in the interface instance are
 specialized!
@@ -1055,7 +1059,7 @@ For example:
   (@next-method a b))
 ```
 Normally in the procedure body we would add with `fx+`, but for
-the shake of the example we display a message and let the generic
+the sake of the example we display a message and let the generic
 number method to add.
 ```scheme
 > (my-add 1 2)
