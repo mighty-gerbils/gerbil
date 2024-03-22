@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define gerbil/compiler/driver::timestamp 1710781154)
+  (define gerbil/compiler/driver::timestamp 1711108660)
   (begin
     (define gxc#default-gerbil-gsc
       (path-expand '"gsc" (path-expand '"bin" (path-expand '"~~"))))
@@ -14,15 +14,15 @@
     (define gxc#scheme-file-settings
       '(permissions: 420 char-encoding: UTF-8 eol-encoding: lf))
     (define gxc#with-output-to-scheme-file
-      (lambda (_path160226_ _fun160227_)
+      (lambda (_path160223_ _fun160224_)
         (with-output-to-file
-         (let ((__tmp160320
+         (let ((__tmp160317
                 (let ()
                   (declare (not safe))
-                  (cons _path160226_ gxc#scheme-file-settings))))
+                  (cons _path160223_ gxc#scheme-file-settings))))
            (declare (not safe))
-           (cons 'path: __tmp160320))
-         _fun160227_)))
+           (cons 'path: __tmp160317))
+         _fun160224_)))
     (define gxc#+gerbil-gsc+ '#f)
     (define gxc#gerbil-gsc
       (lambda ()
@@ -47,8 +47,8 @@
             (set! gxc#+gerbil-ar+ (getenv '"GERBIL_AR" gxc#default-gerbil-ar)))
         gxc#+gerbil-ar+))
     (define gxc#gerbil-rpath
-      (lambda (_gerbil-libdir160221_)
-        (string-append '"-Wl,-rpath=" _gerbil-libdir160221_)))
+      (lambda (_gerbil-libdir160218_)
+        (string-append '"-Wl,-rpath=" _gerbil-libdir160218_)))
     (define gxc#gerbil-runtime-modules
       '("gerbil/runtime/gambit"
         "gerbil/runtime/util"
@@ -69,500 +69,500 @@
         "gerbil/runtime/init"
         "gerbil/runtime"))
     (define gxc#delete-directory*
-      (lambda (_dir160219_) (delete-file-or-directory _dir160219_ '#t)))
+      (lambda (_dir160216_) (delete-file-or-directory _dir160216_ '#t)))
     (define gxc#compile-module__%
-      (lambda (_srcpath160193_ _opts160194_)
-        (if (let () (declare (not safe)) (string? _srcpath160193_))
+      (lambda (_srcpath160190_ _opts160191_)
+        (if (let () (declare (not safe)) (string? _srcpath160190_))
             '#!void
             (let ()
               (declare (not safe))
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath160193_)))
-        (let ((_outdir160196_
+               _srcpath160190_)))
+        (let ((_outdir160193_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'output-dir: _opts160194_)))
-              (_invoke-gsc?160197_
+                 (pgetq__0 'output-dir: _opts160191_)))
+              (_invoke-gsc?160194_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'invoke-gsc: _opts160194_)))
-              (_gsc-options160198_
+                 (pgetq__0 'invoke-gsc: _opts160191_)))
+              (_gsc-options160195_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'gsc-options: _opts160194_)))
-              (_keep-scm?160199_
+                 (pgetq__0 'gsc-options: _opts160191_)))
+              (_keep-scm?160196_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'keep-scm: _opts160194_)))
-              (_verbosity160200_
-               (let () (declare (not safe)) (pgetq__0 'verbose: _opts160194_)))
-              (_optimize160201_
+                 (pgetq__0 'keep-scm: _opts160191_)))
+              (_verbosity160197_
+               (let () (declare (not safe)) (pgetq__0 'verbose: _opts160191_)))
+              (_optimize160198_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'optimize: _opts160194_)))
-              (_debug160202_
-               (let () (declare (not safe)) (pgetq__0 'debug: _opts160194_)))
-              (_gen-ssxi160203_
+                 (pgetq__0 'optimize: _opts160191_)))
+              (_debug160199_
+               (let () (declare (not safe)) (pgetq__0 'debug: _opts160191_)))
+              (_gen-ssxi160200_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'generate-ssxi: _opts160194_))))
-          (if _outdir160196_
-              (let ((__tmp160321
+                 (pgetq__0 'generate-ssxi: _opts160191_))))
+          (if _outdir160193_
+              (let ((__tmp160318
                      (lambda ()
                        (let ()
                          (declare (not safe))
-                         (create-directory*__0 _outdir160196_)))))
+                         (create-directory*__0 _outdir160193_)))))
                 (declare (not safe))
-                (with-lock gxc#+driver-mutex+ __tmp160321))
+                (with-lock gxc#+driver-mutex+ __tmp160318))
               '#!void)
-          (if _optimize160201_
-              (let ((__tmp160322
+          (if _optimize160198_
+              (let ((__tmp160319
                      (lambda ()
                        (let ()
                          (declare (not safe))
                          (gxc#optimizer-info-init!)))))
                 (declare (not safe))
-                (with-lock gxc#+driver-mutex+ __tmp160322))
+                (with-lock gxc#+driver-mutex+ __tmp160319))
               '#!void)
-          (let ((__tmp160326
+          (let ((__tmp160323
                  (lambda ()
                    (let ()
                      (declare (not safe))
-                     (gxc#verbose '"compile " _srcpath160193_))
-                   (let ((__tmp160327
-                          (let ((__tmp160328
+                     (gxc#verbose '"compile " _srcpath160190_))
+                   (let ((__tmp160324
+                          (let ((__tmp160325
                                  (lambda ()
                                    (let ()
                                      (declare (not safe))
-                                     (gx#import-module__0 _srcpath160193_)))))
+                                     (gx#import-module__0 _srcpath160190_)))))
                             (declare (not safe))
-                            (with-lock gxc#+driver-mutex+ __tmp160328))))
+                            (with-lock gxc#+driver-mutex+ __tmp160325))))
                      (declare (not safe))
-                     (gxc#compile-top-module __tmp160327))))
-                (__tmp160325
+                     (gxc#compile-top-module __tmp160324))))
+                (__tmp160322
                  (let () (declare (not safe)) (gxc#compile-timestamp)))
-                (__tmp160323
-                 (let ((__tmp160324
+                (__tmp160320
+                 (let ((__tmp160321
                         (let ()
                           (declare (not safe))
-                          (cons _srcpath160193_ '()))))
+                          (cons _srcpath160190_ '()))))
                    (declare (not safe))
-                   (cons 'compile-module __tmp160324))))
+                   (cons 'compile-module __tmp160321))))
             (declare (not safe))
             (call-with-parameters
-             __tmp160326
-             gxc#current-compile-output-dir
-             _outdir160196_
-             gxc#current-compile-invoke-gsc
-             _invoke-gsc?160197_
-             gxc#current-compile-gsc-options
-             _gsc-options160198_
-             gxc#current-compile-keep-scm
-             _keep-scm?160199_
-             gxc#current-compile-verbose
-             _verbosity160200_
-             gxc#current-compile-optimize
-             _optimize160201_
-             gxc#current-compile-debug
-             _debug160202_
-             gxc#current-compile-generate-ssxi
-             _gen-ssxi160203_
-             gxc#current-compile-timestamp
-             __tmp160325
-             gxc#current-compile-context
              __tmp160323
+             gxc#current-compile-output-dir
+             _outdir160193_
+             gxc#current-compile-invoke-gsc
+             _invoke-gsc?160194_
+             gxc#current-compile-gsc-options
+             _gsc-options160195_
+             gxc#current-compile-keep-scm
+             _keep-scm?160196_
+             gxc#current-compile-verbose
+             _verbosity160197_
+             gxc#current-compile-optimize
+             _optimize160198_
+             gxc#current-compile-debug
+             _debug160199_
+             gxc#current-compile-generate-ssxi
+             _gen-ssxi160200_
+             gxc#current-compile-timestamp
+             __tmp160322
+             gxc#current-compile-context
+             __tmp160320
              gx#current-expander-compiling?
              '#t)))))
     (define gxc#compile-module__0
-      (lambda (_srcpath160212_)
-        (let ((_opts160214_ '()))
+      (lambda (_srcpath160209_)
+        (let ((_opts160211_ '()))
           (declare (not safe))
-          (gxc#compile-module__% _srcpath160212_ _opts160214_))))
+          (gxc#compile-module__% _srcpath160209_ _opts160211_))))
     (define gxc#compile-module
-      (lambda _g160330_
-        (let ((_g160329_ (let () (declare (not safe)) (##length _g160330_))))
-          (cond ((let () (declare (not safe)) (##fx= _g160329_ 1))
-                 (apply (lambda (_srcpath160212_)
+      (lambda _g160327_
+        (let ((_g160326_ (let () (declare (not safe)) (##length _g160327_))))
+          (cond ((let () (declare (not safe)) (##fx= _g160326_ 1))
+                 (apply (lambda (_srcpath160209_)
                           (let ()
                             (declare (not safe))
-                            (gxc#compile-module__0 _srcpath160212_)))
-                        _g160330_))
-                ((let () (declare (not safe)) (##fx= _g160329_ 2))
-                 (apply (lambda (_srcpath160216_ _opts160217_)
+                            (gxc#compile-module__0 _srcpath160209_)))
+                        _g160327_))
+                ((let () (declare (not safe)) (##fx= _g160326_ 2))
+                 (apply (lambda (_srcpath160213_ _opts160214_)
                           (let ()
                             (declare (not safe))
                             (gxc#compile-module__%
-                             _srcpath160216_
-                             _opts160217_)))
-                        _g160330_))
+                             _srcpath160213_
+                             _opts160214_)))
+                        _g160327_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-module
-                  _g160330_))))))
+                  _g160327_))))))
     (define gxc#compile-exe__%
-      (lambda (_srcpath160169_ _opts160170_)
-        (if (let () (declare (not safe)) (string? _srcpath160169_))
+      (lambda (_srcpath160166_ _opts160167_)
+        (if (let () (declare (not safe)) (string? _srcpath160166_))
             '#!void
             (let ()
               (declare (not safe))
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath160169_)))
-        (let ((_outdir160172_
+               _srcpath160166_)))
+        (let ((_outdir160169_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'output-dir: _opts160170_)))
-              (_invoke-gsc?160173_
+                 (pgetq__0 'output-dir: _opts160167_)))
+              (_invoke-gsc?160170_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'invoke-gsc: _opts160170_)))
-              (_gsc-options160174_
+                 (pgetq__0 'invoke-gsc: _opts160167_)))
+              (_gsc-options160171_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'gsc-options: _opts160170_)))
-              (_keep-scm?160175_
+                 (pgetq__0 'gsc-options: _opts160167_)))
+              (_keep-scm?160172_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'keep-scm: _opts160170_)))
-              (_verbosity160176_
-               (let () (declare (not safe)) (pgetq__0 'verbose: _opts160170_)))
-              (_debug160177_
-               (let () (declare (not safe)) (pgetq__0 'debug: _opts160170_))))
-          (if _outdir160172_
-              (let ((__tmp160331
+                 (pgetq__0 'keep-scm: _opts160167_)))
+              (_verbosity160173_
+               (let () (declare (not safe)) (pgetq__0 'verbose: _opts160167_)))
+              (_debug160174_
+               (let () (declare (not safe)) (pgetq__0 'debug: _opts160167_))))
+          (if _outdir160169_
+              (let ((__tmp160328
                      (lambda ()
                        (let ()
                          (declare (not safe))
-                         (create-directory*__0 _outdir160172_)))))
+                         (create-directory*__0 _outdir160169_)))))
                 (declare (not safe))
-                (with-lock gxc#+driver-mutex+ __tmp160331))
+                (with-lock gxc#+driver-mutex+ __tmp160328))
               '#!void)
-          (let ((__tmp160335
+          (let ((__tmp160332
                  (lambda ()
                    (let ()
                      (declare (not safe))
-                     (gxc#verbose '"compile exe " _srcpath160169_))
-                   (let ((__tmp160336
-                          (let ((__tmp160337
+                     (gxc#verbose '"compile exe " _srcpath160166_))
+                   (let ((__tmp160333
+                          (let ((__tmp160334
                                  (lambda ()
                                    (let ()
                                      (declare (not safe))
-                                     (gx#import-module__0 _srcpath160169_)))))
+                                     (gx#import-module__0 _srcpath160166_)))))
                             (declare (not safe))
-                            (with-lock gxc#+driver-mutex+ __tmp160337))))
+                            (with-lock gxc#+driver-mutex+ __tmp160334))))
                      (declare (not safe))
                      (gxc#compile-executable-module
-                      __tmp160336
-                      _opts160170_))))
-                (__tmp160334
+                      __tmp160333
+                      _opts160167_))))
+                (__tmp160331
                  (let () (declare (not safe)) (gxc#compile-timestamp)))
-                (__tmp160332
-                 (let ((__tmp160333
+                (__tmp160329
+                 (let ((__tmp160330
                         (let ()
                           (declare (not safe))
-                          (cons _srcpath160169_ '()))))
+                          (cons _srcpath160166_ '()))))
                    (declare (not safe))
-                   (cons 'compile-exe __tmp160333))))
+                   (cons 'compile-exe __tmp160330))))
             (declare (not safe))
             (call-with-parameters
-             __tmp160335
-             gxc#current-compile-output-dir
-             _outdir160172_
-             gxc#current-compile-invoke-gsc
-             _invoke-gsc?160173_
-             gxc#current-compile-gsc-options
-             _gsc-options160174_
-             gxc#current-compile-keep-scm
-             _keep-scm?160175_
-             gxc#current-compile-verbose
-             _verbosity160176_
-             gxc#current-compile-debug
-             _debug160177_
-             gxc#current-compile-timestamp
-             __tmp160334
-             gxc#current-compile-context
              __tmp160332
+             gxc#current-compile-output-dir
+             _outdir160169_
+             gxc#current-compile-invoke-gsc
+             _invoke-gsc?160170_
+             gxc#current-compile-gsc-options
+             _gsc-options160171_
+             gxc#current-compile-keep-scm
+             _keep-scm?160172_
+             gxc#current-compile-verbose
+             _verbosity160173_
+             gxc#current-compile-debug
+             _debug160174_
+             gxc#current-compile-timestamp
+             __tmp160331
+             gxc#current-compile-context
+             __tmp160329
              gx#current-expander-compiling?
              '#t)))))
     (define gxc#compile-exe__0
-      (lambda (_srcpath160185_)
-        (let ((_opts160187_ '()))
+      (lambda (_srcpath160182_)
+        (let ((_opts160184_ '()))
           (declare (not safe))
-          (gxc#compile-exe__% _srcpath160185_ _opts160187_))))
+          (gxc#compile-exe__% _srcpath160182_ _opts160184_))))
     (define gxc#compile-exe
-      (lambda _g160339_
-        (let ((_g160338_ (let () (declare (not safe)) (##length _g160339_))))
-          (cond ((let () (declare (not safe)) (##fx= _g160338_ 1))
-                 (apply (lambda (_srcpath160185_)
+      (lambda _g160336_
+        (let ((_g160335_ (let () (declare (not safe)) (##length _g160336_))))
+          (cond ((let () (declare (not safe)) (##fx= _g160335_ 1))
+                 (apply (lambda (_srcpath160182_)
                           (let ()
                             (declare (not safe))
-                            (gxc#compile-exe__0 _srcpath160185_)))
-                        _g160339_))
-                ((let () (declare (not safe)) (##fx= _g160338_ 2))
-                 (apply (lambda (_srcpath160189_ _opts160190_)
+                            (gxc#compile-exe__0 _srcpath160182_)))
+                        _g160336_))
+                ((let () (declare (not safe)) (##fx= _g160335_ 2))
+                 (apply (lambda (_srcpath160186_ _opts160187_)
                           (let ()
                             (declare (not safe))
-                            (gxc#compile-exe__% _srcpath160189_ _opts160190_)))
-                        _g160339_))
+                            (gxc#compile-exe__% _srcpath160186_ _opts160187_)))
+                        _g160336_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-exe
-                  _g160339_))))))
+                  _g160336_))))))
     (define gxc#compile-executable-module
-      (lambda (_ctx160165_ _opts160166_)
+      (lambda (_ctx160162_ _opts160163_)
         (if (let ()
               (declare (not safe))
-              (pgetq__0 'full-program-optimization: _opts160166_))
+              (pgetq__0 'full-program-optimization: _opts160163_))
             (let ()
               (declare (not safe))
               (gxc#compile-executable-module/full-program-optimization
-               _ctx160165_
-               _opts160166_))
+               _ctx160162_
+               _opts160163_))
             (let ()
               (declare (not safe))
               (gxc#compile-executable-module/separate
-               _ctx160165_
-               _opts160166_)))))
+               _ctx160162_
+               _opts160163_)))))
     (define gxc#compile-executable-module/separate
-      (lambda (_ctx160048_ _opts160049_)
-        (letrec ((_generate-stub160051_
-                  (lambda (_builtin-modules160161_)
-                    (let ((_mod-main160163_
+      (lambda (_ctx160043_ _opts160044_)
+        (letrec ((_generate-stub160046_
+                  (lambda (_builtin-modules160158_)
+                    (let ((_mod-main160160_
                            (let ()
                              (declare (not safe))
-                             (gxc#find-runtime-symbol _ctx160048_ 'main))))
-                      (write (let ((__tmp160340
-                                    (let ((__tmp160341
-                                           (let ((__tmp160342
-                                                  (let ((__tmp160343
-                                                         (let ((__tmp160345
-                                                                (let ((__tmp160346
+                             (gxc#find-runtime-symbol _ctx160043_ 'main))))
+                      (write (let ((__tmp160337
+                                    (let ((__tmp160338
+                                           (let ((__tmp160339
+                                                  (let ((__tmp160340
+                                                         (let ((__tmp160342
+                                                                (let ((__tmp160343
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (let ()
                                  (declare (not safe))
-                                 (cons _builtin-modules160161_ '()))))
+                                 (cons _builtin-modules160158_ '()))))
                           (declare (not safe))
-                          (cons 'quote __tmp160346)))
-                       (__tmp160344
+                          (cons 'quote __tmp160343)))
+                       (__tmp160341
                         (let ()
                           (declare (not safe))
                           (cons 'libgerbil-builtin-modules '()))))
                    (declare (not safe))
-                   (cons __tmp160345 __tmp160344))))
+                   (cons __tmp160342 __tmp160341))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons 'append
-                                                          __tmp160343))))
+                                                          __tmp160340))))
                                              (declare (not safe))
-                                             (cons __tmp160342 '()))))
+                                             (cons __tmp160339 '()))))
                                       (declare (not safe))
-                                      (cons 'builtin-modules __tmp160341))))
+                                      (cons 'builtin-modules __tmp160338))))
                                (declare (not safe))
-                               (cons 'define __tmp160340)))
-                      (write (let ((__tmp160347
-                                    (let ((__tmp160386
+                               (cons 'define __tmp160337)))
+                      (write (let ((__tmp160344
+                                    (let ((__tmp160383
                                            (let ()
                                              (declare (not safe))
                                              (cons 'gerbil-main '())))
-                                          (__tmp160348
-                                           (let ((__tmp160349
-                                                  (let ((__tmp160350
-                                                         (let ((__tmp160374
-                                                                (let ((__tmp160375
+                                          (__tmp160345
+                                           (let ((__tmp160346
+                                                  (let ((__tmp160347
+                                                         (let ((__tmp160371
+                                                                (let ((__tmp160372
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp160376
-                                      (let ((__tmp160384
-                                             (let ((__tmp160385
+                               (let ((__tmp160373
+                                      (let ((__tmp160381
+                                             (let ((__tmp160382
                                                     (let ()
                                                       (declare (not safe))
                                                       (cons 'builtin-modules
                                                             '()))))
                                                (declare (not safe))
                                                (cons 'gerbil-runtime-init!
-                                                     __tmp160385)))
-                                            (__tmp160377
-                                             (let ((__tmp160378
-                                                    (let ((__tmp160379
-                                                           (let ((__tmp160380
+                                                     __tmp160382)))
+                                            (__tmp160374
+                                             (let ((__tmp160375
+                                                    (let ((__tmp160376
+                                                           (let ((__tmp160377
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp160381
-                                 (let ((__tmp160382
-                                        (let ((__tmp160383
+                          (let ((__tmp160378
+                                 (let ((__tmp160379
+                                        (let ((__tmp160380
                                                (let ()
                                                  (declare (not safe))
                                                  (cons 'command-line '()))))
                                           (declare (not safe))
-                                          (cons __tmp160383 '()))))
+                                          (cons __tmp160380 '()))))
                                    (declare (not safe))
-                                   (cons 'cdr __tmp160382))))
+                                   (cons 'cdr __tmp160379))))
                             (declare (not safe))
-                            (cons __tmp160381 '()))))
+                            (cons __tmp160378 '()))))
                      (declare (not safe))
-                     (cons _mod-main160163_ __tmp160380))))
+                     (cons _mod-main160160_ __tmp160377))))
               (declare (not safe))
-              (cons 'apply __tmp160379))))
+              (cons 'apply __tmp160376))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp160378 '()))))
+                                               (cons __tmp160375 '()))))
                                         (declare (not safe))
-                                        (cons __tmp160384 __tmp160377))))
+                                        (cons __tmp160381 __tmp160374))))
                                  (declare (not safe))
-                                 (cons '() __tmp160376))))
+                                 (cons '() __tmp160373))))
                           (declare (not safe))
-                          (cons 'lambda __tmp160375)))
-                       (__tmp160351
-                        (let ((__tmp160352
-                               (let ((__tmp160353
-                                      (let ((__tmp160354
-                                             (let ((__tmp160365
-                                                    (let ((__tmp160366
-                                                           (let ((__tmp160367
+                          (cons 'lambda __tmp160372)))
+                       (__tmp160348
+                        (let ((__tmp160349
+                               (let ((__tmp160350
+                                      (let ((__tmp160351
+                                             (let ((__tmp160362
+                                                    (let ((__tmp160363
+                                                           (let ((__tmp160364
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp160368
-                                 (let ((__tmp160369
-                                        (let ((__tmp160370
-                                               (let ((__tmp160371
-                                                      (let ((__tmp160372
-                                                             (let ((__tmp160373
+                          (let ((__tmp160365
+                                 (let ((__tmp160366
+                                        (let ((__tmp160367
+                                               (let ((__tmp160368
+                                                      (let ((__tmp160369
+                                                             (let ((__tmp160370
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (let ()
                               (declare (not safe))
                               (cons 'current-output-port '()))))
                        (declare (not safe))
-                       (cons __tmp160373 '()))))
+                       (cons __tmp160370 '()))))
                 (declare (not safe))
-                (cons 'force-output __tmp160372))))
+                (cons 'force-output __tmp160369))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons __tmp160371 '()))))
+                                                 (cons __tmp160368 '()))))
                                           (declare (not safe))
-                                          (cons '() __tmp160370))))
+                                          (cons '() __tmp160367))))
                                    (declare (not safe))
-                                   (cons 'lambda __tmp160369))))
+                                   (cons 'lambda __tmp160366))))
                             (declare (not safe))
-                            (cons __tmp160368 '()))))
+                            (cons __tmp160365 '()))))
                      (declare (not safe))
-                     (cons 'void __tmp160367))))
+                     (cons 'void __tmp160364))))
               (declare (not safe))
-              (cons 'with-catch __tmp160366)))
+              (cons 'with-catch __tmp160363)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (__tmp160355
-                                                    (let ((__tmp160356
-                                                           (let ((__tmp160357
+                                                   (__tmp160352
+                                                    (let ((__tmp160353
+                                                           (let ((__tmp160354
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (let ((__tmp160358
-                                 (let ((__tmp160359
-                                        (let ((__tmp160360
-                                               (let ((__tmp160361
-                                                      (let ((__tmp160362
-                                                             (let ((__tmp160363
+                          (let ((__tmp160355
+                                 (let ((__tmp160356
+                                        (let ((__tmp160357
+                                               (let ((__tmp160358
+                                                      (let ((__tmp160359
+                                                             (let ((__tmp160360
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (let ((__tmp160364
+                            (let ((__tmp160361
                                    (let ()
                                      (declare (not safe))
                                      (cons 'current-error-port '()))))
                               (declare (not safe))
-                              (cons __tmp160364 '()))))
+                              (cons __tmp160361 '()))))
                        (declare (not safe))
-                       (cons 'force-output __tmp160363))))
+                       (cons 'force-output __tmp160360))))
                 (declare (not safe))
-                (cons __tmp160362 '()))))
+                (cons __tmp160359 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
-                                                 (cons '() __tmp160361))))
+                                                 (cons '() __tmp160358))))
                                           (declare (not safe))
-                                          (cons 'lambda __tmp160360))))
+                                          (cons 'lambda __tmp160357))))
                                    (declare (not safe))
-                                   (cons __tmp160359 '()))))
+                                   (cons __tmp160356 '()))))
                             (declare (not safe))
-                            (cons 'void __tmp160358))))
+                            (cons 'void __tmp160355))))
                      (declare (not safe))
-                     (cons 'with-catch __tmp160357))))
+                     (cons 'with-catch __tmp160354))))
               (declare (not safe))
-              (cons __tmp160356 '()))))
+              (cons __tmp160353 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (declare (not safe))
-                                               (cons __tmp160365
-                                                     __tmp160355))))
+                                               (cons __tmp160362
+                                                     __tmp160352))))
                                         (declare (not safe))
-                                        (cons '() __tmp160354))))
+                                        (cons '() __tmp160351))))
                                  (declare (not safe))
-                                 (cons 'lambda __tmp160353))))
+                                 (cons 'lambda __tmp160350))))
                           (declare (not safe))
-                          (cons __tmp160352 '()))))
+                          (cons __tmp160349 '()))))
                    (declare (not safe))
-                   (cons __tmp160374 __tmp160351))))
+                   (cons __tmp160371 __tmp160348))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons 'with-unwind-protect
-                                                          __tmp160350))))
+                                                          __tmp160347))))
                                              (declare (not safe))
-                                             (cons __tmp160349 '()))))
+                                             (cons __tmp160346 '()))))
                                       (declare (not safe))
-                                      (cons __tmp160386 __tmp160348))))
+                                      (cons __tmp160383 __tmp160345))))
                                (declare (not safe))
-                               (cons 'define __tmp160347)))
+                               (cons 'define __tmp160344)))
                       (write '(gerbil-main))
                       (newline))))
-                 (_get-libgerbil-ld-opts160052_
-                  (lambda (_libgerbil160159_)
+                 (_get-libgerbil-ld-opts160047_
+                  (lambda (_libgerbil160156_)
                     (call-with-input-file
-                     (string-append _libgerbil160159_ '".ldd")
+                     (string-append _libgerbil160156_ '".ldd")
                      read)))
-                 (_replace-extension160053_
-                  (lambda (_path160156_ _ext160157_)
+                 (_replace-extension160048_
+                  (lambda (_path160153_ _ext160154_)
                     (string-append
-                     (path-strip-extension _path160156_)
-                     _ext160157_)))
-                 (_not-exclude-module?160054_
-                  (lambda (_ctx160152_)
-                    (let ((_id-str160154_
+                     (path-strip-extension _path160153_)
+                     _ext160154_)))
+                 (_not-exclude-module?160049_
+                  (lambda (_ctx160149_)
+                    (let ((_id-str160151_
                            (symbol->string
                             (##structure-ref
-                             _ctx160152_
+                             _ctx160149_
                              '1
                              gx#expander-context::t
                              '#f))))
-                      (if (let ((__tmp160388
+                      (if (let ((__tmp160385
                                  (let ()
                                    (declare (not safe))
                                    (string-prefix?
                                     '"gerbil/"
-                                    _id-str160154_))))
+                                    _id-str160151_))))
                             (declare (not safe))
-                            (not __tmp160388))
-                          (let ((__tmp160387
+                            (not __tmp160385))
+                          (let ((__tmp160384
                                  (let ()
                                    (declare (not safe))
-                                   (string-prefix? '"std/" _id-str160154_))))
+                                   (string-prefix? '"std/" _id-str160151_))))
                             (declare (not safe))
-                            (not __tmp160387))
+                            (not __tmp160384))
                           '#f))))
-                 (_not-file-empty?160055_
-                  (lambda (_path160150_)
-                    (let ((__tmp160389
+                 (_not-file-empty?160050_
+                  (lambda (_path160147_)
+                    (let ((__tmp160386
                            (let ()
                              (declare (not safe))
-                             (gxc#file-empty? _path160150_))))
+                             (gxc#file-empty? _path160147_))))
                       (declare (not safe))
-                      (not __tmp160389))))
-                 (_compile-stub160056_
-                  (lambda (_output-scm160063_ _output-bin160064_)
-                    (let* ((_gerbil-home160066_
+                      (not __tmp160386))))
+                 (_compile-stub160051_
+                  (lambda (_output-scm160058_ _output-bin160059_)
+                    (let* ((_gerbil-home160061_
                             (getenv '"GERBIL_BUILD_PREFIX"
                                     (let ()
                                       (declare (not safe))
                                       (gerbil-home))))
-                           (_gerbil-libdir160068_
-                            (path-expand '"lib" _gerbil-home160066_))
-                           (_gerbil-staticdir160070_
-                            (path-expand '"static" _gerbil-libdir160068_))
-                           (_gxlink160072_
+                           (_gerbil-libdir160063_
+                            (path-expand '"lib" _gerbil-home160061_))
+                           (_gerbil-staticdir160065_
+                            (path-expand '"static" _gerbil-libdir160063_))
+                           (_gxlink160067_
                             (path-expand
                              '"libgerbil-link"
-                             _gerbil-libdir160068_))
-                           (_tmp160074_
+                             _gerbil-libdir160063_))
+                           (_tmp160069_
                             (path-expand
                              (string-append
                               '"gxc."
@@ -571,329 +571,339 @@
                                  (declare (not safe))
                                  (gxc#compile-timestamp-nanos))))
                              '"/tmp"))
-                           (_tmp-path160078_
-                            (lambda (_f160076_)
+                           (_tmp-path160073_
+                            (lambda (_f160071_)
                               (path-expand
-                               (path-strip-directory _f160076_)
-                               _tmp160074_)))
-                           (_deps160080_
+                               (path-strip-directory _f160071_)
+                               _tmp160069_)))
+                           (_deps160075_
                             (let ()
                               (declare (not safe))
-                              (gxc#find-runtime-module-deps _ctx160048_)))
-                           (_deps160082_
-                            (filter _not-exclude-module?160054_ _deps160080_))
-                           (_src-deps-scm160084_
-                            (map gxc#find-static-module-file _deps160082_))
-                           (_src-deps-scm160086_
-                            (filter _not-file-empty?160055_
-                                    _src-deps-scm160084_))
-                           (_src-deps-scm160088_
-                            (map path-expand _src-deps-scm160086_))
-                           (_deps-scm160090_
-                            (map _tmp-path160078_ _src-deps-scm160088_))
-                           (_deps-c160096_
-                            (map (lambda (_g160091160093_)
+                              (gxc#find-runtime-module-deps _ctx160043_)))
+                           (_deps160077_
+                            (filter _not-exclude-module?160049_ _deps160075_))
+                           (_src-deps-scm160079_
+                            (map gxc#find-static-module-file _deps160077_))
+                           (_src-deps-scm160081_
+                            (filter _not-file-empty?160050_
+                                    _src-deps-scm160079_))
+                           (_src-deps-scm160083_
+                            (map path-expand _src-deps-scm160081_))
+                           (_deps-scm160085_
+                            (map _tmp-path160073_ _src-deps-scm160083_))
+                           (_deps-c160091_
+                            (map (lambda (_g160086160088_)
                                    (let ()
                                      (declare (not safe))
-                                     (_replace-extension160053_
-                                      _g160091160093_
+                                     (_replace-extension160048_
+                                      _g160086160088_
                                       '".c")))
-                                 _deps-scm160090_))
-                           (_deps-o160102_
-                            (map (lambda (_g160097160099_)
+                                 _deps-scm160085_))
+                           (_deps-o160097_
+                            (map (lambda (_g160092160094_)
                                    (let ()
                                      (declare (not safe))
-                                     (_replace-extension160053_
-                                      _g160097160099_
+                                     (_replace-extension160048_
+                                      _g160092160094_
                                       '".o")))
-                                 _deps-scm160090_))
-                           (_src-bin-scm160104_
+                                 _deps-scm160085_))
+                           (_src-bin-scm160099_
                             (let ()
                               (declare (not safe))
-                              (gxc#find-static-module-file _ctx160048_)))
-                           (_src-bin-scm160106_
-                            (path-expand _src-bin-scm160104_))
-                           (_bin-scm160108_
+                              (gxc#find-static-module-file _ctx160043_)))
+                           (_src-bin-scm160101_
+                            (path-expand _src-bin-scm160099_))
+                           (_bin-scm160103_
                             (let ()
                               (declare (not safe))
-                              (_tmp-path160078_ _src-bin-scm160106_)))
-                           (_bin-c160110_
+                              (_tmp-path160073_ _src-bin-scm160101_)))
+                           (_bin-c160105_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _bin-scm160108_
+                              (_replace-extension160048_
+                               _bin-scm160103_
                                '".c")))
-                           (_bin-o160112_
+                           (_bin-o160107_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _bin-scm160108_
+                              (_replace-extension160048_
+                               _bin-scm160103_
                                '".o")))
-                           (_output-bin160114_
-                            (path-expand _output-bin160064_))
-                           (_output-scm160116_
-                            (path-expand _output-scm160063_))
-                           (_output-c160118_
+                           (_output-bin160109_
+                            (path-expand _output-bin160059_))
+                           (_output-scm160111_
+                            (path-expand _output-scm160058_))
+                           (_output-c160113_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _output-scm160116_
+                              (_replace-extension160048_
+                               _output-scm160111_
                                '".c")))
-                           (_output-o160120_
+                           (_output-o160115_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _output-scm160116_
+                              (_replace-extension160048_
+                               _output-scm160111_
                                '".o")))
-                           (_output_-c160122_
+                           (_output_-c160117_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _output-scm160116_
+                              (_replace-extension160048_
+                               _output-scm160111_
                                '"_.c")))
-                           (_output_-o160124_
+                           (_output_-o160119_
                             (let ()
                               (declare (not safe))
-                              (_replace-extension160053_
-                               _output-scm160116_
+                              (_replace-extension160048_
+                               _output-scm160111_
                                '"_.o")))
-                           (_gsc-link-opts160126_
+                           (_gsc-link-opts160121_
                             (let ()
                               (declare (not safe))
                               (gxc#gsc-link-options__0)))
-                           (_gsc-cc-opts160128_
+                           (_gsc-cc-opts160123_
                             (let ()
                               (declare (not safe))
                               (gxc#gsc-cc-options__0)))
-                           (_gsc-static-opts160130_
+                           (_gsc-static-opts160125_
                             (let ()
                               (declare (not safe))
                               (gxc#gsc-static-include-options
-                               _gerbil-staticdir160070_)))
-                           (_output-ld-opts160132_
+                               _gerbil-staticdir160065_)))
+                           (_output-ld-opts160127_
                             (let () (declare (not safe)) (gxc#gcc-ld-options)))
-                           (_libgerbil.a160134_
-                            (path-expand '"libgerbil.a" _gerbil-libdir160068_))
-                           (_libgerbil.so160136_
+                           (_libgerbil.a160129_
+                            (path-expand '"libgerbil.a" _gerbil-libdir160063_))
+                           (_libgerbil.so160131_
                             (path-expand
                              '"libgerbil.so"
-                             _gerbil-libdir160068_))
-                           (_libgerbil-ld-opts160138_
-                            (if (file-exists? _libgerbil.so160136_)
+                             _gerbil-libdir160063_))
+                           (_libgerbil.dylib160133_
+                            (path-expand
+                             '"libgerbil.dylib"
+                             _gerbil-libdir160063_))
+                           (_libgerbil-ld-opts160135_
+                            (if (file-exists? _libgerbil.so160131_)
                                 (let ()
                                   (declare (not safe))
-                                  (_get-libgerbil-ld-opts160052_
-                                   _libgerbil.so160136_))
-                                (if (file-exists? _libgerbil.a160134_)
+                                  (_get-libgerbil-ld-opts160047_
+                                   _libgerbil.so160131_))
+                                (if (file-exists? _libgerbil.dylib160133_)
                                     (let ()
                                       (declare (not safe))
-                                      (_get-libgerbil-ld-opts160052_
-                                       _libgerbil.a160134_))
-                                    (let ()
-                                      (declare (not safe))
-                                      (gxc#raise-compile-error
-                                       '"libgerbil does not exist"
-                                       _libgerbil.a160134_
-                                       _libgerbil.so160136_)))))
-                           (_rpath160140_
+                                      (_get-libgerbil-ld-opts160047_
+                                       _libgerbil.dylib160133_))
+                                    (if (file-exists? _libgerbil.a160129_)
+                                        (let ()
+                                          (declare (not safe))
+                                          (_get-libgerbil-ld-opts160047_
+                                           _libgerbil.a160129_))
+                                        (let ()
+                                          (declare (not safe))
+                                          (gxc#raise-compile-error
+                                           '"libgerbil does not exist"
+                                           _libgerbil.a160129_
+                                           _libgerbil.so160131_
+                                           _libgerbil.dylib160133_))))))
+                           (_rpath160137_
                             (let ()
                               (declare (not safe))
-                              (gxc#gerbil-rpath _gerbil-libdir160068_)))
-                           (_builtin-modules160144_
-                            (map (lambda (_mod160142_)
+                              (gxc#gerbil-rpath _gerbil-libdir160063_)))
+                           (_builtin-modules160141_
+                            (map (lambda (_mod160139_)
                                    (symbol->string
                                     (##structure-ref
-                                     _mod160142_
+                                     _mod160139_
                                      '1
                                      gx#expander-context::t
                                      '#f)))
                                  (let ()
                                    (declare (not safe))
-                                   (cons _ctx160048_ _deps160082_)))))
-                      (let ((__tmp160390
+                                   (cons _ctx160043_ _deps160077_)))))
+                      (let ((__tmp160387
                              (lambda ()
-                               (let ((__tmp160391
-                                      (path-directory _output-bin160114_)))
+                               (let ((__tmp160388
+                                      (path-directory _output-bin160109_)))
                                  (declare (not safe))
-                                 (create-directory*__0 __tmp160391)))))
+                                 (create-directory*__0 __tmp160388)))))
                         (declare (not safe))
-                        (with-lock gxc#+driver-mutex+ __tmp160390))
-                      (let ((__tmp160392
+                        (with-lock gxc#+driver-mutex+ __tmp160387))
+                      (let ((__tmp160389
                              (lambda ()
                                (let ()
                                  (declare (not safe))
-                                 (_generate-stub160051_
-                                  _builtin-modules160144_)))))
+                                 (_generate-stub160046_
+                                  _builtin-modules160141_)))))
                         (declare (not safe))
                         (gxc#with-output-to-scheme-file
-                         _output-scm160116_
-                         __tmp160392))
+                         _output-scm160111_
+                         __tmp160389))
                       (if (gxc#current-compile-invoke-gsc)
                           (begin
-                            (let ((__tmp160393
-                                   (lambda () (create-directory _tmp160074_))))
+                            (let ((__tmp160390
+                                   (lambda () (create-directory _tmp160069_))))
                               (declare (not safe))
-                              (with-lock gxc#+driver-mutex+ __tmp160393))
+                              (with-lock gxc#+driver-mutex+ __tmp160390))
                             (for-each
                              copy-file
-                             _src-deps-scm160088_
-                             _deps-scm160090_)
-                            (copy-file _src-bin-scm160106_ _bin-scm160108_)
-                            (let ((__tmp160401
+                             _src-deps-scm160083_
+                             _deps-scm160085_)
+                            (copy-file _src-bin-scm160101_ _bin-scm160103_)
+                            (let ((__tmp160398
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gsc)))
-                                  (__tmp160394
-                                   (let ((__tmp160395
-                                          (let ((__tmp160396
-                                                 (let ((__tmp160397
-                                                        (let ((__tmp160398
-                                                               (let ((__tmp160399
+                                  (__tmp160391
+                                   (let ((__tmp160392
+                                          (let ((__tmp160393
+                                                 (let ((__tmp160394
+                                                        (let ((__tmp160395
+                                                               (let ((__tmp160396
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp160400
+                              (let ((__tmp160397
                                      (let ()
                                        (declare (not safe))
-                                       (cons _output-scm160116_ '()))))
+                                       (cons _output-scm160111_ '()))))
                                 (declare (not safe))
-                                (cons _bin-scm160108_ __tmp160400))))
+                                (cons _bin-scm160103_ __tmp160397))))
                          (declare (not safe))
-                         (foldr1 cons __tmp160399 _deps-scm160090_))))
+                         (foldr1 cons __tmp160396 _deps-scm160085_))))
                   (declare (not safe))
-                  (foldr1 cons __tmp160398 _gsc-link-opts160126_))))
+                  (foldr1 cons __tmp160395 _gsc-link-opts160121_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons _gxlink160072_
-                                                         __tmp160397))))
+                                                   (cons _gxlink160067_
+                                                         __tmp160394))))
                                             (declare (not safe))
-                                            (cons '"-l" __tmp160396))))
+                                            (cons '"-l" __tmp160393))))
                                      (declare (not safe))
-                                     (cons '"-link" __tmp160395))))
+                                     (cons '"-link" __tmp160392))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160401 __tmp160394))
-                            (let ((__tmp160409
+                              (gxc#invoke __tmp160398 __tmp160391))
+                            (let ((__tmp160406
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gsc)))
-                                  (__tmp160402
-                                   (let ((__tmp160403
-                                          (let ((__tmp160404
-                                                 (let ((__tmp160405
-                                                        (let ((__tmp160406
-                                                               (let ((__tmp160407
+                                  (__tmp160399
+                                   (let ((__tmp160400
+                                          (let ((__tmp160401
+                                                 (let ((__tmp160402
+                                                        (let ((__tmp160403
+                                                               (let ((__tmp160404
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp160408
+                              (let ((__tmp160405
                                      (let ()
                                        (declare (not safe))
-                                       (cons _output_-c160122_ '()))))
+                                       (cons _output_-c160117_ '()))))
                                 (declare (not safe))
-                                (cons _output-c160118_ __tmp160408))))
+                                (cons _output-c160113_ __tmp160405))))
                          (declare (not safe))
-                         (cons _bin-c160110_ __tmp160407))))
+                         (cons _bin-c160105_ __tmp160404))))
                   (declare (not safe))
-                  (foldr1 cons __tmp160406 _deps-c160096_))))
+                  (foldr1 cons __tmp160403 _deps-c160091_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (foldr1 cons
-                                                           __tmp160405
-                                                           _gsc-static-opts160130_))))
+                                                           __tmp160402
+                                                           _gsc-static-opts160125_))))
                                             (declare (not safe))
                                             (foldr1 cons
-                                                    __tmp160404
-                                                    _gsc-cc-opts160128_))))
+                                                    __tmp160401
+                                                    _gsc-cc-opts160123_))))
                                      (declare (not safe))
-                                     (cons '"-obj" __tmp160403))))
+                                     (cons '"-obj" __tmp160400))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160409 __tmp160402))
-                            (let ((__tmp160422
+                              (gxc#invoke __tmp160406 __tmp160399))
+                            (let ((__tmp160419
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gcc)))
-                                  (__tmp160410
-                                   (let ((__tmp160411
-                                          (let ((__tmp160412
-                                                 (let ((__tmp160413
-                                                        (let ((__tmp160414
-                                                               (let ((__tmp160415
+                                  (__tmp160407
+                                   (let ((__tmp160408
+                                          (let ((__tmp160409
+                                                 (let ((__tmp160410
+                                                        (let ((__tmp160411
+                                                               (let ((__tmp160412
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp160416
-                                     (let ((__tmp160417
-                                            (let ((__tmp160418
-                                                   (let ((__tmp160419
-                                                          (let ((__tmp160420
+                              (let ((__tmp160413
+                                     (let ((__tmp160414
+                                            (let ((__tmp160415
+                                                   (let ((__tmp160416
+                                                          (let ((__tmp160417
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (let ((__tmp160421
+                         (let ((__tmp160418
                                 (let ()
                                   (declare (not safe))
                                   (cons '"-lgambit"
-                                        _libgerbil-ld-opts160138_))))
+                                        _libgerbil-ld-opts160135_))))
                            (declare (not safe))
-                           (cons '"-lgerbil" __tmp160421))))
+                           (cons '"-lgerbil" __tmp160418))))
                     (declare (not safe))
-                    (cons _gerbil-libdir160068_ __tmp160420))))
+                    (cons _gerbil-libdir160063_ __tmp160417))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (declare (not safe))
                                                      (cons '"-L"
-                                                           __tmp160419))))
+                                                           __tmp160416))))
                                               (declare (not safe))
-                                              (cons _rpath160140_
-                                                    __tmp160418))))
+                                              (cons _rpath160137_
+                                                    __tmp160415))))
                                        (declare (not safe))
                                        (foldr1 cons
-                                               __tmp160417
-                                               _output-ld-opts160132_))))
+                                               __tmp160414
+                                               _output-ld-opts160127_))))
                                 (declare (not safe))
-                                (cons _output_-o160124_ __tmp160416))))
+                                (cons _output_-o160119_ __tmp160413))))
                          (declare (not safe))
-                         (cons _output-o160120_ __tmp160415))))
+                         (cons _output-o160115_ __tmp160412))))
                   (declare (not safe))
-                  (cons _bin-o160112_ __tmp160414))))
+                  (cons _bin-o160107_ __tmp160411))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (foldr1 cons
-                                                           __tmp160413
-                                                           _deps-o160102_))))
+                                                           __tmp160410
+                                                           _deps-o160097_))))
                                             (declare (not safe))
-                                            (cons _output-bin160114_
-                                                  __tmp160412))))
+                                            (cons _output-bin160109_
+                                                  __tmp160409))))
                                      (declare (not safe))
-                                     (cons '"-o" __tmp160411))))
+                                     (cons '"-o" __tmp160408))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160422 __tmp160410))
+                              (gxc#invoke __tmp160419 __tmp160407))
                             (for-each
                              delete-file
-                             (let ((__tmp160423
-                                    (let ((__tmp160424
-                                           (let ((__tmp160425
+                             (let ((__tmp160420
+                                    (let ((__tmp160421
+                                           (let ((__tmp160422
                                                   (let ()
                                                     (declare (not safe))
-                                                    (cons _output_-o160124_
+                                                    (cons _output_-o160119_
                                                           '()))))
                                              (declare (not safe))
-                                             (cons _output-o160120_
-                                                   __tmp160425))))
+                                             (cons _output-o160115_
+                                                   __tmp160422))))
                                       (declare (not safe))
-                                      (cons _output_-c160122_ __tmp160424))))
+                                      (cons _output_-c160117_ __tmp160421))))
                                (declare (not safe))
-                               (cons _output-c160118_ __tmp160423)))
+                               (cons _output-c160113_ __tmp160420)))
                             (let ()
                               (declare (not safe))
-                              (gxc#delete-directory* _tmp160074_)))
+                              (gxc#delete-directory* _tmp160069_)))
                           '#!void)))))
-          (let* ((_output-bin160058_
+          (let* ((_output-bin160053_
                   (let ()
                     (declare (not safe))
-                    (gxc#compile-exe-output-file _ctx160048_ _opts160049_)))
-                 (_output-scm160060_
-                  (string-append _output-bin160058_ '"__exe.scm")))
+                    (gxc#compile-exe-output-file _ctx160043_ _opts160044_)))
+                 (_output-scm160055_
+                  (string-append _output-bin160053_ '"__exe.scm")))
             (let ()
               (declare (not safe))
-              (_compile-stub160056_ _output-scm160060_ _output-bin160058_))
+              (_compile-stub160051_ _output-scm160055_ _output-bin160053_))
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm160060_))))))
+                (delete-file _output-scm160055_))))))
     (define gxc#compile-executable-module/full-program-optimization
-      (lambda (_ctx159873_ _opts159874_)
-        (letrec ((_reset-declare159876_
+      (lambda (_ctx159868_ _opts159869_)
+        (letrec ((_reset-declare159871_
                   (lambda ()
                     '(declare
                        (gambit-scheme)
@@ -915,643 +925,643 @@
                        (optimize-dead-definitions)
                        (generic)
                        (mostly-fixnum-flonum))))
-                 (_generate-stub159877_
-                  (lambda (_deps160039_)
-                    (let ((_mod-main160041_
+                 (_generate-stub159872_
+                  (lambda (_deps160034_)
+                    (let ((_mod-main160036_
                            (let ()
                              (declare (not safe))
-                             (gxc#find-runtime-symbol _ctx159873_ 'main)))
-                          (_reset-decl160042_
+                             (gxc#find-runtime-symbol _ctx159868_ 'main)))
+                          (_reset-decl160037_
                            (let ()
                              (declare (not safe))
-                             (_reset-declare159876_)))
-                          (_user-decl160043_
+                             (_reset-declare159871_)))
+                          (_user-decl160038_
                            (let ()
                              (declare (not safe))
-                             (_user-declare159878_))))
+                             (_user-declare159873_))))
                       (for-each
-                       (lambda (_dep160045_)
+                       (lambda (_dep160040_)
                          (write '(##namespace ("")))
                          (newline)
-                         (write _reset-decl160042_)
+                         (write _reset-decl160037_)
                          (newline)
-                         (if _user-decl160043_
-                             (begin (write _user-decl160043_) (newline))
+                         (if _user-decl160038_
+                             (begin (write _user-decl160038_) (newline))
                              '#!void)
-                         (write (let ((__tmp160426
+                         (write (let ((__tmp160423
                                        (let ()
                                          (declare (not safe))
-                                         (cons _dep160045_ '()))))
+                                         (cons _dep160040_ '()))))
                                   (declare (not safe))
-                                  (cons 'include __tmp160426)))
+                                  (cons 'include __tmp160423)))
                          (newline))
-                       _deps160039_)
-                      (write (let ((__tmp160427
-                                    (let ((__tmp160440
+                       _deps160034_)
+                      (write (let ((__tmp160424
+                                    (let ((__tmp160437
                                            (let ()
                                              (declare (not safe))
                                              (cons 'gerbil-main '())))
-                                          (__tmp160428
-                                           (let ((__tmp160436
-                                                  (let ((__tmp160437
-                                                         (let ((__tmp160438
-                                                                (let ((__tmp160439
+                                          (__tmp160425
+                                           (let ((__tmp160433
+                                                  (let ((__tmp160434
+                                                         (let ((__tmp160435
+                                                                (let ((__tmp160436
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (let () (declare (not safe)) (cons '() '()))))
                           (declare (not safe))
-                          (cons 'quote __tmp160439))))
+                          (cons 'quote __tmp160436))))
                    (declare (not safe))
-                   (cons __tmp160438 '()))))
+                   (cons __tmp160435 '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
                                                     (cons 'gerbil-runtime-init!
-                                                          __tmp160437)))
-                                                 (__tmp160429
-                                                  (let ((__tmp160430
-                                                         (let ((__tmp160431
-                                                                (let ((__tmp160432
+                                                          __tmp160434)))
+                                                 (__tmp160426
+                                                  (let ((__tmp160427
+                                                         (let ((__tmp160428
+                                                                (let ((__tmp160429
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               (let ((__tmp160433
-                                      (let ((__tmp160434
-                                             (let ((__tmp160435
+                               (let ((__tmp160430
+                                      (let ((__tmp160431
+                                             (let ((__tmp160432
                                                     (let ()
                                                       (declare (not safe))
                                                       (cons 'command-line
                                                             '()))))
                                                (declare (not safe))
-                                               (cons __tmp160435 '()))))
+                                               (cons __tmp160432 '()))))
                                         (declare (not safe))
-                                        (cons 'cdr __tmp160434))))
+                                        (cons 'cdr __tmp160431))))
                                  (declare (not safe))
-                                 (cons __tmp160433 '()))))
+                                 (cons __tmp160430 '()))))
                           (declare (not safe))
-                          (cons _mod-main160041_ __tmp160432))))
+                          (cons _mod-main160036_ __tmp160429))))
                    (declare (not safe))
-                   (cons 'apply __tmp160431))))
+                   (cons 'apply __tmp160428))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp160430 '()))))
+                                                    (cons __tmp160427 '()))))
                                              (declare (not safe))
-                                             (cons __tmp160436 __tmp160429))))
+                                             (cons __tmp160433 __tmp160426))))
                                       (declare (not safe))
-                                      (cons __tmp160440 __tmp160428))))
+                                      (cons __tmp160437 __tmp160425))))
                                (declare (not safe))
-                               (cons 'define __tmp160427)))
+                               (cons 'define __tmp160424)))
                       (write '(gerbil-main))
                       (newline))))
-                 (_user-declare159878_
+                 (_user-declare159873_
                   (lambda ()
-                    (let* ((_gsc-opts159944_
+                    (let* ((_gsc-opts159939_
                             (let ()
                               (declare (not safe))
-                              (pgetq__0 'gsc-options: _opts159874_)))
-                           (_gsc-prelude159946_
-                            (if _gsc-opts159944_
-                                (member '"-prelude" _gsc-opts159944_)
+                              (pgetq__0 'gsc-options: _opts159869_)))
+                           (_gsc-prelude159941_
+                            (if _gsc-opts159939_
+                                (member '"-prelude" _gsc-opts159939_)
                                 '#f))
-                           (_gsc-prelude159948_
-                            (if _gsc-prelude159946_
+                           (_gsc-prelude159943_
+                            (if _gsc-prelude159941_
                                 (read (open-input-string
-                                       (cadr _gsc-prelude159946_)))
+                                       (cadr _gsc-prelude159941_)))
                                 '#f)))
-                      (let _lp159951_ ((_rest159953_
+                      (let _lp159946_ ((_rest159948_
                                         (let ()
                                           (declare (not safe))
-                                          (cons _gsc-prelude159948_ '())))
-                                       (_user-decls159954_ '()))
-                        (let* ((_rest159955159963_ _rest159953_)
-                               (_else159957159971_
+                                          (cons _gsc-prelude159943_ '())))
+                                       (_user-decls159949_ '()))
+                        (let* ((_rest159950159958_ _rest159948_)
+                               (_else159952159966_
                                 (lambda ()
                                   (if (let ()
                                         (declare (not safe))
-                                        (null? _user-decls159954_))
+                                        (null? _user-decls159949_))
                                       '#f
-                                      (let ((__tmp160441
-                                             (reverse _user-decls159954_)))
+                                      (let ((__tmp160438
+                                             (reverse _user-decls159949_)))
                                         (declare (not safe))
-                                        (cons 'declare __tmp160441)))))
-                               (_K159959160027_
-                                (lambda (_rest159974_ _expr159975_)
-                                  (let* ((_expr159976159988_ _expr159975_)
-                                         (_else159979159996_
+                                        (cons 'declare __tmp160438)))))
+                               (_K159954160022_
+                                (lambda (_rest159969_ _expr159970_)
+                                  (let* ((_expr159971159983_ _expr159970_)
+                                         (_else159974159991_
                                           (lambda ()
                                             (let ()
                                               (declare (not safe))
-                                              (_lp159951_
-                                               _rest159974_
-                                               _user-decls159954_)))))
-                                    (let ((_K159984160017_
-                                           (lambda (_decls160015_)
-                                             (let ((__tmp160442
+                                              (_lp159946_
+                                               _rest159969_
+                                               _user-decls159949_)))))
+                                    (let ((_K159979160012_
+                                           (lambda (_decls160010_)
+                                             (let ((__tmp160439
                                                     (let ()
                                                       (declare (not safe))
                                                       (foldl1 cons
-                                                              _user-decls159954_
-                                                              _decls160015_))))
+                                                              _user-decls159949_
+                                                              _decls160010_))))
                                                (declare (not safe))
-                                               (_lp159951_
-                                                _rest159974_
-                                                __tmp160442))))
-                                          (_K159981160002_
-                                           (lambda (_exprs160000_)
-                                             (let ((__tmp160443
-                                                    (append _exprs160000_
-                                                            _rest159974_)))
+                                               (_lp159946_
+                                                _rest159969_
+                                                __tmp160439))))
+                                          (_K159976159997_
+                                           (lambda (_exprs159995_)
+                                             (let ((__tmp160440
+                                                    (append _exprs159995_
+                                                            _rest159969_)))
                                                (declare (not safe))
-                                               (_lp159951_
-                                                __tmp160443
-                                                _user-decls159954_)))))
+                                               (_lp159946_
+                                                __tmp160440
+                                                _user-decls159949_)))))
                                       (if (let ()
                                             (declare (not safe))
-                                            (##pair? _expr159976159988_))
-                                          (let ((_tl159986160022_
+                                            (##pair? _expr159971159983_))
+                                          (let ((_tl159981160017_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _expr159976159988_)))
-                                                (_hd159985160020_
+                                                   (##cdr _expr159971159983_)))
+                                                (_hd159980160015_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _expr159976159988_))))
+                                                   (##car _expr159971159983_))))
                                             (if (let ()
                                                   (declare (not safe))
-                                                  (##eq? _hd159985160020_
+                                                  (##eq? _hd159980160015_
                                                          'declare))
-                                                (let ((_decls160025_
-                                                       _tl159986160022_))
+                                                (let ((_decls160020_
+                                                       _tl159981160017_))
                                                   (declare (not safe))
-                                                  (_K159984160017_
-                                                   _decls160025_))
+                                                  (_K159979160012_
+                                                   _decls160020_))
                                                 (if (let ()
                                                       (declare (not safe))
-                                                      (##eq? _hd159985160020_
+                                                      (##eq? _hd159980160015_
                                                              'begin))
-                                                    (let ((_exprs160010_
-                                                           _tl159986160022_))
+                                                    (let ((_exprs160005_
+                                                           _tl159981160017_))
                                                       (declare (not safe))
-                                                      (_K159981160002_
-                                                       _exprs160010_))
+                                                      (_K159976159997_
+                                                       _exprs160005_))
                                                     (let ()
                                                       (declare (not safe))
-                                                      (_else159979159996_)))))
+                                                      (_else159974159991_)))))
                                           (let ()
                                             (declare (not safe))
-                                            (_else159979159996_))))))))
+                                            (_else159974159991_))))))))
                           (if (let ()
                                 (declare (not safe))
-                                (##pair? _rest159955159963_))
-                              (let ((_hd159960160030_
+                                (##pair? _rest159950159958_))
+                              (let ((_hd159955160025_
                                      (let ()
                                        (declare (not safe))
-                                       (##car _rest159955159963_)))
-                                    (_tl159961160032_
+                                       (##car _rest159950159958_)))
+                                    (_tl159956160027_
                                      (let ()
                                        (declare (not safe))
-                                       (##cdr _rest159955159963_))))
-                                (let* ((_expr160035_ _hd159960160030_)
-                                       (_rest160037_ _tl159961160032_))
+                                       (##cdr _rest159950159958_))))
+                                (let* ((_expr160030_ _hd159955160025_)
+                                       (_rest160032_ _tl159956160027_))
                                   (declare (not safe))
-                                  (_K159959160027_ _rest160037_ _expr160035_)))
+                                  (_K159954160022_ _rest160032_ _expr160030_)))
                               (let ()
                                 (declare (not safe))
-                                (_else159957159971_))))))))
-                 (_compile-stub159879_
-                  (lambda (_output-scm159886_ _output-bin159887_)
-                    (let* ((_gerbil-home159889_
+                                (_else159952159966_))))))))
+                 (_compile-stub159874_
+                  (lambda (_output-scm159881_ _output-bin159882_)
+                    (let* ((_gerbil-home159884_
                             (getenv '"GERBIL_BUILD_PREFIX"
                                     (let ()
                                       (declare (not safe))
                                       (gerbil-home))))
-                           (_gerbil-libdir159891_
-                            (path-expand '"lib" _gerbil-home159889_))
-                           (_runtime159893_
+                           (_gerbil-libdir159886_
+                            (path-expand '"lib" _gerbil-home159884_))
+                           (_runtime159888_
                             (map gxc#find-static-module-file
                                  gxc#gerbil-runtime-modules))
-                           (_gambit-sharp159895_
+                           (_gambit-sharp159890_
                             (path-expand
                              '"lib/_gambit#.scm"
-                             _gerbil-home159889_))
-                           (_include-gambit-sharp159897_
+                             _gerbil-home159884_))
+                           (_include-gambit-sharp159892_
                             (string-append
                              '"(include \""
-                             _gambit-sharp159895_
+                             _gambit-sharp159890_
                              '"\")"))
-                           (_bin-scm159899_
+                           (_bin-scm159894_
                             (let ()
                               (declare (not safe))
-                              (gxc#find-static-module-file _ctx159873_)))
-                           (_deps159901_
+                              (gxc#find-static-module-file _ctx159868_)))
+                           (_deps159896_
                             (let ()
                               (declare (not safe))
-                              (gxc#find-runtime-module-deps _ctx159873_)))
+                              (gxc#find-runtime-module-deps _ctx159868_)))
+                           (_deps159898_
+                            (map gxc#find-static-module-file _deps159896_))
                            (_deps159903_
-                            (map gxc#find-static-module-file _deps159901_))
-                           (_deps159908_
-                            (filter (lambda (_$obj159905_)
-                                      (let ((__tmp160444
+                            (filter (lambda (_$obj159900_)
+                                      (let ((__tmp160441
                                              (let ()
                                                (declare (not safe))
                                                (gxc#file-empty?
-                                                _$obj159905_))))
+                                                _$obj159900_))))
                                         (declare (not safe))
-                                        (not __tmp160444)))
+                                        (not __tmp160441)))
+                                    _deps159898_))
+                           (_deps159907_
+                            (filter (lambda (_f159905_)
+                                      (let ((__tmp160442
+                                             (member _f159905_
+                                                     _runtime159888_)))
+                                        (declare (not safe))
+                                        (not __tmp160442)))
                                     _deps159903_))
-                           (_deps159912_
-                            (filter (lambda (_f159910_)
-                                      (let ((__tmp160445
-                                             (member _f159910_
-                                                     _runtime159893_)))
-                                        (declare (not safe))
-                                        (not __tmp160445)))
-                                    _deps159908_))
-                           (_output-base159914_
+                           (_output-base159909_
                             (string-append
-                             (path-strip-extension _output-scm159886_)))
-                           (_output-c159916_
-                            (string-append _output-base159914_ '".c"))
-                           (_output-o159918_
-                            (string-append _output-base159914_ '".o"))
-                           (_output-c_159920_
-                            (string-append _output-base159914_ '"_.c"))
-                           (_output-o_159922_
-                            (string-append _output-base159914_ '"_.o"))
-                           (_gsc-link-opts159924_
+                             (path-strip-extension _output-scm159881_)))
+                           (_output-c159911_
+                            (string-append _output-base159909_ '".c"))
+                           (_output-o159913_
+                            (string-append _output-base159909_ '".o"))
+                           (_output-c_159915_
+                            (string-append _output-base159909_ '"_.c"))
+                           (_output-o_159917_
+                            (string-append _output-base159909_ '"_.o"))
+                           (_gsc-link-opts159919_
                             (let ()
                               (declare (not safe))
                               (gxc#gsc-link-options__0)))
-                           (_gsc-cc-opts159926_
+                           (_gsc-cc-opts159921_
                             (let ()
                               (declare (not safe))
                               (gxc#gsc-cc-options__0)))
-                           (_gsc-static-opts159928_
-                            (let ((__tmp160446
+                           (_gsc-static-opts159923_
+                            (let ((__tmp160443
                                    (path-expand
                                     '"static"
-                                    _gerbil-libdir159891_)))
+                                    _gerbil-libdir159886_)))
                               (declare (not safe))
-                              (gxc#gsc-static-include-options __tmp160446)))
-                           (_output-ld-opts159930_
+                              (gxc#gsc-static-include-options __tmp160443)))
+                           (_output-ld-opts159925_
                             (let () (declare (not safe)) (gxc#gcc-ld-options)))
-                           (_gsc-gx-macros159932_
+                           (_gsc-gx-macros159927_
                             (if (let ()
                                   (declare (not safe))
                                   (gerbil-runtime-smp?))
-                                (let ((__tmp160448
-                                       (let ((__tmp160449
-                                              (let ((__tmp160450
+                                (let ((__tmp160445
+                                       (let ((__tmp160446
+                                              (let ((__tmp160447
                                                      (let ()
                                                        (declare (not safe))
-                                                       (cons _include-gambit-sharp159897_
+                                                       (cons _include-gambit-sharp159892_
                                                              '()))))
                                                 (declare (not safe))
-                                                (cons '"-e" __tmp160450))))
+                                                (cons '"-e" __tmp160447))))
                                          (declare (not safe))
                                          (cons '"(define-cond-expand-feature|enable-smp|)"
-                                               __tmp160449))))
+                                               __tmp160446))))
                                   (declare (not safe))
-                                  (cons '"-e" __tmp160448))
-                                (let ((__tmp160447
+                                  (cons '"-e" __tmp160445))
+                                (let ((__tmp160444
                                        (let ()
                                          (declare (not safe))
-                                         (cons _include-gambit-sharp159897_
+                                         (cons _include-gambit-sharp159892_
                                                '()))))
                                   (declare (not safe))
-                                  (cons '"-e" __tmp160447))))
-                           (_gsc-link-opts159934_
-                            (append _gsc-link-opts159924_
-                                    _gsc-gx-macros159932_))
-                           (_rpath159936_
+                                  (cons '"-e" __tmp160444))))
+                           (_gsc-link-opts159929_
+                            (append _gsc-link-opts159919_
+                                    _gsc-gx-macros159927_))
+                           (_rpath159931_
                             (let ()
                               (declare (not safe))
-                              (gxc#gerbil-rpath _gerbil-libdir159891_)))
-                           (_default-ld-options159938_
-                            (let ((__tmp160451
+                              (gxc#gerbil-rpath _gerbil-libdir159886_)))
+                           (_default-ld-options159933_
+                            (let ((__tmp160448
                                    (let ()
                                      (declare (not safe))
                                      (cons '"-lm" '()))))
                               (declare (not safe))
-                              (cons '"-ldl" __tmp160451))))
-                      (let ((__tmp160452
+                              (cons '"-ldl" __tmp160448))))
+                      (let ((__tmp160449
                              (lambda ()
-                               (let ((__tmp160453
-                                      (path-directory _output-bin159887_)))
+                               (let ((__tmp160450
+                                      (path-directory _output-bin159882_)))
                                  (declare (not safe))
-                                 (create-directory*__0 __tmp160453)))))
+                                 (create-directory*__0 __tmp160450)))))
                         (declare (not safe))
-                        (with-lock gxc#+driver-mutex+ __tmp160452))
-                      (let ((__tmp160454
+                        (with-lock gxc#+driver-mutex+ __tmp160449))
+                      (let ((__tmp160451
                              (lambda ()
-                               (let ((__tmp160455
-                                      (let ((__tmp160456
-                                             (let ((__tmp160457
+                               (let ((__tmp160452
+                                      (let ((__tmp160453
+                                             (let ((__tmp160454
                                                     (let ()
                                                       (declare (not safe))
-                                                      (cons _bin-scm159899_
+                                                      (cons _bin-scm159894_
                                                             '()))))
                                                (declare (not safe))
                                                (foldr1 cons
-                                                       __tmp160457
-                                                       _deps159912_))))
+                                                       __tmp160454
+                                                       _deps159907_))))
                                         (declare (not safe))
                                         (foldr1 cons
-                                                __tmp160456
-                                                _runtime159893_))))
+                                                __tmp160453
+                                                _runtime159888_))))
                                  (declare (not safe))
-                                 (_generate-stub159877_ __tmp160455)))))
+                                 (_generate-stub159872_ __tmp160452)))))
                         (declare (not safe))
                         (gxc#with-output-to-scheme-file
-                         _output-scm159886_
-                         __tmp160454))
+                         _output-scm159881_
+                         __tmp160451))
                       (if (gxc#current-compile-invoke-gsc)
                           (begin
-                            (let ((__tmp160463
+                            (let ((__tmp160460
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gsc)))
-                                  (__tmp160458
-                                   (let ((__tmp160459
-                                          (let ((__tmp160460
-                                                 (let ((__tmp160461
-                                                        (let ((__tmp160462
+                                  (__tmp160455
+                                   (let ((__tmp160456
+                                          (let ((__tmp160457
+                                                 (let ((__tmp160458
+                                                        (let ((__tmp160459
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (cons _output-scm159886_ '()))))
+                         (cons _output-scm159881_ '()))))
                   (declare (not safe))
-                  (foldr1 cons __tmp160462 _gsc-link-opts159934_))))
+                  (foldr1 cons __tmp160459 _gsc-link-opts159929_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons _output-c_159920_
-                                                         __tmp160461))))
+                                                   (cons _output-c_159915_
+                                                         __tmp160458))))
                                             (declare (not safe))
-                                            (cons '"-o" __tmp160460))))
+                                            (cons '"-o" __tmp160457))))
                                      (declare (not safe))
-                                     (cons '"-link" __tmp160459))))
+                                     (cons '"-link" __tmp160456))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160463 __tmp160458))
-                            (let ((__tmp160469
+                              (gxc#invoke __tmp160460 __tmp160455))
+                            (let ((__tmp160466
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gsc)))
-                                  (__tmp160464
-                                   (let ((__tmp160465
-                                          (let ((__tmp160466
-                                                 (let ((__tmp160467
-                                                        (let ((__tmp160468
+                                  (__tmp160461
+                                   (let ((__tmp160462
+                                          (let ((__tmp160463
+                                                 (let ((__tmp160464
+                                                        (let ((__tmp160465
                                                                (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (declare (not safe))
-                         (cons _output-c_159920_ '()))))
+                         (cons _output-c_159915_ '()))))
                   (declare (not safe))
-                  (cons _output-c159916_ __tmp160468))))
+                  (cons _output-c159911_ __tmp160465))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
                                                    (foldr1 cons
-                                                           __tmp160467
-                                                           _gsc-static-opts159928_))))
+                                                           __tmp160464
+                                                           _gsc-static-opts159923_))))
                                             (declare (not safe))
                                             (foldr1 cons
-                                                    __tmp160466
-                                                    _gsc-cc-opts159926_))))
+                                                    __tmp160463
+                                                    _gsc-cc-opts159921_))))
                                      (declare (not safe))
-                                     (cons '"-obj" __tmp160465))))
+                                     (cons '"-obj" __tmp160462))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160469 __tmp160464))
-                            (let ((__tmp160479
+                              (gxc#invoke __tmp160466 __tmp160461))
+                            (let ((__tmp160476
                                    (let ()
                                      (declare (not safe))
                                      (gxc#gerbil-gcc)))
-                                  (__tmp160470
-                                   (let ((__tmp160471
-                                          (let ((__tmp160472
-                                                 (let ((__tmp160473
-                                                        (let ((__tmp160474
-                                                               (let ((__tmp160475
+                                  (__tmp160467
+                                   (let ((__tmp160468
+                                          (let ((__tmp160469
+                                                 (let ((__tmp160470
+                                                        (let ((__tmp160471
+                                                               (let ((__tmp160472
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (let ((__tmp160476
-                                     (let ((__tmp160477
-                                            (let ((__tmp160478
+                              (let ((__tmp160473
+                                     (let ((__tmp160474
+                                            (let ((__tmp160475
                                                    (let ()
                                                      (declare (not safe))
                                                      (cons '"-lgambit"
-                                                           _default-ld-options159938_))))
+                                                           _default-ld-options159933_))))
                                               (declare (not safe))
-                                              (cons _gerbil-libdir159891_
-                                                    __tmp160478))))
+                                              (cons _gerbil-libdir159886_
+                                                    __tmp160475))))
                                        (declare (not safe))
-                                       (cons '"-L" __tmp160477))))
+                                       (cons '"-L" __tmp160474))))
                                 (declare (not safe))
-                                (cons _rpath159936_ __tmp160476))))
+                                (cons _rpath159931_ __tmp160473))))
                          (declare (not safe))
-                         (foldr1 cons __tmp160475 _output-ld-opts159930_))))
+                         (foldr1 cons __tmp160472 _output-ld-opts159925_))))
                   (declare (not safe))
-                  (cons _output-o_159922_ __tmp160474))))
+                  (cons _output-o_159917_ __tmp160471))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (cons _output-o159918_
-                                                         __tmp160473))))
+                                                   (cons _output-o159913_
+                                                         __tmp160470))))
                                             (declare (not safe))
-                                            (cons _output-bin159887_
-                                                  __tmp160472))))
+                                            (cons _output-bin159882_
+                                                  __tmp160469))))
                                      (declare (not safe))
-                                     (cons '"-o" __tmp160471))))
+                                     (cons '"-o" __tmp160468))))
                               (declare (not safe))
-                              (gxc#invoke __tmp160479 __tmp160470)))
+                              (gxc#invoke __tmp160476 __tmp160467)))
                           '#!void)))))
-          (let* ((_output-bin159881_
+          (let* ((_output-bin159876_
                   (let ()
                     (declare (not safe))
-                    (gxc#compile-exe-output-file _ctx159873_ _opts159874_)))
-                 (_output-scm159883_
-                  (string-append _output-bin159881_ '"__exe.scm")))
+                    (gxc#compile-exe-output-file _ctx159868_ _opts159869_)))
+                 (_output-scm159878_
+                  (string-append _output-bin159876_ '"__exe.scm")))
             (let ()
               (declare (not safe))
-              (_compile-stub159879_ _output-scm159883_ _output-bin159881_))
+              (_compile-stub159874_ _output-scm159878_ _output-bin159876_))
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm159883_))))))
+                (delete-file _output-scm159878_))))))
     (define gxc#find-export-binding
-      (lambda (_ctx159823_ _id159824_)
-        (let ((_$e159870_
-               (let ((__tmp160481
-                      (lambda (_e159825159827_)
-                        (let* ((_g159829159839_ _e159825159827_)
-                               (_else159831159847_ (lambda () '#f))
-                               (_K159833159851_ (lambda () '#t)))
+      (lambda (_ctx159818_ _id159819_)
+        (let ((_$e159865_
+               (let ((__tmp160478
+                      (lambda (_e159820159822_)
+                        (let* ((_g159824159834_ _e159820159822_)
+                               (_else159826159842_ (lambda () '#f))
+                               (_K159828159846_ (lambda () '#t)))
                           (if (let ()
                                 (declare (not safe))
                                 (##structure-direct-instance-of?
-                                 _g159829159839_
+                                 _g159824159834_
                                  'gx#module-export::t))
-                              (let* ((_e159834159854_
+                              (let* ((_e159829159849_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _g159829159839_
+                                         _g159824159834_
                                          '1
                                          gx#module-export::t
                                          '#f)))
-                                     (_e159835159857_
+                                     (_e159830159852_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _g159829159839_
+                                         _g159824159834_
                                          '2
                                          gx#module-export::t
                                          '#f)))
-                                     (_e159836159860_
+                                     (_e159831159855_
                                       (let ()
                                         (declare (not safe))
                                         (##unchecked-structure-ref
-                                         _g159829159839_
+                                         _g159824159834_
                                          '3
                                          gx#module-export::t
                                          '#f))))
                                 (if (let ()
                                       (declare (not safe))
-                                      (##eq? _e159836159860_ '0))
-                                    (let ((_e159837159863_
+                                      (##eq? _e159831159855_ '0))
+                                    (let ((_e159832159858_
                                            (let ()
                                              (declare (not safe))
                                              (##unchecked-structure-ref
-                                              _g159829159839_
+                                              _g159824159834_
                                               '4
                                               gx#module-export::t
                                               '#f))))
-                                      (if ((lambda (_g159865159867_)
+                                      (if ((lambda (_g159860159862_)
                                              (let ()
                                                (declare (not safe))
-                                               (eq? _g159865159867_
-                                                    _id159824_)))
-                                           _e159837159863_)
+                                               (eq? _g159860159862_
+                                                    _id159819_)))
+                                           _e159832159858_)
                                           (let ()
                                             (declare (not safe))
-                                            (_K159833159851_))
+                                            (_K159828159846_))
                                           (let ()
                                             (declare (not safe))
-                                            (_else159831159847_))))
+                                            (_else159826159842_))))
                                     (let ()
                                       (declare (not safe))
-                                      (_else159831159847_))))
+                                      (_else159826159842_))))
                               (let ()
                                 (declare (not safe))
-                                (_else159831159847_))))))
-                     (__tmp160480
+                                (_else159826159842_))))))
+                     (__tmp160477
                       (##structure-ref
-                       _ctx159823_
+                       _ctx159818_
                        '9
                        gx#module-context::t
                        '#f)))
                  (declare (not safe))
-                 (find __tmp160481 __tmp160480))))
-          (if _$e159870_
+                 (find __tmp160478 __tmp160477))))
+          (if _$e159865_
               (let ()
                 (declare (not safe))
-                (gx#core-resolve-module-export _$e159870_))
+                (gx#core-resolve-module-export _$e159865_))
               '#f))))
     (define gxc#find-runtime-symbol
-      (lambda (_ctx159815_ _id159816_)
-        (let ((_$e159818_
+      (lambda (_ctx159810_ _id159811_)
+        (let ((_$e159813_
                (let ()
                  (declare (not safe))
-                 (gxc#find-export-binding _ctx159815_ _id159816_))))
-          (if _$e159818_
-              ((lambda (_bind159821_)
+                 (gxc#find-export-binding _ctx159810_ _id159811_))))
+          (if _$e159813_
+              ((lambda (_bind159816_)
                  (if (let ()
                        (declare (not safe))
                        (##structure-instance-of?
-                        _bind159821_
+                        _bind159816_
                         'gx#runtime-binding::t))
                      '#!void
                      (let ()
                        (declare (not safe))
                        (gxc#raise-compile-error
                         '"export is not a runtime binding"
-                        _id159816_)))
-                 (##structure-ref _bind159821_ '1 gx#binding::t '#f))
-               _$e159818_)
-              (let ((__tmp160482
+                        _id159811_)))
+                 (##structure-ref _bind159816_ '1 gx#binding::t '#f))
+               _$e159813_)
+              (let ((__tmp160479
                      (##structure-ref
-                      _ctx159815_
+                      _ctx159810_
                       '1
                       gx#expander-context::t
                       '#f)))
                 (declare (not safe))
                 (gxc#raise-compile-error
                  '"module does not export symbol"
-                 __tmp160482
-                 _id159816_))))))
+                 __tmp160479
+                 _id159811_))))))
     (define gxc#find-runtime-module-deps
-      (lambda (_ctx159702_)
-        (letrec* ((_ht159704_
+      (lambda (_ctx159697_)
+        (letrec* ((_ht159699_
                    (let () (declare (not safe)) (make-hash-table-eq)))
-                  (_import-set-template159705_
-                   (lambda (_in159767_ _phi159768_)
-                     (let ((_iphi159770_
-                            (fx+ _phi159768_
+                  (_import-set-template159700_
+                   (lambda (_in159762_ _phi159763_)
+                     (let ((_iphi159765_
+                            (fx+ _phi159763_
                                  (##direct-structure-ref
-                                  _in159767_
+                                  _in159762_
                                   '2
                                   gx#import-set::t
                                   '#f)))
-                           (_imports159771_
+                           (_imports159766_
                             (##structure-ref
                              (##direct-structure-ref
-                              _in159767_
+                              _in159762_
                               '1
                               gx#import-set::t
                               '#f)
                              '8
                              gx#module-context::t
                              '#f)))
-                       (let _lp159773_ ((_rest159775_ _imports159771_)
-                                        (_r159776_ '()))
-                         (let* ((_rest159777159785_ _rest159775_)
-                                (_else159779159793_ (lambda () _r159776_))
-                                (_K159781159803_
-                                 (lambda (_rest159796_ _in159797_)
+                       (let _lp159768_ ((_rest159770_ _imports159766_)
+                                        (_r159771_ '()))
+                         (let* ((_rest159772159780_ _rest159770_)
+                                (_else159774159788_ (lambda () _r159771_))
+                                (_K159776159798_
+                                 (lambda (_rest159791_ _in159792_)
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
-                                          _in159797_
+                                          _in159792_
                                           'gx#module-context::t))
                                        (if (let ()
                                              (declare (not safe))
-                                             (fxzero? _iphi159770_))
-                                           (let ((__tmp160489
+                                             (fxzero? _iphi159765_))
+                                           (let ((__tmp160486
                                                   (let ()
                                                     (declare (not safe))
-                                                    (cons _in159797_
-                                                          _r159776_))))
+                                                    (cons _in159792_
+                                                          _r159771_))))
                                              (declare (not safe))
-                                             (_lp159773_
-                                              _rest159796_
-                                              __tmp160489))
+                                             (_lp159768_
+                                              _rest159791_
+                                              __tmp160486))
                                            (let ()
                                              (declare (not safe))
-                                             (_lp159773_
-                                              _rest159796_
-                                              _r159776_)))
+                                             (_lp159768_
+                                              _rest159791_
+                                              _r159771_)))
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
-                                              _in159797_
+                                              _in159792_
                                               'gx#module-import::t))
-                                           (let ((_iphi159799_
-                                                  (fx+ _phi159768_
+                                           (let ((_iphi159794_
+                                                  (fx+ _phi159763_
                                                        (##direct-structure-ref
-                                                        _in159797_
+                                                        _in159792_
                                                         '3
                                                         gx#module-import::t
                                                         '#f))))
                                              (if (let ()
                                                    (declare (not safe))
-                                                   (fxzero? _iphi159799_))
-                                                 (let ((__tmp160487
-                                                        (let ((__tmp160488
+                                                   (fxzero? _iphi159794_))
+                                                 (let ((__tmp160484
+                                                        (let ((__tmp160485
                                                                (##direct-structure-ref
                                                                 (##direct-structure-ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _in159797_
+                         _in159792_
                          '1
                          gx#module-import::t
                          '#f)
@@ -1559,886 +1569,886 @@
                         gx#module-export::t
                         '#f)))
                   (declare (not safe))
-                  (cons __tmp160488 _r159776_))))
+                  (cons __tmp160485 _r159771_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (declare (not safe))
-                                                   (_lp159773_
-                                                    _rest159796_
-                                                    __tmp160487))
+                                                   (_lp159768_
+                                                    _rest159791_
+                                                    __tmp160484))
                                                  (let ()
                                                    (declare (not safe))
-                                                   (_lp159773_
-                                                    _rest159796_
-                                                    _r159776_))))
+                                                   (_lp159768_
+                                                    _rest159791_
+                                                    _r159771_))))
                                            (if (let ()
                                                  (declare (not safe))
                                                  (##structure-direct-instance-of?
-                                                  _in159797_
+                                                  _in159792_
                                                   'gx#import-set::t))
-                                               (let ((_xphi159801_
-                                                      (fx+ _iphi159770_
+                                               (let ((_xphi159796_
+                                                      (fx+ _iphi159765_
                                                            (##direct-structure-ref
-                                                            _in159797_
+                                                            _in159792_
                                                             '2
                                                             gx#import-set::t
                                                             '#f))))
                                                  (if (let ()
                                                        (declare (not safe))
-                                                       (fxzero? _xphi159801_))
-                                                     (let ((__tmp160485
-                                                            (let ((__tmp160486
+                                                       (fxzero? _xphi159796_))
+                                                     (let ((__tmp160482
+                                                            (let ((__tmp160483
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (##direct-structure-ref
-                            _in159797_
+                            _in159792_
                             '1
                             gx#import-set::t
                             '#f)))
                       (declare (not safe))
-                      (cons __tmp160486 _r159776_))))
+                      (cons __tmp160483 _r159771_))))
                (declare (not safe))
-               (_lp159773_ _rest159796_ __tmp160485))
+               (_lp159768_ _rest159791_ __tmp160482))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (if (fxpositive?
-                                                          _xphi159801_)
-                                                         (let ((__tmp160483
-                                                                (let ((__tmp160484
+                                                          _xphi159796_)
+                                                         (let ((__tmp160480
+                                                                (let ((__tmp160481
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                (let ()
                                  (declare (not safe))
-                                 (_import-set-template159705_
-                                  _in159797_
-                                  _iphi159770_))))
+                                 (_import-set-template159700_
+                                  _in159792_
+                                  _iphi159765_))))
                           (declare (not safe))
-                          (foldl1 cons _r159776_ __tmp160484))))
+                          (foldl1 cons _r159771_ __tmp160481))))
                    (declare (not safe))
-                   (_lp159773_ _rest159796_ __tmp160483))
+                   (_lp159768_ _rest159791_ __tmp160480))
                  (let ()
                    (declare (not safe))
-                   (_lp159773_ _rest159796_ _r159776_)))))
+                   (_lp159768_ _rest159791_ _r159771_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (let ()
                                                  (declare (not safe))
-                                                 (_lp159773_
-                                                  _rest159796_
-                                                  _r159776_))))))))
+                                                 (_lp159768_
+                                                  _rest159791_
+                                                  _r159771_))))))))
                            (if (let ()
                                  (declare (not safe))
-                                 (##pair? _rest159777159785_))
-                               (let ((_hd159782159806_
+                                 (##pair? _rest159772159780_))
+                               (let ((_hd159777159801_
                                       (let ()
                                         (declare (not safe))
-                                        (##car _rest159777159785_)))
-                                     (_tl159783159808_
+                                        (##car _rest159772159780_)))
+                                     (_tl159778159803_
                                       (let ()
                                         (declare (not safe))
-                                        (##cdr _rest159777159785_))))
-                                 (let* ((_in159811_ _hd159782159806_)
-                                        (_rest159813_ _tl159783159808_))
+                                        (##cdr _rest159772159780_))))
+                                 (let* ((_in159806_ _hd159777159801_)
+                                        (_rest159808_ _tl159778159803_))
                                    (declare (not safe))
-                                   (_K159781159803_ _rest159813_ _in159811_)))
+                                   (_K159776159798_ _rest159808_ _in159806_)))
                                (let ()
                                  (declare (not safe))
-                                 (_else159779159793_))))))))
-                  (_find-deps159706_
-                   (lambda (_rest159713_ _deps159714_)
-                     (let* ((_rest159715159723_ _rest159713_)
-                            (_else159717159731_ (lambda () _deps159714_))
-                            (_K159719159755_
-                             (lambda (_rest159734_ _hd159735_)
+                                 (_else159774159788_))))))))
+                  (_find-deps159701_
+                   (lambda (_rest159708_ _deps159709_)
+                     (let* ((_rest159710159718_ _rest159708_)
+                            (_else159712159726_ (lambda () _deps159709_))
+                            (_K159714159750_
+                             (lambda (_rest159729_ _hd159730_)
                                (if (let ()
                                      (declare (not safe))
                                      (##structure-instance-of?
-                                      _hd159735_
+                                      _hd159730_
                                       'gx#module-context::t))
-                                   (let ((_id159737_
+                                   (let ((_id159732_
                                           (##structure-ref
-                                           _hd159735_
+                                           _hd159730_
                                            '1
                                            gx#expander-context::t
                                            '#f))
-                                         (_imports159738_
+                                         (_imports159733_
                                           (##structure-ref
-                                           _hd159735_
+                                           _hd159730_
                                            '8
                                            gx#module-context::t
                                            '#f)))
                                      (if (let ()
                                            (declare (not safe))
-                                           (hash-get _ht159704_ _id159737_))
+                                           (hash-get _ht159699_ _id159732_))
                                          (let ()
                                            (declare (not safe))
-                                           (_find-deps159706_
-                                            _rest159734_
-                                            _deps159714_))
-                                         (let ((_$e159740_
+                                           (_find-deps159701_
+                                            _rest159729_
+                                            _deps159709_))
+                                         (let ((_$e159735_
                                                 (let ()
                                                   (declare (not safe))
                                                   (gx#core-context-prelude__%
-                                                   _hd159735_))))
-                                           (if _$e159740_
-                                               ((lambda (_pre159743_)
-                                                  (let ((_xdeps159745_
-                                                         (let ((__tmp160502
+                                                   _hd159730_))))
+                                           (if _$e159735_
+                                               ((lambda (_pre159738_)
+                                                  (let ((_xdeps159740_
+                                                         (let ((__tmp160499
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
-                          (cons _pre159743_ _imports159738_))))
+                          (cons _pre159738_ _imports159733_))))
                    (declare (not safe))
-                   (_find-deps159706_ __tmp160502 _deps159714_))))
+                   (_find-deps159701_ __tmp160499 _deps159709_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (let ()
                                                       (declare (not safe))
                                                       (hash-put!
-                                                       _ht159704_
-                                                       _id159737_
-                                                       _hd159735_))
-                                                    (let ((__tmp160503
+                                                       _ht159699_
+                                                       _id159732_
+                                                       _hd159730_))
+                                                    (let ((__tmp160500
                                                            (let ()
                                                              (declare
                                                                (not safe))
-                                                             (cons _hd159735_
+                                                             (cons _hd159730_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _xdeps159745_))))
+                           _xdeps159740_))))
               (declare (not safe))
-              (_find-deps159706_ _rest159734_ __tmp160503))))
+              (_find-deps159701_ _rest159729_ __tmp160500))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                _$e159740_)
-                                               (let ((_xdeps159747_
+                                                _$e159735_)
+                                               (let ((_xdeps159742_
                                                       (let ()
                                                         (declare (not safe))
-                                                        (_find-deps159706_
-                                                         _imports159738_
-                                                         _deps159714_))))
+                                                        (_find-deps159701_
+                                                         _imports159733_
+                                                         _deps159709_))))
                                                  (let ()
                                                    (declare (not safe))
                                                    (hash-put!
-                                                    _ht159704_
-                                                    _id159737_
-                                                    _hd159735_))
-                                                 (let ((__tmp160501
+                                                    _ht159699_
+                                                    _id159732_
+                                                    _hd159730_))
+                                                 (let ((__tmp160498
                                                         (let ()
                                                           (declare (not safe))
-                                                          (cons _hd159735_
-                                                                _xdeps159747_))))
+                                                          (cons _hd159730_
+                                                                _xdeps159742_))))
                                                    (declare (not safe))
-                                                   (_find-deps159706_
-                                                    _rest159734_
-                                                    __tmp160501)))))))
+                                                   (_find-deps159701_
+                                                    _rest159729_
+                                                    __tmp160498)))))))
                                    (if (let ()
                                          (declare (not safe))
                                          (##structure-instance-of?
-                                          _hd159735_
+                                          _hd159730_
                                           'gx#prelude-context::t))
-                                       (let ((_id159749_
+                                       (let ((_id159744_
                                               (##structure-ref
-                                               _hd159735_
+                                               _hd159730_
                                                '1
                                                gx#expander-context::t
                                                '#f)))
                                          (if (let ()
                                                (declare (not safe))
                                                (hash-get
-                                                _ht159704_
-                                                _id159749_))
+                                                _ht159699_
+                                                _id159744_))
                                              (let ()
                                                (declare (not safe))
-                                               (_find-deps159706_
-                                                _rest159734_
-                                                _deps159714_))
-                                             (let ((_xdeps159751_
-                                                    (let ((__tmp160499
+                                               (_find-deps159701_
+                                                _rest159729_
+                                                _deps159709_))
+                                             (let ((_xdeps159746_
+                                                    (let ((__tmp160496
                                                            (##structure-ref
-                                                            _hd159735_
+                                                            _hd159730_
                                                             '7
                                                             gx#prelude-context::t
                                                             '#f)))
                                                       (declare (not safe))
-                                                      (_find-deps159706_
-                                                       __tmp160499
-                                                       _deps159714_))))
+                                                      (_find-deps159701_
+                                                       __tmp160496
+                                                       _deps159709_))))
                                                (if (let ()
                                                      (declare (not safe))
                                                      (hash-get
-                                                      _ht159704_
-                                                      _id159749_))
+                                                      _ht159699_
+                                                      _id159744_))
                                                    (let ()
                                                      (declare (not safe))
-                                                     (_find-deps159706_
-                                                      _rest159734_
-                                                      _xdeps159751_))
+                                                     (_find-deps159701_
+                                                      _rest159729_
+                                                      _xdeps159746_))
                                                    (begin
                                                      (let ()
                                                        (declare (not safe))
                                                        (hash-put!
-                                                        _ht159704_
-                                                        _id159749_
-                                                        _hd159735_))
-                                                     (let ((__tmp160500
+                                                        _ht159699_
+                                                        _id159744_
+                                                        _hd159730_))
+                                                     (let ((__tmp160497
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (cons _hd159735_
+                                                              (cons _hd159730_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _xdeps159751_))))
+                            _xdeps159746_))))
                (declare (not safe))
-               (_find-deps159706_ _rest159734_ __tmp160500)))))))
+               (_find-deps159701_ _rest159729_ __tmp160497)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        (if (let ()
                                              (declare (not safe))
                                              (##structure-direct-instance-of?
-                                              _hd159735_
+                                              _hd159730_
                                               'gx#module-import::t))
-                                           (if (let ((__tmp160498
+                                           (if (let ((__tmp160495
                                                       (##direct-structure-ref
-                                                       _hd159735_
+                                                       _hd159730_
                                                        '3
                                                        gx#module-import::t
                                                        '#f)))
                                                  (declare (not safe))
-                                                 (fxzero? __tmp160498))
-                                               (let ((__tmp160496
-                                                      (let ((__tmp160497
+                                                 (fxzero? __tmp160495))
+                                               (let ((__tmp160493
+                                                      (let ((__tmp160494
                                                              (##direct-structure-ref
-                                                              _hd159735_
+                                                              _hd159730_
                                                               '1
                                                               gx#module-import::t
                                                               '#f)))
                                                         (declare (not safe))
-                                                        (cons __tmp160497
-                                                              _rest159734_))))
+                                                        (cons __tmp160494
+                                                              _rest159729_))))
                                                  (declare (not safe))
-                                                 (_find-deps159706_
-                                                  __tmp160496
-                                                  _deps159714_))
+                                                 (_find-deps159701_
+                                                  __tmp160493
+                                                  _deps159709_))
                                                (let ()
                                                  (declare (not safe))
-                                                 (_find-deps159706_
-                                                  _rest159734_
-                                                  _deps159714_)))
+                                                 (_find-deps159701_
+                                                  _rest159729_
+                                                  _deps159709_)))
                                            (if (let ()
                                                  (declare (not safe))
                                                  (##structure-direct-instance-of?
-                                                  _hd159735_
+                                                  _hd159730_
                                                   'gx#module-export::t))
-                                               (let ((__tmp160494
-                                                      (let ((__tmp160495
+                                               (let ((__tmp160491
+                                                      (let ((__tmp160492
                                                              (##direct-structure-ref
-                                                              _hd159735_
+                                                              _hd159730_
                                                               '1
                                                               gx#module-export::t
                                                               '#f)))
                                                         (declare (not safe))
-                                                        (cons __tmp160495
-                                                              _rest159734_))))
+                                                        (cons __tmp160492
+                                                              _rest159729_))))
                                                  (declare (not safe))
-                                                 (_find-deps159706_
-                                                  __tmp160494
-                                                  _deps159714_))
+                                                 (_find-deps159701_
+                                                  __tmp160491
+                                                  _deps159709_))
                                                (if (let ()
                                                      (declare (not safe))
                                                      (##structure-direct-instance-of?
-                                                      _hd159735_
+                                                      _hd159730_
                                                       'gx#import-set::t))
-                                                   (if (let ((__tmp160493
+                                                   (if (let ((__tmp160490
                                                               (##direct-structure-ref
-                                                               _hd159735_
+                                                               _hd159730_
                                                                '2
                                                                gx#import-set::t
                                                                '#f)))
                                                          (declare (not safe))
-                                                         (fxzero? __tmp160493))
-                                                       (let ((__tmp160491
-                                                              (let ((__tmp160492
+                                                         (fxzero? __tmp160490))
+                                                       (let ((__tmp160488
+                                                              (let ((__tmp160489
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (##direct-structure-ref
-                              _hd159735_
+                              _hd159730_
                               '1
                               gx#import-set::t
                               '#f)))
                         (declare (not safe))
-                        (cons __tmp160492 _rest159734_))))
+                        (cons __tmp160489 _rest159729_))))
                  (declare (not safe))
-                 (_find-deps159706_ __tmp160491 _deps159714_))
+                 (_find-deps159701_ __tmp160488 _deps159709_))
                (if (fxpositive?
                     (##direct-structure-ref
-                     _hd159735_
+                     _hd159730_
                      '2
                      gx#import-set::t
                      '#f))
-                   (let* ((_xdeps159753_
+                   (let* ((_xdeps159748_
                            (let ()
                              (declare (not safe))
-                             (_import-set-template159705_ _hd159735_ '0)))
-                          (__tmp160490
+                             (_import-set-template159700_ _hd159730_ '0)))
+                          (__tmp160487
                            (let ()
                              (declare (not safe))
-                             (foldl1 cons _rest159734_ _xdeps159753_))))
+                             (foldl1 cons _rest159729_ _xdeps159748_))))
                      (declare (not safe))
-                     (_find-deps159706_ __tmp160490 _deps159714_))
+                     (_find-deps159701_ __tmp160487 _deps159709_))
                    (let ()
                      (declare (not safe))
-                     (_find-deps159706_ _rest159734_ _deps159714_))))
+                     (_find-deps159701_ _rest159729_ _deps159709_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (let ()
                                                      (declare (not safe))
                                                      (error '"Unexpected module import"
-                                                            _hd159735_))))))))))
+                                                            _hd159730_))))))))))
                        (if (let ()
                              (declare (not safe))
-                             (##pair? _rest159715159723_))
-                           (let ((_hd159720159758_
+                             (##pair? _rest159710159718_))
+                           (let ((_hd159715159753_
                                   (let ()
                                     (declare (not safe))
-                                    (##car _rest159715159723_)))
-                                 (_tl159721159760_
+                                    (##car _rest159710159718_)))
+                                 (_tl159716159755_
                                   (let ()
                                     (declare (not safe))
-                                    (##cdr _rest159715159723_))))
-                             (let* ((_hd159763_ _hd159720159758_)
-                                    (_rest159765_ _tl159721159760_))
+                                    (##cdr _rest159710159718_))))
+                             (let* ((_hd159758_ _hd159715159753_)
+                                    (_rest159760_ _tl159716159755_))
                                (declare (not safe))
-                               (_K159719159755_ _rest159765_ _hd159763_)))
+                               (_K159714159750_ _rest159760_ _hd159758_)))
                            (let ()
                              (declare (not safe))
-                             (_else159717159731_)))))))
+                             (_else159712159726_)))))))
           (reverse (filter gx#expander-context-id
-                           (let ((__tmp160504
-                                  (let ((_$e159708_
+                           (let ((__tmp160501
+                                  (let ((_$e159703_
                                          (let ()
                                            (declare (not safe))
                                            (gx#core-context-prelude__%
-                                            _ctx159702_))))
-                                    (if _$e159708_
-                                        ((lambda (_pre159711_)
-                                           (let ((__tmp160505
+                                            _ctx159697_))))
+                                    (if _$e159703_
+                                        ((lambda (_pre159706_)
+                                           (let ((__tmp160502
                                                   (##structure-ref
-                                                   _ctx159702_
+                                                   _ctx159697_
                                                    '8
                                                    gx#module-context::t
                                                    '#f)))
                                              (declare (not safe))
-                                             (cons _pre159711_ __tmp160505)))
-                                         _$e159708_)
+                                             (cons _pre159706_ __tmp160502)))
+                                         _$e159703_)
                                         (##structure-ref
-                                         _ctx159702_
+                                         _ctx159697_
                                          '8
                                          gx#module-context::t
                                          '#f)))))
                              (declare (not safe))
-                             (_find-deps159706_ __tmp160504 '())))))))
+                             (_find-deps159701_ __tmp160501 '())))))))
     (define gxc#find-static-module-file
-      (lambda (_ctx159633_)
-        (let* ((_context-id159635_
+      (lambda (_ctx159628_)
+        (let* ((_context-id159630_
                 (if (let ()
                       (declare (not safe))
                       (##structure-instance-of?
-                       _ctx159633_
+                       _ctx159628_
                        'gx#module-context::t))
-                    (##structure-ref _ctx159633_ '1 gx#expander-context::t '#f)
-                    (string->symbol _ctx159633_)))
-               (_scm159637_
+                    (##structure-ref _ctx159628_ '1 gx#expander-context::t '#f)
+                    (string->symbol _ctx159628_)))
+               (_scm159632_
                 (string-append
                  (let ()
                    (declare (not safe))
-                   (gxc#static-module-name _context-id159635_))
+                   (gxc#static-module-name _context-id159630_))
                  '".scm"))
-               (_dirs159639_ (let () (declare (not safe)) (load-path)))
-               (_dirs159645_
-                (let ((_user-libpath159641_ (getenv '"GERBIL_PATH" '#f)))
-                  (if _user-libpath159641_
-                      (let ((_user-libpath159643_
-                             (path-expand '"lib" _user-libpath159641_)))
-                        (if (member _user-libpath159643_ _dirs159639_)
-                            _dirs159639_
+               (_dirs159634_ (let () (declare (not safe)) (load-path)))
+               (_dirs159640_
+                (let ((_user-libpath159636_ (getenv '"GERBIL_PATH" '#f)))
+                  (if _user-libpath159636_
+                      (let ((_user-libpath159638_
+                             (path-expand '"lib" _user-libpath159636_)))
+                        (if (member _user-libpath159638_ _dirs159634_)
+                            _dirs159634_
                             (let ()
                               (declare (not safe))
-                              (cons _user-libpath159643_ _dirs159639_))))
-                      _dirs159639_)))
-               (_dirs159654_
-                (let ((_$e159647_ (gxc#current-compile-output-dir)))
-                  (if _$e159647_
-                      ((lambda (_g159649159651_)
+                              (cons _user-libpath159638_ _dirs159634_))))
+                      _dirs159634_)))
+               (_dirs159649_
+                (let ((_$e159642_ (gxc#current-compile-output-dir)))
+                  (if _$e159642_
+                      ((lambda (_g159644159646_)
                          (let ()
                            (declare (not safe))
-                           (cons _g159649159651_ _dirs159645_)))
-                       _$e159647_)
-                      _dirs159645_)))
-               (_dirs159660_
-                (map (lambda (_g159655159657_)
-                       (path-expand '"static" _g159655159657_))
-                     _dirs159654_)))
-          (let _lp159663_ ((_rest159665_ _dirs159660_))
-            (let* ((_rest159666159674_ _rest159665_)
-                   (_else159668159682_
+                           (cons _g159644159646_ _dirs159640_)))
+                       _$e159642_)
+                      _dirs159640_)))
+               (_dirs159655_
+                (map (lambda (_g159650159652_)
+                       (path-expand '"static" _g159650159652_))
+                     _dirs159649_)))
+          (let _lp159658_ ((_rest159660_ _dirs159655_))
+            (let* ((_rest159661159669_ _rest159660_)
+                   (_else159663159677_
                     (lambda ()
-                      (let ((__tmp160506
+                      (let ((__tmp160503
                              (##structure-ref
-                              _ctx159633_
+                              _ctx159628_
                               '1
                               gx#expander-context::t
                               '#f)))
                         (declare (not safe))
                         (gxc#raise-compile-error
                          '"cannot find static module"
-                         __tmp160506
-                         _scm159637_))))
-                   (_K159670159690_
-                    (lambda (_rest159685_ _dir159686_)
-                      (let ((_path159688_
-                             (path-expand _scm159637_ _dir159686_)))
-                        (if (file-exists? _path159688_)
-                            _path159688_
+                         __tmp160503
+                         _scm159632_))))
+                   (_K159665159685_
+                    (lambda (_rest159680_ _dir159681_)
+                      (let ((_path159683_
+                             (path-expand _scm159632_ _dir159681_)))
+                        (if (file-exists? _path159683_)
+                            _path159683_
                             (let ()
                               (declare (not safe))
-                              (_lp159663_ _rest159685_)))))))
-              (if (let () (declare (not safe)) (##pair? _rest159666159674_))
-                  (let ((_hd159671159693_
+                              (_lp159658_ _rest159680_)))))))
+              (if (let () (declare (not safe)) (##pair? _rest159661159669_))
+                  (let ((_hd159666159688_
                          (let ()
                            (declare (not safe))
-                           (##car _rest159666159674_)))
-                        (_tl159672159695_
+                           (##car _rest159661159669_)))
+                        (_tl159667159690_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest159666159674_))))
-                    (let* ((_dir159698_ _hd159671159693_)
-                           (_rest159700_ _tl159672159695_))
+                           (##cdr _rest159661159669_))))
+                    (let* ((_dir159693_ _hd159666159688_)
+                           (_rest159695_ _tl159667159690_))
                       (declare (not safe))
-                      (_K159670159690_ _rest159700_ _dir159698_)))
-                  (let () (declare (not safe)) (_else159668159682_))))))))
+                      (_K159665159685_ _rest159695_ _dir159693_)))
+                  (let () (declare (not safe)) (_else159663159677_))))))))
     (define gxc#file-empty?
-      (lambda (_path159631_)
-        (let ((__tmp160507 (file-info-size (file-info _path159631_ '#t))))
+      (lambda (_path159626_)
+        (let ((__tmp160504 (file-info-size (file-info _path159626_ '#t))))
           (declare (not safe))
-          (zero? __tmp160507))))
+          (zero? __tmp160504))))
     (define gxc#compile-top-module
-      (lambda (_ctx159620_)
-        (let ((__tmp160511
+      (lambda (_ctx159615_)
+        (let ((__tmp160508
                (lambda ()
-                 (let ((__tmp160512
+                 (let ((__tmp160509
                         (##structure-ref
-                         _ctx159620_
+                         _ctx159615_
                          '1
                          gx#expander-context::t
                          '#f)))
                    (declare (not safe))
-                   (gxc#verbose '"compile " __tmp160512))
+                   (gxc#verbose '"compile " __tmp160509))
                  (if (gxc#current-compile-optimize)
-                     (let ((__tmp160513
+                     (let ((__tmp160510
                             (lambda ()
                               (let ()
                                 (declare (not safe))
-                                (gxc#optimize! _ctx159620_)))))
+                                (gxc#optimize! _ctx159615_)))))
                        (declare (not safe))
-                       (with-lock gxc#+driver-mutex+ __tmp160513))
+                       (with-lock gxc#+driver-mutex+ __tmp160510))
                      '#!void)
                  (let ()
                    (declare (not safe))
-                   (gxc#collect-bindings _ctx159620_))
-                 (if (let ((__tmp160516
+                   (gxc#collect-bindings _ctx159615_))
+                 (if (let ((__tmp160513
                             (let ()
                               (declare (not safe))
-                              (gxc#lift-nested-modules _ctx159620_))))
+                              (gxc#lift-nested-modules _ctx159615_))))
                        (declare (not safe))
-                       (null? __tmp160516))
-                     (let* ((_thr1159625_
-                             (let ((__tmp160514
+                       (null? __tmp160513))
+                     (let* ((_thr1159620_
+                             (let ((__tmp160511
                                     (lambda ()
                                       (let ()
                                         (declare (not safe))
                                         (gxc#compile-runtime-code
-                                         _ctx159620_)))))
+                                         _ctx159615_)))))
                                (declare (not safe))
-                               (spawn __tmp160514)))
-                            (_thr2159628_
-                             (let ((__tmp160515
+                               (spawn __tmp160511)))
+                            (_thr2159623_
+                             (let ((__tmp160512
                                     (lambda ()
                                       (let ()
                                         (declare (not safe))
-                                        (gxc#compile-meta-code _ctx159620_)))))
+                                        (gxc#compile-meta-code _ctx159615_)))))
                                (declare (not safe))
-                               (spawn __tmp160515))))
-                       (let () (declare (not safe)) (gxc#join! _thr1159625_))
-                       (let () (declare (not safe)) (gxc#join! _thr2159628_)))
+                               (spawn __tmp160512))))
+                       (let () (declare (not safe)) (gxc#join! _thr1159620_))
+                       (let () (declare (not safe)) (gxc#join! _thr2159623_)))
                      (begin
                        (let ()
                          (declare (not safe))
-                         (gxc#compile-runtime-code _ctx159620_))
+                         (gxc#compile-runtime-code _ctx159615_))
                        (let ()
                          (declare (not safe))
-                         (gxc#compile-meta-code _ctx159620_))))
+                         (gxc#compile-meta-code _ctx159615_))))
                  (if (and (gxc#current-compile-optimize)
                           (gxc#current-compile-generate-ssxi))
                      (let ()
                        (declare (not safe))
-                       (gxc#compile-ssxi-code _ctx159620_))
+                       (gxc#compile-ssxi-code _ctx159615_))
                      '#!void)))
-              (__tmp160510
-               (let ((__obj160318
+              (__tmp160507
+               (let ((__obj160315
                       (let ()
                         (declare (not safe))
                         (##structure gxc#symbol-table::t '#f '#f))))
-                 (gxc#symbol-table:::init! __obj160318)
-                 __obj160318))
-              (__tmp160509 (let () (declare (not safe)) (make-hash-table-eq)))
-              (__tmp160508 (let () (declare (not safe)) (make-hash-table))))
+                 (gxc#symbol-table:::init! __obj160315)
+                 __obj160315))
+              (__tmp160506 (let () (declare (not safe)) (make-hash-table-eq)))
+              (__tmp160505 (let () (declare (not safe)) (make-hash-table))))
           (declare (not safe))
           (call-with-parameters
-           __tmp160511
+           __tmp160508
            gx#current-expander-context
-           _ctx159620_
+           _ctx159615_
            gx#current-expander-phi
            '0
            gx#current-expander-marks
            '()
            gxc#current-compile-symbol-table
-           __tmp160510
+           __tmp160507
            gxc#current-compile-runtime-sections
-           __tmp160509
+           __tmp160506
            gxc#current-compile-runtime-names
-           __tmp160508))))
+           __tmp160505))))
     (define gxc#collect-bindings
-      (lambda (_ctx159618_)
-        (let ((__tmp160517
-               (##structure-ref _ctx159618_ '11 gx#module-context::t '#f)))
+      (lambda (_ctx159613_)
+        (let ((__tmp160514
+               (##structure-ref _ctx159613_ '11 gx#module-context::t '#f)))
           (declare (not safe))
-          (gxc#apply-collect-bindings __tmp160517))))
+          (gxc#apply-collect-bindings __tmp160514))))
     (define gxc#compile-runtime-code
-      (lambda (_ctx159564_)
-        (letrec ((_compile1159566_
-                  (lambda (_ctx159607_)
-                    (let* ((_code159609_
+      (lambda (_ctx159559_)
+        (letrec ((_compile1159561_
+                  (lambda (_ctx159602_)
+                    (let* ((_code159604_
                             (##structure-ref
-                             _ctx159607_
+                             _ctx159602_
                              '11
                              gx#module-context::t
                              '#f))
-                           (_rt159613_
+                           (_rt159608_
                             (if (let ()
                                   (declare (not safe))
-                                  (gxc#apply-find-runtime-code _code159609_))
-                                (let ((_idstr159611_
-                                       (let ((__tmp160518
+                                  (gxc#apply-find-runtime-code _code159604_))
+                                (let ((_idstr159606_
+                                       (let ((__tmp160515
                                               (##structure-ref
-                                               _ctx159607_
+                                               _ctx159602_
                                                '1
                                                gx#expander-context::t
                                                '#f)))
                                          (declare (not safe))
                                          (gxc#module-id->path-string
-                                          __tmp160518))))
-                                  (string-append _idstr159611_ '"~0"))
+                                          __tmp160515))))
+                                  (string-append _idstr159606_ '"~0"))
                                 '#f)))
-                      (if _rt159613_
+                      (if _rt159608_
                           (begin
-                            (let ((__tmp160519
+                            (let ((__tmp160516
                                    (gxc#current-compile-runtime-sections)))
                               (declare (not safe))
-                              (hash-put! __tmp160519 _ctx159607_ _rt159613_))
+                              (hash-put! __tmp160516 _ctx159602_ _rt159608_))
                             (let ()
                               (declare (not safe))
-                              (_generate-runtime-code159568_
-                               _ctx159607_
-                               _code159609_)))
-                          (let ((_path159616_
+                              (_generate-runtime-code159563_
+                               _ctx159602_
+                               _code159604_)))
+                          (let ((_path159611_
                                  (let ()
                                    (declare (not safe))
                                    (gxc#compile-static-output-file
-                                    _ctx159607_))))
+                                    _ctx159602_))))
                             (declare (not safe))
                             (gxc#with-output-to-scheme-file
-                             _path159616_
+                             _path159611_
                              void)))
                       (let ()
                         (declare (not safe))
-                        (_generate-loader-code159569_
-                         _ctx159607_
-                         _code159609_
-                         _rt159613_)))))
-                 (_context-timestamp159567_
-                  (lambda (_ctx159605_)
+                        (_generate-loader-code159564_
+                         _ctx159602_
+                         _code159604_
+                         _rt159608_)))))
+                 (_context-timestamp159562_
+                  (lambda (_ctx159600_)
                     (string->symbol
                      (string-append
                       (symbol->string
                        (##structure-ref
-                        _ctx159605_
+                        _ctx159600_
                         '1
                         gx#expander-context::t
                         '#f))
                       '"::timestamp"))))
-                 (_generate-runtime-code159568_
-                  (lambda (_ctx159587_ _code159588_)
-                    (let* ((_lifts159590_
+                 (_generate-runtime-code159563_
+                  (lambda (_ctx159582_ _code159583_)
+                    (let* ((_lifts159585_
                             (let () (declare (not safe)) (box '())))
-                           (_runtime-code159593_
-                            (let ((__tmp160522
+                           (_runtime-code159588_
+                            (let ((__tmp160519
                                    (lambda ()
                                      (let ()
                                        (declare (not safe))
                                        (gxc#apply-generate-runtime
-                                        _code159588_))))
-                                  (__tmp160521
+                                        _code159583_))))
+                                  (__tmp160518
                                    (let ()
                                      (declare (not safe))
                                      (make-hash-table-eq)))
-                                  (__tmp160520
+                                  (__tmp160517
                                    (let ()
                                      (declare (not safe))
                                      (gxc#make-bound-identifier-table))))
                               (declare (not safe))
                               (call-with-parameters
-                               __tmp160522
+                               __tmp160519
                                gx#current-expander-context
-                               _ctx159587_
+                               _ctx159582_
                                gx#current-expander-phi
                                '0
                                gxc#current-compile-lift
-                               _lifts159590_
+                               _lifts159585_
                                gxc#current-compile-marks
-                               __tmp160521
+                               __tmp160518
                                gxc#current-compile-identifiers
-                               __tmp160520)))
-                           (_runtime-code159595_
-                            (if (let ((__tmp160526 (unbox _lifts159590_)))
+                               __tmp160517)))
+                           (_runtime-code159590_
+                            (if (let ((__tmp160523 (unbox _lifts159585_)))
                                   (declare (not safe))
-                                  (null? __tmp160526))
-                                _runtime-code159593_
-                                (let ((__tmp160523
-                                       (let ((__tmp160525
+                                  (null? __tmp160523))
+                                _runtime-code159588_
+                                (let ((__tmp160520
+                                       (let ((__tmp160522
                                               (let ()
                                                 (declare (not safe))
-                                                (cons _runtime-code159593_
+                                                (cons _runtime-code159588_
                                                       '())))
-                                             (__tmp160524
-                                              (reverse (unbox _lifts159590_))))
+                                             (__tmp160521
+                                              (reverse (unbox _lifts159585_))))
                                          (declare (not safe))
                                          (foldr1 cons
-                                                 __tmp160525
-                                                 __tmp160524))))
+                                                 __tmp160522
+                                                 __tmp160521))))
                                   (declare (not safe))
-                                  (cons 'begin __tmp160523))))
-                           (_runtime-code159597_
-                            (let ((__tmp160527
-                                   (let ((__tmp160529
-                                          (let ((__tmp160530
-                                                 (let ((__tmp160533
+                                  (cons 'begin __tmp160520))))
+                           (_runtime-code159592_
+                            (let ((__tmp160524
+                                   (let ((__tmp160526
+                                          (let ((__tmp160527
+                                                 (let ((__tmp160530
                                                         (let ()
                                                           (declare (not safe))
-                                                          (_context-timestamp159567_
-                                                           _ctx159587_)))
-                                                       (__tmp160531
-                                                        (let ((__tmp160532
+                                                          (_context-timestamp159562_
+                                                           _ctx159582_)))
+                                                       (__tmp160528
+                                                        (let ((__tmp160529
                                                                (gxc#current-compile-timestamp)))
                                                           (declare (not safe))
-                                                          (cons __tmp160532
+                                                          (cons __tmp160529
                                                                 '()))))
                                                    (declare (not safe))
-                                                   (cons __tmp160533
-                                                         __tmp160531))))
+                                                   (cons __tmp160530
+                                                         __tmp160528))))
                                             (declare (not safe))
-                                            (cons 'define __tmp160530)))
-                                         (__tmp160528
+                                            (cons 'define __tmp160527)))
+                                         (__tmp160525
                                           (let ()
                                             (declare (not safe))
-                                            (cons _runtime-code159595_ '()))))
+                                            (cons _runtime-code159590_ '()))))
                                      (declare (not safe))
-                                     (cons __tmp160529 __tmp160528))))
+                                     (cons __tmp160526 __tmp160525))))
                               (declare (not safe))
-                              (cons 'begin __tmp160527)))
-                           (_scm0159599_
+                              (cons 'begin __tmp160524)))
+                           (_scm0159594_
                             (let ()
                               (declare (not safe))
                               (gxc#compile-output-file
-                               _ctx159587_
+                               _ctx159582_
                                '0
                                '".scm"))))
-                      (let ((_scms159602_
+                      (let ((_scms159597_
                              (let ()
                                (declare (not safe))
-                               (gxc#compile-static-output-file _ctx159587_))))
-                        (let ((__tmp160534
+                               (gxc#compile-static-output-file _ctx159582_))))
+                        (let ((__tmp160531
                                (lambda ()
                                  (let ()
                                    (declare (not safe))
                                    (gxc#compile-scm-file__0
-                                    _scm0159599_
-                                    _runtime-code159597_)))))
+                                    _scm0159594_
+                                    _runtime-code159592_)))))
                           (declare (not safe))
                           (call-with-parameters
-                           __tmp160534
+                           __tmp160531
                            gxc#current-compile-keep-scm
                            '#t))
-                        (if (file-exists? _scms159602_)
-                            (delete-file _scms159602_)
+                        (if (file-exists? _scms159597_)
+                            (delete-file _scms159597_)
                             '#!void)
                         (let ()
                           (declare (not safe))
                           (gxc#verbose
                            '"copy static module "
-                           _scm0159599_
+                           _scm0159594_
                            '" => "
-                           _scms159602_))
-                        (copy-file _scm0159599_ _scms159602_)
+                           _scms159597_))
+                        (copy-file _scm0159594_ _scms159597_)
                         (if (gxc#current-compile-keep-scm)
                             '#!void
-                            (delete-file _scm0159599_))))))
-                 (_generate-loader-code159569_
-                  (lambda (_ctx159576_ _code159577_ _rt159578_)
-                    (let* ((_loader-code159581_
-                            (let ((__tmp160535
+                            (delete-file _scm0159594_))))))
+                 (_generate-loader-code159564_
+                  (lambda (_ctx159571_ _code159572_ _rt159573_)
+                    (let* ((_loader-code159576_
+                            (let ((__tmp160532
                                    (lambda ()
                                      (let ()
                                        (declare (not safe))
                                        (gxc#apply-generate-loader
-                                        _code159577_)))))
+                                        _code159572_)))))
                               (declare (not safe))
                               (call-with-parameters
-                               __tmp160535
+                               __tmp160532
                                gx#current-expander-context
-                               _ctx159576_)))
-                           (_loader-code159583_
-                            (if _rt159578_
-                                (let ((__tmp160536
-                                       (let ((__tmp160537
-                                              (let ((__tmp160538
-                                                     (let ((__tmp160539
+                               _ctx159571_)))
+                           (_loader-code159578_
+                            (if _rt159573_
+                                (let ((__tmp160533
+                                       (let ((__tmp160534
+                                              (let ((__tmp160535
+                                                     (let ((__tmp160536
                                                             (let ()
                                                               (declare
                                                                 (not safe))
-                                                              (cons _rt159578_
+                                                              (cons _rt159573_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))))
                (declare (not safe))
-               (cons 'load-module __tmp160539))))
+               (cons 'load-module __tmp160536))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (declare (not safe))
-                                                (cons __tmp160538 '()))))
+                                                (cons __tmp160535 '()))))
                                          (declare (not safe))
-                                         (cons _loader-code159581_
-                                               __tmp160537))))
+                                         (cons _loader-code159576_
+                                               __tmp160534))))
                                   (declare (not safe))
-                                  (cons 'begin __tmp160536))
-                                _loader-code159581_)))
-                      (let ((__tmp160540
+                                  (cons 'begin __tmp160533))
+                                _loader-code159576_)))
+                      (let ((__tmp160537
                              (lambda ()
-                               (let ((__tmp160541
+                               (let ((__tmp160538
                                       (let ()
                                         (declare (not safe))
                                         (gxc#compile-output-file
-                                         _ctx159576_
+                                         _ctx159571_
                                          '#f
                                          '".scm"))))
                                  (declare (not safe))
                                  (gxc#compile-scm-file__0
-                                  __tmp160541
-                                  _loader-code159583_)))))
+                                  __tmp160538
+                                  _loader-code159578_)))))
                         (declare (not safe))
                         (call-with-parameters
-                         __tmp160540
+                         __tmp160537
                          gxc#current-compile-gsc-options
                          '#f))))))
-          (let ((_all-modules159571_
-                 (let ((__tmp160542
+          (let ((_all-modules159566_
+                 (let ((__tmp160539
                         (let ()
                           (declare (not safe))
-                          (gxc#lift-nested-modules _ctx159564_))))
+                          (gxc#lift-nested-modules _ctx159559_))))
                    (declare (not safe))
-                   (cons _ctx159564_ __tmp160542))))
+                   (cons _ctx159559_ __tmp160539))))
             (for-each
-             (lambda (_ctx159573_)
-               (let ((__tmp160543
+             (lambda (_ctx159568_)
+               (let ((__tmp160540
                       (lambda ()
                         (let ()
                           (declare (not safe))
-                          (_compile1159566_ _ctx159573_)))))
+                          (_compile1159561_ _ctx159568_)))))
                  (declare (not safe))
                  (call-with-parameters
-                  __tmp160543
+                  __tmp160540
                   gxc#current-compile-decls
                   '())))
-             _all-modules159571_)))))
+             _all-modules159566_)))))
     (define gxc#compile-meta-code
-      (lambda (_ctx159461_)
-        (letrec ((_compile-ssi159463_
-                  (lambda (_code159534_)
-                    (let* ((_path159536_
+      (lambda (_ctx159456_)
+        (letrec ((_compile-ssi159458_
+                  (lambda (_code159529_)
+                    (let* ((_path159531_
                             (let ()
                               (declare (not safe))
                               (gxc#compile-output-file
-                               _ctx159461_
+                               _ctx159456_
                                '#f
                                '".ssi")))
-                           (_prelude159547_
-                            (let* ((_super159538_
+                           (_prelude159542_
+                            (let* ((_super159533_
                                     (##structure-ref
-                                     _ctx159461_
+                                     _ctx159456_
                                      '3
                                      gx#phi-context::t
                                      '#f))
-                                   (_$e159540_
+                                   (_$e159535_
                                     (##structure-ref
-                                     _super159538_
+                                     _super159533_
                                      '1
                                      gx#expander-context::t
                                      '#f)))
-                              (if _$e159540_
-                                  ((lambda (_g159542159544_)
+                              (if _$e159535_
+                                  ((lambda (_g159537159539_)
                                      (let ()
                                        (declare (not safe))
-                                       (make-symbol__1 '":" _g159542159544_)))
-                                   _$e159540_)
+                                       (make-symbol__1 '":" _g159537159539_)))
+                                   _$e159535_)
                                   ':<root>)))
-                           (_ns159549_
+                           (_ns159544_
                             (##structure-ref
-                             _ctx159461_
+                             _ctx159456_
                              '6
                              gx#module-context::t
                              '#f))
-                           (_idstr159551_
+                           (_idstr159546_
                             (symbol->string
                              (##structure-ref
-                              _ctx159461_
+                              _ctx159456_
                               '1
                               gx#expander-context::t
                               '#f)))
-                           (_pkg159558_
-                            (let ((_$e159553_
+                           (_pkg159553_
+                            (let ((_$e159548_
                                    (let ()
                                      (declare (not safe))
-                                     (string-rindex__0 _idstr159551_ '#\/))))
-                              (if _$e159553_
-                                  ((lambda (_x159556_)
+                                     (string-rindex__0 _idstr159546_ '#\/))))
+                              (if _$e159548_
+                                  ((lambda (_x159551_)
                                      (string->symbol
-                                      (substring _idstr159551_ '0 _x159556_)))
-                                   _$e159553_)
+                                      (substring _idstr159546_ '0 _x159551_)))
+                                   _$e159548_)
                                   '#f)))
-                           (_rt159560_
-                            (let ((__tmp160544
+                           (_rt159555_
+                            (let ((__tmp160541
                                    (gxc#current-compile-runtime-sections)))
                               (declare (not safe))
-                              (hash-get __tmp160544 _ctx159461_))))
+                              (hash-get __tmp160541 _ctx159456_))))
                       (let ()
                         (declare (not safe))
-                        (gxc#verbose '"compile " _path159536_))
-                      (let ((__tmp160545
+                        (gxc#verbose '"compile " _path159531_))
+                      (let ((__tmp160542
                              (lambda ()
                                (let ()
                                  (declare (not safe))
-                                 (displayln '"prelude:" '" " _prelude159547_))
-                               (if _pkg159558_
+                                 (displayln '"prelude:" '" " _prelude159542_))
+                               (if _pkg159553_
                                    (let ()
                                      (declare (not safe))
-                                     (displayln '"package:" '" " _pkg159558_))
+                                     (displayln '"package:" '" " _pkg159553_))
                                    '#!void)
                                (let ()
                                  (declare (not safe))
-                                 (displayln '"namespace:" '" " _ns159549_))
+                                 (displayln '"namespace:" '" " _ns159544_))
                                (newline)
-                               (pretty-print _code159534_)
-                               (if _rt159560_
+                               (pretty-print _code159529_)
+                               (if _rt159555_
                                    (pretty-print
-                                    (let ((__tmp160546
-                                           (let ((__tmp160550
-                                                  (let ((__tmp160551
+                                    (let ((__tmp160543
+                                           (let ((__tmp160547
+                                                  (let ((__tmp160548
                                                          (let ()
                                                            (declare (not safe))
                                                            (cons 'load-module
@@ -2446,1096 +2456,1096 @@
                          '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons '%#ref __tmp160551)))
-                                                 (__tmp160547
-                                                  (let ((__tmp160548
-                                                         (let ((__tmp160549
+                                                    (cons '%#ref __tmp160548)))
+                                                 (__tmp160544
+                                                  (let ((__tmp160545
+                                                         (let ((__tmp160546
                                                                 (let ()
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (declare (not safe))
-                          (cons _rt159560_ '()))))
+                          (cons _rt159555_ '()))))
                    (declare (not safe))
-                   (cons '%#quote __tmp160549))))
+                   (cons '%#quote __tmp160546))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (declare (not safe))
-                                                    (cons __tmp160548 '()))))
+                                                    (cons __tmp160545 '()))))
                                              (declare (not safe))
-                                             (cons __tmp160550 __tmp160547))))
+                                             (cons __tmp160547 __tmp160544))))
                                       (declare (not safe))
-                                      (cons '%#call __tmp160546)))
+                                      (cons '%#call __tmp160543)))
                                    '#!void))))
                         (declare (not safe))
                         (gxc#with-output-to-scheme-file
-                         _path159536_
-                         __tmp160545)))))
-                 (_compile-phi159464_
-                  (lambda (_part159474_)
-                    (let* ((_part159475159488_ _part159474_)
-                           (_E159477159492_
+                         _path159531_
+                         __tmp160542)))))
+                 (_compile-phi159459_
+                  (lambda (_part159469_)
+                    (let* ((_part159470159483_ _part159469_)
+                           (_E159472159487_
                             (lambda ()
                               (let ()
                                 (declare (not safe))
                                 (error '"No clause matching"
-                                       _part159475159488_))))
-                           (_K159478159503_
-                            (lambda (_code159495_
-                                     _n159496_
-                                     _phi159497_
-                                     _phi-ctx159498_)
-                              (let* ((_code159501_
-                                      (let ((__tmp160552
+                                       _part159470159483_))))
+                           (_K159473159498_
+                            (lambda (_code159490_
+                                     _n159491_
+                                     _phi159492_
+                                     _phi-ctx159493_)
+                              (let* ((_code159496_
+                                      (let ((__tmp160549
                                              (lambda ()
                                                (let ()
                                                  (declare (not safe))
                                                  (gxc#generate-runtime-phi
-                                                  _code159495_)))))
+                                                  _code159490_)))))
                                         (declare (not safe))
                                         (call-with-parameters
-                                         __tmp160552
+                                         __tmp160549
                                          gx#current-expander-context
-                                         _phi-ctx159498_
+                                         _phi-ctx159493_
                                          gx#current-expander-phi
-                                         _phi159497_)))
-                                     (__tmp160553
+                                         _phi159492_)))
+                                     (__tmp160550
                                       (let ()
                                         (declare (not safe))
                                         (gxc#compile-output-file
-                                         _ctx159461_
-                                         _n159496_
+                                         _ctx159456_
+                                         _n159491_
                                          '".scm"))))
                                 (declare (not safe))
                                 (gxc#compile-scm-file__%
-                                 __tmp160553
-                                 _code159501_
+                                 __tmp160550
+                                 _code159496_
                                  '#t)))))
                       (if (let ()
                             (declare (not safe))
-                            (##pair? _part159475159488_))
-                          (let ((_hd159479159506_
+                            (##pair? _part159470159483_))
+                          (let ((_hd159474159501_
                                  (let ()
                                    (declare (not safe))
-                                   (##car _part159475159488_)))
-                                (_tl159480159508_
+                                   (##car _part159470159483_)))
+                                (_tl159475159503_
                                  (let ()
                                    (declare (not safe))
-                                   (##cdr _part159475159488_))))
-                            (let ((_phi-ctx159511_ _hd159479159506_))
+                                   (##cdr _part159470159483_))))
+                            (let ((_phi-ctx159506_ _hd159474159501_))
                               (if (let ()
                                     (declare (not safe))
-                                    (##pair? _tl159480159508_))
-                                  (let ((_hd159481159513_
+                                    (##pair? _tl159475159503_))
+                                  (let ((_hd159476159508_
                                          (let ()
                                            (declare (not safe))
-                                           (##car _tl159480159508_)))
-                                        (_tl159482159515_
+                                           (##car _tl159475159503_)))
+                                        (_tl159477159510_
                                          (let ()
                                            (declare (not safe))
-                                           (##cdr _tl159480159508_))))
-                                    (let ((_phi159518_ _hd159481159513_))
+                                           (##cdr _tl159475159503_))))
+                                    (let ((_phi159513_ _hd159476159508_))
                                       (if (let ()
                                             (declare (not safe))
-                                            (##pair? _tl159482159515_))
-                                          (let ((_hd159483159520_
+                                            (##pair? _tl159477159510_))
+                                          (let ((_hd159478159515_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##car _tl159482159515_)))
-                                                (_tl159484159522_
+                                                   (##car _tl159477159510_)))
+                                                (_tl159479159517_
                                                  (let ()
                                                    (declare (not safe))
-                                                   (##cdr _tl159482159515_))))
-                                            (let ((_n159525_ _hd159483159520_))
+                                                   (##cdr _tl159477159510_))))
+                                            (let ((_n159520_ _hd159478159515_))
                                               (if (let ()
                                                     (declare (not safe))
-                                                    (##pair? _tl159484159522_))
-                                                  (let ((_hd159485159527_
+                                                    (##pair? _tl159479159517_))
+                                                  (let ((_hd159480159522_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##car _tl159484159522_)))
-                                                        (_tl159486159529_
+                                                           (##car _tl159479159517_)))
+                                                        (_tl159481159524_
                                                          (let ()
                                                            (declare (not safe))
-                                                           (##cdr _tl159484159522_))))
-                                                    (let ((_code159532_
-                                                           _hd159485159527_))
+                                                           (##cdr _tl159479159517_))))
+                                                    (let ((_code159527_
+                                                           _hd159480159522_))
                                                       (if (let ()
                                                             (declare
                                                               (not safe))
-                                                            (##null? _tl159486159529_))
+                                                            (##null? _tl159481159524_))
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (_K159478159503_
-                                                             _code159532_
-                                                             _n159525_
-                                                             _phi159518_
-                                                             _phi-ctx159511_))
+                                                            (_K159473159498_
+                                                             _code159527_
+                                                             _n159520_
+                                                             _phi159513_
+                                                             _phi-ctx159506_))
                                                           (let ()
                                                             (declare
                                                               (not safe))
-                                                            (_E159477159492_)))))
+                                                            (_E159472159487_)))))
                                                   (let ()
                                                     (declare (not safe))
-                                                    (_E159477159492_)))))
+                                                    (_E159472159487_)))))
                                           (let ()
                                             (declare (not safe))
-                                            (_E159477159492_)))))
+                                            (_E159472159487_)))))
                                   (let ()
                                     (declare (not safe))
-                                    (_E159477159492_)))))
-                          (let () (declare (not safe)) (_E159477159492_)))))))
-          (let ((_g160554_
+                                    (_E159472159487_)))))
+                          (let () (declare (not safe)) (_E159472159487_)))))))
+          (let ((_g160551_
                  (let ()
                    (declare (not safe))
-                   (gxc#generate-meta-code _ctx159461_))))
+                   (gxc#generate-meta-code _ctx159456_))))
             (begin
-              (let ((_g160555_
+              (let ((_g160552_
                      (let ()
                        (declare (not safe))
-                       (if (##values? _g160554_)
-                           (##vector-length _g160554_)
+                       (if (##values? _g160551_)
+                           (##vector-length _g160551_)
                            1))))
-                (if (not (let () (declare (not safe)) (##fx= _g160555_ 2)))
-                    (error "Context expects 2 values" _g160555_)))
-              (let ((_ssi-code159466_
-                     (let () (declare (not safe)) (##vector-ref _g160554_ 0)))
-                    (_phi-code159467_
-                     (let () (declare (not safe)) (##vector-ref _g160554_ 1))))
+                (if (not (let () (declare (not safe)) (##fx= _g160552_ 2)))
+                    (error "Context expects 2 values" _g160552_)))
+              (let ((_ssi-code159461_
+                     (let () (declare (not safe)) (##vector-ref _g160551_ 0)))
+                    (_phi-code159462_
+                     (let () (declare (not safe)) (##vector-ref _g160551_ 1))))
                 (begin
                   (let ()
                     (declare (not safe))
-                    (_compile-ssi159463_ _ssi-code159466_))
-                  (let ((_threads159472_
-                         (map (lambda (_code159469_)
-                                (let ((__tmp160556
+                    (_compile-ssi159458_ _ssi-code159461_))
+                  (let ((_threads159467_
+                         (map (lambda (_code159464_)
+                                (let ((__tmp160553
                                        (lambda ()
                                          (let ()
                                            (declare (not safe))
-                                           (_compile-phi159464_
-                                            _code159469_)))))
+                                           (_compile-phi159459_
+                                            _code159464_)))))
                                   (declare (not safe))
-                                  (spawn __tmp160556)))
-                              _phi-code159467_)))
-                    (for-each gxc#join! _threads159472_)))))))))
+                                  (spawn __tmp160553)))
+                              _phi-code159462_)))
+                    (for-each gxc#join! _threads159467_)))))))))
     (define gxc#compile-ssxi-code
-      (lambda (_ctx159444_)
-        (let* ((_path159446_
+      (lambda (_ctx159439_)
+        (let* ((_path159441_
                 (let ()
                   (declare (not safe))
-                  (gxc#compile-output-file _ctx159444_ '#f '".ssxi.ss")))
-               (_code159448_
-                (let ((__tmp160557
+                  (gxc#compile-output-file _ctx159439_ '#f '".ssxi.ss")))
+               (_code159443_
+                (let ((__tmp160554
                        (##structure-ref
-                        _ctx159444_
+                        _ctx159439_
                         '11
                         gx#module-context::t
                         '#f)))
                   (declare (not safe))
-                  (gxc#apply-generate-ssxi __tmp160557)))
-               (_idstr159450_
+                  (gxc#apply-generate-ssxi __tmp160554)))
+               (_idstr159445_
                 (symbol->string
-                 (##structure-ref _ctx159444_ '1 gx#expander-context::t '#f)))
-               (_pkg159457_
-                (let ((_$e159452_
+                 (##structure-ref _ctx159439_ '1 gx#expander-context::t '#f)))
+               (_pkg159452_
+                (let ((_$e159447_
                        (let ()
                          (declare (not safe))
-                         (string-rindex__0 _idstr159450_ '#\/))))
-                  (if _$e159452_
-                      ((lambda (_x159455_)
+                         (string-rindex__0 _idstr159445_ '#\/))))
+                  (if _$e159447_
+                      ((lambda (_x159450_)
                          (string->symbol
-                          (substring _idstr159450_ '0 _x159455_)))
-                       _$e159452_)
+                          (substring _idstr159445_ '0 _x159450_)))
+                       _$e159447_)
                       '#f))))
-          (let () (declare (not safe)) (gxc#verbose '"compile " _path159446_))
-          (let ((__tmp160558
+          (let () (declare (not safe)) (gxc#verbose '"compile " _path159441_))
+          (let ((__tmp160555
                  (lambda ()
                    (let ()
                      (declare (not safe))
                      (displayln '"prelude: :gerbil/compiler/ssxi"))
-                   (if _pkg159457_
+                   (if _pkg159452_
                        (let ()
                          (declare (not safe))
-                         (displayln '"package: " _pkg159457_))
+                         (displayln '"package: " _pkg159452_))
                        '#!void)
                    (newline)
-                   (pretty-print _code159448_))))
+                   (pretty-print _code159443_))))
             (declare (not safe))
-            (gxc#with-output-to-scheme-file _path159446_ __tmp160558)))))
+            (gxc#with-output-to-scheme-file _path159441_ __tmp160555)))))
     (define gxc#generate-meta-code
-      (lambda (_ctx159437_)
-        (let* ((_state159439_
-                (let ((__obj160319
+      (lambda (_ctx159432_)
+        (let* ((_state159434_
+                (let ((__obj160316
                        (let ()
                          (declare (not safe))
                          (##structure gxc#meta-state::t '#f '#f '#f '#f))))
-                  (gxc#meta-state:::init! __obj160319 _ctx159437_)
-                  __obj160319))
-               (_ssi-code159441_
-                (let ((__tmp160559
+                  (gxc#meta-state:::init! __obj160316 _ctx159432_)
+                  __obj160316))
+               (_ssi-code159436_
+                (let ((__tmp160556
                        (##structure-ref
-                        _ctx159437_
+                        _ctx159432_
                         '11
                         gx#module-context::t
                         '#f)))
                   (declare (not safe))
                   (gxc#apply-generate-meta
-                   __tmp160559
+                   __tmp160556
                    'state:
-                   _state159439_))))
-          (values _ssi-code159441_
+                   _state159434_))))
+          (values _ssi-code159436_
                   (let ()
                     (declare (not safe))
-                    (gxc#meta-state-end! _state159439_))))))
+                    (gxc#meta-state-end! _state159434_))))))
     (define gxc#generate-runtime-phi
-      (lambda (_stx159430_)
-        (let ((_lifts159432_ (let () (declare (not safe)) (box '()))))
-          (let ((__tmp160562
+      (lambda (_stx159425_)
+        (let ((_lifts159427_ (let () (declare (not safe)) (box '()))))
+          (let ((__tmp160559
                  (lambda ()
-                   (let ((_code159435_
+                   (let ((_code159430_
                           (let ()
                             (declare (not safe))
-                            (gxc#apply-generate-runtime-phi _stx159430_))))
-                     (if (let ((__tmp160566 (unbox _lifts159432_)))
+                            (gxc#apply-generate-runtime-phi _stx159425_))))
+                     (if (let ((__tmp160563 (unbox _lifts159427_)))
                            (declare (not safe))
-                           (null? __tmp160566))
-                         _code159435_
-                         (let ((__tmp160563
-                                (let ((__tmp160565
+                           (null? __tmp160563))
+                         _code159430_
+                         (let ((__tmp160560
+                                (let ((__tmp160562
                                        (let ()
                                          (declare (not safe))
-                                         (cons _code159435_ '())))
-                                      (__tmp160564
-                                       (reverse (unbox _lifts159432_))))
+                                         (cons _code159430_ '())))
+                                      (__tmp160561
+                                       (reverse (unbox _lifts159427_))))
                                   (declare (not safe))
-                                  (foldr1 cons __tmp160565 __tmp160564))))
+                                  (foldr1 cons __tmp160562 __tmp160561))))
                            (declare (not safe))
-                           (cons 'begin __tmp160563))))))
-                (__tmp160561
+                           (cons 'begin __tmp160560))))))
+                (__tmp160558
                  (let () (declare (not safe)) (make-hash-table-eq)))
-                (__tmp160560
+                (__tmp160557
                  (let ()
                    (declare (not safe))
                    (gxc#make-bound-identifier-table))))
             (declare (not safe))
             (call-with-parameters
-             __tmp160562
+             __tmp160559
              gxc#current-compile-lift
-             _lifts159432_
+             _lifts159427_
              gxc#current-compile-marks
-             __tmp160561
+             __tmp160558
              gxc#current-compile-identifiers
-             __tmp160560)))))
+             __tmp160557)))))
     (define gxc#lift-nested-modules
-      (lambda (_ctx159426_)
-        (let ((_modules159428_ (let () (declare (not safe)) (box '()))))
-          (let ((__tmp160567
-                 (##structure-ref _ctx159426_ '11 gx#module-context::t '#f)))
+      (lambda (_ctx159421_)
+        (let ((_modules159423_ (let () (declare (not safe)) (box '()))))
+          (let ((__tmp160564
+                 (##structure-ref _ctx159421_ '11 gx#module-context::t '#f)))
             (declare (not safe))
-            (gxc#apply-lift-modules __tmp160567 'modules: _modules159428_))
-          (reverse (unbox _modules159428_)))))
+            (gxc#apply-lift-modules __tmp160564 'modules: _modules159423_))
+          (reverse (unbox _modules159423_)))))
     (define gxc#compile-scm-file__%
-      (lambda (_path159409_ _code159410_ _phi?159411_)
-        (let () (declare (not safe)) (gxc#verbose '"compile " _path159409_))
-        (let ((__tmp160568
+      (lambda (_path159404_ _code159405_ _phi?159406_)
+        (let () (declare (not safe)) (gxc#verbose '"compile " _path159404_))
+        (let ((__tmp160565
                (lambda ()
                  (pretty-print
-                  (let ((__tmp160569
-                         (let ((__tmp160576
+                  (let ((__tmp160566
+                         (let ((__tmp160573
                                 (let ()
                                   (declare (not safe))
                                   (cons 'block '())))
-                               (__tmp160570
-                                (let ((__tmp160575
+                               (__tmp160567
+                                (let ((__tmp160572
                                        (let ()
                                          (declare (not safe))
                                          (cons 'standard-bindings '())))
-                                      (__tmp160571
-                                       (let ((__tmp160574
+                                      (__tmp160568
+                                       (let ((__tmp160571
                                               (let ()
                                                 (declare (not safe))
                                                 (cons 'extended-bindings '())))
-                                             (__tmp160572
-                                              (let ((__tmp160573
-                                                     (if _phi?159411_
+                                             (__tmp160569
+                                              (let ((__tmp160570
+                                                     (if _phi?159406_
                                                          '((inlining-limit
                                                             200))
                                                          '())))
                                                 (declare (not safe))
                                                 (foldr1 cons
                                                         '()
-                                                        __tmp160573))))
+                                                        __tmp160570))))
                                          (declare (not safe))
-                                         (cons __tmp160574 __tmp160572))))
+                                         (cons __tmp160571 __tmp160569))))
                                   (declare (not safe))
-                                  (cons __tmp160575 __tmp160571))))
+                                  (cons __tmp160572 __tmp160568))))
                            (declare (not safe))
-                           (cons __tmp160576 __tmp160570))))
+                           (cons __tmp160573 __tmp160567))))
                     (declare (not safe))
-                    (cons 'declare __tmp160569)))
-                 (pretty-print _code159410_))))
+                    (cons 'declare __tmp160566)))
+                 (pretty-print _code159405_))))
           (declare (not safe))
-          (gxc#with-output-to-scheme-file _path159409_ __tmp160568))
+          (gxc#with-output-to-scheme-file _path159404_ __tmp160565))
         (if (gxc#current-compile-invoke-gsc)
             (let ()
               (declare (not safe))
-              (gxc#gsc-compile-file _path159409_ _phi?159411_))
+              (gxc#gsc-compile-file _path159404_ _phi?159406_))
             '#!void)
         (if (gxc#current-compile-keep-scm)
             '#!void
-            (delete-file _path159409_))))
+            (delete-file _path159404_))))
     (define gxc#compile-scm-file__0
-      (lambda (_path159417_ _code159418_)
-        (let ((_phi?159420_ '#f))
+      (lambda (_path159412_ _code159413_)
+        (let ((_phi?159415_ '#f))
           (declare (not safe))
-          (gxc#compile-scm-file__% _path159417_ _code159418_ _phi?159420_))))
+          (gxc#compile-scm-file__% _path159412_ _code159413_ _phi?159415_))))
     (define gxc#compile-scm-file
-      (lambda _g160578_
-        (let ((_g160577_ (let () (declare (not safe)) (##length _g160578_))))
-          (cond ((let () (declare (not safe)) (##fx= _g160577_ 2))
-                 (apply (lambda (_path159417_ _code159418_)
+      (lambda _g160575_
+        (let ((_g160574_ (let () (declare (not safe)) (##length _g160575_))))
+          (cond ((let () (declare (not safe)) (##fx= _g160574_ 2))
+                 (apply (lambda (_path159412_ _code159413_)
                           (let ()
                             (declare (not safe))
                             (gxc#compile-scm-file__0
-                             _path159417_
-                             _code159418_)))
-                        _g160578_))
-                ((let () (declare (not safe)) (##fx= _g160577_ 3))
-                 (apply (lambda (_path159422_ _code159423_ _phi?159424_)
+                             _path159412_
+                             _code159413_)))
+                        _g160575_))
+                ((let () (declare (not safe)) (##fx= _g160574_ 3))
+                 (apply (lambda (_path159417_ _code159418_ _phi?159419_)
                           (let ()
                             (declare (not safe))
                             (gxc#compile-scm-file__%
-                             _path159422_
-                             _code159423_
-                             _phi?159424_)))
-                        _g160578_))
+                             _path159417_
+                             _code159418_
+                             _phi?159419_)))
+                        _g160575_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#compile-scm-file
-                  _g160578_))))))
+                  _g160575_))))))
     (define gxc#gsc-link-options__%
-      (lambda (_phi?159310_)
-        (let _lp159312_ ((_rest159314_ (gxc#current-compile-gsc-options))
-                         (_opts159315_ '()))
-          (let* ((_rest159316159336_ _rest159314_)
-                 (_else159320159344_
+      (lambda (_phi?159305_)
+        (let _lp159307_ ((_rest159309_ (gxc#current-compile-gsc-options))
+                         (_opts159310_ '()))
+          (let* ((_rest159311159331_ _rest159309_)
+                 (_else159315159339_
                   (lambda ()
-                    (if (and (let () (declare (not safe)) (not _phi?159310_))
+                    (if (and (let () (declare (not safe)) (not _phi?159305_))
                              (gxc#current-compile-debug))
-                        (let ((__tmp160579
-                               (let ((__tmp160580 (reverse _opts159315_)))
+                        (let ((__tmp160576
+                               (let ((__tmp160577 (reverse _opts159310_)))
                                  (declare (not safe))
-                                 (cons '"-track-scheme" __tmp160580))))
+                                 (cons '"-track-scheme" __tmp160577))))
                           (declare (not safe))
-                          (cons '"-debug-source" __tmp160579))
-                        (reverse _opts159315_)))))
-            (let ((_K159330159387_
-                   (lambda (_rest159385_)
+                          (cons '"-debug-source" __tmp160576))
+                        (reverse _opts159310_)))))
+            (let ((_K159325159382_
+                   (lambda (_rest159380_)
                      (let ()
                        (declare (not safe))
-                       (_lp159312_ _rest159385_ _opts159315_))))
-                  (_K159325159369_
-                   (lambda (_rest159367_)
+                       (_lp159307_ _rest159380_ _opts159310_))))
+                  (_K159320159364_
+                   (lambda (_rest159362_)
                      (let ()
                        (declare (not safe))
-                       (_lp159312_ _rest159367_ _opts159315_))))
-                  (_K159322159351_
-                   (lambda (_rest159348_ _opt159349_)
-                     (let ((__tmp160581
+                       (_lp159307_ _rest159362_ _opts159310_))))
+                  (_K159317159346_
+                   (lambda (_rest159343_ _opt159344_)
+                     (let ((__tmp160578
                             (let ()
                               (declare (not safe))
-                              (cons _opt159349_ _opts159315_))))
+                              (cons _opt159344_ _opts159310_))))
                        (declare (not safe))
-                       (_lp159312_ _rest159348_ __tmp160581)))))
-              (if (let () (declare (not safe)) (##pair? _rest159316159336_))
-                  (let ((_tl159332159392_
+                       (_lp159307_ _rest159343_ __tmp160578)))))
+              (if (let () (declare (not safe)) (##pair? _rest159311159331_))
+                  (let ((_tl159327159387_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest159316159336_)))
-                        (_hd159331159390_
+                           (##cdr _rest159311159331_)))
+                        (_hd159326159385_
                          (let ()
                            (declare (not safe))
-                           (##car _rest159316159336_))))
+                           (##car _rest159311159331_))))
                     (if (let ()
                           (declare (not safe))
-                          (equal? _hd159331159390_ '"-cc-options"))
+                          (equal? _hd159326159385_ '"-cc-options"))
                         (if (let ()
                               (declare (not safe))
-                              (##pair? _tl159332159392_))
-                            (let* ((_tl159334159395_
+                              (##pair? _tl159327159387_))
+                            (let* ((_tl159329159390_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _tl159332159392_)))
-                                   (_rest159398_ _tl159334159395_))
+                                      (##cdr _tl159327159387_)))
+                                   (_rest159393_ _tl159329159390_))
                               (declare (not safe))
-                              (_K159330159387_ _rest159398_))
-                            (let ((_opt159359_ _hd159331159390_)
-                                  (_rest159361_ _tl159332159392_))
+                              (_K159325159382_ _rest159393_))
+                            (let ((_opt159354_ _hd159326159385_)
+                                  (_rest159356_ _tl159327159387_))
                               (let ()
                                 (declare (not safe))
-                                (_K159322159351_ _rest159361_ _opt159359_))))
+                                (_K159317159346_ _rest159356_ _opt159354_))))
                         (if (let ()
                               (declare (not safe))
-                              (equal? _hd159331159390_ '"-ld-options"))
+                              (equal? _hd159326159385_ '"-ld-options"))
                             (if (let ()
                                   (declare (not safe))
-                                  (##pair? _tl159332159392_))
-                                (let* ((_tl159329159377_
+                                  (##pair? _tl159327159387_))
+                                (let* ((_tl159324159372_
                                         (let ()
                                           (declare (not safe))
-                                          (##cdr _tl159332159392_)))
-                                       (_rest159380_ _tl159329159377_))
+                                          (##cdr _tl159327159387_)))
+                                       (_rest159375_ _tl159324159372_))
                                   (declare (not safe))
-                                  (_K159325159369_ _rest159380_))
-                                (let ((_opt159359_ _hd159331159390_)
-                                      (_rest159361_ _tl159332159392_))
+                                  (_K159320159364_ _rest159375_))
+                                (let ((_opt159354_ _hd159326159385_)
+                                      (_rest159356_ _tl159327159387_))
                                   (let ()
                                     (declare (not safe))
-                                    (_K159322159351_
-                                     _rest159361_
-                                     _opt159359_))))
-                            (let ((_opt159359_ _hd159331159390_)
-                                  (_rest159361_ _tl159332159392_))
+                                    (_K159317159346_
+                                     _rest159356_
+                                     _opt159354_))))
+                            (let ((_opt159354_ _hd159326159385_)
+                                  (_rest159356_ _tl159327159387_))
                               (let ()
                                 (declare (not safe))
-                                (_K159322159351_ _rest159361_ _opt159359_))))))
-                  (let () (declare (not safe)) (_else159320159344_))))))))
+                                (_K159317159346_ _rest159356_ _opt159354_))))))
+                  (let () (declare (not safe)) (_else159315159339_))))))))
     (define gxc#gsc-link-options__0
       (lambda ()
-        (let ((_phi?159404_ '#f))
+        (let ((_phi?159399_ '#f))
           (declare (not safe))
-          (gxc#gsc-link-options__% _phi?159404_))))
+          (gxc#gsc-link-options__% _phi?159399_))))
     (define gxc#gsc-link-options
-      (lambda _g160583_
-        (let ((_g160582_ (let () (declare (not safe)) (##length _g160583_))))
-          (cond ((let () (declare (not safe)) (##fx= _g160582_ 0))
+      (lambda _g160580_
+        (let ((_g160579_ (let () (declare (not safe)) (##length _g160580_))))
+          (cond ((let () (declare (not safe)) (##fx= _g160579_ 0))
                  (apply (lambda ()
                           (let ()
                             (declare (not safe))
                             (gxc#gsc-link-options__0)))
-                        _g160583_))
-                ((let () (declare (not safe)) (##fx= _g160582_ 1))
-                 (apply (lambda (_phi?159406_)
+                        _g160580_))
+                ((let () (declare (not safe)) (##fx= _g160579_ 1))
+                 (apply (lambda (_phi?159401_)
                           (let ()
                             (declare (not safe))
-                            (gxc#gsc-link-options__% _phi?159406_)))
-                        _g160583_))
+                            (gxc#gsc-link-options__% _phi?159401_)))
+                        _g160580_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#gsc-link-options
-                  _g160583_))))))
+                  _g160580_))))))
     (define gxc#gsc-cc-options__%
-      (lambda (_phi?159211_)
-        (let _lp159213_ ((_rest159215_ (gxc#current-compile-gsc-options))
-                         (_opts159216_ '()))
-          (let* ((_rest159217159237_ _rest159215_)
-                 (_else159221159245_
+      (lambda (_phi?159206_)
+        (let _lp159208_ ((_rest159210_ (gxc#current-compile-gsc-options))
+                         (_opts159211_ '()))
+          (let* ((_rest159212159232_ _rest159210_)
+                 (_else159216159240_
                   (lambda ()
-                    (if (and (let () (declare (not safe)) (not _phi?159211_))
+                    (if (and (let () (declare (not safe)) (not _phi?159206_))
                              (gxc#current-compile-debug))
-                        (let ((__tmp160584
-                               (let ((__tmp160585 (reverse _opts159216_)))
+                        (let ((__tmp160581
+                               (let ((__tmp160582 (reverse _opts159211_)))
                                  (declare (not safe))
-                                 (cons '"-g" __tmp160585))))
+                                 (cons '"-g" __tmp160582))))
                           (declare (not safe))
-                          (cons '"-cc-options" __tmp160584))
-                        (reverse _opts159216_)))))
-            (let ((_K159231159284_
-                   (lambda (_rest159281_ _opt159282_)
-                     (let ((__tmp160586
-                            (let ((__tmp160587
+                          (cons '"-cc-options" __tmp160581))
+                        (reverse _opts159211_)))))
+            (let ((_K159226159279_
+                   (lambda (_rest159276_ _opt159277_)
+                     (let ((__tmp160583
+                            (let ((__tmp160584
                                    (let ()
                                      (declare (not safe))
-                                     (cons '"-cc-options" _opts159216_))))
+                                     (cons '"-cc-options" _opts159211_))))
                               (declare (not safe))
-                              (cons _opt159282_ __tmp160587))))
+                              (cons _opt159277_ __tmp160584))))
                        (declare (not safe))
-                       (_lp159213_ _rest159281_ __tmp160586))))
-                  (_K159226159265_
-                   (lambda (_rest159263_)
+                       (_lp159208_ _rest159276_ __tmp160583))))
+                  (_K159221159260_
+                   (lambda (_rest159258_)
                      (let ()
                        (declare (not safe))
-                       (_lp159213_ _rest159263_ _opts159216_))))
-                  (_K159223159251_
-                   (lambda (_rest159249_)
+                       (_lp159208_ _rest159258_ _opts159211_))))
+                  (_K159218159246_
+                   (lambda (_rest159244_)
                      (let ()
                        (declare (not safe))
-                       (_lp159213_ _rest159249_ _opts159216_)))))
-              (if (let () (declare (not safe)) (##pair? _rest159217159237_))
-                  (let ((_tl159233159289_
+                       (_lp159208_ _rest159244_ _opts159211_)))))
+              (if (let () (declare (not safe)) (##pair? _rest159212159232_))
+                  (let ((_tl159228159284_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest159217159237_)))
-                        (_hd159232159287_
+                           (##cdr _rest159212159232_)))
+                        (_hd159227159282_
                          (let ()
                            (declare (not safe))
-                           (##car _rest159217159237_))))
+                           (##car _rest159212159232_))))
                     (if (let ()
                           (declare (not safe))
-                          (equal? _hd159232159287_ '"-cc-options"))
+                          (equal? _hd159227159282_ '"-cc-options"))
                         (if (let ()
                               (declare (not safe))
-                              (##pair? _tl159233159289_))
-                            (let ((_tl159235159294_
+                              (##pair? _tl159228159284_))
+                            (let ((_tl159230159289_
                                    (let ()
                                      (declare (not safe))
-                                     (##cdr _tl159233159289_)))
-                                  (_hd159234159292_
+                                     (##cdr _tl159228159284_)))
+                                  (_hd159229159287_
                                    (let ()
                                      (declare (not safe))
-                                     (##car _tl159233159289_))))
-                              (let ((_opt159297_ _hd159234159292_)
-                                    (_rest159299_ _tl159235159294_))
+                                     (##car _tl159228159284_))))
+                              (let ((_opt159292_ _hd159229159287_)
+                                    (_rest159294_ _tl159230159289_))
                                 (let ()
                                   (declare (not safe))
-                                  (_K159231159284_ _rest159299_ _opt159297_))))
-                            (let ((_rest159257_ _tl159233159289_))
+                                  (_K159226159279_ _rest159294_ _opt159292_))))
+                            (let ((_rest159252_ _tl159228159284_))
                               (declare (not safe))
-                              (_K159223159251_ _rest159257_)))
+                              (_K159218159246_ _rest159252_)))
                         (if (let ()
                               (declare (not safe))
-                              (equal? _hd159232159287_ '"-ld-options"))
+                              (equal? _hd159227159282_ '"-ld-options"))
                             (if (let ()
                                   (declare (not safe))
-                                  (##pair? _tl159233159289_))
-                                (let* ((_tl159230159273_
+                                  (##pair? _tl159228159284_))
+                                (let* ((_tl159225159268_
                                         (let ()
                                           (declare (not safe))
-                                          (##cdr _tl159233159289_)))
-                                       (_rest159276_ _tl159230159273_))
+                                          (##cdr _tl159228159284_)))
+                                       (_rest159271_ _tl159225159268_))
                                   (declare (not safe))
-                                  (_K159226159265_ _rest159276_))
-                                (let ((_rest159257_ _tl159233159289_))
+                                  (_K159221159260_ _rest159271_))
+                                (let ((_rest159252_ _tl159228159284_))
                                   (declare (not safe))
-                                  (_K159223159251_ _rest159257_)))
-                            (let ((_rest159257_ _tl159233159289_))
+                                  (_K159218159246_ _rest159252_)))
+                            (let ((_rest159252_ _tl159228159284_))
                               (declare (not safe))
-                              (_K159223159251_ _rest159257_)))))
-                  (let () (declare (not safe)) (_else159221159245_))))))))
+                              (_K159218159246_ _rest159252_)))))
+                  (let () (declare (not safe)) (_else159216159240_))))))))
     (define gxc#gsc-cc-options__0
       (lambda ()
-        (let ((_phi?159305_ '#f))
+        (let ((_phi?159300_ '#f))
           (declare (not safe))
-          (gxc#gsc-cc-options__% _phi?159305_))))
+          (gxc#gsc-cc-options__% _phi?159300_))))
     (define gxc#gsc-cc-options
-      (lambda _g160589_
-        (let ((_g160588_ (let () (declare (not safe)) (##length _g160589_))))
-          (cond ((let () (declare (not safe)) (##fx= _g160588_ 0))
+      (lambda _g160586_
+        (let ((_g160585_ (let () (declare (not safe)) (##length _g160586_))))
+          (cond ((let () (declare (not safe)) (##fx= _g160585_ 0))
                  (apply (lambda ()
                           (let ()
                             (declare (not safe))
                             (gxc#gsc-cc-options__0)))
-                        _g160589_))
-                ((let () (declare (not safe)) (##fx= _g160588_ 1))
-                 (apply (lambda (_phi?159307_)
+                        _g160586_))
+                ((let () (declare (not safe)) (##fx= _g160585_ 1))
+                 (apply (lambda (_phi?159302_)
                           (let ()
                             (declare (not safe))
-                            (gxc#gsc-cc-options__% _phi?159307_)))
-                        _g160589_))
+                            (gxc#gsc-cc-options__% _phi?159302_)))
+                        _g160586_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gxc#gsc-cc-options
-                  _g160589_))))))
+                  _g160586_))))))
     (define gxc#gsc-static-include-options
-      (lambda (_staticdir159206_)
-        (let* ((_user-staticdir159208_
+      (lambda (_staticdir159201_)
+        (let* ((_user-staticdir159203_
                 (path-expand
                  (path-expand
                   '"lib/static"
                   (let () (declare (not safe)) (gerbil-path)))))
-               (__tmp160590
-                (let ((__tmp160591
+               (__tmp160587
+                (let ((__tmp160588
                        (string-append
                         '"-I "
-                        _staticdir159206_
+                        _staticdir159201_
                         '" -I "
-                        _user-staticdir159208_)))
+                        _user-staticdir159203_)))
                   (declare (not safe))
-                  (cons __tmp160591 '()))))
+                  (cons __tmp160588 '()))))
           (declare (not safe))
-          (cons '"-cc-options" __tmp160590))))
+          (cons '"-cc-options" __tmp160587))))
     (define gxc#gcc-ld-options
       (lambda ()
-        (let _lp159118_ ((_rest159120_ (gxc#current-compile-gsc-options))
-                         (_opts159121_ '()))
-          (let* ((_rest159122159142_ _rest159120_)
-                 (_else159126159150_ (lambda () _opts159121_)))
-            (let ((_K159136159193_
-                   (lambda (_rest159191_)
+        (let _lp159113_ ((_rest159115_ (gxc#current-compile-gsc-options))
+                         (_opts159116_ '()))
+          (let* ((_rest159117159137_ _rest159115_)
+                 (_else159121159145_ (lambda () _opts159116_)))
+            (let ((_K159131159188_
+                   (lambda (_rest159186_)
                      (let ()
                        (declare (not safe))
-                       (_lp159118_ _rest159191_ _opts159121_))))
-                  (_K159131159171_
-                   (lambda (_rest159168_ _opt159169_)
-                     (let ((__tmp160592
-                            (append _opts159121_
+                       (_lp159113_ _rest159186_ _opts159116_))))
+                  (_K159126159166_
+                   (lambda (_rest159163_ _opt159164_)
+                     (let ((__tmp160589
+                            (append _opts159116_
                                     (filter gxc#not-string-empty?
                                             (let ()
                                               (declare (not safe))
                                               (string-split
-                                               _opt159169_
+                                               _opt159164_
                                                '#\space))))))
                        (declare (not safe))
-                       (_lp159118_ _rest159168_ __tmp160592))))
-                  (_K159128159156_
-                   (lambda (_rest159154_)
+                       (_lp159113_ _rest159163_ __tmp160589))))
+                  (_K159123159151_
+                   (lambda (_rest159149_)
                      (let ()
                        (declare (not safe))
-                       (_lp159118_ _rest159154_ _opts159121_)))))
-              (if (let () (declare (not safe)) (##pair? _rest159122159142_))
-                  (let ((_tl159138159198_
+                       (_lp159113_ _rest159149_ _opts159116_)))))
+              (if (let () (declare (not safe)) (##pair? _rest159117159137_))
+                  (let ((_tl159133159193_
                          (let ()
                            (declare (not safe))
-                           (##cdr _rest159122159142_)))
-                        (_hd159137159196_
+                           (##cdr _rest159117159137_)))
+                        (_hd159132159191_
                          (let ()
                            (declare (not safe))
-                           (##car _rest159122159142_))))
+                           (##car _rest159117159137_))))
                     (if (let ()
                           (declare (not safe))
-                          (equal? _hd159137159196_ '"-cc-options"))
+                          (equal? _hd159132159191_ '"-cc-options"))
                         (if (let ()
                               (declare (not safe))
-                              (##pair? _tl159138159198_))
-                            (let* ((_tl159140159201_
+                              (##pair? _tl159133159193_))
+                            (let* ((_tl159135159196_
                                     (let ()
                                       (declare (not safe))
-                                      (##cdr _tl159138159198_)))
-                                   (_rest159204_ _tl159140159201_))
+                                      (##cdr _tl159133159193_)))
+                                   (_rest159199_ _tl159135159196_))
                               (declare (not safe))
-                              (_K159136159193_ _rest159204_))
-                            (let ((_rest159162_ _tl159138159198_))
+                              (_K159131159188_ _rest159199_))
+                            (let ((_rest159157_ _tl159133159193_))
                               (declare (not safe))
-                              (_K159128159156_ _rest159162_)))
+                              (_K159123159151_ _rest159157_)))
                         (if (let ()
                               (declare (not safe))
-                              (equal? _hd159137159196_ '"-ld-options"))
+                              (equal? _hd159132159191_ '"-ld-options"))
                             (if (let ()
                                   (declare (not safe))
-                                  (##pair? _tl159138159198_))
-                                (let ((_tl159135159181_
+                                  (##pair? _tl159133159193_))
+                                (let ((_tl159130159176_
                                        (let ()
                                          (declare (not safe))
-                                         (##cdr _tl159138159198_)))
-                                      (_hd159134159179_
+                                         (##cdr _tl159133159193_)))
+                                      (_hd159129159174_
                                        (let ()
                                          (declare (not safe))
-                                         (##car _tl159138159198_))))
-                                  (let ((_opt159184_ _hd159134159179_)
-                                        (_rest159186_ _tl159135159181_))
+                                         (##car _tl159133159193_))))
+                                  (let ((_opt159179_ _hd159129159174_)
+                                        (_rest159181_ _tl159130159176_))
                                     (let ()
                                       (declare (not safe))
-                                      (_K159131159171_
-                                       _rest159186_
-                                       _opt159184_))))
-                                (let ((_rest159162_ _tl159138159198_))
+                                      (_K159126159166_
+                                       _rest159181_
+                                       _opt159179_))))
+                                (let ((_rest159157_ _tl159133159193_))
                                   (declare (not safe))
-                                  (_K159128159156_ _rest159162_)))
-                            (let ((_rest159162_ _tl159138159198_))
+                                  (_K159123159151_ _rest159157_)))
+                            (let ((_rest159157_ _tl159133159193_))
                               (declare (not safe))
-                              (_K159128159156_ _rest159162_)))))
-                  (let () (declare (not safe)) (_else159126159150_))))))))
+                              (_K159123159151_ _rest159157_)))))
+                  (let () (declare (not safe)) (_else159121159145_))))))))
     (define gxc#not-string-empty?
-      (lambda (_str159115_)
-        (let ((__tmp160593
-               (let () (declare (not safe)) (string-empty? _str159115_))))
+      (lambda (_str159110_)
+        (let ((__tmp160590
+               (let () (declare (not safe)) (string-empty? _str159110_))))
           (declare (not safe))
-          (not __tmp160593))))
+          (not __tmp160590))))
     (define gxc#gsc-compile-file
-      (lambda (_path159083_ _phi?159084_)
-        (letrec ((_gsc-link-path159086_
-                  (lambda (_base-path159107_)
-                    (let _lp159109_ ((_n159111_ '1))
-                      (let ((_path159113_
+      (lambda (_path159078_ _phi?159079_)
+        (letrec ((_gsc-link-path159081_
+                  (lambda (_base-path159102_)
+                    (let _lp159104_ ((_n159106_ '1))
+                      (let ((_path159108_
                              (string-append
-                              _base-path159107_
+                              _base-path159102_
                               '".o"
-                              (number->string _n159111_))))
-                        (if (file-exists? _path159113_)
-                            (let ((__tmp160594
+                              (number->string _n159106_))))
+                        (if (file-exists? _path159108_)
+                            (let ((__tmp160591
                                    (let ()
                                      (declare (not safe))
-                                     (+ _n159111_ '1))))
+                                     (+ _n159106_ '1))))
                               (declare (not safe))
-                              (_lp159109_ __tmp160594))
-                            _path159113_))))))
-          (let* ((_base-path159088_ (path-strip-extension _path159083_))
-                 (_path-c159090_ (string-append _base-path159088_ '".c"))
-                 (_path-o159092_ (string-append _base-path159088_ '".o"))
-                 (_link-path159094_
+                              (_lp159104_ __tmp160591))
+                            _path159108_))))))
+          (let* ((_base-path159083_ (path-strip-extension _path159078_))
+                 (_path-c159085_ (string-append _base-path159083_ '".c"))
+                 (_path-o159087_ (string-append _base-path159083_ '".o"))
+                 (_link-path159089_
                   (let ()
                     (declare (not safe))
-                    (_gsc-link-path159086_ _base-path159088_)))
-                 (_link-path-c159096_ (string-append _link-path159094_ '".c"))
-                 (_link-path-o159098_ (string-append _link-path159094_ '".o"))
-                 (_gsc-link-opts159100_
+                    (_gsc-link-path159081_ _base-path159083_)))
+                 (_link-path-c159091_ (string-append _link-path159089_ '".c"))
+                 (_link-path-o159093_ (string-append _link-path159089_ '".o"))
+                 (_gsc-link-opts159095_
                   (let ()
                     (declare (not safe))
-                    (gxc#gsc-link-options__% _phi?159084_)))
-                 (_gsc-cc-opts159102_
+                    (gxc#gsc-link-options__% _phi?159079_)))
+                 (_gsc-cc-opts159097_
                   (let ()
                     (declare (not safe))
-                    (gxc#gsc-cc-options__% _phi?159084_)))
-                 (_gcc-ld-opts159104_
+                    (gxc#gsc-cc-options__% _phi?159079_)))
+                 (_gcc-ld-opts159099_
                   (let () (declare (not safe)) (gxc#gcc-ld-options))))
-            (let ((__tmp160601 (let () (declare (not safe)) (gxc#gerbil-gsc)))
-                  (__tmp160595
-                   (let ((__tmp160596
-                          (let ((__tmp160597
-                                 (let ((__tmp160598
-                                        (let ((__tmp160599
-                                               (let ((__tmp160600
+            (let ((__tmp160598 (let () (declare (not safe)) (gxc#gerbil-gsc)))
+                  (__tmp160592
+                   (let ((__tmp160593
+                          (let ((__tmp160594
+                                 (let ((__tmp160595
+                                        (let ((__tmp160596
+                                               (let ((__tmp160597
                                                       (let ()
                                                         (declare (not safe))
-                                                        (cons _path159083_
+                                                        (cons _path159078_
                                                               '()))))
                                                  (declare (not safe))
                                                  (foldr1 cons
-                                                         __tmp160600
-                                                         _gsc-link-opts159100_))))
+                                                         __tmp160597
+                                                         _gsc-link-opts159095_))))
                                           (declare (not safe))
-                                          (cons _link-path-c159096_
-                                                __tmp160599))))
+                                          (cons _link-path-c159091_
+                                                __tmp160596))))
                                    (declare (not safe))
-                                   (cons '"-o" __tmp160598))))
+                                   (cons '"-o" __tmp160595))))
                             (declare (not safe))
-                            (cons '"-flat" __tmp160597))))
+                            (cons '"-flat" __tmp160594))))
                      (declare (not safe))
-                     (cons '"-link" __tmp160596))))
+                     (cons '"-link" __tmp160593))))
               (declare (not safe))
-              (gxc#invoke __tmp160601 __tmp160595 'stdout-redirection: '#t))
-            (let ((__tmp160608 (let () (declare (not safe)) (gxc#gerbil-gsc)))
-                  (__tmp160602
-                   (let ((__tmp160603
-                          (let ((__tmp160604
-                                 (let ((__tmp160605
-                                        (let ((__tmp160606
-                                               (let ((__tmp160607
+              (gxc#invoke __tmp160598 __tmp160592 'stdout-redirection: '#t))
+            (let ((__tmp160605 (let () (declare (not safe)) (gxc#gerbil-gsc)))
+                  (__tmp160599
+                   (let ((__tmp160600
+                          (let ((__tmp160601
+                                 (let ((__tmp160602
+                                        (let ((__tmp160603
+                                               (let ((__tmp160604
                                                       (let ()
                                                         (declare (not safe))
-                                                        (cons _link-path-c159096_
+                                                        (cons _link-path-c159091_
                                                               '()))))
                                                  (declare (not safe))
-                                                 (cons _path-c159090_
-                                                       __tmp160607))))
+                                                 (cons _path-c159085_
+                                                       __tmp160604))))
                                           (declare (not safe))
                                           (foldr1 cons
-                                                  __tmp160606
-                                                  _gsc-cc-opts159102_))))
+                                                  __tmp160603
+                                                  _gsc-cc-opts159097_))))
                                    (declare (not safe))
-                                   (cons '"-D___DYNAMIC" __tmp160605))))
+                                   (cons '"-D___DYNAMIC" __tmp160602))))
                             (declare (not safe))
-                            (cons '"-cc-options" __tmp160604))))
+                            (cons '"-cc-options" __tmp160601))))
                      (declare (not safe))
-                     (cons '"-obj" __tmp160603))))
+                     (cons '"-obj" __tmp160600))))
               (declare (not safe))
-              (gxc#invoke __tmp160608 __tmp160602 'stdout-redirection: '#t))
-            (let ((__tmp160614 (let () (declare (not safe)) (gxc#gerbil-gcc)))
-                  (__tmp160609
-                   (let ((__tmp160610
-                          (let ((__tmp160611
-                                 (let ((__tmp160612
-                                        (let ((__tmp160613
+              (gxc#invoke __tmp160605 __tmp160599 'stdout-redirection: '#t))
+            (let ((__tmp160611 (let () (declare (not safe)) (gxc#gerbil-gcc)))
+                  (__tmp160606
+                   (let ((__tmp160607
+                          (let ((__tmp160608
+                                 (let ((__tmp160609
+                                        (let ((__tmp160610
                                                (let ()
                                                  (declare (not safe))
-                                                 (cons _link-path-o159098_
-                                                       _gcc-ld-opts159104_))))
+                                                 (cons _link-path-o159093_
+                                                       _gcc-ld-opts159099_))))
                                           (declare (not safe))
-                                          (cons _path-o159092_ __tmp160613))))
+                                          (cons _path-o159087_ __tmp160610))))
                                    (declare (not safe))
-                                   (cons _link-path159094_ __tmp160612))))
+                                   (cons _link-path159089_ __tmp160609))))
                             (declare (not safe))
-                            (cons '"-o" __tmp160611))))
+                            (cons '"-o" __tmp160608))))
                      (declare (not safe))
-                     (cons '"-shared" __tmp160610))))
+                     (cons '"-shared" __tmp160607))))
               (declare (not safe))
-              (gxc#invoke __tmp160614 __tmp160609))
+              (gxc#invoke __tmp160611 __tmp160606))
             (for-each
              delete-file
-             (let ((__tmp160615
-                    (let ((__tmp160616
-                           (let ((__tmp160617
+             (let ((__tmp160612
+                    (let ((__tmp160613
+                           (let ((__tmp160614
                                   (let ()
                                     (declare (not safe))
-                                    (cons _link-path-o159098_ '()))))
+                                    (cons _link-path-o159093_ '()))))
                              (declare (not safe))
-                             (cons _link-path-c159096_ __tmp160617))))
+                             (cons _link-path-c159091_ __tmp160614))))
                       (declare (not safe))
-                      (cons _path-o159092_ __tmp160616))))
+                      (cons _path-o159087_ __tmp160613))))
                (declare (not safe))
-               (cons _path-c159090_ __tmp160615)))))))
+               (cons _path-c159085_ __tmp160612)))))))
     (define gxc#compile-output-file
-      (lambda (_ctx159054_ _n159055_ _ext159056_)
-        (letrec ((_module-relative-path159058_
-                  (lambda (_ctx159081_)
+      (lambda (_ctx159049_ _n159050_ _ext159051_)
+        (letrec ((_module-relative-path159053_
+                  (lambda (_ctx159076_)
                     (path-strip-directory
-                     (let ((__tmp160618
+                     (let ((__tmp160615
                             (##structure-ref
-                             _ctx159081_
+                             _ctx159076_
                              '1
                              gx#expander-context::t
                              '#f)))
                        (declare (not safe))
-                       (gxc#module-id->path-string __tmp160618)))))
-                 (_module-source-directory159059_
-                  (lambda (_ctx159077_)
+                       (gxc#module-id->path-string __tmp160615)))))
+                 (_module-source-directory159054_
+                  (lambda (_ctx159072_)
                     (path-directory
-                     (let ((_mpath159079_
+                     (let ((_mpath159074_
                             (##structure-ref
-                             _ctx159077_
+                             _ctx159072_
                              '7
                              gx#module-context::t
                              '#f)))
                        (if (let ()
                              (declare (not safe))
-                             (string? _mpath159079_))
-                           _mpath159079_
-                           (last _mpath159079_))))))
-                 (_section-string159060_
-                  (lambda (_n159075_)
-                    (if (let () (declare (not safe)) (number? _n159075_))
-                        (number->string _n159075_)
-                        (if (let () (declare (not safe)) (symbol? _n159075_))
-                            (symbol->string _n159075_)
+                             (string? _mpath159074_))
+                           _mpath159074_
+                           (last _mpath159074_))))))
+                 (_section-string159055_
+                  (lambda (_n159070_)
+                    (if (let () (declare (not safe)) (number? _n159070_))
+                        (number->string _n159070_)
+                        (if (let () (declare (not safe)) (symbol? _n159070_))
+                            (symbol->string _n159070_)
                             (if (let ()
                                   (declare (not safe))
-                                  (string? _n159075_))
-                                _n159075_
+                                  (string? _n159070_))
+                                _n159070_
                                 (let ()
                                   (declare (not safe))
                                   (gxc#raise-compile-error
                                    '"Unexpected section"
-                                   _n159075_)))))))
-                 (_file-name159061_
-                  (lambda (_path159073_)
-                    (if _n159055_
+                                   _n159070_)))))))
+                 (_file-name159056_
+                  (lambda (_path159068_)
+                    (if _n159050_
                         (string-append
-                         _path159073_
+                         _path159068_
                          '"~"
                          (let ()
                            (declare (not safe))
-                           (_section-string159060_ _n159055_))
-                         _ext159056_)
-                        (string-append _path159073_ _ext159056_))))
-                 (_file-path159062_
+                           (_section-string159055_ _n159050_))
+                         _ext159051_)
+                        (string-append _path159068_ _ext159051_))))
+                 (_file-path159057_
                   (lambda ()
-                    (let ((_$e159068_ (gxc#current-compile-output-dir)))
-                      (if _$e159068_
-                          ((lambda (_outdir159071_)
+                    (let ((_$e159063_ (gxc#current-compile-output-dir)))
+                      (if _$e159063_
+                          ((lambda (_outdir159066_)
                              (path-expand
-                              (let ((__tmp160620
-                                     (let ((__tmp160621
+                              (let ((__tmp160617
+                                     (let ((__tmp160618
                                             (##structure-ref
-                                             _ctx159054_
+                                             _ctx159049_
                                              '1
                                              gx#expander-context::t
                                              '#f)))
                                        (declare (not safe))
                                        (gxc#module-id->path-string
-                                        __tmp160621))))
+                                        __tmp160618))))
                                 (declare (not safe))
-                                (_file-name159061_ __tmp160620))
-                              _outdir159071_))
-                           _$e159068_)
+                                (_file-name159056_ __tmp160617))
+                              _outdir159066_))
+                           _$e159063_)
                           (path-expand
-                           (let ((__tmp160619
+                           (let ((__tmp160616
                                   (let ()
                                     (declare (not safe))
-                                    (_module-relative-path159058_
-                                     _ctx159054_))))
+                                    (_module-relative-path159053_
+                                     _ctx159049_))))
                              (declare (not safe))
-                             (_file-name159061_ __tmp160619))
+                             (_file-name159056_ __tmp160616))
                            (let ()
                              (declare (not safe))
-                             (_module-source-directory159059_
-                              _ctx159054_))))))))
-          (let ((_path159064_
-                 (let () (declare (not safe)) (_file-path159062_))))
-            (let ((__tmp160622
+                             (_module-source-directory159054_
+                              _ctx159049_))))))))
+          (let ((_path159059_
+                 (let () (declare (not safe)) (_file-path159057_))))
+            (let ((__tmp160619
                    (lambda ()
-                     (let ((__tmp160623 (path-directory _path159064_)))
+                     (let ((__tmp160620 (path-directory _path159059_)))
                        (declare (not safe))
-                       (create-directory*__0 __tmp160623)))))
+                       (create-directory*__0 __tmp160620)))))
               (declare (not safe))
-              (with-lock gxc#+driver-mutex+ __tmp160622))
-            _path159064_))))
+              (with-lock gxc#+driver-mutex+ __tmp160619))
+            _path159059_))))
     (define gxc#compile-static-output-file
-      (lambda (_ctx159036_)
-        (letrec ((_file-name159038_
-                  (lambda (_id159052_)
+      (lambda (_ctx159031_)
+        (letrec ((_file-name159033_
+                  (lambda (_id159047_)
                     (string-append
                      (let ()
                        (declare (not safe))
-                       (gxc#static-module-name _id159052_))
+                       (gxc#static-module-name _id159047_))
                      '".scm")))
-                 (_file-path159039_
+                 (_file-path159034_
                   (lambda ()
-                    (let* ((_file159045_
-                            (let ((__tmp160624
+                    (let* ((_file159040_
+                            (let ((__tmp160621
                                    (##structure-ref
-                                    _ctx159036_
+                                    _ctx159031_
                                     '1
                                     gx#expander-context::t
                                     '#f)))
                               (declare (not safe))
-                              (_file-name159038_ __tmp160624)))
-                           (_$e159047_ (gxc#current-compile-output-dir)))
-                      (if _$e159047_
-                          ((lambda (_outdir159050_)
+                              (_file-name159033_ __tmp160621)))
+                           (_$e159042_ (gxc#current-compile-output-dir)))
+                      (if _$e159042_
+                          ((lambda (_outdir159045_)
                              (path-expand
-                              _file159045_
-                              (path-expand '"static" _outdir159050_)))
-                           _$e159047_)
-                          (path-expand _file159045_ '"static"))))))
-          (let ((_path159041_
-                 (let () (declare (not safe)) (_file-path159039_))))
-            (let ((__tmp160625
+                              _file159040_
+                              (path-expand '"static" _outdir159045_)))
+                           _$e159042_)
+                          (path-expand _file159040_ '"static"))))))
+          (let ((_path159036_
+                 (let () (declare (not safe)) (_file-path159034_))))
+            (let ((__tmp160622
                    (lambda ()
-                     (let ((__tmp160626 (path-directory _path159041_)))
+                     (let ((__tmp160623 (path-directory _path159036_)))
                        (declare (not safe))
-                       (create-directory*__0 __tmp160626)))))
+                       (create-directory*__0 __tmp160623)))))
               (declare (not safe))
-              (with-lock gxc#+driver-mutex+ __tmp160625))
-            _path159041_))))
+              (with-lock gxc#+driver-mutex+ __tmp160622))
+            _path159036_))))
     (define gxc#compile-exe-output-file
-      (lambda (_ctx159030_ _opts159031_)
-        (let ((_$e159033_
+      (lambda (_ctx159025_ _opts159026_)
+        (let ((_$e159028_
                (let ()
                  (declare (not safe))
-                 (pgetq__0 'output-file: _opts159031_))))
-          (if _$e159033_
-              (values _$e159033_)
+                 (pgetq__0 'output-file: _opts159026_))))
+          (if _$e159028_
+              (values _$e159028_)
               (path-strip-directory
                (symbol->string
                 (##structure-ref
-                 _ctx159030_
+                 _ctx159025_
                  '1
                  gx#expander-context::t
                  '#f)))))))
     (define gxc#static-module-name
-      (lambda (_idstr159023_)
-        (if (let () (declare (not safe)) (string? _idstr159023_))
-            (let* ((_str159025_
+      (lambda (_idstr159018_)
+        (if (let () (declare (not safe)) (string? _idstr159018_))
+            (let* ((_str159020_
                     (let ()
                       (declare (not safe))
-                      (gxc#module-id->path-string _idstr159023_)))
-                   (_strs159027_
+                      (gxc#module-id->path-string _idstr159018_)))
+                   (_strs159022_
                     (let ()
                       (declare (not safe))
-                      (string-split _str159025_ '#\/))))
-              (let () (declare (not safe)) (string-join _strs159027_ '"__")))
-            (if (let () (declare (not safe)) (symbol? _idstr159023_))
-                (let ((__tmp160627 (symbol->string _idstr159023_)))
+                      (string-split _str159020_ '#\/))))
+              (let () (declare (not safe)) (string-join _strs159022_ '"__")))
+            (if (let () (declare (not safe)) (symbol? _idstr159018_))
+                (let ((__tmp160624 (symbol->string _idstr159018_)))
                   (declare (not safe))
-                  (gxc#static-module-name __tmp160627))
+                  (gxc#static-module-name __tmp160624))
                 (let ()
                   (declare (not safe))
-                  (error '"Bad module id" _idstr159023_))))))
+                  (error '"Bad module id" _idstr159018_))))))
     (define gxc#invoke__%
-      (lambda (_g160628_
-               _stdout-redirection158984158988_
-               _stderr-redirection158985158990_
-               _program158992_
-               _args158993_)
-        (let* ((_stdout-redirection158995_
+      (lambda (_g160625_
+               _stdout-redirection158979158983_
+               _stderr-redirection158980158985_
+               _program158987_
+               _args158988_)
+        (let* ((_stdout-redirection158990_
                 (if (let ()
                       (declare (not safe))
-                      (eq? _stdout-redirection158984158988_ absent-value))
+                      (eq? _stdout-redirection158979158983_ absent-value))
                     '#f
-                    _stdout-redirection158984158988_))
-               (_stderr-redirection158997_
+                    _stdout-redirection158979158983_))
+               (_stderr-redirection158992_
                 (if (let ()
                       (declare (not safe))
-                      (eq? _stderr-redirection158985158990_ absent-value))
+                      (eq? _stderr-redirection158980158985_ absent-value))
                     '#f
-                    _stderr-redirection158985158990_)))
-          (let ((__tmp160629
+                    _stderr-redirection158980158985_)))
+          (let ((__tmp160626
                  (let ()
                    (declare (not safe))
-                   (cons _program158992_ _args158993_))))
+                   (cons _program158987_ _args158988_))))
             (declare (not safe))
-            (gxc#verbose '"invoke " __tmp160629))
-          (let* ((_proc158999_
+            (gxc#verbose '"invoke " __tmp160626))
+          (let* ((_proc158994_
                   (open-process
-                   (let ((__tmp160630
-                          (let ((__tmp160631
-                                 (let ((__tmp160632
-                                        (let ((__tmp160633
-                                               (let ((__tmp160634
-                                                      (let ((__tmp160635
-                                                             (let ((__tmp160636
+                   (let ((__tmp160627
+                          (let ((__tmp160628
+                                 (let ((__tmp160629
+                                        (let ((__tmp160630
+                                               (let ((__tmp160631
+                                                      (let ((__tmp160632
+                                                             (let ((__tmp160633
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (let ()
                               (declare (not safe))
-                              (cons _stderr-redirection158997_ '()))))
+                              (cons _stderr-redirection158992_ '()))))
                        (declare (not safe))
-                       (cons 'stderr-redirection: __tmp160636))))
+                       (cons 'stderr-redirection: __tmp160633))))
                 (declare (not safe))
-                (cons _stdout-redirection158995_ __tmp160635))))
+                (cons _stdout-redirection158990_ __tmp160632))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (declare (not safe))
                                                  (cons 'stdout-redirection:
-                                                       __tmp160634))))
+                                                       __tmp160631))))
                                           (declare (not safe))
-                                          (cons _args158993_ __tmp160633))))
+                                          (cons _args158988_ __tmp160630))))
                                    (declare (not safe))
-                                   (cons 'arguments: __tmp160632))))
+                                   (cons 'arguments: __tmp160629))))
                             (declare (not safe))
-                            (cons _program158992_ __tmp160631))))
+                            (cons _program158987_ __tmp160628))))
                      (declare (not safe))
-                     (cons 'path: __tmp160630))))
-                 (_output159004_
-                  (if (or _stdout-redirection158995_
-                          _stderr-redirection158997_)
-                      (read-line _proc158999_ '#f)
+                     (cons 'path: __tmp160627))))
+                 (_output158999_
+                  (if (or _stdout-redirection158990_
+                          _stderr-redirection158992_)
+                      (read-line _proc158994_ '#f)
                       '#f)))
-            (let ((_status159007_ (process-status _proc158999_)))
-              (close-port _proc158999_)
-              (if (let () (declare (not safe)) (zero? _status159007_))
+            (let ((_status159002_ (process-status _proc158994_)))
+              (close-port _proc158994_)
+              (if (let () (declare (not safe)) (zero? _status159002_))
                   '#!void
                   (begin
-                    (display _output159004_)
-                    (let ((__tmp160637
+                    (display _output158999_)
+                    (let ((__tmp160634
                            (let ()
                              (declare (not safe))
-                             (cons _program158992_ _args158993_))))
+                             (cons _program158987_ _args158988_))))
                       (declare (not safe))
                       (gxc#raise-compile-error
                        '"Compilation error; process exit with nonzero status"
-                       __tmp160637
-                       _status159007_)))))))))
+                       __tmp160634
+                       _status159002_)))))))))
     (define gxc#invoke__@
-      (lambda (_keys158983159012_ . _args159014_)
+      (lambda (_keys158978159007_ . _args159009_)
         (apply gxc#invoke__%
-               _keys158983159012_
+               _keys158978159007_
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _keys158983159012_
+                  _keys158978159007_
                   'stdout-redirection:
                   absent-value))
                (let ()
                  (declare (not safe))
                  (symbolic-table-ref
-                  _keys158983159012_
+                  _keys158978159007_
                   'stderr-redirection:
                   absent-value))
-               _args159014_)))
+               _args159009_)))
     (define gxc#invoke
-      (lambda _args158986159020_
+      (lambda _args158981159015_
         (apply keyword-dispatch
                '#(stderr-redirection: stdout-redirection:)
                gxc#invoke__@
-               _args158986159020_)))
+               _args158981159015_)))
     (define gxc#join!
-      (lambda (_thread158977_)
-        (let ((__tmp160639
-               (lambda (_exn158979_)
+      (lambda (_thread158972_)
+        (let ((__tmp160636
+               (lambda (_exn158974_)
                  (if (let ()
                        (declare (not safe))
-                       (uncaught-exception? _exn158979_))
+                       (uncaught-exception? _exn158974_))
                      (raise (let ()
                               (declare (not safe))
-                              (uncaught-exception-reason _exn158979_)))
-                     (raise _exn158979_))))
-              (__tmp160638 (lambda () (thread-join! _thread158977_))))
+                              (uncaught-exception-reason _exn158974_)))
+                     (raise _exn158974_))))
+              (__tmp160635 (lambda () (thread-join! _thread158972_))))
           (declare (not safe))
-          (with-catch __tmp160639 __tmp160638))))))
+          (with-catch __tmp160636 __tmp160635))))))

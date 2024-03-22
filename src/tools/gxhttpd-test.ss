@@ -16,7 +16,7 @@
     (path-expand "gxhttpd-test" this-directory)))
 
 (def (test-setup!)
-  (set! current-gerbil-path (getenv "GERBIL_PATH"))
+  (set! current-gerbil-path (getenv "GERBIL_PATH" #f))
   (setenv "GERBIL_PATH")
   (invoke "gerbil" ["build"] directory: test-directory)
   (set! httpd-process
@@ -30,7 +30,8 @@
     (thread-sleep! 1))
   (let (test-directory-dot-gerbil (path-expand ".gerbil" test-directory))
     (delete-file-or-directory test-directory-dot-gerbil #t))
-  (setenv "GERBIL_PATH" current-gerbil-path))
+  (when current-gerbil-path
+    (setenv "GERBIL_PATH" current-gerbil-path)))
 
 (def gxhttpd-server-test
   (test-suite "httpd"

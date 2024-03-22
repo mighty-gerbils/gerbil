@@ -1,10 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS socket FFI interface
+prelude: :std/ssi
 package: std/os
 
 (export #t)
-(extern
+(defruntime
   _socket
   _bind
   _listen

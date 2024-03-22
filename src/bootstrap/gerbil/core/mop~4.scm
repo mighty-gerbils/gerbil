@@ -922,7 +922,7 @@
   (define |gerbil/core/mop~MOP-5[1]#_g36043_|
     (##structure
      gx#syntax-quote::t
-     'readenv
+     'readenv?
      #f
      (gx#current-expander-context)
      '()))

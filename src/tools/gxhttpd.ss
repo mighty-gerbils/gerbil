@@ -318,6 +318,9 @@
 (defstruct dynamic-mux (root handlers servlets mx cache cache-ttl cache-max-size)
   constructor: :init! final: #t)
 
+(defstruct cache-entry (handler expire preserve?)
+  final: #t)
+
 (defmethod {:init! dynamic-mux}
   (lambda (self cfg)
     (using (self :- dynamic-mux)
@@ -352,32 +355,56 @@
       (cond
        ((hash-get self.cache path)
         => (lambda (cache-entry)
-             (with ([handler . expire] cache-entry)
-               (if (< (##current-time-point) expire)
-                 handler
-                 {self.__get-handler path}))))
+             (let (now (##current-time-point))
+               (cond
+                ((fl< now (&cache-entry-expire cache-entry))
+                 (&cache-entry-handler cache-entry))
+                (((&cache-entry-preserve? cache-entry))
+                 (set! (&cache-entry-expire cache-entry)
+                   (fl+ now self.cache-ttl))
+                 (&cache-entry-handler cache-entry))
+                (else
+                 {self.__get-handler path})))))
        (else
         {self.__get-handler path})))))
 
 (defmethod {__get-handler dynamic-mux}
   (lambda (self path)
+    (defrule (not-found-cache-entry expire)
+      (cache-entry not-found-handler expire (lambda () #f)))
+
+    (defrule (file-cache-entry file-path expire created handler)
+      (let (preserve?
+            (lambda ()
+              (and (file-exists? file-path)
+                   (fl< (time->seconds
+                         (file-info-last-modification-time
+                          (file-info file-path #t)))
+                        created))))
+        (cache-entry handler expire preserve?)))
+
     (using (self :- dynamic-mux)
-      (let (handler
-            (let (server-path (server-request-path path))
-              (cond
-               ((not server-path)
-                not-found-handler)
-               ((find-handler self.handlers server-path))
-               (else
-                (let (file-path (string-append self.root server-path))
-                  (if (file-exists? file-path)
-                    (if (and self.servlets (equal? ".ss" (path-extension file-path)))
-                      (find-servlet-handler self.servlets self.mx file-path)
-                      (file-handler file-path))
-                    not-found-handler))))))
-        (hash-put! self.cache path
-                   (cons handler (+ (##current-time-point) self.cache-ttl)))
-        handler))))
+      (let* ((now (##current-time-point))
+             (expire (+ now self.cache-ttl))
+             (entry
+              (let (server-path (server-request-path path))
+                (cond
+                 ((not server-path)
+                  (not-found-cache-entry expire))
+                 ((find-handler self.handlers server-path)
+                  => (lambda (handler)
+                       (cache-entry handler expire (lambda () #t))))
+                 (else
+                  (let (file-path (string-append self.root server-path))
+                    (if (file-exists? file-path)
+                      (if (and self.servlets (equal? ".ss" (path-extension file-path)))
+                        (file-cache-entry file-path expire now
+                          (find-servlet-handler self.servlets self.mx file-path))
+                        (file-cache-entry file-path expire now
+                          (file-handler file-path)))
+                      (not-found-cache-entry expire))))))))
+        (hash-put! self.cache path entry)
+        (&cache-entry-handler entry)))))
 
 (defmethod {put-handler! dynamic-mux}
   (lambda (self host path handler)
