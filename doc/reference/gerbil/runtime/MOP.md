@@ -520,7 +520,7 @@ Returns the (direct) binding of method with `id` in class `klass`.
   rebind? := boolean; allow method rebinding?
 ```
 
-inds *proc* as the method with *id* in class *klass*.
+Binds *proc* as the method with *id* in class *klass*.
 
 ### bind-specializer!
 ```scheme
@@ -533,8 +533,9 @@ inds *proc* as the method with *id* in class *klass*.
 
 Binds a specializer procedure associated with a method. When a class
 is sealed or an interface instance prototype is created, the
-specializer is invoked with the concrete class to generate a version
-of the method that is specialized for the concrete class.
+specializer is invoked with the concrete class and the specialized method
+table to generate a version of the method that is specialized for the
+concrete class.
 
 ### seal-class!
 ```scheme

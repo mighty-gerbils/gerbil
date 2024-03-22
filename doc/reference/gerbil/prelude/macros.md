@@ -382,7 +382,7 @@ Raises a syntax error; used for meaningful error reporting in syntax-rules macro
 (defalias f64vector-ref-set! f64vector-set!)
 ```
 
-Thes binding enable you to use `set!` with `*vector-ref`.
+These binding enable you to use `set!` with `*vector-ref`.
 
 ::: tip Examples
 ```scheme
@@ -457,9 +457,6 @@ Canonical class type definition macro.
 (defmethod {method-id type}
   expr
   [rebind: <boolean>])
-=> (begin
-    (def type::method-id expr)
-    (bind-method! type::t 'method-id type::method-id rebind?))
 ```
 
 Defines a method `method-id` for type `type`, which must be
