@@ -233,48 +233,48 @@ namespace: gxc
 
 (defmethod {typedecl !predicate}
   (lambda (self)
-    (with ((!predicate klass-id) self)
+    (let (klass-id (&!predicate-id self))
       ['@predicate klass-id])))
 
 (defmethod {typedecl !constructor}
   (lambda (self)
-    (with ((!constructor klass-id) self)
+    (let (klass-id (&!constructor-id self))
       ['@constructor klass-id])))
 
 (defmethod {typedecl !accessor}
   (lambda (self)
-    (with ((!accessor klass-id slot checked?) self)
+    (with ((!accessor klass-id _ _ _ slot checked?) self)
       ['@accessor klass-id slot checked?])))
 
 (defmethod {typedecl !mutator}
   (lambda (self)
-    (with ((!mutator klass-id slot checked?) self)
+    (with ((!mutator klass-id _ _ _ slot checked?) self)
       ['@mutator klass-id slot checked?])))
 
 ;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (with ((!lambda _ arity dispatch inline typedecl) self)
+    (with ((!lambda _ return effect arguments arity dispatch inline typedecl) self)
       (if inline
         (or typedecl
             (error "Cannot generate typedecl for inline rules"))
-        ['@lambda arity dispatch]))))
+        ['@lambda arity dispatch return: return effect: effect arguments: arguments]))))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
     (def (clause-e clause)
-      (with ((!lambda _ arity dispatch) clause)
-        [arity dispatch]))
-    (with ((!case-lambda _ clauses) self)
+      (with ((!lambda _ return effect arguments arity dispatch) clause)
+        [arity dispatch return: return effect: effect arguments: arguments]))
+    (let (clauses (&!case-lambda-clauses self))
       (let (clauses (map clause-e clauses))
         ['@case-lambda clauses ...]))))
 
 (defmethod {typedecl !kw-lambda}
   (lambda (self)
-    (with ((!kw-lambda _ table dispatch) self)
+    (with ((!kw-lambda _ _ _ _ table dispatch) self)
       ['@kw-lambda table dispatch])))
 
 (defmethod {typedecl !kw-lambda-primary}
   (lambda (self)
-    (with ((!kw-lambda-primary _ keys main) self)
+    (with ((!kw-lambda-primary _ _ _ _ keys main) self)
       ['@kw-lambda-dispatch keys main])))
