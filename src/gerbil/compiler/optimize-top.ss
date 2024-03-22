@@ -58,12 +58,13 @@ namespace: gxc
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#lambda                basic-expression-type-lambda%)
   (%#case-lambda           basic-expression-type-case-lambda%)
-  (%#let-values       basic-expression-type-let-values%)
-  (%#letrec-values    basic-expression-type-let-values%)
-  (%#letrec*-values   basic-expression-type-let-values%)
+  (%#let-values       apply-body-last-let-values%)
+  (%#letrec-values    apply-body-last-let-values%)
+  (%#letrec*-values   apply-body-last-let-values%)
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%)
-  (%#if               basic-expression-type-if%))
+  (%#if               basic-expression-type-if%)
+  (%#quote            basic-expression-type-quote%))
 
 ;; method to lift sub-lambdas from case/opt/kw lambda definitions
 (defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
@@ -74,16 +75,20 @@ namespace: gxc
   (%#letrec-values  lift-top-lambda-letrec-values%)
   (%#letrec*-values lift-top-lambda-letrec-values%))
 
+;; method to extract the lambda signature from a typed gerbil annotation
+(defcompile-method (apply-extract-lambda-signature) (::extract-lambda-signature ::false) ()
+  final:
+  (%#begin            apply-last-begin%)
+  (%#begin-annotation extract-lambda-signature-begin-annotation%))
+
 ;;; apply-collect-top-level-type-infp
 (def (collect-top-level-type-define-values% self stx)
   (ast-case stx ()
     ((_ (id) expr)
      (identifier? #'id)
      (let (sym (identifier-symbol #'id))
-       (if (hash-get (current-compile-mutators) sym)
-           (verbose "skipping type inference for mutable binding " sym)
-           (alet (type (apply-basic-expression-top-level-type #'expr))
-             (optimizer-declare-type! sym type)))))
+       (alet (type (apply-basic-expression-top-level-type #'expr))
+         (optimizer-declare-type! sym type))))
     (_ (void))))
 
 ;;; apply-collect-type-info
@@ -143,14 +148,11 @@ namespace: gxc
     ((_ id expr)
      (let ((bind-type (optimizer-resolve-type (identifier-symbol #'id)))
            (expr-type (apply-basic-expression-type #'expr)))
-       (unless (same-type? bind-type expr-type)
+       (unless (type-subclass? expr-type bind-type)
          ;; mutation with incompatible class types destroys type information
          (optimizer-clear-type! (identifier-symbol #'id)))))))
 
 ;;; apply-basic-expression-type
-(def current-compile-type-closure
-  (make-parameter #f))
-
 (def (basic-expression-type-begin% self stx)
   (ast-case stx ()
     ((_ expr)
@@ -237,11 +239,6 @@ namespace: gxc
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#call %#ref %#quote)
-      ((_ . form)
-       (current-compile-type-closure)
-       ;; don't capture local dispatch references, just enough to arity check
-       (make-!lambda 'lambda (lambda-form-arity #'form) #f))
-
       ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
                        (%#ref dispatch) (%#ref -args)))
        ;; kw-lambda
@@ -276,24 +273,25 @@ namespace: gxc
 
       ((_ . form)
        ;; generic lambda -- track type for call arity checking
-       (make-!lambda 'lambda (lambda-form-arity #'form) #f)))))
+       (let (signature (lambda-form-infer-signature #'form))
+         (make-!lambda 'lambda (lambda-form-arity #'form) #f
+                  return: (pgetq return: signature)
+                  effect: (pgetq effect: signature)
+                  arguments: (pgetq arguments: signature)))))))
 
 (def (basic-expression-type-case-lambda% self stx)
   (def (clause-e form)
-    (make-!lambda 'case-lambda-clause (lambda-form-arity form)
-             (and (not (current-compile-type-closure)) ; don't capture local dispatch
-                  (dispatch-lambda-form? form)
-                  (dispatch-lambda-form-delegate form))))
+    (let (signature (lambda-form-infer-signature form))
+      (make-!lambda 'case-lambda-clause (lambda-form-arity form)
+               (and (dispatch-lambda-form? form)
+                    (dispatch-lambda-form-delegate form))
+               return: (pgetq return: signature)
+               effect: (pgetq effect: signature)
+               arguments: (pgetq arguments: signature))))
   (ast-case stx ()
     ((_ . clauses)
      (let (clauses (map clause-e #'clauses))
        (make-!case-lambda 'case-lambda clauses)))))
-
-(def (basic-expression-type-let-values% self stx)
-  (ast-case stx ()
-    ((_ bind body)
-     (parameterize ((current-compile-type-closure #t))
-       (compile-e self #'body)))))
 
 (def (basic-expression-type-call% self stx)
   (ast-case stx (%#ref)
@@ -321,8 +319,54 @@ namespace: gxc
     ((_ test K E)
      (let ((type-K (apply-basic-expression-type #'K))
            (type-E (apply-basic-expression-type #'E)))
-       (and (same-type? type-K type-E)
-            type-K)))))
+       (cond
+        ((type-subclass? type-E type-K)
+         type-K)
+        ((type-subclass? type-K type-E)
+         type-E)
+        (else #f))))))
+
+(def (basic-expression-type-quote% self stx)
+  (ast-case stx ()
+    ((_ value)
+     (let (obj (stx-e #'value))
+       (cond
+        ((immediate? obj)
+         (cond
+          ((char? obj)       (optimizer-lookup-type 'char::t))
+          ((boolean? obj)    (optimizer-lookup-type 'boolean::t))
+          ((void? obj)       (optimizer-lookup-type 'void::t))
+          ((eof-object? obj) (optimizer-lookup-type 'eof::t))
+          ((fixnum? obj)     (optimizer-lookup-type 'fixnum::t))
+          ((null? obj)       (optimizer-lookup-type 'null::t))
+          (else              (optimizer-lookup-type 'special::t))))
+        ((number? obj)
+         (cond
+          ((flonum? obj)   (optimizer-lookup-type 'flonum::t))
+          ((##bignum? obj) (optimizer-lookup-type 'bignum::t))
+          ((##ratnum? obj) (optimizer-lookup-type 'ratnum::t))
+          ((##cpxnum? obj) (optimizer-lookup-type 'cpxnum::t))
+          (else #f)))
+        ((symbol? obj)  (optimizer-lookup-type 'symbol::t))
+        ((keyword? obj) (optimizer-lookup-type 'keyword::t))
+        ((pair? obj)    (optimizer-lookup-type 'pair::t))
+        ((sequence? obj)
+         (cond
+          ((vector? obj)    (optimizer-lookup-type 'vector::t))
+          ((string? obj)    (optimizer-lookup-type 'string::t))
+          ((u8vector? obj)  (optimizer-lookup-type 'u8vector::t))
+          ((s8vector? obj)  (optimizer-lookup-type 's8vector::t))
+          ((u16vector? obj) (optimizer-lookup-type 'u16vector::t))
+          ((s16vector? obj) (optimizer-lookup-type 's16vector::t))
+          ((u32vector? obj) (optimizer-lookup-type 'u32vector::t))
+          ((s32vector? obj) (optimizer-lookup-type 's32vector::t))
+          ((u64vector? obj) (optimizer-lookup-type 'u64vector::t))
+          ((s64vector? obj) (optimizer-lookup-type 's64vector::t))
+          ((f32vector? obj) (optimizer-lookup-type 'f32vector::t))
+          ((f64vector? obj) (optimizer-lookup-type 'f64vector::t))
+          (else #f)))
+        ((box? obj) (optimizer-lookup-type 'box::t))
+        (else #f))))))
 
 ;;; apply-lift-top-lambdas
 (def (dispatch-lambda-form? form)
@@ -368,6 +412,30 @@ namespace: gxc
        ((arg ... . rest)
         [(length #'(arg ...))])
        (rest [0])))))
+
+(def (lambda-form-infer-signature form)
+  (ast-case form ()
+    ((hd body)
+     (apply-extract-lambda-signature #'body))))
+
+(def (extract-lambda-signature-begin-annotation% self stx)
+  (ast-case stx (@type.signature)
+    ((_ (@type.signature signature ...) body)
+     (let loop ((rest #'(signature ...)) (result []))
+       (match rest
+         ([return: type . rest]
+          (loop (cons* (identifier-symbol type) return: result)
+                rest))
+         ([effect: effect . rest]
+          (loop (cons* (map stx-e effect) effect: result)
+                rest))
+         ([arguments: arguments . rest]
+          (loop (cons* (map identifier-symbol arguments) arguments: result)
+                rest))
+         ([] (reverse! result))
+         (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
+    ((_ ann body)
+     (compile-e self #'body))))
 
 (def (lambda-expr? expr)
   (ast-case expr (%#lambda)
