@@ -288,11 +288,10 @@ namespace: gxc
    (else #f)))
 
 ;; utilities
-(def (same-type? type-a type-b)
-  (or (equal? type-a type-b)
-      (and (!class? type-a) (!class? type-b)
-           (eq? (!type-id type-a) (!type-id type-b)))))
-
+(def (type-subclass? klass-a klass-b)
+  (and (!class? klass-a) (!class? klass-b)
+       (or (eq? klass-a klass-b)
+           (memq (!type-id klass-b) (!class-precedence-list klass-a)))))
 
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
@@ -303,12 +302,10 @@ namespace: gxc
                (optimizer-info-type (current-compile-optimizer-info)))
              sym type))
 
-(def (optimizer-clear-type! sym (local? #f))
+(def (optimizer-clear-type! sym)
   (verbose "clear-type " sym)
-  (hash-remove! (if local?
-                  (current-compile-local-type)
-                  (optimizer-info-type (current-compile-optimizer-info)))
-                sym))
+  (hash-remove! (current-compile-local-type) sym)
+  (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
   (let (type (optimizer-resolve-type type-t))
