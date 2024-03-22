@@ -48,7 +48,7 @@ namespace: gxc
   (%#letrec*-values   collect-type-let-values%)
   (%#call             collect-type-call%)
   (%#if               apply-operands)
-  (%#set!             apply-body-setq%))
+  (%#set!             collect-type-setq%))
 
 ;; method to find the type of an expression
 (defcompile-method (apply-basic-expression-type) (::basic-expression-type ::false)
@@ -62,7 +62,8 @@ namespace: gxc
   (%#letrec-values    basic-expression-type-let-values%)
   (%#letrec*-values   basic-expression-type-let-values%)
   (%#call             basic-expression-type-call%)
-  (%#ref              basic-expression-type-ref%))
+  (%#ref              basic-expression-type-ref%)
+  (%#if               basic-expression-type-if%))
 
 ;; method to lift sub-lambdas from case/opt/kw lambda definitions
 (defcompile-method (apply-lift-top-lambdas) (::lift-top-lambdas ::basic-xform)
@@ -109,11 +110,9 @@ namespace: gxc
       ((id)
        (identifier? #'id)
        (let (sym (identifier-symbol #'id))
-         (if (hash-get (current-compile-mutators) sym)
-           (verbose "skipping type declaration for mutable binding " sym)
-           (alet (type (apply-basic-expression-type expr))
-             (when type
-               (optimizer-declare-type! sym type #t))))))
+         (alet (type (apply-basic-expression-type expr))
+           (when type
+             (optimizer-declare-type! sym type #t)))))
       (_ (void))))
 
   (ast-case stx ()
@@ -139,6 +138,14 @@ namespace: gxc
     ((_ expr ...)
      (for-each (cut compile-e self <>) #'(expr ...)))))
 
+(def (collect-type-setq% self stx)
+  (ast-case stx ()
+    ((_ id expr)
+     (let ((bind-type (optimizer-resolve-type (identifier-symbol #'id)))
+           (expr-type (apply-basic-expression-type #'expr)))
+       (unless (same-type? bind-type expr-type)
+         ;; mutation with incompatible class types destroys type information
+         (optimizer-clear-type! (identifier-symbol #'id)))))))
 
 ;;; apply-basic-expression-type
 (def current-compile-type-closure
@@ -298,8 +305,7 @@ namespace: gxc
          (alet (return (!procedure-return rator-type))
            (or (optimizer-resolve-type return)
                (raise-compile-error "unknown procedure return type" stx return))))
-        ((and (!class? rator-type)
-              (eq? (!type-id rator-type) 'procedure))
+        ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))
          #f)
         (else
          (raise-compile-error "operator is not a procedure" stx rator-type)))))
@@ -308,7 +314,15 @@ namespace: gxc
 (def (basic-expression-type-ref% self stx)
   (ast-case stx ()
     ((_ id)
-     (optimizer-lookup-type (identifier-symbol #'id)))))
+     (optimizer-resolve-type (identifier-symbol #'id)))))
+
+(def (basic-expression-type-if% self stx)
+  (ast-case stx ()
+    ((_ test K E)
+     (let ((type-K (apply-basic-expression-type #'K))
+           (type-E (apply-basic-expression-type #'E)))
+       (and (same-type? type-K type-E)
+            type-K)))))
 
 ;;; apply-lift-top-lambdas
 (def (dispatch-lambda-form? form)
