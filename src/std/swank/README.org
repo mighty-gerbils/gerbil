@@ -1,0 +1,52 @@
+#+TITLE: Swank, a SLIME backend for an IDE
+
+SLIME, the Superior Lisp Interaction Mode for Emacs, is an Emacs mode
+for developing Lisp applications.
+-- https://en.wikipedia.org/wiki/SLIME
+
+
+SLIME uses a backend called Swank that is loaded into Lisp to turn
+Emacs into a featured REPL along with an IDE for lisp use.
+
+
+#+begin_src sh
+  gxi -:te  \
+      -e '(import (prefix-in (only-in :std/swank create-server) swank#))'\
+      -e '(swank#create-server port: 4015)'\
+      -
+#+end_src
+
+* HACKING
+
+#+begin_src sh
+  cd src/std
+  gxpkg link github.com/mighty-gerbils/gerbil-swank "`pwd`"
+#+end_src
+
+#+begin_src scheme :shebang #!/usr/bin/env gxi
+;; -*- Gerbil -*-
+
+(import :std/build-script)
+
+(defbuild-script
+  '("swank/api"
+    "swank/message" 
+    "swank/context"
+    "swank/autodoc"
+    "swank/presentation"
+    "swank/top"
+    "swank/eval"
+    "swank/completions"
+    "swank/handlers"
+    "swank/server"
+    "swank"
+    )
+  verbose: 10)
+#+end_src
+
+
+
+
+
+
+

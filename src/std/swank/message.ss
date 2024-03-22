@@ -1,0 +1,63 @@
+(import :std/swank/api :std/text/utf8 :std/io :std/contract :std/interface :gerbil/gambit)
+(export #t)
+
+(def default-swank-buffer-size (expt 2 15)) ; 32K
+(def (read-message reader (buffer-or-size default-swank-buffer-size))
+  (def sizehex (make-u8vector 6))
+  (using (reader :- Reader)
+    (let* ((size (string->number
+		    (utf8->string
+		     (begin
+		       (reader.read sizehex) sizehex))
+		     16))
+	     (buffer (if (number? buffer-or-size)
+		       (make-u8vector default-swank-buffer-size)
+		       buffer-or-size))
+	     (mbytes (reader.read buffer 0 size size))
+	     (port (open-input-u8vector buffer)))
+      #;(input-port-readtable-set!
+       port
+       (readtable-keywords-allowed?-set
+	(input-port-readtable port) 'prefix))
+      (input-port-readtable-set!
+       port
+       (readtable-eval-allowed?-set
+	(input-port-readtable port) #f))
+
+      (read port))))
+
+(def swank-message-handlers (make-hash-table-eq))
+
+(defrules def-swank ()
+  ((_ (name args ...) body ...)
+   (begin
+     (def (name args ...) body ...)
+     (hash-put! swank-message-handlers 'name name)
+     name))
+  ((_ (name args ... . rest) body ...)
+   (begin
+     (def (name args ... . rest) body ...)
+     (hash-put! swank-message-handlers 'name name)
+     name)))
+
+(def (swank-handle-message msg writer)
+  (let (handler (hash-get swank-message-handlers (car msg)))
+    (if handler
+      (begin (write-message writer (apply handler (cdr msg)))
+             #t)
+      #f)))
+
+
+(def (write-message writer msg)
+  (let* ((str (cond ((string? msg) msg)
+		    ((pair? msg)
+		     (with-output-to-string "" (cut write msg)))
+		    (else #f)))
+	 (bytes (if (u8vector? msg) msg
+		    (string->utf8 str)))
+	 (len (u8vector-length bytes))
+	 (hex (string->utf8 (number->string len 16)))
+	 (filler (make-u8vector (- 6 (u8vector-length hex)))))
+    (u8vector-fill! filler 48)
+    (using (writer :- Writer)
+     (writer.write (u8vector-append filler hex bytes)))))

@@ -167,6 +167,17 @@
     "srfi/160/c64"
     "srfi/160/c128"
     "srfi/212"
+    "swank/api"
+    "swank/message"
+    "swank/context"
+    "swank/autodoc"
+    "swank/presentation"
+    "swank/top"
+    "swank/eval"
+    "swank/completions"
+    "swank/handlers"
+    "swank/server"
+    "swank"
     ;; :std/mime
     "mime/struct"
     (gxc: "mime/types" (extra-inputs: ("mime/mime.types")))
