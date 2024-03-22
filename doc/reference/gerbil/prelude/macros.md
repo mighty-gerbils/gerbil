@@ -481,7 +481,7 @@ This is the reader macro for `{...}`, the method invocation operator.
 => (@ (@ obj id) rest ...)
 ```
 
-Slot reference macro.
+Dynamic slot reference macro.
 
 ### @-set!
 ``` scheme
@@ -495,93 +495,316 @@ Slot reference macro.
 => (@-set! (@ obj id rest ...) last val)
 ```
 
-Slot mutation macro.
+Dynamic slot mutation macro.
 
 ### System Classes
+#### :t
 ```scheme
-  (defsystem-class-info :t t::t () true)
+(defsystem-class-info :t t::t () true)
+```
+#### :object
+```scheme
   (defsystem-class-info :object object::t (t::t) true)
+```
 
+#### :immediate
+```scheme
   (defsystem-class-info :immediate immediate::t (t::t) immediate?)
-  (defsystem-class-info :char char::t (immediate::t) char?)
+```
+
+#### :boolean
+```scheme
+  (defsystem-class-info char::t (immediate::t) char?)
+```
+
+#### :boolean
+```scheme
   (defsystem-class-info :boolean boolean::t (immediate::t) boolean?)
+```
 
+#### :atom
+```scheme
   (defsystem-class-info :atom atom::t (immediate::t) atom?)
-  (defsystem-class-info :void void::t (atom::t) void?)
+```
+
+#### :void
+```scheme
+(defsystem-class-info :void void::t (atom::t) void?)
+```
+#### :eof
+```scheme
   (defsystem-class-info :eof eof::t (atom::t) eof-object?)
+```
+#### :true
+```scheme
   (defsystem-class-info :true true::t (boolean::t atom::t) true?)
+```
+#### :false
+```scheme
   (defsystem-class-info :false false::t (boolean::t atom::t) not)
+```
 
+#### :special
+```scheme
   (defsystem-class-info :special special::t (atom::t) special?)
+```
 
+#### :number
+```scheme
   (defsystem-class-info :number number::t (t::t) number?)
+```
+#### :real
+```scheme
   (defsystem-class-info :real real::t (number::t) real?)
+```
+#### :integer
+```scheme
   (defsystem-class-info :integer integer::t (real::t) integer?)
+```
+#### :fixnum
+```scheme
   (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
+```
+#### :bignum
+```scheme
   (defsystem-class-info :bignum  bignum::t (integer::t) ##bignum?)
+```
+#### :ratnum
+```scheme
   (defsystem-class-info :ratnum ratnum::t (real::t) ##ratnum?)
+```
+#### :flonum
+```scheme
   (defsystem-class-info :flonum flonum::t (real::t) flonum?)
+```
+#### :cpxnum
+```scheme
   (defsystem-class-info :cpxnum cpxnum::t (number::t) ##cpxnum?)
+```
 
+#### :symbolic
+```scheme
   (defsystem-class-info :symbolic symbolic::t (t::t) symbolic?)
+```
+#### :symbol
+```scheme
   (defsystem-class-info :symbol symbol::t (symbolic::t) symbol?)
+```
+#### :keyword
+```scheme
   (defsystem-class-info :keyword keyword::t (symbolic::t) keyword?)
+```
 
+#### :list
+```scheme
   (defsystem-class-info :list list::t (t::t) list?)
+```
+#### :pair
+```scheme
   (defsystem-class-info :pair pair::t (list::t) pair?)
+```
+#### :null
+```scheme
   (defsystem-class-info :null null::t (list::t atom::t) null?)
+```
 
+#### :sequence
+```scheme
   (defsystem-class-info :sequence sequence::t (t::t) sequence?)
+```
+#### :vector
+```scheme
   (defsystem-class-info :vector vector::t (sequence::t) vector?)
+```
+#### :string
+```scheme
   (defsystem-class-info :string string::t (sequence::t) string?)
+```
+#### :hvector
+```scheme
   (defsystem-class-info :hvector hvector::t (sequence::t) hvector?)
+```
+#### :u8vector
+```scheme
   (defsystem-class-info :u8vector u8vector::t (hvector::t) u8vector?)
+```
+#### :s8vector
+```scheme
   (defsystem-class-info :s8vector s8vector::t (hvector::t) s8vector?)
+```
+#### :u16vector
+```scheme
   (defsystem-class-info :u16vector u16vector::t (hvector::t) u16vector?)
+```
+#### :s16vector
+```scheme
   (defsystem-class-info :s16vector s16vector::t (hvector::t) s16vector?)
+```
+#### :u32vector
+```scheme
   (defsystem-class-info :u32vector u32vector::t (hvector::t) u32vector?)
+```
+#### :s32vector
+```scheme
   (defsystem-class-info :s32vector s32vector::t (hvector::t) s32vector?)
+```
+#### :u64vector
+```scheme
   (defsystem-class-info :u64vector u64vector::t (hvector::t) u64vector?)
+```
+#### :s64vector
+```scheme
   (defsystem-class-info :s64vector s64vector::t (hvector::t) s64vector?)
+```
+#### :f32vector
+```scheme
   (defsystem-class-info :f32vector f32vector::t (hvector::t) f32vector?)
+```
+#### :f64vector
+```scheme
   (defsystem-class-info :f64vector f64vector::t (hvector::t) f64vector?)
+```
 
+#### :values
+```scheme
   (defsystem-class-info :values values::t (t::t) ##values?)
+```
+#### :box
+```scheme
   (defsystem-class-info :box box::t (t::t) box?)
+```
+#### :frame
+```scheme
   (defsystem-class-info :frame frame::t (t::t) ##frame?)
+```
+#### :continuation
+```scheme
   (defsystem-class-info :continuation continuation::t (t::t) continuation?)
+```
+#### :promise
+```scheme
   (defsystem-class-info :promise promise::t (t::t) promise?)
+```
+#### :weak
+```scheme
   (defsystem-class-info :weak weak::t (t::t) weak?)
+```
+#### :foreign
+```scheme
   (defsystem-class-info :foreign foreign::t (t::t) foreign?)
+```
 
+#### :procedure
+```scheme
   (defsystem-class-info :procedure procedure::t (t::t) procedure?)
+```
 
+#### :time
+```scheme
   (defsystem-class-info :time time::t (t::t) time?)
+```
+#### :thread
+```scheme
   (defsystem-class-info :thread thread::t (t::t) thread?)
+```
+#### :thread-group
+```scheme
   (defsystem-class-info :thread-group thread-group::t (t::t) thread-group?)
+```
+#### :mutex
+```scheme
   (defsystem-class-info :mutex mutex::t (t::t) mutex?)
+```
+#### :condvar
+```scheme
   (defsystem-class-info :condvar condvar::t (t::t) condvar?)
+```
+#### :port
+```scheme
   (defsystem-class-info :port port::t (t::t) port?)
+```
+#### :object-port
+```scheme
   (defsystem-class-info :object-port object-port::t (port::t) object-port?)
+```
+#### :character-port
+```scheme
   (defsystem-class-info :character-port character-port::t (object-port::t) character-port?)
+```
+#### :byte-port
+```scheme
   (defsystem-class-info :byte-port byte-port::t (character-port::t) byte-port?)
+```
+#### :device-port
+```scheme
   (defsystem-class-info :device-port device-port::t (byte-port::t) device-port?)
+```
+#### :vector-port
+```scheme
   (defsystem-class-info :vector-port vector-port::t (object-port::t) vector-port?)
+```
+#### :string-port
+```scheme
   (defsystem-class-info :string-port string-port::t (character-port::t) string-port?)
+```
+#### :u8vector-port
+```scheme
   (defsystem-class-info :u8vector-port u8vector-port::t (byte-port::t) u8vector-port?)
+```
+#### :raw-device-port
+```scheme
   (defsystem-class-info :raw-device-port raw-device-port::t (port::t) raw-device-port?)
+```
+#### :tcp-server-port
+```scheme
   (defsystem-class-info :tcp-server-port tcp-server-port::t (object-port::t) tcp-server-port?)
+```
+#### :udp-port
+```scheme
   (defsystem-class-info :udp-port udp-port::t (object-port::t) udp-port?)
+```
+#### :directory-port
+```scheme
   (defsystem-class-info :directory-port directory-port::t (object-port::t) directory-port?)
+```
+#### :event-queue-port
+```scheme
   (defsystem-class-info :event-queue-port event-queue-port::t (object-port::t) event-queue-port?)
+```
+#### :table
+```scheme
   (defsystem-class-info :table table::t (t::t) table?)
+```
+#### :readenv
+```scheme
   (defsystem-class-info :readenv readenv::t (t::t) readenv?)
+```
+#### :writeenv
+```scheme
   (defsystem-class-info :writeenv writeenv::t (t::t) writeenv?)
+```
+#### :readtable
+```scheme
   (defsystem-class-info :readtable readtable::t (t::t) readtable?)
+```
+#### :processor
+```scheme
   (defsystem-class-info :processor processor::t (t::t) processor?)
+```
+#### :vm
+```scheme
   (defsystem-class-info :vm vm::t (t::t) vm?)
+```
+#### :file-info
+```scheme
   (defsystem-class-info :file-info file-info::t (t::t) file-info?)
+```
+#### :socket-info
+```scheme
   (defsystem-class-info :socket-info socket-info::t (t::t) socket-info?)
+```
+#### :address-info
+```scheme
   (defsystem-class-info :address-info address-info::t (t::t) address-info?)
 ```
 

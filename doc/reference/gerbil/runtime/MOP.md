@@ -7,13 +7,13 @@ These procedures provide the meta-object protocol.
 ## MOP Procedures
 ### class-type?
 ```scheme
-(class-type? o)
+(class-type? o) -> boolean
 ```
 Returns true if *o* is a standard class.
 
 ### class-type=?
 ```scheme
-(class-type=? klass other-klass)
+(class-type=? klass other-klass) -> boolean
 
   klass, other-klass := class
 ```
@@ -22,44 +22,58 @@ Returns true if both classes have the same type id.
 
 ### class-type-final?
 ```scheme
-(class-type-final? klass)
+(class-type-final? klass) -> boolean
 
   klass := class
 ```
 
 Returns true if a class is final.
 
+**Warning** This is an unsafe procedure.
+
 ### class-type-struct?
 ```scheme
-(class-type-struct? klass)
+(class-type-struct? klass) -> boolean
 
   klass := class
 ```
 
 Returns true if a class has the struct property.
 
+**Warning** This is an unsafe procedure.
+
 ### class-type-sealed?
 ```scheme
-(class-type-sealed? klass)
+(class-type-sealed? klass) -> boolean
 
- klass := class
+  klass := class
 ```
 
 Returns true if a class has been sealed.
 
+**Warning** This is an unsafe procedure.
+
 ### class-type-metaclass?
 ```scheme
-(class-type-metaclass? klass)
+(class-type-metaclass? klass) -> boolean
+
+  klass := class
 ```
 
 Returns true if a class has the metaclass property.
+
+**Warning** This is an unsafe procedure.
 
 ### class-type-system?
 ```scheme
-(class-type-system? klass)
+(class-type-system? klass) -> boolean
+
+  klass := class
 ```
 
 Returns true if a class has the metaclass property.
+
+**Warning** This is an unsafe procedure.
 
 ### class-type-id
 ```scheme
@@ -160,6 +174,8 @@ Returns the number of fields in a class
 
 Sets the sealed flag on a class.
 
+**Warning** This is an unsafe procedure.
+
 ### subclass?
 ```scheme
 (subclass? maybe-sub-class maybe-super-class)
@@ -167,12 +183,16 @@ Sets the sealed flag on a class.
 
 Returns true if a class is a subclass of another class.
 
+**Warning** This is an unsafe procedure.
+
 ### substruct?
 ```scheme
 (substruct? maybe-sub-struct maybe-super-struct)
 ```
 
 Returns true if a class is a substruct of a nother class
+
+**Warning** This is an unsafe procedure.
 
 ### make-class-type
 ``` scheme
@@ -194,7 +214,9 @@ alist elements:
  (equal: slot ...)        ; list of equality comparable slots, or boolean
 ```
 
-Creates a new class
+Creates a new class.
+
+**Warning** This is an unsafe procedure.
 
 ### make-class-predicate
 ```scheme
@@ -204,6 +226,8 @@ Creates a new class
 ```
 
 Creates a class instance predicate for instances of *klass*.
+
+**Warning** This is an unsafe procedure.
 
 ### make-class-slot-accessor
 ```scheme
@@ -215,6 +239,8 @@ Creates a class instance predicate for instances of *klass*.
 
 Creates a slot accessor for *slot*.
 
+**Warning** This is an unsafe procedure.
+
 ### make-class-slot-mutator
 ```scheme
 (make-class-slot-mutator klass slot) -> procedure
@@ -224,6 +250,8 @@ Creates a slot accessor for *slot*.
 ```
 
 Creates a slot mutator for *slot*.
+
+**Warning** This is an unsafe procedure.
 
 ### make-class-slot-unchecked-accessor
 ```scheme
@@ -235,6 +263,8 @@ Creates a slot mutator for *slot*.
 
 Like `make-class-slot-accessor`, but creates an unchecked accessor.
 
+**Warning** This is an unsafe procedure.
+
 ### make-class-slot-unchecked-mutator
 ```scheme
 (make-class-slot-unchecked-mutator klass slot)  -> procedure
@@ -244,6 +274,8 @@ Like `make-class-slot-accessor`, but creates an unchecked accessor.
 ```
 
 Like `make-class-slot-mutator`, but creates an unchecked mutator.
+
+**Warning** This is an unsafe procedure.
 
 ### direct-instance?
 ```scheme
@@ -308,6 +340,8 @@ Returns the class of a standard object; *obj* _should_ be a standard object inst
 
 Initializes an object *obj* with a value of *fill*
 
+**Warning** This is an unsafe procedure.
+
 ### new-instance
 ```scheme
 (new-instance klass)
@@ -316,7 +350,7 @@ Initializes an object *obj* with a value of *fill*
 ```
 
 Creates a new instance of *klass* without invoking the constructor.
-All slots are initialized with `#f`
+All slots are initialized with `#f`.
 
 ### make-instance
 ```scheme
@@ -339,6 +373,8 @@ Initializes *obj* by setting its fields to *args* from left to right.
 If there are more fields than arguments, then they are left uninitialized.
 It is an error if there are more arguments than fields in the object.
 
+**Warning** This is an unsafe procedure.
+
 ### class-instance-init!
 ```scheme
 (class-instance-init! obj . args)
@@ -349,6 +385,8 @@ It is an error if there are more arguments than fields in the object.
 Initializes *obj*, using *args* as a plist of slot keywords/symbols and values.
 For every slot and value in the plist, the corresponding object slot is set to
 the value.
+
+**Warning** This is an unsafe procedure.
 
 ### constructor-init!
 ```scheme
@@ -362,6 +400,7 @@ the value.
 Initializes *obj* by applying the constructor with id `kons-id` from
 the class `klass`.
 
+**Warning** This is an unsafe procedure.
 
 ### struct-copy
 ```scheme
@@ -537,6 +576,8 @@ specializer is invoked with the concrete class and the specialized method
 table to generate a version of the method that is specialized for the
 concrete class.
 
+**Warning** This is an unsafe procedure.
+
 ### seal-class!
 ```scheme
 (seal-class! klass)
@@ -581,99 +622,475 @@ Returns the class of an object or primitive value.
 ## Predefined Classes
 
 ### t::t
+```scheme
+(def t::t ...)
+```
+
+The class of everything.
+
 ### class::t
+```scheme
+(def class::t ...)
+```
+
+The class of classes.
+
 ### object::t
+```scheme
+(def object::t ...)
+```
+
+The class of standard objects.
+
 ### immediate::t
+```scheme
+(defsystem-class immediate::t immediate ())
+```
+
 ### atom::t
+```scheme
+(defsystem-class atom::t atom (immediate::t))
+```
+
+
 ### char::t
+```scheme
+(defsystem-class char::t char (immediate::t))
+```
+
 ### boolean::t
+```scheme
+(defsystem-class boolean::t boolean (immediate::t))
+```
+
 ### true::t
+```scheme
+(defsystem-class true::t true (boolean::t atom::t))
+```
+
 ### false::t
+```scheme
+(defsystem-class false::t false (boolean::t atom::t))
+```
+
 ### void::t
+```scheme
+(defsystem-class void::t void (atom::t))
+```
+
 ### eof::t
+```scheme
+(defsystem-class eof::t eof (atom::t))
+```
+
 ### special::t
+```scheme
+(defsystem-class special::t special (atom::t))
+```
+
 ### number::t
+```scheme
+(defsystem-class number::t number ())
+```
+
 ### real::t
+```scheme
+(defsystem-class real::t real (number::t))
+```
+
 ### integer::t
+```scheme
+(defsystem-class integer::t integer (real::t))
+```
+
 ### fixnum::t
+```scheme
+(defsystem-class fixnum::t fixnum (integer::t immediate::t))
+```
+
 ### bignum::t
+```scheme
+(defsystem-class bignum::t bignum (integer::t))
+```
+
 ### ratnum::t
+```scheme
+(defsystem-class ratnum::t ratnum (real::t))
+```
+
 ### flonum::t
+```scheme
+(defsystem-class flonum::t flonum (real::t))
+```
+
 ### cpxnum::t
+```scheme
+(defsystem-class cpxnum::t cpxnum (number::t))
+```
+
 ### symbolic::t
+```scheme
+(defsystem-class symbolic::t symbolic ())
+```
+
 ### symbol::t
+```scheme
+(defsystem-class symbol::t symbol (symbolic::t))
+```
+
 ### keyword::t
+```scheme
+(defsystem-class keyword::t keyword (symbolic::t))
+```
+
 ### list::t
+```scheme
+(defsystem-class list::t list ())
+```
+
+
 ### pair::t
+```scheme
+(defsystem-class pair::t pair (list::t))
+```
+
 ### null::t
+```scheme
+(defsystem-class null::t null (list::t atom::t))
+```
+
 ### sequence::t
+```scheme
+(defsystem-class sequence::t sequence ())
+```
+
 ### vector::t
+```scheme
+(defsystem-class vector::t vector (sequence::t))
+```
+
 ### string::t
+```scheme
+(defsystem-class string::t string (sequence::t))
+```
+
 ### hvector::t
+```scheme
+(defsystem-class hvector::t hvector (sequence::t))
+```
+
 ### u8vector::t
+```scheme
+(defsystem-class u8vector::t u8vector (hvector::t))
+```
+
 ### s8vector::t
+```scheme
+(defsystem-class s8vector::t s8vector (hvector::t))
+```
+
 ### u16vector::t
+```scheme
+(defsystem-class u16vector::t u16vector (hvector::t))
+```
+
 ### s16vector::t
+```scheme
+(defsystem-class s16vector::t s16vector (hvector::t))
+```
+
 ### u32vector::t
+```scheme
+(defsystem-class u32vector::t u32vector (hvector::t))
+```
+
 ### s32vector::t
+```scheme
+(defsystem-class s32vector::t s32vector (hvector::t))
+```
+
 ### u64vector::t
+```scheme
+(defsystem-class u64vector::t u64vector (hvector::t))
+```
+
 ### s64vector::t
+```scheme
+(defsystem-class s64vector::t s64vector (hvector::t))
+```
+
 ### f32vector::t
+```scheme
+(defsystem-class f32vector::t f32vector (hvector::t))
+```
+
 ### f64vector::t
+```scheme
+(defsystem-class f64vector::t f64vector (hvector::t))
+```
+
 ### values::t
+```scheme
+(defsystem-class values::t values ())
+```
+
 ### box::t
+```scheme
+(defsystem-class box::t box ())
+```
+
 ### frame::t
+```scheme
+(defsystem-class frame::t frame ())
+```
+
+
 ### continuation::t
+```scheme
+(defsystem-class continuation::t continuation ())
+```
+
 ### promise::t
+```scheme
+(defsystem-class promise::t promise ())
+```
+
 ### weak::t
+```scheme
+(defsystem-class weak::t weak ())
+```
+
 ### foreign::t
+```scheme
+(defsystem-class foreign::t foreign ())
+```
+
 ### procedure::t
+```scheme
+(defsystem-class procedure::t procedure ())
+```
+
+
+### return::t
+```scheme
+(defsystem-class return::t return ())
+```
+
+
 ### time::t
+```scheme
+(defshadow-class time::t () (macro-type-time))
+```
+
 ### thread::t
+```scheme
+(defshadow-class thread::t () (macro-type-thread))
+```
+
 ### thread-group::t
+```scheme
+(defshadow-class thread-group::t () (macro-type-tgroup))
+```
+
 ### mutex::t
+```scheme
+(defshadow-class mutex::t () (macro-type-mutex))
+```
+
 ### condvar::t
+```scheme
+(defshadow-class condvar::t () (macro-type-condvar))
+```
+
 ### port::t
+```scheme
+(defshadow-class port::t () (macro-type-port))
+```
+
 ### object-port::t
+```scheme
+(defshadow-class object-port::t (port::t) (macro-type-object-port))
+```
+
 ### character-port::t
+```scheme
+(defshadow-class character-port::t (object-port::t) (macro-type-character-port))
+```
+
 ### byte-port::t
+```scheme
+(defshadow-class byte-port::t (character-port::t) (macro-type-byte-port))
+```
+
 ### device-port::t
+```scheme
+(defshadow-class device-port::t (byte-port::t) (macro-type-device-port))
+```
+
 ### vector-port::t
+```scheme
+(defshadow-class vector-port::t (object-port::t) (macro-type-vector-port))
+```
+
 ### string-port::t
+```scheme
+(defshadow-class string-port::t (character-port::t) (macro-type-string-port))
+```
+
 ### u8vector-port::t
+```scheme
+(defshadow-class u8vector-port::t (byte-port::t) (macro-type-u8vector-port))
+```
+
 ### raw-device-port::t
+```scheme
+(defshadow-class raw-device-port::t (port::t) (macro-type-raw-device-port))
+```
+
 ### tcp-server-port::t
+```scheme
+(defshadow-class tcp-server-port::t (object-port::t) (macro-type-tcp-server-port))
+```
+
 ### udp-port::t
+```scheme
+(defshadow-class udp-port::t (object-port::t) (macro-type-udp-port))
+```
+
 ### directory-port::t
+```scheme
+(defshadow-class directory-port::t (object-port::t) (macro-type-directory-port))
+```
+
 ### event-queue-port::t
+```scheme
+(defshadow-class event-queue-port::t (object-port::t) (macro-type-event-queue-port))
+```
+
 ### table::t
+```scheme
+(defshadow-class table::t () (macro-type-table))
+```
+
 ### readenv::t
+```scheme
+(defshadow-class readenv::t () (macro-type-readenv))
+```
+
 ### writeenv::t
+```scheme
+(defshadow-class writeenv::t () (macro-type-writeenv))
+```
+
 ### readtable::t
+```scheme
+(defshadow-class readtable::t () (macro-type-readtable))
+```
+
 ### processor::t
+```scheme
+(defshadow-class processor::t () (macro-type-processor))
+```
+
 ### vm::t
+```scheme
+(defshadow-class vm::t () (macro-type-vm))
+```
+
 ### file-info::t
+```scheme
+(defshadow-class file-info::t () (macro-type-file-info))
+```
+
 ### socket-info::t
+```scheme
+(defshadow-class socket-info::t () (macro-type-socket-info))
+```
+
 ### address-info::t
+```scheme
+(defshadow-class address-info::t () (macro-type-address-info))
+```
+
 
 ## System Object Predicates
 ### special?
+```scheme
+(special? o) -> boolean
+```
 ### sequence?
+```scheme
+(sequence? o) -> boolean
+```
 ### hvector?
+```scheme
+(hvector? o) -> boolean
+```
 ### weak?
+```scheme
+(weak? o) -> boolean
+```
 ### object-port?
+```scheme
+(object-port? o) -> boolean
+```
 ### character-port?
+```scheme
+(character-port? o) -> boolean
+```
 ### byte-port?
+```scheme
+(byte-port? o) -> boolean
+```
 ### character-port?
+```scheme
+(character-port? o) -> boolean
+```
 ### device-port?
+```scheme
+(device-port? o) -> boolean
+```
 ### vector-port?
+```scheme
+(vector-port? o) -> boolean
+```
 ### string-port?
+```scheme
+(string-port? o) -> boolean
+```
 ### u8vector-port?
+```scheme
+(u8vector-port? o) -> boolean
+```
 ### raw-device-port?
+```scheme
+(raw-device-port? o) -> boolean
+```
 ### tcp-server-port?
+```scheme
+(tcp-server-port? o) -> boolean
+```
 ### udp-port?
+```scheme
+(udp-port? o) -> boolean
+```
 ### directory-port?
+```scheme
+(directory-port? o) -> boolean
+```
 ### event-queue-port?
+```scheme
+(event-queue-port? o) -> boolean
+```
 ### readenv?
+```scheme
+(readenv? o) -> boolean
+```
 ### writenv?
+```scheme
+(writenv? o) -> boolean
+```
 ### vm?
+```scheme
+(vm? o) -> boolean
+```
