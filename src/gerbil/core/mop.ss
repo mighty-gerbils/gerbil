@@ -777,7 +777,7 @@ package: gerbil/core
   (defsystem-class-info :directory-port directory-port::t (object-port::t) directory-port?)
   (defsystem-class-info :event-queue-port event-queue-port::t (object-port::t) event-queue-port?)
   (defsystem-class-info :table table::t (t::t) table?)
-  (defsystem-class-info :readenv readenv::t (t::t) readenv)
+  (defsystem-class-info :readenv readenv::t (t::t) readenv?)
   (defsystem-class-info :writeenv writeenv::t (t::t) writeenv?)
   (defsystem-class-info :readtable readtable::t (t::t) readtable?)
   (defsystem-class-info :processor processor::t (t::t) processor?)

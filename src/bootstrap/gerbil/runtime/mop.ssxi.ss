@@ -156,6 +156,8 @@ package: gerbil/runtime
   (declare-type slot-set! (@case-lambda (3 slot-set!__0) (4 slot-set!__%)))
   (declare-type __slot-error (@lambda 2 #f))
   (declare-type subclass? (@lambda 2 #f))
+  (declare-type object? (@lambda 1 #f))
+  (declare-type object-type (@lambda 1 #f))
   (declare-type
    direct-instance?
    (@lambda 2
