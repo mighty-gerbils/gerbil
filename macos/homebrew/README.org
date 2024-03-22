@@ -2,7 +2,7 @@
 #+EXPORT_FILE_NAME: ../../doc/guide/homebrew/README.md
 #+OPTIONS: toc:nil
 
-* Quick: Use the Tap
+* The Gerbil Homebrew Tap
 
 #+begin_src sh
 brew install mighty-gerbils/gerbil/gerbil-scheme
@@ -15,7 +15,7 @@ That will install the last point release + any fixes or updates. It uses the lat
 If you want to install the HEAD of master that can be done.
 
 #+begin_src sh
-  brew install --verbose --HEAD mighty-gerbils/gerbil/gerbil-scheme
+  brew install --debug --verbose --HEAD mighty-gerbils/gerbil/gerbil-scheme
 #+end_src
 
 

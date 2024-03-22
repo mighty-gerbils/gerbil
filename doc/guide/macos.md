@@ -1,3 +1,5 @@
+# Gerbil on MacOS
+
 MacOS is well supported by gerbil.
 
 -   If you've got [Homebrew](https://brew.sh/) you can use the [Tap and/or Formula](#homebrew-formula-and-binaries).
@@ -31,7 +33,7 @@ git subtree add --prefix macos/homebrew git@github.com:mighty-gerbils/homebrew-g
 
 -   **Install XCode:** Open a terminal and run `xcode-select --install`
 
--   **Compile and Install OpenSSL:** We need it for crypto!
+-   **Compile and Install OpenSSL:** We need it for crypto so cannot use the built in ssl.
     
     ```sh
     git clone https://github.com/openssl/openssl.git
