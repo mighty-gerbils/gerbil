@@ -858,6 +858,8 @@ namespace: #f
 
   (unless (procedure? proc)
     (error "bad method; expected procedure" proc))
+  (unless (symbol? id)
+    (error "bad method id; expected symbol" id))
 
   (cond
    ((class-type? klass)
@@ -1021,6 +1023,10 @@ namespace: #f
 
 (def (call-next-method subklass obj id . args)
   (cond
+   ((not (class-type? subklass))
+    (error "bad class; expected class type" subklass))
+   ((not (symbol? id))
+    (error "bad method id; expected symbol" id))
    ((next-method subklass obj id)
     => (lambda (methodf) (apply methodf obj args)))
    (else
