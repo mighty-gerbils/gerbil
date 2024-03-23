@@ -36,6 +36,10 @@ namespace: gxc
 (defclass !signature (return effect arguments)
   final: #t equal: #t)
 
+(defstruct (!primitive-predicate !procedure) ()
+  constructor: :init!
+  equal: #t)
+
 ;;; MOP
 (defstruct (!class !type)
   (super ;; ListOf Symbol; super type runtime identifiers
@@ -275,6 +279,14 @@ namespace: gxc
 
 (defmethod {:init! !primitive-case-lambda}
   !case-lambda:::init!)
+
+(defmethod {:init! !primitive-predicate}
+  (lambda (self id)
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: 'boolean::t
+                  effect: '(pure predicate)
+                  arguments: '(t::t)))))
 
 (def (!type-vtab type)
   (cond

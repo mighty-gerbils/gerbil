@@ -555,7 +555,8 @@
                           (try-cast descriptor obj)))
                     (defpred
                       #'(def (predicate obj)
-                          (direct-instance? klass obj)))
+                          (begin-annotation (@predicate klass-quoted)
+                            (direct-instance? klass obj))))
                     (defpred-instance
                       #'(def (instance-predicate obj)
                           (satisfies? descriptor obj)))
