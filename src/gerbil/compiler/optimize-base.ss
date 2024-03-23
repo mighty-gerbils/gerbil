@@ -336,7 +336,9 @@ namespace: gxc
                        ([method . rest]
                         (and (hash-get klass-a-methods method)
                              (loop rest)))
-                       (else #t)))))))))
+                       (else #t)))))))
+      (and (!procedure? klass-a) (!class? klass-b)
+           (eq? (!type-id klass-b) 'procedure))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
