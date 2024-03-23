@@ -467,7 +467,11 @@ namespace: gxc
 (def (lambda-form-infer-signature form)
   (ast-case form ()
     ((hd body)
-     (apply-extract-lambda-signature #'body))))
+     (cond
+      ((apply-extract-lambda-signature #'body))
+      ((apply-basic-expression-type #'body)
+       => (lambda (return) [return: return]))
+      (else #f)))))
 
 (def (extract-lambda-signature-begin-annotation% self stx)
   (ast-case stx (@type.signature)
