@@ -265,18 +265,20 @@ namespace: gxc
         (or typedecl
             (error "Cannot generate typedecl for inline rules"))
         ['@lambda arity dispatch
-             return: (&!signature-return signature)
-             effect: (&!signature-effect signature)
-             arguments: (&!signature-arguments signature)]))))
+             signature: [return: (&!signature-return signature)
+                         effect: (&!signature-effect signature)
+                         arguments: (&!signature-arguments signature)
+                         unchecked: (&!signature-unchecked signature)]]))))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
     (def (clause-e clause)
       (with ((!lambda _ signature arity dispatch) clause)
         [arity dispatch
-               return: (&!signature-return signature)
-               effect: (&!signature-effect signature)
-               arguments: (&!signature-arguments signature)]))
+               signature: [return: (&!signature-return signature)
+                           effect: (&!signature-effect signature)
+                           arguments: (&!signature-arguments signature)
+                           unchecked: (&!signature-unchecked signature)]]))
     (let (clauses (&!case-lambda-clauses self))
       (let (clauses (map clause-e clauses))
         ['@case-lambda clauses ...]))))

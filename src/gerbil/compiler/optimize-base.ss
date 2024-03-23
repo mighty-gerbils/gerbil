@@ -33,7 +33,7 @@ namespace: gxc
 (defstruct (!procedure !type) (signature)
   equal: #t)
 
-(defclass !signature (return effect arguments)
+(defclass !signature (return effect arguments unchecked)
   final: #t equal: #t)
 
 (defstruct (!primitive-predicate !procedure) ()
@@ -258,7 +258,8 @@ namespace: gxc
   (lambda (self id arity dispatch (inline #f) (typedecl #f)
            return: (return #f)
            effect: (effect #f)
-           arguments: (arguments #f))
+           arguments: (arguments #f)
+           unchecked: (unchecked #f))
     (set! (&!type-id self) id)
     (set! (&!lambda-arity self) arity)
     (set! (&!lambda-dispatch self) dispatch)
@@ -267,7 +268,8 @@ namespace: gxc
     (set! (&!procedure-signature self)
       (!signature return: return
                   effect: effect
-                  arguments: arguments))))
+                  arguments: arguments
+                  unchecked: unchecked))))
 
 (defmethod {:init! !case-lambda}
   (lambda (self id clauses)

@@ -458,14 +458,17 @@ namespace: gxc
          ([(? stx-keyword? key) arg . rest]
           (case (stx-e key)
             ((return:)
-             (loop (cons* (identifier-symbol arg) return: result)
-                   rest))
+             (loop rest
+                   (cons* (identifier-symbol arg) return: result)))
             ((effect:)
-             (loop (cons* (map stx-e arg) effect: result)
-                   rest))
+             (loop rest
+                   (cons* (map stx-e arg) effect: result)))
             ((arguments:)
-             (loop (cons* (map identifier-symbol arg) arguments: result)
-                   rest))
+             (loop rest
+                   (cons* (map identifier-symbol arg) arguments: result)))
+            ((unchecked:)
+             (loop rest
+                   (cons* (identifier-symbol arg) unchecked: result)))
             (else
              (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
          ([] (reverse! result))
