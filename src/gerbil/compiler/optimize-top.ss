@@ -233,6 +233,11 @@ namespace: gxc
      (make-!interface (identifier-symbol #'type-t)
                       (stx-map stx-e #'methods)))))
 
+(def (basic-expression-type-annotation-predicate stx ann)
+  (ast-case ann ()
+    ((_ type-t)
+     (make-!primitive-predicate (identifier-symbol #'type-t)))))
+
 (defbasic-expression-type-annotations
   (@mop.class       basic-expression-type-annotation-mop.class)
   (@mop.constructor basic-expression-type-annotation-mop.constructor)
@@ -241,7 +246,8 @@ namespace: gxc
   (@mop.mutator     basic-expression-type-annotation-mop.mutator)
   (@mop.system      basic-expression-type-annotation-mop.system)
   (@interface       basic-expression-type-annotation-interface)
-  (@type            basic-expression-type-annotation-typedecl))
+  (@type            basic-expression-type-annotation-typedecl)
+  (@predicate       basic-expression-type-annotation-predicate))
 
 (def (basic-expression-type-lambda% self stx)
   (begin-annotation @match:prefix
