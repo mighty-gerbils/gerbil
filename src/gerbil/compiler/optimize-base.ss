@@ -287,12 +287,12 @@ namespace: gxc
     (!class-lookup-method type method))
    (else #f)))
 
-;; utilities
-(def (type-subclass? klass-a klass-b)
-  (and (!class? klass-a) (!class? klass-b)
-       (or (eq? klass-a klass-b)
+(def (!type-subclass? klass-a klass-b)
+  (or (eq? klass-a klass-b)
+      (and (!class? klass-a) (!class? klass-b)
            (memq (!type-id klass-b) (!class-precedence-list klass-a)))))
 
+;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
