@@ -8,7 +8,7 @@
 brew install mighty-gerbils/gerbil/gerbil-scheme
 #+end_src
 
-That will install the last point release + any fixes or updates. It uses the latest =clang= on macos as the compiler
+That will install the last point release + any fixes or updates.
 
 ** HEAD of master
 
