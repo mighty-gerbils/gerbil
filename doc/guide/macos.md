@@ -1,119 +1,194 @@
 # Gerbil on MacOS
 
-To install gerbil on MacOS the easy way is simply to download the homebrew `.rb` and run it as such.
+MacOS is well supported by gerbil.
+
+-   If you've got [Homebrew](https://brew.sh/) you can use the [Tap and/or Formula](#homebrew-formula-and-binaries).
+-   If you've got some time to spare it can [be built](#raw-build) easily.
+
+Because there are many different versions and processors your configuration may be slightly different than expected. If anything at all seems out of the ordinary please [file an issue](https://github.com/mighty-gerbils/gerbil/issues) ot get in touch another way and we'll be on top of it.
+
+
+<a id="homebrew-formula-and-binaries"></a>
+
+# Homebrew Formula and Binaries
+
+The simple way is to use the [Homebrew Tap](https://github.com/mighty-gerbils/homebrew-gerbil).
+
+There are binaries as well as the ability to build the HEAD of master.
 
 ```sh
-wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
-brew install --formula -vd gerbil-scheme.rb
+brew install mighty-gerbils/gerbil/gerbil-scheme
 ```
 
-The run the bleeding edge master build simply pass the `--HEAD` argument.
+That repository is also available in the gerbil source [as a subtree](homebrew/README.md).
 
 ```sh
-brew install --HEAD --formula -vd gerbil-scheme.rb
-```
-
-When updating/upgrading or hacking it's often needed to clear things.
-
-```sh
-  brew unlink gerbil-scheme
-  # Clear the build cache. Helps with subtrees and versions
-  rm -rf $(brew --cache)/gerbil-scheme--git
-```
-
-And, if worse comes to Worcestershire, uninstall and delete the rest.
-
-```sh
-brew uninstall gerbil-scheme
-rm -rf ~/.gerbil
+git subtree add --prefix macos/homebrew git@github.com:mighty-gerbils/homebrew-gerbil.git main --squash
 ```
 
 
-# Documentation
+<a id="raw-build"></a>
 
-<!---
-  The markdown file "macos.md" is weaved (AKA generated) from the homebrew/README.org file.
- -->
+# Build from source
 
-Gerbil is fully available for MacOS! There are some differences that need to be taken into account should you wish to compile and distribute a binary but it should JustWork(tm) all things considered.
+There are a few different ways to build a working `gerbil` on `MacOS`.
 
 
-## `DYLD_LIBRARY_PATH` and stripping: System Integrity Protection (SIP)
+## Install Dependencies
 
-Ah stripping. Whether you love it or hate it, it happens, often witout a say. System Integrity Protection (SIP) in macOS protects the entire system by preventing the execution of unauthorized code.
+-   **Install XCode:** Open a terminal and run `xcode-select --install`
 
-In short the mantra is "Don't Shell Out!". The environment is propagated when just calling `gxi`.
+-   **Compile and Install OpenSSL:** We need it for crypto so cannot use the built in ssl.
+    
+    ```sh
+    git clone https://github.com/openssl/openssl.git
+    cd openssl;
+    ./config && make
+    sudo make install
+    ```
+
+
+## Option 1) Use the built in Clang.
+
+If you want to be as native as possible this is the easy way. Most of us have MacPorts and/or Homebrew and I can totally recommend using GCC, but once you have openssl this **should** work.
+
+This takes a long time as `clang` is a lot slower to build. But the binary may outperform modern `gcc` and building binaries with `clang` without setting `GERBIL_GCC` is something so it's a toss up.
 
 ```sh
-% gxi -e '(displayln (getenv "DYLD_LIBRARY_PATH" #f))'
-/opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+# On Sonama, Silicon not Intel, we set the prefix as so.
+# You may want it elsewhere.
+cd gerbil;
+./configure --prefix=/opt/gerbil && make
+sudo make install
 ```
 
-It may not propagate with a shebang or other reasons. It seems arbitrary. For example I updated my older iMac to an unsupported Ventura. It does not strip for me.
+
+## Option 2) Using GCC@13
+
+If you want a faster compile time both for building `gerbil` and your own binaries `gcc` is the better idea. `GERBIL_GCC` should allow you to compile your own binaries with a different compiler if you ever need to use the weird MacOS headers that are not quite C.
+
+You can install it using [MacPorts](https://www.macports.org/) or [Homebrew](https://brew.sh/).
+
+
+### MacPorts
 
 ```sh
-$ uname -a
-Darwin drewc-iMac.local 22.6.0 Darwin Kernel Version 22.6.0: Tue Aug 15 20:13:24 PDT 2023; root:xnu-8796.141.3.700.5~2/RELEASE_X86_64 x86_64
-$ export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
-$ LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
-$ DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
-$ echo '#!/bin/sh' > /tmp/foo
-$ echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
-$ echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
-$ echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
-$ chmod 755 /tmp/foo
-$ /tmp/foo
-dy?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
-ld?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
-my?: /usr/local/Cellar/gerbil-scheme/HEAD-a7358fc/v0.17.0-314-ga7358fcb/lib/
+sudo port -v install gcc13
+mp () {
+    echo "/opt/local/bin/$1"
+}
+export CC="$(mp gcc-mp-13)"
+export GERBIL_GCC="$(mp gcc-mp-13)"
+export CXX="$(mp g++-mp-13)"
+export LDFLAGS='-Wl,-ld_classic'
+export GERBIL_BUILD_CORES=4
+
+cd $(mktemp -d);
+
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+cd gerbil;
+./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+sudo make install
+
 ```
 
-Whereas my Mac Mini, also running Ventura, does indeed strip.
+
+### Homebrew
 
 ```sh
-% uname -a
-Darwin users-Mac-mini.local 22.4.0 Darwin Kernel Version 22.4.0: Mon Mar  6 21:00:41 PST 2023; root:xnu-8796.101.5~3/RELEASE_ARM64_T8103 arm64
-% export MY_LIBRARY_PATH=$(gxi -e '(display (path-expand "~~lib"))' -e '(flush-output-port)')
-% DYLD_LIBRARY_PATH=${MY_LIBRARY_PATH}
-% LD_LIBRARY_PATH=${MY_LIBRARY_PATH}
-% export DYLD_LIBRARY_PATH LD_LIBRARY_PATH
-% echo '#!/bin/sh' > /tmp/foo
-% echo 'echo dy?: $DYLD_LIBRARY_PATH' >> /tmp/foo
-% echo 'echo ld?: $LD_LIBRARY_PATH' >> /tmp/foo
-% echo 'echo my?: $MY_LIBRARY_PATH' >> /tmp/foo
-% chmod 755 /tmp/foo
-% /tmp/foo
-dy?:
-ld?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
-my?: /opt/homebrew/Cellar/gerbil-scheme/17.9/v0.17.0-314-ga7358fcb/lib/
+brew install gcc@13
+bp () {
+  echo $(brew --prefix gcc@13)/bin/$1
+}
+export CC="$(bp gcc-13)"
+export GERBIL_GCC="$(bp gcc-13)"
+export CXX="$(bp g++-13)"
+export LDFLAGS='-Wl,-ld_classic'
+export GERBIL_BUILD_CORES=4
+
+cd $(mktemp -d);
+
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+cd gerbil;
+./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+sudo make install
+
 ```
 
-So be cautious with `DYLD_LIBRARY_PATH` and friends. Even better is to pass an `-rpath` to `ld` along with a `-L<library-path>` for building if needed.
+
+## Option 3) Using a more recent Clang
+
+Especially for an older Mac where the built in `clang` is ancient but we want some Objective-C like things that apple uses.
+
+You can install it using [MacPorts](https://www.macports.org/) or [Homebrew](https://brew.sh/).
 
 
-## The Mac `ld` and `-rpath`: No strippers allowed!
-
-Because MacOS tries to keep things SI(m)P'le often their `ld` is not capable of finding our `.so`'s, `.a`'s, or `.dylib`'s.
-
-To deal with that there is the `-rpath` parameter for Apple's `ld`.
-
-> -rpath path Add path to the runpath search path list for image being created. At runtime, dyld uses the runpath when searching for dylibs whose load path begins with @rpath/.
-
-What does that mean? In MacOS, every dynamic library has an [install name](https://developer.apple.com/forums/thread/736719). Now, Xcode seems to [do it a certain way](https://developer.apple.com/forums/thread/736728). But we are not Xcode and I do not even know what is is or what it entails.
-
-In linux we can just set the `LD_LIBRARY_PATH` if needed but really it does so much magic to find libraries that it's fairly easy to get by without setting much of anything.
-
-In MacOS there's the often stripped and must be manually propagated `DYLD_LIBRARY_PATH`.
-
-I think there's a great workaround where we can define an rpath relative to the execuable path! There's some more information available [here](https://www.fullstaq.com/knowledge-hub/blogs/an-alternative-to-macos-dyld-library-path).
-
-
-## Unsupported Upgrades
-
-My first real Apple Computer was a 2012 iMac. But I got it mid-2023. So I wanted to upgrade by [installing MacOS on an unsupported Mac](https://www.macworld.com/article/672461/how-to-install-macos-on-unsupported-mac.html). It worked but there are a few things different about it.
-
-Here's where I put some workarounds and hacks.
+### MacPorts
 
 ```sh
-alias otool=/Library/Developer/CommandLineTools/usr/bin/otool
+sudo port -v install clang-18
+mp () {
+    echo "/opt/local/bin/$1"
+}
+export CC="$(mp clang-mp-18)"
+export GERBIL_GCC="$(mp clang-mp-18)"
+export CXX="$(mp clang++-mp-18)"
+export LDFLAGS='-Wl,-ld_classic'
+export GERBIL_BUILD_CORES=4
+
+cd $(mktemp -d);
+
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+cd gerbil;
+./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+sudo make install
+
+```
+
+
+### Homebrew
+
+```sh
+brew install llvm@17
+bp () {
+  echo $(brew --prefix llvm@17)/bin/$1
+}
+export CC="$(bp clang)"
+export GERBIL_GCC="$(bp clang)"
+export CXX="$(bp clang++)"
+export LDFLAGS='-Wl,-ld_classic'
+export GERBIL_BUILD_CORES=4
+
+cd $(mktemp -d);
+
+git clone https://github.com/mighty-gerbils/gerbil.git
+
+cd gerbil;
+./configure --prefix=/opt/gerbil && make -j$GERBIL_BUILD_CORES
+sudo make install
+
+```
+
+
+## Location and usage.
+
+We now have the lastest gerbil setup in the default manner. The symlinks and paths are for our usage. Gerbil will, by default, look in the directory where it is installed always.
+
+So, in this example, the `current/` gerbil is in fact `v0.18.1-51-gd9c691b1/`. This allows us to have different versions installed and used while also giving us some `$PATH`'s for running and including and linking.
+
+```sh
+% ls -l /opt/gerbil
+total 0
+lrwxr-xr-x  1 root  wheel   11  5 Mar 17:31 bin -> current/bin
+lrwxr-xr-x  1 root  wheel   20  5 Mar 17:31 current -> v0.18.1-51-gd9c691b1
+lrwxr-xr-x  1 root  wheel   15  5 Mar 17:31 include -> current/include
+lrwxr-xr-x  1 root  wheel   11  5 Mar 17:31 lib -> current/lib
+lrwxr-xr-x  1 root  wheel   13  5 Mar 17:31 share -> current/share
+lrwxr-xr-x  1 root  wheel   11  5 Mar 17:31 src -> current/src
+drwxr-xr-x  7 root  wheel  224  5 Mar 17:31 v0.18.1-51-gd9c691b1
 ```

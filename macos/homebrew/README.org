@@ -1,0 +1,22 @@
+#+TITLE: Gerbil Homebrew Tap
+#+EXPORT_FILE_NAME: ../../doc/guide/homebrew/README.md
+#+OPTIONS: toc:nil
+
+* The Gerbil Homebrew Tap
+
+#+begin_src sh
+brew install mighty-gerbils/gerbil/gerbil-scheme
+#+end_src
+
+That will install the last point release + any fixes or updates.
+
+** HEAD of master
+
+If you want to install the HEAD of master that can be done.
+
+#+begin_src sh
+  brew install --debug --verbose --HEAD mighty-gerbils/gerbil/gerbil-scheme
+#+end_src
+
+
+

@@ -52,22 +52,13 @@ $ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 
 **Note** If you want to install the latest release (v0.18), you can also use the precompiled binary packages for Ubuntu, Debian, Fedora, and CentOS. They are available in the [v0.18 release](https://github.com/mighty-gerbils/gerbil/releases/tag/v0.18) page.
 
-**If you are on MacOS** you can install Gerbil using our [brew formula](https://github.com/mighty-gerbils/gerbil/blob/master/homebrew/gerbil-scheme.rb):
+**If you are on MacOS** you can install Gerbil using our [brew formula](https://github.com/mighty-gerbils/homebrew-gerbil):
 
 ```shell
-$ wget https://raw.githubusercontent.com/mighty-gerbils/gerbil/master/homebrew/gerbil-scheme.rb
-
-## to use 4 cores for the build
-$ export GERBIL_BUILD_CORES=4
-
-## to install latest release
-$ brew install --formula -vd gerbil-scheme.rb
-
-## to install latest Gerbil from master
-$ brew install --HEAD --formula -vd gerbil-scheme.rb
+$ brew install mighty-gerbils/gerbil/gerbil-scheme
 ```
 
-for more detailed installation instructions see the [Guide](https://cons.io/guide/).
+For more detailed installation instructions see the [Guide](https://cons.io/guide/).
 
 # Using Gerbil
 
