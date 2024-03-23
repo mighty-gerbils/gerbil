@@ -62,19 +62,19 @@ namespace: gxc
 (defmethod {check-arguments !procedure}
   (lambda (self ctx stx args)
     (alet* ((signature (&!procedure-signature self))
-            (argument-types
-             (map optimizer-resolve-type (&!signature-arguments signature))))
-      (let loop ((rest-args args) (rest-types argument-types))
-        (match rest-args
-          ([arg . rest-args]
-           (match rest-types
-             ([type . rest-types]
-              (if (expression-type? arg type)
-                (loop rest-args rest-types)
-                (raise-compile-error "signature type mismatch" stx arg type)))
-             ([] (raise-compile-error "signature arity mismatch" stx argument-types))
-             (tail-type (andmap (cut expression-type? <> tail-type) rest-args))))
-          (else #t))))))
+            (argument-types (&!signature-arguments signature)))
+      (let (argument-types (map optimizer-resolve-type argument-types))
+        (let loop ((rest-args args) (rest-types argument-types))
+          (match rest-args
+            ([arg . rest-args]
+             (match rest-types
+               ([type . rest-types]
+                (if (expression-type? arg type)
+                  (loop rest-args rest-types)
+                  (raise-compile-error "signature type mismatch" stx arg type)))
+               ([] (raise-compile-error "signature arity mismatch" stx argument-types))
+               (tail-type (andmap (cut expression-type? <> tail-type) rest-args))))
+            (else #t)))))))
 
 (defmethod {optimize-call !primitive-predicate}
   (lambda (self ctx stx args)
