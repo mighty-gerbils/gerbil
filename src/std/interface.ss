@@ -32,10 +32,11 @@
         (syntax-case stx ()
           ((_ obj)
            (with-syntax ((klass (interface-info-instance-type self))
-                         (descriptor (interface-info-interface-descriptor self)))
+                         (descriptor (interface-info-interface-descriptor self))
+                         (instance-type (interface-info-instance-type self)))
              #'(let ($obj obj)
                  (if (immediate-instance-of? klass $obj)
-                   $obj
+                   (begin-annotation (@type instance-type) $obj)
                    (cast descriptor $obj)))))
           (_ (identifier? stx)
              (with-syntax ((descriptor (interface-info-interface-descriptor self)))
@@ -545,7 +546,10 @@
                             (make-interface-descriptor klass '(method-name ...)))))
                     (defmake
                       #'(def (make obj)
-                          (cast descriptor obj)))
+                          (begin-annotation (@type.signature return: klass-quoted
+                                                             effect: (cast)
+                                                             arguments: (t))
+                            (cast descriptor obj))))
                     (deftry-make
                       #'(def (try-make obj)
                           (try-cast descriptor obj)))

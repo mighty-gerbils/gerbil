@@ -65,6 +65,11 @@ namespace: gxc
   ((_ type-id slot checked?)
    (make-!mutator 'type-id 'slot checked?)))
 
+;; interfaces
+(defrules @interface ()
+  ((_ type-id methods)
+   (make-!interface 'type-id 'methods)))
+
 ;; lambdas
 (defrules @lambda ()
   ((_ arity inline: inline-rules)

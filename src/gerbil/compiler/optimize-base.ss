@@ -28,7 +28,7 @@ namespace: gxc
 
 ;;; optimizer-info: types
 (defstruct !type (id)
-  equal: #t)
+  equal: #t print: #t)
 (defstruct (!alias !type) ())
 (defstruct (!procedure !type) (return effect arguments)
   equal: #t)
@@ -59,6 +59,11 @@ namespace: gxc
   equal: #t)
 (defstruct (!mutator !procedure) (slot checked?)
   constructor: !init
+  equal: #t)
+
+;; interfaces
+(defstruct (!interface !type)
+  (methods) ;; ListOf Symbol; list of interface methods
   equal: #t)
 
 ;; procedures
@@ -211,8 +216,8 @@ namespace: gxc
   (lambda (self id)
     (set! (!type-id self) id)
     (set! (!procedure-return self) 'boolean::t)
-    (set! (!procedure-effect self) '(pure assert))
-    (set! (!procedure-arguments self) `(t::t))))
+    (set! (!procedure-effect self) '(pure))
+    (set! (!procedure-arguments self) '(t::t))))
 
 (defmethod {:init! !constructor}
   (lambda (self id)
@@ -290,7 +295,28 @@ namespace: gxc
 (def (!type-subclass? klass-a klass-b)
   (or (eq? klass-a klass-b)
       (and (!class? klass-a) (!class? klass-b)
-           (memq (!type-id klass-b) (!class-precedence-list klass-a)))))
+           (let (klass-id-b (!type-id klass-b))
+             (let loop ((rest (!class-precedence-list klass-a)))
+               (match rest
+                 ([klass-name . rest]
+                  (or (eq? klass-id-b
+                           (!type-id
+                            (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                                     klass-name)))
+                      (loop rest)))
+                 (else #f)))))
+      (and (!class? klass-a) (!interface? klass-b)
+           (or (eq? klass-a
+                    (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                             (!type-id klass-b)))
+               (let (interface-methods (!interface-methods klass-b))
+                 (alet (klass-a-methods (!class-methods klass-a))
+                   (let loop ((rest interface-methods))
+                     (match rest
+                       ([method . rest]
+                        (and (hash-get klass-a-methods method)
+                             (loop rest)))
+                       (else #t)))))))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))

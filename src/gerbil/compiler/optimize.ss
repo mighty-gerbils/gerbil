@@ -251,6 +251,12 @@ namespace: gxc
     (with ((!mutator klass-id _ _ _ slot checked?) self)
       ['@mutator klass-id slot checked?])))
 
+;; interfaces
+(defmethod {typedecl !interface}
+  (lambda (self)
+    (with ((!interface klass-id methods) self)
+      ['@interface klass-id methods])))
+
 ;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)

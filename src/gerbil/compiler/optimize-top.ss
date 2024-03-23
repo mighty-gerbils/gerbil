@@ -227,6 +227,12 @@ namespace: gxc
                     (stx-e #'slot)
                     (stx-e #'checked?)))))
 
+(def (basic-expression-type-annotation-interface stx ann)
+  (ast-case ann ()
+    ((_ type-t methods)
+     (make-!interface (identifier-symbol #'type-t)
+                      (stx-map stx-e #'methods)))))
+
 (defbasic-expression-type-annotations
   (@mop.class       basic-expression-type-annotation-mop.class)
   (@mop.constructor basic-expression-type-annotation-mop.constructor)
@@ -234,6 +240,7 @@ namespace: gxc
   (@mop.accessor    basic-expression-type-annotation-mop.accessor)
   (@mop.mutator     basic-expression-type-annotation-mop.mutator)
   (@mop.system      basic-expression-type-annotation-mop.system)
+  (@interface       basic-expression-type-annotation-interface)
   (@type            basic-expression-type-annotation-typedecl))
 
 (def (basic-expression-type-lambda% self stx)
@@ -293,21 +300,41 @@ namespace: gxc
      (let (clauses (map clause-e #'clauses))
        (make-!case-lambda 'case-lambda clauses)))))
 
+(def basic-expression-type-special (make-hash-table-eq))
+(defrules defbasic-expression-type-special ()
+  ((_ (id type-e) ...)
+   (begin
+     (hash-put! basic-expression-type-special 'id type-e) ...)))
+
 (def (basic-expression-type-call% self stx)
   (ast-case stx (%#ref)
     ((_ (%#ref id) . args)
-     (let (rator-type (optimizer-resolve-type (identifier-symbol #'id)))
-       (cond
-        ((not rator-type) #f)
-        ((!procedure? rator-type)
-         (alet (return (!procedure-return rator-type))
-           (or (optimizer-resolve-type return)
-               (raise-compile-error "unknown procedure return type" stx return))))
-        ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))
-         #f)
-        (else
-         (raise-compile-error "operator is not a procedure" stx rator-type)))))
+     (cond
+      ((hash-get basic-expression-type-special (identifier-symbol #'id))
+       => (lambda (type-e) (type-e stx)))
+      (else
+       (let (rator-type (optimizer-resolve-type (identifier-symbol #'id)))
+         (cond
+          ((not rator-type) #f)
+          ((!procedure? rator-type)
+           (alet (return (!procedure-return rator-type))
+             (or (optimizer-resolve-type return)
+                 (raise-compile-error "unknown procedure return type" stx return))))
+          ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))
+           #f)
+          (else
+           (raise-compile-error "operator is not a procedure" stx rator-type)))))))
     (_ #f)))
+
+(def (basic-expression-type-special-cast stx)
+  (ast-case stx (%#ref)
+    ((_ _ (%#ref interface-id) expr)
+     (alet (interface-type (optimizer-resolve-type (identifier-symbol #'interface-id)))
+       (optimizer-resolve-class `(cast ,interface-type)
+                                (!type-id interface-type))))))
+
+(defbasic-expression-type-special
+  (cast basic-expression-type-special-cast))
 
 (def (basic-expression-type-ref% self stx)
   (ast-case stx ()
@@ -423,15 +450,19 @@ namespace: gxc
     ((_ (@type.signature signature ...) body)
      (let loop ((rest #'(signature ...)) (result []))
        (match rest
-         ([return: type . rest]
-          (loop (cons* (identifier-symbol type) return: result)
-                rest))
-         ([effect: effect . rest]
-          (loop (cons* (map stx-e effect) effect: result)
-                rest))
-         ([arguments: arguments . rest]
-          (loop (cons* (map identifier-symbol arguments) arguments: result)
-                rest))
+         ([(? stx-keyword? key) arg . rest]
+          (case (stx-e key)
+            ((return:)
+             (loop (cons* (identifier-symbol arg) return: result)
+                   rest))
+            ((effect:)
+             (loop (cons* (map stx-e arg) effect: result)
+                   rest))
+            ((arguments:)
+             (loop (cons* (map identifier-symbol arg) arguments: result)
+                   rest))
+            (else
+             (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
          ([] (reverse! result))
          (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
     ((_ ann body)
