@@ -282,7 +282,7 @@ namespace: gxc
 
 (defmethod {optimize-call !lambda}
   (lambda (self ctx stx args)
-    (with ((!lambda _ _ _ _ arity dispatch inline) self)
+    (with ((!lambda _ _ arity dispatch inline) self)
       (unless (!lambda-arity-match? self args)
         (raise-compile-error "Illegal lambda application; arity mismatch"
                              stx arity))
@@ -315,7 +315,7 @@ namespace: gxc
                              stx (map !lambda-arity clauses)))))))
 
 (def (!lambda-arity-match? self args)
-  (with ((!lambda _ _ _ _ arity) self)
+  (with ((!lambda _ _ arity) self)
     (match arity
       ((? fixnum?)
        (fx= (length args) arity))
@@ -324,7 +324,7 @@ namespace: gxc
 
 (defmethod {optimize-call !kw-lambda}
   (lambda (self ctx stx args)
-    (with ((!kw-lambda _ _ _ _ table dispatch) self)
+    (with ((!kw-lambda _ _ table dispatch) self)
       (match (optimizer-lookup-type dispatch)
         ((!kw-lambda-primary _ keys main)
          (let ((values pargs kwargs)

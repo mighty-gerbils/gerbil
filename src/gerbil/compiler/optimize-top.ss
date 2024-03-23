@@ -317,7 +317,8 @@ namespace: gxc
          (cond
           ((not rator-type) #f)
           ((!procedure? rator-type)
-           (alet (return (!procedure-return rator-type))
+           (alet* ((signature (&!procedure-signature rator-type))
+                   (return (&!signature-return rator-type)))
              (or (optimizer-resolve-type return)
                  (raise-compile-error "unknown procedure return type" stx return))))
           ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))

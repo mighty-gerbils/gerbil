@@ -30,8 +30,11 @@ namespace: gxc
 (defstruct !type (id)
   equal: #t print: #t)
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) (return effect arguments)
+(defstruct (!procedure !type) (signature)
   equal: #t)
+
+(defclass !signature (return effect arguments)
+  final: #t equal: #t)
 
 ;;; MOP
 (defstruct (!class !type)
@@ -137,29 +140,29 @@ namespace: gxc
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
              (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
-       (set! (!type-id self) id)
-       (set! (!class-super self) super)
-       (set! (!class-precedence-list self) precedence-list)
-       (set! (!class-slots self) slots)
-       (set! (!class-fields self) fields)
-       (set! (!class-constructor self) ctor-method)
-       (set! (!class-struct? self) struct?)
-       (set! (!class-final? self) final?)
-       (set! (!class-metaclass self) metaclass)))
+       (set! (&!type-id self) id)
+       (set! (&!class-super self) super)
+       (set! (&!class-precedence-list self) precedence-list)
+       (set! (&!class-slots self) slots)
+       (set! (&!class-fields self) fields)
+       (set! (&!class-constructor self) ctor-method)
+       (set! (&!class-struct? self) struct?)
+       (set! (&!class-final? self) final?)
+       (set! (&!class-metaclass self) metaclass)))
 
     ;; ssxi loader
     ((self id super precedence-list slots fields constructor struct? final? system? metaclass methods)
-     (set! (!type-id self) id)
-     (set! (!class-super self) super)
-     (set! (!class-precedence-list self) precedence-list)
-     (set! (!class-slots self) slots)
-     (set! (!class-fields self) fields)
-     (set! (!class-constructor self) constructor)
-     (set! (!class-struct? self) struct?)
-     (set! (!class-final? self) final?)
-     (set! (!class-metaclass self) metaclass)
+     (set! (&!type-id self) id)
+     (set! (&!class-super self) super)
+     (set! (&!class-precedence-list self) precedence-list)
+     (set! (&!class-slots self) slots)
+     (set! (&!class-fields self) fields)
+     (set! (&!class-constructor self) constructor)
+     (set! (&!class-struct? self) struct?)
+     (set! (&!class-final? self) final?)
+     (set! (&!class-metaclass self) metaclass)
      (when methods
-       (set! (!class-methods self) (list->hash-table-eq methods))))))
+       (set! (&!class-methods self) (list->hash-table-eq methods))))))
 
 (def (compute-class-fields where base-struct precedence-list direct-slots)
   (let* ((base-fields
@@ -214,34 +217,38 @@ namespace: gxc
 
 (defmethod {:init! !predicate}
   (lambda (self id)
-    (set! (!type-id self) id)
-    (set! (!procedure-return self) 'boolean::t)
-    (set! (!procedure-effect self) '(pure))
-    (set! (!procedure-arguments self) '(t::t))))
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: 'boolean::t
+                  effect: '(pure predicate)
+                  arguments: '(t::t)))))
 
 (defmethod {:init! !constructor}
   (lambda (self id)
-    (set! (!type-id self) id)
-    (set! (!procedure-return self) id)
-    (set! (!procedure-effect self) '(alloc))))
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: id
+                  effect: '(alloc)))))
 
 (defmethod {:init! !accessor}
   (lambda (self id slot checked?)
     (set! (&!type-id self) id)
     (set! (&!accessor-slot self) slot)
     (set! (&!accessor-checked? self) checked?)
-    (set! (&!procedure-return self) 't::t)
-    (set! (&!procedure-effect self) '(pure))
-    (set! (&!procedure-arguments self) `(,id))))
+    (set! (&!procedure-signature self)
+      (!signature return: 't::t
+                  effect: '(pure)
+                  arguments: `(,id)))))
 
 (defmethod {:init! !mutator}
   (lambda (self id slot checked?)
     (set! (&!type-id self) id)
     (set! (&!mutator-slot self) slot)
     (set! (&!mutator-checked? self) checked?)
-    (set! (&!procedure-return self) 'void::t)
-    (set! (&!procedure-effect self) '(mut))
-    (set! (&!procedure-arguments self) `(,id t::t))))
+    (set! (&!procedure-signature self)
+      (!signature return: 'void::t
+                  effect: '(mut)
+                  arguments: `(,id t::t)))))
 
 (defmethod {:init! !lambda}
   (lambda (self id arity dispatch (inline #f) (typedecl #f)
@@ -253,9 +260,10 @@ namespace: gxc
     (set! (&!lambda-dispatch self) dispatch)
     (set! (&!lambda-inline self) inline)
     (set! (&!lambda-inline-typedecl self) typedecl)
-    (set! (&!procedure-return self) return)
-    (set! (&!procedure-effect self) effect)
-    (set! (&!procedure-arguments self) arguments)))
+    (set! (&!procedure-signature self)
+      (!signature return: return
+                  effect: effect
+                  arguments: arguments))))
 
 (defmethod {:init! !case-lambda}
   (lambda (self id clauses)
