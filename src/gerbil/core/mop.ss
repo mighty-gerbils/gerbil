@@ -701,7 +701,7 @@ package: gerbil/core
                 unchecked-mutators: [])))))))
 
   (defsystem-class-info :t t::t () true)
-  (defsyntem-class-info :class class::t (t::t) class-type?)
+  (defsystem-class-info :class class::t (t::t) class-type?)
   (defsystem-class-info :object object::t (t::t) true)
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes
