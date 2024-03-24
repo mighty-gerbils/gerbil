@@ -64,17 +64,19 @@ namespace: gxc
     (alet* ((signature (&!procedure-signature self))
             (argument-types (&!signature-arguments signature)))
       (let (argument-types (map optimizer-resolve-type argument-types))
-        (let loop ((rest-args args) (rest-types argument-types))
+        (let loop ((rest-args args) (rest-types argument-types) (result #t))
           (match rest-args
             ([arg . rest-args]
              (match rest-types
                ([type . rest-types]
-                (if (expression-type? arg type)
-                  (loop rest-args rest-types)
-                  (raise-compile-error "signature type mismatch" stx arg type)))
+                (loop rest-args rest-types
+                      (and (check-expression-type! stx arg type)
+                           result)))
                ([] (raise-compile-error "signature arity mismatch" stx argument-types))
-               (tail-type (andmap (cut expression-type? <> tail-type) rest-args))))
-            (else #t)))))))
+               (tail-type
+                (and (andmap (cut check-expression-type! stx <> tail-type) rest-args)
+                     result))))
+            (else result)))))))
 
 (defmethod {optimize-call !primitive-predicate}
   (lambda (self ctx stx args)
@@ -133,6 +135,39 @@ namespace: gxc
 (def (expression-type? stx klass)
   (let (expr-type (apply-basic-expression-type stx))
     (!type-subclass? expr-type klass)))
+
+(def (check-expression-type! stx expr klass)
+  (if (eq? (!type-id klass) 't)         ; happy!
+    (let (expr-type (apply-basic-expression-type stx))
+      (cond
+       ((not expr-type)
+        ;; no type information, let the runtime contract check it
+        #f)
+       ((eq? 't (!type-id expr-type))
+        ;; unspecific type, let the runtime contract check it
+        #f)
+
+       ((!type-subclass? expr-type klass)) ; happy!
+
+       ;; fuzzy rules for types that might be compatible and should be checked
+       ;; at runtime
+       ((and (!interface? expr-type) (!interface? klass))
+        ;; we might not have a view of all the methods; let the runtime contract
+        ;; cast it
+        #f)
+       ((eq? 'object (!type-id expr-type))
+        ;; unspecific object; if the signature type is also an object,
+        ;; let the runtime contract check it
+        (if (memq 'object::t (!class-precedence-list klass))
+          #f
+          ;; not happy, it expects some primitive type
+          (raise-compile-error "signature type mismatch" stx expr expr-type klass)))
+       ((!type-subclass? klass expr-type)
+        ;; wider type than expected; let the runtime contract check it
+        #f)
+       (else                            ; not happy
+        (raise-compile-error "signature type mismatch" stx expr expr-type klass))))))
+
 
 (defmethod {optimize-call !constructor}
   (lambda (self ctx stx args)
