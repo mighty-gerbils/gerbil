@@ -43,23 +43,14 @@ namespace: #f
   (raise
    (Error message irritants: irritants)))
 
-(defrules check-procedure ()
-  ((_ arg where)
-   (unless (procedure? arg)
-     (raise (Error "expected procedure" where: 'where irritants: [arg])))))
-
-(def (with-exception-handler handler thunk)
-  (check-procedure handler with-exception-handler)
-  (check-procedure thunk with-exception-hander)
+(defapi (with-exception-handler (handler : :procedure) (thunk : :procedure))
   (##with-exception-handler
    (lambda (exn)
      (let (exn (wrap-runtime-exception exn))
        (handler exn)))
    thunk))
 
-(def (with-catch handler thunk)
-  (check-procedure handler with-exception-handler)
-  (check-procedure thunk with-exception-hander)
+(defapi (with-catch (handler : :procedure) (thunk : :procedure))
   (##continuation-capture
    (lambda (cont)
      (with-exception-handler
