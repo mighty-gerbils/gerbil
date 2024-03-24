@@ -59,5 +59,7 @@ namespace: #f
 
 (def (gerbil-runtime-smp?)
   (when (void? __smp?)
-    (set! __smp? (member "--enable-smp" (string-split (configure-command-string) #\'))))
+    (set! __smp?
+      (and (member "--enable-smp" (string-split (configure-command-string) #\'))
+           #t)))
   __smp?)

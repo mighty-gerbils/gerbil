@@ -8,10 +8,11 @@ namespace: #f
 (import "gambit" "util" "table")
 (export #t)
 
-(def (make-promise thunk)
+(defapi (make-promise (thunk : :procedure))
+  :- :promise
   (##make-delay-promise thunk))
 
-(def (call-with-parameters thunk . rest)
+(defapi (call-with-parameters (thunk : :procedure) . rest)
   (match rest
     ([param val . rest]
      (##parameterize1 param val
@@ -19,7 +20,7 @@ namespace: #f
            (lambda () (apply call-with-parameters thunk rest)))))
     ([] (thunk))))
 
-(def (with-unwind-protect K fini)
+(defapi (with-unwind-protect (K : :procedure) (fini : :procedure))
   (let ((once #f))
     (dynamic-wind
         (lambda ()
