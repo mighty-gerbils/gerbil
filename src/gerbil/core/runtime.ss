@@ -1443,9 +1443,15 @@ package: gerbil/core
     andmap
     ormap
     filter-map
+
+    agetq
+    agetv
+    aget
+    ;; TODO: remove after transition to the new name
     assgetq
     assgetv
     assget
+
     pgetq
     pgetv
     pget
