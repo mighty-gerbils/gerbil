@@ -131,7 +131,7 @@ namespace: gxc
     (_ #f)))
 
 (def (expression-type? stx klass)
-  (alet (expr-type (apply-basic-expression-type stx))
+  (let (expr-type (apply-basic-expression-type stx))
     (!type-subclass? expr-type klass)))
 
 (defmethod {optimize-call !constructor}

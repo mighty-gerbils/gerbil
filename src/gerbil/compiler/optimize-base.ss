@@ -316,6 +316,8 @@ namespace: gxc
 
 (def (!type-subclass? klass-a klass-b)
   (or (eq? klass-a klass-b)
+      (and (not klass-a) (!class? klass-b)
+           (eq? (!type-id klass-b) 't))
       (and (!class? klass-a) (!class? klass-b)
            (let (klass-id-b (!type-id klass-b))
              (let loop ((rest (!class-precedence-list klass-a)))
