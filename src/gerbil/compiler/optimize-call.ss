@@ -136,8 +136,8 @@ namespace: gxc
   (let (expr-type (apply-basic-expression-type stx))
     (!type-subclass? expr-type klass)))
 
-(def (check-expression-type! stx expr klass)
-  (if (eq? (!type-id klass) 't)         ; happy!
+(def (check-expression-type! stx expr type)
+  (if (eq? (!type-id type) 't)         ; happy!
     (let (expr-type (apply-basic-expression-type stx))
       (cond
        ((not expr-type)
@@ -147,26 +147,23 @@ namespace: gxc
         ;; unspecific type, let the runtime contract check it
         #f)
 
-       ((!type-subclass? expr-type klass)) ; happy!
+       ((!type-subclass? expr-type type)) ; happy!
 
        ;; fuzzy rules for types that might be compatible and should be checked
        ;; at runtime
-       ((and (!interface? expr-type) (!interface? klass))
+       ((!interface? type)
         ;; we might not have a view of all the methods; let the runtime contract
         ;; cast it
         #f)
        ((eq? 'object (!type-id expr-type))
         ;; unspecific object; if the signature type is also an object,
         ;; let the runtime contract check it
-        (if (memq 'object::t (!class-precedence-list klass))
+        (if (memq 'object::t (!class-precedence-list type))
           #f
           ;; not happy, it expects some primitive type
-          (raise-compile-error "signature type mismatch" stx expr expr-type klass)))
-       ((!type-subclass? klass expr-type)
-        ;; wider type than expected; let the runtime contract check it
-        #f)
+          (raise-compile-error "signature type mismatch" stx expr expr-type type)))
        (else                            ; not happy
-        (raise-compile-error "signature type mismatch" stx expr expr-type klass))))))
+        (raise-compile-error "signature type mismatch" stx expr expr-type type))))))
 
 
 (defmethod {optimize-call !constructor}
@@ -175,10 +172,11 @@ namespace: gxc
            (fields (length (!class-fields klass)))
            (args (map (cut compile-e ctx <>) args))
            (inline-make-object
-            ['%#call ['%#ref '##structure]
-                     ['%#ref (!type-id self)]
-                     (make-list fields '(%#quote #f))
-                     ...]))
+            ['%#begin-annotation ['@type (!type-id self)]
+                                 ['%#call ['%#ref '##structure]
+                                          ['%#ref (!type-id self)]
+                                          (make-list fields '(%#quote #f))
+                                          ...]]))
       (cond
        ((!class-constructor klass)
         => (lambda (ctor)
@@ -214,9 +212,10 @@ namespace: gxc
        ((!class-struct? klass)
         (if (fx= (length args) fields)
           (xform-wrap-source
-           ['%#call ['%#ref '##structure]
-                    ['%#ref (!type-id self)]
-                    args ...]
+           ['%#begin-annotation ['@type (!type-id self)]
+                                ['%#call ['%#ref '##structure]
+                                         ['%#ref (!type-id self)]
+                                         args ...]]
            stx)
           (raise-compile-error "illegal struct constructor application; arity mismatch"
                                stx (!type-id self) (length (!class-fields klass)))))
