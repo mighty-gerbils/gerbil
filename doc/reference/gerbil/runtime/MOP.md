@@ -29,8 +29,6 @@ Returns true if both classes have the same type id.
 
 Returns true if a class is final.
 
-**Warning** This is an unsafe procedure.
-
 ### class-type-struct?
 ```scheme
 (class-type-struct? klass) -> boolean
@@ -39,8 +37,6 @@ Returns true if a class is final.
 ```
 
 Returns true if a class has the struct property.
-
-**Warning** This is an unsafe procedure.
 
 ### class-type-sealed?
 ```scheme
@@ -51,8 +47,6 @@ Returns true if a class has the struct property.
 
 Returns true if a class has been sealed.
 
-**Warning** This is an unsafe procedure.
-
 ### class-type-metaclass?
 ```scheme
 (class-type-metaclass? klass) -> boolean
@@ -62,8 +56,6 @@ Returns true if a class has been sealed.
 
 Returns true if a class has the metaclass property.
 
-**Warning** This is an unsafe procedure.
-
 ### class-type-system?
 ```scheme
 (class-type-system? klass) -> boolean
@@ -72,8 +64,6 @@ Returns true if a class has the metaclass property.
 ```
 
 Returns true if a class has the metaclass property.
-
-**Warning** This is an unsafe procedure.
 
 ### class-type-id
 ```scheme
@@ -174,8 +164,6 @@ Returns the number of fields in a class
 
 Sets the sealed flag on a class.
 
-**Warning** This is an unsafe procedure.
-
 ### subclass?
 ```scheme
 (subclass? maybe-sub-class maybe-super-class)
@@ -183,16 +171,12 @@ Sets the sealed flag on a class.
 
 Returns true if a class is a subclass of another class.
 
-**Warning** This is an unsafe procedure.
-
 ### substruct?
 ```scheme
 (substruct? maybe-sub-struct maybe-super-struct)
 ```
 
 Returns true if a class is a substruct of a nother class
-
-**Warning** This is an unsafe procedure.
 
 ### make-class-type
 ``` scheme
@@ -216,8 +200,6 @@ alist elements:
 
 Creates a new class.
 
-**Warning** This is an unsafe procedure.
-
 ### make-class-predicate
 ```scheme
 (make-class-predicate klass) -> procedure
@@ -226,8 +208,6 @@ Creates a new class.
 ```
 
 Creates a class instance predicate for instances of *klass*.
-
-**Warning** This is an unsafe procedure.
 
 ### make-class-slot-accessor
 ```scheme
@@ -239,8 +219,6 @@ Creates a class instance predicate for instances of *klass*.
 
 Creates a slot accessor for *slot*.
 
-**Warning** This is an unsafe procedure.
-
 ### make-class-slot-mutator
 ```scheme
 (make-class-slot-mutator klass slot) -> procedure
@@ -250,8 +228,6 @@ Creates a slot accessor for *slot*.
 ```
 
 Creates a slot mutator for *slot*.
-
-**Warning** This is an unsafe procedure.
 
 ### make-class-slot-unchecked-accessor
 ```scheme
@@ -263,8 +239,6 @@ Creates a slot mutator for *slot*.
 
 Like `make-class-slot-accessor`, but creates an unchecked accessor.
 
-**Warning** This is an unsafe procedure.
-
 ### make-class-slot-unchecked-mutator
 ```scheme
 (make-class-slot-unchecked-mutator klass slot)  -> procedure
@@ -274,8 +248,6 @@ Like `make-class-slot-accessor`, but creates an unchecked accessor.
 ```
 
 Like `make-class-slot-mutator`, but creates an unchecked mutator.
-
-**Warning** This is an unsafe procedure.
 
 ### direct-instance?
 ```scheme
@@ -340,8 +312,6 @@ Returns the class of a standard object; *obj* _should_ be a standard object inst
 
 Initializes an object *obj* with a value of *fill*
 
-**Warning** This is an unsafe procedure.
-
 ### new-instance
 ```scheme
 (new-instance klass)
@@ -373,8 +343,6 @@ Initializes *obj* by setting its fields to *args* from left to right.
 If there are more fields than arguments, then they are left uninitialized.
 It is an error if there are more arguments than fields in the object.
 
-**Warning** This is an unsafe procedure.
-
 ### class-instance-init!
 ```scheme
 (class-instance-init! obj . args)
@@ -385,8 +353,6 @@ It is an error if there are more arguments than fields in the object.
 Initializes *obj*, using *args* as a plist of slot keywords/symbols and values.
 For every slot and value in the plist, the corresponding object slot is set to
 the value.
-
-**Warning** This is an unsafe procedure.
 
 ### constructor-init!
 ```scheme
@@ -399,8 +365,6 @@ the value.
 
 Initializes *obj* by applying the constructor with id `kons-id` from
 the class `klass`.
-
-**Warning** This is an unsafe procedure.
 
 ### struct-copy
 ```scheme
@@ -464,7 +428,9 @@ By default, this raises an error.
 
 Returns the value associated with slot *slot* in *obj*, without any checks.
 
-**Warning** This is an unsafe procedure.
+::: warning
+This is an unsafe procedure.
+:::
 
 ### unchecked-slot-set!
 ```scheme
@@ -477,7 +443,9 @@ Returns the value associated with slot *slot* in *obj*, without any checks.
 
 Sets the value associated with slot *slot* in *obj* to *val*, without any checks.
 
-**Warning** This is an unsafe procedure.
+::: warning
+This is an unsafe procedure.
+:::
 
 ### call-method
 ```scheme
@@ -542,8 +510,6 @@ Like `bound-method-ref`, but raises an error if the method is not found.
 ```
 Returns the (direct) binding of method with `id` in class `klass`.
 
-**Warning** This is an unsafe procedure.
-
 ### find-method
 ```scheme
 (find-method klass obj id)
@@ -575,8 +541,6 @@ is sealed or an interface instance prototype is created, the
 specializer is invoked with the concrete class and the specialized method
 table to generate a version of the method that is specialized for the
 concrete class.
-
-**Warning** This is an unsafe procedure.
 
 ### seal-class!
 ```scheme
