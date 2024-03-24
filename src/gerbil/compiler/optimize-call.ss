@@ -137,7 +137,14 @@ namespace: gxc
     (!type-subclass? expr-type klass)))
 
 (def (check-expression-type! stx expr type)
-  (if (eq? (!type-id type) 't)         ; happy!
+  (cond
+   ((not type)
+    ;; forced contract check
+    #f)
+
+   ((eq? (!type-id type) 't))           ; happy!
+
+   (else
     (let (expr-type (apply-basic-expression-type stx))
       (cond
        ((not expr-type)
@@ -163,7 +170,7 @@ namespace: gxc
           ;; not happy, it expects some primitive type
           (raise-compile-error "signature type mismatch" stx expr expr-type type)))
        (else                            ; not happy
-        (raise-compile-error "signature type mismatch" stx expr expr-type type))))))
+        (raise-compile-error "signature type mismatch" stx expr expr-type type)))))))
 
 
 (defmethod {optimize-call !constructor}
