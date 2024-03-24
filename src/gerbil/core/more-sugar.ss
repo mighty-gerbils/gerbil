@@ -10,17 +10,74 @@ package: gerbil/core
         (phi: +2 "runtime"))
 (export #t (phi: +1 #t))
 
-;; checked type contract
-(defrules : ())
+;; checked type cast
+(defsyntax (: stx)
+  (syntax-case stx ()
+    ((_ expr type)
+     (identifier? #'type)
+     (let (meta (syntax-local-value #'type false))
+       (cond
+        ((not meta)
+         (raise-syntax-error #f "unknown type" stx #'type))
+        ((class-type-info? meta)
+         (with-syntax ((klass (!class-type-descriptor meta))
+                       (predicate (!class-type-predicate meta)))
+           #'(begin-annotation (@type klass)
+               (let (val expr)
+                 (if (predicate val)
+                   val
+                   (error "bad cast" val klass))))))
+        ((method-ref meta 'type-descriptor)
+         => (lambda (type-descriptor)
+              (cond
+               ((method-ref meta 'type-cast)
+                => (lambda (type-cast)
+                     (with-syntax ((klass (type-descriptor meta))
+                                   (cast-it (type-cast meta)))
+                       #'(begin-annotation (@type klass)
+                           (cast-it expr)))))
+               ((method-ref meta 'type-predicate)
+                => (lambda (type-predicate)
+                     (with-syntax ((klass (type-descriptor meta))
+                                   (predicate (type-predicate meta)))
+                       #'(begin-annotation (@type klass)
+                           (let (val expr)
+                             (if (predicate val)
+                               val
+                               (error "bad cast" val klass)))))))
+               (else
+                (raise-syntax-error #f "type does not support casting" stx #'type)))))
+        (else
+         (raise-syntax-error #f "not a type" stx #'type)))))))
 
-;; checked predicate contract
-(defrules :~ ())
+;; predicate contract
+(defrules :~ (:-)
+  ((_ expr predicate)
+   (let (val expr)
+     (if (predicate val)
+       val
+       (error "contract check failure" val 'predicate))))
+  ((_ expr predicate :- type)
+   (:- (:~ expr predicate) type)))
 
-;; type assertion
-(defrules :- ())
-
-;; type contract assertion
-(defrules :~- ())
+;; type assertion (unchecked cast)
+(defsyntax (:- stx)
+  (syntax-case stx ()
+    ((_ expr type)
+     (identifier? #'type)
+     (let (meta (syntax-local-value #'type false))
+       (cond
+        ((not meta)
+         (raise-syntax-error #f "unknown type" stx #'type))
+        ((class-type-info? meta)
+         (with-syntax ((klass (!class-type-descriptor meta)))
+           #'(begin-annotation (@type klass) expr)))
+        ((method-ref meta 'type-descriptor)
+         => (lambda (type-descriptor)
+              (with-syntax ((klass (type-descriptor meta)))
+                #'(begin-annotation (@type klass) expr))))
+        (else
+         (raise-syntax-error #f "not a type" stx #'type)))))))
 
 ;; default value
 (defrules := ())

@@ -40,7 +40,13 @@
                    (cast descriptor $obj)))))
           (_ (identifier? stx)
              (with-syntax ((descriptor (interface-info-interface-descriptor self)))
-               #'descriptor)))))))
+               #'descriptor))))))
+
+  (defmethod {type-descriptor interface-info}
+    &interface-info-instance-type)
+
+  (defmethod {type-cast interface-info}
+    &interface-info-instance-constructor))
 
 (defsyntax (interface stx)
   (def symbol<?
