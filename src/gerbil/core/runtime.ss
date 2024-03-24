@@ -1436,7 +1436,6 @@ package: gerbil/core
     values-count
     values-ref
     values->list
-    subvector->list
     cons*
     foldl
     foldr
@@ -1489,10 +1488,6 @@ package: gerbil/core
     string-rindex
     string-split
     string-join
-    read-u8vector
-    write-u8vector
-    read-string
-    write-string
 
     ;; :gerbil/runtime/table
     symbolic?
