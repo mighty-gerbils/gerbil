@@ -1147,13 +1147,13 @@ namespace: gxc
      (with-inline-unsafe-primitives
          ['##unchecked-structure-ref (compile-e self #'obj)
                                      (compile-e self #'off)
-                                     (compile-e self #'type)
+                                     '(quote #f)
                                      '(quote #f)]
-       (with-primitive-bind+args (bind args [#'type #'off #'obj])
+       (with-primitive-bind+args (bind args  #'off #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##unchecked-structure-ref obj off type where)
-           ['##unchecked-structure-ref args ... '(quote #f)]])))))
+           ['##unchecked-structure-ref args ... '(quote #f) '(quote #f)]])))))
 
 (def (generate-runtime-struct-unchecked-setq% self stx)
   (ast-case stx ()
@@ -1163,13 +1163,13 @@ namespace: gxc
          ['##unchecked-structure-set! (compile-e self #'obj)
                                       (compile-e self #'val)
                                       (compile-e self #'off)
-                                      (compile-e self #'type)
+                                      '(quote #f)
                                       '(quote #f)]
-       (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
+       (with-primitive-bind+args (bind args [#'off #'val #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##unchecked-structure-set! obj val off type where)
-           ['##unchecked-structure-set! args ... '(quote #f)]])))))
+           ['##unchecked-structure-set! args ... '(quote #f) '(quote #f)]])))))
 
 ;;; loader
 (def (generate-runtime-loader-import% self stx)
