@@ -1209,6 +1209,8 @@ package: gerbil/core
     thread-mailbox-next
     thread-mailbox-rewind
     thread-name
+    thread-priority
+    thread-priority-set!
     thread-priority-boost
     thread-priority-boost-set!
     thread-quantum
@@ -1484,7 +1486,6 @@ package: gerbil/core
     string->bytes
     substring->bytes
     string-empty?
-    string-prefix?
     string-index
     string-rindex
     string-split

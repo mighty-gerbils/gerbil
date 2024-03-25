@@ -103,7 +103,7 @@ namespace: gxc
          (cond
           (instance?
            (xform-wrap-source
-            (if (expression-pure? #'expr)
+            (if (expression-no-side-effects? #'expr)
               ['%#quote #t]
               ['%#begin #'expr #t])
             stx))
@@ -120,7 +120,7 @@ namespace: gxc
             ['%#call ['%#ref 'class-instance?] ['%#ref (!type-id self)] object]
             stx))))))))
 
-(def (expression-pure? stx)
+(def (expression-no-side-effects? stx)
   (ast-case stx (%#quote %#ref %#call)
     ((%#quote _) #t)
     ((%#ref _) #t)
@@ -128,8 +128,9 @@ namespace: gxc
      (alet* ((rator-type (optimizer-resolve-type (identifier-symbol #'rator)))
              (rator-signature (and (!procedure? rator-type) (&!procedure-signature rator-type)))
              (rator-effect (and rator-signature (!signature-effect rator-signature))))
-       (and (memq 'pure rator-effect)
-            (andmap expression-pure? #'(rand ...)))))
+       (and (or (equal? '(pure) rator-effect)
+                (equal? '(alloc) rator-effect))
+            (andmap expression-expression-no-side-effects? #'(rand ...)))))
     (_ #f)))
 
 (def (expression-type? stx klass)

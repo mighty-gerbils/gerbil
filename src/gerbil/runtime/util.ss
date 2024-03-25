@@ -665,8 +665,8 @@ namespace: #f
          (else lst))))))
 
 (defremove1 remove1 equal?)
-(defremove1 remv eqv?)
-(defremove1 remq eq?)
+(defremove1 remv1 eqv?)
+(defremove1 remq1 eq?)
 
 (defapi (remf (proc : :procedure) lst)
   (let lp ((rest lst) (r []))
@@ -792,18 +792,6 @@ namespace: #f
 (defapi (string-empty? (str : :string))
   :- :boolean
   (fxzero? (string-length str)))
-
-(defapi (string-prefix? (prefix : :string) (str : :string))
-  :- :boolean
-  (let ((str-len (string-length str))
-        (prefix-len (string-length prefix)))
-    (and (fx<= prefix-len str-len)
-         (let lp ((i 0))
-           (let (i (:- i :fixnum))
-             (if (fx< i prefix-len)
-               (and (eq? (##string-ref str i) (##string-ref prefix i))
-                    (lp (fx+ i 1)))
-               #t))))))
 
 (defapi (string-index (str : :string)
                       (char : :char)
