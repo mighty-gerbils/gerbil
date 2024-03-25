@@ -719,7 +719,7 @@ package: gerbil/core
 
   (defsystem-class-info :number number::t (t::t) number?)
   (defsystem-class-info :real real::t (number::t) real?)
-  (defsystem-class-info :integer integer::t (real::t) integer?)
+  (defsystem-class-info :integer integer::t (real::t) exact-integer?)
   (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
   (defsystem-class-info :bignum  bignum::t (integer::t) ##bignum?)
   (defsystem-class-info :ratnum ratnum::t (real::t) ##ratnum?)

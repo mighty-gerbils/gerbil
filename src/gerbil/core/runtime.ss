@@ -289,6 +289,7 @@ package: gerbil/core
     open-binary-output-file
     open-input-bytevector
     open-input-string
+    open-output-bytevector
     open-output-string
     output-port-open?
     peek-u8
