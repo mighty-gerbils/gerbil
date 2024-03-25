@@ -329,17 +329,8 @@ namespace: gxc
                       (loop rest)))
                  (else #f)))))
       (and (!class? klass-a) (!interface? klass-b)
-           (or (eq? klass-a
-                    (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
-                                             (!type-id klass-b)))
-               (let (interface-methods (!interface-methods klass-b))
-                 (alet (klass-a-methods (!class-methods klass-a))
-                   (let loop ((rest interface-methods))
-                     (match rest
-                       ([method . rest]
-                        (and (hash-get klass-a-methods method)
-                             (loop rest)))
-                       (else #t)))))))
+           (eq? klass-a (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                                 (!type-id klass-b))))
       (and (!procedure? klass-a) (!class? klass-b)
            (eq? (!type-id klass-b) 'procedure))))
 

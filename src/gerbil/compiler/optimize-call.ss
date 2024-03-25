@@ -157,19 +157,21 @@ namespace: gxc
        ((!type-subclass? expr-type type)) ; happy!
 
        ;; fuzzy rules for types that might be compatible and should be checked
-       ;; at runtime
+       ;; at runtime -- we have incomplete type info in general, and runtime
+       ;; contract checks, so we should not fail to compile when the type
+       ;; is not definitely wrong.
        ((!interface? type)
-        ;; we might not have a view of all the methods; let the runtime contract
-        ;; cast it
+        ;; let the runtime contract cast it
         #f)
-       ((eq? 'object (!type-id expr-type))
-        ;; unspecific object; if the signature type is also an object,
-        ;; let the runtime contract check it
-        (if (memq 'object::t (!class-precedence-list type))
-          #f
-          ;; not happy, it expects some primitive type
-          (raise-compile-error "signature type mismatch" stx expr expr-type type)))
-       (else                            ; not happy
+
+       ((!type-subclass? type expr-type)
+        ;; wider type than what we have; let the runtime contract check it
+        ;; most notable this catches unspecific object instances, which are
+        ;; abundant.
+        #f)
+
+       (else
+        ;; not happy; type is incompatible
         (raise-compile-error "signature type mismatch" stx expr expr-type type)))))))
 
 

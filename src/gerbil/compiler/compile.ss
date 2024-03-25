@@ -1149,7 +1149,7 @@ namespace: gxc
                                      (compile-e self #'off)
                                      '(quote #f)
                                      '(quote #f)]
-       (with-primitive-bind+args (bind args  #'off #'obj])
+       (with-primitive-bind+args (bind args [ #'off #'obj])
          ['let [bind ...]
            '(declare (not safe))
            ;; (##unchecked-structure-ref obj off type where)
