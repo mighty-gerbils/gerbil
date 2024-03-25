@@ -39,11 +39,15 @@ Emacs into a featured REPL along with an IDE for lisp use.
     (clrhash presentation-id-to-object-table))
 
   (def nil-surrogate (gensym 'nil-surragate))
+
   (def presentation-counter 0)
 
   ;; XXX thread safety? [2006-09-13] mb: not in the slightest (fwiw the
   ;; rest of slime isn't thread safe either), do we really care?
   (def (save-presented-object obj)
+    "Save OBJECT and return the assigned id.
+  If OBJECT was saved previously return the old id."
+    (or (table-ref 
 
 
 

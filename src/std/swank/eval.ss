@@ -1,16 +1,23 @@
 (import :gerbil/expander :gerbil/gambit
         :std/swank/api
-        :std/swank/message  :std/swank/presentation :std/swank/context)
+        :std/swank/message
+	:std/swank/presentation
+	:std/swank/repl
+	:std/swank/context)
 
 (def-swank (swank:interactive-eval str)
   (##object->string
    (swank-eval-in-context `(eval (with-input-from-string , str read)))))
 
 (def-swank (swank-repl:listener-eval str)
+  (swank-repl-eval str)
+  ((current-swank-exit-emacs-rex) #f))
+
+(def-swank (swank-repl:%listener-eval str)
   (def outp (open-string))
   (parameterize ((current-output-port outp)
   		 (current-error-port outp))
-					;(displayln "Here Now")
+    ;;(displayln "Here Now")
     (let ((result
 	   (swank-eval-in-context
             `(eval (with-input-from-string ,str read)))) 

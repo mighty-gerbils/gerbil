@@ -42,4 +42,4 @@
 
 
 (def-swank (swank:swank-require modules) (swank-modules))
-(def-swank (swank-repl:create-repl nil . plist) '("TOP" ""))
+(def-swank (swank-repl:create-repl nil . plist) '("TOP" "TOP"))

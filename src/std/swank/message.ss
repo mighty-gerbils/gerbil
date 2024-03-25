@@ -13,7 +13,7 @@
 	     (buffer (if (number? buffer-or-size)
 		       (make-u8vector default-swank-buffer-size)
 		       buffer-or-size))
-	     (mbytes (reader.read buffer 0 size size))
+	     (mbytes (and size (reader.read buffer 0 size size)))
 	     (port (open-input-u8vector buffer)))
       #;(input-port-readtable-set!
        port
@@ -24,7 +24,7 @@
        (readtable-eval-allowed?-set
 	(input-port-readtable port) #f))
 
-      (read port))))
+      (and size (read port)))))
 
 (def swank-message-handlers (make-hash-table-eq))
 
@@ -43,8 +43,9 @@
 (def (swank-handle-message msg writer)
   (let (handler (hash-get swank-message-handlers (car msg)))
     (if handler
-      (begin (write-message writer (apply handler (cdr msg)))
-             #t)
+      (let (ret (apply handler (cdr msg)))
+	(and ret (write-message writer ret))
+        #t)
       #f)))
 
 
