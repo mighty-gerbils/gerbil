@@ -155,14 +155,7 @@
                                         message: (error-message e))))))
           (http-post server-url
                      auth: auth
-                     headers: `(("Content-Type" . "application/json-rpc")
-                                ;; The JSON RPC over HTTP standard says we MUST send
-                                ;; some variant of the Accept header below, but actually
-                                ;; no client bothers sending it, no server bothers checking it,
-                                ;; and it can only make things slower and trigger unwanted
-                                ;; edge cases, so we don't bother sending it either.
-                                ;; ("Accept" . "application/json-rpc, application/json, application/jsonrequest")
-                                ,@headers)
+                     headers: headers
                      ssl-context: ssl-context
                      cookies: cookies
                      data: data)))
@@ -187,9 +180,7 @@
                   ("id" .,id))))
           (http-get server-url
                     auth: auth
-                    headers: `(("Content-Type" . "application/json-rpc")
-                               ;; NB: we don't bother with an Accept header here, either.
-                               ,@headers)
+                    headers: headers
                     params: uri-params
                     ssl-context: ssl-context
                     cookies: cookies)))
