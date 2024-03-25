@@ -16,6 +16,91 @@ Emacs into a featured REPL along with an IDE for lisp use.
       -
 #+end_src
 
+* Presentations
+
+[[file:~/me/src/emacs.d/straight/repos/slime/contrib/swank-presentations.lisp::;;; swank-presentations.lisp --- imitate LispM's presentations][CL version]]
+
+#+begin_src scheme :tangle "presentations.lisp"
+  (import :std/swank/api :std/swank/message1 :gerbil/gambit)
+  (export #t)
+  ;;;; Recording and accessing results of computations
+
+  (def +record-repl-results+ #t)
+  (def object-to-presentation-id-table
+    (##make-table weak-keys: #t))
+  (def presentation-id-to-object-table
+    (##make-table weak-values: #t))
+
+  (def (clrhash tbl)
+    (table-for-each (lambda (k _) (table-set! tbl k)) tbl))
+
+  (def (clear-presentation-tables)
+    (clrhash object-to-presentation-id-table)
+    (clrhash presentation-id-to-object-table))
+
+  (def nil-surrogate (gensym 'nil-surragate))
+  (def presentation-counter 0)
+
+  ;; XXX thread safety? [2006-09-13] mb: not in the slightest (fwiw the
+  ;; rest of slime isn't thread safe either), do we really care?
+  (def (save-presented-object obj)
+
+
+
+
+
+
+#+end_src
+
+* Debugger and Stacktrace
+
+In SBCL
+
+#+begin_src emacs-lisp
+  (:emacs-rex
+ (swank-repl:listener-eval "(error \"Backtrace!\")\n")
+ "COMMON-LISP-USER" :repl-thread 92)
+(:debug 5 1
+	("Backtrace!" "   [Condition of type SIMPLE-ERROR]" nil)
+	(("RETRY" "Retry SLIME REPL evaluation request.")
+	 ("*ABORT" "Return to SLIME's top level.")
+	 ("ABORT" "abort thread (#<THREAD \"repl-thread\" RUNNING {70095D04B3}>)"))
+	((0 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (ERROR \"Backtrace!\") #<NULL-LEXENV>)")
+	 (1 "(EVAL (ERROR \"Backtrace!\"))")
+	 (2 "(SWANK::EVAL-REGION \"(error \\\"Backtrace!\\\") ..)"
+	    (:restartable t))
+	 (3 "((LAMBDA NIL :IN SWANK-REPL::REPL-EVAL))"
+	    (:restartable t))
+	 (4 "(SWANK-REPL::TRACK-PACKAGE #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE74DB}>)"
+	    (:restartable t))
+	 (5 "(SWANK::CALL-WITH-RETRY-RESTART \"Retry SLIME REPL evaluation request.\" #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE74BB}>)"
+	    (:restartable t))
+	 (6 "(SWANK::CALL-WITH-BUFFER-SYNTAX NIL #<FUNCTION (LAMBDA NIL :IN SWANK-REPL::REPL-EVAL) {7005CE749B}>)"
+	    (:restartable t))
+	 (7 "(SWANK-REPL::REPL-EVAL \"(error \\\"Backtrace!\\\") ..)"
+	    (:restartable t))
+	 (8 "(SB-INT:SIMPLE-EVAL-IN-LEXENV (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)")
+	 (9 "(EVAL (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)")
+	 (10 "(SWANK:EVAL-FOR-EMACS (SWANK-REPL:LISTENER-EVAL \"(error \\\"Backtrace!\\\") ..)"
+	     (:restartable t))
+	 (11 "(SWANK::PROCESS-REQUESTS NIL)"
+	     (:restartable t))
+	 (12 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+	     (:restartable t))
+	 (13 "((LAMBDA NIL :IN SWANK::HANDLE-REQUESTS))"
+	     (:restartable t))
+	 (14 "(SWANK/SBCL::CALL-WITH-BREAK-HOOK #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {700897043B}>)")
+	 (15 "((FLET SWANK/BACKEND:CALL-WITH-DEBUGGER-HOOK :IN \"/Users/drewc/me/src/emacs.d/straight/repos/slime/swank/sbcl.lisp\") #<FUNCTION SWANK:SWANK-DEBUGGER-HOOK> #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQU..")
+	 (16 "(SWANK::CALL-WITH-BINDINGS ((*STANDARD-INPUT* . #<SWANK/GRAY::SLIME-INPUT-STREAM {70089700D3}>)) #<FUNCTION (LAMBDA NIL :IN SWANK::HANDLE-REQUESTS) {700897040B}>)"
+	     (:restartable t))
+	 (17 "(SWANK::HANDLE-REQUESTS #<SWANK::MULTITHREADED-CONNECTION {7008970003}> NIL)"
+	     (:restartable t))
+	 (18 "((FLET SB-UNIX::BODY :IN SB-THREAD::RUN))")
+	 (19 "((FLET \"WITHOUT-INTERRUPTS-BODY-167\" :IN SB-THREAD::RUN))"))
+	(92))
+(:debug-activate 5 1 nil)
+#+end_src
+
 * HACKING
 
 #+begin_src sh

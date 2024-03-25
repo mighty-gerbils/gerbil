@@ -22,19 +22,30 @@
 		(substring/shared symstr 0 (1+ idx)))))))
 
 (def (find-completions str (cxt (swank-context)))
-  (append (for/collect ((s (in-hash-keys (gx#expander-context-table cxt))
-
-			   when (symbol-string-prefix? s str))) (symbol->string s))
-	  (delete-duplicates!
-	   (for/fold (kdr [])
-	       (s (##symbol-table)) (let (ns (and (symbol? s) (symbol-ns-prefix? s str)))
-				      (if ns (cons ns kdr) kdr))))))
+  (append
+   (for/collect ((s (in-hash-keys
+		     (gx#expander-context-table cxt))
+		    when (symbol-string-prefix? s str))) (symbol->string s))
+   (if (not (string-prefix? "##" str)) []
+       (map symbol->string
+	    (##global-var-table-foldl
+	     (lambda (prev this)
+	       (if (symbol-string-prefix? this str)
+		 (cons this prev)
+		 prev))
+	     [])))
+   (map symbol->string
+	(##global-var-table-foldl
+	 (lambda (prev this) (if (symbol-ns-prefix? this str)
+			  (cons this prev)
+			  prev))
+	 []))))
 
 (def (common-prefix strings)
   (let (n +inf.0)
     (fold (lambda (x y) ;(displayln x " " y)
 	    (set! n (min (string-prefix-length x (or y x)) n)) x)
-	  #f strings)
+	  #f strings) 
     (substring (car strings) 0 (inexact->exact n))))
 
 (def-swank (swank:completions str pkg)

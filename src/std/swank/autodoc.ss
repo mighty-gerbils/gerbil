@@ -1,4 +1,5 @@
-(import :gerbil/expander :std/swank/message :std/sugar :std/swank/context :std/swank/api
+(import :gerbil/expander :std/swank/message :std/sugar
+	:std/swank/context :std/swank/api 
 	:std/srfi/13)
 (export #t)
 
@@ -6,13 +7,14 @@
   (def (strim sym)
     (string->symbol
      (string-trim-both
-      (symbol->string sym)
+      (symbol->string sym)  
       (? (or (cut char=? <> #\_) char-numeric?)))))
   (let lp ((lst args))
     (if (null? lst) lst
 	(with ([kar . kdr] lst)
 	  (cons (strim kar)
 		(if (pair? kdr) (lp kdr) (strim kdr)))))))
+	  
 
 (def (swank-autodoc-procedure sym proc)
   (def form (##decompile proc))
@@ -20,13 +22,30 @@
     `(,sym . /args/)
     (cons sym (swank-pp-proc-args (cadr form)))))
 
+(def cursor 'swank::%cursor-marker%)
+
+(def (cursor-symbol form (exit #f))
+    (def (fnd)
+      (when (pair? form)
+	(foldl
+	 (lambda (this prev)
+		(cond
+		 ((pair? this) (cursor-symbol this exit))
+		 ((eq? this cursor) (exit prev))
+		 ((equal? this "") prev)
+		 
+		 (else this)))
+	 #f
+	 form))
+      #f)
+    (if exit (fnd) 
+	(call/cc (lambda (k) (set! exit k) (fnd)))))
+
 (def-swank (swank:autodoc lst . args)
-  (try
-   (if (eq? 'quote (car lst))
-     (set! lst (cadr lst)))
-  (let* ((sym (string->symbol (car lst)))
-	 (id (swank-eval-in-context
-	      `(gx#resolve-identifier ',sym))))
+  (try 
+   (let* ((sym (cursor-symbol lst))
+	  (sym (and (string? sym) (string->symbol sym)))
+	  (id (and sym (swank-eval-in-context `(gx#resolve-identifier ',sym)))))
      (if (not id)
        `(:not-available t)
        `(,(##object->string

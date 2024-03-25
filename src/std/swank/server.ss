@@ -19,10 +19,13 @@
 	(let ((msg (read-message reader)))
           (when msg
   	    (swank-handle-message msg writer) (lp)))))))
+
+
+
+  	 
 (def (run-swank-server (port 2005) (host "localhost"))
-  (let (laddr
-	(resolve-address
-  	 (string-append host":"(number->string port))))
+  (let (laddr (resolve-address
+  	       (string-append host":"(number->string port))))
     (displayln "Running Swank Server on " laddr)
     (using (sock (tcp-listen laddr) : ServerSocket)
       (while #t
