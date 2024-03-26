@@ -279,8 +279,8 @@ namespace: gxc
             (runtime-identifier=? #'-keyword-dispatch 'keyword-dispatch)
             (free-identifier=? #'args #'-args))
        (let* ((tab (stx-e #'kwt))
-              (keys (and tab (filter values (vector->list tab)))))
-         (make-!kw-lambda 'kw-lambda keys (identifier-symbol #'dispatch))))
+              (keys (and tab (filter identity (vector->list tab)))))
+         (make-!kw-lambda keys (identifier-symbol #'dispatch))))
 
       ((_ (kwvar . args)
           (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
@@ -296,7 +296,7 @@ namespace: gxc
             (andmap (cut runtime-identifier=? <> 'hash-ref) #'(-hash-ref ...))
             (andmap (cut runtime-identifier=? <> 'absent-value) #'(-absent-value ...))
             (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
-       (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
+       (make-!kw-lambda-primary (map stx-e #'(key ...)) (identifier-symbol #'main)))
 
       ((_ . form)
        ;; delegate dispatch
@@ -306,10 +306,7 @@ namespace: gxc
       ((_ . form)
        ;; generic lambda -- track type for call arity checking
        (let (signature (lambda-form-infer-signature #'form))
-         (make-!lambda 'lambda (lambda-form-arity #'form) #f
-                  return: (pgetq return: signature)
-                  effect: (pgetq effect: signature)
-                  arguments: (pgetq arguments: signature)))))))
+         (make-!lambda 'lambda (lambda-form-arity #'form) #f signature: signature))))))
 
 (def (basic-expression-type-case-lambda% self stx)
   (def (clause-e form)
@@ -470,7 +467,7 @@ namespace: gxc
      (cond
       ((apply-extract-lambda-signature #'body))
       ((apply-basic-expression-type #'body)
-       => (lambda (return) [return: return]))
+       => (lambda (return) (make-!signature return: return)))
       (else #f)))))
 
 (def (extract-lambda-signature-begin-annotation% self stx)
@@ -494,7 +491,7 @@ namespace: gxc
                    (cons* (identifier-symbol arg) unchecked: result)))
             (else
              (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
-         ([] (reverse! result))
+         ([] (apply make-!signature result))
          (_ (raise-compile-error "bad lambda signature" stx #'(signature ...))))))
     ((_ ann body)
      (compile-e self #'body))))

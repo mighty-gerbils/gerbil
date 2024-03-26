@@ -255,26 +255,27 @@ namespace: gxc
                   arguments: `(,id t::t)))))
 
 (defmethod {:init! !lambda}
-  (lambda (self id arity dispatch (inline #f) (typedecl #f)
-           return: (return #f)
-           effect: (effect #f)
-           arguments: (arguments #f)
-           unchecked: (unchecked #f))
-    (set! (&!type-id self) id)
+  (lambda (self arity dispatch signature: (signature #f))
+    (set! (&!type-id self) 'procedure)
     (set! (&!lambda-arity self) arity)
-    (set! (&!lambda-dispatch self) dispatch)
-    (set! (&!lambda-inline self) inline)
-    (set! (&!lambda-inline-typedecl self) typedecl)
-    (set! (&!procedure-signature self)
-      (!signature return: return
-                  effect: effect
-                  arguments: arguments
-                  unchecked: unchecked))))
+    (set! (&!procedure-signature self) signature)))
 
 (defmethod {:init! !case-lambda}
-  (lambda (self id clauses)
-    (set! (&!case-lambda-id self) id)
+  (lambda (self clauses)
+    (set! (&!type-id self) 'procedure)
     (set! (&!case-lambda-clauses self) clauses)))
+
+(defmethod {:init! !kw-lambda}
+  (lambda (self tab dispatch)
+    (set! (&!type-id self) 'procedure)
+    (set! (&!kw-lambda-table self) tab)
+    (set! (&!kw-lambda-dispatch self) dispatch)))
+
+(defmethod {:init! !kw-lambda-primary}
+  (lambda (self keys main)
+    (set! (&!type-id self) 'procedure)
+    (set! (&!kw-lambda-primary-keys self) keys)
+    (set! (&!kw-lambda-primary-main self) main)))
 
 (defmethod {:init! !primitive-lambda}
   !lambda:::init!)
@@ -287,7 +288,7 @@ namespace: gxc
     (set! (&!type-id self) id)
     (set! (&!procedure-signature self)
       (!signature return: 'boolean::t
-                  effect: '(pure predicate)
+                  effect: '(pure)
                   arguments: '(t::t)))))
 
 (def (!type-vtab type)

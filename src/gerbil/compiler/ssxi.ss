@@ -72,51 +72,39 @@ namespace: gxc
 
 ;; lambdas
 (defrules @lambda ()
-  ((_ arity inline: inline-rules)
-   (make-!lambda 'lambda 'arity #f inline-rules '(@lambda arity inline: inline-rules)))
-  ((recur primitive: arity)
-   (recur primitive: arity #f))
-  ((_ primitive: arity dispatch)
-   (make-!primitive-lambda 'lambda 'arity 'dispatch))
-  ((_ primitive: arity dispatch signature: signature )
-   (apply make-!primitive-lambda 'lambda 'arity 'dispatch 'signature))
   ((_ arity dispatch)
-   (make-!lambda 'lambda 'arity 'dispatch))
+   (make-!lambda 'arity 'dispatch))
   ((_ arity dispatch signature: signature)
-   (apply make-!lambda 'lambda 'arity 'dispatch signature))
+   (make-!lambda 'arity 'dispatch signature: (apply make-!signature 'signature)))
   ((recur arity)
    (recur arity #f))
   ((recur arity signature: signature)
    (recur arity #f signature: signature)))
 
 (defrules @case-lambda ()
-  ((_ primitive: (arity dispatch) ...)
-   (make-!primitive-case-lambda 'case-lambda [(@lambda primitive: arity dispatch) ...]))
-  ((_ primitive: (arity dispatch signature: signature) ...)
-   (make-!primitive-case-lambda 'case-lambda [(@lambda primitive: arity dispatch signature: signature) ...]))
   ((_ (arity dispatch) ...)
-   (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...]))
+   (make-!case-lambda [(@lambda arity dispatch) ...]))
   ((_ (arity dispatch signature: signature) ...)
-   (make-!case-lambda 'case-lambda [(@lambda arity dispatch signature: signature) ...])))
+   (make-!case-lambda [(@lambda arity dispatch signature: signature) ...])))
 
 (defrules @kw-lambda ()
   ((_ tab dispatch)
-   (make-!kw-lambda 'kw-lambda 'tab 'dispatch)))
+   (make-!kw-lambda 'tab 'dispatch)))
 
 (defrules @kw-lambda-dispatch ()
   ((_ keys main)
-   (make-!kw-lambda-primary 'kw-lambda-dispatch 'keys 'main)))
+   (make-!kw-lambda-primary 'keys 'main)))
 
-(defrules declare-iniline-rules! ()
+(defrules declare-inline-rules! ()
   ((_ (proc rule) ...)
-   (begin (declare-iniline-rule! proc rule) ...)))
+   (begin (declare-inline-rule! proc rule) ...)))
 
-(defrules declare-iniline-rule! ()
+(defrules declare-inline-rule! ()
   ((_ proc rule)
    (let (type (optimizer-lookup-type 'proc))
      (if (!lambda? type)
        (set! (!lambda-inline type) rule)
-       (error "cannot declare inline rule for non lambda procedure" 'proc type)))))
+       (raise-syntax-error #f "cannot declare inline rule for non lambda procedure" 'proc type)))))
 
 (defrules declare-primitive-predicates ()
   ((_ (proc klass) ...)
@@ -128,18 +116,86 @@ namespace: gxc
 
 (defrules declare-primitive-procedure (@list)
   ((_ id (@list sig ...))
-   (declare-primitive-case-lambda id (sig ...)))
+   (declare-primitive-case-lambda id sig ...))
   ((_ id sig ...)
    (declare-primitive-lambda id sig ...)))
 
+(begin-syntax
+  (def (verify-procedure! ctx id)
+    (let (proc (with-catch false (cut eval-syntax id)))
+      (unless (procedure? proc)
+        (raise-compile-error "unknown procedure" ctx id proc))))
+
+  (def (verify-class! ctx id)
+    (let (klass (with-catch false (cut eval-syntax id)))
+      (unless (class-type? klass)
+        (raise-compile-error "unknown class" ctx id proc))))
+
+  (def (parse-signature ctx proc sig)
+    (def (signature-arity args)
+      (let loop ((rest args) (count 0))
+        (match rest
+          ([_ . rest]
+           (loop rest (fx1+ count)))
+          ([] count)
+          (_ [count]))))
+
+    (def (make-signature args return effect unchecked)
+      (stx-for-each (cut verify-class! ctx <>) args)
+      (verify-class! ctx return)
+      (when unchecked
+        (verify-procedure! ctx unchecked))
+      (let* ((args (stx-map stx-e args))
+             (arity (signature-arity args))
+             (return (stx-e return))
+             (effect (and effect (syntax->datum effect)))
+             (_ (when effect
+                  (unless (and (list? effect) (andmap symbol? effect))
+                    (raise-compile-error "bad effect" ctx proc effect))))
+             (unchecked (stx-e unchecked)))
+        (make-!signature arguments: args
+                         return: return
+                         effect: effect
+                         unchecked: unchecked)))
+
+    (verify-procedure! ctx proc)
+    (syntax-case sig ()
+      ((args return)
+       (make-signature #'args #'return #f #f))
+      ((args return effect: effect)
+       (make-signature #'args #'return #'effect #f))
+      ((args return effect: effect unchecked:)
+       (make-signature #'args #'return #'effect (make-symbol "##" (stx-e #'proc))))
+      ((args return effect: effect unchecked: unchecked-proc)
+       (make-signature #'args #'return #f #'unchecked-proc))
+      ((args return unchecked:)
+       (make-signature #'args #'return #f (make-symbol "##" (stx-e #'proc))))
+      ((args return unchecked: unchecked-proc)
+       (make-signature #'args #'return #f #'unchecked-proc)))))
+
 (defsyntax (declare-primitive-predicate stx)
-  XXX
-  )
+  (syntax-case stx ()
+    ((_ proc klass)
+     (and (identifier? #'proc) (identifier? #'klass))
+     (begin
+       (verify-procedure! stx #'proc)
+       (verify-class! stx #'klass)
+       #'(declare-type proc (make-!primitive-predicate klass))))))
 
 (defsyntax (declare-primitive-lambda stx)
-  XXX
-  )
+  (syntax-case stx ()
+    ((proc signature ...)
+     (identifier? #'proc)
+     (begin
+       (verify-procedure! #'proc)
+       (with-syntax (((arity sig) (parse-signature stx #'proc #'(signature ...))))
+         #'(declare-type proc (make-!primitive-lambda 'arity #f signature: 'sig)))))))
 
 (defsyntax (declare-primitive-case-lambda stx)
-  XXX
-  )
+  ((_ proc case-signature ...)
+   (identifier? #'proc)
+   (begin
+     (verify-procedure! #'proc)
+     (with-syntax ((((arity sig) ...)
+                    (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
+       #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: 'sig) ...]))))))

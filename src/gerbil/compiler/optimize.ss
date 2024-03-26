@@ -128,9 +128,8 @@ namespace: gxc
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
-    (when (current-compile-verbose)
-      (displayln "Failed to load ssxi module for " id)
-      (display-exception exn))
+    (displayln "*** WARNING Failed to load ssxi module for " id)
+    (display-exception exn)
     #f)
 
   (def (import-e)
@@ -260,15 +259,12 @@ namespace: gxc
 ;; procedure types
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (with ((!lambda _ signature arity dispatch inline typedecl) self)
-      (if inline
-        (or typedecl
-            (error "Cannot generate typedecl for inline rules"))
-        ['@lambda arity dispatch
-             signature: [return: (&!signature-return signature)
-                         effect: (&!signature-effect signature)
-                         arguments: (&!signature-arguments signature)
-                         unchecked: (&!signature-unchecked signature)]]))))
+    (with ((!lambda _ signature arity dispatch) self)
+      ['@lambda arity dispatch
+           signature: [return: (&!signature-return signature)
+                       effect: (&!signature-effect signature)
+                       arguments: (&!signature-arguments signature)
+                       unchecked: (&!signature-unchecked signature)]])))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
