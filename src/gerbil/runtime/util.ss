@@ -159,7 +159,7 @@ namespace: #f
                  (syntax-local-class-type-info? #'type))
             (loop #'rest (cons #'id invocation-args)))))
         (id (identifier? #'id)
-            (cons* 'apply invoke (reverse! invocation-args)))
+            (cons* 'apply invoke (reverse! (cons #'id invocation-args))))
         (() (cons invoke (reverse! invocation-args)))))))
 
 ;; definition macro for public API procedures, which must be safe and typed.
@@ -310,7 +310,7 @@ namespace: #f
 (def absent-value
   '#(#!void))
 
-(defapi (true . _)
+(defapi (true . ignore)
   :- :true
   #t)
 
@@ -318,11 +318,11 @@ namespace: #f
   :- :boolean
   (eq? obj #t))
 
-(defapi (false . _)
+(defapi (false . ignore)
   :- :false
   #f)
 
-(defapi (void . _)
+(defapi (void . ignore)
   :- :void
   #!void)
 
