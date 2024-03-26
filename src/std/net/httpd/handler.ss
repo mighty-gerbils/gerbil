@@ -135,8 +135,14 @@
     (try
      (loop)
      (catch (os-error? e)
-       ;; only keep the failed primitive.
-       (set-cdr! (error-irritants e) '())
+       ;; replace all #u8() with <u8vector>
+       (slot-set! e 'irritants
+                  (foldr (lambda (item acc)
+                           (if (u8vector? item)
+                             (cons "<u8vector>" acc)
+                             (cons item acc)))
+                         '()
+                         (error-irritants e)))
        (errorf "unhandled exception: ~a" e)
        (raise e))
      (catch (e)
