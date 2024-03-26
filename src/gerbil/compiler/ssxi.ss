@@ -124,12 +124,12 @@ namespace: gxc
   (def (verify-procedure! ctx id)
     (let (proc (with-catch false (cut eval-syntax id)))
       (unless (procedure? proc)
-        (raise-compile-error "unknown procedure" ctx id proc))))
+        (raise-syntax-error #f "unknown procedure" ctx id))))
 
   (def (verify-class! ctx id)
     (let (klass (with-catch false (cut eval-syntax id)))
       (unless (class-type? klass)
-        (raise-compile-error "unknown class" ctx id proc))))
+        (raise-syntax-error #f "unknown class" ctx id))))
 
   (def (parse-signature ctx proc sig)
     (def (signature-arity args)
@@ -145,18 +145,17 @@ namespace: gxc
       (verify-class! ctx return)
       (when unchecked
         (verify-procedure! ctx unchecked))
-      (let* ((args (stx-map stx-e args))
-             (arity (signature-arity args))
-             (return (stx-e return))
-             (effect (and effect (syntax->datum effect)))
-             (_ (when effect
-                  (unless (and (list? effect) (andmap symbol? effect))
-                    (raise-compile-error "bad effect" ctx proc effect))))
-             (unchecked (stx-e unchecked)))
-        (make-!signature arguments: args
-                         return: return
-                         effect: effect
-                         unchecked: unchecked)))
+      (let (arity (signature-arity (stx-map stx-e args)))
+        (when effect
+          (let (effect (syntax->datum effect))
+            (unless (and (list? effect) (andmap symbol? effect))
+              (raise-syntax-error #f "bad effect" ctx proc effect))))
+        [arity
+         (with-syntax ((args args) (return return) (effect effect) (unchecked unchecked))
+           #'(make-!signature arguments: args
+                              return: return
+                              effect: effect
+                              unchecked: unchecked))]))
 
     (verify-procedure! ctx proc)
     (syntax-case sig ()
@@ -189,13 +188,14 @@ namespace: gxc
      (begin
        (verify-procedure! #'proc)
        (with-syntax (((arity sig) (parse-signature stx #'proc #'(signature ...))))
-         #'(declare-type proc (make-!primitive-lambda 'arity #f signature: 'sig)))))))
+         #'(declare-type proc (make-!primitive-lambda 'arity #f signature: sig)))))))
 
 (defsyntax (declare-primitive-case-lambda stx)
-  ((_ proc case-signature ...)
-   (identifier? #'proc)
-   (begin
-     (verify-procedure! #'proc)
-     (with-syntax ((((arity sig) ...)
-                    (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
-       #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: 'sig) ...]))))))
+  (syntax-case stx ()
+    ((_ proc case-signature ...)
+     (identifier? #'proc)
+     (begin
+       (verify-procedure! #'proc)
+       (with-syntax ((((arity sig) ...)
+                      (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
+         #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: 'sig) ...])))))))

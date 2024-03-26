@@ -87,7 +87,7 @@ namespace: gxc
               (instance? (expression-type? #'expr klass)))
          (if instance?
            (xform-wrap-source
-            (if (expression-pure? #'expr)
+            (if (expression-no-side-effects? #'expr)
               ['%#quote #t]
               ['%#begin #'expr #t])
             stx)
@@ -130,7 +130,7 @@ namespace: gxc
              (rator-effect (and rator-signature (!signature-effect rator-signature))))
        (and (or (equal? '(pure) rator-effect)
                 (equal? '(alloc) rator-effect))
-            (andmap expression-expression-no-side-effects? #'(rand ...)))))
+            (andmap expression-no-side-effects? #'(rand ...)))))
     (_ #f)))
 
 (def (expression-type? stx klass)
