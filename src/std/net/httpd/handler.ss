@@ -11,6 +11,7 @@
         :std/foreign
         :std/text/utf8
         :std/pregexp
+        (only-in :std/os/error os-error?)
         ./base
         (for-syntax :std/stxutil
                     :std/misc/string))
@@ -133,6 +134,11 @@
 
     (try
      (loop)
+     (catch (os-error? e)
+       ;; only keep the failed primitive.
+       (set-cdr! (error-irritants e) '())
+       (errorf "unhandled exception: ~a" e)
+       (raise e))
      (catch (e)
        (unless (memq e '(abort eof))
          (errorf "unhandled exception: ~a" e)
