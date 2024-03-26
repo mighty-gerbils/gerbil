@@ -137,12 +137,8 @@
      (catch (os-error? e)
        ;; replace all #u8() with <u8vector>
        (slot-set! e 'irritants
-                  (foldr (lambda (item acc)
-                           (if (u8vector? item)
-                             (cons "<u8vector>" acc)
-                             (cons item acc)))
-                         '()
-                         (error-irritants e)))
+                  (map (lambda (x) (if (u8vector? x) '<u8vector> x))
+                       (error-irritants e)))
        (errorf "unhandled exception: ~a" e)
        (raise e))
      (catch (e)
