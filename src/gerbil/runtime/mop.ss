@@ -319,8 +319,8 @@ namespace: #f
 (defapi (class-type-field-count (klass : :class)) :- :fixnum
   (##fx- (##vector-length (class-type-slot-vector klass)) 1))
 (defapi (class-type-seal! (klass : :class))
-  (##uncecked-structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
-                             3 class::t class-type-seal!))
+  (##unchecked-structure-set! klass (##fxior class-type-flag-sealed (##type-flags klass))
+                              3 class::t class-type-seal!))
 
 ;; Is maybe-sub-struct a subclass of maybe-super-struct?
 ; : (OrFalse TypeDescriptor) (OrFalse TypeDescriptor) -> Bool
