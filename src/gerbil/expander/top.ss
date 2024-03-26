@@ -476,7 +476,7 @@ namespace: gx
     ((_ hd expr)
      (stx-andmap identifier? hd)
      [(core-quote-syntax '%#define-values)
-      (stx-map user-binding-identifier hd)
+      (stx-map identity hd)
       expr])))
 
 (def (macro-expand-define-syntax stx)
@@ -499,7 +499,7 @@ namespace: gx
           (stx-list? body)
           (not (stx-null? body)))
      (core-cons* '%#lambda
-       (stx-map user-binding-identifier hd)
+       (stx-map identity hd)
        body))))
 
 (def (macro-expand-case-lambda stx)
@@ -510,7 +510,7 @@ namespace: gx
             (stx-list? body)
             (not (stx-null? body)))
        (stx-wrap-source
-        (cons (stx-map user-binding-identifier hd)
+        (cons (stx-map identity hd)
               body)
         (stx-source clause)))
       (else
@@ -527,7 +527,7 @@ namespace: gx
     (core-syntax-case bind ()
       ((ids expr)
        (stx-andmap identifier? ids)
-       [(stx-map user-binding-identifier ids) expr])
+       [(stx-map identity ids) expr])
       (else
        (raise-syntax-error #f "Bad syntax; malformed binding" stx bind))))
 
@@ -597,10 +597,6 @@ namespace: gx
 (def (ellipsis? stx)
   (and (identifier? stx)
        (core-identifier=? stx '...)))
-
-(def (user-binding-identifier x)
-  (and (identifier? x) (not (underscore? x))
-       x))
 
 (def (check-duplicate-identifiers stx (where stx))
   (let lp ((rest (syntax->list stx)))

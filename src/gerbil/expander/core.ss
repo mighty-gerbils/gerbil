@@ -692,7 +692,7 @@ namespace: gx
       (lp (&phi-context-super ctx))
       ctx)))
 
-(def (core-context-rebind? (ctx (current-expander-context)) . _)
+(def (core-context-rebind? (ctx (current-expander-context)) . ignore)
   (or (current-expander-allow-rebind?)
       (and (top-context? ctx)
            (not (module-context? ctx))
