@@ -68,10 +68,8 @@ namespace: #f
 
 ;; we really don't want stack traces in syntax error, they are worse than useless.
 ;; so SyntaxError extends just Exception
-(defclass (SyntaxError Exception) (message irritants where
-                                   context
-                                   phi
-                                   marks)
+(defclass (SyntaxError Exception StackTrace)
+  (message irritants where context phi marks)
   final: #t)
 
 (defmethod {display-exception SyntaxError}
@@ -113,7 +111,12 @@ namespace: #f
                     (##display-locat loc #t (current-output-port)))))
              (newline))
            rest))
-        (else (void))))))
+        (else (void)))
+      (when (getenv "GERBIL_EXPANDER_DEBUG" #f)
+        (alet (cont (&StackTrace-continuation self))
+          (display "--- continuation backtrace:")
+          (newline)
+          (display-continuation-backtrace cont))))))
 
 (seal-class! SyntaxError::t)
 

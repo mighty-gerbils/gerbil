@@ -1641,6 +1641,7 @@ package: gerbil/core
     weak::t
     foreign::t
     procedure::t
+    return::t
     time::t
     thread::t
     thread-group::t

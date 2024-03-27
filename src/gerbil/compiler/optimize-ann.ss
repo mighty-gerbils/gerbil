@@ -918,7 +918,7 @@ namespace: gxc
        (let* ((body (apply-expression-subst #'body id: #'obj new-id: target))
               (body (if negation (closure-e body) body)))
          ;; we need to redeclare the type of the lambda, as it has lost the argument
-         (optimizer-declare-type! (identifier-symbol id) (make-!lambda 'lambda 0 #f) #t)
+         (optimizer-declare-type! (identifier-symbol id) (make-!lambda 0 #f) #t)
          (cons id ['%#lambda [] body]))))))
 
 ;;; apply-push-match-vars

@@ -42,7 +42,10 @@ namespace: gxc
 (def current-compile-keep-scm
   (make-parameter #f))
 (def current-compile-verbose
-  (make-parameter #f))
+  (make-parameter
+   (alet (verbosity (getenv "GERBIL_BUILD_VERBOSE" #f))
+     (or (string->number verbosity)
+         verbosity))))
 (def current-compile-optimize
   (make-parameter #f))
 (def current-compile-debug
@@ -96,3 +99,12 @@ namespace: gxc
           (string-set! res i xchar)
           (lp (fx1+ i)))
         res))))
+
+(def (map* proc maybe-improper-list)
+  (let recur ((rest maybe-improper-list))
+    (match rest
+      ([hd . rest]
+       (cons (proc hd)
+             (recur rest)))
+      ([] [])
+      (tail (proc tail)))))

@@ -1,15 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; support for defining metaclasses
-(import :gerbil/runtime/mop
-        (for-syntax (only-in :gerbil/runtime/mop class::t.id)))
+(import :gerbil/runtime/mop)
 (export class)
 
 ;; this is the class metaclass expander meta type
 ;; to allow simple creation of new metaclasses
 (defsyntax class
   (make-class-type-info
-   id: class::t.id
+   id: 'class
    name: 'class
    super: []
    slots: '(id name super flags fields

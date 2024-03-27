@@ -88,24 +88,16 @@ namespace: gxc
      (identifier? #'id)
      (let (sym (identifier-symbol #'id))
        (alet (type (apply-basic-expression-top-level-type #'expr))
-         (optimizer-declare-type! sym type))))
+         (if (!class-meta? type)
+           (begin
+             (optimizer-declare-class! sym (!class-meta-class type))
+             (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
+           (optimizer-declare-type! sym type)))))
     (_ (void))))
 
 ;;; apply-collect-type-info
 (def (collect-type-define-values% self stx)
   (ast-case stx ()
-    ((_ (id) expr)
-     (identifier? #'id)
-     (let (sym (identifier-symbol #'id))
-       (cond
-        ((hash-get (current-compile-mutators) sym)
-         (verbose "skipping type inference for mutable binding " sym))
-        ((optimizer-lookup-type sym) ; already have a type from top level type collection
-         (verbose "skipping type inference for already declared type " sym))
-        (else
-         (alet (type (apply-basic-expression-type #'expr))
-           (optimizer-declare-type! sym type))))
-       (compile-e self #'expr)))
     ((_ hd expr)
      (compile-e self #'expr))))
 
@@ -119,8 +111,7 @@ namespace: gxc
              ((id type)
               (and (identifier? #'id) (identifier? #'type))
               (optimizer-declare-type! (identifier-symbol #'id)
-                                       (or (optimizer-resolve-type (identifier-symbol #'type))
-                                           (raise-compile-error "unknown type" stx #'type))
+                                       (optimizer-resolve-class stx (identifier-symbol #'type))
                                        #t))
              (_ (raise-compile-error "malformed type assertion" stx assertion))))
          #'(assertion ...))
@@ -135,7 +126,10 @@ namespace: gxc
        (identifier? #'id)
        (let (sym (identifier-symbol #'id))
          (alet (type (apply-basic-expression-type expr))
-           (when type
+           (if (!class-meta? type)
+             (begin
+               (optimizer-declare-class! sym (!class-meta-class type))
+               (optimizer-declare-type! sym (optimizer-resolve-class stx 'class::t)))
              (optimizer-declare-type! sym type #t)))))
       (_ (void))))
 
@@ -200,8 +194,7 @@ namespace: gxc
 (def (basic-expression-type-annotation-typedecl stx ann)
   (ast-case ann ()
     ((_ type-id)
-     (or (optimizer-resolve-type (identifier-symbol #'type-id))
-         (raise-compile-error "unknown type" stx #'type-id)))))
+     (optimizer-resolve-class stx (identifier-symbol #'type-id)))))
 
 (def (basic-expression-type-annotation-mop.class stx ann)
   (ast-case ann ()
@@ -213,14 +206,16 @@ namespace: gxc
            (struct? (stx-e #'struct?))
            (final? (stx-e #'final?))
            (metaclass (and (stx-e #'metaclass) (identifier-symbol #'metaclass))))
-       (make-!class type-id super slots ctor-method struct? final? #f metaclass)))))
+       (make-!class-meta
+        (make-!class type-id super slots ctor-method struct? final? #f metaclass))))))
 
 (def (basic-expression-type-annotation-mop.system stx ann)
   (ast-case ann ()
     ((_ type-id super)
      (let ((type-id (stx-e #'type-id))
            (super (stx-map identifier-symbol #'super)))
-       (make-!class type-id super [] #f #f #f #t #f)))))
+       (make-!class-meta
+        (make-!class type-id super [] #f #f #f #t #f))))))
 
 (def (basic-expression-type-annotation-mop.constructor stx ann)
   (ast-case ann ()
@@ -301,24 +296,24 @@ namespace: gxc
       ((_ . form)
        ;; delegate dispatch
        (dispatch-lambda-form? #'form)
-       (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+       (make-!lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
 
       ((_ . form)
-       ;; generic lambda -- track type for call arity checking
+       ;; generic lambda -- track type for call arity checking and return type inference
        (let (signature (lambda-form-infer-signature #'form))
-         (make-!lambda 'lambda (lambda-form-arity #'form) #f signature: signature))))))
+         (make-!lambda (lambda-form-arity #'form) #f signature: signature))))))
 
 (def (basic-expression-type-case-lambda% self stx)
   (def (clause-e form)
     (let (signature (lambda-form-infer-signature form))
-      (apply make-!lambda 'case-lambda-clause (lambda-form-arity form)
+      (make-!lambda (lambda-form-arity form)
              (and (dispatch-lambda-form? form)
                   (dispatch-lambda-form-delegate form))
-             signature)))
+             signature: signature)))
   (ast-case stx ()
     ((_ . clauses)
      (let (clauses (map clause-e #'clauses))
-       (make-!case-lambda 'case-lambda clauses)))))
+       (make-!case-lambda clauses)))))
 
 (def basic-expression-type-special (make-hash-table-eq))
 (defrules defbasic-expression-type-special ()
@@ -338,21 +333,19 @@ namespace: gxc
           ((not rator-type) #f)
           ((!procedure? rator-type)
            (alet* ((signature (&!procedure-signature rator-type))
-                   (return (&!signature-return rator-type)))
-             (or (optimizer-resolve-type return)
-                 (raise-compile-error "unknown procedure return type" stx return))))
+                   (return (&!signature-return signature)))
+             (optimizer-resolve-class stx return)))
           ((and (!class? rator-type) (eq? (!type-id rator-type) 'procedure))
            #f)
           (else
-           (raise-compile-error "operator is not a procedure" stx rator-type)))))))
+           (raise-compile-error "operator is not a procedure" stx #'id rator-type)))))))
     (_ #f)))
 
 (def (basic-expression-type-special-cast stx)
   (ast-case stx (%#ref)
     ((_ _ (%#ref interface-id) expr)
      (alet (interface-type (optimizer-resolve-type (identifier-symbol #'interface-id)))
-       (optimizer-resolve-class `(cast ,interface-type)
-                                (!type-id interface-type))))))
+       (optimizer-resolve-class stx (!type-id interface-type))))))
 
 (defbasic-expression-type-special
   (cast basic-expression-type-special-cast))
@@ -381,39 +374,39 @@ namespace: gxc
        (cond
         ((immediate? obj)
          (cond
-          ((char? obj)       (optimizer-lookup-type 'char::t))
-          ((boolean? obj)    (optimizer-lookup-type 'boolean::t))
-          ((void? obj)       (optimizer-lookup-type 'void::t))
-          ((eof-object? obj) (optimizer-lookup-type 'eof::t))
-          ((fixnum? obj)     (optimizer-lookup-type 'fixnum::t))
-          ((null? obj)       (optimizer-lookup-type 'null::t))
-          (else              (optimizer-lookup-type 'special::t))))
+          ((char? obj)       (optimizer-resolve-class stx 'char::t))
+          ((boolean? obj)    (optimizer-resolve-class stx 'boolean::t))
+          ((void? obj)       (optimizer-resolve-class stx 'void::t))
+          ((eof-object? obj) (optimizer-resolve-class stx 'eof::t))
+          ((fixnum? obj)     (optimizer-resolve-class stx 'fixnum::t))
+          ((null? obj)       (optimizer-resolve-class stx 'null::t))
+          (else              (optimizer-resolve-class stx 'special::t))))
         ((number? obj)
          (cond
-          ((flonum? obj)   (optimizer-lookup-type 'flonum::t))
-          ((##bignum? obj) (optimizer-lookup-type 'bignum::t))
-          ((##ratnum? obj) (optimizer-lookup-type 'ratnum::t))
-          ((##cpxnum? obj) (optimizer-lookup-type 'cpxnum::t))
+          ((flonum? obj)   (optimizer-resolve-class stx 'flonum::t))
+          ((##bignum? obj) (optimizer-resolve-class stx 'bignum::t))
+          ((##ratnum? obj) (optimizer-resolve-class stx 'ratnum::t))
+          ((##cpxnum? obj) (optimizer-resolve-class stx 'cpxnum::t))
           (else #f)))
-        ((symbol? obj)  (optimizer-lookup-type 'symbol::t))
-        ((keyword? obj) (optimizer-lookup-type 'keyword::t))
-        ((pair? obj)    (optimizer-lookup-type 'pair::t))
+        ((symbol? obj)  (optimizer-resolve-class stx 'symbol::t))
+        ((keyword? obj) (optimizer-resolve-class stx 'keyword::t))
+        ((pair? obj)    (optimizer-resolve-class stx 'pair::t))
         ((sequence? obj)
          (cond
-          ((vector? obj)    (optimizer-lookup-type 'vector::t))
-          ((string? obj)    (optimizer-lookup-type 'string::t))
-          ((u8vector? obj)  (optimizer-lookup-type 'u8vector::t))
-          ((s8vector? obj)  (optimizer-lookup-type 's8vector::t))
-          ((u16vector? obj) (optimizer-lookup-type 'u16vector::t))
-          ((s16vector? obj) (optimizer-lookup-type 's16vector::t))
-          ((u32vector? obj) (optimizer-lookup-type 'u32vector::t))
-          ((s32vector? obj) (optimizer-lookup-type 's32vector::t))
-          ((u64vector? obj) (optimizer-lookup-type 'u64vector::t))
-          ((s64vector? obj) (optimizer-lookup-type 's64vector::t))
-          ((f32vector? obj) (optimizer-lookup-type 'f32vector::t))
-          ((f64vector? obj) (optimizer-lookup-type 'f64vector::t))
+          ((vector? obj)    (optimizer-resolve-class stx 'vector::t))
+          ((string? obj)    (optimizer-resolve-class stx 'string::t))
+          ((u8vector? obj)  (optimizer-resolve-class stx 'u8vector::t))
+          ((s8vector? obj)  (optimizer-resolve-class stx 's8vector::t))
+          ((u16vector? obj) (optimizer-resolve-class stx 'u16vector::t))
+          ((s16vector? obj) (optimizer-resolve-class stx 's16vector::t))
+          ((u32vector? obj) (optimizer-resolve-class stx 'u32vector::t))
+          ((s32vector? obj) (optimizer-resolve-class stx 's32vector::t))
+          ((u64vector? obj) (optimizer-resolve-class stx 'u64vector::t))
+          ((s64vector? obj) (optimizer-resolve-class stx 's64vector::t))
+          ((f32vector? obj) (optimizer-resolve-class stx 'f32vector::t))
+          ((f64vector? obj) (optimizer-resolve-class stx 'f64vector::t))
           (else #f)))
-        ((box? obj) (optimizer-lookup-type 'box::t))
+        ((box? obj) (optimizer-resolve-class stx 'box::t))
         (else #f))))))
 
 ;;; apply-lift-top-lambdas
@@ -467,7 +460,14 @@ namespace: gxc
      (cond
       ((apply-extract-lambda-signature #'body))
       ((apply-basic-expression-type #'body)
-       => (lambda (return) (make-!signature return: return)))
+       => (lambda (return-type)
+            (cond
+             ((!procedure? return-type)
+              (make-!signature return: 'procedure::t))
+             ((optimizer-lookup-class-name return-type)
+              => (lambda (return-type-name)
+                   (make-!signature return: return-type-name)))
+             (else #f))))
       (else #f)))))
 
 (def (extract-lambda-signature-begin-annotation% self stx)
@@ -479,16 +479,16 @@ namespace: gxc
           (case (stx-e key)
             ((return:)
              (loop rest
-                   (cons* (identifier-symbol arg) return: result)))
+                   (cons* return: (identifier-symbol arg) result)))
             ((effect:)
              (loop rest
-                   (cons* (map stx-e arg) effect: result)))
+                   (cons* effect: (and arg (map stx-e arg)) result)))
             ((arguments:)
              (loop rest
-                   (cons* (map identifier-symbol arg) arguments: result)))
+                   (cons* arguments: (map* identifier-symbol arg) result)))
             ((unchecked:)
              (loop rest
-                   (cons* (identifier-symbol arg) unchecked: result)))
+                   (cons* unchecked: (identifier-symbol arg) result)))
             (else
              (raise-compile-error "bad lambda signature" stx #'(signature ...) key))))
          ([] (apply make-!signature result))

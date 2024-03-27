@@ -73,9 +73,7 @@ package: gerbil/core
                         (type-constructor
                          (stx-getq constructor: #'rest))
                         (mop-type-t (core-quote-syntax #'type-t))
-                        (mop-super
-                         (append (stx-map core-quote-syntax #'super)
-                                 [(core-quote-syntax 'object::t)]))
+                        (mop-super (stx-map core-quote-syntax #'super))
                         (mop-struct? struct?)
                         (mop-final? (stx-getq final: #'rest))
                         (mop-metaclass

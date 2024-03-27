@@ -54,15 +54,14 @@ namespace: #f
 (def class-type-flag-system 8192) ;; it is a system class, non instantiable
 
 ;; the root class
-(def t::t.id 'gerbil#t::t)
 (def t::t
-  (begin-annotation (@mop.system gerbil#t::t ())
+  (begin-annotation (@mop.system t ())
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        #f                               ; type: class::t, set below
-       t::t.id                          ; type-id
+       't                               ; type-id
        't                               ; type-name
        flags                            ; type-flags
        #f                               ; type-super
@@ -75,10 +74,9 @@ namespace: #f
        #f))))
 
 ;; the class metaclass
-(def class::t.id 'gerbil#class::t)
 (def class::t
     (begin-annotation
-        (@mop.class gerbil#class::t     ; type-id
+        (@mop.class class               ; type-id
                     (t::t)              ; super
                     (id name super flags fields
                         precedence-list slot-vector slot-table
@@ -113,7 +111,7 @@ namespace: #f
                 (struct: . #t)))
              (t (##structure
                  #f                  ; type: self reference, set below
-                 class::t.id         ; type-id
+                 'class              ; type-id
                  'class              ; type-name
                  flags               ; type-flags
                  ##type-type         ; type-super
@@ -132,15 +130,14 @@ namespace: #f
 (##structure-type-set! t::t class::t)
 
 ;; standard objects
-(def object::t.id 'gerbil#object::t)
 (def object::t
-  (begin-annotation (@mop.system gerbil#object::t (t::t))
+  (begin-annotation (@mop.system object (t::t))
     (let ((flags (##fxior type-flag-extensible type-flag-id class-type-flag-system))
           (properties '((direct-slots:) (system: . #t)))
           (slot-table (make-symbolic-table #f 0)))
       (##structure
        class::t                         ; type
-       t::t.id                          ; type-id
+       'object                          ; type-id
        'object                          ; type-name
        flags                            ; type-flags
        #f                               ; type-super
@@ -155,7 +152,7 @@ namespace: #f
 (def class-type?
   (begin-annotation (@mop.predicate class::t)
     (lambda (obj)
-      (##structure-instance-of? obj class::t.id))))
+      (##structure-instance-of? obj 'class))))
 
 (defapi (class-type=? (x : :class) (y : :class))
   :- :boolean

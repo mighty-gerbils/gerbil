@@ -18,6 +18,11 @@ namespace: gxc
    (identifier? #'symbol)
    (optimizer-declare-type! 'symbol type-expr)))
 
+(defrules declare-class ()
+  ((_ symbol type-expr)
+   (identifier? #'symbol)
+   (optimizer-declare-class! 'symbol type-expr)))
+
 (defrules declare-type* ()
   ((_ (symbol type) ...)
    (begin (declare-type symbol type) ...)))
@@ -104,15 +109,19 @@ namespace: gxc
    (let (type (optimizer-lookup-type 'proc))
      (if (!lambda? type)
        (set! (!lambda-inline type) rule)
-       (raise-syntax-error #f "cannot declare inline rule for non lambda procedure" 'proc type)))))
+       (displayln "*** WARNING unknown procedure " 'proc "; ignoring inline rule")))))
 
 (defrules declare-primitive-predicates ()
-  ((_ (proc klass) ...)
-   (begin (declare-primitive-predicate proc klass) ...)))
+  ((_) (begin))
+  ((_ (proc klass) . rest)
+   (begin (declare-primitive-predicate proc klass)
+          (declare-primitive-predicates . rest))))
 
 (defrules declare-primitive-procedures ()
-  ((_ (id sig ...) ...)
-   (begin (declare-primitive-procedure id sig ...) ...)))
+  ((_) (begin))
+  ((_ (id sig ...) . rest)
+   (begin (declare-primitive-procedure id sig ...)
+          (declare-primitive-procedures . rest))))
 
 (defrules declare-primitive-procedure (@list)
   ((_ id (@list sig ...))
@@ -152,10 +161,10 @@ namespace: gxc
               (raise-syntax-error #f "bad effect" ctx proc effect))))
         [arity
          (with-syntax ((args args) (return return) (effect effect) (unchecked unchecked))
-           #'(make-!signature arguments: args
-                              return: return
-                              effect: effect
-                              unchecked: unchecked))]))
+           #'(make-!signature arguments: 'args
+                              return: 'return
+                              effect: 'effect
+                              unchecked: 'unchecked))]))
 
     (verify-procedure! ctx proc)
     (syntax-case sig ()
@@ -164,13 +173,13 @@ namespace: gxc
       ((args return effect: effect)
        (make-signature #'args #'return #'effect #f))
       ((args return effect: effect unchecked:)
-       (make-signature #'args #'return #'effect (make-symbol "##" (stx-e #'proc))))
+       (make-signature #'args #'return #'effect (make-symbol "##" (stx-e proc))))
       ((args return effect: effect unchecked: unchecked-proc)
-       (make-signature #'args #'return #f #'unchecked-proc))
+       (make-signature #'args #'return #f (stx-e #'unchecked-proc)))
       ((args return unchecked:)
-       (make-signature #'args #'return #f (make-symbol "##" (stx-e #'proc))))
+       (make-signature #'args #'return #f (make-symbol "##" (stx-e proc))))
       ((args return unchecked: unchecked-proc)
-       (make-signature #'args #'return #f #'unchecked-proc)))))
+       (make-signature #'args #'return #f (stx-e #'unchecked-proc))))))
 
 (defsyntax (declare-primitive-predicate stx)
   (syntax-case stx ()
@@ -179,23 +188,31 @@ namespace: gxc
      (begin
        (verify-procedure! stx #'proc)
        (verify-class! stx #'klass)
-       #'(declare-type proc (make-!primitive-predicate klass))))))
+       #'(declare-type proc (make-!primitive-predicate 'klass))))))
 
 (defsyntax (declare-primitive-lambda stx)
   (syntax-case stx ()
-    ((proc signature ...)
+    ((_ proc signature ...)
      (identifier? #'proc)
-     (begin
-       (verify-procedure! #'proc)
-       (with-syntax (((arity sig) (parse-signature stx #'proc #'(signature ...))))
-         #'(declare-type proc (make-!primitive-lambda 'arity #f signature: sig)))))))
+     (with-syntax (((arity sig) (parse-signature stx #'proc #'(signature ...))))
+       #'(declare-type proc (make-!primitive-lambda 'arity #f signature: sig))))))
 
 (defsyntax (declare-primitive-case-lambda stx)
   (syntax-case stx ()
     ((_ proc case-signature ...)
      (identifier? #'proc)
-     (begin
-       (verify-procedure! #'proc)
-       (with-syntax ((((arity sig) ...)
-                      (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
-         #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: 'sig) ...])))))))
+     (with-syntax ((((arity sig) ...)
+                    (map (cut parse-signature stx #'proc <>) #'(case-signature ...))))
+       #'(declare-type proc (make-!primitive-case-lambda [(make-!primitive-lambda 'arity #f signature: sig) ...]))))))
+
+(defrules declare-builtin-class ()
+  ((_ system: id super)
+   (optimizer-declare-builtin-class! 'id (make-!class (class-type-id id) 'super [] #f #f #f #t #f)))
+  ((_ struct: id super slots)
+   (optimizer-declare-builtin-class! 'id (make-!class (class-type-id id) 'super 'slots #f #f #f #f #f)))
+  ((_ class: id super slots)
+   (optimizer-declare-builtin-class! 'id (make-!class (class-type-id id) 'super 'slots #f #t #f #f #f))))
+
+(defrules declare-builtin-classes ()
+  ((_ decl ...)
+   (begin (declare-builtin-class . decl) ...)))

@@ -9,6 +9,7 @@ namespace: gxc
         "../expander"
         "base"
         "method"
+        "compile"
         "optimize-base"
         "optimize-xform"
         "optimize-top")
@@ -26,31 +27,51 @@ namespace: gxc
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-resolve-type rator-id)))
        (cond
-        ((or (!procedure? rator-type)
-             (and (!class? rator-type)
-                  (eq? (&!type-id rator-type) 'procedure)))
+        ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
          (let (optimized {optimize-call rator-type self stx #'rands})
-           (if (!primitive? rator-type)
-             optimized        ; %#call-unchecked unsafe for primitives
-             (ast-case optimized (%#call)
-               ((%#call . body)
-                (xform-wrap-source
-                 (cons '%#call-unchecked #'body)
-                 stx))
-               (_ optimized)))))
-        ((not rator-type)
+           (ast-case optimized (%#call %#ref)
+             ((%#call (%#ref optimized-rator) . args)
+              (let (optimized-rator-id (identifier-symbol #'optimized-rator))
+                (if (or (and (!primitive? rator-type)
+                             (eq? optimized-rator-id rator-id))
+                        (memq optimized-rator-id checked-primitives))
+                  ;; %#call-unchecked unsafe in this case
+                  optimized
+                  ;; %#call-unchecked to known procedure
+                  (xform-wrap-source
+                   (cons* '%#call-unchecked #'(%#ref optimized-rator) #'args)
+                   stx))))
+             (_ optimized))))
+        ((and (!class? rator-type) (eq? (&!type-id rator-type) 'procedure))
+         (let (args (map (cut compile-e self <>) #'rands))
+           ;; known to be procedure, %#call-unchecked
+           (xform-wrap-source
+            (cons* '%#call-unchecked #'(%#ref rator) #'args)
+            stx)))
+        ((or (not rator-type) (eq? (!type-id rator-type) 't))
          (xform-call% self stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
-    (_ (xform-call% self stx))))
+    ((_ rator . rands)
+     (let (rator-type (apply-basic-expression-type #'rator))
+       (if (and rator-type
+                (eq? (!type-id rator-type) 'procedure)
+                (not (!primitive? rator-type)))
+           ;; known to be procedure, %#call-unchecked
+           (xform-wrap-source
+            (cons* '%#call-unchecked
+                   (compile-e self #'rator)
+                   (map (cut compile-e self <>) #'rands))
+            stx)
+         (xform-call% self stx))))))
 
 (defmethod {optimize-call !procedure}
   (lambda (self ctx stx args)
     (if {check-arguments self ctx stx args}
       (let (signature (&!procedure-signature self))
         (cond
-         ((!signature-unchecked self)
+         ((!signature-unchecked signature)
           => (lambda (unchecked)
                (xform-wrap-source
                 ['%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args) ...]
@@ -62,8 +83,10 @@ namespace: gxc
 (defmethod {check-arguments !procedure}
   (lambda (self ctx stx args)
     (alet* ((signature (&!procedure-signature self))
-            (argument-types (&!signature-arguments signature)))
-      (let (argument-types (map optimizer-resolve-type argument-types))
+            (argument-types (!signature-arguments signature)))
+      (let (argument-types
+            (map* (lambda (t) (and t (optimizer-resolve-class stx t)))
+                  argument-types))
         (let loop ((rest-args args) (rest-types argument-types) (result #t))
           (match rest-args
             ([arg . rest-args]
@@ -146,7 +169,7 @@ namespace: gxc
    ((eq? (!type-id type) 't))           ; happy!
 
    (else
-    (let (expr-type (apply-basic-expression-type stx))
+    (let (expr-type (apply-basic-expression-type expr))
       (cond
        ((not expr-type)
         ;; no type information, let the runtime contract check it

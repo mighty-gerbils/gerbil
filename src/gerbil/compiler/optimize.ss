@@ -191,7 +191,13 @@ namespace: gxc
   (def (generate-e id)
     (let (sym (and (identifier? #'id) (identifier-symbol id)))
       (cond
-       ((and sym (optimizer-lookup-type sym))
+       ((optimizer-lookup-class sym)
+        => (lambda (klass)
+             (verbose "generate class decl" sym)
+             ['begin
+               ['declare-class sym {typedecl klass}]
+               ['declare-type sym 'class::t]]))
+       ((optimizer-lookup-type sym)
         => (lambda (type)
              (verbose "generate typedecl " sym)
              (let (typedecl {typedecl type})
@@ -260,21 +266,18 @@ namespace: gxc
 (defmethod {typedecl !lambda}
   (lambda (self)
     (with ((!lambda _ signature arity dispatch) self)
-      ['@lambda arity dispatch
-           signature: [return: (&!signature-return signature)
-                       effect: (&!signature-effect signature)
-                       arguments: (&!signature-arguments signature)
-                       unchecked: (&!signature-unchecked signature)]])))
+      (if signature
+        ['@lambda arity dispatch
+             signature: [return: (&!signature-return signature)
+                         effect: (&!signature-effect signature)
+                         arguments: (&!signature-arguments signature)
+                         unchecked: (&!signature-unchecked signature)]]
+        ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
     (def (clause-e clause)
-      (with ((!lambda _ signature arity dispatch) clause)
-        [arity dispatch
-               signature: [return: (&!signature-return signature)
-                           effect: (&!signature-effect signature)
-                           arguments: (&!signature-arguments signature)
-                           unchecked: (&!signature-unchecked signature)]]))
+      (cdr (!lambda::typedecl clause)))
     (let (clauses (&!case-lambda-clauses self))
       (let (clauses (map clause-e clauses))
         ['@case-lambda clauses ...]))))

@@ -4,6 +4,87 @@
 prelude: :gerbil/compiler/ssxi
 package: gerbil
 
+;; declare builtin classes in case they are not there
+;; this is necessary to recursively bootstrap from unoptimized stage1 builds
+;; NOTE this must match :gerbil/runtime/mop-system-classess
+(declare-builtin-classes
+  (system: t::t ())
+  (struct: class::t (t::t) ())
+  (system: object::t (t::t))
+  (system: immediate::t (t::t))
+  (system: char::t (immediate::t))
+  (system: boolean::t (immediate::t))
+  (system: atom::t (immediate::t))
+  (system: void::t (atom::t))
+  (system: eof::t (atom::t))
+  (system: true::t (boolean::t atom::t))
+  (system: false::t (boolean::t atom::t))
+  (system: special::t (atom::t))
+  (system: number::t (t::t))
+  (system: real::t (number::t))
+  (system: integer::t (real::t))
+  (system: fixnum::t (integer::t immediate::t))
+  (system: bignum::t (integer::t))
+  (system: ratnum::t (real::t))
+  (system: flonum::t (real::t))
+  (system: cpxnum::t (number::t))
+  (system: symbolic::t (t::t))
+  (system: symbol::t (symbolic::t))
+  (system: keyword::t (symbolic::t))
+  (system: list::t (t::t))
+  (system: pair::t (list::t))
+  (system: null::t (list::t atom::t))
+  (system: sequence::t (t::t))
+  (system: vector::t (sequence::t))
+  (system: string::t (sequence::t))
+  (system: hvector::t (sequence::t))
+  (system: u8vector::t (hvector::t))
+  (system: s8vector::t (hvector::t))
+  (system: u16vector::t (hvector::t))
+  (system: s16vector::t (hvector::t))
+  (system: u32vector::t (hvector::t))
+  (system: s32vector::t (hvector::t))
+  (system: u64vector::t (hvector::t))
+  (system: s64vector::t (hvector::t))
+  (system: f32vector::t (hvector::t))
+  (system: f64vector::t (hvector::t))
+  (system: values::t (t::t))
+  (system: box::t (t::t))
+  (system: frame::t (t::t))
+  (system: continuation::t (t::t))
+  (system: promise::t (t::t))
+  (system: weak::t (t::t))
+  (system: foreign::t (t::t))
+  (system: procedure::t (t::t))
+  (system: return::t (t::t))
+  (system: time::t (t::t))
+  (system: thread::t (t::t))
+  (system: thread-group::t (t::t))
+  (system: mutex::t (t::t))
+  (system: condvar::t (t::t))
+  (system: port::t (t::t))
+  (system: object-port::t (port::t))
+  (system: character-port::t (object-port::t))
+  (system: byte-port::t (character-port::t))
+  (system: device-port::t (byte-port::t))
+  (system: vector-port::t (object-port::t))
+  (system: string-port::t (character-port::t))
+  (system: u8vector-port::t (byte-port::t))
+  (system: raw-device-port::t (port::t))
+  (system: tcp-server-port::t (object-port::t))
+  (system: udp-port::t (object-port::t))
+  (system: directory-port::t (object-port::t))
+  (system: event-queue-port::t (object-port::t))
+  (system: table::t (t::t))
+  (system: readenv::t (t::t))
+  (system: writeenv::t (t::t))
+  (system: readtable::t (t::t))
+  (system: processor::t (t::t))
+  (system: vm::t (t::t))
+  (system: file-info::t (t::t))
+  (system: socket-info::t (t::t))
+  (system: address-info::t (t::t)))
+
 ;;; signatures for (gambit) scheme primitives
 (declare-primitive-predicates
  ;; R5RS
@@ -50,8 +131,7 @@ package: gerbil
  (thread? thread::t)
  (u16vector? u16vector::t)
  (u32vector? u32vector::t)
- (u8vector? u8vector::t)
- )
+ (u8vector? u8vector::t))
 
 (declare-primitive-procedures
  ;; R5RS
@@ -147,7 +227,7 @@ package: gerbil
  (exact->inexact (number::t) number::t effect: (pure))
  (exact? (number::t) boolean::t effect: (pure))
  (exp (number::t) number::t effect: (pure))
- (expt (number::t number::t) effect: (pure))
+ (expt (number::t number::t) number::t effect: (pure))
  (floor (number::t) number::t effect: (pure))
  (for-each [((procedure::t list::t) void::t unchecked:)
             ((procedure::t list::t . list::t) void::t unchecked:)])
@@ -185,7 +265,7 @@ package: gerbil
  (memv [((t::t list::t) t::t effect: (pure) unchecked:)
         ((t::t list::t procedure::t) t::t unchecked:)])
  (min number::t number::t effect: (pure))
- (modulo (number::t) number::t effect: (pure))
+ (modulo (number::t number::t) number::t effect: (pure))
  (negative? (number::t) boolean::t effect: (pure))
  (newline [(() void::t effect: (io))
            ((port::t) void::t effect: (io))])
@@ -214,7 +294,7 @@ package: gerbil
  (set-cdr! (pair::t t::t) void::t effect: (mut) unchecked:)
  (sin (number::t) boolean::t effect: (pure))
  (sqrt (number::t) boolean::t effect: (pure))
- (string char::t effect: (alloc) unchecked:)
+ (string char::t string::t effect: (alloc) unchecked:)
  (string->list [((string::t) list::t effect: (alloc) unchecked:)
                 ((string::t fixnum::t) list::t effect: (alloc))
                 ((string::t fixnum::t fixnum::t) list::t effect: (alloc))])
@@ -303,7 +383,7 @@ package: gerbil
  (eof-object () eof::t effect: (pure))
  (error-object-irritants (t::t) list::t effect: (pure))
  (error-object-message (t::t) string::t effect: (pure))
- (error-object? (t::t) boolean:t effect: (pure))
+ (error-object? (t::t) boolean::t effect: (pure))
  (euclidean-quotient (number::t number::t) number::t effect: (pure))
  (euclidean-remainder (number::t number::t) number::t effect: (pure))
  (euclidean/ (number::t number::t) number::t effect: (pure))
@@ -357,9 +437,9 @@ package: gerbil
  (read-error? (t::t) boolean::t effect: (pure))
  (read-line [(() string::t effect: (io))
              ((port::t) string::t effect: (io))
-             ((port::t char::t) string::t effect: (io))
-             ((port::t char::t boolean::t) string::t effect: (io))
-             ((port::t char::t boolean::t fixnum::t) string::t effect: (io))])
+             ((port::t t::t) string::t effect: (io))
+             ((port::t t::t boolean::t) string::t effect: (io))
+             ((port::t t::t boolean::t fixnum::t) string::t effect: (io))])
  (read-string [((fixnum::t) string::t effect: (io))
                ((fixnum::t port::t) string::t effect: (io))])
  (read-u8 [(() t::t effect: (io))
@@ -428,7 +508,7 @@ package: gerbil
  (address-infos t::t list::t effect: (io))
  (all-bits-set? (integer::t integer::t) boolean::t effect: (pure))
  (any [((procedure::t list::t) t::t unchecked:)
-       ((procedure::t list::t . list::t) t::tg unchecked:)])
+       ((procedure::t list::t . list::t) t::t unchecked:)])
  (any-bit-set? (integer::t integer::t) boolean::t effect: (pure))
  (any-bits-set?  (integer::t integer::t) boolean::t effect: (pure))
  (append! list::t list::t effect: (mut))
@@ -483,7 +563,7 @@ package: gerbil
  (call-with-output-u8vector (t::t procedure::t) t::t effect: (io))
  (call-with-output-vector (t::t procedure::t) t::t effect: (io))
  (call/cc (procedure::t) t::t effect: (continuation-capture) unchecked: ##call-with-current-continuation)
- car+cdr
+ (car+cdr (pair::t) values::t effect: (pure))
  ;;cfun-conversion-exception-arguments
  ;;cfun-conversion-exception-code
  ;;cfun-conversion-exception-message
@@ -544,13 +624,13 @@ package: gerbil
  (condition-variable-broadcast! (condvar::t) void::t effect: (io))
  (condition-variable-name (condvar::t) t::t effect: (pure))
  (condition-variable-signal! (condvar::t) void::t effect: (io))
- (condition-variable-specific (condvar::t) t::t effects: (pure))
- (condition-variable-specific-set! (condvar::t t::t) void::t effects: (mut))
+ (condition-variable-specific (condvar::t) t::t effect: (pure))
+ (condition-variable-specific-set! (condvar::t t::t) void::t effect: (mut))
  (configure-command-string () string::t effect: (pure))
  (conjugate (number::t) number::t effect: (pure))
  (cons* (t::t t::t . t::t) pair::t effect: (alloc))
  (console-port () port::t)
- (continuation-capture (procedure::t) t::t effect: (continuation-capture) unhcecked: ##continuation-capture)
+ (continuation-capture (procedure::t) t::t effect: (continuation-capture) unchecked: ##continuation-capture)
  (continuation-graft (continuation::t procedure::t . t::t) t::t effect: (abort) unchecked:)
  (continuation-return (continuation::t . t::t) t::t effect: (abort) unchecked:)
  (copy-bit (fixnum::t integer::t boolean::t) integer::t effect: (pure))
@@ -570,7 +650,7 @@ package: gerbil
  (current-processor () processor::t)
  (current-readtable [(() readtable::t)
                      ((readtable::t) void::t)])
- (current-thread () thead::t)
+ (current-thread () thread::t)
  (current-time () time::t)
  (current-user-interrupt-handler [(() procedure::t)
                                   ((procedure::t) void::t)])
@@ -711,11 +791,11 @@ package: gerbil
  (fl+* flonum::t flonum::t effect: (pure) unchecked:)
  (fl- flonum::t flonum::t effect: (pure) unchecked:)
  (fl/ flonum::t flonum::t effect: (pure) unchecked:)
- (fl< flonumm:t boolean::t effect: (pure) unchecked:)
- (fl<= flonumm:t boolean::t effect: (pure) unchecked:)
- (fl= flonumm:t boolean::t effect: (pure) unchecked:)
- (fl> flonumm:t boolean::t effect: (pure) unchecked:)
- (fl>= flonumm:t boolean::t effect: (pure) unchecked:)
+ (fl< flonum::t boolean::t effect: (pure) unchecked:)
+ (fl<= flonum::t boolean::t effect: (pure) unchecked:)
+ (fl= flonum::t boolean::t effect: (pure) unchecked:)
+ (fl> flonum::t boolean::t effect: (pure) unchecked:)
+ (fl>= flonum::t boolean::t effect: (pure) unchecked:)
  (flabs (flonum::t) flonum::t effect: (pure) unchecked:)
  (flacos (flonum::t) flonum::t effect: (pure) unchecked:)
  (flacosh (flonum::t) flonum::t effect: (pure) unchecked:)
@@ -762,7 +842,7 @@ package: gerbil
                 ((port::t) void::t effect: (io))])
  (foreign-address (foreign::t) integer::t effect: (pure))
  (foreign-release! (foreign::t) void::t effect: (io))
- (foreign-released? (foreignt::t) boolean::t effect: (pure))
+ (foreign-released? (foreign::t) boolean::t effect: (pure))
  (foreign-tags (foreign::t) list::t effect: (pure))
  (fourth (list::t) t::t effect: (pure))
  (fx* fixnum::t fixnum::t effect: (pure) unchecked:)
@@ -818,7 +898,7 @@ package: gerbil
  ;;generate-proper-tail-calls
 
  (gensym [(() symbol::t effect: (alloc) unchecked:)
-          ((symbol::T) symbol::t effect: (alloc) unchecked:)])
+          ((symbol::t) symbol::t effect: (alloc) unchecked:)])
  (get-output-u8vector (port::t) u8vector::t effect: (io))
  (get-output-vector (port::t) vector::t effect: (io))
  (getenv [((string::t) string::t effect: (pure) unchecked:)
@@ -849,7 +929,7 @@ package: gerbil
  ;;inactive-thread-exception-procedure
  ;;inactive-thread-exception?
 
- initial-current-directory
+ ;;nitial-current-directory
 
  ;;initialized-thread-exception-arguments
  ;;initialized-thread-exception-procedure
@@ -989,9 +1069,9 @@ package: gerbil
                ((mutex::t t::t) void::t effect: (io))
                ((mutex::t t::t thread::t) void::t effect: (io))])
  (mutex-name (mutex::t) t::t effect: (pure))
- (mutex-specific (mutex::t) t:t effect: (pure))
+ (mutex-specific (mutex::t) t::t effect: (pure))
  (mutex-specific-set! (mutex::t t::t) void::t effect: (mut))
- (mutex-state (mutex::t) t:t effect: (pure))
+ (mutex-state (mutex::t) t::t effect: (pure))
  (mutex-unlock! [((mutex::t) void::t effect: (io))
                  ((mutex::t condvar::t) void::t effect: (io))
                  ((mutex::t condvar::t t::t) void::t effect: (io))])
@@ -1171,7 +1251,7 @@ package: gerbil
  (readtable-write-extended-read-macros?-set (readtable::t boolean::t) readtable::t effect: (alloc))
  (real-time () flonum::t effect: (io))
  (remove (procedure::t list::t) list::t effect: (alloc))
- (remove! (procedure::T list::t) list::t effect: (mut))
+ (remove! (procedure::t list::t) list::t effect: (mut))
  (remq (t::t list::t) list::t effect: (alloc))
  (rename-file (string::t string::t) void::t effect: (io) unchecked:)
 
@@ -1277,7 +1357,7 @@ package: gerbil
  ;;script-file
 
  (second (list::t) t::t effect: (pure))
- (seconds->time (real::t) time::t effect: (alloc) uncecked:)
+ (seconds->time (real::t) time::t effect: (alloc) unchecked:)
  (serial-number->object (fixnum::t) t::t effect: (io) unchecked:)
 
  ;; TODO service-info::t
@@ -1301,7 +1381,7 @@ package: gerbil
  (shell-command [((string::t) t::t effect: (io) unchecked:)
                  ((string::t boolean::t) t::t effect: (io) unchecked:)])
  (sinh (number::t) number::t effect: (pure))
- (sixth (list::t) t::T effect: (pure))
+ (sixth (list::t) t::t effect: (pure))
 
  ;; TODO socket-info::t
  ;;socket-info-address
@@ -1325,7 +1405,7 @@ package: gerbil
 
  (string->keyword (string::t) keyword::t effect: (pure) unchecked:)
  (string->uninterned-keyword (string::t) keyword::t effect: (pure) unchecked:)
- (string->uninterned-symbol (string::t) symol::t effect: (pure) unchecked:)
+ (string->uninterned-symbol (string::t) symbol::t effect: (pure) unchecked:)
  (string-ci=?-hash (string::t) fixnum::t effect: (pure) unchecked:)
  (string-concatenate string::t string::t effect: (alloc) unchecked:)
  (string-contains [((string::t string::t) boolean::t effect: (pure) unchecked:)
@@ -1487,10 +1567,9 @@ package: gerbil
  ;;terminated-thread-exception-procedure
  ;;terminated-thread-exception?
 
- test-bit-field?
-
+ (test-bit-field? (fixnum::t fixnum::t integer::t) integer::t)
  (third (list::t) t::t effect: (pure))
- (thread (procedue::t) thread::t effect: (io))
+ (thread (procedure::t) thread::t effect: (io))
  (thread-base-priority (thread::t) fixnum::t effect: (pure))
  (thread-base-priority-set! (thread::t fixnum::t) void::t effect: (mut io))
  (thread-group->thread-group-list (thread-group::t) list::t effect: (io))
@@ -1519,12 +1598,10 @@ package: gerbil
                        ((thread::t t::t t::t) t::t effect: (io))])
  (thread-mailbox-rewind (thread::t) void::t effect: (io))
  (thread-name (thread::t) t::t effect: (pure))
- (thread-priority (thread::t) real::t effect: (pure))
- (thread-priority-set! (thread::t real::t) t::t effect: (io mut))
  (thread-priority-boost (thread::t) real::t effect: (pure))
  (thread-priority-boost-set! (thread::t real::t) t::t effect: (io mut))
  (thread-quantum (thread::t) real::t effect: (pure))
- (thread-quantum-set! (thread::t real::T) void::t effect: (io mut))
+ (thread-quantum-set! (thread::t real::t) void::t effect: (io mut))
  (thread-receive  [((thread::t) t::t effect: (io))
 	               ((thread::t t::t) t::t effect: (io))
                    ((thread::t t::t t::t) t::t effect: (io))])
@@ -1641,16 +1718,16 @@ package: gerbil
  ;; TODO socket-info::t
  ;;udp-local-socket-info
  (udp-read-subu8vector [((u8vector::t fixnum::t fixnum::t) fixnum::t effect: (io))
-                        ((u8vector::t fixnum::t fixnum::t port::T) fixnum::t effect: (io))])
+                        ((u8vector::t fixnum::t fixnum::t port::t) fixnum::t effect: (io))])
  (udp-read-u8vector [(() u8vector::t effect: (io))
                      ((port::t) u8vector::t effect: (io))])
- ;; TODO socket-info::T
+ ;; TODO socket-info::t
  ;;udp-source-socket-info
 
  (udp-write-subu8vector [((u8vector::t fixnum::t fixnum::t) fixnum::t effect: (io))
-                         ((u8vector::t fixnum::t fixnum::t port::T) fixnum::t effect: (io))])
+                         ((u8vector::t fixnum::t fixnum::t port::t) fixnum::t effect: (io))])
  (udp-write-u8vector [((u8vector::t) void::t effect: (io))
-                      ((u8vector::t port) void::t effect: (io))])
+                      ((u8vector::t port::t) void::t effect: (io))])
 
  ;;unbound-global-exception-code
  ;;unbound-global-exception-rte
@@ -1719,7 +1796,7 @@ package: gerbil
 
  (will-execute! (weak::t) void::t)
  (will-testator (weak::t) t::t effect: (pure))
- (will? (t::t) boolean::T effect: (pure))
+ (will? (t::t) boolean::t effect: (pure))
 
  ;; redefined by gerbil runtime
  ;;with-exception-catcher
@@ -1737,7 +1814,7 @@ package: gerbil
  (with-output-to-vector (t::t procedure::t) t::t effect: (io))
  (write-file-string (t::t string::t) void::t effect: (io))
  (write-file-string-list (t::t list::t) void::t effect: (io))
- (write-file-u8vector (t::t u8vetor::t) void::t effect: (io))
+ (write-file-u8vector (t::t u8vector::t) void::t effect: (io))
  (write-substring [((string::t fixnum::t fixnum::t) void::t effect: (io))
                    ((string::t fixnum::t fixnum::t port::t) void::t effect: (io))])
  (write-subu8vector [((u8vector::t fixnum::t fixnum::t) void::t effect: (io))

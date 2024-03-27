@@ -19,28 +19,31 @@ namespace: gxc
 (def current-compile-local-type
   (make-parameter #f))
 
-(defstruct optimizer-info (type ssxi methods)
+(defstruct optimizer-info (type classes ssxi methods)
   constructor: :init!)
 
 (defmethod {:init! optimizer-info}
   (lambda (self)
-    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq))))
+    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq))))
 
 ;;; optimizer-info: types
 (defstruct !type (id)
   equal: #t print: #t)
 (defstruct (!alias !type) ())
 (defstruct (!procedure !type) (signature)
-  equal: #t)
+  equal: #t print: #t)
 
 (defclass !signature (return effect arguments unchecked)
-  final: #t equal: #t)
+  final: #t equal: #t print: #t)
 
 (defstruct (!primitive-predicate !procedure) ()
   constructor: :init!
   equal: #t)
 
 ;;; MOP
+(defstruct (!class-meta !type) (class)
+  constructor: :init!)
+
 (defstruct (!class !type)
   (super ;; ListOf Symbol; super type runtime identifiers
    precedence-list ;; ListOf Symbol; linearized super precendence list
@@ -53,7 +56,8 @@ namespace: gxc
    metaclass ;; OrFalse Symbol; the metaclass of the class
    methods) ;; Map Symbol -> Symbol; known method implementations
   constructor: :init!
-  equal: #t)
+  equal: #t
+  print: (super precedence-list))
 
 (defstruct (!predicate !procedure) ()
   constructor: :init!
@@ -62,10 +66,10 @@ namespace: gxc
   constructor: :init!
   equal: #t)
 (defstruct (!accessor !procedure) (slot checked?)
-  constructor: !init
+  constructor: :init!
   equal: #t)
 (defstruct (!mutator !procedure) (slot checked?)
-  constructor: !init
+  constructor: :init!
   equal: #t)
 
 ;; interfaces
@@ -95,6 +99,11 @@ namespace: gxc
   equal: #t)
 
 ;;; methods
+(defmethod {:init! !class-meta}
+  (lambda (self klass)
+    (set! (&!type-id self) 'class)
+    (set! (&!class-meta-class self) klass)))
+
 (defmethod {:init! !class}
   (case-lambda
     ((self id super slots ctor-method struct? final? system? metaclass)
@@ -141,6 +150,24 @@ namespace: gxc
                               (optimizer-resolve-class `(!class ,id) klass-id)))
                            eq: eq?
                            get-name: identity))
+            (precedence-list
+             (cond
+              ((memq id '(t object class)) precedence-list)
+              ((memq 'object::t precedence-list)
+               precedence-list)
+              (system?
+               (if (memq 't::t precedence-list)
+                 precedence-list
+                 (append precedence-list '(t::t))))
+              (else
+               (let loop ((tail precedence-list) (head []))
+                 (match tail
+                   ([hd . rest]
+                    (if (eq? hd 't::t)
+                      (foldl cons (cons 'object::t tail) head)
+                      (loop rest (cons hd head))))
+                   (else
+                    (foldl cons '(object::t t::t) head)))))))
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
              (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
@@ -242,7 +269,7 @@ namespace: gxc
     (set! (&!procedure-signature self)
       (!signature return: 't::t
                   effect: '(pure)
-                  arguments: `(,id)))))
+                  arguments: [id]))))
 
 (defmethod {:init! !mutator}
   (lambda (self id slot checked?)
@@ -252,7 +279,7 @@ namespace: gxc
     (set! (&!procedure-signature self)
       (!signature return: 'void::t
                   effect: '(mut)
-                  arguments: `(,id t::t)))))
+                  arguments: [id 't::t]))))
 
 (defmethod {:init! !lambda}
   (lambda (self arity dispatch signature: (signature #f))
@@ -291,12 +318,6 @@ namespace: gxc
                   effect: '(pure)
                   arguments: '(t::t)))))
 
-(def (!type-vtab type)
-  (cond
-   ((!class? type)
-    (!class-method-table type))
-   (else #f)))
-
 (def (!class-method-table klass)
   (cond
    ((!class-methods klass))
@@ -309,41 +330,58 @@ namespace: gxc
   (alet (tab (!class-methods klass))
     (hash-get tab method)))
 
-(def (!type-lookup-method type method)
-  (cond
-   ((!class? type)
-    (!class-lookup-method type method))
-   (else #f)))
-
 (def (!type-subclass? klass-a klass-b)
-  (or (eq? klass-a klass-b)
-      (eq? (!type-id klass-b) 't)
-      (and (!class? klass-a) (!class? klass-b)
-           (let (klass-id-b (!type-id klass-b))
-             (let loop ((rest (!class-precedence-list klass-a)))
-               (match rest
-                 ([klass-name . rest]
-                  (or (eq? klass-id-b
-                           (!type-id
-                            (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
-                                                     klass-name)))
-                      (loop rest)))
-                 (else #f)))))
-      (and (!class? klass-a) (!interface? klass-b)
-           (eq? klass-a (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
-                                                 (!type-id klass-b))))
-      (and (!procedure? klass-a) (!class? klass-b)
-           (eq? (!type-id klass-b) 'procedure))))
+  (and klass-a klass-b
+       (or (eq? klass-a klass-b)
+           (eq? (!type-id klass-a) (!type-id klass-b))
+           (eq? (!type-id klass-b) 't)
+           (and (!procedure? klass-a)
+                (eq? (!type-id klass-b) 'procedure))
+           (and (!class? klass-a)
+                (!class? klass-b)
+                (!class-subclass? klass-a klass-b))
+           (and (!class? klass-a) (!interface? klass-b)
+                (eq? (!type-id klass-a)
+                     (!type-id (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                                        (!type-id klass-b))))))))
+
+(def (!class-subclass? klass-a klass-b)
+  (let ((klass-id-b (!type-id klass-b))
+        (precedence-list (!class-precedence-list klass-a)))
+    (let loop ((rest precedence-list))
+      (match rest
+        ([klass-name . rest]
+         (or (eq? (!type-id (optimizer-resolve-class `(subclass? ,klass-a ,klass-b) klass-name))
+                  klass-id-b)
+             (loop rest)))
+        (else #f)))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
   (verbose "declare-type " sym " " (struct->list type))
-  (hash-put! (if local?
-               (current-compile-local-type)
-               (optimizer-info-type (current-compile-optimizer-info)))
-             sym type))
+  (let (table (if local?
+                (current-compile-local-type)
+                (optimizer-info-type (current-compile-optimizer-info))))
+    (hash-put! table sym type)))
+
+(def (optimizer-declare-class! sym type)
+  (unless (!class? type)
+    (error "bad declaration: expected !class" sym type))
+  (let (table (optimizer-info-classes (current-compile-optimizer-info)))
+    (verbose "declare-class " sym " " (struct->list type))
+    (hash-put! table sym type)
+    (hash-put! table type sym)))
+
+(def (optimizer-declare-builtin-class! sym type)
+  (unless (!class? type)
+    (error "bad declaration: expected !class" sym type))
+  (let (table (optimizer-info-classes (current-compile-optimizer-info)))
+    (unless (hash-get table sym)
+      (verbose "declare-builtin-class " sym " " (struct->list type))
+      (hash-put! table sym type)
+      (hash-put! table type sym))))
 
 (def (optimizer-clear-type! sym)
   (verbose "clear-type " sym)
@@ -351,32 +389,26 @@ namespace: gxc
   (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
-  (let (type (optimizer-resolve-type type-t))
-    (cond
-     ((!type-vtab type)
-      => (lambda (vtab)
-           (cond
-            ((hash-get vtab method) =>
-             (lambda (existing)
-               (cond
-                (rebind?
-                 (verbose "declare-method: rebind existing method" type-t " " method)
-                 (hash-put! vtab method sym))
-                ((eq? existing sym)
-                 (void))
-                (else
-                 (raise-compile-error
-                  "declare-method: duplicate method declaration"
-                  `(bind-method! ,type-t ,method ,sym) method)))))
-            (else
-             (verbose "declare-method " type-t " " method " => " sym)
-             (hash-put! vtab method sym)))))
-     ((not type)
-      (verbose "declare-method: unknown type "  type-t))
-     (else
-      (raise-compile-error
-       "declare-method: bad method declaration; no method table"
-       `(bind-method! ,type-t ,sym ,method) type)))))
+  (let (klass (optimizer-lookup-class type-t))
+    (if klass
+      (let (vtab (!class-method-table klass))
+        (cond
+         ((hash-get vtab method) =>
+          (lambda (existing)
+            (cond
+             (rebind?
+              (verbose "declare-method: rebind existing method" type-t " " method)
+              (hash-put! vtab method sym))
+             ((eq? existing sym)
+              (void))
+             (else
+              (raise-compile-error
+               "declare-method: duplicate method declaration"
+               `(bind-method! ,type-t ,method ,sym) method)))))
+         (else
+          (verbose "declare-method " type-t " " method " => " sym)
+          (hash-put! vtab method sym))))
+      (verbose "declare-method: unknown class"  type-t))))
 
 (def (optimizer-lookup-type sym)
   (or (alet (ht (current-compile-local-type))
@@ -390,19 +422,21 @@ namespace: gxc
       (optimizer-resolve-type (!type-id type))
       type)))
 
-(def (optimizer-resolve-class where klass-id)
-  (cond
-   ((optimizer-resolve-type klass-id)
-    => (lambda (klass)
-         (unless (!class? klass)
-           (raise-compile-error "bad class reference; not a class type"
-                                where klass-id klass))
-         klass))
-   (else
-    (raise-compile-error "unknown class" where klass-id))))
+(def (optimizer-lookup-class sym)
+  (let (table (optimizer-info-classes (current-compile-optimizer-info)))
+    (hash-get table sym)))
+
+(def (optimizer-resolve-class where sym)
+  (or (optimizer-lookup-class sym)
+      (raise-compile-error "unknown class" where sym)))
+
+(def (optimizer-lookup-class-name klass)
+  (unless (!class? klass)
+    (raise-compile-error "not a class" 'lookup-class-name klass))
+  (hash-get (optimizer-info-classes (current-compile-optimizer-info)) klass))
 
 (def (optimizer-lookup-method type-t method)
-  (!type-lookup-method (optimizer-resolve-type type-t) method))
+  (!class-lookup-method (optimizer-resolve-class 'lookup-method type-t) method))
 
 (def (optimizer-top-level-method! sym)
   (verbose "top-level method: " sym)

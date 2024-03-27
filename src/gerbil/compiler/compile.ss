@@ -46,6 +46,13 @@ namespace: gxc
     debug-source
     debug-environments))
 
+;; primitives that must remain checked, as they change to unchecked when (not safe)
+(def checked-primitives
+  '(##direct-structure-ref
+    ##direct-structure-set!
+    ##structure-ref
+    ##structure-set!))
+
 ;; quote-syntax lifts
 (def current-compile-lift
   (make-parameter #f))
@@ -977,7 +984,8 @@ namespace: gxc
        (ast-case #'rator (%#ref)
          ((%#ref _)
           (let (f (compile-e self #'rator))
-            (if (string-prefix? "##" (symbol->string f))
+            (if (and (string-prefix? "##" (symbol->string f))
+                     (not (memq f checked-primitives)))
               (with-primitive-bind+args (bind args (reverse #'rands))
                 ['let [bind ...]
                   '(declare (not safe))
@@ -987,11 +995,11 @@ namespace: gxc
 
 (def (generate-runtime-call-unchecked% self stx)
   (ast-case stx (%#ref)
-    ((_ (%#ref rator) . rands)
+    ((_ (%#ref rator) rand ...)
      (if (current-compile-decls-unsafe?)
        (generate-runtime-call% self stx)
        (let (f (compile-e self #'(%#ref rator)))
-         (with-primitive-bind+args (bind args (reverse #'rands))
+         (with-primitive-bind+args (bind args (reverse #'(rand ...)))
            ['let [bind ...]
              '(declare (not safe))
              (cons f args)]))))
