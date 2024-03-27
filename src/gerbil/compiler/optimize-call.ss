@@ -44,11 +44,12 @@ namespace: gxc
                    stx))))
              (_ optimized))))
         ((and (!class? rator-type) (eq? (&!type-id rator-type) 'procedure))
-         (let (args (map (cut compile-e self <>) #'rands))
-           ;; known to be procedure, %#call-unchecked
-           (xform-wrap-source
-            (cons* '%#call-unchecked #'(%#ref rator) #'args)
-            stx)))
+         ;; known to be procedure, %#call-unchecked
+         (xform-wrap-source
+          (cons* '%#call-unchecked
+                 #'(%#ref rator)
+                 (map (cut compile-e self <>) #'rands))
+          stx))
         ((or (not rator-type) (eq? (!type-id rator-type) 't))
          (xform-call% self stx))
         (else
