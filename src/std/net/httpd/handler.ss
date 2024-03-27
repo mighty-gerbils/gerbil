@@ -11,6 +11,7 @@
         :std/foreign
         :std/text/utf8
         :std/pregexp
+        (only-in :std/os/error os-error?)
         ./base
         (for-syntax :std/stxutil
                     :std/misc/string))
@@ -133,6 +134,13 @@
 
     (try
      (loop)
+     (catch (os-error? e)
+       ;; replace all #u8() with <u8vector>
+       (slot-set! e 'irritants
+                  (map (lambda (x) (if (u8vector? x) '<u8vector> x))
+                       (error-irritants e)))
+       (errorf "unhandled exception: ~a" e)
+       (raise e))
      (catch (e)
        (unless (memq e '(abort eof))
          (errorf "unhandled exception: ~a" e)
