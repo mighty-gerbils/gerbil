@@ -257,8 +257,10 @@ fi
 rm -f build-env.sh
 cat > build-env.sh <<EOF
 GERBIL_PREFIX=${gerbil_prefix}
+GERBIL_DIST=${gerbil_dist}
+GERBIL_FHS=${prefix}
 GERBIL_VERSION=${gerbil_version}
-export GERBIL_PREFIX GERBIL_VERSION
+export GERBIL_PREFIX GERBIL_VERSION GERBIL_DIST GERBIL_FHS
 EOF
 
 exit 0

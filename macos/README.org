@@ -216,3 +216,64 @@ lrwxr-xr-x  1 root  wheel   11  5 Mar 17:31 src -> current/src
 drwxr-xr-x  7 root  wheel  224  5 Mar 17:31 v0.18.1-51-gd9c691b1
  #+end_src
 
+* MacPorts
+
+The easy way.
+
+#+begin_src sh
+  cd ~/src/gerbil/macos/ports
+
+  prefix=/opt/local
+  SRC_CONF="${prefix}/etc/macports/sources.conf"
+
+  add_source () {
+      SRC="${1:-`pwd`}"
+      TMP="$(mktemp)"
+
+      echo "file://$SRC" > $TMP
+      cat ${SRC_CONF} >> $TMP
+      sudo mv -v $TMP $SRC_CONF
+  }
+
+  maybe_add_source () {
+      SRC="${1:-`pwd`}"
+      grep -e "$SRC" "$SRC_CONF" || add_source $SRC
+  }
+
+  maybe_add_source
+  portindex
+      
+#+end_src
+
+
+
+#+begin_src tcl :tangle ./ports/lang/gerbil-scheme/Portfile :mkdirp #t
+  # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+
+  PortSystem          1.0
+
+  name                gerbil-scheme
+  version             0.18.1
+  categories          lang
+  platforms           darwin
+  license             {LGPL-2.1+ Apache-2}
+  maintainers         nomaintainer
+  description         Gerbil Scheme
+  long_description    Gerbil Scheme: A LISP for the 21st Century
+  homepage            https://cons.io
+
+  fetch.type          git
+  git.url             https://github.com/mighty-gerbils/gerbil.git
+  git.branch          v0.18.1
+
+  depends_lib         port:openssl3 \
+                      port:zlib
+
+  depends_build       port:autoconf
+
+  configure.args      --enable-march=
+                      
+#+end_src
+
+
+
