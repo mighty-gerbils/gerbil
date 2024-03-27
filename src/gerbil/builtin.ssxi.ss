@@ -955,9 +955,9 @@ package: gerbil
  ;;invalid-utf8-encoding-exception-procedure
  ;;invalid-utf8-encoding-exception?
 
- (iota [((fixnum::t) list::t effect: (alloc))
-        ((fixnum::t fixnum::t) list::t effect: (alloc))
-        ((fixnum::t fixnum::t fixnum::t) list::t effect: (alloc))])
+ (iota [((fixnum::t) list::t effect: (alloc) unchecked:)
+        ((fixnum::t fixnum::t) list::t effect: (alloc) unchecked:)
+        ((fixnum::t fixnum::t fixnum::t) list::t effect: (alloc) unchecked:)])
 
  ;;join-timeout-exception-arguments
  ;;join-timeout-exception-procedure
