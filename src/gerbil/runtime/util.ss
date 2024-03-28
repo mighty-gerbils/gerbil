@@ -383,7 +383,7 @@ namespace: #f
   :- :pair
   (def (recur x rest)
     (if (pair? rest)
-      (with-type ((rest :pair))
+      (let (rest (:- rest :pair))
         (cons x (recur (car rest) (cdr rest))))
       x))
   (cons x (recur y rest)))
@@ -839,7 +839,7 @@ namespace: #f
         (match rest
           ([hd . rest]
            (if (string? hd)
-             (with-type ((hd :string))
+             (let (hd (:- hd :string))
                (if (pair? rest)
                  (lp rest
                      (fx+ (string-length hd)
@@ -862,20 +862,20 @@ namespace: #f
           (olen (:- (join-length strs jlen) :fixnum))
           (ostr (make-string olen)))
     (let lp ((rest strs) (k 0))
-      (match rest
-        ([hd . rest]
-         (with-type ((hd :string)
-                     (k :fixnum))
-           (let ((hdlen (string-length hd)))
-             (if (pair? rest)
-               (begin
-                 (##substring-move! hd 0 hdlen ostr k)
-                 (##substring-move! join 0 jlen ostr (##fx+ k hdlen))
-                 (lp rest (fx+ k hdlen jlen)))
-               (begin
-                 (##substring-move! hd 0 hdlen ostr k)
-                 ostr)))))
-        (else ""))))) ; empty
+      (with-type ((k :fixnum))
+        (match rest
+          ([hd . rest]
+           (with-type ((hd :string))
+             (let ((hdlen (string-length hd)))
+               (if (pair? rest)
+                 (begin
+                   (##substring-move! hd 0 hdlen ostr k)
+                   (##substring-move! join 0 jlen ostr (##fx+ k hdlen))
+                   (lp rest (fx+ k hdlen jlen)))
+                 (begin
+                   (##substring-move! hd 0 hdlen ostr k)
+                   ostr)))))
+          (else "")))))) ; empty
 
 (defapi (read-u8vector (bytes : :u8vector)
                        (port :~ input-port? :- :port))
