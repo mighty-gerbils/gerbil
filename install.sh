@@ -55,6 +55,14 @@ link_version() {
     (cd "${base}" && rm -f share && ln -sf current/share share) || die
 }
 
+link_dist () {
+    local dist_bin="${1}/bin"
+    local gerbil_bin="${2}/bin"
+    echo; echo "Making executable links"; echo;
+    (cd "${dist_bin}" && ln -sfv ${gerbil_bin}/gx* "${gerbil_bin}/gerbil" ${dist_bin}) || die
+}
+
+
 if [ -e build-env.sh ]; then
     . ./build-env.sh
 else
@@ -68,3 +76,10 @@ GERBIL_BASE=$(dirname "${GERBIL_PREFIX}")
 if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
     link_version "${DESTDIR}${GERBIL_BASE}" "${GERBIL_VERSION}"
 fi
+
+if [ "$GERBIL_DIST" = "yes" ]; then
+    link_dist "${GERBIL_FHS}" "${GERBIL_PREFIX}"
+fi
+
+
+echo; echo "Done! Enjoy Gerbil'ing :)"; echo

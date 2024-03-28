@@ -123,6 +123,8 @@ while [ $# -gt 0 ]; do
 
         --prefix=*)
             prefix=$(echo "$1" | cut -d = -f 2-)
+	    # Trim trailing /
+	    prefix=${prefix%/}
             shift
             ;;
 
