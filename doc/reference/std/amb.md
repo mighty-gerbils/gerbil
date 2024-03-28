@@ -163,5 +163,5 @@ Here is the well known dwelling house puzzle:
             (lp rest)))
       (else #t))))
 
-(solve-dwelling-puzzle) => '((baker 3) (cooper 2) (fletcher 4) (miller 5) (smith 1))
+(solve-dwelling-puzzle) ;=> '((baker 3) (cooper 2) (fletcher 4) (miller 5) (smith 1))
 ```
