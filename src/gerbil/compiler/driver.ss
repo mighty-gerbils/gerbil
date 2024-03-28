@@ -240,7 +240,7 @@ namespace: gxc
                  bin-c
                  output-c output_-c])
         (invoke (gerbil-gcc)
-                ["-o" output-bin
+                ["-w" "-o" output-bin
                  deps-o ...
                  bin-o
                  output-o output_-o
@@ -371,7 +371,7 @@ namespace: gxc
                 ["-obj" gsc-cc-opts ... gsc-static-opts ...
                  output-c output-c_])
         (invoke (gerbil-gcc)
-                ["-o" output-bin
+                ["-w" "-o" output-bin
                  output-o output-o_ output-ld-opts ...
                  rpath
                  "-L" gerbil-libdir "-lgambit"
@@ -803,7 +803,7 @@ namespace: gxc
             ["-obj" "-cc-options" "-D___DYNAMIC" gsc-cc-opts ...  path-c link-path-c]
             stdout-redirection: #t)
     (invoke (gerbil-gcc)
-            ["-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
+            ["-w" "-shared" "-o" link-path path-o link-path-o gcc-ld-opts ... ])
     (for-each delete-file [path-c path-o link-path-c link-path-o])))
 
 (def (compile-output-file ctx n ext)
