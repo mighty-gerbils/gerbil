@@ -432,18 +432,6 @@
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
-   '("(\\(defun\\|deflabel\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face)
-     (2 font-lock-function-name-face)))
-  (gerbil-fontlock-add
-   '("(\\(defasm\\|deftemplate\\)\\s-+\\(\\sw+\\)"
-     (1 font-lock-keyword-face)
-     (2 font-lock-variable-name-face)))
-  (gerbil-fontlock-add
-   '("(\\(deftype\\)\\s-+(?\\(\\sw+\\)"
-     (1 font-lock-keyword-face)
-     (2 font-lock-type-face)))
-  (gerbil-fontlock-add
    '("(\\(def\\sw+-rules\\)\\s-+(?\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
@@ -464,7 +452,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-type-face)))
   (gerbil-fontlock-add
-   '("(\\(defregister\\|defvar\\|defconst\\)\\s-+\\(\\sw+\\)"
+   '("(\\(defconst\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
@@ -477,6 +465,10 @@
      (2 font-lock-variable-name-face)
      (3 font-lock-keyword-face)
      (4 font-lock-type-face)))
+  (gerbil-fontlock-add
+   '("(\\(defapi\\|deftyped\\)\\s-+(\\(\\sw+\\)"
+     (1 font-lock-keyword-face)
+     (2 font-lock-function-name-face)))
   (gerbil-fontlock-add
    '("\\_<\\(\\sw+\\)\\.\\(\\sw+\\)\\_>"
      (1 font-lock-variable-name-face)
@@ -493,7 +485,6 @@
   (gerbil-fontlock-add
    '("\\([_#]+\\)"
      (1 font-lock-builtin-face)))
-
   (gerbil-fontlock-add
    '("\\([{}]\\|\\[\\|\\]\\)"
      (1 font-lock-variable-name-face)))

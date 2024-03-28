@@ -32,14 +32,21 @@
         (syntax-case stx ()
           ((_ obj)
            (with-syntax ((klass (interface-info-instance-type self))
-                         (descriptor (interface-info-interface-descriptor self)))
+                         (descriptor (interface-info-interface-descriptor self))
+                         (instance-type (interface-info-instance-type self)))
              #'(let ($obj obj)
                  (if (immediate-instance-of? klass $obj)
-                   $obj
+                   (begin-annotation (@type instance-type) $obj)
                    (cast descriptor $obj)))))
           (_ (identifier? stx)
              (with-syntax ((descriptor (interface-info-interface-descriptor self)))
-               #'descriptor)))))))
+               #'descriptor))))))
+
+  (defmethod {type-descriptor interface-info}
+    &interface-info-instance-type)
+
+  (defmethod {type-cast interface-info}
+    &interface-info-instance-constructor))
 
 (defsyntax (interface stx)
   (def symbol<?
@@ -545,13 +552,17 @@
                             (make-interface-descriptor klass '(method-name ...)))))
                     (defmake
                       #'(def (make obj)
-                          (cast descriptor obj)))
+                          (begin-annotation (@type.signature return: klass-quoted
+                                                             effect: (cast)
+                                                             arguments: (t))
+                            (cast descriptor obj))))
                     (deftry-make
                       #'(def (try-make obj)
                           (try-cast descriptor obj)))
                     (defpred
                       #'(def (predicate obj)
-                          (direct-instance? klass obj)))
+                          (begin-annotation (@predicate klass-quoted)
+                            (direct-instance? klass obj))))
                     (defpred-instance
                       #'(def (instance-predicate obj)
                           (satisfies? descriptor obj)))

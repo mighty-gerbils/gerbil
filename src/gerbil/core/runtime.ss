@@ -289,6 +289,7 @@ package: gerbil/core
     open-binary-output-file
     open-input-bytevector
     open-input-string
+    open-output-bytevector
     open-output-string
     output-port-open?
     peek-u8
@@ -1208,6 +1209,8 @@ package: gerbil/core
     thread-mailbox-next
     thread-mailbox-rewind
     thread-name
+    thread-priority
+    thread-priority-set!
     thread-priority-boost
     thread-priority-boost-set!
     thread-quantum
@@ -1436,16 +1439,21 @@ package: gerbil/core
     values-count
     values-ref
     values->list
-    subvector->list
     cons*
     foldl
     foldr
     andmap
     ormap
     filter-map
+
+    agetq
+    agetv
+    aget
+    ;; TODO: remove after transition to the new name
     assgetq
     assgetv
     assget
+
     pgetq
     pgetv
     pget
@@ -1478,15 +1486,10 @@ package: gerbil/core
     string->bytes
     substring->bytes
     string-empty?
-    string-prefix?
     string-index
     string-rindex
     string-split
     string-join
-    read-u8vector
-    write-u8vector
-    read-string
-    write-string
 
     ;; :gerbil/runtime/table
     symbolic?

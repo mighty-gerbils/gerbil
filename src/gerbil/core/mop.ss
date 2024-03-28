@@ -701,6 +701,7 @@ package: gerbil/core
                 unchecked-mutators: [])))))))
 
   (defsystem-class-info :t t::t () true)
+  (defsystem-class-info :class class::t (t::t) class-type?)
   (defsystem-class-info :object object::t (t::t) true)
 
   ;; NOTE: this must match gerbil/runtime/mop-system-classes
@@ -718,7 +719,7 @@ package: gerbil/core
 
   (defsystem-class-info :number number::t (t::t) number?)
   (defsystem-class-info :real real::t (number::t) real?)
-  (defsystem-class-info :integer integer::t (real::t) integer?)
+  (defsystem-class-info :integer integer::t (real::t) exact-integer?)
   (defsystem-class-info :fixnum fixnum::t (integer::t immediate::t) fixnum?)
   (defsystem-class-info :bignum  bignum::t (integer::t) ##bignum?)
   (defsystem-class-info :ratnum ratnum::t (real::t) ##ratnum?)

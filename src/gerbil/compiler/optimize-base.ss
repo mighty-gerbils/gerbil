@@ -27,9 +27,18 @@ namespace: gxc
     (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq))))
 
 ;;; optimizer-info: types
-(defstruct !type (id))
+(defstruct !type (id)
+  equal: #t print: #t)
 (defstruct (!alias !type) ())
-(defstruct (!procedure !type) ())
+(defstruct (!procedure !type) (signature)
+  equal: #t)
+
+(defclass !signature (return effect arguments unchecked)
+  final: #t equal: #t)
+
+(defstruct (!primitive-predicate !procedure) ()
+  constructor: :init!
+  equal: #t)
 
 ;;; MOP
 (defstruct (!class !type)
@@ -43,26 +52,47 @@ namespace: gxc
    system? ;; Boolean; is it a system class?
    metaclass ;; OrFalse Symbol; the metaclass of the class
    methods) ;; Map Symbol -> Symbol; known method implementations
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 
-(defstruct (!predicate !procedure) ())
-(defstruct (!constructor !procedure)())
-(defstruct (!accessor !procedure) (slot checked?))
-(defstruct (!mutator !procedure) (slot checked?))
+(defstruct (!predicate !procedure) ()
+  constructor: :init!
+  equal: #t)
+(defstruct (!constructor !procedure)()
+  constructor: :init!
+  equal: #t)
+(defstruct (!accessor !procedure) (slot checked?)
+  constructor: !init
+  equal: #t)
+(defstruct (!mutator !procedure) (slot checked?)
+  constructor: !init
+  equal: #t)
+
+;; interfaces
+(defstruct (!interface !type)
+  (methods) ;; ListOf Symbol; list of interface methods
+  equal: #t)
 
 ;; procedures
-(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
+(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl signature)
+  constructor: :init!
+  equal: #t)
+(defstruct (!case-lambda !procedure) (clauses)
+  constructor: :init!
+  equal: #t)
+(defstruct (!kw-lambda !procedure) (table dispatch)
   constructor: :init!)
-(defstruct (!case-lambda !procedure) (clauses))
-(defstruct (!kw-lambda !procedure) (table dispatch))
-(defstruct (!kw-lambda-primary !procedure) (keys main))
+(defstruct (!kw-lambda-primary !procedure) (keys main)
+  constructor: :init!)
 
 ;; primitive markers (necessary to avoid unsound call optimizations)
 (defclass !primitive ())
 (defclass (!primitive-lambda !primitive !lambda) ()
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 (defclass (!primitive-case-lambda !primitive !case-lambda) ()
-  constructor: :init!)
+  constructor: :init!
+  equal: #t)
 
 ;;; methods
 (defmethod {:init! !class}
@@ -114,29 +144,29 @@ namespace: gxc
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
              (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
-       (set! (!type-id self) id)
-       (set! (!class-super self) super)
-       (set! (!class-precedence-list self) precedence-list)
-       (set! (!class-slots self) slots)
-       (set! (!class-fields self) fields)
-       (set! (!class-constructor self) ctor-method)
-       (set! (!class-struct? self) struct?)
-       (set! (!class-final? self) final?)
-       (set! (!class-metaclass self) metaclass)))
+       (set! (&!type-id self) id)
+       (set! (&!class-super self) super)
+       (set! (&!class-precedence-list self) precedence-list)
+       (set! (&!class-slots self) slots)
+       (set! (&!class-fields self) fields)
+       (set! (&!class-constructor self) ctor-method)
+       (set! (&!class-struct? self) struct?)
+       (set! (&!class-final? self) final?)
+       (set! (&!class-metaclass self) metaclass)))
 
     ;; ssxi loader
     ((self id super precedence-list slots fields constructor struct? final? system? metaclass methods)
-     (set! (!type-id self) id)
-     (set! (!class-super self) super)
-     (set! (!class-precedence-list self) precedence-list)
-     (set! (!class-slots self) slots)
-     (set! (!class-fields self) fields)
-     (set! (!class-constructor self) constructor)
-     (set! (!class-struct? self) struct?)
-     (set! (!class-final? self) final?)
-     (set! (!class-metaclass self) metaclass)
+     (set! (&!type-id self) id)
+     (set! (&!class-super self) super)
+     (set! (&!class-precedence-list self) precedence-list)
+     (set! (&!class-slots self) slots)
+     (set! (&!class-fields self) fields)
+     (set! (&!class-constructor self) constructor)
+     (set! (&!class-struct? self) struct?)
+     (set! (&!class-final? self) final?)
+     (set! (&!class-metaclass self) metaclass)
      (when methods
-       (set! (!class-methods self) (list->hash-table-eq methods))))))
+       (set! (&!class-methods self) (list->hash-table-eq methods))))))
 
 (def (compute-class-fields where base-struct precedence-list direct-slots)
   (let* ((base-fields
@@ -191,34 +221,74 @@ namespace: gxc
 
 (defmethod {:init! !predicate}
   (lambda (self id)
-    (set! (!type-id self) id)))
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: 'boolean::t
+                  effect: '(pure predicate)
+                  arguments: '(t::t)))))
 
 (defmethod {:init! !constructor}
   (lambda (self id)
-    (set! (!type-id self) id)))
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: id
+                  effect: '(alloc)))))
 
 (defmethod {:init! !accessor}
   (lambda (self id slot checked?)
-    (set! (!type-id self) id)
-    (set! (!accessor-slot self) slot)
-    (set! (!accessor-checked? self) checked?)))
+    (set! (&!type-id self) id)
+    (set! (&!accessor-slot self) slot)
+    (set! (&!accessor-checked? self) checked?)
+    (set! (&!procedure-signature self)
+      (!signature return: 't::t
+                  effect: '(pure)
+                  arguments: `(,id)))))
 
 (defmethod {:init! !mutator}
   (lambda (self id slot checked?)
-    (set! (!type-id self) id)
-    (set! (!mutator-slot self) slot)
-    (set! (!mutator-checked? self) checked?)))
+    (set! (&!type-id self) id)
+    (set! (&!mutator-slot self) slot)
+    (set! (&!mutator-checked? self) checked?)
+    (set! (&!procedure-signature self)
+      (!signature return: 'void::t
+                  effect: '(mut)
+                  arguments: `(,id t::t)))))
 
 (defmethod {:init! !lambda}
-  (lambda (self id arity dispatch (inline #f) (typedecl #f))
-    (struct-instance-init! self id arity dispatch inline typedecl)))
+  (lambda (self id arity dispatch (inline #f) (typedecl #f)
+           return: (return #f)
+           effect: (effect #f)
+           arguments: (arguments #f)
+           unchecked: (unchecked #f))
+    (set! (&!type-id self) id)
+    (set! (&!lambda-arity self) arity)
+    (set! (&!lambda-dispatch self) dispatch)
+    (set! (&!lambda-inline self) inline)
+    (set! (&!lambda-inline-typedecl self) typedecl)
+    (set! (&!procedure-signature self)
+      (!signature return: return
+                  effect: effect
+                  arguments: arguments
+                  unchecked: unchecked))))
+
+(defmethod {:init! !case-lambda}
+  (lambda (self id clauses)
+    (set! (&!case-lambda-id self) id)
+    (set! (&!case-lambda-clauses self) clauses)))
 
 (defmethod {:init! !primitive-lambda}
   !lambda:::init!)
 
 (defmethod {:init! !primitive-case-lambda}
-  (lambda (self . args)
-    (apply struct-instance-init! self args)))
+  !case-lambda:::init!)
+
+(defmethod {:init! !primitive-predicate}
+  (lambda (self id)
+    (set! (&!type-id self) id)
+    (set! (&!procedure-signature self)
+      (!signature return: 'boolean::t
+                  effect: '(pure predicate)
+                  arguments: '(t::t)))))
 
 (def (!type-vtab type)
   (cond
@@ -244,6 +314,26 @@ namespace: gxc
     (!class-lookup-method type method))
    (else #f)))
 
+(def (!type-subclass? klass-a klass-b)
+  (or (eq? klass-a klass-b)
+      (eq? (!type-id klass-b) 't)
+      (and (!class? klass-a) (!class? klass-b)
+           (let (klass-id-b (!type-id klass-b))
+             (let loop ((rest (!class-precedence-list klass-a)))
+               (match rest
+                 ([klass-name . rest]
+                  (or (eq? klass-id-b
+                           (!type-id
+                            (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                                     klass-name)))
+                      (loop rest)))
+                 (else #f)))))
+      (and (!class? klass-a) (!interface? klass-b)
+           (eq? klass-a (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
+                                                 (!type-id klass-b))))
+      (and (!procedure? klass-a) (!class? klass-b)
+           (eq? (!type-id klass-b) 'procedure))))
+
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
@@ -254,12 +344,10 @@ namespace: gxc
                (optimizer-info-type (current-compile-optimizer-info)))
              sym type))
 
-(def (optimizer-clear-type! sym (local? #f))
+(def (optimizer-clear-type! sym)
   (verbose "clear-type " sym)
-  (hash-remove! (if local?
-                  (current-compile-local-type)
-                  (optimizer-info-type (current-compile-optimizer-info)))
-                sym))
+  (hash-remove! (current-compile-local-type) sym)
+  (hash-remove! (optimizer-info-type (current-compile-optimizer-info)) sym))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
   (let (type (optimizer-resolve-type type-t))

@@ -36,9 +36,11 @@ namespace: #f
    (clear!   HashTable-clear@ HashTable-clear@-set!)))
 
 (def HashTable::interface
-  (interface-descriptor
-   HashTable::t
-   '(ref set! update! delete! for-each length copy clear!)))
+  (begin-annotation (@interface HashTable::t
+                      (ref set! update! delete! for-each length copy clear!))
+    (interface-descriptor
+     HashTable::t
+     '(ref set! update! delete! for-each length copy clear!))))
 
 (defstruct-type HashTableLock::t (interface-instance::t)
   #f HashTableLock?
@@ -52,9 +54,11 @@ namespace: #f
    (end-write!   HashTableLock-end-write@ HashTableLock-end-write@-set!)))
 
 (def HashTableLock::interface
-  (interface-descriptor
-   HashTableLock::t
-   '(begin-read! end-read! begin-write! end-write!)))
+  (begin-annotation (@interface HashTableLock::t
+                      (begin-read! end-read! begin-write! end-write!))
+    (interface-descriptor
+     HashTableLock::t
+     '(begin-read! end-read! begin-write! end-write!))))
 
 ;; raw/builtin table methods
 (bind-method! __table::t 'ref raw-table-ref)

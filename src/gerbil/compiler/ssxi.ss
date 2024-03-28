@@ -65,6 +65,11 @@ namespace: gxc
   ((_ type-id slot checked?)
    (make-!mutator 'type-id 'slot checked?)))
 
+;; interfaces
+(defrules @interface ()
+  ((_ type-id methods)
+   (make-!interface 'type-id 'methods)))
+
 ;; lambdas
 (defrules @lambda ()
   ((_ arity inline: inline-rules)
@@ -73,16 +78,26 @@ namespace: gxc
    (recur primitive: arity #f))
   ((_ primitive: arity dispatch)
    (make-!primitive-lambda 'lambda 'arity 'dispatch))
+  ((_ primitive: arity dispatch signature: signature )
+   (apply make-!primitive-lambda 'lambda 'arity 'dispatch 'signature))
   ((_ arity dispatch)
    (make-!lambda 'lambda 'arity 'dispatch))
+  ((_ arity dispatch signature: signature)
+   (apply make-!lambda 'lambda 'arity 'dispatch signature))
   ((recur arity)
-   (recur arity #f)))
+   (recur arity #f))
+  ((recur arity signature: signature)
+   (recur arity #f signature: signature)))
 
 (defrules @case-lambda ()
   ((_ primitive: (arity dispatch) ...)
    (make-!primitive-case-lambda 'case-lambda [(@lambda primitive: arity dispatch) ...]))
+  ((_ primitive: (arity dispatch signature: signature) ...)
+   (make-!primitive-case-lambda 'case-lambda [(@lambda primitive: arity dispatch signature: signature) ...]))
   ((_ (arity dispatch) ...)
-   (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...])))
+   (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...]))
+  ((_ (arity dispatch signature: signature) ...)
+   (make-!case-lambda 'case-lambda [(@lambda arity dispatch signature: signature) ...])))
 
 (defrules @kw-lambda ()
   ((_ tab dispatch)
@@ -92,28 +107,39 @@ namespace: gxc
   ((_ keys main)
    (make-!kw-lambda-primary 'kw-lambda-dispatch 'keys 'main)))
 
-(defrules declare-primitive ()
-  ((_ prim unchecked: arity)
-   (declare-type prim (@lambda arity)))
-  ((_ prim unchecked: arity ...)
-   (declare-type prim (@case-lambda (arity #f) ...)))
-  ((_ prim arity)
-   (declare-type prim (@lambda primitive: arity)))
-    ((_ prim arity ...)
-   (declare-type prim (@case-lambda primitive: (arity #f) ...))))
+(defrules declare-iniline-rules! ()
+  ((_ (proc rule) ...)
+   (begin (declare-iniline-rule! proc rule) ...)))
 
-(defrules declare-primitive/unchecked ()
-  ((_ prim arity)
-   (declare-type prim (@lambda arity)))
-  ((_ prim arity ...)
-   (declare-type prim (@case-lambda (arity #f) ...))))
+(defrules declare-iniline-rule! ()
+  ((_ proc rule)
+   (let (type (optimizer-lookup-type 'proc))
+     (if (!lambda? type)
+       (set! (!lambda-inline type) rule)
+       (error "cannot declare inline rule for non lambda procedure" 'proc type)))))
 
-(defrules declare-primitive* ()
-  ((_ (prim arity ...) ...)
-   (begin
-     (declare-primitive prim arity ...) ...)))
+(defrules declare-primitive-predicates ()
+  ((_ (proc klass) ...)
+   (begin (declare-primitive-predicate proc klass) ...)))
 
-(defrules declare-primitive/unchecked* ()
-  ((_ (prim arity ...) ...)
-   (begin
-     (declare-primitive/unchecked prim arity ...) ...)))
+(defrules declare-primitive-procedures ()
+  ((_ (id sig ...) ...)
+   (begin (declare-primitive-procedure id sig ...) ...)))
+
+(defrules declare-primitive-procedure (@list)
+  ((_ id (@list sig ...))
+   (declare-primitive-case-lambda id (sig ...)))
+  ((_ id sig ...)
+   (declare-primitive-lambda id sig ...)))
+
+(defsyntax (declare-primitive-predicate stx)
+  XXX
+  )
+
+(defsyntax (declare-primitive-lambda stx)
+  XXX
+  )
+
+(defsyntax (declare-primitive-case-lambda stx)
+  XXX
+  )
