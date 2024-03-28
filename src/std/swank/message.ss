@@ -22,7 +22,7 @@
       (input-port-readtable-set!
        port
        (readtable-eval-allowed?-set
-	(input-port-readtable port) #f))
+	(input-port-readtable port) #t))
 
       (and size (read port)))))
 
@@ -37,6 +37,28 @@
   ((_ (name args ... . rest) body ...)
    (begin
      (def (name args ... . rest) body ...)
+     (hash-put! swank-message-handlers 'name name)
+     name))
+  ((_ (name . rest) body ...)
+   (begin
+     (def (name . rest) body ...)
+     (hash-put! swank-message-handlers 'name name)
+     name)))
+
+(defrules set-swank! ()
+  ((_ (name args ...) body ...)
+   (begin
+     (set! name (lambda (args ...) body ...))
+     (hash-put! swank-message-handlers 'name name)
+     name))
+  ((_ (name args ... . rest) body ...)
+   (begin
+     (set! name (lambda (args ... . rest) body ...))
+     (hash-put! swank-message-handlers 'name name)
+     name))
+  ((_ (name . rest) body ...)
+   (begin
+     (set! name (lambda (args . rest) body ...))
      (hash-put! swank-message-handlers 'name name)
      name)))
 

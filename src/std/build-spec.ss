@@ -171,6 +171,7 @@
     "swank/message"
     "swank/context"
     "swank/autodoc"
+    "swank/repl"
     "swank/presentation"
     "swank/top"
     "swank/eval"
