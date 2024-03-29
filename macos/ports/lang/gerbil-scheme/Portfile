@@ -15,7 +15,7 @@ homepage            https://cons.io
 fetch.type          git
 git.url             https://github.com/mighty-gerbils/gerbil.git
 # git.branch          v0.18.1
-git.branch          fc4c70a743a5ba169c9875a10e4e1219d0286d56
+git.branch          882e8292019f1c5f8fc8895f9e2751186974520c
 
 depends_lib         port:openssl3 \
                     port:zlib
@@ -26,4 +26,4 @@ configure.args      --enable-march= --enable-dist
 
 compiler.whitelist macports-gcc-13
 
-build.cmd "export GERBIL_GCC='${configure.cc}'; make"
+build.cmd "export GERBIL_GCC='${configure.cc}'; make -j4"
