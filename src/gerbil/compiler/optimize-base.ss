@@ -285,6 +285,7 @@ namespace: gxc
   (lambda (self arity dispatch signature: (signature #f))
     (set! (&!type-id self) 'procedure)
     (set! (&!lambda-arity self) arity)
+    (set! (&!lambda-dispatch self) dispatch)
     (set! (&!procedure-signature self) signature)))
 
 (defmethod {:init! !case-lambda}
@@ -339,11 +340,7 @@ namespace: gxc
                 (eq? (!type-id klass-b) 'procedure))
            (and (!class? klass-a)
                 (!class? klass-b)
-                (!class-subclass? klass-a klass-b))
-           (and (!class? klass-a) (!interface? klass-b)
-                (eq? (!type-id klass-a)
-                     (!type-id (optimizer-resolve-class `(subclass? ,klass-a ,klass-b)
-                                                        (!type-id klass-b))))))))
+                (!class-subclass? klass-a klass-b)))))
 
 (def (!class-subclass? klass-a klass-b)
   (let ((klass-id-b (!type-id klass-b))
@@ -355,6 +352,10 @@ namespace: gxc
                   klass-id-b)
              (loop rest)))
         (else #f)))))
+
+(def (!interface-instance? type)
+  (and (!class? type)
+       (memq 'gerbil#interface-instance::t (!class-precedence-list type))))
 
 ;; utilities
 (def (optimizer-declare-type! sym type (local? #f))

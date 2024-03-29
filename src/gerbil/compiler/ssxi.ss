@@ -87,10 +87,8 @@ namespace: gxc
    (recur arity #f signature: signature)))
 
 (defrules @case-lambda ()
-  ((_ (arity dispatch) ...)
-   (make-!case-lambda [(@lambda arity dispatch) ...]))
-  ((_ (arity dispatch signature: signature) ...)
-   (make-!case-lambda [(@lambda arity dispatch signature: signature) ...])))
+  ((_ (clause ...) ...)
+   (make-!case-lambda [(@lambda clause ...) ...])))
 
 (defrules @kw-lambda ()
   ((_ tab dispatch)
@@ -105,10 +103,10 @@ namespace: gxc
    (begin (declare-inline-rule! proc rule) ...)))
 
 (defrules declare-inline-rule! ()
-  ((_ proc rule)
+  ((_ proc rules)
    (let (type (optimizer-lookup-type 'proc))
      (if (!lambda? type)
-       (set! (!lambda-inline type) rule)
+       (set! (!lambda-inline type) rules)
        (displayln "*** WARNING unknown procedure " 'proc "; ignoring inline rule")))))
 
 (defrules declare-primitive-predicates ()

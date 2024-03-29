@@ -220,6 +220,10 @@ namespace: #f
        #'(begin-annotation (@type.assert (qid tid) ...)
            (let () body ...))))))
 
+(defrules declare-inline ()
+  ((_ proc inline-rules)
+   (begin-annotation (@inline proc) 'inline-rules)))
+
 ;;; low level locks
 (cond-expand
   (gerbil-smp
@@ -314,21 +318,52 @@ namespace: #f
   :- :true
   #t)
 
+(declare-inline true
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #t))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #t)))))
+
 (defapi (true? obj)
   :- :boolean
   (eq? obj #t))
+
+(declare-inline true?
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref eq?) arg (%#quote #t)))))
 
 (defapi (false . ignore)
   :- :false
   #f)
 
+(declare-inline false
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #f))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #f)))))
+
 (defapi (void . ignore)
   :- :void
   #!void)
 
+(declare-inline void
+  (ast-rules (%#call %#ref)
+    ((%#call _ (%#ref arg) ...)
+     (%#quote #!void))
+    ((%#call _ arg ...)
+     (%#begin arg ... (%#quote #!void)))))
+
 (defapi (void? obj)
   :- :boolean
   (eq? obj #!void))
+
+(declare-inline void?
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref eq?) arg (%#quote #!void)))))
 
 (defapi (dssl-object? obj)
   :- :boolean
@@ -362,6 +397,18 @@ namespace: #f
     (##vector-length obj)
     1))
 
+(declare-inline values-count
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref var))
+       #'(%#if (%#call (%#ref ##values?) (%#ref var))
+               (%#call (%#ref ##vector-length) (%#ref var))
+               (%#quote 1)))
+      ((%#call recur expr)
+       (with-syntax (($values (make-symbol (gensym '__values))))
+         #'(%#let-values ((($values) expr))
+                         (%#call recur (%#ref $values))))))))
+
 (defapi (values-ref obj (k : :fixnum))
   (if (##values? obj)
     (##vector-ref obj k)
@@ -373,20 +420,17 @@ namespace: #f
     (##vector->list obj)
     (list obj)))
 
-(defapi (subvector->list (obj : :vector)
-                         (start  :~ nonnegative-fixnum? :- :fixnum := 0))
-  :- :list
-  (let (lst (vector->list obj))
-    (list-tail lst start)))
-
-(defapi (cons* x y . rest)
-  :- :pair
-  (def (recur x rest)
-    (if (pair? rest)
-      (let (rest (:- rest :pair))
-        (cons x (recur (car rest) (cdr rest))))
-      x))
-  (cons x (recur y rest)))
+(declare-inline values->list
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref var))
+       #'(%#if (%#call (%#ref ##values?) (%#ref var))
+               (%#call (%#ref ##vector->list) (%#ref var))
+               (%#call (%#ref list) (%#ref var))))
+      ((%#call recur expr)
+       (with-syntax (($values (make-symbol (gensym '__values))))
+         #'(%#let-values ((($values) expr))
+                         (%#call recur (%#ref $values))))))))
 
 (defapi (foldl1 (f : :procedure) iv lst)
   (let lp ((rest lst) (r iv))
@@ -679,12 +723,36 @@ namespace: #f
 
 (defapi (1+ (x : :number)) :- :number
   (+ x 1))
+
+(declare-inline 1+
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref +) arg (%#quote 1)))))
+
 (defapi (1- (x : :number)) :- :number
   (- x 1))
+
+(declare-inline 1-
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref -) arg (%#quote 1)))))
+
 (defapi (fx1+ (x : :fixnum)) :- :fixnum
   (fx+ x 1))
+
+(declare-inline fx1+
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref fx+) arg (%#quote 1)))))
+
 (defapi (fx1- (x : :fixnum)) :- :fixnum
   (fx- x 1))
+
+(declare-inline fx1-
+  (ast-rules (%#call)
+    ((%#call _ arg)
+     (%#call (%#ref fx-) arg (%#quote 1)))))
+
 (def fxshift
   fxarithmetic-shift)
 (def fx/

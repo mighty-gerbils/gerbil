@@ -650,6 +650,13 @@ namespace: #f
   :- :boolean
   (##structure-direct-instance-of? obj (##type-id klass)))
 
+(declare-inline direct-instance?
+  (ast-rules (%#call)
+    ((%#call _ klass obj)
+     (%#call (%#ref ##structure-direct-instance-of?)
+             obj
+             (%#call (%#ref ##type-id) klass)))))
+
 (defapi (struct-instance? (klass : :class) obj)
   :- :boolean
   (##structure-instance-of? obj (##type-id klass)))
@@ -666,6 +673,19 @@ namespace: #f
     (let (obj (##make-structure klass k))
       (object-fill! obj #f)
       obj)))
+
+(declare-inline make-object
+  (lambda (ast)
+    (ast-case ast (%#call %#quote)
+      ((%#call make-object klass (%#quote len))
+       (with-syntax (((init ...) (make-list (fx1- (stx-e #'len)) '(%#quote #f))))
+         #'(%#call (%#ref ##structure) klass init ...)))
+      ((%#call make-object klass len)
+       (with-syntax (($obj (make-symbol (gensym '__obj))))
+         #'(%#let-values ((($obj) (%#call (%#ref ##make-structure) klass len)))
+                         (%#begin
+                          (%#call (%#ref object-fill!) (%#ref $obj) (%#quote #f))
+                          (%#ref $obj))))))))
 
 (defapi (object-fill! (obj : :object) fill)
   ;; courtesy of marc feeley
@@ -702,6 +722,32 @@ namespace: #f
   (if (##fx< (length args) (##structure-length obj))
     (__struct-instance-init! obj args)
     (error "too many arguments for struct" object: obj args: args)))
+
+(declare-inline struct-instance-init!
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ self)
+       #'(%#quote #!void))
+      ((%#call _ (%#ref self) arg ...)
+       (with-syntax* (((values arg-count) (length #'(arg ...)))
+                      ((off ...) (iota arg-count 1))
+                      (count arg-count))
+         #'(%#if (%#call (%#ref ##fx<)
+                         (%#quote count)
+                         (%#call (%#ref ##structure-length) (%#ref self)))
+                 (%#begin
+                  (%#call (%#ref ##unchecked-structure-set!) (%#ref self) arg (%#quote off) (%#quote #f) (%#quote #f))
+                  ...
+                  (%#quote #!void))
+                 (%#call (%#ref error)
+                         (%#quote "struct-instance-init!: too many arguments for struct")
+                         (%#ref self)
+                         (%#quote count)
+                         (%#call (%#ref ##vector-length) (%#ref self))))))
+      ((%#call recur self arg ...)
+       (with-syntax (($self (make-symbol (gensym '__self))))
+         #'(%#let-values ((($self) self))
+                         (%#call recur (%#ref $self) arg ...)))))))
 
 (def (__struct-instance-init! obj args)
   (let lp ((k 1) (rest args))
@@ -772,6 +818,21 @@ namespace: #f
     => (lambda (method) (apply method obj args)))
    (else
     (error "cannot find method" object: obj method: id))))
+
+(declare-inline call-method
+  (lambda (ast)
+    (ast-case ast (%#call %#ref)
+      ((%#call _ (%#ref self) method arg ...)
+       (with-syntax (($method (make-symbol (gensym '__method))))
+         #'(%#let-values ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
+                         (%#if (%#ref $method)
+                               (%#call (%#ref $method) (%#ref self) arg ...)
+                               (%#call (%#ref error) (%#quote "Missing method")
+                                       (%#ref self) method)))))
+      ((%#call recur self method arg ...)
+       (with-syntax (($self (make-symbol (gensym '__self))))
+         #'(%#let-values ((($self) self))
+                         (%#call recur (%#ref $self) method arg ...)))))))
 
 (defapi (method-ref obj (id : :symbol))
   (find-method (class-of obj) obj id))

@@ -154,25 +154,32 @@ namespace: gxc
 ;;; source transforms
 (def (optimize-source stx)
   (apply-collect-mutators stx)
+  ;; collect all methods for specializer generation
   (apply-collect-methods stx)
-  ;; collect top-level types to aid specializer generation
+  ;; collect top-level types to get class definitions
   (apply-collect-top-level-type-info stx)
+  ;; generate specializers and lift lambdas for things like case/opt/kw lambdas
   (let* ((stx (apply-generate-method-specializers stx))
          (stx (apply-lift-top-lambdas stx)))
-    ;; full type collection to aid further optimizations
+    ;; full type collection for type directed optimizations
     (apply-collect-type-info stx)
+    ;; process user declarations
+    (apply-collect-top-level-declarations stx)
+    ;; optimize special constructs (match, syntax-case)
     (let (stx (apply-optimize-annotated stx))
+      ;; type-check and optimize procedure applications
       (apply-optimize-call stx))))
 
 ;; method to generate the ssxi optimizer meta module
 (defcompile-method (apply-generate-ssxi) (::generate-ssxi ::generate-runtime-empty)
   ()
   final:
-  (%#begin         generate-runtime-begin%)
-  (%#begin-syntax  generate-ssxi-begin-syntax%)
-  (%#module        generate-ssxi-module%)
-  (%#define-values generate-ssxi-define-values%)
-  (%#call          generate-ssxi-call%))
+  (%#begin            generate-runtime-begin%)
+  (%#begin-syntax     generate-ssxi-begin-syntax%)
+  (%#begin-annotation generate-ssxi-begin-annotation%)
+  (%#module           generate-ssxi-module%)
+  (%#define-values    generate-ssxi-define-values%)
+  (%#call             generate-ssxi-call%))
 
 ;;; apply-generate-ssxi
 (def (generate-ssxi-begin-syntax% self stx)
@@ -227,6 +234,13 @@ namespace: gxc
                       #f])
     (_ '(begin))))
 
+(def (generate-ssxi-begin-annotation% self stx)
+  (ast-case stx (@inline %#quote)
+    ((_ (@inline proc) (%#quote rules))
+     ['declare-inline-rule! (identifier-symbol #'proc) #'rules])
+    ((_ ann body) '(begin))))
+
+;; typedecls
 (defmethod {typedecl !alias}
   (lambda (self)
     (with ((!alias alias-id) self)

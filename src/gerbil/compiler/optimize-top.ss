@@ -24,13 +24,22 @@ namespace: gxc
   (%#module           apply-module%)
   (%#define-values    collect-top-level-type-define-values%))
 
+;; method to collect top level user type related declarations
+(defcompile-method (apply-collect-top-level-declarations)
+  (::collect-top-level-declarations ::void)
+  ()
+  final:
+  (%#begin            apply-begin%)
+  (%#begin-syntax     apply-begin-syntax%)
+  (%#module           apply-module%)
+  (%#begin-annotation collect-top-level-decl-begin-annotation%))
+
 ;; method to extract the type of an expression
 (defcompile-method (apply-basic-expression-top-level-type)
   (::basic-expression-top-level-type ::false)
   ()
   final:
-  (%#begin-annotation basic-expression-type-begin-annotation%)
-  (%#call             basic-expression-type-call%))
+  (%#begin-annotation basic-expression-type-begin-annotation%))
 
 ;; method to collect the type
 (defcompile-method (apply-collect-type-info) (::collect-type-info ::void)
@@ -95,10 +104,34 @@ namespace: gxc
            (optimizer-declare-type! sym type)))))
     (_ (void))))
 
+;;; apply-collect-top-level-declarations
+(def (collect-top-level-decl-begin-annotation% self stx)
+  (ast-case stx (@inline %#quote)
+    ((_ (@inline proc) (%#quote rules))
+     (let (type (optimizer-lookup-type (identifier-symbol #'proc)))
+       (if (!lambda? type)
+         (set! (!lambda-inline type)
+           (eval-in-ssxi-context #'rules))
+         (raise-compile-error "inline rule for non lambda procedure" stx #'proc))))
+    ((_ ann body) (void))))
+
+(def (eval-in-ssxi-context expr)
+  (parameterize ((current-expander-context (make-top-context)))
+    (eval '(import :gerbil/compiler/ssxi))
+    (eval-syntax expr)))
+
 ;;; apply-collect-type-info
 (def (collect-type-define-values% self stx)
   (ast-case stx ()
-    ((_ hd expr)
+    ((_ (hd) expr)
+     (identifier? #'hd)
+     (let (sym (identifier-symbol #'hd))
+       (if (optimizer-lookup-type sym) ; already has a type from top
+         (compile-e self #'expr)
+         (let (type (apply-basic-expression-type #'expr))
+           (when type (optimizer-declare-type! sym type))
+           (compile-e self #'expr)))))
+    ((_ _ expr)
      (compile-e self #'expr))))
 
 (def (collect-type-begin-annotation% self stx)

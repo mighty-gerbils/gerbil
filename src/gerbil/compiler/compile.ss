@@ -518,8 +518,8 @@ namespace: gxc
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
        (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
-         ['let [] ['declare decls ...]
-               (compile-e self #'expr)])))))
+         ['begin ['declare decls ...]
+                 (compile-e self #'expr)])))))
 
 (def (generate-runtime-declare% self stx)
   (ast-case stx ()

@@ -191,7 +191,7 @@ namespace: gxc
        ;; at runtime -- we have incomplete type info in general, and runtime
        ;; contract checks, so we should not fail to compile when the type
        ;; is not definitely wrong.
-       ((!interface? type)
+       ((!interface-instance? type)
         ;; let the runtime contract cast it
         #f)
 
