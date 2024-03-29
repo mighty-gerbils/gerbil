@@ -331,27 +331,27 @@ namespace: gxc
   (alet (tab (!class-methods klass))
     (hash-get tab method)))
 
-(def (!type-subclass? klass-a klass-b)
-  (and klass-a klass-b
-       (or (eq? klass-a klass-b)
-           (eq? (!type-id klass-a) (!type-id klass-b))
-           (eq? (!type-id klass-b) 't)
-           (and (!procedure? klass-a)
-                (eq? (!type-id klass-b) 'procedure))
-           (and (!class? klass-a)
-                (!class? klass-b)
-                (!class-subclass? klass-a klass-b)))))
+(def (!type-subtype? type-a type-b)
+  (and type-a type-b
+       (or (eq? type-a type-b)
+           (eq? (!type-id type-b) 't)
+           (and (!procedure? type-a)
+                (eq? (!type-id type-b) 'procedure))
+           (and (!class? type-a)
+                (!class? type-b)
+                (!class-subclass? type-a type-b)))))
 
 (def (!class-subclass? klass-a klass-b)
-  (let ((klass-id-b (!type-id klass-b))
-        (precedence-list (!class-precedence-list klass-a)))
-    (let loop ((rest precedence-list))
-      (match rest
-        ([klass-name . rest]
-         (or (eq? (!type-id (optimizer-resolve-class `(subclass? ,klass-a ,klass-b) klass-name))
-                  klass-id-b)
-             (loop rest)))
-        (else #f)))))
+  (or (eq? (!type-id klass-a) (!type-id klass-b))
+      (let ((klass-id-b (!type-id klass-b))
+            (precedence-list (!class-precedence-list klass-a)))
+        (let loop ((rest precedence-list))
+          (match rest
+            ([klass-name . rest]
+             (or (eq? (!type-id (optimizer-resolve-class `(subclass? ,klass-a ,klass-b) klass-name))
+                      klass-id-b)
+                 (loop rest)))
+            (else #f))))))
 
 (def (!interface-instance? type)
   (and (!class? type)

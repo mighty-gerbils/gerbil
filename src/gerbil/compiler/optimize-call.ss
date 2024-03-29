@@ -165,7 +165,7 @@ namespace: gxc
 
 (def (expression-type? stx klass)
   (let (expr-type (apply-basic-expression-type stx))
-    (and expr-type (!type-subclass? expr-type klass))))
+    (and expr-type (!type-subtype? expr-type klass))))
 
 (def (check-expression-type! stx expr type)
   (cond
@@ -185,7 +185,7 @@ namespace: gxc
         ;; unspecific type, let the runtime contract check it
         #f)
 
-       ((!type-subclass? expr-type type)) ; happy!
+       ((!type-subtype? expr-type type)) ; happy!
 
        ;; fuzzy rules for types that might be compatible and should be checked
        ;; at runtime -- we have incomplete type info in general, and runtime
@@ -195,7 +195,7 @@ namespace: gxc
         ;; let the runtime contract cast it
         #f)
 
-       ((!type-subclass? type expr-type)
+       ((!type-subtype? type expr-type)
         ;; wider type than what we have; let the runtime contract check it
         ;; most notable this catches unspecific object instances, which are
         ;; abundant.

@@ -194,7 +194,7 @@ namespace: gxc
     ((_ id expr)
      (let ((bind-type (optimizer-resolve-type (identifier-symbol #'id)))
            (expr-type (apply-basic-expression-type #'expr)))
-       (unless (!type-subclass? expr-type bind-type)
+       (unless (!type-subtype? expr-type bind-type)
          ;; mutation with incompatible class types destroys type information
          (optimizer-clear-type! (identifier-symbol #'id)))))))
 
@@ -393,10 +393,11 @@ namespace: gxc
     ((_ test K E)
      (let ((type-K (apply-basic-expression-type #'K))
            (type-E (apply-basic-expression-type #'E)))
+       ;; TODO greatest-common-type primitive
        (cond
-        ((!type-subclass? type-E type-K)
+        ((!type-subtype? type-E type-K)
          type-K)
-        ((!type-subclass? type-K type-E)
+        ((!type-subtype? type-K type-E)
          type-E)
         (else #f))))))
 
