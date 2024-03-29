@@ -82,7 +82,7 @@ if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
 fi
 
 if [ "$GERBIL_DIST" = "yes" ]; then
-    link_dist "$${DESTDIR}{GERBIL_FHS}" "${DESTDIR}${GERBIL_PREFIX}"
+    link_dist "${DESTDIR}{GERBIL_FHS}" "${DESTDIR}${GERBIL_PREFIX}"
 fi
 
 

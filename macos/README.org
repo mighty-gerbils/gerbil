@@ -265,7 +265,7 @@ The easy way.
   fetch.type          git
   git.url             https://github.com/mighty-gerbils/gerbil.git
   # git.branch          v0.18.1
-  git.branch          c7ecd93337b068fc24d06b67bf109d2e665d6e5d
+  git.branch          fc4c70a743a5ba169c9875a10e4e1219d0286d56
 
   depends_lib         port:openssl3 \
                       port:zlib
