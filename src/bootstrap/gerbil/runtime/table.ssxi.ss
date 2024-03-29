@@ -2,6 +2,9 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
+  (declare-type
+   __table::t.id
+   (@class symbol (symbolic::t) (symbolic::t t::t) () () #f #f #f #f #f #f))
   (declare-type &raw-table-table (@lambda 1 #f))
   (declare-type &raw-table-count (@lambda 1 #f))
   (declare-type &raw-table-free (@lambda 1 #f))
@@ -14,7 +17,12 @@ package: gerbil/runtime
   (declare-type &raw-table-hash-set! (@lambda 2 #f))
   (declare-type &raw-table-test-set! (@lambda 2 #f))
   (declare-type &raw-table-seed-set! (@lambda 2 #f))
-  (declare-type raw-table-size-hint->size (@lambda 1 #f))
+  (declare-type
+   raw-table-size-hint->size
+   (@lambda 1
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type make-raw-table__% (@lambda 4 #f))
   (declare-type make-raw-table__0 (@lambda 3 #f))
   (declare-type
@@ -31,7 +39,12 @@ package: gerbil/runtime
   (declare-type __raw-table-update! (@lambda 4 #f))
   (declare-type __raw-table-rehash! (@lambda 1 #f))
   (declare-type eq-hash (@lambda 1 #f))
-  (declare-type procedure-hash (@lambda 1 #f))
+  (declare-type
+   procedure-hash
+   (@lambda 1
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __eq-hash (@lambda 1 #f))
   (declare-type eqv-hash (@lambda 1 #f))
   (declare-type symbolic? (@lambda 1 #f))
@@ -113,6 +126,22 @@ package: gerbil/runtime
   (declare-type immediate-table-update! (@lambda 4 #f))
   (declare-type __immediate-table-update! (@lambda 4 #f))
   (declare-type immediate-table-delete! (@lambda 2 #f))
+  (declare-type
+   __gc-table::t.id
+   (@class symbol (symbolic::t) (symbolic::t t::t) () () #f #f #f #f #f #f))
+  (declare-type
+   __gc-table-loads
+   (@class f64vector
+           (hvector::t)
+           (hvector::t sequence::t t::t)
+           ()
+           ()
+           #f
+           #f
+           #f
+           #f
+           #f
+           #f))
   (declare-type &gc-table-gcht (@lambda 1 #f))
   (declare-type &gc-table-immediate (@lambda 1 #f))
   (declare-type &gc-table-gcht-set! (@lambda 2 #f))
@@ -137,5 +166,10 @@ package: gerbil/runtime
   (declare-type gc-table-for-each (@lambda 2 #f))
   (declare-type gc-table-copy (@lambda 1 #f))
   (declare-type gc-table-clear! (@lambda 1 #f))
-  (declare-type gc-table-length (@lambda 1 #f))
+  (declare-type
+   gc-table-length
+   (@lambda 1
+            #f
+            signature:
+            (return: fixnum::t effect: #f arguments: #f unchecked: #f)))
   (declare-type __object->eq-hash (@lambda 1 #f)))

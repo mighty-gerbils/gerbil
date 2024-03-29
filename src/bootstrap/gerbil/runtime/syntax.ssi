@@ -22,6 +22,7 @@ namespace: #f
          (%#define-runtime SyntaxError-context SyntaxError-context)
          (%#define-runtime SyntaxError-phi SyntaxError-phi)
          (%#define-runtime SyntaxError-marks SyntaxError-marks)
+         (%#define-runtime SyntaxError-continuation SyntaxError-continuation)
          (%#define-runtime SyntaxError-message-set! SyntaxError-message-set!)
          (%#define-runtime
           SyntaxError-irritants-set!
@@ -30,12 +31,16 @@ namespace: #f
          (%#define-runtime SyntaxError-context-set! SyntaxError-context-set!)
          (%#define-runtime SyntaxError-phi-set! SyntaxError-phi-set!)
          (%#define-runtime SyntaxError-marks-set! SyntaxError-marks-set!)
+         (%#define-runtime
+          SyntaxError-continuation-set!
+          SyntaxError-continuation-set!)
          (%#define-runtime &SyntaxError-message &SyntaxError-message)
          (%#define-runtime &SyntaxError-irritants &SyntaxError-irritants)
          (%#define-runtime &SyntaxError-where &SyntaxError-where)
          (%#define-runtime &SyntaxError-context &SyntaxError-context)
          (%#define-runtime &SyntaxError-phi &SyntaxError-phi)
          (%#define-runtime &SyntaxError-marks &SyntaxError-marks)
+         (%#define-runtime &SyntaxError-continuation &SyntaxError-continuation)
          (%#define-runtime &SyntaxError-message-set! &SyntaxError-message-set!)
          (%#define-runtime
           &SyntaxError-irritants-set!
@@ -44,10 +49,16 @@ namespace: #f
          (%#define-runtime &SyntaxError-context-set! &SyntaxError-context-set!)
          (%#define-runtime &SyntaxError-phi-set! &SyntaxError-phi-set!)
          (%#define-runtime &SyntaxError-marks-set! &SyntaxError-marks-set!)
-         (%#define-syntax SyntaxError |[:0:]#SyntaxError|)
          (%#define-runtime
-          SyntaxError::display-exception
-          SyntaxError::display-exception)
+          &SyntaxError-continuation-set!
+          &SyntaxError-continuation-set!)
+         (%#define-syntax SyntaxError |[:0:]#SyntaxError|)
+         (%#begin (%#define-runtime
+                   SyntaxError::display-exception
+                   SyntaxError::display-exception)
+                  (%#define-runtime
+                   SyntaxError::display-exception::specialize
+                   SyntaxError::display-exception::specialize))
          (%#define-runtime make-syntax-error make-syntax-error)
          (%#define-runtime syntax-error? syntax-error?)
          (%#define-runtime __raise-syntax-error __raise-syntax-error)

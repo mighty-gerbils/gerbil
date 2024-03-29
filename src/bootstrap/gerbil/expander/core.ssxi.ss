@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
-  (declare-type
+  (declare-class
    gx#expander-context::t
    (@class gx#expander-context::t
-           (object::t)
+           ()
            (object::t t::t)
            (id table)
            (id table)
@@ -15,6 +15,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#expander-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#expander-context? (@predicate gx#expander-context::t))
   (declare-type gx#make-expander-context (@constructor gx#expander-context::t))
   (declare-type
@@ -41,10 +44,10 @@ package: gerbil/expander
   (declare-type
    gx#&expander-context-table-set!
    (@mutator gx#expander-context::t table #f))
-  (declare-type
+  (declare-class
    gx#root-context::t
    (@class gx#root-context::t
-           (gx#expander-context::t object::t)
+           (gx#expander-context::t)
            (gx#expander-context::t object::t t::t)
            ()
            (id table)
@@ -54,6 +57,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#root-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#root-context? (@predicate gx#root-context::t))
   (declare-type gx#make-root-context (@constructor gx#root-context::t))
   (declare-type gx#root-context-id (@accessor gx#root-context::t id #t))
@@ -68,10 +74,10 @@ package: gerbil/expander
   (declare-type
    gx#&root-context-table-set!
    (@mutator gx#root-context::t table #f))
-  (declare-type
+  (declare-class
    gx#phi-context::t
-   (@class gx#context-phi::t
-           (gx#expander-context::t object::t)
+   (@class gx#phi-context::t
+           (gx#expander-context::t)
            (gx#expander-context::t object::t t::t)
            (super up down)
            (id table super up down)
@@ -81,6 +87,9 @@ package: gerbil/expander
            #f
            #f
            ((:init! . gx#phi-context:::init!))))
+  (declare-type
+   gx#phi-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#phi-context? (@predicate gx#phi-context::t))
   (declare-type gx#make-phi-context (@constructor gx#phi-context::t))
   (declare-type gx#phi-context-super (@accessor gx#phi-context::t super #t))
@@ -111,10 +120,10 @@ package: gerbil/expander
   (declare-type
    gx#&phi-context-table-set!
    (@mutator gx#phi-context::t table #f))
-  (declare-type
+  (declare-class
    gx#top-context::t
    (@class gx#top-context::t
-           (gx#phi-context::t object::t)
+           (gx#phi-context::t)
            (gx#phi-context::t gx#expander-context::t object::t t::t)
            ()
            (id table super up down)
@@ -124,6 +133,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#top-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#top-context? (@predicate gx#top-context::t))
   (declare-type gx#make-top-context (@constructor gx#top-context::t))
   (declare-type gx#top-context-super (@accessor gx#top-context::t super #t))
@@ -154,10 +166,10 @@ package: gerbil/expander
   (declare-type
    gx#&top-context-table-set!
    (@mutator gx#top-context::t table #f))
-  (declare-type
+  (declare-class
    gx#module-context::t
    (@class gx#module-context::t
-           (gx#top-context::t object::t)
+           (gx#top-context::t)
            (gx#top-context::t
             gx#phi-context::t
             gx#expander-context::t
@@ -171,6 +183,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#module-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#module-context? (@predicate gx#module-context::t))
   (declare-type gx#make-module-context (@constructor gx#module-context::t))
   (declare-type gx#module-context-ns (@accessor gx#module-context::t ns #t))
@@ -285,10 +300,10 @@ package: gerbil/expander
   (declare-type
    gx#&module-context-table-set!
    (@mutator gx#module-context::t table #f))
-  (declare-type
+  (declare-class
    gx#prelude-context::t
    (@class gx#prelude-context::t
-           (gx#top-context::t object::t)
+           (gx#top-context::t)
            (gx#top-context::t
             gx#phi-context::t
             gx#expander-context::t
@@ -302,6 +317,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#prelude-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#prelude-context? (@predicate gx#prelude-context::t))
   (declare-type gx#make-prelude-context (@constructor gx#prelude-context::t))
   (declare-type
@@ -388,10 +406,10 @@ package: gerbil/expander
   (declare-type
    gx#&prelude-context-table-set!
    (@mutator gx#prelude-context::t table #f))
-  (declare-type
+  (declare-class
    gx#local-context::t
    (@class gx#local-context::t
-           (gx#phi-context::t object::t)
+           (gx#phi-context::t)
            (gx#phi-context::t gx#expander-context::t object::t t::t)
            ()
            (id table super up down)
@@ -401,6 +419,9 @@ package: gerbil/expander
            #f
            #f
            ((:init! . gx#local-context:::init!))))
+  (declare-type
+   gx#local-context::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#local-context? (@predicate gx#local-context::t))
   (declare-type gx#make-local-context (@constructor gx#local-context::t))
   (declare-type
@@ -443,22 +464,56 @@ package: gerbil/expander
   (declare-type
    gx#&local-context-table-set!
    (@mutator gx#local-context::t table #f))
-  (declare-type gx#phi-context:::init!__% (@lambda 3 #f))
-  (declare-type gx#phi-context:::init!__0 (@lambda 2 #f))
+  (declare-type
+   gx#phi-context:::init!__%
+   (@lambda 3
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#phi-context:::init!__0
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#phi-context:::init!
-   (@case-lambda (2 gx#phi-context:::init!__0) (3 gx#phi-context:::init!__%)))
-  (declare-type gx#local-context:::init!__% (@lambda 2 #f))
-  (declare-type gx#local-context:::init!__0 (@lambda 1 #f))
+   (@case-lambda
+    (2
+     gx#phi-context:::init!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (3
+     gx#phi-context:::init!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-type
+   gx#local-context:::init!__%
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#local-context:::init!__0
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#local-context:::init!
    (@case-lambda
-    (1 gx#local-context:::init!__0)
-    (2 gx#local-context:::init!__%)))
-  (declare-type
+    (1
+     gx#local-context:::init!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (2
+     gx#local-context:::init!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
+  (declare-class
    gx#binding::t
    (@class gx#binding::t
-           (object::t)
+           ()
            (object::t t::t)
            (id key phi)
            (id key phi)
@@ -468,6 +523,7 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type gx#binding::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#binding? (@predicate gx#binding::t))
   (declare-type gx#make-binding (@constructor gx#binding::t))
   (declare-type gx#binding-id (@accessor gx#binding::t id #t))
@@ -482,10 +538,10 @@ package: gerbil/expander
   (declare-type gx#&binding-id-set! (@mutator gx#binding::t id #f))
   (declare-type gx#&binding-key-set! (@mutator gx#binding::t key #f))
   (declare-type gx#&binding-phi-set! (@mutator gx#binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#runtime-binding::t
    (@class gx#runtime-binding::t
-           (gx#binding::t object::t)
+           (gx#binding::t)
            (gx#binding::t object::t t::t)
            ()
            (id key phi)
@@ -495,6 +551,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#runtime-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#runtime-binding? (@predicate gx#runtime-binding::t))
   (declare-type gx#make-runtime-binding (@constructor gx#runtime-binding::t))
   (declare-type gx#runtime-binding-id (@accessor gx#runtime-binding::t id #t))
@@ -529,10 +588,10 @@ package: gerbil/expander
   (declare-type
    gx#&runtime-binding-phi-set!
    (@mutator gx#runtime-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#local-binding::t
    (@class gx#local-binding::t
-           (gx#runtime-binding::t object::t)
+           (gx#runtime-binding::t)
            (gx#runtime-binding::t gx#binding::t object::t t::t)
            ()
            (id key phi)
@@ -542,6 +601,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#local-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#local-binding? (@predicate gx#local-binding::t))
   (declare-type gx#make-local-binding (@constructor gx#local-binding::t))
   (declare-type gx#local-binding-id (@accessor gx#local-binding::t id #t))
@@ -564,10 +626,10 @@ package: gerbil/expander
   (declare-type
    gx#&local-binding-phi-set!
    (@mutator gx#local-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#top-binding::t
    (@class gx#top-binding::t
-           (gx#runtime-binding::t object::t)
+           (gx#runtime-binding::t)
            (gx#runtime-binding::t gx#binding::t object::t t::t)
            ()
            (id key phi)
@@ -577,6 +639,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#top-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#top-binding? (@predicate gx#top-binding::t))
   (declare-type gx#make-top-binding (@constructor gx#top-binding::t))
   (declare-type gx#top-binding-id (@accessor gx#top-binding::t id #t))
@@ -591,10 +656,10 @@ package: gerbil/expander
   (declare-type gx#&top-binding-id-set! (@mutator gx#top-binding::t id #f))
   (declare-type gx#&top-binding-key-set! (@mutator gx#top-binding::t key #f))
   (declare-type gx#&top-binding-phi-set! (@mutator gx#top-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#module-binding::t
    (@class gx#module-binding::t
-           (gx#top-binding::t object::t)
+           (gx#top-binding::t)
            (gx#top-binding::t
             gx#runtime-binding::t
             gx#binding::t
@@ -608,6 +673,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#module-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#module-binding? (@predicate gx#module-binding::t))
   (declare-type gx#make-module-binding (@constructor gx#module-binding::t))
   (declare-type
@@ -646,10 +714,10 @@ package: gerbil/expander
   (declare-type
    gx#&module-binding-phi-set!
    (@mutator gx#module-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#extern-binding::t
    (@class gx#extern-binding::t
-           (gx#top-binding::t object::t)
+           (gx#top-binding::t)
            (gx#top-binding::t
             gx#runtime-binding::t
             gx#binding::t
@@ -663,6 +731,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#extern-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#extern-binding? (@predicate gx#extern-binding::t))
   (declare-type gx#make-extern-binding (@constructor gx#extern-binding::t))
   (declare-type gx#extern-binding-id (@accessor gx#extern-binding::t id #t))
@@ -689,10 +760,10 @@ package: gerbil/expander
   (declare-type
    gx#&extern-binding-phi-set!
    (@mutator gx#extern-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#syntax-binding::t
    (@class gx#syntax-binding::t
-           (gx#binding::t object::t)
+           (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e)
            (id key phi e)
@@ -702,6 +773,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#syntax-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#syntax-binding? (@predicate gx#syntax-binding::t))
   (declare-type gx#make-syntax-binding (@constructor gx#syntax-binding::t))
   (declare-type gx#syntax-binding-e (@accessor gx#syntax-binding::t e #t))
@@ -732,10 +806,10 @@ package: gerbil/expander
   (declare-type
    gx#&syntax-binding-phi-set!
    (@mutator gx#syntax-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#import-binding::t
    (@class gx#import-binding::t
-           (gx#binding::t object::t)
+           (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e context weak?)
            (id key phi e context weak?)
@@ -745,6 +819,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#import-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#import-binding? (@predicate gx#import-binding::t))
   (declare-type gx#make-import-binding (@constructor gx#import-binding::t))
   (declare-type gx#import-binding-e (@accessor gx#import-binding::t e #t))
@@ -799,10 +876,10 @@ package: gerbil/expander
   (declare-type
    gx#&import-binding-phi-set!
    (@mutator gx#import-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#alias-binding::t
    (@class gx#alias-binding::t
-           (gx#binding::t object::t)
+           (gx#binding::t)
            (gx#binding::t object::t t::t)
            (e)
            (id key phi e)
@@ -812,6 +889,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#alias-binding::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#alias-binding? (@predicate gx#alias-binding::t))
   (declare-type gx#make-alias-binding (@constructor gx#alias-binding::t))
   (declare-type gx#alias-binding-e (@accessor gx#alias-binding::t e #t))
@@ -838,10 +918,10 @@ package: gerbil/expander
   (declare-type
    gx#&alias-binding-phi-set!
    (@mutator gx#alias-binding::t phi #f))
-  (declare-type
+  (declare-class
    gx#expander::t
    (@class gx#expander::t
-           (object::t)
+           ()
            (object::t t::t)
            (e)
            (e)
@@ -851,16 +931,17 @@ package: gerbil/expander
            #f
            #f
            ((apply-macro-expander . gx#expander::apply-macro-expander))))
+  (declare-type gx#expander::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#expander? (@predicate gx#expander::t))
   (declare-type gx#make-expander (@constructor gx#expander::t))
   (declare-type gx#expander-e (@accessor gx#expander::t e #t))
   (declare-type gx#expander-e-set! (@mutator gx#expander::t e #t))
   (declare-type gx#&expander-e (@accessor gx#expander::t e #f))
   (declare-type gx#&expander-e-set! (@mutator gx#expander::t e #f))
-  (declare-type
+  (declare-class
    gx#core-expander::t
    (@class gx#core-expander::t
-           (gx#expander::t object::t)
+           (gx#expander::t)
            (gx#expander::t object::t t::t)
            (id compile-top)
            (e id compile-top)
@@ -870,6 +951,9 @@ package: gerbil/expander
            #f
            #f
            ((apply-macro-expander . gx#core-expander::apply-macro-expander))))
+  (declare-type
+   gx#core-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#core-expander? (@predicate gx#core-expander::t))
   (declare-type gx#make-core-expander (@constructor gx#core-expander::t))
   (declare-type gx#core-expander-id (@accessor gx#core-expander::t id #t))
@@ -892,10 +976,10 @@ package: gerbil/expander
    gx#&core-expander-compile-top-set!
    (@mutator gx#core-expander::t compile-top #f))
   (declare-type gx#&core-expander-e-set! (@mutator gx#core-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#expression-form::t
    (@class gx#expression-form::t
-           (gx#core-expander::t object::t)
+           (gx#core-expander::t)
            (gx#core-expander::t gx#expander::t object::t t::t)
            ()
            (e id compile-top)
@@ -905,6 +989,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#expression-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#expression-form? (@predicate gx#expression-form::t))
   (declare-type gx#make-expression-form (@constructor gx#expression-form::t))
   (declare-type gx#expression-form-id (@accessor gx#expression-form::t id #t))
@@ -935,10 +1022,10 @@ package: gerbil/expander
   (declare-type
    gx#&expression-form-e-set!
    (@mutator gx#expression-form::t e #f))
-  (declare-type
+  (declare-class
    gx#special-form::t
    (@class gx#special-form::t
-           (gx#core-expander::t object::t)
+           (gx#core-expander::t)
            (gx#core-expander::t gx#expander::t object::t t::t)
            ()
            (e id compile-top)
@@ -948,6 +1035,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#special-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#special-form? (@predicate gx#special-form::t))
   (declare-type gx#make-special-form (@constructor gx#special-form::t))
   (declare-type gx#special-form-id (@accessor gx#special-form::t id #t))
@@ -970,10 +1060,10 @@ package: gerbil/expander
    gx#&special-form-compile-top-set!
    (@mutator gx#special-form::t compile-top #f))
   (declare-type gx#&special-form-e-set! (@mutator gx#special-form::t e #f))
-  (declare-type
+  (declare-class
    gx#definition-form::t
    (@class gx#definition-form::t
-           (gx#special-form::t object::t)
+           (gx#special-form::t)
            (gx#special-form::t
             gx#core-expander::t
             gx#expander::t
@@ -987,6 +1077,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#definition-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#definition-form? (@predicate gx#definition-form::t))
   (declare-type gx#make-definition-form (@constructor gx#definition-form::t))
   (declare-type gx#definition-form-id (@accessor gx#definition-form::t id #t))
@@ -1017,10 +1110,10 @@ package: gerbil/expander
   (declare-type
    gx#&definition-form-e-set!
    (@mutator gx#definition-form::t e #f))
-  (declare-type
+  (declare-class
    gx#top-special-form::t
    (@class gx#top-special-form::t
-           (gx#special-form::t object::t)
+           (gx#special-form::t)
            (gx#special-form::t
             gx#core-expander::t
             gx#expander::t
@@ -1036,6 +1129,9 @@ package: gerbil/expander
            ((apply-macro-expander
              .
              gx#top-special-form::apply-macro-expander))))
+  (declare-type
+   gx#top-special-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#top-special-form? (@predicate gx#top-special-form::t))
   (declare-type gx#make-top-special-form (@constructor gx#top-special-form::t))
   (declare-type
@@ -1070,10 +1166,10 @@ package: gerbil/expander
   (declare-type
    gx#&top-special-form-e-set!
    (@mutator gx#top-special-form::t e #f))
-  (declare-type
+  (declare-class
    gx#module-special-form::t
    (@class gx#module-special-form::t
-           (gx#top-special-form::t object::t)
+           (gx#top-special-form::t)
            (gx#top-special-form::t
             gx#special-form::t
             gx#core-expander::t
@@ -1090,6 +1186,9 @@ package: gerbil/expander
            ((apply-macro-expander
              .
              gx#module-special-form::apply-macro-expander))))
+  (declare-type
+   gx#module-special-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#module-special-form? (@predicate gx#module-special-form::t))
   (declare-type
    gx#make-module-special-form
@@ -1130,10 +1229,10 @@ package: gerbil/expander
   (declare-type
    gx#&module-special-form-e-set!
    (@mutator gx#module-special-form::t e #f))
-  (declare-type
+  (declare-class
    gx#feature-expander::t
    (@class gx#feature-expander::t
-           (gx#expander::t object::t)
+           (gx#expander::t)
            (gx#expander::t object::t t::t)
            ()
            (e)
@@ -1143,6 +1242,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#feature-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#feature-expander? (@predicate gx#feature-expander::t))
   (declare-type gx#make-feature-expander (@constructor gx#feature-expander::t))
   (declare-type gx#feature-expander-e (@accessor gx#feature-expander::t e #t))
@@ -1153,10 +1255,10 @@ package: gerbil/expander
   (declare-type
    gx#&feature-expander-e-set!
    (@mutator gx#feature-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#private-feature-expander::t
    (@class gx#private-feature-expander::t
-           (gx#feature-expander::t object::t)
+           (gx#feature-expander::t)
            (gx#feature-expander::t gx#expander::t object::t t::t)
            ()
            (e)
@@ -1166,6 +1268,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#private-feature-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type
    gx#private-feature-expander?
    (@predicate gx#private-feature-expander::t))
@@ -1184,10 +1289,10 @@ package: gerbil/expander
   (declare-type
    gx#&private-feature-expander-e-set!
    (@mutator gx#private-feature-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#reserved-expander::t
    (@class gx#reserved-expander::t
-           (gx#expander::t object::t)
+           (gx#expander::t)
            (gx#expander::t object::t t::t)
            ()
            (e)
@@ -1197,6 +1302,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#reserved-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#reserved-expander? (@predicate gx#reserved-expander::t))
   (declare-type
    gx#make-reserved-expander
@@ -1213,10 +1321,10 @@ package: gerbil/expander
   (declare-type
    gx#&reserved-expander-e-set!
    (@mutator gx#reserved-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#macro-expander::t
-   (@class gx#core-macro::t
-           (gx#expander::t object::t)
+   (@class gx#macro-expander::t
+           (gx#expander::t)
            (gx#expander::t object::t t::t)
            ()
            (e)
@@ -1226,16 +1334,19 @@ package: gerbil/expander
            #f
            #f
            ((apply-macro-expander . gx#macro-expander::apply-macro-expander))))
+  (declare-type
+   gx#macro-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#macro-expander? (@predicate gx#macro-expander::t))
   (declare-type gx#make-macro-expander (@constructor gx#macro-expander::t))
   (declare-type gx#macro-expander-e (@accessor gx#macro-expander::t e #t))
   (declare-type gx#macro-expander-e-set! (@mutator gx#macro-expander::t e #t))
   (declare-type gx#&macro-expander-e (@accessor gx#macro-expander::t e #f))
   (declare-type gx#&macro-expander-e-set! (@mutator gx#macro-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#rename-macro-expander::t
    (@class gx#rename-macro-expander::t
-           (gx#macro-expander::t object::t)
+           (gx#macro-expander::t)
            (gx#macro-expander::t gx#expander::t object::t t::t)
            ()
            (e)
@@ -1247,6 +1358,9 @@ package: gerbil/expander
            ((apply-macro-expander
              .
              gx#rename-macro-expander::apply-macro-expander))))
+  (declare-type
+   gx#rename-macro-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type
    gx#rename-macro-expander?
    (@predicate gx#rename-macro-expander::t))
@@ -1265,10 +1379,10 @@ package: gerbil/expander
   (declare-type
    gx#&rename-macro-expander-e-set!
    (@mutator gx#rename-macro-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#user-expander::t
-   (@class gx#macro-expander::t
-           (gx#macro-expander::t object::t)
+   (@class gx#user-expander::t
+           (gx#macro-expander::t)
            (gx#macro-expander::t gx#expander::t object::t t::t)
            (context phi)
            (e context phi)
@@ -1278,6 +1392,9 @@ package: gerbil/expander
            #f
            #f
            ((apply-macro-expander . gx#user-expander::apply-macro-expander))))
+  (declare-type
+   gx#user-expander::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#user-expander? (@predicate gx#user-expander::t))
   (declare-type gx#make-user-expander (@constructor gx#user-expander::t))
   (declare-type
@@ -1304,10 +1421,10 @@ package: gerbil/expander
    gx#&user-expander-phi-set!
    (@mutator gx#user-expander::t phi #f))
   (declare-type gx#&user-expander-e-set! (@mutator gx#user-expander::t e #f))
-  (declare-type
+  (declare-class
    gx#expander-mark::t
    (@class gx#expander-mark::t
-           (object::t)
+           ()
            (object::t t::t)
            (subst context phi trace)
            (subst context phi trace)
@@ -1317,6 +1434,9 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type
+   gx#expander-mark::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#expander-mark? (@predicate gx#expander-mark::t))
   (declare-type gx#make-expander-mark (@constructor gx#expander-mark::t))
   (declare-type
@@ -1377,7 +1497,12 @@ package: gerbil/expander
    (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__%)))
   (declare-type gx#core-expand-top (@lambda 1 #f))
   (declare-type gx#core-expand-expression (@lambda 1 #f))
-  (declare-type gx#core-expand-expression+1 (@lambda 1 #f))
+  (declare-type
+   gx#core-expand-expression+1
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-expand*__% (@lambda 2 #f))
   (declare-type gx#core-expand*__0 (@lambda 1 #f))
   (declare-type
@@ -1427,7 +1552,12 @@ package: gerbil/expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
     (3 gx#core-apply-user-expander__%)))
-  (declare-type gx#core-apply-user-macro (@lambda 5 #f))
+  (declare-type
+   gx#core-apply-user-macro
+   (@lambda 5
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#user-expander::apply-macro-expander
    (@case-lambda
@@ -1541,8 +1671,18 @@ package: gerbil/expander
     (2 gx#core-quote-syntax__1)
     (3 gx#core-quote-syntax__2)
     (4 gx#core-quote-syntax__%)))
-  (declare-type gx#core-cons (@lambda 2 #f))
-  (declare-type gx#core-list (@lambda (1) #f))
+  (declare-type
+   gx#core-cons
+   (@lambda 2
+            #f
+            signature:
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#core-list
+   (@lambda (1)
+            #f
+            signature:
+            (return: pair::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#core-cons* (@lambda (1) #f))
   (declare-type gx#core-resolve-path__% (@lambda 2 #f))
   (declare-type gx#core-resolve-path__0 (@lambda 1 #f))

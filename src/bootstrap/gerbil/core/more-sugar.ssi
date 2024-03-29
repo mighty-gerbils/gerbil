@@ -21,7 +21,6 @@ namespace: gerbil/core/more-sugar
                   (%#define-syntax : |gerbil/core/more-sugar[:0:]#:|))
          (%#define-syntax :~ |gerbil/core/more-sugar[:0:]#:~|)
          (%#define-syntax :- |gerbil/core/more-sugar[:0:]#:-|)
-         (%#define-syntax :~- |gerbil/core/more-sugar[:0:]#:~-|)
          (%#define-syntax := |gerbil/core/more-sugar[:0:]#:=|)
          (%#begin-syntax
           (%#define-runtime

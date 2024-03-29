@@ -17,11 +17,13 @@ namespace: gxc
           (spec: 0 with-syntax* with-syntax*)
           (import: :gerbil/core)
           (import: :gerbil/core/expander)
-          (import: :gerbil/expander))
+          (import: :gerbil/expander)
+          (import: :gerbil/compiler/optimize-base))
          (%#begin (%#begin-syntax
                    (%#call (%#ref load-module)
                            (%#quote "gerbil/compiler/ssxi~1")))
                   (%#define-syntax declare-type |gxc[:0:]#declare-type|))
+         (%#define-syntax declare-class |gxc[:0:]#declare-class|)
          (%#define-syntax declare-type* |gxc[:0:]#declare-type*|)
          (%#define-syntax declare-method |gxc[:0:]#declare-method|)
          (%#define-syntax declare-method* |gxc[:0:]#declare-method*|)
@@ -32,15 +34,40 @@ namespace: gxc
          (%#define-syntax @constructor |gxc[:0:]#@constructor|)
          (%#define-syntax @accessor |gxc[:0:]#@accessor|)
          (%#define-syntax @mutator |gxc[:0:]#@mutator|)
+         (%#define-syntax @interface |gxc[:0:]#@interface|)
          (%#define-syntax @lambda |gxc[:0:]#@lambda|)
          (%#define-syntax @case-lambda |gxc[:0:]#@case-lambda|)
          (%#define-syntax @kw-lambda |gxc[:0:]#@kw-lambda|)
          (%#define-syntax @kw-lambda-dispatch |gxc[:0:]#@kw-lambda-dispatch|)
-         (%#define-syntax declare-primitive |gxc[:0:]#declare-primitive|)
          (%#define-syntax
-          declare-primitive/unchecked
-          |gxc[:0:]#declare-primitive/unchecked|)
-         (%#define-syntax declare-primitive* |gxc[:0:]#declare-primitive*|)
+          declare-inline-rules!
+          |gxc[:0:]#declare-inline-rules!|)
+         (%#define-syntax declare-inline-rule! |gxc[:0:]#declare-inline-rule!|)
          (%#define-syntax
-          declare-primitive/unchecked*
-          |gxc[:0:]#declare-primitive/unchecked*|))
+          declare-primitive-predicates
+          |gxc[:0:]#declare-primitive-predicates|)
+         (%#define-syntax
+          declare-primitive-procedures
+          |gxc[:0:]#declare-primitive-procedures|)
+         (%#define-syntax
+          declare-primitive-procedure
+          |gxc[:0:]#declare-primitive-procedure|)
+         (%#begin-syntax
+          (%#define-runtime verify-procedure! |gxc[1]#verify-procedure!|)
+          (%#define-runtime verify-class! |gxc[1]#verify-class!|)
+          (%#define-runtime parse-signature |gxc[1]#parse-signature|))
+         (%#define-syntax
+          declare-primitive-predicate
+          |gxc[:0:]#declare-primitive-predicate|)
+         (%#define-syntax
+          declare-primitive-lambda
+          |gxc[:0:]#declare-primitive-lambda|)
+         (%#define-syntax
+          declare-primitive-case-lambda
+          |gxc[:0:]#declare-primitive-case-lambda|)
+         (%#define-syntax
+          declare-builtin-class
+          |gxc[:0:]#declare-builtin-class|)
+         (%#define-syntax
+          declare-builtin-classes
+          |gxc[:0:]#declare-builtin-classes|))

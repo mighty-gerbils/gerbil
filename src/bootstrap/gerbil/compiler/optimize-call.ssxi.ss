@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
 (begin
-  (declare-type
+  (declare-class
    gxc#::optimize-call::t
    (@class gxc#::optimize-call::t
-           (gxc#::basic-xform::t object::t)
+           (gxc#::basic-xform::t)
            (gxc#::basic-xform::t
             gxc#::basic-xform-expression::t
             gxc#::identity::t
@@ -21,18 +21,56 @@ package: gerbil/compiler
            #f
            #f
            #f))
+  (declare-type
+   gxc#::optimize-call::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gxc#::optimize-call? (@predicate gxc#::optimize-call::t))
   (declare-type gxc#make-::optimize-call (@constructor gxc#::optimize-call::t))
+  (declare-type
+   gxc#::optimize-call-bind-methods!
+   (@class promise () (t::t) () () #f #f #f #f #f #f))
   (declare-type gxc#apply-optimize-call (@lambda 1 #f))
   (declare-type gxc#optimize-call% (@lambda 2 #f))
+  (declare-type gxc#!procedure::optimize-call (@lambda 4 #f))
+  (declare-type
+   gxc#!procedure::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#!procedure::check-arguments (@lambda 4 #f))
+  (declare-type gxc#!primitive-predicate::optimize-call (@lambda 4 #f))
   (declare-type gxc#!predicate::optimize-call (@lambda 4 #f))
-  (declare-type gxc#!predicate::optimize-call::specialize (@lambda 2 #f))
+  (declare-type
+   gxc#!predicate::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type gxc#expression-no-side-effects? (@lambda 1 #f))
+  (declare-type gxc#expression-type? (@lambda 2 #f))
+  (declare-type gxc#check-expression-type! (@lambda 3 #f))
   (declare-type gxc#!constructor::optimize-call (@lambda 4 #f))
-  (declare-type gxc#!constructor::optimize-call::specialize (@lambda 2 #f))
+  (declare-type
+   gxc#!constructor::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#!accessor::optimize-call (@lambda 4 #f))
-  (declare-type gxc#!accessor::optimize-call::specialize (@lambda 2 #f))
+  (declare-type
+   gxc#!accessor::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#!mutator::optimize-call (@lambda 4 #f))
-  (declare-type gxc#!mutator::optimize-call::specialize (@lambda 2 #f))
+  (declare-type
+   gxc#!mutator::optimize-call::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#!lambda::optimize-call (@lambda 4 #f))
   (declare-type gxc#!case-lambda::optimize-call (@lambda 4 #f))
   (declare-type gxc#!lambda-arity-match? (@lambda 2 #f))

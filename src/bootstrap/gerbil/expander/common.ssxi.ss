@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
-  (declare-type
+  (declare-class
    gx#AST::t
    (@class gerbil#AST::t
-           (object::t)
+           ()
            (object::t t::t)
            (e source)
            (e source)
@@ -15,6 +15,7 @@ package: gerbil/expander
            #f
            #f
            #f))
+  (declare-type gx#AST::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#AST? (@predicate gx#AST::t))
   (declare-type gx#make-AST (@constructor gx#AST::t))
   (declare-type gx#AST-e (@accessor gx#AST::t e #t))

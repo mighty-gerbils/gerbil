@@ -5,10 +5,10 @@ package: gerbil/core
   (declare-type |gerbil/core/mop~MOP-1[1]#module-type-id| (@lambda 1 #f))
   (declare-type |gerbil/core/mop~MOP-1[1]#make-class-type-id| (@lambda 1 #f))
   (declare-type |gerbil/core/mop~MOP-1[1]#generate-typedef| (@lambda 2 #f))
-  (declare-type
+  (declare-class
    gerbil/core/mop~MOP-2#class-type-info::t
    (@class gerbil.core#class-type-info::t
-           (object::t)
+           ()
            (object::t t::t)
            (id name
                super
@@ -46,6 +46,9 @@ package: gerbil/core
            #f
            #f
            #f))
+  (declare-type
+   gerbil/core/mop~MOP-2#class-type-info::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type
    gerbil/core/mop~MOP-2#class-type-info?
    (@predicate gerbil/core/mop~MOP-2#class-type-info::t))

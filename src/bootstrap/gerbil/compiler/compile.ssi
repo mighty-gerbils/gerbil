@@ -9,6 +9,7 @@ namespace: gxc
           :gerbil/compiler/method)
          (%#export #t)
          (%#define-runtime gambit-annotations gxc#gambit-annotations)
+         (%#define-runtime checked-primitives gxc#checked-primitives)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
          (%#define-runtime current-compile-marks gxc#current-compile-marks)
          (%#define-runtime

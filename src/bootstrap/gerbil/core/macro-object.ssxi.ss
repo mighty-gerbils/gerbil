@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/core
 
 (begin
-  (declare-type
+  (declare-class
    gerbil/core/macro-object#macro-object::t
    (@class gerbil.core#macro-object::t
-           (object::t)
+           ()
            (object::t t::t)
            (macro)
            (macro)
@@ -17,6 +17,9 @@ package: gerbil/core
            ((apply-macro-expander
              .
              gerbil/core/macro-object#macro-object::apply-macro-expander))))
+  (declare-type
+   gerbil/core/macro-object#macro-object::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type
    gerbil/core/macro-object#macro-object?
    (@predicate gerbil/core/macro-object#macro-object::t))
@@ -40,4 +43,7 @@ package: gerbil/core
    (@lambda 2 #f))
   (declare-type
    gerbil/core/macro-object#macro-object::apply-macro-expander::specialize
-   (@lambda 2 #f)))
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f))))

@@ -313,6 +313,7 @@ namespace: gerbil/core/mop
                              defsystem-class-info
                              |gerbil/core/mop~MOP-5[:0:]#defsystem-class-info|))
                    (%#define-syntax :t |gerbil/core/mop~MOP-5[:0:]#:t|)
+                   (%#define-syntax :class |gerbil/core/mop~MOP-5[:0:]#:class|)
                    (%#define-syntax
                     :object
                     |gerbil/core/mop~MOP-5[:0:]#:object|)

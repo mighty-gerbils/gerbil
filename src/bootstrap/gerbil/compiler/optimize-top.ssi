@@ -33,6 +33,24 @@ namespace: gxc
           apply-collect-top-level-type-info
           gxc#apply-collect-top-level-type-info)
          (%#define-runtime
+          ::collect-top-level-declarations::t
+          gxc#::collect-top-level-declarations::t)
+         (%#define-runtime
+          ::collect-top-level-declarations?
+          gxc#::collect-top-level-declarations?)
+         (%#define-runtime
+          make-::collect-top-level-declarations
+          gxc#make-::collect-top-level-declarations)
+         (%#define-syntax
+          ::collect-top-level-declarations
+          |gxc[:0:]#::collect-top-level-declarations|)
+         (%#define-runtime
+          ::collect-top-level-declarations-bind-methods!
+          gxc#::collect-top-level-declarations-bind-methods!)
+         (%#define-runtime
+          apply-collect-top-level-declarations
+          gxc#apply-collect-top-level-declarations)
+         (%#define-runtime
           ::basic-expression-top-level-type::t
           gxc#::basic-expression-top-level-type::t)
          (%#define-runtime
@@ -87,18 +105,41 @@ namespace: gxc
           gxc#::lift-top-lambdas-bind-methods!)
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
          (%#define-runtime
+          ::extract-lambda-signature::t
+          gxc#::extract-lambda-signature::t)
+         (%#define-runtime
+          ::extract-lambda-signature?
+          gxc#::extract-lambda-signature?)
+         (%#define-runtime
+          make-::extract-lambda-signature
+          gxc#make-::extract-lambda-signature)
+         (%#define-syntax
+          ::extract-lambda-signature
+          |gxc[:0:]#::extract-lambda-signature|)
+         (%#define-runtime
+          ::extract-lambda-signature-bind-methods!
+          gxc#::extract-lambda-signature-bind-methods!)
+         (%#define-runtime
+          apply-extract-lambda-signature
+          gxc#apply-extract-lambda-signature)
+         (%#define-runtime
           collect-top-level-type-define-values%
           gxc#collect-top-level-type-define-values%)
+         (%#define-runtime
+          collect-top-level-decl-begin-annotation%
+          gxc#collect-top-level-decl-begin-annotation%)
+         (%#define-runtime eval-in-ssxi-context gxc#eval-in-ssxi-context)
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
          (%#define-runtime
+          collect-type-begin-annotation%
+          gxc#collect-type-begin-annotation%)
+         (%#define-runtime
           collect-type-let-values%
           gxc#collect-type-let-values%)
          (%#define-runtime collect-type-call% gxc#collect-type-call%)
-         (%#define-runtime
-          current-compile-type-closure
-          gxc#current-compile-type-closure)
+         (%#define-runtime collect-type-setq% gxc#collect-type-setq%)
          (%#define-runtime
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
@@ -111,6 +152,9 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-begin-annotation%
           gxc#basic-expression-type-begin-annotation%)
+         (%#define-runtime
+          basic-expression-type-annotation-typedecl
+          gxc#basic-expression-type-annotation-typedecl)
          (%#define-runtime
           basic-expression-type-annotation-mop.class
           gxc#basic-expression-type-annotation-mop.class)
@@ -130,31 +174,49 @@ namespace: gxc
           basic-expression-type-annotation-mop.mutator
           gxc#basic-expression-type-annotation-mop.mutator)
          (%#define-runtime
+          basic-expression-type-annotation-interface
+          gxc#basic-expression-type-annotation-interface)
+         (%#define-runtime
+          basic-expression-type-annotation-predicate
+          gxc#basic-expression-type-annotation-predicate)
+         (%#define-runtime
           basic-expression-type-lambda%
           gxc#basic-expression-type-lambda%)
          (%#define-runtime
           basic-expression-type-case-lambda%
           gxc#basic-expression-type-case-lambda%)
          (%#define-runtime
-          basic-expression-type-let-values%
-          gxc#basic-expression-type-let-values%)
-         (%#define-runtime
-          basic-expression-type-builtin
-          gxc#basic-expression-type-builtin)
+          basic-expression-type-special
+          gxc#basic-expression-type-special)
          (%#define-syntax
-          defbasic-expression-type-builtin
-          |gxc[:0:]#defbasic-expression-type-builtin|)
+          defbasic-expression-type-special
+          |gxc[:0:]#defbasic-expression-type-special|)
          (%#define-runtime
           basic-expression-type-call%
           gxc#basic-expression-type-call%)
          (%#define-runtime
+          basic-expression-type-special-cast
+          gxc#basic-expression-type-special-cast)
+         (%#define-runtime
           basic-expression-type-ref%
           gxc#basic-expression-type-ref%)
+         (%#define-runtime
+          basic-expression-type-if%
+          gxc#basic-expression-type-if%)
+         (%#define-runtime
+          basic-expression-type-quote%
+          gxc#basic-expression-type-quote%)
          (%#define-runtime dispatch-lambda-form? gxc#dispatch-lambda-form?)
          (%#define-runtime
           dispatch-lambda-form-delegate
           gxc#dispatch-lambda-form-delegate)
          (%#define-runtime lambda-form-arity gxc#lambda-form-arity)
+         (%#define-runtime
+          lambda-form-infer-signature
+          gxc#lambda-form-infer-signature)
+         (%#define-runtime
+          extract-lambda-signature-begin-annotation%
+          gxc#extract-lambda-signature-begin-annotation%)
          (%#define-runtime lambda-expr? gxc#lambda-expr?)
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)

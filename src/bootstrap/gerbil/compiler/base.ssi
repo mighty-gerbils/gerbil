@@ -72,5 +72,6 @@ namespace: gxc
          (%#define-runtime
           module-path-reserved-chars
           gxc#module-path-reserved-chars)
-         (%#define-runtime module-id->path-string gxc#module-id->path-string))
+         (%#define-runtime module-id->path-string gxc#module-id->path-string)
+         (%#define-runtime map* gxc#map*))
 (%#call (%#ref load-module) (%#quote "gerbil/compiler/base~0"))

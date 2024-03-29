@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type
+  (declare-class
    __syntax::t
    (@class gerbil/runtime/eval#__syntax::t
-           (object::t)
+           ()
            (object::t t::t)
            (e id)
            (e id)
@@ -15,6 +15,7 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type __syntax::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type __syntax? (@predicate __syntax::t))
   (declare-type make-__syntax (@constructor __syntax::t))
   (declare-type __syntax-e (@accessor __syntax::t e #t))
@@ -25,10 +26,10 @@ package: gerbil/runtime
   (declare-type &__syntax-id (@accessor __syntax::t id #f))
   (declare-type &__syntax-e-set! (@mutator __syntax::t e #f))
   (declare-type &__syntax-id-set! (@mutator __syntax::t id #f))
-  (declare-type
+  (declare-class
    __core-form::t
    (@class gerbil/runtime/eval#__core-form::t
-           (__syntax::t object::t)
+           (__syntax::t)
            (__syntax::t object::t t::t)
            ()
            (e id)
@@ -38,6 +39,7 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type __core-form::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type __core-form? (@predicate __core-form::t))
   (declare-type make-__core-form (@constructor __core-form::t))
   (declare-type __core-form-e (@accessor __core-form::t e #t))
@@ -48,10 +50,10 @@ package: gerbil/runtime
   (declare-type &__core-form-id (@accessor __core-form::t id #f))
   (declare-type &__core-form-e-set! (@mutator __core-form::t e #f))
   (declare-type &__core-form-id-set! (@mutator __core-form::t id #f))
-  (declare-type
+  (declare-class
    __core-expression::t
    (@class gerbil/runtime/eval#__core-expression::t
-           (__core-form::t object::t)
+           (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
@@ -61,6 +63,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __core-expression::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type __core-expression? (@predicate __core-expression::t))
   (declare-type make-__core-expression (@constructor __core-expression::t))
   (declare-type __core-expression-e (@accessor __core-expression::t e #t))
@@ -75,10 +80,10 @@ package: gerbil/runtime
   (declare-type
    &__core-expression-id-set!
    (@mutator __core-expression::t id #f))
-  (declare-type
+  (declare-class
    __core-special-form::t
    (@class gerbil/runtime/eval#__core-special-form::t
-           (__core-form::t object::t)
+           (__core-form::t)
            (__core-form::t __syntax::t object::t t::t)
            ()
            (e id)
@@ -88,6 +93,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   __core-special-form::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type __core-special-form? (@predicate __core-special-form::t))
   (declare-type make-__core-special-form (@constructor __core-special-form::t))
   (declare-type __core-special-form-e (@accessor __core-special-form::t e #t))

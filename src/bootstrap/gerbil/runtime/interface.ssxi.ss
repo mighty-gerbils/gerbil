@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/runtime
 
 (begin
-  (declare-type
+  (declare-class
    CastError::t
    (@class gerbil/runtime/interface#CastError::t
-           (Error::t object::t)
+           (Error::t)
            (Error::t StackTrace::t Exception::t object::t t::t)
            ()
            (continuation message irritants where)
@@ -15,6 +15,7 @@ package: gerbil/runtime
            #f
            #f
            ((:init! . CastError:::init!))))
+  (declare-type CastError::t (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type CastError? (@predicate CastError::t))
   (declare-type make-CastError (@constructor CastError::t))
   (declare-type CastError-message (@accessor CastError::t message #t))
@@ -44,10 +45,10 @@ package: gerbil/runtime
   (declare-type CastError:::init! (@lambda (2) #f))
   (declare-type raise-cast-error (@lambda (2) #f))
   (declare-type interface-cast-error? (@predicate CastError::t))
-  (declare-type
+  (declare-class
    interface-instance::t
    (@class gerbil#interface-instance::t
-           (object::t)
+           ()
            (object::t t::t)
            (__object)
            (__object)
@@ -57,6 +58,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   interface-instance::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type interface-instance? (@predicate interface-instance::t))
   (declare-type
    interface-instance-object
@@ -70,10 +74,10 @@ package: gerbil/runtime
   (declare-type
    &interface-instance-object-set!
    (@mutator interface-instance::t __object #f))
-  (declare-type
+  (declare-class
    interface-descriptor::t
    (@class gerbil/runtime/interface#interface-descriptor::t
-           (object::t)
+           ()
            (object::t t::t)
            (type methods)
            (type methods)
@@ -83,6 +87,9 @@ package: gerbil/runtime
            #f
            #f
            #f))
+  (declare-type
+   interface-descriptor::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type interface-descriptor? (@predicate interface-descriptor::t))
   (declare-type
    make-interface-descriptor
@@ -128,7 +135,18 @@ package: gerbil/runtime
   (declare-type prototype-table-update! (@lambda 4 #f))
   (declare-type __prototype-table-update! (@lambda 4 #f))
   (declare-type prototype-trable-delete! (@lambda 2 #f))
-  (declare-type interface-subclass? (@lambda 1 #f))
+  (declare-type
+   __interface-prototypes-mx
+   (@class vector (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+  (declare-type
+   __interface-prototypes-key
+   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
+  (declare-type
+   interface-subclass?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type create-prototype (@lambda 3 #f))
   (declare-type try-create-prototype (@lambda 3 #f))
   (declare-type cast (@lambda 2 #f))

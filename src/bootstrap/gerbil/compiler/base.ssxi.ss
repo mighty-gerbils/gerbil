@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
 (begin
-  (declare-type
+  (declare-class
    gxc#symbol-table::t
    (@class gxc#symbol-table::t
-           (object::t)
+           ()
            (object::t t::t)
            (gensyms bindings)
            (gensyms bindings)
@@ -15,6 +15,9 @@ package: gerbil/compiler
            #f
            #f
            ((:init! . gxc#symbol-table:::init!))))
+  (declare-type
+   gxc#symbol-table::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gxc#symbol-table? (@predicate gxc#symbol-table::t))
   (declare-type gxc#make-symbol-table (@constructor gxc#symbol-table::t))
   (declare-type
@@ -41,7 +44,21 @@ package: gerbil/compiler
   (declare-type
    gxc#&symbol-table-bindings-set!
    (@mutator gxc#symbol-table::t bindings #f))
-  (declare-type gxc#symbol-table:::init! (@lambda 1 #f))
+  (declare-type
+   gxc#symbol-table:::init!
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gxc#raise-compile-error (@lambda (2) #f))
-  (declare-type gxc#verbose (@lambda (0) #f))
-  (declare-type gxc#module-id->path-string (@lambda 1 #f)))
+  (declare-type
+   gxc#verbose
+   (@lambda (0)
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gxc#module-path-reserved-chars
+   (@class string (sequence::t) (sequence::t t::t) () () #f #f #f #f #f #f))
+  (declare-type gxc#module-id->path-string (@lambda 1 #f))
+  (declare-type gxc#map* (@lambda 2 #f)))

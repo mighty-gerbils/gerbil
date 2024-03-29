@@ -2,10 +2,10 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
-  (declare-type
+  (declare-class
    gx#syntax-pattern::t
    (@class gx#syntax-pattern::t
-           (gx#expander::t object::t)
+           (gx#expander::t)
            (gx#expander::t object::t t::t)
            (id depth)
            (e id depth)
@@ -15,6 +15,9 @@ package: gerbil/expander
            #f
            #f
            ((apply-macro-expander . gx#syntax-pattern::apply-macro-expander))))
+  (declare-type
+   gx#syntax-pattern::t
+   (optimizer-resolve-class 'typedecl 'class::t))
   (declare-type gx#syntax-pattern? (@predicate gx#syntax-pattern::t))
   (declare-type gx#make-syntax-pattern (@constructor gx#syntax-pattern::t))
   (declare-type gx#syntax-pattern-id (@accessor gx#syntax-pattern::t id #t))
@@ -54,6 +57,11 @@ package: gerbil/expander
     (2 gx#macro-expand-syntax-case__1)
     (3 gx#macro-expand-syntax-case__2)
     (4 gx#macro-expand-syntax-case__%)))
-  (declare-type gx#syntax-local-pattern? (@lambda 1 #f))
+  (declare-type
+   gx#syntax-local-pattern?
+   (@lambda 1
+            #f
+            signature:
+            (return: boolean::t effect: #f arguments: #f unchecked: #f)))
   (declare-type gx#syntax-check-splice-targets (@lambda (1) #f))
   (declare-type gx#syntax-split-splice (@lambda 2 #f)))

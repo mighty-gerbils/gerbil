@@ -7,8 +7,10 @@ namespace: gxc
           :gerbil/expander
           :gerbil/compiler/base
           :gerbil/compiler/method
+          :gerbil/compiler/compile
           :gerbil/compiler/optimize-base
-          :gerbil/compiler/optimize-xform)
+          :gerbil/compiler/optimize-xform
+          :gerbil/compiler/optimize-top)
          (%#export #t)
          (%#define-runtime ::optimize-call::t gxc#::optimize-call::t)
          (%#define-runtime ::optimize-call? gxc#::optimize-call?)
@@ -23,11 +25,28 @@ namespace: gxc
          (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
          (%#define-runtime optimize-call% gxc#optimize-call%)
          (%#begin (%#define-runtime
+                   !procedure::optimize-call
+                   gxc#!procedure::optimize-call)
+                  (%#define-runtime
+                   !procedure::optimize-call::specialize
+                   gxc#!procedure::optimize-call::specialize))
+         (%#define-runtime
+          !procedure::check-arguments
+          gxc#!procedure::check-arguments)
+         (%#define-runtime
+          !primitive-predicate::optimize-call
+          gxc#!primitive-predicate::optimize-call)
+         (%#begin (%#define-runtime
                    !predicate::optimize-call
                    gxc#!predicate::optimize-call)
                   (%#define-runtime
                    !predicate::optimize-call::specialize
                    gxc#!predicate::optimize-call::specialize))
+         (%#define-runtime
+          expression-no-side-effects?
+          gxc#expression-no-side-effects?)
+         (%#define-runtime expression-type? gxc#expression-type?)
+         (%#define-runtime check-expression-type! gxc#check-expression-type!)
          (%#begin (%#define-runtime
                    !constructor::optimize-call
                    gxc#!constructor::optimize-call)

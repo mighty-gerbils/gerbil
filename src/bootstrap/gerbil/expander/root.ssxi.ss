@@ -2,6 +2,12 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
+  (declare-type
+   gx#*core-syntax-expanders*
+   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
+  (declare-type
+   gx#*core-macro-expanders*
+   (@class pair (list::t) (list::t t::t) () () #f #f #f #f #f #f))
   (declare-type gx#root-context:::init!__% (@lambda 2 #f))
   (declare-type gx#root-context:::init!__0 (@lambda 1 #f))
   (declare-type
@@ -9,12 +15,35 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#root-context:::init!__0)
     (2 gx#root-context:::init!__%)))
-  (declare-type gx#root-context:::init!::specialize (@lambda 2 #f))
-  (declare-type gx#top-context:::init!__% (@lambda 2 #f))
-  (declare-type gx#top-context:::init!__0 (@lambda 1 #f))
+  (declare-type
+   gx#root-context:::init!::specialize
+   (@lambda 2
+            #f
+            signature:
+            (return: procedure::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#top-context:::init!__%
+   (@lambda 2
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
+  (declare-type
+   gx#top-context:::init!__0
+   (@lambda 1
+            #f
+            signature:
+            (return: t::t effect: #f arguments: #f unchecked: #f)))
   (declare-type
    gx#top-context:::init!
-   (@case-lambda (1 gx#top-context:::init!__0) (2 gx#top-context:::init!__%)))
+   (@case-lambda
+    (1
+     gx#top-context:::init!__0
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))
+    (2
+     gx#top-context:::init!__%
+     signature:
+     (return: t::t effect: #f arguments: #f unchecked: #f))))
   (declare-type
    gx#expander-context::bind-core-syntax-expanders!__%
    (@lambda 2 #f))
