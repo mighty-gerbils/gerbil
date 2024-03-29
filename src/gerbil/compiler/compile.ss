@@ -513,8 +513,11 @@ namespace: gxc
     ((_ (ann param ...) expr)
      (and (identifier? #'ann) ; extended optimizer annotation?
           (not (memq (stx-e #'ann) gambit-annotations)))
-     ;; TODO process appropriate annotations
-     (compile-e self #'expr))
+     (if (memq (stx-e #'ann) '(@inline))
+       ;; optimizer declaration, skip
+       '(begin)
+       ;; other annotations
+       (compile-e self #'expr)))
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
        (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
