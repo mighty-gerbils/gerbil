@@ -264,13 +264,18 @@ The easy way.
 
   fetch.type          git
   git.url             https://github.com/mighty-gerbils/gerbil.git
-  git.branch          v0.18.1
+  # git.branch          v0.18.1
+  git.branch          c7ecd93337b068fc24d06b67bf109d2e665d6e5d
 
   depends_lib         port:openssl3 \
                       port:zlib
 
   depends_build       port:autoconf
 
-  configure.args      --enable-march=
+  configure.args      --enable-march= --enable-dist
+
+  compiler.whitelist macports-gcc-13
+
+  build.cmd "export GERBIL_GCC='${configure.cc}'; make"
                       
 #+end_src

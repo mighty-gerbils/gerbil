@@ -56,10 +56,14 @@ link_version() {
 }
 
 link_dist () {
-    local dist_bin="${1}/bin"
-    local gerbil_bin="${2}/bin"
+    local prefix="${1}"
+    local gerbil="${2}"
+    local rel="${gerbil#$prefix}"
+    local dist_bin="${prefix}/bin"
+    local gerbil_bin="..${rel}/bin"
+    
     echo; echo "Making executable links"; echo;
-    (cd "${dist_bin}" && ln -sfv ${gerbil_bin}/gx* "${gerbil_bin}/gerbil" ${dist_bin}) || die
+    (cd "${dist_bin}" && ln -sfv ${gerbil_bin}/gx* "${gerbil_bin}/gerbil" .) || die
 }
 
 
@@ -78,7 +82,7 @@ if [ "${GERBIL_BASE}/${GERBIL_VERSION}" = "${GERBIL_PREFIX}" ]; then
 fi
 
 if [ "$GERBIL_DIST" = "yes" ]; then
-    link_dist "${GERBIL_FHS}" "${GERBIL_PREFIX}"
+    link_dist "$${DESTDIR}{GERBIL_FHS}" "${DESTDIR}${GERBIL_PREFIX}"
 fi
 
 
