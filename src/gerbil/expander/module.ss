@@ -13,27 +13,20 @@ namespace: gx
 (def __module-pkg-cache (make-hash-table))
 
 (defstruct module-import (source name phi weak?)
-  id: gx#module-import::t
-  final: #t)
+  final: #t print: #t)
 (defstruct module-export (context key phi name weak?)
-  id: gx#module-export::t
-  final: #t)
+  final: #t transparent: #t)
 
 (defstruct import-set (source phi imports)
-  id: gx#import-set::t
-  final: #t)
+  final: #t print: (source phi))
 (defstruct export-set (source phi exports)
-  id: gx#export-set::t
-  final: #t)
+  final: #t print: (source phi))
 
 (defclass (import-expander user-expander) ()
-  id: gx#import-expander::t
   constructor: :init!)
 (defclass (export-expander user-expander) ()
-  id: gx#export-expander::t
   constructor: :init!)
 (defclass (import-export-expander import-expander export-expander) ()
-  id: gx#import-export-expander::t
   constructor: :init!)
 
 (def current-import-expander-phi
@@ -1003,7 +996,7 @@ namespace: gx
            (foldl (lambda (in r) (cons (import->export in) r))
                   r imports)
            r))
-        (else r)))
+      (else r)))
 
     (cons (make-export-set src current-phi
             (foldl fold-e [] (&module-context-import current-ctx)))

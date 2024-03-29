@@ -8,8 +8,7 @@ namespace: gx
 (import "common" "stx" "core" "top")
 (export #t)
 
-(defstruct (syntax-pattern expander) (id depth)
-  id: gx#syntax-pattern::t)
+(defstruct (syntax-pattern expander) (id depth))
 
 (defmethod {apply-macro-expander syntax-pattern}
   (lambda (self stx)

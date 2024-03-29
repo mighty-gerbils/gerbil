@@ -11,7 +11,7 @@ namespace: gxc
         "base" "optimize-base")
 (export #t ast-rules ast-case
         syntax with-syntax with-syntax*
-        (import: "../core" "../core/expander" "../expander"))
+        (import: "../core" "../core/expander" "../expander" "optimize-base"))
 
 (defrules declare-type ()
   ((_ symbol type-expr)

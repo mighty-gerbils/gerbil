@@ -27,9 +27,10 @@ namespace: gxc
 (def (optimize! ctx)
   (parameterize ((current-compile-mutators (make-hash-table-eq))
                  (current-compile-local-type (make-hash-table-eq)))
-    (optimizer-load-ssxi-deps ctx)
     ;; load builtins
     (optimizer-load-builtin-ssxi ctx)
+    ;; load deps
+    (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
                (expander-context-id ctx)
@@ -49,7 +50,8 @@ namespace: gxc
   (let* ((modid (expander-context-id ctx))
          (modid-str (symbol->string modid)))
     (for-each load-it!
-              '(gerbil/runtime/gambit
+              '(gerbil/builtin
+                gerbil/runtime/gambit
                 gerbil/runtime/util
                 gerbil/runtime/table
                 gerbil/runtime/control
@@ -67,7 +69,7 @@ namespace: gxc
                 gerbil/runtime/loader
                 gerbil/runtime/init
                 gerbil/runtime
-                gerbil/builtin))))
+                gerbil/builtin-inline-rules))))
 
 (def (optimizer-load-ssxi-deps ctx)
   (def deps
@@ -128,8 +130,8 @@ namespace: gxc
   ;; artefact; else check and :id.ssxi library path
   ;; catch error and display exception in verbose mode
   (def (catch-e exn)
-    (displayln "*** WARNING Failed to load ssxi module for " id)
     (display-exception exn)
+    (displayln "*** WARNING Failed to load ssxi module for " id)
     #f)
 
   (def (import-e)
@@ -196,7 +198,7 @@ namespace: gxc
              (verbose "generate class decl" sym)
              ['begin
                ['declare-class sym {typedecl klass}]
-               ['declare-type sym 'class::t]]))
+               ['declare-type sym '(optimizer-resolve-class 'typedecl 'class::t)]]))
        ((optimizer-lookup-type sym)
         => (lambda (type)
              (verbose "generate typedecl " sym)

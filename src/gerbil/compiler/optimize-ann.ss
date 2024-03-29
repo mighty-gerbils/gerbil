@@ -298,7 +298,7 @@ namespace: gxc
         (else
          (match (optimizer-resolve-type sym)
            ((!predicate t)
-            (optimizer-resolve-type t))
+            (optimizer-resolve-class `(predicate-type ,id) t))
            (else #f))))))
 
   (def (fold-assert-type expr val env)
@@ -582,15 +582,13 @@ namespace: gxc
                 ;; if it's an assertion for a subtype of ours
                 (and (!class? t)
                      (!class? xt)
-                     (memq t (map (cut optimizer-resolve-class xt <>)
-                                  (!class-precedence-list xt)))))
+                     (!class-subclass? t xt)))
                (else
                 ;; it's a negative type assertion; we cannot satisfy it
                 ;; if it's an assertion for a supertype of ours
                 (if (and (!class? t)
                          (!class? xt)
-                         (memq xt (map (cut optimizer-resolve-class t <>)
-                                       (!class-precedence-list t))))
+                         (!class-subclass? t xt))
                     #f
                     (lp rest))))
               (lp rest)))

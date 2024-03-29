@@ -518,8 +518,8 @@ namespace: gxc
     ((_ ann expr)
      (let (decls (map syntax->datum #'ann))
        (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
-         ['begin ['declare decls ...]
-                 (compile-e self #'expr)])))))
+         ['let [] ['declare decls ...]
+               (compile-e self #'expr)])))))
 
 (def (generate-runtime-declare% self stx)
   (ast-case stx ()
@@ -845,7 +845,7 @@ namespace: gxc
         (_ (let* ((body (if compiled-body? body (compile-e self body)))
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
-             ['letrec (reverse bind) body])))))
+              ['letrec (reverse bind) body])))))
 
   (def (generate-values-check check body)
     ['begin (reverse check) ... body])
@@ -974,24 +974,25 @@ namespace: gxc
                   (body #'(body ...))
                   (init (map list args rands)))
              ['let id init body ...])
-           (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+           (raise-compile-error "Illegal loop application; arity mismatch"
+                                stx #'(arg ...) rands)))
         (_ (cons rator rands)))))
 
   (ast-case stx ()
-    ((_ rator . rands)
+    ((_ rator rand ...)
      ;; see gambit#422
-     (with-inline-unsafe-primitives (compile-call #'rator #'rands)
+     (with-inline-unsafe-primitives (compile-call #'rator #'(rand ...))
        (ast-case #'rator (%#ref)
          ((%#ref _)
           (let (f (compile-e self #'rator))
             (if (and (string-prefix? "##" (symbol->string f))
                      (not (memq f checked-primitives)))
-              (with-primitive-bind+args (bind args (reverse #'rands))
+              (with-primitive-bind+args (bind args (reverse #'(rand ...)))
                 ['let [bind ...]
                   '(declare (not safe))
                   (cons f args)])
-              (compile-call #'rator #'rands))))
-         (_ (compile-call #'rator #'rands)))))))
+              (compile-call #'rator #'(rand ...)))))
+         (_ (compile-call #'rator #'(rand ...))))))))
 
 (def (generate-runtime-call-unchecked% self stx)
   (ast-case stx (%#ref)
@@ -1559,8 +1560,7 @@ namespace: gxc
          (id
           (identifier? #'id)
           (generate* (foldl cons [(generate1 #'id)] r)))
-         (_
-          (generate* (reverse r))))))))
+         (_ (generate* (reverse r))))))))
 
 (def (generate-meta-define-syntax% self stx)
   (ast-case stx ()

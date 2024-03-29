@@ -86,7 +86,8 @@
 ;; initialize optimizer and preload builtin.ssxi so that we have visibility
 (unless (getenv "GERBIL_BUILD_NOOPT" #f)
   (gxc#optimizer-info-init!)
-  (gx#import-module "gerbil/builtin.ssxi.ss" #t))
+  (gx#import-module "gerbil/builtin.ssxi.ss" #t)
+  (gx#import-module "gerbil/builtin-inline-rules.ssxi.ss" #t))
 ;; compile runtime
 (compile-group gerbil-modules-runtime)
 ;; compile expander first so that prelude macros have expander visibility

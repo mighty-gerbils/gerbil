@@ -5,7 +5,7 @@
 prelude: :<root>
 package: gerbil/core
 
-(import "runtime" (phi: +1 "runtime") (phi: +2 "runtime"))
+(import "runtime" (phi: +1 "runtime"))
 (export #t (import: ExpanderRuntime SyntaxCase SyntaxSugar))
 
 (module ExpanderRuntime

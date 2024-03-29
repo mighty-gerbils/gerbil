@@ -1022,7 +1022,8 @@ namespace: #f
    (else
     (##default-wr we obj))))
 
-(##wr-set! write-object)
+;; TODO uncomment
+;; (##wr-set! write-object)
 
 ;; shadow classes: these are system class automagically created for builtin types
 ;; to track their methods

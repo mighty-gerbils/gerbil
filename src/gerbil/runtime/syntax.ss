@@ -88,7 +88,7 @@ namespace: #f
       (cond
        ((location)
         => (lambda (where)
-             (##display-locat where #t (current-output-port))))
+             (##display-locat where #t port)))
        (else (display "?")))
       (newline)
       (display        "--- Syntax Error")
@@ -108,7 +108,7 @@ namespace: #f
               ((__AST-source detail)
                => (lambda (loc)
                     (display " at ")
-                    (##display-locat loc #t (current-output-port)))))
+                    (##display-locat loc #t port))))
              (newline))
            rest))
         (else (void)))

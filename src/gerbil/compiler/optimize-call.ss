@@ -23,15 +23,18 @@ namespace: gxc
 ;;; apply-optimize-call
 (def (optimize-call% self stx)
   (ast-case stx (%#ref)
-    ((_ (%#ref rator) . rands)
+    ((_ (%#ref rator) rand ...)
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-resolve-type rator-id)))
        (cond
+        ((or (not rator-type)
+             (eq? (!type-id rator-type) 't))
+         (xform-call% self stx))
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-         (let (optimized {optimize-call rator-type self stx #'rands})
+         (let (optimized {optimize-call rator-type self stx #'(rand ...)})
            (ast-case optimized (%#call %#ref)
-             ((%#call (%#ref optimized-rator) . args)
+             ((%#call (%#ref optimized-rator) arg ...)
               (let (optimized-rator-id (identifier-symbol #'optimized-rator))
                 (if (or (and (!primitive? rator-type)
                              (eq? optimized-rator-id rator-id))
@@ -40,7 +43,7 @@ namespace: gxc
                   optimized
                   ;; %#call-unchecked to known procedure
                   (xform-wrap-source
-                   (cons* '%#call-unchecked #'(%#ref optimized-rator) #'args)
+                   (cons* '%#call-unchecked #'(%#ref optimized-rator) #'(arg ...))
                    stx))))
              (_ optimized))))
         ((and (!class? rator-type) (eq? (&!type-id rator-type) 'procedure))
@@ -48,13 +51,11 @@ namespace: gxc
          (xform-wrap-source
           (cons* '%#call-unchecked
                  #'(%#ref rator)
-                 (map (cut compile-e self <>) #'rands))
+                 (map (cut compile-e self <>) #'(rand ...)))
           stx))
-        ((or (not rator-type) (eq? (!type-id rator-type) 't))
-         (xform-call% self stx))
         (else
          (raise-compile-error "illegal application; not a procedure" stx rator-type)))))
-    ((_ rator . rands)
+    ((_ rator rand ...)
      (let (rator-type (apply-basic-expression-type #'rator))
        (if (and rator-type
                 (eq? (!type-id rator-type) 'procedure)
@@ -63,7 +64,7 @@ namespace: gxc
            (xform-wrap-source
             (cons* '%#call-unchecked
                    (compile-e self #'rator)
-                   (map (cut compile-e self <>) #'rands))
+                   (map (cut compile-e self <>) #'(rand ...)))
             stx)
          (xform-call% self stx))))))
 
@@ -75,7 +76,7 @@ namespace: gxc
          ((!signature-unchecked signature)
           => (lambda (unchecked)
                (xform-wrap-source
-                ['%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args) ...]
+                (cons* '%#call ['%#ref unchecked] (map (cut compile-e ctx <>) args))
                 stx)))
          (else
           (xform-call% ctx stx))))
@@ -108,12 +109,14 @@ namespace: gxc
       ((expr)
        (let* ((klass (optimizer-resolve-class stx (&!type-id self)))
               (object (compile-e ctx #'expr))
-              (instance? (expression-type? #'expr klass)))
+              (instance? (or (expression-type? object klass)
+                             (expression-type? #'expr klass))))
          (if instance?
            (xform-wrap-source
-            (if (expression-no-side-effects? #'expr)
+            (if (or (expression-no-side-effects? object)
+                    (expression-no-side-effects? #'expr))
               ['%#quote #t]
-              ['%#begin #'expr #t])
+              ['%#begin object #t])
             stx)
            (xform-call% ctx stx)))))))
 
@@ -123,13 +126,15 @@ namespace: gxc
       ((expr)
        (let* ((klass (optimizer-resolve-class stx (!type-id self)))
               (object (compile-e ctx #'expr))
-              (instance? (expression-type? #'expr klass)))
+              (instance? (or (expression-type? object klass)
+                             (expression-type? #'expr klass))))
          (cond
           (instance?
            (xform-wrap-source
-            (if (expression-no-side-effects? #'expr)
+            (if (or (expression-no-side-effects? object)
+                    (expression-no-side-effects? #'expr))
               ['%#quote #t]
-              ['%#begin #'expr #t])
+              ['%#begin object #t])
             stx))
           ((!class-final? klass)
            (xform-wrap-source
@@ -145,7 +150,8 @@ namespace: gxc
             stx))))))))
 
 (def (expression-no-side-effects? stx)
-  (ast-case stx (%#quote %#ref %#call)
+  ;; TODO this should be a compile method for more accuracy
+  (ast-case stx (%#quote %#ref %#call %#set!)
     ((%#quote _) #t)
     ((%#ref _) #t)
     ((%#call (%#ref rator) rand ...)
@@ -159,7 +165,7 @@ namespace: gxc
 
 (def (expression-type? stx klass)
   (let (expr-type (apply-basic-expression-type stx))
-    (!type-subclass? expr-type klass)))
+    (and expr-type (!type-subclass? expr-type klass))))
 
 (def (check-expression-type! stx expr type)
   (cond
@@ -198,7 +204,6 @@ namespace: gxc
        (else
         ;; not happy; type is incompatible
         (raise-compile-error "signature type mismatch" stx expr expr-type type)))))))
-
 
 (defmethod {optimize-call !constructor}
   (lambda (self ctx stx args)
@@ -555,7 +560,7 @@ namespace: gxc
            (lp #'rest pargs (cons (cons kw #'val) kwargs)))))
       ((val . rest)
        (lp #'rest (cons #'val pargs) kwargs))
-      (()
+      (_
        (values (reverse pargs) (reverse kwargs))))))
 
 (defmethod {optimize-call !kw-lambda-primary}
