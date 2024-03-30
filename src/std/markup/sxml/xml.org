@@ -1,0 +1,93 @@
+#+TITLE: XML: eXtensible Markup Language
+#+EXPORT_FILE_NAME: ../../../../doc/reference/std/markup/sxml/xml.md
+#+OPTIONS: toc:nil
+
+* Contents                                                         :noexport:
+:PROPERTIES:
+:TOC:      :include siblings :depth 3 :ignore (this)
+:END:
+:CONTENTS:
+- [[#xml-extensible-markup-language][XML: eXtensible Markup Language]]
+  - [[#parsing][Parsing]]
+    - [[#read-xml][read-xml]]
+  - [[#printing][Printing]]
+    - [[#write-xml][write-xml]]
+    - [[#print-sxml-xml][print-sxml->xml]]
+:END:
+
+* XML: eXtensible Markup Language
+:PROPERTIES:
+:CUSTOM_ID: xml-extensible-markup-language
+:END:
+
+The module provides XML parsing and printing procedures. It also
+exports the [[file:README.org][SXML]] procedures.
+
+::: tip To use the bindings from this module:
+
+#+begin_src scheme
+(import :std/markup/xml)
+#+end_src
+
+:::
+
+** Parsing
+:PROPERTIES:
+:CUSTOM_ID: parsing
+:END:
+*** read-xml
+:PROPERTIES:
+:CUSTOM_ID: read-xml
+:END:
+#+begin_src scheme
+(read-xml source [namespaces: ()]) -> sxml | error
+
+  source     := port | string | u8vector
+  namespaces := alist or hash-table mapping urls to namespace prefixes
+#+end_src
+
+Reads and parses XML from /source/ and returns SXML result. /namespaces/
+is optional alist or a hash table of mapping uri (string) -> namespace
+(string) same interface as =parse-xml= so that implementations can be
+swapped. Signals an error on invalid /source/ value.
+
+::: tip Examples
+
+#+begin_src scheme
+> (import :std/markup/xml)
+> (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
+(*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
+#+end_src
+
+:::
+** Printing
+:PROPERTIES:
+:CUSTOM_ID: printing
+:END:
+*** write-xml
+:PROPERTIES:
+:CUSTOM_ID: write-xml
+:END:
+#+begin_src scheme
+(write-xml sxml [port = (current-output-port)]) -> void
+
+  sxml := SXML nodes
+  port := output port
+#+end_src
+
+Writes given /sxml/ data as XML into output /port/. Signals an error on
+invalid /port/.
+
+*** print-sxml->xml
+:PROPERTIES:
+:CUSTOM_ID: print-sxml-xml
+:END:
+#+begin_src scheme
+(print-sxml->xml sxml [port = (current-output-port)]) -> void
+
+  sxml := SXML nodes
+  port := output port
+#+end_src
+
+Write given /sxml/ into /port/ after converting it to XML. Indents the
+result to multiple lines.

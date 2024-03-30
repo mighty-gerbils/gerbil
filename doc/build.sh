@@ -16,7 +16,8 @@ weave_subtree () {
 
 
 
-
+weave ../macos/README.org
+weave ../macos/homebrew/README.org
 weave ../src/std/mime/README.org
 weave ../src/std/markup/README.org
 weave ../src/std/markup/sxml/README.org

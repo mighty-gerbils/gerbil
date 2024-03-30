@@ -588,12 +588,12 @@ namespace: #f
 
 (def (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
+    (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-ref obj off klass slot))
     (not-an-instance obj klass)))
 (def (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
-    (let (off (class-slot-offset (object-type obj) slot))
+    (let (off (class-slot-offset (##structure-type obj) slot))
       (##unchecked-structure-set! obj val off klass slot))
     (not-an-instance obj klass)))
 
@@ -631,10 +631,17 @@ namespace: #f
                (&class-type-precedence-list maybe-sub-class)))))
 
 ;;; generic object utilities
-(def object?
-  ##structure?)
-(def object-type
-  ##structure-type)
+(def (object? o)
+  (and (##structure? o)
+       (class-type? (##structure-type o))))
+
+(def (object-type o)
+  (if (##structure? o)
+    (let (klass (##structure-type o))
+      (if (class-type? klass)
+        klass
+        (error "not an object" o klass)))
+    (error "not an object" o)))
 
 (def (direct-instance? klass obj)
   (##structure-direct-instance-of? obj (##type-id klass)))
@@ -698,7 +705,7 @@ namespace: #f
       (else obj))))
 
 (def (class-instance-init! obj . args)
-  (__class-instance-init! (object-type obj) obj args))
+  (__class-instance-init! (##structure-type obj) obj args))
 
 (def (__class-instance-init! klass obj args)
   (let lp ((rest args))
@@ -736,13 +743,13 @@ namespace: #f
   (##structure-copy struct))
 
 (def (struct->list obj)
-  (if (object? obj)
+  (if (##structure? obj)
     (##vector->list obj)
     (error "not a structure" obj)))
 
 (def (class->list obj)
   (if (object? obj)
-    (let (klass (object-type obj))
+    (let (klass (##structure-type obj))
       (if (class-type? klass)
         (let (slot-vector (&class-type-slot-vector klass))
           (let loop ((index (##fx- (##vector-length slot-vector) 1))
@@ -841,7 +848,7 @@ namespace: #f
 (def (mixin-method-ref klass obj id)
   (mixin-find-method (class-type-precedence-list klass) obj id))
 
-(def (bind-method! klass id proc (rebind? #t))
+(def (bind-method! klass id proc (rebind? #f))
   (def (bind! ht)
     (if (and (not rebind?) (symbolic-table-ref ht id #f))
       (error "method already bound" class: klass method: id)
@@ -851,6 +858,8 @@ namespace: #f
 
   (unless (procedure? proc)
     (error "bad method; expected procedure" proc))
+  (unless (symbol? id)
+    (error "bad method id; expected symbol" id))
 
   (cond
    ((class-type? klass)
@@ -1014,6 +1023,10 @@ namespace: #f
 
 (def (call-next-method subklass obj id . args)
   (cond
+   ((not (class-type? subklass))
+    (error "bad class; expected class type" subklass))
+   ((not (symbol? id))
+    (error "bad method id; expected symbol" id))
    ((next-method subklass obj id)
     => (lambda (methodf) (apply methodf obj args)))
    (else
