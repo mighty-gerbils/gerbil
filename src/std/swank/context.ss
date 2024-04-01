@@ -36,7 +36,7 @@
       (filter gx#module-context?
 	      (map cdr
 		   (hash->list
-		    (gx#current-expander-module-registry)))))
+		   gx#__module-registry))))
     ...]))
 
 (def-swank (swank:list-all-package-names . _)
