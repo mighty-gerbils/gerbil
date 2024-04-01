@@ -1,0 +1,2392 @@
+;;; -*- Gerbil -*-
+;;; © vyzo
+;;; gerbil core prelude: contract and interface macros
+;;;
+prelude: :<root>
+package: gerbil/core
+
+(import "runtime"
+        "sugar"
+        "mop"
+        "match"
+        "more-sugar"
+        "module-sugar"
+        (phi: +1
+              "runtime"
+              "sugar"
+              "mop"
+              "match"
+              "more-sugar"
+              "expander"
+              "macro-object"
+              "more-syntax-sugar")
+        (phi: +2
+              "runtime"
+              "expander"))
+(export  #t ; export the submodules themselves
+         (import: TypeCast TypeReference Using ContractRules Interface TypedDefinitions)
+         (phi: +1 (import: InterfaceInfo TypeEnv ClassPrecedenceList)))
+
+(module InterfaceInfo
+  (import "expander")
+  (export #t)
+  (defclass interface-info (name
+                            interface-mixin
+                            interface-methods
+                            instance-type interface-descriptor
+                            instance-constructor instance-try-constructor
+                            instance-predicate instance-satisfies-predicate
+                            implementation-methods
+                            unchecked-implementation-methods))
+
+  (defmethod {apply-macro-expander interface-info}
+    (with-syntax ((cast (quote-syntax cast))
+                  (immediate-instance-of? (quote-syntax immediate-instance-of?)))
+      (lambda (self stx)
+        (syntax-case stx ()
+          ((_ obj)
+           (with-syntax ((klass (interface-info-instance-type self))
+                         (descriptor (interface-info-interface-descriptor self))
+                         (instance-type (interface-info-instance-type self)))
+             #'(let ($obj obj)
+                 (begin-annotation (@type instance-type)
+                   (if (immediate-instance-of? klass $obj)
+                     $obj
+                     (cast descriptor $obj))))))
+          (_ (identifier? stx)
+             (with-syntax ((descriptor (interface-info-interface-descriptor self)))
+               #'descriptor))))))
+
+  (def (interface-info-flatten-mixin info)
+    (let loop ((rest (interface-info-interface-mixin info)) (result []))
+      (match rest
+        ([id . rest]
+         (let (mixin (interface-info-interface-mixin (syntax-local-value id)))
+           (let (result
+                 (if (member id result free-identifier=?)
+                   result
+                   (cons id result)))
+             (loop (foldl cons rest mixin) result))))
+        (else result))))
+
+  (def (syntax-local-interface-info? stx (is? true))
+    (and (identifier? stx)
+         (alet (e (syntax-local-value stx false))
+           (and (interface-info? e)
+                (is? e))))))
+
+(module TypeCast
+  (import (phi: +1 InterfaceInfo))
+  (export #t)
+  ;; checked type cast
+  (defsyntax (: stx)
+    (syntax-case stx ()
+      ((_ expr type)
+       (identifier? #'type)
+       (let (meta (syntax-local-value #'type false))
+         (cond
+          ((not meta)
+           (raise-syntax-error #f "unknown type" stx #'type))
+          ((class-type-info? meta)
+           (with-syntax ((klass (!class-type-descriptor meta))
+                         (predicate (!class-type-predicate meta)))
+             #'(begin-annotation (@type klass)
+                 (let (val expr)
+                   (if (predicate val)
+                     val
+                     (error "bad cast" klass val))))))
+          ((interface-info? meta)
+           (with-syntax ((klass (interface-info-instance-type meta))
+                         (cast-it (interface-info-instance-constructor meta)))
+             #'(begin-annotation (@type klass)
+                 (cast-it expr))))
+          (else
+           (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
+
+  ;; OrFalse type assertion; #f is allowed (the null pointer, oh boy)
+  (defsyntax (:? stx)
+    (syntax-case stx ()
+      ((_ expr type)
+       (identifier? #'type)
+       (let (meta (syntax-local-value #'type false))
+         (cond
+          ((not meta)
+           (raise-syntax-error #f "unknown type" stx #'type))
+          ((class-type-info? meta)
+           (with-syntax ((klass (!class-type-descriptor meta))
+                         (predicate (!class-type-predicate meta)))
+             #'(begin-annotation (@type klass)
+                 (let (val expr)
+                   (if (or (not val) (predicate val))
+                     val
+                     (error "bad cast" klass val))))))
+          ((interface-info? meta)
+           (with-syntax ((klass (interface-info-instance-type meta))
+                         (cast-it (interface-info-instance-constructor meta)))
+             #'(begin-annotation (@type klass)
+                 (let (val expr)
+                   (and val (cast-it val))))))
+          (else
+           (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
+
+
+  ;; type assertion (unchecked cast)
+  (defsyntax (:- stx)
+    (syntax-case stx ()
+      ((_ expr type)
+       (identifier? #'type)
+       (let (meta (syntax-local-value #'type false))
+         (cond
+          ((not meta)
+           (raise-syntax-error #f "unknown type" stx  #'type))
+          ((class-type-info? meta)
+           (with-syntax ((klass (!class-type-descriptor meta)))
+             #'(begin-annotation (@type klass) expr)))
+          ((interface-info? meta)
+           (with-syntax ((klass (interface-info-instance-type meta)))
+             #'(begin-annotation (@type klass) expr)))
+          (else
+           (raise-syntax-error #f "not a class type or interface" stx #'type)))))))
+
+  ;; predicate contract check
+  (defrules :~ (:-)
+    ((_ expr predicate)
+     (let (val expr)
+       (if (predicate val)
+         val
+         (contract-violation! expr predicate val))))
+    ((_ expr predicate :- type)
+     (:- (:~ expr predicate) type)))
+
+  ;; default value
+  (defrules := ())
+
+  ;; nil checks
+  (defrules check-nil! ()
+    ((_ expr)
+     (or expr (nil-violation! expr))))
+
+  (defsyntax (contract-violation! stx)
+    (syntax-case stx ()
+      ((macro ctx contract-expr value)
+       (with-syntax ((src-ctx
+                      (cond
+                       ((or (stx-source #'ctx)
+                            (stx-source stx)
+                            (stx-source #'macro))
+                        => (lambda (locat)
+                             (call-with-output-string ""
+                               (cut ##display-locat locat #t <>))))
+                       (else
+                        (expander-context-id (core-context-top))))))
+         #'(raise-contract-violation-error
+            "contract violation"
+            context: 'src-ctx contract: 'contract-expr value: value)))))
+
+  (defsyntax (nil-violation! stx)
+    (syntax-case stx ()
+      ((macro expr)
+       (with-syntax ((src-ctx
+                      (cond
+                       ((or (stx-source #'expr)
+                            (stx-source stx)
+                            (stx-source #'macro))
+                        => (lambda (locat)
+                             (call-with-output-string ""
+                               (cut ##display-locat locat #t <>))))
+                       (else
+                        (expander-context-id (core-context-top))))))
+         #'(raise-contract-violation-error
+            "nil (#f) derefence"
+            context: 'src-ctx contract: '(check-nil! expr) value: #f))))))
+
+(module TypeReference
+  (import (phi: +1 InterfaceInfo))
+  (export #t (phi: +1 #t))
+
+  (begin-syntax
+    (defclass type-reference (identifier))
+
+    (def (type-identifier? id)
+      (and (identifier? id)
+           (alet (t (syntax-local-value id false))
+             (or (class-type-info? t)
+                 (interface-info? t)
+                 (type-reference? t)))))
+
+    (def (resolve-type stx id)
+      (let loop ((t (syntax-local-value id false)))
+        (cond
+         ((class-type-info? t) t)
+         ((interface-info? t) t)
+         ((type-reference? t)
+          (loop (syntax-local-value (type-reference-identifier t) false)))
+         ((not t)
+          (raise-syntax-error #f "unresolved type" stx id))
+         (else
+          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t)))))
+
+    (def (resolve-type->type-descriptor stx id)
+      (let (t (resolve-type stx id))
+        (cond
+         ((class-type-info? t)
+          (!class-type-descriptor t))
+         ((interface-info? t)
+          (interface-info-instance-type t))
+         (else
+          (raise-syntax-error #f "unexpected type; expected class, interface or type reference" stx id t))))))
+
+  (defrules deftype ()
+    ((_ reference-id type-id)
+     (and (identifier? #'reference-id)
+          (identifier? #'type-id))
+     (defsyntax reference-id
+       (make-type-reference identifier: (quote-syntax type-id))))))
+
+(module TypeEnv
+  (import "expander")
+  (export #t)
+  (defstruct type-env (var type checked? super)
+    final: #t)
+
+  (def (current-type-env)
+    (syntax-local-value (syntax-local-introduce '@@type) false))
+
+  (def (type-env-lookup var)
+    (let loop ((te (current-type-env)))
+      (cond
+       ((not te) #f)
+       ((free-identifier=? var (type-env-var te)) te)
+       (else (loop (type-env-super te)))))))
+
+(module Using
+  (import TypeCast TypeReference (phi: +1 InterfaceInfo TypeEnv))
+  (export #t)
+
+  (defsyntax (using stx)
+    (syntax-case stx (:~ :-)
+      ((_ (id expr ~ contract) body ...)
+       (and (identifier? #'id)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':-)
+                (free-identifier=? #'~ #':~)
+                (free-identifier=? #'~ #':?)))
+       #'(let (id expr)
+           (using (id ~ contract)
+             body ...)))
+      ((_ (id expr :~ contract :- Type) body ...)
+       (and (identifier? #'id)
+            (identifier? #'Type))
+       #'(let (id expr)
+           (using (id :~ contract)
+             (using (id :- Type)
+               body ...))))
+      ((_ (id ~ Type) body ...)
+       (and (identifier? #'id)
+            (identifier? #'Type)
+            (identifier? #'~)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':-)
+                (free-identifier=? #'~ #':?)))
+       (let (meta (syntax-local-value #'Type false))
+         (cond
+          ((not meta)
+           (raise-syntax-error #f "unknown type" stx  #'Type))
+          ((interface-info? meta)
+           #'(with-interface (id ~ Type) body ...))
+          ((class-type-info? meta)
+           #'(with-class (id ~ Type) body ...))
+          ((type-reference? meta)
+           (with-syntax ((Type (type-reference-identifier meta)))
+             #'(using (id ~ Type) body ...)))
+          (else
+           (raise-syntax-error #f "bad type; must be an interface, struct, or class with complete type information" stx #'Type meta)))))
+      ((_ (id :~ pred) body ...)
+       (identifier? #'id)
+       #'(with-contract (id :~ pred) body ...))
+      ((_ (id :~ pred :- Type) body ...)
+       (and (identifier? #'id)
+            (identifier? #'Type))
+       #'(using (id :~ pred)
+           (using (id :- Type)
+             body ...)))
+      ((_ (hd . rest) body ...)
+       #'(using hd (using rest body ...)))
+      ((_ () body ...)
+       #'(let () body ...))))
+
+  (defrules with-contract (:~)
+    ((_ (id :~ predicate-expr) body ...)
+     (identifier? #'id)
+     (if (predicate-expr id)
+       (let () body ...)
+       (contract-violation! id predicate-expr id))))
+
+  (begin-syntax
+    (def (dotted-identifier? id)
+      (and (identifier? id)
+           (alet (index (string-index (symbol->string (stx-e id)) #\.))
+             (> index 0))))
+
+    (def (split-dotted-identifier stx id)
+      (let (parts (string-split (symbol->string (stx-e id)) #\.))
+        (if (find string-empty? parts)
+          (raise-syntax-error #f "bad dotted identifier" stx id)
+          (cons (stx-identifier id (car parts))
+                (map string->symbol (cdr parts))))))
+
+    (def (get-slot-accessor stx klass-or-id slot)
+      (let* ((klass (if (identifier? klass-or-id)
+                      (resolve-type stx klass-or-id)
+                      klass-or-id))
+             (accessors (!class-type-unchecked-accessors klass)))
+        (cond
+         ((assgetq slot accessors))
+         (else
+          (raise-syntax-error #f "no accessor for slot" stx klass slot)))))
+
+    (def (get-slot-mutator stx klass-or-id slot checked?)
+      (let* ((klass (if (identifier? klass-or-id)
+                      (resolve-type stx klass-or-id)
+                      klass-or-id))
+             (mutators (if checked?
+                         (!class-type-mutators klass)
+                         (!class-type-unchecked-mutators klass))))
+        (cond
+         ((assgetq slot mutators))
+         (else
+          (raise-syntax-error #f "no mutator for slot" stx klass slot))))))
+
+  (defsyntax (with-class stx)
+    (def (expand-body klass var Type body checked?)
+      (with-syntax ((@@type (syntax-local-introduce '@@type))
+                    (Type::t (!class-type-descriptor klass))
+                    (var var)
+                    (klass klass)
+                    ((body ...) body))
+        #'(let (var (begin-annotation (@type Type::t) var))
+            (let-syntax ((@@type
+                          (make-type-env (quote-syntax var)
+                                         'klass
+                                         checked?
+                                         (current-type-env))))
+              (let () body ...)))))
+
+    (def (expand var Type body checked? maybe?)
+      (let* ((klass (syntax-local-value Type false))
+             (expr-body (expand-body klass var Type body checked?)))
+        (if checked?
+          (with-syntax ((predicate
+                         (let (instance? (!class-type-predicate klass))
+                           (if maybe?
+                             `(? (or not ,instance?))
+                             instance?)))
+                        (var var) (expr-body expr-body))
+            #'(with-contract (var :~ predicate)
+                expr-body))
+          expr-body)))
+
+    (syntax-case stx (: :? :-)
+      ((_ (var : Type) body ...)
+       (syntax-local-class-type-info? #'Type)
+       (expand #'var #'Type #'(body ...) #t #f))
+      ((_ (var :? Type) body ...)
+       (syntax-local-class-type-info? #'Type)
+       (expand #'var #'Type #'(body ...) #t #t))
+      ((_ (var :- Type) body ...)
+       (syntax-local-class-type-info? #'Type)
+       (expand #'var #'Type #'(body ...) #f #f))))
+
+  (defsyntax (with-interface stx)
+    (def (expand-body var Interface body checked?)
+      (with-syntax ((@@type (syntax-local-introduce '@@type))
+                    (Instance::t  (interface-info-instance-type Interface))
+                    (Interface Interface)
+                    (var var)
+                    (checked? checked?)
+                    ((body ...) body))
+        #'(let (var (begin-annotation (@type Instance::t) var))
+            (let-syntax ((@@type
+                          (make-type-env (quote-syntax var)
+                                         'Interface
+                                         checked?
+                                         (current-type-env))))
+              (let () body ...)))))
+
+    (def (expand var Interface body checked? maybe?)
+      (let (expr-body (expand-body var Interface body checked?))
+        (if checked?
+          (if maybe?
+            (with-syntax ((var var)
+                          (try-Interface
+                           (interface-info-instance-try-constructor
+                            (syntax-local-value Interface)))
+                          (expr-body expr-body))
+              #'(let (var (try-Interface var))
+                  expr-body))
+            (with-syntax ((var var) (Interface Interface) (expr-body expr-body))
+              #'(let (var (Interface var))
+                  expr-body)))
+          expr-body)))
+
+    (syntax-case stx (: :? :-)
+      ((_ (var : Interface) body ...)
+       (and (identifier? #'var)
+            (syntax-local-interface-info? #'Interface))
+       (expand #'var #'Interface #'(body ...) #t #f))
+      ((_ (var :? Interface) body ...)
+       (and (identifier? #'var)
+            (syntax-local-interface-info? #'Interface))
+       (expand #'var #'Interface #'(body ...) #t #t))
+      ((_ (var :- Interface) body ...)
+       (and (identifier? #'var)
+            (syntax-local-interface-info? #'Interface))
+       (expand #'var #'Interface #'(body ...) #f #f))))
+
+  (defsyntax (%%app-dotted stx)
+    (syntax-case stx (%%ref-dotted)
+      ((_ id rand ...)
+       (identifier? #'id)
+       #'(%%app-dotted (%%ref-dotted id) rand ...))
+      ((_ (%%ref-dotted id) rand ...)
+       (if (dotted-identifier? #'id)
+         (with ([var . parts] (split-dotted-identifier stx #'id))
+           (cond
+            ((type-env-lookup var)
+             => (lambda (te)
+                  (let loop ((parts parts) (type (type-env-type te)) (object var) (nil-check? #f))
+                    (match parts
+                      ([part . rest]
+                       (cond
+                        ((and (not nil-check?) (string-prefix? "?" (symbol->string part)))
+                         (let (str (symbol->string part))
+                           (loop (cons (string->symbol
+                                        (substring str 1 (string-length str)))
+                                       rest)
+                                 type object #t)))
+                        ((class-type-info? type)
+                         (with-syntax ((object object)
+                                       (accessor (get-slot-accessor stx type part)))
+                           (cond
+                            ((null? rest)
+                             (if nil-check?
+                               #'(%%app (accessor (check-nil! object)) rand ...)
+                               #'(%%app (accessor object) rand ...)))
+                            ((!class-slot-type type part)
+                             => (lambda (type)
+                                  (let (type (resolve-type stx type))
+                                    (if nil-check?
+                                      (loop rest type #'(accessor (check-nil! object)) #f)
+                                      (loop rest type #'(accessor object) #f)))))
+                            (else
+                             (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
+                        ((interface-info? type)
+                         (if (null? rest)
+                             (with-syntax ((object object)
+                                           (method
+                                            (stx-identifier #'id
+                                              (if (type-env-checked? te) "&" "")
+                                              (interface-info-name type)
+                                              "-" part)))
+                               (if nil-check?
+                                 #'(%%app (%%ref method) (check-nil! object) rand ...)
+                                 #'(%%app (%%ref method) object rand ...)))
+
+                             (raise-syntax-error #f "illegal dotted reference; interface has no slots" stx #'id part)))
+                        (else
+                         (raise-syntax-error #f "unexpected type" stx type))))
+                      (else
+                       (with-syntax ((rator object))
+                         #'(%%app rator rand ...)))))))
+            (else
+             ;; no type info for base of dots, dispatch to %%ef
+             #'(%%app id rand ...))))
+         #'(%%app id rand ...)))
+      ((_ arg ...)
+       #'(%%app arg ...))))
+
+  (defsyntax (%%ref-dotted stx)
+    (syntax-case stx ()
+      ((_ id)
+       (dotted-identifier? #'id)
+       (with ([var . parts] (split-dotted-identifier stx #'id))
+         (cond
+          ((type-env-lookup var)
+           => (lambda (te)
+                (let loop ((parts parts) (type (type-env-type te)) (object var) (nil-check? #f))
+                  (match parts
+                    ([part . rest]
+                     (cond
+                      ((and (not nil-check?) (string-prefix? "?" (symbol->string part)))
+                       (let (str (symbol->string part))
+                         (loop (cons (string->symbol
+                                      (substring str 1 (string-length str)))
+                                     rest)
+                               type object #t)))
+                      ((class-type-info? type)
+                       (with-syntax ((object object)
+                                     (accessor (get-slot-accessor stx type part)))
+                         (cond
+                          ((null? rest)
+                           (cond
+                            ((!class-slot-type type part)
+                             => (lambda (slot-type)
+                                  (with-syntax ((slot-type (resolve-type->type-descriptor stx type)))
+                                    (if nil-check?
+                                      #'(begin-annotation (@type slot-type)
+                                          (accessor (check-nil! object)))
+                                      #'(begin-annotation (@type slot-type)
+                                          (accessor object))))))
+                            (nil-check?
+                             #'(accessor (check-nil! object)))
+                            (else
+                             #'(accessor object))))
+                          ((!class-slot-type type part)
+                           => (lambda (type)
+                                (let (type (resolve-type stx type))
+                                  (if nil-check?
+                                    (loop rest type #'(accessor (check-nil! object)) #f)
+                                    (loop rest type #'(accessor object) #f)))))
+                          (else
+                           (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part)))))
+                      ((interface-info? type)
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                      (else
+                       (raise-syntax-error #f "unexpected type" stx type))))
+                    (else object)))))
+          (else
+           ;; no type info for base of dots, dispatch to %%ref
+           #'(%%ref id)))))
+      ((_ id)
+       #'(%%ref id))))
+
+  (defsyntax (%%set-dotted! stx)
+    (syntax-case stx ()
+      ((_ id value)
+       (dotted-identifier? #'id)
+       (with ([var . parts] (split-dotted-identifier stx #'id))
+         (cond
+          ((type-env-lookup var)
+           => (lambda (te)
+                (let loop ((parts parts) (type (type-env-type te)) (object var) (nil-check? #f))
+                  (match parts
+                    ([part . rest]
+                     (cond
+                      ((and (not nil-check?) (string-prefix? "?" (symbol->string part)))
+                       (let (str (symbol->string part))
+                         (loop (cons (string->symbol
+                                      (substring str 1 (string-length str)))
+                                     rest)
+                               type object #t)))
+                      ((class-type-info? type)
+                       (cond
+                        ((null? rest)
+                         (with-syntax ((object object)
+                                       (mutator
+                                        (get-slot-mutator
+                                         stx type part
+                                         ;; invoke the checked mutator if the contract
+                                         ;; was checked and the slot has a type/contract
+                                         ;; to be checked
+                                         (and (type-env-checked? te)
+                                              (or (!class-slot-type type part)
+                                                  (!class-slot-contract type part))))))
+                           (if nil-check?
+                             #'(mutator (check-nil! object) value)
+                             #'(mutator object value))))
+                        ((!class-slot-type type part)
+                         => (lambda (type)
+                              (let (type (resolve-type stx type))
+                                (with-syntax ((object object)
+                                              (accessor (get-slot-accessor stx type part)))
+                                  (if nil-check?
+                                    (loop rest type #'(accessor (check-nil! object)) #f)
+                                    (loop rest type #'(accessor object) #f))))))
+                        (else
+                         (raise-syntax-error #f "unresolved dotted reference; unknown type for slot" stx #'id part))))
+                      ((interface-info? type)
+                       (raise-syntax-error #f "illegal dotted reference; interface has no slots"))
+                      (else
+                       (raise-syntax-error #f "unexpected type" stx type))))))))
+          (else
+           ;; no type info for base of dots, dispatch to set!
+           #'(set! id value)))))
+      ((_ target value)
+       #'(set! target value)))))
+
+(module ContractRules
+  (export #t)
+
+  (defrule (maybe pred)
+    (? (or not pred)))
+
+  (defrule (in-range? start end)
+    (lambda (o)
+      (and (fixnum? o)
+           (fx>= o start)
+           (fx< o end))))
+
+  (defrule (in-range-inclusive? start end)
+    (lambda (o)
+      (and (fixnum? o)
+           (fx<= start o end))))
+
+  (defrule (list-of? pred)
+    (lambda (o)
+      (and (list? o)
+           (andmap pred o)))))
+
+(module ClassPrecedenceList
+  (export #t)
+  (import "expander" MOP-2)
+  (def (!class-precedence-list klass)
+    (cond
+     ((!class-type-precedence-list klass))
+     (else
+      (let* (((values precedence-list base-struct)
+              (c4-linearize [] (!class-type-super klass)
+                            get-precedence-list:
+                            (lambda (klass-id)
+                              (cons klass-id (!class-precedence-list (syntax-local-value klass-id))))
+                            struct:
+                            (lambda (klass-id)
+                              (!class-type-struct? (syntax-local-value klass-id)))
+                            eq: eq?
+                            get-name: identity))
+             (precedence-list
+              (cond
+               ((memq (!class-type-id klass) '(t object class))
+                precedence-list)
+               ((member (quote-syntax :object) precedence-list free-identifier=?)
+                precedence-list)
+               ((!class-type-system? klass)
+                (if (member (quote-syntax :t) precedence-list free-identifier=?)
+                  precedence-list
+                  (append precedence-list [(quote-syntax :t)])))
+               (else
+                (let loop ((tail precedence-list) (head []))
+                  (match tail
+                    ([hd . rest]
+                     (if (free-identifier=? hd (quote-syntax :t))
+                       (foldl cons (cons (quote-syntax :object) tail) head)
+                       (loop rest (cons hd head))))
+                    (else
+                     (foldl cons [(quote-syntax :object) (quote-syntax :t)] head))))))))
+        (set! (!class-type-precedence-list klass) precedence-list)
+        precedence-list)))))
+
+(module Interface
+  (import TypeCast TypeReference Using
+          (phi: +1 InterfaceInfo TypeEnv ClassPrecedenceList))
+  (export #t (phi: +1 #t))
+
+  (begin-syntax
+    (def (check-signature! stx args return
+                           optionals: (optionals-allowed? #t)
+                           keywords: (keywords-allowed? #t))
+      (check-valid-type! stx return)
+      (check-signature-spec! stx args
+                             optionals: optionals-allowed?
+                             keywords: keywords-allowed?))
+
+    (def (check-valid-type! stx id)
+      (let (info (syntax-local-value id false))
+        (cond
+         ((or (class-type-info? info)
+              (interface-info? info)
+              (type-reference? info)))
+         ((not info)
+          (raise-syntax-error #f "invalid signature; unknown type" stx id))
+         (else
+          (raise-syntax-error #f "invalid signature; not a a class type or interface" stx id info)))))
+
+    (def (check-signature-spec! stx signature
+                                optionals: (optionals-allowed? #t)
+                                keywords: (keywords-allowed? #t))
+      (let lp ((rest signature) (have-optional? #f) (ids []) (kws []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (cond
+            (have-optional?
+             (raise-syntax-error #f "invalid signature; required argument after optionals" stx signature #'id))
+            ((not (null? kws))
+             (raise-syntax-error #f "invalid signature; positional arguments must precede keyword arguments"))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            (else
+             (lp #'rest have-optional? (cons #'id ids) kws))))
+          (((id _) . rest)
+           (identifier? #'id)
+           (cond
+            ((not optionals-allowed?)
+             (raise-syntax-error #f "invalid signature; optionals not allowed" stx signature))
+            ((not (null? kws))
+             (raise-syntax-error #f "invalid signature; positional arguments must precede keyword arguments"))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            (else
+             (lp #'rest #t (cons #'id ids) kws))))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (cond
+            ((not optionals-allowed?)
+             (syntax-case #'contract (:=)
+               ((_ ... := default)
+                (raise-syntax-error #f "invalid signature; optionals not allowed" stx signature))
+               (_ (void))))
+            ((not (null? kws))
+             (raise-syntax-error #f "invalid signature; positional arguments must precede keyword arguments"))
+            (have-optional?
+             (syntax-case #'contract (:=)
+               ((_ ... := default)
+                (begin (check-signature-contract-types! stx #'contract)
+                       (lp #'rest #t (cons #'id ids) kws)))
+               (_
+                (raise-syntax-error #f "invalid signature; expected optional argument" stx signature #'contract))))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            (else
+             (check-signature-contract-types! stx #'contract)
+             (lp #'rest have-optional? (cons #'id ids) kws))))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (cond
+            ((not keywords-allowed?)
+             (raise-syntax-error #f "invalid signature; keywords not allowed" stx signature))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            ((memq (stx-e #'kw) kws)
+             (raise-syntax-error #f "invalid signature; duplicate keyword" stx signature #'kw))
+            (else
+             (lp #'rest have-optional? (cons #'id ids) (cons (stx-e #'kw) kws)))))
+          ((kw (id _) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (cond
+            ((not keywords-allowed?)
+             (raise-syntax-error #f "invalid signature; keywords not allowed" stx signature))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            ((memq (stx-e #'kw) kws)
+             (raise-syntax-error #f "invalid signature; duplicate keyword" stx signature #'kw))
+            (else
+             (lp #'rest have-optional? (cons #'id ids) (cons (stx-e #'kw) kws)))))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (cond
+            ((not keywords-allowed?)
+             (raise-syntax-error #f "invalid signature; keywords not allowed" stx signature))
+            ((find (cut bound-identifier=? <> #'id) ids)
+             (raise-syntax-error #f "invalid signature; duplicate identifier" stx signature #'id))
+            ((memq (stx-e #'kw) kws)
+             (raise-syntax-error #f "invalid signature; duplicate keyword" stx signature #'kw))
+            (else
+             (check-signature-contract-types! stx #'contract)
+             (lp #'rest have-optional? (cons #'id ids) (cons (stx-e #'kw) kws)))))
+          (id (identifier? #'id) #t)
+          (() #t)
+          (_ (raise-syntax-error #f "invalid signature" stx signature rest)))))
+
+    (def (signature-contract? contract)
+      (syntax-case contract (: :? :~ :- :=)
+        ((: type)
+         (identifier? #'type))
+        ((: type := default)
+         (identifier? #'type))
+        ((:? type)
+         (identifier? #'type))
+        ((:? type := default)
+         (identifier? #'type))
+        ((:- type)
+         (identifier? #'type))
+        ((:- type := default)
+         (identifier? #'type))
+        ((:~ predicate-expr) #t)
+        ((:~ predicate-expr := default) #t)
+        ((:~ predicate-expr :- type)
+         (identifier? #'type))
+        ((:~ predicate-expr :- type := default)
+         (identifier? #'type))
+        (_ #f)))
+
+    (def (check-signature-contract-types! stx contract)
+      (syntax-case contract (: :? :~ := :-)
+        ((: type)
+         (check-valid-type! stx #'type))
+        ((: type := default)
+         (check-valid-type! stx #'type))
+        ((:? type)
+         (check-valid-type! stx #'type))
+        ((:? type := default)
+         (check-valid-type! stx #'type))
+        ((:- type)
+         (check-valid-type! stx #'type))
+        ((:- type := default)
+         (check-valid-type! stx #'type))
+        ((:~ predicate-expr :- type)
+         (check-valid-type! stx #'type))
+        ((:~ predicate-expr :- type := default)
+         (check-valid-type! stx #'type))
+        (_ (void))))
+
+    (def (signature-arguments-in signature)
+      (let loop ((rest signature) (result []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest (cons #'id result)))
+          (((id _) . rest)
+           (identifier? #'id)
+           (loop #'rest (cons #'id result)))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (syntax-case #'contract (:=)
+             ((_ ... := default)
+              (loop #'rest (cons #'(id default) result)))
+             (_ (loop #'rest (cons #'id result)))))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest (cons* #'id #'kw result)))
+          ((kw (id default) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest (cons* #'(id default) #'kw result)))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (syntax-case #'contract (:=)
+             ((_ ... := default)
+              (loop #'rest (cons* #'(id default) #'kw result)))
+             (_ (loop #'rest (cons* #'id #'kw result)))))
+          (id (identifier? #'id) (foldl cons #'id result))
+          (_ (reverse! result)))))
+
+    (def (signature-arguments-out signature)
+      (let loop ((rest signature) (has-keywords? #f) (result []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest #f (cons #'id result)))
+          (((id _) . rest)
+           (identifier? #'id)
+           (loop #'rest #f (cons #'id result)))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest #f (cons #'id result)))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest #t (cons* #'id #'kw result)))
+          ((kw (id default) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest #t (cons* #'id #'kw result)))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest #t (cons* #'id #'kw result)))
+          (id (identifier? #'id)
+              (let (result (foldl cons [#'id] result))
+                (if has-keywords?
+                  (cons (syntax-local-introduce '@@keywords)
+                        result)
+                  result)))
+          (_ (let (result (reverse! result))
+               (if has-keywords?
+                 (cons (syntax-local-introduce '@@keywords)
+                       result)
+                 result))))))
+
+    (def (make-interface-method-lambda-signature stx self Interface method signature return checked?)
+      (if checked?
+        (make-procedure-lambda-signature stx
+          (cons [self ': Interface] signature)
+          return
+          (stx-identifier method "&" method))
+        (let (return-type (resolve-type->type-descriptor stx #'return))
+          [return: return-type])))
+
+    (def (make-interface-method-contract stx self Interface signature checked?)
+      (make-procedure-contract stx (cons [self ': Interface] signature) checked?))
+
+    (def (make-procedure-lambda-signature stx signature return unchecked)
+      (def (type-e contract)
+        (syntax-case contract (: :? :~ :- :=)
+          ((: type . maybe-default)
+           (resolve-type->type-descriptor stx #'type))
+          ((:? type . maybe-default)
+           (resolve-type->type-descriptor stx #'type))
+          ((:- type . maybe-default)
+           (core-quote-syntax 't::t))
+          (_ #f)))
+
+      (let loop ((rest signature) (has-keywords? #f) (result []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest #f result))
+          (((id _) . rest)
+           (identifier? #'id)
+           (loop #'rest #f result))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest #f (cons (type-e #'contract) result)))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest #t result))
+          ((kw (id _) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest #t result))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest #t (cons (type-e #'contract) result)))
+          (id
+           (identifier? #'id)
+           (let* ((arguments (foldl cons (core-quote-syntax 't::t) result))
+                  (arguments (if has-keywords?
+                               (cons (core-quote-syntax 't::t)
+                                     arguments)
+                               arguments))
+                  (return-type (resolve-type->type-descriptor stx return))
+                  (unchecked (and (stx-e unchecked) (core-quote-syntax unchecked))))
+             [arguments: result
+                         return: return-type
+                         unchecked: unchecked]))
+          (()
+           (let* ((arguments (reverse! result))
+                  (arguments (if has-keywords?
+                               (cons (core-quote-syntax 't::t)
+                                     arguments)
+                               arguments))
+                  (return-type (resolve-type->type-descriptor stx return))
+                  (unchecked (and (stx-e unchecked) (core-quote-syntax unchecked))))
+             [arguments: result return: return-type unchecked: unchecked])))))
+
+    (def (make-procedure-contract stx signature checked?)
+      (def (contract-e id contract)
+        (with-syntax ((id id))
+          (syntax-case contract (: :? :~ :- :=)
+            ((: type . maybe-default)
+             (if checked?
+               #'(id : type)
+               #'(id :- type)))
+            ((:? type . maybe-default)
+             (if checked?
+               #'(id :? type)
+               #'(id :- type)))
+            ((:- type . maybe-default)
+             #'(id :- type))
+            ((:~ predicate-expr :- type . maybe-default)
+             (if checked?
+               #'(id :~ predicate-expr :- type)
+               #'(id :- type)))
+            ((:~ predicate-expr . maybe-default)
+             (if checked?
+               #'(id :~ predicate-expr)
+               #f)))))
+
+      (let loop ((rest signature) (result []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest result))
+          (((id _) . rest)
+           (identifier? #'id)
+           (loop #'rest result))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest (cons (contract-e #'id #'contract) result)))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest result))
+          ((kw (id _) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (loop #'rest result))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           (loop #'rest (cons (contract-e #'id #'contract) result)))
+          (_ (reverse! (filter identity result))))))
+
+    (def (compatible-signatures? left right)
+      (let/cc return
+        (let ((left-arity (signature-arity left))
+              (right-arity (signature-arity right)))
+          (unless (equal? left-arity right-arity)
+            (return #f)))
+        (let ((left-kws (signature-keywords left))
+              (right-kws (signature-keywords right)))
+          (unless (equal? left-kws right-kws)
+            (return #f)))
+        (let (((values left-positional-contract left-kw-contract)
+               (signature-type-contract left))
+              ((values right-positional-contract right-kw-contract)
+               (signature-type-contract right)))
+          (let ((left-contract
+                 (append left-positional-contract
+                         (foldr (lambda (kwc r) (cons (cdr kwc) r))
+                                [] left-kw-contract)))
+                (right-contract
+                 (append right-positional-contract
+                         (foldr (lambda (kwc r) (cons (cdr kwc) r))
+                                [] right-kw-contract))))
+            (unless (compatible-signature-type-contract? left-contract right-contract)
+              (return #f))))
+        #t))
+
+    (def (compatible-signature-type-contract? left right)
+      (let loop ((left-rest left) (right-rest right))
+        (match left-rest
+          ([left . left-rest]
+           (match right-rest
+             ([right . right-rest]
+              (and (compatible-type-contract? left right)
+                   (loop left-rest right-rest)))
+             (else #f)))
+          (else (null? right-rest)))))
+
+    (def (compatible-type-contract? left right)
+      (andmap
+       (lambda (a b)
+         (syntax-case a (: :? :- :~ :=)
+           ((~ type-a . _)
+            (or (free-identifier=? #'~ #':)
+                (free-identifier=? #'~ #':-))
+            (syntax-case b (:~)
+              ((~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred ~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred := _) #t)))
+           ((:? type-a . _)
+            (syntax-case b (:~ :?)
+              ((:? type-b . _)
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred :? type-b . _)
+               (contract-type-subtype? #'type-a #'type-b))
+              (_ #f)))
+           ((:- type-a . _)
+            (syntax-case b (:~ :=)
+              ((~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred ~ type-b . rest)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred := _) #t)))
+           ((:~ pred-a : type-a . _)
+            (syntax-case b (:~)
+              ((~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred-b ~ type-b . _)
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred := _) #t)))
+           ((:~ pred-a :? type-a . _)
+            (syntax-case b (:? :~)
+              ((:? type-b . _)
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred-b :? type-b . _)
+               (contract-type-subtype? #'type-a #'type-b))
+              (_ #f)))
+           ((:~ pred-a :- type-a . _)
+            (syntax-case b (:~)
+              ((~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred-b ~ type-b . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               (contract-type-subtype? #'type-a #'type-b))
+              ((:~ pred-b := _) #t)))
+           ((:~ pred-a . _)
+            (syntax-case b (: :? :- :~)
+              ((~ . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               #f)
+              ((:~ pred-b ~ . _)
+               (or (free-identifier=? #'~ #':)
+                   (free-identifier=? #'~ #':?)
+                   (free-identifier=? #'~ #':-))
+               #f)
+              (_ #t)))))
+       left right))
+
+    (def (contract-type-subtype? type-a type-b)
+      (cond
+       ((not type-a) (not type-b))
+       ((not type-b) #f)
+       ((free-identifier=? type-a type-b) #t)
+       (else
+        (let again ((klass-a (syntax-local-value type-a))
+                    (klass-b (syntax-local-value type-b)))
+          (cond
+           ((eq? klass-a klass-b) #t)
+           ((class-type-info? klass-a)
+            (cond
+             ((class-type-info? klass-b)
+              (cond
+               ((eq? (!class-type-id klass-a) (!class-type-id klass-b))
+                #t)
+               ((member type-b (!class-precedence-list klass-a) free-identifier=?)
+                #t)
+               (else #f)))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the type reference cannot be resolved at this time, maybe it is
+               ;; a (mutually) recursive type reference.
+               ;; best we can do is ensure that it refers to the same type
+               ((free-identifier=? type-a (type-reference-identifier klass-b))
+                #t)
+               (else #f)))
+             (else #f)))
+           ((interface-info? klass-a)
+            (cond
+             ((interface-info? klass-b)
+              (cond
+               ((member type-b (interface-info-flatten-mixin klass-a))
+                #t)
+               (else #f)))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the type reference cannot be resolved at this time, maybe it is
+               ;; a (mutually) recursive type reference.
+               ;; best we can do is ensure that it refers to the same type
+               ((free-identifier=? type-a (type-reference-identifier klass-b))
+                #t)
+               (else #f)))
+             (else #f)))
+           ((type-reference? klass-a)
+            (cond
+             ((syntax-local-value (type-reference-identifier klass-a) false)
+              => (lambda (klass-a) (again klass-a klass-b)))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the best we can do is check that they refer to the same type
+               ((free-identifier=? (type-reference-identifier klass-a) (type-reference-identifier klass-b))
+                #t)
+               (else #f)))
+             ;; the type reference cannot be resolved at this time, maybe it is
+             ;; a (mutually) recursive type reference.
+             ;; best we can do is ensure that it refers to the same type
+             ((free-identifier=? type-b (type-reference-identifier klass-a))
+              #t)
+             (else #f)))
+           (else #f))))))
+
+    (def (signature-type-contract signature)
+      (let loop ((rest signature) (positionals []) (keywords []))
+        (syntax-case #'rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (loop #'rest (cons #'(:- :t) positionals) keywords))
+          (((id default) . rest)
+           (identifier? #'id)
+           (loop #'rest (cons #'(:- :t) positionals) keywords))
+          ((id . contract)
+           (identifier? #'id)
+           (loop #'rest (cons #'contract positionals) keywords))
+          ((kw id . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id))
+           (loop #'rest positionals
+                 (cons (cons* (stx-e #'kw) #'id #'(:- :t))
+                       keywords)))
+          ((kw (id default) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id))
+           (loop #'rest positionals
+                 (cons (cons* (stx-e #'kw) #'id #'(:- :t))
+                       keywords)))
+          ((kw (id . contract) . rest)
+           (loop #'rest positionals
+                 (cons (cons* (stx-e #'kw) #'id #'contract)
+                       keywords)))
+          (_ (values (reverse! positionals)
+                     (list-sort (lambda (a b) (keyword<? (car a) (car b)))
+                                keywords))))))
+
+
+    (def (signature-arity spec)
+      (let lp ((rest (stx-cdr spec)) (required 0) (optional 0))
+        (syntax-case rest (:=)
+          ((id . rest)
+           (identifier? #'id)
+           (lp #'rest (1+ required) optional))
+          (((id default) . rest)
+           (identifier? #'id)
+           (lp #'rest required (1+ optional)))
+          (((_ ... := default) . rest)
+           (lp #'rest required (1+ optional)))
+          (((id . _) . rest)
+           (identifier? #'id)
+           (lp #'rest (1+ required) optional))
+          ((kw _ . rest)
+           (stx-keyword? #'kw)
+           (lp #'rest required optional))
+          (id
+           (identifier? #'id)
+           [required optional '...])
+          (()
+           [required optional]))))
+
+    (def (signature-keywords spec)
+      (let lp ((rest spec) (keywords []))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (lp #'rest keywords))
+          (((id . _) . rest)
+           (identifier? #'id)
+           (lp #'rest keywords))
+          ((kw _ . rest)
+           (stx-keyword? #'kw)
+           (lp #'rest (cons (stx-e #'kw) keywords)))
+          (_  (list-sort keyword<? keywords)))))
+
+    (def (symbol<? x y)
+      (string<? (symbol->string x) (symbol->string y)))
+    (def (keyword<? x y)
+      (string<? (keyword->string x) (keyword->string y))))
+
+  (defsyntax (interface stx)
+    (def (fold-methods mixin specs)
+      (let* ((methods (fold-specs specs))
+             (methods (fold-mixins mixin methods)))
+        ;; processing:
+        ;; - verify method compatibility
+        ;; - remove duplicates from mixins
+        ;; - sort lexicographically
+        (let lp ((rest methods) (methods []))
+          (match rest
+            ([method . rest]
+             (cond
+              ((find (lambda (other) (stx-eq? (stx-car method) (stx-car other))) rest)
+               => (lambda (duplicate)
+                    (if (compatible-signatures? duplicate method)
+                      (lp rest methods)
+                      (raise-syntax-error #f "invalid interface specification; incompatible method signatures" stx method duplicate))))
+              (else
+               (lp rest (cons method methods)))))
+            (else
+             (list-sort (lambda (x y) (symbol<? (stx-car x) (stx-car y))) methods))))))
+
+    (def (fold-mixins mixin)
+      (foldl
+        (lambda (mixin methods)
+          (cond
+           ((syntax-local-value mixin false)
+            => (lambda (info)
+                 (if (interface-info? info)
+                   (foldl cons methods (map syntax-local-introduce (interface-info-interface-methods info)))
+                   (raise-syntax-error #f "invalid mixin; not an interface type" stx mixin info))))
+           (else
+            (raise-syntax-error #f "invalid mixin; unknown type" stx mixin))))
+        [] mixin))
+
+    (def (fold-specs specs)
+      (let loop ((rest specs) (methods []))
+        (syntax-case specs (=>)
+          (((id . args) => return-type . rest)
+           (and (identifier? #'id)
+                (identifier? #'return-type))
+           (begin
+             (check-signature! stx #'args #'return-type)
+             (loop #'rest (cons [#'id #'args #'return-type] methods))))
+          (((id . args) . rest)
+           (identifier? #'id)
+           (begin
+             (check-signature! stx #'args #f)
+             (loop #'rest (cons [#'id #'args (syntax-local-introduce ':t)] methods))))
+          (() methods)
+          (bad (raise-syntax-error #f "invalid interface specification" stx #'bad)))))
+
+    (def (make-method-defs Interface)
+      (lambda (method offset)
+        (let ((signature (stx-car (stx-cdr  method)))
+              (method-name (stx-car method)))
+          (with-syntax ((Interface Interface)
+                        (method-name method-name)
+                        (method method)
+                        (self (syntax-local-introduce 'self))
+                        (offset offset)
+                        ((out ...) (signature-arguments-out signature)))
+            (syntax/loc stx
+              (definterface-method interface-name method
+                (declare (not safe))
+                (let ((obj (##unchecked-structure-ref self 1 #f 'method-name))
+                      (f   (##unchecked-structure-ref self offset #f 'method-name)))
+                  (f obj out ...))))))))
+
+    (syntax-case stx ()
+      ((_ hd spec ...)
+       (or (identifier? #'hd)
+           (identifier-list? #'hd))
+       (with-syntax* ((name (if (identifier? #'hd) #'hd (stx-car #'hd)))
+                      (klass (stx-identifier #'name #'name "::t"))
+                      (klass-quoted (core-quote-syntax #'klass))
+                      (klass-type-id (make-class-type-id #'name))
+                      (descriptor (stx-identifier #'name #'name "::interface"))
+                      (make (stx-identifier #'name "make-" #'name))
+                      (try-make (stx-identifier #'name "try-" #'name))
+                      (predicate (stx-identifier #'name #'name "?"))
+                      (instance-predicate (stx-identifier #'name "is-" #'name "?"))
+                      ((mixin ...)
+                       (if (identifier? #'hd) [] (stx-cdr #'hd)))
+                      ((method ...)
+                       (fold-methods #'(mixin ...) #'(spec ...)))
+                      ((method-name ...)
+                       (map car #'(method ...)))
+                      ((method-signature ...)
+                       (map cdr #'(method ...)))
+                      ((method-impl-name ...)
+                       (map (lambda (method-name)
+                              (stx-identifier #'name #'name "-" method-name))
+                            #'(method-name ...)))
+                      ((unchecked-method-impl-name ...)
+                       (map (lambda (method-name)
+                              (stx-identifier #'name "&" #'name "-" method-name))
+                            #'(method-name ...)))
+                      ((defmethod-impl ...)
+                       (map (make-method-defs #'name)
+                            #'(method ...)
+                            (iota (length #'(method-name ...)) 2)))
+                      (defklass
+                        #'(def klass
+                            (begin-annotation (@mop.class klass-type-id
+                                                          (interface-instance::t)
+                                                          (method-name ...)
+                                                          #f #t #t #f)
+                              (make-class-type 'klass-type-id ; type id
+                                               'name          ; name
+                                               [interface-instance::t] ; super
+                                               '(method-name ...) ; direct slots
+                                               '((final: . #t) (struct: . #t)) ; plist
+                                               #f)))) ; constructor (none)
+                      (defdescriptor
+                        #'(def descriptor
+                            (begin-annotation (@interface klass-quoted (method-name ...))
+                              (make-interface-descriptor klass '(method-name ...)))))
+                      (defmake
+                        #'(def (make obj)
+                            (begin-annotation (@type.signature return: klass-quoted
+                                                               effect: (cast)
+                                                               arguments: (t::t))
+                              (cast descriptor obj))))
+                      (deftry-make
+                        #'(def (try-make obj)
+                            (begin-annotation (@type.signature return: t::t
+                                                               effect: (cast)
+                                                               arguments: (t::t))
+
+                              (try-cast descriptor obj))))
+                      (defpred
+                        #'(def predicate
+                            (begin-annotation (@mop.predicate klass-quoted)
+                              (lambda (obj)
+                                (direct-instance? klass obj)))))
+                      (defpred-instance
+                        #'(def (instance-predicate obj)
+                            (begin-annotation (@type.signature return: boolean::t
+                                                               effect: (pure)
+                                                               arguments: (t::t))
+                              (satisfies? descriptor obj))))
+                      (definfo
+                        #'(defsyntax name
+                            (make-interface-info
+                             name: 'name
+                             interface-mixin: [(quote-syntax mixin) ...]
+                             interface-methods: '(method ...)
+                             instance-type: (quote-syntax klass)
+                             interface-descriptor: (quote-syntax descriptor)
+                             instance-constructor: (quote-syntax make)
+                             instance-try-constructor: (quote-syntax try-make)
+                             instance-predicate: (quote-syntax predicate)
+                             instance-satisfies-predicate: (quote-syntax instance-predicate)
+                             implementation-methods: [(quote-syntax method-impl-name) ...]
+                             unchecked-implementation-methods: [(quote-syntax unchecked-method-impl-name) ...]))))
+         #'(begin defklass defdescriptor defmake deftry-make defpred defpred-instance definfo
+                  defmethod-impl ...)))))
+
+  ;; syntax for defining interface (extension) methods
+  (defsyntax (definterface-method stx)
+    (def (make-checked-method-def Interface method-impl-name unchecked-method-impl-name signature return)
+      (with-syntax ((Interface Interface)
+                    (method method-impl-name)
+                    (unhchecked-method unchecked-method-impl-name)
+                    (self (syntax-local-introduce 'self))
+                    (in (signature-arguments-in signature))
+                    ((out ...) (signature-arguments-out signature))
+                    (signature signature)
+                    (return return))
+        (if (stx-list? #'signature)
+          (syntax/loc stx
+            (def (method self . in)
+              (with-interface-checked-method (Interface method signature return)
+                (unchecked-method self out ...))))
+          (syntax/loc stx
+            (def (method self . in)
+              (with-interface-checked-method self (Interface method signature return)
+                (##apply unchecked-method self out ...)))))))
+
+    (def (make-unchecked-method-def Interface unchecked-method-impl-name signature return body)
+      (with-syntax ((Interface Interface)
+                    (unhchecked-method unchecked-method-impl-name)
+                    (self (syntax-local-introduce 'self))
+                    (in (signature-arguments-in signature))
+                    (signature signature)
+                    (return return)
+                    ((body ...) body))
+        (syntax/loc stx
+          (def (unchecked-method self . in)
+            (with-interface-unchecked-method self (Interface unchecked-method signature return)
+              body ...)))))
+
+    (syntax-case stx ()
+      ((_ Interface (method-name signature return) body ...)
+       (and (syntax-local-interface-info? #'Interface)
+            (identifier? #'method-name))
+       (let* ((info (syntax-local-value #'Interface))
+              (interface-name (interface-info-name info))
+              (method-impl-name
+               (stx-identifier #'Interface interface-name "-" #'method-name))
+              (unchecked-method-impl-name
+               (stx-identifier #'Interface "&" method-impl-name)))
+         (check-signature! stx #'signature #'return)
+         (with-syntax ((defchecked
+                         (make-checked-method-def
+                          #'Interface
+                          method-impl-name
+                          unchecked-method-impl-name
+                          #'signature
+                          #'return))
+                       (defunchecked
+                         (make-unchecked-method-def
+                          #'Interface
+                          unchecked-method-impl-name
+                          #'signature
+                          #'return
+                          #'(body ...))))
+           #'(begin defchecked defunchecked))))))
+
+  (defsyntax (with-interface-method stx)
+    (syntax-case stx ()
+      ((_ self (Interface method signature return checked?) body ...)
+       (let (checked? (stx-e #'checked?))
+         (with-syntax ((lambda-signature
+                        (make-interface-method-lambda-signature stx
+                          #'self #'Interface #'method #'signature #'return checked?))
+                       (contract
+                        (make-interface-method-contract stx
+                          #'self #'Interface #'signature checked?)))
+           #'(begin-annotation (@type.signature . lambda-signature)
+               (using contract body ...)))))))
+
+  (defrule (with-interface-checked-method self (Interface method signature return)
+             body ...)
+    (with-interface-method self (Interface method signature return #t) body ...))
+
+  (defrule (with-interface-unchecked-method self (Interface method signature return)
+             body ...)
+    (with-interface-method self (Interface method signature return #f) body ...))
+
+  (defsyntax-for-export (interface-out stx)
+    (def (expand body unchecked?)
+      (syntax-case body ()
+        ((id ...)
+         (identifier-list? #'(id ...))
+         (let lp ((rest #'(id ...)) (ids []))
+           (syntax-case rest ()
+             ((id . rest)
+              (let (info (syntax-local-value #'id false))
+                (unless (interface-info? info)
+                  (raise-syntax-error #f "not an interface type" stx #'id))
+                (with ((interface-info instance-type: type
+                                       interface-descriptor: descriptor
+                                       instance-constructor: constructor
+                                       instance-try-constructor: try-constructor
+                                       instance-predicate: predicate
+                                       instance-satisfies-predicate: satisfies-predicate
+                                       implementation-methods: method-impl
+                                       unchecked-implementation-methods: unchecked-impl)
+                       info)
+                  (lp #'rest [#'id type descriptor constructor try-constructor predicate satisfies-predicate method-impl ... (if unchecked? unchecked-impl []) ... ids ...]))))
+             (_ (cons begin: ids)))))))
+
+    (syntax-case stx ()
+      ((_ unchecked: unchecked? body ...)
+       (expand #'(body ...) (stx-e #'unchecked?)))
+      ((_ body ...)
+       (expand #'(body ...) #f)))))
+
+(module TypedDefinitions
+  (import TypeCast Using ContractRules TypeReference Interface
+          (phi: +1 InterfaceInfo TypeEnv ClassPrecedenceList))
+  (export #t (phi: +1 #t))
+
+  (begin-syntax
+    (def (is-signature? formals)
+      (let lp ((rest formals))
+        (syntax-case rest ()
+          ((id . rest)
+           (identifier? #'id)
+           (lp #'rest))
+          (((id _) . rest)
+           (lp #'rest))
+          (((id . contract) . rest)
+           (and (identifier? #'id)
+                (signature-contract? #'contract))
+           #t)
+          ((kw id . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (lp #'rest))
+          ((kw (id _) . rest)
+           (and (stx-keyword? #'kw) (identifier? #'id))
+           (lp #'rest))
+          ((kw (id . contract) . rest)
+           (and (stx-keyword? #'kw)
+                (identifier? #'id)
+                (signature-contract? #'contract))
+           #t)
+          (_ #f)))))
+
+  (defsyntax (def/c stx)
+    (def (make-definition id args return body)
+      (check-signature! stx args return)
+      (let (unchecked-id (stx-identifier id "__" id))
+        (with-syntax ((defchecked (make-checked-def id unchecked-id args return))
+                      (defunchecked (make-unchecked-def unchecked-id args return body)))
+          #'(begin defchecked defunchecked))))
+
+    (def (make-checked-def id unchecked-id signature return)
+      (with-syntax ((id id)
+                    (unchecked-id unchecked-id)
+                    (in (signature-arguments-in signature))
+                    ((out ...) (signature-arguments-out signature))
+                    (signature signature)
+                    (return return))
+        (if (stx-list? #'signature)
+          (syntax/loc stx
+            (def (id . in)
+              (with-procedure-signature (signature return unchecked-id)
+                (with-procedure-contract signature
+                  (unchecked-id out ...)))))
+          (syntax/loc stx
+            (def (id . in)
+              (with-procedure-signature (signature return unchecked-id)
+                (with-procedure-contract signature
+                  (##apply unchecked-id out ...))))))))
+
+    (def (make-unchecked-def unchecked-id signature return body)
+      (with-syntax ((unchecked-id unchecked-id)
+                    (in (signature-arguments-in signature))
+                    (signature signature)
+                    (return return)
+                    ((body ...) body))
+        (syntax/loc stx
+          (def (unchecked-id . in)
+            (with-procedure-signature (#f return #f)
+              (with-procedure-unchecked-contract signature
+                body ...))))))
+
+    (syntax-case stx (=>)
+      ((_ (id . args) => return body ...)
+       (identifier? #'id)
+       (if (is-signature? #'args)
+         (make-definition #'id #'args #'return #'(body ...))
+         ;; we only have a return type, so this is a plain def
+         #'(def (id . args)
+             (with-procedure-signature (#f return #f)
+               body ...))))
+      ((_ (id . args) body ...)
+       (identifier? #'id)
+       (if (is-signature? #'args)
+         #'(def/c (id . args) => :t body ...)
+         #'(def (id . args) body ...)))
+      ((_ ((head . rest) . args) body ...)
+       #'(def/c (head . rest)
+           (lambda/c args body ...)))
+      ((_ id expr)
+       (identifier? #'id)
+       #'(def id expr))))
+
+  (defsyntax (with-procedure-signature stx)
+    (syntax-case stx ()
+      ((_ (#f return #f) body ...)
+       (with-syntax ((return-type (resolve-type->type-descriptor stx #'return)))
+         #'(begin-annotation (@type.signature return: return-type)
+             (let () body ...))))
+      ((_ (signature return unchecked) body ...)
+       (with-syntax ((lambda-signature (make-procedure-lambda-signature stx #'signature #'return #'unchecked)))
+         #'(begin-annotation (@type.signature . lambda-signature)
+             (let () body ...))))))
+
+  (defsyntax (with-procedure-contract stx)
+    (syntax-case stx ()
+      ((_ signature body ...)
+       (with-syntax ((contract (make-procedure-contract stx #'signature #t)))
+         #'(using contract body ...)))))
+
+  (defsyntax (with-procedure-unchecked-contract stx)
+    (syntax-case stx ()
+      ((_ signature body ...)
+       (with-syntax ((contract (make-procedure-contract stx #'signature #f)))
+         #'(using contract body ...)))))
+
+  (defsyntax (lambda/c stx)
+    (def (make-lambda signature return body)
+      (with-syntax ((in (signature-arguments-in signature))
+                    (signature signature)
+                    (return return)
+                    ((body ...) body))
+        (syntax/loc stx
+          (lambda in
+            (with-procedure-signature (signature return #f)
+              (with-procedure-contract signature
+                body ...))))))
+    (syntax-case stx (=>)
+      ((_ args => return body ...)
+       (if (is-signature? #'args)
+         (make-lambda #'args #'return #'(body ...))
+         #'(lambda args
+             (with-procedure-signature (#f return #f)
+               body ...))))
+      ((_ args body ...)
+       (if (is-signature? #'args)
+         #'(lambda/c args => :t body ...)
+         #'(lambda args body ...)))))
+
+  (defsyntax (def*/c stx)
+    (def (is-clause-signature? clause)
+      (syntax-case clause (=>)
+        ((args => return body ...) #t)
+        ((args body ...)
+         (is-signature? #'args))))
+
+    (def (clause-e clause)
+      (syntax-case clause (=>)
+        ((args => return body ...)
+         (if (is-signature? #'args)
+           (begin
+             (check-signature! stx #'args #'return #f keywords: #f optionals: #f)
+             (with-syntax ((in (signature-arguments-in #'args)))
+               #'(in
+                  (with-procedure-signature (args return #f)
+                    (with-procedure-contract signature
+                      body ...)))))
+             #'(args
+                (with-procedure-signature (#f return #f)
+                  body ...))))
+        ((args body ...)
+         (if (is-signature? #'args)
+           (clause-e #'(args => :t body ...))
+           clause))))
+
+    (syntax-case stx ()
+      ((_ id clause ...)
+       (and (identifier? #'id)
+            (ormap is-clause-signature? #'(clause ...)))
+       (with-syntax (((clause ...) (map clause-e #'(clause ...))))
+         #'(def* id clause ...)))
+      ((_ id clause ...)
+       (identifier? #'id)
+       #'(def* id clause ...))))
+
+  (defsyntax (defclass/c stx)
+    (def (generate hd slots body)
+      (syntax-case hd ()
+        ((id super ...)
+         (and (identifier? #'id)
+              (andmap syntax-local-class-type-info? #'(super ...)))
+         (generate-defclass #'id #'(super ...) slots body))
+        (id
+         (identifier? #'id)
+         (generate-defclass #'id [] slots body))
+        (_ (raise-syntax-error #f "bad class head" stx hd))))
+
+    (def (check-typedef-body! body)
+      (def (body-opt? key)
+        (memq (stx-e key)
+              '(id: struct: name: constructor: transparent: final: print: equal: metaclass:)))
+      (alet (tail (stx-plist? body body-opt?))
+        (raise-syntax-error #f "invalid defclass body" stx (stx-car tail))))
+
+    (def (slot-name slot-spec)
+      (stx-e
+       (if (identifier? slot-spec)
+         slot-spec
+         (stx-car slot-spec))))
+
+    (def (slot-contract slot-spec)
+      (syntax-case slot-spec ()
+        (id (identifier? #'id) #f)
+        ((id defult) #f)
+        ((id . contract) #'contract)))
+
+    (def (slot-contract-normalize slot-spec)
+      (alet (contract (slot-contract slot-spec))
+        (contract-normalize contract)))
+
+    (def (contract-normalize contract)
+      (syntax-case contract (:~ :? :=)
+        ((pre ... := _)
+         (contract-normalize #'(pre ...)))
+        ((:~ pred :? type)
+         #'(:~ (? (or not pred)) :? type))
+        (_ contract)))
+
+    (def (slot-contract-type slot-spec)
+      (alet (contract (slot-contract slot-spec))
+        (contract-type contract)))
+
+    (def (contract-type contract)
+      (syntax-case contract (: :? :- :~)
+        ((: type . maybe-default) #'type)
+        ((:? type . maybe-default) #'type)
+        ((:- type . maybe-default) #'type)
+        ((:~ pred :- type . maybe-default) #'type)
+        (_ #f)))
+
+    (def (slot-contract-predicate slot-spec)
+      (alet (contract (slot-contract slot-spec))
+        (contract-predicate contract)))
+
+    (def (contract-predicate contract)
+      (syntax-case contract (:~)
+        ((:~ pred . contract-rest)
+         #'pred)
+        (_ #f)))
+
+    (def (slot-default slot-spec)
+      (syntax-case slot-spec (:=)
+        ((id default) #'default)
+        ((id ... := default) #'default)
+        (_ #f)))
+
+    (def (infer-slot-type slot type-a type-b)
+      (cond
+       ((not type-a) type-b)
+       ((not type-b) type-a)
+       ((free-identifier=? type-a type-b) type-a)
+       (else
+        (let again ((klass-a (syntax-local-value type-a))
+                    (klass-b (syntax-local-value type-b)))
+          (cond
+           ((eq? klass-a klass-b) type-a)
+           ((class-type-info? klass-a)
+            (cond
+             ((class-type-info? klass-b)
+              (cond
+               ((eq? (!class-type-id klass-a) (!class-type-id klass-b))
+                type-a)
+               ((member type-a (!class-precedence-list klass-b) free-identifier=?)
+                type-b)
+               ((member type-b (!class-precedence-list klass-a) free-identifier=?)
+                type-a)
+               (else
+                (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the type reference cannot be resolved at this time, maybe it is
+               ;; a (mutually) recursive type reference.
+               ;; best we can do is ensure that it refers to the same type
+               ((free-identifier=? type-a (type-reference-identifier klass-b))
+                type-a)
+               (else
+                (raise-syntax-error #f "cannot resolve type reference to determine slot type compatibility" stx slot type-a type-b))))
+             (else
+              (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
+           ((interface-info? klass-a)
+            (cond
+             ((interface-info? klass-b)
+              (cond
+               ((member type-a (interface-info-flatten-mixin klass-b))
+                type-b)
+               ((member type-b (interface-info-flatten-mixin klass-a))
+                type-a)
+               (else
+                (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the type reference cannot be resolved at this time, maybe it is
+               ;; a (mutually) recursive type reference.
+               ;; best we can do is ensure that it refers to the same type
+               ((free-identifier=? type-a (type-reference-identifier klass-b))
+                type-a)
+               (else
+                (raise-syntax-error #f "cannot resolve type reference to determine slot type compatibility" stx slot type-a type-b))))
+             (else
+              (raise-syntax-error #f "incompatible slot types" stx slot type-a type-b))))
+           ((type-reference? klass-a)
+            (cond
+             ((syntax-local-value (type-reference-identifier klass-a) false)
+              => (lambda (klass-a) (again klass-a klass-b)))
+             ((type-reference? klass-b)
+              (cond
+               ((syntax-local-value (type-reference-identifier klass-b) false)
+                => (lambda (klass-b) (again klass-a klass-b)))
+               ;; the best we can do is check that they refer to the same type
+               ((free-identifier=? (type-reference-identifier klass-a) (type-reference-identifier klass-b))
+                type-a)
+               (else
+                (raise-syntax-error #f "cannot resolve type reference to determine slot type compatibility" stx slot type-a type-b))))
+             ;; the type reference cannot be resolved at this time, maybe it is
+             ;; a (mutually) recursive type reference.
+             ;; best we can do is ensure that it refers to the same type
+             ((free-identifier=? type-b (type-reference-identifier klass-a))
+              type-b)
+             (else
+              (raise-syntax-error #f "cannot resolve type reference to determine slot type compatibility" stx slot type-a type-b))))
+           (else
+            (raise-syntax-error #f "unexpected slot type" stx slot type-a klass-a)))))))
+
+    ;; super list => (values slots {hash slot -> type})
+    (def (get-mixin-slots super)
+      (def tab (make-hash-table-eq))
+      (let loop ((rest super) (result []))
+        (match rest
+          ([type-id . rest]
+           (let* ((klass (resolve-type stx type-id))
+                  (slots (!class-type-slots klass)))
+             (let loop-inner ((rest-slots slots) (result result))
+               (match rest-slots
+                 ([slot . rest-slots]
+                  (let (slot-type (hash-ref tab slot absent-value))
+                    (cond
+                     ((eq? slot-type absent-value)
+                      (hash-put! tab slot (!class-slot-type klass slot))
+                      (loop-inner rest-slots (cons slot result)))
+                     ((not slot-type)
+                      ;; it's there, but we don't have a type
+                      (hash-put! tab slot (!class-slot-type klass slot))
+                      (loop-inner rest-slots result))
+                     (else
+                      (let (other-slot-type (!class-slot-type klass slot))
+                        (let (slot-type (infer-slot-type slot other-slot-type slot-type))
+                          (hash-put! tab slot slot-type)
+                          (loop-inner rest-slots result)))))))
+                 (else (values (reverse! result) tab)))))))))
+
+    (def (get-slot-table slots mixin-slots super contract-e getf mixf)
+      (def tab (make-hash-table-eq))
+      (for-each
+        (lambda (slot)
+          (for-each
+             (lambda (super-type)
+               (let (klass (syntax-local-value super-type))
+                 (cond
+                  ((hash-get tab slot)
+                   => (lambda (a)
+                        (cond
+                         ((getf klass slot)
+                          => (lambda (b)
+                               (hash-put! tab slot (mixf slot a b)))))))
+                  ((getf klass slot)
+                   => (lambda (a)
+                        (hash-put! tab slot a))))))
+             super))
+        mixin-slots)
+      (for-each
+        (lambda (slot-spec)
+          (let ((slot (slot-name slot-spec))
+                (a (contract-e slot-spec)))
+            (when a
+              (cond
+               ((hash-get tab slot)
+                => (lambda (b)
+                     (hash-put! tab slot (mixf slot a b))))
+               (else
+                (hash-put! tab slot a))))))
+        slots)
+      tab)
+
+    (def (get-slot-contracts slots mixin-slots super slot-type-table)
+      (get-slot-table slots mixin-slots super
+                      slot-contract-normalize
+                      !class-slot-contract
+                      (lambda (slot a b)
+                        (defrule (incompatible-contracts!)
+                          (raise-syntax-error #f "incompatible slot contracts" stx slot a b))
+                        (syntax-case a (: :? :- :~)
+                          ((: . _)
+                           (syntax-case b (:? :~)
+                             ((~ . _)
+                              (or (free-identifier=? #'~ #':)
+                                  (free-identifier=? #'~ #':?)
+                                  (free-identifier=? #'~ #':-))
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(: type)))
+                             ((:~ pred . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ pred : type)))))
+                          ((:? . _)
+                           (syntax-case b (:~ :?)
+                             ((:? . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:? type)))
+                             ((:~ pred :? . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ pred :? type)))
+                             (_ (incompatible-contracts!))))
+                          ((:- . _)
+                           (syntax-case b (:~)
+                             ((~ . _)
+                              (or (free-identifier=? #'~ #':)
+                                  (free-identifier=? #'~ #':?)
+                                  (free-identifier=? #'~ #':-))
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:- type)))
+                             ((:~ pred . rest)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ pred :- type)))))
+                          ((:~ pred-a : . _)
+                           (syntax-case b (:~)
+                             ((:~ pred-b . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ (? (and pred-a pred-b)) : type)))
+                             (_ (with-syntax ((type (hash-ref slot-type-table slot)))
+                                  #'(:~ pred-a : type)))))
+                          ((:~ pred-a :? . _)
+                           (syntax-case b (:? :~)
+                             ((:? . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ pred-a :? type)))
+                             ((:~ pred-b :? . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ (? (and pred-a pred-b)) :? type)))
+                             ((:~ pred-b . _)
+                              (incompatible-contracts!))
+                             (_ (incompatible-contracts!))))
+                          ((:~ pred-a :- . _)
+                           (syntax-case b (:~)
+                             ((~ . _)
+                              (or (free-identifier=? #'~ #':)
+                                  (free-identifier=? #'~ #':?)
+                                  (free-identifier=? #'~ #':-)))
+                             ((:~ pred-b . _)
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ (? (and pred-a pred-b)) :- type)))))
+                          ((:~ pred-a . _)
+                           (syntax-case b (: :? :- :~)
+                             ((:~ pred-b ~ . _)
+                              (or (free-identifier=? #'~ #':)
+                                  (free-identifier=? #'~ #':?)
+                                  (free-identifier=? #'~ #':-))
+                              (with-syntax ((type (hash-ref slot-type-table slot)))
+                                #'(:~ (? (and pred-a pred-b)) : type)))
+                             (_ (with-syntax ((type (hash-ref slot-type-table slot)))
+                                  #'(:~ pred-a : type)))))))))
+
+    (def (get-slot-defaults slots mixin-slots super)
+      (get-slot-table slots mixin-slots super
+                      slot-default
+                      !class-slot-default
+                      (lambda (slot a b) a)))
+
+    (def (update-slot-types! slots slot-type-table)
+      (for-each
+        (lambda (slot-spec)
+          (let (slot (slot-name slot-spec))
+            (alet (slot-type (slot-contract-type slot-spec))
+              (cond
+               ((hash-get slot-type-table slot)
+                => (lambda (other-slot-type)
+                     (let (slot-type (infer-slot-type slot other-slot-type slot-type))
+                       (hash-put! slot-type-table slot slot-type))))
+               (else
+                (hash-put! slot-type-table slot slot-type))))))
+        slots))
+
+
+    (def (order-slots slots super)
+      ;; TODO this has to become a base utility in :gerbil/runtime/c4
+      (let* (((values precedence-list base-struct)
+              (c4-linearize [] super
+                            get-precedence-list:
+                            (lambda (klass-id)
+                              (cons klass-id (!class-precedence-list (syntax-local-value klass-id))))
+                            struct:
+                            (lambda (klass-id)
+                              (!class-type-struct? (syntax-local-value (syntax-local-value klass-id))))
+                            eq: eq?
+                            get-name: identity))
+             (base-fields
+              (if base-struct
+                (!class-type-ordered-slots (syntax-local-value base-struct))
+                []))
+             (r-fields (reverse base-fields))
+             (seen-slots
+              (let (tab (make-hash-table-eq))
+                (for-each (cut hash-put! tab <> #t) base-fields)
+                tab))
+             (process-slot
+              (lambda (slot)
+                (unless (hash-get seen-slots slot)
+                  (hash-put! seen-slots slot #t)
+                  (set! r-fields (cons slot r-fields))))))
+        (for-each (lambda (mixin)
+                    (let (klass (syntax-local-value mixin))
+                      (unless (!class-type-struct? klass)
+                        (for-each process-slot (!class-type-ordered-slots klass)))))
+                  precedence-list)
+        (for-each process-slot slots)
+        (reverse r-fields)))
+
+    (def (wrap e-stx)
+      (stx-wrap-source e-stx (stx-source stx)))
+
+    (def (generate-defclass id super-ref slots body)
+      (def (make-id . args)
+        (apply stx-identifier id args))
+      (check-duplicate-identifiers (map slot-name slots) stx)
+      (check-signature-spec! stx slots keywords: #f)
+      (check-typedef-body! body)
+      (let* (((values mixin-slots slot-type-table)
+              (get-mixin-slots super-ref))
+             (slot-contract-table (get-slot-contracts slots mixin-slots super-ref))
+             (slot-default-table  (get-slot-defaults slots mixin-slots super-ref))
+             (ordered-slots (order-slots slots super-ref)))
+        (update-slot-types! slots slot-type-table)
+
+        (with-syntax* (((values name)
+                        (symbol->string (stx-e id)))
+                       ((values super)
+                        (map syntax-local-value super-ref))
+                       ((values struct?)
+                        (stx-getq struct: body))
+                       (type id)
+                       (type::t   (make-id name "::t"))
+                       (make-type (make-id "make-" name))
+                       (type?     (make-id name "?"))
+                       (type-super
+                        (map !class-type-descriptor super))
+                       ((slot ...)
+                        (map slot-name slots))
+                       ((ordered-slot ...) ordered-slots)
+                       ((getf ...)   ; no contract
+                        (stx-map (cut make-id name "-" <>) slots))
+                       ((setf ...)   ; with contract, if any
+                        (stx-map (cut make-id name "-" <> "-set!") slots))
+                       ((rawsetf ...) ; without contract, defclass-type
+                        (stx-map (cut make-id name "-unchecked-" <> "-set!") slots))
+                       ((values mixin-slots)
+                        (get-mixin-slots super-ref slots))
+                       ((mixin-slot ...)
+                        mixin-slots)
+                       ((mixin-getf ...)
+                        (stx-map (cut make-id name "-" <>) mixin-slots))
+                       ((mixin-setf ...)
+                        (stx-map (cut make-id name "-" <> "-set!") mixin-slots))
+                       ((mixin-rawsetf ...)
+                        (stx-map (cut make-id name "-unchecked-" <> "-set!") mixin-slots))
+                       ((ugetf ...)
+                        (stx-map (cut make-id "&" <>) #'(getf ...)))
+                       ((usetf ...)
+                        (stx-map (cut make-id "&" <>) #'(setf ...)))
+                       ((mixin-ugetf ...)
+                        (stx-map (cut make-id "&" <>) #'(mixin-getf ...)))
+                       ((mixin-usetf ...)
+                        (stx-map (cut make-id "&" <>) #'(mixin-setf ...)))
+                       ((values type-slots)
+                        (cond
+                         ((stx-null? slots) [])
+                         (else
+                          [slots:
+                           (map (lambda (slot getf setf rawsetf)
+                                  (with-syntax ((slot slot)
+                                                (getf getf)
+                                                (setf setf)
+                                                (rawsetf rawsetf))
+                                    (if (hash-get slot-contract-table (stx-e #'slot))
+                                      #'(slot getf rawsetf)
+                                      #'(slot getf setf))))
+                                #'(slot ...)
+                                #'(getf ...)
+                                #'(setf ...)
+                                #'(rawsetf ...))])))
+                       ((values type-mixin-slots)
+                        (cond
+                         ((stx-null? slots) [])
+                         (else
+                          [mixin:
+                           (filter-map
+                            (lambda (slot getf setf rawsetf)
+                              (and (not (memq (stx-e slot) slots))
+                                   (with-syntax ((slot slot)
+                                                 (getf getf)
+                                                 (setf setf)
+                                                 (rawsetf rawsetf))
+                                     (if (hash-get slot-contract-table (stx-e #'slot))
+                                       #'(slot getf rawsetf)
+                                       #'(slot getf setf)))))
+                            #'(mixin-slot ...)
+                            #'(mixin-getf ...)
+                            #'(mixin-setf ...)
+                            #'(mixin-rawsetf ...))])))
+                       ((values type-name)
+                        [name: (or (stx-getq name: body) id)])
+                       ((values type-id)
+                        [id: (or (stx-getq id: body) (make-class-type-id #'type))])
+                       ((values type-constructor)
+                        (or (alet (e (stx-getq constructor: body))
+                              [constructor: e])
+                            []))
+                       ((values properties)
+                        (let* ((properties
+                                (if (stx-e (stx-getq transparent: body))
+                                  [[transparent: . #t]]
+                                  []))
+                               (properties
+                                (cond
+                                 ((stx-e (stx-getq print: body))
+                                  => (lambda (print)
+                                       (let (print (if (eq? print #t) #'(slot ...) print))
+                                         (cons [print: . print] properties))))
+                                 (else properties)))
+                               (properties
+                                (cond
+                                 ((stx-e (stx-getq equal: body))
+                                  => (lambda (equal)
+                                       (let (equal (if (eq? equal #t) #'(slot ...) equal))
+                                         (cons [equal: . equal] properties))))
+                                 (else properties))))
+                          properties))
+                       ((values type-properties)
+                        (if (null? properties)
+                          []
+                          (with-syntax ((properties properties))
+                            [properties: #'(quote properties)])))
+                       ((values metaclass)
+                        (cond
+                         ((stx-getq metaclass: body)
+                          => (lambda (metaclass)
+                               (and (identifier? metaclass) metaclass)))
+                         (else #f)))
+                       ((values final?)
+                        (stx-e (stx-getq final: body)))
+                       ((values type-struct)
+                        [struct: struct?])
+                       ((values type-final)
+                        [final: final?])
+                       ((values type-metaclass)
+                        (if metaclass
+                          ['metaclass: metaclass]
+                          []))
+                       ((type-body ...)
+                        [type-id ...
+                                 type-name ...
+                                 type-constructor ...
+                                 type-struct ...
+                                 type-final ...
+                                 type-metaclass ...
+                                 type-properties ...
+                                 type-slots ...
+                                 type-mixin-slots ...])
+                       (raw-make
+                        (if (and (zero? (hash-length slot-contract-table))
+                                 (zero? (hash-length slot-default-table))
+                                 (not metaclass))
+                          #f
+                          #'make-type))
+                       (defklass
+                        (wrap
+                         #'(defclass-type type::t type-super
+                             raw-make type?
+                             type-body ...)))
+                       (meta-type-name
+                        (with-syntax ((type-name (cadr type-name)))
+                          #'(quote type-name)))
+                       (meta-type-super
+                        (with-syntax (((super-id ...) super-ref))
+                          #'[(quote-syntax super-id) ...]))
+                       (meta-type-slots #'(quote (slot ...)))
+                       (meta-type-ordered-slos #'(quote (ordered-slot ...)))
+                       (meta-type-slot-types
+                        (with-syntax ((((slot . type) ...)
+                                       (hash->list slot-type-table)))
+                          #'[['slot :: (quote-syntax type)] ...]))
+                       (meta-type-slot-contracts
+                        (with-syntax ((((slot . contract) ...)
+                                       (hash->list slot-contract-table)))
+                          #'[['slot :: 'contract] ...]))
+                       (meta-type-slot-defaults
+                        (with-syntax ((((slot . default) ...)
+                                       (hash->list slot-default-table)))
+                          #'[['slot :: 'default] ...]))
+                       (meta-type-struct? struct?)
+                       (meta-type-final? final?)
+                       (meta-type-metaclass
+                        (if metaclass
+                          (with-syntax ((metaclass metaclass))
+                            #'(quote-syntax metaclass))
+                          #f))
+                       (meta-type-constructor-method
+                        (if (null? type-constructor)
+                          #f
+                          (with-syntax (((constructor: kons) type-constructor))
+                            #'(quote kons))))
+                       (meta-type-descriptor #'(quote-syntax type::t))
+                       (meta-type-constructor #'(quote-syntax make-type))
+                       (meta-type-predicate #'(quote-syntax type?))
+                       (meta-type-accessors
+                        #'[['slot :: (quote-syntax getf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-getf)]...])
+                       (meta-type-mutators
+                        #'[['slot :: (quote-syntax setf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-setf)]...])
+                       (meta-type-unchecked-accessors
+                        #'[['slot :: (quote-syntax ugetf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-ugetf)]...])
+                       (meta-type-unchecked-mutators
+                        #'[['slot :: (quote-syntax usetf)] ...
+                           ['mixin-slot :: (quote-syntax mixin-usetf)]...])
+                       (defmeta
+                        (wrap
+                         #'(defsyntax type
+                             (make-class-type-info
+                              id: meta-type-id
+                              name: meta-type-name
+                              slots: meta-type-slots
+                              ordered-slots: meta-type-ordered-slots
+                              super: meta-type-super
+                              struct?: meta-type-struct?
+                              final?: meta-type-final?
+                              metaclass: meta-type-metaclass
+                              constructor-method: meta-type-constructor-method
+                              type-descriptor: meta-type-descriptor
+                              constructor: meta-type-constructor
+                              predicate: meta-type-predicate
+                              accessors: meta-type-accessors
+                              mutators: meta-type-mutators
+                              unchecked-accessors: meta-type-unchecked-accessors
+                              unchecked-mutators: meta-type-unchecked-mutators
+                              slot-types: meta-type-slot-types
+                              slot-contracts: meta-type-slot-contracts
+                              slot-defaults: meta-type-slot-defaults))))
+                       (defcons
+                        (cond
+                         ((or (not (null? type-constructor))
+                              (and (zero? (hash-length slot-contract-table))
+                                   (zero? (hash-length slot-default-table)))
+                              metaclass)
+                          ;; use the raw constructor from defclass-type
+                          #'(begin))
+                         ;; synthesize struct constructor procedure
+                         ((and struct? (zero? (hash-length slot-default-table)))
+                          ;; define struct constructor
+                          (with-syntax ((contract
+                                         (foldr
+                                           (lambda (slot r)
+                                             (cond
+                                              ((hash-get slot-contract-table (stx-e slot))
+                                               => (lambda (contract)
+                                                    (let (default
+                                                           (cond
+                                                            ((hash-get slot-default-table (stx-e slot))
+                                                             => (lambda (default) [':= default]))
+                                                            (else [])))
+                                                      (cons* (symbol->keyword (stx-e slot))
+                                                             [slot contract ... default ...]
+                                                             r))))
+                                              (else
+                                               (let (default (hash-get slot-default-table (stx-e slot)))
+                                                 (cons* (symbol->keyword (stx-e slot))
+                                                        [slot default]
+                                                      r)))))
+                                           []
+                                           #'(ordered-slot ...)))
+                                        (type::t (core-quote-syntax #'type::t)))
+                            (wrap
+                             #'(def/c (make-type . contract) => type
+                                 (begin-annotation (@type type::t)
+                                   (##structure type::t ordered-slot ...))))))
+                         (else
+                          ;; define keyword constructor
+                          (with-syntax ((contract
+                                         (foldr
+                                           (lambda (slot r)
+                                             (let (default (hash-get slot-default-table (stx-e slot)))
+                                               (cond
+                                                ((hash-get slot-contract-table (stx-e slot))
+                                                 => (lambda (contract)
+                                                      (let (default (if default
+                                                                      [':= default]
+                                                                      []))
+                                                        (cons* (symbol->keyword (stx-e slot))
+                                                               [slot contract ... default ...]
+                                                               r))))
+                                                (else
+                                                 (cons* (symbol->keyword (stx-e slot))
+                                                        [slot default]
+                                                        r)))))
+                                           []
+                                           #'(ordered-slot ...)))
+                                        (type::t (core-quote-syntax #'type::t)))
+                            (wrap
+                             #'(def/c (make-type . contract) => type
+                                 (begin-annotation (@type type::t)
+                                   (##structure type::t ordered-slot ...))))))))
+                       ((defsetf ...)
+                        (filter
+                         identity
+                         (map
+                         (lambda (slot setf usetf)
+                           (alet (contract (hash-get slot-contract-table (stx-e slot)))
+                             (with-syntax ((slot-spec (cons slot contract))
+                                           (slot slot)
+                                           (setf setf)
+                                           (usetf usetf))
+                               (wrap
+                                #'(def/c (setf ($obj : type) slot-spec) => :void
+                                    (usetf $obj slot))))))
+                         #'(slot ...)
+                         #'(setf ...)
+                         #'(usetf ...)))))
+          #'(begin defklass defmeta defmake defsetf ...))))
+
+    (syntax-case stx ()
+      ((_ hd (slot ...) . body)
+       (generate #'hd #'(slot ...) #'body))))
+
+  (defrule (defstruct/c hd slots . body)
+    (defclass/c hd slots struct: #t . body)))
+
+(import TypeCast Using ContractRules TypeReference Interface TypedDefinitions
+        (phi: +1 InterfaceInfo TypeEnv ClassPrecedenceList))
