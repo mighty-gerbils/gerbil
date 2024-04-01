@@ -1721,10 +1721,16 @@ package: gerbil/core
 
     ;; :gerbil/runtime/interface
     interface-instance::t
-    interface-cast-error?
-    interface-descriptor?
     interface-instance?
+    interface-instance-object
+    &interface-instance-object
+    make-interface-descriptor
+    interface-descriptor?
+    interface-descriptor-type
+    interface-descriptor-methods
     cast try-cast satisfies?
+    interface-cast-error?
+
 
     ;; :gerbil/runtime/hash
     raise-unbound-key-error

@@ -33,13 +33,16 @@ package: gerbil
                   "core/more-sugar"
                   "core/module-sugar"
                   "core/contract")
-         lambda def def* defclass defstruct set!)
+         lambda case-lambda let def def* defmethod defclass defstruct set!)
         (rename: %%app-dotted %%app)
         (rename: %%ref-dotted %%ref)
         (rename: %%set-dotted! set!)
         (rename: lambda/c lambda)
+        (rename: case-lambda/c case-lambda)
+        (rename: let/c let)
         (rename: def/c def)
         (rename: def*/c def*)
+        (rename: defmethod/c defmethod)
         (rename: defclass/c defclass)
         (rename: defstruct/c defstruct)
         (phi: +1
@@ -53,13 +56,16 @@ package: gerbil
                         "core/expander"
                         "core/macro-object"
                         "core/more-syntax-sugar")
-               lambda def def* defclass defstruct set!)
+               lambda case-lambda let def def* defmethod defclass defstruct set!)
               (rename: %%app-dotted %%app)
               (rename: %%ref-dotted %%ref)
               (rename: %%set-dotted! set!)
               (rename: lambda/c lambda)
+              (rename: case-lambda/c case-lambda)
+              (rename: let/c let)
               (rename: def/c def)
               (rename: def*/c def*)
+              (rename: defmethod/c defmethod)
               (rename: defclass/c defclass)
               (rename: defstruct/c defstruct))
         (phi: +2 (import: "core/runtime"

@@ -121,7 +121,7 @@ package: gerbil/core
   (defrules cond (else =>)
     ((_) #!void)
     ((_ (else body ...))
-     (%#expression (begin body ...)))
+     (let () body ...))
     ((_ (else . _) . _)
      (syntax-error "bad syntax; misplaced else"))
     ((recur (test) . rest)
@@ -131,7 +131,7 @@ package: gerbil/core
      (let ($e test)
        (if $e (K $e) (recur . rest))))
     ((recur (test body ...) . rest)
-     (if test (begin body ...) (recur . rest))))
+     (if test (let () body ...) (recur . rest))))
 
   (defrules when ()
     ((_ test expr ...)

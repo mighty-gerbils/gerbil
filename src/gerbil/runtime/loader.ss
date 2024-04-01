@@ -25,7 +25,7 @@ namespace: #f
     (error "bad load path; expected list of paths" paths))
   (set! __load-path paths))
 
-(defapi (load-module (modpath : :string))
+(def (load-module (modpath : :string))
   (cond
    ((hash-get __modules modpath))
    ((__find-library-module modpath)
@@ -36,7 +36,7 @@ namespace: #f
    (else
     (error "module not found" modpath))))
 
-(defapi (reload-module! (modpath : :string))
+(def (reload-module! (modpath : :string))
   (cond
    ((hash-get __modules modpath)
     => (lambda (current-path)

@@ -78,7 +78,7 @@ namespace: gxc
   equal: #t)
 
 ;; procedures
-(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl signature)
+(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!
   equal: #t)
 (defstruct (!case-lambda !procedure) (clauses)
@@ -101,8 +101,8 @@ namespace: gxc
 ;;; methods
 (defmethod {:init! !class-meta}
   (lambda (self klass)
-    (set! (&!type-id self) 'class)
-    (set! (&!class-meta-class self) klass)))
+    (set! self.id 'class)
+    (set! self.class klass)))
 
 (defmethod {:init! !class}
   (case-lambda
@@ -171,29 +171,29 @@ namespace: gxc
             (fields
              ;; 4. compute slot->field mapping for direct instances/structs
              (compute-class-fields `(!class ,id) base-struct precedence-list slots)))
-       (set! (&!type-id self) id)
-       (set! (&!class-super self) super)
-       (set! (&!class-precedence-list self) precedence-list)
-       (set! (&!class-slots self) slots)
-       (set! (&!class-fields self) fields)
-       (set! (&!class-constructor self) ctor-method)
-       (set! (&!class-struct? self) struct?)
-       (set! (&!class-final? self) final?)
-       (set! (&!class-metaclass self) metaclass)))
+       (set! self.id id)
+       (set! self.super super)
+       (set! self.precedence-list precedence-list)
+       (set! self.slots slots)
+       (set! self.fields fields)
+       (set! self.constructor ctor-method)
+       (set! self.struct? struct?)
+       (set! self.final? final?)
+       (set! self.metaclass metaclass)))
 
     ;; ssxi loader
     ((self id super precedence-list slots fields constructor struct? final? system? metaclass methods)
-     (set! (&!type-id self) id)
-     (set! (&!class-super self) super)
-     (set! (&!class-precedence-list self) precedence-list)
-     (set! (&!class-slots self) slots)
-     (set! (&!class-fields self) fields)
-     (set! (&!class-constructor self) constructor)
-     (set! (&!class-struct? self) struct?)
-     (set! (&!class-final? self) final?)
-     (set! (&!class-metaclass self) metaclass)
+     (set! self.id id)
+     (set! self.super super)
+     (set! self.precedence-list precedence-list)
+     (set! self.slots slots)
+     (set! self.fields fields)
+     (set! self.constructor constructor)
+     (set! self.struct? struct?)
+     (set! self.final? final?)
+     (set! self.metaclass metaclass)
      (when methods
-       (set! (&!class-methods self) (list->hash-table-eq methods))))))
+       (set! self.methods (list->hash-table-eq methods))))))
 
 (def (compute-class-fields where base-struct precedence-list direct-slots)
   ;; TODO this has to become a base utility in :gerbil/runtime/c4
@@ -249,62 +249,62 @@ namespace: gxc
 
 (defmethod {:init! !predicate}
   (lambda (self id)
-    (set! (&!type-id self) id)
-    (set! (&!procedure-signature self)
+    (set! self.id id)
+    (set! self.signature
       (!signature return: 'boolean::t
                   effect: '(pure predicate)
                   arguments: '(t::t)))))
 
 (defmethod {:init! !constructor}
   (lambda (self id)
-    (set! (&!type-id self) id)
-    (set! (&!procedure-signature self)
+    (set! self.id id)
+    (set! self.signature
       (!signature return: id
                   effect: '(alloc)))))
 
 (defmethod {:init! !accessor}
   (lambda (self id slot checked?)
-    (set! (&!type-id self) id)
-    (set! (&!accessor-slot self) slot)
-    (set! (&!accessor-checked? self) checked?)
-    (set! (&!procedure-signature self)
+    (set! self.id id)
+    (set! self.slot slot)
+    (set! self.checked? checked?)
+    (set! self.signature
       (!signature return: 't::t
                   effect: '(pure)
                   arguments: [id]))))
 
 (defmethod {:init! !mutator}
   (lambda (self id slot checked?)
-    (set! (&!type-id self) id)
-    (set! (&!mutator-slot self) slot)
-    (set! (&!mutator-checked? self) checked?)
-    (set! (&!procedure-signature self)
+    (set! self.id id)
+    (set! self.slot slot)
+    (set! self.checked? checked?)
+    (set! self.signature
       (!signature return: 'void::t
                   effect: '(mut)
                   arguments: [id 't::t]))))
 
 (defmethod {:init! !lambda}
   (lambda (self arity dispatch signature: (signature #f))
-    (set! (&!type-id self) 'procedure)
-    (set! (&!lambda-arity self) arity)
-    (set! (&!lambda-dispatch self) dispatch)
-    (set! (&!procedure-signature self) signature)))
+    (set! self.id 'procedure)
+    (set! self.arity arity)
+    (set! self.dispatch dispatch)
+    (set! self.signature signature)))
 
 (defmethod {:init! !case-lambda}
   (lambda (self clauses)
-    (set! (&!type-id self) 'procedure)
-    (set! (&!case-lambda-clauses self) clauses)))
+    (set! self.id 'procedure)
+    (set! self.clauses clauses)))
 
 (defmethod {:init! !kw-lambda}
   (lambda (self tab dispatch)
-    (set! (&!type-id self) 'procedure)
-    (set! (&!kw-lambda-table self) tab)
-    (set! (&!kw-lambda-dispatch self) dispatch)))
+    (set! self.id 'procedure)
+    (set! self.table tab)
+    (set! self.dispatch dispatch)))
 
 (defmethod {:init! !kw-lambda-primary}
   (lambda (self keys main)
-    (set! (&!type-id self) 'procedure)
-    (set! (&!kw-lambda-primary-keys self) keys)
-    (set! (&!kw-lambda-primary-main self) main)))
+    (set! self.id 'procedure)
+    (set! self.keys keys)
+    (set! self.main main)))
 
 (defmethod {:init! !primitive-lambda}
   !lambda:::init!)
@@ -314,8 +314,8 @@ namespace: gxc
 
 (defmethod {:init! !primitive-predicate}
   (lambda (self id)
-    (set! (&!type-id self) id)
-    (set! (&!procedure-signature self)
+    (set! self.id id)
+    (set! self.signature
       (!signature return: 'boolean::t
                   effect: '(pure)
                   arguments: '(t::t)))))
@@ -428,9 +428,12 @@ namespace: gxc
   (let (table (optimizer-info-classes (current-compile-optimizer-info)))
     (hash-get table sym)))
 
-(def (optimizer-resolve-class where sym)
-  (or (optimizer-lookup-class sym)
-      (raise-compile-error "unknown class" where sym)))
+(def (optimizer-resolve-class where sym) => !class
+  (:-
+   (or (alet (klass (optimizer-lookup-class sym))
+        (: klass !class))
+       (raise-compile-error "unknown class" where sym))
+   !class))
 
 (def (optimizer-lookup-class-name klass)
   (unless (!class? klass)
@@ -446,8 +449,3 @@ namespace: gxc
 
 (def (optimizer-top-level-method? sym)
   (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
-
-(def (identifier-symbol stx)
-  (if (syntax-quote? stx)
-    (generate-runtime-binding-id stx)
-    (stx-e stx)))

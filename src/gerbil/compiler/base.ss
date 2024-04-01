@@ -123,3 +123,76 @@ namespace: gxc
   (let (str (symbol->string sym))
     (and (string-prefix? "_%" str)
          (string-suffix? "%_" str))))
+
+(def (generate-runtime-binding-id id)
+  (cond
+   ((and (syntax-quote? id) (resolve-identifier id))
+    => (lambda (bind)
+         (let ((eid (binding-id bind))
+               (ht (symbol-table-bindings (current-compile-symbol-table))))
+           (cond
+            ((interned-symbol? eid) eid)
+            ((hash-get ht eid))
+            ((local-binding? bind)
+             (let (gid (generate-runtime-gensym-reference eid))
+               (hash-put! ht eid gid)
+               gid))
+            ((module-binding? bind)
+             (let (gid
+                   (cond
+                    ((module-context-ns (module-binding-context bind))
+                     => (lambda (ns) (make-symbol ns "#" eid)))
+                    (else (generate-runtime-gensym-reference eid))))
+               (hash-put! ht eid gid)
+               gid))
+            (else
+             ;; module bindings have been mapped in collect-bindings.
+             (raise-compile-error "Cannot compile reference to uninterned binding"
+                                  id eid bind))))))
+   ((interned-symbol? (stx-e id))
+    ;; implicit extern or optimizer introduced symbol
+    (stx-e id))
+   (else
+    ;; gensymed reference, where did you get this one?
+    (raise-compile-error "Cannot compile reference to uninterned identifier"
+                         id))))
+
+(def (generate-runtime-binding-id* id)
+  (if (identifier? id)
+    (generate-runtime-binding-id id)
+    (generate-runtime-temporary)))
+
+(def (generate-runtime-temporary (top #f))
+  (if top
+    (let ((ns (module-context-ns (core-context-top (current-expander-context))))
+          (phi (current-expander-phi)))
+      (if ns
+        (if (fxpositive? phi)
+          (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol ns "#_" (gensym) "_"))
+        (if (fxpositive? phi)
+          (make-symbol "[" (number->string phi) "]#_" (gensym) "_")
+          (make-symbol "_" (gensym) "_"))))
+    (make-symbol "_" (gensym) "_")))
+
+(def (generate-runtime-gensym-reference sym (quote? #f))
+  (let (ht (symbol-table-gensyms (current-compile-symbol-table)))
+    (cond
+     ((hash-get ht sym))
+     (else
+      (let (g (if quote?
+                (make-symbol "__" sym "__" (current-compile-timestamp))
+                (make-symbol "_%" sym "%_")))
+        (hash-put! ht sym g)
+        g)))))
+
+(def (runtime-identifier=? id1 id2)
+  (def (symbol-e id)
+    (if (symbol? id) id
+        (generate-runtime-binding-id id)))
+  (eq? (symbol-e id1) (symbol-e id2)))
+
+(def (identifier-symbol stx)
+  (if (syntax-quote? stx)
+    (generate-runtime-binding-id stx)
+    (stx-e stx)))

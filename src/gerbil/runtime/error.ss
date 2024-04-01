@@ -56,14 +56,14 @@ namespace: #f
 
 (def contract-violation-error? ContractViolation?)
 
-(defapi (with-exception-handler (handler : :procedure) (thunk : :procedure))
+(def (with-exception-handler (handler : :procedure) (thunk : :procedure))
   (##with-exception-handler
    (lambda (exn)
      (let (exn (wrap-runtime-exception exn))
        (handler exn)))
    thunk))
 
-(defapi (with-catch (handler : :procedure) (thunk : :procedure))
+(def (with-catch (handler : :procedure) (thunk : :procedure))
   (##continuation-capture
    (lambda (cont)
      (with-exception-handler

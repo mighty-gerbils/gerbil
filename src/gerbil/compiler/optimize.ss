@@ -163,6 +163,8 @@ namespace: gxc
          (stx (apply-lift-top-lambdas stx)))
     ;; full type collection for type directed optimizations
     (apply-collect-type-info stx)
+    ;; check declared procedure return types
+    (apply-check-return-type stx)
     ;; process user declarations
     (apply-collect-top-level-declarations stx)
     ;; optimize special constructs (match, syntax-case)
@@ -244,8 +246,7 @@ namespace: gxc
 ;; typedecls
 (defmethod {typedecl !alias}
   (lambda (self)
-    (with ((!alias alias-id) self)
-      ['@alias alias-id])))
+    ['@alias self.id]))
 
 ;; MOP
 (defmethod {typedecl !class}
@@ -260,8 +261,7 @@ namespace: gxc
 
 (defmethod {typedecl !constructor}
   (lambda (self)
-    (let (klass-id (&!constructor-id self))
-      ['@constructor klass-id])))
+    ['@constructor self.id]))
 
 (defmethod {typedecl !accessor}
   (lambda (self)
@@ -284,11 +284,12 @@ namespace: gxc
   (lambda (self)
     (with ((!lambda _ signature arity dispatch) self)
       (if signature
-        ['@lambda arity dispatch
-             signature: [return: (&!signature-return signature)
-                         effect: (&!signature-effect signature)
-                         arguments: (&!signature-arguments signature)
-                         unchecked: (&!signature-unchecked signature)]]
+        (using (signature :- !signature)
+          ['@lambda arity dispatch
+               signature: [return: signature.return
+                           effect: signature.effect
+                           arguments: signature.arguments
+                           unchecked: signature.unchecked]])
         ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}

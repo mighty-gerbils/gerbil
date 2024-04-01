@@ -83,6 +83,8 @@ namespace: #f
      (else
       (let loop ((t1 sit) (t2 sit2))
         (cond ;; equal? should be the same as eq? due to single-inheritance
+         ;; TODO BUG equal? is not good for arbitrary objects
+         ;;          it should be a parameter
          ((equal? t1 sit2) (void)) ;; sit is a prefix of sit2
          ((equal? t2 sit) (set! sit sit2)) ;; sit2 is a prefix of sit
          ((or (null? t1) (null? t2))

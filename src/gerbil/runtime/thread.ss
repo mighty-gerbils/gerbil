@@ -9,18 +9,18 @@ namespace: #f
 (export #t)
 
 ;; spawn an actor thread apply f to args
-(defapi (spawn (f : :procedure) . args)
-  :- :thread
+(def (spawn (f : :procedure) . args)
+  => :thread
   (spawn-actor f args '#!void #f))
 
 ;; spawn a named actor thread
-(defapi (spawn/name name (f : :procedure) . args)
-  :- :thread
+(def (spawn/name name (f : :procedure) . args)
+  => :thread
   (spawn-actor f args name #f))
 
 ;; spawn a named actor thread with a new thread group
-(defapi (spawn/group name (f : :procedure) . args)
-  :- :thread
+(def (spawn/group name (f : :procedure) . args)
+  => :thread
   (let (tgroup (make-thread-group name))
     (spawn-actor f args name tgroup)))
 
@@ -122,7 +122,7 @@ namespace: #f
 (def (current-thread-group)
   (thread-thread-group (current-thread)))
 
-(defapi (with-lock (mx : :mutex) (proc : :procedure))
+(def (with-lock (mx : :mutex) (proc : :procedure))
   (let (handler (current-exception-handler))
     (with-exception-handler
      (lambda (e)
@@ -138,15 +138,15 @@ namespace: #f
          (mutex-unlock! mx)
          result)))))
 
-(defapi (with-dynamic-lock (mx : :mutex) (proc : :procedure))
+(def (with-dynamic-lock (mx : :mutex) (proc : :procedure))
   (dynamic-wind
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
 
 ;; utilities for exception printing
-(defapi (with-exception-stack-trace (thunk : :procedure)
-                                    (error-port : :port := (current-error-port)))
+(def (with-exception-stack-trace (thunk : :procedure)
+                                 (error-port : :port := (current-error-port)))
   (with-exception-handler
    (let (E (current-exception-handler))
      (lambda (exn)

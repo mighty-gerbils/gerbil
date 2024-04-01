@@ -11,218 +11,6 @@ namespace: #f
 ;; predefine this so that we can raise it before it is defined (bootstrap)
 (defmutable raise-contract-violation-error error)
 
-;; syntax utilities
-(begin-syntax
-  (def (procedure-formals ctx args)
-    (let recur ((rest args))
-      (syntax-case rest ()
-        ((hd . rest)
-         (syntax-case #'hd (:=)
-           (id
-            (identifier? #'id)
-            (cons #'hd (recur #'rest)))
-           ((id default)
-            (identifier? #'id)
-            (cons #'hd (recur #'rest)))
-           ((id contract ... := default)
-            (identifier? #'id)
-            (cons #'(id default) (recur #'rest)))
-           ((id sigil . _)
-            (and (identifier? #'sigil)
-                 (or (free-identifier=? #'sigil #':)
-                     (free-identifier=? #'sigil #':-)
-                     (free-identifier=? #'sigil #':~)))
-            (cons #'id (recur #'rest)))
-           (_ (raise-syntax-error #f "bad procedure formals" ctx args #'hd))))
-        (id (identifier? #'id) #'id)
-        (() [])
-        (_ (raise-syntax-error #f "bad procedure formals" ctx args #'hd)))))
-
-  (def (procedure-signature ctx args return effect)
-    (let* ((argument-types
-            (let recur ((rest args))
-              (syntax-case rest ()
-                ((hd . rest)
-                 (syntax-case #'hd (: :~ :-)
-                   (id
-                    (identifier? #'id)
-                    (cons (core-quote-syntax 't::t) (recur #'rest)))
-                   ((id default)
-                    (identifier? #'id)
-                    (cons (core-quote-syntax 't::t) (recur #'rest)))
-                   ((id : type . _)
-                    (and (identifier? #'id)
-                         (syntax-local-class-type-info? #'type))
-                    (let (info (syntax-local-value #'type))
-                      (cons (!class-type-descriptor info)
-                            (recur #'rest))))
-                   ((id :- type . _)
-                    (and (identifier? #'id)
-                         (syntax-local-class-type-info? #'type))
-                    (cons (core-quote-syntax 't::t)
-                          (recur #'rest)))
-                   ((id :~ contract :- type . _)
-                    (and (identifier? #'id)
-                         (identifier? #'contract)
-                         (syntax-local-class-type-info? #'type))
-                    (let (info (syntax-local-value #'type))
-                      (cons #f (recur #'rest))))
-                   (_ (raise-syntax-error #f "bad procedure signature" ctx #'hd))))
-                (id (identifier? #'id) (core-quote-syntax 't::t))
-                (() []))))
-           (return-type
-            (let (info (syntax-local-value return false))
-              (if (class-type-info? info)
-                (!class-type-descriptor info)
-                (raise-syntax-error #f "bad procedure return type" ctx return)))))
-      [arguments: argument-types return: return-type effect: effect]))
-
-  (def (procedure-typedecl ctx args)
-    (let recur ((rest args))
-      (syntax-case rest ()
-        ((hd . rest)
-         (syntax-case #'hd (: :~ :-)
-           (id
-            (identifier? #'id)
-            (cons #'(id :t) (recur #'rest)))
-           ((id default)
-            (identifier? #'id)
-            (cons #'(id :t) (recur #'rest)))
-           ((id : type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (cons #'(id type) (recur #'rest)))
-           ((id :- type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (cons #'(id type) (recur #'rest)))
-           ((id :~ contract :- type . _)
-            (and (identifier? #'id)
-                 (identifier? #'contract)
-                 (syntax-local-class-type-info? #'type))
-            (cons #'(id type) (recur #'rest)))))
-        (id (identifier? #'id) #'((id :t)))
-        (() []))))
-
-  (def (procedure-contract ctx args)
-    (let recur ((rest args))
-      (syntax-case rest ()
-        ((hd . rest)
-         (syntax-case #'hd (: :~ :-)
-           (id
-            (identifier? #'id)
-            (recur #'rest))
-           ((id default)
-            (identifier? #'id)
-            (recur #'rest))
-           ((id : type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (let (info (syntax-local-value #'type))
-              (with-syntax ((klass (!class-type-descriptor info))
-                            (predicate (!class-type-predicate info)))
-                (cons #'(unless (predicate id)
-                          (error "bad argument; contract violation" 'klass id ))
-                      (recur #'rest)))))
-           ((id :- type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (recur #'rest))
-           ((id :~ contract :- type . _)
-            (and (identifier? #'id)
-                 (identifier? #'contract)
-                 (syntax-local-class-type-info? #'type))
-            (cons #'(unless (contract id)
-                      (error "bad argument; contract violation" 'contract id))
-                  (recur #'rest)))))
-        (id (identifier? #'id) [])
-        (() []))))
-
-  (def (procedure-invocation ctx invoke args)
-    (let loop ((rest args) (invocation-args []))
-      (syntax-case rest ()
-        ((hd . rest)
-         (syntax-case #'hd (: :~ :-)
-           (id
-            (identifier? #'id)
-            (loop #'rest (cons #'id invocation-args)))
-           ((id default)
-            (identifier? #'id)
-            (loop #'rest (cons #'id invocation-args)))
-           ((id : type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (loop #'rest (cons #'id invocation-args)))
-           ((id :- type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (loop #'rest (cons #'id invocation-args)))
-           ((id :~ contract :- type . _)
-            (and (identifier? #'id)
-                 (syntax-local-class-type-info? #'type))
-            (loop #'rest (cons #'id invocation-args)))))
-        (id (identifier? #'id)
-            (cons* 'apply invoke (reverse! (cons #'id invocation-args))))
-        (() (cons invoke (reverse! invocation-args)))))))
-
-;; definition macro for public API procedures, which must be safe and typed.
-(defsyntax (defapi stx)
-  (syntax-case stx (:-)
-    ((_ (proc . args) :- return effect: effect body ...)
-     (let ((unchecked (stx-identifier #'proc "__" #'proc))
-           (effect (alet (effect (stx-e #'effect))
-                     (map stx-e effect))))
-       (with-syntax ((formals (procedure-formals stx #'args))
-                     ((contract-check ...) (procedure-contract stx #'args))
-                     (signature
-                      (cons* unchecked: (core-quote-syntax unchecked)
-                             (procedure-signature stx #'args #'return effect)))
-                     (unchecked-signature
-                      [return: (!class-type-descriptor (syntax-local-value #'return))
-                               effect: effect])
-                     (unchecked-typedecl (procedure-typedecl stx #'args))
-                     (unchecked-invocation (procedure-invocation stx unchecked #'args))
-                     (unchecked-proc unchecked))
-         #'(begin
-             (def (proc . formals)
-               (begin-annotation (@type.signature . signature)
-                 (begin
-                   contract-check ...
-                   unchecked-invocation)))
-             (def (unchecked-proc . formals)
-               (begin-annotation (@type.signature . unchecked-signature)
-                 (with-type unchecked-typedecl
-                   body ...)))))))
-    ((_ (proc . args) :- return body ...)
-     #'(defapi (proc . args) :- return effect: #f body ...))
-    ((_ (proc . args) body ...)
-     #'(defapi (proc . args) :- :t effect: #f body ...))))
-
-;; definition macro for internal typed procedures
-(defsyntax (deftyped stx)
-  (syntax-case stx (:-)
-    ((_ (proc . args) :- return body ...)
-     (with-syntax ((formals   (procedure-formals stx #'args))
-                   (signature (procedure-signature stx #'args #'return #f))
-                   (typedecl  (procedure-typedecl stx #'args)))
-       #'(def (proc . formals)
-           (begin-annotation (@type.signature . signature)
-             (with-type typedecl
-               body ...)))))
-    ((_ hd body ...)
-     #'(deftyped hd :- :t body ...))))
-
-(defsyntax (with-type stx)
-  (syntax-case stx ()
-    ((_ ((id type) ...) body ...)
-     (and (identifier-list? #'(id ...))
-          (andmap syntax-local-class-type-info? #'(type ...)))
-     (with-syntax (((qid ...) (map core-quote-syntax #'(id ...)))
-                   ((tid ...) (map !class-type-descriptor
-                                   (map syntax-local-value #'(type ...)))))
-       #'(begin-annotation (@type.assert (qid tid) ...)
-           (let () body ...))))))
-
 (defrules declare-inline ()
   ((_ proc inline-rules)
    (begin-annotation (@inline proc) 'inline-rules)))
@@ -261,8 +49,8 @@ namespace: #f
 
 ;;;
 
-(defapi (displayln . args)
-  :- :void
+(def (displayln . args)
+  => :void
   (let lp ((rest args))
     (match rest
       ([hd . rest]
@@ -271,15 +59,14 @@ namespace: #f
       (else
        (newline)))))
 
-(defapi (display* . args)
-  :- :void
+(def (display* . args)
+  => :void
   (for-each display args))
 
-(defapi (file-newer? (file1 : :string)
+(def (file-newer? (file1 : :string)
                      (file2 : :string))
-  :- :boolean
-  (deftyped (modification-time (file :- :string))
-    :- :flonum
+  => :boolean
+  (def (modification-time (file :- :string)) => :flonum
     (time->seconds
      (file-info-last-modification-time
       (file-info file #t))))
@@ -287,10 +74,10 @@ namespace: #f
   (fl> (modification-time file1)
        (modification-time file2)))
 
-(defapi (create-directory* (dir   : :string)
-                           (perms : :fixnum := #o755 ))
-  :- :void
-  (deftyped (create1 (path :- :string))
+(def (create-directory* (dir   : :string)
+                        (perms : :fixnum := #o755 ))
+  => :void
+  (def (create1 (path :- :string))
     (cond
      ((file-exists? path)
       (unless (eq? (file-type path) 'directory)
@@ -309,7 +96,8 @@ namespace: #f
                (create1 (substring dir 0 x)))
              (lp (fx+ x 1))))
        (else
-        (create1 dir))))))
+        (create1 dir)))))
+  (void))
 
 (def absent-obj
   (##absent-object))
@@ -317,8 +105,8 @@ namespace: #f
 (def absent-value
   '#(#!void))
 
-(defapi (true . ignore)
-  :- :true
+(def (true . ignore)
+  => :true
   #t)
 
 (declare-inline true
@@ -328,8 +116,8 @@ namespace: #f
     ((%#call _ arg ...)
      (%#begin arg ... (%#quote #t)))))
 
-(defapi (true? obj)
-  :- :boolean
+(def (true? obj)
+  => :boolean
   (eq? obj #t))
 
 (declare-inline true?
@@ -337,8 +125,8 @@ namespace: #f
     ((%#call _ arg)
      (%#call (%#ref eq?) arg (%#quote #t)))))
 
-(defapi (false . ignore)
-  :- :false
+(def (false . ignore)
+  => :false
   #f)
 
 (declare-inline false
@@ -348,8 +136,8 @@ namespace: #f
     ((%#call _ arg ...)
      (%#begin arg ... (%#quote #f)))))
 
-(defapi (void . ignore)
-  :- :void
+(def (void . ignore)
+  => :void
   #!void)
 
 (declare-inline void
@@ -359,8 +147,8 @@ namespace: #f
     ((%#call _ arg ...)
      (%#begin arg ... (%#quote #!void)))))
 
-(defapi (void? obj)
-  :- :boolean
+(def (void? obj)
+  => :boolean
   (eq? obj #!void))
 
 (declare-inline void?
@@ -368,34 +156,34 @@ namespace: #f
     ((%#call _ arg)
      (%#call (%#ref eq?) arg (%#quote #!void)))))
 
-(defapi (dssl-object? obj)
-  :- :boolean
+(def (dssl-object? obj)
+  => :boolean
   (and (memq obj '(#!key #!rest #!optional)) #t))
-(defapi (dssl-key-object? obj)
-  :- :boolean
+(def (dssl-key-object? obj)
+  => :boolean
   (eq? obj #!key))
-(defapi (dssl-rest-object? obj)
-  :- :boolean
+(def (dssl-rest-object? obj)
+  => :boolean
   (eq? obj #!rest))
-(defapi (dssl-optional-object? obj)
-  :- :boolean
+(def (dssl-optional-object? obj)
+  => :boolean
   (eq? obj #!optional))
 
-(defapi (immediate? obj)
-  :- :boolean
+(def (immediate? obj)
+  => :boolean
   (let (t (:- (##type obj) :fixnum))
     (fxzero? (fxand t #b1))))
 
-(defapi (nonnegative-fixnum? obj)
-  :- :boolean
+(def (nonnegative-fixnum? obj)
+  => :boolean
   (and (fixnum? obj) (##fx>= obj 0)))
 
-(defapi (pair-or-null? obj)
-  :- :boolean
+(def (pair-or-null? obj)
+  => :boolean
   (or (pair? obj) (null? obj)))
 
-(defapi (values-count obj)
-  :- :fixnum
+(def (values-count obj)
+  => :fixnum
   (if (##values? obj)
     (##vector-length obj)
     1))
@@ -412,13 +200,13 @@ namespace: #f
          #'(%#let-values ((($values) expr))
                          (%#call recur (%#ref $values))))))))
 
-(defapi (values-ref obj (k : :fixnum))
+(def (values-ref obj (k : :fixnum))
   (if (##values? obj)
     (##vector-ref obj k)
     obj))
 
-(defapi (values->list obj)
-  :- :list
+(def (values->list obj)
+  => :list
   (if (##values? obj)
     (##vector->list obj)
     (list obj)))
@@ -435,14 +223,14 @@ namespace: #f
          #'(%#let-values ((($values) expr))
                          (%#call recur (%#ref $values))))))))
 
-(defapi (foldl1 (f : :procedure) iv lst)
+(def (foldl1 (f : :procedure) iv lst)
   (let lp ((rest lst) (r iv))
     (match rest
       ([x . rest]
        (lp rest (f x r)))
       (else r))))
 
-(defapi (foldl2 (f : :procedure) iv lst1 lst2)
+(def (foldl2 (f : :procedure) iv lst1 lst2)
   (let lp ((rest1 lst1) (rest2 lst2) (r iv))
     (match rest1
       ([x1 . rest1]
@@ -460,7 +248,7 @@ namespace: #f
   ((f iv lst1 lst2 . rest)
    (apply foldl* f iv lst1 lst2 rest)))
 
-(defapi (foldl* (f : :procedure) iv . rest)
+(def (foldl* (f : :procedure) iv . rest)
   (let recur ((iv iv) (rest rest))
     (if (andmap1 pair? rest)
       (recur (apply f
@@ -470,14 +258,14 @@ namespace: #f
              (map cdr rest))
       iv)))
 
-(defapi (foldr1 (f : :procedure) iv lst)
+(def (foldr1 (f : :procedure) iv lst)
   (let recur ((rest lst))
     (match rest
       ([x . rest]
        (f x (recur rest)))
       (else iv))))
 
-(defapi (foldr2 (f : :procedure) iv lst1 lst2)
+(def (foldr2 (f : :procedure) iv lst1 lst2)
   (let recur ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -495,7 +283,7 @@ namespace: #f
   ((f iv lst1 lst2 . rest)
    (apply foldr* f iv lst1 lst2 rest)))
 
-(defapi (foldr* (f : :procedure) iv . rest)
+(def (foldr* (f : :procedure) iv . rest)
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (apply f
@@ -507,8 +295,8 @@ namespace: #f
 
 ;; Destructively remove the empty lists from a list of lists, returns the list.
 ;; : (List (List X)) -> (List (NonEmptyList X))
-(defapi (remove-nulls! l)
-  :- :list
+(def (remove-nulls! l)
+  => :list
   (match l
     ([[] . r]
      (remove-nulls! r))
@@ -522,8 +310,8 @@ namespace: #f
     (_ l))) ;; []
 
 ;; : (List X) X -> (NonEmptyList X)
-(defapi (append1! l x)
-  :- :list
+(def (append1! l x)
+  => :list
   (let (l2 [x])
     (if (pair? l)
       (begin (set-cdr! (:- (##last-pair l) :pair) l2) l)
@@ -535,8 +323,8 @@ namespace: #f
 ;; satisfying the predicate if any (or the empty list if none exists),
 ;; and the tail with the reverse of the rhead up till then appended in front.
 ;; : (X -> Bool) (List X) (List X) -> (List X) (List X)
-(defapi (append-reverse-until (pred  : :procedure) rhead tail)
-  :- :list
+(def (append-reverse-until (pred  : :procedure) rhead tail)
+  => :list
   (let loop ((rhead rhead) (tail tail))
     (match rhead
       ([] (values [] tail))
@@ -545,16 +333,16 @@ namespace: #f
          (values rhead tail)
          (loop r (cons a tail)))))))
 
-(defapi (andmap1 (f : :procedure) lst)
-  :- :boolean
+(def (andmap1 (f : :procedure) lst)
+  => :boolean
   (let lp ((rest lst))
     (match rest
       ([x . rest]
        (and (f x) (lp rest)))
       (else #t))))
 
-(defapi (andmap2 (f : :procedure) lst1 lst2)
-  :- :boolean
+(def (andmap2 (f : :procedure) lst1 lst2)
+  => :boolean
   (let lp ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -572,22 +360,22 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply andmap* f lst1 lst2 rest)))
 
-(defapi (andmap* (f : :procedure) . rest)
-  :- :boolean
+(def (andmap* (f : :procedure) . rest)
+  => :boolean
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (and (apply f (map car rest))
            (recur (map cdr rest)))
       #t)))
 
-(defapi (ormap1 (f : :procedure) lst)
+(def (ormap1 (f : :procedure) lst)
   (let lp ((rest lst))
     (match rest
       ([x . rest]
        (or (f x) (lp rest)))
       (else #f))))
 
-(defapi (ormap2 (f : :procedure) lst1 lst2)
+(def (ormap2 (f : :procedure) lst1 lst2)
   (let lp ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -605,15 +393,15 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply ormap* f lst1 lst2 rest)))
 
-(defapi (ormap* (f : :procedure) . rest)
+(def (ormap* (f : :procedure) . rest)
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (or (apply f (map car rest))
           (recur (map cdr rest)))
       #f)))
 
-(defapi (filter-map1 (f : :procedure) lst)
-  :- :list
+(def (filter-map1 (f : :procedure) lst)
+  => :list
   (let recur ((rest lst))
     (match rest
       ([x . rest]
@@ -622,8 +410,8 @@ namespace: #f
         (else (recur rest))))
       (else []))))
 
-(defapi (filter-map2 (f : :procedure) lst1 lst2)
-  :- :list
+(def (filter-map2 (f : :procedure) lst1 lst2)
+  => :list
   (let recur ((rest1 lst1) (rest2 lst2))
     (match rest1
       ([x1 . rest1]
@@ -643,8 +431,8 @@ namespace: #f
   ((f lst1 lst2 . rest)
    (apply filter-map* f lst1 lst2 rest)))
 
-(defapi (filter-map* (f : :procedure) . rest)
-  :- :list
+(def (filter-map* (f : :procedure) . rest)
+  => :list
   (let recur ((rest rest))
     (if (andmap1 pair? rest)
       (cond
@@ -656,7 +444,7 @@ namespace: #f
 
 (defrules defaget ()
   ((_ aget assf)
-   (defapi (aget key lst (default #f))
+   (def (aget key lst (default #f))
      (cond
       ((and (pair? lst) (assf key lst)) => cdr)
       ((procedure? default)
@@ -674,7 +462,7 @@ namespace: #f
 
 (defrules defpget ()
   ((_ pget cmp)
-   (defapi (pget key lst (default #f))
+   (def (pget key lst (default #f))
      (let lp ((rest lst))
        (match rest
          ([k v . rest]
@@ -688,12 +476,12 @@ namespace: #f
 (defpget pgetv eqv?)
 (defpget pget equal?)
 
-(defapi (find (pred : :procedure) lst)
+(def (find (pred : :procedure) lst)
   (cond
    ((memf pred lst) => ##car)
    (else #f)))
 
-(defapi (memf (proc : :procedure) lst)
+(def (memf (proc : :procedure) lst)
   (let lp ((rest lst))
     (match rest
       ([hd . tl]
@@ -702,7 +490,7 @@ namespace: #f
 
 (defrules defremove1 ()
   ((_ remove cmp)
-   (defapi (remove el lst)
+   (def (remove el lst)
      (let lp ((rest lst) (r []))
        (match rest
          ([hd . rest]
@@ -715,7 +503,7 @@ namespace: #f
 (defremove1 remv1 eqv?)
 (defremove1 remq1 eq?)
 
-(defapi (remf (proc : :procedure) lst)
+(def (remf (proc : :procedure) lst)
   (let lp ((rest lst) (r []))
     (match rest
       ([hd . rest]
@@ -724,7 +512,7 @@ namespace: #f
          (lp rest (cons hd r))))
       (else lst))))
 
-(defapi (1+ (x : :number)) :- :number
+(def (1+ (x : :number)) => :number
   (+ x 1))
 
 (declare-inline 1+
@@ -732,7 +520,7 @@ namespace: #f
     ((%#call _ arg)
      (%#call (%#ref +) arg (%#quote 1)))))
 
-(defapi (1- (x : :number)) :- :number
+(def (1- (x : :number)) => :number
   (- x 1))
 
 (declare-inline 1-
@@ -740,7 +528,7 @@ namespace: #f
     ((%#call _ arg)
      (%#call (%#ref -) arg (%#quote 1)))))
 
-(defapi (fx1+ (x : :fixnum)) :- :fixnum
+(def (fx1+ (x : :fixnum)) => :fixnum
   (fx+ x 1))
 
 (declare-inline fx1+
@@ -748,7 +536,7 @@ namespace: #f
     ((%#call _ arg)
      (%#call (%#ref fx+) arg (%#quote 1)))))
 
-(defapi (fx1- (x : :fixnum)) :- :fixnum
+(def (fx1- (x : :fixnum)) => :fixnum
   (fx- x 1))
 
 (declare-inline fx1-
@@ -760,24 +548,24 @@ namespace: #f
   fxarithmetic-shift)
 (def fx/
   fxquotient)
-(defapi (fx>=0? x) :- :boolean
+(def (fx>=0? x) => :boolean
   (and (fixnum? x) (##fx>= x 0)))
-(defapi (fx>0? x) :- :boolean
+(def (fx>0? x) => :boolean
   (and (fixnum? x) (##fx> x 0)))
-(defapi (fx=0? x) :- :boolean
+(def (fx=0? x) => :boolean
   (##fx= x 0))
-(defapi (fx<0? x) :- :boolean
+(def (fx<0? x) => :boolean
   (and (fixnum? x) (##fx< x 0)))
-(defapi (fx<=0? x) :- :boolean
+(def (fx<=0? x) => :boolean
   (and (fixnum? x) (##fx<= x 0)))
 
-(defapi (interned-symbol? x)
-  :- :boolean
+(def (interned-symbol? x)
+  => :boolean
   (and (symbol? x)
        (not (uninterned-symbol? x))))
 
-(defapi (display-as-string x (port :~ output-port? :- :port))
-  :- :void
+(def (display-as-string x (port :~ output-port? :- :port))
+  => :void
   (cond
    ((or (string? x) (symbol? x) (keyword? x) (number? x) (char? x))
     (display x port))
@@ -813,26 +601,26 @@ namespace: #f
   ((x) (if (interned-keyword? x) x (string->keyword (as-string x))))
   (args (string->keyword (apply as-string args))))
 
-(defapi (interned-keyword? x)
-  :- :boolean
+(def (interned-keyword? x)
+  => :boolean
   (and (keyword? x)
        (not (uninterned-keyword? x))))
 
-(defapi (symbol->keyword (sym : :symbol))
-  :- :keyword
+(def (symbol->keyword (sym : :symbol))
+  => :keyword
   (if (uninterned-symbol? sym)
     (string->uninterned-keyword (symbol->string sym))
     (string->keyword (symbol->string sym))))
 
-(defapi (keyword->symbol (sym : :keyword))
-  :- :symbol
+(def (keyword->symbol (sym : :keyword))
+  => :symbol
   (if (uninterned-keyword? sym)
     (string->uninterned-symbol (keyword->string sym))
     (string->symbol (keyword->string sym))))
 
-(defapi (bytes->string (bstr : :u8vector)
+(def (bytes->string (bstr : :u8vector)
                        (enc  : :symbol := 'UTF-8))
-  :- :string
+  => :string
   (if (eq? enc 'UTF-8)
     (utf8->string bstr)
     (let* ((in (open-input-u8vector `(char-encoding: ,enc init: ,bstr)))
@@ -842,56 +630,56 @@ namespace: #f
       (string-shrink! out n)
       out)))
 
-(defapi (string->bytes (str : :string)
+(def (string->bytes (str : :string)
                        (enc : :symbol := 'UTF-8))
-  :- :u8vector
+  => :u8vector
   (if (eq? enc 'UTF-8)
     (string->utf8 str)
     (substring->bytes str 0 (string-length str) enc)))
 
-(defapi (substring->bytes (str : :string)
-                          (start :~ nonnegative-fixnum? :- :fixnum)
-                          (end :~ nonnegative-fixnum? :- :fixnum)
-                          (enc 'UTF-8))
-  :- :u8vector
+(def (substring->bytes (str : :string)
+                       (start :~ nonnegative-fixnum? :- :fixnum)
+                       (end :~ nonnegative-fixnum? :- :fixnum)
+                       (enc 'UTF-8))
+  => :u8vector
   (if (eq? enc 'UTF-8)
     (string->utf8 str start end)
     (let ((out (open-output-u8vector `(char-encoding: ,enc))))
       (write-substring str start end out)
       (get-output-u8vector out))))
 
-(defapi (string-empty? (str : :string))
-  :- :boolean
+(def (string-empty? (str : :string))
+  => :boolean
   (fxzero? (string-length str)))
 
-(defapi (string-index (str : :string)
+(def (string-index (str : :string)
                       (char : :char)
                       (start :~ nonnegative-fixnum? :- :fixnum :=  0))
   (let ((len (string-length str)))
     (let lp ((k start))
-      (with-type ((k :fixnum))
+      (using (k :- :fixnum)
         (and (fx< k len)
              (if (eq? char (##string-ref str k))
                k
                (lp (fx+ k 1))))))))
 
-(defapi (string-rindex (str : :string)
+(def (string-rindex (str : :string)
                        (char : :char)
                        (start #f))
   (let* ((len (string-length str))
          (start (:- (if (fixnum? start) start (fx- len 1)) :fixnum)))
     (let lp ((k start))
-      (with-type ((k :fixnum))
+      (using (k :- :fixnum)
         (and (fx>= k 0)
              (if (eq? char (##string-ref str k))
                k
                (lp (fx- k 1))))))))
 
-(defapi (string-split (str : :string) (char : :char))
-  :- :list
+(def (string-split (str : :string) (char : :char))
+  => :list
   (let ((len (string-length str)))
     (let lp ((start 0) (r '()))
-      (with-type ((start :fixnum))
+      (using (start :- :fixnum)
         (cond
          ((string-index str char start)
           => (lambda (end)
@@ -902,15 +690,15 @@ namespace: #f
          (else
           (reverse! r)))))))
 
-(defapi (string-join strs join)
-  :- :string
+(def (string-join strs join)
+  => :string
   (def (join-length strs jlen)
     (let lp ((rest strs) (len 0))
-      (with-type ((len :fixnum))
+      (using (len :- :fixnum)
         (match rest
           ([hd . rest]
            (if (string? hd)
-             (let (hd (:- hd :string))
+             (using (hd :- :string)
                (if (pair? rest)
                  (lp rest
                      (fx+ (string-length hd)
@@ -933,10 +721,10 @@ namespace: #f
           (olen (:- (join-length strs jlen) :fixnum))
           (ostr (make-string olen)))
     (let lp ((rest strs) (k 0))
-      (with-type ((k :fixnum))
+      (using (k :- :fixnum)
         (match rest
           ([hd . rest]
-           (with-type ((hd :string))
+           (using (hd :- :string)
              (let ((hdlen (string-length hd)))
                (if (pair? rest)
                  (begin
@@ -948,23 +736,23 @@ namespace: #f
                    ostr)))))
           (else "")))))) ; empty
 
-(defapi (read-u8vector (bytes : :u8vector)
-                       (port :~ input-port? :- :port))
-  :- :fixnum
+(def (read-u8vector (bytes : :u8vector)
+                    (port :~ input-port? :- :port))
+  => :fixnum
   (##read-subu8vector bytes 0 (u8vector-length bytes) port))
 
-(defapi (write-u8vector (bytes : :u8vector)
-                        (port  :~ output-port? :- :port))
-  :- :void
+(def (write-u8vector (bytes : :u8vector)
+                     (port  :~ output-port? :- :port))
+  => :void
   (##write-subu8vector bytes 0 (u8vector-length bytes) port))
 
-(defapi (read-string (str  : :string)
-                     (port :~ input-port? :- :port))
-  :- :fixnum
+(def (read-string (str  : :string)
+                  (port :~ input-port? :- :port))
+  => :fixnum
   (##read-substring str 0 (string-length str) port))
-(defapi (write-string (str  : :string)
-                      (port :~ output-port? :- :port))
-  :- :void
+(def (write-string (str  : :string)
+                   (port :~ output-port? :- :port))
+  => :void
   (##write-substring str 0 (string-length str) port))
 
 (defrules DBG ()
